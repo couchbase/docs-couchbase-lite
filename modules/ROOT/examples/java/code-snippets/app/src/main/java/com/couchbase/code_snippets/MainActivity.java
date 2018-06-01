@@ -13,6 +13,7 @@ import com.couchbase.lite.Database;
 import com.couchbase.lite.DatabaseConfiguration;
 import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.EncryptionKey;
 import com.couchbase.lite.Endpoint;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.FullTextExpression;
@@ -22,6 +23,7 @@ import com.couchbase.lite.IndexBuilder;
 import com.couchbase.lite.Join;
 import com.couchbase.lite.LogDomain;
 import com.couchbase.lite.LogLevel;
+import com.couchbase.lite.MessageEndpoint;
 import com.couchbase.lite.Meta;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
@@ -165,6 +167,15 @@ public class MainActivity extends AppCompatActivity {
         // # end::new-database[]
 
         database.delete();
+    }
+
+    // ### Database Encryption
+    public void testDatabaseEncryption() throws CouchbaseLiteException {
+        // # tag::database-encryption[]
+        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
+        config.setEncryptionKey(new EncryptionKey("PASSWORD"));
+        Database database = new Database("mydb", config);
+        // # end::database-encryption[]
     }
 
     // ### Logging
@@ -677,6 +688,23 @@ public class MainActivity extends AppCompatActivity {
         is.close();
         config.setPinnedServerCertificate(cert);
         // # end::certificate-pinning[]
+    }
+
+    // ### Reset replicator checkpoint
+    public void testReplicationResetCheckpoint() throws URISyntaxException {
+        URI uri = new URI("ws://localhost:4984/db");
+        Endpoint endpoint = new URLEndpoint(uri);
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
+        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
+        Replicator replicator = new Replicator(config);
+        replicator.start();
+
+        // # tag::replication-reset-checkpoint[]
+        replicator.resetCheckpoint();
+        replicator.start();
+        // # end::replication-reset-checkpoint[]
+
+        replicator.stop();
     }
 
 }
