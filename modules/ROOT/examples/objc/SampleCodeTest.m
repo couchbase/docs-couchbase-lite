@@ -37,6 +37,21 @@
     // # end::new-database[]
 }
 
+#if COUCHBASE_ENTERPRISE
+- (void) dontTestDatabaseEncryption {
+    // # tag::database-encryption[]
+    CBLDatabaseConfiguration *config = [[CBLDatabaseConfiguration alloc] init];
+    config.encryptionKey = [[CBLEncryptionKey alloc] initWithPassword:@"secretpassword"];
+
+    NSError *error;
+    CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"my-database" config:config error:&error];
+    if (!database) {
+        NSLog(@"Cannot open the database: %@", error);
+    }
+    // # end::database-encryption[]
+}
+#endif
+
 - (void) dontTestLogging {
     // # tag::logging[]
     [CBLDatabase setLogLevel: kCBLLogLevelVerbose domain: kCBLLogDomainReplicator];
@@ -510,6 +525,19 @@
         }
     }];
     // # end::replication-error-handling[]
+}
+
+- (void) dontTestReplicationResetCheckpoint {
+    CBLDatabase *database = self.db;
+    NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
+    CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
+    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
+    CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
+
+    // # tag::replication-reset-checkpoint[]
+    [replicator resetCheckpoint];
+    [replicator start];
+    // # end::replication-reset-checkpoint[]
 }
 
 #ifdef COUCHBASE_ENTERPRISE
