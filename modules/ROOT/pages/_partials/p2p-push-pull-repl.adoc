@@ -1,0 +1,50 @@
+Typically, an application needs to send data and receive data. Directionality of the replication could be any of the following.
+
+- **Push only:** The data is pushed from the local database to the remote database.
+- **Pull only:** The data is pulled from the remote database to the local database.
+- **Push and Pull:** The data is exchanged both ways.
+
+Usually, the remote is a Sync Gateway database which is identified through a URL. In the context of peer-to-peer syncing, the remote is another Couchbase Lite database.
+
+image::replication.png[]
+
+The replication lifecycle is handled through the `MessageEndpointConnection`.
+
+==== Active Peer
+
+When Couchbase Lite calls back the application code through the `MessageEndpointConnection.send` method, you should send that data to the other peer using the communication framework.
+
+[source,{lang}]
+----
+include::{examplesdir}/{snippetsdir}[tags=active-peer-send]
+----
+
+Once the data is sent, call the completion block to acknowledge the completion. You can use the `MessageError` in the completion block to specify if the error is recoverable or not. If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection`.
+
+
+When data is received from the passive peer via the Communication Framework, you call the `ReplicatorConnection.receive` method.
+
+[source,{lang}]
+----
+include::{examplesdir}/{snippetsdir}[tags=active-peer-receive]
+----
+
+The replication connection's `receive` method is called which then processes the data in order to persist it to the local database.
+
+==== Passive Peer
+
+As in the case of the active peer, the passive peer must implement the `MessageEndpointConnection.send` method to send data to the other peer.
+
+[source,{lang}]
+----
+include::{examplesdir}/{snippetsdir}[tags=passive-peer-send]
+----
+
+Once the data is sent, call the completion block to acknowledge the completion. You can use the `MessageError` in the completion block to specify if the error is recoverable or not. If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection`.
+
+When data is received from the active peer via the Communication Framework, you call the `ReplicatorConnection.receive` method.
+
+[source,{lang}]
+----
+include::{examplesdir}/{snippetsdir}[tags=passive-peer-receive]
+----

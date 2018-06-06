@@ -197,11 +197,6 @@ Alternatively, the `Database(string name, DatabaseConfiguration config)` initial
 
 include::{partialsdir}/database-encryption.adoc[]
 
-[source,objectivec]
-----
-include::{examplesdir}/{snippetsdir}[tags=database-encryption]
-----
-
 === Finding a Database File
 
 When the application is running on the iOS simulator, you can locate the application's sandbox directory using the https://simpholders.com/3/[SimPholders] utility.
@@ -935,11 +930,61 @@ include::{examplesdir}/{snippetsdir}[tags=certificate-pinning]
 
 This example loads the certificate from the application sandbox, then converts it to the appropriate type to configure the replication object.
 
+== Peer-to-Peer Sync
+
+include::{partialsdir}/p2p-intro.adoc[]
+
+=== Peer Discovery
+
+include::{partialsdir}/p2p-peer-discovery.adoc[]
+
+=== Peer Selection and Connection Setup
+
+include::{partialsdir}/p2p-peer-selection.adoc[]
+
+=== Replication Setup
+
+include::{partialsdir}/p2p-replication-setup.adoc[]
+
+=== Push/Pull Replication
+
+include::{partialsdir}/p2p-push-pull-repl.adoc[]
+
+=== Connection Teardown
+
+include::{partialsdir}/p2p-connection-teardown.adoc[]
+
 == Thread Safety
 
 The Couchbase Lite API is thread safe except for calls to mutable objects: `MutableDocument`, `MutableDictionary` and `MutableArray`.
 
 == Release Notes
+
+=== 2.1
+
+*Performance Improvements*
+
+- https://github.com/couchbase/couchbase-lite-ios/issues/2127[*#2127*] CBLReplicator always runs on main queue
+
+*Enhancements*
+
+- https://github.com/couchbase/couchbase-lite-ios/issues/1610[*#1610*] 2.0: Provide a script to strip simulator architecture frameworks for app submission
+- https://github.com/couchbase/couchbase-lite-ios/issues/2117[*#2117*] Implement Database Encryption (EE feature)
+- https://github.com/couchbase/couchbase-lite-ios/issues/2118[*#2118*] Support Peer-to-Peer replication through MessageEndpoint API (EE feature)
+- https://github.com/couchbase/couchbase-lite-ios/issues/2139[*#2139*] Implement Replicator reset checkpoint feature
+
+*Bugs*
+
+- https://github.com/couchbase/couchbase-lite-ios/issues/1926[*#1926*] Swift Replicator.addChangeListener crashes
+- https://github.com/couchbase/couchbase-lite-ios/issues/2140[*#2140*] 2.0 : TIC Read Status 1:57 error spam
+- https://github.com/couchbase/couchbase-lite-ios/issues/2149[*#2149*] Swift DictionaryObject and ArrayObject not having toMutable() method
+- https://github.com/couchbase/couchbase-lite-ios/issues/2162[*#2162*] 2.1 DB1: Crash when inserting image Blobs to objects in embedded array in Swift
+- https://github.com/couchbase/couchbase-lite-ios/issues/2188[*#2188*] Replicator not getting stopped when using MessageEndpoint
+
+*Known Issues*
+
+- https://github.com/couchbase/couchbase-lite-ios/issues/2112[*#2112*] HTTP proxy support
+- https://github.com/couchbase/couchbase-lite-ios/issues/2122[*#2122*] IOS 9 - Got LiteCore error: connection closed abnormally - eventual crash
 
 === 2.0.2
 

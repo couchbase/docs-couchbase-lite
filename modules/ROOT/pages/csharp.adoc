@@ -173,11 +173,6 @@ Alternatively, the `Database(string name, DatabaseConfiguration config)` initial
 
 include::{partialsdir}/database-encryption.adoc[]
 
-[source,swift]
-----
-include::{examplesdir}/{snippetsdir}[tags=database-encryption]
-----
-
 === Finding a Database File
 
 Where a database goes by default depends on the platform it is running on.
@@ -884,10 +879,24 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 === 2.1
 
-- Device Encryption is now supported (EE features)
-- Resetting a replication (in other words, making it start over again) is now supported via Replication's ResetCheckpoint method.
-Be sure to call it before the Replication is started.
-- Bug Fixes: #979, #1000, #1008, #1009, #1010, #1011
+*Enhancements*
+
+- https://github.com/couchbase/couchbase-lite-net/issues/1005[*#1005*] Add Encryption to EE
+- https://github.com/couchbase/couchbase-lite-net/issues/1006[*#1006*] Add P2P
+
+*Bugs*
+
+- https://github.com/couchbase/couchbase-lite-net/issues/1000[*#1000*] 2.0. Xamarin. Replicator fails to get out of Connecting State when connecting to unreachable host
+- https://github.com/couchbase/couchbase-lite-net/issues/1010[*#1010*] [Xamarin][db023] continuus synchronisation stopping after a while
+- https://github.com/couchbase/couchbase-lite-net/issues/1011[*#1011*] Xamarin Android cannot recover from loss of connection to LAN address
+- https://github.com/couchbase/couchbase-lite-net/issues/1012[*#1012*] Reusing the same collation in a query will cause all of them to be affected by the last modification
+- https://github.com/couchbase/couchbase-lite-net/issues/1020[*#1020*] Closing/Disposing database throws Exception because of unfinished replicators
+- https://github.com/couchbase/couchbase-lite-net/issues/1048[*#1048*] Couchbase Lite parsing nested value as UInt64 then throwing exception on update.
+- https://github.com/couchbase/couchbase-lite-net/issues/1051[*#1051*] Heap corruption/Access Violation with unreachable replication endpoint on Windows x86
+
+*Known Issues*
+
+- https://github.com/couchbase/couchbase-lite-net/issues/1040[*#1040*] HTTP Proxy Support
 
 === 2.0.3
 
@@ -897,7 +906,7 @@ Be sure to call it before the Replication is started.
 
 * Support for Log redaction of sensitive information when <<Logging,logging is enabled>>.
 
-=== 2.0
+=== 2.0 release notes
 
 *Enhancements*
 

@@ -156,11 +156,6 @@ Alternatively, the `Database(string name, DatabaseConfiguration config)` initial
 
 include::{partialsdir}/database-encryption.adoc[]
 
-[source,java]
-----
-include::{examplesdir}/{snippetsdir}[tags=database-encryption]
-----
-
 === Finding a Database File
 
 When the application is running on the Android emulator, you can locate the application's data folder and access the database file by using the *adb* CLI tools.
@@ -872,11 +867,57 @@ include::{examplesdir}/{snippetsdir}[tags=certificate-pinning]
 
 This example loads the certificate from the application sandbox, then converts it to the appropriate type to configure the replication object.
 
+== Peer-to-Peer Sync
+
+include::{partialsdir}/p2p-intro.adoc[]
+
+=== Peer Discovery
+
+include::{partialsdir}/p2p-peer-discovery.adoc[]
+
+=== Peer Selection and Connection Setup
+
+include::{partialsdir}/p2p-peer-selection.adoc[]
+
+=== Replication Setup
+
+include::{partialsdir}/p2p-replication-setup.adoc[]
+
+=== Push/Pull Replication
+
+include::{partialsdir}/p2p-push-pull-repl.adoc[]
+
+=== Connection Teardown
+
+include::{partialsdir}/p2p-connection-teardown.adoc[]
+
 == Thread Safety
 
 The Couchbase Lite API is thread safe except for calls to mutable objects: `MutableDocument`, `MutableDictionary` and `MutableArray`.
 
 == Release Notes
+
+=== 2.1
+
+*Enhancements*
+
+- https://github.com/couchbase/couchbase-lite-android/issues/1678[*#1678*] Support Peer-to-Peer replication through MessageEndpoint API (EE Feature)
+- https://github.com/couchbase/couchbase-lite-android/issues/1683[*#1683*] Support Database Encryption (EE feature)
+- https://github.com/couchbase/couchbase-lite-android/issues/1696[*#1696*] Support replicator reset checkpoint
+
+*Bugs*
+
+- https://github.com/couchbase/couchbase-lite-android/issues/1510[*#1510*] 2.0: Crash with DB21 - in c4doc_update()
+- https://github.com/couchbase/couchbase-lite-android/issues/1665[*#1665*] Exception thrown openDatabase (Proguard strips methods that CBL uses)
+- https://github.com/couchbase/couchbase-lite-android/issues/1676[*#1676*] 2.0: Replicator Error misses the error message.
+- https://github.com/couchbase/couchbase-lite-android/issues/1702[*#1702*] 2.x: ValueIndexItem.expression(Expression) is missing
+- https://github.com/couchbase/couchbase-lite-android/issues/1725[*#1725*] 2.1: Android : Replication does not start
+- https://github.com/couchbase/couchbase-lite-android/issues/1727[*#1727*] Dead lock occurs - DB 2.0.0
+- https://github.com/couchbase/couchbase-lite-android/issues/1742[*#1742*] Couchbase mobile 2.0.2 Emoji Support
+
+*Known Issues*
+
+- https://github.com/couchbase/couchbase-lite-android/issues/1743[*#1743*] HTTP Proxy Support
 
 === 2.0.2
 
