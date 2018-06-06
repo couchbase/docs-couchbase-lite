@@ -39,6 +39,16 @@ class SampleCodeTest: CBLTestCase {
         // # end::new-database[]
     }
 
+    #if COUCHBASE_ENTERPRISE
+    func dontTestDatabaseEncryption() throws {
+        // # tag::database-encryption[]
+        let config = DatabaseConfiguration()
+        config.encryptionKey = EncryptionKey.password("secretpassword")
+        self.database = try Database(name: "my-database", config: config)
+        // # end::database-encryption[]
+    }
+    #endif
+
     func dontTestLogging() throws {
         // # tag::logging[]
         Database.setLogLevel(.verbose, domain: .replicator)
@@ -570,6 +580,13 @@ class SampleCodeTest: CBLTestCase {
             }
         }
         // # end::replication-error-handling[]
+    }
+
+    func dontTestReplicationResetCheckpoint() throws {
+        // # tag::replication-reset-checkpoint[]
+        self.replicator.resetCheckpoint()
+        self.replicator.start()
+        // # end::replication-reset-checkpoint[]
     }
 
     #if COUCHBASE_ENTERPRISE

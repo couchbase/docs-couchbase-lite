@@ -1,9 +1,7 @@
 :idprefix:
 :idseparator: -
-ifndef::env-site,env-github[]
 :toc: left
 :toclevels: 3
-endif::[]
 :snippetsdir: csharp/Program.cs
 
 toc::[]
@@ -50,15 +48,14 @@ link:../installation/sync-gateway/index.html[Installing Sync Gateway ⟶]
 
 == Supported Versions
 
-Couchbase Lite .NET will be a .NET Standard 2.0 library as of the
-Couchbase Lite .NET 2.0 GA release. Runtimes which have received more
+Couchbase Lite .NET is a .NET Standard 2.0 library. Runtimes which have received more
 testing and are *officially* supported are:
 
 [cols=",,",options="header",]
 |=========================================================
 |.NET Runtime |Minimum Runtime Version |Minimum OS version
-|.NET Core Win |2.0 |10 (any supported)
-|.NET Framework |4.6.1 |10 (any supported)
+|.NET Core Win |2.0 |10 (any Microsoft supported)
+|.NET Framework |4.6.1 |10 (any Microsoft supported)
 |UWP |6.0.1 |10.0.16299
 |=========================================================
 
@@ -103,7 +100,7 @@ version" is an approximately good metric here.
 
 == API References
 
-http://docs.couchbase.com/mobile/2.0/couchbase-lite-net/[`.NET SDK API References`]
+- http://docs.couchbase.com/mobile/2.1/couchbase-lite-net/db001[`2.1-DB001 .NET SDK API References`]
 
 == Upgrading
 
@@ -165,6 +162,15 @@ Alternatively, the `Database(string name, DatabaseConfiguration config)`
 initializer can be used to provide specific options in the
 http://docs.couchbase.com/mobile/2.0/couchbase-lite-net/db022/html/T_Couchbase_Lite_DatabaseConfiguration.htm[`DatabaseConfiguration`]
 object such as the database directory.
+
+=== Database Encryption
+
+include::{partialsdir}/database-encryption.adoc[]
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=database-encryption]
+----
 
 === Finding a Database File
 
@@ -930,6 +936,15 @@ Couchbase Lite replicator and thus will trigger a connection retry.
 - `504`: Gateway Timeout
 - `1001`: DNS resolution error
 
+=== Replication Checkpoints
+
+include::{partialsdir}/replication-checkpoint.adoc[]
+
+[source,csharp]
+----
+include::{examplesdir}/{snippetsdir}[tags=replication-reset-checkpoint]
+----
+
 == Handling Conflicts
 
 In Couchbase Lite 2.0, document conflicts are automatically resolved. This
@@ -1002,16 +1017,21 @@ converts it to the appropriate type to configure the replication object.
 
 == Thread Safety
 
-The Couchbase Lite API is thread safe except for calls to mutable objects:
-`MutableDocument`, `MutableDictionary` and `MutableArray`.
+The Couchbase Lite API is thread safe except for calls to mutable objects: `MutableDocument`, `MutableDictionary` and `MutableArray`.
 
 == Release Notes
 
-=== 2.0.2
+=== 2.1 release notes
+
+- Device Encryption is now supported (EE features)
+- Resetting a replication (in other words, making it start over again) is now supported via Replication's ResetCheckpoint method. Be sure to call it before the Replication is started.
+- Bug Fixes: #979, #1000, #1008, #1009, #1010, #1011
+
+=== 2.0.2 release notes
 
 * Support for Log redaction of sensitive information when xref:#logging[logging is enabled].
 
-=== 2.0.0
+=== 2.0 release notes
 
 *Enhancements*
 
