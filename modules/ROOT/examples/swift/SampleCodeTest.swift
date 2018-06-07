@@ -709,3 +709,66 @@ class SampleCodeTest: CBLTestCase {
     }
 
 }
+
+// # tag::message-endpoint-delegate[]
+// Class to configure replicator and initiate a connection with the remote peer.
+class MessageEndpointManager: MessageEndpointDelegate {
+    
+    init() throws {
+        // # tag::message-endpoint-replicator[]
+        let database = try Database(name: "dbname")
+        
+        // The delegate must implement the `MessageEndpointDelegate` protocol.
+        let target = MessageEndpoint(uid: "UID:123", target: nil, protocolType: .messageStream, delegate: self) // <1>
+        let config = ReplicatorConfiguration(database: database, target: target) // <2>
+        
+        // Create the replicator object.
+        let replicator = Replicator(config: config)
+        // Start the replication.
+        replicator.start()
+        // # end::message-endpoint-replicator[]
+    }
+    
+    func createConnection(endpoint: MessageEndpoint) -> MessageEndpointConnection { // <3>
+        return ConnectionManager()
+    }
+
+}
+// # end::message-endpoint-delegate[]
+
+// # tag::message-endpoint-connection[]
+var replicatorConnection: ReplicatorConnection! // <1>
+
+class ConnectionManager: MessageEndpointConnection {
+    
+    init() {}
+
+    func open(connection: ReplicatorConnection, completion: @escaping (Bool, MessagingError?) -> Void) { // <2>
+        // ...
+        replicatorConnection = connection
+        completion(true, nil)
+    }
+
+    func send(message: Message, completion: @escaping (Bool, MessagingError?) -> Void) { // <3>
+        // ...
+        completion(true, nil)
+    }
+
+    func close(error: Error?, completion: @escaping () -> Void) { // <4>
+        // ...
+        completion()
+    }
+
+}
+// # end::message-endpoint-connection[]
+
+// # tag::replicator-connection[]
+class ReceiverManager {
+    
+    func receive(data: Data) { // <1>
+        let message = Message.fromData(data) // <2>
+        replicatorConnection.receive(messge: message) // <3>
+    }
+    
+}
+// # end::replicator-connection[]

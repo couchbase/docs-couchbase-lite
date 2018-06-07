@@ -790,6 +790,12 @@ the result.
 Couchbase Mobile 2.0 uses a new replication protocol based on
 WebSockets.
 
+The replicator is designed to send documents from a source to a target database. The target can be one of the following:
+
+- `URLEndpoint`: to replicate data between a local Couchbase Lite database and remote Sync Gateway database using the WebSocket protocol ([start here]).
+- `DatabaseEndpoint`: to replicate data between two local Couchbase Lite databases. This target can be used to create a local back-up of a database ([database replicas])
+- `MessageEndpoint`: allows a local database to replicate with another Couchbase Lite database via a custom transportation protocol such iOS Multipeer Connectivity, Android WiFi Direct, Android NearByConnection, socket based transportation etc. (see xref:#message-endpoint[Message Endpoint])
+
 === Compatibility
 
 ⚠️ The new protocol is *incompatible* with CouchDB-based databases. And
@@ -1056,6 +1062,65 @@ include::{examplesdir}/{snippetsdir}[tags=certificate-pinning]
 
 This example loads the certificate from the application sandbox, then
 converts it to the appropriate type to configure the replication object.
+
+== Message Endpoint
+
+The Message Endpoint API allows a local database to replicate with another Couchbase Lite database via a custom transportation.
+
+For peer-to-peer communication between iOS devices, we recommend to use link:https://developer.apple.com/documentation/multipeerconnectivity[Multipeer Connectivity framework] to handle sending and receiving messages. This framework wraps multiple technologies – WiFi and Bluetooth – and uses whichever is available to establish a connection between devices. Note that the Multipeer Connectivity framework is only supported on iOS devices.
+
+Integrating a transport protocol with the Couchbase Message Endpoint API involves 4 steps:
+
+. xref:#instantiating-a-replicator[Instantiating a replicator] object to connect with the remote peer.
+. Configuring the replicator on the local peer to xref:#sending-messages[send messages].
+. Configuring the replicator on the remote peer to xref:#receiving-messages[receive messages].
+. xref:#start-the-replication[Starting the replication].
+
+=== Instantiating a Replicator
+
+The following code instantiates a replicator with a `MessageEndpoint` target object.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=message-endpoint-replicator]
+----
+<1> The `MessageEndpoint` object representing the target device is initialized. The delegate must implement the `MessageEndpointDelegate` protocol.
+<2> The replicator configuration is then initialized, similarly to using a `URLEndpoint` or `DatabaseEndpoint` as the target.
+
+The following class implements the `MessageEndpointDelegate` protocol.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=message-endpoint-delegate]
+----
+The `MessageEndpointDelegate` protocol method will be called by Couchbase Lite's internal APIs when it starts a new replication. The return type is `MessageEndpointConnection` which is an abstract class.
+
+=== Sending Messages
+
+The `MessageEndpointConnection` abstract class must be implemented by the application to integrated with a custom data transportation protocol.
+
+The following code is a subclass of `MessageEndpointConnection` and implements the required method. Each method will be called by the replicator to open a connection, close a connection, and send a message to the remote peer.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=message-endpoint-connection]
+----
+<1> A `ReplicationConnection` global variable. This will be set once the message endpoint connection is opened. See below.
+<2> Called by the replicator to open the connection with the other peer. This method must open a connection with the other peer using a transport protocol of your choice (Multipeer Connectivity, Android NearbyConnection etc) and call the completion handler.
+<3> Called by the replicator to send the message to the other peer. This method send the message to the other peer using a transport protocol of your choice (Multipeer Connectivity, Android NearbyConnection etc). Once the data is sent, call the completion block to acknowledge the completion.
+<4> Called by the replicator to close the current connection with the other peer. This method must close the connection with the other peer using a transport protocol of your choice (Multipeer Connectivity, Android NearbyConnection etc). Call the completion block is used for acknowledging the completion.
+
+=== Receiving Messages
+
+To receive a message, you must use the `ReplicationConnection` instance that was set in the previous step. This object implements two methods.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=replicator-connection]
+----
+<1> This method must be called from the custom transportation protocol's API when it receives data.
+<2> You can then convert the data type to a message type.
+<3> The replication connection's `receive` method can then be called to persist the message to the local database.
 
 == Thread Safety
 
