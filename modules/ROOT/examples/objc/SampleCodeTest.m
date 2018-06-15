@@ -511,6 +511,17 @@
     // # end::replication-status[]
 }
 
+- (void) dontTestCustomReplicationHeader {
+    CBLDatabase *database = self.db;
+    NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
+    CBLURLEndpoint *endpoint = [[CBLURLEndpoint alloc] initWithURL:url];
+    
+    // # tag::replication-custom-header[]
+    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:endpoint];
+    config.headers = @{@"CustomHeaderName" : @"Value"};
+    // # end::replication-custom-header[]
+}
+
 - (void) dontTestHandlingReplicationError {
     CBLDatabase *database = self.db;
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];

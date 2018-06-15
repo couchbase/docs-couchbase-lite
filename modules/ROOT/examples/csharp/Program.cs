@@ -661,6 +661,22 @@ namespace api_walkthrough
             };
             // # end::certificate-pinning[]
         }
+        
+        private static void ReplicationCustomHeaders()
+        {
+            var url = new Uri("ws://localhost:4984/mydatabase");
+            var target = new URLEndpoint(url);
+            
+            // # tag::replication-custom-header[]
+            var config = new ReplicatorConfiguration(database, target)
+            {
+                Headers = new Dictionary<string, string> 
+                {
+                    ["CustomHeaderName"] = "Value"   
+                }
+            };
+            // # end::replication-custom-header[]
+        }
 
         static void Main(string[] args)
         {
