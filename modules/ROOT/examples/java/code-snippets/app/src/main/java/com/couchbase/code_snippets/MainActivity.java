@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
@@ -435,15 +436,20 @@ public class MainActivity extends AppCompatActivity {
         // For Documentation
         {
             // # tag::query-collection-operator-in[]
-            Query query = QueryBuilder.select(SelectResult.property("name"))
+            Expression[] values = new Expression[] {
+                Expression.property("first"),
+                Expression.property("last"),
+                Expression.property("username")
+            };
+
+            Query query = QueryBuilder.select(SelectResult.all())
                 .from(DataSource.database(database))
-                .where(Expression.property("country").in(Expression.string("Latvia"), Expression.string("usa"))
-                    .and(Expression.property("type").equalTo(Expression.string("airport"))))
-                .orderBy(Ordering.property("name"));
+                .where(Expression.string("Armani").in(values));
+            // # end::query-collection-operator-in[]
+
             ResultSet rs = query.execute();
             for (Result result : rs)
                 Log.w("Sample", String.format("%s", result.toMap().toString()));
-            // # end::query-collection-operator-in[]
         }
     }
 
