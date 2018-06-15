@@ -47,7 +47,9 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 
 import static com.couchbase.lite.CBLError.Code.CBLErrorBusy;
@@ -673,6 +675,18 @@ public class MainActivity extends AppCompatActivity {
         // # end::replication-error-handling[]
 
         replication.stop();
+    }
+
+    public void testReplicationCustomHeader() throws URISyntaxException {
+        URI uri = new URI("ws://localhost:4984/db");
+        Endpoint endpoint = new URLEndpoint(uri);
+
+        // # tag::replication-custom-header[]
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("CustomHeaderName", "Value");
+        config.setHeaders(headers);
+        // # end::replication-custom-header[]
     }
 
     // ### Certificate Pinning
