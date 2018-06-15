@@ -561,6 +561,16 @@ class SampleCodeTest: CBLTestCase {
         }
         // # end::replication-status[]
     }
+    
+    func dontTestReplicationCustomHeader() throws {
+        let url = URL(string: "ws://localhost:4984/mydatabase")!
+        let target = URLEndpoint(url: url)
+        
+        // # tag::replication-custom-header[]
+        let config = ReplicatorConfiguration(database: database, target: target)
+        config.headers = ["CustomHeaderName": "Value"]
+        // # end::replication-custom-header[]
+    }
 
     func dontTestHandlingReplicationError() throws {
         // # tag::replication-error-handling[]
