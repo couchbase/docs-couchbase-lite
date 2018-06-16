@@ -1,6 +1,8 @@
 Couchbase Lite 2.1 introduces database encryption, this functionality is exclusively available in the Enterprise Edition.
 
-If you're migrating an application from Couchbase Lite 1.x to 2.x, note that the xref:#database-upgrade[automatic database upgrade] functionality is *not supported* for encrypted databases. Furthermore, databases encrypted with one SDK (i.e Swift, C#, Java or Objective-C) *cannot* be opened with another SDK.
+If you're migrating an application from Couchbase Lite 1.x to 2.x, note that the xref:#database-upgrade[automatic database upgrade] functionality is *not supported* for encrypted databases.
+
+An encrypted database can only be opened with the same language SDK that was used to encrypt it in the first place (Swift, C#, Java or Objective-C). For example, if a database is encrypted with the Swift SDK and then exported, it will only be readable with the Swift SDK.
 
 The encryption specification is 256-bit AES.
 
