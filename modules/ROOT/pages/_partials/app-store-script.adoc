@@ -1,0 +1,15 @@
+=== Submission to the App Store
+
+The following does not apply if you have installed Couchbase Lite with Carthage or Cocoapods. With those package managers, Couchbase Lite is built with the application itself according to the architecture type of the target (emulator or device).
+
+The Couchbase Lite framework available on the link:https://couchbase.com/downloads[downloads page] contains a build for both the simulator (x86_64) and iOS devices (ARM). Submissions to the App Store of a binary that contains the simulator architecture is not supported therefor you must remove it from **CouchbaseLite.framework** before App Store submission. The following steps describe how to set up a build phase in Xcode to do this automatically.
+
+. In Xcode, open the *Build Phases* tab, then select the *+* > *Add Run Script Build Phase* option.
++
+image:run-script-phase.png[]
++
+. Copy the contents of link:https://raw.githubusercontent.com/couchbase/couchbase-lite-ios/master/Scripts/strip_frameworks.sh[strip_framework.sh] in the *Run Script* editor window.
++
+image::run-script-copy.png[]
+
+That's it, now every time you build and run your application, Xcode will remove binary architectures that do not match the target's architecture type (emulator or device).
