@@ -20,27 +20,50 @@ You create a Manager object by calling a constructor or initializer on the Manag
 var manager = Manager.SharedInstance;
 ----
 
-=== Dude, where's my database file?
+=== Default database path
 
 The Manager creates a directory in the filesystem and stores databases inside it.
 Normally, you don't need to care where that is -- your application shouldn't be directly accessing those files.
 But sometimes it does matter.
+Depending on the platform you are developing for, the default database path will be:
 
-* Android: The directory is the location returned by the Android Context object's ``getFilesDir()``.
-* iOS: `Application Support/CouchbaseLite/`
-* macOS: `~/Library/Application Support/com.example.YourAppBundleID/CouchbaseLite/`
+[cols="1,1", options="header"]
+|===
+|
+            Platform
 
-[quote]
-*Note:* One notable case where the location can be important is on iOS: Apple's app review process tries to make sure that the only application data that will be backed up to iCloud is data created by the user.
-So it's a red flag when, on first launch, an app creates data in backed-up locations (including the Documents and Application Support directories) without user action.
-Unfortunately, that will happen if your app starts a pull replication on launch, or installs a pre-populated database.
-Some apps using Couchbase Lite have had their App Store approval held up for this reason!
+|
+            Path
 
-On iOS or Mac OS you can change the location of the databases by instantiating the Manager via a constructor/initializer that takes a path as a parameter.
-This directory will be created if it doesn't already exist.
-(Of course you should be consistent about what path to use, since if you change the path the application won't be able to find any already-existing databases.)
 
-On Android, you can subclass `com.couchbase.lite.android.AndroidContext` and override its `getFilesDir` method to return the desired directory.
+
+|
+            Windows (WPF)
+|
+            C:<username>\|
+
+|
+            Unix
+|
+            ~/.local/share/
+
+|
+            Xamarin Android
+|
+            /data/data/
+// <package-name>/files/.local/share/
+//           </package-name>
+
+|
+// <entry>
+//             Xamarin iOS
+//           </entry>
+
+// <entry>
+//             /Documents (inside sandbox)
+//           </entry>
+
+|===
 
 [source]
 ----
