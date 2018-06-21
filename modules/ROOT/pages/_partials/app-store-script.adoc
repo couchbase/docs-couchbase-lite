@@ -1,8 +1,20 @@
 === Submission to the App Store
 
-The following does not apply if you have installed Couchbase Lite with Carthage or Cocoapods. With those package managers, Couchbase Lite is built with the application itself according to the architecture type of the target (emulator or device).
+When submitting a build of your application to the App Store you must ensure that it doesn't contain any simulator architecture otherwise the upload will fail with the error message "Unsupported Architecture. Your executable contains unsupported architecture '[x86_64, i386]'."
 
-The Couchbase Lite framework available on the link:https://couchbase.com/downloads[downloads page] contains a build for both the simulator (x86_64) and iOS devices (ARM). Submissions to the App Store of a binary that contains the simulator architecture is not supported therefor you must remove it from **CouchbaseLite.framework** before App Store submission. The following steps describe how to set up a build phase in Xcode to do this automatically.
+The steps to remove the simulator architecture (x86_64) from **CouchbaseLite.framework** depends on the method you chose to install Couchbase Lite. See below:
+
+[.tabs]
+=====
+.Carthage
+[.tab]
+====
+The link:https://github.com/Carthage/Carthage/blob/5fd867c4895b4f59d70181dec169a1644f4430e3/README.md#adding-frameworks-to-an-application[following link] describes how to set up a build phase in Xcode and run a Carthage script in order to remove the simulator architecture (x86_64).
+====
+.Frameworks
+[.tab]
+====
+The Couchbase Lite framework available on the link:https://couchbase.com/downloads[downloads page] contains a build for both the simulator (x86_64) and iOS devices (ARM). The following steps describe how to set up a build phase in Xcode to do this automatically.
 
 . In Xcode, open the *Build Phases* tab, then select the *+* > *Add Run Script Build Phase* option.
 +
@@ -13,3 +25,5 @@ image:run-script-phase.png[]
 image::run-script-copy.png[]
 
 That's it, now every time you build and run your application, Xcode will remove binary architectures that do not match the target's architecture type (emulator or device).
+====
+=====
