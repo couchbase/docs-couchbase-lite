@@ -710,7 +710,13 @@ class SampleCodeTest: CBLTestCase {
 
 }
 
+/* ----------------------------------------------------------- */
+/* ---------------------  ACTIVE SIDE  ---------------------- */
+/* ----------------------------------------------------------- */
+
 // # tag::message-endpoint-delegate[]
+var connectionManager: ConnectionManager?
+
 // Class to configure replicator and initiate a connection with the remote peer.
 class MessageEndpointManager: MessageEndpointDelegate {
     
@@ -719,8 +725,8 @@ class MessageEndpointManager: MessageEndpointDelegate {
         let database = try Database(name: "dbname")
         
         // The delegate must implement the `MessageEndpointDelegate` protocol.
-        let target = MessageEndpoint(uid: "UID:123", target: nil, protocolType: .messageStream, delegate: self) // <1>
-        let config = ReplicatorConfiguration(database: database, target: target) // <2>
+        let target = MessageEndpoint(uid: "UID:123", target: nil, protocolType: .messageStream, delegate: self)
+        let config = ReplicatorConfiguration(database: database, target: target)
         
         // Create the replicator object.
         let replicator = Replicator(config: config)
@@ -729,15 +735,16 @@ class MessageEndpointManager: MessageEndpointDelegate {
         // # end::message-endpoint-replicator[]
     }
     
-    func createConnection(endpoint: MessageEndpoint) -> MessageEndpointConnection { // <3>
-        return ConnectionManager()
+    func createConnection(endpoint: MessageEndpoint) -> MessageEndpointConnection { // <1>
+        connectionManager = ConnectionManager()
+        return connectionManager!
     }
 
 }
 // # end::message-endpoint-delegate[]
 
 // # tag::message-endpoint-connection[]
-var replicatorConnection: ReplicatorConnection! // <1>
+var replicatorConnection: ReplicatorConnection? // <1>
 
 class ConnectionManager: MessageEndpointConnection {
     
@@ -753,8 +760,13 @@ class ConnectionManager: MessageEndpointConnection {
         // ...
         completion(true, nil)
     }
+    
+    func receive(data: Data) {
+        let message = Message.fromData(data) // <4>
+        replicatorConnection?.receive(messge: message) // <5>
+    }
 
-    func close(error: Error?, completion: @escaping () -> Void) { // <4>
+    func close(error: Error?, completion: @escaping () -> Void) { // <6>
         // ...
         completion()
     }
@@ -762,13 +774,70 @@ class ConnectionManager: MessageEndpointConnection {
 }
 // # end::message-endpoint-connection[]
 
-// # tag::replicator-connection[]
-class ReceiverManager {
+// # tag::communications-framework-active-side[]
+class CommunicationsFrameworkActiveSideClass {
     
     func receive(data: Data) { // <1>
-        let message = Message.fromData(data) // <2>
-        replicatorConnection.receive(messge: message) // <3>
+        connectionManager?.receive(data: data) // <2>
     }
     
 }
-// # end::replicator-connection[]
+// # end::communications-framework-active-side[]
+
+/* ----------------------------------------------------------- */
+/* ---------------------  PASSIVE SIDE  ---------------------- */
+/* ----------------------------------------------------------- */
+
+// # tag::message-endpoint-listener[]
+var listenerManager: ListenerManager?
+
+class ListenerManager {
+    
+    let database: Database
+    let listener: MessageEndpointListener
+    
+    init(_ database: Database) {
+        self.database = database
+        let config = MessageEndpointListenerConfiguration(database: database, protocolType: .messageStream) // <1>
+        self.listener = MessageEndpointListener(config: config) // <2>
+        self.listener.addChangeListener { (change) in // <3>
+            let status = change.status
+            if status.activity == .connecting {
+                print("Connecting")
+            } else if status.activity == .stopped {
+                print("Stopped")
+            } else if status.activity == .idle {
+                print("Idle")
+            } else if status.activity == .busy {
+                print("Busy")
+            } else if status.activity == .offline {
+                print("Offline")
+            }
+        }
+        
+    }
+}
+// # end::message-endpoint-listener[]
+
+// # tag::associating-listener-and-connection[]
+class CommunicationsFrameworkManager {
+    
+    var connectionManager:ConnectionManager? // <1>
+    
+    func onAcceptIncomingConnectionFromPeer() { // <2>
+        connectionManager = ConnectionManager() // <3>
+        listenerManager?.listener.accept(connection: connectionManager!) // <4>
+    }
+}
+// # end::associating-listener-and-connection[]
+
+// # tag::communications-framework-passive-side[]
+class CommunicationsFrameworkPassiveSideClass {
+    
+    func receive(data: Data) { // <1>
+        connectionManager?.receive(data: data) // <2>
+    }
+    
+}
+// # end::communications-framework-passive-side[]
+
