@@ -1872,3 +1872,101 @@ Yes and no.
 It encrypts the connection, which is unquestionably much better than not using SSL.
 But unlike the usual SSL-in-a-browser approach you're used to, it doesn't identify the server/listener to the client.
 The client has to take the cert on faith the first time it connects.
+
+== Release Notes
+
+*Deprecation notices*
+
+The following features are being deprecated in Couchbase Mobile 1.4 and will be unsupported in 2.0.
+
+* ForestDB
+* Bonjour P2P Discovery Service
+
+The following platforms are being deprecated in Couchbase Mobile 1.4 and will be unsupported in 2.0.
+
+* $$.$$NET 3.5
+
+=== 1.4.1 release
+
+*Performance Improvements*
+
+* https://github.com/couchbase/couchbase-lite-net/issues/827[#827] Purge does not remove row from 'docs' table
+* https://github.com/couchbase/couchbase-lite-net/issues/856[#856] View indexing is very slow, due to mis-optimized SQLite query
+
+*Enhancements*
+
+* https://github.com/couchbase/couchbase-lite-net/issues/867[#867] Preserve revision history for each "branch" on pruning
+* https://github.com/couchbase/couchbase-lite-net/issues/915[#915] Support DocIDs setting for pull replication with Sync Gateway
+
+*Bugs*
+
+* https://github.com/couchbase/couchbase-lite-net/issues/778[#778] Push sync becomes slower as local DB grows, fails to advance lastSequence
+* https://github.com/couchbase/couchbase-lite-net/issues/821[#821] .NET not encoding atts_since
+* https://github.com/couchbase/couchbase-lite-net/issues/824[#824] Pull replication stopping when coming online
+* https://github.com/couchbase/couchbase-lite-net/issues/830[#830] Remove RunInOuterTransaction
+* https://github.com/couchbase/couchbase-lite-net/issues/832[#832] New_edits on _bulk_docs should default to true
+* https://github.com/couchbase/couchbase-lite-net/issues/834[#834] 1.4 breaks custom headers on PUT HTTP requests
+* https://github.com/couchbase/couchbase-lite-net/issues/835[#835] Unable to select multiple values with LINQ 1.4
+* https://github.com/couchbase/couchbase-lite-net/issues/840[#840] Couchbase.Lite.dll missing Product Version Info and Others
+* https://github.com/couchbase/couchbase-lite-net/issues/847[#847] Trying to remove encryption from a SQLite DB throws an exception
+* https://github.com/couchbase/couchbase-lite-net/issues/848[#848] Retry loop causes web socket changes feed to stop
+* https://github.com/couchbase/couchbase-lite-net/issues/850[#850] Wrong return code for listener causes problems with puller and deleted items.
+* https://github.com/couchbase/couchbase-lite-net/issues/853[#853] Updating a design doc view map function does not take effect
+* https://github.com/couchbase/couchbase-lite-net/issues/863[#863] PollInterval is not obeyed
+* https://github.com/couchbase/couchbase-lite-net/issues/910[#910] Channel removal potentially disrupts attachments
+* https://github.com/couchbase/couchbase-lite-net/issues/914[#914] Bulk download error not passed to client
+
+
+=== 1.4 release
+
+*API change*
+
+* An `isDeletion` property is now available on the `DatabaseChange` object to identify if a change is tombstone document.
+
+*Enhancements*
+
+* https://github.com/couchbase/couchbase-lite-net/issues/245[#245] Implement LINQ IQueryable
+* https://github.com/couchbase/couchbase-lite-net/issues/575[#575] Package Custom SQLite
+* https://github.com/couchbase/couchbase-lite-net/issues/709[#709] Implement LiteServ on mobile platforms
+* https://github.com/couchbase/couchbase-lite-net/issues/741[#741] Remove Mono.Security build
+* https://github.com/couchbase/couchbase-lite-net/issues/745[#745] Support 'stale=false' queries in Listener
+* https://github.com/couchbase/couchbase-lite-net/issues/766[#766] Push replication does not work when attachment content type is missing
+* https://github.com/couchbase/couchbase-lite-net/issues/797[#797] Add DatabaseChangedEventArgs.IsDeletion to public API
+* https://github.com/couchbase/couchbase-lite-net/issues/802[#802] Attempt to silence websockets when they shutdown
+
+*Bugs*
+
+* https://github.com/couchbase/couchbase-lite-net/issues/672[#672] .NET LiteServ is loading windows specific binaries on mac
+* https://github.com/couchbase/couchbase-lite-net/issues/710[#710] SQL Exception caused by trying to query non-existent `maps_#` table
+* https://github.com/couchbase/couchbase-lite-net/issues/713[#713] QueryOptions skip and limit used incorrectly during reduce
+* https://github.com/couchbase/couchbase-lite-net/issues/718[#718] V1.3 Continuous replication stops on change tracker error
+* https://github.com/couchbase/couchbase-lite-net/issues/719[#719] Replication - Inconsistent Number of Documents After Replicating
+* https://github.com/couchbase/couchbase-lite-net/issues/724[#724] V1.3 GetPendingDocumentIDs value is cached while offline for Push
+* https://github.com/couchbase/couchbase-lite-net/issues/725[#725] Replication fails to authenticate with POST _replicate cookie.
+* https://github.com/couchbase/couchbase-lite-net/issues/727[#727] BlobStoreWriter fails to delete encryption marker when removing encryption
+* https://github.com/couchbase/couchbase-lite-net/issues/731[#731] Missing docs when pushing to multiple sync gateways
+* https://github.com/couchbase/couchbase-lite-net/issues/732[#732] Transaction rollback does not invalidate cached doc ID map
+* https://github.com/couchbase/couchbase-lite-net/issues/735[#735] SIGSEGV when closing a database while replication is still active
+* https://github.com/couchbase/couchbase-lite-net/issues/742[#742] CB Lite on Android Xamarin fails to replicate when local DB is large
+* https://github.com/couchbase/couchbase-lite-net/issues/749[#749] Attachments failed to replicate when deleted and recreated
+* https://github.com/couchbase/couchbase-lite-net/issues/753[#753] SQLiteStorageEngine can return stale data in rare cases
+* https://github.com/couchbase/couchbase-lite-net/issues/755[#755] Pull replication gets stuck in Active with more completed changes than pending changes
+* https://github.com/couchbase/couchbase-lite-net/issues/756[#756] Pusher does not report "Forbidden" errors
+* https://github.com/couchbase/couchbase-lite-net/issues/757[#757] Replicator should not assume LastSequence is an integer
+* https://github.com/couchbase/couchbase-lite-net/issues/765[#765] Not all docs replicating with p2p .NET pull replication
+* https://github.com/couchbase/couchbase-lite-net/issues/767[#767] Changes feed skipping changes on rapid long poll
+* https://github.com/couchbase/couchbase-lite-net/issues/772[#772] ManagementException in GetWindowsName() of Platform.cs
+* https://github.com/couchbase/couchbase-lite-net/issues/773[#773] BrowseService's Dispose crash fix not merged to Master?
+* https://github.com/couchbase/couchbase-lite-net/issues/776[#776] Replication.Stop() doesn't release sockets
+* https://github.com/couchbase/couchbase-lite-net/issues/779[#779] Attachments disappearing from docs when continuous pull is enabled
+* https://github.com/couchbase/couchbase-lite-net/issues/782[#782] Encrypted attachments fail to push
+* https://github.com/couchbase/couchbase-lite-net/issues/785[#785] NullReferenceException in Replication.GetStatusFromError
+* https://github.com/couchbase/couchbase-lite-net/issues/789[#789] Investigate root cause of deletion not propagating to .NET client
+* https://github.com/couchbase/couchbase-lite-net/issues/795[#795] Set ServicePointManager.SecurityProtocol
+* https://github.com/couchbase/couchbase-lite-net/issues/796[#796] Headers not sent when pullReplication.Continuous = true
+* https://github.com/couchbase/couchbase-lite-net/issues/803[#803] NullReferenceException in WebSocketChangeTracker
+* https://github.com/couchbase/couchbase-lite-net/issues/804[#804] Attachment doesn't handle non-seekable streams gracefully
+* https://github.com/couchbase/couchbase-lite-net/issues/806[#806] 1.4 SQLite returns incorrect reason on REST API Get to purged doc
+* https://github.com/couchbase/couchbase-lite-net/issues/807[#807] Handle closed web sockets by reconnecting
+* https://github.com/couchbase/couchbase-lite-net/issues/825[#825] Pull replication doesn't restart with web sockets
+* https://github.com/couchbase/couchbase-lite-net/issues/826[#826] .NET not sending all docs to a client pull replication (p2p, SSL)

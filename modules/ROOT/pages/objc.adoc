@@ -4574,3 +4574,83 @@ Yes and no.
 It encrypts the connection, which is unquestionably much better than not using SSL.
 But unlike the usual SSL-in-a-browser approach you're used to, it doesn't identify the server/listener to the client.
 The client has to take the cert on faith the first time it connects.
+
+== Release Notes
+
+*Deprecation notices*
+
+The following features are being deprecated in Couchbase Mobile 1.4 and will be unsupported in 2.0.
+
+* ForestDB
+* Geo queries
+
+The following platforms are being deprecated in Couchbase Mobile 1.4 and will be unsupported in 2.0.
+
+* iOS 8
+
+
+=== 1.4.1 release
+
+*Performance Improvements*
+
+* https://github.com/couchbase/couchbase-lite-ios/issues/1648[#1648] Purge does not remove row from 'docs' table
+* https://github.com/couchbase/couchbase-lite-ios/issues/1737[#1737] View indexing is very slow, due to mis-optimized SQLite query
+* https://github.com/couchbase/couchbase-lite-ios/issues/1751[#1751] Push replication becomes slower as local DB grows
+
+*Bugs*
+
+* https://github.com/couchbase/couchbase-lite-ios/issues/1354[#1354] Deferred pulling of attachments problem
+* https://github.com/couchbase/couchbase-lite-ios/issues/1572[#1572] Idle crash [CBLRemoteSession close]
+* https://github.com/couchbase/couchbase-lite-ios/issues/1613[#1613] Crash in askDelegateToValidateServerTrust
+* https://github.com/couchbase/couchbase-lite-ios/issues/1622[#1622] Error opening!: 23 - when trying to load data from iOS to Apple Watch
+* https://github.com/couchbase/couchbase-lite-ios/issues/1649[#1649] Missing role appears to cause continuous push replication to stop [v1.4]
+* https://github.com/couchbase/couchbase-lite-ios/issues/1655[#1655] Fatal Exception: NSInternalInconsistencyException [1.4]
+* https://github.com/couchbase/couchbase-lite-ios/issues/1707[#1707] Replication Stops working after lots of syncing / lots of time - Too much memory used during replication
+* https://github.com/couchbase/couchbase-lite-ios/issues/1758[#1758] Updating a design doc view map function does not take effect
+* https://github.com/couchbase/couchbase-lite-ios/issues/1770[#1770] Crash observed while saving documents to DB
+* https://github.com/couchbase/couchbase-lite-ios/issues/1779[#1779] IOS App Extension replication gets suspended "prematurely"
+* https://github.com/couchbase/couchbase-lite-ios/issues/1853[#1853] CBL_BlobStoreWriter appendData assertion failure
+* https://github.com/couchbase/couchbase-lite-ios/issues/1887[#1887] 1.4 Encrypting a new database fails. Existing database encrypt fine.
+* https://github.com/couchbase/couchbase-lite-ios/issues/1898[#1898] One shot sync not pulling data properly in background
+* https://github.com/couchbase/couchbase-lite-ios/issues/1912[#1912] Peer sync between High Sierra and iOS 11 CBLWarnUntrustedCert error
+* https://github.com/couchbase/couchbase-lite-ios/issues/1918[#1918] Channel removal potentially disrupts attachments
+* https://github.com/couchbase/couchbase-lite-ios/issues/1921[#1921] CBLListener retaining CBL_RunLoopServer so both never get freed.
+* https://github.com/couchbase/couchbase-lite-ios/issues/1923[#1923] CBLRemoteSession finishTasksAndInvalidate crash
+
+
+=== 1.4 release
+
+*API change*
+
+* An `isDeletion` property is now available on the `DatabaseChange` object to identify if a change is tombstone document.
+
+*Performance Improvements*
+
+* https://github.com/couchbase/couchbase-lite-ios/issues/1389[#1389] Allow SQLite reads concurrently with writer
+* https://github.com/couchbase/couchbase-lite-ios/issues/1497[#1497] Update ForestDB to get improved compaction / space reuse
+
+*Enhancements*
+
+* https://github.com/couchbase/couchbase-lite-ios/issues/1538[#1538] Make CBLDatabaseChange.isDeletion public?
+
+*Bugs*
+
+* https://github.com/couchbase/couchbase-lite-ios/issues/794[#794] "!_changeTracker" assertion failure in -[CBLRestPuller startChangeTracker]
+* https://github.com/couchbase/couchbase-lite-ios/issues/1207[#1207] Push replication stops with error `400 bad_request`
+* https://github.com/couchbase/couchbase-lite-ios/issues/1243[#1243] Replication task missing source or target values
+* https://github.com/couchbase/couchbase-lite-ios/issues/1285[#1285] REST API does not allow GET on a db with "/" in its name
+* https://github.com/couchbase/couchbase-lite-ios/issues/1343[#1343] Need to close all other db handles before rekeying
+* https://github.com/couchbase/couchbase-lite-ios/issues/1365[#1365] Non-continuous push replication gets stuck in kCBLReplicationIdle status
+* https://github.com/couchbase/couchbase-lite-ios/issues/1422[#1422] ForestDB crashes frequently in the background because of protection data level
+* https://github.com/couchbase/couchbase-lite-ios/issues/1429[#1429] 1.3.1-6: crashed EXC_BAD_ACCESS KERN_INVALID_ADDRESS 0x0000000000000000
+* https://github.com/couchbase/couchbase-lite-ios/issues/1442[#1442] Collection class properties not propagating from CBLDocument to CBLModel after sync
+* https://github.com/couchbase/couchbase-lite-ios/issues/1443[#1443] Handle iOS file protection gracefully when in background
+* https://github.com/couchbase/couchbase-lite-ios/issues/1461[#1461] ForestDB: Assertion failure in -link:[MYBackgroundMonitor beginBackgroundTaskNamed:] MYBackgroundMonitor.m:66
+* https://github.com/couchbase/couchbase-lite-ios/issues/1467[#1467] Memory leak caused by ref cycle between replicator and CBLRemoteSession
+* https://github.com/couchbase/couchbase-lite-ios/issues/1556[#1556] Assertion failed: (_changesTimeout > 0)
+* https://github.com/couchbase/couchbase-lite-ios/issues/1557[#1557] Exception caught in CBLDatabase transaction
+* https://github.com/couchbase/couchbase-lite-ios/issues/1558[#1558] Not all updates propagating while under load
+* https://github.com/couchbase/couchbase-lite-ios/issues/1568[#1568] Attachments failing to push after delete / create (ForestDB)
+* https://github.com/couchbase/couchbase-lite-ios/issues/1579[#1579] [NSLock lock]: deadlock when deleting database (ForestDB)
+* https://github.com/couchbase/couchbase-lite-ios/issues/1580[#1580] Wrong "reason" response for GET on purged documents
+* https://github.com/couchbase/couchbase-lite-ios/issues/1621[#1621] OIDC failing with Grocery Sync when creating new google project
