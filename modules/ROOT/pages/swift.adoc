@@ -1090,17 +1090,22 @@ The following code instantiates a replicator with a `MessageEndpoint` target obj
 ----
 include::{examplesdir}/{snippetsdir}[tags=message-endpoint-replicator]
 ----
-The replicator configuration is first initialized with a `MessageEndpoint` object as the target.
+* This code instantiates a new `MessageEndpoint` object.
+** The first argument (`uid`) is a unique ID for the endpoint.
+** The second argument (`target`) is the information needed to connect to the endpoint (URL, local network ID, etc) and will be used later.
+** The third argument (`protocolType`) specifies the kind of transport you intend to implement.  There are two choices.  The default (`MessageStream`) means that you want to "send a series of messages," or in other words you will control the formatting of messages so that there are clear boundaries between messages.  The alternative (`ByteStream`) means that you just want to send raw bytes over the stream and Couchbase should format for you to ensure that messages get delivered in full.  To illustrate this, if you get a large message it is possible that it will get split into multiple packets when traveling over a network.  In `MessageStream` mode you, or your messaging framework, are responsible for collecting the relevant packets and reassembling them.  In `ByteStream` mode, you can simply send the bytes as is without doing any analysis and Couchbase will know how to reassemble them.
+** The final argument is the delegate that will implement the `MessageEndpointConnection` protocol.
+* The replicator configuration is then initialized with the `MessageEndpoint` instance as the target.
 
 ==== Implementing the Message Endpoint Delegate protocol
 
-Next, the `MessageEndpointDelegate` protocol must be implemented in order to create a `MessageEndpointConnection` instance. The following code creates a new class called `MessageEndpointManager` that implements the `MessageEndpointDelegate` protocol.
+Next, the `MessageEndpointDelegate` protocol must be implemented. The following code creates a new class called `MessageEndpointManager` that implements the `MessageEndpointDelegate` protocol.
 
 [source,swift]
 ----
 include::{examplesdir}/{snippetsdir}[tags=message-endpoint-delegate]
 ----
-<1> The `MessageEndpointDelegate` protocol method will be called by Couchbase Lite's internal APIs when it starts a new replication. The return type is `MessageEndpointConnection` which is an abstract class. The following section describes how to implement it.
+<1> This protocol is responsible for creating the actual connection object that will be used to send data over the wire. The return type is `MessageEndpointConnection` which is an abstract class. The following section describes how to implement it.
 
 ==== Implementing the Message Endpoint Connection on the Active Peer
 
@@ -1132,7 +1137,7 @@ include::{examplesdir}/{snippetsdir}[tags=communications-framework-active-side]
 
 === Passive Peer Side
 
-Integrating with the Couchbase Message Endpoint API on the passive peer involves the following steps.
+The passive side (also referred to as the server side) reacts to things that it receives but does not initiate any communication on its own. The server must make use of the `MessageEndpointListener` class, which is the counterpart to the `Replicator` class on the active side. Integrating with the Message Endpoint API on the passive peer involves the following steps.
 
 . xref:#instantiating-a-message-endpoint-listener[Instantiating a Message Endpoint Listener] with the database to be used in the replication.
 . xref:#implementing-the-message-endpoint-connection-on-the-passive-peer[Implementing the Message Endpoint Connection on the Passive Peer] for opening connections, sending and receiving messages.
