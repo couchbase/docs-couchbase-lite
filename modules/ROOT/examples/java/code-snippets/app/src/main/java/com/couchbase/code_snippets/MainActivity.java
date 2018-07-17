@@ -618,18 +618,7 @@ public class MainActivity extends AppCompatActivity {
         // # end::fts-query[]
     }
 
-    public void testStartingAReplication() throws URISyntaxException {
-        // # tag::replication[]
-        URI uri = new URI("ws://10.0.2.2:4984/db");
-        Endpoint endpoint = new URLEndpoint(uri);
-        ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
-        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
-        Replicator replication = new Replicator(config);
-        replication.start();
-        // # end::replication[]
-
-        replication.stop();
-    }
+    /* The `tag::replication[]` example is inlined in java.adoc */
 
     public void testTroubleshooting() {
         // # tag::replication-logging[]
