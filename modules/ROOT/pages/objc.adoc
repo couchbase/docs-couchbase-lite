@@ -880,7 +880,7 @@ The following example creates a `pull` replication with Sync Gateway.
 ----
 @interface MyClass : NSObject
 @property (nonatomic) CBLDatabase *database;
-@property (nonatomic) CBLReplicator *replicator;
+@property (nonatomic) CBLReplicator *replicator; // <1>
 @end
 
 @implementation MyClass
@@ -888,7 +888,7 @@ The following example creates a `pull` replication with Sync Gateway.
 @synthesize replicator=_replicator;
 
 - (void) startReplication {
-    NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
+    NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"]; // <2>
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:_database
                                                                                        target:target];
@@ -900,10 +900,6 @@ The following example creates a `pull` replication with Sync Gateway.
 ----
 <1> A replication is an asynchronous operation. To keep a reference to the `replicator` object, you can set it as an instance property.
 <2> The URL scheme for remote database
-URLs has changed in Couchbase Lite 2.0. You should now use `ws:`, or
-`wss:` for SSL/TLS connections.
-
-As shown in the code snippet above, the URL scheme for remote database
 URLs has changed in Couchbase Lite 2.0. You should now use `ws:`, or
 `wss:` for SSL/TLS connections.
 
