@@ -515,19 +515,7 @@ class SampleCodeTest: CBLTestCase {
 
     // MARK: Replication
 
-    func dontTestStartReplication() throws {
-        database = self.db
-
-        // # tag::replication[]
-        let url = URL(string: "ws://localhost:4984/db")!
-        let target = URLEndpoint(url: url)
-        let config = ReplicatorConfiguration(database: database, target: target)
-        config.replicatorType = .pull
-
-        self.replicator = Replicator(config: config)
-        self.replicator.start()
-        // # end::replication[]
-    }
+    /* The `tag::replication[]` example is inlined in swift.adoc */
 
     func dontTestEnableReplicatorLogging() throws {
         // # tag::replication-logging[]
