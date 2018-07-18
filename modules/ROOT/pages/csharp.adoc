@@ -819,15 +819,16 @@ Replication objects are now bidirectional, this means you can start a
 parameters can be specified through the
 http://docs.couchbase.com/mobile/2.0/couchbase-lite-net/db022/html/T_Couchbase_Lite_Sync_ReplicatorConfiguration.htm[`ReplicatorConfiguration`]
 object; for example, if you wish to start a `push` only or `pull` only
-replication. The following example creates a `pull` only replication
-instance with Sync Gateway.
+replication.
+
+The following example creates a `pull` replication with Sync Gateway.
 
 [source,csharp]
 ----
-include::{examplesdir}/{snippetsdir}[tags=replication]
+PLACEHOLDER
 ----
-
-As shown in the code snippet above, the URL scheme for remote database
+<1> A replication is an asynchronous operation. To keep a reference to the `replicator` object, you can set it as an instance property.
+<2> The URL scheme for remote database
 URLs has changed in Couchbase Lite 2.0. You should now use `ws:`, or
 `wss:` for SSL/TLS connections.
 
