@@ -1088,6 +1088,8 @@ Integrating with the Couchbase Message Endpoint API involves the following steps
 
 ==== Instantiating a Replicator
 
+image:state-1.png[]
+
 The following code instantiates a replicator with a `MessageEndpoint` target object.
 
 [source,swift]
@@ -1102,6 +1104,8 @@ include::{examplesdir}/{snippetsdir}[tags=message-endpoint-replicator]
 * The replicator configuration is then initialized with the `MessageEndpoint` instance as the target.
 
 ==== Implementing the Message Endpoint Delegate protocol
+
+image:state-2.png[]
 
 Next, the `MessageEndpointDelegate` protocol must be implemented. The following code creates a new class called `MessageEndpointManager` that implements the `MessageEndpointDelegate` protocol.
 
@@ -1150,6 +1154,8 @@ The passive side (also referred to as the server side) reacts to things that it 
 
 ==== Instantiating a Message Endpoint Listener
 
+image:state-3.png[]
+
 The following code instantiates a `MessageEndpointListener` with a given database.
 
 [source,swift]
@@ -1161,6 +1167,8 @@ include::{examplesdir}/{snippetsdir}[tags=message-endpoint-listener]
 <3> Optionally, change listener can be registered with the `MessageEndpointListener` to monitor the listener's activity
 
 ==== Implementing the Message Endpoint Connection on the Passive Peer
+
+image:state-4.png[]
 
 The `MessageEndpointConnection` protocol must be implemented by the application on the passive peer side as well. The implementation is more or less identical to what is done on the active peer side.
 
@@ -1200,6 +1208,8 @@ include::{examplesdir}/{snippetsdir}[tags=communications-framework-active-side]
 ----
 <1> This method would be part of the _communication framework_ and would be invoked when peer receives data.
 <2> Invoke the receive method on the `MessageEndpointConnection`. You had created the `connectionManager` while xref:#associating-the-connection-with-the-listener[Associating the Message Endpoint Connection with the Message Endpoint Listener].
+
+image:state-5.png[]
 
 == Thread Safety
 
