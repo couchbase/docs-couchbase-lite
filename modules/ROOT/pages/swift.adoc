@@ -1086,6 +1086,8 @@ Integrating with the Couchbase Message Endpoint API involves the following steps
 
 ==== Instantiating a Replicator
 
+In this section, we assume that the communication framework code is already in place to browse for remote peers. When a new peer is found, you can initialize and start a new replication to that peer as shown in the diagram below.
+
 image:state-1.png[]
 
 The following code instantiates a replicator with a `MessageEndpoint` target object.
@@ -1103,9 +1105,7 @@ include::{examplesdir}/{snippetsdir}[tags=message-endpoint-replicator]
 
 ==== Implementing the Message Endpoint Delegate protocol
 
-image:state-2.png[]
-
-Next, the `MessageEndpointDelegate` protocol must be implemented. The following code creates a new class called `MessageEndpointManager` that implements the `MessageEndpointDelegate` protocol.
+Next, the `MessageEndpointDelegate` protocol must be implemented to create a new connection. The following code creates a new class called `MessageEndpointManager` that implements the `MessageEndpointDelegate` protocol.
 
 [source,swift]
 ----
@@ -1113,9 +1113,13 @@ include::{examplesdir}/{snippetsdir}[tags=message-endpoint-delegate]
 ----
 <1> This protocol is responsible for creating the actual connection object that will be used to send data over the wire. The return type is `MessageEndpointConnection` which is an abstract class. The following section describes how to implement it.
 
+The connection lifecycle will be covered in the next section.
+
 ==== Implementing the Message Endpoint Connection on the Active Peer
 
-The `MessageEndpointConnection` protocol must be implemented by the application to integrate with the "communications framework".
+The `MessageEndpointConnection` protocol must be implemented by the application to integrate with the "communications framework". This class delegates the process of opening the connection, sending messages and closing the connection to the "communications framework".
+
+image:state-2.png[]
 
 The following code is a subclass of `MessageEndpointConnection` and implements the required method. Each method will be called by the replicator to open a connection, close a connection, and send a message to the remote peer.
 
