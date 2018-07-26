@@ -828,11 +828,11 @@ The following example creates a `pull` replication with Sync Gateway.
 public class MyClass
 {
     public Database Database { get; set; }
-    public Replicator Replicator { get; set; }
+    public Replicator Replicator { get; set; } // <1>
 
     public void StartReplication()
     {
-        var url = new Uri("ws://localhost:4984/db");
+        var url = new Uri("ws://localhost:4984/db"); // <2>
         var target = new URLEndpoint(url);
         var config = new ReplicatorConfiguration(Database, target)
         {
