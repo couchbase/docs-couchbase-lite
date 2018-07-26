@@ -875,15 +875,29 @@ Replication can be bidirectional, this means you can start a
 parameters can be specified through the
 http://docs.couchbase.com/mobile/2.0/couchbase-lite-swift/db022/Classes/ReplicatorConfiguration.html[`ReplicatorConfiguration`]
 object; for example, if you wish to start a `push` only or `pull` only
-replication. The following example creates a `pull` only replication
-instance with Sync Gateway.
+replication.
+
+The following example creates a `pull` replication with Sync Gateway.
 
 [source,swift]
 ----
-include::{examplesdir}/{snippetsdir}[tags=replication]
-----
+class MyClass {
+    var database: Database?
+    var replicator: Replicator? // <1>
 
-As shown in the code snippet above, the URL scheme for remote database
+    func startReplicator() {
+        let url = URL(string: "ws://localhost:4984/db")! // <2>
+        let target = URLEndpoint(url: url)
+        let config = ReplicatorConfiguration(database: database!, target: target)
+        config.replicatorType = .pull
+
+        self.replicator = Replicator(config: config)
+        self.replicator?.start()
+    }
+}
+----
+<1> A replication is an asynchronous operation. To keep a reference to the `replicator` object, you can set it as an instance property.
+<2> The URL scheme for remote database
 URLs has changed in Couchbase Lite 2.0. You should now use `ws:`, or
 `wss:` for SSL/TLS connections.
 
