@@ -2,15 +2,10 @@
 
 When submitting a build of your application to the App Store you must ensure that it doesn't contain any simulator architecture otherwise the upload will fail with the error message "Unsupported Architecture. Your executable contains unsupported architecture '[x86_64, i386]'."
 
-The steps to remove the simulator architecture (x86_64) from **CouchbaseLite.framework** depends on the method you chose to install Couchbase Lite. See below:
+The steps to remove the simulator architecture (x86_64) from **CouchbaseLite.framework** are outlined below. They depend on the method you chose to install Couchbase Lite:
 
 [.tabs]
 =====
-.Carthage
-[.tab]
-====
-The link:https://github.com/Carthage/Carthage/blob/5fd867c4895b4f59d70181dec169a1644f4430e3/README.md#adding-frameworks-to-an-application[following link] describes how to set up a build phase in Xcode and run a Carthage script in order to remove the simulator architecture (x86_64).
-====
 .Frameworks
 [.tab]
 ====
@@ -25,5 +20,15 @@ image:run-script-phase.png[]
 image::run-script-copy.png[]
 
 That's it, now every time you build and run your application, Xcode will remove binary architectures that do not match the target's architecture type (emulator or device).
+====
+.Carthage
+[.tab]
+====
+The link:https://github.com/Carthage/Carthage/blob/5fd867c4895b4f59d70181dec169a1644f4430e3/README.md#adding-frameworks-to-an-application[following link] describes how to set up a build phase in Xcode and run a Carthage script in order to remove the simulator architecture (x86_64).
+====
+.Cocoapods
+[.tab]
+====
+N/A
 ====
 =====
