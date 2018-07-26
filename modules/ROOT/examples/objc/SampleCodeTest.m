@@ -472,19 +472,7 @@
 
 #pragma mark - Replication
 
-- (void) dontTestStartReplication {
-    CBLDatabase *database = self.db;
-    
-    // # tag::replication[]
-    NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
-    CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
-    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database
-                                                                                       target:target];
-    config.replicatorType = kCBLReplicatorTypePull;
-    CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
-    [replicator start];
-    // # end::replication[]
-}
+/* The `tag::replication[]` example is inlined in objc.adoc */
 
 - (void) dontTestEnableReplicatorLogging {
     // # tag::replication-logging[]
