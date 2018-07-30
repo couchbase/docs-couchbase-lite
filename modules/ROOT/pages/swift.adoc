@@ -1114,103 +1114,164 @@ include::{examplesdir}/{snippetsdir}[tags=certificate-pinning]
 This example loads the certificate from the application sandbox, then
 converts it to the appropriate type to configure the replication object.
 
-== Message Endpoint
+== Peer to Peer Sync
 
 [IMPORTANT, caption="ENTERPRISE EDITION"]
 ====
-The Message Endpoint API is an link:https://www.couchbase.com/downloads[Enterprise Edition] feature.
+Peer to Peer Sync is an link:https://www.couchbase.com/downloads[Enterprise Edition] feature.
 ====
 
-The Message Endpoint API allows a local database to replicate with another Couchbase Lite database via an appropriate platform specific _communication framework_.
+Peer to peer sync allows a local database to replicate with another Couchbase Lite database via an appropriate platform specific _communication framework_.
 
 For peer-to-peer communication between iOS devices, we recommend to use link:https://developer.apple.com/documentation/multipeerconnectivity[Multipeer Connectivity framework] as the _communication framework_. The framework will handle sending and receiving messages and supports multiple transport technologies – WiFi and Bluetooth and uses whichever is available to establish a connection between devices. Note that the Multipeer Connectivity framework is only supported on iOS devices.
 
 A peer can take on one of these two roles:
 
 - *Active Peer:* The peer that initiates the connection and replication (i.e the "client" side).
-- *Passive Peer:* The peer that receives a connection request and is the replication endpoint that the active peer connects to (i.e the "server" side).
+- *Passive Peer:* The passive side (also referred to as the server side) reacts to things that it receives but does not initiate any communication on its own.
 
 *The following sections describe the classes, properties and methods of the Message Endpoint API only. Peer-to-peer replication won't work until the communication framework code is added where required, which is not being discussed here.*
 
 === Peer Discovery
 
+Peer discovery is usually the first step when building peer-to-peer applications. The communication framework generally includes a peer discovery API for devices to advertize themselves on the network and to browse for other peers.
+
 image::discovery.png[]
+
+On the passive peer, you can start the `MessageEndpointListener` as soon as the application begins to advertize itself on the local network.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=listener]
+----
+
+Some communication frameworks allow custom metadata (such as a username) to be sent as part of the advertizing process. This metadata can be used for peer selection as discussed in the next step.
 
 === Peer Selection
 
+Once a peer device is found, it is the application code's responsibility to decide whether it should establish a connection with that peer. The metadata received from the advertizer can be used to identify and authenticate the peer device.
+
+Again, this step largely depends on the communication framework that is being used.
+
 image::selection.png[]
 
-=== Connection
+Once the remote peer has been authenticated, the next step is to connect with that peer and initialize the Message Endpoint API.
+
+=== Connection Setup
 
 image::connection.png[]
 
-=== Replication
+==== Active Peer
 
-image::replication.png[]
+The active peer must instantiate a `MessageEndpoint` object that represents the remote peer (also referred to as target).
 
-=== Teardown
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=message-endpoint]
+----
+<1> The first argument (`uid`) is a unique ID for the endpoint. The second argument (`target`) is the information needed to connect to the endpoint (URL, local network ID, etc) and will be used later. The third argument (`protocolType`) specifies the kind of transport you intend to implement.  There are two choices.  The default (`MessageStream`) means that you want to "send a series of messages," or in other words you will control the formatting of messages so that there are clear boundaries between messages.  The alternative (`ByteStream`) means that you just want to send raw bytes over the stream and Couchbase should format for you to ensure that messages get delivered in full.  To illustrate this, if you get a large message it is possible that it will get split into multiple packets when traveling over a network.  In `MessageStream` mode you, or your messaging framework, are responsible for collecting the relevant packets and reassembling them.  In `ByteStream` mode, you can simply send the bytes as is without doing any analysis and Couchbase will know how to reassemble them. The final argument is the delegate that will implement the `MessageEndpointConnection` protocol.
 
-image::teardown.png[]
-
-
-=== Active Peer Side
-
-Integrating with the Couchbase Message Endpoint API involves the following steps on the active peer.
-
-. xref:#instantiating-a-replicator[Instantiating a replicator] object to connect with the passive peer.
-. xref:#implementing-the-message-endpoint-delegate-protocol[Implementing the Message Endpoint Delegate protocol] in order to create a `MessageEndpointConnection` object.
-. xref:#implementing-the-message-endpoint-connection-on-the-active-peer[Implementing the Message Endpoint Connection on the Active Peer] to open the connection, send and receive messages.
-. xref:#handling-incoming-messages-received-from-the-passive-peer[Handling Incoming Messages Received from the Passive Peer]
-
-==== Instantiating a Replicator
-
-In this section, we assume that the communication framework code is already in place to browse for remote peers. When a new peer is found, you can initialize and start a new replication to that peer as shown in the diagram below.
-
-image:state-1.png[]
-
-The following code instantiates a replicator with a `MessageEndpoint` target object.
+Then, a `Replicator` is instantiated with that `messageEndpoint` as the target.
 
 [source,swift]
 ----
 include::{examplesdir}/{snippetsdir}[tags=message-endpoint-replicator]
 ----
-* This code instantiates a new `MessageEndpoint` object.
-** The first argument (`uid`) is a unique ID for the endpoint.
-** The second argument (`target`) is the information needed to connect to the endpoint (URL, local network ID, etc) and will be used later.
-** The third argument (`protocolType`) specifies the kind of transport you intend to implement.  There are two choices.  The default (`MessageStream`) means that you want to "send a series of messages," or in other words you will control the formatting of messages so that there are clear boundaries between messages.  The alternative (`ByteStream`) means that you just want to send raw bytes over the stream and Couchbase should format for you to ensure that messages get delivered in full.  To illustrate this, if you get a large message it is possible that it will get split into multiple packets when traveling over a network.  In `MessageStream` mode you, or your messaging framework, are responsible for collecting the relevant packets and reassembling them.  In `ByteStream` mode, you can simply send the bytes as is without doing any analysis and Couchbase will know how to reassemble them.
-** The final argument is the delegate that will implement the `MessageEndpointConnection` protocol.
-* The replicator configuration is then initialized with the `MessageEndpoint` instance as the target.
+<1> The replicator configuration is then initialized with the `MessageEndpoint` instance as the target.
 
-==== Implementing the Message Endpoint Delegate protocol
-
-Next, the `MessageEndpointDelegate` protocol must be implemented to create a new connection. The following code creates a new class called `MessageEndpointManager` that implements the `MessageEndpointDelegate` protocol.
+Next, Couchbase Lite will call back the application code through the `MessageEndpointDelegate.createConnection` interface method. This method is responsible for returning a new connection. The following code creates a new class called `MessageEndpointManager` that implements the `MessageEndpointDelegate` protocol.
 
 [source,swift]
 ----
-include::{examplesdir}/{snippetsdir}[tags=message-endpoint-delegate]
+include::{examplesdir}/{snippetsdir}[tags=create-connection]
 ----
-<1> This protocol is responsible for creating the actual connection object that will be used to send data over the wire. The return type is `MessageEndpointConnection` which is an abstract class. The following section describes how to implement it.
+<1> This protocol is responsible for creating the actual connection object that will be used to send data over the wire. The return type is `MessageEndpointConnection` which is an abstract class.
 
-The connection lifecycle will be covered in the next section.
-
-==== Implementing the Message Endpoint Connection on the Active Peer
-
-The `MessageEndpointConnection` protocol must be implemented by the application to integrate with the "communications framework". This class delegates the process of opening the connection, sending messages and closing the connection to the "communications framework".
-
-image:state-2.png[]
-
-The following code is a subclass of `MessageEndpointConnection` and implements the required method. Each method will be called by the replicator to open a connection, close a connection, and send a message to the remote peer.
+Next, Couchbase Lite will call back the application code through the `MessageEndpointConnection.open` method.
 
 [source,swift]
 ----
-include::{examplesdir}/{snippetsdir}[tags=message-endpoint-connection]
+include::{examplesdir}/{snippetsdir}[tags=active-peer-open]
 ----
-<1> A `ReplicationConnection` global variable. This will be set once the message endpoint connection is opened. See below.
-<2> Called by the replicator to open the connection with the other peer. This method must open a connection with the other peer using a _communication framework_ of your choice (Multipeer Connectivity, Android NearbyConnection etc) and call the completion handler. You can use the `MessageError` in the completion block to specify if the error is recoverable or not. If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection` instance.
-<3> Called by the replicator to send the message to the other peer. This method sends the message to the other peer using the _communication framework_. Once the data is sent, call the completion block to acknowledge the completion. You can use the `MessageError` in the completion block to specify if the error is recoverable or not. If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection`.
-<4> The incoming data is converted to the `Message` type. This method will be called later on when xref:#handling-incoming-messages-received-from-the-passive-peer[handling incoming messages received from the passive peer].
-<5> The replication connection's `receive` method is called which then process the data in order to persist it to the local database.
-<6> Called by the replicator to close the current connection with the other peer. This method must close the connection with the other peer using a transport protocol of your choice (Multipeer Connectivity, Android NearbyConnection etc). Call the completion block to acknowledge the completion.
+
+This method must open a connection with the other peer using a _communication framework_ of your choice (Multipeer Connectivity, Android NearbyConnection etc) and call the completion handler. You can use the `MessageError` in the completion block to specify if the error is recoverable or not. If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection` instance.
+
+==== Passive Peer
+
+Once the connection is established on the passive peer, you must create a new `MessageEndpointConnection` instance and pass it to the listener. This tells the listener to accept connections from that peer.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=advertizer-accept]
+----
+
+Couchbase Lite will then call back the application code through the `MessageEndpointConnection.open` method.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=passive-peer-open]
+----
+
+At this point, the connection is established and both peers are ready to exchange data.
+
+=== Push/Pull Replication
+
+Typically, an application needs to send data and receive data. With Couchbase, this is handled by replications which run on the device. They can be of two types:
+
+- **Push:** The data is pushed from the local database to the remote database.
+- **Pull:** The data is pulled from the remote database to the local database.
+
+Usually, the remote is a Sync Gateway database which is identified through a URL. In the context of peer-to-peer syncing, the remote is another Couchbase Lite database.
+
+image::replication.png[]
+
+The replication lifecycle is handled through the `MessageEndpointConnection`. The application code is responsible for subclassing `MessageEndpointConnection` and implementing each of the required methods.
+
+==== Active Peer
+
+When Couchbase Lite calls back the application code through the `MessageEndpointConnection.send` method you should send that data to the other peer using the communication framework.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=active-peer-send]
+----
+
+Called by the replicator to send the message to the other peer. This method sends the message to the other peer using the _communication framework_. Once the data is sent, call the completion block to acknowledge the completion. You can use the `MessageError` in the completion block to specify if the error is recoverable or not. If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection`.
+
+To receive data, you can call the `ReplicatorConnection.receive` method.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=active-peer-receive]
+----
+
+The incoming data is converted to the `Message` type. The replication connection's `receive` method is called which then process the data in order to persist it to the local database.
+
+==== Passive Peer
+
+Similarly to the active peer, the passive peer must implement the `MessageEndpointConnection.send` method to send data to the other peer.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=passive-peer-send]
+----
+
+And use the `ReplicatorConnection.receive` method to store incoming data to the database.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=passive-peer-receive]
+----
+
+=== Connection Teardown
+
+image::teardown.png[]
+
+==== Active Peer
+
+Called by the replicator to close the current connection with the other peer. This method must close the connection with the other peer using a transport protocol of your choice (Multipeer Connectivity, Android NearbyConnection etc). Call the completion block to acknowledge the completion.
+
+==== Passive Peer
 
 ==== Handling Incoming Messages Received from the Passive Peer
 
@@ -1224,8 +1285,6 @@ include::{examplesdir}/{snippetsdir}[tags=communications-framework-active-side]
 <2> Invoke the receive method on the `MessageEndpointConnection`. You had created the _connectionManager_ while <<Implementing a MessageEndpointDelegate protocol>> .
 
 === Passive Peer Side
-
-The passive side (also referred to as the server side) reacts to things that it receives but does not initiate any communication on its own. The server must make use of the `MessageEndpointListener` class, which is the counterpart to the `Replicator` class on the active side. Integrating with the Message Endpoint API on the passive peer involves the following steps.
 
 . xref:#instantiating-a-message-endpoint-listener[Instantiating a Message Endpoint Listener] with the database to be used in the replication.
 . xref:#implementing-the-message-endpoint-connection-on-the-passive-peer[Implementing the Message Endpoint Connection on the Passive Peer] for opening connections, sending and receiving messages.

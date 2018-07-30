@@ -19,6 +19,7 @@
 
 import XCTest
 import CouchbaseLiteSwift
+import MultipeerConnectivity
 
 
 class SampleCodeTest: CBLTestCase {
@@ -713,20 +714,19 @@ class SampleCodeTest: CBLTestCase {
 /* ----------------------------------------------------------- */
 /* ---------------------  ACTIVE SIDE  ---------------------- */
 /* ----------------------------------------------------------- */
-
-// # tag::message-endpoint-delegate[]
-var connectionManager: ConnectionManager?
-
 // Class to configure replicator and initiate a connection with the remote peer.
-class MessageEndpointManager: MessageEndpointDelegate {
+class BrowserSessionManager: MessageEndpointDelegate {
     
     init() throws {
-        // # tag::message-endpoint-replicator[]
+        // # tag::message-endpoint[]
         let database = try Database(name: "dbname")
         
         // The delegate must implement the `MessageEndpointDelegate` protocol.
-        let target = MessageEndpoint(uid: "UID:123", target: nil, protocolType: .messageStream, delegate: self)
-        let config = ReplicatorConfiguration(database: database, target: target)
+        let target = MessageEndpoint(uid: "UID:123", target: nil, protocolType: .messageStream, delegate: self) // <1>
+        // # end::message-endpoint[]
+        
+        // # tag::message-endpoint-replicator[]
+        let config = ReplicatorConfiguration(database: database, target: target) // <1>
         
         // Create the replicator object.
         let replicator = Replicator(config: config)
@@ -735,35 +735,42 @@ class MessageEndpointManager: MessageEndpointDelegate {
         // # end::message-endpoint-replicator[]
     }
     
+    // # tag::create-connection[]
     func createConnection(endpoint: MessageEndpoint) -> MessageEndpointConnection { // <1>
-        connectionManager = ConnectionManager()
-        return connectionManager!
+        let connectionManager = ActivePeerConnection()
+        return connectionManager
     }
+    // # end::create-connection[]
 
 }
 // # end::message-endpoint-delegate[]
 
-// # tag::message-endpoint-connection[]
-var replicatorConnection: ReplicatorConnection? // <1>
-
-class ConnectionManager: MessageEndpointConnection {
+class ActivePeerConnection: MessageEndpointConnection {
+    
+    var replicatorConnection: ReplicatorConnection?
     
     init() {}
 
+    // # tag::active-peer-open[]
     func open(connection: ReplicatorConnection, completion: @escaping (Bool, MessagingError?) -> Void) { // <2>
         // ...
         replicatorConnection = connection
         completion(true, nil)
     }
+    // # end::active-peer-open[]
 
+    // # tag::active-peer-send[]
     func send(message: Message, completion: @escaping (Bool, MessagingError?) -> Void) { // <3>
-        // ...
+        /* send the message to the other peer */
         completion(true, nil)
     }
+    // # end::active-peer-send[]
     
     func receive(data: Data) {
+        // # tag::active-peer-receive[]
         let message = Message.fromData(data) // <4>
         replicatorConnection?.receive(messge: message) // <5>
+        // # end::active-peer-receive[]
     }
 
     func close(error: Error?, completion: @escaping () -> Void) { // <6>
@@ -774,22 +781,87 @@ class ConnectionManager: MessageEndpointConnection {
 }
 // # end::message-endpoint-connection[]
 
-// # tag::communications-framework-active-side[]
-class CommunicationsFrameworkActiveSideClass {
-    
-    func receive(data: Data) { // <1>
-        connectionManager?.receive(data: data) // <2>
-    }
-    
-}
-// # end::communications-framework-active-side[]
-
 /* ----------------------------------------------------------- */
 /* ---------------------  PASSIVE SIDE  ---------------------- */
 /* ----------------------------------------------------------- */
 
-// # tag::message-endpoint-listener[]
-var listenerManager: ListenerManager?
+class AdvertizingSessionManager: NSObject, MCSessionDelegate, MCNearbyServiceAdvertiserDelegate {
+    
+    var listener: MessageEndpointListener?
+    
+    func startListener() {
+        // # tag::listener[]
+        let database = try! Database(name: "mydb")
+        let config = MessageEndpointListenerConfiguration(database: database, protocolType: .messageStream)
+        listener = MessageEndpointListener(config: config)
+        // # end::listener[]
+    }
+    
+    func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
+        
+    }
+    
+    func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
+        
+        // # tag::advertizer-accept[]
+        /* PassivePeerConnection implements MessageEndpointConnection */
+        let passivePeerConnection = PassivePeerConnection()
+        listener?.accept(connection: passivePeerConnection)
+        // # end::advertizer-accept[]
+    }
+    
+    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
+        
+    }
+    
+    func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
+        
+    }
+    
+    func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
+        
+    }
+    
+    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
+        
+    }
+    
+}
+
+class PassivePeerConnection: NSObject, MessageEndpointConnection {
+    
+    var replicatorConnection: ReplicatorConnection?
+    
+    override init() {
+        super.init()
+    }
+    
+    // # tag::passive-peer-open[]
+    func open(connection: ReplicatorConnection, completion: @escaping (Bool, MessagingError?) -> Void) {
+        replicatorConnection = connection
+        completion(true, nil)
+    }
+    // # end::passive-peer-open[]
+    
+    // # tag::passive-peer-send[]
+    func send(message: Message, completion: @escaping (Bool, MessagingError?) -> Void) {
+        /* send the message to the other peer */
+        completion(true, nil)
+    }
+    // # end::passive-peer-send[]
+    
+    func receive(data: Data) {
+        // # tag::passive-peer-receive[]
+        let message = Message.fromData(data) // <4>
+        replicatorConnection?.receive(messge: message) // <5>
+        // # end::passive-peer-receive[]
+    }
+    
+    func close(error: Error?, completion: @escaping () -> Void) {
+        
+    }
+    
+}
 
 class ListenerManager {
     
@@ -817,27 +889,4 @@ class ListenerManager {
         
     }
 }
-// # end::message-endpoint-listener[]
-
-// # tag::associating-listener-and-connection[]
-class CommunicationsFrameworkManager {
-    
-    var connectionManager:ConnectionManager? // <1>
-    
-    func onAcceptIncomingConnectionFromPeer() { // <2>
-        connectionManager = ConnectionManager() // <3>
-        listenerManager?.listener.accept(connection: connectionManager!) // <4>
-    }
-}
-// # end::associating-listener-and-connection[]
-
-// # tag::communications-framework-passive-side[]
-class CommunicationsFrameworkPassiveSideClass {
-    
-    func receive(data: Data) { // <1>
-        connectionManager?.receive(data: data) // <2>
-    }
-    
-}
-// # end::communications-framework-passive-side[]
 
