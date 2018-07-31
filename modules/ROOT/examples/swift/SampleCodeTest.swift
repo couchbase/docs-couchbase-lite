@@ -750,6 +750,12 @@ class ActivePeerConnection: MessageEndpointConnection {
     var replicatorConnection: ReplicatorConnection?
     
     init() {}
+    
+    func disconnect() {
+        // # tag::active-replicator-close[]
+        replicatorConnection?.close(error: nil)
+        // # end::active-replicator-close[]
+    }
 
     // # tag::active-peer-open[]
     func open(connection: ReplicatorConnection, completion: @escaping (Bool, MessagingError?) -> Void) {
@@ -759,31 +765,33 @@ class ActivePeerConnection: MessageEndpointConnection {
     // # end::active-peer-open[]
 
     // # tag::active-peer-send[]
-    func send(message: Message, completion: @escaping (Bool, MessagingError?) -> Void) { // <3>
-        /* send the message to the other peer */
-        /* ----------------------------------------------------------- */
-        /* ----------- SEND THE DATA  ---------------------- */
-        /* ----------------------------------------------------------- */
+    func send(message: Message, completion: @escaping (Bool, MessagingError?) -> Void) {
+        var data = Data()
+        data.append(message.toData())
+        /* send the data to the other peer */
+        /* ... */
+        /* call the completion handler once the message is sent */
         completion(true, nil)
     }
     // # end::active-peer-send[]
     
     func receive(data: Data) {
         // # tag::active-peer-receive[]
-        let message = Message.fromData(data) // <4>
-        replicatorConnection?.receive(messge: message) // <5>
+        let message = Message.fromData(data)
+        replicatorConnection?.receive(messge: message)
         // # end::active-peer-receive[]
     }
 
     // # tag::active-peer-close[]
-    func close(error: Error?, completion: @escaping () -> Void) { // <6>
-        // ...
+    func close(error: Error?, completion: @escaping () -> Void) {
+        /* disconnect with communications framework */
+        /* ... */
+        /* call completion handler */
         completion()
     }
     // # end::active-peer-close[]
 
 }
-// # end::message-endpoint-connection[]
 
 /* ----------------------------------------------------------- */
 /* ---------------------  PASSIVE SIDE  ---------------------- */
@@ -801,12 +809,17 @@ class AdvertizingSessionManager: NSObject, MCSessionDelegate, MCNearbyServiceAdv
         // # end::listener[]
     }
     
+    func stopListener() {
+        // # tag::passive-stop-listener[]
+        messageEndpointListener?.closeAll()
+        // # end::passive-stop-listener[]
+    }
+    
     func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
         
     }
     
     func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
-        
         // # tag::advertizer-accept[]
         let connection = PassivePeerConnection() /* implements MessageEndpointConnection */
         messageEndpointListener?.accept(connection: connection)
@@ -848,49 +861,29 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
     
     // # tag::passive-peer-send[]
     func send(message: Message, completion: @escaping (Bool, MessagingError?) -> Void) {
-        /* send the message to the other peer */
+        var data = Data()
+        data.append(message.toData())
+        /* send the data to the other peer */
+        /* ... */
+        /* call the completion handler once the message is sent */
         completion(true, nil)
     }
     // # end::passive-peer-send[]
     
     func receive(data: Data) {
         // # tag::passive-peer-receive[]
-        let message = Message.fromData(data) // <4>
-        replicatorConnection?.receive(messge: message) // <5>
+        let message = Message.fromData(data)
+        replicatorConnection?.receive(messge: message)
         // # end::passive-peer-receive[]
     }
     
     // # tag::passive-peer-close[]
     func close(error: Error?, completion: @escaping () -> Void) {
-        
+        /* disconnect with communications framework */
+        /* ... */
+        /* call completion handler */
+        completion()
     }
     // # end::passive-peer-close[]
-}
-
-class ListenerManager {
-    
-    let database: Database
-    let listener: MessageEndpointListener
-    
-    init(_ database: Database) {
-        self.database = database
-        let config = MessageEndpointListenerConfiguration(database: database, protocolType: .messageStream) // <1>
-        self.listener = MessageEndpointListener(config: config) // <2>
-        self.listener.addChangeListener { (change) in // <3>
-            let status = change.status
-            if status.activity == .connecting {
-                print("Connecting")
-            } else if status.activity == .stopped {
-                print("Stopped")
-            } else if status.activity == .idle {
-                print("Idle")
-            } else if status.activity == .busy {
-                print("Busy")
-            } else if status.activity == .offline {
-                print("Offline")
-            }
-        }
-        
-    }
 }
 

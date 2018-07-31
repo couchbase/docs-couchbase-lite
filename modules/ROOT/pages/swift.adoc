@@ -1244,16 +1244,16 @@ The replication lifecycle is handled through the `MessageEndpointConnection`. Th
 
 ==== Active Peer
 
-When Couchbase Lite calls back the application code through the `MessageEndpointConnection.send` method you should send that data to the other peer using the communication framework.
+When Couchbase Lite calls back the application code through the `MessageEndpointConnection.send` method, you should send that data to the other peer using the communication framework.
 
 [source,swift]
 ----
 include::{examplesdir}/{snippetsdir}[tags=active-peer-send]
 ----
 
-Called by the replicator to send the message to the other peer. This method sends the message to the other peer using the _communication framework_. Once the data is sent, call the completion block to acknowledge the completion. You can use the `MessageError` in the completion block to specify if the error is recoverable or not. If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection`.
+Once the data is sent, call the completion block to acknowledge the completion. You can use the `MessageError` in the completion block to specify if the error is recoverable or not. If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection`.
 
-To receive data, you can call the `ReplicatorConnection.receive` method.
+To receive data on the active peer, you can call the `ReplicatorConnection.receive` method.
 
 [source,swift]
 ----
@@ -1271,7 +1271,9 @@ Similarly to the active peer, the passive peer must implement the `MessageEndpoi
 include::{examplesdir}/{snippetsdir}[tags=passive-peer-send]
 ----
 
-And use the `ReplicatorConnection.receive` method to store incoming data to the database.
+Once the data is sent, call the completion block to acknowledge the completion. You can use the `MessageError` in the completion block to specify if the error is recoverable or not. If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection`.
+
+To receive data on the passive peer, you can call the `ReplicatorConnection.receive` method.
 
 [source,swift]
 ----
@@ -1280,22 +1282,64 @@ include::{examplesdir}/{snippetsdir}[tags=passive-peer-receive]
 
 === Connection Teardown
 
+When a peer disconnects from a peer-to-peer network, all other peers are notified. The disconnect notification is a good opportunity to close and remove a replication connection. The steps to teardown the connection are slightly different depending on whether it is the active or passive peer that disconnects first. We will cover each case below.
+
+==== Initiated by Active Peer
+
 image::dis-active.png[]
 
-image::dis-passive.png[]
+===== Active Peer
 
-==== Active Peer
+When an active peer disconnects, it must call the `ReplicatorConnection.close` method.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=active-replicator-close]
+----
+
+Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to give the application a chance to disconnect with the communication framework.
 
 [source,swift]
 ----
 include::{examplesdir}/{snippetsdir}[tags=active-peer-close]
 ----
 
-==== Passive Peer
+===== Passive Peer
+
+The passive peer must do the same when it receives the disconnection notification.
 
 [source,swift]
 ----
 include::{examplesdir}/{snippetsdir}[tags=passive-peer-close]
+----
+
+==== Initiated by Passive Peer
+
+image::dis-passive.png[]
+
+===== Passive Peer
+
+When the passive disconnects, it must class the `MessageEndpointListener.closeAll` method.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=passive-stop-listener]
+----
+
+===== Active Peer
+
+On the active peer, the application code must call the `ReplicatorConnection.close` method when it receives the disconnection notification.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=active-replicator-close]
+----
+
+Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to give the application a chance to disconnect with the communication framework.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=active-peer-close]
 ----
 
 == Thread Safety
