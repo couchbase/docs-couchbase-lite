@@ -736,7 +736,7 @@ class BrowserSessionManager: MessageEndpointDelegate {
     }
     
     // # tag::create-connection[]
-    func createConnection(endpoint: MessageEndpoint) -> MessageEndpointConnection { // <1>
+    func createConnection(endpoint: MessageEndpoint) -> MessageEndpointConnection {
         let connection = ActivePeerConnection() /* implements MessageEndpointConnection */
         return connection
     }
