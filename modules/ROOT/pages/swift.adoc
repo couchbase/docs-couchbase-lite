@@ -1118,58 +1118,56 @@ converts it to the appropriate type to configure the replication object.
 
 [IMPORTANT, caption="ENTERPRISE EDITION"]
 ====
-Peer-to-peer sync is an link:https://www.couchbase.com/downloads[Enterprise Edition] feature.
+Peer-to-peer sync is an link:https://www.couchbase.com/products/editions[Enterprise Edition] feature.
 ====
 
-Peer-to-peer sync allows devices to make a database available to other nodes ("peers") on the network. As part of this, Couchbase Lite is responsible for storing the data and keeping track of the data exchange, but isn't responsible for the data transfer itself. Sending and receiving data must be handled by the platform APIs or a 3rd party framework (we'll call it the *communication framework*).
+Peer-to-peer sync allows devices running Couchbase Lite to directly sync data with each other. As part of this, Couchbase Lite is responsible for storing the data and keeping track of the data exchange, but isn't responsible for the data transfer itself. Sending and receiving data must be handled by the platform APIs or a third party framework. In this section, we will refer to these third party frameworks as communication frameworks.
 
-On iOS, we recommend to use link:https://developer.apple.com/documentation/multipeerconnectivity[Multipeer Connectivity framework] as the communication framework. The framework will handle sending and receiving messages and supports multiple transport technologies – WiFi and Bluetooth and uses whichever is available to establish a connection between devices. Note that the Multipeer Connectivity framework is only supported on iOS devices.
+On iOS, Apple's link:https://developer.apple.com/documentation/multipeerconnectivity[Multipeer Connectivity Framework] would be a good choice for the Communication Framework. This framework will handle sending and receiving messages and supports multiple transport technologies – WiFi and Bluetooth and uses whichever is available to establish a connection between devices.
 
-Thus, to enable peer-to-peer sync with Couchbase Lite, the application must integrate the communication framework API with the Couchbase Lite API. The following sections describe the classes, properties and methods of the Couchbase Lite API. Peer-to-peer replication won't work until the communication framework code is added where required, which is not included in those code snippets.
+Thus, to enable peer-to-peer sync with Couchbase Lite, the application must use the Communication Framework with Couchbase Lite. The following sections describe a typical peer-to-peer workflow. Where applicable, we discuss how to integrate Couchbase Lite into the workflow.
+
+In Couchbase Lite, a peer can take on one of these two roles:
+
+- *Active Peer:* The peer that initializes the connection and replication (i.e the "client" side).
+- *Passive Peer:* The passive side reacts to things that it receives but does not initiate any communication on its own (i.e. the "server" side).
 
 === Peer Discovery
 
-Peer discovery is the first step to building peer-to-peer applications. The communication framework will generally include a peer discovery API for devices to advertize themselves on the network and to browse for other peers.
+Peer discovery is the first step. The communication framework will generally include a peer discovery API for devices to advertise themselves on the network and to browse for other peers.
 
 image::discovery.png[]
 
-A peer can take on one of these two roles:
-
-- *Active Peer:* The peer that initiates the connection and replication (i.e the "client" side).
-- *Passive Peer:* The passive side reacts to things that it receives but does not initiate any communication on its own (i.e. the "server" side).
-
 ==== Active Peer
 
-As shown on the diagram above, the first step is to initialize the database.
+As shown on the diagram above, the first step is to initialize the Couchbase Lite database.
 
 ==== Passive Peer
 
-In addition to initializing the database, the passive peer must use the `MessageEndpointListener` class. It's a Couchbase Lite API to allow the application to accept connections and be notified when data is received.
+In addition to initializing the database, the passive peer must initialize the `MessageEndpointListener`. The `MessageEndpointListener` acts as as a listener for incoming connections.
 
 [source,swift]
 ----
 include::{examplesdir}/{snippetsdir}[tags=listener]
 ----
 
-Some communication frameworks allow custom metadata (such as a username) to be sent as part of the advertizing process. This metadata can be used for peer selection as discussed in the next step.
+=== Peer Selection and Connection Setup
 
-=== Peer Selection
+Once a peer device is found, it is the application code's responsibility to decide whether it should establish a connection with that peer. This step includes inviting a peer to a session and peer authentication.
 
-Once a peer device is found, it is the application code's responsibility to decide whether it should establish a connection with that peer. The metadata received from the advertizer can be used to identify and authenticate the peer device.
-
-Again, this step largely depends on the communication framework that is being used.
+This is handled by the Communication Framework.
 
 image::selection.png[]
 
 Once the remote peer has been authenticated, the next step is to connect with that peer and initialize the Message Endpoint API.
 
-=== Connection Setup
+=== Replication Setup
 
 image::connection.png[]
 
 ==== Active Peer
 
-The active peer must instantiate a `MessageEndpoint` object that represents the remote peer (also referred to as target).
+When the connection is established, the active peer must instantiate a `MessageEndpoint` object corresponding to the remote peer.
 
 [source,swift]
 ----
@@ -1178,19 +1176,23 @@ include::{examplesdir}/{snippetsdir}[tags=message-endpoint]
 
 The `MessageEndpoint` initializer takes the following arguments.
 
-. `uid`: a unique ID for the endpoint.
-. `target`: the information needed to connect to the endpoint (URL, local network ID, etc) and will be used later.
-. `protocolType`: specifies the kind of transport you intend to implement.  There are two choices.  The default (`MessageStream`) means that you want to "send a series of messages," or in other words you will control the formatting of messages so that there are clear boundaries between messages.  The alternative (`ByteStream`) means that you just want to send raw bytes over the stream and Couchbase should format for you to ensure that messages get delivered in full.  To illustrate this, if you get a large message it is possible that it will get split into multiple packets when traveling over a network.  In `MessageStream` mode you, or your messaging framework, are responsible for collecting the relevant packets and reassembling them.  In `ByteStream` mode, you can simply send the bytes as is without doing any analysis and Couchbase will know how to reassemble them.
+. `uid`: a unique ID that represents the local active peer.
+. `target`: This represents the remote passive peer and could be any suitable representation of the remote peer. It could be an Id, URL etc. If using the MultiPeerConnectivity Framework, this could be the MCPeerID.
+. `protocolType`: specifies the kind of transport you intend to implement. There are two options.
+	* The default (`MessageStream`) means that you want to "send a series of messages", or in other words the Communication Framework will control the formatting of messages so that there are clear boundaries between messages.
+	* The alternative (`ByteStream`) means that you just want to send raw bytes over the stream and Couchbase should format for you to ensure that messages get delivered in full.
++
+Typically, the Communication Framework will handle message assembly and disassembly so you would use the `MessageType` option in most cases.
 . `delegate`: the delegate that will implement the `MessageEndpointConnection` protocol.
 
-Then, a new `Replicator` can be instantiated with that `messageEndpoint` as the target.
+Then, a `Replicator` is instantiated with the initialized `MessageEndpoint` as the target.
 
 [source,swift]
 ----
 include::{examplesdir}/{snippetsdir}[tags=message-endpoint-replicator]
 ----
 
-Next, Couchbase Lite will call back the application code through the `MessageEndpointDelegate.createConnection` interface method. This method is responsible for returning a new connection.
+Next, Couchbase Lite will call back the application code through the `MessageEndpointDelegate.createConnection` interface method. When the application receives the callback, it must create an instance of `MessageEndpointConnection` and return it.
 
 [source,swift]
 ----
@@ -1204,11 +1206,13 @@ Next, Couchbase Lite will call back the application code through the `MessageEnd
 include::{examplesdir}/{snippetsdir}[tags=active-peer-open]
 ----
 
-This method must open a connection with the other peer using the communication framework API and call the completion handler. The `MessageError` argument in the completion block is used to specify if the error is recoverable or not. If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection` instance.
+The connection argument is then set on an instance variable. The application code must keep track of every `ReplicatorConnection` associated with every `MessageEndpointConnection`.
+
+The `MessageError` argument in the completion block is used to specify if the error is recoverable or not. If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection` instance.
 
 ==== Passive Peer
 
-As shown on the diagram, the first step after connection establishment on the passive peer is to initialize a new `MessageEndpointConnection` and pass it to the listener. This tells the listener to accept incoming data from that peer.
+The first step after connection establishment on the passive peer is to initialize a new `MessageEndpointConnection` and pass it to the listener. This tells the listener to accept incoming data from that peer.
 
 [source,swift]
 ----
@@ -1230,7 +1234,7 @@ At this point, the connection is established and both peers are ready to exchang
 
 === Push/Pull Replication
 
-Typically, an application needs to send data and receive data. With Couchbase, this is handled by replications which run on the device. They can be of two types:
+Typically, an application needs to send data and receive data. Directionality of the replication could be any of the following.
 
 - **Push only:** The data is pushed from the local database to the remote database.
 - **Pull only:** The data is pulled from the remote database to the local database.
@@ -1240,7 +1244,7 @@ Usually, the remote is a Sync Gateway database which is identified through a URL
 
 image::replication.png[]
 
-The replication lifecycle is handled through the `MessageEndpointConnection`. The application code is responsible for subclassing `MessageEndpointConnection` and implementing each of the required methods.
+The replication lifecycle is handled through the `MessageEndpointConnection`.
 
 ==== Active Peer
 
@@ -1253,18 +1257,19 @@ include::{examplesdir}/{snippetsdir}[tags=active-peer-send]
 
 Once the data is sent, call the completion block to acknowledge the completion. You can use the `MessageError` in the completion block to specify if the error is recoverable or not. If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection`.
 
-To receive data on the active peer, you can call the `ReplicatorConnection.receive` method.
+
+When data is received from the passive peer via the Communication Framework, you call the `ReplicatorConnection.receive` method.
 
 [source,swift]
 ----
 include::{examplesdir}/{snippetsdir}[tags=active-peer-receive]
 ----
 
-The incoming data is converted to the `Message` type. The replication connection's `receive` method is called which then process the data in order to persist it to the local database.
+The replication connection's `receive` method is called which then processes the data in order to persist it to the local database.
 
 ==== Passive Peer
 
-Similarly to the active peer, the passive peer must implement the `MessageEndpointConnection.send` method to send data to the other peer.
+As in the case of the active peer, the passive peer must implement the `MessageEndpointConnection.send` method to send data to the other peer.
 
 [source,swift]
 ----
@@ -1273,7 +1278,7 @@ include::{examplesdir}/{snippetsdir}[tags=passive-peer-send]
 
 Once the data is sent, call the completion block to acknowledge the completion. You can use the `MessageError` in the completion block to specify if the error is recoverable or not. If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection`.
 
-To receive data on the passive peer, you can call the `ReplicatorConnection.receive` method.
+When data is received from the active peer via the Communication Framework, you call the `ReplicatorConnection.receive` method.
 
 [source,swift]
 ----
@@ -1282,7 +1287,7 @@ include::{examplesdir}/{snippetsdir}[tags=passive-peer-receive]
 
 === Connection Teardown
 
-When a peer disconnects from a peer-to-peer network, all other peers are notified. The disconnect notification is a good opportunity to close and remove a replication connection. The steps to teardown the connection are slightly different depending on whether it is the active or passive peer that disconnects first. We will cover each case below.
+When a peer disconnects from a peer-to-peer network, all connected peers are notified. The disconnect notification is a good opportunity to close and remove a replication connection. The steps to teardown the connection are slightly different depending on whether it is the active or passive peer that disconnects first. We will cover each case below.
 
 ==== Initiated by Active Peer
 
@@ -1297,7 +1302,7 @@ When an active peer disconnects, it must call the `ReplicatorConnection.close` m
 include::{examplesdir}/{snippetsdir}[tags=active-replicator-close]
 ----
 
-Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to give the application a chance to disconnect with the communication framework.
+Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to give the application a chance to disconnect with the Communication Framework.
 
 [source,swift]
 ----
@@ -1306,7 +1311,14 @@ include::{examplesdir}/{snippetsdir}[tags=active-peer-close]
 
 ===== Passive Peer
 
-The passive peer must do the same when it receives the disconnection notification.
+When the passive peer receives the corresponding disconnect notification from the Communication Framework, it must call the `ReplicatorConnection.close` method.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=passive-replicator-close]
+----
+
+Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to give the application a chance to disconnect with the Communication Framework.
 
 [source,swift]
 ----
@@ -1326,16 +1338,23 @@ When the passive disconnects, it must class the `MessageEndpointListener.closeAl
 include::{examplesdir}/{snippetsdir}[tags=passive-stop-listener]
 ----
 
+Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to give the application a chance to disconnect with the Communication Framework.
+
+[source,swift]
+----
+include::{examplesdir}/{snippetsdir}[tags=passive-peer-close]
+----
+
 ===== Active Peer
 
-On the active peer, the application code must call the `ReplicatorConnection.close` method when it receives the disconnection notification.
+When the active peer receives the corresponding disconnect notification from the Communication Framework, it must call the `ReplicatorConnection.close` method.
 
 [source,swift]
 ----
 include::{examplesdir}/{snippetsdir}[tags=active-replicator-close]
 ----
 
-Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to give the application a chance to disconnect with the communication framework.
+Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to give the application a chance to disconnect with the Communication Framework.
 
 [source,swift]
 ----

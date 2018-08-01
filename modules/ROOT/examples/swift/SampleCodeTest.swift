@@ -718,15 +718,17 @@ class SampleCodeTest: CBLTestCase {
 class BrowserSessionManager: MessageEndpointDelegate {
     
     init() throws {
+        let id = ""
+        let delegate = try! BrowserSessionManager()
         // # tag::message-endpoint[]
         let database = try Database(name: "dbname")
         
         // The delegate must implement the `MessageEndpointDelegate` protocol.
-        let target = MessageEndpoint(uid: "UID:123", target: nil, protocolType: .messageStream, delegate: self)
+        let messageEndpointTarget = MessageEndpoint(uid: "UID:123", target: id, protocolType: .messageStream, delegate: delegate)
         // # end::message-endpoint[]
         
         // # tag::message-endpoint-replicator[]
-        let config = ReplicatorConfiguration(database: database, target: target)
+        let config = ReplicatorConfiguration(database: database, target: messageEndpointTarget)
         
         // Create the replicator object.
         let replicator = Replicator(config: config)
@@ -736,6 +738,7 @@ class BrowserSessionManager: MessageEndpointDelegate {
     }
     
     // # tag::create-connection[]
+    /* implementation of MessageEndpointDelegate */
     func createConnection(endpoint: MessageEndpoint) -> MessageEndpointConnection {
         let connection = ActivePeerConnection() /* implements MessageEndpointConnection */
         return connection
@@ -758,6 +761,7 @@ class ActivePeerConnection: MessageEndpointConnection {
     }
 
     // # tag::active-peer-open[]
+    /* implementation of MessageEndpointConnection */
     func open(connection: ReplicatorConnection, completion: @escaping (Bool, MessagingError?) -> Void) {
         replicatorConnection = connection
         completion(true, nil)
@@ -765,6 +769,7 @@ class ActivePeerConnection: MessageEndpointConnection {
     // # end::active-peer-open[]
 
     // # tag::active-peer-send[]
+    /* implementation of MessageEndpointConnection */
     func send(message: Message, completion: @escaping (Bool, MessagingError?) -> Void) {
         var data = Data()
         data.append(message.toData())
@@ -783,6 +788,7 @@ class ActivePeerConnection: MessageEndpointConnection {
     }
 
     // # tag::active-peer-close[]
+    /* implementation of MessageEndpointConnection */
     func close(error: Error?, completion: @escaping () -> Void) {
         /* disconnect with communications framework */
         /* ... */
@@ -852,7 +858,14 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
         super.init()
     }
     
+    func disconnect() {
+        // # tag::passive-replicator-close[]
+        replicatorConnection?.close(error: nil)
+        // # end::passive-replicator-close[]
+    }
+    
     // # tag::passive-peer-open[]
+    /* implementation of MessageEndpointConnection */
     func open(connection: ReplicatorConnection, completion: @escaping (Bool, MessagingError?) -> Void) {
         replicatorConnection = connection
         completion(true, nil)
@@ -860,6 +873,7 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
     // # end::passive-peer-open[]
     
     // # tag::passive-peer-send[]
+    /* implementation of MessageEndpointConnection */
     func send(message: Message, completion: @escaping (Bool, MessagingError?) -> Void) {
         var data = Data()
         data.append(message.toData())
@@ -878,6 +892,7 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
     }
     
     // # tag::passive-peer-close[]
+    /* implementation of MessageEndpointConnection */
     func close(error: Error?, completion: @escaping () -> Void) {
         /* disconnect with communications framework */
         /* ... */
