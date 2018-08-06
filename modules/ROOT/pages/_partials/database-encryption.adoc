@@ -1,14 +1,20 @@
 [IMPORTANT, caption="ENTERPRISE EDITION"]
 ====
-On-device database encryption is an link:https://www.couchbase.com/downloads[Enterprise Edition] feature.
+Peer-to-peer sync is an link:https://www.couchbase.com/products/editions[Enterprise Edition] feature.
 ====
 
-Couchbase Lite 2.1 introduces database encryption, this functionality is exclusively available in the Enterprise Edition.
+The Couchbase Lite 2.1 release includes the ability to encrypt Couchbase Lite databases. This allows mobile applications to secure the data at rest, when it is being stored on the device. The algorithm used to encrypt the database is 256-bit AES.
 
-If you're migrating an application from Couchbase Lite 1.x to 2.x, note that the xref:#database-upgrade[automatic database upgrade] functionality is *not supported* for encrypted databases.
+To enable encryption, you must set the `DatabaseConfiguration.encryptionKey` property with the encryption key of your choice. The encryption key is then required every time the database is opened.
+
+[source,{lang}]
+----
+include::{examplesdir}/{snippetsdir}[tags=database-encryption]
+----
+
+If you're migrating an application from Couchbase Lite 1.x to 2.x, note that the xref:#database-upgrade[automatic database upgrade] functionality is *not supported* for encrypted databases. Thus, to upgrade an encrypted 1.x database, you can:
+
+. Disable encryption using the Couchbase Lite 1.x SDK (see xref:1.4@{lang}.adoc#database-encryption[1.x encryption guide])
+. Open the database file with encryption enabled using the Couchbase Lite 2.x SDK (see example above)
 
 An encrypted database can only be opened with the same language SDK that was used to encrypt it in the first place (Swift, C#, Java or Objective-C). For example, if a database is encrypted with the Swift SDK and then exported, it will only be readable with the Swift SDK.
-
-The encryption specification is 256-bit AES.
-
-The code below demonstrates how to open or create an existing database with an encryption key. This code will not compile if you are running the Community Edition of Couchbase Lite.
