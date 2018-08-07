@@ -53,13 +53,21 @@ Couchbase Lite .NET is a .NET Standard 2.0 library. The following tables list ou
 Runtimes which have received more
 testing and are *officially* supported are:
 
-[cols=",,",options="header",]
-|=========================================================
+|===
 |.NET Runtime |Minimum Runtime Version |Minimum OS version
-|.NET Core Win |2.0 |10 (any Microsoft supported)
-|.NET Framework |4.6.1 |10 (any Microsoft supported)
-|UWP |6.0.1 |10.0.16299
-|=========================================================
+
+|.NET Core Win
+|2.0
+|10 (any Microsoft supported)
+
+|.NET Framework
+|4.6.1
+|10 (any Microsoft supported)
+
+|UWP
+|6.0.1
+|10.0.16299
+|===
 
 === Not Officially Supported
 
@@ -67,14 +75,25 @@ The following runtimes are also compatible but have not received as much
 testing and are *not officially* supported yet, but they will be once
 they go through the QE process.
 
-[cols=",,",options="header",]
-|=========================================================
+|===
 |.NET Runtime |Minimum Runtime Version |Minimum OS version
-|.NET Core Mac |2.0 |10.12
-|.NET Core Linux |2.0 |n/a*
-|Xamarin iOS |10.14 |10.3.1
-|Xamarin Android |8.0 |4.4 (API 19)
-|=========================================================
+
+|.NET Core Mac
+|2.0
+|10.12
+
+|.NET Core Linux
+|2.0
+|n/a*
+
+|Xamarin iOS
+|10.14
+|10.3.1
+
+|Xamarin Android
+|8.0
+|4.4 (API 19)
+|===
 
 *{sp}There are many different variants of Linux, and we don't have the
 resources to test all of them. They are tested on Ubuntu 16.04, but have
@@ -327,7 +346,7 @@ different to the "avatar" key that was used in the example above. On the
 image below, the document now contains the `_attachments` dictionary
 when viewed in the Couchbase Server Admin Console.
 
-image:attach_replicated.png[image]
+image::attach_replicated.png[]
 
 A blob also has properties such as `"digest"` (a SHA-1 digest of the
 data), `"length"` (the length in bytes), and optionally `"content_type"`
@@ -661,8 +680,7 @@ Armagh
 Avignon
 ----
 
-Full-Text Search
-~~~~~~~~~~~~~~~~
+=== Full-Text Search
 
 To run a full-text search (FTS) query, you must have created a full-text
 index on the expression being matched. Unlike regular queries, the index
@@ -797,8 +815,7 @@ the 1.x replication protocol when a Couchbase Lite 1.x client connects
 through "http://localhost:4984/db" and the 2.0 replication protocol when
 a Couchbase Lite 2.0 client connects through "ws://localhost:4984/db".
 
-Starting Sync Gateway
-^^^^^^^^^^^^^^^^^^^^^
+==== Starting Sync Gateway
 
 https://www.couchbase.com/downloads[Download Sync Gateway] and start it
 from the command line with the configuration file created above.
@@ -893,20 +910,25 @@ include::{examplesdir}/{snippetsdir}[tags=replication-status]
 The following table lists the different activity levels in the API and
 the meaning of each one.
 
-[cols=",",options="header",]
-|=======================================================================
+|===
 |State |Meaning
-|`STOPPED` |The replication is finished or hit a fatal error.
 
-|`OFFLINE` |The replicator is offline as the remote host is unreachable.
+|`STOPPED`
+|The replication is finished or hit a fatal error.
 
-|`CONNECTING` |The replicator is connecting to the remote host.
+|`OFFLINE`
+|The replicator is offline as the remote host is unreachable.
 
-|`IDLE` |The replication caught up with all the changes available from
+|`CONNECTING`
+|The replicator is connecting to the remote host.
+
+|`IDLE`
+|The replication caught up with all the changes available from
 the server. The `IDLE` state is only used in continuous replications.
 
-|`BUSY` |The replication is actively transferring data.
-|=======================================================================
+|`BUSY`
+|The replication is actively transferring data.
+|===
 
 === Handling Network Errors
 

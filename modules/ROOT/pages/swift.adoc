@@ -40,11 +40,11 @@ include::{examplesdir}/{snippetsdir}[tags=getting-started]
 Build and run. You should see the document ID and property printed to
 the console. The document was successfully persisted to the database.
 
-image:getting-started-ios.png[image]
+image::getting-started-ios.png[]
 
 In the next step, you will setup Sync Gateway. Before synchronizing documents to Sync Gateway you will need to disable App Transport Security (ATS) on iOS. App Transport Security is enabled by default since iOS 9 and enforces applications to use HTTPS exclusively. For this getting started guide, you will disable it but we recommend to enable it in production (and link:../guides/sync-gateway/configuring-ssl/index.html[enable HTTPS on Sync Gateway]). In the Xcode navigator, right-click on *Info.plist* and open it as a source file.
 
-image:info-plist.png[image]
+image::info-plist.png[]
 
 Append the following inside of the `<dict>` XML tags to disable ATS.
 
@@ -60,12 +60,15 @@ link:../installation/sync-gateway/index.html[Installing Sync Gateway ⟶]
 
 == Supported Versions
 
-[cols=",",options="header",]
-|============================
+|===
 |Platform |Minimum OS version
-|iOS |9.0
-|macOS |10.9
-|============================
+
+|iOS
+|9.0
+
+|macOS
+|10.9
+|===
 
 == API References
 
@@ -151,7 +154,7 @@ When the application is running on the iOS simulator, you can locate the applica
 
 `cblite` is a command-line tool for inspecting and querying Couchbase Lite 2.x databases. To use it, download Couchbase Lite from the https://www.couchbase.com/downloads[downloads page] and navigate to the *Tools* folder.
 
-image:cblite-tool.png[image,,300]
+image::cblite-tool.png[]
 
 Instructions for various commands are available in *Tools/README.md*.
 
@@ -935,20 +938,25 @@ include::{examplesdir}/{snippetsdir}[tags=replication-status]
 The following table lists the different activity levels in the API and
 the meaning of each one.
 
-[cols=",",options="header",]
-|=======================================================================
+|===
 |State |Meaning
-|`STOPPED` |The replication is finished or hit a fatal error.
 
-|`OFFLINE` |The replicator is offline as the remote host is unreachable.
+|`STOPPED`
+|The replication is finished or hit a fatal error.
 
-|`CONNECTING` |The replicator is connecting to the remote host.
+|`OFFLINE`
+|The replicator is offline as the remote host is unreachable.
 
-|`IDLE` |The replication caught up with all the changes available from
+|`CONNECTING`
+|The replicator is connecting to the remote host.
+
+|`IDLE`
+|The replication caught up with all the changes available from
 the server. The `IDLE` state is only used in continuous replications.
 
-|`BUSY` |The replication is actively transferring data.
-|=======================================================================
+|`BUSY`
+|The replication is actively transferring data.
+|===
 
 === Handling Network Errors
 
