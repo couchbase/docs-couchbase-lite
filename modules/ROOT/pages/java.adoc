@@ -68,16 +68,23 @@ link:../installation/sync-gateway/index.html[Installing Sync Gateway ⟶]
 
 == Supported Versions
 
-[cols=",,",options="header",]
-|==================================================
+|===
 |Platform |Runtime architectures |Minimum API Level
-|Android |armeabi-v7a |19
-|Android |arm64-v8a |21
-|Android |x86 |19
-|==================================================
 
-API References
-~~~~~~~~~~~~~~
+|Android
+|armeabi-v7a
+|19
+
+|Android
+|arm64-v8a
+|21
+
+|Android
+|x86
+|19
+|===
+
+=== API References
 
 http://docs.couchbase.com/mobile/2.1/couchbase-lite-java/db001/[Java SDK API References]
 
@@ -326,7 +333,7 @@ different to the "avatar" key that was used in the example above. On the
 image below, the document now contains the `_attachments` dictionary
 when viewed in the Couchbase Server Admin Console.
 
-image:attach_replicated.png[image]
+image::attach_replicated.png[]
 
 A blob also has properties such as `"digest"` (a SHA-1 digest of the
 data), `"length"` (the length in bytes), and optionally `"content_type"`
@@ -884,20 +891,25 @@ include::{examplesdir}/{snippetsdir}[tags=replication-status]
 The following table lists the different activity levels in the API and
 the meaning of each one.
 
-[cols=",",options="header",]
-|=======================================================================
+|===
 |State |Meaning
-|`STOPPED` |The replication is finished or hit a fatal error.
 
-|`OFFLINE` |The replicator is offline as the remote host is unreachable.
+|`STOPPED`
+|The replication is finished or hit a fatal error.
 
-|`CONNECTING` |The replicator is connecting to the remote host.
+|`OFFLINE`
+|The replicator is offline as the remote host is unreachable.
 
-|`IDLE` |The replication caught up with all the changes available from
+|`CONNECTING`
+|The replicator is connecting to the remote host.
+
+|`IDLE`
+|The replication caught up with all the changes available from
 the server. The `IDLE` state is only used in continuous replications.
 
-|`BUSY` |The replication is actively transferring data.
-|=======================================================================
+|`BUSY`
+|The replication is actively transferring data.
+|===
 
 === Handling Network Errors
 
