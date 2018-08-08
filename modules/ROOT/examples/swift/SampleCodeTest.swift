@@ -719,12 +719,12 @@ class BrowserSessionManager: MessageEndpointDelegate {
     
     init() throws {
         let id = ""
-        let delegate = try! BrowserSessionManager()
+
         // # tag::message-endpoint[]
         let database = try Database(name: "dbname")
         
         // The delegate must implement the `MessageEndpointDelegate` protocol.
-        let messageEndpointTarget = MessageEndpoint(uid: "UID:123", target: id, protocolType: .messageStream, delegate: delegate)
+        let messageEndpointTarget = MessageEndpoint(uid: "UID:123", target: id, protocolType: .messageStream, delegate: self)
         // # end::message-endpoint[]
         
         // # tag::message-endpoint-replicator[]
@@ -771,8 +771,7 @@ class ActivePeerConnection: MessageEndpointConnection {
     // # tag::active-peer-send[]
     /* implementation of MessageEndpointConnection */
     func send(message: Message, completion: @escaping (Bool, MessagingError?) -> Void) {
-        var data = Data()
-        data.append(message.toData())
+        var data = message.toData()
         /* send the data to the other peer */
         /* ... */
         /* call the completion handler once the message is sent */
