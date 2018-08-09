@@ -712,10 +712,10 @@ class SampleCodeTest: CBLTestCase {
 }
 
 /* ----------------------------------------------------------- */
-/* ---------------------  ACTIVE SIDE  ---------------------- */
+/* ---------------------  ACTIVE SIDE  ----------------------- */
+/* ---------------  stubs for documentation  ----------------- */
 /* ----------------------------------------------------------- */
-// Class to configure replicator and initiate a connection with the remote peer.
-class BrowserSessionManager: MessageEndpointDelegate {
+class ActivePeer: MessageEndpointDelegate {
     
     init() throws {
         let id = ""
@@ -800,11 +800,16 @@ class ActivePeerConnection: MessageEndpointConnection {
 
 /* ----------------------------------------------------------- */
 /* ---------------------  PASSIVE SIDE  ---------------------- */
+/* ---------------  stubs for documentation  ----------------- */
 /* ----------------------------------------------------------- */
-
-class AdvertizingSessionManager: NSObject, MCSessionDelegate, MCNearbyServiceAdvertiserDelegate {
+class PassivePeerConnection: NSObject, MessageEndpointConnection {
     
     var messageEndpointListener: MessageEndpointListener?
+    var replicatorConnection: ReplicatorConnection?
+    
+    override init() {
+        super.init()
+    }
     
     func startListener() {
         // # tag::listener[]
@@ -820,41 +825,11 @@ class AdvertizingSessionManager: NSObject, MCSessionDelegate, MCNearbyServiceAdv
         // # end::passive-stop-listener[]
     }
     
-    func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
-        
-    }
-    
-    func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
+    func acceptConnection() {
         // # tag::advertizer-accept[]
         let connection = PassivePeerConnection() /* implements MessageEndpointConnection */
         messageEndpointListener?.accept(connection: connection)
         // # end::advertizer-accept[]
-    }
-    
-    func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
-        
-    }
-    
-    func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
-        
-    }
-    
-    func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
-        
-    }
-    
-    func session(_ session: MCSession, didFinishReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, at localURL: URL?, withError error: Error?) {
-        
-    }
-    
-}
-
-class PassivePeerConnection: NSObject, MessageEndpointConnection {
-    
-    var replicatorConnection: ReplicatorConnection?
-    
-    override init() {
-        super.init()
     }
     
     func disconnect() {
