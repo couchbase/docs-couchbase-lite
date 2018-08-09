@@ -688,11 +688,10 @@
 // Peer-to-Peer Sample
 
 /* ----------------------------------------------------------- */
-/* ---------------------  ACTIVE SIDE  ---------------------- */
+/* ---------------------  ACTIVE SIDE  ----------------------- */
+/* ---------------  stubs for documentation  ----------------- */
 /* ----------------------------------------------------------- */
-
-// Class to configure replicator and initiate a connection with the remote peer.
-@interface BrowserSessionManager: NSObject <CBLMessageEndpointDelegate>
+@interface ActivePeer: NSObject <CBLMessageEndpointDelegate>
 
 @end
 
@@ -701,7 +700,7 @@
 - (void)receive:(NSData*)data;
 @end
 
-@implementation BrowserSessionManager
+@implementation ActivePeer
 
 - (instancetype) init {
     self = [super init];
@@ -788,20 +787,18 @@
 
 /* ----------------------------------------------------------- */
 /* ---------------------  PASSIVE SIDE  ---------------------- */
+/* ---------------  stubs for documentation  ----------------- */
 /* ----------------------------------------------------------- */
-
-@interface AdvertizingSessionManager: NSObject <MCSessionDelegate, MCNearbyServiceAdvertiserDelegate>
+@interface PassivePeerConnection: NSObject <CBLMessageEndpointConnection>
 - (void)startListener;
 - (void)stopListener;
-@end
-
-@interface PassivePeerConnection: NSObject <CBLMessageEndpointConnection>
 - (void)disconnect;
 - (void)receive:(NSData*)data;
 @end
 
-@implementation AdvertizingSessionManager {
+@implementation PassivePeerConnection {
     CBLMessageEndpointListener *_messageEndpointListener;
+    id <CBLReplicatorConnection> _replicatorConnection;
 }
 
 - (void)startListener {
@@ -821,37 +818,11 @@
     // # end::passive-stop-listener[]
 }
 
-- (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didReceiveInvitationFromPeer:(MCPeerID *)peerID withContext:(NSData *)context invitationHandler:(void (^)(BOOL, MCSession *))invitationHandler {
-    
-}
-
-- (void)session:(nonnull MCSession *)session peer:(nonnull MCPeerID *)peerID didChangeState:(MCSessionState)state {
+- (void)acceptConnection() {
     // # tag::advertizer-accept[]
     PassivePeerConnection *connection = [[PassivePeerConnection alloc] init]; /* implements CBLMessageEndpointConnection */
     [_messageEndpointListener accept: connection];
     // # end::advertizer-accept[]
-}
-
-- (void)session:(nonnull MCSession *)session didReceiveData:(nonnull NSData *)data fromPeer:(nonnull MCPeerID *)peerID {
-    
-}
-
-- (void)session:(nonnull MCSession *)session didReceiveStream:(nonnull NSInputStream *)stream withName:(nonnull NSString *)streamName fromPeer:(nonnull MCPeerID *)peerID {
-    
-}
-
-- (void)session:(nonnull MCSession *)session didStartReceivingResourceWithName:(nonnull NSString *)resourceName fromPeer:(nonnull MCPeerID *)peerID withProgress:(nonnull NSProgress *)progress {
-    
-}
-
-- (void)session:(MCSession *)session didFinishReceivingResourceWithName:(NSString *)resourceName fromPeer:(MCPeerID *)peerID atURL:(NSURL *)localURL withError:(NSError *)error {
-    
-}
-
-@end
-
-@implementation PassivePeerConnection {
-    id <CBLReplicatorConnection> _replicatorConnection;
 }
 
 - (void)disconnect {
