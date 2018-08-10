@@ -42,7 +42,7 @@ namespace api_walkthrough
 
         private static void GettingStarted()
         {
-            // # tag::getting-started[]
+            // tag::getting-started[]
             // Get the database (and create it if it doesn't exist)
             var database = new Database("mydb");
             // Create a new document (i.e. a record) in the database
@@ -97,14 +97,14 @@ namespace api_walkthrough
             replicator.Start();
 
             // Later, stop and dispose the replicator *before* closing/disposing the database
-            // # end::getting-started[]
+            // end::getting-started[]
         }
 
         private static void UseEncryption()
         {
             // Enterprise edition only
 
-            // # tag::database-encryption[]
+            // tag::database-encryption[]
             // Create a new, or open an existing database with encryption enabled
             var config = new DatabaseConfiguration
             {
@@ -119,7 +119,7 @@ namespace api_walkthrough
                 // Remove encryption
                 db.ChangeEncryptionKey(null);
             }
-            // # end::database-encryption[]
+            // end::database-encryption[]
         }
 
         private static void ResetReplicatorCheckpoint()
@@ -129,11 +129,11 @@ namespace api_walkthrough
             var target = new URLEndpoint(url);
             var config = new ReplicatorConfiguration(database, target);
             using (var replicator = new Replicator(config)) {
-                // # tag::replication-reset-checkpoint[]
+                // tag::replication-reset-checkpoint[]
                 // replicator is a Replicator instance
                 replicator.ResetCheckpoint();
                 replicator.Start();
-                // # end::replication-reset-checkpoint[]
+                // end::replication-reset-checkpoint[]
             }
         }
 
@@ -141,34 +141,34 @@ namespace api_walkthrough
         {
             var db = _Database;
             using (var document = new MutableDocument()) {
-                // # tag::1x-attachment[]
+                // tag::1x-attachment[]
                 var attachments = document.GetDictionary("_attachments");
                 var avatar = attachments.GetBlob("avatar");
                 var content = avatar?.Content;
-                // # end::1x-attachment[]
+                // end::1x-attachment[]
             }
         }
 
         private static void CreateNewDatabase()
         {
-            // # tag::new-database[]
+            // tag::new-database[]
             var db = new Database("my-database");
-            // # end::new-database[]
+            // end::new-database[]
 
             _Database = db;
         }
 
         private static void ChangeLogging()
         {
-            // # tag::logging[]
+            // tag::logging[]
             Database.SetLogLevel(LogDomain.Replicator, LogLevel.Verbose);
             Database.SetLogLevel(LogDomain.Query, LogLevel.Verbose);
-            // # end::logging[]
+            // end::logging[]
         }
 
         private static void LoadPrebuilt()
         {
-            // # tag::prebuilt-database[]
+            // tag::prebuilt-database[]
             // Note: Getting the path to a database is platform-specific.  For .NET Core / .NET Framework this
             // can be a simple filesystem path.  For UWP, you will need to get the path from your assets.  For
             // iOS you need to get the path from the main bundle.  For Android you need to extract it from your
@@ -178,7 +178,7 @@ namespace api_walkthrough
                 _NeedsExtraDocs = true;
                 Database.Copy(path, "travel-sample", null);
             }
-            // # end::prebuilt-database[]
+            // end::prebuilt-database[]
 
             _Database.Close();
             _Database = new Database("travel-sample");
@@ -187,7 +187,7 @@ namespace api_walkthrough
         private static void CreateDocument()
         {
             var db = _Database;
-            // # tag::initializer[]
+            // tag::initializer[]
             using (var newTask = new MutableDocument("xyz")) {
                 newTask.SetString("type", "task")
                     .SetString("owner", "todo")
@@ -195,28 +195,28 @@ namespace api_walkthrough
 
                 db.Save(newTask);
             }
-            // # end::initializer[]
+            // end::initializer[]
         }
 
         private static void UpdateDocument()
         {
             var db = _Database;
-            // # tag::update-document[]
+            // tag::update-document[]
             using(var document = db.GetDocument("xyz"))
             using (var mutableDocument = document.ToMutable()) {
                 mutableDocument.SetString("name", "apples");
                 db.Save(mutableDocument);
             }
-            // # end::update-document[]
+            // end::update-document[]
         }
 
         private static void UseTypedAccessors()
         {
             using (var newTask = new MutableDocument()) {
-                // # tag::date-getter[]
+                // tag::date-getter[]
                 newTask.SetValue("createdAt", DateTimeOffset.UtcNow);
                 var date = newTask.GetDate("createdAt");
-                // # end::date-getter[]
+                // end::date-getter[]
 
                 Console.WriteLine(date);
             }
@@ -225,7 +225,7 @@ namespace api_walkthrough
         private static void DoBatchOperation()
         {
             var db = _Database;
-            // # tag::batch[]
+            // tag::batch[]
             db.InBatch(() =>
             {
                 for (var i = 0; i < 10; i++) {
@@ -238,20 +238,20 @@ namespace api_walkthrough
                     }
                 }
             });
-            // # end::batch[]
+            // end::batch[]
         }
 
         private static void UseBlob()
         {
             var db = _Database;
             using (var newTask = new MutableDocument()) {
-                // # tag::blob[]
+                // tag::blob[]
                 // Note: Reading the data is implementation dependent, as with prebuilt databases
                 var image = File.ReadAllBytes("avatar.jpg");
                 var blob = new Blob("image/jpeg", image);
                 newTask.SetBlob("avatar", blob);
                 db.Save(newTask);
-                // # end::blob[]
+                // end::blob[]
                 
                 var taskBlob = newTask.GetBlob("avatar");
                 using (var bitmap = SKBitmap.Decode(taskBlob.ContentStream)) {
@@ -264,13 +264,13 @@ namespace api_walkthrough
         {
             var db = _Database;
 
-            // # tag::query-index[]
+            // tag::query-index[]
             // For value types, this is optional but provides performance enhancements
             var index = IndexBuilder.ValueIndex(
                 ValueIndexItem.Expression(Expression.Property("type")),
                 ValueIndexItem.Expression(Expression.Property("name")));
             db.CreateIndex("TypeNameIndex", index);
-            // # end::query-index[]
+            // end::query-index[]
         }
 
         private static void SelectMeta()
@@ -278,7 +278,7 @@ namespace api_walkthrough
             Console.WriteLine("Select Meta");
             var db = _Database;
 
-            // # tag::query-select-meta[]
+            // tag::query-select-meta[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("type"), 
@@ -289,19 +289,19 @@ namespace api_walkthrough
                     Console.WriteLine($"Document Name :: {result.GetString("name")}");
                 }
             }
-            // # end::query-select-meta[]
+            // end::query-select-meta[]
         }
 
         private static void SelectAll()
         {
             var db = _Database;
 
-            // # tag::query-select-all[]
+            // tag::query-select-all[]
             using (var query = QueryBuilder.Select(SelectResult.All())
                 .From(DataSource.Database(db))) {
                 // All user properties will be available here
             }
-            // # end::query-select-all[]
+            // end::query-select-all[]
         }
 
         private static void SelectWhere()
@@ -309,7 +309,7 @@ namespace api_walkthrough
             Console.WriteLine("Where");
             var db = _Database;
 
-            // # tag::query-where[]
+            // tag::query-where[]
             using (var query = QueryBuilder.Select(SelectResult.All())
                 .From(DataSource.Database(db))
                 .Where(Expression.Property("type").EqualTo(Expression.String("hotel")))
@@ -319,7 +319,7 @@ namespace api_walkthrough
                     Console.WriteLine($"Document Name :: {dict?.GetString("name")}");
                 }
             }
-            // # end::query-where[]
+            // end::query-where[]
         }
 
         private static void UseCollectionContains()
@@ -327,7 +327,7 @@ namespace api_walkthrough
             Console.WriteLine("Collection Operator CONTAINS");
             var db = _Database;
 
-            // # tag::query-collection-operator-contains[]
+            // tag::query-collection-operator-contains[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("name"),
@@ -342,7 +342,7 @@ namespace api_walkthrough
                     Console.WriteLine($"Public Likes :: {jsonString}");
                 }
             }
-            // # end::query-collection-operator-contains[]
+            // end::query-collection-operator-contains[]
         }
 
         private static void UseCollectionIn()
@@ -350,7 +350,7 @@ namespace api_walkthrough
             Console.WriteLine("Collection Operator IN");
             var db = _Database;
 
-            // # tag::query-collection-operator-in[]
+            // tag::query-collection-operator-in[]
             var values = new IExpression[]
                 { Expression.Property("first"), Expression.Property("last"), Expression.Property("username") };
 
@@ -364,7 +364,7 @@ namespace api_walkthrough
                     Console.WriteLine($"In results :: {jsonString}");
                 }
             }
-            // # end::query-collection-operator-in[]
+            // end::query-collection-operator-in[]
         }
 
         private static void SelectLike()
@@ -372,7 +372,7 @@ namespace api_walkthrough
             Console.WriteLine("Like");
             var db = _Database;
 
-            // # tag::query-like-operator[]
+            // tag::query-like-operator[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("name"))
@@ -384,7 +384,7 @@ namespace api_walkthrough
                     Console.WriteLine($"Name Property :: {result.GetString("name")}");
                 }
             }
-            // # end::query-like-operator[]
+            // end::query-like-operator[]
         }
 
         private static void SelectWildcardLike()
@@ -392,7 +392,7 @@ namespace api_walkthrough
             Console.WriteLine("Wildcard Like");
             var db = _Database;
 
-            // # tag::query-like-operator-wildcard-match[]
+            // tag::query-like-operator-wildcard-match[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("name"))
@@ -404,7 +404,7 @@ namespace api_walkthrough
                     Console.WriteLine($"Name Property :: {result.GetString("name")}");
                 }
             }
-            // # end::query-like-operator-wildcard-match[]
+            // end::query-like-operator-wildcard-match[]
         }
 
         private static void SelectWildcardCharacterLike()
@@ -412,7 +412,7 @@ namespace api_walkthrough
             Console.WriteLine("Wildchard Characters");
             var db = _Database;
 
-            // # tag::query-like-operator-wildcard-character-match[]
+            // tag::query-like-operator-wildcard-character-match[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("name"))
@@ -424,7 +424,7 @@ namespace api_walkthrough
                     Console.WriteLine($"Name Property :: {result.GetString("name")}");
                 }
             }
-            // # end::query-like-operator-wildcard-character-match[]
+            // end::query-like-operator-wildcard-character-match[]
         }
 
         private static void SelectRegex()
@@ -432,7 +432,7 @@ namespace api_walkthrough
             Console.WriteLine("Regex");
             var db = _Database;
 
-            // # tag::query-regex-operator[]
+            // tag::query-regex-operator[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("name"))
@@ -444,7 +444,7 @@ namespace api_walkthrough
                     Console.WriteLine($"Name Property :: {result.GetString("name")}");
                 }
             }
-            // # end::query-regex-operator[]
+            // end::query-regex-operator[]
         }
 
         private static void SelectJoin()
@@ -452,7 +452,7 @@ namespace api_walkthrough
             Console.WriteLine("Join");
             var db = _Database;
 
-            // # tag::query-join[]
+            // tag::query-join[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Expression.Property("name").From("airline")),
                     SelectResult.Expression(Expression.Property("callsign").From("airline")),
@@ -469,7 +469,7 @@ namespace api_walkthrough
                     Console.WriteLine($"Name Property :: {result.GetString("name")}");
                 }
             }
-            // # end::query-join[]
+            // end::query-join[]
         }
 
         private static void GroupBy()
@@ -477,7 +477,7 @@ namespace api_walkthrough
             Console.WriteLine("GroupBy");
             var db = _Database;
 
-            // # tag::query-groupby[]
+            // tag::query-groupby[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Function.Count(Expression.All())),
                     SelectResult.Property("country"),
@@ -491,7 +491,7 @@ namespace api_walkthrough
                         $"There are {result.GetInt("$1")} airports in the {result.GetString("tz")} timezone located in {result.GetString("country")} and above 300 ft");
                 }
             }
-            // # end::query-groupby[]
+            // end::query-groupby[]
         }
 
         private static void OrderBy()
@@ -499,7 +499,7 @@ namespace api_walkthrough
             Console.WriteLine("OrderBy");
             var db = _Database;
 
-            // # tag::query-orderby[]
+            // tag::query-orderby[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("title"))
@@ -511,7 +511,7 @@ namespace api_walkthrough
                     Console.WriteLine($"Title :: {result.GetString("title")}");
                 }
             }
-            // # end::query-orderby[]
+            // end::query-orderby[]
         }
 
         private static void CreateFullTextIndex()
@@ -528,10 +528,10 @@ namespace api_walkthrough
                 }
             }
 
-            // # tag::fts-index[]
+            // tag::fts-index[]
             var index = IndexBuilder.FullTextIndex(FullTextIndexItem.Property("name")).IgnoreAccents(false);
             db.CreateIndex("nameFTSIndex", index);
-            // # end::fts-index[]
+            // end::fts-index[]
         }
 
         private static void FullTextSearch()
@@ -539,7 +539,7 @@ namespace api_walkthrough
             Console.WriteLine("Full text search");
             var db = _Database;
 
-            // # tag::fts-query[]
+            // tag::fts-query[]
             var whereClause = FullTextExpression.Index("nameFTSIndex").Match("'buy'");
             using (var query = QueryBuilder.Select(SelectResult.Expression(Meta.ID))
                 .From(DataSource.Database(db))
@@ -548,7 +548,7 @@ namespace api_walkthrough
                     Console.WriteLine($"Document id {result.GetString(0)}");
                 }
             }
-            // # end::fts-query[]
+            // end::fts-query[]
         }
         private static void StartReplication()
         {
@@ -570,7 +570,7 @@ namespace api_walkthrough
              * }
              */
 
-            // # tag::replication[]
+            // tag::replication[]
             // Note: Android emulator needs to use 10.0.2.2 for localhost (10.0.3.2 for GenyMotion)
             var url = new Uri("ws://localhost:4984/db");
             var target = new URLEndpoint(url);
@@ -581,31 +581,31 @@ namespace api_walkthrough
 
             var replicator = new Replicator(config);
             replicator.Start();
-            // # end::replication[]
+            // end::replication[]
 
             _Replicator = replicator;
         }
 
         private static void VerboseReplicatorLogging()
         {
-            // # tag::replication-logging[]
+            // tag::replication-logging[]
             Database.SetLogLevel(LogDomain.Replicator, LogLevel.Verbose);
             Database.SetLogLevel(LogDomain.Network, LogLevel.Verbose);
-            // # end::replication-logging[]
+            // end::replication-logging[]
         }
 
         private static void SetupReplicatorListener()
         {
             var replicator = _Replicator;
 
-            // # tag::replication-status[]
+            // tag::replication-status[]
             replicator.AddChangeListener((sender, args) =>
             {
                 if (args.Status.Activity == ReplicatorActivityLevel.Stopped) {
                     Console.WriteLine("Replication stopped");
                 }
             });
-            // # end::replication-status[]
+            // end::replication-status[]
         }
 
         private static void SetupReplicatorErrorListener()
@@ -615,14 +615,14 @@ namespace api_walkthrough
 
             var replicator = _Replicator;
 
-            // # tag::replication-error-handling[]
+            // tag::replication-error-handling[]
             replicator.AddChangeListener((sender, args) =>
             {
                 if (args.Status.Error != null) {
                     Console.WriteLine($"Error :: {args.Status.Error}");
                 }
             });
-            // # end::replication-error-handling[]
+            // end::replication-error-handling[]
         }
 
         private static void DatabaseReplica()
@@ -630,7 +630,7 @@ namespace api_walkthrough
             var db = _Database;
             using (var database2 = new Database("backup")) {
                 // EE feature: This code will not compile on the community edition
-                // # tag::database-replica[]
+                // tag::database-replica[]
                 var targetDatabase = new DatabaseEndpoint(database2);
                 var config = new ReplicatorConfiguration(db, targetDatabase)
                 {
@@ -639,7 +639,7 @@ namespace api_walkthrough
 
                 var replicator = new Replicator(config);
                 replicator.Start();
-                // # end::database-replica[]
+                // end::database-replica[]
 
                 _Replicator?.Stop();
                 _Replicator = replicator;
@@ -653,13 +653,13 @@ namespace api_walkthrough
             var target = new URLEndpoint(url);
             var db = _Database;
 
-            // # tag::certificate-pinning[]
+            // tag::certificate-pinning[]
             var certificate = new X509Certificate2("cert.cer");
             var config = new ReplicatorConfiguration(db, target)
             {
                 PinnedServerCertificate = certificate
             };
-            // # end::certificate-pinning[]
+            // end::certificate-pinning[]
         }
         
         private static void ReplicationCustomHeaders()
@@ -667,7 +667,7 @@ namespace api_walkthrough
             var url = new Uri("ws://localhost:4984/mydatabase");
             var target = new URLEndpoint(url);
             
-            // # tag::replication-custom-header[]
+            // tag::replication-custom-header[]
             var config = new ReplicatorConfiguration(database, target)
             {
                 Headers = new Dictionary<string, string> 
@@ -675,7 +675,7 @@ namespace api_walkthrough
                     ["CustomHeaderName"] = "Value"   
                 }
             };
-            // # end::replication-custom-header[]
+            // end::replication-custom-header[]
         }
 
         static void Main(string[] args)

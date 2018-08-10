@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     //@Test
     public void testGettingStarted() throws CouchbaseLiteException, URISyntaxException {
-        // # tag::getting-started[]
+        // tag::getting-started[]
 
         // Get the database (and create it if it doesn’t exist).
         DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         // Start replication.
         replicator.start();
 
-        // # end::getting-started[]
+        // end::getting-started[]
 
         database.delete();
     }
@@ -154,43 +154,43 @@ public class MainActivity extends AppCompatActivity {
 
         Document document = new MutableDocument();
 
-        // # tag::1x-attachment[]
+        // tag::1x-attachment[]
         Dictionary attachments = document.getDictionary("_attachments");
         Blob blob = attachments != null ? attachments.getBlob("avatar") : null;
         byte[] content = blob != null ? blob.getContent() : null;
-        // # end::1x-attachment[]
+        // end::1x-attachment[]
     }
 
     // ### New Database
     public void testNewDatabase() throws CouchbaseLiteException {
-        // # tag::new-database[]
+        // tag::new-database[]
         DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
         Database database = new Database("my-database", config);
-        // # end::new-database[]
+        // end::new-database[]
 
         database.delete();
     }
 
     // ### Database Encryption
     public void testDatabaseEncryption() throws CouchbaseLiteException {
-        // # tag::database-encryption[]
+        // tag::database-encryption[]
         DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
         config.setEncryptionKey(new EncryptionKey("PASSWORD"));
         Database database = new Database("mydb", config);
-        // # end::database-encryption[]
+        // end::database-encryption[]
     }
 
     // ### Logging
     public void testLogging() throws CouchbaseLiteException {
-        // # tag::logging[]
+        // tag::logging[]
         Database.setLogLevel(LogDomain.REPLICATOR, LogLevel.VERBOSE);
         Database.setLogLevel(LogDomain.QUERY, LogLevel.VERBOSE);
-        // # end::logging[]
+        // end::logging[]
     }
 
     // ### Loading a pre-built database
     public void testPreBuiltDatabase() throws IOException {
-        // # tag::prebuilt-database[]
+        // tag::prebuilt-database[]
         DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
         ZipUtils.unzip(getAsset("replacedb/android200-sqlite.cblite2.zip"), getApplicationContext().getFilesDir());
         File path = new File(getApplicationContext().getFilesDir(), "android-sqlite");
@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (CouchbaseLiteException e) {
             Log.e(TAG, "Could not load pre-built database");
         }
-        // # end::prebuilt-database[]
+        // end::prebuilt-database[]
     }
 
 
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
 
     // ### Initializers
     public void testInitializers() {
-        // # tag::initializer[]
+        // tag::initializer[]
         MutableDocument newTask = new MutableDocument();
         newTask.setString("type", "task");
         newTask.setString("owner", "todo");
@@ -240,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (CouchbaseLiteException e) {
             com.couchbase.lite.internal.support.Log.e(TAG, e.toString());
         }
-        // # end::initializer[]
+        // end::initializer[]
     }
 
     // ### Mutability
@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (CouchbaseLiteException e) {
         }
 
-        // # tag::update-document[]
+        // tag::update-document[]
         Document document = database.getDocument("xyz");
         MutableDocument mutableDocument = document.toMutable();
         mutableDocument.setString("name", "apples");
@@ -259,22 +259,22 @@ public class MainActivity extends AppCompatActivity {
         } catch (CouchbaseLiteException e) {
             com.couchbase.lite.internal.support.Log.e(TAG, e.toString());
         }
-        // # end::update-document[]
+        // end::update-document[]
     }
 
     // ### Typed Accessors
     public void testTypedAccessors() {
         MutableDocument newTask = new MutableDocument();
 
-        // # tag::date-getter[]
+        // tag::date-getter[]
         newTask.setValue("createdAt", new Date());
         Date date = newTask.getDate("createdAt");
-        // # end::date-getter[]
+        // end::date-getter[]
     }
 
     // ### Batch operations
     public void testBatchOperations() {
-        // # tag::batch[]
+        // tag::batch[]
         try {
             database.inBatch(new Runnable() {
                 @Override
@@ -296,14 +296,14 @@ public class MainActivity extends AppCompatActivity {
         } catch (CouchbaseLiteException e) {
             com.couchbase.lite.internal.support.Log.e(TAG, e.toString());
         }
-        // # end::batch[]
+        // end::batch[]
     }
 
     // ### Blobs
     public void testBlobs() {
         MutableDocument newTask = new MutableDocument();
 
-        // # tag::blob[]
+        // tag::blob[]
         InputStream is = getAsset("avatar.jpg");
         try {
             Blob blob = new Blob("image/jpeg", is);
@@ -321,25 +321,25 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
-        // # end::blob[]
+        // end::blob[]
     }
 
     // ### Indexing
     public void testIndexing() throws CouchbaseLiteException {
         // For Documentation
         {
-            // # tag::query-index[]
+            // tag::query-index[]
             database.createIndex("TypeNameIndex",
                 IndexBuilder.valueIndex(ValueIndexItem.property("type"),
                     ValueIndexItem.property("name")));
-            // # end::query-index[]
+            // end::query-index[]
         }
     }
 
     // ### SELECT statement
     public void testSelectStatement() throws CouchbaseLiteException {
         {
-            // # tag::query-select-meta[]
+            // tag::query-select-meta[]
             Query query = QueryBuilder
                 .select(SelectResult.expression(Meta.id),
                     SelectResult.property("name"),
@@ -357,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (CouchbaseLiteException e) {
                 Log.e("Sample", e.getLocalizedMessage());
             }
-            // # end::query-select-meta[]
+            // end::query-select-meta[]
         }
     }
 
@@ -382,12 +382,12 @@ public class MainActivity extends AppCompatActivity {
     public void testSelectAll() throws CouchbaseLiteException {
         // For Documentation
         {
-            // # tag::query-select-all[]
+            // tag::query-select-all[]
             Query query = QueryBuilder
                 .select(SelectResult.all())
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("hotel")));
-            // # end::query-select-all[]
+            // end::query-select-all[]
             ResultSet rs = query.execute();
             for (Result result : rs)
                 Log.i("Sample", String.format("hotel -> %s", result.getDictionary(DATABASE_NAME).toMap()));
@@ -398,7 +398,7 @@ public class MainActivity extends AppCompatActivity {
     public void testWhereStatement() throws CouchbaseLiteException {
         // For Documentation
         {
-            // # tag::query-where[]
+            // tag::query-where[]
             Query query = QueryBuilder
                 .select(SelectResult.all())
                 .from(DataSource.database(database))
@@ -410,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("Sample", String.format("name -> %s", all.getString("name")));
                 Log.i("Sample", String.format("type -> %s", all.getString("type")));
             }
-            // # end::query-where[]
+            // end::query-where[]
         }
     }
 
@@ -418,7 +418,7 @@ public class MainActivity extends AppCompatActivity {
     public void testCollectionStatement() throws CouchbaseLiteException {
         // For Documentation
         {
-            // # tag::query-collection-operator-contains[]
+            // tag::query-collection-operator-contains[]
             Query query = QueryBuilder
                 .select(SelectResult.expression(Meta.id),
                     SelectResult.property("name"),
@@ -429,7 +429,7 @@ public class MainActivity extends AppCompatActivity {
             ResultSet rs = query.execute();
             for (Result result : rs)
                 Log.i("Sample", String.format("public_likes -> %s", result.getArray("public_likes").toList()));
-            // # end::query-collection-operator-contains[]
+            // end::query-collection-operator-contains[]
         }
     }
 
@@ -437,7 +437,7 @@ public class MainActivity extends AppCompatActivity {
     public void testInOperator() throws CouchbaseLiteException {
         // For Documentation
         {
-            // # tag::query-collection-operator-in[]
+            // tag::query-collection-operator-in[]
             Expression[] values = new Expression[] {
                 Expression.property("first"),
                 Expression.property("last"),
@@ -447,7 +447,7 @@ public class MainActivity extends AppCompatActivity {
             Query query = QueryBuilder.select(SelectResult.all())
                 .from(DataSource.database(database))
                 .where(Expression.string("Armani").in(values));
-            // # end::query-collection-operator-in[]
+            // end::query-collection-operator-in[]
 
             ResultSet rs = query.execute();
             for (Result result : rs)
@@ -459,7 +459,7 @@ public class MainActivity extends AppCompatActivity {
     public void testPatternMatching() throws CouchbaseLiteException {
         // For Documentation
         {
-            // # tag::query-like-operator[]
+            // tag::query-like-operator[]
             Query query = QueryBuilder
                 .select(SelectResult.expression(Meta.id),
                     SelectResult.property("country"),
@@ -470,7 +470,7 @@ public class MainActivity extends AppCompatActivity {
             ResultSet rs = query.execute();
             for (Result result : rs)
                 Log.i("Sample", String.format("name -> %s", result.getString("name")));
-            // # end::query-like-operator[]
+            // end::query-like-operator[]
         }
     }
 
@@ -478,7 +478,7 @@ public class MainActivity extends AppCompatActivity {
     public void testWildcardMatch() throws CouchbaseLiteException {
         // For Documentation
         {
-            // # tag::query-like-operator-wildcard-match[]
+            // tag::query-like-operator-wildcard-match[]
             Query query = QueryBuilder
                 .select(SelectResult.expression(Meta.id),
                     SelectResult.property("country"),
@@ -489,7 +489,7 @@ public class MainActivity extends AppCompatActivity {
             ResultSet rs = query.execute();
             for (Result result : rs)
                 Log.i("Sample", String.format("name -> %s", result.getString("name")));
-            // # end::query-like-operator-wildcard-match[]
+            // end::query-like-operator-wildcard-match[]
         }
     }
 
@@ -497,7 +497,7 @@ public class MainActivity extends AppCompatActivity {
     public void testWildCharacterMatch() throws CouchbaseLiteException {
         // For Documentation
         {
-            // # tag::query-like-operator-wildcard-character-match[]
+            // tag::query-like-operator-wildcard-character-match[]
             Query query = QueryBuilder
                 .select(SelectResult.expression(Meta.id),
                     SelectResult.property("country"),
@@ -508,7 +508,7 @@ public class MainActivity extends AppCompatActivity {
             ResultSet rs = query.execute();
             for (Result result : rs)
                 Log.i("Sample", String.format("name -> %s", result.getString("name")));
-            // # end::query-like-operator-wildcard-character-match[]
+            // end::query-like-operator-wildcard-character-match[]
         }
     }
 
@@ -516,7 +516,7 @@ public class MainActivity extends AppCompatActivity {
     public void testRegexMatch() throws CouchbaseLiteException {
         // For Documentation
         {
-            // # tag::query-regex-operator[]
+            // tag::query-regex-operator[]
             Query query = QueryBuilder
                 .select(SelectResult.expression(Meta.id),
                     SelectResult.property("country"),
@@ -527,7 +527,7 @@ public class MainActivity extends AppCompatActivity {
             ResultSet rs = query.execute();
             for (Result result : rs)
                 Log.i("Sample", String.format("name -> %s", result.getString("name")));
-            // # end::query-regex-operator[]
+            // end::query-regex-operator[]
         }
     }
 
@@ -535,7 +535,7 @@ public class MainActivity extends AppCompatActivity {
     public void testJoinStatement() throws CouchbaseLiteException {
         // For Documentation
         {
-            // # tag::query-join[]
+            // tag::query-join[]
             Query query = QueryBuilder.select(
                 SelectResult.expression(Expression.property("name").from("airline")),
                 SelectResult.expression(Expression.property("callsign").from("airline")),
@@ -551,7 +551,7 @@ public class MainActivity extends AppCompatActivity {
             ResultSet rs = query.execute();
             for (Result result : rs)
                 Log.w("Sample", String.format("%s", result.toMap().toString()));
-            // # end::query-join[]
+            // end::query-join[]
         }
     }
 
@@ -559,7 +559,7 @@ public class MainActivity extends AppCompatActivity {
     public void testGroupByStatement() throws CouchbaseLiteException {
         // For Documentation
         {
-            // # tag::query-groupby[]
+            // tag::query-groupby[]
             Query query = QueryBuilder.select(
                 SelectResult.expression(Function.count(Expression.string("*"))),
                 SelectResult.property("country"),
@@ -577,7 +577,7 @@ public class MainActivity extends AppCompatActivity {
                         result.getInt("$1"),
                         result.getString("tz"),
                         result.getString("country")));
-            // # end::query-groupby[]
+            // end::query-groupby[]
         }
     }
 
@@ -585,7 +585,7 @@ public class MainActivity extends AppCompatActivity {
     public void testOrderByStatement() throws CouchbaseLiteException {
         // For Documentation
         {
-            // # tag::query-orderby[]
+            // tag::query-orderby[]
             Query query = QueryBuilder
                 .select(SelectResult.expression(Meta.id),
                     SelectResult.property("name"))
@@ -596,18 +596,18 @@ public class MainActivity extends AppCompatActivity {
             ResultSet rs = query.execute();
             for (Result result : rs)
                 Log.i("Sample", String.format("%s", result.toMap()));
-            // # end::query-orderby[]
+            // end::query-orderby[]
         }
     }
 
     void prepareIndex() throws CouchbaseLiteException {
-        // # tag::fts-index[]
+        // tag::fts-index[]
         database.createIndex("nameFTSIndex", IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false));
-        // # end::fts-index[]
+        // end::fts-index[]
     }
 
     public void testFTS() throws CouchbaseLiteException {
-        // # tag::fts-query[]
+        // tag::fts-query[]
         Expression whereClause = FullTextExpression.index("nameFTSIndex").match("buy");
         Query ftsQuery = QueryBuilder.select(SelectResult.expression(Meta.id))
             .from(DataSource.database(database))
@@ -615,15 +615,15 @@ public class MainActivity extends AppCompatActivity {
         ResultSet ftsQueryResult = ftsQuery.execute();
         for (Result result : ftsQueryResult)
             com.couchbase.lite.internal.support.Log.i(TAG, String.format("document properties %s", result.getString(0)));
-        // # end::fts-query[]
+        // end::fts-query[]
     }
 
     /* The `tag::replication[]` example is inlined in java.adoc */
 
     public void testTroubleshooting() {
-        // # tag::replication-logging[]
+        // tag::replication-logging[]
         Database.setLogLevel(LogDomain.REPLICATOR, LogLevel.VERBOSE);
-        // # end::replication-logging[]
+        // end::replication-logging[]
     }
 
     public void testReplicationStatus() throws URISyntaxException {
@@ -633,7 +633,7 @@ public class MainActivity extends AppCompatActivity {
         config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
         Replicator replication = new Replicator(config);
 
-        // # tag::replication-status[]
+        // tag::replication-status[]
         replication.addChangeListener(new ReplicatorChangeListener() {
             @Override
             public void changed(ReplicatorChange change) {
@@ -641,7 +641,7 @@ public class MainActivity extends AppCompatActivity {
                     com.couchbase.lite.internal.support.Log.i(TAG, "Replication stopped");
             }
         });
-        // # end::replication-status[]
+        // end::replication-status[]
     }
 
     public void testHandlingNetworkErrors() throws URISyntaxException {
@@ -651,7 +651,7 @@ public class MainActivity extends AppCompatActivity {
         config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
         Replicator replication = new Replicator(config);
 
-        // # tag::replication-error-handling[]
+        // tag::replication-error-handling[]
         replication.addChangeListener(new ReplicatorChangeListener() {
             @Override
             public void changed(ReplicatorChange change) {
@@ -661,7 +661,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         replication.start();
-        // # end::replication-error-handling[]
+        // end::replication-error-handling[]
 
         replication.stop();
     }
@@ -670,12 +670,12 @@ public class MainActivity extends AppCompatActivity {
         URI uri = new URI("ws://localhost:4984/db");
         Endpoint endpoint = new URLEndpoint(uri);
 
-        // # tag::replication-custom-header[]
+        // tag::replication-custom-header[]
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("CustomHeaderName", "Value");
         config.setHeaders(headers);
-        // # end::replication-custom-header[]
+        // end::replication-custom-header[]
     }
 
     // ### Certificate Pinning
@@ -685,12 +685,12 @@ public class MainActivity extends AppCompatActivity {
         Endpoint endpoint = new URLEndpoint(uri);
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
 
-        // # tag::certificate-pinning[]
+        // tag::certificate-pinning[]
         InputStream is = getAsset("cert.cer");
         byte[] cert = IOUtils.toByteArray(is);
         is.close();
         config.setPinnedServerCertificate(cert);
-        // # end::certificate-pinning[]
+        // end::certificate-pinning[]
     }
 
     // ### Reset replicator checkpoint
@@ -702,10 +702,10 @@ public class MainActivity extends AppCompatActivity {
         Replicator replicator = new Replicator(config);
         replicator.start();
 
-        // # tag::replication-reset-checkpoint[]
+        // tag::replication-reset-checkpoint[]
         replicator.resetCheckpoint();
         replicator.start();
-        // # end::replication-reset-checkpoint[]
+        // end::replication-reset-checkpoint[]
 
         replicator.stop();
     }
