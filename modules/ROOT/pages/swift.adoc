@@ -51,7 +51,8 @@ Follow the steps below.
 . Open the *Build Settings* tab of your app target's settings.
 . In the *Linking* section, edit *Runpath Search Paths* and add ``@loader_path/../Frameworks/``.
 . Now switch to the **Build Phases**.
-. Press the *Add Build Phase* button at the top of the window and create a new *Copy Files* phase. image:../img/ios-copy-files-phase.png[]
+. Press the *Add Build Phase* button at the top of the window and create a new *Copy Files* phase.
+image:../img/ios-copy-files-phase.png[]
 . Set the phase's destination to **Frameworks**.
 . Press the *\+* button below the phases' file list and select *CouchbaseLite.framework* to add it.
 
@@ -70,7 +71,8 @@ Follow the steps below.
 
 |``CouchbaseLiteListener.framework``
 |
-                To access the database through HTTP (often used for hybrid development and peer-to-peer sync). This component has a dependency on ``JavaScriptCore.framework``, make sure to add this framework as well if you're planning on using it.
+                To access the database through HTTP (often used for hybrid development and peer-to-peer sync).
+This component has a dependency on ``JavaScriptCore.framework``, make sure to add this framework as well if you're planning on using it.
 
 |``CBLJSONValidator``
 |
@@ -78,7 +80,8 @@ Follow the steps below.
 
 |``CBLRegisterJSViewCompiler``, `libCBLJSViewCompiler.a`
 |
-                To register Views and Filters through the Listener. When doing so, the logic is written in JavaScript and stored in the database.
+                To register Views and Filters through the Listener.
+When doing so, the logic is written in JavaScript and stored in the database.
 
 |``libCBLForestDBStorage.a``
 |
@@ -90,7 +93,9 @@ Follow the steps below.
 
 |``Extras/CBLEncryptionController``
 |
-                Utility class to handle password entry. Prompts the user to make up a key, asks for the key when re-opening the database, and asks again if the key was incorrect. It even takes advantage of Touch ID fingerprint authentication on recent iOS devices to avoid making the user deal with a password at all.
+                Utility class to handle password entry.
+Prompts the user to make up a key, asks for the key when re-opening the database, and asks again if the key was incorrect
+It even takes advantage of Touch ID fingerprint authentication on recent iOS devices to avoid making the user deal with a password at all.
 
 |``Extras/CBLIncrementalStore``
 |
@@ -138,7 +143,8 @@ The following subspecs are available to import different Couchbase Lite componen
 
 |``couchbase-lite-ios/SQLite``
 |
-                  To use SQLite as the storage type. This is the default.
+                  To use SQLite as the storage type.
+This is the default.
 
 |``couchbase-lite-ios/SQLCipher``
 |
@@ -363,8 +369,10 @@ Concurrency is supported through explicit method calls.
 You can use the `CBLManager` method `backgroundTellDatabaseNamed:to:` to perform any operation in the background.
 Be careful with this, though! Couchbase Lite objects are per-thread, and your block runs on a background thread, so:
 
-* You can`'t use any of the Couchbase Lite objects (databases, documents, models...) you were using on the main thread. Instead, you have to use the CBLDatabase object passed to the block, and the other objects reachable from it.
-* You can`'t save any of the Couchbase Lite objects in the block and then call them on the main thread. (For example, if in the block you allocated some CBLModels and assigned them to properties of application objects, bad stuff would happen if they got called later on by application code.)
+* You can`'t use any of the Couchbase Lite objects (databases, documents, models...) you were using on the main thread.
+Instead, you have to use the CBLDatabase object passed to the block, and the other objects reachable from it.
+* You can`'t save any of the Couchbase Lite objects in the block and then call them on the main thread.
+(For example, if in the block you allocated some CBLModels and assigned them to properties of application objects, bad stuff would happen if they got called later on by application code.)
 * And of course, since the block is called on a background thread, any application or system APIs you call from it need to be thread-safe.
 
 In general, it`'s best to do only very limited things using this API, otherwise it becomes too easy to accidentally use main-thread Couchbase Lite objects in the block, or store background-thread Couchbase Lite objects in places where they`'ll be called on the main thread.
@@ -443,11 +451,17 @@ Usually you use a "type" property to distinguish them.
 
 A database has the following elements:
 
-* Its **name**. The name must consist only of _lowercase_ ASCII letters, digits, and the special characters ``\_$()+-/``. It must also be less than 240 bytes and start with a lower case letter.
-* Documents. Each document is identified uniquely by its ID.
-* Views. Each view has a unique name, and a persistent index as well as map and reduce functions.
-* Filter functions. These are used to replicate subsets of documents.
-* Replications. Each replication specifies a remote database to sync documents to or from, and other parameters.
+* Its **name**.
+The name must consist only of _lowercase_ ASCII letters, digits, and the special characters ``\_$()+-/``.
+It must also be less than 240 bytes and start with a lower case letter.
+* Documents.
+Each document is identified uniquely by its ID.
+* Views.
+Each view has a unique name, and a persistent index as well as map and reduce functions.
+* Filter functions.
+These are used to replicate subsets of documents.
+* Replications.
+Each replication specifies a remote database to sync documents to or from, and other parameters.
 
 === Creating a database
 
@@ -478,7 +492,7 @@ Even if some of the content changes on the server after you create the app, the 
 *Note:* This is essentially trading setup time for app installation time.
 If you install a 100MB database in your app, that of course adds to the time it takes to download and install the app.
 But it can still be faster than replication since the 100MB database will simply be downloaded in bulk as part of the app archive, instead of going through the interactive sync protocol.
-Also, the download happens when the user expects it to (while installing the app) rather than when s/he's not (on first launch.)
+Also, the download happens when the user expects it to (while installing the app) rather than when s/he's not (on first launch).
 
 To use a prebuilt database, you need to set up the database, build the database into your app bundle as a resource, and install the database during the initial launch.
 
@@ -494,13 +508,16 @@ If you start with a snapshot of a live database from a server, then create a new
 LiteServ is a useful tool for creating databases and running replications locally on your development machine.
 
 *Extracting and Building the Database:* Next you need to find the database's files.
-The location of these is determined by the Manager instance; it's in a directory called `CouchbaseLite` whose default location is platform-specific.
-(On iOS and Mac OS, it's in the `Application Support` directory.) The main database file has a .cblite extension.
+The location of these is determined by the Manager instance;
+it's in a directory called `CouchbaseLite` whose default location is platform-specific.
+(On iOS and Mac OS, it's in the `Application Support` directory.)
+The main database file has a .cblite extension.
 If your database has attachments, you also need the "databasename attachments" directory that`'s adjacent to it.
 
 [quote]
 *Note:* iOS/Mac specific instructions: Add the database file and the corresponding attachments directory to your Xcode project.
-If you add the attachments folder, make sure that in the Add Files sheet you select the Create folder references for any added folders radio button, so that the folder structure is preserved; otherwise, the individual attachment files are all added as top-level bundle resources.
+If you add the attachments folder, make sure that in the Add Files sheet you select the Create folder references for any added folders radio button, so that the folder structure is preserved;
+otherwise, the individual attachment files are all added as top-level bundle resources.
 
 *Installing the Database:* After your app launches and creates a Database instance for its database, it needs to check whether the database exists.
 If the database does not exist, the app should copy it from the app bundle.
@@ -528,7 +545,8 @@ if database == nil {
 
 === Opening a database
 
-You'll typically open a database while initializing your app, right after instantiating the Manager object, and store a reference to the Database object as either a global variable or a property of your top-level application object (the app delegate on iOS or Mac OS.) Opening a database is as simple as calling the Manager's `databaseNamed` method -- this will first create a new empty database if one doesn't already exist with that name.
+You'll typically open a database while initializing your app, right after instantiating the Manager object, and store a reference to the Database object as either a global variable or a property of your top-level application object (the app delegate on iOS or Mac OS).
+Opening a database is as simple as calling the Manager's `databaseNamed` method -- this will first create a new empty database if one doesn't already exist with that name.
 It's fine to call this method more than once: it will return the same Database instance every time.
 
 [quote]
@@ -551,7 +569,8 @@ It returns null/nil (without an error or exception) if no database with that nam
 
 === Database encryption
 
-Since Couchbase Lite 1.2, databases can be encrypted using SQLCipher; an open source extension to SQLite that provides transparent encryption of database files.
+Since Couchbase Lite 1.2, databases can be encrypted using SQLCipher;
+an open source extension to SQLite that provides transparent encryption of database files.
 The encryption specification is 256-bit AES.
 The steps below outline how to enable it.
 
@@ -585,7 +604,9 @@ var database: CBLDatabase = manager.openDatabaseNamed("db", withOptions: options
 
 If the database does not exist (and `options.create` is true) it will be created encrypted with the given key.
 
-If the database already exists, the key will be used to decrypt it (and to encrypt future changes). If the key does not match the one previously used, opening the database will fail; the error/exception will have status code 401.
+If the database already exists, the key will be used to decrypt it (and to encrypt future changes).
+If the key does not match the one previously used, opening the database will fail;
+the error/exception will have status code 401.
 
 To change the encryption key, you must first open the database using the `openDatabase` method with the existing key and if the operation is successful, use the `changeEncryptionKey` method providing the new key.
 Passing `nil` as the value will disable encryption.
@@ -594,12 +615,14 @@ Passing `nil` as the value will disable encryption.
 
 {% if site.version == '1.5' %}
 
-*Note: The following section describes how to set up ForestDB, which will be deprecated in the next major release of Couchbase Mobile. For present and future development, we recommend to use the default storage type, SQLite.*
+*Note: The following section describes how to set up ForestDB, which will be deprecated in the next major release of Couchbase Mobile.
+For present and future development, we recommend to use the default storage type, SQLite.*
 
 {% endif %}
 
 There are two storage engines available with Couchbase Lite: SQLite and ForestDB.
-In the case of SQLite, it will use the system dependency already available on most platforms (iOS, Android, Windows...). To use ForestDB, the project must include the ForestDB storage dependency (see instructions below.)
+In the case of SQLite, it will use the system dependency already available on most platforms (iOS, Android, Windows...).
+To use ForestDB, the project must include the ForestDB storage dependency (see instructions below).
 
 ==== What is ForestDB?
 
@@ -619,7 +642,8 @@ The ForestDB engine isn't built into the iOS and tvOS platforms, to save space.
 To use ForestDB on those platforms you'll need to link it into your app as an extra static library.
 
 . Add the library `libCBLForestDBStorage.a` to your project and add it to your iOS app target's "Link Binary With Libraries" build phase.
-. Link the system library ``libc++.dylib``. To do that, in the target's Build Phases editor, press the "+" button below the "Link
+. Link the system library ``libc++.dylib``.
+To do that, in the target's Build Phases editor, press the "+" button below the "Link
 . Binary With Libraries" and add `libc++.dylib`
 . Make sure `-ObjC` is set in `Other Linker Flags` in `Build Settings`
 
@@ -673,15 +697,18 @@ Therefore, each thread or dispatch queue that you use Couchbase Lite on should h
 
 If your app uses Couchbase Lite on multiple threads, then on each thread (or dispatch queue) it must:
 
-* Create a new CBLManager instance. If you use multiple threads, do not use the ``sharedInstance``.
+* Create a new CBLManager instance.
+If you use multiple threads, do not use the ``sharedInstance``.
 * Use only objects (Databases, Documents, ...) acquired from its Manager.
 * Not pass any Couchbase Lite objects to code running on any other thread/queue.
 
-If different threads/queues need to communicate to each other about documents, they can use the document ID (and database name, if you use multiple databases.)
+If different threads/queues need to communicate to each other about documents, they can use the document ID (and database name, if you use multiple databases).
 
-By default, Couchbase Lite is thread-based; if you are instead creating a CBLManager for use on a dispatch queue (which might run on different threads during its lifetime), you must set the Manager's `dispatchQueue` property, so that it can properly schedule future calls.
+By default, Couchbase Lite is thread-based;
+if you are instead creating a CBLManager for use on a dispatch queue (which might run on different threads during its lifetime), you must set the Manager's `dispatchQueue` property, so that it can properly schedule future calls.
 
-As a convenience, CBLManager's `backgroundTellDatabaseNamed:to:` method will run a block on an existing background thread (the same one the replicator runs on). You must be careful to avoid using any of the calling thread's objects in the block, since the block runs on a different thread.
+As a convenience, CBLManager's `backgroundTellDatabaseNamed:to:` method will run a block on an existing background thread (the same one the replicator runs on).
+You must be careful to avoid using any of the calling thread's objects in the block, since the block runs on a different thread.
 Instead, you should use the CBLDatabase object passed to the block and derive other objects like documents from it.
 
 [source]
@@ -709,7 +736,8 @@ If you find any thread safety related issues, please report a bug.
 === Database notifications
 
 You can register for notifications when documents are added/updated/deleted from a database.
-In practice, applications don't use these as much as live queries and document change notifications; still this facility can be useful if you want a lightweight way to tell whenever anything's changed in a database.
+In practice, applications don't use these as much as live queries and document change notifications;
+still this facility can be useful if you want a lightweight way to tell whenever anything's changed in a database.
 
 [source]
 ----
@@ -726,7 +754,8 @@ NSNotificationCenter.defaultCenter().addObserverForName(kCBLDatabaseChangeNotifi
 
 The example above shows how to access the revision linked to the document change that is being processed.
 The notifications may not be delivered immediately after the document changes.
-Notifications aren't delivered during a transaction; they're buffered up for delivery after the transaction completes.
+Notifications aren't delivered during a transaction;
+they're buffered up for delivery after the transaction completes.
 
 === Database housekeeping
 
@@ -749,10 +778,12 @@ self.database = nil
 
 == Document
 
-In a _document database_ such as Couchbase Lite, the primary entity stored in a database is called a *document* instead of a "row" or "record". This reflects the fact that a document can store more data, with more structure, than its equivalent in other databases.
+In a _document database_ such as Couchbase Lite, the primary entity stored in a database is called a *document* instead of a "row" or "record".
+This reflects the fact that a document can store more data, with more structure, than its equivalent in other databases.
 
 In Couchbase Lite, a document's *body* takes the form of a JSON object -- a collection of key/value pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
-Every document is identified by a **document ID**, which can be automatically generated (as a UUID) or determined by the application; the only constraints are that it must be unique within the database, and it can't be changed.
+Every document is identified by a **document ID**, which can be automatically generated (as a UUID) or determined by the application;
+the only constraints are that it must be unique within the database, and it can't be changed.
 
 In addition, a document can contain attachments, named binary blobs that are useful for storing large media files or other non-textual data.
 Couchbase Lite supports attachments of unlimited size, although the Sync Gateway currently imposes a 20MB limit for attachments synced to it.
@@ -841,7 +872,8 @@ If you call `getDocument` multiple times with the same ID, you get the same Docu
 This helps conserve memory, and it also makes it easy to compare Document object references (pointers) -- you can just use `==` to check whether two references refer to the same document.
 
 Loading a Document object doesn't immediately read its properties from the database.
-Those are loaded on demand, when you call an accessor method like `getProperties` (or access the Objective-C property ``properties``). The properties are represented using whatever platform type is appropriate for a JSON object.
+Those are loaded on demand, when you call an accessor method like `getProperties` (or access the Objective-C property ``properties``).
+The properties are represented using whatever platform type is appropriate for a JSON object.
 In Objective-C they're an ``NSDictionary``, in Java a ``Map<String,Object>``.
 
 Here's a simple example of getting a document's properties:
@@ -859,7 +891,8 @@ let owner = properties["owner"] as? String;
 
 [quote]
 *Note:* The `getProperties` method is actually just a convenient shortcut for getting the Document's `currentRevision` and then getting its `properties` -- since a document usually has multiple revisions, the properties really belong to a revision.
-Every existing document has a current revision (in fact that's how you can tell whether a document exists or not.) Almost all the time you'll be accessing a document's current revision, which is why the convenient direct properties accessor exists.
+Every existing document has a current revision (in fact that's how you can tell whether a document exists or not).
+Almost all the time you'll be accessing a document's current revision, which is why the convenient direct properties accessor exists.
 
 ==== Updating documents
 
@@ -882,8 +915,10 @@ if doc.putProperties(properties, error: &error) == nil {
 }
 ----
 
-`update` instead takes a callback function or block (the details vary by language). It loads the current revision's properties, then calls this function, passing it an `UnsavedRevision` object, whose properties are a mutable copy of the current ones.
-Your callback code can modify this object's properties as it sees fit; after it returns, the modified revision is saved and becomes the current one.
+`update` instead takes a callback function or block (the details vary by language).
+It loads the current revision's properties, then calls this function, passing it an `UnsavedRevision` object, whose properties are a mutable copy of the current ones.
+Your callback code can modify this object's properties as it sees fit;
+after it returns, the modified revision is saved and becomes the current one.
 
 [source]
 ----
@@ -902,7 +937,9 @@ if error != nil {
 
 Whichever way you save changes, you need to consider the possibility of **update conflicts**.
 Couchbase Lite uses Multiversion Concurrency Control (MVCC) to guard against simultaneous changes to a document.
-(Even if your app code is single-threaded, the replicator runs on a background thread and can be pulling revisions into the database at the same time you're making changes.) Here's the typical sequence of events that creates an update conflict:
+(Even if your app code is single-threaded, the replicator runs on a background thread and can be pulling revisions into the database at the same time you're making changes.)
+
+Here's the typical sequence of events that creates an update conflict:
 
 . Your code reads the document's current properties, and constructs a modified copy to save
 . Another thread (perhaps the replicator) updates the document, creating a new revision with different properties
@@ -912,8 +949,10 @@ Clearly, if your update were allowed to proceed, the change from step 2 would be
 Instead, the update will fail with a conflict error.
 Here's where the two API calls differ:
 
-. putProperties simply returns the error to you to handle. You'll need to detect this type of error, and probably handle it by re-reading the new properties and making the change to those, then trying again.
-. update is smarter: it handles the conflict error itself by re-reading the document, then calling your block again with the updated properties, and retrying the save. It will keep retrying until there is no conflict.
+. putProperties simply returns the error to you to handle.
+You'll need to detect this type of error, and probably handle it by re-reading the new properties and making the change to those, then trying again.
+. update is smarter: it handles the conflict error itself by re-reading the document, then calling your block again with the updated properties, and retrying the save.
+It will keep retrying until there is no conflict.
 
 
 [quote]
@@ -943,7 +982,8 @@ This ensures that the deletion will replicate to the server, and then to other e
 In other words, something else may have updated the document at the same time you were trying to delete it.
 It's up to your app whether it's appropriate to retry the delete operation.
 
-If you need to preserve one or more fields in a document that you want to `delete` (like a record of who deleted it or when it was deleted) you can avoid the delete method; just update the document and set the ``UnsavedRevision``'s `deletion` property to ``true``, or set JSON properties that include a `"_deleted"` property with a value of ``true``.
+If you need to preserve one or more fields in a document that you want to `delete` (like a record of who deleted it or when it was deleted) you can avoid the delete method;
+just update the document and set the ``UnsavedRevision``'s `deletion` property to ``true``, or set JSON properties that include a `"_deleted"` property with a value of ``true``.
 You can retain all of the fields, as shown in the following example, or you can remove specified fields so that the tombstone revision contains only the fields that you need.
 
 [source]
@@ -979,10 +1019,12 @@ doc.expirationDate = ttl
 
 Expiration timing is not highly precise.
 The times are stored with one-second granularity, and the timer that triggers expiration may be delayed slightly by the operating system or by other activity on the database thread.
-Expiration won't happen while the app is not running; this means it may be triggered soon after the app is activated or launched, to catch up with expiration times that have already passed.
+Expiration won't happen while the app is not running;
+this means it may be triggered soon after the app is activated or launched, to catch up with expiration times that have already passed.
 
 [quote]
-*Note:* As with the existing explicit *purge* mechanism, this applies only to the local database; it has nothing to do with replication.
+*Note:* As with the existing explicit *purge* mechanism, this applies only to the local database;
+it has nothing to do with replication.
 This expiration time is not propagated when the document is replicated.
 The purge of the document does not cause it to be deleted on any other database.
 If the document is later updated on a remote database that the local database pulls from, the new revision will be pulled and the document will reappear.
@@ -1028,7 +1070,8 @@ A typical scenario is:
 
 At this point, even though DocumentA is in a conflicted state, it needs to have a current revision.
 That is, when your app calls ``getProperties``, Couchbase Lite has to return something.
-It chooses one of the two conflicting revisions (2-877 and 2-54a) as the "winner". The choice is deterministic, which means that every device that is faced with the same conflict will pick the same winner, without having to communicate.
+It chooses one of the two conflicting revisions (2-877 and 2-54a) as the "winner".
+The choice is deterministic, which means that every device that is faced with the same conflict will pick the same winner, without having to communicate.
 In this case it just compares the revision IDs "2-54a" and "2-877" and picks the higher one, "2-877".
 
 To be precise, Couchbase Lite uses the following rules to handle conflicts:
@@ -1040,7 +1083,8 @@ To be precise, Couchbase Lite uses the following rules to handle conflicts:
 
 [quote]
 *Note:* Couchbase Lite does not automatically merge the contents of conflicts.
-Automated merging would run the risk of giving wrong or undesired results in many cases; only you know your document schemas well enough to decide how conflicts should be merged.
+Automated merging would run the risk of giving wrong or undesired results in many cases;
+only you know your document schemas well enough to decide how conflicts should be merged.
 
 In some cases this simple "one revision wins" rule is good enough.
 For example, in a grocery list if two people rename the same item, one of them will just see that their change got overwritten, and may do it over again.
@@ -1056,8 +1100,11 @@ For example, if two sales associates update the same customer record and it ends
 
 There are two alternative ways to resolve a conflict:
 
-* *Pick a winner.* Just decide which of the two changes should win, and delete the other one. The deleted revision will no longer be eligible as a conflict winner, so there won't be any more conflict.
-* *Merge.* Consider the contents of both conflicting revisions and construct a new revision that incorporates both. The details are, of course, application-dependent, and might even require user interaction. Then resolve the conflict by saving the merged revision, then deleting the old losing conflict revision.
+* *Pick a winner.* Just decide which of the two changes should win, and delete the other one.
+The deleted revision will no longer be eligible as a conflict winner, so there won't be any more conflict.
+* *Merge.* Consider the contents of both conflicting revisions and construct a new revision that incorporates both.
+The details are, of course, application-dependent, and might even require user interaction.
+Then resolve the conflict by saving the merged revision, then deleting the old losing conflict revision.
 
 The following example shows how to resolve a conflict:
 
@@ -1130,7 +1177,8 @@ Use an all-documents query with the `onlyConflicts` mode.
 
 === Purging documents
 
-Purging a document is different from deleting it; it's more like forgetting it.
+Purging a document is different from deleting it;
+it's more like forgetting it.
 The `purge` method removes all trace of a document (and all its revisions and their attachments) from the local database.
 It has no effect on replication or on remote databases, though.
 
@@ -1212,7 +1260,8 @@ The *maxRevTreeDepth* value defaults to 20, which means that the metadata and JS
 portrait />
 
 If there are conflicting revisions, the document may end up with *disconnected branches* after the pruning process.
-In the animation below, the document has a conflicting branch (revisions `3'` - ``7'``). When the current revision (or longest branch) reaches the 23rd update, the conflicting branch is cut off.
+In the animation below, the document has a conflicting branch (revisions `3'` - ``7'``).
+When the current revision (or longest branch) reaches the 23rd update, the conflicting branch is cut off.
 The revision tree is not in a corrupted state and the logic that chooses the winning revision still applies.
 But it may make it impossible to do certain merges to resolve conflicts and occupy disk space that could have been free-ed if the conflict was resolved early on.
 
@@ -1237,7 +1286,8 @@ Hence, it is important to resolve conflicts in your application in order to re-c
 
 Attachments store data associated with a document, but are not part of the document's JSON object.
 Their primary purpose is to make it efficient to store large binary data in a document.
-Binary data stored in JSON has to be base64-encoded into a string, which inflates its size by 33%. Also, binary data blobs are often large (think of camera images or audio files), and big JSON documents are slow to parse.
+Binary data stored in JSON has to be base64-encoded into a string, which inflates its size by 33%.
+Also, binary data blobs are often large (think of camera images or audio files), and big JSON documents are slow to parse.
 
 Attachments are uninterpreted data (blobs) stored separately from the JSON body.
 A document can have any number of attachments, each with a different name.
@@ -1263,7 +1313,8 @@ The `Revision` class has a number of methods for accessing attachments:
 * `attachments` returns all the attachments as `Attachment` objects.
 
 Once you have an `Attachment` object, you can access its name, MIME type and content length.
-The accessors for the content vary by platform: on iOS it's available as an `NSData` object or as an `NSURL` pointing to a read-only file; in Java you read the data from an ``InputStream``.
+The accessors for the content vary by platform: on iOS it's available as an `NSData` object or as an `NSURL` pointing to a read-only file;
+in Java you read the data from an ``InputStream``.
 
 [source]
 ----
@@ -1282,7 +1333,8 @@ if att != nil {
 
 To create an attachment, first create a mutable `UnsavedRevision` object by calling `createRevision` on the document's ``currentRevision``.
 Then call `setAttachment` on the new revision to add an attachment.
-(You can of course also change the JSON by modifying the revision's properties.) Finally you call `save` to save the new revision.
+(You can of course also change the JSON by modifying the revision's properties.)
+Finally you call `save` to save the new revision.
 
 Updating an attachment's content (or type) works exactly the same way: the `setAttachment` method will replace any existing attachment with the same name.
 
@@ -1325,12 +1377,14 @@ As a consequence of the naming scheme, attachments are de-duplicated: if multipl
 Updating a document's attachment does *not* immediately remove the old version of the attachment.
 And deleting a document does not immediately delete its attachments.
 An attachment file has to remain on disk as long as there are any document revisions that reference it, And a revision persists until the next database compaction after it's been replaced or deleted.
-(Orphaned attachment files are deleted from disk as part of the compaction process.) So if you're concerned about the space taken up by attachments, you should compact the database frequently, or at least after making changes to large attachments.
+(Orphaned attachment files are deleted from disk as part of the compaction process.)
+So if you're concerned about the space taken up by attachments, you should compact the database frequently, or at least after making changes to large attachments.
 
 == View
 
 A View is a persistent index of documents in a database, which you then query to find data.
-Couchbase Lite doesn't have a query language like SQL; instead, it uses a technique called map/reduce to generate indexes (views) according to arbitrary app-defined criteria.
+Couchbase Lite doesn't have a query language like SQL;
+instead, it uses a technique called map/reduce to generate indexes (views) according to arbitrary app-defined criteria.
 Queries can then look up a range of rows from a view, and either use the rows' keys and values directly or get the documents they came from.
 
 The main component of a view (other than its name) is its **map function**.
@@ -1343,10 +1397,12 @@ The resulting index is persistent, and updated incrementally as documents change
 
 A view may also have a **reduce function**.
 If present, it can be used during queries to combine multiple rows into one.
-It can be used to compute aggregate values like totals or averages, or to group rows by common criteria (like collecting all the artists in a record collection.) We'll explain reduce functions later on.
+It can be used to compute aggregate values like totals or averages, or to group rows by common criteria (like collecting all the artists in a record collection.)
+We'll explain reduce functions later on.
 
 [quote]
-Remember: *a view is not a query, it`'s an index.* Views are persistent, and need to be updated (incrementally) whenever documents change, so having large numbers of them can be expensive.
+Remember: *a view is not a query, it`'s an index.*
+Views are persistent, and need to be updated (incrementally) whenever documents change, so having large numbers of them can be expensive.
 Instead, it`'s better to have a smaller number of views that can be queried in interesting ways.
 
 === Creating and initializing views
@@ -1375,7 +1431,7 @@ The `version` parameter to `setMapBlock` takes a bit of explanation.
 During development, and as you update the app, you may change the behavior of a map function.
 This invalidates any existing index generated by that function, so the next time the app runs, the view should rebuild the index from scratch using the new function.
 Unfortunately the view indexer can't tell that the map function has changed because it can't see its source code! Instead, you have to provide a version string that the indexer can compare, and you must change that string whenever you change the function.
-The easiest thing to remember is just to set the version to "1" initially, and then increment it every time you edit any source code in the map function (or any function of yours that it calls.)
+The easiest thing to remember is just to set the version to "1" initially, and then increment it every time you edit any source code in the map function (or any function of yours that it calls).
 
 === Querying views
 
@@ -1400,7 +1456,9 @@ function(doc) {
 }
 ----
 
-This function works with a database that contains, among other things, documents representing people, which are tagged with a `type` property whose value is "``person``". (This use of a `type` property is a common idiom.) Every person document contains `name` and `phone` properties.
+This function works with a database that contains, among other things, documents representing people, which are tagged with a `type` property whose value is "``person``".
+(This use of a `type` property is a common idiom.)
+Every person document contains `name` and `phone` properties.
 The map function simply checks whether the document represents a person, and if it does, it calls `emit` to add the name and phone number to the index.
 
 The resulting index maps names to phone numbers.
@@ -1412,21 +1470,30 @@ You can also query it to get ranges of names, in alphabetical order, which is ve
 The map function is called by the indexer to help generate an index, and it has to meet certain requirements, otherwise the index won't be consistent.
 It's important to understand some rules so you can create a proper map function, otherwise your queries can misbehave in strange ways.
 
-* *It must be a "https://en.wikipedia.org/wiki/Pure_function[pure]" function:* That means any time it's called with the same input, it must produce exactly the same output. In other words, it can't use any external state, just its input JSON.
+* *It must be a "https://en.wikipedia.org/wiki/Pure_function[pure]" function:* That means any time it's called with the same input, it must produce exactly the same output.
+In other words, it can't use any external state, just its input JSON.
 * *It can't have side effects:* It shouldn't change any external state, because it's unpredictable when it's called or how often it's called or in what order documents are passed to it.
 * *It must be thread-safe:* It may be called on a background thread belonging to the indexer, or even in parallel on several threads at once.
 
 In particular, avoid these common mistakes:
 
-* Don't do anything that depends on the current date and time -- that breaks the first rule, since your function's output can change depending on the date/time it's called. Common mistakes include emitting the current time as a timestamp, emitting a person's age, or emitting only documents that have been modified in the past week.
-* Don't try to "parameterize" the map function by referring to an external variable whose value you change when querying. It won't work. People sometimes try this because they want to find various subsets of the data, like all the items of a particular color. Instead, emit all the values of that property, and use a key range in the query to pick out the rows with the specific value you want.
-* Don't make any assumptions about when the map function is called. That's an implementation detail of the indexer. (For example, it's not called every time a document changes.)
-* Avoid having the map function call out into complex external code. That code might change later on to be stateful or have side effects, breaking your map function.
+* Don't do anything that depends on the current date and time -- that breaks the first rule, since your function's output can change depending on the date/time it's called.
+Common mistakes include emitting the current time as a timestamp, emitting a person's age, or emitting only documents that have been modified in the past week.
+* Don't try to "parameterize" the map function by referring to an external variable whose value you change when querying.
+It won't work.
+People sometimes try this because they want to find various subsets of the data, like all the items of a particular color.
+Instead, emit all the values of that property, and use a key range in the query to pick out the rows with the specific value you want.
+* Don't make any assumptions about when the map function is called.
+That's an implementation detail of the indexer.
+(For example, it's not called every time a document changes.)
+* Avoid having the map function call out into complex external code.
+That code might change later on to be stateful or have side effects, breaking your map function.
 
 
 ==== Keys and values
 
-Both the key and value passed to `emit` can be any JSON-compatible objects: not just strings, but also numbers, booleans, arrays, dictionaries/maps, and the special JSON `null` object (which is distinct from a null/nil pointer.) In addition, the value emitted, but _not_ the key, can be a null/nil pointer.
+Both the key and value passed to `emit` can be any JSON-compatible objects: not just strings, but also numbers, booleans, arrays, dictionaries/maps, and the special JSON `null` object (which is distinct from a null/nil pointer).
+In addition, the value emitted, but _not_ the key, can be a null/nil pointer.
 (It's pretty common to not need a value in a view, in which case it's more efficient to not emit one.)
 
 Keys are commonly strings, but it turns out that arrays are a very useful type of key as well.
@@ -1435,15 +1502,19 @@ That means that you can use array keys to establish multiple levels of sorting.
 If the map function emits keys of the form __[lastname, firstname]__, then the index will be sorted by last name, and entries with the same last name will be sorted by first name, just as if you'd used _ORDER BY lastname, firstname_ in SQL.
 
 Here are the exact rules for sorting (collation) of keys.
-The most significant factor is the key's object type; keys of one type always sort before or after keys of a different type.
+The most significant factor is the key's object type;
+keys of one type always sort before or after keys of a different type.
 This list gives the types in order, and states how objects of that type are compared:
 
 * null
 * false, true (in that order)
 * Numbers, in numeric order of course
-* Strings, case-insensitive. The exact ordering is specified by the http://www.unicode.org/unicode/reports/tr10/[Unicode Collation Algorithm]. This is *not* the same as ASCII ordering, so the results might surprise you -- for example, all symbols, including "~", sort before alphanumeric characters.
+* Strings, case-insensitive.
+The exact ordering is specified by the http://www.unicode.org/unicode/reports/tr10/[Unicode Collation Algorithm].
+This is *not* the same as ASCII ordering, so the results might surprise you -- for example, all symbols, including "~", sort before alphanumeric characters.
 * Arrays, compared item-by-item as described above.
-* Maps/dictionaries, also compared item-by-item. Unfortunately the order of items is ambiguous (since JSON doesn't specify any ordering of keys, and most implementations use hash tables which randomize the order) so using these as keys isn't recommended.
+* Maps/dictionaries, also compared item-by-item.
+Unfortunately the order of items is ambiguous (since JSON doesn't specify any ordering of keys, and most implementations use hash tables which randomize the order) so using these as keys isn't recommended.
 
 
 ==== The source document, and redirection
@@ -1451,8 +1522,7 @@ This list gives the types in order, and states how objects of that type are comp
 In addition to its key and value, every index row also remembers the ID of the document that emitted it.
 This can be accessed at query time via the `QueryRow.documentID` property, or more commonly via the shortcut `QueryRow.document` which uses the ID to load the Document object.
 
-It can sometimes be useful to redirect this reference, i.e.
-to make the index row point to a different document instead.
+It can sometimes be useful to redirect this reference, i.e. to make the index row point to a different document instead.
 You do this by emitting a value that's a dictionary with a key `\_id` whose value is the document ID you want the row to reference.
 The `QueryRow.documentID` and accessors will then use this document ID instead.
 
@@ -1483,12 +1553,13 @@ They're optional, and less commonly used.
 A reduce function post-processes the indexed key/value pairs generated by the map function, by aggregating the values together.
 Very commonly it counts them, or (if the values are numeric) totals or averages them.
 The reduce function boils down data the way a chef reduces a sauce.
-Or if you're a SQL user, reduce functions are like SQL aggregation operators like `COUNT` or `AVERAGE` (only you get to define your own.)
+Or if you're a SQL user, reduce functions are like SQL aggregation operators like `COUNT` or `AVERAGE` (only you get to define your own).
 
 In general, most views don't need reduce functions, so don't feel like you're missing something if you haven't written one.
 But if you find yourself writing a query and counting the returned rows or adding up their values, you could do that more efficiently with a reduce function.
 
-*A reduce function takes an ordered list of key/value pairs, aggregates them together into a single object, and returns that object.* Here's an example, building on the phone-numbers example up above:
+*A reduce function takes an ordered list of key/value pairs, aggregates them together into a single object, and returns that object.*
+Here's an example, building on the phone-numbers example up above:
 
 [source]
 ----
@@ -1529,7 +1600,8 @@ This totaling is common enough that `CBLView` provide a utility to do it for you
 ==== Rereducing
 
 The previous section ignored the boolean `rereduce` parameter that's passed to the reduce function.
-What's it for? Unfortunately, from your perspective as a reduce-function-writer it's just there to make your job a bit harder.
+What's it for?
+Unfortunately, from your perspective as a reduce-function-writer it's just there to make your job a bit harder.
 The reason it exists is because it's part of a major optimization that makes reducing more efficient for the query engine.
 
 Think of a view with a hundred million rows in its index.
@@ -1541,7 +1613,9 @@ It'll read some number of rows into memory, send them to your reduce function, r
 This scales very well, but now there's the problem of what to do with the multiple reduced values returned by your function.
 Reducing is supposed to produce one end result, not several! The answer is to reduce the list of reduced values -- to ``re-reduce``.
 
-The rereduce parameter is there to tell your reduce function that it's being called in this special ``re-reduce mode``. *When re-reducing there are no keys, and the values are the ones already returned by previous runs of the same reduce function.* The function's job is, once again, to combine the values into a single value and return it.
+The rereduce parameter is there to tell your reduce function that it's being called in this special ``re-reduce mode``.
+*When re-reducing there are no keys, and the values are the ones already returned by previous runs of the same reduce function.*
+The function's job is, once again, to combine the values into a single value and return it.
 
 Sometimes you can handle re-reduce mode exactly like reduce mode.
 The second reduce block shown above (the one that totals up the values) can do this.
@@ -1586,34 +1660,45 @@ It must not have side effects.
 And it must be thread-safe.
 In addition:
 
-* *Its output should be no larger than its input.* Usually this comes naturally. But it is legal to return an array or dictionary, and sometimes people have tried to make reduce functions that transform the input values without actually making them any smaller. The problem with this is that it scales badly, and as the size of the index grows, the indexer will eventually run out of memory and fail.
+* *Its output should be no larger than its input.*
+Usually this comes naturally.
+But it is legal to return an array or dictionary, and sometimes people have tried to make reduce functions that transform the input values without actually making them any smaller.
+The problem with this is that it scales badly, and as the size of the index grows, the indexer will eventually run out of memory and fail.
 
 
 === Development considerations
 
 ==== Map function design
 
-*When to emit a whole document as the value?* In some places you'll see code that does something like `emit(key, doc)` , i.e.
-emitting the document's entire body as the value.
-(Some people seem to do this by reflex whenever they don't have a specific value in mind.) It's not necessarily bad, but most of the time you shouldn't do it.
-The benefit is that, by having the document's properties right at hand when you process a query row, it can make querying a little bit faster (saving a trip to the database to load the document.) But the downside is that it makes the view index a lot larger, which can make querying slower.
+*When to emit a whole document as the value?*
+In some places you'll see code that does something like `emit(key, doc)`, i.e. emitting the document's entire body as the value.
+(Some people seem to do this by reflex whenever they don't have a specific value in mind.)
+It's not necessarily bad, but most of the time you shouldn't do it.
+The benefit is that, by having the document's properties right at hand when you process a query row, it can make querying a little bit faster (saving a trip to the database to load the document).
+But the downside is that it makes the view index a lot larger, which can make querying slower.
 So whether it's a net gain or loss depends on the specific use case.
 We recommend that you just set the value to `null` if you don't need to emit any specific value.
 
-*Is it OK is the same key is emitted more than once?* The index allows duplicate keys, whether emitted by the same document or different documents.
+*Is it OK is the same key is emitted more than once?*
+The index allows duplicate keys, whether emitted by the same document or different documents.
 A query will return all of those key/value pairs if they match.
-They'll be sorted by the ID of the document that was responsible for emitting them; if a doc emits the same key multiple times, the order is undefined.
+They'll be sorted by the ID of the document that was responsible for emitting them;
+if a doc emits the same key multiple times, the order is undefined.
 
-*When is the map function called?* View indexes are updated on demand when queried.
+*When is the map function called?*
+View indexes are updated on demand when queried.
 So after a document changes, the next query made to a view will cause that view's map function to be called on the doc's new contents, updating the view index.
 (But remember that you shouldn't write any code that makes assumptions about when map functions are called.)
 
-*If a document has conflicts, which conflicting revision gets indexed?* The document's ``currentRevision``, sometimes called the "winning" revision, is the one that you see in the API if you don't request a revision by ID.
+*If a document has conflicts, which conflicting revision gets indexed?*
+The document's ``currentRevision``, sometimes called the "winning" revision, is the one that you see in the API if you don't request a revision by ID.
 
 ==== Performance
 
-*How to improve your view indexing:* The main thing you have control over is the performance of your map function, both how long it takes to run and how many objects it allocates.
-Try profiling your app while the view is indexing and see if a lot of time is spent in the map function; if so, optimize it.
+*How to improve your view indexing:*
+The main thing you have control over is the performance of your map function, both how long it takes to run and how many objects it allocates.
+Try profiling your app while the view is indexing and see if a lot of time is spent in the map function;
+if so, optimize it.
 See if you can short-circuit the map function and give up early if the document isn't a type that will produce any rows.
 Also see if you could emit less data.
 (If you're emitting the entire document as a value, don't.)
@@ -1626,7 +1711,8 @@ To perform a query you create one of these, customize its properties (such as th
 The result is a ``QueryEnumerator``, which provides a list of `QueryRow` objects, each one describing one row from the view's index.
 
 There's also a special type of query called an **all-docs query**.
-This type of query isn't associated with any view; or rather, you can think of it as querying an imaginary view that contains one row for every document in the database.
+This type of query isn't associated with any view;
+or rather, you can think of it as querying an imaginary view that contains one row for every document in the database.
 You use an all-docs query to find all the documents in the database, or the documents with keys in a specific range, or even the documents with a specific set of keys.
 It can also be used to find documents with conflicts.
 
@@ -1641,29 +1727,43 @@ In its default state a `Query` object will return every row of the index, in inc
 But there are several properties you can configure to change this, before you run the query.
 Here are the most basic and common ones:
 
-* ``startKey``: the key to start at. The default value, ``null``, means to start from the beginning.
-* ``endKey``: the last key to return. The default value, ``null``, means to continue to the end.
-* ``descending``: If set to ``true``, the keys will be returned in reverse order. (This also reverses the meanings of the `startKey` and `endKey` properties, since the query will now start at the highest keys and end at lower ones!)
+* ``startKey``: the key to start at.
+The default value, ``null``, means to start from the beginning.
+* ``endKey``: the last key to return.
+The default value, ``null``, means to continue to the end.
+* ``descending``: If set to ``true``, the keys will be returned in reverse order.
+(This also reverses the meanings of the `startKey` and `endKey` properties, since the query will now start at the highest keys and end at lower ones!)
 * ``limit``: If nonzero, this is the maximum number of rows that will be returned.
-* ``skip``: If nonzero, this many rows will be skipped (starting from the `startKey` if any.)
+* ``skip``: If nonzero, this many rows will be skipped (starting from the `startKey` if any).
 
 Some more advanced properties that aren't used as often:
 
-* ``keys``: If provided, the query will fetch only the rows with the given keys. (and `startKey` and `endKey` will be ignored.)
-* ``startKeyDocID``: If multiple index rows match the startKey, this property specifies that the result should start from the one(s) emitted by the document with this ID, if any. (Useful if the view contains multiple identical keys, making .startKey ambiguous.)
-* ``endKeyDocID``: If multiple index rows match the endKey, this property specifies that the result should end with from the one(s) emitted by the document with this ID, if any. (Useful if the view contains multiple identical keys, making .startKey ambiguous.)
-* ``indexUpdateMode``: Changes the behavior of index updating. By default the index will be updated if necessary before the query runs. You can choose to skip this (and get possibly-stale results), with the option of also starting an asynchronous background update of the index.
+* ``keys``: If provided, the query will fetch only the rows with the given keys (and `startKey` and `endKey` will be ignored).
+* ``startKeyDocID``: If multiple index rows match the startKey, this property specifies that the result should start from the one(s) emitted by the document with this ID, if any.
+(Useful if the view contains multiple identical keys, making .startKey ambiguous.)
+* ``endKeyDocID``: If multiple index rows match the endKey, this property specifies that the result should end with from the one(s) emitted by the document with this ID, if any.
+(Useful if the view contains multiple identical keys, making .startKey ambiguous.)
+* ``indexUpdateMode``: Changes the behavior of index updating.
+By default the index will be updated if necessary before the query runs.
+You can choose to skip this (and get possibly-stale results), with the option of also starting an asynchronous background update of the index.
 * ``prefixMatchLevel``: If nonzero, enables prefix matching of string or array keys.
-** A value of 1 treats the endKey itself as a prefix: if it's a string, keys in the index that come after the endKey, but begin with the same prefix, will be matched. (For example, if the endKey is `"foo"` then the key `"foolish"` in the index will be matched, but not ``"fong"``.) Or if the endKey is an array, any array beginning with those elements will be matched. (For example, if the endKey is ``[1]``, then `[1, "x"]` will match, but not ``[2]``.) If the key is any other type, there is no effect.
-** A value of 2 assumes the endKey is an array and treats its final item as a prefix, using the rules above. (For example, an endKey of `[1, "x"]` will match `[1, "xtc"]` but not ``[1, "y"]``.)
+** A value of 1 treats the endKey itself as a prefix: if it's a string, keys in the index that come after the endKey, but begin with the same prefix, will be matched.
+(For example, if the endKey is `"foo"` then the key `"foolish"` in the index will be matched, but not ``"fong"``.)
+Or if the endKey is an array, any array beginning with those elements will be matched.
+(For example, if the endKey is ``[1]``, then `[1, "x"]` will match, but not ``[2]``.)
+If the key is any other type, there is no effect.
+** A value of 2 assumes the endKey is an array and treats its final item as a prefix, using the rules above.
+(For example, an endKey of `[1, "x"]` will match `[1, "xtc"]` but not ``[1, "y"]``.)
 ** A value of 3 assumes the key is an array of arrays, etc.
 +
 Note that if the `$$.$$descending` property is also set, the search order is reversed and the above discussion applies to the ``startKey``, *not* the ``endKey``.
 
 There are other advanced properties that only apply to reducing and grouping:
 
-* ``mapOnly``: If set to true, prevents the reduce function from being run, so you get all of the index rows instead of an aggregate. Has no effect if the view has no reduce function.
-* ``groupLevel``: If greater than zero, enables grouping of rows. The value specifies the number of items in the value array that will be grouped.
+* ``mapOnly``: If set to true, prevents the reduce function from being run, so you get all of the index rows instead of an aggregate.
+Has no effect if the view has no reduce function.
+* ``groupLevel``: If greater than zero, enables grouping of rows.
+The value specifies the number of items in the value array that will be grouped.
 
 
 [source]
@@ -1677,18 +1777,21 @@ query.limit = 20
 
 === All-documents queries
 
-An all-docs query isn't associated with a view; or rather, you can think of it as querying an imaginary view that contains one row for every document in the database, whose key is the document ID.
+An all-docs query isn't associated with a view;
+or rather, you can think of it as querying an imaginary view that contains one row for every document in the database, whose key is the document ID.
 It supports all the standard view options, so you can query ranges of document IDs, reverse the order, and even query a specific set of documents using the `keys` property.
 
 All-docs queries also have a special property called `allDocsMode` that can customize their behavior.
 Its values are:
 
-* ``allDocs``: The default mode. Returns all non-deleted documents.
+* ``allDocs``: The default mode.
+Returns all non-deleted documents.
 * ``includeDeleted``: In this mode, deleted documents are included as well.
 * ``showConflicts``: In this mode, each ``QueryRow``'s `conflictingRevisions` property can be used to find whether it's in conflict and what the IDs of the conflicting revisions are.
 * ``onlyConflicts``: Like ``showConflicts``, but _only_ conflicted documents are returned.
 
-(__These are not flags.__ You can only choose one.)
+(__These are not flags.__
+You can only choose one.)
 
 [source]
 ----
@@ -1711,7 +1814,8 @@ These are returned as a `QueryEnumerator` object, which mainly serves as an enum
 
 Each `QueryRow` has two main properties, its `key` and its ``value``.
 These are what were emitted to the index.
-(Or in the case of an all-docs query, the key is the same as the document ID.) It also has a `documentID` property that identifies the document that the key and value were emitted from, although usually you'd access the `document` property instead, which gives you the `Document` object directly.
+(Or in the case of an all-docs query, the key is the same as the document ID.)
+It also has a `documentID` property that identifies the document that the key and value were emitted from, although usually you'd access the `document` property instead, which gives you the `Document` object directly.
 
 [source]
 ----
@@ -1740,7 +1844,7 @@ If you keep the QueryEnumerator object and check its `stale` property, a `false`
 Second, even if the enumerator says it's stale and you re-run the query, the new results might not be any different.
 The `stale` method is conservative and might report false positives, and even if the index did change, your query might not include any of the changed rows.
 You can quickly check if the new QueryEnumerator you got is equivalent to the old one by comparing the objects for equality (e.g.
-using `equals` in Java, or `-isEqual:` in Objective-C.)
+using `equals` in Java, or `-isEqual:` in Objective-C).
 
 [source]
 ----
@@ -1782,9 +1886,11 @@ override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject
 
 === Querying key ranges
 
-There are some subtleties to working with key ranges (``startKey`` and ``endKey``.) The first is that if you reverse the order of keys, by setting the `reverse` property, then the `startKey` needs to be _greater than_ the ``endKey``.
+There are some subtleties to working with key ranges (``startKey`` and ``endKey``).
+The first is that if you reverse the order of keys, by setting the `reverse` property, then the `startKey` needs to be _greater than_ the ``endKey``.
 That's the reason they're named _start_ and __end__, rather than _min_ and __max__.
-In the following example, note that the key range starts at 100 and ends at 90; if we'd done it the other way around, we'd have gotten an empty result set.
+In the following example, note that the key range starts at 100 and ends at 90;
+if we'd done it the other way around, we'd have gotten an empty result set.
 
 [source]
 ----
@@ -1800,7 +1906,9 @@ Second is the handling of compound (array) keys.
 When a view's keys are arrays, it's very common to want to query all the rows that have a specific value (or value range) for the first element.
 The start key is just a one-element array with that value in it, but it's not obvious what the _end_ key should be.
 What works is an array that's like the starting key but with a second object appended that's greater than any possible value.
-For example, if the start key is (in JSON) `["red"]` then the end key could be `["red", "ZZZZ"]` ... because none of the possible second items could be greater than "ZZZZ", right? Unfortunately this has obvious problems.
+For example, if the start key is (in JSON) `["red"]` then the end key could be `["red", "ZZZZ"]` ...
+because none of the possible second items could be greater than "ZZZZ", right?
+Unfortunately this has obvious problems.
 The correct stop value to use turns out to be an empty object/dictionary, ``{}``, making the end key ``["red", {}]``.
 This works because the sort order in views puts dictionaries last.
 
@@ -1856,13 +1964,16 @@ The `groupLevel` property of a query allows you to collapse together (aggregate)
 And you can compute aggregated statistics of the grouped-together rows by using a reduce function.
 One very powerful use of grouping is to take a view whose keys are arrays representing a hierarchy -- like `[genre, artist, album, track]` for a music library -- and query a single level of the hierarchy for use in a navigation UI.
 
-In general, `groupLevel` requires that the keys be arrays; rows with other types of keys will be ignored.
+In general, `groupLevel` requires that the keys be arrays;
+rows with other types of keys will be ignored.
 When the `groupLevel` is __n__, the query combines rows that have equal values in the first n items of the key into a single row whose key is the n-item common prefix.
 
 `groupLevel=1` is slightly different in that it supports non-array keys: it compares them for equality.
 In other words, if a view's keys are strings or numbers, a query with `groupLevel=1` will return a row for each _unique_ key in the index.
 
-We've talked about the keys of grouped query rows, but what are the values? The `value` property of each row will be the result of running the view's reduce function over all the rows that were aggregated; or if the view has no reduce function, there's no value.
+We've talked about the keys of grouped query rows, but what are the values?
+The `value` property of each row will be the result of running the view's reduce function over all the rows that were aggregated;
+or if the view has no reduce function, there's no value.
 (See the View documentation for information on reduce functions.)
 
 Here's an interesting example.
@@ -1887,7 +1998,8 @@ while let row = result?.nextRow() {
 
 A Replication object represents a replication (or "sync") task that transfers changes between a local database and a remote one.
 To replicate, you first get a new Replication object from a Database, then configure its settings, then tell it to start.
-The actual replication runs asynchronously on a background thread; you can monitor its progress by observing notifications posted by the Replication object when its state changes, as well as notifications posted by the database when documents are changed by the replicator.
+The actual replication runs asynchronously on a background thread;
+you can monitor its progress by observing notifications posted by the Replication object when its state changes, as well as notifications posted by the database when documents are changed by the replicator.
 
 A typical application will create a pair of replications (push and pull) at launch time, both pointing to the URL of a server run by the application vendor.
 These stay active continuously during the lifespan of the app, uploading and downloading documents as changes occur and when the network is available.
@@ -1902,16 +2014,22 @@ If it does that, replication will Just Work without much extra effort.
 
 === Types of replications
 
-* *Push vs Pull:* A push replication uploads changes from the local database to the remote one; a pull downloads changes from the remote database to the local one.
-* *One-shot vs Continuous:* By default a replication runs long enough to transfer all the changes from the source to the target database, then quits. A continuous replication, on the other hand, will stay active indefinitely, watching for further changes to occur and transferring them.
-* *Filtered:* Replications can have filters that restrict what documents they'll transfer. This can be useful to limit the amount of a large remote database that's downloaded to a device, or to keep some local documents private. A special type of filter used with the Couchbase Sync Gateway is the set of *channels* that a pull replication will download from. It's also possible to limit a replication to an explicit set of document IDs.
+* *Push vs Pull:* A push replication uploads changes from the local database to the remote one;
+a pull downloads changes from the remote database to the local one.
+* *One-shot vs Continuous:* By default a replication runs long enough to transfer all the changes from the source to the target database, then quits.
+A continuous replication, on the other hand, will stay active indefinitely, watching for further changes to occur and transferring them.
+* *Filtered:* Replications can have filters that restrict what documents they'll transfer.
+This can be useful to limit the amount of a large remote database that's downloaded to a device, or to keep some local documents private.
+A special type of filter used with the Couchbase Sync Gateway is the set of *channels* that a pull replication will download from.
+It's also possible to limit a replication to an explicit set of document IDs.
 
 
 === Creating replications
 
 You create a Replication object by calling the Database methods `createPullReplication` or ``createPushReplication``.
 Both of these take a single parameter, the URL of the remote database to sync with.
-As the names imply, each method creates a replication that transfers changes in one direction only; if you want bidirectional sync, as most apps do, you should create one of each.
+As the names imply, each method creates a replication that transfers changes in one direction only;
+if you want bidirectional sync, as most apps do, you should create one of each.
 
 Next you can customize the replication settings.
 The most common change is to set the `continuous` property to ``true``.
@@ -1997,7 +2115,8 @@ push.filterParams = ["name": "Waldo"]
 
 Channels are used to filter documents being pulled from the Sync Gateway.
 Every document stored in a Sync Gateway database is tagged with a set of named channels by the Gateway's app-defined sync function.
-Every pull replication from the Gateway is already implicitly filtered by the set of channels that the user's account is allowed to access; you can filter it further by creating an array of channel names and setting it as the value of the channels property of a pull Replication.
+Every pull replication from the Gateway is already implicitly filtered by the set of channels that the user's account is allowed to access;
+you can filter it further by creating an array of channel names and setting it as the value of the channels property of a pull Replication.
 Only documents tagged with those channels will be downloaded.
 
 [source]
@@ -2020,7 +2139,8 @@ There is an incompatibility in the way the `filter` parameter is handled in the 
 
 ==== Filtering by document IDs
 
-In one-shot *pull* replications with Sync Gateway, it's possible to specify a list of document IDs (this feature is not available for replications in continuous mode, see https://github.com/couchbase/sync_gateway/issues/1703[#1703]). The code below pulls the documents with ID "123" and "xyz" if they exist and the user has access to them.
+In one-shot *pull* replications with Sync Gateway, it's possible to specify a list of document IDs (this feature is not available for replications in continuous mode, see https://github.com/couchbase/sync_gateway/issues/1703[#1703]).
+The code below pulls the documents with ID "123" and "xyz" if they exist and the user has access to them.
 
 [source]
 ----
@@ -2039,13 +2159,20 @@ The details of this are platform-specific.
 
 A replication has a number of properties that you can access, especially from a notification callback, to check on its status and progress:
 
-* ``status``: An enumeration that gives the current state of the replication. The values are Stopped, Offline, Idle and Active.
-** Stopped: A one-shot replication goes into this state after all documents have been transferred or a fatal error occurs. (Continuous replications never stop.)
-** **Offline**: The remote server is not reachable. Most often this happens because there's no network connection, but it can also occur if the server's inside an intranet or home network but the device isn't. (The replication will monitor the network state and will try to connect when the server becomes reachable.)
+* ``status``: An enumeration that gives the current state of the replication.
+The values are Stopped, Offline, Idle and Active.
+** Stopped: A one-shot replication goes into this state after all documents have been transferred or a fatal error occurs.
+(Continuous replications never stop.)
+** **Offline**: The remote server is not reachable.
+Most often this happens because there's no network connection, but it can also occur if the server's inside an intranet or home network but the device isn't.
+(The replication will monitor the network state and will try to connect when the server becomes reachable.)
 ** **Idle**: Indicates that a continuous replication has "caught up" and transferred all documents, but is monitoring the source database for future changes.
 ** **Active**: The replication is actively working, either transferring documents or determining what needs to be transferred.
-* ``lastError``: The last error encountered by the replicator. (Not all errors are fatal, and a continuous replication will keep running even after a fatal error, by waiting and retrying later.)
-* ``completedChangesCount``, ``changesCount``: The number of documents that have been transferred so far, and the estimated total number to transfer in order to catch up. The ratio of these can be used to display a progress meter. Just be aware that changesCount may be zero if the number of documents to transfer isn't known yet, and in a continuous replication both values will reset to zero when the status goes from Idle back to Active.
+* ``lastError``: The last error encountered by the replicator.
+(Not all errors are fatal, and a continuous replication will keep running even after a fatal error, by waiting and retrying later.)
+* ``completedChangesCount``, ``changesCount``: The number of documents that have been transferred so far, and the estimated total number to transfer in order to catch up.
+The ratio of these can be used to display a progress meter.
+Just be aware that changesCount may be zero if the number of documents to transfer isn't known yet, and in a continuous replication both values will reset to zero when the status goes from Idle back to Active.
 
 
 [source]
@@ -2121,10 +2248,13 @@ You subclass the abstract class CBLModel and add your own properties, plus a ver
 === What model objects give you
 
 * *Native property access:* Access document properties as native properties.
-* *Extended type support:* Transparent support for common types that don't have a JSON representation, like NSDate and NSData. You can even represent references to other model objects.
+* *Extended type support:* Transparent support for common types that don't have a JSON representation, like NSDate and NSData.
+You can even represent references to other model objects.
 * *Mutable state:* Properties can be ``readwrite``, so they can be changed in memory, then later saved back to the document.
-* *Key-Value Observing:* You can observe the value of a property and get notified when it changes. On Mac OS X, you can also use bindings to connect properties to UI controls.
-* *Dynamic typing:* You can use the `CBLModelFactory` to associate each model class with a document type. You can create a hierarchy of model classes and have the appropriate subclass instantiated at runtime according to the document's type.
+* *Key-Value Observing:* You can observe the value of a property and get notified when it changes.
+On Mac OS X, you can also use bindings to connect properties to UI controls.
+* *Dynamic typing:* You can use the `CBLModelFactory` to associate each model class with a document type.
+You can create a hierarchy of model classes and have the appropriate subclass instantiated at runtime according to the document's type.
 
 
 === Defining model classes
@@ -2162,18 +2292,30 @@ CBLModel supports a pretty broad range of data types for properties, but not eve
 Types that can't be directly represented in JSON -- like dates -- will be converted to a string representation, but will be properly converted back to the property's native type when the model object is next read from the database.
 
 * *Numeric types:* All numeric types will be stored in JSON as numbers.
-* *Booleans:* Declare boolean properties as the C99 type ``bool``, not the legacy Objective-C type ``BOOL``. (Why not? The latter is really just a typedef for ``char``, so at runtime it just looks like an 8-bit integer, which means it'll be stored in JSON as 0 or 1, not true or false.)
+* *Booleans:* Declare boolean properties as the C99 type ``bool``, not the legacy Objective-C type ``BOOL``.
+(Why not?
+The latter is really just a typedef for ``char``, so at runtime it just looks like an 8-bit integer, which means it'll be stored in JSON as 0 or 1, not true or false.)
 * *NSString:* Maps to a JSON string, of course.
 * *NSDate:* JSON doesn't have a date type, so the date will be stored as a string in the semi-standard ISO-8601 format, and parsed from that format when read in.
-* *NSData:* JSON doesn't support binary data, so the data will be encoded as Base64 and stored as a string. (The size and CPU overhead of the conversion make this inefficient for large data. Consider using an attachment instead.)
-* *Other CBLModel classes:* You can create a one-to-one references to another model object by declaring a persistent property whose type is a CBLModel subclass. The value will be persisted as a JSON string containing the document ID of the model object.
-* *NSArray:* An NSArray is saved as a JSON array, with each element of the array converted to JSON according to the rules in this section. When reading a JSON array from a document, however, it can be ambiguous what type of object to use; there are annotations that can customize that. See below.
-* *Any class implementing CBLJSONEncoding:*``CBLJSONEncoding`` is a protocol defined by Couchbase Lite. Any class of yours that implements this protocol can be used as the type of a persistent property; CBLModel will call the CBLJSONEncoding API to tell the object to convert itself to/from JSON.
+* *NSData:* JSON doesn't support binary data, so the data will be encoded as Base64 and stored as a string.
+(The size and CPU overhead of the conversion make this inefficient for large data.
+Consider using an attachment instead.)
+* *Other CBLModel classes:* You can create a one-to-one references to another model object by declaring a persistent property whose type is a CBLModel subclass.
+The value will be persisted as a JSON string containing the document ID of the model object.
+* *NSArray:* An NSArray is saved as a JSON array, with each element of the array converted to JSON according to the rules in this section.
+When reading a JSON array from a document, however, it can be ambiguous what type of object to use;
+there are annotations that can customize that.
+See below.
+* *Any class implementing CBLJSONEncoding:*``CBLJSONEncoding`` is a protocol defined by Couchbase Lite.
+Any class of yours that implements this protocol can be used as the type of a persistent property;
+CBLModel will call the CBLJSONEncoding API to tell the object to convert itself to/from JSON.
 
-If an object-valued property has a value of ``nil``, its corresponding JSON property will be left out entirely when saving the document; it will _not_ be written with a JSON `null` as a value.
+If an object-valued property has a value of ``nil``, its corresponding JSON property will be left out entirely when saving the document;
+it will _not_ be written with a JSON `null` as a value.
 Similarly, any missing property in the JSON will be converted to a nil or 0 or false value.
 
-If a JSON value read from a document has a type that's incompatible with the corresponding model property -- like a string when the property type is `int` -- the model property will be set to the appropriate empty value (``0``, ``false``, or ``nil``). If you need stricter type matching, you should add a validation function to the Database, to ensure that documents have the correct JSON property types.
+If a JSON value read from a document has a type that's incompatible with the corresponding model property -- like a string when the property type is `int` -- the model property will be set to the appropriate empty value (``0``, ``false``, or ``nil``).
+If you need stricter type matching, you should add a validation function to the Database, to ensure that documents have the correct JSON property types.
 
 === CBLJSONEncoding
 
@@ -2226,7 +2368,8 @@ class User: NSObject, CBLJSONEncoding {
 === Array element types
 
 The `NSArray` property type often needs special handling, to ensure that the items of JSON arrays are converted to the correct type of object.
-By default, the items are simply parsed as JSON; this breaks round-trip fidelity if you store NSDate or NSData or CBLModel objects -- they'll all be read back in as NSStrings.
+By default, the items are simply parsed as JSON;
+this breaks round-trip fidelity if you store NSDate or NSData or CBLModel objects -- they'll all be read back in as NSStrings.
 And if you store objects implementing CBLJSONEncoding, they'll be read back in as whatever JSON-compatible value the object encoded itself as.
 
 To prevent this, you can specify that the items of the array property must be of a particular class.
@@ -2267,7 +2410,8 @@ The API is very similar to that of the UnsavedRevision class: you can access att
 
 === Instantiating model objects
 
-Remember that every model has a one-to-one association with a document in the database. *CBLModel* has no public initializer methods, and you should not implement any yourself in subclasses.
+Remember that every model has a one-to-one association with a document in the database.
+*CBLModel* has no public initializer methods, and you should not implement any yourself in subclasses.
 
 To create a new model object on a new document, use the following class method:
 
@@ -2289,7 +2433,8 @@ let doc = self.database["some-note"]
 let note = Note(forDocument: doc)
 ----
 
-The `\+modelForDocument:` method is inherited from CBLModel; you don't need to override it.
+The `\+modelForDocument:` method is inherited from CBLModel;
+you don't need to override it.
 But it always creates an instance of the class that it's invoked on, `Note` in the example.
 
 [quote]
@@ -2341,8 +2486,7 @@ if type == "note" {
 }
 ----
 
-Even worse, let's say you have a model class that has a reference to a Note, i.e.
-a property of type ``Note*``.
+Even worse, let's say you have a model class that has a reference to a Note, i.e. a property of type ``Note*``.
 When resolving this property value, CBLModel will instantiate a `Note` object, even if the document's type indicates it should be represented by a `VoiceNote` or ``PictureNote``!
 
 To solve these problems, register your model classes with the database's ModelFactory, specifying a different `"type"` value for each one:
@@ -2357,7 +2501,8 @@ factory.registerClass(VoiceNote.self, forDocumentType: "voice_note")
 factory.registerClass(PictureNote.self, forDocumentType: "picture_note")
 ----
 
-Once you've done this, you can now call `\+modelForDocument:` directly on CBLModel, instead of on your subclass; the method will look up the document's type in the model factory to find out what class to instantiate.
+Once you've done this, you can now call `\+modelForDocument:` directly on CBLModel, instead of on your subclass;
+the method will look up the document's type in the model factory to find out what class to instantiate.
 
 [source]
 ----
@@ -2367,7 +2512,8 @@ let doc = self.database["some-note"]
 let note = CBLModel(forDocument: doc) as Note
 ----
 
-This doesn't look much different from the usual style; but by letting CBLModel choose the class, you'll dynamically get an object of the correct subclass (Note, VoiceNote or PictureNote) based on the `"type"` property of the individual document.
+This doesn't look much different from the usual style;
+but by letting CBLModel choose the class, you'll dynamically get an object of the correct subclass (Note, VoiceNote or PictureNote) based on the `"type"` property of the individual document.
 Also, when resolving a property value whose type is a model class, the factory will be used to ensure that the correct subclass is instantiated.
 
 [quote]
@@ -2402,7 +2548,8 @@ When this boolean property is set, the model will automatically call `save:` sho
 If instead you want to undo all changes and revert the model object back to the document's state, call ``revertChanges``.
 
 To delete the document, call ``deleteDocument:``.
-(Afterwards, don't use the model object anymore; with a deleted document it's no longer in a useable state.)
+(Afterwards, don't use the model object anymore;
+with a deleted document it's no longer in a useable state.)
 
 ==== Customizing saving
 
@@ -2435,13 +2582,13 @@ override func propertiesToSaveForDeletion() -> [NSObject : AnyObject]! {
 }
 ----
 
-Sometimes you don't want to save immediately, but you want to get the model's current state as a JSON object, i.e.
-the data that _would_ be saved to the document.
+Sometimes you don't want to save immediately, but you want to get the model's current state as a JSON object, i.e. the data that _would_ be saved to the document.
 The `propertiesToSave` method returns this.
 
 == Peer-to-Peer
 
-Two instances of Couchbase Lite can directly sync with each other without a server (peer-to-peer). At least one of them must use the Couchbase Lite Listener library, which enables any Couchbase Lite database to become the remote in a replication by listening on a TCP port and by exposing the standard replication endpoints on that port.
+Two instances of Couchbase Lite can directly sync with each other without a server (peer-to-peer).
+At least one of them must use the Couchbase Lite Listener library, which enables any Couchbase Lite database to become the remote in a replication by listening on a TCP port and by exposing the standard replication endpoints on that port.
 
 
 image::../img/docs-listener-diagram.png[]
@@ -2510,8 +2657,11 @@ Android calls them Network Service Discovery.
 
 The first step to using Bonjour for peer discovery is to advertise a service with the following properties:
 
-* *Type:* Bonjour can be used by many other types of devices on the LAN (printers, scanners, other apps etc). The service type is a way to interact only with peers whose service type is the same.
-* *Name:* A string to serve as identifier for other peers. It should be unique for each peer. It does not need to be human-readable.
+* *Type:* Bonjour can be used by many other types of devices on the LAN (printers, scanners, other apps etc).
+The service type is a way to interact only with peers whose service type is the same.
+* *Name:* A string to serve as identifier for other peers.
+It should be unique for each peer.
+It does not need to be human-readable.
 * *Port:* The port number the Listener is running on.
 * *Metadata:* Optional data that will be sent in the advertizment packets (the size limit is around 1.5KB).
 
@@ -2523,8 +2673,10 @@ Once a peer device is discovered and the hostname is resolved, you can start a p
 
 Useful resources to work with mDNS include:
 
-* *Bonjour for iOS and Mac applications:* The Couchbase Lite SDK exposes part of the Bonjour API for an easier integration. The official documentation for iOS and Mac applications can be found in the https://developer.apple.com/library/mac/documentation/Networking/Conceptual/NSNetServiceProgGuide/Introduction.html[NSNetService Programming Guide].
-* *NSD for Android applications:* The de facto framework for Android is called Network Service Discovery (NSD) and is compatible with Bonjour since Android 4.1. The official guide can be found in the https://developer.android.com/training/connect-devices-wirelessly/nsd.html[Android NSD guide].
+* *Bonjour for iOS and Mac applications:* The Couchbase Lite SDK exposes part of the Bonjour API for an easier integration.
+The official documentation for iOS and Mac applications can be found in the https://developer.apple.com/library/mac/documentation/Networking/Conceptual/NSNetServiceProgGuide/Introduction.html[NSNetService Programming Guide].
+* *NSD for Android applications:* The de facto framework for Android is called Network Service Discovery (NSD) and is compatible with Bonjour since Android 4.1.
+The official guide can be found in the https://developer.android.com/training/connect-devices-wirelessly/nsd.html[Android NSD guide].
 * *JmDNS:* Implementation in Java that can be used in Android and Java applications (https://github.com/jmdns/jmdns[official repository]).
 
 
@@ -2613,7 +2765,8 @@ The following platforms are being deprecated in Couchbase Mobile 1.4 and will be
 * https://github.com/couchbase/couchbase-lite-ios/issues/1770[#1770] Crash observed while saving documents to DB
 * https://github.com/couchbase/couchbase-lite-ios/issues/1779[#1779] IOS App Extension replication gets suspended "prematurely"
 * https://github.com/couchbase/couchbase-lite-ios/issues/1853[#1853] CBL_BlobStoreWriter appendData assertion failure
-* https://github.com/couchbase/couchbase-lite-ios/issues/1887[#1887] 1.4 Encrypting a new database fails. Existing database encrypt fine.
+* https://github.com/couchbase/couchbase-lite-ios/issues/1887[#1887] 1.4 Encrypting a new database fails.
+Existing database encrypt fine.
 * https://github.com/couchbase/couchbase-lite-ios/issues/1898[#1898] One shot sync not pulling data properly in background
 * https://github.com/couchbase/couchbase-lite-ios/issues/1912[#1912] Peer sync between High Sierra and iOS 11 CBLWarnUntrustedCert error
 * https://github.com/couchbase/couchbase-lite-ios/issues/1918[#1918] Channel removal potentially disrupts attachments
