@@ -1,6 +1,6 @@
 [IMPORTANT, caption="ENTERPRISE EDITION"]
 ====
-Peer-to-peer sync is an link:https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+Database encryption is an link:https://www.couchbase.com/products/editions[Enterprise Edition] feature.
 ====
 
 The Couchbase Lite 2.1 release includes the ability to encrypt Couchbase Lite databases. This allows mobile applications to secure the data at rest, when it is being stored on the device. The algorithm used to encrypt the database is 256-bit AES.
@@ -11,6 +11,8 @@ To enable encryption, you must set the `DatabaseConfiguration.encryptionKey` pro
 ----
 include::{examplesdir}/{snippetsdir}[tags=database-encryption]
 ----
+
+Couchbase Lite does not persist the key. It is the application's responsibility to manage the key and store it in a platform specific secure store.
 
 If you're migrating an application from Couchbase Lite 1.x to 2.x, note that the <<database-upgrade,automatic database upgrade>> functionality is *not supported* for encrypted databases. Thus, to upgrade an encrypted 1.x database, you can:
 
