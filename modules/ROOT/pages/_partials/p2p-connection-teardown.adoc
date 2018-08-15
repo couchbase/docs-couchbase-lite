@@ -8,32 +8,32 @@ image::dis-active.png[]
 
 When an active peer disconnects, it must call the `ReplicatorConnection.close` method.
 
-[source,{lang}]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=active-replicator-close]
+include::{snippet}[tag=active-replicator-close]
 ----
 
 Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to give the application a chance to disconnect with the Communication Framework.
 
-[source,{lang}]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=active-peer-close]
+include::{snippet}[tag=active-peer-close]
 ----
 
 ===== Passive Peer
 
 When the passive peer receives the corresponding disconnect notification from the Communication Framework, it must call the `ReplicatorConnection.close` method.
 
-[source,{lang}]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=passive-replicator-close]
+include::{snippet}[tag=passive-replicator-close]
 ----
 
 Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to give the application a chance to disconnect with the Communication Framework.
 
-[source,{lang}]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=passive-peer-close]
+include::{snippet}[tag=passive-peer-close]
 ----
 
 ==== Initiated by Passive Peer
@@ -44,30 +44,30 @@ image::dis-passive.png[]
 
 When the passive disconnects, it must class the `MessageEndpointListener.closeAll` method.
 
-[source,{lang}]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=passive-stop-listener]
+include::{snippet}[tag=passive-stop-listener]
 ----
 
 Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to give the application a chance to disconnect with the Communication Framework.
 
-[source,{lang}]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=passive-peer-close]
+include::{snippet}[tag=passive-peer-close]
 ----
 
 ===== Active Peer
 
 When the active peer receives the corresponding disconnect notification from the Communication Framework, it must call the `ReplicatorConnection.close` method.
 
-[source,{lang}]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=active-replicator-close]
+include::{snippet}[tag=active-replicator-close]
 ----
 
 Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to give the application a chance to disconnect with the Communication Framework.
 
-[source,{lang}]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=active-peer-close]
+include::{snippet}[tag=active-peer-close]
 ----
