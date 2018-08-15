@@ -734,7 +734,6 @@ class ActivePeer: MessageEndpointDelegate {
     // end::create-connection[]
 
 }
-// end::message-endpoint-delegate[]
 
 class ActivePeerConnection: MessageEndpointConnection {
     
