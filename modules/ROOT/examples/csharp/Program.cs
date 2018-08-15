@@ -20,9 +20,11 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
+using System.Threading.Tasks;
 
 using Couchbase.Lite;
 using Couchbase.Lite.Logging;
+using Couchbase.Lite.P2P;
 using Couchbase.Lite.Query;
 using Couchbase.Lite.Sync;
 using Newtonsoft.Json;
@@ -720,5 +722,173 @@ namespace api_walkthrough
         }
 
         #endregion
+    }
+
+    /* ----------------------------------------------------------- */
+    /* ---------------------  ACTIVE SIDE  ----------------------- */
+    /* ---------------  stubs for documentation  ----------------- */
+    /* ----------------------------------------------------------- */
+
+    class ActivePeer : IMessageEndpointDelegate
+    {
+        ActivePeer()
+        {
+            var id = "";
+
+            // # tag::message-endpoint[]
+            var database = new Database("dbname");
+
+            // The delegate must implement the `IMessageEndpointDelegate` protocol.
+            var messageEndpointTarget = new MessageEndpoint(uid: "UID:123", target: "",
+                protocolType: ProtocolType.MessageStream, delegateObject: this);
+            // # end::message-endpoint[]
+
+            // # tag::message-endpoint-replicator[]
+            var config = new ReplicatorConfiguration(database, messageEndpointTarget);
+
+            // Create the replicator object
+            var replicator = new Replicator(config);
+            // Start the replicator
+            replicator.Start();
+            // # end::message-endpoint-replicator[]
+        }
+
+        // # tag::create-connection[]
+        /* implementation of MessageEndpointDelegate */
+        public IMessageEndpointConnection CreateConnection(MessageEndpoint endpoint)
+        {
+            var connection = new ActivePeerConnection(); /* implements MessageEndpointConnection */
+            return connection;
+        }
+        // # end::create-connection[]
+    }
+
+    class ActivePeerConnection : IMessageEndpointConnection
+    {
+        private IReplicatorConnection _replicatorConnection;
+
+        public void Disconnect()
+        {
+            // # tag::active-replicator-close[]
+            _replicatorConnection?.Close(null);
+            // # end::active-replicator-close[]
+        }
+
+        public void Receive(byte[] data)
+        {
+            // # tag::active-peer-receive[]
+            var message = Message.FromBytes(data);
+            _replicatorConnection?.Receive(message);
+            // # end::active-peer-receive[]
+        }
+
+        // # tag::active-peer-close[]
+        /* implementation of MessageEndpointConnection */
+        public async Task Close(Exception error)
+        {
+            // await socket.Close, etc (or do nothing if already closed)
+            // throw MessagingException if something goes wrong (though
+            // since it is "close" nothing special will happen)
+        }
+        // # end::active-peer-close[]
+
+        // # tag::active-peer-open[]
+        /* implementation of MessageEndpointConnection */
+        public async Task Open(IReplicatorConnection connection)
+        {
+            _replicatorConnection = connection;
+            // await socket.Open(), etc
+            // throw MessagingException if something goes wrong
+        }
+        // # end::active-peer-open[]
+
+        // # tag::active-peer-send[]
+        /* implementation of MessageEndpointConnection */
+        public async Task Send(Message message)
+        {
+            var data = message.ToByteArray();
+            // await Socket.Send(), etc
+            // throw MessagingException if something goes wrong
+        }
+        // # end::active-peer-send[]
+    }
+
+    /* ----------------------------------------------------------- */
+    /* ---------------------  PASSIVE SIDE  ---------------------- */
+    /* ---------------  stubs for documentation  ----------------- */
+    /* ----------------------------------------------------------- */
+    class PassivePeerConnection : IMessageEndpointConnection
+    {
+        private MessageEndpointListener _messageEndpointListener;
+        private IReplicatorConnection _replicatorConnection;
+
+        public void StartListener()
+        {
+            // # tag::listener[]
+            var database = new Database("mydb");
+            var config = new MessageEndpointListenerConfiguration(database, ProtocolType.MessageStream);
+            _messageEndpointListener = new MessageEndpointListener(config);
+            // # end::listener[]
+        }
+
+        public void StopListener()
+        {
+            // # tag::passive-stop-listener[]
+            _messageEndpointListener?.CloseAll();
+            // # end::passive-stop-listener[]
+        }
+
+        public void AcceptConnection()
+        {
+            // # tag::advertizer-accept[]
+            var connection = new PassivePeerConnection(); /* implements MessageEndpointConnection */
+            _messageEndpointListener?.Accept(connection);
+            // # end::advertizer-accept[]
+        }
+
+        public void Disconnect()
+        {
+            // # tag::passive-replicator-close[]
+            _replicatorConnection?.Close(null);
+            // # end::passive-replicator-close[]
+        }
+
+        public void Receive(byte[] data)
+        {
+            // # tag::passive-peer-receive[]
+            var message = Message.FromBytes(data);
+            _replicatorConnection?.Receive(message);
+            // # end::passive-peer-receive[]
+        }
+
+        // # tag::passive-peer-close[]
+        /* implementation of MessageEndpointConnection */
+        public async Task Close(Exception error)
+        {
+            // await socket.Close, etc (or do nothing if already closed)
+            // throw MessagingException if something goes wrong (though
+            // since it is "close" nothing special will happen)
+        }
+        // # end::passive-peer-close[]
+
+        // # tag::passive-peer-open[]
+        /* implementation of MessageEndpointConnection */
+        public Task Open(IReplicatorConnection connection)
+        {
+            _replicatorConnection = connection;
+            // socket should already be open on the passive side
+            return Task.FromResult(true);
+        }
+        // # end::passive-peer-open[]
+
+        // # tag::passive-peer-send[]
+        /* implementation of MessageEndpointConnection */
+        public async Task Send(Message message)
+        {
+            var data = message.ToByteArray();
+            // await Socket.Send(), etc
+            // throw MessagingException if something goes wrong
+        }
+        // # end::passive-peer-send[]
     }
 }
