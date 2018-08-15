@@ -4,9 +4,9 @@ image::connection.png[]
 
 When the connection is established, the active peer must instantiate a `MessageEndpoint` object corresponding to the remote peer.
 
-[source,{lang}]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=message-endpoint]
+include::{snippet}[tag=message-endpoint]
 ----
 
 The `MessageEndpoint` initializer takes the following arguments.
@@ -22,23 +22,23 @@ Typically, the Communication Framework will handle message assembly and disassem
 
 Then, a `Replicator` is instantiated with the initialized `MessageEndpoint` as the target.
 
-[source,{lang}]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=message-endpoint-replicator]
+include::{snippet}[tag=message-endpoint-replicator]
 ----
 
 Next, Couchbase Lite will call back the application code through the `MessageEndpointDelegate.createConnection` interface method. When the application receives the callback, it must create an instance of `MessageEndpointConnection` and return it.
 
-[source,{lang}]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=create-connection]
+include::{snippet}[tag=create-connection]
 ----
 
 Next, Couchbase Lite will call back the application code through the `MessageEndpointConnection.open` method.
 
-[source,{lang}]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=active-peer-open]
+include::{snippet}[tag=active-peer-open]
 ----
 
 The connection argument is then set on an instance variable. The application code must keep track of every `ReplicatorConnection` associated with every `MessageEndpointConnection`.
@@ -49,18 +49,18 @@ The `MessageError` argument in the completion block is used to specify if the er
 
 The first step after connection establishment on the passive peer is to initialize a new `MessageEndpointConnection` and pass it to the listener. This tells the listener to accept incoming data from that peer.
 
-[source,{lang}]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=advertizer-accept]
+include::{snippet}[tag=advertizer-accept]
 ----
 
 `messageEndpointListener` is the instance of the `MessageEndpointListener` that was created in the first step (xref:#peer-discovery[Peer Discovery])
 
 Couchbase Lite will then call back the application code through the `MessageEndpointConnection.open` method.
 
-[source,{lang}]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=passive-peer-open]
+include::{snippet}[tag=passive-peer-open]
 ----
 
 The `connection` argument is then set on an instance variable. The application code must keep track of every `ReplicatorConnection` associated with every `MessageEndpointConnection`.
