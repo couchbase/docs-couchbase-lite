@@ -1,20 +1,26 @@
 .Enterprise Edition only
 IMPORTANT: Database encryption is an link:https://www.couchbase.com/products/editions[Enterprise Edition] feature.
 
-The Couchbase Lite 2.1 release includes the ability to encrypt Couchbase Lite databases. This allows mobile applications to secure the data at rest, when it is being stored on the device. The algorithm used to encrypt the database is 256-bit AES.
+The Couchbase Lite 2.1 release includes the ability to encrypt Couchbase Lite databases.
+This allows mobile applications to secure the data at rest, when it is being stored on the device.
+The algorithm used to encrypt the database is 256-bit AES.
 
-To enable encryption, you must set the `DatabaseConfiguration.encryptionKey` property with the encryption key of your choice. The encryption key is then required every time the database is opened.
+To enable encryption, you must set the `DatabaseConfiguration.encryptionKey` property with the encryption key of your choice.
+The encryption key is then required every time the database is opened.
 
 [source]
 ----
 include::{snippet}[tag=database-encryption]
 ----
 
-Couchbase Lite does not persist the key. It is the application's responsibility to manage the key and store it in a platform specific secure store such as Apple's https://developer.apple.com/documentation/security/keychain_services[Keychain] or Android's https://developer.android.com/training/articles/keystore[Keystore].
+Couchbase Lite does not persist the key.
+It is the application's responsibility to manage the key and store it in a platform specific secure store such as Apple's https://developer.apple.com/documentation/security/keychain_services[Keychain] or Android's https://developer.android.com/training/articles/keystore[Keystore].
 
-If you're migrating an application from Couchbase Lite 1.x to 2.x, note that the <<database-upgrade,automatic database upgrade>> functionality is *not supported* for encrypted databases. Thus, to upgrade an encrypted 1.x database, you can:
+If you're migrating an application from Couchbase Lite 1.x to 2.x, note that the <<database-upgrade,automatic database upgrade>> functionality is *not supported* for encrypted databases.
+Thus, to upgrade an encrypted 1.x database, you can:
 
 . Disable encryption using the Couchbase Lite 1.x SDK (see xref:1.4@{source-language}.adoc#database-encryption[1.x encryption guide])
 . Open the database file with encryption enabled using the Couchbase Lite 2.x SDK (see example above)
 
-An encrypted database can only be opened with the same language SDK that was used to encrypt it in the first place (Swift, C#, Java or Objective-C). For example, if a database is encrypted with the Swift SDK and then exported, it will only be readable with the Swift SDK.
+An encrypted database can only be opened with the same language SDK that was used to encrypt it in the first place (Swift, C#, Java or Objective-C).
+For example, if a database is encrypted with the Swift SDK and then exported, it will only be readable with the Swift SDK.

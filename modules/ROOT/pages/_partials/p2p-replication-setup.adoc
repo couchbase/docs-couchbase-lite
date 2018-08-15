@@ -12,8 +12,11 @@ include::{snippet}[tag=message-endpoint]
 The `MessageEndpoint` initializer takes the following arguments.
 
 . `uid`: a unique ID that represents the local active peer.
-. `target`: This represents the remote passive peer and could be any suitable representation of the remote peer. It could be an Id, URL etc. If using the MultiPeerConnectivity Framework, this could be the MCPeerID.
-. `protocolType`: specifies the kind of transport you intend to implement. There are two options.
+. `target`: This represents the remote passive peer and could be any suitable representation of the remote peer.
+It could be an Id, URL etc.
+If using the MultiPeerConnectivity Framework, this could be the MCPeerID.
+. `protocolType`: specifies the kind of transport you intend to implement.
+There are two options.
 	* The default (`MessageStream`) means that you want to "send a series of messages", or in other words the Communication Framework will control the formatting of messages so that there are clear boundaries between messages.
 	* The alternative (`ByteStream`) means that you just want to send raw bytes over the stream and Couchbase should format for you to ensure that messages get delivered in full.
 +
@@ -27,7 +30,8 @@ Then, a `Replicator` is instantiated with the initialized `MessageEndpoint` as t
 include::{snippet}[tag=message-endpoint-replicator]
 ----
 
-Next, Couchbase Lite will call back the application code through the `MessageEndpointDelegate.createConnection` interface method. When the application receives the callback, it must create an instance of `MessageEndpointConnection` and return it.
+Next, Couchbase Lite will call back the application code through the `MessageEndpointDelegate.createConnection` interface method.
+When the application receives the callback, it must create an instance of `MessageEndpointConnection` and return it.
 
 [source]
 ----
@@ -41,13 +45,16 @@ Next, Couchbase Lite will call back the application code through the `MessageEnd
 include::{snippet}[tag=active-peer-open]
 ----
 
-The connection argument is then set on an instance variable. The application code must keep track of every `ReplicatorConnection` associated with every `MessageEndpointConnection`.
+The connection argument is then set on an instance variable.
+The application code must keep track of every `ReplicatorConnection` associated with every `MessageEndpointConnection`.
 
-The `MessageError` argument in the completion block is used to specify if the error is recoverable or not. If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection` instance.
+The `MessageError` argument in the completion block is used to specify if the error is recoverable or not.
+If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection` instance.
 
 ==== Passive Peer
 
-The first step after connection establishment on the passive peer is to initialize a new `MessageEndpointConnection` and pass it to the listener. This tells the listener to accept incoming data from that peer.
+The first step after connection establishment on the passive peer is to initialize a new `MessageEndpointConnection` and pass it to the listener.
+This tells the listener to accept incoming data from that peer.
 
 [source]
 ----
@@ -63,6 +70,7 @@ Couchbase Lite will then call back the application code through the `MessageEndp
 include::{snippet}[tag=passive-peer-open]
 ----
 
-The `connection` argument is then set on an instance variable. The application code must keep track of every `ReplicatorConnection` associated with every `MessageEndpointConnection`.
+The `connection` argument is then set on an instance variable.
+The application code must keep track of every `ReplicatorConnection` associated with every `MessageEndpointConnection`.
 
 At this point, the connection is established and both peers are ready to exchange data.

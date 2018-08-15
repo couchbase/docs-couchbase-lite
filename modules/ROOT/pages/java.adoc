@@ -204,7 +204,8 @@ include::{snippet}[tag=prebuilt-database]
 == Document
 
 In Couchbase Lite, a document's body takes the form of a JSON object — a collection of key/value pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
-Every document is identified by a document ID, which can be automatically generated (as a UUID) or specified programmatically; the only constraints are that it must be unique within the database, and it can't be changed.
+Every document is identified by a document ID, which can be automatically generated (as a UUID) or specified programmatically;
+the only constraints are that it must be unique within the database, and it can't be changed.
 
 === Initializers
 
@@ -289,7 +290,8 @@ On the image below, the document now contains the `_attachments` dictionary when
 
 image::attach_replicated.png[]
 
-A blob also has properties such as `"digest"` (a SHA-1 digest of the data), `"length"` (the length in bytes), and optionally `"content_type"` (the MIME type.) The data is not stored in the document, but in a separate content-addressable store, indexed by the digest.
+A blob also has properties such as `"digest"` (a SHA-1 digest of the data), `"length"` (the length in bytes), and optionally `"content_type"` (the MIME type).
+The data is not stored in the document, but in a separate content-addressable store, indexed by the digest.
 
 This `Blob` can be retrieved on the Sync Gateway REST API at http://localhost:4984/justdoit/user.david/blob_1[localhost:4984/justdoit/user.david/blob_1].
 Notice that the blob identifier in the URL path is "blob_1" (not "avatar").
@@ -690,7 +692,8 @@ For platform specific installation instructions, refer to the Sync Gateway https
 === Starting a Replication
 
 Replication can be bidirectional, this means you can start a `push`/`pull` replication with a single instance.
-The replication's parameters can be specified through the http://docs.couchbase.com/mobile/2.0/couchbase-lite-java/db022/index.html?com/couchbase/lite/ReplicatorConfiguration.html[`ReplicatorConfiguration`] object; for example, if you wish to start a `push` only or `pull` only replication.
+The replication's parameters can be specified through the http://docs.couchbase.com/mobile/2.0/couchbase-lite-java/db022/index.html?com/couchbase/lite/ReplicatorConfiguration.html[`ReplicatorConfiguration`] object;
+for example, if you wish to start a `push` only or `pull` only replication.
 
 The following example creates a `pull` replication with Sync Gateway.
 
@@ -725,7 +728,8 @@ In this example the hostname is `10.0.2.2` because the Android emulator runs in 
 include::{partialsdir}/verify-replication.adoc[]
 
 Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit data.
-Some load balancers are not configured for WebSocket connections by default (NGINX for example); so it might be necessary to explicitly enable them in the load balancer's configuration (see https://developer.couchbase.com/documentation/mobile/current/guides/sync-gateway/nginx/index.html[Load Balancers]).
+Some load balancers are not configured for WebSocket connections by default (NGINX for example);
+so it might be necessary to explicitly enable them in the load balancer's configuration (see https://developer.couchbase.com/documentation/mobile/current/guides/sync-gateway/nginx/index.html[Load Balancers]).
 
 By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
 The level of compression is set on Sync Gateway and can be tuned in the configuration file (link:../guides/sync-gateway/config-properties/index.html#2.0/replicator_compression[`replicator_compression`]).
