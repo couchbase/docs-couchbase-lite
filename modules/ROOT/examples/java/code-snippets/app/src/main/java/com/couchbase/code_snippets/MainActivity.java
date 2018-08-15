@@ -728,32 +728,32 @@ class BrowserSessionManager implements MessageEndpointDelegate {
     public void initCouchbase() throws CouchbaseLiteException {
         String id = "";
         MessageEndpointDelegate delegate;
-        // # tag::message-endpoint[]
+        // tag::message-endpoint[]
         DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(getApplicationContext());
         Database database = new Database("mydb", databaseConfiguration);
 
         // The delegate must implement the `MessageEndpointDelegate` protocol.
         MessageEndpoint messageEndpointTarget = new MessageEndpoint("UID:123", id, ProtocolType.MESSAGE_STREAM, delegate);
-        // # end::message-endpoint[]
+        // end::message-endpoint[]
 
-        // # tag::message-endpoint-replicator[]
+        // tag::message-endpoint-replicator[]
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, messageEndpointTarget);
 
         // Create the replicator object.
         Replicator replicator = new Replicator(config);
         // Start the replication.
         replicator.start();
-        // # end::message-endpoint-replicator[]
+        // end::message-endpoint-replicator[]
     }
 
-    // # tag::create-connection[]
+    // tag::create-connection[]
     /* implementation of MessageEndpointDelegate */
     @Override
     public MessageEndpointConnection createConnection(MessageEndpoint endpoint) {
         ActivePeerConnection connection = new ActivePeerConnection(); /* implements MessageEndpointConnection */
         return connection;
     }
-    // # end::create-connection[]
+    // end::create-connection[]
 }
 
 class ActivePeerConnection implements MessageEndpointConnection {
@@ -761,21 +761,21 @@ class ActivePeerConnection implements MessageEndpointConnection {
     private ReplicatorConnection replicatorConnection;
 
     public void disconnect() {
-        // # tag::active-replicator-close[]
+        // tag::active-replicator-close[]
         replicatorConnection.close(null);
-        // # end::active-replicator-close[]
+        // end::active-replicator-close[]
     }
 
-    // # tag::active-peer-open[]
+    // tag::active-peer-open[]
     /* implementation of MessageEndpointConnection */
     @Override
     public void open(ReplicatorConnection connection, MessagingCompletion completion) {
         replicatorConnection = connection;
         completion.complete(true, null);
     }
-    // # end::active-peer-open[]
+    // end::active-peer-open[]
 
-    // # tag::active-peer-close[]
+    // tag::active-peer-close[]
     @Override
     public void close(Exception error, MessagingCompletion completion) {
         /* disconnect with communications framework */
@@ -783,9 +783,9 @@ class ActivePeerConnection implements MessageEndpointConnection {
         /* call completion handler */
         completion.complete(true, null);
     }
-    // # end::active-peer-close[]
+    // end::active-peer-close[]
 
-    // # tag::active-peer-send[]
+    // tag::active-peer-send[]
     /* implementation of MessageEndpointConnection */
     @Override
     public void send(Message message, MessagingCompletion completion) {
@@ -794,12 +794,12 @@ class ActivePeerConnection implements MessageEndpointConnection {
         /* call the completion handler once the message is sent */
         completion.complete(true, null);
     }
-    // # end::active-peer-send[]
+    // end::active-peer-send[]
 
     public void receive(Message message) {
-        // # tag::active-peer-receive[]
+        // tag::active-peer-receive[]
         replicatorConnection.receive(message);
-        // # end::active-peer-receive[]
+        // end::active-peer-receive[]
     }
 
 }
@@ -814,43 +814,43 @@ class PassivePeerConnection implements MessageEndpointConnection {
     private ReplicatorConnection replicatorConnection;
 
     public void startListener() throws CouchbaseLiteException {
-        // # tag::listener[]
+        // tag::listener[]
         DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(getApplicationContext());
         Database database = new Database("mydb", databaseConfiguration);
         MessageEndpointListenerConfiguration listenerConfiguration = new MessageEndpointListenerConfiguration(database, ProtocolType.MESSAGE_STREAM);
         this.messageEndpointListener = new MessageEndpointListener(listenerConfiguration);
-        // # end::listener[]
+        // end::listener[]
     }
 
     public void stopListener() {
-        // # tag::passive-stop-listener[]
+        // tag::passive-stop-listener[]
         messageEndpointListener.closeAll();
-        // # end::passive-stop-listener[]
+        // end::passive-stop-listener[]
     }
 
     public void accept() {
-        // # tag::advertizer-accept[]
+        // tag::advertizer-accept[]
         PassivePeerConnection connection = new PassivePeerConnection(); /* implements MessageEndpointConnection */
         messageEndpointListener.accept(connection);
-        // # end::advertizer-accept[]
+        // end::advertizer-accept[]
     }
 
     public void disconnect() {
-        // # tag::passive-replicator-close[]
+        // tag::passive-replicator-close[]
         replicatorConnection.close(null);
-        // # end::passive-replicator-close[]
+        // end::passive-replicator-close[]
     }
 
-    // # tag::passive-peer-open[]
+    // tag::passive-peer-open[]
     /* implementation of MessageEndpointConnection */
     @Override
     public void open(ReplicatorConnection connection, MessagingCompletion completion) {
         replicatorConnection = connection;
         completion.complete(true, null);
     }
-    // # end::passive-peer-open[]
+    // end::passive-peer-open[]
 
-    // # tag::passive-peer-close[]
+    // tag::passive-peer-close[]
     /* implementation of MessageEndpointConnection */
     @Override
     public void close(Exception error, MessagingCompletion completion) {
@@ -859,9 +859,9 @@ class PassivePeerConnection implements MessageEndpointConnection {
         /* call completion handler */
         completion.complete(true, null);
     }
-    // # end::passive-peer-close[]
+    // end::passive-peer-close[]
 
-    // # tag::passive-peer-send[]
+    // tag::passive-peer-send[]
     /* implementation of MessageEndpointConnection */
     @Override
     public void send(Message message, MessagingCompletion completion) {
@@ -870,11 +870,11 @@ class PassivePeerConnection implements MessageEndpointConnection {
         /* call the completion handler once the message is sent */
         completion.complete(true, null);
     }
-    // # end::passive-peer-send[]
+    // end::passive-peer-send[]
 
     public void receive(Message message) {
-        // # tag::passive-peer-receive[]
+        // tag::passive-peer-receive[]
         replicatorConnection.receive(message);
-        // # end::passive-peer-receive[]
+        // end::passive-peer-receive[]
     }
 }

@@ -708,33 +708,33 @@ class ActivePeer: MessageEndpointDelegate {
     init() throws {
         let id = ""
 
-        // # tag::message-endpoint[]
+        // tag::message-endpoint[]
         let database = try Database(name: "dbname")
         
         // The delegate must implement the `MessageEndpointDelegate` protocol.
         let messageEndpointTarget = MessageEndpoint(uid: "UID:123", target: id, protocolType: .messageStream, delegate: self)
-        // # end::message-endpoint[]
+        // end::message-endpoint[]
         
-        // # tag::message-endpoint-replicator[]
+        // tag::message-endpoint-replicator[]
         let config = ReplicatorConfiguration(database: database, target: messageEndpointTarget)
         
         // Create the replicator object.
         let replicator = Replicator(config: config)
         // Start the replication.
         replicator.start()
-        // # end::message-endpoint-replicator[]
+        // end::message-endpoint-replicator[]
     }
     
-    // # tag::create-connection[]
+    // tag::create-connection[]
     /* implementation of MessageEndpointDelegate */
     func createConnection(endpoint: MessageEndpoint) -> MessageEndpointConnection {
         let connection = ActivePeerConnection() /* implements MessageEndpointConnection */
         return connection
     }
-    // # end::create-connection[]
+    // end::create-connection[]
 
 }
-// # end::message-endpoint-delegate[]
+// end::message-endpoint-delegate[]
 
 class ActivePeerConnection: MessageEndpointConnection {
     
@@ -743,20 +743,20 @@ class ActivePeerConnection: MessageEndpointConnection {
     init() {}
     
     func disconnect() {
-        // # tag::active-replicator-close[]
+        // tag::active-replicator-close[]
         replicatorConnection?.close(error: nil)
-        // # end::active-replicator-close[]
+        // end::active-replicator-close[]
     }
 
-    // # tag::active-peer-open[]
+    // tag::active-peer-open[]
     /* implementation of MessageEndpointConnection */
     func open(connection: ReplicatorConnection, completion: @escaping (Bool, MessagingError?) -> Void) {
         replicatorConnection = connection
         completion(true, nil)
     }
-    // # end::active-peer-open[]
+    // end::active-peer-open[]
 
-    // # tag::active-peer-send[]
+    // tag::active-peer-send[]
     /* implementation of MessageEndpointConnection */
     func send(message: Message, completion: @escaping (Bool, MessagingError?) -> Void) {
         var data = message.toData()
@@ -765,16 +765,16 @@ class ActivePeerConnection: MessageEndpointConnection {
         /* call the completion handler once the message is sent */
         completion(true, nil)
     }
-    // # end::active-peer-send[]
+    // end::active-peer-send[]
     
     func receive(data: Data) {
-        // # tag::active-peer-receive[]
+        // tag::active-peer-receive[]
         let message = Message.fromData(data)
         replicatorConnection?.receive(messge: message)
-        // # end::active-peer-receive[]
+        // end::active-peer-receive[]
     }
 
-    // # tag::active-peer-close[]
+    // tag::active-peer-close[]
     /* implementation of MessageEndpointConnection */
     func close(error: Error?, completion: @escaping () -> Void) {
         /* disconnect with communications framework */
@@ -782,7 +782,7 @@ class ActivePeerConnection: MessageEndpointConnection {
         /* call completion handler */
         completion()
     }
-    // # end::active-peer-close[]
+    // end::active-peer-close[]
 
 }
 
@@ -800,41 +800,41 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
     }
     
     func startListener() {
-        // # tag::listener[]
+        // tag::listener[]
         let database = try! Database(name: "mydb")
         let config = MessageEndpointListenerConfiguration(database: database, protocolType: .messageStream)
         messageEndpointListener = MessageEndpointListener(config: config)
-        // # end::listener[]
+        // end::listener[]
     }
     
     func stopListener() {
-        // # tag::passive-stop-listener[]
+        // tag::passive-stop-listener[]
         messageEndpointListener?.closeAll()
-        // # end::passive-stop-listener[]
+        // end::passive-stop-listener[]
     }
     
     func acceptConnection() {
-        // # tag::advertizer-accept[]
+        // tag::advertizer-accept[]
         let connection = PassivePeerConnection() /* implements MessageEndpointConnection */
         messageEndpointListener?.accept(connection: connection)
-        // # end::advertizer-accept[]
+        // end::advertizer-accept[]
     }
     
     func disconnect() {
-        // # tag::passive-replicator-close[]
+        // tag::passive-replicator-close[]
         replicatorConnection?.close(error: nil)
-        // # end::passive-replicator-close[]
+        // end::passive-replicator-close[]
     }
     
-    // # tag::passive-peer-open[]
+    // tag::passive-peer-open[]
     /* implementation of MessageEndpointConnection */
     func open(connection: ReplicatorConnection, completion: @escaping (Bool, MessagingError?) -> Void) {
         replicatorConnection = connection
         completion(true, nil)
     }
-    // # end::passive-peer-open[]
+    // end::passive-peer-open[]
     
-    // # tag::passive-peer-send[]
+    // tag::passive-peer-send[]
     /* implementation of MessageEndpointConnection */
     func send(message: Message, completion: @escaping (Bool, MessagingError?) -> Void) {
         var data = Data()
@@ -844,16 +844,16 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
         /* call the completion handler once the message is sent */
         completion(true, nil)
     }
-    // # end::passive-peer-send[]
+    // end::passive-peer-send[]
     
     func receive(data: Data) {
-        // # tag::passive-peer-receive[]
+        // tag::passive-peer-receive[]
         let message = Message.fromData(data)
         replicatorConnection?.receive(messge: message)
-        // # end::passive-peer-receive[]
+        // end::passive-peer-receive[]
     }
     
-    // # tag::passive-peer-close[]
+    // tag::passive-peer-close[]
     /* implementation of MessageEndpointConnection */
     func close(error: Error?, completion: @escaping () -> Void) {
         /* disconnect with communications framework */
@@ -861,6 +861,6 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
         /* call completion handler */
         completion()
     }
-    // # end::passive-peer-close[]
+    // end::passive-peer-close[]
 }
 

@@ -735,32 +735,32 @@ namespace api_walkthrough
         {
             var id = "";
 
-            // # tag::message-endpoint[]
+            // tag::message-endpoint[]
             var database = new Database("dbname");
 
             // The delegate must implement the `IMessageEndpointDelegate` protocol.
             var messageEndpointTarget = new MessageEndpoint(uid: "UID:123", target: "",
                 protocolType: ProtocolType.MessageStream, delegateObject: this);
-            // # end::message-endpoint[]
+            // end::message-endpoint[]
 
-            // # tag::message-endpoint-replicator[]
+            // tag::message-endpoint-replicator[]
             var config = new ReplicatorConfiguration(database, messageEndpointTarget);
 
             // Create the replicator object
             var replicator = new Replicator(config);
             // Start the replicator
             replicator.Start();
-            // # end::message-endpoint-replicator[]
+            // end::message-endpoint-replicator[]
         }
 
-        // # tag::create-connection[]
+        // tag::create-connection[]
         /* implementation of MessageEndpointDelegate */
         public IMessageEndpointConnection CreateConnection(MessageEndpoint endpoint)
         {
             var connection = new ActivePeerConnection(); /* implements MessageEndpointConnection */
             return connection;
         }
-        // # end::create-connection[]
+        // end::create-connection[]
     }
 
     class ActivePeerConnection : IMessageEndpointConnection
@@ -769,20 +769,20 @@ namespace api_walkthrough
 
         public void Disconnect()
         {
-            // # tag::active-replicator-close[]
+            // tag::active-replicator-close[]
             _replicatorConnection?.Close(null);
-            // # end::active-replicator-close[]
+            // end::active-replicator-close[]
         }
 
         public void Receive(byte[] data)
         {
-            // # tag::active-peer-receive[]
+            // tag::active-peer-receive[]
             var message = Message.FromBytes(data);
             _replicatorConnection?.Receive(message);
-            // # end::active-peer-receive[]
+            // end::active-peer-receive[]
         }
 
-        // # tag::active-peer-close[]
+        // tag::active-peer-close[]
         /* implementation of MessageEndpointConnection */
         public async Task Close(Exception error)
         {
@@ -790,9 +790,9 @@ namespace api_walkthrough
             // throw MessagingException if something goes wrong (though
             // since it is "close" nothing special will happen)
         }
-        // # end::active-peer-close[]
+        // end::active-peer-close[]
 
-        // # tag::active-peer-open[]
+        // tag::active-peer-open[]
         /* implementation of MessageEndpointConnection */
         public async Task Open(IReplicatorConnection connection)
         {
@@ -800,9 +800,9 @@ namespace api_walkthrough
             // await socket.Open(), etc
             // throw MessagingException if something goes wrong
         }
-        // # end::active-peer-open[]
+        // end::active-peer-open[]
 
-        // # tag::active-peer-send[]
+        // tag::active-peer-send[]
         /* implementation of MessageEndpointConnection */
         public async Task Send(Message message)
         {
@@ -810,7 +810,7 @@ namespace api_walkthrough
             // await Socket.Send(), etc
             // throw MessagingException if something goes wrong
         }
-        // # end::active-peer-send[]
+        // end::active-peer-send[]
     }
 
     /* ----------------------------------------------------------- */
@@ -824,44 +824,44 @@ namespace api_walkthrough
 
         public void StartListener()
         {
-            // # tag::listener[]
+            // tag::listener[]
             var database = new Database("mydb");
             var config = new MessageEndpointListenerConfiguration(database, ProtocolType.MessageStream);
             _messageEndpointListener = new MessageEndpointListener(config);
-            // # end::listener[]
+            // end::listener[]
         }
 
         public void StopListener()
         {
-            // # tag::passive-stop-listener[]
+            // tag::passive-stop-listener[]
             _messageEndpointListener?.CloseAll();
-            // # end::passive-stop-listener[]
+            // end::passive-stop-listener[]
         }
 
         public void AcceptConnection()
         {
-            // # tag::advertizer-accept[]
+            // tag::advertizer-accept[]
             var connection = new PassivePeerConnection(); /* implements MessageEndpointConnection */
             _messageEndpointListener?.Accept(connection);
-            // # end::advertizer-accept[]
+            // end::advertizer-accept[]
         }
 
         public void Disconnect()
         {
-            // # tag::passive-replicator-close[]
+            // tag::passive-replicator-close[]
             _replicatorConnection?.Close(null);
-            // # end::passive-replicator-close[]
+            // end::passive-replicator-close[]
         }
 
         public void Receive(byte[] data)
         {
-            // # tag::passive-peer-receive[]
+            // tag::passive-peer-receive[]
             var message = Message.FromBytes(data);
             _replicatorConnection?.Receive(message);
-            // # end::passive-peer-receive[]
+            // end::passive-peer-receive[]
         }
 
-        // # tag::passive-peer-close[]
+        // tag::passive-peer-close[]
         /* implementation of MessageEndpointConnection */
         public async Task Close(Exception error)
         {
@@ -869,9 +869,9 @@ namespace api_walkthrough
             // throw MessagingException if something goes wrong (though
             // since it is "close" nothing special will happen)
         }
-        // # end::passive-peer-close[]
+        // end::passive-peer-close[]
 
-        // # tag::passive-peer-open[]
+        // tag::passive-peer-open[]
         /* implementation of MessageEndpointConnection */
         public Task Open(IReplicatorConnection connection)
         {
@@ -879,9 +879,9 @@ namespace api_walkthrough
             // socket should already be open on the passive side
             return Task.FromResult(true);
         }
-        // # end::passive-peer-open[]
+        // end::passive-peer-open[]
 
-        // # tag::passive-peer-send[]
+        // tag::passive-peer-send[]
         /* implementation of MessageEndpointConnection */
         public async Task Send(Message message)
         {
@@ -889,6 +889,6 @@ namespace api_walkthrough
             // await Socket.Send(), etc
             // throw MessagingException if something goes wrong
         }
-        // # end::passive-peer-send[]
+        // end::passive-peer-send[]
     }
 }
