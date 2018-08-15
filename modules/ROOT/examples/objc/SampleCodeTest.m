@@ -693,7 +693,7 @@
 - (instancetype) init {
     self = [super init];
     if (self) {
-        // # tag::message-endpoint[]
+        // tag::message-endpoint[]
         CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"dbname" error:nil];
         
         // The delegate must implement the `CBLMessageEndpointDelegate` protocol.
@@ -703,25 +703,25 @@
                                          target:id
                                    protocolType:kCBLProtocolTypeMessageStream
                                        delegate:self];
-        // # end::message-endpoint[]
+        // end::message-endpoint[]
         
-        // # tag::message-endpoint-replicator[]
+        // tag::message-endpoint-replicator[]
         CBLReplicatorConfiguration *config =
         [[CBLReplicatorConfiguration alloc] initWithDatabase:database target: endpoint];
         
         // Create the replicator object.
         CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig: config];
         [replicator start];
-        // # end::message-endpoint-replicator[]
+        // end::message-endpoint-replicator[]
     }
     return self;
 }
 
-// # tag::create-connection[]
+// tag::create-connection[]
 - (id<CBLMessageEndpointConnection>)createConnectionForEndpoint:(CBLMessageEndpoint *)endpoint {
     return [[ActivePeerConnection alloc] init];
 }
-// # end::create-connection[]
+// end::create-connection[]
 
 @end
 
@@ -731,20 +731,20 @@
 }
 
 - (void)disconnect {
-    // # tag::active-replicator-close[]
+    // tag::active-replicator-close[]
     [_replicatorConnection close:nil];
-    // # end::active-replicator-close[]
+    // end::active-replicator-close[]
 }
 
-// # tag::active-peer-open[]
+// tag::active-peer-open[]
 /* implementation of CBLMessageEndpointConnection */
 - (void)open:(nonnull id<CBLReplicatorConnection>)connection completion:(nonnull void (^)(BOOL, CBLMessagingError * _Nullable))completion {
     _replicatorConnection = connection;
     completion(YES, nil);
 }
-// # end::active-peer-open[]
+// end::active-peer-open[]
 
-// # tag::active-peer-send[]
+// tag::active-peer-send[]
 /* implementation of CBLMessageEndpointConnection */
 - (void)send:(nonnull CBLMessage *)message completion:(nonnull void (^)(BOOL, CBLMessagingError * _Nullable))completion {
     NSData *data = [message toData];
@@ -754,16 +754,16 @@
     /* call the completion handler once the message is sent */
     completion(YES, nil);
 }
-// # end::active-peer-send[]
+// end::active-peer-send[]
 
 - (void)receive:(NSData*)data {
-    // # tag::active-peer-receive[]
+    // tag::active-peer-receive[]
     CBLMessage *message = [CBLMessage fromData:data];
     [_replicatorConnection receive:message];
-    // # end::active-peer-receive[]
+    // end::active-peer-receive[]
 }
 
-// # tag::active-peer-close[]
+// tag::active-peer-close[]
 /* implementation of CBLMessageEndpointConnection */
 - (void)close:(nullable NSError *)error completion:(nonnull void (^)(void))completion {
     /* disconnect with communications framework */
@@ -771,7 +771,7 @@
     /* call completion handler */
     completion();
 }
-// # end::active-peer-close[]
+// end::active-peer-close[]
 
 @end
 
@@ -792,44 +792,44 @@
 }
 
 - (void)startListener {
-    // # tag::listener[]
+    // tag::listener[]
     CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"mydb" error:nil];
     
     CBLMessageEndpointListenerConfiguration *config =
     [[CBLMessageEndpointListenerConfiguration alloc] initWithDatabase:database
                                                          protocolType:kCBLProtocolTypeMessageStream];
     _messageEndpointListener = [[CBLMessageEndpointListener alloc] initWithConfig:config];
-    // # end::listener[]
+    // end::listener[]
 }
 
 - (void)stopListener {
-    // # tag::passive-stop-listener[]
+    // tag::passive-stop-listener[]
     [_messageEndpointListener closeAll];
-    // # end::passive-stop-listener[]
+    // end::passive-stop-listener[]
 }
 
 - (void)acceptConnection() {
-    // # tag::advertizer-accept[]
+    // tag::advertizer-accept[]
     PassivePeerConnection *connection = [[PassivePeerConnection alloc] init]; /* implements CBLMessageEndpointConnection */
     [_messageEndpointListener accept: connection];
-    // # end::advertizer-accept[]
+    // end::advertizer-accept[]
 }
 
 - (void)disconnect {
-    // # tag::passive-replicator-close[]
+    // tag::passive-replicator-close[]
     [_replicatorConnection close:nil];
-    // # end::passive-replicator-close[]
+    // end::passive-replicator-close[]
 }
 
-// # tag::passive-peer-open[]
+// tag::passive-peer-open[]
 /* implementation of CBLMessageEndpointConnection */
 - (void)open:(nonnull id<CBLReplicatorConnection>)connection completion:(nonnull void (^)(BOOL, CBLMessagingError * _Nullable))completion {
     _replicatorConnection = connection;
     completion(YES, nil);
 }
-// # end::passive-peer-open[]
+// end::passive-peer-open[]
 
-// # tag::passive-peer-send[]
+// tag::passive-peer-send[]
 /* implementation of CBLMessageEndpointConnection */
 - (void)send:(nonnull CBLMessage *)message completion:(nonnull void (^)(BOOL, CBLMessagingError * _Nullable))completion {
     NSData *data = [message toData];
@@ -839,16 +839,16 @@
     /* call the completion handler once the message is sent */
     completion(YES, nil);
 }
-// # end::passive-peer-send[]
+// end::passive-peer-send[]
 
 - (void)receive:(NSData*)data {
-    // # tag::passive-peer-receive[]
+    // tag::passive-peer-receive[]
     CBLMessage *message = [CBLMessage fromData:data];
     [_replicatorConnection receive:message];
-    // # end::passive-peer-receive[]
+    // end::passive-peer-receive[]
 }
 
-// # tag::passive-peer-close[]
+// tag::passive-peer-close[]
 /* implementation of CBLMessageEndpointConnection */
 - (void)close:(nullable NSError *)error completion:(nonnull void (^)(void))completion {
     /* disconnect with communications framework */
@@ -856,6 +856,6 @@
     /* call completion handler */
     completion();
 }
-// # end::passive-peer-close[]
+// end::passive-peer-close[]
 @end
 
