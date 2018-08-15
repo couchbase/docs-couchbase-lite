@@ -1,8 +1,8 @@
 = Swift
-:lang: swift
 :idprefix:
 :idseparator: -
-:snippetsdir: swift/SampleCodeTest.swift
+:snippet: {examplesdir}/swift/SampleCodeTest.swift
+:source-language: swift
 
 == Getting Started
 
@@ -17,7 +17,7 @@ Create or open an existing Xcode project and install Couchbase Lite using one of
 * Click on *Project > General > Embedded Binary* and add *CouchbaseLiteSwift.framework* to this section.
 * Import the framework and start using it in your project.
 +
-[source,swift]
+[source]
 ----
 import CouchbaseLiteSwift
 ...
@@ -91,9 +91,9 @@ pod install
 Open *ViewController.swift* in Xcode and copy the following code in the `viewDidLoad` method.
 This snippet demonstrates how to run basic CRUD operations, a simple Query and running bi-directional replications with Sync Gateway.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=getting-started]
+include::{snippet}[tag=getting-started]
 ----
 
 Build and run.
@@ -171,9 +171,9 @@ In 1.x they were stored under the `_attachments` field and in Couchbase Lite 2.0
 The automatic upgrade functionality will not update the internal schema for attachments, so they will still be accessible under the `_attachments` field.
 The following example shows how to retrieve an attachment that was created in a 1.x database with the 2.0 API.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=1x-attachment]
+include::{snippet}[tag=1x-attachment]
 ----
 
 === Replication Compatibility
@@ -192,9 +192,9 @@ This allows for a smoother transition to get all your user base onto a version o
 As the top-level entity in the API, new databases can be created using the `Database` class by passing in a name, configuration, or both.
 The following example creates a database using the `Database(name: String)` method.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=new-database]
+include::{snippet}[tag=new-database]
 ----
 
 Just as before, the database will be created in a default location.
@@ -218,9 +218,9 @@ Instructions for various commands are available in *Tools/README.md*.
 The log messages are split into different domains (`LogDomains`) which can be tuned to different log levels.
 The following example enables `verbose` logging for the `replicator` and `query` domains.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=logging]
+include::{snippet}[tag=logging]
 ----
 
 === Loading a pre-built database
@@ -232,9 +232,9 @@ To use a prebuilt database, you need to set up the database, build the database 
 After your app launches, it needs to check whether the database exists.
 If the database does not exist, the app should copy it from the app bundle using the http://docs.couchbase.com/mobile/2.0/couchbase-lite-swift/db022/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC4copyySS8fromPath_SS02toD0AA0D13ConfigurationVSg10withConfigtKFZ[`Database.copy(fromPath:toDatabase:withConfig:)`] method as shown below.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=prebuilt-database]
+include::{snippet}[tag=prebuilt-database]
 ----
 
 == Document
@@ -255,9 +255,9 @@ This method can be used to check if a document with a given ID already exists in
 
 The following code example creates a document and persists it to the database.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=initializer]
+include::{snippet}[tag=initializer]
 ----
 
 === Mutability
@@ -265,9 +265,9 @@ include::{examplesdir}/{snippetsdir}[tags=initializer]
 By default, when a document is read from the database it is immutable.
 The `document.toMutable()` method should be used to create an instance of the document which can be updated.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=update-document]
+include::{snippet}[tag=update-document]
 ----
 
 Changes to the document are persisted to the database when the `saveDocument` method is called.
@@ -281,9 +281,9 @@ In addition, as a convenience we offer `Date` accessors.
 Dates are a common data type, but JSON doesn't natively support them, so the convention is to store them as strings in ISO-8601 format.
 The following example sets the date on the `createdAt` property and reads it back using the `document.date(forKey: String)` accessor method.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=date-getter]
+include::{snippet}[tag=date-getter]
 ----
 
 If the property doesn't exist in the document it will return the default value for that  getter method (0 for `getInt`, 0.0 for `getFloat` etc.).
@@ -293,9 +293,9 @@ If you need to determine whether a given property exists in the document, you sh
 A `Document` can be converted to a plain dictionary type.
 That's often useful to pass the document contents as a plain object to another method.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=to-dictionary]
+include::{snippet}[tag=to-dictionary]
 ----
 
 === Batch operations
@@ -303,9 +303,9 @@ include::{examplesdir}/{snippetsdir}[tags=to-dictionary]
 If you're making multiple changes to a database at once, it's faster to group them together.
 The following example persists a few documents in batch.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=batch]
+include::{snippet}[tag=batch]
 ----
 
 At the *local* level this operation is still transactional: no other `Database` instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
@@ -316,9 +316,9 @@ But Couchbase Mobile is a distributed system, and due to the way replication wor
 It's also possible to register for document changes.
 The following example registers for changes to the document with ID `user.john` and prints the `verified_account` property.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=document-listener]
+include::{snippet}[tag=document-listener]
 ----
 
 == Blobs
@@ -328,9 +328,9 @@ The new behavior should be clearer too: a `Blob` is now a normal object that can
 In other words, you just instantiate a `Blob` and set it as the value of a property, and then later you can get the property value, which will be a `Blob` object.
 The following code example adds a blob to the document under the `avatar` property.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=blob]
+include::{snippet}[tag=blob]
 ----
 
 The `Blob` API lets you access the contents as in-memory data (a `Data` object) or as a `InputStream`.
@@ -388,18 +388,18 @@ In the query result, we print the `_id` and `name` properties of each row using 
 }
 ----
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=query-select-meta]
+include::{snippet}[tag=query-select-meta]
 ----
 
 The `SelectResult.all()` method can be used to query all the properties of a document.
 In this case, the document in the result is embedded in a dictionary where the key is the database name.
 The following snippet shows the same query using `SelectResult.all()` and the result in JSON.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=query-select-all]
+include::{snippet}[tag=query-select-all]
 ----
 
 [source,json]
@@ -450,9 +450,9 @@ In the example below, we use the `equalTo` operator to query documents where the
 }
 ----
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=query-where]
+include::{snippet}[tag=query-where]
 ----
 
 ==== Collection Operators
@@ -472,9 +472,9 @@ The following example uses the `Function.arrayContains` to find documents whose 
 }
 ----
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=query-collection-operator-contains]
+include::{snippet}[tag=query-collection-operator-contains]
 ----
 
 ===== IN Operator
@@ -482,9 +482,9 @@ include::{examplesdir}/{snippetsdir}[tags=query-collection-operator-contains]
 The `IN` operator is useful when you need to explicitly list out the values to test against.
 The following example looks for documents whose `first`, `last` or `username` property value equals "Armani".
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=query-collection-operator-in]
+include::{snippet}[tag=query-collection-operator-in]
 ----
 
 ==== Like Operator
@@ -495,9 +495,9 @@ Use the `like` operator for case insensitive matches and the `regex` operator (s
 In the example below, we are looking for documents of type `landmark` where the name property exactly matches the string "Royal engineers museum".
 Note that since `like` does a case insensitive match, the following query will return "landmark" type documents with name matching "Royal Engineers Museum", "royal engineers museum", "ROYAL ENGINEERS MUSEUM" and so on.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=query-like-operator]
+include::{snippet}[tag=query-like-operator]
 ----
 
 ==== Wildcard Match
@@ -509,9 +509,9 @@ In the example below, we are looking for documents of `type` "landmark" where th
 The following query will return "landmark" type documents with name matching "Engineers", "engine", "english egg" , "England Eagle" and so on.
 Notice that the matches may span word boundaries.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=query-like-operator-wildcard-match]
+include::{snippet}[tag=query-like-operator-wildcard-match]
 ----
 
 ==== Wildcard Character Match
@@ -521,9 +521,9 @@ We can use `_` sign within a like expression to do a wildcard match against a si
 In the example below, we are looking for documents of type "landmark" where the `name` property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
 The following query will return "landmark" `type` documents with the `name` matching "Engineer", "engineer" and so on.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=query-like-operator-wildcard-character-match]
+include::{snippet}[tag=query-like-operator-wildcard-character-match]
 ----
 
 ==== Regex Operator
@@ -535,9 +535,9 @@ In the example below, we are looking for documents of `type` "landmark" where th
 The following query will return "landmark" type documents with name matching "Engine", "engine" and so on.
 Note that the `\b` specifies that the match must occur on word boundaries.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=query-regex-operator]
+include::{snippet}[tag=query-regex-operator]
 ----
 
 === JOIN statement
@@ -547,9 +547,9 @@ The JOIN clause enables you to create new input objects by combining two or more
 The following example uses a JOIN clause to find the airline details which have routes that start from RIX.
 This example JOINS the document of type "route" with documents of type "airline" using the document ID (`_id`) on the "airline" document and `airlineid` on the "route" document.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=query-join]
+include::{snippet}[tag=query-join]
 ----
 
 === GROUP BY statement
@@ -568,9 +568,9 @@ The following example looks for the number of airports at an altitude of 300 ft 
 }
 ----
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=query-groupby]
+include::{snippet}[tag=query-groupby]
 ----
 
 [source,text]
@@ -587,9 +587,9 @@ There are 123 airports on the America/Denver timezone located in United States a
 It is possible to sort the results of a query based on a given expression result.
 The example below returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=query-orderby]
+include::{snippet}[tag=query-orderby]
 ----
 
 [source,text]
@@ -621,9 +621,9 @@ The following example creates a new index for the `type` and `name` properties.
 }
 ----
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=query-index]
+include::{snippet}[tag=query-index]
 ----
 
 If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.
@@ -639,17 +639,17 @@ A live query is a great way to build reactive user interfaces, especially table/
 For example, as the replicator runs and pulls new data from the server, a live query-driven UI will automatically update to show the data without the user having to manually refresh.
 This helps your app feel quick and responsive.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=live-query]
+include::{snippet}[tag=live-query]
 ----
 <1> The live query starts immediately and changes are posted asynchronously.
 
 The following example stops the live query with the token from the previous example.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=stop-live-query]
+include::{snippet}[tag=stop-live-query]
 ----
 
 == Full-Text Search
@@ -658,9 +658,9 @@ To run a full-text search (FTS) query, you must have created a full-text index o
 Unlike queries, the index is not optional.
 The following example inserts documents and creates an FTS index on the `name` property.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=fts-index]
+include::{snippet}[tag=fts-index]
 ----
 
 Multiple properties to index can be specified in the `Index.fullTextIndex(withItems: [FullTextIndexItem])` method.
@@ -669,9 +669,9 @@ With the index created, an FTS query on the property that is being indexed can b
 The full-text search criteria is defined as a `FullTextExpression`.
 The left-hand side is the full-text index to use and the right-hand side is the pattern to match.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=fts-query]
+include::{snippet}[tag=fts-query]
 ----
 
 In the example above, the pattern to match is a word, the full-text search query matches all documents that contain the word 'buy' in the value of the `doc.name` property.
@@ -777,7 +777,7 @@ for example, if you wish to start a `push` only or `pull` only replication.
 
 The following example creates a `pull` replication with Sync Gateway.
 
-[source,swift]
+[source]
 ----
 class MyClass {
     var database: Database?
@@ -818,9 +818,9 @@ So we don't recommend to rely on that when using the replication or database cha
 As always, when there is a problem with replication, logging is your friend.
 The following example increases the log output for activity related to replication with Sync Gateway.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=replication-logging]
+include::{snippet}[tag=replication-logging]
 ----
 
 === Authentication
@@ -853,9 +853,9 @@ Under the hood, the replicator will send the credentials in the first request to
 This is the recommended way of using basic authentication.
 The following example initiates a one-shot replication as the user *john* with the password *pass*.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=basic-authentication]
+include::{snippet}[tag=basic-authentication]
 ----
 
 ==== Session Authentication
@@ -865,9 +865,9 @@ A user session must first be created through the link:../references/sync-gateway
 The HTTP response contains a session ID which can then be used to authenticate as the user it was created for.
 The following example initiates a one-shot replication with the session ID that is returned from the `POST /{db}/_session` endpoint.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=session-authentication]
+include::{snippet}[tag=session-authentication]
 ----
 
 === Replication Status
@@ -875,9 +875,9 @@ include::{examplesdir}/{snippetsdir}[tags=session-authentication]
 The `replication.status.activity` property can be used to check the status of a replication.
 For example, when the replication is actively transferring data and when it has stopped.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=replication-status]
+include::{snippet}[tag=replication-status]
 ----
 
 The following table lists the different activity levels in the API and the meaning of each one.
@@ -902,9 +902,9 @@ The `IDLE` state is only used in continuous replications.
 If an error occurs, the replication status will be updated with an `Error` which follows the standard HTTP error codes.
 The following example monitors the replication for errors and logs the error code to the console.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=replication-error-handling]
+include::{snippet}[tag=replication-error-handling]
 ----
 
 When a permanent error occurs (i.e `404`: not found, `401`: unauthorized), the replicator (continuous or one-shot) will stop permanently.
@@ -923,9 +923,9 @@ The following error codes are considered temporary by the Couchbase Lite replica
 
 include::{partialsdir}/replication-custom-header.adoc[]
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=replication-custom-header]
+include::{snippet}[tag=replication-custom-header]
 ----
 
 == Handling Conflicts
@@ -957,9 +957,9 @@ It allows a Couchbase Lite replicator to store data on secondary storage.
 It would be especially useful in scenarios where a user's device is damaged and the data needs to be moved to a different device.
 Note that the code below won't compile if you're running the *Community Edition* of Couchbase Lite.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=database-replica]
+include::{snippet}[tag=database-replica]
 ----
 
 == Certificate Pinning
@@ -976,9 +976,9 @@ The `cert.pem` and `key.pem` can be used in the Sync Gateway configuration (see 
 
 On the Couchbase Lite side, the replication must be configured with the `cert.cer` file.
 
-[source,swift]
+[source]
 ----
-include::{examplesdir}/{snippetsdir}[tags=certificate-pinning]
+include::{snippet}[tag=certificate-pinning]
 ----
 
 This example loads the certificate from the application sandbox, then converts it to the appropriate type to configure the replication object.
