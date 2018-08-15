@@ -26,9 +26,8 @@ If you have a license or you are evaluating the Enterprise edition, install the 
 . Your app must call the relevant `Activate()` function inside of the class that is included in the support assembly (there is only one public class in each support assembly, and the support assembly itself is a nuget dependency).
 +
 For example, UWP looks like `Couchbase.Lite.Support.UWP.Activate()`.
-Currently the support assemblies provide dependency injected mechanisms for default directory logic, and platform specific logging (i.e.
-Android will log to logcat with correct log levels and tags.
-No more "mono-stdout" at always info level).
+Currently the support assemblies provide dependency injected mechanisms for default directory logic, and platform specific logging (i.e. Android will log to logcat with correct log levels and tags.
+No more "mono-stdout" at always info level.)
 
 === Starter code
 
@@ -178,8 +177,7 @@ include::{partialsdir}/database-encryption.adoc[]
 Where a database goes by default depends on the platform it is running on.
 Here are the defaults for each platform:
 
-* .NET Core: `Path.Combine(AppContext.BaseDirectory, "CouchbaseLite")` (unless the app context is altered [e.g.
-by XUnit], this will be the same directory as the output binary)
+* .NET Core: `Path.Combine(AppContext.BaseDirectory, "CouchbaseLite")` (unless the app context is altered [e.g. by XUnit], this will be the same directory as the output binary)
 * UWP: `Windows.Storage.ApplicationData.Current.LocalFolder.Path` (Inside the installed app sandbox.
 Note that this sandbox gets deleted sometimes when debugging from inside Visual Studio when the app is shutdown)
 * Xamarin iOS: In a folder named CouchbaseLite inside of `ApplicationSupportDirectory` (this can be retrieved more easily from the simulator using the https://simpholders.com/3/[SimPholders] utility)
@@ -212,7 +210,8 @@ include::{examplesdir}/{snippetsdir}[tags=prebuilt-database]
 == Document
 
 In Couchbase Lite, a document's body takes the form of a JSON object — a collection of key/value pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
-Every document is identified by a document ID, which can be automatically generated (as a UUID) or determined by the application; the only constraints are that it must be unique within the database, and it can't be changed.
+Every document is identified by a document ID, which can be automatically generated (as a UUID) or determined by the application;
+the only constraints are that it must be unique within the database, and it can't be changed.
 
 === Initializers
 
@@ -297,7 +296,8 @@ On the image below, the document now contains the `_attachments` dictionary when
 
 image::attach_replicated.png[]
 
-A blob also has properties such as `"digest"` (a SHA-1 digest of the data), `"length"` (the length in bytes), and optionally `"content_type"` (the MIME type.) The data is not stored in the document, but in a separate content-addressable store, indexed by the digest.
+A blob also has properties such as `"digest"` (a SHA-1 digest of the data), `"length"` (the length in bytes), and optionally `"content_type"` (the MIME type).
+The data is not stored in the document, but in a separate content-addressable store, indexed by the digest.
 
 This `Blob` can be retrieved on the Sync Gateway REST API at http://localhost:4984/justdoit/user.david/blob_1[localhost:4984/justdoit/user.david/blob_1].
 Notice that the blob identifier in the URL path is "blob_1" (not "avatar").
@@ -697,7 +697,8 @@ For platform specific installation instructions, refer to the Sync Gateway https
 === Starting a Replication
 
 Replication objects are now bidirectional, this means you can start a `push`/`pull` replication with a single instance.
-The replication's parameters can be specified through the http://docs.couchbase.com/mobile/2.0/couchbase-lite-net/db022/html/T_Couchbase_Lite_Sync_ReplicatorConfiguration.htm[`ReplicatorConfiguration`] object; for example, if you wish to start a `push` only or `pull` only replication.
+The replication's parameters can be specified through the http://docs.couchbase.com/mobile/2.0/couchbase-lite-net/db022/html/T_Couchbase_Lite_Sync_ReplicatorConfiguration.htm[`ReplicatorConfiguration`] object;
+for example, if you wish to start a `push` only or `pull` only replication.
 
 The following example creates a `pull` replication with Sync Gateway.
 
@@ -730,7 +731,8 @@ You should now use `ws:`, or `wss:` for SSL/TLS connections.
 include::{partialsdir}/verify-replication.adoc[]
 
 Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit data.
-Some load balancers are not configured for WebSocket connections by default (NGINX for example); so it might be necessary to explicitly enable them in the load balancer's configuration (see https://developer.couchbase.com/documentation/mobile/1.5/guides/sync-gateway/nginx/index.html[Load Balancers]).
+Some load balancers are not configured for WebSocket connections by default (NGINX for example);
+so it might be necessary to explicitly enable them in the load balancer's configuration (see https://developer.couchbase.com/documentation/mobile/1.5/guides/sync-gateway/nginx/index.html[Load Balancers]).
 
 By default, the WebSocket protocol uses compression to optimize over speed and bandwidth.
 The level of compression is set on Sync Gateway and can be tuned in the configuration file (link:../guides/sync-gateway/config-properties/index.html#2.0/replicator_compression[`replicator_compression`]).
