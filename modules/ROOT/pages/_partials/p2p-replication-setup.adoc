@@ -17,10 +17,11 @@ It could be an Id, URL etc.
 If using the MultiPeerConnectivity Framework, this could be the MCPeerID.
 . `protocolType`: specifies the kind of transport you intend to implement.
 There are two options.
-	* The default (`MessageStream`) means that you want to "send a series of messages", or in other words the Communication Framework will control the formatting of messages so that there are clear boundaries between messages.
-	* The alternative (`ByteStream`) means that you just want to send raw bytes over the stream and Couchbase should format for you to ensure that messages get delivered in full.
+ ** The default (`MessageStream`) means that you want to "send a series of messages", or in other words the Communication Framework will control the formatting of messages so that there are clear boundaries between messages.
+ ** The alternative (`ByteStream`) means that you just want to send raw bytes over the stream and Couchbase should format for you to ensure that messages get delivered in full.
 +
 Typically, the Communication Framework will handle message assembly and disassembly so you would use the `MessageType` option in most cases.
+
 . `delegate`: the delegate that will implement the `MessageEndpointConnection` protocol.
 
 Then, a `Replicator` is instantiated with the initialized `MessageEndpoint` as the target.
