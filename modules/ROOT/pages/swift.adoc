@@ -95,7 +95,7 @@ image::getting-started-ios.png[]
 In the next step, you will setup Sync Gateway.
 Before synchronizing documents to Sync Gateway you will need to disable App Transport Security (ATS) on iOS.
 App Transport Security is enabled by default since iOS 9 and enforces applications to use HTTPS exclusively.
-For this getting started guide, you will disable it but we recommend to enable it in production (and link:../guides/sync-gateway/configuring-ssl/index.html[enable HTTPS on Sync Gateway]).
+For this getting started guide, you will disable it but we recommend to enable it in production (and xref:sync-gateway::configuring-ssl.adoc[enable HTTPS on Sync Gateway]).
 In the Xcode navigator, right-click on *Info.plist* and open it as a source file.
 
 image::info-plist.png[]
@@ -110,7 +110,7 @@ Append the following inside of the `<dict>` XML tags to disable ATS.
 </dict>
 ----
 
-link:../installation/sync-gateway/index.html[Installing Sync Gateway ⟶]
+xref:sync-gateway::getting-started.adoc#_installation[Installing Sync Gateway ->]
 
 == Supported Versions
 
@@ -152,7 +152,7 @@ Additionally, the automatic migration feature does not support encrypted databas
 ==== Handling of Existing Conflicts
 
 For conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new 2.0 database and does NOT copy any conflicting revisions.
-This functionality is related to the way conflicts are being handled in Couchbase Lite 2.0 (see link:swift.html#handling-conflicts[Handling Conflicts]).
+This functionality is related to the way conflicts are being handled in Couchbase Lite 2.0 (see <<handling-conflicts,Handling Conflicts>>).
 Optionally, existing conflicts in the 1.x database can be resolved with the https://developer.couchbase.com/documentation/mobile/1.5/guides/couchbase-lite/native-api/revision/index.html[1.x API] prior to the database being upgraded to 2.0.
 
 ==== Handling of Existing Attachments
@@ -759,7 +759,7 @@ The replicator is designed to send documents from a source to a target database.
 === Compatibility
 
 WARNING: The new protocol is *incompatible* with CouchDB-based databases.
-And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that link:../references/couchbase-lite/release-notes/index.html#compatibility-matrix[supports it].
+And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that xref:compatibility-matrix.adoc[supports it].
 
 To use this protocol with Couchbase Lite 2.0, the replication URL should specify WebSockets as the URL scheme (see the "Starting a Replication" section below).
 Mobile clients using Couchbase Lite 1.x can continue to use *http* as the URL scheme.
@@ -813,7 +813,7 @@ Some load balancers are not configured for WebSocket connections by default (NGI
 so it might be necessary to explicitly enable them in the load balancer's configuration (see https://developer.couchbase.com/documentation/mobile/1.5/guides/sync-gateway/nginx/index.html[Load Balancers]).
 
 By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
-The level of compression is set on Sync Gateway and can be tuned in the configuration file (link:../guides/sync-gateway/config-properties/index.html#2.0/replicator_compression[`replicator_compression`]).
+The level of compression is set on Sync Gateway and can be tuned in the configuration file (https://developer.couchbase.com/documentation/mobile/2.0/guides/sync-gateway/config-properties/index.html#2.0/replicator_compression[`replicator_compression`]).
 
 ==== Replication Ordering
 
@@ -850,7 +850,7 @@ You can enable authentication with the following properties in the configuration
 ----
 
 To authenticate with Sync Gateway, an associated user must first be created.
-Sync Gateway users can be created through the link:../references/sync-gateway/admin-rest-api/index.html?v=2.0#/user/post\__db___user_[`+POST /{db}/_user+`] endpoint on the Admin REST API.
+Sync Gateway users can be created through the xref:sync-gateway::admin-rest-api.adoc?v=2.0#/user/post\__db___user_[`+POST /{db}/_user+`] endpoint on the Admin REST API.
 Provided that the user exists on Sync Gateway, there are two ways to authenticate from a Couchbase Lite client: Basic Authentication or Session Authentication.
 
 ==== Basic Authentication
@@ -868,7 +868,7 @@ include::{snippet}[tag=basic-authentication]
 ==== Session Authentication
 
 Session authentication is another way to authenticate with Sync Gateway.
-A user session must first be created through the link:../references/sync-gateway/rest-api/index.html#/session/post\__db___session[`+POST /{db}/_session+`] endpoint on the Public REST API.
+A user session must first be created through the xref:sync-gateway::rest-api.adoc#/session/post\__db___session[`+POST /{db}/_session+`] endpoint on the Public REST API.
 The HTTP response contains a session ID which can then be used to authenticate as the user it was created for.
 The following example initiates a one-shot replication with the session ID that is returned from the `+POST /{db}/_session+` endpoint.
 
