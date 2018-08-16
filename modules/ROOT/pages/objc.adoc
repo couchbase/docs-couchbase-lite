@@ -4,6 +4,7 @@
 :snippet: {examplesdir}/objc/SampleCodeTest.m
 :source-language: objectivec
 :version: 2.1.0-DB001
+:blank-field: ____
 
 == Getting Started
 
@@ -29,15 +30,13 @@ Create or open an existing Xcode project and install Couchbase Lite using one of
 . https://github.com/Carthage/Carthage#installing-carthage[Install Carthage]
 . In your *Cartfile*, add the following.
 +
-*Couchbase Lite Community Edition*
-+
+.Couchbase Lite Community Edition
 [source,ruby,subs=attributes+]
 ----
 binary "https://s3.amazonaws.com/cbmobile-carthage/CouchbaseLite-Community.json" ~> {version}
 ----
 +
-*Couchbase Lite Enterprise Edition*
-+
+.Couchbase Lite Enterprise Edition
 [source,ruby,subs=attributes+]
 ----
 binary "https://s3.amazonaws.com/cbmobile-carthage/CouchbaseLite-Enterprise.json" ~> {version}
@@ -52,8 +51,7 @@ binary "https://s3.amazonaws.com/cbmobile-carthage/CouchbaseLite-Enterprise.json
 . https://guides.cocoapods.org/using/getting-started.html[Install Cocoapods]
 . In your *Podfile*, add the following.
 +
-*Couchbase Lite Community Edition*
-+
+.Couchbase Lite Community Edition
 [source,ruby,subs=attributes+]
 ----
 target '<your target name>' do
@@ -62,8 +60,7 @@ target '<your target name>' do
 end
 ----
 +
-*Couchbase Lite Enterprise Edition*
-+
+.Couchbase Lite Enterprise Edition
 [source,ruby,subs=attributes+]
 ----
 target '<your target name>' do
@@ -136,7 +133,7 @@ The API has changed in Couchbase Lite 2.0 and will require porting an applicatio
 To update an Xcode project built with Couchbase Lite 1.x:
 
 * Remove the existing *CouchbaseLite.framework* dependency from the Xcode project.
-* Remove all the Couchbase Lite 1.x dependencies (see the link:https://developer.couchbase.com/documentation/mobile/1.5/installation/ios/index.html#ios-amp-tvos[1.x installation guide]).
+* Remove all the Couchbase Lite 1.x dependencies (see the https://developer.couchbase.com/documentation/mobile/1.5/installation/ios/index.html#ios-amp-tvos[1.x installation guide]).
 * Install the Couchbase Lite 2.0 framework in your project (see the link:swift.html#_frameworks[installation options]).
 At this point, there will be many compiler warnings.
 Refer to the examples on this page to learn about the new API.
@@ -146,14 +143,14 @@ Refer to the examples on this page to learn about the new API.
 
 Databases that were created with Couchbase Lite 1.2 or later can be used with Couchbase Lite 2.0.
 Upon detecting it is a 1.x database file, Couchbase Lite will automatically upgrade it to 2.0.
-This feature is only available for the default storage type (i.e not a ForestDB database).
+This feature is only available for the default storage type (i.e., not a ForestDB database).
 Additionally, the automatic migration feature does not support encrypted databases, so if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://developer.couchbase.com/documentation/mobile/1.5/guides/couchbase-lite/native-api/database/index.html#step-2-enabling-encryption[1.x Database Guide]).
 
 ==== Handling of Existing Conflicts
 
 For conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new 2.0 database and does NOT copy any conflicting revisions.
 This functionality is related to the way conflicts are being handled in Couchbase Lite 2.0 (see link:swift.html#_handling_conflicts[Handling Conflicts]).
-Optionally, existing conflicts in the 1.x database can be resolved with the link:https://developer.couchbase.com/documentation/mobile/1.5/guides/couchbase-lite/native-api/revision/index.html[1.x API] prior to the database being upgraded to 2.0.
+Optionally, existing conflicts in the 1.x database can be resolved with the https://developer.couchbase.com/documentation/mobile/1.5/guides/couchbase-lite/native-api/revision/index.html[1.x API] prior to the database being upgraded to 2.0.
 
 ==== Handling of Existing Attachments
 
@@ -175,7 +172,7 @@ The replication protocol used in Couchbase Lite 2.0 has been re-designed from th
 Therefore, to use replication with Couchbase Lite 2.x, the target Sync Gateway instance must also be upgraded to 2.x.
 
 Sync Gateway 2.x will continue to accept clients that connect through the 1.x protocol.
-It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through "http://localhost:4984/db" and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through "ws://localhost:4984/db".
+It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through ws://localhost:4984/db.
 This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
 
 == Database
@@ -227,7 +224,7 @@ Even if some of the content changes on the server after you create the app, the 
 
 To use a prebuilt database, you need to set up the database, build the database into your app bundle as a resource, and install the database during the initial launch.
 After your app launches, it needs to check whether the database exists.
-If the database does not exist, the app should copy it from the app bundle using the http://docs.couchbase.com/mobile/2.0/couchbase-lite-objc/db022/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(cm)copyFromPath:toDatabase:withConfig:error:[`[CBLDatabase copyFromPath:toDatabase:withConfig:error:]`] method as shown below.
+If the database does not exist, the app should copy it from the app bundle using the http://docs.couchbase.com/mobile/2.0/couchbase-lite-objc/db022/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(cm)copyFromPath:toDatabase:withConfig:error:[`[CBLDatabase copyFromPath:toDatabase:withConfig:error:\]`] method as shown below.
 
 [source]
 ----
@@ -236,7 +233,7 @@ include::{snippet}[tag=prebuilt-database]
 
 == Document
 
-In Couchbase Lite, a document's body takes the form of a JSON object — a collection of key/value pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
+In Couchbase Lite, a document's body takes the form of a JSON object -- a collection of key/value pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
 Every document is identified by a document ID, which can be automatically generated (as a UUID) or specified programmatically;
 the only constraints are that it must be unique within the database, and it can't be changed.
 
@@ -285,7 +282,7 @@ include::{snippet}[tag=date-getter]
 
 If the property doesn't exist in the document it will return the default value for that  getter method (0 for `getInt`, 0.0 for `getFloat` etc.).
 
-If you need to determine whether a given property exists in the document, you should use the http://docs.couchbase.com/mobile/2.0/couchbase-lite-objc/db022/Classes/CBLDocument.html[`[Document contains:key]`] method.
+If you need to determine whether a given property exists in the document, you should use the http://docs.couchbase.com/mobile/2.0/couchbase-lite-objc/db022/Classes/CBLDocument.html[`[Document contains:key\]`] method.
 
 === Batch operations
 
@@ -331,13 +328,13 @@ image::attach_replicated.png[,500]
 A blob also has properties such as `"digest"` (a SHA-1 digest of the data), `"length"` (the length in bytes), and optionally `"content_type"` (the MIME type).
 The data is not stored in the document, but in a separate content-addressable store, indexed by the digest.
 
-This `Blob` can be retrieved on the Sync Gateway REST API at http://localhost:4984/justdoit/user.david/blob_1[localhost:4984/justdoit/user.david/blob_1].
+This `Blob` can be retrieved on the Sync Gateway REST API at http://localhost:4984/justdoit/user.david/blob_1.
 Notice that the blob identifier in the URL path is "blob_1" (not "avatar").
 
 == Query
 
 Database queries have changed significantly.
-Instead of the map/reduce views used in 1.x, they're now based on expressions, of the form "return ____ from documents where ____, ordered by ____", with semantics based on Couchbase's N1QL query language.
+Instead of the map/reduce views used in 1.x, they're now based on expressions, of the form "return {blank-field} from documents where {blank-field}, ordered by {blank-field}", with semantics based on Couchbase's N1QL query language.
 
 There are several parts to specifying a query:
 
@@ -495,7 +492,7 @@ include::{snippet}[tag=query-like-operator-wildcard-match]
 
 ==== Wildcard Character Match
 
-We can use `_` sign within a like expression to do a wildcard match against a single character.
+We can use an `_` sign within a like expression to do a wildcard match against a single character.
 
 In the example below, we are looking for documents of type "landmark" where the `name` property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
 The following query will return "landmark" `type` documents with the `name` matching "Engineer", "engineer" and so on.
@@ -653,13 +650,13 @@ The left-hand side is the full-text index to use and the right-hand side is the 
 include::{snippet}[tag=fts-query]
 ----
 
-In the example above, the pattern to match is a word, the full-text search query matches all documents that contain the word 'buy' in the value of the `doc.name` property.
+In the example above, the pattern to match is a word, the full-text search query matches all documents that contain the word "buy" in the value of the `doc.name` property.
 
 Full-text search is supported in the following languages: danish, dutch, english, finnish, french, german, hungarian, italian, norwegian, portuguese, romanian, russian, spanish, swedish and turkish.
 
 The pattern to match can also be in the following forms:
 
-* *prefix queries:* the query expression used to search for a term prefix is the prefix itself with a '*' character appended to it.
+* *prefix queries:* the query expression used to search for a term prefix is the prefix itself with a "*" character appended to it.
 For example:
 +
 ....
@@ -668,6 +665,7 @@ For example:
 -- all documents that contain "linux", but also those that contain terms "linear",
 --"linker", "linguistic" and so on.
 ....
+
 * *overriding the property name that is being indexed:* Normally, a token or token prefix query is matched against the document property specified as the left-hand side of the `match` operator.
 This may be overridden by specifying a property name followed by a ":" character before a basic term query.
 There may be space between the ":" and the term to query for, but not between the property name and the ":" character.
@@ -679,6 +677,7 @@ For example:
 -- the document title, and the term "problems" appears in either the title
 -- or body of the document.
 ....
+
 * *phrase queries:* a phrase query is a query that retrieves all documents that contain a nominated set of terms or term prefixes in a specified order with no intervening tokens.
 Phrase queries are specified by enclosing a space separated sequence of terms or term prefixes in double quotes (").
 For example:
@@ -687,6 +686,7 @@ For example:
 "'"linux applications"'"
 -- Query for all documents that contain the phrase "linux applications".
 ....
+
 * *NEAR queries:* A NEAR query is a query that returns documents that contain a two or more nominated terms or phrases within a specified proximity of each other (by default with 10 or less intervening terms).
 A NEAR query is specified by putting the keyword "NEAR" between two phrase, token or token prefix queries.
 To specify a proximity other than the default, an operator of the form "NEAR/" may be used, where is the maximum number of intervening terms allowed.
@@ -697,6 +697,7 @@ For example:
 -- Search for a document that contains the phrase "replication" and the term
 -- "database" with not more than 2 terms separating the two.
 ....
+
 * *AND, OR & NOT query operators:* The enhanced query syntax supports the AND, OR and NOT binary set operators.
 Each of the two operands to an operator may be a basic FTS query, or the result of another AND, OR or NOT set operation.
 Operators must be entered using capital letters.
@@ -735,7 +736,7 @@ And since Couchbase Lite 2 only supports the new protocol, you will need to run 
 
 To use this protocol with Couchbase Lite 2.0, the replication URL should specify WebSockets as the URL scheme (see the "Starting a Replication" section below).
 Mobile clients using Couchbase Lite 1.x can continue to use *http* as the URL scheme.
-Sync Gateway 2.0 will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through "http://localhost:4984/db" and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through "ws://localhost:4984/db".
+Sync Gateway 2.0 will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through ws://localhost:4984/db.
 
 === Starting Sync Gateway
 
@@ -780,7 +781,7 @@ The following example creates a `pull` replication with Sync Gateway.
 ----
 <1> A replication is an asynchronous operation.
 To keep a reference to the `replicator` object, you can set it as an instance property.
-<1> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
+<2> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
 You should now use `ws:`, or `wss:` for SSL/TLS connections.
 
 include::{partialsdir}/verify-replication.adoc[]
@@ -849,17 +850,17 @@ The following example monitors the replication for errors and logs the error cod
 include::{snippet}[tag=replication-error-handling]
 ----
 
-When a permanent error occurs (i.e `404`: not found, `401`: unauthorized), the replicator (continuous or one-shot) will stop permanently.
-If the error is temporary (i.e waiting for the network to recover), a continuous replication will retry to connect indefinitely and if the replication is one-shot it will retry for a limited number of times.
+When a permanent error occurs (i.e., `404`: not found, `401`: unauthorized), the replicator (continuous or one-shot) will stop permanently.
+If the error is temporary (i.e., waiting for the network to recover), a continuous replication will retry to connect indefinitely and if the replication is one-shot it will retry for a limited number of times.
 The following error codes are considered temporary by the Couchbase Lite replicator and thus will trigger a connection retry.
 
-- `408`: Request Timeout
-- `429`: Too Many Requests
-- `500`: Internal Server Error
-- `502`: Bad Gateway
-- `503`: Service Unavailable
-- `504`: Gateway Timeout
-- `1001`: DNS resolution error
+* `408`: Request Timeout
+* `429`: Too Many Requests
+* `500`: Internal Server Error
+* `502`: Bad Gateway
+* `503`: Service Unavailable
+* `504`: Gateway Timeout
+* `1001`: DNS resolution error
 
 === Custom Headers
 
@@ -889,16 +890,16 @@ There are 2 different `save` method signatures to specify how to handle a possib
 The Last-Write-Win (LWW) algorithm is used to pick the winning revision.
 * `save(document: MutableDocument, concurrencyControl: ConcurrencyControl)`: attempts to save the document with a concurrency control.
 The concurrency control parameter has two possible values:
-** `lastWriteWins`: The last operation wins if there is a conflict.
-** `failOnConflict`: The operation will fail if there is a conflict.
+ ** `lastWriteWins`: The last operation wins if there is a conflict.
+ ** `failOnConflict`: The operation will fail if there is a conflict.
 
 Similarly to the save operation, the delete operation also has two method signatures to specify how to handle a possible conflict:
 
 * `delete(document: Document)`: The last write will win if there is a conflict.
 * `delete(document: Document, concurrencyControl: ConcurrencyControl)`: attemps to delete the document with a concurrency control.
 The concurrency control parameter has two possible values:
-** `lastWriteWins`: The last operation wins if there is a conflict.
-** `failOnConflict`: The operation will fail if there is a conflict.
+ ** `lastWriteWins`: The last operation wins if there is a conflict.
+ ** `failOnConflict`: The operation will fail if there is a conflict.
 
 == Database Replicas
 
@@ -966,29 +967,25 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 === 2.1
 
-*Performance Improvements*
+.Performance Improvements
+* https://github.com/couchbase/couchbase-lite-ios/issues/2127[*#2127*] CBLReplicator always runs on main queue
 
-- https://github.com/couchbase/couchbase-lite-ios/issues/2127[*#2127*] CBLReplicator always runs on main queue
+.Enhancements
+* https://github.com/couchbase/couchbase-lite-ios/issues/1610[*#1610*] 2.0: Provide a script to strip simulator architecture frameworks for app submission
+* https://github.com/couchbase/couchbase-lite-ios/issues/2117[*#2117*] Implement Database Encryption (EE feature)
+* https://github.com/couchbase/couchbase-lite-ios/issues/2118[*#2118*] Support Peer-to-Peer replication through MessageEndpoint API (EE feature)
+* https://github.com/couchbase/couchbase-lite-ios/issues/2139[*#2139*] Implement Replicator reset checkpoint feature
 
-*Enhancements*
+.Bugs
+* https://github.com/couchbase/couchbase-lite-ios/issues/1926[*#1926*] Swift Replicator.addChangeListener crashes
+* https://github.com/couchbase/couchbase-lite-ios/issues/2140[*#2140*] 2.0 : TIC Read Status 1:57 error spam
+* https://github.com/couchbase/couchbase-lite-ios/issues/2149[*#2149*] Swift DictionaryObject and ArrayObject not having toMutable() method
+* https://github.com/couchbase/couchbase-lite-ios/issues/2162[*#2162*] 2.1 DB1: Crash when inserting image Blobs to objects in embedded array in Swift
+* https://github.com/couchbase/couchbase-lite-ios/issues/2188[*#2188*] Replicator not getting stopped when using MessageEndpoint
 
-- https://github.com/couchbase/couchbase-lite-ios/issues/1610[*#1610*] 2.0: Provide a script to strip simulator architecture frameworks for app submission
-- https://github.com/couchbase/couchbase-lite-ios/issues/2117[*#2117*] Implement Database Encryption (EE feature)
-- https://github.com/couchbase/couchbase-lite-ios/issues/2118[*#2118*] Support Peer-to-Peer replication through MessageEndpoint API (EE feature)
-- https://github.com/couchbase/couchbase-lite-ios/issues/2139[*#2139*] Implement Replicator reset checkpoint feature
-
-*Bugs*
-
-- https://github.com/couchbase/couchbase-lite-ios/issues/1926[*#1926*] Swift Replicator.addChangeListener crashes
-- https://github.com/couchbase/couchbase-lite-ios/issues/2140[*#2140*] 2.0 : TIC Read Status 1:57 error spam
-- https://github.com/couchbase/couchbase-lite-ios/issues/2149[*#2149*] Swift DictionaryObject and ArrayObject not having toMutable() method
-- https://github.com/couchbase/couchbase-lite-ios/issues/2162[*#2162*] 2.1 DB1: Crash when inserting image Blobs to objects in embedded array in Swift
-- https://github.com/couchbase/couchbase-lite-ios/issues/2188[*#2188*] Replicator not getting stopped when using MessageEndpoint
-
-*Known Issues*
-
-- https://github.com/couchbase/couchbase-lite-ios/issues/2112[*#2112*] HTTP proxy support
-- https://github.com/couchbase/couchbase-lite-ios/issues/2122[*#2122*] IOS 9 - Got LiteCore error: connection closed abnormally - eventual crash
+.Known Issues
+* https://github.com/couchbase/couchbase-lite-ios/issues/2112[*#2112*] HTTP proxy support
+* https://github.com/couchbase/couchbase-lite-ios/issues/2122[*#2122*] IOS 9 - Got LiteCore error: connection closed abnormally - eventual crash
 
 === 2.0.2
 
@@ -996,8 +993,7 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 === 2.0.0
 
-*Bugs*
-
+.Bugs
 * https://github.com/couchbase/couchbase-lite-ios/issues/1701[*#1701*] 2:0 swift expression based query returning empty results
 * https://github.com/couchbase/couchbase-lite-ios/issues/1836[*#1836*] 2.0: Database Listener callbacks not always getting called on main thread
 * https://github.com/couchbase/couchbase-lite-ios/issues/1854[*#1854*] 2.0 : Dictionary, Array, and Fragment have duplicate definitions
@@ -1009,7 +1005,6 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 * https://github.com/couchbase/couchbase-lite-ios/issues/2094[*#2094*] TestSelfSignedSSLFailure_SG failed on iOS 10.2
 * https://github.com/couchbase/couchbase-lite-ios/issues/2104[*#2104*] Set Immutable Dictionary or Array to Document causes toDictionary() to crash in Swift
 
-*Known Issues*
-
+.Known Issues
 * https://github.com/couchbase/couchbase-lite-ios/issues/2112[*#2112*] HTTP proxy support
 * https://github.com/couchbase/couchbase-lite-ios/issues/2122[*#2122*] IOS 9 - Got LiteCore error: connection closed abnormally - eventual crash
