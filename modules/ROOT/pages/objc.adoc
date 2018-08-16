@@ -82,7 +82,7 @@ This snippet demonstrates how to run basic CRUD operations, a simple Query and r
 
 [source]
 ----
-include::{snippet}[tag=getting-started]
+include::{snippet}[tag=getting-started,indent=0]
 ----
 
 Build and run.
@@ -162,7 +162,7 @@ The following example shows how to retrieve an attachment that was created in a 
 
 [source]
 ----
-include::{snippet}[tag=1x-attachment]
+include::{snippet}[tag=1x-attachment,indent=0]
 ----
 
 === Replication Compatibility
@@ -183,7 +183,7 @@ The following example creates a database using the `Database(name: String)` meth
 
 [source]
 ----
-include::{snippet}[tag=new-database]
+include::{snippet}[tag=new-database,indent=0]
 ----
 
 Just as before, the database will be created in a default location.
@@ -209,7 +209,7 @@ The following example enables `verbose` logging for the `replicator` and `query`
 
 [source]
 ----
-include::{snippet}[tag=logging]
+include::{snippet}[tag=logging,indent=0]
 ----
 
 === Loading a pre-built database
@@ -223,7 +223,7 @@ If the database does not exist, the app should copy it from the app bundle using
 
 [source]
 ----
-include::{snippet}[tag=prebuilt-database]
+include::{snippet}[tag=prebuilt-database,indent=0]
 ----
 
 == Document
@@ -246,7 +246,7 @@ The following code example creates a document and persists it to the database.
 
 [source]
 ----
-include::{snippet}[tag=initializer]
+include::{snippet}[tag=initializer,indent=0]
 ----
 
 === Mutability
@@ -256,7 +256,7 @@ The `document.toMutable()` method should be used to create an instance of the do
 
 [source]
 ----
-include::{snippet}[tag=update-document]
+include::{snippet}[tag=update-document,indent=0]
 ----
 
 Changes to the document are persisted to the database when the `saveDocument` method is called.
@@ -272,7 +272,7 @@ The following example sets the date on the `createdAt` property and reads it bac
 
 [source]
 ----
-include::{snippet}[tag=date-getter]
+include::{snippet}[tag=date-getter,indent=0]
 ----
 
 If the property doesn't exist in the document it will return the default value for that  getter method (0 for `getInt`, 0.0 for `getFloat` etc.).
@@ -286,7 +286,7 @@ The following example persists a few documents in batch.
 
 [source]
 ----
-include::{snippet}[tag=batch]
+include::{snippet}[tag=batch,indent=0]
 ----
 
 At the *local* level this operation is still transactional: no other `Database` instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
@@ -301,7 +301,7 @@ The following code example adds a blob to the document under the `avatar` proper
 
 [source]
 ----
-include::{snippet}[tag=blob]
+include::{snippet}[tag=blob,indent=0]
 ----
 
 The `Blob` API lets you access the contents as in-memory data (a `Data` object) or as a `InputStream`.
@@ -361,7 +361,7 @@ In the query result, we print the `_id` and `name` properties of each row using 
 
 [source]
 ----
-include::{snippet}[tag=query-select-meta]
+include::{snippet}[tag=query-select-meta,indent=0]
 ----
 
 The `SelectResult.all()` method can be used to query all the properties of a document.
@@ -370,7 +370,7 @@ The following snippet shows the same query using `SelectResult.all()` and the re
 
 [source]
 ----
-include::{snippet}[tag=query-select-all]
+include::{snippet}[tag=query-select-all,indent=0]
 ----
 
 [source,json]
@@ -423,7 +423,7 @@ In the example below, we use the `equalTo` operator to query documents where the
 
 [source]
 ----
-include::{snippet}[tag=query-where]
+include::{snippet}[tag=query-where,indent=0]
 ----
 
 ==== Collection Operators
@@ -445,7 +445,7 @@ The following example uses the `Function.arrayContains` to find documents whose 
 
 [source]
 ----
-include::{snippet}[tag=query-collection-operator-contains]
+include::{snippet}[tag=query-collection-operator-contains,indent=0]
 ----
 
 ===== IN Operator
@@ -455,7 +455,7 @@ The following example looks for documents whose `first`, `last` or `username` pr
 
 [source]
 ----
-include::{snippet}[tag=query-collection-operator-in]
+include::{snippet}[tag=query-collection-operator-in,indent=0]
 ----
 
 ==== Like Operator
@@ -468,7 +468,7 @@ Note that since `like` does a case insensitive match, the following query will r
 
 [source]
 ----
-include::{snippet}[tag=query-like-operator]
+include::{snippet}[tag=query-like-operator,indent=0]
 ----
 
 ==== Wildcard Match
@@ -482,7 +482,7 @@ Notice that the matches may span word boundaries.
 
 [source]
 ----
-include::{snippet}[tag=query-like-operator-wildcard-match]
+include::{snippet}[tag=query-like-operator-wildcard-match,indent=0]
 ----
 
 ==== Wildcard Character Match
@@ -494,7 +494,7 @@ The following query will return "landmark" `type` documents with the `name` matc
 
 [source]
 ----
-include::{snippet}[tag=query-like-operator-wildcard-character-match]
+include::{snippet}[tag=query-like-operator-wildcard-character-match,indent=0]
 ----
 
 ==== Regex Operator
@@ -508,7 +508,7 @@ Note that the `\b` specifies that the match must occur on word boundaries.
 
 [source]
 ----
-include::{snippet}[tag=query-regex-operator]
+include::{snippet}[tag=query-regex-operator,indent=0]
 ----
 
 === JOIN statement
@@ -520,7 +520,7 @@ This example JOINS the document of type "route" with documents of type "airline"
 
 [source]
 ----
-include::{snippet}[tag=query-join]
+include::{snippet}[tag=query-join,indent=0]
 ----
 
 === GROUP BY statement
@@ -541,7 +541,7 @@ The following example looks for the number of airports at an altitude of 300 ft 
 
 [source]
 ----
-include::{snippet}[tag=query-groupby]
+include::{snippet}[tag=query-groupby,indent=0]
 ----
 
 [source,text]
@@ -560,7 +560,7 @@ The example below returns documents of type equal to "hotel" sorted in ascending
 
 [source]
 ----
-include::{snippet}[tag=query-orderby]
+include::{snippet}[tag=query-orderby,indent=0]
 ----
 
 [source,text]
@@ -593,7 +593,7 @@ The following example creates a new index for the `type` and `name` properties.
 
 [source]
 ----
-include::{snippet}[tag=query-index]
+include::{snippet}[tag=query-index,indent=0]
 ----
 
 If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.
@@ -611,7 +611,7 @@ This helps your app feel quick and responsive.
 
 [source]
 ----
-include::{snippet}[tag=live-query]
+include::{snippet}[tag=live-query,indent=0]
 ----
 
 The live query starts immediately and changes are posted asynchronously.
@@ -620,7 +620,7 @@ The following example stops the live query with the token from the previous exam
 
 [source]
 ----
-include::{snippet}[tag=stop-live-query]
+include::{snippet}[tag=stop-live-query,indent=0]
 ----
 
 == Full-Text Search
@@ -631,7 +631,7 @@ The following example inserts documents and creates an FTS index on the `name` p
 
 [source]
 ----
-include::{snippet}[tag=fts-index]
+include::{snippet}[tag=fts-index,indent=0]
 ----
 
 Multiple properties to index can be specified in the `Index.fullTextIndex(withItems: [FullTextIndexItem])` method.
@@ -642,7 +642,7 @@ The left-hand side is the full-text index to use and the right-hand side is the 
 
 [source]
 ----
-include::{snippet}[tag=fts-query]
+include::{snippet}[tag=fts-query,indent=0]
 ----
 
 In the example above, the pattern to match is a word, the full-text search query matches all documents that contain the word "buy" in the value of the `doc.name` property.
@@ -800,7 +800,7 @@ The following example increases the log output for activity related to replicati
 
 [source]
 ----
-include::{snippet}[tag=replication-logging]
+include::{snippet}[tag=replication-logging,indent=0]
 ----
 
 === Replication Status
@@ -810,7 +810,7 @@ For example, when the replication is actively transferring data and when it has 
 
 [source]
 ----
-include::{snippet}[tag=replication-status]
+include::{snippet}[tag=replication-status,indent=0]
 ----
 
 The following table lists the different activity levels in the API and the meaning of each one.
@@ -842,7 +842,7 @@ The following example monitors the replication for errors and logs the error cod
 
 [source]
 ----
-include::{snippet}[tag=replication-error-handling]
+include::{snippet}[tag=replication-error-handling,indent=0]
 ----
 
 When a permanent error occurs (i.e., `404`: not found, `401`: unauthorized), the replicator (continuous or one-shot) will stop permanently.
@@ -863,7 +863,7 @@ include::{partialsdir}/replication-custom-header.adoc[]
 
 [source]
 ----
-include::{snippet}[tag=replication-custom-header]
+include::{snippet}[tag=replication-custom-header,indent=0]
 ----
 
 == Handling Conflicts
@@ -897,7 +897,7 @@ Note that the code below won't compile if you're running the *Community Edition*
 
 [source]
 ----
-include::{snippet}[tag=database-replica]
+include::{snippet}[tag=database-replica,indent=0]
 ----
 
 == Certificate Pinning
@@ -916,7 +916,7 @@ On the Couchbase Lite side, the replication must be configured with the `cert.ce
 
 [source]
 ----
-include::{snippet}[tag=certificate-pinning]
+include::{snippet}[tag=certificate-pinning,indent=0]
 ----
 
 This example loads the certificate from the application sandbox, then converts it to the appropriate type to configure the replication object.
