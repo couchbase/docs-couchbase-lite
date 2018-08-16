@@ -4,6 +4,7 @@
 :snippet: {examplesdir}/java/code-snippets/app/src/main/java/com/couchbase/code_snippets/MainActivity.java
 :source-language: java
 :version: 2.1.0-DB001
+:blank-field: ____
 
 WARNING: Currently, Couchbase Lite 2.0 is available for Android only.
 The SDK cannot be used in Java applications.
@@ -41,6 +42,7 @@ allprojects {
     }
 }
 ----
+
 * Next, add the following in the `dependencies` section of the application's *build.gradle* (the one in the *app* folder).
 +
 [source,groovy,subs=attributes+]
@@ -96,7 +98,7 @@ The API has changed in Couchbase Lite 2.0 and will require porting an applicatio
 To update an Xcode project built with Couchbase Lite 1.x:
 
 * Remove the existing Couchbase Lite dependency from the Android Studio project.
-* Install the Couchbase Lite 2.0 framework in your project (see the link:java.html#getting-started[installation options]).
+* Install the Couchbase Lite 2.0 framework in your project (see the <<getting-started,installation options>>).
 At this point, there will be many compiler warnings.
 Refer to the examples on this page to learn about the new API.
 * Build & run your application.
@@ -105,14 +107,14 @@ Refer to the examples on this page to learn about the new API.
 
 Databases that were created with Couchbase Lite 1.2 or later can be used with Couchbase Lite 2.0.
 Upon detecting it is a 1.x database file, Couchbase Lite will automatically upgrade it to 2.0.
-This feature is only available for the default storage type (i.e not a ForestDB database).
+This feature is only available for the default storage type (i.e., not a ForestDB database).
 Additionally, the automatic migration feature does not support encrypted databases, so if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://developer.couchbase.com/documentation/mobile/1.5/guides/couchbase-lite/native-api/database/index.html#step-2-enabling-encryption[1.x Database Guide]).
 
 ==== Handling of Existing Conflicts
 
 For conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new 2.0 database and does NOT copy any conflicting revisions.
 This functionality is related to the way conflicts are being handled in Couchbase Lite 2.0 (see link:swift.html#_handling_conflicts[Handling Conflicts]).
-Optionally, existing conflicts in the 1.x database can be resolved with the link:https://developer.couchbase.com/documentation/mobile/1.5/guides/couchbase-lite/native-api/revision/index.html[1.x API] prior to the database being upgraded to 2.0.
+Optionally, existing conflicts in the 1.x database can be resolved with the https://developer.couchbase.com/documentation/mobile/1.5/guides/couchbase-lite/native-api/revision/index.html[1.x API] prior to the database being upgraded to 2.0.
 
 ==== Handling of Existing Attachments
 
@@ -134,7 +136,7 @@ The replication protocol used in Couchbase Lite 2.0 has been re-designed from th
 Therefore, to use replication with Couchbase Lite 2.x, the target Sync Gateway instance must also be upgraded to 2.x.
 
 Sync Gateway 2.x will continue to accept clients that connect through the 1.x protocol.
-It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through "http://localhost:4984/db" and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through "ws://localhost:4984/db".
+It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through ws://localhost:4984/db.
 This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
 
 == Database
@@ -203,7 +205,7 @@ include::{snippet}[tag=prebuilt-database]
 
 == Document
 
-In Couchbase Lite, a document's body takes the form of a JSON object — a collection of key/value pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
+In Couchbase Lite, a document's body takes the form of a JSON object -- a collection of key/value pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
 Every document is identified by a document ID, which can be automatically generated (as a UUID) or specified programmatically;
 the only constraints are that it must be unique within the database, and it can't be changed.
 
@@ -293,13 +295,13 @@ image::attach_replicated.png[]
 A blob also has properties such as `"digest"` (a SHA-1 digest of the data), `"length"` (the length in bytes), and optionally `"content_type"` (the MIME type).
 The data is not stored in the document, but in a separate content-addressable store, indexed by the digest.
 
-This `Blob` can be retrieved on the Sync Gateway REST API at http://localhost:4984/justdoit/user.david/blob_1[localhost:4984/justdoit/user.david/blob_1].
+This `Blob` can be retrieved on the Sync Gateway REST API at http://localhost:4984/justdoit/user.david/blob_1.
 Notice that the blob identifier in the URL path is "blob_1" (not "avatar").
 
 == Query
 
 Database queries have changed significantly.
-Instead of the map/reduce views used in 1.x, they're now based on expressions, of the form "return ____ from documents where ____, ordered by ____", with semantics based on Couchbase's N1QL query language.
+Instead of the map/reduce views used in 1.x, they're now based on expressions, of the form "return {blank-field} from documents where {blank-field}, ordered by {blank-field}", with semantics based on Couchbase's N1QL query language.
 
 There are several parts to specifying a query:
 
@@ -457,7 +459,7 @@ include::{snippet}[tag=query-like-operator-wildcard-match]
 
 ==== Wildcard Character Match
 
-We can use `_` sign within a like expression to do a wildcard match against a single character.
+We can use an `_` sign within a like expression to do a wildcard match against a single character.
 
 In the example below, we are looking for documents of type "landmark" where the `name` property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
 The following query will return "landmark" `type` documents with the `name` matching "Engineer", "engineer" and so on.
@@ -594,13 +596,13 @@ The left-hand side is the full-text index to use and the right-hand side is the 
 include::{snippet}[tag=fts-query]
 ----
 
-In the example above, the pattern to match is a word, the full-text search query matches all documents that contain the word 'buy' in the value of the `doc.name` property.
+In the example above, the pattern to match is a word, the full-text search query matches all documents that contain the word "buy" in the value of the `doc.name` property.
 
 Full-text search is supported in the following languages: danish, dutch, english, finnish, french, german, hungarian, italian, norwegian, portuguese, romanian, russian, spanish, swedish and turkish.
 
 The pattern to match can also be in the following forms:
 
-* *prefix queries:* the query expression used to search for a term prefix is the prefix itself with a '*' character appended to it.
+* *prefix queries:* the query expression used to search for a term prefix is the prefix itself with a "*" character appended to it.
 For example:
 +
 ....
@@ -609,6 +611,7 @@ For example:
 -- all documents that contain "linux", but also those that contain terms "linear",
 --"linker", "linguistic" and so on.
 ....
+
 * *overriding the property name that is being indexed:* Normally, a token or token prefix query is matched against the document property specified as the left-hand side of the `match` operator.
 This may be overridden by specifying a property name followed by a ":" character before a basic term query.
 There may be space between the ":" and the term to query for, but not between the property name and the ":" character.
@@ -620,6 +623,7 @@ For example:
 -- the document title, and the term "problems" appears in either the title
 -- or body of the document.
 ....
+
 * *phrase queries:* a phrase query is a query that retrieves all documents that contain a nominated set of terms or term prefixes in a specified order with no intervening tokens.
 Phrase queries are specified by enclosing a space separated sequence of terms or term prefixes in double quotes (").
 For example:
@@ -628,6 +632,7 @@ For example:
 "'"linux applications"'"
 -- Query for all documents that contain the phrase "linux applications".
 ....
+
 * *NEAR queries:* A NEAR query is a query that returns documents that contain a two or more nominated terms or phrases within a specified proximity of each other (by default with 10 or less intervening terms).
 A NEAR query is specified by putting the keyword "NEAR" between two phrase, token or token prefix queries.
 To specify a proximity other than the default, an operator of the form "NEAR/" may be used, where is the maximum number of intervening terms allowed.
@@ -638,6 +643,7 @@ For example:
 -- Search for a document that contains the phrase "replication" and the term
 -- "database" with not more than 2 terms separating the two.
 ....
+
 * *AND, OR & NOT query operators:* The enhanced query syntax supports the AND, OR and NOT binary set operators.
 Each of the two operands to an operator may be a basic FTS query, or the result of another AND, OR or NOT set operation.
 Operators must be entered using capital letters.
@@ -674,9 +680,9 @@ Couchbase Mobile 2.0 uses a new replication protocol based on WebSockets.
 WARNING: The new protocol is *incompatible* with CouchDB-based databases.
 And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that link:../references/couchbase-lite/release-notes/index.html#compatibility-matrix[supports it].
 
-To use this protocol with Couchbase Lite 2.0, the replication URL should specify WebSockets as the URL scheme (see the "Starting a Replication" section below).
+To use this protocol with Couchbase Lite 2.0, the replication URL should specify WebSockets as the URL scheme (see the <<Starting a Replication>> section below).
 Mobile clients using Couchbase Lite 1.x can continue to use *http* as the URL scheme.
-Sync Gateway 2.0 will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through "http://localhost:4984/db" and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through "ws://localhost:4984/db".
+Sync Gateway 2.0 will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through "ws://localhost:4984/db".
 
 === Starting Sync Gateway
 
@@ -721,7 +727,7 @@ class MyClass {
 ----
 <1> A replication is an asynchronous operation.
 To keep a reference to the `replicator` object, you can set it as an instance property.
-<1> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
+<2> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
 You should now use `ws:`, or `wss:` for SSL/TLS connections.
 In this example the hostname is `10.0.2.2` because the Android emulator runs in a VM that is generally accessible on `10.0.2.2` from the host machine (see https://developer.android.com/studio/run/emulator-networking[Android Emulator networking] documentation).
 
@@ -791,17 +797,17 @@ The following example monitors the replication for errors and logs the error cod
 include::{snippet}[tag=replication-error-handling]
 ----
 
-When a permanent error occurs (i.e `404`: not found, `401`: unauthorized), the replicator (continuous or one-shot) will stop permanently.
-If the error is temporary (i.e waiting for the network to recover), a continuous replication will retry to connect indefinitely and if the replication is one-shot it will retry for a limited number of times.
+When a permanent error occurs (i.e., `404`: not found, `401`: unauthorized), the replicator (continuous or one-shot) will stop permanently.
+If the error is temporary (i.e., waiting for the network to recover), a continuous replication will retry to connect indefinitely and if the replication is one-shot it will retry for a limited number of times.
 The following error codes are considered temporary by the Couchbase Lite replicator and thus will trigger a connection retry.
 
-- `408`: Request Timeout
-- `429`: Too Many Requests
-- `500`: Internal Server Error
-- `502`: Bad Gateway
-- `503`: Service Unavailable
-- `504`: Gateway Timeout
-- `1001`: DNS resolution error
+* `408`: Request Timeout
+* `429`: Too Many Requests
+* `500`: Internal Server Error
+* `502`: Bad Gateway
+* `503`: Service Unavailable
+* `504`: Gateway Timeout
+* `1001`: DNS resolution error
 
 === Custom Headers
 
@@ -831,16 +837,16 @@ There are 2 different `save` method signatures to specify how to handle a possib
 The Last-Write-Win (LWW) algorithm is used to pick the winning revision.
 * `save(document: MutableDocument, concurrencyControl: ConcurrencyControl)`: attempts to save the document with a concurrency control.
 The concurrency control parameter has two possible values:
-** `lastWriteWins`: The last operation wins if there is a conflict.
-** `failOnConflict`: The operation will fail if there is a conflict.
+ ** `lastWriteWins`: The last operation wins if there is a conflict.
+ ** `failOnConflict`: The operation will fail if there is a conflict.
 
 Similarly to the save operation, the delete operation also has two method signatures to specify how to handle a possible conflict:
 
 * `delete(document: Document)`: The last write will win if there is a conflict.
 * `delete(document: Document, concurrencyControl: ConcurrencyControl)`: attemps to delete the document with a concurrency control.
 The concurrency control parameter has two possible values:
-** `lastWriteWins`: The last operation wins if there is a conflict.
-** `failOnConflict`: The operation will fail if there is a conflict.
+ ** `lastWriteWins`: The last operation wins if there is a conflict.
+ ** `failOnConflict`: The operation will fail if there is a conflict.
 
 == Database Replicas
 
@@ -903,25 +909,22 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 === 2.1
 
-*Enhancements*
+.Enhancements
+* https://github.com/couchbase/couchbase-lite-android/issues/1678[*#1678*] Support Peer-to-Peer replication through MessageEndpoint API (EE Feature)
+* https://github.com/couchbase/couchbase-lite-android/issues/1683[*#1683*] Support Database Encryption (EE feature)
+* https://github.com/couchbase/couchbase-lite-android/issues/1696[*#1696*] Support replicator reset checkpoint
 
-- https://github.com/couchbase/couchbase-lite-android/issues/1678[*#1678*] Support Peer-to-Peer replication through MessageEndpoint API (EE Feature)
-- https://github.com/couchbase/couchbase-lite-android/issues/1683[*#1683*] Support Database Encryption (EE feature)
-- https://github.com/couchbase/couchbase-lite-android/issues/1696[*#1696*] Support replicator reset checkpoint
+.Bugs
+* https://github.com/couchbase/couchbase-lite-android/issues/1510[*#1510*] 2.0: Crash with DB21 - in c4doc_update()
+* https://github.com/couchbase/couchbase-lite-android/issues/1665[*#1665*] Exception thrown openDatabase (Proguard strips methods that CBL uses)
+* https://github.com/couchbase/couchbase-lite-android/issues/1676[*#1676*] 2.0: Replicator Error misses the error message.
+* https://github.com/couchbase/couchbase-lite-android/issues/1702[*#1702*] 2.x: ValueIndexItem.expression(Expression) is missing
+* https://github.com/couchbase/couchbase-lite-android/issues/1725[*#1725*] 2.1: Android : Replication does not start
+* https://github.com/couchbase/couchbase-lite-android/issues/1727[*#1727*] Dead lock occurs - DB 2.0.0
+* https://github.com/couchbase/couchbase-lite-android/issues/1742[*#1742*] Couchbase mobile 2.0.2 Emoji Support
 
-*Bugs*
-
-- https://github.com/couchbase/couchbase-lite-android/issues/1510[*#1510*] 2.0: Crash with DB21 - in c4doc_update()
-- https://github.com/couchbase/couchbase-lite-android/issues/1665[*#1665*] Exception thrown openDatabase (Proguard strips methods that CBL uses)
-- https://github.com/couchbase/couchbase-lite-android/issues/1676[*#1676*] 2.0: Replicator Error misses the error message.
-- https://github.com/couchbase/couchbase-lite-android/issues/1702[*#1702*] 2.x: ValueIndexItem.expression(Expression) is missing
-- https://github.com/couchbase/couchbase-lite-android/issues/1725[*#1725*] 2.1: Android : Replication does not start
-- https://github.com/couchbase/couchbase-lite-android/issues/1727[*#1727*] Dead lock occurs - DB 2.0.0
-- https://github.com/couchbase/couchbase-lite-android/issues/1742[*#1742*] Couchbase mobile 2.0.2 Emoji Support
-
-*Known Issues*
-
-- https://github.com/couchbase/couchbase-lite-android/issues/1743[*#1743*] HTTP Proxy Support
+.Known Issues
+* https://github.com/couchbase/couchbase-lite-android/issues/1743[*#1743*] HTTP Proxy Support
 
 === 2.0.2
 
@@ -929,13 +932,11 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 === 2.0.0
 
-*Enhancements*
-
+.Enhancements
 * https://github.com/couchbase/couchbase-lite-android/issues/1264[*#1264*] 2.0 migration from Forest back to SQlite
 * https://github.com/couchbase/couchbase-lite-android/issues/1577[*#1577*] 2.1: Eliminate CouchbaseLiteRuntimeExecption, convert it to CouchbaseLiteExecption
 
-*Bugs*
-
+.Bugs
 * https://github.com/couchbase/couchbase-lite-android/issues/1217[*#1217*] 2.0: Todo Sample bug Fix and implement remaining features
 * https://github.com/couchbase/couchbase-lite-android/issues/1234[*#1234*] 2.0: Replicator continuous pull status completed and total number out of sync
 * https://github.com/couchbase/couchbase-lite-android/issues/1247[*#1247*] 2.0: Push Replication Causing Errors
@@ -956,13 +957,12 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 * https://github.com/couchbase/couchbase-lite-android/issues/1652[*#1652*] App crash with deleteDocument with concurrencyControl
 * https://github.com/couchbase/couchbase-lite-android/issues/1693[*#1693*] DB023 - Crazy amount of dbListenerTokens - makes the DB run slow
 
-*Known Issues*
-
+.Known Issues
 * https://github.com/couchbase/couchbase-lite-android/issues/1685[*#1685*] Replicator in Android get stuck at busy state when it goes back to online from offline (Genymotion)
 * https://github.com/couchbase/couchbase-lite-android/issues/1702[*#1702*] ValueIndexItem.expression(Expression) is implemented with CBL Android 2.0.0 release.
 This API will be available with 2.1.0 release
-* https://github.com/couchbase/couchbase-lite-android/issues/1665[*#1665*]: it is currently not possible to enable link:https://developer.android.com/studio/build/shrink-code.html[code shrinking] (`minifyEnabled: true`) in an Android Studio project that uses Couchbase Lite 2.0.
-As a workaround, code shrinking can be disabled for Couchbase Lite classes and its dependencies by adding the following in **proguard-rules.pro**.
+* https://github.com/couchbase/couchbase-lite-android/issues/1665[*#1665*]: it is currently not possible to enable https://developer.android.com/studio/build/shrink-code.html[code shrinking] (`minifyEnabled: true`) in an Android Studio project that uses Couchbase Lite 2.0.
+As a workaround, code shrinking can be disabled for Couchbase Lite classes and its dependencies by adding the following in *proguard-rules.pro*.
 +
 [source,groovy]
 ----
