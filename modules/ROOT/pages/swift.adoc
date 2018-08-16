@@ -215,7 +215,7 @@ The application is now correctly configured to start synchronizing documents wit
 
 == API References
 
-link:[Swift API References]
+http://docs.couchbase.com/mobile/2.0/couchbase-lite-swift/index.html[Swift API References]
 
 == Manager
 
@@ -689,7 +689,7 @@ they're buffered up for delivery after the transaction completes.
 
 === Database housekeeping
 
-Refer to the link:../revision/index.html[Revisions] guide to learn about compaction and pruning to manage the database size.
+Refer to the https://developer.couchbase.com/documentation/mobile/1.4/guides/couchbase-lite/native-api/revision/index.html[Revisions] guide to learn about compaction and pruning to manage the database size.
 
 === Deleting a database
 
@@ -1130,7 +1130,7 @@ They're there only to help with concurrency and resolving conflicts during repli
 
 Revisions form a tree data structure since they can have multiple branches.
 In the case where there are multiple branches, one or more conflicts exist and should be resolved per the application requirements.
-Refer to the link:../../../../training/develop/adding-synchronization/index.html#resolve-conflicts[Adding Synchronization] lesson to learn how to resolve conflicts in your application.
+Refer to the https://developer.couchbase.com/documentation/mobile/1.4/training/develop/adding-synchronization/index.html#add-synchronization[Adding Synchronization] lesson to learn how to resolve conflicts in your application.
 
 === Tombstones
 
@@ -1172,7 +1172,7 @@ But it may make it impossible to do certain merges to resolve conflicts and occu
 Compaction is defined as the process of purging the JSON bodies of non-leaf revisions.
 As shown on the diagram below, only properties with a leading underscore (`_` is the character to denote properties reserved for Couchbase) are kept to construct the revision tree.
 
-Compaction can only be invoked manually via the link:../../../../references/couchbase-lite/couchbase-lite/database/database/index.html#void-compact[compact()] method.
+Compaction can only be invoked manually via the https://developer.couchbase.com/documentation/mobile/1.4/references/couchbase-lite/couchbase-lite/database/database/index.html#void-compact[compact()] method.
 The compaction process does not remove JSON bodies of leaf nodes.
 Hence, it is important to resolve conflicts in your application in order to re-claim disk space when the compaction process is executed.
 
@@ -2441,6 +2441,7 @@ Some typical Listener use cases include:
 
 === Installing the Listener library
 
+// FIXME I don't know where this page resolves
 Refer to the link:./../../../../installation/index.html[installation guide] of the platform of your choice to install the Listener component.
 The Couchbase Lite Listener is coupled to Couchbase Lite.
 Both frameworks should always have the same release version.
@@ -2523,7 +2524,7 @@ However, there are some good practice guidelines to follow in order to replicate
 
 ==== Filter functions
 
-It may be desirable to use link:../replication/index.html#filtered-replications[filter functions] to replicate only the documents of interest to another peer.
+It may be desirable to use https://developer.couchbase.com/documentation/mobile/1.4/guides/couchbase-lite/native-api/replication/index.html#filtered-replications[filter functions] to replicate only the documents of interest to another peer.
 Filter functions in a peer-to-peer context are executed when the start method on the replication object is called.
 This is a major difference with the Sync Function available on Sync Gateway that builds the access rules when documents are saved to the Sync Gateway database.
 
@@ -2624,7 +2625,7 @@ Existing database encrypt fine.
 * https://github.com/couchbase/couchbase-lite-ios/issues/1429[#1429] 1.3.1-6: crashed EXC_BAD_ACCESS KERN_INVALID_ADDRESS 0x0000000000000000
 * https://github.com/couchbase/couchbase-lite-ios/issues/1442[#1442] Collection class properties not propagating from CBLDocument to CBLModel after sync
 * https://github.com/couchbase/couchbase-lite-ios/issues/1443[#1443] Handle iOS file protection gracefully when in background
-* https://github.com/couchbase/couchbase-lite-ios/issues/1461[#1461] ForestDB: Assertion failure in -link:[MYBackgroundMonitor beginBackgroundTaskNamed:] MYBackgroundMonitor.m:66
+* https://github.com/couchbase/couchbase-lite-ios/issues/1461[#1461] ForestDB: Assertion failure in MYBackgroundMonitor.m:66
 * https://github.com/couchbase/couchbase-lite-ios/issues/1467[#1467] Memory leak caused by ref cycle between replicator and CBLRemoteSession
 * https://github.com/couchbase/couchbase-lite-ios/issues/1556[#1556] Assertion failed: (_changesTimeout > 0)
 * https://github.com/couchbase/couchbase-lite-ios/issues/1557[#1557] Exception caught in CBLDatabase transaction
