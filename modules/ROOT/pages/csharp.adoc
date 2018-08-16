@@ -842,7 +842,7 @@ Leaf revisions are not impacted.
 The process runs automatically every time a revision is added.
 The *maxRevTreeDepth* value defaults to 20, which means that the metadata and JSON bodies of the last 20 revisions are retained in Couchbase Lite as shown on the animation below.
 
-image::https://cl.ly/321B1Y3T0K07/pruning-cbl.gif[]
+image::pruning-cbl.gif[]
 
 If there are conflicting revisions, the document may end up with *disconnected branches* after the pruning process.
 In the animation below, the document has a conflicting branch (revisions 3 - 7).
@@ -850,14 +850,14 @@ When the current revision (or longest branch) reaches the 23rd update, the confl
 The revision tree is not in a corrupted state and the logic that chooses the winning revision still applies.
 But it may make it impossible to do certain merges to resolve conflicts and occupy disk space that could have been free-ed if the conflict was resolved early on.
 
-image::https://cl.ly/0q342b0R251y/pruning-conflict.gif[]
+image::pruning-conflict.gif[]
 
 === Compaction
 
 Compaction is defined as the process of purging the JSON bodies of non-leaf revisions.
 As shown on the diagram below, only properties with a leading underscore (`_` is the character to denote properties reserved for Couchbase) are kept to construct the revision tree.
 
-image::https://cl.ly/1Q1F0i3f2i3n/compaction.gif[]
+image::compaction.gif[]
 
 Compaction can only be invoked manually via the `Database.compact()` method.
 The compaction process does not remove JSON bodies of leaf nodes.
@@ -1985,7 +1985,7 @@ The following platforms are being deprecated in Couchbase Mobile 1.4 and will be
 
 .Bugs
 * {url-issues-net}/672[#672] .NET LiteServ is loading windows specific binaries on mac
-* {url-issues-net}/710[#710] SQL Exception caused by trying to query non-existent `maps_#` table
+* {url-issues-net}/710[#710] SQL Exception caused by trying to query non-existent `+maps_#+` table
 * {url-issues-net}/713[#713] QueryOptions skip and limit used incorrectly during reduce
 * {url-issues-net}/718[#718] V1.3 Continuous replication stops on change tracker error
 * {url-issues-net}/719[#719] Replication - Inconsistent Number of Documents After Replicating
