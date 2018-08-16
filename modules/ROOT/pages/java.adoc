@@ -1,10 +1,6 @@
-:lang: java
 :idprefix:
 :idseparator: -
-:toc: left
-:toclevels: 3
-
-toc::[]
+:source-language: java
 
 == Getting Started
 
@@ -17,45 +13,33 @@ toc::[]
 +
 [source,xml]
 ----
-
 <dependency>
         <groupId>com.couchbase.lite</groupId>
         <artifactId>couchbase-lite-java</artifactId>
         <version>{{ site.package_version }}</version>
 </dependency>
 ----
-. Sync the dependencies and start using Couchbase Lite in your project.
 
+. Sync the dependencies and start using Couchbase Lite in your project.
 
 ===== Available artifacts
 
 The following libraries can be used in a Java project to import different components.
 
-[cols="1,1", options="header"]
 |===
-|
-                Artifact name
+|Artifact name |Service
 
-|
-                Service
+|`couchbase-lite-java-listener`
+|To access the database through HTTP (often used for hybrid development and peer-to-peer sync).
 
+|`couchbase-lite-java-forestdb`
+|To use ForestDB as the storage type.
 
+|`couchbase-lite-java-sqlcipher`
+|To enable encryption on SQLite databases.
 
-|``couchbase-lite-java-listener``
-|
-                To access the database through HTTP (often used for hybrid development and peer-to-peer sync).
-
-|``couchbase-lite-java-forestdb``
-|
-                To use ForestDB as the storage type.
-
-|``couchbase-lite-java-sqlcipher``
-|
-                To enable encryption on SQLite databases.
-
-|``couchbase-lite-java-javascript``
-|
-                JavaScript view (map/reduce) engine for the REST API.
+|`couchbase-lite-java-javascript`
+|JavaScript view (map/reduce) engine for the REST API.
 |===
 
 ==== Other options
@@ -64,7 +48,7 @@ You can find instructions for other build systems (Gradle etc.) on the https://m
 
 === Starter Code
 
-Create a new *command line app* in the IDE of your choice (in this example we'll use **IntelliJ IDEA CE**).
+Create a new *command line app* in the IDE of your choice (in this example we'll use *IntelliJ IDEA CE*).
 
 image::intellij-starter-proj.png[]
 
@@ -82,7 +66,6 @@ Add the following inside the `project` XML tag.
 
 [source,xml]
 ----
-
 dependencies
         dependency
                 groupIdcom.couchbase.lite/groupId
@@ -94,9 +77,8 @@ dependencies
 
 Open *Main.java* and add the following in the `main` method.
 
-[source,java]
+[source]
 ----
-
 package com.couchbase.HelloCBL;
 
 import com.couchbase.lite.*;
@@ -196,7 +178,6 @@ You create a Manager object by calling a constructor or initializer on the Manag
 
 [source]
 ----
-
 CBLManager *manager = [CBLManager sharedInstance];
 if (!manager) {
         NSLog(@"Cannot create Manager instance");
@@ -205,7 +186,6 @@ if (!manager) {
 
 [source]
 ----
-
 let manager = CBLManager.sharedInstance()
 if manager == nil {
     NSLog("Cannot create Manager Instance")
@@ -214,21 +194,18 @@ if manager == nil {
 
 [source]
 ----
-
 JavaContext context = new JavaContext();
 manager = new Manager(context, Manager.DEFAULT_OPTIONS);
 ----
 
 [source]
 ----
-
 AndroidContext androidContext = new AndroidContext(getApplicationContext());
 manager = new Manager(androidContext, Manager.DEFAULT_OPTIONS);
 ----
 
 [source]
 ----
-
 var manager = Manager.SharedInstance;
 ----
 
@@ -238,13 +215,11 @@ The Manager creates a directory in the filesystem and stores databases inside it
 Normally, you don't need to care where that is -- your application shouldn't be directly accessing those files.
 But sometimes it does matter.
 
-* Android: The directory is the location returned by the Android Context object's ``getFilesDir()``.
+* Android: The directory is the location returned by the Android Context object's `getFilesDir()`.
 * iOS: `Application Support/CouchbaseLite/`
 * macOS: `~/Library/Application Support/com.example.YourAppBundleID/CouchbaseLite/`
 
-
-[quote]
-*Note:* One notable case where the location can be important is on iOS: Apple's app review process tries to make sure that the only application data that will be backed up to iCloud is data created by the user.
+NOTE: One notable case where the location can be important is on iOS: Apple's app review process tries to make sure that the only application data that will be backed up to iCloud is data created by the user.
 So it's a red flag when, on first launch, an app creates data in backed-up locations (including the Documents and Application Support directories) without user action.
 Unfortunately, that will happen if your app starts a pull replication on launch, or installs a pre-populated database.
 Some apps using Couchbase Lite have had their App Store approval held up for this reason!
@@ -257,7 +232,6 @@ On Android, you can subclass `com.couchbase.lite.android.AndroidContext` and ove
 
 [source]
 ----
-
 NSString* dir = WhereIWantCBLStuffToGo();
 NSError* error;
 self.manager = [[CBLManager alloc] initWithDirectory: dir
@@ -270,7 +244,6 @@ if (!manager) {
 
 [source]
 ----
-
 let dir = WhereIWantCBLStuffToGo()
 var error: NSError?
 self.manager = CBLManager(directory: dir, options: nil, error: &error)
@@ -281,7 +254,6 @@ if manager == nil {
 
 [source]
 ----
-
 // Not Manager constructor to specify the directory.
 // Instead you should subclass JavaContext and override
 // the getFilesDir method.
@@ -289,7 +261,6 @@ if manager == nil {
 
 [source]
 ----
-
 // Not Manager constructor to specify the directory.
 // Instead you should subclass AndroidContext and override
 // the getFilesDir method.
@@ -297,7 +268,6 @@ if manager == nil {
 
 [source]
 ----
-
 var options = new ManagerOptions();
 options.ReadOnly = true;
 Manager manager = new Manager(Directory.CreateDirectory(dbPath), options);
@@ -311,9 +281,8 @@ You can control whether individual tag groups are logged.
 
 The available tags are:
 
-[source]
+[source,text]
 ----
-
 In Objective-C tag groups is disabled by default.
 
 BLIP
@@ -342,9 +311,8 @@ ViewVerbose
 WS
 ----
 
-[source]
+[source,text]
 ----
-
 In Swift tag groups is disabled by default.
 
 BLIP
@@ -373,9 +341,8 @@ ViewVerbose
 WS
 ----
 
-[source]
+[source,text]
 ----
-
 In Java tag groups are enabled at level WARN by default.
 
 Log tags
@@ -401,9 +368,8 @@ Log.WARN
 Log.ERROR
 ----
 
-[source]
+[source,text]
 ----
-
 Log tags
 
 Log.Domains.Database
@@ -432,32 +398,27 @@ The following code snippet enables logging for the *Sync* tag.
 
 [source]
 ----
-
 CBLManager enableLogging: @"Sync"];
 ----
 
 [source]
 ----
-
 CBLManager.enableLogging("Sync")
 ----
 
 [source]
 ----
-
 Manager.enableLogging("Sync", Log.VERBOSE);
 ----
 
 [source]
 ----
-
 Log.Domains.Sync.Level = Log.LogLevel.Verbose
 ----
 
 === Concurrency Support
 
-[quote]
-*Note:* In Java all Couchbase Lite objects may be shared freely between threads.
+NOTE: In Java all Couchbase Lite objects may be shared freely between threads.
 The rest of this section is irrelevant for Java programs, and applies only to Objective-C.
 
 In Objective-C, a `Manager` instance and the object graph associated with it may only be accessed from the thread or dispatch queue that created the `Manager` instance.
@@ -468,19 +429,18 @@ Concurrency is supported through explicit method calls.
 You can use the `CBLManager` method `backgroundTellDatabaseNamed:to:` to perform any operation in the background.
 Be careful with this, though! Couchbase Lite objects are per-thread, and your block runs on a background thread, so:
 
-* You can`'t use any of the Couchbase Lite objects (databases, documents, models...) you were using on the main thread.
+* You can't use any of the Couchbase Lite objects (databases, documents, models...) you were using on the main thread.
 Instead, you have to use the CBLDatabase object passed to the block, and the other objects reachable from it.
-* You can`'t save any of the Couchbase Lite objects in the block and then call them on the main thread.
+* You can't save any of the Couchbase Lite objects in the block and then call them on the main thread.
 (For example, if in the block you allocated some CBLModels and assigned them to properties of application objects, bad stuff would happen if they got called later on by application code.)
 * And of course, since the block is called on a background thread, any application or system APIs you call from it need to be thread-safe.
 
-In general, it`'s best to do only very limited things using this API, otherwise it becomes too easy to accidentally use main-thread Couchbase Lite objects in the block, or store background-thread Couchbase Lite objects in places where they`'ll be called on the main thread.
+In general, it's best to do only very limited things using this API, otherwise it becomes too easy to accidentally use main-thread Couchbase Lite objects in the block, or store background-thread Couchbase Lite objects in places where they'll be called on the main thread.
 
-Here`'s an example that deletes a number of documents given an array of IDs:
+Here's an example that deletes a number of documents given an array of IDs:
 
 [source]
 ----
-
 // "myDB" is the CBLDatabase object in use on the main thread.
 CBLManager* mgr = myDB.manager;
 NSString* name = myDB.name;
@@ -493,7 +453,6 @@ NSString* name = myDB.name;
 
 [source]
 ----
-
 // "myDB" is the CBLDatabase object in use on the main thread.
 let mgr = myDB.manager
 let name = myDB.name
@@ -505,15 +464,13 @@ mgr.backgroundTellDatabaseNamed(name, to: { (bgdb: CBLDatabase!) -> Void in
 })
 ----
 
-[source]
+[source,text]
 ----
-
 Not supported on this platform.
 ----
 
-[source]
+[source,text]
 ----
-
 Not supported on this platform.
 ----
 
@@ -523,7 +480,6 @@ If you want to do lots of Couchbase Lite processing in the background in Objecti
 
 [source]
 ----
-
 - (BOOL)application:(UIApplication *)application
         didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -549,7 +505,6 @@ If you want to do lots of Couchbase Lite processing in the background in Objecti
 
 [source]
 ----
-
 func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: NSDictionary?) -> Bool {
   let manager = CBLManager.sharedInstance()
   var error: NSError?
@@ -564,15 +519,13 @@ func runBackground(bgMgr: CBLManager) {
 }
 ----
 
-[source]
+[source,text]
 ----
-
 Not supported on this platform.
 ----
 
-[source]
+[source,text]
 ----
-
 Not supported on this platform.
 ----
 
@@ -581,7 +534,6 @@ Just have the background thread create a new instance of CBLManager from scratch
 
 [source]
 ----
-
 - (BOOL)application:(UIApplication *)application
         didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -603,7 +555,6 @@ Just have the background thread create a new instance of CBLManager from scratch
 
 [source]
 ----
-
 func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: NSDictionary?) -> Bool {
   // We're not going to use Couchbase Lite at all on the main thread;
   // instead we start a background thread to run it on:
@@ -618,15 +569,13 @@ func runBackground {
 }
 ----
 
-[source]
+[source,text]
 ----
-
 Not supported on this platform.
 ----
 
-[source]
+[source,text]
 ----
-
 Not supported on this platform.
 ----
 
@@ -640,15 +589,14 @@ Multiple databases are independent of each other.
 If your application supports switching between multiple users, each with their own separate content and settings, you should consider using a database for each user.
 Otherwise, it's usually best to stick with one database.
 
-[quote]
-*Note:* A database is not a table.
+NOTE: A database is not a table.
 Couchbase Lite doesn't have any equivalent of relational database tables: different types of documents all coexist in the same database.
 Usually you use a "type" property to distinguish them.
 
 A database has the following elements:
 
-* Its **name**.
-The name must consist only of _lowercase_ ASCII letters, digits, and the special characters ``\_$()+-/``.
+* Its *name*.
+The name must consist only of _lowercase_ ASCII letters, digits, and the special characters `_$()+-/`.
 It must also be less than 240 bytes and start with a lower case letter.
 * Documents.
 Each document is identified uniquely by its ID.
@@ -659,8 +607,6 @@ These are used to replicate subsets of documents.
 * Replications.
 Each replication specifies a remote database to sync documents to or from, and other parameters.
 
-
-[[_creating_a_database]]
 === Creating a database
 
 ==== Creating an empty database
@@ -675,8 +621,7 @@ Often you'll want to create a local clone (or subset) of a database on a server.
 To do this you simply create an empty database as above, then start a pull replication that will download the remote database into it.
 The replication is asynchronous, but you can monitor its progress to find out when it's done.
 
-[quote]
-*Note:* If possible, avoid blocking until the replication completes.
+NOTE: If possible, avoid blocking until the replication completes.
 The user's first-launch experience will be much more pleasant if s/he can begin using your app immediately instead of staring at a modal progress screen waiting for downloads to complete.
 If you've implemented a data-driven UI, the content will appear incrementally as it downloads.
 For example, the ToDoLite app initially displays no content, but the to-do lists and their items quickly appear as the replication progresses.
@@ -686,8 +631,7 @@ For example, the ToDoLite app initially displays no content, but the to-do lists
 If your app needs to sync a lot of data initially, but that data is fairly static and won't change much, it can be a lot more efficient to bundle a database in your application and install it on the first launch.
 Even if some of the content changes on the server after you create the app, the app's first pull replication will bring the database up to date.
 
-[quote]
-*Note:* This is essentially trading setup time for app installation time.
+NOTE: This is essentially trading setup time for app installation time.
 If you install a 100MB database in your app, that of course adds to the time it takes to download and install the app.
 But it can still be faster than replication since the 100MB database will simply be downloaded in bulk as part of the app archive, instead of going through the interactive sync protocol.
 Also, the download happens when the user expects it to (while installing the app) rather than when s/he's not (on first launch.)
@@ -697,12 +641,11 @@ To use a prebuilt database, you need to set up the database, build the database 
 *Setting Up the Database:* You need to make the database as small as possible.
 Couchbase Lite keeps a revision history of every document and that takes up space.
 When creating the database locally, you can make it smaller by storing each document (via a PUT request) only once, rather than updating it multiple times.
-(You can double-check this by verifying that each document revision ID starts with ``1-``.)
+(You can double-check this by verifying that each document revision ID starts with `1-`.)
 
 If you start with a snapshot of a live database from a server, then create a new, empty local database and replicate the source database into it.
 
-[quote]
-*Tip:* On iOS / Mac OS, the Couchbase Lite Xcode project has a target called LiteServ that builds a small Mac app that does nothing but run the REST API.
+TIP: On iOS / Mac OS, the Couchbase Lite Xcode project has a target called LiteServ that builds a small Mac app that does nothing but run the REST API.
 LiteServ is a useful tool for creating databases and running replications locally on your development machine.
 
 *Extracting and Building the Database:* Next you need to find the database's files.
@@ -710,10 +653,9 @@ The location of these is determined by the Manager instance;
 it's in a directory called `CouchbaseLite` whose default location is platform-specific.
 (On iOS and Mac OS, it's in the `Application Support` directory.)
 The main database file has a .cblite extension.
-If your database has attachments, you also need the "databasename attachments" directory that`'s adjacent to it.
+If your database has attachments, you also need the "databasename attachments" directory that's adjacent to it.
 
-[quote]
-*Note:* iOS/Mac specific instructions: Add the database file and the corresponding attachments directory to your Xcode project.
+NOTE: iOS/Mac specific instructions: Add the database file and the corresponding attachments directory to your Xcode project.
 If you add the attachments folder, make sure that in the Add Files sheet you select the Create folder references for any added folders radio button, so that the folder structure is preserved;
 otherwise, the individual attachment files are all added as top-level bundle resources.
 
@@ -723,7 +665,6 @@ The code looks like this:
 
 [source]
 ----
-
 CBLManager* dbManager = [CBLManager sharedInstance];
 CBLDatabase* database = [dbManager existingDatabaseNamed: @"catalog" error: &error];
 if (!database) {
@@ -743,7 +684,6 @@ if (!database) {
 
 [source]
 ----
-
 let dbManager = CBLManager.sharedInstance()
 var error :NSError?
 var database = dbManager.existingDatabaseNamed("catalog", error: &error)
@@ -761,15 +701,13 @@ if database == nil {
 }
 ----
 
-[source]
+[source,text]
 ----
-
 No code example is currently available.
 ----
 
 [source]
 ----
-
 // catalog.zip should unzip in the root folder as a CBL database (i.e catalog.cblite2)
 Manager manager = new Manager(new AndroidContext(getApplicationContext()), Manager.DEFAULT_OPTIONS);
 Database database = manager.getExistingDatabase("catalog");
@@ -783,9 +721,8 @@ if (database == null) {
 }
 ----
 
-[source]
+[source,text]
 ----
-
 No code example is currently available.
 ----
 
@@ -795,12 +732,11 @@ You'll typically open a database while initializing your app, right after instan
 Opening a database is as simple as calling the Manager's `databaseNamed` method -- this will first create a new empty database if one doesn't already exist with that name.
 It's fine to call this method more than once: it will return the same Database instance every time.
 
-[quote]
-*Caution:* For compatibility reasons, *database names cannot contain uppercase letters!* The only legal characters are lowercase ASCII letters, digits, and the special characters `\_$()+-/`
+CAUTION: For compatibility reasons, *database names cannot contain uppercase letters!*
+The only legal characters are lowercase ASCII letters, digits, and the special characters `_$()+-/`
 
 [source]
 ----
-
 // get or create database:
 CBLManager *manager = [CBLManager sharedInstance];
 NSError *error;
@@ -812,7 +748,6 @@ if (!self.database) {
 
 [source]
 ----
-
 let manager = CBLManager.sharedInstance()
 var error: NSError?
 self.database = manager.databaseNamed("my-database", error: &error)
@@ -823,7 +758,6 @@ if self.database == nil {
 
 [source]
 ----
-
 try {
      Manager manager = new Manager(new JavaContext("data"), Manager.DEFAULT_OPTIONS);
      this.db = manager.getDatabase("my-database");
@@ -835,7 +769,6 @@ try {
 
 [source]
 ----
-
 try {
      Manager manager = new Manager(new AndroidContext(mContext), Manager.DEFAULT_OPTIONS);
      this.db = manager.getDatabase("my-database");
@@ -847,7 +780,6 @@ try {
 
 [source]
 ----
-
 var db = Manager.SharedInstance.GetDatabase("my-database");
 if (db == null)
 {
@@ -855,8 +787,7 @@ if (db == null)
 }
 ----
 
-[quote]
-*Note:* If you want to open only an existing database, without the possibility of creating a new one, call the related Manager method `existingDatabaseNamed` instead.
+NOTE: If you want to open only an existing database, without the possibility of creating a new one, call the related Manager method `existingDatabaseNamed` instead.
 It returns null/nil (without an error or exception) if no database with that name exists.
 
 === Database encryption
@@ -877,7 +808,6 @@ Add the following in the application level build.gradle file.
 
 [source,bash]
 ----
-
 dependencies {
     compile 'com.couchbase.lite:couchbase-lite-android:+'
     compile 'com.couchbase.lite:couchbase-lite-android-sqlcipher:+'
@@ -890,7 +820,6 @@ dependencies {
 . Add the `libsqlcipher.a` library to your XCode project.
 . Go to the Link Binary With Libraries build phase of your app target.
 . Remove `libsqlite.dylib`
-
 
 ===== Windows
 
@@ -907,7 +836,6 @@ To enable encryption, you must register an encryption key when opening the datab
 
 [source]
 ----
-
 CBLDatabaseOptions* options = [[CBLDatabaseOptions alloc] init];
 options.storageType = @"SQLite";
 options.encryptionKey = @"password123456";
@@ -917,7 +845,6 @@ CBLDatabase* database = [manager openDatabaseNamed:@"db" withOptions:options err
 
 [source]
 ----
-
 var options: CBLDatabaseOptions = CBLDatabaseOptions()
 options.storageType = "SQLite"
 options.encryptionKey = "password123456"
@@ -927,7 +854,6 @@ var database: CBLDatabase = manager.openDatabaseNamed("db", withOptions: options
 
 [source]
 ----
-
 String key = "password123456";
 DatabaseOptions options = new DatabaseOptions();
 options.setCreate(true);
@@ -937,7 +863,6 @@ Database database = manager.openDatabase("db", options);
 
 [source]
 ----
-
 var key = new SymmetricKey("password123456");
 var options = new DatabaseOptions
 {
@@ -959,12 +884,8 @@ Passing `nil` as the value will disable encryption.
 
 === Storage engines
 
-{% if site.version == '1.5' %}
-
-*Note: The following section describes how to set up ForestDB, which will be deprecated in the next major release of Couchbase Mobile.
-For present and future development, we recommend to use the default storage type, SQLite.*
-
-{% endif %}
+NOTE: The following section describes how to set up ForestDB, which will be deprecated in the next major release of Couchbase Mobile.
+For present and future development, we recommend to use the default storage type, SQLite.
 
 There are two storage engines available with Couchbase Lite: SQLite and ForestDB.
 In the case of SQLite, it will use the system dependency already available on most platforms (iOS, Android, Windows...).
@@ -981,41 +902,33 @@ ForestDB is a persistent key-value storage library, it's a key-value map where t
 * Lower RAM footprint (data caches are shared between threads)
 * Database compaction is automatic and runs periodically in the background
 
-
-[[_ios_1]]
 ===== iOS
 
 The ForestDB engine isn't built into the iOS and tvOS platforms, to save space.
 To use ForestDB on those platforms you'll need to link it into your app as an extra static library.
 
 . Add the library `libCBLForestDBStorage.a` to your project and add it to your iOS app target's "Link Binary With Libraries" build phase.
-. Link the system library ``libc++.dylib``.
-To do that, in the target's Build Phases editor, press the "+" button below the "Link
-. Binary With Libraries" and add `libc++.dylib`
+. Link the system library `+libc++.dylib+`.
+To do that, in the target's Build Phases editor, press the "+" button below the "Link Binary With Libraries" and add `+libc++.dylib+`
 . Make sure `-ObjC` is set in `Other Linker Flags` in `Build Settings`
 
+NOTE: These steps aren't necessary for Mac OS because that version of the Couchbase Lite framework already has ForestDB built into it.
 
-[quote]
-*Note:* These steps aren't necessary for Mac OS because that version of the Couchbase Lite framework already has ForestDB built into it.
-
-[[_android_1]]
 ===== Android
 
 Add the following in the application level `build.gradle` file.
 
 [source]
 ----
-
 dependencies {
     compile 'com.couchbase.lite:couchbase-lite-android:+'
     compile 'com.couchbase.lite:couchbase-lite-android-forestdb:+'
 }
 ----
 
-[[_windows_1]]
 ===== Windows
 
-Install the Nuget package called ``Couchbase.Lite.Storage.ForestDB``.
+Install the Nuget package called `Couchbase.Lite.Storage.ForestDB`.
 
 Then call `Couchbase.Lite.Storage.ForestDB.Plugin.Register()` in the application.
 
@@ -1027,25 +940,21 @@ At runtime, you need to tell the `Manager` you want to use ForestDB, by setting 
 
 [source]
 ----
-
 manager.storageType = kCBLForestDBStorage;
 ----
 
 [source]
 ----
-
 manager.storageType = kCBLForestDBStorage
 ----
 
 [source]
 ----
-
 manager.setStorageType("ForestDB");
 ----
 
 [source]
 ----
-
 Manager manager = Manager.SharedInstance;
 manager.StorageType = "ForestDB";
 ----
@@ -1061,7 +970,6 @@ To do this, you use an alternate method to open your database, one that allows y
 
 [source]
 ----
-
 CBLDatabaseOptions *options = [[CBLDatabaseOptions alloc] init];
 options.create = YES;
 options.storageType = kCBLForestDBStorage;  // Forces upgrade to ForestDB
@@ -1072,7 +980,6 @@ CBLDatabase* db = [manager openDatabaseNamed:@"my-database"
 
 [source]
 ----
-
 var options: CBLDatabaseOptions = CBLDatabaseOptions()
 options.create = true
 options.storageType = kCBLForestDBStorage  // Forces upgrade to ForestDB
@@ -1081,7 +988,6 @@ var db: CBLDatabase = manager.openDatabaseNamed("my-database", withOptions: opti
 
 [source]
 ----
-
 Manager manager = new Manager(new JavaContext("data"), Manager.DEFAULT_OPTIONS);
 
 DatabaseOptions options = new DatabaseOptions();
@@ -1092,7 +998,6 @@ Database database = manager.openDatabase("my-database", options);
 
 [source]
 ----
-
 Manager manager = new Manager(new AndroidContext(this), null);
 
 DatabaseOptions options = new DatabaseOptions();
@@ -1103,7 +1008,6 @@ Database database = manager.openDatabase("my-database", options);
 
 [source]
 ----
-
 Manager manager = Manager.SharedInstance;
 DatabaseOptions options = new DatabaseOptions();
 options.Create = true;
@@ -1123,12 +1027,12 @@ Concurrency support varies by platform.
 
 The Objective-C implementation follows the typical behavior of Cocoa classes: the classes are not themselves thread-safe, so the app is responsible for calling them safely.
 In addition, some of the classes post `NSNotifications` and need to know what runloop or dispatch queue to deliver the notifications on.
-Therefore, each thread or dispatch queue that you use Couchbase Lite on should have __its own set of Couchbase Lite objects__.
+Therefore, each thread or dispatch queue that you use Couchbase Lite on should have _its own set of Couchbase Lite objects_.
 
 If your app uses Couchbase Lite on multiple threads, then on each thread (or dispatch queue) it must:
 
 * Create a new CBLManager instance.
-If you use multiple threads, do not use the ``sharedInstance``.
+If you use multiple threads, do not use the `sharedInstance`.
 * Use only objects (Databases, Documents, ...) acquired from its Manager.
 * Not pass any Couchbase Lite objects to code running on any other thread/queue.
 
@@ -1143,7 +1047,6 @@ Instead, you should use the CBLDatabase object passed to the block and derive ot
 
 [source]
 ----
-
 // Example to read a document asynchronously on a background thread.
 // (This isn't very realistic since reading one document is fast enough to
 // do on the main thread.)
@@ -1159,7 +1062,6 @@ NSString* docID = myDocument.documentID;
 
 [source]
 ----
-
 // Example to read a document asynchronously on a background thread.
 // (This isn't very realistic since reading one document is fast enough to
 // do on the main thread.)
@@ -1174,15 +1076,13 @@ myDB.manager.backgroundTellDatabaseNamed(myDB.name, to: { (bgdb: CBLDatabase!) -
 })
 ----
 
-[source]
+[source,text]
 ----
-
 No code example is currently available.
 ----
 
-[source]
+[source,text]
 ----
-
 No code example is currently available.
 ----
 
@@ -1199,7 +1099,6 @@ still this facility can be useful if you want a lightweight way to tell whenever
 
 [source]
 ----
-
 [[NSNotificationCenter defaultCenter] addObserverForName: kCBLDatabaseChangeNotification
             object: myDatabase
              queue: nil
@@ -1213,7 +1112,6 @@ still this facility can be useful if you want a lightweight way to tell whenever
 
 [source]
 ----
-
 NSNotificationCenter.defaultCenter().addObserverForName(kCBLDatabaseChangeNotification, object: myDatabase, queue: nil) {
   (notification) -> Void in
     if let changes = notification.userInfo!["changes"] as? [CBLDatabaseChange] {
@@ -1226,7 +1124,6 @@ NSNotificationCenter.defaultCenter().addObserverForName(kCBLDatabaseChangeNotifi
 
 [source]
 ----
-
 try {
      Database db = manager.getExistingDatabase("my-database");
 
@@ -1249,7 +1146,6 @@ try {
 
 [source]
 ----
-
 database.Changed += (sender, e) => {
     var changes = e.Changes.ToList();
     foreach (DocumentChange change in changes) {
@@ -1269,12 +1165,11 @@ Refer to the link:../revision/index.html[Revisions] guide to learn about compact
 
 === Deleting a database
 
-The `delete` method (``deleteDatabase`` in Objective-C) permanently deletes a database's file and all its attachments.
+The `delete` method (`deleteDatabase` in Objective-C) permanently deletes a database's file and all its attachments.
 After this, you should immediately set your Database reference to nil/null and not call it again.
 
 [source]
 ----
-
 NSError* error;
 if (![self.database deleteDatabase: &error]) {
     [self handleError: error];
@@ -1284,7 +1179,6 @@ self.database = nil;
 
 [source]
 ----
-
 var error: NSError?
 if !self.database.deleteDatabase(&error) {
     self.handleError(error)
@@ -1294,7 +1188,6 @@ self.database = nil
 
 [source]
 ----
-
 try {
      myDatabase.delete();
 } catch (IOException e) {
@@ -1305,7 +1198,6 @@ try {
 
 [source]
 ----
-
 try {
     database.Delete();
 } catch (CouchbaseLiteException e) {
@@ -1319,7 +1211,7 @@ In a _document database_ such as Couchbase Lite, the primary entity stored in a 
 This reflects the fact that a document can store more data, with more structure, than its equivalent in other databases.
 
 In Couchbase Lite, a document's *body* takes the form of a JSON object -- a collection of key/value pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
-Every document is identified by a **document ID**, which can be automatically generated (as a UUID) or determined by the application;
+Every document is identified by a *document ID*, which can be automatically generated (as a UUID) or determined by the application;
 the only constraints are that it must be unique within the database, and it can't be changed.
 
 In addition, a document can contain attachments, named binary blobs that are useful for storing large media files or other non-textual data.
@@ -1327,7 +1219,7 @@ Couchbase Lite supports attachments of unlimited size, although the Sync Gateway
 
 Couchbase Lite keeps track of the change history of every document, as a series of revisions.
 This is somewhat like a version control system such as Git or Subversion, although its main purpose is not to be able to access old data, but rather to assist the replicator in deciding what data to sync and what documents have conflicts.
-Every time a document is created or updated, it is assigned a new unique **revision ID**.
+Every time a document is created or updated, it is assigned a new unique *revision ID*.
 The IDs of past revisions are available, and the contents of past revisions may be available, but only if the revision was created locally and the database has not yet been compacted.
 
 To summarize, a document has the following attributes:
@@ -1339,8 +1231,6 @@ To summarize, a document has the following attributes:
 * Zero or more named binary attachments
 * Creating, Reading, Updating and Deleting documents (CRUD)
 
-
-[[_creating_reading_updating_and_deleting_documents_crud]]
 === Creating, Reading, Updating and Deleting documents (CRUD)
 
 Couchbase Lite of course supports the typical database "CRUD" operations on documents: Create, Read, Update, Delete.
@@ -1348,14 +1238,13 @@ Couchbase Lite of course supports the typical database "CRUD" operations on docu
 ==== Creating documents
 
 You can create a document with or without giving it an ID.
-If you don't need or want to define your own ID, call the Database method ``createDocument``, and the ID will be generated randomly in the form of a Universally Unique ID (UUID), which looks like a string of hex digits.
+If you don't need or want to define your own ID, call the Database method `createDocument`, and the ID will be generated randomly in the form of a Universally Unique ID (UUID), which looks like a string of hex digits.
 The uniqueness ensures that there is no chance of an accidental collision by two client apps independently creating different documents with the same ID, then replicating to the same server.
 
 The following example shows how to create a document with an automatically-assigned UUID:
 
 [source]
 ----
-
 NSString* owner = [@"profile:" stringByAppendingString: userId];
 NSDictionary* properties = @{@"type":       @"list",
                              @"title":      title,
@@ -1371,7 +1260,6 @@ if (![document putProperties: properties error: &error]) {
 
 [source]
 ----
-
 let owner = "profile".stringByAppendingString(userId)
 let properties = [
     "type": "list",
@@ -1388,7 +1276,6 @@ if document.putProperties(properties, error: &error) == nil {
 
 [source]
 ----
-
 Map<String, Object> properties = new HashMap<String, Object>();
 properties.put("type", "list");
 properties.put("title", title);
@@ -1402,7 +1289,6 @@ document.putProperties(properties);
 
 [source]
 ----
-
 var document = database.CreateDocument();
 var properties = new Dictionary<string, object>()
     {
@@ -1416,7 +1302,7 @@ var rev = document.PutProperties(properties);
 Debug.Assert(rev != null);
 ----
 
-If you do want to choose the document's ID, just call the Database method ``getDocument``, just as you would to retrieve an existing document.
+If you do want to choose the document's ID, just call the Database method `getDocument`, just as you would to retrieve an existing document.
 If the document doesn't exist yet, you still get a valid Document object, it just doesn't have any revisions or contents yet.
 The first time you save the document, it will be added persistently to the database.
 If a document does already exist with the same ID, saving the document will produce a conflict error.
@@ -1425,7 +1311,6 @@ The following example shows how to create a document with an custom ID:
 
 [source]
 ----
-
 NSDictionary* properties = @{@"title":      @"Little, Big",
                              @"author":     @"John Crowley",
                              @"published":  1982};
@@ -1438,7 +1323,6 @@ if (![document putProperties: properties error: &error]) {
 
 [source]
 ----
-
 let properties =
 [
     "title": "Little, Big",
@@ -1454,7 +1338,6 @@ if document.putProperties(properties, error: &error) == nil {
 
 [source]
 ----
-
 Map<String, Object> properties = new HashMap<String, Object>();
 properties.put("title", "Little, Big");
 properties.put("author", "John Crowley");
@@ -1469,7 +1352,6 @@ try {
 
 [source]
 ----
-
 var properties = new Dictionary<string, object>
     {
         {"title", "Little, Big"},
@@ -1482,14 +1364,13 @@ var rev = document.PutProperties(properties);
 Debug.Assert(rev != null);
 ----
 
-[quote]
-*Tip:* It's up to you whether to assign your own IDs or use random UUIDs.
+TIP: It's up to you whether to assign your own IDs or use random UUIDs.
 If the documents are representing entities that already have unique IDs -- like email addresses or employee numbers -- then it makes sense to use those, especially if you need to ensure that there can't be two documents representing the same entity.
 For example, in a library cataloging app, you wouldn't want two librarians to independently create duplicate records for the same book, so you might use the book's ISBN as the document ID to enforce uniqueness.
 
 ==== Reading documents
 
-To retrieve a Document object given its ID, call the Database method ``getDocument``.
+To retrieve a Document object given its ID, call the Database method `getDocument`.
 As described in the previous section, if there is no document with this ID, this method will return a valid but empty Document object.
 (If you would rather get a null/nil result for a nonexistent document, call `existingDocumentWithID` instead.)
 
@@ -1499,15 +1380,14 @@ If you call `getDocument` multiple times with the same ID, you get the same Docu
 This helps conserve memory, and it also makes it easy to compare Document object references (pointers) -- you can just use `==` to check whether two references refer to the same document.
 
 Loading a Document object doesn't immediately read its properties from the database.
-Those are loaded on demand, when you call an accessor method like `getProperties` (or access the Objective-C property ``properties``).
+Those are loaded on demand, when you call an accessor method like `getProperties` (or access the Objective-C property `properties`).
 The properties are represented using whatever platform type is appropriate for a JSON object.
-In Objective-C they're an ``NSDictionary``, in Java a ``Map<String,Object>``.
+In Objective-C they're an `NSDictionary`, in Java a `Map<String,Object>`.
 
 Here's a simple example of getting a document's properties:
 
 [source]
 ----
-
 CBLDocument* doc = [database documentWithID: _myDocID];
 // We can directly access properties from the document object:
 NSString* title = doc[@"title"];
@@ -1518,7 +1398,6 @@ NSString* owner = properties[@"owner"];
 
 [source]
 ----
-
 let doc = database.documentWithID(myDocID)
 // We can directly access properties from the document object:
 let title = doc["title"] as? String
@@ -1529,7 +1408,6 @@ let owner = properties["owner"] as? String;
 
 [source]
 ----
-
 Document doc = database.getDocument(myDocId);
 // We can directly access properties from the document object:
 doc.getProperty("title");
@@ -1540,7 +1418,6 @@ String owner = (String) properties.get("owner");
 
 [source]
 ----
-
 var doc = database.GetDocument(myDocId);
 // We can directly access properties from the document object:
 doc.GetProperty("title");
@@ -1548,14 +1425,13 @@ doc.GetProperty("title");
 var owner = doc.Properties["owner"];
 ----
 
-[quote]
-*Note:* The `getProperties` method is actually just a convenient shortcut for getting the Document's `currentRevision` and then getting its `properties` -- since a document usually has multiple revisions, the properties really belong to a revision.
+NOTE: The `getProperties` method is actually just a convenient shortcut for getting the Document's `currentRevision` and then getting its `properties` -- since a document usually has multiple revisions, the properties really belong to a revision.
 Every existing document has a current revision (in fact that's how you can tell whether a document exists or not).
 Almost all the time you'll be accessing a document's current revision, which is why the convenient direct properties accessor exists.
 
 ==== Updating documents
 
-There are two methods that update a document: `putProperties` and ``update``.
+There are two methods that update a document: `putProperties` and `update`.
 We'll cover them both, then explain why they're different.
 
 `putProperties` is simpler: given a new JSON object, it replaces the document's body with that object.
@@ -1563,7 +1439,6 @@ Actually what it does is creates a new revision with those properties and makes 
 
 [source]
 ----
-
 CBLDocument* doc = [database documentWithID: _myDocID];
 NSMutableDictionary* p = [doc.properties mutableCopy];
 p[@"title"] = title;
@@ -1576,7 +1451,6 @@ if (![doc putProperties: p error: &error]) {
 
 [source]
 ----
-
 let doc = database.documentWithID(myDocID)
 var properties = doc.properties
 properties["title"] = title
@@ -1589,7 +1463,6 @@ if doc.putProperties(properties, error: &error) == nil {
 
 [source]
 ----
-
 Document doc = database.getDocument(myDocID);
 Map<String, Object> properties = new HashMap<String, Object>();
 properties.putAll(doc.getProperties());
@@ -1604,7 +1477,6 @@ try {
 
 [source]
 ----
-
 var doc = database.GetDocument(myDocId);
 var p = new Dictionary<string, object>(doc.Properties)
     {
@@ -1622,7 +1494,6 @@ after it returns, the modified revision is saved and becomes the current one.
 
 [source]
 ----
-
 CBLDocument* doc = [database documentWithID: _myDocID];
 NSError* error;
 if (![doc update: ^BOOL(CBLUnsavedRevision *newRev) {
@@ -1636,7 +1507,6 @@ if (![doc update: ^BOOL(CBLUnsavedRevision *newRev) {
 
 [source]
 ----
-
 let doc = database.documentWithID(myDocID)
 var error: NSError?
 doc.update({ (newRev) -> Bool in
@@ -1651,7 +1521,6 @@ if error != nil {
 
 [source]
 ----
-
 Document doc = database.getDocument(myDocId);
 doc.update(new Document.DocumentUpdater() {
     @Override
@@ -1667,7 +1536,6 @@ doc.update(new Document.DocumentUpdater() {
 
 [source]
 ----
-
 var doc = database.GetDocument(myDocId);
 doc.Update((UnsavedRevision newRevision) =>
 {
@@ -1678,7 +1546,7 @@ doc.Update((UnsavedRevision newRevision) =>
 });
 ----
 
-Whichever way you save changes, you need to consider the possibility of **update conflicts**.
+Whichever way you save changes, you need to consider the possibility of *update conflicts*.
 Couchbase Lite uses Multiversion Concurrency Control (MVCC) to guard against simultaneous changes to a document.
 (Even if your app code is single-threaded, the replicator runs on a background thread and can be pulling revisions into the database at the same time you're making changes).
 
@@ -1697,19 +1565,16 @@ You'll need to detect this type of error, and probably handle it by re-reading t
 . update is smarter: it handles the conflict error itself by re-reading the document, then calling your block again with the updated properties, and retrying the save.
 It will keep retrying until there is no conflict.
 
-
-[quote]
-*Tip:* Of the two techniques, calling update may be a bit harder to understand initially, but it actually makes your code simpler and more reliable.
+TIP: Of the two techniques, calling update may be a bit harder to understand initially, but it actually makes your code simpler and more reliable.
 We recommend it.
 (Just be aware that your callback block can be called multiple times.)
 
 ==== Deleting documents
 
-The `delete` method (``deleteDocument:`` in Objective-C) deletes a document:
+The `delete` method (`deleteDocument:` in Objective-C) deletes a document:
 
 [source]
 ----
-
 CBLDocument* doc = [database documentWithID: _myDocID];
 NSError* error;
 if (![doc deleteDocument: &error]) {
@@ -1719,7 +1584,6 @@ if (![doc deleteDocument: &error]) {
 
 [source]
 ----
-
 let doc = database.documentWithID(myDocID)
 var error: NSError?
 if !doc.deleteDocument(&error) {
@@ -1729,33 +1593,29 @@ if !doc.deleteDocument(&error) {
 
 [source]
 ----
-
 Document task = (Document) database.getDocument("task1");
 task.delete();
 ----
 
 [source]
 ----
-
 var doc = database.GetDocument(myDocId);
 doc.Delete();
 ----
 
-Deleting a document actually just creates a new revision (informally called a "tombstone") that has the special `\_deleted` property set to ``true``.
+Deleting a document actually just creates a new revision (informally called a "tombstone") that has the special `_deleted` property set to `true`.
 This ensures that the deletion will replicate to the server, and then to other endpoints that pull from that database, just like any other document revision.
 
-[quote]
-*Note:* It's possible for the delete call to fail with a conflict error, since it's really just a special type of putProperties.
+NOTE: It's possible for the delete call to fail with a conflict error, since it's really just a special type of putProperties.
 In other words, something else may have updated the document at the same time you were trying to delete it.
 It's up to your app whether it's appropriate to retry the delete operation.
 
 If you need to preserve one or more fields in a document that you want to `delete` (like a record of who deleted it or when it was deleted) you can avoid the delete method;
-just update the document and set the ``UnsavedRevision``'s `deletion` property to ``true``, or set JSON properties that include a `"_deleted"` property with a value of ``true``.
+just update the document and set the ``UnsavedRevision```'s `deletion` property to `true`, or set JSON properties that include a `"_deleted"` property with a value of `true`.
 You can retain all of the fields, as shown in the following example, or you can remove specified fields so that the tombstone revision contains only the fields that you need.
 
 [source]
 ----
-
 CBLDocument* doc = [database documentWithID: _myDocID];
 NSError* error;
 if (![doc update: ^BOOL(CBLUnsavedRevision *newRev) {
@@ -1768,7 +1628,6 @@ if (![doc update: ^BOOL(CBLUnsavedRevision *newRev) {
 
 [source]
 ----
-
 doc.update({ (newRev) -> Bool in
     newRev.isDeletion = true
     newRev["deleted_at"] = currentTimeString
@@ -1781,7 +1640,6 @@ if error != nil {
 
 [source]
 ----
-
 Document doc = database.getDocument(myDocId);
 doc.update(new Document.DocumentUpdater() {
     @Override
@@ -1797,7 +1655,6 @@ doc.update(new Document.DocumentUpdater() {
 
 [source]
 ----
-
 var doc = database.GetDocument(myDocId);
 doc.Update((UnsavedRevision newRevision) =>
 {
@@ -1817,7 +1674,6 @@ The following example sets the TTL for a document to 5 seconds from the current 
 
 [source]
 ----
-
 NSDate* ttl = [NSDate dateWithTimeIntervalSinceNow: 5];
 NSDictionary* properties = @{@"foo": @"bar"};
 CBLDocument* doc = [db createDocument];
@@ -1827,7 +1683,6 @@ doc.expirationDate = ttl;
 
 [source]
 ----
-
 var ttl = NSDate(timeIntervalSinceNow: 5)
 var properties = ["foo": "bar"]
 var doc = db.createDocument()
@@ -1837,7 +1692,6 @@ doc.expirationDate = ttl
 
 [source]
 ----
-
 Date tll = new Date(System.currentTimeMillis() + 5000);
 Document doc = database.createDocument();
 Map<String, Object> properties = new HashMap<String, Object>();
@@ -1848,7 +1702,6 @@ doc.setExpirationDate(ttl);
 
 [source]
 ----
-
 var doc = db.CreateDocument();
 doc.PutProperties(new Dictionary<string, object> { { "foo", "bar" } });
 doc.ExpireAfter(TimeSpan.FromSeconds(5));
@@ -1859,8 +1712,7 @@ The times are stored with one-second granularity, and the timer that triggers ex
 Expiration won't happen while the app is not running;
 this means it may be triggered soon after the app is activated or launched, to catch up with expiration times that have already passed.
 
-[quote]
-*Note:* As with the existing explicit *purge* mechanism, this applies only to the local database;
+NOTE: As with the existing explicit *purge* mechanism, this applies only to the local database;
 it has nothing to do with replication.
 This expiration time is not propagated when the document is replicated.
 The purge of the document does not cause it to be deleted on any other database.
@@ -1877,10 +1729,8 @@ You can use change events for the following purposes:
 * To be notified when a document is deleted
 * To be notified when a document enters into a conflicted state
 
-
 [source]
 ----
-
 [[NSNotificationCenter defaultCenter] addObserverForName: kCBLDocumentChangeNotification
             object: myDocument
              queue: nil
@@ -1894,7 +1744,6 @@ You can use change events for the following purposes:
 
 [source]
 ----
-
 NSNotificationCenter.defaultCenter().addObserverForName(kCBLDocumentChangeNotification, object: myDocument, queue: nil) {
     (notification) -> Void in
         if let change = notification.userInfo!["change"] as? CBLDatabaseChange {
@@ -1906,7 +1755,6 @@ NSNotificationCenter.defaultCenter().addObserverForName(kCBLDocumentChangeNotifi
 
 [source]
 ----
-
 Document doc = database.createDocument();
 doc.addChangeListener(new Document.ChangeListener() {
     @Override
@@ -1924,7 +1772,6 @@ doc.createRevision().save();
 
 [source]
 ----
-
 var doc = database.CreateDocument();
 doc.Change += (sender, e) =>
 {
@@ -1953,7 +1800,7 @@ A typical scenario is:
 * Revision 2-54a is synced to Naomi's device, which already has 2-877, similarly putting the local document in conflict
 
 At this point, even though DocumentA is in a conflicted state, it needs to have a current revision.
-That is, when your app calls ``getProperties``, Couchbase Lite has to return something.
+That is, when your app calls `getProperties`, Couchbase Lite has to return something.
 It chooses one of the two conflicting revisions (2-877 and 2-54a) as the "winner".
 The choice is deterministic, which means that every device that is faced with the same conflict will pick the same winner, without having to communicate.
 In this case it just compares the revision IDs "2-54a" and "2-877" and picks the higher one, "2-877".
@@ -1964,9 +1811,7 @@ To be precise, Couchbase Lite uses the following rules to handle conflicts:
 * If there are no undeleted leaf revisions, the deletion (tombstone) on the longest branch wins.
 * If there's a tie, the winner is the one whose revision ID sorts higher in a simple ASCII comparison.
 
-
-[quote]
-*Note:* Couchbase Lite does not automatically merge the contents of conflicts.
+NOTE: Couchbase Lite does not automatically merge the contents of conflicts.
 Automated merging would run the risk of giving wrong or undesired results in many cases;
 only you know your document schemas well enough to decide how conflicts should be merged.
 
@@ -1974,8 +1819,7 @@ In some cases this simple "one revision wins" rule is good enough.
 For example, in a grocery list if two people rename the same item, one of them will just see that their change got overwritten, and may do it over again.
 But usually the details of the document content are more important, so the application will want to detect and resolve conflicts.
 
-[quote]
-*Note:* Resolving conflicts can also save the space in the database.
+NOTE: Resolving conflicts can also save the space in the database.
 Conflicting revisions stay in the database indefinitely until resolved, even surviving compactions.
 Therefore, it makes sense to deal with the conflict by at least deleting the non-winning revision.
 
@@ -1994,7 +1838,6 @@ The following example shows how to resolve a conflict:
 
 [source]
 ----
-
 CBLDocument* doc = [database documentWithID: _myDocID];
 NSError* error;
 NSArray* conflicts = [doc getConflictingRevisions: &error];
@@ -2030,7 +1873,6 @@ if (conflicts.count > 1) {
 
 [source]
 ----
-
 let doc = database.documentWithID(myDocID)
 var error: NSError?
 if let conflicts = doc.getConflictingRevisions(&error) as? [CBLSavedRevision]{
@@ -2067,7 +1909,6 @@ if let conflicts = doc.getConflictingRevisions(&error) as? [CBLSavedRevision]{
 
 [source]
 ----
-
 final Document doc = database.getDocument(myDocID);
 final List<SavedRevision> conflicts = doc.getConflictingRevisions();
 if (conflicts.size() > 1) {
@@ -2104,7 +1945,6 @@ if (conflicts.size() > 1) {
 
 [source]
 ----
-
 var doc = database.GetDocument(myDocId);
 var conflicts = doc.ConflictingRevisions.ToList();
 if (conflicts.Count > 1)
@@ -2142,7 +1982,6 @@ No.
 The revision ID is derived from a digest of the document body.
 So if two databases save identical changes, they end up with identical revision IDs, and Couchbase Lite (and the Sync Gateway) treat these as the same revision.
 
-[[_i_deleted_a_document_but_the_its_still_in_the_database_only_now_its_properties_are_different._what_happened]]
 ==== I deleted a document, but the it's still in the database, only now its properties are different. What happened?
 
 Sounds like the document was in conflict and you didn't realize it.
@@ -2180,14 +2019,13 @@ For example, if you purge a document, and then later the document is updated on 
 The body of a document contains a few special properties that store metadata about the document.
 For the most part you can ignore these since the API provides accessor methods for the same information, but it can still be helpful to know what they are if you encounter them.
 
-* ``\_id``: The document ID.
-* ``\_rev``: The revision ID.
-* ``\_attachments``: Metadata about the document's attachments.
-* ``\_deleted``: Only appears in a deletion (tombstone) revision, where it has the value ``true``.
+* `_id`: The document ID.
+* `_rev`: The revision ID.
+* `_attachments`: Metadata about the document's attachments.
+* `_deleted`: Only appears in a deletion (tombstone) revision, where it has the value `true`.
 
-
-[quote]
-*Note:* A leading underscore always denotes a reserved property--don`'t use an underscore prefix for any of your own properties, and don't change the value of any reserved property.
+NOTE: A leading underscore always denotes a reserved property.
+Don't use an underscore prefix for any of your own properties, and don't change the value of any reserved property.
 
 == Revision
 
@@ -2197,17 +2035,17 @@ Couchbase Lite uses a technique called Multiversion Concurrency Control (MVCC) t
 This is the same technique used by version-control systems like Git or Subversion, and by WebDAV.
 Document versioning is similar to the check-and-set mechanism (CAS) of Couchbase Server, except that in Couchbase Lite versioning is required rather than optional and the token is a UUID rather than an integer.
 
-Every document has a special field called `\_rev` that contains the revision ID.
+Every document has a special field called `_rev` that contains the revision ID.
 The revision ID is assigned automatically each time the document is saved.
 Every time a document is updated, it gets a different and unique revision ID.
 
 When you save an update to an existing document, you must include its current revision ID.
-If the revision ID you provide isn`'t the current one, the update is rejected.
+If the revision ID you provide isn't the current one, the update is rejected.
 When this happens, it means some other endpoint snuck in and updated the document before you.
 You need to fetch the new version, reconcile any changes, incorporate the newer revision ID, and try again.
 
 Keep in mind that Couchbase Lite is not a version control system and you must not use the versioning feature in your application.
-They`'re there only to help with concurrency and resolving conflicts during replication.
+They're there only to help with concurrency and resolving conflicts during replication.
 
 === Resolving Conflicts
 
@@ -2220,7 +2058,7 @@ Refer to the link:../../../../training/develop/adding-synchronization/index.html
 The reason that tombstone revisions exist is so that deletes can be sync'd to other databases.
 If revisions were simply deleted with a naive approach, then there would be no easy way to sync up with other databases that contained the revision.
 
-There is a special field in a revision's JSON called `\_deleted` which determines whether the revision is a tombstone revision or not.
+There is a special field in a revision's JSON called `_deleted` which determines whether the revision is a tombstone revision or not.
 A consequence of this fact is that tombstone revisions can hold arbitrary amounts of metadata, which can be useful for an application.
 If the full metadata of the document is preserved in the tombstone revision, then a document could easily be restored to it's last known good state after it's been deleted at some point.
 
@@ -2244,28 +2082,16 @@ Leaf revisions are not impacted.
 The process runs automatically every time a revision is added.
 The *maxRevTreeDepth* value defaults to 20, which means that the metadata and JSON bodies of the last 20 revisions are retained in Couchbase Lite as shown on the animation below.
 
-
-// <img src="https://cl.ly/321B1Y3T0K07/pruning-cbl.gif"/>
-portrait />
-
 If there are conflicting revisions, the document may end up with *disconnected branches* after the pruning process.
-In the animation below, the document has a conflicting branch (revisions `3'` - ``7'``).
+In the animation below, the document has a conflicting branch (revisions 3 - 7).
 When the current revision (or longest branch) reaches the 23rd update, the conflicting branch is cut off.
 The revision tree is not in a corrupted state and the logic that chooses the winning revision still applies.
 But it may make it impossible to do certain merges to resolve conflicts and occupy disk space that could have been free-ed if the conflict was resolved early on.
 
-
-// <img src="https://cl.ly/0q342b0R251y/pruning-conflict.gif"/>
-portrait />
-
 === Compaction
 
 Compaction is defined as the process of purging the JSON bodies of non-leaf revisions.
-As shown on the diagram below, only properties with a leading underscore (``\_`` is the character to denote properties reserved for Couchbase) are kept to construct the revision tree.
-
-
-// <img src="https://cl.ly/1Q1F0i3f2i3n/compaction.gif"/>
-portrait />
+As shown on the diagram below, only properties with a leading underscore (`_` is the character to denote properties reserved for Couchbase) are kept to construct the revision tree.
 
 Compaction can only be invoked manually via the link:../../../../references/couchbase-lite/couchbase-lite/database/database/index.html#void-compact[compact()] method.
 The compaction process does not remove JSON bodies of leaf nodes.
@@ -2291,7 +2117,7 @@ In particular, changes to document JSON values will *not* cause Couchbase Lite t
 
 In the native API, attachments are represented by the `Attachment` class.
 Attachments are available from a `Revision` object.
-From a ``Document``, you get to the attachments via its ``currentRevision``.
+From a `Document`, you get to the attachments via its `currentRevision`.
 
 === Reading attachments
 
@@ -2303,11 +2129,10 @@ The `Revision` class has a number of methods for accessing attachments:
 
 Once you have an `Attachment` object, you can access its name, MIME type and content length.
 The accessors for the content vary by platform: on iOS it's available as an `NSData` object or as an `NSURL` pointing to a read-only file;
-in Java you read the data from an ``InputStream``.
+in Java you read the data from an `InputStream`.
 
 [source]
 ----
-
 // Load an JPEG attachment from a document into a UIImage:
 CBLDocument* doc = [db documentWithID: @"Robin"];
 CBLRevision* rev = doc.currentRevision;
@@ -2321,7 +2146,6 @@ if (att != nil) {
 
 [source]
 ----
-
 // Load an JPEG attachment from a document into a UIImage:
 let doc = db.documentWithID("Robin")
 let rev = doc.currentRevision
@@ -2334,7 +2158,6 @@ if att != nil {
 
 [source]
 ----
-
 // Load an JPEG attachment from a document into a Drawable:
 Document doc = database.getDocument("Robin");
 Revision rev = doc.getCurrentRevision();
@@ -2347,7 +2170,6 @@ if (att != null) {
 
 [source]
 ----
-
 // Load an JPEG attachment from a document:
 var doc = database.GetDocument("Robin");
 var rev = doc.CurrentRevision;
@@ -2362,7 +2184,7 @@ if (att != null)
 
 === Writing (and deleting) attachments
 
-To create an attachment, first create a mutable `UnsavedRevision` object by calling `createRevision` on the document's ``currentRevision``.
+To create an attachment, first create a mutable `UnsavedRevision` object by calling `createRevision` on the document's `currentRevision`.
 Then call `setAttachment` on the new revision to add an attachment.
 (You can of course also change the JSON by modifying the revision's properties.)
 Finally you call `save` to save the new revision.
@@ -2371,7 +2193,6 @@ Updating an attachment's content (or type) works exactly the same way: the `setA
 
 [source]
 ----
-
 // Add or update an image to a document as a JPEG attachment:
 CBLDocument* doc = [db documentWithID: @"Robin"];
 CBLUnsavedRevision* newRev = [doc.currentRevision createRevision];
@@ -2386,7 +2207,6 @@ assert([newRev save: &error]);
 
 [source]
 ----
-
 // Add or update an image to a document as a JPEG attachment:
 let doc = db.documentWithID("Robin")
 let newRev = doc.currentRevision.createRevision()
@@ -2398,7 +2218,6 @@ assert(newRev.save(&error) != nil)
 
 [source]
 ----
-
 // Add an image in a callback after invoking the Android Camera activity
 protected void onActivityResult(int requestCode, int resultCode, Intent data){
     InputStream stream = null;
@@ -2415,7 +2234,6 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data){
 
 [source]
 ----
-
 // Add or update an image to a document as a JPEG attachment:
 var doc = database.GetDocument("Robin");
 var newRev = doc.CurrentRevision.CreateRevision();
@@ -2425,11 +2243,10 @@ var savedRev = newRev.Save();
 Debug.Assert(savedRev != null);
 ----
 
-To delete an attachment, just call `removeAttachment` instead of ``setAttachment``.
+To delete an attachment, just call `removeAttachment` instead of `setAttachment`.
 
 [source]
 ----
-
 // Remove an attachment from a document:
 CBLDocument* doc = [db documentWithID: @"Robin"];
 CBLUnsavedRevision* newRev = [doc.currentRevision createRevision];
@@ -2441,7 +2258,6 @@ assert([newRev save: &error]);
 
 [source]
 ----
-
 // Remove an attachment from a document:
 let doc = db.documentWithID("Robin")
 let newRev = doc.currentRevision.createRevision()
@@ -2452,7 +2268,6 @@ assert(newRev.save(&error) != nil)
 
 [source]
 ----
-
 // Remove an attachment from a document:
 Document doc = database.getDocument("Robin");
 UnsavedRevision newRev = doc.getCurrentRevision().createRevision();
@@ -2463,7 +2278,6 @@ newRev.save();
 
 [source]
 ----
-
 // Remove an attachment from a document:
 var doc = database.GetDocument("Robin");
 var newRev = doc.CurrentRevision.CreateRevision();
@@ -2496,27 +2310,26 @@ Couchbase Lite doesn't have a query language like SQL;
 instead, it uses a technique called map/reduce to generate indexes (views) according to arbitrary app-defined criteria.
 Queries can then look up a range of rows from a view, and either use the rows' keys and values directly or get the documents they came from.
 
-The main component of a view (other than its name) is its **map function**.
-This function is written in the same language as your app--most likely Objective-C or Java--so it`'s very flexible.
+The main component of a view (other than its name) is its *map function*.
+This function is written in the same language as your app--most likely Objective-C or Java--so it's very flexible.
 It takes a document's JSON as input, and *emits* (outputs) any number of key/value pairs to be indexed.
 The view generates a complete index by calling the map function on every document in the database, and adding each emitted key/value pair to the index, sorted by key.
 For example, a map function might grind through an address-book database and produce a set of mappings from names to phone numbers.
 The resulting index is persistent, and updated incrementally as documents change.
-(It`'s very much like the type of index a SQL database creates internally to optimize queries.)
+(It's very much like the type of index a SQL database creates internally to optimize queries.)
 
-A view may also have a **reduce function**.
+A view may also have a *reduce function*.
 If present, it can be used during queries to combine multiple rows into one.
 It can be used to compute aggregate values like totals or averages, or to group rows by common criteria (like collecting all the artists in a record collection).
 We'll explain reduce functions later on.
 
-[quote]
-Remember: *a view is not a query, it`'s an index.*
+IMPORTANT: *A view is not a query, it's an index.*
 Views are persistent, and need to be updated (incrementally) whenever documents change, so having large numbers of them can be expensive.
-Instead, it`'s better to have a smaller number of views that can be queried in interesting ways.
+Instead, it's better to have a smaller number of views that can be queried in interesting ways.
 
 === Creating and initializing views
 
-`View` objects belong to a ``Database``.
+`View` objects belong to a `Database`.
 You create or find a view by calling the database's `viewNamed` method, which will create and return a new `View` if none exists by that name.
 
 Even though a view is persistent, its map and reduce functions aren't: they're just function pointers (or blocks, or inner classes) and have to be registered at runtime, before the view is queried.
@@ -2524,7 +2337,6 @@ It's good practice to set up views when your app starts up, right after opening 
 
 [source]
 ----
-
 // Create a view and register its map function:
 CBLView* phoneView = [db viewNamed: @"phones"];
 [view setMapBlock: MAPBLOCK({
@@ -2536,7 +2348,6 @@ CBLView* phoneView = [db viewNamed: @"phones"];
 
 [source]
 ----
-
 // Create a view and register its map function:
 let phoneView = db.viewNamed("phones")
 phoneView.setMapBlock({ (doc, emit) in
@@ -2550,7 +2361,6 @@ phoneView.setMapBlock({ (doc, emit) in
 
 [source]
 ----
-
 // Create a view and register its map function:
 View phoneView = database.getView("phones");
 phoneView.setMap(new Mapper() {
@@ -2566,7 +2376,6 @@ phoneView.setMap(new Mapper() {
 
 [source]
 ----
-
 // Create a view and register its map function:
 var view = database.GetView("phones");
 view.SetMap((doc, emit) =>
@@ -2587,7 +2396,7 @@ The easiest thing to remember is just to set the version to "1" initially, and t
 
 === Querying views
 
-You query a view by using a `Query` object that you create from a `View` by calling ``createQuery``.
+You query a view by using a `Query` object that you create from a `View` by calling `createQuery`.
 This is a big topic, and is covered in a separate article on the `Query` class.
 
 === Map functions
@@ -2601,14 +2410,13 @@ For discussion purposes, here's a simple map function in JavaScript:
 
 [source,javascript]
 ----
-
 function(doc) {
     if (doc["type"] == "person")
         emit(doc["name"], doc["phone"]);
 }
 ----
 
-This function works with a database that contains, among other things, documents representing people, which are tagged with a `type` property whose value is "``person``".
+This function works with a database that contains, among other things, documents representing people, which are tagged with a `type` property whose value is "`person`".
 (This use of a `type` property is a common idiom.)
 Every person document contains `name` and `phone` properties.
 The map function simply checks whether the document represents a person, and if it does, it calls `emit` to add the name and phone number to the index.
@@ -2641,7 +2449,6 @@ That's an implementation detail of the indexer.
 * Avoid having the map function call out into complex external code.
 That code might change later on to be stateful or have side effects, breaking your map function.
 
-
 ==== Keys and values
 
 Both the key and value passed to `emit` can be any JSON-compatible objects: not just strings, but also numbers, booleans, arrays, dictionaries/maps, and the special JSON `null` object (which is distinct from a null/nil pointer.)
@@ -2651,7 +2458,7 @@ In addition, the value emitted, but _not_ the key, can be a null/nil pointer.
 Keys are commonly strings, but it turns out that arrays are a very useful type of key as well.
 This is because of the way arrays are sorted: given two array keys, the first items are compared first, then if those match the second items are compared, and so on.
 That means that you can use array keys to establish multiple levels of sorting.
-If the map function emits keys of the form __[lastname, firstname]__, then the index will be sorted by last name, and entries with the same last name will be sorted by first name, just as if you'd used _ORDER BY lastname, firstname_ in SQL.
+If the map function emits keys of the form _[lastname, firstname]_, then the index will be sorted by last name, and entries with the same last name will be sorted by first name, just as if you'd used _ORDER BY lastname, firstname_ in SQL.
 
 Here are the exact rules for sorting (collation) of keys.
 The most significant factor is the key's object type;
@@ -2668,19 +2475,17 @@ This is *not* the same as ASCII ordering, so the results might surprise you -- f
 * Maps/dictionaries, also compared item-by-item.
 Unfortunately the order of items is ambiguous (since JSON doesn't specify any ordering of keys, and most implementations use hash tables which randomize the order) so using these as keys isn't recommended.
 
-
 ==== The source document, and redirection
 
 In addition to its key and value, every index row also remembers the ID of the document that emitted it.
 This can be accessed at query time via the `QueryRow.documentID` property, or more commonly via the shortcut `QueryRow.document` which uses the ID to load the Document object.
 
 It can sometimes be useful to redirect this reference, i.e. to make the index row point to a different document instead.
-You do this by emitting a value that's a dictionary with a key `\_id` whose value is the document ID you want the row to reference.
+You do this by emitting a value that's a dictionary with a key `_id` whose value is the document ID you want the row to reference.
 The `QueryRow.documentID` and accessors will then use this document ID instead.
 
 [source]
 ----
-
 // This example indexes documents that record Facebook-style "likes".
 // When querying, the document we really want to look at is the post being
 // liked, so we redirect the emitted row at that document.
@@ -2696,7 +2501,6 @@ The `QueryRow.documentID` and accessors will then use this document ID instead.
 
 [source]
 ----
-
 // This example indexes documents that record Facebook-style "likes".
 // When querying, the document we really want to look at is the post being
 // liked, so we redirect the emitted row at that document.
@@ -2712,7 +2516,6 @@ view.setMapBlock({ (doc, emit) -> Void in
 
 [source]
 ----
-
 // This example indexes documents that record Facebook-style "likes".
 // When querying, the document we really want to look at is the post being
 // liked, so we redirect the emitted row at that document.
@@ -2732,9 +2535,8 @@ view.setMap(new Mapper() {
 }, "1");
 ----
 
-[source]
+[source,text]
 ----
-
 No code example is currently available.
 ----
 
@@ -2759,7 +2561,6 @@ Here's an example, building on the phone-numbers example up above:
 
 [source]
 ----
-
 // Create a view and register its map and reduce functions:
 CBLView* phoneView = [db viewNamed: @"phones"];
 [view setMapBlock: MAPBLOCK({
@@ -2773,7 +2574,6 @@ CBLView* phoneView = [db viewNamed: @"phones"];
 
 [source]
 ----
-
 let phoneView = db.viewNamed("phones")
 phoneView.setMapBlock({ (doc, emit) -> Void in
     if let phones = doc["phones"] as? [String] {
@@ -2788,7 +2588,6 @@ phoneView.setMapBlock({ (doc, emit) -> Void in
 
 [source]
 ----
-
 // Create a view and register its map and reduce functions:
 View phoneView = database.getView("phones");
 phoneView.setMapReduce(new Mapper() {
@@ -2809,7 +2608,6 @@ phoneView.setMapReduce(new Mapper() {
 
 [source]
 ----
-
 // Create a view and register its map and reduce functions:
 var view = database.GetView("phones");
 view.SetMapReduce((doc, emit) =>
@@ -2832,7 +2630,6 @@ Here's just the body of a reduce function that totals up numbers.
 
 [source]
 ----
-
 double total = 0;
 for (NSNumber* value in values) {
     total += value.doubleValue;
@@ -2842,7 +2639,6 @@ return @(total);
 
 [source]
 ----
-
 var total: Double = 0.0
 let numberValues = values as [Double];
 for value in numberValues {
@@ -2853,7 +2649,6 @@ return total
 
 [source]
 ----
-
 double total = 0;
 for (Double value : values) {
     total += value.doubleValue();
@@ -2863,7 +2658,6 @@ return new Double(total);
 
 [source]
 ----
-
 var total = 0.0;
 foreach(var value in values.ToList())
 {
@@ -2887,9 +2681,9 @@ That's a lot of overhead, and on a mobile device it's likely to crash your app.
 Instead, the database will read the rows in chunks.
 It'll read some number of rows into memory, send them to your reduce function, release them from memory, then go on to the next rows.
 This scales very well, but now there's the problem of what to do with the multiple reduced values returned by your function.
-Reducing is supposed to produce one end result, not several! The answer is to reduce the list of reduced values -- to ``re-reduce``.
+Reducing is supposed to produce one end result, not several! The answer is to reduce the list of reduced values -- to `re-reduce`.
 
-The rereduce parameter is there to tell your reduce function that it's being called in this special ``re-reduce mode``.
+The rereduce parameter is there to tell your reduce function that it's being called in this special `re-reduce mode`.
 *When re-reducing there are no keys, and the values are the ones already returned by previous runs of the same reduce function.*
 The function's job is, once again, to combine the values into a single value and return it.
 
@@ -2904,7 +2698,6 @@ Let's revisit that example and add proper support for re-reducing:
 
 [source]
 ----
-
 // Create a view and register its map and reduce functions:
 CBLView* phoneView = [db viewNamed: @"phones"];
 [view setMapBlock: MAPBLOCK({
@@ -2922,7 +2715,6 @@ CBLView* phoneView = [db viewNamed: @"phones"];
 
 [source]
 ----
-
 // Create a view and register its map and reduce functions:
 let phoneView = db.viewNamed("phones")
 phoneView.setMapBlock({ (doc, emit) in
@@ -2942,7 +2734,6 @@ phoneView.setMapBlock({ (doc, emit) in
 
 [source]
 ----
-
 // Create a view and register its map and reduce functions:
 View phoneView = database.getView("phones");
 phoneView.setMapReduce(new Mapper() {
@@ -2967,7 +2758,6 @@ phoneView.setMapReduce(new Mapper() {
 
 [source]
 ----
-
 // Create a view and register its map and reduce functions:
 let phoneView = database.GetView("phones");
 phoneView.SetMapReduce((doc, emit) =>
@@ -3009,7 +2799,6 @@ Usually this comes naturally.
 But it is legal to return an array or dictionary, and sometimes people have tried to make reduce functions that transform the input values without actually making them any smaller.
 The problem with this is that it scales badly, and as the size of the index grows, the indexer will eventually run out of memory and fail.
 
-
 === Development considerations
 
 ==== Map function design
@@ -3031,7 +2820,7 @@ if a doc emits the same key multiple times, the order is undefined.
 So after a document changes, the next query made to a view will cause that view's map function to be called on the doc's new contents, updating the view index.
 (But remember that you shouldn't write any code that makes assumptions about when map functions are called.)
 
-*If a document has conflicts, which conflicting revision gets indexed?* The document's ``currentRevision``, sometimes called the "winning" revision, is the one that you see in the API if you don't request a revision by ID.
+*If a document has conflicts, which conflicting revision gets indexed?* The document's `currentRevision`, sometimes called the "winning" revision, is the one that you see in the API if you don't request a revision by ID.
 
 ==== Performance
 
@@ -3047,67 +2836,65 @@ Also see if you could emit less data.
 A *query* is the action of looking up results from a view's index.
 In Couchbase Lite, queries are objects of the `Query` class.
 To perform a query you create one of these, customize its properties (such as the key range or the maximum number of rows) and then run it.
-The result is a ``QueryEnumerator``, which provides a list of `QueryRow` objects, each one describing one row from the view's index.
+The result is a `QueryEnumerator`, which provides a list of `QueryRow` objects, each one describing one row from the view's index.
 
-There's also a special type of query called an **all-docs query**.
+There's also a special type of query called an *all-docs query*.
 This type of query isn't associated with any view;
 or rather, you can think of it as querying an imaginary view that contains one row for every document in the database.
 You use an all-docs query to find all the documents in the database, or the documents with keys in a specific range, or even the documents with a specific set of keys.
 It can also be used to find documents with conflicts.
 
-Couchbase Lite also provides **live queries**.
+Couchbase Lite also provides *live queries*.
 Once created, a live query remains active and monitors changes to the view's index, notifying observers whenever the query results change.
 Live queries are very useful for driving UI components like table views.
 
 === Creating and configuring queries
 
-`Query` objects are created by a ``View``'s `createQuery` method, and by a ``Database``'s `createAllDocumentsQuery` method.
+`Query` objects are created by a ``View```'s `createQuery` method, and by a ``Database```'s `createAllDocumentsQuery` method.
 In its default state a `Query` object will return every row of the index, in increasing order by key.
 But there are several properties you can configure to change this, before you run the query.
 Here are the most basic and common ones:
 
-* ``startKey``: the key to start at.
-The default value, ``null``, means to start from the beginning.
-* ``endKey``: the last key to return.
-The default value, ``null``, means to continue to the end.
-* ``descending``: If set to ``true``, the keys will be returned in reverse order.
+* `startKey`: the key to start at.
+The default value, `null`, means to start from the beginning.
+* `endKey`: the last key to return.
+The default value, `null`, means to continue to the end.
+* `descending`: If set to `true`, the keys will be returned in reverse order.
 (This also reverses the meanings of the `startKey` and `endKey` properties, since the query will now start at the highest keys and end at lower ones!)
-* ``limit``: If nonzero, this is the maximum number of rows that will be returned.
-* ``skip``: If nonzero, this many rows will be skipped (starting from the `startKey` if any.)
+* `limit`: If nonzero, this is the maximum number of rows that will be returned.
+* `skip`: If nonzero, this many rows will be skipped (starting from the `startKey` if any.)
 
 Some more advanced properties that aren't used as often:
 
-* ``keys``: If provided, the query will fetch only the rows with the given keys (and `startKey` and `endKey` will be ignored).
-* ``startKeyDocID``: If multiple index rows match the startKey, this property specifies that the result should start from the one(s) emitted by the document with this ID, if any.
+* `keys`: If provided, the query will fetch only the rows with the given keys (and `startKey` and `endKey` will be ignored).
+* `startKeyDocID`: If multiple index rows match the startKey, this property specifies that the result should start from the one(s) emitted by the document with this ID, if any.
 (Useful if the view contains multiple identical keys, making .startKey ambiguous.)
-* ``endKeyDocID``: If multiple index rows match the endKey, this property specifies that the result should end with from the one(s) emitted by the document with this ID, if any.
+* `endKeyDocID`: If multiple index rows match the endKey, this property specifies that the result should end with from the one(s) emitted by the document with this ID, if any.
 (Useful if the view contains multiple identical keys, making .startKey ambiguous.)
-* ``indexUpdateMode``: Changes the behavior of index updating.
+* `indexUpdateMode`: Changes the behavior of index updating.
 By default the index will be updated if necessary before the query runs.
 You can choose to skip this (and get possibly-stale results), with the option of also starting an asynchronous background update of the index.
-* ``prefixMatchLevel``: If nonzero, enables prefix matching of string or array keys.
-** A value of 1 treats the endKey itself as a prefix: if it's a string, keys in the index that come after the endKey, but begin with the same prefix, will be matched.
-(For example, if the endKey is `"foo"` then the key `"foolish"` in the index will be matched, but not ``"fong"``.)
+* `prefixMatchLevel`: If nonzero, enables prefix matching of string or array keys.
+ ** A value of 1 treats the endKey itself as a prefix: if it's a string, keys in the index that come after the endKey, but begin with the same prefix, will be matched.
+(For example, if the endKey is `"foo"` then the key `"foolish"` in the index will be matched, but not `"fong"`.)
 Or if the endKey is an array, any array beginning with those elements will be matched.
-(For example, if the endKey is ``[1]``, then `[1, "x"]` will match, but not ``[2]``.)
+(For example, if the endKey is `[1]`, then `[1, "x"]` will match, but not `[2]`.)
 If the key is any other type, there is no effect.
-** A value of 2 assumes the endKey is an array and treats its final item as a prefix, using the rules above.
-(For example, an endKey of `[1, "x"]` will match `[1, "xtc"]` but not ``[1, "y"]``.)
-** A value of 3 assumes the key is an array of arrays, etc.
+ ** A value of 2 assumes the endKey is an array and treats its final item as a prefix, using the rules above.
+(For example, an endKey of `[1, "x"]` will match `[1, "xtc"]` but not `[1, "y"]`.)
+ ** A value of 3 assumes the key is an array of arrays, etc.
 +
-Note that if the `$$.$$descending` property is also set, the search order is reversed and the above discussion applies to the ``startKey``, *not* the ``endKey``.
+Note that if the `.descending` property is also set, the search order is reversed and the above discussion applies to the `startKey`, *not* the `endKey`.
 
 There are other advanced properties that only apply to reducing and grouping:
 
-* ``mapOnly``: If set to true, prevents the reduce function from being run, so you get all of the index rows instead of an aggregate.
+* `mapOnly`: If set to true, prevents the reduce function from being run, so you get all of the index rows instead of an aggregate.
 Has no effect if the view has no reduce function.
-* ``groupLevel``: If greater than zero, enables grouping of rows.
+* `groupLevel`: If greater than zero, enables grouping of rows.
 The value specifies the number of items in the value array that will be grouped.
-
 
 [source]
 ----
-
 // Set up a query for a view that indexes blog posts, to get the latest:
 CBLQuery* query = [[self.db viewNamed: @"postsByDate"] createQuery];
 query.descending = YES;
@@ -3116,7 +2903,6 @@ query.limit = 20;
 
 [source]
 ----
-
 // Set up a query for a view that indexes blog posts, to get the latest:
 let query = db.viewNamed("postsByDate").createQuery()
 query.descending = true
@@ -3125,7 +2911,6 @@ query.limit = 20
 
 [source]
 ----
-
 // Set up a query for a view that indexes blog posts, to get the latest:
 Query query = database.getView("postsByDate").createQuery();
 query.setDescending(true);
@@ -3134,7 +2919,6 @@ query.setLimit(20);
 
 [source]
 ----
-
 // Set up a query for a view that indexes blog posts, to get the latest:
 var query = database.GetView("postsByDate").CreateQuery();
 query.Descending = true;
@@ -3150,18 +2934,17 @@ It supports all the standard view options, so you can query ranges of document I
 All-docs queries also have a special property called `allDocsMode` that can customize their behavior.
 Its values are:
 
-* ``allDocs``: The default mode.
+* `allDocs`: The default mode.
 Returns all non-deleted documents.
-* ``includeDeleted``: In this mode, deleted documents are included as well.
-* ``showConflicts``: In this mode, each ``QueryRow``'s `conflictingRevisions` property can be used to find whether it's in conflict and what the IDs of the conflicting revisions are.
-* ``onlyConflicts``: Like ``showConflicts``, but _only_ conflicted documents are returned.
+* `includeDeleted`: In this mode, deleted documents are included as well.
+* `showConflicts`: In this mode, each ``QueryRow```'s `conflictingRevisions` property can be used to find whether it's in conflict and what the IDs of the conflicting revisions are.
+* `onlyConflicts`: Like `showConflicts`, but _only_ conflicted documents are returned.
 
-(__These are not flags.__
+(_These are not flags._
 You can only choose one.)
 
 [source]
 ----
-
 // Let's find the documents that have conflicts so we can resolve them:
 CBLQuery* query = [self.db createAllDocumentsQuery];
 query.allDocsMode = kCBLOnlyConflicts;
@@ -3176,7 +2959,6 @@ for (CBLQueryRow* row in result) {
 
 [source]
 ----
-
 // Let's find the documents that have conflicts so we can resolve them:
 let query = db.createAllDocumentsQuery()
 query.allDocsMode = CBLAllDocsMode.OnlyConflicts
@@ -3190,7 +2972,6 @@ while let row = result?.nextRow() {
 
 [source]
 ----
-
 // Let's find the documents that have conflicts so we can resolve them:
 Query query = database.createAllDocumentsQuery();
 query.setAllDocsMode(Query.AllDocsMode.ONLY_CONFLICTS);
@@ -3206,7 +2987,6 @@ for (Iterator<QueryRow> it = result; it.hasNext(); ) {
 
 [source]
 ----
-
 // Let's find the documents that have conflicts so we can resolve them:
 Query query = database.createAllDocumentsQuery();
 query.setAllDocsMode(Query.AllDocsMode.ONLY_CONFLICTS);
@@ -3222,7 +3002,6 @@ for (Iterator<QueryRow> it = result; it.hasNext(); ) {
 
 [source]
 ----
-
 // Let's find the documents that have conflicts so we can resolve them:
 var query = database.CreateAllDocumentsQuery();
 query.AllDocsMode = AllDocsMode.OnlyConflicts;
@@ -3242,14 +3021,13 @@ foreach (var row in rows)
 After a `Query` object is set up just right, you call its `run` method to get the results.
 These are returned as a `QueryEnumerator` object, which mainly serves as an enumerable collection of `QueryRow` objects.
 
-Each `QueryRow` has two main properties, its `key` and its ``value``.
+Each `QueryRow` has two main properties, its `key` and its `value`.
 These are what were emitted to the index.
 (Or in the case of an all-docs query, the key is the same as the document ID.)
 It also has a `documentID` property that identifies the document that the key and value were emitted from, although usually you'd access the `document` property instead, which gives you the `Document` object directly.
 
 [source]
 ----
-
 // Let's query a view that maps product names to prices,
 // starting with the "M"s and showing 100 widgets:
 CBLQuery* query = [[self.db viewNamed: @"widgetsByName"] createQuery];
@@ -3263,7 +3041,6 @@ for (CBLQueryRow* row in result) {
 
 [source]
 ----
-
 // Let's query a view that maps product names to prices,
 // starting with the "M"s and showing 100 widgets:
 let query = db.viewNamed("widgetsByName").createQuery()
@@ -3278,7 +3055,6 @@ while let row = result?.nextRow() {
 
 [source]
 ----
-
 // Let's query a view that maps product names to prices,
 // starting with the "M"s and showing 100 widgets:
 Query query = database.getView("widgetsByName").createQuery();
@@ -3293,7 +3069,6 @@ for (Iterator<QueryRow> it = result; it.hasNext(); ) {
 
 [source]
 ----
-
 // Let's query a view that maps product names to prices,
 // starting with the "M"s and showing 100 widgets:
 var query = database.GetView("widgetsByName").CreateQuery();
@@ -3324,7 +3099,6 @@ using `equals` in Java, or `-isEqual:` in Objective-C).
 
 [source]
 ----
-
 // Check whether the query result set has changed:
 if (self.queryResult == nil || self.queryResult.stale) {
     CBLQueryEnumerator *newResult = [self.query run: &error];
@@ -3337,7 +3111,6 @@ if (self.queryResult == nil || self.queryResult.stale) {
 
 [source]
 ----
-
 // Check whether the query result set has changed:
 if (queryResult == nil || queryResult.stale) {
     let newResult = query.run(&error)
@@ -3350,7 +3123,6 @@ if (queryResult == nil || queryResult.stale) {
 
 [source]
 ----
-
 // Check whether the query result set has changed:
 if (queryResult == null || queryResult.isStale()) {
     QueryEnumerator newResult = query.run();
@@ -3363,7 +3135,6 @@ if (queryResult == null || queryResult.isStale()) {
 
 [source]
 ----
-
 // Check whether the query result set has changed:
 if (queryResult == null || queryResult.Stale)
 {
@@ -3376,7 +3147,7 @@ if (queryResult == null || queryResult.Stale)
 }
 ----
 
-There's a class that actually does this work for you, called ``LiveQuery``.
+There's a class that actually does this work for you, called `LiveQuery`.
 A live query stays active and monitors the database and view index for changes.
 When there's a change it re-runs itself automatically, and if the query results changed it notifies any observers.
 LiveQuery is a great way to build reactive user interfaces, especially table/list views, that keep themselves up to date.
@@ -3385,7 +3156,6 @@ This helps your app feel quick and responsive.
 
 [source]
 ----
-
 - (void) initializeQuery {
     // Set up my live query during view initialization:
     CBLQuery* query = [[self.db viewNamed: @"widgets"] createQuery];
@@ -3408,7 +3178,6 @@ This helps your app feel quick and responsive.
 
 [source]
 ----
-
 func initializeQuery() {
     let query = db.viewNamed("widgets").createQuery()
     query.limit = 100
@@ -3426,7 +3195,6 @@ override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject
 
 [source]
 ----
-
 private void initializeQuery() {
     // Set up my live query during view initialization:
     Query query = database.getView("widgets").createQuery();
@@ -3447,7 +3215,6 @@ private void initializeQuery() {
 
 [source]
 ----
-
 private void InitializeQuery()
 {
     // Set up my live query during view initialization:
@@ -3461,15 +3228,14 @@ private void InitializeQuery()
 
 === Querying key ranges
 
-There are some subtleties to working with key ranges (``startKey`` and ``endKey``).
-The first is that if you reverse the order of keys, by setting the `reverse` property, then the `startKey` needs to be _greater than_ the ``endKey``.
-That's the reason they're named _start_ and __end__, rather than _min_ and __max__.
+There are some subtleties to working with key ranges (`startKey` and `endKey`).
+The first is that if you reverse the order of keys, by setting the `reverse` property, then the `startKey` needs to be _greater than_ the `endKey`.
+That's the reason they're named _start_ and _end_, rather than _min_ and _max_.
 In the following example, note that the key range starts at 100 and ends at 90;
 if we'd done it the other way around, we'd have gotten an empty result set.
 
 [source]
 ----
-
 // Set up a query for the highest-rated movies:
 CBLQuery* query = [[self.db viewNamed: @"postsByDate"] createQuery];
 query.descending = YES;
@@ -3479,7 +3245,6 @@ query.endKey = @90;
 
 [source]
 ----
-
 // Set up a query for the highest-rated movies:
 let query = db.viewNamed("postsByDate").createQuery()
 query.descending = true
@@ -3489,7 +3254,6 @@ query.endKey = 90
 
 [source]
 ----
-
 // Set up a query for the highest-rated movies:
 Query query = database.getView("postsByDate").createQuery();
 query.setDescending(true);
@@ -3499,7 +3263,6 @@ query.setEndKey(new Integer(90));
 
 [source]
 ----
-
 // Set up a query for the highest-rated movies:
 var query = database.GetView("postsByDate").CreateQuery();
 query.Descending = true;
@@ -3513,12 +3276,11 @@ The start key is just a one-element array with that value in it, but it's not ob
 What works is an array that's like the starting key but with a second object appended that's greater than any possible value.
 For example, if the start key is (in JSON) `["red"]` then the end key could be `["red", "ZZZZ"]` ...because none of the possible second items could be greater than "ZZZZ", right?
 Unfortunately this has obvious problems.
-The correct stop value to use turns out to be an empty object/dictionary, ``{}``, making the end key ``["red", {}]``.
+The correct stop value to use turns out to be an empty object/dictionary, `{}`, making the end key `["red", {}]`.
 This works because the sort order in views puts dictionaries last.
 
 [source]
 ----
-
 // Assume the view's keys are like [color, model]. We want all the red ones.
 CBLQuery* query = [[self.db viewNamed: @"carsByColorAndModel"] createQuery];
 query.startKey = @[@"red"]
@@ -3527,7 +3289,6 @@ query.endKey   = @[@"red", @{}];
 
 [source]
 ----
-
 // Assume the view's keys are like [color, model]. We want all the red ones.
 let query = db.viewNamed("carsByColorAndModel").createQuery()
 query.startKey = ["red"]
@@ -3536,7 +3297,6 @@ query.endKey = ["red",[:]]
 
 [source]
 ----
-
 // Assume the view's keys are like [color, model]. We want all the red ones.
 Query query = database.getView("carsByColorAndModel").createQuery();
 query.setStartKey("red");
@@ -3545,7 +3305,6 @@ query.setEndKey(Arrays.asList("red", new HashMap<String, Object>()));
 
 [source]
 ----
-
 // Assume the view's keys are like [color, model]. We want all the red ones.
 var query = database.GetView("carsByColorAndModel").CreateQuery();
 query.StartKey = new List<object> {"red"};
@@ -3558,16 +3317,15 @@ If the view has a reduce function, it will be run _by default_ when you query th
 This means that all rows of the output will be aggregated into a single row with no key, whose value is the output of the reduce function.
 (See the View documentation for a full description of what reduce functions do.)
 
-(It's important to realize that the reduce function runs on the rows that __would be output__, not all the rows in the view.
-So if you set the `startKey` and/or ``endKey``, the reduce function runs only on the rows in that key range.)
+(It's important to realize that the reduce function runs on the rows that _would be output_, not all the rows in the view.
+So if you set the `startKey` and/or `endKey`, the reduce function runs only on the rows in that key range.)
 
-If you don't want the reduce function to be used, set the query's `mapOnly` property to ``true``.
+If you don't want the reduce function to be used, set the query's `mapOnly` property to `true`.
 This gives you the flexibility to use a single view for both detailed results and statistics.
-For example, adding a typical row-count reduce function to a view lets you get the full results (with ``mapOnly=true``) or just the number of rows (with ``mapOnly=false``).
+For example, adding a typical row-count reduce function to a view lets you get the full results (with `mapOnly=true`) or just the number of rows (with `mapOnly=false`).
 
 [source]
 ----
-
 // This view's keys are order dates, and values are prices.
 // The reduce function computes an average of the input values.
 CBLQuery* query = [ordersByDateView createQuery];
@@ -3587,7 +3345,6 @@ NSLog(@"Average order was $%.2f", [row.value doublevalue]);
 
 [source]
 ----
-
 // This view's keys are order dates, and values are prices.
 // The reduce function computes an average of the input values.
 let query = ordersByDateView.createQuery()
@@ -3611,7 +3368,6 @@ if let aggregate = result?.nextRow() {
 
 [source]
 ----
-
 // This view's keys are order dates, and values are prices.
 // The reduce function computes an average of the input values.
 Query query = database.getView("ordersByDateView").createQuery();
@@ -3633,7 +3389,6 @@ Log.w("MYAPP", "Average order was $%f", ((Double)aggregate.getValue()).doubleVal
 
 [source]
 ----
-
 // This view's keys are order dates, and values are prices.
 // The reduce function computes an average of the input values.
 var query = database.GetView("ordersByDateView").CreateQuery();
@@ -3665,7 +3420,7 @@ One very powerful use of grouping is to take a view whose keys are arrays repres
 
 In general, `groupLevel` requires that the keys be arrays;
 rows with other types of keys will be ignored.
-When the `groupLevel` is __n__, the query combines rows that have equal values in the first n items of the key into a single row whose key is the n-item common prefix.
+When the `groupLevel` is _n_, the query combines rows that have equal values in the first n items of the key into a single row whose key is the n-item common prefix.
 
 `groupLevel=1` is slightly different in that it supports non-array keys: it compares them for equality.
 In other words, if a view's keys are strings or numbers, a query with `groupLevel=1` will return a row for each _unique_ key in the index.
@@ -3682,7 +3437,6 @@ The user's drilled down into the genre "Mope-Rock", then artist "Radiohead", and
 
 [source]
 ----
-
 CBLQuery* query = [hierarchyView createQuery];
 query.groupLevel = 3;
 query.startKey = @[@"Mope-Rock", @"Radiohead"];
@@ -3698,7 +3452,6 @@ for (CBLQueryRow* row in [query run: &error]) {
 
 [source]
 ----
-
 var albumTitles: [String] = []
 var albumTimes: [Int] = []
 var error: NSError?
@@ -3711,7 +3464,6 @@ while let row = result?.nextRow() {
 
 [source]
 ----
-
 Query query = database.getView("hierarchyView").createQuery();
 query.setGroupLevel(3);
 query.setStartKey(Arrays.asList("Mope-Rock", "Radiohead"));
@@ -3730,7 +3482,6 @@ for (Iterator<QueryRow> it = result; it.hasNext(); ) {
 
 [source]
 ----
-
 var query = database.GetView("hierarchyView").CreateQuery();
 query.GroupLevel = 3;
 query.StartKey = new List<object> {"Mope-Rock", "Radiohead"};
@@ -3776,21 +3527,19 @@ This can be useful to limit the amount of a large remote database that's downloa
 A special type of filter used with the Couchbase Sync Gateway is the set of *channels* that a pull replication will download from.
 It's also possible to limit a replication to an explicit set of document IDs.
 
-
 === Creating replications
 
-You create a Replication object by calling the Database methods `createPullReplication` or ``createPushReplication``.
+You create a Replication object by calling the Database methods `createPullReplication` or `createPushReplication`.
 Both of these take a single parameter, the URL of the remote database to sync with.
 As the names imply, each method creates a replication that transfers changes in one direction only;
 if you want bidirectional sync, as most apps do, you should create one of each.
 
 Next you can customize the replication settings.
-The most common change is to set the `continuous` property to ``true``.
+The most common change is to set the `continuous` property to `true`.
 You may also need to supply authentication credentials, like a username/password or a Facebook token.
 
 [source]
 ----
-
 NSURL* url = [NSURL URLWithString: @"https://example.com/mydatabase/"];
 CBLReplication *push = [database createPushReplication: url];
 CBLReplication *pull = [database createPullReplication: url];
@@ -3803,7 +3552,6 @@ push.authenticator = pull.authenticator = auth;
 
 [source]
 ----
-
 let url = NSURL(string: "https://example.com/mydatabase/")
 let push = database.createPushReplication(url)
 let pull = database.createPullReplication(url)
@@ -3817,7 +3565,6 @@ pull.authenticator = auth
 
 [source]
 ----
-
 URL url = new URL("https://example.com/mydatabase/");
 Replication push = database.createPushReplication(url);
 Replication pull = database.createPullReplication(url);
@@ -3830,7 +3577,6 @@ pull.setAuthenticator(auth);
 
 [source]
 ----
-
 var url = new Uri("https://example.com/mydatabase/");
 var push = database.CreatePushReplication(url);
 var pull = database.CreatePullReplication(url);
@@ -3850,7 +3596,6 @@ Otherwise, the replication will eventually stop when it's transferred everything
 
 [source]
 ----
-
 [[NSNotificationCenter defaultCenter] addObserver: self
                                          selector: @selector(replicationChanged:)
                                              name: kCBLReplicationChangeNotification
@@ -3871,7 +3616,6 @@ self.pull = pull;
 
 [source]
 ----
-
 NSNotificationCenter.defaultCenter().addObserver(self,
     selector: "replicationChanged", name: kCBLReplicationChangeNotification, object: push)
 NSNotificationCenter.defaultCenter().addObserver(self,
@@ -3888,7 +3632,6 @@ self.pull = pull;
 
 [source]
 ----
-
 push.addChangeListener(new Replication.ChangeListener() {
     @Override
     public void changed(Replication.ChangeEvent event) {
@@ -3909,7 +3652,6 @@ this.pull = pull;
 
 [source]
 ----
-
 push.Changed += (sender, e) =>
 {
     // Will be called when the push replication status changes
@@ -3938,7 +3680,7 @@ You then set the filter's name as the `filter` property of the Replication objec
 The replicator passes your filter function a SavedRevision object.
 The function can examine the document's ID and properties, and simply returns true to allow the document to be replicated, or false to prevent it from being replicated.
 
-Caution:The filter function will be called on the replicator's background thread, so it should be thread-safe.
+CAUTION: The filter function will be called on the replicator's background thread, so it should be thread-safe.
 Ideally it shouldn't reference any external state, but this isn't strictly required.
 
 The filter function can also be given parameters.
@@ -3948,7 +3690,6 @@ For example, a function could filter documents created in any year, accepting th
 
 [source]
 ----
-
 // Define a filter that matches only docs with a given "owner" property.
 // The value to match is given as a parameter named "name":
 [db setFilterNamed: @"byOwner" asBlock: FILTERBLOCK({
@@ -3965,7 +3706,6 @@ push.filterParams = @{@"name": @"Waldo"};
 
 [source]
 ----
-
 db.setFilterNamed("byOwner", asBlock: {
     (revision, params) -> Bool in
         let nameParam = params["name"] as? String
@@ -3981,7 +3721,6 @@ push.filterParams = ["name": "Waldo"]
 
 [source]
 ----
-
 // Define a filter that matches only docs with a given "owner" property.
 // The value to match is given as a parameter named "name":
 db.setFilter("byOwner", new ReplicationFilter() {
@@ -4003,7 +3742,6 @@ push.setFilterParams(params);
 
 [source]
 ----
-
 // Define a filter that matches only docs with a given "owner" property.
 // The value to match is given as a parameter named "name":
 database.SetFilter("byOwner", (revision, filterParams) =>
@@ -4029,7 +3767,6 @@ Only documents tagged with those channels will be downloaded.
 
 [source]
 ----
-
 // Set up a channel-filtered pull replication that will pull only
 // docs in the "sales" channel from the Sync Gateway:
 CBLReplication *pull = [database createPullReplication: url];
@@ -4038,7 +3775,6 @@ pull.channels = @[@"sales"];
 
 [source]
 ----
-
 // Set up a channel-filtered pull replication that will pull only
 // docs in the "sales" channel from the Sync Gateway:
 var pull: CBLReplication = database.createPullReplication(url)
@@ -4047,7 +3783,6 @@ pull.channels = ["sales"]
 
 [source]
 ----
-
 // Set up a channel-filtered pull replication that will pull only
 // docs in the "sales" channel from the Sync Gateway:
 db.createPullReplication(url);
@@ -4056,14 +3791,12 @@ channels.add("sales");
 pull.setChannels(channels);
 ----
 
-[source]
+[source,text]
 ----
-
 No code example is currently available.
 ----
 
-[quote]
-*Note:* Replication properties changed after it has already started won't have any effect.
+NOTE: Replication properties changed after it has already started won't have any effect.
 If you wish to change replication properties such as channels, authentication, etc, you must create a new replication object using the `createPushReplication` or `createPullReplication` method.
 
 ==== Filtered pull from CouchDB, PouchDB or Cloudant
@@ -4078,7 +3811,6 @@ The code below pulls the documents with ID "123" and "xyz" if they exist and the
 
 [source]
 ----
-
 CBLReplication* pull = [database createPullReplication:kSyncGatewayUrl];
 pull.documentIDs = @[@"123", @"xyz"];
 [pull start];
@@ -4086,7 +3818,6 @@ pull.documentIDs = @[@"123", @"xyz"];
 
 [source]
 ----
-
 let pull = database.createPullReplication(kSyncGatewayUrl)
 pull.documentIDs = ["123", "xyz"]
 pull.start()
@@ -4094,7 +3825,6 @@ pull.start()
 
 [source]
 ----
-
 List<String> docIDs = new ArrayList<>();
 docIDs.add("123");
 docIDs.add("xyz");
@@ -4106,7 +3836,6 @@ pull.start();
 
 [source]
 ----
-
 var pull = database.CreatePullReplication(SyncGatewayUrl);
 pull.DocIds = new string[] {"123", "xyz"};
 pull.Start();
@@ -4121,25 +3850,23 @@ The details of this are platform-specific.
 
 A replication has a number of properties that you can access, especially from a notification callback, to check on its status and progress:
 
-* ``status``: An enumeration that gives the current state of the replication.
+* `status`: An enumeration that gives the current state of the replication.
 The values are Stopped, Offline, Idle and Active.
-** Stopped: A one-shot replication goes into this state after all documents have been transferred or a fatal error occurs.
+ ** Stopped: A one-shot replication goes into this state after all documents have been transferred or a fatal error occurs.
 (Continuous replications never stop.)
-** **Offline**: The remote server is not reachable.
+ ** *Offline*: The remote server is not reachable.
 Most often this happens because there's no network connection, but it can also occur if the server's inside an intranet or home network but the device isn't.
 (The replication will monitor the network state and will try to connect when the server becomes reachable.)
-** **Idle**: Indicates that a continuous replication has "caught up" and transferred all documents, but is monitoring the source database for future changes.
-** **Active**: The replication is actively working, either transferring documents or determining what needs to be transferred.
-* ``lastError``: The last error encountered by the replicator.
+ ** *Idle*: Indicates that a continuous replication has "caught up" and transferred all documents, but is monitoring the source database for future changes.
+ ** *Active*: The replication is actively working, either transferring documents or determining what needs to be transferred.
+* `lastError`: The last error encountered by the replicator.
 (Not all errors are fatal, and a continuous replication will keep running even after a fatal error, by waiting and retrying later.)
-* ``completedChangesCount``, ``changesCount``: The number of documents that have been transferred so far, and the estimated total number to transfer in order to catch up.
+* `completedChangesCount`, `changesCount`: The number of documents that have been transferred so far, and the estimated total number to transfer in order to catch up.
 The ratio of these can be used to display a progress meter.
 Just be aware that changesCount may be zero if the number of documents to transfer isn't known yet, and in a continuous replication both values will reset to zero when the status goes from Idle back to Active.
 
-
 [source]
 ----
-
 [[NSNotificationCenter defaultCenter] addObserver: self
                      selector: @selector(replicationChanged:)
                          name: kCBLReplicationChangeNotification
@@ -4170,7 +3897,6 @@ Just be aware that changesCount may be zero if the number of documents to transf
 
 [source]
 ----
-
 NSNotificationCenter.defaultCenter().addObserver(self,
     selector: "replicationChanged:",
     name: kCBLReplicationChangeNotification,
@@ -4202,7 +3928,6 @@ func replicationChanged(n: NSNotification) {
 
 [source]
 ----
-
 final ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "Please wait ...", "Syncing", false);
 pull.addChangeListener(new Replication.ChangeListener() {
     @Override
@@ -4226,7 +3951,6 @@ pull.addChangeListener(new Replication.ChangeListener() {
 
 [source]
 ----
-
 // The replication reporting the notification is either
 // the push or the pull, but we want to look at the
 // aggregate of both the push and pull.
@@ -4251,7 +3975,6 @@ The replication listener can also be used to detect when credentials are incorre
 
 [source]
 ----
-
     ...
 
     [[NSNotificationCenter defaultCenter] addObserver: self
@@ -4278,7 +4001,6 @@ The replication listener can also be used to detect when credentials are incorre
 
 [source]
 ----
-
     ...
 
     NSNotificationCenter.defaultCenter().addObserver(self, selector: "changeListener:", name: kCBLReplicationChangeNotification, object: push)
@@ -4300,7 +4022,6 @@ func changeListener(notification: NSNotification) {
 
 [source]
 ----
-
 push = database.createPushReplication(url);
 push.addChangeListener(new Replication.ChangeListener() {
     @Override
@@ -4320,7 +4041,6 @@ push.addChangeListener(new Replication.ChangeListener() {
 
 [source]
 ----
-
     ...
     pull.Changed += Changed;
     push.Changed += Changed;
@@ -4356,8 +4076,7 @@ include::{partialsdir}/data-modeling.adoc[]
 Two instances of Couchbase Lite can directly sync with each other without a server (peer-to-peer).
 At least one of them must use the Couchbase Lite Listener library, which enables any Couchbase Lite database to become the remote in a replication by listening on a TCP port and by exposing the standard replication endpoints on that port.
 
-
-image::../img/docs-listener-diagram.png[]
+image::docs-listener-diagram.png[]
 
 It becomes an alternate entry-point into the data store.
 Another peer can therefore use the URL and port number in the replicator to sync data to and from the database currently listening.
@@ -4367,8 +4086,6 @@ Some typical Listener use cases include:
 * Synchronizing with selected peer devices on the same LAN network.
 * Offline/online: use peer-to-peer in conjunction with Sync Gateway.
 
-
-[[_installing_the_listener_library]]
 === Installing the Listener library
 
 Refer to the link:./../../../../installation/index.html[installation guide] of the platform of your choice to install the Listener component.
@@ -4381,7 +4098,6 @@ To begin using the Listener you must create an instance by specifying a manager 
 
 [source]
 ----
-
 CBLManager* manager = [CBLManager sharedInstance];
 self.listener = [[CBLListener alloc] initWithManager:manager port:55000];
 self.listener.passwords = @{@"hello": @"pw123"};
@@ -4390,7 +4106,6 @@ self.listener.passwords = @{@"hello": @"pw123"};
 
 [source]
 ----
-
 let manager = CBLManager.sharedInstance()
 self.listener = CBLListener(manager: manager, port: 55000)
 self.listener.passwords = ["hello": "pw123"]
@@ -4399,7 +4114,6 @@ self.listener.start(nil)
 
 [source]
 ----
-
 Manager manager = new Manager((Context) getApplicationContext(), Manager.DEFAULT_OPTIONS);
 Credentials credentials = new Credentials("hello", "pw123");
 listener = new LiteListener(manager, 55000, credentials);
@@ -4409,7 +4123,6 @@ thread.start();
 
 [source]
 ----
-
 Manager manager = Manager.SharedInstance;
 listener = new CouchbaseLiteTcpListener (manager, 55000, CouchbaseLiteTcpOptions.AllowBasicAuth);
 listener.SetPasswords(new Dictionary<string, string>() { { "hello", "pw123" } });
@@ -4421,7 +4134,7 @@ In the example above, the listener instance is initialized as an instance proper
 
 Basic authentication is the recommended approach for protecting database access on the LAN.
 The listening peer can optionally be initialized with a list of username/password pairs.
-The peer that intends to run the replication must provide the same username/password ``http://username:password@hostname:port/dbname``.
+The peer that intends to run the replication must provide the same username/password `\http://username:password@hostname:port/dbname`.
 
 === Discovery
 
@@ -4432,8 +4145,6 @@ This section covers two ways to discover peers:
 * Using a QR code to encode the peer's remote URL.
 * DNS Service Discovery (DNS-SD, aka Bonjour).
 
-
-[[_qr_code]]
 ==== QR code
 
 ===== PhotoDrop
@@ -4473,7 +4184,6 @@ The official documentation for iOS and Mac applications can be found in the http
 The official guide can be found in the https://developer.android.com/training/connect-devices-wirelessly/nsd.html[Android NSD guide].
 * *JmDNS:* Implementation in Java that can be used in Android and Java applications (https://github.com/jmdns/jmdns[official repository]).
 
-
 ===== Bonjour browsers
 
 Bonjour browsers are useful to monitor devices broadcasting a particular service on the LAN (http://www.macupdate.com/app/mac/13388/bonjour-browser[OS X Bonjour browser], https://itunes.apple.com/gb/app/discovery-bonjour-browser/id305441017[iOS app], http://hobbyistsoftware.com/bonjourbrowser[Windows browser])
@@ -4510,27 +4220,23 @@ In addition to using basic authentication, it is also possible to enable SSL ove
 
 [source]
 ----
-
 if (![listener setAnonymousSSLIdentityWithLabel: @"MyApp SSL" error: &error])
     // handle error
 ----
 
 [source]
 ----
-
 if !listener.setAnonymousSSLIdentityWithLabel("MyApp SSL", error: error) {
    // handle error }
 ----
 
-[source]
+[source,text]
 ----
-
 No code example is currently available.
 ----
 
 [source]
 ----
-
 var path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "unit_test.pfx");
 var cert = X509Manager.GetPersistentCertificate("127.0.0.1", "123abc", path);
 CouchbaseLiteTcpListener listener = new CouchbaseLiteTcpListener(manager, 0, CouchbaseLiteTcpOptions.UseTLS, cert);
@@ -4547,7 +4253,7 @@ The client has to take the cert on faith the first time it connects.
 
 == Release Notes
 
-*Deprecation notices*
+=== Deprecation notices
 
 The following features are being deprecated in Couchbase Mobile 1.4 and will be unsupported in 2.0.
 
@@ -4559,19 +4265,16 @@ The following platforms are being deprecated in Couchbase Mobile 1.4 and will be
 
 === 1.4.1 release
 
-*Performance Improvements*
-
+.Performance Improvements
 * https://github.com/couchbase/couchbase-lite-java-core/issues/1608[#1608] Purge does not remove row from 'docs' table
 * https://github.com/couchbase/couchbase-lite-java-core/issues/1623[#1623] Potential bug: Push replication becomes slower as local DB grows
 * https://github.com/couchbase/couchbase-lite-java-core/issues/1630[#1630] View indexing is very slow, due to mis-optimized SQLite query
 
-*Enhancements*
-
+.Enhancements
 * https://github.com/couchbase/couchbase-lite-java-core/issues/290[#290] 1.x: [Memory] Memory leak in allReplicators
 * https://github.com/couchbase/couchbase-lite-java-core/issues/639[#639] 1.x: Enhance ChangeTracker Error handling (port latest codes from iOS)
 
-*Bugs*
-
+.Bugs
 * https://github.com/couchbase/couchbase-lite-java-core/issues/1372[#1372] Router unable to route request to do_GET_DesignDocument (ForestDB)
 * https://github.com/couchbase/couchbase-lite-java-core/issues/1483[#1483] 1.x: java.lang.OutOfMemoryError: Failed to allocate a 24 byte allocation with 329648 free bytes and 321KB until OOM; failed due to fragmentation...
 * https://github.com/couchbase/couchbase-lite-java-core/issues/1604[#1604] 1.x: Leftover replication threads prevent application exit.
@@ -4587,18 +4290,15 @@ The following platforms are being deprecated in Couchbase Mobile 1.4 and will be
 
 === 1.4 release
 
-*API change*
-
+.API change
 * An `isDeletion` property is now available on the `DatabaseChange` object to identify if a change is tombstone document.
 
-*Enhancements*
-
+.Enhancements
 * https://github.com/couchbase/couchbase-lite-java-core/issues/1087[#1087] LiteServ app for Java
 * https://github.com/couchbase/couchbase-lite-java-core/issues/1543[#1543] Make CBLDatabaseChange.isDeletion public?
 * https://github.com/couchbase/couchbase-lite-java-core/issues/1554[#1554] 1.0.2d is being rejected by Google Play
 
-*Bugs*
-
+.Bugs
 * https://github.com/couchbase/couchbase-lite-java-core/issues/911[#911] Multiple duplicate replication change events sent in pull replication
 * https://github.com/couchbase/couchbase-lite-java-core/issues/1334[#1334] Change tracker stopped during continuous replication error thrown when cookie expires
 * https://github.com/couchbase/couchbase-lite-java-core/issues/1385[#1385] CBLReplicatorExecutor still exists after stopping the replicator
