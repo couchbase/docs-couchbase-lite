@@ -381,7 +381,7 @@ they're buffered up for delivery after the transaction completes.
 
 === Database housekeeping
 
-Refer to the <<revision,Revision>> guide to learn about compaction and pruning to manage the database size.
+Refer to the <<revision,Revisions>> guide to learn about compaction and pruning to manage the database size.
 
 === Deleting a database
 
@@ -787,6 +787,7 @@ For the most part you can ignore these since the API provides accessor methods f
 NOTE: A leading underscore always denotes a reserved property.
 Don't use an underscore prefix for any of your own properties, and don't change the value of any reserved property.
 
+[#revision]
 == Revision
 
 Couchbase Lite uses revisions to resolve conflicts detected during replication.
@@ -859,7 +860,7 @@ As shown on the diagram below, only properties with a leading underscore (`_` is
 
 image::compaction.gif[]
 
-Compaction can only be invoked manually via the `Database.compact()` method.
+Compaction can only be invoked manually via the https://developer.couchbase.com/documentation/mobile/1.4/references/couchbase-lite/couchbase-lite/database/database/index.html#void-compact[compact()] method.
 The compaction process does not remove JSON bodies of leaf nodes.
 Hence, it is important to resolve conflicts in your application in order to re-claim disk space when the compaction process is executed.
 
@@ -1638,6 +1639,7 @@ this.push = push;
 this.pull = pull;
 ----
 
+[#filtered-replications]
 === Filtered replications
 
 You can restrict a replication to only a subset of the available documents, by writing a filter function.
@@ -1807,7 +1809,7 @@ Some typical Listener use cases include:
 
 === Installing the Listener library
 
-Refer to the <<installation, Installation>> section to install the Listener component.
+Refer to the <<installation,Installation>> section to install the Listener component.
 The Couchbase Lite Listener is coupled to Couchbase Lite.
 Both frameworks should always have the same release version.
 
@@ -1889,7 +1891,7 @@ However, there are some good practice guidelines to follow in order to replicate
 
 ==== Filter functions
 
-It may be desirable to use <<filtered-replications, filtered replications>> to replicate only the documents of interest to another peer.
+It may be desirable to use <<filtered-replications,filter functions>> to replicate only the documents of interest to another peer.
 Filter functions in a peer-to-peer context are executed when the start method on the replication object is called.
 This is a major difference with the Sync Function available on Sync Gateway that builds the access rules when documents are saved to the Sync Gateway database.
 
