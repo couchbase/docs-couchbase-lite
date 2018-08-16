@@ -779,10 +779,10 @@ For example, if you purge a document, and then later the document is updated on 
 The body of a document contains a few special properties that store metadata about the document.
 For the most part you can ignore these since the API provides accessor methods for the same information, but it can still be helpful to know what they are if you encounter them.
 
-* `_id`: The document ID.
-* `_rev`: The revision ID.
-* `_attachments`: Metadata about the document's attachments.
-* `_deleted`: Only appears in a deletion (tombstone) revision, where it has the value `true`.
+`_id`:: The document ID.
+`_rev`:: The revision ID.
+`_attachments`:: Metadata about the document's attachments.
+`_deleted`:: Only appears in a deletion (tombstone) revision, where it has the value `true`.
 
 NOTE: A leading underscore always denotes a reserved property.
 Don't use an underscore prefix for any of your own properties, and don't change the value of any reserved property.
@@ -890,9 +890,9 @@ From a `Document`, you get to the attachments via its `currentRevision`.
 
 The `Revision` class has a number of methods for accessing attachments:
 
-* `attachmentNames` returns the names of all the attachments.
-* `attachmentNamed` returns an `Attachment` object given its name.
-* `attachments` returns all the attachments as `Attachment` objects.
+`attachmentNames`:: Returns the names of all the attachments.
+`attachmentNamed`:: Returns an `Attachment` object given its name.
+`attachments`:: Returns all the attachments as `Attachment` objects.
 
 Once you have an `Attachment` object, you can access its name, MIME type and content length.
 The accessors for the content vary by platform: on iOS it's available as an `NSData` object or as an `NSURL` pointing to a read-only file;
@@ -1052,12 +1052,12 @@ You can also query it to get ranges of names, in alphabetical order, which is ve
 The map function is called by the indexer to help generate an index, and it has to meet certain requirements, otherwise the index won't be consistent.
 It's important to understand some rules so you can create a proper map function, otherwise your queries can misbehave in strange ways.
 
-* *It must be a "https://en.wikipedia.org/wiki/Pure_function[pure]" function:*
+It must be a "https://en.wikipedia.org/wiki/Pure_function[pure]" function::
 That means any time it's called with the same input, it must produce exactly the same output.
 In other words, it can't use any external state, just its input JSON.
-* *It can't have side effects:*
+It can't have side effects::
 It shouldn't change any external state, because it's unpredictable when it's called or how often it's called or in what order documents are passed to it.
-* *It must be thread-safe:*
+It must be thread-safe::
 It may be called on a background thread belonging to the indexer, or even in parallel on several threads at once.
 
 In particular, avoid these common mistakes:
@@ -1298,42 +1298,56 @@ In its default state a `Query` object will return every row of the index, in inc
 But there are several properties you can configure to change this, before you run the query.
 Here are the most basic and common ones:
 
-* `startKey`: the key to start at.
+`startKey`::
+The key to start at.
 The default value, `null`, means to start from the beginning.
-* `endKey`: the last key to return.
+`endKey`::
+The last key to return.
 The default value, `null`, means to continue to the end.
-* `descending`: If set to `true`, the keys will be returned in reverse order.
+`descending`::
+If set to `true`, the keys will be returned in reverse order.
 (This also reverses the meanings of the `startKey` and `endKey` properties, since the query will now start at the highest keys and end at lower ones!)
-* `limit`: If nonzero, this is the maximum number of rows that will be returned.
-* `skip`: If nonzero, this many rows will be skipped (starting from the `startKey` if any).
+`limit`::
+If nonzero, this is the maximum number of rows that will be returned.
+`skip`::
+If nonzero, this many rows will be skipped (starting from the `startKey` if any).
 
 Some more advanced properties that aren't used as often:
 
-* `keys`: If provided, the query will fetch only the rows with the given keys (and `startKey` and `endKey` will be ignored).
-* `startKeyDocID`: If multiple index rows match the startKey, this property specifies that the result should start from the one(s) emitted by the document with this ID, if any.
+`keys`::
+If provided, the query will fetch only the rows with the given keys (and `startKey` and `endKey` will be ignored).
+`startKeyDocID`::
+If multiple index rows match the startKey, this property specifies that the result should start from the one(s) emitted by the document with this ID, if any.
 (Useful if the view contains multiple identical keys, making .startKey ambiguous.)
-* `endKeyDocID`: If multiple index rows match the endKey, this property specifies that the result should end with from the one(s) emitted by the document with this ID, if any.
+`endKeyDocID`::
+If multiple index rows match the endKey, this property specifies that the result should end with from the one(s) emitted by the document with this ID, if any.
 (Useful if the view contains multiple identical keys, making .startKey ambiguous.)
-* `indexUpdateMode`: Changes the behavior of index updating.
+`indexUpdateMode`::
+Changes the behavior of index updating.
 By default the index will be updated if necessary before the query runs.
 You can choose to skip this (and get possibly-stale results), with the option of also starting an asynchronous background update of the index.
-* `prefixMatchLevel`: If nonzero, enables prefix matching of string or array keys.
- ** A value of 1 treats the endKey itself as a prefix: if it's a string, keys in the index that come after the endKey, but begin with the same prefix, will be matched.
+`prefixMatchLevel`::
+If nonzero, enables prefix matching of string or array keys.
++
+--
+* A value of 1 treats the endKey itself as a prefix: if it's a string, keys in the index that come after the endKey, but begin with the same prefix, will be matched.
 (For example, if the endKey is `"foo"` then the key `"foolish"` in the index will be matched, but not `"fong"`.)
 Or if the endKey is an array, any array beginning with those elements will be matched.
 (For example, if the endKey is `[1]`, then `[1, "x"]` will match, but not `[2]`.)
 If the key is any other type, there is no effect.
- ** A value of 2 assumes the endKey is an array and treats its final item as a prefix, using the rules above.
+* A value of 2 assumes the endKey is an array and treats its final item as a prefix, using the rules above.
 (For example, an endKey of `[1, "x"]` will match `[1, "xtc"]` but not `[1, "y"]`.)
- ** A value of 3 assumes the key is an array of arrays, etc.
-+
+* A value of 3 assumes the key is an array of arrays, etc.
+
 Note that if the `.descending` property is also set, the search order is reversed and the above discussion applies to the `startKey`, *not* the `endKey`.
+--
 
 There are other advanced properties that only apply to reducing and grouping:
 
-* `mapOnly`: If set to true, prevents the reduce function from being run, so you get all of the index rows instead of an aggregate.
+`mapOnly`::
+If set to true, prevents the reduce function from being run, so you get all of the index rows instead of an aggregate.
 Has no effect if the view has no reduce function.
-* `groupLevel`: If greater than zero, enables grouping of rows.
+`groupLevel`:: If greater than zero, enables grouping of rows.
 The value specifies the number of items in the value array that will be grouped.
 
 [source]
@@ -1353,11 +1367,15 @@ It supports all the standard view options, so you can query ranges of document I
 All-docs queries also have a special property called `allDocsMode` that can customize their behavior.
 Its values are:
 
-* `allDocs`: The default mode.
+`allDocs`::
+The default mode.
 Returns all non-deleted documents.
-* `includeDeleted`: In this mode, deleted documents are included as well.
-* `showConflicts`: In this mode, each ``QueryRow```'s `conflictingRevisions` property can be used to find whether it's in conflict and what the IDs of the conflicting revisions are.
-* `onlyConflicts`: Like `showConflicts`, but _only_ conflicted documents are returned.
+`includeDeleted`::
+In this mode, deleted documents are included as well.
+`showConflicts`::
+In this mode, each ``QueryRow```'s `conflictingRevisions` property can be used to find whether it's in conflict and what the IDs of the conflicting revisions are.
+`onlyConflicts`::
+Like `showConflicts`, but _only_ conflicted documents are returned.
 
 (_These are not flags._
 You can only choose one.)
@@ -1584,11 +1602,14 @@ If it does that, replication will Just Work without much extra effort.
 
 === Types of replications
 
-* *Push vs Pull:* A push replication uploads changes from the local database to the remote one;
+Push vs Pull::
+A push replication uploads changes from the local database to the remote one;
 a pull downloads changes from the remote database to the local one.
-* *One-shot vs Continuous:* By default a replication runs long enough to transfer all the changes from the source to the target database, then quits.
+One-shot vs Continuous::
+By default a replication runs long enough to transfer all the changes from the source to the target database, then quits.
 A continuous replication, on the other hand, will stay active indefinitely, watching for further changes to occur and transferring them.
-* *Filtered:* Replications can have filters that restrict what documents they'll transfer.
+Filtered::
+Replications can have filters that restrict what documents they'll transfer.
 This can be useful to limit the amount of a large remote database that's downloaded to a device, or to keep some local documents private.
 A special type of filter used with the Couchbase Sync Gateway is the set of *channels* that a pull replication will download from.
 It's also possible to limit a replication to an explicit set of document IDs.
@@ -1858,13 +1879,17 @@ Android calls them Network Service Discovery.
 
 The first step to using Bonjour for peer discovery is to advertise a service with the following properties:
 
-* *Type:* Bonjour can be used by many other types of devices on the LAN (printers, scanners, other apps etc.).
+Type::
+Bonjour can be used by many other types of devices on the LAN (printers, scanners, other apps etc.).
 The service type is a way to interact only with peers whose service type is the same.
-* *Name:* A string to serve as identifier for other peers.
+Name::
+A string to serve as identifier for other peers.
 It should be unique for each peer.
 It does not need to be human-readable.
-* *Port:* The port number the Listener is running on.
-* *Metadata:* Optional data that will be sent in the advertizment packets (the size limit is around 1.5KB).
+Port::
+The port number the Listener is running on.
+Metadata::
+Optional data that will be sent in the advertizment packets (the size limit is around 1.5KB).
 
 To browse for peers on the network, each implementation has an asynchronous API to get notified as peers go online and offline from the network.
 Given this method of device discovery is platform specific, we recommend to follow the guides below.
@@ -1874,11 +1899,14 @@ Once a peer device is discovered and the hostname is resolved, you can start a p
 
 Useful resources to work with mDNS include:
 
-* *Bonjour for iOS and Mac applications:* The Couchbase Lite SDK exposes part of the Bonjour API for an easier integration.
+Bonjour for iOS and Mac applications::
+The Couchbase Lite SDK exposes part of the Bonjour API for an easier integration.
 The official documentation for iOS and Mac applications can be found in the https://developer.apple.com/library/mac/documentation/Networking/Conceptual/NSNetServiceProgGuide/Introduction.html[NSNetService Programming Guide].
-* *NSD for Android applications:* The de facto framework for Android is called Network Service Discovery (NSD) and is compatible with Bonjour since Android 4.1.
+NSD for Android applications::
+The de facto framework for Android is called Network Service Discovery (NSD) and is compatible with Bonjour since Android 4.1.
 The official guide can be found in the https://developer.android.com/training/connect-devices-wirelessly/nsd.html[Android NSD guide].
-* *JmDNS:* Implementation in Java that can be used in Android and Java applications (https://github.com/jmdns/jmdns[official repository]).
+JmDNS::
+Implementation in Java that can be used in Android and Java applications (https://github.com/jmdns/jmdns[official repository]).
 
 ===== Bonjour browsers
 
