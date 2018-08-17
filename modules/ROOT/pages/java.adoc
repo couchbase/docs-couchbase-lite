@@ -64,7 +64,7 @@ Build and run.
 You should see the document ID and property printed to the console.
 The document was successfully persisted to the database.
 
-link:../installation/sync-gateway/index.html[Installing Sync Gateway ⟶]
+xref:sync-gateway::getting-started.adoc#_installation[Installing Sync Gateway ->]
 
 == Supported Versions
 
@@ -96,7 +96,7 @@ The API has changed in Couchbase Lite 2.0 and will require porting an applicatio
 To update an Xcode project built with Couchbase Lite 1.x:
 
 * Remove the existing Couchbase Lite dependency from the Android Studio project.
-* Install the Couchbase Lite 2.0 framework in your project (see the link:java.html#getting-started[installation options]).
+* Install the Couchbase Lite 2.0 framework in your project (see the <<getting-started,installation options>>).
 At this point, there will be many compiler warnings.
 Refer to the examples on this page to learn about the new API.
 * Build & run your application.
@@ -111,7 +111,7 @@ Additionally, the automatic migration feature does not support encrypted databas
 ==== Handling of Existing Conflicts
 
 For conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new 2.0 database and does NOT copy any conflicting revisions.
-This functionality is related to the way conflicts are being handled in Couchbase Lite 2.0 (see link:swift.html#_handling_conflicts[Handling Conflicts]).
+This functionality is related to the way conflicts are being handled in Couchbase Lite 2.0 (see xref:swift.adoc#handling-conflicts[Handling Conflicts]).
 Optionally, existing conflicts in the 1.x database can be resolved with the https://developer.couchbase.com/documentation/mobile/1.5/guides/couchbase-lite/native-api/revision/index.html[1.x API] prior to the database being upgraded to 2.0.
 
 ==== Handling of Existing Attachments
@@ -672,7 +672,7 @@ Couchbase Mobile 2.0 uses a new replication protocol based on WebSockets.
 === Compatibility
 
 WARNING: The new protocol is *incompatible* with CouchDB-based databases.
-And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that link:../references/couchbase-lite/release-notes/index.html#compatibility-matrix[supports it].
+And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that xref:compatibility-matrix.adoc[supports it].
 
 To use this protocol with Couchbase Lite 2.0, the replication URL should specify WebSockets as the URL scheme (see the "Starting a Replication" section below).
 Mobile clients using Couchbase Lite 1.x can continue to use *http* as the URL scheme.
@@ -732,7 +732,7 @@ Some load balancers are not configured for WebSocket connections by default (NGI
 so it might be necessary to explicitly enable them in the load balancer's configuration (see https://developer.couchbase.com/documentation/mobile/current/guides/sync-gateway/nginx/index.html[Load Balancers]).
 
 By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
-The level of compression is set on Sync Gateway and can be tuned in the configuration file (link:../guides/sync-gateway/config-properties/index.html#2.0/replicator_compression[`replicator_compression`]).
+The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway::config-properties.adoc#2.0/replicator_compression[`replicator_compression`]).
 
 ==== Replication Ordering
 
