@@ -676,7 +676,7 @@ class SampleCodeTest: CBLTestCase {
         
         // Start replication.
         replicator.start()
-        // end::getting-starter[]
+        // end::getting-started[]
     }
 
 }
