@@ -1006,7 +1006,25 @@ This example loads the certificate from the application sandbox, then converts i
 
 == Peer-to-Peer Sync
 
-include::{partialsdir}/p2p-intro.adoc[]
+.Enterprise Edition only
+IMPORTANT: Peer-to-peer sync is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+
+Peer-to-peer sync allows devices running Couchbase Lite to directly sync data with each other.
+As part of this, Couchbase Lite is responsible for storing the data and keeping track of the data exchange, but isn't responsible for the data transfer itself.
+Sending and receiving data must be handled by the platform APIs or a third party framework.
+In this section, we will refer to these third party frameworks as communication frameworks.
+
+On iOS, Apple's https://developer.apple.com/documentation/multipeerconnectivity[Multipeer Connectivity Framework] would be a good choice for the Communication Framework.
+This framework will handle sending and receiving messages and supports multiple transport technologies -- WiFi and Bluetooth and uses whichever is available to establish a connection between devices.
+
+Thus, to enable peer-to-peer sync with Couchbase Lite, the application must use the Communication Framework with Couchbase Lite.
+The following sections describe a typical peer-to-peer workflow.
+Where applicable, we discuss how to integrate Couchbase Lite into the workflow.
+
+In Couchbase Lite, a peer can take on one of these two roles:
+
+* *Active Peer:* The peer that initializes the connection and replication (i.e the "client" side).
+* *Passive Peer:* The passive side reacts to things that it receives but does not initiate any communication on its own (i.e. the "server" side).
 
 === Peer Discovery
 
