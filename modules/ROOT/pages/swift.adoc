@@ -5,6 +5,7 @@
 :source-language: swift
 :version: 2.1.0-DB001
 :blank-field: ____
+:url-issues-ios: https://github.com/couchbase/couchbase-lite-ios/issues
 
 == Getting Started
 
@@ -110,7 +111,7 @@ Append the following inside of the `<dict>` XML tags to disable ATS.
 </dict>
 ----
 
-xref:sync-gateway::getting-started.adoc#_installation[Installing Sync Gateway ->]
+xref:sync-gateway::getting-started.adoc#installation[Installing Sync Gateway ->]
 
 == Supported Versions
 
@@ -236,7 +237,7 @@ include::{snippet}[tag=prebuilt-database,indent=0]
 
 == Document
 
-In Couchbase Lite, a document's body takes the form of a JSON object -- a collection of key/value pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
+In Couchbase Lite, a document's body takes the form of a JSON object--a collection of key/value pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
 Every document is identified by a document ID, which can be automatically generated (as a UUID) or specified programmatically;
 the only constraints are that it must be unique within the database, and it can't be changed.
 
@@ -349,7 +350,7 @@ image::attach_replicated.png[,500]
 A blob also has properties such as `"digest"` (a SHA-1 digest of the data), `"length"` (the length in bytes), and optionally `"content_type"` (the MIME type).
 The data is not stored in the document, but in a separate content-addressable store, indexed by the digest.
 
-This `Blob` can be retrieved on the Sync Gateway REST API at http://localhost:4984/justdoit/user.david/blob_1.
+This `Blob` can be retrieved on the Sync Gateway REST API at \http://localhost:4984/justdoit/user.david/blob_1.
 Notice that the blob identifier in the URL path is "blob_1" (not "avatar").
 
 == Query
@@ -359,12 +360,12 @@ Instead of the map/reduce views used in 1.x, they're now based on expressions, o
 
 There are several parts to specifying a query:
 
-* SELECT: specifies the projection, which is the part of the document that is to be returned.
-* FROM: specifies the database to query the documents from.
-* JOIN: specifies the matching criteria in which to join multiple documents.
-* WHERE: specifies the query criteria that the result must satisfy.
-* GROUP BY: specifies the query criteria to group rows by.
-* ORDER BY: specifies the query criteria to sort the rows in the result.
+SELECT:: Specifies the projection, which is the part of the document that is to be returned.
+FROM:: Specifies the database to query the documents from.
+JOIN:: Specifies the matching criteria in which to join multiple documents.
+WHERE:: Specifies the query criteria that the result must satisfy.
+GROUP BY:: Specifies the query criteria to group rows by.
+ORDER BY:: Specifies the query criteria to sort the rows in the result.
 
 === SELECT statement
 
@@ -677,7 +678,8 @@ Full-text search is supported in the following languages: danish, dutch, english
 
 The pattern to match can also be in the following forms:
 
-* *prefix queries:* the query expression used to search for a term prefix is the prefix itself with a "*" character appended to it.
+prefix queries::
+The query expression used to search for a term prefix is the prefix itself with a "*" character appended to it.
 For example:
 +
 ....
@@ -687,7 +689,8 @@ For example:
 --"linker", "linguistic" and so on.
 ....
 
-* *overriding the property name that is being indexed:* Normally, a token or token prefix query is matched against the document property specified as the left-hand side of the `match` operator.
+overriding the property name that is being indexed::
+Normally, a token or token prefix query is matched against the document property specified as the left-hand side of the `match` operator.
 This may be overridden by specifying a property name followed by a ":" character before a basic term query.
 There may be space between the ":" and the term to query for, but not between the property name and the ":" character.
 For example:
@@ -699,7 +702,8 @@ For example:
 -- or body of the document.
 ....
 
-* *phrase queries:* a phrase query is a query that retrieves all documents that contain a nominated set of terms or term prefixes in a specified order with no intervening tokens.
+phrase queries::
+A phrase query is a query that retrieves all documents that contain a nominated set of terms or term prefixes in a specified order with no intervening tokens.
 Phrase queries are specified by enclosing a space separated sequence of terms or term prefixes in double quotes (").
 For example:
 +
@@ -708,7 +712,8 @@ For example:
 -- Query for all documents that contain the phrase "linux applications".
 ....
 
-* *NEAR queries:* A NEAR query is a query that returns documents that contain a two or more nominated terms or phrases within a specified proximity of each other (by default with 10 or less intervening terms).
+NEAR queries::
+A NEAR query is a query that returns documents that contain a two or more nominated terms or phrases within a specified proximity of each other (by default with 10 or less intervening terms).
 A NEAR query is specified by putting the keyword "NEAR" between two phrase, token or token prefix queries.
 To specify a proximity other than the default, an operator of the form "NEAR/" may be used, where is the maximum number of intervening terms allowed.
 For example:
@@ -719,7 +724,8 @@ For example:
 -- "database" with not more than 2 terms separating the two.
 ....
 
-* *AND, OR & NOT query operators:* The enhanced query syntax supports the AND, OR and NOT binary set operators.
+AND, OR & NOT query operators::
+The enhanced query syntax supports the AND, OR and NOT binary set operators.
 Each of the two operands to an operator may be a basic FTS query, or the result of another AND, OR or NOT set operation.
 Operators must be entered using capital letters.
 Otherwise, they are interpreted as basic term queries instead of set operators.
@@ -750,11 +756,15 @@ In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the pro
 
 Couchbase Mobile 2.0 uses a new replication protocol based on WebSockets.
 
-The replicator is designed to send documents from a source to a target database. The target can be one of the following:
+The replicator is designed to send documents from a source to a target database.
+The target can be one of the following:
 
-* `URLEndpoint`: to replicate data between a local Couchbase Lite database and remote Sync Gateway database using the WebSocket protocol ([start here]).
-* `DatabaseEndpoint`: to replicate data between two local Couchbase Lite databases. This target can be used to create a local back-up of a database ([database replicas])
-* `MessageEndpoint`: allows a local database to replicate with another Couchbase Lite database via a custom transportation protocol such iOS Multipeer Connectivity, Android WiFi Direct, Android NearByConnection, socket based transportation etc. (see xref:#message-endpoint[Message Endpoint])
+`URLEndpoint`::
+To replicate data between a local Couchbase Lite database and remote Sync Gateway database using the WebSocket protocol ([start here]).
+`DatabaseEndpoint`::
+To replicate data between two local Couchbase Lite databases. This target can be used to create a local back-up of a database ([database replicas])
+`MessageEndpoint`::
+Allows a local database to replicate with another Couchbase Lite database via a custom transportation protocol such iOS Multipeer Connectivity, Android WiFi Direct, Android NearByConnection, socket based transportation etc. (see [Message Endpoint])
 
 === Compatibility
 
@@ -774,7 +784,7 @@ https://www.couchbase.com/downloads[Download Sync Gateway] and start it from the
 ~/Downloads/couchbase-sync-gateway/bin/sync_gateway
 ----
 
-For platform specific installation instructions, refer to the Sync Gateway https://developer.couchbase.com/documentation/mobile/1.5/installation/sync-gateway/index.html[installation guide].
+For platform specific installation instructions, refer to the Sync Gateway xref:sync-gateway::getting-started.adoc#installation[installation guide].
 
 === Starting a Replication
 
@@ -810,10 +820,10 @@ include::{partialsdir}/verify-replication.adoc[]
 
 Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit data.
 Some load balancers are not configured for WebSocket connections by default (NGINX for example);
-so it might be necessary to explicitly enable them in the load balancer's configuration (see https://developer.couchbase.com/documentation/mobile/1.5/guides/sync-gateway/nginx/index.html[Load Balancers]).
+so it might be necessary to explicitly enable them in the load balancer's configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
 
 By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
-The level of compression is set on Sync Gateway and can be tuned in the configuration file (https://developer.couchbase.com/documentation/mobile/2.0/guides/sync-gateway/config-properties/index.html#2.0/replicator_compression[`replicator_compression`]).
+The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway::config-properties.adoc#replicator_compression[`replicator_compression`]).
 
 ==== Replication Ordering
 
@@ -850,7 +860,7 @@ You can enable authentication with the following properties in the configuration
 ----
 
 To authenticate with Sync Gateway, an associated user must first be created.
-Sync Gateway users can be created through the xref:sync-gateway::admin-rest-api.adoc?v=2.0#/user/post\__db___user_[`+POST /{db}/_user+`] endpoint on the Admin REST API.
+Sync Gateway users can be created through the xref:sync-gateway::admin-rest-api.adoc#/user/post\__db___user_[`+POST /{db}/_user+`] endpoint on the Admin REST API.
 Provided that the user exists on Sync Gateway, there are two ways to authenticate from a Couchbase Lite client: Basic Authentication or Session Authentication.
 
 ==== Basic Authentication
@@ -889,6 +899,7 @@ include::{snippet}[tag=replication-status,indent=0]
 
 The following table lists the different activity levels in the API and the meaning of each one.
 
+[cols="1,2"]
 |===
 |State |Meaning
 
@@ -990,10 +1001,10 @@ Certificate pinning is a technique that can be used by applications to "pin" a h
 The certificate is typically delivered to the client by an out-of-band channel and bundled with the client.
 In this case, Couchbase Lite uses this embedded certificate to verify the trustworthiness of the server and no longer needs to rely on a trusted third party for that (commonly referred to as the Certificate Authority).
 
-The `openssl` command can be used to create a new self-signed certificate and convert the `.pem` file to a `.cert` file (see https://developer.couchbase.com/documentation/mobile/1.5/guides/sync-gateway/configuring-ssl/index.html#creating-your-own-self-signed-certificate[creating your own self-signed certificate]).
+The `openssl` command can be used to create a new self-signed certificate and convert the `.pem` file to a `.cert` file (see xref:sync-gateway::configuring-ssl.adoc#creating-your-own-self-signed-certificate[creating your own self-signed certificate]).
 You should then have 3 files: `cert.pem`, `cert.cer` and `key.pem`.
 
-The `cert.pem` and `key.pem` can be used in the Sync Gateway configuration (see https://developer.couchbase.com/documentation/mobile/1.5/guides/sync-gateway/configuring-ssl/index.html#installing-the-certificate[installing the certificate]).
+The `cert.pem` and `key.pem` can be used in the Sync Gateway configuration (see xref:sync-gateway::configuring-ssl.adoc#installing-the-certificate[installing the certificate]).
 
 On the Couchbase Lite side, the replication must be configured with the `cert.cer` file.
 
@@ -1023,8 +1034,10 @@ Where applicable, we discuss how to integrate Couchbase Lite into the workflow.
 
 In Couchbase Lite, a peer can take on one of these two roles:
 
-* *Active Peer:* The peer that initializes the connection and replication (i.e the "client" side).
-* *Passive Peer:* The passive side reacts to things that it receives but does not initiate any communication on its own (i.e. the "server" side).
+Active Peer::
+The peer that initializes the connection and replication (i.e the "client" side).
+Passive Peer::
+The passive side reacts to things that it receives but does not initiate any communication on its own (i.e. the "server" side).
 
 === Peer Discovery
 
@@ -1055,24 +1068,24 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 === 2.1
 
 .Performance Improvements
-* https://github.com/couchbase/couchbase-lite-ios/issues/2127[*#2127*] CBLReplicator always runs on main queue
+* {url-issues-ios}/2127[*#2127*] CBLReplicator always runs on main queue
 
 .Enhancements
-* https://github.com/couchbase/couchbase-lite-ios/issues/1610[*#1610*] 2.0: Provide a script to strip simulator architecture frameworks for app submission
-* https://github.com/couchbase/couchbase-lite-ios/issues/2117[*#2117*] Implement Database Encryption (EE feature)
-* https://github.com/couchbase/couchbase-lite-ios/issues/2118[*#2118*] Support Peer-to-Peer replication through MessageEndpoint API (EE feature)
-* https://github.com/couchbase/couchbase-lite-ios/issues/2139[*#2139*] Implement Replicator reset checkpoint feature
+* {url-issues-ios}/1610[*#1610*] 2.0: Provide a script to strip simulator architecture frameworks for app submission
+* {url-issues-ios}/2117[*#2117*] Implement Database Encryption (EE feature)
+* {url-issues-ios}/2118[*#2118*] Support Peer-to-Peer replication through MessageEndpoint API (EE feature)
+* {url-issues-ios}/2139[*#2139*] Implement Replicator reset checkpoint feature
 
 .Bugs
-* https://github.com/couchbase/couchbase-lite-ios/issues/1926[*#1926*] Swift Replicator.addChangeListener crashes
-* https://github.com/couchbase/couchbase-lite-ios/issues/2140[*#2140*] 2.0 : TIC Read Status 1:57 error spam
-* https://github.com/couchbase/couchbase-lite-ios/issues/2149[*#2149*] Swift DictionaryObject and ArrayObject not having toMutable() method
-* https://github.com/couchbase/couchbase-lite-ios/issues/2162[*#2162*] 2.1 DB1: Crash when inserting image Blobs to objects in embedded array in Swift
-* https://github.com/couchbase/couchbase-lite-ios/issues/2188[*#2188*] Replicator not getting stopped when using MessageEndpoint
+* {url-issues-ios}/1926[*#1926*] Swift Replicator.addChangeListener crashes
+* {url-issues-ios}/2140[*#2140*] 2.0 : TIC Read Status 1:57 error spam
+* {url-issues-ios}/2149[*#2149*] Swift DictionaryObject and ArrayObject not having toMutable() method
+* {url-issues-ios}/2162[*#2162*] 2.1 DB1: Crash when inserting image Blobs to objects in embedded array in Swift
+* {url-issues-ios}/2188[*#2188*] Replicator not getting stopped when using MessageEndpoint
 
 .Known Issues
-* https://github.com/couchbase/couchbase-lite-ios/issues/2112[*#2112*] HTTP proxy support
-* https://github.com/couchbase/couchbase-lite-ios/issues/2122[*#2122*] IOS 9 - Got LiteCore error: connection closed abnormally - eventual crash
+* {url-issues-ios}/2112[*#2112*] HTTP proxy support
+* {url-issues-ios}/2122[*#2122*] IOS 9 - Got LiteCore error: connection closed abnormally - eventual crash
 
 === 2.0.3
 
@@ -1080,22 +1093,22 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 === 2.0.2
 
-* Support for Log redaction of sensitive information when <<Logging,logging is enabled>>.
+* Support for Log redaction of sensitive information when <<logging,logging is enabled>>.
 
 === 2.0.0
 
 .Bugs
-* https://github.com/couchbase/couchbase-lite-ios/issues/1701[*#1701*] 2:0 swift expression based query returning empty results
-* https://github.com/couchbase/couchbase-lite-ios/issues/1836[*#1836*] 2.0: Database Listener callbacks not always getting called on main thread
-* https://github.com/couchbase/couchbase-lite-ios/issues/1854[*#1854*] 2.0 : Dictionary, Array, and Fragment have duplicate definitions
-* https://github.com/couchbase/couchbase-lite-ios/issues/1862[*#1862*] 2.0: CBLQueryExpression "and:" and "or:" methods cause syntax errors in Obj-C++
-* https://github.com/couchbase/couchbase-lite-ios/issues/2005[*#2005*] 2.0: Make CBLDatabase query/replication tracking thread-safe
-* https://github.com/couchbase/couchbase-lite-ios/issues/2035[*#2035*] Cross Join Not Returning expected results
-* https://github.com/couchbase/couchbase-lite-ios/issues/2061[*#2061*] Swift 2.0: LiteCore error trying to copy prebuilt DB
-* https://github.com/couchbase/couchbase-lite-ios/issues/2085[*#2085*] Crashed in CBLWebSocket
-* https://github.com/couchbase/couchbase-lite-ios/issues/2094[*#2094*] TestSelfSignedSSLFailure_SG failed on iOS 10.2
-* https://github.com/couchbase/couchbase-lite-ios/issues/2104[*#2104*] Set Immutable Dictionary or Array to Document causes toDictionary() to crash in Swift
+* {url-issues-ios}/1701[*#1701*] 2:0 swift expression based query returning empty results
+* {url-issues-ios}/1836[*#1836*] 2.0: Database Listener callbacks not always getting called on main thread
+* {url-issues-ios}/1854[*#1854*] 2.0 : Dictionary, Array, and Fragment have duplicate definitions
+* {url-issues-ios}/1862[*#1862*] 2.0: CBLQueryExpression "and:" and "or:" methods cause syntax errors in Obj-C++
+* {url-issues-ios}/2005[*#2005*] 2.0: Make CBLDatabase query/replication tracking thread-safe
+* {url-issues-ios}/2035[*#2035*] Cross Join Not Returning expected results
+* {url-issues-ios}/2061[*#2061*] Swift 2.0: LiteCore error trying to copy prebuilt DB
+* {url-issues-ios}/2085[*#2085*] Crashed in CBLWebSocket
+* {url-issues-ios}/2094[*#2094*] TestSelfSignedSSLFailure_SG failed on iOS 10.2
+* {url-issues-ios}/2104[*#2104*] Set Immutable Dictionary or Array to Document causes toDictionary() to crash in Swift
 
 .Known Issues
-* https://github.com/couchbase/couchbase-lite-ios/issues/2112[*#2112*] HTTP proxy support
-* https://github.com/couchbase/couchbase-lite-ios/issues/2122[*#2122*] IOS 9 - Got LiteCore error: connection closed abnormally - eventual crash
+* {url-issues-ios}/2112[*#2112*] HTTP proxy support
+* {url-issues-ios}/2122[*#2122*] IOS 9 - Got LiteCore error: connection closed abnormally - eventual crash

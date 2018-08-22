@@ -4,6 +4,7 @@
 :snippet: {examplesdir}/csharp/Program.cs
 :source-language: csharp
 :blank-field: ____
+:url-issues-net: https://github.com/couchbase/couchbase-lite-net/issues
 
 == Getting Started
 
@@ -43,7 +44,7 @@ Build and run.
 You should see the document ID and property printed to the console.
 The document was successfully persisted to the database.
 
-xref:sync-gateway::getting-started.adoc#_installation[Installing Sync Gateway ->]
+xref:sync-gateway::getting-started.adoc#installation[Installing Sync Gateway ->]
 
 == Supported Versions
 
@@ -299,7 +300,7 @@ image::attach_replicated.png[]
 A blob also has properties such as `"digest"` (a SHA-1 digest of the data), `"length"` (the length in bytes), and optionally `"content_type"` (the MIME type).
 The data is not stored in the document, but in a separate content-addressable store, indexed by the digest.
 
-This `Blob` can be retrieved on the Sync Gateway REST API at http://localhost:4984/justdoit/user.david/blob_1.
+This `Blob` can be retrieved on the Sync Gateway REST API at \http://localhost:4984/justdoit/user.david/blob_1.
 Notice that the blob identifier in the URL path is "blob_1" (not "avatar").
 
 == Query
@@ -309,12 +310,12 @@ Instead of the map/reduce views used in 1.x, they're now based on expressions, o
 
 There are several parts to specifying a query:
 
-* SELECT: specifies the projection, which is the part of the document that is to be returned.
-* FROM: specifies the database to query the documents from.
-* JOIN: specifies the matching criteria in which to join multiple documents.
-* WHERE: specifies the query criteria that the result must satisfy.
-* GROUP BY: specifies the query criteria to group rows by.
-* ORDER BY: specifies the query criteria to sort the rows in the result.
+SELECT:: Specifies the projection, which is the part of the document that is to be returned.
+FROM:: Specifies the database to query the documents from.
+JOIN:: Specifies the matching criteria in which to join multiple documents.
+WHERE:: Specifies the query criteria that the result must satisfy.
+GROUP BY:: Specifies the query criteria to group rows by.
+ORDER BY:: Specifies the query criteria to sort the rows in the result.
 
 === Indexing
 
@@ -605,7 +606,8 @@ Full-text search is supported in the following languages: danish, dutch, english
 
 The pattern to match can also be in the following forms:
 
-* *prefix queries:* the query expression used to search for a term prefix is the prefix itself with a "*" character appended to it.
+prefix queries::
+The query expression used to search for a term prefix is the prefix itself with a "*" character appended to it.
 For example:
 +
 ....
@@ -615,7 +617,8 @@ For example:
 --"linker", "linguistic" and so on.
 ....
 
-* *overriding the property name that is being indexed:* Normally, a token or token prefix query is matched against the document property specified as the left-hand side of the `match` operator.
+overriding the property name that is being indexed::
+Normally, a token or token prefix query is matched against the document property specified as the left-hand side of the `match` operator.
 This may be overridden by specifying a property name followed by a ":" character before a basic term query.
 There may be space between the ":" and the term to query for, but not between the property name and the ":" character.
 For example:
@@ -627,7 +630,8 @@ For example:
 -- or body of the document.
 ....
 
-* *phrase queries:* a phrase query is a query that retrieves all documents that contain a nominated set of terms or term prefixes in a specified order with no intervening tokens.
+phrase queries::
+A phrase query is a query that retrieves all documents that contain a nominated set of terms or term prefixes in a specified order with no intervening tokens.
 Phrase queries are specified by enclosing a space separated sequence of terms or term prefixes in double quotes (").
 For example:
 +
@@ -636,7 +640,8 @@ For example:
 -- Query for all documents that contain the phrase "linux applications".
 ....
 
-* *NEAR queries:* A NEAR query is a query that returns documents that contain a two or more nominated terms or phrases within a specified proximity of each other (by default with 10 or less intervening terms).
+NEAR queries::
+A NEAR query is a query that returns documents that contain a two or more nominated terms or phrases within a specified proximity of each other (by default with 10 or less intervening terms).
 A NEAR query is specified by putting the keyword "NEAR" between two phrase, token or token prefix queries.
 To specify a proximity other than the default, an operator of the form "NEAR/" may be used, where is the maximum number of intervening terms allowed.
 For example:
@@ -647,7 +652,8 @@ For example:
 -- "database" with not more than 2 terms separating the two.
 ....
 
-* *AND, OR & NOT query operators:* The enhanced query syntax supports the AND, OR and NOT binary set operators.
+AND, OR & NOT query operators::
+The enhanced query syntax supports the AND, OR and NOT binary set operators.
 Each of the two operands to an operator may be a basic FTS query, or the result of another AND, OR or NOT set operation.
 Operators must be entered using capital letters.
 Otherwise, they are interpreted as basic term queries instead of set operators.
@@ -698,7 +704,7 @@ https://www.couchbase.com/downloads[Download Sync Gateway] and start it from the
 .Unix
  bash ~/Downloads/couchbase-sync-gateway/bin/sync_gateway
 
-For platform specific installation instructions, refer to the Sync Gateway https://developer.couchbase.com/documentation/mobile/1.5/installation/sync-gateway/index.html[installation guide].
+For platform specific installation instructions, refer to the Sync Gateway xref:sync-gateway::getting-started.adoc#installation[installation guide].
 
 === Starting a Replication
 
@@ -738,10 +744,10 @@ include::{partialsdir}/verify-replication.adoc[]
 
 Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit data.
 Some load balancers are not configured for WebSocket connections by default (NGINX for example);
-so it might be necessary to explicitly enable them in the load balancer's configuration (see https://developer.couchbase.com/documentation/mobile/1.5/guides/sync-gateway/nginx/index.html[Load Balancers]).
+so it might be necessary to explicitly enable them in the load balancer's configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
 
 By default, the WebSocket protocol uses compression to optimize over speed and bandwidth.
-The level of compression is set on Sync Gateway and can be tuned in the configuration file (https://developer.couchbase.com/documentation/mobile/2.0/guides/sync-gateway/config-properties/index.html#2.0/replicator_compression[`replicator_compression`]).
+The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway::config-properties.adoc#replicator_compression[`replicator_compression`]).
 
 ==== Replication Ordering
 
@@ -770,6 +776,7 @@ include::{snippet}[tag=replication-status,indent=0]
 
 The following table lists the different activity levels in the API and the meaning of each one.
 
+[cols="1,2"]
 |===
 |State |Meaning
 
@@ -865,10 +872,10 @@ Certificate pinning is a technique that can be used by applications to "pin" a h
 The certificate is typically delivered to the client by an out-of-band channel and bundled with the client.
 In this case, Couchbase Lite uses this embedded certificate to verify the trustworthiness of the server and no longer needs to rely on a trusted third party for that (commonly referred to as the Certificate Authority).
 
-The `openssl` command can be used to create a new self-signed certificate and convert the `.pem` file to a `.cert` file (see https://developer.couchbase.com/documentation/mobile/1.5/guides/sync-gateway/configuring-ssl/index.html#creating-your-own-self-signed-certificate[creating your own self-signed certificate]).
+The `openssl` command can be used to create a new self-signed certificate and convert the `.pem` file to a `.cert` file (see xref:sync-gateway::configuring-ssl.adoc#creating-your-own-self-signed-certificate[creating your own self-signed certificate]).
 You should then have 3 files: `cert.pem`, `cert.cer` and `key.pem`.
 
-The `cert.pem` and `key.pem` can be used in the Sync Gateway configuration (see https://developer.couchbase.com/documentation/mobile/1.5/guides/sync-gateway/configuring-ssl/index.html#installing-the-certificate[installing the certificate]).
+The `cert.pem` and `key.pem` can be used in the Sync Gateway configuration (see xref:sync-gateway::configuring-ssl.adoc#installing-the-certificate[installing the certificate]).
 
 On the Couchbase Lite side, the replication must be configured with the `cert.cer` file.
 
@@ -930,42 +937,42 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 === 2.1
 
 .Enhancements
-* https://github.com/couchbase/couchbase-lite-net/issues/1005[*#1005*] Add Encryption to EE
-* https://github.com/couchbase/couchbase-lite-net/issues/1006[*#1006*] Add P2P
+* {url-issues-net}/1005[*#1005*] Add Encryption to EE
+* {url-issues-net}/1006[*#1006*] Add P2P
 
 .Bugs
-* https://github.com/couchbase/couchbase-lite-net/issues/1000[*#1000*] 2.0. Xamarin. Replicator fails to get out of Connecting State when connecting to unreachable host
-* https://github.com/couchbase/couchbase-lite-net/issues/1010[*#1010*] [Xamarin][db023] continuus synchronisation stopping after a while
-* https://github.com/couchbase/couchbase-lite-net/issues/1011[*#1011*] Xamarin Android cannot recover from loss of connection to LAN address
-* https://github.com/couchbase/couchbase-lite-net/issues/1012[*#1012*] Reusing the same collation in a query will cause all of them to be affected by the last modification
-* https://github.com/couchbase/couchbase-lite-net/issues/1020[*#1020*] Closing/Disposing database throws Exception because of unfinished replicators
-* https://github.com/couchbase/couchbase-lite-net/issues/1048[*#1048*] Couchbase Lite parsing nested value as UInt64 then throwing exception on update.
-* https://github.com/couchbase/couchbase-lite-net/issues/1051[*#1051*] Heap corruption/Access Violation with unreachable replication endpoint on Windows x86
+* {url-issues-net}/1000[*#1000*] 2.0. Xamarin. Replicator fails to get out of Connecting State when connecting to unreachable host
+* {url-issues-net}/1010[*#1010*] [Xamarin][db023] continuous synchronization stopping after a while
+* {url-issues-net}/1011[*#1011*] Xamarin Android cannot recover from loss of connection to LAN address
+* {url-issues-net}/1012[*#1012*] Reusing the same collation in a query will cause all of them to be affected by the last modification
+* {url-issues-net}/1020[*#1020*] Closing/Disposing database throws Exception because of unfinished replicators
+* {url-issues-net}/1048[*#1048*] Couchbase Lite parsing nested value as UInt64 then throwing exception on update.
+* {url-issues-net}/1051[*#1051*] Heap corruption/Access Violation with unreachable replication endpoint on Windows x86
 
 .Known Issues
-* https://github.com/couchbase/couchbase-lite-net/issues/1040[*#1040*] HTTP Proxy Support
+* {url-issues-net}/1040[*#1040*] HTTP Proxy Support
 
 === 2.0.3
 
-* Support for Log redaction of sensitive information when <<Logging,logging is enabled>>.
+* Support for Log redaction of sensitive information when <<logging,logging is enabled>>.
 
 === 2.0.2
 
-* Support for Log redaction of sensitive information when <<Logging,logging is enabled>>.
+* Support for Log redaction of sensitive information when <<logging,logging is enabled>>.
 
 === 2.0 release notes
 
 .Enhancements
-* https://github.com/couchbase/couchbase-lite-net/issues/647[*#647*] Equivalent to full text search
-* https://github.com/couchbase/couchbase-lite-net/issues/964[*#964*] AddLoggerProvider
+* {url-issues-net}/647[*#647*] Equivalent to full text search
+* {url-issues-net}/964[*#964*] AddLoggerProvider
 
 .Bugs
-* https://github.com/couchbase/couchbase-lite-net/issues/884[*#884*] Replication with DNS endpoint failing on (at least) Mac
-* https://github.com/couchbase/couchbase-lite-net/issues/894[*#894*] Crash on iOS Simulator 9.x on Query.Run() execution
-* https://github.com/couchbase/couchbase-lite-net/issues/957[*#957*] SG doesn't have any docs in its cache after replication
-* https://github.com/couchbase/couchbase-lite-net/issues/966[*#966*] Incorrect callback type(?) leads to AOT compilation failure for Xamarin
-* https://github.com/couchbase/couchbase-lite-net/issues/994[*#994*] 2.0db023 SetBinaryLogDirectory(string) path ignored, still written to AppContext.BaseDirectory
+* {url-issues-net}/884[*#884*] Replication with DNS endpoint failing on (at least) Mac
+* {url-issues-net}/894[*#894*] Crash on iOS Simulator 9.x on Query.Run() execution
+* {url-issues-net}/957[*#957*] SG doesn't have any docs in its cache after replication
+* {url-issues-net}/966[*#966*] Incorrect callback type(?) leads to AOT compilation failure for Xamarin
+* {url-issues-net}/994[*#994*] 2.0db023 SetBinaryLogDirectory(string) path ignored, still written to AppContext.BaseDirectory
 
 .Known Issues
-* https://github.com/couchbase/couchbase-lite-net/issues/1002[*#1002*] System proxy is not being used for replication
-* https://github.com/couchbase/couchbase-lite-net/issues/1012[*#1012*] Reusing the same collation in a query will cause all of them to be affected by the last modification
+* {url-issues-net}/1002[*#1002*] System proxy is not being used for replication
+* {url-issues-net}/1012[*#1012*] Reusing the same collation in a query will cause all of them to be affected by the last modification
