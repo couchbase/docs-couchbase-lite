@@ -5,6 +5,7 @@
 :source-language: java
 :version: 2.1.0-DB001
 :blank-field: ____
+:url-issues-java: https://github.com/couchbase/couchbase-lite-android/issues
 
 WARNING: Currently, Couchbase Lite 2.0 is available for Android only.
 The SDK cannot be used in Java applications.
@@ -66,7 +67,7 @@ Build and run.
 You should see the document ID and property printed to the console.
 The document was successfully persisted to the database.
 
-xref:sync-gateway::getting-started.adoc#_installation[Installing Sync Gateway ->]
+xref:sync-gateway::getting-started.adoc#installation[Installing Sync Gateway ->]
 
 == Supported Versions
 
@@ -295,7 +296,7 @@ image::attach_replicated.png[]
 A blob also has properties such as `"digest"` (a SHA-1 digest of the data), `"length"` (the length in bytes), and optionally `"content_type"` (the MIME type).
 The data is not stored in the document, but in a separate content-addressable store, indexed by the digest.
 
-This `Blob` can be retrieved on the Sync Gateway REST API at http://localhost:4984/justdoit/user.david/blob_1.
+This `Blob` can be retrieved on the Sync Gateway REST API at \http://localhost:4984/justdoit/user.david/blob_1.
 Notice that the blob identifier in the URL path is "blob_1" (not "avatar").
 
 == Query
@@ -305,12 +306,12 @@ Instead of the map/reduce views used in 1.x, they're now based on expressions, o
 
 There are several parts to specifying a query:
 
-* SELECT: specifies the projection, which is the part of the document that is to be returned.
-* FROM: specifies the database to query the documents from.
-* JOIN: specifies the matching criteria in which to join multiple documents.
-* WHERE: specifies the query criteria that the result must satisfy.
-* GROUP BY: specifies the query criteria to group rows by.
-* ORDER BY: specifies the query criteria to sort the rows in the result.
+SELECT:: Specifies the projection, which is the part of the document that is to be returned.
+FROM:: Specifies the database to query the documents from.
+JOIN:: Specifies the matching criteria in which to join multiple documents.
+WHERE:: Specifies the query criteria that the result must satisfy.
+GROUP BY:: Specifies the query criteria to group rows by.
+ORDER BY:: Specifies the query criteria to sort the rows in the result.
 
 === SELECT statement
 
@@ -602,7 +603,8 @@ Full-text search is supported in the following languages: danish, dutch, english
 
 The pattern to match can also be in the following forms:
 
-* *prefix queries:* the query expression used to search for a term prefix is the prefix itself with a "*" character appended to it.
+prefix queries::
+The query expression used to search for a term prefix is the prefix itself with a "*" character appended to it.
 For example:
 +
 ....
@@ -612,7 +614,8 @@ For example:
 --"linker", "linguistic" and so on.
 ....
 
-* *overriding the property name that is being indexed:* Normally, a token or token prefix query is matched against the document property specified as the left-hand side of the `match` operator.
+overriding the property name that is being indexed::
+Normally, a token or token prefix query is matched against the document property specified as the left-hand side of the `match` operator.
 This may be overridden by specifying a property name followed by a ":" character before a basic term query.
 There may be space between the ":" and the term to query for, but not between the property name and the ":" character.
 For example:
@@ -624,7 +627,8 @@ For example:
 -- or body of the document.
 ....
 
-* *phrase queries:* a phrase query is a query that retrieves all documents that contain a nominated set of terms or term prefixes in a specified order with no intervening tokens.
+phrase queries::
+A phrase query is a query that retrieves all documents that contain a nominated set of terms or term prefixes in a specified order with no intervening tokens.
 Phrase queries are specified by enclosing a space separated sequence of terms or term prefixes in double quotes (").
 For example:
 +
@@ -633,7 +637,8 @@ For example:
 -- Query for all documents that contain the phrase "linux applications".
 ....
 
-* *NEAR queries:* A NEAR query is a query that returns documents that contain a two or more nominated terms or phrases within a specified proximity of each other (by default with 10 or less intervening terms).
+NEAR queries::
+A NEAR query is a query that returns documents that contain a two or more nominated terms or phrases within a specified proximity of each other (by default with 10 or less intervening terms).
 A NEAR query is specified by putting the keyword "NEAR" between two phrase, token or token prefix queries.
 To specify a proximity other than the default, an operator of the form "NEAR/" may be used, where is the maximum number of intervening terms allowed.
 For example:
@@ -644,7 +649,8 @@ For example:
 -- "database" with not more than 2 terms separating the two.
 ....
 
-* *AND, OR & NOT query operators:* The enhanced query syntax supports the AND, OR and NOT binary set operators.
+AND, OR & NOT query operators::
+The enhanced query syntax supports the AND, OR and NOT binary set operators.
 Each of the two operands to an operator may be a basic FTS query, or the result of another AND, OR or NOT set operation.
 Operators must be entered using capital letters.
 Otherwise, they are interpreted as basic term queries instead of set operators.
@@ -693,7 +699,7 @@ https://www.couchbase.com/downloads[Download Sync Gateway] and start it from the
 ~/Downloads/couchbase-sync-gateway/bin/sync_gateway
 ----
 
-For platform specific installation instructions, refer to the Sync Gateway https://developer.couchbase.com/documentation/mobile/current/installation/sync-gateway/index.html[installation guide].
+For platform specific installation instructions, refer to the Sync Gateway xref:sync-gateway::getting-started.adoc#installation[installation guide].
 
 === Starting a Replication
 
@@ -735,10 +741,10 @@ include::{partialsdir}/verify-replication.adoc[]
 
 Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit data.
 Some load balancers are not configured for WebSocket connections by default (NGINX for example);
-so it might be necessary to explicitly enable them in the load balancer's configuration (see https://developer.couchbase.com/documentation/mobile/current/guides/sync-gateway/nginx/index.html[Load Balancers]).
+so it might be necessary to explicitly enable them in the load balancer's configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
 
 By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
-The level of compression is set on Sync Gateway and can be tuned in the configuration file (https://developer.couchbase.com/documentation/mobile/2.0/guides/sync-gateway/config-properties/index.html#2.0/replicator_compression[`replicator_compression`]).
+The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway::config-properties.adoc#replicator_compression[`replicator_compression`]).
 
 ==== Replication Ordering
 
@@ -767,6 +773,7 @@ include::{snippet}[tag=replication-status,indent=0]
 
 The following table lists the different activity levels in the API and the meaning of each one.
 
+[cols="1,2"]
 |===
 |State |Meaning
 
@@ -863,10 +870,10 @@ Certificate pinning is a technique that can be used by applications to "pin" a h
 The certificate is typically delivered to the client by an out-of-band channel and bundled with the client.
 In this case, Couchbase Lite uses this embedded certificate to verify the trustworthiness of the server and no longer needs to rely on a trusted third party for that (commonly referred to as the Certificate Authority).
 
-The `openssl` command can be used to create a new self-signed certificate and convert the `.pem` file to a `.cert` file (see https://developer.couchbase.com/documentation/mobile/1.5/guides/sync-gateway/configuring-ssl/index.html#creating-your-own-self-signed-certificate[creating your own self-signed certificate]).
+The `openssl` command can be used to create a new self-signed certificate and convert the `.pem` file to a `.cert` file (see xref:sync-gateway::configuring-ssl.adoc#creating-your-own-self-signed-certificate[creating your own self-signed certificate]).
 You should then have 3 files: `cert.pem`, `cert.cer` and `key.pem`.
 
-The `cert.pem` and `key.pem` can be used in the Sync Gateway configuration (see https://developer.couchbase.com/documentation/mobile/1.5/guides/sync-gateway/configuring-ssl/index.html#installing-the-certificate[installing the certificate]).
+The `cert.pem` and `key.pem` can be used in the Sync Gateway configuration (see xref:sync-gateway::configuring-ssl.adoc#installing-the-certificate[installing the certificate]).
 
 On the Couchbase Lite side, the replication must be configured with the `cert.cer` file.
 
@@ -928,21 +935,21 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 === 2.1
 
 .Enhancements
-* https://github.com/couchbase/couchbase-lite-android/issues/1678[*#1678*] Support Peer-to-Peer replication through MessageEndpoint API (EE Feature)
-* https://github.com/couchbase/couchbase-lite-android/issues/1683[*#1683*] Support Database Encryption (EE feature)
-* https://github.com/couchbase/couchbase-lite-android/issues/1696[*#1696*] Support replicator reset checkpoint
+* {url-issues-java}/1678[*#1678*] Support Peer-to-Peer replication through MessageEndpoint API (EE Feature)
+* {url-issues-java}/1683[*#1683*] Support Database Encryption (EE feature)
+* {url-issues-java}/1696[*#1696*] Support replicator reset checkpoint
 
 .Bugs
-* https://github.com/couchbase/couchbase-lite-android/issues/1510[*#1510*] 2.0: Crash with DB21 - in c4doc_update()
-* https://github.com/couchbase/couchbase-lite-android/issues/1665[*#1665*] Exception thrown openDatabase (Proguard strips methods that CBL uses)
-* https://github.com/couchbase/couchbase-lite-android/issues/1676[*#1676*] 2.0: Replicator Error misses the error message.
-* https://github.com/couchbase/couchbase-lite-android/issues/1702[*#1702*] 2.x: ValueIndexItem.expression(Expression) is missing
-* https://github.com/couchbase/couchbase-lite-android/issues/1725[*#1725*] 2.1: Android : Replication does not start
-* https://github.com/couchbase/couchbase-lite-android/issues/1727[*#1727*] Dead lock occurs - DB 2.0.0
-* https://github.com/couchbase/couchbase-lite-android/issues/1742[*#1742*] Couchbase mobile 2.0.2 Emoji Support
+* {url-issues-java}/1510[*#1510*] 2.0: Crash with DB21 - in c4doc_update()
+* {url-issues-java}/1665[*#1665*] Exception thrown openDatabase (Proguard strips methods that CBL uses)
+* {url-issues-java}/1676[*#1676*] 2.0: Replicator Error misses the error message.
+* {url-issues-java}/1702[*#1702*] 2.x: ValueIndexItem.expression(Expression) is missing
+* {url-issues-java}/1725[*#1725*] 2.1: Android : Replication does not start
+* {url-issues-java}/1727[*#1727*] Dead lock occurs - DB 2.0.0
+* {url-issues-java}/1742[*#1742*] Couchbase mobile 2.0.2 Emoji Support
 
 .Known Issues
-* https://github.com/couchbase/couchbase-lite-android/issues/1743[*#1743*] HTTP Proxy Support
+* {url-issues-java}/1743[*#1743*] HTTP Proxy Support
 
 === 2.0.2
 
@@ -951,35 +958,35 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 === 2.0.0
 
 .Enhancements
-* https://github.com/couchbase/couchbase-lite-android/issues/1264[*#1264*] 2.0 migration from Forest back to SQlite
-* https://github.com/couchbase/couchbase-lite-android/issues/1577[*#1577*] 2.1: Eliminate CouchbaseLiteRuntimeExecption, convert it to CouchbaseLiteExecption
+* {url-issues-java}/1264[*#1264*] 2.0 migration from Forest back to SQlite
+* {url-issues-java}/1577[*#1577*] 2.1: Eliminate CouchbaseLiteRuntimeExecption, convert it to CouchbaseLiteExecption
 
 .Bugs
-* https://github.com/couchbase/couchbase-lite-android/issues/1217[*#1217*] 2.0: Todo Sample bug Fix and implement remaining features
-* https://github.com/couchbase/couchbase-lite-android/issues/1234[*#1234*] 2.0: Replicator continuous pull status completed and total number out of sync
-* https://github.com/couchbase/couchbase-lite-android/issues/1247[*#1247*] 2.0: Push Replication Causing Errors
-* https://github.com/couchbase/couchbase-lite-android/issues/1273[*#1273*] 2.0: Replicator Activity Level stays in Busy state
-* https://github.com/couchbase/couchbase-lite-android/issues/1347[*#1347*] 2.0: How do we properly stop puller Replicator and delete database ?
-* https://github.com/couchbase/couchbase-lite-android/issues/1470[*#1470*] 2.0: In My App with CB Lite DB020(Android), ConflictResolver is called endless loop during three device or much more!
-* https://github.com/couchbase/couchbase-lite-android/issues/1499[*#1499*] 2.0: Repl Bad URL returns 19 instead of 15 on API 24 ARM emulator
-* https://github.com/couchbase/couchbase-lite-android/issues/1500[*#1500*] 2.0: LoadTest.testUpdate() causes memory error with Android API 19 Arm Emulator
-* https://github.com/couchbase/couchbase-lite-android/issues/1501[*#1501*] 2.0: ReplicatorTest > testPushDoc fails
-* https://github.com/couchbase/couchbase-lite-android/issues/1512[*#1512*] 2.0: ReplicatorTest > testPullDoc fails
-* https://github.com/couchbase/couchbase-lite-android/issues/1581[*#1581*] 2.0 : LiveQuery threading issue
-* https://github.com/couchbase/couchbase-lite-android/issues/1609[*#1609*] 2.0: testSelfSignedSSLPinned() unit test failure
-* https://github.com/couchbase/couchbase-lite-android/issues/1610[*#1610*] Exception from the cpp layer in my android app on load tests
-* https://github.com/couchbase/couchbase-lite-android/issues/1615[*#1615*] 2.0: NullPointerException: Attempt to invoke virtual method 'boolean com.couchbase.litecore.C4QueryEnumerator.next()' on a null object reference
-* https://github.com/couchbase/couchbase-lite-android/issues/1620[*#1620*] NOT operator not working for FTS
-* https://github.com/couchbase/couchbase-lite-android/issues/1630[*#1630*] 2.0: make public Index interface
-* https://github.com/couchbase/couchbase-lite-android/issues/1651[*#1651*] 2.0: C4DocumentTest.testPut() fails
-* https://github.com/couchbase/couchbase-lite-android/issues/1652[*#1652*] App crash with deleteDocument with concurrencyControl
-* https://github.com/couchbase/couchbase-lite-android/issues/1693[*#1693*] DB023 - Crazy amount of dbListenerTokens - makes the DB run slow
+* {url-issues-java}/1217[*#1217*] 2.0: Todo Sample bug Fix and implement remaining features
+* {url-issues-java}/1234[*#1234*] 2.0: Replicator continuous pull status completed and total number out of sync
+* {url-issues-java}/1247[*#1247*] 2.0: Push Replication Causing Errors
+* {url-issues-java}/1273[*#1273*] 2.0: Replicator Activity Level stays in Busy state
+* {url-issues-java}/1347[*#1347*] 2.0: How do we properly stop puller Replicator and delete database ?
+* {url-issues-java}/1470[*#1470*] 2.0: In My App with CB Lite DB020(Android), ConflictResolver is called endless loop during three device or much more!
+* {url-issues-java}/1499[*#1499*] 2.0: Repl Bad URL returns 19 instead of 15 on API 24 ARM emulator
+* {url-issues-java}/1500[*#1500*] 2.0: LoadTest.testUpdate() causes memory error with Android API 19 Arm Emulator
+* {url-issues-java}/1501[*#1501*] 2.0: ReplicatorTest > testPushDoc fails
+* {url-issues-java}/1512[*#1512*] 2.0: ReplicatorTest > testPullDoc fails
+* {url-issues-java}/1581[*#1581*] 2.0 : LiveQuery threading issue
+* {url-issues-java}/1609[*#1609*] 2.0: testSelfSignedSSLPinned() unit test failure
+* {url-issues-java}/1610[*#1610*] Exception from the cpp layer in my android app on load tests
+* {url-issues-java}/1615[*#1615*] 2.0: NullPointerException: Attempt to invoke virtual method 'boolean com.couchbase.litecore.C4QueryEnumerator.next()' on a null object reference
+* {url-issues-java}/1620[*#1620*] NOT operator not working for FTS
+* {url-issues-java}/1630[*#1630*] 2.0: make public Index interface
+* {url-issues-java}/1651[*#1651*] 2.0: C4DocumentTest.testPut() fails
+* {url-issues-java}/1652[*#1652*] App crash with deleteDocument with concurrencyControl
+* {url-issues-java}/1693[*#1693*] DB023 - Crazy amount of dbListenerTokens - makes the DB run slow
 
 .Known Issues
-* https://github.com/couchbase/couchbase-lite-android/issues/1685[*#1685*] Replicator in Android get stuck at busy state when it goes back to online from offline (Genymotion)
-* https://github.com/couchbase/couchbase-lite-android/issues/1702[*#1702*] ValueIndexItem.expression(Expression) is implemented with CBL Android 2.0.0 release.
+* {url-issues-java}/1685[*#1685*] Replicator in Android get stuck at busy state when it goes back to online from offline (Genymotion)
+* {url-issues-java}/1702[*#1702*] ValueIndexItem.expression(Expression) is implemented with CBL Android 2.0.0 release.
 This API will be available with 2.1.0 release
-* https://github.com/couchbase/couchbase-lite-android/issues/1665[*#1665*]: it is currently not possible to enable https://developer.android.com/studio/build/shrink-code.html[code shrinking] (`minifyEnabled: true`) in an Android Studio project that uses Couchbase Lite 2.0.
+* {url-issues-java}/1665[*#1665*]: it is currently not possible to enable https://developer.android.com/studio/build/shrink-code.html[code shrinking] (`minifyEnabled: true`) in an Android Studio project that uses Couchbase Lite 2.0.
 As a workaround, code shrinking can be disabled for Couchbase Lite classes and its dependencies by adding the following in *proguard-rules.pro*.
 +
 [source,groovy]
