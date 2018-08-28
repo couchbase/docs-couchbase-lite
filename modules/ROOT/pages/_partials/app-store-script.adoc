@@ -4,11 +4,11 @@ When submitting a build of your application to the App Store you must ensure tha
 
 The steps to remove the simulator architecture (x86_64) from **CouchbaseLite.framework** are outlined below. They depend on the method you chose to install Couchbase Lite:
 
-[.tabs]
-=====
-.Frameworks
-[.tab]
+[{tabs}]
 ====
+Frameworks::
++
+--
 The Couchbase Lite framework available on the link:https://couchbase.com/downloads[downloads page] contains a build for both the simulator (x86_64) and iOS devices (ARM). The following steps describe how to set up a build phase in Xcode to do this automatically.
 
 . In Xcode, open the *Build Phases* tab, then select the *+* > *Add Run Script Build Phase* option.
@@ -20,15 +20,11 @@ image:run-script-phase.png[]
 image::run-script-copy.png[]
 
 That's it, now every time you build and run your application, Xcode will remove binary architectures that do not match the target's architecture type (emulator or device).
-====
-.Carthage
-[.tab]
-====
+--
+
+Carthage::
++
+--
 The link:https://github.com/Carthage/Carthage/blob/5fd867c4895b4f59d70181dec169a1644f4430e3/README.md#adding-frameworks-to-an-application[following link] describes how to set up a build phase in Xcode and run a Carthage script in order to remove the simulator architecture (x86_64).
+--
 ====
-.Cocoapods
-[.tab]
-====
-N/A
-====
-=====
