@@ -26,31 +26,6 @@ if (!manager) {
 }
 ----
 
-[source]
-----
-let manager = CBLManager.sharedInstance()
-if manager == nil {
-    NSLog("Cannot create Manager Instance")
-}
-----
-
-[source]
-----
-JavaContext context = new JavaContext();
-manager = new Manager(context, Manager.DEFAULT_OPTIONS);
-----
-
-[source]
-----
-AndroidContext androidContext = new AndroidContext(getApplicationContext());
-manager = new Manager(androidContext, Manager.DEFAULT_OPTIONS);
-----
-
-[source]
-----
-var manager = Manager.SharedInstance;
-----
-
 === Dude, where's my database file?
 
 The Manager creates a directory in the filesystem and stores databases inside it.
@@ -82,37 +57,6 @@ self.manager = [[CBLManager alloc] initWithDirectory: dir
 if (!manager) {
         NSLog(@"Cannot create Manager instance: %@", error);
 }
-----
-
-[source]
-----
-let dir = WhereIWantCBLStuffToGo()
-var error: NSError?
-self.manager = CBLManager(directory: dir, options: nil, error: &error)
-if manager == nil {
-    NSLog("Cannot create Manager instance: %@", (error ?? ""))
-}
-----
-
-[source]
-----
-// Not Manager constructor to specify the directory.
-// Instead you should subclass JavaContext and override
-// the getFilesDir method.
-----
-
-[source]
-----
-// Not Manager constructor to specify the directory.
-// Instead you should subclass AndroidContext and override
-// the getFilesDir method.
-----
-
-[source]
-----
-var options = new ManagerOptions();
-options.ReadOnly = true;
-Manager manager = new Manager(Directory.CreateDirectory(dbPath), options);
 ----
 
 === Global logging settings
@@ -153,109 +97,11 @@ ViewVerbose
 WS
 ----
 
-[source]
-----
-In Swift tag groups is disabled by default.
-
-BLIP
-BLIPVerbose
-CBLDatabase
-CBLJSONMatcher
-CBLListener
-CBLListenerVerbose
-CBLModel
-CBL_Router
-CBL_Server
-CBL_URLProtocol
-CBLValidation
-CBLRemoteRequest
-CBLMultiStreamWriter
-ChangeTracker
-ChangeTrackerVerbose
-JSONSchema
-MYDynamicObject
-Query
-RemoteRequest
-Sync
-SyncVerbose
-View
-ViewVerbose
-WS
-----
-
-[source]
-----
-In Java tag groups are enabled at level WARN by default.
-
-Log tags
-
-Log.TAG_BLOB_STORE //BlobStore
-Log.TAG //CBLite
-Log.TAG_CHANGE_TRACKER //ChangeTracker
-Log.TAG_DATABASE //Database
-Log.TAG_LISTENER //Listener
-Log.TAG_MULTI_STREAM_WRITER //MultistreamWriter
-Log.TAG_QUERY //Query
-Log.TAG_REMOTE_REQUEST //RemoteRequest
-Log.TAG_ROUTER //Router
-Log.TAG_SYNC //Sync
-Log.TAG_VIEW //View
-
-Log levels
-
-Log.VERBOSE
-Log.DEBUG
-Log.INFO
-Log.WARN
-Log.ERROR
-----
-
-[source]
-----
-Log tags
-
-Log.Domains.Database
-Log.Domains.Query
-Log.Domains.View
-Log.Domains.Router
-Log.Domains.Sync
-Log.Domains.ChangeTracker
-Log.Domains.Validation
-Log.Domains.Upgrade
-Log.Domains.Listener
-Log.Domains.Discovery
-Log.Domains.TaskScheduling
-Log.Domains.All
-
-Log levels
-
-Log.LogLevel.Verbose
-Log.LogLevel.Debug
-Log.LogLevel.Error
-Log.LogLevel.Warning
-Log.LogLevel.Information
-----
-
 The following code snippet enables logging for the *Sync* tag.
 
 [source]
 ----
-CBLManager enableLogging: @"Sync"];
-----
-
-[source]
-----
-CBLManager.enableLogging("Sync")
-----
-
-[source]
-----
-Manager.enableLogging("Sync", Log.VERBOSE);
-----
-
-[source]
-----
-Log.Domains.Sync.Level = Log.LogLevel.Verbose
+[CBLManager enableLogging: @"Sync"];
 ----
 
 === Concurrency Support
@@ -293,29 +139,6 @@ NSString* name = myDB.name;
 }];
 ----
 
-[source]
-----
-// "myDB" is the CBLDatabase object in use on the main thread.
-let mgr = myDB.manager
-let name = myDB.name
-mgr.backgroundTellDatabaseNamed(name, to: { (bgdb: CBLDatabase!) -> Void in
-  // Inside this block we can't use myDB; instead use the instance given (bgdb)
-  for docID in docIDs {
-    bgdb.documentWithID(docID).deleteDocument(nil)
-  }
-})
-----
-
-[source,text]
-----
-Not supported on this platform.
-----
-
-[source,text]
-----
-Not supported on this platform.
-----
-
 ==== Running Couchbase Lite on a background thread
 
 If you want to do lots of Couchbase Lite processing in the background in Objective-C, the best way to do it is to start your own background thread and use a new `Manager` instance on it.
@@ -345,32 +168,6 @@ If you want to do lots of Couchbase Lite processing in the background in Objecti
 }
 ----
 
-[source]
-----
-func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: NSDictionary?) -> Bool {
-  let manager = CBLManager.sharedInstance()
-  var error: NSError?
-  let database = manager.databaseNamed("db", error: &error)
-  let bgMgr = manager.copy()
-  NSThread.detachNewThreadSelector("runBackground:", toTarget: self, withObject: bgMgr)
-  return true
-}
-func runBackground(bgMgr: CBLManager) {
-  var error: NSError?
-  let bgDB = [bgMgr.databaseNamed("db", error: &error)]
-}
-----
-
-[source,text]
-----
-Not supported on this platform.
-----
-
-[source,text]
-----
-Not supported on this platform.
-----
-
 If you don't plan to use Couchbase Lite on the main thread at all, the setup is even easier.
 Just have the background thread create a new instance of CBLManager from scratch and use that:
 
@@ -393,32 +190,6 @@ Just have the background thread create a new instance of CBLManager from scratch
     CBLDatabase* db = [manager databaseNamed: @"db" error: &error];
     // ... now use the database
 }
-----
-
-[source]
-----
-func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: NSDictionary?) -> Bool {
-  // We're not going to use Couchbase Lite at all on the main thread;
-  // instead we start a background thread to run it on:
-  NSThread.detachNewThreadSelector("runBackground", toTarget: self, withObject: nil)
-  return true
-}
-func runBackground {
-  let manager = CBLManager.sharedInstance()
-  var error: NSError?
-  let db = [manager.databaseNamed("db", error: &error)]
-  // ... now use the database
-}
-----
-
-[source,text]
-----
-Not supported on this platform.
-----
-
-[source,text]
-----
-Not supported on this platform.
 ----
 
 == Database
@@ -524,50 +295,6 @@ if (!database) {
 }
 ----
 
-[source]
-----
-let dbManager = CBLManager.sharedInstance()
-var error :NSError?
-var database = dbManager.existingDatabaseNamed("catalog", error: &error)
-if database == nil {
-    let cannedDbPath = NSBundle.mainBundle().pathForResource("catalog", ofType: "cblite")
-    let cannedAttPath = NSBundle.mainBundle().pathForResource("catalog attachments", ofType: "")
-    dbManager.replaceDatabaseNamed("catalog", withDatabaseFile: cannedDbPath, withAttachments: cannedAttPath, error: &error)
-    if error != nil {
-        self.handleError(error)
-    }
-    database = dbManager.existingDatabaseNamed("catalog", error: &error)
-    if error != nil {
-        self.handleError(error)
-    }
-}
-----
-
-[source,text]
-----
-No code example is currently available.
-----
-
-[source]
-----
-// catalog.zip should unzip in the root folder as a CBL database (i.e catalog.cblite2)
-Manager manager = new Manager(new AndroidContext(getApplicationContext()), Manager.DEFAULT_OPTIONS);
-Database database = manager.getExistingDatabase("catalog");
-if (database == null) {
-    try {
-        ZipUtils.unzip(getAssets().open("catalog.zip"), manager.getContext().getFilesDir());
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-    database = manager.getExistingDatabase("catalog");
-}
-----
-
-[source,text]
-----
-No code example is currently available.
-----
-
 === Opening a database
 
 You'll typically open a database while initializing your app, right after instantiating the Manager object, and store a reference to the Database object as either a global variable or a property of your top-level application object (the app delegate on iOS or Mac OS).
@@ -588,47 +315,6 @@ if (!self.database) {
 }
 ----
 
-[source]
-----
-let manager = CBLManager.sharedInstance()
-var error: NSError?
-self.database = manager.databaseNamed("my-database", error: &error)
-if self.database == nil {
-    self.handleError(error)
-}
-----
-
-[source]
-----
-try {
-     Manager manager = new Manager(new JavaContext("data"), Manager.DEFAULT_OPTIONS);
-     this.db = manager.getDatabase("my-database");
- } catch (IOException e) {
-     Log.e(TAG, "Cannot create database", e);
-     return;
- }
-----
-
-[source]
-----
-try {
-     Manager manager = new Manager(new AndroidContext(mContext), Manager.DEFAULT_OPTIONS);
-     this.db = manager.getDatabase("my-database");
- } catch (IOException e) {
-     Log.e(TAG, "Cannot create database", e);
-     return;
- }
-----
-
-[source]
-----
-var db = Manager.SharedInstance.GetDatabase("my-database");
-if (db == null)
-{
-    Log.E(Tag, "Cannot create database");
-}
-----
-
 NOTE: If you want to open only an existing database, without the possibility of creating a new one, call the related Manager method `existingDatabaseNamed` instead.
 It returns null/nil (without an error or exception) if no database with that name exists.
 
@@ -642,33 +328,11 @@ The steps below outline how to enable it.
 ==== Step 1: Installing SQLCipher
 
 SQLCipher is an optional dependency.
-The section below describes how to add it on each platform.
-
-===== Android
-
-Add the following in the application level build.gradle file.
-
-[source,bash]
-----
-dependencies {
-    compile 'com.couchbase.lite:couchbase-lite-android:+'
-    compile 'com.couchbase.lite:couchbase-lite-android-sqlcipher:+'
-}
-----
-
-===== iOS
 
 . Download the iOS SDK from http://www.couchbase.com/nosql-databases/downloads#couchbase-mobile[here].
 . Add the `libsqlcipher.a` library to your XCode project.
 . Go to the Link Binary With Libraries build phase of your app target.
 . Remove `libsqlite.dylib`
-
-===== Windows
-
-* Install the Nuget package called `Couchbase.Lite.Storage.SQLCipher`
-* Alternatively, if you are manually adding the DLLs to the Visual Studio project, you should include `sqlcipher.dll` and `Couchbase.Lite.Storage.SQLCipher.dll`
-
-Then call `Couchbase.Lite.Storage.SQLCipher.Plugin.Register()` in the application.
 
 ==== Step 2: Enabling encryption
 
@@ -683,36 +347,6 @@ options.storageType = @"SQLite";
 options.encryptionKey = @"password123456";
 options.create = YES;
 CBLDatabase* database = [manager openDatabaseNamed:@"db" withOptions:options error:nil];
-----
-
-[source]
-----
-var options: CBLDatabaseOptions = CBLDatabaseOptions()
-options.storageType = "SQLite"
-options.encryptionKey = "password123456"
-options.create = true
-var database: CBLDatabase = manager.openDatabaseNamed("db", withOptions: options, error: nil)
-----
-
-[source]
-----
-String key = "password123456";
-DatabaseOptions options = new DatabaseOptions();
-options.setCreate(true);
-options.setEncryptionKey(key);
-Database database = manager.openDatabase("db", options);
-----
-
-[source]
-----
-var key = new SymmetricKey("password123456");
-var options = new DatabaseOptions
-{
-    EncryptionKey = key,
-    Create = true,
-    StorageType = StorageEngineTypes.SQLite
-};
-Database database = manager.OpenDatabase("db", options);
 ----
 
 If the database does not exist (and `options.create` is true) it will be created encrypted with the given key.
@@ -744,8 +378,6 @@ ForestDB is a persistent key-value storage library, it's a key-value map where t
 * Lower RAM footprint (data caches are shared between threads)
 * Database compaction is automatic and runs periodically in the background
 
-===== iOS
-
 The ForestDB engine isn't built into the iOS and tvOS platforms, to save space.
 To use ForestDB on those platforms you'll need to link it into your app as an extra static library.
 
@@ -756,24 +388,6 @@ To do that, in the target's Build Phases editor, press the "+" button below the 
 
 NOTE: These steps aren't necessary for Mac OS because that version of the Couchbase Lite framework already has ForestDB built into it.
 
-===== Android
-
-Add the following in the application level `build.gradle` file.
-
-[source]
-----
-dependencies {
-    compile 'com.couchbase.lite:couchbase-lite-android:+'
-    compile 'com.couchbase.lite:couchbase-lite-android-forestdb:+'
-}
-----
-
-===== Windows
-
-Install the Nuget package called `Couchbase.Lite.Storage.ForestDB`.
-
-Then call `Couchbase.Lite.Storage.ForestDB.Plugin.Register()` in the application.
-
 ==== Choosing a storage engine
 
 ===== For new databases
@@ -783,22 +397,6 @@ At runtime, you need to tell the `Manager` you want to use ForestDB, by setting 
 [source]
 ----
 manager.storageType = kCBLForestDBStorage;
-----
-
-[source]
-----
-manager.storageType = kCBLForestDBStorage
-----
-
-[source]
-----
-manager.setStorageType("ForestDB");
-----
-
-[source]
-----
-Manager manager = Manager.SharedInstance;
-manager.StorageType = "ForestDB";
 ----
 
 This only applies to new databases.
@@ -818,43 +416,6 @@ options.storageType = kCBLForestDBStorage;  // Forces upgrade to ForestDB
 CBLDatabase* db = [manager openDatabaseNamed:@"my-database"
                                  withOptions:options
                                        error:&error];
-----
-
-[source]
-----
-var options: CBLDatabaseOptions = CBLDatabaseOptions()
-options.create = true
-options.storageType = kCBLForestDBStorage  // Forces upgrade to ForestDB
-var db: CBLDatabase = manager.openDatabaseNamed("my-database", withOptions: options, error: error!)
-----
-
-[source]
-----
-Manager manager = new Manager(new JavaContext("data"), Manager.DEFAULT_OPTIONS);
-
-DatabaseOptions options = new DatabaseOptions();
-options.setCreate(true);
-options.setStorageType("ForestDB");
-Database database = manager.openDatabase("my-database", options);
-----
-
-[source]
-----
-Manager manager = new Manager(new AndroidContext(this), null);
-
-DatabaseOptions options = new DatabaseOptions();
-options.setCreate(true);
-options.setStorageType("ForestDB");
-Database database = manager.openDatabase("my-database", options);
-----
-
-[source]
-----
-Manager manager = Manager.SharedInstance;
-DatabaseOptions options = new DatabaseOptions();
-options.Create = true;
-options.StorageType = "ForestDB";
-Database database = manager.OpenDatabase ("my-database", options);
 ----
 
 Setting the options' `storageType` property forces the database to use the ForestDB format.
@@ -902,32 +463,6 @@ NSString* docID = myDocument.documentID;
 }];
 ----
 
-[source]
-----
-// Example to read a document asynchronously on a background thread.
-// (This isn't very realistic since reading one document is fast enough to
-// do on the main thread.)
-let docID = myDocument.documentID
-myDB.manager.backgroundTellDatabaseNamed(myDB.name, to: { (bgdb: CBLDatabase!) -> Void in
-    if let bgDoc = bgdb[docID] {
-        var properties = bgDoc.properties;
-        dispatch_async(nil, { () -> Void in
-            self.handleDoc(properties)
-        })
-    }
-})
-----
-
-[source,text]
-----
-No code example is currently available.
-----
-
-[source,text]
-----
-No code example is currently available.
-----
-
 ===== Android, Java
 
 It is safe to call Couchbase Lite from multiple threads on the Android / Java platform.
@@ -952,50 +487,6 @@ still this facility can be useful if you want a lightweight way to tell whenever
 ];
 ----
 
-[source]
-----
-NSNotificationCenter.defaultCenter().addObserverForName(kCBLDatabaseChangeNotification, object: myDatabase, queue: nil) {
-  (notification) -> Void in
-    if let changes = notification.userInfo!["changes"] as? [CBLDatabaseChange] {
-        for change in changes {
-            NSLog("Document changed, revision ID '%@'", change.revisionID)
-        }
-    }
-}
-----
-
-[source]
-----
-try {
-     Database db = manager.getExistingDatabase("my-database");
-
-     if(db != null) {
-         db.addChangeListener(new ChangeListener() {
-             public void changed(ChangeEvent event) {
-                 for (DocumentChange change : event.getChanges()) {
-                    /* Access the document revision related to that change. */
-                    Map<String, Object> properties = change.getAddedRevision().getBody().getProperties();
-                 }
-             }
-         });
-     }
-
- } catch (IOException e) {
-     Log.e(TAG, "Cannot delete database", e);
-     return;
- }
-----
-
-[source]
-----
-database.Changed += (sender, e) => {
-    var changes = e.Changes.ToList();
-    foreach (DocumentChange change in changes) {
-        Log.D(Tag, "Document changed, revision ID " + change.RevisionId);
-    }
-};
-----
-
 The example above shows how to access the revision linked to the document change that is being processed.
 The notifications may not be delivered immediately after the document changes.
 Notifications aren't delivered during a transaction;
@@ -1017,34 +508,6 @@ if (![self.database deleteDatabase: &error]) {
     [self handleError: error];
 }
 self.database = nil;
-----
-
-[source]
-----
-var error: NSError?
-if !self.database.deleteDatabase(&error) {
-    self.handleError(error)
-}
-self.database = nil
-----
-
-[source]
-----
-try {
-     myDatabase.delete();
-} catch (IOException e) {
-     Log.e(TAG, "Cannot delete database", e);
-     return;
-}
-----
-
-[source]
-----
-try {
-    database.Delete();
-} catch (CouchbaseLiteException e) {
-    Log.E(Tag, "Cannot delete database", e);
-}
 ----
 
 == Document
@@ -1100,50 +563,6 @@ if (![document putProperties: properties error: &error]) {
 }
 ----
 
-[source]
-----
-let owner = "profile".stringByAppendingString(userId)
-let properties = [
-    "type": "list",
-    "title": title,
-    "owner": owner,
-    "members": []
-]
-let document = database.createDocument()
-var error: NSError?
-if document.putProperties(properties, error: &error) == nil {
-    self.handleError(error)
-}
-----
-
-[source]
-----
-Map<String, Object> properties = new HashMap<String, Object>();
-properties.put("type", "list");
-properties.put("title", title);
-properties.put("created_at", currentTimeString);
-properties.put("owner", "profile:" + userId);
-properties.put("members", new
-ArrayList<String>());
-Document document = database.createDocument();
-document.putProperties(properties);
-----
-
-[source]
-----
-var document = database.CreateDocument();
-var properties = new Dictionary<string, object>()
-    {
-        {"type", "list"},
-        {"title", "title"},
-        {"created_at", DateTime.UtcNow.ToString ("o")},
-        {"owner", "profile:" + userId},
-        {"members", new List<string>()}
-    };
-var rev = document.PutProperties(properties);
-Debug.Assert(rev != null);
-----
-
 If you do want to choose the document's ID, just call the Database method `getDocument`, just as you would to retrieve an existing document.
 If the document doesn't exist yet, you still get a valid Document object, it just doesn't have any revisions or contents yet.
 The first time you save the document, it will be added persistently to the database.
@@ -1161,49 +580,6 @@ NSError* error;
 if (![document putProperties: properties error: &error]) {
     [self handleError: error];
 }
-----
-
-[source]
-----
-let properties =
-[
-    "title": "Little, Big",
-    "author": "John Crowley",
-    "published":  1982
-]
-let document = database.documentWithID("978-0061120053")
-var error: NSError?
-if document.putProperties(properties, error: &error) == nil {
-    self.handleError(error)
-}
-----
-
-[source]
-----
-Map<String, Object> properties = new HashMap<String, Object>();
-properties.put("title", "Little, Big");
-properties.put("author", "John Crowley");
-properties.put("published", 1982);
-Document document = database.getDocument("978-0061120053");
-try {
-    document.putProperties(properties);
-} catch (CouchbaseLiteException e) {
-    Log.e(TAG, "Cannot save document", e);
-}
-----
-
-[source]
-----
-var properties = new Dictionary<string, object>
-    {
-        {"title", "Little, Big"},
-        {"author", "John Crowley"},
-        {"published", 1982}
-    };
-var document = database.GetDocument("978-0061120053");
-Debug.Assert(document != null);
-var rev = document.PutProperties(properties);
-Debug.Assert(rev != null);
 ----
 
 TIP: It's up to you whether to assign your own IDs or use random UUIDs.
@@ -1238,35 +614,6 @@ NSDictionary* properties = doc.properties;
 NSString* owner = properties[@"owner"];
 ----
 
-[source]
-----
-let doc = database.documentWithID(myDocID)
-// We can directly access properties from the document object:
-let title = doc["title"] as? String
-// Or go through its properties dictionary:
-let properties = doc.properties;
-let owner = properties["owner"] as? String;
-----
-
-[source]
-----
-Document doc = database.getDocument(myDocId);
-// We can directly access properties from the document object:
-doc.getProperty("title");
-// Or go through its properties dictionary:
-Map<String, Object> properties = doc.getProperties();
-String owner = (String) properties.get("owner");
-----
-
-[source]
-----
-var doc = database.GetDocument(myDocId);
-// We can directly access properties from the document object:
-doc.GetProperty("title");
-// Or go through its properties dictionary:
-var owner = doc.Properties["owner"];
-----
-
 NOTE: The `getProperties` method is actually just a convenient shortcut for getting the Document's `currentRevision` and then getting its `properties` -- since a document usually has multiple revisions, the properties really belong to a revision.
 Every existing document has a current revision (in fact that's how you can tell whether a document exists or not).
 Almost all the time you'll be accessing a document's current revision, which is why the convenient direct properties accessor exists.
@@ -1291,44 +638,6 @@ if (![doc putProperties: p error: &error]) {
 }
 ----
 
-[source]
-----
-let doc = database.documentWithID(myDocID)
-var properties = doc.properties
-properties["title"] = title
-properties["notes"] = notes
-var error: NSError?
-if doc.putProperties(properties, error: &error) == nil {
-    self.handleError(error)
-}
-----
-
-[source]
-----
-Document doc = database.getDocument(myDocID);
-Map<String, Object> properties = new HashMap<String, Object>();
-properties.putAll(doc.getProperties());
-properties.put("title", title);
-properties.put("notes", notes);
-try {
-    doc.putProperties(properties);
-} catch (CouchbaseLiteException e) {
-    e.printStackTrace();
-}
-----
-
-[source]
-----
-var doc = database.GetDocument(myDocId);
-var p = new Dictionary<string, object>(doc.Properties)
-    {
-        {"title", title},
-        {"notes", notes}
-    };
-var rev = doc.PutProperties(p);
-Debug.Assert(rev != null);
-----
-
 `update` instead takes a callback function or block (the details vary by language).
 It loads the current revision's properties, then calls this function, passing it an `UnsavedRevision` object, whose properties are a mutable copy of the current ones.
 Your callback code can modify this object's properties as it sees fit;
@@ -1345,47 +654,6 @@ if (![doc update: ^BOOL(CBLUnsavedRevision *newRev) {
 } error: &error]) {
     [self handleError: error];
 }
-----
-
-[source]
-----
-let doc = database.documentWithID(myDocID)
-var error: NSError?
-doc.update({ (newRev) -> Bool in
-    newRev["title"] = title
-    newRev["notes"] = notes
-    return true
-}, error: &error)
-if error != nil {
-    self.handleError(error)
-}
-----
-
-[source]
-----
-Document doc = database.getDocument(myDocId);
-doc.update(new Document.DocumentUpdater() {
-    @Override
-    public boolean update(UnsavedRevision newRevision) {
-        Map<String, Object> properties = newRevision.getProperties();
-        properties.put("title", title);
-        properties.put("notes", notes);
-        newRevision.setUserProperties(properties);
-        return true;
-    }
-});
-----
-
-[source]
-----
-var doc = database.GetDocument(myDocId);
-doc.Update((UnsavedRevision newRevision) =>
-{
-    var properties = newRevision.Properties;
-    properties["title"] = title;
-    properties["notes"] = notes;
-    return true;
-});
 ----
 
 Whichever way you save changes, you need to consider the possibility of *update conflicts*.
@@ -1424,27 +692,6 @@ if (![doc deleteDocument: &error]) {
 }
 ----
 
-[source]
-----
-let doc = database.documentWithID(myDocID)
-var error: NSError?
-if !doc.deleteDocument(&error) {
-    self.handleError(error)
-}
-----
-
-[source]
-----
-Document task = (Document) database.getDocument("task1");
-task.delete();
-----
-
-[source]
-----
-var doc = database.GetDocument(myDocId);
-doc.Delete();
-----
-
 Deleting a document actually just creates a new revision (informally called a "tombstone") that has the special `_deleted` property set to `true`.
 This ensures that the deletion will replicate to the server, and then to other endpoints that pull from that database, just like any other document revision.
 
@@ -1468,44 +715,6 @@ if (![doc update: ^BOOL(CBLUnsavedRevision *newRev) {
 }
 ----
 
-[source]
-----
-doc.update({ (newRev) -> Bool in
-    newRev.isDeletion = true
-    newRev["deleted_at"] = currentTimeString
-    return true
-}, error: &error)
-if error != nil {
-    self.handleError(error)
-}
-----
-
-[source]
-----
-Document doc = database.getDocument(myDocId);
-doc.update(new Document.DocumentUpdater() {
-    @Override
-    public boolean update(UnsavedRevision newRevision) {
-        newRevision.setIsDeletion(true);
-        Map<String, Object> properties = newRevision.getUserProperties();
-        properties.put("deleted_at", currentTimeString);
-        newRevision.setUserProperties(properties);
-        return true;
-    }
-})
-----
-
-[source]
-----
-var doc = database.GetDocument(myDocId);
-doc.Update((UnsavedRevision newRevision) =>
-{
-    newRevision.IsDeletion = true;
-    newRevision.Properties["deleted_at"] = currentTimeString;
-    return true;
-});
-----
-
 === Document expiration (TTL)
 
 Documents in a local database can have an expiration time.
@@ -1521,32 +730,6 @@ NSDictionary* properties = @{@"foo": @"bar"};
 CBLDocument* doc = [db createDocument];
 [doc putProperties:properties error:nil];
 doc.expirationDate = ttl;
-----
-
-[source]
-----
-var ttl = NSDate(timeIntervalSinceNow: 5)
-var properties = ["foo": "bar"]
-var doc = db.createDocument()
-doc.putProperties(properties, error: nil)
-doc.expirationDate = ttl
-----
-
-[source]
-----
-Date tll = new Date(System.currentTimeMillis() + 5000);
-Document doc = database.createDocument();
-Map<String, Object> properties = new HashMap<String, Object>();
-properties.put("foo", "bar");
-doc.putProperties(properties);
-doc.setExpirationDate(ttl);
-----
-
-[source]
-----
-var doc = db.CreateDocument();
-doc.PutProperties(new Dictionary<string, object> { { "foo", "bar" } });
-doc.ExpireAfter(TimeSpan.FromSeconds(5));
 ----
 
 Expiration timing is not highly precise.
@@ -1582,47 +765,6 @@ You can use change events for the following purposes:
             [self setNeedsDisplay: YES];  // redraw the view
         }
 ];
-----
-
-[source]
-----
-NSNotificationCenter.defaultCenter().addObserverForName(kCBLDocumentChangeNotification, object: myDocument, queue: nil) {
-    (notification) -> Void in
-        if let change = notification.userInfo!["change"] as? CBLDatabaseChange {
-            NSLog("This is a new revision, %@", change.revisionID);
-            set.setNeedsDisplay(true)
-        }
-}
-----
-
-[source]
-----
-Document doc = database.createDocument();
-doc.addChangeListener(new Document.ChangeListener() {
-    @Override
-    public void changed(Document.ChangeEvent event) {
-        DocumentChange docChange = event.getChange();
-        String msg = "New revision added: %s. Conflict: %s";
-        msg = String.format(msg,
-        docChange.getAddedRevision(), docChange.isConflict());
-        Log.d(TAG, msg);
-        documentChanged.countDown();
-    }
-});
-doc.createRevision().save();
-----
-
-[source]
-----
-var doc = database.CreateDocument();
-doc.Change += (sender, e) =>
-{
-    var change = e.Change;
-    var documentId = change.DocumentId;
-    var revisionId = change.RevisionId;
-    var isConflict = change.IsConflict;
-    var addedRev = change.AddedRevision;
-};
 ----
 
 === Conflicts
@@ -1710,109 +852,6 @@ if (conflicts.count > 1) {
         }
         return YES;
     }];
-}
-----
-
-[source]
-----
-let doc = database.documentWithID(myDocID)
-var error: NSError?
-if let conflicts = doc.getConflictingRevisions(&error) as? [CBLSavedRevision]{
-    if conflicts.count > 1 {
-        // There is more than one leaf revision, thus a conflict!
-        database.inTransaction({ () -> Bool in
-            // Come up with a merged/resolved document in some way that's
-            // appropriate for the app. You could even just pick the body of
-            // one of the revisions.
-            var mergedProps = self.mergeRevisions(conflicts)
-            // Delete the conflicting revisions to get rid of the conflict:
-            var current = doc.currentRevision
-            for rev in conflicts {
-                var newRev = rev.createRevision()
-                if rev == current {
-                    // add the merged revision
-                    newRev.properties = NSMutableDictionary(dictionary: mergedProps)
-                } else {
-                    // mark other conflicts as deleted
-                    newRev.isDeletion = true
-                }
-                // saveAllowingConflict allows 'rev' to be updated even if it
-                // is not the document's current revision.
-                var error: NSError?
-                if newRev.saveAllowingConflict(&error) == nil {
-                    return false
-                }
-            }
-            return true
-        })
-    }
-}
-----
-
-[source]
-----
-final Document doc = database.getDocument(myDocID);
-final List<SavedRevision> conflicts = doc.getConflictingRevisions();
-if (conflicts.size() > 1) {
-        // There is more than one current revision, thus a conflict!
-        database.runInTransaction(new TransactionalTask() {
-                @Override
-                public boolean run() {
-                        try {
-                                // Come up with a merged/resolved document in some way that's
-                                // appropriate for the app. You could even just pick the body of
-                                // one of the revisions.
-                                Map<String, Object> mergedProps = mergeRevisions(conflicts);
-                                // Delete the conflicting revisions to get rid of the conflict:
-                                SavedRevision current = doc.getCurrentRevision();
-                                for (SavedRevision rev : conflicts) {
-                                        UnsavedRevision newRev = rev.createRevision();
-                                        if (rev.getId().equals(current.getId())) {
-                                                newRev.setProperties(mergedProps);
-                                        } else {
-                                                newRev.setIsDeletion(true);
-                                        }
-                                        // saveAllowingConflict allows 'rev' to be updated even if it
-                                        // is not the document's current revision.
-                                        newRev.save(true);
-                                }
-                        } catch (CouchbaseLiteException e) {
-                                return false;
-                        }
-                        return true;
-                }
-        });
-}
-----
-
-[source]
-----
-var doc = database.GetDocument(myDocId);
-var conflicts = doc.ConflictingRevisions.ToList();
-if (conflicts.Count > 1)
-{
-    // There is more than one current revision, thus a conflict!
-    database.RunInTransaction(() =>
-    {
-        var mergedProps = MergeRevisions(conflicts);
-        var current = doc.CurrentRevision;
-        foreach(var rev in conflicts)
-        {
-            var newRev = rev.CreateRevision();
-            if (rev == current)
-            {
-                newRev.SetProperties(mergedProps);
-            }
-            else
-            {
-                newRev.IsDeletion = true;
-            }
-            // saveAllowingConflict allows 'rev' to be updated even if it
-            // is not the document's current revision.
-            newRev.SaveAllowingConflict();
-        }
-        return true;
-    });
 }
 ----
 
@@ -1986,44 +1025,6 @@ if (att != nil) {
 }
 ----
 
-[source]
-----
-// Load an JPEG attachment from a document into a UIImage:
-let doc = db.documentWithID("Robin")
-let rev = doc.currentRevision
-let att = rev.attachmentNamed("photo.jpg")
-var photo: UIImage?
-if att != nil {
-    photo = UIImage(att.content)
-}
-----
-
-[source]
-----
-// Load an JPEG attachment from a document into a Drawable:
-Document doc = database.getDocument("Robin");
-Revision rev = doc.getCurrentRevision();
-Attachment att = rev.getAttachment("photo.jpg");
-if (att != null) {
-    InputStream is = att.getContent();
-    Drawable d = Drawable.createFromStream(is, "src name");
-}
-----
-
-[source]
-----
-// Load an JPEG attachment from a document:
-var doc = database.GetDocument("Robin");
-var rev = doc.CurrentRevision;
-var att = rev.GetAttachment("photo.jpg");
-if (att != null)
-{
-    var imageData = att.Content.ToList<byte>();
-    // Convert the raw image data into an Image object based
-    // on your development platform.
-}
-----
-
 === Writing (and deleting) attachments
 
 To create an attachment, first create a mutable `UnsavedRevision` object by calling `createRevision` on the document's `currentRevision`.
@@ -2047,44 +1048,6 @@ NSError* error;
 assert([newRev save: &error]);
 ----
 
-[source]
-----
-// Add or update an image to a document as a JPEG attachment:
-let doc = db.documentWithID("Robin")
-let newRev = doc.currentRevision.createRevision()
-let imageData = UIImageJPEGRepresentation(photo, 0.75)
-newRev.setAttachmentNamed("photo.jpg", withContentType: "image/jpeg", content: imageData)
-var error: NSError?
-assert(newRev.save(&error) != nil)
-----
-
-[source]
-----
-// Add an image in a callback after invoking the Android Camera activity
-protected void onActivityResult(int requestCode, int resultCode, Intent data){
-    InputStream stream = null;
-    if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-        InputStream stream = getContentResolver().openInputStream(data.getData());
-        // Add or update an image to a document as a JPEG attachment:
-        Document doc = database.getDocument("Robin");
-        UnsavedRevision newRev = doc.getCurrentRevision().createRevision();
-        newRev.setAttachment("photo.jpg", "image/jpeg", stream);
-        newRev.save();
-    }
-}
-----
-
-[source]
-----
-// Add or update an image to a document as a JPEG attachment:
-var doc = database.GetDocument("Robin");
-var newRev = doc.CurrentRevision.CreateRevision();
-var imageStream = GetAsset("photo.png");
-newRev.SetAttachment("photo.jpg", "image/jpeg", imageStream);
-var savedRev = newRev.Save();
-Debug.Assert(savedRev != null);
-----
-
 To delete an attachment, just call `removeAttachment` instead of `setAttachment`.
 
 [source]
@@ -2096,36 +1059,6 @@ CBLUnsavedRevision* newRev = [doc.currentRevision createRevision];
 // (You could also update newRev.properties while you're here)
 NSError* error;
 assert([newRev save: &error]);
-----
-
-[source]
-----
-// Remove an attachment from a document:
-let doc = db.documentWithID("Robin")
-let newRev = doc.currentRevision.createRevision()
-newRev.removeAttachmentNamed("phto.jpg")
-var error: NSError?
-assert(newRev.save(&error) != nil)
-----
-
-[source]
-----
-// Remove an attachment from a document:
-Document doc = database.getDocument("Robin");
-UnsavedRevision newRev = doc.getCurrentRevision().createRevision();
-newRev.removeAttachment("photo.jpg");
-// (You could also update newRev.properties while you're here)
-newRev.save();
-----
-
-[source]
-----
-// Remove an attachment from a document:
-var doc = database.GetDocument("Robin");
-var newRev = doc.CurrentRevision.CreateRevision();
-newRev.RemoveAttachment("photo.jpg");
-var savedRev = newRev.Save();
-Debug.Assert(savedRev != null);
 ----
 
 === Attachment storage
@@ -2186,48 +1119,6 @@ CBLView* phoneView = [db viewNamed: @"phones"];
         emit(phone, doc[@"name"]);
     }
 }) version: @"2"];
-----
-
-[source]
-----
-// Create a view and register its map function:
-let phoneView = db.viewNamed("phones")
-phoneView.setMapBlock({ (doc, emit) in
-    if let phones = doc["phones"] as? [String] {
-        for phone in phones {
-            emit(phone, doc["name"])
-        }
-    }
-}, version: "2")
-----
-
-[source]
-----
-// Create a view and register its map function:
-View phoneView = database.getView("phones");
-phoneView.setMap(new Mapper() {
-    @Override
-    public void map(Map<String, Object> document, Emitter emitter) {
-        List<String> phones = (List) document.get("phones");
-        for (String phone : phones) {
-            emitter.emit(phone, document.get("name"));
-        }
-    }
-}, "2");
-----
-
-[source]
-----
-// Create a view and register its map function:
-var view = database.GetView("phones");
-view.SetMap((doc, emit) =>
-{
-    var phones = doc["phones"].AsList<string>();
-    foreach(var phone in phones)
-    {
-        emit(phone, doc["name"]);
-    }
-}, "2");
 ----
 
 The `version` parameter to `setMapBlock` takes a bit of explanation.
@@ -2341,47 +1232,6 @@ The `QueryRow.documentID` and accessors will then use this document ID instead.
 }) version: @"1"];
 ----
 
-[source]
-----
-// This example indexes documents that record Facebook-style "likes".
-// When querying, the document we really want to look at is the post being
-// liked, so we redirect the emitted row at that document.
-view.setMapBlock({ (doc, emit) -> Void in
-    if doc["type"] as? String == "like" {
-        let associatedID = doc["likePostID"] as String
-        let key = [doc["creator"]!, doc["date"]!]
-        let value = ["_id": associatedID]
-        emit(key, value)
-    }
-}, version: "1")
-----
-
-[source]
-----
-// This example indexes documents that record Facebook-style "likes".
-// When querying, the document we really want to look at is the post being
-// liked, so we redirect the emitted row at that document.
-view.setMap(new Mapper() {
-    @Override
-    public void map(Map<String, Object> document, Emitter emitter) {
-        if (document.get("type").equals("like")) {
-            String associatedID = (String) document.get("likedPostID");
-            List<Object> key = new ArrayList<Object>();
-            key.add(document.get("creator"));
-            key.add(document.get("date"));
-            HashMap<String, Object> value = new HashMap<String, Object>();
-            value.put("_id", associatedID);
-            emitter.emit(key, value);
-        }
-    }
-}, "1");
-----
-
-[source,text]
-----
-No code example is currently available.
-----
-
 Even if you've used the redirect technique, at query time you can still recover the ID of the actual document that emitted the row, by using the `QueryRow.sourceDocumentID` property.
 
 === Reduce functions
@@ -2414,54 +1264,6 @@ CBLView* phoneView = [db viewNamed: @"phones"];
 } version: @"2"];
 ----
 
-[source]
-----
-let phoneView = db.viewNamed("phones")
-phoneView.setMapBlock({ (doc, emit) -> Void in
-    if let phones = doc["phones"] as? [String] {
-        for phone in phones {
-            emit(phone, doc["name"])
-        }
-    }
-}, reduceBlock: { (keys, values, rereduce) -> AnyObject! in
-    return values.count
-}, version: "2")
-----
-
-[source]
-----
-// Create a view and register its map and reduce functions:
-View phoneView = database.getView("phones");
-phoneView.setMapReduce(new Mapper() {
-    @Override
-    public void map(Map<String, Object> document, Emitter emitter) {
-        List<String> phones = (List) document.get("phones");
-        for (String phone : phones) {
-            emitter.emit(phone, document.get("name"));
-        }
-    }
-}, new Reducer() {
-    @Override
-    public Object reduce(List<Object> keys, List<Object> values, boolean rereduce) {
-       return new Integer(values.size());
-    }
-}, "2");
-----
-
-[source]
-----
-// Create a view and register its map and reduce functions:
-var view = database.GetView("phones");
-view.SetMapReduce((doc, emit) =>
-{
-    var phones = doc["phones"].AsList<string>();
-    foreach(var phone in phones)
-    {
-        emit(phone, doc["name"]);
-    }
-}, (keys, values, rereduce) => values.ToList().Count, "2.0");
-----
-
 For efficiency, the key/value pairs are passed in as two parallel arrays.
 This reduce block just counts the number of values and returns that number as an object.
 We could query this view, with reduce enabled, and get the total number of phone numbers in the database.
@@ -2477,35 +1279,6 @@ for (NSNumber* value in values) {
     total += value.doubleValue;
 }
 return @(total);
-----
-
-[source]
-----
-var total: Double = 0.0
-let numberValues = values as [Double];
-for value in numberValues {
-    total += value
-}
-return total
-----
-
-[source]
-----
-double total = 0;
-for (Double value : values) {
-    total += value.doubleValue();
-}
-return new Double(total);
-----
-
-[source]
-----
-var total = 0.0;
-foreach(var value in values.ToList())
-{
-    total += Convert.ToDouble(value);
-}
-return total;
 ----
 
 This totaling is common enough that `CBLView` provide a utility to do it for you, the `totalValues` method.
@@ -2554,72 +1327,6 @@ CBLView* phoneView = [db viewNamed: @"phones"];
         return @(values.count);
     }
 }) version: @"2"];
-----
-
-[source]
-----
-// Create a view and register its map and reduce functions:
-let phoneView = db.viewNamed("phones")
-phoneView.setMapBlock({ (doc, emit) in
-    if let phones = doc["phones"] as? [String] {
-        for phone in phones {
-            emit(phone, doc["name"])
-        }
-    }
-}, reduceBlock: { (keys, values, rereduce) in
-    if rereduce {
-        return CBLView.totalValues(values) // re-reduce mode adds up counts
-    } else {
-        return values.count
-    }
-}, version: "2")
-----
-
-[source]
-----
-// Create a view and register its map and reduce functions:
-View phoneView = database.getView("phones");
-phoneView.setMapReduce(new Mapper() {
-    @Override
-    public void map(Map<String, Object> document, Emitter emitter) {
-        List<String> phones = (List) document.get("phones");
-        for (String phone : phones) {
-            emitter.emit(phone, document.get("name"));
-        }
-    }
-}, new Reducer() {
-    @Override
-    public Object reduce(List<Object> keys, List<Object> values, boolean rereduce) {
-        if (rereduce) {
-            return View.totalValues(values);
-        } else {
-            return new Integer(values.size());
-        }
-    }
-}, "2");
-----
-
-[source]
-----
-// Create a view and register its map and reduce functions:
-let phoneView = database.GetView("phones");
-phoneView.SetMapReduce((doc, emit) =>
-{
-    var phones = doc["phones"].AsList<string>();
-    foreach(var phone in phones)
-    {
-        emit(phone, doc["name"]);
-    }
-}, (keys, values, rereduce) => {
-    if (rereduce)
-    {
-        return View.TotalValues(values.ToList());
-    }
-    else
-    {
-        return values.ToList().Count;
-    }
-}, "2.0");
 ----
 
 When the `rereduce` flag is off, this just counts the raw values as before.
@@ -2743,30 +1450,6 @@ query.descending = YES;
 query.limit = 20;
 ----
 
-[source]
-----
-// Set up a query for a view that indexes blog posts, to get the latest:
-let query = db.viewNamed("postsByDate").createQuery()
-query.descending = true
-query.limit = 20
-----
-
-[source]
-----
-// Set up a query for a view that indexes blog posts, to get the latest:
-Query query = database.getView("postsByDate").createQuery();
-query.setDescending(true);
-query.setLimit(20);
-----
-
-[source]
-----
-// Set up a query for a view that indexes blog posts, to get the latest:
-var query = database.GetView("postsByDate").CreateQuery();
-query.Descending = true;
-query.Limit = 20;
-----
-
 === All-documents queries
 
 An all-docs query isn't associated with a view;
@@ -2799,65 +1482,6 @@ for (CBLQueryRow* row in result) {
 }
 ----
 
-[source]
-----
-// Let's find the documents that have conflicts so we can resolve them:
-let query = db.createAllDocumentsQuery()
-query.allDocsMode = CBLAllDocsMode.OnlyConflicts
-var error: NSError?
-let result = query.run(&error)
-while let row = result?.nextRow() {
-    NSLog("!!! Conflict in document %@", row.documentID);
-    self.beginConflictResolution(row.document)
-}
-----
-
-[source]
-----
-// Let's find the documents that have conflicts so we can resolve them:
-Query query = database.createAllDocumentsQuery();
-query.setAllDocsMode(Query.AllDocsMode.ONLY_CONFLICTS);
-QueryEnumerator result = query.run();
-for (Iterator<QueryRow> it = result; it.hasNext(); ) {
-    QueryRow row = it.next();
-    if (row.getConflictingRevisions().size() > 0) {
-        Log.w("MYAPP", "Conflict in document: %s", row.getDocumentId());
-        beginConflictResolution(row.getDocument());
-    }
-}
-----
-
-[source]
-----
-// Let's find the documents that have conflicts so we can resolve them:
-Query query = database.createAllDocumentsQuery();
-query.setAllDocsMode(Query.AllDocsMode.ONLY_CONFLICTS);
-QueryEnumerator result = query.run();
-for (Iterator<QueryRow> it = result; it.hasNext(); ) {
-    QueryRow row = it.next();
-    if (row.getConflictingRevisions().size() > 0) {
-        Log.w("MYAPP", "Conflict in document: %s", row.getDocumentId());
-        beginConflictResolution(row.getDocument());
-    }
-}
-----
-
-[source]
-----
-// Let's find the documents that have conflicts so we can resolve them:
-var query = database.CreateAllDocumentsQuery();
-query.AllDocsMode = AllDocsMode.OnlyConflicts;
-var rows = query.Run();
-foreach (var row in rows)
-{
-    if (row.GetConflictingRevisions().Any())
-    {
-        Log.W(Tag, "Conflict in document: " + row.DocumentId);
-        BeginConflictResolution(row.Document);
-    }
-}
-----
-
 === Running queries
 
 After a `Query` object is set up just right, you call its `run` method to get the results.
@@ -2878,50 +1502,6 @@ query.limit = 100;
 CBLQueryEnumerator* result = [query run: &error];
 for (CBLQueryRow* row in result) {
     NSLog(@"Widget named %@ costs $%.2f", row.key, [row.value doubleValue]);
-}
-----
-
-[source]
-----
-// Let's query a view that maps product names to prices,
-// starting with the "M"s and showing 100 widgets:
-let query = db.viewNamed("widgetsByName").createQuery()
-query.startKey = "m"
-query.limit = 100
-var error: NSError?
-let result = query.run(&error)
-while let row = result?.nextRow() {
-    NSLog("Widget named %@ costs $%.2f", row.key as String, row.value as Double);
-}
-----
-
-[source]
-----
-// Let's query a view that maps product names to prices,
-// starting with the "M"s and showing 100 widgets:
-Query query = database.getView("widgetsByName").createQuery();
-query.setStartKey("m");
-query.setLimit(100);
-QueryEnumerator result = query.run();
-for (Iterator<QueryRow> it = result; it.hasNext(); ) {
-    QueryRow row = it.next();
-    Log.w("MYAPP", "Widget named %s costs $%f", row.getKey(), ((Double)row.getValue()).doubleValue());
-}
-----
-
-[source]
-----
-// Let's query a view that maps product names to prices,
-// starting with the "M"s and showing 100 widgets:
-var query = database.GetView("widgetsByName").CreateQuery();
-query.StartKey = "m";
-query.Limit = 100;
-var rows = query.Run();
-foreach (var row in rows)
-{
-    var name = row.Key;
-    var cost = Convert.ToDouble(row.Value);
-    Log.W(Tag, "Widget named " + name + " costs $" +  cost);
 }
 ----
 
@@ -2947,44 +1527,6 @@ if (self.queryResult == nil || self.queryResult.stale) {
     if (![self.queryResult isEqual: newResult]) {
         self.queryResult = newResult;
         [self updateMyUserInterface];
-    }
-}
-----
-
-[source]
-----
-// Check whether the query result set has changed:
-if (queryResult == nil || queryResult.stale) {
-    let newResult = query.run(&error)
-    if (queryResult != newResult) {
-        queryResult = newResult
-        self.updateMyUserInterface()
-    }
-}
-----
-
-[source]
-----
-// Check whether the query result set has changed:
-if (queryResult == null || queryResult.isStale()) {
-    QueryEnumerator newResult = query.run();
-    if (!queryResult.equals(newResult)) {
-        queryResult = newResult;
-        updateMyUserInterface();
-    }
-}
-----
-
-[source]
-----
-// Check whether the query result set has changed:
-if (queryResult == null || queryResult.Stale)
-{
-    QueryEnumerator newResult = query.Run();
-    if (!queryResult.Equals(newResult))
-    {
-        queryResult = newResult;
-        UpdateMyUserInterface();
     }
 }
 ----
@@ -3018,56 +1560,6 @@ This helps your app feel quick and responsive.
 }
 ----
 
-[source]
-----
-func initializeQuery() {
-    let query = db.viewNamed("widgets").createQuery()
-    query.limit = 100
-    liveQuery = query.asLiveQuery()
-    liveQuery.addObserver(self, forKeyPath: "rows", options: nil, context: nil)
-    liveQuery.start()
-}
-override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject,
-    change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
-    if object as? NSObject == liveQuery {
-        displayRows(liveQuery.rows)
-    }
-}
-----
-
-[source]
-----
-private void initializeQuery() {
-    // Set up my live query during view initialization:
-    Query query = database.getView("widgets").createQuery();
-    query.setLimit(100);
-    LiveQuery liveQuery = query.toLiveQuery();
-    this.liveQuery = liveQuery;
-    liveQuery.addChangeListener(new LiveQuery.ChangeListener() {
-        @Override
-        public void changed(LiveQuery.ChangeEvent event) {
-            if (event.getSource().equals(this.liveQuery)) {
-                this.displayRows(event.getRows());
-            }
-        }
-    });
-    this.liveQuery.start();
-}
-----
-
-[source]
-----
-private void InitializeQuery()
-{
-    // Set up my live query during view initialization:
-    var query = database.GetView("widgets").CreateQuery();
-    query.Limit = 100;
-    liveQuery = query.ToLiveQuery();
-    liveQuery.Changed += (sender, e) => DisplayRows(e.Rows);
-    liveQuery.Start();
-}
-----
-
 === Querying key ranges
 
 There are some subtleties to working with key ranges (`startKey` and `endKey`).
@@ -3085,33 +1577,6 @@ query.startKey = @100;  // Note the start key is higher than the end key
 query.endKey = @90;
 ----
 
-[source]
-----
-// Set up a query for the highest-rated movies:
-let query = db.viewNamed("postsByDate").createQuery()
-query.descending = true
-query.startKey = 100 // Note the start key is higher than the end key
-query.endKey = 90
-----
-
-[source]
-----
-// Set up a query for the highest-rated movies:
-Query query = database.getView("postsByDate").createQuery();
-query.setDescending(true);
-query.setStartKey(new Integer(100));
-query.setEndKey(new Integer(90));
-----
-
-[source]
-----
-// Set up a query for the highest-rated movies:
-var query = database.GetView("postsByDate").CreateQuery();
-query.Descending = true;
-query.StartKey = 100;
-query.EndKey = 90;
-----
-
 Second is the handling of compound (array) keys.
 When a view's keys are arrays, it's very common to want to query all the rows that have a specific value (or value range) for the first element.
 The start key is just a one-element array with that value in it, but it's not obvious what the _end_ key should be.
@@ -3127,30 +1592,6 @@ This works because the sort order in views puts dictionaries last.
 CBLQuery* query = [[self.db viewNamed: @"carsByColorAndModel"] createQuery];
 query.startKey = @[@"red"]
 query.endKey   = @[@"red", @{}];
-----
-
-[source]
-----
-// Assume the view's keys are like [color, model]. We want all the red ones.
-let query = db.viewNamed("carsByColorAndModel").createQuery()
-query.startKey = ["red"]
-query.endKey = ["red",[:]]
-----
-
-[source]
-----
-// Assume the view's keys are like [color, model]. We want all the red ones.
-Query query = database.getView("carsByColorAndModel").createQuery();
-query.setStartKey("red");
-query.setEndKey(Arrays.asList("red", new HashMap<String, Object>()));
-----
-
-[source]
-----
-// Assume the view's keys are like [color, model]. We want all the red ones.
-var query = database.GetView("carsByColorAndModel").CreateQuery();
-query.StartKey = new List<object> {"red"};
-query.EndKey = new List<object> {"red", new Dictionary<string, object>()};
 ----
 
 === Reducing
@@ -3183,75 +1624,6 @@ for (CBLQueryRow* row in [query run: &error]) {
 query.mapOnly = NO;
 CBLQueryRow* aggregate = [[query run: &error] nextRow];
 NSLog(@"Average order was $%.2f", [row.value doublevalue]);
-----
-
-[source]
-----
-// This view's keys are order dates, and values are prices.
-// The reduce function computes an average of the input values.
-let query = ordersByDateView.createQuery()
-query.startKey = "2014-01-01"
-query.endKey = "2014-02-01"
-query.inclusiveEnd = false
-// First run without reduce to get the individual orders for January '14:
-query.mapOnly = true
-var error: NSError?
-var result = query.run(&error)
-while let row = result?.nextRow() {
-    NSLog("On %@: order for $%.2f", row.key as String, row.value as Double);
-}
-// Now run with reduce to get the average order price for January '14:
-query.mapOnly = false
-result = query.run(&error)
-if let aggregate = result?.nextRow() {
-    NSLog("Average order was $%.2f", aggregate.value as Double)
-}
-----
-
-[source]
-----
-// This view's keys are order dates, and values are prices.
-// The reduce function computes an average of the input values.
-Query query = database.getView("ordersByDateView").createQuery();
-query.setStartKey("2014-01-01");
-query.setEndKey("2014-02-01");
-// First run without reduce to get the individual orders for January '14:
-query.setMapOnly(true);
-QueryEnumerator result = query.run();
-for (Iterator<QueryRow> it = result; it.hasNext(); ) {
-    QueryRow row = it.next();
-    Log.w("MYAPP", "On %s: order for $%f", row.getKey(), ((Double)row.getValue()).doubleValue());
-}
-// Now run with reduce to get the average order price for January '14:
-query.setMapOnly(false);
-QueryEnumerator result = query.run();
-QueryRow aggregate = result.next();
-Log.w("MYAPP", "Average order was $%f", ((Double)aggregate.getValue()).doubleValue());
-----
-
-[source]
-----
-// This view's keys are order dates, and values are prices.
-// The reduce function computes an average of the input values.
-var query = database.GetView("ordersByDateView").CreateQuery();
-query.StartKey = "2014-01-01";
-query.EndKey = "2014-02-01";
-query.InclusiveEnd = false;
-// First run without reduce to get the individual orders for January '14:
-query.MapOnly = true;
-var rows = query.Run();
-foreach (var row in rows)
-{
-    var date = row.Key;
-    var price = Convert.ToDouble(row.Value);
-    Log.D(Tag, String.Format("On {0}: order for ${1:0.##}", date, price));
-}
-// Now run with reduce to get the average order price for January '14:
-query.MapOnly = false;
-rows = query.Run();
-Debug.Assert(rows.Count > 0);
-var avg = Convert.ToDouble(rows.GetRow(0).Value);
-Log.D(Tag, String.Format("Average order was ${0:0.##}", avg));
 ----
 
 === Grouping by key
@@ -3289,54 +1661,6 @@ NSMutableArray* albumTimes  = [NSMutableArray array];
 for (CBLQueryRow* row in [query run: &error]) {
     [albumTitles addObject: [row keyAtIndex: 2];  // title is 3rd item of key
     [albumTimes addObject:  row.value];   // value is album's running time
-}
-----
-
-[source]
-----
-var albumTitles: [String] = []
-var albumTimes: [Int] = []
-var error: NSError?
-let result = query.run(&error)
-while let row = result?.nextRow() {
-    albumTitles.append(row.keyAtIndex(2) as String)
-    albumTimes.append(row.value as Int)
-}
-----
-
-[source]
-----
-Query query = database.getView("hierarchyView").createQuery();
-query.setGroupLevel(3);
-query.setStartKey(Arrays.asList("Mope-Rock", "Radiohead"));
-query.setEndKey(Arrays.asList("Mope-Rock", "Radiohead", new HashMap<String, Object>()));
-// groupLevel=3 will return [genre, artist, album] keys.
-List<String> albumTitles = new ArrayList<String>();
-List<String> albumTimes = new ArrayList<String>();
-QueryEnumerator result = query.run();
-for (Iterator<QueryRow> it = result; it.hasNext(); ) {
-    QueryRow row = it.next();
-    List<String> key = (List) row.getKey();
-    albumTitles.add(key.get(2)); // title is 3rd item of key
-    albumTimes.add((String)row.getValue()); // value is album's running time
-}
-----
-
-[source]
-----
-var query = database.GetView("hierarchyView").CreateQuery();
-query.GroupLevel = 3;
-query.StartKey = new List<object> {"Mope-Rock", "Radiohead"};
-query.EndKey = new List<object> {"Mope-Rock", "Radiohead", new Dictionary<string, object>()};
-// GroupLevel = 3 will return [genre, artist, album] keys.
-var albumTitles = new List<string>();
-var albumTimes = new List<string>();
-var rows = query.Run();
-foreach (var row in rows)
-{
-    var keys = row.Key.AsList<string>();
-    albumTitles.Add(keys[2]);           // title is 3rd item of key
-    albumTimes.Add((string)row.Value);  // value is album's running time
 }
 ----
 
@@ -3392,43 +1716,6 @@ auth = [CBLAuthenticator basicAuthenticatorWithName: username
 push.authenticator = pull.authenticator = auth;
 ----
 
-[source]
-----
-let url = NSURL(string: "https://example.com/mydatabase/")
-let push = database.createPushReplication(url)
-let pull = database.createPullReplication(url)
-push.continuous = true
-pull.continuous = true
-var auth: CBLAuthenticatorProtocol?
-auth = CBLAuthenticator.basicAuthenticatorWithName(username, password: password)
-push.authenticator = auth
-pull.authenticator = auth
-----
-
-[source]
-----
-URL url = new URL("https://example.com/mydatabase/");
-Replication push = database.createPushReplication(url);
-Replication pull = database.createPullReplication(url);
-pull.setContinuous(true);
-push.setContinuous(true);
-Authenticator auth = new BasicAuthenticator(username, password);
-push.setAuthenticator(auth);
-pull.setAuthenticator(auth);
-----
-
-[source]
-----
-var url = new Uri("https://example.com/mydatabase/");
-var push = database.CreatePushReplication(url);
-var pull = database.CreatePullReplication(url);
-var auth = AuthenticatorFactory.CreateBasicAuthenticator(username, password);
-push.Authenticator = auth;
-pull.Authenticator = auth;
-push.Continuous = true;
-pull.Continuous = true;
-----
-
 You will also probably want to monitor the replication's progress, particularly because this will tell you if errors occur, but also if you want to display a progress indicator to the user.
 The API for registering as an observer is platform-specific.
 
@@ -3454,58 +1741,6 @@ self.push = push;
 self.pull = pull;
 // The replications are running now; the -replicationChanged: method will
 // be called with notifications when their status changes.
-----
-
-[source]
-----
-NSNotificationCenter.defaultCenter().addObserver(self,
-    selector: "replicationChanged", name: kCBLReplicationChangeNotification, object: push)
-NSNotificationCenter.defaultCenter().addObserver(self,
-    selector: "replicationChanged", name: kCBLReplicationChangeNotification, object: pull)
-push.start()
-pull.start()
-// It's important to keep a reference to a running replication,
-// or it is likely to be dealloced!
-self.push = push;
-self.pull = pull;
-// The replications are running now; the -replicationChanged: method will
-// be called with notifications when their status changes.
-----
-
-[source]
-----
-push.addChangeListener(new Replication.ChangeListener() {
-    @Override
-    public void changed(Replication.ChangeEvent event) {
-        // will be called back when the push replication status changes
-    }
-});
-pull.addChangeListener(new Replication.ChangeListener() {
-    @Override
-    public void changed(Replication.ChangeEvent event) {
-        // will be called back when the pull replication status changes
-    }
-});
-push.start();
-pull.start();
-this.push = push;
-this.pull = pull;
-----
-
-[source]
-----
-push.Changed += (sender, e) =>
-{
-    // Will be called when the push replication status changes
-};
-pull.Changed += (sender, e) =>
-{
-    // Will be called when the pull replication status changes
-};
-push.Start();
-pull.Start();
-this.push = push;
-this.pull = pull;
 ----
 
 === Filtered replications
@@ -3546,59 +1781,6 @@ push.filter = @"byOwner";
 push.filterParams = @{@"name": @"Waldo"};
 ----
 
-[source]
-----
-db.setFilterNamed("byOwner", asBlock: {
-    (revision, params) -> Bool in
-        let nameParam = params["name"] as? String
-        return nameParam != nil && nameParam! == revision["owner"] as? String
-})
-//
-// Set up a filtered push replication using the above filter block,
-// that will push only docs whose "owner" property equals "Waldo":
-var push = db.createPushReplication(url)
-push.filter = "byOwner"
-push.filterParams = ["name": "Waldo"]
-----
-
-[source]
-----
-// Define a filter that matches only docs with a given "owner" property.
-// The value to match is given as a parameter named "name":
-db.setFilter("byOwner", new ReplicationFilter() {
-    @Override
-    public boolean filter(SavedRevision revision, Map<String, Object> params) {
-        String nameParam = (String) params.get("name");
-        return nameParam != null && nameParam.equals(revision.getProperty("owner"));
-    }
-});
-//
-// Set up a filtered push replication using the above filter block,
-// that will push only docs whose "owner" property equals "Waldo":
-Replication push = db.createPushReplication(url);
-push.setFilter("byOwner");
-Map<String, Object> params = new HashMap<String, Object>();
-params.put("name", "Waldo");
-push.setFilterParams(params);
-----
-
-[source]
-----
-// Define a filter that matches only docs with a given "owner" property.
-// The value to match is given as a parameter named "name":
-database.SetFilter("byOwner", (revision, filterParams) =>
-{
-    var nameParam = filterParams["name"];
-    var owner = (string)revision.GetProperty("owner");
-    return (nameParam != null) && nameParam.Equals(owner);
-});
-// Set up a filtered push replication using the above filter block,
-// that will push only docs whose "owner" property equals "Waldo":
-var push = database.CreatePushReplication(url);
-push.Filter = "byOwner";
-push.FilterParams = new Dictionary<string, object> { {"name", "Waldo"} };
-----
-
 ==== Filtered pull from Sync Gateway
 
 Channels are used to filter documents being pulled from the Sync Gateway.
@@ -3613,29 +1795,6 @@ Only documents tagged with those channels will be downloaded.
 // docs in the "sales" channel from the Sync Gateway:
 CBLReplication *pull = [database createPullReplication: url];
 pull.channels = @[@"sales"];
-----
-
-[source]
-----
-// Set up a channel-filtered pull replication that will pull only
-// docs in the "sales" channel from the Sync Gateway:
-var pull: CBLReplication = database.createPullReplication(url)
-pull.channels = ["sales"]
-----
-
-[source]
-----
-// Set up a channel-filtered pull replication that will pull only
-// docs in the "sales" channel from the Sync Gateway:
-db.createPullReplication(url);
-List<String> channels = new ArrayList<String>();
-channels.add("sales");
-pull.setChannels(channels);
-----
-
-[source,text]
-----
-No code example is currently available.
 ----
 
 NOTE: Replication properties changed after it has already started won't have any effect.
@@ -3656,31 +1815,6 @@ The code below pulls the documents with ID "123" and "xyz" if they exist and the
 CBLReplication* pull = [database createPullReplication:kSyncGatewayUrl];
 pull.documentIDs = @[@"123", @"xyz"];
 [pull start];
-----
-
-[source]
-----
-let pull = database.createPullReplication(kSyncGatewayUrl)
-pull.documentIDs = ["123", "xyz"]
-pull.start()
-----
-
-[source]
-----
-List<String> docIDs = new ArrayList<>();
-docIDs.add("123");
-docIDs.add("xyz");
-
-Replication pull = database.createPullReplication(mSyncGatewayUrl);
-pull.setDocIds(docIDs);
-pull.start();
-----
-
-[source]
-----
-var pull = database.CreatePullReplication(SyncGatewayUrl);
-pull.DocIds = new string[] {"123", "xyz"};
-pull.Start();
 ----
 
 For *push* replications with Sync Gateway, this functionality is available in one-shot and continuous replications.
@@ -3737,80 +1871,6 @@ Just be aware that changesCount may be zero if the number of documents to transf
 }
 ----
 
-[source]
-----
-NSNotificationCenter.defaultCenter().addObserver(self,
-    selector: "replicationChanged:",
-    name: kCBLReplicationChangeNotification,
-    object: push)
-NSNotificationCenter.defaultCenter().addObserver(self,
-    selector: "replicationChanged:",
-    name: kCBLReplicationChangeNotification,
-    object: pull)
-func replicationChanged(n: NSNotification) {
-    // The replication reporting the notification is n.object , but we
-    // want to look at the aggregate of both the push and pull.
-
-    // First check whether replication is currently active:
-    let active = pull.status == CBLReplicationStatus.Active || push.status == CBLReplicationStatus.Active
-    self.activityIndicator.state = active
-    // Now show a progress indicator:
-    self.progressBar.hidden = !active;
-    if active {
-        var progress = 0.0
-        let total = push.changesCount + pull.changesCount
-        let completed = push.completedChangesCount + pull.completedChangesCount
-        if total > 0 {
-            progress = Double(completed) / Double(total);
-        }
-        self.progressBar.progress = progress;
-    }
-}
-----
-
-[source]
-----
-final ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "Please wait ...", "Syncing", false);
-pull.addChangeListener(new Replication.ChangeListener() {
-    @Override
-    public void changed(Replication.ChangeEvent event) {
-        // The replication reporting the notification is either
-        // the push or the pull, but we want to look at the
-        // aggregate of both the push and pull.
-        // First check whether replication is currently active:
-        boolean active = (pull.getStatus() == Replication.ReplicationStatus.REPLICATION_ACTIVE) ||
-        (push.getStatus() == Replication.ReplicationStatus.REPLICATION_ACTIVE);
-        if (!active) {
-            progressDialog.dismiss();
-        } else {
-            double total = push.getCompletedChangesCount() + pull.getCompletedChangesCount();
-            progressDialog.setMax(total);
-            progressDialog.setProgress(push.getChangesCount() + pull.getChangesCount());
-        }
-    }
-});
-----
-
-[source]
-----
-// The replication reporting the notification is either
-// the push or the pull, but we want to look at the
-// aggregate of both the push and pull.
-// First check whether replication is currently active:
-var active = push.Status == ReplicationStatus.Active ||
-             pull.Status == ReplicationStatus.Active;
-if (!active)
-{
-    DismissProgressBar();
-}
-else
-{
-    var total = push.CompletedChangesCount + pull.CompletedChangesCount;
-    var progress = push.ChangesCount + pull.ChangesCount;
-    ShowProgressBar(progress, total);
-}
-----
-
 ==== Detecting unauthorized credentials
 
 The replication listener can also be used to detect when credentials are incorrect or access to Sync Gateway requires authentication.
@@ -3836,74 +1896,6 @@ The replication listener can also be used to detect when credentials are incorre
         NSError *error = pull.lastError ? pull.lastError : push.lastError;
         if (error.code == 401) {
             NSLog(@"Authentication error");
-        }
-    }
-}
-----
-
-[source]
-----
-    ...
-
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: "changeListener:", name: kCBLReplicationChangeNotification, object: push)
-    NSNotificationCenter.defaultCenter().addObserver(self, selector: "changeListener:", name: kCBLReplicationChangeNotification, object: pull)
-}
-
-func changeListener(notification: NSNotification) {
-    if (push.status == CBLReplicationStatus.Active || pull.status == CBLReplicationStatus.Active) {
-        print("Sync in progress")
-    } else {
-        let error = push.lastError ?? pull.lastError
-        print("Error with code \(error?.code)")
-        if error?.code == 401 {
-            print("Authentication error")
-        }
-    }
-}
-----
-
-[source]
-----
-push = database.createPushReplication(url);
-push.addChangeListener(new Replication.ChangeListener() {
-    @Override
-    public void changed(Replication.ChangeEvent event) {
-        if (event.getError() != null) {
-            Throwable lastError = event.getError();
-            if (lastError instanceof RemoteRequestResponseException) {
-                RemoteRequestResponseException exception = (RemoteRequestResponseException) lastError;
-                if (exception.getCode() == 401) {
-                    // Authentication error
-                }
-            }
-        }
-    }
-});
-----
-
-[source]
-----
-    ...
-    pull.Changed += Changed;
-    push.Changed += Changed;
-}
-
-void Changed(object sender, ReplicationChangeEventArgs e)
-{
-    if (pull.Status == ReplicationStatus.Active || push.Status == ReplicationStatus.Active)
-    {
-        Console.WriteLine("Sync in progress");
-    }
-    else if (e.LastError != null)
-    {
-        Exception error = e.LastError;
-        if (error is HttpResponseException)
-        {
-            HttpResponseException exception = (HttpResponseException)error;
-            if ((int) exception.StatusCode == 401)
-            {
-                Console.WriteLine("Authentication error");
-            }
         }
     }
 }
@@ -4270,31 +2262,6 @@ self.listener.passwords = @{@"hello": @"pw123"};
 [listener start:nil];
 ----
 
-[source]
-----
-let manager = CBLManager.sharedInstance()
-self.listener = CBLListener(manager: manager, port: 55000)
-self.listener.passwords = ["hello": "pw123"]
-self.listener.start(nil)
-----
-
-[source]
-----
-Manager manager = new Manager((Context) getApplicationContext(), Manager.DEFAULT_OPTIONS);
-Credentials credentials = new Credentials("hello", "pw123");
-listener = new LiteListener(manager, 55000, credentials);
-Thread thread = new Thread(listener);
-thread.start();
-----
-
-[source]
-----
-Manager manager = Manager.SharedInstance;
-listener = new CouchbaseLiteTcpListener (manager, 55000, CouchbaseLiteTcpOptions.AllowBasicAuth);
-listener.SetPasswords(new Dictionary<string, string>() { { "hello", "pw123" } });
-listener.Start ();
-----
-
 Make sure to keep a reference to the listener instance in your application otherwise it may be garbage collected and unexpectedly stop listening for incoming HTTP requests.
 In the example above, the listener instance is initialized as an instance property of the class.
 
@@ -4388,24 +2355,6 @@ In addition to using basic authentication, it is also possible to enable SSL ove
 ----
 if (![listener setAnonymousSSLIdentityWithLabel: @"MyApp SSL" error: &error])
     // handle error
-----
-
-[source]
-----
-if !listener.setAnonymousSSLIdentityWithLabel("MyApp SSL", error: error) {
-   // handle error }
-----
-
-[source,text]
-----
-No code example is currently available.
-----
-
-[source,text]
-----
-var path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "unit_test.pfx");
-var cert = X509Manager.GetPersistentCertificate("127.0.0.1", "123abc", path);
-CouchbaseLiteTcpListener listener = new CouchbaseLiteTcpListener(manager, 0, CouchbaseLiteTcpOptions.UseTLS, cert);
 ----
 
 The Listener is now serving SSL using an automatically generated identity.
