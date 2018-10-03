@@ -199,6 +199,9 @@ public class MainActivity extends AppCompatActivity {
     // ### Loading a pre-built database
     public void testPreBuiltDatabase() throws IOException {
         // tag::prebuilt-database[]
+				// Note: Getting the path to a database is platform-specific.
+				// For Android you need to extract it from your
+				// assets to a temporary directory and then pass that path.
         Context context = getApplicationContext();
         if (!Database.exists("travel-sample", context.getFilesDir())) {
             /* copy database to files directory */

@@ -61,6 +61,8 @@
 
 - (void) dontTestLoadingPrebuilt {
     // tag::prebuilt-database[]
+		// Note: Getting the path to a database is platform-specific.
+		// For iOS you need to get the path from the main bundle.
     if (![CBLDatabase databaseExists:@"travel-sample" inDirectory:nil]) {
         NSError*error;
         NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"travel-sample" ofType:@"cblite2"];

@@ -59,6 +59,8 @@ class SampleCodeTest: CBLTestCase {
 
     func dontTestLoadingPrebuilt() throws {
         // tag::prebuilt-database[]
+        // Note: Getting the path to a database is platform-specific.
+        // For iOS you need to get the path from the main bundle.
         let path = Bundle.main.path(forResource: "travel-sample", ofType: "cblite2")!
         if !Database.exists(withName: "travel-sample") {
             do {
