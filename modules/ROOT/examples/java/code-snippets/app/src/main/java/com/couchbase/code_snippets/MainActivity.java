@@ -201,16 +201,17 @@ public class MainActivity extends AppCompatActivity {
         // tag::prebuilt-database[]
         // Note: Getting the path to a database is platform-specific.
         // For Android you need to extract it from your
-        // assets to a temporary directory and then pass that path.
+        // assets to a temporary directory and then pass that path to Database.copy()
         Context context = getApplicationContext();
-        if (!Database.exists("travel-sample", context.getFilesDir())) {
-            /* copy database to files directory */
-        }
         DatabaseConfiguration configuration = new DatabaseConfiguration(context);
-        try {
-            database = new Database("travel-sample", configuration);
-        } catch (CouchbaseLiteException e) {
-            e.printStackTrace();
+        if (!Database.exists("travel-sample", context.getFilesDir())) {
+            ZipUtils.unzip(getAsset("travel-sample.cblite2.zip"), getApplicationContext().getFilesDir());
+            File path = new File(getApplicationContext().getFilesDir(), "travel-sample");
+            try {
+                Database.copy(path, "travel-sample", configuration);
+            } catch (CouchbaseLiteException e) {
+                e.printStackTrace();
+            }
         }
         // end::prebuilt-database[]
     }
