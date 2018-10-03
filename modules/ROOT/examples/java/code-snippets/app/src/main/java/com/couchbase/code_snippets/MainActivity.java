@@ -1,5 +1,6 @@
 package com.couchbase.code_snippets;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -198,13 +199,15 @@ public class MainActivity extends AppCompatActivity {
     // ### Loading a pre-built database
     public void testPreBuiltDatabase() throws IOException {
         // tag::prebuilt-database[]
-        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
-        ZipUtils.unzip(getAsset("replacedb/android200-sqlite.cblite2.zip"), getApplicationContext().getFilesDir());
-        File path = new File(getApplicationContext().getFilesDir(), "android-sqlite");
+        Context context = getApplicationContext();
+        if (!Database.exists("travel-sample", context.getFilesDir())) {
+            /* copy database to files directory */
+        }
+        DatabaseConfiguration configuration = new DatabaseConfiguration(context);
         try {
-            Database.copy(path, "travel-sample", config);
+            database = new Database("travel-sample", configuration);
         } catch (CouchbaseLiteException e) {
-            Log.e(TAG, "Could not load pre-built database");
+            e.printStackTrace();
         }
         // end::prebuilt-database[]
     }
