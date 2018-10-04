@@ -16,11 +16,16 @@ include::{snippet}[tag=database-encryption,indent=0]
 Couchbase Lite does not persist the key.
 It is the application's responsibility to manage the key and store it in a platform specific secure store such as Apple's https://developer.apple.com/documentation/security/keychain_services[Keychain] or Android's https://developer.android.com/training/articles/keystore[Keystore].
 
-If you're migrating an application from Couchbase Lite 1.x to 2.x, note that the <<database-upgrade,automatic database upgrade>> functionality is *not supported* for encrypted databases.
-Thus, to upgrade an encrypted 1.x database, you can:
-
-. Disable encryption using the Couchbase Lite 1.x SDK (see xref:1.4@{source-language}.adoc#database-encryption[1.x encryption guide])
-. Open the database file with encryption enabled using the Couchbase Lite 2.x SDK (see example above)
-
 An encrypted database can only be opened with the same language SDK that was used to encrypt it in the first place (Swift, C#, Java or Objective-C).
 For example, if a database is encrypted with the Swift SDK and then exported, it will only be readable with the Swift SDK.
+
+==== Upgrading from 1.x when Encryption is Enabled
+
+If you're migrating an application from Couchbase Lite 1.x to 2.x, note that the <<database-upgrade,automatic database upgrade>> functionality is *not supported* for encrypted databases.
+Thus, to upgrade an encrypted 1.x database, you should do the following:
+
+. Disable encryption using the Couchbase Lite 1.x framework (see xref:1.4@{source-language}.adoc#database-encryption[1.x encryption guide])
+. Open the database file with encryption enabled using the Couchbase Lite 2.x framework (see <<database-encryption, database encryption>>).
+
+Since it is not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in the same application this upgrade path would require two successive upgrades.
+If you are using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.
