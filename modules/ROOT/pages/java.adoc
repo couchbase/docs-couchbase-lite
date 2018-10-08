@@ -2336,86 +2336,87 @@ The client has to take the cert on faith the first time it connects.
 
 == Release Notes
 
-=== Deprecation notices
-
-The following features are being deprecated in Couchbase Mobile 1.4 and will be unsupported in 2.0.
-
-* ForestDB
-
-The following platforms are being deprecated in Couchbase Mobile 1.4 and will be unsupported in 2.0.
-
-* Android API Level < 16
-
-=== 1.4.1 release
-
-.Performance Improvements
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1608[#1608] Purge does not remove row from 'docs' table
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1623[#1623] Potential bug: Push replication becomes slower as local DB grows
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1630[#1630] View indexing is very slow, due to mis-optimized SQLite query
+=== 1.3.1 release
 
 .Enhancements
-* https://github.com/couchbase/couchbase-lite-java-core/issues/290[#290] 1.x: [Memory] Memory leak in allReplicators
-* https://github.com/couchbase/couchbase-lite-java-core/issues/639[#639] 1.x: Enhance ChangeTracker Error handling (port latest codes from iOS)
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1376[#1376] Implement `timeout` parameter for `\_changes` REST API
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1387[#1387] Support for _oidc_refresh response without ID token
 
 .Bugs
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1296[#1296] Cordova - After putting Android app in background mode for a few hours, CB lite is unresponsive
 * https://github.com/couchbase/couchbase-lite-java-core/issues/1372[#1372] Router unable to route request to do_GET_DesignDocument (ForestDB)
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1483[#1483] 1.x: java.lang.OutOfMemoryError: Failed to allocate a 24 byte allocation with 329648 free bytes and 321KB until OOM; failed due to fragmentation...
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1604[#1604] 1.x: Leftover replication threads prevent application exit.
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1605[#1605] 1.x: peer to peer replication with attachments does not work with android client
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1627[#1627] Replicator does not close a connection immediately after stopping the replication.
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1629[#1629] Wrong return code for listener causes problems with puller and deleted items
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1631[#1631] Stopped replicator is restarted by network reachability
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1637[#1637] 1.x: RejectedExecutionException is through from Replicator
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1652[#1652] 1.x - LiveQuery: row.getDocument().getProperties() return null if document is deleted during indexing
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1660[#1660] 1.x: Peer to Peer: InvocationTargetException in Router.java with PhotoDrop sample app
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1663[#1663] 1.x: Channel removal potentially disrupts attachments
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1617[#1617] The specified SyncGatewaySession value with in POST /_replicate is not used.
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1375[#1375] Reduce intermittently returns wrong results for 1.3.0-45
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1379[#1379] MultipartDocumentReader: Attachment length cannot be parsed as Integer
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1386[#1386] POST _replicate not create replicators when altering props beside type, target/source
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1394[#1394] ViewsTest.testDeleteView() test failure
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1399[#1399] Longpoll _changes on Listener does not respect timeout property
 
-=== 1.4 release
-
-.API change
-* An `isDeletion` property is now available on the `DatabaseChange` object to identify if a change is tombstone document.
+=== 1.3 release
 
 .Enhancements
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1087[#1087] LiteServ app for Java
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1543[#1543] Make CBLDatabaseChange.isDeletion public?
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1554[#1554] 1.0.2d is being rejected by Google Play
+* https://github.com/couchbase/couchbase-lite-java-core/issues/708[#708] Apache HTTP Client Removal/Deprecated in Android M.
+* https://github.com/couchbase/couchbase-lite-java-core/issues/820[#820] Filter out _removed revision from push replication
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1054[#1054] Support POST /_changes in Listener
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1057[#1057] Cbforest master branch version fails with many unit test (1.2.0-java -> master)
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1097[#1097] After purging a doc, its rows are left behind in view indexes
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1099[#1099] Docs in SQLite dbs never get pruned until entire db is compacted
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1194[#1194] Fallback to GET when POST is not allowed to _changes
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1207[#1207] TTL support
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1222[#1222] Make SQLite one writer and one/multiple reader modes to avoid waiting connection.
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1247[#1247] Add public API to add an existing revision (AKA new_edits=false, or -forceInsert:)
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1255[#1255] Authenticator for OpenID Connect
 
 .Bugs
-* https://github.com/couchbase/couchbase-lite-java-core/issues/911[#911] Multiple duplicate replication change events sent in pull replication
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1334[#1334] Change tracker stopped during continuous replication error thrown when cookie expires
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1385[#1385] CBLReplicatorExecutor still exists after stopping the replicator
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1470[#1470] IOS pull replication from Android
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1471[#1471] Attachments failed to replicate when deleted and recreated
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1481[#1481] ConnectionError: ('Connection aborted.', error(54, 'Connection reset by peer'))
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1493[#1493] Test failure ViewsTest.failingTestAllDocumentsLiveQuery on Jenkins
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1495[#1495] Changes feed skipping changes on rapid long poll
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1498[#1498] Was not able to delete the database directory, Status: 500 (HTTP 500 Internal Server Error)
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1510[#1510] Mixing HashMap and TreeMap for properties in Document.
-HashMap allows to generate non-canonical JSON.
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1534[#1534] Push Replication Fails With createTarget Set
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1535[#1535] ForestDB Views Issue :Router: Router unable to route request to do_GET_DesignDocument(java.lang.NullPointerException)
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1539[#1539] Small load - ConnectionError: ('Connection aborted.', error(54, 'Connection reset by peer'))
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1540[#1540] _replicate REST API with one-shot returns immediately.
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1549[#1549] 1.4-12 ConnectionError: ('Connection aborted.', error(54, 'Connection reset by peer')) during doc add
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1550[#1550] Test Failure: testAndroid2MLimit
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1551[#1551] Test failure: testMultipleLiveQueries
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1552[#1552] P2P fails between android and macosx
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1553[#1553] Test Failure: testGetDocumentWithLargeJSON
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1557[#1557] List not syncing during test fest (Need to reproduce).
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1558[#1558] Listener returning different error codes for negative tests 1.3.1 vs 1.4
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1563[#1563] Database deletion failing with 1.4-25
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1564[#1564] P2P sanity test failing
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1575[#1575] SSL with allowSelfSignedSSLCertificates() method
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1576[#1576] [Functional Test] Socket timeout when pushing docs to LiteServ
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1578[#1578] Image attachment not sync'ing from .NET to Android
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1581[#1581] Replication failures when running Sync Gateway in distributed index
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1585[#1585] ForestDB + Encryption - SIGSEGV during database deletion
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1588[#1588] Investigate test_verify_open_revs_with_revs_limit_push_conflict failure
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1589[#1589] Investigate possible push replication issue
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1590[#1590] Investigate failure at client.stop_replication()
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1592[#1592] Find root cause of ConnectionError: ('Connection aborted.', error(54, 'Connection reset by peer'))
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1593[#1593] Missing changes on changes feed (Mac <- Android) pull replication
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1595[#1595] Database error with peer-2-peer-sanity test
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1597[#1597] P2P - ForestDB Error: forceInsert()
-* https://github.com/couchbase/couchbase-lite-java-core/issues/1599[#1599] Updates not propagating to SQLite Client
+* https://github.com/couchbase/couchbase-lite-java-core/issues/310[#310] Post on doc without data returns 404 instead of 405
+* https://github.com/couchbase/couchbase-lite-java-core/issues/667[#667] Using PipedInputStream and PipedOutputStream in URLConnection can cause deadlock (see issue 57 in couchbase-lite-java-listener)
+* https://github.com/couchbase/couchbase-lite-java-core/issues/880[#880] Query for view with map-reduce function and startkey doesn't work properly
+* https://github.com/couchbase/couchbase-lite-java-core/issues/891[#891] Fix failing tests (on Jenkins/VM)
+* https://github.com/couchbase/couchbase-lite-java-core/issues/952[#952] Views broken with concurrent update and delete
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1015[#1015] NPE Attempt to invoke virtual method int com.couchbase.lite.Database.findMissingRevisions on a null object reference
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1026[#1026] Change tracker stopping during replication exception
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1037[#1037] Proxy setting on Android blocks access to Listener
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1073[#1073] ForestDB CBL 1.2 random crash.
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1090[#1090] Android API 10: java.lang.UnsatisfiedLinkError: nativeOpen
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1091[#1091] ReplicationTest > testPusherBatching FAILED with CBL Java
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1095[#1095] CBL 1.2 ForestDB random crash.
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1098[#1098] Querying local CBLite via REST API returns all doc revisions (not just current rev)
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1161[#1161] CBL - 1.2.0 upgrade from 1.1.0 clears device db
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1176[#1176] ForestDB CBL 1.2 crash in endTransaction()
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1177[#1177] ForestDB CBL 1.2 crash.
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1193[#1193] Return 405 (Method Not Allowed) instead of 404 if Router does not support requested REST API
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1196[#1196] Crash in ForestDB (filemgr_is_fully_resident)
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1201[#1201] GrocerySync crashes with ForestDB
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1210[#1210] Listener ?attachments=true to return attachment in base64
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1211[#1211] Supports `only_conflicts` and `include_conflicts` query parameters for `\_all_docs` REST API
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1222[#1222] Make SQLite one writer and one/multiple reader modes to avoid waiting connection.
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1227[#1227] Port: Crash when saving, conflict generated and infinite replication loop
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1232[#1232] ManagerTest.testClose() failed with latest master branch
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1235[#1235] BackFillTest.testPullReplWithRevsAndAtts() fails
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1236[#1236] PullReplWithRevsAndAttsTest.testPullReplWithRevsAndAtts() fails
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1241[#1241] Couchbase-lite-java-forestdb is not build-able on Windows
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1243[#1243] Push replication from Android LiteServ and sync_gateway not pushing all deleted documents
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1245[#1245] CBL Java/Android can not handle complex Accept: header value
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1249[#1249] Purge does not update view on ForestDB Mobile
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1263[#1263] Deleting a db takes over 1 min.
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1264[#1264] Querying a design document view returns deleted documents too REST API
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1270[#1270] Forestdb Handle is being used by another thread (Note: ForestDB error code = -39)
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1272[#1272] 400 Missing data of attachment while pushing attachments
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1275[#1275] Very slow doc PUT's with lots of garbage collection.
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1276[#1276] ForestDB CBL crash.
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1285[#1285] OkHttp ConnectionPool thread leaking
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1289[#1289] SecureTokenStore does not work with Android M/N and there is encrypting data size limitation for API 18 - 22
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1297[#1297] 590 Database error (Note: ForestDB error code = -39)
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1299[#1299] Get just attachment with header 'Accept: applicatio/json' should return {"status" : 406, "error" : "not_acceptable"}
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1300[#1300] Compaction doesn't work with ForestDb
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1301[#1301] ForestDB throws exception from native call (Note: ForestDB error code = -39)
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1308[#1308] Encrypted attachments fail to sync
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1315[#1315] Replicator shouldn't go to IDLE state if the authenticating is not done
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1319[#1319] Autopruning failing on pull replication
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1324[#1324] OIDC shouldn't clear refresh token after refreshing the token
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1332[#1332] Cancelling a replication does not return a response.
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1333[#1333] OIDC: Obtaining username with refresh-token might have issue
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1339[#1339] Make lower initial heartbeat value for /_changes REST API
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1342[#1342] Unit Test Failures on Jenkins
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1355[#1355] Listener does not return response for PUT /db
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1356[#1356] Listener does not return response for DELETE /db
+* https://github.com/couchbase/couchbase-lite-java-core/issues/1367[#1367] Live Query Seems broken with ForestDB

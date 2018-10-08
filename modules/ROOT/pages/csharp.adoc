@@ -1959,91 +1959,85 @@ The client has to take the cert on faith the first time it connects.
 
 == Release Notes
 
-*Deprecation notices*
-
-The following features are being deprecated in Couchbase Mobile 1.4 and will be unsupported in 2.0.
-
-* ForestDB
-* Bonjour P2P Discovery Service
-
-The following platforms are being deprecated in Couchbase Mobile 1.4 and will be unsupported in 2.0.
-
-* .NET 3.5
-
-=== 1.4.1 release
-
-.Performance Improvements
-* {url-issues-net}/827[#827] Purge does not remove row from 'docs' table
-* {url-issues-net}/856[#856] View indexing is very slow, due to mis-optimized SQLite query
-
-.Enhancements
-* {url-issues-net}/867[#867] Preserve revision history for each "branch" on pruning
-* {url-issues-net}/915[#915] Support DocIDs setting for pull replication with Sync Gateway
+=== 1.3.1 release
 
 .Bugs
-* {url-issues-net}/778[#778] Push sync becomes slower as local DB grows, fails to advance lastSequence
-* {url-issues-net}/821[#821] .NET not encoding atts_since
-* {url-issues-net}/824[#824] Pull replication stopping when coming online
-* {url-issues-net}/830[#830] Remove RunInOuterTransaction
-* {url-issues-net}/832[#832] New_edits on _bulk_docs should default to true
-* {url-issues-net}/834[#834] 1.4 breaks custom headers on PUT HTTP requests
-* {url-issues-net}/835[#835] Unable to select multiple values with LINQ 1.4
-* {url-issues-net}/840[#840] Couchbase.Lite.dll missing Product Version Info and Others
-* {url-issues-net}/847[#847] Trying to remove encryption from a SQLite DB throws an exception
-* {url-issues-net}/848[#848] Retry loop causes web socket changes feed to stop
-* {url-issues-net}/850[#850] Wrong return code for listener causes problems with puller and deleted items.
-* {url-issues-net}/853[#853] Updating a design doc view map function does not take effect
-* {url-issues-net}/863[#863] PollInterval is not obeyed
-* {url-issues-net}/910[#910] Channel removal potentially disrupts attachments
-* {url-issues-net}/914[#914] Bulk download error not passed to client
+* https://github.com/couchbase/couchbase-lite-net/issues/693[#693] TestJSViews failing with ForestDB
+* https://github.com/couchbase/couchbase-lite-net/issues/716[#716] V1.3 Unauthorized http state not reported on replicators LastError property
+* https://github.com/couchbase/couchbase-lite-net/issues/717[#717] Unexpected replications returned from active tasks
+* https://github.com/couchbase/couchbase-lite-net/issues/723[#723] POST _replicate fails which when "source" or "target" is a dictionary
 
-=== 1.4 release
-
-.API change
-* An `isDeletion` property is now available on the `DatabaseChange` object to identify if a change is tombstone document.
+=== 1.3 release
 
 .Enhancements
-* {url-issues-net}/245[#245] Implement LINQ IQueryable
-* {url-issues-net}/575[#575] Package Custom SQLite
-* {url-issues-net}/709[#709] Implement LiteServ on mobile platforms
-* {url-issues-net}/741[#741] Remove Mono.Security build
-* {url-issues-net}/745[#745] Support 'stale=false' queries in Listener
-* {url-issues-net}/766[#766] Push replication does not work when attachment content type is missing
-* {url-issues-net}/797[#797] Add DatabaseChangedEventArgs.IsDeletion to public API
-* {url-issues-net}/802[#802] Attempt to silence websockets when they shutdown
+* https://github.com/couchbase/couchbase-lite-net/issues/50[#50] Add WebSocket support to replication
+* https://github.com/couchbase/couchbase-lite-net/issues/558[#558] Missing PrefixMatchLevel under query
+* https://github.com/couchbase/couchbase-lite-net/issues/570[#570] Implement Database.Close()
+* https://github.com/couchbase/couchbase-lite-net/issues/574[#574] Remove requirement to define SQLCIPHER
+* https://github.com/couchbase/couchbase-lite-net/issues/582[#582] Stop using long poll limit
+* https://github.com/couchbase/couchbase-lite-net/issues/595[#595] Support POST /_changes in listener
+* https://github.com/couchbase/couchbase-lite-net/issues/596[#596] Package 32-bit CBForest-Interop.dll
+* https://github.com/couchbase/couchbase-lite-net/issues/599[#599] Allow users to specify the format they want dates to be deserialized as
+* https://github.com/couchbase/couchbase-lite-net/issues/606[#606] Implement remote logging interface
+* https://github.com/couchbase/couchbase-lite-net/issues/613[#613] Make View.UpdateIndex() public
+* https://github.com/couchbase/couchbase-lite-net/issues/615[#615] Hook up GET _active_tasks
+* https://github.com/couchbase/couchbase-lite-net/issues/617[#617] TTL support
+* https://github.com/couchbase/couchbase-lite-net/issues/634[#634] No way to remove a database.
+* https://github.com/couchbase/couchbase-lite-net/issues/635[#635] Add support for HTTP 408 status
+* https://github.com/couchbase/couchbase-lite-net/issues/639[#639] Provide build of ListenerConsole in latestbuilds with each nuget package set.
+* https://github.com/couchbase/couchbase-lite-net/issues/648[#648] Major inefficiencies replicating docs with many revisions
+* https://github.com/couchbase/couchbase-lite-net/issues/650[#650] Investigate ability to more quickly start a stopping replication
+* https://github.com/couchbase/couchbase-lite-net/issues/652[#652] OpenID connect mechanism
+* https://github.com/couchbase/couchbase-lite-net/issues/653[#653] REST API for TTL
+* https://github.com/couchbase/couchbase-lite-net/issues/678[#678] Implement GET design doc
+* https://github.com/couchbase/couchbase-lite-net/issues/685[#685] Add API for clearing OpenID auth token
+* https://github.com/couchbase/couchbase-lite-net/issues/686[#686] OpenID tokens in the key store should be per-database
 
 .Bugs
-* {url-issues-net}/672[#672] .NET LiteServ is loading windows specific binaries on mac
-* {url-issues-net}/710[#710] SQL Exception caused by trying to query non-existent `+maps_#+` table
-* {url-issues-net}/713[#713] QueryOptions skip and limit used incorrectly during reduce
-* {url-issues-net}/718[#718] V1.3 Continuous replication stops on change tracker error
-* {url-issues-net}/719[#719] Replication - Inconsistent Number of Documents After Replicating
-* {url-issues-net}/724[#724] V1.3 GetPendingDocumentIDs value is cached while offline for Push
-* {url-issues-net}/725[#725] Replication fails to authenticate with POST _replicate cookie.
-* {url-issues-net}/727[#727] BlobStoreWriter fails to delete encryption marker when removing encryption
-* {url-issues-net}/731[#731] Missing docs when pushing to multiple sync gateways
-* {url-issues-net}/732[#732] Transaction rollback does not invalidate cached doc ID map
-* {url-issues-net}/735[#735] SIGSEGV when closing a database while replication is still active
-* {url-issues-net}/742[#742] CB Lite on Android Xamarin fails to replicate when local DB is large
-* {url-issues-net}/749[#749] Attachments failed to replicate when deleted and recreated
-* {url-issues-net}/753[#753] SQLiteStorageEngine can return stale data in rare cases
-* {url-issues-net}/755[#755] Pull replication gets stuck in Active with more completed changes than pending changes
-* {url-issues-net}/756[#756] Pusher does not report "Forbidden" errors
-* {url-issues-net}/757[#757] Replicator should not assume LastSequence is an integer
-* {url-issues-net}/765[#765] Not all docs replicating with p2p .NET pull replication
-* {url-issues-net}/767[#767] Changes feed skipping changes on rapid long poll
-* {url-issues-net}/772[#772] ManagementException in GetWindowsName() of Platform.cs
-* {url-issues-net}/773[#773] BrowseService's Dispose crash fix not merged to Master?
-* {url-issues-net}/776[#776] Replication.Stop() doesn't release sockets
-* {url-issues-net}/779[#779] Attachments disappearing from docs when continuous pull is enabled
-* {url-issues-net}/782[#782] Encrypted attachments fail to push
-* {url-issues-net}/785[#785] NullReferenceException in Replication.GetStatusFromError
-* {url-issues-net}/789[#789] Investigate root cause of deletion not propagating to .NET client
-* {url-issues-net}/795[#795] Set ServicePointManager.SecurityProtocol
-* {url-issues-net}/796[#796] Headers not sent when pullReplication.Continuous = true
-* {url-issues-net}/803[#803] NullReferenceException in WebSocketChangeTracker
-* {url-issues-net}/804[#804] Attachment doesn't handle non-seekable streams gracefully
-* {url-issues-net}/806[#806] 1.4 SQLite returns incorrect reason on REST API Get to purged doc
-* {url-issues-net}/807[#807] Handle closed web sockets by reconnecting
-* {url-issues-net}/825[#825] Pull replication doesn't restart with web sockets
-* {url-issues-net}/826[#826] .NET not sending all docs to a client pull replication (p2p, SSL)
+* https://github.com/couchbase/couchbase-lite-net/issues/557[#557] SimpleAndroidSync freezing when adding items offline
+* https://github.com/couchbase/couchbase-lite-net/issues/573[#573] Implement query filter on ForestDB views
+* https://github.com/couchbase/couchbase-lite-net/issues/580[#580] Prevent nuget from using incompatible Stateless versions
+* https://github.com/couchbase/couchbase-lite-net/issues/583[#583] System.BadImageFormatException when calling manager.GetDatabase("dbname") method
+* https://github.com/couchbase/couchbase-lite-net/issues/590[#590] Listener crashes when receiving improper messages
+* https://github.com/couchbase/couchbase-lite-net/issues/591[#591] Warn if map function calls emit(null, ...)
+* https://github.com/couchbase/couchbase-lite-net/issues/608[#608] Listener intermittently enters hanging state
+* https://github.com/couchbase/couchbase-lite-net/issues/609[#609] After purging a doc, live queries are not informed of the view change
+* https://github.com/couchbase/couchbase-lite-net/issues/610[#610] Docs in SQLite dbs never get pruned until entire db is compacted
+* https://github.com/couchbase/couchbase-lite-net/issues/611[#611] Stop() should not wait for changes to finish
+* https://github.com/couchbase/couchbase-lite-net/issues/612[#612] When examining an exception, all nested exceptions should be examined
+* https://github.com/couchbase/couchbase-lite-net/issues/616[#616] ExecSQL timeout prevents successful query of a very large db
+* https://github.com/couchbase/couchbase-lite-net/issues/623[#623] Pushing ending prematurely
+* https://github.com/couchbase/couchbase-lite-net/issues/625[#625] Xamarin Android crash due to hitting max application memory while syncing large attachments
+* https://github.com/couchbase/couchbase-lite-net/issues/627[#627] Revpos == 0 needs to be treated as valid
+* https://github.com/couchbase/couchbase-lite-net/issues/628[#628] Fallback to GET when POST is not allowed to _changes
+* https://github.com/couchbase/couchbase-lite-net/issues/631[#631] Duplicate rows emitted during UpdateIndex
+* https://github.com/couchbase/couchbase-lite-net/issues/636[#636] Starting a replication that already exists causes NRE
+* https://github.com/couchbase/couchbase-lite-net/issues/637[#637] IOS device build error in 1.2.1.1
+* https://github.com/couchbase/couchbase-lite-net/issues/640[#640] Docs taking a really long time to replicate
+* https://github.com/couchbase/couchbase-lite-net/issues/641[#641] 401 Unauthorized during replication
+* https://github.com/couchbase/couchbase-lite-net/issues/643[#643] Manager constructor fails on Windows 10
+* https://github.com/couchbase/couchbase-lite-net/issues/644[#644] Heartbeat not behaving correctly with Listener (not honoring user setting)
+* https://github.com/couchbase/couchbase-lite-net/issues/654[#654] Change tracker paused not working
+* https://github.com/couchbase/couchbase-lite-net/issues/655[#655] Web socket change tracker doesn't use auth
+* https://github.com/couchbase/couchbase-lite-net/issues/656[#656] Delete replications not following the same behavior as the native iOS library
+* https://github.com/couchbase/couchbase-lite-net/issues/657[#657] Documents with null _attachments property cause NullReferenceException
+* https://github.com/couchbase/couchbase-lite-net/issues/659[#659] Document.Update enters infinite loop
+* https://github.com/couchbase/couchbase-lite-net/issues/660[#660] Setting log configuration via app.config is throwing exception
+* https://github.com/couchbase/couchbase-lite-net/issues/661[#661] Removed attachments reported by UnsavedRevision
+* https://github.com/couchbase/couchbase-lite-net/issues/666[#666] Unsaved attachment ContentType property throws NullReferenceException
+* https://github.com/couchbase/couchbase-lite-net/issues/667[#667] WebSocketChangeTracker does not support using cookies for authentication
+* https://github.com/couchbase/couchbase-lite-net/issues/669[#669] POST _replicate on the listen does not returns null "session_id"
+* https://github.com/couchbase/couchbase-lite-net/issues/673[#673] Incorrect processing in REST API of documents with null bodies
+* https://github.com/couchbase/couchbase-lite-net/issues/674[#674] Needless exception thrown and caught when dynamic DLL is loaded
+* https://github.com/couchbase/couchbase-lite-net/issues/675[#675] Incorrect class type causing issues with REST all documents query
+* https://github.com/couchbase/couchbase-lite-net/issues/676[#676] Rare continuous changes feed issue over SSL
+* https://github.com/couchbase/couchbase-lite-net/issues/679[#679] Functional test failure on auto pruning
+* https://github.com/couchbase/couchbase-lite-net/issues/683[#683] Fail to GET encrypted raw attachment
+* https://github.com/couchbase/couchbase-lite-net/issues/687[#687] Pusher not properly setting headers on HTTP requests
+* https://github.com/couchbase/couchbase-lite-net/issues/688[#688] Null reference exception during functional auto prune test
+* https://github.com/couchbase/couchbase-lite-net/issues/694[#694] Xamarin Android SIGSEGV on unit test
+* https://github.com/couchbase/couchbase-lite-net/issues/698[#698] NullReferenceException in SendAsyncRequest
+* https://github.com/couchbase/couchbase-lite-net/issues/705[#705] Replication unable to recover from remote checkpoint conflict
+
+.Known Issues
+* https://github.com/couchbase/couchbase-lite-net/issues/693[#693] TestJSViews failing with ForestDB
