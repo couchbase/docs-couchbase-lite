@@ -1,14 +1,14 @@
 Although the size of the Couchbase Lite framework that is downloaded is around 50MB, note that the framework would add only around 3.5MB to the size of the app when it is installed from the App Store.
 This is because when the user installs your app from the App Store, only the bits that are relevant to the device architecture are delivered.
 
-==== Why is the original size so large?
+=== Why is the original size so large?
 
 The Couchbase Lite framework  includes a "fat" binary that contains slices for both device (`armv7`, `arm64`) and simulator (`i386` and `x86_64`) CPU architectures.
 The fat binary allows you to link your app to the same framework and run your app on the simulator or a real device.
 In addition, the bitcode that is included with the framework contributes to the majority of the download size.
 https://help.apple.com/xcode/mac/current/#/devbbdc5ce4f[Bitcode] is an intermediate code representation that allows Apple to recompile the app after App submission and to deliver a thin version of the app specific to the device architecture.
 
-==== Architecture Stripping
+=== Architecture Stripping
 
 When submitting a build of your application to the App Store you must ensure that it doesn't contain any simulator architecture otherwise the upload will fail with the error message "Unsupported Architecture.
 Your executable contains unsupported architecture '[x86_64, i386]'."
@@ -42,12 +42,12 @@ The link:https://github.com/Carthage/Carthage/blob/5fd867c4895b4f59d70181dec169a
 --
 ====
 
-==== Should you disable bitcode?
+=== Should you disable bitcode?
 
 Although you can disable bitcode within your app and strip away bitcode from the Couchbase Lite framework, it is not necessary to do so.
 In fact, it is probably best to leave it enabled to be future proof.
 This is because the bitcode is never downloaded by the user even though it is uploaded during App submission.
 
-==== Other resource to reduce the size of your app
+=== Other resource to reduce the size of your app
 
 More information is available on this https://developer.apple.com/library/archive/qa/qa1795/_index.html[Apple Q&A] page.
