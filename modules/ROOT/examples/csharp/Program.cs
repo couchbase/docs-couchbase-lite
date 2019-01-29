@@ -595,6 +595,36 @@ namespace api_walkthrough
             Database.SetLogLevel(LogDomain.Network, LogLevel.Verbose);
             // end::replication-logging[]
         }
+        
+        private static void EnableBasicAuth()
+        {
+            var database = _Database;
+            
+            // tag::basic-authentication[]
+            var url = new Uri("ws://localhost:4984/mydatabase");
+            var target = new URLEndpoint(url);
+            var config = new ReplicatorConfiguration(database, target);
+            config.Authenticator = new BasicAuthenticator("john", "pass");
+
+            var replicator = new Replicator(config);
+            replicator.Start();
+            // end::basic-authentication[]
+        }
+        
+        private static void EnableSessionAuth()
+        {
+            var database = _Database;
+            
+            // tag::session-authentication[]
+            var url = new Uri("ws://localhost:4984/mydatabase");
+            var target = new URLEndpoint(url);
+            var config = new ReplicatorConfiguration(database, target);
+            config.Authenticator = new SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447");
+
+            var replicator = new Replicator(config);
+            replicator.Start();
+            // end::session-authentication[]
+        }
 
         private static void SetupReplicatorListener()
         {
