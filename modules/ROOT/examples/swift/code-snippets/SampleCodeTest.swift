@@ -17,12 +17,11 @@
 //  limitations under the License.
 //
 
-import XCTest
 import CouchbaseLiteSwift
 import MultipeerConnectivity
 
 
-class SampleCodeTest: CBLTestCase {
+class SampleCodeTest {
     
     var database: Database!
     
@@ -771,7 +770,7 @@ class ActivePeerConnection: MessageEndpointConnection {
     func receive(data: Data) {
         // tag::active-peer-receive[]
         let message = Message.fromData(data)
-        replicatorConnection?.receive(messge: message)
+        replicatorConnection?.receive(message: message)
         // end::active-peer-receive[]
     }
 
@@ -850,7 +849,7 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
     func receive(data: Data) {
         // tag::passive-peer-receive[]
         let message = Message.fromData(data)
-        replicatorConnection?.receive(messge: message)
+        replicatorConnection?.receive(message: message)
         // end::passive-peer-receive[]
     }
     
