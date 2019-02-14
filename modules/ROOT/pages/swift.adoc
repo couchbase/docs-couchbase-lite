@@ -647,7 +647,6 @@ Thus, good performance depends on designing and creating the _right_ indexes to 
 === Change Events
 
 A live query stays active and monitors the database for changes.
-When there's a change it re-runs itself automatically, and if the query results changed it notifies any observers.
 A live query is a great way to build reactive user interfaces, especially table/list views, that keep themselves up to date.
 For example, as the replicator runs and pulls new data from the server, a live query-driven UI will automatically update to show the data without the user having to manually refresh.
 This helps your app feel quick and responsive.
@@ -656,7 +655,9 @@ This helps your app feel quick and responsive.
 ----
 include::{snippet}[tag=live-query,indent=0]
 ----
-<1> The live query starts immediately and changes are posted asynchronously.
+<1> To start a live query, you must call `query.execute()`.
+This will immediately execute the query and post the result to the change listener.
+When there's a change it re-runs itself automatically, and posts the new query result to any observers (change listeners).
 
 The following example stops the live query with the token from the previous example.
 

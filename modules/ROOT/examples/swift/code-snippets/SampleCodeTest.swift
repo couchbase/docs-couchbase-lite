@@ -224,12 +224,21 @@ class SampleCodeTest {
         // end::query-select-all[]
         
         // tag::live-query[]
+        let query = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+        
+        // Adds a query change listener.
+        // Changes will be posted on the main queue.
         let token = query.addChangeListener { (change) in
-            for result in change.results! { // <1>
+            for result in change.results! {
                 print(result.keys)
                 /* Update UI */
             }
         }
+        
+        // Start live query.
+        query.execute(); // <1>
         // end::live-query[]
         
         // tag::stop-live-query[]
