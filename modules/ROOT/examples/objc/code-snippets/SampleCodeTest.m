@@ -17,9 +17,10 @@
 //  limitations under the License.
 //
 
-#import "CBLTestCase.h"
+#import <UIKit/UIKit.h>
+#import <CouchbaseLite/CouchbaseLite.h>
 
-@interface SampleCodeTest : CBLTestCase
+@interface SampleCodeTest : NSObject
 
 @end
 
