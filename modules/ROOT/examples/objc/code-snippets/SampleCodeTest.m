@@ -486,6 +486,32 @@
     // end::replication-logging[]
 }
 
+- (void) dontTestReplicationBasicAuthentication {
+    CBLDatabase *database = self.db;
+    // tag::basic-authentication[]
+    NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
+    CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
+    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
+    config.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"john" password:@"pass"];
+    
+    CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
+    [replicator start];
+    // end::basic-authentication[]
+}
+
+- (void) dontTestReplicationSessionAuthentication {
+    CBLDatabase *database = self.db;
+    // tag::session-authentication[]
+    NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
+    CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
+    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
+    config.authenticator = [[CBLSessionAuthenticator alloc] initWithSessionID:@"904ac010862f37c8dd99015a33ab5a3565fd8447"];
+    
+    CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
+    [replicator start];
+    // end::session-authentication[]
+}
+
 - (void) dontTestReplicatorStatus {
     CBLDatabase *database = self.db;
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
