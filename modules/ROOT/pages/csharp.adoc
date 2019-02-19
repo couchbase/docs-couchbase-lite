@@ -104,7 +104,7 @@ Comparing this to the xref:1.4@csharp.adoc#supported-versions[supported versions
 
 == API References
 
-* http://docs.couchbase.com/mobile/2.1/couchbase-lite-net/[C# SDK API References]
+http://docs.couchbase.com/mobile/2.1/couchbase-lite-swift[Swift SDK API References]
 
 == Upgrading
 
@@ -133,7 +133,7 @@ For conflicts in the 1.x database, the automatic upgrade process copies the defa
 This functionality is related to the way conflicts are being handled in Couchbase Lite 2.0 (see xref:swift.adoc#handling-conflicts[Handling Conflicts]).
 Optionally, existing conflicts in the 1.x database can be resolved with the xref:1.4@{source-language}.adoc#resolving-conflicts[1.x API] prior to the database being upgraded to 2.0.
 
-===== Handling of Existing Attachments
+==== Handling of Existing Attachments
 
 Attachments that were persisted in the 1.x database will be copied to the 2.0 database.
 In Couchbase Lite 2.0, the `Attachment` API has been renamed to `Blob` API.
@@ -150,11 +150,11 @@ include::{snippet}[tag=1x-attachment,indent=0]
 === Replication Compatibility
 
 The replication protocol used in Couchbase Lite 2.0 has been re-designed from the ground up and it is not backwards compatible with the 1.x replication protocol.
-Therefore, to use replication with Couchbase Lite 2.0, the target Sync Gateway instance must also be upgraded to 2.0.
+Therefore, to use replication with Couchbase Lite 2.x, the target Sync Gateway instance must also be upgraded to 2.x.
 
-Sync Gateway 2.0 will continue to accept clients that connect through the 1.x protocol.
+Sync Gateway 2.x will continue to accept clients that connect through the 1.x protocol.
 It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through ws://localhost:4984/db.
-This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.0.
+This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
 
 == Database
 
@@ -212,8 +212,8 @@ include::{snippet}[tag=prebuilt-database,indent=0]
 
 == Document
 
-In Couchbase Lite, a document's body takes the form of a JSON object -- a collection of key/value pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
-Every document is identified by a document ID, which can be automatically generated (as a UUID) or determined by the application;
+In Couchbase Lite, a document's body takes the form of a JSON object--a collection of key/value pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
+Every document is identified by a document ID, which can be automatically generated (as a UUID) or specified programmatically;
 the only constraints are that it must be unique within the database, and it can't be changed.
 
 === Initializers
@@ -277,7 +277,7 @@ But Couchbase Mobile is a distributed system, and due to the way replication wor
 
 == Blobs
 
-We've renamed "attachments" to "blobs", for clarity.
+We've renamed "attachments" to "blobs".
 The new behavior should be clearer too: a `Blob` is now a normal object that can appear in a document as a property value.
 In other words, you just instantiate a `Blob` and set it as the value of a property, and then later you can get the property value, which will be a `Blob` object.
 The following code example adds a blob to the document under the `avatar` property.
@@ -292,6 +292,10 @@ It also supports an optional `type` property that by convention stores the MIME 
 
 In the example above, "image/jpeg" is the MIME type and "avatar" is the key which references that `Blob`.
 That key can be used to retrieve the `Blob` object at a later time.
+
+On Couchbase Lite, blobs can be arbitrarily large, and are only read on demand, not when you load a `Document` object.
+On Sync Gateway, the maximum content size is 20 MB per blob.
+If a document's blob is over 20 MB, the document will be replicated but not the blob.
 
 When a document is synchronized, the Couchbase Lite replicator will add an `_attachments` dictionary to the document's properties if it contains a blob.
 A random access name will be generated for each `Blob` which is different to the "avatar" key that was used in the example above.
@@ -580,10 +584,10 @@ Armagh
 Avignon
 ----
 
-=== Full-Text Search
+== Full-Text Search
 
 To run a full-text search (FTS) query, you must have created a full-text index on the expression being matched.
-Unlike regular queries, the index is not optional.
+Unlike queries, the index is not optional.
 The following example inserts documents and creates an FTS index on the `name` property.
 
 [source]
@@ -685,18 +689,27 @@ In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the pro
 == Replication
 
 Couchbase Mobile 2.0 uses a new replication protocol based on WebSockets.
-This protocol has been designed to be fast, efficient, easier to implement, and symmetrical between the client and server.
+
+The replicator is designed to send documents from a source to a target database.
+The target can be one of the following:
+
+`URLEndpoint`::
+To replicate data between a local Couchbase Lite database and remote Sync Gateway database using the WebSocket protocol ([start here]).
+`DatabaseEndpoint`::
+To replicate data between two local Couchbase Lite databases. This target can be used to create a local back-up of a database ([database replicas])
+`MessageEndpoint`::
+Allows a local database to replicate with another Couchbase Lite database via a custom transportation protocol such iOS Multipeer Connectivity, Android WiFi Direct, Android NearByConnection, socket based transportation etc. (see [Message Endpoint])
 
 === Compatibility
 
 WARNING: The new protocol is *incompatible* with CouchDB-based databases.
 And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that xref:compatibility-matrix.adoc[supports it].
 
-To use this protocol with Couchbase Lite 2.0, the replication URL should specify WebSockets as the URL scheme (see the <<Starting a Replication>> section below).
+To use this protocol with Couchbase Lite 2.0, the replication URL should specify WebSockets as the URL scheme (see the "Starting a Replication" section below).
 Mobile clients using Couchbase Lite 1.x can continue to use *http* as the URL scheme.
-Sync Gateway 2.0 will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through ws://localhost:4984/db.
+Sync Gateway 2.0 will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through "http://localhost:4984/db" and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through "ws://localhost:4984/db".
 
-==== Starting Sync Gateway
+=== Starting Sync Gateway
 
 https://www.couchbase.com/downloads[Download Sync Gateway] and start it from the command line with the configuration file created above.
 
@@ -748,7 +761,7 @@ Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit dat
 Some load balancers are not configured for WebSocket connections by default (NGINX for example);
 so it might be necessary to explicitly enable them in the load balancer's configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
 
-By default, the WebSocket protocol uses compression to optimize over speed and bandwidth.
+By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
 The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway::config-properties.adoc#replicator_compression[`replicator_compression`]).
 
 ==== Replication Ordering
@@ -958,8 +971,10 @@ Where applicable, we discuss how to integrate Couchbase Lite into the workflow.
 
 In Couchbase Lite, a peer can take on one of these two roles:
 
-* *Active Peer:* The peer that initializes the connection and replication (i.e the "client" side).
-* *Passive Peer:* The passive side reacts to things that it receives but does not initiate any communication on its own (i.e. the "server" side).
+Active Peer::
+The peer that initializes the connection and replication (i.e the "client" side).
+Passive Peer::
+The passive side reacts to things that it receives but does not initiate any communication on its own (i.e. the "server" side).
 
 === Peer Discovery
 
