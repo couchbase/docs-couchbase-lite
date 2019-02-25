@@ -1,1 +1,8 @@
 Predictive Query enables Couchbase Lite queries to use machine learning, by providing query functions that can process document data (properties or blobs) via trained ML models.
+
+PredictiveModel interface allows developers to integrate ML model into CouchbaseLite query. Developers will implement PredictiveModel which has only one function called prediction() and register the model object to CouchbaseLite with a unique model name. The registered model will be later referenced by name when the query predictive() function is called.
+
+The input and output of the predictive model are DictionaryObject, therefore, the supported data type will be constrained by the data type that the DictionaryObject supports.
+
+The null value returned by the prediction method will be interpreted as MISSING value in queries.
+
