@@ -594,10 +594,33 @@ Armagh
 Avignon
 ----
 
+== Live Query
+
+A live query stays active and monitors the database for changes.
+When there's a change it re-runs itself automatically, and if the query results changed it notifies any observers.
+A live query is a great way to build reactive user interfaces, especially table/list views, that keep themselves up to date.
+For example, as the replicator runs and pulls new data from the server, a live query-driven UI will automatically update to show the data without the user having to manually refresh.
+This helps your app feel quick and responsive.
+
+[source]
+----
+include::{snippet}[tag=live-query,indent=0]
+----
+
+The live query starts immediately and changes are posted asynchronously.
+
+The following example stops the live query with the token from the previous example.
+
+[source]
+----
+include::{snippet}[tag=stop-live-query,indent=0]
+----
+
 == Indexing
 
-Before we begin querying documents, let's briefly mention the importance of having a query index.
-A query can only be fast if there's a pre-existing database index it can search to narrow down the set of documents to examine.
+Creating indexes can speed up the performance of queries.
+While indexes make queries faster, they also make writes slightly slower, and the Couchbase Lite database file slightly larger.
+As such, it is best to only create indexes when you need to optimize a specific case for better query performance.
 
 The following example creates a new index for the `type` and `name` properties.
 
@@ -619,28 +642,6 @@ If there are multiple expressions, the first one will be the primary key, the se
 
 NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
 Thus, good performance depends on designing and creating the _right_ indexes to go along with your queries.
-
-=== Change Events
-
-A live query stays active and monitors the database for changes.
-When there's a change it re-runs itself automatically, and if the query results changed it notifies any observers.
-A live query is a great way to build reactive user interfaces, especially table/list views, that keep themselves up to date.
-For example, as the replicator runs and pulls new data from the server, a live query-driven UI will automatically update to show the data without the user having to manually refresh.
-This helps your app feel quick and responsive.
-
-[source]
-----
-include::{snippet}[tag=live-query,indent=0]
-----
-
-The live query starts immediately and changes are posted asynchronously.
-
-The following example stops the live query with the token from the previous example.
-
-[source]
-----
-include::{snippet}[tag=stop-live-query,indent=0]
-----
 
 == Full-Text Search
 
