@@ -19,6 +19,7 @@
 
 import CouchbaseLiteSwift
 import MultipeerConnectivity
+import CoreML
 
 
 class SampleCodeTest {
@@ -706,6 +707,45 @@ class SampleCodeTest {
         // Start replication.
         replicator.start()
         // end::getting-started[]
+    }
+    
+    func dontTestPredictionQuery() throws {
+        let database: Database
+        do {
+            database = try Database(name: "mydb")
+        } catch {
+            fatalError("Error opening database")
+        }
+        
+        // tag::predictive-query[]
+        // Load MLModel from `Sentiment.mlmodel`
+        let modelURL = Bundle.main.url(forResource: "Sentiment", withExtension: "mlmodel")!
+        let compiledModelURL = try MLModel.compileModel(at: modelURL)
+        let model = try MLModel(contentsOf: compiledModelURL)
+        let predictiveModel = CoreMLPredictiveModel(mlModel: model)
+        
+        // Register model
+        Database.prediction.registerModel(predictiveModel, withName: "SentimentAnalysis")
+        
+        // Create prediction
+        let input = Expression.dictionary(["bad": Expression.property("bad"),
+                                           "average": Expression.property("average"),
+                                           "good": Expression.property("good")])
+        let prediction = Function.prediction(model: "SentimentAnalysis", input: input)
+
+        // Create query
+        let predictiveQuery = QueryBuilder
+            .select(SelectResult.expression(prediction))
+            .from(DataSource.database(database))
+        
+        // Run the query.
+        do {
+            let result = try predictiveQuery.execute()
+            print("Number of rows :: \(result.allResults().count)")
+        } catch {
+            fatalError("Error running the query")
+        }
+        // end::predictive-query[]
     }
 
 }
