@@ -12,3 +12,26 @@ The following example describes how to load a CoreML model (`Sentiment.mlmodel`)
 ----
 include::{snippet}[tag=predictive-query,indent=0]
 ----
+
+Meeting Notes:
+
+=== PredictiveModel
+
+- There's an interface called `PredictiveModel` on each platform which must be implemented.
+- `ItemClassifier.mlmodel` the input of the model is an image and the output is a category.
+- We don't handle dynamic keys, the prediction output will need be converted for the Query API.
+- Diagram to describe the input/output of the Model (input: image, output: label and probability OR input: params, output: integer value).
+- Array indexing is very unique to Couchbase Lite
+
+Possible order.
+
+1. Describe the model with a diagram
+2. Register the model
+3. Optionally create an index
+4. Run the prediction
+5. De-register
+
+=== CoreMLPredictiveModel
+
+- `CoreMLPredictiveModel` is an implementation of the `PredictiveModel` interface for CoreML (for iOS only).
+- Recently added: `outputTransformer` method to support dynamic keys with `CoreMLPredictiveModel`
