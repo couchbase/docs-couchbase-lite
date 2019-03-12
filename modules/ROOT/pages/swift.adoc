@@ -226,7 +226,9 @@ image::cblite-tool.png[]
 
 Instructions for various commands are available in *Tools/README.md*.
 
-=== Logging
+=== Logging [DEPRECATED]
+
+CAUTION: The following API is deprecated and superseded by the <<logging,Logging API>> introduced in Couchbase Lite 2.5.
 
 The log messages are split into different domains (`LogDomains`) which can be tuned to different log levels.
 The following example enables `verbose` logging for the `replicator` and `query` domains.
@@ -235,6 +237,31 @@ The following example enables `verbose` logging for the `replicator` and `query`
 ----
 include::{snippet}[tag=logging,indent=0]
 ----
+
+=== Logging
+
+Couchbase Lite 2.5 adds a new logging API that unifies the logging behavior across all platforms, making logs easier to both retrieve and decode during development and in production.
+
+There are three different logging features:
+
+Console based logging::
+Enabled by default.
+Console based logging is often used to facilitate troubleshooting during development.
+File based and custom logging are disabled by default and can be enabled and configured on the "Database" object.
++
+File based logging::
+File based logging is supported in two formats:
+
+* a plaintext mode
+* a binary format mode which is much more efficient in terms of storage and performance.
+It is the default configuration for file based logging.
++
+It is recommended that you use binary log format.
+However, in order to view the binary encoded log files, you will need a decoder.
+To decode the binary logs, there is a binary log decoder called the *cbl-log* which is a tool downloadable from https://www.couchbase.com/downloads[here].
++
+Custom logging::
+Provides apps the ability to use other logging frameworks to handle Couchbase Lite log messages.
 
 === Loading a pre-built database
 
