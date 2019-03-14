@@ -729,7 +729,7 @@ class MyClass {
     void startReplication() {
         URI uri = null;
         try {
-            uri = new URI("ws://10.0.2.2:4984/db"); // <2>
+            uri = new URI("wss://10.0.2.2:4984/db"); // <2>
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -830,6 +830,9 @@ The following error codes are considered temporary by the Couchbase Lite replica
 * `503`: Service Unavailable
 * `504`: Gateway Timeout
 * `1001`: DNS resolution error
+
+NOTE: As of Android Pie, version 9, API 28, cleartext support is disabled, by default.  Although `wss:` protocol URLs
+are not affected, in order to use the `ws:` protocol, applications must target API 27 or lower, or must configure application network security as described https://www.couchbase.com/downloads[here].
 
 === Custom Headers
 
