@@ -323,7 +323,6 @@ namespace api_walkthrough
 
                 // Start live query.
                 query.Execute(); // <1>
-                                 // end::live-query[]
 
                 // tag::stop-live-query[]
                 query.RemoveChangeListener(token);
@@ -331,6 +330,7 @@ namespace api_walkthrough
 
                 Console.WriteLine(query);
             }
+            // end::live-query[]
         }
 
         private static void SelectWhere()
