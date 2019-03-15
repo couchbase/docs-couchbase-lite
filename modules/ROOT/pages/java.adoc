@@ -747,6 +747,9 @@ To keep a reference to the `replicator` object, you can set it as an instance pr
 <2> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
 You should now use `ws:`, or `wss:` for SSL/TLS connections.
 In this example the hostname is `10.0.2.2` because the Android emulator runs in a VM that is generally accessible on `10.0.2.2` from the host machine (see https://developer.android.com/studio/run/emulator-networking[Android Emulator networking] documentation).
++
+NOTE: As of Android Pie, version 9, API 28, cleartext support is disabled, by default.
+Although `wss:` protocol URLs are not affected, in order to use the `ws:` protocol, applications must target API 27 or lower, or must configure application network security as described https://developer.android.com/training/articles/security-config#CleartextTrafficPermitted[here].
 
 include::{partialsdir}/verify-replication.adoc[]
 
@@ -830,9 +833,6 @@ The following error codes are considered temporary by the Couchbase Lite replica
 * `503`: Service Unavailable
 * `504`: Gateway Timeout
 * `1001`: DNS resolution error
-
-NOTE: As of Android Pie, version 9, API 28, cleartext support is disabled, by default.  Although `wss:` protocol URLs
-are not affected, in order to use the `ws:` protocol, applications must target API 27 or lower, or must configure application network security as described https://www.couchbase.com/downloads[here].
 
 === Custom Headers
 
