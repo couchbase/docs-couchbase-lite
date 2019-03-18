@@ -324,13 +324,14 @@ namespace api_walkthrough
                 // Start live query.
                 query.Execute(); // <1>
 
-                // tag::stop-live-query[]
-                query.RemoveChangeListener(token);
-                // end::stop-live-query[]
-
                 Console.WriteLine(query);
             }
             // end::live-query[]
+
+            // TODO: this code won't compile because query is defined in the `using() {}` statement
+            // tag::stop-live-query[]
+            query.RemoveChangeListener(token);
+            // end::stop-live-query[]
         }
 
         private static void SelectWhere()
