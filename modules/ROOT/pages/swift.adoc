@@ -838,6 +838,18 @@ The level of compression is set on Sync Gateway and can be tuned in the configur
 To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
 So we don't recommend to rely on that when using the replication or database change listeners for example.
 
+=== Delta Sync
+
+NOTE: Delta Sync is an Enterprise Edition feature on Sync Gateway and Couchbase Lite.
+
+Couchbase Mobile 2.5 introduces delta sync.
+Delta Sync is the ability to replicate only parts of the Couchbase document that have changed.
+This can result in significant savings in bandwidth consumption as well as throughput improvements, especially when network bandwidth is typically constrained.
+
+Replications to a <<starting-sync-gateway, URLEndpoint>> (i.e Sync Gateway) automatically use delta sync if the xref:config-properties.adoc#databases-foo_db-delta_sync[databases.$db.delta_sync.enabled] property is set to `true` in Sync Gateway's configuration file.
+
+Replications to a <<database-replicas, DatabaseEndpoint>> automatically *disable* delta sync and replications to a <<peer-to-peer-sync, MessageEndpoint>> automatically *enable* delta sync.
+
 === Troubleshooting
 
 As always, when there is a problem with replication, logging is your friend.
