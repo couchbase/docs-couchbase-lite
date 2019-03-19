@@ -1,37 +1,87 @@
 Predictive Query enables Couchbase Lite queries to use machine learning, by providing query functions that can process document data (properties or blobs) via trained ML models.
 
-PredictiveModel interface allows developers to integrate ML model into CouchbaseLite query. Developers will implement PredictiveModel which has only one function called prediction() and register the model object to CouchbaseLite with a unique model name. The registered model will be later referenced by name when the query predictive() function is called.
+Let's consider an image classifier model that takes a picture as input and outputs a label and probability.
 
-The input and output of the predictive model are DictionaryObject, therefore, the supported data type will be constrained by the data type that the DictionaryObject supports.
+image::predictive-diagram.jpg[]
 
-The null value returned by the prediction method will be interpreted as MISSING value in queries.
+To run a predictive query with a model as the one shown above, you must implement the following steps.
 
-The following example describes how to load a CoreML model (`Sentiment.mlmodel`), register the model with Couchbase Lite and run a predictive query.
+. <<integrate-the-model,Integrate the Model>>
+. <<register-the-model,Register the Model>>
+. <<create-an-index,Create an Index (Optional)>>
+. <<run-a-prediction-query,Run a Prediction Query>>
+. <<deregister-the-model,De-register the Model>>
+
+=== Integrate the Model
+
+To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `prediction()`.
+
+[source]
+----
+include::{snippet}[tag=predictive-model,indent=0]
+----
+<1> The `predict(input) -> output` method provides the input and expects the result of using the machine learning model.
+The input and output of the predictive model is a `DictionaryObject`.
+Therefore, the supported data type will be constrained by the data type that the `DictionaryObject` supports.
+
+=== Register the Model
+
+To register the model you must create a new instance and pass it to the `Database.prediction.registerModel` static method.
+
+[source]
+----
+include::{snippet}[tag=register-model,indent=0]
+----
+
+=== Create an Index
+
+Creating an index for a predictive query is highly recommended.
+By computing the predictions during writes and building a prediction index, you can significantly improve the speed of prediction queries (which would otherwise have to be computed during reads).
+
+There are two types of indexes for predictive queries:
+
+* <<value-index,Value Index>>
+* <<predictive-index,Predictive Index>>
+
+==== Value Index
+
+The code below creates a value index from the "label" value of the prediction result.
+When documents are added or updated, the index will call the prediction function to update the city value in the index.
+
+[source]
+----
+include::{snippet}[tag=predictive-query-value-index,indent=0]
+----
+
+==== Predictive Index
+
+Predictive Index is a new index type used for predictive query.
+The Predictive Index is different from the value index in that the Predictive Index caches the predictive result and creates the value index from the cached predictive result when the predictive results values are specified.
+
+The code below creates a predictive index from the "label" value of the prediction result.
+
+[source]
+----
+include::{snippet}[tag=predictive-query-predictive-index,indent=0]
+----
+
+=== Run a Prediction Query
+
+The code below creates a query that calls the prediction function to return the "label" value for the first 10 results in the database.
 
 [source]
 ----
 include::{snippet}[tag=predictive-query,indent=0]
 ----
+<1> The `Function.prediction()` function returns a constructed Prediction Function object which can be used further to specify a property value extracted from the output dictionary of the `PredictiveModel.prediction()` function.
++
+NOTE: The null value returned by the prediction method will be interpreted as MISSING value in queries.
 
-Meeting Notes:
+=== Unregister the Model
 
-=== PredictiveModel
+To unregister the model you must call the `Database.prediction.unregisterModel` static method.
 
-- There's an interface called `PredictiveModel` on each platform which must be implemented.
-- `ItemClassifier.mlmodel` the input of the model is an image and the output is a category.
-- We don't handle dynamic keys, the prediction output will need be converted for the Query API.
-- Diagram to describe the input/output of the Model (input: image, output: label and probability OR input: params, output: integer value).
-- Array indexing is very unique to Couchbase Lite
-
-Possible order.
-
-1. Describe the model with a diagram
-2. Register the model
-3. Optionally create an index
-4. Run the prediction
-5. De-register
-
-=== CoreMLPredictiveModel
-
-- `CoreMLPredictiveModel` is an implementation of the `PredictiveModel` interface for CoreML (for iOS only).
-- Recently added: `outputTransformer` method to support dynamic keys with `CoreMLPredictiveModel`
+[source]
+----
+include::{snippet}[tag=unregister-model,indent=0]
+----

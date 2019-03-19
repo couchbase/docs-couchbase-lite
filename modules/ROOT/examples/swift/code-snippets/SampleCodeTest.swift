@@ -708,7 +708,50 @@ class SampleCodeTest {
         // end::getting-started[]
     }
     
-    func dontTestPredictionQuery() throws {
+    func dontTestPredictiveModel() throws {
+        let database: Database
+        do {
+            database = try Database(name: "mydb")
+        } catch {
+            fatalError("Error opening database")
+        }
+
+        // tag::register-model[]
+        let model = ImageClassifierModel()
+        Database.prediction.registerModel(model, withName: "ImageClassifier")
+        // end::register-model[]
+        
+        // tag::predictive-query-value-index[]
+        let input = Expression.dictionary(["photo": Expression.property("photo")])
+        let prediction = Function.prediction(model: "ImageClassifier", input: input)
+        
+        let index = IndexBuilder.valueIndex(items: ValueIndexItem.expression(prediction.property("label")))
+        try database.createIndex(index, withName: "index-image-classifier")
+        // end::predictive-query-value-index[]
+        
+        // tag::unregister-model[]
+        Database.prediction.unregisterModel(withName: "ImageClassifier")
+        // end::unregister-model[]
+    }
+    
+    func dontTestPredictiveIndex() throws {
+        let database: Database
+        do {
+            database = try Database(name: "mydb")
+        } catch {
+            fatalError("Error opening database")
+        }
+
+        // tag::predictive-query-predictive-index[]
+        let input = Expression.dictionary(["photo": Expression.property("photo")])
+        let prediction = Function.prediction(model: "ImageClassifier", input: input)
+        
+        let index = IndexBuilder.predictiveIndex(model: "ImageClassifier", input: input)
+        try database.createIndex(index, withName: "index-image-classifier")
+        // end::predictive-query-predictive-index[]
+    }
+    
+    func dontTestPredictiveQuery() throws {
         let database: Database
         do {
             database = try Database(name: "mydb")
@@ -717,37 +760,68 @@ class SampleCodeTest {
         }
         
         // tag::predictive-query[]
-        // Load MLModel from `Sentiment.mlmodel`
-        let modelURL = Bundle.main.url(forResource: "Sentiment", withExtension: "mlmodel")!
-        let compiledModelURL = try MLModel.compileModel(at: modelURL)
-        let model = try MLModel(contentsOf: compiledModelURL)
-        let predictiveModel = CoreMLPredictiveModel(mlModel: model)
+        let input = Expression.dictionary(["photo": Expression.property("photo")])
+        let prediction = Function.prediction(model: "ImageClassifier", input: input) // <1>
         
-        // Register model
-        Database.prediction.registerModel(predictiveModel, withName: "SentimentAnalysis")
-        
-        // Create prediction
-        let input = Expression.dictionary(["bad": Expression.property("bad"),
-                                           "average": Expression.property("average"),
-                                           "good": Expression.property("good")])
-        let prediction = Function.prediction(model: "SentimentAnalysis", input: input)
-
-        // Create query
-        let predictiveQuery = QueryBuilder
-            .select(SelectResult.expression(prediction))
+        let query = QueryBuilder
+            .select(SelectResult.expression(prediction.property("label")))
             .from(DataSource.database(database))
+            .limit(Expression.int(10))
         
         // Run the query.
         do {
-            let result = try predictiveQuery.execute()
+            let result = try query.execute()
             print("Number of rows :: \(result.allResults().count)")
         } catch {
             fatalError("Error running the query")
         }
         // end::predictive-query[]
     }
+    
+    func dontTestCoreMLPredictiveModel() throws {
+        let database: Database
+        do {
+            database = try Database(name: "mydb")
+        } catch {
+            fatalError("Error opening database")
+        }
+        
+        // tag::coreml-predictive-model[]
+        // Load MLModel from `ImageClassifier.mlmodel`
+        let modelURL = Bundle.main.url(forResource: "ImageClassifier", withExtension: "mlmodel")!
+        let compiledModelURL = try MLModel.compileModel(at: modelURL)
+        let model = try MLModel(contentsOf: compiledModelURL)
+        let predictiveModel = CoreMLPredictiveModel(mlModel: model)
+        
+        // Register model
+        Database.prediction.registerModel(predictiveModel, withName: "ImageClassifier")
+        // end::coreml-predictive-model[]
+    }
 
 }
+
+// stub
+class tensorFlowModel {
+    static func predictImage(data: Data) -> [String : AnyObject] {
+    }
+}
+// tag::predictive-model[]
+class ImageClassifierModel: PredictiveModel {
+    func predict(input: DictionaryObject) -> DictionaryObject? {
+        guard let blob = input.blob(forKey: "photo") else {
+            return nil
+        }
+        
+        let imageData = blob.content!
+        let modelOutput = tensorFlowModel.predictImage(data: imageData)
+        
+        let output = MutableDictionaryObject()
+        output.setString(modelOutput["label"] as? String, forKey: "label")
+        output.setInt(modelOutput["probability"] as! Int, forKey: "probability")
+        return output // <1>
+    }
+}
+// end::predictive-model[]
 
 /* ----------------------------------------------------------- */
 /* ---------------------  ACTIVE SIDE  ----------------------- */
