@@ -822,7 +822,7 @@ class SampleCodeTest {
         let prediction = Function.prediction(model: "ImageClassifier", input: input)
         
         let index = IndexBuilder.valueIndex(items: ValueIndexItem.expression(prediction.property("label")))
-        try database.createIndex(index, withName: "index-image-classifier")
+        try database.createIndex(index, withName: "value-index-image-classifier")
         // end::predictive-query-value-index[]
         
         // tag::unregister-model[]
@@ -843,7 +843,7 @@ class SampleCodeTest {
         let prediction = Function.prediction(model: "ImageClassifier", input: input)
         
         let index = IndexBuilder.predictiveIndex(model: "ImageClassifier", input: input)
-        try database.createIndex(index, withName: "index-image-classifier")
+        try database.createIndex(index, withName: "predictive-index-image-classifier")
         // end::predictive-query-predictive-index[]
     }
     
@@ -860,9 +860,15 @@ class SampleCodeTest {
         let prediction = Function.prediction(model: "ImageClassifier", input: input) // <1>
         
         let query = QueryBuilder
-            .select(SelectResult.expression(prediction.property("label")))
+            .select(SelectResult.all())
             .from(DataSource.database(database))
-            .limit(Expression.int(10))
+            .where(
+                prediction.property("label").equalTo(Expression.string("car"))
+                .and(
+                    prediction.property("probablity")
+                        .greaterThanOrEqualTo(Expression.double(0.8))
+                )
+            )
         
         // Run the query.
         do {
@@ -896,12 +902,14 @@ class SampleCodeTest {
 
 }
 
-// stub
-class tensorFlowModel {
-    static func predictImage(data: Data) -> [String : AnyObject] {
-    }
-}
+
 // tag::predictive-model[]
+// `tensorFlowModel` is a fake implementation
+// this would be the implementation of the ml model you have chosen
+class tensorFlowModel {
+    static func predictImage(data: Data) -> [String : AnyObject] {}
+}
+
 class ImageClassifierModel: PredictiveModel {
     func predict(input: DictionaryObject) -> DictionaryObject? {
         guard let blob = input.blob(forKey: "photo") else {
@@ -909,11 +917,11 @@ class ImageClassifierModel: PredictiveModel {
         }
         
         let imageData = blob.content!
+        // `tensorFlowModel` is a fake implementation
+        // this would be the implementation of the ml model you have chosen
         let modelOutput = tensorFlowModel.predictImage(data: imageData)
         
-        let output = MutableDictionaryObject()
-        output.setString(modelOutput["label"] as? String, forKey: "label")
-        output.setInt(modelOutput["probability"] as! Int, forKey: "probability")
+        let output = MutableDictionaryObject(data: modelOutput)
         return output // <1>
     }
 }
