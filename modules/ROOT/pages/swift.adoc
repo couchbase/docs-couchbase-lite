@@ -923,6 +923,29 @@ include::{partialsdir}/replication-checkpoint.adoc[]
 include::{snippet}[tag=replication-reset-checkpoint,indent=0]
 ----
 
+=== Replication Filters
+
+Replication Filters allow you to have quick control over which documents are stored as the result of a push and/or pull replication.
+Examples of push or pull filters include:
+
+* A push filter allows an app to push a subset of a database to the server, which can be very useful in some circumstances.
+For instance, high-priority docs could be pushed first, or docs in a "draft" state could be skipped.
+* A pull filter gives an app the ability to validate documents being pulled, and skip ones that fail.
+This is an important security mechanism in a peer-to-peer topology with peers that are not fully trusted.
++
+NOTE: Pull replication filters are not a substitute for channels.
+Sync Gateway xref:sync-gateway::data-routing.adoc[channels] are designed to be scalable (documents are filtered on the server) where as a pull replication filter is applied to a document once it has been downloaded.
+
+The following example filters out documents whose `type` property is equal to `draft`.
+
+[source]
+----
+include::{snippet}[tag=replication-push-filter,indent=0]
+----
+<1> The callback should follow the semantics of a https://en.wikipedia.org/wiki/Pure_function[pure function].
+Otherwise, long running functions would considerably slow down the replicator.
+Furthermore, your callback should not make assumptions about what thread it is being called on.
+
 == Handling Conflicts
 
 In Couchbase Lite 2.0, document conflicts are automatically resolved.
