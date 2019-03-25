@@ -605,7 +605,7 @@ class SampleCodeTest {
 
         let config = ReplicatorConfiguration(database: database, target: target)
         config.pushFilter = { (document, flags) in // <1>
-            if (document.string(forKey: "type") == "draft") {
+            if (flags.rawValue == DocumentFlags.deleted.rawValue) {
                 return false
             }
             return true
@@ -614,6 +614,24 @@ class SampleCodeTest {
         self.replicator = Replicator(config: config)
         self.replicator.start()
         // end::replication-push-filter[]
+    }
+
+    func dontTestReplicationPullFilter() throws {
+        // tag::replication-pull-filter[]
+        let url = URL(string: "ws://localhost:4984/mydatabase")!
+        let target = URLEndpoint(url: url)
+        
+        let config = ReplicatorConfiguration(database: database, target: target)
+        config.pullFilter = { (document, flags) in // <1>
+            if (document.string(forKey: "type") == "draft") {
+                return false
+            }
+            return true
+        }
+        
+        self.replicator = Replicator(config: config)
+        self.replicator.start()
+        // end::replication-pull-filter[]
     }
 
     #if COUCHBASE_ENTERPRISE
