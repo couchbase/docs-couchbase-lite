@@ -142,6 +142,15 @@ class SampleCodeTest {
         }
         // end::document-listener[]
     }
+    
+    func dontTestDocumentExpiration() throws {
+        database = self.db
+        
+        // tag::document-expiration[]
+        let ttl = NSDate(timeIntervalSinceNow: 5)
+        Database.setDocumentExpiration("xyz", ttl)
+        // end::document-expiration[]
+    }
 
     func dontTestBlob() throws {
     #if TARGET_OS_IPHONE
