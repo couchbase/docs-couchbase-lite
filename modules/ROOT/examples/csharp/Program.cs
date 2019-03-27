@@ -16,6 +16,7 @@
 // limitations under the License.
 // 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -23,6 +24,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Couchbase.Lite;
+using Couchbase.Lite.Enterprise.Query;
 using Couchbase.Lite.Logging;
 using Couchbase.Lite.P2P;
 using Couchbase.Lite.Query;
@@ -719,7 +721,7 @@ namespace api_walkthrough
             // end::certificate-pinning[]
         }
         
-        private static void ReplicationCustomHeaders()
+        private static void ReplicationCustomHeaders(Database database)
         {
             var url = new Uri("ws://localhost:4984/mydatabase");
             var target = new URLEndpoint(url);
@@ -733,6 +735,61 @@ namespace api_walkthrough
                 }
             };
             // end::replication-custom-header[]
+        }
+
+        private static void UsePredictiveModel()
+        {
+            using (var db = new Database("mydb")) {
+                // tag::register-model[]
+                var model = new ImageClassifierModel();
+                Database.Prediction.RegisterModel("ImageClassifier", model);
+                // end::register-model[]
+
+                // tag::predictive-query-value-index[]
+                var index = IndexBuilder.ValueIndex(ValueIndexItem.Property("label"));
+                db.CreateIndex("value-index-image-classifier", index);
+                // end::predictive-query-value-index[]
+
+                // tag::unregister-model[]
+                Database.Prediction.UnregisterModel("ImageClassifier");
+                // end::unregister-model[]
+            }
+        }
+
+        private static void UsePredictiveIndex()
+        {
+            using (var db = new Database("mydb")) {
+                // tag::predictive-query-predictive-index[]
+                var input = Expression.Dictionary(new Dictionary<string, object>
+                {
+                    ["photo"] = Expression.Property("photo")
+                });
+
+                var index = IndexBuilder.PredictiveIndex("ImageClassifier", input);
+                db.CreateIndex("predictive-index-image-classifier", index);
+                // end::predictive-query-predictive-index[]
+            }
+        }
+
+        private static void DoPredictiveQuery()
+        {
+            using (var db = new Database("mydb")) {
+                // tag::predictive-query[]
+                var input = Expression.Dictionary(new Dictionary<string, object>
+                {
+                    ["photo"] = Expression.Property("photo")
+                });
+                var prediction = Function.Prediction("ImageClassifier", input);
+
+                using (var q = QueryBuilder.Select(SelectResult.All())
+                    .From(DataSource.Database(db))
+                    .Where(prediction.Property("label").EqualTo(Expression.String("car"))
+                        .And(prediction.Property("probability").GreaterThanOrEqualTo(Expression.Double(0.8))))) {
+                    var result = q.Execute();
+                    Console.WriteLine($"Number of rows: {result.Count()}");
+                }
+                // end::predictive-query[]
+            }
         }
 
         static void Main(string[] args)
@@ -946,4 +1003,34 @@ namespace api_walkthrough
         }
         // end::passive-peer-send[]
     }
+
+    // tag::predictive-model[]
+    // `TensorFlowModel` is a fake implementation
+    // this would be the implementation of the ml model you have chosen
+    class TensorFlowModel
+    {
+        public static IDictionary<string, object> PredictImage(byte[] data)
+        {
+            // Do calculations, etc
+            return null;
+        }
+    }
+
+    class ImageClassifierModel : IPredictiveModel
+    {
+        public DictionaryObject Predict(DictionaryObject input)
+        {
+            var blob = input.GetBlob("photo");
+            if (blob == null) {
+                return null;
+            }
+
+            var imageData = blob.Content;
+            // `TensorFlowModel` is a fake implementation
+            // this would be the implementation of the ml model you have chosen
+            var modelOutput = TensorFlowModel.PredictImage(imageData);
+            return new MutableDictionaryObject(modelOutput);
+        }
+    }
+    // end::predictive-model[]
 }
