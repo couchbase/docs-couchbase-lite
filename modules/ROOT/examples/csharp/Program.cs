@@ -16,6 +16,7 @@
 // limitations under the License.
 // 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -719,7 +720,7 @@ namespace api_walkthrough
             // end::certificate-pinning[]
         }
         
-        private static void ReplicationCustomHeaders()
+        private static void ReplicationCustomHeaders(Database database)
         {
             var url = new Uri("ws://localhost:4984/mydatabase");
             var target = new URLEndpoint(url);
@@ -733,6 +734,50 @@ namespace api_walkthrough
                 }
             };
             // end::replication-custom-header[]
+        }
+
+        private static void PushWithFilter(Database database)
+        {
+            // tag::replication-push-filter[]
+            var url = new Uri("ws://localhost:4984/mydatabase");
+            var target = new URLEndpoint(url);
+
+            var config = new ReplicatorConfiguration(database, target);
+            config.PushFilter = (document, flags) =>
+            {
+                if (flags.HasFlag(DocumentFlags.Deleted)) {
+                    return false;
+                }
+
+                return true;
+            };
+
+            // Dispose() later
+            var replicator = new Replicator(config);
+            replicator.Start();
+            // end::replication-push-filter[]
+        }
+
+        private static void PullWithFilter(Database database)
+        {
+            // tag::replication-pull-filter[]
+            var url = new Uri("ws://localhost:4984/mydatabase");
+            var target = new URLEndpoint(url);
+
+            var config = new ReplicatorConfiguration(database, target);
+            config.PullFilter = (document, flags) =>
+            {
+                if (document.GetString("type") == "draft") {
+                    return false;
+                }
+
+                return true;
+            };
+
+            // Dispose() later
+            var replicator = new Replicator(config);
+            replicator.Start();
+            // end::replication-pull-filter[]
         }
 
         static void Main(string[] args)
