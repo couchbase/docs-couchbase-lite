@@ -572,6 +572,23 @@ class SampleCodeTest {
         // end::replication-status[]
     }
     
+    func dontTestReplicatorDocumentEvent() throws {
+        // tag::add-document-replication-listener[]
+        let token = self.replicator.addDocumentReplicationListener { (replication) in
+            print("Replication type :: \(replication.isPush ? "Push" : "Pull")")
+            for document in replication.documents {
+                print("Doc ID :: \(document.id)")
+            }
+        }
+        
+        self.replicator.start()
+        // end::add-document-replication-listener[]
+        
+        // tag::remove-document-replication-listener[]
+        self.replicator.removeChangeListener(withToken: token)
+        // end::remove-document-replication-listener[]
+    }
+    
     func dontTestReplicationCustomHeader() throws {
         let url = URL(string: "ws://localhost:4984/mydatabase")!
         let target = URLEndpoint(url: url)
