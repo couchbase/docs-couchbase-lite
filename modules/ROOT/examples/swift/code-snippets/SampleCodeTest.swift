@@ -271,6 +271,16 @@ class SampleCodeTest {
         // end::query-where[]
     }
     
+    func dontTestQueryDeletedDocuments() throws {
+        // tag::query-deleted-documents[]
+        // Query documents that have been deleted
+        let query = QueryBuilder
+            .select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(db))
+            .where(Meta.isDeleted)
+        // end::query-deleted-documents[]
+    }
+    
     func dontTestCollectionOperatorContains() throws {
         database = self.db
 
