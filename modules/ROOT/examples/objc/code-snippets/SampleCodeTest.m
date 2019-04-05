@@ -22,6 +22,8 @@
 
 @interface SampleCodeTest : NSObject
 
+@property(nonatomic) CBLDatabase* db;
+
 @end
 
 @implementation SampleCodeTest
@@ -568,6 +570,46 @@
     // end::replication-reset-checkpoint[]
 }
 
+- (void) dontTestReplicationPushFilter {
+    CBLDatabase *database = self.db;
+    
+    // tag::replication-push-filter[]
+    NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
+    CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
+    
+    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
+    config.pushFilter = ^BOOL(CBLDocument * _Nonnull document, CBLDocumentFlags flags) {
+        if ([[document stringForKey: @"type"] isEqualToString: @"draft"]) {
+            return false;
+        }
+        return true;
+    };
+    
+    CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
+    [replicator start];
+    // end::replication-push-filter[]
+}
+
+- (void) dontTestReplicationPullFilter {
+    CBLDatabase *database = self.db;
+    
+    // tag::replication-pull-filter[]
+    NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
+    CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
+    
+    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
+    config.pullFilter = ^BOOL(CBLDocument * _Nonnull document, CBLDocumentFlags flags) {
+        if ([[document stringForKey: @"type"] isEqualToString: @"draft"]) {
+            return false;
+        }
+        return true;
+    };
+    
+    CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
+    [replicator start];
+    // end::replication-pull-filter[]
+}
+
 #ifdef COUCHBASE_ENTERPRISE
 - (void) dontTestDatabaseReplica {
     CBLDatabase *database = self.db;
@@ -659,6 +701,13 @@
     // Start replication
     [replicator start];
     // end::getting-started[]
+}
+
+#pragma mark - Helper methods
+
+- (NSData*) dataFromResource: (NSString*)resourceName ofType: (NSString*)type {
+    // this is just for making it build without errors.
+    return [NSData data];
 }
 
 @end
@@ -837,7 +886,7 @@
     // end::passive-stop-listener[]
 }
 
-- (void)acceptConnection() {
+- (void)acceptConnection {
     // tag::advertizer-accept[]
     PassivePeerConnection *connection = [[PassivePeerConnection alloc] init]; /* implements CBLMessageEndpointConnection */
     [_messageEndpointListener accept: connection];
