@@ -22,9 +22,9 @@
 #import <CoreML/CoreML.h>
 
 // tag::predictive-model[]
-// `tensorFlowModel` is a fake implementation
+// `coreMLModel` is a fake implementation
 // this would be the implementation of the ml model you have chosen
-@interface tensorFlowModel : NSObject
+@interface coreMLModel : NSObject
 
 + (NSDictionary*)predictImage: (NSData*)data;
 
@@ -42,9 +42,9 @@
     CBLBlob* blob = [input blobForKey:@"photo"];
     
     NSData* imageData = blob.content;
-    // `tensorFlowModel` is a fake implementation
+    // `coreMLModel` is a fake implementation
     // this would be the implementation of the ml model you have chosen
-    NSDictionary* modelOutput = [tensorFlowModel predictImage:imageData];
+    NSDictionary* modelOutput = [coreMLModel predictImage:imageData];
     
     CBLMutableDictionary* output = [[CBLMutableDictionary alloc] initWithData: modelOutput];
     return output; // <1>
