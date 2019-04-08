@@ -24,6 +24,7 @@ import MultipeerConnectivity
 class SampleCodeTest {
     
     var database: Database!
+    var db: Database!
     
     var replicator: Replicator!
     
