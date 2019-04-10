@@ -308,7 +308,7 @@ namespace api_walkthrough
             // tag::live-query[]
             var query = QueryBuilder
                 .Select(SelectResult.All())
-                .From(DataSource.Database(Db));
+                .From(DataSource.Database(db));
 
             // Adds a query change listener.
             // Changes will be posted on the main queue.
