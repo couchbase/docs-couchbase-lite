@@ -606,7 +606,7 @@ class SampleCodeTest {
 
         let config = ReplicatorConfiguration(database: database, target: target)
         config.pushFilter = { (document, flags) in // <1>
-            if (flags.rawValue == DocumentFlags.deleted.rawValue) {
+            if (document.string(forKey: "type") == "draft") {
                 return false
             }
             return true
@@ -624,7 +624,7 @@ class SampleCodeTest {
         
         let config = ReplicatorConfiguration(database: database, target: target)
         config.pullFilter = { (document, flags) in // <1>
-            if (document.string(forKey: "type") == "draft") {
+            if (flags.rawValue == DocumentFlags.deleted.rawValue) {
                 return false
             }
             return true
