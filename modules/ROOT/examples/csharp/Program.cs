@@ -323,15 +323,12 @@ namespace api_walkthrough
 			
             // Start live query.
             query.Execute(); // <1>
+            // end::live-query[]
 
             // tag::stop-live-query[]
             query.RemoveChangeListener(token);
-            // end::stop-live-query[]
-
-            Console.WriteLine(query);
-
             query.Dispose();
-            // end::live-query[]
+            // end::stop-live-query[]
         }
 
         private static void SelectWhere()
