@@ -599,7 +599,7 @@
     
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
     config.pullFilter = ^BOOL(CBLDocument * _Nonnull document, CBLDocumentFlags flags) {
-        if ([[document stringForKey: @"type"] isEqualToString: @"draft"]) {
+        if ((flags & kCBLDocumentFlagsDeleted) == kCBLDocumentFlagsDeleted) {
             return false;
         }
         return true;
