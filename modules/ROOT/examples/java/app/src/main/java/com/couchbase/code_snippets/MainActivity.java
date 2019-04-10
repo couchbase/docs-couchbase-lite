@@ -1,8 +1,8 @@
 package com.couchbase.code_snippets;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.couchbase.lite.ArrayFunction;
@@ -12,6 +12,7 @@ import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.DatabaseConfiguration;
+import com.couchbase.lite.DatabaseEndpoint;
 import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.EncryptionKey;
@@ -722,6 +723,25 @@ public class MainActivity extends AppCompatActivity {
         // end::replication-reset-checkpoint[]
 
         replicator.stop();
+    }
+
+    public void testDatabaseReplica() throws CouchbaseLiteException {
+        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
+        Database database1 = new Database("mydb", config);
+
+        config = new DatabaseConfiguration(getApplicationContext());
+        Database database2 = new Database("db2", config);
+
+        /* EE feature: code below might throw a compilation error
+           if it's compiled against CBL Android Community. */
+        // tag::database-replica[]
+        DatabaseEndpoint targetDatabase = new DatabaseEndpoint(database2);
+        ReplicatorConfiguration replicatorConfig = new ReplicatorConfiguration(database1, targetDatabase);
+        replicatorConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH);
+
+        Replicator replicator = new Replicator(replicatorConfig);
+        replicator.start();
+        // end::database-replica[]
     }
 
 }
