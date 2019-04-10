@@ -23,6 +23,7 @@ import com.couchbase.lite.FullTextIndexItem;
 import com.couchbase.lite.Function;
 import com.couchbase.lite.IndexBuilder;
 import com.couchbase.lite.Join;
+import com.couchbase.lite.ListenerToken;
 import com.couchbase.lite.LogDomain;
 import com.couchbase.lite.LogLevel;
 import com.couchbase.lite.Message;
@@ -404,6 +405,29 @@ public class MainActivity extends AppCompatActivity {
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("hotel")));
             // end::query-select-all[]
+
+            // tag::live-query[]
+            Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.database(database));
+
+            // Adds a query change listener.
+            // Changes will be posted on the main queue.
+            ListenerToken token = query.addChangeListener(change -> {
+                for (Result result: change.getResults()) {
+                    Log.d(TAG, "results: " + result.getKeys());
+                    /* Update UI */
+                }
+            });
+
+            // Start live query.
+            query.execute(); // <1>
+            // end::live-query[]
+
+            // tag::stop-live-query[]
+            query.removeChangeListener(token);
+            // end::stop-live-query[]
+
             ResultSet rs = query.execute();
             for (Result result : rs)
                 Log.i("Sample", String.format("hotel -> %s", result.getDictionary(DATABASE_NAME).toMap()));
