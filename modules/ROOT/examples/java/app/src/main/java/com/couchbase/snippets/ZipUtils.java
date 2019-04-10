@@ -1,4 +1,4 @@
-package com.couchbase.code_snippets;
+package com.couchbase.snippets;
 
 import java.io.File;
 import java.io.FileOutputStream;

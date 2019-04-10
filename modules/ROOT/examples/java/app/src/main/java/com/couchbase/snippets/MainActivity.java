@@ -1,9 +1,22 @@
-package com.couchbase.code_snippets;
+package com.couchbase.snippets;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import com.couchbase.lite.ArrayFunction;
 import com.couchbase.lite.BasicAuthenticator;
@@ -15,6 +28,7 @@ import com.couchbase.lite.DatabaseConfiguration;
 import com.couchbase.lite.DatabaseEndpoint;
 import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.DocumentFlag;
 import com.couchbase.lite.EncryptionKey;
 import com.couchbase.lite.Endpoint;
 import com.couchbase.lite.Expression;
@@ -32,13 +46,17 @@ import com.couchbase.lite.MessageEndpointConnection;
 import com.couchbase.lite.MessageEndpointDelegate;
 import com.couchbase.lite.MessageEndpointListener;
 import com.couchbase.lite.MessageEndpointListenerConfiguration;
+import com.couchbase.lite.MessagingCloseCompletion;
 import com.couchbase.lite.MessagingCompletion;
 import com.couchbase.lite.Meta;
+import com.couchbase.lite.MutableDictionary;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
+import com.couchbase.lite.PredictiveModel;
 import com.couchbase.lite.ProtocolType;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.ReplicationFilter;
 import com.couchbase.lite.Replicator;
 import com.couchbase.lite.ReplicatorChange;
 import com.couchbase.lite.ReplicatorChangeListener;
@@ -51,19 +69,6 @@ import com.couchbase.lite.SessionAuthenticator;
 import com.couchbase.lite.URLEndpoint;
 import com.couchbase.lite.ValueIndexItem;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-
-import static com.couchbase.lite.CBLError.Code.CBLErrorBusy;
 
 public class MainActivity extends AppCompatActivity {
     static final String TAG = MainActivity.class.getSimpleName();
@@ -219,26 +224,21 @@ public class MainActivity extends AppCompatActivity {
         // end::prebuilt-database[]
     }
 
-
     // helper methods
 
     // if db exist, delete it
     private void deleteDB(String name, File dir) throws CouchbaseLiteException {
         // database exist, delete it
-        if (Database.exists(name, )) {
+        if (Database.exists(name, dir)) {
             // sometimes, db is still in used, wait for a while. Maximum 3 sec
             for (int i = 0; i < 10; i++) {
                 try {
                     Database.delete(name, dir);
                     break;
                 } catch (CouchbaseLiteException ex) {
-                    if (ex.getCode() == CBLErrorBusy) {
-                        try {
-                            Thread.sleep(300);
-                        } catch (Exception e) {
-                        }
-                    } else {
-                        throw ex;
+                    try {
+                        Thread.sleep(300);
+                    } catch (Exception e) {
                     }
                 }
             }
@@ -255,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             database.save(newTask);
         } catch (CouchbaseLiteException e) {
-            com.couchbase.lite.internal.support.Log.e(TAG, e.toString());
+            Log.e(TAG, e.toString());
         }
         // end::initializer[]
     }
@@ -274,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             database.save(mutableDocument);
         } catch (CouchbaseLiteException e) {
-            com.couchbase.lite.internal.support.Log.e(TAG, e.toString());
+            Log.e(TAG, e.toString());
         }
         // end::update-document[]
     }
@@ -304,14 +304,14 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             database.save(doc);
                         } catch (CouchbaseLiteException e) {
-                            com.couchbase.lite.internal.support.Log.e(TAG, e.toString());
+                            Log.e(TAG, e.toString());
                         }
-                        com.couchbase.lite.internal.support.Log.i(TAG, String.format("saved user document %s", doc.getString("name")));
+                        Log.i(TAG, String.format("saved user document %s", doc.getString("name")));
                     }
                 }
             });
         } catch (CouchbaseLiteException e) {
-            com.couchbase.lite.internal.support.Log.e(TAG, e.toString());
+            Log.e(TAG, e.toString());
         }
         // end::batch[]
     }
@@ -330,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
             Blob taskBlob = newTask.getBlob("avatar");
             byte[] bytes = taskBlob.getContent();
         } catch (CouchbaseLiteException e) {
-            com.couchbase.lite.internal.support.Log.e(TAG, e.toString());
+            Log.e(TAG, e.toString());
         } finally {
             try {
                 is.close();
@@ -654,7 +654,7 @@ public class MainActivity extends AppCompatActivity {
             .where(whereClause);
         ResultSet ftsQueryResult = ftsQuery.execute();
         for (Result result : ftsQueryResult)
-            com.couchbase.lite.internal.support.Log.i(TAG, String.format("document properties %s", result.getString(0)));
+            Log.i(TAG, String.format("document properties %s", result.getString(0)));
         // end::fts-query[]
     }
 
@@ -702,7 +702,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void changed(ReplicatorChange change) {
                 if (change.getStatus().getActivityLevel() == Replicator.ActivityLevel.STOPPED)
-                    com.couchbase.lite.internal.support.Log.i(TAG, "Replication stopped");
+                    Log.i(TAG, "Replication stopped");
             }
         });
         // end::replication-status[]
@@ -721,7 +721,7 @@ public class MainActivity extends AppCompatActivity {
             public void changed(ReplicatorChange change) {
                 CouchbaseLiteException error = change.getStatus().getError();
                 if (error != null)
-                    com.couchbase.lite.internal.support.Log.w(TAG, "Error code:: %d", error.getCode());
+                    Log.w(TAG, "Error code:: %d", error);
             }
         });
         replication.start();
@@ -774,6 +774,46 @@ public class MainActivity extends AppCompatActivity {
         replicator.stop();
     }
 
+    public void testReplicationPushFilter() throws URISyntaxException {
+        // tag::replication-push-filter[]
+        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
+        config.setPushFilter(new ReplicationFilter() {
+            @Override
+            public boolean filtered(@NonNull Document document, @NonNull EnumSet<DocumentFlag> flags) {
+                return flags.equals(DocumentFlag.DocumentFlagsDeleted);
+            }
+        });
+
+        Replicator replication = new Replicator(config);
+        replication.start();
+        // end::replication-push-filter[]
+    }
+
+    public void testReplicationPullFilter() throws URISyntaxException {
+        // tag::replication-pull-filter[]
+        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
+        config.setPullFilter(new ReplicationFilter() {
+            @Override
+            public boolean filtered(@NonNull Document document, @NonNull EnumSet<DocumentFlag> flags) {
+                return "draft".equals(document.getString("type"));
+            }
+        });
+
+        Replicator replication = new Replicator(config);
+        replication.start();
+        // end::replication-pull-filter[]
+    }
+
+    private InputStream getAsset(String assetName) {
+        try { return getAssets().open(assetName); }
+        catch (IOException ignore) { }
+        return null;
+    }
+
     public void testDatabaseReplica() throws CouchbaseLiteException {
         DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
         Database database1 = new Database("mydb", config);
@@ -800,16 +840,17 @@ public class MainActivity extends AppCompatActivity {
 /* ----------------------------------------------------------- */
 
 class BrowserSessionManager implements MessageEndpointDelegate {
+    private final Context context;
+
+    private BrowserSessionManager(Context context) { this.context = context; }
 
     public void initCouchbase() throws CouchbaseLiteException {
-        String id = "";
-        MessageEndpointDelegate delegate;
-        // tag::message-endpoint[]
-        DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(getApplicationContext());
+         // tag::message-endpoint[]
+        DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(context);
         Database database = new Database("mydb", databaseConfiguration);
 
         // The delegate must implement the `MessageEndpointDelegate` protocol.
-        MessageEndpoint messageEndpointTarget = new MessageEndpoint("UID:123", id, ProtocolType.MESSAGE_STREAM, delegate);
+        MessageEndpoint messageEndpointTarget = new MessageEndpoint("UID:123", "active", ProtocolType.MESSAGE_STREAM, this);
         // end::message-endpoint[]
 
         // tag::message-endpoint-replicator[]
@@ -853,11 +894,11 @@ class ActivePeerConnection implements MessageEndpointConnection {
 
     // tag::active-peer-close[]
     @Override
-    public void close(Exception error, MessagingCompletion completion) {
+    public void close(Exception error, MessagingCloseCompletion completion) {
         /* disconnect with communications framework */
         /* ... */
         /* call completion handler */
-        completion.complete(true, null);
+        completion.complete();
     }
     // end::active-peer-close[]
 
@@ -885,13 +926,16 @@ class ActivePeerConnection implements MessageEndpointConnection {
 /* ----------------------------------------------------------- */
 
 class PassivePeerConnection implements MessageEndpointConnection {
+    private final Context context;
 
     private MessageEndpointListener messageEndpointListener;
     private ReplicatorConnection replicatorConnection;
 
+    private PassivePeerConnection(Context context) { this.context = context; }
+
     public void startListener() throws CouchbaseLiteException {
         // tag::listener[]
-        DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(getApplicationContext());
+        DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(context);
         Database database = new Database("mydb", databaseConfiguration);
         MessageEndpointListenerConfiguration listenerConfiguration = new MessageEndpointListenerConfiguration(database, ProtocolType.MESSAGE_STREAM);
         this.messageEndpointListener = new MessageEndpointListener(listenerConfiguration);
@@ -906,7 +950,7 @@ class PassivePeerConnection implements MessageEndpointConnection {
 
     public void accept() {
         // tag::advertizer-accept[]
-        PassivePeerConnection connection = new PassivePeerConnection(); /* implements MessageEndpointConnection */
+        PassivePeerConnection connection = new PassivePeerConnection(context); /* implements MessageEndpointConnection */
         messageEndpointListener.accept(connection);
         // end::advertizer-accept[]
     }
@@ -929,11 +973,11 @@ class PassivePeerConnection implements MessageEndpointConnection {
     // tag::passive-peer-close[]
     /* implementation of MessageEndpointConnection */
     @Override
-    public void close(Exception error, MessagingCompletion completion) {
+    public void close(Exception error, MessagingCloseCompletion completion) {
         /* disconnect with communications framework */
         /* ... */
         /* call completion handler */
-        completion.complete(true, null);
+        completion.complete();
     }
     // end::passive-peer-close[]
 
