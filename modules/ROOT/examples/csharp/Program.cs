@@ -306,32 +306,34 @@ namespace api_walkthrough
             // end::query-select-all[]
 
             // tag::live-query[]
-            using (var query = QueryBuilder
+            var query = QueryBuilder
                 .Select(SelectResult.All())
-                .From(DataSource.Database(db))) {
+                .From(DataSource.Database(Db));
 
-                // Adds a query change listener.
-                // Changes will be posted on the main queue.
-                var token = query.AddChangeListener((sender, args) =>
-                {
-                    var allResult = args.Results.AllResults();
-                    foreach (var result in allResult) {
-                        Console.WriteLine(result.Keys);
-                        /* Update UI */
-                    }
-                });
+            // Adds a query change listener.
+            // Changes will be posted on the main queue.
+            var token = query.AddChangeListener((sender, args) =>
+            {
+                var allResult = args.Results.AllResults();
+                foreach (var result in allResult) {
+                    Console.WriteLine(result.Keys);
+                    /* Update UI */
+                }
+            });
 
+            try {
                 // Start live query.
                 query.Execute(); // <1>
+            } finally {
+                // tag::stop-live-query[]
+                query.RemoveChangeListener(token);
+                // end::stop-live-query[]
 
                 Console.WriteLine(query);
+
+                query.Dispose();
             }
             // end::live-query[]
-
-            // TODO: this code won't compile because query is defined in the `using() {}` statement
-            // tag::stop-live-query[]
-            query.RemoveChangeListener(token);
-            // end::stop-live-query[]
         }
 
         private static void SelectWhere()
