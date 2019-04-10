@@ -320,19 +320,17 @@ namespace api_walkthrough
                     /* Update UI */
                 }
             });
+			
+			// Start live query.
+            query.Execute(); // <1>
 
-            try {
-                // Start live query.
-                query.Execute(); // <1>
-            } finally {
-                // tag::stop-live-query[]
-                query.RemoveChangeListener(token);
-                // end::stop-live-query[]
+            // tag::stop-live-query[]
+            query.RemoveChangeListener(token);
+            // end::stop-live-query[]
 
-                Console.WriteLine(query);
+            Console.WriteLine(query);
 
-                query.Dispose();
-            }
+            query.Dispose();
             // end::live-query[]
         }
 
