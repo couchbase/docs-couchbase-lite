@@ -46,6 +46,7 @@ import com.couchbase.lite.ReplicatorConnection;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
+import com.couchbase.lite.SessionAuthenticator;
 import com.couchbase.lite.URLEndpoint;
 import com.couchbase.lite.ValueIndexItem;
 
@@ -639,6 +640,30 @@ public class MainActivity extends AppCompatActivity {
         // tag::replication-logging[]
         Database.setLogLevel(LogDomain.REPLICATOR, LogLevel.VERBOSE);
         // end::replication-logging[]
+    }
+
+    public void testReplicationBasicAuthentication() throws URISyntaxException {
+        // tag::basic-authentication[]
+        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
+        config.setAuthenticator(new BasicAuthenticator("devin", "cow"));
+
+        Replicator replication = new Replicator(config);
+        replication.start();
+        // end::basic-authentication[]
+    }
+
+    public void testReplicationSessionAuthentication() throws URISyntaxException {
+        // tag::session-authentication[]
+        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
+        config.setAuthenticator(new SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447"));
+
+        Replicator replication = new Replicator(config);
+        replication.start();
+        // end::session-authentication[]
     }
 
     public void testReplicationStatus() throws URISyntaxException {
