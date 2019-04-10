@@ -321,7 +321,7 @@ namespace api_walkthrough
                 }
             });
 			
-			// Start live query.
+            // Start live query.
             query.Execute(); // <1>
 
             // tag::stop-live-query[]
