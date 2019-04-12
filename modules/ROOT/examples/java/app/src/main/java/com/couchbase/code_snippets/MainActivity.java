@@ -1,9 +1,20 @@
 package com.couchbase.code_snippets;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import com.couchbase.lite.ArrayFunction;
 import com.couchbase.lite.BasicAuthenticator;
@@ -12,6 +23,7 @@ import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.DatabaseConfiguration;
+import com.couchbase.lite.DatabaseEndpoint;
 import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.EncryptionKey;
@@ -22,6 +34,7 @@ import com.couchbase.lite.FullTextIndexItem;
 import com.couchbase.lite.Function;
 import com.couchbase.lite.IndexBuilder;
 import com.couchbase.lite.Join;
+import com.couchbase.lite.ListenerToken;
 import com.couchbase.lite.LogDomain;
 import com.couchbase.lite.LogLevel;
 import com.couchbase.lite.Message;
@@ -34,6 +47,8 @@ import com.couchbase.lite.MessagingCompletion;
 import com.couchbase.lite.Meta;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
+import com.couchbase.lite.PredictiveIndex;
+import com.couchbase.lite.PredictiveModel;
 import com.couchbase.lite.ProtocolType;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
@@ -45,7 +60,9 @@ import com.couchbase.lite.ReplicatorConnection;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
+import com.couchbase.lite.SessionAuthenticator;
 import com.couchbase.lite.URLEndpoint;
+import com.couchbase.lite.ValueIndex;
 import com.couchbase.lite.ValueIndexItem;
 
 import java.io.File;
@@ -402,6 +419,29 @@ public class MainActivity extends AppCompatActivity {
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("hotel")));
             // end::query-select-all[]
+
+            // tag::live-query[]
+            Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.database(database));
+
+            // Adds a query change listener.
+            // Changes will be posted on the main queue.
+            ListenerToken token = query.addChangeListener(change -> {
+                for (Result result: change.getResults()) {
+                    Log.d(TAG, "results: " + result.getKeys());
+                    /* Update UI */
+                }
+            });
+
+            // Start live query.
+            query.execute(); // <1>
+            // end::live-query[]
+
+            // tag::stop-live-query[]
+            query.removeChangeListener(token);
+            // end::stop-live-query[]
+
             ResultSet rs = query.execute();
             for (Result result : rs)
                 Log.i("Sample", String.format("hotel -> %s", result.getDictionary(DATABASE_NAME).toMap()));
@@ -640,6 +680,30 @@ public class MainActivity extends AppCompatActivity {
         // end::replication-logging[]
     }
 
+    public void testReplicationBasicAuthentication() throws URISyntaxException {
+        // tag::basic-authentication[]
+        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
+        config.setAuthenticator(new BasicAuthenticator("devin", "cow"));
+
+        Replicator replication = new Replicator(config);
+        replication.start();
+        // end::basic-authentication[]
+    }
+
+    public void testReplicationSessionAuthentication() throws URISyntaxException {
+        // tag::session-authentication[]
+        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
+        config.setAuthenticator(new SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447"));
+
+        Replicator replication = new Replicator(config);
+        replication.start();
+        // end::session-authentication[]
+    }
+
     public void testReplicationStatus() throws URISyntaxException {
         URI uri = new URI("ws://localhost:4984/db");
         Endpoint endpoint = new URLEndpoint(uri);
@@ -722,6 +786,74 @@ public class MainActivity extends AppCompatActivity {
         // end::replication-reset-checkpoint[]
 
         replicator.stop();
+    }
+
+    public void testDatabaseReplica() throws CouchbaseLiteException {
+        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
+        Database database1 = new Database("mydb", config);
+
+        config = new DatabaseConfiguration(getApplicationContext());
+        Database database2 = new Database("db2", config);
+
+        /* EE feature: code below might throw a compilation error
+           if it's compiled against CBL Android Community. */
+        // tag::database-replica[]
+        DatabaseEndpoint targetDatabase = new DatabaseEndpoint(database2);
+        ReplicatorConfiguration replicatorConfig = new ReplicatorConfiguration(database1, targetDatabase);
+        replicatorConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH);
+
+        Replicator replicator = new Replicator(replicatorConfig);
+        replicator.start();
+        // end::database-replica[]
+    }
+    
+    public void testPredictiveModel() throws CouchbaseLiteException {
+        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
+        Database database = new Database("mydb", config);
+        
+        // tag::register-model[]
+        Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());
+        // end::register-model[]
+        
+        // tag::predictive- query-value-index[]
+        ValueIndex index = IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")));
+        database.createIndex("value-index-image-classifier", index);
+        // end::predictive-query-value-index[]
+        
+        // tag::unregister-model[]
+        Database.prediction.unregisterModel("ImageClassifier");
+        // end::unregister-model[]
+    }
+    
+    public void testPredictiveIndex() throws CouchbaseLiteException {
+        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
+        Database database = new Database("mydb", config);
+        
+        // tag::predictive-query-predictive-index[]
+        Map<String, Object> inputMap = new HashMap<>();
+        inputMap.put("numbers", Expression.property("photo"));
+        Expression input = Expression.map(inputMap);
+        
+        PredictiveIndex index = IndexBuilder.predictiveIndex("ImageClassifier", input, null);
+        database.createIndex("predictive-index-image-classifier", index);
+        // end::predictive-query-predictive-index[]
+    }
+    
+    public void testPredictiveQuery() throws CouchbaseLiteException {
+        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
+        Database database = new Database("mydb", config);
+        
+        // tag::predictive-query[]
+        Query query = QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.database(database))
+        .where(Expression.property("label").equalTo(Expression.string("car"))
+               .and(Expression.property("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))));
+        
+        // Run the query.
+        ResultSet result = query.execute();
+        Log.d(TAG, "Number of rows: " + result.allResults().size());
+        // end::predictive-query[]
     }
 
 }
@@ -885,3 +1017,26 @@ class PassivePeerConnection implements MessageEndpointConnection {
         // end::passive-peer-receive[]
     }
 }
+
+// tag::predictive-model[]
+// `tensorFlowModel` is a fake implementation
+// this would be the implementation of the ml model you have chosen
+class ImageClassifierModel implements PredictiveModel {
+    @Override
+    public Dictionary predict(@NonNull Dictionary input) {
+        Blob blob = input.getBlob("photo");
+        if (blob == null) { return null; }
+
+        // `tensorFlowModel` is a fake implementation
+        // this would be the implementation of the ml model you have chosen
+        return new MutableDictionary(TensorFlowModel.predictImage(blob.getContent()));
+    }
+}
+
+class TensorFlowModel {
+    public static Map<String, Object> predictImage(byte[] data) {
+        return null;
+    }
+}
+// end::predictive-model[]
+

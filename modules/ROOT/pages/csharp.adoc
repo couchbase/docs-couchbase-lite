@@ -104,7 +104,7 @@ Comparing this to the xref:1.4@csharp.adoc#supported-versions[supported versions
 
 == API References
 
-http://docs.couchbase.com/mobile/2.1/couchbase-lite-swift[Swift SDK API References]
+http://docs.couchbase.com/mobile/2.5/couchbase-lite-net[C# SDK API References]
 
 == Upgrading
 
@@ -584,6 +584,59 @@ Armagh
 Avignon
 ----
 
+== Live Query
+
+A live query stays active and monitors the database for changes.
+A live query is a great way to build reactive user interfaces, especially table/list views, that keep themselves up to date.
+For example, as the replicator runs and pulls new data from the server, a live query-driven UI will automatically update to show the data without the user having to manually refresh.
+This helps your app feel quick and responsive.
+
+[source]
+----
+include::{snippet}[tag=live-query,indent=0]
+----
+<1> To start a live query, you must call `query.execute()`.
+This will immediately execute the query and post the result to the change listener.
+When there's a change it re-runs itself automatically, and posts the new query result to any observers (change listeners).
+
+The following example stops the live query with the token from the previous example.
+
+[source]
+----
+include::{snippet}[tag=stop-live-query,indent=0]
+----
+
+== Indexing
+
+Creating indexes can speed up the performance of queries.
+While indexes make queries faster, they also make writes slightly slower, and the Couchbase Lite database file slightly larger.
+As such, it is best to only create indexes when you need to optimize a specific case for better query performance.
+
+The following example creates a new index for the `type` and `name` properties.
+
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "Apple Droid"
+}
+----
+
+[source]
+----
+include::{snippet}[tag=query-index,indent=0]
+----
+
+If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.
+
+NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
+Thus, good performance depends on designing and creating the _right_ indexes to go along with your queries.
+
+== Predictive Query
+
+include::{partialsdir}/predictive-query.adoc[]
+
 == Full-Text Search
 
 To run a full-text search (FTS) query, you must have created a full-text index on the expression being matched.
@@ -690,17 +743,7 @@ In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the pro
 
 == Replication
 
-Couchbase Mobile 2.0 uses a new replication protocol based on WebSockets.
-
-The replicator is designed to send documents from a source to a target database.
-The target can be one of the following:
-
-`URLEndpoint`::
-To replicate data between a local Couchbase Lite database and remote Sync Gateway database using the WebSocket protocol ([start here]).
-`DatabaseEndpoint`::
-To replicate data between two local Couchbase Lite databases. This target can be used to create a local back-up of a database ([database replicas])
-`MessageEndpoint`::
-Allows a local database to replicate with another Couchbase Lite database via a custom transportation protocol such iOS Multipeer Connectivity, Android WiFi Direct, Android NearByConnection, socket based transportation etc. (see [Message Endpoint])
+include::{partialsdir}/replication-introduction.adoc[]
 
 === Compatibility
 
@@ -932,6 +975,12 @@ Database replicas is available in the *Enterprise Edition* only (https://www.cou
 Starting in Couchbase Lite 2.0, replication between two local databases is now supported.
 It allows a Couchbase Lite replicator to store data on secondary storage.
 It would be especially useful in scenarios where a user's device is damaged and the data needs to be moved to a different device.
+Note that the code below won't compile if you're running the *Community Edition* of Couchbase Lite.
+
+[source]
+----
+include::{snippet}[tag=database-replica,indent=0]
+----
 
 == Certificate Pinning
 
