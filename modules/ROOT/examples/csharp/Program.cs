@@ -665,7 +665,7 @@ namespace api_walkthrough
             // end::replication-status[]
         }
 		
-		private void ReplicatorDocumentEvent()
+		private static void ReplicatorDocumentEvent()
         {
             var replicator = _Replicator;
 			
