@@ -904,9 +904,9 @@ class SampleCodeTest {
 
 
 // tag::predictive-model[]
-// `anyMLFramework` is a fake implementation
+// `myMLModel` is a fake implementation
 // this would be the implementation of the ml model you have chosen
-class anyMLFramework {
+class myMLModel {
     static func predictImage(data: Data) -> [String : AnyObject] {}
 }
 
@@ -917,9 +917,9 @@ class ImageClassifierModel: PredictiveModel {
         }
         
         let imageData = blob.content!
-        // `anyMLFramework` is a fake implementation
+        // `myMLModel` is a fake implementation
         // this would be the implementation of the ml model you have chosen
-        let modelOutput = anyMLFramework.predictImage(data: imageData)
+        let modelOutput = myMLModel.predictImage(data: imageData)
         
         let output = MutableDictionaryObject(data: modelOutput)
         return output // <1>
