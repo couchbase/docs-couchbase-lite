@@ -579,7 +579,7 @@ class SampleCodeTest {
             for document in replication.documents {
                 if (document.error != nil) {
                     print("Doc ID :: \(document.id)")
-                    if (document.flags.rawValue == DocumentFlags.deleted.rawValue) {
+                    if (document.flags.contains(.deleted)) {
                         print("Successfully replicated a deleted document")
                     }
                 } else {
