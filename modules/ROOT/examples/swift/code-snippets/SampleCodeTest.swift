@@ -624,7 +624,7 @@ class SampleCodeTest {
         
         let config = ReplicatorConfiguration(database: database, target: target)
         config.pullFilter = { (document, flags) in // <1>
-            if (flags.rawValue == DocumentFlags.deleted.rawValue) {
+            if (flags.contains(.deleted)) {
                 return false
             }
             return true
