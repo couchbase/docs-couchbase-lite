@@ -206,6 +206,17 @@ namespace api_walkthrough
                 .Where(Meta.Expiration.LessThan(Expression.Double(oneDayFromNow)));
             // end::document-expiration[]
         }
+		
+		private static void QueryDeletedDocuments()
+        {
+            // tag::query-deleted-documents[]
+            // Query documents that have been deleted
+            var query = QueryBuilder
+                .Select(SelectResult.Expression(Meta.ID))
+                .From(DataSource.Database(db))
+                .Where(Meta.IsDeleted);
+            // end::query-deleted-documents[]
+        }
 
         private static void CreateDocument()
         {
