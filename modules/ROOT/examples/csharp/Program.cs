@@ -185,6 +185,27 @@ namespace api_walkthrough
             _Database.Close();
             _Database = new Database("travel-sample");
         }
+		
+		private void DocumentExpiration()
+        {
+			var db = _Database;
+			
+            // tag::document-expiration[]
+            // Purge the document one day from now
+            var ttl = DateTimeOffset.UtcNow.AddDays(1);
+            db.SetDocumentExpiration("doc123", ttl);
+
+            // Reset expiration
+            db.SetDocumentExpiration("doc1", null);
+
+            // Query documents that will be expired in less than five minutes
+            var oneDayFromNow = DateTimeOffset.UtcNow.AddMinutes(5).ToUnixTimeMilliseconds();
+            var query = QueryBuilder
+                .Select(SelectResult.Expression(Meta.ID))
+                .From(DataSource.Database(db))
+                .Where(Meta.Expiration.LessThan(Expression.Double(oneDayFromNow)));
+            // end::document-expiration[]
+        }
 
         private static void CreateDocument()
         {
