@@ -186,7 +186,7 @@ namespace api_walkthrough
             _Database = new Database("travel-sample");
         }
 		
-		private void DocumentExpiration()
+		private static void DocumentExpiration()
         {
 			var db = _Database;
 			
