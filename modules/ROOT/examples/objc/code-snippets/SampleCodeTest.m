@@ -248,8 +248,8 @@
     
     // tag::query-deleted-documents[]
     // Query documents that have been deleted
-    CBLQuery* query = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: CBLQueryMeta.id]]
-                                         from: [CBLQueryDataSource database: database]
+    CBLQuery* query = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression:CBLQueryMeta.id]]
+                                         from: [CBLQueryDataSource database:database]
                                         where: CBLQueryMeta.isDeleted];
     // end::query-deleted-documents[]
     NSLog(@"%@", query);
