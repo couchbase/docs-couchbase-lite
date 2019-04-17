@@ -207,7 +207,7 @@ namespace api_walkthrough
             // end::document-expiration[]
         }
 		
-		private static void QueryDeletedDocuments()
+	private static void QueryDeletedDocuments()
         {
             // tag::query-deleted-documents[]
             // Query documents that have been deleted
