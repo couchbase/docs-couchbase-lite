@@ -186,9 +186,9 @@ namespace api_walkthrough
             _Database = new Database("travel-sample");
         }
 		
-		private static void DocumentExpiration()
+	private static void DocumentExpiration()
         {
-			var db = _Database;
+	    var db = _Database;
 			
             // tag::document-expiration[]
             // Purge the document one day from now
