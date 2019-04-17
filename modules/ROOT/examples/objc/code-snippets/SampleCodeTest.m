@@ -243,6 +243,18 @@
     NSLog(@"%@", query);
 }
 
+- (void) dontTestQueryDeletedDocuments {
+    CBLDatabase* database = self.db;
+    
+    // tag::query-deleted-documents[]
+    // Query documents that have been deleted
+    CBLQuery* query = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: CBLQueryMeta.id]]
+                                         from: [CBLQueryDataSource database: database]
+                                        where: CBLQueryMeta.isDeleted];
+    // end::query-deleted-documents[]
+    NSLog(@"%@", query);
+}
+
 - (void) dontTestCollectionOperatorContains {
     NSError *error;
     CBLDatabase *database = self.db;
