@@ -25,6 +25,7 @@ import CoreML
 class SampleCodeTest {
     
     var database: Database!
+    var db: Database!
     
     var replicator: Replicator!
     
@@ -808,9 +809,9 @@ class SampleCodeTest {
 
 
 // tag::predictive-model[]
-// `tensorFlowModel` is a fake implementation
+// `anyMLFramework` is a fake implementation
 // this would be the implementation of the ml model you have chosen
-class tensorFlowModel {
+class anyMLFramework {
     static func predictImage(data: Data) -> [String : AnyObject] {}
 }
 
@@ -821,9 +822,9 @@ class ImageClassifierModel: PredictiveModel {
         }
         
         let imageData = blob.content!
-        // `tensorFlowModel` is a fake implementation
+        // `anyMLFramework` is a fake implementation
         // this would be the implementation of the ml model you have chosen
-        let modelOutput = tensorFlowModel.predictImage(data: imageData)
+        let modelOutput = anyMLFramework.predictImage(data: imageData)
         
         let output = MutableDictionaryObject(data: modelOutput)
         return output // <1>

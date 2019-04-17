@@ -1,0 +1,44 @@
+By default, Sync Gateway does not enable authentication.
+This is to make it easier to get up and running with synchronization.
+You can enable authentication with the following properties in the configuration file:
+
+[source,json]
+----
+{
+  "databases": {
+    "mydatabase": {
+      "users": {
+        "GUEST": {"disabled": true}
+      }
+    }
+  }
+}
+----
+
+To authenticate with Sync Gateway, an associated user must first be created.
+Sync Gateway users can be created through the xref:sync-gateway::admin-rest-api.adoc#/user/post\__db___user_[`+POST /{db}/_user+`] endpoint on the Admin REST API.
+Provided that the user exists on Sync Gateway, there are two ways to authenticate from a Couchbase Lite client: Basic Authentication or Session Authentication.
+
+==== Basic Authentication
+
+You can provide a user name and password to the basic authenticator class method.
+Under the hood, the replicator will send the credentials in the first request to retrieve a `SyncGatewaySession` cookie and use it for all subsequent requests during the replication.
+This is the recommended way of using basic authentication.
+The following example initiates a one-shot replication as the user *john* with the password *pass*.
+
+[source]
+----
+include::{snippet}[tag=basic-authentication,indent=0]
+----
+
+==== Session Authentication
+
+Session authentication is another way to authenticate with Sync Gateway.
+A user session must first be created through the xref:sync-gateway::rest-api.adoc#/session/post\__db___session[`+POST /{db}/_session+`] endpoint on the Public REST API.
+The HTTP response contains a session ID which can then be used to authenticate as the user it was created for.
+The following example initiates a one-shot replication with the session ID that is returned from the `+POST /{db}/_session+` endpoint.
+
+[source]
+----
+include::{snippet}[tag=session-authentication,indent=0]
+----

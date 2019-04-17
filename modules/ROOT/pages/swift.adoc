@@ -3,7 +3,7 @@
 :idseparator: -
 :snippet: {examplesdir}/swift/code-snippets/SampleCodeTest.swift
 :source-language: swift
-:version: 2.1.1
+:version: 2.1.6
 :blank-field: ____
 :url-issues-ios: https://github.com/couchbase/couchbase-lite-ios/issues
 :tabs:
@@ -619,24 +619,23 @@ Avignon
 
 == Live Query
 
-A live query stays active and monitors the database for changes.
-A live query is a great way to build reactive user interfaces, especially table/list views, that keep themselves up to date.
-For example, as the replicator runs and pulls new data from the server, a live query-driven UI will automatically update to show the data without the user having to manually refresh.
-This helps your app feel quick and responsive.
+include::{partialsdir}/live-query.adoc[]
+
+== Predictive Query
+
+include::{partialsdir}/predictive-query.adoc[]
+
+=== Integrate a Model with CoreMLPredictiveModel (iOS only)
+
+`CoreMLPredictiveModel` is a Core ML based implementation of the `PredictiveModel` protocol that facilitates the integration of Core ML models with Couchbase Lite.
+
+
+The following example describes how to load a Core ML model using `CoreMLPredictiveModel`.
+All other steps (register, indexing, query, unregister) are the same as with a model that is integrated using your own `PredictiveModel` implementation.
 
 [source]
 ----
-include::{snippet}[tag=live-query,indent=0]
-----
-<1> To start a live query, you must call `query.execute()`.
-This will immediately execute the query and post the result to the change listener.
-When there's a change it re-runs itself automatically, and posts the new query result to any observers (change listeners).
-
-The following example stops the live query with the token from the previous example.
-
-[source]
-----
-include::{snippet}[tag=stop-live-query,indent=0]
+include::{snippet}[tag=coreml-predictive-model,indent=0]
 ----
 
 == Predictive Query
@@ -789,17 +788,7 @@ In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the pro
 
 == Replication
 
-Couchbase Mobile 2.0 uses a new replication protocol based on WebSockets.
-
-The replicator is designed to send documents from a source to a target database.
-The target can be one of the following:
-
-`URLEndpoint`::
-To replicate data between a local Couchbase Lite database and remote Sync Gateway database using the WebSocket protocol ([start here]).
-`DatabaseEndpoint`::
-To replicate data between two local Couchbase Lite databases. This target can be used to create a local back-up of a database ([database replicas])
-`MessageEndpoint`::
-Allows a local database to replicate with another Couchbase Lite database via a custom transportation protocol such iOS Multipeer Connectivity, Android WiFi Direct, Android NearByConnection, socket based transportation etc. (see [Message Endpoint])
+include::{partialsdir}/replication-introduction.adoc[]
 
 === Compatibility
 
@@ -865,6 +854,18 @@ The level of compression is set on Sync Gateway and can be tuned in the configur
 To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
 So we don't recommend to rely on that when using the replication or database change listeners for example.
 
+=== Delta Sync
+
+NOTE: Delta Sync is an Enterprise Edition feature on Sync Gateway and Couchbase Lite.
+
+Couchbase Mobile 2.5 introduces delta sync.
+Delta Sync is the ability to replicate only parts of the Couchbase document that have changed.
+This can result in significant savings in bandwidth consumption as well as throughput improvements, especially when network bandwidth is typically constrained.
+
+Replications to a <<starting-sync-gateway, URLEndpoint>> (i.e Sync Gateway) automatically use delta sync if the xref:config-properties.adoc#databases-foo_db-delta_sync[databases.$db.delta_sync.enabled] property is set to `true` in Sync Gateway's configuration file.
+
+Replications to a <<database-replicas, DatabaseEndpoint>> automatically *disable* delta sync and replications to a <<peer-to-peer-sync, MessageEndpoint>> automatically *enable* delta sync.
+
 === Troubleshooting
 
 As always, when there is a problem with replication, logging is your friend.
@@ -877,50 +878,7 @@ include::{snippet}[tag=replication-logging,indent=0]
 
 === Authentication
 
-By default, Sync Gateway does not enable authentication.
-This is to make it easier to get up and running with synchronization.
-You can enable authentication with the following properties in the configuration file:
-
-[source,json]
-----
-{
-  "databases": {
-    "mydatabase": {
-      "users": {
-        "GUEST": {"disabled": true}
-      }
-    }
-  }
-}
-----
-
-To authenticate with Sync Gateway, an associated user must first be created.
-Sync Gateway users can be created through the xref:sync-gateway::admin-rest-api.adoc#/user/post\__db___user_[`+POST /{db}/_user+`] endpoint on the Admin REST API.
-Provided that the user exists on Sync Gateway, there are two ways to authenticate from a Couchbase Lite client: Basic Authentication or Session Authentication.
-
-==== Basic Authentication
-
-You can provide a user name and password to the basic authenticator class method.
-Under the hood, the replicator will send the credentials in the first request to retrieve a `SyncGatewaySession` cookie and use it for all subsequent requests during the replication.
-This is the recommended way of using basic authentication.
-The following example initiates a one-shot replication as the user *john* with the password *pass*.
-
-[source]
-----
-include::{snippet}[tag=basic-authentication,indent=0]
-----
-
-==== Session Authentication
-
-Session authentication is another way to authenticate with Sync Gateway.
-A user session must first be created through the xref:sync-gateway::rest-api.adoc#/session/post\__db___session[`+POST /{db}/_session+`] endpoint on the Public REST API.
-The HTTP response contains a session ID which can then be used to authenticate as the user it was created for.
-The following example initiates a one-shot replication with the session ID that is returned from the `+POST /{db}/_session+` endpoint.
-
-[source]
-----
-include::{snippet}[tag=session-authentication,indent=0]
-----
+include::{partialsdir}/authentication.adoc[]
 
 === Replication Status
 
@@ -1022,16 +980,7 @@ The concurrency control parameter has two possible values:
 
 == Database Replicas
 
-Database replicas is available in the *Enterprise Edition* only (https://www.couchbase.com/downloads).
-Starting in Couchbase Lite 2.0, replication between two local databases is now supported.
-It allows a Couchbase Lite replicator to store data on secondary storage.
-It would be especially useful in scenarios where a user's device is damaged and the data needs to be moved to a different device.
-Note that the code below won't compile if you're running the *Community Edition* of Couchbase Lite.
-
-[source]
-----
-include::{snippet}[tag=database-replica,indent=0]
-----
+include::{partialsdir}/database-replicas.adoc[]
 
 == Certificate Pinning
 
@@ -1102,6 +1051,16 @@ include::{partialsdir}/p2p-connection-teardown.adoc[]
 The Couchbase Lite API is thread safe except for calls to mutable objects: `MutableDocument`, `MutableDictionary` and `MutableArray`.
 
 == Release Notes
+
+=== 2.1.6
+
+* This release is compiled with Xcode 10.2.
+
+=== 2.1.5
+
+.Bugs
+* https://github.com/couchbase/couchbase-lite-core/issues/714[*#714*] docIDs starting with `_design/` cause the upgrade to 1.x to fail
+* https://github.com/couchbase/couchbase-lite-core/issues/712[*#712*] fleece::Scope throws an exception on a background thread while updating a live query
 
 === 2.1.3
 

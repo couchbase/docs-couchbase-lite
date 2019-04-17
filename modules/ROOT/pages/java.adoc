@@ -4,7 +4,7 @@
 :snippet: {examplesdir}/java/app/src/main/java/com/couchbase/code_snippets/MainActivity.java
 :ziputils: {examplesdir}/java/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
 :source-language: java
-:version: 2.1.0
+:version: 2.1.2
 :blank-field: ____
 :url-issues-java: https://github.com/couchbase/couchbase-lite-android/issues
 
@@ -90,7 +90,7 @@ xref:sync-gateway::getting-started.adoc#installation[Installing Sync Gateway ->]
 
 == API References
 
-http://docs.couchbase.com/mobile/2.1/couchbase-lite-java[Java SDK API References]
+http://docs.couchbase.com/mobile/2.1.2/couchbase-lite-java[Java SDK API References]
 
 == Upgrading
 
@@ -557,6 +557,10 @@ Armagh
 Avignon
 ----
 
+== Live Query
+
+include::{partialsdir}/live-query.adoc[]
+
 == Indexing
 
 Creating indexes can speed up the performance of queries.
@@ -690,7 +694,7 @@ In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the pro
 
 == Replication
 
-Couchbase Mobile 2.0 uses a new replication protocol based on WebSockets.
+include::{partialsdir}/replication-introduction.adoc[]
 
 === Compatibility
 
@@ -729,7 +733,7 @@ class MyClass {
     void startReplication() {
         URI uri = null;
         try {
-            uri = new URI("ws://10.0.2.2:4984/db"); // <2>
+            uri = new URI("wss://10.0.2.2:4984/db"); // <2>
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -747,6 +751,9 @@ To keep a reference to the `replicator` object, you can set it as an instance pr
 <2> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
 You should now use `ws:`, or `wss:` for SSL/TLS connections.
 In this example the hostname is `10.0.2.2` because the Android emulator runs in a VM that is generally accessible on `10.0.2.2` from the host machine (see https://developer.android.com/studio/run/emulator-networking[Android Emulator networking] documentation).
++
+NOTE: As of Android Pie, version 9, API 28, cleartext support is disabled, by default.
+Although `wss:` protocol URLs are not affected, in order to use the `ws:` protocol, applications must target API 27 or lower, or must configure application network security as described https://developer.android.com/training/articles/security-config#CleartextTrafficPermitted[here].
 
 include::{partialsdir}/verify-replication.adoc[]
 
@@ -771,6 +778,10 @@ The following example increases the log output for activity related to replicati
 ----
 include::{snippet}[tag=replication-logging,indent=0]
 ----
+
+=== Authentication
+
+include::{partialsdir}/authentication.adoc[]
 
 === Replication Status
 
@@ -872,11 +883,7 @@ The concurrency control parameter has two possible values:
 
 == Database Replicas
 
-Database replicas is available in the *Enterprise Edition* only (https://www.couchbase.com/downloads).
-Starting in Couchbase Lite 2.0, replication between two local databases is now supported.
-It allows a Couchbase Lite replicator to store data on secondary storage.
-It would be especially useful in scenarios where a user's device is damaged and the data needs to be moved to a different device.
-Note that the code below won't compile if you're running the *Community Edition* of Couchbase Lite.
+include::{partialsdir}/database-replicas.adoc[]
 
 == Certificate Pinning
 

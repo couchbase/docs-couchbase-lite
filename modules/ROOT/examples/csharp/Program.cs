@@ -306,6 +306,31 @@ namespace api_walkthrough
                 // All user properties will be available here
             }
             // end::query-select-all[]
+
+            // tag::live-query[]
+            var query = QueryBuilder
+                .Select(SelectResult.All())
+                .From(DataSource.Database(db));
+
+            // Adds a query change listener.
+            // Changes will be posted on the main queue.
+            var token = query.AddChangeListener((sender, args) =>
+            {
+                var allResult = args.Results.AllResults();
+                foreach (var result in allResult) {
+                    Console.WriteLine(result.Keys);
+                    /* Update UI */
+                }
+            });
+			
+            // Start live query.
+            query.Execute(); // <1>
+            // end::live-query[]
+
+            // tag::stop-live-query[]
+            query.RemoveChangeListener(token);
+            query.Dispose();
+            // end::stop-live-query[]
         }
 
         private static void SelectWhere()
