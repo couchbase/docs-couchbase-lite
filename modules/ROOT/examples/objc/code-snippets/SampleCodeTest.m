@@ -130,6 +130,31 @@
     // end::batch[]
 }
 
+- (void) dontTestDocumentExpiration {
+    NSError* error;
+    CBLDatabase *database = self.db;
+    
+    // tag::document-expiration[]
+    // Purge the document one day from now
+    NSDate* ttl = [[NSCalendar currentCalendar] dateByAddingUnit: NSCalendarUnitDay
+                                                           value: 1
+                                                          toDate: [NSDate date]
+                                                         options: 0];
+    [database setDocumentExpirationWithID:@"doc123" expiration:ttl error:&error];
+
+    // Reset expiration
+    [database setDocumentExpirationWithID:@"doc1" expiration:nil error: &error];
+    
+    // Query documents that will be expired in less than five minutes
+    NSTimeInterval fiveMintsFromNow = [[NSDate dateWithTimeIntervalSinceNow:60 * 5] timeIntervalSince1970];
+    CBLQuery* query = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+                                         from: [CBLQueryDataSource database: database]
+                                        where: [[CBLQueryMeta expiration]
+                                                lessThan: [CBLQueryExpression double: fiveMintsFromNow]]];
+    // end::document-expiration[]
+    NSLog(@"%@", query);
+}
+
 - (void) dontTestBlob {
 #if TARGET_OS_IPHONE
     NSError *error;
