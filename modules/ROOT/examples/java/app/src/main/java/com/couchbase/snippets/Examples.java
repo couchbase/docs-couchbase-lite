@@ -82,6 +82,7 @@ import com.couchbase.lite.SessionAuthenticator;
 import com.couchbase.lite.URLEndpoint;
 import com.couchbase.lite.ValueIndex;
 import com.couchbase.lite.ValueIndexItem;
+import com.couchbase.lite.Where;
 
 
 public class Examples {
@@ -462,6 +463,17 @@ public class Examples {
             // end::query-where[]
         }
     }
+
+    public void testQueryDeletedDocuments() {
+        // tag::query-deleted-documents[]
+        // Query documents that have been deleted
+        Where query = QueryBuilder
+            .select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(database))
+            .where(Meta.deleted);
+        // end::query-deleted-documents[]
+    }
+
 
     // ####　Collection Operators
     public void testCollectionStatement() throws CouchbaseLiteException {
