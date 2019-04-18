@@ -31,3 +31,8 @@ include::{snippet}[tag=replication-pull-filter,indent=0]
 <1> The callback should follow the semantics of a https://en.wikipedia.org/wiki/Pure_function[pure function].
 Otherwise, long running functions would considerably slow down the replicator.
 Furthermore, your callback should not make assumptions about what thread it is being called on.
+
+NOTE: Losing access to a document (via the Sync Function) also triggers the pull replication filter.
+Filtering out such an event would retain the document locally.
+As a result, there would be a local copy of the document disjointed from the one that resides on Couchbase Server.
+Further updates to the document stored on Couchbase Server would not be received in pull replications.
