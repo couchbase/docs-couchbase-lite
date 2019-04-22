@@ -19,6 +19,39 @@
 
 #import <UIKit/UIKit.h>
 #import <CouchbaseLite/CouchbaseLite.h>
+#import <CoreML/CoreML.h>
+
+// tag::predictive-model[]
+// `myMLModel` is a fake implementation
+// this would be the implementation of the ml model you have chosen
+@interface myMLModel : NSObject
+
++ (NSDictionary*)predictImage: (NSData*)data;
+
+@end
+
+@interface ImageClassifierModel : NSObject <CBLPredictiveModel>
+
+- (nullable CBLDictionary*) predict: (CBLDictionary*)input;
+
+@end
+
+@implementation ImageClassifierModel
+
+- (nullable CBLDictionary*) predict: (CBLDictionary*)input; {
+    CBLBlob* blob = [input blobForKey:@"photo"];
+    
+    NSData* imageData = blob.content;
+    // `myMLModel` is a fake implementation
+    // this would be the implementation of the ml model you have chosen
+    NSDictionary* modelOutput = [myMLModel predictImage:imageData];
+    
+    CBLMutableDictionary* output = [[CBLMutableDictionary alloc] initWithData: modelOutput];
+    return output; // <1>
+}
+
+@end
+// end::predictive-model[]
 
 @interface SampleCodeTest : NSObject
 
@@ -766,6 +799,75 @@
     // Start replication
     [replicator start];
     // end::getting-started[]
+}
+
+- (void) dontTestPredictiveModel {
+    NSError *error;
+    CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
+    
+    // tag::register-model[]
+    ImageClassifierModel* model = [[ImageClassifierModel alloc] init];
+    [[CBLDatabase prediction] registerModel:model withName:@"ImageClassifier"];
+    // end::register-model[]
+    
+    // tag::predictive-query-value-index[]
+    CBLQueryExpression* input = [CBLQueryExpression dictionary: @{@"photo":[CBLQueryExpression property:@"photo"]}];
+    CBLQueryPredictionFunction* prediction = [CBLQueryFunction predictionUsingModel:@"ImageClassifier" input:input];
+    
+    CBLValueIndex* index = [CBLIndexBuilder valueIndexWithItems:@[[CBLValueIndexItem expression:[prediction property:@"label"]]]];
+    [database createIndex:index withName:@"value-index-image-classifier" error:&error];
+    // end::predictive-query-value-index[]
+    
+    // tag::unregister-model[]
+    [[CBLDatabase prediction] unregisterModelWithName:@"ImageClassifier"];
+    // end::unregister-model[]
+}
+
+- (void) dontTestPredictiveIndex {
+    NSError *error;
+    CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
+    
+    // tag::predictive-query-predictive-index[]
+    CBLQueryExpression* input = [CBLQueryExpression dictionary:@{@"photo":[CBLQueryExpression property:@"photo"]}];
+    
+    CBLPredictiveIndex* index = [CBLIndexBuilder predictiveIndexWithModel:@"ImageClassifier" input:input properties:nil];
+    [database createIndex:index withName:@"predictive-index-image-classifier" error:&error];
+    // end::predictive-query-predictive-index[]
+}
+
+- (void) dontTestPredictiveQuery {
+    NSError *error;
+    CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
+    
+    // tag::predictive-query[]
+    CBLQueryExpression* input = [CBLQueryExpression dictionary: @{@"photo":[CBLQueryExpression property:@"photo"]}];
+    CBLQueryPredictionFunction* prediction = [CBLQueryFunction predictionUsingModel:@"ImageClassifier" input:input];
+    
+    CBLQueryExpression* condition = [[[prediction property:@"label"] equalTo:[CBLQueryExpression string:@"car"]]
+                                     andExpression:[[prediction property:@"probablity"] greaterThanOrEqualTo:[CBLQueryExpression double:0.8]]];
+    CBLQuery* query = [CBLQueryBuilder select: @[[CBLQuerySelectResult all]]
+                                         from: [CBLQueryDataSource database:database]
+                                        where: condition];
+    
+    // Run the query.
+    CBLQueryResultSet *result = [query execute:&error];
+    NSLog(@"Number of rows :: %lu", (unsigned long)[[result allResults] count]);
+    // end::predictive-query[]
+}
+
+- (void) dontTestCoreMLPredictiveModel {
+    NSError *error;
+    
+    // tag::coreml-predictive-model[]
+    // Load MLModel from `ImageClassifier.mlmodel`
+    NSURL* modelURL = [[NSBundle mainBundle] URLForResource:@"ImageClassifier" withExtension:@"mlmodel"];
+    NSURL* compiledModelURL = [MLModel compileModelAtURL:modelURL error:&error];
+    MLModel* model = [MLModel modelWithContentsOfURL:compiledModelURL error:&error];
+    CBLCoreMLPredictiveModel* predictiveModel = [[CBLCoreMLPredictiveModel alloc] initWithMLModel:model];
+    
+    // Register model
+    [[CBLDatabase prediction] registerModel:predictiveModel withName:@"ImageClassifier"];
+    // end::coreml-predictive-model[]
 }
 
 @end
