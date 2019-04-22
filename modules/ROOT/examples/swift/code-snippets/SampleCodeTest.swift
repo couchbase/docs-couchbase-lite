@@ -58,6 +58,14 @@ class SampleCodeTest {
         // end::logging[]
     }
     
+    func dontTestEnableLogging() throws {
+        // tag::file-logging[]
+        let tempFolder = NSTemporaryDirectory().appending("cbllog")
+        Database.log.file.config = LogFileConfiguration.init(directory: tempFolder)
+        Database.log.file.level = .info
+        // end::file-logging[]
+    }
+    
     func dontTestCustomLogging() throws {
         // tag::custom-logging[]
         // TBD

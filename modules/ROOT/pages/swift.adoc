@@ -248,9 +248,9 @@ There are three different logging features:
 Console based logging::
 Enabled by default.
 Console based logging is often used to facilitate troubleshooting during development.
-File based and custom logging are disabled by default and can be enabled and configured on the "Database" object.
 +
 File based logging::
+Disabled by default.
 File based logging is supported in two formats:
 
 * a binary format mode which is much more efficient in terms of storage and performance.
@@ -261,7 +261,15 @@ It is recommended that you use binary log format.
 However, in order to view the binary encoded log files, you will need a decoder.
 To decode the binary logs, there is a binary log decoder called the *cbl-log* which is a tool downloadable from xref:#cbl-log[here].
 +
+The following example enables file based logging.
++
+[source]
+----
+include::{snippet}[tag=file-logging,indent=0]
+----
++
 Custom logging::
+Disabled by default.
 Provides apps the ability to register a callback function in order to receive Couchbase Lite log messages.
 The messages can be logged using any external logging framework.
 +

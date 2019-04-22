@@ -203,6 +203,15 @@ public class MainActivity extends AppCompatActivity {
         // end::logging[]
     }
 
+    // ### File logging
+    public void testFileLogging() throws CouchbaseLiteException {
+        // tag::file-logging[]
+        final File path = context.getCacheDir();
+        Database.log.getFile().setConfig(new LogFileConfiguration(path.toString()));
+        Database.log.getFile().setLevel(LogLevel.INFO);
+        // end::file-logging[]
+    }
+
     // ### Loading a pre-built database
     public void testPreBuiltDatabase() throws IOException {
         // tag::prebuilt-database[]
