@@ -57,6 +57,12 @@ class SampleCodeTest {
         Database.setLogLevel(.verbose, domain: .query)
         // end::logging[]
     }
+    
+    func dontTestCustomLogging() throws {
+        // tag::custom-logging[]
+        // TBD
+        // end::custom-logging[]
+    }
 
     func dontTestLoadingPrebuilt() throws {
         // tag::prebuilt-database[]
