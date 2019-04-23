@@ -710,7 +710,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testHandlingNetworkErrors() throws URISyntaxException {
-        Endpoint endpoint = new URLEndpoint(new URI("ws://localhost:4984/db"));
+        URI uri = new URI("ws://localhost:4984/db");
+        Endpoint endpoint = new URLEndpoint(uri);
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
         config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
         Replicator replication = new Replicator(config);
