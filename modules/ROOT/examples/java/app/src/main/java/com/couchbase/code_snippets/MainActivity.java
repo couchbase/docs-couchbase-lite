@@ -320,18 +320,18 @@ public class MainActivity extends AppCompatActivity {
     private void DocumentExpiration() throws CouchbaseLiteException {
         // tag::document-expiration[]
         // Purge the document one day from now
-        Instant t = Instant.now().plus(1, ChronoUnit.DAYS);
-        database.setDocumentExpiration("doc123", new Date(t.toEpochMilli()));
+        Instant ttl = Instant.now().plus(1, ChronoUnit.DAYS);
+        database.setDocumentExpiration("doc123", new Date(ttl.toEpochMilli()));
 
         // Reset expiration
         database.setDocumentExpiration("doc1", null);
 
         // Query documents that will be expired in less than five minutes
-        t = Instant.now().plus(5, ChronoUnit.MINUTES);
+        Instant fiveMinutesFromNow = Instant.now().plus(5, ChronoUnit.MINUTES);
         Query query = QueryBuilder
             .select(SelectResult.expression(Meta.id))
             .from(DataSource.database(database))
-            .where(Meta.expiration.lessThan(Expression.doubleValue(t.toEpochMilli())));
+            .where(Meta.expiration.lessThan(Expression.doubleValue(fiveMinutesFromNow.toEpochMilli())));
         // end::document-expiration[]
     }
 
