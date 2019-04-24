@@ -16,7 +16,6 @@
 // limitations under the License.
 // 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -720,7 +719,7 @@ namespace api_walkthrough
             // end::certificate-pinning[]
         }
         
-        private static void ReplicationCustomHeaders(Database database)
+        private static void ReplicationCustomHeaders()
         {
             var url = new Uri("ws://localhost:4984/mydatabase");
             var target = new URLEndpoint(url);
