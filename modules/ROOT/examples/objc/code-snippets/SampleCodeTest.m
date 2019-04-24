@@ -22,8 +22,6 @@
 
 @interface SampleCodeTest : NSObject
 
-@property(nonatomic) CBLDatabase* db;
-
 @end
 
 @implementation SampleCodeTest
@@ -703,13 +701,6 @@
     // end::getting-started[]
 }
 
-#pragma mark - Helper methods
-
-- (NSData*) dataFromResource: (NSString*)resourceName ofType: (NSString*)type {
-    // this is just for making it build without errors.
-    return [NSData data];
-}
-
 @end
 
 
@@ -886,7 +877,7 @@
     // end::passive-stop-listener[]
 }
 
-- (void)acceptConnection {
+- (void)acceptConnection() {
     // tag::advertizer-accept[]
     PassivePeerConnection *connection = [[PassivePeerConnection alloc] init]; /* implements CBLMessageEndpointConnection */
     [_messageEndpointListener accept: connection];
