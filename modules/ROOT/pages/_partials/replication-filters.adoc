@@ -35,4 +35,4 @@ Furthermore, your callback should not make assumptions about what thread it is b
 NOTE: Losing access to a document (via the Sync Function) also triggers the pull replication filter.
 Filtering out such an event would retain the document locally.
 As a result, there would be a local copy of the document disjointed from the one that resides on Couchbase Server.
-Further updates to the document stored on Couchbase Server would not be received in pull replications.
+Further updates to the document stored on Couchbase Server would not be received in pull replications and further local edits could be potentially pushed, which would result in 409 errors since access has been revoked.
