@@ -146,11 +146,11 @@
     [database setDocumentExpirationWithID:@"doc1" expiration:nil error: &error];
     
     // Query documents that will be expired in less than five minutes
-    NSTimeInterval fiveMintsFromNow = [[NSDate dateWithTimeIntervalSinceNow:60 * 5] timeIntervalSince1970];
+    NSTimeInterval fiveMinutesFromNow = [[NSDate dateWithTimeIntervalSinceNow:60 * 5] timeIntervalSince1970];
     CBLQuery* query = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
                                          from: [CBLQueryDataSource database: database]
                                         where: [[CBLQueryMeta expiration]
-                                                lessThan: [CBLQueryExpression double: fiveMintsFromNow]]];
+                                                lessThan: [CBLQueryExpression double: fiveMinutesFromNow]]];
     // end::document-expiration[]
     NSLog(@"%@", query);
 }

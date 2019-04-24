@@ -155,13 +155,13 @@ class SampleCodeTest {
         try db.setDocumentExpiration(withID: "doc1", expiration: nil)
         
         // Query documents that will be expired in less than five minutes
-        let oneDayFromNow = Date(timeIntervalSinceNow: 60 * 5).timeIntervalSince1970
+        let fiveMinutesFromNow = Date(timeIntervalSinceNow: 60 * 5).timeIntervalSince1970
         let query = QueryBuilder
             .select(SelectResult.expression(Meta.id))
             .from(DataSource.database(db))
             .where(
                 Meta.expiration.lessThan(
-                    Expression.double(oneDayFromNow)
+                    Expression.double(fiveMinutesFromNow)
                 )
             )
         // end::document-expiration[]

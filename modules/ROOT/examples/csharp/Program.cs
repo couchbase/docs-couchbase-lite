@@ -199,11 +199,11 @@ namespace api_walkthrough
             db.SetDocumentExpiration("doc1", null);
 
             // Query documents that will be expired in less than five minutes
-            var oneDayFromNow = DateTimeOffset.UtcNow.AddMinutes(5).ToUnixTimeMilliseconds();
+            var fiveMinutesFromNow = DateTimeOffset.UtcNow.AddMinutes(5).ToUnixTimeMilliseconds();
             var query = QueryBuilder
                 .Select(SelectResult.Expression(Meta.ID))
                 .From(DataSource.Database(db))
-                .Where(Meta.Expiration.LessThan(Expression.Double(oneDayFromNow)));
+                .Where(Meta.Expiration.LessThan(Expression.Double(fiveMinutesFromNow)));
             // end::document-expiration[]
         }
 
