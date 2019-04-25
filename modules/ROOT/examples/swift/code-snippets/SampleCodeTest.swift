@@ -880,13 +880,6 @@ class SampleCodeTest {
     }
     
     func dontTestCoreMLPredictiveModel() throws {
-        let database: Database
-        do {
-            database = try Database(name: "mydb")
-        } catch {
-            fatalError("Error opening database")
-        }
-        
         // tag::coreml-predictive-model[]
         // Load MLModel from `ImageClassifier.mlmodel`
         let modelURL = Bundle.main.url(forResource: "ImageClassifier", withExtension: "mlmodel")!
