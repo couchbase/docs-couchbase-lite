@@ -39,6 +39,7 @@ import com.couchbase.lite.Ordering;
 import com.couchbase.lite.ProtocolType;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.ReplicatedDocument;
 import com.couchbase.lite.Replicator;
 import com.couchbase.lite.ReplicatorChange;
 import com.couchbase.lite.ReplicatorChangeListener;
@@ -758,6 +759,40 @@ public class MainActivity extends AppCompatActivity {
         // end::replication-error-handling[]
 
         replication.stop();
+    }
+
+    public void testReplicatorDocumentEvent() throws URISyntaxException {
+        Endpoint endpoint = new URLEndpoint(new URI("ws://localhost:4984/db"));
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
+        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
+        Replicator replicator = new Replicator(config);
+
+        // tag::add-document-replication-listener[]
+        ListenerToken token = replicator.addDocumentReplicationListener(replication -> {
+
+            Log.i(TAG, "Replication type: " + ((replication.isPush()) ? "Push" : "Pull"));
+            for (ReplicatedDocument document : replication.getDocuments()) {
+                Log.i(TAG, "Doc ID: " + document.getID());
+
+                CouchbaseLiteException err = document.getError();
+                if (err != null) {
+                    // There was an error
+                    Log.e(TAG, "Error replicating document: ", err);
+                    return;
+                }
+
+                if (document.flags().contains(DocumentFlag.DocumentFlagsDeleted)) {
+                    Log.i(TAG, "Successfully replicated a deleted document");
+                }
+            }
+        });
+
+        replicator.start();
+        // end::add-document-replication-listener[]
+
+        // tag::remove-document-replication-listener[]
+        replicator.removeChangeListener(token);
+        // end::remove-document-replication-listener[]
     }
 
     public void testReplicationCustomHeader() throws URISyntaxException {
