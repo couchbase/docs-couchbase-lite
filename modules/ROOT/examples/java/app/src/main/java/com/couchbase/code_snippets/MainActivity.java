@@ -454,6 +454,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void testQueryDeletedDocuments() {
+        // tag::query-deleted-documents[]
+        // Query documents that have been deleted
+        Where query = QueryBuilder
+            .select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(database))
+            .where(Meta.deleted);
+        // end::query-deleted-documents[]
+    }
+
+
     // ####　Collection Operators
     public void testCollectionStatement() throws CouchbaseLiteException {
         // For Documentation
