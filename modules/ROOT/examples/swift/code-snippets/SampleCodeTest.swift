@@ -142,7 +142,32 @@ class SampleCodeTest {
         }
         // end::document-listener[]
     }
-
+    
+    func dontTestDocumentExpiration() throws {
+        database = self.db
+        
+        // tag::document-expiration[]
+        // Purge the document one day from now
+        let ttl = Calendar.current.date(byAdding: .day, value: 1, to: Date())
+        try database.setDocumentExpiration(withID: "doc123", expiration: ttl)
+        
+        // Reset expiration
+        try db.setDocumentExpiration(withID: "doc1", expiration: nil)
+        
+        // Query documents that will be expired in less than five minutes
+        let fiveMinutesFromNow = Date(timeIntervalSinceNow: 60 * 5).timeIntervalSince1970
+        let query = QueryBuilder
+            .select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(db))
+            .where(
+                Meta.expiration.lessThan(
+                    Expression.double(fiveMinutesFromNow)
+                )
+            )
+        // end::document-expiration[]
+        
+    }
+    
     func dontTestBlob() throws {
     #if TARGET_OS_IPHONE
         database = self.db
