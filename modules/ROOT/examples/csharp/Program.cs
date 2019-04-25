@@ -185,6 +185,17 @@ namespace api_walkthrough
             _Database.Close();
             _Database = new Database("travel-sample");
         }
+		
+	private static void QueryDeletedDocuments()
+        {
+            // tag::query-deleted-documents[]
+            // Query documents that have been deleted
+            var query = QueryBuilder
+                .Select(SelectResult.Expression(Meta.ID))
+                .From(DataSource.Database(db))
+                .Where(Meta.IsDeleted);
+            // end::query-deleted-documents[]
+        }
 
         private static void CreateDocument()
         {
