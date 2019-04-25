@@ -655,6 +655,22 @@ namespace api_walkthrough
             // end::replication-logging[]
         }
         
+        private static void FileLogging()
+        {
+            // tag::file-logging[]
+            var tempFolder = Path.Combine(Service.GetInstance<IDefaultDirectoryResolver>().DefaultDirectory(), "cbllog");
+            Database.Log.File.Config = new LogFileConfiguration(tempFolder);
+            Database.Log.File.Level = LogLevel.Info;
+            // end::file-logging[]
+        }
+
+        private static void EnableCustomLogging()
+        {
+            // tag::set-custom-logging[]
+            Database.Log.Custom = new LogTestLogger();
+            // end::set-custom-logging[]
+        }
+
         private static void EnableBasicAuth()
         {
             var database = _Database;
@@ -1138,4 +1154,27 @@ namespace api_walkthrough
         }
     }
     // end::predictive-model[]
+
+    // tag::custom-logging[]
+    private class LogTestLogger : ILogger
+    {
+        [NotNull]
+        private readonly List<string> _lines = new List<string>();
+
+        public IReadOnlyList<string> Lines => _lines;
+        public LogLevel Level { get; set; }
+
+        public void Reset()
+        {
+            _lines.Clear();
+        }
+
+        public void Log(LogLevel level, LogDomain domain, string message)
+        {
+            if (level >= Level) {
+                _lines.Add(message);
+            }
+        }
+    }
+    // end::custom-logging[]
 }
