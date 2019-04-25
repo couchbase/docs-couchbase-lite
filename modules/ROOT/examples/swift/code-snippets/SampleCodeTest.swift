@@ -840,8 +840,7 @@ class SampleCodeTest {
 
         // tag::predictive-query-predictive-index[]
         let input = Expression.dictionary(["photo": Expression.property("photo")])
-        let prediction = Function.prediction(model: "ImageClassifier", input: input)
-        
+
         let index = IndexBuilder.predictiveIndex(model: "ImageClassifier", input: input)
         try database.createIndex(index, withName: "predictive-index-image-classifier")
         // end::predictive-query-predictive-index[]
