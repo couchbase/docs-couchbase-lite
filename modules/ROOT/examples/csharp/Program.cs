@@ -696,6 +696,35 @@ namespace api_walkthrough
             });
             // end::replication-status[]
         }
+		
+		private static void ReplicatorDocumentEvent()
+        {
+            var replicator = _Replicator;
+			
+            // tag::add-document-replication-listener[]
+            var token = replicator.AddDocumentReplicationListener((sender, args) =>
+            {
+                var direction = args.IsPush ? "Push" : "Pull";
+                Console.WriteLine($"Replication type :: {direction}");
+                foreach (var document in args.Documents) {
+                    if (document.Error != null) {
+                        Console.WriteLine($"Doc ID :: {document.Id}");
+                        if (document.Flags.HasFlag(DocumentFlags.Deleted)) {
+                            Console.WriteLine("Successfully replicated a deleted document");
+                        } else {
+                            // There was an error
+                        }
+                    }
+                }
+            });
+
+            replicator.Start();
+            // end::add-document-replication-listener[]
+
+            // tag::remove-document-replication-listener[]
+            replicator.RemoveChangeListener(token);
+            // end::remove-document-replication-listener[]
+        }
 
         private static void SetupReplicatorErrorListener()
         {

@@ -565,6 +565,36 @@
     // end::replication-status[]
 }
 
+- (void) dontTestReplicatorDocumentEvent {
+    CBLDatabase *database = self.db;
+    NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
+    CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
+    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
+    CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
+    
+    // tag::add-document-replication-listener[]
+    id token = [replicator addDocumentReplicationListener:^(CBLDocumentReplication * _Nonnull replication) {
+        NSLog(@"Replication type :: %@", replication.isPush ? @"Push" : @"Pull");
+        for (CBLReplicatedDocument* document in replication.documents) {
+            if (document.error != nil) {
+                NSLog(@"Doc ID :: %@", document.id);
+                if ((document.flags & kCBLDocumentFlagsDeleted) == kCBLDocumentFlagsDeleted) {
+                    NSLog(@"Successfully replicated a deleted document");
+                }
+            } else{
+                // There was an error
+            }
+        }
+    }];
+    
+    [replicator start];
+    // end::add-document-replication-listener[]
+    
+    // tag::remove-document-replication-listener[]
+    [replicator removeChangeListenerWithToken: token];
+    // end::remove-document-replication-listener[]
+}
+
 - (void) dontTestCustomReplicationHeader {
     CBLDatabase *database = self.db;
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
