@@ -25,7 +25,9 @@ import com.couchbase.lite.IndexBuilder;
 import com.couchbase.lite.Join;
 import com.couchbase.lite.ListenerToken;
 import com.couchbase.lite.LogDomain;
+import com.couchbase.lite.LogFileConfiguration;
 import com.couchbase.lite.LogLevel;
+import com.couchbase.lite.Logger;
 import com.couchbase.lite.Message;
 import com.couchbase.lite.MessageEndpoint;
 import com.couchbase.lite.MessageEndpointConnection;
@@ -201,6 +203,24 @@ public class MainActivity extends AppCompatActivity {
         Database.setLogLevel(LogDomain.REPLICATOR, LogLevel.VERBOSE);
         Database.setLogLevel(LogDomain.QUERY, LogLevel.VERBOSE);
         // end::logging[]
+    }
+
+    public void testEnableCustomLogging() {
+        // tag::set-custom-logging[]
+        // this custom logger will never be asked to log an event
+        // with a log level < WARNING
+        Database.log.setCustom(new LogTestLogger(LogLevel.WARNING));
+        // end::set-custom-logging[]
+    }
+
+
+    // ### File logging
+    public void testFileLogging() throws CouchbaseLiteException {
+        // tag::file-logging[]
+        final File path = context.getCacheDir();
+        Database.log.getFile().setConfig(new LogFileConfiguration(path.toString()));
+        Database.log.getFile().setLevel(LogLevel.INFO);
+        // end::file-logging[]
     }
 
     // ### Loading a pre-built database
@@ -1127,3 +1147,22 @@ class TensorFlowModel {
     }
 }
 // end::predictive-model[]
+
+// tag::custom-logging[]
+class LogTestLogger implements Logger {
+    @NonNull
+    private final LogLevel level;
+
+    public LogTestLogger(@NonNull LogLevel level) { this.level = level; }
+
+    @NonNull
+    @Override
+    public LogLevel getLevel() { return level; }
+
+    @Override
+    public void log(@NonNull LogLevel level, @NonNull LogDomain domain, @NonNull String message) {
+        // this method will never be called if param level < this.level
+        // handle the message, for example piping it to a third party framework
+    }
+}
+// end::custom-logging[]
