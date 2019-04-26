@@ -1158,10 +1158,6 @@ namespace api_walkthrough
     // tag::custom-logging[]
     private class LogTestLogger : ILogger
     {
-        [NotNull]
-        private readonly List<string> _lines = new List<string>();
-
-        public IReadOnlyList<string> Lines => _lines;
         public LogLevel Level { get; set; }
 
         public void Reset()
@@ -1171,9 +1167,8 @@ namespace api_walkthrough
 
         public void Log(LogLevel level, LogDomain domain, string message)
         {
-            if (level >= Level) {
-                _lines.Add(message);
-            }
+            // handle the message, for example piping it to
+            // a third party framework
         }
     }
     // end::custom-logging[]
