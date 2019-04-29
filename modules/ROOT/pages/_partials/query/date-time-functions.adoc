@@ -1,0 +1,17 @@
+Couchbase Lite documents support a <<initializers,date type>> that internally stores dates in ISO 8601 with the GMT/UTC timezone.
+
+Couchbase Lite 2.5 adds the ability to run date comparisons in your Couchbase Lite queries.
+To do so, four functions have been added to the Query Builder API:
+
+`Function.StringToMillis(Expression.Property("date_time"))`::
+The input to this will be a validly formatted ISO 8601 `date_time` string.
+The end result will be an expression (with a numeric content) that can be further input into the query builder.
+`Function.StringToUTC(Expression.Property("date_time"))`::
+The input to this will be a validly formatted ISO 8601 `date_time` string.
+The end result will be an expression (with string content) that can be further input into the query builder.
+`Function.MillisToString(Expression.Property("date_time"))`::
+The input for this is a numeric value representing milliseconds since the Unix epoch.
+The end result will be an expression (with string content representing the date and time as an ISO 8601 string in the device’s timezone) that can be further input into the query builder.
+`Function.MillisToUTC(Expression.Property("date_time"))`::
+The input for this is a numeric value representing milliseconds since the Unix epoch.
+The end result will be an expression (with string content representing the date and time as a UTC ISO 8601 string) that can be further input into the query builder.
