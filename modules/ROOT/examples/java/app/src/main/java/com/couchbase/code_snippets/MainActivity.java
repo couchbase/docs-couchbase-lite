@@ -796,7 +796,7 @@ public class MainActivity extends AppCompatActivity {
         URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
-        config.setPullFilter(new ReplicationFilter() {
+        config.setPullFilter(new ReplicationFilter() { // <1>
             @Override
             public boolean filtered(@NonNull Document document, @NonNull EnumSet<DocumentFlag> flags) {
                 return "draft".equals(document.getString("type"));

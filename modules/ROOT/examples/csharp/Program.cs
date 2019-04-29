@@ -764,7 +764,7 @@ namespace api_walkthrough
             var target = new URLEndpoint(url);
 
             var config = new ReplicatorConfiguration(database, target);
-            config.PullFilter = (document, flags) =>
+            config.PullFilter = (document, flags) => // <1>
             {
                 if (document.GetString("type") == "draft") {
                     return false;
