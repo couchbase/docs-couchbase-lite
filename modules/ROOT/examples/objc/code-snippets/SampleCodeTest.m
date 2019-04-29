@@ -635,6 +635,46 @@
     // end::replication-reset-checkpoint[]
 }
 
+- (void) dontTestReplicationPushFilter {
+    CBLDatabase *database = self.db;
+    
+    // tag::replication-push-filter[]
+    NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
+    CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
+    
+    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
+    config.pushFilter = ^BOOL(CBLDocument * _Nonnull document, CBLDocumentFlags flags) {
+        if ([[document stringForKey: @"type"] isEqualToString: @"draft"]) {
+            return false;
+        }
+        return true;
+    };
+    
+    CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
+    [replicator start];
+    // end::replication-push-filter[]
+}
+
+- (void) dontTestReplicationPullFilter {
+    CBLDatabase *database = self.db;
+    
+    // tag::replication-pull-filter[]
+    NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
+    CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
+    
+    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
+    config.pullFilter = ^BOOL(CBLDocument * _Nonnull document, CBLDocumentFlags flags) { // <1>
+        if ((flags & kCBLDocumentFlagsDeleted) == kCBLDocumentFlagsDeleted) {
+            return false;
+        }
+        return true;
+    };
+    
+    CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
+    [replicator start];
+    // end::replication-pull-filter[]
+}
+
 #ifdef COUCHBASE_ENTERPRISE
 - (void) dontTestDatabaseReplica {
     CBLDatabase *database = self.db;

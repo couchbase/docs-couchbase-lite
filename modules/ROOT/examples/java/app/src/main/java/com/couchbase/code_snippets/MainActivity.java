@@ -839,6 +839,40 @@ public class MainActivity extends AppCompatActivity {
         replicator.stop();
     }
 
+    public void testReplicationPushFilter() throws URISyntaxException {
+        // tag::replication-push-filter[]
+        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
+        config.setPushFilter(new ReplicationFilter() {
+            @Override
+            public boolean filtered(@NonNull Document document, @NonNull EnumSet<DocumentFlag> flags) {
+                return flags.equals(DocumentFlag.DocumentFlagsDeleted);
+            }
+        });
+
+        Replicator replication = new Replicator(config);
+        replication.start();
+        // end::replication-push-filter[]
+    }
+
+    public void testReplicationPullFilter() throws URISyntaxException {
+        // tag::replication-pull-filter[]
+        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
+        config.setPullFilter(new ReplicationFilter() { // <1>
+            @Override
+            public boolean filtered(@NonNull Document document, @NonNull EnumSet<DocumentFlag> flags) {
+                return "draft".equals(document.getString("type"));
+            }
+        });
+
+        Replicator replication = new Replicator(config);
+        replication.start();
+        // end::replication-pull-filter[]
+    }
+
     public void testDatabaseReplica() throws CouchbaseLiteException {
         DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
         Database database1 = new Database("mydb", config);
