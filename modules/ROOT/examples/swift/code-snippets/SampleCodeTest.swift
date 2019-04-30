@@ -57,6 +57,20 @@ class SampleCodeTest {
         Database.setLogLevel(.verbose, domain: .query)
         // end::logging[]
     }
+    
+    func dontTestFileLogging() throws {
+        // tag::file-logging[]
+        let tempFolder = NSTemporaryDirectory().appending("cbllog")
+        Database.log.file.config = LogFileConfiguration.init(directory: tempFolder)
+        Database.log.file.level = .info
+        // end::file-logging[]
+    }
+
+    func dontTestEnableCustomLogging() throws {
+        // tag::set-custom-logging[]
+        Database.log.custom = LogTestLogger()
+        // end::set-custom-logging[]
+    }
 
     func dontTestLoadingPrebuilt() throws {
         // tag::prebuilt-database[]
@@ -918,6 +932,20 @@ class ImageClassifierModel: PredictiveModel {
     }
 }
 // end::predictive-model[]
+
+// tag::custom-logging[]
+fileprivate class LogTestLogger: Logger {
+    
+    // set the log level
+    var level: LogLevel = .none
+    
+    func log(level: LogLevel, domain: LogDomain, message: String) {
+        // handle the message, for example piping it to
+        // a third party framework
+    }
+    
+}
+// end::custom-logging[]
 
 /* ----------------------------------------------------------- */
 /* ---------------------  ACTIVE SIDE  ----------------------- */

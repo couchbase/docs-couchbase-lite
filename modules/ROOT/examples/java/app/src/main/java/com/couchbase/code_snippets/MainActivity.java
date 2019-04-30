@@ -25,7 +25,9 @@ import com.couchbase.lite.IndexBuilder;
 import com.couchbase.lite.Join;
 import com.couchbase.lite.ListenerToken;
 import com.couchbase.lite.LogDomain;
+import com.couchbase.lite.LogFileConfiguration;
 import com.couchbase.lite.LogLevel;
+import com.couchbase.lite.Logger;
 import com.couchbase.lite.Message;
 import com.couchbase.lite.MessageEndpoint;
 import com.couchbase.lite.MessageEndpointConnection;
@@ -201,6 +203,24 @@ public class MainActivity extends AppCompatActivity {
         Database.setLogLevel(LogDomain.REPLICATOR, LogLevel.VERBOSE);
         Database.setLogLevel(LogDomain.QUERY, LogLevel.VERBOSE);
         // end::logging[]
+    }
+
+    public void testEnableCustomLogging() {
+        // tag::set-custom-logging[]
+        // this custom logger will never be asked to log an event
+        // with a log level < WARNING
+        Database.log.setCustom(new LogTestLogger(LogLevel.WARNING));
+        // end::set-custom-logging[]
+    }
+
+
+    // ### File logging
+    public void testFileLogging() throws CouchbaseLiteException {
+        // tag::file-logging[]
+        final File path = context.getCacheDir();
+        Database.log.getFile().setConfig(new LogFileConfiguration(path.toString()));
+        Database.log.getFile().setLevel(LogLevel.INFO);
+        // end::file-logging[]
     }
 
     // ### Loading a pre-built database
@@ -894,50 +914,50 @@ public class MainActivity extends AppCompatActivity {
         replicator.start();
         // end::database-replica[]
     }
-    
+
     public void testPredictiveModel() throws CouchbaseLiteException {
         DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
         Database database = new Database("mydb", config);
-        
+
         // tag::register-model[]
         Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());
         // end::register-model[]
-        
+
         // tag::predictive- query-value-index[]
         ValueIndex index = IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")));
         database.createIndex("value-index-image-classifier", index);
         // end::predictive-query-value-index[]
-        
+
         // tag::unregister-model[]
         Database.prediction.unregisterModel("ImageClassifier");
         // end::unregister-model[]
     }
-    
+
     public void testPredictiveIndex() throws CouchbaseLiteException {
         DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
         Database database = new Database("mydb", config);
-        
+
         // tag::predictive-query-predictive-index[]
         Map<String, Object> inputMap = new HashMap<>();
         inputMap.put("numbers", Expression.property("photo"));
         Expression input = Expression.map(inputMap);
-        
+
         PredictiveIndex index = IndexBuilder.predictiveIndex("ImageClassifier", input, null);
         database.createIndex("predictive-index-image-classifier", index);
         // end::predictive-query-predictive-index[]
     }
-    
+
     public void testPredictiveQuery() throws CouchbaseLiteException {
         DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
         Database database = new Database("mydb", config);
-        
+
         // tag::predictive-query[]
         Query query = QueryBuilder
         .select(SelectResult.all())
         .from(DataSource.database(database))
         .where(Expression.property("label").equalTo(Expression.string("car"))
                .and(Expression.property("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))));
-        
+
         // Run the query.
         ResultSet result = query.execute();
         Log.d(TAG, "Number of rows: " + result.allResults().size());
@@ -1128,3 +1148,21 @@ class TensorFlowModel {
 }
 // end::predictive-model[]
 
+// tag::custom-logging[]
+class LogTestLogger implements Logger {
+    @NonNull
+    private final LogLevel level;
+
+    public LogTestLogger(@NonNull LogLevel level) { this.level = level; }
+
+    @NonNull
+    @Override
+    public LogLevel getLevel() { return level; }
+
+    @Override
+    public void log(@NonNull LogLevel level, @NonNull LogDomain domain, @NonNull String message) {
+        // this method will never be called if param level < this.level
+        // handle the message, for example piping it to a third party framework
+    }
+}
+// end::custom-logging[]
