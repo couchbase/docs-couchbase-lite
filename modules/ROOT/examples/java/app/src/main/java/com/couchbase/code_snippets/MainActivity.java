@@ -1,38 +1,10 @@
-//
-// Copyright (c) 2019 Couchbase, Inc All rights reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-package com.couchbase.snippets;
+package com.couchbase.code_snippets;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.threeten.bp.Instant;
-import org.threeten.bp.temporal.ChronoUnit;
-
-import com.couchbase.lite.AbstractReplicator;
 import com.couchbase.lite.ArrayFunction;
 import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.Blob;
@@ -43,7 +15,6 @@ import com.couchbase.lite.DatabaseConfiguration;
 import com.couchbase.lite.DatabaseEndpoint;
 import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Document;
-import com.couchbase.lite.DocumentFlag;
 import com.couchbase.lite.EncryptionKey;
 import com.couchbase.lite.Endpoint;
 import com.couchbase.lite.Expression;
@@ -54,7 +25,6 @@ import com.couchbase.lite.IndexBuilder;
 import com.couchbase.lite.Join;
 import com.couchbase.lite.ListenerToken;
 import com.couchbase.lite.LogDomain;
-import com.couchbase.lite.LogFileConfiguration;
 import com.couchbase.lite.LogLevel;
 import com.couchbase.lite.Logger;
 import com.couchbase.lite.Message;
@@ -63,19 +33,16 @@ import com.couchbase.lite.MessageEndpointConnection;
 import com.couchbase.lite.MessageEndpointDelegate;
 import com.couchbase.lite.MessageEndpointListener;
 import com.couchbase.lite.MessageEndpointListenerConfiguration;
-import com.couchbase.lite.MessagingCloseCompletion;
 import com.couchbase.lite.MessagingCompletion;
 import com.couchbase.lite.Meta;
-import com.couchbase.lite.MutableDictionary;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
-import com.couchbase.lite.PredictiveIndex;
-import com.couchbase.lite.PredictiveModel;
 import com.couchbase.lite.ProtocolType;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
-import com.couchbase.lite.ReplicatedDocument;
 import com.couchbase.lite.Replicator;
+import com.couchbase.lite.ReplicatorChange;
+import com.couchbase.lite.ReplicatorChangeListener;
 import com.couchbase.lite.ReplicatorConfiguration;
 import com.couchbase.lite.ReplicatorConnection;
 import com.couchbase.lite.Result;
@@ -83,26 +50,39 @@ import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 import com.couchbase.lite.SessionAuthenticator;
 import com.couchbase.lite.URLEndpoint;
-import com.couchbase.lite.ValueIndex;
 import com.couchbase.lite.ValueIndexItem;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
-public class Examples {
-    private static final String TAG = "EXAMPLE";
 
-    private static final String DATABASE_NAME = "database";
+import static com.couchbase.lite.CBLError.Code.CBLErrorBusy;
 
-    private final Context context;
-    private Database database;
+public class MainActivity extends AppCompatActivity {
+    static final String TAG = MainActivity.class.getSimpleName();
+    protected final static String DATABASE_NAME = "database";
+    Database database;
 
-    public Examples(Context context) { this.context = context; }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
 
     //@Test
     public void testGettingStarted() throws CouchbaseLiteException, URISyntaxException {
         // tag::getting-started[]
 
         // Get the database (and create it if it doesn’t exist).
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
+        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
         Database database = new Database("mydb", config);
 
         // Create a new document (i.e. a record) in the database.
@@ -141,9 +121,11 @@ public class Examples {
         Replicator replicator = new Replicator(replConfig);
 
         // Listen to replicator change events.
-        replicator.addChangeListener(change -> {
-            if (change.getStatus().getError() != null) {
-                Log.i(TAG, "Error code ::  " + change.getStatus().getError().getCode());
+        replicator.addChangeListener(new ReplicatorChangeListener() {
+            @Override
+            public void changed(ReplicatorChange change) {
+                if (change.getStatus().getError() != null)
+                    Log.i(TAG, "Error code ::  " + change.getStatus().getError().getCode());
             }
         });
 
@@ -157,11 +139,11 @@ public class Examples {
 
     public void test1xAttachments() throws CouchbaseLiteException, IOException {
         // if db exist, delete it
-        deleteDB("android-sqlite", context.getFilesDir());
+        deleteDB("android-sqlite", getApplicationContext().getFilesDir());
 
-        ZipUtils.unzip(getAsset("replacedb/android140-sqlite.cblite2.zip"), context.getFilesDir());
+        ZipUtils.unzip(getAsset("replacedb/android140-sqlite.cblite2.zip"), getApplicationContext().getFilesDir());
 
-        Database db = new Database("android-sqlite", new DatabaseConfiguration(context));
+        Database db = new Database("android-sqlite", new DatabaseConfiguration(getApplicationContext()));
         try {
 
             Document doc = db.getDocument("doc1");
@@ -169,15 +151,17 @@ public class Examples {
             // For Validation
             Dictionary attachments = doc.getDictionary("_attachments");
             Blob blob = attachments.getBlob("attach1");
-            if (!Arrays.equals("attach1".getBytes(), blob.getContent())) {
-                throw new AssertionError("test failed");
-            }
-        }
-        finally {
+            byte[] content = blob.getContent();
+            // For Validation
+
+            byte[] attach = String.format(Locale.ENGLISH, "attach1").getBytes();
+            Arrays.equals(attach, content);
+
+        } finally {
             // close db
             db.close();
             // if db exist, delete it
-            deleteDB("android-sqlite", context.getFilesDir());
+            deleteDB("android-sqlite", getApplicationContext().getFilesDir());
         }
 
         Document document = new MutableDocument();
@@ -192,7 +176,7 @@ public class Examples {
     // ### New Database
     public void testNewDatabase() throws CouchbaseLiteException {
         // tag::new-database[]
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
+        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
         Database database = new Database("my-database", config);
         // end::new-database[]
 
@@ -202,16 +186,17 @@ public class Examples {
     // ### Database Encryption
     public void testDatabaseEncryption() throws CouchbaseLiteException {
         // tag::database-encryption[]
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
+        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
         config.setEncryptionKey(new EncryptionKey("PASSWORD"));
         Database database = new Database("mydb", config);
         // end::database-encryption[]
     }
 
     // ### Logging
-    public void testLogging() {
+    public void testLogging() throws CouchbaseLiteException {
         // tag::logging[]
-        Database.log.getConsole().setLevel(LogLevel.VERBOSE);
+        Database.setLogLevel(LogDomain.REPLICATOR, LogLevel.VERBOSE);
+        Database.setLogLevel(LogDomain.QUERY, LogLevel.VERBOSE);
         // end::logging[]
     }
 
@@ -239,35 +224,41 @@ public class Examples {
         // Note: Getting the path to a database is platform-specific.
         // For Android you need to extract it from your
         // assets to a temporary directory and then pass that path to Database.copy()
+        Context context = getApplicationContext();
         DatabaseConfiguration configuration = new DatabaseConfiguration(context);
         if (!Database.exists("travel-sample", context.getFilesDir())) {
-            ZipUtils.unzip(getAsset("travel-sample.cblite2.zip"), context.getFilesDir());
-            File path = new File(context.getFilesDir(), "travel-sample");
+            ZipUtils.unzip(getAsset("travel-sample.cblite2.zip"), getApplicationContext().getFilesDir());
+            File path = new File(getApplicationContext().getFilesDir(), "travel-sample");
             try {
                 Database.copy(path, "travel-sample", configuration);
-            }
-            catch (CouchbaseLiteException e) {
+            } catch (CouchbaseLiteException e) {
                 e.printStackTrace();
             }
         }
         // end::prebuilt-database[]
     }
 
+
     // helper methods
 
     // if db exist, delete it
-    private void deleteDB(String name, File dir) {
+    private void deleteDB(String name, File dir) throws CouchbaseLiteException {
         // database exist, delete it
-        if (Database.exists(name, dir)) {
+        if (Database.exists(name, )) {
             // sometimes, db is still in used, wait for a while. Maximum 3 sec
             for (int i = 0; i < 10; i++) {
                 try {
                     Database.delete(name, dir);
                     break;
-                }
-                catch (CouchbaseLiteException ex) {
-                    try { Thread.sleep(300); }
-                    catch (InterruptedException ignore) { }
+                } catch (CouchbaseLiteException ex) {
+                    if (ex.getCode() == CBLErrorBusy) {
+                        try {
+                            Thread.sleep(300);
+                        } catch (Exception e) {
+                        }
+                    } else {
+                        throw ex;
+                    }
                 }
             }
         }
@@ -282,17 +273,18 @@ public class Examples {
         newTask.setDate("createdAt", new Date());
         try {
             database.save(newTask);
-        }
-        catch (CouchbaseLiteException e) {
-            Log.e(TAG, e.toString());
+        } catch (CouchbaseLiteException e) {
+            com.couchbase.lite.internal.support.Log.e(TAG, e.toString());
         }
         // end::initializer[]
     }
 
     // ### Mutability
     public void testMutability() {
-        try { database.save(new MutableDocument("xyz")); }
-        catch (CouchbaseLiteException ignore) { }
+        try {
+            database.save(new MutableDocument("xyz"));
+        } catch (CouchbaseLiteException e) {
+        }
 
         // tag::update-document[]
         Document document = database.getDocument("xyz");
@@ -300,9 +292,8 @@ public class Examples {
         mutableDocument.setString("name", "apples");
         try {
             database.save(mutableDocument);
-        }
-        catch (CouchbaseLiteException e) {
-            Log.e(TAG, e.toString());
+        } catch (CouchbaseLiteException e) {
+            com.couchbase.lite.internal.support.Log.e(TAG, e.toString());
         }
         // end::update-document[]
     }
@@ -321,45 +312,27 @@ public class Examples {
     public void testBatchOperations() {
         // tag::batch[]
         try {
-            database.inBatch(() -> {
-                for (int i = 0; i < 10; i++) {
-                    MutableDocument doc = new MutableDocument();
-                    doc.setValue("type", "user");
-                    doc.setValue("name", "user " + i);
-                    doc.setBoolean("admin", false);
-                    try {
-                        database.save(doc);
+            database.inBatch(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < 10; i++) {
+                        MutableDocument doc = new MutableDocument();
+                        doc.setValue("type", "user");
+                        doc.setValue("name", String.format("user %d", i));
+                        doc.setBoolean("admin", false);
+                        try {
+                            database.save(doc);
+                        } catch (CouchbaseLiteException e) {
+                            com.couchbase.lite.internal.support.Log.e(TAG, e.toString());
+                        }
+                        com.couchbase.lite.internal.support.Log.i(TAG, String.format("saved user document %s", doc.getString("name")));
                     }
-                    catch (CouchbaseLiteException e) {
-                        Log.e(TAG, e.toString());
-                    }
-                    Log.i(TAG, String.format("saved user document %s", doc.getString("name")));
                 }
             });
-        }
-        catch (CouchbaseLiteException e) {
-            Log.e(TAG, e.toString());
+        } catch (CouchbaseLiteException e) {
+            com.couchbase.lite.internal.support.Log.e(TAG, e.toString());
         }
         // end::batch[]
-    }
-
-    // ### Document Expiration
-    public void DocumentExpiration() throws CouchbaseLiteException {
-        // tag::document-expiration[]
-        // Purge the document one day from now
-        Instant ttl = Instant.now().plus(1, ChronoUnit.DAYS);
-        database.setDocumentExpiration("doc123", new Date(ttl.toEpochMilli()));
-
-        // Reset expiration
-        database.setDocumentExpiration("doc1", null);
-
-        // Query documents that will be expired in less than five minutes
-        Instant fiveMinutesFromNow = Instant.now().plus(5, ChronoUnit.MINUTES);
-        Query query = QueryBuilder
-            .select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(Meta.expiration.lessThan(Expression.doubleValue(fiveMinutesFromNow.toEpochMilli())));
-        // end::document-expiration[]
     }
 
     // ### Blobs
@@ -368,7 +341,6 @@ public class Examples {
 
         // tag::blob[]
         InputStream is = getAsset("avatar.jpg");
-        if (is == null) { return; }
         try {
             Blob blob = new Blob("image/jpeg", is);
             newTask.setBlob("avatar", blob);
@@ -376,13 +348,14 @@ public class Examples {
 
             Blob taskBlob = newTask.getBlob("avatar");
             byte[] bytes = taskBlob.getContent();
-        }
-        catch (CouchbaseLiteException e) {
-            Log.e(TAG, e.toString());
-        }
-        finally {
-            try { is.close(); }
-            catch (IOException ignore) { }
+        } catch (CouchbaseLiteException e) {
+            com.couchbase.lite.internal.support.Log.e(TAG, e.toString());
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+
+            }
         }
         // end::blob[]
     }
@@ -392,22 +365,19 @@ public class Examples {
         // For Documentation
         {
             // tag::query-index[]
-            database.createIndex(
-                "TypeNameIndex",
-                IndexBuilder.valueIndex(
-                    ValueIndexItem.property("type"),
+            database.createIndex("TypeNameIndex",
+                IndexBuilder.valueIndex(ValueIndexItem.property("type"),
                     ValueIndexItem.property("name")));
             // end::query-index[]
         }
     }
 
     // ### SELECT statement
-    public void testSelectStatement() {
+    public void testSelectStatement() throws CouchbaseLiteException {
         {
             // tag::query-select-meta[]
             Query query = QueryBuilder
-                .select(
-                    SelectResult.expression(Meta.id),
+                .select(SelectResult.expression(Meta.id),
                     SelectResult.property("name"),
                     SelectResult.property("type"))
                 .from(DataSource.database(database))
@@ -420,8 +390,7 @@ public class Examples {
                     Log.i("Sample", String.format("hotel id -> %s", result.getString("id")));
                     Log.i("Sample", String.format("hotel name -> %s", result.getString("name")));
                 }
-            }
-            catch (CouchbaseLiteException e) {
+            } catch (CouchbaseLiteException e) {
                 Log.e("Sample", e.getLocalizedMessage());
             }
             // end::query-select-meta[]
@@ -455,12 +424,32 @@ public class Examples {
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("hotel")));
             // end::query-select-all[]
+
+            // tag::live-query[]
+            Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.database(database));
+
+            // Adds a query change listener.
+            // Changes will be posted on the main queue.
+            ListenerToken token = query.addChangeListener(change -> {
+                for (Result result: change.getResults()) {
+                    Log.d(TAG, "results: " + result.getKeys());
+                    /* Update UI */
+                }
+            });
+
+            // Start live query.
+            query.execute(); // <1>
+            // end::live-query[]
+
+            // tag::stop-live-query[]
+            query.removeChangeListener(token);
+            // end::stop-live-query[]
+
             ResultSet rs = query.execute();
-            for (Result result : rs) {
-                Log.i(
-                    "Sample",
-                    String.format("hotel -> %s", result.getDictionary(DATABASE_NAME).toMap()));
-            }
+            for (Result result : rs)
+                Log.i("Sample", String.format("hotel -> %s", result.getDictionary(DATABASE_NAME).toMap()));
         }
     }
 
@@ -501,20 +490,15 @@ public class Examples {
         {
             // tag::query-collection-operator-contains[]
             Query query = QueryBuilder
-                .select(
-                    SelectResult.expression(Meta.id),
+                .select(SelectResult.expression(Meta.id),
                     SelectResult.property("name"),
                     SelectResult.property("public_likes"))
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("hotel"))
-                    .and(ArrayFunction
-                        .contains(Expression.property("public_likes"), Expression.string("Armani Langworth"))));
+                    .and(ArrayFunction.contains(Expression.property("public_likes"), Expression.string("Armani Langworth"))));
             ResultSet rs = query.execute();
-            for (Result result : rs) {
-                Log.i(
-                    "Sample",
-                    String.format("public_likes -> %s", result.getArray("public_likes").toList()));
-            }
+            for (Result result : rs)
+                Log.i("Sample", String.format("public_likes -> %s", result.getArray("public_likes").toList()));
             // end::query-collection-operator-contains[]
         }
     }
@@ -536,7 +520,8 @@ public class Examples {
             // end::query-collection-operator-in[]
 
             ResultSet rs = query.execute();
-            for (Result result : rs) { Log.w("Sample", String.format("%s", result.toMap().toString())); }
+            for (Result result : rs)
+                Log.w("Sample", String.format("%s", result.toMap().toString()));
         }
     }
 
@@ -546,15 +531,15 @@ public class Examples {
         {
             // tag::query-like-operator[]
             Query query = QueryBuilder
-                .select(
-                    SelectResult.expression(Meta.id),
+                .select(SelectResult.expression(Meta.id),
                     SelectResult.property("country"),
                     SelectResult.property("name"))
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("landmark"))
                     .and(Expression.property("name").like(Expression.string("Royal Engineers Museum"))));
             ResultSet rs = query.execute();
-            for (Result result : rs) { Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
+            for (Result result : rs)
+                Log.i("Sample", String.format("name -> %s", result.getString("name")));
             // end::query-like-operator[]
         }
     }
@@ -565,15 +550,15 @@ public class Examples {
         {
             // tag::query-like-operator-wildcard-match[]
             Query query = QueryBuilder
-                .select(
-                    SelectResult.expression(Meta.id),
+                .select(SelectResult.expression(Meta.id),
                     SelectResult.property("country"),
                     SelectResult.property("name"))
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("landmark"))
                     .and(Expression.property("name").like(Expression.string("Eng%e%"))));
             ResultSet rs = query.execute();
-            for (Result result : rs) { Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
+            for (Result result : rs)
+                Log.i("Sample", String.format("name -> %s", result.getString("name")));
             // end::query-like-operator-wildcard-match[]
         }
     }
@@ -584,15 +569,15 @@ public class Examples {
         {
             // tag::query-like-operator-wildcard-character-match[]
             Query query = QueryBuilder
-                .select(
-                    SelectResult.expression(Meta.id),
+                .select(SelectResult.expression(Meta.id),
                     SelectResult.property("country"),
                     SelectResult.property("name"))
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("landmark"))
                     .and(Expression.property("name").like(Expression.string("Eng____r"))));
             ResultSet rs = query.execute();
-            for (Result result : rs) { Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
+            for (Result result : rs)
+                Log.i("Sample", String.format("name -> %s", result.getString("name")));
             // end::query-like-operator-wildcard-character-match[]
         }
     }
@@ -603,15 +588,15 @@ public class Examples {
         {
             // tag::query-regex-operator[]
             Query query = QueryBuilder
-                .select(
-                    SelectResult.expression(Meta.id),
+                .select(SelectResult.expression(Meta.id),
                     SelectResult.property("country"),
                     SelectResult.property("name"))
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("landmark"))
                     .and(Expression.property("name").regex(Expression.string("\\bEng.*r\\b"))));
             ResultSet rs = query.execute();
-            for (Result result : rs) { Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
+            for (Result result : rs)
+                Log.i("Sample", String.format("name -> %s", result.getString("name")));
             // end::query-regex-operator[]
         }
     }
@@ -634,7 +619,8 @@ public class Examples {
                     .and(Expression.property("type").from("airline").equalTo(Expression.string("airline")))
                     .and(Expression.property("sourceairport").from("route").equalTo(Expression.string("RIX"))));
             ResultSet rs = query.execute();
-            for (Result result : rs) { Log.w("Sample", String.format("%s", result.toMap().toString())); }
+            for (Result result : rs)
+                Log.w("Sample", String.format("%s", result.toMap().toString()));
             // end::query-join[]
         }
     }
@@ -651,20 +637,16 @@ public class Examples {
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("airport"))
                     .and(Expression.property("geo.alt").greaterThanOrEqualTo(Expression.intValue(300))))
-                .groupBy(
-                    Expression.property("country"),
+                .groupBy(Expression.property("country"),
                     Expression.property("tz"))
                 .orderBy(Ordering.expression(Function.count(Expression.string("*"))).descending());
             ResultSet rs = query.execute();
-            for (Result result : rs) {
-                Log.i(
-                    "Sample",
-                    String.format(
-                        "There are %d airports on the %s timezone located in %s and above 300ft",
+            for (Result result : rs)
+                Log.i("Sample",
+                    String.format("There are %d airports on the %s timezone located in %s and above 300ft",
                         result.getInt("$1"),
                         result.getString("tz"),
                         result.getString("country")));
-            }
             // end::query-groupby[]
         }
     }
@@ -675,24 +657,22 @@ public class Examples {
         {
             // tag::query-orderby[]
             Query query = QueryBuilder
-                .select(
-                    SelectResult.expression(Meta.id),
+                .select(SelectResult.expression(Meta.id),
                     SelectResult.property("name"))
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("hotel")))
                 .orderBy(Ordering.property("name").ascending())
                 .limit(Expression.intValue(10));
             ResultSet rs = query.execute();
-            for (Result result : rs) { Log.i("Sample", String.format("%s", result.toMap())); }
+            for (Result result : rs)
+                Log.i("Sample", String.format("%s", result.toMap()));
             // end::query-orderby[]
         }
     }
 
     void prepareIndex() throws CouchbaseLiteException {
         // tag::fts-index[]
-        database.createIndex(
-            "nameFTSIndex",
-            IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false));
+        database.createIndex("nameFTSIndex", IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false));
         // end::fts-index[]
     }
 
@@ -703,11 +683,8 @@ public class Examples {
             .from(DataSource.database(database))
             .where(whereClause);
         ResultSet ftsQueryResult = ftsQuery.execute();
-        for (Result result : ftsQueryResult) {
-            Log.i(
-                TAG,
-                String.format("document properties %s", result.getString(0)));
-        }
+        for (Result result : ftsQueryResult)
+            com.couchbase.lite.internal.support.Log.i(TAG, String.format("document properties %s", result.getString(0)));
         // end::fts-query[]
     }
 
@@ -715,234 +692,8 @@ public class Examples {
 
     public void testTroubleshooting() {
         // tag::replication-logging[]
-        Database.log.getConsole().setLevel(LogLevel.VERBOSE);
+        Database.setLogLevel(LogDomain.REPLICATOR, LogLevel.VERBOSE);
         // end::replication-logging[]
-    }
-
-    public void testReplicationStatus() throws URISyntaxException {
-        URI uri = new URI("ws://localhost:4984/db");
-        Endpoint endpoint = new URLEndpoint(uri);
-        ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
-        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
-        Replicator replication = new Replicator(config);
-
-        // tag::replication-status[]
-        replication.addChangeListener(change -> {
-            if (change.getStatus().getActivityLevel() == Replicator.ActivityLevel.STOPPED) {
-                Log.i(TAG, "Replication stopped");
-            }
-        });
-        // end::replication-status[]
-    }
-
-    public void testHandlingNetworkErrors() throws URISyntaxException {
-        Endpoint endpoint = new URLEndpoint(new URI("ws://localhost:4984/db"));
-        ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
-        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
-        Replicator replication = new Replicator(config);
-
-        // tag::replication-error-handling[]
-        replication.addChangeListener(change -> {
-            CouchbaseLiteException error = change.getStatus().getError();
-            if (error != null) { Log.w(TAG, "Error code:: %d", error); }
-        });
-        replication.start();
-        // end::replication-error-handling[]
-
-        replication.stop();
-    }
-
-    public void testReplicatorDocumentEvent() throws URISyntaxException {
-        Endpoint endpoint = new URLEndpoint(new URI("ws://localhost:4984/db"));
-        ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
-        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
-        Replicator replicator = new Replicator(config);
-
-        // tag::add-document-replication-listener[]
-        ListenerToken token = replicator.addDocumentReplicationListener(replication -> {
-
-            Log.i(TAG, "Replication type: " + ((replication.isPush()) ? "Push" : "Pull"));
-            for (ReplicatedDocument document : replication.getDocuments()) {
-                Log.i(TAG, "Doc ID: " + document.getID());
-
-                CouchbaseLiteException err = document.getError();
-                if (err != null) {
-                    // There was an error
-                    Log.e(TAG, "Error replicating document: ", err);
-                    return;
-                }
-
-                if (document.flags().contains(DocumentFlag.DocumentFlagsDeleted)) {
-                    Log.i(TAG, "Successfully replicated a deleted document");
-                }
-            }
-        });
-
-        replicator.start();
-        // end::add-document-replication-listener[]
-
-        // tag::remove-document-replication-listener[]
-        replicator.removeChangeListener(token);
-        // end::remove-document-replication-listener[]
-    }
-
-    public void testReplicationCustomHeader() throws URISyntaxException {
-        URI uri = new URI("ws://localhost:4984/db");
-        Endpoint endpoint = new URLEndpoint(uri);
-
-        // tag::replication-custom-header[]
-        ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
-        Map<String, String> headers = new HashMap<>();
-        headers.put("CustomHeaderName", "Value");
-        config.setHeaders(headers);
-        // end::replication-custom-header[]
-    }
-
-    // ### Certificate Pinning
-
-    public void testCertificatePinning() throws URISyntaxException, IOException {
-        URI uri = new URI("ws://localhost:4984/db");
-        Endpoint endpoint = new URLEndpoint(uri);
-        ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
-
-        // tag::certificate-pinning[]
-        InputStream is = getAsset("cert.cer");
-        byte[] cert = IOUtils.toByteArray(is);
-        if (is != null) {
-            try { is.close(); }
-            catch (IOException ignore) {}
-        }
-
-        config.setPinnedServerCertificate(cert);
-        // end::certificate-pinning[]
-    }
-
-    // ### Reset replicator checkpoint
-    public void testReplicationResetCheckpoint() throws URISyntaxException {
-        URI uri = new URI("ws://localhost:4984/db");
-        Endpoint endpoint = new URLEndpoint(uri);
-        ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
-        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
-        Replicator replicator = new Replicator(config);
-        replicator.start();
-
-        // tag::replication-reset-checkpoint[]
-        replicator.resetCheckpoint();
-        replicator.start();
-        // end::replication-reset-checkpoint[]
-
-        replicator.stop();
-    }
-
-    public void testReplicationPushFilter() throws URISyntaxException {
-        // tag::replication-push-filter[]
-        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
-        
-        ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
-        config.setPushFilter(new ReplicationFilter() {
-            @Override
-            public boolean filtered(@NonNull Document document, @NonNull EnumSet<DocumentFlag> flags) {
-                return flags.equals(DocumentFlag.DocumentFlagsDeleted);
-            }
-        });
-        
-        Replicator replication = new Replicator(config);
-        replication.start();
-        // end::replication-push-filter[]
-    }
-
-    public void testReplicationPullFilter() throws URISyntaxException {
-        // tag::replication-pull-filter[]
-        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
-        
-        ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
-        config.setPullFilter(new ReplicationFilter() { // <1>
-            @Override
-            public boolean filtered(@NonNull Document document, @NonNull EnumSet<DocumentFlag> flags) {
-                return "draft".equals(document.getString("type"));
-            }
-        });
-        
-        Replicator replication = new Replicator(config);
-        replication.start();
-        // end::replication-pull-filter[]
-    }
-
-    public void testPredictiveModel() throws CouchbaseLiteException {
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
-        Database database = new Database("mydb", config);
-
-        // tag::register-model[]
-        Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());
-        // end::register-model[]
-
-        // tag::predictive- query-value-index[]
-        ValueIndex index = IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")));
-        database.createIndex("value-index-image-classifier", index);
-        // end::predictive-query-value-index[]
-
-        // tag::unregister-model[]
-        Database.prediction.unregisterModel("ImageClassifier");
-        // end::unregister-model[]
-    }
-
-    public void testPredictiveIndex() throws CouchbaseLiteException {
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
-        Database database = new Database("mydb", config);
-
-        // tag::predictive-query-predictive-index[]
-        Map<String, Object> inputMap = new HashMap<>();
-        inputMap.put("numbers", Expression.property("photo"));
-        Expression input = Expression.map(inputMap);
-
-        PredictiveIndex index = IndexBuilder.predictiveIndex("ImageClassifier", input, null);
-        database.createIndex("predictive-index-image-classifier", index);
-        // end::predictive-query-predictive-index[]
-    }
-
-    public void testPredictiveQuery() throws CouchbaseLiteException {
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
-        Database database = new Database("mydb", config);
-
-        // tag::predictive-query[]
-        Query query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(Expression.property("label").equalTo(Expression.string("car"))
-                .and(Expression.property("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))));
-
-        // Run the query.
-        ResultSet result = query.execute();
-        Log.d(TAG, "Number of rows: " + result.allResults().size());
-        // end::predictive-query[]
-    }
-
-    public void testQueryAll() throws CouchbaseLiteException {
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
-        Database database = new Database("mydb", config);
-
-        // tag::query-select-all[]
-        Query query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database));
-        // end::query-select-all[]
-
-        // Adds a query change listener.
-        // Changes will be posted on the main queue.
-        ListenerToken token = query.addChangeListener(change -> {
-            for (Result result : change.getResults()) {
-                Log.d(TAG, "results: " + result.getKeys());
-                /* Update UI */
-            }
-        });
-
-        // Start live query.
-        query.execute(); // <1>
-        // end::live-query[]
-
-        // tag::stop-live-query[]
-        query.removeChangeListener(token);
-        // end::stop-live-query[]
     }
 
     public void testReplicationBasicAuthentication() throws URISyntaxException {
@@ -969,11 +720,95 @@ public class Examples {
         // end::session-authentication[]
     }
 
+    public void testReplicationStatus() throws URISyntaxException {
+        URI uri = new URI("ws://localhost:4984/db");
+        Endpoint endpoint = new URLEndpoint(uri);
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
+        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
+        Replicator replication = new Replicator(config);
+
+        // tag::replication-status[]
+        replication.addChangeListener(new ReplicatorChangeListener() {
+            @Override
+            public void changed(ReplicatorChange change) {
+                if (change.getStatus().getActivityLevel() == Replicator.ActivityLevel.STOPPED)
+                    com.couchbase.lite.internal.support.Log.i(TAG, "Replication stopped");
+            }
+        });
+        // end::replication-status[]
+    }
+
+    public void testHandlingNetworkErrors() throws URISyntaxException {
+        URI uri = new URI("ws://localhost:4984/db");
+        Endpoint endpoint = new URLEndpoint(uri);
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
+        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
+        Replicator replication = new Replicator(config);
+
+        // tag::replication-error-handling[]
+        replication.addChangeListener(new ReplicatorChangeListener() {
+            @Override
+            public void changed(ReplicatorChange change) {
+                CouchbaseLiteException error = change.getStatus().getError();
+                if (error != null)
+                    com.couchbase.lite.internal.support.Log.w(TAG, "Error code:: %d", error.getCode());
+            }
+        });
+        replication.start();
+        // end::replication-error-handling[]
+
+        replication.stop();
+    }
+
+    public void testReplicationCustomHeader() throws URISyntaxException {
+        URI uri = new URI("ws://localhost:4984/db");
+        Endpoint endpoint = new URLEndpoint(uri);
+
+        // tag::replication-custom-header[]
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
+        Map<String, String> headers = new HashMap<String, String>();
+        headers.put("CustomHeaderName", "Value");
+        config.setHeaders(headers);
+        // end::replication-custom-header[]
+    }
+
+    // ### Certificate Pinning
+
+    public void testCertificatePinning() throws URISyntaxException, IOException {
+        URI uri = new URI("ws://localhost:4984/db");
+        Endpoint endpoint = new URLEndpoint(uri);
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
+
+        // tag::certificate-pinning[]
+        InputStream is = getAsset("cert.cer");
+        byte[] cert = IOUtils.toByteArray(is);
+        is.close();
+        config.setPinnedServerCertificate(cert);
+        // end::certificate-pinning[]
+    }
+
+    // ### Reset replicator checkpoint
+    public void testReplicationResetCheckpoint() throws URISyntaxException {
+        URI uri = new URI("ws://localhost:4984/db");
+        Endpoint endpoint = new URLEndpoint(uri);
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
+        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
+        Replicator replicator = new Replicator(config);
+        replicator.start();
+
+        // tag::replication-reset-checkpoint[]
+        replicator.resetCheckpoint();
+        replicator.start();
+        // end::replication-reset-checkpoint[]
+
+        replicator.stop();
+    }
+
     public void testDatabaseReplica() throws CouchbaseLiteException {
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
+        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
         Database database1 = new Database("mydb", config);
 
-        config = new DatabaseConfiguration(context);
+        config = new DatabaseConfiguration(getApplicationContext());
         Database database2 = new Database("db2", config);
 
         /* EE feature: code below might throw a compilation error
@@ -986,22 +821,8 @@ public class Examples {
         Replicator replicator = new Replicator(replicatorConfig);
         replicator.start();
         // end::database-replica[]
-
-        replicator.addChangeListener(change -> {
-            if (change.getStatus().getActivityLevel().equals(AbstractReplicator.ActivityLevel.STOPPED)) {
-                try { database2.delete(); }
-                catch (CouchbaseLiteException ignore) { }
-            }
-        });
-
-        replicator.stop();
     }
 
-    private InputStream getAsset(String assetName) {
-        try { return context.getAssets().open(assetName); }
-        catch (IOException ignore) { }
-        return null;
-    }
 }
 
 /* ----------------------------------------------------------- */
@@ -1009,21 +830,16 @@ public class Examples {
 /* ----------------------------------------------------------- */
 
 class BrowserSessionManager implements MessageEndpointDelegate {
-    private final Context context;
-
-    private BrowserSessionManager(Context context) { this.context = context; }
 
     public void initCouchbase() throws CouchbaseLiteException {
+        String id = "";
+        MessageEndpointDelegate delegate;
         // tag::message-endpoint[]
-        DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(context);
+        DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(getApplicationContext());
         Database database = new Database("mydb", databaseConfiguration);
 
         // The delegate must implement the `MessageEndpointDelegate` protocol.
-        MessageEndpoint messageEndpointTarget = new MessageEndpoint(
-            "UID:123",
-            "active",
-            ProtocolType.MESSAGE_STREAM,
-            this);
+        MessageEndpoint messageEndpointTarget = new MessageEndpoint("UID:123", id, ProtocolType.MESSAGE_STREAM, delegate);
         // end::message-endpoint[]
 
         // tag::message-endpoint-replicator[]
@@ -1038,10 +854,10 @@ class BrowserSessionManager implements MessageEndpointDelegate {
 
     // tag::create-connection[]
     /* implementation of MessageEndpointDelegate */
-    @NonNull
     @Override
-    public MessageEndpointConnection createConnection(@NonNull MessageEndpoint endpoint) {
-        return new ActivePeerConnection(); /* implements MessageEndpointConnection */
+    public MessageEndpointConnection createConnection(MessageEndpoint endpoint) {
+        ActivePeerConnection connection = new ActivePeerConnection(); /* implements MessageEndpointConnection */
+        return connection;
     }
     // end::create-connection[]
 }
@@ -1059,7 +875,7 @@ class ActivePeerConnection implements MessageEndpointConnection {
     // tag::active-peer-open[]
     /* implementation of MessageEndpointConnection */
     @Override
-    public void open(@NonNull ReplicatorConnection connection, @NonNull MessagingCompletion completion) {
+    public void open(ReplicatorConnection connection, MessagingCompletion completion) {
         replicatorConnection = connection;
         completion.complete(true, null);
     }
@@ -1067,18 +883,18 @@ class ActivePeerConnection implements MessageEndpointConnection {
 
     // tag::active-peer-close[]
     @Override
-    public void close(Exception error, @NonNull MessagingCloseCompletion completion) {
+    public void close(Exception error, MessagingCompletion completion) {
         /* disconnect with communications framework */
         /* ... */
         /* call completion handler */
-        completion.complete();
+        completion.complete(true, null);
     }
     // end::active-peer-close[]
 
     // tag::active-peer-send[]
     /* implementation of MessageEndpointConnection */
     @Override
-    public void send(@NonNull Message message, @NonNull MessagingCompletion completion) {
+    public void send(Message message, MessagingCompletion completion) {
         /* send the data to the other peer */
         /* ... */
         /* call the completion handler once the message is sent */
@@ -1099,20 +915,15 @@ class ActivePeerConnection implements MessageEndpointConnection {
 /* ----------------------------------------------------------- */
 
 class PassivePeerConnection implements MessageEndpointConnection {
-    private final Context context;
 
     private MessageEndpointListener messageEndpointListener;
     private ReplicatorConnection replicatorConnection;
 
-    private PassivePeerConnection(Context context) { this.context = context; }
-
     public void startListener() throws CouchbaseLiteException {
         // tag::listener[]
-        DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(context);
+        DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(getApplicationContext());
         Database database = new Database("mydb", databaseConfiguration);
-        MessageEndpointListenerConfiguration listenerConfiguration = new MessageEndpointListenerConfiguration(
-            database,
-            ProtocolType.MESSAGE_STREAM);
+        MessageEndpointListenerConfiguration listenerConfiguration = new MessageEndpointListenerConfiguration(database, ProtocolType.MESSAGE_STREAM);
         this.messageEndpointListener = new MessageEndpointListener(listenerConfiguration);
         // end::listener[]
     }
@@ -1125,8 +936,7 @@ class PassivePeerConnection implements MessageEndpointConnection {
 
     public void accept() {
         // tag::advertizer-accept[]
-        PassivePeerConnection connection = new PassivePeerConnection(context); /* implements 
-        MessageEndpointConnection */
+        PassivePeerConnection connection = new PassivePeerConnection(); /* implements MessageEndpointConnection */
         messageEndpointListener.accept(connection);
         // end::advertizer-accept[]
     }
@@ -1140,7 +950,7 @@ class PassivePeerConnection implements MessageEndpointConnection {
     // tag::passive-peer-open[]
     /* implementation of MessageEndpointConnection */
     @Override
-    public void open(@NonNull ReplicatorConnection connection, @NonNull MessagingCompletion completion) {
+    public void open(ReplicatorConnection connection, MessagingCompletion completion) {
         replicatorConnection = connection;
         completion.complete(true, null);
     }
@@ -1149,18 +959,18 @@ class PassivePeerConnection implements MessageEndpointConnection {
     // tag::passive-peer-close[]
     /* implementation of MessageEndpointConnection */
     @Override
-    public void close(Exception error, @NonNull MessagingCloseCompletion completion) {
+    public void close(Exception error, MessagingCompletion completion) {
         /* disconnect with communications framework */
         /* ... */
         /* call completion handler */
-        completion.complete();
+        completion.complete(true, null);
     }
     // end::passive-peer-close[]
 
     // tag::passive-peer-send[]
     /* implementation of MessageEndpointConnection */
     @Override
-    public void send(@NonNull Message message, @NonNull MessagingCompletion completion) {
+    public void send(Message message, MessagingCompletion completion) {
         /* send the data to the other peer */
         /* ... */
         /* call the completion handler once the message is sent */
@@ -1174,44 +984,3 @@ class PassivePeerConnection implements MessageEndpointConnection {
         // end::passive-peer-receive[]
     }
 }
-
-// tag::predictive-model[]
-// `tensorFlowModel` is a fake implementation
-// this would be the implementation of the ml model you have chosen
-class ImageClassifierModel implements PredictiveModel {
-    @Override
-    public Dictionary predict(@NonNull Dictionary input) {
-        Blob blob = input.getBlob("photo");
-        if (blob == null) { return null; }
-
-        // `tensorFlowModel` is a fake implementation
-        // this would be the implementation of the ml model you have chosen
-        return new MutableDictionary(TensorFlowModel.predictImage(blob.getContent()));
-    }
-}
-
-class TensorFlowModel {
-    public static Map<String, Object> predictImage(byte[] data) {
-        return null;
-    }
-}
-// end::predictive-model[]
-
-// tag::custom-logging[]
-class LogTestLogger implements Logger {
-    @NonNull
-    private final LogLevel level;
-
-    public LogTestLogger(@NonNull LogLevel level) { this.level = level; }
-
-    @NonNull
-    @Override
-    public LogLevel getLevel() { return level; }
-
-    @Override
-    public void log(@NonNull LogLevel level, @NonNull LogDomain domain, @NonNull String message) {
-        // this method will never be called if param level < this.level
-        // handle the message, for example piping it to a third party framework
-    }
-}
-// end::custom-logging[]
