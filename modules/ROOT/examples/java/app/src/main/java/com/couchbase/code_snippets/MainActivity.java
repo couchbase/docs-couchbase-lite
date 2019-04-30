@@ -26,7 +26,6 @@ import com.couchbase.lite.Join;
 import com.couchbase.lite.ListenerToken;
 import com.couchbase.lite.LogDomain;
 import com.couchbase.lite.LogLevel;
-import com.couchbase.lite.Logger;
 import com.couchbase.lite.Message;
 import com.couchbase.lite.MessageEndpoint;
 import com.couchbase.lite.MessageEndpointConnection;
@@ -37,9 +36,12 @@ import com.couchbase.lite.MessagingCompletion;
 import com.couchbase.lite.Meta;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
+import com.couchbase.lite.PredictiveIndex;
+import com.couchbase.lite.PredictiveModel;
 import com.couchbase.lite.ProtocolType;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.ReplicatedDocument;
 import com.couchbase.lite.Replicator;
 import com.couchbase.lite.ReplicatorChange;
 import com.couchbase.lite.ReplicatorChangeListener;
@@ -50,6 +52,7 @@ import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 import com.couchbase.lite.SessionAuthenticator;
 import com.couchbase.lite.URLEndpoint;
+import com.couchbase.lite.ValueIndex;
 import com.couchbase.lite.ValueIndexItem;
 
 import java.io.File;
@@ -200,24 +203,6 @@ public class MainActivity extends AppCompatActivity {
         // end::logging[]
     }
 
-    public void testEnableCustomLogging() {
-        // tag::set-custom-logging[]
-        // this custom logger will never be asked to log an event
-        // with a log level < WARNING
-        Database.log.setCustom(new LogTestLogger(LogLevel.WARNING));
-        // end::set-custom-logging[]
-    }
-
-
-    // ### File logging
-    public void testFileLogging() throws CouchbaseLiteException {
-        // tag::file-logging[]
-        final File path = context.getCacheDir();
-        Database.log.getFile().setConfig(new LogFileConfiguration(path.toString()));
-        Database.log.getFile().setLevel(LogLevel.INFO);
-        // end::file-logging[]
-    }
-
     // ### Loading a pre-built database
     public void testPreBuiltDatabase() throws IOException {
         // tag::prebuilt-database[]
@@ -333,6 +318,25 @@ public class MainActivity extends AppCompatActivity {
             com.couchbase.lite.internal.support.Log.e(TAG, e.toString());
         }
         // end::batch[]
+    }
+
+    // ### Document Expiration
+    private void DocumentExpiration() throws CouchbaseLiteException {
+        // tag::document-expiration[]
+        // Purge the document one day from now
+        Instant ttl = Instant.now().plus(1, ChronoUnit.DAYS);
+        database.setDocumentExpiration("doc123", new Date(ttl.toEpochMilli()));
+
+        // Reset expiration
+        database.setDocumentExpiration("doc1", null);
+
+        // Query documents that will be expired in less than five minutes
+        Instant fiveMinutesFromNow = Instant.now().plus(5, ChronoUnit.MINUTES);
+        Query query = QueryBuilder
+            .select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(database))
+            .where(Meta.expiration.lessThan(Expression.doubleValue(fiveMinutesFromNow.toEpochMilli())));
+        // end::document-expiration[]
     }
 
     // ### Blobs
@@ -760,6 +764,40 @@ public class MainActivity extends AppCompatActivity {
         replication.stop();
     }
 
+    public void testReplicatorDocumentEvent() throws URISyntaxException {
+        Endpoint endpoint = new URLEndpoint(new URI("ws://localhost:4984/db"));
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
+        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
+        Replicator replicator = new Replicator(config);
+
+        // tag::add-document-replication-listener[]
+        ListenerToken token = replicator.addDocumentReplicationListener(replication -> {
+
+            Log.i(TAG, "Replication type: " + ((replication.isPush()) ? "Push" : "Pull"));
+            for (ReplicatedDocument document : replication.getDocuments()) {
+                Log.i(TAG, "Doc ID: " + document.getID());
+
+                CouchbaseLiteException err = document.getError();
+                if (err != null) {
+                    // There was an error
+                    Log.e(TAG, "Error replicating document: ", err);
+                    return;
+                }
+
+                if (document.flags().contains(DocumentFlag.DocumentFlagsDeleted)) {
+                    Log.i(TAG, "Successfully replicated a deleted document");
+                }
+            }
+        });
+
+        replicator.start();
+        // end::add-document-replication-listener[]
+
+        // tag::remove-document-replication-listener[]
+        replicator.removeChangeListener(token);
+        // end::remove-document-replication-listener[]
+    }
+
     public void testReplicationCustomHeader() throws URISyntaxException {
         URI uri = new URI("ws://localhost:4984/db");
         Endpoint endpoint = new URLEndpoint(uri);
@@ -804,6 +842,40 @@ public class MainActivity extends AppCompatActivity {
         replicator.stop();
     }
 
+    public void testReplicationPushFilter() throws URISyntaxException {
+        // tag::replication-push-filter[]
+        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
+        config.setPushFilter(new ReplicationFilter() {
+            @Override
+            public boolean filtered(@NonNull Document document, @NonNull EnumSet<DocumentFlag> flags) {
+                return flags.equals(DocumentFlag.DocumentFlagsDeleted);
+            }
+        });
+
+        Replicator replication = new Replicator(config);
+        replication.start();
+        // end::replication-push-filter[]
+    }
+
+    public void testReplicationPullFilter() throws URISyntaxException {
+        // tag::replication-pull-filter[]
+        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
+        config.setPullFilter(new ReplicationFilter() { // <1>
+            @Override
+            public boolean filtered(@NonNull Document document, @NonNull EnumSet<DocumentFlag> flags) {
+                return "draft".equals(document.getString("type"));
+            }
+        });
+
+        Replicator replication = new Replicator(config);
+        replication.start();
+        // end::replication-pull-filter[]
+    }
+
     public void testDatabaseReplica() throws CouchbaseLiteException {
         DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
         Database database1 = new Database("mydb", config);
@@ -821,6 +893,55 @@ public class MainActivity extends AppCompatActivity {
         Replicator replicator = new Replicator(replicatorConfig);
         replicator.start();
         // end::database-replica[]
+    }
+
+    public void testPredictiveModel() throws CouchbaseLiteException {
+        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
+        Database database = new Database("mydb", config);
+
+        // tag::register-model[]
+        Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());
+        // end::register-model[]
+
+        // tag::predictive- query-value-index[]
+        ValueIndex index = IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")));
+        database.createIndex("value-index-image-classifier", index);
+        // end::predictive-query-value-index[]
+
+        // tag::unregister-model[]
+        Database.prediction.unregisterModel("ImageClassifier");
+        // end::unregister-model[]
+    }
+
+    public void testPredictiveIndex() throws CouchbaseLiteException {
+        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
+        Database database = new Database("mydb", config);
+
+        // tag::predictive-query-predictive-index[]
+        Map<String, Object> inputMap = new HashMap<>();
+        inputMap.put("numbers", Expression.property("photo"));
+        Expression input = Expression.map(inputMap);
+
+        PredictiveIndex index = IndexBuilder.predictiveIndex("ImageClassifier", input, null);
+        database.createIndex("predictive-index-image-classifier", index);
+        // end::predictive-query-predictive-index[]
+    }
+
+    public void testPredictiveQuery() throws CouchbaseLiteException {
+        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
+        Database database = new Database("mydb", config);
+
+        // tag::predictive-query[]
+        Query query = QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.database(database))
+        .where(Expression.property("label").equalTo(Expression.string("car"))
+               .and(Expression.property("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))));
+
+        // Run the query.
+        ResultSet result = query.execute();
+        Log.d(TAG, "Number of rows: " + result.allResults().size());
+        // end::predictive-query[]
     }
 
 }
@@ -984,3 +1105,25 @@ class PassivePeerConnection implements MessageEndpointConnection {
         // end::passive-peer-receive[]
     }
 }
+
+// tag::predictive-model[]
+// `tensorFlowModel` is a fake implementation
+// this would be the implementation of the ml model you have chosen
+class ImageClassifierModel implements PredictiveModel {
+    @Override
+    public Dictionary predict(@NonNull Dictionary input) {
+        Blob blob = input.getBlob("photo");
+        if (blob == null) { return null; }
+
+        // `tensorFlowModel` is a fake implementation
+        // this would be the implementation of the ml model you have chosen
+        return new MutableDictionary(TensorFlowModel.predictImage(blob.getContent()));
+    }
+}
+
+class TensorFlowModel {
+    public static Map<String, Object> predictImage(byte[] data) {
+        return null;
+    }
+}
+// end::predictive-model[]
