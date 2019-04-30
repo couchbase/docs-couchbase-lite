@@ -61,7 +61,7 @@ class SampleCodeTest {
     func dontTestFileLogging() throws {
         // tag::file-logging[]
         let tempFolder = NSTemporaryDirectory().appending("cbllog")
-        Database.log.file.config = LogFileConfiguration.init(directory: tempFolder)
+        Database.log.file.config = LogFileConfiguration(directory: tempFolder)
         Database.log.file.level = .info
         // end::file-logging[]
     }
