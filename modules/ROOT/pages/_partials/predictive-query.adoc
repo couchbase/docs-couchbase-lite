@@ -1,0 +1,93 @@
+.Uncommited API
+NOTE: Predictive Query is a xref:c-sdk::compatibility-versions-features.adoc[Uncommitted API].
+
+.Enterprise Edition only
+IMPORTANT: Predictive Query is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+
+Predictive Query enables Couchbase Lite queries to use machine learning, by providing query functions that can process document data (properties or blobs) via trained ML models.
+
+Let's consider an image classifier model that takes a picture as input and outputs a label and probability.
+
+image::predictive-diagram.png[]
+
+To run a predictive query with a model as the one shown above, you must implement the following steps.
+
+. <<integrate-the-model,Integrate the Model>>
+. <<register-the-model,Register the Model>>
+. <<create-an-index,Create an Index (Optional)>>
+. <<run-a-prediction-query,Run a Prediction Query>>
+. <<unregister-the-model,Unregister the Model>>
+
+=== Integrate the Model
+
+To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `prediction()`.
+
+[source]
+----
+include::{snippet}[tag=predictive-model,indent=0]
+----
+<1> The `predict(input) ++->++ output` method provides the input and expects the result of using the machine learning model.
+The input and output of the predictive model is a `DictionaryObject`.
+Therefore, the supported data type will be constrained by the data type that the `DictionaryObject` supports.
+
+=== Register the Model
+
+To register the model you must create a new instance and pass it to the `Database.prediction.registerModel` static method.
+
+[source]
+----
+include::{snippet}[tag=register-model,indent=0]
+----
+
+=== Create an Index
+
+Creating an index for a predictive query is highly recommended.
+By computing the predictions during writes and building a prediction index, you can significantly improve the speed of prediction queries (which would otherwise have to be computed during reads).
+
+There are two types of indexes for predictive queries:
+
+* <<value-index,Value Index>>
+* <<predictive-index,Predictive Index>>
+
+==== Value Index
+
+The code below creates a value index from the "label" value of the prediction result.
+When documents are added or updated, the index will call the prediction function to update the city value in the index.
+
+[source]
+----
+include::{snippet}[tag=predictive-query-value-index,indent=0]
+----
+
+==== Predictive Index
+
+Predictive Index is a new index type used for predictive query.
+The Predictive Index is different from the value index in that the Predictive Index caches the predictive result and creates the value index from the cached predictive result when the predictive results values are specified.
+
+The code below creates a predictive index from the "label" value of the prediction result.
+
+[source]
+----
+include::{snippet}[tag=predictive-query-predictive-index,indent=0]
+----
+
+=== Run a Prediction Query
+
+The code below creates a query that calls the prediction function to return the "label" value for the first 10 results in the database.
+
+[source]
+----
+include::{snippet}[tag=predictive-query,indent=0]
+----
+<1> The `Function.prediction()` function returns a constructed Prediction Function object which can be used further to specify a property value extracted from the output dictionary of the `PredictiveModel.prediction()` function.
++
+NOTE: The null value returned by the prediction method will be interpreted as MISSING value in queries.
+
+=== Unregister the Model
+
+To unregister the model you must call the `Database.prediction.unregisterModel` static method.
+
+[source]
+----
+include::{snippet}[tag=unregister-model,indent=0]
+----
