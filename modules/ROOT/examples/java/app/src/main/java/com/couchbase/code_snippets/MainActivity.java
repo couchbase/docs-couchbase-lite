@@ -36,6 +36,8 @@ import com.couchbase.lite.MessagingCompletion;
 import com.couchbase.lite.Meta;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
+import com.couchbase.lite.PredictiveIndex;
+import com.couchbase.lite.PredictiveModel;
 import com.couchbase.lite.ProtocolType;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
@@ -50,6 +52,7 @@ import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 import com.couchbase.lite.SessionAuthenticator;
 import com.couchbase.lite.URLEndpoint;
+import com.couchbase.lite.ValueIndex;
 import com.couchbase.lite.ValueIndexItem;
 
 import java.io.File;
@@ -891,6 +894,55 @@ public class MainActivity extends AppCompatActivity {
         replicator.start();
         // end::database-replica[]
     }
+    
+    public void testPredictiveModel() throws CouchbaseLiteException {
+        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
+        Database database = new Database("mydb", config);
+        
+        // tag::register-model[]
+        Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());
+        // end::register-model[]
+        
+        // tag::predictive- query-value-index[]
+        ValueIndex index = IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")));
+        database.createIndex("value-index-image-classifier", index);
+        // end::predictive-query-value-index[]
+        
+        // tag::unregister-model[]
+        Database.prediction.unregisterModel("ImageClassifier");
+        // end::unregister-model[]
+    }
+    
+    public void testPredictiveIndex() throws CouchbaseLiteException {
+        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
+        Database database = new Database("mydb", config);
+        
+        // tag::predictive-query-predictive-index[]
+        Map<String, Object> inputMap = new HashMap<>();
+        inputMap.put("numbers", Expression.property("photo"));
+        Expression input = Expression.map(inputMap);
+        
+        PredictiveIndex index = IndexBuilder.predictiveIndex("ImageClassifier", input, null);
+        database.createIndex("predictive-index-image-classifier", index);
+        // end::predictive-query-predictive-index[]
+    }
+    
+    public void testPredictiveQuery() throws CouchbaseLiteException {
+        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
+        Database database = new Database("mydb", config);
+        
+        // tag::predictive-query[]
+        Query query = QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.database(database))
+        .where(Expression.property("label").equalTo(Expression.string("car"))
+               .and(Expression.property("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))));
+        
+        // Run the query.
+        ResultSet result = query.execute();
+        Log.d(TAG, "Number of rows: " + result.allResults().size());
+        // end::predictive-query[]
+    }
 
 }
 
@@ -1053,3 +1105,26 @@ class PassivePeerConnection implements MessageEndpointConnection {
         // end::passive-peer-receive[]
     }
 }
+
+// tag::predictive-model[]
+// `tensorFlowModel` is a fake implementation
+// this would be the implementation of the ml model you have chosen
+class ImageClassifierModel implements PredictiveModel {
+    @Override
+    public Dictionary predict(@NonNull Dictionary input) {
+        Blob blob = input.getBlob("photo");
+        if (blob == null) { return null; }
+
+        // `tensorFlowModel` is a fake implementation
+        // this would be the implementation of the ml model you have chosen
+        return new MutableDictionary(TensorFlowModel.predictImage(blob.getContent()));
+    }
+}
+
+class TensorFlowModel {
+    public static Map<String, Object> predictImage(byte[] data) {
+        return null;
+    }
+}
+// end::predictive-model[]
+

@@ -19,6 +19,7 @@
 
 import CouchbaseLiteSwift
 import MultipeerConnectivity
+import CoreML
 
 
 class SampleCodeTest {
@@ -802,8 +803,121 @@ class SampleCodeTest {
         replicator.start()
         // end::getting-started[]
     }
+    
+    func dontTestPredictiveModel() throws {
+        let database: Database
+        do {
+            database = try Database(name: "mydb")
+        } catch {
+            fatalError("Error opening database")
+        }
+
+        // tag::register-model[]
+        let model = ImageClassifierModel()
+        Database.prediction.registerModel(model, withName: "ImageClassifier")
+        // end::register-model[]
+        
+        // tag::predictive-query-value-index[]
+        let input = Expression.dictionary(["photo": Expression.property("photo")])
+        let prediction = Function.prediction(model: "ImageClassifier", input: input)
+        
+        let index = IndexBuilder.valueIndex(items: ValueIndexItem.expression(prediction.property("label")))
+        try database.createIndex(index, withName: "value-index-image-classifier")
+        // end::predictive-query-value-index[]
+        
+        // tag::unregister-model[]
+        Database.prediction.unregisterModel(withName: "ImageClassifier")
+        // end::unregister-model[]
+    }
+    
+    func dontTestPredictiveIndex() throws {
+        let database: Database
+        do {
+            database = try Database(name: "mydb")
+        } catch {
+            fatalError("Error opening database")
+        }
+
+        // tag::predictive-query-predictive-index[]
+        let input = Expression.dictionary(["photo": Expression.property("photo")])
+
+        let index = IndexBuilder.predictiveIndex(model: "ImageClassifier", input: input)
+        try database.createIndex(index, withName: "predictive-index-image-classifier")
+        // end::predictive-query-predictive-index[]
+    }
+    
+    func dontTestPredictiveQuery() throws {
+        let database: Database
+        do {
+            database = try Database(name: "mydb")
+        } catch {
+            fatalError("Error opening database")
+        }
+        
+        // tag::predictive-query[]
+        let input = Expression.dictionary(["photo": Expression.property("photo")])
+        let prediction = Function.prediction(model: "ImageClassifier", input: input) // <1>
+        
+        let query = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(
+                prediction.property("label").equalTo(Expression.string("car"))
+                .and(
+                    prediction.property("probablity")
+                        .greaterThanOrEqualTo(Expression.double(0.8))
+                )
+            )
+        
+        // Run the query.
+        do {
+            let result = try query.execute()
+            print("Number of rows :: \(result.allResults().count)")
+        } catch {
+            fatalError("Error running the query")
+        }
+        // end::predictive-query[]
+    }
+    
+    func dontTestCoreMLPredictiveModel() throws {
+        // tag::coreml-predictive-model[]
+        // Load MLModel from `ImageClassifier.mlmodel`
+        let modelURL = Bundle.main.url(forResource: "ImageClassifier", withExtension: "mlmodel")!
+        let compiledModelURL = try MLModel.compileModel(at: modelURL)
+        let model = try MLModel(contentsOf: compiledModelURL)
+        let predictiveModel = CoreMLPredictiveModel(mlModel: model)
+        
+        // Register model
+        Database.prediction.registerModel(predictiveModel, withName: "ImageClassifier")
+        // end::coreml-predictive-model[]
+    }
 
 }
+
+
+// tag::predictive-model[]
+// `myMLModel` is a fake implementation
+// this would be the implementation of the ml model you have chosen
+class myMLModel {
+    static func predictImage(data: Data) -> [String : AnyObject] {}
+}
+
+class ImageClassifierModel: PredictiveModel {
+    func predict(input: DictionaryObject) -> DictionaryObject? {
+        guard let blob = input.blob(forKey: "photo") else {
+            return nil
+        }
+        
+        let imageData = blob.content!
+        // `myMLModel` is a fake implementation
+        // this would be the implementation of the ml model you have chosen
+        let modelOutput = myMLModel.predictImage(data: imageData)
+        
+        let output = MutableDictionaryObject(data: modelOutput)
+        return output // <1>
+    }
+}
+// end::predictive-model[]
 
 /* ----------------------------------------------------------- */
 /* ---------------------  ACTIVE SIDE  ----------------------- */
