@@ -53,6 +53,27 @@
 @end
 // end::predictive-model[]
 
+// tag::custom-logging[]
+@interface LogTestLogger : NSObject<CBLLogger>
+
+// set the log level
+@property (nonatomic) CBLLogLevel level;
+
+@end
+
+@implementation LogTestLogger
+
+@synthesize level=_level;
+
+- (void) logWithLevel: (CBLLogLevel)level domain: (CBLLogDomain)domain message: (NSString*)message {
+    // handle the message, for example piping it to
+    // a third party framework
+}
+
+@end
+
+// end::custom-logging[]
+
 @interface SampleCodeTest : NSObject
 
 @end
@@ -91,6 +112,21 @@
     [CBLDatabase setLogLevel: kCBLLogLevelVerbose domain: kCBLLogDomainReplicator];
     [CBLDatabase setLogLevel: kCBLLogLevelVerbose domain: kCBLLogDomainQuery];
     // end::logging[]
+}
+
+- (void) dontTestFileLogging {
+    // tag::file-logging[]
+    NSString* tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent:@"cbllog"];
+    CBLLogFileConfiguration* config = [[CBLLogFileConfiguration alloc] initWithDirectory:tempFolder];
+    [CBLDatabase.log.file setConfig:config];
+    [CBLDatabase.log.file setLevel: kCBLLogLevelInfo];
+    // end::file-logging[]
+}
+
+- (void) dontTestEnableCustomLogging {
+    // tag::set-custom-logging[]
+    [CBLDatabase.log setCustom:[[LogTestLogger alloc] init]];
+    // end::set-custom-logging[]
 }
 
 - (void) dontTestLoadingPrebuilt {
