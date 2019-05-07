@@ -256,7 +256,21 @@ namespace api_walkthrough
             // end::batch[]
         }
 
-	private static void DocumentExpiration()
+        private static void DatabaseChangeListener()
+        {
+            var db = _Database;
+
+            // tag::document-listener[]
+            db.AddDocumentChangeListener("user.john", (sender, args) =>
+            {
+                using (var doc = Db.GetDocument(args.DocumentID)) {
+                    Console.WriteLine($"Status :: {doc.GetString("verified_account")}");
+                }
+            });
+            // end::document-listener[]
+        }
+
+        private static void DocumentExpiration()
         {
 	    var db = _Database;
 			
