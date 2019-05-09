@@ -199,6 +199,17 @@
     // end::batch[]
 }
 
+- (void) dontTestChangeListener {
+    __weak CBLDatabase *database = self.db;
+    
+    // tag::document-listener[]
+    [database addDocumentChangeListenerWithID: @"user.john" listener:^(CBLDocumentChange * change) {
+        CBLDocument* document = [database documentWithID: change.documentID];
+        NSLog(@"Status :: %@)", [document stringForKey: @"verified_account"]);
+    }];
+    // end::document-listener[]
+}
+
 - (void) dontTestDocumentExpiration {
     NSError* error;
     CBLDatabase *database = self.db;
