@@ -310,21 +310,33 @@
                                          from:[CBLQueryDataSource database:database]];
     // end::query-select-all[]
     
+    NSLog(@"%@", query);
+}
+
+- (void) dontTestLiveQuery {
+    NSError* error;
+    CBLDatabase *database = self.db;
+    
     // tag::live-query[]
+    CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
+                                         from:[CBLQueryDataSource database:database]];
+    
+    // Adds a query change listener.
+    // Changes will be posted on the main queue.
     id<CBLListenerToken> token = [query addChangeListener:^(CBLQueryChange * _Nonnull change) {
-        for (CBLQueryResultSet *result in [change results])
-        {
+        for (CBLQueryResultSet *result in [change results]) {
             NSLog(@"%@", result);
             /* Update UI */
         }
     }];
+    
+    // Start live query.
+    [query execute: &error]; // <1>
     // end::live-query[]
     
     // tag::stop-live-query[]
     [query removeChangeListenerWithToken:token];
     // end::stop-live-query[]
-    
-    NSLog(@"%@", query);
 }
 
 - (void) dontTestWhere {
