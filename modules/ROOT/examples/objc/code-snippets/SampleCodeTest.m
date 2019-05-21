@@ -787,15 +787,18 @@
 
 - (void) dontTestCertificatePinning {
     CBLDatabase *database = self.db;
+    
+    // tag::certificate-pinning[]
+    NSURL *certURL = [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"cer"];
+    NSData *data = [[NSData alloc] initWithContentsOfURL: certURL];
+    SecCertificateRef certificate = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
+    
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
     
-    // tag::certificate-pinning[]
-    NSData *data = [self dataFromResource: @"cert" ofType: @"cer"];
-    SecCertificateRef cert = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database
                                                                                        target:target];
-    config.pinnedServerCertificate = (SecCertificateRef)CFAutorelease(cert);
+    config.pinnedServerCertificate = (SecCertificateRef)CFAutorelease(certificate);
     // end::certificate-pinning[]
     
     NSLog(@"%@", config);
