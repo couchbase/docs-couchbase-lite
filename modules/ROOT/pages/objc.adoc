@@ -7,6 +7,7 @@
 :blank-field: ____
 :url-issues-ios: https://github.com/couchbase/couchbase-lite-ios/issues
 :tabs:
+:url-api-references: http://docs.couchbase.com/mobile/2.5.0/couchbase-lite-objc
 
 == Getting Started
 
@@ -137,7 +138,7 @@ include::{partialsdir}/ios-framework-size.adoc[]
 
 == API References
 
-http://docs.couchbase.com/mobile/2.5.0/couchbase-lite-objc[Objective-C SDK API References]
+{url-api-references}[Objective-C SDK API References]
 
 == Upgrading
 
@@ -202,7 +203,7 @@ include::{snippet}[tag=new-database,indent=0]
 ----
 
 Just as before, the database will be created in a default location.
-Alternatively, the `Database(string name, DatabaseConfiguration config)` initializer can be used to provide specific options in the http://docs.couchbase.com/mobile/2.0/couchbase-lite-objc/db022/Classes/CBLDatabaseConfiguration.html[`DatabaseConfiguration`] object such as the database directory.
+Alternatively, the `Database(string name, DatabaseConfiguration config)` initializer can be used to provide specific options in the {url-api-references}/Classes/CBLDatabaseConfiguration.html[`DatabaseConfiguration`] object such as the database directory.
 
 === Database Encryption
 
@@ -251,7 +252,7 @@ Even if some of the content changes on the server after you create the app, the 
 
 To use a prebuilt database, you need to set up the database, build the database into your app bundle as a resource, and install the database during the initial launch.
 After your app launches, it needs to check whether the database exists.
-If the database does not exist, the app should copy it from the app bundle using the http://docs.couchbase.com/mobile/2.0/couchbase-lite-objc/db022/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(cm)copyFromPath:toDatabase:withConfig:error:[`[CBLDatabase copyFromPath:toDatabase:withConfig:error:\]`] method as shown below.
+If the database does not exist, the app should copy it from the app bundle using the {url-api-references}/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(cm)copyFromPath:toDatabase:withConfig:error:[`[CBLDatabase copyFromPath:toDatabase:withConfig:error:\]`] method as shown below.
 
 [source]
 ----
@@ -295,7 +296,7 @@ Changes to the document are persisted to the database when the `saveDocument` me
 
 === Typed Accessors
 
-The `Document` class now offers a set of http://docs.couchbase.com/mobile/2.0/couchbase-lite-objc/db022/Protocols/CBLDictionary.html#/Type%20Setters[`property accessors`] for various scalar types, including boolean, integers, floating-point and strings.
+The `Document` class now offers a set of {url-api-references}/Protocols/CBLDictionary.html#/Type%20Setters[`property accessors`] for various scalar types, including boolean, integers, floating-point and strings.
 These accessors take care of converting to/from JSON encoding, and make sure you get the type you're expecting.
 
 In addition, as a convenience we offer `Date` accessors.
@@ -309,7 +310,7 @@ include::{snippet}[tag=date-getter,indent=0]
 
 If the property doesn't exist in the document it will return the default value for that  getter method (0 for `getInt`, 0.0 for `getFloat` etc.).
 
-If you need to determine whether a given property exists in the document, you should use the http://docs.couchbase.com/mobile/2.0/couchbase-lite-objc/db022/Classes/CBLDocument.html[`[Document contains:key\]`] method.
+If you need to determine whether a given property exists in the document, you should use the {url-api-references}/Classes/CBLDocument.html[`[Document contains:key\]`] method.
 
 === Batch operations
 
@@ -445,7 +446,7 @@ You can chain any number of Expressions in order to implement sophisticated filt
 
 ==== Comparison
 
-The http://docs.couchbase.com/mobile/2.0/couchbase-lite-objc/db022/Classes/CBLQueryExpression.html[comparison operators] can be used in the WHERE statement to specify on which property to match documents.
+The {url-api-references}/Classes/CBLQueryExpression.html[comparison operators] can be used in the WHERE statement to specify on which property to match documents.
 In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
 
 [source,json]
@@ -464,7 +465,7 @@ include::{snippet}[tag=query-where,indent=0]
 
 ==== Collection Operators
 
-http://docs.couchbase.com/mobile/2.0/couchbase-lite-objc/db022/Classes/CBLQueryExpression.html#/Collection%20operators:[Collection operators] are useful to check if a given value is present in an array.
+{url-api-references}/Classes/CBLQueryExpression.html#/Collection%20operators:[Collection operators] are useful to check if a given value is present in an array.
 
 ===== CONTAINS Operator
 
@@ -496,7 +497,7 @@ include::{snippet}[tag=query-collection-operator-in,indent=0]
 
 ==== Like Operator
 
-The http://docs.couchbase.com/mobile/2.0/couchbase-lite-objc/db022/Classes/CBLQueryExpression.html#/c:objc(cs)CBLQueryExpression(im)like:[`like`] operator can be used for string matching.
+The {url-api-references}/Classes/CBLQueryExpression.html#/c:objc(cs)CBLQueryExpression(im)like:[`like`] operator can be used for string matching.
 
 The `like` operator is case sensitive.
 
@@ -806,7 +807,7 @@ For platform specific installation instructions, refer to the Sync Gateway xref:
 === Starting a Replication
 
 Replication objects are now bidirectional, this means you can start a `push`/`pull` replication with a single instance.
-The replication's parameters can be specified through the http://docs.couchbase.com/mobile/2.0/couchbase-lite-objc/db022/Classes/CBLReplicatorConfiguration.html[`ReplicatorConfiguration`] object;
+The replication's parameters can be specified through the {url-api-references}/Classes/CBLReplicatorConfiguration.html[`ReplicatorConfiguration`] object;
 for example, if you wish to start a `push` only or `pull` only replication.
 
 The following example creates a `pull` replication with Sync Gateway.
