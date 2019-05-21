@@ -729,12 +729,14 @@ class SampleCodeTest {
     #endif
 
     func dontTestCertificatePinning() throws {
-        let url = URL(string: "wss://localhost:4985/db")!
-        let target = URLEndpoint(url: url)
 
         // tag::certificate-pinning[]
-        let data = try self.dataFromResource(name: "cert", ofType: "cer")
-        let certificate = SecCertificateCreateWithData(nil, data)
+        let certURL = Bundle.main.url(forResource: "cert", withExtension: "cer")!
+        let data = try! Data(contentsOf: certURL)
+        let certificate = SecCertificateCreateWithData(nil, data as CFData)
+
+        let url = URL(string: "wss://localhost:4985/db")!
+        let target = URLEndpoint(url: url)
 
         let config = ReplicatorConfiguration(database: database, target: target)
         config.pinnedServerCertificate = certificate
