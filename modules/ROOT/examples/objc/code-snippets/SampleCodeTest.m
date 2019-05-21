@@ -75,7 +75,7 @@
 // end::custom-logging[]
 
 @interface SampleCodeTest : NSObject
-
+@property(nonatomic) CBLDatabase* db;
 @end
 
 @implementation SampleCodeTest
@@ -789,6 +789,10 @@
     NSLog(@"%@", config);
 }
 
+- (NSData*) dataFromResource: (NSString*)file ofType: (NSString*)type {
+    return [NSData data];
+}
+
 - (void) dontTestGettingStarted {
     // tag::getting-started[]
     // Get the database (and create it if it doesn’t exist).
@@ -1093,7 +1097,7 @@
     // end::passive-stop-listener[]
 }
 
-- (void)acceptConnection() {
+- (void)acceptConnection {
     // tag::advertizer-accept[]
     PassivePeerConnection *connection = [[PassivePeerConnection alloc] init]; /* implements CBLMessageEndpointConnection */
     [_messageEndpointListener accept: connection];
