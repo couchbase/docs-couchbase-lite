@@ -487,10 +487,11 @@ include::{snippet}[tag=query-collection-operator-in,indent=0]
 ==== Like Operator
 
 The http://docs.couchbase.com/mobile/2.0/couchbase-lite-net/db022/html/M_Couchbase_Lite_Query_IExpression_Like.htm[`like`] operator can be used for string matching.
-It is recommended to use the `like` operator for case insensitive matches and the `regex` operator (see below) for case sensitive matches.
+
+The `like` operator is case sensitive.
 
 In the example below, we are looking for documents of type `landmark` where the name property exactly matches the string "Royal engineers museum".
-Note that since `like` does a case insensitive match, the following query will return "landmark" type documents with name matching "Royal Engineers Museum", "royal engineers museum", "ROYAL ENGINEERS MUSEUM" and so on.
+Note that since `like` does a case sensitive match, the following query will return "landmark" type documents with the name property exactly matching "Royal Engineers Museum".
 
 [source]
 ----
@@ -525,8 +526,9 @@ include::{snippet}[tag=query-like-operator-wildcard-character-match,indent=0]
 
 ==== Regex Operator
 
-The http://docs.couchbase.com/mobile/2.0/couchbase-lite-net/db022/html/M_Couchbase_Lite_Query_IExpression_Regex.htm[`regex`] operator can be used for case sensitive matches.
 Similar to wildcard `like` expressions, `regex` expressions based pattern matching allow you to have some fuzziness in your search string.
+
+The http://docs.couchbase.com/mobile/2.0/couchbase-lite-net/db022/html/M_Couchbase_Lite_Query_IExpression_Regex.htm[`regex`] operator is case sensitive.
 
 In the example below, we are looking for documents of `type` "landmark" where the name property matches any string (on word boundaries) that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
 The following query will return "landmark" type documents with name matching "Engine", "engine" and so on.
