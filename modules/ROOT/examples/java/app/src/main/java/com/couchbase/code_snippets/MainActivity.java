@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "Number of rows ::  " + result.allResults().size());
 
         // Create replicators to push and pull changes to and from the cloud.
-        Endpoint targetEndpoint = new URLEndpoint(new URI("ws://localhost:4984/example_sg_db"));
+        Endpoint targetEndpoint = new URLEndpoint(new URI("ws://localhost:4984/getting-started-db"));
         ReplicatorConfiguration replConfig = new ReplicatorConfiguration(database, targetEndpoint);
         replConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
 

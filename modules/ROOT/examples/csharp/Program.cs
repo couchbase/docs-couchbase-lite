@@ -83,7 +83,7 @@ namespace api_walkthrough
             }
 
             // Create replicator to push and pull changes to and from the cloud
-            var targetEndpoint = new URLEndpoint(new Uri("ws://localhost:4984/example_sg_db"));
+            var targetEndpoint = new URLEndpoint(new Uri("ws://localhost:4984/getting-started-db"));
             var replConfig = new ReplicatorConfiguration(database, targetEndpoint);
 
             // Add authentication

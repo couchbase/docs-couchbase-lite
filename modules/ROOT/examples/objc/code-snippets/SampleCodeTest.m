@@ -844,7 +844,7 @@
     NSLog(@"Number of rows :: %lu", (unsigned long)[[result allResults] count]);
     
     // Create replicators to push and pull changes to and from the cloud.
-    NSURL *url = [[NSURL alloc] initWithString:@"ws://localhost:4984/example_sg_db"];
+    NSURL *url = [[NSURL alloc] initWithString:@"ws://localhost:4984/getting-started-db"];
     CBLURLEndpoint *targetEndpoint = [[CBLURLEndpoint alloc] initWithURL:url];
     CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:targetEndpoint];
     replConfig.replicatorType = kCBLReplicatorTypePushAndPull;

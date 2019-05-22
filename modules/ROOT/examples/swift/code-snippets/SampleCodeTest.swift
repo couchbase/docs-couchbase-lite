@@ -798,7 +798,7 @@ class SampleCodeTest {
         }
         
         // Create replicators to push and pull changes to and from the cloud.
-        let targetEndpoint = URLEndpoint(url: URL(string: "ws://localhost:4984/example_sg_db")!)
+        let targetEndpoint = URLEndpoint(url: URL(string: "ws://localhost:4984/getting-started-db")!)
         let replConfig = ReplicatorConfiguration(database: database, target: targetEndpoint)
         replConfig.replicatorType = .pushAndPull
         
