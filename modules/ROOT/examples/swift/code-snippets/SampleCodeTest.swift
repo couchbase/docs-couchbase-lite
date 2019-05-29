@@ -441,7 +441,7 @@ class SampleCodeTest {
             )
             .from(DataSource.database(database))
             .where(Expression.property("type").equalTo(Expression.string("landmark"))
-                .and(Expression.property("name").like(Expression.string("\\bEng.*e\\b")))
+                .and(Expression.property("name").regex(Expression.string("\\bEng.*e\\b")))
             )
             .limit(Expression.int(10))
         // end::query-regex-operator[]
