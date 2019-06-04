@@ -79,7 +79,7 @@ import java.util.Map;
 
 import static com.couchbase.lite.CBLError.Code.CBLErrorBusy;
 
-public class MainActivity extends AppCompatActivity {
+public class Examples extends AppCompatActivity {
     static final String TAG = MainActivity.class.getSimpleName();
     protected final static String DATABASE_NAME = "database";
     Database database;
