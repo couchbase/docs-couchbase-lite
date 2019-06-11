@@ -1,0 +1,83 @@
+Starting in Couchbase Lite 2.6, applications developers who want more control over how document conflicts are handled can use custom logic to select the winner between conflicting revisions of a document.
+
+A conflict can be resolved <<case-1-during-replication,during replication>> or when <<case-2-when-saving-a-document,saving a document>>.
+
+==== Case 1: During Replication
+
+To implement custom conflict resolution during replication, you must implement the following steps.
+
+. <<conflict-resolver,Conflict Resolver>>
+. <<configure-the-replicator,Configure the Replicator>>
+
+===== Conflict Resolver
+
+Implemented by developers to provide a custom conflict resolution.
+
+[source]
+----
+public protocol ConflictResolver {
+    func resolve(conflict: Conflict) -> Document?
+}
+----
+
+There are a few things to be noted here:
+
+. When a null document is returned, the conflict will be resolved as document deletion.
+. If the document ID is not correct, the replicator will accept the change but will log a warning message.
+. If a document from a different is returned, the replicator will take it as an error. A DocumentReplicationNotification will be notified with an error and an error message should be logged.
+. The resolve() method should be called in the way that it doesn’t block the main database operations. Also when the replicator stopped, the conflict resolving should be done as well.
+. If there is an exception thrown in the resolve() method, the exception will be caught and handled:
+.. The conflict resolving will be skipped. The pending conflicted documents will be resolved when the replicator is restarted.
+.. The exception will be reported in the warning log.
+.. The exception will be reported in the DocumentReplicationChange event.
+
+===== Configure the Replicator
+
+The implemented custom conflict resolver object can be registered to the replicator at the ReplicatorConfiguration's conflictResolver property.
+The default value of the conflictResolver is `null`.
+When the value is null, the default conflict resolution will be applied.
+
+[source]
+----
+public class ReplicatorConfiguration {
+    public var conflictResolver: ConflictResolver?
+}
+----
+
+==== Case 2: When Saving a Document
+
+Prior Cobalt, by default, CBL uses last-write-wins concurrency control to handle conflict when saving a document. Developers has an option to use fails-on-conflict (AKA optimistic concurrency control) so that they can manually handle the conflict when saving a document.
+
+However, the manual steps from using the fails-on-conflict to resolve a conflict in a loop may not be desirable. In Cobalt, we allow developers to hook a conflict handler when saving a document so that the developers can easily handle the conflict in a single save method call.
+
+To implement custom conflict resolution when saving a document, you must implement the following steps.
+
+. <<conflict-handler,Conflict Handler>>
+. <<save-method-handler,Save Method Handler>>
+
+===== Conflict Handler
+
+Implemented by developers to provide a custom conflict handler. This will be implemented as block or closure if the platform allows. When handling the conflict, developers will directly modify the SaveConflict.document, which is the same document object that is passed to the save() method. When handling is done, return true. Returning false will cancel the save operation.
+
+[source]
+----
+public protocol ConflictHandler {
+    func handle(document: MutableDocument, oldDocument: Document?) -> Bool
+}
+----
+
+===== Save Method Handler
+
+The save() method that allows specifying a conflict handler.
+
+[source,]
+----
+public Database {
+	public func save(document: MutableDocument, conflictHandler: ConflictHandler) throws -> Bool
+}
+----
+
+Notes:
+
+. If the conflict handler returns false, the save method will cancel the save operation and return false value the same way as using the save() method with failOnConflict concurrency control.
+. If there is an exception thrown from the handle object, the exception will be caught and rethrow in the save() method.
