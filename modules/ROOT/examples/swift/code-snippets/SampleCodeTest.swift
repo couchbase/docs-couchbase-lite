@@ -919,6 +919,15 @@ class SampleCodeTest {
         self.replicator = Replicator(config: config)
         self.replicator.start()
         // end::replication-conflict-resolver[]
+    }
+    
+    func dontTestSaveWithConflictHandler() throws {
+        // tag::update-document-with-conflict-handler[]
+        guard let document = database.document(withID: "xyz") else { return }
+        let mutableDocument = document.toMutable()
+        mutableDocument.setString("apples", forKey: "name")
+        try database.saveDocument(mutableDocument, conflictHandler: ExampleConflictHandler.handle)
+        // end::update-document-with-conflict-handler[]
 
     }
     
@@ -965,33 +974,36 @@ fileprivate class LogTestLogger: Logger {
 
 // tag::local-win-conflict-resolver[]
 class LocalWinConflictResolver: ConflictResolver {
-    
     func resolve(conflict: Conflict) -> Document? {
         return conflict.localDocument
     }
-    
 }
 // end::local-win-conflict-resolver[]
 
 // tag::remote-win-conflict-resolver[]
 class RemoteWinConflictResolver: ConflictResolver {
-    
     func resolve(conflict: Conflict) -> Document? {
         return conflict.remoteDocument
     }
-    
 }
 // end::remote-win-conflict-resolver[]
 
 // tag::merge-conflict-resolver[]
 class MergeConflictResolver: ConflictResolver {
-    
     func resolve(conflict: Conflict) -> Document? {
         return self.merge(conflict.localDocument, conflict.remoteDocument)
     }
-    
 }
 // end::merge-conflict-resolver[]
+
+// tag::example-conflict-handler[]
+class ExampleConflictHandler {
+    static func handle(document: MutableDocument, oldDocument: Document?) -> Bool {
+        self.merge(document, from: oldDocument)
+        return true
+    }
+}
+// end::example-conflict-handler[]
 
 /* ----------------------------------------------------------- */
 /* ---------------------  ACTIVE SIDE  ----------------------- */
