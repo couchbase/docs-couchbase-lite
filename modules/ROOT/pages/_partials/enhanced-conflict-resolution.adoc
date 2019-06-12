@@ -13,12 +13,35 @@ To implement custom conflict resolution during replication, you must implement t
 
 Implemented by developers to provide a custom conflict resolution.
 
+[{tabs}]
+====
+Local Win::
++
+--
 [source]
 ----
-public protocol ConflictResolver {
-    func resolve(conflict: Conflict) -> Document?
-}
+include::{snippet}[tag=local-win-conflict-resolver,indent=0]
 ----
+--
+
+Remote Win::
++
+--
+[source]
+----
+include::{snippet}[tag=remote-win-conflict-resolver,indent=0]
+----
+--
+
+Merge::
++
+--
+[source]
+----
+include::{snippet}[tag=merge-conflict-resolver,indent=0]
+----
+--
+====
 
 There are a few things to be noted here:
 
@@ -36,12 +59,9 @@ There are a few things to be noted here:
 The implemented custom conflict resolver object can be registered to the replicator at the ReplicatorConfiguration's conflictResolver property.
 The default value of the conflictResolver is `null`.
 When the value is null, the default conflict resolution will be applied.
-
 [source]
 ----
-public class ReplicatorConfiguration {
-    public var conflictResolver: ConflictResolver?
-}
+include::{snippet}[tag=replication-conflict-resolver,indent=0]
 ----
 
 ==== Case 2: When Saving a Document
