@@ -908,6 +908,20 @@ class SampleCodeTest {
         // end::coreml-predictive-model[]
     }
 
+    func dontTestReplicatorConflictResolver() throws {
+        // tag::replication-conflict-resolver[]
+        let url = URL(string: "ws://localhost:4984/mydatabase")!
+        let target = URLEndpoint(url: url)
+        
+        let config = ReplicatorConfiguration(database: database, target: target)
+        config.conflictResolver = LocalWinConflictResolver()
+        
+        self.replicator = Replicator(config: config)
+        self.replicator.start()
+        // end::replication-conflict-resolver[]
+
+    }
+    
 }
 
 
@@ -948,6 +962,36 @@ fileprivate class LogTestLogger: Logger {
     
 }
 // end::custom-logging[]
+
+// tag::local-win-conflict-resolver[]
+class LocalWinConflictResolver: ConflictResolver {
+    
+    func resolve(conflict: Conflict) -> Document? {
+        return conflict.localDocument
+    }
+    
+}
+// end::local-win-conflict-resolver[]
+
+// tag::remote-win-conflict-resolver[]
+class RemoteWinConflictResolver: ConflictResolver {
+    
+    func resolve(conflict: Conflict) -> Document? {
+        return conflict.remoteDocument
+    }
+    
+}
+// end::remote-win-conflict-resolver[]
+
+// tag::merge-conflict-resolver[]
+class MergeConflictResolver: ConflictResolver {
+    
+    func resolve(conflict: Conflict) -> Document? {
+        return self.merge(conflict.localDocument, conflict.remoteDocument)
+    }
+    
+}
+// end::merge-conflict-resolver[]
 
 /* ----------------------------------------------------------- */
 /* ---------------------  ACTIVE SIDE  ----------------------- */
