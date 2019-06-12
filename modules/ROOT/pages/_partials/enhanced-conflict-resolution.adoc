@@ -82,20 +82,16 @@ Implemented by developers to provide a custom conflict handler. This will be imp
 
 [source]
 ----
-public protocol ConflictHandler {
-    func handle(document: MutableDocument, oldDocument: Document?) -> Bool
-}
+include::{snippet}[tag=example-conflict-handler,indent=0]
 ----
 
 ===== Save Method Handler
 
 The save() method that allows specifying a conflict handler.
 
-[source,]
+[source]
 ----
-public Database {
-	public func save(document: MutableDocument, conflictHandler: ConflictHandler) throws -> Bool
-}
+include::{snippet}[tag=update-document-with-conflict-handler,indent=0]
 ----
 
 Notes:
