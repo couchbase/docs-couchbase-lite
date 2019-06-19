@@ -89,16 +89,17 @@ namespace api_walkthrough
             // Add authentication
             replConfig.Authenticator = new BasicAuthenticator("john", "pass");
 
-            // Create replicator
-            var replicator = new Replicator(replConfig);
-            replicator.AddChangeListener((sender, args) =>
+            // Create replicator (make sure to add an instance or static variable
+	    // named _Replicator)
+            _Replicator = new Replicator(replConfig);
+            _Replicator.AddChangeListener((sender, args) =>
             {
                 if (args.Status.Error != null) {
                     Console.WriteLine($"Error :: {args.Status.Error}");
                 }
             });
 
-            replicator.Start();
+            _Replicator.Start();
 
             // Later, stop and dispose the replicator *before* closing/disposing the database
             // end::getting-started[]
