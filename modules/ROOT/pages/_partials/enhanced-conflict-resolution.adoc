@@ -1,6 +1,10 @@
-Starting in Couchbase Lite 2.6, applications developers who want more control over how document conflicts are handled can use custom logic to select the winner between conflicting revisions of a document.
+Starting in Couchbase Lite 2.6, application developers who want more control over how document conflicts are handled can use custom logic to select the winner between conflicting revisions of a document.
 
-A conflict can be resolved <<case-1-during-replication,during replication>> or when <<case-2-when-saving-a-document,saving a document>>.
+A conflict can be resolved <<case-1-during-replication,during replication (case 1)>> or when <<case-2-when-saving-a-document,saving a document (case 2)>>.
+
+If a custom conflict resolver is not provided, the system will automatically resolve conflicts as discussed in <<automatic-conflict-resolution,Automatic Conflict Resolution>>, and as a consequence there will be no conflicting revisions in the database.
+
+CAUTION: While this is true of any user defined functions, app developers must be strongly cautioned against writing sub-optimal custom conflict handlers that are time consuming and could slow down the client's save operations.
 
 ==== Case 1: During Replication
 
@@ -11,11 +15,15 @@ To implement custom conflict resolution during replication, you must implement t
 
 ===== Conflict Resolver
 
-Implemented by developers to provide a custom conflict resolution.
+Apps have the following strategies for resolving conflicts:
+
+- *Local Wins:* The current revision in the database wins.
+- *Remote Wins:* The revision pulled from the remote endpoint through replication wins.
+- *Merge:* Merge the content bodies of the conflicting revisions.
 
 [{tabs}]
 ====
-Local Win::
+Local Wins::
 +
 --
 [source]
@@ -24,7 +32,7 @@ include::{snippet}[tag=local-win-conflict-resolver,indent=0]
 ----
 --
 
-Remote Win::
+Remote Wins::
 +
 --
 [source]
@@ -43,22 +51,32 @@ include::{snippet}[tag=merge-conflict-resolver,indent=0]
 --
 ====
 
-There are a few things to be noted here:
+There are some important points to be noted:
 
-. When a null document is returned, the conflict will be resolved as document deletion.
-. If the document ID is not correct, the replicator will accept the change but will log a warning message.
-. If a document from a different is returned, the replicator will take it as an error. A DocumentReplicationNotification will be notified with an error and an error message should be logged.
-. The resolve() method should be called in the way that it doesn’t block the main database operations. Also when the replicator stopped, the conflict resolving should be done as well.
-. If there is an exception thrown in the resolve() method, the exception will be caught and handled:
-.. The conflict resolving will be skipped. The pending conflicted documents will be resolved when the replicator is restarted.
-.. The exception will be reported in the warning log.
-.. The exception will be reported in the DocumentReplicationChange event.
+. When a null document is returned by the resolver, the conflict will be resolved as a document deletion.
+. If the document ID of the document returned by the resolver does not correspond to the document that is in conflict then the replicator will log a warning message.
++
+IMPORTANT: Developers are encouraged to review the warnings and fix the resolver to return a valid document ID.
+. If a document from a different database is returned, the replicator will treat it as an error.
+A <<replication-events,document replication event>> will be posted with an error and an error message will be logged.
++
+IMPORTANT: Apps are encouraged to observe such errors and take appropriate measures to fix the resolver function.
+. When the replicator is stopped, the system will attempt to resolve outstanding and pending conflicts before stopping.
+Hence apps should expect to see some delay when attempting to stop the replicator depending on the number of outstanding documents in the replication queue and the complexity of the resolver function.
+. If there is an exception thrown in the `resolve()` method, the exception will be caught and handled:
+.. The conflict to resolve will be skipped.
+// TODO: regarding the following point, does that mean the replicator is stopped when an exception is thrown?
+The pending conflicted documents will be resolved when the replicator is restarted.
+.. The exception will be reported in the warning logs.
+.. The exception will be reported in the <<replication-events,document replication event>>.
++
+IMPORTANT: While the system will handle exceptions in the manner specified above, it is strongly encouraged for the resolver function to catch exceptions and handle them in a way appropriate to their needs.
 
 ===== Configure the Replicator
 
-The implemented custom conflict resolver object can be registered to the replicator at the ReplicatorConfiguration's conflictResolver property.
+The implemented custom conflict resolver can be registered on the replicator configuration object.
 The default value of the conflictResolver is `null`.
-When the value is null, the default conflict resolution will be applied.
+When the value is `null`, the default conflict resolution will be applied.
 
 [source]
 ----
@@ -67,9 +85,11 @@ include::{snippet}[tag=replication-conflict-resolver,indent=0]
 
 ==== Case 2: When Saving a Document
 
-Prior Cobalt, by default, CBL uses last-write-wins concurrency control to handle conflict when saving a document. Developers has an option to use fails-on-conflict (AKA optimistic concurrency control) so that they can manually handle the conflict when saving a document.
+In Couchbase Lite versions 2.5 and earlier, by default, Couchbase Lite uses last-write-wins concurrency control to handle a conflict when saving a document.
 
-However, the manual steps from using the fails-on-conflict to resolve a conflict in a loop may not be desirable. In Cobalt, we allow developers to hook a conflict handler when saving a document so that the developers can easily handle the conflict in a single save method call.
+Developers have the option to use <<automatic-conflict-resolution,fails-on-conflict>> (AKA optimistic concurrency control) so that they can manually handle the conflict when saving a document.
+
+Starting in Couchbase Lite 2.6, we allow developers to hook a conflict handler when saving a document so that the developers can easily handle the conflict in a single save method call.
 
 To implement custom conflict resolution when saving a document, you must implement the following steps.
 
@@ -78,7 +98,12 @@ To implement custom conflict resolution when saving a document, you must impleme
 
 ===== Conflict Handler
 
-Implemented by developers to provide a custom conflict handler. This will be implemented as block or closure if the platform allows. When handling the conflict, developers will directly modify the SaveConflict.document, which is the same document object that is passed to the save() method. When handling is done, return true. Returning false will cancel the save operation.
+Implemented by developers to provide a custom conflict handler.
+Within the conflict handler, apps will be modifying the `document` parameter which is the same instance of `Document` that is passed to the `save()` method.
+So in effect, apps will be directly modifying the document that is being saved.
+
+When handling is done, the method must return `true`.
+Returning `false` will cancel the save operation.
 
 [source]
 ----
@@ -87,14 +112,18 @@ include::{snippet}[tag=example-conflict-handler,indent=0]
 
 ===== Save Method Handler
 
-The save() method that allows specifying a conflict handler.
+The `save()` method allows a conflict handler to be specified.
 
 [source]
 ----
 include::{snippet}[tag=update-document-with-conflict-handler,indent=0]
 ----
 
-Notes:
+There are some important points to be noted:
 
-. If the conflict handler returns false, the save method will cancel the save operation and return false value the same way as using the save() method with failOnConflict concurrency control.
-. If there is an exception thrown from the handle object, the exception will be caught and rethrow in the save() method.
+. If the conflict handler returns `false`, the save method will cancel the save operation and return `false` the same way as using the `save()` method with the `failOnConflict` concurrency control.
+. If there is an exception thrown in the `handle()` method, the exception will be caught and handled:
+// TODO: is the following point correct?
+.. The save operation will be cancelled and return `false`.
+.. The exception will be reported in the warning logs.
+.. The exception will be reported in the `DocumentReplicationChange` event.
