@@ -51,6 +51,8 @@ include::{snippet}[tag=merge-conflict-resolver,indent=0]
 --
 ====
 
+===== Important Guidelines and Best Practices
+
 There are some important points to be noted:
 
 . When a null document is returned by the resolver, the conflict will be resolved as a document deletion.
@@ -71,6 +73,8 @@ The pending conflicted documents will be resolved when the replicator is restart
 .. The exception will be reported in the <<replication-events,document replication event>>.
 +
 IMPORTANT: While the system will handle exceptions in the manner specified above, it is strongly encouraged for the resolver function to catch exceptions and handle them in a way appropriate to their needs.
+. If you have multiple replicators, it is recommended that instead of distinct resolvers, you should use a unified conflict resolver across all replicators.
+Failure to do so could potentially lead to data loss under exception cases or if the app is terminated (by the user or an app crash) while there are pending conflicts.
 
 ===== Configure the Replicator
 
@@ -82,11 +86,6 @@ When the value is `null`, the default conflict resolution will be applied.
 ----
 include::{snippet}[tag=replication-conflict-resolver,indent=0]
 ----
-
-===== Best Practices
-
-- It is recommended for the same conflict resolver to be associated with all replicators.
-If that's not possible, it is recommended for the resolver to handle all exceptions, failing to do so could potentially lead to data loss.
 
 ==== Case 2: When Saving a Document
 
