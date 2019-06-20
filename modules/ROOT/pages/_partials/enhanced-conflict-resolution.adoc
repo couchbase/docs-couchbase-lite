@@ -83,6 +83,11 @@ When the value is `null`, the default conflict resolution will be applied.
 include::{snippet}[tag=replication-conflict-resolver,indent=0]
 ----
 
+===== Best Practices
+
+- It is recommended for the same conflict resolver to be associated with all replicators.
+If that's not possible, it is recommended for the resolver to handle all exceptions, failing to do so could potentially lead to data loss.
+
 ==== Case 2: When Saving a Document
 
 In Couchbase Lite versions 2.5 and earlier, by default, Couchbase Lite uses last-write-wins concurrency control to handle a conflict when saving a document.
