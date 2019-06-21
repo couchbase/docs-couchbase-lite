@@ -809,6 +809,7 @@
 }
 
 - (void) dontTestGettingStarted {
+    CBLReplicator *_replicator;
     // tag::getting-started[]
     // Get the database (and create it if it doesn’t exist).
     NSError *error;
@@ -852,18 +853,18 @@
     // Add authentication.
     replConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"john" password:@"pass"];
     
-    // Create replicator.
-    CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
+    // Create replicator (make sure to add an instance or static variable named _replicator)
+    _replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
     
     // Listen to replicator change events.
-    [replicator addChangeListener:^(CBLReplicatorChange *change) {
+    [_replicator addChangeListener:^(CBLReplicatorChange *change) {
         if (change.status.error) {
             NSLog(@"Error code: %ld", change.status.error.code);
         }
     }];
     
     // Start replication
-    [replicator start];
+    [_replicator start];
     // end::getting-started[]
 }
 
