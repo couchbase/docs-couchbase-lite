@@ -90,7 +90,7 @@ namespace api_walkthrough
             replConfig.Authenticator = new BasicAuthenticator("john", "pass");
 
             // Create replicator (make sure to add an instance or static variable
-	    // named _Replicator)
+            // named _Replicator)
             _Replicator = new Replicator(replConfig);
             _Replicator.AddChangeListener((sender, args) =>
             {
