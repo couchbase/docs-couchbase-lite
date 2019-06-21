@@ -127,8 +127,4 @@ include::{snippet}[tag=update-document-with-conflict-handler,indent=0]
 There are some important points to be noted:
 
 . If the conflict handler returns `false`, the save method will cancel the save operation and return `false` the same way as using the `save()` method with the `failOnConflict` concurrency control.
-. If there is an exception thrown in the `handle()` method, the exception will be caught and handled:
-// TODO: is the following point correct?
-.. The save operation will be cancelled and return `false`.
-.. The exception will be reported in the warning logs.
-.. The exception will be reported in the `DocumentReplicationChange` event.
+. If there is an exception thrown in the `handle()` method, the exception will be caught and rethrown in the `save()` method.
