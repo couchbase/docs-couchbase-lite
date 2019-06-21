@@ -906,7 +906,10 @@ include::{snippet}[tag=replication-reset-checkpoint,indent=0]
 
 include::{partialsdir}/replication-filters.adoc[]
 
-== Handling Conflicts
+[#handling-conflicts]
+== Conflict Resolution
+
+=== Automatic Conflict Resolution
 
 In Couchbase Lite 2.0, document conflicts are automatically resolved.
 This functionality aims to simplify the default behavior of conflict handling and save disk space (conflicting revisions will no longer be stored in the database).
@@ -926,6 +929,10 @@ Similarly to the save operation, the delete operation also has two method signat
 The concurrency control parameter has two possible values:
  ** `lastWriteWins`: The last operation wins if there is a conflict.
  ** `failOnConflict`: The operation will fail if there is a conflict.
+
+=== Custom Conflict Resolution
+
+include::{partialsdir}/enhanced-conflict-resolution.adoc[]
 
 == Database Replicas
 
