@@ -805,7 +805,13 @@ namespace api_walkthrough
             var db = _Database;
 
             // tag::certificate-pinning[]
-            var certificate = new X509Certificate2("cert.cer");
+            // Note: `GetCertificate` is a fake method. This would be the platform-specific method
+            // to find and load the certificate as an instance of `X509Certificate2`.
+            // For .NET Core / .NET Framework this can be loaded from the filesystem path.
+            // For UWP, from the assets directory.
+            // For iOS, from the main bundle.
+            // For Android, from the assets directory.
+            var certificate = GetCertificate("cert.cer");
             var config = new ReplicatorConfiguration(db, target)
             {
                 PinnedServerCertificate = certificate
