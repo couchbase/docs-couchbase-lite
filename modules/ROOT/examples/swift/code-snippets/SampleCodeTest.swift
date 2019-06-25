@@ -805,18 +805,18 @@ class SampleCodeTest {
         // Add authentication.
         replConfig.authenticator = BasicAuthenticator(username: "john", password: "pass")
         
-        // Create replicator.
-        let replicator = Replicator(config: replConfig)
+        // Create replicator (make sure to add an instance or static variable named replicator)
+        self.replicator = Replicator(config: replConfig)
         
         // Listen to replicator change events.
-        replicator.addChangeListener { (change) in
+        self.replicator.addChangeListener { (change) in
             if let error = change.status.error as NSError? {
                 print("Error code :: \(error.code)")
             }
         }
         
         // Start replication.
-        replicator.start()
+        self.replicator.start()
         // end::getting-started[]
     }
     
