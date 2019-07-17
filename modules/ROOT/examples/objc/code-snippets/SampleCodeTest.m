@@ -74,6 +74,49 @@
 
 // end::custom-logging[]
 
+// tag::local-win-conflict-resolver[]
+@interface LocalWinConflictResolver: NSObject<CBLConflictResolver>
+@end
+
+@implementation LocalWinConflictResolver
+- (CBLDocument*) resolve: (CBLConflict*)conflict {
+    return conflict.localDocument;
+}
+
+@end
+// end::local-win-conflict-resolver[]
+
+// tag::remote-win-conflict-resolver[]
+@interface RemoteWinConflictResolver: NSObject<CBLConflictResolver>
+@end
+
+@implementation RemoteWinConflictResolver
+- (CBLDocument*) resolve: (CBLConflict*)conflict {
+    return conflict.remoteDocument;
+}
+
+@end
+// end::remote-win-conflict-resolver[]
+
+
+// tag::merge-conflict-resolver[]
+@interface MergeConflictResolver: NSObject<CBLConflictResolver>
+@end
+// end::merge-conflict-resolver[]
+
+@interface MergeConflictResolver (Helper)
+- (CBLDocument*) merge: (CBLDocument*)local remote: (CBLDocument*)remote;
+@end
+
+// tag::merge-conflict-resolver[]
+@implementation MergeConflictResolver
+- (CBLDocument*) resolve: (CBLConflict*)conflict {
+    return [self merge: conflict.localDocument remote: conflict.remoteDocument];
+}
+
+@end
+// end::merge-conflict-resolver[]
+
 @interface SampleCodeTest : NSObject
 @property(nonatomic) CBLDatabase* db;
 @end
@@ -936,6 +979,41 @@
     [[CBLDatabase prediction] registerModel:predictiveModel withName:@"ImageClassifier"];
     // end::coreml-predictive-model[]
 }
+
+- (void) dontTestReplicatorConflictResolver {
+    NSError *error;
+    CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
+    
+    // tag::replication-conflict-resolver[]
+    NSURL *url = [[NSURL alloc] initWithString:@"ws://localhost:4984/getting-started-db"];
+    CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
+    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
+    config.conflictResolver = [[LocalWinConflictResolver alloc] init];
+    
+    CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
+    [replicator start];
+    // end::replication-conflict-resolver[]
+}
+
+- (void) dontTestSaveWithConflictHandler {
+    NSError *error;
+    CBLDatabase *database = self.db;
+    
+    // tag::update-document-with-conflict-handler[]
+    CBLDocument *document = [database documentWithID:@"xyz"];
+    CBLMutableDocument *mutableDocument = [document toMutable];
+    [mutableDocument setString:@"apples" forKey:@"name"];
+    
+    [database saveDocument:mutableDocument
+           conflictHandler:^BOOL(CBLMutableDocument *document, CBLDocument *oldDocument) {
+               [self merge:document from:oldDocument];
+               return YES;
+           }
+                     error: &error];
+    // end::update-document-with-conflict-handler[]
+}
+
+- (void) merge: (CBLMutableDocument*)document from: (CBLDocument*)oldDocument { }
 
 @end
 
