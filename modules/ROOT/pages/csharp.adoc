@@ -951,8 +951,8 @@ Hence, these should not be used for tracking the actual progress of the replicat
 
 ==== Replication Status and App Life Cycle
 
-Couchbase Lite does not do anything to a replication when the app is backgrounded.
-It will continue running as long as the remote system does not terminate the connection and the app does not terminate.
+Couchbase Lite doesn't react to OS backgrounding or foregrounding events and replication(s) will continue running as long as the remote system does not terminate the connection and the app does not terminate.
+It is generally recommended to stop replications before going into the background otherwise socket connections may be closed by the OS and this may interfere with the replication process.
 
 === Handling Network Errors
 
