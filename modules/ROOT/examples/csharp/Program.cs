@@ -105,6 +105,32 @@ namespace api_walkthrough
             // end::getting-started[]
         }
 
+        private static void TestReplicatorConflictResolver()
+        {
+            // tag::replication-conflict-resolver[]
+            var target = new URLEndpoint(new Uri("ws://localhost:4984/mydatabase"));
+            var replConfig = new ReplicatorConfiguration(database, target);
+            replConfig.ConflictResolver = new LocalWinConflictResolver();
+
+            var replicator = new Replicator(replConfig);
+            replicator.Start();
+            // end::replication-conflict-resolver[]
+        }
+
+        private static void TestSaveWithConflictHandler()
+        {
+            // tag::update-document-with-conflict-handler[]
+            using (var document = database.GetDocument("xyz"))
+            using (var mutableDocument = document.ToMutable()) {
+                mutableDocument.SetString("name", "apples");
+                database.Save(mutableDocument, (updated, current) =>
+                {
+                    return true;
+                });
+            }
+            // end::update-document-with-conflict-handler[]
+        }
+
         private static void UseEncryption()
         {
             // Enterprise edition only
@@ -1193,4 +1219,39 @@ namespace api_walkthrough
         }
     }
     // end::custom-logging[]
+
+    // tag::local-win-conflict-resolver[]
+    class LocalWinConflictResolver : IConflictResolver
+    {
+        Document Resolve(Conflict conflict)
+        {
+            return conflict.LocalDocument;
+        }
+    }
+    // end::local-win-conflict-resolver[]
+
+    // tag::remote-win-conflict-resolver[]
+    class RemoteWinConflictResolver : IConflictResolver
+    {
+        public Document Resolve(Conflict conflict)
+        {
+            return conflict.RemoteDocument;
+        }
+    }
+    // end::remote-win-conflict-resolver[]
+
+    // tag::merge-conflict-resolver[]
+    class MergeConflictResolver : IConflictResolver
+    {
+        public Document Resolve(Conflict conflict)
+        {
+            var localDict = conflict.LocalDocument.ToDictionary();
+            var remoteDict = conflict.RemoteDocument.ToDictionary();
+            var result = localDict.Concat(remoteDict)
+               .GroupBy(kv => kv.Key)
+               .ToDictionary(g => g.Key, g => g.First().Value);
+            return new MutableDocument(conflict.DocumentID, result);
+        }
+    }
+    // end::merge-conflict-resolver[]
 }
