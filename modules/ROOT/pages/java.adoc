@@ -870,6 +870,10 @@ Hence, these should not be used for tracking the actual progress of the replicat
 Couchbase Lite doesn't react to OS backgrounding or foregrounding events and replication(s) will continue running as long as the remote system does not terminate the connection and the app does not terminate.
 It is generally recommended to stop replications before going into the background otherwise socket connections may be closed by the OS and this may interfere with the replication process.
 
+NOTE: On Android, foreground and background events are available on the Activity class.
+Detecting when the whole application enters the foreground or background, as opposed to a single Activity, requires additional logic.
+For example, the code referenced in https://gist.github.com/steveliles/11116937[this gist] is one way to implement an abstraction layer over the Activity API to provide Application lifecycle events.
+
 === Handling Network Errors
 
 If an error occurs, the replication status will be updated with an `Error` which follows the standard HTTP error codes.
