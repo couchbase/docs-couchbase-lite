@@ -1005,7 +1005,7 @@
     
     [database saveDocument:mutableDocument
            conflictHandler:^BOOL(CBLMutableDocument *document, CBLDocument *oldDocument) {
-               [self merge:document from:oldDocument];
+               // handle conflict
                return YES;
            }
                      error: &error];

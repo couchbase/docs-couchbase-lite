@@ -926,7 +926,10 @@ class SampleCodeTest {
         guard let document = database.document(withID: "xyz") else { return }
         let mutableDocument = document.toMutable()
         mutableDocument.setString("apples", forKey: "name")
-        try database.saveDocument(mutableDocument, conflictHandler: ExampleConflictHandler.handle)
+        try database.saveDocument(mutableDocument, conflictHandler: { (document, oldDocument) -> Bool in
+            // handle conflict
+            return true
+        })
         // end::update-document-with-conflict-handler[]
 
     }
@@ -995,15 +998,6 @@ class MergeConflictResolver: ConflictResolver {
     }
 }
 // end::merge-conflict-resolver[]
-
-// tag::example-conflict-handler[]
-class ExampleConflictHandler {
-    static func handle(document: MutableDocument, oldDocument: Document?) -> Bool {
-        self.merge(document, from: oldDocument)
-        return true
-    }
-}
-// end::example-conflict-handler[]
 
 /* ----------------------------------------------------------- */
 /* ---------------------  ACTIVE SIDE  ----------------------- */
