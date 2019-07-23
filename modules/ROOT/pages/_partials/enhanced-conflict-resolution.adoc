@@ -90,41 +90,25 @@ include::{snippet}[tag=replication-conflict-resolver,indent=0]
 
 ==== Case 2: When Saving a Document
 
-In Couchbase Lite versions 2.5 and earlier, by default, Couchbase Lite uses last-write-wins concurrency control to handle a conflict when saving a document.
+In version 2.5 and earlier, by default, Couchbase Lite uses last-write-win concurrency control to handle a conflict when saving a document.
 
 Developers have the option to use <<automatic-conflict-resolution,fails-on-conflict>> (AKA optimistic concurrency control) so that they can manually handle the conflict when saving a document.
 
-Starting in Couchbase Lite 2.6, we allow developers to hook a conflict handler when saving a document so that the developers can easily handle the conflict in a single save method call.
+Starting in Couchbase Lite 2.6, we allow developers to hook a conflict handler when saving a document so that developers can easily handle the conflict in a single save method call.
 
-To implement custom conflict resolution when saving a document, you must implement the following steps.
-
-. <<conflict-handler,Conflict Handler>>
-. <<save-method-handler,Save Method Handler>>
-
-===== Conflict Handler
-
-Implemented by developers to provide a custom conflict handler.
-Within the conflict handler, apps will be modifying the `document` parameter which is the same instance of `Document` that is passed to the `save()` method.
-So in effect, apps will be directly modifying the document that is being saved.
-
-When handling is done, the method must return `true`.
-Returning `false` will cancel the save operation.
-
-[source]
-----
-include::{snippet}[tag=example-conflict-handler,indent=0]
-----
-
-===== Save Method Handler
-
-The `save()` method allows a conflict handler to be specified.
+To implement custom conflict resolution when saving a document, apps must call the `save()` method with a conflict handler.
+The following example invokes this method.
 
 [source]
 ----
 include::{snippet}[tag=update-document-with-conflict-handler,indent=0]
 ----
 
-There are some important points to be noted:
+Important points to be noted:
 
-. If the conflict handler returns `false`, the save method will cancel the save operation and return `false` the same way as using the `save()` method with the `failOnConflict` concurrency control.
+. Within the conflict handler, you can modify the `document` parameter which is the same instance of `Document` that is passed to the `save()` method.
+So in effect, you will be directly modifying the document that is being saved.
+. When handling is done, the method must return `true`.
+. If the handler could not resolve the conflict, it can return `false`.
+In this case, the save method will cancel the save operation and return `false` the same way as using the `save()` method with the `failOnConflict` concurrency control.
 . If there is an exception thrown in the `handle()` method, the exception will be caught and rethrown in the `save()` method.
