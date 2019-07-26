@@ -97,7 +97,9 @@ Developers have the option to use <<automatic-conflict-resolution,fails-on-confl
 Starting in Couchbase Lite 2.6, we allow developers to hook a conflict handler when saving a document so that developers can easily handle the conflict in a single save method call.
 
 To implement custom conflict resolution when saving a document, apps must call the `save()` method with a conflict handler.
-The following example invokes this method.
+
+The following code snippet shows an example of merging properties from the existing document (`current`) into the one being saved (`new`).
+In the event of conflicting keys, it will pick the key value from `new`.
 
 [source]
 ----
