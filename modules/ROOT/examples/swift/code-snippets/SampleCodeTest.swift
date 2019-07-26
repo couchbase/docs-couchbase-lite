@@ -926,8 +926,11 @@ class SampleCodeTest {
         guard let document = database.document(withID: "xyz") else { return }
         let mutableDocument = document.toMutable()
         mutableDocument.setString("apples", forKey: "name")
-        try database.saveDocument(mutableDocument, conflictHandler: { (document, oldDocument) -> Bool in
-            // handle conflict
+        try database.saveDocument(mutableDocument, conflictHandler: { (new, current) -> Bool in
+            let currentDict = current!.toDictionary()
+            let newDict = new.toDictionary()
+            let result = newDict.merging(currentDict, uniquingKeysWith: { (first, _) in first })
+            new.setData(result)
             return true
         })
         // end::update-document-with-conflict-handler[]
