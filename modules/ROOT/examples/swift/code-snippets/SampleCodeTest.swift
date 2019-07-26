@@ -994,7 +994,12 @@ class RemoteWinConflictResolver: ConflictResolver {
 // tag::merge-conflict-resolver[]
 class MergeConflictResolver: ConflictResolver {
     func resolve(conflict: Conflict) -> Document? {
-        return self.merge(conflict.localDocument, conflict.remoteDocument)
+        let localDict = conflict.localDocument!.toDictionary()
+        let remoteDict = conflict.remoteDocument!.toDictionary()
+        let result = localDict.merging(remoteDict) { (current, new) -> Any in
+            return current // return current value in case of duplicate keys
+        }
+        return MutableDocument(id: conflict.documentID, data: result)
     }
 }
 // end::merge-conflict-resolver[]
