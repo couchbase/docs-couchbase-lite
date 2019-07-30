@@ -125,6 +125,12 @@ namespace api_walkthrough
                 mutableDocument.SetString("name", "apples");
                 database.Save(mutableDocument, (updated, current) =>
                 {
+                    var currentDict = current.ToDictionary();
+                    var newDict = updated.ToDictionary();
+                    var result = newDict.Concat(currentDict)
+                        .GroupBy(kv => kv.Key)
+                        .ToDictionary(g => g.Key, g => g.First().Value);
+                    updated.SetData(result);
                     return true;
                 });
             }
