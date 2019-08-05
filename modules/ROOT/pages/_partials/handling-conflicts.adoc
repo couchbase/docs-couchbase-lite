@@ -1,18 +1,60 @@
-In Couchbase Lite 2.0, document conflicts are automatically resolved.
-This functionality aims to simplify the default behavior of conflict handling and save disk space (conflicting revisions will no longer be stored in the database).
-There are 2 different `save` method signatures to specify how to handle a possible conflict:
+Document conflicts can occur when changes are made to the same version of a document by multiple peers in a distributed system.
+With Couchbase Mobile, this can be a Couchbase Lite or Sync Gateway database instance, and conflicts can occur in the following scenarios:
 
-* `save(document: MutableDocument)`: when concurrent writes to an individual record occur, the conflict is automatically resolved and only one non-conflicting document update is stored in the database.
-The Last-Write-Win (LWW) algorithm is used to pick the winning revision.
+* When a replication is in progress, or
+* When saving a document
+
+The following sections discuss each scenario in more detail.
+
+=== Case 1: Conflicts when a replication is in progress
+
+There's no practical way to prevent a conflict when two updates to a document are made on different instances of the app.
+Neither app even knows that the other one has changed the document, until later on when replication propagates their incompatible changes to each other.
+A typical scenario is:
+
+. Molly creates DocumentA.
+. DocumentA is synced to Naomi's device.
+. Molly updates DocumentA, let's call it ChangeX for the purpose of this example.
+. Naomi makes a different change to DocumentA, let's call it ChangeY.
+. ChangeY is synced to Molly's device, which already has ChangeX, putting the document in conflict.
+. ChangeX is synced to Naomi's device, which already has ChangeY, similarly putting the local document in conflict.
+
+Couchbase Lite uses the following rules to handle the conflicts occurring in steps 5 and 6.
+
+* A deleted document (i.e tombstone) always wins over a document update.
+* If both changes are document updates, the Last-Write-Win (LWW) algorithm is used to pick the winning update.
+
+The result is saved internally by the Couchbase Lite replicator.
+Those rules describe the internal behavior of the replicator.
+There is currently no other way to handle conflicts when a replication is in progress.
+
+=== Case 2: Conflicts when saving a document
+
+When updating a document, you need to consider the possibility of update conflicts.
+Update conflicts can occur when you try to update a document that’s been updated since you read it.
+Here's a typical sequence of events that would create an update conflict:
+
+. Your code reads the document's current properties, and constructs a modified copy to save.
+. Another thread (perhaps the replicator) updates the document, creating a new revision with different properties.
+. Your code updates the document (by calling `save(document: MutableDocument)`) with its modified properties.
+
+In Couchbase Lite 2.0, by default, the conflict is automatically resolved and only one document update is stored in the database.
+The Last-Write-Win (LWW) algorithm is used to pick the winning update.
+So in effect, the changes from step 2 would be overwritten and lost.
+
+If the probability of update conflicts is high in your app and you wish to avoid the possibility of overwritten data, the `save` and `delete` APIs provide additional method signatures with concurrency control:
+
 * `save(document: MutableDocument, concurrencyControl: ConcurrencyControl)`: attempts to save the document with a concurrency control.
 The concurrency control parameter has two possible values:
- ** `lastWriteWins`: The last operation wins if there is a conflict.
- ** `failOnConflict`: The operation will fail if there is a conflict.
+** `lastWriteWins` (default): The last operation wins if there is a conflict.
+** `failOnConflict`: The operation will fail if there is a conflict.
+In this case, the app can detect the error that is being thrown, and handle it by re-reading the document, making the necessary conflict resolution, then trying again.
 
 Similarly to the save operation, the delete operation also has two method signatures to specify how to handle a possible conflict:
 
 * `delete(document: Document)`: The last write will win if there is a conflict.
-* `delete(document: Document, concurrencyControl: ConcurrencyControl)`: attemps to delete the document with a concurrency control.
+* `delete(document: Document, concurrencyControl: ConcurrencyControl)`: attempts to delete the document with a concurrency control.
 The concurrency control parameter has two possible values:
- ** `lastWriteWins`: The last operation wins if there is a conflict.
- ** `failOnConflict`: The operation will fail if there is a conflict.
+** `lastWriteWins` (default): The last operation wins if there is a conflict.
+** `failOnConflict`: The operation will fail if there is a conflict.
+In this case, the app can detect the error that is being thrown, and handle it by re-reading the document, making the necessary conflict resolution, then trying again.
