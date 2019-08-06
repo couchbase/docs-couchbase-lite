@@ -102,16 +102,17 @@
 // tag::merge-conflict-resolver[]
 @interface MergeConflictResolver: NSObject<CBLConflictResolver>
 @end
-// end::merge-conflict-resolver[]
 
-@interface MergeConflictResolver (Helper)
-- (CBLDocument*) merge: (CBLDocument*)local remote: (CBLDocument*)remote;
-@end
-
-// tag::merge-conflict-resolver[]
 @implementation MergeConflictResolver
 - (CBLDocument*) resolve: (CBLConflict*)conflict {
-    return [self merge: conflict.localDocument remote: conflict.remoteDocument];
+    NSDictionary *localDict = conflict.localDocument.toDictionary;
+    NSDictionary *remoteDict = conflict.remoteDocument.toDictionary;
+    
+    NSMutableDictionary *result = [NSMutableDictionary dictionaryWithDictionary:localDict];
+    [result addEntriesFromDictionary:remoteDict];
+    
+    return [[CBLMutableDocument alloc] initWithID:conflict.documentID
+                                             data:result];
 }
 
 @end
@@ -1005,15 +1006,18 @@
     [mutableDocument setString:@"apples" forKey:@"name"];
     
     [database saveDocument:mutableDocument
-           conflictHandler:^BOOL(CBLMutableDocument *document, CBLDocument *oldDocument) {
-               // handle conflict
+           conflictHandler:^BOOL(CBLMutableDocument *new, CBLDocument *current) {
+               NSDictionary *currentDict = current.toDictionary;
+               NSDictionary *newDict = new.toDictionary;
+               
+               NSMutableDictionary *result = [NSMutableDictionary dictionaryWithDictionary:currentDict];
+               [result addEntriesFromDictionary:newDict];
+               [new setData: result];
                return YES;
            }
                      error: &error];
     // end::update-document-with-conflict-handler[]
 }
-
-- (void) merge: (CBLMutableDocument*)document from: (CBLDocument*)oldDocument { }
 
 @end
 
