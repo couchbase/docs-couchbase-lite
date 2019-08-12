@@ -23,6 +23,8 @@ Install the `Couchbase.Lite` package.
 .Couchbase Lite Enterprise Edition
 Install the `Couchbase.Lite.Enterprise` package.
 +
+NOTE: It is recommended to use `PackageReference` style of dependency management because there is a strict version requirement between Couchbase.Lite and its dependent Couchbase.Lite.Support library (Looks like Couchbase.Lite.Support.<Platform> / Couchbase.Lite.Enterprise.Support.<Platform>).  If you are using `packages.config` to manage packages then you need extra care when upgrading the package to make sure that the support library is also updated to the exact same version.  If you do not use the same version it is more than likely that *bad things will happen*.
++
 https://www.couchbase.com/products/editions[Comparative Table]
 . Your app must call the relevant `Activate()` function inside of the class that is included in the support assembly.
 There is only one public class in each support assembly, and the support assembly itself is a nuget dependency.
