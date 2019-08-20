@@ -996,6 +996,30 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 *Android API Support*
 
 Support for Android API 19 and 21 is being deprecated in this release and will be removed in a future release.
+=== 2.6.0
+
+*API Changes*
+
+* The constructor `Database(Context)` no longer exists.  It has been replaced by `CouchbaseLite.init(Context)`.
+* The static method `CouchbaseLite.init(Context)` must be called before *any* other method in the Couchbase Lite API.
+
+*Known Issues*
+
+* none
+
+*Enhancements*
+
+* https://issues.couchbase.com/browse/CBL-10[*CBL-10*] Custom Conflict Resolution.
+
+*Bugs*
+
+* https://issues.couchbase.com/browse/CBL-48[*CBL-48*] Copy method of Database class is not able to copy encrypted db.
+* https://issues.couchbase.com/browse/CBL-86[*CBL-86*] Race condition on SharedKeys causes silent error.
+* https://issues.couchbase.com/browse/CBL-71[*CBL-71*] LiteCore database alias clashes with select all alias.
+* https://issues.couchbase.com/browse/CBL-88[*CBL-88*] Calling Replicator#getStatus() on a replicator that hasn't started throws NPE.
+* https://issues.couchbase.com/browse/CBL-89[*CBL-89*] Calling Replicator#stop() on a replicator that hasn't started throws NPE.
+* https://issues.couchbase.com/browse/CBL-130[*CBL-130*] Crash: Possible memory corruption.
+* https://issues.couchbase.com/browse/CBL-165[*CBL-165*] Replication failed due to unauthorized(401) error.
 
 === 2.6.0
 
