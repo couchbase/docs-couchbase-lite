@@ -29,12 +29,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
-import com.couchbase.lite.AbstractReplicator;
 import com.couchbase.lite.ArrayFunction;
 import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.Blob;
+import com.couchbase.lite.CouchbaseLite;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
@@ -52,8 +53,10 @@ import com.couchbase.lite.Function;
 import com.couchbase.lite.IndexBuilder;
 import com.couchbase.lite.Join;
 import com.couchbase.lite.ListenerToken;
+import com.couchbase.lite.LogDomain;
 import com.couchbase.lite.LogFileConfiguration;
 import com.couchbase.lite.LogLevel;
+import com.couchbase.lite.Logger;
 import com.couchbase.lite.Message;
 import com.couchbase.lite.MessageEndpoint;
 import com.couchbase.lite.MessageEndpointConnection;
@@ -99,8 +102,11 @@ public class Examples {
     public void testGettingStarted() throws CouchbaseLiteException, URISyntaxException {
         // tag::getting-started[]
 
+        // Initialize the Couchbase Lite system
+        CouchbaseLite.init(context);
+
         // Get the database (and create it if it doesn’t exist).
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
+        DatabaseConfiguration config = new DatabaseConfiguration();
         Database database = new Database("mydb", config);
 
         // Create a new document (i.e. a record) in the database.
@@ -159,7 +165,7 @@ public class Examples {
 
         ZipUtils.unzip(getAsset("replacedb/android140-sqlite.cblite2.zip"), context.getFilesDir());
 
-        Database db = new Database("android-sqlite", new DatabaseConfiguration(context));
+        Database db = new Database("android-sqlite", new DatabaseConfiguration());
         try {
 
             Document doc = db.getDocument("doc1");
@@ -173,7 +179,8 @@ public class Examples {
             byte[] attach = String.format(Locale.ENGLISH, "attach1").getBytes();
             Arrays.equals(attach, content);
 
-        } finally {
+        }
+        finally {
             // close db
             db.close();
             // if db exist, delete it
@@ -192,7 +199,7 @@ public class Examples {
     // ### New Database
     public void testNewDatabase() throws CouchbaseLiteException {
         // tag::new-database[]
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
+        DatabaseConfiguration config = new DatabaseConfiguration();
         Database database = new Database("my-database", config);
         // end::new-database[]
 
@@ -202,7 +209,7 @@ public class Examples {
     // ### Database Encryption
     public void testDatabaseEncryption() throws CouchbaseLiteException {
         // tag::database-encryption[]
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
+        DatabaseConfiguration config = new DatabaseConfiguration();
         config.setEncryptionKey(new EncryptionKey("PASSWORD"));
         Database database = new Database("mydb", config);
         // end::database-encryption[]
@@ -240,13 +247,14 @@ public class Examples {
         // Note: Getting the path to a database is platform-specific.
         // For Android you need to extract it from your
         // assets to a temporary directory and then pass that path to Database.copy()
-        DatabaseConfiguration configuration = new DatabaseConfiguration(context);
+        DatabaseConfiguration configuration = new DatabaseConfiguration();
         if (!Database.exists("travel-sample", context.getFilesDir())) {
             ZipUtils.unzip(getAsset("travel-sample.cblite2.zip"), context.getFilesDir());
             File path = new File(context.getFilesDir(), "travel-sample");
             try {
                 Database.copy(path, "travel-sample", configuration);
-            } catch (CouchbaseLiteException e) {
+            }
+            catch (CouchbaseLiteException e) {
                 e.printStackTrace();
             }
         }
@@ -264,7 +272,8 @@ public class Examples {
                 try {
                     Database.delete(name, dir);
                     break;
-                } catch (CouchbaseLiteException ex) {
+                }
+                catch (CouchbaseLiteException ex) {
                     try { Thread.sleep(300); }
                     catch (InterruptedException ignore) { }
                 }
@@ -281,7 +290,8 @@ public class Examples {
         newTask.setDate("createdAt", new Date());
         try {
             database.save(newTask);
-        } catch (CouchbaseLiteException e) {
+        }
+        catch (CouchbaseLiteException e) {
             Log.e(TAG, e.toString());
         }
         // end::initializer[]
@@ -298,7 +308,8 @@ public class Examples {
         mutableDocument.setString("name", "apples");
         try {
             database.save(mutableDocument);
-        } catch (CouchbaseLiteException e) {
+        }
+        catch (CouchbaseLiteException e) {
             Log.e(TAG, e.toString());
         }
         // end::update-document[]
@@ -326,13 +337,15 @@ public class Examples {
                     doc.setBoolean("admin", false);
                     try {
                         database.save(doc);
-                    } catch (CouchbaseLiteException e) {
+                    }
+                    catch (CouchbaseLiteException e) {
                         Log.e(TAG, e.toString());
                     }
                     Log.i(TAG, String.format("saved user document %s", doc.getString("name")));
                 }
             });
-        } catch (CouchbaseLiteException e) {
+        }
+        catch (CouchbaseLiteException e) {
             Log.e(TAG, e.toString());
         }
         // end::batch[]
@@ -371,9 +384,11 @@ public class Examples {
 
             Blob taskBlob = newTask.getBlob("avatar");
             byte[] bytes = taskBlob.getContent();
-        } catch (CouchbaseLiteException e) {
+        }
+        catch (CouchbaseLiteException e) {
             Log.e(TAG, e.toString());
-        } finally {
+        }
+        finally {
             try { is.close(); }
             catch (IOException ignore) { }
         }
@@ -413,7 +428,8 @@ public class Examples {
                     Log.i("Sample", String.format("hotel id -> %s", result.getString("id")));
                     Log.i("Sample", String.format("hotel name -> %s", result.getString("name")));
                 }
-            } catch (CouchbaseLiteException e) {
+            }
+            catch (CouchbaseLiteException e) {
                 Log.e("Sample", e.getLocalizedMessage());
             }
             // end::query-select-meta[]
@@ -456,7 +472,7 @@ public class Examples {
             // Adds a query change listener.
             // Changes will be posted on the main queue.
             ListenerToken token = query.addChangeListener(change -> {
-                for (Result result: change.getResults()) {
+                for (Result result : change.getResults()) {
                     Log.d(TAG, "results: " + result.getKeys());
                     /* Update UI */
                 }
@@ -898,10 +914,10 @@ public class Examples {
     }
 
     public void testDatabaseReplica() throws CouchbaseLiteException {
-        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
+        DatabaseConfiguration config = new DatabaseConfiguration();
         Database database1 = new Database("mydb", config);
 
-        config = new DatabaseConfiguration(getApplicationContext());
+        config = new DatabaseConfiguration();
         Database database2 = new Database("db2", config);
 
         /* EE feature: code below might throw a compilation error
@@ -917,7 +933,7 @@ public class Examples {
     }
 
     public void testPredictiveModel() throws CouchbaseLiteException {
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
+        DatabaseConfiguration config = new DatabaseConfiguration();
         Database database = new Database("mydb", config);
 
         // tag::register-model[]
@@ -935,7 +951,7 @@ public class Examples {
     }
 
     public void testPredictiveIndex() throws CouchbaseLiteException {
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
+        DatabaseConfiguration config = new DatabaseConfiguration();
         Database database = new Database("mydb", config);
 
         // tag::predictive-query-predictive-index[]
@@ -949,7 +965,7 @@ public class Examples {
     }
 
     public void testPredictiveQuery() throws CouchbaseLiteException {
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
+        DatabaseConfiguration config = new DatabaseConfiguration();
         Database database = new Database("mydb", config);
 
         // tag::predictive-query[]
@@ -1071,7 +1087,7 @@ class PassivePeerConnection implements MessageEndpointConnection {
 
     public void startListener() throws CouchbaseLiteException {
         // tag::listener[]
-        DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(context);
+        DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration();
         Database database = new Database("mydb", databaseConfiguration);
         MessageEndpointListenerConfiguration listenerConfiguration = new MessageEndpointListenerConfiguration(
             database,
