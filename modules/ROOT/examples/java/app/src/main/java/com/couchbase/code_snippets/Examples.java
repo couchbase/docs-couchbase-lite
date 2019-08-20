@@ -18,6 +18,7 @@ package com.couchbase.code_snippets;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -355,6 +356,19 @@ public class Examples {
             .from(DataSource.database(database))
             .where(Meta.expiration.lessThan(Expression.doubleValue(fiveMinutesFromNow.toEpochMilli())));
         // end::document-expiration[]
+    }
+
+    public void testDocumentChangeListener() throws CouchbaseLiteException {
+        // tag::document-listener[]
+        database.addDocumentChangeListener(
+            "user.john",
+            change -> {
+                Document doc = database.getDocument(change.getDocumentID());
+                if (doc != null) {
+                    Toast.makeText(context, "Status: " + doc.getString("verified_account"), Toast.LENGTH_SHORT).show();
+                }
+            });
+        // end::document-listener[]
     }
 
     // ### Blobs
