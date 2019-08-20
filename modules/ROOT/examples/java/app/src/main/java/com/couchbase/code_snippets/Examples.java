@@ -92,6 +92,7 @@ public class Examples {
 
     private final Context context;
     private Database database;
+    private Replicator replicator;
 
     public Examples(Context context) { this.context = context; }
 
@@ -135,7 +136,7 @@ public class Examples {
         // Add authentication.
         replConfig.setAuthenticator(new BasicAuthenticator("john", "pass"));
 
-        // Create replicator.
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator replicator = new Replicator(replConfig);
 
         // Listen to replicator change events.
@@ -741,8 +742,9 @@ public class Examples {
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
         config.setAuthenticator(new BasicAuthenticator("devin", "cow"));
 
-        Replicator replication = new Replicator(config);
-        replication.start();
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        replicator = new Replicator(config);
+        replicator.start();
         // end::basic-authentication[]
     }
 
@@ -753,8 +755,9 @@ public class Examples {
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
         config.setAuthenticator(new SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447"));
 
-        Replicator replication = new Replicator(config);
-        replication.start();
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        replicator = new Replicator(config);
+        replicator.start();
         // end::session-authentication[]
     }
 
@@ -763,10 +766,11 @@ public class Examples {
         Endpoint endpoint = new URLEndpoint(uri);
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
         config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
-        Replicator replication = new Replicator(config);
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        replicator = new Replicator(config);
 
         // tag::replication-status[]
-        replication.addChangeListener(change -> {
+        replicator.addChangeListener(change -> {
             if (change.getStatus().getActivityLevel() == Replicator.ActivityLevel.STOPPED) {
                 Log.i(TAG, "Replication stopped");
             }
@@ -778,24 +782,26 @@ public class Examples {
         Endpoint endpoint = new URLEndpoint(new URI("ws://localhost:4984/db"));
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
         config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
-        Replicator replication = new Replicator(config);
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        replicator = new Replicator(config);
 
         // tag::replication-error-handling[]
-        replication.addChangeListener(change -> {
+        replicator.addChangeListener(change -> {
             CouchbaseLiteException error = change.getStatus().getError();
             if (error != null) { Log.w(TAG, "Error code:: %d", error); }
         });
-        replication.start();
+        replicator.start();
         // end::replication-error-handling[]
 
-        replication.stop();
+        replicator.stop();
     }
 
     public void testReplicatorDocumentEvent() throws URISyntaxException {
         Endpoint endpoint = new URLEndpoint(new URI("ws://localhost:4984/db"));
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
         config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
-        Replicator replicator = new Replicator(config);
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        replicator = new Replicator(config);
 
         // tag::add-document-replication-listener[]
         ListenerToken token = replicator.addDocumentReplicationListener(replication -> {
@@ -862,7 +868,8 @@ public class Examples {
         Endpoint endpoint = new URLEndpoint(uri);
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
         config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
-        Replicator replicator = new Replicator(config);
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        replicator = new Replicator(config);
         replicator.start();
 
         // tag::replication-reset-checkpoint[]
@@ -880,8 +887,9 @@ public class Examples {
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
         config.setPushFilter((document, flags) -> flags.contains(DocumentFlag.DocumentFlagsDeleted));
 
-        Replicator replication = new Replicator(config);
-        replication.start();
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        replicator = new Replicator(config);
+        replicator.start();
         // end::replication-push-filter[]
     }
 
@@ -892,8 +900,9 @@ public class Examples {
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
         config.setPullFilter((document, flags) -> "draft".equals(document.getString("type")));
 
-        Replicator replication = new Replicator(config);
-        replication.start();
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        replicator = new Replicator(config);
+        replicator.start();
         // end::replication-pull-filter[]
     }
 
@@ -911,7 +920,8 @@ public class Examples {
         ReplicatorConfiguration replicatorConfig = new ReplicatorConfiguration(database1, targetDatabase);
         replicatorConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH);
 
-        Replicator replicator = new Replicator(replicatorConfig);
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        replicator = new Replicator(replicatorConfig);
         replicator.start();
         // end::database-replica[]
     }
@@ -973,6 +983,7 @@ public class Examples {
 
 class BrowserSessionManager implements MessageEndpointDelegate {
     private final Context context;
+    private Replicator replicator;
 
     private BrowserSessionManager(Context context) { this.context = context; }
 
@@ -993,7 +1004,7 @@ class BrowserSessionManager implements MessageEndpointDelegate {
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, messageEndpointTarget);
 
         // Create the replicator object.
-        Replicator replicator = new Replicator(config);
+        replicator = new Replicator(config);
         // Start the replication.
         replicator.start();
         // end::message-endpoint-replicator[]
