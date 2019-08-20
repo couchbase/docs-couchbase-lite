@@ -36,6 +36,7 @@ import java.util.Map;
 import com.couchbase.lite.ArrayFunction;
 import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.Blob;
+import com.couchbase.lite.CouchbaseLite;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
@@ -103,8 +104,11 @@ public class Examples {
     public void testGettingStarted() throws CouchbaseLiteException, URISyntaxException {
         // tag::getting-started[]
 
+        // Initialize the Couchbase Lite system
+        CouchbaseLite.init(context);
+
         // Get the database (and create it if it doesn’t exist).
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
+        DatabaseConfiguration config = new DatabaseConfiguration();
         Database database = new Database("mydb", config);
 
         // Create a new document (i.e. a record) in the database.
@@ -163,7 +167,7 @@ public class Examples {
 
         ZipUtils.unzip(getAsset("replacedb/android140-sqlite.cblite2.zip"), context.getFilesDir());
 
-        Database db = new Database("android-sqlite", new DatabaseConfiguration(context));
+        Database db = new Database("android-sqlite", new DatabaseConfiguration());
         try {
 
             Document doc = db.getDocument("doc1");
@@ -193,10 +197,18 @@ public class Examples {
         // end::1x-attachment[]
     }
 
+    // ### Initializer
+    public void testInitializer() {
+        // tag::sdk-initializer[]
+        // Initialize the Couchbase Lite system
+        CouchbaseLite.init(context);
+        // end::sdk-initializer[]
+    }
+
     // ### New Database
     public void testNewDatabase() throws CouchbaseLiteException {
         // tag::new-database[]
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
+        DatabaseConfiguration config = new DatabaseConfiguration();
         Database database = new Database("my-database", config);
         // end::new-database[]
 
@@ -206,7 +218,7 @@ public class Examples {
     // ### Database Encryption
     public void testDatabaseEncryption() throws CouchbaseLiteException {
         // tag::database-encryption[]
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
+        DatabaseConfiguration config = new DatabaseConfiguration();
         config.setEncryptionKey(new EncryptionKey("PASSWORD"));
         Database database = new Database("mydb", config);
         // end::database-encryption[]
@@ -244,7 +256,7 @@ public class Examples {
         // Note: Getting the path to a database is platform-specific.
         // For Android you need to extract it from your
         // assets to a temporary directory and then pass that path to Database.copy()
-        DatabaseConfiguration configuration = new DatabaseConfiguration(context);
+        DatabaseConfiguration configuration = new DatabaseConfiguration();
         if (!Database.exists("travel-sample", context.getFilesDir())) {
             ZipUtils.unzip(getAsset("travel-sample.cblite2.zip"), context.getFilesDir());
             File path = new File(context.getFilesDir(), "travel-sample");
@@ -923,10 +935,10 @@ public class Examples {
     }
 
     public void testDatabaseReplica() throws CouchbaseLiteException {
-        DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
+        DatabaseConfiguration config = new DatabaseConfiguration();
         Database database1 = new Database("mydb", config);
 
-        config = new DatabaseConfiguration(getApplicationContext());
+        config = new DatabaseConfiguration();
         Database database2 = new Database("db2", config);
 
         /* EE feature: code below might throw a compilation error
@@ -943,7 +955,7 @@ public class Examples {
     }
 
     public void testPredictiveModel() throws CouchbaseLiteException {
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
+        DatabaseConfiguration config = new DatabaseConfiguration();
         Database database = new Database("mydb", config);
 
         // tag::register-model[]
@@ -961,7 +973,7 @@ public class Examples {
     }
 
     public void testPredictiveIndex() throws CouchbaseLiteException {
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
+        DatabaseConfiguration config = new DatabaseConfiguration();
         Database database = new Database("mydb", config);
 
         // tag::predictive-query-predictive-index[]
@@ -975,7 +987,7 @@ public class Examples {
     }
 
     public void testPredictiveQuery() throws CouchbaseLiteException {
-        DatabaseConfiguration config = new DatabaseConfiguration(context);
+        DatabaseConfiguration config = new DatabaseConfiguration();
         Database database = new Database("mydb", config);
 
         // tag::predictive-query[]
@@ -1098,7 +1110,7 @@ class PassivePeerConnection implements MessageEndpointConnection {
 
     public void startListener() throws CouchbaseLiteException {
         // tag::listener[]
-        DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(context);
+        DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration();
         Database database = new Database("mydb", databaseConfiguration);
         MessageEndpointListenerConfiguration listenerConfiguration = new MessageEndpointListenerConfiguration(
             database,
