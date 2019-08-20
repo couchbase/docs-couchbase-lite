@@ -965,6 +965,45 @@ public class Examples {
         // end::predictive-query[]
     }
 
+    public void testReplicationWithCustomConflictResolver() throws URISyntaxException {
+        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
+        config.setConflictResolver(conflict -> {
+            // the local document wins..
+            Document doc = conflict.getLocalDocument();
+            // unless it has been deleted: then use the remote document
+            if (doc == null) { doc = conflict.getRemoteDocument(); }
+            // if both docs have been deleted, go ahead and delete
+            if (doc != null) {
+                // mark the winning document as conflicted
+                MutableDocument mutableDoc = doc.toMutable();
+                mutableDoc.setBoolean("conflicted", true);
+            }
+            // and return it.
+            return doc;
+        });
+
+        Replicator replication = new Replicator(config);
+        replication.start();
+    }
+
+    public void testSaveWithCustomConflictResolver() throws CouchbaseLiteException {
+        Document doc = database.getDocument("xyz");
+        if (doc == null) { return; }
+        MutableDocument mutableDocument = doc.toMutable();
+        mutableDocument.setString("name", "apples");
+
+        database.save(
+            mutableDocument,
+            (newDoc, curDoc) -> {
+                if (curDoc == null) { return false; }
+                Map<String, Object> dataMap = curDoc.toMap();
+                dataMap.putAll(newDoc.toMap());
+                newDoc.setData(dataMap);
+                return true;
+            });
+    }
 }
 
 /* ----------------------------------------------------------- */
