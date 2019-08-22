@@ -473,7 +473,7 @@ public class Examples {
             // Adds a query change listener.
             // Changes will be posted on the main queue.
             ListenerToken token = query.addChangeListener(change -> {
-                for (Result result: change.getResults()) {
+                for (Result result : change.getResults()) {
                     Log.d(TAG, "results: " + result.getKeys());
                     /* Update UI */
                 }
