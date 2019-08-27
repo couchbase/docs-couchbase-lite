@@ -969,20 +969,7 @@ public class Examples {
         URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
-        config.setConflictResolver(conflict -> {
-            // the local document wins..
-            Document doc = conflict.getLocalDocument();
-            // unless it has been deleted: then use the remote document
-            if (doc == null) { doc = conflict.getRemoteDocument(); }
-            // if both docs have been deleted, go ahead and delete
-            if (doc != null) {
-                // mark the winning document as conflicted
-                MutableDocument mutableDoc = doc.toMutable();
-                mutableDoc.setBoolean("conflicted", true);
-            }
-            // and return it.
-            return doc;
-        });
+        config.setConflictResolver(new LocalWinConflictResolver());
 
         Replicator replication = new Replicator(config);
         replication.start();
@@ -1005,6 +992,32 @@ public class Examples {
             });
     }
 }
+
+// tag::local-win-conflict-resolver[]
+class LocalWinConflictResolver implements ConflictResolver {
+    public Document resolve(Conflict conflict) {
+        return conflict.getLocalDocument();
+    }
+}
+// end::local-win-conflict-resolver[]
+
+// tag::remote-win-conflict-resolver[]
+class RemoteWinConflictResolver implements ConflictResolver {
+    public Document resolve(Conflict conflict) {
+        return conflict.getRemoteDocument();
+    }
+}
+// end::remote-win-conflict-resolver[]
+
+// tag::merge-conflict-resolver[]
+class MergeConflictResolver implements ConflictResolver {
+    public Document resolve(Conflict conflict) {
+        Map<String, Object> merge = conflict.getLocalDocument().toMap();
+        merge.putAll(conflict.getRemoteDocument().toMap());
+        return new MutableDocument(conflict.getDocumentId(), merge);
+    }
+// end::merge-conflict-resolver[]
+
 
 /* ----------------------------------------------------------- */
 /* ---------------------  ACTIVE SIDE  ----------------------- */
