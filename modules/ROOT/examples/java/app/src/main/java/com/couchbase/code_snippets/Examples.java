@@ -1003,7 +1003,64 @@ public class Examples {
         // end::predictive-query[]
     }
 
+    public void testReplicationWithCustomConflictResolver() throws URISyntaxException {
+        // tag::replication-conflict-resolver[]
+        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+        ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
+        config.setConflictResolver(new LocalWinConflictResolver());
+
+        Replicator replication = new Replicator(config);
+        replication.start();
+        // end::replication-conflict-resolver[]
+    }
+
+    public void testSaveWithCustomConflictResolver() throws CouchbaseLiteException {
+        // tag::update-document-with-conflict-handler[]
+        Document doc = database.getDocument("xyz");
+        if (doc == null) { return; }
+        MutableDocument mutableDocument = doc.toMutable();
+        mutableDocument.setString("name", "apples");
+
+        database.save(
+            mutableDocument,
+            (newDoc, curDoc) -> {
+                if (curDoc == null) { return false; }
+                Map<String, Object> dataMap = curDoc.toMap();
+                dataMap.putAll(newDoc.toMap());
+                newDoc.setData(dataMap);
+                return true;
+            });
+        // end::update-document-with-conflict-handler[]
+    }
 }
+
+// tag::local-win-conflict-resolver[]
+class LocalWinConflictResolver implements ConflictResolver {
+    public Document resolve(Conflict conflict) {
+        return conflict.getLocalDocument();
+    }
+}
+// end::local-win-conflict-resolver[]
+
+// tag::remote-win-conflict-resolver[]
+class RemoteWinConflictResolver implements ConflictResolver {
+    public Document resolve(Conflict conflict) {
+        return conflict.getRemoteDocument();
+    }
+}
+// end::remote-win-conflict-resolver[]
+
+// tag::merge-conflict-resolver[]
+class MergeConflictResolver implements ConflictResolver {
+    public Document resolve(Conflict conflict) {
+        Map<String, Object> merge = conflict.getLocalDocument().toMap();
+        merge.putAll(conflict.getRemoteDocument().toMap());
+        return new MutableDocument(conflict.getDocumentId(), merge);
+    }
+}
+// end::merge-conflict-resolver[]
+
 
 /* ----------------------------------------------------------- */
 /* ---------------------  ACTIVE SIDE  ----------------------- */
