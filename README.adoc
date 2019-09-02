@@ -1,6 +1,6 @@
 = Couchbase Lite Documentation
 
-== Source File
+== Source File Location
 
 The documentation for each SDK is kept in a single AsciiDoc file:
 
@@ -13,7 +13,7 @@ The documentation for each SDK is kept in a single AsciiDoc file:
 
 Tasks to prepare release notes (the process is the same on all platforms):
 
-. Copy the "Bugs" and "Known Issues" list from http://docs-build.sc.couchbase.com/release-notes/raw.html[raw.html] to the SDK's <<source-file>> under the `== Release Notes` heading. Example: https://github.com/couchbase/docs-couchbase-lite/commit/24ba5e56e3e8ae2588ff3c54e4374520a8037c68[24ba5e5]
+. Copy the "Bugs" and "Known Issues" list from http://docs-build.sc.couchbase.com/release-notes/raw.html[raw.html] to the SDK's <<source-file-location>> under the `== Release Notes` heading. Example: https://github.com/couchbase/docs-couchbase-lite/commit/24ba5e56e3e8ae2588ff3c54e4374520a8037c68[24ba5e5]
 . Review the issue summaries.
 . Commit on the release branch.
 . Push to GitHub.
@@ -25,11 +25,27 @@ Tasks to prepare release notes (the process is the same on all platforms):
 //
 // To change the text, you can update the issue title to see it reflected on **raw.html**.
 //
-== Patch Release
+
+== Release Tasks
+
+=== Minor Release
+
+Tasks for a minor release (*x.y*):
+
+. Create new branch `release/x.y`.
+. Update metadata version.
+Example: https://github.com/couchbase/docs-couchbase-lite/commit/6171d62e826ee9fd181a39c79c3357c6dff646c9[6171d62]
+. Update staging playbook.
+Example: https://github.com/couchbase/docs-site/commit/2d40527b17a8fe8f3648ff2b0610374a2f1bb7cb[2d40527]
+. Update production playbook.
+Example: https://github.com/couchbase/docs-site/commit/65958c96dd27f96c3b3f7b290c7f73aa55a80573[65958c9]
+. Mark `release/x.y` as default branch https://github.com/couchbase/docs-couchbase-lite/settings/branches[on GitHub].
+
+=== Patch Release
 
 Tasks for a patch release:
 
-=== Swift
+==== Swift
 
 . Create new branch.
 . Bump `:version:` attribute in link:modules/ROOT/pages/swift.adoc[swift.adoc].
@@ -38,7 +54,7 @@ Example: https://github.com/couchbase/docs-couchbase-lite/commit/939c8a2e982eae0
 . Open PR when there is code freeze for the release (tracked on JIRA).
 . Merge PR when the release is being published (tracked on JIRA).
 
-=== Java
+==== Java
 
 . Create new branch.
 . Bump `:version:` attribute link:modules/ROOT/pages/java.adoc[java.adoc].
@@ -47,14 +63,14 @@ Example: https://github.com/couchbase/docs-couchbase-lite/commit/deefb029180808d
 . Open PR when there is code freeze for the release (tracked on JIRA).
 . Merge PR when the release is being published (tracked on JIRA).
 
-=== C#
+==== C#
 
 . Create new branch.
 . Prepare <<release-notes>>.
 . Open PR when there is code freeze for the release (tracked on JIRA).
 . Merge PR when the release is being published (tracked on JIRA).
 
-=== Objective-C
+==== Objective-C
 
 . Create new branch.
 . Bump `:version:` attribute link:modules/ROOT/pages/objc.adoc[objc.adoc].
