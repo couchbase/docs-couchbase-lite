@@ -668,12 +668,12 @@
     id token = [replicator addDocumentReplicationListener:^(CBLDocumentReplication * _Nonnull replication) {
         NSLog(@"Replication type :: %@", replication.isPush ? @"Push" : @"Pull");
         for (CBLReplicatedDocument* document in replication.documents) {
-            if (document.error != nil) {
+            if (document.error == nil) {
                 NSLog(@"Doc ID :: %@", document.id);
                 if ((document.flags & kCBLDocumentFlagsDeleted) == kCBLDocumentFlagsDeleted) {
                     NSLog(@"Successfully replicated a deleted document");
                 }
-            } else{
+            } else {
                 // There was an error
             }
         }

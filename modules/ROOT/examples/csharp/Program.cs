@@ -740,13 +740,13 @@ namespace api_walkthrough
                 var direction = args.IsPush ? "Push" : "Pull";
                 Console.WriteLine($"Replication type :: {direction}");
                 foreach (var document in args.Documents) {
-                    if (document.Error != null) {
+                    if (document.Error == null) {
                         Console.WriteLine($"Doc ID :: {document.Id}");
                         if (document.Flags.HasFlag(DocumentFlags.Deleted)) {
                             Console.WriteLine("Successfully replicated a deleted document");
-                        } else {
-                            // There was an error
                         }
+                    } else {
+                        // There was an error
                     }
                 }
             });

@@ -627,7 +627,7 @@ class SampleCodeTest {
         let token = self.replicator.addDocumentReplicationListener { (replication) in
             print("Replication type :: \(replication.isPush ? "Push" : "Pull")")
             for document in replication.documents {
-                if (document.error != nil) {
+                if (document.error == nil) {
                     print("Doc ID :: \(document.id)")
                     if (document.flags.contains(.deleted)) {
                         print("Successfully replicated a deleted document")
