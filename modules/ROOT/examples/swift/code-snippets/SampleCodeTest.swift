@@ -656,6 +656,16 @@ class SampleCodeTest {
         // end::replication-custom-header[]
     }
 
+    func dontTestReplicationChannels() throws {
+        let url = URL(string: "ws://localhost:4984/mydatabase")!
+        let target = URLEndpoint(url: url)
+        
+        // tag::replication-channels[]
+        let config = ReplicatorConfiguration(database: database, target: target)
+        config.channels = ["channel_name"]
+        // end::replication-channels[]
+    }
+
     func dontTestHandlingReplicationError() throws {
         // tag::replication-error-handling[]
         self.replicator.addChangeListener { (change) in
