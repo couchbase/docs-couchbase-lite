@@ -962,7 +962,7 @@ public class Examples {
         Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());
         // end::register-model[]
 
-        // tag::predictive- query-value-index[]
+        // tag::predictive-query-value-index[]
         ValueIndex index = IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")));
         database.createIndex("value-index-image-classifier", index);
         // end::predictive-query-value-index[]
