@@ -1245,7 +1245,7 @@ class ImageClassifierModel implements PredictiveModel {
 
         // `tensorFlowModel` is a fake implementation
         // this would be the implementation of the ml model you have chosen
-        return new MutableDictionary(TensorFlowModel.predictImage(blob.getContent()));
+        return new MutableDictionary(TensorFlowModel.predictImage(blob.getContent())); // <1>
     }
 }
 

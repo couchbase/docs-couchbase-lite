@@ -952,7 +952,7 @@
     
     // tag::predictive-query[]
     CBLQueryExpression* input = [CBLQueryExpression dictionary: @{@"photo":[CBLQueryExpression property:@"photo"]}];
-    CBLQueryPredictionFunction* prediction = [CBLQueryFunction predictionUsingModel:@"ImageClassifier" input:input];
+    CBLQueryPredictionFunction* prediction = [CBLQueryFunction predictionUsingModel:@"ImageClassifier" input:input]; // <1>
     
     CBLQueryExpression* condition = [[[prediction property:@"label"] equalTo:[CBLQueryExpression string:@"car"]]
                                      andExpression:[[prediction property:@"probablity"] greaterThanOrEqualTo:[CBLQueryExpression double:0.8]]];
