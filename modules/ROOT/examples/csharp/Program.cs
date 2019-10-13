@@ -842,7 +842,7 @@ namespace api_walkthrough
             var target = new URLEndpoint(url);
 
             var config = new ReplicatorConfiguration(database, target);
-            config.PushFilter = (document, flags) =>
+            config.PushFilter = (document, flags) => // <1>
             {
                 if (flags.HasFlag(DocumentFlags.Deleted)) {
                     return false;

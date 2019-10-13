@@ -735,7 +735,7 @@
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
     
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
-    config.pushFilter = ^BOOL(CBLDocument * _Nonnull document, CBLDocumentFlags flags) {
+    config.pushFilter = ^BOOL(CBLDocument * _Nonnull document, CBLDocumentFlags flags) { // <1>
         if ([[document stringForKey: @"type"] isEqualToString: @"draft"]) {
             return false;
         }

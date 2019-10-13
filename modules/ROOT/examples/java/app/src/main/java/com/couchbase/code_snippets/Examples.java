@@ -902,7 +902,7 @@ public class Examples {
         URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
-        config.setPushFilter((document, flags) -> flags.contains(DocumentFlag.DocumentFlagsDeleted));
+        config.setPushFilter((document, flags) -> flags.contains(DocumentFlag.DocumentFlagsDeleted)); // <1>
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         replicator = new Replicator(config);
@@ -915,7 +915,7 @@ public class Examples {
         URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
-        config.setPullFilter((document, flags) -> "draft".equals(document.getString("type")));
+        config.setPullFilter((document, flags) -> "draft".equals(document.getString("type"))); // <1>
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         replicator = new Replicator(config);
