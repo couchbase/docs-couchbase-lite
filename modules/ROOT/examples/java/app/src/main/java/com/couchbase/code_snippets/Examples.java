@@ -69,6 +69,7 @@ import com.couchbase.lite.Meta;
 import com.couchbase.lite.MutableDictionary;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
+import com.couchbase.lite.PredictionFunction;
 import com.couchbase.lite.PredictiveIndex;
 import com.couchbase.lite.PredictiveModel;
 import com.couchbase.lite.ProtocolType;
@@ -979,6 +980,11 @@ public class Examples {
         Database database = new Database("mydb", config);
 
         // tag::predictive-query[]
+        Map<String, Object> inputProperties = new HashMap<>();
+        inputProperties.put("photo", Expression.property("photo"));
+        Expression input = Expression.map(inputProperties);
+        PredictionFunction prediction = Function.prediction("ImageClassifier", input); // <1>
+
         Query query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
