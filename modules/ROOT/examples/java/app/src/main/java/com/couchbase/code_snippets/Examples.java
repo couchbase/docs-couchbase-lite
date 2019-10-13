@@ -36,6 +36,8 @@ import java.util.Map;
 import com.couchbase.lite.ArrayFunction;
 import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.Blob;
+import com.couchbase.lite.Conflict;
+import com.couchbase.lite.ConflictResolver;
 import com.couchbase.lite.CouchbaseLite;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
