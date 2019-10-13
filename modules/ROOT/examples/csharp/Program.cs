@@ -921,7 +921,7 @@ namespace api_walkthrough
                 {
                     ["photo"] = Expression.Property("photo")
                 });
-                var prediction = Function.Prediction("ImageClassifier", input);
+                var prediction = Function.Prediction("ImageClassifier", input); // <1>
 
                 using (var q = QueryBuilder.Select(SelectResult.All())
                     .From(DataSource.Database(db))
@@ -1171,7 +1171,7 @@ namespace api_walkthrough
             // `TensorFlowModel` is a fake implementation
             // this would be the implementation of the ml model you have chosen
             var modelOutput = TensorFlowModel.PredictImage(imageData);
-            return new MutableDictionaryObject(modelOutput);
+            return new MutableDictionaryObject(modelOutput); // <1>
         }
     }
     // end::predictive-model[]
