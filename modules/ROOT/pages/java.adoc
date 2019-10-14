@@ -12,10 +12,29 @@
 NOTE: This is a *Beta* build that is NOT QE approved. This is intended for use in development/test environments to integrate with the new Couchbase Lite 2.7 Java API. It must NOT be used in production environments. Since this is a private beta, please direct all questions to Priya Rajagopal (priya.rajagopal@couchbase.com) and your respective accounts team.
 
 == Getting Started
-=== Couchbase Lite
-A Beta1 version of Couchbase Lite EE 2.7 Java framework is packaged as a .zip file and is available for download from the <<Download Links>> section.
 
-The .zip includes the following
+=== IntelliJ project
+
+Create a new *command line app* in the IDE of your choice (in this example we'll use *IntelliJ IDEA CE*).
+
+In *IntelliJ*, select *File > New > Project...* and click *Next*.
+
+image::java-cli-app.png[,600]
+
+Choose the *Command Line App* template.
+
+image::java-new-proj.png[,600]
+
+Provide details for the new project.
+
+image::java-new-proj-details.png[,600]
+
+Open the *Project Structure* window and select *+ > JARs or directories...*.
+
+image::java-add-jars.png[,600]
+
+Download link:https://drive.google.com/file/d/1LTyydRRI7ZrgnBPgXnIinuaERc61hHX6/view?usp=sharing[Couchbase Lite Java].
+In the Finder window, select the JAR files that were downloaded.
 
 * The `couchbase-lite-java-ee-2.7.0-DB001.jar` that includes native libraries for  Windows, Linux and macOS
 
@@ -24,10 +43,15 @@ The .zip includes the following
 ** `okhttp-3.9.1.jar`
 ** `okio-1.13.0.jar`
 
-* Given the heterogenity of Linux platforms, specifically for Linux, we have included the required versions of relevant shared support libraries
-** The `support` folder  contains the relevant shared system libraries (libz, libc++, icu ) that must be linked to when building on Linux. *Note*: Distributing the compatible system libraries elimintaes the hassle of having to download/ build compatible versions of system libraries for the Linux platform of choice.
+image::java-select-jars.png[,600]
+
+* Given the heterogeneity of Linux platforms, specifically for Linux, we have included the required versions of relevant shared support libraries
+** The `support` folder  contains the relevant shared system libraries (libz, libc++, icu ) that must be linked to when building on Linux. *Note*: Distributing the compatible system libraries eliminates the hassle of having to download/ build compatible versions of system libraries for the Linux platform of choice.
+
+image::java-confirm-jars.png[,600]
 
 ==== Linux platforms
+
 In addition to the .jars, you will need to load the support libraries distributed with Couchbase Lite.
 
 There are two options to load the support libraries for linux:
@@ -50,20 +74,15 @@ export LD_LIBRARY_PATH=//path/to/ouchbase-lite-java-ee-2.7.0-DB001/download/supp
 java -Djava.library.path=/path/to/ouchbase-lite-java-ee-2.7.0-DB001/support/linux/libc++:/path/to/ouchbase-lite-java-ee-2.7.0-DB001/support/linux/icu/lib:/path/to/ouchbase-lite-java-ee-2.7.0-DB001/support/linux/zlib/1.2.11/lib:
 ----
 
-
 ==== non-Linux platforms
+
 Build and run with the .jars that are provided in the .zip package. You do not need the support libraries.
 
-==== API References
-With the exception of the link:https://docs.couchbase.com/mobile/2.6.0/couchbase-lite-java/[`init()`] API, all other APIs are identical to the Android Java version of Couchbase Lite. The only difference is that the `init()` API accepts no parameters.
+=== Starter code
 
-Refer to the link:https://docs.couchbase.com/couchbase-lite/2.6/java.html#database[java code snippets] provided in the Android Java section while implementing the Java app.
+Open *Main.java* in IntelliJ and copy the following code in the `main` method.
+This snippet demonstrates how to run basic CRUD operations, a simple Query and running bi-directional replications with Sync Gateway.
 
-
-==== Sample App
-You can download a starter app from the <<Download Links>> section.  The Couchbase Lite enabled Java app demonstrates the basic CRUD and sync functionality.
-
-This is the source code of the sample app is found in the `StarterApp.java` file
 [source,java]
 ----
 include::{snippet-java}[tag=getting-started,indent=0]
@@ -73,13 +92,24 @@ include::{snippet-java}[tag=getting-started,indent=0]
 <3> You can optionally AES-256 encrypt the database by providing a key
 <4> This is needed for the websocket connections to gracefully close
 
-===== Testing the sample app
-====== Setup Couchbase Server
+Build and run.
+You should see the document ID and property printed to the console.
+The document was successfully persisted to the database.
+
+xref:sync-gateway::getting-started.adoc#installation[Installing Sync Gateway ->]
+
+== Sample App
+
+Download the link:https://drive.google.com/file/d/1OZqKA6gN5DB3fJtF3oD7D8C7E7C_jxDr/view?usp=sharing[Sample Starter App].
+
+=== Setup Couchbase Server
+
 - Install Couchbase Server following steps outlined in link:https://docs.couchbase.com/sync-gateway/2.6/getting-started.html#creating-an-rbac-user[documentation]
 -  Create a bucket named "db" following instructions link:https://docs.couchbase.com/sync-gateway/2.6/getting-started.html#creating-a-bucket[here]
 -  Create a RBAC user with "admin" as username and password as "password" following instructions link:https://docs.couchbase.com/sync-gateway/2.6/getting-started.html#creating-an-rbac-user[here]
 
-====== Setup Sync Gateway
+=== Setup Sync Gateway
+
 - Install the Sync Gateway following the steps outlined in the link:https://docs.couchbase.com/sync-gateway/2.6/getting-started.html#enterprise-edition[documentation].
 - Configure the Sync Gateway using the following sample sync-gateway-config file.
 
@@ -143,7 +173,8 @@ include::{snippet-java}[tag=getting-started,indent=0]
 <3> This is password of the RBAC user
 <4> This is a Sync Gateway user. Replication will happen within the context of the user.
 
-====== Running the sample app
+=== Running the sample app
+
 - On Linux, follow the steps outlined in <<Linux platforms>> to load the correct support libraries
 - To build the .jar, run the following command. The FAT jar file will be generated in build/libs folder
 [source,java]
@@ -165,7 +196,8 @@ java -jar StarterCode-1.0.jar
 
 - The `mydb.cblite2` database directory will be created at the current directory from where the application is run
 
-== OS Support
+== Supported Versions
+
 Couchbase Lite Java will be supported on x86 64-bit platforms. These are the targeted OS versions
 
 .Table Supported OS Versions
@@ -205,101 +237,11 @@ Couchbase Lite Java will be supported on x86 64-bit platforms. These are the tar
 |Desktop & Web Service/Servlet (Tomcat)
 |===
 
-
-
-== Download Links
-
-- link:https://drive.google.com/file/d/1LTyydRRI7ZrgnBPgXnIinuaERc61hHX6/view?usp=sharing[Couchbase Lite Java]
-- link:https://drive.google.com/file/d/1OZqKA6gN5DB3fJtF3oD7D8C7E7C_jxDr/view?usp=sharing[Sample Starter App]
-
-
-== License
-Enterprise License : https://www.couchbase.com/legal/agreements/LA07152019
-
-== Getting Started
-
-=== Android Studio
-
-Create or open an existing Android Studio project and install Couchbase Lite using the following method.
-
-==== Couchbase Lite Community Edition
-
-* Add the following in the `dependencies` section of the application's *build.gradle* (the one in the *app* folder).
-+
-[source,groovy,subs=attributes+]
-----
-dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-android:{version}'
-}
-----
-
-==== Couchbase Lite Enterprise Edition
-
-* In the top-level *build.gradle* file, add the following Couchbase Maven repository in the `allprojects` section.
-+
-[source,groovy]
-----
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven {
-            url "https://mobile.maven.couchbase.com/maven2/dev/"
-        }
-    }
-}
-----
-
-* Next, add the following in the `dependencies` section of the application's *build.gradle* (the one in the *app* folder).
-+
-[source,groovy,subs=attributes+]
-----
-dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-android-ee:{version}'
-}
-----
-
-=== Starter code
-
-Open *MainActivity.java* in Android Studio and copy the following code in the `onCreate` method.
-This snippet demonstrates how to run basic CRUD operations, a simple Query and running bi-directional replications with Sync Gateway.
-
-[source]
-----
-include::{snippet}[tag=getting-started,indent=0]
-----
-
-Build and run.
-You should see the document ID and property printed to the console.
-The document was successfully persisted to the database.
-
-xref:sync-gateway::getting-started.adoc#installation[Installing Sync Gateway ->]
-
-== Supported Versions
-
-|===
-|Platform |Runtime architectures |Minimum API Level
-
-|Android
-|armeabi-v7a
-|22
-
-|Android
-|arm64-v8a
-|22
-
-|Android
-|x86
-|22
-
-|Android
-|x86_64
-|22
-|===
-
 == API References
 
-{url-api-references}[Java SDK API References]
+With the exception of the link:https://docs.couchbase.com/mobile/2.6.0/couchbase-lite-java/[`init()`] API, all other APIs are identical to the Android Java version of Couchbase Lite. The only difference is that the `init()` API accepts no parameters.
+
+Refer to the link:https://docs.couchbase.com/couchbase-lite/2.6/java.html#database[java code snippets] provided in the Android Java section while implementing the Java app.
 
 == Upgrading
 
