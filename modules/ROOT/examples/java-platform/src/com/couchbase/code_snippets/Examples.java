@@ -82,4 +82,10 @@ public class Examples {
     }
     // end::getting-started[]
 
+    public void testPrebuiltDatabase() {
+        // tag::prebuilt-database[]
+        // TBA
+        // end::prebuilt-database[]
+    }
+
 }
