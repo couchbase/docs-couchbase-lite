@@ -82,4 +82,11 @@ public class Examples {
     }
     // end::getting-started[]
 
+
+    public void testInitializer() {
+        // tag::sdk-initializer[]
+        // Initialize the Couchbase Lite system
+        CouchbaseLite.init();
+        // end::sdk-initializer[]
+    }
 }
