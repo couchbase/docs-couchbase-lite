@@ -524,10 +524,12 @@ include::{snippet}[tag=query-collection-operator-in,indent=0]
 
 The {url-api-references}/Classes/Expression.html#/s:18CouchbaseLiteSwift10ExpressionC4likeACypF[`like`] operator can be used for string matching.
 
-The `like` operator is case sensitive.
+The `like` operator performs **case sensitive** matches.
+So if you want to make the string matching case insensitive, you would have to use `Function.lower` or `Function.upper` to transform the matched string to lowercase or uppercase equivalents.
 
 In the example below, we are looking for documents of type `landmark` where the name property exactly matches the string "Royal engineers museum".
-Note that since `like` does a case sensitive match, the following query will return "landmark" type documents with the name property exactly matching "Royal Engineers Museum".
+Note that since `like` does a case sensitive match, we use `Function.lower` to transform the matched string to the lowercase equivalent.
+So the following query will return "landmark" type documents with the name matching "Royal Engineers Museum", "royal engineers museum", "ROYAL ENGINEERS MUSEUM" and so on.
 
 [source]
 ----
@@ -540,7 +542,9 @@ We can use `%` sign within a `like` expression to do a wildcard match against ze
 Using wildcards allows you to have some fuzziness in your search string.
 
 In the example below, we are looking for documents of `type` "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
-The following query will return "landmark" type documents with name matching "Engineers", "engine", "english egg" , "England Eagle" and so on.
+Once again, we are using `Function.lower` to make the search case insensitive.
+
+The following query will return "landmark" `type` documents with name matching "Engineers", "engine", "english egg" , "England Eagle" and so on.
 Notice that the matches may span word boundaries.
 
 [source]
