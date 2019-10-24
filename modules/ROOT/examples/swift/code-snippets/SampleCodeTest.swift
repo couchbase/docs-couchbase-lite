@@ -370,7 +370,7 @@ class SampleCodeTest {
             )
             .from(DataSource.database(database))
             .where(Expression.property("type").equalTo(Expression.string("landmark"))
-                .and( Expression.property("name").like(Expression.string("Royal engineers museum")))
+                .and(Function.lower(Expression.property("name")).like(Expression.string("Royal engineers museum")))
             )
             .limit(Expression.int(10))
 
@@ -394,7 +394,7 @@ class SampleCodeTest {
             )
             .from(DataSource.database(database))
             .where(Expression.property("type").equalTo(Expression.string("landmark"))
-                .and(Expression.property("name").like(Expression.string("eng%e%")))
+                .and(Function.lower(Expression.property("name")).like(Expression.string("eng%e%")))
             )
             .limit(Expression.int(10))
         // end::query-like-operator-wildcard-match[]
