@@ -486,7 +486,7 @@ namespace api_walkthrough
                     SelectResult.Property("name"))
                 .From(DataSource.Database(db))
                 .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
-                    .And(Expression.Property("name").Like(Expression.String("Royal Engineers Museum"))))
+                    .And(Function.Lower(Expression.Property("name")).Like(Expression.String("Royal Engineers Museum"))))
                 .Limit(Expression.Int(10))) {
                 foreach (var result in query.Execute()) {
                     Console.WriteLine($"Name Property :: {result.GetString("name")}");
@@ -506,7 +506,7 @@ namespace api_walkthrough
                     SelectResult.Property("name"))
                 .From(DataSource.Database(db))
                 .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
-                    .And(Expression.Property("name").Like(Expression.String("Eng%e%"))))
+                    .And(Function.Lower(Expression.Property("name")).Like(Expression.String("Eng%e%"))))
                 .Limit(Expression.Int(10))) {
                 foreach (var result in query.Execute()) {
                     Console.WriteLine($"Name Property :: {result.GetString("name")}");
