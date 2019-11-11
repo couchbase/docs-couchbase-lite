@@ -842,6 +842,154 @@ The level of compression is set on Sync Gateway and can be tuned in the configur
 To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
 So we don't recommend to rely on that when using the replication or database change listeners for example.
 
+==== Replicator Notifications on a Custom Executor
+
+Prior to version 2.6, Couchbase Lite spun up multiple executors.
+This policy could result in too many threads being spun up.
+
+An executor manages a pool of threads and, perhaps, a queue in front of the executor to handle the asynchronous callbacks.
+Couchbase Lite API calls which are processed by an executor are listed below.
+
+[source]
+----
+Query.addChangeListener
+MessageEndpointListerner.addChangeListener
+LiveQuery.addChangeListener
+AbstractReplicator.addDocumentReplicationListener
+AbstractReplicator.addChangeListener
+Database.addChangeListener
+Database.addDocumentChangeListener
+Database.addDatabaseChangeListener
+Database.addChangeListener
+----
+
+As of version 2.6, Couchbase Lite spins up a single executor and a number of threads proportional to the number of CPUs `2 x CPUs`.
+
+Note that in some applications with other processes running in parallel, you may see `RejectedExecutionExceptions` error and the Couchbase Lite listener being aborted.
+This happens when there are more than `2 x CPUs` events being processed at the same time.
+
+The solution to this problem is for the client code to specify an executor in the overloaded versions of the above calls.
+The client executor can enforce an application policy for delivery ordering and the number of threads. The examples below show different policies:
+
+*Guaranteed Order Delivery*
+
+[source,java]
+----
+/**
+ * This version guarantees in order delivery and is parsimonious with space
+ * The listener does not need to be thread safe (at least as far as this code is concerned).
+ * It will run on only thread (the Executor's thread) and must return from a given call
+ * before the next call commences.  Events may be delivered arbitrarily late, though,
+ * depending on how long it takes the listener to run.
+ */
+public class InOrderExample {
+    private static final ExecutorService IN_ORDER_EXEC = Executors.newSingleThreadExecutor();
+
+    public Replicator runReplicator(Database db1, Database db2, ReplicatorChangeListener listener)
+        throws CouchbaseLiteException {
+        ReplicatorConfiguration config = new ReplicatorConfiguration(db1, new DatabaseEndpoint(db2));
+        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+        config.setContinuous(false);
+
+        Replicator repl = new Replicator(config);
+        ListenerToken token = repl.addChangeListener(IN_ORDER_EXEC, listener::changed);
+
+        repl.start();
+
+        return repl;
+    }
+}
+----
+
+*Maximum Throughput*
+
+[source,]
+----
+/**
+ * This version maximizes throughput.  It will deliver change notifications as quickly
+ * as CPU availability allows. It may deliver change notifications out of order.
+ * Listeners must be thread safe because they may be called from multiple threads.
+ * In fact, they must be re-entrant because a given listener may be running on mutiple threads
+ * simultaneously.  In addition, when notifications swamp the processors, notifications awaiting
+ * a processor will be queued as Threads, (instead of as Runnables) with accompanying memory
+ * and GC impact.
+ */
+public class MaxThroughputExample {
+    private static final ExecutorService MAX_THROUGHPUT_EXEC = Executors.newCachedThreadPool();
+
+    public Replicator runReplicator(Database db1, Database db2, ReplicatorChangeListener listener)
+        throws CouchbaseLiteException {
+        ReplicatorConfiguration config = new ReplicatorConfiguration(db1, new DatabaseEndpoint(db2));
+        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+        config.setContinuous(false);
+
+        Replicator repl = new Replicator(config);
+        ListenerToken token = repl.addChangeListener(MAX_THROUGHPUT_EXEC, listener::changed);
+
+        repl.start();
+
+        return repl;
+    }
+}
+----
+
+*Extreme Configurability*
+
+[source]
+----
+/**
+ * This version demonstrates the extreme configurability of the CouchBase Lite replicator callback system.
+ * It may deliver updates out of order and does require thread-safe and re-entrant listeners
+ * (though it does correctly synchronizes tasks passed to it using a SynchronousQueue).
+ * The thread pool executor shown here is configured for the sweet spot for number of threads per CPU.
+ * In a real system, this single executor might be used by the entire application and be passed to
+ * this module, thus establishing a reasonable app-wide threading policy.
+ * In an emergency (Rejected Execution) it lazily creates a backup executor with an unbounded queue
+ * in front of it.  It, thus, may deliver notifications late, as well as out of order.
+ */
+public class PolicyExample {
+    private static final int CPUS = Runtime.getRuntime().availableProcessors();
+
+    private static ThreadPoolExecutor BACKUP_EXEC;
+
+    private static final RejectedExecutionHandler BACKUP_EXECUTION
+        = new RejectedExecutionHandler() {
+        public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
+            synchronized (this) {
+                if (BACKUP_EXEC == null) { BACKUP_EXEC = createBackupExecutor(); }
+            }
+            BACKUP_EXEC.execute(r);
+        }
+    };
+
+    private static ThreadPoolExecutor createBackupExecutor() {
+        ThreadPoolExecutor exec
+            = new ThreadPoolExecutor(CPUS + 1, 2 * CPUS + 1, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+        exec.allowCoreThreadTimeOut(true);
+        return exec;
+    }
+
+    private static final ThreadPoolExecutor STANDARD_EXEC
+        = new ThreadPoolExecutor(CPUS + 1, 2 * CPUS + 1, 30, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+
+    static { STANDARD_EXEC.setRejectedExecutionHandler(BACKUP_EXECUTION); }
+
+    public Replicator runReplicator(Database db1, Database db2, ReplicatorChangeListener listener)
+        throws CouchbaseLiteException {
+        ReplicatorConfiguration config = new ReplicatorConfiguration(db1, new DatabaseEndpoint(db2));
+        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+        config.setContinuous(false);
+
+        Replicator repl = new Replicator(config);
+        ListenerToken token = repl.addChangeListener(STANDARD_EXEC, listener::changed);
+
+        repl.start();
+
+        return repl;
+    }
+}
+----
+
 === Troubleshooting
 
 As always, when there is a problem with replication, logging is your friend.
@@ -1032,6 +1180,8 @@ xref:index.adoc[Read more]
 *Enhancements*
 
 * Expose the Document Revision ID: the `revisionID` property on a `Document` instance now returns the current revision identifier.
+* The handling of replicator notifications has been enhanced to use a single Executor and 2 x CPU threads.
+Apps can specify custom executors in order to override the default behavior (see <<replicator-notifications-on-a-custom-executor>>).
 
 *Android API Support*
 
