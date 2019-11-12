@@ -863,13 +863,12 @@ Database.addDatabaseChangeListener
 Database.addChangeListener
 ----
 
-As of version 2.6, Couchbase Lite spins up a single executor and a number of threads proportional to the number of CPUs `2 x CPUs`.
+As of version 2.6, Couchbase sometimes uses its own internal executor to run asynchronous client code.
+While this is fine for small tasks, larger tasks -- those that take significant compute time, or that perform I/O -- can block Couchbase processing.
+If this happens your application will fail with a `RejectedExecutionException` and it may be necessary to create a separate executor on which to run the large tasks.
 
-Note that in some applications with other processes running in parallel, you may see `RejectedExecutionExceptions` error and the Couchbase Lite listener being aborted.
-This happens when there are more than `2 x CPUs` events being processed at the same time.
-
-The solution to this problem is for the client code to specify an executor in the overloaded versions of the above calls.
-The client executor can enforce an application policy for delivery ordering and the number of threads. The examples below show different policies:
+The following examples show how to specify a separate executor in the client code.
+The client code executor can enforce an application policy for delivery ordering and the number of threads.
 
 *Guaranteed Order Delivery*
 
