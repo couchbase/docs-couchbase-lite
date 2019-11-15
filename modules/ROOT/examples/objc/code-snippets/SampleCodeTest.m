@@ -464,7 +464,7 @@
     CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
     
     CBLQueryExpression *type = [[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"landmark"]];
-    CBLQueryExpression *like = [[CBLQueryExpression property:@"name"] like:[CBLQueryExpression string:@"Royal engineers museum"]];
+    CBLQueryExpression *like = [[CBLQueryFunction lower:[CBLQueryExpression property:@"name"]] like:[CBLQueryExpression string:@"Royal engineers museum"]];
     
     CBLQuery *query = [CBLQueryBuilder select:@[id, country, name]
                                          from:[CBLQueryDataSource database:database]
@@ -486,7 +486,7 @@
     CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
     
     CBLQueryExpression *type = [[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"landmark"]];
-    CBLQueryExpression *like = [[CBLQueryExpression property:@"name"] like:[CBLQueryExpression string:@"eng%e%"]];
+    CBLQueryExpression *like = [[CBLQueryFunction lower:[CBLQueryExpression property:@"name"]] like:[CBLQueryExpression string:@"eng%e%"]];
     
     CBLQueryLimit *limit = [CBLQueryLimit limit:[CBLQueryExpression integer:10]];
     
