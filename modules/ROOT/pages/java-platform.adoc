@@ -1,16 +1,91 @@
+// Beta 2 changes
 = Java
-:idprefix:
-:idseparator: -
-:snippet: {examplesdir}/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java
-:snippet-java-platform: {examplesdir}/java-platform/src/com/couchbase/code_snippets/Examples.java
-:source-language: java
-:version: 2.7.0
-:blank-field: ____
-:url-issues-java: TBA
-:url-api-references: TBA
-
+include::_attributes.adoc[]
+//
+// :idprefix:
+// :idseparator: -
+// :snippet: {examplesdir}/java-android/app/src/main/java/com//// couchbase/code_snippets/Examples.java
+// :snippet-java-platform: {examplesdir}/java-platform/src////// com/couchbase/code_snippets/Examples.java
+// :source-language: java
+// :version: 2.7.0
+// :blank-field: ____
+// :url-issues-java: TBA
+// :url-api-references: TBA
+//
 == Getting Started
 
+
+=== Get required binaries
+==== Using a zip file
+The {cbl} Java platform is distributed as a _.zip_ file that contains all necessary native libraries.
+
+You can download the file here: {url-cb-downloads}[{nmCBdwnlds}]
+
+==== Using your IDE or Build toolset
+You can import the required binary dependencies (_jars_) directly into your project folders using, for example, Gradle or Maven.
+
+[tabs]
+====
+Community Edition::
++
+--
+Dependency endpoint: com.couchbase.lite:couchbase-lite-java-platform:2.7.0
+
+--
+Enterprise Edition::
++
+--
+* Maven repository endpoint: https://mobile.maven.couchbase.com/maven2/dev/
+* Dependency endpoint: com.couchbase.lite:couchbase-lite-java-platform-ee:2.7.0
+--
+====
+
+
+=== Learn what's in the package
+
+The _.zip_ includes the {cbl} jar, plus jars for relevant dependencies:
+* couchbase-lite-java-ee-2.7.0-63.jar
+* json-20180813.jar
+* okhttp-3.9.1.jar
+* okio-1.13.0.jar
+
+Also included with the zip are the necessary shared support libraries, which must be linked to (only) when deploying in a Linux environment.
+
+
+
+
+=== Set any required Linux parenthesis
+
+
+• Given the heterogenity of Linux platforms, specifically for Linux, we have included the required
+versions of relevant shared support libraries
+◦ The support folder contains the relevant shared system libraries (libz, libc++, icu ) that must
+be linked to when building on Linux. Note: Distributing the compatible system libraries
+eliminates the hassle of having to download and-or build compatible versions of system libraries
+for the Linux platform of choice.
+
+
+
+
+=== Deploy the package
+
+
+[tabs]
+====
+--
+Desktop::
++
+--
+example desktop stuff
+--
+Web Container::
++
+--
+Tomcat stuff
+--
+====
+
+== Deprecated and-or to be reviewed content
 === IntelliJ project
 
 Create a new *command line app* in the IDE of your choice (in this example we'll use *IntelliJ IDEA CE*).
