@@ -6,6 +6,8 @@
 :blank-field: ____
 :url-issues-net: https://github.com/couchbase/couchbase-lite-net/issues
 :url-api-references: http://docs.couchbase.com/mobile/2.6.0/couchbase-lite-net
+include::_attributesLocal.adoc[]
+
 
 == Getting Started
 
@@ -1083,15 +1085,59 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 == Release Notes
 
+=== 2.7.0
+
+*{nftr}*
+
+New at this release is the Java Platform, which enables development of Java apps on any platform that supports the JVM model
+
+xref::index.adoc[{more}]
+
+*{ke}*
+
+- https://issues.couchbase.com/browse/CBL-216[*CBL-216*] Ordering null values inconsistent with N1QL expectations
+- https://issues.couchbase.com/browse/CBL-95[*CBL-95*] Pending conflicts could be resolved by a wrong replicator
+- https://issues.couchbase.com/browse/CBL-49[*CBL-49*] Need a way to distinguish boolean types
+
+*{fixed}*
+
+- https://issues.couchbase.com/browse/CBL-562[*CBL-562*] Can't open existing db read-only; LiteCore test "Database Open Older Encrypted" fails
+- https://issues.couchbase.com/browse/CBL-550[*CBL-550*] SQLite index creation mistakenly sets user_version backwards
+- https://issues.couchbase.com/browse/CBL-536[*CBL-536*] Long delay starting replicator, for big databases
+- https://issues.couchbase.com/browse/CBL-527[*CBL-527*] RefCount crash
+- https://issues.couchbase.com/browse/CBL-525[*CBL-525*] Upgrade from 1.x fails if any docID starts with "_"
+- https://issues.couchbase.com/browse/CBL-489[*CBL-489*] xamarin-iOS : Not connecting back to SGW with ssl when SGW restarts
+- https://issues.couchbase.com/browse/CBL-463[*CBL-463*] Attempt to log strings that are not Modified UTF-8
+- https://issues.couchbase.com/browse/CBL-456[*CBL-456*] Deprecated Database.setLogLevel is not logging
+- https://issues.couchbase.com/browse/CBL-444[*CBL-444*] Purging documents does not fire events in a QueryChangeListener
+- https://issues.couchbase.com/browse/CBL-428[*CBL-428*] .NET Framework build does not load LiteCore properly
+- https://issues.couchbase.com/browse/CBL-415[*CBL-415*] strod produces locale-dependent results for encoding Fleece
+- https://issues.couchbase.com/browse/CBL-402[*CBL-402*] Back-tag recent releases
+- https://issues.couchbase.com/browse/CBL-400[*CBL-400*] Not getting right number of revisions on SGW while using multiple SGWS
+- https://issues.couchbase.com/browse/CBL-395[*CBL-395*] Platform WebSocket code should manage HTTP cookies - Android - .NET
+- https://issues.couchbase.com/browse/CBL-355[*CBL-355*] Queries silently ignore Collation Locale
+- https://issues.couchbase.com/browse/CBL-349[*CBL-349*] TestNonBlockingDatabaseOperationConflictResolver can silently fail
+- https://issues.couchbase.com/browse/CBL-343[*CBL-343*] LiteCore tests need to use unique database
+- https://issues.couchbase.com/browse/CBL-324[*CBL-324*] Function.upper() failed to operate non-ASCII characters
+- https://issues.couchbase.com/browse/CBL-242[*CBL-242*] Inconsistent revision hash length
+- https://issues.couchbase.com/browse/CBL-221[*CBL-221*] "mutex lock failed" during initial pull replication of large # of docs
+- https://issues.couchbase.com/browse/CBL-218[*CBL-218*] FTS indexing an array-valued property is unreliable
+- https://issues.couchbase.com/browse/CBL-207[*CBL-207*] Replicator change event has idle with timeout error
+- https://issues.couchbase.com/browse/CBL-175[*CBL-175*] Can't query the records has the % character with LIKE operator.
+- https://issues.couchbase.com/browse/CBL-171[*CBL-171*] CBL replication never finishes for replication filtering when doc count is 1000
+- https://issues.couchbase.com/browse/CBL-126[*CBL-126*] Litecore does not retry subChanges request that fails with temporary 503 error
+- https://issues.couchbase.com/browse/CBL-52[*CBL-52*] “LIKE”, "CONTAINS", "REGEX_LIKE" operators ignore collations
+
+
 === 2.6.0
 
-*New Features*
+*{nftr}*
 
 * Custom Conflict Resolution
 +
-xref:index.adoc[Read more]
+xref:index.adoc[{more}]
 
-*Enhancements*
+*{enh}*
 
 * Expose the Document Revision ID: the `revisionID` property on a `Document` instance now returns the current revision identifier.
 
@@ -1100,7 +1146,7 @@ xref:index.adoc[Read more]
 Support for Android API 19, API 20 and API 21 on Xamarin is deprecated in this release.
 Support will be removed within two (non-maintenance) releases following the deprecation announcement.
 
-*Fixed in this Release*
+*{fixed}*
 
 * https://issues.couchbase.com/browse/CBL-171[*CBL-171*] CBL replication never finishes for replication filtering when doc count is 1000
 * https://issues.couchbase.com/browse/CBL-136[*CBL-136*] Replication is not replicating all updates with delta-sync enabled
@@ -1111,23 +1157,23 @@ Support will be removed within two (non-maintenance) releases following the depr
 * https://issues.couchbase.com/browse/CBL-47[*CBL-47*] Intermittent SQLITE_MISUSE error during normal testing
 * https://issues.couchbase.com/browse/CBL-45[*CBL-45*] LiteCore time out issues stray busy callback
 * https://issues.couchbase.com/browse/CBL-38[*CBL-38*] null pointer dereference
-* https://issues.couchbase.com/browse/CBL-2[*CBL-2*] [sg-ssl enabled] cbl replicator does not resume after SG restart 
+* https://issues.couchbase.com/browse/CBL-2[*CBL-2*] [sg-ssl enabled] cbl replicator does not resume after SG restart
 
-*Known Issues*
+*{ke}*
 
 - https://issues.couchbase.com/browse/CBL-95[*CBL-95*] Pending conflicts could be resolved by a wrong replicator
 - https://issues.couchbase.com/browse/CBL-49[*CBL-49*] Need a way to distinguish boolean types
 
 === 2.5.3
 
-*Bugs*
+{fixed}
 
 * https://issues.couchbase.com/browse/CBL-176[*CBL-176*] Reduce replication timeouts.
 * https://issues.couchbase.com/browse/CBL-110[*CBL-110*] Delta sync on top of a deletion caused data discrepancy between Couchbase Sync Gateway and Couchbase Lite.
 
 === 2.5.2
 
-*Bugs*
+{fixed}
 
 * https://github.com/couchbase/couchbase-lite-core/issues/776[*#776*] `c4db_endTransaction` sometimes results in invalid memory access.
 * https://github.com/couchbase/couchbase-lite-core/issues/787[*#787*] Fleece error when querying array property.
@@ -1135,16 +1181,16 @@ Support will be removed within two (non-maintenance) releases following the depr
 
 === 2.5.0
 
-*New Features*
+*{nftr}*
 
 * Delta Sync
 * Replication Filters
 * Continuous Logging
 * Predictive Query
 +
-xref:index.adoc[Read more]
+xref:index.adoc[{more}]
 
-*Enhancements*
+*{enh}*
 
 * {url-issues-net}/999[*#999*]
 Move embedded credentials check from Replicator to URLEndpoint
@@ -1157,7 +1203,7 @@ Remove log rotation change batching
 * {url-issues-net}/1119[*#1119*]
 Write a log warning if file logging is disabled
 
-*Bugs*
+{fixed}
 
 * {url-issues-net}/1120[*#1120*]
 [CBSE-6309] Xamarin Android BlobWriteStream writing extra bytes
@@ -1169,7 +1215,7 @@ properly
 * {url-issues-net}/1137[*#1137*]
 Revisions are missing on sync-gateway with large number of docs
 
-*Known Issues*
+*{ke}*
 
 * {url-issues-net}/1140[*#1140*]
 [xamarin-ios][sg-ssl enabled] cbl replicator does not resume after SG
@@ -1177,7 +1223,7 @@ restart
 
 === 2.1.2
 
-.Bugs
+.{fixed}
 * {url-issues-net}/1057[*#1057*] Xamarin Android can’t detect airplane mode correctly
 * {url-issues-net}/1066[*#1066*] Authorization headers should be sent preemptively
 
@@ -1187,11 +1233,11 @@ restart
 
 === 2.1
 
-.Enhancements
+.{enh}
 * {url-issues-net}/1005[*#1005*] Add Encryption to EE
 * {url-issues-net}/1006[*#1006*] Add P2P
 
-.Bugs
+.{fixed}
 * {url-issues-net}/1000[*#1000*] 2.0. Xamarin. Replicator fails to get out of Connecting State when connecting to unreachable host
 * {url-issues-net}/1010[*#1010*] [Xamarin][db023] continuous synchronization stopping after a while
 * {url-issues-net}/1011[*#1011*] Xamarin Android cannot recover from loss of connection to LAN address
@@ -1200,7 +1246,7 @@ restart
 * {url-issues-net}/1048[*#1048*] Couchbase Lite parsing nested value as UInt64 then throwing exception on update.
 * {url-issues-net}/1051[*#1051*] Heap corruption/Access Violation with unreachable replication endpoint on Windows x86
 
-.Known Issues
+.{ke}
 * {url-issues-net}/1040[*#1040*] HTTP Proxy Support
 
 === 2.0.3
@@ -1213,17 +1259,20 @@ restart
 
 === 2.0 release notes
 
-.Enhancements
+.{enh}
+
 * {url-issues-net}/647[*#647*] Equivalent to full text search
 * {url-issues-net}/964[*#964*] AddLoggerProvider
 
-.Bugs
+.{fixed}
+
 * {url-issues-net}/884[*#884*] Replication with DNS endpoint failing on (at least) Mac
 * {url-issues-net}/894[*#894*] Crash on iOS Simulator 9.x on Query.Run() execution
 * {url-issues-net}/957[*#957*] SG doesn't have any docs in its cache after replication
 * {url-issues-net}/966[*#966*] Incorrect callback type(?) leads to AOT compilation failure for Xamarin
 * {url-issues-net}/994[*#994*] 2.0db023 SetBinaryLogDirectory(string) path ignored, still written to AppContext.BaseDirectory
 
-.Known Issues
+.{ke}
+
 * {url-issues-net}/1002[*#1002*] System proxy is not being used for replication
 * {url-issues-net}/1012[*#1012*] Reusing the same collation in a query will cause all of them to be affected by the last modification
