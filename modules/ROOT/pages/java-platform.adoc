@@ -1,189 +1,189 @@
-// Beta 2 changes
-= Java
-include::_attributes.adoc[]
-//
-// :idprefix:
-// :idseparator: -
-// :snippet: {examplesdir}/java-android/app/src/main/java/com//// couchbase/code_snippets/Examples.java
-// :snippet-java-platform: {examplesdir}/java-platform/src////// com/couchbase/code_snippets/Examples.java
-// :source-language: java
-// :version: 2.7.0
-// :blank-field: ____
-// :url-issues-java: TBA
-// :url-api-references: TBA
-//
+= Couchbase Lite Java Framework (Java Platform)
+
+include::_partials/mobAttrCBL.adoc[]
+
+:JP: Java Platform
+:cblJP: {product} for {JP}
+:packageNm:
+
 == Getting Started
+{cblJP} provides a Java framework for Couchbase Lite development. It can be deployed to a desktop or web server (for example, {webServerEnv}).
+
+You can use this page to familiarize yourself with the product: its components, deployment, and use.
+
+NOTE: We use _IntelliJ IDEA CE_ and _Gradle_ for the examples presented in this content.
+You are free to use the IDE and build tools of your choice.
+
+You will learn:
+
+* Where to get the necessary binaries -- <<Get the required binaries>>
+* What the binaries contain -- <<Package Contents>>
+* How to depoy {cblJP} -- <<Package Contents>>
+* How to use {cblJP} -- <<Package Contents>>
 
 
-=== Get required binaries
-==== Using a zip file
-The {cbl} Java platform is distributed as a _.zip_ file that contains all necessary native libraries.
+=== Where to get {cblFrmWk}
+You need to get the appropriate binaries for either the {cbl} Community or Enterprise editions).
 
-You can download the file here: {url-cb-downloads}[{nmCBdwnlds}]
+Both packages are available for download in `.zip` file format on the link:http://couchbase.com/downloads[Couchbase Downloads page].
+You can download the file here: link:{url-cb-downloads-mobile}[{nmCBdwnlds}]
 
-==== Using your IDE or Build toolset
-You can import the required binary dependencies (_jars_) directly into your project folders using, for example, Gradle or Maven.
-
-[tabs]
-====
-Community Edition::
+** Community Edition
 +
---
-Dependency endpoint: com.couchbase.lite:couchbase-lite-java-platform:2.7.0
+couchbase-lite-java-platform-2.7.0-63
 
---
-Enterprise Edition::
+** Enterprise Edition
 +
---
-* Maven repository endpoint: https://mobile.maven.couchbase.com/maven2/dev/
-* Dependency endpoint: com.couchbase.lite:couchbase-lite-java-platform-ee:2.7.0
---
-====
-
-
-=== Learn what's in the package
-
-The _.zip_ includes the {cbl} jar, plus jars for relevant dependencies:
-* couchbase-lite-java-ee-2.7.0-63.jar
-* json-20180813.jar
-* okhttp-3.9.1.jar
-* okio-1.13.0.jar
-
-Also included with the zip are the necessary shared support libraries, which must be linked to (only) when deploying in a Linux environment.
+couchbase-lite-java-platform-ee-2.7.0-63.zip
 
 
 
+=== Package Contents
 
-=== Set any required Linux parenthesis
+The _.zip_ includes the {cblJP} jar, plus jars for any relevant dependencies, plus a set of Linux _shared libraries_.
 
+NOTE: This means you do not need to download and-or build compatible versions of system libraries for the Linux platform of choice.
 
-• Given the heterogenity of Linux platforms, specifically for Linux, we have included the required
-versions of relevant shared support libraries
-◦ The support folder contains the relevant shared system libraries (libz, libc++, icu ) that must
-be linked to when building on Linux. Note: Distributing the compatible system libraries
-eliminates the hassle of having to download and-or build compatible versions of system libraries
-for the Linux platform of choice.
+So you when you unpack, you can expect to see:
 
+* A `lib` folder containing all necessary JAR files:
+** couchbase-lite-java-ee-2.7.0-63.jar
+** json-20180813.jar
+** okhttp-3.9.1.jar
+** okio-1.13.0.jar
+* A `support` folder
++
+This contains the shared system libraries (libz, libc++, icu ) that must be linked-to when building on Linux.
++
+WARNING: Use only when deploying to a Linux environment.
 
++
+See <<Prepare the Linux environment>> for how to use these.
 
 
 === Deploy the package
 
+In order to deploy the package you will need to:
+[loweralpha]
+. Download the _zip_ file
+. Unpack the _zip_ file to a location accessible to, and usable by, your chosen *build* environment
+. Add the jars directory and its contents (see: <<jars>>) as dependencies in the Build tool and-or IDE of your choice
+. For Linux only:
+[lowerroman]
+.. Make the supplied _shared libraries_ accessible to, and usable by, your chosen Linux build and runtime environment
+.. Set the `$LD_LIBRARY_PATH` environment variable to the path-to-the _shared lbraries_
 
-[tabs]
-====
---
-Desktop::
+With these tasks completed, you can now build and run using the .jars (you do not need the support libraries).
+
+TIP: See <<Building your first {cblJP} app>> for an exmple of how to do this.
+//.How to deploy
+
+==== Set-up in a Non-Linux Desktop environment
+
+For an IDE:
+
+. In *IntelliJ*, select *File > New > Project...* and click *Next*.
 +
---
-example desktop stuff
---
-Web Container::
-+
---
-Tomcat stuff
---
-====
-
-== Deprecated and-or to be reviewed content
-=== IntelliJ project
-
-Create a new *command line app* in the IDE of your choice (in this example we'll use *IntelliJ IDEA CE*).
-
-In *IntelliJ*, select *File > New > Project...* and click *Next*.
-
 image::java-cli-app.png[,600]
-
-Choose the *Command Line App* template.
-
++
+.. Choose the *Command Line App* template.
++
 image::java-new-proj.png[,600]
-
-Provide details for the new project.
-
++
+.. Provide details for the new project.
++
 image::java-new-proj-details.png[,600]
 
-Open the *Project Structure* window and select *+ > JARs or directories...*.
-
+. Open the *Project Structure* window and select *+ > JARs or directories...*.
++
 image::java-add-jars.png[,600]
-
-Download link:https://drive.google.com/file/d/1LTyydRRI7ZrgnBPgXnIinuaERc61hHX6/view?usp=sharing[Couchbase Lite Java].
-In the Finder window, select the JAR files that were downloaded.
-
-* The `couchbase-lite-java-ee-2.7.0-DB001.jar` that includes native libraries for  Windows, Linux and macOS
-
-* Relevant dependencies including
-** `json-20180813.jar`
-** `okhttp-3.9.1.jar`
-** `okio-1.13.0.jar`
-
++
+In the Finder window, select the follwing JAR files from the `lib` folder of the package you downloaded and unpacked.
++
+* couchbase-lite-java-ee-2.7.0-DB001.jar`
+* `json-20180813.jar`
+* `okhttp-3.9.1.jar`
+* `okio-1.13.0.jar`
++
 image::java-select-jars.png[,600]
 
-* Given the heterogeneity of Linux platforms, specifically for Linux, we have included the required versions of relevant shared support libraries
-** The `support` folder  contains the relevant shared system libraries (libz, libc++, icu ) that must be linked to when building on Linux. *Note*: Distributing the compatible system libraries eliminates the hassle of having to download/ build compatible versions of system libraries for the Linux platform of choice.
 
-image::java-confirm-jars.png[,600]
+==== Additional steps for Linux only
 
-==== Linux platforms
-
-In addition to the .jars, you will need to load the support libraries distributed with Couchbase Lite.
-
-There are two options to load the support libraries for linux:
-
-1. Set `LD_LIBRARY_PATH` environment parameter for example:
+[arabic]
+. Follow the instructions for non-Linux above if you have not already done so
+. Load the _shared libraries_ using either of these methods;
+[lowerroman]
+.. Add the `LD_LIBRARY_PATH` environment variable declaratives to your `bashrc`
++
+----
+export LD_LIBRARY_PATH=/path/to/couchbase-lite-java-ee-2.7.0-
+63/support/linux/x86_64/libicu:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/path/to/couchbase-lite-java-ee-2.7.0- 63/support/linux/x86_64/libz:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/path/to/couchbase-lite-java-ee-2.7.0- 63/support/linux/x86_64/libc++:$LD_LIBRARY_PATH
+----
+.. Declare the libraries in `java.library.path` parameter when runnning `java`
++
 [source,bash]
+
 ----
-export LD_LIBRARY_PATH=/path/to/ouchbase-lite-java-ee-2.7.0-DB001/download/support/linux/icu/lib:$LD_LIBRARY_PATH
-
-export LD_LIBRARY_PATH=//path/to/ouchbase-lite-java-ee-2.7.0-DB001/download/support/linux/zlib/1.2.11/lib:$LD_LIBRARY_PATH
-
-export LD_LIBRARY_PATH=//path/to/ouchbase-lite-java-ee-2.7.0-DB001/download/support/linux/libc++:$LD_LIBRARY_PATH
+java -Djava.library.path=/path/to/couchbase-lite-java-ee-2.7.0 -63/support/linux/x86_64/libicu:/path/to/couchbase-lite-java-ee-2.7.0 -63/support/linux/x86_64/libz:path/to/couchbase-lite-java-ee-2.7.0 -63/support/linux/x86_64/libc++:
 ----
 
-(You can also put this in your .bashrc file)
+=== Test your deployment
 
-2. Use java.library.path property when running java command.
-[source,bash]
+You can quickly validate your build environment (if you have Gradle installed) using our  starter app (see: <<Download Links>> section).
+This Couchbase Lite enabled Java app demonstrates the basic CRUD and sync functionality.
+Whilst it requires {sg} and {svr} instances to run, you can validate your build environment simply by:
+
+. Downloading the app
+. Navigating to the app folder and running the gradle build in terminal:
++
 ----
-java -Djava.library.path=/path/to/ouchbase-lite-java-ee-2.7.0-DB001/support/linux/libc++:/path/to/ouchbase-lite-java-ee-2.7.0-DB001/support/linux/icu/lib:/path/to/ouchbase-lite-java-ee-2.7.0-DB001/support/linux/zlib/1.2.11/lib:
+cd <path-to-sample-app>
+./gradew jar
 ----
 
-==== non-Linux platforms
+Now you know your build environment works you can begin building your own apps.
 
-Build and run with the .jars that are provided in the .zip package. You do not need the support libraries.
+TIP: See <<Building your first {cblJP} app>> for an exmple of how to do this.
 
-=== Starter code
+This is the source code of the sample app is found in the StarterApp.java file
 
-Open *Main.java* in IntelliJ and copy the following code in the `main` method.
-This snippet demonstrates how to run basic CRUD operations, a simple Query and running bi-directional replications with Sync Gateway.
-
-[source,java]
+--
+Desktop using Gradle::
+--
+[loweralpha]
+. Create a Gradle project folder for {cbl} (`<path-to-couchbase-gradle-project>`)
+. Download the zip to (for example) your `~/Downloads` folder
+. Expand the zip
+. Copy the .jar files to your {cbl} project folder
++
+[source, bash]
 ----
-include::{snippet-java-platform}[tag=getting-started,indent=0]
+`cp -R lib <path-to-couchbase-gradle-project>/cbl-libs`
 ----
-<1> The app will start a replicator pointing to `ws://localhost:4984/db`.
-<2> This is the only API that differs from the Android Java version. It accepts no parameters
-<3> You can optionally AES-256 encrypt the database by providing a key
-<4> This is needed for the websocket connections to gracefully close
+. Add `libs` to the `build.gradle` file if it is not already included
+[source, bash]
+----
+  implementation fileTree(include:["*.jar"]), dir:"cbl-libs")
+----
 
-Build and run.
-You should see the document ID and property printed to the console.
-The document was successfully persisted to the database.
+The jar libraries will then be available for use in the Gradle project.
 
-xref:sync-gateway::getting-started.adoc#installation[Installing Sync Gateway ->]
 
-== Sample App
+== Building your first {cbl} project
 
-Download the link:https://drive.google.com/file/d/1OZqKA6gN5DB3fJtF3oD7D8C7E7C_jxDr/view?usp=sharing[Sample Starter App].
-
-=== Setup Couchbase Server
+=== Prerequisites
+==== Setup Couchbase Server
 
 - Install Couchbase Server following steps outlined in link:https://docs.couchbase.com/sync-gateway/2.6/getting-started.html#creating-an-rbac-user[documentation]
 -  Create a bucket named "db" following instructions link:https://docs.couchbase.com/sync-gateway/2.6/getting-started.html#creating-a-bucket[here]
 -  Create a RBAC user with "admin" as username and password as "password" following instructions link:https://docs.couchbase.com/sync-gateway/2.6/getting-started.html#creating-an-rbac-user[here]
 
-=== Setup Sync Gateway
+==== Setup Sync Gateway
 
-- Install the Sync Gateway following the steps outlined in the link:https://docs.couchbase.com/sync-gateway/2.6/getting-started.html#enterprise-edition[documentation].
+- Install the Sync Gateway following the steps outlined in the xref:sync-gateway::getting-started.adoc#installation[Installing Sync Gateway ->]
 - Configure the Sync Gateway using the following sample sync-gateway-config file.
 
 [source,json]
@@ -246,6 +246,23 @@ Download the link:https://drive.google.com/file/d/1OZqKA6gN5DB3fJtF3oD7D8C7E7C_j
 <3> This is password of the RBAC user
 <4> This is a Sync Gateway user. Replication will happen within the context of the user.
 
+
+=== Build the app
+If you haven't already done so, download the link:https:/blah/view?usp=sharing[Sample Starter App].
+
+Open *Main.java* in IntelliJ and copy the following code in the `main` method.
+This snippet demonstrates how to run basic CRUD operations, a simple Query and running bi-directional replications with Sync Gateway.
+
+[source,java]
+----
+include::{snippet-java-platform}[tag=getting-started,indent=0]
+----
+<1> The app will start a replicator pointing to `ws://localhost:4984/db`.
+<2> This is the only API that differs from the Android Java version. It accepts no parameters
+<3> You can optionally AES-256 encrypt the database by providing a key
+<4> This is needed for the websocket connections to gracefully close
+
+
 === Running the sample app
 
 - On Linux, follow the steps outlined in <<Linux platforms>> to load the correct support libraries
@@ -267,7 +284,10 @@ Download the link:https://drive.google.com/file/d/1OZqKA6gN5DB3fJtF3oD7D8C7E7C_j
 java -jar StarterCode-1.0.jar
 ----
 
-- The `mydb.cblite2` database directory will be created at the current directory from where the application is run
+You should see the document ID and property printed to the console.
+The document was successfully persisted to the database.
+NOTE: The `mydb.cblite2` database directory is created in the directory you run application from
+
 
 == Supported Versions
 
@@ -318,22 +338,12 @@ Refer to the link:https://docs.couchbase.com/couchbase-lite/2.6/java.html#databa
 
 == Upgrading
 
-=== Android Studio
+=== Databases
 
-The API has changed in Couchbase Lite 2.0 and will require porting an application that is using Couchbase Lite 1.x API to the Couchbase Lite 2.0 API.
-To update an Android project built with Couchbase Lite 1.x:
-
-* Remove the existing Couchbase Lite dependency from the Android Studio project.
-* Install the Couchbase Lite 2.0 framework in your project (see the <<getting-started, Getting Started>> section).
-At this point, there will be many compiler warnings.
-Refer to the examples on this page to learn about the new API.
-* Build & run your application.
-
-=== Database Upgrade
-
-Databases that were created with Couchbase Lite 1.2 or later can be used with Couchbase Lite 2.0.
+Databases that were created with Couchbase Lite 1.2 or later can be used with {cbl} {version-full}.
 Upon detecting it as a 1.x database file, Couchbase Lite will automatically upgrade it to 2.0.
-This feature is only available for the default storage type (i.e., not a ForestDB database).
+
+NOTE: This feature is only available for the default storage type (i.e., not a ForestDB database).
 Additionally, the automatic migration feature does not support encrypted databases, so if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the xref:1.4@{source-language}.adoc#database-encryption[1.x Database Guide]).
 
 ==== Handling of Existing Conflicts
