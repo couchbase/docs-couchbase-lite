@@ -82,10 +82,20 @@ public class Examples {
     }
     // end::getting-started[]
 
+
     public void testPrebuiltDatabase() {
         // tag::prebuilt-database[]
         // TBA
         // end::prebuilt-database[]
+    }
+
+
+
+    public void testInitializer() {
+        // tag::sdk-initializer[]
+        // Initialize the Couchbase Lite system
+        CouchbaseLite.init();
+        // end::sdk-initializer[]
     }
 
 }
