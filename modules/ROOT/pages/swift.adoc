@@ -9,6 +9,9 @@
 :tabs:
 :url-api-references: http://docs.couchbase.com/mobile/2.6.0/couchbase-lite-swift
 
+include::_attributesLocal.adoc[]
+
+
 == Getting Started
 
 
@@ -1064,9 +1067,21 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 == Release Notes
 
-== 2.7.0
+=== 2.7.0
 
-*Fixed in this release*
+*{nftr}*
+
+New at this release is the Java Platform, which enables development of Java apps on any platform that supports the JVM model
+
+xref::index.adoc[{more}]
+
+*{ke}*
+
+- https://issues.couchbase.com/browse/CBL-216[*CBL-216*] Ordering null values inconsistent with N1QL expectations
+- https://issues.couchbase.com/browse/CBL-95[*CBL-95*] Pending conflicts could be resolved by a wrong replicator
+- https://issues.couchbase.com/browse/CBL-49[*CBL-49*] Need a way to distinguish boolean types
+
+*{fixed}*
 
 - https://issues.couchbase.com/browse/CBL-562[*CBL-562*] Can't open existing db read-only; LiteCore test "Database Open Older Encrypted" fails
 - https://issues.couchbase.com/browse/CBL-556[*CBL-556*] Reachability undermines offline reconnect logic
@@ -1100,13 +1115,13 @@ This maintenance release adds support for Xcode 11 and Swift 5.1.
 
 === 2.6.0
 
-*New Features*
+*{nftr}*
 
 * Custom Conflict Resolution
 +
-xref:index.adoc[Read more]
+xref:index.adoc[{more}]
 
-*Enhancements*
+*{enh}*
 
 * Expose the Document Revision ID: the `revisionID` property on a `Document` instance now returns the current revision identifier.
 
@@ -1115,7 +1130,7 @@ xref:index.adoc[Read more]
 Support for iOS 9.0 is deprecated in this release.
 Support will be removed within two (non-maintenance) releases following the deprecation announcement.
 
-*Fixed in this Release*
+*{fixed}*
 
 - https://issues.couchbase.com/browse/CBL-222[*CBL-222*] CBL push replication is not replicating doc updates with delta sync after CBL upgrade
 - https://issues.couchbase.com/browse/CBL-171[*CBL-171*] CBL replication never finishes for replication filtering when doc count is 1000
@@ -1129,21 +1144,21 @@ Support will be removed within two (non-maintenance) releases following the depr
 - https://issues.couchbase.com/browse/CBL-45[*CBL-45*] LiteCore time out issues stray busy callback
 - https://issues.couchbase.com/browse/CBL-38[*CBL-38*] null pointer dereference
 
-*Known Issues*
+*{ke}*
 
 - https://issues.couchbase.com/browse/CBL-95[*CBL-95*] Pending conflicts could be resolved by a wrong replicator
 - https://issues.couchbase.com/browse/CBL-49[*CBL-49*] Need a way to distinguish boolean types
 
 === 2.5.3
 
-*Bugs*
+{fixed}
 
 * https://issues.couchbase.com/browse/CBL-176[*CBL-176*] Reduce replication timeouts.
 * https://issues.couchbase.com/browse/CBL-110[*CBL-110*] Delta sync on top of a deletion caused data discrepancy between Couchbase Sync Gateway and Couchbase Lite.
 
 === 2.5.2
 
-*Bugs*
+{fixed}
 
 * https://github.com/couchbase/couchbase-lite-core/issues/776[*#776*] `c4db_endTransaction` sometimes results in invalid memory access.
 * https://github.com/couchbase/couchbase-lite-core/issues/787[*#787*] Fleece error when querying array property.
@@ -1151,27 +1166,27 @@ Support will be removed within two (non-maintenance) releases following the depr
 
 === 2.5.1
 
-*Bugs*
+{fixed}
 
 * {url-issues-ios}/2438[*#2438*] Cannot Open Database Encrypted in 2.1.x with 2.5
 
 === 2.5.0
 
-*New Features*
+*{nftr}*
 
 * Delta Sync
 * Replication Filters
 * Continuous Logging
 * Predictive Query
 +
-xref:index.adoc[Read more]
+xref:index.adoc[{more}]
 
 *Performance Improvements*
 
 * {url-issues-ios}/168[*#168*]
 Transfer new revisions as deltas
 
-*Enhancements*
+*{enh}*
 
 * {url-issues-ios}/168[*#168*]
 Transfer new revisions as deltas
@@ -1182,7 +1197,7 @@ Logging redirect is missing for 2.X
 * {url-issues-ios}/2321[*#2321*]
 Remove log rotation change batching
 
-*Bugs*
+{fixed}
 
 * {url-issues-ios}/2022[*#2022*]
 ``isOldAttachment'' check is incorrect
@@ -1211,7 +1226,7 @@ AddressSanitizer issue in CBLFileLogger’s apply method
 * {url-issues-ios}/2405[*#2405*]
 Console Log Crash when there is percent character in the log message
 
-*Known Issues*
+*{ke}*
 
 * {url-issues-ios}/2438[*#2438*] Cannot Open Database Encrypted in 2.1.x with 2.5
 
@@ -1221,7 +1236,7 @@ Console Log Crash when there is percent character in the log message
 
 === 2.1.5
 
-.Bugs
+.{fixed}
 * https://github.com/couchbase/couchbase-lite-core/issues/714[*#714*] docIDs starting with `_design/` cause the upgrade to 1.x to fail
 * https://github.com/couchbase/couchbase-lite-core/issues/712[*#712*] fleece::Scope throws an exception on a background thread while updating a live query
 
@@ -1229,12 +1244,12 @@ Console Log Crash when there is percent character in the log message
 
 * This release is compiled with Xcode 10.1. It will now work with Swift 4.2.1
 
-.Bugs
+.{fixed}
 * {url-issues-ios}/2230[*#2230*] Incompatible Swift version, Swift 4.2.1
 
 === 2.1.2
 
-.Bugs
+.{fixed}
 * {url-issues-ios}/2205[*#2205*] Crash when using 2.1 to pull attachments from 2.0
 * {url-issues-ios}/2216[*#2216*] Auth Header from BasicAuthenticator not getting sent if SG Guest user is enabled
 
@@ -1247,20 +1262,20 @@ Console Log Crash when there is percent character in the log message
 .Performance Improvements
 * {url-issues-ios}/2127[*#2127*] CBLReplicator always runs on main queue
 
-.Enhancements
+.{enh}
 * {url-issues-ios}/1610[*#1610*] 2.0: Provide a script to strip simulator architecture frameworks for app submission
 * {url-issues-ios}/2117[*#2117*] Implement Database Encryption (EE feature)
 * {url-issues-ios}/2118[*#2118*] Support Peer-to-Peer replication through MessageEndpoint API (EE feature)
 * {url-issues-ios}/2139[*#2139*] Implement Replicator reset checkpoint feature
 
-.Bugs
+.{fixed}
 * {url-issues-ios}/1926[*#1926*] Swift Replicator.addChangeListener crashes
 * {url-issues-ios}/2140[*#2140*] 2.0 : TIC Read Status 1:57 error spam
 * {url-issues-ios}/2149[*#2149*] Swift DictionaryObject and ArrayObject not having toMutable() method
 * {url-issues-ios}/2162[*#2162*] 2.1 DB1: Crash when inserting image Blobs to objects in embedded array in Swift
 * {url-issues-ios}/2188[*#2188*] Replicator not getting stopped when using MessageEndpoint
 
-.Known Issues
+.{ke}
 * {url-issues-ios}/2112[*#2112*] HTTP proxy support
 * {url-issues-ios}/2122[*#2122*] IOS 9 - Got LiteCore error: connection closed abnormally - eventual crash
 
@@ -1274,7 +1289,7 @@ Console Log Crash when there is percent character in the log message
 
 === 2.0.0
 
-.Bugs
+.{fixed}
 * {url-issues-ios}/1701[*#1701*] 2:0 swift expression based query returning empty results
 * {url-issues-ios}/1836[*#1836*] 2.0: Database Listener callbacks not always getting called on main thread
 * {url-issues-ios}/1854[*#1854*] 2.0 : Dictionary, Array, and Fragment have duplicate definitions
@@ -1286,7 +1301,7 @@ Console Log Crash when there is percent character in the log message
 * {url-issues-ios}/2094[*#2094*] TestSelfSignedSSLFailure_SG failed on iOS 10.2
 * {url-issues-ios}/2104[*#2104*] Set Immutable Dictionary or Array to Document causes toDictionary() to crash in Swift
 
-.Known Issues
+.{ke}
 * {url-issues-ios}/2112[*#2112*] HTTP proxy support
 * {url-issues-ios}/2122[*#2122*] IOS 9 - Got LiteCore error: connection closed abnormally - eventual crash
 * {url-issues-ios}/2196[*#2196*] Crash with wifi disabled and bad network
