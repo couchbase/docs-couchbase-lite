@@ -1,20 +1,18 @@
-= Java Android
+= Java
 :idprefix:
 :idseparator: -
-:snippet: {examplesdir}/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java
-:ziputils: {examplesdir}/java-android/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
+:snippet: {examplesdir}/java/src/com/couchbase/code_snippets/Examples.java
+//:ziputils: {examplesdir}/java/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
 :source-language: java
 :version: 2.7.0
 :blank-field: ____
-:url-issues-java: https://github.com/couchbase/couchbase-lite-android/issues
-:url-api-references: http://docs.couchbase.com/mobile/2.6.0/couchbase-lite-java
-// :page-aliases: java
+:url-issues-java: https://github.com/couchbase/couchbase-lite-java/issues
+:url-api-references: http://docs.couchbase.com/mobile/2.7.0/couchbase-lite-java
 
-include::_attributesLocal.adoc[]
-
+WARNING: Currently, Couchbase Lite 2.0 and above is available for Android only.
+The SDK cannot be used in Java applications.
 
 == Getting Started
-
 
 === Android Studio
 
@@ -101,17 +99,6 @@ xref:sync-gateway::getting-started.adoc#installation[Installing Sync Gateway ->]
 
 == Upgrading
 
-=== Android Studio
-
-The API changed in Couchbase Lite 2.0 and you will need to port any application that is using Couchbase Lite 1.x API to the latest Couchbase Lite API.
-To update an Android project built with Couchbase Lite 1.x:
-
-* Remove the existing Couchbase Lite dependency from the Android Studio project.
-* Install the Couchbase Lite framework in your project (see the <<getting-started, Getting Started>> section).
-At this point, there will be many compiler warnings.
-Refer to the examples on this page to learn about the new API.
-* Build & run your application.
-
 === Database Upgrade
 
 Databases created using Couchbase Lite 1.2 or later can still be used with Couchbase Lite 2.x; but will be automatically updated to the  current 2.x version.
@@ -122,9 +109,10 @@ Additionally, the automatic migration feature does not support encrypted databas
 
 If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
 This functionality is related to the way conflicts are now being handled in Couchbase Lite (see xref:{source-language}.adoc#handling-conflicts[Handling Conflicts]).
-Optionally, existing conflicts in the 1.x database can be resolved with the xref:1.4@{source-language}.adoc#resolving-conflicts[1.x API] prior to the database being upgraded.
+Optionally, existing conflicts in the 1.x database can be resolved with the xref:1.4@{source-language}.adoc#resolving-conflicts[1.x API] prior to the database being upgraded to 2.x.
 
 ==== Handling of Existing Attachments
+
 
 Attachments persisted in a 1.x database are copied to the new database.
 NOTE: The relevant Couchbase Lite API is now called the `Blob` API not the `Attachments` API.
@@ -133,6 +121,7 @@ The functionally is identical but the internal schema for attachments has change
 Blobs are stored anywhere in the document, just like other value types, whereas in 1.x they were stored under the `_attachments` field.
 The automatic upgrade functionality *does not* update the internal schema for attachments, so they remain accessible under the `_attachments` field.
 The following example shows how to retrieve an attachment that was created in a 1.x database with a 2.x API.
+
 [source]
 ----
 include::{snippet}[tag=1x-attachment,indent=0]
@@ -144,7 +133,7 @@ The current replication protocol is not backwards compatible with the 1.x replic
 Therefore, to use replication with Couchbase Lite 2.x, the target Sync Gateway instance must also be upgraded to 2.x.
 
 Sync Gateway 2.x will continue to accept clients that connect through the 1.x protocol.
-It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through ws://localhost:4984/db.
+It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.x replication protocol when a Couchbase Lite 2.x client connects through ws://localhost:4984/db.
 This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
 
 == Initializer
@@ -494,10 +483,12 @@ include::{snippet}[tag=query-collection-operator-in,indent=0]
 
 The {url-api-references}/com/couchbase/lite/Expression.html#like-com.couchbase.lite.Expression-[`like`] operator can be used for string matching.
 
-The `like` operator is case sensitive.
+The `like` operator performs **case sensitive** matches.
+So if you want to make the string matching case insensitive, you would have to use `Function.lower` or `Function.upper` to transform the matched string to lowercase or uppercase equivalents.
 
 In the example below, we are looking for documents of type `landmark` where the name property exactly matches the string "Royal engineers museum".
-Note that since `like` does a case sensitive match, the following query will return "landmark" type documents with the name property exactly matching "Royal Engineers Museum".
+Note that since `like` does a case sensitive match, we use `Function.lower` to transform the matched string to the lowercase equivalent.
+So the following query will return "landmark" type documents with the name matching "Royal Engineers Museum", "royal engineers museum", "ROYAL ENGINEERS MUSEUM" and so on.
 
 [source]
 ----
@@ -510,7 +501,9 @@ We can use `%` sign within a `like` expression to do a wildcard match against ze
 Using wildcards allows you to have some fuzziness in your search string.
 
 In the example below, we are looking for documents of `type` "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
-The following query will return "landmark" type documents with name matching "Engineers", "engine", "english egg" , "England Eagle" and so on.
+Once again, we are using `Function.lower` to make the search case insensitive.
+
+The following query will return "landmark" `type` documents with name matching "Engineers", "engine", "english egg" , "England Eagle" and so on.
 Notice that the matches may span word boundaries.
 
 [source]
@@ -839,6 +832,153 @@ The level of compression is set on Sync Gateway and can be tuned in the configur
 To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
 So we don't recommend to rely on that when using the replication or database change listeners for example.
 
+==== Replicator Notifications on a Custom Executor
+
+Prior to version 2.6, Couchbase Lite spun up multiple executors.
+This policy could result in too many threads being spun up.
+
+An executor manages a pool of threads and, perhaps, a queue in front of the executor, to handle the asynchronous callbacks.
+Couchbase Lite API calls which are processed by an executor are listed below.
+
+[source]
+----
+Query.addChangeListener
+MessageEndpointListerner.addChangeListener
+LiveQuery.addChangeListener
+AbstractReplicator.addDocumentReplicationListener
+AbstractReplicator.addChangeListener
+Database.addChangeListener
+Database.addDocumentChangeListener
+Database.addDatabaseChangeListener
+Database.addChangeListener
+----
+
+As of version 2.6, Couchbase sometimes uses its own internal executor to run asynchronous client code.
+While this is fine for small tasks, larger tasks -- those that take significant compute time, or that perform I/O -- can block Couchbase processing.
+If this happens your application will fail with a `RejectedExecutionException` and it may be necessary to create a separate executor on which to run the large tasks.
+
+The following examples show how to specify a separate executor in the client code.
+The client code executor can enforce an application policy for delivery ordering and the number of threads.
+
+*Guaranteed Order Delivery*
+
+[source,java]
+----
+/**
+ * This version guarantees in order delivery and is parsimonious with space
+ * The listener does not need to be thread safe (at least as far as this code is concerned).
+ * It will run on only thread (the Executor's thread) and must return from a given call
+ * before the next call commences.  Events may be delivered arbitrarily late, though,
+ * depending on how long it takes the listener to run.
+ */
+public class InOrderExample {
+    private static final ExecutorService IN_ORDER_EXEC = Executors.newSingleThreadExecutor();
+
+    public Replicator runReplicator(Database db1, Database db2, ReplicatorChangeListener listener)
+        throws CouchbaseLiteException {
+        ReplicatorConfiguration config = new ReplicatorConfiguration(db1, new DatabaseEndpoint(db2));
+        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+        config.setContinuous(false);
+
+        Replicator repl = new Replicator(config);
+        ListenerToken token = repl.addChangeListener(IN_ORDER_EXEC, listener::changed);
+
+        repl.start();
+
+        return repl;
+    }
+}
+----
+
+*Maximum Throughput*
+
+[source,]
+----
+/**
+ * This version maximizes throughput.  It will deliver change notifications as quickly
+ * as CPU availability allows. It may deliver change notifications out of order.
+ * Listeners must be thread safe because they may be called from multiple threads.
+ * In fact, they must be re-entrant because a given listener may be running on mutiple threads
+ * simultaneously.  In addition, when notifications swamp the processors, notifications awaiting
+ * a processor will be queued as Threads, (instead of as Runnables) with accompanying memory
+ * and GC impact.
+ */
+public class MaxThroughputExample {
+    private static final ExecutorService MAX_THROUGHPUT_EXEC = Executors.newCachedThreadPool();
+
+    public Replicator runReplicator(Database db1, Database db2, ReplicatorChangeListener listener)
+        throws CouchbaseLiteException {
+        ReplicatorConfiguration config = new ReplicatorConfiguration(db1, new DatabaseEndpoint(db2));
+        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+        config.setContinuous(false);
+
+        Replicator repl = new Replicator(config);
+        ListenerToken token = repl.addChangeListener(MAX_THROUGHPUT_EXEC, listener::changed);
+
+        repl.start();
+
+        return repl;
+    }
+}
+----
+
+*Extreme Configurability*
+
+[source]
+----
+/**
+ * This version demonstrates the extreme configurability of the CouchBase Lite replicator callback system.
+ * It may deliver updates out of order and does require thread-safe and re-entrant listeners
+ * (though it does correctly synchronizes tasks passed to it using a SynchronousQueue).
+ * The thread pool executor shown here is configured for the sweet spot for number of threads per CPU.
+ * In a real system, this single executor might be used by the entire application and be passed to
+ * this module, thus establishing a reasonable app-wide threading policy.
+ * In an emergency (Rejected Execution) it lazily creates a backup executor with an unbounded queue
+ * in front of it.  It, thus, may deliver notifications late, as well as out of order.
+ */
+public class PolicyExample {
+    private static final int CPUS = Runtime.getRuntime().availableProcessors();
+
+    private static ThreadPoolExecutor BACKUP_EXEC;
+
+    private static final RejectedExecutionHandler BACKUP_EXECUTION
+        = new RejectedExecutionHandler() {
+        public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
+            synchronized (this) {
+                if (BACKUP_EXEC == null) { BACKUP_EXEC = createBackupExecutor(); }
+            }
+            BACKUP_EXEC.execute(r);
+        }
+    };
+
+    private static ThreadPoolExecutor createBackupExecutor() {
+        ThreadPoolExecutor exec
+            = new ThreadPoolExecutor(CPUS + 1, 2 * CPUS + 1, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+        exec.allowCoreThreadTimeOut(true);
+        return exec;
+    }
+
+    private static final ThreadPoolExecutor STANDARD_EXEC
+        = new ThreadPoolExecutor(CPUS + 1, 2 * CPUS + 1, 30, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+
+    static { STANDARD_EXEC.setRejectedExecutionHandler(BACKUP_EXECUTION); }
+
+    public Replicator runReplicator(Database db1, Database db2, ReplicatorChangeListener listener)
+        throws CouchbaseLiteException {
+        ReplicatorConfiguration config = new ReplicatorConfiguration(db1, new DatabaseEndpoint(db2));
+        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+        config.setContinuous(false);
+
+        Replicator repl = new Replicator(config);
+        ListenerToken token = repl.addChangeListener(STANDARD_EXEC, listener::changed);
+
+        repl.start();
+
+        return repl;
+    }
+}
+----
+
 === Troubleshooting
 
 As always, when there is a problem with replication, logging is your friend.
@@ -1004,90 +1144,46 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 == Release Notes
 
-=== 2.7.0
+=== 2.6.2
 
-*{nftr}*
+This maintenance release for Android includes important bug fixes.
 
-New at this release is the Java Platform, which enables development of Java apps on any platform that supports the JVM model
+*Bugs*
 
-xref::index.adoc[{more}]
-
-*{ke}*
-
-- https://issues.couchbase.com/browse/CBL-370[*CBL-370*] Broken API, Kotlin: Unable to import ReplicatorType
-- https://issues.couchbase.com/browse/CBL-216[*CBL-216*] Ordering null values inconsistent with N1QL expectations
-- https://issues.couchbase.com/browse/CBL-95[*CBL-95*] Pending conflicts could be resolved by a wrong replicator
-- https://issues.couchbase.com/browse/CBL-49[*CBL-49*] Need a way to distinguish boolean types
-
-*{fixed}*
-
-- https://issues.couchbase.com/browse/CBL-562[*CBL-562*] Can't open existing db read-only; LiteCore test "Database Open Older Encrypted" fails
-- https://issues.couchbase.com/browse/CBL-550[*CBL-550*] SQLite index creation mistakenly sets user_version backwards
-- https://issues.couchbase.com/browse/CBL-536[*CBL-536*] Long delay starting replicator, for big databases
-- https://issues.couchbase.com/browse/CBL-527[*CBL-527*] RefCount crash
-- https://issues.couchbase.com/browse/CBL-525[*CBL-525*] Upgrade from 1.x fails if any docID starts with "_"
-- https://issues.couchbase.com/browse/CBL-478[*CBL-478*] Better handling of RejectedExecutionExceptions
-- https://issues.couchbase.com/browse/CBL-469[*CBL-469*] Infinite loop parsing a URL
-- https://issues.couchbase.com/browse/CBL-466[*CBL-466*] [Android] enable file logging - setConfig failed if called more than once
-- https://issues.couchbase.com/browse/CBL-463[*CBL-463*] Attempt to log strings that are not Modified UTF-8
-- https://issues.couchbase.com/browse/CBL-444[*CBL-444*] Purging documents does not fire events in a QueryChangeListener
-- https://issues.couchbase.com/browse/CBL-436[*CBL-436*] Crash finding keys in and empty dictionary
-- https://issues.couchbase.com/browse/CBL-415[*CBL-415*] strod produces locale-dependent results for encoding Fleece
-- https://issues.couchbase.com/browse/CBL-404[*CBL-404*] Static maps in C4Socket are gigantic memory leaks
-- https://issues.couchbase.com/browse/CBL-402[*CBL-402*] Back-tag recent releases
-- https://issues.couchbase.com/browse/CBL-400[*CBL-400*] Not getting right number of revisions on SGW while using multiple SGWS
-- https://issues.couchbase.com/browse/CBL-392[*CBL-392*] Incorrect data sent for attachment with digest...
-- https://issues.couchbase.com/browse/CBL-390[*CBL-390*] Blob constructor silently truncates stream arguments
-- https://issues.couchbase.com/browse/CBL-355[*CBL-355*] Queries silently ignore Collation Locale
-- https://issues.couchbase.com/browse/CBL-346[*CBL-346*] Creating revisions out-of-orders sequence numbers
-- https://issues.couchbase.com/browse/CBL-343[*CBL-343*] LiteCore tests need to use unique database
-- https://issues.couchbase.com/browse/CBL-324[*CBL-324*] Function.upper() failed to operate non-ASCII characters
-- https://issues.couchbase.com/browse/CBL-272[*CBL-272*] MessageSocketFactory.socket_open() is not accessible by C4Socket
-- https://issues.couchbase.com/browse/CBL-253[*CBL-253*] Automated tests take a 2 minutes, each, to complete
-- https://issues.couchbase.com/browse/CBL-242[*CBL-242*] Inconsistent revision hash length
-- https://issues.couchbase.com/browse/CBL-241[*CBL-241*] Fix the constructor `MutableDocument(Document)`
-- https://issues.couchbase.com/browse/CBL-234[*CBL-234*] Release ResultSet when LiveQuery is stopped may cause unexpected behavior
-- https://issues.couchbase.com/browse/CBL-221[*CBL-221*] "mutex lock failed" during initial pull replication of large # of docs
-- https://issues.couchbase.com/browse/CBL-218[*CBL-218*] FTS indexing an array-valued property is unreliable
-- https://issues.couchbase.com/browse/CBL-207[*CBL-207*] Replicator change event has idle with timeout error
-- https://issues.couchbase.com/browse/CBL-205[*CBL-205*] Crash when stopping replication during sync
-- https://issues.couchbase.com/browse/CBL-175[*CBL-175*] Can't query the records has the % character with LIKE operator.
-- https://issues.couchbase.com/browse/CBL-174[*CBL-174*] Local reference table overflow
-- https://issues.couchbase.com/browse/CBL-172[*CBL-172*] Live Query initial delay
-- https://issues.couchbase.com/browse/CBL-171[*CBL-171*] CBL replication never finishes for replication filtering when doc count is 1000
-- https://issues.couchbase.com/browse/CBL-144[*CBL-144*] Incorrect log level passed to custom logger
-- https://issues.couchbase.com/browse/CBL-143[*CBL-143*] Default logging flooded with C4Socket warning messages
-- https://issues.couchbase.com/browse/CBL-126[*CBL-126*] Litecore does not retry subChanges request that fails with temporary 503 error
-- https://issues.couchbase.com/browse/CBL-52[*CBL-52*] “LIKE”, "CONTAINS", "REGEX_LIKE" operators ignore collations
-- https://issues.couchbase.com/browse/CBL-34[*CBL-34*] Replicator crash
-- https://issues.couchbase.com/browse/CBL-13[*CBL-13*] Native crash
-
+* https://issues.couchbase.com/browse/CBL-468[*CBL-468*] Null dereference during pull-only replication.
+* https://issues.couchbase.com/browse/CBL-467[*CBL-467*] Replication listener sometimes crashed on NPE.
+* https://issues.couchbase.com/browse/CBL-436[*CBL-436*] An attempt to get the keys from an empty dictionary caused a crash.
+* https://issues.couchbase.com/browse/CBL-324[*CBL-324*] Function.upper() failed to operate non-ASCII characters.
+* https://issues.couchbase.com/browse/CBL-172[*CBL-172*] Initial delay observed when starting a liveQuery has been fixed.
+* https://issues.couchbase.com/browse/CBL-34[*CBL-34*] Fixed a replicator crash issue.
 
 
 === 2.6.0
 
-*{nftr}*
+*New Features*
 
 * Custom Conflict Resolution
 +
-xref:index.adoc[{more}]
+xref:index.adoc[Read more]
 
-*{enh}*
+*Enhancements*
 
 * Expose the Document Revision ID: the `revisionID` property on a `Document` instance now returns the current revision identifier.
+* The handling of replicator notifications has been enhanced to use a single executor.
+Apps can specify custom executors in order to override the default behavior (see <<replicator-notifications-on-a-custom-executor>>).
 
 *Android API Support*
 
 Support for Android API 19 and 21 is being deprecated in this release and will be removed in a future release.
 
-*{api}*
+*API Changes*
 
 * The constructor `DatabaseConfiguration(Context)` no longer exists.  It has been replaced by `DatabaseConfiguration()`.
 * The static method `CouchbaseLite.init(Context)` must be called before *any* other method in the Couchbase Lite API.
 Applications upgrading from earlier versions to 2.6 must invoke this method.
-{more} in the <<initializer>> section.
+Read more in the <<initializer>> section.
 
-*{fixed}*
+*Bugs*
 
 * https://issues.couchbase.com/browse/CBL-48[*CBL-48*] Copy method of Database class is not able to copy encrypted db.
 * https://issues.couchbase.com/browse/CBL-86[*CBL-86*] Race condition on SharedKeys causes silent error.
@@ -1097,7 +1193,7 @@ Applications upgrading from earlier versions to 2.6 must invoke this method.
 * https://issues.couchbase.com/browse/CBL-130[*CBL-130*] Crash: Possible memory corruption.
 * https://issues.couchbase.com/browse/CBL-165[*CBL-165*] Replication failed due to unauthorized(401) error.
 
-*{ke}*
+*Known Issues*
 
 - https://issues.couchbase.com/browse/CBL-324[*CBL-324*] Function.upper() failed to operate non-ASCII characters
 - https://issues.couchbase.com/browse/CBL-95[*CBL-95*] Pending conflicts could be resolved by a wrong replicator
@@ -1105,11 +1201,11 @@ Applications upgrading from earlier versions to 2.6 must invoke this method.
 
 === 2.5.3
 
-*{enh}*
+*Enhancements*
 
 * https://issues.couchbase.com/browse/CBL-142[*CBL-142*] Added native support for x86_64.
 
-{fixed}
+*Bugs*
 
 * https://issues.couchbase.com/browse/CBL-176[*CBL-176*] Reduce replication timeouts.
 * https://issues.couchbase.com/browse/CBL-110[*CBL-110*] Delta sync on top of a deletion caused data discrepancy between Couchbase Sync Gateway and Couchbase Lite.
@@ -1117,7 +1213,7 @@ Applications upgrading from earlier versions to 2.6 must invoke this method.
 
 === 2.5.2
 
-{fixed}
+*Bugs*
 
 * https://github.com/couchbase/couchbase-lite-core/issues/776[*#776*] `c4db_endTransaction` sometimes results in invalid memory access.
 * https://github.com/couchbase/couchbase-lite-core/issues/787[*#787*] Fleece error when querying array property.
@@ -1126,16 +1222,16 @@ Applications upgrading from earlier versions to 2.6 must invoke this method.
 
 === 2.5.0
 
-*{nftr}*
+*New Features*
 
 * Delta Sync
 * Replication Filters
 * Continuous Logging
 * Predictive Query
 +
-xref:index.adoc[{more}]
+xref:index.adoc[Read more]
 
-*{enh}*
+*Enhancements*
 
 * {url-issues-java}/1779[*#1779*]
 Replication Filters
@@ -1144,7 +1240,7 @@ Remove log rotation change batching
 * {url-issues-java}/1845[*#1845*]
 Annotate @NonNull to public API
 
-{fixed}
+*Bugs*
 
 * {url-issues-java}/1523[*#1523*]
 2.0: ``isOldAttachment'' check is incorrect
@@ -1167,7 +1263,7 @@ BlobInputStream does not return -1 when finished reading
 * {url-issues-java}/1904[*#1904*]
 Signal 11 SIGSEGV when initiating Dictionary Iterator
 
-*{ke}*
+*Known Issues*
 
 * {url-issues-java}/1773[*#1773*]
 Client Proxy Support
@@ -1177,7 +1273,7 @@ close
 
 === 2.1.2
 
-.{fixed}
+.Bugs
 * {url-issues-java}/1760[*#1760*] Warning about CBLWebSocket failed to shutdown the web socket
 * {url-issues-java}/1761[*#1761*] Could not find class `android.system.ErrnoException' error
 * {url-issues-java}/1762[*#1762*] Potential memory leak in replicator
@@ -1186,12 +1282,12 @@ close
 
 === 2.1
 
-.{enh}
+.Enhancements
 * {url-issues-java}/1678[*#1678*] Support Peer-to-Peer replication through MessageEndpoint API (EE Feature)
 * {url-issues-java}/1683[*#1683*] Support Database Encryption (EE feature)
 * {url-issues-java}/1696[*#1696*] Support replicator reset checkpoint
 
-.{fixed}
+.Bugs
 * {url-issues-java}/1510[*#1510*] 2.0: Crash with DB21 - in c4doc_update()
 * {url-issues-java}/1665[*#1665*] Exception thrown openDatabase (Proguard strips methods that CBL uses)
 * {url-issues-java}/1676[*#1676*] 2.0: Replicator Error misses the error message.
@@ -1200,7 +1296,7 @@ close
 * {url-issues-java}/1727[*#1727*] Dead lock occurs - DB 2.0.0
 * {url-issues-java}/1742[*#1742*] Couchbase mobile 2.0.2 Emoji Support
 
-.{ke}
+.Known Issues
 * {url-issues-java}/1743[*#1743*] HTTP Proxy Support
 
 === 2.0.2
@@ -1209,11 +1305,11 @@ close
 
 === 2.0.0
 
-.{enh}
+.Enhancements
 * {url-issues-java}/1264[*#1264*] 2.0 migration from Forest back to SQlite
 * {url-issues-java}/1577[*#1577*] 2.1: Eliminate CouchbaseLiteRuntimeExecption, convert it to CouchbaseLiteExecption
 
-.{fixed}
+.Bugs
 * {url-issues-java}/1217[*#1217*] 2.0: Todo Sample bug Fix and implement remaining features
 * {url-issues-java}/1234[*#1234*] 2.0: Replicator continuous pull status completed and total number out of sync
 * {url-issues-java}/1247[*#1247*] 2.0: Push Replication Causing Errors
@@ -1234,7 +1330,7 @@ close
 * {url-issues-java}/1652[*#1652*] App crash with deleteDocument with concurrencyControl
 * {url-issues-java}/1693[*#1693*] DB023 - Crazy amount of dbListenerTokens - makes the DB run slow
 
-.{ke}
+.Known Issues
 * {url-issues-java}/1685[*#1685*] Replicator in Android get stuck at busy state when it goes back to online from offline (Genymotion)
 * {url-issues-java}/1702[*#1702*] ValueIndexItem.expression(Expression) is implemented with CBL Android 2.0.0 release.
 This API will be available with 2.1.0 release
