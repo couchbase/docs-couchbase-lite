@@ -1,167 +1,690 @@
-= Java
-:idprefix:
-:idseparator: -
-:snippet: {examplesdir}/java/src/com/couchbase/code_snippets/Examples.java
-//:ziputils: {examplesdir}/java/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
-:source-language: java
-:version: 2.7.0
-:blank-field: ____
-:url-issues-java: https://github.com/couchbase/couchbase-lite-java/issues
-:url-api-references: http://docs.couchbase.com/mobile/2.7.0/couchbase-lite-java
+= Couchbase Lite Java Framework
+include::_partials/mobAttrCBL.adoc[]
+include::_attributesLocal.adoc[]
+:JP: Java
+:Android: Java (android)
+:cblJP: {product} for {JP}
+:packageNmCE: couchbase-lite-java-platform-{version-full}
+:packageNmEE: couchbase-lite-java-platform-ee-{version-full}
+:url-api-references: http://docs.couchbase.com/mobile/{version}/couchbase-lite-java
+:hdIndent:
+:sgGetStartedDoc: sync-gateway::getting-started.adoc
+:sgGetStartedDoc-installation: {sgGetStartedDoc}#installation
+:sgGetStartedDoc-createRBACuser: {sgGetStartedDoc}#creating-an-rbac-user
+:sgGetStartedDoc-createBucket: {sgGetStartedDoc}#creating-a-bucket
 
-WARNING: Currently, Couchbase Lite 2.0 and above is available for Android only.
-The SDK cannot be used in Java applications.
+== GET STARTED
+{cblJP} enables development and deployment of {cbl} applications to a JVM environment.
+You can deploy to a desktop or web server (for example, {gpWebServerEnv}), including embedded {gpWebServerEnv} deployments.
 
-== Getting Started
+Use this page to familiarize yourself with the product, its components, deployment, and use.
 
-=== Android Studio
+You will learn:
 
-Create or open an existing Android Studio project and install Couchbase Lite using the following method.
+* Where to get the necessary binaries -- <<Where to Get Binaries>>
+* What the binaries contain -- <<Package Contents>>
+* How to deploy {cblJP} -- <<Deploy the Package>>
+* How to use {cblJP} -- <<YOUR FIRST PROJECT>>
 
-==== Couchbase Lite Community Edition
+NOTE: We use _{gpIDE}_, _{gpBuildTool}_ and _{gpWebServerEnv}_ as tools to build and run the examples presented in this content.
+You are free to use the tools of your choice.
 
-* Add the following in the `dependencies` section of the application's *build.gradle* (the one in the *app* folder).
+== Where to Get Binaries
+Binaries are available for both Community (CE) and Enterprise (EE) editions in `.zip` format here: link:{url-cb-downloads-mobile}[{nmCBdwnlds}] page.
+
+* Community Edition -- {packageNmCE}
+* Enterprise Edition -- {packageNmEE}
+
+== Package Contents
+
+The _.zip_ includes jars for the appropriate edition of the {cblJP} and any relevant dependencies, plus a set of Linux _shared libraries_.
+
+NOTE: This means you do not need to download and-or build compatible versions of system libraries for the Linux platform of choice.
+
+So you when you unpack, expect to see:
+
+* A `lib` folder containing all necessary JAR files:
+** {packageNmCE} or for EE {packageNmEE}
+** json-20180813.jar
+** okhttp-3.9.1.jar
+** okio-1.13.0.jar
+
+* A `support` folder containing the following libraries:
+** libz
+** libc++
+** libicu
+
 +
-[source,groovy,subs=attributes+]
-----
-dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-android:{version}'
-}
-----
-
-==== Couchbase Lite Enterprise Edition
-
-* In the top-level *build.gradle* file, add the following Couchbase Maven repository in the `allprojects` section.
+These shared libraries must be linked-to when building and-or running in a Linux environment.
 +
-[source,groovy]
+
+WARNING: Use only when deploying to a Linux environment.
+See <<Additional Steps for Linux Only>> for how to use these.
+
+== Deploy the Package
+
+. Download the _zip_ file
+. Unzip the file.
++
+Choose a location accessible to -- and usable by -- your chosen *build* environment.
+We'll refer to this as the `<pathToCbl>`.
+
+[bmkLinuxSharedLibs]
+=== Additional Steps for Linux Only
+
+. Copy the _shared libraries_ (`<pathToCbl>/support`) to a location accessible to -- and usable by -- your build and runtime environments.
+. Add the _shared libraries_ to your library path using either of these methods;
+** Set the `LD_LIBRARY_PATH` environment variable using the following commands.
++
+[source, bashrc]
+
 ----
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven {
-            url "https://mobile.maven.couchbase.com/maven2/dev/"
-        }
+export LD_LIBRARY_PATH=<pathToCbl>/couchbase-lite-java-ee-2.7.0-
+63/support/linux/x86_64/libicu:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=<pathToCbl>/couchbase-lite-java-ee-2.7.0- 63/support/linux/x86_64/libz:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=<pathToCbl>/couchbase-lite-java-ee-2.7.0- 63/support/linux/x86_64/libc++:$LD_LIBRARY_PATH
+----
+
++
+TIP: Save typing-time and add the above commands to your `.bashrc` file
+
+** Alternatively, declare the libraries in the `java.library.path` parameter of the `java` command
++
+[source,bash]
+
+----
+java -Djava.library.path=<pathToCbl>/couchbase-lite-java-ee-2.7.0-63/support/linux/x86_64/libicu:
+<pathToCbl>/couchbase-lite-java-ee-2.7.0-63/support/linux/x86_64/libz:
+<pathToCbl>/couchbase-lite-java-ee-2.7.0-63/support/linux/x86_64/libc++:
+----
+
+== Set-up {cblJP}
+
+This section explains how to configure your build environment to use {cblJP}.
+It involves adding the {cbl} jars library (and its contents) as dependencies in the build tool and-or IDE of your choice.
+
+.Set-up Scenarios
+[tabs]
+====
+
+Console App::
++
+--
+
+We'll cover how to set-up {gpIDE} and {gpBuildTool} to build {cbl} apps; see <<bmkGradleSetupConsoleApp>>
+
+
+*Using an IDE*
+
+. Within {gpIDE}, select *File > New > Project...* and click *Next*.
++
+image::java-cli-app.png[,600]
++
+
+. Select the *Command Line App* template
++
+TIP: You may need to select the *Create project from template* option first
+
++
+image::java-new-proj.png[,600]
++
+
+. Provide details for the new project.
+
+** Project name = `GettingStarted`
+** Project location = as required
+** Base package name = `com.couchbase`
++
+image::java-new-proj-details.png[,600]
+
+. Open the *Project Structure* window and select *Modules*
+. Add required dependencies:
++
+NOTE: The jars within the selected libraries are added as dependencies.
+These will appear in the _External Libraries_ in {gpIDE}'s Project tree view.
+
+.. Within the _Modules_ page, select the *Dependencies* tab
+.. Select *+ > JARs or directories...*.
++
+TIP: The *Add (+)* option is at the bottom of the main panel
+
++
+
+image::java-add-jars.png[,600]
++
+.. Navigate to and select the directory containing the {cbl} jars; that is `<pathToCbl>/lib`
+.. *Open* to select the library
++
+
+.. *Apply* to continue
+. Tell the IDE to create a JAR file
++
+.. Within the _Project Structure_ panel, select *Artifacts*
+.. In _Artifacts_, select *+ > JAR > From modules with dependencies*
+.. Select the *Main* class, from the _Create Jars from Modules_ panel
+.. *OK* to continue
+.. *OK* to close the panel
+. Still within the _Artifacts_ panel, add the compiled output into the jar
+.. Select *+ > Module Output*
+.. Select *GettingStarted*
+.. *OK* to continue
+. [Optionally] Select *Include in project build* to create the jar on each build
+. *Apply* and *OK* to save your changes and close the _Project Structure_ panel
+. Save and *Close* the project
+
++
+anchor:bmkGradleSetupConsoleApp[]
+
+*Alternatively, to do the same using Gradle*
+
+. Create a Gradle project folder for {cbl} (`<path-to-couchbase-gradle-project>`)
+. Initialize the project folder for {gpBuildTool}
++
+----
+gradle init
+----
+.. Select *2* (Application) as the project type
+.. Select *3* (Java) as the language
+.. Accept the defaults for remaining options
++
+Gradle builds its configuration files and prepares the project folder for use.
+. Include the {cbl} jars as dependencies in the `build.gradle file`
++
+[source, bash]
+
+----
+implementation fileTree(include: ['*.jar'], dir: <pathToCbl>/lib>
+----
+--
+
+Web Server (Local)::
++
+--
+WARNING: {gpIDE} _Ultimate_ is needed to build web apps.
+
+*Prerequisites*
+
+* Ensure your build environment matches the runtime {gpWebServerEnv} environment. Specifically, that the Java and  {gpWebServerEnv} versions are the same.
+* If your {gpWebServerEnv} server runs Linux, follow the steps in <<bmkLinuxSharedLibs>> to make the shared libraries available.
+* Ensure the {cbl} jars you downloaded (`<pathToCbl>/lib`) are either:
+** On the executable path within {gpWebServerEnv}, or,
+** Packed into the `.war` as both compile and runtime dependencies
+
+*Steps*
+
+Within {gpIDE}:
+
+. Create a new project
+.. Select *File > New > Project...* and click *Next*.
++
+image::java-cli-app.png[,600]
++
+.. Select *Java* as the language
+.. Select appropriate *Project SDK* (Java 8 and above)
+.. Select *Web App* as framework
++
+TIP: You may need to select the *Create project from template* option first
+
+.. Select *Next* to continue
++
+image::java-new-proj.png[,600]
+.. Enter _Project name_ *gettingstarted*
+.. Set other paths as required
+.. *Finish* to continue
++
+image::java-new-proj-details.png[,600]
++
+// . Create a new package `com.couchbase.gettingstarted`
+. Create Dependencies
+.. From the main menu, select *File > Project Structure*
+.. Within the _Project Structure_ panel, select *Modules* project settings
++
+.. Select the *Dependencies* tab
+.. Select *(Add) + > JARs or directories...*+
++
+TIP: The *Add(+)* option is at the bottom of the main panel
+
++
+image::java-add-jars.png[,600]
++
+.. Select these libaries:
++
+
+TIP: The content (jars) of these libraries become dependencies. They are shown in {gpIDE}'s _External Libraries_  view.
+
++
+*** `<pathToCbl>/lib` -- which contains {cblJP}:
+*** `<pathToCbl>/lib_javax` -- the required `javax` jars
+.. *Apply* to continue
+. Direct the IDE to create a _WAR_ file as the output artifact
++
+.. Still in _Project Structure_, select *Artifacts* from _Project Settings_
+.. Select *Add *(+) > Web Application: Exploded > From modules with dependencies*
++
+TIP: Use the 'Web Application:exploded' option during build.
+It's easy to check the _war_ contents.
+Change the _Type_ to _Web Application: Archive_ when you know the `war` includes the correct items.
+
+.. Within the _Select Modules_ panel, select *gettingstarted*
+.. *OK* to continue
+.. *OK* to close the _Select Modules_ panel
+//. Include the compiled output and the sole web page in the `war`:
+. Include the compiled output in the `war`:
++
+Within the _Artifact's Output Layout_ tab:
+
+.. Select *+ > Module Output > GettingStarted*
+.. *OK* to continue
+//.. Select *+ > File*
+//.. Navigate to the *web* directory and select the file *`showDbItems.jsp`*
+//.. *OK* to continue
+. [Optionally] Select *Include in project build* to create the jar on each build
++
+TIP: This means there is no need to call _Build Artifacts_ after each build
+
++
+TIP: You can (optionally) configure the IDE to launch {gpWebServerEnv}
+
+. *Apply* and *OK*
++
+This saves your changes and closes the _Project Structure_ panel
+
+--
+Web Server (Docker)::
++
+--
+*Steps*
+
+. Include the <pathToCbl>/lib directory in the build of your docker image and on the classpath of any deployed apps.
+This avoids the need to pack them into the war of each webapp).
+. Include the shared libraries in the build of your (Linux) Docker image see <<bmkLinuxSharedLibs>>
+. Ensure you set `$CATALINA_BASE` and `$CATALINA_HOME` appropriately
+. Ensure the appropriate Java version is installed and that the `$JRE_HOME and $JDK_HOME` paths are set to point to it
+. Create a directory for your database and map it to the Docker container volume to assure persistence
+
+--
+Web Server (Embed)::
++
+--
+WARNING: WIP - needs revision
+
+Deploying your app embedded within a {gpWebServerEnv} server ensures you maximize your control over the runtime environment.
+
+The simplest way to do so is to deploy it in an embedded tomcat harness.
+You can build a simple harness as follows:
+
+*Prerequisites*
+
+You will need to get the embedded tomcat `tar.gz` from link::[https://tomcat.apache.org/download-90.cgi]
+
+*Steps*
+
+. Create a project for the harness
+. Add a `libs` directory to the project containing the following library containers:
+** libMyJar - for jar dependencies needed for the harness
+** libMyWar -- for the war and any associated dependencies
+. Unpack the embedded tomcat `tar.gz` into libMyJar
+. Paste the embed harness code below (or similar) into the `tcWebAppHarness.java` file:
++
+[source, java]
+
+----
+include::{snippet-java-jvm}[tags=tcWebAppHarness,indent=0]
+----
++
+. Configure any dependencies for the harness. That is:
+** The embedded tomcat jars and javax servlet already copied into libMyJar
+** Any `.war` it is required to run
+. Build the harness app with {gpIDE} or {gpBuildTool}
++
+At this stage running the jar will launch the embedded {gpWebServerEnv}, but no web app has been added yet.
+
+--
+
+====
+
+NOTE: Your project build environments are now ready to build {cblJP} apps.
+To continue building the starter app, see <<YOUR FIRST PROJECT>>.
+
+// EndTab Embedded Web Server
+
+
+// Test your deployment
+
+// If you have {gpBuildTool} installed you can quickly validate your build environment using our starter app {nmMobStarterApp}. The app demonstrates {cbl}'s CRUD and sync functionality.
+
+// To actually run the app requires {sg} and {svr} but, you can validate your build environment simply by:
+
+// . Downloading the app, (see: <<Download Links>> section)
+// . Navigating to the app folder and running a {gpBuildTool} build in terminal:
+// +
+// ----
+// cd <path-to-sample-app>
+// ./gradlew jar
+// ----
+
+// Now you know your build environment works you can begin building your own apps.
+
+// TIP: See <<YOUR FIRST PROJECT>> for an example of how to do this.
+
+
+== YOUR FIRST PROJECT
+
+== Build your app
+
+NOTE: See <<Prerequisites>> above if you have not already done so.
+
+This section explains how to use the {cblJP} to build your first application.
+To do this we will use the source code of the {nmMobStarterApp} starter app.
+
+If you haven't already done so, download link:{url-cb-mobStarterApp}[{nmMobStarterApp}].
+
+The {nmMobStarterApp} code demonstrates how to use {cblJP} to run:
+
+* basic CRUD operations,
+* a simple Query
+* bi-directional replications with Sync Gateway.
+
+NOTE: By default this app stores its database in the `./` directory. For {gpWebServerEnv} that is `{gpWebServerEnv}/webapps/cblDbDir`
+
+
+.First app build
+[tabs]
+====
+Console App::
++
+--
+
+. Open *Main.java* in {gpIDE} and paste the following code into `Main`
++
+[source,java]
+----
+include::{snippet-java-jvm}[tags=getting-started,indent=0]
+----
+<1> The app will start a replicator pointing to `ws://localhost:4984/db`.
+<2> This is the only API that differs from the {android} version. It accepts no parameters.
+<3> You can optionally AES-256 encrypt the database by providing a key
+<4> This is needed for the websocket connections to gracefully close
++
+. Within the IDE, select *Build > Build Project* to compile the code and assemble the output .jar file.
++
+NOTE: If you did not set *Include in project build* you will need to use *Build > Build Artifacts > GettingStarted* to create the jar.
+
++
+The app is now ready to run.
+But first you need prepare the associated {cbl} components - see <<Run Your App>>
+
+--
+Web App::
++
+--
+Within {gpIDE}:
+
+. Open the _gettingstarted_ project you created in <<Set-up Couchbase Lite for Java>>
+
+. Create a new package  in the _src_ directory
++
+Use *File > New > Package* and name it `com.couchbase.gettingstarted`
+. Paste the servlet code (below) into the package, using:
++
+*<right-click>com.couchbase.gettingstarted, Paste*
++
+[source, java]
+
+----
+include::{snippet-java-jvm}[tags=GettingStartedWebApp,indent=0]
+----
+
+. Create a new JSP file in the `web` directory
+.. Select `web`
+.. *File > New > JSP/JSPX*
+.. Enter name as `showDbItems`
+.. Select *JSP* and *<Enter>* to continue
+.. Paste the following content into the file:
++
+[source, jsp]
+
+----
+<html>
+<head>
+    <title>Couchbase Lite (Java Jvm) :: Getting Started App</title>
+</head>
+<body>
+<h1>Couchbase Lite (Java Jvm) :: Getting Started App</h1>
+<h2>List all current DB rows</h2>
+<hr>
+<p>NumRows = ${myRowCount}</p>
+<hr>
+${myResults}
+<hr>
+</body>
+</html>
+----
+. Build the app and add artifacts to the war.
++
+Your app is now ready to deploy and run.
+
+--
+Embedded Web App::
++
+--
+WARNING: WIP - needs revision
+
+. Build your web app as described for the Web App option
+. Within the project folder of tcWebAppHarness:
+
+.. Copy the `.war` into the `libs/libMyWar` library
+.. Rebuild the tcWebAppHarness apps
++
+This will include your {nmMobStarterApp} app as a war file within the runnable jar.
+--
+
+NOTE: Your {nmMobStarterApp} app is now built and (almost) ready to go; see <<Run Your App>>
+====
+
+
+== Run Your App
+
+=== Prerequisites
+
+Before you can run your {nmMobStarterApp} app you will need to have runnable instances of {svr} and {sg}. if you have then go straight to <<Running Apps>>
+
+NOTE: On Linux: You must have loaded the shared libraries as described in <<Linux platforms>>
+
+==== Install Couchbase
+
+If you have not already done so:
+
+. Install {svr} and {sg} following steps outlined in xref:{sgGetStartedDoc-installation}[Installing Sync Gateway ->]
+. If you haven't already done so, download the starter app link:{url-cb-mobStarterApp}[{nmMobStarterApp}].
+
+==== Configure {svr}
+
+[{orderedList}]
+. Within {svr}, create a bucket named {nmSampleAppDb}
++
+Follow the instructions xref:{sgGetStartedDoc-createBucket}[here]
+
+[{steps}]
+. Create a RBAC user for {sg}
++
+See instructions xref:{sgGetStartedDoc-createRBACuser}[here]
+[{steps2}]
+.. Set username to {nmSampleAppUser}
+.. Set password to {nmSampleAppPassword}
+
+==== Configure {sg}
+
+Configure Sync Gateway using the following sample sync-gateway-config file.
+
+[source, json]
+
+----
+//include::_partials/gettingstarted-syncgateway.adoc[]
+{
+  "log": ["*"],
+  "logging": {
+    "log_file_path": "/var/tmp/sglogs",
+    "console": {
+      "log_level": "debug",
+      "log_keys": ["*"]
+    },
+    "error": {
+      "enabled": true,
+      "rotation": {
+        "max_size": 20,
+        "max_age": 180
+      }
+    },
+    "warn": {
+      "enabled": true,
+      "rotation": {
+        "max_size": 20,
+        "max_age": 90
+      }
+    },
+    "info": {
+      "enabled": true
+    },
+    "debug": {
+      "enabled": true
     }
+  },
+  "databases": {
+    "db": {
+      "server": "http://localhost:8091",
+      "bucket": "db", // <1>
+      "username": "{nmSampleAppUser}", // <2>
+      "password": "{nmSampleAppPassword}", // <3>
+      "enable_shared_bucket_access": true,
+      "import_docs": "continuous",
+      "num_index_replicas": 0,
+       "import_filter": `
+        function(doc) {
+
+          return true;
+        }`,
+      "users":{
+          "GUEST":{"disabled":true},
+          "admin": {"password": "password", "admin_channels": ["*"]},
+          "demo": {"password": "password", "admin_channels": ["*"]} // <4>
+      }
+    }
+  }
 }
+
 ----
 
-* Next, add the following in the `dependencies` section of the application's *build.gradle* (the one in the *app* folder).
+<1> This is the name of the bucket you configured on server
+<2> This is the username of the RBAC user
+<3> This is password of the RBAC user
+<4> This is a Sync Gateway user. Replication will happen within the context of the user.
+
+The starter app will:
+
+* Create a database
+* Add content to the DB
+* Run a simple query counting the DB rows
+* Start bi-directional replication using {sg} to {svr}.
+
+NOTE: The app creates its `{nmSampleAppDb} database` directory in the same directory you run the application from; for web apps this is `$CATALINA_BASE` by default.
+
+
+=== Running Apps
+
+// Start Tab Block
+.Running first app
+[tabs]
+====
+
+First, ensure you have started your {svr} instance.
+
+Console App::
 +
-[source,groovy,subs=attributes+]
+--
+
+. Launch a command line terminal
+. Navigate to the directory containing the jar created in <<First app build>>
+. Launch the app using either of:
+** Gradle
++
+[source,java]
 ----
-dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-android-ee:{version}'
-}
+./gradlew run
 ----
+** Java
++
+[source,bashrc]
 
-=== Starter code
-
-Open *MainActivity.java* in Android Studio and copy the following code in the `onCreate` method.
-This snippet demonstrates how to run basic CRUD operations, a simple Query and running bi-directional replications with Sync Gateway.
-
-[source]
 ----
-include::{snippet}[tag=getting-started,indent=0]
-----
-
-Build and run.
-You should see the document ID and property printed to the console.
-The document was successfully persisted to the database.
-
-xref:sync-gateway::getting-started.adoc#installation[Installing Sync Gateway ->]
-
-== Supported Versions
-
-|===
-|Platform |Runtime architectures |Minimum API Level
-
-|Android
-|armeabi-v7a
-|22
-
-|Android
-|arm64-v8a
-|22
-
-|Android
-|x86
-|22
-
-|Android
-|x86_64
-|22
-|===
-
-== API References
-
-{url-api-references}[Java SDK API References]
-
-== Upgrading
-
-=== Database Upgrade
-
-Databases created using Couchbase Lite 1.2 or later can still be used with Couchbase Lite 2.x; but will be automatically updated to the  current 2.x version.
-This feature is only available for the default storage type (i.e., not a ForestDB database).
-Additionally, the automatic migration feature does not support encrypted databases, so if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the xref:1.4@{source-language}.adoc#database-encryption[1.x Database Guide]).
-
-==== Handling of Existing Conflicts
-
-If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
-This functionality is related to the way conflicts are now being handled in Couchbase Lite (see xref:{source-language}.adoc#handling-conflicts[Handling Conflicts]).
-Optionally, existing conflicts in the 1.x database can be resolved with the xref:1.4@{source-language}.adoc#resolving-conflicts[1.x API] prior to the database being upgraded to 2.x.
-
-==== Handling of Existing Attachments
-
-
-Attachments persisted in a 1.x database are copied to the new database.
-NOTE: The relevant Couchbase Lite API is now called the `Blob` API not the `Attachments` API.
-
-The functionally is identical but the internal schema for attachments has changed.
-Blobs are stored anywhere in the document, just like other value types, whereas in 1.x they were stored under the `_attachments` field.
-The automatic upgrade functionality *does not* update the internal schema for attachments, so they remain accessible under the `_attachments` field.
-The following example shows how to retrieve an attachment that was created in a 1.x database with a 2.x API.
-
-[source]
-----
-include::{snippet}[tag=1x-attachment,indent=0]
+java -jar gettingstarted.jar
 ----
 
-=== Replication Compatibility
+You will see the document ID and property printed to the console together with a query result showing the number of rows in the database.
 
-The current replication protocol is not backwards compatible with the 1.x replication protocol.
-Therefore, to use replication with Couchbase Lite 2.x, the target Sync Gateway instance must also be upgraded to 2.x.
+This shows the document was successfully persisted to the database.
+--
 
-Sync Gateway 2.x will continue to accept clients that connect through the 1.x protocol.
-It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.x replication protocol when a Couchbase Lite 2.x client connects through ws://localhost:4984/db.
-This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
+Web App::
++
+--
+. Ensure {gpWebServerEnv} is running
+. Use 'localhost:8080/manager' to navigate to and deploy your `.war` file
+. Point your browser to: `localhost:8080/gettingstarted/GettingStarted`
+
+The `showDbItems.jsp` page displays the results from the app.
+
+These are also added to the _catalina.out_ log file.
+--
+Embedded Web App::
++
+--
+. Launch the `.jar` file you created
++
+The {nmMobStarterApp} web app page is displayed.
+. Select *Click Here* to initiate the Getting Started test
++
+Results from the app are displayed on screen.
+They are also added to the embedded _catalina.out_ log file.
+--
+
+====
+// END TABS block
+
+== API REFERENCES
+
+This section introduces the {cblJP} API methods available to you.
+
+With the exception of the <<Initializer>>, all other APIs are identical to the {android} version of {cbl}.
+
+Refer to the link:https://docs.couchbase.com/couchbase-lite/{version}/java.html#database[java code snippets] provided in the {android} section while implementing the Java app.
 
 == Initializer
 
 Your first step in using the API must be to call its initializer.
 An exception is raised if any other API method is invoked before the  initializer.
 
+The `init()` API accepts no parameters.
+
 [source]
 ----
-include::{snippet}[tag=sdk-initializer,indent=0]
+include::{snippet-java-jvm}[tags=sdk-initializer,indent=0]
 ----
 
-== Database
-
-=== New Database
+== New Database
 
 As the top-level entity in the API, new databases can be created using the `Database` class by passing in a name, configuration, or both.
 The following example creates a database using the `Database(String name, DatabaseConfiguration config)` method.
 
 [source]
 ----
-include::{snippet}[tag=new-database,indent=0]
+include::{snippet}[tags=new-database,indent=0]
 ----
 
 Just as before, the database will be created in a default location.
 Alternatively, the `Database(string name, DatabaseConfiguration config)` initializer can be used to provide specific options in the {url-api-references}/com/couchbase/lite/DatabaseConfiguration.html[`DatabaseConfiguration`] object such as the database directory.
 
-=== Database Encryption
+== Database Encryption
 
 .Enterprise Edition only
 IMPORTANT: Database encryption is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
@@ -170,37 +693,31 @@ The Couchbase Lite 2.1 release includes the ability to encrypt Couchbase Lite da
 This allows mobile applications to secure the data at rest, when it is being stored on the device.
 The algorithm used to encrypt the database is 256-bit AES.
 
-include::{partialsdir}/database-encryption.adoc[]
+include::{partialsdir}/database-encryption.adoc[leveloffset=-2]
 
-=== Finding a Database File
+== Finding a Database File
 
-When the application is running on the Android emulator, you can locate the application's data folder and access the database file by using the *adb* CLI tools.
-For example, to list the different databases on the emulator, you can run the following commands.
+NEED JVM VERSION - prototype below --
 
-[source,bash]
+Typically your database is stored within your apps project folder, `resources`for example. By default it is created in a directory with the root level called, for example '<applicationName>.cblite2'.
+
+A database's directory is governed by the API _DatabaseConfiguration_ class as show in {url-api-references}/com/couchbase/lite/DatabaseConfiguration.html.
+
+Use Getter/Setter to read/write this as needed.
+
+[source, java]
 ----
-$ adb shell
-$ su
-$ cd /data/data/{APPLICATION_ID}/files
-$ ls
-----
-
-The *adb pull* command can be used to pull a specific database to your host machine.
-
-[source,bash]
-----
-$ adb root
-$ adb pull /data/data/{APPLICATION_ID}/files/{DATABASE_NAME}.cblite2 .
+DatabaseConfiguration thisConfig = new DatabaseConfiguration(); thisConfig.setDirectory("yourDBpath")
 ----
 
-=== CLI tool
+== CLI tool
 
 `cblite` is a command-line tool for inspecting and querying Couchbase Lite 2.x databases.
 
 You can download and build it from the couchbaselabs https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md[GitHub repository].
 Note that the `cblite` tool is not supported by the https://www.couchbase.com/support-policy[Couchbase Support Policy].
 
-=== Logging [DEPRECATED]
+== Logging [DEPRECATED]
 
 CAUTION: The following API is deprecated and superseded by the <<logging,Logging API>> introduced in Couchbase Lite 2.5.
 
@@ -209,14 +726,14 @@ The following example enables `verbose` logging for the `replicator` and `query`
 
 [source]
 ----
-include::{snippet}[tag=logging,indent=0]
+include::{snippet}[tags=logging,indent=0,leveloffset=-1 ]
 ----
 
-=== Logging
+== Logging
 
-include::{partialsdir}/logging.adoc[]
+include::{partialsdir}/logging.adoc[leveloffset=-1 ]
 
-=== Loading a pre-built database
+== Loading a pre-built database
 
 If your app needs to sync a lot of data initially, but that data is fairly static and won't change much, it can be a lot more efficient to bundle a database in your application and install it on the first launch.
 Even if some of the content changes on the server after you create the app, the app's first pull replication will bring the database up to date.
@@ -227,15 +744,17 @@ If the database does not exist, the application should copy it from the assets f
 
 [source]
 ----
-include::{snippet}[tag=prebuilt-database,indent=0]
+include::{snippet}[tags=prebuilt-database,indent=0]
 ----
 
 In the example below, the `ZipUtils.unzip` method copies the zipped pre-built database from the APK's *assets* directory to the *files* directory.
 This method is provided below for reference as it isn't included in the Couchbase Lite library.
 
+WARNING: Author's note---Ignored include as not relevant to Java Platform
+
 [source]
 ----
-include::{ziputils}[tag=ziputils-unzip,indent=0]
+// include::{ziputils}[tags=ziputils-unzip,indent=0]
 ----
 
 == Document
@@ -244,7 +763,7 @@ In Couchbase Lite, a document's body takes the form of a JSON object -- a collec
 Every document is identified by a document ID, which can be automatically generated (as a UUID) or specified programmatically;
 the only constraints are that it must be unique within the database, and it can't be changed.
 
-=== Initializers
+== Initializers
 
 The following methods/initializers can be used:
 
@@ -258,22 +777,22 @@ The following code example creates a document and persists it to the database.
 
 [source]
 ----
-include::{snippet}[tag=initializer,indent=0]
+include::{snippet}[tags=initializer,indent=0]
 ----
 
-=== Mutability
+== Mutability
 
 By default, when a document is read from the database it is immutable.
 The `document.toMutable()` method should be used to create an instance of the document which can be updated.
 
 [source]
 ----
-include::{snippet}[tag=update-document,indent=0]
+include::{snippet}[tags=update-document,indent=0]
 ----
 
 Changes to the document are persisted to the database when the `save` method is called.
 
-=== Typed Accessors
+== Typed Accessors
 
 The `Document` class now offers a set of {url-api-references}/com/couchbase/lite/Dictionary.html[`property accessors`] for various scalar types, including boolean, integers, floating-point and strings.
 These accessors take care of converting to/from JSON encoding, and make sure you get the type you're expecting.
@@ -284,36 +803,36 @@ The following example sets the date on the `createdAt` property and reads it bac
 
 [source]
 ----
-include::{snippet}[tag=date-getter,indent=0]
+include::{snippet}[tags=date-getter,indent=0]
 ----
 
 If the property doesn't exist in the document it will return the default value for that getter method (0 for `getInt`, 0.0 for `getFloat` etc.).
 To check whether a given property exists in the document, you should use the {url-api-references}/com/couchbase/lite/Document.html#contains-java.lang.String-[`Document.Contains(String key)`] method.
 
-=== Batch operations
+== Batch operations
 
 If you're making multiple changes to a database at once, it's faster to group them together.
 The following example persists a few documents in batch.
 
 [source]
 ----
-include::{snippet}[tag=batch,indent=0]
+include::{snippet}[tags=batch,indent=0]
 ----
 
 At the *local* level this operation is still transactional: no other `Database` instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
 But Couchbase Mobile is a distributed system, and due to the way replication works, there's no guarantee that Sync Gateway or other devices will receive your changes all at once.
 
-=== Document change events
+== Document change events
 
 It's also possible to register for document changes.
 The following example registers for changes to the document with ID `user.john` and prints the `verified_account` property.
 
 [source]
 ----
-include::{snippet}[tag=document-listener,indent=0]
+include::{snippet}[tags=document-listener,indent=0]
 ----
 
-=== Document Expiration
+== Document Expiration
 
 include::{partialsdir}/document-expiration.adoc[]
 
@@ -326,7 +845,7 @@ The following code example adds a blob to the document under the `avatar` proper
 
 [source]
 ----
-include::{snippet}[tag=blob,indent=0]
+include::{snippet}[tags=blob,indent=0]
 ----
 
 The `Blob` API lets you access the contents as in-memory data (a `Data` object) or as a `InputStream`.
@@ -382,7 +901,7 @@ In the query result, we print the `_id` and `name` properties of each row using 
 
 [source]
 ----
-include::{snippet}[tag=query-select-meta,indent=0]
+include::{snippet}[tags=query-select-meta,indent=0]
 ----
 
 The `SelectResult.all()` method can be used to query all the properties of a document.
@@ -391,7 +910,7 @@ The following snippet shows the same query using `SelectResult.all()` and the re
 
 [source]
 ----
-include::{snippet}[tag=query-select-all,indent=0]
+include::{snippet}[tags=query-select-all,indent=0]
 ----
 
 [source,json]
@@ -444,14 +963,14 @@ In the example below, we use the `equalTo` operator to query documents where the
 
 [source]
 ----
-include::{snippet}[tag=query-where,indent=0]
+include::{snippet}[tags=query-where,indent=0]
 ----
 
-==== Collection Operators
+=== Collection Operators
 
 {url-api-references}/com/couchbase/lite/ArrayFunction.html[Collection operators] are useful to check if a given value is present in an array.
 
-===== CONTAINS Operator
+==== CONTAINS Operator
 
 The following example uses the `Function.arrayContains` to find documents whose `public_likes` array property contain a value equal to "Armani Langworth".
 
@@ -466,33 +985,31 @@ The following example uses the `Function.arrayContains` to find documents whose 
 
 [source]
 ----
-include::{snippet}[tag=query-collection-operator-contains,indent=0]
+include::{snippet}[tags=query-collection-operator-contains,indent=0]
 ----
 
-===== IN Operator
+==== IN Operator
 
 The `IN` operator is useful when you need to explicitly list out the values to test against.
 The following example looks for documents whose `first`, `last` or `username` property value equals "Armani".
 
 [source]
 ----
-include::{snippet}[tag=query-collection-operator-in,indent=0]
+include::{snippet}[tags=query-collection-operator-in,indent=0]
 ----
 
 ==== Like Operator
 
 The {url-api-references}/com/couchbase/lite/Expression.html#like-com.couchbase.lite.Expression-[`like`] operator can be used for string matching.
 
-The `like` operator performs **case sensitive** matches.
-So if you want to make the string matching case insensitive, you would have to use `Function.lower` or `Function.upper` to transform the matched string to lowercase or uppercase equivalents.
+The `like` operator is case sensitive.
 
 In the example below, we are looking for documents of type `landmark` where the name property exactly matches the string "Royal engineers museum".
-Note that since `like` does a case sensitive match, we use `Function.lower` to transform the matched string to the lowercase equivalent.
-So the following query will return "landmark" type documents with the name matching "Royal Engineers Museum", "royal engineers museum", "ROYAL ENGINEERS MUSEUM" and so on.
+Note that since `like` does a case sensitive match, the following query will return "landmark" type documents with the name property exactly matching "Royal Engineers Museum".
 
 [source]
 ----
-include::{snippet}[tag=query-like-operator,indent=0]
+include::{snippet}[tags=query-like-operator,indent=0]
 ----
 
 ==== Wildcard Match
@@ -501,14 +1018,12 @@ We can use `%` sign within a `like` expression to do a wildcard match against ze
 Using wildcards allows you to have some fuzziness in your search string.
 
 In the example below, we are looking for documents of `type` "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
-Once again, we are using `Function.lower` to make the search case insensitive.
-
-The following query will return "landmark" `type` documents with name matching "Engineers", "engine", "english egg" , "England Eagle" and so on.
+The following query will return "landmark" type documents with name matching "Engineers", "engine", "english egg" , "England Eagle" and so on.
 Notice that the matches may span word boundaries.
 
 [source]
 ----
-include::{snippet}[tag=query-like-operator-wildcard-match,indent=0]
+include::{snippet}[tags=query-like-operator-wildcard-match,indent=0]
 ----
 
 ==== Wildcard Character Match
@@ -520,7 +1035,7 @@ The following query will return "landmark" `type` documents with the `name` matc
 
 [source]
 ----
-include::{snippet}[tag=query-like-operator-wildcard-character-match,indent=0]
+include::{snippet}[tags=query-like-operator-wildcard-character-match,indent=0]
 ----
 
 ==== Regex Operator
@@ -535,17 +1050,17 @@ Note that the `\b` specifies that the match must occur on word boundaries.
 
 [source]
 ----
-include::{snippet}[tag=query-regex-operator,indent=0]
+include::{snippet}[tags=query-regex-operator,indent=0]
 ----
 
-==== Deleted Document
+=== Query Deleted Document
 
-Starting in Couchbase Lite 2.5, you can query documents that have been deleted (tombstones).
+You can query documents that have been deleted (tombstones).
 The following example shows how to query deleted documents in the database.
 
 [source]
 ----
-include::{snippet}[tag=query-deleted-documents,indent=0]
+include::{snippet}[tags=query-deleted-documents,indent=0]
 ----
 
 === JOIN statement
@@ -557,7 +1072,7 @@ This example JOINS the document of type "route" with documents of type "airline"
 
 [source]
 ----
-include::{snippet}[tag=query-join,indent=0]
+include::{snippet}[tags=query-join,indent=0]
 ----
 
 === GROUP BY statement
@@ -578,7 +1093,7 @@ The following example looks for the number of airports at an altitude of 300 ft 
 
 [source]
 ----
-include::{snippet}[tag=query-groupby,indent=0]
+include::{snippet}[tags=query-groupby,indent=0]
 ----
 
 [source,text]
@@ -597,7 +1112,7 @@ The example below returns documents of type equal to "hotel" sorted in ascending
 
 [source]
 ----
-include::{snippet}[tag=query-orderby,indent=0]
+include::{snippet}[tags=query-orderby,indent=0]
 ----
 
 [source,text]
@@ -616,15 +1131,15 @@ Avignon
 
 include::{partialsdir}/query/date-time-functions.adoc[]
 
-== Live Query
+=== Live Query
 
 include::{partialsdir}/live-query.adoc[]
 
-== Predictive Query
+=== Predictive Query
 
 include::{partialsdir}/predictive-query.adoc[]
 
-== Indexing
+=== Indexing
 
 Creating indexes can speed up the performance of queries.
 While indexes make queries faster, they also make writes slightly slower, and the Couchbase Lite database file slightly larger.
@@ -643,7 +1158,7 @@ The following example creates a new index for the `type` and `name` properties.
 
 [source]
 ----
-include::{snippet}[tag=query-index,indent=0]
+include::{snippet}[tags=query-index,indent=0]
 ----
 
 If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.
@@ -651,7 +1166,7 @@ If there are multiple expressions, the first one will be the primary key, the se
 NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
 Thus, good performance depends on designing and creating the _right_ indexes to go along with your queries.
 
-== Full-Text Search
+=== Full-Text Search
 
 To run a full-text search (FTS) query, you must have created a full-text index on the expression being matched.
 Unlike regular queries, the index is not optional.
@@ -659,7 +1174,7 @@ The following example inserts documents and creates an FTS index on the `name` p
 
 [source]
 ----
-include::{snippet}[tag=fts-index,indent=0]
+include::{snippet}[tags=fts-index,indent=0]
 ----
 
 Multiple properties to index can be specified in the index creation method.
@@ -670,7 +1185,7 @@ The left-hand side is the full-text index to use and the right-hand side is the 
 
 [source]
 ----
-include::{snippet}[tag=fts-query,indent=0]
+include::{snippet}[tags=fts-query,indent=0]
 ----
 
 In the example above, the pattern to match is a word, the full-text search query matches all documents that contain the word "buy" in the value of the `doc.name` property.
@@ -757,18 +1272,18 @@ In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the pro
 
 == Replication
 
-include::{partialsdir}/replication-introduction.adoc[]
+include::{partialsdir}/replication-introduction.adoc[leveloffset=3]
 
-=== Compatibility
+== Compatibility
 
 WARNING: The new protocol is *incompatible* with CouchDB-based databases.
-And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that xref:sync-gateway::compatibility-matrix.adoc[supports it].
+And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that xref:compatibility-matrix.adoc[supports it].
 
 To use this protocol with Couchbase Lite 2.0, the replication URL should specify WebSockets as the URL scheme (see the <<Starting a Replication>> section below).
 Mobile clients using Couchbase Lite 1.x can continue to use *http* as the URL scheme.
 Sync Gateway 2.0 will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through "ws://localhost:4984/db".
 
-=== Starting Sync Gateway
+== Starting Sync Gateway
 
 https://www.couchbase.com/downloads[Download Sync Gateway] and start it from the command line with the configuration file created above.
 
@@ -779,7 +1294,7 @@ https://www.couchbase.com/downloads[Download Sync Gateway] and start it from the
 
 For platform specific installation instructions, refer to the Sync Gateway xref:sync-gateway::getting-started.adoc#installation[installation guide].
 
-=== Starting a Replication
+== Starting a Replication
 
 Replication can be bidirectional, this means you can start a `push`/`pull` replication with a single instance.
 The replication's parameters can be specified through the {url-api-references}/index.html?com/couchbase/lite/ReplicatorConfiguration.html[`ReplicatorConfiguration`] object;
@@ -813,10 +1328,8 @@ class MyClass {
 To keep a reference to the `replicator` object, you can set it as an instance property.
 <2> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
 You should now use `ws:`, or `wss:` for SSL/TLS connections.
-In this example the hostname is `10.0.2.2` because the Android emulator runs in a VM that is generally accessible on `10.0.2.2` from the host machine (see https://developer.android.com/studio/run/emulator-networking[Android Emulator networking] documentation).
+In this example the hostname is `10.0.2.2`.
 +
-NOTE: As of Android Pie, version 9, API 28, cleartext support is disabled, by default.
-Although `wss:` protocol URLs are not affected, in order to use the `ws:` protocol, applications must target API 27 or lower, or must configure application network security as described https://developer.android.com/training/articles/security-config#CleartextTrafficPermitted[here].
 
 include::{partialsdir}/verify-replication.adoc[]
 
@@ -827,12 +1340,12 @@ so it might be necessary to explicitly enable them in the load balancer's config
 By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
 The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway::config-properties.adoc#replicator_compression[`replicator_compression`]).
 
-==== Replication Ordering
+=== Replication Ordering
 
 To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
 So we don't recommend to rely on that when using the replication or database change listeners for example.
 
-==== Replicator Notifications on a Custom Executor
+=== Replicator Notifications on a Custom Executor
 
 Prior to version 2.6, Couchbase Lite spun up multiple executors.
 This policy could result in too many threads being spun up.
@@ -924,7 +1437,8 @@ public class MaxThroughputExample {
 
 *Extreme Configurability*
 
-[source]
+[source, java]
+
 ----
 /**
  * This version demonstrates the extreme configurability of the CouchBase Lite replicator callback system.
@@ -979,28 +1493,28 @@ public class PolicyExample {
 }
 ----
 
-=== Troubleshooting
+== Troubleshooting
 
 As always, when there is a problem with replication, logging is your friend.
 The following example increases the log output for activity related to replication with Sync Gateway.
 
 [source]
 ----
-include::{snippet}[tag=replication-logging,indent=0]
+include::{snippet}[tags=replication-logging,indent=0]
 ----
 
-=== Authentication
+== Authentication
 
-include::{partialsdir}/authentication.adoc[]
+include::{partialsdir}/authentication.adoc[leveloffset=-1]
 
-=== Replication Status
+== Replication Status
 
 The `replication.Status.Activity` property can be used to check the status of a replication.
 For example, when the replication is actively transferring data and when it has stopped.
 
 [source]
 ----
-include::{snippet}[tag=replication-status,indent=0]
+include::{snippet}[tags=replication-status,indent=0]
 ----
 
 The following table lists the different activity levels in the API and the meaning of each one.
@@ -1030,19 +1544,19 @@ NOTE: The replication change object also has properties to track the progress (`
 But since the replication occurs in batches and the total count can vary through the course of a replication, those progress indicators are not very useful from the standpoint of an app user.
 Hence, these should not be used for tracking the actual progress of the replication.
 
-==== Replication Status and App Life Cycle
+=== Replication Status and App Life Cycle
 
 Couchbase Lite doesn't react to OS backgrounding or foregrounding events and replication(s) will continue running as long as the remote system does not terminate the connection and the app does not terminate.
 It is generally recommended to stop replications before going into the background otherwise socket connections may be closed by the OS and this may interfere with the replication process.
 
-=== Handling Network Errors
+== Handling Network Errors
 
 If an error occurs, the replication status will be updated with an `Error` which follows the standard HTTP error codes.
 The following example monitors the replication for errors and logs the error code to the console.
 
 [source]
 ----
-include::{snippet}[tag=replication-error-handling,indent=0]
+include::{snippet}[tags=replication-error-handling,indent=0]
 ----
 
 When a permanent error occurs (i.e., `404`: not found, `401`: unauthorized), the replicator (continuous or one-shot) will stop permanently.
@@ -1057,31 +1571,31 @@ The following error codes are considered temporary by the Couchbase Lite replica
 * `504`: Gateway Timeout
 * `1001`: DNS resolution error
 
-=== Replication Events
+== Replication Events
 
-include::{partialsdir}/replication-events.adoc[]
+include::{partialsdir}/replication-events.adoc[leveloffset=-1]
 
-=== Custom Headers
+== Custom Headers
 
 include::{partialsdir}/replication-custom-header.adoc[]
 
 [source]
 ----
-include::{snippet}[tag=replication-custom-header,indent=0]
+include::{snippet}[tags=replication-custom-header,indent=0]
 ----
 
-=== Replication Checkpoint Reset
+== Replication Checkpoint Reset
 
 include::{partialsdir}/replication-checkpoint.adoc[]
 
 [source]
 ----
-include::{snippet}[tag=replication-reset-checkpoint,indent=0]
+include::{snippet}[tags=replication-reset-checkpoint,indent=0]
 ----
 
-=== Replication Filters
+== Replication Filters
 
-include::{partialsdir}/replication-filters.adoc[]
+include::{partialsdir}/replication-filters.adoc[leveloffset=-1]
 
 == Handling Conflicts
 
@@ -1106,9 +1620,6 @@ As part of this, Couchbase Lite is responsible for storing the data and keeping 
 Sending and receiving data must be handled by the platform APIs or a third party framework.
 In this section, we will refer to these third party frameworks as communication frameworks.
 
-On Android, the https://developers.google.com/nearby/messages/overview[Nearby Messages API] would be a good choice for the Communication Framework.
-This framework will handle sending and receiving messages and supports multiple transport technologies -- WiFi and Bluetooth and uses whichever is available to establish a connection between devices.
-
 Thus, to enable peer-to-peer sync with Couchbase Lite, the application must use the Communication Framework with Couchbase Lite.
 The following sections describe a typical peer-to-peer workflow.
 Where applicable, we discuss how to integrate Couchbase Lite into the workflow.
@@ -1118,236 +1629,128 @@ In Couchbase Lite, a peer can take on one of these two roles:
 * *Active Peer:* The peer that initializes the connection and replication (i.e the "client" side).
 * *Passive Peer:* The passive side reacts to things that it receives but does not initiate any communication on its own (i.e. the "server" side).
 
-=== Peer Discovery
+== Peer Discovery
 
-include::{partialsdir}/p2p-peer-discovery.adoc[]
+include::{partialsdir}/p2p-peer-discovery.adoc[leveloffset=-1]
 
-=== Peer Selection and Connection Setup
+== Peer Selection and Connection Setup
 
-include::{partialsdir}/p2p-peer-selection.adoc[]
+include::{partialsdir}/p2p-peer-selection.adoc[leveloffset=-1]
 
-=== Replication Setup
+== Replication Setup
 
-include::{partialsdir}/p2p-replication-setup.adoc[]
+include::{partialsdir}/p2p-replication-setup.adoc[leveloffset=-1]
 
-=== Push/Pull Replication
+== Push/Pull Replication
 
-include::{partialsdir}/p2p-push-pull-repl.adoc[]
+include::{partialsdir}/p2p-push-pull-repl.adoc[leveloffset=-1]
 
-=== Connection Teardown
+== Connection Teardown
 
-include::{partialsdir}/p2p-connection-teardown.adoc[]
+include::{partialsdir}/p2p-connection-teardown.adoc[leveloffset=-1]
 
 == Thread Safety
 
 The Couchbase Lite API is thread safe except for calls to mutable objects: `MutableDocument`, `MutableDictionary` and `MutableArray`.
 
-== Release Notes
+== UPGRADING
 
-=== 2.6.2
+== Database
 
-This maintenance release for Android includes important bug fixes.
+Databases created using Couchbase Lite 1.2 or later can still be used with Couchbase Lite 2.x; but will be automatically updated to the  current 2.x version.
+This feature is only available for the default storage type (i.e., not a ForestDB database).
+Additionally, the automatic migration feature does not support encrypted databases, so if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the xref:1.4@{source-language}.adoc#database-encryption[1.x Database Guide]).
 
-*Bugs*
+=== Handling of Existing Conflicts
 
-* https://issues.couchbase.com/browse/CBL-468[*CBL-468*] Null dereference during pull-only replication.
-* https://issues.couchbase.com/browse/CBL-467[*CBL-467*] Replication listener sometimes crashed on NPE.
-* https://issues.couchbase.com/browse/CBL-436[*CBL-436*] An attempt to get the keys from an empty dictionary caused a crash.
-* https://issues.couchbase.com/browse/CBL-324[*CBL-324*] Function.upper() failed to operate non-ASCII characters.
-* https://issues.couchbase.com/browse/CBL-172[*CBL-172*] Initial delay observed when starting a liveQuery has been fixed.
-* https://issues.couchbase.com/browse/CBL-34[*CBL-34*] Fixed a replicator crash issue.
+If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
+This functionality is related to the way conflicts are now being handled in Couchbase Lite (see xref:{source-language}.adoc#handling-conflicts[Handling Conflicts]).
+Optionally, existing conflicts in the 1.x database can be resolved with the xref:1.4@{source-language}.adoc#resolving-conflicts[1.x API] prior to the database being upgraded to 2.x.
+
+=== Handling of Existing Attachments
 
 
-=== 2.6.0
+Attachments persisted in a 1.x database are copied to the new database.
+NOTE: The relevant Couchbase Lite API is now called the `Blob` API not the `Attachments` API.
 
-*New Features*
+The functionally is identical but the internal schema for attachments has changed.
+Blobs are stored anywhere in the document, just like other value types, whereas in 1.x they were stored under the `_attachments` field.
+The automatic upgrade functionality *does not* update the internal schema for attachments, so they remain accessible under the `_attachments` field.
+The following example shows how to retrieve an attachment that was created in a 1.x database with a 2.x API.
 
-* Custom Conflict Resolution
-+
-xref:index.adoc[Read more]
-
-*Enhancements*
-
-* Expose the Document Revision ID: the `revisionID` property on a `Document` instance now returns the current revision identifier.
-* The handling of replicator notifications has been enhanced to use a single executor.
-Apps can specify custom executors in order to override the default behavior (see <<replicator-notifications-on-a-custom-executor>>).
-
-*Android API Support*
-
-Support for Android API 19 and 21 is being deprecated in this release and will be removed in a future release.
-
-*API Changes*
-
-* The constructor `DatabaseConfiguration(Context)` no longer exists.  It has been replaced by `DatabaseConfiguration()`.
-* The static method `CouchbaseLite.init(Context)` must be called before *any* other method in the Couchbase Lite API.
-Applications upgrading from earlier versions to 2.6 must invoke this method.
-Read more in the <<initializer>> section.
-
-*Bugs*
-
-* https://issues.couchbase.com/browse/CBL-48[*CBL-48*] Copy method of Database class is not able to copy encrypted db.
-* https://issues.couchbase.com/browse/CBL-86[*CBL-86*] Race condition on SharedKeys causes silent error.
-* https://issues.couchbase.com/browse/CBL-71[*CBL-71*] LiteCore database alias clashes with select all alias.
-* https://issues.couchbase.com/browse/CBL-88[*CBL-88*] Calling Replicator#getStatus() on a replicator that hasn't started throws NPE.
-* https://issues.couchbase.com/browse/CBL-89[*CBL-89*] Calling Replicator#stop() on a replicator that hasn't started throws NPE.
-* https://issues.couchbase.com/browse/CBL-130[*CBL-130*] Crash: Possible memory corruption.
-* https://issues.couchbase.com/browse/CBL-165[*CBL-165*] Replication failed due to unauthorized(401) error.
-
-*Known Issues*
-
-- https://issues.couchbase.com/browse/CBL-324[*CBL-324*] Function.upper() failed to operate non-ASCII characters
-- https://issues.couchbase.com/browse/CBL-95[*CBL-95*] Pending conflicts could be resolved by a wrong replicator
-- https://issues.couchbase.com/browse/CBL-49[*CBL-49*] Need a way to distinguish boolean types
-
-=== 2.5.3
-
-*Enhancements*
-
-* https://issues.couchbase.com/browse/CBL-142[*CBL-142*] Added native support for x86_64.
-
-*Bugs*
-
-* https://issues.couchbase.com/browse/CBL-176[*CBL-176*] Reduce replication timeouts.
-* https://issues.couchbase.com/browse/CBL-110[*CBL-110*] Delta sync on top of a deletion caused data discrepancy between Couchbase Sync Gateway and Couchbase Lite.
-* https://issues.couchbase.com/browse/CBL-131[*CBL-131*] Continuous replicator does not back off retries.
-
-=== 2.5.2
-
-*Bugs*
-
-* https://github.com/couchbase/couchbase-lite-core/issues/776[*#776*] `c4db_endTransaction` sometimes results in invalid memory access.
-* https://github.com/couchbase/couchbase-lite-core/issues/787[*#787*] Fleece error when querying array property.
-* https://github.com/couchbase/couchbase-lite-core/issues/792[*#792*] DBWorker crashes in Fleece Encoder (writePointer).
-* https://issues.couchbase.com/browse/CBL-5[*CBL-5*] Excessive synchronization is stalling Live Query notification.
-
-=== 2.5.0
-
-*New Features*
-
-* Delta Sync
-* Replication Filters
-* Continuous Logging
-* Predictive Query
-+
-xref:index.adoc[Read more]
-
-*Enhancements*
-
-* {url-issues-java}/1779[*#1779*]
-Replication Filters
-* {url-issues-java}/1821[*#1821*]
-Remove log rotation change batching
-* {url-issues-java}/1845[*#1845*]
-Annotate @NonNull to public API
-
-*Bugs*
-
-* {url-issues-java}/1523[*#1523*]
-2.0: ``isOldAttachment'' check is incorrect
-* {url-issues-java}/1755[*#1755*]
-Query enumeration error: LiteCoreException
-* {url-issues-java}/1756[*#1756*]
-2.0 Replicator does not work with TLS 1.2 when using Android API <= 19
-* {url-issues-java}/1785[*#1785*]
-Result.toMap() does not return boolean values
-* {url-issues-java}/1814[*#1814*]
-Change domains type of the Console Logger to EnumSet
-* {url-issues-java}/1818[*#1818*]
-Crash on document save with 2.1.2
-* {url-issues-java}/1872[*#1872*]
-Logging messages CBL code are not shown up in console
-* {url-issues-java}/1899[*#1899*]
-Signal 11 SIGSEGV with current iridium Branch
-* {url-issues-java}/1900[*#1900*]
-BlobInputStream does not return -1 when finished reading
-* {url-issues-java}/1904[*#1904*]
-Signal 11 SIGSEGV when initiating Dictionary Iterator
-
-*Known Issues*
-
-* {url-issues-java}/1773[*#1773*]
-Client Proxy Support
-* {url-issues-java}/1888[*#1888*]
-Memory Leak: Database reference held by a ReplicatorListenerThread after
-close
-
-=== 2.1.2
-
-.Bugs
-* {url-issues-java}/1760[*#1760*] Warning about CBLWebSocket failed to shutdown the web socket
-* {url-issues-java}/1761[*#1761*] Could not find class `android.system.ErrnoException' error
-* {url-issues-java}/1762[*#1762*] Potential memory leak in replicator
-* {url-issues-java}/1763[*#1763*] Log from replicator’s native code shouldn’t be shown unless the logging is enabled
-* {url-issues-java}/1766[*#1766*] Auth Header from BasicAuthenticator not getting sent if SG Guest user is enabled
-
-=== 2.1
-
-.Enhancements
-* {url-issues-java}/1678[*#1678*] Support Peer-to-Peer replication through MessageEndpoint API (EE Feature)
-* {url-issues-java}/1683[*#1683*] Support Database Encryption (EE feature)
-* {url-issues-java}/1696[*#1696*] Support replicator reset checkpoint
-
-.Bugs
-* {url-issues-java}/1510[*#1510*] 2.0: Crash with DB21 - in c4doc_update()
-* {url-issues-java}/1665[*#1665*] Exception thrown openDatabase (Proguard strips methods that CBL uses)
-* {url-issues-java}/1676[*#1676*] 2.0: Replicator Error misses the error message.
-* {url-issues-java}/1702[*#1702*] 2.x: ValueIndexItem.expression(Expression) is missing
-* {url-issues-java}/1725[*#1725*] 2.1: Android : Replication does not start
-* {url-issues-java}/1727[*#1727*] Dead lock occurs - DB 2.0.0
-* {url-issues-java}/1742[*#1742*] Couchbase mobile 2.0.2 Emoji Support
-
-.Known Issues
-* {url-issues-java}/1743[*#1743*] HTTP Proxy Support
-
-=== 2.0.2
-
-* Support for Log redaction of sensitive information when <<Logging,logging is enabled>>.
-
-=== 2.0.0
-
-.Enhancements
-* {url-issues-java}/1264[*#1264*] 2.0 migration from Forest back to SQlite
-* {url-issues-java}/1577[*#1577*] 2.1: Eliminate CouchbaseLiteRuntimeExecption, convert it to CouchbaseLiteExecption
-
-.Bugs
-* {url-issues-java}/1217[*#1217*] 2.0: Todo Sample bug Fix and implement remaining features
-* {url-issues-java}/1234[*#1234*] 2.0: Replicator continuous pull status completed and total number out of sync
-* {url-issues-java}/1247[*#1247*] 2.0: Push Replication Causing Errors
-* {url-issues-java}/1273[*#1273*] 2.0: Replicator Activity Level stays in Busy state
-* {url-issues-java}/1347[*#1347*] 2.0: How do we properly stop puller Replicator and delete database ?
-* {url-issues-java}/1470[*#1470*] 2.0: In My App with CB Lite DB020(Android), ConflictResolver is called endless loop during three device or much more!
-* {url-issues-java}/1499[*#1499*] 2.0: Repl Bad URL returns 19 instead of 15 on API 24 ARM emulator
-* {url-issues-java}/1500[*#1500*] 2.0: LoadTest.testUpdate() causes memory error with Android API 19 Arm Emulator
-* {url-issues-java}/1501[*#1501*] 2.0: ReplicatorTest > testPushDoc fails
-* {url-issues-java}/1512[*#1512*] 2.0: ReplicatorTest > testPullDoc fails
-* {url-issues-java}/1581[*#1581*] 2.0 : LiveQuery threading issue
-* {url-issues-java}/1609[*#1609*] 2.0: testSelfSignedSSLPinned() unit test failure
-* {url-issues-java}/1610[*#1610*] Exception from the cpp layer in my android app on load tests
-* {url-issues-java}/1615[*#1615*] 2.0: NullPointerException: Attempt to invoke virtual method 'boolean com.couchbase.litecore.C4QueryEnumerator.next()' on a null object reference
-* {url-issues-java}/1620[*#1620*] NOT operator not working for FTS
-* {url-issues-java}/1630[*#1630*] 2.0: make public Index interface
-* {url-issues-java}/1651[*#1651*] 2.0: C4DocumentTest.testPut() fails
-* {url-issues-java}/1652[*#1652*] App crash with deleteDocument with concurrencyControl
-* {url-issues-java}/1693[*#1693*] DB023 - Crazy amount of dbListenerTokens - makes the DB run slow
-
-.Known Issues
-* {url-issues-java}/1685[*#1685*] Replicator in Android get stuck at busy state when it goes back to online from offline (Genymotion)
-* {url-issues-java}/1702[*#1702*] ValueIndexItem.expression(Expression) is implemented with CBL Android 2.0.0 release.
-This API will be available with 2.1.0 release
-* {url-issues-java}/1665[*#1665*]: it is currently not possible to enable https://developer.android.com/studio/build/shrink-code.html[code shrinking] (`minifyEnabled: true`) in an Android Studio project that uses Couchbase Lite 2.0.
-As a workaround, code shrinking can be disabled for Couchbase Lite classes and its dependencies by adding the following in *proguard-rules.pro*.
-+
-[source,groovy]
+[source]
 ----
-# OkHttp3
--dontwarn okhttp3.**
--dontwarn okio.**
--dontwarn javax.annotation.**
--dontwarn org.conscrypt.**
-# A resource is loaded with a relative path so the package of this class must be preserved.
--keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
-
-# CBL2.x
--keep class com.couchbase.litecore.**{ *; }
--keep class com.couchbase.lite.**{ *; }
+include::{snippet}[tags=1x-attachment,indent=0]
 ----
+
+== Replication Compatibility
+
+The current replication protocol is not backwards compatible with the 1.x replication protocol.
+Therefore, to use replication with Couchbase Lite 2.x, the target Sync Gateway instance must also be upgraded to 2.x.
+
+Sync Gateway 2.x will continue to accept clients that connect through the 1.x protocol.
+It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.x replication protocol when a Couchbase Lite 2.x client connects through ws://localhost:4984/db.
+This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
+
+
+== SUPPORTED VERSIONS
+
+Couchbase Lite Java will be supported on x86 64-bit platforms. These are the targeted OS versions
+
+.Table Supported OS Versions
+|===
+| OS|Version|Type
+
+.2+|RHEL
+|6.10
+|Desktop & Web Service/Servlet (Tomcat)
+|7
+|Desktop & Web Service/Servlet (Tomcat)
+.2+|centOS
+|6.10
+|Desktop & Web Service/Servlet (Tomcat)
+|7
+|Desktop & Web Service/Servlet (Tomcat)
+|Ubuntu
+|16.0
+|Desktop & Web Service/Servlet (Tomcat)
+|Debian
+|GNU/Linux 8
+|Desktop & Web Service/Servlet (Tomcat)
+|Microsoft Server
+|Windows Server 2012
+|Web Service/Servlet (Tomcat)
+|Microsoft
+|Windows 10
+|Desktop
+
+|===
+.Table Supported OS Versions (DEVELOPMENT & TESTING ONLY)
+|===
+| OS|Version|Type
+
+|macOS
+|macOS 10.12.6 (High Sierra)
+|Desktop & Web Service/Servlet (Tomcat)
+|===
+
+
+== RELEASE NOTES
+
+=== .
+
+== 2.7.0
+
+*{nftr}*
+
+New at this release is the Java Platform, which enables development of Java apps on any platform that supports the JVM model
+
+xref::index.adoc[{more}]
+
+*{ke}*
+
+{natt}
+
+*{fixed}*
+
+{natt}
