@@ -23,6 +23,8 @@ private static final String DB_NAME = "gettingstarted";
 /*      Credentials declared this way purely for expediency in this demo - use OAUTH in production code */
 private static final String DB_USER = "sync_gateway";
 private static final String DB_PASS = "password"; // <3>
+private static final String DB_PATH = new File("").getAbsolutePath()+"/resources";
+
 
 public static void main (String [] args) throws CouchbaseLiteException, InterruptedException, URISyntaxException {
     Random RANDOM = new Random();
@@ -41,6 +43,7 @@ public static void main (String [] args) throws CouchbaseLiteException, Interrup
     String Prop_Type = "type";
     String Prop_Version = "version";
     String searchStringType = "SDK";
+    String dirPath = new File("").getAbsolutePath()+"/resources";
 
 
     // Initialize Couchbase Lite
@@ -48,8 +51,7 @@ public static void main (String [] args) throws CouchbaseLiteException, Interrup
 
     // Get the database (and create it if it doesn’t exist).
     DatabaseConfiguration config = new DatabaseConfiguration();
-    // System.out.println(" DIR="+config.getDirectory() );
-    // config.setDirectory("/resources/"+DB_NAME);
+    config.setDirectory(DB_PATH);
     config.setEncryptionKey(new EncryptionKey(DB_PASS)); // <3>
     Database database = new Database(DB_NAME, config);
 
@@ -268,7 +270,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 
 public class tcWebHarness {
-    public static void Main(String[] args) throws ServletException, LifecycleException {
+    public static void main(String[] args) throws ServletException, LifecycleException {
         String myTCbase="temp";
         String yourWebAppWarName = args[0];
         String contextPath = "/GettingStarted"; /* the URL path to your web app */
@@ -303,14 +305,17 @@ cp -R <pathToTomcatDownload>/**/.jar libs/libMyJar
 
 
 
-
+// Check context validity for JVM cf Android
+// Needs JVM alterative to ZipUtils
     public void test1xAttachments() throws CouchbaseLiteException, IOException {
         // if db exist, delete it
-        deleteDB("android-sqlite", context.getFilesDir());
+        private string final DB_NAME = "cbl-sqlite"
+
+        deleteDB(DB_NAME, context.getFilesDir());
 
         ZipUtils.unzip(getAsset("replacedb/android140-sqlite.cblite2.zip"), context.getFilesDir());
 
-        Database db = new Database("android-sqlite", new DatabaseConfiguration());
+        Database db = new Database(DB_NAME, new DatabaseConfiguration());
         try {
 
             Document doc = db.getDocument("doc1");
@@ -328,7 +333,7 @@ cp -R <pathToTomcatDownload>/**/.jar libs/libMyJar
             // close db
             db.close();
             // if db exist, delete it
-            deleteDB("android-sqlite", context.getFilesDir());
+            deleteDB(DB_NAME, context.getFilesDir());
         }
 
         Document document = new MutableDocument();
@@ -344,7 +349,7 @@ cp -R <pathToTomcatDownload>/**/.jar libs/libMyJar
     public void testInitializer() {
         // tag::sdk-initializer[]
         // Initialize the Couchbase Lite system
-        CouchbaseLite.init(context);
+        CouchbaseLite.init();
         // end::sdk-initializer[]
     }
 
@@ -352,7 +357,7 @@ cp -R <pathToTomcatDownload>/**/.jar libs/libMyJar
     public void testNewDatabase() throws CouchbaseLiteException {
         // tag::new-database[]
         DatabaseConfiguration config = new DatabaseConfiguration();
-        Database database = new Database("my-database", config);
+        Database database = new Database(DB_NAME, config);
         // end::new-database[]
 
         database.delete();
@@ -363,7 +368,7 @@ cp -R <pathToTomcatDownload>/**/.jar libs/libMyJar
         // tag::database-encryption[]
         DatabaseConfiguration config = new DatabaseConfiguration();
         config.setEncryptionKey(new EncryptionKey("PASSWORD"));
-        Database database = new Database("mydb", config);
+        Database database = new Database(DB_NAME, config);
         // end::database-encryption[]
     }
 
@@ -386,7 +391,8 @@ cp -R <pathToTomcatDownload>/**/.jar libs/libMyJar
 
     // ### File logging
     public void testFileLogging() throws CouchbaseLiteException {
-        // tag::file-logging[]
+// Check context validity for JVM cf Android
+       // tag::file-logging[]
         final File path = context.getCacheDir();
         Database.log.getFile().setConfig(new LogFileConfiguration(path.toString()));
         Database.log.getFile().setLevel(LogLevel.INFO);
@@ -1079,10 +1085,10 @@ cp -R <pathToTomcatDownload>/**/.jar libs/libMyJar
 
     public void testDatabaseReplica() throws CouchbaseLiteException {
         DatabaseConfiguration config = new DatabaseConfiguration();
-        Database database1 = new Database("mydb", config);
+        Database database1 = new Database(DB_NAME, config);
 
         config = new DatabaseConfiguration();
-        Database database2 = new Database("db2", config);
+        Database database2 = new Database(DB_NAME2, config);
 
         /* EE feature: code below might throw a compilation error
            if it's compiled against CBL Android Community. */
@@ -1099,7 +1105,7 @@ cp -R <pathToTomcatDownload>/**/.jar libs/libMyJar
 
     public void testPredictiveModel() throws CouchbaseLiteException {
         DatabaseConfiguration config = new DatabaseConfiguration();
-        Database database = new Database("mydb", config);
+        Database database = new Database(DB_NAME, config);
 
         // tag::register-model[]
         Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());
@@ -1117,7 +1123,7 @@ cp -R <pathToTomcatDownload>/**/.jar libs/libMyJar
 
     public void testPredictiveIndex() throws CouchbaseLiteException {
         DatabaseConfiguration config = new DatabaseConfiguration();
-        Database database = new Database("mydb", config);
+        Database database = new Database(DB_NAME, config);
 
         // tag::predictive-query-predictive-index[]
         Map<String, Object> inputMap = new HashMap<>();
@@ -1131,7 +1137,7 @@ cp -R <pathToTomcatDownload>/**/.jar libs/libMyJar
 
     public void testPredictiveQuery() throws CouchbaseLiteException {
         DatabaseConfiguration config = new DatabaseConfiguration();
-        Database database = new Database("mydb", config);
+        Database database = new Database(DB_NAME, config);
 
         // tag::predictive-query[]
         Map<String, Object> inputProperties = new HashMap<>();
@@ -1218,12 +1224,13 @@ class BrowserSessionManager implements MessageEndpointDelegate {
     private final Context context;
     private Replicator replicator;
 
-    private BrowserSessionManager(Context context) { this.context = context; }
+// Check context validity for JVM cf Android
+private BrowserSessionManager(Context context) { this.context = context; }
 
     public void initCouchbase() throws CouchbaseLiteException {
         // tag::message-endpoint[]
         DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(context);
-        Database database = new Database("mydb", databaseConfiguration);
+        Database database = new Database(DB_NAME, databaseConfiguration);
 
         // The delegate must implement the `MessageEndpointDelegate` protocol.
         MessageEndpoint messageEndpointTarget = new MessageEndpoint(
@@ -1305,6 +1312,7 @@ class ActivePeerConnection implements MessageEndpointConnection {
 /* ---------------------  PASSIVE SIDE  ---------------------- */
 /* ----------------------------------------------------------- */
 
+// Check context validity for JVM cf Android
 class PassivePeerConnection implements MessageEndpointConnection {
     private final Context context;
 
@@ -1316,7 +1324,7 @@ class PassivePeerConnection implements MessageEndpointConnection {
     public void startListener() throws CouchbaseLiteException {
         // tag::listener[]
         DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration();
-        Database database = new Database("mydb", databaseConfiguration);
+        Database database = new Database(DB_NAME, databaseConfiguration);
         MessageEndpointListenerConfiguration listenerConfiguration = new MessageEndpointListenerConfiguration(
             database,
             ProtocolType.MESSAGE_STREAM);
