@@ -378,7 +378,7 @@ NOTE: See <<Prerequisites>> above if you have not already done so.
 This section explains how to use the {cblJP} to build your first application.
 To do this we will use the source code of the {nmMobStarterApp} starter app.
 
-If you haven't already done so, download link:{url-cb-mobStarterApp}[{nmMobStarterApp}].
+TIP: The {nmMobStarterApp} app can be downloaded from GitHub link:{url-cb-mobStarterApp}[{nmMobStarterApp}].
 
 The {nmMobStarterApp} code demonstrates how to use {cblJP} to run:
 
@@ -388,6 +388,7 @@ The {nmMobStarterApp} code demonstrates how to use {cblJP} to run:
 
 NOTE: By default this app stores its database in the `./` directory. For {gpWebServerEnv} that is `{gpWebServerEnv}/webapps/cblDbDir`
 
+anchor:bmkFirstAppBuild[]
 
 .First app build
 [tabs]
@@ -588,37 +589,39 @@ The starter app will:
 * Run a simple query counting the DB rows
 * Start bi-directional replication using {sg} to {svr}.
 
-NOTE: The app creates its `{nmSampleAppDb} database` directory in the same directory you run the application from; for web apps this is `$CATALINA_BASE` by default.
+NOTE: The app creates its database in the `{nmSampleAppDbPath}` directory relative its root location when run.
 
 
 === Running Apps
 
 // Start Tab Block
+
+First, ensure you have started your {svr} instance.
+
 .Running first app
 [tabs]
 ====
-
-First, ensure you have started your {svr} instance.
 
 Console App::
 +
 --
 
 . Launch a command line terminal
-. Navigate to the directory containing the jar created in <<First app build>>
-. Launch the app using either of:
-** Gradle
-+
-[source,java]
-----
-./gradlew run
-----
-** Java
+. Navigate to the directory containing the jar created in <<bmkFirstAppBuild>>
+. Launch the app using:
 +
 [source,bashrc]
 
 ----
 java -jar gettingstarted.jar
+----
++
+Alternatively, if you are using {gpBuildTool} then you can use:
++
+[source,java]
+
+----
+./gradlew run
 ----
 
 You will see the document ID and property printed to the console together with a query result showing the number of rows in the database.
@@ -634,6 +637,8 @@ Web App::
 . Point your browser to: `localhost:8080/gettingstarted/GettingStarted`
 
 The `showDbItems.jsp` page displays the results from the app.
+
+
 
 These are also added to the _catalina.out_ log file.
 --
