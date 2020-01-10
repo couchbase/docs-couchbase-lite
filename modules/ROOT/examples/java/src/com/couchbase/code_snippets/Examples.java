@@ -43,12 +43,6 @@ public static void main (String [] args) throws CouchbaseLiteException, Interrup
     String Prop_Type = "type";
     String Prop_Version = "version";
     String searchStringType = "SDK";
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-    String dirPath = new File("").getAbsolutePath()+"/resources";
-=======
->>>>>>> Stashed changes
     String dirPath = new File("").getAbsolutePath()+"/resources";
 
 
