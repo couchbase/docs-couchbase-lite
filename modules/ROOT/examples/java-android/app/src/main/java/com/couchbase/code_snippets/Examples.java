@@ -599,7 +599,7 @@ public class Examples {
                     SelectResult.property("name"))
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("landmark"))
-                    .and(Expression.property("name").like(Expression.string("Royal Engineers Museum"))));
+                    .and(Function.lower(Expression.property("name")).like(Function.Expression.string("royal engineers museum")))));
             ResultSet rs = query.execute();
             for (Result result : rs) { Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
             // end::query-like-operator[]
@@ -618,7 +618,7 @@ public class Examples {
                     SelectResult.property("name"))
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("landmark"))
-                    .and(Expression.property("name").like(Expression.string("Eng%e%"))));
+                    .and(Function.lower(Expression.property("name")).like(Expression.string("eng%e%"))));
             ResultSet rs = query.execute();
             for (Result result : rs) { Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
             // end::query-like-operator-wildcard-match[]
@@ -637,7 +637,7 @@ public class Examples {
                     SelectResult.property("name"))
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("landmark"))
-                    .and(Expression.property("name").like(Expression.string("Eng____r"))));
+                    .and(Function.lower(Expression.property("name")).like(Expression.string("eng____r"))));
             ResultSet rs = query.execute();
             for (Result result : rs) { Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
             // end::query-like-operator-wildcard-character-match[]
@@ -656,7 +656,7 @@ public class Examples {
                     SelectResult.property("name"))
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("landmark"))
-                    .and(Expression.property("name").regex(Expression.string("\\bEng.*r\\b"))));
+                    .and(Function.lower(Expression.property("name")).regex(Expression.string("\\beng.*r\\b"))));
             ResultSet rs = query.execute();
             for (Result result : rs) { Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
             // end::query-regex-operator[]

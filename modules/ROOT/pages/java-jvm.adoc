@@ -1036,10 +1036,16 @@ include::{snippet}[tags=query-collection-operator-in,indent=0]
 
 The {url-api-references}/com/couchbase/lite/Expression.html#like-com.couchbase.lite.Expression-[`like`] operator can be used for string matching.
 
-The `like` operator is case sensitive.
+// DOC-5813 change replicated from Java-Android during cherr-pick //
+
+The `like` operator performs **case sensitive** matches.
+So, to make the string matching case-insensitive, use `Function.lower` or `Function.upper` to transform the matched strings to lowercase or uppercase equivalents.
 
 In the example below, we are looking for documents of type `landmark` where the name property exactly matches the string "Royal engineers museum".
-Note that since `like` does a case sensitive match, the following query will return "landmark" type documents with the name property exactly matching "Royal Engineers Museum".
+
+TIP: For case-insensitive comparison, use `Function.lower` to align the cases of the strings being compared.
+
+The following query returns "landmark" type documents regardless of the name's case (so, for example: "Royal Engineers Museum", "royal engineers museum", "ROYAL ENGINEERS MUSEUM" are all matches).
 
 [source]
 ----
@@ -1052,8 +1058,12 @@ We can use `%` sign within a `like` expression to do a wildcard match against ze
 Using wildcards allows you to have some fuzziness in your search string.
 
 In the example below, we are looking for documents of `type` "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
-The following query will return "landmark" type documents with name matching "Engineers", "engine", "english egg" , "England Eagle" and so on.
-Notice that the matches may span word boundaries.
+
+The following query will return "landmark" `type` documents with name matching "Engineers", "engine", "english egg" , "England Eagle" and so on.
+
+NOTE: Once again, we are using `Function.lower` to make the search act as case insensitive.
+
+NOTE: The matches may span word boundaries.
 
 [source]
 ----
