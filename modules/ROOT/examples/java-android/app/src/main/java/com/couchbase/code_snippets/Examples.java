@@ -112,7 +112,7 @@ public class Examples {
 
         // Get the database (and create it if it doesn’t exist).
         DatabaseConfiguration config = new DatabaseConfiguration();
-        Database database = new Database("mydb", config);
+        Database database = new Database("getting-started", config);
 
         // Create a new document (i.e. a record) in the database.
         MutableDocument mutableDoc = new MutableDocument()
@@ -144,7 +144,7 @@ public class Examples {
         replConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
 
         // Add authentication.
-        replConfig.setAuthenticator(new BasicAuthenticator("john", "pass"));
+        replConfig.setAuthenticator(new BasicAuthenticator("sync-gateway", "password"));
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator replicator = new Replicator(replConfig);
