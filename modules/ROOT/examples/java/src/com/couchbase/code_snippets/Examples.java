@@ -49,12 +49,6 @@ public static void main (String [] args) throws CouchbaseLiteException, Interrup
     String Prop_Type = "type";
     String Prop_Version = "version";
     String searchStringType = "SDK";
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-    String dirPath = new File("").getAbsolutePath()+"/resources";
-=======
->>>>>>> Stashed changes
     String dirPath = new File("").getAbsolutePath()+"/resources";
 
 
@@ -314,6 +308,54 @@ mkdir libs/libMyJar
 cp -R <pathToTomcatDownload>/**/.jar libs/libMyJar
 
 // end::tcWebAppHarness-setup[]
+
+// tag::embeddedTomcat[]
+apply plugin: 'java'
+    apply plugin: 'war'
+    apply plugin: 'com.bmuschko.tomcat'
+
+    sourceCompatibility = 1.8
+
+    buildscript {
+        repositories {
+            jcenter()
+        }
+        dependencies {
+            classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+
+        implementation fileTree(dir: 'libs', include: '*.jar')
+
+        compileOnly "javax.servlet:javax.servlet-api:4.0.1"
+
+        def tomcatVersion = '9.0.24'
+        tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+                "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
+                "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
+    }
+
+    tomcat {
+        httpPort = 8080
+        httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
+        ajpProtocol  = 'org.apache.coyote.ajp.AjpNio2Protocol'
+        contextPath = '/'
+    }
+
+[tomcatRun, tomcatRunWar].each { task ->
+            fileTree("libs").visit { FileVisitDetails details ->
+        task.additionalRuntimeResources << file(details.file.path)
+    }
+    }
+// end::embeddedTomcat[]
+
 
 
 
