@@ -1,5 +1,6 @@
 = Couchbase Lite Java Framework
 include::_partials/mobAttrCBL.adoc[]
+
 include::_attributesLocal.adoc[]
 :JP: Java
 :Android: Java (android)
@@ -58,6 +59,32 @@ NOTE: This means you do not need to download and-or build compatible versions of
 +
 *Running in a Linux environment?* See  <<bmkLinuxSharedLibs>> for how to link to these shared libraries.
 
+== Prerequisites
+
+*Install {svr} and {sg}*
+
+Before you can run any {cbljp} app you will need to have runnable instances of {svr} and {sg}.
+If you have not already done so:
+Install _{svr}_ and _{sg}_ following steps outlined in xref:{sgGetStartedDoc-installation}[Installing Sync Gateway ->]
+// . If you haven't already done so, download the starter app link:{url-cb-mobStarterApp}[{nmMobStarterApp}].
+
+NOTE: On Linux: You must have loaded the shared libraries as described in <<bmkLinuxSharedLibs>>
+
+*Create the Getting Started App Database*
+
+[{orderedList}]
+. Within {svr}, create a bucket named {nmSampleAppDb}
++
+Follow the instructions xref:{sgGetStartedDoc-createBucket}[here]
++
+[{steps}]
+. Create a RBAC user for {sg}
++
+See instructions xref:{sgGetStartedDoc-createRBACuser}[here]
+[{steps2}]
+** Set username to `sync-gateway`
+** Set password to `password`
+
 
 == Deploy the Package
 
@@ -66,11 +93,11 @@ NOTE: This means you do not need to download and-or build compatible versions of
 . Download the _zip_ file from the link:{url-cb-downloads-mobile}[{nmCBdwnlds}] page.
 . Unpack the downloaded file to a location accessible to -- and usable by -- your chosen *build* environment.
 +
-We'll refer to this location, `<your dir>/{packageNmCE}` as the `<pathToCblJava>`.
+We'll refer to the following location `<your dir>/{packageNmCE}` as the `<pathToCbl>`.
 
 *To use a Maven package:*
 
-You will need to point your `build.gradle` file to the appropriate repository and add the {cbl} package as a dependency (see <<bmkUsingMavenRepos>> in the next step, <<Prepare the Build Environment>>).
+You will need to point your `build.gradle` file to the appropriate repository and add the {cbl} package as a dependency (see <<bmkUsingMavenRepos>> in the next step, <<Prepare Your Build Environment>>).
 
 anchor:bmkLinuxSharedLibs[Additional Steps for Linux]
 *To use {cbl} in a Linux environment:*
@@ -94,89 +121,19 @@ export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libc++:$LD_LIBRARY_PATH
 +
 TIP: Save typing-time, add the above commands to your `.<shell>rc` file.
 
-== Prepare the Build Environment
 
-This section explains how to configure your build environment to use {cblJP}.
-It involves adding the {cbl} jars library (and its contents) as dependencies in the build tool and-or IDE of your choice.
+== Preparing Your Build Environment
 
-.Set-up Scenarios
-[tabs]
-====
+This section shows how to set up {gpBuildTool} and {gpIDE} Community Edition to build {cbljp} applications.
 
-Console App::
+. Create a project folder
 +
---
-
-We'll cover how to set-up {gpIDE} and {gpBuildTool} to build {cbl} apps; see <<bmkGradleSetupConsoleApp>>
-
-
-*Using an IDE*
-
-. Within {gpIDE}, select *File > New > Project...* and click *Next*.
-+
-image::java-cli-app.png[,600]
-+
-
-. Select the *Command Line App* template
-+
-TIP: You may need to select the *Create project from template* option first
-
-+
-image::java-new-proj.png[,600]
-+
-
-. Provide details for the new project.
-
-** Project name = `GettingStarted`
-** Project location = as required
-** Base package name = `com.couchbase`
-+
-image::java-new-proj-details.png[,600]
-
-. Open the *Project Structure* window and select *Modules*
-. Add required dependencies:
-+
-NOTE: The jars within the selected libraries are added as dependencies.
-These will appear in the _External Libraries_ in {gpIDE}'s Project tree view.
-
-.. Within the _Modules_ page, select the *Dependencies* tab
-.. Select *+ > JARs or directories...*.
-+
-TIP: The *Add (+)* option is at the bottom of the main panel
-
-+
-
-image::java-add-jars.png[,600]
-+
-.. Navigate to and select the directory containing the {cbl} jars; that is `<pathToCbl>/lib`
-.. *Open* to select the library
-+
-
-.. *Apply* to continue
-. Tell the IDE to create a JAR file
-+
-.. Within the _Project Structure_ panel, select *Artifacts*
-.. In _Artifacts_, select *+ > JAR > From modules with dependencies*
-.. Select the *Main* class, from the _Create Jars from Modules_ panel
-.. *OK* to continue
-.. *OK* to close the panel
-. Still within the _Artifacts_ panel, add the compiled output into the jar
-.. Select *+ > Module Output*
-.. Select *GettingStarted*
-.. *OK* to continue
-. [Optionally] Select *Include in project build* to create the jar on each build
-. *Apply* and *OK* to save your changes and close the _Project Structure_ panel
-. Save and *Close* the project
-
-+
-anchor:bmkGradleSetupConsoleApp[]
-
-*Alternatively, to do the same using Gradle*
-
-. Create a Gradle project folder for {cbl} (`<path-to-couchbase-gradle-project>`)
-. Initialize the project folder for {gpBuildTool}
+[source, bashrc]
 +
 ----
+mkdir gettingstarted
+cd gettingstarted
+gradle init
 gradle init
 ----
 .. Select *2* (Application) as the project type
@@ -184,21 +141,39 @@ gradle init
 .. Accept the defaults for remaining options
 +
 Gradle builds its configuration files and prepares the project folder for use.
-. Include the {cbl} jars as dependencies in the `build.gradle file`
-+
-*Using Downloaded Libaries*
-+
-[source, bash]
 
+. Copy the {cbl} jar lib into the project
++
 ----
-implementation fileTree(include: ['*.jar'], dir: <pathToCbl>/lib>
+cp -r <pathToCbl>lib/ libs
+----
+
+. For a web app project, create a webapp folder for the `.html` and `.jsp` components
++
+----
+mkdir src/main/webapp
+----
+
+. . Include the {cbl} jars as dependencies in the `build.gradle` file
++
+The contents of your `build.gradle` file will depend on the type of project you are building, whether you are using Community or Enterprise edition and whether you prefer to use Maven-distributed binaries or a download.
++
+TIP: Example `build.gradle` file contents are given in  <<Build a Getting Started App>>
+
+** If you are using downloaded binaries, your file should contain:
++
+----
+Dependencies {
+  implementation fileTree(include: ['*.jar'], dir: <pathToCbl>/lib>
+}
 ----
 +
 anchor:bmkUsingMavenRepos[Using Maven repositories]
-
-*Using Maven Repositories*
 +
-.For Community Edition
+** If you are using Maven repositories, it should include:
++
+*** For Community edition
++
 ----
 repositories {
    jcenter()
@@ -210,14 +185,14 @@ Dependencies {
 }
 ----
 +
-.For Enterprise Edition
+
+*** For Enterprise Edition
++
 ----
 repositories {
    jcenter()
    mavenCentral()
-   maven {
-       url "http://172.23.121.218/maven2/internalmaven/"
-   }
+
 }
 
 Dependencies {
@@ -226,16 +201,138 @@ Dependencies {
 
 ----
 
+. Import your project structure into {gpIDE}
+
+.. Within {gpIDE}, open the project folder
++
+{gpIDE} will detect the {gpBuildTool} project content and prompt you to import it
+
+.. Accept the prompt to Import Gradle Project
++
+Note the {gpBuildTool} menu on the right of the screen. You will use this to build your project and distributables (war)
++
+image::GradleMenuWebApp.png[,300]
+
+
+== Build a Getting Started App
+
+This section explains how to use your configured build environment to create a starter {cblJP} app.
+
+=== About Building {cblJP} Web Apps
+
+anchor:bmkMultCblJapps[Running multiple {cblJP} web apps]
+*Running Multiple {cblJP} web apps*
+
+You should note that, based on this link:https://tomcat.apache.org/tomcat-9.0-doc/class-loader-howto.html[tomcat documentation], each web application has its own class loader (WebappX).
+This application-specific loader loads all of the classes, jars, and resources found in the application's `WEB-INF/classes` and `WEB-INF/lib` folders.
+In addition to this, the common class loader loads the shared jar files from `$CATALINA_BASE/lib` and makes them available for all web applications.
+
+However, a constraint within {gpWebServerEnv} means  native shared libraries cannot be loaded by multiple class loaders.
+
+This is an issue because the {cbljp} library contains native shared libraries to be loaded at runtime.
+
+So, to use the {cbljp} library in multiple web applications, you should put the {cblJP} jar files into `$CATALINA_BASE/lib` rather than deploy the with each web app.
+
+WARNING:  Configuring the logging functionality will affect the logging of all web applications. This is a direct consequence of putting {cbl} jar files in the _common class loader_, which shares _{cbl} Console, File_ and _Custom logging functionalities_  across all  web appls.
+
+=== About the Getting Started App
+
+// TIP: The {nmMobStarterApp} app can be downloaded from GitHub link:{url-cb-mobStarterApp}[{nmMobStarterApp}].
+
+The {nmMobStarterApp} code demonstrates how to use {cblJP} to run:
+
+* basic CRUD operations,
+* a simple Query
+* bi-directional replications with Sync Gateway.
+
+NOTE: By default this app stores its database in `{nmSampleAppDbPath}` directory.
+
+The {nmMobStarterApp} app will:
+
+* Create a database
++
+The app creates its database in the `{nmSampleAppDbPath}` directory relative to its root location when run (See: <<Finding a Database File>>).
+
+TIP: Explicitly state your required database location when creating your database (see: <<Finding a Database File>> for how to do this)
+
+* Add content to the DB
+* Run a simple query counting the DB rows
+* Start bi-directional replication using {sg} to {svr}
+* Produce a simple report on the db Contents
++
+image::cblOutput.png[,400]
+
+NOTE: Before starting your app ensure you have started both your {svr} and {sg} instances.
+
+.Set-up Scenarios
+[tabs]
+====
+
+Console App::
++
+--
+
+We'll cover how to use {gpIDE} and {gpBuildTool} to build a simple {cblJP} console application.
+
+
+. Within {gpIDE}, open the project we created in <<Preparing Your Build Environment>>
+
+. Replace the `build.gradle` content with:
+----
+include::{snippet-java-jvm}[tags=getting-startedGradle,indent=0]
+----
+. Replace the app.java code with the following GettingStarted.java code:
++
+[source,java]
+----
+include::{snippet-java-jvm}[tags=getting-started,indent=0]
+----
+<1> The app will start a replicator pointing to `ws://localhost:4984/db`, where `db` is the name of your {sg} database.
+<2> This is the only API that differs from the {android} version. It accepts no parameters.
+<3> You can optionally AES-256 encrypt the database by providing a key
+<4> This is needed for the websocket connections to gracefully close
++
+. Within {gpIDE}'s {gpBuildTool} menu:
+  ** Use *Gradle > Tasks > Build* to compile the code
+  ** Use *Gradle > Tasks > Run* to Run the code
+  ** Use *Gradle > Tasks > Jar* to build a jar file
+
+
+You can run your app using by any of these methods:
+** Using {gpIDE}'s Build > Run option
+** Launching the app from a command line using:
++
+[source,bashrc]
+
+----
+java -jar gettingstarted.jar
+----
++
+Or, alternatively, if you are using {gpBuildTool} then you can use:
++
+[source,java]
+
+----
+./gradlew run
+----
++
+However you launch it you should see the document ID and property printed to the console together with a query result showing the number of rows in the database.
+
+This shows the document was successfully persisted to the database.
+
+See: <<About the Getting Started App>> for more on the app itself
+
 --
 
 Web Container::
 +
 --
 
-anchor:bmkMultCblJapps[Running multiple {cblJP} web apps]
-*Running Multiple {cblJP} web apps*
+This section explains how to set-up a build project to create {cblJP} web apps using of {gpBuildTool} and {gpIDE}.
 
-You should note that, based on this link:https://tomcat.apache.org/tomcat-9.0-doc/class-loader-howto.html[tomcat documentation], each web application has its own class loader (WebappX).
+anchor:bmkMultCblJapps[Running multiple {cblJP} web apps]
+
+Before building and deploying multiple {cblJP} web apps, y*ou should note that, based on this link:https://tomcat.apache.org/tomcat-9.0-doc/class-loader-howto.html[tomcat documentation], each web application has its own class loader (WebappX).
 This application-specific loader loads all of the classes, jars, and resources found in the application's `WEB-INF/classes` and `WEB-INF/lib` folders.
 In addition to this, the common class loader loads the shared jar files from `$CATALINA_BASE/lib` and makes them available for all web applications.
 
@@ -255,87 +352,74 @@ WARNING:  Configuring the logging functionality will affect the logging of all w
 ** _For a multiple web-app deployment:_ Copying them to `$CATALINA_HOME/lib` (see <<bmkMultCblJapps>>)
 ** _For a single web app deployment:_ Copying them to the application's `WEB-INF/lib`. That is, they are packed into the deployable `.war` file.
 
+anchor:bmkGradleWebAppBuild[]
 *Steps*
 
-Within {gpIDE}:
+. Within {gpIDE}, open the project we created in <<Preparing Your Build Environment>>
 
-. Create a new project
-.. Select *File > New > Project...* and click *Next*.
+. Replace the content of your `build.gradle` file with:
 +
-image::java-cli-app.png[,600]
-+
-.. Select *Java* as the language
-.. Select appropriate *Project SDK* (Java 8 and above)
-.. Select *Web App* as framework
-+
-TIP: You may need to select the *Create project from template* option first
+[source, bashrc]
+----
+include::{snippet-java-jvm}[tags=GsWebAppBuildGradle,indent=0]
+----
 
-.. Select *Next* to continue
+. Add a *gettingstarted* class in `src/main/java` using *File > New > Java Class*
 +
-image::java-new-proj.png[,600]
-.. Enter _Project name_ *gettingstarted*
-.. Set other paths as required
-.. *Finish* to continue
+. Paste the servlet code (below) into the class:
 +
-image::java-new-proj-details.png[,600]
-+
-// . Create a new package `com.couchbase.gettingstarted`
-. Create Dependencies
-.. From the main menu, select *File > Project Structure*
-.. Within the _Project Structure_ panel, select *Modules* project settings
-+
-.. Select the *Dependencies* tab
-.. Select *(Add) + > JARs or directories...*+
-+
-TIP: The *Add(+)* option is at the bottom of the main panel
+[source, java]
 
-+
-image::java-add-jars.png[,600]
-+
-.. Select these libaries:
-+
+----
+include::{snippet-java-jvm}[tags=GsWebApp,indent=0]
+----
 
-TIP: The content (jars) of these libraries become dependencies. They are shown in {gpIDE}'s _External Libraries_ view.
+. Create an index html file in `src/main/webapp`
+.. Use *File > New > HTML*
+.. Enter `index.html` as _Name_
+.. *<Enter>* to continue
+.. Add the following content to the file:
++
+----
+include::{snippet-java-jvm}[tags=GsWebAppIndex,indent=0]
+----
 
+. Create a view file in `src/main/webapp`
+.. *File > New > File*
+.. Enter `showDbItems.jsp` as _Name_
+.. *<Enter>* to continue
+.. Paste the following content into the file:
 +
-*** `<pathToCbl>/lib` -- which contains {cblJP}:
-*** `<pathToCbl>/lib_javax` -- the required `javax` jars
+[source, jsp]
 +
-NOTE: *Running multiple {cblJP} web apps?* Declare the {cbl} jars as a  compile-time dependency only (`providedCompile`) See: <<bmkMultCblJapps>>.
+----
+include::{snippet-java-jvm}[tags=GsWebAppShowDbItems,indent=0]
+----
+. Use the Gradle menu to build the app and the war when required:
++
+image::GradleMenuWebApp.png[,300]
 
-.. *Apply* to continue
-. Direct the IDE to create a _WAR_ file as the output artifact
+.. Use *Gradle > Tasks > Build*
+.. Use *Gradle > Tasks > War*
 +
-.. Still in _Project Structure_, select *Artifacts* from _Project Settings_
-.. Select *Add *(+) > Web Application: Exploded > From modules with dependencies*
-+
-TIP: Use the 'Web Application:exploded' option during build.
-It's easy to check the _war_ contents.
-Change the _Type_ to _Web Application: Archive_ when you know the `war` includes the correct items.
+The war file will be in the project's `build.lib` folder.
 
-.. Within the _Select Modules_ panel, select *gettingstarted*
-.. *OK* to continue
-.. *OK* to close the _Select Modules_ panel
-//. Include the compiled output and the sole web page in the `war`:
-. Include the compiled output in the `war`:
-+
-Within the _Artifact's Output Layout_ tab:
+. To run the app:
 
-.. Select *+ > Module Output > GettingStarted*
-.. *OK* to continue
-//.. Select *+ > File*
-//.. Navigate to the *web* directory and select the file *`showDbItems.jsp`*
-//.. *OK* to continue
-. [Optionally] Select *Include in project build* to create the jar on each build
+.. Ensure {gpWebServerEnv} is running
+.. Use the 'localhost:8080/manager' function to navigate-to, select and deploy your `.war` file
+.. Point your browser to: `localhost:8080/gettingstarted`
 +
-This means there is no need to call _Build Artifacts_ after each build
+This opens the browser at your index.html page.
+..  Select the *here* link
++
+This launches the servlet and displays the results in showdDbItems.jsp
+These are also added to the _catalina.out_ log file.
 
-+
-TIP: You can also (optionally) configure the IDE to launch {gpWebServerEnv}
+image::cblOutput.png[,400]
 
-. *Apply* and *OK*
-+
-This saves your changes and closes the _Project Structure_ panel
+See: <<About the Getting Started App>> for more on the app itself
+
 
 // --
 
@@ -363,29 +447,17 @@ The simplest way to do so is to build and deploy your web app using a {gpBuildTo
 
 The example we use is based on the `com.bmuschko.tomcat` plugin.
 
-The `build.gradle` file uses the CouchbaseLite jar files from the downloadable packaged zip file.
+anchor:bmkGradleEmbeddedBuild[]
 
-Place these jar files in the CouchbaseLiteLib folder located at the root of the {buildTool} project.
 
-*Steps*
-
-. Create and cd to a project folder
-. Initialise the {gpBuildTool} project to create a Java app project
+. Within {gpIDE}, open the project we created in <<Preparing Your Build Environment>>
+. Replace the content of your `build.gradle` file with:
 +
-[source, bashrc]
-
 ----
-./gradlew init
+include::{snippet-java-jvm}[tags=GsEmbeddedTomcatBuildGradle,indent=0]
 ----
-
-. Copy the <pathToCbl> jars to `<projectRoot>/CouchbaseLiteLib`
-. Edit the `build-gradle` file to contain the following:
 +
-[source, groovy]
-
-----
-include::{snippet-java-jvm}[tags=embeddedTomcat,indent=0]
-----
+This pulls-in the required {gpBuildTool} plugins to embed Tomcat.
 
 . View the gradle tasks available to you:
 +
@@ -395,39 +467,82 @@ include::{snippet-java-jvm}[tags=embeddedTomcat,indent=0]
 ./gradlew tasks
 ----
 +
-This shows the following web application tasks are now available:
+This shows us that the following web application tasks are now available:
 
-** tomcatJasper - Runs the JSP compiler and turns JSP pages into Java source.
-** tomcatRun - Uses your files as and where they are and deploys them to Tomcat.
-** tomcatRunWar - Assembles the webapp into a war and deploys it to Tomcat.
-** tomcatStop - Stops Tomcat.
+** `tomcatJasper` - Runs the JSP compiler and turns JSP pages into Java source.
+** `tomcatRun` - Uses your files as and where they are and deploys them to Tomcat.
+** `tomcatRunWar` - Assembles the webapp into a war and deploys it to Tomcat.
+** `tomcatStop` - Stops Tomcat.
 
-. You can run an empty Tomcat container now using:
+. At this point you can run an empty Tomcat container using:
 +
 [source, bashrc]
-
++
 ----
 ./gradlew tomcatRun
 ----
 
-. You can create a distributable `.war` file using:
+. You can also create a distributable `.war` file using:
 +
 [source, bashrc]
-
++
 ----
 ./gradlew war
 ----
++
+Of course, at this stage running the war will launch only the embedded {gpWebServerEnv} container, as no web app has been added yet.
++
+. You can now *Add Some Java*
+.. Add a *gettingstarted* class in `src/main/java` using *File > New > Java Class*
++
+.. Paste the servlet code (below) into the class:
++
+[source, java]
 
+----
+include::{snippet-java-jvm}[tags=GsWebApp,indent=0]
+----
 
-At this stage running the war will only launch the embedded {gpWebServerEnv}, as no web app has been added yet.
+. Create an index html file in `src/main/webapp`
+.. Use *File > New > HTML*
+.. Enter `index.html` as _Name_
+.. *<Enter>* to continue
+.. Add the following content to the file:
++
+----
+include::{snippet-java-jvm}[tags=GsWebAppIndex,indent=0]
+----
 
-We'll see how to do that in the next step <<YOUR FIRST PROJECT>>
+. Create a view file in `src/main/webapp`
+.. *File > New > File*
+.. Enter `showDbItems.jsp` as _Name_
+.. *<Enter>* to continue
+.. Paste the following content into the file:
++
+[source, jsp]
++
+----
+include::{snippet-java-jvm}[tags=GsWebAppShowDbItems,indent=0]
+----
+. Use the Gradle menu to build the app and the war when required:
+. Run the app using:
+----
+tomcatRun
+----
+.. From the tomcatRun window select the *http://localhost:8080* link
++
+This opens the browser at your index.html page.
+..  Select the *here* link
++
+This launches the servlet and displays the results in showdDbItems.jsp
+
+image::cblOutput.png[,400]
+
+See: <<About the Getting Started App>> for more on the app itself
+
 --
 
 ====
-
-NOTE: Your project build environments are now ready to build {cblJP} apps.
-To continue building the starter app, see <<YOUR FIRST PROJECT>>.
 
 // EndTab Embedded Web Server
 
@@ -450,242 +565,6 @@ To continue building the starter app, see <<YOUR FIRST PROJECT>>.
 
 // TIP: See <<YOUR FIRST PROJECT>> for an example of how to do this.
 
-
-== YOUR FIRST PROJECT
-
-== Build your app
-
-NOTE: See <<Prepare the Build Environment>> above if you have not already done so.
-
-This section explains how to use the {cblJP} to build your first application.
-To do this we will use the source code of the {nmMobStarterApp} starter app.
-
-TIP: The {nmMobStarterApp} app can be downloaded from GitHub link:{url-cb-mobStarterApp}[{nmMobStarterApp}].
-
-The {nmMobStarterApp} code demonstrates how to use {cblJP} to run:
-
-* basic CRUD operations,
-* a simple Query
-* bi-directional replications with Sync Gateway.
-
-NOTE: By default this app stores its database in `{nmSampleAppDbPath}` directory.
-
-anchor:bmkFirstAppBuild[]
-
-.First app build
-[tabs]
-====
-Console App::
-+
---
-
-. Open *Main.java* in {gpIDE} and paste the following code into `Main`
-+
-[source,java]
-----
-include::{snippet-java-jvm}[tags=getting-started,indent=0]
-----
-<1> The app will start a replicator pointing to `ws://localhost:4984/db`, where `db` is the name of your {sg} database.
-<2> This is the only API that differs from the {android} version. It accepts no parameters.
-<3> You can optionally AES-256 encrypt the database by providing a key
-<4> This is needed for the websocket connections to gracefully close
-+
-. Within {gpIDE}, select *Build > Build Project* to compile the code and assemble the output .jar file.
-+
-NOTE: If you did not set *Include in project build* you will need to use *Build > Build Artifacts > GettingStarted* to create the jar.
-
-+
-The app is now ready to run.
-But first you need prepare the associated {cbl} run-time components - see <<Run Your App>>
-
---
-Web App::
-+
---
-Within {gpIDE}:
-
-. Open the _gettingstarted_ project you created in <<Set-up Couchbase Lite for Java>>
-
-. Create a new package  in the _src_ directory
-+
-Use *File > New > Package* and name it `com.couchbase.gettingstarted`
-. Paste the servlet code (below) into the package, using:
-+
-*<right-click>com.couchbase.gettingstarted, Paste*
-+
-[source, java]
-
-----
-include::{snippet-java-jvm}[tags=GettingStartedWebApp,indent=0]
-----
-
-. Create a new JSP file in the `web` directory
-.. Select `web`
-.. *File > New > JSP/JSPX*
-.. Enter name as `showDbItems`
-.. Select *JSP* and *<Enter>* to continue
-.. Paste the following content into the file:
-+
-[source, jsp]
-
-----
-<html>
-<head>
-    <title>Couchbase Lite (Java Jvm) :: Getting Started App</title>
-</head>
-<body>
-<h1>Couchbase Lite (Java Jvm) :: Getting Started App</h1>
-<h2>List all current DB rows</h2>
-<hr>
-<p>NumRows = ${myRowCount}</p>
-<hr>
-${myResults}
-<hr>
-</body>
-</html>
-----
-. Build the app and add artifacts to the war.
-+
-Your app is now ready to deploy and run.
-
---
-Embedded Web App::
-+
---
-WARNING: WIP - needs revision
-
-. Build your web app as described for the Web App option
-. Within the project folder of tcWebAppHarness:
-
-.. Copy the `.war` into the `libs/libMyWar` library
-.. Rebuild the tcWebAppHarness apps
-+
-This will include your {nmMobStarterApp} app as a war file within the runnable jar.
---
-
-NOTE: Your {nmMobStarterApp} app is now built and (almost) ready to go; see <<Run Your App>>
-====
-
-== Run Your App
-
-=== Prerequisites
-
-Before you can run your {nmMobStarterApp} app you will need to have runnable instances of {svr} and {sg}. if you have then go straight to <<Running Apps>>
-
-NOTE: On Linux: You must have loaded the shared libraries as described in <<bmkLinuxSharedLibs>>
-
-==== Install {svr} and {sg}
-
-If you have not already done so:
-Install _{svr}_ and _{sg}_ following steps outlined in xref:{sgGetStartedDoc-installation}[Installing Sync Gateway ->]
-// . If you haven't already done so, download the starter app link:{url-cb-mobStarterApp}[{nmMobStarterApp}].
-
-==== Create the Getting Started Database
-
-[{orderedList}]
-. Within {svr}, create a bucket named {nmSampleAppDb}
-+
-Follow the instructions xref:{sgGetStartedDoc-createBucket}[here]
-
-[{steps}]
-. Create a RBAC user for {sg}
-+
-See instructions xref:{sgGetStartedDoc-createRBACuser}[here]
-[{steps2}]
-.. Set username to {nmSampleAppUser}
-.. Set password to {nmSampleAppPassword}
-
-// ==== Configure {sg}
-
-// Configure Sync Gateway using the following sample sync-gateway-config file.
-
-// [source, json]
-
-// ----
-// // include::_partials/gettingstarted-syncgateway.adoc[]
-
-// include::{snippet-java-jvm}[tags=sdk-initializer,indent=0]
-// ----
-
-// <1> This is the name of the bucket you configured on server
-// <2> This is the username of the RBAC user
-// <3> This is password of the RBAC user
-// <4> This is a Sync Gateway user. Replication will happen within the context of the user.
-
-=== Running Apps
-
-The {nmMobStarterApp} app will:
-
-* Create a database
-+
-The app creates its database in the `{nmSampleAppDbPath}` directory relative to its root location when run (See: <<Finding a Database File>>).
-
-TIP: Explicitly state your required database location when creating your database (see: <<Finding a Database File>> for how to do this)
-
-* Add content to the DB
-* Run a simple query counting the DB rows
-* Start bi-directional replication using {sg} to {svr}.
-
-First, ensure you have started your {svr} instance.
-
-.Running first app
-[tabs]
-====
-
-Console App::
-+
---
-
-. Launch a command line terminal
-. Navigate to the directory containing the jar created in <<YOUR FIRST PROJECT>>
-. Launch the app using:
-+
-[source,bashrc]
-
-----
-java -jar gettingstarted.jar
-----
-+
-Alternatively, if you are using {gpBuildTool} then you can use:
-+
-[source,java]
-
-----
-./gradlew run
-----
-
-You will see the document ID and property printed to the console together with a query result showing the number of rows in the database.
-
-This shows the document was successfully persisted to the database.
---
-
-Web App::
-+
---
-. Ensure {gpWebServerEnv} is running
-. Use 'localhost:8080/manager' to navigate to and deploy your `.war` file
-. Point your browser to: `localhost:8080/gettingstarted/GettingStarted`
-
-The `showDbItems.jsp` page displays the results from the app.
-
-
-
-These are also added to the _catalina.out_ log file.
---
-Embedded Web App::
-+
---
-. Launch the `.jar` file you created
-+
-The {nmMobStarterApp} web app page is displayed.
-. Select *Click Here* to initiate the Getting Started test
-+
-Results from the app are displayed on screen.
-They are also added to the embedded _catalina.out_ log file.
---
-
-====
-// END TABS block
 
 == API REFERENCES
 
