@@ -9,6 +9,7 @@ public class Examples {
 // tag::getting-started[]
 import com.couchbase.lite.*;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -18,14 +19,13 @@ import java.util.Random;
 
 public class GettingStarted {
 
-*/
-private static final String DB_DIR = "/usr/local/var/tomcat/data";
+private static final String DB_DIR = "/data"; // <5>
 private static final String DB_NAME = "getting-started";
 /*      Credentials declared this way purely for expediency in this demo - use OAUTH in production code */
 private static final String DB_USER = "sync_gateway";
 private static final String DB_PASS = "password"; // <3>
 //    private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/db" + DB_NAME;
-private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/getting-started";
+private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/getting-started"; // <1>
 private static final String DB_PATH = new File("").getAbsolutePath()+"/resources";
 
 
@@ -54,7 +54,7 @@ public static void main (String [] args) throws CouchbaseLiteException, Interrup
 
     // Get the database (and create it if it doesn’t exist).
     DatabaseConfiguration config = new DatabaseConfiguration();
-    config.setDirectory(DB_PATH);
+    config.setDirectory(DB_PATH); // <5>
     config.setEncryptionKey(new EncryptionKey(DB_PASS)); // <3>
     Database database = new Database(DB_NAME, config);
 
@@ -91,18 +91,19 @@ public static void main (String [] args) throws CouchbaseLiteException, Interrup
             SelectResult.property(Prop_Version),
             SelectResult.property(Prop_Type))
         .from(DataSource.database(database));
-    ResultSet results = queryAll.execute();
-    Result thisResult;
-    String resultLine="";
-    while( (thisResult=results.next())!=null) {
-        numRows++;
-        System.out.println(String.format("%d ... Id: %s is learning: %s version: %.2f type is %s",
-                numRows,
-                thisResult.getString(Prop_Id),
-                thisResult.getString(Prop_Language),
-                thisResult.getDouble(Prop_Version),
-                thisResult.getString(Prop_Type)));
-    }
+        try {
+            for (Result result : queryAll.execute()) {
+              numRows++;
+              System.out.println(String.format("%d ... Id: %s is learning: %s version: %.2f type is %s",
+                  numrows,
+                  result.getString(Prop_Id),
+                  result.getString(Prop_Language),
+                  result.getDouble(Prop_Version),
+                  result.getString(Prop_Type)));
+              }
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }              
     System.out.println(String.format("Total rows returned by query = %d", numRows));
 
     Endpoint targetEndpoint = new URLEndpoint(new URI(SYNC_GATEWAY_URL));
@@ -165,9 +166,40 @@ application {
 // end::getting-startedGradle[]
 
 
-// tag::GsWebApp[]
+// tag::gsGradleMavenExample[]
+plugins {
+    id 'java'
+    id 'application'
+}
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven {
+            url "https://mobile.maven.couchbase.com/maven2/dev/"
+        }
+    }
+}
+dependencies {
+//  Use for Enterprise version
+    implementation "com.couchbase.lite:couchbase-lite-java-ee:2.7.0"
+//  Use for community versions
+//    implementation "com.couchbase.lite:couchbase-lite-java:2.7.0"
+}
+
+application {
+    // Define the main class for the application.
+    mainClassName = 'gettingstarted.GettingStarted'
+}
+
+// end::gsGradleMavenExample[]
+
+
+
+// tag::GsWebApp_GettingStarted[]
 import com.couchbase.lite.*;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import java.io.IOException;
 import java.net.URI;
@@ -177,32 +209,30 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import static com.couchbase.lite.DataSource.database;
-
 @WebServlet( value = "/GettingStarted")
 public class GettingStarted extends javax.servlet.http.HttpServlet {
-    private static final String DB_DIR = "/usr/local/var/tomcat/data";
+    private static final String DB_DIR = "/usr/local/var/tomcat/data"; // <1>
     private static final String DB_NAME = "getting-started";
     /*      Credentials declared this way purely for expediency in this demo - use OAUTH in production code */
     private static final String DB_USER = "sync_gateway";
     private static final String DB_PASS = "password";
     //    private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/db" + DB_NAME;
-    private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/getting-started";
-    private static final String NEWLINETAG="<br />";
+    private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/getting-started"; // <2>
+    private static final String NEWLINETAG = "<br />";
     private String MYRESULTS;
     private int NUMROWS;
     private Random RANDOM = new Random();
 
-    protected void doGet (javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse
+    protected void doGet(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse
             response) throws javax.servlet.ServletException, IOException {
         outputMessage("Servlet started :: doGet Invoked");
         doPost(request, response);
     }
 
-    protected void doPost (javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse
+    protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse
             response) throws javax.servlet.ServletException, IOException {
-        NUMROWS=0;
-        MYRESULTS="";
+        NUMROWS = 0;
+        MYRESULTS = "";
         outputMessage("Servlet started :: doPost Invoked");
         String url = "/showDbItems.jsp";
         try {
@@ -220,52 +250,54 @@ public class GettingStarted extends javax.servlet.http.HttpServlet {
         outputMessage("Servlet Ended :: doPost Exits");
     }
 
-    public String testCouchbaseLite() throws CouchbaseLiteException, URISyntaxException, InterruptedException {
+    public String testCouchbaseLite() throws CouchbaseLiteException, URISyntaxException, InterruptedException, ServletException {
 
-//       public static void main(String[] args) throws Exception {
-
-        int randPtr = RANDOM.nextInt(5) +  1;
+        int randPtr = RANDOM.nextInt(5) + 1;
         long syncTotal = 0;
         Double randVn = RANDOM.nextDouble() + 1;
-        List<String> listLangs = new ArrayList<String> (Arrays.asList("Java","Swift","C#.Net","Objective-C","C++","Cobol"));
-        List<String> listTypes = new ArrayList<String> (Arrays.asList("SDK","API","Framework","Methodology","Language","IDE"));
+        List<String> listLangs = new ArrayList<String>(Arrays.asList("Java", "Swift", "C#.Net", "Objective-C", "C++", "Cobol"));
+        List<String> listTypes = new ArrayList<String>(Arrays.asList("SDK", "API", "Framework", "Methodology", "Language", "IDE"));
 
-        String Prop_Id ="id";
+        String Prop_Id = "id";
         String Prop_Language = "language";
         String Prop_Type = "type";
         String Prop_Version = "version";
-        String searchStringType="SDK";
-
-        // Initialise Couchbase
-
-//      Initiate CouchbaseLite
-        CouchbaseLite.init();
+        String searchStringType = "SDK";
 
         // Get and configure database
-        outputMessage("== Opening DB and adding record");
-        Database database;
-        try {
-            DatabaseConfiguration config = new DatabaseConfiguration();
-            config.setDirectory(DB_DIR);
-            database = new Database(DB_NAME, config);
-        }
-        catch (CouchbaseLiteException e) {
-            throw new IllegalStateException("Cannot create database", e);
-        }
+        // Note initialisation of CouchbaseLite is done in ServletContextListener
+        outputMessage("== Opening DB and doing initial sync");
+        Database database = DatabaseManager.manager().getDatabase(DB_NAME,DB_DIR,DB_PASS);
+
+        // Initial DB sync prior to local updates
+        syncTotal = DatabaseManager.manager().runOneShotReplication(database, SYNC_GATEWAY_URL, DB_USER, DB_PASS);
+        outputMessage(String.format("Inital number of rows synchronised = %d", syncTotal));
 
         // Create a new document (i.e. a record) in the database.
+        outputMessage("== Adding a record");
         MutableDocument mutableDoc = new MutableDocument()
                 .setDouble(Prop_Version, randVn)
-                .setString(Prop_Type, listTypes.get(RANDOM.nextInt(listTypes.size() -1 )));
+                .setString(Prop_Type, listTypes.get(RANDOM.nextInt(listTypes.size() - 1)));
 
         // Save it to the database.
-        database.save(mutableDoc);
+        try {
+            database.save(mutableDoc);
+        } catch (CouchbaseLiteException e) {
+            throw new ServletException("Error saving a document", e);
+        }
 
         // Update a document.
+        outputMessage("== Updating added record");
         mutableDoc = database.getDocument(mutableDoc.getId()).toMutable();
-        mutableDoc.setString(Prop_Language, listLangs.get(RANDOM.nextInt(listLangs.size() -1)));
-        database.save(mutableDoc);
+        mutableDoc.setString(Prop_Language, listLangs.get(RANDOM.nextInt(listLangs.size() - 1)));
+        // Save it to the database.
+        try {
+            database.save(mutableDoc);
+        } catch (CouchbaseLiteException e) {
+            throw new ServletException("Error saving a document", e);
+        }
 
+        outputMessage("== Retrieving record by id");
         Document newDoc = database.getDocument(mutableDoc.getId());
         // Show the document ID (generated by the database) and properties
         outputMessage("Document ID :: " + newDoc.getId());
@@ -276,8 +308,12 @@ public class GettingStarted extends javax.servlet.http.HttpServlet {
         Query query = QueryBuilder.select(SelectResult.all())
                 .from(DataSource.database(database))
                 .where(Expression.property(Prop_Type).equalTo(Expression.string(searchStringType)));
-        ResultSet result = query.execute();
-        outputMessage(String.format("Query returned %d rows of type %s", result.allResults().size(), searchStringType));
+        try{
+            ResultSet result = query.execute();
+            outputMessage(String.format("Query returned %d rows of type %s", result.allResults().size(), searchStringType));
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
 
         // Create a query to fetch all documents.
         outputMessage("== Executing Query 2");
@@ -286,34 +322,94 @@ public class GettingStarted extends javax.servlet.http.HttpServlet {
                 SelectResult.property(Prop_Version),
                 SelectResult.property(Prop_Type))
                 .from(DataSource.database(database));
-        ResultSet results = queryAll.execute();
-        Result thisResult;
-        String resultLine="";
-        while( (thisResult=results.next())!=null) {
-            NUMROWS++;
-            outputMessage(String.format("%d ... Id: %s is learning: %s version: %.2f type is %s",
-                    NUMROWS,
-                    thisResult.getString(Prop_Id),
-                    thisResult.getString(Prop_Language),
-                    thisResult.getDouble(Prop_Version),
-                    thisResult.getString(Prop_Type)));
-        }        outputMessage( String.format("Total rows returned by query = %d", NUMROWS));
+        try {
+            for (Result result : queryAll.execute()) {
+              NUMROWS++;
+                outputMessage(String.format("%d ... Id: %s is learning: %s version: %.2f type is %s",
+                  NUMROWS,
+                  result.getString(Prop_Id),
+                  result.getString(Prop_Language),
+                  result.getDouble(Prop_Version),
+                  result.getString(Prop_Type)));
+              }
+            } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+        outputMessage(String.format("Total rows returned by query = %d", NUMROWS));
 
-        syncTotal = initiateReplication(database, SYNC_GATEWAY_URL, DB_USER, DB_PASS);
-        outputMessage( String.format("Total rows synchronised = %d", syncTotal));
+//      Do final single-shot replication to incorporate changed NumRows
+        outputMessage("== Doing final single-shot sync");
+        syncTotal = DatabaseManager.manager().runOneShotReplication(database, SYNC_GATEWAY_URL, DB_USER, DB_PASS);
+        outputMessage(String.format("Total rows synchronised = %d", syncTotal));
         database.close();
-
         return MYRESULTS;
     }
 
-    private long initiateReplication ( Database parDb, String parURL, String parName, String parPassword) throws InterruptedException {
-
-        // Set replicator endpoint
-        URI sgURI =null;
-        try{
-            sgURI=new URI(parURL);
+    public void outputMessage(String msg) {
+        String thisMsg = "Null message";
+        if (msg.length() > 0) {
+            thisMsg = msg;
         }
-        catch (URISyntaxException e) {
+        System.out.println(msg);
+        MYRESULTS = MYRESULTS + msg + NEWLINETAG;
+    }
+}
+// end::GsWebApp_GettingStarted[]
+
+// tag::GsWebApp_Listener[]
+    import javax.servlet.ServletContextEvent;
+    import javax.servlet.ServletContextListener;
+    import javax.servlet.annotation.WebListener;
+
+    @WebListener
+    public class Application implements ServletContextListener {
+      @Override
+      public void contextInitialized(ServletContextEvent event) {
+          DatabaseManager.manager().init();
+      }
+    }
+// end::GsWebApp_Listener[]
+
+// tag::GsWebApp_DbManager[]
+import com.couchbase.lite.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+public class DatabaseManager {
+
+    private static DatabaseManager instance;
+    private Database database;
+    public static synchronized DatabaseManager manager() {
+        if (instance == null) {
+            instance = new DatabaseManager();
+        }
+        return instance;
+    }
+    public synchronized void init() {
+        CouchbaseLite.init(); // <1>
+    }
+    public synchronized Database getDatabase(String parDbname, String parDbDir,  String parDbPass) {
+        if (database == null) {
+            try {
+                DatabaseConfiguration config = new DatabaseConfiguration();
+                config.setDirectory(parDbDir); // <2>
+                config.setEncryptionKey(new EncryptionKey(parDb_PASS)); // <3>
+                database = new Database(parDbname, config);
+            }
+            catch (CouchbaseLiteException e) {
+                throw new IllegalStateException("Cannot create database", e);
+            }
+        }
+        return database;
+    }
+
+    public synchronized long runOneShotReplication( Database parDb, String parURL, String parName, String parPassword) throws InterruptedException {
+        long syncTotal = 0;
+        // Set replicator endpoint
+        URI sgURI = null;
+        try {
+            sgURI = new URI(parURL);
+        } catch (URISyntaxException e) {
             e.printStackTrace();
         }
         URLEndpoint targetEndpoint = new URLEndpoint(sgURI);
@@ -323,18 +419,18 @@ public class GettingStarted extends javax.servlet.http.HttpServlet {
         ReplicatorConfiguration replConfig = new ReplicatorConfiguration(parDb, targetEndpoint);
 
         replConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
-        replConfig.setContinuous(true);
+        replConfig.setContinuous(false);    // make this a single-shot replication cf. a continuous replication
 
         // Add authentication.
-        System.out.println("== Synchronising DB :: Setting authenticator");
+//        outputMessage("== Synchronising DB :: Setting authenticator");
         replConfig.setAuthenticator(new BasicAuthenticator(parName, parPassword));
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        System.out.println("== Synchronising DB :: Creating replicator");
+//        outputMessage("== Synchronising DB :: Creating replicator");
         Replicator replicator = new Replicator(replConfig);
 
         // Listen to replicator change events.
-        System.out.println("== Synchronising DB :: Adding listener");
+//        System.out.println("== Synchronising DB :: Adding listener");
         replicator.addChangeListener(change -> {
             if (change.getStatus().getError() != null) {
                 System.err.println("Error code ::  " + change.getStatus().getError().getCode());
@@ -342,31 +438,24 @@ public class GettingStarted extends javax.servlet.http.HttpServlet {
         });
 
         // Start replication.
-        System.out.println("== Synchronising DB :: Starting");
+//        outputMessage("== Synchronising DB :: Starting");
         replicator.start();
         // Check status of replication and wait till it is completed
-        while ( (replicator.getStatus().getActivityLevel() !=  Replicator.ActivityLevel.STOPPED) && (replicator.getStatus().getActivityLevel() != Replicator.ActivityLevel.IDLE) ) {
+        while ((replicator.getStatus().getActivityLevel() != Replicator.ActivityLevel.STOPPED) && (replicator.getStatus().getActivityLevel() != Replicator.ActivityLevel.IDLE)) {
             Thread.sleep(1000);
         }
 
-        System.out.println("== Synchronising DB :: Completed " + replicator.getStatus().getProgress().getTotal());
+        syncTotal = replicator.getStatus().getProgress().getTotal();
         replicator.stop();
-
+//        outputMessage("== Synchronising DB :: Completed ");
         return replicator.getStatus().getProgress().getTotal();
-    }
 
-    public void outputMessage (String msg) {
-        String thisMsg = "Null message";
+        }
+}
 
-        if(msg.length()>0) { thisMsg = msg; }
-        System.out.println(msg);
-        MYRESULTS = MYRESULTS + msg + NEWLINETAG;
-    }
-} // End Servlets
+// end::GsWebApp_DbManager[]
 
-// end::GsWebApp[]
-
-// tag::GsWebAppIndex[]
+// tag::GsWebApp_Index[]
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -379,9 +468,9 @@ public class GettingStarted extends javax.servlet.http.HttpServlet {
 
 </body>
 </html>
-// end::GsWebAppIndex[]
+// end::GsWebApp_Index[]
 
-// tag::GsWebAppShowDbItems[]
+// tag::GsWebApp_ShowDbItems[]
 <html>
 <head>
     <title>Couchbase Lite (Java Jvm) :: Getting Started App</title>
@@ -396,15 +485,16 @@ ${myResults}
 <hr>
 </body>
 </html>
-// end::GsWebAppShowDbItems[]
+// end::GsWebApp_ShowDbItems[]
+
 
 // tag::GsWebAppBuildGradle[]
 apply plugin: 'java'
-apply plugin: 'war'
+apply plugin: 'jar'
+// apply plugin: 'war'
 sourceCompatibility = 1.8
 repositories {
   jcenter()
-  mavenCentral()
 }
 dependencies {
     implementation fileTree(dir: 'libs', include: '*.jar')
@@ -435,8 +525,10 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    implementation fileTree(dir: 'libs', include: '*.jar')
+    //  Use for Enterprise version
+    compileOnly "com.couchbase.lite:couchbase-lite-java-ee:2.7.0"
+    //  Use for community versions
+    //    compileOnly "com.couchbase.lite:couchbase-lite-java:2.7.0"
     compileOnly "javax.servlet:javax.servlet-api:4.0.1"
     tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
         "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
@@ -459,208 +551,6 @@ tomcat {
 // end::GsEmbeddedTomcatBuildGradle[]
 
 
-
-// tag::GettingStartedEmbeddedApp[]
-import com.couchbase.lite.*;
-
-import javax.servlet.annotation.WebServlet;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
-import static com.couchbase.lite.DataSource.database;
-
-@WebServlet( value = "/GettingStarted")
-public class GettingStarted extends javax.servlet.http.HttpServlet {
-    private static final String DB_DIR = "/usr/local/var/tomcat/data";
-    private static final String DB_NAME = "getting-started";
-    /*      Credentials declared this way purely for expediency in this demo - use OAUTH in production code */
-    private static final String DB_USER = "sync_gateway";
-    private static final String DB_PASS = "password";
-//    private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/db" + DB_NAME;
-    private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/getting-started";
-    private static final String NEWLINETAG="<br />";
-    private String MYRESULTS;
-    private int NUMROWS;
-    private Random RANDOM = new Random();
-
-    protected void doGet (javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse
-            response) throws javax.servlet.ServletException, IOException {
-        outputMessage("Servlet started :: doGet Invoked");
-        doPost(request, response);
-    }
-
-    protected void doPost (javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse
-            response) throws javax.servlet.ServletException, IOException {
-        NUMROWS=0;
-        MYRESULTS="";
-        outputMessage("Servlet started :: doPost Invoked");
-        String url = "/showDbItems.jsp";
-        try {
-            MYRESULTS = testCouchbaseLite();
-        } catch (CouchbaseLiteException | URISyntaxException | InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            outputMessage(String.format("CouchbaseLite Test Ended :: There are %d rows in DB", NUMROWS));
-        }
-        request.setAttribute("myRowCount", NUMROWS);
-        request.setAttribute("myResults", MYRESULTS);
-        getServletContext()
-                .getRequestDispatcher(url)
-                .forward(request, response);
-        outputMessage("Servlet Ended :: doPost Exits");
-    }
-
-    public String testCouchbaseLite() throws CouchbaseLiteException, URISyntaxException, InterruptedException {
-
-//       public static void main(String[] args) throws Exception {
-
-        int randPtr = RANDOM.nextInt(5) +  1;
-        long syncTotal = 0;
-        Double randVn = RANDOM.nextDouble() + 1;
-        List<String> listLangs = new ArrayList<String> (Arrays.asList("Java","Swift","C#.Net","Objective-C","C++","Cobol"));
-        List<String> listTypes = new ArrayList<String> (Arrays.asList("SDK","API","Framework","Methodology","Language","IDE"));
-
-        String Prop_Id ="id";
-        String Prop_Language = "language";
-        String Prop_Type = "type";
-        String Prop_Version = "version";
-        String searchStringType="SDK";
-
-        // Initialise Couchbase
-
-//      Initiate CouchbaseLite
-        CouchbaseLite.init();
-
-        // Get and configure database
-        outputMessage("== Opening DB and adding record");
-        Database database;
-        try {
-            DatabaseConfiguration config = new DatabaseConfiguration();
-            config.setDirectory(DB_DIR);
-            database = new Database(DB_NAME, config);
-        }
-        catch (CouchbaseLiteException e) {
-            throw new IllegalStateException("Cannot create database", e);
-        }
-
-        // Create a new document (i.e. a record) in the database.
-        MutableDocument mutableDoc = new MutableDocument()
-                .setDouble(Prop_Version, randVn)
-                .setString(Prop_Type, listTypes.get(RANDOM.nextInt(listTypes.size() -1 )));
-
-        // Save it to the database.
-        database.save(mutableDoc);
-
-        // Update a document.
-        mutableDoc = database.getDocument(mutableDoc.getId()).toMutable();
-        mutableDoc.setString(Prop_Language, listLangs.get(RANDOM.nextInt(listLangs.size() -1)));
-        database.save(mutableDoc);
-
-        Document newDoc = database.getDocument(mutableDoc.getId());
-        // Show the document ID (generated by the database) and properties
-        outputMessage("Document ID :: " + newDoc.getId());
-        outputMessage("Learning " + newDoc.getString(Prop_Language));
-
-        // Create a query to fetch documents of type SDK.
-        outputMessage("== Executing Query 1");
-        Query query = QueryBuilder.select(SelectResult.all())
-                .from(DataSource.database(database))
-                .where(Expression.property(Prop_Type).equalTo(Expression.string(searchStringType)));
-        ResultSet result = query.execute();
-        outputMessage(String.format("Query returned %d rows of type %s", result.allResults().size(), searchStringType));
-
-        // Create a query to fetch all documents.
-        outputMessage("== Executing Query 2");
-        Query queryAll = QueryBuilder.select(SelectResult.expression(Meta.id),
-                SelectResult.property(Prop_Language),
-                SelectResult.property(Prop_Version),
-                SelectResult.property(Prop_Type))
-                .from(DataSource.database(database));
-        ResultSet results = queryAll.execute();
-        Result thisResult;
-        String resultLine="";
-        while( (thisResult=results.next())!=null) {
-            NUMROWS++;
-            outputMessage(String.format("%d ... Id: %s is learning: %s version: %.2f type is %s",
-                    NUMROWS,
-                    thisResult.getString(Prop_Id),
-                    thisResult.getString(Prop_Language),
-                    thisResult.getDouble(Prop_Version),
-                    thisResult.getString(Prop_Type)));
-        }        outputMessage( String.format("Total rows returned by query = %d", NUMROWS));
-
-        syncTotal = initiateReplication(database, SYNC_GATEWAY_URL, DB_USER, DB_PASS);
-        outputMessage( String.format("Total rows synchronised = %d", syncTotal));
-        database.close();
-
-        return MYRESULTS;
-    }
-
-    private long initiateReplication ( Database parDb, String parURL, String parName, String parPassword) throws InterruptedException {
-
-        // Set replicator endpoint
-        URI sgURI =null;
-        try{
-            sgURI=new URI(parURL);
-        }
-        catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        URLEndpoint targetEndpoint = new URLEndpoint(sgURI);
-
-        // Configure replication
-        System.out.println("== Synchronising DB :: Configuring replicator");
-        ReplicatorConfiguration replConfig = new ReplicatorConfiguration(parDb, targetEndpoint);
-
-        replConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
-        replConfig.setContinuous(true);
-
-        // Add authentication.
-        System.out.println("== Synchronising DB :: Setting authenticator");
-        replConfig.setAuthenticator(new BasicAuthenticator(parName, parPassword));
-
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        System.out.println("== Synchronising DB :: Creating replicator");
-        Replicator replicator = new Replicator(replConfig);
-
-        // Listen to replicator change events.
-        System.out.println("== Synchronising DB :: Adding listener");
-        replicator.addChangeListener(change -> {
-            if (change.getStatus().getError() != null) {
-                System.err.println("Error code ::  " + change.getStatus().getError().getCode());
-            }
-        });
-
-        // Start replication.
-        System.out.println("== Synchronising DB :: Starting");
-        replicator.start();
-        // Check status of replication and wait till it is completed
-        while ( (replicator.getStatus().getActivityLevel() !=  Replicator.ActivityLevel.STOPPED) && (replicator.getStatus().getActivityLevel() != Replicator.ActivityLevel.IDLE) ) {
-            Thread.sleep(1000);
-        }
-
-        System.out.println("== Synchronising DB :: Completed " + replicator.getStatus().getProgress().getTotal());
-        replicator.stop();
-
-        return replicator.getStatus().getProgress().getTotal();
-    }
-
-
-        public void outputMessage (String msg) {
-            String thisMsg = "Null message";
-
-            if(msg.length()>0) { thisMsg = msg; }
-            System.out.println(msg);
-            MYRESULTS = MYRESULTS + msg + NEWLINETAG;
-        }
-} // End Servlets
-
-// end::GettingStartedEmbeddedApp[]
 
 // tag::tcWebAppHarness[]
 package com.couchbase.tcWebAppHarness;
@@ -760,7 +650,7 @@ apply plugin: 'java'
     public void test1xAttachments() throws CouchbaseLiteException, IOException {
         // if db exist, delete it
         private string final DB_NAME = "cbl-sqlite"
-
+        File dbPath=new File(“.").getAbsolutePath();
         deleteDB(DB_NAME, context.getFilesDir());
 
         ZipUtils.unzip(getAsset("replacedb/android140-sqlite.cblite2.zip"), context.getFilesDir());
@@ -841,9 +731,8 @@ apply plugin: 'java'
 
     // ### File logging
     public void testFileLogging() throws CouchbaseLiteException {
-// Check context validity for JVM cf Android
        // tag::file-logging[]
-        final File path = context.getCacheDir();
+        final File path = new File("/usr/local/MyApp/logs")
         Database.log.getFile().setConfig(new LogFileConfiguration(path.toString()));
         Database.log.getFile().setLevel(LogLevel.INFO);
         // end::file-logging[]
@@ -857,8 +746,7 @@ apply plugin: 'java'
         // assets to a temporary directory and then pass that path to Database.copy()
         DatabaseConfiguration configuration = new DatabaseConfiguration();
         if (!Database.exists("travel-sample", context.getFilesDir())) {
-            ZipUtils.unzip(getAsset("travel-sample.cblite2.zip"), context.getFilesDir());
-            File path = new File(context.getFilesDir(), "travel-sample");
+            ZipUtils.unzip(getAsset("travel-sample.cblite2.zip"), final File path = new File("/usr/local/MyApp/travel-sample");
             try {
                 Database.copy(path, "travel-sample", configuration);
             } catch (CouchbaseLiteException e) {
@@ -1036,8 +924,7 @@ apply plugin: 'java'
                 .orderBy(Ordering.expression(Meta.id));
 
             try {
-                ResultSet rs = query.execute();
-                for (Result result : rs) {
+                for (Result result : query.execute()) {
                     Log.i("Sample", String.format("hotel id -> %s", result.getString("id")));
                     Log.i("Sample", String.format("hotel name -> %s", result.getString("name")));
                 }
@@ -1057,8 +944,7 @@ apply plugin: 'java'
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("airport")))
                 .orderBy(Ordering.expression(Meta.id));
-            ResultSet rs = query.execute();
-            for (Result result : rs) {
+            for (Result result : query.execute()) {
                 Log.w("Sample", String.format("airport id -> %s", result.getString("id")));
                 Log.w("Sample", String.format("airport id -> %s", result.getString(0)));
             }
@@ -1098,8 +984,7 @@ apply plugin: 'java'
             query.removeChangeListener(token);
             // end::stop-live-query[]
 
-            ResultSet rs = query.execute();
-            for (Result result : rs) {
+            for (Result result : query.execute()) {
                 Log.i(
                     "Sample",
                     String.format("hotel -> %s", result.getDictionary(DATABASE_NAME).toMap()));
@@ -1117,8 +1002,7 @@ apply plugin: 'java'
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("hotel")))
                 .limit(Expression.intValue(10));
-            ResultSet rs = query.execute();
-            for (Result result : rs) {
+            for (Result result : query.execute()) {
                 Dictionary all = result.getDictionary(DATABASE_NAME);
                 Log.i("Sample", String.format("name -> %s", all.getString("name")));
                 Log.i("Sample", String.format("type -> %s", all.getString("type")));
@@ -1152,8 +1036,7 @@ apply plugin: 'java'
                 .where(Expression.property("type").equalTo(Expression.string("hotel"))
                     .and(ArrayFunction
                         .contains(Expression.property("public_likes"), Expression.string("Armani Langworth"))));
-            ResultSet rs = query.execute();
-            for (Result result : rs) {
+            for (Result result : query.execute()) {
                 Log.i(
                     "Sample",
                     String.format("public_likes -> %s", result.getArray("public_likes").toList()));
@@ -1178,10 +1061,11 @@ apply plugin: 'java'
                 .where(Expression.string("Armani").in(values));
             // end::query-collection-operator-in[]
 
-            ResultSet rs = query.execute();
-            for (Result result : rs) { Log.w("Sample", String.format("%s", result.toMap().toString())); }
+            for (Result result : query.execute()) {
+                { Log.w("Sample", String.format("%s", result.toMap().toString()));
+                }
+             }
         }
-    }
 
     // Pattern Matching
     public void testPatternMatching() throws CouchbaseLiteException {
@@ -1196,8 +1080,9 @@ apply plugin: 'java'
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("landmark"))
                     .and(Function.lower(Expression.property("name")).like(Function.Expression.string("royal engineers museum")))));
-            ResultSet rs = query.execute();
-            for (Result result : rs) { Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
+            for (Result result : query.execute()) {
+                Log.i("Sample", String.format("name -> %s", result.getString("name")));
+            }
             // end::query-like-operator[]
         }
     }
@@ -1215,8 +1100,8 @@ apply plugin: 'java'
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("landmark"))
                 .and(Function.lower(Expression.property("name")).like(Expression.string("eng%e%"))));
-            ResultSet rs = query.execute();
-            for (Result result : rs) { Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
+            for (Result result : query.execute()) {
+                Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
             // end::query-like-operator-wildcard-match[]
         }
     }
@@ -1234,8 +1119,8 @@ apply plugin: 'java'
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("landmark"))
                 .and(Function.lower(Expression.property("name")).like(Expression.string("eng____r"))));
-            ResultSet rs = query.execute();
-            for (Result result : rs) { Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
+            for (Result result : query.execute()) {
+                Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
             // end::query-like-operator-wildcard-character-match[]
         }
     }
@@ -1253,7 +1138,8 @@ apply plugin: 'java'
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("landmark"))
                 .and(Function.lower(Expression.property("name")).regex(Expression.string("\\beng.*r\\b"))));            ResultSet rs = query.execute();
-            for (Result result : rs) { Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
+            for (Result result : query.execute()) {
+                Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
             // end::query-regex-operator[]
         }
     }
@@ -1275,8 +1161,9 @@ apply plugin: 'java'
                 .where(Expression.property("type").from("route").equalTo(Expression.string("route"))
                     .and(Expression.property("type").from("airline").equalTo(Expression.string("airline")))
                     .and(Expression.property("sourceairport").from("route").equalTo(Expression.string("RIX"))));
-            ResultSet rs = query.execute();
-            for (Result result : rs) { Log.w("Sample", String.format("%s", result.toMap().toString())); }
+            for (Result result : query.execute()) {
+                     Log.w("Sample", String.format("%s", result.toMap().toString()));
+            }
             // end::query-join[]
         }
     }
@@ -1297,8 +1184,7 @@ apply plugin: 'java'
                     Expression.property("country"),
                     Expression.property("tz"))
                 .orderBy(Ordering.expression(Function.count(Expression.string("*"))).descending());
-            ResultSet rs = query.execute();
-            for (Result result : rs) {
+            for (Result result : query.execute()) {
                 Log.i(
                     "Sample",
                     String.format(
@@ -1324,8 +1210,9 @@ apply plugin: 'java'
                 .where(Expression.property("type").equalTo(Expression.string("hotel")))
                 .orderBy(Ordering.property("name").ascending())
                 .limit(Expression.intValue(10));
-            ResultSet rs = query.execute();
-            for (Result result : rs) { Log.i("Sample", String.format("%s", result.toMap())); }
+            For (Result result : query.execute()) {
+                Log.i("Sample", String.format("%s", result.toMap()));
+            }
             // end::query-orderby[]
         }
     }
