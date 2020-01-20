@@ -147,9 +147,9 @@ Each web application has its own *class loader (WebappX). This loads the classes
 
 So, if you are running multiple {cbl} web applications, deploy your {cbljp} library `<pathToCbl>/libs` to `$CATALINA_BASE/lib`. This means you do not need to deploy it in each web app and *minimizes the size of each app*.
 
-
 NOTE:  Configuring {cbl} logging functionality will affect the logging of all web applications as the _common class loader_ shares _{cbl} Console, File_ and _Custom logging functionalities_  across all  web apps.
 
+For information about building a WAR file see <<Deploying a WAR file to tomcat>>
 
 *Prerequisites*
 
@@ -158,7 +158,7 @@ NOTE:  Configuring {cbl} logging functionality will affect the logging of all we
 * Ensure the {cbl} jars (`<pathToCbl>/lib`) are on the executable path within {gpWebServerEnv} -- see: <<bmkMultCblJapps>>
 +
 
-TIP: This means you can declare them as `compileOnly` dependencies
+TIP: This also means you should declare the dependencies as `providedCompile` to avoid them being bundled into the `WEB-INF/libs` folder
 
 *Steps*
 
@@ -209,6 +209,8 @@ Note the Gradle menu at the extreme right of the screen:
 +
 
 image::GradleMenuWebApp.png[,300]
+
+If you want to deploy your app to a local tomcat container then see <<Deploying a WAR file to tomcat>>
 
 
 That's it. You're all set to start building your own {cblJP} applications -- see <<Building a Getting Started App>> for an example of how to do that.
@@ -1573,7 +1575,10 @@ In addition to setting-up your build environment, you also need to make the supp
 NOTE: These libraries are provided only in the `.zip` distributable.
 
 . Copy the _native libraries_ (`<pathToCbl>/support`) to a location accessible to -- and usable by -- your build and runtime environments.
-. Add the libraries to the `LD_LIBRARY_PATH`:
+. Add the following libraries to the `LD_LIBRARY_PATH` in `$CATALINA_BASE/bin/setenv.sh:
++
+NOTE: If the setenv.sh file doesn’t exist, you will need to create a new file.
+
 +
 [source, bashrc]
 
@@ -1582,6 +1587,10 @@ export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libicu:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libz:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libc++:$LD_LIBRARY_PATH
 ----
++
+Please refer to the Linux Platform Support section for the minimum version requirements of those libraries.
+
+
 
 Back to <<Preparing Your Build Environment>>
 
@@ -1638,6 +1647,31 @@ NOTE: Before starting your app ensure you have started both your {svr} and {sg} 
 
 Back to <<Building a Getting Started App>>
 
+=== Deploying a WAR file to tomcat
+
+If you want to deploy your web app to a local Tomcat instance then you will need to generate a WAR file.
+However, you should note that when creating a war file, if you use the `implementation` dependency type then your _Couchbase Lite_ jar files will be bundled into WEB-INF/lib of the web application.
+To exclude Couchbase Lite jar files from getting bundled and to use Couchbase Lite in multiple web applications, change the dependency type from *`implementation`* to *`providedCompile`*
+
+. You can do this using the Gradle command below from within your project folder:
+[source, bashrc]
++
+----
+./gradlew war
+----
++
+NOTE:  The generated war file will be at <PROJECT ROOT>/build/libs.
+
+
+. Deploy the war file to Tomcat, by copying it to $CATALINA_BASE/webapps
++
+TIP: You can also use Tomcat’s Manager App to deploy the war file -- see link:https://tomcat.apache.org/tomcat-9.0-doc/manager-howto.html[tomcat's Manager App] documentation for more detail.
+
+. To use common class loader approach to load Couchbase Lite libraries, copy all of the Couchbase Lite jar files in $CATALINA_BASE/lib.
++
+NOTE: For linux platform see also -- <<Additional Steps for Linux>>
+
+Back to <<Preparing Your Build Environment>>
 
 
 == RELEASE NOTES
