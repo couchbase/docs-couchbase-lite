@@ -103,7 +103,7 @@ public static void main (String [] args) throws CouchbaseLiteException, Interrup
               }
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
-        }              
+        }
     System.out.println(String.format("Total rows returned by query = %d", numRows));
 
     Endpoint targetEndpoint = new URLEndpoint(new URI(SYNC_GATEWAY_URL));
@@ -1253,7 +1253,7 @@ apply plugin: 'java'
         URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
-        config.setAuthenticator(new BasicAuthenticator("devin", "cow"));
+        config.setAuthenticator(new BasicAuthenticator("username", "password"));
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         replicator = new Replicator(config);

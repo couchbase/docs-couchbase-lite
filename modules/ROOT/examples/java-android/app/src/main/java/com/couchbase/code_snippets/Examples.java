@@ -771,7 +771,7 @@ public class Examples {
         URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
-        config.setAuthenticator(new BasicAuthenticator("devin", "cow"));
+        config.setAuthenticator(new BasicAuthenticator("username", "password"));
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         replicator = new Replicator(config);
