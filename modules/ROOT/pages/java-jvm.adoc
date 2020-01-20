@@ -22,84 +22,219 @@ Use this page to familiarize yourself with the product, its components, deployme
 You will learn:
 
 * Where to get the necessary binaries -- <<Where to Get Binaries>>
-* What the binaries contain -- <<Package Contents>>
-* How to deploy {cblJP} -- <<Deploy the Package>>
-* How to use {cblJP} -- <<YOUR FIRST PROJECT>>
+* What the binaries contain -- <<Using Downloaded Binaries>>
+* How to deploy {cblJP} -- <<Preparing Your Build Environment>>
+* How to use {cblJP} to create a simple application -- <<Building a Getting Started App>>
 
-NOTE: We use _{gpIDE}_, _{gpBuildTool}_ and _{gpWebServerEnv}_ as tools to build and run the examples presented in this content.
+NOTE: We use _{gpIDE}_, _{gpBuildTool}_, _Maven_ and _{gpWebServerEnv}_ as tools to build and run the examples presented in this content.
 You are free to use the tools of your choice.
 
 == Where to Get Binaries
-{cbl} binaries are available for both Community (CE) and Enterprise (EE) editions in `.zip` format on the  link:{url-cb-downloads-mobile}[{nmCBdwnlds}] page.
+{cblJP} binaries are available for both Community (CE) and Enterprise (EE) editions from the _Maven_ repositories -- see: <<Preparing Your Build Environment>> for how.
 
-* Community Edition -- {packageNmCE}
-* Enterprise Edition -- {packageNmEE}
+Alternatively, you can download a version in `.zip` format -- see: <<Using Downloaded Binaries>> for how.
 
-Alternatively, you can direct {gpBuildTool} to get these dependencies from the _Bintray/JCenter/Maven_ repositories (See: <<Prepare the Build Environment>> for how).
+== Preparing Your Build Environment
 
-== Package Contents
+=== Prerequisites
 
-The package contains a license file, jar libraries for the appropriate edition of the {cbl} and a set of Linux _shared libraries_.
+* Planning to sync with a {svr}?
++
+You will need to have runnable instances of {svr} and {sg} installed.
+If you have not already done so see <<Preparatory Steps>>
+* Planning to run {cblJP} on Linux?
++
+You must have loaded the shared libraries as described in <<Additional Steps for Linux>>
 
-NOTE: This means you do not need to download and-or build compatible versions of system libraries for the Linux platform of choice.
+=== Assumptions
 
-* A `lib` folder containing all necessary JAR files:
-** {packageNmCE} or for EE {packageNmEE}
-** json-20180813.jar
-** okhttp-3.9.1.jar
-** okio-1.13.0.jar
+This section shows how to set up and use {cblJP} to build desktop and web applications using {gpBuildTool}, Maven, {gpWebServerEnv} and {gpIDE} Community Edition.
 
-* A `support` folder containing the following native libraries:
-, , and
-** `libz` (requires zlib v.1.2.11+)
-** `libc++` requires libc++ v.3.6.0+)
-** `libicu` (requires ICU4C v.5.4.1+)
+It assumes a familiarity with these products, however you are free to use your own choice of development tools.
+
+The contents of your `build.gradle` file will depend on the type of project you are building, whether you are using Community or Enterprise edition and whether you prefer to use Maven-distributed binaries or a zip download.
+
+
+TIP: If you wish to use a downloaded zip instead of Maven then see - <<Using Downloaded Binaries>>
+
+
+NOTE: If you are deploying to Linux, you will need the {cbl} `support` library, which is available _only_ on the zip download distributable -- see <<Additional Steps for Linux>>
+
+anchor:bmkUsingMavenRepos[Using Maven repositories]
+
+=== Defining Dependencies and Repositories
+
+[tabs]
+====
+
+Console App Development::
++
+--
+*Steps*
+
+. Create a project folder
+. Initialize it for a Gradle Java application
+. Create your `build.gradle` file, including the following repositories and dependencies:
+
+* For Community edition
++
+[source,groovy,subs=attributes+]
+----
+dependencies {
+    implementation 'com.couchbase.lite:couchbase-lite-java:{version-full}'
+}
+----
+
+* For Enterprise Edition
++
+[source,groovy]
+
+----
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven {
+            url "https://mobile.maven.couchbase.com/maven2/dev/"
+        }
+    }
+}
+dependencies {
+    implementation 'com.couchbase.lite:couchbase-lite-java-ee:{version-full}'
+}
+----
+
+. Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
++
+TIP: If you don't have auto-import set for Gradle projects, then accept the   *Import Gradle Project* prompt that is displayed bottom-right of the screen
 
 +
-*Running in a Linux environment?* See  <<bmkLinuxSharedLibs>> for how to link to these shared libraries.
-
-
-== Deploy the Package
-
-*To use a downloadable package:*
-
-. Download the _zip_ file from the link:{url-cb-downloads-mobile}[{nmCBdwnlds}] page.
-. Unpack the downloaded file to a location accessible to -- and usable by -- your chosen *build* environment.
+Note the Gradle menu at the extreme right of the screen:
 +
-We'll refer to this location, `<your dir>/{packageNmCE}` as the `<pathToCblJava>`.
 
-*To use a Maven package:*
+image::GradleMenuWebApp.png[,300]
 
-You will need to point your `build.gradle` file to the appropriate repository and add the {cbl} package as a dependency (see <<bmkUsingMavenRepos>> in the next step, <<Prepare the Build Environment>>).
 
-anchor:bmkLinuxSharedLibs[Additional Steps for Linux]
-*To use {cbl} in a Linux environment:*
-You will also need to make the following native libraries available:
-* ICU4C v.5.4.1+
-* zlib v.1.2.11+
-* libc++ v.3.6.0+
+That's it. You're all set to start building your own {cblJP} applications -- see <<Building a Getting Started App>> for an example of how to do that.
 
-NOTE: These are provided in the `.zip` package `support` library
 
-. Copy the _native libraries_ (`<pathToCbl>/support`) to a location accessible to -- and usable by -- your build and runtime environments.
-. Add the libraries to the `LD_LIBRARY_PATH`:
+.Sample build.gradle content
+
+[source,groovy,subs=attributes+]
+----
+include::{snippet-java-jvm}[tags=gsGradleMavenExample,indent=0]
+----
+
+--
+
+Web App Development::
++
+--
+
+This section explains how to set-up a build project to create {cblJP} web apps using {gpBuildTool} and {gpIDE}.
+
+*The WebApp Build Environment*
+
+In our examples here we build and deploy web apps using a {gpBuildTool} plugin based on the `com.bmuschko.tomcat` plugin. It provides a simple {gpWebServerEnv} harness that can be used from within {gpIDEce} or the command-line.
+
+Of course if you are using {gpIDEee} you can use its integrated tomcat features to achieve the same results.
+
+For more about this plugin and its use see <<Using the Gradle WebApp Plugin>>
+
+anchor:bmkMultCblJapps[Running multiple {cblJP} web apps]
+*Running multiple {cblJP} web apps*
+Each web application has its own *class loader (WebappX). This loads the classes, jars, and resources found in the application's `WEB-INF/classes` and `WEB-INF/lib` folders, together with any shared jar files from `$CATALINA_BASE/lib` -- see link:https://tomcat.apache.org/tomcat-9.0-doc/class-loader-howto.html[tomcat documentation] for more.
+
+So, if you are running multiple {cbl} web applications, deploy your {cbljp} library `<pathToCbl>/libs` to `$CATALINA_BASE/lib`. This means you do not need to deploy it in each web app and *minimizes the size of each app*.
+
+
+NOTE:  Configuring {cbl} logging functionality will affect the logging of all web applications as the _common class loader_ shares _{cbl} Console, File_ and _Custom logging functionalities_  across all  web apps.
+
+
+*Prerequisites*
+
+* Ensure your build environment matches the runtime {gpWebServerEnv} environment. Specifically, that the Java and  {gpWebServerEnv} versions are the same.
+* If your {gpWebServerEnv} server runs Linux, declare the _shared libraries_ (`<pathToCbl>/support` --  as discussed in <<bmkLinuxSharedLibs>>) in the `$CATALINA_HOME/bin/setenv.sh` script file.
+* Ensure the {cbl} jars (`<pathToCbl>/lib`) are on the executable path within {gpWebServerEnv} -- see: <<bmkMultCblJapps>>
++
+
+TIP: This means you can declare them as `compileOnly` dependencies
+
+*Steps*
+
+. Create a project folder and initialize it for a Gradle Java application
 +
 [source, bashrc]
+----
+gradle init
+----
 
-----
-export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libicu:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libz:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libc++:$LD_LIBRARY_PATH
-----
+. Create your `build.gradle` file, including the following repositories and dependencies:
+
+* For Community edition
 +
-TIP: Save typing-time, add the above commands to your `.<shell>rc` file.
+[source,groovy,subs=attributes+]
+----
+dependencies {
+    implementation 'com.couchbase.lite:couchbase-lite-java:{version-full}'
+}
+----
 
-== Prepare the Build Environment
+* For Enterprise Edition
++
+[source,groovy]
 
-This section explains how to configure your build environment to use {cblJP}.
-It involves adding the {cbl} jars library (and its contents) as dependencies in the build tool and-or IDE of your choice.
+----
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven {
+            url "https://mobile.maven.couchbase.com/maven2/dev/"
+        }
+    }
+}
+dependencies {
+    implementation 'com.couchbase.lite:couchbase-lite-java-ee:{version-full}'
+}
+----
 
-.Set-up Scenarios
+. Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
+
++
+TIP: If you don't have auto-import set for Gradle projects, then accept the   *Import Gradle Project* prompt that is displayed bottom-right of the screen
+
++
+Note the Gradle menu at the extreme right of the screen:
++
+
+image::GradleMenuWebApp.png[,300]
+
+
+That's it. You're all set to start building your own {cblJP} applications -- see <<Building a Getting Started App>> for an example of how to do that.
+
+.Sample build.gradle content
+
+[source,groovy,subs=attributes+]
+----
+include::{snippet-java-jvm}[tags=GsEmbeddedTomcatBuildGradle,indent=0]
+----
+
+--
+
+====
+
+
+
+== Building a Getting Started App
+
+This section explains how to validate your configured build environment by building a starter app that uses many of {cblJP}'s more common features.
+
+// TIP: The {nmMobStarterApp} app can be downloaded from GitHub link:{url-cb-mobStarterApp}[{nmMobStarterApp}].
+
+The {nmMobStarterApp} app demonstrates how to use {cblJP}. Console and Web App versions are available.
+
+.Development-type Scenarios
 [tabs]
 ====
 
@@ -107,235 +242,110 @@ Console App::
 +
 --
 
-We'll cover how to set-up {gpIDE} and {gpBuildTool} to build {cbl} apps; see <<bmkGradleSetupConsoleApp>>
+TIP: Ensure you added the {cbl} dependency to your `build.gradle` file
+
+Create, build and run a new project using the following `GettingStarted.java` code:
 
 
-*Using an IDE*
 
-. Within {gpIDE}, select *File > New > Project...* and click *Next*.
-+
-image::java-cli-app.png[,600]
-+
-
-. Select the *Command Line App* template
-+
-TIP: You may need to select the *Create project from template* option first
-
-+
-image::java-new-proj.png[,600]
-+
-
-. Provide details for the new project.
-
-** Project name = `GettingStarted`
-** Project location = as required
-** Base package name = `com.couchbase`
-+
-image::java-new-proj-details.png[,600]
-
-. Open the *Project Structure* window and select *Modules*
-. Add required dependencies:
-+
-NOTE: The jars within the selected libraries are added as dependencies.
-These will appear in the _External Libraries_ in {gpIDE}'s Project tree view.
-
-.. Within the _Modules_ page, select the *Dependencies* tab
-.. Select *+ > JARs or directories...*.
-+
-TIP: The *Add (+)* option is at the bottom of the main panel
-
-+
-
-image::java-add-jars.png[,600]
-+
-.. Navigate to and select the directory containing the {cbl} jars; that is `<pathToCbl>/lib`
-.. *Open* to select the library
-+
-
-.. *Apply* to continue
-. Tell the IDE to create a JAR file
-+
-.. Within the _Project Structure_ panel, select *Artifacts*
-.. In _Artifacts_, select *+ > JAR > From modules with dependencies*
-.. Select the *Main* class, from the _Create Jars from Modules_ panel
-.. *OK* to continue
-.. *OK* to close the panel
-. Still within the _Artifacts_ panel, add the compiled output into the jar
-.. Select *+ > Module Output*
-.. Select *GettingStarted*
-.. *OK* to continue
-. [Optionally] Select *Include in project build* to create the jar on each build
-. *Apply* and *OK* to save your changes and close the _Project Structure_ panel
-. Save and *Close* the project
-
-+
-anchor:bmkGradleSetupConsoleApp[]
-
-*Alternatively, to do the same using Gradle*
-
-. Create a Gradle project folder for {cbl} (`<path-to-couchbase-gradle-project>`)
-. Initialize the project folder for {gpBuildTool}
-+
-----
-gradle init
-----
-.. Select *2* (Application) as the project type
-.. Select *3* (Java) as the language
-.. Accept the defaults for remaining options
-+
-Gradle builds its configuration files and prepares the project folder for use.
-. Include the {cbl} jars as dependencies in the `build.gradle file`
-+
-*Using Downloaded Libaries*
-+
-[source, bash]
+[source,java]
 
 ----
-implementation fileTree(include: ['*.jar'], dir: <pathToCbl>/lib>
+include::{snippet-java-jvm}[tags=getting-started,indent=0]
 ----
-+
-anchor:bmkUsingMavenRepos[Using Maven repositories]
+<1> The app will start a replicator pointing to `ws://localhost:4984/db`, where `db` is the name of your {sg} database
+<2> This is the only API that differs from the {android} version. It accepts no parameters and should be called once only
+<3> You can optionally AES-256 encrypt the database by providing a key
+<4> This is needed for a tidy closedown of work executors
+<5> It is advisable to set a specific directory path for the database.
 
-*Using Maven Repositories*
-+
-.For Community Edition
-----
-repositories {
-   jcenter()
-   mavenCentral()
-}
+On running the app, you should see the document ID and property printed to the console together with a query result showing the number of rows in the database.
 
-Dependencies {
-    implementation "com.couchbase.lite:couchbase-lite-java:2.7.0"
-}
-----
-+
-.For Enterprise Edition
-----
-repositories {
-   jcenter()
-   mavenCentral()
-   maven {
-       url "http://172.23.121.218/maven2/internalmaven/"
-   }
-}
+This shows the document was successfully persisted to the database.
 
-Dependencies {
-    implementation "com.couchbase.lite:couchbase-lite-java-ee:2.7.0"
-}
-
-----
+See <<About the Getting Started App>> for more on the app itself
 
 --
 
-Web Container::
+Web App::
 +
 --
 
-anchor:bmkMultCblJapps[Running multiple {cblJP} web apps]
-*Running Multiple {cblJP} web apps*
-
-You should note that, based on this link:https://tomcat.apache.org/tomcat-9.0-doc/class-loader-howto.html[tomcat documentation], each web application has its own class loader (WebappX).
-This application-specific loader loads all of the classes, jars, and resources found in the application's `WEB-INF/classes` and `WEB-INF/lib` folders.
-In addition to this, the common class loader loads the shared jar files from `$CATALINA_BASE/lib` and makes them available for all web applications.
-
-However, a constraint within {gpWebServerEnv} means  native shared libraries cannot be loaded by multiple class loaders.
-
-This is an issue because the {cbljp} library contains native shared libraries to be loaded at runtime.
-
-So, to use the {cbljp} library in multiple web applications, you should put the {cblJP} jar files into `$CATALINA_BASE/lib` rather than deploy the with each web app.
-
-WARNING:  Configuring the logging functionality will affect the logging of all web applications. This is a direct consequence of putting {cbl} jar files in the _common class loader_, which shares _{cbl} Console, File_ and _Custom logging functionalities_  across all  web appls.
-
-*Prerequisites*
-
-* Ensure your build environment matches the runtime {gpWebServerEnv} environment. Specifically, that the Java and  {gpWebServerEnv} versions are the same.
-* If your {gpWebServerEnv} server runs Linux, declare the _shared libraries_ (`<pathToCbl>/support` --  as discussed in <<bmkLinuxSharedLibs>>) in the `$CATALINA_HOME/bin/setenv.sh` script file.
-* Ensure the {cbl} jars (`<pathToCbl>/lib`) are on the executable path within {gpWebServerEnv}, by either:
-** _For a multiple web-app deployment:_ Copying them to `$CATALINA_HOME/lib` (see <<bmkMultCblJapps>>)
-** _For a single web app deployment:_ Copying them to the application's `WEB-INF/lib`. That is, they are packed into the deployable `.war` file.
+This section explains how to set-up a build project to create {cblJP} web apps using {gpBuildTool} and {gpIDE}.
 
 *Steps*
 
-Within {gpIDE}:
+. Create a new project folder and add a `build.gradle` file containing the following:
++
+[source,groovy,subs=attributes+]
+----
+include::{snippet-java-jvm}[tags=GsEmbeddedTomcatBuildGradle,indent=0]
+----
 
-. Create a new project
-.. Select *File > New > Project...* and click *Next*.
+. Within {gpIDE}, open the new project folder
 +
-image::java-cli-app.png[,600]
+If you don't have auto-import enabled, then accept the *Import from Gradle* prompt that appears at the bottom right of the screen.
+. Create a Java class _GettingStarted_ using this code:
 +
-.. Select *Java* as the language
-.. Select appropriate *Project SDK* (Java 8 and above)
-.. Select *Web App* as framework
-+
-TIP: You may need to select the *Create project from template* option first
+[source, java]
 
-.. Select *Next* to continue
+----
+include::{snippet-java-jvm}[tags=GsWebApp_GettingStarted,indent=0]
+----
 +
-image::java-new-proj.png[,600]
-.. Enter _Project name_ *gettingstarted*
-.. Set other paths as required
-.. *Finish* to continue
+<1> It is advisable to set a specific directory path for the database.
+<2> The app will start a replicator pointing to `ws://localhost:4984/db`, where `db` is the name of your {sg} database
 +
-image::java-new-proj-details.png[,600]
+. Create a Java class _Listener_ using this code:
 +
-// . Create a new package `com.couchbase.gettingstarted`
-. Create Dependencies
-.. From the main menu, select *File > Project Structure*
-.. Within the _Project Structure_ panel, select *Modules* project settings
-+
-.. Select the *Dependencies* tab
-.. Select *(Add) + > JARs or directories...*+
-+
-TIP: The *Add(+)* option is at the bottom of the main panel
+[source, java]
 
-+
-image::java-add-jars.png[,600]
-+
-.. Select these libaries:
+----
+include::{snippet-java-jvm}[tags=GsWebApp_Listener,indent=0]
+----
 +
 
-TIP: The content (jars) of these libraries become dependencies. They are shown in {gpIDE}'s _External Libraries_ view.
+. Create a Java class _Database Manager_ using this code:
++
+[source, java]
 
+----
+include::{snippet-java-jvm}[tags=GsWebApp_DbManager,indent=0]
+----
 +
-*** `<pathToCbl>/lib` -- which contains {cblJP}:
-*** `<pathToCbl>/lib_javax` -- the required `javax` jars
+<1> This is the only API that differs from the {android} version. It accepts no parameters and should be called once only
+<2> It is advisable to set a specific directory path for the database.
+<3> You can optionally AES-256 encrypt the database by providing a key
 +
-NOTE: *Running multiple {cblJP} web apps?* Declare the {cbl} jars as a  compile-time dependency only (`providedCompile`) See: <<bmkMultCblJapps>>.
+. Create an `index.html` file in `src/main/web app` with the following content:
++
+[source, html]
 
-.. *Apply* to continue
-. Direct the IDE to create a _WAR_ file as the output artifact
-+
-.. Still in _Project Structure_, select *Artifacts* from _Project Settings_
-.. Select *Add *(+) > Web Application: Exploded > From modules with dependencies*
-+
-TIP: Use the 'Web Application:exploded' option during build.
-It's easy to check the _war_ contents.
-Change the _Type_ to _Web Application: Archive_ when you know the `war` includes the correct items.
+----
+include::{snippet-java-jvm}[tags=GsWebApp_Index,indent=0]
+----
 
-.. Within the _Select Modules_ panel, select *gettingstarted*
-.. *OK* to continue
-.. *OK* to close the _Select Modules_ panel
-//. Include the compiled output and the sole web page in the `war`:
-. Include the compiled output in the `war`:
+. Create a `showDbItems.jsp` file in `src/main/web app` with the following content:
 +
-Within the _Artifact's Output Layout_ tab:
+[source, html]
 
-.. Select *+ > Module Output > GettingStarted*
-.. *OK* to continue
-//.. Select *+ > File*
-//.. Navigate to the *web* directory and select the file *`showDbItems.jsp`*
-//.. *OK* to continue
-. [Optionally] Select *Include in project build* to create the jar on each build
-+
-This means there is no need to call _Build Artifacts_ after each build
+----
+include::{snippet-java-jvm}[tags=GsWebApp_ShowDbItems,indent=0]
+----
 
+. Build, deploy and run the app using `tomcatRun`
 +
-TIP: You can also (optionally) configure the IDE to launch {gpWebServerEnv}
+image::GradleMenuWebApp.png[,300]
 
-. *Apply* and *OK*
+.. Point your browser to: `localhost:8080/gettingstarted`
 +
-This saves your changes and closes the _Project Structure_ panel
+This opens the browser at your index.html page.
+..  Select the *here* link
++
+This launches the servlet and displays the results in `showdDbItems.jsp`.
+They are also added to the _catalina.out_ log file.
+
+See <<About the Getting Started App>> for more on the app itself
 
 // --
 
@@ -345,7 +355,7 @@ This saves your changes and closes the _Project Structure_ panel
 // *Steps*
 
 // . Include the <pathToCbl>/lib directory in the build of your docker image and on the classpath of any deployed apps.
-// This avoids the need to pack them into the war of each webapp).
+// This avoids the need to pack them into the war of each web app).
 // . Include the shared libraries in the build of your (Linux) Docker image see <<bmkLinuxSharedLibs>>
 // . Ensure you set `$CATALINA_BASE` and `$CATALINA_HOME` appropriately
 // . Ensure the appropriate Java version is installed and that the `$JRE_HOME and $JDK_HOME` paths are set to point to it
@@ -353,81 +363,8 @@ This saves your changes and closes the _Project Structure_ panel
 
 //
 --
-Embedded Tomcat::
-+
---
-
-Deploying your app embedded within a {gpWebServerEnv} server ensures you maximize your control over the runtime environment.
-
-The simplest way to do so is to build and deploy your web app using a {gpBuildTool} plugin that provides a simple {gpWebServerEnv} harness.
-
-The example we use is based on the `com.bmuschko.tomcat` plugin.
-
-The `build.gradle` file uses the CouchbaseLite jar files from the downloadable packaged zip file.
-
-Place these jar files in the CouchbaseLiteLib folder located at the root of the {buildTool} project.
-
-*Steps*
-
-. Create and cd to a project folder
-. Initialise the {gpBuildTool} project to create a Java app project
-+
-[source, bashrc]
-
-----
-./gradlew init
-----
-
-. Copy the <pathToCbl> jars to `<projectRoot>/CouchbaseLiteLib`
-. Edit the `build-gradle` file to contain the following:
-+
-[source, groovy]
-
-----
-include::{snippet-java-jvm}[tags=embeddedTomcat,indent=0]
-----
-
-. View the gradle tasks available to you:
-+
-[source, bashrc]
-
-----
-./gradlew tasks
-----
-+
-This shows the following web application tasks are now available:
-
-** tomcatJasper - Runs the JSP compiler and turns JSP pages into Java source.
-** tomcatRun - Uses your files as and where they are and deploys them to Tomcat.
-** tomcatRunWar - Assembles the webapp into a war and deploys it to Tomcat.
-** tomcatStop - Stops Tomcat.
-
-. You can run an empty Tomcat container now using:
-+
-[source, bashrc]
-
-----
-./gradlew tomcatRun
-----
-
-. You can create a distributable `.war` file using:
-+
-[source, bashrc]
-
-----
-./gradlew war
-----
-
-
-At this stage running the war will only launch the embedded {gpWebServerEnv}, as no web app has been added yet.
-
-We'll see how to do that in the next step <<YOUR FIRST PROJECT>>
---
 
 ====
-
-NOTE: Your project build environments are now ready to build {cblJP} apps.
-To continue building the starter app, see <<YOUR FIRST PROJECT>>.
 
 // EndTab Embedded Web Server
 
@@ -450,242 +387,6 @@ To continue building the starter app, see <<YOUR FIRST PROJECT>>.
 
 // TIP: See <<YOUR FIRST PROJECT>> for an example of how to do this.
 
-
-== YOUR FIRST PROJECT
-
-== Build your app
-
-NOTE: See <<Prepare the Build Environment>> above if you have not already done so.
-
-This section explains how to use the {cblJP} to build your first application.
-To do this we will use the source code of the {nmMobStarterApp} starter app.
-
-TIP: The {nmMobStarterApp} app can be downloaded from GitHub link:{url-cb-mobStarterApp}[{nmMobStarterApp}].
-
-The {nmMobStarterApp} code demonstrates how to use {cblJP} to run:
-
-* basic CRUD operations,
-* a simple Query
-* bi-directional replications with Sync Gateway.
-
-NOTE: By default this app stores its database in `{nmSampleAppDbPath}` directory.
-
-anchor:bmkFirstAppBuild[]
-
-.First app build
-[tabs]
-====
-Console App::
-+
---
-
-. Open *Main.java* in {gpIDE} and paste the following code into `Main`
-+
-[source,java]
-----
-include::{snippet-java-jvm}[tags=getting-started,indent=0]
-----
-<1> The app will start a replicator pointing to `ws://localhost:4984/db`, where `db` is the name of your {sg} database.
-<2> This is the only API that differs from the {android} version. It accepts no parameters.
-<3> You can optionally AES-256 encrypt the database by providing a key
-<4> This is needed for the websocket connections to gracefully close
-+
-. Within {gpIDE}, select *Build > Build Project* to compile the code and assemble the output .jar file.
-+
-NOTE: If you did not set *Include in project build* you will need to use *Build > Build Artifacts > GettingStarted* to create the jar.
-
-+
-The app is now ready to run.
-But first you need prepare the associated {cbl} run-time components - see <<Run Your App>>
-
---
-Web App::
-+
---
-Within {gpIDE}:
-
-. Open the _gettingstarted_ project you created in <<Set-up Couchbase Lite for Java>>
-
-. Create a new package  in the _src_ directory
-+
-Use *File > New > Package* and name it `com.couchbase.gettingstarted`
-. Paste the servlet code (below) into the package, using:
-+
-*<right-click>com.couchbase.gettingstarted, Paste*
-+
-[source, java]
-
-----
-include::{snippet-java-jvm}[tags=GettingStartedWebApp,indent=0]
-----
-
-. Create a new JSP file in the `web` directory
-.. Select `web`
-.. *File > New > JSP/JSPX*
-.. Enter name as `showDbItems`
-.. Select *JSP* and *<Enter>* to continue
-.. Paste the following content into the file:
-+
-[source, jsp]
-
-----
-<html>
-<head>
-    <title>Couchbase Lite (Java Jvm) :: Getting Started App</title>
-</head>
-<body>
-<h1>Couchbase Lite (Java Jvm) :: Getting Started App</h1>
-<h2>List all current DB rows</h2>
-<hr>
-<p>NumRows = ${myRowCount}</p>
-<hr>
-${myResults}
-<hr>
-</body>
-</html>
-----
-. Build the app and add artifacts to the war.
-+
-Your app is now ready to deploy and run.
-
---
-Embedded Web App::
-+
---
-WARNING: WIP - needs revision
-
-. Build your web app as described for the Web App option
-. Within the project folder of tcWebAppHarness:
-
-.. Copy the `.war` into the `libs/libMyWar` library
-.. Rebuild the tcWebAppHarness apps
-+
-This will include your {nmMobStarterApp} app as a war file within the runnable jar.
---
-
-NOTE: Your {nmMobStarterApp} app is now built and (almost) ready to go; see <<Run Your App>>
-====
-
-== Run Your App
-
-=== Prerequisites
-
-Before you can run your {nmMobStarterApp} app you will need to have runnable instances of {svr} and {sg}. if you have then go straight to <<Running Apps>>
-
-NOTE: On Linux: You must have loaded the shared libraries as described in <<bmkLinuxSharedLibs>>
-
-==== Install {svr} and {sg}
-
-If you have not already done so:
-Install _{svr}_ and _{sg}_ following steps outlined in xref:{sgGetStartedDoc-installation}[Installing Sync Gateway ->]
-// . If you haven't already done so, download the starter app link:{url-cb-mobStarterApp}[{nmMobStarterApp}].
-
-==== Create the Getting Started Database
-
-[{orderedList}]
-. Within {svr}, create a bucket named {nmSampleAppDb}
-+
-Follow the instructions xref:{sgGetStartedDoc-createBucket}[here]
-
-[{steps}]
-. Create a RBAC user for {sg}
-+
-See instructions xref:{sgGetStartedDoc-createRBACuser}[here]
-[{steps2}]
-.. Set username to {nmSampleAppUser}
-.. Set password to {nmSampleAppPassword}
-
-// ==== Configure {sg}
-
-// Configure Sync Gateway using the following sample sync-gateway-config file.
-
-// [source, json]
-
-// ----
-// // include::_partials/gettingstarted-syncgateway.adoc[]
-
-// include::{snippet-java-jvm}[tags=sdk-initializer,indent=0]
-// ----
-
-// <1> This is the name of the bucket you configured on server
-// <2> This is the username of the RBAC user
-// <3> This is password of the RBAC user
-// <4> This is a Sync Gateway user. Replication will happen within the context of the user.
-
-=== Running Apps
-
-The {nmMobStarterApp} app will:
-
-* Create a database
-+
-The app creates its database in the `{nmSampleAppDbPath}` directory relative to its root location when run (See: <<Finding a Database File>>).
-
-TIP: Explicitly state your required database location when creating your database (see: <<Finding a Database File>> for how to do this)
-
-* Add content to the DB
-* Run a simple query counting the DB rows
-* Start bi-directional replication using {sg} to {svr}.
-
-First, ensure you have started your {svr} instance.
-
-.Running first app
-[tabs]
-====
-
-Console App::
-+
---
-
-. Launch a command line terminal
-. Navigate to the directory containing the jar created in <<YOUR FIRST PROJECT>>
-. Launch the app using:
-+
-[source,bashrc]
-
-----
-java -jar gettingstarted.jar
-----
-+
-Alternatively, if you are using {gpBuildTool} then you can use:
-+
-[source,java]
-
-----
-./gradlew run
-----
-
-You will see the document ID and property printed to the console together with a query result showing the number of rows in the database.
-
-This shows the document was successfully persisted to the database.
---
-
-Web App::
-+
---
-. Ensure {gpWebServerEnv} is running
-. Use 'localhost:8080/manager' to navigate to and deploy your `.war` file
-. Point your browser to: `localhost:8080/gettingstarted/GettingStarted`
-
-The `showDbItems.jsp` page displays the results from the app.
-
-
-
-These are also added to the _catalina.out_ log file.
---
-Embedded Web App::
-+
---
-. Launch the `.jar` file you created
-+
-The {nmMobStarterApp} web app page is displayed.
-. Select *Click Here* to initiate the Getting Started test
-+
-Results from the app are displayed on screen.
-They are also added to the embedded _catalina.out_ log file.
---
-
-====
-// END TABS block
 
 == API REFERENCES
 
@@ -751,12 +452,12 @@ Database thisDB = new Database("db", thisConfig);
 You can download and build it from the couchbaselabs https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md[GitHub repository].
 Note that the `cblite` tool is not supported by the https://www.couchbase.com/support-policy[Couchbase Support Policy].
 
-== Logging [DEPRECATED]
-
-CAUTION: The following API is deprecated and superseded by the <<logging,Logging API>> introduced in Couchbase Lite 2.5.
-
-The log messages are split into different domains (`LogDomains`) which can be tuned to different log levels.
-The following example enables `verbose` logging for the `replicator` and `query` domains.
+// == Logging [DEPRECATED]
+//
+// CAUTION: The following API is deprecated and superseded by the <<logging,Logging API>> introduced in Couchbase Lite 2.5.
+//
+// The log messages are split into different domains (`LogDomains`) which can be tuned to different log levels.
+// The following example enables `verbose` logging for the `replicator` and `query` domains.
 
 [source]
 ----
@@ -802,7 +503,7 @@ the only constraints are that it must be unique within the database, and it can'
 The following methods/initializers can be used:
 
 * The `MutableDocument()` initializer can be used to create a new document where the document ID is randomly generated by the database.
-* The `MutableDocument(withID: String)` initializer can be used to create a new document with a specific ID.
+* The `MutableDocument(String id)` initializer can be used to create a new document with a specific ID.
 * The `database.getDocument(String id)` method can be used to get a document.
 If it doesn't exist in the database, it will return `null`.
 This method can be used to check if a document with a given ID already exists in the database.
@@ -816,8 +517,8 @@ include::{snippet}[tags=initializer,indent=0]
 
 == Mutability
 
-By default, when a document is read from the database it is immutable.
-The `document.toMutable()` method should be used to create an instance of the document which can be updated.
+When a document is read from the database it is immutable.
+Use the `document.toMutable()` method to create an updateable instance of the document.
 
 [source]
 ----
@@ -882,7 +583,8 @@ The following code example adds a blob to the document under the `avatar` proper
 include::{snippet}[tags=blob,indent=0]
 ----
 
-The `Blob` API lets you access the contents as in-memory data (a `Data` object) or as a `InputStream`.
+The `Blob` API lets you access the contents as an in-memory byte array (
+`public byte[] getContent()`) or as an `InputStream` (`public InputStream getContentStream()`).
 It also supports an optional `type` property that by convention stores the MIME type of the contents.
 
 In the example above, "image/jpeg" is the MIME type and "avatar" is the key which references that `Blob`.
@@ -902,8 +604,7 @@ Notice that the blob identifier in the URL path is "blob_1" (not "avatar").
 
 == Query
 
-Database queries have changed significantly.
-Instead of the map/reduce views used in 1.x, they're now based on expressions, of the form "return {blank-field} from documents where {blank-field}, ordered by {blank-field}", with semantics based on Couchbase's N1QL query language.
+Database queries are based on expressions, of the form "SELECT {blank-field} FROM documents WHERE {blank-field}, ORDERed by {blank-field}", with semantics based on Couchbase's N1QL query language.
 
 There are several parts to specifying a query:
 
@@ -1024,8 +725,8 @@ include::{snippet}[tags=query-collection-operator-contains,indent=0]
 
 ==== IN Operator
 
-The `IN` operator is useful when you need to explicitly list out the values to test against.
-The following example looks for documents whose `first`, `last` or `username` property value equals "Armani".
+The `IN` operator is useful when you need to select based on a specified term matching any element of a defined list of values.
+The following example compiles a list of values from `first`, `last` and `username` property value. It then selects if any of those values equals "Armani".
 
 [source]
 ----
@@ -1087,6 +788,8 @@ include::{snippet}[tags=query-like-operator-wildcard-character-match,indent=0]
 Similar to wildcard `like` expressions, `regex` expressions based pattern matching allow you to have some fuzziness in your search string.
 
 The `regex` operator is case sensitive.
+
+TIP: For more on the regex spec used by {cbl} see http://www.cplusplus.com/reference/regex/ECMAScript/[cplusplus regex reference page]
 
 In the example below, we are looking for documents of `type` "landmark" where the name property matches any string (on word boundaries) that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
 The following query will return "landmark" type documents with name matching "Engine", "engine" and so on.
@@ -1214,7 +917,7 @@ Thus, good performance depends on designing and creating the _right_ indexes to 
 
 To run a full-text search (FTS) query, you must have created a full-text index on the expression being matched.
 Unlike regular queries, the index is not optional.
-The following example inserts documents and creates an FTS index on the `name` property.
+The following example creates an FTS index on the `name` property.
 
 [source]
 ----
@@ -1223,7 +926,7 @@ include::{snippet}[tags=fts-index,indent=0]
 
 Multiple properties to index can be specified in the index creation method.
 
-With the index created, an FTS query on the property that is being indexed can be constructed and ran.
+With the index created for a given property, you can now construct and run FTS queries on that property.
 The full-text search criteria is defined as a `FullTextExpression`.
 The left-hand side is the full-text index to use and the right-hand side is the pattern to match.
 
@@ -1242,14 +945,13 @@ The pattern to match can also be in the following forms:
 
 prefix queries::
 The query expression used to search for a term prefix is the prefix itself with a "*" character appended to it.
-For example:
+For example
 +
 ....
 "'lin*'"
--- Query for all documents containing a term with the prefix "lin". This will match
--- all documents that contain "linux", but also those that contain terms "linear",
---"linker", "linguistic" and so on.
 ....
+Will search for all documents containing a term with the prefix `lin`, poducing a match for all documents that contain "linux" and also those that contain terms "linear", "linker", "linguistic" and so on.
+
 
 overriding the property name that is being indexed::
 Normally, a token or token prefix query is matched against the document property specified as the left-hand side of the `match` operator.
@@ -1387,7 +1089,7 @@ The level of compression is set on Sync Gateway and can be tuned in the configur
 === Replication Ordering
 
 To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
-So we don't recommend to rely on that when using the replication or database change listeners for example.
+So do not rely receiving replicated data in a specific sequence when using the replication or database change listeners for example.
 
 === Replicator Notifications on a Custom Executor
 
@@ -1777,6 +1479,165 @@ Couchbase Lite Java will be supported on x86 64-bit platforms. These are the tar
 |macOS 10.12.6 (High Sierra)
 |Desktop & Web Service/Servlet (Tomcat)
 |===
+
+== SUPPLEMENTARY INFORMATION
+
+=== Preparatory Steps
+
+anchor:bmkSetupSyncAndServer[Setting up Sync Gateway]
+
+*Install {svr} and {sg}*
+
+Before you can run any {cbljp} app you will need to have runnable instances of {svr} and {sg}.
+If you have not already done so:
+
+
+Install _{svr}_ and _{sg}_ following steps outlined in xref:{sgGetStartedDoc-installation}[Installing Sync Gateway ->]
+
+*Create the Getting Started App Database*
+
+[{orderedList}]
+. Within {svr}, create a bucket named {nmSampleAppDb}
++
+Follow the instructions xref:{sgGetStartedDoc-createBucket}[here]
++
+[{steps}]
+. Create a RBAC user for {sg}
++
+See instructions xref:{sgGetStartedDoc-createRBACuser}[here]
+[{steps2}]
+** Set username to `sync-gateway`
+** Set password to `password`
+
+Back to <<Preparing Your Build Environment>>
+
+=== Using Downloaded Binaries
+
+*Package Contents*
+
+The download package contains a license file, jar libraries for the appropriate edition of the {cbl} and a set of Linux _shared libraries_.
+
+Get the download package from the link:{url-cb-downloads-mobile}[{nmCBdwnlds}] page.
+
+* Community Edition -- {packageNmCE}
+* Enterprise Edition -- {packageNmEE}
+
+When unpacked the package contains the following:
+
+* A `lib` folder containing all necessary JAR files:
+** {packageNmCE} or for EE {packageNmEE}
+** json-20180813.jar
+** okhttp-3.9.1.jar
+** okio-1.13.0.jar
+
+* A `support` folder containing the Linux native libraries:
++
+NOTE: This means you do not need to download and-or build compatible versions of system libraries for the Linux platform of choice.
+
+** `libz` (requires zlib v.1.2.11+)
+** `lib{cpp}` requires libc++ v.3.6.0+)
+** `libicu` (requires ICU4C v.5.4.1+)
+
+Go back to <<GET STARTED>>
+
+*Steps*
+
+. Download the _zip_ file from the link:{url-cb-downloads-mobile}[{nmCBdwnlds}] page.
+. Unpack the downloaded file to a location accessible to -- and usable by -- your chosen *build* environment.
++
+We'll refer to that location -- `<your dir>/{packageNmCE}` -- as the `<pathToCbl>`.
+
+. Include the following dependency in your `build.gradle` file, you can remove any {cbl} Maven references:
++
+----
+Dependencies {
+  implementation fileTree(include: ['*.jar'], dir: <pathToCbl>/lib>
+}
+----
+
+Where <pathToCbl> is the location of the downloaded {cbl} library.
+
+.Sample build gradle
+----
+include::{snippet-java-jvm}[tags=GsWebAppBuildGradle,indent=0]
+----
+
+Back to <<Preparing Your Build Environment>>
+
+
+=== Additional Steps for Linux
+
+anchor:bmkLinuxSharedLibs[Additional Steps for Linux]
+In addition to setting-up your build environment, you also need to make the supplied native libraries (`<pathToCbl/support`) available:
+
+NOTE: These libraries are provided only in the `.zip` distributable.
+
+. Copy the _native libraries_ (`<pathToCbl>/support`) to a location accessible to -- and usable by -- your build and runtime environments.
+. Add the libraries to the `LD_LIBRARY_PATH`:
++
+[source, bashrc]
+
+----
+export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libicu:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libz:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libc++:$LD_LIBRARY_PATH
+----
+
+Back to <<Preparing Your Build Environment>>
+
+
+=== Using the Gradle WebApp Plugin
+
+The simplest way to build and deploy your {cblJP} web app is to use a {gpBuildTool} plugin that provides a simple {gpWebServerEnv} harness.
+
+Our examples are based on the `com.bmuschko.tomcat` plugin -- see https://github.com/bmuschko/gradle-tomcat-plugin[com.bmuschko.tomcat on Github].
+
+Including the plugin in your `build.gradle` file make a number of tomcat tasks available to you. View them using:
+
+[source, bashrc]
+
+----
+./gradlew tasks
+----
+
+This shows that the following web application tasks are now available:
+
+** `tomcatJasper` - Runs the JSP compiler and turns JSP pages into Java source.
+** `tomcatRun` - Uses your files as and where they are and deploys them to Tomcat.
+** `tomcatRunWar` - Assembles the web app into a war and deploys it to Tomcat.
+** `tomcatStop` - Stops Tomcat.
+
+So, to run the app use:
+
+----
+tomcatRun
+----
+
+Back to <<Preparing Your Build Environment>>
+
+
+=== About the Getting Started App
+
+anchor:bmkAboutGettingStarted[]
+The {nmMobStarterApp} app will:
+
+* Create a database
++
+The app creates its database in the `{nmSampleAppDbPath}` directory relative to its root location when run (See: <<Finding a Database File>>).
+
+TIP: Explicitly state your required database location when creating your database (see: <<Finding a Database File>> for how to do this)
+
+* Add content to the DB
+* Run a simple query counting the DB rows
+* Start a one-shot, bi-directional replication using {sg} and {svr}
+* Produce a simple report on the db Contents
++
+image::cblOutput.png[,400]
+
+NOTE: Before starting your app ensure you have started both your {svr} and {sg} instances.
+
+Back to <<Building a Getting Started App>>
+
 
 
 == RELEASE NOTES
