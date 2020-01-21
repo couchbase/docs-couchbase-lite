@@ -418,7 +418,7 @@ The following example creates a database using the `Database(String name, Databa
 
 [source]
 ----
-include::{snippet}[tags=new-database,indent=0]
+include::{snippet-java-jvm}[tags=new-database,indent=0]
 ----
 
 Just as before, the database will be created in a default location.
@@ -463,7 +463,7 @@ Note that the `cblite` tool is not supported by the https://www.couchbase.com/su
 
 [source]
 ----
-include::{snippet}[tags=logging,indent=0,leveloffset=-1 ]
+include::{snippet-java-jvm}[tags=logging,indent=0,leveloffset=-1 ]
 ----
 
 == Logging
@@ -481,7 +481,7 @@ If the database does not exist, the application should copy it from the assets f
 
 [source]
 ----
-include::{snippet}[tags=prebuilt-database,indent=0]
+include::{snippet-java-jvm}[tags=prebuilt-database,indent=0]
 ----
 
 In the example below, the `ZipUtils.unzip` method copies the zipped pre-built database from the application's `resource` directory to the *files* directory.
@@ -489,7 +489,7 @@ This method is provided below for information as it isn't included in the Couchb
 
 [source]
 ----
-include::{snippet}[tags=ziputils-unzip,indent=0]
+include::{snippet-java-jvm}[tags=ziputils-unzip,indent=0]
 ----
 
 == Document
@@ -512,7 +512,7 @@ The following code example creates a document and persists it to the database.
 
 [source]
 ----
-include::{snippet}[tags=initializer,indent=0]
+include::{snippet-java-jvm}[tags=initializer,indent=0]
 ----
 
 == Mutability
@@ -522,7 +522,7 @@ Use the `document.toMutable()` method to create an updateable instance of the do
 
 [source]
 ----
-include::{snippet}[tags=update-document,indent=0]
+include::{snippet-java-jvm}[tags=update-document,indent=0]
 ----
 
 Changes to the document are persisted to the database when the `save` method is called.
@@ -538,7 +538,7 @@ The following example sets the date on the `createdAt` property and reads it bac
 
 [source]
 ----
-include::{snippet}[tags=date-getter,indent=0]
+include::{snippet-java-jvm}[tags=date-getter,indent=0]
 ----
 
 If the property doesn't exist in the document it will return the default value for that getter method (0 for `getInt`, 0.0 for `getFloat` etc.).
@@ -551,7 +551,7 @@ The following example persists a few documents in batch.
 
 [source]
 ----
-include::{snippet}[tags=batch,indent=0]
+include::{snippet-java-jvm}[tags=batch,indent=0]
 ----
 
 At the *local* level this operation is still transactional: no other `Database` instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
@@ -564,7 +564,7 @@ The following example registers for changes to the document with ID `user.john` 
 
 [source]
 ----
-include::{snippet}[tags=document-listener,indent=0]
+include::{snippet-java-jvm}[tags=document-listener,indent=0]
 ----
 
 == Document Expiration
@@ -580,7 +580,7 @@ The following code example adds a blob to the document under the `avatar` proper
 
 [source]
 ----
-include::{snippet}[tags=blob,indent=0]
+include::{snippet-java-jvm}[tags=blob,indent=0]
 ----
 
 The `Blob` API lets you access the contents as an in-memory byte array (
@@ -636,7 +636,7 @@ In the query result, we print the `_id` and `name` properties of each row using 
 
 [source]
 ----
-include::{snippet}[tags=query-select-meta,indent=0]
+include::{snippet-java-jvm}[tags=query-select-meta,indent=0]
 ----
 
 The `SelectResult.all()` method can be used to query all the properties of a document.
@@ -645,7 +645,7 @@ The following snippet shows the same query using `SelectResult.all()` and the re
 
 [source]
 ----
-include::{snippet}[tags=query-select-all,indent=0]
+include::{snippet-java-jvm}[tags=query-select-all,indent=0]
 ----
 
 [source,json]
@@ -698,7 +698,7 @@ In the example below, we use the `equalTo` operator to query documents where the
 
 [source]
 ----
-include::{snippet}[tags=query-where,indent=0]
+include::{snippet-java-jvm}[tags=query-where,indent=0]
 ----
 
 === Collection Operators
@@ -720,7 +720,7 @@ The following example uses the `Function.arrayContains` to find documents whose 
 
 [source]
 ----
-include::{snippet}[tags=query-collection-operator-contains,indent=0]
+include::{snippet-java-jvm}[tags=query-collection-operator-contains,indent=0]
 ----
 
 ==== IN Operator
@@ -730,7 +730,7 @@ The following example compiles a list of values from `first`, `last` and `userna
 
 [source]
 ----
-include::{snippet}[tags=query-collection-operator-in,indent=0]
+include::{snippet-java-jvm}[tags=query-collection-operator-in,indent=0]
 ----
 
 ==== Like Operator
@@ -750,7 +750,7 @@ The following query returns "landmark" type documents regardless of the name's c
 
 [source]
 ----
-include::{snippet}[tags=query-like-operator,indent=0]
+include::{snippet-java-jvm}[tags=query-like-operator,indent=0]
 ----
 
 ==== Wildcard Match
@@ -768,7 +768,7 @@ NOTE: The matches may span word boundaries.
 
 [source]
 ----
-include::{snippet}[tags=query-like-operator-wildcard-match,indent=0]
+include::{snippet-java-jvm}[tags=query-like-operator-wildcard-match,indent=0]
 ----
 
 ==== Wildcard Character Match
@@ -780,7 +780,7 @@ The following query will return "landmark" `type` documents with the `name` matc
 
 [source]
 ----
-include::{snippet}[tags=query-like-operator-wildcard-character-match,indent=0]
+include::{snippet-java-jvm}[tags=query-like-operator-wildcard-character-match,indent=0]
 ----
 
 ==== Regex Operator
@@ -797,7 +797,7 @@ Note that the `\b` specifies that the match must occur on word boundaries.
 
 [source]
 ----
-include::{snippet}[tags=query-regex-operator,indent=0]
+include::{snippet-java-jvm}[tags=query-regex-operator,indent=0]
 ----
 
 === Query Deleted Document
@@ -807,7 +807,7 @@ The following example shows how to query deleted documents in the database.
 
 [source]
 ----
-include::{snippet}[tags=query-deleted-documents,indent=0]
+include::{snippet-java-jvm}[tags=query-deleted-documents,indent=0]
 ----
 
 === JOIN statement
@@ -819,7 +819,7 @@ This example JOINS the document of type "route" with documents of type "airline"
 
 [source]
 ----
-include::{snippet}[tags=query-join,indent=0]
+include::{snippet-java-jvm}[tags=query-join,indent=0]
 ----
 
 === GROUP BY statement
@@ -840,7 +840,7 @@ The following example looks for the number of airports at an altitude of 300 ft 
 
 [source]
 ----
-include::{snippet}[tags=query-groupby,indent=0]
+include::{snippet-java-jvm}[tags=query-groupby,indent=0]
 ----
 
 [source,text]
@@ -859,7 +859,7 @@ The example below returns documents of type equal to "hotel" sorted in ascending
 
 [source]
 ----
-include::{snippet}[tags=query-orderby,indent=0]
+include::{snippet-java-jvm}[tags=query-orderby,indent=0]
 ----
 
 [source,text]
@@ -905,7 +905,7 @@ The following example creates a new index for the `type` and `name` properties.
 
 [source]
 ----
-include::{snippet}[tags=query-index,indent=0]
+include::{snippet-java-jvm}[tags=query-index,indent=0]
 ----
 
 If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.
@@ -921,7 +921,7 @@ The following example creates an FTS index on the `name` property.
 
 [source]
 ----
-include::{snippet}[tags=fts-index,indent=0]
+include::{snippet-java-jvm}[tags=fts-index,indent=0]
 ----
 
 Multiple properties to index can be specified in the index creation method.
@@ -932,7 +932,7 @@ The left-hand side is the full-text index to use and the right-hand side is the 
 
 [source]
 ----
-include::{snippet}[tags=fts-query,indent=0]
+include::{snippet-java-jvm}[tags=fts-query,indent=0]
 ----
 
 In the example above, the pattern to match is a word, the full-text search query matches all documents that contain the word "buy" in the value of the `doc.name` property.
@@ -1246,7 +1246,7 @@ The following example increases the log output for activity related to replicati
 
 [source]
 ----
-include::{snippet}[tags=replication-logging,indent=0]
+include::{snippet-java-jvm}[tags=replication-logging,indent=0]
 ----
 
 == Authentication
@@ -1260,7 +1260,7 @@ For example, when the replication is actively transferring data and when it has 
 
 [source]
 ----
-include::{snippet}[tags=replication-status,indent=0]
+include::{snippet-java-jvm}[tags=replication-status,indent=0]
 ----
 
 The following table lists the different activity levels in the API and the meaning of each one.
@@ -1299,7 +1299,7 @@ The following code snippet adds a `Change Listener`, which monitors a replicatio
 .Monitoring for network errors
 [source]
 ----
-include::{snippet}[tags=replication-error-handling,indent=0]
+include::{snippet-java-jvm}[tags=replication-error-handling,indent=0]
 ----
 
 *For permanent network errors* (for example, `404` not found, or `401` unauthorized):
@@ -1331,7 +1331,7 @@ include::{partialsdir}/replication-custom-header.adoc[]
 
 [source]
 ----
-include::{snippet}[tags=replication-custom-header,indent=0]
+include::{snippet-java-jvm}[tags=replication-custom-header,indent=0]
 ----
 
 == Replication Checkpoint Reset
@@ -1340,7 +1340,7 @@ include::{partialsdir}/replication-checkpoint.adoc[]
 
 [source]
 ----
-include::{snippet}[tags=replication-reset-checkpoint,indent=0]
+include::{snippet-java-jvm}[tags=replication-reset-checkpoint,indent=0]
 ----
 
 == Replication Filters
@@ -1430,7 +1430,7 @@ The following example shows how to retrieve an attachment that was created in a 
 
 [source]
 ----
-include::{snippet}[tags=1x-attachment,indent=0]
+include::{snippet-java-jvm}[tags=1x-attachment,indent=0]
 ----
 
 == Replication Compatibility
