@@ -997,7 +997,7 @@ public class Examples {
         Map<String, Object> inputProperties = new HashMap<>();
         inputProperties.put("photo", Expression.property("photo"));
         Expression input = Expression.map(inputProperties);
-        PredictionFunction prediction = Function.prediction("ImageClassifier", input); // <1>
+        PredictionFunction prediction = PredictiveModel.predict("ImageClassifier", input); // <1>
 
         Query query = QueryBuilder
             .select(SelectResult.all())

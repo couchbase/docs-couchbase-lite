@@ -953,7 +953,7 @@ namespace api_walkthrough
                 {
                     ["photo"] = Expression.Property("photo")
                 });
-                var prediction = Function.Prediction("ImageClassifier", input); // <1>
+                var prediction = PredictiveModel.predict("ImageClassifier", input); // <1>
 
                 using (var q = QueryBuilder.Select(SelectResult.All())
                     .From(DataSource.Database(db))

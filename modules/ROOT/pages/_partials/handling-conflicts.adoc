@@ -28,7 +28,7 @@ Couchbase Lite uses the following rules to handle the conflicts occurring in ste
 
 The result is saved internally by the Couchbase Lite replicator.
 Those rules describe the internal behavior of the replicator.
-There is currently no other way to handle conflicts when a replication is in progress.
+For additional control over the handling of conflicts, including when a replication is in progress, see <<Custom Conflict Resolution>>.
 
 ==== Custom Conflict Resolution
 
@@ -118,6 +118,7 @@ When the value is `null`, the default conflict resolution will be applied.
 include::{snippet}[tag=replication-conflict-resolver,indent=0]
 ----
 
+
 === Case 2: Conflicts when saving a document
 
 When updating a document, you need to consider the possibility of update conflicts.
@@ -126,7 +127,7 @@ Here's a typical sequence of events that would create an update conflict:
 
 . Your code reads the document's current properties, and constructs a modified copy to save.
 . Another thread (perhaps the replicator) updates the document, creating a new revision with different properties.
-. Your code updates the document (by calling `save(document: MutableDocument)`) with its modified properties.
+. Your code updates the document with its modified properties, for example using `db.save( mutableDocumentName)`.
 
 ==== Automatic Conflict Resolution
 

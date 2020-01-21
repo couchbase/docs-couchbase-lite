@@ -1,5 +1,6 @@
-Starting from Couchbase Lite 2.5, it's also possible to register for document updates during a replication.
-The following example registers for changes on the `self.replicator` object and prints the document ID of each document received and sent.
+You can choose to register for document updates during a replication.
+
+For example, the code snippet below registers a listener to monitor document replication performed by the replicator referenced by the variable `replicator`. It prints the document ID of each document received and sent.
 
 [source]
 ----
@@ -15,4 +16,4 @@ include::{snippet}[tag=remove-document-replication-listener,indent=0]
 
 ==== Document Access Removal Behavior
 
-When xref:sync-gateway::sync-function-api.adoc#document-access-removal-behavior[access to a document is removed] on Sync Gateway, the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
+When xref:sync-gateway::sync-function-api.adoc[access to a document is removed] on Sync Gateway, the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.

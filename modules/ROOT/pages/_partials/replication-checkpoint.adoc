@@ -1,5 +1,5 @@
-Checkpoints are used by the replicator to keep track of documents that are sent to the target database.
-Without checkpoints, Couchbase Lite would send the entire database content every time it connects to the target database, even though the target database may already have the majority of the database content from previous replications.
+Replicators use checkpoints to keep track of documents sent to the target database.
+Without checkpoints, Couchbase Lite would replicate the entire database content to the target database on each connection, even though previous replications may already have replicated some or all of that content.
 
 This functionality is generally not a concern to application developers.
-But if you require the replication to start again from zero then you may call the checkpoint reset method *before* starting the replicator.
+However, if you do want to force the replication to start again from zero, use the checkpoint reset method `replicator.resetCheckpoint()` *before* starting the replicator.
