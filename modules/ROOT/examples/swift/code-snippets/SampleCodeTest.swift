@@ -845,7 +845,7 @@ class SampleCodeTest {
         
         // tag::predictive-query-value-index[]
         let input = Expression.dictionary(["photo": Expression.property("photo")])
-        let prediction = Function.prediction(model: "ImageClassifier", input: input)
+        let prediction = PredictiveModel.predict(model: "ImageClassifier", input: input)
         
         let index = IndexBuilder.valueIndex(items: ValueIndexItem.expression(prediction.property("label")))
         try database.createIndex(index, withName: "value-index-image-classifier")
@@ -882,7 +882,7 @@ class SampleCodeTest {
         
         // tag::predictive-query[]
         let input = Expression.dictionary(["photo": Expression.property("photo")])
-        let prediction = Function.prediction(model: "ImageClassifier", input: input) // <1>
+        let prediction = PredictiveModel.predict(model: "ImageClassifier", input: input) // <1>
         
         let query = QueryBuilder
             .select(SelectResult.all())

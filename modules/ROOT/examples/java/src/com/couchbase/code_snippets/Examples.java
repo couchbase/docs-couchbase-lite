@@ -19,7 +19,6 @@ import java.util.Random;
 
 public class GettingStarted {
 
-private static final String DB_DIR = "/data"; // <5>
 private static final String DB_NAME = "getting-started";
 /*      Credentials declared this way purely for expediency in this demo - use OAUTH in production code */
 private static final String DB_USER = "sync_gateway";
@@ -503,7 +502,7 @@ dependencies {
 // end::GsWebAppBuildGradle[]
 
 // tag::GsEmbeddedTomcatBuildGradle[]
-def tomcatVersion = '9.0.24'
+// def tomcatVersion = '9.0.24'
 
 apply plugin: 'java'
 apply plugin: 'war'
@@ -530,9 +529,9 @@ dependencies {
     //  Use for community versions
     //    compileOnly "com.couchbase.lite:couchbase-lite-java:2.7.0"
     compileOnly "javax.servlet:javax.servlet-api:4.0.1"
-    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:9.0.24",
         "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
-        "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
+        "org.apache.tomcat.embed:tomcat-embed-jasper:9.0.24"
 }
 
 tomcat {
@@ -623,9 +622,9 @@ apply plugin: 'java'
         compileOnly "javax.servlet:javax.servlet-api:4.0.1"
 
         def tomcatVersion = '9.0.24'
-        tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+        tomcat "org.apache.tomcat.embed:tomcat-embed-core:9.0.24",
                 "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
-                "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
+                "org.apache.tomcat.embed:tomcat-embed-jasper:9.0.24"
     }
 
     tomcat {
@@ -739,14 +738,17 @@ apply plugin: 'java'
     }
 
     // ### Loading a pre-built database
+
     public void testPreBuiltDatabase() throws IOException {
         // tag::prebuilt-database[]
         // Note: Getting the path to a database is platform-specific.
         // For Android you need to extract it from your
         // assets to a temporary directory and then pass that path to Database.copy()
         DatabaseConfiguration configuration = new DatabaseConfiguration();
-        if (!Database.exists("travel-sample", context.getFilesDir())) {
-            ZipUtils.unzip(getAsset("travel-sample.cblite2.zip"), final File path = new File("/usr/local/MyApp/travel-sample");
+        if (!Database.exists("travel-sample", APP_DB_DIR)) {
+            File tmpDir = new File(System.getProperty("java.io.tmpdir"));
+            ZipUtils.unzip(getAsset("travel-sample.cblite2.zip"), tmpDir);
+            File path = new File(tmpDir, "travel-sample");
             try {
                 Database.copy(path, "travel-sample", configuration);
             } catch (CouchbaseLiteException e) {
@@ -1479,7 +1481,7 @@ apply plugin: 'java'
         Map<String, Object> inputProperties = new HashMap<>();
         inputProperties.put("photo", Expression.property("photo"));
         Expression input = Expression.map(inputProperties);
-        PredictionFunction prediction = Function.prediction("ImageClassifier", input); // <1>
+        PredictionFunction prediction = PredictiveModel.predict("ImageClassifier", input); // <1>
 
         Query query = QueryBuilder
             .select(SelectResult.all())
@@ -1766,3 +1768,35 @@ class LogTestLogger implements Logger {
     }
 }
 // end::custom-logging[]
+
+
+
+
+// tag::ziputils-unzip[]
+public class ZipUtils {
+    public static void unzip(InputStream in, File destination) throws IOException {
+        byte[] buffer = new byte[1024];
+        ZipInputStream zis = new ZipInputStream(in);
+        ZipEntry ze = zis.getNextEntry();
+        while (ze != null) {
+            String fileName = ze.getName();
+            File newFile = new File(destination, fileName);
+            if (ze.isDirectory()) {
+                newFile.mkdirs();
+            } else {
+                new File(newFile.getParent()).mkdirs();
+                FileOutputStream fos = new FileOutputStream(newFile);
+                int len;
+                while ((len = zis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, len);
+                }
+                fos.close();
+            }
+            ze = zis.getNextEntry();
+        }
+        zis.closeEntry();
+        zis.close();
+        in.close();
+    }
+}
+// end::ziputils-unzip[]

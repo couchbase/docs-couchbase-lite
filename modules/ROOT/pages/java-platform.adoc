@@ -81,7 +81,7 @@ Console App Development::
 [source,groovy,subs=attributes+]
 ----
 dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-java:{version-full}'
+    implementation 'com.couchbase.lite:couchbase-lite-java:2.7.0'
 }
 ----
 
@@ -100,7 +100,7 @@ allprojects {
     }
 }
 dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-java-ee:{version-full}'
+    implementation 'com.couchbase.lite:couchbase-lite-java-ee:2.7.0'
 }
 ----
 
@@ -176,7 +176,7 @@ gradle init
 [source,groovy,subs=attributes+]
 ----
 dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-java:{version-full}'
+    implementation 'com.couchbase.lite:couchbase-lite-java:2.7.0'
 }
 ----
 
@@ -195,7 +195,7 @@ allprojects {
     }
 }
 dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-java-ee:{version-full}'
+    implementation 'com.couchbase.lite:couchbase-lite-java-ee:2.7.0'
 }
 ----
 
@@ -418,7 +418,7 @@ The following example creates a database using the `Database(String name, Databa
 
 [source]
 ----
-include::{snippet}[tags=new-database,indent=0]
+include::{snippet-java-jvm}[tags=new-database,indent=0]
 ----
 
 Just as before, the database will be created in a default location.
@@ -437,7 +437,7 @@ include::{partialsdir}/database-encryption.adoc[leveloffset=-2]
 
 == Finding a Database File
 
-By default a {cblJP} database is created in a directory at the current location called  `<applicationName>.cblite2`.
+By default a {cblJP} database is created in a directory at the current location called  `<databaseName>.cblite2`.
 
 This location is set by the link:{url-api-references}/com/couchbase/lite/DatabaseConfiguration.html[DatabaseConfiguration] method. You should always use it to explicitly set the database location. See the following example  for how to do this:
 [source, java]
@@ -463,7 +463,7 @@ Note that the `cblite` tool is not supported by the https://www.couchbase.com/su
 
 [source]
 ----
-include::{snippet}[tags=logging,indent=0,leveloffset=-1 ]
+include::{snippet-java-jvm}[tags=logging,indent=0,leveloffset=-1 ]
 ----
 
 == Logging
@@ -481,17 +481,15 @@ If the database does not exist, the application should copy it from the assets f
 
 [source]
 ----
-include::{snippet}[tags=prebuilt-database,indent=0]
+include::{snippet-java-jvm}[tags=prebuilt-database,indent=0]
 ----
 
-In the example below, the `ZipUtils.unzip` method copies the zipped pre-built database from the APK's *assets* directory to the *files* directory.
-This method is provided below for reference as it isn't included in the Couchbase Lite library.
-
-WARNING: Author's note---Ignored include as not relevant to Java Platform
+In the example below, the `ZipUtils.unzip` method copies the zipped pre-built database from the application's `resource` directory to the *files* directory.
+This method is provided below for information as it isn't included in the Couchbase Lite library.
 
 [source]
 ----
-// include::{ziputils}[tags=ziputils-unzip,indent=0]
+include::{snippet-java-jvm}[tags=ziputils-unzip,indent=0]
 ----
 
 == Document
@@ -514,7 +512,7 @@ The following code example creates a document and persists it to the database.
 
 [source]
 ----
-include::{snippet}[tags=initializer,indent=0]
+include::{snippet-java-jvm}[tags=initializer,indent=0]
 ----
 
 == Mutability
@@ -524,7 +522,7 @@ Use the `document.toMutable()` method to create an updateable instance of the do
 
 [source]
 ----
-include::{snippet}[tags=update-document,indent=0]
+include::{snippet-java-jvm}[tags=update-document,indent=0]
 ----
 
 Changes to the document are persisted to the database when the `save` method is called.
@@ -540,7 +538,7 @@ The following example sets the date on the `createdAt` property and reads it bac
 
 [source]
 ----
-include::{snippet}[tags=date-getter,indent=0]
+include::{snippet-java-jvm}[tags=date-getter,indent=0]
 ----
 
 If the property doesn't exist in the document it will return the default value for that getter method (0 for `getInt`, 0.0 for `getFloat` etc.).
@@ -553,7 +551,7 @@ The following example persists a few documents in batch.
 
 [source]
 ----
-include::{snippet}[tags=batch,indent=0]
+include::{snippet-java-jvm}[tags=batch,indent=0]
 ----
 
 At the *local* level this operation is still transactional: no other `Database` instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
@@ -566,7 +564,7 @@ The following example registers for changes to the document with ID `user.john` 
 
 [source]
 ----
-include::{snippet}[tags=document-listener,indent=0]
+include::{snippet-java-jvm}[tags=document-listener,indent=0]
 ----
 
 == Document Expiration
@@ -582,7 +580,7 @@ The following code example adds a blob to the document under the `avatar` proper
 
 [source]
 ----
-include::{snippet}[tags=blob,indent=0]
+include::{snippet-java-jvm}[tags=blob,indent=0]
 ----
 
 The `Blob` API lets you access the contents as an in-memory byte array (
@@ -606,7 +604,7 @@ Notice that the blob identifier in the URL path is "blob_1" (not "avatar").
 
 == Query
 
-Database queries are based on expressions, of the form "SELECT {blank-field} FROM documents WHERE {blank-field}, ORDERed by {blank-field}", with semantics based on Couchbase's N1QL query language.
+Database queries are based on expressions, of the form "SELECT {blank-field} FROM database WHERE {blank-field}, ORDERed by {blank-field}", with semantics based on Couchbase's N1QL query language.
 
 There are several parts to specifying a query:
 
@@ -638,7 +636,7 @@ In the query result, we print the `_id` and `name` properties of each row using 
 
 [source]
 ----
-include::{snippet}[tags=query-select-meta,indent=0]
+include::{snippet-java-jvm}[tags=query-select-meta,indent=0]
 ----
 
 The `SelectResult.all()` method can be used to query all the properties of a document.
@@ -647,7 +645,7 @@ The following snippet shows the same query using `SelectResult.all()` and the re
 
 [source]
 ----
-include::{snippet}[tags=query-select-all,indent=0]
+include::{snippet-java-jvm}[tags=query-select-all,indent=0]
 ----
 
 [source,json]
@@ -700,7 +698,7 @@ In the example below, we use the `equalTo` operator to query documents where the
 
 [source]
 ----
-include::{snippet}[tags=query-where,indent=0]
+include::{snippet-java-jvm}[tags=query-where,indent=0]
 ----
 
 === Collection Operators
@@ -722,7 +720,7 @@ The following example uses the `Function.arrayContains` to find documents whose 
 
 [source]
 ----
-include::{snippet}[tags=query-collection-operator-contains,indent=0]
+include::{snippet-java-jvm}[tags=query-collection-operator-contains,indent=0]
 ----
 
 ==== IN Operator
@@ -732,7 +730,7 @@ The following example compiles a list of values from `first`, `last` and `userna
 
 [source]
 ----
-include::{snippet}[tags=query-collection-operator-in,indent=0]
+include::{snippet-java-jvm}[tags=query-collection-operator-in,indent=0]
 ----
 
 ==== Like Operator
@@ -752,7 +750,7 @@ The following query returns "landmark" type documents regardless of the name's c
 
 [source]
 ----
-include::{snippet}[tags=query-like-operator,indent=0]
+include::{snippet-java-jvm}[tags=query-like-operator,indent=0]
 ----
 
 ==== Wildcard Match
@@ -770,7 +768,7 @@ NOTE: The matches may span word boundaries.
 
 [source]
 ----
-include::{snippet}[tags=query-like-operator-wildcard-match,indent=0]
+include::{snippet-java-jvm}[tags=query-like-operator-wildcard-match,indent=0]
 ----
 
 ==== Wildcard Character Match
@@ -782,7 +780,7 @@ The following query will return "landmark" `type` documents with the `name` matc
 
 [source]
 ----
-include::{snippet}[tags=query-like-operator-wildcard-character-match,indent=0]
+include::{snippet-java-jvm}[tags=query-like-operator-wildcard-character-match,indent=0]
 ----
 
 ==== Regex Operator
@@ -799,7 +797,7 @@ Note that the `\b` specifies that the match must occur on word boundaries.
 
 [source]
 ----
-include::{snippet}[tags=query-regex-operator,indent=0]
+include::{snippet-java-jvm}[tags=query-regex-operator,indent=0]
 ----
 
 === Query Deleted Document
@@ -809,7 +807,7 @@ The following example shows how to query deleted documents in the database.
 
 [source]
 ----
-include::{snippet}[tags=query-deleted-documents,indent=0]
+include::{snippet-java-jvm}[tags=query-deleted-documents,indent=0]
 ----
 
 === JOIN statement
@@ -821,7 +819,7 @@ This example JOINS the document of type "route" with documents of type "airline"
 
 [source]
 ----
-include::{snippet}[tags=query-join,indent=0]
+include::{snippet-java-jvm}[tags=query-join,indent=0]
 ----
 
 === GROUP BY statement
@@ -842,7 +840,7 @@ The following example looks for the number of airports at an altitude of 300 ft 
 
 [source]
 ----
-include::{snippet}[tags=query-groupby,indent=0]
+include::{snippet-java-jvm}[tags=query-groupby,indent=0]
 ----
 
 [source,text]
@@ -861,7 +859,7 @@ The example below returns documents of type equal to "hotel" sorted in ascending
 
 [source]
 ----
-include::{snippet}[tags=query-orderby,indent=0]
+include::{snippet-java-jvm}[tags=query-orderby,indent=0]
 ----
 
 [source,text]
@@ -907,7 +905,7 @@ The following example creates a new index for the `type` and `name` properties.
 
 [source]
 ----
-include::{snippet}[tags=query-index,indent=0]
+include::{snippet-java-jvm}[tags=query-index,indent=0]
 ----
 
 If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.
@@ -923,7 +921,7 @@ The following example creates an FTS index on the `name` property.
 
 [source]
 ----
-include::{snippet}[tags=fts-index,indent=0]
+include::{snippet-java-jvm}[tags=fts-index,indent=0]
 ----
 
 Multiple properties to index can be specified in the index creation method.
@@ -934,7 +932,7 @@ The left-hand side is the full-text index to use and the right-hand side is the 
 
 [source]
 ----
-include::{snippet}[tags=fts-query,indent=0]
+include::{snippet-java-jvm}[tags=fts-query,indent=0]
 ----
 
 In the example above, the pattern to match is a word, the full-text search query matches all documents that contain the word "buy" in the value of the `doc.name` property.
@@ -1248,7 +1246,7 @@ The following example increases the log output for activity related to replicati
 
 [source]
 ----
-include::{snippet}[tags=replication-logging,indent=0]
+include::{snippet-java-jvm}[tags=replication-logging,indent=0]
 ----
 
 == Authentication
@@ -1262,7 +1260,7 @@ For example, when the replication is actively transferring data and when it has 
 
 [source]
 ----
-include::{snippet}[tags=replication-status,indent=0]
+include::{snippet-java-jvm}[tags=replication-status,indent=0]
 ----
 
 The following table lists the different activity levels in the API and the meaning of each one.
@@ -1292,23 +1290,26 @@ NOTE: The replication change object also has properties to track the progress (`
 But since the replication occurs in batches and the total count can vary through the course of a replication, those progress indicators are not very useful from the standpoint of an app user.
 Hence, these should not be used for tracking the actual progress of the replication.
 
-=== Replication Status and App Life Cycle
-
-Couchbase Lite doesn't react to OS backgrounding or foregrounding events and replication(s) will continue running as long as the remote system does not terminate the connection and the app does not terminate.
-It is generally recommended to stop replications before going into the background otherwise socket connections may be closed by the OS and this may interfere with the replication process.
-
 == Handling Network Errors
 
-If an error occurs, the replication status will be updated with an `Error` which follows the standard HTTP error codes.
-The following example monitors the replication for errors and logs the error code to the console.
+When _replicator_ detects a network error it updates its status depending on the error type (permanent or temporary) and returns an appropriate HTTP error code.
 
+The following code snippet adds a `Change Listener`, which monitors a replication for errors and logs the the returned error code.
+
+.Monitoring for network errors
 [source]
 ----
-include::{snippet}[tags=replication-error-handling,indent=0]
+include::{snippet-java-jvm}[tags=replication-error-handling,indent=0]
 ----
 
-When a permanent error occurs (i.e., `404`: not found, `401`: unauthorized), the replicator (continuous or one-shot) will stop permanently.
-If the error is temporary (i.e., waiting for the network to recover), a continuous replication will retry to connect indefinitely and if the replication is one-shot it will retry for a limited number of times.
+*For permanent network errors* (for example, `404` not found, or `401` unauthorized):
+_Replicator_ will stop permanently, whether `setContinuous`  is _true_ or _false_. Of course, it sets its status to `STOPPED`
+
+*For recoverable or temporary errors:* _Replicator_ sets its status to `OFFLINE`, then:
+
+* If `setContinuous=_true_` it retries the connection indefinitely
+* If `setContinuous=_false_` (one-shot) it retries the connection a limited number of times.
+
 The following error codes are considered temporary by the Couchbase Lite replicator and thus will trigger a connection retry.
 
 * `408`: Request Timeout
@@ -1323,13 +1324,14 @@ The following error codes are considered temporary by the Couchbase Lite replica
 
 include::{partialsdir}/replication-events.adoc[leveloffset=-1]
 
+
 == Custom Headers
 
 include::{partialsdir}/replication-custom-header.adoc[]
 
 [source]
 ----
-include::{snippet}[tags=replication-custom-header,indent=0]
+include::{snippet-java-jvm}[tags=replication-custom-header,indent=0]
 ----
 
 == Replication Checkpoint Reset
@@ -1338,7 +1340,7 @@ include::{partialsdir}/replication-checkpoint.adoc[]
 
 [source]
 ----
-include::{snippet}[tags=replication-reset-checkpoint,indent=0]
+include::{snippet-java-jvm}[tags=replication-reset-checkpoint,indent=0]
 ----
 
 == Replication Filters
@@ -1428,7 +1430,7 @@ The following example shows how to retrieve an attachment that was created in a 
 
 [source]
 ----
-include::{snippet}[tags=1x-attachment,indent=0]
+include::{snippet-java-jvm}[tags=1x-attachment,indent=0]
 ----
 
 == Replication Compatibility
