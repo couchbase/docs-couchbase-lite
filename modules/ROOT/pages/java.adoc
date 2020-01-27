@@ -324,6 +324,8 @@ When a document is synchronized, the Couchbase Lite replicator will add an `_att
 A random access name will be generated for each `Blob` which is different to the "avatar" key that was used in the example above.
 On the image below, the document now contains the `_attachments` dictionary when viewed in the Couchbase Server Admin Console.
 
+.Replication of Attachments
+
 image::attach_replicated.png[]
 
 A blob also has properties such as `"digest"` (a SHA-1 digest of the data), `"length"` (the length in bytes), and optionally `"content_type"` (the MIME type).
@@ -864,10 +866,13 @@ NOTE: The replication change object also has properties to track the progress (`
 But since the replication occurs in batches and the total count can vary through the course of a replication, those progress indicators are not very useful from the standpoint of an app user.
 Hence, these should not be used for tracking the actual progress of the replication.
 
-==== Replication Status and App Life Cycle
+anchor:repstatus-and-lifecycle[]
 
-Couchbase Lite doesn't react to OS backgrounding or foregrounding events and replication(s) will continue running as long as the remote system does not terminate the connection and the app does not terminate.
-It is generally recommended to stop replications before going into the background otherwise socket connections may be closed by the OS and this may interfere with the replication process.
+==== Replication Status and App Lifecycle
+
+Couchbase Lite replications will continue running until the app terminates, unless the remote system, or the application, terminates the connection.
+
+NOTE: Recall that the Android OS may kill an application without warning. You should explicitly stop replication processes when they are no longer useful (for example, when they are `suspended` or `idle`) to avoid socket connections being closed by the OS, which may interfere with the replication process.
 
 === Handling Network Errors
 
