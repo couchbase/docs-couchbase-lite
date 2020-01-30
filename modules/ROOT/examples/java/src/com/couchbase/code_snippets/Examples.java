@@ -502,7 +502,10 @@ dependencies {
 // end::GsWebAppBuildGradle[]
 
 // tag::GsEmbeddedTomcatBuildGradle[]
-// def tomcatVersion = '9.0.24'
+
+ext{
+  TOMCAT_VERSION="9.0.24"
+}
 
 apply plugin: 'java'
 apply plugin: 'war'
@@ -529,9 +532,9 @@ dependencies {
     //  Use for community versions
     //    compileOnly "com.couchbase.lite:couchbase-lite-java:2.7.0"
     compileOnly "javax.servlet:javax.servlet-api:4.0.1"
-    tomcat "org.apache.tomcat.embed:tomcat-embed-core:9.0.24",
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${TOMCAT_VERSION}",
         "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
-        "org.apache.tomcat.embed:tomcat-embed-jasper:9.0.24"
+        "org.apache.tomcat.embed:tomcat-embed-jasper:${TOMCAT_VERSION}"
 }
 
 tomcat {
@@ -595,6 +598,10 @@ cp -R <pathToTomcatDownload>/**/.jar libs/libMyJar
 // end::tcWebAppHarness-setup[]
 
 // tag::embeddedTomcat[]
+ext{
+  TOMCAT_VERSION="9.0.24"
+}
+
 apply plugin: 'java'
     apply plugin: 'war'
     apply plugin: 'com.bmuschko.tomcat'
@@ -621,10 +628,9 @@ apply plugin: 'java'
 
         compileOnly "javax.servlet:javax.servlet-api:4.0.1"
 
-        def tomcatVersion = '9.0.24'
-        tomcat "org.apache.tomcat.embed:tomcat-embed-core:9.0.24",
+        tomcat "org.apache.tomcat.embed:tomcat-embed-core:${TOMCAT_VERSION}",
                 "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
-                "org.apache.tomcat.embed:tomcat-embed-jasper:9.0.24"
+                "org.apache.tomcat.embed:tomcat-embed-jasper:${TOMCAT_VERSION}"
     }
 
     tomcat {
