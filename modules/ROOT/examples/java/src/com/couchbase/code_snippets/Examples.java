@@ -91,14 +91,14 @@ public static void main (String [] args) throws CouchbaseLiteException, Interrup
             SelectResult.property(Prop_Type))
         .from(DataSource.database(database));
         try {
-            for (Result result : queryAll.execute()) {
+            for (Result thisDoc : queryAll.execute()) {
               numRows++;
               System.out.println(String.format("%d ... Id: %s is learning: %s version: %.2f type is %s",
-                  numrows,
-                  result.getString(Prop_Id),
-                  result.getString(Prop_Language),
-                  result.getDouble(Prop_Version),
-                  result.getString(Prop_Type)));
+                  numRows,
+                  thisDoc.getString(Prop_Id),
+                  thisDoc.getString(Prop_Language),
+                  thisDoc.getDouble(Prop_Version),
+                  thisDoc.getString(Prop_Type)));
               }
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
@@ -322,14 +322,14 @@ public class GettingStarted extends javax.servlet.http.HttpServlet {
                 SelectResult.property(Prop_Type))
                 .from(DataSource.database(database));
         try {
-            for (Result result : queryAll.execute()) {
+            for (Result thisDoc : queryAll.execute()) {
               NUMROWS++;
                 outputMessage(String.format("%d ... Id: %s is learning: %s version: %.2f type is %s",
                   NUMROWS,
-                  result.getString(Prop_Id),
-                  result.getString(Prop_Language),
-                  result.getDouble(Prop_Version),
-                  result.getString(Prop_Type)));
+                  thisDoc.getString(Prop_Id),
+                  thisDoc.getString(Prop_Language),
+                  thisDoc.getDouble(Prop_Version),
+                  thisDoc.getString(Prop_Type)));
               }
             } catch (CouchbaseLiteException e) {
             e.printStackTrace();
