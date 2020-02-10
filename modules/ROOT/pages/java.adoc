@@ -1,13 +1,19 @@
 = Java
-:idprefix:
-:idseparator: -
+// Common attributes
+include::_partials/mobAttrCBL.adoc[]
+
+// Local attributes
+//
+:patch: 4
+:maintRelVrsn: {version}.{patch}
+:source-language: java
 :snippet: {examplesdir}/java/app/src/main/java/com/couchbase/code_snippets/Examples.java
 :ziputils: {examplesdir}/java/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
-:source-language: java
-:version: 2.6.0
-:blank-field: ____
-:url-issues-java: https://github.com/couchbase/couchbase-lite-android/issues
-:url-api-references: http://docs.couchbase.com/mobile/2.6.0/couchbase-lite-java
+:url-issues-ios: {url-github-root}/couchbase-lite-android/issues
+:tabs:
+:url-api-references: {url-mobDocs-root}/{docsVersion}/couchbase-lite-java
+//
+// End local attributes
 
 WARNING: Currently, Couchbase Lite 2.6 and below is available for Android only.
 The SDK cannot be used in Java applications prior to xref:2.7@java-platform.adoc[Couchbase Lite 2.7].
@@ -25,7 +31,7 @@ Create or open an existing Android Studio project and install Couchbase Lite usi
 [source,groovy,subs=attributes+]
 ----
 dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-android:{version}'
+    implementation 'com.couchbase.lite:couchbase-lite-android:{maintRelVrsn}'
 }
 ----
 
@@ -36,7 +42,7 @@ dependencies {
 [source,groovy,subs=attributes+]
 ----
 dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-android-ee:{version}'
+    implementation 'com.couchbase.lite:couchbase-lite-android-ee:{maintRelVrsn}'
 }
 ----
 
@@ -1038,7 +1044,7 @@ anchor:repstatus-and-lifecycle[]
 
 Couchbase Lite replications will continue running until the app terminates, unless the remote system, or the application, terminates the connection.
 
-NOTE: Recall that the Android OS may kill an application without warning. 
+NOTE: Recall that the Android OS may kill an application without warning.
 You should explicitly stop replication processes when they are no longer useful (for example, when they are `suspended` or `idle`) to avoid socket connections being closed by the OS, which may interfere with the replication process.
 
 === Handling Network Errors
@@ -1149,6 +1155,12 @@ include::{partialsdir}/p2p-connection-teardown.adoc[]
 The Couchbase Lite API is thread safe except for calls to mutable objects: `MutableDocument`, `MutableDictionary` and `MutableArray`.
 
 == Release Notes
+
+===  2.6.4 (February 2020)
+
+This maintenance release includes the following important fix:
+
+- https://issues.couchbase.com/browse/CBL-619[*CBL-619*] Shared Keys created in an unloaded state potentially leading to crashes while reading document.
 
 === 2.6.2
 

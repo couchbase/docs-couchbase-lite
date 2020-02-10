@@ -1,16 +1,17 @@
 = Swift
-:idprefix:
-:idseparator: -
+// Common attributes
+include::_partials/mobAttrCBL.adoc[]
+// Local attributes
+:patch: 4
+:maintRelVrsn: {version}.{patch}
+:docsVersion: {version}.0
 :snippet: {examplesdir}/swift/code-snippets/SampleCodeTest.swift
 :source-language: swift
-:version: 2.6.0
-:blank-field: ____
-:url-issues-ios: https://github.com/couchbase/couchbase-lite-ios/issues
+:url-issues-ios: {url-github-root}/couchbase-lite-ios/issues
 :tabs:
-:url-api-references: http://docs.couchbase.com/mobile/2.6.0/couchbase-lite-swift
+:url-api-references: {url-mobDocs-root}/{docsVersion}/couchbase-lite-swift
 
 == Getting Started
-
 
 === Xcode project
 
@@ -21,7 +22,7 @@ Create or open an existing Xcode project and install Couchbase Lite using one of
 Frameworks::
 +
 --
-* https://www.couchbase.com/downloads[Download] Couchbase Lite.
+* {url-mobDownloads-root}[Download] Couchbase Lite.
 * Unzip the file and drag *CouchbaseLiteSwift.framework* from your Finder to the Xcode navigator.
 * Click on *Project > General > Embedded Binary* and add *CouchbaseLiteSwift.framework* to this section.
 * Import the framework and start using it in your project.
@@ -42,13 +43,13 @@ Carthage::
 .Couchbase Lite Community Edition
 [source,ruby,subs=attributes+]
 ----
-binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Community.json" ~> {version}
+binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Community.json" ~> {maintRelVrsn}
 ----
 +
 .Couchbase Lite Enterprise Edition
 [source,ruby,subs=attributes+]
 ----
-binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Enterprise.json" ~> {version}
+binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Enterprise.json" ~> {maintRelVrsn}
 ----
 
 . Run `carthage update --platform ios`.
@@ -67,7 +68,7 @@ CocoaPods::
 ----
 target 'Example' do
   use_frameworks!
-  pod 'CouchbaseLite-Swift', '~> {version}'
+  pod 'CouchbaseLite-Swift', '~> {maintRelVrsn}'
 end
 ----
 +
@@ -76,7 +77,7 @@ end
 ----
 target 'Example' do
   use_frameworks!
-  pod 'CouchbaseLite-Swift-Enterprise', '~> {version}'
+  pod 'CouchbaseLite-Swift-Enterprise', '~> {maintRelVrsn}'
 end
 ----
 
@@ -1067,6 +1068,12 @@ include::{partialsdir}/p2p-connection-teardown.adoc[]
 The Couchbase Lite API is thread safe except for calls to mutable objects: `MutableDocument`, `MutableDictionary` and `MutableArray`.
 
 == Release Notes
+
+===  2.6.4 -- February 2020
+
+This maintenance release includes the following important fix:
+
+- https://issues.couchbase.com/browse/CBL-540[CBL-540] Fixes memory leak, preventing crashes
 
 === 2.6.3
 
