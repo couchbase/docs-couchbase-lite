@@ -4,6 +4,7 @@
 :snippet: {examplesdir}/java/code-snippets/app/src/main/java/com/couchbase/code_snippets/MainActivity.java
 :source-language: java
 :blank-field: ____
+ifndef::partialsdir[:partialsdir: _partials]
 
 WARNING: Currently, Couchbase Lite 2.0 is available for Android only.
 The SDK cannot be used in Java applications.
@@ -176,13 +177,7 @@ $ adb pull /data/data/{APPLICATION_ID}/files/{DATABASE_NAME}.cblite2 .
 
 === Logging
 
-The log messages are split into different domains (`LogDomains`) which can be tuned to different log levels.
-The following example enables `verbose` logging for the `replicator` and `query` domains.
-
-[source]
-----
-include::{snippet}[tag=logging,indent=0]
-----
+include::{partialsdir}feature-Logging.adoc[]
 
 === Loading a pre-built database
 
@@ -871,7 +866,7 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 === 2.0.2
 
-* Support for Log redaction of sensitive information when <<logging,logging is enabled>>.
+include::{partialsdir}/feature-LogRedaction-2.0.2.adoc[]
 
 === 2.0.0
 

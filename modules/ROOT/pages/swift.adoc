@@ -5,6 +5,7 @@
 :source-language: swift
 :blank-field: ____
 :tabs:
+ifndef::partialsdir[:partialsdir: _partials]
 
 == Getting Started
 
@@ -222,13 +223,7 @@ Instructions for various commands are available in *Tools/README.md*.
 
 === Logging
 
-The log messages are split into different domains (`LogDomains`) which can be tuned to different log levels.
-The following example enables `verbose` logging for the `replicator` and `query` domains.
-
-[source]
-----
-include::{snippet}[tag=logging,indent=0]
-----
+include::{partialsdir}feature-Logging.adoc[]
 
 === Loading a pre-built database
 
@@ -1007,11 +1002,12 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 === 2.0.3
 
-* This release adds compatibility for Swift 4.1.2 (as part of Xcode 9.4).
+.New Feature -- Swift Compatibility
+This release adds compatibility for Swift 4.1.2 (as part of Xcode 9.4).
 
 === 2.0.2
 
-* Support for Log redaction of sensitive information when <<logging,logging is enabled>>.
+include::{partialsdir}/feature-LogRedaction-2.0.2.adoc[]
 
 === 2.0.0
 
