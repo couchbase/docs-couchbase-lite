@@ -1,0 +1,97 @@
+// Begin Block - feature-Logging
+
+// Begin test case
+// :source-language: java
+// :snippet: {examplesdir}/java/code-snippets/app/src/main/java/com/couchbase/code_snippets/MainActivity.java
+// End test case
+
+// Begin init local attributes
+:lang_csharp: csharp
+:lang_swift: swift
+:lang_android: java
+:lang_objective-C: objectivec
+:url-api-prefix: https://docs.couchbase.com/mobile/2.0/couchbase-lite
+ifndef::source-language[:url-for-setloglevels!:]
+ifndef::snippet[:snippet-lnk!:]
+ifdef::snippet[:snippet-lnk: {snippet}]
+// End init local attributes
+
+// Begin set language-specific api url
+ifdef::source-language[]
+
+ifeval::["{source-language}" == "{lang_csharp}"]
+:url-for-setloglevels: {url-api-prefix}-net/html/M_Couchbase_Lite_Database_SetLogLevel.htm
+:url-for-enumLogLevel: {url-api-prefix}-net/html/T_Couchbase_Lite_Logging_LogLevel.htm
+:url-for-enumLogDomain: {url-api-prefix}-net/html/T_Couchbase_Lite_Logging_LogDomain.htm
+endif::[]
+
+ifeval::["{source-language}" == "{lang_swift}"]
+:url-for-setloglevels: {url-api-prefix}-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC11setLogLevelyAA0fG0O_AA0F6DomainO6domaintFZ
+:url-for-enumLogLevel: {url-api-prefix}-swift/Enums/LogLevel.html
+:url-for-enumLogDomain: {url-api-prefix}--swift/Enums/LogDomain.html
+endif::[]
+
+ifeval::["{source-language}" == "{lang_objective-C}"]
+:url-for-setloglevels: {url-api-prefix}-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(cm)setLogLevel:domain:
+:url-for-enumLogLevel: {url-api-prefix}-objc/Enums/CBLLogLevel.html
+:url-for-enumLogDomain: {url-api-prefix}-objc/Enums/CBLLogDomain.html
+endif::[]
+
+ifeval::["{source-language}" == "{lang_android}"]
+:url-for-setloglevels: {url-api-prefix}-java/com/couchbase/lite/Database.html#setLogLevel-com.couchbase.lite.LogDomain-com.couchbase.lite.LogLevel-
+:url-for-enumLogLevel: {url-api-prefix}-java/com/couchbase/lite/LogLevel.html
+:url-for-enumLogDomain: {url-api-prefix}-java/com/couchbase/lite/LogDomain.html
+endif::[]
+
+endif::source-language[]
+// End set language-specific api url
+
+// Begin text blocks
+
+Couchbase Lite's logging strategy provides for the redaction of sensitive information in CBL logs.
+This redaction requires no configuration.
+It will operate whenever logging is enabled -- that is when LogLevel is not `None`.
+
+The log messages are split into different domains (`LogDomains`). Each log domain's logging level can be set independently of any other domain's logging level.
+
+ifdef::url-for-enumLogLevel,url-for-enumLogDomain,url-for-setloglevels[]
+For more on logging configuration, see:
+
+ifdef::url-for-setloglevels[]
+* link:{url-for-setloglevels}[Set Log Level]
+endif::url-for-setloglevels[]
+ifdef::url-for-enumLogLevel[]
+* link:{url-for-enumLogLevel}[Log Level Enum]
+endif::url-for-enumLogLevel[]
+ifdef::url-for-enumLogDomain[]
+* link:{url-for-enumLogDomain}[Set Log Domain]
+endif::url-for-enumLogDomain[]
+
+endif::url-for-enumLogLevel,url-for-enumLogDomain,url-for-setloglevels[]
+
+ifdef::snippet-lnk[]
+The code snippet below sets the logging level to `verbose` for the `replicator` and `query` domains.
+
+.Code sample -- Set Log Level
+[source, {source-language}]
+
+----
+include::{snippet-lnk}[tag=logging,indent=0]
+----
+
+endif::snippet-lnk[]
+// End text blocks
+
+// Begin deconstructors
+:url-for-enumLogLevel!:
+:url-for-enumLogDomain!:
+:url-for-setloglevels!:
+:snippet-lnk!:
+:lang_csharp!:
+:lang_swift!:
+:lang_android!:
+:lang_objective-C!:
+:url-api-prefix!:
+// End deconstructors
+
+// End Block - feature-Logging

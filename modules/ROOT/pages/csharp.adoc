@@ -5,6 +5,8 @@
 :source-language: csharp
 :blank-field: ____
 :url-issues-net: https://github.com/couchbase/couchbase-lite-net/issues
+ifndef::partialsdir[:partialsdir: partial$]
+ifndef::examplesdir[:examplesdir: example$]
 
 == Getting Started
 
@@ -209,10 +211,16 @@ Note that the `cblite` tool is not supported by the https://www.couchbase.com/su
 The log messages are split into different domains (`LogDomains`) which can be tuned to different log levels.
 The following example enables `Verbose` logging for the `Replicator` and `Query` domains.
 
-[source]
+[source, {source-language}]
 ----
 include::{snippet}[tag=logging,indent=0]
 ----
+
+==== my bits
+
+include::{partialsdir}feature-Logging.adoc[]
+
+
 
 === Loading a pre-built database
 
@@ -1090,7 +1098,7 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 === 2.0.2
 
-* Support for Log redaction of sensitive information when <<logging,logging is enabled>>.
+include::{partialsdir}/feature-LogRedaction-2.0.2.adoc[]
 
 === 2.0 release notes
 
