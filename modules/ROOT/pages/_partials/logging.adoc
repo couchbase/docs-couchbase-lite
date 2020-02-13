@@ -1,59 +1,69 @@
-// Starting version 2.5
-Couchbase Lite provides a logging API that unifies logging behavior across all platforms, making debugging and troubleshooting easier during development and in production.
-The actual retrieval of the logs from the device is out of scope of this feature.
+// Begin required attributes
+// :cbl-log-version: the required cbl-log version number (eg 2.7.0)
+// :snippet: the path to the language specific example code-snippets
+ifndef::cbl-log-version[:cbl-log-version: UNDEFINED-CBL-LOG-VERSION]
+ifndef::snippet[:snippet: UNDEFINED-SNIPPET-PATH]
+:url-cbl-log-binaries: https://packages.couchbase.com/releases/couchbase-lite-log/{cbl-log-version}/couchbase-lite-log-{cbl-log-version}
+//  End required attributes
 
-There are three different logging features:
+// Begin text block
+From version 2.5, Couchbase Lite provides a logging API that unifies the logging behavior across all platforms, making debugging and troubleshooting easier during development and in production.
 
-Console based logging::
-Enabled by default.
-Console based logging is often used to facilitate troubleshooting during development. The default log level is `WARNING`.
-+
-File based logging::
-Disabled by default.
-File based logging is supported in two formats:
+NOTE: The retrieval of logs from the device is out of scope of this feature.
 
-* a binary format mode which is much more efficient in terms of storage and performance.
-It is the default configuration for file based logging.
-* a plaintext mode
-+
-It is recommended that you use binary log format.
-However, in order to view the binary encoded log files, you will need a decoder.
+Available logging features include:
 
-A binary log decoder called the *cbl-log* is available -- see <<Decoding binary bogs>>, below.
-+
+* Console based logging
+* File based logging
+* Custom logging
+
+== Console based logging
+Default: Enabled.
+
+Console based logging is often used to facilitate troubleshooting during development.
+
+== File based logging
+Default: Disabled.
+
+Available file based logging formats:
+
+* Binary -- most efficient for storage and performance. It is the default for file based logging.
+* Plaintext
+
+We recommend using the binary log format and
+a decoder, such as *cbl-log*, to view them. Download *cbl-log* from link:https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cbl-log.md[couchbaselabs/couchbase-mobile-tools, window=_blank].
+
+NOTE: See  <<Decoding binary logs>>.
+
 The following example enables file based logging.
-+
+
 [source]
 ----
 include::{snippet}[tag=file-logging,indent=0]
 ----
-+
-Custom logging::
-Disabled by default.
-Provides apps the ability to register a callback function in order to receive Couchbase Lite log messages.
-The messages can be logged using any external logging framework.
-Apps must implement the `Logger` interface.
-+
-[source]
+
+== Custom logging
+Default: Disabled.
+
+Allows registration of a callback function to receive Couchbase Lite log messages, which may be logged using any external logging framework.
+
+Apps must implement the `Logger` interface, as shown below:
+
+[source, {source-language}]
 ----
 include::{snippet}[tag=custom-logging,indent=0]
 ----
 And set it on the `custom` property.
-+
-[source]
+
+[source, {source-language}]
 ----
 include::{snippet}[tag=set-custom-logging,indent=0]
 ----
 
-==== Decoding binary logs
+== Decoding binary logs
 
-The *cbl-log* tool should be used to decode binary log files.
+The *cbl-log* tool should be used to decode binary log files as shown in these examples.
 
-TIP: You can also get cbl-log on github -- link:https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cbl-log.md[couchbaselabs/couchbase-mobile-tools].
-
-The instructions below explain how to download and deploy cbl-log.
-
-.Deploying cbl-log
 [{tabs}]
 ====
 macOS::
@@ -63,7 +73,7 @@ Download the *cbl-log* tool using `wget`.
 
 [source,console]
 ----
-wget https://packages.couchbase.com/releases/couchbase-lite-log/2.7.0/couchbase-lite-log-2.7.0-macos.zip
+wget {url-cbl-log-binaries}-macos.zip
 ----
 
 Navigate to the *bin* directory and run the `cbl-log` executable.
@@ -81,7 +91,7 @@ Download the *cbl-log* tool using `wget`.
 
 [source,console]
 ----
-wget https://packages.couchbase.com/releases/couchbase-lite-log/2.7.0/couchbase-lite-log-2.7.0-centos.zip
+wget {url-cbl-log-binaries}-centos.zip
 ----
 
 Navigate to the *bin* directory and run the `cbl-log` executable.
@@ -99,7 +109,7 @@ Download the *cbl-log* tool using PowerShell.
 
 [source,powershell]
 ----
-Invoke-WebRequest https://packages.couchbase.com/releases/couchbase-lite-log/2.7.0/couchbase-lite-log-2.7.0-windows.zip -OutFile couchbase-lite-log-2.7.0-windows.zip
+Invoke-WebRequest {url-cbl-log-binaries}-windows.zip -OutFile couchbase-lite-log-{cbl-log-version}-windows.zip
 ----
 
 Run the `cbl-log` executable.
