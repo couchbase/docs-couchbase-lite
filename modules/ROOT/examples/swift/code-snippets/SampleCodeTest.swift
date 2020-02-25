@@ -989,7 +989,7 @@ fileprivate class LogTestLogger: Logger {
 // end::custom-logging[]
 
 // tag::local-win-conflict-resolver[]
-class LocalWinConflictResolver: ConflictResolver {
+class LocalWinConflictResolver: ConflictResolverProtocol {
     func resolve(conflict: Conflict) -> Document? {
         return conflict.localDocument
     }
@@ -997,7 +997,7 @@ class LocalWinConflictResolver: ConflictResolver {
 // end::local-win-conflict-resolver[]
 
 // tag::remote-win-conflict-resolver[]
-class RemoteWinConflictResolver: ConflictResolver {
+class RemoteWinConflictResolver: ConflictResolverProtocol {
     func resolve(conflict: Conflict) -> Document? {
         return conflict.remoteDocument
     }
@@ -1005,7 +1005,7 @@ class RemoteWinConflictResolver: ConflictResolver {
 // end::remote-win-conflict-resolver[]
 
 // tag::merge-conflict-resolver[]
-class MergeConflictResolver: ConflictResolver {
+class MergeConflictResolver: ConflictResolverProtocol {
     func resolve(conflict: Conflict) -> Document? {
         let localDict = conflict.localDocument!.toDictionary()
         let remoteDict = conflict.remoteDocument!.toDictionary()
