@@ -1,0 +1,52 @@
+// Begin Block - feature-Logging
+//
+// Begin Required Attributes
+// :snippet:
+// :source-language:
+// :url-apiref-setloglevels:
+// :url-apiref-enumLoglevels:
+// :url-apiref-enumLogDomain:
+// End Required Attributes
+
+// Begin text block
+Couchbase Lite's logging strategy provides for the redaction of sensitive information in CBL logs.
+This redaction requires no configuration.
+It will operate whenever logging is enabled -- that is when `LogLevel` is not `None`.
+
+The log messages are split into different domains (`LogDomains`). Each log domain's logging level can be set independently of any other domain's logging level.
+
+// Begin link to api for appropriate SDK, but only if ANY urls are defined
+ifdef::url-apiref-enumLogLevel,url-apiref-enumLogDomain,url-apiref-setloglevels[]
+For more on logging configuration, see:
+
+// Include a link only if the specific url is defined
+ifdef::url-apiref-setloglevels[]
+* link:{url-apiref-setloglevels}[Set Log Level, window=_blank]
+endif::url-apiref-setloglevels[]
+ifdef::url-apiref-enumLogLevel[]
+* link:{url-apiref-enumLogLevel}[Log Level Enum, window=_blank]
+endif::url-apiref-enumLogLevel[]
+ifdef::url-apiref-enumLogDomain[]
+* link:{url-apiref-enumLogDomain}[Set Log Domain, window=_blank]
+endif::url-apiref-enumLogDomain[]
+
+endif::url-apiref-enumLogLevel,url-apiref-enumLogDomain,url-apiref-setloglevels[]
+// End link to api for appropriate SDK only if that url is defined
+
+// Begin Include a snippet only if that attribute is defined
+ifdef::snippet[]
+The example code snippet below sets the logging level to `verbose` for both the `replicator`, and `query` domains.
+
+[source, {source-language}]
+
+----
+include::{snippet}[tag=logging,indent=0]
+----
+
+endif::snippet[]
+// End Include a snippet only if that attribute is defined
+
+// End text block
+
+
+// End Block - feature-Logging

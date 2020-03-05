@@ -1,12 +1,23 @@
 = Objective-C
 :idprefix:
 :idseparator: -
-:snippet: {examplesdir}/objc/code-snippets/SampleCodeTest.m
-:source-language: objectivec
-:version: 2.1.6
 :blank-field: ____
-:url-issues-ios: https://github.com/couchbase/couchbase-lite-ios/issues
+:release: 2.1
+:patch: 5
+:version-full: {release}.0
+:this-version: {release}.{patch}
+:couchbase-lite-name: couchbase-lite-objc
+:url-api-references: http://docs.couchbase.com/mobile/2.1/couchbase-lite-objc
 :tabs:
+// Begin define attributes used in INCLUDEs
+:snippet: example$objc/code-snippets/SampleCodeTest.m
+:source-language: objc
+:url-issues-ios: https://github.com/couchbase/couchbase-lite-ios/issues
+:url-apiref-setloglevels: {url-api-references}/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(cm)setLogLevel:domain:
+:url-apiref-enumLogLevel: {url-api-references}/Enums/CBLLogLevel.html
+:url-apiref-enumLogDomain: {url-api-references}/Enums/CBLLogDomain.html
+// End define attributes used in INCLUDEs
+
 
 == Getting Started
 
@@ -40,13 +51,13 @@ Carthage::
 .Couchbase Lite Community Edition
 [source,ruby,subs=attributes+]
 ----
-binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Community.json" ~> {version}
+binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Community.json" ~> {version-full}
 ----
 +
 .Couchbase Lite Enterprise Edition
 [source,ruby,subs=attributes+]
 ----
-binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Enterprise.json" ~> {version}
+binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Enterprise.json" ~> {version-full}
 ----
 
 . Run `carthage update --platform ios`.
@@ -65,7 +76,7 @@ CocoaPods::
 ----
 target '<your target name>' do
   use_frameworks!
-  pod 'CouchbaseLite', '~> {version}'
+  pod 'CouchbaseLite', '~> {version-full}'
 end
 ----
 +
@@ -74,7 +85,7 @@ end
 ----
 target '<your target name>' do
   use_frameworks!
-  pod 'CouchbaseLite-Enterprise', '~> {version}'
+  pod 'CouchbaseLite-Enterprise', '~> {version-full}'
 end
 ----
 
@@ -122,7 +133,7 @@ xref:sync-gateway::getting-started.adoc#installation[Installing Sync Gateway ->]
 
 == Couchbase Lite Framework Size
 
-include::{partialsdir}/ios-framework-size.adoc[]
+include::partial$ios-framework-size.adoc[]
 
 == Supported Versions
 
@@ -213,7 +224,7 @@ The Couchbase Lite 2.1 release includes the ability to encrypt Couchbase Lite da
 This allows mobile applications to secure the data at rest, when it is being stored on the device.
 The algorithm used to encrypt the database is 128-bit AES.
 
-include::{partialsdir}/database-encryption.adoc[]
+include::partial$database-encryption.adoc[]
 
 === Finding a Database File
 
@@ -228,13 +239,7 @@ Note that the `cblite` tool is not supported by the https://www.couchbase.com/su
 
 === Logging
 
-The log messages are split into different domains (`LogDomains`) which can be tuned to different log levels.
-The following example enables `verbose` logging for the `replicator` and `query` domains.
-
-[source]
-----
-include::{snippet}[tag=logging,indent=0]
-----
+include::partial$feature-Logging.adoc[]
 
 === Loading a pre-built database
 
@@ -754,7 +759,7 @@ In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the pro
 
 == Replication
 
-include::{partialsdir}/replication-introduction.adoc[]
+include::partial$replication-introduction.adoc[]
 
 === Compatibility
 
@@ -811,7 +816,7 @@ To keep a reference to the `replicator` object, you can set it as an instance pr
 <2> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
 You should now use `ws:`, or `wss:` for SSL/TLS connections.
 
-include::{partialsdir}/verify-replication.adoc[]
+include::partial$verify-replication.adoc[]
 
 Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit data.
 Some load balancers are not configured for WebSocket connections by default (NGINX for example);
@@ -943,7 +948,7 @@ The following error codes are considered temporary by the Couchbase Lite replica
 
 === Custom Headers
 
-include::{partialsdir}/replication-custom-header.adoc[]
+include::partial$replication-custom-header.adoc[]
 
 [source]
 ----
@@ -952,7 +957,7 @@ include::{snippet}[tag=replication-custom-header,indent=0]
 
 === Replication Checkpoint Reset
 
-include::{partialsdir}/replication-checkpoint.adoc[]
+include::partial$replication-checkpoint.adoc[]
 
 [source]
 ----
@@ -961,7 +966,7 @@ include::{snippet}[tag=replication-reset-checkpoint,indent=0]
 
 == Handling Conflicts
 
-include::{partialsdir}/handling-conflicts.adoc[]
+include::partial$handling-conflicts.adoc[]
 
 == Database Replicas
 
@@ -1021,23 +1026,23 @@ Passive Peer:: The passive side reacts to things that it receives but does not i
 
 === Peer Discovery
 
-include::{partialsdir}/p2p-peer-discovery.adoc[]
+include::partial$p2p-peer-discovery.adoc[]
 
 === Peer Selection and Connection Setup
 
-include::{partialsdir}/p2p-peer-selection.adoc[]
+include::partial$p2p-peer-selection.adoc[]
 
 === Replication Setup
 
-include::{partialsdir}/p2p-replication-setup.adoc[]
+include::partial$p2p-replication-setup.adoc[]
 
 === Push/Pull Replication
 
-include::{partialsdir}/p2p-push-pull-repl.adoc[]
+include::partial$p2p-push-pull-repl.adoc[]
 
 === Connection Teardown
 
-include::{partialsdir}/p2p-connection-teardown.adoc[]
+include::partial$p2p-connection-teardown.adoc[]
 
 == Thread Safety
 
@@ -1081,7 +1086,7 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 === 2.0.2
 
-* Support for Log redaction of sensitive information when <<logging,logging is enabled>>.
+include::partial$feature-LogRedaction-2.0.2.adoc[]
 
 === 2.0.0
 
