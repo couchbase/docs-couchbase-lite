@@ -5,9 +5,22 @@
 //  :msg_endRel: 2.8
 //  include::_partials/deprecationNotice.adoc[]
 //
+// Begin Test case
+// :msg_title: My Title
+// :msg_component: test component
+// :msg_action: none
+// :msg_release: 2.6
+// :msg_endRel: 2.9
+// End Test case
+
+// Begin BLOCK
+ifndef::msg_level[:msg_level: IMPORTANT]
+ifndef::msg_hdr[:msg_hdr: Deprecation Notice]
 ifdef::msg_component[]
-[IMPORTANT]
-.Deprecation Notice
+[{msg_level}]
+ifndef::msg_title[.{msg_hdr}]
+ifdef::msg_title[.{msg_hdr} -- {msg_title}]
+
 ====
 Support for {msg_component}
 ifdef::msg_release[was deprecated in release {msg_release}]
@@ -15,12 +28,20 @@ ifndef::msg_release[is being deprecated in this release]
 and will be removed in
 ifdef::msg_endRel[ release {msg_endRel}]
 ifndef::msg_endRel[ a future release]
+ifdef::msg_action[]
+ifeval::["{msg_action}"!="none"]
 
-ifdef::msg_action[_Action:_ {msg_action}]
+_Action:_ {msg_action}
+endif::[]
+endif::msg_action[]
 ifndef::msg_action[_Action:_ Please plan to migrate your apps to use an appropriate alternative version.]
 ====
+// Dispose of attributes to ensure they are not propogated to other inclusion instances
+:!msg_hdr:
+:!msg_level:
 :!msg_component:
 :!msg_action:
 :!msg_release:
-:!deprecation_endRel:
+:!msg_endRel:
 endif::msg_component[]
+// End Block
