@@ -1,6 +1,5 @@
 = Couchbase Lite Java Framework
-include::_partials/mobAttrCBL.adoc[]
-include::_attributesLocal.adoc[]
+include::partial$mobAttrCBL.adoc[]
 :JP: Java
 :Android: Java (android)
 :cblJP: {product} {JP}
@@ -8,10 +7,12 @@ include::_attributesLocal.adoc[]
 :packageNmEE: couchbase-lite-java-ee-{version-full}
 :url-api-references: http://docs.couchbase.com/mobile/{version-full}/couchbase-lite-java
 :hdIndent:
+:snippet: {snippet-java-jvm}
 :sgGetStartedDoc: sync-gateway::getting-started.adoc
 :sgGetStartedDoc-installation: {sgGetStartedDoc}#installation
 :sgGetStartedDoc-createRBACuser: {sgGetStartedDoc}#creating-an-rbac-user
 :sgGetStartedDoc-createBucket: {sgGetStartedDoc}#creating-a-bucket
+:tabs:
 
 == GET STARTED
 
@@ -65,7 +66,7 @@ anchor:bmkUsingMavenRepos[Using Maven repositories]
 
 === Defining Dependencies and Repositories
 
-[tabs]
+[{tabs}]
 ====
 
 Console App Development::
@@ -123,7 +124,7 @@ That's it. You're all set to start building your own {cblJP} applications -- see
 
 [source,groovy,subs=attributes+]
 ----
-include::{snippet-java-jvm}[tags=gsGradleMavenExample,indent=0]
+include::{snippet}[tags=gsGradleMavenExample,indent=0]
 ----
 
 --
@@ -220,7 +221,7 @@ That's it. You're all set to start building your own {cblJP} applications -- see
 
 [source,groovy,subs=attributes+]
 ----
-include::{snippet-java-jvm}[tags=GsEmbeddedTomcatBuildGradle,indent=0]
+include::{snippet}[tags=GsEmbeddedTomcatBuildGradle,indent=0]
 ----
 
 --
@@ -238,7 +239,7 @@ This section explains how to validate your configured build environment by build
 The {nmMobStarterApp} app demonstrates how to use {cblJP}. Console and Web App versions are available.
 
 .Development-type Scenarios
-[tabs]
+[{tabs}]
 ====
 
 Console App::
@@ -254,7 +255,7 @@ Create, build and run a new project using the following `GettingStarted.java` co
 [source,java]
 
 ----
-include::{snippet-java-jvm}[tags=getting-started,indent=0]
+include::{snippet}[tags=getting-started,indent=0]
 ----
 <1> The app will start a replicator pointing to `ws://localhost:4984/db`, where `db` is the name of your {sg} database
 <2> This is the only API that differs from the {android} version. It accepts no parameters and should be called once only
@@ -282,7 +283,7 @@ This section explains how to set-up a build project to create {cblJP} web apps u
 +
 [source,groovy,subs=attributes+]
 ----
-include::{snippet-java-jvm}[tags=GsEmbeddedTomcatBuildGradle,indent=0]
+include::{snippet}[tags=GsEmbeddedTomcatBuildGradle,indent=0]
 ----
 
 . Within {gpIDE}, open the new project folder
@@ -293,7 +294,7 @@ If you don't have auto-import enabled, then accept the *Import from Gradle* prom
 [source, java]
 
 ----
-include::{snippet-java-jvm}[tags=GsWebApp_GettingStarted,indent=0]
+include::{snippet}[tags=GsWebApp_GettingStarted,indent=0]
 ----
 +
 <1> It is advisable to set a specific directory path for the database.
@@ -304,7 +305,7 @@ include::{snippet-java-jvm}[tags=GsWebApp_GettingStarted,indent=0]
 [source, java]
 
 ----
-include::{snippet-java-jvm}[tags=GsWebApp_Listener,indent=0]
+include::{snippet}[tags=GsWebApp_Listener,indent=0]
 ----
 +
 
@@ -313,7 +314,7 @@ include::{snippet-java-jvm}[tags=GsWebApp_Listener,indent=0]
 [source, java]
 
 ----
-include::{snippet-java-jvm}[tags=GsWebApp_DbManager,indent=0]
+include::{snippet}[tags=GsWebApp_DbManager,indent=0]
 ----
 +
 <1> This is the only API that differs from the {android} version. It accepts no parameters and should be called once only
@@ -325,7 +326,7 @@ include::{snippet-java-jvm}[tags=GsWebApp_DbManager,indent=0]
 [source, html]
 
 ----
-include::{snippet-java-jvm}[tags=GsWebApp_Index,indent=0]
+include::{snippet}[tags=GsWebApp_Index,indent=0]
 ----
 
 . Create a `showDbItems.jsp` file in `src/main/web app` with the following content:
@@ -333,7 +334,7 @@ include::{snippet-java-jvm}[tags=GsWebApp_Index,indent=0]
 [source, html]
 
 ----
-include::{snippet-java-jvm}[tags=GsWebApp_ShowDbItems,indent=0]
+include::{snippet}[tags=GsWebApp_ShowDbItems,indent=0]
 ----
 
 . Build, deploy and run the app using `tomcatRun`
@@ -409,7 +410,7 @@ The `init()` API accepts no parameters.
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=sdk-initializer,indent=0]
+include::{snippet}[tags=sdk-initializer,indent=0]
 ----
 
 == New Database
@@ -419,7 +420,7 @@ The following example creates a database using the `Database(String name, Databa
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=new-database,indent=0]
+include::{snippet}[tags=new-database,indent=0]
 ----
 
 Just as before, the database will be created in a default location.
@@ -434,7 +435,7 @@ The Couchbase Lite 2.1 release includes the ability to encrypt Couchbase Lite da
 This allows mobile applications to secure the data at rest, when it is being stored on the device.
 The algorithm used to encrypt the database is 256-bit AES.
 
-include::{partialsdir}/database-encryption.adoc[leveloffset=-2]
+include::partial$database-encryption.adoc[leveloffset=-2]
 
 == Finding a Database File
 
@@ -453,23 +454,24 @@ Database thisDB = new Database("db", thisConfig);
 `cblite` is a command-line tool for inspecting and querying Couchbase Lite 2.x databases.
 
 You can download and build it from the couchbaselabs https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md[GitHub repository].
-Note that the `cblite` tool is not supported by the https://www.couchbase.com/support-policy[Couchbase Support Policy].
 
-// == Logging [DEPRECATED]
-//
-// CAUTION: The following API is deprecated and superseded by the <<logging,Logging API>> introduced in Couchbase Lite 2.5.
-//
-// The log messages are split into different domains (`LogDomains`) which can be tuned to different log levels.
-// The following example enables `verbose` logging for the `replicator` and `query` domains.
+NOTE: The `cblite` tool is not supported by the https://www.couchbase.com/support-policy[Couchbase Support Policy].
 
-[source]
+=== Logging
+
+If you are using a Couchbase Lite release prior to 2.5 see <<Logging functionality prior to Release 2.5, Deprecated functionality>>
+
+include::partial$logging.adoc[leveloffset=+2]
+
+==== Logging functionality prior to Release 2.5
+
+include::partial$logging-pre2.5.adoc[]
+
+[source, {source-language}]
+
 ----
-include::{snippet-java-jvm}[tags=logging,indent=0,leveloffset=-1 ]
+include::{snippet}[tags=logging,indent=0]
 ----
-
-== Logging
-
-include::{partialsdir}/logging.adoc[leveloffset=-1 ]
 
 == Loading a pre-built database
 
@@ -482,7 +484,7 @@ If the database does not exist, the application should copy it from the assets f
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=prebuilt-database,indent=0]
+include::{snippet}[tags=prebuilt-database,indent=0]
 ----
 
 In the example below, the `ZipUtils.unzip` method copies the zipped pre-built database from the application's `resource` directory to the *files* directory.
@@ -490,7 +492,7 @@ This method is provided below for information as it isn't included in the Couchb
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=ziputils-unzip,indent=0]
+include::{snippet}[tags=ziputils-unzip,indent=0]
 ----
 
 == Document
@@ -513,7 +515,7 @@ The following code example creates a document and persists it to the database.
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=initializer,indent=0]
+include::{snippet}[tags=initializer,indent=0]
 ----
 
 == Mutability
@@ -523,7 +525,7 @@ Use the `document.toMutable()` method to create an updateable instance of the do
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=update-document,indent=0]
+include::{snippet}[tags=update-document,indent=0]
 ----
 
 Changes to the document are persisted to the database when the `save` method is called.
@@ -539,7 +541,7 @@ The following example sets the date on the `createdAt` property and reads it bac
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=date-getter,indent=0]
+include::{snippet}[tags=date-getter,indent=0]
 ----
 
 If the property doesn't exist in the document it will return the default value for that getter method (0 for `getInt`, 0.0 for `getFloat` etc.).
@@ -552,7 +554,7 @@ The following example persists a few documents in batch.
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=batch,indent=0]
+include::{snippet}[tags=batch,indent=0]
 ----
 
 At the *local* level this operation is still transactional: no other `Database` instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
@@ -565,12 +567,12 @@ The following example registers for changes to the document with ID `user.john` 
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=document-listener,indent=0]
+include::{snippet}[tags=document-listener,indent=0]
 ----
 
 == Document Expiration
 
-include::{partialsdir}/document-expiration.adoc[]
+include::partial$document-expiration.adoc[]
 
 == Blobs
 
@@ -581,7 +583,7 @@ The following code example adds a blob to the document under the `avatar` proper
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=blob,indent=0]
+include::{snippet}[tags=blob,indent=0]
 ----
 
 The `Blob` API lets you access the contents as an in-memory byte array (
@@ -637,7 +639,7 @@ In the query result, we print the `_id` and `name` properties of each row using 
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=query-select-meta,indent=0]
+include::{snippet}[tags=query-select-meta,indent=0]
 ----
 
 The `SelectResult.all()` method can be used to query all the properties of a document.
@@ -646,7 +648,7 @@ The following snippet shows the same query using `SelectResult.all()` and the re
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=query-select-all,indent=0]
+include::{snippet}[tags=query-select-all,indent=0]
 ----
 
 [source,json]
@@ -699,7 +701,7 @@ In the example below, we use the `equalTo` operator to query documents where the
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=query-where,indent=0]
+include::{snippet}[tags=query-where,indent=0]
 ----
 
 === Collection Operators
@@ -721,7 +723,7 @@ The following example uses the `Function.arrayContains` to find documents whose 
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=query-collection-operator-contains,indent=0]
+include::{snippet}[tags=query-collection-operator-contains,indent=0]
 ----
 
 ==== IN Operator
@@ -731,7 +733,7 @@ The following example compiles a list of values from `first`, `last` and `userna
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=query-collection-operator-in,indent=0]
+include::{snippet}[tags=query-collection-operator-in,indent=0]
 ----
 
 ==== Like Operator
@@ -751,7 +753,7 @@ The following query returns "landmark" type documents regardless of the name's c
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=query-like-operator,indent=0]
+include::{snippet}[tags=query-like-operator,indent=0]
 ----
 
 ==== Wildcard Match
@@ -769,7 +771,7 @@ NOTE: The matches may span word boundaries.
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=query-like-operator-wildcard-match,indent=0]
+include::{snippet}[tags=query-like-operator-wildcard-match,indent=0]
 ----
 
 ==== Wildcard Character Match
@@ -781,7 +783,7 @@ The following query will return "landmark" `type` documents with the `name` matc
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=query-like-operator-wildcard-character-match,indent=0]
+include::{snippet}[tags=query-like-operator-wildcard-character-match,indent=0]
 ----
 
 ==== Regex Operator
@@ -798,7 +800,7 @@ Note that the `\b` specifies that the match must occur on word boundaries.
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=query-regex-operator,indent=0]
+include::{snippet}[tags=query-regex-operator,indent=0]
 ----
 
 === Query Deleted Document
@@ -808,7 +810,7 @@ The following example shows how to query deleted documents in the database.
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=query-deleted-documents,indent=0]
+include::{snippet}[tags=query-deleted-documents,indent=0]
 ----
 
 === JOIN statement
@@ -820,7 +822,7 @@ This example JOINS the document of type "route" with documents of type "airline"
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=query-join,indent=0]
+include::{snippet}[tags=query-join,indent=0]
 ----
 
 === GROUP BY statement
@@ -841,7 +843,7 @@ The following example looks for the number of airports at an altitude of 300 ft 
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=query-groupby,indent=0]
+include::{snippet}[tags=query-groupby,indent=0]
 ----
 
 [source,text]
@@ -860,7 +862,7 @@ The example below returns documents of type equal to "hotel" sorted in ascending
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=query-orderby,indent=0]
+include::{snippet}[tags=query-orderby,indent=0]
 ----
 
 [source,text]
@@ -877,15 +879,15 @@ Avignon
 
 === Date/Time Functions
 
-include::{partialsdir}/query/date-time-functions.adoc[]
+include::partial$query/date-time-functions.adoc[]
 
 === Live Query
 
-include::{partialsdir}/live-query.adoc[]
+include::partial$live-query.adoc[]
 
 === Predictive Query
 
-include::{partialsdir}/predictive-query.adoc[]
+include::partial$predictive-query.adoc[]
 
 === Indexing
 
@@ -906,7 +908,7 @@ The following example creates a new index for the `type` and `name` properties.
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=query-index,indent=0]
+include::{snippet}[tags=query-index,indent=0]
 ----
 
 If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.
@@ -922,7 +924,7 @@ The following example creates an FTS index on the `name` property.
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=fts-index,indent=0]
+include::{snippet}[tags=fts-index,indent=0]
 ----
 
 Multiple properties to index can be specified in the index creation method.
@@ -933,7 +935,7 @@ The left-hand side is the full-text index to use and the right-hand side is the 
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=fts-query,indent=0]
+include::{snippet}[tags=fts-query,indent=0]
 ----
 
 In the example above, the pattern to match is a word, the full-text search query matches all documents that contain the word "buy" in the value of the `doc.name` property.
@@ -1019,7 +1021,7 @@ In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the pro
 
 == Replication
 
-include::{partialsdir}/replication-introduction.adoc[leveloffset=3]
+include::partial$replication-introduction.adoc[leveloffset=3]
 
 == Compatibility
 
@@ -1078,7 +1080,7 @@ You should now use `ws:`, or `wss:` for SSL/TLS connections.
 In this example the hostname is `10.0.2.2`.
 +
 
-include::{partialsdir}/verify-replication.adoc[]
+include::partial$verify-replication.adoc[]
 
 Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit data.
 Some load balancers are not configured for WebSocket connections by default (NGINX for example);
@@ -1247,12 +1249,12 @@ The following example increases the log output for activity related to replicati
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=replication-logging,indent=0]
+include::{snippet}[tags=replication-logging,indent=0]
 ----
 
 == Authentication
 
-include::{partialsdir}/authentication.adoc[leveloffset=-1]
+include::partial$authentication.adoc[leveloffset=-1]
 
 == Replication Status
 
@@ -1261,7 +1263,7 @@ For example, when the replication is actively transferring data and when it has 
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=replication-status,indent=0]
+include::{snippet}[tags=replication-status,indent=0]
 ----
 
 The following table lists the different activity levels in the API and the meaning of each one.
@@ -1300,7 +1302,7 @@ The following code snippet adds a `Change Listener`, which monitors a replicatio
 .Monitoring for network errors
 [source]
 ----
-include::{snippet-java-jvm}[tags=replication-error-handling,indent=0]
+include::{snippet}[tags=replication-error-handling,indent=0]
 ----
 
 *For permanent network errors* (for example, `404` not found, or `401` unauthorized):
@@ -1323,42 +1325,42 @@ The following error codes are considered temporary by the Couchbase Lite replica
 
 == Replication Events
 
-include::{partialsdir}/replication-events.adoc[leveloffset=-1]
+include::partial$replication-events.adoc[leveloffset=-1]
 
 
 == Custom Headers
 
-include::{partialsdir}/replication-custom-header.adoc[]
+include::partial$replication-custom-header.adoc[]
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=replication-custom-header,indent=0]
+include::{snippet}[tags=replication-custom-header,indent=0]
 ----
 
 == Replication Checkpoint Reset
 
-include::{partialsdir}/replication-checkpoint.adoc[]
+include::partial$replication-checkpoint.adoc[]
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=replication-reset-checkpoint,indent=0]
+include::{snippet}[tags=replication-reset-checkpoint,indent=0]
 ----
 
 == Replication Filters
 
-include::{partialsdir}/replication-filters.adoc[leveloffset=-1]
+include::partial$replication-filters.adoc[leveloffset=-1]
 
 == Handling Conflicts
 
-include::{partialsdir}/handling-conflicts.adoc[]
+include::partial$handling-conflicts.adoc[]
 
 == Database Replicas
 
-include::{partialsdir}/database-replicas.adoc[]
+include::partial$database-replicas.adoc[]
 
 == Certificate Pinning
 
-include::{partialsdir}/certificate-pinning.adoc[]
+include::partial$certificate-pinning.adoc[]
 
 == Peer-to-Peer Sync
 
@@ -1382,23 +1384,23 @@ In Couchbase Lite, a peer can take on one of these two roles:
 
 == Peer Discovery
 
-include::{partialsdir}/p2p-peer-discovery.adoc[leveloffset=-1]
+include::partial$p2p-peer-discovery.adoc[leveloffset=-1]
 
 == Peer Selection and Connection Setup
 
-include::{partialsdir}/p2p-peer-selection.adoc[leveloffset=-1]
+include::partial$p2p-peer-selection.adoc[leveloffset=-1]
 
 == Replication Setup
 
-include::{partialsdir}/p2p-replication-setup.adoc[leveloffset=-1]
+include::partial$p2p-replication-setup.adoc[leveloffset=-1]
 
 == Push/Pull Replication
 
-include::{partialsdir}/p2p-push-pull-repl.adoc[leveloffset=-1]
+include::partial$p2p-push-pull-repl.adoc[leveloffset=-1]
 
 == Connection Teardown
 
-include::{partialsdir}/p2p-connection-teardown.adoc[leveloffset=-1]
+include::partial$p2p-connection-teardown.adoc[leveloffset=-1]
 
 == Thread Safety
 
@@ -1415,8 +1417,6 @@ Additionally, the automatic migration feature does not support encrypted databas
 === Handling of Existing Conflicts
 
 If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
-This functionality is related to the way conflicts are now being handled in Couchbase Lite (see xref:{source-language}.adoc#handling-conflicts[Handling Conflicts]).
-Optionally, existing conflicts in the 1.x database can be resolved with the xref:1.4@{source-language}.adoc#resolving-conflicts[1.x API] prior to the database being upgraded to 2.x.
 
 === Handling of Existing Attachments
 
@@ -1431,7 +1431,7 @@ The following example shows how to retrieve an attachment that was created in a 
 
 [source]
 ----
-include::{snippet-java-jvm}[tags=1x-attachment,indent=0]
+include::{snippet}[tags=1x-attachment,indent=0]
 ----
 
 == Replication Compatibility
@@ -1564,7 +1564,7 @@ Where <pathToCbl> is the location of the downloaded {cbl} library.
 
 .Sample build gradle
 ----
-include::{snippet-java-jvm}[tags=GsWebAppBuildGradle,indent=0]
+include::{snippet}[tags=GsWebAppBuildGradle,indent=0]
 ----
 
 Back to <<Preparing Your Build Environment>>

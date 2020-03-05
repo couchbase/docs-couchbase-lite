@@ -5,7 +5,7 @@ include::_attributesLocal.adoc[]
 :idseparator: -
 :snippet: {examplesdir}/swift/code-snippets/SampleCodeTest.swift
 :source-language: swift
-// :version: 2.6.0
+:version: 2.7.0
 :blank-field: ____
 :url-issues-ios: https://github.com/couchbase/couchbase-lite-ios/issues
 :tabs:
@@ -132,7 +132,7 @@ xref:sync-gateway::getting-started.adoc#installation[Installing Sync Gateway ->]
 
 == Couchbase Lite Framework Size
 
-include::{partialsdir}/ios-framework-size.adoc[]
+include::partial$ios-framework-size.adoc[]
 
 == Supported Versions
 
@@ -240,7 +240,7 @@ The Couchbase Lite 2.1 release includes the ability to encrypt Couchbase Lite da
 This allows mobile applications to secure the data at rest, when it is being stored on the device.
 The algorithm used to encrypt the database is 256-bit AES.
 
-include::{partialsdir}/database-encryption.adoc[]
+include::partial$database-encryption.adoc[]
 
 === Finding a Database File
 
@@ -253,21 +253,21 @@ When the application is running on the iOS simulator, you can locate the applica
 You can download and build it from the couchbaselabs https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md[GitHub repository].
 Note that the `cblite` tool is not supported by the https://www.couchbase.com/support-policy[Couchbase Support Policy].
 
-=== Logging [DEPRECATED]
-
-CAUTION: The following API is deprecated and superseded by the <<logging,Logging API>> introduced in Couchbase Lite 2.5.
-
-The log messages are split into different domains (`LogDomains`) which can be tuned to different log levels.
-The following example enables `verbose` logging for the `replicator` and `query` domains.
-
-[source]
-----
-include::{snippet}[tag=logging,indent=0]
-----
-
 === Logging
 
-include::{partialsdir}/logging.adoc[]
+If you are using a Couchbase Lite release prior to 2.5 see <<Logging functionality prior to Release 2.5, Deprecated functionality>>
+
+include::partial$logging.adoc[leveloffset=+2]
+
+==== Logging functionality prior to Release 2.5
+
+include::partial$logging-pre2.5.adoc[]
+
+[source, {source-language}]
+
+----
+include::{snippet}[tags=logging,indent=0]
+----
 
 === Loading a pre-built database
 
@@ -369,7 +369,7 @@ include::{snippet}[tag=document-listener,indent=0]
 
 === Document Expiration
 
-include::{partialsdir}/document-expiration.adoc[]
+include::partial$document-expiration.adoc[]
 
 == Blobs
 
@@ -672,15 +672,15 @@ Avignon
 
 === Date/Time Functions
 
-include::{partialsdir}/query/date-time-functions.adoc[]
+include::partial$query/date-time-functions.adoc[]
 
 == Live Query
 
-include::{partialsdir}/live-query.adoc[]
+include::partial$live-query.adoc[]
 
 == Predictive Query
 
-include::{partialsdir}/predictive-query.adoc[]
+include::partial$predictive-query.adoc[]
 
 === Integrate a Model with CoreMLPredictiveModel (iOS only)
 
@@ -828,7 +828,7 @@ In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the pro
 
 == Replication
 
-include::{partialsdir}/replication-introduction.adoc[]
+include::partial$replication-introduction.adoc[]
 
 === Compatibility
 
@@ -880,7 +880,7 @@ To keep a reference to the `replicator` object, you can set it as an instance pr
 <2> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
 You should now use `ws:`, or `wss:` for SSL/TLS connections.
 
-include::{partialsdir}/verify-replication.adoc[]
+include::partial$verify-replication.adoc[]
 
 Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit data.
 Some load balancers are not configured for WebSocket connections by default (NGINX for example);
@@ -918,7 +918,7 @@ include::{snippet}[tag=replication-logging,indent=0]
 
 === Authentication
 
-include::{partialsdir}/authentication.adoc[]
+include::partial$authentication.adoc[]
 
 === Replication Status
 
@@ -995,11 +995,11 @@ The following error codes are considered temporary by the Couchbase Lite replica
 
 === Replication Events
 
-include::{partialsdir}/replication-events.adoc[]
+include::partial$replication-events.adoc[]
 
 === Custom Headers
 
-include::{partialsdir}/replication-custom-header.adoc[]
+include::partial$replication-custom-header.adoc[]
 
 [source]
 ----
@@ -1008,11 +1008,11 @@ include::{snippet}[tag=replication-custom-header,indent=0]
 
 === Channels
 
-include::{partialsdir}/replication-channels.adoc[]
+include::partial$replication-channels.adoc[]
 
 === Replication Checkpoint Reset
 
-include::{partialsdir}/replication-checkpoint.adoc[]
+include::partial$replication-checkpoint.adoc[]
 
 [source]
 ----
@@ -1021,19 +1021,19 @@ include::{snippet}[tag=replication-reset-checkpoint,indent=0]
 
 === Replication Filters
 
-include::{partialsdir}/replication-filters.adoc[]
+include::partial$replication-filters.adoc[]
 
 == Handling Conflicts
 
-include::{partialsdir}/handling-conflicts.adoc[]
+include::partial$handling-conflicts.adoc[]
 
 == Database Replicas
 
-include::{partialsdir}/database-replicas.adoc[]
+include::partial$database-replicas.adoc[]
 
 == Certificate Pinning
 
-include::{partialsdir}/certificate-pinning.adoc[]
+include::partial$certificate-pinning.adoc[]
 
 == Peer-to-Peer Sync
 
@@ -1061,23 +1061,23 @@ The passive side reacts to things that it receives but does not initiate any com
 
 === Peer Discovery
 
-include::{partialsdir}/p2p-peer-discovery.adoc[]
+include::partial$p2p-peer-discovery.adoc[]
 
 === Peer Selection and Connection Setup
 
-include::{partialsdir}/p2p-peer-selection.adoc[]
+include::partial$p2p-peer-selection.adoc[]
 
 === Replication Setup
 
-include::{partialsdir}/p2p-replication-setup.adoc[]
+include::partial$p2p-replication-setup.adoc[]
 
 === Push/Pull Replication
 
-include::{partialsdir}/p2p-push-pull-repl.adoc[]
+include::partial$p2p-push-pull-repl.adoc[]
 
 === Connection Teardown
 
-include::{partialsdir}/p2p-connection-teardown.adoc[]
+include::partial$p2p-connection-teardown.adoc[]
 
 == Thread Safety
 
