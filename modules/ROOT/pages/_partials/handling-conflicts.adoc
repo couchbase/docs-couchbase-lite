@@ -1,30 +1,54 @@
-Document conflicts can occur when changes are made to the same version of a document by multiple peers in a distributed system.
-With Couchbase Mobile, this can be a Couchbase Lite or Sync Gateway database instance, and conflicts can occur in the following scenarios:
+// cater for instances where the inclusion's container does not include the attributes
+ifndef::url-cb-blog[]
+include::mobAttrCBL.adoc[]
+endif::url-cb-blog[]
 
-* When a replication is in progress, or
-* When saving a document
+Document conflicts can occur if multiple changes are made to the same version of a document by multiple peers in a distributed system. For Couchbase Mobile, this can be a Couchbase Lite or Sync Gateway database instance.
+
+Such conflicts can occur after either of the following events:
+
+* A replication saves a document change.
++
+In this instance, _most-revisions wins_ unless one change was a delete -- see <<Case 1: Conflicts when a replication is in progress>>
+* An application saves a document change directly to a database instance.
++
+In this case, _last write wins_, unless one change was a delete -- see <<Case 2: Conflicts when saving a document>>
 
 The following sections discuss each scenario in more detail.
 
 === Case 1: Conflicts when a replication is in progress
 
-There's no practical way to prevent a conflict when two updates to a document are made on different instances of the app.
-Neither app even knows that the other one has changed the document, until later on when replication propagates their incompatible changes to each other.
-A typical scenario is:
+There's no practical way to prevent a conflict when incompatible changes to a document are be made in multiple instances of an app.
+The conflict is realized only when replication propagates the incompatible changes to each other.
+anchor:bmkRepConScene[A typical replication conflict scenario]
 
-. Molly creates DocumentA.
-. DocumentA is synced to Naomi's device.
-. Molly updates DocumentA, let's call it ChangeX for the purpose of this example.
-. Naomi makes a different change to DocumentA, let's call it ChangeY.
-. ChangeY is synced to Molly's device, which already has ChangeX, putting the document in conflict.
-. ChangeX is synced to Naomi's device, which already has ChangeY, similarly putting the local document in conflict.
-
+.A typical replication conflict scenario:
+====
+. Molly uses her device to create _DocumentA_.
+. Replication syncs _DocumentA_ to Naomi's device.
+. Molly uses her device to apply _ChangeX_ to _DocumentA_.
+. Naomi uses her device to make a different change, _ChangeY_, to _DocumentA_.
+. Replication syncs _ChangeY_ to Molly's device.
++
+This device already has _ChangeX_ putting the local document in conflict.
+. Replication syncs _ChangeX_ to Naomi's device.
++
+This device already has _ChangeY_ and now Naomi's local document is in conflict.
+====
 ==== Automatic Conflict Resolution
 
-Couchbase Lite uses the following rules to handle the conflicts occurring in steps 5 and 6.
+NOTE: These rules apply only to conflicts arising from replication.
 
-* A deleted document (i.e tombstone) always wins over a document update.
-* If both changes are document updates, the Last-Write-Win (LWW) algorithm is used to pick the winning update.
+Couchbase Lite uses the following rules to handle conflicts such as those described in <<bmkRepConScene>>:
+
+* If one of the changes is a deletion:
++
+A deleted document (that is, a _tombstone_) always wins over a document update.
+* If both changes are document changes:
++
+The change with the most revisions will win.
++
+Since each change creates a revision with an ID prefixed by an incremented version number, the winner is the change with the highest version number.
 
 The result is saved internally by the Couchbase Lite replicator.
 Those rules describe the internal behavior of the replicator.
@@ -174,3 +198,6 @@ So in effect, you will be directly modifying the document that is being saved.
 . If the handler could not resolve the conflict, it can return `false`.
 In this case, the save method will cancel the save operation and return `false` the same way as using the `save()` method with the `failOnConflict` concurrency control.
 . If there is an exception thrown in the `handle()` method, the exception will be caught and rethrown in the `save()` method.
+
+.Dive deeper ...
+TIP: Checkout link:{url-cb-blog}/document-conflicts-couchbase-mobile[Document Conflicts and Automatic Conflict Resolution in Couchbase Mobile 2.0] on {nmCbBlogLink}.
