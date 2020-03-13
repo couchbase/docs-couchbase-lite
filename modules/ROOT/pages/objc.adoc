@@ -1,10 +1,24 @@
 = Objective-C
 :idprefix:
 :idseparator: -
-:snippet: {examplesdir}/ios/SampleCodeTest.m
-:source-language: objectivec
 :blank-field: ____
-:tabs:
+:release: 2.0
+:patch: 2
+:version-full: {release}.0
+:this-version: {release}.{patch}
+:couchbase-lite-name: couchbase-lite-objc
+:url-api-references: http://docs.couchbase.com/mobile/2.0/couchbase-lite-objc
+:tabs:	:tabs:
+
+// Begin define attributes used in INCLUDEs
+:snippet: example$ios/SampleCodeTest.m
+:source-language: objc
+:url-issues-ios: https://github.com/couchbase/couchbase-lite-ios/issues
+:url-apiref-setloglevels: {url-api-references}/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(cm)setLogLevel:domain:
+:url-apiref-enumLogLevel: {url-api-references}/Enums/CBLLogLevel.html
+:url-apiref-enumLogDomain: {url-api-references}/Enums/CBLLogDomain.html
+// End define attributes used in INCLUDEs
+
 
 == Getting Started
 
@@ -218,13 +232,7 @@ Instructions for various commands are available in *Tools/README.md*.
 
 === Logging
 
-The log messages are split into different domains (`LogDomains`) which can be tuned to different log levels.
-The following example enables `verbose` logging for the `replicator` and `query` domains.
-
-[source]
-----
-include::{snippet}[tag=logging,indent=0]
-----
+include::partial$feature-Logging.adoc[]
 
 === Loading a pre-built database
 
@@ -943,7 +951,7 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 === 2.0.2
 
-* Support for Log redaction of sensitive information when <<logging,logging is enabled>>.
+include::partial$feature-LogRedaction-2.0.2.adoc[]
 
 === 2.0.0
 

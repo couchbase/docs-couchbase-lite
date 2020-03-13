@@ -1,13 +1,27 @@
 = Swift
 :idprefix:
 :idseparator: -
-:snippet: {examplesdir}/ios/SampleCodeTest.swift
-:source-language: swift
 :blank-field: ____
-:tabs:
+:release: 2.0
+:patch: 3
+:version-full: {release}.0
+:this-version: {release}.{patch}
+:couchbase-lite-name: couchbase-lite-swift
+:url-api-references: http://docs.couchbase.com/mobile/2.0/couchbase-lite-swift
+:tabs:	:tabs:
+
+// Begin define attributes used in INCLUDEs
+:snippet: example$ios/SampleCodeTest.swift
+:source-language: swift
+:url-issues-ios: https://github.com/couchbase/couchbase-lite-ios/issues
+:url-apiref-setloglevels: {url-api-references}/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC11setLogLevelyAA0fG0O_AA0F6DomainO6domaintFZ
+:url-apiref-enumLogLevel: {url-api-references}/Enums/LogLevel.html
+:url-apiref-enumLogDomain: {url-api-references}/Enums/LogDomain.html
+// End define attributes used in INCLUDEs
 
 == Getting Started
 
+{examplesdir} is here
 
 === Xcode project
 
@@ -222,13 +236,7 @@ Instructions for various commands are available in *Tools/README.md*.
 
 === Logging
 
-The log messages are split into different domains (`LogDomains`) which can be tuned to different log levels.
-The following example enables `verbose` logging for the `replicator` and `query` domains.
-
-[source]
-----
-include::{snippet}[tag=logging,indent=0]
-----
+include::partial$feature-Logging.adoc[]
 
 === Loading a pre-built database
 
@@ -1011,7 +1019,7 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 === 2.0.2
 
-* Support for Log redaction of sensitive information when <<logging,logging is enabled>>.
+include::partial$feature-LogRedaction-2.0.2.adoc[]
 
 === 2.0.0
 
