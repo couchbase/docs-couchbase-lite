@@ -1,9 +1,24 @@
 = Java
 :idprefix:
 :idseparator: -
-:snippet: {examplesdir}/java/code-snippets/app/src/main/java/com/couchbase/code_snippets/MainActivity.java
-:source-language: java
 :blank-field: ____
+:release: 2.0
+:patch: 2
+:version-full: {release}.0
+:this-version: {release}.{patch}
+:couchbase-lite-name: couchbase-lite-android
+:url-api-references: http://docs.couchbase.com/mobile/2.0/couchbase-lite-java
+
+// Begin define attributes used in INCLUDEs
+:snippet: example$java/code-snippets/app/src/main/java/com/couchbase/code_snippets/MainActivity.java
+:ziputils: {examplesdir}/java/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
+:source-language: java
+:url-issues-java: https://github.com/couchbase/{couchbase-lite-name}/issues
+:url-apiref-setloglevels: {url-api-references}/index.html?com/couchbase/lite/Database.html#setLogLevel-com.couchbase.lite.LogDomain-com.couchbase.lite.LogLevel-
+:url-apiref-enumLogLevel: {url-api-references}/index.html?com/couchbase/lite/LogLevel.html
+:url-apiref-enumLogDomain: {url-api-references}/index.html?com/couchbase/lite/LogDomain.html
+// End define attributes used in INCLUDEs
+
 
 WARNING: Currently, Couchbase Lite 2.0 is available for Android only.
 The SDK cannot be used in Java applications.
@@ -176,13 +191,7 @@ $ adb pull /data/data/{APPLICATION_ID}/files/{DATABASE_NAME}.cblite2 .
 
 === Logging
 
-The log messages are split into different domains (`LogDomains`) which can be tuned to different log levels.
-The following example enables `verbose` logging for the `replicator` and `query` domains.
-
-[source]
-----
-include::{snippet}[tag=logging,indent=0]
-----
+include::partial$feature-Logging.adoc[]
 
 === Loading a pre-built database
 
@@ -871,7 +880,7 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 === 2.0.2
 
-* Support for Log redaction of sensitive information when <<logging,logging is enabled>>.
+include::partial$feature-LogRedaction-2.0.2.adoc[]
 
 === 2.0.0
 
