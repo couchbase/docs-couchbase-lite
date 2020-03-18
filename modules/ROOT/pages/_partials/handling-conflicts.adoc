@@ -7,14 +7,16 @@ Document conflicts can occur if multiple changes are made to the same version of
 
 Such conflicts can occur after either of the following events:
 
-* A replication saves a document change.
-+
-In this instance, _most-revisions wins_ unless one change was a delete -- see <<Case 1: Conflicts when a replication is in progress>>
-* An application saves a document change directly to a database instance.
-+
-In this case, _last write wins_, unless one change was a delete -- see <<Case 2: Conflicts when saving a document>>
+* *A replication saves a document change* -- in which case the change with the _most-revisions wins_ (unless one change is a delete). See the example <<Case 1: Conflicts when a replication is in progress>>
+* *An application saves a document change directly to a database instance* -- in which case, _last write wins_, unless one change is a delete -- see <<Case 2: Conflicts when saving a document>>
+
+NOTE: *_Deletes_ always win.* So, in either of the above cases, if one of the changes was a _Delete_ then that change wins.
 
 The following sections discuss each scenario in more detail.
+
+[TIP]
+.Dive deeper ...
+Read more about link:{url-cb-blog}/document-conflicts-couchbase-mobile[Document Conflicts and Automatic Conflict Resolution in Couchbase Mobile] on {nmCbBlogLink}.
 
 === Case 1: Conflicts when a replication is in progress
 
@@ -198,6 +200,3 @@ So in effect, you will be directly modifying the document that is being saved.
 . If the handler could not resolve the conflict, it can return `false`.
 In this case, the save method will cancel the save operation and return `false` the same way as using the `save()` method with the `failOnConflict` concurrency control.
 . If there is an exception thrown in the `handle()` method, the exception will be caught and rethrown in the `save()` method.
-
-.Dive deeper ...
-TIP: Checkout link:{url-cb-blog}/document-conflicts-couchbase-mobile[Document Conflicts and Automatic Conflict Resolution in Couchbase Mobile 2.0] on {nmCbBlogLink}.
