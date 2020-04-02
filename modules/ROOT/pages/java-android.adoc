@@ -16,47 +16,54 @@ include::_attributesLocal.adoc[]
 
 == Getting Started
 
-
-=== Android Studio
-
 Create or open an existing Android Studio project and install Couchbase Lite using the following method.
 
-==== Couchbase Lite Community Edition
+Make the following additions to the module-level `build.gradle` file (typically in the *app* folder).
 
-* Add the following in the `dependencies` section of the application's *build.gradle* (the one in the *app* folder).
+
+[{tabs}]
+====
+Community::
++
+--
+. Include the following in the `android {}` section:
 +
 [source,groovy,subs=attributes+]
 ----
-dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-android:{version}'
-}
+include::partial$gsBuildGradle.adoc[tag=compileOptions]
 ----
-
-==== Couchbase Lite Enterprise Edition
-
-* In the top-level *build.gradle* file, add the following Couchbase Maven repository in the `allprojects` section.
-+
-[source,groovy]
-----
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven {
-            url "https://mobile.maven.couchbase.com/maven2/dev/"
-        }
-    }
-}
-----
-
-* Next, add the following in the `dependencies` section of the application's *build.gradle* (the one in the *app* folder).
+. Include the following in the `dependencies{}` section:
 +
 [source,groovy,subs=attributes+]
 ----
-dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-android-ee:{version}'
-}
+include::partial$gsBuildGradle.adoc[tag=dependenciesCE]
 ----
+
+--
+Enterprise::
++
+--
+. Include the following in the `android {}` section:
++
+[source,groovy,subs=attributes+]
+----
+include::partial$gsBuildGradle.adoc[tag=compileOptions]
+----
+
+. Include the following in the `dependencies{}` section:
++
+[source,groovy,subs=attributes+]
+----
+include::partial$gsBuildGradle.adoc[tag=dependencies]
+----
+. Include the following in the `repositories {}` section:
++
+----
+include::partial$gsBuildGradle.adoc[tag=repositories]
+----
+--
+====
+
 
 === Starter code
 

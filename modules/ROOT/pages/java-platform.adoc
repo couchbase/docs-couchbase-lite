@@ -61,9 +61,7 @@ It assumes a familiarity with these products, however you are free to use your o
 
 The contents of your `build.gradle` file will depend on the type of project you are building, whether you are using Community or Enterprise edition and whether you prefer to use Maven-distributed binaries or a zip download.
 
-
 TIP: If you wish to use a downloaded zip instead of Maven then see - <<Using Downloaded Binaries>>
-
 
 NOTE: If you are deploying to Linux, you will need the {cbl} `support` library, which is available _only_ on the zip download distributable -- see <<Additional Steps for Linux>>
 
@@ -81,34 +79,42 @@ Console App Development::
 
 . Create a project folder
 . Initialize it for a Gradle Java application
-. Create your `build.gradle` file, including the following repositories and dependencies:
+. Include the following in the `build.gradle` file:
 
-* For Community edition
+Community edition::
 +
-[source,groovy,subs=attributes+]
-----
-dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-java:2.7.0'
-}
-----
-
-* For Enterprise Edition
+Compile options
 +
 [source,groovy]
-
 ----
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven {
-            url "https://mobile.maven.couchbase.com/maven2/dev/"
-        }
-    }
-}
-dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-java-ee:2.7.0'
-}
+include::partial$gsBuildGradle.adoc[tag=compileOptions]
+----
+Dependencies
++
+[source,groovy]
+----
+include::partial$gsBuildGradle.adoc[tag=dependenciesCE]
+----
+
+Enterprise Edition::
++
+Compile options
++
+[source,groovy]
+----
+include::partial$gsBuildGradle.adoc[tag=compileOptions]
+----
+Dependencies
++
+[source,groovy]
+----
+include::partial$gsBuildGradle.adoc[tag=dependencies]
+----
+Repositories
++
+[source,groovy]
+----
+include::partial$gsBuildGradle.adoc[tag=repositories]
 ----
 
 . Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
@@ -129,7 +135,7 @@ That's it. You're all set to start building your own {cblJP} applications -- see
 
 [source,groovy,subs=attributes+]
 ----
-include::{snippet}[tags=gsGradleMavenExample,indent=0]
+include::partial$gsBuildGradle.adoc[tag=allContent]
 ----
 
 --
