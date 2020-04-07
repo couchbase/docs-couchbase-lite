@@ -3,8 +3,9 @@ include::partial$mobAttrCBL.adoc[]
 :JP: Java
 :Android: Java (android)
 :cblJP: {product} {JP}
-:packageNmCE: couchbase-lite-java-{version-full}
-:packageNmEE: couchbase-lite-java-ee-{version-full}
+:packageNm: couchbase-lite-java
+:packageNmCE: {packageNm}-{version-full}
+:packageNmEE: {packageNm}-ee-{version-full}
 :url-api-references: http://docs.couchbase.com/mobile/{version-full}/couchbase-lite-java
 :hdIndent:
 :snippet: {snippet-java-jvm}
@@ -87,13 +88,13 @@ Compile options
 +
 [source,groovy]
 ----
-include::partial$gsBuildGradle.adoc[tag=compileOptions]
+include::partial$gsBuildGradleJava.adoc[tag=compileOptions]
 ----
 Dependencies
 +
 [source,groovy]
 ----
-include::partial$gsBuildGradle.adoc[tag=dependenciesCE]
+include::partial$gsBuildGradleJava.adoc[tag=dependenciesCE]
 ----
 
 Enterprise Edition::
@@ -102,19 +103,19 @@ Compile options
 +
 [source,groovy]
 ----
-include::partial$gsBuildGradle.adoc[tag=compileOptions]
+include::partial$gsBuildGradleJava.adoc[tag=compileOptions]
 ----
 Dependencies
 +
 [source,groovy]
 ----
-include::partial$gsBuildGradle.adoc[tag=dependencies]
+include::partial$gsBuildGradleJava.adoc[tag=dependencies]
 ----
 Repositories
 +
 [source,groovy]
 ----
-include::partial$gsBuildGradle.adoc[tag=repositories]
+include::partial$gsBuildGradleJava.adoc[tag=repositories]
 ----
 
 . Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
@@ -133,9 +134,9 @@ That's it. You're all set to start building your own {cblJP} applications -- see
 
 .Sample build.gradle content
 
-[source,groovy,subs=attributes+]
+[source,groovy]
 ----
-include::partial$gsBuildGradle.adoc[tag=allContent]
+include::partial$gsBuildGradleJava.adoc[tag=allContent]
 ----
 
 --
@@ -188,9 +189,7 @@ gradle init
 +
 [source,groovy,subs=attributes+]
 ----
-dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-java:2.7.0'
-}
+include::partial$gsBuildGradleJava.adoc[tag=dependenciesCE]
 ----
 
 * For Enterprise Edition
@@ -198,18 +197,8 @@ dependencies {
 [source,groovy]
 
 ----
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven {
-            url "https://mobile.maven.couchbase.com/maven2/dev/"
-        }
-    }
-}
-dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-java-ee:2.7.0'
-}
+include::partial$gsBuildGradleJava.adoc[tag=repositories]
+include::partial$gsBuildGradleJava.adoc[tag=dependencies]
 ----
 
 . Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
