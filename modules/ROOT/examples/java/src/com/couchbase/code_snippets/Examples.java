@@ -137,11 +137,23 @@ public static void main (String [] args) throws CouchbaseLiteException, Interrup
 // end::getting-started[]
 
 // tag::getting-startedGradle[]
+
 plugins {
     id 'java'
     id 'application'
 }
 
+// Comment out the below line if no source code is Kotlin
+kotlinOptions { jvmTarget = '1.8' }
+
+// Set minimum JVM level to ensure availability of, for example, lambda expressions
+compileOptions
+{
+    targetCompatibility 1.8
+    sourceCompatibility 1.8
+} 
+
+// Declare repositories
 repositories {
     // Add your Maven/Ivy/file repository here.
     jcenter()
@@ -170,20 +182,31 @@ plugins {
     id 'java'
     id 'application'
 }
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven {
-            url "https://mobile.maven.couchbase.com/maven2/dev/"
-        }
+
+// Comment out the below line if no source code is Kotlin
+kotlinOptions { jvmTarget = '1.8' }
+
+// Set minimum JVM level to ensure availability of, for example, lambda expressions
+compileOptions
+{
+    targetCompatibility 1.8
+    sourceCompatibility 1.8
+} 
+
+repositories {
+    maven {
+        url "https://mobile.maven.couchbase.com/maven2/dev/"
     }
+    google()
+    jcenter()
 }
+
+
 dependencies {
-//  Use for Enterprise version
+//  Comment out below line if using Enterprise version
+    implementation "com.couchbase.lite:couchbase-lite-java:2.7.0"
+//  Comment out below line if using Community version
     implementation "com.couchbase.lite:couchbase-lite-java-ee:2.7.0"
-//  Use for community versions
-//    implementation "com.couchbase.lite:couchbase-lite-java:2.7.0"
 }
 
 application {
