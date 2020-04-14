@@ -1,0 +1,292 @@
+= Release Notes
+include::partial$_attributes-local.adoc[]
+:snippet: {examplesdir}/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java
+:ziputils: {examplesdir}/java-android/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
+:source-language: java
+:version: 2.7.0
+:packageNm: couchbase-lite-android
+:blank-field: ____
+:url-issues-java: https://github.com/couchbase/couchbase-lite-android/issues
+:url-api-references: http://docs.couchbase.com/mobile/{version}/couchbase-lite-android
+
+=== 2.7.0
+
+*{nftr}*
+
+New at this release is the Java Platform, which enables development of Java apps on any platform that supports the JVM model
+
+xref::index.adoc[{more}]
+
+*Current Support Notices*
+
+:msg_component: API 19 and 21
+:msg_action:  Please plan to migrate your apps to use API versions greater than API 21
+:msg_release: 2.6
+:msg_endRel: 2.9
+include::_partials/deprecationNotice.adoc[]
+
+See also <<Supported Versions>>
+
+*{ke}*
+
+- https://issues.couchbase.com/browse/CBL-608[*CBL-608*]	Blob missing content file
+- https://issues.couchbase.com/browse/CBL-564[*CBL-564*]	Property alias not working under certain cases
+- https://issues.couchbase.com/browse/CBL-370[*CBL-370*] Broken API, Kotlin: Unable to import ReplicatorType
+- https://issues.couchbase.com/browse/CBL-216[*CBL-216*] Ordering null values inconsistent with N1QL expectations
+- https://issues.couchbase.com/browse/CBL-95[*CBL-95*] Pending conflicts could be resolved by a wrong replicator
+- https://issues.couchbase.com/browse/CBL-49[*CBL-49*] Need a way to distinguish boolean types
+
+*{fixed}*
+
+// - https://issues.couchbase.com/browse/CBL-562[*CBL-562*] Can't open existing db read-only; LiteCore test "Database Open Older Encrypted" fails
+// - https://issues.couchbase.com/browse/CBL-550[*CBL-550*] SQLite index creation mistakenly sets user_version backwards
+// - https://issues.couchbase.com/browse/CBL-536[*CBL-536*] Long delay starting replicator, for big databases
+// - https://issues.couchbase.com/browse/CBL-527[*CBL-527*] RefCount crash
+// - https://issues.couchbase.com/browse/CBL-525[*CBL-525*] Upgrade from 1.x fails if any docID starts with "_"
+- https://issues.couchbase.com/browse/CBL-478[*CBL-478*] Better handling of RejectedExecutionExceptions
+- https://issues.couchbase.com/browse/CBL-469[*CBL-469*] Infinite loop parsing a URL
+// - https://issues.couchbase.com/browse/CBL-466[*CBL-466*] [Android] enable file logging - setConfig failed if called more than once
+- https://issues.couchbase.com/browse/CBL-463[*CBL-463*] Attempt to log strings that are not Modified UTF-8
+- https://issues.couchbase.com/browse/CBL-444[*CBL-444*] Purging documents does not fire events in a QueryChangeListener
+- https://issues.couchbase.com/browse/CBL-436[*CBL-436*] Crash finding keys in and empty dictionary
+// - https://issues.couchbase.com/browse/CBL-415[*CBL-415*] strod produces locale-dependent results for encoding Fleece
+- https://issues.couchbase.com/browse/CBL-404[*CBL-404*] Static maps in C4Socket are gigantic memory leaks
+- https://issues.couchbase.com/browse/CBL-402[*CBL-402*] Back-tag recent releases
+// - https://issues.couchbase.com/browse/CBL-400[*CBL-400*] Not getting right number of revisions on SGW while using multiple SGWS
+- https://issues.couchbase.com/browse/CBL-392[*CBL-392*] Incorrect data sent for attachment with digest...
+// - https://issues.couchbase.com/browse/CBL-390[*CBL-390*] Blob constructor silently truncates stream arguments
+- https://issues.couchbase.com/browse/CBL-355[*CBL-355*] Queries silently ignore Collation Locale
+- https://issues.couchbase.com/browse/CBL-346[*CBL-346*] Creating revisions out-of-orders sequence numbers
+// - https://issues.couchbase.com/browse/CBL-343[*CBL-343*] LiteCore tests need to use unique database
+- https://issues.couchbase.com/browse/CBL-324[*CBL-324*] Function.upper() failed to operate non-ASCII characters
+- https://issues.couchbase.com/browse/CBL-272[*CBL-272*] MessageSocketFactory.socket_open() is not accessible by C4Socket
+// - https://issues.couchbase.com/browse/CBL-253[*CBL-253*] Automated tests take a 2 minutes, each, to complete
+- https://issues.couchbase.com/browse/CBL-242[*CBL-242*] Inconsistent revision hash length
+// - https://issues.couchbase.com/browse/CBL-241[*CBL-241*] Fix the constructor `MutableDocument(Document)`
+// - https://issues.couchbase.com/browse/CBL-234[*CBL-234*] Release ResultSet when LiveQuery is stopped may cause unexpected behavior
+- https://issues.couchbase.com/browse/CBL-221[*CBL-221*] "mutex lock failed" during initial pull replication of large # of docs
+- https://issues.couchbase.com/browse/CBL-218[*CBL-218*] FTS indexing an array-valued property is unreliable
+- https://issues.couchbase.com/browse/CBL-207[*CBL-207*] Replicator change event has idle with timeout error
+- https://issues.couchbase.com/browse/CBL-205[*CBL-205*] Crash when stopping replication during sync
+// - https://issues.couchbase.com/browse/CBL-175[*CBL-175*] Can't query the records has the % character with LIKE operator.
+- https://issues.couchbase.com/browse/CBL-174[*CBL-174*] Local reference table overflow
+- https://issues.couchbase.com/browse/CBL-172[*CBL-172*] Live Query initial delay
+- https://issues.couchbase.com/browse/CBL-171[*CBL-171*] CBL replication never finishes for replication filtering when doc count is 1000
+- https://issues.couchbase.com/browse/CBL-144[*CBL-144*] Incorrect log level passed to custom logger
+- https://issues.couchbase.com/browse/CBL-143[*CBL-143*] Default logging flooded with C4Socket warning messages
+// - https://issues.couchbase.com/browse/CBL-126[*CBL-126*] Litecore does not retry subChanges request that fails with temporary 503 error
+- https://issues.couchbase.com/browse/CBL-106[*CBL-106*] Replicator C++ exception: "properties excessively large"
+- https://issues.couchbase.com/browse/CBL-52[*CBL-52*] “LIKE”, "CONTAINS", "REGEX_LIKE" operators ignore collations
+- https://issues.couchbase.com/browse/CBL-34[*CBL-34*] Replicator crash
+- https://issues.couchbase.com/browse/CBL-13[*CBL-13*] Native crash
+
+=== 2.6.2
+
+This maintenance release for Android includes important bug fixes.
+
+*Bugs*
+
+* https://issues.couchbase.com/browse/CBL-468[*CBL-468*] Null dereference during pull-only replication.
+* https://issues.couchbase.com/browse/CBL-467[*CBL-467*] Replication listener sometimes crashed on NPE.
+* https://issues.couchbase.com/browse/CBL-436[*CBL-436*] An attempt to get the keys from an empty dictionary caused a crash.
+* https://issues.couchbase.com/browse/CBL-324[*CBL-324*] Function.upper() failed to operate non-ASCII characters.
+* https://issues.couchbase.com/browse/CBL-172[*CBL-172*] Initial delay observed when starting a liveQuery has been fixed.
+* https://issues.couchbase.com/browse/CBL-34[*CBL-34*] Fixed a replicator crash issue.
+
+
+=== 2.6.0
+
+*{nftr}*
+
+* Custom Conflict Resolution
++
+xref:index.adoc[{more}]
+
+*{enh}*
+
+* Expose the Document Revision ID: the `revisionID` property on a `Document` instance now returns the current revision identifier.
+
+*Android API Support*
+
+:msg_component: API 19 and 21
+:msg_action:  Please plan to migrate your apps to use API versions greater than API 21
+:msg_release: 2.6
+include::_partials/deprecationNotice.adoc[]
+
+*{api}*
+
+* The constructor `DatabaseConfiguration(Context)` no longer exists.  It has been replaced by `DatabaseConfiguration()`.
+* The static method `CouchbaseLite.init(Context)` must be called before *any* other method in the Couchbase Lite API.
+Applications upgrading from earlier versions to 2.6 must invoke this method.
+
+{more} in the <<initializer>> section.
+
+
+*Bugs*
+
+* https://issues.couchbase.com/browse/CBL-48[*CBL-48*] Copy method of Database class is not able to copy encrypted db.
+* https://issues.couchbase.com/browse/CBL-86[*CBL-86*] Race condition on SharedKeys causes silent error.
+* https://issues.couchbase.com/browse/CBL-71[*CBL-71*] LiteCore database alias clashes with select all alias.
+* https://issues.couchbase.com/browse/CBL-88[*CBL-88*] Calling Replicator#getStatus() on a replicator that hasn't started throws NPE.
+* https://issues.couchbase.com/browse/CBL-89[*CBL-89*] Calling Replicator#stop() on a replicator that hasn't started throws NPE.
+* https://issues.couchbase.com/browse/CBL-130[*CBL-130*] Crash: Possible memory corruption.
+* https://issues.couchbase.com/browse/CBL-165[*CBL-165*] Replication failed due to unauthorized(401) error.
+
+*{ke}*
+
+- https://issues.couchbase.com/browse/CBL-324[*CBL-324*] Function.upper() failed to operate non-ASCII characters
+- https://issues.couchbase.com/browse/CBL-95[*CBL-95*] Pending conflicts could be resolved by a wrong replicator
+- https://issues.couchbase.com/browse/CBL-49[*CBL-49*] Need a way to distinguish boolean types
+
+=== 2.5.3
+
+*{enh}*
+
+* https://issues.couchbase.com/browse/CBL-142[*CBL-142*] Added native support for x86_64.
+
+{fixed}
+
+* https://issues.couchbase.com/browse/CBL-176[*CBL-176*] Reduce replication timeouts.
+* https://issues.couchbase.com/browse/CBL-110[*CBL-110*] Delta sync on top of a deletion caused data discrepancy between Couchbase Sync Gateway and Couchbase Lite.
+* https://issues.couchbase.com/browse/CBL-131[*CBL-131*] Continuous replicator does not back off retries.
+
+=== 2.5.2
+
+{fixed}
+
+* https://github.com/couchbase/couchbase-lite-core/issues/776[*#776*] `c4db_endTransaction` sometimes results in invalid memory access.
+* https://github.com/couchbase/couchbase-lite-core/issues/787[*#787*] Fleece error when querying array property.
+* https://github.com/couchbase/couchbase-lite-core/issues/792[*#792*] DBWorker crashes in Fleece Encoder (writePointer).
+* https://issues.couchbase.com/browse/CBL-5[*CBL-5*] Excessive synchronization is stalling Live Query notification.
+
+=== 2.5.0
+
+*{nftr}*
+
+* Delta Sync
+* Replication Filters
+* Continuous Logging
+* Predictive Query
++
+xref:index.adoc[{more}]
+
+*{enh}*
+
+* {url-issues-java}/1779[*#1779*]
+Replication Filters
+* {url-issues-java}/1821[*#1821*]
+Remove log rotation change batching
+* {url-issues-java}/1845[*#1845*]
+Annotate @NonNull to public API
+
+{fixed}
+
+* {url-issues-java}/1523[*#1523*]
+2.0: ``isOldAttachment'' check is incorrect
+* {url-issues-java}/1755[*#1755*]
+Query enumeration error: LiteCoreException
+* {url-issues-java}/1756[*#1756*]
+2.0 Replicator does not work with TLS 1.2 when using Android API <= 19
+* {url-issues-java}/1785[*#1785*]
+Result.toMap() does not return boolean values
+* {url-issues-java}/1814[*#1814*]
+Change domains type of the Console Logger to EnumSet
+* {url-issues-java}/1818[*#1818*]
+Crash on document save with 2.1.2
+* {url-issues-java}/1872[*#1872*]
+Logging messages CBL code are not shown up in console
+* {url-issues-java}/1899[*#1899*]
+Signal 11 SIGSEGV with current iridium Branch
+* {url-issues-java}/1900[*#1900*]
+BlobInputStream does not return -1 when finished reading
+* {url-issues-java}/1904[*#1904*]
+Signal 11 SIGSEGV when initiating Dictionary Iterator
+
+*{ke}*
+
+* {url-issues-java}/1773[*#1773*]
+Client Proxy Support
+* {url-issues-java}/1888[*#1888*]
+Memory Leak: Database reference held by a ReplicatorListenerThread after
+close
+
+=== 2.1.2
+
+.{fixed}
+* {url-issues-java}/1760[*#1760*] Warning about CBLWebSocket failed to shutdown the web socket
+* {url-issues-java}/1761[*#1761*] Could not find class `android.system.ErrnoException' error
+* {url-issues-java}/1762[*#1762*] Potential memory leak in replicator
+* {url-issues-java}/1763[*#1763*] Log from replicator’s native code shouldn’t be shown unless the logging is enabled
+* {url-issues-java}/1766[*#1766*] Auth Header from BasicAuthenticator not getting sent if SG Guest user is enabled
+
+=== 2.1
+
+.{enh}
+* {url-issues-java}/1678[*#1678*] Support Peer-to-Peer replication through MessageEndpoint API (EE Feature)
+* {url-issues-java}/1683[*#1683*] Support Database Encryption (EE feature)
+* {url-issues-java}/1696[*#1696*] Support replicator reset checkpoint
+
+.{fixed}
+* {url-issues-java}/1510[*#1510*] 2.0: Crash with DB21 - in c4doc_update()
+* {url-issues-java}/1665[*#1665*] Exception thrown openDatabase (Proguard strips methods that CBL uses)
+* {url-issues-java}/1676[*#1676*] 2.0: Replicator Error misses the error message.
+* {url-issues-java}/1702[*#1702*] 2.x: ValueIndexItem.expression(Expression) is missing
+* {url-issues-java}/1725[*#1725*] 2.1: Android : Replication does not start
+* {url-issues-java}/1727[*#1727*] Dead lock occurs - DB 2.0.0
+* {url-issues-java}/1742[*#1742*] Couchbase mobile 2.0.2 Emoji Support
+
+.{ke}
+* {url-issues-java}/1743[*#1743*] HTTP Proxy Support
+
+=== 2.0.2
+
+* Support for Log redaction of sensitive information when <<Logging,logging is enabled>>.
+
+=== 2.0.0
+
+.{enh}
+* {url-issues-java}/1264[*#1264*] 2.0 migration from Forest back to SQlite
+* {url-issues-java}/1577[*#1577*] 2.1: Eliminate CouchbaseLiteRuntimeExecption, convert it to CouchbaseLiteExecption
+
+.{fixed}
+* {url-issues-java}/1217[*#1217*] 2.0: Todo Sample bug Fix and implement remaining features
+* {url-issues-java}/1234[*#1234*] 2.0: Replicator continuous pull status completed and total number out of sync
+* {url-issues-java}/1247[*#1247*] 2.0: Push Replication Causing Errors
+* {url-issues-java}/1273[*#1273*] 2.0: Replicator Activity Level stays in Busy state
+* {url-issues-java}/1347[*#1347*] 2.0: How do we properly stop puller Replicator and delete database ?
+* {url-issues-java}/1470[*#1470*] 2.0: In My App with CB Lite DB020(Android), ConflictResolver is called endless loop during three device or much more!
+* {url-issues-java}/1499[*#1499*] 2.0: Repl Bad URL returns 19 instead of 15 on API 24 ARM emulator
+* {url-issues-java}/1500[*#1500*] 2.0: LoadTest.testUpdate() causes memory error with Android API 19 Arm Emulator
+* {url-issues-java}/1501[*#1501*] 2.0: ReplicatorTest > testPushDoc fails
+* {url-issues-java}/1512[*#1512*] 2.0: ReplicatorTest > testPullDoc fails
+* {url-issues-java}/1581[*#1581*] 2.0 : LiveQuery threading issue
+* {url-issues-java}/1609[*#1609*] 2.0: testSelfSignedSSLPinned() unit test failure
+* {url-issues-java}/1610[*#1610*] Exception from the cpp layer in my android app on load tests
+* {url-issues-java}/1615[*#1615*] 2.0: NullPointerException: Attempt to invoke virtual method 'boolean com.couchbase.litecore.C4QueryEnumerator.next()' on a null object reference
+* {url-issues-java}/1620[*#1620*] NOT operator not working for FTS
+* {url-issues-java}/1630[*#1630*] 2.0: make public Index interface
+* {url-issues-java}/1651[*#1651*] 2.0: C4DocumentTest.testPut() fails
+* {url-issues-java}/1652[*#1652*] App crash with deleteDocument with concurrencyControl
+* {url-issues-java}/1693[*#1693*] DB023 - Crazy amount of dbListenerTokens - makes the DB run slow
+
+.{ke}
+* {url-issues-java}/1685[*#1685*] Replicator in Android get stuck at busy state when it goes back to online from offline (Genymotion)
+* {url-issues-java}/1702[*#1702*] ValueIndexItem.expression(Expression) is implemented with CBL Android 2.0.0 release.
+This API will be available with 2.1.0 release
+* {url-issues-java}/1665[*#1665*]: it is currently not possible to enable https://developer.android.com/studio/build/shrink-code.html[code shrinking] (`minifyEnabled: true`) in an Android Studio project that uses Couchbase Lite 2.0.
+As a workaround, code shrinking can be disabled for Couchbase Lite classes and its dependencies by adding the following in *proguard-rules.pro*.
++
+[source,groovy]
+----
+# OkHttp3
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-dontwarn javax.annotation.**
+-dontwarn org.conscrypt.**
+# A resource is loaded with a relative path so the package of this class must be preserved.
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+
+# CBL2.x
+-keep class com.couchbase.litecore.**{ *; }
+-keep class com.couchbase.lite.**{ *; }
+----
