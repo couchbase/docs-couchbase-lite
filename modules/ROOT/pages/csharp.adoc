@@ -1091,6 +1091,30 @@ The Couchbase Lite API is thread safe except for calls to mutable objects: `Muta
 
 == Release Notes
 
+=== 2.7.1
+
+Note: Support notices remain in force for this maintenance release -- see <<support-notices, Support Notices>> below.
+
+==== {fixed}
+
+This maintenance release fixes the following issues:
+
+* https://issues.couchbase.com/browse/CBL-849[*CBL-849*] Returning WebProxy null when WINHTTP_PROXY_INFO out as invalid value if that ever happens
+* https://issues.couchbase.com/browse/CBL-789[*CBL-789*] Crash when accessing `connection->name()`
+* https://issues.couchbase.com/browse/CBL-701[*CBL-701*] Pending Document IDs not working correctly
+* https://issues.couchbase.com/browse/CBL-698[*CBL-698*] Wrong query evaluation using expression values instead of expression properties
+* https://issues.couchbase.com/browse/CBL-657[*CBL-657*] LIKE and CONTAINS are much slower in 2.7
+* https://issues.couchbase.com/browse/CBL-580[*CBL-580*] Native memory leak when save document repeatedly​
+* https://issues.couchbase.com/browse/CBL-579[*CBL-579*] SDK fails for opening Database files over 2GB
+
+==== {ke}
+
+The following issues document known errors:
+
+* https://issues.couchbase.com/browse/CBL-216[*CBL-216*] Ordering null values inconsistent with N1QL expectations
+* https://issues.couchbase.com/browse/CBL-95[*CBL-95*] Pending conflicts could be resolved by a wrong replicator
+* https://issues.couchbase.com/browse/CBL-49[*CBL-49*] Need a way to distinguish boolean types
+
 === 2.7.0
 
 *{nftr}*
@@ -1106,7 +1130,7 @@ xref::index.adoc[{more}]
 - https://issues.couchbase.com/browse/CBL-49[*CBL-49*] Need a way to distinguish boolean types
 
 *{fixed}*
-//
+
 // - https://issues.couchbase.com/browse/CBL-562[*CBL-562*] Can't open existing db read-only; LiteCore test "Database Open Older Encrypted" fails
 // - https://issues.couchbase.com/browse/CBL-550[*CBL-550*] SQLite index creation mistakenly sets user_version backwards
 // - https://issues.couchbase.com/browse/CBL-536[*CBL-536*] Long delay starting replicator, for big databases
@@ -1148,6 +1172,7 @@ xref:index.adoc[{more}]
 
 * Expose the Document Revision ID: the `revisionID` property on a `Document` instance now returns the current revision identifier.
 
+[#support-notices]
 *OS API Support*
 
 Support for Android API 19, API 20 and API 21 on Xamarin is deprecated in this release.
