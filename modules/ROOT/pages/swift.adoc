@@ -139,29 +139,87 @@ include::partial$ios-framework-size.adoc[]
 .Support Constraints - Apple Mac OS
 CAUTION: Mac OS is supported ONLY for testing and development purposes.
 
+=== Supported Operating System Versions
 // [width="70%"]
 [%autowidth.stretch]
 |===
 |Platform |Minimum OS version
 
 |iOS
-|*10.0* (9.0 -- DEPRECATED)
+|*10.0* (9.0 -- <<support-notices, Deprecated>>)
 
 |macOS
-|*10.11* (10.9 and 10.10 -- DEPRECATED)
+|*10.11* (10.9 and 10.10 -- <<support-notices, Deprecated>>)
 |===
 
-:msg_level: CAUTION
-:msg_title: Apple Mac OS
-:msg_component: Mac OS 10.9 and 10.10
-:msg_endrel: 2.8
-:msg_release: 2.5
-include::_partials/deprecationNotice.adoc[]
+=== Compiler Support Matrix
+The table below shows the compatibility of Xcode / Swift compiler versions with Couchbase Lite versions.
+Build your Couchbase Lite apps using the Xcode version(s) corresponding to your Couchbase Lite version.
 
-:msg_title: Apple iOS
-:msg_component: iOS 9
-:msg_release: 2.6
-include::_partials/deprecationNotice.adoc[]
+// |1 |2 |3 |4 |5 |6
+[cols="7*^",options=noheader,autowidth]
+|===
+|
+6+|*Xcode version(s)/Swift version*
+
+|*CBL Version*
+|*10.2.1-10.3/5.0.1*
+|*11.0-11.1/5.1*
+|*11.2/5.1.2*
+|*11.3-11.3.1/5.1.3*
+|*11.4/5.2*
+|*11.4.1/5.2.2*
+
+|2.6.0
+| x
+|
+|
+|
+|
+|
+
+|2.6.1
+|
+| x
+|
+|
+|
+|
+
+|2.6.3
+|
+| x
+| x
+| x
+| x
+| x
+
+|2.6.4
+|
+|
+|
+| x
+| x
+| x
+
+|2.7.0
+|
+|
+|
+| x
+| x
+| x
+
+|2.7.1
+|
+|
+|
+|
+|
+| x
+|===
+
+
 == API References
 
 {url-api-references}[Swift SDK API References]
@@ -1118,28 +1176,37 @@ The following issues document known errors:
 
 *{nftr}*
 
-New at this release is the Java Platform, which enables development of Java apps on any platform that supports the JVM model
+New at this version is the Java Platform, which enables development of Java apps on any platform that supports the JVM model
 
 xref::index.adoc[{more}]
 
 [#support-notices]
-*Support Notices*
+*Support Notices - Deprecations*
 
-:msg_level: CAUTION
-:msg_title: Apple Mac OS
-:msg_component: Mac OS 10.9 and 10.10
-:msg_endrel: 2.8
-:msg_release: 2.5
-:msg_action: Please plan to migrate your apps to use at least the minimum <<Supported Versions>>.
-include::_partials/deprecationNotice.adoc[]
+Apple Mac OS 10.9 and 10.10::
+* Support for Mac OS 10.9 and 10.10 was deprecated in version 2.5 and will be removed in version 2.8
+* *Action*: Please plan to migrate your apps to use at least the minimum Supported Versions.
 
-:msg_title: Apple iOS
-:msg_component: iOS 9
-:msg_release: 2.6
-:msg_endrel: 2.9
-:msg_action: Please plan to migrate your apps to use at least the minimum <<Supported Versions>>.
-include::_partials/deprecationNotice.adoc[]
+Apple iOS 9::
+* Support for iOS 9 was deprecated in version 2.6 and will be removed in version 2.9
+* *Action*: Please plan to migrate your apps to use at least the minimum Supported Versions.
 
+
+// :msg_level: CAUTION
+// :msg_title: Apple Mac OS
+// :msg_component: Mac OS 10.9 and 10.10
+// :msg_endrel: 2.8
+// :msg_release: 2.5
+// :msg_action: Please plan to migrate your apps to use at least the minimum <<Supported Versions>>.
+// include::_partials/deprecationNotice.adoc[]
+//
+// :msg_title: Apple iOS
+// :msg_component: iOS 9
+// :msg_release: 2.6
+// :msg_endrel: 2.9
+// :msg_action: Please plan to migrate your apps to use at least the minimum <<Supported Versions>>.
+// include::_partials/deprecationNotice.adoc[]
+//
 *{ke}*
 
 - https://issues.couchbase.com/browse/CBL-216[*CBL-216*] Ordering null values inconsistent with N1QL expectations
