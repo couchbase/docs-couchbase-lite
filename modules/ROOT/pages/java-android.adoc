@@ -1,4 +1,3 @@
-
 = Couchbase Lite Java (Android) framework
 :idprefix:
 :idseparator: -
@@ -789,7 +788,40 @@ In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the pro
 
 == Replication
 
+=== Endpoints
 include::partial$replication-introduction.adoc[]
+
+=== Permitting Continuous Mode
+In order to run in `continuous=true` mode Android requires you obtain _ACCESS_NETWORK_STATE_ permission. This is because in _continuous replication_, the replicator must monitor the status of network connectivity to be able to recover from network disruptions in a timely fashion.
+
+Failure to obtain permission, for any reason, will lead to elongated recovery times following network reconnect events.
+
+To ensure permission is requested you must include a `<uses-permission>` element in the _manifest_.
+This will ensure Android prompts the user, to allow or deny it, when it is first used within the app.
+Failure to provide the entry will result in Android silently denying permission, leading to prolonged recovery times.
+
+.Example manifest entry
+[source, xml]
+----
+<!--  ... other manifest content ... -->
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<!--  ... other manifest content ... -->
+----
+
+It is recommended that, on start-up, your apps pre-emptively provide a rationale for any required permissions and then request those permissions.
+Explaining why permissions are needed, their importance and the consequences of denial, will help your users make informed decisions.
+
+.Why we need access_network_state permission
+====
+Continuous replication needs `access_network_state` permission in order to monitor the status of network connectivity and to recover from network disruptions in a timely fashion.
+Failure to provide permissions could extend network reconnect event recovery-time by as much as 10 minutes.
+====
+
+Your users can revoke permission at any time.
+So your apps must continually check they (still) have the required permission before performing any operation that depends upon it.
+
+NOTE: Further Information - https://developer.android.com/training/permissions/requesting[Requesting App Permissions, window=_blank]
+
 
 === Compatibility
 
