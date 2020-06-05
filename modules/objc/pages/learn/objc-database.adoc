@@ -1,0 +1,91 @@
+= Database
+:page-layout: article
+:page-status: {release-status-cbl} -- {release-comments-cbl}
+:page-edition: Under Development
+:page-role:
+:description: Couchbase mobile database concepts
+
+include::shared-mobile::partial$_attributes-shared.adoc[]
+include::ROOT:partial$_page-index.adoc[]
+include::ROOT:partial$_glossary-links.adoc[]
+include::ROOT:partial$_attributes-local.adoc[]
+include::{lang-mod-objc}:partial$_attributes-module.adoc[]
+
+// BEGIN::Local page attributes
+:blank-field: ____
+:lang-title: {lang-title-objc}
+:module: {lang-mod-objc}
+:packageNm: couchbase-lite-{module}
+:source-language: {lang-name-objc}
+:snippet: {snippets-content--objc}
+:url-issues: {url-github-cbl}{module}/issues
+
+// END::Local page attributes
+
+[abstract]
+{description}
+
+== New Database
+
+As the top-level entity in the API, new databases can be created using the `Database` class by passing in a name, configuration, or both.
+The following example creates a database using the `Database(name: String)` method.
+
+[source]
+----
+include::{snippet}[tag=new-database,indent=0]
+----
+
+Just as before, the database will be created in a default location.
+Alternatively, the `Database(string name, DatabaseConfiguration config)` initializer can be used to provide specific options in the {url-api-references}/Classes/CBLDatabaseConfiguration.html[`DatabaseConfiguration`] object such as the database directory.
+
+== Database Encryption
+
+.Enterprise Edition only
+IMPORTANT: Database encryption is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+
+The Couchbase Lite 2.1 release includes the ability to encrypt Couchbase Lite databases.
+This allows mobile applications to secure the data at rest, when it is being stored on the device.
+The algorithm used to encrypt the database is 256-bit AES.
+
+include::{root-partials}database-encryption.adoc[]
+
+== Finding a Database File
+
+When the application is running on the iOS simulator, you can locate the application's sandbox directory using the https://simpholders.com/3/[SimPholders] utility.
+
+== CLI tool
+
+`cblite` is a command-line tool for inspecting and querying Couchbase Lite 2.x databases.
+
+You can download and build it from the couchbaselabs https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md[GitHub repository].
+Note that the `cblite` tool is not supported by the https://www.couchbase.com/support-policy[Couchbase Support Policy].
+
+== Logging
+
+If you are using a Couchbase Lite release prior to 2.5 see <<Logging functionality prior to Release 2.5, Deprecated functionality>>
+
+include::{root-partials}logging.adoc[leveloffset=+2]
+
+=== Logging functionality prior to Release 2.5
+
+include::{root-partials}logging-pre2.5.adoc[]
+
+[source]
+
+----
+include::{snippet}[tags=logging,indent=0]
+----
+
+== Loading a pre-built database
+
+If your app needs to sync a lot of data initially, but that data is fairly static and won't change much, it can be a lot more efficient to bundle a database in your application and install it on the first launch.
+Even if some of the content changes on the server after you create the app, the app's first pull replication will bring the database up to date.
+
+To use a prebuilt database, you need to set up the database, build the database into your app bundle as a resource, and install the database during the initial launch.
+After your app launches, it needs to check whether the database exists.
+If the database does not exist, the app should copy it from the app bundle using the {url-api-references}/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(cm)copyFromPath:toDatabase:withConfig:error:[`[CBLDatabase copyFromPath:toDatabase:withConfig:error:\]`] method as shown below.
+
+[source]
+----
+include::{snippet}[tag=prebuilt-database,indent=0]
+----
