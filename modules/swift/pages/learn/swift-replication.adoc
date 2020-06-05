@@ -1,0 +1,227 @@
+= Working with Replications
+:page-layout: article
+:page-status: {release-status-cbl} -- {release-comments-cbl}
+:page-edition: Under Development
+:page-role:
+:description: Couchbase database replication and synchronization concepts
+include::shared-mobile::{root-partials}_attributes-shared.adoc[]
+include::ROOT:partial$_page-index.adoc[]
+include::ROOT:partial$_glossary-links.adoc[]
+include::ROOT:partial$_attributes-local.adoc[]
+include::{lang-mod-swift}:partial$_attributes-module.adoc[]
+
+
+// BEGIN::Local page attributes
+:blank-field: ____
+:lang-title: {lang-title-swift}
+:module: {lang-mod-swift}
+:packageNm: couchbase-lite-{module}
+:source-language: {lang-name-swift}
+:snippet: {snippets-content--swift}
+//:snippet: {module}:example$code-snippets/SampleCodeTest.swift
+:url-issues: {url-github-cbl}{module}/issues
+//:url-api-references: http://docs.couchbase.com/mobile/2.7.0/couchbase-lite-swift
+
+
+// END::Local page attributes
+
+[abstract]
+{description}
+
+== Overview
+{snippet}
+
+include::{root-partials}replication-introduction.adoc[]
+
+== Compatibility
+
+WARNING: The new protocol is *incompatible* with CouchDB-based databases.
+And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that xref:sync-gateway::compatibility-matrix.adoc[supports it].
+
+To use this protocol with Couchbase Lite 2.0, the replication URL should specify WebSockets as the URL scheme (see the "Starting a Replication" section below).
+Mobile clients using Couchbase Lite 1.x can continue to use *http* as the URL scheme.
+Sync Gateway 2.0 will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through "http://localhost:4984/db" and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through "ws://localhost:4984/db".
+
+== Starting Sync Gateway
+
+https://www.couchbase.com/downloads[Download Sync Gateway] and start it from the command line with the configuration file created above.
+
+[source,bash]
+----
+~/Downloads/couchbase-sync-gateway/bin/sync_gateway
+----
+
+For platform specific installation instructions, refer to the Sync Gateway xref:sync-gateway::getting-started.adoc#installation[installation guide].
+
+== Starting a Replication
+
+Replication can be bidirectional, this means you can start a `push`/`pull` replication with a single instance.
+The replication's parameters can be specified through the {url-api-references}/Classes/ReplicatorConfiguration.html[`ReplicatorConfiguration`] object;
+for example, if you wish to start a `push` only or `pull` only replication.
+
+The following example creates a `pull` replication with Sync Gateway.
+
+[source]
+----
+class MyClass {
+    var database: Database?
+    var replicator: Replicator? // <1>
+
+    func startReplicator() {
+        let url = URL(string: "ws://localhost:4984/db")! // <2>
+        let target = URLEndpoint(url: url)
+        let config = ReplicatorConfiguration(database: database!, target: target)
+        config.replicatorType = .pull
+
+        self.replicator = Replicator(config: config)
+        self.replicator?.start()
+    }
+}
+----
+<1> A replication is an asynchronous operation.
+To keep a reference to the `replicator` object, you can set it as an instance property.
+<2> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
+You should now use `ws:`, or `wss:` for SSL/TLS connections.
+
+include::{root-partials}verify-replication.adoc[]
+
+Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit data.
+Some load balancers are not configured for WebSocket connections by default (NGINX for example);
+so it might be necessary to explicitly enable them in the load balancer's configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
+
+By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
+The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway::config-properties.adoc#replicator_compression[`replicator_compression`]).
+
+=== Replication Ordering
+
+To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
+So we don't recommend to rely on that when using the replication or database change listeners for example.
+
+== Delta Sync
+
+NOTE: Delta Sync is an Enterprise Edition feature on Sync Gateway and Couchbase Lite.
+
+Couchbase Mobile 2.5 introduces delta sync.
+Delta Sync is the ability to replicate only parts of the Couchbase document that have changed.
+This can result in significant savings in bandwidth consumption as well as throughput improvements, especially when network bandwidth is typically constrained.
+
+Replications to a <<starting-sync-gateway, URLEndpoint>> (i.e Sync Gateway) automatically use delta sync if the xref:sync-gateway::config-properties.adoc#databases-foo_db-delta_sync[databases.$db.delta_sync.enabled] property is set to `true` in Sync Gateway's configuration file.
+
+Replications to a <<database-replicas, DatabaseEndpoint>> automatically *disable* delta sync and replications to a <<peer-to-peer-sync, MessageEndpoint>> automatically *enable* delta sync.
+
+== Troubleshooting
+
+As always, when there is a problem with replication, logging is your friend.
+The following example increases the log output for activity related to replication with Sync Gateway.
+
+[source]
+----
+include::{snippet}[tag=replication-logging,indent=0]
+----
+
+== Authentication
+
+include::{root-partials}authentication.adoc[]
+
+== Replication Status
+
+The `replication.status.activity` property can be used to check the status of a replication.
+For example, when the replication is actively transferring data and when it has stopped.
+
+[source]
+----
+include::{snippet}[tag=replication-status,indent=0]
+----
+
+The following table lists the different activity levels in the API and the meaning of each one.
+
+[cols="1,2"]
+|===
+|State |Meaning
+
+|`STOPPED`
+|The replication is finished or hit a fatal error.
+
+|`OFFLINE`
+|The replicator is offline as the remote host is unreachable.
+
+|`CONNECTING`
+|The replicator is connecting to the remote host.
+
+|`IDLE`
+|The replication caught up with all the changes available from the server.
+The `IDLE` state is only used in continuous replications.
+
+|`BUSY`
+|The replication is actively transferring data.
+|===
+
+NOTE: The replication change object also has properties to track the progress (`change.status.completed` and `change.status.total`).
+But since the replication occurs in batches and the total count can vary through the course of a replication, those progress indicators are not very useful from the standpoint of an app user.
+Hence, these should not be used for tracking the actual progress of the replication.
+
+=== Replication Status and App Life Cycle
+
+The following diagram describes the status changes when the application starts a replication, and when the application is being backgrounded or foregrounded by the OS.
+It applies to iOS only.
+
+image:replicator-states.png[]
+
+Additionally, on iOS, an app already in the background may be terminated.
+In this case, the `Database` and `Replicator` instances will be `null` when the app returns to the foreground.
+Therefore, as preventive measure, it is recommended to do a `null` check when the app enters the foreground, and to re-initialize the database and replicator if any of those is `null`.
+
+On other platforms, Couchbase Lite doesn't react to OS backgrounding or foregrounding events and replication(s) will continue running as long as the remote system does not terminate the connection and the app does not terminate.
+It is generally recommended to stop replications before going into the background otherwise socket connections may be closed by the OS and this may interfere with the replication process.
+
+== Handling Network Errors
+
+If an error occurs, the replication status will be updated with an `Error` which follows the standard HTTP error codes.
+The following example monitors the replication for errors and logs the error code to the console.
+
+[source]
+----
+include::{snippet}[tag=replication-error-handling,indent=0]
+----
+
+When a permanent error occurs (i.e., `404`: not found, `401`: unauthorized), the replicator (continuous or one-shot) will stop permanently.
+If the error is temporary (i.e., waiting for the network to recover), a continuous replication will retry to connect indefinitely and if the replication is one-shot it will retry for a limited number of times.
+The following error codes are considered temporary by the Couchbase Lite replicator and thus will trigger a connection retry.
+
+* `408`: Request Timeout
+* `429`: Too Many Requests
+* `500`: Internal Server Error
+* `502`: Bad Gateway
+* `503`: Service Unavailable
+* `504`: Gateway Timeout
+* `1001`: DNS resolution error
+
+== Replication Events
+
+include::{root-partials}replication-events.adoc[]
+
+== Custom Headers
+
+include::{root-partials}replication-custom-header.adoc[]
+
+[source]
+----
+include::{snippet}[tag=replication-custom-header,indent=0]
+----
+
+== Channels
+
+include::{root-partials}replication-channels.adoc[]
+
+== Replication Checkpoint Reset
+
+include::{root-partials}replication-checkpoint.adoc[]
+
+[source]
+----
+include::{snippet}[tag=replication-reset-checkpoint,indent=0]
+----
+
+== Replication Filters
+
+include::{root-partials}replication-filters.adoc[]
