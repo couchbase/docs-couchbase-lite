@@ -1,0 +1,41 @@
+== What's New
+:page-layout: article
+:page-status: {release-status-cbl} -- {release-comments-cbl}
+:page-edition: Under Development
+:page-role:
+
+include::shared-mobile::partial$_attributes-shared.adoc[]
+include::ROOT:partial$_page-index.adoc[]
+include::ROOT:partial$_glossary-links.adoc[]
+include::ROOT:partial$_attributes-local.adoc[]
+include::{lang-mod-android}:partial$_attributes-module.adoc[]
+
+// BEGIN::Local page attributes
+:blank-field: ____
+:lang-title: {lang-title-android}
+:module: {lang-mod-android}
+:packageNm: couchbase-lite-{module}
+:source-language: {lang-name-android}
+:snippet: {snippets-content--android}
+:url-issues-java: {url-github-cbl}{module}/issues
+:ziputils: {snippets-pfx--android}/code_snippets/ZipUtils.java
+
+ifndef::release-status-cbl[:release-status-cbl!:]
+ifeval::["{release-status-cbl}" == "gamma"]
+[.pane__frame--orange]
+.Author's Notes
+--
+Add content covering new stuff in this releasee.
+--
+endif::[]
+
+
+* We are now providing a replication listener API and implementation that uses WebSocket protocol as a solution for developers to use for their peer-to-peer replication. The feature of the listener API can be summarized as a list here.
+* Provide a replication listener for a single database with an option to allow only pull replication.
+* Support TLS communication by default and could be disabled.
+* Support an auto-generated anonymous TLS Identity if the TLS Identity is not specified.
+* Support two types of authentication:
+* Password Authentication
+* Client Certificate Authentication as a part of TLS Communication
+* Provide connection status information.
+* A utility API to programmatically generate a self-sign certificate.
