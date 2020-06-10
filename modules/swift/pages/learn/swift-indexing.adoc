@@ -1,0 +1,35 @@
+= Indexing
+include::partial$_attributes-local.adoc[]
+//:includeroot: include::ROOT:partial$
+:includeModule: include::partial$
+:snippet: ROOT:example$/swift/code-snippets/SampleCodeTest.swift
+:source-language: swift
+:url-issues-ios: https://github.com/couchbase/couchbase-lite-ios/issues
+:url-api-references: http://docs.couchbase.com/mobile/2.7.0/couchbase-lite-swift
+
+
+Creating indexes can speed up the performance of queries.
+While indexes make queries faster, they also make writes slightly slower, and the Couchbase Lite database file slightly larger.
+As such, it is best to only create indexes when you need to optimize a specific case for better query performance.
+
+The following example creates a new index for the `type` and `name` properties.
+
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "Apple Droid"
+}
+----
+
+[source]
+----
+include::{snippet}[tag=query-index,indent=0]
+----
+
+If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.
+
+NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
+Thus, good performance depends on designing and creating the _right_ indexes to go along with your queries.
+

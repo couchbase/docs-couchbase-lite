@@ -1,0 +1,51 @@
+= Indexing
+// :page-layout: article
+// :page-status: {release-status-cbl} -- {release-comments-cbl}
+// :page-edition: Under Development
+// :page-role:
+//
+// include::shared-mobile::partial$_attributes-shared.adoc[]
+// include::ROOT:partial$_page-index.adoc[]
+// include::ROOT:partial$_glossary-links.adoc[]
+// include::ROOT:partial$_attributes-local.adoc[]
+// include::{lang-mod-swift}:partial$_attributes-module.adoc[]
+//
+// // BEGIN::Local page attributes
+// :blank-field: ____
+// :ziputils: {snippets-pfx--swift}/code_snippets/ZipUtils.java
+// // END::Local page attributes
+
+
+// // BEGIN::REQUIRED EXTERNALS
+// :this-module: {par-module}
+// :this-lang-title: {par-lang-title}
+// :this-packageNm: {par-packageNm}
+// :this-source-language: {par-source-language}
+:this-snippet: {par-snippet}
+//:this-url-issues: {par-url-issues}
+// END::REQUIRED EXTERNALS
+
+Creating indexes can speed up the performance of queries.
+While indexes make queries faster, they also make writes slightly slower, and the Couchbase Lite database file slightly larger.
+As such, it is best to only create indexes when you need to optimize a specific case for better query performance.
+
+The following example creates a new index for the `type` and `name` properties.
+
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "Apple Droid"
+}
+----
+
+[source]
+----
+include::{snippet}[tag=query-index,indent=0]
+----
+
+If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.
+
+NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
+Thus, good performance depends on designing and creating the _right_ indexes to go along with your queries.

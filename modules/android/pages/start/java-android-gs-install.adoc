@@ -1,0 +1,124 @@
+= Java Android API Install
+:page-status: {release-status-cbl}
+:page-edition: w-i-p
+:page-layout: article
+:page-content-type: procedural
+:page-roles:
+:page-aliases:
+:description: Couchbase Lite Swift API Reference Document
+:keywords: edge nosql api
+// End of Page Definition Statements
+
+include::shared-mobile::partial$_attributes-shared.adoc[]
+include::ROOT:partial$_attributes-local.adoc[]
+
+// BEGIN:: SET LOCAL ENVIRONMENT ATTRIBUTES
+:snippets: {snippets-content--android}
+:source-language: {lang-name-android}
+:packageNm: couchbase-lite-android
+:url-issues: {url-issues-android}
+:url-api-references: {url-apr-references-android}
+// END:: SET LOCAL ENVIRONMENT ATTRIBUTES
+
+== Getting Started
+
+Create or open an existing Android Studio project and install Couchbase Lite using the following method.
+
+Make the following additions to the module-level `build.gradle` file (typically in the *app* folder).
+
+
+[{tabs}]
+====
+Community::
++
+--
+. Include the following in the `android {}` section:
++
+[source,groovy]
+----
+include::partial$gsBuildGradleAndroid.adoc[tag=compileOptions]
+----
+. Include the following in the `dependencies{}` section:
++
+[source,groovy]
+----
+include::partial$gsBuildGradleAndroid.adoc[tag=dependenciesCE]
+----
+
+--
+Enterprise::
++
+--
+. Include the following in the `android {}` section:
++
+[source,groovy]
+----
+include::partial$gsBuildGradleAndroid.adoc[tag=compileOptions]
+----
+
+
+. Include the following in the `dependencies{}` section:
++
+[source,groovy]
+----
+include::partial$gsBuildGradleAndroid.adoc[tag=dependencies]
+----
++
+. Include the following in the `repositories {}` section:
++
+[source,groovy]
+----
+include::partial$gsBuildGradleAndroid.adoc[tag=repositories]
+----
+--
+====
+
+
+=== Starter code
+
+Open *MainActivity.java* in Android Studio and copy the following code in the `onCreate` method.
+This snippet demonstrates how to run basic CRUD operations, a simple Query and running bi-directional replications with Sync Gateway.
+
+[source, java]
+----
+include::{snippet}[tag=getting-started,indent=0]
+----
+
+Build and run.
+You should see the document ID and property printed to the console.
+The document was successfully persisted to the database.
+
+{xref-pg-sgw-gs-install}
+
+== Supported Versions
+
+The operating systems listed below refer to "Certified" versions of Android.
+We do not test against, nor guarantee support for, uncertified Android versions such as versions built from source.
+
+:msg_component: API 19 and 21
+:msg_action:  Please plan to migrate your apps to use API versions greater than API 21
+:msg_release: 2.6
+
+include::{root-partials}deprecationNotice.adoc[]
+
+[%autowidth.stretch]
+|===
+|Platform |Runtime architectures |Minimum API Level
+
+|Android
+|armeabi-v7a
+|22
+
+|Android
+|arm64-v8a
+|22
+
+|Android
+|x86
+|22
+
+|Android
+|x86_64
+|22
+|===
+

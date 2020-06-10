@@ -1,0 +1,98 @@
+= Database for Java (Android)
+include::ROOT:partial$_attributes-local.adoc[]
+:snippet: ROOT:example$/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java
+:ziputils: ROOT:example$/java-android/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
+:source-language: java
+:version: 2.7.0
+:packageNm: couchbase-lite-android
+:blank-field: ____
+:url-issues-java: https://github.com/couchbase/couchbase-lite-android/issues
+:url-api-references: http://docs.couchbase.com/mobile/{version}/couchbase-lite-android
+
+
+
+
+== Initializer
+Your first step in using the API must be to call its initializer.
+An exception is raised if any other API method is invoked before the  initializer.
+
+[source]
+----
+include::{snippet}[tag=sdk-initializer,indent=0]
+----
+
+== New Database
+As the top-level entity in the API, new databases can be created using the `Database` class by passing in a name, configuration, or both.
+The following example creates a database using the `Database(String name, DatabaseConfiguration config)` method.
+
+[source]
+----
+include::{snippet}[tag=new-database,indent=0]
+----
+
+Just as before, the database will be created in a default location.
+Alternatively, the `Database(string name, DatabaseConfiguration config)` initializer can be used to provide specific options in the {url-api-references}/com/couchbase/lite/DatabaseConfiguration.html[`DatabaseConfiguration`] object such as the database directory.
+
+== Database Encryption
+
+include::ROOT:partial$database-encryption.adoc[]
+
+== Finding a Database File
+
+When the application is running on the Android emulator, you can locate the application's data folder and access the database file by using the *adb* CLI tools.
+For example, to list the different databases on the emulator, you can run the following commands.
+
+[source,bash]
+----
+$ adb shell
+$ su
+$ cd /data/data/{APPLICATION_ID}/files
+$ ls
+----
+
+The *adb pull* command can be used to pull a specific database to your host machine.
+
+[source,bash]
+----
+$ adb root
+$ adb pull /data/data/{APPLICATION_ID}/files/{DATABASE_NAME}.cblite2 .
+----
+
+== CLI tool
+
+include::ROOT:partial$cli-tool.adoc[]
+
+== Logging
+
+If you are using a Couchbase Lite release prior to 2.5 see <<Logging functionality prior to Release 2.5, Deprecated functionality>>
+
+include::ROOT:partial$logging.adoc[leveloffset=+2]
+
+=== Logging functionality prior to Release 2.5
+
+include::ROOT:partial$logging-pre2.5.adoc[]
+
+[source, {source-language}]
+
+----
+include::{snippet}[tags=logging,indent=0]
+----
+
+== Loading a pre-built database
+
+include::ROOT:partial$database-load-prebuilt.adoc[]
+
+If the database does not exist, your application should copy it from the assets folder to the app's files directory.
+
+[source]
+----
+include::{snippet}[tag=prebuilt-database,indent=0]
+----
+
+In the example below, the `ZipUtils.unzip` method copies the zipped pre-built database from the APK's *assets* directory to the *files* directory.
+This method is provided below for reference as it isn't included in the Couchbase Lite library.
+
+[source]
+----
+include::{ziputils}[tag=ziputils-unzip,indent=0]
+----

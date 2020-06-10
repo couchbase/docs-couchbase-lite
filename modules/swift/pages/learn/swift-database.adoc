@@ -1,0 +1,60 @@
+= Database for Swift
+include::partial$_attributes-local.adoc[]
+//:includeroot: include::ROOT:partial$
+:includeModule: include::partial$
+:snippet: ROOT:example$/swift/code-snippets/SampleCodeTest.swift
+:source-language: swift
+:url-issues-ios: https://github.com/couchbase/couchbase-lite-ios/issues
+:url-api-references: http://docs.couchbase.com/mobile/2.7.0/couchbase-lite-swift
+
+== New Database
+
+As the top-level entity in the API, new databases can be created using the `Database` class by passing in a name, configuration, or both.
+The following example creates a database using the `Database(name: String)` method.
+
+[source]
+----
+include::{snippet}[tag=new-database,indent=0]
+----
+
+Just as before, the database will be created in a default location.
+Alternatively, the `Database(name: Strings, config: DatabaseConfiguration?)` initializer can be used to provide specific options in the {url-api-references}/Classes/DatabaseConfiguration.html[`DatabaseConfiguration`] object such as the database directory.
+
+== Database Encryption
+
+include::ROOT:partial$database-encryption.adoc[]
+
+== Finding a Database File
+
+When the application is running on the iOS simulator, you can locate the application's sandbox directory using the https://simpholders.com/3/[SimPholders] utility.
+
+== CLI tool
+
+include::ROOT:partial$cli-tool.adoc[]
+
+== Logging
+
+If you are using a Couchbase Lite release prior to 2.5 see <<Logging functionality prior to Release 2.5, Deprecated functionality>>
+
+include::ROOT:partial$logging.adoc[leveloffset=+2]
+
+=== Logging functionality prior to Release 2.5
+
+include::ROOT:partial$logging-pre2.5.adoc[]
+
+[source, {source-language}]
+
+----
+include::{snippet}[tags=logging,indent=0]
+----
+
+== Loading a pre-built database
+
+include::ROOT:partial$database-load-prebuilt.adoc[]
+
+If the database does not exist, your application should use the {url-api-references}/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC4copyySS8fromPath_SS02toD0AA0D13ConfigurationVSg10withConfigtKFZ[`Database.copy(fromPath:toDatabase:withConfig:)`] method to copy the database from the app bundle.
+
+[source]
+----
+include::{snippet}[tag=prebuilt-database,indent=0]
+----
