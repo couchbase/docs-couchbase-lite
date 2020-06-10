@@ -1,22 +1,52 @@
 = Database for Java (Android)
-include::ROOT:partial$_attributes-local.adoc[]
-:snippet: ROOT:example$/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java
-:ziputils: ROOT:example$/java-android/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
-:source-language: java
-:version: 2.7.0
-:packageNm: couchbase-lite-android
+:page-layout: article
+:page-status: {release-status-cbl} -- {release-comments-cbl}
+:page-edition: Under Development
+:page-role:
+:description: Working with Couchbase Lite Databases
+
+
+include::partial$_std-cbl-hdr-android.adoc[]
+
+// include::shared-mobile::partial$_attributes-shared.adoc[]
+// include::ROOT:partial$_page-index.adoc[]
+// include::ROOT:partial$_glossary-links.adoc[]
+// include::ROOT:partial$_attributes-local.adoc[]
+// include::{lang-mod-android}:partial$_attributes-module.adoc[]
+
+
+// BEGIN::Local page attributes
 :blank-field: ____
-:url-issues-java: https://github.com/couchbase/couchbase-lite-android/issues
-:url-api-references: http://docs.couchbase.com/mobile/{version}/couchbase-lite-android
+:lang-title: {lang-title-android}
+:url-issues-java: {url-github-cbl}{module}/issues
+:ziputils: {snippets-pfx--android}/code_snippets/ZipUtils.java
+
+//:version: 2.7.{snippet}
+//:xref-pfx-sgw: {xref-pfx-sgw}:
+//:ziputils: ROOT:example$/java-android/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
+//:url-api-references: http://docs.couchbase.com/mobile/{version}/couchbase-lite-android
+//:snippet: ROOT:example$/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java
+
+// END::Local page attributes
 
 
+ifndef::release-status-cbl[:release-status-cbl!:]
+ifeval::["{release-status-cbl}" == "gamma"]
+[.pane__frame--orange]
+.Author's Notes
+--
+Add content covering CBL database API concept and use.
+--
+endif::[]
 
+[abstract]
+{description}
 
 == Initializer
 Your first step in using the API must be to call its initializer.
 An exception is raised if any other API method is invoked before the  initializer.
 
-[source]
+[source, {source-language}]
 ----
 include::{snippet}[tag=sdk-initializer,indent=0]
 ----
@@ -25,7 +55,8 @@ include::{snippet}[tag=sdk-initializer,indent=0]
 As the top-level entity in the API, new databases can be created using the `Database` class by passing in a name, configuration, or both.
 The following example creates a database using the `Database(String name, DatabaseConfiguration config)` method.
 
-[source]
+
+[source, {source-language}]
 ----
 include::{snippet}[tag=new-database,indent=0]
 ----
@@ -82,17 +113,14 @@ include::{snippet}[tags=logging,indent=0]
 
 include::ROOT:partial$database-load-prebuilt.adoc[]
 
-If the database does not exist, your application should copy it from the assets folder to the app's files directory.
-
-[source]
-----
-include::{snippet}[tag=prebuilt-database,indent=0]
-----
-
 In the example below, the `ZipUtils.unzip` method copies the zipped pre-built database from the APK's *assets* directory to the *files* directory.
-This method is provided below for reference as it isn't included in the Couchbase Lite library.
 
-[source]
+This method is provided for reference as it isn't included in the Couchbase Lite library.
+
+[source, {source-language}]
 ----
 include::{ziputils}[tag=ziputils-unzip,indent=0]
 ----
+
+include::{root-partials}block-related-content-std.adoc[]
+

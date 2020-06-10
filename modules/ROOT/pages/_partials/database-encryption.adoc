@@ -1,5 +1,14 @@
+.Enterprise Edition only
+IMPORTANT: Database encryption is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+
+The Couchbase Lite 2.1 release includes the ability to encrypt Couchbase Lite databases.
+This allows mobile applications to secure the data at rest, when it is being stored on the device.
+The algorithm used to encrypt the database is 256-bit AES.
+
 To enable encryption, you must set the `DatabaseConfiguration.encryptionKey` property with the encryption key of your choice.
 The encryption key is then required every time the database is opened.
+
+&&{snippet}
 
 [source]
 ----
@@ -9,7 +18,7 @@ include::{snippet}[tag=database-encryption,indent=0]
 Couchbase Lite does not persist the key.
 It is the application's responsibility to manage the key and store it in a platform specific secure store such as Apple's https://developer.apple.com/documentation/security/keychain_services[Keychain] or Android's https://developer.android.com/training/articles/keystore[Keystore].
 
-An encrypted database can only be opened with the same language SDK that was used to encrypt it in the first place (Swift, C#, Java or Objective-C).
+An encrypted database can only be opened with the same language SDK that was used to encrypt it in the first place (Swift, C#, Java, Java (Android) or Objective-C).
 For example, if a database is encrypted with the Swift SDK and then exported, it will only be readable with the Swift SDK.
 
 ==== Upgrading from 1.x when Encryption is Enabled

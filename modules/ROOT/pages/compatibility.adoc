@@ -1,6 +1,6 @@
 = Compatibility
-:page-status: {release-status-cbl}
-:page-edition: w-i-p
+:page-status: {release-status-cbl} -- {release-comments-cbl}
+:page-edition: Under Development
 :page-layout: article
 :page-content-type: procedural
 :page-roles:
@@ -9,16 +9,27 @@
 :keywords: edge nosql performant compatibility mobile replication
 // End of Page Definition Statements
 
-include::shared-mobile::partial$_attributes-shared.adoc[]
-include::ROOT:partial$_attributes-local.adoc[]
+include::{param-module}::partial$_std-cbl-hdr-{param-module}.adoc[]
 
-// BEGIN:: SET LOCAL ENVIRONMENT ATTRIBUTES
-:snippets: {snippets-content--swift}
-:source-language: {lang-name-swift}
-:packageNm: couchbase-lite-swift
-:url-issues: {url-issues-swift}
-:url-api-references: {url-apr-references-swift}
-// END:: SET LOCAL ENVIRONMENT ATTRIBUTES
+ifndef::release-status-cbl[:release-status-cbl!:]
+ifeval::["{release-status-cbl}" == "gamma"]
+[.pane__frame--orange]
+.Author's Notes
+--
+Add content covering CBL compatibility
+
+* DOC-6537 H2-Comp: CBL - Update compatibility matrix
+https://issues.couchbase.com/browse/DOC-6537
+
+Update this matrix. Find attached .adoc with new matrix and screenshot of what it generatescompatibility_matrix_hydrogen.adoc
+
+SOURCE: https://issues.couchbase.com/secure/attachment/89196/89196_compatibility_matrix_hydrogen.adoc
++
+See: {xref-cbl-pg-replication} and {xref-cbl-pg-supportnotes}
+
+--
+endif::[]
+
 == Operating System SDK Support
 
 The table below summarizes the Operating System SDK versions supported by Couchbase Lite.

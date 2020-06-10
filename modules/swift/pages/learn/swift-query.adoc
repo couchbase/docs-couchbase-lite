@@ -1,8 +1,26 @@
 = Querying Couchbase Lite Databases
-:page-status: beta
-:page-type: article
+:page-layout: article
+:page-status: {release-status-cbl} -- {release-comments-cbl}
+:page-edition: Under Development
+:page-role:
 
-include::partial$_attributes-local.adoc[]
+include::shared-mobile::partial$_attributes-shared.adoc[]
+include::ROOT:partial$_page-index.adoc[]
+include::ROOT:partial$_glossary-links.adoc[]
+include::ROOT:partial$_attributes-local.adoc[]
+include::{lang-mod-swift}:partial$_attributes-module.adoc[]
+
+// BEGIN::Local page attributes
+:blank-field: ____
+:lang-title: {lang-title-swift}
+:module: {lang-mod-swift}
+:packageNm: couchbase-lite-{module}
+:source-language: {lang-name-swift}
+:snippet: {snippets-content--swift}
+:url-issues-java: {url-github-cbl}{module}/issues
+:ziputils: {snippets-pfx--swift}/code_snippets/ZipUtils.java
+
+== Query Format
 
 Database queries have changed significantly.
 Instead of the map/reduce views used in 1.x, they're now based on expressions, of the form "return {blank-field} from documents where {blank-field}, ordered by {blank-field}", with semantics based on Couchbase's N1QL query language.
@@ -83,9 +101,9 @@ Similar to SQL, you can use the where clause to filter the documents to be retur
 The select statement takes in an `Expression`.
 You can chain any number of Expressions in order to implement sophisticated filtering capabilities.
 
-=== Comparison
+== Comparison
 
-The {url-api-references}/com/couchbase/lite/Expression.html[comparison operators] can be used in the WHERE statement to specify on which property to match documents.
+The {url-api-references}/Classes/Expression.html#/Comparison%20Operators[comparison operators] can be used in the WHERE statement to specify on which property to match documents.
 In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
 
 [source,json]

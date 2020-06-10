@@ -3,6 +3,8 @@ ifndef::url-cb-blog[]
 include::mobAttrCBL.adoc[]
 endif::url-cb-blog[]
 
+== Causes of Conflicts
+
 Document conflicts can occur if multiple changes are made to the same version of a document by multiple peers in a distributed system. For Couchbase Mobile, this can be a Couchbase Lite or Sync Gateway database instance.
 
 Such conflicts can occur after either of the following events:
@@ -18,13 +20,13 @@ The following sections discuss each scenario in more detail.
 .Dive deeper ...
 Read more about link:{url-cb-blog}/document-conflicts-couchbase-mobile[Document Conflicts and Automatic Conflict Resolution in Couchbase Mobile] on {nmCbBlogLink}.
 
-=== Case 1: Conflicts when a replication is in progress
+== Conflicts when Replicating
 
 There's no practical way to prevent a conflict when incompatible changes to a document are be made in multiple instances of an app.
 The conflict is realized only when replication propagates the incompatible changes to each other.
 anchor:bmkRepConScene[A typical replication conflict scenario]
 
-.A typical replication conflict scenario:
+.A typical cause of replication conflicts:
 ====
 . Molly uses her device to create _DocumentA_.
 . Replication syncs _DocumentA_ to Naomi's device.
@@ -37,7 +39,8 @@ This device already has _ChangeX_ putting the local document in conflict.
 +
 This device already has _ChangeY_ and now Naomi's local document is in conflict.
 ====
-==== Automatic Conflict Resolution
+
+=== Automatic Conflict Resolution
 
 NOTE: These rules apply only to conflicts arising from replication.
 
@@ -56,7 +59,7 @@ The result is saved internally by the Couchbase Lite replicator.
 Those rules describe the internal behavior of the replicator.
 For additional control over the handling of conflicts, including when a replication is in progress, see <<Custom Conflict Resolution>>.
 
-==== Custom Conflict Resolution
+=== Custom Conflict Resolution
 
 Starting in Couchbase Lite 2.6, application developers who want more control over how document conflicts are handled can use custom logic to select the winner between conflicting revisions of a document.
 
@@ -69,7 +72,7 @@ To implement custom conflict resolution during replication, you must implement t
 . <<conflict-resolver,Conflict Resolver>>
 . <<configure-the-replicator,Configure the Replicator>>
 
-===== Conflict Resolver
+=== Conflict Resolver
 
 Apps have the following strategies for resolving conflicts:
 
@@ -109,53 +112,62 @@ include::{snippet}[tag=merge-conflict-resolver,indent=0]
 
 When a null document is returned by the resolver, the conflict will be resolved as a document deletion.
 
-===== Important Guidelines and Best Practices
+=== Important Guidelines and Best Practices
 
-There are some important points to be noted:
 
-. If you have multiple replicators, it is recommended that instead of distinct resolvers, you should use a unified conflict resolver across all replicators.
+.Points of Note:
+* If you have multiple replicators, it is recommended that instead of distinct resolvers, you should use a unified conflict resolver across all replicators.
 Failure to do so could potentially lead to data loss under exception cases or if the app is terminated (by the user or an app crash) while there are pending conflicts.
-. If the document ID of the document returned by the resolver does not correspond to the document that is in conflict then the replicator will log a warning message.
+* If the document ID of the document returned by the resolver does not correspond to the document that is in conflict then the replicator will log a warning message.
 +
 IMPORTANT: Developers are encouraged to review the warnings and fix the resolver to return a valid document ID.
-. If a document from a different database is returned, the replicator will treat it as an error.
+
+* If a document from a different database is returned, the replicator will treat it as an error.
 A <<replication-events,document replication event>> will be posted with an error and an error message will be logged.
 +
 IMPORTANT: Apps are encouraged to observe such errors and take appropriate measures to fix the resolver function.
-. When the replicator is stopped, the system will attempt to resolve outstanding and pending conflicts before stopping.
+
+* When the replicator is stopped, the system will attempt to resolve outstanding and pending conflicts before stopping.
 Hence apps should expect to see some delay when attempting to stop the replicator depending on the number of outstanding documents in the replication queue and the complexity of the resolver function.
-. If there is an exception thrown in the `resolve()` method, the exception will be caught and handled:
-.. The conflict to resolve will be skipped.
+* If there is an exception thrown in the `resolve()` method, the exception will be caught and handled:
+** The conflict to resolve will be skipped.
 // TODO: regarding the following point, does that mean the replicator is stopped when an exception is thrown?
 The pending conflicted documents will be resolved when the replicator is restarted.
-.. The exception will be reported in the warning logs.
-.. The exception will be reported in the <<replication-events,document replication event>>.
+** The exception will be reported in the warning logs.
+** The exception will be reported in the <<replication-events,document replication event>>.
 +
 IMPORTANT: While the system will handle exceptions in the manner specified above, it is strongly encouraged for the resolver function to catch exceptions and handle them in a way appropriate to their needs.
 
-===== Configure the Replicator
+=== Configure the Replicator
 
 The implemented custom conflict resolver can be registered on the replicator configuration object.
 The default value of the conflictResolver is `null`.
 When the value is `null`, the default conflict resolution will be applied.
 
+.A Conflict Resolver
+====
 [source]
 ----
 include::{snippet}[tag=replication-conflict-resolver,indent=0]
 ----
+====
 
-
-=== Case 2: Conflicts when saving a document
+== Conflicts when Updating
 
 When updating a document, you need to consider the possibility of update conflicts.
 Update conflicts can occur when you try to update a document that’s been updated since you read it.
+
+
+.How Updating May Cause Conflicts
+====
 Here's a typical sequence of events that would create an update conflict:
 
 . Your code reads the document's current properties, and constructs a modified copy to save.
 . Another thread (perhaps the replicator) updates the document, creating a new revision with different properties.
 . Your code updates the document with its modified properties, for example using `db.save( mutableDocumentName)`.
+====
 
-==== Automatic Conflict Resolution
+=== Automatic Conflict Resolution
 
 In Couchbase Lite 2.0, by default, the conflict is automatically resolved and only one document update is stored in the database.
 The Last-Write-Win (LWW) algorithm is used to pick the winning update.
@@ -163,22 +175,32 @@ So in effect, the changes from step 2 would be overwritten and lost.
 
 If the probability of update conflicts is high in your app and you wish to avoid the possibility of overwritten data, the `save` and `delete` APIs provide additional method signatures with concurrency control:
 
-* `save(document: MutableDocument, concurrencyControl: ConcurrencyControl)`: attempts to save the document with a concurrency control.
+.Currency Control Signatures
+====
+Save operations::
+`save(document: MutableDocument, concurrencyControl: ConcurrencyControl)`: attempts to save the document with a concurrency control.
++
 The concurrency control parameter has two possible values:
-** `lastWriteWins` (default): The last operation wins if there is a conflict.
-** `failOnConflict`: The operation will fail if there is a conflict.
+
+* `lastWriteWins` (default): The last operation wins if there is a conflict.
+* `failOnConflict`: The operation will fail if there is a conflict.
++
 In this case, the app can detect the error that is being thrown, and handle it by re-reading the document, making the necessary conflict resolution, then trying again.
 
-Similarly to the save operation, the delete operation also has two method signatures to specify how to handle a possible conflict:
+Delete operations::
+As with save operations, delete operation also have two method signatures, which specify how to handle a possible conflict:
 
 * `delete(document: Document)`: The last write will win if there is a conflict.
 * `delete(document: Document, concurrencyControl: ConcurrencyControl)`: attempts to delete the document with a concurrency control.
+
++
 The concurrency control parameter has two possible values:
 ** `lastWriteWins` (default): The last operation wins if there is a conflict.
 ** `failOnConflict`: The operation will fail if there is a conflict.
 In this case, the app can detect the error that is being thrown, and handle it by re-reading the document, making the necessary conflict resolution, then trying again.
+====
 
-==== Custom Conflict Resolution
+=== Custom Conflict Resolution
 
 Starting in Couchbase Lite 2.6, we allow developers to hook a conflict handler when saving a document so that developers can easily handle the conflict in a single save method call.
 
@@ -187,16 +209,18 @@ To implement custom conflict resolution when saving a document, apps must call t
 The following code snippet shows an example of merging properties from the existing document (`current`) into the one being saved (`new`).
 In the event of conflicting keys, it will pick the key value from `new`.
 
+.Merging Document Properties
+====
 [source]
 ----
 include::{snippet}[tag=update-document-with-conflict-handler,indent=0]
 ----
+====
 
-Important points to be noted:
-
-. Within the conflict handler, you can modify the `document` parameter which is the same instance of `Document` that is passed to the `save()` method.
+.Points of Note:
+* Within the conflict handlefr, you can modify the `document` parameter which is the same instance of `Document` that is passed to the `save()` method.
 So in effect, you will be directly modifying the document that is being saved.
-. When handling is done, the method must return `true`.
-. If the handler could not resolve the conflict, it can return `false`.
+* When handling is done, the method must return `true`.
+* If the handler could not resolve the conflict, it can return `false`.
 In this case, the save method will cancel the save operation and return `false` the same way as using the `save()` method with the `failOnConflict` concurrency control.
-. If there is an exception thrown in the `handle()` method, the exception will be caught and rethrown in the `save()` method.
+* If there is an exception thrown in the `handle()` method, the exception will be caught and rethrown in the `save()` method.
