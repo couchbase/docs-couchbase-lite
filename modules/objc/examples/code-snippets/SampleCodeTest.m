@@ -53,6 +53,11 @@
 @end
 // end::predictive-model[]
 
+// to avoid link error
+@implementation myMLModel
++ (NSDictionary*)predictImage: (NSData*)data { return [NSDictionary dictionary]; }
+@end
+
 // tag::custom-logging[]
 @interface LogTestLogger : NSObject<CBLLogger>
 
@@ -1017,6 +1022,46 @@
            }
                      error: &error];
     // end::update-document-with-conflict-handler[]
+}
+
+- (BOOL) isValidCredentials: (NSString*)u password: (NSString*)p { return YES; } // helper
+- (void) dontTestInitListener {
+    CBLDatabase *database = self.db;
+    CBLURLEndpointListener* listener = nil;
+    
+    // tag::init-urllistener[]
+    CBLURLEndpointListenerConfiguration* config;
+    config = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: database];
+    config.tlsIdentity = nil; // Use with anonymous self signed cert
+    config.authenticator = [[CBLListenerPasswordAuthenticator alloc] initWithBlock: ^BOOL(NSString * username, NSString * password) {
+        if ([self isValidCredentials: username password:password]) {
+            return  YES;
+        }
+        return NO;
+    }];
+    
+    listener = [[CBLURLEndpointListener alloc] initWithConfig: config];
+    // tag::init-urllistener[]
+}
+
+- (void) dontTestListenerStart {
+    NSError* error = nil;
+    CBLURLEndpointListener* listener = nil;
+    
+    // tag::start-urllistener[]
+    BOOL success = [listener startWithError: &error];
+    if (!success) {
+        NSLog(@"Cannot start the listener: %@", error);
+    }
+    // tag::start-urllistener[]
+}
+
+- (void) dontTestListenerStop {
+    CBLURLEndpointListener* listener = nil;
+    
+    // tag::stop-urllistener[]
+    [listener stop];
+    // tag::stop-urllistener[]
 }
 
 @end
