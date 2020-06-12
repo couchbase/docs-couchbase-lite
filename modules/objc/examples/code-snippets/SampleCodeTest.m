@@ -53,6 +53,11 @@
 @end
 // end::predictive-model[]
 
+// to avoid link error
+@implementation myMLModel
++ (NSDictionary*)predictImage: (NSData*)data { return [NSDictionary dictionary]; }
+@end
+
 // tag::custom-logging[]
 @interface LogTestLogger : NSObject<CBLLogger>
 
