@@ -1,0 +1,263 @@
+//= Using Peer-to-Peer Sync (websockets)
+//:page-layout: article
+//:page-status: {release-status-cbl} -- {release-comments-cbl}
+//:page-edition: Enterprise
+//:page-role:
+//
+//include::partial$_std-cbl-hdr-{param-module}.adoc[]
+//
+// BEGIN::Local page attributes
+//
+//:url-issues-java: {url-github-cbl}{module}/issues
+//:ziputils: {snippets-pfx--android}/code_snippets/ZipUtils.java
+//
+
+[abstract]
+--
+{description}
+{param-abstract}
+--
+
+ifndef::release-status-cbl[:release-status-cbl!:]
+ifeval::["{release-status-cbl}" == "gamma"]
+[.pane__frame--orange]
+.Author's Notes
+--
+
+DOC-6340-H2-P2P: New topic - Implementing P2P Sync
+https://issues.couchbase.com/browse/DOC-6340
+
+This is the how-to for P2P snc using websockets
+--
+endif::[]
+
+== Overview
+
+ifeval::["{page-edition}"=="{enterprise}"]
+.Enterprise Edition only
+IMPORTANT: Peer-to-peer sync is an {url-enterprise} feature.
+You must purchase the Enterprise License which includes official {url-support-policy} to use it in production (also see the {url-license-and-supp-faq}).
+endif::[]
+
+This content provides sample code covering the implementation of peer-to-peer sync over websockets. Specifically it covers the implementation of a passive peer listener, that will accept and apply database changes replicated by a connected active peer.
+
+=== Discovery
+Optional, but typical step.
+
+Pior to initiating the listener you may execute the peer discovery phase.
+For the passive peer this involves advertising the device using, for example _Bonjour_, and waiting for an invite.
+The connection is established once the passive peer has authenticated and accepted an active peer's invitation.
+
+//[#pass-initialize]
+//====
+// include::{snippet-p2psync-ws}[tags="startWebsocketsListener"]
+//[source, {source-language}]
+//----
+//include::{snippet-p2psync-ws}[tags="listener-config"]
+//----
+//====
+
+=== Initialization
+
+You will need to configure the listener. The example below shows a simple configuration. The subsequent sections show additional configuration options with examples. You do not need to provide configuration values for all properties, only those necessary to meet the requirements of your sync process.
+
+[#simple-listener-initialization]
+.Simple Listener Initialization
+====
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="listener-initialize", indent=0]
+----
+
+<1> <<configure-listener>>
+<2> <<configure-tls-authentication>>
+<3> <<configure-client-authentication>>
+<4> <<configure-delta-sync>>
+<5> Initialize the listener using the configuration settings
+<6> Start the listener
+<7> <<conflict-resolution>>
+====
+
+== Configure Listener
+
+Use a combination of the two `URLEndointListenerConfiguration` constructors (below) to set the <<Database>>, <<Port>> and <<network-interface,IP>> to be used.
+
+* `public init(database: Database)`
+* `init(config:)`
+
+
+=== Database
+API Reference: {url-api-reference-urlendpointconfiguration-initdb}
+
+Using the `init(database)` constructor, as in <<simple-listener-initialization>> this example, will initialize the configuration paramaters with details of the local database endpoint.
+All other configuration values will take their default setting.
+
+NOTE: Database is read-only, and can only be set using this constructor.
+
+Default::
+none
+Example::
+See callout 1 in <<simple-listener-initialization>>
+API Reference::
+{url-api-reference-urlendpointconfiguration-initdb} |
+{url-api-reference-urlendpointconfiguration-database}
+
+=== Port
+
+Use this configuration parameter to specify the port that the listener will listen to.
+If this is null or zero, the port is auto-assigned.
+
+Default::
+Null or zero depending on platform.
+Example::
+{empty}
++
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="listener-config-port", indent=0]
+----
+API::
+{url-api-reference-urlendpointconfiguration-port}
+
+=== Network Interface
+
+Use this configuration parameter to specify the network interface the listener is to listen on.
+Specify either an IP Address or network interface name such as `en0`
+
+Default:: nil -- the listener will listen to all network interfaces
+Example::
+{empty}
++
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="listener-config-netw-iface", indent=0]
+----
+API::
+{url-api-reference-urlendpointconfiguration-netwk-iface}
+
+
+== Configure TLS Authentication
+
+=== Enable or Disable TLS
+
+include::{root-partials}p2p-api.adoc[tag=config-disable-tls]
+
+Default::
+include::{root-partials}p2p-api.adoc[tag=config-disable-tls-default]
+Example::
+{empty}
++
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="listener-config-disable-tls", indent=0]
+----
+
+API::
+{url-api-reference-urlendpointconfiguration-disable-tls}
+
+=== Set TLS Identity
+
+include::{root-partials}p2p-api.adoc[tag=config-tls-id]
+
+Default::
+include::{root-partials}p2p-api.adoc[tag=config-tls-id-default]
+Example::
+{empty}
++
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="listener-config-tls-id", indent=0]
+----
+API::
+{url-api-reference-urlendpointconfiguration-tls-id}
+
+Related-items::
+{url-api-reference-tlsidentity}
+
+== Configure Client Authentication
+
+include::{root-partials}p2p-api.adoc[tag=config-auth]
+
+=== Authenticating with User Name and Password
+
+include::{root-partials}p2p-api.adoc[tag=ListenerPasswordAuthenticator]
+
+include::{root-partials}p2p-api.adoc[tag=ListenerPasswordAuthenticatorDelegate]
+
+=== Authenticating with Certificate
+
+include::{root-partials}p2p-api.adoc[tag=ListenerCertificateAuthenticator]
+
+==== Using Root CA Certicicate Chains
+
+include::{root-partials}p2p-api.adoc[tag=ListenerCertificateAuthenticator-root]
+
+==== Using Application Logic
+
+include::{root-partials}p2p-api.adoc[tag=ListenerCertificateAuthenticatorDelegate]
+
+Default::
+N/A
+Example::
+As shown above.
+API::
+{url-api-reference-urlendpointconfiguration-auth}
+
+== Configure Delta Sync
+
+Use the `enableDeltaSync` property to activate or deactivate delta sync mode.
+
+Default::
+False - that is delta sync is deactivated.
+Example::
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="listener-config-delta-sync", indent=0]
+----
+API::
+{url-api-reference-urlendpointconfiguration-delta-sync}
+
+== Configure Conflict Resolver
+
+The listener returns a 409 response on detecting a conflict.
+All conflicts are reolved on the active peer, which supports both  automatic and custom conflict resolution.
+
+// [source, {source-language}]
+// ----
+// include::{snippet-p2psync-ws}[tags="listener-pv-cfg-conflict", indent=0]
+// ----
+
+//[#pass-start]
+== Start Listener
+
+Once you have configured the listener, you can start listening, ready to accept incoming data from active peers.
+//====
+// include::{snippet-p2psync-ws}[tags="initWebsocketsListener"]
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="listener-start", indent=0]
+----
+//====
+
+== Checking the Status
+
+You can use the `status` property of the listener to check on the number of total and active connections.
+The object returned is of type `ConnecionStatus` and comprises:
+
+* ConnectionCount -- the total number of connections served by the listener
+* activeConnectionCount -- the number of active (BUSY) connections currently being served by the listener
+
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="listener-status-check", indent=0]
+----
+
+== Stop the Listener
+//====
+// include::{snippet-p2psync-ws}[tags="stopWebsocketsListener"]config
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="listener-stop"]
+----
+
+

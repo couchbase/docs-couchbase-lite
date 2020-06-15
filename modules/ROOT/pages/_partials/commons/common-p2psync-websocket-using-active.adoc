@@ -1,0 +1,196 @@
+//= Using Peer-to-Peer Sync (websockets)
+//:page-layout: article
+//:page-status: {release-status-cbl} -- {release-comments-cbl}
+//:page-edition: Enterprise
+//:page-role:
+//
+//include::partial$_std-cbl-hdr-{param-module}.adoc[]
+//
+// BEGIN::Local page attributes
+//
+//:url-issues-java: {url-github-cbl}{module}/issues
+//:ziputils: {snippets-pfx--android}/code_snippets/ZipUtils.java
+//
+
+[abstract]
+--
+{description}
+{param-abstract}
+--
+
+ifndef::release-status-cbl[:release-status-cbl!:]
+ifeval::["{release-status-cbl}" == "gamma"]
+[.pane__frame--orange]
+.Author's Notes
+--
+
+DOC-6340-H2-P2P: New topic - Implementing P2P Sync
+https://issues.couchbase.com/browse/DOC-6340
+
+This is the how-to for P2P snc using websockets
+--
+endif::[]
+
+== Overview
+
+ifeval::["{page-edition}"=="{enterprise}"]
+.Enterprise Edition only
+IMPORTANT: Peer-to-peer sync is an {url-enterprise} feature.
+You must purchase the Enterprise License which includes official {url-support-policy} to use it in production (also see the {url-license-and-supp-faq}).
+endif::[]
+
+This content provides sample code covering the implementation of peer-to-peer sync over websockets. Specifically it covers the implementation of an active peer listener, that will sync database changes with a connected passive peer.
+
+For the overall workflow see: *add link here*
+
+== Discovery
+Pior to initiating the listener you must have executed the peer discovery phase.
+
+For the active peer discovery involves browsing for an available peer device using, for example _Bonjour_.
+Once found the active peer can initiate connection by inviting the passive peer to connect. Once the invite is accepted, the connection is established and the active peer can initiate replication (pull, push-pull or push) .
+
+.Key Steps
+* Discovery -- Identify and select remote peer (Bonjour)
+* Authentication -- Authenticate remote peer
+* Connection -- Initialize and Start the Replication
+* Replication -- Run the replication
+* Disconnection -- Stop replication and listener
+
+// image::ROOT:replication.svg[,800]
+
+== Authentication
+//====
+
+You set the required authentication method in the configuration using `ListenerPasswordAuthenticator` or `ListenerCertificateAuthenticator`.
+
+[{tabs}]
+====
+
+Username/Password::
++
+--
+This snippet uses a closure to verify if the given credentials match any on a stored allow-list.
+
+TLS -- Self-signed::
++
+--
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="listener-auth-tls-self-signed"]
+----
+--
+
+Cert (root)::
++
+--
+This snippet seeds the Certificate Authenticator with a list of the root certificates to trust when verifying client.
+
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="listener-auth-tls-CCA-Root-full", indent=0]
+----
+--
+
+Certs (auth)::
++
+--
+This snippet seeds the Certificate Authenticator with a closure to verify client certificates.
+
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="listener-auth-tls-ca-cert", indent=0]
+----
+--
+====
+
+// Anonymous::
+// +
+// --
+// [source, {source-language}, indent=0]
+// ----
+// include::{snippet-p2psync-ws}[tags="listener-auth-tls-anon", // indent=0]
+// ----
+// --
+====
+
+== Replication Config
+
+=== Configure the Replication Target:
+
+** The database to be sync'd
+** The remote peer's endpoint using `URLEndPoint` and the passive peer's URL as returned fron the discovery phase. You need to append the target database name to the url.
+
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="replicator-start-func-config-init", indent=0]
+----
+
+=== Configure the Replication Mode:
+
+** Set  `replicatorType` = pushAndPull
+** Sets `continuous` = true
+
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="replicator-start-func-config-more", indent=0]
+----
+
+=== Configure the Authentication Mode
+
+** Set the authentication mode, for example 'self signed certificate'
+** Set the authenticator, for example `BasicAuthenticator` and provides the current users credentials
+
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="replicator-start-func-config-auth", indent=0]
+----
+
+== Initiate Replication
+
+=== Initialize the Replication
+
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="replicator-start-func-repl-init", indent=0]
+----
+
+=== Monitor Replication Changes
+
+Add a change listener as a callback to the Replicator.
+You will then be asynchronously notified of state changes.
+Use this to monitor changes and to inform on sync progress, as shown below; this is an optional step.
+
+//====
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="replicator-register-for-events", indent=0]
+----
+
+=== Start the Replicator
+In this snippet the functionality described <<registering-a-change-listener, above>> is delivered by the `registerForEventsForReplicator` function.
+
+//====
+
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="replicator-start-func-repl-start", indent=0]
+----
+
+== Disconnection
+
+[#act-stop]
+.Stop the Listener
+//====
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="listener-stop", indent=0]
+----
+
+== Using TLSIdentity
+
+Use the `TLSIdentity` API to manage TLS identity data, including for example the X.509 certificate chain ued to configure TLS coomunication to the listener.
+
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="replicator-start-func-repl-start", indent=0]
+----
