@@ -1,0 +1,246 @@
+// = P2P Sync Using WebsocketEndpointListener
+// :page-layout: article
+// :page-status: {release-status-cbl} -- {release-comments-cbl}
+// :page-edition: Under Development
+// :page-role:
+// :description: Couchbase mobile database queries - concepts
+//
+// include::partial$_std-cbl-hdr-android.adoc[]
+[abstract]
+--
+{description}
+{param-abstract}
+--
+
+ifndef::release-status-cbl[:release-status-cbl!:]
+ifeval::["{release-status-cbl}" == "gamma"]
+[.pane__frame--orange]
+.Author's Notes
+--
+
+DOC-6892-H2-P2P: New topic - WebsockedtEndpointListener and P2P Sync
+https://issues.couchbase.com/browse/DOC-6892
+
+Add content covering CBL websocketlistener
+
+Sources:
+* reqs https://docs.google.com/document/d/1o1Dol-g6_D5Stf0IrgY_yxr0kO6AYVJFGOgGjoh6Q6c/edit?ts=5e5fe7da#
+* design https://docs.google.com/document/d/1R2Vd5Iei1OLJvU4QJ-zE6FED8VH-nr2Q9PyjbjwVW48/edit#heading=h.ayhq9efeewhi
+
+This will be  full description of the websocketendpointlistener including:
+
+* Overview and feature description
+* API
+* Workflow - operational sequence for normal P2P sync ops
+* Example code for simple sync ops
+* Constraints
+
+The content may ultimately be split up as needed.
+
+Topic to include from requirements:
+
+* If user-defined port is not specified, the system will automatically select a port to use. -- https://docs.google.com/document/d/1o1Dol-g6_D5Stf0IrgY_yxr0kO6AYVJFGOgGjoh6Q6c/edit#bookmark=id.s5y61p8gawi1
+--
+endif::[]
+
+==  Overview
+
+Couchbase Lite provides out-of-the-box {glos-term-peer-to-peer-sync}, over websockets, between Couchbase Lite enabled clients in IP-based networks.
+
+Using this _WebsocketEndpointListener_ developers can implement peer-to-peer replication without navigating the compexity of the _MessageEndpoint_ API, which can often be a barrier.
+The _WebsocketEndpointListener_ listens for incoming websocket connections on a user-defined, or auto-selected, port.
+
+== Features
+
+The listener features comprise:
+--
+* Capable of serving one couchbase lite databases per listener.
+** Instantiated by client, each instance for different db. no limit on instances (ex. practical limit).
+** If user-defined port is not specified, the system will automatically select a port to use.
+** The API allows users to get the current port of the listener.
+** The API CAN return the list of URL(s) endpoint of listener. The URL must include the listener port as well as the serving database.
+
+* Support for encryption and authentication over TLS with multiple modes comprising:
+** Anonymous
++
+Auto-generated anonymous TLS Identity if the TLS Identity is not specified.
+This provides encryption but *not* authentication.
+** Certificate
++
+Self-signed or Client Certificate Authentication (CA signed).
+** Not-enabled, that-is, plain text.
+* Support for basic authentication.
+* Delta Sync Support.
+* Built-in network resiliency with retries.
+* Built-in conflict resolution support (automatic and custom).
+--
+
+== Main API components
+
+URLEndpointListener::
+The `URLEndpointListener` is the Peer-to-Peer listener for replication. It acts like a passive replicator, in the same way that Sync Gateway does.
++
+Core functionalities of the listener are:
++
+* Users can initialize the class using a _URLEndpointListenerConfiguration_ object.
+* The listener can be started, or can be stopped.
+* Once the listener is started, a total number of connections or active connections can be checked.
+
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="listener"]
+----
+
+URLEndpointListenerConfiguration::
+A configuration class used for creating a _URLEndpointListener_ object.
+The property setters should be made fluent API if the platform allows.
+
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="listener-config"]
+----
+
+// public class URLEndpointListenerConfiguration {
+//     // Properties
+//     public let database: Database
+//     public var port: UInt16?
+//     public var networkInterface: String?
+//     public var disableTLS: Bool
+//     public var tlsIdentity: TLSIdentity?
+//     public var authenticator: ListenerAuthenticator?
+//     public var enableDeltaSync: Bool
+//
+//     // Constructors
+//     public init(database: Database)
+//     public init(config: URLEndpointListenerConfiguration)
+// }
+// ----
+//
+
+TLSIdentity::
+TLSIdentity represents the identity information (Key pair and Certificates) used for setting up TLS Communication. The TLSIdentity API would be different among between platforms. The following API is based on the Apple Platform.
+
+Initialize::
+Use `URLEndpointListenerConfiguration` to set the required listener configuration, specifically:
++
+* database
+* tls status and identity
+* delta_sync status
+
++
+Use `URLEndpointListener` to instantiate the _WebsocketEndpointListener_ using the _URLEndpointListenerConfiguration_ configuration values in the constructor.
+
+Start::
+Use `URLEndpointListener.start` method to start the listener
+
+Assuming no error is returned the listener is operational.
+
+Initialize Replication::
+Use `ReplicatorConfiguration.init` to provide:
++
+* db
+* URLEndpoint.init(target url)
+
+
+== Typical Workflow
+
+The typical workflow will vary, depending on whether the client is acting as an {glos-term-active-peer} or {glos-term-passive-peer}.
+
+.[Using CBL's Websockets Listener -- *needs refactor to std diagram format*]
+image::ROOT:p2psync-websocket-workflow.svg[,800]
+
+// * Discovery
+// * Connection
+// * Peer setup/Config
+// * Replicator setup
+// * Replication
+// * Disconnection
+
+[#act-peer]
+== Active Peer Workflow
+
+<<act-discovery>> | <<act-connect>> | <<act-config>> | <<act-rep-setup>> | <<act-replication>> | <<act-disconnect>>
+
+
+[#act-discovery]
+=== Discovery
+
+Automatic Device Discovery is out of scope for release.
+
+Back to <<act-peer>>
+
+
+[#act-connect]
+=== Connection
+
+Back to <<act-peer>>
+
+[#act-config]
+=== Peer setup/Config
+
+Back to <<act-peer>>
+
+[#act-rep-setup]
+=== Replicator setup
+
+
+Back to <<act-peer>>
+
+[#act-replication]
+=== Replication
+
+Back to <<act-peer>>
+
+[#act-disconnect]
+=== Disconnection
+
+Back to <<act-peer>>
+
+[#pass-peer]
+== Passive Peer Workflow
+
+<<pass-discovery>> | <<pass-connect>> | <<pass-config>> | <<pass-rep-setup>> | <<pass-replication>> | <<pass-disconnect>>
+
+
+[#pass-discovery]
+=== Discovery
+
+Automatic Device Discovery is out of scope for release.
+
+Back to <<pass-peer>>
+
+
+[#pass-connect]
+=== Connection
+
+Back to <<pass-peer>>
+
+[#pass-config]
+=== Peer setup/Config
+
+Back to <<pass-peer>>
+
+[#pass-rep-setup]
+=== Replicator setup
+
+
+Back to <<pass-peer>>
+
+[#pass-replication]
+=== Replication
+
+Back to <<pass-peer>>
+
+[#pass-disconnect]
+=== Disconnection
+
+Back to <<pass-peer>>
+
+== Conflict handling
+
+
+== Constraints
+* Sizing - eg num websocket endponi listeners
+** The scalability of the sync must only be limited by OS-level factors like number of open socket descriptions, volume of mutations getting synced .
+* We must provide some guidance on the sizing factors that will determine the number of supported clients. This is probably the most commonly asked question when it comes to p2p support. Alternatives like MPC specify the same.
+Context: This has been one of the reasons why off-the-shelf solutions haven’t worked requiring custom implementation
