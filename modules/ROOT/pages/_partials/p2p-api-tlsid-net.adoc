@@ -1,0 +1,174 @@
+
+<<URLEndpointListener-class>> |
+<<URLEndpointListener-props>> |
+<<URLEndpointListener-constructors>> |
+<<URLEndpointListener-methods>>
+
+TLSIdentity represents the identity information (Key pair and Certificates) used for setting up TLS Communication.
+The TLSIdentity API differs from platform-to-platform.
+This API is based on the {param-platform} platform.
+
+[#tlsidentity-class]
+.Class Definition
+
+[source, {source-language}]
+----
+public class TLSIdentity {
+  // Properties
+  public class TLSIdentity {
+  public let certs: Array<SecCertificate>
+  public let expiration: Date
+  //
+  // Methods
+  public static func getIdentity(label: String) throws ->TLSIdentity?
+  public static func getIdentity(identity: SecIdentity) throws ->   TLSIdentity
+  public static func createIdentity(isServer: Bool, attributes:   Dictionary<String, String>, expiration: Date?, label: String)   throws -> TLSIdentity
+  public static func importIdentity(data: Data /* PKCS12 */, password   String?, label: String) throws -> TLSIdentity
+  public static func deleteIdentity(label: String) throws
+}
+----
+
+
+[#tlsidentity-props]
+.Properties
+{empty}
+// ^ need for heading to show in cross ref and here. [caption=] meant no heading appeared in xref
+[cols="15,15,10,10,50"]
+|===
+|Name | Type |Nullable |ReadOnly |Description
+
+|certs
+|Array<SecCertificate>
+|No
+|Yes
+|The certificate chain.
+
+|expiration
+|Date
+|No
+|ReadOnly
+|The expiration date of the (leaf) certificate of the TLSIdentity.
+
+|===
+
+[#tlsidentity-methods]
+.Methods
+{empty}
+
+.*`getIdentity()`*
+[caption=]
+[cols="20,80"]
+|===
+
+|Form
+a|[{source-language}]
+----
+getIdentity(label: String) throws -> TLSIdentity?
+----
+
+|Explanation
+|Get the TLSIdentity of the given label from the secure storage.
+
+|Preconditions
+|N/A
+
+|Postconditions
+|The identity returned from the secure storage. If the identity doesn’t exist, this method will return null.
+
+|Exceptions
+|CouchbaseLiteException will be thrown if there is an error occurred while getting the identity from the secure storage.
+
+|Usage
+a|[{source-language}]
+----
+----
+
+|===
+
+
+.`createIdentity(isServer, attributes, expiration, label)`
+[caption=]
+[cols="20,80"]
+|===
+
+|Form
+a|[{source-language}]
+----
+createIdentity(isServer: Bool, attributes: Dictionary<String, String>?, expiration: Date?, label: String) throws -> TLSIdentity
+----
+
+|Objective
+|Create and store a client self-signed identity in a secure storage. The identity will be stored in the secure storage using the given label.
+
+The isServer tells that the certificate being created is a server or client certificate. The certificate attributes are optional. If the expiration date is not specified, the expiration date of the certificate will be 365 days.
+
+When creating a certificate, the common name attribute is required for creating a CSR. If the common name is not presented in the certificate, an exception will be thrown.
+
+|Preconditions
+|N/A
+
+|Postconditions
+|A self-signed TLSIdentity. The identity is stored in the secure storage using the specified label.
+
+|Exceptions
+|CouchbaseLiteException will be thrown when the identity cannot be created.
+
+*The error code will be determined during the technical design phase.*
+
+|===
+
+.`importIdentity(data, password, label) throws -> TLSIdentity`
+{empty}
+[caption=]
+[cols="20,80"]
+|===
+
+|form
+a|[{source-language}]
+----
+importIdentity(data: Data, password: String?, label: String) throws -> TLSIdentity
+----
+
+|Explanation
+|Create the identity from the given PKCS12 Data and password. The identity will be stored in the secure storage using the given label.
+
+|Preconditions
+|N/A
+
+|Postconditions
+|A TLSIdentity is created. The identity is stored in the secure storage using the specified label.
+
+|Exceptions
+|CouchbaseLiteException will be thrown when the identity cannot be created. The error code will be determined during the technical design phase.
+
+CouchbaseLiteException will be thrown if the common name is not presented in the certificate.
+
+|===
+
+.`deleteIdentity(label)`
+{empty}
+[caption=]
+[cols="20,80"]
+|===
+
+|Form
+a|[{source-language}]
+----
+deleteIdentity(label: String) throws
+----
+
+|Explanation
+|Delete the identity of the given label or alias from the secure storage.
+
+|Preconditions
+|N/A
+
+|Postconditions
+|The identity is deleted from the storage. If the identity doesn’t exist, this operation will be no-ops.
+
+|Exceptions
+|CouchbaseLiteException will be thrown when the identity cannot be deleted. The error code will be determined during the technical design phase.
+
+|===
+
+

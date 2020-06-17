@@ -23,14 +23,14 @@ import CoreML
 
 
 class SampleCodeTest {
-    
+
     var database: Database!
     var db: Database!
-    
+
     var replicator: Replicator!
-    
+
     // MARK: Database
-    
+
     func dontTestNewDatabase() throws {
         // tag::new-database[]
         do {
@@ -57,7 +57,7 @@ class SampleCodeTest {
         Database.setLogLevel(.verbose, domain: .query)
         // end::logging[]
     }
-    
+
     func dontTestFileLogging() throws {
         // tag::file-logging[]
         let tempFolder = NSTemporaryDirectory().appending("cbllog")
@@ -119,7 +119,7 @@ class SampleCodeTest {
         newTask.setValue(Date(), forKey: "createdAt")
         let date = newTask.date(forKey: "createdAt")
         // end::date-getter[]
-        
+
         // tag::to-dictionary[]
         newTask.toDictionary() // returns a Dictionary<String, Any>
         // end::to-dictionary[]
@@ -145,10 +145,10 @@ class SampleCodeTest {
         }
         // end::batch[]
     }
-    
+
     func dontTestChangeListener() throws {
         database = self.db
-        
+
         // tag::document-listener[]
         database.addDocumentChangeListener(withID: "user.john") { (change) in
             if let document = self.database.document(withID: change.documentID) {
@@ -157,18 +157,18 @@ class SampleCodeTest {
         }
         // end::document-listener[]
     }
-    
+
     func dontTestDocumentExpiration() throws {
         database = self.db
-        
+
         // tag::document-expiration[]
         // Purge the document one day from now
         let ttl = Calendar.current.date(byAdding: .day, value: 1, to: Date())
         try database.setDocumentExpiration(withID: "doc123", expiration: ttl)
-        
+
         // Reset expiration
         try db.setDocumentExpiration(withID: "doc1", expiration: nil)
-        
+
         // Query documents that will be expired in less than five minutes
         let fiveMinutesFromNow = Date(timeIntervalSinceNow: 60 * 5).timeIntervalSince1970
         let query = QueryBuilder
@@ -180,9 +180,9 @@ class SampleCodeTest {
                 )
             )
         // end::document-expiration[]
-        
+
     }
-    
+
     func dontTestBlob() throws {
     #if TARGET_OS_IPHONE
         database = self.db
@@ -215,7 +215,7 @@ class SampleCodeTest {
         let avatar = attachments?.blob(forKey: "avatar")
         let content = avatar?.content
         // end::1x-attachment[]
-        
+
         print("\(content!)")
     }
 
@@ -263,12 +263,12 @@ class SampleCodeTest {
             .select(SelectResult.all())
             .from(DataSource.database(database))
         // end::query-select-all[]
-        
+
         // tag::live-query[]
         let query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
-        
+
         // Adds a query change listener.
         // Changes will be posted on the main queue.
         let token = query.addChangeListener { (change) in
@@ -277,11 +277,11 @@ class SampleCodeTest {
                 /* Update UI */
             }
         }
-        
+
         // Start live query.
         query.execute(); // <1>
         // end::live-query[]
-        
+
         // tag::stop-live-query[]
         query.removeChangeListener(withToken: token)
         // end::stop-live-query[]
@@ -310,7 +310,7 @@ class SampleCodeTest {
         }
         // end::query-where[]
     }
-    
+
     func dontTestQueryDeletedDocuments() throws {
         // tag::query-deleted-documents[]
         // Query documents that have been deleted
@@ -320,7 +320,7 @@ class SampleCodeTest {
             .where(Meta.isDeleted)
         // end::query-deleted-documents[]
     }
-    
+
     func dontTestCollectionOperatorContains() throws {
         database = self.db
 
@@ -343,20 +343,20 @@ class SampleCodeTest {
         }
         // end::query-collection-operator-contains[]
     }
-    
+
     func dontTestCollectionOperatorIn() throws {
         database = self.db
-        
+
         // tag::query-collection-operator-in[]
         let values = [Expression.property("first"), Expression.property("last"), Expression.property("username")]
-        
+
         QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
             .where(Expression.string("Armani").in(values))
         // end::query-collection-operator-in[]
     }
-    
+
 
     func dontTestLikeOperator() throws {
         database = self.db
@@ -621,7 +621,7 @@ class SampleCodeTest {
         }
         // end::replication-status[]
     }
-    
+
     func dontTestReplicatorDocumentEvent() throws {
         // tag::add-document-replication-listener[]
         let token = self.replicator.addDocumentReplicationListener { (replication) in
@@ -637,19 +637,19 @@ class SampleCodeTest {
                 }
             }
         }
-        
+
         self.replicator.start()
         // end::add-document-replication-listener[]
-        
+
         // tag::remove-document-replication-listener[]
         self.replicator.removeChangeListener(withToken: token)
         // end::remove-document-replication-listener[]
     }
-    
+
     func dontTestReplicationCustomHeader() throws {
         let url = URL(string: "ws://localhost:4984/mydatabase")!
         let target = URLEndpoint(url: url)
-        
+
         // tag::replication-custom-header[]
         let config = ReplicatorConfiguration(database: database, target: target)
         config.headers = ["CustomHeaderName": "Value"]
@@ -659,7 +659,7 @@ class SampleCodeTest {
     func dontTestReplicationChannels() throws {
         let url = URL(string: "ws://localhost:4984/mydatabase")!
         let target = URLEndpoint(url: url)
-        
+
         // tag::replication-channels[]
         let config = ReplicatorConfiguration(database: database, target: target)
         config.channels = ["channel_name"]
@@ -682,7 +682,7 @@ class SampleCodeTest {
         self.replicator.start()
         // end::replication-reset-checkpoint[]
     }
-    
+
     func dontTestReplicationPushFilter() throws {
         // tag::replication-push-filter[]
         let url = URL(string: "ws://localhost:4984/mydatabase")!
@@ -695,7 +695,7 @@ class SampleCodeTest {
             }
             return true
         }
-        
+
         self.replicator = Replicator(config: config)
         self.replicator.start()
         // end::replication-push-filter[]
@@ -705,7 +705,7 @@ class SampleCodeTest {
         // tag::replication-pull-filter[]
         let url = URL(string: "ws://localhost:4984/mydatabase")!
         let target = URLEndpoint(url: url)
-        
+
         let config = ReplicatorConfiguration(database: database, target: target)
         config.pullFilter = { (document, flags) in // <1>
             if (flags.contains(.deleted)) {
@@ -713,7 +713,7 @@ class SampleCodeTest {
             }
             return true
         }
-        
+
         self.replicator = Replicator(config: config)
         self.replicator.start()
         // end::replication-pull-filter[]
@@ -722,7 +722,7 @@ class SampleCodeTest {
     #if COUCHBASE_ENTERPRISE
     func dontTestDatabaseReplica() throws {
         let database2 = try self.openDB(name: "db2")
-        
+
         /* EE feature: code below might throw a compilation error
            if it's compiled against CBL Swift Community. */
         // tag::database-replica[]
@@ -733,7 +733,7 @@ class SampleCodeTest {
         self.replicator = Replicator(config: config)
         self.replicator.start()
         // end::database-replica[]
-        
+
         try database2.delete()
     }
     #endif
@@ -754,7 +754,7 @@ class SampleCodeTest {
 
         print("\(config)")
     }
-    
+
     func dontTestGettingStarted() throws {
         // tag::getting-started[]
         // Get the database (and create it if it doesn’t exist).
@@ -764,25 +764,25 @@ class SampleCodeTest {
         } catch {
             fatalError("Error opening database")
         }
-        
+
         // Create a new document (i.e. a record) in the database.
         let mutableDoc = MutableDocument()
             .setFloat(2.0, forKey: "version")
             .setString("SDK", forKey: "type")
-        
+
         // Save it to the database.
         do {
             try database.saveDocument(mutableDoc)
         } catch {
             fatalError("Error saving document")
         }
-        
+
         // Update a document.
         if let mutableDoc = database.document(withID: mutableDoc.id)?.toMutable() {
             mutableDoc.setString("Swift", forKey: "language")
             do {
                 try database.saveDocument(mutableDoc)
-                
+
                 let document = database.document(withID: mutableDoc.id)!
                 // Log the document ID (generated by the database)
                 // and properties
@@ -792,13 +792,13 @@ class SampleCodeTest {
                 fatalError("Error updating document")
             }
         }
-        
+
         // Create a query to fetch documents of type SDK.
         let query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
             .where(Expression.property("type").equalTo(Expression.string("SDK")))
-        
+
         // Run the query.
         do {
             let result = try query.execute()
@@ -806,30 +806,30 @@ class SampleCodeTest {
         } catch {
             fatalError("Error running the query")
         }
-        
+
         // Create replicators to push and pull changes to and from the cloud.
         let targetEndpoint = URLEndpoint(url: URL(string: "ws://localhost:4984/getting-started-db")!)
         let replConfig = ReplicatorConfiguration(database: database, target: targetEndpoint)
         replConfig.replicatorType = .pushAndPull
-        
+
         // Add authentication.
         replConfig.authenticator = BasicAuthenticator(username: "john", password: "pass")
-        
+
         // Create replicator (make sure to add an instance or static variable named replicator)
         self.replicator = Replicator(config: replConfig)
-        
+
         // Listen to replicator change events.
         self.replicator.addChangeListener { (change) in
             if let error = change.status.error as NSError? {
                 print("Error code :: \(error.code)")
             }
         }
-        
+
         // Start replication.
         self.replicator.start()
         // end::getting-started[]
     }
-    
+
     func dontTestPredictiveModel() throws {
         let database: Database
         do {
@@ -842,20 +842,20 @@ class SampleCodeTest {
         let model = ImageClassifierModel()
         Database.prediction.registerModel(model, withName: "ImageClassifier")
         // end::register-model[]
-        
+
         // tag::predictive-query-value-index[]
         let input = Expression.dictionary(["photo": Expression.property("photo")])
         let prediction = PredictiveModel.predict(model: "ImageClassifier", input: input)
-        
+
         let index = IndexBuilder.valueIndex(items: ValueIndexItem.expression(prediction.property("label")))
         try database.createIndex(index, withName: "value-index-image-classifier")
         // end::predictive-query-value-index[]
-        
+
         // tag::unregister-model[]
         Database.prediction.unregisterModel(withName: "ImageClassifier")
         // end::unregister-model[]
     }
-    
+
     func dontTestPredictiveIndex() throws {
         let database: Database
         do {
@@ -871,7 +871,7 @@ class SampleCodeTest {
         try database.createIndex(index, withName: "predictive-index-image-classifier")
         // end::predictive-query-predictive-index[]
     }
-    
+
     func dontTestPredictiveQuery() throws {
         let database: Database
         do {
@@ -879,11 +879,11 @@ class SampleCodeTest {
         } catch {
             fatalError("Error opening database")
         }
-        
+
         // tag::predictive-query[]
         let input = Expression.dictionary(["photo": Expression.property("photo")])
         let prediction = PredictiveModel.predict(model: "ImageClassifier", input: input) // <1>
-        
+
         let query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
@@ -894,7 +894,7 @@ class SampleCodeTest {
                         .greaterThanOrEqualTo(Expression.double(0.8))
                 )
             )
-        
+
         // Run the query.
         do {
             let result = try query.execute()
@@ -904,7 +904,7 @@ class SampleCodeTest {
         }
         // end::predictive-query[]
     }
-    
+
     func dontTestCoreMLPredictiveModel() throws {
         // tag::coreml-predictive-model[]
         // Load MLModel from `ImageClassifier.mlmodel`
@@ -912,7 +912,7 @@ class SampleCodeTest {
         let compiledModelURL = try MLModel.compileModel(at: modelURL)
         let model = try MLModel(contentsOf: compiledModelURL)
         let predictiveModel = CoreMLPredictiveModel(mlModel: model)
-        
+
         // Register model
         Database.prediction.registerModel(predictiveModel, withName: "ImageClassifier")
         // end::coreml-predictive-model[]
@@ -922,15 +922,15 @@ class SampleCodeTest {
         // tag::replication-conflict-resolver[]
         let url = URL(string: "ws://localhost:4984/mydatabase")!
         let target = URLEndpoint(url: url)
-        
+
         let config = ReplicatorConfiguration(database: database, target: target)
         config.conflictResolver = LocalWinConflictResolver()
-        
+
         self.replicator = Replicator(config: config)
         self.replicator.start()
         // end::replication-conflict-resolver[]
     }
-    
+
     func dontTestSaveWithConflictHandler() throws {
         // tag::update-document-with-conflict-handler[]
         guard let document = database.document(withID: "xyz") else { return }
@@ -946,7 +946,7 @@ class SampleCodeTest {
         // end::update-document-with-conflict-handler[]
 
     }
-    
+
 }
 
 
@@ -962,12 +962,12 @@ class ImageClassifierModel: PredictiveModel {
         guard let blob = input.blob(forKey: "photo") else {
             return nil
         }
-        
+
         let imageData = blob.content!
         // `myMLModel` is a fake implementation
         // this would be the implementation of the ml model you have chosen
         let modelOutput = myMLModel.predictImage(data: imageData)
-        
+
         let output = MutableDictionaryObject(data: modelOutput)
         return output // <1>
     }
@@ -976,15 +976,15 @@ class ImageClassifierModel: PredictiveModel {
 
 // tag::custom-logging[]
 fileprivate class LogTestLogger: Logger {
-    
+
     // set the log level
     var level: LogLevel = .none
-    
+
     func log(level: LogLevel, domain: LogDomain, message: String) {
         // handle the message, for example piping it to
         // a third party framework
     }
-    
+
 }
 // end::custom-logging[]
 
@@ -1022,27 +1022,27 @@ class MergeConflictResolver: ConflictResolverProtocol {
 /* ---------------  stubs for documentation  ----------------- */
 /* ----------------------------------------------------------- */
 class ActivePeer: MessageEndpointDelegate {
-    
+
     init() throws {
         let id = ""
 
         // tag::message-endpoint[]
         let database = try Database(name: "dbname")
-        
+
         // The delegate must implement the `MessageEndpointDelegate` protocol.
         let messageEndpointTarget = MessageEndpoint(uid: "UID:123", target: id, protocolType: .messageStream, delegate: self)
         // end::message-endpoint[]
-        
+
         // tag::message-endpoint-replicator[]
         let config = ReplicatorConfiguration(database: database, target: messageEndpointTarget)
-        
+
         // Create the replicator object.
         let replicator = Replicator(config: config)
         // Start the replication.
         replicator.start()
         // end::message-endpoint-replicator[]
     }
-    
+
     // tag::create-connection[]
     /* implementation of MessageEndpointDelegate */
     func createConnection(endpoint: MessageEndpoint) -> MessageEndpointConnection {
@@ -1054,11 +1054,11 @@ class ActivePeer: MessageEndpointDelegate {
 }
 
 class ActivePeerConnection: MessageEndpointConnection {
-    
+
     var replicatorConnection: ReplicatorConnection?
-    
+
     init() {}
-    
+
     func disconnect() {
         // tag::active-replicator-close[]
         replicatorConnection?.close(error: nil)
@@ -1083,7 +1083,7 @@ class ActivePeerConnection: MessageEndpointConnection {
         completion(true, nil)
     }
     // end::active-peer-send[]
-    
+
     func receive(data: Data) {
         // tag::active-peer-receive[]
         let message = Message.fromData(data)
@@ -1108,14 +1108,14 @@ class ActivePeerConnection: MessageEndpointConnection {
 /* ---------------  stubs for documentation  ----------------- */
 /* ----------------------------------------------------------- */
 class PassivePeerConnection: NSObject, MessageEndpointConnection {
-    
+
     var messageEndpointListener: MessageEndpointListener?
     var replicatorConnection: ReplicatorConnection?
-    
+
     override init() {
         super.init()
     }
-    
+
     func startListener() {
         // tag::listener[]
         let database = try! Database(name: "mydb")
@@ -1123,26 +1123,26 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
         messageEndpointListener = MessageEndpointListener(config: config)
         // end::listener[]
     }
-    
+
     func stopListener() {
         // tag::passive-stop-listener[]
         messageEndpointListener?.closeAll()
         // end::passive-stop-listener[]
     }
-    
+
     func acceptConnection() {
         // tag::advertizer-accept[]
         let connection = PassivePeerConnection() /* implements MessageEndpointConnection */
         messageEndpointListener?.accept(connection: connection)
         // end::advertizer-accept[]
     }
-    
+
     func disconnect() {
         // tag::passive-replicator-close[]
         replicatorConnection?.close(error: nil)
         // end::passive-replicator-close[]
     }
-    
+
     // tag::passive-peer-open[]
     /* implementation of MessageEndpointConnection */
     func open(connection: ReplicatorConnection, completion: @escaping (Bool, MessagingError?) -> Void) {
@@ -1150,7 +1150,7 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
         completion(true, nil)
     }
     // end::passive-peer-open[]
-    
+
     // tag::passive-peer-send[]
     /* implementation of MessageEndpointConnection */
     func send(message: Message, completion: @escaping (Bool, MessagingError?) -> Void) {
@@ -1162,14 +1162,14 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
         completion(true, nil)
     }
     // end::passive-peer-send[]
-    
+
     func receive(data: Data) {
         // tag::passive-peer-receive[]
         let message = Message.fromData(data)
         replicatorConnection?.receive(message: message)
         // end::passive-peer-receive[]
     }
-    
+
     // tag::passive-peer-close[]
     /* implementation of MessageEndpointConnection */
     func close(error: Error?, completion: @escaping () -> Void) {
@@ -1181,3 +1181,675 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
     // end::passive-peer-close[]
 }
 
+
+// BEGIN URLENDPOINTLISTENER SAMPLES
+
+//
+//  URLEndpontListenerTest.swift
+//  CouchbaseLite
+//
+//  Copyright (c) 2020 Couchbase, Inc. All rights reserved.
+//
+//  Licensed under the Couchbase License Agreement (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//  https://info.couchbase.com/rs/302-GJY-034/images/2017-10-30_License_Agreement.pdf
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
+//
+
+import XCTest
+@testable import CouchbaseLiteSwift
+
+@available(macOS 10.12, iOS 10.0, *)
+class URLEndpontListenerTest: ReplicatorTest {
+    let wsPort: UInt16 = 4984
+    let wssPort: UInt16 = 4985
+    let serverCertLabel = "CBL-Server-Cert"
+    let clientCertLabel = "CBL-Client-Cert"
+
+    var listener: URLEndpointListener?
+
+    @discardableResult
+    func listen() throws -> URLEndpointListener {
+        return try listen(tls: true, auth: nil)
+    }
+
+    @discardableResult
+    func listen(tls: Bool) throws -> URLEndpointListener {
+        return try! listen(tls: tls, auth: nil)
+    }
+
+    @discardableResult
+    func listen(tls: Bool, auth: ListenerAuthenticator?) throws -> URLEndpointListener {
+        // Stop:
+        if let listener = self.listener {
+            listener.stop()
+        }
+
+        // Listener:
+        let config = URLEndpointListenerConfiguration.init(database: self.oDB)
+        config.port = tls ? wssPort : wsPort
+        config.disableTLS = !tls
+        config.authenticator = auth
+
+        return try listen(config: config)
+    }
+
+    @discardableResult
+    func listen(config: URLEndpointListenerConfiguration) throws -> URLEndpointListener {
+        self.listener = URLEndpointListener.init(config: config)
+
+        // Start:
+        try self.listener!.start()
+
+        return self.listener!
+    }
+
+    func stopListen() throws {
+        if let listener = self.listener {
+            try stopListener(listener: listener)
+        }
+    }
+
+    func stopListener(listener: URLEndpointListener) throws {
+        let identity = listener.tlsIdentity
+        listener.stop()
+        if let id = identity {
+            try id.deleteFromKeyChain()
+        }
+    }
+
+    func cleanUpIdentities() throws {
+        self.ignoreException {
+            try URLEndpointListener.deleteAnonymousIdentities()
+        }
+    }
+
+    func replicator(db: Database, continuous: Bool, target: Endpoint, serverCert: SecCertificate?) -> Replicator {
+        let config = ReplicatorConfiguration(database: db, target: target)
+        config.replicatorType = .pushAndPull
+        config.continuous = continuous
+        config.pinnedServerCertificate = serverCert
+        return Replicator(config: config)
+    }
+
+    /// Two replicators, replicates docs to the self.listener; validates connection status
+    func validateMultipleReplicationsTo() throws {
+        let exp1 = expectation(description: "replicator#1 stop")
+        let exp2 = expectation(description: "replicator#2 stop")
+        let count = self.listener!.config.database.count
+
+        // open DBs
+        try deleteDB(name: "db1")
+        try deleteDB(name: "db2")
+        let db1 = try openDB(name: "db1")
+        let db2 = try openDB(name: "db2")
+
+        // For keeping the replication long enough to validate connection status, we will use blob
+        let imageData = try dataFromResource(name: "image", ofType: "jpg")
+
+        // DB#1
+        let doc1 = createDocument()
+        let blob1 = Blob(contentType: "image/jpg", data: imageData)
+        doc1.setBlob(blob1, forKey: "blob")
+        try db1.saveDocument(doc1)
+
+        // DB#2
+        let doc2 = createDocument()
+        let blob2 = Blob(contentType: "image/jpg", data: imageData)
+        doc2.setBlob(blob2, forKey: "blob")
+        try db2.saveDocument(doc2)
+
+        let repl1 = replicator(db: db1,
+                               continuous: false,
+                               target: self.listener!.localURLEndpoint,
+                               serverCert: self.listener!.tlsIdentity!.certs[0])
+        let repl2 = replicator(db: db2,
+                               continuous: false,
+                               target: self.listener!.localURLEndpoint,
+                               serverCert: self.listener!.tlsIdentity!.certs[0])
+
+        var maxConnectionCount: UInt64 = 0, maxActiveCount: UInt64 = 0
+        let changeListener = { (change: ReplicatorChange) in
+            if change.status.activity == .busy {
+                maxConnectionCount = max(self.listener!.status.connectionCount, maxConnectionCount);
+                maxActiveCount = max(self.listener!.status.activeConnectionCount, maxActiveCount);
+            }
+
+            if change.status.activity == .stopped {
+                if change.replicator.config.database.name == "db1" {
+                    exp1.fulfill()
+                } else {
+                    exp2.fulfill()
+                }
+            }
+
+        }
+        let token1 = repl1.addChangeListener(changeListener)
+        let token2 = repl2.addChangeListener(changeListener)
+
+        repl1.start()
+        repl2.start()
+        wait(for: [exp1, exp2], timeout: 5.0)
+
+        // check both replicators access listener at same time
+        XCTAssertEqual(maxConnectionCount, 2);
+        XCTAssertEqual(maxActiveCount, 2);
+
+        // all data are transferred to/from
+        XCTAssertEqual(self.listener!.config.database.count, count + 2);
+        XCTAssertEqual(db1.count, count + 1/* db2 doc*/);
+        XCTAssertEqual(db2.count, count + 1/* db1 doc*/);
+
+        repl1.removeChangeListener(withToken: token1)
+        repl2.removeChangeListener(withToken: token2)
+
+        try db1.close()
+        try db2.close()
+    }
+
+    override func setUp() {
+        super.setUp()
+        try! cleanUpIdentities()
+    }
+
+    override func tearDown() {
+        try! stopListen()
+        try! cleanUpIdentities()
+        super.tearDown()
+    }
+
+    func testTLSIdentity() throws {
+        if !self.keyChainAccessAllowed {
+            return
+        }
+
+        // Disabled TLS:
+        var config = URLEndpointListenerConfiguration.init(database: self.oDB)
+        config.disableTLS = true
+        var listener = URLEndpointListener.init(config: config)
+        XCTAssertNil(listener.tlsIdentity)
+
+        try listener.start()
+        XCTAssertNil(listener.tlsIdentity)
+        try stopListener(listener: listener)
+        XCTAssertNil(listener.tlsIdentity)
+
+        // Anonymous Identity:
+        config = URLEndpointListenerConfiguration.init(database: self.oDB)
+        listener = URLEndpointListener.init(config: config)
+        XCTAssertNil(listener.tlsIdentity)
+
+        try listener.start()
+        XCTAssertNotNil(listener.tlsIdentity)
+        try stopListener(listener: listener)
+        XCTAssertNil(listener.tlsIdentity)
+
+        // User Identity:
+        try TLSIdentity.deleteIdentity(withLabel: serverCertLabel);
+        let attrs = [certAttrCommonName: "CBL-Server"]
+        let identity = try TLSIdentity.createIdentity(forServer: true,
+                                                      attributes: attrs,
+                                                      expiration: nil,
+                                                      label: serverCertLabel)
+        config = URLEndpointListenerConfiguration.init(database: self.oDB)
+        config.tlsIdentity = identity
+        listener = URLEndpointListener.init(config: config)
+        XCTAssertNil(listener.tlsIdentity)
+
+        try listener.start()
+        XCTAssertNotNil(listener.tlsIdentity)
+        XCTAssert(identity === listener.tlsIdentity!)
+        try stopListener(listener: listener)
+        XCTAssertNil(listener.tlsIdentity)
+    }
+
+    func testPasswordAuthenticator() throws {
+        // Listener:
+        let listenerAuth = ListenerPasswordAuthenticator.init {
+            (username, password) -> Bool in
+            return (username as NSString).isEqual(to: "daniel") &&
+                   (password as NSString).isEqual(to: "123")
+        }
+        let listener = try listen(tls: false, auth: listenerAuth)
+
+        // Replicator - No Authenticator:
+        self.run(target: listener.localURLEndpoint, type: .pushAndPull, continuous: false,
+                 auth: nil, expectedError: CBLErrorHTTPAuthRequired)
+
+        // Replicator - Wrong Credentials:
+        var auth = BasicAuthenticator.init(username: "daniel", password: "456")
+        self.run(target: listener.localURLEndpoint, type: .pushAndPull, continuous: false,
+                 auth: auth, expectedError: CBLErrorHTTPAuthRequired)
+
+        // Replicator - Success:
+        auth = BasicAuthenticator.init(username: "daniel", password: "123")
+        self.run(target: listener.localURLEndpoint, type: .pushAndPull, continuous: false,
+                 auth: auth)
+
+        // Cleanup:
+        try stopListen()
+    }
+
+    func testClientCertAuthenticatorWithClosure() throws {
+        if !self.keyChainAccessAllowed {
+            return
+        }
+
+        // Listener:
+        let listenerAuth = ListenerCertificateAuthenticator.init { (certs) -> Bool in
+            XCTAssertEqual(certs.count, 1)
+            var commongName: CFString?
+            let status = SecCertificateCopyCommonName(certs[0], &commongName)
+            XCTAssertEqual(status, errSecSuccess)
+            XCTAssertNotNil(commongName)
+            XCTAssertEqual((commongName! as String), "daniel")
+            return true
+        }
+        let listener = try listen(tls: true, auth: listenerAuth)
+        XCTAssertNotNil(listener.tlsIdentity)
+        XCTAssertEqual(listener.tlsIdentity!.certs.count, 1)
+
+        // Cleanup:
+        try TLSIdentity.deleteIdentity(withLabel: clientCertLabel)
+
+        // Create client identity:
+        let attrs = [certAttrCommonName: "daniel"]
+        let identity = try TLSIdentity.createIdentity(forServer: false, attributes: attrs, expiration: nil, label: clientCertLabel)
+
+        // Replicator:
+        let auth = ClientCertificateAuthenticator.init(identity: identity)
+        let serverCert = listener.tlsIdentity!.certs[0]
+        self.run(target: listener.localURLEndpoint, type: .pushAndPull, continuous: false, auth: auth, serverCert: serverCert)
+
+        // Cleanup:
+        try TLSIdentity.deleteIdentity(withLabel: clientCertLabel)
+        try stopListen()
+    }
+
+    func testClientCertAuthenticatorWithRootCerts() throws {
+        if !self.keyChainAccessAllowed {
+            return
+        }
+
+        // Root Cert:
+        let rootCertData = try dataFromResource(name: "identity/client-ca", ofType: "der")
+        let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
+
+        // Listener:
+        let listenerAuth = ListenerCertificateAuthenticator.init(rootCerts: [rootCert])
+        let listener = try listen(tls: true, auth: listenerAuth)
+
+        // Cleanup:
+        try TLSIdentity.deleteIdentity(withLabel: clientCertLabel)
+
+        // Create client identity:
+        let clientCertData = try dataFromResource(name: "identity/client", ofType: "p12")
+        let identity = try TLSIdentity.importIdentity(withData: clientCertData, password: "123", label: clientCertLabel)
+
+        // Replicator:
+        let auth = ClientCertificateAuthenticator.init(identity: identity)
+        let serverCert = listener.tlsIdentity!.certs[0]
+
+        self.ignoreException {
+            self.run(target: listener.localURLEndpoint, type: .pushAndPull, continuous: false, auth: auth, serverCert: serverCert)
+        }
+
+        // Cleanup:
+        try TLSIdentity.deleteIdentity(withLabel: clientCertLabel)
+        try stopListen()
+    }
+
+    func testServerCertVerificationModeSelfSignedCert() throws {
+        if !self.keyChainAccessAllowed {
+            return
+        }
+
+        // Listener:
+        let listener = try listen(tls: true)
+        XCTAssertNotNil(listener.tlsIdentity)
+        XCTAssertEqual(listener.tlsIdentity!.certs.count, 1)
+
+        // Replicator - TLS Error:
+        self.ignoreException {
+            self.run(target: listener.localURLEndpoint, type: .pushAndPull, continuous: false,
+                     serverCertVerifyMode: .caCert, serverCert: nil, expectedError: CBLErrorTLSCertUnknownRoot)
+        }
+
+        // Replicator - Success:
+        self.ignoreException {
+            self.run(target: listener.localURLEndpoint, type: .pushAndPull, continuous: false,
+                     serverCertVerifyMode: .selfSignedCert, serverCert: nil)
+        }
+
+        // Cleanup
+        try stopListen()
+    }
+
+    func testServerCertVerificationModeCACert() throws {
+        if !self.keyChainAccessAllowed {
+            return
+        }
+
+        // Listener:
+        let listener = try listen(tls: true)
+        XCTAssertNotNil(listener.tlsIdentity)
+        XCTAssertEqual(listener.tlsIdentity!.certs.count, 1)
+
+        // Replicator - TLS Error:
+        self.ignoreException {
+            self.run(target: listener.localURLEndpoint, type: .pushAndPull, continuous: false,
+                     serverCertVerifyMode: .caCert, serverCert: nil, expectedError: CBLErrorTLSCertUnknownRoot)
+        }
+
+        // Replicator - Success:
+        self.ignoreException {
+            let serverCert = listener.tlsIdentity!.certs[0]
+            self.run(target: listener.localURLEndpoint, type: .pushAndPull, continuous: false,
+                     serverCertVerifyMode: .caCert, serverCert: serverCert)
+        }
+
+        // Cleanup
+        try stopListen()
+    }
+
+    func testPort() throws {
+        if !self.keyChainAccessAllowed {
+            return
+        }
+
+        let config = URLEndpointListenerConfiguration(database: self.oDB)
+        config.port = wsPort
+        self.listener = URLEndpointListener(config: config)
+        XCTAssertNil(self.listener!.port)
+
+        // Start:
+        try self.listener!.start()
+        XCTAssertEqual(self.listener!.port, wsPort)
+
+        try stopListen()
+        XCTAssertNil(self.listener!.port)
+    }
+
+    func testEmptyPort() throws {
+        if !self.keyChainAccessAllowed {
+            return
+        }
+
+        let config = URLEndpointListenerConfiguration(database: self.oDB)
+        self.listener = URLEndpointListener(config: config)
+        XCTAssertNil(self.listener!.port)
+
+        // Start:
+        try self.listener!.start()
+        XCTAssertNotEqual(self.listener!.port, 0)
+
+        try stopListen()
+        XCTAssertNil(self.listener!.port)
+    }
+
+    func testBusyPort() throws {
+        if !self.keyChainAccessAllowed {
+            return
+        }
+
+        try listen()
+
+        let config = URLEndpointListenerConfiguration(database: self.oDB)
+        config.port = self.listener!.port
+        let listener2 = URLEndpointListener(config: config)
+
+        expectError(domain: NSPOSIXErrorDomain, code: Int(EADDRINUSE)) {
+            try listener2.start()
+        }
+    }
+
+    func testURLs() throws {
+        if !self.keyChainAccessAllowed {
+            return
+        }
+
+        let config = URLEndpointListenerConfiguration(database: self.oDB)
+        config.port = wsPort
+        self.listener = URLEndpointListener(config: config)
+        XCTAssertNil(self.listener!.urls)
+
+        // Start:
+        try self.listener!.start()
+        XCTAssert(self.listener!.urls?.count != 0)
+
+        try stopListen()
+        XCTAssertNil(self.listener!.urls)
+    }
+
+    func testConnectionStatus() throws {
+        if !self.keyChainAccessAllowed {
+            return
+        }
+
+        let config = URLEndpointListenerConfiguration(database: self.oDB)
+        config.port = wsPort
+        config.disableTLS = true
+        self.listener = URLEndpointListener(config: config)
+        XCTAssertEqual(self.listener!.status.connectionCount, 0)
+        XCTAssertEqual(self.listener!.status.activeConnectionCount, 0)
+
+        // Start:
+        try self.listener!.start()
+        XCTAssertEqual(self.listener!.status.connectionCount, 0)
+        XCTAssertEqual(self.listener!.status.activeConnectionCount, 0)
+
+        try generateDocument(withID: "doc-1")
+        let rConfig = self.config(target: self.listener!.localURLEndpoint,
+                                 type: .pushAndPull, continuous: false, auth: nil,
+                                 serverCertVerifyMode: .caCert, serverCert: nil)
+        var maxConnectionCount: UInt64 = 0, maxActiveCount:UInt64 = 0
+        run(config: rConfig, reset: false, expectedError: nil) { (replicator) in
+            replicator.addChangeListener { (change) in
+                maxConnectionCount = max(self.listener!.status.connectionCount, maxConnectionCount)
+                maxActiveCount = max(self.listener!.status.activeConnectionCount, maxActiveCount)
+            }
+        }
+        XCTAssertEqual(maxConnectionCount, 1)
+        XCTAssertEqual(maxActiveCount, 1)
+        XCTAssertEqual(self.oDB.count, 1)
+
+        try stopListen()
+        XCTAssertEqual(self.listener!.status.connectionCount, 0)
+        XCTAssertEqual(self.listener!.status.activeConnectionCount, 0)
+    }
+
+    func testMultipleListenersOnSameDatabase() throws {
+        if !self.keyChainAccessAllowed { return }
+
+        let config = URLEndpointListenerConfiguration(database: self.oDB)
+        let listener1 = URLEndpointListener(config: config)
+        let listener2 = URLEndpointListener(config: config)
+
+        try listener1.start()
+        try listener2.start()
+
+        try generateDocument(withID: "doc-1")
+        self.run(target: listener1.localURLEndpoint,
+                 type: .pushAndPull,
+                 continuous: false,
+                 auth: nil,
+                 serverCert: listener1.tlsIdentity!.certs[0])
+
+        // since listener1 and listener2 are using same certificates, one listener only needs stop.
+        listener2.stop()
+        try stopListener(listener: listener1)
+        XCTAssertEqual(self.oDB.count, 1)
+    }
+
+    func testReplicatorAndListenerOnSameDatabase() throws {
+        if !self.keyChainAccessAllowed { return }
+
+        let exp1 = expectation(description: "replicator#1 stop")
+        let exp2 = expectation(description: "replicator#2 stop")
+
+        // listener
+        let doc = createDocument()
+        try self.oDB.saveDocument(doc)
+        try listen()
+
+        // Replicator#1 (otherDB -> DB#1)
+        let doc1 = createDocument()
+        try self.db.saveDocument(doc1)
+        let target = DatabaseEndpoint(database: self.db)
+        let repl1 = replicator(db: self.oDB, continuous: true, target: target, serverCert: nil)
+
+        // Replicator#2 (DB#2 -> Listener(otherDB))
+        try deleteDB(name: "db2")
+        let db2 = try openDB(name: "db2")
+        let doc2 = createDocument()
+        try db2.saveDocument(doc2)
+        let repl2 = replicator(db: db2,
+                               continuous: true,
+                               target: self.listener!.localURLEndpoint,
+                               serverCert: self.listener!.tlsIdentity!.certs[0])
+
+        let changeListener = { (change: ReplicatorChange) in
+            if change.status.activity == .idle &&
+                change.status.progress.completed == change.status.progress.total {
+                if self.oDB.count == 3 && self.db.count == 3 && db2.count == 3 {
+                    change.replicator.stop()
+                }
+            }
+
+            if change.status.activity == .stopped {
+                if change.replicator.config.database.name == "db2" {
+                    exp2.fulfill()
+                } else {
+                    exp1.fulfill()
+                }
+            }
+
+        }
+        let token1 = repl1.addChangeListener(changeListener)
+        let token2 = repl2.addChangeListener(changeListener)
+
+        repl1.start()
+        repl2.start()
+        wait(for: [exp1, exp2], timeout: 5.0)
+
+        XCTAssertEqual(self.oDB.count, 3)
+        XCTAssertEqual(self.db.count, 3)
+        XCTAssertEqual(db2.count, 3)
+
+        repl1.removeChangeListener(withToken: token1)
+        repl2.removeChangeListener(withToken: token2)
+
+        try db2.close()
+        try stopListen()
+    }
+
+    func testCloseWithActiveListener() throws {
+        if !self.keyChainAccessAllowed { return }
+
+        try listen()
+
+        // Close database should also stop the listener:
+        try self.oDB.close()
+
+        XCTAssertNil(self.listener!.port)
+        XCTAssertNil(self.listener!.urls)
+
+        try stopListen()
+    }
+
+    // TODO: https://issues.couchbase.com/browse/CBL-1008
+    func _testEmptyNetworkInterface() throws {
+        if !self.keyChainAccessAllowed { return }
+
+        try listen()
+
+        for (i, url) in self.listener!.urls!.enumerated() {
+            // separate db instance!
+            let db = try Database(name: "db-\(i)")
+            let doc = createDocument()
+            doc.setString(url.absoluteString, forKey: "url")
+            try db.saveDocument(doc)
+
+            // separate replicator instance
+            let target = URLEndpoint(url: url)
+            let rConfig = ReplicatorConfiguration(database: db, target: target)
+            rConfig.pinnedServerCertificate = self.listener?.tlsIdentity!.certs[0]
+            run(config: rConfig, expectedError: nil)
+
+            // remove the db
+            try db.delete()
+        }
+
+        XCTAssertEqual(self.oDB.count, UInt64(self.listener!.urls!.count))
+
+        let q = QueryBuilder.select([SelectResult.all()]).from(DataSource.database(self.oDB))
+        let rs = try q.execute()
+        var result = [URL]()
+        for res in rs.allResults() {
+            let dict = res.dictionary(at: 0)
+            result.append(URL(string: dict!.string(forKey: "url")!)!)
+        }
+
+        XCTAssertEqual(result, self.listener!.urls)
+        try stopListen()
+
+        // validate 0.0.0.0 meta-address should return same empty response.
+        let config = URLEndpointListenerConfiguration(database: self.oDB)
+        config.networkInterface = "0.0.0.0"
+        try listen(config: config)
+        XCTAssertEqual(self.listener!.urls!, result)
+        try stopListen()
+    }
+
+    func testMultipleReplicatorsToListener() throws {
+        if !self.keyChainAccessAllowed { return }
+
+        try listen()
+
+        let doc = createDocument()
+        doc.setString("Tiger", forKey: "species")
+        try self.oDB.saveDocument(doc)
+
+        try validateMultipleReplicationsTo()
+
+        try stopListen()
+    }
+
+    // TODO: https://issues.couchbase.com/browse/CBL-954
+    func _testReadOnlyListener() throws {
+        if !self.keyChainAccessAllowed { return }
+
+        let config = URLEndpointListenerConfiguration(database: self.oDB)
+        config.readOnly = true
+        try listen(config: config)
+
+        self.run(target: self.listener!.localURLEndpoint, type: .pushAndPull, continuous: false,
+                 auth: nil, serverCert: self.listener!.tlsIdentity!.certs[0],
+                 expectedError: CBLErrorHTTPForbidden)
+    }
+}
+
+@available(macOS 10.12, iOS 10.0, *)
+extension URLEndpointListener {
+    var localURL: URL {
+        assert(self.port != nil && self.port! > UInt16(0))
+        var comps = URLComponents()
+        comps.scheme = self.config.disableTLS ? "ws" : "wss"
+        comps.host = "localhost"
+        comps.port = Int(self.port!)
+        comps.path = "/\(self.config.database.name)"
+        return comps.url!
+    }
+
+    var localURLEndpoint: URLEndpoint {
+        return URLEndpoint.init(url: self.localURL)
+    }
+}
+
+// END URLENDPOINTLISTENER SAMPLES

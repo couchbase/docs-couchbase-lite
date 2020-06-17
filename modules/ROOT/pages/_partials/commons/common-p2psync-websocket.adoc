@@ -75,172 +75,23 @@ Self-signed or Client Certificate Authentication (CA signed).
 * Built-in conflict resolution support (automatic and custom).
 --
 
-== Main API components
+== API
 
-URLEndpointListener::
-The `URLEndpointListener` is the Peer-to-Peer listener for replication. It acts like a passive replicator, in the same way that Sync Gateway does.
-+
-Core functionalities of the listener are:
-+
-* Users can initialize the class using a _URLEndpointListenerConfiguration_ object.
-* The listener can be started, or can be stopped.
-* Once the listener is started, a total number of connections or active connections can be checked.
+include::{root-partials}p2p-api.adoc[leveloffset=+1]
 
-[source, {source-language}]
-----
-include::{snippet-p2psync-ws}[tags="listener"]
-----
+== Security
 
-URLEndpointListenerConfiguration::
-A configuration class used for creating a _URLEndpointListener_ object.
-The property setters should be made fluent API if the platform allows.
+include::{root-partials}p2p-security.adoc[leveloffset=+1]
 
-[source, {source-language}]
-----
-include::{snippet-p2psync-ws}[tags="listener-config"]
-----
+== Sizing
 
-// public class URLEndpointListenerConfiguration {
-//     // Properties
-//     public let database: Database
-//     public var port: UInt16?
-//     public var networkInterface: String?
-//     public var disableTLS: Bool
-//     public var tlsIdentity: TLSIdentity?
-//     public var authenticator: ListenerAuthenticator?
-//     public var enableDeltaSync: Bool
-//
-//     // Constructors
-//     public init(database: Database)
-//     public init(config: URLEndpointListenerConfiguration)
-// }
-// ----
-//
+include::{root-partials}p2p-sizing.adoc[leveloffset=+1]
 
-TLSIdentity::
-TLSIdentity represents the identity information (Key pair and Certificates) used for setting up TLS Communication. The TLSIdentity API would be different among between platforms. The following API is based on the Apple Platform.
-
-Initialize::
-Use `URLEndpointListenerConfiguration` to set the required listener configuration, specifically:
-+
-* database
-* tls status and identity
-* delta_sync status
-
-+
-Use `URLEndpointListener` to instantiate the _WebsocketEndpointListener_ using the _URLEndpointListenerConfiguration_ configuration values in the constructor.
-
-Start::
-Use `URLEndpointListener.start` method to start the listener
-
-Assuming no error is returned the listener is operational.
-
-Initialize Replication::
-Use `ReplicatorConfiguration.init` to provide:
-+
-* db
-* URLEndpoint.init(target url)
-
-
-== Typical Workflow
-
-The typical workflow will vary, depending on whether the client is acting as an {glos-term-active-peer} or {glos-term-passive-peer}.
-
-.[Using CBL's Websockets Listener -- *needs refactor to std diagram format*]
-image::ROOT:p2psync-websocket-workflow.svg[,800]
-
-// * Discovery
-// * Connection
-// * Peer setup/Config
-// * Replicator setup
-// * Replication
-// * Disconnection
-
-[#act-peer]
-== Active Peer Workflow
-
-<<act-discovery>> | <<act-connect>> | <<act-config>> | <<act-rep-setup>> | <<act-replication>> | <<act-disconnect>>
-
-
-[#act-discovery]
-=== Discovery
-
-Automatic Device Discovery is out of scope for release.
-
-Back to <<act-peer>>
-
-
-[#act-connect]
-=== Connection
-
-Back to <<act-peer>>
-
-[#act-config]
-=== Peer setup/Config
-
-Back to <<act-peer>>
-
-[#act-rep-setup]
-=== Replicator setup
-
-
-Back to <<act-peer>>
-
-[#act-replication]
-=== Replication
-
-Back to <<act-peer>>
-
-[#act-disconnect]
-=== Disconnection
-
-Back to <<act-peer>>
-
-[#pass-peer]
-== Passive Peer Workflow
-
-<<pass-discovery>> | <<pass-connect>> | <<pass-config>> | <<pass-rep-setup>> | <<pass-replication>> | <<pass-disconnect>>
-
-
-[#pass-discovery]
-=== Discovery
-
-Automatic Device Discovery is out of scope for release.
-
-Back to <<pass-peer>>
-
-
-[#pass-connect]
-=== Connection
-
-Back to <<pass-peer>>
-
-[#pass-config]
-=== Peer setup/Config
-
-Back to <<pass-peer>>
-
-[#pass-rep-setup]
-=== Replicator setup
-
-
-Back to <<pass-peer>>
-
-[#pass-replication]
-=== Replication
-
-Back to <<pass-peer>>
-
-[#pass-disconnect]
-=== Disconnection
-
-Back to <<pass-peer>>
-
-== Conflict handling
-
-
-== Constraints
 * Sizing - eg num websocket endponi listeners
 ** The scalability of the sync must only be limited by OS-level factors like number of open socket descriptions, volume of mutations getting synced .
 * We must provide some guidance on the sizing factors that will determine the number of supported clients. This is probably the most commonly asked question when it comes to p2p support. Alternatives like MPC specify the same.
 Context: This has been one of the reasons why off-the-shelf solutions haven’t worked requiring custom implementation
+
+== Conflict handling
+
+include::{root-partials}p2p-conflict.adoc[leveloffset=+1]

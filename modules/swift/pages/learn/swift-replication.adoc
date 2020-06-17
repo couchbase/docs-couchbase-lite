@@ -85,6 +85,27 @@ You should now use `ws:`, or `wss:` for SSL/TLS connections.
 
 include::{root-partials}verify-replication.adoc[]
 
+==== TLS
+The `replicatorConfiguration` class povides `serverCertificateVerficationMode` property.
+Use this to specify how the replicator should verify the server identity.
+Two modes are supported:
+
+* CA-CERT -- The replicator verifies the server identity by using the trusted CA or using the pinned server certificate.
+* SELF-SIGNED-CERT -- The replicator will accept all and only self-signed certificates.
+The replicator will reject non-self-signed certificates.
+
+[source, {source-language}]
+----
+public enum ServerCertificateVerificationMode {
+    CA-CERT, SELF-SIGNED-CERT
+}
+
+public class ReplicatorConfiguration {
+    public var serverCertificateVerificationMode: ServerCertificateVerificationMode = .CA-CERT
+}
+----
+
+==== WebSockets
 Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit data.
 Some load balancers are not configured for WebSocket connections by default (NGINX for example);
 so it might be necessary to explicitly enable them in the load balancer's configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
