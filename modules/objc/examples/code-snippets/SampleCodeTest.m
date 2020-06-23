@@ -1036,7 +1036,7 @@
     }];
     
     listener = [[CBLURLEndpointListener alloc] initWithConfig: config];
-    // tag::init-urllistener[]
+    // end::init-urllistener[]
 }
 
 - (void) dontTestListenerStart {
@@ -1048,7 +1048,7 @@
     if (!success) {
         NSLog(@"Cannot start the listener: %@", error);
     }
-    // tag::start-urllistener[]
+    // end::start-urllistener[]
 }
 
 - (void) dontTestListenerStop {
@@ -1056,7 +1056,7 @@
     
     // tag::stop-urllistener[]
     [listener stop];
-    // tag::stop-urllistener[]
+    // end::stop-urllistener[]
 }
 
 - (void) dontTestCreateSelfSignedCert {
@@ -1070,7 +1070,7 @@
                                             expiration: [NSDate dateWithTimeIntervalSinceNow: 86400]
                                                  label: @"Server-Cert-Label"
                                                  error: &error];
-    // tag::create-self-signed-cert[]
+    // end::create-self-signed-cert[]
 }
 
 @end
@@ -1299,4 +1299,3 @@
 }
 // end::passive-peer-close[]
 @end
-
