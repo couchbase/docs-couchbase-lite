@@ -947,6 +947,17 @@ class SampleCodeTest {
 
     }
     
+    func dontTestCreateSelfSignedCert() throws {
+        // tag::create-self-signed-cert[]
+        let attrs = [certAttrCommonName: "Couchbase Inc"]
+        let identity = try TLSIdentity.createIdentity(forServer: true,
+                                                      attributes: attrs,
+                                                      expiration: Date().addingTimeInterval(86400),
+                                                      label: "Server-Cert-Label")
+        // end::create-self-signed-cert[]
+        print("\(identity.expiration)") // to avoid warning
+    }
+    
 }
 
 
