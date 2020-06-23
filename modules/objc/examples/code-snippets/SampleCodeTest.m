@@ -1019,6 +1019,60 @@
     // end::update-document-with-conflict-handler[]
 }
 
+- (BOOL) isValidCredentials: (NSString*)u password: (NSString*)p { return YES; } // helper
+- (void) dontTestInitListener {
+    CBLDatabase *database = self.db;
+    CBLURLEndpointListener* listener = nil;
+    
+    // tag::init-urllistener[]
+    CBLURLEndpointListenerConfiguration* config;
+    config = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: database];
+    config.tlsIdentity = nil; // Use with anonymous self signed cert
+    config.authenticator = [[CBLListenerPasswordAuthenticator alloc] initWithBlock: ^BOOL(NSString * username, NSString * password) {
+        if ([self isValidCredentials: username password:password]) {
+            return  YES;
+        }
+        return NO;
+    }];
+    
+    listener = [[CBLURLEndpointListener alloc] initWithConfig: config];
+    // end::init-urllistener[]
+}
+
+- (void) dontTestListenerStart {
+    NSError* error = nil;
+    CBLURLEndpointListener* listener = nil;
+    
+    // tag::start-urllistener[]
+    BOOL success = [listener startWithError: &error];
+    if (!success) {
+        NSLog(@"Cannot start the listener: %@", error);
+    }
+    // end::start-urllistener[]
+}
+
+- (void) dontTestListenerStop {
+    CBLURLEndpointListener* listener = nil;
+    
+    // tag::stop-urllistener[]
+    [listener stop];
+    // end::stop-urllistener[]
+}
+
+- (void) dontTestCreateSelfSignedCert {
+    NSError* error = nil;
+    CBLTLSIdentity* identity = nil;
+    // tag::create-self-signed-cert[]
+    
+    NSDictionary* attrs = @{ kCBLCertAttrCommonName: @"Couchbase Inc" };
+    identity = [CBLTLSIdentity createIdentityForServer: YES /* isServer */
+                                            attributes: attrs
+                                            expiration: [NSDate dateWithTimeIntervalSinceNow: 86400]
+                                                 label: @"Server-Cert-Label"
+                                                 error: &error];
+    // end::create-self-signed-cert[]
+}
+
 @end
 
 
@@ -1245,4 +1299,3 @@
 }
 // end::passive-peer-close[]
 @end
-
