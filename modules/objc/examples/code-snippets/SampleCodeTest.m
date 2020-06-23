@@ -53,11 +53,6 @@
 @end
 // end::predictive-model[]
 
-// to avoid link error
-@implementation myMLModel
-+ (NSDictionary*)predictImage: (NSData*)data { return [NSDictionary dictionary]; }
-@end
-
 // tag::custom-logging[]
 @interface LogTestLogger : NSObject<CBLLogger>
 
@@ -1062,6 +1057,20 @@
     // tag::stop-urllistener[]
     [listener stop];
     // tag::stop-urllistener[]
+}
+
+- (void) dontTestCreateSelfSignedCert {
+    NSError* error = nil;
+    CBLTLSIdentity* identity = nil;
+    // tag::create-self-signed-cert[]
+    
+    NSDictionary* attrs = @{ kCBLCertAttrCommonName: @"Couchbase Inc" };
+    identity = [CBLTLSIdentity createIdentityForServer: YES /* isServer */
+                                            attributes: attrs
+                                            expiration: [NSDate dateWithTimeIntervalSinceNow: 86400]
+                                                 label: @"Server-Cert-Label"
+                                                 error: &error];
+    // tag::create-self-signed-cert[]
 }
 
 @end
