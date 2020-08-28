@@ -39,6 +39,7 @@ namespace api_walkthrough
     {
         private static Database _Database;
         private static Replicator _Replicator;
+        private static URLEndpointListener _listener;
         private static ListenerToken _ListenerToken;
         private static bool _NeedsExtraDocs;
 
@@ -135,6 +136,60 @@ namespace api_walkthrough
                 });
             }
             // end::update-document-with-conflict-handler[]
+        }
+
+        private static bool IsValidCredential(string name, SecureString password) { return true;  } // helper
+        private static void TestInitListener()
+        {
+            var db = new Database("other-database");
+            _Database = db;
+
+            // tag::init-urllistener[]
+            var config = new URLEndpointListenerConfiguration(_Database);
+            config.TlsIdentity = null; // Use with anonymous self-signed cert
+            config.Authenticator = new ListenerPasswordAuthenticator((sender, username, password) =>
+            {
+                if(IsValidCredential(username, password)) {
+                    return true;
+                }
+
+                return false;
+            });
+
+            _listener = new URLEndpointListener(config);
+            // end::init-urllistener[]
+        }
+
+        private static void TestListenerStart()
+        {
+            // tag::start-urllistener[]
+            // CouchbaseLiteException will be thrown when the listener cannot be started. The most common error 
+            // would be that the configured port has already been used.
+            _listener.Start();
+            // end::start-urllistener[]
+        }
+
+        private static void TestListenerStop()
+        {
+            // tag::stop-urllistener[]
+            _listener.Stop();
+            // end::stop-urllistener[]
+        }
+
+        private static void TestCreateSelfSignedCert()
+        {
+            TLSIdentity identity;
+            X509Store _store = new X509Store(StoreName.My); //The identity will be stored in the secure storage using the given label.
+            DateTimeOffset fiveMinToExpireCert = DateTimeOffset.UtcNow.AddMinutes(5);
+
+            // tag::create-self-signed-cert[]
+            identity = TLSIdentity.CreateIdentity(true, /* isServer */
+                new Dictionary<string, string>() { { Certificate.CommonNameAttribute, "Couchbase Inc" } }, // When creating a certificate, the common name attribute is required for creating a CSR. If the common name is not presented in the certificate, an exception will be thrown.
+                fiveMinToExpireCert, // If the expiration date is not specified, the expiration date of the certificate will be 365 days
+                _store,
+                "CBL-Server-Cert",
+                null); // The key label to get cert in certificate map. If null, the same default directory for a Couchbase Lite database is used for map.
+            // end::create-self-signed-cert[]
         }
 
         private static void UseEncryption()
