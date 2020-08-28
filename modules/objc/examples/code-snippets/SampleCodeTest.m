@@ -40,12 +40,12 @@
 
 - (nullable CBLDictionary*) predict: (CBLDictionary*)input; {
     CBLBlob* blob = [input blobForKey:@"photo"];
-    
+
     NSData* imageData = blob.content;
     // `myMLModel` is a fake implementation
     // this would be the implementation of the ml model you have chosen
     NSDictionary* modelOutput = [myMLModel predictImage:imageData];
-    
+
     CBLMutableDictionary* output = [[CBLMutableDictionary alloc] initWithData: modelOutput];
     return output; // <1>
 }
@@ -112,10 +112,10 @@
 - (CBLDocument*) resolve: (CBLConflict*)conflict {
     NSDictionary *localDict = conflict.localDocument.toDictionary;
     NSDictionary *remoteDict = conflict.remoteDocument.toDictionary;
-    
+
     NSMutableDictionary *result = [NSMutableDictionary dictionaryWithDictionary:localDict];
     [result addEntriesFromDictionary:remoteDict];
-    
+
     return [[CBLMutableDocument alloc] initWithID:conflict.documentID
                                              data:result];
 }
@@ -198,7 +198,7 @@
 - (void) dontTestInitializer {
     NSError *error;
     CBLDatabase *database = self.db;
-    
+
     // tag::initializer[]
     CBLMutableDocument *newTask = [[CBLMutableDocument alloc] init];
     [newTask setString:@"task" forKey:@"task"];
@@ -211,7 +211,7 @@
 - (void) dontTestMutability {
     NSError *error;
     CBLDatabase *database = self.db;
-    
+
     // tag::update-document[]
     CBLDocument *document = [database documentWithID:@"xyz"];
     CBLMutableDocument *mutableDocument = [document toMutable];
@@ -222,19 +222,19 @@
 
 - (void) dontTestTypedAcessors {
     CBLMutableDocument *newTask = [[CBLMutableDocument alloc] init];
-    
+
     // tag::date-getter[]
     [newTask setValue:[NSDate date] forKey:@"createdAt"];
     NSDate *date = [newTask dateForKey:@"createdAt"];
     // end::date-getter[]
-    
+
     NSLog(@"Date: %@", date);
 }
 
 - (void) dontTestBatchOperations {
     NSError *error;
     CBLDatabase *database = self.db;
-    
+
     // tag::batch[]
     [database inBatch:&error usingBlock:^{
         for (int i = 0; i < 10; i++) {
@@ -250,7 +250,7 @@
 
 - (void) dontTestChangeListener {
     __weak CBLDatabase *database = self.db;
-    
+
     // tag::document-listener[]
     [database addDocumentChangeListenerWithID: @"user.john" listener:^(CBLDocumentChange * change) {
         CBLDocument* document = [database documentWithID: change.documentID];
@@ -262,7 +262,7 @@
 - (void) dontTestDocumentExpiration {
     NSError* error;
     CBLDatabase *database = self.db;
-    
+
     // tag::document-expiration[]
     // Purge the document one day from now
     NSDate* ttl = [[NSCalendar currentCalendar] dateByAddingUnit: NSCalendarUnitDay
@@ -270,10 +270,10 @@
                                                           toDate: [NSDate date]
                                                          options: 0];
     [database setDocumentExpirationWithID:@"doc123" expiration:ttl error:&error];
-    
+
     // Reset expiration
     [database setDocumentExpirationWithID:@"doc1" expiration:nil error: &error];
-    
+
     // Query documents that will be expired in less than five minutes
     NSTimeInterval fiveMinutesFromNow = [[NSDate dateWithTimeIntervalSinceNow:60 * 5] timeIntervalSince1970];
     CBLQuery* query = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
@@ -289,33 +289,33 @@
     NSError *error;
     CBLDatabase *database = self.db;
     CBLMutableDocument *newTask = [[CBLMutableDocument alloc] initWithID:@"task1"];
-    
+
     // tag::blob[]
     UIImage *appleImage = [UIImage imageNamed:@"avatar.jpg"];
     NSData *imageData = UIImageJPEGRepresentation(appleImage, 1.0);
-    
+
     CBLBlob *blob = [[CBLBlob alloc] initWithContentType:@"image/jpeg" data:imageData];
     [newTask setBlob:blob forKey:@"avatar"];
     [database saveDocument:newTask error:&error];
-    
+
     CBLDocument *savedTask = [database documentWithID: @"task1"];
     CBLBlob *taskBlob = [savedTask blobForKey:@"avatar"];
     UIImage *taskImage = [UIImage imageWithData:taskBlob.content];
     // end::blob[]
-    
+
     NSLog(@"%@", taskImage);
 #endif
 }
 
 - (void) dontTest1xAttachment {
     CBLMutableDocument *document = [[CBLMutableDocument alloc] initWithID:@"task1"];
-    
+
     // tag::1x-attachment[]
     CBLDictionary *attachments = [document dictionaryForKey:@"_attachments"];
     CBLBlob *avatar = [attachments blobForKey:@"avatar"];
     NSData *content = [avatar content];
     // end::1x-attachment[]
-    
+
     NSLog(@"%@", content);
 }
 
@@ -324,7 +324,7 @@
 - (void) dontTestIndexing {
     NSError *error;
     CBLDatabase *database = self.db;
-    
+
     // tag::query-index[]
     CBLValueIndexItem *type = [CBLValueIndexItem property:@"type"];
     CBLValueIndexItem *name = [CBLValueIndexItem property:@"name"];
@@ -336,14 +336,14 @@
 - (void) dontTestSelect {
     NSError *error;
     CBLDatabase *database = self.db;
-    
+
     // tag::query-select-meta[]
     CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
     CBLQuery *query = [CBLQueryBuilder select:@[name]
                                          from:[CBLQueryDataSource database:database]
                                         where:[[[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression value:@"user"]] andExpression:
                                                [[CBLQueryExpression property:@"admin"] equalTo:[CBLQueryExpression boolean:NO]]]];
-    
+
     NSEnumerator* rs = [query execute:&error];
     for (CBLQueryResult *result in rs) {
         NSLog(@"user name :: %@", [result stringAtIndex:0]);
@@ -353,23 +353,23 @@
 
 - (void) dontTestSelectAll {
     CBLDatabase *database = self.db;
-    
+
     // tag::query-select-all[]
     CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
                                          from:[CBLQueryDataSource database:database]];
     // end::query-select-all[]
-    
+
     NSLog(@"%@", query);
 }
 
 - (void) dontTestLiveQuery {
     NSError* error;
     CBLDatabase *database = self.db;
-    
+
     // tag::live-query[]
     CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
                                          from:[CBLQueryDataSource database:database]];
-    
+
     // Adds a query change listener.
     // Changes will be posted on the main queue.
     id<CBLListenerToken> token = [query addChangeListener:^(CBLQueryChange * _Nonnull change) {
@@ -378,11 +378,11 @@
             /* Update UI */
         }
     }];
-    
+
     // Start live query.
     [query execute: &error]; // <1>
     // end::live-query[]
-    
+
     // tag::stop-live-query[]
     [query removeChangeListenerWithToken:token];
     // end::stop-live-query[]
@@ -391,27 +391,27 @@
 - (void) dontTestWhere {
     NSError *error;
     CBLDatabase *database = self.db;
-    
+
     // tag::query-where[]
     CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
                                          from:[CBLQueryDataSource database:database]
                                         where:[[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"hotel"]]
                                       groupBy:nil having:nil orderBy:nil
                                         limit:[CBLQueryLimit limit:[CBLQueryExpression integer:10]]];
-    
+
     NSEnumerator* rs = [query execute:&error];
     for (CBLQueryResult *result in rs) {
         CBLDictionary *dict = [result valueForKey:@"travel-sample"];
         NSLog(@"document name :: %@", [dict stringForKey:@"name"]);
     }
     // end::query-where[]
-    
+
     NSLog(@"%@", query);
 }
 
 - (void) dontTestQueryDeletedDocuments {
     CBLDatabase* database = self.db;
-    
+
     // tag::query-deleted-documents[]
     // Query documents that have been deleted
     CBLQuery* query = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression:CBLQueryMeta.id]]
@@ -424,20 +424,20 @@
 - (void) dontTestCollectionOperatorContains {
     NSError *error;
     CBLDatabase *database = self.db;
-    
+
     // tag::query-collection-operator-contains[]
     CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
     CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
     CBLQuerySelectResult *likes = [CBLQuerySelectResult property:@"public_likes"];
-    
+
     CBLQueryExpression *type = [[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"hotel"]];
     CBLQueryExpression *contains = [CBLQueryArrayFunction contains:[CBLQueryExpression property:@"public_likes"]
                                                              value:[CBLQueryExpression string:@"Armani Langworth"]];
-    
+
     CBLQuery *query = [CBLQueryBuilder select:@[id, name, likes]
                                          from:[CBLQueryDataSource database:database]
                                         where:[type andExpression: contains]];
-    
+
     NSEnumerator* rs = [query execute:&error];
     for (CBLQueryResult *result in rs) {
         NSLog(@"public_likes :: %@", [[result arrayForKey:@"public_likes"] toArray]);
@@ -447,12 +447,12 @@
 
 - (void) dontTestCollectionOperatorIn {
     CBLDatabase *database = self.db;
-    
+
     // tag::query-collection-operator-in[]
     NSArray *values = @[[CBLQueryExpression property:@"first"],
                        [CBLQueryExpression property:@"last"],
                        [CBLQueryExpression property:@"username"]];
-                       
+
     [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
                        from:[CBLQueryDataSource database:database]
                       where:[[CBLQueryExpression string:@"Armani"] in:values]];
@@ -462,19 +462,19 @@
 - (void) dontTestLikeOperator {
     NSError *error;
     CBLDatabase *database = self.db;
-    
+
     // tag::query-like-operator[]
     CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
     CBLQuerySelectResult *country = [CBLQuerySelectResult property:@"country"];
     CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
-    
+
     CBLQueryExpression *type = [[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"landmark"]];
     CBLQueryExpression *like = [[CBLQueryFunction lower:[CBLQueryExpression property:@"name"]] like:[CBLQueryExpression string:@"Royal engineers museum"]];
-    
+
     CBLQuery *query = [CBLQueryBuilder select:@[id, country, name]
                                          from:[CBLQueryDataSource database:database]
                                         where:[type andExpression: like]];
-    
+
     NSEnumerator* rs = [query execute:&error];
     for (CBLQueryResult *result in rs) {
         NSLog(@"name property :: %@", [result stringForKey:@"name"]);
@@ -484,139 +484,139 @@
 
 - (void) dontTestWildCardMatch {
     CBLDatabase *database = self.db;
-    
+
     // tag::query-like-operator-wildcard-match[]
     CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
     CBLQuerySelectResult *country = [CBLQuerySelectResult property:@"country"];
     CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
-    
+
     CBLQueryExpression *type = [[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"landmark"]];
     CBLQueryExpression *like = [[CBLQueryFunction lower:[CBLQueryExpression property:@"name"]] like:[CBLQueryExpression string:@"eng%e%"]];
-    
+
     CBLQueryLimit *limit = [CBLQueryLimit limit:[CBLQueryExpression integer:10]];
-    
+
     CBLQuery *query = [CBLQueryBuilder select:@[id, country, name]
                                          from:[CBLQueryDataSource database:database]
                                         where:[type andExpression: like]
                                       groupBy:nil having:nil orderBy:nil
                                         limit:limit];
     // end::query-like-operator-wildcard-match[]
-    
+
     NSLog(@"%@", query);
 }
 
 - (void) dontTestWildCardCharacterMatch {
     CBLDatabase *database = self.db;
-    
+
     // tag::query-like-operator-wildcard-character-match[]
     CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
     CBLQuerySelectResult *country = [CBLQuerySelectResult property:@"country"];
     CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
-    
+
     CBLQueryExpression *type = [[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"landmark"]];
     CBLQueryExpression *like = [[CBLQueryExpression property:@"name"] like:[CBLQueryExpression string:@"eng____r"]];
-    
+
     CBLQueryLimit *limit = [CBLQueryLimit limit:[CBLQueryExpression integer:10]];
-    
+
     CBLQuery *query = [CBLQueryBuilder select:@[id, country, name]
                                          from:[CBLQueryDataSource database:database]
                                         where:[type andExpression: like]
                                       groupBy:nil having:nil orderBy:nil
                                         limit:limit];
     // end::query-like-operator-wildcard-character-match[]
-    
+
     NSLog(@"%@", query);
 }
 
 - (void) dontTestRegexMatch {
     CBLDatabase *database = self.db;
-    
+
     // tag::query-regex-operator[]
     CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
     CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
-    
+
     CBLQueryExpression *type = [[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"landmark"]];
     CBLQueryExpression *regex = [[CBLQueryExpression property:@"name"] regex:[CBLQueryExpression string:@"\\bEng.*e\\b"]];
-    
+
     CBLQueryLimit *limit = [CBLQueryLimit limit:[CBLQueryExpression integer:10]];
-    
+
     CBLQuery *query = [CBLQueryBuilder select:@[id, name]
                                          from:[CBLQueryDataSource database:database]
                                         where:[type andExpression: regex]
                                       groupBy:nil having:nil orderBy:nil
                                         limit:limit];
     // end::query-regex-operator[]
-    
+
     NSLog(@"%@", query);
 }
 
 - (void) dontTestJoin {
     CBLDatabase *database = self.db;
-    
+
     // tag::query-join[]
     CBLQuerySelectResult *name = [CBLQuerySelectResult expression:[CBLQueryExpression property:@"name" from:@"airline"]];
     CBLQuerySelectResult *callsign = [CBLQuerySelectResult expression:[CBLQueryExpression property:@"callsign" from:@"airline"]];
     CBLQuerySelectResult *dest = [CBLQuerySelectResult expression:[CBLQueryExpression property:@"destinationairport" from:@"route"]];
     CBLQuerySelectResult *stops = [CBLQuerySelectResult expression:[CBLQueryExpression property:@"stops" from:@"route"]];
     CBLQuerySelectResult *airline = [CBLQuerySelectResult expression:[CBLQueryExpression property:@"airline" from:@"route"]];
-    
+
     CBLQueryJoin *join = [CBLQueryJoin join:[CBLQueryDataSource database:database as:@"route"]
                                          on:[[CBLQueryMeta idFrom:@"airline"] equalTo:[CBLQueryExpression property:@"airlineid" from:@"route"]]];
-    
+
     CBLQueryExpression *typeRoute = [[CBLQueryExpression property:@"type" from:@"route"] equalTo:[CBLQueryExpression string:@"route"]];
     CBLQueryExpression *typeAirline = [[CBLQueryExpression property:@"type" from:@"airline"] equalTo:[CBLQueryExpression string:@"airline"]];
     CBLQueryExpression *sourceRIX = [[CBLQueryExpression property:@"sourceairport" from:@"route"] equalTo:[CBLQueryExpression string:@"RIX"]];
-    
+
     CBLQuery *query = [CBLQueryBuilder select:@[name, callsign, dest, stops, airline]
                                          from:[CBLQueryDataSource database:database as:@"airline"]
                                          join:@[join]
                                         where:[[typeRoute andExpression:typeAirline] andExpression:sourceRIX]];
     // end::query-join[]
-    
+
     NSLog(@"%@", query);
 }
 
 - (void) dontTestGroupBy {
     CBLDatabase *database = self.db;
-    
+
     // tag::query-groupby[]
     CBLQuerySelectResult *count = [CBLQuerySelectResult expression:[CBLQueryFunction count:[CBLQueryExpression all]]];
     CBLQuerySelectResult *country = [CBLQuerySelectResult property:@"country"];
     CBLQuerySelectResult *tz = [CBLQuerySelectResult property:@"tz"];
-    
+
     CBLQueryExpression *type = [[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"airport"]];
     CBLQueryExpression *geoAlt = [[CBLQueryExpression property:@"geo.alt"] greaterThanOrEqualTo:[CBLQueryExpression integer:300]];
-    
+
     CBLQuery *query = [CBLQueryBuilder select:@[count, country, tz]
                                          from:[CBLQueryDataSource database:database]
                                         where:[type andExpression: geoAlt]
                                       groupBy:@[[CBLQueryExpression property:@"country"],
                                                 [CBLQueryExpression property:@"tz"]]];
     // end::query-groupby[]
-    
+
     NSLog(@"%@", query);
 }
 
 - (void) dontTestOrderBy {
     CBLDatabase *database = self.db;
-    
+
     // tag::query-orderby[]
     CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
     CBLQuerySelectResult *title = [CBLQuerySelectResult property:@"title"];
-    
+
     CBLQuery *query = [CBLQueryBuilder select:@[id, title]
                                          from:[CBLQueryDataSource database:database]
                                         where:[[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"hotel"]]
                                       orderBy:@[[[CBLQueryOrdering property:@"title"] descending]]];
     // end::query-orderby[]
-    
+
     NSLog(@"%@", query);
 }
 
 - (void) dontTestCreateFullTextIndex {
     NSError *error;
     CBLDatabase *database = self.db;
-    
+
     // tag::fts-index[]
     // Insert documents
     NSArray *tasks = @[@"buy groceries", @"play chess", @"book travels", @"buy museum tickets"];
@@ -626,7 +626,7 @@
         [doc setString:task forKey:@"name"];
         [database saveDocument:doc error:&error];
     }
-    
+
     // Create index
     CBLFullTextIndex *index = [CBLIndexBuilder fullTextIndexWithItems:@[[CBLFullTextIndexItem property:@"name"]]];
     index.ignoreAccents = NO;
@@ -637,13 +637,13 @@
 - (void) dontTestFullTextSearch {
     NSError *error;
     CBLDatabase *database = self.db;
-    
+
     // tag::fts-query[]
     CBLQueryExpression *where = [[CBLQueryFullTextExpression indexWithName:@"nameFTSIndex"] match:@"'buy'"];
     CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult expression:[CBLQueryMeta id]]]
                                          from:[CBLQueryDataSource database:database]
                                         where:where];
-    
+
     NSEnumerator* rs = [query execute:&error];
     for (CBLQueryResult *result in rs) {
         NSLog(@"document id %@", [result stringAtIndex:0]);
@@ -671,7 +671,7 @@
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
     config.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"john" password:@"pass"];
-    
+
     CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
     [replicator start];
     // end::basic-authentication[]
@@ -684,7 +684,7 @@
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
     config.authenticator = [[CBLSessionAuthenticator alloc] initWithSessionID:@"904ac010862f37c8dd99015a33ab5a3565fd8447"];
-    
+
     CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
     [replicator start];
     // end::session-authentication[]
@@ -696,7 +696,7 @@
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
     CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
-    
+
     // tag::replication-status[]
     [replicator addChangeListener:^(CBLReplicatorChange *change) {
         if (change.status.activity == kCBLReplicatorStopped) {
@@ -712,7 +712,7 @@
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
     CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
-    
+
     // tag::add-document-replication-listener[]
     id token = [replicator addDocumentReplicationListener:^(CBLDocumentReplication * _Nonnull replication) {
         NSLog(@"Replication type :: %@", replication.isPush ? @"Push" : @"Pull");
@@ -727,10 +727,10 @@
             }
         }
     }];
-    
+
     [replicator start];
     // end::add-document-replication-listener[]
-    
+
     // tag::remove-document-replication-listener[]
     [replicator removeChangeListenerWithToken: token];
     // end::remove-document-replication-listener[]
@@ -740,7 +740,7 @@
     CBLDatabase *database = self.db;
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
     CBLURLEndpoint *endpoint = [[CBLURLEndpoint alloc] initWithURL:url];
-    
+
     // tag::replication-custom-header[]
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:endpoint];
     config.headers = @{@"CustomHeaderName" : @"Value"};
@@ -753,7 +753,7 @@
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
     CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
-    
+
     // tag::replication-error-handling[]
     [replicator addChangeListener:^(CBLReplicatorChange *change) {
         if (change.status.error) {
@@ -778,11 +778,11 @@
 
 - (void) dontTestReplicationPushFilter {
     CBLDatabase *database = self.db;
-    
+
     // tag::replication-push-filter[]
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
-    
+
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
     config.pushFilter = ^BOOL(CBLDocument * _Nonnull document, CBLDocumentFlags flags) { // <1>
         if ([[document stringForKey: @"type"] isEqualToString: @"draft"]) {
@@ -790,7 +790,7 @@
         }
         return true;
     };
-    
+
     CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
     [replicator start];
     // end::replication-push-filter[]
@@ -798,11 +798,11 @@
 
 - (void) dontTestReplicationPullFilter {
     CBLDatabase *database = self.db;
-    
+
     // tag::replication-pull-filter[]
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
-    
+
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
     config.pullFilter = ^BOOL(CBLDocument * _Nonnull document, CBLDocumentFlags flags) { // <1>
         if ((flags & kCBLDocumentFlagsDeleted) == kCBLDocumentFlagsDeleted) {
@@ -810,7 +810,7 @@
         }
         return true;
     };
-    
+
     CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
     [replicator start];
     // end::replication-pull-filter[]
@@ -820,14 +820,14 @@
 - (void) dontTestDatabaseReplica {
     CBLDatabase *database = self.db;
     CBLDatabase *database2 = self.db;
-    
+
     /* EE feature: code below might throw a compilation error
      if it's compiled against CBL Swift Community. */
     // tag::database-replica[]
     CBLDatabaseEndpoint *targetDatabase = [[CBLDatabaseEndpoint alloc] initWithDatabase:database2];
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:targetDatabase];
     config.replicatorType = kCBLReplicatorTypePush;
-    
+
     CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
     [replicator start];
     // end::database-replica[]
@@ -836,20 +836,20 @@
 
 - (void) dontTestCertificatePinning {
     CBLDatabase *database = self.db;
-    
+
     // tag::certificate-pinning[]
     NSURL *certURL = [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"cer"];
     NSData *data = [[NSData alloc] initWithContentsOfURL: certURL];
     SecCertificateRef certificate = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
-    
+
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
-    
+
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database
                                                                                        target:target];
     config.pinnedServerCertificate = (SecCertificateRef)CFAutorelease(certificate);
     // end::certificate-pinning[]
-    
+
     NSLog(@"%@", config);
 }
 
@@ -863,55 +863,55 @@
     // Get the database (and create it if it doesn’t exist).
     NSError *error;
     CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
-    
+
     // Create a new document (i.e. a record) in the database.
     CBLMutableDocument *mutableDoc = [[CBLMutableDocument alloc] init];
     [mutableDoc setFloat:2.0 forKey:@"version"];
     [mutableDoc setString:@"SDK" forKey:@"type"];
-    
+
     // Save it to the database.
     [database saveDocument:mutableDoc error:&error];
-    
+
     // Update a document.
     CBLMutableDocument *mutableDoc2 = [[database documentWithID:mutableDoc.id] toMutable];
     [mutableDoc2 setString:@"Swift" forKey:@"language"];
     [database saveDocument:mutableDoc2 error:&error];
-    
+
     CBLDocument *document = [database documentWithID:mutableDoc2.id];
     // Log the document ID (generated by the database)
     // and properties
     NSLog(@"Document ID :: %@", document.id);
     NSLog(@"Learning %@", [document stringForKey:@"language"]);
-    
+
     // Create a query to fetch documents of type SDK.
     CBLQueryExpression *type = [[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"SDK"]];
     CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
                                           from:[CBLQueryDataSource database:database]
                                          where:type];
-    
+
     // Run the query
     CBLQueryResultSet *result = [query execute:&error];
     NSLog(@"Number of rows :: %lu", (unsigned long)[[result allResults] count]);
-    
+
     // Create replicators to push and pull changes to and from the cloud.
     NSURL *url = [[NSURL alloc] initWithString:@"ws://localhost:4984/getting-started-db"];
     CBLURLEndpoint *targetEndpoint = [[CBLURLEndpoint alloc] initWithURL:url];
     CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:targetEndpoint];
     replConfig.replicatorType = kCBLReplicatorTypePushAndPull;
-    
+
     // Add authentication.
     replConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"john" password:@"pass"];
-    
+
     // Create replicator (make sure to add an instance or static variable named _replicator)
     _replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
-    
+
     // Listen to replicator change events.
     [_replicator addChangeListener:^(CBLReplicatorChange *change) {
         if (change.status.error) {
             NSLog(@"Error code: %ld", change.status.error.code);
         }
     }];
-    
+
     // Start replication
     [_replicator start];
     // end::getting-started[]
@@ -920,20 +920,20 @@
 - (void) dontTestPredictiveModel {
     NSError *error;
     CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
-    
+
     // tag::register-model[]
     ImageClassifierModel* model = [[ImageClassifierModel alloc] init];
     [[CBLDatabase prediction] registerModel:model withName:@"ImageClassifier"];
     // end::register-model[]
-    
+
     // tag::predictive-query-value-index[]
     CBLQueryExpression* input = [CBLQueryExpression dictionary: @{@"photo":[CBLQueryExpression property:@"photo"]}];
     CBLQueryPredictionFunction* prediction = [CBLQueryFunction predictionUsingModel:@"ImageClassifier" input:input];
-    
+
     CBLValueIndex* index = [CBLIndexBuilder valueIndexWithItems:@[[CBLValueIndexItem expression:[prediction property:@"label"]]]];
     [database createIndex:index withName:@"value-index-image-classifier" error:&error];
     // end::predictive-query-value-index[]
-    
+
     // tag::unregister-model[]
     [[CBLDatabase prediction] unregisterModelWithName:@"ImageClassifier"];
     // end::unregister-model[]
@@ -942,10 +942,10 @@
 - (void) dontTestPredictiveIndex {
     NSError *error;
     CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
-    
+
     // tag::predictive-query-predictive-index[]
     CBLQueryExpression* input = [CBLQueryExpression dictionary:@{@"photo":[CBLQueryExpression property:@"photo"]}];
-    
+
     CBLPredictiveIndex* index = [CBLIndexBuilder predictiveIndexWithModel:@"ImageClassifier" input:input properties:nil];
     [database createIndex:index withName:@"predictive-index-image-classifier" error:&error];
     // end::predictive-query-predictive-index[]
@@ -954,17 +954,17 @@
 - (void) dontTestPredictiveQuery {
     NSError *error;
     CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
-    
+
     // tag::predictive-query[]
     CBLQueryExpression* input = [CBLQueryExpression dictionary: @{@"photo":[CBLQueryExpression property:@"photo"]}];
     CBLQueryPredictionFunction* prediction = [CBLQueryFunction predictionUsingModel:@"ImageClassifier" input:input]; // <1>
-    
+
     CBLQueryExpression* condition = [[[prediction property:@"label"] equalTo:[CBLQueryExpression string:@"car"]]
                                      andExpression:[[prediction property:@"probablity"] greaterThanOrEqualTo:[CBLQueryExpression double:0.8]]];
     CBLQuery* query = [CBLQueryBuilder select: @[[CBLQuerySelectResult all]]
                                          from: [CBLQueryDataSource database:database]
                                         where: condition];
-    
+
     // Run the query.
     CBLQueryResultSet *result = [query execute:&error];
     NSLog(@"Number of rows :: %lu", (unsigned long)[[result allResults] count]);
@@ -973,14 +973,14 @@
 
 - (void) dontTestCoreMLPredictiveModel {
     NSError *error;
-    
+
     // tag::coreml-predictive-model[]
     // Load MLModel from `ImageClassifier.mlmodel`
     NSURL* modelURL = [[NSBundle mainBundle] URLForResource:@"ImageClassifier" withExtension:@"mlmodel"];
     NSURL* compiledModelURL = [MLModel compileModelAtURL:modelURL error:&error];
     MLModel* model = [MLModel modelWithContentsOfURL:compiledModelURL error:&error];
     CBLCoreMLPredictiveModel* predictiveModel = [[CBLCoreMLPredictiveModel alloc] initWithMLModel:model];
-    
+
     // Register model
     [[CBLDatabase prediction] registerModel:predictiveModel withName:@"ImageClassifier"];
     // end::coreml-predictive-model[]
@@ -989,13 +989,13 @@
 - (void) dontTestReplicatorConflictResolver {
     NSError *error;
     CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
-    
+
     // tag::replication-conflict-resolver[]
     NSURL *url = [[NSURL alloc] initWithString:@"ws://localhost:4984/getting-started-db"];
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
     config.conflictResolver = [[LocalWinConflictResolver alloc] init];
-    
+
     CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
     [replicator start];
     // end::replication-conflict-resolver[]
@@ -1004,17 +1004,17 @@
 - (void) dontTestSaveWithConflictHandler {
     NSError *error;
     CBLDatabase *database = self.db;
-    
+
     // tag::update-document-with-conflict-handler[]
     CBLDocument *document = [database documentWithID:@"xyz"];
     CBLMutableDocument *mutableDocument = [document toMutable];
     [mutableDocument setString:@"apples" forKey:@"name"];
-    
+
     [database saveDocument:mutableDocument
            conflictHandler:^BOOL(CBLMutableDocument *new, CBLDocument *current) {
                NSDictionary *currentDict = current.toDictionary;
                NSDictionary *newDict = new.toDictionary;
-               
+
                NSMutableDictionary *result = [NSMutableDictionary dictionaryWithDictionary:currentDict];
                [result addEntriesFromDictionary:newDict];
                [new setData: result];
@@ -1028,7 +1028,7 @@
 - (void) dontTestInitListener {
     CBLDatabase *database = self.db;
     CBLURLEndpointListener* listener = nil;
-    
+
     // tag::init-urllistener[]
     CBLURLEndpointListenerConfiguration* config;
     config = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: database];
@@ -1039,7 +1039,7 @@
         }
         return NO;
     }];
-    
+
     listener = [[CBLURLEndpointListener alloc] initWithConfig: config];
     // end::init-urllistener[]
 }
@@ -1047,7 +1047,7 @@
 - (void) dontTestListenerStart {
     NSError* error = nil;
     CBLURLEndpointListener* listener = nil;
-    
+
     // tag::start-urllistener[]
     BOOL success = [listener startWithError: &error];
     if (!success) {
@@ -1058,7 +1058,7 @@
 
 - (void) dontTestListenerStop {
     CBLURLEndpointListener* listener = nil;
-    
+
     // tag::stop-urllistener[]
     [listener stop];
     // end::stop-urllistener[]
@@ -1068,7 +1068,7 @@
     NSError* error = nil;
     CBLTLSIdentity* identity = nil;
     // tag::create-self-signed-cert[]
-    
+
     NSDictionary* attrs = @{ kCBLCertAttrCommonName: @"Couchbase Inc" };
     identity = [CBLTLSIdentity createIdentityForServer: YES /* isServer */
                                             attributes: attrs
@@ -1141,7 +1141,7 @@
     if (self) {
         // tag::message-endpoint[]
         CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"dbname" error:nil];
-        
+
         // The delegate must implement the `CBLMessageEndpointDelegate` protocol.
         NSString* id = @"";
         CBLMessageEndpoint *endpoint =
@@ -1150,11 +1150,11 @@
                                    protocolType:kCBLProtocolTypeMessageStream
                                        delegate:self];
         // end::message-endpoint[]
-        
+
         // tag::message-endpoint-replicator[]
         CBLReplicatorConfiguration *config =
         [[CBLReplicatorConfiguration alloc] initWithDatabase:database target: endpoint];
-        
+
         // Create the replicator object.
         CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig: config];
         [replicator start];
@@ -1240,7 +1240,7 @@
 - (void)startListener {
     // tag::listener[]
     CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"mydb" error:nil];
-    
+
     CBLMessageEndpointListenerConfiguration *config =
     [[CBLMessageEndpointListenerConfiguration alloc] initWithDatabase:database
                                                          protocolType:kCBLProtocolTypeMessageStream];

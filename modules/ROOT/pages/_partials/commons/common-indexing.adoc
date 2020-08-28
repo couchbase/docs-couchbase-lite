@@ -1,6 +1,6 @@
-= Indexing
+// = Indexing
 // :page-layout: article
-// :page-status: {release-status-cbl} -- {release-comments-cbl}
+// :page-status:
 // :page-edition: Under Development
 // :page-role:
 //
@@ -21,31 +21,43 @@
 // :this-lang-title: {par-lang-title}
 // :this-packageNm: {par-packageNm}
 // :this-source-language: {par-source-language}
-:this-snippet: {par-snippet}
+// :this-snippet: {par-snippet}
 //:this-url-issues: {par-url-issues}
 // END::REQUIRED EXTERNALS
 
-Creating indexes can speed up the performance of queries.
-While indexes make queries faster, they also make writes slightly slower, and the Couchbase Lite database file slightly larger.
-As such, it is best to only create indexes when you need to optimize a specific case for better query performance.
+Before we begin querying documents, let's briefly mention the importance of having an appropriate and balanced approach to indexes.
 
-The following example creates a new index for the `type` and `name` properties.
+Creating indexes can speed up the performance of queries.
+A query will typically return results more quickly if it can take advantage of an existing database index to search, narrowing down the set of documents to be examined.
+
+.Creating a new index
+====
+
+This example creates a new index for the `type` and `name` properties, shown in this data model:
 
 [source,json]
 ----
 {
     "_id": "hotel123",
-    "type": "hotel",
+    "type": "hotel", <.>
     "name": "Apple Droid"
 }
 ----
 
-[source]
+The code to create the index will look something like this:
+
+[source, {source-language}]
 ----
 include::{snippet}[tag=query-index,indent=0]
 ----
+<.> Where there are multiple expressions, the first becomes the primary key, the second the secondary key and so on.
 
-If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.
+====
 
-NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
-Thus, good performance depends on designing and creating the _right_ indexes to go along with your queries.
+When planning the indexes you need for your database, remember that while indexes make queries faster, they may also:
+
+* Make writes slightly slower, because each index must be updated whenever a document is updated
+* Make your Couchbase Lite database slightly larger.
+
+So too many indexes may hurt performance.
+Optimal performance depends on designing and creating the _right_ indexes to go along with your queries.

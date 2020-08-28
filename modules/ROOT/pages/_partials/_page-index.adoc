@@ -1,4 +1,17 @@
 //ifndef::xref-pfx-cbl[]
+ifndef::param-name[:param-name: param-name undefined]
+ifndef::param-module[:param-module: param-module undefined]
+ifndef::param-title[:param-title: param-title undefined]
+ifndef::snippet[:snippet: snippet undefined]
+ifndef::ke[:ke: ke undefined]
+ifndef::fixed[:fixed: fixed undefined]
+ifndef::enh[:enh enh undefined]
+ifndef::nftr[:nftr nftr undefined]
+ifndef::version[:version: version undefined]
+
+
+
+
 :xref-pfx-cbl: xref:couchbase-lite:{param-module}:
 :xref-pfx-root: xref:couchbase-lite::
 //endif::xref-pfx-cbl[]
@@ -10,11 +23,12 @@
 
 :xref-cbl-pg-index: {xref-pfx-root}{cbl-pg-index}[Couchbase Lite]
 :xref-cbl-pg-introduction: {xref-pfx-root}{cbl-pg-introduction}[About CBL]
-:xref-cbl-pg-whatsnew: {xref-pfx-root}{cbl-pg-whatsnew}[What's New]
+:xref-cbl-pg-whatsnew: {xref-pfx-cbl}product/{cbl-pg-whatsnew}[What's New]
 
 
-// Begin -- Ref - Page Targets
+// Begin -- Ref - Page Target
 //
+:cbl-pg-quickstart-index: quickstart-index.adoc
 :cbl-pg-blob: learn/{param-name}-blob.adoc
 :cbl-pg-build: start/{param-name}-gs-build.adoc
 :cbl-pg-cert-pinning: learn/{param-name}-cert-pinning.adoc
@@ -22,13 +36,18 @@
 :cbl-pg-changelog-all: cbl-changelog-all.adoc
 :cbl-pg-compatibility: compatibility.adoc
 :cbl-pg-conflict: learn/{param-name}-conflict.adoc
+:cbl-pg-conflict-auto: learn/{param-name}-conflict.adoc#automatic-conflict-resolution
+:cbl-pg-conflict-custom: learn/{param-name}-conflict.adoc#custom-conflict-resolution
 :cbl-pg-database: learn/{param-name}-database.adoc
 :cbl-pg-dbo-crud: next/{param-name}-dbo-crud.adoc
 :cbl-pg-dbo-query: next/{param-name}-dbo-query.adoc
-:cbl-pg-dbo-p2psync-websocket-using: advance/{param-name}-p2psync-websocket-using.adoc
+:cbl-pg-dbo-p2psync-websocket-using-passive: advance/{param-name}-p2psync-websocket-using-passive.adoc
+:cbl-pg-dbo-p2psync-websocket-using-passive--delta-sync: {cbl-pg-dbo-p2psync-websocket-using-passive}#configure-delta-sync
+:cbl-pg-dbo-p2psync-websocket-using-active: advance/{param-name}-p2psync-websocket-using-active.adoc
 :cbl-pg-dbo-p2psync-cloud-using: advance/{param-name}-p2psync-cloud-using.adoc
 :cbl-pg-dbreplica: learn/{param-name}-dbreplica.adoc
 :cbl-pg-dep-upgrade: advance/{param-name}-dep-upgrade.adoc
+:cbl-pg-p2p-manage-tls-id: advance/{param-name}-p2p-managing-tls-id.adoc
 :cbl-pg-document: learn/{param-name}-document.adoc
 :cbl-pg-fts: learn/{param-name}-fts.adoc
 :cbl-pg-index: index.adoc
@@ -40,15 +59,18 @@
 :cbl-pg-p2psync-websocket: learn/{param-name}-p2psync-websocket.adoc
 :cbl-pg-p2psync-custom: learn/{param-name}-p2psync-custom.adoc
 :cbl-pg-prereqs: start/{param-name}-gs-prereqs.adoc
-:cbl-pg-query: learn/query/{param-name}-query.adoc
-:cbl-pg-query-using: learn/query/{param-name}-query-using.adoc
-:cbl-pg-query-live: learn/query/{param-name}-query-live.adoc
-:cbl-pg-query-predictive: learn/query/{param-name}-query-predictive.adoc
-:cbl-pg-date-time: learn/query/{param-name}-date-time.adoc
+:cbl-pg-query: learn/{param-name}-query.adoc
+:cbl-pg-query-using: learn/{param-name}-query-using.adoc
+:cbl-pg-query-live: learn/{param-name}-query-live.adoc
+:cbl-pg-query-predictive: learn/{param-name}-query-predictive.adoc
+:cbl-pg-date-time: learn/{param-name}-date-time.adoc
 :cbl-pg-ref-api: refer/{param-name}-ref-api.adoc
 :cbl-pg-refer-glossary:   refer-glossary.adoc
-:cbl-pg-releasenotes: product/{param-name}-pn-releasenotes.adoc
+:cbl-pg-glossary:   refer-glossary.adoc
+:cbl-pg-releasenotes: product/{param-name}-releasenotes.adoc
 :cbl-pg-replication: learn/{param-name}-replication.adoc
+:cbl-pg-replication--status: {cbl-pg-replication}#replication-status
+:cbl-pg-replication--delta-sync: {cbl-pg-replication}#delta-sync
 :cbl-pg-supportnotes: product/{param-name}-pn-supportnotes.adoc
 :cbl-pg-sync-p2p: learn/{param-name}-sync-p2p.adoc
 :cbl-pg-sync-svr: learn/{param-name}-sync-svr.adoc
@@ -60,11 +82,12 @@
 // Being -- Ref - xrefs
 //
 //:xref-cbl-pg-query-using: {xref-pfx-cbl}{cbl-pg-queryxref-cbl-pg-query-using}[Using Queries]
-:xref-cbl-pg-query: {xref-pfx-cbl}{cbl-pg-query}[Query the data]
+:xref-cbl-pg-quickstart-index: {xref-pfx-cbl}{cbl-pg-quickstart-index}[{param-title}]
+:xref-cbl-pg-query: {xref-pfx-cbl}{cbl-pg-query}[Working with Queries]
 :xref-cbl-pg-query-live: {xref-pfx-cbl}{cbl-pg-query-live}[Live Query]
 :xref-cbl-pg-query-predictive: {xref-pfx-cbl}{cbl-pg-query-predictive}[Predictive Query]
-:xref-cbl-pg-date-time: {xref-pfx-cbl}{cbl-pg-date-time}[Date Time Functions]
-:xref-cbl-pg-database: {xref-pfx-cbl}{cbl-pg-database}[Database]
+:xref-cbl-pg-date-time: {xref-pfx-cbl}{cbl-pg-date-time}[Date and Time Functions]
+//:xref-cbl-pg-database: {xref-pfx-cbl}{cbl-pg-database}[Database]
 :xref-cbl-pg-indexing: {xref-pfx-cbl}{cbl-pg-indexing}[Indexing]
 :xref-cbl-pg-releasenotes: {xref-pfx-cbl}{cbl-pg-releasenotes}[Release Notes]
 :xref-cbl-pg-compatibility: {xref-pfx-root}{cbl-pg-compatibility}[Compatibility]
@@ -72,16 +95,20 @@
 :xref-cbl-pg-blob: {xref-pfx-cbl}{cbl-pg-blob}[Working with Blobs]
 :xref-cbl-pg-dbo-crud: {xref-pfx-cbl}{cbl-pg-dbo-crud}[Using CRUD Operations]
 :xref-cbl-pg-dbo-query: {xref-pfx-cbl}{cbl-pg-dbo-query}[Using Query Operations]
-:xref-cbl-pg-dbo-p2psync-websocket-using: {xref-pfx-cbl}{cbl-pg-dbo-p2psync-websocket-using}[Using peer-to-peer sync over websockets]
-:xref-cbl-pg-dbo-p2psync-cloud-using: {xref-pfx-cbl}{cbl-pg-dbo-p2psync-cloud-using}[Using peer-to-peer sync over cloud]
+:xref-cbl-pg-dbo-p2psync-websocket-using-passive: {xref-pfx-cbl}{cbl-pg-dbo-p2psync-websocket-using-passive}[Passive Peer]
+:xref-cbl-pg-dbo-p2psync-websocket-using-passive--delta-sync: {xref-pfx-cbl}{cbl-pg-dbo-p2psync-websocket-using-passive--delta-sync}[Delta Sync]
+:xref-cbl-pg-dbo-p2psync-websocket-using-active: {xref-pfx-cbl}{cbl-pg-dbo-p2psync-websocket-using-active}[Active Peer]
+:xref-cbl-pg-dbo-p2psync-cloud-using: {xref-pfx-cbl}{cbl-pg-dbo-p2psync-cloud-using}[Peer-to-Peer Sync (cloud)]
 :xref-cbl-pg-build: {xref-pfx-cbl}{cbl-pg-build}[Test Build]
 :xref-cbl-pg-cert-pinning: {xref-pfx-cbl}{cbl-pg-cert-pinning}[Certificate Pinning]
 :xref-cbl-pg-changelog: {xref-pfx-cbl}{cbl-pg-changelog}[Change Log]
 :xref-cbl-pg-changelog-all: {xref-pfx-root}{cbl-pg-changelog-all}[Change Log (all platforms)]
 :xref-cbl-pg-compatibility: {xref-pfx-root}{cbl-pg-compatibility}[Compatibility]
 :xref-cbl-pg-conflict: {xref-pfx-cbl}{cbl-pg-conflict}[Handling Conflicts]
+:xref-cbl-pg-conflict-auto: {xref-pfx-cbl}{cbl-pg-conflict-auto}[Automatic Conflict Resolution]
+:xref-cbl-pg-conflict-custom: {xref-pfx-cbl}{cbl-pg-conflict-custom}[Custom Conflict Resolution]
 :xref-cbl-pg-database: {xref-pfx-cbl}{cbl-pg-database}[Working with Databases]
-:xref-cbl-pg-dbreplica: {xref-pfx-cbl}{cbl-pg-dbreplica}[Local Replicaton]
+:xref-cbl-pg-dbreplica: {xref-pfx-cbl}{cbl-pg-dbreplica}[Inter Database Replicaton]
 :xref-cbl-pg-dep-upgrade: {xref-pfx-cbl}{cbl-pg-dep-upgrade}[Upgrading]
 :xref-cbl-pg-document: {xref-pfx-cbl}{cbl-pg-document}[Working with Documents]
 :xref-cbl-pg-fts: {xref-pfx-cbl}{cbl-pg-fts}[Running Full-text Searches]
@@ -89,18 +116,21 @@
 :xref-cbl-pg-index: {xref-pfx-cbl}{cbl-pg-index}[{component-title-cbl}]
 :xref-cbl-pg-indexing: {xref-pfx-cbl}{cbl-pg-indexing}[Indexing]
 :xref-cbl-pg-install: {xref-pfx-cbl}{cbl-pg-install}[Install]
-:xref-cbl-pg-p2psync: {xref-pfx-cbl}{cbl-pg-p2psync}[Peer-to_peer Synchronization]
+:xref-cbl-pg-p2p-manage-tls-id: {xref-pfx-cbl}{cbl-pg-p2p-manage-tls-id}[Manage TLS Identities]
+:xref-cbl-pg-p2psync: {xref-pfx-cbl}{cbl-pg-p2psync}[Peer-to-peer Synchronization]
 :xref-cbl-pg-p2psync-http: {xref-pfx-cbl}{cbl-pg-p2psync-http}[P2P - http]
-:xref-cbl-pg-p2psync-custom: {xref-pfx-cbl}{cbl-pg-p2psync-custom}[P2P - Custom]
-:xref-cbl-pg-p2psync-websocket: {xref-pfx-cbl}{cbl-pg-p2psync-websocket}[P2P - Websocket]
+:xref-cbl-pg-p2psync-custom: {xref-pfx-cbl}{cbl-pg-p2psync-custom}[Peer-to-peer sync (custom)]
+:xref-cbl-pg-p2psync-websocket: {xref-pfx-cbl}{cbl-pg-p2psync-websocket}[Peer-to-peer sync over web sockets]
 :xref-cbl-pg-prereqs: {xref-pfx-cbl}{cbl-pg-prereqs}[Prerequisites]
-:xref-cbl-pg-query: {xref-pfx-cbl}{cbl-pg-query}[Query the data]
+//:xref-cbl-pg-query: {xref-pfx-cbl}{cbl-pg-query}[Query the data]
 :xref-cbl-pg-query-live: {xref-pfx-cbl}{cbl-pg-query-live}[Live Queries]
 :xref-cbl-pg-query-predictive: {xref-pfx-cbl}{cbl-pg-query-predictive}[Predictive Queries]
 :xref-cbl-pg-ref-api: {xref-pfx-cbl}{cbl-pg-ref-api}[Reference API]
 :xref-cbl-pg-refer-glossary: {xref-pfx-root}{cbl-pg-refer-glossary}[Glossary]
 :xref-cbl-pg-releasenotes: {xref-pfx-cbl}{cbl-pg-releasenotes}[Release Notes]
-:xref-cbl-pg-replication: {xref-pfx-cbl}{cbl-pg-replication}[Working with Replications]
+:xref-cbl-pg-replication: {xref-pfx-cbl}{cbl-pg-replication}[Sync Gateway Replications]
+:xref-cbl-pg-replication--status: {xref-pfx-cbl}{cbl-pg-replication--status}[Replication Status]
+:xref-cbl-pg-replication--delta-sync: {xref-pfx-cbl}{cbl-pg-replication--delta-sync}[Replication Delta-Sync]
 :xref-cbl-pg-supportnotes: {xref-pfx-cbl}{cbl-pg-supportnotes}[Support Notices]
 :xref-cbl-pg-sync-p2p: {xref-pfx-cbl}{cbl-pg-sync-p2p}[Synchronization - P2P]
 :xref-cbl-pg-sync-svr: {xref-pfx-cbl}{cbl-pg-sync-svr}[Synchronization - Server]

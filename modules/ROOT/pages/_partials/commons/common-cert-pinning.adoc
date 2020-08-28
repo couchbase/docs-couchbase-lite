@@ -1,35 +1,37 @@
-== Certificate Pinning
-:page-layout: article
-:page-status: {release-status-cbl} -- {release-comments-cbl}
-:page-edition: Under Development
-:page-role:
+// == Certificate Pinning
+Couchbase Lite supports certificate pinning.
+Certificate pinning is a technique that can be used by applications to "pin" a host to its certificate.
+The certificate is typically delivered to the client by an out-of-band channel and bundled with the client.
+In this case, Couchbase Lite uses this embedded certificate to verify the trustworthiness of the server and no longer needs to rely on a trusted third party for that (commonly referred to as the Certificate Authority).
 
-include::shared-mobile::partial$_attributes-shared.adoc[]
-include::ROOT:partial$_page-index.adoc[]
-include::ROOT:partial$_glossary-links.adoc[]
-include::ROOT:partial$_attributes-local.adoc[]
-include::{lang-mod-android}:partial$_attributes-module.adoc[]
+The following steps describe how to configure certificate pinning between Couchbase Lite and Sync Gateway.
 
-// BEGIN::Local page attributes
-:blank-field: ____
-:lang-title: {lang-title-android}
-:module: {lang-mod-android}
-:packageNm: couchbase-lite-{module}
-:source-language: {lang-name-android}
-:snippet: {snippets-content--android}
-:url-issues-java: {url-github-cbl}{module}/issues
-:ziputils: {snippets-pfx--android}/code_snippets/ZipUtils.java
+. xref:sync-gateway::security.adoc#creating-your-own-self-signed-certificate[Create your own self-signed certificate] with the `openssl` command.
+After completing this step, you should have 3 files: `cert.pem`, `cert.cer` and `privkey.pem`.
+. xref:sync-gateway::security.adoc#installing-the-certificate[Configure Sync Gateway] with the `cert.pem` and `privkey.pem` files.
+After completing this step, Sync Gateway is reachable over `https`/`wss`.
+. On the Couchbase Lite side, the replication must point to a URL with the `wss` scheme and configured with the `cert.cer` file created in step 1.
++
+[source, {source-language}]
+----
+include::{snippet}[tag=certificate-pinning,indent=0]
+----
+This example loads the certificate from the application sandbox, then converts it to the appropriate type to configure the replication object.
+. Build and run your app.
+The replication should now run successfully over https with certificate pinning.
 
-ifndef::release-status-cbl[:release-status-cbl!:]
-ifeval::["{release-status-cbl}" == "gamma"]
-[.pane__frame--orange]
-.Author's Notes
---
-Refactor and rationalize content as required and-or time permits.
---
-endif::[]
+=== Troubleshooting
 
-== Certificate Pinning
+If Sync Gateway is configured with a self signed certificate but your app points to a `ws` scheme instead of `wss` you will encounter an error with status code `11006`.
 
-include::partial$certificate-pinning.adoc[]
+[source,console]
+----
+CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: WebSocket error 1006 "connection closed abnormally"
+----
 
+If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't using the certificate you will encounter an error with status code `5011`.
+
+[source,text]
+----
+CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "server TLS certificate is self-signed or has unknown root cert"
+----

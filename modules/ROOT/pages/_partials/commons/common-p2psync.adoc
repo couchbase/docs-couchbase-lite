@@ -1,37 +1,38 @@
-// = Peer-to-Peer Synchronization
-// :page-layout: article
-// :page-status: {release-status-cbl} -- {release-comments-cbl}
-// :page-edition: Under Development
-// :page-role:
-// :description: Couchbase mobile database peer-to-peer (P2P) synchronization concepts
+//= Peer-to-Peer Synchronization
+//:page-layout: article
+//:page-status:
+//:page-edition: Enterprise
+//:page-role:
 //
-// include::shared-mobile::partial$_attributes-shared.adoc[]
-// include::ROOT:partial$_page-index.adoc[]
-// include::ROOT:partial$_glossary-links.adoc[]
-// include::ROOT:partial$_attributes-local.adoc[]
-// include::{lang-mod-swift}:partial$_attributes-module.adoc[]
+//include::partial$_std-cbl-hdr-{param-module}.adoc[]
 //
-// // BEGIN::Local page attributes
-// :blank-field: ____
-// :lang-title: {lang-title-swift}
-// :module: {lang-mod-swift}
-// :packageNm: couchbase-lite-{module}
-// :source-language: {lang-name-swift}
-// :snippet: {snippets-content--swift}
-// :url-issues: {url-github-cbl}{module}/issues
+// BEGIN::Local page attributes
 //
-// // END::Local page attributes
-//
-// [abstract]
-// {description}
+//:url-issues-java: {url-github-cbl}{module}/issues
+//:ziputils: {snippets-pfx--android}/code_snippets/ZipUtils.java
 //
 
-// // BEGIN::required attributes
-:this-module: {par-module}
-// // END::required attributes
 
-== Overview
+// DO NOT EDIT
+include::{root-partials}block-related-howto-p2psync-ws.adoc[]
+include::{root-partials}_block-abstract.adoc[]
+// DO NOT EDIT
 
+
+
+ifndef::release-status-cbl[:release-status-cbl!:]
+ifeval::["{release-status-cbl}" == "gamma"]
+[.pane__frame--orange]
+.Author's Notes
+--
+
+DOC-6340-H2-P2P: New topic - Implementing P2P Sync
+https://issues.couchbase.com/browse/DOC-6340
+This is the main P2P content covering Couchbase Lite P2P:
+
+Create a parent topic P2P Sync that will cover the generic sync concepts and then branch to cover new URLEndpointListener topic, existing EndpointListener topic
+--
+endif::[]
 
 .Enterprise Edition only
 IMPORTANT: Peer-to-peer sync is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
@@ -39,49 +40,64 @@ You must purchase the Enterprise License which includes official https://www.cou
 
 
 
-Peer-to-peer sync allows devices running Couchbase Lite to directly sync data with each other.
-As part of this, Couchbase Lite is responsible for storing the data and keeping track of the data exchange, but isn't responsible for the data transfer itself.
-Sending and receiving data must be handled by the platform APIs or a third party framework.
-In this section, we will refer to these third party frameworks as communication frameworks.
+// For offline-first applications requiring direct collaboration between the edge devices,
+== Introduction
+Couchbase Lite's peer-to-peer sync solution offers secure storage and bidirectional synchronization of data between edge devices without the need for a centralized cloud-based control point.
 
-ifeval::[{this-module}={lang-mod-swift}]
-On iOS, Apple's https://developer.apple.com/documentation/multipeerconnectivity[Multipeer Connectivity Framework] would be a good choice for the Communication Framework.
-endif::[]
+The solution provides “out-of-box” peer-to-peer support in IP-based networks, which enables customers to:
 
-ifeval::[{this-module}={lang-mod-android}]
-On Android, the https://developers.google.com/nearby/messages/overview[Nearby Messages API] would be a good choice for the Communication Framework.
-endif::[]
-This framework will handle sending and receiving messages and supports multiple transport technologies -- WiFi and Bluetooth and uses whichever is available to establish a connection between devices.
+* Simplify development by enabling sync with just a few lines of code
+* Optimize network bandwidth usage and reduce data transfer cost with Delta Sync support
+* Securely sync data with built-in support for TLS encryption and authentication support
+* Significantly reduce complexity of managing document conflicts from concurrent writes with built-in conflict resolution support.
 
-Thus, to enable peer-to-peer sync with Couchbase Lite, the application must use the Communication Framework with Couchbase Lite.
-The following sections describe a typical peer-to-peer workflow.
-Where applicable, we discuss how to integrate Couchbase Lite into the workflow.
+
+== Replication Characteristics
+
+Replications take place over secure encrypted websocket connections (SSL/TLS).
+
+The replication provides built-in network resiliency allowing sync between heterogenous Couchbase lite platforms and flexible topologies.
+
+Network connection errors are handled by persistent exponential backoff, with retries continuing indefinitely (or for a specified maximum period).
+
+== Component Responsibilities
+
+
+== Approach
+{glos-term-peer-to-peer-sync} enables edge devices running Couchbase Lite to directly sync Couchbase Lite database changes with each other without a server.
+
+In peer-to-peer exchanges, Couchbase Lite is responsible for storing the data and keeping track of the data exchange.
+The synchronization is handled by our peer-to-peer sync communication framework.
+
+To sync, one of the Couchbase Lite instances must use a _URLEndpointListener_, enabling its database to become the remote in a standard replication by listening and exposing Couchbase's replication endpoints on a selected port.
+
+// * A custom built _MessageEndpointListener_
+// +
+// Using this approach developers can use the platform APIs and-or a third party Communication Framework such as
+// ifeval::["{param-platform}"=="{platform-android}"]
+// Android's https://developers.google.com/nearby/messages/overview[Nearby Messages API]
+// endif::[]
+// ifeval::["{param-platform}"=="{platform-ios}"]
+// Apple’s https://developer.apple.com/documentation/multipeerconnectivity[Multipeer Connectivity Framework]
+// endif::[]
+// , to implement their own listener.
+// +
+// This provides great flexibility. It will handle sending and receiving messages and supports multiple transport technologies -- WiFi and Bluetooth and uses whichever is available to establish a connection between devices.
 
 In Couchbase Lite, a peer can take on one of these two roles:
 
 Active Peer::
-The peer that initializes the connection and replication (i.e the "client" side).
+The peer that initializes the connection and replication.
 Passive Peer::
-The passive side reacts to things that it receives but does not initiate any communication on its own (i.e. the "server" side).
+The passive side reacts to things that it receives but does not initiate any communication on its own.
 
-=== Peer Discovery
+// For how to configure
+// Websocket Listener::
+// {xref-cbl-pg-p2psync-websocket}
 
-include::{root-partials}p2p-peer-discovery.adoc[]
+// Custom Listener::
+// {xref-cbl-pg-p2psync-custom}
 
-=== Peer Selection and Connection Setup
-
-include::{root-partials}p2p-peer-selection.adoc[]
-
-=== Replication Setup
-
-include::{root-partials}p2p-replication-setup.adoc[]
-
-=== Push/Pull Replication
-
-include::{root-partials}p2p-push-pull-repl.adoc[]
-
-=== Connection Teardown
-
-include::{root-partials}p2p-connection-teardown.adoc[]
-
-
+// DO NOT EDIT OR REMOVE
+include::{root-partials}block-related-content-p2psync.adoc[]
+// DO NOT EDIT OR REMOVE

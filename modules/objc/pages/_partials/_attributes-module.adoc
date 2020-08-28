@@ -1,15 +1,132 @@
 // Begin define module specific attributes
 
 :snippet: {snippets-content--objc}
-:snippet-p2psync-ws: {snippets-p2psync-ws--objc}
-
 :source-language: {lang-name-objc}
+:module: {lang-mod-objc}
 :packageNm: couchbase-lite-objc
 :url-issues: {url-issues-objc}
+//:snippet-p2psync-ws: {snippets-p2psync-ws--objc}
+:sep: #/
+:api-pfx: CBL
+
 :url-api-references: {url-api-references-objc}
-:module: {lang-mod-objc}
+//:url-api-references-structs: {url-api-references}/Structs
+:url-api-references-classes: {url-api-references}/Classes
+:url-api-references-structs: {url-api-references-classes}
+:url-api-references-enums: {url-api-references}/Enums
+
+:url-api-references-urlendpointconfiguration: {url-api-references-classes}/{api-pfx}URLEndpointListenerConfiguration.html
 
 
+:url-api-references-urlendpointlistener: {url-api-references-classes}/{api-pfx}URLEndpointListener.html
+
+:url-api-class-urlendpointlistener: {url-api-references-urlendpointlistener}[URLEndpointListener]
+
+:url-api-references-tlsidentity: {url-api-references-classes}/{api-pfx}TLSIdentity.html
+
+:url-api-class-tlsidentity: {url-api-references-tlsidentity}[TLSIdentity]
+
+:url-api-method-tls-identity-import: {url-api-references-tlsidentity}{sep}c:objc(cs){api-pfx}TLSIdentity(cm)importIdentityWithData:password:label:error:[importIdentity(withData:password:label:error:)]
+
+:url-api-class-urlendpointconfiguration: {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]
+
+:url-api-references-urlendpointconfiguration-property: {url-api-references-urlendpointconfiguration}{sep}c:objc(cs){api-pfx}URLEndpointListenerConfiguration
+
+:url-api-references-urlendpointconfiguration-port: {url-api-references-urlendpointconfiguration-property}(py)port[port]
+
+:url-api-references-urlendpointconfiguration-netwk-iface: {url-api-references-urlendpointconfiguration-property}(py)networkInterface[networkInterface]
+
+:url-api-references-urlendpointconfiguration-database: {url-api-references-urlendpointconfiguration-property}(py)database[database]
+
+:url-api-references-urlendpointconfiguration-initdb: {url-api-references-urlendpointconfiguration-property}(im)initWithDatabase:[-initWithDatabase:]
+:url-api-references-urlendpointconfiguration-initcfg: {url-api-references-urlendpointconfiguration-property}(im)initWithConfig::[-initWithConfig:]
+:url-api-references-urlendpointconfiguration-init: {url-api-references-urlendpointconfiguration-property}(im)init:[-init:]
+
+:url-api-references-urlendpointconfiguration-disable-tls: {url-api-references-urlendpointconfiguration-property}(py)disableTLS[disableTLS]
+
+:url-api-references-urlendpointconfiguration-tls-id: {url-api-references-urlendpointconfiguration-property}(py)tlsIdentity[tlsIdentity]
+
+:url-api-references-urlendpointconfiguration-delta-sync: {url-api-references-urlendpointconfiguration-property}(py)enableDeltaSync[enableDeltaSync]
+
+:url-api-references-urlendpointconfiguration-auth: {url-api-references-urlendpointconfiguration-property}(py)authenticator[authenticator]
 // diag: Env+Module {param-module}
+
+
+// Replicator API
+:url-api-references-replicator: {url-api-references-classes}/{api-pfx}Replicator.html
+:url-api-class-replicator: {url-api-references-replicator}[Replicator]
+
+:url-api-properties-replicator: {url-api-references-replicator}{sep}c:objc(cs){api-pfx}Replicator
+
+:url-api-constructor-replicator-init-config: {url-api-properties-replicator}(im)initWithConfig:[initWith(config:)]
+
+:url-api-method-replicator-add-change-listener: {url-api-properties-replicator}(im)addChangeListener:[addChangeListener(_:)]
+
+:url-api-method-replicator-rmv-change-listener: {url-api-properties-replicator}(im)removeChangeListenerWithToken[removeChangeListenerWithToken({api-pfx}ListenerToken:)]
+
+:url-api-method-replicator-start: {url-api-properties-replicator}(im)start[start()]
+
+:url-api-method-replicator-stop: {url-api-properties-replicator}(im)stop[stop()]
+
+:url-api-property-replicator-status: {url-api-properties-replicator}(py)status[status]
+
+// Note there is a replicator.status property AND
+// a ReplicationStatus class/struct --- oh yes, easy to confuse.
+
+//:url-api-property-replicator-status-activity: {url-api-references-replicator}{sep}s:18CouchbaseLiteobjc10ReplicatorC13ActivityLevelO
+
+:url-api-references-replicator-status: {url-api-references-classes}/{api-pfx}ReplicatorStatus.html
+
+:url-api-class-replicator-status: {url-api-references-replicator-status}[{api-pfx}ReplicatorStatus]
+
+:url-api-properties-replicator-status: {url-api-references-replicator-status}{sep}c:objc(cs){api-pfx}ReplicatorStatus
+
+:url-api-enum-replicator-activity: {url-api-properties-replicator-status}(py)activity[activity enum]
+
+:url-api-enum-replicator-progress: {url-api-properties-replicator-status}(py)progress)[progress enum]
+
+:url-api-enum-replicator-error: {url-api-properties-replicator-status}(py)error[error enum]
+
+// ReplicatorConfiguration API
+:url-api-references-replicator-config: {url-api-references-classes}/{api-pfx}ReplicatorConfiguration.html
+
+:url-api-class-replicator-config: {url-api-references-replicator-config}[ReplicatorConfiguration]
+
+:url-api-references-replicator-config-prop: {url-api-references-replicator-config}{sep}c:objc(cs){api-pfx}ReplicatorConfiguration
+
+:url-api-constructor-replicator-config-db-tgt: {url-api-references-replicator-config-prop}(im)initWithDatabase:target:[-initWithDatabase:target:]
+
+:url-api-constructor-replicator-config-cfg: {url-api-references-replicator-config-prop}(im)initWithConfig:[-initWithConfig:config:]
+
+:url-api-prop-replicator-config-auth: {url-api-references-replicator-config-prop}(py)authenticator[authenticator]
+
+:url-api-prop-replicator-config-cont: {url-api-references-replicator-config-prop}(py)continuous)[continuous]
+
+:url-api-prop-replicator-config-rep-type: {{url-api-references-replicator-config-prop}(py)replicatorType[replicatorType]
+
+:url-api-prop-replicator-config-ServerCertificateVerificationMode: {url-api-references-replicator-config-prop}(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
+
+:url-api-enum-replicator-config-ServerCertificateVerificationMode: {url-api-references-replicator-config}{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+:url-api-prop-replicator-config-database: {url-api-references-replicator-config-prop}(py)database[database]
+
+:url-api-prop-replicator-config-target: {url-api-references-replicator-config-prop}(py)target[target]
+
+:url-api-prop-replicator-config-conflict: {url-api-references-replicator-config-prop}(py)conflictResolver[conflictResolver]
+
+
+:url-api-class-replicator-config-basic-auth: {url-api-references-structs}/{api-pfx}BasicAuthenticator.html[BasicAuthenticator]
+
+:url-api-class-replicator-config-cert-auth: {url-api-references-structs}/{api-pfx}ClientCertificateAuthenticator.html[ClientCertificateAuthenticator]
+
+
+
+
+
+// Replicator API
+
+
+
+
 
 // End define module specific attributes

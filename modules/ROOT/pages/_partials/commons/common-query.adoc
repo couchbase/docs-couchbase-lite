@@ -1,6 +1,6 @@
-= Querying Couchbase Lite Databases
+// = Querying Couchbase Lite Databases
 // :page-layout: article
-// :page-status: {release-status-cbl} -- {release-comments-cbl}
+// :page-status:
 // :page-edition: Under Development
 // :page-role:
 //
@@ -21,12 +21,11 @@
 // :this-lang-title: {par-lang-title}
 // :this-packageNm: {par-packageNm}
 // :this-source-language: {par-source-language}
-:this-snippet: {par-snippet}
+// :snippet: {par-snippet}
 //:this-url-issues: {par-url-issues}
 // END::REQUIRED EXTERNALS
 
 == Query Format
-
 Database queries have changed significantly.
 Instead of the map/reduce views used in 1.x, they're now based on expressions, of the form "return {blank-field} from documents where {blank-field}, ordered by {blank-field}", with semantics based on Couchbase's N1QL query language.
 
@@ -38,6 +37,35 @@ JOIN:: Specifies the matching criteria in which to join multiple documents.
 WHERE:: Specifies the query criteria that the result must satisfy.
 GROUP BY:: Specifies the query criteria to group rows by.
 ORDER BY:: Specifies the query criteria to sort the rows in the result.
+
+// BEGIN:From csharp version
+// === Indexing
+
+// Before we begin querying documents, let's briefly mention the importance of having a query index.
+// A query can only be fast if there's a pre-existing database index it can search to narrow down the set of documents to examine.
+
+// The following example creates a new index for the `type` and `name` properties.
+
+// [source,json]
+// ----
+// {
+//     "_id": "hotel123",
+//     "type": "hotel",
+//     "name": "Apple Droid"
+// }
+// ----
+
+// [source, {source-language}]
+// ----
+// include::{snippet}[tag=query-index,indent=0]
+// ----
+
+// If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.
+
+// NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
+// Thus, good performance depends on designing and creating the _right_ indexes to go along with your queries.
+// END:From csharp version
+
 
 == SELECT statement
 
@@ -58,18 +86,18 @@ In the query result, we print the `_id` and `name` properties of each row using 
 }
 ----
 
-[source]
+[source, {source-language}]
 ----
-include::{this-snippet}[tag=query-select-meta,indent=0]
+include::{snippet}[tag=query-select-meta,indent=0]
 ----
 
 The `SelectResult.all()` method can be used to query all the properties of a document.
 In this case, the document in the result is embedded in a dictionary where the key is the database name.
 The following snippet shows the same query using `SelectResult.all()` and the result in JSON.
 
-[source]
+[source, {source-language}]
 ----
-include::{this-snippet}[tag=query-select-all,indent=0]
+include::{snippet}[tag=query-select-all,indent=0]
 ----
 
 [source,json]
@@ -108,7 +136,7 @@ You can chain any number of Expressions in order to implement sophisticated filt
 
 == Comparison
 
-The {url-api-references}/Classes/Expression.html#/Comparison%20Operators[comparison operators] can be used in the WHERE statement to specify on which property to match documents.
+The {url-api-classes-query-expression-comparators} can be used in the WHERE statement to specify on which property to match documents.
 In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
 
 [source,json]
@@ -120,14 +148,14 @@ In the example below, we use the `equalTo` operator to query documents where the
 }
 ----
 
-[source]
+[source, {source-language}]
 ----
-include::{this-snippet}[tag=query-where,indent=0]
+include::{snippet}[tag=query-where,indent=0]
 ----
 
 === Collection Operators
 
-{url-api-references}/com/couchbase/lite/ArrayFunction.html[Collection operators] are useful to check if a given value is present in an array.
+{url-api-classes-query-arrayfunction-collection-ops} are useful to check if a given value is present in an array.
 
 ==== CONTAINS Operator
 
@@ -142,9 +170,9 @@ The following example uses the `Function.arrayContains` to find documents whose 
 }
 ----
 
-[source]
+[source, {source-language}]
 ----
-include::{this-snippet}[tag=query-collection-operator-contains,indent=0]
+include::{snippet}[tag=query-collection-operator-contains,indent=0]
 ----
 
 ==== IN Operator
@@ -152,14 +180,14 @@ include::{this-snippet}[tag=query-collection-operator-contains,indent=0]
 The `IN` operator is useful when you need to explicitly list out the values to test against.
 The following example looks for documents whose `first`, `last` or `username` property value equals "Armani".
 
-[source]
+[source, {source-language}]
 ----
-include::{this-snippet}[tag=query-collection-operator-in,indent=0]
+include::{snippet}[tag=query-collection-operator-in,indent=0]
 ----
 
 === Like Operator
 
-The {url-api-references}/com/couchbase/lite/Expression.html#like-com.couchbase.lite.Expression-[`like`] operator can be used for string matching.
+The {url-api-methods-expression-like} operator can be used for string matching.
 
 The `like` operator performs **case sensitive** matches.
 So if you want to make the string matching case insensitive, you would have to use `Function.lower` or `Function.upper` to transform the matched string to lowercase or uppercase equivalents.
@@ -168,9 +196,9 @@ In the example below, we are looking for documents of type `landmark` where the 
 Note that since `like` does a case sensitive match, we use `Function.lower` to transform the matched string to the lowercase equivalent.
 So the following query will return "landmark" type documents with the name matching "Royal Engineers Museum", "royal engineers museum", "ROYAL ENGINEERS MUSEUM" and so on.
 
-[source]
+[source, {source-language}]
 ----
-include::{this-snippet}[tag=query-like-operator,indent=0]
+include::{snippet}[tag=query-like-operator,indent=0]
 ----
 
 === Wildcard Match
@@ -184,9 +212,9 @@ Once again, we are using `Function.lower` to make the search case insensitive.
 The following query will return "landmark" `type` documents with name matching "Engineers", "engine", "english egg" , "England Eagle" and so on.
 Notice that the matches may span word boundaries.
 
-[source]
+[source, {source-language}]
 ----
-include::{this-snippet}[tag=query-like-operator-wildcard-match,indent=0]
+include::{snippet}[tag=query-like-operator-wildcard-match,indent=0]
 ----
 
 === Wildcard Character Match
@@ -196,9 +224,9 @@ We can use an `_` sign within a like expression to do a wildcard match against a
 In the example below, we are looking for documents of type "landmark" where the `name` property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
 The following query will return "landmark" `type` documents with the `name` matching "Engineer", "engineer" and so on.
 
-[source]
+[source, {source-language}]
 ----
-include::{this-snippet}[tag=query-like-operator-wildcard-character-match,indent=0]
+include::{snippet}[tag=query-like-operator-wildcard-character-match,indent=0]
 ----
 
 === Regex Operator
@@ -211,9 +239,9 @@ In the example below, we are looking for documents of `type` "landmark" where th
 The following query will return "landmark" type documents with name matching "Engine", "engine" and so on.
 Note that the `\b` specifies that the match must occur on word boundaries.
 
-[source]
+[source, {source-language}]
 ----
-include::{this-snippet}[tag=query-regex-operator,indent=0]
+include::{snippet}[tag=query-regex-operator,indent=0]
 ----
 
 === Deleted Document
@@ -221,9 +249,9 @@ include::{this-snippet}[tag=query-regex-operator,indent=0]
 Starting in Couchbase Lite 2.5, you can query documents that have been deleted (tombstones).
 The following example shows how to query deleted documents in the database.
 
-[source]
+[source, {source-language}]
 ----
-include::{this-snippet}[tag=query-deleted-documents,indent=0]
+include::{snippet}[tag=query-deleted-documents,indent=0]
 ----
 
 == JOIN statement
@@ -233,9 +261,9 @@ The JOIN clause enables you to create new input objects by combining two or more
 The following example uses a JOIN clause to find the airline details which have routes that start from RIX.
 This example JOINS the document of type "route" with documents of type "airline" using the document ID (`_id`) on the "airline" document and `airlineid` on the "route" document.
 
-[source]
+[source, {source-language}]
 ----
-include::{this-snippet}[tag=query-join,indent=0]
+include::{snippet}[tag=query-join,indent=0]
 ----
 
 == GROUP BY statement
@@ -254,9 +282,9 @@ The following example looks for the number of airports at an altitude of 300 ft 
 }
 ----
 
-[source]
+[source, {source-language}]
 ----
-include::{this-snippet}[tag=query-groupby,indent=0]
+include::{snippet}[tag=query-groupby,indent=0]
 ----
 
 [source,text]
@@ -273,9 +301,9 @@ There are 123 airports on the America/Denver timezone located in United States a
 It is possible to sort the results of a query based on a given expression result.
 The example below returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.
 
-[source]
+[source, {source-language}]
 ----
-include::{this-snippet}[tag=query-orderby,indent=0]
+include::{snippet}[tag=query-orderby,indent=0]
 ----
 
 [source,text]
@@ -292,4 +320,4 @@ Avignon
 
 == Date/Time Functions
 
-include::ROOT:partial$query/date-time-functions.adoc[]
+include::ROOT:partial$query-date-time-functions.adoc[]
