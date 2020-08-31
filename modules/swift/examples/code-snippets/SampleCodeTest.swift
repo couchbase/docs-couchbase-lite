@@ -947,6 +947,40 @@ class SampleCodeTest {
 
     }
     
+    // helper
+    func isValidCredentials(_ u: String, password: String) -> Bool { return true }
+    
+    func dontTestInitListener() throws {
+        let db: Database!
+        
+        // tag::init-urllistener[]
+        let config = URLEndpointListenerConfiguration(database: db)
+        config.tlsIdentity = nil; // Use with anonymous self signed cert
+        config.authenticator = ListenerPasswordAuthenticator(authenticator:
+            { (username, password) -> Bool in
+                return self.isValidCredentials(username, password: password)
+        })
+        
+        // end::init-urllistener[]
+    }
+    
+    func dontTestListenerStart() throws {
+        let listener: URLEndpointListener
+        
+        // tag::start-urllistener[]
+        try listener.start()
+        
+        // end::start-urllistener[]
+    }
+    
+    func dontTestListenerStop() throws {
+        let listener: URLEndpointListener
+        // tag::stop-urllistener[]
+        listener.stop()
+        
+        // end::stop-urllistener[]
+    }
+    
     func dontTestCreateSelfSignedCert() throws {
         // tag::create-self-signed-cert[]
         let attrs = [certAttrCommonName: "Couchbase Inc"]
@@ -957,7 +991,6 @@ class SampleCodeTest {
         // end::create-self-signed-cert[]
         print("\(identity.expiration)") // to avoid warning
     }
-    
 }
 
 
