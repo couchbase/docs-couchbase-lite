@@ -200,10 +200,12 @@ namespace api_walkthrough
             X509Store _store = new X509Store(StoreName.My);
             TLSIdentity identity;
 
+            // tag::client-cert-authenticator-root-certs[]
             byte[] caData, clientData;
             clientData = File.ReadAllBytes("C:\\client.p12"); // PKCS12 data containing private key, public key, and certificates
             caData = File.ReadAllBytes("C:\\client-ca.der"); 
 
+            // Root certs
             var rootCert = new X509Certificate2(caData);
             var auth = new ListenerCertificateAuthenticator(new X509Certificate2Collection(rootCert));
 
@@ -221,8 +223,8 @@ namespace api_walkthrough
                 "CBL-Client-Cert",
                 null);
 
-            var database = new Database("MyDB");
-
+            // Replicator -- Client
+            var database = new Database("client-database");
             var builder = new UriBuilder(
                 "wss",
                 "localhost",
@@ -244,6 +246,7 @@ namespace api_walkthrough
 
             // Stop listener after replicator is stopped
             _listener.Stop();
+            // end::client-cert-authenticator-root-certs[]
         }
 
         private static void UseEncryption()
