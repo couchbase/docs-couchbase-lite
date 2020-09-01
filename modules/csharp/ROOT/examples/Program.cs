@@ -192,6 +192,60 @@ namespace api_walkthrough
             // end::create-self-signed-cert[]
         }
 
+        private static void TestClientCertAuthenticatorRootCerts()
+        {
+            var db = new Database("other-database");
+            _Database = db;
+
+            X509Store _store = new X509Store(StoreName.My);
+            TLSIdentity identity;
+
+            byte[] caData, clientData;
+            clientData = File.ReadAllBytes("C:\\client.p12"); // PKCS12 data containing private key, public key, and certificates
+            caData = File.ReadAllBytes("C:\\client-ca.der"); 
+
+            var rootCert = new X509Certificate2(caData);
+            var auth = new ListenerCertificateAuthenticator(new X509Certificate2Collection(rootCert));
+
+            // Create URL Endpoint Listener
+            var config = new URLEndpointListenerConfiguration(_Database);
+            config.DisableTLS = false; //The default value is false which means that the TLS will be enabled by default.
+            config.Authenticator = auth;
+            _listener = new URLEndpointListener(config);
+            _listener.Start();
+
+            // Client identity
+            identity = TLSIdentity.ImportIdentity(_store,
+                clientData,
+                "123",
+                "CBL-Client-Cert",
+                null);
+
+            var database = new Database("MyDB");
+
+            var builder = new UriBuilder(
+                "wss",
+                "localhost",
+                _listener.Port,
+                $"/{_listener.Config.Database.Name}"
+            );
+
+            var url = builder.Uri;
+            var target = new URLEndpoint(url);
+            var config = new ReplicatorConfiguration(database, target);
+            config.ReplicatorType = ReplicatorType.PushAndPull;
+            config.Continuous = false;
+            config.Authenticator = new ClientCertificateAuthenticator(identity);
+            config.AcceptOnlySelfSignedServerCertificate = true;
+            config.PinnedServerCertificate = _listener.TlsIdentity.Certs[0];
+            using (var replicator = new Replicator(config)) {
+                replicator.Start();
+            }
+
+            // Stop listener after replicator is stopped
+            _listener.Stop();
+        }
+
         private static void UseEncryption()
         {
             // Enterprise edition only
