@@ -179,7 +179,7 @@ namespace api_walkthrough
         private static void TestCreateSelfSignedCert()
         {
             TLSIdentity identity;
-            X509Store _store = new X509Store(StoreName.My); //The identity will be stored in the secure storage using the given label.
+            X509Store _store = new X509Store(StoreName.My); // The identity will be stored in the secure storage using the given label.
             DateTimeOffset fiveMinToExpireCert = DateTimeOffset.UtcNow.AddMinutes(5);
 
             // tag::create-self-signed-cert[]
