@@ -210,10 +210,10 @@ namespace api_walkthrough
             var auth = new ListenerCertificateAuthenticator(new X509Certificate2Collection(rootCert));
 
             // Create URL Endpoint Listener
-            var config = new URLEndpointListenerConfiguration(_Database);
-            config.DisableTLS = false; //The default value is false which means that the TLS will be enabled by default.
-            config.Authenticator = auth;
-            _listener = new URLEndpointListener(config);
+            var listenerConfig = new URLEndpointListenerConfiguration(_Database);
+            listenerConfig.DisableTLS = false; //The default value is false which means that the TLS will be enabled by default.
+            listenerConfig.Authenticator = auth;
+            _listener = new URLEndpointListener(listenerConfig);
             _listener.Start();
 
             // Client identity
@@ -247,6 +247,67 @@ namespace api_walkthrough
             // Stop listener after replicator is stopped
             _listener.Stop();
             // end::client-cert-authenticator-root-certs[]
+        }
+
+        private static void TestClientCertAuthenticator()
+        {
+            var db = new Database("other-database");
+            _Database = db;
+
+            X509Store _store = new X509Store(StoreName.My);
+            TLSIdentity identity;
+
+            // tag::client-cert-authenticator[]
+
+            // Create Listener Certificate Authenticator
+            var auth = new ListenerCertificateAuthenticator((sender, cert) =>
+            {
+                if (cert.Count != 1) {
+                    return false;
+                }
+
+                return cert[0].SubjectName.Name?.Replace("CN=", "") == "couchbase";
+            });
+
+            // Create URL Endpoint Listener
+            var listenerConfig = new URLEndpointListenerConfiguration(_Database);
+            listenerConfig.DisableTLS = false; //The default value is false which means that the TLS will be enabled by default.
+            listenerConfig.Authenticator = auth;
+            _listener = new URLEndpointListener(listenerConfig);
+            _listener.Start();
+
+            // User Identity
+            identity = TLSIdentity.CreateIdentity(false,
+                new Dictionary<string, string>() { { Certificate.CommonNameAttribute, "couchbase" } },
+                null,
+                _store,
+                ClientCertLabel,
+                null);
+
+            // Replicator -- Client
+            var database = new Database("client-database");
+            var builder = new UriBuilder(
+                "wss",
+                "localhost",
+                _listener.Port,
+                $"/{_listener.Config.Database.Name}"
+            );
+
+            var url = builder.Uri;
+            var target = new URLEndpoint(url);
+            var config = new ReplicatorConfiguration(database, target);
+            config.ReplicatorType = ReplicatorType.PushAndPull;
+            config.Continuous = false;
+            config.Authenticator = new ClientCertificateAuthenticator(identity);
+            config.AcceptOnlySelfSignedServerCertificate = false;
+            config.PinnedServerCertificate = _listener.TlsIdentity.Certs[0];
+            using (var replicator = new Replicator(config)) {
+                replicator.Start();
+            }
+
+            // Stop listener after replicator is stopped
+            _listener.Stop();
+            // end::client-cert-authenticator[]
         }
 
         private static void UseEncryption()
