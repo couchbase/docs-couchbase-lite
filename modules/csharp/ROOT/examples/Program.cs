@@ -192,7 +192,21 @@ namespace api_walkthrough
             // end::create-self-signed-cert[]
         }
 
-        private static void TestClientCertAuthenticatorRootCerts()
+        private static void TestImportTLSIdentity()
+        {
+            TLSIdentity identity;
+            X509Store _store = new X509Store(StoreName.My); // The identity will be stored in the secure storage using the given label
+            byte[] data = File.ReadAllBytes("C:\\client.p12"); // PKCS12 data containing private key, public key, and certificates
+
+            // tag::import-tls-identity[]
+            identity = TLSIdentity.ImportIdentity(_store, 
+                data, 
+                "123", // The password that is needed to access the certificate data
+                "CBL-Client-Cert", 
+                null); // The key label to get cert in certificate map. If null, the same default directory for a Couchbase Lite database is used for map.
+            // end::import-tls-identity[]
+
+          private static void TestClientCertAuthenticatorRootCerts()
         {
             var db = new Database("other-database");
             _Database = db;
@@ -246,7 +260,7 @@ namespace api_walkthrough
 
             // Stop listener after replicator is stopped
             _listener.Stop();
-            // end::client-cert-authenticator-root-certs[]
+            // end::client-cert-authenticator-root-cert
         }
 
         private static void UseEncryption()
