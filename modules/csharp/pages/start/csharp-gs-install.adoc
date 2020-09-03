@@ -1,0 +1,49 @@
+= Install Couchbase Lite
+:page-layout: article
+:page-status: {release-status-cbl} -- {release-comments-cbl}
+:page-edition:
+:page-role:
+:description: SHow to install Couchbase Lite for .Net
+:keywords: edge nosql api .Net C#
+
+include::partial$_std-cbl-hdr-csharp.adoc[]
+
+// DO NOT EDIT
+:param-abstract: Using Nuget to install couchbase Lite
+
+// include::{root-partials}block-related-get-started.adoc[]
+
+include::{root-partials}_block-abstract.adoc[]
+// DO NOT EDIT
+
+== Visual Studio Project
+
+Create or open an existing Visual Studio project and install Couchbase Lite using the following method.
+
+== Nuget
+
+. Install either of the following packages from Nuget.
++
+.Couchbase Lite Community Edition
+Install the `Couchbase.Lite` package.
++
+.Couchbase Lite Enterprise Edition
+Install the `Couchbase.Lite.Enterprise` package.
++
+NOTE: Nuget packages can be installed via `PackageReference` or `packages.config`.
+It is recommended to use the `PackageReference` style of dependency management because there is a strict version requirement between Couchbase Lite and its dependent Support library (`Couchbase.Lite.Support.<Platform>` and `Couchbase.Lite.Enterprise.Support.<Platform>` for Community and Enterprise respectively).
+If you are using `packages.config`, you must take extra care when upgrading the package to make sure that the support library is also updated to the exact same version.
+Versions that are not the same are incompatible with each other.
++
+https://www.couchbase.com/products/editions[Comparative Table]
+. Your app must call the relevant `Activate()` function inside of the class that is included in the support assembly.
+There is only one public class in each support assembly, and the support assembly itself is a nuget dependency.
++
+For example, UWP looks like `Couchbase.Lite.Support.UWP.Activate()`.
+Currently the support assemblies provide dependency injected mechanisms for default directory logic, and platform specific logging (i.e., csharp will log to logcat with correct log levels and tags.
+No more "mono-stdout" always at info level.)
+
+
+// DO NOT EDIT -- Footer Related Content Block
+include::{root-partials}block-related-content-p2psync.adoc[]
+// DO NOT EDIT
