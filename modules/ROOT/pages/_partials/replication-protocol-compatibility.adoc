@@ -1,0 +1,11 @@
+To use this protocol the replication URL should specify WebSockets as the URL scheme (see the <<Starting a Replication>> section below).
+
+Incompatibilities::
+Couchbase Lite's replication protocol is *incompatible* with CouchDB-based databases.
+And since Couchbase Lite 2.x+ only supports the new protocol, you will need to run a version of Sync Gateway that supports it -- see: {xref-cbl-pg-compatibility}.
+
+Legacy Compatibility::
+Clients using Couchbase Lite 1.x can continue to use `http` as the URL scheme.
+Sync Gateway 2.0 will automatically use:
+* The 1.x replication protocol when a Couchbase Lite 1.x client connects through `\http://localhost:4984/db`
+* The 2.0 replication protocol when a Couchbase Lite 2.0 client connects through `ws://localhost:4984/db`.

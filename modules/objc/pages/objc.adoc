@@ -908,7 +908,7 @@ You can enable authentication with the following properties in the configuration
 ----
 
 To authenticate with Sync Gateway, an associated user must first be created.
-Sync Gateway users can be created through the xref:sync-gateway::admin-rest-api.adoc#/user/post\__db___user_[`+POST /{db}/_user+`] endpoint on the Admin REST API.
+Sync Gateway users can be created through the xref:sync-gateway::admin-rest-api.adoc#/user/post\__db___user_[`+POST /{tkn-db}/_user+`] endpoint on the Admin REST API.
 Provided that the user exists on Sync Gateway, there are two ways to authenticate from a Couchbase Lite client: Basic Authentication or Session Authentication.
 
 ==== Basic Authentication
@@ -926,9 +926,9 @@ include::{snippet}[tag=basic-authentication,indent=0]
 ==== Session Authentication
 
 Session authentication is another way to authenticate with Sync Gateway.
-A user session must first be created through the xref:sync-gateway::rest-api.adoc#/session/post\__db___session[`+POST /{db}/_session+`] endpoint on the Public REST API.
+A user session must first be created through the xref:sync-gateway::rest-api.adoc#/session/post\__db___session[`+POST /{tkn-db}/_session+`] endpoint on the Public REST API.
 The HTTP response contains a session ID which can then be used to authenticate as the user it was created for.
-The following example initiates a one-shot replication with the session ID that is returned from the `+POST /{db}/_session+` endpoint.
+The following example initiates a one-shot replication with the session ID that is returned from the `+POST /{tkn-db}/_session+` endpoint.
 
 [source]
 ----
@@ -1053,7 +1053,7 @@ include::{snippet}[tag=database-replica,indent=0]
 
 == Certificate Pinning
 
-include::partial$certificate-pinning.adoc[]
+include::partial$::{root-partials}commons/common-certificate-pinning.adoc
 
 == Peer-to-Peer Sync
 
@@ -1182,7 +1182,7 @@ include::_partials/deprecationNotice.adoc[]
 - https://issues.couchbase.com/browse/CBL-218[*CBL-218*] FTS indexing an array-valued property is unreliable
 - https://issues.couchbase.com/browse/CBL-207[*CBL-207*] Replicator change event has idle with timeout error
 - https://issues.couchbase.com/browse/CBL-175[*CBL-175*] Can't query the records has the % character with LIKE operator.
-- https://issues.couchbase.com/browse/CBL-171[*CBL-171*] CBL replication never finishes for replication filtering when doc count is 1000
+- https://issues.couchbase.com/browse/CBL-171[*CBL-171*] Couchbase Lite replication never finishes for replication filtering when doc count is 1000
 - https://issues.couchbase.com/browse/CBL-126[*CBL-126*] Litecore does not retry subChanges request that fails with temporary 503 error
 - https://issues.couchbase.com/browse/CBL-52[*CBL-52*] “LIKE”, "CONTAINS", "REGEX_LIKE" operators ignore collations
 
@@ -1214,8 +1214,8 @@ Support will be removed within two (non-maintenance) releases following the depr
 
 *{fixed}*
 
-- https://issues.couchbase.com/browse/CBL-222[*CBL-222*] CBL push replication is not replicating doc updates with delta sync after CBL upgrade
-- https://issues.couchbase.com/browse/CBL-171[*CBL-171*] CBL replication never finishes for replication filtering when doc count is 1000
+- https://issues.couchbase.com/browse/CBL-222[*CBL-222*] Couchbase Lite push replication is not replicating doc updates with delta sync after Couchbase Lite upgrade
+- https://issues.couchbase.com/browse/CBL-171[*CBL-171*] Couchbase Lite replication never finishes for replication filtering when doc count is 1000
 - https://issues.couchbase.com/browse/CBL-146[*CBL-146*] Custom Conflict resolution is throwing exception for iOS app when trying to resolve conflict
 - https://issues.couchbase.com/browse/CBL-136[*CBL-136*] Replication is not replicating all updates with delta-sync enabled
 - https://issues.couchbase.com/browse/CBL-110[*CBL-110*] delta sync on top of a deletion caused data discrepancy between SG and CBL

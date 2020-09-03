@@ -122,7 +122,7 @@
 :nmLangJS: javascript
 :nmLangNet: C#/.Net
 :nmLangSwift: Swift
-:nmLangObcJ: Objective-C
+:nmLangobjc: Objective-C
 :nmLangAndroid: Android
 
 
@@ -132,18 +132,58 @@
 
 //  Standard URL Attributes
 //
+:url-api-references-pfx:
+
+// :url-api-references-staging: https://ibsoln.github.io/stage/h2/mobile/{version-full}/couchbase-lite-
+:url-api-references-staging: https://ibsoln.github.io/stage/api/mobile/{version-full}/couchbase-lite-
+:url-api-references-beta: https://ibsoln.github.io/betasites/api/mobile/{version-full}/couchbase-lite-
+:url-api-references-production: http://docs.couchbase.com/mobile/{version-full}/couchbase-lite-
+
+:build-local: https://localhost:5000
+:build-staging: https://docs-staging.couchbase.com
+:build-beta: https://docs-betacouchbase.com
+:build-sandbox: https://docs-sandbox.couchbase.com
+:build-production: https://docs.couchbase.com
+
+ifndef::site-url[:site-url: 'undefined']
+// ifndef::site-url[]
+ifeval::["{site-url}"=="{build-local}"]
+//preparing staging or local site
+:url-api-references-pfx: {url-api-references-staging}
+endif::[]
+ifeval::["{site-url}"=="{build-staging}"]
+//preparing staging or local site
+:url-api-references-pfx: {url-api-references-staging}
+endif::[]
+ifeval::["{site-url}"=="{build-beta}"]
+//preparing staging or local site
+:url-api-references-pfx: {url-api-references-beta}
+endif::[]
+ifeval::["{site-url}"=="{build-production}"]
+//preparing staging or local site
+:url-api-references-pfx: {url-api-references-production}
+endif::[]
+//pfx after block {url-api-references-pfx}
+// endif::site-url[]
+
+// Using: {url-api-references-pfx} from {site-url}
+
+
 :url-issues-android: https://github.com/couchbase/couchbase-lite-android/issues
 :url-issues-csharp: https://github.com/couchbase/couchbase-lite-csharp/issues
 :url-issues-java: https://github.com/couchbase/couchbase-lite-android/issues
 :url-issues-objc: https://github.com/couchbase/couchbase-lite-ios/issues
 :url-issues-swift: https://github.com/couchbase/couchbase-lite-ios/issues
-:url-api-references-pfx: http://docs.couchbase.com/mobile/{version}/couchbase-lite-{module}
-:url-api-references: http://docs.couchbase.com/mobile/{version}/couchbase-lite-{module}
-:url-api-references-android: {url-api-references-pfx}{lang-name-android}
-:url-api-references-csharp: {url-api-references-pfx}{lang-name-csharp}
-:url-api-references-java: {url-api-references-pfx}{lang-name-java}
-:url-api-references-objc: {url-api-references-pfx}{lang-name-objc}
-:url-api-references-swift: {url-api-references-pfx}
+// :url-api-references: http://docs.couchbase.com/mobile/{version}/couchbase-lite-{module}
+:url-api-references-android: {url-api-references-pfx}{lang-mod-android}
+:url-api-references-csharp: {url-api-references-pfx}net
+// :url-api-references-csharp: {url-api-references-pfx}{lang-mod-csharp}
+:url-api-references-java: {url-api-references-pfx}{lang-mod-java}
+:url-api-references-objc: {url-api-references-pfx}{lang-mod-objc}
+:url-api-references-swift: {url-api-references-pfx}{lang-mod-swift}
+
+//swift api {url-api-references-swift}
+//pfx api {url-api-references-pfx}
 
 :url-cb-mobStarterApp: https://github.com/ibsoln/cblGettingStarted.git
 // :url-api-references: Now defined locally in pages
@@ -154,10 +194,12 @@
 // Snippets and Partials Links
 :root-examples: ROOT:example$
 :root-partials: ROOT:partial$
+:root-commons: {root-partials}commons/common-
 //:root-images: ROOT:assets/images/
 :root-images: ROOT:assets/images/
 :root-attachments: ROOT:assets/attachments/
 
+:android-pages: {lang-mod-android}:page$
 :android-examples: {lang-mod-android}:example$
 :csharp-examples: {lang-mod-csharp}:example$
 :java-examples: {lang-mod-java}:example$
@@ -175,7 +217,7 @@
 :snippets-pfx--android: example$java-android/app/src/main/java/com/couchbase
 :snippets-pfx: example$code-snippets/
 :snippets-content--android: {lang-mod-android}:{snippets-pfx--android}/code_snippets/Examples.java
-:snippets-content--csharp: {lang-mod-csharp}:example$Program.cs
+:snippets-content--csharp: {lang-mod-csharp}:{snippets-pfx}Program.cs
 :snippets-content--java: {lang-mod-java}:{snippets-pfx}Examples.java
 :snippets-content--objc: {lang-mod-objc}:{snippets-pfx}SampleCodeTest.m
 :snippets-content--swift: {lang-mod-swift}:{snippets-pfx}SampleCodeTest.swift
@@ -183,6 +225,7 @@
 :snippets-p2psync-ws--android: {lang-mod-android}:{snippets-pfx--android}/code_snippets/p2psync-websocket.java
 :snippets-p2psync-ws--objc: {lang-mod-objc}:{snippets-pfx}p2psync-websocket.m
 :snippets-p2psync-ws--swift: {lang-mod-swift}:{snippets-pfx}p2psync-websocket.swift
+:snippets-p2psync-ws--csharp: {lang-mod-csharp}:{snippets-pfx}p2psync-websocket.cs
 
 // SGW Pages
 :pg-sgw-gs-install: gs-sgw-install.adoc
@@ -191,7 +234,7 @@
 :xref-pg-sgw-gs-install: {xref-pfx-sgw}:{pg-sgw-gs-install}[Install Sync Gateway]
 
 
-// CBL Pages
+// Couchbase Lite Pages
 
 :component-mob-status: {_page-status-gamma}
 :component-cbl-status: {_page-status-gamma}
@@ -202,3 +245,17 @@
 
 // diag: Env+Local(ROOT)
 
+
+:securestorage: secure storage
+:securestorage-api: secure storage API
+
+
+ifeval::["{param-platform}"=="{platform-android}"]
+:securestorage: Keystore
+:securestorage-api: KeyStore API
+endif::[]
+
+ifeval::["{param-platform}"=="{platform-ios}"]
+:securestorage: Keychain
+:securestorage-api: Keychain API
+endif::[]

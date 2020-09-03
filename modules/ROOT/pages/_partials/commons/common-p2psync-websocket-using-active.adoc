@@ -1,0 +1,397 @@
+//= Using Peer-to-Peer Sync (websockets)
+
+//ifeval::[{param-platform} == {platform-jvm}]
+//:securestorage: Key store .jks r .p12 file
+//:securestorage-api: Couchbase Lite's convenience KeyStore API
+//endif::[]
+//
+//ifeval::[{param-platform} == {platform-net}]
+//:securestorage: Key store .jks or .p12 file
+//:securestorage-api: Couchbase Lite's convenience KeyStore API
+//endif::[]
+
+
+// DO NOT EDIT
+:param-abstract: How to set up a Replicator to connect with a Listener and replicate changes using peer-to-peer sync
+include::{root-partials}block-related-howto-p2psync-ws.adoc[]
+include::{root-partials}_block-abstract.adoc[]
+
+ifeval::["{param-platform}"=="{platform-android}"]
+include::{root-partials}_block-caveats.adoc[tags=android-constraints]
+endif::[]
+
+include::{root-partials}_block-caveats.adoc[tags=code-disclaimer]
+include::{root-partials}_block-caveats.adoc[tag=enterprise-only]
+// DO NOT EDIT
+
+ifndef::release-status-cbl[:release-status-cbl!:]
+ifeval::["{release-status-cbl}" == "gamma"]
+[.pane__frame--orange]
+.Author's Notes
+--
+
+DOC-6340-H2-P2P: New topic - Implementing P2P Sync
+https://issues.couchbase.com/browse/DOC-6340
+
+This is the how-to for P2P snc using websockets
+--
+endif::[]
+
+[#introduction]
+== Introduction
+This content provides sample code and configuration examples covering the implementation of {glos-term-peer-to-peer-sync} over websockets.
+
+Specifically it covers the implementation of an {glos-term-active-peer}.
+This _replicator_ will initiate connection with a {glos-term-passive-peer} and participate in the replication of database changes to bring both databases into sync.
+
+In this context the _active peer_ (replicator) acts as the _client_, whilst the _passive peer_ (listener) acts as the _server_.
+
+You will need to initialize and configure a replicator for each Couchbase Lite database instance you want to sync.
+<<simple-replication-to-listener>> shows the initialization and configuration process.
+Subsequent sections provide additional details and examples for the main configuration options.
+
+[#simple-replication-to-listener]
+.Replication configuration and initialization
+// [%collapsible]
+====
+
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="p2p-act-rep-func;!p2p-act-rep-config-cacert;!p2p-act-rep-config-pinnedcert;!p2p-tlsid-tlsidentity-with-label;!p2p-act-rep-config-cacert-pinned", indent=0]
+----
+ifeval::["{param-platform}"=="{platform-android}"]
+[NOTE]
+--
+include::{root-partials}_block-caveats.adoc[tags=android-threads]
+--
+endif::[]
+
+<.> Use the {url-api-class-replicator-config} class's constructor -- {url-api-constructor-replicator-config-db-tgt} -- to initialize the replicator configuration with the local database -- see also: <<configure-target>>
+
+<.> Here we have configured server security to use only self-signed certificates.
+By default only CA Certificates are accepted -- see: <<listener-authentication>>.
+
+<.> Here the we have configured client security to use _Basic Authentication_.
+Other options are available, for example to authenticate using certificates.
+To use client certificate based authentication -- see: <<client-authentication>>
+
+<.> Handle <<conflict-resolution>>
+
+<.> Initialize the replicator with specified configuration
+
+<.> Register an observer to be notified of changes to the replication status
+
+<.> Start the replicator
+====
+
+== API References
+
+You can find {url-api-references}[{param-title} API References] here.
+
+== Device Discovery
+*This phase is optional:* If the listener is initialized on a well known URL endpoint (for example, a static IP Address or well known DNS address) then you can configure active peers to connect to those.
+
+Prior to connecting with a listener you may execute a peer discovery phase to dynamically discover peers.
+
+ifeval::["{param-platform}"=="{platform-ios}"]
+For the active peer this involves browsing-for and selecting the appropriate service using a zero-config protocol such as _Bonjour_-- see: https://developer.apple.com/bonjour/.
+endif::[]
+ifeval::["{param-platform}"=="{platform-android}"]
+For the active peer this involves browsing-for and selecting the appropriate service using a zero-config protocol such as _Network Service Discovery_ -- see: https://developer.android.com/training/connect-devices-wirelessly/nsd.
+endif::[]
+
+// image::ROOT:replication.svg[,800]
+
+== Configure Replicator
+In this section: <<configure-target>>  |  <<sync-mode>>  |  <<listener-authentication>>  | <<client-authentication>>
+
+=== Configure Target
+Use the
+{url-api-class-replicator-config} class and {url-api-constructor-replicator-config-db-tgt} constructor to initialize the replication configuration.
+
+This constructor provides the passive peer's database and endpoint details -- whether pre-configured or gathered during a discovery phase.
+
+The required parameters are:
+
+* The local database to be synced.
+* The database URL including the port the listener is listening on.
++
+--
+The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) prefixes.
+ifeval::[{param-platform}=={android-platform}]
+include::{root-partials}_block-caveats.adoc[tags=android-manifest-cleartext]
+endif::[]
+--
+
+You will also need any security credentials provided (for example, user name and password or Cert) for use in the authentication phase of configuration.
+
+.Set target and database config properties
+====
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="p2p-act-rep-initialize", indent=0]
+----
+<.> Note use of the `wss://` prefix to ensure TLS encryption (strongly recommended in production).
+====
+
+=== Sync Mode
+Use `{url-api-class-replicator-config}` class's {url-api-prop-replicator-config-rep-type} and
+`{url-api-prop-replicator-config-cont}` parameters, to tell the replicator:
+
+* The direction of the replication: `*pushAndPull*`; `pull`; `push`
+* Whether the replicator should:
+** Stay active indefinitely to replicate changed documents: `continuous=true`
+** Be a one-shot replication of changed documents: `continuous=false`
+
+.Configure replicator type and mode
+====
+
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-type, indent=0]
+include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-cont, indent=0]
+
+----
+
+====
+
+=== Listener Authentication
+
+:this-prop: {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate}
+Use `{url-api-class-replicator-config}`, with its {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} parameter, to tell the replicator how to verify TLS server certificates.
+
+If {this-prop} is `false` (default) then only CA Certificates are accepted.
+
+If {this-prop} is `true` then only Self-Signed Certificates are accepted.
+
+.Set Server TLS security
+=====
+[{tabs}]
+====
+
+CA Cert::
++
+--
+
+[source, {source-language}]
+----
+
+include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-cacert, indent=0]
+
+----
+
+<.> This is the default. Only CA Certificates are allowed.
+They must be a certificate from a trusted root
+Self signed certificates disallowed.
+
+--
+
+Self Signed Cert::
++
+--
+// TODO : Two examples
+// Example 1:
+// Use .selfsignedcert mode and no pinned certificate (This mode ignores the server cert)
+// Example 2:
+// Use .cacert mode and show pinned certificate (pinned certificate can be self signed or CA cert)
+
+[source, {source-language}]
+----
+
+include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-self-cert, indent=0]
+
+----
+
+<.> Set this to `true` to accept any self signed cert.
+Any certificates that are not self-signed are rejected.
+
+--
+
+
+Pinned Certificate::
++
+--
+Set the server's SSL certificate (perhaps bundled with the app) to be used for validation, including it in the replicator config.
+
+[source, {source-language}]
+----
+
+include::{snippet-p2psync-ws}[tag=p2p-act-rep-config-cacert-pinned, indent=0]
+
+----
+
+include::{snippet-p2psync-ws}[tag=p2p-act-rep-config-cacert-pinned-callouts, indent=0]
+
+--
+====
+=====
+
+=== Client Authentication
+
+Use {url-api-class-replicator-config}'s {url-api-prop-replicator-config-auth} method to define the authentication method to the replicator - see <<configuring-client-authentication>>.
+
+==== Basic Authentication
+Use the `{url-api-class-replicator-config-basic-auth}` to provide basic authentication using username and password credentials.
+
+For basic authentication the `disableTLS` configuration setting is ignored.
+
+[[basic-authentication]]
+.Basic Authentication
+====
+
+This example shows basic authentication using user name and password:
+
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="p2p-act-rep-auth", indent=0]
+
+----
+====
+
+==== Certificate Authentication
+Use the `{url-api-class-replicator-config-cert-auth}` to configure the client TLS certificates to be presented to the server, on connection.
+This applies only to the {url-api-class-urlendpointlistener}.
+
+Note that TLS validates a certificate before passing it over for authentication.
+If an invalid certificate is detected then control is never passed over, and the connection is denied.
+The decision to be made by the authenticator is simply: "do I trust this certificate, or not"?
+
+The decision is usually based on the certificate being signed by a source we trust.
+
+For certificate authentication the `disableTLS` configuration setting must be `false`.
+
+With certificates you also have the option to either:
+
+* Use Couchbase Lite's convenience API to create self-signed certificates.
+The `{url-api-class-tlsidentity}` class provides methods to manage identities.
+* Bring your own certificate.
+Our convenience API also gives you the flexibility to bring your own TLS identities, using the `{url-api-method-tls-identity-import}` method.
++
+This makes it easy to bundle PKCS12 certificates with your application.
+
+
+// See {xref-cbl-pg-p2p-manage-tls-id} for more on how to do this.
+
+[[configuring-client-authentication]]
+.Client Cert Authentication
+====
+This example shows client certificate authentication using an identity from secure storage.
+
+[source, {source-language}]
+----
+
+include::{snippet-p2psync-ws}[tags=p2p-tlsid-tlsidentity-with-label, indent=0]
+
+----
+// include::{snippet-p2psync-ws}[tags=p2p-tlsid-tlsidentity-with-label, indent=0]
+include::{snippet-p2psync-ws}[tags=p2p-tlsid-tlsidentity-with-label-callouts, indent=0]
+
+====
+
+
+== Initialize Replicator
+
+Use the `{url-api-class-replicator}` class's {url-api-constructor-replicator-init-config} constructor, to initialize the replicator with the configuration you have defined.
+You can, optionally, add a change listener (see <<monitor-sync>>) before starting the replicator running using {url-api-method-replicator-start}.
+
+.Initialize and run replicator
+====
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags=p2p-act-rep-start-full;!p2p-act-rep-add-change-listener, indent=0]
+----
+====
+
+== Monitor Sync
+
+=== Change Listeners
+Use the {url-api-class-replicator} class to add a change listener as a callback to the Replicator ({url-api-method-replicator-add-change-listener}) -- see <<monitor-replication>>.
+You will then be asynchronously notified of state changes.
+Use this to monitor changes and to inform on sync progress, as shown below; this is an optional step.
+
+=== Replicator Status
+You can use the {url-api-class-replicator} class's {url-api-property-replicator-status} property to check the replicator status.
+That is, whether it is actively transferring data or if it has stopped.
+
+// ifeval::["{source-language"=="objc"]
+Alternatively, use the {url-api-class-replicator-status} class to get status information. The returned _ReplicationStatus_ structure comprises:
+
+* {url-api-enum-replicator-activity} -- stopped, offline, connecting, idle or busy
+* {url-api-enum-replicator-progress}
+** completed The total number of changes completed
+** total -- the total number of changes to be processed
+* {url-api-enum-replicator-error} -- the current error, if any
+
+For more on replication status, see: {xref-cbl-pg-replication--status}
+
+[[monitor-replication]]
+.Monitor replication
+=====
+[{tabs}]
+====
+Adding a Change Listener::
++
+--
+[source, {source-language}]
+----
+
+include::{snippet-p2psync-ws}[tags=p2p-act-rep-add-change-listener,indent=0]
+
+----
+--
++
+Using replicator.status::
++
+--
+[source, {source-language}]
+----
+
+include::{snippet-p2psync-ws}[tags=p2p-act-rep-status,indent=0]
+
+----
+--
+====
+=====
+
+== Stop Sync
+
+<.> Stopping the replication is straightforward using the {url-api-method-replicator-stop} method.
+
+.Stop replicator
+====
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags=p2p-act-rep-stop, indent=0]
+----
+====
+
+TIP: If you added an optional change listener (see <<monitor-sync>> for how) you should also remove it using the {url-api-method-replicator-rmv-change-listener} method.
+
+== Conflict Resolution
+
+Couchbase Lite's default conflict resolution policy is applied -- see {xref-cbl-pg-conflict-auto}.
+To use a different policy, specify a _conflict resolver_ using {url-api-prop-replicator-config-conflict} -- see: {xref-cbl-pg-conflict-custom}.
+
+//TODO: Update example to show how the confog resolver parameter is set (refer to the stanadrd replicator code)
+
+.Conflict resolving
+
+include::{root-partials}handling-conflicts.adoc[tags=handling-conflicts-conflict-resolvers]
+
+
+include::{root-partials}handling-conflicts.adoc[tags=handling-conflicts-custom-merge]
+
+For more on replicator conflict resolution see: {xref-cbl-pg-conflict}.
+
+== Delta Sync
+// DONE: Add reference to listener section tht includes enableDeltaSync parameter being set to true
+If delta sync is enabled on the listener, then replication will use delta sync.
+
+// For more on how to:
+
+// * Enable delta sync on the listener -- see: {xref-cbl-pg-dbo-p2psync-websocket-using-passive--delta-sync}
+// * Replicator Delta Sync concept -- see: {xref-cbl-pg-replication--delta-sync}
+
+// DO NOT EDIT OR REMOVE
+include::{root-partials}block-related-content-p2psync.adoc[]
+// DO NOT EDIT OR REMOVE

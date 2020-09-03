@@ -1,0 +1,621 @@
+
+<<URLEndpointListener>>
+| <<URLEndpointListenerConfiguration>>
+| <<tlsidentity>>
+
+== URLEndpointListener
+
+<<URLEndpointListener-class>> |
+<<URLEndpointListener-props>> |
+<<URLEndpointListener-constructors>> |
+<<URLEndpointListener-methods>>
+
+The `URLEndpointListener` is the Peer-to-Peer listener for replication. It acts like a passive replicator, in the same way that Sync Gateway does.
+
+Core functionalities of the listener are:
+
+* Users can initialize the class using a _URLEndpointListenerConfiguration_ object.
+* The listener can be started, or can be stopped.
+* Once the listener is started, a total number of connections or active connections can be checked.
+
+[#URLEndpointListener-class]
+.Class Definition
+URLEndpointListener class provides a WebSocket based listener for replicating with a database. On the client side, the URLEndpoint will be used to point to the URL of the listener.
+
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="p2p-ws-api-urlendpointlistener", indent=0]
+----
+
+[#URLEndpointListener-constructors,Constructors]
+.Constructors
+{empty}
+[cols="20,80"]
+|===
+
+|Objective
+|Creates a configuration object with a database object. The other properties of the object will have its default value (See Properties section for more detail).
+
+|Form
+a|[source, {source-language}]
+----
+init(config: URLEndpointListenerConfiguration)
+----
+
+|Pre conditions
+|N/A
+
+|Post conditions
+|A URLEndpointListenerConfiguration object
+
+|Exceptions
+|None
+
+|Usage
+a|[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="p2p-ws-api-urlendpointlistener-constructor", indent=0]
+----
+<1> Use the constructer as shown above.
+|===
+
+[#URLEndpointListener-props]
+.Properties
+{empty}
+// ^ need for heading to show in cross ref and here. [caption=] meant no heading appeared in xref
+[cols="15,15,10,10,50"]
+|===
+|Name | Type |Nullable |ReadOnly |Description
+
+|config
+|URLEndpointListenerConfiguration
+|No
+|Yes
+|The configuration object used for creating the listener.
+See <<URLEndpointListenerConfiguration>> for more detail.
+
+|port
+|UInt16
+|Depend on Platform
+|No
+|Return the listening port of the listener.
+When the listener is not started, the port will be null (if the platform can have the optional value type) otherwise zero.
+
+|tlsIdentity
+|TLSIdentity
+|Yes
+|Yes
+|The TLS identity used by the listener.
+The identity may be as specified by users or be the generated anonymous identity.
+
+When TLS is enabled and `tlsIdentity` is not specified, the listener generates an anonymous self-signed identity on start up.
+
+*Note*: The auto-generated anonymous self-signed identity can be saved for future use so that the identity doesn’t need to be re-generated every time if the platform (for example, Apple platforms) supports secure storage.
+
+When the listener is not started, the identity is null.
+
+When TLS is disabled, the identity is always null.
+
+|urls
+|Array<URL>
+|Yes
+|Yes
+|The URLs of the listener.
+
+If the network interface is specified, there will be only one URL that reflects the network interface address in the array.
+
+If the network interface is not specified, we will gather all possible URLs from all network interfaces that the listener is listening to.
+
+The value will be null if the listener is not started.
+|status
+|ConnectionStatus
+|Yes
+|Yes
+|The connection status of the listener. See the ConnectionStatus section for more detail
+
+|===
+
+[#URLEndpointListener-methods,Methods]
+.Methods
+`start()`
+[cols="2*"]
+[%autowidth]
+|===
+
+|Objective
+|Synchronously starts the listener
+
+|Pre conditions
+|The listener can be in either `started` or `stopped` state.
+If the listener has already been started, the `start()` operation will be no-ops.
+
+|Post conditions
+|The listener is in a `started` state
+
+|Exceptions
+|A CouchbaseLiteException is thrown if the listener cannot be started.
+The most common error would be that the configured port has already been used.
+The error code is *TBD*.
+|===
+
+`stop()`
+[cols="2*"]
+[%autowidth]
+|===
+
+|Objective
+|Synchronously stops the listener
+
+|Pre conditions
+|The listener can be in either `started` or `stopped` state.
+If the listener has already been stopped, the `stop()` operation will be no-ops.
+
+|Post conditions
+|The listener is an a `stopped` state
+
+|Exceptions
+|None
+|===
+
+
+== URLEndpointListenerConfiguration
+
+<<URLEndpointListenerConfiguration-class>> |
+<<URLEndpointListenerConfiguration-props>> |
+<<URLEndpointListenerConfiguration-constructors>> |
+<<URLEndpointListenerConfiguration-methods>> |
+link:{url-api-references}/Classes/CBLURLEndpointListenerConfiguration.html[API Reference]
+
+A configuration class used for creating a _URLEndpointListener_ object.
+
+// [source, {source-language}]
+// ----
+// include::{snippet-p2psync-ws}[tags="listener-config"]
+// ----
+
+[#URLEndpointListenerConfiguration-class]
+.Class Definition
+A configuration class used for creating a _URLEndpointListener_ object.
+
+[source, {source-language}]
+----
+public class URLEndpointListenerConfiguration {
+    // Properties
+    public let database: Database
+    public var port: UInt16?
+    public var networkInterface: String?
+    public var disableTLS: Bool
+    public var tlsIdentity: TLSIdentity?
+    public var authenticator: ListenerAuthenticator?
+    public var enableDeltaSync: Bool
+    // Constructors
+    public init(database: Database)
+    public init(config: URLEndpointListenerConfiguration)
+}
+----
+
+
+[#URLEndpointListenerConfiguration-constructors]
+.Constructors
+
+[source, {source-language}]
+----
+init(database: Database)
+----
+
+[cols="2*"]
+[%autowidth]
+|===
+
+|Objective
+|Creates a configuration object with a database object. The other properties of the object will have its default value (See Properties section for more detail).
+
+|Pre conditions
+|N/A
+
+|Post conditions
+|A URLEndpointListenerConfiguration object
+
+|Exceptions
+|None
+|===
+
+
+[source, {source-language}]
+----
+init(config: URLEndpointListenerConfiguration)
+----
+
+[cols="2*"]
+[%autowidth]
+|===
+
+|Objective
+|Creates a configuration object from an existing config object.
+
+|Pre conditions
+|N/A
+
+|Post conditions
+|A URLEndpointListenerConfiguration object
+
+|Exceptions
+|None
+|===
+
+
+[#URLEndpointListenerConfiguration-props,Properties]
+.Properties
+{empty}
+[cols="15,15,10,10,50"]
+|===
+|Name | Type |Nullable |ReadOnly |Description
+
+|database
+|Database
+|No
+|Yes
+|A database object associated with the listener.
+
+|port
+|UInt16
+|Depend on Platform
+|No
+|The port that the listener will listen to.
+When the port is null or zero, the listener will listen to an available port (auto-assigned). Default value is null or zero depending on platform.
+
+|networkInterface
+|String
+|Yes
+|No
+|Network Interface in the form of the IP Address or network interface name.
+
+|disableTLS
+|Bool
+|No
+|No
+a|
+// tag::config-disable-tls-full[]
+// tag::config-disable-tls[]
+TLS is enabled by default.
+
+Use {url-api-class-urlendpointconfiguration}'s {url-api-references-urlendpointconfiguration-disable-tls} method to disable TLS communication if necessary
+
+{url-api-references-urlendpointconfiguration-disable-tls} works in conjunction with `TLSIdentity`, to enable developers to define the key and-or certificate to be used.
+
+* If `disableTLS` is true -- TLS communication is disabled and TLS identity is ignored.
+Active peers will the `ws://` URL scheme used to connect to the listener.
+* If `disableTLS` is false or not specified -- TLS communication is enabled.
++
+Active peers will the `wss://` URL scheme used to connect to the listener.
+
+// end::config-disable-tls[]
+
+See also:: `TLSIdentity`
+
+Default:
+// tag::config-disable-tls-default[]
+False -- that is, TLS is enabled by default and the URL scheme to connect to the listener is `wss://`.
+// end::config-disable-tls-default[]
+API Reference:  {url-api-references-urlendpointconfiguration-disable-tls}
+
+// end::config-disable-tls-full[]
+|tlsIdentity
+|TLSIdentity
+|Yes
+|No
+a|
+
+// tag::config-tls-id-full[]
+// tag::config-tls-id[]
+Use {url-api-class-urlendpointconfiguration}'s
+{url-api-references-urlendpointconfiguration-tls-id} method to configure the TLS Identity used in TLS communication.
+
+If `TLSIdentity` is not set when TLS is enabled (default), the listener uses an auto-generated anonymous self-signed identity.
+This doesn't authenticate or verify trust (on the client side) but it does encrypt communication, giving a more secure option than Non-TLS communication.
+
+*Reusable Id* -- If the platform supports secure storage, you can save and re-use the auto-generated identity. This avoids the need to generate new identities every time.
+
+// end::config-tls-id[]
+
+Default:
+// tag::config-tls-id-default[]
+Nil -- in this case an auto-generated anonymous self-signed identity is used unless `disableTLS = true`
+// end::config-tls-id-default[]
+
+API Reference:  {url-api-references-urlendpointconfiguration-tls-id}
+
+// end::config-tls-id-full[]
+
+|authenticator
+|ListenerAuthenticator
+|Yes
+| No
+a|
+// tag::config-auth-full[]
+// tag::config-auth[]
+Use this configuration parameter to specify the authenticator to be used by the listener to authenticate the request.
+
+This should be set to one of the following:
+
+* ListenerPasswordAuthenticator
+* ListenerCertificateAuthenticator
+// end::config-auth[]
+
+Default:
+// tag::config-auth-default[]
+Null -- there is no authentication.
+// tag::config-auth-default[]
+API Reference:  {url-api-references-urlendpointconfiguration-auth}
+
+// end::config-auth-full[]
+
+|readOnly
+|Bool
+|No
+|No
+|Allow only pull replication if the value is true. Default value is false.
+
+|enableDeltaSync
+|Bool
+|No
+|No
+|To enable Delta Sync. The default value is false.
+
+|===
+
+== TLSIdentity
+
+include::{root-partials}p2p-api-tlsid-{param-platform}.adoc[]
+
+
+
+// [#URLEndpointListenerConfiguration-methods,Methods]
+// .Methods
+// --
+// --
+
+// == TLSIdentity
+//
+// TLSIdentity represents the identity information (Key pair and // Certificates) used for setting up TLS Communication. The // TLSIdentity API would be different among between platforms. The // following API is based on the Apple Platform.
+//
+// == Initialize
+//
+// Use `URLEndpointListenerConfiguration` to set the required listener // configuration, specifically:
+//
+// * database
+// * tls status and identity
+// * delta_sync status
+//
+// Use `URLEndpointListener` to instantiate the // _URLEndpointListener_ using the // _URLEndpointListenerConfiguration_ configuration values in the // constructor.
+//
+
+
+== ListenerAuthenticator
+
+.Definition
+[source, {source-language}]
+----
+public protocol ListenerAuthenticator { }
+----
+
+This opaque authenticator interface is implemented by the authenticator classes. Couchbase Lite supports two types of the authenticator:
+
+* ListenerPasswordAuthenticator
+* ListenerCertificateAuthenticator
+
+== ListenerPasswordAuthenticator
+// tag::ListenerPasswordAuthenticator[]
+Use the {url-api-class-ListenerPasswordAuthenticator} class to provide password type authentication such as the Basic Authentication.
+The actual authentication is provided by the application code. Often in the form of a closure where the platform permits.
+// end::ListenerPasswordAuthenticator[]
+
+.Class Definition
+
+[source, {source-language}]
+----
+public class ListenerPasswordAuthenticator : ListenerAuthenticator {
+    // Constructors
+    public init(delegate: ListenerPasswordAuthenticatorDelegate) { }
+}
+----
+
+.Constructors
+
+[source, {source-language}]
+----
+init(delegate: ListenerPasswordAuthenticatorDelegate)
+----
+
+[cols="2,8"]
+|===
+
+|Explanation
+|Creates a ListenerPasswordAuthenticator object with the given delegate object used for authenticating the username and password.
+
+|Preconditions
+|N/A
+
+|Postconditions
+|A ListenerPasswordAuthenticator object.
+
+|===
+
+== ListenerPasswordAuthenticatorDelegate
+
+// tag::ListenerPasswordAuthenticatorDelegate[]
+Use the `ListenerPasswordAuthenticatorDelegate` type to provide the application logic to be used to authenticate user credentials such as name and password.
+
+Your `ListenerPasswordAuthenticatorDelegate` should be a function or block (such as a closure expression) if the platform allows.
+The parameters presented to the code block are:
+
+* Username -- type String
+* Password -- type will depend on the platform, for example SecureString for .NET or byte[] for Java.
+// end::ListenerPasswordAuthenticatorDelegate[]
+
+[source,{source-languge}]
+----
+public protocol ListenerPasswordAuthenticatorDelegate {
+    func authenticate(username: String, password: Data) -> Bool
+}
+----
+
+== ListenerCertificateAuthenticator
+// tag::ListenerCertificateAuthenticator[]
+Use the {url-api-class-ListenerCertificateAuthenticator} class to authenticate  clients certificates.
+This requires you have TLS enabled.
+You can verify the certificate using either:
+
+* Root CA certificate chains -- any client certificate signed by the given root CA certificate chains is authenticated
+
+* Application logic -- an option used mainly for authenticating self-signed certificates
+
+// end::ListenerCertificateAuthenticator[]
+
+// [source,{source-language}]
+// ----
+// public class ListenerCertificateAuthenticator : _ListenerAuthenticator
+// public init(rootCerts: [SecCertificate])
+// public init(authenticator: @escaping (_ certificates: [SecCertificate]) -> Bool)
+// }
+// ----
+
+NOTE: For Java, the equivalent of the SecCertificate is Certificate and for .NET, the equivalent of the SecCertificate is X509Certificate2.
+
+=== Constructors
+
+==== For Root CA Chain Authentication
+
+[source,{source-langauge}]
+----
+init(rootCerts: [SecCertificate])
+----
+
+.Usage:
+
+// tag::ListenerCertificateAuthenticator-root[]
+Initialize the `ListenerCertificateAuthenticator` using the `rootCert` interface. This identifies the Root CA Chain to be used to verify a certificate chain received from the client.
+
+// end::ListenerCertificateAuthenticator-root[]
+.Root Cert authentication
+====
+// tag::ListenerCertificateAuthenticator-root-snip[]
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags=" ", indent=0]
+----
+// end::ListenerCertificateAuthenticator-root-snip[]
+====
+
+[cols="2,8"]
+|===
+
+|Explanation
+|Creates a ListenerCertificateAuthenticator object with the given root CA certificate chains.
+Any client certificate that's been signed by the given root CA certificate chains will be authenticated.
+
+|Preconditions
+|N/A
+
+|Postconditions
+|The ListenerCertificateAuthenticator object.
+
+|===
+
+[source,{source-langauge}]
+----
+init(delegate: ListenerCertificateAuthenticatorDelegate)
+----
+
+Usage
+
+tag::ListenerCertificateAuthenticatorDelegate[]
+Use the `ListenerCertificateAuthenticator` to provide the application logic to verify a certificate chain received from the client.
+The logic should take the form of function or block (such as, a closure expression) where the platform allows.
+// end::ListenerCertificateAuthenticatorDelegate[]
+
+[source, {source-language}]
+----
+public protocol ListenerCertificateAuthenticatorDelegate {
+    func authenticate(certs: Array<SecCertificate>) -> Bool
+}
+----
+
+.Cert authentication closure
+====
+tag::ListenerCertificateAuthenticatorDelegate-snip[]
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="listener-config-client-auth-self-signed", indent=0]
+----
+// end::ListenerCertificateAuthenticatorDelegate-snip[]
+====
+
+
+[cols="2,8"]
+|===
+
+|Explanation
+|Creates a ListenerCertificateAuthenticator object with the given delegate object to verify the certificates received from the client.
+When given the delegate object, it means that developers will need to verify the certificate chain received from the client by themselves.
+This option is mostly used for authenticating the self-sign certificate.
+
+|Preconditions
+|N/A
+
+|Postconditions
+|The ListenerCertificateAuthenticator object.
+
+|===
+
+
+== ListenerCertificateAuthenticatorDelegate
+
+
+.SecCertificate equivalents
+[NOTE]
+* For Java, the equivalent of the SecCertificate is Certificate.
+* For .NET, the equivalent of the SecCertificate is X509Certificate2.
+// end::ListenerCertificateAuthenticatorDelegate[]
+
+
+== ConnectionStatus
+ConnectionStatus provides information about the current number of the connections and the current number of the active connections served by the URLEndpointListener object.
+The connection information can be used by developers to decide whether they could stop the listener.
+
+.Definition
+[source, {source-language}]
+----
+public class ConnectionStatus {
+    // Properties
+    public let connectionCount: UInt
+    public let activeConnectionCount: UInt
+ }
+----
+
+.Properties
+
+[cols="2,1,1,1,5"]
+
+|===
+
+|Name
+|Type
+|Nullable
+|ReadOnly
+|Explanation
+
+|connectionCount
+|UInt
+|N/A
+|Yes
+|The current number of the connections served by the listener.
+
+|activeConnectionCount
+|UInt
+|N/A
+|Yes
+|The current number of the active connections (BUSY) served by the listener.
+
+|===
+

@@ -1,0 +1,155 @@
+
+Peer-to--peer sync supports <<using-basic-authentication, Basic Authentication>> and <<using-tls,TLS Authentication>>.
+For anything other than test deployments, we strongly encourage the use of TLS. In fact, peer-to-peer sync using WebsocketEndpointListener is encrypted using TLS by default.
+
+The authentiation mechanism used is defined at endpoint level, meaning that it is independent of the database being replicated. So when replicating multiple database instances you may use basic on one instance an another authentication method on other instances.
+
+
+== Using TLS
+NOTE: The Mminimum supported version of TLS is TLS 1.2.
+
+Peer-to-peer sync using WebsocketEndpointListener supports certificate based authentication of the server and-or listener:
+
+* For server side certificates can be: self signed, from trusted CA or anonymous (system generated).
+* For listeners certificates may be: self signed or trusted CA signed.
++
+Where a TLS certificate is not explicitly specified for the listener, the Listener implementation will generate anonymous certificate to use for encryption
+
+The difficulties of managing certificates in disconnected edge environments means that self-signed certificates are the more likely use case in such  environments.
+
+NOTE: Cert Management (distribution/ revocation) is outside the scope of implementation.
+
+Peer-to-peer sync using WebsocketEndpointListener supports the ability to opt out of TLS encryption communication.
+Active clients replicating with a WebsocketEndpointListener have the option to skip validation of server certificates when the listener is configured with self-signed certificates.
+This option is ignored when dealing with CA certificates.
+
+
+ifndef::release-status-cbl[:release-status-cbl!:]
+ifeval::["{release-status-cbl}" == "gamma"]
+[.pane__frame--orange]
+.Author's Notes
+--
+
+Documentation : Must include relevant code snippets that show the use of API to generate self signed cert.
+
+Challenges : This will be available on the following platforms
+iOS
+macOS
+--
+endif::[]
+
+=== ReplicatorConfiguration
+
+The `replicatorConfiguration` class provides two additional methods supporting TLS.
+
+==== `acceptOnlySelfSignedServerCertificate`
+
+Use this to specify whether the replicator ought to accept (only) self-signed certificates, rejecting all others.
+Two modes are supported:
+
+* False -- The replicator verifies the server identity by using the trusted CA or using the pinned server certificate.
+* True -- The replicator will accept all and only self-signed certificates.
+The replicator will reject non-self-signed certificates.
+
+
+[source, {source-language}]
+----
+public class ReplicatorConfiguration {
+    public var acceptOnlySelfSignedServerCertificate: Bool { get set }
+}
+----
+
+==== `serverCertificate` property
+Use this readOnly serverCertificate property to identify what the current server certificate is.
+
+Saving the the certificate and pinning it the net time you set-up the replicator can provide an SSH type of authentication.
+
+[source, {source-language}]
+----
+public class ReplicatorConfiguration {
+    public let serverCertificate: SecCertificate?
+}
+----
+
+NOTE: For Java, the equivalent of the SecCertificate is Certificate and for .NET, the equivalent of the SecCertificate is X509Certificate2.
+
+=== ClientCertificateAuthenticator
+
+ClientCertificateAuthenticator is a ReplicatorConfiguration authenticator set.
+Use it when creating a replicator to tell the replicator to use the client certificate for authentication.
+
+.Definition
+[source, {source-language}]
+----
+public class ClientCertificateAuthenticator: Authenticator {
+    // Properties
+    public let identity: TLSIdentity
+
+    // Constructors
+    public init(identity: TLSIdentity)
+}
+----
+
+.Constructors
+[source, {source-language}]
+----
+init(identity: TLSIdentity)
+----
+
+[cols="2,8"]
+|===
+
+|Explanation
+|Creates a ClientCertificateAuthenticator object with an identity which contains (Public & Private) keys and the certificate and optional CA Certs for verifying the identity’s certification.
+|Preconditions
+|N/A
+
+|Postconditions
+|A ClientCertificateAuthenticator object
+
+|===
+
+.Properties
+{empty}
+[caption=]
+[cols="2,1,1,1,5"]
+|===
+
+|Name
+|Type
+|Nullable
+|ReadOnly
+|Explanation
+
+|identity
+|TLSIdentity
+|No
+|Yes
+|The identity object given when creating the ClientCertificaterAuthenticator object.
+
+|===
+
+
+== Using Basic Authentication
+
+The passive client supports basic uthentication using username and password credentials.
+
+=== `BasicAuthenticator`
+
+Because of security concerns we keep passwords in a `SecureString` format for .NET and in byte array format form other platforms as follows.
+
+[source, {source-language}]
+----
+public class BasicAuthenticator {
+    // Deprecate Property
+    public let password: String
+
+    // New Property
+    public let passwordData: Data
+
+    // Deprecate
+    public init(username: String, password: String)
+    // New Constructor
+    public init(username: String, password: Data)
+}
+----

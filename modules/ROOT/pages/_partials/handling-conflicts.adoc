@@ -80,40 +80,53 @@ Apps have the following strategies for resolving conflicts:
 - *Remote Wins:* The revision pulled from the remote endpoint through replication wins.
 - *Merge:* Merge the content bodies of the conflicting revisions.
 
+// tag::handling-conflicts-conflict-resolvers[]
 [{tabs}]
 ====
 Local Wins::
 +
 --
-[source]
+
+[source, {source-language}]
 ----
+
 include::{snippet}[tag=local-win-conflict-resolver,indent=0]
+
 ----
 --
 
 Remote Wins::
 +
 --
-[source]
+
+[source, {source-language}]
 ----
+
 include::{snippet}[tag=remote-win-conflict-resolver,indent=0]
+
 ----
+
 --
 
 Merge::
 +
 --
-[source]
+
+[source, {source-language}]
 ----
+
 include::{snippet}[tag=merge-conflict-resolver,indent=0]
+
 ----
+
 --
+
 ====
+// end::handling-conflicts-conflict-resolvers[]
 
 When a null document is returned by the resolver, the conflict will be resolved as a document deletion.
 
 === Important Guidelines and Best Practices
-
 
 .Points of Note:
 * If you have multiple replicators, it is recommended that instead of distinct resolvers, you should use a unified conflict resolver across all replicators.
@@ -202,10 +215,11 @@ In this case, the app can detect the error that is being thrown, and handle it b
 
 === Custom Conflict Resolution
 
-Starting in Couchbase Lite 2.6, we allow developers to hook a conflict handler when saving a document so that developers can easily handle the conflict in a single save method call.
+Developers can hook a conflict handler when saving a document so they can easily handle the conflict in a single save method call.
 
-To implement custom conflict resolution when saving a document, apps must call the `save()` method with a conflict handler.
+To implement custom conflict resolution when saving a document, apps must call the `save` method with a conflict handler block ( {url-api-method-database-save-conflict}).
 
+// tag::handling-conflicts-custom-merge[]
 The following code snippet shows an example of merging properties from the existing document (`current`) into the one being saved (`new`).
 In the event of conflicting keys, it will pick the key value from `new`.
 
@@ -215,12 +229,8 @@ In the event of conflicting keys, it will pick the key value from `new`.
 ----
 include::{snippet}[tag=update-document-with-conflict-handler,indent=0]
 ----
-====
 
-.Points of Note:
-* Within the conflict handlefr, you can modify the `document` parameter which is the same instance of `Document` that is passed to the `save()` method.
-So in effect, you will be directly modifying the document that is being saved.
-* When handling is done, the method must return `true`.
-* If the handler could not resolve the conflict, it can return `false`.
-In this case, the save method will cancel the save operation and return `false` the same way as using the `save()` method with the `failOnConflict` concurrency control.
-* If there is an exception thrown in the `handle()` method, the exception will be caught and rethrown in the `save()` method.
+include::{snippet}[tag=update-document-with-conflict-handler-callouts,indent=0]
+
+====
+// end::handling-conflicts-custom-merge[]

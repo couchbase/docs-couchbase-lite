@@ -1,0 +1,162 @@
+// = P2P Sync Using URLEndpointListener
+// :page-layout: article
+// :page-status:
+// :page-edition: Under Development
+// :page-role:
+// :description: Couchbase mobile database queries - concepts
+//
+// include::partial$_std-cbl-hdr-android.adoc[]
+
+// DO NOT EDIT
+include::{root-partials}block-related-howto-p2psync-ws.adoc[]
+include::{root-partials}_block-abstract.adoc[]
+// DO NOT EDIT
+
+ifndef::release-status-cbl[:release-status-cbl!:]
+ifeval::["{release-status-cbl}" == "gamma"]
+[.pane__frame--orange]
+.Author's Notes
+--
+
+DOC-6892-H2-P2P: New topic - WebsockedtEndpointListener and P2P Sync
+https://issues.couchbase.com/browse/DOC-6892
+
+Add content covering Couchbase Lite websocketlistener
+
+Sources:
+* reqs https://docs.google.com/document/d/1o1Dol-g6_D5Stf0IrgY_yxr0kO6AYVJFGOgGjoh6Q6c/edit?ts=5e5fe7da#
+* design https://docs.google.com/document/d/1R2Vd5Iei1OLJvU4QJ-zE6FED8VH-nr2Q9PyjbjwVW48/edit#heading=h.ayhq9efeewhi
+
+This will be  full description of the URLEndpointListener including:
+
+* Overview and feature description
+* API
+* Workflow - operational sequence for normal P2P sync ops
+* Example code for simple sync ops
+* Constraints
+
+The content may ultimately be split up as needed.
+
+Topic to include from requirements:
+
+* If user-defined port is not specified, the system will automatically select a port to use. -- https://docs.google.com/document/d/1o1Dol-g6_D5Stf0IrgY_yxr0kO6AYVJFGOgGjoh6Q6c/edit#bookmark=id.s5y61p8gawi1
+--
+endif::[]
+
+== Introduction
+Couchbase Lite's peer-to-peer sync solution offers secure storage and bidirectional synchronization of data between edge devices without the need for a centralized cloud-based control point.
+
+The solution provides “out-of-box” peer-to-peer support in IP-based networks, which enables customers to:
+
+* Simplify development by enabling sync with just a few lines of code
+* Optimize network bandwidth usage and reduce data transfer cost with Delta Sync support
+* Securely sync data with built-in support for TLS encryption and authentication support
+* Significantly reduce complexity of managing document conflicts from concurrent writes with built-in conflict resolution support.
+
+// == Overview
+
+
+// Couchbase Lite provides out-of-the-box {glos-term-peer-to-peer-sync}, over websockets, between Couchbase Lite enabled clients in IP-based networks.
+
+// Using this _URLEndpointListener_ developers can implement peer-to-peer replication without navigating the compexity of the _MessageEndpoint_ API, which can often be a barrier.
+// The _URLEndpointListener_ listens for incoming websocket connections on a user-defined, or auto-selected, port.
+// --
+
+// [.narrow]
+// .How to use
+// * {url-api-references}[API Reference]
+// * {xref-cbl-pg-dbo-p2psync-websocket-using-passive}
+// * {xref-cbl-pg-dbo-p2psync-websocket-using-active}
+// * {xref-cbl-pg-p2p-manage-tls-id}
+
+// == Approach
+// {glos-term-peer-to-peer-sync} enables edge devices running Couchbase Lite to directly sync Couchbase Lite database changes with each other without a server.
+
+// In peer-to-peer exchanges, Couchbase Lite is responsible for storing the data and keeping track of the data exchange.
+// Synchronization is handled by the peer-to-peer communication framework.
+
+// In each peer-to-peer sync one of the Couchbase Lite instances acts as a _listener_, enabling its database to become the remote in a standard replication.
+// This is done using just a few lines of code to configure and initialize the listener.
+
+// ====
+// [source, {source-language}]
+// ----
+
+// include::{snippet-p2psync-ws}[tags="listener-initialize;!listener-config-db;!listener-config-netw-iface;!listener-config-tls-id-full", indent=0]
+// ----
+
+// <.> By default the system willl assign a port
+// <.> Defaults to false; no delta sync.
+// <.> TLS is enabled and on by default. It is inadvisable to switch it off in production
+
+// ====
+
+// == Listener Features
+
+// * Each listener instance serves one couchbase lite database
+// * There is no limit on the number of instances except a practical limit
+// * Listeners will automatically select a port to use or will use a user-specified port
+// * Listeners support for encryption and authentication over TLS with multiple modes comprising:
+// ** CA Cert
+// ** Self-signed Cert
+// ** Anonymous Self-signed -- Auto-generated anonymous TLS Identity if none specified; provides encryption but *not* authentication
+// ** Not-enabled, that-is, plain text.
+// * Support for basic authentication.
+// * Delta Sync Support.
+
+== Network Resiliency
+
+Built-in network resiliency with retries.
+
+== Conflict Resolution
+Built-in conflict resolution support (automatic and custom).
+
+// == API
+
+// include::{root-partials}p2p-api.adoc[leveloffset=+1]
+
+== Security
+
+// include::{root-partials}p2p-security.adoc[leveloffset=+1]
+
+Peer-to--peer sync supports <<using-basic-authentication, Basic Authentication>> and <<using-tls,TLS Authentication>>.
+For anything other than test deployments, we strongly encourage the use of TLS. In fact, peer-to-peer sync using URLEndpointListener is encrypted using TLS by default.
+
+The authentication mechanism used is defined at endpoint level, meaning that it is independent of the database being replicated.
+So when replicating multiple database instances you may use basic on one instance an another authentication method on other instances.
+
+NOTE: The Minimum supported version of TLS is TLS 1.2.
+
+Peer-to-peer sync using URLEndpointListener supports certificate based authentication of the server and-or listener:
+
+* Replicator certificates can be: self signed, from trusted CA or anonymous (system generated).
+* Listeners certificates may be: self signed or trusted CA signed.
++
+Where a TLS certificate is not explicitly specified for the listener, the Listener implementation will generate anonymous certificate to use for encryption
+
+// The difficulties of managing certificates in disconnected edge environments means that self-signed certificates are the more likely use case in such  environments.
+
+// NOTE: Cert Management (distribution/revocation) is outside the scope of implementation.
+
+// The URLEndpointListener supports the ability to opt out of TLS encryption communication.
+
+// Active clients replicating with a URLEndpointListener have the option to skip validation of server certificates when the listener is configured with self-signed certificates.
+// This option is ignored when dealing with CA certificates.
+
+
+// == Sizing
+
+// // include::{root-partials}p2p-sizing.adoc[leveloffset=+1]
+
+// * Sizing - eg num websocket endponi listeners
+// ** The scalability of the sync must only be limited by OS-level factors like number of open socket descriptions, volume of mutations getting synced .
+// * We must provide some guidance on the sizing factors that will determine the number of supported clients. This is probably the most commonly asked question when it comes to p2p support. Alternatives like MPC specify the same.
+// // Context: This has been one of the reasons why off-the-shelf solutions haven’t worked requiring custom implementation
+
+// == Conflict handling
+
+// include::{root-partials}p2p-conflict.adoc[leveloffset=+1]
+
+// DO NOT EDIT OR REMOVE
+include::{root-partials}block-related-content-p2psync.adoc[]
+// DO NOT EDIT OR REMOVE

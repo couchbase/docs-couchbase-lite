@@ -1,47 +1,52 @@
 = Working with Replications
 :page-layout: article
-:page-status: {release-status-cbl} -- {release-comments-cbl}
+:page-status:
 :page-edition: Under Development
 :page-role:
+:description: Couchbase database replication and synchronization concepts
+// include::shared-mobile::{root-partials}_attributes-shared.adoc[]
+// include::ROOT:{root-partials}_page-index.adoc[]
+// include::ROOT:{root-partials}_glossary-links.adoc[]
+// include::ROOT:{root-partials}_attributes-local.adoc[]
+// include::{lang-mod-android}:{root-partials}_attributes-module.adoc[]
 
-include::shared-mobile::partial$_attributes-shared.adoc[]
-include::ROOT:partial$_page-index.adoc[]
-include::ROOT:partial$_glossary-links.adoc[]
-include::ROOT:partial$_attributes-local.adoc[]
-include::{lang-mod-android}:partial$_attributes-module.adoc[]
 
-// BEGIN::Local page attributes
-:blank-field: ____
-:lang-title: {lang-title-android}
-:module: {lang-mod-android}
-:packageNm: couchbase-lite-{module}
-:source-language: {lang-name-android}
-:snippet: {snippets-content--android}
-:url-issues-java: {url-github-cbl}{module}/issues
-:ziputils: {snippets-pfx--android}/code_snippets/ZipUtils.java
+// // BEGIN::Local page attributes
+// :blank-field: ____
+// :lang-title: {lang-title-android}
+// :module: {lang-mod-android}
+// :packageNm: couchbase-lite-{module}
+// :source-language: {lang-name-android}
+// :snippet: {snippets-content--android}
+// //:snippet: {module}:example$code-snippets/SampleCodeTest.android
+// :url-issues: {url-github-cbl}{module}/issues
+// //:url-api-references: http://docs.couchbase.com/mobile/2.7.0/couchbase-lite-android
+include::partial$_std-cbl-hdr-android.adoc[]
+
+:param-abstract: Related Concepts: {xref-cbl-pg-conflict} | {xref-cbl-pg-dbreplica} | {xref-cbl-pg-cert-pinning} |
+:topic-group: Topic Group -- Replication
+include::{root-partials}block-abstract.adoc[]
 
 ifndef::release-status-cbl[:release-status-cbl!:]
-ifeval::["{release-status-cbl}" =  "gamma"]
+ifeval::["{release-status-cbl}" == "gamma"]
 [.pane__frame--orange]
 .Author's Notes
 --
 Refactor and rationalize content as required and-or time permits.
 --
 endif::[]
-=  Replication
+endif::[]
 
-include::partial$replication-introduction.adoc[]
 
-==  Compatibility
+== Replication Protocol
 
-WARNING: The new protocol is *incompatible* with CouchDB-based databases.
-And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that xref:sync-gateway::compatibility-matrix.adoc[supports it].
+include::{root-partials}replication-introduction.adoc[]
 
-To use this protocol with Couchbase Lite 2.0, the replication URL should specify WebSockets as the URL scheme (see the <<Starting a Replication>> section below).
-Mobile clients using Couchbase Lite 1.x can continue to use *http* as the URL scheme.
-Sync Gateway 2.0 will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through "ws://localhost:4984/db".
+== Protocol Compatibility
 
-==  Starting Sync Gateway
+include::{root-partials}replication-protocol-compatibility.adoc[]
+
+== Starting Sync Gateway
 
 https://www.couchbase.com/downloads[Download Sync Gateway] and start it from the command line with the configuration file created above.
 
@@ -52,7 +57,7 @@ https://www.couchbase.com/downloads[Download Sync Gateway] and start it from the
 
 For platform specific installation instructions, refer to the Sync Gateway xref:sync-gateway::getting-started.adoc#installation[installation guide].
 
-==  Starting a Replication
+== Starting a Replication
 
 Replication can be bidirectional, this means you can start a `push`/`pull` replication with a single instance.
 The replication's parameters can be specified through the {url-api-references}/index.html?com/couchbase/lite/ReplicatorConfiguration.html[`ReplicatorConfiguration`] object;
@@ -60,16 +65,16 @@ for example, if you wish to start a `push` only or `pull` only replication.
 
 The following example creates a `pull` replication with Sync Gateway.
 
-[source]
+[source, {source-language}]
 ----
 class MyClass {
     Database database;
-    Replicator replicator; // <1>
+    Replicator replicator; // <.>
 
     void startReplication() {
         URI uri = null;
         try {
-            uri = new URI("wss://10.0.2.2:4984/db"); // <2>
+            uri = new URI("wss://10.0.2.2:4984/db"); // <.>
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -82,30 +87,29 @@ class MyClass {
 
 }
 ----
-<1> A replication is an asynchronous operation.
+<.> A replication is an asynchronous operation.
 To keep a reference to the `replicator` object, you can set it as an instance property.
-<2> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
-You should now use `ws:`, or `wss:` for SSL/TLS connections.
+<.> The URL scheme for remote database URLs uses `ws:`, or `wss:` for SSL/TLS connections over wb sockets.
 In this example the hostname is `10.0.2.2` because the Android emulator runs in a VM that is generally accessible on `10.0.2.2` from the host machine (see https://developer.android.com/studio/run/emulator-networking[Android Emulator networking] documentation).
 +
 NOTE: As of Android Pie, version 9, API 28, cleartext support is disabled, by default.
 Although `wss:` protocol URLs are not affected, in order to use the `ws:` protocol, applications must target API 27 or lower, or must configure application network security as described https://developer.android.com/training/articles/security-config#CleartextTrafficPermitted[here].
 
-include::partial$verify-replication.adoc[]
+include::{root-partials}verify-replication.adoc[]
 
-Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit data.
+Couchbase Lite uses WebSockets as the communication protocol to transmit data.
 Some load balancers are not configured for WebSocket connections by default (NGINX for example);
 so it might be necessary to explicitly enable them in the load balancer's configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
 
 By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
 The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway::config-properties.adoc#replicator_compression[`replicator_compression`]).
 
-===  Replication Ordering
+== Replication Ordering
 
 To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
 So we don't recommend to rely on that when using the replication or database change listeners for example.
 
-===  Replicator Notifications on a Custom Executor
+=== Replicator Notifications on a Custom Executor
 
 Prior to version 2.6, Couchbase Lite spun up multiple executors.
 This policy could result in too many threads being spun up.
@@ -252,7 +256,11 @@ public class PolicyExample {
 }
 ----
 
-==  Troubleshooting
+== Delta Sync
+
+include::{root-partials}replication-delta-sync.adoc[]
+
+== Troubleshooting
 
 As always, when there is a problem with replication, logging is your friend.
 The following example increases the log output for activity related to replication with Sync Gateway.
@@ -262,11 +270,11 @@ The following example increases the log output for activity related to replicati
 include::{snippet}[tag=replication-logging,indent=0]
 ----
 
-==  Authentication
+== Authentication
 
-include::partial$authentication.adoc[]
+include::{root-partials}authentication.adoc[]
 
-==  Replication Status
+== Replication Status
 
 The `replication.Status.Activity` property can be used to check the status of a replication.
 For example, when the replication is actively transferring data and when it has stopped.
@@ -305,14 +313,14 @@ Hence, these should not be used for tracking the actual progress of the replicat
 
 anchor:repstatus-and-lifecycle[]
 
-===  Replication Status and App Lifecycle
+=== Replication Status and App Lifecycle
 
 Couchbase Lite replications will continue running until the app terminates, unless the remote system, or the application, terminates the connection.
 
 NOTE: Recall that the Android OS may kill an application without warning.
 You should explicitly stop replication processes when they are no longer useful (for example, when they are `suspended` or `idle`) to avoid socket connections being closed by the OS, which may interfere with the replication process.
 
-==  Handling Network Errors
+== Handling Network Errors
 
 If an error occurs, the replication status will be updated with an `Error` which follows the standard HTTP error codes.
 The following example monitors the replication for errors and logs the error code to the console.
@@ -334,28 +342,30 @@ The following error codes are considered temporary by the Couchbase Lite replica
 * `504`: Gateway Timeout
 * `1001`: DNS resolution error
 
-==  Replication Events
+== Replication Events
 
-include::partial$replication-events.adoc[]
+include::{root-partials}replication-events.adoc[]
 
-==  Custom Headers
+== Custom Headers
 
-include::partial$replication-custom-header.adoc[]
+include::{root-partials}replication-custom-header.adoc[]
 
 [source]
 ----
 include::{snippet}[tag=replication-custom-header,indent=0]
 ----
 
-==  Replication Checkpoint Reset
+== Replication Checkpoint Reset
 
-include::partial$replication-checkpoint.adoc[]
+include::{root-partials}replication-checkpoint.adoc[]
 
 [source]
 ----
 include::{snippet}[tag=replication-reset-checkpoint,indent=0]
 ----
 
-==  Replication Filters
+== Replication Filters
 
-include::partial$replication-filters.adoc[]
+include::{root-partials}replication-filters.adoc[]
+
+include::{root-partials}block-related-content-rep.adoc[]

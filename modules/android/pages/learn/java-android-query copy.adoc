@@ -1,0 +1,312 @@
+= Working with Queries
+:page-layout: article
+:page-status:
+:page-edition: Under Development
+:page-role:
+:description: Couchbase Lite database data model concepts - blobs
+
+include::partial$_std-cbl-hdr-android.adoc[]
+
+
+:param-abstract: Related Concepts: {xref-cbl-pg-query-predictive} | {xref-cbl-pg-query-live} | {xref-cbl-pg-indexing}
+:topic-group: Topic Group -- Querying
+include::{root-partials}block-abstract.adoc[]
+
+
+//include::shared-mobile::partial$_attributes-shared.adoc[]
+//include::ROOT:partial$_page-index.adoc[]
+//include::ROOT:partial$_glossary-links.adoc[]
+//include::ROOT:partial$_attributes-local.adoc[]
+//include::{lang-mod-android}:partial$_attributes-module.adoc[]
+//
+// BEGIN::Local page attributes
+//:blank-field: ____
+//:lang-title: {lang-title-android}
+//:module: {lang-mod-android}
+//:packageNm: couchbase-lite-{module}
+//:source-language: {lang-name-android}
+//:snippet: {snippets-content--android}
+//:url-issues-java: {url-github-cbl}{module}/issues
+//:ziputils: {snippets-pfx--android}/code_snippets/ZipUtils.java
+
+
+ifndef::release-status-cbl[:release-status-cbl!:]
+ifeval::["{release-status-cbl}" == "gamma"]
+[.pane__frame--orange]
+.Author's Notes
+--
+Refactor and rationalize content as required and-or time permits.
+--
+endif::[]
+
+
+= Query Format
+
+Database queries have changed significantly.
+Instead of the map/reduce views used in 1.x, they're now based on expressions, of the form "return {blank-field} from documents where {blank-field}, ordered by {blank-field}", with semantics based on Couchbase's N1QL query language.
+
+There are several parts to specifying a query:
+
+SELECT:: Specifies the projection, which is the part of the document that is to be returned.
+FROM:: Specifies the database to query the documents from.
+JOIN:: Specifies the matching criteria in which to join multiple documents.
+WHERE:: Specifies the query criteria that the result must satisfy.
+GROUP BY:: Specifies the query criteria to group rows by.
+ORDER BY:: Specifies the query criteria to sort the rows in the result.
+
+== SELECT statement
+
+With the SELECT statement, you can query and manipulate JSON data.
+With projections, you retrieve just the fields that you need and not the entire document.
+
+A SelectResult represents a single return value of the query statement.
+You can specify a comma separated list of `SelectResult` expressions in the select statement of your query.
+For instance the following select statement queries for the document `_id` as well as the `type` and `name` properties of all documents in the database.
+In the query result, we print the `_id` and `name` properties of each row using the property name getter method.
+
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "Apple Droid"
+}
+----
+
+[source]
+----
+include::{snippet}[tag=query-select-meta,indent=0]
+----
+
+The `SelectResult.all()` method can be used to query all the properties of a document.
+In this case, the document in the result is embedded in a dictionary where the key is the database name.
+The following snippet shows the same query using `SelectResult.all()` and the result in JSON.
+
+[source]
+----
+include::{snippet}[tag=query-select-all,indent=0]
+----
+
+[source,json]
+----
+[
+    {
+        "travel-sample": {
+            "callsign": "MILE-AIR",
+            "country": "United States",
+            "iata": "Q5",
+            "icao": "MLA",
+            "id": 10,
+            "name": "40-Mile Air",
+            "type": "airline"
+        }
+    },
+    {
+        "travel-sample": {
+            "callsign": "TXW",
+            "country": "United States",
+            "iata": "TQ",
+            "icao": "TXW",
+            "id": 10123,
+            "name": "Texas Wings",
+            "type": "airline"
+        }
+    }
+]
+----
+
+== WHERE statement
+
+Similar to SQL, you can use the where clause to filter the documents to be returned as part of the query.
+The select statement takes in an `Expression`.
+You can chain any number of Expressions in order to implement sophisticated filtering capabilities.
+
+== Comparison
+
+The {url-api-classes-query-expression-comparators} can be used in the WHERE statement to specify on which property to match documents.
+In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
+
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "Apple Droid"
+}
+----
+
+[source]
+----
+include::{snippet}[tag=query-where,indent=0]
+----
+
+== Collection Operators
+
+{url-api-classes-query-arrayfunction-collection-ops} are useful to check if a given value is present in an array.
+
+=== CONTAINS Operator
+
+The following example uses the `Function.arrayContains` to find documents whose `public_likes` array property contain a value equal to "Armani Langworth".
+
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "name": "Apple Droid",
+    "public_likes": ["Armani Langworth", "Elfrieda Gutkowski", "Maureen Ruecker"]
+}
+----
+
+[source]
+----
+include::{snippet}[tag=query-collection-operator-contains,indent=0]
+----
+
+=== IN Operator
+
+The `IN` operator is useful when you need to explicitly list out the values to test against.
+The following example looks for documents whose `first`, `last` or `username` property value equals "Armani".
+
+[source]
+----
+include::{snippet}[tag=query-collection-operator-in,indent=0]
+----
+
+== Like Operator
+
+The {url-api-references}/com/couchbase/lite/Expression.html#like-com.couchbase.lite.Expression-[`like`] operator can be used for string matching.
+
+The `like` operator performs **case sensitive** matches.
+So if you want to make the string matching case insensitive, you would have to use `Function.lower` or `Function.upper` to transform the matched string to lowercase or uppercase equivalents.
+
+In the example below, we are looking for documents of type `landmark` where the name property exactly matches the string "Royal engineers museum".
+Note that since `like` does a case sensitive match, we use `Function.lower` to transform the matched string to the lowercase equivalent.
+So the following query will return "landmark" type documents with the name matching "Royal Engineers Museum", "royal engineers museum", "ROYAL ENGINEERS MUSEUM" and so on.
+
+[source]
+----
+include::{snippet}[tag=query-like-operator,indent=0]
+----
+
+== Wildcard Match
+
+We can use `%` sign within a `like` expression to do a wildcard match against zero or more characters.
+Using wildcards allows you to have some fuzziness in your search string.
+
+In the example below, we are looking for documents of `type` "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
+Once again, we are using `Function.lower` to make the search case insensitive.
+
+The following query will return "landmark" `type` documents with name matching "Engineers", "engine", "english egg" , "England Eagle" and so on.
+Notice that the matches may span word boundaries.
+
+[source]
+----
+include::{snippet}[tag=query-like-operator-wildcard-match,indent=0]
+----
+
+== Wildcard Character Match
+
+We can use an `_` sign within a like expression to do a wildcard match against a single character.
+
+In the example below, we are looking for documents of type "landmark" where the `name` property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
+The following query will return "landmark" `type` documents with the `name` matching "Engineer", "engineer" and so on.
+
+[source]
+----
+include::{snippet}[tag=query-like-operator-wildcard-character-match,indent=0]
+----
+
+== Regex Operator
+
+Similar to wildcard `like` expressions, `regex` expressions based pattern matching allow you to have some fuzziness in your search string.
+
+The `regex` operator is case sensitive.
+
+In the example below, we are looking for documents of `type` "landmark" where the name property matches any string (on word boundaries) that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
+The following query will return "landmark" type documents with name matching "Engine", "engine" and so on.
+Note that the `\b` specifies that the match must occur on word boundaries.
+
+[source]
+----
+include::{snippet}[tag=query-regex-operator,indent=0]
+----
+
+== Deleted Document
+
+Starting in Couchbase Lite 2.5, you can query documents that have been deleted (tombstones).
+The following example shows how to query deleted documents in the database.
+
+[source]
+----
+include::{snippet}[tag=query-deleted-documents,indent=0]
+----
+
+== JOIN statement
+
+The JOIN clause enables you to create new input objects by combining two or more source objects.
+
+The following example uses a JOIN clause to find the airline details which have routes that start from RIX.
+This example JOINS the document of type "route" with documents of type "airline" using the document ID (`_id`) on the "airline" document and `airlineid` on the "route" document.
+
+[source]
+----
+include::{snippet}[tag=query-join,indent=0]
+----
+
+== GROUP BY statement
+
+You can perform further processing on the data in your result set before the final projection is generated.
+The following example looks for the number of airports at an altitude of 300 ft or higher and groups the results by country and timezone.
+
+[source,json]
+----
+{
+    "_id": "airport123",
+    "type": "airport",
+    "country": "United States",
+    "geo": { "alt": 456 },
+    "tz": "America/Anchorage"
+}
+----
+
+[source]
+----
+include::{snippet}[tag=query-groupby,indent=0]
+----
+
+[source,text]
+----
+There are 138 airports on the Europe/Paris timezone located in France and above 300 ft
+There are 29 airports on the Europe/London timezone located in United Kingdom and above 300 ft
+There are 50 airports on the America/Anchorage timezone located in United States and above 300 ft
+There are 279 airports on the America/Chicago timezone located in United States and above 300 ft
+There are 123 airports on the America/Denver timezone located in United States and above 300 ft
+----
+
+== ORDER BY statement
+
+It is possible to sort the results of a query based on a given expression result.
+The example below returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.
+
+[source]
+----
+include::{snippet}[tag=query-orderby,indent=0]
+----
+
+[source,text]
+----
+Aberdyfi
+Achiltibuie
+Altrincham
+Ambleside
+Annan
+Ardèche
+Armagh
+Avignon
+----
+
+== Date and Time Functions
+
+include::{root-partials}query-date-time-functions.adoc[]
+
+include::{root-partials}block-related-content-query.adoc[]

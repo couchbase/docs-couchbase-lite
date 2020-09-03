@@ -1,278 +1,45 @@
-= Release Notes
-include::ROOT:partial$_attributes-local.adoc[]
-:snippet: ROOT:example$/swift/code-snippets/SampleCodeTest.swift
-:source-language: swift
-:version: 2.7.0
-:blank-field: ____
-:url-issues-ios: https://github.com/couchbase/couchbase-lite-ios/issues
-:tabs:
-:url-api-references: http://docs.couchbase.com/mobile/2.7.0/couchbase-lite-swift
+:idprefix:
+:idseparator: -
+:icons: font
+:source-highlighter: rouge
+:quick-uri: https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/
+ifndef::env-site,env-github[]
+:toc: left
+:toclevels: 3
+endif::[]
+toc::[]
 
-== 2.7.0
+NOTE1: This is a *Beta* build that is NOT QE approved. This is intended for use in development and test environments. It must NOT be used in production environments.
 
-*{nftr}*
+Since this is a private release, please direct all questions to the Product Manager, Priya Rajagopal (priya.rajagopal@couchbase.com) and your respective accounts team. Pleaase do not use any public forums for questions.
 
-New at this release is the Java Platform, which enables development of Java apps on any platform that supports the JVM model
+=== Couchbase Lite - what's new
 
-xref::index.adoc[{more}]
+include::ROOT:page$/cbl-whatsnew.adoc[tag=whatsnew]
 
-*Current Support Notices*
+=== Documentation
+* link:https://ibsoln.github.io/stage/h2beta/couchbase-lite/2.8/swift/learn/swift-p2psync-websocket.html[Beta Documentation for peer-to-peer]
+* link:https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-swift/Classes/URLEndpointListener.html[API References]
 
-:msg_level: CAUTION
-:msg_title: Apple Mac OS
-:msg_component: Mac OS 10.9 and 10.10
-:msg_endrel: 2.8
-:msg_release: 2.5
-:msg_action: Please plan to migrate your apps to use at least the minimum <<Supported Versions>>.
-include::ROOT:partial$deprecationNotice.adoc[]
+=== Sample App
+You can download a detailed tutorial and corresponding swift app project from the <<Download Links>> section. The sample app demonstrates the websockets listener based peer-to-peer capability.
 
-:msg_title: Apple iOS
-:msg_component: iOS 9
-:msg_release: 2.6
-:msg_endrel: 2.9
-:msg_action: Please plan to migrate your apps to use at least the minimum <<Supported Versions>>.
-include::ROOT:partial$deprecationNotice.adoc[]
 
-*{ke}*
+== OS Support
+Couchbase Lite iOS peer-to-peer functionality will be supported on
 
-- https://issues.couchbase.com/browse/CBL-216[*CBL-216*] Ordering null values inconsistent with N1QL expectations
-- https://issues.couchbase.com/browse/CBL-95[*CBL-95*] Pending conflicts could be resolved by a wrong replicator
-- https://issues.couchbase.com/browse/CBL-49[*CBL-49*] Need a way to distinguish boolean types
+- iOS 10+
+- macOS 10.12.6+ (High Sierra) - for dev and testing
 
-*{fixed}*
 
-- https://issues.couchbase.com/browse/CBL-562[*CBL-562*] Can't open existing db read-only; LiteCore test "Database Open Older Encrypted" fails
-- https://issues.couchbase.com/browse/CBL-556[*CBL-556*] Reachability undermines offline reconnect logic
-- https://issues.couchbase.com/browse/CBL-550[*CBL-550*] SQLite index creation mistakenly sets user_version backwards
-- https://issues.couchbase.com/browse/CBL-536[*CBL-536*] Long delay starting replicator, for big databases
-- https://issues.couchbase.com/browse/CBL-527[*CBL-527*] RefCount crash
-- https://issues.couchbase.com/browse/CBL-525[*CBL-525*] Upgrade from 1.x fails if any docID starts with "_"
-- https://issues.couchbase.com/browse/CBL-503[*CBL-503*] Jenkins PR validation uses master branch
-- https://issues.couchbase.com/browse/CBL-463[*CBL-463*] Attempt to log strings that are not Modified UTF-8
-- https://issues.couchbase.com/browse/CBL-444[*CBL-444*] Purging documents does not fire events in a QueryChangeListener
-- https://issues.couchbase.com/browse/CBL-437[*CBL-437*] Deprecated Database.setLogLevel is not logging
-- https://issues.couchbase.com/browse/CBL-415[*CBL-415*] strod produces locale-dependent results for encoding Fleece
-- https://issues.couchbase.com/browse/CBL-402[*CBL-402*] Back-tag recent releases
-- https://issues.couchbase.com/browse/CBL-400[*CBL-400*] Not getting right number of revisions on SGW while using multiple SGWS
-- https://issues.couchbase.com/browse/CBL-369[*CBL-369*] FTS and database alias
-- https://issues.couchbase.com/browse/CBL-355[*CBL-355*] Queries silently ignore Collation Locale
-- https://issues.couchbase.com/browse/CBL-343[*CBL-343*] LiteCore tests need to use unique database
-- https://issues.couchbase.com/browse/CBL-324[*CBL-324*] Function.upper() failed to operate non-ASCII characters
-- https://issues.couchbase.com/browse/CBL-242[*CBL-242*] Inconsistent revision hash length
-- https://issues.couchbase.com/browse/CBL-221[*CBL-221*] "mutex lock failed" during initial pull replication of large # of docs
-- https://issues.couchbase.com/browse/CBL-218[*CBL-218*] FTS indexing an array-valued property is unreliable
-- https://issues.couchbase.com/browse/CBL-207[*CBL-207*] Replicator change event has idle with timeout error
-- https://issues.couchbase.com/browse/CBL-175[*CBL-175*] Can't query the records has the % character with LIKE operator.
-- https://issues.couchbase.com/browse/CBL-171[*CBL-171*] CBL replication never finishes for replication filtering when doc count is 1000
-- https://issues.couchbase.com/browse/CBL-126[*CBL-126*] Litecore does not retry subChanges request that fails with temporary 503 error
-- https://issues.couchbase.com/browse/CBL-106[*CBL-106*] Replicator C++ exception: "properties excessively large"
-- https://issues.couchbase.com/browse/CBL-52[*CBL-52*] “LIKE”, "CONTAINS", "REGEX_LIKE" operators ignore collations
+== Download Links
 
-== 2.6.3
+include::ROOT:page$/cbl-whatsnew.adoc[tag=downloads]
 
-*Fixed in this Release*
+//- link:https://packages.couchbase.com/releases/couchbase-lite-ios/2.8.0-beta/couchbase-lite-swift_enterprise_2.8.0.zip[Couchbase Lite iOS Swift Prerelease]
+//- link:https://packages.couchbase.com/releases/couchbase-lite-ios/2.8.0-beta/couchbase-lite-objc_enterprise_2.8.0.zip[Couchbase Lite iOS ObjC Prerelease]
+//- link:https://drive.google.com/file/d/1ewD11aeY0jr0M0YdwQ-XDlZRCnj8-1Gg/view?usp=sharing[Sample Swift App for Peer-to-Peer - Sample Project and Tutorial]
 
-- https://issues.couchbase.com/browse/CBL-547[*CBL-547*] CBLWebSocket crashing in older iPhone versions
-- https://issues.couchbase.com/browse/CBL-468[*CBL-468*] Null dereference during pull-only replication
-- https://issues.couchbase.com/browse/CBL-531[*CBL-531*] Support Xcode 11.2 with Swift 5.1.2 compiler
+== License
+Enterprise License : https://www.couchbase.com/legal/agreements/LA07152019
 
-== 2.6.1
-
-This maintenance release adds support for Xcode 11 and Swift 5.1.
-
-== 2.6.0
-
-*{nftr}*
-
-* Custom Conflict Resolution
-+
-xref:index.adoc[{more}]
-
-*{enh}*
-
-* Expose the Document Revision ID: the `revisionID` property on a `Document` instance now returns the current revision identifier.
-
-*iOS SDK Support*
-
-Support for iOS 9.0 is deprecated in this release.
-Support will be removed within two (non-maintenance) releases following the deprecation announcement.
-
-*{fixed}*
-
-// - https://issues.couchbase.com/browse/CBL-222[*CBL-222*] CBL push replication is not replicating doc updates with delta sync after CBL upgrade
-- https://issues.couchbase.com/browse/CBL-171[*CBL-171*] CBL replication never finishes for replication filtering when doc count is 1000
-- https://issues.couchbase.com/browse/CBL-146[*CBL-146*] Custom Conflict resolution is throwing exception for iOS app when trying to resolve conflict
-- https://issues.couchbase.com/browse/CBL-136[*CBL-136*] Replication is not replicating all updates with delta-sync enabled
-- https://issues.couchbase.com/browse/CBL-110[*CBL-110*] delta sync on top of a deletion caused data discrepancy between SG and CBL
-- https://issues.couchbase.com/browse/CBL-106[*CBL-106*] Replicator C++ exception: "properties excessively large"
-- https://issues.couchbase.com/browse/CBL-104[*CBL-104*] Replicating two documents with identical blob could cause POSIX error
-- https://issues.couchbase.com/browse/CBL-86[*CBL-86*] Race condition on SharedKeys causes silent error
-- https://issues.couchbase.com/browse/CBL-47[*CBL-47*] Intermittent SQLITE_MISUSE error during normal testing
-- https://issues.couchbase.com/browse/CBL-45[*CBL-45*] LiteCore time out issues stray busy callback
-- https://issues.couchbase.com/browse/CBL-38[*CBL-38*] null pointer dereference
-
-*{ke}*
-
-- https://issues.couchbase.com/browse/CBL-95[*CBL-95*] Pending conflicts could be resolved by a wrong replicator
-- https://issues.couchbase.com/browse/CBL-49[*CBL-49*] Need a way to distinguish boolean types
-
-== 2.5.3
-
-{fixed}
-
-* https://issues.couchbase.com/browse/CBL-176[*CBL-176*] Reduce replication timeouts.
-* https://issues.couchbase.com/browse/CBL-110[*CBL-110*] Delta sync on top of a deletion caused data discrepancy between Couchbase Sync Gateway and Couchbase Lite.
-
-== 2.5.2
-
-{fixed}
-
-* https://github.com/couchbase/couchbase-lite-core/issues/776[*#776*] `c4db_endTransaction` sometimes results in invalid memory access.
-* https://github.com/couchbase/couchbase-lite-core/issues/787[*#787*] Fleece error when querying array property.
-* https://github.com/couchbase/couchbase-lite-core/issues/792[*#792*] DBWorker crashes in Fleece Encoder (writePointer).
-
-== 2.5.1
-
-{fixed}
-
-* {url-issues-ios}/2438[*#2438*] Cannot Open Database Encrypted in 2.1.x with 2.5
-
-== 2.5.0
-
-*{nftr}*
-
-* Delta Sync
-* Replication Filters
-* Continuous Logging
-* Predictive Query
-+
-xref:index.adoc[Read more]
-
-.macOS Support
-NOTE: MacOS is supported ONLY for testing and development purposes. Support for macOS 10.9 and 10.10 is now deprecated and will cease at Release 2.8. -- see <<supported-versions>>.
-
-*Performance Improvements*
-
-* {url-issues-ios}/168[*#168*]
-Transfer new revisions as deltas
-
-*{enh}*
-
-* {url-issues-ios}/168[*#168*]
-Transfer new revisions as deltas
-* {url-issues-ios}/847[*#847*]
-Client-side pull replication filters
-* {url-issues-ios}/2221[*#2221*]
-Logging redirect is missing for 2.X
-* {url-issues-ios}/2321[*#2321*]
-Remove log rotation change batching
-
-{fixed}
-
-* {url-issues-ios}/2022[*#2022*]
-``isOldAttachment'' check is incorrect
-* {url-issues-ios}/2238[*#2238*]
-Memory release issue for released certificate
-* {url-issues-ios}/2269[*#2269*]
-CBLWebSocket CLOSED
-* {url-issues-ios}/2270[*#2270*]
-Document Expiry doesn’t seem to set the expiration timestamp in
-milliseconds
-* {url-issues-ios}/2274[*#2274*]
-TestPushAndPullBigBodyDocument_SG intermittently fails
-* {url-issues-ios}/2281[*#2281*]
-(Closed) Logs which contains non-english letter turns out to be
-gibberish
-* {url-issues-ios}/2291[*#2291*]
-DB change notifications not posted if another thread is in a transaction
-* {url-issues-ios}/2292[*#2292*]
-Change the default directory of the log files
-* {url-issues-ios}/2306[*#2306*]
-Fix default log file location
-* {url-issues-ios}/2372[*#2372*]
-Replicator doesn’t retry after disable and enable wifi
-* {url-issues-ios}/2393[*#2393*]
-AddressSanitizer issue in CBLFileLogger’s apply method
-* {url-issues-ios}/2405[*#2405*]
-Console Log Crash when there is percent character in the log message
-
-*{ke}*
-
-* {url-issues-ios}/2438[*#2438*] Cannot Open Database Encrypted in 2.1.x with 2.5
-
-== 2.1.6
-
-* This release is compiled with Xcode 10.2.
-
-== 2.1.5
-
-.{fixed}
-* https://github.com/couchbase/couchbase-lite-core/issues/714[*#714*] docIDs starting with `_design/` cause the upgrade to 1.x to fail
-* https://github.com/couchbase/couchbase-lite-core/issues/712[*#712*] fleece::Scope throws an exception on a background thread while updating a live query
-
-== 2.1.3
-
-* This release is compiled with Xcode 10.1. It will now work with Swift 4.2.1
-
-.{fixed}
-* {url-issues-ios}/2230[*#2230*] Incompatible Swift version, Swift 4.2.1
-
-== 2.1.2
-
-.{fixed}
-* {url-issues-ios}/2205[*#2205*] Crash when using 2.1 to pull attachments from 2.0
-* {url-issues-ios}/2216[*#2216*] Auth Header from BasicAuthenticator not getting sent if SG Guest user is enabled
-
-== 2.1.1
-
-* This release is compiled with Xcode 10.0. It will now work with Swift 4.2.1
-
-== 2.1
-
-.Performance Improvements
-* {url-issues-ios}/2127[*#2127*] CBLReplicator always runs on main queue
-
-.{enh}
-* {url-issues-ios}/1610[*#1610*] 2.0: Provide a script to strip simulator architecture frameworks for app submission
-* {url-issues-ios}/2117[*#2117*] Implement Database Encryption (EE feature)
-* {url-issues-ios}/2118[*#2118*] Support Peer-to-Peer replication through MessageEndpoint API (EE feature)
-* {url-issues-ios}/2139[*#2139*] Implement Replicator reset checkpoint feature
-
-.{fixed}
-* {url-issues-ios}/1926[*#1926*] Swift Replicator.addChangeListener crashes
-* {url-issues-ios}/2140[*#2140*] 2.0 : TIC Read Status 1:57 error spam
-* {url-issues-ios}/2149[*#2149*] Swift DictionaryObject and ArrayObject not having toMutable() method
-* {url-issues-ios}/2162[*#2162*] 2.1 DB1: Crash when inserting image Blobs to objects in embedded array in Swift
-* {url-issues-ios}/2188[*#2188*] Replicator not getting stopped when using MessageEndpoint
-
-.{ke}
-* {url-issues-ios}/2112[*#2112*] HTTP proxy support
-* {url-issues-ios}/2122[*#2122*] IOS 9 - Got LiteCore error: connection closed abnormally - eventual crash
-
-== 2.0.3
-
-* This release adds compatibility for Swift 4.1.2 (as part of Xcode 9.4).
-
-== 2.0.2
-
-* Support for Log redaction of sensitive information when <<logging,logging is enabled>>.
-
-== 2.0.0
-
-.{fixed}
-* {url-issues-ios}/1701[*#1701*] 2:0 swift expression based query returning empty results
-* {url-issues-ios}/1836[*#1836*] 2.0: Database Listener callbacks not always getting called on main thread
-* {url-issues-ios}/1854[*#1854*] 2.0 : Dictionary, Array, and Fragment have duplicate definitions
-* {url-issues-ios}/1862[*#1862*] 2.0: CBLQueryExpression "and:" and "or:" methods cause syntax errors in Obj-C++
-* {url-issues-ios}/2005[*#2005*] 2.0: Make CBLDatabase query/replication tracking thread-safe
-* {url-issues-ios}/2035[*#2035*] Cross Join Not Returning expected results
-* {url-issues-ios}/2061[*#2061*] Swift 2.0: LiteCore error trying to copy prebuilt DB
-* {url-issues-ios}/2085[*#2085*] Crashed in CBLWebSocket
-* {url-issues-ios}/2094[*#2094*] TestSelfSignedSSLFailure_SG failed on iOS 10.2
-* {url-issues-ios}/2104[*#2104*] Set Immutable Dictionary or Array to Document causes toDictionary() to crash in Swift
-
-.{ke}
-* {url-issues-ios}/2112[*#2112*] HTTP proxy support
-* {url-issues-ios}/2122[*#2122*] IOS 9 - Got LiteCore error: connection closed abnormally - eventual crash
-* {url-issues-ios}/2196[*#2196*] Crash with wifi disabled and bad network
-* {url-issues-ios}/2197[*#2197*] `WebSocket C4 dispatch` crash during sync

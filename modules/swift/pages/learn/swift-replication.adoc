@@ -1,46 +1,42 @@
 = Working with Replications
 :page-layout: article
-:page-status: {release-status-cbl} -- {release-comments-cbl}
+:page-status:
 :page-edition: Under Development
 :page-role:
 :description: Couchbase database replication and synchronization concepts
-include::shared-mobile::{root-partials}_attributes-shared.adoc[]
-include::ROOT:partial$_page-index.adoc[]
-include::ROOT:partial$_glossary-links.adoc[]
-include::ROOT:partial$_attributes-local.adoc[]
-include::{lang-mod-swift}:partial$_attributes-module.adoc[]
+// include::shared-mobile::{root-partials}_attributes-shared.adoc[]
+// include::ROOT:partial$_page-index.adoc[]
+// include::ROOT:partial$_glossary-links.adoc[]
+// include::ROOT:partial$_attributes-local.adoc[]
+// include::{lang-mod-swift}:partial$_attributes-module.adoc[]
 
 
-// BEGIN::Local page attributes
-:blank-field: ____
-:lang-title: {lang-title-swift}
-:module: {lang-mod-swift}
-:packageNm: couchbase-lite-{module}
-:source-language: {lang-name-swift}
-:snippet: {snippets-content--swift}
-//:snippet: {module}:example$code-snippets/SampleCodeTest.swift
-:url-issues: {url-github-cbl}{module}/issues
-//:url-api-references: http://docs.couchbase.com/mobile/2.7.0/couchbase-lite-swift
+// // BEGIN::Local page attributes
+// :blank-field: ____
+// :lang-title: {lang-title-swift}
+// :module: {lang-mod-swift}
+// :packageNm: couchbase-lite-{module}
+// :source-language: {lang-name-swift}
+// :snippet: {snippets-content--swift}
+// //:snippet: {module}:example$code-snippets/SampleCodeTest.swift
+// :url-issues: {url-github-cbl}{module}/issues
+// //:url-api-references: http://docs.couchbase.com/mobile/2.7.0/couchbase-lite-swift
 
+include::partial$_std-cbl-hdr-swift.adoc[]
 
+:param-abstract: Related Concepts: {xref-cbl-pg-conflict} | {xref-cbl-pg-dbreplica} |{xref-cbl-pg-cert-pinning}
+:topic-group: Topic Group -- Replication
 // END::Local page attributes
 
-[abstract]
-{description}
+include::{root-partials}block-abstract.adoc[]
 
-== Overview
-{snippet}
+== Replication Protocol
 
 include::{root-partials}replication-introduction.adoc[]
 
-== Compatibility
+== Protocol Compatibility
 
-WARNING: The new protocol is *incompatible* with CouchDB-based databases.
-And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that xref:sync-gateway::compatibility-matrix.adoc[supports it].
-
-To use this protocol with Couchbase Lite 2.0, the replication URL should specify WebSockets as the URL scheme (see the "Starting a Replication" section below).
-Mobile clients using Couchbase Lite 1.x can continue to use *http* as the URL scheme.
-Sync Gateway 2.0 will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through "http://localhost:4984/db" and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through "ws://localhost:4984/db".
+include::{root-partials}replication-protocol-compatibility.adoc[]
 
 == Starting Sync Gateway
 
@@ -85,6 +81,23 @@ You should now use `ws:`, or `wss:` for SSL/TLS connections.
 
 include::{root-partials}verify-replication.adoc[]
 
+==== TLS
+The `replicatorConfiguration` class provides the `acceptOnlySelfSignedServerCertificate` method, which specifies whether the replicator ought to accept (only) self-signed certificates, rejecting all others.
+
+Two modes are supported:
+
+* False -- The replicator verifies the server identity by using the trusted CA or using the pinned server certificate.
+* True -- The replicator will accept all and only self-signed certificates.
+The replicator will reject non-self-signed certificates.
+
+[source, {source-language}]
+----
+public class ReplicatorConfiguration {
+  public var acceptOnlySelfSignedServerCertificate: Bool { get set }
+}
+----
+
+==== WebSockets
 Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit data.
 Some load balancers are not configured for WebSocket connections by default (NGINX for example);
 so it might be necessary to explicitly enable them in the load balancer's configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
@@ -92,22 +105,14 @@ so it might be necessary to explicitly enable them in the load balancer's config
 By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
 The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway::config-properties.adoc#replicator_compression[`replicator_compression`]).
 
-=== Replication Ordering
+== Replication Ordering
 
 To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
 So we don't recommend to rely on that when using the replication or database change listeners for example.
 
 == Delta Sync
 
-NOTE: Delta Sync is an Enterprise Edition feature on Sync Gateway and Couchbase Lite.
-
-Couchbase Mobile 2.5 introduces delta sync.
-Delta Sync is the ability to replicate only parts of the Couchbase document that have changed.
-This can result in significant savings in bandwidth consumption as well as throughput improvements, especially when network bandwidth is typically constrained.
-
-Replications to a <<starting-sync-gateway, URLEndpoint>> (i.e Sync Gateway) automatically use delta sync if the xref:sync-gateway::config-properties.adoc#databases-foo_db-delta_sync[databases.$db.delta_sync.enabled] property is set to `true` in Sync Gateway's configuration file.
-
-Replications to a <<database-replicas, DatabaseEndpoint>> automatically *disable* delta sync and replications to a <<peer-to-peer-sync, MessageEndpoint>> automatically *enable* delta sync.
+include::{root-partials}replication-delta-sync.adoc[]
 
 == Troubleshooting
 
@@ -225,3 +230,6 @@ include::{snippet}[tag=replication-reset-checkpoint,indent=0]
 == Replication Filters
 
 include::{root-partials}replication-filters.adoc[]
+
+
+include::{root-partials}block-related-content-p2psync.adoc[]
