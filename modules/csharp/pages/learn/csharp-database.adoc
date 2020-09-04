@@ -12,9 +12,7 @@ include::partial$_std-cbl-hdr-csharp.adoc[]
 include::{root-partials}block-abstract.adoc[]
 
 
-== Database
-
-=== New Database
+== New Database
 
 As the top-level entity in the API, new databases can be created using the `Database` class by passing in a name, configuration, or both.
 The following example creates a database using the `Database(string name)` method.
@@ -27,7 +25,7 @@ include::{snippet}[tag=new-database,indent=0]
 Just as before, the database will be created in a default location.
 Alternatively, the `Database(string name, DatabaseConfiguration config)` initializer can be used to provide specific options in the {url-api-references}/api/Couchbase.Lite.DatabaseConfiguration.html[`DatabaseConfiguration`] object such as the database directory.
 
-=== Database Encryption
+== Database Encryption
 
 // .Enterprise Edition only
 // IMPORTANT: Database encryption is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
@@ -38,7 +36,7 @@ Alternatively, the `Database(string name, DatabaseConfiguration config)` initial
 
 include::partial$database-encryption.adoc[]
 
-=== Finding a Database File
+== Finding a Database File
 
 Where a database goes by default depends on the platform it is running on.
 Here are the defaults for each platform:
@@ -49,17 +47,17 @@ Note that this sandbox gets deleted sometimes when debugging from inside Visual 
 * Xamarin iOS: In a folder named CouchbaseLite inside of `ApplicationSupportDirectory` (this can be retrieved more easily from the simulator using the https://simpholders.com/3/[SimPholders] utility)
 * Xamarin csharp: Using the `Context` passed in the `Activate()` method, `Context.FilesDir.AbsolutePath` (database can be retrieved using adb)
 
-=== CLI tool
+== CLI tool
 
 include::ROOT:partial$cli-tool.adoc[]
 
-=== Logging
+== Logging
 
 If you are using a Couchbase Lite release prior to 2.5 see <<Logging functionality prior to Release 2.5, Deprecated functionality>>
 
 include::partial$logging.adoc[leveloffset=+2]
 
-==== Logging functionality prior to Release 2.5
+=== Logging functionality prior to Release 2.5
 
 include::partial$logging-pre2.5.adoc[]
 
@@ -69,7 +67,7 @@ include::partial$logging-pre2.5.adoc[]
 include::{snippet}[tags=logging,indent=0]
 ----
 
-=== Loading a pre-built database
+== Loading a pre-built database
 
 If your app needs to sync a lot of data initially, but that data is fairly static and won't change much, it can be a lot more efficient to bundle a database in your application and install it on the first launch.
 Even if some of the content changes on the server after you create the app, the app's first pull replication will bring the database up to date.
@@ -82,6 +80,5 @@ If the database does not exist, the app should copy it from the app bundle using
 ----
 include::{snippet}[tag=prebuilt-database,indent=0]
 ----
-
 
 include::{root-partials}block-related-content-std.adoc[]
