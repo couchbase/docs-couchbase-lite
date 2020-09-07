@@ -68,11 +68,10 @@ endif::[]
 
 <.> Use the {url-api-class-replicator-config} class's constructor -- {url-api-constructor-replicator-config-db-tgt} -- to initialize the replicator configuration with the local database -- see also: <<configure-target>>
 
-<.> Here we have configured server security to use only self-signed certificates.
-By default only CA Certificates are accepted -- see: <<listener-authentication>>.
+<.> Here we have configured the client to connect only to servers that authenticate themselves using a self-signed certificates.
+By default, clients accept only servers that authenticate themselves using  certificates that can be verified using the OS bundled Root CA Certificates -- see: <<authenticating-the-listener>>.
 
-<.> Here the we have configured client security to use _Basic Authentication_.
-Other options are available, for example to authenticate using certificates.
+<.> Here the we have configured the client to supply _Basic Authentication_ credentials to the server. Other options are available, for example authenticating using certificates.
 To use client certificate based authentication -- see: <<client-authentication>>
 
 <.> Handle <<conflict-resolution>>
@@ -103,18 +102,18 @@ endif::[]
 // image::ROOT:replication.svg[,800]
 
 == Configure Replicator
-In this section: <<configure-target>>  |  <<sync-mode>>  |  <<listener-authentication>>  | <<client-authentication>>
+In this section: <<configure-target>>  |  <<sync-mode>>  |  <<authenticating-the-listener>>  | <<client-authentication>>
 
 === Configure Target
 Use the
 {url-api-class-replicator-config} class and {url-api-constructor-replicator-config-db-tgt} constructor to initialize the replication configuration.
 
-This constructor provides the passive peer's database and endpoint details -- whether pre-configured or gathered during a discovery phase.
+This constructor provides the name of the local database, and the listener's URL (this will include the name of the remote database to be sync'd) -- whether pre-configured or gathered during a discovery phase.
 
 The required parameters are:
 
-* The local database to be synced.
-* The database URL including the port the listener is listening on.
+* The local database to be synced
+* The listener URL including its port and the remote database name
 +
 --
 The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) prefixes.
@@ -138,7 +137,13 @@ include::{snippet-p2psync-ws}[tags="p2p-act-rep-initialize", indent=0]
 Use `{url-api-class-replicator-config}` class's {url-api-prop-replicator-config-rep-type} and
 `{url-api-prop-replicator-config-cont}` parameters, to tell the replicator:
 
-* The direction of the replication: `*pushAndPull*`; `pull`; `push`
+* The direction of the replication:
+ifeval::["{param-platform}"=="{platform-android}"]
+`*PUSH_AND_PULL*`; `PULL`; `PUSH`
+endif::[]
+ifeval::["{param-platform}"!="{platform-android}"]
+`*pushAndPull*`; `pull`; `push`
+endif::[]
 * Whether the replicator should:
 ** Stay active indefinitely to replicate changed documents: `continuous=true`
 ** Be a one-shot replication of changed documents: `continuous=false`
@@ -155,14 +160,17 @@ include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-cont, indent=0]
 
 ====
 
-=== Listener Authentication
+=== Authenticating the Listener
+Here we define how the client is to verify that the server (listener) is the one it wants to interact with.
 
 :this-prop: {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate}
-Use `{url-api-class-replicator-config}`, with its {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} parameter, to tell the replicator how to verify TLS server certificates.
+Use `{url-api-class-replicator-config}`, with its {this-prop}
+//{url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate}
+parameter, to tell the replicator how to verify TLS server certificates.
 
-If {this-prop} is `false` (default) then only CA Certificates are accepted.
-
-If {this-prop} is `true` then only Self-Signed Certificates are accepted.
+* If there are pinned certificates, nothing else matters, the server cert must *exactly* match one of the pinned certs.
+* If there are no pinned certs and {this-prop} is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
+* If there are no pinned certificates and {this-prop} is `false` (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates (probably of length 1) whose root is signed by one of the certificates in the system CA bundle.
 
 .Set Server TLS security
 =====
@@ -180,9 +188,10 @@ include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-cacert, indent=0]
 
 ----
 
-<.> This is the default. Only CA Certificates are allowed.
-They must be a certificate from a trusted root
-Self signed certificates disallowed.
+<.> This is the default.
+Only CA Certificates are allowed.
+They must be a certificate from a trusted root.
+Self signed certificates are not allowed.
 
 --
 
@@ -227,13 +236,12 @@ include::{snippet-p2psync-ws}[tag=p2p-act-rep-config-cacert-pinned-callouts, ind
 =====
 
 === Client Authentication
+Here we define the credentials that the client can present to the server if prompted to do so in order that the server can authenticate it.
 
-Use {url-api-class-replicator-config}'s {url-api-prop-replicator-config-auth} method to define the authentication method to the replicator - see <<configuring-client-authentication>>.
+We use {url-api-class-replicator-config}'s {url-api-prop-replicator-config-auth} method to define the authentication method to the replicator - see <<configuring-client-authentication>>.
 
 ==== Basic Authentication
-Use the `{url-api-class-replicator-config-basic-auth}` to provide basic authentication using username and password credentials.
-
-For basic authentication the `disableTLS` configuration setting is ignored.
+Use the `{url-api-class-replicator-config-basic-auth}` to supply basic authentication credentials (username and password).
 
 [[basic-authentication]]
 .Basic Authentication
@@ -249,25 +257,20 @@ include::{snippet-p2psync-ws}[tags="p2p-act-rep-auth", indent=0]
 ====
 
 ==== Certificate Authentication
+
 Use the `{url-api-class-replicator-config-cert-auth}` to configure the client TLS certificates to be presented to the server, on connection.
 This applies only to the {url-api-class-urlendpointlistener}.
 
-Note that TLS validates a certificate before passing it over for authentication.
-If an invalid certificate is detected then control is never passed over, and the connection is denied.
-The decision to be made by the authenticator is simply: "do I trust this certificate, or not"?
+NOTE: The *server* (listener) must have `disableTLS` set `false` and have a ClientCertificateAuthenticator configured, or it will never ask for this client's certificate.
 
-The decision is usually based on the certificate being signed by a source we trust.
+How you derive the certificate to be presented to the server will depend on the certificates that server is configured to accept:
 
-For certificate authentication the `disableTLS` configuration setting must be `false`.
+* If the server will accept only self-signed certificates, you can bring your own, or create one using the convenience API method {url-api-method-tls-identity-create}
+* If the server will accept only CA signed certificates, you will have to supply a TLSIdentity using {url-api-method-tls-identity-get}, which uses an identify provided in {securestorage}.
 
-With certificates you also have the option to either:
-
-* Use Couchbase Lite's convenience API to create self-signed certificates.
-The `{url-api-class-tlsidentity}` class provides methods to manage identities.
-* Bring your own certificate.
-Our convenience API also gives you the flexibility to bring your own TLS identities, using the `{url-api-method-tls-identity-import}` method.
-+
-This makes it easy to bundle PKCS12 certificates with your application.
+ifeval::["{param-platform}"=="{platform-android}"]
+TLSIdentity.getIdentity uses the Android keystore.  Please see (Android developers documentation (for example https://developer.android.com/training/articles/keystore) for more information about how to import a keychain.
+endif::[]
 
 
 // See {xref-cbl-pg-p2p-manage-tls-id} for more on how to do this.
@@ -369,15 +372,16 @@ TIP: If you added an optional change listener (see <<monitor-sync>> for how) you
 
 == Conflict Resolution
 
-Couchbase Lite's default conflict resolution policy is applied -- see {xref-cbl-pg-conflict-auto}.
-To use a different policy, specify a _conflict resolver_ using {url-api-prop-replicator-config-conflict} -- see: {xref-cbl-pg-conflict-custom}.
+Unless you specify otherwise, Couchbase Lite's default conflict resolution policy is applied -- see {xref-cbl-pg-conflict-auto}.
+
+To use a different policy, specify a _conflict resolver_ using {url-api-prop-replicator-config-conflict} as shown in <<using-conflict-resolvers>>.
+
+For more complex solutions you can provide a custom conflict resolver - see: {xref-cbl-pg-conflict-custom}.
 
 //TODO: Update example to show how the confog resolver parameter is set (refer to the stanadrd replicator code)
 
-.Conflict resolving
-
+[#using-conflict-resolvers]
 include::{root-partials}handling-conflicts.adoc[tags=handling-conflicts-conflict-resolvers]
-
 
 include::{root-partials}handling-conflicts.adoc[tags=handling-conflicts-custom-merge]
 

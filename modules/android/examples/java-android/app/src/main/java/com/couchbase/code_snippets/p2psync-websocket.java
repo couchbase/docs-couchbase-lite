@@ -1,6 +1,36 @@
 // PASSIVE PEER STUFF
 // Stuff I adapted
 //
+// BEGIN new stuff 90420temp cache
+private URLEndpointListener createListener() {
+  final URLEndpointListenerConfiguration listenerConfig = new URLEndpointListenerConfiguration(db);
+
+  listenerConfig.setDisableTls(false);
+
+  listenerConfig.setEnableDeltaSync(true);
+
+  listenerConfig.setTlsIdentity(null); // Use with anonymous self signed cert
+
+  listenerConfig.setAuthenticator(new ListenerPasswordAuthenticator(this::isWhitelistedUser));
+
+  return new URLEndpointListener(listenerConfig);
+}
+
+private void startListener(@NotNull URLEndpointListener listener) {
+  executor.submit(() -> {
+      CouchbaseLiteException err = null;
+      try { listener.start(); }
+      catch (CouchbaseLiteException e) { err = e; }
+      onStart(err);
+  });
+}
+
+private void stopListener(@NotNull URLEndpointListener listener) {
+  listener.stop();
+}
+// END new stuff 90420temp cache
+
+
 
 
 import Foundation
@@ -110,22 +140,42 @@ class cMyPassListener {
     // end::listener-config-client-auth-pwd[]
     // tag::listener-config-client-root-ca[]
     // Configure the client authenticator
-    // to validate using ROOT CA <.>
+    // to validate using ROOT CA
     // thisClientID.certs is a list containing a client cert to accept
     // and any other certs needed to complete a chain between the client cert
     // and a CA
-    TLSIdentity thisServerID = getIdentity(“server”)
-    TLSIdentity thisClientID = getIdentity(“authorizedClient”)
+    final TLSIdentity validId =
+      TLSIdentity.getIdentity("Our Corporate Id");  // get the identity <.>
 
-    thisConfig.setTlsIdentity = thisServerID;
+    if (validId == null) { throw new IllegalStateException("Cannot find corporate id"); }
+
+    thisConfig.setTlsIdentity(validId); // <.>
+
     thisConfig.setAuthenticator(
-      new ListenerCertificateAuthenticator(thisClientID.getCerts()));
+      new ListenerCertificateAuthenticator(validId.getCerts())); // <.>
+      // accept only clients signed by the corp cert
 
-    URLEndpointListener thisListener = new URLEndpointListener(thisConfig)
+    final URLEndpointListener thisListener =
+      new URLEndpointListener(thisConfig);
 
     // end::listener-config-client-root-ca[]
     // tag::listener-config-client-auth-self-signed[]
-    // Work in progress. Code snippet to be provided.
+    // Configure a server to accept any client on Tuesday
+
+  final TLSIdentity thisCorpId = TLSIdentity.getIdentity("OurCorp");
+  if (thisCorpId == null) {
+    throw new IllegalStateException("Cannot find corporate id"); }
+  thisConfig.setTlsIdentity(thisCorpId);
+  thisConfig.setAuthenticator(
+    new ListenerCertificateAuthenticator(
+      (thisCorpId.getCerts()) -> {
+      // use supplied logic that resolves to boolean
+      // true=valid, false=invalid
+      }
+    );
+  final ULEndpointListener thisListener =
+    new URLEndpointListener(thisConfig);
+
     // end::listener-config-client-auth-self-signed[]
     // tag::listener-start[]
     // Initialize the listener
@@ -430,7 +480,7 @@ public class Examples {
     // end::p2p-act-rep-config-type[]
     // tag::p2p-act-rep-config-cont[]
     // Configure Sync Mode
-    thisConfig.setContinuous(true); // default value
+    thisConfig.setContinuous(false); // default value
 
     // end::p2p-act-rep-config-cont[]
     // tag::p2p-act-rep-config-tls-full[]
@@ -465,7 +515,13 @@ public class Examples {
     // end::p2p-act-rep-auth[]
     // end::p2p-act-rep-config-tls-full[]
     // tag::p2p-tlsid-tlsidentity-with-label[]
-    // Work in progress. Code snippet to be provided.
+    // ... other replicator configuration
+    // Provide a client certificate to the server for authentication
+    final TLSIdentity thisClientId = TLSIdentity.getIdentity("clientId");
+    if (thisClientId == null) { throw new IllegalStateException("Cannot find client id"); }
+    thisConfig.setAuthenticator(new ClientCertificateAuthenticator(thisClientId));
+    // ... other replicator configuration
+    // final thisReplicator(thisConfig);
 
     // end::p2p-tlsid-tlsidentity-with-label[]
     // tag::p2p-act-rep-config-cacert-pinned[]
@@ -481,19 +537,22 @@ public class Examples {
 
     // end::p2p-act-rep-config-conflict[]
     // tag::p2p-act-rep-start-full[]
-    // Create replicator hold a reference somewhere
-    // to prevent the Replicator from being GCed)
+    // Create replicator
+    // Consider holding a reference somewhere
+    // to prevent the Replicator from being GCed
     final Replicator thisReplicator = new Replicator(thisConfig); // <.>
 
     // tag::p2p-act-rep-add-change-listener[]
     // Optionally add a change listener
-    ListenerToken thisListener
-      = new thisReplicator.addChangeListener(change -> { // <.>
-        if (change.getStatus().getError() != null) {
-          Log.i(TAG, "Error code ::  " +
-            change.getStatus().getError().getCode());
-        }
+    ListenerToken thisListener =
+      new thisReplicator.addChangeListener(change -> { // <.>
+        final CouchbaseLiteException err =
+         change.getStatus().getError();
+         if (err != null) {
+           Log.i(TAG, "Error code ::  " + err.getCode(), e);
+         }
       });
+
 
     // end::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-start[]
@@ -680,7 +739,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [th
 // C A L L O U T S
 
 // tag::p2p-act-rep-config-cacert-pinned-callouts[]
-<.> Configure to accept only CA certs
+<.> This setting is ignored in this 'pinned certificate' context.
 <.> Configure the pinned certificate using data from the byte array `cert`
 // end::p2p-act-rep-config-cacert-pinned-callouts[]
 
@@ -696,3 +755,26 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [th
     TLSIdentity thisIdentity = new TLSIdentity.getIdentity("server"); // <.>
 
     // end::beta-listener-config-tls-id-caCert[]
+
+
+
+
+
+Blakes submitted example
+
+public URLEndpointListener getTuesdayListener() throws CouchbaseLiteException {
+  final URLEndpointListenerConfiguration config = new URLEndpointListenerConfiguration(new Database("sharedDb"));
+  final TLSIdentity thisCorpId = TLSIdentity.getIdentity("OurCorp");
+  if (thisCorpId == null) { throw new IllegalStateException("Cannot find corporate id"); }
+  thisConfig.setTlsIdentity(thisCorpId);
+  thisConfig.setAuthenticator(new ListenerCertificateAuthenticator(
+    (thisCorpId.getCerts()) -> {
+    // user supplied logic that resolves to boolean
+    // true=valid, false=invalid
+    });
+  final ULEndpointListener thisListener = new URLEndpointListener(thisConfig);
+}
+
+private boolean tuesdaysAreGood(List<Certificate> certificates) {
+  return Calendar.getInstance().get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY;
+}

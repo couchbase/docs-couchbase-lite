@@ -312,9 +312,10 @@ Use {url-api-class-urlendpointconfiguration}'s
 {url-api-references-urlendpointconfiguration-tls-id} method to configure the TLS Identity used in TLS communication.
 
 If `TLSIdentity` is not set when TLS is enabled (default), the listener uses an auto-generated anonymous self-signed identity.
-This doesn't authenticate or verify trust (on the client side) but it does encrypt communication, giving a more secure option than Non-TLS communication.
+Whilst the client will not use this to authenticate the server, it will use it to encrypt communication, giving a more secure option than Non-TLS communication.
+This identity is saved for re-use.
 
-*Reusable Id* -- If the platform supports secure storage, you can save and re-use the auto-generated identity. This avoids the need to generate new identities every time.
+// *Reusable Id* -- If the platform supports secure storage, you can save and re-use the auto-generated identity. This avoids the need to generate new identities every time.
 
 // end::config-tls-id[]
 
@@ -407,7 +408,7 @@ This opaque authenticator interface is implemented by the authenticator classes.
 == ListenerPasswordAuthenticator
 // tag::ListenerPasswordAuthenticator[]
 Use the {url-api-class-ListenerPasswordAuthenticator} class to provide password type authentication such as the Basic Authentication.
-The actual authentication is provided by the application code. Often in the form of a closure where the platform permits.
+The actual authentication is provided by the application code, usually in the form of a closure.
 // end::ListenerPasswordAuthenticator[]
 
 .Class Definition
