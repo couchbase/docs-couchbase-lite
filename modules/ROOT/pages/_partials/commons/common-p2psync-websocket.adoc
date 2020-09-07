@@ -117,6 +117,7 @@ Built-in conflict resolution support (automatic and custom).
 
 == Security
 
+=== Authentication
 // include::{root-partials}p2p-security.adoc[leveloffset=+1]
 
 Peer-to--peer sync supports <<using-basic-authentication, Basic Authentication>> and <<using-tls,TLS Authentication>>.
@@ -143,6 +144,19 @@ Where a TLS certificate is not explicitly specified for the listener, the Listen
 // Active clients replicating with a URLEndpointListener have the option to skip validation of server certificates when the listener is configured with self-signed certificates.
 // This option is ignored when dealing with CA certificates.
 
+[#using-secure-storage]
+=== Using Secure Storage
+The use of TLS, its associated keys and certificates requires using secure storage to minimize the chances of a security breach.
+The implementation of this storage differs from platform to platform.
+<<secure-storage-details>> summarizes the secure storage used to store keys and certificates for {param-title}.
+{param-platform}
+
+
+.Secure storage details
+[#secure-storage-details,cols="1,4"]
+|===
+include::{root-partials}secure-storage.adoc[tag={param-platform}]
+|===
 
 // == Sizing
 
