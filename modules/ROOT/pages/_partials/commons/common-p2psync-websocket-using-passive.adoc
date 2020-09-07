@@ -21,9 +21,11 @@ This _listener_ will accept a connection from an {glos-term-active-peer} and par
 In this context the _passive peer_ (listener) acts as the _server_ and the
  _active peer_ (replicator) acts as the _client_.
 
+Subsequent sections provide additional details and examples for the main configuration options.
+
+== Configuration Summary
 You should initialize and configure a Listener for each Couchbase Lite database instance you want to to sync.
 <<simple-listener-initialization>> shows a simple initialization and configuration process.
-Subsequent sections provide additional details and examples for the main configuration options.
 
 [#simple-listener-initialization]
 .Listener configuration and initialization
@@ -49,7 +51,7 @@ TLS is always enabled out-of-the-box, so you can usually omit this line.
 But you _can_, optionally, disable TLS (*not* advisable in production) -- see: <<tls-security>>
 <.> Optionally, apply the default TLS authentication, which is by anonymous self-signed certificate.
 <.> Set client security.
-Optionally, apply basic authentication to validate the user's presented credentials (`thisUser` and `thisPassword`), where `username` and `password` are the valid credentials -- see <<client-authentication>> for more options.
+Optionally, apply basic authentication to validate the user's presented credentials (`thisUser` and `thisPassword`), where `username` and `password` are the valid credentials -- see <<authenticating-the-client>> for more options.
 <.> Initialize the listener using the configuration settings.
 // Once initialized you cannot change the settings.
 <.> <<start-listener>>
@@ -82,7 +84,7 @@ Initialize the Listener config with the local database.
 All other configuration values will take their default setting.
 
 Each Listener instance serves one Couchbase Lite database.
-Couchbase sets no hard limit on the number of instances you can initialize.
+Couchbase sets no hard limit on the number of listeners you can initialize.
 
 .Specify Local Database
 ====
@@ -117,7 +119,9 @@ include::{snippet-p2psync-ws}[tags=listener-config-port, indent=0]
 ----
 
 <.> To use a canonical port -- one known to other applications - specify it explicitly using the {url-api-references-urlendpointconfiguration-port} method shown here.
-
+ifeval::["{param-platform}"=="{platform-android}"]
+You can query the port using {}url-api-references-urlendpointconfiguration-port-get.
+endif::[]
 --
 
 Network Interface::
@@ -147,7 +151,7 @@ This must be either an IP Address or network interface name such as `en0`.
 //== Configure the Listener
 
 // <<configure-tls>>
-// | <<configure-client-authentication>>
+// | <<configure-authenticating-the-client>>
 // | <<configure-delta-sync>>
 // | <<conflict-resolution>>
 == Delta Sync
@@ -185,7 +189,8 @@ include::{root-partials}_block-caveats.adoc[tags=android-manifest-cleartext]
 --
 endif::[]
 
-The `disableTLS` setting is ignored when using _Basic Authentication_, but is must be 'false' when _Client Cert Authentication_ is required.
+The `disableTLS` setting must be 'false' when _Client Cert Authentication_ is required.
+Basic Authentication can be used with, or without, TLS.
 
 When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity (<<configure-tls-identity-for-listener>>).
 
@@ -203,7 +208,7 @@ Configure TLS Identity for Listener::
 include::{root-partials}p2p-api.adoc[tag=config-tls-id]
 
 NOTE: Typically, you will configure the Listener's TLS Identity once during initial launch.
-Subsequent starts of the Listener will then reuse the identity from secure storage, or (re)create it if it doesn't exist
+Subsequent starts of the Listener will then reuse the identity from secure storage.
 //-- see: {xref-cbl-pg-p2p-manage-tls-id}
 .
 
@@ -212,11 +217,13 @@ Subsequent starts of the Listener will then reuse the identity from secure stora
 // include::{snippet-p2psync-ws}[tags=listener-config-tls-id-cert, indent=0]
 // include::{snippet-p2psync-ws}[tags=listener-config-tls-id-full;!listener-config-tls-id-SelfSigned;!listener-config-tls-id-caCert;!listener-config-tls-id-cert, indent=0]
 
+
 .Set Listener's TLS identity
 =====
 [{tabs}]
 ====
 
+ifeval::["{param-platform}"!="{platform-android}"]
 Import from key-pair::
 +
 --
@@ -245,6 +252,7 @@ include::{snippet-p2psync-ws}[tags="listener-config-tls-id-caCert-callouts", ind
 // <.> The alias ("server" in this case) must refer to an entry in Android's canonical keystore, which has a private key and at least one certificate.
 // endif::[]
 --
+endif::[]
 
 Create Self-Signed Cert::
 +
@@ -278,27 +286,30 @@ include::{snippet-p2psync-ws}[tags=listener-config-tls-id-anon, indent=0]
 ----
 <.> These are are the default settings; authentication using an anonymous self-signed certificate is assumed.
 --
+// Are we missing a section that shows how to use TLSIdentity.getIdentity.  It would be used to create an identity with a certificate signed by a Root CA, in important case.  It could also be used to get an existing self-signed cert (perhaps one created by CreateIdentity above)
+
 ====
 
 =====
 
-== Client Authentication
-In this section: <<authenticate-using-the-client-username-and-password>>  |  <<authenticate-using-the-client-certificate>>  |  <<delete-tls-identity>>  |  <<the-impact-of-tls-settings>>
+== Authenticating the Client
+In this section: <<use-basic-authentication>>  |  <<using-client-certificate-authentication>>  |  <<delete-tls-identity>>  |  <<the-impact-of-tls-settings>>
 
 Use the
 {url-api-class-urlendpointconfiguration} class's {url-api-references-urlendpointconfiguration-auth} method to specify how client credentials are to be authenticated.
 
 Valid options are:
-
-* {url-api-class-ListenerPasswordAuthenticator} -- which authenticates using a client's username and password
-* {url-api-class-ListenerCertificateAuthenticator} -- which authenticates using  a clients certificate.
+* No authentication -- If you do not define an Authenticator then all clients are accepted.
+* {url-api-class-ListenerPasswordAuthenticator} -- which authenticates using a client's username and password.
+* {url-api-class-ListenerCertificateAuthenticator} -- which authenticates using a client's certificate.
 
 // include::{root-partials}p2p-api.adoc[tag=config-auth]
 
-=== Authenticate Using the Client Username and Password
+=== Use Basic Authentication
+// === Authenticate Using the Client Username and Password
 
 This section shows how to authenticate client username and password using basic authentication.
-For how to authenticate using client certificates see: <<authenticate-using-the-client-certificate>>
+For how to authenticate using client certificates see: <<using-client-certificate-authentication>>
 
 include::{root-partials}p2p-api.adoc[tag=ListenerPasswordAuthenticator]
 
@@ -315,32 +326,27 @@ include::{root-partials}p2p-api.adoc[tag=ListenerPasswordAuthenticator]
 include::{snippet-p2psync-ws}[tags=listener-config-client-auth-pwd, indent=0]
 
 ----
-<.> Where 'thisUser' and 'thisPassword' are the previously populated values to be authenticated.
+<.> Where 'thisUser' and 'thisPassword' are the client-suplied values to be authenticated.
 ====
 // include::{snippet}[tags=listener-config-client-auth-pwd-full, indent=0]
 
-=== Authenticate using the Client Certificate
+=== Using Client Certificate Authentication
 
 // include::{root-partials}p2p-api.adoc[tag=ListenerCertificateAuthenticator]
+There are three ways to authenticate a client:
 
-* Root CA certificate chains +
+* A chain of one or more certificates that ends at a system CA signed certificate.
 +
---
-
-Any client certificate signed by the given root CA certificate chains is authenticated.
-
-include::{root-partials}p2p-api.adoc[tag=ListenerCertificateAuthenticator-root]
-
---
-
-* Application logic
+This is the default when no authenticator is specified
+* A chain of one or more certificates that ends at a certificate in the list of certificates supplied to the constructor for `ListenerCertificateAuthenticator`.
 +
---
-This option is used for authenticating self-signed certificates.
-
-include::{root-partials}p2p-api.adoc[tag=ListenerCertificateAuthenticatorDelegate]
-
---
+Note that system CA certificates are ignored
+* Application logic: This method assumes complete responsibility for verifying and authenticating the client.
++
+If the second parameter supplied to the constructor for `ListenerCertificateAuthenticator` is non-null, all other forms of authentication are bypassed.
++
+The client response to the certificate request is passed to the method supplied as the second constructor parameter.
+The logic should take the form of function or block (such as, a closure expression) where the platform allows.
 
 .Set Certificate Authorization
 =====
@@ -355,6 +361,9 @@ Root CA::
 include::{snippet-p2psync-ws}[tag=listener-config-client-root-ca, indent=0]
 
 ----
+<.> Get the identity to validate against (your corporate TLS Id)
+<.> Set your TLS identity
+<.> Provide the identity's valid certificates to the client authenticator. A valid client will provide one or more certificates that match a certificate in this list.
 
 --
 +
@@ -371,12 +380,13 @@ include::{snippet-p2psync-ws}[tags=listener-config-client-auth-self-signed, inde
 ====
 =====
 
-=== Delete TLS Identity
+[#delete-tls-identity]
+=== Delete {securestorage} Entry
 
 ifeval::["{param-platform}"=="{platform-android}"]
-You can remove unwanted TLS identities from {securestorage} using the KeyStore API (see -- https://developer.android.com/reference/java/security/KeyStore#deleteEntry(java.lang.String)).
+You can remove unwanted entries from {securestorage} using the {securestorage-api} (see -- https://developer.android.com/reference/java/security/KeyStore#deleteEntry(java.lang.String)).
 endif::[]
-ifeval::["{param-platform}"=="{platform-ios}"]
+ifeval::["{param-platform}"!="{platform-android}"]
 You can remove unwanted TLS identities from {securestorage} using the convenience API.
 endif::[]
 
@@ -408,7 +418,7 @@ a|TLS is disabled; all communication is plain text.
 |false
 | set to `nil`
 a|* The system will auto generate an _anonymous_ self signed cert.
-*  Active peers will skip validation of the server cert.
+* Active peers (clients) should be configured to accept self-signed certificates.
 * Communication is encrypted
 
 |false
@@ -455,6 +465,8 @@ include::{snippet-p2psync-ws}[tags=listener-start-callouts, indent=0]
 == Monitor Listener
 
 Use the Listener's `getStatus` method to get counts of total and active connections -- see: <<get-connection-counts>>.
+
+You should note that these counts can be extremely volatile. So, the actual number of active connections may have changed, by the time the call to, for example, `getActiveConnectionCount` returns a result.
 
 [[get-connection-counts]]
 .Get connection counts

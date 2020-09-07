@@ -81,6 +81,8 @@ Apps have the following strategies for resolving conflicts:
 - *Merge:* Merge the content bodies of the conflicting revisions.
 
 // tag::handling-conflicts-conflict-resolvers[]
+.Using conflict resolvers
+=====
 [{tabs}]
 ====
 Local Wins::
@@ -122,6 +124,7 @@ include::{snippet}[tag=merge-conflict-resolver,indent=0]
 --
 
 ====
+=====
 // end::handling-conflicts-conflict-resolvers[]
 
 When a null document is returned by the resolver, the conflict will be resolved as a document deletion.
@@ -213,7 +216,7 @@ The concurrency control parameter has two possible values:
 In this case, the app can detect the error that is being thrown, and handle it by re-reading the document, making the necessary conflict resolution, then trying again.
 ====
 
-=== Custom Conflict Resolution
+=== Custom Conflict Handlers
 
 Developers can hook a conflict handler when saving a document so they can easily handle the conflict in a single save method call.
 
