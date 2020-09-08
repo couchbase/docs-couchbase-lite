@@ -14,7 +14,6 @@ ifndef::version[:version: version undefined]
 
 :xref-pfx-cbl: xref:couchbase-lite:{param-module}:
 :xref-pfx-root: xref:couchbase-lite::
-//endif::xref-pfx-cbl[]
 
 // Begin -- Ref - ROOT Page Targets
 :cbl-pg-index: index.adoc
@@ -33,8 +32,9 @@ ifndef::version[:version: version undefined]
 :cbl-pg-build: start/{param-name}-gs-build.adoc
 :cbl-pg-cert-pinning: learn/{param-name}-cert-pinning.adoc
 :cbl-pg-changelog: product/{param-name}-changelog.adoc
-:cbl-pg-changelog-all: cbl-changelog-all.adoc
-:cbl-pg-compatibility: compatibility.adoc
+:cbl-pg-changelog-all: changelog.adoc
+:cbl-pg-compatibility: product/{param-name}-compatibility.adoc
+:cbl-pg-compatibility-all: compatibility.adoc
 :cbl-pg-conflict: learn/{param-name}-conflict.adoc
 :cbl-pg-conflict-auto: learn/{param-name}-conflict.adoc#automatic-conflict-resolution
 :cbl-pg-conflict-custom: learn/{param-name}-conflict.adoc#custom-conflict-resolution
@@ -65,13 +65,15 @@ ifndef::version[:version: version undefined]
 :cbl-pg-query-predictive: learn/{param-name}-query-predictive.adoc
 :cbl-pg-date-time: learn/{param-name}-date-time.adoc
 :cbl-pg-ref-api: refer/{param-name}-ref-api.adoc
-:cbl-pg-refer-glossary:   refer-glossary.adoc
+:cbl-pg-refer-glossary: refer/{param-name}-refer-glossary.adoc
 :cbl-pg-glossary:   refer-glossary.adoc
 :cbl-pg-releasenotes: product/{param-name}-releasenotes.adoc
+:cbl-pg-releasenotes-all: releasenotes.adoc
 :cbl-pg-replication: learn/{param-name}-replication.adoc
 :cbl-pg-replication--status: {cbl-pg-replication}#replication-status
 :cbl-pg-replication--delta-sync: {cbl-pg-replication}#delta-sync
-:cbl-pg-supportnotes: product/{param-name}-pn-supportnotes.adoc
+:cbl-pg-supportnotes: product/{param-name}-supportnotes.adoc
+:cbl-pg-supportnotes-all: supportnotes.adoc
 :cbl-pg-sync-p2p: learn/{param-name}-sync-p2p.adoc
 :cbl-pg-sync-svr: learn/{param-name}-sync-svr.adoc
 :cbl-pg-thread-safety: learn/{param-name}-thread-safety.adoc
@@ -92,7 +94,9 @@ ifndef::version[:version: version undefined]
 //:xref-cbl-pg-database: {xref-pfx-cbl}{cbl-pg-database}[Database]
 :xref-cbl-pg-indexing: {xref-pfx-cbl}{cbl-pg-indexing}[Indexing]
 :xref-cbl-pg-releasenotes: {xref-pfx-cbl}{cbl-pg-releasenotes}[Release Notes]
-:xref-cbl-pg-compatibility: {xref-pfx-root}{cbl-pg-compatibility}[Compatibility]
+:xref-cbl-pg-releasenotes-all: {xref-pfx-root}{cbl-pg-releasenotes-all}[Release Notes]
+:xref-cbl-pg-compatibility: {xref-pfx-cbl}{cbl-pg-compatibility}[Compatibility]
+:xref-cbl-pg-compatibility-all: {xref-pfx-root}{cbl-pg-compatibility-all}[Compatibility]
 
 :xref-cbl-pg-blob: {xref-pfx-cbl}{cbl-pg-blob}[Working with Blobs]
 :xref-cbl-pg-dbo-crud: {xref-pfx-cbl}{cbl-pg-dbo-crud}[Using CRUD Operations]
@@ -104,8 +108,8 @@ ifndef::version[:version: version undefined]
 :xref-cbl-pg-build: {xref-pfx-cbl}{cbl-pg-build}[Test Build]
 :xref-cbl-pg-cert-pinning: {xref-pfx-cbl}{cbl-pg-cert-pinning}[Certificate Pinning]
 :xref-cbl-pg-changelog: {xref-pfx-cbl}{cbl-pg-changelog}[Change Log]
-:xref-cbl-pg-changelog-all: {xref-pfx-root}{cbl-pg-changelog-all}[Change Log (all platforms)]
-:xref-cbl-pg-compatibility: {xref-pfx-root}{cbl-pg-compatibility}[Compatibility]
+:xref-cbl-pg-changelog-all: {xref-pfx-root}{cbl-pg-changelog-all}[Change Log]
+// :xref-cbl-pg-compatibility: {xref-pfx-root}{cbl-pg-compatibility}[Compatibility]
 :xref-cbl-pg-conflict: {xref-pfx-cbl}{cbl-pg-conflict}[Handling Conflicts]
 :xref-cbl-pg-conflict-auto: {xref-pfx-cbl}{cbl-pg-conflict-auto}[Automatic Conflict Resolution]
 :xref-cbl-pg-conflict-custom: {xref-pfx-cbl}{cbl-pg-conflict-custom}[Custom Conflict Resolution]
@@ -130,12 +134,13 @@ ifndef::version[:version: version undefined]
 :xref-cbl-pg-query-live: {xref-pfx-cbl}{cbl-pg-query-live}[Live Queries]
 :xref-cbl-pg-query-predictive: {xref-pfx-cbl}{cbl-pg-query-predictive}[Predictive Queries]
 :xref-cbl-pg-ref-api: {xref-pfx-cbl}{cbl-pg-ref-api}[Reference API]
-:xref-cbl-pg-refer-glossary: {xref-pfx-root}{cbl-pg-refer-glossary}[Glossary]
+:xref-cbl-pg-refer-glossary: {xref-pfx-cbl}{cbl-pg-refer-glossary}[Glossary]
 :xref-cbl-pg-releasenotes: {xref-pfx-cbl}{cbl-pg-releasenotes}[Release Notes]
 :xref-cbl-pg-replication: {xref-pfx-cbl}{cbl-pg-replication}[Sync Gateway Replications]
 :xref-cbl-pg-replication--status: {xref-pfx-cbl}{cbl-pg-replication--status}[Replication Status]
 :xref-cbl-pg-replication--delta-sync: {xref-pfx-cbl}{cbl-pg-replication--delta-sync}[Replication Delta-Sync]
 :xref-cbl-pg-supportnotes: {xref-pfx-cbl}{cbl-pg-supportnotes}[Support Notices]
+:xref-cbl-pg-supportnotes-all: {xref-pfx-root}{cbl-pg-supportnotes-all}[Support Notices]
 :xref-cbl-pg-sync-p2p: {xref-pfx-cbl}{cbl-pg-sync-p2p}[Synchronization - P2P]
 :xref-cbl-pg-sync-svr: {xref-pfx-cbl}{cbl-pg-sync-svr}[Synchronization - Server]
 :xref-cbl-pg-thread-safety: {xref-pfx-cbl}{cbl-pg-thread-safety}[Thread-safety]
