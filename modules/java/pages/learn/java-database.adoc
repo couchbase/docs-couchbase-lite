@@ -1,0 +1,90 @@
+= Working with Databases
+
+== Initializer
+
+Your first step in using the API must be to call its initializer.
+An exception is raised if any other API method is invoked before the  initializer.
+
+The `init()` API accepts no parameters.
+
+[source]
+----
+include::{snippet}[tags=sdk-initializer,indent=0]
+----
+
+== New Database
+
+As the top-level entity in the API, new databases can be created using the `Database` class by passing in a name, configuration, or both.
+The following example creates a database using the `Database(String name, DatabaseConfiguration config)` method.
+
+[source]
+----
+include::{snippet}[tags=new-database,indent=0]
+----
+
+Just as before, the database will be created in a default location.
+Alternatively, the `Database(string name, DatabaseConfiguration config)` initializer can be used to provide specific options in the {url-api-references}/com/couchbase/lite/DatabaseConfiguration.html[`DatabaseConfiguration`] object such as the database directory.
+
+== Database Encryption
+
+// .Enterprise Edition only
+// IMPORTANT: Database encryption is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+
+// The Couchbase Lite 2.1 release includes the ability to encrypt Couchbase Lite databases.
+// This allows mobile applications to secure the data at rest, when it is being stored on the device.
+// The algorithm used to encrypt the database is 256-bit AES.
+
+include::{root-partials}database-encryption.adoc[leveloffset=-2]
+
+== Finding a Database File
+
+By default a {cblJP} database is created in a directory at the current location called  `<databaseName>.cblite2`.
+
+This location is set by the link:{url-api-references}/com/couchbase/lite/DatabaseConfiguration.html[DatabaseConfiguration] method. You should always use it to explicitly set the database location. See the following example  for how to do this:
+[source, java]
+
+----
+DatabaseConfiguration thisConfig = new DatabaseConfiguration(); thisConfig.setDirectory("yourDBpath");
+Database thisDB = new Database("db", thisConfig);
+----
+
+== CLI tool
+
+include::ROOT:partial$cli-tool.adoc[]
+
+// `cblite` is a command-line tool for inspecting and querying Couchbase Lite 2.x databases.
+
+// You can download and build it from the couchbaselabs https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md[GitHub repository].
+
+// NOTE: The `cblite` tool is not supported by the https://www.couchbase.com/support-policy[Couchbase Support Policy].
+
+=== Logging
+
+If you are using a Couchbase Lite release prior to 2.5 see <<Logging functionality prior to Release 2.5, Deprecated functionality>>
+
+include::partial$logging.adoc[leveloffset=+2]
+
+==== Logging functionality prior to Release 2.5
+
+include::partial$logging-pre2.5.adoc[]
+
+[source, {source-language}]
+
+----
+include::{snippet}[tags=logging,indent=0]
+----
+
+== Loading a pre-built database
+
+include::{root-partials}database-load-prebuilt.adoc[]
+
+In the example below, the `ZipUtils.unzip` method copies the zipped pre-built database from the application's `resource` directory to the *files* directory.
+This method is provided below for information as it isn't included in the Couchbase Lite library.
+
+[source]
+----
+include::{snippet}[tags=ziputils-unzip,indent=0]
+----
+
+
+include::{root-partials}block-related-content-std.adoc[]
