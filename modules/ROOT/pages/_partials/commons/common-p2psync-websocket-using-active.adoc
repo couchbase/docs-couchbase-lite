@@ -169,12 +169,12 @@ include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-cont, indent=0]
 ====
 
 === Authenticating the Listener
-Here we define how the client is to verify that the server (listener) is the one it wants to interact with.
+Here we define how the client is to verify that the server (listener) is one it is prepared to interact with.
 
 :this-prop: {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate}
 Use `{url-api-class-replicator-config}`, with its {this-prop}
 //{url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate}
-parameter, to tell the replicator how to verify TLS server certificates.
+parameter, to tell the replicator how to verify server-supplied TLS server certificates.
 
 * If there are pinned certificates, nothing else matters, the server cert must *exactly* match one of the pinned certs.
 * If there are no pinned certs and {this-prop} is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.

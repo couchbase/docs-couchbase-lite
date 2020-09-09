@@ -148,25 +148,57 @@ namespace api_walkthrough
     // end::listener-config-client-auth-pwd[]
     // tag::listener-config-client-root-ca[]
     // Configure the client authenticator
-    // to validate using ROOT CA <.>
-    byte[] thisCaData; // byte array for CA data
-    using (var thisReader = new BinaryReader(stream)) {
-      thisCaData = thisReader.ReadBytes(int stream.Length);
-    }; // Get cert data
+    // to validate using ROOT CA
 
-    var thisRootCert = new X509Certificate(thisCaData); //
+    // Get the valid cert chain, in this instance from
+    // PKCS12 data containing private key, public key
+    // and certificates <.>
+    clientData = File.ReadAllBytes("C:\\client.p12");
+    ourCaData = File.ReadAllBytes("C:\\client-ca.der");
 
-    thisConfig.Authenticator = new  ListenerCertificateAuthenticator(
-      new X509Certificate2Collection(thisRootCert)
-    );
+    // Get the root certs from the data
+    var thisRootCert = new X509Certificate2(ourCaData); // <.>
+
+    // Configure the authenticator to use the root certs
+    var thisAuth = new ListenerCertificateAuthenticator(new X509Certificate2Collection(thisRootCert)); // <.>
+
+    thisConfig.Authenticator = thisAuth; // <.>
+
+    // Initialize the listener using the config
+    _listener = new URLEndpointListener(thisConfig); // <.>
+
 
     // end::listener-config-client-root-ca[]
     // tag::listener-config-client-auth-self-signed[]
-    // Work in progress. Code snippet to be provided.
+    // Configure the client authenticator
+    // to validate using ROOT CA
+    // tag::listener-config-client-root-ca-lambda[]
+
+    // Get the valid cert chain, in this instance from
+    // PKCS12 data containing private key, public key
+    // and certificates <.>
+    clientData = File.ReadAllBytes("C:\\client.p12");
+    ourCaData = File.ReadAllBytes("C:\\client-ca.der");
+
+    // Get the root certs from the data
+    var thisRootCert = new X509Certificate2(ourCaData); // <.>
+
+    // Configure the authenticator to pass the root certs
+    // To a user supplied code block for authentication
+    var thisAuth =
+      new ListenerCertificateAuthenticator(
+        new X509Certificate2Collection(thisRootCert) => {
+          // . . . user supplied code block
+          // . . . returns boolean value (true=authenticated)
+        }); // <.>
+
+    thisConfig.Authenticator = thisAuth; // <.>
+
+    // end::listener-config-client-root-ca-lambda[]
     // end::listener-config-client-auth-self-signed[]
     // tag::listener-start[]
     // Initialize the listener
-    var thisListener = new URLEndpointListener(thisConfig); // <.>
+    _thisListener = new URLEndpointListener(thisConfig); // <.>
 
     // Start the listener
     thisListener.start(); // <.>
@@ -672,3 +704,20 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 <.> PKCS12 data containing private key, public key, and certificates
 <.> This is the default value and means that TLS is enabled
 // end::p2p-tlsid-tlsidentity-with-label-callouts[]
+
+
+    // tag::old-listener-config-client-root-ca[]
+    // Configure the client authenticator
+    // to validate using ROOT CA <.>
+    byte[] thisCaData; // byte array for CA data
+    using (var thisReader = new BinaryReader(stream)) {
+      thisCaData = thisReader.ReadBytes(int stream.Length);
+    }; // Get cert data
+
+    var thisRootCert = new X509Certificate(thisCaData); //
+
+    thisConfig.Authenticator = new  ListenerCertificateAuthenticator(
+      new X509Certificate2Collection(thisRootCert)
+    );
+
+    // end::old-listener-config-client-root-ca[]

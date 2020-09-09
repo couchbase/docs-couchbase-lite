@@ -672,18 +672,27 @@ class cMyPassListener {
       })
 
     // end::listener-config-client-auth-pwd[]
+    // tag::listener-config-client-root-ca[]
     // tag::listener-config-client-auth-root[]
     // Authenticate using Cert Authority
+
     // cert is a pre-populated object of type:SecCertificate representing a certificate
-    let rootCertData = SecCertificateCopyData(cert) as Data
-    let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
-    // Listener:
-    listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert])
+    let rootCertData = SecCertificateCopyData(cert) as Data // <.>
+    let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)! <.>
+
+    listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert]) // <.> <.>
 
     // end::listener-config-client-auth-root[]
+    // end::listener-config-client-root-ca[]
+    // tag::listener-config-client-auth-lambda[]
     // tag::listener-config-client-auth-self-signed[]
     // Authenticate self-signed cert using application logic
-    listenerConfig.authenticator = ListenerCertificateAuthenticator.init {
+
+    // cert is a user-supplied object of type:SecCertificate representing a certificate
+    let rootCertData = SecCertificateCopyData(cert) as Data // <.>
+    let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)! // <.>
+
+    listenerConfig.authenticator = ListenerCertificateAuthenticator.init { // <.>
       (cert) -> Bool in
         var cert:SecCertificate
         var certCommonName:CFString?
@@ -692,10 +701,11 @@ class cMyPassListener {
             return true
         }
         return false
-    }
+    } // <.>
 
     // end::listener-config-client-auth-self-signed[]
- // tag::listener-start[]
+    // end::listener-config-client-auth-lambda[]
+    // tag::listener-start[]
     // Initialize the listener
     _websocketListener = URLEndpointListener(config: listenerConfig) // <.>
     guard let websocketListener = _websocketListener else {
