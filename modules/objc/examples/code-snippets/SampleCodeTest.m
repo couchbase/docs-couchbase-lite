@@ -125,6 +125,7 @@
 
 @interface SampleCodeTest : NSObject
 @property(nonatomic) CBLDatabase* db;
+@property(nonatomic) NSArray* _allowlistedUsers;
 @end
 
 @implementation SampleCodeTest
@@ -1024,6 +1025,8 @@
     // end::update-document-with-conflict-handler[]
 }
 
+#pragma mark - URLListener
+
 - (BOOL) isValidCredentials: (NSString*)u password: (NSString*)p { return YES; } // helper
 - (void) dontTestInitListener {
     CBLDatabase *database = self.db;
@@ -1078,8 +1081,44 @@
     // end::create-self-signed-cert[]
 }
 
+- (void) dontTestListenerCertificateAuthenticatorRootCert {
+    CBLURLEndpointListenerConfiguration* config;
+    
+    // tag::listener-certificate-authenticator-root-urllistener[]
+    NSURL *certURL = [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"cer"];
+    NSData *data = [[NSData alloc] initWithContentsOfURL: certURL];
+    SecCertificateRef rootCertRef = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
+    
+    config.authenticator = [[CBLListenerCertificateAuthenticator alloc]
+                            initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];
+    // end::listener-certificate-authenticator-root-urllistener[]
+}
+
+- (void) dontTestListenerCertificateAuthenticatorCallback {
+    CBLURLEndpointListenerConfiguration* config;
+    
+    // tag::listener-certificate-authenticator-callback-urllistener[]
+    
+    CBLListenerCertificateAuthenticator* listenerAuth =
+    [[CBLListenerCertificateAuthenticator alloc] initWithBlock: ^BOOL(NSArray *certs) {
+        SecCertificateRef cert = (__bridge SecCertificateRef)(certs[0]);
+        CFStringRef cnRef;
+        OSStatus status = SecCertificateCopyCommonName(cert, &cnRef);
+        if (status == errSecSuccess) {
+            NSString* cn = (NSString*)CFBridgingRelease(cnRef);
+            if ([self._allowlistedUsers containsObject: cn])
+                return YES;
+        }
+        return NO;
+    }];
+    
+    config.authenticator = listenerAuth;
+    // end::listener-certificate-authenticator-callback-urllistener[]
+}
+
 @end
 
+#pragma mark -
 
 // Singleton Pattern
 // <doc>
