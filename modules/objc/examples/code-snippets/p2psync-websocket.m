@@ -105,9 +105,9 @@ class cMyPassListener {
     thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert])
 
     // end::listener-config-client-root-ca[]
+    // tag::listener-config-client-auth-lambda[]
     // tag::listener-config-client-auth-self-signed[]
-    // Authenticate self-signed cert
-    // using application logic
+    // Authenticate self-signed cert using application logic
     NEEDS CODE CONVERSION
     thisConfig.authenticator = ListenerCertificateAuthenticator.init {
       (cert) -> Bool in
@@ -121,6 +121,7 @@ class cMyPassListener {
     }
 
     // end::listener-config-client-auth-self-signed[]
+    // end::listener-config-client-auth-lambda[]
     // tag::listener-start[]
     // Initialize the listener
     CBLURLEndpointListener* thisListener = nil;
@@ -176,6 +177,7 @@ let activeConnections = thisListener.status.activeConnectionCount
   thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert])
 
 // end::listener-config-client-auth-root[]
+// end::listener-config-client-root-ca[]
 
 
 // tag::listener-config-client-auth-self-signed[]

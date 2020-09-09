@@ -16,10 +16,8 @@ include::{root-partials}_block-caveats.adoc[tag=code-disclaimer]
 This content provides code and configuration examples covering the implementation of {glos-term-peer-to-peer-sync} over websockets.
 
 Specifically it covers the implementation of a {glos-term-passive-peer}.
-This _listener_ will accept a connection from an {glos-term-active-peer} and participate in the replication of database changes to bring both databases into sync.
 
-In this context the _passive peer_ (listener) acts as the _server_ and the
- _active peer_ (replicator) acts as the _client_.
+This _passive peer_ (also referred to as the server, or listener) will accept a connection from an {glos-term-active-peer} (also referred to as the client or replicator) and participate in the replication of database changes to bring both databases into sync.
 
 Subsequent sections provide additional details and examples for the main configuration options.
 
@@ -30,8 +28,8 @@ The implementation of this storage differs from platform to platform -- see {xre
 
 == Configuration Summary
 
-You should initialize and configure a Listener for each Couchbase Lite database instance you want to to sync.
-<<simple-listener-initialization>> shows a simple initialization and configuration process.
+You should initialize and configure a listener for each Couchbase Lite database instance you want to to sync.
+There is no limit on the number of listeners you may configure -- <<simple-listener-initialization>> shows a simple initialization and configuration process.
 
 [#simple-listener-initialization]
 .Listener configuration and initialization
@@ -55,9 +53,10 @@ By default the system will automatically assign a port -- to over-ride this see:
 <.> Set server security.
 TLS is always enabled out-of-the-box, so you can usually omit this line.
 But you _can_, optionally, disable TLS (*not* advisable in production) -- see: <<tls-security>>
-<.> Optionally, apply the default TLS authentication, which is by anonymous self-signed certificate.
-<.> Set client security.
-Optionally, apply basic authentication to validate the user's presented credentials (`thisUser` and `thisPassword`), where `username` and `password` are the valid credentials -- see <<authenticating-the-client>> for more options.
+<.> Set the credentials this server will present to the client for authentication.
+Here we show the default TLS authentication, which is by anonymous self-signed certificate.
+<.> Set client security -- define the credentials the client will present for authentication.
+Here we show how basic authentication is configured to authenticate the client-supplied credentials (`thisUser` and `thisPassword`), against the valid credentials (here `username` and `password`) -- see <<authenticating-the-client>> for more options.
 <.> Initialize the listener using the configuration settings.
 // Once initialized you cannot change the settings.
 <.> <<start-listener>>
@@ -86,8 +85,8 @@ The connection is established once the passive peer has authenticated and accept
 // = Configure Listener
 
 == Initialize the Listener Configuration
-Initialize the Listener config with the local database.
-All other configuration values will take their default setting.
+Initialize the listener configuration with the local database.
+All other configuration values take their default setting.
 
 Each Listener instance serves one Couchbase Lite database.
 Couchbase sets no hard limit on the number of listeners you can initialize.
@@ -115,7 +114,7 @@ Port number::
 +
 --
 
-The Listener will automatically select an available port.
+The Listener will automatically select an available port if you do not specify one.
 
 .Specify a Port to Use
 ====
@@ -124,7 +123,7 @@ The Listener will automatically select an available port.
 include::{snippet-p2psync-ws}[tags=listener-config-port, indent=0]
 ----
 
-<.> To use a canonical port -- one known to other applications - specify it explicitly using the {url-api-references-urlendpointconfiguration-port} method shown here.
+<.> To use a canonical port -- one known to other applications -- specify it explicitly using the {url-api-references-urlendpointconfiguration-port} method shown here.
 ifeval::["{param-platform}"=="{platform-android}"]
 You can query the port using {}url-api-references-urlendpointconfiguration-port-get.
 endif::[]
@@ -141,7 +140,7 @@ The Listener will listen on all network interfaces by default.
 ----
 include::{snippet-p2psync-ws}[tags=listener-config-netw-iface, indent=0]
 ----
-<.> To specify an interface -- one known to other applications - identify it explicitly, using the {url-api-references-urlendpointconfiguration-netwk-iface} method shown here.
+<.> To specify an interface -- one known to other applications -- identify it explicitly, using the {url-api-references-urlendpointconfiguration-netwk-iface} method shown here.
 This must be either an IP Address or network interface name such as `en0`.
 ====
 --
@@ -186,7 +185,10 @@ Use {url-api-class-urlendpointconfiguration}'s {url-api-references-urlendpointco
 // <<enable-or-disable-tls,Use TLS>>
 // | <<configure-tls-server-identity, Set the TLS Identity>>
 // | back to: <<simple-listener-initialization>>
+=== Enable or Disable TLS
 TLS based encryption is enabled by default and this setting ought to be used in any production environment. However, it _can_ be disabled, for example for development and-or test environments.
+
+When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity -- see<<configure-tls-identity-for-listener>>.
 
 ifeval::["{param-platform}"=="{platform-android}"]
 [NOTE]
@@ -195,21 +197,11 @@ include::{root-partials}_block-caveats.adoc[tags=android-manifest-cleartext]
 --
 endif::[]
 
-The `disableTLS` setting must be 'false' when _Client Cert Authentication_ is required.
-Basic Authentication can be used with, or without, TLS.
-
-When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity (<<configure-tls-identity-for-listener>>).
-
-Enable or Disable TLS::
-+
---
 include::{root-partials}p2p-api.adoc[tag=config-disable-tls]
---
 
-[#configure-tls-identity-for-listener]
-Configure TLS Identity for Listener::
-+
---
+=== Configure TLS Identity for Listener
+
+Here we define the TLS identity the server (listener) will present to the client (replicator) for authentication.
 
 include::{root-partials}p2p-api.adoc[tag=config-tls-id]
 
@@ -218,7 +210,6 @@ Subsequent starts of the Listener will then reuse the identity from secure stora
 //-- see: {xref-cbl-pg-p2p-manage-tls-id}
 .
 
---
 // include::{snippet-p2psync-ws}[tags=listener-config-tls-id-cert, indent=0]
 // include::{snippet-p2psync-ws}[tags=listener-config-tls-id-cert, indent=0]
 // include::{snippet-p2psync-ws}[tags=listener-config-tls-id-full;!listener-config-tls-id-SelfSigned;!listener-config-tls-id-caCert;!listener-config-tls-id-cert, indent=0]
@@ -301,21 +292,27 @@ include::{snippet-p2psync-ws}[tags=listener-config-tls-id-anon, indent=0]
 == Authenticating the Client
 In this section: <<use-basic-authentication>>  |  <<using-client-certificate-authentication>>  |  <<delete-tls-identity>>  |  <<the-impact-of-tls-settings>>
 
-Use the
-{url-api-class-urlendpointconfiguration} class's {url-api-references-urlendpointconfiguration-auth} method to specify how client credentials are to be authenticated.
+Here we define how the server (listener) is to verify that the client is one it is prepared to interact with.
+
+We use the
+{url-api-class-urlendpointconfiguration} class's {url-api-references-urlendpointconfiguration-auth} method to specify how the client-supplied credentials are to be authenticated.
 
 Valid options are:
+
 * No authentication -- If you do not define an Authenticator then all clients are accepted.
-* {url-api-class-ListenerPasswordAuthenticator} -- which authenticates using a client's username and password.
-* {url-api-class-ListenerCertificateAuthenticator} -- which authenticates using a client's certificate.
+* Basic Authentication -- We uses the {url-api-class-ListenerPasswordAuthenticator} -- which authenticates using a client-supplied username and password.
+* {url-api-class-ListenerCertificateAuthenticator} -- which authenticates using a client supplied chain of one or more certificates.
+We initialize the authenticator using one of the following constructors:
+** A list of one or more root certificates -- the client supplied certificate must end at a certificate in this list if it is to be authenticated
+** A block of code that assumes total responsibility for authentication -- it must return a boolean response (true for an authenticated client, or false for a failed authentication).
 
 // include::{root-partials}p2p-api.adoc[tag=config-auth]
 
 === Use Basic Authentication
 // === Authenticate Using the Client Username and Password
 
-This section shows how to authenticate client username and password using basic authentication.
-For how to authenticate using client certificates see: <<using-client-certificate-authentication>>
+This section shows how to authenticate client-supplied username and password credentials using basic authentication.
+For how to authenticate using client certificates -- see: <<using-client-certificate-authentication>>
 
 include::{root-partials}p2p-api.adoc[tag=ListenerPasswordAuthenticator]
 
@@ -332,11 +329,12 @@ include::{root-partials}p2p-api.adoc[tag=ListenerPasswordAuthenticator]
 include::{snippet-p2psync-ws}[tags=listener-config-client-auth-pwd, indent=0]
 
 ----
-<.> Where 'thisUser' and 'thisPassword' are the client-suplied values to be authenticated.
+<.> Where 'thisUser' and 'thisPassword' are the client-supplied values to be authenticated.
 ====
 // include::{snippet}[tags=listener-config-client-auth-pwd-full, indent=0]
 
 === Using Client Certificate Authentication
+Here we define how the server will authenticate client-supplied certificates.
 
 // include::{root-partials}p2p-api.adoc[tag=ListenerCertificateAuthenticator]
 There are three ways to authenticate a client:
@@ -344,12 +342,12 @@ There are three ways to authenticate a client:
 * A chain of one or more certificates that ends at a system CA signed certificate.
 +
 This is the default when no authenticator is specified
-* A chain of one or more certificates that ends at a certificate in the list of certificates supplied to the constructor for `ListenerCertificateAuthenticator`.
+* A chain of one or more certificates that ends at a certificate in the list of certificates supplied to the constructor for  {url-api-class-ListenerCertificateAuthenticator}.
 +
 Note that system CA certificates are ignored
 * Application logic: This method assumes complete responsibility for verifying and authenticating the client.
 +
-If the second parameter supplied to the constructor for `ListenerCertificateAuthenticator` is non-null, all other forms of authentication are bypassed.
+If the parameter supplied to the constructor for `ListenerCertificateAuthenticator` is of type  `ListenerCertificateAuthenticatorDelegate`, all other forms of authentication are bypassed.
 +
 The client response to the certificate request is passed to the method supplied as the second constructor parameter.
 The logic should take the form of function or block (such as, a closure expression) where the platform allows.
@@ -361,27 +359,51 @@ The logic should take the form of function or block (such as, a closure expressi
 Root CA::
 +
 --
+Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the the {url-api-class-ListenerCertificateAuthenticator}.
+
 [source, {source-language}]
 ----
 
 include::{snippet-p2psync-ws}[tag=listener-config-client-root-ca, indent=0]
 
 ----
-<.> Get the identity to validate against (your corporate TLS Id)
-<.> Set your TLS identity
-<.> Provide the identity's valid certificates to the client authenticator. A valid client will provide one or more certificates that match a certificate in this list.
+
+<.>  Get the identity data to authenticate against. This can be, for example, from a resource file provided with the app, or an identity previously saved in {securestorage}.
+
+<.> Get the root certs from the retrieved data.
+
+<.> Configure the authenticator to authenticate the client supplied certificate(s) using these root certs.
+A valid client will provide one or more certificates that match a certificate in this list.
+
+<.> Add the authenticator to the listener configuration.
+
+// <.>  Initialize the listener using the configuration.
+
 
 --
 +
 Application Logic::
 +
 --
+Configure the server (listener) to authenticate the client using user-supplied logic.
+
 [source, {source-language}]
 ----
 
-include::{snippet-p2psync-ws}[tags=listener-config-client-auth-self-signed, indent=0]
+include::{snippet-p2psync-ws}[tags=listener-config-client-auth-lambda, indent=0]
 
 ----
+
+<.>  Get the identity data to authenticate against.
+This can be, for example, from a resource file provided with the app, or an identity previously saved in {securestorage}.
+<.> Get the root certificates from the retrieved data.
+// <.> Provide the identity's valid certificates to the client authenticator.
+<.>  Configure the Authenticator to pass the root certificates to a user supplied code block.
+This code assumes complete responsibility for authenticating the client supplied certificate(s).
+It must return a boolean value; with `true` denoting the client supplied certificate authentic.
+<.> Add the authenticator to the listener configuration.
+// <.>  Initialize the listener using the config
+
 --
 ====
 =====
@@ -410,7 +432,7 @@ include::{snippet-p2psync-ws}[tag=p2p-tlsid-delete-id-from-keychain]
 
 === The Impact of TLS Settings
 
-The table in this section shows the expected system behavior (in regards to security ) depending on the TLS configuration settings deployed.
+The table in this section shows the expected system behavior (in regards to security) depending on the TLS configuration settings deployed.
 
 .Expected system behavior
 [cols="12,44,44"]

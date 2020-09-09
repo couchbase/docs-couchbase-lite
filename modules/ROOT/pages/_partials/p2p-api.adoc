@@ -277,9 +277,10 @@ When the port is null or zero, the listener will listen to an available port (au
 a|
 // tag::config-disable-tls-full[]
 // tag::config-disable-tls[]
-TLS is enabled by default.
+We use {url-api-class-urlendpointconfiguration}'s {url-api-references-urlendpointconfiguration-disable-tls} method to disable TLS communication if necessary
 
-Use {url-api-class-urlendpointconfiguration}'s {url-api-references-urlendpointconfiguration-disable-tls} method to disable TLS communication if necessary
+The `disableTLS` setting must be 'false' when _Client Cert Authentication_ is required.
+Basic Authentication can be used with, or without, TLS.
 
 {url-api-references-urlendpointconfiguration-disable-tls} works in conjunction with `TLSIdentity`, to enable developers to define the key and-or certificate to be used.
 
@@ -287,7 +288,7 @@ Use {url-api-class-urlendpointconfiguration}'s {url-api-references-urlendpointco
 Active peers will the `ws://` URL scheme used to connect to the listener.
 * If `disableTLS` is false or not specified -- TLS communication is enabled.
 +
-Active peers will the `wss://` URL scheme used to connect to the listener.
+Active peers will use the `wss://` URL scheme to connect to the listener.
 
 // end::config-disable-tls[]
 
@@ -347,6 +348,7 @@ Default:
 // tag::config-auth-default[]
 Null -- there is no authentication.
 // tag::config-auth-default[]
+
 API Reference:  {url-api-references-urlendpointconfiguration-auth}
 
 // end::config-auth-full[]
@@ -407,8 +409,8 @@ This opaque authenticator interface is implemented by the authenticator classes.
 
 == ListenerPasswordAuthenticator
 // tag::ListenerPasswordAuthenticator[]
-Use the {url-api-class-ListenerPasswordAuthenticator} class to provide password type authentication such as the Basic Authentication.
-The actual authentication is provided by the application code, usually in the form of a closure.
+We use the {url-api-class-ListenerPasswordAuthenticator} class to provide username and password type authentication (Basic Authentication).
+The actual authentication is done by user-provided application code (usually provided in the form of a closure).
 // end::ListenerPasswordAuthenticator[]
 
 .Class Definition
