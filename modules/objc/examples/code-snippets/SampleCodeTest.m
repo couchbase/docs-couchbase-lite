@@ -1036,7 +1036,8 @@
     CBLURLEndpointListenerConfiguration* config;
     config = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: database];
     config.tlsIdentity = nil; // Use with anonymous self signed cert
-    config.authenticator = [[CBLListenerPasswordAuthenticator alloc] initWithBlock: ^BOOL(NSString * username, NSString * password) {
+    config.authenticator = [[
+       alloc] initWithBlock: ^BOOL(NSString * username, NSString * password) {
         if ([self isValidCredentials: username password:password]) {
             return  YES;
         }
@@ -1083,12 +1084,12 @@
 
 - (void) dontTestListenerCertificateAuthenticatorRootCert {
     CBLURLEndpointListenerConfiguration* config;
-    
+
     // tag::listener-certificate-authenticator-root-urllistener[]
     NSURL *certURL = [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"cer"];
     NSData *data = [[NSData alloc] initWithContentsOfURL: certURL];
     SecCertificateRef rootCertRef = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
-    
+
     config.authenticator = [[CBLListenerCertificateAuthenticator alloc]
                             initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];
     // end::listener-certificate-authenticator-root-urllistener[]
@@ -1096,9 +1097,9 @@
 
 - (void) dontTestListenerCertificateAuthenticatorCallback {
     CBLURLEndpointListenerConfiguration* config;
-    
+
     // tag::listener-certificate-authenticator-callback-urllistener[]
-    
+
     CBLListenerCertificateAuthenticator* listenerAuth =
     [[CBLListenerCertificateAuthenticator alloc] initWithBlock: ^BOOL(NSArray *certs) {
         SecCertificateRef cert = (__bridge SecCertificateRef)(certs[0]);
@@ -1111,7 +1112,7 @@
         }
         return NO;
     }];
-    
+
     config.authenticator = listenerAuth;
     // end::listener-certificate-authenticator-callback-urllistener[]
 }

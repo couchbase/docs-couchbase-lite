@@ -94,32 +94,39 @@ class cMyPassListener {
     // tag::listener-config-client-auth-root[]
     // tag::listener-config-client-root-ca[]
     // Configure the client authenticator
-    // to validate using ROOT CA <.>
-    // cert is a pre-populated object of
-    // type:SecCertificate representing a certificate
-    NEEDS CODE CONVERSION
+    NSURL *certURL =
+      [[NSBundle mainBundle]
+        URLForResource: @"cert" withExtension: @"cer"]; // <.>
+    NSData *data =
+      [[NSData alloc]
+        initWithContentsOfURL: certURL];
+    SecCertificateRef rootCertRef =
+      SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);  // <.>
 
-    let rootCertData = SecCertificateCopyData(cert) as Data
-    let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
-    // Listener:
-    thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert])
+    thisConfig.authenticator =
+      [[CBLListenerCertificateAuthenticator alloc]
+        initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];  // <.>
 
-    // end::listener-config-client-root-ca[]
     // tag::listener-config-client-auth-lambda[]
-    // tag::listener-config-client-auth-self-signed[]
-    // Authenticate self-signed cert using application logic
-    NEEDS CODE CONVERSION
-    thisConfig.authenticator = ListenerCertificateAuthenticator.init {
-      (cert) -> Bool in
-        var cert:SecCertificate
-        var certCommonName:CFString?
-        let status=SecCertificateCopyCommonName(cert, &certCommonName)
-        if (self._allowlistedUsers.contains(["name": certCommonName! as String])) {
-            return true
-        }
-        return false
-    }
+    // end::listener-config-client-root-ca[]
+    // Authenticate self-signed cert
+    // using application logic
+    CBLListenerCertificateAuthenticator* thisListenerAuth =
+      [[CBLListenerCertificateAuthenticator alloc]
+        initWithBlock: ^BOOL(NSArray *certs) {
+          SecCertificateRef cert =
+            (__bridge SecCertificateRef)(certs[0]); // <.>
+          CFStringRef cnRef;
+          OSStatus status = SecCertificateCopyCommonName(cert, &cnRef); // <.>
+          if (status == errSecSuccess) {
+              NSString* cn = (NSString*)CFBridgingRelease(cnRef);
+              if ([self._allowlistedUsers containsObject: cn])
+                  return YES;
+          }
+          return NO;
+      }];  // <.>
 
+    thisConfig.authenticator = thisListenerAuth; // <.>
     // end::listener-config-client-auth-self-signed[]
     // end::listener-config-client-auth-lambda[]
     // tag::listener-start[]
