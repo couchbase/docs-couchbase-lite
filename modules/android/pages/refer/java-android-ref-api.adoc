@@ -641,6 +641,8 @@ So we don't recommend to rely on that when using the replication or database cha
 Prior to version 2.6, Couchbase Lite spun up multiple executors.
 This policy could result in too many threads being spun up.
 
+NOTE: If no listeners are registered to listen to a replicator at the time of the most recent `start(. . .)`, then no subsequently registered listeners will receive notifications.
+
 An executor manages a pool of threads and, perhaps, a queue in front of the executor, to handle the asynchronous callbacks.
 Couchbase Lite API calls which are processed by an executor are listed below.
 
