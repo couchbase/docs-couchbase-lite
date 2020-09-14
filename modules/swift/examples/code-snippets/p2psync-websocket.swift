@@ -453,11 +453,13 @@ extension URLEndpointListener {
 
 // tag::xctListener-auth-password-basic[]
 listenerConfig.authenticator = ListenerPasswordAuthenticator.init {
-            (username, password) -> Bool in
+  (username, password) -> Bool in
+    (["password" : password, "name":username])
     if (self._allowListedUsers.contains(["password" : password, "name":username])) {
         return true
     }
     return false
+}
 // end::xctListener-auth-password-basic[]
 
 // tag::xctListener-auth-cert-roots[]
@@ -492,7 +494,7 @@ listenerConfig.authenticator = ListenerPasswordAuthenticator.init {
     return false
         }
 
-_websocketListener = URLEndpointListener(config: listenerConfig)
+_thisListener = URLEndpointListener(config: listenerConfig)
 // end::xctListener-config-basic-auth[]
 
 
@@ -611,9 +613,9 @@ import CouchbaseLiteSwift
 import MultipeerConnectivity
 
 class cMyPassListener {
-  // tag::listener-initialize[]
   fileprivate var _allowlistedUsers:[[String:String]] = []
-  fileprivate var _websocketListener:URLEndpointListener?
+  // tag::listener-initialize[]
+  fileprivate var _thisListener:URLEndpointListener?
   fileprivate var thisDB:Database?
     // Include websockets listener initializer code
 
@@ -647,29 +649,53 @@ class cMyPassListener {
 
     // end::listener-config-tls-disable[]
     // tag::listener-config-tls-id-full[]
+    // tag::listener-config-tls-id-caCert[]
+    let thisIdentity =
+      do {
+        return try TLSIdentity.identity(
+          withIdentity: thisSecId,
+          certs: [pubCerts[0]]
+          ) // <.>
+      } catch {
+        print("Error while loading cert : \(error)")
+        return nil
+      } // <.>
+
+    // end::listener-config-tls-id-caCert[]
+    // tag::listener-config-tls-id-SelfSigned[]
+    let attrs = [certAttrCommonName: "Couchbase Inc"]
+    let thisIdentity =
+      try TLSIdentity.createIdentity(forServer: true,
+            attributes: attrs,
+            expiration: Date().addingTimeInterval(86400),
+            label: "Server-Cert-Label") // <.>
+
+    // end::listener-config-tls-id-SelfSigned[]
     // tag::listener-config-tls-id-anon[]
+    // Set the credentials the server presents the client
     // Use an anonymous self-signed cert
-    listenerConfig.tlsIdentity = nil
+    listenerConfig.tlsIdentity = nil // <.>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-tls-id-set[]
-    // set the TLS Identity
+    // Set the credentials the server presents the client
     listenerConfig.tlsIdentity =
-      TLSIdentity(withLabel:thisIdentity)
+      TLSIdentity(withLabel:thisIdentity) // <.>
 
     // end::listener-config-tls-id-set[]
     // end::listener-config-tls-id-full[]
     // tag::listener-config-client-auth-pwd[]
-    // Configure the client authenticator for Basic Authentication) <.>
+    // Configure how the client is to be authenticated
+    // Here, use Basic Authentication
     listenerConfig.authenticator =
       ListenerPasswordAuthenticator(authenticator: {
         (thisUser, thisPassword) -> Bool in
-            if (self._allowlistedUsers.contains(
-              ["password" : thisPassword, "name":thisUser])) {
-                return true
-            }
+          if (self._allowlistedUsers.contains(
+            ["password" : thisPassword, "name":thisUser])) {
+              return true
+          }
         return false
-      })
+      }) // <.>
 
     // end::listener-config-client-auth-pwd[]
     // tag::listener-config-client-root-ca[]
@@ -693,10 +719,10 @@ class cMyPassListener {
     let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)! // <.>
 
     listenerConfig.authenticator = ListenerCertificateAuthenticator.init { // <.>
-      (cert) -> Bool in
-        var cert:SecCertificate
+      (certs) -> Bool in
+        var certs:SecCertificate
         var certCommonName:CFString?
-        let status=SecCertificateCopyCommonName(cert, &certCommonName)
+        let status=SecCertificateCopyCommonName(certs[0], &certCommonName)
         if (self._allowlistedUsers.contains(["name": certCommonName! as String])) {
             return true
         }
@@ -707,13 +733,13 @@ class cMyPassListener {
     // end::listener-config-client-auth-lambda[]
     // tag::listener-start[]
     // Initialize the listener
-    _websocketListener = URLEndpointListener(config: listenerConfig) // <.>
-    guard let websocketListener = _websocketListener else {
-      throw print("WebsocketsListenerNotInitialized")
+    _thisListener = URLEndpointListener(config: listenerConfig) // <.>
+    guard let thisListener = _thisListener else {
+      throw print("ListenerNotInitialized")
       // ... take appropriate actions
     }
     // Start the listener
-    try websocketListener.start() // <.>
+    try thisListener.start() // <.>
 
     // end::listener-start[]
 // end::listener-initialize[]
@@ -730,12 +756,12 @@ listenerConfig.enableDeltaSync = true
 
 // end::old-listener-config-delta-sync[]
 // tag::listener-status-check[]
-let totalConnections = websocketListener.status.connectionCount
-let activeConnections = websocketListener.status.activeConnectionCount
+let totalConnections = thisListener.status.connectionCount
+let activeConnections = thisListener.status.activeConnectionCount
 
 // end::listener-status-check[]
 // tag::listener-stop[]
-        listener.stop()
+        thisListener.stop()
 
 // end::listener-stop[]
 // tag::old-listener-config-client-auth-root[]

@@ -29,7 +29,7 @@ class cMyPassListener {
 
     // end::listener-config-port[]
     // tag::listener-config-netw-iface[]
-    NSURL *thisURL = [NSURL URLWithString:@"10.1.1.10"];
+    NSString *thisURL = @"10.1.1.10";
     thisConfig.networkInterface = thisURL; // <.>
 
     // end::listener-config-netw-iface[]
@@ -48,6 +48,13 @@ class cMyPassListener {
 
     // end::listener-config-tls-disable[]
     // tag::listener-config-tls-id-full[]
+    // tag::listener-config-tls-id-caCert[]
+    // Use CA Cert
+    // Create a TLSIdentity from a key-pair and
+    // certificate in secure storage
+
+
+    // end::listener-config-tls-id-caCert[]
     // tag::listener-config-tls-id-SelfSigned[]
     // Use a self-signed certificate
     NSDictionary* attrs =
@@ -59,13 +66,8 @@ class cMyPassListener {
           expiration: [NSDate dateWithTimeIntervalSinceNow: 86400]
                 label: @" couchbase-docs-cert"
                 error: &error]; // <.>
-    // end::listener-config-tls-id-SelfSigned[]
-    // tag::listener-config-tls-id-caCert[]
-    // Use CA Cert
-    // Create a TLSIdentity from a key-pair and
-    // certificate in secure storage
 
-    // end::listener-config-tls-id-caCert[]
+    // end::listener-config-tls-id-SelfSigned[]
     // tag::listener-config-tls-id-anon[]
     // Use an anonymous self-signed cert
     thisConfig.tlsIdentity = nil; // <.>
@@ -81,18 +83,17 @@ class cMyPassListener {
     // tag::listener-config-client-auth-pwd[]
     // Configure Client Security using an Authenticator
     // For example, Basic Authentication <.>
-    - (BOOL) isValidCredentials: (NSString*)u password: (NSString*)p { return YES; } // helper
-
-    thisConfig.authenticator = [[CBLListenerPasswordAuthenticator alloc] initWithBlock: ^BOOL(NSString * thisUser, NSString * thisPassword) {
-        if ([self isValidCredentials: thisUser password:thisPassword]) {
-            return  YES;
-        }
-        return NO;
-    }];
+    thisConfig.authenticator =
+      [[CBLListenerPasswordAuthenticator alloc]
+        initWithBlock: ^BOOL(NSString * thisUser, NSString * thisPassword) {
+          if ([self isValidCredentials: thisUser password:thisPassword]) {
+              return  YES;
+          }
+          return NO;
+      }];
 
     // end::listener-config-client-auth-pwd[]
     // tag::listener-config-client-auth-root[]
-    // tag::listener-config-client-root-ca[]
     // Configure the client authenticator
     NSURL *certURL =
       [[NSBundle mainBundle]
@@ -107,8 +108,8 @@ class cMyPassListener {
       [[CBLListenerCertificateAuthenticator alloc]
         initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];  // <.>
 
+    // end::listener-config-client-auth-root[]
     // tag::listener-config-client-auth-lambda[]
-    // end::listener-config-client-root-ca[]
     // Authenticate self-signed cert
     // using application logic
     CBLListenerCertificateAuthenticator* thisListenerAuth =
@@ -124,17 +125,19 @@ class cMyPassListener {
                   return YES;
           }
           return NO;
-      }];  // <.>
+      }];  // <.> <.>
 
     thisConfig.authenticator = thisListenerAuth; // <.>
-    // end::listener-config-client-auth-self-signed[]
+
     // end::listener-config-client-auth-lambda[]
     // tag::listener-start[]
+    // tag::listener-init[]
     // Initialize the listener
     CBLURLEndpointListener* thisListener = nil;
-    thisListener = [[CBLURLEndpointListener alloc] initWithConfig: listenerConfig]; // <.>
+    thisListener = [[CBLURLEndpointListener alloc] initWithConfig: thisConfig]; // <.>
     }
 
+    // end::listener-init[]
     // start the listener
     BOOL success = [thisListener startWithError: &error];
     if (!success) {
@@ -152,10 +155,10 @@ class cMyPassListener {
   }
 }
 
-// tag::listener-config-tls-disable[]
+// tag::xlistener-config-tls-disable[]
 thisConfig.disableTLS  = true
 
-// end::listener-config-tls-disable[]
+// end::xlistener-config-tls-disable[]
 
 // tag::listener-config-tls-id-nil[]
 thisConfig.tlsIdentity = nil
@@ -176,16 +179,15 @@ let activeConnections = thisListener.status.activeConnectionCount
 // end::listener-status-check[]
 
 
-// tag::listener-config-client-auth-root[]
+// tag::old-listener-config-client-auth-root[]
   // cert is a pre-populated object of type:SecCertificate representing a certificate
   let rootCertData = SecCertificateCopyData(cert) as Data
   let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
   // Listener:
   thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert])
 
-// end::listener-config-client-auth-root[]
-// end::listener-config-client-root-ca[]
-
+// end::old-listener-config-client-auth-root[]
+/
 
 // tag::listener-config-client-auth-self-signed[]
 thisConfig.authenticator = ListenerCertificateAuthenticator.init {
