@@ -40,23 +40,17 @@ endif::[]
 [#introduction]
 == Introduction
 This content provides sample code and configuration examples covering the implementation of {glos-term-peer-to-peer-sync} over websockets.
-
 Specifically it covers the implementation of an {glos-term-active-peer}.
-This _replicator_ will initiate connection with a {glos-term-passive-peer} and participate in the replication of database changes to bring both databases into sync.
 
-In this context the _active peer_ (replicator) acts as the _client_, whilst the _passive peer_ (listener) acts as the _server_.
-
-You will need to initialize and configure a replicator for each Couchbase Lite database instance you want to sync.
-<<simple-replication-to-listener>> shows the initialization and configuration process.
+This _active peer_ (also referred to as a client and-or a replicator) will initiate connection with a {glos-term-passive-peer} (also reffered to as a server and-or listener) and participate in the replication of database changes to bring both databases into sync.
 
 Subsequent sections provide additional details and examples for the main configuration options.
 
-.Secure Storage
-[NOTE]
-The use of TLS, its associated keys and certificates requires using secure storage to minimize the chances of a security breach.
-The implementation of this storage differs from platform to platform -- see {xref-cbl-pg-p2psync-websocket-using-secure-storage}.
+include::{root-partials}_block-caveats.adoc[tags=securestorage]
 
 == Configuration Summary
+You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
+<<simple-replication-to-listener>> shows the initialization and configuration process.
 
 [#simple-replication-to-listener]
 .Replication configuration and initialization
@@ -76,19 +70,20 @@ endif::[]
 
 <.> Use the {url-api-class-replicator-config} class's constructor -- {url-api-constructor-replicator-config-db-tgt} -- to initialize the replicator configuration with the local database -- see also: <<configure-target>>
 
-<.> Here we have configured the client to connect only to servers that authenticate themselves using a self-signed certificates.
-By default, clients accept only servers that authenticate themselves using  certificates that can be verified using the OS bundled Root CA Certificates -- see: <<authenticating-the-listener>>.
+<.> Configure how the client will authenticate the server.
+Here we say connect only to servers presenting a self-signed certificate.
+By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<authenticating-the-listener>>.
 
-<.> Here the we have configured the client to supply _Basic Authentication_ credentials to the server. Other options are available, for example authenticating using certificates.
-To use client certificate based authentication -- see: <<client-authentication>>
+<.> Configure the credentials the client will present to the server.
+Here we say to provide _Basic Authentication_ credentials. Other options are available -- see: <<client-authentication>>.
 
-<.> Handle <<conflict-resolution>>
+<.> Configure how the replication should perform <<conflict-resolution>>.
 
-<.> Initialize the replicator with specified configuration
+<.> Initialize the replicator using your configuration object.
 
-<.> Register an observer to be notified of changes to the replication status
+<.> Register an observer, which will notify you of changes to the replication status.
 
-<.> Start the replicator
+<.> Start the replicator.
 ====
 
 == API References
@@ -114,14 +109,12 @@ In this section: <<configure-target>>  |  <<sync-mode>>  |  <<authenticating-the
 
 === Configure Target
 Use the
-{url-api-class-replicator-config} class and {url-api-constructor-replicator-config-db-tgt} constructor to initialize the replication configuration.
+{url-api-class-replicator-config} class and {url-api-constructor-replicator-config-db-tgt} constructor to initialize the replication configuration with local and remote database locations.
 
-This constructor provides the name of the local database, and the listener's URL (this will include the name of the remote database to be sync'd) -- whether pre-configured or gathered during a discovery phase.
+The constructor provides
 
-The required parameters are:
-
-* The local database to be synced
-* The listener URL including its port and the remote database name
+* the name of the local database to be sync'd
+* the listener's URL (including its port and the name of the remote database to sync with) -- whether pre-configured or gathered during a discovery phase.
 +
 --
 The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) prefixes.
@@ -130,7 +123,7 @@ include::{root-partials}_block-caveats.adoc[tags=android-manifest-cleartext]
 endif::[]
 --
 
-You will also need any security credentials provided (for example, user name and password or Cert) for use in the authentication phase of configuration.
+// You will also need any security credentials provided (for example, user name and password or Cert) for use in the authentication phase of configuration.
 
 .Set target and database config properties
 ====
@@ -142,7 +135,9 @@ include::{snippet-p2psync-ws}[tags="p2p-act-rep-initialize", indent=0]
 ====
 
 === Sync Mode
-Use `{url-api-class-replicator-config}` class's {url-api-prop-replicator-config-rep-type} and
+Here we define the direction and type of replication we want to initiate.
+
+We use `{url-api-class-replicator-config}` class's {url-api-prop-replicator-config-rep-type} and
 `{url-api-prop-replicator-config-cont}` parameters, to tell the replicator:
 
 * The direction of the replication:
@@ -152,9 +147,9 @@ endif::[]
 ifeval::["{param-platform}"!="{platform-android}"]
 `*pushAndPull*`; `pull`; `push`
 endif::[]
-* Whether the replicator should:
-** Stay active indefinitely to replicate changed documents: `continuous=true`
-** Be a one-shot replication of changed documents: `continuous=false`
+* The type of replication, that is:
+** Continuous -- remaining active indefinitely to replicate changed documents (`continuous=true`).
+** Ad-hoc -- a one-shot replication of changed documents (`continuous=false`).
 
 .Configure replicator type and mode
 ====
