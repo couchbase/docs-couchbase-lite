@@ -92,18 +92,6 @@ namespace api_walkthrough
       DateTimeOffset fiveMinToExpireCert = DateTimeOffset.UtcNow.AddMinutes(5);
     // . . . other user code . . .
 
-    // tag::create-self-signed-cert[]
-    thisIdentity =
-      TLSIdentity.CreateIdentity(
-        true, /* isServer */
-        new Dictionary<string, string>() {
-          { Certificate.CommonNameAttribute, "Couchbase Inc" } }, // <.>
-        fiveMinToExpireCert, // <.>
-        _store,
-        "couchbase-demo-cert", // <.>
-        null);  // <.>
-    // end::create-self-signed-cert[]
-    // end::listener-config-tls-id-SelfSigned[]
     // tag::listener-config-tls-id-caCert[]
     // Use CA Cert
     // Create a TLSIdentity from an imported key-pair
@@ -123,6 +111,18 @@ namespace api_walkthrough
 
     // end::import-tls-identity[]
     // end::listener-config-tls-id-caCert[]
+    // tag::create-self-signed-cert[]
+    thisIdentity =
+      TLSIdentity.CreateIdentity(
+        true, /* isServer */
+        new Dictionary<string, string>() {
+          { Certificate.CommonNameAttribute, "Couchbase Inc" } }, // <.>
+        fiveMinToExpireCert, // <.>
+        _store,
+        "couchbase-demo-cert", // <.>
+        null);  // <.>
+    // end::create-self-signed-cert[]
+    // end::listener-config-tls-id-SelfSigned[]
     // tag::listener-config-tls-id-anon[]
     // Use an Anonymous Self-Signed Cert
     thisConfig.TlsIdentity = null; // <.>
@@ -146,7 +146,7 @@ namespace api_walkthrough
       );
 
     // end::listener-config-client-auth-pwd[]
-    // tag::listener-config-client-root-ca[]
+    // tag::listener-config-client-auth-root[]
     // Configure the client authenticator
     // to validate using ROOT CA
 
@@ -167,12 +167,10 @@ namespace api_walkthrough
     // Initialize the listener using the config
     _listener = new URLEndpointListener(thisConfig); // <.>
 
-
-    // end::listener-config-client-root-ca[]
-    // tag::listener-config-client-auth-self-signed[]
+    // end::listener-config-client-auth-root[]
+    // tag::listener-config-client-auth-root-lambda[]
     // Configure the client authenticator
-    // to validate using ROOT CA
-    // tag::listener-config-client-root-ca-lambda[]
+    // to validate using application logic
 
     // Get the valid cert chain, in this instance from
     // PKCS12 data containing private key, public key
@@ -194,8 +192,7 @@ namespace api_walkthrough
 
     thisConfig.Authenticator = thisAuth; // <.>
 
-    // end::listener-config-client-root-ca-lambda[]
-    // end::listener-config-client-auth-self-signed[]
+    // end::listener-config-client-auth-root-lambda[]
     // tag::listener-start[]
     // Initialize the listener
     _thisListener = new URLEndpointListener(thisConfig); // <.>
@@ -285,11 +282,11 @@ namespace api_walkthrough
 
 
 
-// tag::listener-config-client-auth-root[]
+// tag::old-listener-config-client-auth-root[]
   // cert is a pre-populated object of type:SecCertificate representing a certificate
   // Work in progress. Code snippet to be provided.
 
-  // end::listener-config-client-auth-root[]
+  // end::old-listener-config-client-auth-root[]
 
 
   // prev content of listener-config-client-auth-self-signed (for ios)
