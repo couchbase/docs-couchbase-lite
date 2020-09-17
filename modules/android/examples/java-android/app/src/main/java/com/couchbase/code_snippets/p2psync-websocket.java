@@ -743,6 +743,14 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [th
 <.> Configure the pinned certificate using data from the byte array `cert`
 // end::p2p-act-rep-config-cacert-pinned-callouts[]
 
+// tag::p2p-tlsid-tlsidentity-with-label-callouts[]
+<.> Attempt to get the identity from secure storage
+<.> Set the authenticator to ClientCertificateAuthenticator and configure it to use the retrieved identity
+
+// end::p2p-tlsid-tlsidentity-with-label-callouts[]
+
+
+
 
     // thisConfig.setAuthenticator(
     // new ListenerCertificateAuthenticator(certs));

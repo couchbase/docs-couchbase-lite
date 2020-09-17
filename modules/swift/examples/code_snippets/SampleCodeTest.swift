@@ -982,12 +982,17 @@ class SampleCodeTest {
     }
 
     func dontTestCreateSelfSignedCert() throws {
+        // <site-rooot>/objc/advance/objc-p2psync-websocket-using-passive.html
+        // Example-6
         // tag::create-self-signed-cert[]
+        // tag::listener-config-tls-id-SelfSigned[]
         let attrs = [certAttrCommonName: "Couchbase Inc"]
-        let identity = try TLSIdentity.createIdentity(forServer: true,
-                                                      attributes: attrs,
-                                                      expiration: Date().addingTimeInterval(86400),
-                                                      label: "Server-Cert-Label")
+        let identity =
+          try TLSIdentity.createIdentity(forServer: true,
+                attributes: attrs,
+                expiration: Date().addingTimeInterval(86400),
+                label: "Server-Cert-Label")
+        // end::listener-config-tls-id-SelfSigned[]
         // end::create-self-signed-cert[]
         print("\(identity.expiration)") // to avoid warning
     }

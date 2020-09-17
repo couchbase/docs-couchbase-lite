@@ -81,6 +81,34 @@ namespace api_walkthrough
 
     // end::listener-config-tls-disable[]
     // tag::listener-config-tls-id-full[]
+    // tag::listener-config-tls-id-caCert[]
+    // Use CA Cert
+    // Create a TLSIdentity from an imported key-pair
+    // . . . previously declared variables include ...
+    TLSIdentity thisIdentity;
+    X509Store _store =
+      new X509Store(StoreName.My); // The id is stored in secure storage
+                                   // using  given label
+
+    // PKCS12 data containing private key,
+    // public key, and certificates
+    byte[] thisKeyPair =
+      File.ReadAllBytes("C:\\client.p12"); // <.>
+    // . . . other user code . . .
+
+    // tag::import-tls-identity[]
+    thisIdentity = TLSIdentity.ImportIdentity(
+      _store,
+      thisKeyPair, // <.>
+      "123", // Password to access certificate data
+      "couchbase-demo-cert",
+      null); // Label to get cert in certificate map
+        // NOTE: If a null label is supplied then the same
+        // default directory for a Couchbase Lite database
+        // is used for map.
+
+    // end::import-tls-identity[]
+    // end::listener-config-tls-id-caCert[]
     // tag::listener-config-tls-id-SelfSigned[]
     // Use a self-signed certificate
     // Create a TLSIdentity for the server and
@@ -88,41 +116,33 @@ namespace api_walkthrough
 
     // . . . previously declared variables include ...
       TLSIdentity thisIdentity;
-      X509Store _store = new X509Store(StoreName.My); // <.>
-      DateTimeOffset fiveMinToExpireCert = DateTimeOffset.UtcNow.AddMinutes(5);
+      X509Store _store =
+        new X509Store(StoreName.My); // <.>
+      DateTimeOffset fiveMinToExpireCert =
+        DateTimeOffset.UtcNow.AddMinutes(5);
     // . . . other user code . . .
 
     // tag::create-self-signed-cert[]
     thisIdentity =
       TLSIdentity.CreateIdentity(
         true, /* isServer */
-        new Dictionary<string, string>() {
-          { Certificate.CommonNameAttribute, "Couchbase Inc" } }, // <.>
-        fiveMinToExpireCert, // <.>
+        new Dictionary<string, string>() { // <.>
+          { Certificate.CommonNameAttribute, "Couchbase Inc" } },
+              // The common name attribute is required
+              // when creating a CSR. If it is not presented
+              // in the cert, an exception is thrown.
+        fiveMinToExpireCert,
+              // If the expiration date is not specified,
+              // the certs expiration will be 365 days
         _store,
-        "couchbase-demo-cert", // <.>
-        null);  // <.>
+        "couchbase-demo-cert",
+        null);  // The key label to get cert in certificate map.
+                // If null, the same default directory
+                // for a Couchbase Lite db is used for map.
+
+
     // end::create-self-signed-cert[]
     // end::listener-config-tls-id-SelfSigned[]
-    // tag::listener-config-tls-id-caCert[]
-    // Use CA Cert
-    // Create a TLSIdentity from an imported key-pair
-    // . . . previously declared variables include ...
-    TLSIdentity thisIdentity;
-    X509Store _store = new X509Store(StoreName.My); // <.>
-    byte[] thisKeyPair = File.ReadAllBytes("C:\\client.p12"); // <.>
-    // . . . other user code . . .
-
-    // tag::import-tls-identity[]
-    thisIdentity = TLSIdentity.ImportIdentity(
-      _store,
-      thisKeyPair, // <.>
-      "123", // <.>
-      "couchbase-demo-cert", // <.>
-      null);  // <.>
-
-    // end::import-tls-identity[]
-    // end::listener-config-tls-id-caCert[]
     // tag::listener-config-tls-id-anon[]
     // Use an Anonymous Self-Signed Cert
     thisConfig.TlsIdentity = null; // <.>
@@ -146,7 +166,7 @@ namespace api_walkthrough
       );
 
     // end::listener-config-client-auth-pwd[]
-    // tag::listener-config-client-root-ca[]
+    // tag::listener-config-client-auth-root[]
     // Configure the client authenticator
     // to validate using ROOT CA
 
@@ -167,12 +187,10 @@ namespace api_walkthrough
     // Initialize the listener using the config
     _listener = new URLEndpointListener(thisConfig); // <.>
 
-
-    // end::listener-config-client-root-ca[]
-    // tag::listener-config-client-auth-self-signed[]
+    // end::listener-config-client-auth-root[]
+    // tag::listener-config-client-auth-lambda[]
     // Configure the client authenticator
-    // to validate using ROOT CA
-    // tag::listener-config-client-root-ca-lambda[]
+    // to validate using application logic
 
     // Get the valid cert chain, in this instance from
     // PKCS12 data containing private key, public key
@@ -194,8 +212,7 @@ namespace api_walkthrough
 
     thisConfig.Authenticator = thisAuth; // <.>
 
-    // end::listener-config-client-root-ca-lambda[]
-    // end::listener-config-client-auth-self-signed[]
+    // end::listener-config-client-auth-lambda[]
     // tag::listener-start[]
     // Initialize the listener
     _thisListener = new URLEndpointListener(thisConfig); // <.>
@@ -285,11 +302,11 @@ namespace api_walkthrough
 
 
 
-// tag::listener-config-client-auth-root[]
+// tag::old-listener-config-client-auth-root[]
   // cert is a pre-populated object of type:SecCertificate representing a certificate
   // Work in progress. Code snippet to be provided.
 
-  // end::listener-config-client-auth-root[]
+  // end::old-listener-config-client-auth-root[]
 
 
   // prev content of listener-config-client-auth-self-signed (for ios)
@@ -398,7 +415,7 @@ public class Examples {
     // end::p2p-act-rep-config-cont[]
     // tag::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-cacert[]
-    // Configure Server Security -- only accept CA Certs
+    // Configure Server Security -- only accept CA certs
     thisConfig.AcceptOnlySelfSignedServerCertificate = false; // <.>
 
     // end::p2p-act-rep-config-cacert[]
@@ -419,69 +436,18 @@ public class Examples {
 
     // end::p2p-act-rep-auth[]
     // end::p2p-act-rep-config-tls-full[]
-    // tag::p2p-tlsid-tlsidentity-with-label[]
-    var db = new Database("other-database");
-    _Database = db;
-    X509Store _store = new X509Store(StoreName.My);
-    TLSIdentity thisIdentity;
 
-    // tag::client-cert-authenticator-root-certs[]
-    byte[] thisCaData, thisClientData;
-    thisClientData = File.ReadAllBytes("C:\\client.p12"); // <.>
-    thisCaData = File.ReadAllBytes("C:\\client-ca.der");
 
-    // Root certs
-    var thisRootCert = new X509Certificate2(thisCaData);
-    var thisAuth =
-      new ListenerCertificateAuthenticator(
-        new X509Certificate2Collection(thisRootCert));
-
-    // Create URL Endpoint Listener
-    var thisConfig = new URLEndpointListenerConfiguration(_Database);
-    thisConfig.DisableTLS = false; // <.>
-    thisConfig.Authenticator = thisAuth;
-    _listener = new URLEndpointListener(thisConfig);
-    _listener.Start();
-
-    // Client identity
-    thisIdentity = TLSIdentity.ImportIdentity(_store,
-        thisClientData,
-        "123",
-        "CBL-Client-Cert",
-        null);
-
-    // Replicator -- Client
-    var database = new Database("client-database");
-    var builder = new UriBuilder(
-        "wss",
-        "localhost",
-        _listener.Port,
-        $"/{_listener.thisConfig.Database.Name}"
-    );
-
-    var url = builder.Uri;
-    var target = new URLEndpoint(url);
-    var thisConfig = new ReplicatorConfiguration(database, target);
-    thisConfig.ReplicatorType = ReplicatorType.PushAndPull;
-    thisConfig.Continuous = false;
-    thisConfig.Authenticator = new ClientCertificateAuthenticator(thisIdentity);
-    thisConfig.AcceptOnlySelfSignedServerCertificate = true;
-    thisConfig.PinnedServerCertificate = _listener.TlsIdentity.Certs[0];
-    using (var replicator = new Replicator(thisConfig)) {
-        replicator.Start();
-    }
-
-    // Stop listener after replicator is stopped
-    _listener.Stop();
-
-    // end::p2p-tlsid-tlsidentity-with-label[]
     // tag::p2p-act-rep-config-cacert-pinned[]
-
     // Only CA Certs accepted
-    thisConfig.AcceptOnlySelfSignedServerCertificate = false; // <.>
-    // Use the pinned certificate from the byte array (caData)
-    var thisCert = new X509Certificate2(caData);
-    thisConfig.PinnedServerCertificate = thisCert; // <.>
+    thisConfig.AcceptOnlySelfSignedServerCertificate =
+      false; // <.>
+
+    var thisCert =
+      new X509Certificate2(caData); // <.>
+
+    thisConfig.PinnedServerCertificate =
+      thisCert; // <.>
 
     // end::p2p-act-rep-config-cacert-pinned[]
     // tag::p2p-act-rep-config-conflict-full[]
@@ -513,7 +479,7 @@ public class Examples {
         if (args.Status.Activity == ReplicatorActivityLevel.Stopped) {
             Console.WriteLine("Replication stopped");
         }
-      }); // <.>
+      });
 
     // end::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-start[]
@@ -698,11 +664,19 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 // tag::p2p-act-rep-config-cacert-pinned-callouts[]
 <.> Configure to accept only CA certs
 <.> Configure the pinned certificate using data from the byte array `cert`
+<.> Set the certificate to be compared with that provided by the server
 // end::p2p-act-rep-config-cacert-pinned-callouts[]
 
-// tag::p2p-tlsid-tlsidentity-with-label-callouts[]
+// tag::??p2p-tlsid-tlsidentity-with-label-callouts[]
 <.> PKCS12 data containing private key, public key, and certificates
 <.> This is the default value and means that TLS is enabled
+// end::??p2p-tlsid-tlsidentity-with-label-callouts[]
+
+// tag::p2p-tlsid-tlsidentity-with-label-callouts[]
+<.> Refuse self-signed certificates
+<.> Get the identity
+<.> Set the Client Certificate Authenticator to require signed certificates with this identity
+
 // end::p2p-tlsid-tlsidentity-with-label-callouts[]
 
 
@@ -721,3 +695,109 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
     );
 
     // end::old-listener-config-client-root-ca[]
+
+
+
+        // tag::p2p-tlsid-tlsidentity-with-label-per-sam[]
+    var db = new Database("other-database");
+    _Database = db;
+    X509Store _store = new X509Store(StoreName.My);
+    TLSIdentity thisIdentity;
+
+    // tag::client-cert-authenticator-root-certs[]
+
+    // Configure the expected server-supplied
+    // credentials -- only accept CA Certs
+    thisConfig.AcceptOnlySelfSignedServerCertificate = false; // <.>
+
+    // Client identity
+    thisIdentity =
+      TLSIdentity.ImportIdentity(_store,
+        clientData,
+        "123",
+        "CBL-Client-Cert",
+        null); // <.>
+
+    thisConfig.Authenticator =
+      new ClientCertificateAuthenticator(thisIdentity); // <.>
+
+    // end::client-cert-authenticator-root-certs[]
+
+
+
+
+
+    byte[] thisCaData, thisClientData;
+    thisClientData = File.ReadAllBytes("C:\\client.p12"); // <.>
+    thisCaData = File.ReadAllBytes("C:\\client-ca.der");
+
+    // Root certs
+    var thisRootCert = new X509Certificate2(thisCaData);
+    var thisAuth =
+      new ListenerCertificateAuthenticator(
+        new X509Certificate2Collection(thisRootCert));
+
+    // Create URL Endpoint Listener
+    var thisConfig = new URLEndpointListenerConfiguration(_Database);
+    thisConfig.DisableTLS = false; // <.>
+    thisConfig.Authenticator = thisAuth;
+    _listener = new URLEndpointListener(thisConfig);
+    _listener.Start();
+
+    // Client identity
+    thisIdentity = TLSIdentity.ImportIdentity(_store,
+        thisClientData,
+        "123",
+        "CBL-Client-Cert",
+        null);
+
+    // Replicator -- Client
+    var database = new Database("client-database");
+    var builder = new UriBuilder(
+        "wss",
+        "localhost",
+        _listener.Port,
+        $"/{_listener.thisConfig.Database.Name}"
+    );
+
+    var url = builder.Uri;
+    var target = new URLEndpoint(url);
+    var thisConfig = new ReplicatorConfiguration(database, target);
+    thisConfig.ReplicatorType = ReplicatorType.PushAndPull;
+    thisConfig.Continuous = false;
+    thisConfig.Authenticator = new ClientCertificateAuthenticator(thisIdentity);
+    thisConfig.AcceptOnlySelfSignedServerCertificate = true;
+    thisConfig.PinnedServerCertificate = _listener.TlsIdentity.Certs[0];
+    using (var replicator = new Replicator(thisConfig)) {
+        replicator.Start();
+    }
+
+
+
+
+
+    // Stop listener after replicator is stopped
+    _listener.Stop();
+
+    // end::p2p-tlsid-tlsidentity-with-label-per-sam[]
+
+
+        // tag::p2p-tlsid-tlsidentity-with-label[]
+    // Configure the expected server-supplied
+    // credentials -- only accept CA Certs
+    thisConfig.AcceptOnlySelfSignedServerCertificate = false; // <.>
+
+    // Client identity
+    thisIdentity =
+      TLSIdentity.ImportIdentity(_store,
+        clientData,
+        "123",
+        "CBL-Client-Cert",
+        null); // <.>
+
+    thisConfig.Authenticator =
+      new ClientCertificateAuthenticator(thisIdentity); // <.>
+
+    // end::p2p-tlsid-tlsidentity-with-label[]
+
+

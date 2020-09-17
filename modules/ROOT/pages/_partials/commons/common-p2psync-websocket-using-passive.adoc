@@ -26,6 +26,7 @@ include::{root-partials}_block-caveats.adoc[tags=securestorage]
 You should configure and initialize a listener for each Couchbase Lite database instance you want to to sync.
 There is no limit on the number of listeners you may configure -- <<simple-listener-initialization>> shows a simple initialization and configuration process.
 
+// Example-1
 [#simple-listener-initialization]
 .Listener configuration and initialization
 ====
@@ -91,6 +92,7 @@ All other configuration values take their default setting.
 Each Listener instance serves one Couchbase Lite database.
 Couchbase sets no hard limit on the number of listeners you can initialize.
 
+// Example 2
 .Specify Local Database
 ====
 In this example `thisDB` has previously been declared as an object of type Database.
@@ -118,6 +120,7 @@ Port number::
 
 The Listener will automatically select an available port if you do not specify one.
 
+// Example 3
 .Specify a Port to Use
 ====
 [source, {source-language}]
@@ -138,6 +141,7 @@ Network Interface::
 --
 The Listener will listen on all network interfaces by default.
 
+// Example 4
 .Specify a Network Interface to Use
 ====
 [source, {source-language}]
@@ -172,6 +176,7 @@ Delta Sync allows clients to sync only those parts of a document that have chang
 This can result in significant savings in bandwidth consumption as well as throughput improvements.
 Both valuable benefits, especially when network bandwidth is constrained.
 
+// Example 5
 .Enable delta sync
 ====
 [source, {source-language}]
@@ -226,7 +231,7 @@ NOTE: Typically, you will configure the listener's TLS Identity once during init
 // include::{snippet-p2psync-ws}[tags=listener-config-tls-id-cert, indent=0]
 // include::{snippet-p2psync-ws}[tags=listener-config-tls-id-full;!listener-config-tls-id-SelfSigned;!listener-config-tls-id-caCert;!listener-config-tls-id-cert, indent=0]
 
-
+// Example-6
 .Set Listener's TLS identity
 =====
 [{tabs}]
@@ -257,11 +262,21 @@ include::{snippet-p2psync-ws}[tags="listener-config-tls-id-full;!listener-config
 
 *Notes on example:*
 
-include::{example_callouts}[tags="listener-config-tls-id-caCert", indent=0]
+//include::{example_callouts}[tags="listener-config-tls-id-caCert", indent=0]
 
 // ifeval::["{param-platform}"=="{platform-android}"]
 // <.> The alias ("server" in this case) must refer to an entry in Android's canonical keystore, which has a private key and at least one certificate.
 // endif::[]
+
+<.> Ensure TLS is used
+// <.> Create keystore entry
+<.> Get keypair data
+<.> Use keypair data to create and store the TLS identity
+// <.> Password for {securestorage}
+// <.> Label for
+// <.> null
+<.> Set this identity as the one presented in response to to the client's prompt
+
 --
 endif::[]
 
@@ -280,7 +295,10 @@ include::{snippet-p2psync-ws}[tags="listener-config-tls-id-full;!listener-config
 
 *Notes on example:*
 
-include::{example_callouts}[tags="listener-config-tls-id-SelfSigned", indent=0]
+<.> Ensure TLS is used.
+<.> Map the required certificate attributes, in this case the common name.
+<.> Create the required TLS identity using the attributes. Add to {securestorage} as 'couchbase-docs-cert'.
+<.> Configure the server to present the defined identity credentials when prompted.
 
 --
 
@@ -337,6 +355,8 @@ include::{root-partials}p2p-api.adoc[tag=ListenerPasswordAuthenticator]
 
 // include::{root-partials}p2p-api.adoc[tag=ListenerPasswordAuthenticatorDelegate]
 
+
+// Example 7
 .Password authentication
 ====
 // In this example, `allowlistedUsers` is a dictionary comprising the usernames and passwords of valid users. Credentials not in `allowlistedUsers` are denied access.
@@ -374,6 +394,7 @@ If the parameter supplied to the constructor for `ListenerCertificateAuthenticat
 The client response to the certificate request is passed to the method supplied as the second constructor parameter.
 The logic should take the form of function or block (such as, a closure expression) where the platform allows.
 
+// Example 8
 .Set Certificate Authorization
 =====
 [{tabs}]
@@ -442,6 +463,7 @@ ifeval::["{param-platform}"!="{platform-android}"]
 You can remove unwanted TLS identities from {securestorage} using the convenience API.
 endif::[]
 
+// Example 9
 .Deleting TLS Identities
 ====
 [source, {source-language}]
@@ -502,6 +524,7 @@ a|* System will use the configured identity.
 
 Once you have completed the Listener's configuration settings you can initialize the Listener instance and start it running -- see: <<initialize-and-start-listener>>
 
+// Example 10
 [[initialize-and-start-listener]]
 .Initialize and start listener
 ====
@@ -520,6 +543,7 @@ Use the Listener's `getStatus` method to get counts of total and active connecti
 
 You should note that these counts can be extremely volatile. So, the actual number of active connections may have changed, by the time the call to, for example, `getActiveConnectionCount` returns a result.
 
+// Example 11
 [[get-connection-counts]]
 .Get connection counts
 ====
@@ -545,17 +569,19 @@ include::{example_callouts}[tags=listener-status-check, indent=0]
 // ----
 
 == Stop Listener
-====
 // include::{snippet-p2psync-ws}[tags=stopWebsocketsListener"]config
+
+// Example 12
 .Stop listener using `stop` method
+====
 [source, {source-language}]
 ----
 include::{snippet-p2psync-ws}[tags=listener-stop, indent=0]
 ----
+====
 
 NOTE: Closing the database will also close the listener.
 
-====
 
 
 // DO NOT EDIT -- Footer Related Content Block

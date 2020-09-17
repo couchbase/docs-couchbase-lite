@@ -1,13 +1,27 @@
 // Release note body content for this release
 // Inclusions are use in multiple pages
+
+ifeval::["{param-module}"=="ROOT"]
+:url-api-method-replicator-getPendingDocumentIds: getPendingDocument
+:url-api-class-database: Database
+:url-api-method-database-delete: Delete()
+:url-api-method-database-close: Close()
+endif::[]
+
+
+// DO NOT REMOVE
+:param-abstract: This content describes the key features and changes implemented by release {version} of Couchbase Lite on {param-title}
+:param-related: {xref-cbl-pg-whatsnew}  |  {xref-cbl-pg-compatibility}
+include::{root-partials}block-abstract.adoc[]
+// DO NOT REMOVE
+
 :ns: None specified
 
-Platform here is: {param-platform}
-
 == New Features
+=== Peer-to-Peer Synchronization
 // tag::feature-highlights[]
 Couchbase Lite EE 2.8 framework for {param-title} provides out-of-the-box support for peer-to-peer sync over websockets.
-This enables replication of database changes over websockets between Couchbase Lite clients.
+This enables replication of database changes over websockets between Couchbase Lite clients without the dependency on centralized cloud-based control.
 
 // end::feature-highlights[]
 
@@ -20,10 +34,10 @@ This enables replication of database changes over websockets between Couchbase L
 // tag::feature-changes[]
 The API has been enhanced with the following changes:
 
-* The {url-api-method-database-close} method now automatically handles stopping open replicators, closing peer-to-peer websocket listener and removing observers for live queries.
-* The {url-api-method-database-delete} method
+* The {url-api-class-database}'s {url-api-method-database-close} method now automatically handles stopping open replicators, closing peer-to-peer websocket listener and removing observers for live queries.
+* The {url-api-class-database}'s {url-api-method-database-delete} method
 now automatically handles stopping open replicators, closing peer-to-peer websocket listener and removing observers for live queries.
-* The {url-api-method-replicator-getPendingDocumentIds()} method
+* The Replicator's {url-api-method-replicator-getPendingDocumentIds} method
 +
 This endpoint will retrieve the Ids of all documents currently pending push
 * Meta.revisionID
