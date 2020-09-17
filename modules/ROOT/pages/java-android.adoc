@@ -1,4 +1,3 @@
-
 = Couchbase Lite Java (Android) framework
 :idprefix:
 :idseparator: -
@@ -792,7 +791,38 @@ In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the pro
 
 == Replication
 
+=== Endpoints
 include::partial$replication-introduction.adoc[]
+
+=== Permitting Continuous Mode
+
+When running in continuous mode (`continuous=true`) the replicator monitors the network so it can quickly recover from disruption.
+This monitoring relies on _ACCESS_NETWORK_STATE_ permission, without it recovery could take up to 10 minutes longer.
+
+.Get Permission
+
+. Include a `<uses-permission>` element in the _manifest_
++
+.Example manifest entry
+[source, xml]
+----
+<!--  ... other manifest content ... -->
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<!--  ... other manifest content ... -->
+----
+
+. Request user permission explicitly
++
+You should _explicitly_ request permission from the user, explaining why it's needed.
+Otherwise, Android OS requests permission the first time replicator needs it, but gives no reason.
+
+. Check permission on each use
++
+Users can revoke permission at any time.
+So your app must verify it has permission before each use.
+
+NOTE: Further Information - https://developer.android.com/training/permissions/requesting[Requesting App Permissions, window=_blank]
+
 
 === Compatibility
 
