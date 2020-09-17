@@ -837,8 +837,9 @@
 
 - (void) dontTestCertificatePinning {
     CBLDatabase *database = self.db;
-
+    // Active - Example 4
     // tag::certificate-pinning[]
+    // tag=p2p-act-rep-config-cacert-pinned[]
     NSURL *certURL = [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"cer"];
     NSData *data = [[NSData alloc] initWithContentsOfURL: certURL];
     SecCertificateRef certificate = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
@@ -849,6 +850,8 @@
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database
                                                                                        target:target];
     config.pinnedServerCertificate = (SecCertificateRef)CFAutorelease(certificate);
+
+    // end=p2p-act-rep-config-cacert-pinned[]
     // end::certificate-pinning[]
 
     NSLog(@"%@", config);
@@ -1071,34 +1074,44 @@
 - (void) dontTestCreateSelfSignedCert {
     NSError* error = nil;
     CBLTLSIdentity* identity = nil;
+    // <site-rooot>/objc/advance/objc-p2psync-websocket-using-passive.html
+    // Example-6
     // tag::create-self-signed-cert[]
+    // tag::listener-config-tls-id-SelfSigned[]
 
     NSDictionary* attrs = @{ kCBLCertAttrCommonName: @"Couchbase Inc" };
-    identity = [CBLTLSIdentity createIdentityForServer: YES /* isServer */
-                                            attributes: attrs
-                                            expiration: [NSDate dateWithTimeIntervalSinceNow: 86400]
-                                                 label: @"Server-Cert-Label"
-                                                 error: &error];
+    identity =
+      [CBLTLSIdentity createIdentityForServer: YES /* isServer */
+        attributes: attrs
+        expiration: [NSDate dateWithTimeIntervalSinceNow: 86400]
+        label: @"Server-Cert-Label"
+        error: &error];
+    // end::listener-config-tls-id-SelfSigned[]
     // end::create-self-signed-cert[]
 }
 
 - (void) dontTestListenerCertificateAuthenticatorRootCert {
     CBLURLEndpointListenerConfiguration* config;
 
+    // Example 8-tab1
     // tag::listener-certificate-authenticator-root-urllistener[]
+    // tag::listener-config-client-auth-root[]
+
     NSURL *certURL = [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"cer"];
     NSData *data = [[NSData alloc] initWithContentsOfURL: certURL];
     SecCertificateRef rootCertRef = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
 
     config.authenticator = [[CBLListenerCertificateAuthenticator alloc]
                             initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];
+    // end::listener-config-client-auth-root[]
     // end::listener-certificate-authenticator-root-urllistener[]
 }
 
 - (void) dontTestListenerCertificateAuthenticatorCallback {
     CBLURLEndpointListenerConfiguration* config;
-
+    // Example 8-tab2
     // tag::listener-certificate-authenticator-callback-urllistener[]
+    // tag::listener-config-client-auth-lambda[]
 
     CBLListenerCertificateAuthenticator* listenerAuth =
     [[CBLListenerCertificateAuthenticator alloc] initWithBlock: ^BOOL(NSArray *certs) {
@@ -1114,6 +1127,7 @@
     }];
 
     config.authenticator = listenerAuth;
+    // end::listener-config-client-auth-lambda[]
     // end::listener-certificate-authenticator-callback-urllistener[]
 }
 

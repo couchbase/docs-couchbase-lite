@@ -179,16 +179,29 @@ namespace api_walkthrough
         private static void TestCreateSelfSignedCert()
         {
             TLSIdentity identity;
-            X509Store _store = new X509Store(StoreName.My); // The identity will be stored in the secure storage using the given label.
+            X509Store _store =
+             new X509Store(StoreName.My);
+              // The identity will be stored in the secure
+              // storage using the given label.
             DateTimeOffset fiveMinToExpireCert = DateTimeOffset.UtcNow.AddMinutes(5);
 
             // tag::create-self-signed-cert[]
+            // tag::listener-config-tls-id-SelfSigned[]
             identity = TLSIdentity.CreateIdentity(true, /* isServer */
-                new Dictionary<string, string>() { { Certificate.CommonNameAttribute, "Couchbase Inc" } }, // When creating a certificate, the common name attribute is required for creating a CSR. If the common name is not presented in the certificate, an exception will be thrown.
-                fiveMinToExpireCert, // If the expiration date is not specified, the expiration date of the certificate will be 365 days
+                new Dictionary<string, string>() { { Certificate.CommonNameAttribute, "Couchbase Inc" } },
+                    // The common name attribute is required
+                    // when creating a CSR. If it is not presented
+                    // in the cert, an exception is thrown.
+                fiveMinToExpireCert,
+                    // If the expiration date is not specified,
+                    // the certs expiration will be 365 days
                 _store,
                 "CBL-Server-Cert",
-                null); // The key label to get cert in certificate map. If null, the same default directory for a Couchbase Lite database is used for map.
+                null);  // The key label to get cert in certificate map.
+                        // If null, the same default directory
+                        // for a Couchbase Lite db is used for map.
+
+            // end::listener-config-tls-id-SelfSigned[]
             // end::create-self-signed-cert[]
         }
 
@@ -199,11 +212,15 @@ namespace api_walkthrough
             byte[] data = File.ReadAllBytes("C:\\client.p12"); // PKCS12 data containing private key, public key, and certificates
 
             // tag::import-tls-identity[]
+            // tag::listener-config-tls-id-caCert[]
             identity = TLSIdentity.ImportIdentity(_store,
                 data,
                 "123", // The password that is needed to access the certificate data
                 "CBL-Client-Cert",
-                null); // The key label to get cert in certificate map. If null, the same default directory for a Couchbase Lite database is used for map.
+                null);  // The key label to get cert in certificate map.
+                        // If null, the same default directory
+                        // for a Couchbase Lite db is used for map.
+            // end::listener-config-tls-id-caCert[]
             // end::import-tls-identity[]
         }
 

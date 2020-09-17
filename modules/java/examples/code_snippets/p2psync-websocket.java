@@ -44,11 +44,27 @@ class cMyPassListener {
 
     // end::listener-config-tls-disable[]
     // tag::listener-config-tls-id-full[]
+    // tag::listener-config-tls-id-caCert[]
+    // Use CA Cert
+    // Import a key pair into secure storage
+    // Create a TLSIdentity from the imported key-pair
+    InputStream thisKeyPair = new FileInputStream();
+    thisKeyPair.getClass().getResourceAsStream("serverkeypair.p12");
+
+    TLSIdentity thisIdentity = new TLSIdentity.importIdentity(
+      EXTERNAL_KEY_STORE_TYPE,  // KeyStore type, eg: "PKCS12"
+      thisKeyPair,              // An InputStream from the keystore
+      password,                 // The keystore password
+      EXTERNAL_KEY_ALIAS,       // The alias to be used (in external keystore)
+      null,                     // The key password
+      "test-alias"              // The alias for the imported key
+    ); // <.>
+
+    // end::listener-config-tls-id-caCert[]
     // tag::listener-config-tls-id-SelfSigned[]
     // Use a self-signed certificate
     // Create a TLSIdentity for the server using convenience API.
     // System generates self-signed cert
-    // Work-in-progress. Code snippet coming soon.
     private static final Map<String, String> CERT_ATTRIBUTES; //<.>
     static {
       final Map<String, String> thisMap = new HashMap<>();
@@ -69,25 +85,6 @@ class cMyPassListener {
         "couchbase-docs-cert"); <.>
 
     // end::listener-config-tls-id-SelfSigned[]
-
-    // tag::listener-config-tls-id-caCert[]
-    // Use CA Cert
-    // Import a key pair into secure storage
-    // Create a TLSIdentity from the imported key-pair
-    InputStream thisKeyPair = new FileInputStream();
-
-    thisKeyPair.getClass().getResourceAsStream("serverkeypair.p12");
-
-    TLSIdentity thisIdentity = new TLSIdentity.importIdentity(
-      EXTERNAL_KEY_STORE_TYPE,  // KeyStore type, eg: "PKCS12"
-      thisKeyPair,              // An InputStream from the keystore
-      password,                 // The keystore password
-      EXTERNAL_KEY_ALIAS,       // The alias to be used (in external keystore)
-      null,                     // The key password
-      "test-alias"              // The alias for the imported key
-    );
-
-    // end::listener-config-tls-id-caCert[]
     // tag::listener-config-tls-id-anon[]
     // Use an Anonymous Self-Signed Cert
     thisConfig.setTlsIdentity(null); // <.>
@@ -108,25 +105,23 @@ class cMyPassListener {
         Arrays.equals(password, thisPassword)));
 
     // end::listener-config-client-auth-pwd[]
-    // tag::listener-config-client-root-ca[]
+    // tag::listener-config-client-auth-root[]
     // Configure the client authenticator
-    // to validate using ROOT CA <.>
-    // thisClientID.certs is a list containing a client cert to accept
-    // and any other certs needed to complete a chain between the client cert
-    // and a CA
-    TLSIdentity thisServerID = getIdentity(“server”)
+    // to validate using ROOT CA
+    TLSIdentity thisServerID = getIdentity(“server”) // <.>
     TLSIdentity thisClientID = getIdentity(“authorizedClient”)
 
     thisConfig.setTlsIdentity = thisServerID;
     thisConfig.setAuthenticator(
-      new ListenerCertificateAuthenticator(thisClientID.getCerts()));
+      new ListenerCertificateAuthenticator(thisClientID.getCerts())); // <.> <.> <.>
 
-    URLEndpointListener thisListener = new URLEndpointListener(thisConfig)
+    URLEndpointListener thisListener = new URLEndpointListener(thisConfig) //
 
-    // end::listener-config-client-root-ca[]
-    // tag::listener-config-client-auth-self-signed[]
+    // end::listener-config-client-auth-root[]
+    // tag::listener-config-client-auth-lambda[]
     // Work in progress. Code snippet to be provided.
-    // end::listener-config-client-auth-self-signed[]
+
+    // end::listener-config-client-auth-lambda[]
     // tag::listener-start[]
     // Initialize the listener
     final URLEndpointListener thisListener
@@ -447,10 +442,10 @@ public class Examples {
 
     // end::p2p-act-rep-config-self-cert[]
     // tag::p2p-act-rep-config-pinnedcert[]
-
     // Return the remote pinned cert (the listener's cert)
     byte returnedCert
-     = new byte(thisConfig.getPinnedCertificate()); // Get listener cert if pinned
+    = new byte(thisConfig.getPinnedCertificate()); // Get listener cert if pinned
+
     // end::p2p-act-rep-config-pinnedcert[]
     // Configure Client Security // <.>
     // tag::p2p-act-rep-auth[]
@@ -465,7 +460,21 @@ public class Examples {
     // end::p2p-act-rep-auth[]
     // end::p2p-act-rep-config-tls-full[]
     // tag::p2p-tlsid-tlsidentity-with-label[]
-    // Work in progress. Code snippet to be provided.
+    // ... other replicator configuration
+    // Provide a client certificate to the server for authentication
+    final TLSIdentity thisClientId =
+      TLSIdentity.getIdentity(
+        _store,     // keystore holding private key and cert chain
+        "clientId", // key label/alias
+        null        // key password as required
+      ); // <.>
+    if (thisClientId == null) { throw new IllegalStateException("Client id not found"); } // Error path
+
+    thisConfig.setAuthenticator(
+      new ClientCertificateAuthenticator(thisClientId)); // <.>
+
+    // ... other replicator configuration
+    // final thisReplicator(thisConfig);
 
     // end::p2p-tlsid-tlsidentity-with-label[]
     // tag::p2p-act-rep-config-cacert-pinned[]
@@ -477,12 +486,11 @@ public class Examples {
     // end::p2p-act-rep-config-cacert-pinned[]
     // tag::p2p-act-rep-config-conflict[]
     /* Optionally set custom conflict resolver call back */
-    thisConfig.setConflictResolver( /* define resolver function */); // <.>
+    thisConfig.setConflictResolver( /* user supplied code */ ); // <.>
 
     // end::p2p-act-rep-config-conflict[]
     // tag::p2p-act-rep-start-full[]
-    // Create replicator hold a reference somewhere
-    // to prevent the Replicator from being GCed)
+    // Create replicator
     final Replicator thisReplicator = new Replicator(thisConfig); // <.>
 
     // tag::p2p-act-rep-add-change-listener[]
@@ -683,6 +691,15 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [th
 <.> Configure to accept only CA certs
 <.> Configure the pinned certificate using data from the byte array `cert`
 // end::p2p-act-rep-config-cacert-pinned-callouts[]
+
+// tag::p2p-tlsid-tlsidentity-with-label-callouts[]
+<.> Attempt to get the identity from secure storage
+<.> Set the authenticator to ClientCertificateAuthenticator and  the configure it to use the retrieved identity
+
+// end::p2p-tlsid-tlsidentity-with-label-callouts[]
+
+
+
 
 
     // thisConfig.setAuthenticator(

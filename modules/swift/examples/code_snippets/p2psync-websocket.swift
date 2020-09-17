@@ -663,9 +663,9 @@ class cMyPassListener {
 
     // end::listener-config-tls-id-caCert[]
     // tag::listener-config-tls-id-SelfSigned[]
-    let attrs = [certAttrCommonName: "Couchbase Inc"]
+    let attrs = [certAttrCommonName: "Couchbase Inc"] // <.>
     let thisIdentity =
-      try TLSIdentity.createIdentity(forServer: true,
+      try TLSIdentity.createIdentity(forServer: true, /* isServer */
             attributes: attrs,
             expiration: Date().addingTimeInterval(86400),
             label: "Server-Cert-Label") // <.>
@@ -884,14 +884,16 @@ class myActPeerClass {
         // USE KEYCHAIN IDENTITY IF EXISTS
         // Check if Id exists in keychain. If so use that Id
         do {
-            if let thisIdentity = try TLSIdentity.identity(withLabel: "doco-sync-server") {
+            if let thisIdentity =
+              try TLSIdentity.identity(withLabel: "doco-sync-server") {
                 print("An identity with label : doco-sync-server already exists in keychain")
                 return thisIdentity
-                }
+              } // <.>
         } catch
           {return nil}
         // end::p2p-tlsid-check-keychain[]
-        thisAuthenticator.ClientCertificateAuthenticator(identity: thisIdentity )
+        thisAuthenticator.ClientCertificateAuthenticator(identity: thisIdentity ) // <.>
+
         config.authenticator = thisAuthenticator
 
     // end::p2p-tlsid-tlsidentity-with-label[]

@@ -52,6 +52,7 @@ include::{root-partials}_block-caveats.adoc[tags=securestorage]
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
 <<simple-replication-to-listener>> shows the initialization and configuration process.
 
+// Example 1
 [#simple-replication-to-listener]
 .Replication configuration and initialization
 // [%collapsible]
@@ -59,7 +60,7 @@ You should configure and initialize a replicator for each Couchbase Lite databas
 
 [source, {source-language}]
 ----
-include::{snippet-p2psync-ws}[tags="p2p-act-rep-func;!p2p-act-rep-config-cacert;!p2p-act-rep-config-pinnedcert;!p2p-tlsid-tlsidentity-with-label;!p2p-act-rep-config-cacert-pinned", indent=0]
+include::{snippet-p2psync-ws}[tags="p2p-act-rep-func;!p2p-act-rep-config-cacert;!p2p-act-rep-config-pinnedcert;!p2p-tlsid-tlsidentity-with-label;!p2p-act-rep-config-cacert-pinned";!p2p-tlsid-tlsidentity-with-label, indent=0]
 ----
 ifeval::["{param-platform}"=="{platform-android}"]
 [NOTE]
@@ -67,6 +68,8 @@ ifeval::["{param-platform}"=="{platform-android}"]
 include::{root-partials}_block-caveats.adoc[tags=android-threads]
 --
 endif::[]
+
+*Notes on Example*
 
 <.> Use the {url-api-class-replicator-config} class's constructor -- {url-api-constructor-replicator-config-db-tgt} -- to initialize the replicator configuration with the local database -- see also: <<configure-target>>
 
@@ -125,12 +128,16 @@ endif::[]
 
 // You will also need any security credentials provided (for example, user name and password or Cert) for use in the authentication phase of configuration.
 
+// Example 2
 .Set target and database config properties
 ====
 [source, {source-language}]
 ----
 include::{snippet-p2psync-ws}[tags="p2p-act-rep-initialize", indent=0]
 ----
+
+*Notes on Example*
+
 <.> Note use of the `wss://` prefix to ensure TLS encryption (strongly recommended in production).
 ====
 
@@ -151,6 +158,7 @@ endif::[]
 ** Continuous -- remaining active indefinitely to replicate changed documents (`continuous=true`).
 ** Ad-hoc -- a one-shot replication of changed documents (`continuous=false`).
 
+// Example 3
 .Configure replicator type and mode
 ====
 
@@ -164,7 +172,7 @@ include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-cont, indent=0]
 ====
 
 === Authenticating the Listener
-Here we define how the client is to verify that the server (listener) is one it is prepared to interact with.
+Define the credentials the client is expecting fom the server in order to ensure that the server (listener) is one it is prepared to interact with.
 
 :this-prop: {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate}
 Use `{url-api-class-replicator-config}`, with its {this-prop}
@@ -175,6 +183,7 @@ parameter, to tell the replicator how to verify server-supplied TLS server certi
 * If there are no pinned certs and {this-prop} is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
 * If there are no pinned certificates and {this-prop} is `false` (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates (probably of length 1) whose root is signed by one of the certificates in the system CA bundle.
 
+// Example 4
 .Set Server TLS security
 =====
 [{tabs}]
@@ -183,6 +192,7 @@ parameter, to tell the replicator how to verify server-supplied TLS server certi
 CA Cert::
 +
 --
+Set the client to expect and accept only Root CA Certs
 
 [source, {source-language}]
 ----
@@ -190,6 +200,7 @@ CA Cert::
 include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-cacert, indent=0]
 
 ----
+*Notes on Example*
 
 <.> This is the default.
 Only CA Certificates are allowed.
@@ -201,11 +212,7 @@ Self signed certificates are not allowed.
 Self Signed Cert::
 +
 --
-// TODO : Two examples
-// Example 1:
-// Use .selfsignedcert mode and no pinned certificate (This mode ignores the server cert)
-// Example 2:
-// Use .cacert mode and show pinned certificate (pinned certificate can be self signed or CA cert)
+Set the client to expect and accept only self-signed certificates
 
 [source, {source-language}]
 ----
@@ -213,6 +220,7 @@ Self Signed Cert::
 include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-self-cert, indent=0]
 
 ----
+*Notes on Example*
 
 <.> Set this to `true` to accept any self signed cert.
 Any certificates that are not self-signed are rejected.
@@ -223,7 +231,7 @@ Any certificates that are not self-signed are rejected.
 Pinned Certificate::
 +
 --
-Set the server's SSL certificate (perhaps bundled with the app) to be used for validation, including it in the replicator config.
+Set the client to expect and accept only self-signed certificates and validate it against a pinned certificate.
 
 [source, {source-language}]
 ----
@@ -246,6 +254,7 @@ We use {url-api-class-replicator-config}'s {url-api-prop-replicator-config-auth}
 ==== Basic Authentication
 Use the `{url-api-class-replicator-config-basic-auth}` to supply basic authentication credentials (username and password).
 
+// Example 5
 [[basic-authentication]]
 .Basic Authentication
 ====
@@ -264,7 +273,7 @@ include::{snippet-p2psync-ws}[tags="p2p-act-rep-auth", indent=0]
 Use the `{url-api-class-replicator-config-cert-auth}` to configure the client TLS certificates to be presented to the server, on connection.
 This applies only to the {url-api-class-urlendpointlistener}.
 
-NOTE: The *server* (listener) must have `disableTLS` set `false` and have a ClientCertificateAuthenticator configured, or it will never ask for this client's certificate.
+NOTE: The *server* (listener) must have `disableTLS` set `false` and have a {url-api-class-replicator-config-cert-auth} configured, or it will never ask for this client's certificate.
 
 How you derive the certificate to be presented to the server will depend on the certificates that server is configured to accept:
 
@@ -277,7 +286,7 @@ endif::[]
 
 
 // See {xref-cbl-pg-p2p-manage-tls-id} for more on how to do this.
-
+// Example 6
 [[configuring-client-authentication]]
 .Client Cert Authentication
 ====
@@ -289,8 +298,16 @@ This example shows client certificate authentication using an identity from secu
 include::{snippet-p2psync-ws}[tags=p2p-tlsid-tlsidentity-with-label, indent=0]
 
 ----
+
+*Notes on Example*
+
+<.> Ensure self-signed certificates are denied
+<.> Attempt to get the identity from secure storage
+<.> Set the authenticator to {url-api-class-replicator-config-cert-auth} and configure it to use the retrieved identity
+
+
 // include::{snippet-p2psync-ws}[tags=p2p-tlsid-tlsidentity-with-label, indent=0]
-include::{snippet-p2psync-ws}[tags=p2p-tlsid-tlsidentity-with-label-callouts, indent=0]
+// include::{snippet-p2psync-ws}[tags=p2p-tlsid-tlsidentity-with-label-callouts, indent=0]
 
 ====
 
@@ -300,12 +317,21 @@ include::{snippet-p2psync-ws}[tags=p2p-tlsid-tlsidentity-with-label-callouts, in
 Use the `{url-api-class-replicator}` class's {url-api-constructor-replicator-init-config} constructor, to initialize the replicator with the configuration you have defined.
 You can, optionally, add a change listener (see <<monitor-sync>>) before starting the replicator running using {url-api-method-replicator-start}.
 
+// Example 7
 .Initialize and run replicator
 ====
 [source, {source-language}]
 ----
+
 include::{snippet-p2psync-ws}[tags=p2p-act-rep-start-full;!p2p-act-rep-add-change-listener, indent=0]
+
 ----
+
+*Notes on Example*
+
+<.> Initialize the replicator with the configiuration
+<.> Start the replictor
+
 ====
 
 == Monitor Sync
@@ -361,17 +387,23 @@ include::{snippet-p2psync-ws}[tags=p2p-act-rep-status,indent=0]
 
 == Stop Sync
 
-<.> Stopping the replication is straightforward using the {url-api-method-replicator-stop} method.
+TIP: If you added an optional change listener (see <<monitor-sync>> for how) you should also remove it using the {url-api-method-replicator-rmv-change-listener} method.
 
+// Example 9
 .Stop replicator
 ====
 [source, {source-language}]
 ----
-include::{snippet-p2psync-ws}[tags=p2p-act-rep-stop, indent=0]
-----
-====
 
-TIP: If you added an optional change listener (see <<monitor-sync>> for how) you should also remove it using the {url-api-method-replicator-rmv-change-listener} method.
+include::{snippet-p2psync-ws}[tags=p2p-act-rep-stop, indent=0]
+
+----
+
+*Notes on Example*
+
+<.> Stopping the replication is straightforward using the {url-api-method-replicator-stop} method.
+
+====
 
 == Conflict Resolution
 

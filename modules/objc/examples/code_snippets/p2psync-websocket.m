@@ -52,7 +52,7 @@ class cMyPassListener {
     // Use CA Cert
     // Create a TLSIdentity from a key-pair and
     // certificate in secure storage
-
+    Under construction
 
     // end::listener-config-tls-id-caCert[]
     // tag::listener-config-tls-id-SelfSigned[]
@@ -391,17 +391,18 @@ class cMyGetCert1{
         //var thisData : CFData?
         // tag::p2p-tlsid-check-keychain[]
         // tag::p2p-tlsid-tlsidentity-with-label[]
-        // USE KEYCHAIN IDENTITY IF EXISTS
-        // Check if Id exists in keychain. If so use that Id
+
+        // Check if Id exists in keychain and if so, use it
         do {
             if let thisIdentity = try TLSIdentity.identity(withLabel: "doco-sync-server") {
                 print("An identity with label : doco-sync-server already exists in keychain")
                 return thisIdentity
-                }
+                } //<.>
         } catch
           {return nil}
-// end::p2p-tlsid-check-keychain[]
-        thisAuthenticator.ClientCertificateAuthenticator(identity: thisIdentity )
+        // end::p2p-tlsid-check-keychain[]
+        thisAuthenticator.ClientCertificateAuthenticator(identity: thisIdentity ) // <.>
+
         thisConfig.thisAuthenticator
 // end::p2p-tlsid-tlsidentity-with-label[]
 
