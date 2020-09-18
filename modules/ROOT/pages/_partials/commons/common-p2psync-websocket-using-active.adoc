@@ -174,14 +174,15 @@ include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-cont, indent=0]
 === Authenticating the Listener
 Define the credentials the client is expecting fom the server in order to ensure that the server (listener) is one it is prepared to interact with.
 
-:this-prop: {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate}
-Use `{url-api-class-replicator-config}`, with its {this-prop}
-//{url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate}
-parameter, to tell the replicator how to verify server-supplied TLS server certificates.
+Note that the client cannot authenticate the server if TLS is turned off. When TLS is enabled (default) the client _must_ authenticate the server. If the server cannot provide acceptable credentials then the connection will fail.
+
+:this-prop:
+:this-prop:
+Use `{url-api-class-replicator-config}` methods  {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} and {url-api-prop-replicator-config-setPinnedServerCertificate}, to tell the replicator how to verify server-supplied TLS server certificates.
 
 * If there are pinned certificates, nothing else matters, the server cert must *exactly* match one of the pinned certs.
-* If there are no pinned certs and {this-prop} is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
-* If there are no pinned certificates and {this-prop} is `false` (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates (probably of length 1) whose root is signed by one of the certificates in the system CA bundle.
+* If there are no pinned certs and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
+* If there are no pinned certificates and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `false` (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
 
 // Example 4
 .Set Server TLS security
@@ -192,7 +193,7 @@ parameter, to tell the replicator how to verify server-supplied TLS server certi
 CA Cert::
 +
 --
-Set the client to expect and accept only Root CA Certs
+Set the client to expect and accept only CA attested certificates.
 
 [source, {source-language}]
 ----
@@ -203,8 +204,7 @@ include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-cacert, indent=0]
 *Notes on Example*
 
 <.> This is the default.
-Only CA Certificates are allowed.
-They must be a certificate from a trusted root.
+Only certificate chains with roots signed by a trusted CA are allowed.
 Self signed certificates are not allowed.
 
 --
@@ -231,7 +231,7 @@ Any certificates that are not self-signed are rejected.
 Pinned Certificate::
 +
 --
-Set the client to expect and accept only self-signed certificates and validate it against a pinned certificate.
+Set the client to expect and accept only a pinned certificate.
 
 [source, {source-language}]
 ----
@@ -295,13 +295,14 @@ This example shows client certificate authentication using an identity from secu
 [source, {source-language}]
 ----
 
+// include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-cacert, indent=0]
 include::{snippet-p2psync-ws}[tags=p2p-tlsid-tlsidentity-with-label, indent=0]
 
 ----
 
 *Notes on Example*
 
-<.> Ensure self-signed certificates are denied
+// <.> Only accept CA attested certificates
 <.> Attempt to get the identity from secure storage
 <.> Set the authenticator to {url-api-class-replicator-config-cert-auth} and configure it to use the retrieved identity
 
@@ -345,8 +346,9 @@ Use this to monitor changes and to inform on sync progress, as shown below; this
 You can use the {url-api-class-replicator} class's {url-api-property-replicator-status} property to check the replicator status.
 That is, whether it is actively transferring data or if it has stopped.
 
-// ifeval::["{source-language"=="objc"]
-Alternatively, use the {url-api-class-replicator-status} class to get status information. The returned _ReplicationStatus_ structure comprises:
+// // ifeval::["{source-language"=="objc"]
+// Alternatively, use the {url-api-class-replicator-status} class to get status information.
+The returned _ReplicationStatus_ structure comprises:
 
 * {url-api-enum-replicator-activity} -- stopped, offline, connecting, idle or busy
 * {url-api-enum-replicator-progress}
@@ -413,11 +415,14 @@ To use a different policy, specify a _conflict resolver_ using {url-api-prop-rep
 
 For more complex solutions you can provide a custom conflict resolver - see: {xref-cbl-pg-conflict-custom}.
 
-//TODO: Update example to show how the confog resolver parameter is set (refer to the stanadrd replicator code)
-
+// Example 10
 [#using-conflict-resolvers]
 include::{root-partials}handling-conflicts.adoc[tags=handling-conflicts-conflict-resolvers]
 
+Just as a replicator may observe a conflict -- when updating a document that has changed both in the local database and in a remote database -- any attempt to save a document may also observe a conflict, if a replication has taken place since the local app retrieved the document from the database. To address that possibility, a version of the `Database.save()` method also takes a conflict resolver as shown in <<merging-document-properties>>.
+
+// Example 11
+[#merging-document-properties]
 include::{root-partials}handling-conflicts.adoc[tags=handling-conflicts-custom-merge]
 
 For more on replicator conflict resolution see: {xref-cbl-pg-conflict}.
