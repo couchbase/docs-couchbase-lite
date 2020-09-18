@@ -9,19 +9,12 @@ import MultipeerConnectivity
 
 class cMyPassListener {
   // tag::listener-initialize[]
-  // tag::listener-local-db[]
-  // . . . preceding application logic . . .
-  fileprivate  var _allowlistedUsers:[[String:String]] = []
-  fileprivate var _thisListener:URLEndpointListener?
-  fileprivate var thisDB:Database?
-  // Include websockets listener initializer code
-  // func fMyPassListener() {
-  CBLDatabase *thisDB = self.db;
-  // end::listener-local-db[]
   // tag::listener-config-db[]
-  // Initialize the listener config
-  CBLURLEndpointListenerConfiguration* thisConfig; // <.>
-  thisConfig = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: database];
+  // Initialize the listener config <.>
+  CBLURLEndpointListenerConfiguration* thisConfig;
+  thisConfig =
+    [[CBLURLEndpointListenerConfiguration alloc]
+      initWithDatabase: database];
 
     // end::listener-config-db[]
     // tag::listener-config-port[]
@@ -34,52 +27,20 @@ class cMyPassListener {
 
     // end::listener-config-netw-iface[]
     // tag::listener-config-delta-sync[]
-    thisConfig.enableDeltaSync = true // <.>
+    thisConfig.enableDeltaSync = true; // <.>
 
     // end::listener-config-delta-sync[]
-    // tag::listener-config-tls-full[]
     // Configure server security
     // tag::listener-config-tls-enable[]
     thisConfig.disableTLS  = false; // <.>
 
     // end::listener-config-tls-enable[]
-    // tag::listener-config-tls-disable[]
-    thisConfig.disableTLS  = true; // <.>
 
-    // end::listener-config-tls-disable[]
-    // tag::listener-config-tls-id-full[]
-    // tag::listener-config-tls-id-caCert[]
-    // Use CA Cert
-    // Create a TLSIdentity from a key-pair and
-    // certificate in secure storage
-    Under construction
-
-    // end::listener-config-tls-id-caCert[]
-    // tag::listener-config-tls-id-SelfSigned[]
-    // Use a self-signed certificate
-    NSDictionary* attrs =
-      @{ kCBLCertAttrCommonName: @"Couchbase Inc" }; // <.>
-
-    thisIdentity =
-      [CBLTLSIdentity createIdentityForServer: YES /* isServer */
-          attributes: attrs
-          expiration: [NSDate dateWithTimeIntervalSinceNow: 86400]
-                label: @" couchbase-docs-cert"
-                error: &error]; // <.>
-
-    // end::listener-config-tls-id-SelfSigned[]
     // tag::listener-config-tls-id-anon[]
     // Use an anonymous self-signed cert
     thisConfig.tlsIdentity = nil; // <.>
 
     // end::listener-config-tls-id-anon[]
-    // tag::listener-config-tls-id-set[]
-    // set the TLS Identity
-    thisConfig.tlsIdentity =
-      TLSIdentity(withLabel:thisIdentity); // <.>
-
-    // end::listener-config-tls-id-set[]
-    // end::listener-config-tls-id-full[]
     // tag::listener-config-client-auth-pwd[]
     // Configure Client Security using an Authenticator
     // For example, Basic Authentication <.>
@@ -93,59 +54,23 @@ class cMyPassListener {
       }];
 
     // end::listener-config-client-auth-pwd[]
-    // tag::listener-config-client-auth-root[]
-    // Configure the client authenticator
-    NSURL *certURL =
-      [[NSBundle mainBundle]
-        URLForResource: @"cert" withExtension: @"cer"]; // <.>
-    NSData *data =
-      [[NSData alloc]
-        initWithContentsOfURL: certURL];
-    SecCertificateRef rootCertRef =
-      SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);  // <.>
-
-    thisConfig.authenticator =
-      [[CBLListenerCertificateAuthenticator alloc]
-        initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];  // <.>
-
-    // end::listener-config-client-auth-root[]
-    // tag::listener-config-client-auth-lambda[]
-    // Authenticate self-signed cert
-    // using application logic
-    CBLListenerCertificateAuthenticator* thisListenerAuth =
-      [[CBLListenerCertificateAuthenticator alloc]
-        initWithBlock: ^BOOL(NSArray *certs) {
-          SecCertificateRef cert =
-            (__bridge SecCertificateRef)(certs[0]); // <.>
-          CFStringRef cnRef;
-          OSStatus status = SecCertificateCopyCommonName(cert, &cnRef); // <.>
-          if (status == errSecSuccess) {
-              NSString* cn = (NSString*)CFBridgingRelease(cnRef);
-              if ([self._allowlistedUsers containsObject: cn])
-                  return YES;
-          }
-          return NO;
-      }];  // <.> <.>
-
-    thisConfig.authenticator = thisListenerAuth; // <.>
-
-    // end::listener-config-client-auth-lambda[]
     // tag::listener-start[]
     // tag::listener-init[]
-    // Initialize the listener
+    // Initialize the listener <.>
     CBLURLEndpointListener* thisListener = nil;
-    thisListener = [[CBLURLEndpointListener alloc] initWithConfig: thisConfig]; // <.>
-    }
+    thisListener =
+      [[CBLURLEndpointListener alloc] initWithConfig: thisConfig];
 
     // end::listener-init[]
-    // start the listener
+    // start the listener <.>
     BOOL success = [thisListener startWithError: &error];
     if (!success) {
         NSLog(@"Cannot start the listener: %@", error);
-    } // <.>
+    }
 
     // end::listener-start[]
 // end::listener-initialize[]
+  } // end of class
 
 // tag::listener-stop[]
     [thisListener stop];
@@ -154,6 +79,114 @@ class cMyPassListener {
 
   }
 }
+
+
+// Additional Snippets
+
+
+
+// tag::listener-local-db[]
+// . . . preceding application logic . . .
+fileprivate  var _allowlistedCommonNames:[[String:String]] = []
+fileprivate var _thisListener:URLEndpointListener?
+fileprivate var thisDB:Database?
+// Include websockets listener initializer code
+// func fMyPassListener() {
+CBLDatabase *thisDB = self.db;
+// end::listener-local-db[]
+
+// tag::listener-config-tls-full[]
+  // Configure server authentication
+  // tag::listener-config-tls-disable[]
+  thisConfig.disableTLS  = true; // <.>
+
+  // end::listener-config-tls-disable[]
+
+  // EXAMPLE 6
+  // tag::listener-config-tls-id-full[]
+  // tag::listener-config-tls-id-caCert[]
+  // Use CA Cert
+  // Create a TLSIdentity from a key-pair and
+  // certificate in secure storage
+    NSURL *certURL =
+      [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"p12"]; // <.>
+
+    NSData *data =
+      [[NSData alloc] initWithContentsOfURL: certURL];
+    CBLTLSIdentity* thisIdentity =
+      [CBLTLSIdentity importIdentityWithData: data
+        password: @"123"
+        label: @"couchbase-docs-cert"
+        error: &error]; // <.>
+
+    config.tlsIdentity = thisIdentity; // <.>
+
+  // end::listener-config-tls-id-caCert[]
+  // tag::listener-config-tls-id-SelfSigned[]
+  // Use a self-signed certificate
+  NSDictionary* attrs =
+    @{ kCBLCertAttrCommonName: @"Couchbase Inc" }; // <.>
+
+  thisIdentity =
+    [CBLTLSIdentity createIdentityForServer: YES /* isServer */
+        attributes: attrs
+        expiration: [NSDate dateWithTimeIntervalSinceNow: 86400]
+              label: @" couchbase-docs-cert"
+              error: &error]; // <.>
+
+  // end::listener-config-tls-id-SelfSigned[]
+      // tag::listener-config-tls-id-set[]
+  // set the TLS Identity
+  thisConfig.tlsIdentity = thisIdentity; // <.>
+
+  // end::listener-config-tls-id-set[]
+  // end::listener-config-tls-id-full[]
+// end::listener-config-tls-full[]
+
+// EXAMPLE 8
+// tag::listener-config-client-auth-root[]
+// Configure the client authenticator
+NSURL *certURL =
+  [[NSBundle mainBundle]
+    URLForResource: @"cert" withExtension: @"p12"]; // <.>
+NSData *data =
+  [[NSData alloc]
+    initWithContentsOfURL: certURL];
+SecCertificateRef rootCertRef =
+  SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);  // <.>
+
+thisConfig.authenticator =
+  [[CBLListenerCertificateAuthenticator alloc]
+    initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];  // <.> <.>
+
+// end::listener-config-client-auth-root[]
+// tag::listener-config-client-auth-lambda[]
+// Authenticate self-signed cert
+// using application logic
+CBLListenerCertificateAuthenticator* thisListenerAuth =
+  [[CBLListenerCertificateAuthenticator alloc]
+    initWithBlock: ^BOOL(NSArray *certs) {
+      SecCertificateRef cert =
+        (__bridge SecCertificateRef)(certs[0]); // <.>
+      CFStringRef cnRef;
+      OSStatus status = SecCertificateCopyCommonName(cert, &cnRef); // <.>
+      if (status == errSecSuccess) {
+          NSString* cn = (NSString*)CFBridgingRelease(cnRef);
+          if ([self._allowlistedCommonNames containsObject: cn])
+              return YES;
+      }
+      return NO;
+  }];  // <.>
+
+thisConfig.authenticator = thisListenerAuth; // <.>
+
+// end::listener-config-client-auth-lambda[]
+
+
+
+
+
+
 
 // tag::xlistener-config-tls-disable[]
 thisConfig.disableTLS  = true
@@ -173,8 +206,8 @@ thisConfig.enableDeltaSync = true
 
 
 // tag::listener-status-check[]
-let totalConnections = thisListener.status.connectionCount
-let activeConnections = thisListener.status.activeConnectionCount
+NSUInteger totalConnections = thisListener.status.connectionCount;
+NSUInteger activeConnections = thisListener.status.activeConnectionCount;
 
 // end::listener-status-check[]
 
@@ -195,7 +228,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init {
     var cert:SecCertificate
     var certCommonName:CFString?
     let status=SecCertificateCopyCommonName(cert, &certCommonName)
-    if (self._allowlistedUsers.contains(["name": certCommonName! as String])) {
+    if (self._allowlistedCommonNames.contains(["name": certCommonName! as String])) {
         return true
     }
     return false
@@ -499,12 +532,7 @@ do {
 
 // tag::p2p-tlsid-delete-id-from-keychain[]
 
-do {
-    try TLSIdentity.identity(withIdentity: thisSecId)
-} catch {
-    print("Error while deleting cert : \(error)")
-    return nil
-}
+[CBLTLSIdentity deleteIdentityWithLabel:thisSecId error: &error];
 
 // end::p2p-tlsid-delete-id-from-keychain[]
 
