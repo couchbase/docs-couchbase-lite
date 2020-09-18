@@ -439,7 +439,7 @@ public class Examples {
     final ReplicatorConfiguration thisConfig
        = new ReplicatorConfiguration(
           thisDB,
-          URLEndpoint(URI("wss://listener.com:port"))); // <.>
+          URLEndpoint(URI("wss://listener.com:8954"))); // <.>
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config-type[]
@@ -450,7 +450,7 @@ public class Examples {
     // end::p2p-act-rep-config-type[]
     // tag::p2p-act-rep-config-cont[]
     // Configure Sync Mode
-    thisConfig.setContinuous(true); // default value
+    thisConfig.setContinuous(false); // default value
 
     // end::p2p-act-rep-config-cont[]
     // tag::p2p-act-rep-config-tls-full[]
@@ -489,7 +489,7 @@ public class Examples {
     // Provide a client certificate to the server for authentication
     final TLSIdentity thisClientId =
       TLSIdentity.getIdentity(
-        _store,     // keystore holding private key and cert chain
+        store,     // keystore holding private key and cert chain
         "clientId", // key label/alias
         null        // key password as required
       ); // <.>
@@ -503,8 +503,6 @@ public class Examples {
 
     // end::p2p-tlsid-tlsidentity-with-label[]
     // tag::p2p-act-rep-config-cacert-pinned[]
-    // Only CA Certs accepted
-    thisConfig.setAcceptOnlySelfSignedServerCertificate(false); // <.>
     // Use the pinned certificate from the byte array (cert)
     thisConfig.setPinnedServerCertificate(cert.getEncoded()); // <.>
 
@@ -518,10 +516,10 @@ public class Examples {
     // Create replicator
     final Replicator thisReplicator = new Replicator(thisConfig); // <.>
 
+    // Optionally add a change listener <.>
     // tag::p2p-act-rep-add-change-listener[]
-    // Optionally add a change listener
     ListenerToken thisListener
-      = new thisReplicator.addChangeListener(change -> { // <.>
+      = new thisReplicator.addChangeListener(change -> {
         if (change.getStatus().getError() != null) {
           Log.i(TAG, "Error code ::  " +
             change.getStatus().getError().getCode());
