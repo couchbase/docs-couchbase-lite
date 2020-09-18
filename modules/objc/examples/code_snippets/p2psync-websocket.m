@@ -288,25 +288,18 @@ class myActPeerClass {
 
     // end::p2p-act-rep-config-cont[]
     // tag::p2p-act-rep-config-tls-full[]
-    // tag::p2p-act-rep-config-cacert[]
-    // Configure Server Security -- only accept CA Certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = NO; // <.>
-
-    // end::p2p-act-rep-config-cacert[]
     // tag::p2p-act-rep-config-self-cert[]
-    // Configure Server Security -- only accept self-signed certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <.>
+    // Configure Server Authentication
+    // Here - expect and accept self-signed certs
+    thisConfig.acceptOnlySelfSignedServerCertificate = YES; // <.>
 
     // end::p2p-act-rep-config-self-cert[]
-    // tag::p2p-act-rep-config-pinnedcert[]
-    // Return the remote pinned cert (the listener's cert)
-    thisConfig.pinnedServerCertificate = thisCert; // Get listener cert if pinned
-
-    // end::p2p-act-rep-config-pinnedcert[]
-    // Configure Client Security // <.>
+    // Configure Client Authentication
     // tag::p2p-act-rep-auth[]
-    //  Set Authentication Mode
-    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"john" password:@"pass"];
+    // Here set client to use basic authentication
+    // Providing username and password credentials
+    // If prompted for them by server
+    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"john" password:@"pass"]; // <.>
 
     // end::p2p-act-rep-auth[]
     // end::p2p-act-rep-config-tls-full[]
@@ -320,19 +313,19 @@ class myActPeerClass {
     // Apply configuration settings to the replicator
     _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; // <.>
 
+    // Optionally add a change listener <.>
     // tag::p2p-act-rep-add-change-listener[]
-    // Optionally add a change listener
-    // retain token for use in deletion
+    // Retain token for use in deletion
     id<CBLListenerToken> thisListenerToken
       = [thisReplicator addChangeListener:^(CBLReplicatorChange *thisChange) {
     // tag::p2p-act-rep-status[]
           if (thisChange.status.activity == kCBLReplicatorStopped) {
             NSLog(@"Replication stopped");
             } else {
-            NSLog(@"Status: " + thisChange.status.activity);
+            NSLog(@"Status: %d", thisChange.status.activity);
             };
     // end::p2p-act-rep-status[]
-        }]; // <.>
+        }];
 // end::p2p-act-rep-add-change-listener[]
 // tag::p2p-act-rep-start[]
     // Run the replicator using the config settings
@@ -346,12 +339,26 @@ class myActPeerClass {
     func mystopfunc() {
 // tag::p2p-act-rep-stop[]
     // Remove the change listener
-    [thisReplicator removeChangeListenerWithToken: thisLstenerToken];
+    [thisReplicator removeChangeListenerWithToken: thisListenerToken];
 
     // Stop the replicator
-    [thisReplicator start];
+    [thisReplicator stop];
 // end::p2p-act-rep-stop[]
 }
+
+// Additional Snippets from above
+    // tag::p2p-act-rep-config-cacert[]
+    // Configure Server Security -- only accept CA Certs
+    thisConfig.acceptOnlySelfSignedServerCertificate = NO; // <.>
+
+    // end::p2p-act-rep-config-cacert[]
+
+
+    // tag::p2p-act-rep-config-pinnedcert[]
+    // Return the remote pinned cert (the listener's cert)
+    thisConfig.pinnedServerCertificate = thisCert; // Get listener cert if pinned
+
+    // end::p2p-act-rep-config-pinnedcert[]
 
 
 
@@ -389,22 +396,17 @@ class cMyGetCert1{
         let thisLabel : String? = "doco-sync-server"
 
         //var thisData : CFData?
-        // tag::p2p-tlsid-check-keychain[]
         // tag::p2p-tlsid-tlsidentity-with-label[]
-
+        // tag::p2p-tlsid-check-keychain[]
         // Check if Id exists in keychain and if so, use it
-        do {
-            if let thisIdentity = try TLSIdentity.identity(withLabel: "doco-sync-server") {
-                print("An identity with label : doco-sync-server already exists in keychain")
-                return thisIdentity
-                } //<.>
-        } catch
-          {return nil}
-        // end::p2p-tlsid-check-keychain[]
-        thisAuthenticator.ClientCertificateAuthenticator(identity: thisIdentity ) // <.>
+        CBLTLSIdentity* identity =
+          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &error]; // <.>
 
-        thisConfig.thisAuthenticator
-// end::p2p-tlsid-tlsidentity-with-label[]
+        // end::p2p-tlsid-check-keychain[]
+        thisConfig.authenticator =
+          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; // <.>
+
+        // end::p2p-tlsid-tlsidentity-with-label[]
 
 
 // tag::p2p-tlsid-check-bundled[]
@@ -512,17 +514,6 @@ do {
 
 // end::p2p-tlsid-manage-func[]
 
-
-
-
-
-
-
-// tag::p2p-act-rep-config-self-cert[]
-// Use serverCertificateVerificationMode set to `.selfSignedCert` to disable cert validation
-thisConfig.disableTLS = false
-thisConfig.acceptOnlySelfSignedServerCertificate=true
-// end::p2p-act-rep-config-self-cert[]
 
 
 // tag::p2p-act-rep-config-cacert-pinned-func[]
