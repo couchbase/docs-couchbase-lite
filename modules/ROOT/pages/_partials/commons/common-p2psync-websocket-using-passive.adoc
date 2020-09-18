@@ -30,6 +30,7 @@ There is no limit on the number of listeners you may configure -- <<simple-liste
 [#simple-listener-initialization]
 .Listener configuration and initialization
 ====
+
 [source, {source-language}]
 ----
 
@@ -39,6 +40,12 @@ include::{snippet-p2psync-ws}[tags="listener-initialize;!listener-local-db;!list
 
 ifeval::["{param-platform}"=="{platform-android}"]
 TIP: You must include the initializer `CouchbaseLite.init(context)` such that it is executed once and once only prior to initializing the replicator; for example in your app's `onCreate()` method.
+
+endif::[]
+
+ifeval::["{param-platform}"=="{platform-jvm}"]
+TIP: You must include the initializer `CouchbaseLite.init(context)` such that it is executed once and once only prior to initializing the replicator; for example in your app's `onCreate()` method.
+
 endif::[]
 
 *Notes on example:*
@@ -53,8 +60,11 @@ TLS is always enabled out-of-the-box, so you can usually omit this line.
 But you _can_, optionally, disable TLS (*not* advisable in production) -- see: <<tls-security>>
 <.> Set the credentials this server will present to the client for authentication.
 Here we show the default TLS authentication, which is by anonymous self-signed certificate.
-<.> Set client security -- define the credentials the client will present for authentication.
+The server must always authenticate itself to the client.
+<.> Set client security -- define the credentials the server expects the client to present for authentication.
 Here we show how basic authentication is configured to authenticate the client-supplied credentials (`thisUser` and `thisPassword`), against the valid credentials (here `username` and `password`) -- see <<authenticating-the-client>> for more options.
++
+Note that client authentication is optional.
 <.> Initialize the listener using the configuration settings.
 // Once initialized you cannot change the settings.
 <.> <<start-listener>>
@@ -106,6 +116,8 @@ include::{snippet-p2psync-ws}[tags=listener-config-db, indent=0]
 *Notes on example:*
 
 <.> Set the local database name using the {url-api-class-urlendpointconfiguration}'s constructor {url-api-references-urlendpointconfiguration-initdb}.
++
+The database must be opened before the listener is started.
 //`public init(database: Database)` {url-api-references-urlendpointconfiguration-database} .
 
 ====
@@ -132,7 +144,7 @@ include::{snippet-p2psync-ws}[tags=listener-config-port, indent=0]
 
 <.> To use a canonical port -- one known to other applications -- specify it explicitly using the {url-api-references-urlendpointconfiguration-port} method shown here.
 ifeval::["{param-platform}"=="{platform-android}"]
-You can query the port using {}url-api-references-urlendpointconfiguration-port-get.
+You can query the port using {url-api-references-urlendpointconfiguration-port-get}.
 endif::[]
 --
 
@@ -219,7 +231,7 @@ include::{root-partials}p2p-api.adoc[tag=config-disable-tls]
 
 === Configure TLS Identity for Listener
 
-Define the credentials the server will present to the client for authentication.
+Define the credentials the server will present to the client for authentication. Note that the server must always authenticate itself with the client -- for how the client deals with this, see {xref-cbl-bmk-dbo-p2psync-websocket-using-active-auth-listener}.
 
 include::{root-partials}p2p-api.adoc[tag=config-tls-id]
 
@@ -231,7 +243,7 @@ NOTE: Typically, you will configure the listener's TLS Identity once during init
 // include::{snippet-p2psync-ws}[tags=listener-config-tls-id-cert, indent=0]
 // include::{snippet-p2psync-ws}[tags=listener-config-tls-id-full;!listener-config-tls-id-SelfSigned;!listener-config-tls-id-caCert;!listener-config-tls-id-cert, indent=0]
 
-// Example-6
+// Example 6
 .Set Listener's TLS identity
 =====
 [{tabs}]
@@ -331,7 +343,7 @@ In this section: <<use-basic-authentication>>  |  <<using-client-certificate-aut
 
 Define how the server (listener) will authenticate the client as one it is prepared to interact with.
 
-You can use the
+Whilst client authentication is optional, Couchbase lite provides the necessary tools to implement it. Use the
 {url-api-class-urlendpointconfiguration} class's {url-api-references-urlendpointconfiguration-auth} method to specify how the client-supplied credentials are to be authenticated.
 
 Valid options are:
@@ -391,7 +403,7 @@ Note that system CA certificates are ignored
 +
 If the parameter supplied to the constructor for `ListenerCertificateAuthenticator` is of type  `ListenerCertificateAuthenticatorDelegate`, all other forms of authentication are bypassed.
 +
-The client response to the certificate request is passed to the method supplied as the second constructor parameter.
+The client response to the certificate request is passed to the method supplied as the constructor parameter.
 The logic should take the form of function or block (such as, a closure expression) where the platform allows.
 
 // Example 8

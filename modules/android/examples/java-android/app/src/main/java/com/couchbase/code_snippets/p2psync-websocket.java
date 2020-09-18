@@ -38,13 +38,8 @@ import CouchbaseLiteSwift
 import MultipeerConnectivity
 
 class cMyPassListener {
+// EXAMPLE 1
     // tag::listener-initialize[]
-    // tag::listener-local-db[]
-    // . . . preceding application logic . . .
-    CouchbaseLite.init(context); <.>
-    Database thisDB = new Database("passivepeerdb");
-
-    // end::listener-local-db[]
     // tag::listener-config-db[]
     // Initialize the listener config
     final URLEndpointListenerConfiguration thisConfig
@@ -66,69 +61,15 @@ class cMyPassListener {
     // tag::listener-config-tls-full[]
     // Configure server security
     // tag::listener-config-tls-enable[]
-    thisConfig.setDisableTLS(false); // <.>
+    thisConfig.setDisableTls(false); // <.>
 
     // end::listener-config-tls-enable[]
-    // tag::listener-config-tls-disable[]
-    thisConfig.setDisableTLS(true); // <.>
-
-    // end::listener-config-tls-disable[]
-    // tag::listener-config-tls-id-full[]
-    // tag::listener-config-tls-id-SelfSigned[]
-    // Use a self-signed certificate
-    // Create a TLSIdentity for the server using convenience API.
-    // System generates self-signed cert
-    // Work-in-progress. Code snippet coming soon.
-    private static final Map<String, String> CERT_ATTRIBUTES; //<.>
-    static {
-      final Map<String, String> thisMap = new HashMap<>();
-      m.put(TLSIdentity.CERT_ATTRIBUTE_COMMON_NAME, "Couchbase Demo");
-      m.put(TLSIdentity.CERT_ATTRIBUTE_ORGANIZATION, "Couchbase");
-      m.put(TLSIdentity.CERT_ATTRIBUTE_ORGANIZATION_UNIT, "Mobile");
-      m.put(TLSIdentity.CERT_ATTRIBUTE_EMAIL_ADDRESS, "noreply@couchbase.com");
-      CERT_ATTRIBUTES = Collections.unmodifiableMap(thisMap);
-    }
-
-    // Store the TLS identity in secure storage
-    // under the label 'couchbase-docs-cert'
-    TLSIdentity thisIdentity =
-      new TLSIdentity.createIdentity(
-        true,
-        CERT_ATTRIBUTES,
-        null,
-        "couchbase-docs-cert"); <.>
-
-    // end::listener-config-tls-id-SelfSigned[]
-
-    // tag::listener-config-tls-id-caCert[]
-    // Use CA Cert
-    // Import a key pair into secure storage
-    // Create a TLSIdentity from the imported key-pair
-    InputStream thisKeyPair = new FileInputStream();
-
-    thisKeyPair.getClass().getResourceAsStream("serverkeypair.p12");
-
-    TLSIdentity thisIdentity = new TLSIdentity.importIdentity(
-      EXTERNAL_KEY_STORE_TYPE,  // KeyStore type, eg: "PKCS12"
-      thisKeyPair,              // An InputStream from the keystore
-      password,                 // The keystore password
-      EXTERNAL_KEY_ALIAS,       // The alias to be used (in external keystore)
-      null,                     // The key password
-      "test-alias"              // The alias for the imported key
-    );
-
-    // end::listener-config-tls-id-caCert[]
     // tag::listener-config-tls-id-anon[]
     // Use an Anonymous Self-Signed Cert
     thisConfig.setTlsIdentity(null); // <.>
 
     // end::listener-config-tls-id-anon[]
-    // tag::listener-config-tls-id-set[]
-    // Set the TLS Identity
-    thisConfig.setTlsIdentity(thisIdentity); // <.>
 
-    // end::listener-config-tls-id-set[]
-    // end::listener-config-tls-id-full[]
     // tag::listener-config-client-auth-pwd[]
     // Configure Client Security using an Authenticator
     // For example, Basic Authentication <.>
@@ -138,45 +79,6 @@ class cMyPassListener {
         Arrays.equals(password, thisPassword)));
 
     // end::listener-config-client-auth-pwd[]
-    // tag::listener-config-client-root-ca[]
-    // Configure the client authenticator
-    // to validate using ROOT CA
-    // thisClientID.certs is a list containing a client cert to accept
-    // and any other certs needed to complete a chain between the client cert
-    // and a CA
-    final TLSIdentity validId =
-      TLSIdentity.getIdentity("Our Corporate Id");  // get the identity <.>
-
-    if (validId == null) { throw new IllegalStateException("Cannot find corporate id"); }
-
-    thisConfig.setTlsIdentity(validId); // <.>
-
-    thisConfig.setAuthenticator(
-      new ListenerCertificateAuthenticator(validId.getCerts())); // <.>
-      // accept only clients signed by the corp cert
-
-    final URLEndpointListener thisListener =
-      new URLEndpointListener(thisConfig);
-
-    // end::listener-config-client-root-ca[]
-    // tag::listener-config-client-auth-self-signed[]
-    // Configure a server to accept any client on Tuesday
-
-  final TLSIdentity thisCorpId = TLSIdentity.getIdentity("OurCorp");
-  if (thisCorpId == null) {
-    throw new IllegalStateException("Cannot find corporate id"); }
-  thisConfig.setTlsIdentity(thisCorpId);
-  thisConfig.setAuthenticator(
-    new ListenerCertificateAuthenticator(
-      (thisCorpId.getCerts()) -> {
-      // use supplied logic that resolves to boolean
-      // true=valid, false=invalid
-      }
-    );
-  final ULEndpointListener thisListener =
-    new URLEndpointListener(thisConfig);
-
-    // end::listener-config-client-auth-self-signed[]
     // tag::listener-start[]
     // Initialize the listener
     final URLEndpointListener thisListener
@@ -188,6 +90,119 @@ class cMyPassListener {
     // end::listener-start[]
     // end::listener-initialize[]
   }
+
+// ADDITIONAL SNIPPETS
+
+// tag::listener-local-db[]
+// . . . preceding application logic . . .
+CouchbaseLite.init(context); <.>
+Database thisDB = new Database("passivepeerdb");
+
+// end::listener-local-db[]
+
+// tag::listener-config-tls-disable[]
+thisConfig.setDisableTls(true); // <.>
+
+// end::listener-config-tls-disable[]
+
+// tag::listener-config-tls-id-full[]
+  // tag::listener-config-tls-id-caCert[]
+  // Use CA Cert
+  // Import a key pair into secure storage
+  // Create a TLSIdentity from the imported key-pair
+  InputStream thisKeyPair = new FileInputStream();
+
+  thisKeyPair.getClass().getResourceAsStream("serverkeypair.p12"); // <.>
+
+  TLSIdentity thisIdentity = new TLSIdentity.importIdentity(
+    EXTERNAL_KEY_STORE_TYPE,  // KeyStore type, eg: "PKCS12"
+    thisKeyPair,              // An InputStream from the keystore
+    password,                 // The keystore password
+    EXTERNAL_KEY_ALIAS,       // The alias to be used (in external keystore)
+    null,                     // The key password
+    "test-alias"              // The alias for the imported key
+    );
+
+  // end::listener-config-tls-id-caCert[]
+
+  // tag::listener-config-tls-id-SelfSigned[]
+  // Use a self-signed certificate
+  // Create a TLSIdentity for the server using convenience API.
+  // System generates self-signed cert
+  // Work-in-progress. Code snippet coming soon.
+  private static final Map<String, String> CERT_ATTRIBUTES; //<.>
+  static {
+    final Map<String, String> thisMap = new HashMap<>();
+    m.put(TLSIdentity.CERT_ATTRIBUTE_COMMON_NAME, "Couchbase Demo");
+    m.put(TLSIdentity.CERT_ATTRIBUTE_ORGANIZATION, "Couchbase");
+    m.put(TLSIdentity.CERT_ATTRIBUTE_ORGANIZATION_UNIT, "Mobile");
+    m.put(TLSIdentity.CERT_ATTRIBUTE_EMAIL_ADDRESS, "noreply@couchbase.com");
+    CERT_ATTRIBUTES = Collections.unmodifiableMap(thisMap);
+  }
+
+  // Store the TLS identity in secure storage
+  // under the label 'couchbase-docs-cert'
+  TLSIdentity thisIdentity =
+    new TLSIdentity.createIdentity(
+      true,
+      CERT_ATTRIBUTES,
+      null,
+      "couchbase-docs-cert"); <.>
+
+  // end::listener-config-tls-id-SelfSigned[]
+
+  // tag::listener-config-tls-id-set[]
+  // Set the TLS Identity
+  thisConfig.setTlsIdentity(thisIdentity); // <.>
+
+  // end::listener-config-tls-id-set[]
+// end::listener-config-tls-id-full[]
+
+// tag::listener-config-client-root-ca[]
+  // tag::listener-config-client-auth-root[]
+  // Configure the client authenticator
+  // to validate using ROOT CA
+  // thisClientID.certs is a list containing a client cert to accept
+  // and any other certs needed to complete a chain between the client cert
+  // and a CA
+  final TLSIdentity validId =
+    TLSIdentity.getIdentity("Our Corporate Id");  // get the identity <.>
+
+  if (validId == null) { throw new IllegalStateException("Cannot find corporate id"); }
+
+  thisConfig.setTlsIdentity(validId); // <.>
+
+  thisConfig.setAuthenticator(
+    new ListenerCertificateAuthenticator(validId.getCerts())); // <.> <.>
+    // accept only clients signed by the corp cert
+
+  final URLEndpointListener thisListener =
+    new URLEndpointListener(thisConfig);
+
+  // end::listener-config-client-auth-root[]
+// end::listener-config-client-root-ca[]
+
+// tag::listener-config-client-auth-lambda[]
+// Configure authentication using application logic
+  final TLSIdentity thisCorpId = TLSIdentity.getIdentity("OurCorp"); // <.>
+  if (thisCorpId == null) {
+    throw new IllegalStateException("Cannot find corporate id"); }
+  thisConfig.setTlsIdentity(thisCorpId);
+  thisConfig.setAuthenticator(
+    new ListenerCertificateAuthenticator(
+      (thisCorpId.getCerts()) -> {
+      // use supplied logic that resolves to boolean
+      // true=valid, false=invalid
+      }
+    ); // <.> <.> <.>
+  final ULEndpointListener thisListener =
+    new URLEndpointListener(thisConfig);
+
+  // end::listener-config-client-auth-lambda[]
+
+
+
+
 
 
   // Quick sync
@@ -205,7 +220,7 @@ class cMyPassListener {
       = new URLEndpointListener(thisConfig); // <.>
     thisListener.start();
     // end::quick-sync[]
-  }
+
 
 
   // tag::listener-config-tls-disable[]
