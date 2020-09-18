@@ -1046,14 +1046,14 @@ public class Examples {
 
 // tag::update-document-with-conflict-handler-callouts[]
 
-<.> The conflict handler code is provided as a block
+<.> The conflict handler code is provided as a lambda.
 
 <.> If the handler cannot resolve a conflict, it can return false.
 In this case, the save method will cancel the save operation and return false the same way as using the save() method with the failOnConflict concurrency control.
 
 <.> Within the conflict handler, you can modify the document parameter which is the same instance of Document that is passed to the save() method. So in effect, you will be directly modifying the document that is being saved.
 
-<.> When handling is done, the method must return true.
+<.> When handling is done, the method must return true (for  successful resolution) or false (if it was unable to resolve the conflict).
 
 <.> If there is an exception thrown in the handle() method, the exception will be caught and re-thrown in the save() method
 // end::update-document-with-conflict-handler-callouts[]

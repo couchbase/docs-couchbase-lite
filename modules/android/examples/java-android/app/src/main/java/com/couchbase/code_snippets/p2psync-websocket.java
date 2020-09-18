@@ -484,7 +484,7 @@ public class Examples {
     final ReplicatorConfiguration thisConfig
        = new ReplicatorConfiguration(
           thisDB,
-          URLEndpoint(URI("wss://listener.com:port"))); // <.>
+          URLEndpoint(URI("wss://listener.com:8954"))); // <.>
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config-type[]
@@ -501,12 +501,12 @@ public class Examples {
     // tag::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security
-    // -- only accept CA Certs
+    // -- only accept CA attested certs
     thisConfig.setAcceptOnlySelfSignedServerCertificate(false); // <.>
 
     // end::p2p-act-rep-config-cacert[]
     // tag::p2p-act-rep-config-self-cert[]
-    // Configure Server Security --
+    // Configure Server Authentication --
     // only accept self-signed certs
     thisConfig.setAcceptOnlySelfSignedServerCertificate(true); // <.>
 
@@ -517,13 +517,13 @@ public class Examples {
     byte returnedCert
      = new byte(thisConfig.getPinnedCertificate()); // Get listener cert if pinned
     // end::p2p-act-rep-config-pinnedcert[]
-    // Configure Client Security // <.>
     // tag::p2p-act-rep-auth[]
-    // Configure basic auth using user credentials
+    // Configure the credentials we expect the
+    // client to provide
     final BasicAuthenticator thisAuth
       = new BasicAuthenticator(
           "thisUsername",
-          "thisPasswordValue"));
+          "thisPasswordValue")); // <.>
 
     thisConfig.setAuthenticator(thisAuth)
 
@@ -532,16 +532,17 @@ public class Examples {
     // tag::p2p-tlsid-tlsidentity-with-label[]
     // ... other replicator configuration
     // Provide a client certificate to the server for authentication
-    final TLSIdentity thisClientId = TLSIdentity.getIdentity("clientId");
+    final TLSIdentity thisClientId = TLSIdentity.getIdentity("clientId"); // <.>
+
     if (thisClientId == null) { throw new IllegalStateException("Cannot find client id"); }
-    thisConfig.setAuthenticator(new ClientCertificateAuthenticator(thisClientId));
+
+    thisConfig.setAuthenticator(new ClientCertificateAuthenticator(thisClientId)); // <.>
     // ... other replicator configuration
-    // final thisReplicator(thisConfig);
+    final thisReplicator= new Replicator(thisConfig);
 
     // end::p2p-tlsid-tlsidentity-with-label[]
     // tag::p2p-act-rep-config-cacert-pinned[]
-    // Only CA Certs accepted
-    thisConfig.setAcceptOnlySelfSignedServerCertificate(false); // <.>
+
     // Use the pinned certificate from the byte array (cert)
     thisConfig.setPinnedServerCertificate(cert.getEncoded()); // <.>
 
@@ -557,17 +558,16 @@ public class Examples {
     // to prevent the Replicator from being GCed
     final Replicator thisReplicator = new Replicator(thisConfig); // <.>
 
+    // Optionally add a change listener <.>
     // tag::p2p-act-rep-add-change-listener[]
-    // Optionally add a change listener
     ListenerToken thisListener =
-      new thisReplicator.addChangeListener(change -> { // <.>
+      new thisReplicator.addChangeListener(change -> {
         final CouchbaseLiteException err =
          change.getStatus().getError();
          if (err != null) {
            Log.i(TAG, "Error code ::  " + err.getCode(), e);
          }
       });
-
 
     // end::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-start[]
@@ -576,8 +576,8 @@ public class Examples {
 
     // end::p2p-act-rep-start[]
     // end::p2p-act-rep-start-full[]
+    // end::p2p-act-rep-func[]         ***** End p2p-act-rep-func
   }
-// end::p2p-act-rep-func[]         ***** End p2p-act-rep-func
 }
     // tag::p2p-act-rep-status[]
 
@@ -754,7 +754,6 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [th
 // C A L L O U T S
 
 // tag::p2p-act-rep-config-cacert-pinned-callouts[]
-<.> This setting is ignored in this 'pinned certificate' context.
 <.> Configure the pinned certificate using data from the byte array `cert`
 // end::p2p-act-rep-config-cacert-pinned-callouts[]
 
