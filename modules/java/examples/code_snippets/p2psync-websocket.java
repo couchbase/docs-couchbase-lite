@@ -9,12 +9,6 @@ import MultipeerConnectivity
 
 class cMyPassListener {
     // tag::listener-initialize[]
-    // tag::listener-local-db[]
-    // . . . preceding application logic . . .
-    CouchbaseLite.init(context); <.>
-    Database thisDB = new Database("passivepeerdb");
-
-    // end::listener-local-db[]
     // tag::listener-config-db[]
     // Initialize the listener config
     final URLEndpointListenerConfiguration thisConfig
@@ -33,12 +27,49 @@ class cMyPassListener {
     thisConfig.setEnableDeltaSync(false); // <.>
 
     // end::listener-config-delta-sync[]
-    // tag::listener-config-tls-full[]
     // Configure server security
     // tag::listener-config-tls-enable[]
     thisConfig.setDisableTLS(false); // <.>
 
     // end::listener-config-tls-enable[]
+    // tag::listener-config-tls-id-anon[]
+    // Use an Anonymous Self-Signed Cert
+    thisConfig.setTlsIdentity(null); // <.>
+
+    // end::listener-config-tls-id-anon[]
+    // tag::listener-config-client-auth-pwd[]
+    // Configure Client Security using an Authenticator
+    // For example, Basic Authentication <.>
+    thisConfig.setAuthenticator(new ListenerPasswordAuthenticator(
+      (thisUser, thisPassword) ->
+        username.equals(thisUser) &&
+        Arrays.equals(password, thisPassword)));
+
+    // end::listener-config-client-auth-pwd[]
+
+    // tag::listener-start[]
+    // Initialize the listener
+    final URLEndpointListener thisListener
+      = new URLEndpointListener(thisConfig); // <.>
+
+    // Start the listener
+    thisListener.start(); // <.>
+
+    // end::listener-start[]
+    // end::listener-initialize[]
+  }
+
+// ADDITIONAL SNIPPETS
+
+
+    // tag::listener-local-db[]
+    // . . . preceding application logic . . .
+    CouchbaseLite.init(context); <.>
+    Database thisDB = new Database("passivepeerdb");
+
+    // end::listener-local-db[]
+
+    // tag::listener-config-tls-full[]
     // tag::listener-config-tls-disable[]
     thisConfig.setDisableTLS(true); // <.>
 
@@ -49,7 +80,7 @@ class cMyPassListener {
     // Import a key pair into secure storage
     // Create a TLSIdentity from the imported key-pair
     InputStream thisKeyPair = new FileInputStream();
-    thisKeyPair.getClass().getResourceAsStream("serverkeypair.p12");
+    thisKeyPair.getClass().getResourceAsStream("serverkeypair.p12"); // <.>
 
     TLSIdentity thisIdentity = new TLSIdentity.importIdentity(
       EXTERNAL_KEY_STORE_TYPE,  // KeyStore type, eg: "PKCS12"
@@ -85,26 +116,13 @@ class cMyPassListener {
         "couchbase-docs-cert"); <.>
 
     // end::listener-config-tls-id-SelfSigned[]
-    // tag::listener-config-tls-id-anon[]
-    // Use an Anonymous Self-Signed Cert
-    thisConfig.setTlsIdentity(null); // <.>
 
-    // end::listener-config-tls-id-anon[]
     // tag::listener-config-tls-id-set[]
     // Set the TLS Identity
     thisConfig.setTlsIdentity(thisIdentity); // <.>
 
     // end::listener-config-tls-id-set[]
     // end::listener-config-tls-id-full[]
-    // tag::listener-config-client-auth-pwd[]
-    // Configure Client Security using an Authenticator
-    // For example, Basic Authentication <.>
-    thisConfig.setAuthenticator(new ListenerPasswordAuthenticator(
-      (thisUser, thisPassword) ->
-        username.equals(thisUser) &&
-        Arrays.equals(password, thisPassword)));
-
-    // end::listener-config-client-auth-pwd[]
     // tag::listener-config-client-auth-root[]
     // Configure the client authenticator
     // to validate using ROOT CA
@@ -112,6 +130,7 @@ class cMyPassListener {
     TLSIdentity thisClientID = getIdentity(“authorizedClient”)
 
     thisConfig.setTlsIdentity = thisServerID;
+
     thisConfig.setAuthenticator(
       new ListenerCertificateAuthenticator(thisClientID.getCerts())); // <.> <.> <.>
 
@@ -119,20 +138,26 @@ class cMyPassListener {
 
     // end::listener-config-client-auth-root[]
     // tag::listener-config-client-auth-lambda[]
-    // Work in progress. Code snippet to be provided.
+    // Configure authentication using application logic
+    final TLSIdentity thisCorpId = TLSIdentity.getIdentity("OurCorp"); // <.>
+    if (thisCorpId == null) {
+      throw new IllegalStateException("Cannot find corporate id"); }
+    thisConfig.setTlsIdentity(thisCorpId);
+    thisConfig.setAuthenticator(
+      new ListenerCertificateAuthenticator(
+        (thisCorpId.getCerts()) -> {
+        // use supplied logic that resolves to boolean
+        // true=valid, false=invalid
+        }
+      ); // <.> <.> <.>
+    final ULEndpointListener thisListener =
+      new URLEndpointListener(thisConfig);
 
     // end::listener-config-client-auth-lambda[]
-    // tag::listener-start[]
-    // Initialize the listener
-    final URLEndpointListener thisListener
-      = new URLEndpointListener(thisConfig); // <.>
 
-    // Start the listener
-    thisListener.start(); // <.>
 
-    // end::listener-start[]
-    // end::listener-initialize[]
-  }
+
+
 
 
   // Quick sync
