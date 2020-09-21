@@ -617,17 +617,15 @@ class cMyPassListener {
   // tag::listener-initialize[]
   fileprivate var _thisListener:URLEndpointListener?
   fileprivate var thisDB:Database?
-    // Include websockets listener initializer code
 
-    // func fMyPassListener() {
     // tag::listener-config-db[]
-    let db=thisDB!
-    let listenerConfig = URLEndpointListenerConfiguration(database: db) // <.>
+    let listenerConfig =
+      URLEndpointListenerConfiguration(database: thisDB!) // <.>
 
     // end::listener-config-db[]
     // tag::listener-config-port[]
-    /* optionally */ let wsPort: UInt16 = 4984
-    /* optionally */ let wssPort: UInt16 = 4985
+    /* optionally */ let wsPort: UInt16 = 55991
+    /* optionally */ let wssPort: UInt16 = 55990
     listenerConfig.port =  wssPort // <.>
 
     // end::listener-config-port[]
@@ -639,31 +637,78 @@ class cMyPassListener {
     listenerConfig.enableDeltaSync = true // <.>
 
     // end::listener-config-delta-sync[]
-    // tag::listener-config-tls-full[]
     // tag::listener-config-tls-enable[]
     listenerConfig.disableTLS  = false // <.>
 
     // end::listener-config-tls-enable[]
+     // tag::listener-config-tls-id-anon[]
+    // Set the credentials the server presents the client
+    // Use an anonymous self-signed cert
+    listenerConfig.tlsIdentity = nil // <.>
+
+    // end::listener-config-tls-id-anon[]
+    // tag::listener-config-client-auth-pwd[]
+    // Configure how the client is to be authenticated
+    // Here, use Basic Authentication
+    listenerConfig.authenticator =
+      ListenerPasswordAuthenticator(authenticator: {
+        (thisUser, thisPassword) -> Bool in
+          if (self._allowlistedUsers.contains {
+                $0 == thisPassword && $1 == thisUser
+              }) {
+              return true
+              }
+            return false
+          }) // <.>
+
+    // end::listener-config-client-auth-pwd[]
+
+    // tag::listener-start[]
+    // Initialize the listener
+    _thisListener = URLEndpointListener(config: listenerConfig) // <.>
+    guard let thisListener = _thisListener else {
+      throw ListenerError.NotInitialized
+      // ... take appropriate actions
+    }
+    // Start the listener
+    try thisListener.start() // <.>
+
+    // end::listener-start[]
+// end::listener-initialize[]
+  }
+}
+
+
+// BEGIN Additonal listener options
+    // tag::listener-config-tls-full[]
+    // tag::listener-config-tls-full-enable[]
+    listenerConfig.disableTLS  = false // <.>
+
+    // end::listener-config-tls-full-enable[]
     // tag::listener-config-tls-disable[]
     listenerConfig.disableTLS  = true // <.>
 
     // end::listener-config-tls-disable[]
+
     // tag::listener-config-tls-id-full[]
     // tag::listener-config-tls-id-caCert[]
+    guard let pathToCert =
+      Bundle.main.path(forResource: "cert", ofType: "p12")
+    else { /* process error */ return }
+
+    guard let localCertificate =
+      try? NSData(contentsOfFile: pathToCert) as Data
+    else { /* process error */ return } // <.>
+
     let thisIdentity =
-      do {
-        return try TLSIdentity.identity(
-          withIdentity: thisSecId,
-          certs: [pubCerts[0]]
-          ) // <.>
-      } catch {
-        print("Error while loading cert : \(error)")
-        return nil
-      } // <.>
+      try TLSIdentity.importIdentity(withData: localCertificate,
+                                    password: "123",
+                                    label: thisSecId) // <.>
 
     // end::listener-config-tls-id-caCert[]
     // tag::listener-config-tls-id-SelfSigned[]
     let attrs = [certAttrCommonName: "Couchbase Inc"] // <.>
+
     let thisIdentity =
       try TLSIdentity.createIdentity(forServer: true, /* isServer */
             attributes: attrs,
@@ -671,33 +716,12 @@ class cMyPassListener {
             label: "Server-Cert-Label") // <.>
 
     // end::listener-config-tls-id-SelfSigned[]
-    // tag::listener-config-tls-id-anon[]
+    // tag::listener-config-tls-id-full-set[]
     // Set the credentials the server presents the client
-    // Use an anonymous self-signed cert
-    listenerConfig.tlsIdentity = nil // <.>
+    listenerConfig.tlsIdentity = thisIdentity    // <.>
 
-    // end::listener-config-tls-id-anon[]
-    // tag::listener-config-tls-id-set[]
-    // Set the credentials the server presents the client
-    listenerConfig.tlsIdentity =
-      TLSIdentity(withLabel:thisIdentity) // <.>
-
-    // end::listener-config-tls-id-set[]
+    // end::listener-config-tls-id-full-set[]
     // end::listener-config-tls-id-full[]
-    // tag::listener-config-client-auth-pwd[]
-    // Configure how the client is to be authenticated
-    // Here, use Basic Authentication
-    listenerConfig.authenticator =
-      ListenerPasswordAuthenticator(authenticator: {
-        (thisUser, thisPassword) -> Bool in
-          if (self._allowlistedUsers.contains(
-            ["password" : thisPassword, "name":thisUser])) {
-              return true
-          }
-        return false
-      }) // <.>
-
-    // end::listener-config-client-auth-pwd[]
     // tag::listener-config-client-root-ca[]
     // tag::listener-config-client-auth-root[]
     // Authenticate using Cert Authority
@@ -723,7 +747,7 @@ class cMyPassListener {
         var certs:SecCertificate
         var certCommonName:CFString?
         let status=SecCertificateCopyCommonName(certs[0], &certCommonName)
-        if (self._allowlistedUsers.contains(["name": certCommonName! as String])) {
+        if (self._allowedCommonNames.contains(["name": certCommonName! as String])) {
             return true
         }
         return false
@@ -731,20 +755,10 @@ class cMyPassListener {
 
     // end::listener-config-client-auth-self-signed[]
     // end::listener-config-client-auth-lambda[]
-    // tag::listener-start[]
-    // Initialize the listener
-    _thisListener = URLEndpointListener(config: listenerConfig) // <.>
-    guard let thisListener = _thisListener else {
-      throw print("ListenerNotInitialized")
-      // ... take appropriate actions
-    }
-    // Start the listener
-    try thisListener.start() // <.>
+// END Additonal listener options
 
-    // end::listener-start[]
-// end::listener-initialize[]
-  }
-}
+
+
 
 
 // tag::old-listener-config-tls-id-nil[]
