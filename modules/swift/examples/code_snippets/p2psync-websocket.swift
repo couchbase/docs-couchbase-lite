@@ -829,8 +829,8 @@ class myActPeerClass {
 
   func fMyActPeer() {
     // tag::p2p-act-rep-func[]
-    let user = "syncuser"
-    let password = "sync9455"
+    let thisUser = "syncuser"
+    let thisPassword = "sync9455"
     let cert:SecCertificate?
     let passivePeerEndpoint = "10.1.1.12:8920"
     let passivePeerPort = "8920"
@@ -856,22 +856,11 @@ class myActPeerClass {
     config.continuous = true
 
     // end::p2p-act-rep-config-cont[]
-    // tag::p2p-act-rep-config-tls-full[]
-    // tag::p2p-act-rep-config-cacert[]
-    // Configure Server Security -- only accept CA Certs
-    config.acceptOnlySelfSignedServerCertificate = false // <.>
-
-    // end::p2p-act-rep-config-cacert[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Security -- only accept self-signed certs
     config.acceptOnlySelfSignedServerCertificate = true; <.>
 
     // end::p2p-act-rep-config-self-cert[]
-    // tag::p2p-act-rep-config-pinnedcert[]
-    // Return the remote pinned cert (the listener's cert)
-    config.pinnedServerCertificate = thisCert; // Get listener cert if pinned
-
-    // end::p2p-act-rep-config-pinnedcert[]
     // Configure Client Security // <.>
     // tag::p2p-act-rep-auth[]
     //  Set Authentication Mode
@@ -879,24 +868,6 @@ class myActPeerClass {
     config.authenticator = thisAuthenticator
 
     // end::p2p-act-rep-auth[]
-    // end::p2p-act-rep-config-tls-full[]
-    // tag::p2p-tlsid-tlsidentity-with-label[]
-        // USE KEYCHAIN IDENTITY IF EXISTS
-        // Check if Id exists in keychain. If so use that Id
-        do {
-            if let thisIdentity =
-              try TLSIdentity.identity(withLabel: "doco-sync-server") {
-                print("An identity with label : doco-sync-server already exists in keychain")
-                return thisIdentity
-              } // <.>
-        } catch
-          {return nil}
-        // end::p2p-tlsid-check-keychain[]
-        thisAuthenticator.ClientCertificateAuthenticator(identity: thisIdentity ) // <.>
-
-        config.authenticator = thisAuthenticator
-
-    // end::p2p-tlsid-tlsidentity-with-label[]
     // tag::p2p-act-rep-config-conflict[]
     /* Optionally set custom conflict resolver call back */
     config.conflictResolver = ( /* define resolver function */); // <.>
@@ -946,7 +917,44 @@ class myActPeerClass {
 }
 
 
+// BEGIN Additional p2p-avt-rep options
+    // tag::p2p-act-rep-config-tls-full[]
+    // tag::p2p-act-rep-config-cacert[]
+    // Configure Server Security -- only accept CA Certs
+    config.acceptOnlySelfSignedServerCertificate = false // <.>
 
+    // end::p2p-act-rep-config-cacert[]
+    // tag::p2p-act-rep-config-self-cert[]
+    // Configure Server Security -- only accept self-signed certs
+    config.acceptOnlySelfSignedServerCertificate = true; <.>
+
+    // end::p2p-act-rep-config-self-cert[]
+    // tag::p2p-act-rep-config-pinnedcert[]
+    // Return the remote pinned cert (the listener's cert)
+    config.pinnedServerCertificate = thisCert; // Get listener cert if pinned
+
+    // end::p2p-act-rep-config-pinnedcert[]
+    // Configure Client Security // <.>
+    // tag::p2p-act-rep-auth[]
+    //  Set Authentication Mode
+    let thisAuthenticator = BasicAuthenticator(username: thisUser, password: thisPassword)
+    config.authenticator = thisAuthenticator
+
+    // end::p2p-act-rep-auth[]
+    // end::p2p-act-rep-config-tls-full[]
+
+    // tag::p2p-tlsid-tlsidentity-with-label[]
+      // Check if Id exists in keychain and if so, use that Id
+      if let thisIdentity =
+        (try? TLSIdentity.identity(withLabel: "doco-sync-server")) ?? nil { // <.>
+          print("An identity with label : doco-sync-server already exists in keychain")
+          thisAuthenticator = ClientCertificateAuthenticator(identity: thisIdentity)  // <.>
+          config.authenticator = thisAuthenticator
+          }
+
+      // end::p2p-tlsid-check-keychain[]
+    // end::p2p-tlsid-tlsidentity-with-label[]
+// END Additional p2p-avt-rep options
 
 
 
@@ -1114,7 +1122,8 @@ func fMyCaCertPinned() {
   // Get bundled resource and read into localcert
   guard let pathToCert = Bundle.main.path(forResource: "listener-pinned-cert", ofType: "cer")
     else { /* process error */ }
-  guard let localCertificate:NSData = NSData(contentsOfFile: pathToCert!)
+  guard let localCertificate:NSData =
+               NSData(contentsOfFile: pathToCert)
     else { /* process error */ }
 
   // Create certificate
