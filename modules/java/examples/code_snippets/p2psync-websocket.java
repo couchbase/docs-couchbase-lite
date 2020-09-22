@@ -41,9 +41,9 @@ class cMyPassListener {
     // Configure Client Security using an Authenticator
     // For example, Basic Authentication <.>
     thisConfig.setAuthenticator(new ListenerPasswordAuthenticator(
-      (thisUser, thisPassword) ->
-        username.equals(thisUser) &&
-        Arrays.equals(password, thisPassword)));
+      (validUser, validPassword) ->
+        username.equals(validUser) &&
+        Arrays.equals(password, validPassword)));
 
     // end::listener-config-client-auth-pwd[]
 
@@ -167,9 +167,9 @@ class cMyPassListener {
        = new URLEndpointListenerConfiguration(thisDB); // <.>
 
     thisConfig.setAuthenticator(new ListenerPasswordAuthenticator(
-      (thisUser, thisPassword) ->
-        username.equals(thisUser) &&
-        Arrays.equals(password, thisPassword)));
+      (validUser, validPassword) ->
+        username.equals(validUser) &&
+        Arrays.equals(password, validPassword)));
 
     final URLEndpointListener thisListener
       = new URLEndpointListener(thisConfig); // <.>
@@ -453,36 +453,69 @@ public class Examples {
     thisConfig.setContinuous(false); // default value
 
     // end::p2p-act-rep-config-cont[]
-    // tag::p2p-act-rep-config-tls-full[]
-    // tag::p2p-act-rep-config-cacert[]
-    // Configure Server Security
-    // -- only accept CA Certs
-    thisConfig.setAcceptOnlySelfSignedServerCertificate(false); // <.>
-
-    // end::p2p-act-rep-config-cacert[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Security --
     // only accept self-signed certs
     thisConfig.setAcceptOnlySelfSignedServerCertificate(true); // <.>
 
     // end::p2p-act-rep-config-self-cert[]
-    // tag::p2p-act-rep-config-pinnedcert[]
-    // Return the remote pinned cert (the listener's cert)
-    byte returnedCert
-    = new byte(thisConfig.getPinnedCertificate()); // Get listener cert if pinned
-
-    // end::p2p-act-rep-config-pinnedcert[]
     // Configure Client Security // <.>
     // tag::p2p-act-rep-auth[]
     // Configure basic auth using user credentials
     final BasicAuthenticator thisAuth
       = new BasicAuthenticator(
-          "thisUsername",
-          "thisPasswordValue"));
+          "Our Username",
+          "Our PasswordValue"));
 
     thisConfig.setAuthenticator(thisAuth)
 
     // end::p2p-act-rep-auth[]
+    // tag::p2p-act-rep-config-conflict[]
+    /* Optionally set custom conflict resolver call back */
+    thisConfig.setConflictResolver( /* user supplied code */ ); // <.>
+
+    // end::p2p-act-rep-config-conflict[]
+    // tag::p2p-act-rep-start-full[]
+    // Create replicator
+    final Replicator thisReplicator = new Replicator(thisConfig); // <.>
+
+    // tag::p2p-act-rep-add-change-listener[]
+    // tag::p2p-act-rep-add-change-listener-label[]
+    // Optionally add a change listener <.>
+    // end::p2p-act-rep-add-change-listener-label[]
+    ListenerToken thisListener
+      = new thisReplicator.addChangeListener(change -> {
+        if (change.getStatus().getError() != null) {
+          Log.i(TAG, "Error code ::  " +
+            change.getStatus().getError().getCode());
+        }
+      });
+
+    // end::p2p-act-rep-add-change-listener[]
+    // tag::p2p-act-rep-start[]
+    // Start replicator
+    thisReplicator.start(false); // <.>
+
+    // end::p2p-act-rep-start[]
+    // end::p2p-act-rep-start-full[]
+    // end::p2p-act-rep-func[]         ***** End p2p-act-rep-func
+  }
+}
+
+
+// BEGIN additoinal active snippet
+    // tag::p2p-act-rep-config-tls-full[]
+    // tag::p2p-act-rep-config-cacert[]
+    // Configure Server Security
+    // -- only accept CA Certs
+    thisConfig.setAcceptOnlySelfSignedServerCertificate(false); // <.>
+
+    // end::p2p-act-rep-config-cacert[]    // tag::p2p-act-rep-config-pinnedcert[]
+    // Return the remote pinned cert (the listener's cert)
+    byte returnedCert
+    = new byte(thisConfig.getPinnedCertificate()); // Get listener cert if pinned
+
+    // end::p2p-act-rep-config-pinnedcert[]
     // end::p2p-act-rep-config-tls-full[]
     // tag::p2p-tlsid-tlsidentity-with-label[]
     // ... other replicator configuration
@@ -507,36 +540,13 @@ public class Examples {
     thisConfig.setPinnedServerCertificate(cert.getEncoded()); // <.>
 
     // end::p2p-act-rep-config-cacert-pinned[]
-    // tag::p2p-act-rep-config-conflict[]
-    /* Optionally set custom conflict resolver call back */
-    thisConfig.setConflictResolver( /* user supplied code */ ); // <.>
 
-    // end::p2p-act-rep-config-conflict[]
-    // tag::p2p-act-rep-start-full[]
-    // Create replicator
-    final Replicator thisReplicator = new Replicator(thisConfig); // <.>
 
-    // Optionally add a change listener <.>
-    // tag::p2p-act-rep-add-change-listener[]
-    ListenerToken thisListener
-      = new thisReplicator.addChangeListener(change -> {
-        if (change.getStatus().getError() != null) {
-          Log.i(TAG, "Error code ::  " +
-            change.getStatus().getError().getCode());
-        }
-      });
 
-    // end::p2p-act-rep-add-change-listener[]
-    // tag::p2p-act-rep-start[]
-    // Start replicator
-    thisReplicator.start(false); // <.>
 
-    // end::p2p-act-rep-start[]
-    // end::p2p-act-rep-start-full[]
-  }
-// end::p2p-act-rep-func[]         ***** End p2p-act-rep-func
-}
-    // tag::p2p-act-rep-status[]
+
+
+// tag::p2p-act-rep-status[]
 
     Log.i(TAG, "The Replicator is currently " +
       thisReplicator.getStatus().getActivityLevel());
@@ -618,11 +628,11 @@ TLSIdentity thisIdentity =
 
 
     // Configure the client authenticator (if using Basic Authentication)
-    // String thisUser = new String("validUsername"); // an example username
-    // String thisPassword = new String("validPasswordValue"); // an example password
+    // String validUser = new String("validUsername"); // an example username
+    // String validPassword = new String("validPasswordValue"); // an example password
 
     // ListenerPasswordAuthenticator thisAuth = new ListenerPasswordAuthenticator( // <.>
-    //   thisUser, thisPassword -> thisUser == "validUsername" && thisPassword == "validPasswordValue" );
+    //   validUser, validPassword -> validUser == "validUsername" && validPassword == "validPasswordValue" );
 
     // if (thisAuth) {
     //   thisConfig.setAuthenticator(auth);

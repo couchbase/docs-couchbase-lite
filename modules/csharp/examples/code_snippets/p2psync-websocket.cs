@@ -408,7 +408,7 @@ public class Examples {
     // Configure Client Security // <.>
     // tag::p2p-act-rep-auth[]
     // Configure basic auth using user credentials
-    thisConfig.Authenticator = new BasicAuthenticator(thisUser, thisPassword);
+    thisConfig.Authenticator = new BasicAuthenticator("Our Username", "Our Password");
 
     // end::p2p-act-rep-auth[]
     // tag::p2p-act-rep-config-conflict-full[]
@@ -471,7 +471,7 @@ public class Examples {
     // Configure Client Security // <.>
     // tag::p2p-act-rep-auth[]
     // Configure basic auth using user credentials
-    thisConfig.Authenticator = new BasicAuthenticator(thisUser, thisPassword);
+    thisConfig.Authenticator = new BasicAuthenticator("Our Username", "Our Password");
 
     // end::p2p-act-rep-auth[]
     // end::p2p-act-rep-config-tls-full[]
@@ -537,7 +537,7 @@ public class Examples {
   thisConfig.EnableDeltaSync(true)   // <.> Optional. Defaults to false.
 
   // Configure the client authenticator (if using basic auth)
-  ListenerPasswordAuthenticator auth = new ListenerPasswordAuthenticator { "username", "password"}; // <.>
+  ListenerPasswordAuthenticator auth = new ListenerPasswordAuthenticator { "Our Username", "Our Password"}; // <.>
   thisConfig.Authenticator(auth); // <.>
 
   // Initialize the listener
@@ -581,11 +581,11 @@ TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
 
 
     // Configure the client authenticator (if using Basic Authentication)
-    // String thisUser = new String("validUsername"); // an example username
-    // String thisPassword = new String("validPasswordValue"); // an example password
+    // String validUser = new String("validUsername"); // an example username
+    // String validPassword = new String("validPasswordValue"); // an example password
 
     // ListenerPasswordAuthenticator thisAuth = new ListenerPasswordAuthenticator( // <.>
-    //   thisUser, thisPassword -> thisUser == "validUsername" && thisPassword == "validPasswordValue" );
+    //   validUser, validPassword -> validUser == "validUsername" && validPassword == "validPasswordValue" );
 
     // if (thisAuth) {
     //   thisConfig.Authenticator(auth);
