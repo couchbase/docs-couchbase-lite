@@ -41,7 +41,7 @@ namespace api_walkthrough
   {
   private static Database _Database;
   private static Replicator _Replicator;
-  private static ListenerToken _ThisListenerToken;
+  private static ListenerToken _thisListenerToken;
   private static bool _NeedsExtraDocs;
 
   #region Private Methods
@@ -398,8 +398,8 @@ public class Examples {
     // tag::p2p-act-rep-initialize[]
     // initialize the replicator configuration
 
-    var thisListener = new URLEndpoint("wss://listener.com:4984/otherDB"); // <.>
-    var config = new ReplicatorConfiguration(thisDB, thisListener);
+    var thisUrl = new URLEndpoint("wss://listener.com:4984/otherDB"); // <.>
+    var config = new ReplicatorConfiguration(thisDB, thisUrl);
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config-type[]
@@ -413,43 +413,17 @@ public class Examples {
     thisConfig.Continuous = true; // default value
 
     // end::p2p-act-rep-config-cont[]
-    // tag::p2p-act-rep-config-tls-full[]
-    // tag::p2p-act-rep-config-cacert[]
-    // Configure Server Security -- only accept CA certs
-    thisConfig.AcceptOnlySelfSignedServerCertificate = false; // <.>
-
-    // end::p2p-act-rep-config-cacert[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Security -- only accept self-signed certs
     thisConfig.AcceptOnlySelfSignedServerCertificate = true; // <.>
 
     // end::p2p-act-rep-config-self-cert[]
-    // tag::p2p-act-rep-config-pinnedcert[]
-
-    // Return the remote pinned cert (the listener's cert)
-    byte returnedCert = new byte(thisConfig.getPinnedCertificate()); // Get listener cert if pinned
-    // end::p2p-act-rep-config-pinnedcert[]
     // Configure Client Security // <.>
     // tag::p2p-act-rep-auth[]
     // Configure basic auth using user credentials
     thisConfig.Authenticator = new BasicAuthenticator(thisUser, thisPassword);
 
     // end::p2p-act-rep-auth[]
-    // end::p2p-act-rep-config-tls-full[]
-
-
-    // tag::p2p-act-rep-config-cacert-pinned[]
-    // Only CA Certs accepted
-    thisConfig.AcceptOnlySelfSignedServerCertificate =
-      false; // <.>
-
-    var thisCert =
-      new X509Certificate2(caData); // <.>
-
-    thisConfig.PinnedServerCertificate =
-      thisCert; // <.>
-
-    // end::p2p-act-rep-config-cacert-pinned[]
     // tag::p2p-act-rep-config-conflict-full[]
     // tag::p2p-act-rep-config-conflict-builtin[]
     /* Optionally set a conflict resolver call back */ // <.>
@@ -473,13 +447,16 @@ public class Examples {
     var thisReplicator = new Replicator(thisConfig); // <.>
 
     // tag::p2p-act-rep-add-change-listener[]
-    // Optionally add a change listener
-    _ThisListenerToken = thisReplicator.AddChangeListener((sender, args) =>
-      {
-        if (args.Status.Activity == ReplicatorActivityLevel.Stopped) {
-            Console.WriteLine("Replication stopped");
-        }
-      });
+    // tag::p2p-act-rep-add-change-listener-label[]
+    //Optionally add a change listener // <.>
+    // end::p2p-act-rep-add-change-listener-label[]
+    _thisListenerToken =
+      thisReplicator.AddChangeListener((sender, args) =>
+        {
+          if (args.Status.Activity == ReplicatorActivityLevel.Stopped) {
+              Console.WriteLine("Replication stopped");
+          }
+        });
 
     // end::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-start[]
@@ -490,6 +467,52 @@ public class Examples {
 // end::p2p-act-rep-start-full[]
 // end::p2p-act-rep-func[]         ***** End p2p-act-rep-func
 }
+
+// Additional snippets
+
+    // tag::p2p-act-rep-config-tls-full[]
+    // tag::p2p-act-rep-config-cacert[]
+    // Configure Server Security -- only accept CA certs
+    thisConfig.AcceptOnlySelfSignedServerCertificate = false; // <.>
+
+    // end::p2p-act-rep-config-cacert[]
+    // tag::p2p-act-rep-config-pinnedcert[]
+
+    // Return the remote pinned cert (the listener's cert)
+    byte returnedCert = new byte(thisConfig.getPinnedCertificate()); // Get listener cert if pinned
+    // end::p2p-act-rep-config-pinnedcert[]
+    // Configure Client Security // <.>
+    // tag::p2p-act-rep-auth[]
+    // Configure basic auth using user credentials
+    thisConfig.Authenticator = new BasicAuthenticator(thisUser, thisPassword);
+
+    // end::p2p-act-rep-auth[]
+    // end::p2p-act-rep-config-tls-full[]
+
+    // tag::p2p-act-rep-config-cacert-pinned[]
+    // Only CA Certs accepted
+    thisConfig.AcceptOnlySelfSignedServerCertificate =
+      false; // <.>
+
+    var thisCert =
+      new X509Certificate2(caData); // <.>
+
+    thisConfig.PinnedServerCertificate =
+      thisCert; // <.>
+
+    // end::p2p-act-rep-config-cacert-pinned[]
+
+
+
+
+
+
+
+
+
+
+
+
     // Code to refactor
     Log.i(TAG, "The Replicator is currently " + thisReplicator.getStatus().getActivityLevel());
 
@@ -511,7 +534,7 @@ public class Examples {
 
       // tag::p2p-act-rep-stop[]
       // Stop replication.
-      thisReplicator.stop(); // <.>
+      thisReplicator.Stop(); // <.>
       // end::p2p-act-rep-stop[]
 
 
@@ -783,10 +806,6 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
 
         // tag::p2p-tlsid-tlsidentity-with-label[]
-    // Configure the expected server-supplied
-    // credentials -- only accept CA Certs
-    thisConfig.AcceptOnlySelfSignedServerCertificate = false; // <.>
-
     // Client identity
     thisIdentity =
       TLSIdentity.ImportIdentity(_store,

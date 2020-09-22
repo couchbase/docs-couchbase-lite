@@ -57,9 +57,10 @@ You should configure and initialize a replicator for each Couchbase Lite databas
 // [%collapsible]
 ====
 
+// include::{snippet-p2psync-ws}[tags="p2p-act-rep-func;!p2p-act-rep-config-cacert;!p2p-act-rep-config-pinnedcert;!p2p-tlsid-tlsidentity-with-label;!p2p-act-rep-config-cacert-pinned";!p2p-tlsid-tlsidentity-with-label, indent=0]
 [source, {source-language}]
 ----
-include::{snippet-p2psync-ws}[tags="p2p-act-rep-func;!p2p-act-rep-config-cacert;!p2p-act-rep-config-pinnedcert;!p2p-tlsid-tlsidentity-with-label;!p2p-act-rep-config-cacert-pinned";!p2p-tlsid-tlsidentity-with-label, indent=0]
+include::{snippet-p2psync-ws}[tags=p2p-act-rep-func, indent=0]
 ----
 ifeval::["{param-platform}"=="{platform-android}"]
 [NOTE]
@@ -300,13 +301,8 @@ include::{snippet-p2psync-ws}[tags=p2p-tlsid-tlsidentity-with-label, indent=0]
 
 *Notes on Example*
 
-// <.> Only accept CA attested certificates
-<.> Attempt to get the identity from secure storage
+<.> Import and create an identity from the given PKCS12 data containing private key, public key, and certificates
 <.> Set the authenticator to {url-api-class-replicator-config-cert-auth} and configure it to use the retrieved identity
-
-
-// include::{snippet-p2psync-ws}[tags=p2p-tlsid-tlsidentity-with-label, indent=0]
-// include::{snippet-p2psync-ws}[tags=p2p-tlsid-tlsidentity-with-label-callouts, indent=0]
 
 ====
 
@@ -368,7 +364,7 @@ Adding a Change Listener::
 [source, {source-language}]
 ----
 
-include::{snippet-p2psync-ws}[tags=p2p-act-rep-add-change-listener,indent=0]
+include::{snippet-p2psync-ws}[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
 
 ----
 --
