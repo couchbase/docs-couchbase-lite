@@ -26,7 +26,8 @@ include::{root-partials}_block-caveats.adoc[tags=securestorage]
 You should configure and initialize a listener for each Couchbase Lite database instance you want to to sync.
 There is no limit on the number of listeners you may configure -- <<simple-listener-initialization>> shows a simple initialization and configuration process.
 
-// Example-1
+// Example 1
+// include::{snippet-p2psync-ws}[tags="listener-initialize;!listener-local-db;!listener-config-tls-disable;!listener-config-tls-id-caCert;!listener-config-tls-id-SelfSigned;!listener-config-tls-id-set;!listener-config-client-auth-root;!listener-config-client-auth-lambda", indent=0]
 [#simple-listener-initialization]
 .Listener configuration and initialization
 ====
@@ -34,7 +35,7 @@ There is no limit on the number of listeners you may configure -- <<simple-liste
 [source, {source-language}]
 ----
 
-include::{snippet-p2psync-ws}[tags="listener-initialize;!listener-local-db;!listener-config-tls-disable;!listener-config-tls-id-caCert;!listener-config-tls-id-SelfSigned;!listener-config-tls-id-set;!listener-config-client-auth-root;!listener-config-client-auth-lambda", indent=0]
+include::{snippet-p2psync-ws}[tags=listener-initialize, indent=0]
 
 ----
 
@@ -62,7 +63,7 @@ But you _can_, optionally, disable TLS (*not* advisable in production) -- see: <
 Here we show the default TLS authentication, which is by anonymous self-signed certificate.
 The server must always authenticate itself to the client.
 <.> Set client security -- define the credentials the server expects the client to present for authentication.
-Here we show how basic authentication is configured to authenticate the client-supplied credentials (`thisUser` and `thisPassword`), against the valid credentials (here `username` and `password`) -- see <<authenticating-the-client>> for more options.
+Here we show how basic authentication is configured to authenticate the client-supplied credentials from the http authentication header against valid credentials -- see <<authenticating-the-client>> for more options.
 +
 Note that client authentication is optional.
 <.> Initialize the listener using the configuration settings.
@@ -250,7 +251,7 @@ NOTE: Typically, you will configure the listener's TLS Identity once during init
 ====
 
 ifeval::["{param-platform}"!="{platform-android}"]
-Import from key-pair::
+Import::
 +
 --
 // ifeval::["{param-platform}"=="{platform-android}"]
@@ -262,7 +263,7 @@ Import from key-pair::
 // *This method is not secure. Do not use in production code.*
 
 // endif::[]
-Import a key pair into secure storage and create a TLSIdentity from the imported key-pair.
+Import an identity from a secure key and certificate data source.
 
 [source, {source-language}]
 ----
@@ -282,8 +283,8 @@ include::{snippet-p2psync-ws}[tags="listener-config-tls-id-full;!listener-config
 
 <.> Ensure TLS is used
 // <.> Create keystore entry
-<.> Get keypair data
-<.> Use keypair data to create and store the TLS identity
+<.> Get key and certificate data
+<.> Use the retrieved data to create and store the TLS identity
 // <.> Password for {securestorage}
 // <.> Label for
 // <.> null
@@ -349,7 +350,7 @@ Whilst client authentication is optional, Couchbase lite provides the necessary 
 Valid options are:
 
 * No authentication -- If you do not define an Authenticator then all clients are accepted.
-* Basic Authentication -- uses the {url-api-class-ListenerPasswordAuthenticator} to authenticate the client using the client-supplied username and password.
+* Basic Authentication -- uses the {url-api-class-ListenerPasswordAuthenticator} to authenticate the client using the client-supplied username and password (from the http authentication header).
 * {url-api-class-ListenerCertificateAuthenticator} -- which authenticates the client using a client supplied chain of one or more certificates.
 You should initialize the authenticator using one of the following constructors:
 ** A list of one or more root certificates -- the client supplied certificate must end at a certificate in this list if it is to be authenticated
@@ -383,7 +384,7 @@ include::{snippet-p2psync-ws}[tags=listener-config-client-auth-pwd, indent=0]
 
 *Notes on example:*
 
-<.> Where 'thisUser' and 'thisPassword' are the client-supplied values to be authenticated.
+<.> Where 'username'/'password' are the client-supplied values (from the http-authentication header) and `validUser`/`validPassword` are the values acceptable to the server.
 ====
 // include::{snippet}[tags=listener-config-client-auth-pwd-full, indent=0]
 
@@ -492,6 +493,12 @@ include::{snippet-p2psync-ws}[tag=p2p-tlsid-delete-id-from-keychain]
 
 The table in this section shows the expected system behavior (in regards to security) depending on the TLS configuration settings deployed.
 
+:tlsIdNil: nil
+
+ifeval::["{param-platform}"=="{platform-net}"]
+:tlsIdNil: null
+endif::[]
+
 .Expected system behavior
 [cols="12,44,44"]
 |===
@@ -502,7 +509,7 @@ The table in this section shows the expected system behavior (in regards to secu
 a|TLS is disabled; all communication is plain text.
 
 |false
-| set to `nil`
+a| set to {tlsIdNil}
 a|* The system will auto generate an _anonymous_ self signed cert.
 * Active peers (clients) should be configured to accept self-signed certificates.
 * Communication is encrypted
@@ -551,9 +558,9 @@ include::{module-callouts}[tags=listener-start, indent=0]
 
 == Monitor Listener
 
-Use the Listener's `getStatus` method to get counts of total and active connections -- see: <<get-connection-counts>>.
+Use the Listener's `{url-api-property-urlendpointlistener-status}` property/method to get counts of total and active connections -- see: <<get-connection-counts>>.
 
-You should note that these counts can be extremely volatile. So, the actual number of active connections may have changed, by the time the call to, for example, `getActiveConnectionCount` returns a result.
+You should note that these counts can be extremely volatile. So, the actual number of active connections may have changed, by the time the `{url-api-class-connection-status}` class returns a result.
 
 // Example 11
 [[get-connection-counts]]

@@ -48,12 +48,7 @@ namespace api_walkthrough
   private static void GettingStarted()
   {
     // tag::listener-initialize[]
-    // tag::listener-local-db[]
-    // . . . preceding application logic . . .
-    // Get the database (and create it if it doesn't exist)
-    var thisDB = new Database("mydb");
 
-    // end::listener-local-db[]
     // tag::listener-config-db[]
     // Initialize the listener config
     var thisConfig = new URLEndpointListenerConfiguration(thisDB); // <.>
@@ -76,149 +71,31 @@ namespace api_walkthrough
     thisConfig.DisableTLS = false; // <.>
 
     // end::listener-config-tls-enable[]
-    // tag::listener-config-tls-disable[]
-    thisConfig.DisableTLS = true; // <.>
-
-    // end::listener-config-tls-disable[]
-    // tag::listener-config-tls-id-full[]
-    // tag::listener-config-tls-id-caCert[]
-    // Use CA Cert
-    // Create a TLSIdentity from an imported key-pair
-    // . . . previously declared variables include ...
-    TLSIdentity thisIdentity;
-    X509Store _store =
-      new X509Store(StoreName.My); // The id is stored in secure storage
-                                   // using  given label
-
-    // PKCS12 data containing private key,
-    // public key, and certificates
-    byte[] thisKeyPair =
-      File.ReadAllBytes("C:\\client.p12"); // <.>
-    // . . . other user code . . .
-
-    // tag::import-tls-identity[]
-    thisIdentity = TLSIdentity.ImportIdentity(
-      _store,
-      thisKeyPair, // <.>
-      "123", // Password to access certificate data
-      "couchbase-demo-cert",
-      null); // Label to get cert in certificate map
-        // NOTE: If a null label is supplied then the same
-        // default directory for a Couchbase Lite database
-        // is used for map.
-
-    // end::import-tls-identity[]
-    // end::listener-config-tls-id-caCert[]
-    // tag::listener-config-tls-id-SelfSigned[]
-    // Use a self-signed certificate
-    // Create a TLSIdentity for the server and
-    // store it in secure storage
-
-    // . . . previously declared variables include ...
-      TLSIdentity thisIdentity;
-      X509Store _store =
-        new X509Store(StoreName.My); // <.>
-      DateTimeOffset fiveMinToExpireCert =
-        DateTimeOffset.UtcNow.AddMinutes(5);
-    // . . . other user code . . .
-
-    // tag::create-self-signed-cert[]
-    thisIdentity =
-      TLSIdentity.CreateIdentity(
-        true, /* isServer */
-        new Dictionary<string, string>() { // <.>
-          { Certificate.CommonNameAttribute, "Couchbase Inc" } },
-              // The common name attribute is required
-              // when creating a CSR. If it is not presented
-              // in the cert, an exception is thrown.
-        fiveMinToExpireCert,
-              // If the expiration date is not specified,
-              // the certs expiration will be 365 days
-        _store,
-        "couchbase-demo-cert",
-        null);  // The key label to get cert in certificate map.
-                // If null, the same default directory
-                // for a Couchbase Lite db is used for map.
-
-
-    // end::create-self-signed-cert[]
-    // end::listener-config-tls-id-SelfSigned[]
     // tag::listener-config-tls-id-anon[]
     // Use an Anonymous Self-Signed Cert
     thisConfig.TlsIdentity = null; // <.>
 
     // end::listener-config-tls-id-anon[]
-    // tag::listener-config-tls-id-set[]
-    // Set the TLS Identity
-    thisConfig.TlsIdentity = thisIdentity; // <.>
-
-    // end::listener-config-tls-id-set[]
-    // end::listener-config-tls-id-full[]
     // tag::listener-config-client-auth-pwd[]
-    // Configure the client authenticator (if using Basic Authentication) <.>
-    SecureString thisPassword = "valid.password"; /* example only */
-    var thisUser = "valid.user";
+    // Configure the client authenticator
+    // Here we are using Basic Authentication) <.>
+    SecureString validPassword =  new SecureString(); /* example only */
+    // Get SecureString input for validPassword
+    var validUser = "valid.username";
     thisConfig.Authenticator = new ListenerPasswordAuthenticator(
-      (sender, thisUser, thisPassword) =>
+      (sender, validUser, validPassword) =>
         {
-          return username.equals("valid.user")  && thisPassword == "valid.password");
+          return username.equals(validUser)  && password == validPassword);
         }
       );
 
     // end::listener-config-client-auth-pwd[]
-    // tag::listener-config-client-auth-root[]
-    // Configure the client authenticator
-    // to validate using ROOT CA
-
-    // Get the valid cert chain, in this instance from
-    // PKCS12 data containing private key, public key
-    // and certificates <.>
-    clientData = File.ReadAllBytes("C:\\client.p12");
-    ourCaData = File.ReadAllBytes("C:\\client-ca.der");
-
-    // Get the root certs from the data
-    var thisRootCert = new X509Certificate2(ourCaData); // <.>
-
-    // Configure the authenticator to use the root certs
-    var thisAuth = new ListenerCertificateAuthenticator(new X509Certificate2Collection(thisRootCert)); // <.>
-
-    thisConfig.Authenticator = thisAuth; // <.>
-
-    // Initialize the listener using the config
-    _listener = new URLEndpointListener(thisConfig); // <.>
-
-    // end::listener-config-client-auth-root[]
-    // tag::listener-config-client-auth-lambda[]
-    // Configure the client authenticator
-    // to validate using application logic
-
-    // Get the valid cert chain, in this instance from
-    // PKCS12 data containing private key, public key
-    // and certificates <.>
-    clientData = File.ReadAllBytes("C:\\client.p12");
-    ourCaData = File.ReadAllBytes("C:\\client-ca.der");
-
-    // Get the root certs from the data
-    var thisRootCert = new X509Certificate2(ourCaData); // <.>
-
-    // Configure the authenticator to pass the root certs
-    // To a user supplied code block for authentication
-    var thisAuth =
-      new ListenerCertificateAuthenticator(
-        new X509Certificate2Collection(thisRootCert) => {
-          // . . . user supplied code block
-          // . . . returns boolean value (true=authenticated)
-        }); // <.>
-
-    thisConfig.Authenticator = thisAuth; // <.>
-
-    // end::listener-config-client-auth-lambda[]
     // tag::listener-start[]
     // Initialize the listener
     _thisListener = new URLEndpointListener(thisConfig); // <.>
 
     // Start the listener
-    thisListener.start(); // <.>
+    thisListener.Start(); // <.>
 
     // end::listener-start[]
     // end::listener-initialize[]
@@ -241,16 +118,126 @@ namespace api_walkthrough
 
 
   // tag::listener-status-check[]
-  int connectionCount = thisListener.getStatus().getConnectionCount(); // <.>
-  int activeConnectionCount = thisListener.getStatus().getActiveConnectionCount();  // <.>
+  int connectionCount = thisListener.Status.ConnectionCount; // <.>
+  int activeConnectionCount = thisListener.Status.ActiveConnectionCount;  // <.>
 
   // end::listener-status-check[]
 
 
   // tag::listener-stop[]
-  thisListener.stop();
+  thisListener.Stop();
 
   // end::listener-stop[]
+
+// Additional snippets
+
+    // tag::listener-config-tls-disable[]
+    thisConfig.DisableTLS = true; // <.>
+
+    // end::listener-config-tls-disable[]
+
+    // tag::listener-local-db[]
+    // . . . preceding application logic . . .
+    // Get the database (and create it if it doesn't exist)
+    var thisDB = new Database("mydb");
+
+    // end::listener-local-db[]
+
+    // tag::listener-config-tls-id-full[]
+    // tag::listener-config-tls-id-caCert[]
+    // Use CA Cert
+    // Create a TLSIdentity from an imported key-pair
+    // . . . previously declared variables include ...
+    TLSIdentity thisIdentity;
+    X509Store _store =
+      new X509Store(StoreName.My); // create and label x509 store
+
+    // Get keys and certificates from PKCS12 data
+    byte[] thisIdData =
+      File.ReadAllBytes("c:client.p12"); // <.>
+    // . . . other user code . . .
+
+    // tag::import-tls-identity[]
+    thisIdentity = TLSIdentity.ImportIdentity(
+      _store,
+      thisIdData, // <.>
+      "123", // Password to access certificate data
+      "couchbase-demo-cert",
+      null); // Label to get cert in certificate map
+        // NOTE: If a null label is supplied then the same
+        // default directory for a Couchbase Lite database
+        // is used for map.
+
+    // end::import-tls-identity[]
+    // end::listener-config-tls-id-caCert[]
+
+    // tag::listener-config-tls-id-anon[]
+    // Use an Anonymous Self-Signed Cert
+    thisConfig.TlsIdentity = null; // <.>
+
+    // end::listener-config-tls-id-anon[]
+    // tag::listener-config-tls-id-set[]
+    // Set the TLS Identity
+    thisConfig.TlsIdentity = thisIdentity; // <.>
+
+    // end::listener-config-tls-id-set[]
+    // end::listener-config-tls-id-full[]
+
+    // tag::listener-config-client-auth-root[]
+    // Configure the client authenticator
+    // to validate using ROOT CA
+
+    // Get the valid cert chain, in this instance from
+    // PKCS12 data containing private key, public key
+    // and certificates <.>
+    var clientData = File.ReadAllBytes("c:client.p12");
+    var ourCaData = File.ReadAllBytes("c:client-ca.der");
+
+    // Get the root certs from the data
+    var thisRootCert = new X509Certificate2(ourCaData); // <.>
+
+    // Configure the authenticator to use the root certs
+    var thisAuth = new ListenerCertificateAuthenticator(new X509Certificate2Collection(thisRootCert)); // <.>
+
+    thisConfig.Authenticator = thisAuth; // <.>
+
+    // Initialize the listener using the config
+    _listener = new URLEndpointListener(thisConfig);
+
+    // end::listener-config-client-auth-root[]
+    // tag::listener-config-client-auth-lambda[]
+    // Configure the client authenticator
+    // to validate using application logic
+
+    // Get the valid cert chain, in this instance from
+    // PKCS12 data containing private key, public key
+    // and certificates <.>
+    clientData = File.ReadAllBytes("c:client.p12");
+    ourCaData = File.ReadAllBytes("c:client-ca.der");
+
+    // Get the root certs from the data
+    var thisRootCert = new X509Certificate2(ourCaData); // <.>
+
+    // Configure the authenticator to pass the root certs
+    // To a user supplied code block for authentication
+    var thisAuth =
+      new ListenerCertificateAuthenticator(
+        new X509Certificate2Collection(thisRootCert) => {
+          // . . . user supplied code block
+          // . . . returns boolean value (true=authenticated)
+        }); // <.>
+
+    thisConfig.Authenticator = thisAuth; // <.>
+
+    // end::listener-config-client-auth-lambda[]
+
+
+
+// END Additional
+
+
+
+
 
 
 // Listener Callouts
@@ -491,13 +478,13 @@ public class Examples {
 // end::p2p-act-rep-func[]         ***** End p2p-act-rep-func
 }
     // Code to refactor
-    Log.i(TAG, "The Replicator is currently " + thisReplicator.getStatus().getActivityLevel());
+    Log.i(TAG, "The Replicator is currently " + thisReplicator.Status().getActivityLevel());
 
     Log.i(TAG, "The Replicator has processed " + t);
 
-    if (thisReplicator.getStatus().getActivityLevel() == Replicator.ActivityLevel.BUSY) {
+    if (thisReplicator.Status().getActivityLevel() == Replicator.ActivityLevel.BUSY) {
           Log.i(TAG, "Replication Processing");
-          Log.i(TAG, "It has completed " + thisReplicator.getStatus().getProgess().getTotal() + " changes");
+          Log.i(TAG, "It has completed " + thisReplicator.Status().getProgess().getTotal() + " changes");
       }
     // tag::p2p-act-rep-status[]
     _thisReplicator.Stop();
@@ -511,7 +498,7 @@ public class Examples {
 
       // tag::p2p-act-rep-stop[]
       // Stop replication.
-      thisReplicator.stop(); // <.>
+      thisReplicator.Stop(); // <.>
       // end::p2p-act-rep-stop[]
 
 
@@ -534,7 +521,7 @@ public class Examples {
   final URLEndpointListener listener = new URLEndpointListener( thisConfig ); // <.>
 
   // Start the listener
-  listener.start(); // <.>
+  listener.Start(); // <.>
     }
 
 
@@ -590,8 +577,8 @@ TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
 
     // tag::old-p2p-act-rep-add-change-listener[]
     ListenerToken thisListener = new thisReplicator.addChangeListener(change -> { // <.>
-      if (change.getStatus().getError() != null) {
-        Log.i(TAG, "Error code ::  " + change.getStatus().getError().getCode());
+      if (change.Status().getError() != null) {
+        Log.i(TAG, "Error code ::  " + change.Status().getError().getCode());
       }
     });
 
