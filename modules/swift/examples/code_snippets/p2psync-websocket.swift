@@ -165,7 +165,7 @@ class URLEndpontListenerTest: ReplicatorTest {
         // Listener:
 // tag::xctListener-auth-basic-pwd[]
         let thisAuth = ListenerPasswordAuthenticator.init {
-            (thisUser, thisPassword) -> Bool in
+            (validUser, validPassword) -> Bool in
             return (username as NSString).isEqual(to: "daniel") &&
                    (password as NSString).isEqual(to: "123")
         }
@@ -487,8 +487,8 @@ listenerConfig.enableDeltaSync = true
 listenerConfig.tlsIdentity = nil
 
 listenerConfig.authenticator = ListenerPasswordAuthenticator.init {
-            (thisUser, thisPassword) -> Bool in
-    if (self._whitelistedUsers.contains(["password" : thisPassword, "name":thisUser])) {
+            (validUser, validPassword) -> Bool in
+    if (self._whitelistedUsers.contains(["password" : validPassword, "name":validUser])) {
         return true
     }
     return false
@@ -537,7 +537,7 @@ _thisListener = URLEndpointListener(config: listenerConfig)
 // tag::replicator-start-func-config-auth[]
 
             config.acceptOnlySelfSignedServerCertificate = true
-            let authenticator = BasicAuthenticator(username: thisUser, password: thisPassword)
+            let authenticator = BasicAuthenticator(username: validUser, password: validPassword)
             config.authenticator = authenticator
 // end::replicator-start-func-config-auth[]
 
@@ -652,9 +652,9 @@ class cMyPassListener {
     // Here, use Basic Authentication
     listenerConfig.authenticator =
       ListenerPasswordAuthenticator(authenticator: {
-        (thisUser, thisPassword) -> Bool in
+        (validUser, validPassword) -> Bool in
           if (self._allowlistedUsers.contains {
-                $0 == thisPassword && $1 == thisUser
+                $0 == validPassword && $1 == validUser
               }) {
               return true
               }
@@ -843,8 +843,8 @@ class myActPeerClass {
 
   func fMyActPeer() {
     // tag::p2p-act-rep-func[]
-    let thisUser = "syncuser"
-    let thisPassword = "sync9455"
+    let validUser = "syncuser"
+    let validPassword = "sync9455"
     let cert:SecCertificate?
     let passivePeerEndpoint = "10.1.1.12:8920"
     let passivePeerPort = "8920"
@@ -878,7 +878,7 @@ class myActPeerClass {
     // Configure Client Security // <.>
     // tag::p2p-act-rep-auth[]
     //  Set Authentication Mode
-    let thisAuthenticator = BasicAuthenticator(username: thisUser, password: thisPassword)
+    let thisAuthenticator = BasicAuthenticator(username: "Our Username", password: "Our Password")
     config.authenticator = thisAuthenticator
 
     // end::p2p-act-rep-auth[]
@@ -951,7 +951,7 @@ class myActPeerClass {
     // Configure Client Security // <.>
     // tag::p2p-act-rep-auth[]
     //  Set Authentication Mode
-    let thisAuthenticator = BasicAuthenticator(username: thisUser, password: thisPassword)
+    let thisAuthenticator = BasicAuthenticator(username: validUser, password: validPassword)
     config.authenticator = thisAuthenticator
 
     // end::p2p-act-rep-auth[]

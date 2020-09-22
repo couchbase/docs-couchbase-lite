@@ -1628,7 +1628,7 @@ public class PasswordAuthListener {
       config.setPort(0); // this is the default
       config.setDisableTls(true);
       config.setAuthenticator(new ListenerPasswordAuthenticator(
-        (thisUser, pwd) -> username.equals(thisUser) && Arrays.equals(thisPassword, pwd)));
+        (validUser, pwd) -> username.equals(validUser) && Arrays.equals(validPassword, pwd)));
 
         final URLEndpointListener listener = new URLEndpointListener(config);
         listener.start();

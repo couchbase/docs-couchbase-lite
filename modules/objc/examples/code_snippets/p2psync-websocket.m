@@ -46,8 +46,8 @@ class cMyPassListener {
     // For example, Basic Authentication <.>
     thisConfig.authenticator =
       [[CBLListenerPasswordAuthenticator alloc]
-        initWithBlock: ^BOOL(NSString * thisUser, NSString * thisPassword) {
-          if ([self isValidCredentials: thisUser password:thisPassword]) {
+        initWithBlock: ^BOOL(NSString * validUser, NSString * validPassword) {
+          if ([self isValidCredentials: validUser password:validPassword]) {
               return  YES;
           }
           return NO;
@@ -281,8 +281,8 @@ import MultipeerConnectivity
 class myActPeerClass {
 
   func fMyActPeer() {
-    // let thisUser = "syncthisUser"
-    // let thisPassword = "sync9455"
+    // let validUser = "syncthisUser"
+    // let validPassword = "sync9455"
     // let cert:SecCertificate?
     // let passivePeerEndpoint = "10.1.1.12:8920"
     // let passivePeerPort = "8920"
@@ -332,7 +332,7 @@ class myActPeerClass {
     // Here set client to use basic authentication
     // Providing username and password credentials
     // If prompted for them by server
-    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"john" password:@"pass"]; // <.>
+    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; // <.>
 
     // end::p2p-act-rep-auth[]
     // end::p2p-act-rep-config-tls-full[]
@@ -346,8 +346,10 @@ class myActPeerClass {
     // Apply configuration settings to the replicator
     _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; // <.>
 
-    // Optionally add a change listener <.>
     // tag::p2p-act-rep-add-change-listener[]
+    // tag::p2p-act-rep-add-change-listener-label[]
+    // Optionally add a change listener <.>
+    // end::p2p-act-rep-add-change-listener-label[]
     // Retain token for use in deletion
     id<CBLListenerToken> thisListenerToken
       = [thisReplicator addChangeListener:^(CBLReplicatorChange *thisChange) {
