@@ -32,6 +32,55 @@ private void stopListener(@NotNull URLEndpointListener listener) {
 
 
 
+// tag::listener-simple[]
+final URLEndpointListenerConfiguration thisConfig =
+  new URLEndpointListenerConfiguration(thisDB); // <.>
+
+thisConfig.setAuthenticator(
+  new ListenerPasswordAuthenticator(
+    (username, password) ->
+      username.equals("valid.User") &&
+      Arrays.equals(password, valid.password.string)
+    )
+  ); // <.>
+
+final URLEndpointListener thisListener =
+  new URLEndpointListener(thisConfig); // <.>
+
+thisListener.start(); // <.>
+
+// end::listener-simple[]
+
+
+
+// tag::replicator-simple[]
+URI uri = null;
+try {
+    uri = new URI("wss://10.0.2.2:4984/db");
+} catch (URISyntaxException e) {
+    e.printStackTrace();
+}
+Endpoint theListenerEndpoint = new URLEndpoint(uri); // <.>
+
+ReplicatorConfiguration thisConfig =
+  new ReplicatorConfiguration(database, theListenerEndpoint); // <.>
+
+thisConfig.setAcceptOnlySelfSignedServerCertificate(true); // <.>
+
+final BasicAuthenticator thisAuth
+= new BasicAuthenticator(
+    "valid.user",
+    "valid.password.string"));
+thisConfig.setAuthenticator(thisAuth) // <.>
+
+this.replicator = new Replicator(config); // <.>
+this.replicator.start(); // <.>
+
+// end::replicator-simple[]
+
+
+
+
 
 import Foundation
 import CouchbaseLiteSwift

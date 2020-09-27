@@ -1,3 +1,58 @@
+
+// tag::listener-simple[]
+CBLURLEndpointListenerConfiguration* thisConfig;
+  thisConfig =
+    [[CBLURLEndpointListenerConfiguration alloc]
+      initWithDatabase: database]; // <.>
+
+thisConfig.authenticator =
+  [[CBLListenerPasswordAuthenticator alloc]
+    initWithBlock: ^BOOL(NSString * validUser, NSString * validPassword) {
+      if ([self isValidCredentials: validUser password:validPassword]) {
+          return  YES;
+      }
+      return NO;
+  }]; // <.>
+
+CBLURLEndpointListener* thisListener = nil;
+thisListener =
+  [[CBLURLEndpointListener alloc] initWithConfig: thisConfig]; // <.>
+
+BOOL success = [thisListener startWithError: &error];
+if (!success) {
+    NSLog(@"Cannot start the listener: %@", error);
+} // <.>
+
+// end::listener-simple[]
+
+// tag::replicator-simple[]
+NSURL *url =
+  [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
+CBLURLEndpoint *theListenerURL =
+  [[CBLURLEndpoint alloc] initWithURL:url]; // <.>
+
+CBLReplicatorConfiguration *thisConfig
+  = [[CBLReplicatorConfiguration alloc]
+      initWithDatabase:thisDB target:theListenerURL]; // <.>
+
+thisConfig.acceptOnlySelfSignedServerCertificate = YES; // <.>
+
+thisConfig.authenticator =
+  [[CBLBasicAuthenticator alloc]
+    initWithUsername:@"valid.user"
+      password:@"valid.password.string"]; // <.>
+
+
+CBLReplicator *_thisReplicator;
+_thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; // <.>
+
+[_thisReplicator start]; // <.>
+
+// end::replicator-simple[]
+
+
+
+
 //
 // Stuff I adapted
 //
@@ -292,6 +347,7 @@ class myActPeerClass {
     // var replicatorListener:ListenerToken?
 
     CBLReplicator *_thisReplicator;
+
     CBLListenerToken *_thisListenerToken;
 
     CBLDatabase *database
