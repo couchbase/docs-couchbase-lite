@@ -18,6 +18,47 @@
 
 // tag::listener[]
 
+// tag::listener-simple[]
+val config =
+  URLEndpointListenerConfiguration(database) // <.>
+
+config.setAuthenticator(
+    ListenerPasswordAuthenticator {
+      username, password ->
+        "valid.user" == username &&
+        ("valid.password.string" == String(password))
+    }
+) // <.>
+
+val listener =
+  URLEndpointListener(config) // <.>
+
+listener.start()  // <.>
+
+// end::listener-simple[]
+
+
+
+// tag::replicator-simple[]
+
+let tgtUrl = URL(string: "wss://10.1.1.12:8092/actDb")!
+let targetEndpoint = URLEndpoint(url: tgtUrl) //  <.>
+
+var thisConfig = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) // <.>
+
+thisConfig.acceptOnlySelfSignedServerCertificate = true; <.>
+
+let thisAuthenticator = BasicAuthenticator(username: "valid.user", password: "valid.password.string")
+thisConfig.authenticator = thisAuthenticator // <.>
+
+this.replicator = new Replicator(config); // <.>
+
+this.replicator.start(); // <.>
+
+// end::replicator-simple[]
+
+
+
 import XCTest
 @testable import CouchbaseLiteSwift
 

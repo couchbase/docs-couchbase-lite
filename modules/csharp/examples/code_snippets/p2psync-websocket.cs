@@ -1,3 +1,45 @@
+
+// tag::listener-simple[]
+var thisConfig = new URLEndpointListenerConfiguration(thisDB); // <.>
+
+thisConfig.Authenticator =
+  new ListenerPasswordAuthenticator(
+    (sender, username, password) =>
+      {
+      return username.equals("valid.user")  && (password == validPassword);
+      }
+  ); // <.>
+
+_thisListener = new URLEndpointListener(thisConfig); // <.>
+
+_thisListener.Start(); // <.>
+
+// end::listener-simple[]
+
+
+
+// tag::replicator-simple[]
+var theListenerEndpoint = new URLEndpoint("wss://listener.com:4984/otherDB"); // <.>
+
+var thisConfig = new ReplicatorConfiguration(thisDB, theListenerEndpoint); // <.>
+
+thisConfig.AcceptOnlySelfSignedServerCertificate = true; // <.>
+
+thisConfig.Authenticator =
+  new BasicAuthenticator("valid.user", "valid.password.string"); // <.>
+
+var thisReplicator = new Replicator(thisConfig); // <.>
+
+thisReplicator.Start(); // <.>
+
+// end::replicator-simple[]
+
+
+
+
+
+
+
 // PASSIVE PEER STUFF
 // Stuff I adapted
 //

@@ -3,6 +3,50 @@
 //
 
 
+
+// tag::listener-simple[]
+final URLEndpointListenerConfiguration thisConfig =
+  new URLEndpointListenerConfiguration(thisDB); // <.>
+
+thisConfig.setAuthenticator(
+  new ListenerPasswordAuthenticator(
+    (username, password) ->
+      username.equals("valid.User") &&
+      Arrays.equals(password, valid.password.string)
+    )
+  ); // <.>
+
+final URLEndpointListener thisListener =
+  new URLEndpointListener(thisConfig); // <.>
+
+thisListener.start(); // <.>
+
+// end::listener-simple[]
+
+
+
+// tag::replicator-simple[]
+final ReplicatorConfiguration thisConfig =
+  new ReplicatorConfiguration(
+    thisDB,
+    URLEndpoint(URI("wss://listener.com:8954"))); // <.> <.>
+
+thisConfig.setAcceptOnlySelfSignedServerCertificate(true); // <.>
+
+final BasicAuthenticator thisAuth
+= new BasicAuthenticator(
+    "valid.user",
+    "valid.password.string"));
+thisConfig.setAuthenticator(thisAuth) // <.>
+
+this.replicator = new Replicator(config); // <.>
+this.replicator.start(); // <.>
+
+// end::replicator-simple[]
+
+
+
+
 import Foundation
 import CouchbaseLiteSwift
 import MultipeerConnectivity
