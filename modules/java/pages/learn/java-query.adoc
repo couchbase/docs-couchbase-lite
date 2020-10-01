@@ -1,6 +1,26 @@
-== Query
+= Query Construction
+:page-layout: article
+:page-status:
+:page-edition:
+:page-role:
+:description: Working with Couchbase Lite's data model  -- Constructing queries
 
-Database queries are based on expressions, of the form "SELECT {blank-field} FROM database WHERE {blank-field}, ORDERed by {blank-field}", with semantics based on Couchbase's N1QL query language.
+include::partial$_std-cbl-hdr-java.adoc[]
+
+:param-abstract!:
+:param-related: {xref-cbl-pg-query-predictive} | {xref-cbl-pg-indexing} | {xref-cbl-pg-query}
+:topic-group: Queries
+include::{root-partials}block-abstract.adoc[]
+
+
+== Overview
+Couchbase Lite for {param-title}'s database queries are based on expressions, of the form:
+
+----
+SELECT {blank-field} FROM database WHERE {blank-field}, ORDERed by {blank-field}
+----
+
+Semantics are based on Couchbase's N1QL query language.
 
 There are several parts to specifying a query:
 
@@ -11,7 +31,7 @@ WHERE:: Specifies the query criteria that the result must satisfy.
 GROUP BY:: Specifies the query criteria to group rows by.
 ORDER BY:: Specifies the query criteria to sort the rows in the result.
 
-=== SELECT statement
+== SELECT statement
 
 With the SELECT statement, you can query and manipulate JSON data.
 With projections, you retrieve just the fields that you need and not the entire document.
@@ -72,13 +92,13 @@ include::{snippet}[tags=query-select-all,indent=0]
 ]
 ----
 
-=== WHERE statement
+== WHERE statement
 
 Similar to SQL, you can use the where clause to filter the documents to be returned as part of the query.
 The select statement takes in an `Expression`.
 You can chain any number of Expressions in order to implement sophisticated filtering capabilities.
 
-==== Comparison
+=== Comparison
 
 The {url-api-references}/com/couchbase/lite/Expression.html[comparison operators] can be used in the WHERE statement to specify on which property to match documents.
 In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
@@ -97,11 +117,11 @@ In the example below, we use the `equalTo` operator to query documents where the
 include::{snippet}[tags=query-where,indent=0]
 ----
 
-=== Collection Operators
+== Collection Operators
 
 {url-api-references}/com/couchbase/lite/ArrayFunction.html[Collection operators] are useful to check if a given value is present in an array.
 
-==== CONTAINS Operator
+=== CONTAINS Operator
 
 The following example uses the `Function.arrayContains` to find documents whose `public_likes` array property contain a value equal to "Armani Langworth".
 
@@ -119,7 +139,7 @@ The following example uses the `Function.arrayContains` to find documents whose 
 include::{snippet}[tags=query-collection-operator-contains,indent=0]
 ----
 
-==== IN Operator
+=== IN Operator
 
 The `IN` operator is useful when you need to select based on a specified term matching any element of a defined list of values.
 The following example compiles a list of values from `first`, `last` and `username` property value. It then selects if any of those values equals "Armani".
@@ -129,7 +149,7 @@ The following example compiles a list of values from `first`, `last` and `userna
 include::{snippet}[tags=query-collection-operator-in,indent=0]
 ----
 
-==== Like Operator
+=== Like Operator
 
 The {url-api-references}/com/couchbase/lite/Expression.html#like-com.couchbase.lite.Expression-[`like`] operator can be used for string matching.
 
@@ -149,7 +169,7 @@ The following query returns "landmark" type documents regardless of the name's c
 include::{snippet}[tags=query-like-operator,indent=0]
 ----
 
-==== Wildcard Match
+=== Wildcard Match
 
 We can use `%` sign within a `like` expression to do a wildcard match against zero or more characters.
 Using wildcards allows you to have some fuzziness in your search string.
@@ -167,7 +187,7 @@ NOTE: The matches may span word boundaries.
 include::{snippet}[tags=query-like-operator-wildcard-match,indent=0]
 ----
 
-==== Wildcard Character Match
+=== Wildcard Character Match
 
 We can use an `_` sign within a like expression to do a wildcard match against a single character.
 
@@ -179,7 +199,7 @@ The following query will return "landmark" `type` documents with the `name` matc
 include::{snippet}[tags=query-like-operator-wildcard-character-match,indent=0]
 ----
 
-==== Regex Operator
+=== Regex Operator
 
 Similar to wildcard `like` expressions, `regex` expressions based pattern matching allow you to have some fuzziness in your search string.
 
@@ -196,7 +216,7 @@ Note that the `\b` specifies that the match must occur on word boundaries.
 include::{snippet}[tags=query-regex-operator,indent=0]
 ----
 
-=== Query Deleted Document
+== Query Deleted Document
 
 You can query documents that have been deleted (tombstones).
 The following example shows how to query deleted documents in the database.
@@ -206,7 +226,7 @@ The following example shows how to query deleted documents in the database.
 include::{snippet}[tags=query-deleted-documents,indent=0]
 ----
 
-=== JOIN statement
+== JOIN statement
 
 The JOIN clause enables you to create new input objects by combining two or more source objects.
 
@@ -218,7 +238,7 @@ This example JOINS the document of type "route" with documents of type "airline"
 include::{snippet}[tags=query-join,indent=0]
 ----
 
-=== GROUP BY statement
+== GROUP BY statement
 
 You can perform further processing on the data in your result set before the final projection is generated.
 The following example looks for the number of airports at an altitude of 300 ft or higher and groups the results by country and timezone.
@@ -248,7 +268,7 @@ There are 279 airports on the America/Chicago timezone located in United States 
 There are 123 airports on the America/Denver timezone located in United States and above 300 ft
 ----
 
-=== ORDER BY statement
+== ORDER BY statement
 
 It is possible to sort the results of a query based on a given expression result.
 The example below returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.
@@ -269,3 +289,5 @@ Ardèche
 Armagh
 Avignon
 ----
+
+include::{root-partials}block-related-content-query.adoc[]

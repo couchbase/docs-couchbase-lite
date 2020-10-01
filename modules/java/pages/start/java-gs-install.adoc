@@ -1,5 +1,13 @@
-= Installing Couchbase Lite on Java
+= Couchbase Lite on Java -- Installing
+:page-layout: article
+:page-status:
+:page-edition:
+:page-role:
+:description: Couchbase Lite on Java -- a framework for developing offline-first Java applications for mobile and edge
+:keywords: mobile edge nosql api Java JVM web-app device-app
+
 include::partial$_std-cbl-hdr-java.adoc[]
+
 :JP: Java
 :Android: Java (android)
 :cblJP: {product} {JP}
@@ -16,11 +24,14 @@ include::partial$_std-cbl-hdr-java.adoc[]
 :tabs:
 
 
-:param-abstract: How to install Couchbase Lite on {param-name}
 // DO NOT EDIT
+:param-abstract: This content provides instructions that enable you to deploy Couchbase Lite on {param-name}
+:param-related: {xref-cbl-pg-install} | {xref-cbl-pg-prereqs} | {xref-cbl-pg-build} |
+:topic-group:
 include::{root-partials}block-abstract.adoc[]
 // include::{root-partials}block-related-get-started.adoc[]
 // DO NOT EDIT
+
 
 == GET STARTED
 
@@ -34,7 +45,7 @@ You will learn:
 * Where to get the necessary binaries -- <<Where to Get Binaries>>
 * What the binaries contain -- <<Using Downloaded Binaries>>
 * How to deploy {cblJP} -- <<Preparing Your Build Environment>>
-* How to use {cblJP} to create a simple application -- <<Building a Getting Started App>>
+* How to use {cblJP} to create a simple application -- {xref-cbl-pg-build}
 
 NOTE: We use _{gpIDE}_, _{gpBuildTool}_, _Maven_ and _{gpWebServerEnv}_ as tools to build and run the examples presented in this content.
 You are free to use the tools of your choice.
@@ -235,212 +246,6 @@ include::{snippet}[tags=GsEmbeddedTomcatBuildGradle,indent=0]
 
 ====
 
-
-
-== Building a Getting Started App
-
-This section explains how to validate your configured build environment by building a starter app that uses many of {cblJP}'s more common features.
-
-// TIP: The {nmMobStarterApp} app can be downloaded from GitHub link:{url-cb-mobStarterApp}[{nmMobStarterApp}].
-
-The {nmMobStarterApp} app demonstrates how to use {cblJP}. Console and Web App versions are available.
-
-.Development-type Scenarios
-[{tabs}]
-====
-
-Console App::
-+
---
-
-TIP: Ensure you added the {cbl} dependency to your `build.gradle` file
-
-Create, build and run a new project using the following `GettingStarted.java` code:
-
-
-
-[source,java]
-
-----
-include::{snippet}[tags=getting-started,indent=0]
-----
-<1> The app will start a replicator pointing to `ws://localhost:4984/db`, where `db` is the name of your {sg} database
-<2> This is the only API that differs from the {android} version. It accepts no parameters and should be called once only
-<3> You can optionally AES-256 encrypt the database by providing a key
-<4> This is needed for a tidy closedown of work executors
-<5> It is advisable to set a specific directory path for the database.
-
-On running the app, you should see the document ID and property printed to the console together with a query result showing the number of rows in the database.
-
-This shows the document was successfully persisted to the database.
-
-See <<About the Getting Started App>> for more on the app itself
-
---
-
-Web App::
-+
---
-
-This section explains how to set-up a build project to create {cblJP} web apps using {gpBuildTool} and {gpIDE}.
-
-*Steps*
-
-. Create a new project folder and add a `build.gradle` file containing the following:
-+
-[source,groovy,subs=attributes+]
-----
-include::{snippet}[tags=GsEmbeddedTomcatBuildGradle,indent=0]
-----
-
-. Within {gpIDE}, open the new project folder
-+
-If you don't have auto-import enabled, then accept the *Import from Gradle* prompt that appears at the bottom right of the screen.
-. Create a Java class _GettingStarted_ using this code:
-+
-[source, java]
-
-----
-include::{snippet}[tags=GsWebApp_GettingStarted,indent=0]
-----
-+
-<1> It is advisable to set a specific directory path for the database.
-<2> The app will start a replicator pointing to `ws://localhost:4984/db`, where `db` is the name of your {sg} database
-+
-. Create a Java class _Listener_ using this code:
-+
-[source, java]
-
-----
-include::{snippet}[tags=GsWebApp_Listener,indent=0]
-----
-+
-
-. Create a Java class _Database Manager_ using this code:
-+
-[source, java]
-
-----
-include::{snippet}[tags=GsWebApp_DbManager,indent=0]
-----
-+
-<1> This is the only API that differs from the {android} version. It accepts no parameters and should be called once only
-<2> It is advisable to set a specific directory path for the database.
-<3> You can optionally AES-256 encrypt the database by providing a key
-+
-. Create an `index.html` file in `src/main/web app` with the following content:
-+
-[source, html]
-
-----
-include::{snippet}[tags=GsWebApp_Index,indent=0]
-----
-
-. Create a `showDbItems.jsp` file in `src/main/web app` with the following content:
-+
-[source, html]
-
-----
-include::{snippet}[tags=GsWebApp_ShowDbItems,indent=0]
-----
-
-. Build, deploy and run the app using `tomcatRun`
-+
-image::GradleMenuWebApp.png[,300]
-
-.. Point your browser to: `localhost:8080/gettingstarted`
-+
-This opens the browser at your index.html page.
-..  Select the *here* link
-+
-This launches the servlet and displays the results in `showdDbItems.jsp`.
-They are also added to the _catalina.out_ log file.
-
-See <<About the Getting Started App>> for more on the app itself
-
-// --
-
-// Web Server (Docker)::
-// +
-// --
-// *Steps*
-
-// . Include the <pathToCbl>/lib directory in the build of your docker image and on the classpath of any deployed apps.
-// This avoids the need to pack them into the war of each web app).
-// . Include the shared libraries in the build of your (Linux) Docker image see <<bmkLinuxSharedLibs>>
-// . Ensure you set `$CATALINA_BASE` and `$CATALINA_HOME` appropriately
-// . Ensure the appropriate Java version is installed and that the `$JRE_HOME and $JDK_HOME` paths are set to point to it
-// . Create a directory for your database and map it to the Docker container volume to assure persistence
-
-//
---
-
-====
-
-// EndTab Embedded Web Server
-
-
-// Test your deployment
-
-// If you have {gpBuildTool} installed you can quickly validate your build environment using our starter app {nmMobStarterApp}. The app demonstrates {cbl}'s CRUD and sync functionality.
-
-// To actually run the app requires {sg} and {svr} but, you can validate your build environment simply by:
-
-// . Downloading the app, (see: <<Download Links>> section)
-// . Navigating to the app folder and running a {gpBuildTool} build in terminal:
-// +
-// ----
-// cd <path-to-sample-app>
-// ./gradlew jar
-// ----
-
-// Now you know your build environment works you can begin building your own apps.
-
-// TIP: See <<YOUR FIRST PROJECT>> for an example of how to do this.
-
-
-
-== SUPPORTED VERSIONS
-
-Couchbase Lite Java will be supported on x86 64-bit platforms. These are the targeted OS versions
-
-.Table Supported OS Versions
-|===
-| OS|Version|Type
-
-.2+|RHEL
-|6.10
-|Desktop & Web Service/Servlet (Tomcat)
-|7
-|Desktop & Web Service/Servlet (Tomcat)
-.2+|centOS
-|6.10
-|Desktop & Web Service/Servlet (Tomcat)
-|7
-|Desktop & Web Service/Servlet (Tomcat)
-|Ubuntu
-|16.0
-|Desktop & Web Service/Servlet (Tomcat)
-|Debian
-|GNU/Linux 8
-|Desktop & Web Service/Servlet (Tomcat)
-|Microsoft Server
-|Windows Server 2012
-|Web Service/Servlet (Tomcat)
-|Microsoft
-|Windows 10
-|Desktop
-
-|===
-.Table Supported OS Versions (DEVELOPMENT & TESTING ONLY)
-|===
-| OS|Version|Type
-
-|macOS
-|macOS 10.12.6 (High Sierra)
-|Desktop & Web Service/Servlet (Tomcat)
-|===
-
 == SUPPLEMENTARY INFORMATION
 
 === Preparatory Steps
@@ -549,10 +354,7 @@ export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libc++:$LD_LIBRARY_PATH
 +
 Please refer to the Linux Platform Support section for the minimum version requirements of those libraries.
 
-
-
 Back to <<Preparing Your Build Environment>>
-
 
 === Using the Gradle WebApp Plugin
 
@@ -583,29 +385,6 @@ tomcatRun
 
 Back to <<Preparing Your Build Environment>>
 
-
-=== About the Getting Started App
-
-anchor:bmkAboutGettingStarted[]
-The {nmMobStarterApp} app will:
-
-* Create a database
-+
-The app creates its database in the `{nmSampleAppDbPath}` directory relative to its root location when run (See: <<Finding a Database File>>).
-
-TIP: Explicitly state your required database location when creating your database (see: <<Finding a Database File>> for how to do this)
-
-* Add content to the DB
-* Run a simple query counting the DB rows
-* Start a one-shot, bi-directional replication using {sg} and {svr}
-* Produce a simple report on the db Contents
-+
-image::cblOutput.png[,400]
-
-NOTE: Before starting your app ensure you have started both your {svr} and {sg} instances.
-
-Back to <<Building a Getting Started App>>
-
 === Deploying a WAR file to tomcat
 
 If you want to deploy your web app to a local Tomcat instance then you will need to generate a WAR file.
@@ -633,44 +412,4 @@ NOTE: For linux platform see also -- <<Additional Steps for Linux>>
 Back to <<Preparing Your Build Environment>>
 
 
-== RELEASE NOTES
-
-=== 2.7.1
-
-==== {fixed}
-
-This maintenance release fixes the following issues:
-
-* https://issues.couchbase.com/browse/CBL-799[*CBL-799*] Crash calling pull validator callback
-* https://issues.couchbase.com/browse/CBL-789[*CBL-789*] Crash when accessing `connection->name()`
-* https://issues.couchbase.com/browse/CBL-701[*CBL-701*] Pending Document IDs not working correctly
-* https://issues.couchbase.com/browse/CBL-698[*CBL-698*] Wrong query evaluation using expression values instead of expression properties
-* https://issues.couchbase.com/browse/CBL-657[*CBL-657*] LIKE and CONTAINS are much slower in 2.7
-* https://issues.couchbase.com/browse/CBL-581[*CBL-581*] Native memory leak when save document repeatedly​
-* https://issues.couchbase.com/browse/CBL-579[*CBL-579*] SDK fails for opening Database files over 2GB
-
-==== {ke}
-
-The following issues document known errors:
-
-* https://issues.couchbase.com/browse/CBL-647[*CBL-637*] Java Console app doesn't exit
-* https://issues.couchbase.com/browse/CBL-370[*CBL-370*] 370	Broken API, Kotlin: Unable to import ReplicatorType
-* https://issues.couchbase.com/browse/CBL-216[*CBL-216*] Ordering null values inconsistent with N1QL expectations
-* https://issues.couchbase.com/browse/CBL-95[*CBL-95*] Pending conflicts could be resolved by a wrong replicator
-* https://issues.couchbase.com/browse/CBL-49[*CBL-49*] Need a way to distinguish boolean types
-
-=== 2.7.0
-
-*{nftr}*
-
-New at this release is the Java Platform, which enables development of Java apps on any platform that supports the JVM model
-
-xref::index.adoc[{more}]
-
-*{ke}*
-
-{natt}
-
-*{fixed}*
-
-{natt}
+include::{root-partials}block-related-content-start.adoc[]
