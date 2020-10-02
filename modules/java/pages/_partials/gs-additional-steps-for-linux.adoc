@@ -1,0 +1,62 @@
+// inclusion
+anchor:bmkLinuxSharedLibs[Additional Steps for Linux]
+In addition to setting-up your build environment, you also need to make the supplied native libraries (`<pathToCbl/support`) available:
+
+NOTE: These libraries are provided only in the `.zip` distributable.
+
+[tabs]
+====
+
+Web Service/Tomcat::
++
+--
+. Copy the _native libraries_ (`<pathToCbl>/support`) to a location accessible to -- and usable by -- your build and runtime environments.
+. Add the following libraries to the `LD_LIBRARY_PATH` in `$CATALINA_BASE/bin/setenv.sh:
++
+NOTE: If the setenv.sh file doesn’t exist, you will need to create a new file.
+
++
+[source, bashrc]
+
+----
+export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libicu:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libz:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libc++:$LD_LIBRARY_PATH
+----
+--
+
+Desktop::
++
+--
+. Copy the _native libraries_ (`<pathToCbl>/support`) to a location accessible to -- and usable by -- your build and runtime environments.
+. Add the following libraries to the `LD_LIBRARY_PATH` in the .bashrc file:
+
++
+[source, bashrc]
+
+----
+export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libicu:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libz:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libc++:$LD_LIBRARY_PATH
+----
+
+--
+
+Windows::
++
+--
+. Copy the _native libraries_ (`<pathToCbl>/support`) to a location accessible to -- and usable by -- your build and runtime environments.
+. Set the following environment variables in `$CATALINA_BASE/bin/setenv.bat` file:
+
++
+[source, bashrc]
+
+----
+set LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libicu:$LD_LIBRARY_PATH;<pathToCbl>/support/linux/x86_64/libz:$LD_LIBRARY_PATH;LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libc++:$LD_LIBRARY_PATH
+----
+
+--
+
+Please refer to the Linux Platform Support section for the mini
+mum version requirements of those libraries.
+====

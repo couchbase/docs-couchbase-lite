@@ -16,7 +16,7 @@ include::partial$_std-cbl-hdr-java.adoc[]
 :packageNmEE: {packageNm}-ee-{version-full}
 :url-api-references: http://docs.couchbase.com/mobile/{version-full}/couchbase-lite-java
 :hdIndent:
-:snippet: {snippet-java-jvm}
+// :snippet: {snippet-java-jvm}
 :sgGetStartedDoc: sync-gateway::getting-started.adoc
 :sgGetStartedDoc-installation: {sgGetStartedDoc}#installation
 :sgGetStartedDoc-createRBACuser: {sgGetStartedDoc}#creating-an-rbac-user
@@ -49,6 +49,8 @@ So, If you have not already done so:
 
 Install _{svr}_ and _{sg}_ following steps outlined in xref:{sgGetStartedDoc-installation}[Installing Sync Gateway ->]
 
+For supported versions -- see: {xref-cbl-pg-compatibility} | {xref-cbl-pg-supported-os}
+
 === Prepare {svr} and {sg} for the Test Build
 
 [{orderedList}]
@@ -80,8 +82,8 @@ When unpacked the package contains the following:
 * A `lib` folder containing all necessary JAR files:
 ** {packageNmCE} or for EE {packageNmEE}
 ** json-20180813.jar
-** okhttp-3.9.1.jar
-** okio-1.13.0.jar
+** okhttp-3.14.7.jar
+** okio-1.17.2.jar
 
 * A `support` folder containing the Linux native libraries:
 +
@@ -117,25 +119,6 @@ include::{snippet}[tags=GsWebAppBuildGradle,indent=0]
 
 == Using Native Libraries for Linux
 
-anchor:bmkLinuxSharedLibs[Additional Steps for Linux]
-In addition to setting-up your build environment, you also need to make the supplied native libraries (`<pathToCbl/support`) available:
-
-NOTE: These libraries are provided only in the `.zip` distributable.
-
-. Copy the _native libraries_ (`<pathToCbl>/support`) to a location accessible to -- and usable by -- your build and runtime environments.
-. Add the following libraries to the `LD_LIBRARY_PATH` in `$CATALINA_BASE/bin/setenv.sh:
-+
-NOTE: If the setenv.sh file doesn’t exist, you will need to create a new file.
-
-+
-[source, bashrc]
-
-----
-export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libicu:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libz:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libc++:$LD_LIBRARY_PATH
-----
-+
-Please refer to the Linux Platform Support section for the minimum version requirements of those libraries.
+include::partial$gs-additional-steps-for-linux.adoc[]
 
 include::{root-partials}block-related-content-start.adoc[]
