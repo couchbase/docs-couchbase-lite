@@ -142,6 +142,18 @@ class cMyPassListener {
 
 // ADDITIONAL SNIPPETS
 
+// tag::listener-get-url-list[]
+final URLEndpointListenerConfigurationthisConfig =
+  URLEndpointListenerConfiguration(database: self.oDB)
+final URLEndpointListener thisListener
+  = new URLEndpointListener(thisConfig);
+thisListener.start()
+Log.i(TAG, "URLS are " + thisListener.getUrls();
+
+// end::listener-get-url-list[]
+
+
+
 // tag::listener-local-db[]
 // . . . preceding application logic . . .
 CouchbaseLite.init(context); <.>

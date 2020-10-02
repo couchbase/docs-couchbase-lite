@@ -138,7 +138,18 @@ class cMyPassListener {
 
 // Additional Snippets
 
+// tag::listener-get-url-list[]
+NSError* error = nil;
+CBLURLEndpointListenerConfiguration* config =
+  [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: self.otherDB];
+CBLURLEndpointListener* listener =
+  [[CBLURLEndpointListener alloc] initWithConfig: config];
 
+[listener startWithError: &error];
+
+NSLog(@"%@", listener.urls);
+
+// end::listener-get-url-list[]
 
 // tag::listener-local-db[]
 // . . . preceding application logic . . .

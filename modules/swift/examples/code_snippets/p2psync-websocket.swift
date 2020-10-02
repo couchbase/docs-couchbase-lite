@@ -721,6 +721,23 @@ class cMyPassListener {
 
 
 // BEGIN Additonal listener options
+
+
+
+// tag::listener-get-url-list[]
+let config =
+  URLEndpointListenerConfiguration(database: self.oDB)
+let listener = URLEndpointListener(config: config)
+try listener.start()
+
+print("urls: \(listener.urls)")
+
+// end::listener-get-url-list[]
+
+
+
+
+
     // tag::listener-config-tls-full[]
     // tag::listener-config-tls-full-enable[]
     listenerConfig.disableTLS  = false // <.>
