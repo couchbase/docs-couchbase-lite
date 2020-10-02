@@ -173,6 +173,18 @@ namespace api_walkthrough
 
 // Additional snippets
 
+
+// tag::listener-get-url-list[]
+var thisConfig = new URLEndpointListenerConfiguration(thisDB);
+_thisListener = new URLEndpointListener(thisConfig);
+
+_thisListener.Start();
+
+ Console.WriteLine("URLS are {0} ", thisListener.Urls;
+
+// end::listener-get-url-list[]
+
+
     // tag::listener-config-tls-disable[]
     thisConfig.DisableTLS = true; // <.>
 
