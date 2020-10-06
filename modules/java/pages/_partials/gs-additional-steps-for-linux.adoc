@@ -1,4 +1,7 @@
 // inclusion
+
+:ld-library-path: LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/:$LD_LIBRARY_PATH
+
 anchor:bmkLinuxSharedLibs[Additional Steps for Linux]
 In addition to setting-up your build environment, you also need to make the supplied native libraries (`<pathToCbl/support`) available:
 
@@ -16,12 +19,10 @@ Web Service/Tomcat::
 NOTE: If the setenv.sh file doesn’t exist, you will need to create a new file.
 
 +
-[source, bashrc]
+[source, bashrc, subs="normal"]
 
 ----
-export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libicu:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libz:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libc++:$LD_LIBRARY_PATH
+{ld-library-path}
 ----
 --
 
@@ -32,12 +33,10 @@ Desktop::
 . Add the following libraries to the `LD_LIBRARY_PATH` in the .bashrc file:
 
 +
-[source, bashrc]
+[source, bashrc, subs="normal"]
 
 ----
-export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libicu:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libz:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libc++:$LD_LIBRARY_PATH
+export {ld-library-path}
 ----
 
 --
@@ -49,10 +48,10 @@ Windows::
 . Set the following environment variables in `$CATALINA_BASE/bin/setenv.bat` file:
 
 +
-[source, bashrc]
+[source, bashrc, subs="normal"]
 
 ----
-set LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libicu:$LD_LIBRARY_PATH;<pathToCbl>/support/linux/x86_64/libz:$LD_LIBRARY_PATH;LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/libc++:$LD_LIBRARY_PATH
+set {ld-library-path}
 ----
 
 --
