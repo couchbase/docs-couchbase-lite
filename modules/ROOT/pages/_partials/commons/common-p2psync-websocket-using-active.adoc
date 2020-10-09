@@ -1,16 +1,5 @@
 //= Using Peer-to-Peer Synchronization (websockets)
 
-//ifeval::[{param-platform} == {platform-jvm}]
-//:securestorage: Key store .jks r .p12 file
-//:securestorage-api: Couchbase Lite's convenience KeyStore API
-//endif::[]
-//
-//ifeval::[{param-platform} == {platform-net}]
-//:securestorage: Key store .jks or .p12 file
-//:securestorage-api: Couchbase Lite's convenience KeyStore API
-//endif::[]
-
-
 // DO NOT EDIT
 :param-abstract: How to set up a Replicator to connect with a Listener and replicate changes using peer-to-peer sync
 include::{root-partials}block-related-howto-p2psync-ws.adoc[]
@@ -22,19 +11,6 @@ include::{root-partials}_block-caveats.adoc[tags=android-constraints]
 endif::[]
 include::{root-partials}_block-caveats.adoc[tags=code-disclaimer]
 // DO NOT EDIT
-
-ifndef::release-status-cbl[:release-status-cbl!:]
-ifeval::["{release-status-cbl}" == "gamma"]
-[.pane__frame--orange]
-.Author's Notes
---
-
-DOC-6340-H2-P2P: New topic - Implementing P2P Sync
-https://issues.couchbase.com/browse/DOC-6340
-
-This is the how-to for P2P snc using websockets
---
-endif::[]
 
 [#introduction]
 == Introduction
@@ -57,7 +33,6 @@ You should configure and initialize a replicator for each Couchbase Lite databas
 // [%collapsible]
 ====
 
-// include::{snippet-p2psync-ws}[tags="p2p-act-rep-func;!p2p-act-rep-config-cacert;!p2p-act-rep-config-pinnedcert;!p2p-tlsid-tlsidentity-with-label;!p2p-act-rep-config-cacert-pinned";!p2p-tlsid-tlsidentity-with-label, indent=0]
 [source, {source-language}]
 ----
 

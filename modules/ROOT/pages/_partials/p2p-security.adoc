@@ -2,11 +2,10 @@
 Peer-to--peer sync supports <<using-basic-authentication, Basic Authentication>> and <<using-tls,TLS Authentication>>.
 For anything other than test deployments, we strongly encourage the use of TLS. In fact, peer-to-peer sync using WebsocketEndpointListener is encrypted using TLS by default.
 
-The authentiation mechanism used is defined at endpoint level, meaning that it is independent of the database being replicated. So when replicating multiple database instances you may use basic on one instance an another authentication method on other instances.
-
+The authentication mechanism used is defined at endpoint level, meaning that it is independent of the database being replicated. So when replicating multiple database instances you may use basic on one instance an another authentication method on other instances.
 
 == Using TLS
-NOTE: The Mminimum supported version of TLS is TLS 1.2.
+NOTE: The Minimum supported version of TLS is TLS 1.2.
 
 Peer-to-Peer Synchronization using WebsocketEndpointListener supports certificate based authentication of the server and-or listener:
 
@@ -23,21 +22,6 @@ Peer-to-Peer Synchronization using WebsocketEndpointListener supports the abilit
 Active clients replicating with a WebsocketEndpointListener have the option to skip validation of server certificates when the listener is configured with self-signed certificates.
 This option is ignored when dealing with CA certificates.
 
-
-ifndef::release-status-cbl[:release-status-cbl!:]
-ifeval::["{release-status-cbl}" == "gamma"]
-[.pane__frame--orange]
-.Author's Notes
---
-
-Documentation : Must include relevant code snippets that show the use of API to generate self signed cert.
-
-Challenges : This will be available on the following platforms
-iOS
-macOS
---
-endif::[]
-
 === ReplicatorConfiguration
 
 The `replicatorConfiguration` class provides two additional methods supporting TLS.
@@ -50,7 +34,6 @@ Two modes are supported:
 * False -- The replicator verifies the server identity by using the trusted CA or using the pinned server certificate.
 * True -- The replicator will accept all and only self-signed certificates.
 The replicator will reject non-self-signed certificates.
-
 
 [source, {source-language}]
 ----
@@ -125,14 +108,14 @@ init(identity: TLSIdentity)
 |TLSIdentity
 |No
 |Yes
-|The identity object given when creating the ClientCertificaterAuthenticator object.
+|The identity object given when creating the ClientCertificateAuthenticator object.
 
 |===
 
 
 == Using Basic Authentication
 
-The passive client supports basic uthentication using username and password credentials.
+The passive client supports basic authentication using username and password credentials.
 
 === `BasicAuthenticator`
 
