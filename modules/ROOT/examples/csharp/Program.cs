@@ -1043,7 +1043,7 @@ namespace api_walkthrough
         /* implementation of MessageEndpointDelegate */
         public IMessageEndpointConnection CreateConnection(MessageEndpoint endpoint)
         {
-            var connection = new ActivePeerConnection(); /* implements MessageEndpointConnection */
+            var connection = new ActivePeerConnection(); /* implements IMessageEndpointConnection */
             return connection;
         }
         // end::create-connection[]
@@ -1069,7 +1069,7 @@ namespace api_walkthrough
         }
 
         // tag::active-peer-close[]
-        /* implementation of MessageEndpointConnection */
+        /* implementation of IMessageEndpointConnection */
         public async Task Close(Exception error)
         {
             // await socket.Close, etc (or do nothing if already closed)
@@ -1079,7 +1079,7 @@ namespace api_walkthrough
         // end::active-peer-close[]
 
         // tag::active-peer-open[]
-        /* implementation of MessageEndpointConnection */
+        /* implementation of IMessageEndpointConnection */
         public async Task Open(IReplicatorConnection connection)
         {
             _replicatorConnection = connection;
@@ -1089,7 +1089,7 @@ namespace api_walkthrough
         // end::active-peer-open[]
 
         // tag::active-peer-send[]
-        /* implementation of MessageEndpointConnection */
+        /* implementation of IMessageEndpointConnection */
         public async Task Send(Message message)
         {
             var data = message.ToByteArray();
@@ -1127,7 +1127,7 @@ namespace api_walkthrough
         public void AcceptConnection()
         {
             // tag::advertizer-accept[]
-            var connection = new PassivePeerConnection(); /* implements MessageEndpointConnection */
+            var connection = new PassivePeerConnection(); /* implements IMessageEndpointConnection */
             _messageEndpointListener?.Accept(connection);
             // end::advertizer-accept[]
         }
@@ -1148,7 +1148,7 @@ namespace api_walkthrough
         }
 
         // tag::passive-peer-close[]
-        /* implementation of MessageEndpointConnection */
+        /* implementation of IMessageEndpointConnection */
         public async Task Close(Exception error)
         {
             // await socket.Close, etc (or do nothing if already closed)
@@ -1158,7 +1158,7 @@ namespace api_walkthrough
         // end::passive-peer-close[]
 
         // tag::passive-peer-open[]
-        /* implementation of MessageEndpointConnection */
+        /* implementation of IMessageEndpointConnection */
         public Task Open(IReplicatorConnection connection)
         {
             _replicatorConnection = connection;
@@ -1168,7 +1168,7 @@ namespace api_walkthrough
         // end::passive-peer-open[]
 
         // tag::passive-peer-send[]
-        /* implementation of MessageEndpointConnection */
+        /* implementation of IMessageEndpointConnection */
         public async Task Send(Message message)
         {
             var data = message.ToByteArray();
