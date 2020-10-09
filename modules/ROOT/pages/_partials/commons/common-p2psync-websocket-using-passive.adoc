@@ -20,14 +20,14 @@ include::{root-partials}_block-caveats.adoc[tag=code-disclaimer]
 This content provides code and configuration examples covering the implementation of {glos-term-peer-to-peer-sync} over websockets.
 Specifically it covers the implementation of a {glos-term-passive-peer}.
 
-This _passive peer_ (also referred to as the server, or listener) will accept a connection from an {glos-term-active-peer} (also referred to as the client or replicator) and participate in the replication of database changes to bring both databases into sync.
+This _passive peer_ (also referred to as the server, or listener) will accept a connection from an {glos-term-active-peer} (also referred to as the client or replicator) and participate in the replication of database changes to synchronize both databases.
 
-Subsequent sections provide additional details and examples for the main configuration options.
+Subsequent sections provide additional details, and examples for the main configuration options.
 
 include::{root-partials}_block-caveats.adoc[tags=securestorage]
 
 == Configuration Summary
-You should configure and initialize a listener for each Couchbase Lite database instance you want to to sync.
+You should configure and initialize a listener for each Couchbase Lite database instance you want to sync.
 There is no limit on the number of listeners you may configure -- <<simple-listener-initialization>> shows a simple initialization and configuration process.
 
 // Example 1
@@ -44,12 +44,12 @@ include::{snippet-p2psync-ws}[tags=listener-initialize, indent=0]
 ----
 
 ifeval::["{param-platform}"=="{platform-android}"]
-TIP: You must include the initializer `CouchbaseLite.init(context)` such that it is executed once and once only prior to initializing the replicator; for example in your app's `onCreate()` method.
+TIP: You must include the initializer `CouchbaseLite.init(context)` such that it is executed (once only) prior to initializing the replicator; for example in your app's `onCreate()` method.
 
 endif::[]
 
 ifeval::["{param-platform}"=="{platform-jvm}"]
-TIP: You must include the initializer `CouchbaseLite.init(context)` such that it is executed once and once only prior to initializing the replicator; for example in your app's `onCreate()` method.
+TIP: You must include the initializer `CouchbaseLite.init(context)` such that it is executed (once only) prior to initializing the replicator; for example in your app's `onCreate()` method.
 
 endif::[]
 
@@ -57,8 +57,9 @@ endif::[]
 
 <.> Identify the local database to be used -- see: <<initialize-the-listener-configuration>>
 <.> Optionally, choose a port to use.
-By default the system will automatically assign a port -- to over-ride this see: <<set-network-and-port>>
-<.> Optionally, choose a network-interface to use. By default the system will listen on all network interfaces -- to over-ride this see: <<set-network-and-port>>
+By default the system will automatically assign a port -- to over-ride this, see: <<set-network-and-port>>
+<.> Optionally, choose a network-interface to use.
+By default the system will listen on all network interfaces -- to over-ride this see: <<set-network-and-port>>
 <.> Optionally, choose to sync only changes, the default is not to enable delta-sync -- see: <<delta-sync>>.
 <.> Set server security.
 TLS is always enabled out-of-the-box, so you can usually omit this line.
@@ -235,7 +236,8 @@ Use {url-api-class-urlendpointconfiguration}'s {url-api-references-urlendpointco
 === Enable or Disable TLS
 Define whether the connection is to use TLS or clear text.
 
-TLS based encryption is enabled by default and this setting ought to be used in any production environment. However, it _can_ be disabled, for example for development and-or test environments.
+TLS based encryption is enabled by default and this setting ought to be used in any production environment.
+However, it _can_ be disabled, for example for development and-or test environments.
 
 When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity -- see <<configure-tls-identity-for-listener>>.
 
@@ -250,17 +252,12 @@ include::{root-partials}p2p-api.adoc[tag=config-disable-tls]
 
 === Configure TLS Identity for Listener
 
-Define the credentials the server will present to the client for authentication. Note that the server must always authenticate itself with the client -- for how the client deals with this, see {xref-cbl-bmk-dbo-p2psync-websocket-using-active-auth-listener}.
+Define the credentials the server will present to the client for authentication.
+Note that the server must always authenticate itself with the client -- see {xref-cbl-bmk-dbo-p2psync-websocket-using-active-auth-listener} for how the client deals with this.
 
 include::{root-partials}p2p-api.adoc[tag=config-tls-id]
 
 NOTE: Typically, you will configure the listener's TLS Identity once during initial launch and re-use it (from {securestorage} on any subsequent starts.
-// //-- see: {xref-cbl-pg-p2p-manage-tls-id}
-// .
-
-// include::{snippet-p2psync-ws}[tags=listener-config-tls-id-cert, indent=0]
-// include::{snippet-p2psync-ws}[tags=listener-config-tls-id-cert, indent=0]
-// include::{snippet-p2psync-ws}[tags=listener-config-tls-id-full;!listener-config-tls-id-SelfSigned;!listener-config-tls-id-caCert;!listener-config-tls-id-cert, indent=0]
 
 // Example 6
 .Set Listener's TLS identity
@@ -306,7 +303,7 @@ include::{snippet-p2psync-ws}[tags="listener-config-tls-id-full;!listener-config
 // <.> Password for {securestorage}
 // <.> Label for
 // <.> null
-<.> Set this identity as the one presented in response to to the client's prompt
+<.> Set this identity as the one presented in response to the client's prompt
 
 --
 endif::[]
@@ -314,7 +311,8 @@ endif::[]
 Create Self-Signed Cert::
 +
 --
-Create a TLSIdentity for the server using convenience API. The system generates a self-signed certificate.
+Create a TLSIdentity for the server using convenience API.
+The system generates a self-signed certificate.
 
 [source, {source-language}]
 ----
@@ -328,7 +326,8 @@ include::{snippet-p2psync-ws}[tags="listener-config-tls-id-full;!listener-config
 
 <.> Ensure TLS is used.
 <.> Map the required certificate attributes, in this case the common name.
-<.> Create the required TLS identity using the attributes. Add to {securestorage} as 'couchbase-docs-cert'.
+<.> Create the required TLS identity using the attributes.
+Add to {securestorage} as 'couchbase-docs-cert'.
 <.> Configure the server to present the defined identity credentials when prompted.
 
 --
@@ -362,7 +361,8 @@ In this section: <<use-basic-authentication>>  |  <<using-client-certificate-aut
 
 Define how the server (listener) will authenticate the client as one it is prepared to interact with.
 
-Whilst client authentication is optional, Couchbase lite provides the necessary tools to implement it. Use the
+Whilst client authentication is optional, Couchbase lite provides the necessary tools to implement it.
+Use the
 {url-api-class-urlendpointconfiguration} class's {url-api-references-urlendpointconfiguration-auth} method to specify how the client-supplied credentials are to be authenticated.
 
 Valid options are:
