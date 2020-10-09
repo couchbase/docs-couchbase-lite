@@ -174,6 +174,19 @@ namespace api_walkthrough
 // Additional snippets
 
 
+// tag::listener-get-network-interfaces[]
+foreach(NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+{
+  if(ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ||
+      ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
+  {
+    // do something with the interface(s)
+  }
+}
+
+// end::listener-get-network-interfaces[]
+
+
 // tag::listener-get-url-list[]
 var thisConfig = new URLEndpointListenerConfiguration(thisDB);
 _thisListener = new URLEndpointListener(thisConfig);
@@ -183,7 +196,6 @@ _thisListener.Start();
  Console.WriteLine("URLS are {0} ", thisListener.Urls;
 
 // end::listener-get-url-list[]
-
 
     // tag::listener-config-tls-disable[]
     thisConfig.DisableTLS = true; // <.>

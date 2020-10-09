@@ -142,7 +142,7 @@ class cMyPassListener {
 
 // ADDITIONAL SNIPPETS
 
-// tag::listener-get-url-list[]
+// tag::listener-get-network-interfaces[]
 final URLEndpointListenerConfigurationthisConfig =
   URLEndpointListenerConfiguration(database: self.oDB)
 final URLEndpointListener thisListener
@@ -150,7 +150,7 @@ final URLEndpointListener thisListener
 thisListener.start()
 Log.i(TAG, "URLS are " + thisListener.getUrls();
 
-// end::listener-get-url-list[]
+// end::listener-get-network-interfaces[]
 
 
 

@@ -132,10 +132,7 @@ The database must be opened before the listener is started.
 == Set Network and Port
 
 
-Port number::
-+
---
-
+=== Port number
 The Listener will automatically select an available port if you do not specify one.
 
 // Example 3
@@ -153,55 +150,55 @@ Ensure that any port you do specify is not blocked by firewall rules.
 ifeval::["{param-platform}"=="{platform-android}"]
 You can query the port using {url-api-references-urlendpointconfiguration-port-get}.
 endif::[]
---
+====
 
-Network Interface::
-+
---
+=== Network Interface
 The Listener will listen on all network interfaces by default.
 
 // Example 4
+
+[#specify-a-network-interface-to-use]
 .Specify a Network Interface to Use
 ====
 [source, {source-language}]
 ----
 include::{snippet-p2psync-ws}[tags=listener-config-netw-iface, indent=0]
 ----
+====
 
-*Notes on example:*
+.Notes on <<specify-a-network-interface-to-use>>
 
 <.> To specify an interface -- one known to other applications -- identify it explicitly, using the {url-api-references-urlendpointconfiguration-netwk-iface} method shown here.
 This must be either an IP Address or network interface name such as `en0`.
+
+:param-include!:
+ifeval::["{param-name}"=="{lang-name-swift}"]
+:param-include: true
+endif::[]
+ifeval::["{param-name}"=="{lang-name-csharp}"]
+:param-include: true
+endif::[]
+
+ifdef::param-include[]
+TIP: Where necessary, you can identify the available interfaces at runtime, using appropriate platform tools -- see <<get-network-interfaces>>.
+
+[#get-network-interfaces]
+.Identify available network interfaces
 ====
---
+endif::[]
 
-You can identify the listener's available URLs using {url-api-property-urlendpointlistener-urls}
-
-.Get listener URL list
-====
-
+ifdef::param-include[]
 [source, {source-language}]
 ----
 
-include::{snippet-p2psync-ws}[tags=listener-get-url-list, indent=0]
+include::{snippet-p2psync-ws}[tags=listener-get-network-interfaces, indent=0]
 
 ----
 
 ====
-// Example::
-// +
-// [source, {source-language}]
-// ----
-// include::{snippet-p2psync-ws}[tags=listener-config-netw-iface, indent=0]
-// ----
+endif::[]
+:param-include!:
 
-
-//== Configure the Listener
-
-// <<configure-tls>>
-// | <<configure-authenticating-the-client>>
-// | <<configure-delta-sync>>
-// | <<conflict-resolution>>
 == Delta Sync
 
 Delta Sync allows clients to sync only those parts of a document that have changed.

@@ -138,6 +138,11 @@ class cMyPassListener {
 
 // Additional Snippets
 
+// tag::listener-get-network-interfaces[]
+// . . .  code snippet to be provided
+
+// end::listener-get-network-interfaces[]
+
 // tag::listener-get-url-list[]
 NSError* error = nil;
 CBLURLEndpointListenerConfiguration* config =
