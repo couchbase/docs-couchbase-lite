@@ -105,6 +105,11 @@ class cMyPassListener {
 
 // ADDITIONAL SNIPPETS
 
+// tag::listener-get-network-interfaces[]
+// . . . code snippet to be provided
+
+// end::listener-get-network-interfaces[]
+
 // tag::listener-get-url-list[]
 final URLEndpointListenerConfigurationthisConfig =
   URLEndpointListenerConfiguration(database: self.oDB)

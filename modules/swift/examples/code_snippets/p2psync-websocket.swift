@@ -724,6 +724,19 @@ class cMyPassListener {
 
 
 
+// tag::listener-get-network-interfaces[]
+import SystemConfiguration
+// . . .
+
+  #if os(macOS)
+  for interface in SCNetworkInterfaceCopyAll() as! [SCNetworkInterface] {
+      // do something with this `interface`
+  }
+  #endif
+// . . .
+
+// end::listener-get-network-interfaces[]
+
 // tag::listener-get-url-list[]
 let config =
   URLEndpointListenerConfiguration(database: self.oDB)
@@ -733,9 +746,6 @@ try listener.start()
 print("urls: \(listener.urls)")
 
 // end::listener-get-url-list[]
-
-
-
 
 
     // tag::listener-config-tls-full[]
