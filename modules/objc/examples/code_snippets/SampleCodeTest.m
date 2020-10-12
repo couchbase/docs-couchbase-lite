@@ -640,10 +640,13 @@
     CBLDatabase *database = self.db;
 
     // tag::fts-query[]
-    CBLQueryExpression *where = [[CBLQueryFullTextExpression indexWithName:@"nameFTSIndex"] match:@"'buy'"];
-    CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult expression:[CBLQueryMeta id]]]
-                                         from:[CBLQueryDataSource database:database]
-                                        where:where];
+    CBLQueryExpression *where =
+      [[CBLQueryFullTextExpression indexWithName:@"nameFTSIndex"] match:@"'buy'"];
+    CBLQuery *query =
+      [CBLQueryBuilder
+        select:@[[CBLQuerySelectResult expression:[CBLQueryMeta id]]]
+        from:[CBLQueryDataSource database:database]
+        where:where];
 
     NSEnumerator* rs = [query execute:&error];
     for (CBLQueryResult *result in rs) {
