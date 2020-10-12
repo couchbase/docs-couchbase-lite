@@ -1,7 +1,11 @@
 // inclusion
+ifeval::["{param-abstract}"=="{empty}"]
+:param-abstract!:
+endif::[]
+
 :this-abstract!:
 ifdef::param-abstract[]
-:this-abstract: {param-abstract}
+:this-abstract: Abstract -- {param-abstract}
 endif::param-abstract[]
 
 // ++++
@@ -13,12 +17,12 @@ endif::param-abstract[]
 ifdef::description[]
 [abstract]
 --
-ifdef::topic-group[]
-Topic Group -- _{topic-group}_ +
-endif::topic-group[]
+// ifdef::topic-group[]
+// Topic Group -- _{topic-group}_ +
+// endif::topic-group[]
 Description -- _{description}_ +
 ifdef::this-abstract[]
-Abstract -- _{this-abstract}_ +
+_{this-abstract}_ +
 endif::this-abstract[]
 // [.column]
 ifdef::param-related[]
@@ -29,19 +33,3 @@ endif::description[]
 // ++++
 // </div>
 // ++++
-
-// ifdef::description[]
-// [abstract]
-// --
-// {description}
-
-// ifdef::param-abstract[]
-// :this-abstract: {param-abstract}
-// {this-abstract}
-// endif::param-abstract[]
-
-// ifdef::topic-group[]
-// {topic-group}
-// endif::topic-group[]
-// --
-// endif::description[]
