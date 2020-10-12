@@ -64,7 +64,7 @@ include::{snippet}[tags=date-getter,indent=0]
 If the property doesn't exist in the document it will return the default value for that getter method (0 for `getInt`, 0.0 for `getFloat` etc.).
 To check whether a given property exists in the document, you should use the {url-api-references}/com/couchbase/lite/Document.html#contains-java.lang.String-[`Document.Contains(String key)`] method.
 
-== Batch operations
+== Batch Operations
 
 If you're making multiple changes to a database at once, it's faster to group them together.
 The following example persists a few documents in batch.
@@ -77,7 +77,7 @@ include::{snippet}[tags=batch,indent=0]
 At the *local* level this operation is still transactional: no other `Database` instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
 But Couchbase Mobile is a distributed system, and due to the way replication works, there's no guarantee that Sync Gateway or other devices will receive your changes all at once.
 
-== Document change events
+== Document Change Events
 
 It's also possible to register for document changes.
 The following example registers for changes to the document with ID `user.john` and prints the `verified_account` property.
