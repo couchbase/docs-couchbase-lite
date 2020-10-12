@@ -41,9 +41,11 @@ Replication can be bidirectional, this means you can start a `push`/`pull` repli
 The replication's parameters can be specified through the {url-api-references}/index.html?com/couchbase/lite/ReplicatorConfiguration.html[`ReplicatorConfiguration`] object;
 for example, if you wish to start a `push` only or `pull` only replication.
 
-The following example creates a `pull` replication with Sync Gateway.
+.Pull replication
+====
+This example creates a `pull` replication with Sync Gateway.
 
-[source]
+[source, {source-language}]
 ----
 class MyClass {
     Database database;
@@ -70,9 +72,11 @@ To keep a reference to the `replicator` object, you can set it as an instance pr
 <2> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
 You should now use `ws:`, or `wss:` for SSL/TLS connections.
 In this example the hostname is `10.0.2.2`.
-+
+====
 
-include::partial$verify-replication.adoc[]
+=== Verify the Replication
+
+include::{root-partials}verify-replication.adoc[]
 
 Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit data.
 Some load balancers are not configured for WebSocket connections by default (NGINX for example);
@@ -241,12 +245,12 @@ The following example increases the log output for activity related to replicati
 
 [source]
 ----
-include::{snippet}[tags=replication-logging,indent=0]
+include::{snippet}[tags="replication-logging",indent=0]
 ----
 
 == Authentication
 
-include::partial$authentication.adoc[leveloffset=-1]
+include::{root-partials}authentication.adoc[]
 
 == Replication Status
 
@@ -255,7 +259,7 @@ For example, when the replication is actively transferring data and when it has 
 
 [source]
 ----
-include::{snippet}[tags=replication-status,indent=0]
+include::{snippet}[tags="replication-status",indent=0]
 ----
 
 The following table lists the different activity levels in the API and the meaning of each one.
