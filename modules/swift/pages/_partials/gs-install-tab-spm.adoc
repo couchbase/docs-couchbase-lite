@@ -1,9 +1,7 @@
 // CouchbaseLiteSwift-EE
 // Repository for hosting Swift package for Couchbase Lite Swift Enterprise Edition
-
 :url-ee: https://github.com/couchbase/couchbase-lite-swift-ee.git
 :url-ce: https://github.com/couchbase/couchbase-lite-ios.git
-
 
 [[step-1]]
 .Step 1: Add CouchbaseLiteSwift to Swift Package
@@ -48,30 +46,24 @@ class ParentPackageSomeClass {
   }
 }
 ----
-
-
++
 [#sample-manifest-file]
 .Sample Manifest file
-====
-
 [source, {source-language}]
 ----
-
 // swift-tools-version:5.3
-
 import PackageDescription
-
 let package = Package(
 name: "ParentPackage",
 products: [
   .library(
     name: "ParentPackage",
     targets: ["ParentPackage"]),
-],
+  ],
 dependencies: [
   .package(name: "CouchbaseLiteSwift",
     url: "https://github.com/couchbase/couchbase-lite-swift-ee.git", from: "2.8.0"),
-],
+  ],
 targets: [
   .target(
     name: "ParentPackage",
@@ -79,41 +71,33 @@ targets: [
   .testTarget(
     name: "ParentPackageTests",
     dependencies: ["ParentPackage"]),
-]
+  ]
 )
 ----
-====
 
 [[step-2]]
 .Step 2: Add CouchbaseLiteSwift to Project
-
 Add CouchbaseLiteSwift to your HostApp
 
-. Project to which you are going to add the CouchbaseLiteSwift
+. In the project to which you are going to add CouchbaseLiteSwift
 +
 image::spm-1.png[]
-
-. Click on the add package dependency button, (Xcode Project File > Project Settings > Swift Packages > Add Package Dependency)
+. Click on the add package dependency button, (_Xcode Project File > Project Settings > Swift Packages > Add Package Dependency_)
 +
 image::spm-2.png[]
-
 . Enter the appropriate Couchbase Lite URL +
 For example: {url-ee}
 +
 image::spm-3.png[]
-
 . Specify the version
 +
 image::spm-4.png[]
-
 . Finish
 +
 image::spm-5.png[]
-
 . You will see the name, version and URL of the added CouchbaseLiteSwift Package
 +
 image::spm-6.png[]
-
 . Import CouchbaseLiteSwift, and use it.
 +
 image::spm-7.png[]
