@@ -22,7 +22,7 @@ The public facing API has completely changed in Couchbase Lite 2.0 and will requ
 To update an Xcode project built with Couchbase Lite 1.x:
 
 * Remove the existing Couchbase Lite nuget package from the Visual Studio project.
-* Remove all the Couchbase Lite 1.x dependencies (see the xref:1.4@{source-language}.adoc#getting-started[1.x installation guide]).
+* Remove all the Couchbase Lite 1.x dependencies (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/{source-language}.html#getting-started[1.x installation guide]).
 * Install the Couchbase Lite 2.0 framework in your project (see the <<getting-started, Getting Started>> section).
 At this point, there will be many compiler warnings.
 Refer to the examples on this page to learn about the new API.
@@ -33,13 +33,13 @@ Refer to the examples on this page to learn about the new API.
 Databases that were created with Couchbase Lite 1.2 or later can be used with Couchbase Lite 2.0.
 Upon detecting it is a 1.x database file, Couchbase Lite will automatically upgrade it to 2.0.
 This feature is only available for the default storage type (i.e., not a ForestDB database).
-Additionally, the automatic migration feature does not support encrypted databases, so if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the xref:1.4@{source-language}.adoc#database-encryption[1.x Database Guide]).
+Additionally, the automatic migration feature does not support encrypted databases, so if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/{source-language}.html#database-encryption[1.x Database Guide]).
 
 ==== Handling of Existing Conflicts
 
 For conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new 2.0 database and does NOT copy any conflicting revisions.
-This functionality is related to the way conflicts are being handled in Couchbase Lite 2.0 (see xref:swift.adoc#handling-conflicts[Handling Conflicts]).
-Optionally, existing conflicts in the 1.x database can be resolved with the xref:1.4@{source-language}.adoc#resolving-conflicts[1.x API] prior to the database being upgraded to 2.0.
+This functionality is related to the way conflicts are being handled in Couchbase Lite 2.0 -- {xref-cbl-pg-conflict}
+Optionally, existing conflicts in the 1.x database can be resolved with the https://docs-archive.couchbase.com/couchbase-lite/1.4/{source-language}.html#resolving-conflicts[1.x API] prior to the database being upgraded to 2.0.
 
 ==== Handling of Existing Attachments
 
@@ -88,6 +88,7 @@ The Couchbase Lite 2.1 release includes the ability to encrypt Couchbase Lite da
 This allows mobile applications to secure the data at rest, when it is being stored on the device.
 The algorithm used to encrypt the database is 256-bit AES.
 
+:param-language: {param-name}
 include::{root-partials}database-encryption.adoc[]
 
 === Finding a Database File
@@ -700,7 +701,7 @@ include::{root-partials}replication-introduction.adoc[]
 === Compatibility
 
 WARNING: The new protocol is *incompatible* with CouchDB-based databases.
-And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that xref:sync-gateway::prodnotes/pn-compatibility.adoc[supports it].
+And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that xref:sync-gateway:ROOT:prodnotes/pn-compatibility.adoc[supports it].
 
 To use this protocol with Couchbase Lite 2.0, the replication URL should specify WebSockets as the URL scheme (see the "Starting a Replication" section below).
 Mobile clients using Couchbase Lite 1.x can continue to use *http* as the URL scheme.
@@ -796,7 +797,7 @@ You can enable authentication with the following properties in the configuration
 ----
 
 To authenticate with Sync Gateway, an associated user must first be created.
-Sync Gateway users can be created through the xref:sync-gateway:ROOT:refer/admin-rest-api.adoc#/user/post\__db___user_[`+POST /{tkn-db}/_user+`] endpoint on the Admin REST API.
+Sync Gateway users can be created through the xref:sync-gateway:ROOT:refer/rest-api-admin.adoc#/user/post\__db___user_[`+POST /{tkn-db}/_user+`] endpoint on the Admin REST API.
 Provided that the user exists on Sync Gateway, there are two ways to authenticate from a Couchbase Lite client: Basic Authentication or Session Authentication.
 
 ==== Basic Authentication
@@ -814,7 +815,7 @@ include::{snippet}[tag=basic-authentication,indent=0]
 ==== Session Authentication
 
 Session authentication is another way to authenticate with Sync Gateway.
-A user session must first be created through the xref:sync-gateway::rest-api.adoc#/session/post\__db___session[`+POST /{tkn-db}/_session+`] endpoint on the Public REST API.
+A user session must first be created through the xref:sync-gateway::rest-api-public.adoc#/session/post\__db___session[`+POST /{tkn-db}/_session+`] endpoint on the Public REST API.
 The HTTP response contains a session ID which can then be used to authenticate as the user it was created for.
 The following example initiates a one-shot replication with the session ID that is returned from the `+POST /{tkn-db}/_session+` endpoint.
 
