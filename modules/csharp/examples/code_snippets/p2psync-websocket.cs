@@ -263,7 +263,7 @@ _thisListener.Start();
     var thisRootCert = new X509Certificate2(ourCaData); // <.>
 
     // Configure the authenticator to use the root certs
-    var thisAuth = new ListenerCertificateAuthenticator(new X509Certificate2Collection(thisRootCert)); // <.>
+    var thisAuth = new ListenerCertificateAuthenticator(new X509Certificate2Collection(thisRootCert));
 
     thisConfig.Authenticator = thisAuth; // <.>
 
@@ -282,7 +282,7 @@ _thisListener.Start();
     ourCaData = File.ReadAllBytes("c:client-ca.der");
 
     // Get the root certs from the data
-    var thisRootCert = new X509Certificate2(ourCaData); // <.>
+    var thisRootCert = new X509Certificate2(ourCaData);
 
     // Configure the authenticator to pass the root certs
     // To a user supplied code block for authentication

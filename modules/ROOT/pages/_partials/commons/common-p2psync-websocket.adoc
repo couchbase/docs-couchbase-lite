@@ -39,14 +39,14 @@ At its most basic, peer-to-peer synchronization requires one peer to act as the 
 
 image::ROOT:docs-listener-diagram.png[,600]
 
-So, in order to use peer-to-peer synchronization in your application you must configure one peer to act as this listener using the provided listener API endpoints, the most important of which include _URLEndpointListener_ and _URLEndpointListenerConfiguration_.
+So, in order to use peer-to-peer synchronization in your application you must configure one peer to act as this listener using the provided listener API, the most important of which include _URLEndpointListener_ and _URLEndpointListenerConfiguration_.
 Using these building blocks, developers can quickly implement peer-to-peer synchronization.
 
 .Simple workflow
 ====
 . Configure the listener (_passive peer_, or _server_)
 . Initialize the listener, which listens for incoming websocket connections (on a user-defined, or auto-selected, port)
-. Configure a replicator (_active peer, or _client_)
+. Configure a replicator (_active peer_, or _client_)
 . Use some form of discovery phase perhaps with a zero-config protocol {zero-config}, or use known URL endpoints, to identify a listener
 . Point the replicator at the listener
 . Initialize the replicator +
@@ -62,7 +62,7 @@ You can also learn more about how to implement peer-to-peer synchronization by r
 
 == Features
 
-Couchbase Lite for {param-title}'s peer-to-peer synchronization solution provides support for cross-platform synchronization; for example, between Java and iOS devices.
+Couchbase Lite for {param-title}'s peer-to-peer synchronization solution provides support for cross-platform synchronization; for example, between Android and iOS devices.
 
 Each listener instance serves one Couchbase Lite database.
 But there is no hard limit on the number of listener instances that you can associate with a database.
@@ -97,14 +97,12 @@ For testing and development purposes, support is provided for the client (active
 When a listener is stopped, then all connected replicators are notified by a websocket error. Your application should distinguish between transient and permanent connectivity errors.
 
 ==== Passive peers
-If a passive peer permanently losing connectivity with an active peer will clean up any associated endpoint connections to that peer.
-
-If a passive peer temporarily losing connectivity with an active peer will wait for the client to reconnect.
+A passive peer losing connectivity with an active peer will clean up any associated endpoint connections to that peer. The active peer may attempt to reconnect to the passive peer.
 
 ==== Active peers
-If an active peer permanently losing connectivity with a passive peer will cease replicating.
+An active peer permanently losing connectivity with a passive peer will cease replicating.
 
-If an active peer temporarily losing connectivity with a passive peer will use exponential backoff functionality to attempt reconnection.
+An active peer temporarily losing connectivity with a passive peer will use exponential backoff functionality to attempt reconnection.
 
 === Delta Sync
 
@@ -115,8 +113,7 @@ Statistics on delta-sync usage are available, including the total number of revi
 
 === Conflict Resolution
 
-* Conflict resolution for peer-to-peer synchronization works in the same way as it does for Sync Gateway replication, with both custom and automatic resolution available.
-
+Conflict resolution for peer-to-peer synchronization works in the same way as it does for Sync Gateway replication, with both custom and automatic resolution available.
 
 == Constraints
 ifeval::["{param-platform}"=="{platform-ios}"]
@@ -187,7 +184,7 @@ include::{root-partials}p2p-api.adoc[leveloffset=+1]
 === Authentication
 // include::{root-partials}p2p-security.adoc[leveloffset=+1]
 
-Peer-to--peer sync supports <<using-basic-authentication, Basic Authentication>> and <<using-tls,TLS Authentication>>.
+Peer-to-peer sync supports <<using-basic-authentication, Basic Authentication>> and <<using-tls,TLS Authentication>>.
 For anything other than test deployments, we strongly encourage the use of TLS. In fact, peer-to-peer sync using URLEndpointListener is encrypted using TLS by default.
 
 The authentication mechanism used is defined at endpoint level, meaning that it is independent of the database being replicated.

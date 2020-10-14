@@ -796,7 +796,7 @@ print("urls: \(listener.urls)")
 
     // cert is a pre-populated object of type:SecCertificate representing a certificate
     let rootCertData = SecCertificateCopyData(cert) as Data // <.>
-    let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)! <.>
+    let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)! //
 
     listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert]) // <.> <.>
 
@@ -808,7 +808,7 @@ print("urls: \(listener.urls)")
 
     // cert is a user-supplied object of type:SecCertificate representing a certificate
     let rootCertData = SecCertificateCopyData(cert) as Data // <.>
-    let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)! // <.>
+    let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
 
     listenerConfig.authenticator = ListenerCertificateAuthenticator.init { // <.>
       (certs) -> Bool in

@@ -224,7 +224,7 @@ NSData *data =
   [[NSData alloc]
     initWithContentsOfURL: certURL];
 SecCertificateRef rootCertRef =
-  SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);  // <.>
+  SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
 
 thisConfig.authenticator =
   [[CBLListenerCertificateAuthenticator alloc]
@@ -240,7 +240,7 @@ CBLListenerCertificateAuthenticator* thisListenerAuth =
       SecCertificateRef cert =
         (__bridge SecCertificateRef)(certs[0]); // <.>
       CFStringRef cnRef;
-      OSStatus status = SecCertificateCopyCommonName(cert, &cnRef); // <.>
+      OSStatus status = SecCertificateCopyCommonName(cert, &cnRef);
       if (status == errSecSuccess) {
           NSString* cn = (NSString*)CFBridgingRelease(cnRef);
           if ([self._allowlistedCommonNames containsObject: cn])

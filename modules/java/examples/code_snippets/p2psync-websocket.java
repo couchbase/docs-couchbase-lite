@@ -191,7 +191,7 @@ Log.i(TAG, "URLS are " + thisListener.getUrls();
     thisConfig.setTlsIdentity = thisServerID;
 
     thisConfig.setAuthenticator(
-      new ListenerCertificateAuthenticator(thisClientID.getCerts())); // <.> <.> <.>
+      new ListenerCertificateAuthenticator(thisClientID.getCerts())); // <.> <.>
 
     URLEndpointListener thisListener = new URLEndpointListener(thisConfig) //
 
@@ -208,7 +208,7 @@ Log.i(TAG, "URLS are " + thisListener.getUrls();
         // use supplied logic that resolves to boolean
         // true=valid, false=invalid
         }
-      ); // <.> <.> <.>
+      ); // <.> <.>
     final ULEndpointListener thisListener =
       new URLEndpointListener(thisConfig);
 
