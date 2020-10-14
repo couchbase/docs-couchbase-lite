@@ -157,7 +157,7 @@ Note that the client cannot authenticate the server if TLS is turned off. When T
 :this-prop:
 Use `{url-api-class-replicator-config}` methods  {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} and {url-api-prop-replicator-config-setPinnedServerCertificate}, to tell the replicator how to verify server-supplied TLS server certificates.
 
-* If there are pinned certificates, nothing else matters, the server cert must *exactly* match one of the pinned certs.
+* If there is a pinned certificate, nothing else matters, the server cert must *exactly* match the pinned certificate.
 * If there are no pinned certs and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
 * If there are no pinned certificates and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `false` (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
 
@@ -252,10 +252,7 @@ This applies only to the {url-api-class-urlendpointlistener}.
 
 NOTE: The *server* (listener) must have `disableTLS` set `false` and have a {url-api-class-replicator-config-cert-auth} configured, or it will never ask for this client's certificate.
 
-How you derive the certificate to be presented to the server will depend on the certificates that server is configured to accept:
-
-* If the server will accept only self-signed certificates, you can bring your own, or create one using the convenience API method {url-api-method-tls-identity-create}
-* If the server will accept only CA signed certificates, you will have to supply a TLSIdentity using {url-api-method-tls-identity-get}, which uses an identify provided in {securestorage}.
+The certificate to be presented to the server will need to be signed by the root certificates or be valid based on the authentication callback set to the listener via ListenerCertificateAuthenticator.
 
 ifeval::["{param-platform}"=="{platform-android}"]
 TLSIdentity.getIdentity uses the Android keystore.  Please see (Android developers documentation (for example https://developer.android.com/training/articles/keystore) for more information about how to import a keychain.
@@ -277,8 +274,8 @@ include::{snippet-p2psync-ws}[tags=p2p-tlsid-tlsidentity-with-label, indent=0]
 ----
 
 *Notes on Example*
-
-<.> Import and create an identity from the given PKCS12 data containing private key, public key, and certificates
+<.> Get an identity from secure storage and create a TLS Identity object
+// <.> Import and create an identity from the given PKCS12 data containing private key, public key, and certificates
 <.> Set the authenticator to {url-api-class-replicator-config-cert-auth} and configure it to use the retrieved identity
 
 ====

@@ -121,7 +121,7 @@ include::{snippet-p2psync-ws}[tags=listener-config-db, indent=0]
 
 *Notes on example:*
 
-<.> Set the local database name using the {url-api-class-urlendpointconfiguration}'s constructor {url-api-references-urlendpointconfiguration-initdb}.
+<.> Set the local database using the {url-api-class-urlendpointconfiguration}'s constructor {url-api-references-urlendpointconfiguration-initdb}.
 +
 The database must be opened before the listener is started.
 //`public init(database: Database)` {url-api-references-urlendpointconfiguration-database} .
@@ -129,8 +129,7 @@ The database must be opened before the listener is started.
 ====
 
 
-== Set Network and Port
-
+== Set Port and Network Interface
 
 === Port number
 The Listener will automatically select an available port if you do not specify one.
@@ -407,14 +406,9 @@ include::{snippet-p2psync-ws}[tags=listener-config-client-auth-pwd, indent=0]
 Define how the server will authenticate client-supplied certificates.
 
 // include::{root-partials}p2p-api.adoc[tag=ListenerCertificateAuthenticator]
-There are three ways to authenticate a client:
+There are two ways to authenticate a client:
 
-* A chain of one or more certificates that ends at a system CA signed certificate.
-+
-This is the default when no authenticator is specified
 * A chain of one or more certificates that ends at a certificate in the list of certificates supplied to the constructor for  {url-api-class-ListenerCertificateAuthenticator}.
-+
-Note that system CA certificates are ignored
 * Application logic: This method assumes complete responsibility for verifying and authenticating the client.
 +
 If the parameter supplied to the constructor for `ListenerCertificateAuthenticator` is of type  `ListenerCertificateAuthenticatorDelegate`, all other forms of authentication are bypassed.
@@ -443,7 +437,6 @@ include::{snippet-p2psync-ws}[tag=listener-config-client-auth-root, indent=0]
 
 <.>  Get the identity data to authenticate against.
 This can be, for example, from a resource file provided with the app, or an identity previously saved in {securestorage}.
-<.> Get the root certs from the retrieved data.
 <.> Configure the authenticator to authenticate the client supplied certificate(s) using these root certs.
 A valid client will provide one or more certificates that match a certificate in this list.
 <.> Add the authenticator to the listener configuration.
@@ -469,20 +462,17 @@ include::{snippet-p2psync-ws}[tags=listener-config-client-auth-lambda, indent=0]
 
 <.>  Get the identity data to authenticate against.
 This can be, for example, from a resource file provided with the app, or an identity previously saved in {securestorage}.
-<.> Get the root certificates from the retrieved data.
-// <.> Provide the identity's valid certificates to the client authenticator.
 <.>  Configure the Authenticator to pass the root certificates to a user supplied code block.
 This code assumes complete responsibility for authenticating the client supplied certificate(s).
 It must return a boolean value; with `true` denoting the client supplied certificate authentic.
 <.> Add the authenticator to the listener configuration.
-// <.>  Initialize the listener using the config
 
 --
 ====
 =====
 
 [#delete-tls-identity]
-=== Delete {securestorage} Entry
+=== Delete Entry
 
 ifeval::["{param-platform}"=="{platform-android}"]
 You can remove unwanted entries from {securestorage} using the {securestorage-api} (see -- https://developer.android.com/reference/java/security/KeyStore#deleteEntry(java.lang.String)).

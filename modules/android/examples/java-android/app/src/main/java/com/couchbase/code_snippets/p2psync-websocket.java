@@ -231,7 +231,7 @@ thisConfig.setDisableTls(true); // <.>
 
   if (validId == null) { throw new IllegalStateException("Cannot find corporate id"); }
 
-  thisConfig.setTlsIdentity(validId); // <.>
+  thisConfig.setTlsIdentity(validId);
 
   thisConfig.setAuthenticator(
     new ListenerCertificateAuthenticator(validId.getCerts())); // <.> <.>
@@ -255,7 +255,7 @@ thisConfig.setDisableTls(true); // <.>
       // use supplied logic that resolves to boolean
       // true=valid, false=invalid
       }
-    ); // <.> <.> <.>
+    ); // <.> <.>
   final ULEndpointListener thisListener =
     new URLEndpointListener(thisConfig);
 
