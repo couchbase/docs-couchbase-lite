@@ -53,7 +53,9 @@ public static void main (String [] args) throws CouchbaseLiteException, Interrup
 
     // Get the database (and create it if it doesn’t exist).
     DatabaseConfiguration config = new DatabaseConfiguration();
-    config.setDirectory(DB_PATH); // <5>
+
+    config.setDirectory(context.getFilesDir().getAbsolutePath()); // <5>
+
     config.setEncryptionKey(new EncryptionKey(DB_PASS)); // <3>
     Database database = new Database(DB_NAME, config);
 
@@ -725,6 +727,9 @@ apply plugin: 'java'
     public void testNewDatabase() throws CouchbaseLiteException {
         // tag::new-database[]
         DatabaseConfiguration config = new DatabaseConfiguration();
+
+        config.setDirectory(context.getFilesDir().getAbsolutePath());
+
         Database database = new Database(DB_NAME, config);
         // end::new-database[]
 
@@ -771,8 +776,6 @@ apply plugin: 'java'
     public void testPreBuiltDatabase() throws IOException {
         // tag::prebuilt-database[]
         // Note: Getting the path to a database is platform-specific.
-        // For Android you need to extract it from your
-        // assets to a temporary directory and then pass that path to Database.copy()
         DatabaseConfiguration configuration = new DatabaseConfiguration();
         if (!Database.exists("travel-sample", APP_DB_DIR)) {
             File tmpDir = new File(System.getProperty("java.io.tmpdir"));
