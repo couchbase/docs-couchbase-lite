@@ -112,7 +112,11 @@ public class Examples {
 
     // Get the database (and create it if it doesn’t exist).
     DatabaseConfiguration config = new DatabaseConfiguration();
+
+    config.setDirectory(context.getFilesDir().getAbsolutePath());
+
     Database database = new Database("getting-started", config);
+
 
     // Create a new document (i.e. a record) in the database.
     MutableDocument mutableDoc = new MutableDocument()
@@ -212,7 +216,9 @@ public class Examples {
   // ### New Database
   public void testNewDatabase() throws CouchbaseLiteException {
     // tag::new-database[]
-    DatabaseConfiguration config = new DatabaseConfiguration();
+    final DatabaseConfiguration config = new DatabaseConfiguration();
+    config.setDirectory(context.getFilesDir().getAbsolutePath()); // <.>
+
     Database database = new Database("my-database", config);
     // end::new-database[]
 
@@ -254,14 +260,15 @@ public class Examples {
         // end::file-logging[]
     }
 
+
     // ### Loading a pre-built database
     public void testPreBuiltDatabase() throws IOException {
-        // tag::prebuilt-database[]
-        // Note: Getting the path to a database is platform-specific.
-        // For Android you need to extract it from your
-        // assets to a temporary directory and then pass that path to Database.copy()
-        DatabaseConfiguration configuration = new DatabaseConfiguration();
-        if (!Database.exists("travel-sample", context.getFilesDir())) {
+      // tag::prebuilt-database[]
+      // Note: Getting the path to a database is platform-specific.
+      // For Android you need to extract it from your
+      // assets to a temporary directory and then pass that path to Database.copy()
+      DatabaseConfiguration configuration = new DatabaseConfiguration();
+      if (!Database.exists("travel-sample", context.getFilesDir())) {
             ZipUtils.unzip(getAsset("travel-sample.cblite2.zip"), context.getFilesDir());
             File path = new File(context.getFilesDir(), "travel-sample");
             try {
