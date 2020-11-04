@@ -1,14 +1,5 @@
-// Release note body content for this release
-// Inclusions are use in multiple pages
-
-// ifeval::["{param-module}"=="ROOT"]
-// :url-api-method-replicator-getPendingDocumentIds: Get Pending Document
-// :url-api-method-replicator-isDocumentPending: Is Document Pending
-// :url-api-class-database: Database
-// :url-api-method-database-delete: Delete
-// :url-api-method-database-close: Close
-// :url-api-property-meta-revisionid: Meta Revision ID
-// endif::[]
+// BEGIN inclusion commons-releasenote.adoc
+// Release note body content for all platforms
 
 // BEGIN DO NOT REMOVE
 :param-abstract: This content describes the key features and changes implemented by release {version} of Couchbase Lite on {param-title}
@@ -17,51 +8,96 @@ include::{root-partials}block-abstract.adoc[]
 
 // END DO NOT REMOVE
 
-// == Couchbase Lite for {param-title} vn.{page-component-version}
-// * Original Release Date: October 2020
-// * This Patch Version: *unpatched*
-// * This Patch Version Date: n/a
-//* This Patch Version: *{version-maint}*
-//* This Patch Version Date: *{version-maint-date}*
+// BEGIN: Decide which releases are relevant for this platform
+ifeval::["{param-module}"=="{lang-mod-android}"]
+:param-2-8-1:
+endif::[]
+ifeval::["{param-module}"=="{lang-mod-java}"]
+:param-2-8-1:
+endif::[]
+// END: Decide which releases are relevant for this platform
 
-== Release 2.8.0 (October 2020)
-.Quick Links
-<<new-features>> *|* <<improvements>> *|* <<issues-and-resolutions>> *|* <<support-notices>> *|* <<Related Content>>
+// BEGIN: Show the 2-8-1 contents if relevant to the platform
+ifdef::param-2-8-1[]
+[#maint-latest]
+[#maint-2.8.1]
+== Release 2.8.1 (November 2020)
+This maintenance release addresses a backward-compatibility issue (https://issues.couchbase.com/browse/CBL-1406[CBL-1406]), which affects:
 
-[#new-features]
+* Couchbase Lite on Java
+* Couchbase Lite on Android (Java)
+
+If you develop apps using those products, and those apps could potentially access databases created by a mix of Release 2.7 and Release 2.8 versions, then you should apply Release 2.8.1 as soon as practicable.
+
+// .Quick Links
+// <<improvements-2-8-1>> *|* <<issues-and-resolutions-2-8-1>> *|* <<support-notices-2-8-1>> *|* <<Related Content>>
+
+// [#new-features-2-8-1]
+// === New Features
+// include::{root-partials}pn-change-log-2-8-1.adoc[tag=latest-all-new, leveloffset=+1]
+
+// [#improvements-2-8-1]
+// === Improvements
+
+// include::{root-partials}pn-change-log-2-8-1.adoc[tag=latest-all-changed-features, leveloffset=+1]
+
+// include::{module-partials}pn-issues-list.adoc[tag=enhancements]
+
+// include::{root-partials}pn-change-log-2-8-1.adoc[tag=latest-all-changed-api, leveloffset=+1]
+
+[#issues-and-resolutions-2-8-1]
+=== Issues and Resolutions
+==== Known Issues
+include::{module-partials}pn-issues-list.adoc[tag=knownissues-2-8-1]
+
+==== Fixed Issues
+include::{module-partials}pn-issues-list.adoc[tag=fixed-2-8-1]
+
+endif::[]
+// END: Show the 2-8-1 contents if relevant to the platform
+
+
+
+[#major]
+== Release 2.8 (October 2020)
+====
+_Quick Links_: <<new-features-2-8-0>> *|* <<improvements-2-8-0>> *|* <<issues-and-resolutions-2-8-0>> *|* <<support-notices-2-8-0>> *|* <<Related Content>>
+====
+
+[#new-features-2-8-0]
 === New Features
 // tag::feature-highlights[]
 :param-link1: {xref-cbl-pg-landing-p2psync}
-include::{root-partials}pn-change-log-content.adoc[tag=latest-all-new, leveloffset=+1]
+include::{root-partials}pn-change-log-content.adoc[tag=all-new-2-8, leveloffset=+1]
 
 // end::feature-highlights[]
-[#improvements]
+[#improvements-2-8-0]
 === Improvements
 
 ==== Feature Changes
 // tag::feature-changes[]
-include::{root-partials}pn-change-log-content.adoc[tag=latest-all-changed-features, leveloffset=+1]
+include::{root-partials}pn-change-log-content.adoc[tag=all-changed-features-2-8, leveloffset=+1]
 
 // end::feature-changes[]
 ==== Other Enhancements
-include::{module-partials}pn-issues-list.adoc[tag=enhancements]
+include::{module-partials}pn-issues-list.adoc[tag=enhancements-2-8-0]
 
 ==== API Changes
 // – identify any REST API changes
 // tag::api-changes[]
-include::{root-partials}pn-change-log-content.adoc[tag=latest-all-changed-api, leveloffset=+1]
+include::{root-partials}pn-change-log-content.adoc[tag=all-changed-api-2-8, leveloffset=+1]
 
 // end::api-changes[]
 
-[#issues-and-resolutions]
+[#issues-and-resolutions-2-8-0]
 === Issues and Resolutions
 ==== Known Issues
-include::{module-partials}pn-issues-list.adoc[tag=knownissues]
+include::{module-partials}pn-issues-list.adoc[tag=knownissues-2-8-0]
 
 ==== Fixed Issues
-include::{module-partials}pn-issues-list.adoc[tag=fixed]
+include::{module-partials}pn-issues-list.adoc[tag=fixed-2-8-0]
 
-[#support-notices]
+[#support-notices-2-8-0]
 === Support Notices
 This section documents any support-related notes, constraints and changes
 
@@ -73,7 +109,7 @@ You should plan to move to an alternative, supported, solution as soon as practi
 
 ===== This Release
 // include::{root-partials}block-deprecations.adoc[tag={param-platform}-new]
-include::{module-partials}pn-issues-list.adoc[tag=deprecated]
+include::{module-partials}pn-issues-list.adoc[tag=deprecated-2-8-0]
 * {empty}
 +
 include::{root-partials}block-deprecations.adoc[tag=any-platform-new]
@@ -102,3 +138,10 @@ include::{root-partials}block-supportnotices.adoc[tag={param-platform}-ongoing]
 // DO NOT EDIT -- Footer Related Content Block
 include::{root-partials}block-related-content-prod.adoc[]
 // DO NOT EDIT
+
+// BEGIN: Destroy local param attributes
+:param-2-8-1!:
+// END: Destroy local param attributes
+
+
+// END inclusion commons-releasenotes.adoc
