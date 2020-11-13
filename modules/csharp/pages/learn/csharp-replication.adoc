@@ -12,11 +12,11 @@ include::partial$_std-cbl-hdr-csharp.adoc[]
 include::{root-partials}block-abstract.adoc[]
 
 
-== Replication
+== Introduction
 
 include::{root-partials}replication-introduction.adoc[]
 
-=== Compatibility
+== Compatibility
 
 WARNING: The new protocol is *incompatible* with CouchDB-based databases.
 And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that xref:sync-gateway::prodnotes/pn-compatibility.adoc[supports it].
@@ -25,7 +25,7 @@ To use this protocol with Couchbase Lite 2.0, the replication URL should specify
 Mobile clients using Couchbase Lite 1.x can continue to use *http* as the URL scheme.
 Sync Gateway 2.0 will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through "http://localhost:4984/db" and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through "ws://localhost:4984/db".
 
-=== Starting Sync Gateway
+== Starting Sync Gateway
 
 https://www.couchbase.com/downloads[Download Sync Gateway] and start it from the command line with the configuration file created above.
 
@@ -37,7 +37,7 @@ https://www.couchbase.com/downloads[Download Sync Gateway] and start it from the
 
 For platform specific installation instructions, refer to the Sync Gateway xref:sync-gateway::start/gs-sgw-install.adoc[installation guide].
 
-=== Starting a Replication
+== Starting a Replication
 
 Replication objects are now bidirectional, this means you can start a `push`/`pull` replication with a single instance.
 The replication's parameters can be specified through the {url-api-references}/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html[`ReplicatorConfiguration`] object;
@@ -80,12 +80,12 @@ so it might be necessary to explicitly enable them in the load balancer's config
 By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
 The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway:ROOT:refer/config-properties.adoc#replicator_compression[`replicator_compression`]).
 
-==== Replication Ordering
+=== Replication Ordering
 
 To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
 So we don't recommend to rely on that when using the replication or database change listeners for example.
 
-=== Troubleshooting
+== Troubleshooting
 
 As always, when there is a problem with replication, logging is your friend.
 The following example increases the log output for activity related to replication with Sync Gateway.
@@ -95,7 +95,7 @@ The following example increases the log output for activity related to replicati
 include::{snippet}[tag=replication-logging,indent=0]
 ----
 
-=== Authentication
+== Authentication
 
 By default, Sync Gateway does not enable authentication.
 This is to make it easier to get up and running with synchronization.
@@ -118,7 +118,7 @@ To authenticate with Sync Gateway, an associated user must first be created.
 Sync Gateway users can be created through the xref:sync-gateway::refer/rest-api-admin.adoc#/user/post\__db___user_[`+POST /{tkn-db}/_user+`] endpoint on the Admin REST API.
 Provided that the user exists on Sync Gateway, there are two ways to authenticate from a Couchbase Lite client: Basic Authentication or Session Authentication.
 
-==== Basic Authentication
+=== Basic Authentication
 
 You can provide a user name and password to the basic authenticator class method.
 Under the hood, the replicator will send the credentials in the first request to retrieve a `SyncGatewaySession` cookie and use it for all subsequent requests during the replication.
@@ -130,7 +130,7 @@ The following example initiates a one-shot replication as the user *john* with t
 include::{snippet}[tag=basic-authentication,indent=0]
 ----
 
-==== Session Authentication
+=== Session Authentication
 
 Session authentication is another way to authenticate with Sync Gateway.
 A user session must first be created through the xref:sync-gateway::refer/rest-api-public.adoc#/session/post\__db___session[`+POST /{tkn-db}/_session+`] endpoint on the Public REST API.
@@ -142,7 +142,7 @@ The following example initiates a one-shot replication with the session ID that 
 include::{snippet}[tag=session-authentication,indent=0]
 ----
 
-=== Replication Status
+== Replication Status
 
 The `replication.Status.Activity` property can be used to check the status of a replication.
 For example, when the replication is actively transferring data and when it has stopped.
@@ -179,12 +179,12 @@ NOTE: The replication change object also has properties to track the progress (`
 But since the replication occurs in batches and the total count can vary through the course of a replication, those progress indicators are not very useful from the standpoint of an app user.
 Hence, these should not be used for tracking the actual progress of the replication.
 
-==== Replication Status and App Life Cycle
+=== Replication Status and App Life Cycle
 
 Couchbase Lite doesn't react to OS backgrounding or foregrounding events and replication(s) will continue running as long as the remote system does not terminate the connection and the app does not terminate.
 It is generally recommended to stop replications before going into the background otherwise socket connections may be closed by the OS and this may interfere with the replication process.
 
-=== Handling Network Errors
+== Handling Network Errors
 
 If an error occurs, the replication status will be updated with an `Error` which follows the standard HTTP error codes.
 The following example monitors the replication for errors and logs the error code to the console.
@@ -206,11 +206,11 @@ The following error codes are considered temporary by the Couchbase Lite replica
 * `504`: Gateway Timeout
 * `1001`: DNS resolution error
 
-=== Replication Events
+== Replication Events
 
 include::{root-partials}replication-events.adoc[]
 
-=== Custom Headers
+== Custom Headers
 
 include::{root-partials}replication-custom-header.adoc[]
 
@@ -219,7 +219,7 @@ include::{root-partials}replication-custom-header.adoc[]
 include::{snippet}[tag=replication-custom-header,indent=0]
 ----
 
-=== Replication Checkpoint Reset
+== Replication Checkpoint Reset
 
 include::{root-partials}replication-checkpoint.adoc[]
 
@@ -228,7 +228,7 @@ include::{root-partials}replication-checkpoint.adoc[]
 include::{snippet}[tag=replication-reset-checkpoint,indent=0]
 ----
 
-=== Replication Filters
+== Replication Filters
 
 include::{root-partials}replication-filters.adoc[]
 
