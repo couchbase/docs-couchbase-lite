@@ -1,4 +1,13 @@
-// inclusion
+// BEGIN -- inclusion/macro -- {root-partials}_block-abstract.adoc
+// Purpose -- To output a standard pre-formatted abstract block at head of page.
+// Used-by -- many and various pages, also, optionally, used from {root-commons} content, but not from {root-partials} content
+// Passed-parameters -- voided on completion
+// -  param-abstract: message to output
+// -  param-related: related links content
+// -  topic-group: optional topic group, currently suppressed
+// Other -- uses the page description if defined
+//
+
 ifeval::["{param-abstract}"=="{empty}"]
 :param-abstract!:
 endif::[]
@@ -8,29 +17,23 @@ ifdef::param-abstract[]
 :this-abstract: Abstract -- {param-abstract}
 endif::param-abstract[]
 
-// ++++
-// <div class="card-row">
-// ++++
-
-// [.column]
-// ====== {empty}
 ifdef::description[]
 [abstract]
 --
-// ifdef::topic-group[]
-// Topic Group -- _{topic-group}_ +
-// endif::topic-group[]
+
 Description -- _{description}_ +
 ifdef::this-abstract[]
 _{this-abstract}_ +
 endif::this-abstract[]
-// [.column]
 ifdef::param-related[]
 Related Content -- {param-related}
 endif::param-related[]
 
 --
 endif::description[]
-// ++++
-// </div>
-// ++++
+// void passed parameters and local attributes
+:!param-related:
+:!param-abstract:
+:!topic-group:
+:!this-abstract:
+// END -- inclusion/macro -- {root-partials}_block-abstract.adoc
