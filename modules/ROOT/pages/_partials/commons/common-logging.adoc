@@ -1,14 +1,37 @@
+// BEGIN -- inclusion/partial -- logging.adoc
+// Used-by:
+//    - ROOT:commons/common--database.adoc
+//    - ROOT:partial$:<module>-troubleshooting-logs.adoc
+// Uses: {snippets} -- various
+
+
 // Begin required attributes
 // :cbl-log-version: the required cbl-log version number (eg 2.7.0)
 // :snippet: the path to the language specific example code_snippets
+// :fn-2x5: footnote content
+:fn-2x5: footnote:fn-2x5[From version 2.5]
 ifndef::version-full[:version-full: UNDEFINED-VERSION]
 ifndef::cbl-log-version[:cbl-log-version: {version-full}]
 ifndef::snippet[:snippet: UNDEFINED-SNIPPET-PATH]
 :url-cbl-log-binaries: https://packages.couchbase.com/releases/couchbase-lite-log/{cbl-log-version}/couchbase-lite-log-{cbl-log-version}
 //  End required attributes
 
+// Begin -- Output an abstract unless this inclusion is being used as part of an encompassing page
+// Allow for external over-ride of default content
+ifdef::param-fullpage[]
+:tslinks: {xref-cbl-pg-troubleshooting-queries}
+ifeval::["{param-platform}"=="{platform-ios}"]
+:tslinks: {tslinks} | {xref-cbl-pg-troubleshooting-crashes}
+endif::[]
+ifndef::param-related[:param-related: {tslinks}]
+ifndef::topic-group[:topic-group: Troubleshooting]
+include::{root-partials}_block-abstract.adoc[]
+endif::[]
+// End -- Output an abstract unless this inclusion is being used as part of an encompassing page
+
+
 // Begin text block
-From version 2.5, Couchbase Lite provides a logging API that unifies the logging behavior across all platforms, making debugging and troubleshooting easier during development and in production.
+Couchbase Lite provides a logging API that unifies the logging behavior across all platforms{fn-2x5}, making debugging and troubleshooting easier during development and in production.
 
 NOTE: The retrieval of logs from the device is out of scope of this feature.
 
@@ -16,6 +39,7 @@ Available logging features include:
 
 * Console based logging
 * File based logging
+* Replication logging
 * Custom logging
 
 == Console based logging
@@ -38,33 +62,63 @@ NOTE: See  <<Decoding binary logs>>.
 
 The following example enables file based logging.
 
+[#file-log]
+.Enabling file logging
+====
 [source]
 ----
 include::{snippet}[tag=file-logging,indent=0]
 ----
+====
+
+== Replication Logging
+
+The following example increases the log output for activity related to replication with Sync Gateway.
+
+[repl-log]
+.Setting replication log-level
+====
+[source]
+----
+include::{snippet}[tag=replication-logging,indent=0]
+----
+====
+
 
 == Custom logging
 Default: Disabled.
 
 Allows registration of a callback function to receive Couchbase Lite log messages, which may be logged using any external logging framework.
 
-Apps must implement the `Logger` interface, as shown below:
+Apps must implement the `Logger` interface -- see <<impl-log>> -- a
+And set it on the `custom` property -- see <<cust-log>>.
 
+[#impl-log]
+.Implementing logger interface
+====
 [source, {source-language}]
 ----
 include::{snippet}[tag=custom-logging,indent=0]
 ----
-And set it on the `custom` property.
+====
 
+
+[#cust-log]
+.Enabling custom logging
+====
 [source, {source-language}]
 ----
 include::{snippet}[tag=set-custom-logging,indent=0]
 ----
+====
 
 == Decoding binary logs
 
-The *cbl-log* tool should be used to decode binary log files as shown in these examples.
+You can use the *cbl-log* tool to decode binary log files -- see <<cbl-log>>.
 
+[#cbl-log]
+.Using the cbl-log tool
+=====
 [{tabs}]
 ====
 macOS::
@@ -121,3 +175,19 @@ $ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
 ----
 --
 ====
+=====
+
+// Begin - Output related content unless this inclusion is used as part of an encompassing page
+ifdef::param-fullpage[]
+include::{root-partials}block-related-content-query.adoc[]
+endif::[]
+// End - Output related content unless this inclusion is used as part of an encompassing page
+
+// Begin -- Void any temporary parameters
+:param-full-page!:
+:param-related!:
+:param-abstract!:
+:tslinks!:
+// End -- Void any temporary parameters
+
+// END -- inclusion/partial -- logging.adoc
