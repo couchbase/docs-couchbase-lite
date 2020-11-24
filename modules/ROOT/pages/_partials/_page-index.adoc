@@ -1,4 +1,11 @@
+// BEGIN -- inclusion -- _page-index.adoc
+//
+// Defines common attributes that contain page-names and xrefs to those pages and, in some cases, to anchors within the page
+// By 'including' this page and using the defined attribute names in any links, you can ensure the ongoing legitimacy of those links.
+//
 //ifndef::xref-pfx-cbl[]
+
+// Begin -- Construct essential attributes if the calling page/environment does not already contain them
 ifndef::param-name[:param-name: param-name undefined]
 ifndef::param-module[:param-module: param-module undefined]
 ifndef::param-title[:param-title: param-title undefined]
@@ -8,12 +15,14 @@ ifndef::fixed[:fixed: fixed undefined]
 ifndef::enh[:enh: enh undefined]
 ifndef::nftr[:nftr: nftr undefined]
 ifndef::version[:version: version undefined]
+// End -- Construct essential attributes if the calling page/environment does not already contain them
 
 
-
-
+:xref-pfx-sgw: xref:sync-gateway::
 :xref-pfx-cbl: xref:couchbase-lite:{param-module}:
 :xref-pfx-root: xref:couchbase-lite::
+// End -- define module context
+
 
 :xref-cbl-pg-tutorial-p2psync: xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Getting Started with Peer-to-Peer Synchronization]
 
@@ -25,144 +34,163 @@ ifndef::version[:version: version undefined]
 :xref-cbl-pg-index: {xref-pfx-root}{cbl-pg-index}[Couchbase Lite]
 :xref-cbl-pg-introduction: {xref-pfx-root}{cbl-pg-introduction}[About CBL]
 :xref-cbl-pg-whatsnew: {xref-pfx-root}{cbl-pg-whatsnew}[What's New]
+// End -- Ref - ROOT Page Targets
 
-
+// Begin -- List of links to release notes
+// Used in pages that are called before a platform has been selected (e.g. Introduction and What's New)
 :xref-cbl-pg-releasenotes-list: xref:couchbase-lite:swift:product/swift-releasenotes.adoc[Swift]  |  xref:couchbase-lite:objc:product/objc-releasenotes.adoc[Objective-C]  |  xref:couchbase-lite:java:product/java-releasenotes.adoc[Java]  |  xref:couchbase-lite:android:product/java-android-releasenotes.adoc[Android (Java)]  |  xref:couchbase-lite:csharp:product/csharp-releasenotes.adoc[C#.Net]
+// End -- List of links to release notes
 
-
-// Begin -- Ref - Page Target
+// Begin -- Ref - Page Targets -- a list of all pages (and their relative paths)
 //
-:cbl-pg-quickstart: quickstart.adoc
 :cbl-pg-blob: learn/{param-name}-blob.adoc
 :cbl-pg-build: start/{param-name}-gs-build.adoc
 :cbl-pg-cert-pinning: learn/{param-name}-cert-pinning.adoc
-:cbl-pg-changelog: product/{param-name}-changelog.adoc
 :cbl-pg-changelog-all: changelog.adoc
-:cbl-pg-compatibility: product/{param-name}-compatibility.adoc
+:cbl-pg-changelog: product/{param-name}-changelog.adoc
 :cbl-pg-compatibility-all: compatibility.adoc
-:cbl-pg-conflict: learn/{param-name}-conflict.adoc
+:cbl-pg-compatibility: product/{param-name}-compatibility.adoc
 :cbl-pg-conflict-auto: learn/{param-name}-conflict.adoc#automatic-conflict-resolution
 :cbl-pg-conflict-custom: learn/{param-name}-conflict.adoc#custom-conflict-resolution
+:cbl-pg-conflict: learn/{param-name}-conflict.adoc
 :cbl-pg-database: learn/{param-name}-database.adoc
+:cbl-pg-date-time: learn/{param-name}-date-time.adoc
 :cbl-pg-dbo-crud: next/{param-name}-dbo-crud.adoc
-:cbl-pg-dbo-query: next/{param-name}-dbo-query.adoc
-:cbl-pg-dbo-p2psync-websocket-using-passive: advance/{param-name}-p2psync-websocket-using-passive.adoc
-:cbl-pg-dbo-p2psync-websocket-using-passive--delta-sync: {cbl-pg-dbo-p2psync-websocket-using-passive}#configure-delta-sync
-:cbl-pg-dbo-p2psync-websocket-using-active: advance/{param-name}-p2psync-websocket-using-active.adoc
 :cbl-pg-dbo-p2psync-cloud-using: advance/{param-name}-p2psync-cloud-using.adoc
+:cbl-pg-dbo-p2psync-websocket-using-active: advance/{param-name}-p2psync-websocket-using-active.adoc
+:cbl-pg-dbo-p2psync-websocket-using-passive--delta-sync: {cbl-pg-dbo-p2psync-websocket-using-passive}#configure-delta-sync
+:cbl-pg-dbo-p2psync-websocket-using-passive: advance/{param-name}-p2psync-websocket-using-passive.adoc
+:cbl-pg-dbo-query: next/{param-name}-dbo-query.adoc
 :cbl-pg-dbreplica: learn/{param-name}-dbreplica.adoc
 :cbl-pg-dep-upgrade: advance/{param-name}-dep-upgrade.adoc
-:cbl-pg-p2p-manage-tls-id: advance/{param-name}-p2p-managing-tls-id.adoc
 :cbl-pg-document: learn/{param-name}-document.adoc
 :cbl-pg-fts: learn/{param-name}-fts.adoc
+:cbl-pg-get-started: start/{param-name}-gs-get-started.adoc
+:cbl-pg-glossary:   refer-glossary.adoc
 :cbl-pg-index: index.adoc
 :cbl-pg-indexing: learn/{param-name}-indexing.adoc
 :cbl-pg-install: start/{param-name}-gs-install.adoc
-:cbl-pg-get-started: start/{param-name}-gs-get-started.adoc
-:cbl-pg-landing-replications: learn/{param-name}-landing-replications.adoc
 :cbl-pg-landing-p2psync: learn/{param-name}-landing-p2psync.adoc
+:cbl-pg-landing-replications: learn/{param-name}-landing-replications.adoc
+:cbl-pg-p2p-manage-tls-id: advance/{param-name}-p2p-managing-tls-id.adoc
+:cbl-pg-p2psync-custom: learn/{param-name}-p2psync-custom.adoc
 :cbl-pg-p2psync-http: learn/{param-name}-p2psync-http.adoc
 :cbl-pg-p2psync-tls: learn/{param-name}-p2psync-tls.adoc
 :cbl-pg-p2psync-websocket: learn/{param-name}-p2psync-websocket.adoc
-:cbl-pg-p2psync-custom: learn/{param-name}-p2psync-custom.adoc
 :cbl-pg-prereqs: start/{param-name}-gs-prereqs.adoc
-:cbl-pg-query: learn/{param-name}-query.adoc
-:cbl-pg-query-using: learn/{param-name}-query-using.adoc
 :cbl-pg-query-live: learn/{param-name}-query-live.adoc
 :cbl-pg-query-predictive: learn/{param-name}-query-predictive.adoc
-:cbl-pg-date-time: learn/{param-name}-date-time.adoc
-:cbl-pg-ref-api: refer/{param-name}-ref-api.adoc
+:cbl-pg-query-troubleshooting: learn/{param-name}-query-troubleshooting.adoc
+:cbl-pg-query-using: learn/{param-name}-query-using.adoc
+:cbl-pg-query: learn/{param-name}-query.adoc
+:cbl-pg-quickstart: quickstart.adoc
+:cbl-pg-pfx-api: refer/{param-name}-pfx-api.adoc
 :cbl-pg-refer-glossary: refer/{param-name}-refer-glossary.adoc
-:cbl-pg-glossary:   refer-glossary.adoc
-:cbl-pg-releasenotes: product/{param-name}-releasenotes.adoc
 :cbl-pg-releasenotes-all: releasenotes.adoc
-:cbl-pg-replication: learn/{param-name}-replication.adoc
-:cbl-pg-replication--status: {cbl-pg-replication}#replication-status
+:cbl-pg-releasenotes: product/{param-name}-releasenotes.adoc
 :cbl-pg-replication--delta-sync: {cbl-pg-replication}#delta-sync
-:cbl-pg-supportnotes: product/{param-name}-supportnotices.adoc
+:cbl-pg-replication--status: {cbl-pg-replication}#replication-status
+:cbl-pg-replication: learn/{param-name}-replication.adoc
+:cbl-pg-supported-os: product/{param-name}-supported-os.adoc
 :cbl-pg-supportnotes-all: supportnotices.adoc
+:cbl-pg-supportnotes: product/{param-name}-supportnotices.adoc
 :cbl-pg-sync-p2p: learn/{param-name}-sync-p2p.adoc
 :cbl-pg-sync-svr: learn/{param-name}-sync-svr.adoc
 :cbl-pg-thread-safety: learn/{param-name}-thread-safety.adoc
+:cbl-pg-troubleshooting-crashes: {param-name}-troubleshooting-crashes.adoc
+:cbl-pg-troubleshooting-logs: {param-name}-troubleshooting-logs.adoc
+:cbl-pg-troubleshooting-queries: {param-name}-troubleshooting-queries.adoc
 :cbl-pg-troubleshooting: advance/{param-name}-troubleshooting.adoc
-:cbl-pg-supported-os: product/{param-name}-supported-os.adoc
 //
 // End -- Ref - Page Targets
 
-
-
 // Being -- Ref - xrefs
 //
-//:xref-cbl-pg-query-using: {xref-pfx-cbl}{cbl-pg-queryxref-cbl-pg-query-using}[Using Queries]
-:xref-cbl-pg-quickstart: {xref-pfx-cbl}{cbl-pg-quickstart}[{param-title}]
-:xref-cbl-pg-query: {xref-pfx-cbl}{cbl-pg-query}[Queries]
-:xref-cbl-pg-query-live: {xref-pfx-cbl}{cbl-pg-query-live}[Live Query]
-:xref-cbl-pg-query-predictive: {xref-pfx-cbl}{cbl-pg-query-predictive}[Predictive Query]
-:xref-cbl-pg-date-time: {xref-pfx-cbl}{cbl-pg-date-time}[Date and Time Functions]
-//:xref-cbl-pg-database: {xref-pfx-cbl}{cbl-pg-database}[Database]
-:xref-cbl-pg-indexing: {xref-pfx-cbl}{cbl-pg-indexing}[Indexing]
-:xref-cbl-pg-releasenotes: {xref-pfx-cbl}{cbl-pg-releasenotes}[Release Notes]
-:xref-cbl-pg-releasenotes-all: {xref-pfx-root}{cbl-pg-releasenotes-all}[Release Notes]
-:xref-cbl-pg-compatibility: {xref-pfx-cbl}{cbl-pg-compatibility}[Compatibility]
-:xref-cbl-pg-compatibility-all: {xref-pfx-root}{cbl-pg-compatibility-all}[Compatibility]
 
+:xref-cbl-bmk-database-findfile: {xref-cbl-pfx-database}#finding-a-database-file[Finding a Database File]
+:xref-cbl-bmk-dbo-p2psync-websocket-using-active-auth-listener: {xref-cbl-pfx-dbo-p2psync-websocket-using-active}#authenticating-the-listener[Active Peer - authenticating the listener]
+:xref-cbl-bmk-replication-deltasync: {xref-cbl-pfx-replication}#delta-sync[Delta-Sync Replications]
+:xref-cbl-pfx-database: {xref-pfx-cbl}{cbl-pg-database}
+:xref-cbl-pfx-dbo-p2psync-websocket-using-active: {xref-pfx-cbl}{cbl-pg-dbo-p2psync-websocket-using-active}
+:xref-cbl-pfx-p2psync-websocket: {xref-pfx-cbl}{cbl-pg-p2psync-websocket}
+:xref-cbl-pfx-replication: {xref-pfx-cbl}{cbl-pg-replication}
 :xref-cbl-pg-blob: {xref-pfx-cbl}{cbl-pg-blob}[Blobs]
-:xref-cbl-pg-dbo-crud: {xref-pfx-cbl}{cbl-pg-dbo-crud}[Using CRUD Operations]
-:xref-cbl-pg-dbo-query: {xref-pfx-cbl}{cbl-pg-dbo-query}[Using Query Operations]
-:xref-cbl-pg-dbo-p2psync-websocket-using-passive: {xref-pfx-cbl}{cbl-pg-dbo-p2psync-websocket-using-passive}[Passive Peer]
-:xref-cbl-pg-dbo-p2psync-websocket-using-passive--delta-sync: {xref-pfx-cbl}{cbl-pg-dbo-p2psync-websocket-using-passive--delta-sync}[Delta Sync]
-:xref-cbl-ref-dbo-p2psync-websocket-using-active: {xref-pfx-cbl}{cbl-pg-dbo-p2psync-websocket-using-active}
-:xref-cbl-pg-dbo-p2psync-websocket-using-active: {xref-cbl-ref-dbo-p2psync-websocket-using-active}[Active Peer]
-:xref-cbl-bmk-dbo-p2psync-websocket-using-active-auth-listener: {xref-cbl-ref-dbo-p2psync-websocket-using-active}#authenticating-the-listener[Active Peer - authenticating the listener]
-:xref-cbl-pg-dbo-p2psync-cloud-using: {xref-pfx-cbl}{cbl-pg-dbo-p2psync-cloud-using}[Peer-to-Peer Synchronization (cloud)]
 :xref-cbl-pg-build: {xref-pfx-cbl}{cbl-pg-build}[Test Build]
+:xref-cbl-pg-cbl-pg-get-started: {xref-pfx-cbl}{cbl-pg-get-started}[Get Started]
 :xref-cbl-pg-cert-pinning: {xref-pfx-cbl}{cbl-pg-cert-pinning}[Certificate Pinning]
-:xref-cbl-pg-changelog: {xref-pfx-cbl}{cbl-pg-changelog}[Change Log]
 :xref-cbl-pg-changelog-all: {xref-pfx-root}{cbl-pg-changelog-all}[Change Log]
-// :xref-cbl-pg-compatibility: {xref-pfx-root}{cbl-pg-compatibility}[Compatibility]
-:xref-cbl-pg-conflict: {xref-pfx-cbl}{cbl-pg-conflict}[Conflicts]
+:xref-cbl-pg-changelog: {xref-pfx-cbl}{cbl-pg-changelog}[Change Log]
+:xref-cbl-pg-compatibility-all: {xref-pfx-root}{cbl-pg-compatibility-all}[Compatibility]
+:xref-cbl-pg-compatibility: {xref-pfx-cbl}{cbl-pg-compatibility}[Compatibility]
 :xref-cbl-pg-conflict-auto: {xref-pfx-cbl}{cbl-pg-conflict-auto}[Automatic Conflict Resolution]
 :xref-cbl-pg-conflict-custom: {xref-pfx-cbl}{cbl-pg-conflict-custom}[Custom Conflict Resolution]
-:xref-cbl-ref-database: {xref-pfx-cbl}{cbl-pg-database}
-:xref-cbl-pg-database: {xref-cbl-ref-database}[Databases]
-:xref-cbl-bmk-database-findfile: {xref-cbl-ref-database}#finding-a-database-file[Finding a Database File]
-:xref-cbl-pg-dbreplica: {xref-pfx-cbl}{cbl-pg-dbreplica}[Inter-Database Replication]
-:xref-cbl-pg-dep-upgrade: {xref-pfx-cbl}{cbl-pg-dep-upgrade}[Upgrading]
+:xref-cbl-pg-conflict: {xref-pfx-cbl}{cbl-pg-conflict}[Handling Data Conflicts]
+:xref-cbl-pg-database: {xref-cbl-pfx-database}[Databases]
+:xref-cbl-pg-date-time: {xref-pfx-cbl}{cbl-pg-date-time}[Date and Time Functions]
+:xref-cbl-pg-dbo-crud: {xref-pfx-cbl}{cbl-pg-dbo-crud}[Using CRUD Operations]
+:xref-cbl-pg-dbo-p2psync-cloud-using: {xref-pfx-cbl}{cbl-pg-dbo-p2psync-cloud-using}[Peer-to-Peer Synchronization (cloud)]
+:xref-cbl-pg-dbo-p2psync-websocket-using-active: {xref-cbl-pfx-dbo-p2psync-websocket-using-active}[Active Peer]
+:xref-cbl-pg-dbo-p2psync-websocket-using-passive--delta-sync: {xref-pfx-cbl}{cbl-pg-dbo-p2psync-websocket-using-passive--delta-sync}[Delta Sync]
+:xref-cbl-pg-dbo-p2psync-websocket-using-passive: {xref-pfx-cbl}{cbl-pg-dbo-p2psync-websocket-using-passive}[Passive Peer]
+:xref-cbl-pg-dbo-query: {xref-pfx-cbl}{cbl-pg-dbo-query}[Using Query Operations]
+:xref-cbl-pg-dbreplica: {xref-pfx-cbl}{cbl-pg-dbreplica}[Intra-device Replication]
+:xref-cbl-pg-dep-upgrade: {xref-pfx-cbl}{cbl-pg-dep-upgrade}[Upgrade]
 :xref-cbl-pg-document: {xref-pfx-cbl}{cbl-pg-document}[Documents]
-:xref-cbl-pg-fts: {xref-pfx-cbl}{cbl-pg-fts}[Full-text Searches]
+:xref-cbl-pg-fts: {xref-pfx-cbl}{cbl-pg-fts}[Full Text Search]
 :xref-cbl-pg-glossary: {xref-pfx-root}{cbl-pg-glossary}[Glossary]
 :xref-cbl-pg-index: {xref-pfx-cbl}{cbl-pg-index}[{component-title-cbl}]
 :xref-cbl-pg-indexing: {xref-pfx-cbl}{cbl-pg-indexing}[Indexes]
+:xref-cbl-pg-indexing: {xref-pfx-cbl}{cbl-pg-indexing}[Indexing]
 :xref-cbl-pg-install: {xref-pfx-cbl}{cbl-pg-install}[Install]
-:xref-cbl-pg-cbl-pg-get-started: {xref-pfx-cbl}{cbl-pg-get-started}[Get Started]
+// :xref-cbl-pg-landing-p2psync: {xref-pfx-cbl}{cbl-pg-landing-p2psync}[Peer-to-Peer Synchronization] REDIRECT to P2PSYNC-WEBSOCKET.adco
+:xref-cbl-pg-landing-p2psync: {xref-cbl-pfx-p2psync-websocket}[Peer-to-Peer Device Sync]
+:xref-cbl-pg-landing-replications: {xref-pfx-cbl}{cbl-pg-landing-replications}[Sync Database Changes]
 :xref-cbl-pg-p2p-manage-tls-id: {xref-pfx-cbl}{cbl-pg-p2p-manage-tls-id}[Manage TLS Identities]
-:xref-cbl-pg-landing-replications: {xref-pfx-cbl}{cbl-pg-landing-replications}[Replications]
-:xref-cbl-pg-landing-p2psync: {xref-pfx-cbl}{cbl-pg-landing-p2psync}[Peer-to-Peer Synchronization]
-:xref-cbl-pg-p2psync-http: {xref-pfx-cbl}{cbl-pg-p2psync-http}[P2P - http]
 :xref-cbl-pg-p2psync-custom: {xref-pfx-cbl}{cbl-pg-p2psync-custom}[Peer-to-Peer Synchronization (custom)]
-:xref-cbl-ref-p2psync-websocket: {xref-pfx-cbl}{cbl-pg-p2psync-websocket}
-:xref-cbl-pg-p2psync-websocket: {xref-cbl-ref-p2psync-websocket}[Peer-to-Peer Synchronization over web sockets]
-:xref-cbl-pg-p2psync-websocket-using-secure-storage: {xref-cbl-ref-p2psync-websocket}#using-secure-storage[Using secure storage]
+:xref-cbl-pg-p2psync-http: {xref-pfx-cbl}{cbl-pg-p2psync-http}[P2P - http]
+:xref-cbl-pg-p2psync-websocket-using-secure-storage: {xref-cbl-pfx-p2psync-websocket}#using-secure-storage[Using secure storage]
+:xref-cbl-pg-p2psync-websocket: {xref-cbl-pfx-p2psync-websocket}[Peer-to-Peer Device Sync]
+:xref-cbl-pg-pfx-api: {xref-pfx-cbl}{cbl-pg-pfx-api}[Reference API]
 :xref-cbl-pg-prereqs: {xref-pfx-cbl}{cbl-pg-prereqs}[Prerequisites]
-//:xref-cbl-pg-query: {xref-pfx-cbl}{cbl-pg-query}[Query the data]
 :xref-cbl-pg-query-live: {xref-pfx-cbl}{cbl-pg-query-live}[Live Queries]
+:xref-cbl-pg-query-live: {xref-pfx-cbl}{cbl-pg-query-live}[Live Query]
 :xref-cbl-pg-query-predictive: {xref-pfx-cbl}{cbl-pg-query-predictive}[Predictive Queries]
-:xref-cbl-pg-ref-api: {xref-pfx-cbl}{cbl-pg-ref-api}[Reference API]
+:xref-cbl-pg-query-predictive: {xref-pfx-cbl}{cbl-pg-query-predictive}[Predictive Query]
+:xref-cbl-pg-query-troubleshooting: {xref-pfx-cbl}{cbl-pg-query-troubleshooting}[Query Troubleshooting]
+:xref-cbl-pg-query: {xref-pfx-cbl}{cbl-pg-query}[Queries]
+:xref-cbl-pg-quickstart: {xref-pfx-cbl}{cbl-pg-quickstart}[{param-title}]
 :xref-cbl-pg-refer-glossary: {xref-pfx-cbl}{cbl-pg-refer-glossary}[Glossary]
+:xref-cbl-pg-releasenotes-all: {xref-pfx-root}{cbl-pg-releasenotes-all}[Release Notes]
 :xref-cbl-pg-releasenotes: {xref-pfx-cbl}{cbl-pg-releasenotes}[Release Notes]
-:xref-cbl-ref-replication: {xref-pfx-cbl}{cbl-pg-replication}
-:xref-cbl-pg-replication: {xref-cbl-ref-replication}[Sync{nbsp}Gateway Replications]
-:xref-cbl-bmk-replication-deltasync: {xref-cbl-ref-replication}#delta-sync[Delta-Sync Replications]
-:xref-cbl-pg-replication--status: {xref-pfx-cbl}{cbl-pg-replication--status}[Replication Status]
+:xref-cbl-pg-releasenotes: {xref-pfx-cbl}{cbl-pg-releasenotes}[Release Notes]
 :xref-cbl-pg-replication--delta-sync: {xref-pfx-cbl}{cbl-pg-replication--delta-sync}[Replication Delta-Sync]
-:xref-cbl-pg-supportnotes: {xref-pfx-cbl}{cbl-pg-supportnotes}[Support Notices]
+:xref-cbl-pg-replication--status: {xref-pfx-cbl}{cbl-pg-replication--status}[Replication Status]
+:xref-cbl-pg-replication: {xref-cbl-pfx-replication}[Remote Sync using Sync Gateway]
+:xref-cbl-pg-supported-os: {xref-pfx-cbl}{cbl-pg-supported-os}[Supported OS]
 :xref-cbl-pg-supportnotes-all: {xref-pfx-root}{cbl-pg-supportnotes-all}[Support Notices]
+:xref-cbl-pg-supportnotes: {xref-pfx-cbl}{cbl-pg-supportnotes}[Support Notices]
 :xref-cbl-pg-sync-p2p: {xref-pfx-cbl}{cbl-pg-sync-p2p}[Synchronization - P2P]
 :xref-cbl-pg-sync-svr: {xref-pfx-cbl}{cbl-pg-sync-svr}[Synchronization - Server]
 :xref-cbl-pg-thread-safety: {xref-pfx-cbl}{cbl-pg-thread-safety}[Thread-safety]
+:xref-cbl-pg-troubleshooting-crashes: {xref-pfx-cbl}{cbl-pg-troubleshooting-crashes}[Decoding Crash Logs]
+:xref-cbl-pg-troubleshooting-logs: {xref-pfx-cbl}{cbl-pg-troubleshooting-logs}[Using Logs]
+:xref-cbl-pg-troubleshooting-queries: {xref-pfx-cbl}{cbl-pg-troubleshooting-queries}[Troubleshooting Queries]
 :xref-cbl-pg-troubleshooting: {xref-pfx-cbl}{cbl-pg-troubleshooting}[Troubleshooting]
-:xref-cbl-pg-supported-os: {xref-pfx-cbl}{cbl-pg-supported-os}[Supported OS]
+// :xref-cbl-pg-compatibility: {xref-pfx-root}{cbl-pg-compatibility}[Compatibility]
+//:xref-cbl-pg-database: {xref-pfx-cbl}{cbl-pg-database}[Database]
+//:xref-cbl-pg-query-using: {xref-pfx-cbl}{cbl-pg-queryxref-cbl-pg-query-using}[Using Queries]
+//:xref-cbl-pg-query: {xref-pfx-cbl}{cbl-pg-query}[Query the data]
 //
 // End -- Ref - xrefs
+
+// SGW Pages linked-to from CBL
+:sgw-pg-install: start/gs-sgw-install.adoc
+:sgw-pg-svr-cfg: start/gs-sgw-svr-cfg.adoc
+:sgw-pg-svr-cfg-bmk-createuser: {sgw-pg-svr-cfg}#create-rbac-user
+:sgw-pg-svr-cfg-bmk-createBucket: {sgw-pg-svr-cfg}#create-bucket
+
+:xref-sgw-pg-install: {xref-pfx-sgw}{sgw-pg-install}[Install Sync Gateway]
+:xref-sgw-pg-svr-cfg-bmk-createuser: {xref-pfx-sgw}{sgw-pg-svr-cfg-bmk-createuser}[Create an RBAC User]
+:xref-sgw-pg-svr-cfg-bmk-createbucket: {xref-pfx-sgw}{sgw-pg-svr-cfg-bmk-createbucket}[Create a Bucket]
 
 // diag page index == {param-module}/{param-name}/{param-title}
