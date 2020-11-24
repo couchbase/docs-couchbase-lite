@@ -827,6 +827,72 @@ namespace api_walkthrough
             // end::query-orderby[]
         }
 
+      // ### EXPLAIN statement
+      private static void TestExplainStatement()
+      // For Documentation
+      {
+        var db = _Database;
+          // tag::query-explain-all[]
+        var query =
+          QueryBuilder
+            .Select(SelectResult.All())
+            .From(DataSource.Database(db))
+            .Where(Expression.Property("type").EqualTo(Expression.String("hotel")))
+            .GroupBy(Expression.Property("country"))
+            .OrderBy(Ordering.Property("title").Ascending()) // <.>
+
+          Console.WriteLine(query.Explain()); // <.>
+
+          // end::query-explain-all[]
+          // tag::query-explain-like[]
+var query =
+  QueryBuilder
+    .Select(SelectResult.All())
+    .From(DataSource.Database(db))
+    .Where(Expression.Property("type").Like(Expression.String("%hotel%"))
+      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); // <.>
+  Console.WriteLine(query.Explain());
+
+          // end::query-explain-like[]
+          // tag::query-explain-nopfx[]
+var query =
+  QueryBuilder
+    .Select(SelectResult.All())
+    .From(DataSource.Database(db))
+    .Where(Expression.Property("type").Like(Expression.String("hotel%"))
+      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); // <.>
+
+  Console.WriteLine(query.Explain());
+
+          // end::query-explain-nopfx[]
+          // tag::query-explain-function[]
+var query =
+  QueryBuilder
+    .Select(SelectResult.All())
+    .From(DataSource.Database(db))
+    .Where(Function.Lower(Expression.Property("type")).EqualTo(Expression.String("hotel"))); // <.>
+
+  Console.WriteLine(query.Explain());
+
+          // end::query-explain-function[]
+          // tag::query-explain-nofunction[]
+        var query =
+          QueryBuilder
+            .Select(SelectResult.All())
+            .From(DataSource.Database(db))
+            .Where(Expression.Property("type")).EqualTo(Expression.String("hotel")); // <.>
+
+          Console.WriteLine(query.Explain());
+
+          // end::query-explain-nofunction[]
+      }
+
+      // end query-explain
+
+
+
+
+
         private static void CreateFullTextIndex()
         {
             var db = _Database;

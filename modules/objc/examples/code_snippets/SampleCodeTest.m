@@ -614,6 +614,120 @@
     NSLog(@"%@", query);
 }
 
+
+- (void) dontTestExplainAll {
+    CBLDatabase *database = self.db;
+    NSError *error;
+    // tag::query-explain-all[]
+    CBLQuery *query =
+        [CBLQueryBuilder
+            select:@[[CBLQuerySelectResult all]]
+            from:[CBLQueryDataSource database:database]
+            where:[[CBLQueryExpression property:@"type"]
+                   equalTo:[CBLQueryExpression string:@"university"]]
+//            groupBy:@[[CBLQueryExpression property:@"country"]] // <.>
+                          orderBy:@[[[CBLQueryOrdering property:@"title"] descending]] // <.>
+       ];
+
+    NSLog(@"%@", [query explain:&error]); // <.>
+
+      // end::query-explain-all[]
+}
+- (void) dontTestExplainLike {
+    CBLDatabase *database = self.db;
+    NSError *error;
+    // tag::query-explain-like[]
+    CBLQueryExpression *type =
+        [[CBLQueryExpression property:@"type"]
+            like:[CBLQueryExpression string:@"%hotel%"]];
+    CBLQueryExpression *name =
+        [[CBLQueryExpression property:@"name"]
+            like:[CBLQueryExpression string:@"%royal%"]];
+
+    CBLQuery *query =
+        [CBLQueryBuilder
+            select:@[[CBLQuerySelectResult all]]
+            from:[CBLQueryDataSource database:database]
+            where:[type andExpression: name]
+        ];
+      NSLog(@"%@", [query explain:&error]); // <.>
+
+      // end::query-explain-like[]
+
+}
+- (void) dontTestExplainNoPfx {
+    CBLDatabase *database = self.db;
+    NSError *error;
+
+    // tag::query-explain-nopfx[]
+    CBLQueryExpression *type =
+        [[CBLQueryExpression property:@"type"]
+            like:[CBLQueryExpression string:@"hotel%"]]; // <.>
+    CBLQueryExpression *name =
+        [[CBLQueryExpression property:@"name"]
+            like:[CBLQueryExpression string:@"%royal%"]];
+
+    CBLQuery *query =
+        [CBLQueryBuilder
+            select:@[[CBLQuerySelectResult all]]
+            from:[CBLQueryDataSource database:database]
+            where:[type andExpression: name]
+        ];
+
+    NSLog(@"%@", [query explain:&error]);
+
+    // end::query-explain-nopfx[]
+}
+
+- (void) dontTestExplainFunction {
+    CBLDatabase *database = self.db;
+    NSError *error;
+
+    // tag::query-explain-function[]
+    CBLQueryExpression *type =
+        [[CBLQueryFunction lower:[CBLQueryExpression property:@"type"]]
+            equalTo:[CBLQueryExpression string:@"hotel"]]; // <.>
+    CBLQueryExpression *name =
+        [[CBLQueryExpression property:@"name"]
+            like:[CBLQueryExpression string:@"%royal%"]];
+
+    CBLQuery *query =
+        [CBLQueryBuilder
+            select:@[[CBLQuerySelectResult all]]
+                from:[CBLQueryDataSource database:database]
+                where:[type andExpression: name]];
+
+    NSLog(@"%@", [query explain:&error]);
+
+    // end::query-explain-function[]
+}
+
+- (void) dontTestExplainNoFunction {
+    CBLDatabase *database = self.db;
+    NSError *error;
+      // tag::query-explain-nofunction[]
+    CBLQueryExpression *type =
+        [[CBLQueryExpression property:@"type"]
+            equalTo:[CBLQueryExpression string:@"hotel"]]; // <.>
+    CBLQueryExpression *name =
+        [[CBLQueryExpression property:@"name"]
+            like:[CBLQueryExpression string:@"%royal%"]];
+
+    CBLQuery *query =
+        [CBLQueryBuilder
+            select:@[[CBLQuerySelectResult all]]
+            from:[CBLQueryDataSource database:database]
+            where:[type andExpression: name]
+        ];
+
+    NSLog(@"%@", [query explain:&error]);
+
+      // end::query-explain-nofunction[]
+
+}
+
+
+
 - (void) dontTestCreateFullTextIndex {
     NSError *error;
     CBLDatabase *database = self.db;
@@ -1042,13 +1156,17 @@
     CBLURLEndpointListenerConfiguration* config;
     config = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: database];
     config.tlsIdentity = nil; // Use with anonymous self signed cert
-    config.authenticator = [[
-       alloc] initWithBlock: ^BOOL(NSString * username, NSString * password) {
-        if ([self isValidCredentials: username password:password]) {
-            return  YES;
-        }
-        return NO;
-    }];
+    config.authenticator =
+        [[CBLListenerPasswordAuthenticator alloc]
+            initWithBlock: ^BOOL(
+                NSString * username,
+                NSString * password)
+                {
+                if ([self isValidCredentials: username password:password]) {
+                    return  YES;
+                }
+                return NO;
+            }];
 
     listener = [[CBLURLEndpointListener alloc] initWithConfig: config];
     // end::init-urllistener[]
