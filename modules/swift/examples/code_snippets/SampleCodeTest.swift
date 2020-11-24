@@ -532,6 +532,66 @@ class SampleCodeTest {
         print("\(query)")
     }
 
+    func dontTestExplain() throws {
+      database = self.db
+      // tag::query-explain-all[]
+      let thisQuery = QueryBuilder
+          .select(SelectResult.all())
+          .from(DataSource.database(database))
+          .where(Expression.property("type").equalTo(Expression.string("university")))
+          .groupBy(Expression.property("country"))
+          .orderBy(Ordering.property("name").ascending())  // <.>
+
+      print(try thisQuery.explain()) // <.>
+      // end::query-explain-all[]
+
+      // tag::query-explain-like[]
+      let thisQuery = QueryBuilder
+          .select(SelectResult.all())
+          .from(DataSource.database(database))
+          .where(Expression.property("type").like(Expression.string("%hotel%")) // <.>
+            .and(Expression.property("name").like(Expression.string("%royal%"))));
+
+      print(try thisQuery.explain())
+
+      // end::query-explain-like[]
+
+      // tag::query-explain-nopfx[]
+      let thisQuery = QueryBuilder
+          .select(SelectResult.all())
+          .from(DataSource.database(database))
+          .where(Expression.property("type").like(Expression.string("hotel%")) // <.>
+            .and(Expression.property("name").like(Expression.string("%royal%"))));
+
+      print(try thisQuery.explain());
+
+      // end::query-explain-nopfx[]
+
+      // tag::query-explain-function[]
+      let thisQuery = QueryBuilder
+          .select(SelectResult.all())
+          .from(DataSource.database(database))
+          .where(
+            Function.lower(Expression.property("type").equalTo(Expression.string("hotel"))); // <.>
+
+      print(try thisQuery.explain());
+
+      // end::query-explain-function[]
+
+      // tag::query-explain-nofunction[]
+      let thisQuery = QueryBuilder
+          .select(SelectResult.all())
+          .from(DataSource.database(database))
+          .where(
+            Expression.property("type").equalTo(Expression.string("hotel"))); // <.>
+
+      print(try thisQuery.explain());
+
+      // end::query-explain-nofunction[]
+
+    }
+
+
     func dontTestCreateFullTextIndex() throws {
         database = self.db
 

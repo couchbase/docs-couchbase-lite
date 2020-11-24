@@ -726,22 +726,67 @@ public class Examples {
 
     // ### ORDER BY statement
     public void testOrderByStatement() throws CouchbaseLiteException {
-        // For Documentation
-        {
-            // tag::query-orderby[]
-            Query query = QueryBuilder
-                .select(
-                    SelectResult.expression(Meta.id),
-                    SelectResult.property("name"))
-                .from(DataSource.database(database))
-                .where(Expression.property("type").equalTo(Expression.string("hotel")))
-                .orderBy(Ordering.property("name").ascending())
-                .limit(Expression.intValue(10));
-            ResultSet rs = query.execute();
-            for (Result result : rs) { Log.i("Sample", String.format("%s", result.toMap())); }
-            // end::query-orderby[]
+      // For Documentation
+      {
+        // tag::query-orderby[]
+        Query query = QueryBuilder
+        .select(
+          SelectResult.expression(Meta.id),
+          SelectResult.property("name"))
+          .from(DataSource.database(database))
+          .where(Expression.property("type").equalTo(Expression.string("hotel")))
+          .orderBy(Ordering.property("name").ascending())
+          .limit(Expression.intValue(10));
+          ResultSet rs = query.execute();
+          for (Result result : rs) { Log.i("Sample", String.format("%s", result.toMap())); }
+          // end::query-orderby[]
         }
-    }
+      }
+      // ### EXPLAIN statement
+      public void testExplainStatement() throws CouchbaseLiteException {
+          // For Documentation
+          {
+              // tag::query-explain-all[]
+              Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.database(database))
+                .where(Expression.property("type").equalTo(Expression.string("university")))
+                .groupBy(Expression.property("country"))
+                .orderBy(Ordering.property("name").descending()); // <.>
+              Log.i(query.explain()); // <.>
+              // end::query-explain-all[]
+              // tag::query-explain-like[]
+              Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.database(database))
+                .where(Expression.property("type").like(Expression.string("%hotel%"))); // <.>
+              Log.i(query.explain());
+              // end::query-explain-like[]
+              // tag::query-explain-nopfx[]
+              Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.database(database))
+                .where(Expression.property("type").like(Expression.string("hotel%")) // <.>
+                  .and(Expression.property("name").like(Expression.string("%royal%"))));
+              Log.i(query.explain());
+              // end::query-explain-nopfx[]
+              // tag::query-explain-function[]
+              Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.database(database))
+                .where(Function.lower(Expression.property("type").equalTo(Expression.string("hotel")))); // <.>
+              Log.i(query.explain());
+              // end::query-explain-function[]
+              // tag::query-explain-nofunction[]
+              Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.database(database))
+                .where(Expression.property("type").equalTo(Expression.string("hotel"))); // <.>
+              Log.i(query.explain());
+              // end::query-explain-nofunction[]
+          }
+      }
+      // end query-explain
 
     void prepareIndex() throws CouchbaseLiteException {
         // tag::fts-index[]

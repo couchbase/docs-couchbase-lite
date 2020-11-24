@@ -15,6 +15,7 @@
 // END::Local page attributes
 
 :url-api-references-sfx: /api/Couchbase.Lite.
+:url-api-references-method-pfx: Couchbase_Lite_
 :url-api-references: {url-api-references-csharp}
 :url-api-references2: {url-api-references-csharp}{url-api-references-sfx}
 :url-api-references-di: {url-api-references2}DI
@@ -22,6 +23,10 @@
 :url-api-references-log: {url-api-references2}Logging
 :url-api-references-p2p: {url-api-references2}P2P
 :url-api-references-query: {url-api-references2}Query
+:url-api-references-query-function: {url-api-references-query}.Function.html
+:url-api-references-query-where: {url-api-references-query}.IWhere.html
+:url-api-references-query-orderby: {url-api-references-query}.IOrderBy.html
+:url-api-references-query-groupby: {url-api-references-query}.IGroupBy.html
 :url-api-references-sync: {url-api-references2}Sync
 :url-api-references-classes: {url-api-references2}
 :url-api-references-classes-p2p: {url-api-references-p2p}.
@@ -30,7 +35,7 @@
 // DATABASE CLASSES
 :url-api-references-database: {url-api-references-classes}{api-pfx}Database.html
 :url-api-class-database: {url-api-references-database}[Database]
-:url-api-method-database: {url-api-references-database}{sep}Couchbase_Lite_Database_
+:url-api-method-database: {url-api-references-database}{sep}{url-api-references-method-pfx}Database_
 :url-api-method-database-close: {url-api-method-database}Close[Database.Close()]
 :url-api-method-database-delete: {url-api-method-database}Delete[Database.Delete()]
 :url-api-method-database-save-conflict: {url-api-references-database}{sep}save-com.couchbase.lite.MutableDocument-com.couchbase.lite.ConflictHandler-[database.save(MutableDocument, ConflictHandler)]
@@ -49,7 +54,7 @@
 :url-api-method-database-save: {url-api-method-database}Save_Couchbase_Lite_MutableDocument_[Database.Save()]
 
 :url-api-references-document: {url-api-references-classes}{api-pfx}Document.html
-:url-api-method-document: {url-api-references-document}{sep}Couchbase_Lite_Document_
+:url-api-method-document: {url-api-references-document}{sep}{url-api-references-method-pfx}Document_
 :url-api-class-document: {url-api-references-document}[Document]
 :url-api-method-document-tomutable: {url-api-method-document}ToMutable[Document.ToMutable()]
 :url-api-method-document-contains: {url-api-method-document}Contains_System_String_[Document.Contains(String key)]
@@ -61,16 +66,22 @@
 
 :url-api-references-mutabledocument: {url-api-references-classes}{api-pfx}MutableDocument.html
 :url-api-class-mutabledocument: {url-api-references-mutabledocument}[MutableDocument()]
-:url-api-method-mutabledocument: {url-api-references-mutabledocument}{sep}Couchbase_Lite_MutableDocument_
+:url-api-method-mutabledocument: {url-api-references-mutabledocument}{sep}{url-api-references-method-pfx}MutableDocument_
 :url-api-method-mutabledocument-init: {url-api-method-mutabledocument}_ctor[MutableDocument()]
 :url-api-method-mutabledocument-initid: {url-api-method-mutabledocument}Item_System_String_[MutableDocument(String id)]
 
 
-// QUERY CLASSES // CLASS METHODS
-:url-api-references-query-classes: {url-api-references-query}.html[Query Class index]
+// QUERY RELATED CLASSES and METHODS
 
-:url-api-classes-query-pfx: {url-api-references-query}.
 
+// Query class and methods
+:url-api-references-query: {url-api-references2}Query
+:url-api-classes-query-pfx: {url-api-references-query}.IQuery.html
+:url-api-class-query: {url-api-classes-query-pfx}[IQuery]
+:url-api-method-query-explain: {url-api-classes-query-pfx}{sep}{url-api-references-method-pfx}_Query_IQuery_Explain[Explain()]
+:url-api-method-query-execute: {sep}{url-api-references-method-pfx}_Query_IQuery_Execute--[Execute()]
+
+// Expression class and methods
 :url-api-method-expression-pfx: {url-api-classes-query-pfx}IExpression.html#Couchbase_Lite_Query_IExpression_
 // :url-api-method-expression-like: {url-api-method-expression-pfx}Like_Couchbase_Lite_Query_IExpression_
 :url-api-method-expression-like: {url-api-method-expression-pfx}Like_Couchbase_Lite_Query_IExpression_[Like()]
@@ -79,9 +90,40 @@
 :url-api-classes-query-expression-comparators: {url-api-method-expression-pfx}[Expression Comparators]
 :url-api-method-expression-: {url-api-method-expression-pfx}[Expression]
 
+// ArrayFunction class and methods
 :url-api-method-arrayfunction-pfx: {url-api-classes-query-pfx}ArrayFunction.html
 :url-api-classes-query-arrayfunction: {url-api-method-arrayfunction-pfx}[ArrayFunction]
 :url-api-classes-query-arrayfunction-collection-ops: {url-api-method-arrayfunction-pfx}[ArrayFunction Collection Operators]
+
+
+// Function class and methods
+//
+:url-api-references-query-function: {url-api-references-query}.Function.html
+:url-api-classes-function-pfx: {url-api-references-query-function}
+:url-api-class-function: {url-api-classes-function-pfx}[Function]
+:url-api-method-function-lower: {url-api-classes-function-pfx}{sep}{url-api-references-method-pfx}Query_Function_Lower_{url-api-references-method-pfx}Query_IExpression_[Lower()]
+:url-api-method-function-count: {url-api-classes-function-pfx}{sep}{url-api-references-method-pfx}Query_Function_Count_{url-api-references-method-pfx}Query_IExpression_[Count()]
+
+// Where class and methods
+//
+:url-api-references-query-where: {url-api-references-query}.IWhere.html
+:url-api-classes-where-pfx: {url-api-references-query-where}
+:url-api-class-where: {url-api-classes-where-pfx}[IWhere]
+
+// orderby class and methods
+//
+:url-api-references-query-orderby: {url-api-references-query}.IOrderBy.html
+:url-api-classes-orderby-pfx: {url-api-references-query-orderby}
+:url-api-class-orderby: {url-api-classes-orderby-pfx}[IOrderBy]
+
+// GroupBy class and methods
+//
+:url-api-references-query-groupby: {url-api-references-query}.IGroupBy.html
+:url-api-classes-groupby-pfx: {url-api-references-query-groupby}
+:url-api-class-groupby: {url-api-classes-groupby-pfx}[IGroupBy]
+
+
+
 
 
 // PEER-TO-PEER CLASSES
@@ -90,7 +132,7 @@
 // URLENDPOINT CLASSES
 :url-api-references-urlendpointlistener: {url-api-references-classes-p2p}{api-pfx}URLEndpointListener.html
 :url-api-class-urlendpointlistener: {url-api-references-urlendpointlistener}[URLEndpointListener]
-:url-api-references-urlendpointlistener-method: {url-api-references-urlendpointlistener}{sep}Couchbase_Lite_P2P_URLEndpointListener_
+:url-api-references-urlendpointlistener-method: {url-api-references-urlendpointlistener}{sep}{url-api-references-method-pfx}P2P_URLEndpointListener_
 :url-api-references-urlendpointlistener-property: {url-api-references-urlendpointlistener-method}
 :url-api-method-urlendpointlistener-start: {url-api-references-urlendpointlistener-method}Start[Start()]
 :url-api-property-urlendpointlistener-status: {url-api-references-urlendpointlistener-property}Status[Status]
@@ -104,8 +146,8 @@
 :url-api-references-tlsidentity: {url-api-references-classes-p2p}{api-pfx}TLSIdentity.html
 :url-api-class-tlsidentity: {url-api-references-tlsidentity}[TLSIdentity]
 
-// :url-api-references-tlsidentity-property: {url-api-references-tlsidentity}{sep}Couchbase_Lite_P2P_TLSIdentity_
-:url-api-references-tlsidentity-method: {url-api-references-tlsidentity}{sep}Couchbase_Lite_P2P_TLSIdentity_
+// :url-api-references-tlsidentity-property: {url-api-references-tlsidentity}{sep}{url-api-references-method-pfx}P2P_TLSIdentity_
+:url-api-references-tlsidentity-method: {url-api-references-tlsidentity}{sep}{url-api-references-method-pfx}P2P_TLSIdentity_
 
 :url-api-method-tls-identity-create: {url-api-references-tlsidentity-method}CreateIdentity_System_Boolean_System_Collections_Generic_Dictionary_System_String_System_String__System_Nullable_System_DateTimeOffset__System_Security_Cryptography_X509Certificates_X509Store_System_String_System_String_[CreateIdentity()]
 
@@ -118,7 +160,7 @@
 :url-api-method-tls-identity-import: {url-api-references-tlsidentity-method}ImportIdentity_System_Security_Cryptography_X509Certificates_X509Store_System_Byte___System_String_System_String_System_String_[ImportIdentity()]
 
 
-:url-api-references-urlendpointconfiguration-property: {url-api-references-urlendpointconfiguration}{sep}Couchbase_Lite_P2P_URLEndpointListenerConfiguration_
+:url-api-references-urlendpointconfiguration-property: {url-api-references-urlendpointconfiguration}{sep}{url-api-references-method-pfx}P2P_URLEndpointListenerConfiguration_
 // https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-csharp/com/couchbase/lite/URLEndpointListenerConfiguration.html#setPort-int-
 :url-api-references-urlendpointconfiguration-auth: {url-api-references-urlendpointconfiguration-property}Authenticator[Authenticator]
 
@@ -157,7 +199,7 @@
 // REPLICATOR API CLASSES
 :url-api-references-replicator: {url-api-references-classes-sync}{api-pfx}Replicator.html
 :url-api-class-replicator: {url-api-references-replicator}[Replicator]
-:url-api-properties-replicator: {url-api-references-replicator}{sep}Couchbase_Lite_Sync_Replicator_
+:url-api-properties-replicator: {url-api-references-replicator}{sep}{url-api-references-method-pfx}Sync_Replicator_
 
 // :url-api-references-replicator-abs: {url-api-references-classes-sync}{api-pfx}AbstractReplicator.html
 // :url-api-class-replicator-abs: {url-api-references-replicator-abs}[AbstractReplicator]
@@ -185,7 +227,7 @@
 // REPLICATORSTATUS
 :url-api-references-replicator-status: {url-api-references-classes-sync}{api-pfx}ReplicatorStatus.html
 :url-api-class-replicator-status: {url-api-references-replicator-status}[ReplicatorStatus]
-:url-api-properties-replicator-status: {url-api-references-replicator-status}{sep}Couchbase_Lite_Sync_ReplicatorStatus_
+:url-api-properties-replicator-status: {url-api-references-replicator-status}{sep}{url-api-references-method-pfx}Sync_ReplicatorStatus_
 
 :url-api-enum-replicator-activity: {url-api-properties-replicator-status}Activity[Activity]
 :url-api-enum-replicator-progress: {url-api-properties-replicator-status}Progress[Progress]
@@ -196,7 +238,7 @@
 
 :url-api-class-replicator-config: {url-api-references-replicator-config}[ReplicatorConfiguration]
 
-:url-api-references-replicator-config-prop: {url-api-references-replicator-config}{sep}Couchbase_Lite_Sync_ReplicatorConfiguration_
+:url-api-references-replicator-config-prop: {url-api-references-replicator-config}{sep}{url-api-references-method-pfx}Sync_ReplicatorConfiguration_
 
 :url-api-constructor-replicator-config-db-tgt: {url-api-references-replicator-config-prop}_ctor_Couchbase_Lite_Database_Couchbase_Lite_Sync_IEndpoint[ReplicatorConfiguration(Database database, IEndpoint target)]
 
@@ -240,7 +282,7 @@
 // Meta API
 :url-api-references-meta: {url-api-classes-query-pfx}{api-pfx}Meta.html
 
-:url-api-property-meta-revisionid: {url-api-references-meta}{sep}Couchbase_Lite_Query_Meta_RevisionID[Meta.revisionID]
+:url-api-property-meta-revisionid: {url-api-references-meta}{sep}{url-api-references-method-pfx}Query_Meta_RevisionID[Meta.revisionID]
 
 
 
