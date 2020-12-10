@@ -11,6 +11,8 @@ include::partial$mobAttrCBL.adoc[]
 //
 // End header
 
+include::_attributes-local.adoc[][]
+
 == Getting Started
 
 === Visual Studio Project
@@ -308,6 +310,9 @@ include::{snippet}[tag=batch,indent=0]
 
 At the *local* level this operation is still transactional: no other `Database` instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
 But Couchbase Mobile is a distributed system, and due to the way replication works, there's no guarantee that Sync Gateway or other devices will receive your changes all at once.
+
+// Include standard documents constraints (prefixes) content
+include::{root-commons}document-constraints.adoc[]
 
 === Document Expiration
 
