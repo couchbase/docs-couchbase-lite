@@ -1,0 +1,26 @@
+// BEGIN -- inclusion -- common text for document constraints for inclusion in <language>.adoc#document sections  (pre 2.8)
+
+=== Document Constraints
+
+Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
+This is to facilitate the creation of documents for use either in _local only_ mode where documents are not synced, or when used exclusively in peer-to-peer sync.
+
+NOTE: "_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes -- see <<res-keys>>.
+
+Users are cautioned that any attempt to sync such documents to Sync Gateway will result in an error.
+To be future proof, you are advised to avoid creating such documents.
+Use of these attributes for user-level data may result in undefined system behavior.
+
+For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway - data modeling guidelines]
+
+[#res-keys]
+.Reserved Keys List
+====
+* _attachments
+* _id
+* _deleted
+* _removed
+* _rev
+====
+
+// END -- inclusion -- common text for document constraints for inclusion in <language>.adoc#document sections  (pre 2.8
