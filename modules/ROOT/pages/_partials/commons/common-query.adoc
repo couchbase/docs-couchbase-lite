@@ -11,10 +11,9 @@
 // include::{lang-mod-swift}:partial$_attributes-module.adoc[]
 //
 // // BEGIN::Local page attributes
-// :blank-field: ____
+:blank-field: ____
 // :ziputils: {snippets-pfx--swift}/code_snippets/ZipUtils.java
 // // END::Local page attributes
-
 
 // // BEGIN::REQUIRED EXTERNALS
 // :this-module: {par-module}
@@ -26,8 +25,14 @@
 // END::REQUIRED EXTERNALS
 
 == Query Format
-Database queries have changed significantly.
-Instead of the map/reduce views used in 1.x, they're now based on expressions, of the form "return {blank-field} from documents where {blank-field}, ordered by {blank-field}", with semantics based on Couchbase's N1QL query language.
+Couchbase Lite for {param-title}'s database queries are based on expressions, of the form:
+
+[source, console, subs=attributes]
+----
+SELECT {blank-field} FROM database WHERE {blank-field}, ORDERed by {blank-field}
+----
+
+Semantics are based on Couchbase's N1QL query language.
 
 There are several parts to specifying a query:
 
@@ -38,34 +43,31 @@ WHERE:: Specifies the query criteria that the result must satisfy.
 GROUP BY:: Specifies the query criteria to group rows by.
 ORDER BY:: Specifies the query criteria to sort the rows in the result.
 
-// BEGIN:From csharp version
-// === Indexing
+== Indexing
 
-// Before we begin querying documents, let's briefly mention the importance of having a query index.
-// A query can only be fast if there's a pre-existing database index it can search to narrow down the set of documents to examine.
+Before we begin querying documents, let's briefly mention the importance of having a query index.
+A query can only be fast if there's a pre-existing database index it can search to narrow down the set of documents to examine -- see also: {xref-cbl-pg-query-troubleshooting} .
 
-// The following example creates a new index for the `type` and `name` properties.
+The following example creates a new index for the `type` and `name` properties.
 
-// [source,json]
-// ----
-// {
-//     "_id": "hotel123",
-//     "type": "hotel",
-//     "name": "Apple Droid"
-// }
-// ----
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "Apple Droid"
+}
+----
 
-// [source, {source-language}]
-// ----
-// include::{snippet}[tag=query-index,indent=0]
-// ----
+[source, {source-language}]
+----
+include::{snippet}[tag=query-index,indent=0]
+----
 
-// If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.
+If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.
 
-// NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
-// Thus, good performance depends on designing and creating the _right_ indexes to go along with your queries.
-// END:From csharp version
-
+NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
+Thus, good performance depends on designing and creating the _right_ indexes to go along with your queries.
 
 == SELECT statement
 
@@ -159,7 +161,7 @@ include::{snippet}[tag=query-where,indent=0]
 
 ==== CONTAINS Operator
 
-The following example uses the `Function.arrayContains` to find documents whose `public_likes` array property contain a value equal to "Armani Langworth".
+The following example uses the `{url-api-classes-query-arrayfunction}` to find documents where the `public_likes` array property contains a value equal to "Armani Langworth".
 
 [source,json]
 ----
@@ -235,6 +237,8 @@ Similar to wildcard `like` expressions, `regex` expressions based pattern matchi
 
 The `regex` operator is case sensitive.
 
+TIP: For more on the regex spec used by {cbl} see http://www.cplusplus.com/reference/regex/ECMAScript/[cplusplus regex reference page]
+
 In the example below, we are looking for documents of `type` "landmark" where the name property matches any string (on word boundaries) that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
 The following query will return "landmark" type documents with name matching "Engine", "engine" and so on.
 Note that the `\b` specifies that the match must occur on word boundaries.
@@ -246,7 +250,9 @@ include::{snippet}[tag=query-regex-operator,indent=0]
 
 === Deleted Document
 
-Starting in Couchbase Lite 2.5, you can query documents that have been deleted (tombstones).
+You can query documents that have been deleted (tombstones)
+footnote:[Starting in Couchbase Lite 2.5].
+
 The following example shows how to query deleted documents in the database.
 
 [source, {source-language}]
