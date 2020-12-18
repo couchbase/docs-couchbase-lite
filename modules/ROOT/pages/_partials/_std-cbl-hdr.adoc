@@ -1,28 +1,21 @@
-//:param-module: {param-module}
-//:param-name: {param-name}
-//:param-title: {param-title}
+// BEGIN -- inclusion -- _std-cbl-hdr.adoc -- Standard page initialization
+// REQUIRES:
+//  :param-module: {param-module}
+//  :param-name: {param-name}
+//  :param-title: {param-title}
+// INVOKED-BY:
+//  each of the <module>:partial$_std-cbl-hdr-<module>.adoc files
+
 ifndef::param-name[:param-name: all]
+
+:module-partials: {param-module}:partial$
+:shared-partials: shared-mobile:ROOT:partial$
 
 include::shared-mobile::partial$_attributes-shared.adoc[]
 include::ROOT:partial$_attributes-local.adoc[]
 include::{param-module}:partial$_attributes-module.adoc[]
 include::ROOT:partial$_page-index.adoc[]
-include::ROOT:partial$_cbl_url.adoc[]
+// include::ROOT:partial$_cbl_url.adoc[]
 include::ROOT:partial$_glossary-links.adoc[]
 
-:module-partials: {param-module}:partial$
-
-//  include::{root-partials}block-abstract.adoc[] doesn't necessarily have all
-// attributes defined when params are set at page level
-
-// diag std hdr {param-module}/{param-name}/ {param-title}
-
-// BEGIN::Local page attributes
-// :blank-field: ____
-// :module: {param-module}
-// :packageNm: couchbase-lite-{module}
-// :source-language: {param-name}
-// :snippet: snippets-content--{module}
-// END::Local page attributes
-
-// diag: std header for {param-module}
+// END -- inclusion -- _std-cbl-hdr.adoc -- Standard page initialization
