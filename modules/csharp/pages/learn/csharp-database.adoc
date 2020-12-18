@@ -67,18 +67,8 @@ include::{root-partials}logging-pre2.5.adoc[]
 include::{snippet}[tags=logging,indent=0]
 ----
 
-== Loading a pre-built database
+// == Loading a pre-built database
 
-If your app needs to sync a lot of data initially, but that data is fairly static and won't change much, it can be a lot more efficient to bundle a database in your application and install it on the first launch.
-Even if some of the content changes on the server after you create the app, the app's first pull replication will bring the database up to date.
-
-To use a prebuilt database, you need to set up the database, build the database into your app bundle as a resource, and install the database during the initial launch.
-After your app launches, it needs to check whether the database exists.
-If the database does not exist, the app should copy it from the app bundle using the {url-api-references}/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Copy_System_String_System_String_Couchbase_Lite_DatabaseConfiguration_[`Database.Copy(string, DatabaseConfiguration)`] method as shown below.
-
-[source, {source-language}]
-----
-include::{snippet}[tag=prebuilt-database,indent=0]
-----
+// include::{root-partials}database-load-prebuilt.adoc[]
 
 include::{root-partials}block-related-content-std.adoc[]
