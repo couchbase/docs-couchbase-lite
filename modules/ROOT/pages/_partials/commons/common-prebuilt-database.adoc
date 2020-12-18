@@ -19,13 +19,13 @@ The initial sync of any pre-built database will pull-in any content changes on t
 
 .*To use a prebuilt database:*
 
-* Create a new Couchbase Lite database with pre-bundled data and incorporate it into your app bundle as an asset/resource -- see <<inc-db>>
-* Adjust the start-up logic of your app to deploy the packaged database if it doesn't exist and to then initiate a sync to update it -- see <<deploy-db>>
+* Create a new Couchbase Lite database with the required data set -- see <<crt-db>>
+* Incorporate the pre-built database with your app bundle as an asset/resource -- see <<bundle-db>>
+* Adjust the start-up logic of your app to check for the presence of the required database.
+If it doesn't already exist, it should create one using the bundled pre-built database, before initiating a sync to update the data -- see <<deploy-db>>
 
-*Alternatively* {ellipsis} rather than bundling the database within the app, the app could pull the database down from a CDN server on launch.
-
-[#inc-db]
-== Bundle Database with Application
+[#crt-db]
+== Creating Pre-built database
 
 These steps would typically be part of your build and release process:
 
@@ -41,33 +41,46 @@ These steps would typically be part of your build and release process:
 +
 [IMPORTANT]
 --
-Ensure the replication that is used for creating the pre-built database *uses the exact same remote URL and replication config parameters (channels and filters)* as those your app will use when it is running.
+Ensure the replication used to populate Couchbase Lite database *uses the exact same remote URL and replication config parameters (channels and filters)* as those your app will use when it is running.
 
-*Otherwise:* {ellipsis} the checkpoints will mismatch and the app will attempt to pull the data down again
+*Otherwise:* {ellipsis} there will be a checkpoint mismatch and the app will attempt to pull the data down again
 
-So don't, for instance, create a pre-built database against a staging Sync Gateway server and try to use that within your production app that syncs against a production Sync Gateway.
+So don't, for instance, create a pre-built database against a staging Sync Gateway server and try to use that within a production app that syncs against a production Sync Gateway.
 --
 +
 You can use the cblite tool (`cblite cp`) for this -- see: {url-github-cblite-docs-cp}  |  {url-github-repo-mobile-tools-cblite}
 +
-*Alternatively* {ellipsis} you can write a simple CBL app to just initiate the required pull sync -- see: {xref-cbl-bmk-replication-start}
+.*Alternatively* {ellipsis}
 
-. When the replication is complete, create the same indexes the app will use
-
-. Copy the database into your app package
+* You can write a simple CBL app to just initiate the required pull sync -- see: {xref-cbl-bmk-replication-start}
+* A third party community Java app is available.
+It provides a UI to create a local Couchbase Lite database and pull data from a Sync Gateway database -- see: https://github.com/Infosys/CouchbaseLiteTester[CouchbaseLite Tester]
 +
+NOTE: Couchbase accepts no responsibility for the ongoing availability, maintenance or support of this third party community contribution, nor for the provision of support for issues arising from its use.
+
+. Create the *same* indexes the app will use (wait for the replication to finish before doing this).
+
+[#bundle-db]
+== Bundle Database with Application
+
+Copy the database into your app package.
+
 Put it in an appropriate place (for example, an assets or resource folder).
-Where possible you can zip the database.
+
+Where the platform permits you can zip the database.
+
+*Alternatively* {ellipsis} rather than bundling the database within the app, the app could pull the database down from a CDN server on launch.
 
 [#deploy-db]
-== Deploy Database on Initial Launch
+== Using Pre-built Database on App Launch
 
 During the application start-up logic, check if database exists in the required location, and *if not*:
 
-. Locate the pre-packaged database (for example, in the assets or other resource  folder)
-. Copy the pre-packaged database to the required database location
+. Locate the pre-packaged database (for example, in the assets or other resource folder)
+
+. Copy the pre-packaged database to the required location
 +
-Use {url-api-method-database-copy} to do this, as it is import to ensure that a UUID is generated for each copy -- see: <<copy-db>>
+Use the API's {url-api-method-database-copy} method; this ensures that a UUID is generated for each copy -- see: <<copy-db>>
 +
 [IMPORTANT]
 --
@@ -83,17 +96,24 @@ Use {url-api-method-database-copy} to do this, as it is import to ensure that a 
 ----
 include::{snippet}[tag=prebuilt-database,indent=0]
 ----
-+
 
-. Open the database
+. Open the database; you can now start querying the data and using it
 
 . Start a pull replication, to sync any changes
 +
 The replicator uses the pre-built database's checkpoint as the timestamp to sync from; only documents changed since then are synced
-
-. Do not wait for replication to complete if you can avoid it
 +
-Start your normal application logic immediately, unless it is essential to have the absolute up-to-date data set to begin.
+[IMPORTANT]
+--
+If you used cblite to pull the data *without including a port number with the URL* and are replicating in a Java or iOS (swift/ObjC) app -- *you must include the port number in the URL provided to the replication* (port 443 for `wss://` or 80 for `ws://`).
+
+*Otherwise:* You will get a checkpoint mismatch. +
+This is caused by a URL discrepancy, which arises because `cblite` automatically adds the default port number when none is specified, *but* the Java and iOS (swift/ObjC) replicators DO NOT.
+
+--
+
++
+NOTE: Start your normal application logic immediately, unless it is essential to have the absolute up-to-date data set to begin.
 That way the user is not kept hanging around watching a progress indicator.
 They can begin interacting with your app whilst any out-of-data data is being updated.
 
