@@ -33,9 +33,9 @@ These steps would typically be part of your build and release process:
 +
 [IMPORTANT]
 --
-*Always start with a fresh database for each app version*; this ensures there are no checkpoint issues
+*Always start with a fresh database for each app version*; this ensures there are no {glos-term-checkpoint} issues
 
-*Otherwise:*  You will invalidate the cached checkpoint in the packaged database, and instead reuse the same database in your build process (for subsequent app versions).
+*Otherwise:*  You will invalidate the cached {glos-term-checkpoint} in the packaged database, and instead reuse the same database in your build process (for subsequent app versions).
 --
 . Pull the data from Sync Gateway into the new Couchbase Lite database
 +
@@ -43,7 +43,7 @@ These steps would typically be part of your build and release process:
 --
 Ensure the replication used to populate Couchbase Lite database *uses the exact same remote URL and replication config parameters (channels and filters)* as those your app will use when it is running.
 
-*Otherwise:* {ellipsis} there will be a checkpoint mismatch and the app will attempt to pull the data down again
+*Otherwise:* {ellipsis} there will be a {glos-term-checkpoint} mismatch and the app will attempt to pull the data down again
 
 So don't, for instance, create a pre-built database against a staging Sync Gateway server and try to use that within a production app that syncs against a production Sync Gateway.
 --
@@ -86,7 +86,7 @@ Use the API's {url-api-method-database-copy} method; this ensures that a UUID is
 --
 *Do not copy the database using any other method*
 
-*Otherwise:* Each copy of the app will invalidate the other apps’ checkpoints because a new UUID was not generated.
+*Otherwise:* Each copy of the app will invalidate the other apps’ {glos-term-checkpoints} because a new UUID was not generated.
 
 --
 +
@@ -101,13 +101,13 @@ include::{snippet}[tag=prebuilt-database,indent=0]
 
 . Start a pull replication, to sync any changes
 +
-The replicator uses the pre-built database's checkpoint as the timestamp to sync from; only documents changed since then are synced
+The replicator uses the pre-built database's {glos-term-checkpoint} as the timestamp to sync from; only documents changed since then are synced
 +
 [IMPORTANT]
 --
 If you used cblite to pull the data *without including a port number with the URL* and are replicating in a Java or iOS (swift/ObjC) app -- *you must include the port number in the URL provided to the replication* (port 443 for `wss://` or 80 for `ws://`).
 
-*Otherwise:* You will get a checkpoint mismatch. +
+*Otherwise:* You will get a {glos-term-checkpoint} mismatch. +
 This is caused by a URL discrepancy, which arises because `cblite` automatically adds the default port number when none is specified, *but* the Java and iOS (swift/ObjC) replicators DO NOT.
 
 --
