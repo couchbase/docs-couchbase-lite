@@ -189,12 +189,12 @@ Here's a typical sequence of events that would create an update conflict:
 
 . Your code reads the document's current properties, and constructs a modified copy to save.
 . Another thread (perhaps the replicator) updates the document, creating a new revision with different properties.
-. Your code updates the document with its modified properties, for example using `db.save( mutableDocumentName)`.
+. Your code updates the document with its modified properties, for example using {url-api-method-database-save-doc}.
 ====
 
 === Automatic Conflict Resolution
 
-In Couchbase Lite 2.0, by default, the conflict is automatically resolved and only one document update is stored in the database.
+In Couchbase Lite, by default, the conflict is automatically resolved and only one document update is stored in the database.
 The Last-Write-Win (LWW) algorithm is used to pick the winning update.
 So in effect, the changes from step 2 would be overwritten and lost.
 
@@ -203,7 +203,7 @@ If the probability of update conflicts is high in your app and you wish to avoid
 .Currency Control Signatures
 ====
 Save operations::
-`save(document: MutableDocument, concurrencyControl: ConcurrencyControl)`: attempts to save the document with a concurrency control.
+{url-api-method-database-save-concctrl} -- attempts to save the document with a concurrency control.
 +
 The concurrency control parameter has two possible values:
 
@@ -215,8 +215,8 @@ In this case, the app can detect the error that is being thrown, and handle it b
 Delete operations::
 As with save operations, delete operation also have two method signatures, which specify how to handle a possible conflict:
 
-* `delete(document: Document)`: The last write will win if there is a conflict.
-* `delete(document: Document, concurrencyControl: ConcurrencyControl)`: attempts to delete the document with a concurrency control.
+* {url-api-method-database-deletedoc-doc}: The last write will win if there is a conflict.
+* {url-api-method-database-deletedoc-concctrl}: attempts to delete the document with a concurrency control.
 
 +
 The concurrency control parameter has two possible values:
