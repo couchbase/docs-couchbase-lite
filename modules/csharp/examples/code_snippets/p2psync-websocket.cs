@@ -873,3 +873,45 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
     // end::p2p-tlsid-tlsidentity-with-label[]
 
 
+// For replications
+
+// BEGIN -- snippets --
+//    Purpose -- code samples for use in replication topic
+
+// tag::sgw-repl-pull[]
+public class MyClass
+{
+    public Database Database { get; set; }
+    public Replicator Replicator { get; set; } // <1>
+
+    public void StartReplication()
+    {
+        var url = new Uri("ws://localhost:4984/db"); // <2>
+        var target = new URLEndpoint(url);
+        var config = new ReplicatorConfiguration(Database, target)
+        {
+            ReplicatorType = ReplicatorType.Pull
+        };
+
+        Replicator = new Replicator(config);
+        Replicator.Start();
+    }
+}
+
+// end::sgw-repl-pull[]
+
+// tag::sgw-repl-pull-callouts[]
+<1> A replication is an asynchronous operation.
+To keep a reference to the `replicator` object, you can set it as an instance property.
+<2> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
+You should now use `ws:`, or `wss:` for SSL/TLS connections.
+// end::sgw-repl-pull-callouts[]
+
+
+    // tag::sgw-act-rep-initialize[]
+    // initialize the replicator configuration
+
+    var thisUrl = new URLEndpoint("wss://l10.0.2.2:4984/anotherDB"); // <.>
+    var config = new ReplicatorConfiguration(thisDB, thisUrl);
+
+    // end::sgw-act-rep-initialize[]

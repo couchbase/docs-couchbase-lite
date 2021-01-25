@@ -116,11 +116,18 @@
 :url-support-policy: {url-cb-website}support-policy[Couchbase Support]
 :url-license-and-supp-faq: {url-cb-website}licensing-and-support-faq
 [Licensing]
-:url-cb-blog: https://blog.couchbase.com
+:url-cb-blog: https://blog.couchbase.com/
+:url-cb-blog-replication: {url-cb-blog}data-replication-couchbase-mobile/[Introducing the Data Replication Protocol^]
+:url-cb-blog-cert-pinning: {url-cb-blog}certificate-pinning-android-with-couchbase-mobile/[Certificate Pinning with Couchbase Mobile^]
+
+
 
 // BEGIN -- download urls
-:url-downloads-all: {url-cb-website}downloads
-:url-downloads-mobile: {url-downloads-all}#extend-with-mobile
+:url-cb-downloads-all: {url-cb-website}downloads
+:url-cb-downloads: {url-cb-downloads-all}?family=mobile
+// deprecate this
+:url-downloads-mobile: {url-cb-downloads}
+// deprecated that
 
 :url-download-swift: https://packages.couchbase.com/releases/couchbase-lite-ios/2.8.0-beta/couchbase-lite-swift_community_2.8.0.zip[Couchbase Lite Swift]
 :url-download-objc: https://packages.couchbase.com/releases/couchbase-lite-ios/2.8.0-beta/couchbase-lite-objc_community_2.8.0.zip[Couchbase Lite ObjC]
@@ -215,7 +222,7 @@
 :securestorage-api: secure storage API
 
 
-ifeval::["{param-platform}"=="{platform-android}"]
+ifdef::is-android[]
 :securestorage: Keystore
 :securestorage-api: KeyStore API
 endif::[]

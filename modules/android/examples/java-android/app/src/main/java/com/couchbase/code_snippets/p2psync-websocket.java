@@ -875,3 +875,53 @@ public URLEndpointListener getTuesdayListener() throws CouchbaseLiteException {
 private boolean tuesdaysAreGood(List<Certificate> certificates) {
   return Calendar.getInstance().get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY;
 }
+
+
+/ For replications
+
+// BEGIN -- snippets --
+//    Purpose -- code samples for use in replication topic
+
+// tag::sgw-repl-pull[]
+class MyClass {
+  Database database;
+  Replicator replicator; // <.>
+
+  void startReplication() {
+      URI uri = null;
+      try {
+          uri = new URI("wss://10.0.2.2:4984/db"); // <.>
+      } catch (URISyntaxException e) {
+          e.printStackTrace();
+      }
+      Endpoint endpoint = new URLEndpoint(uri);
+      ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
+      config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
+      this.replicator = new Replicator(config);
+      this.replicator.start();
+  }
+
+}
+
+// end::sgw-repl-pull[]
+
+// tag::sgw-repl-pull-callouts[]
+<.> A replication is an asynchronous operation.
+To keep a reference to the `replicator` object, you can set it as an instance property.
+<.> The URL scheme for remote database URLs uses `ws:`, or `wss:` for SSL/TLS connections over wb sockets.
+In this example the hostname is `10.0.2.2` because the Android emulator runs in a VM that is generally accessible on `10.0.2.2` from the host machine (see https://developer.android.com/studio/run/emulator-networking[Android Emulator networking] documentation).
++
+NOTE: As of Android Pie, version 9, API 28, cleartext support is disabled, by default.
+Although `wss:` protocol URLs are not affected, in order to use the `ws:` protocol, applications must target API 27 or lower, or must configure application network security as described https://developer.android.com/training/articles/security-config#CleartextTrafficPermitted[here].
+
+// end::sgw-repl-pull-callouts[]
+
+
+    // tag::sgw-act-rep-initialize[]
+    // initialize the replicator configuration
+    final ReplicatorConfiguration thisConfig
+       = new ReplicatorConfiguration(
+          thisDB,
+          URLEndpoint(URI("wss://10.0.2.2:8954/travel-sample"))); // <.>
+
+    // end::sgw-act-rep-initialize[]

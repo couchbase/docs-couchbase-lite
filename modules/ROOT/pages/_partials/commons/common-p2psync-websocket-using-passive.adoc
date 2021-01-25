@@ -6,7 +6,7 @@ include::{root-partials}block-related-howto-p2psync-ws.adoc[]
 include::{root-partials}block-abstract.adoc[]
 
 include::{root-partials}_block-caveats.adoc[tag=enterprise-only]
-ifeval::["{param-platform}"=="{platform-android}"]
+ifdef::is-android[]
 include::{root-partials}_block-caveats.adoc[tags=android-constraints]
 endif::[]
 ifeval::["{param-platform}"=="{platform-ios}"]
@@ -43,7 +43,7 @@ include::{snippet-p2psync-ws}[tags=listener-initialize, indent=0]
 
 ----
 
-ifeval::["{param-platform}"=="{platform-android}"]
+ifdef::is-android[]
 TIP: You must include the initializer `CouchbaseLite.init(context)` such that it is executed (once only) prior to initializing the replicator; for example in your app's `onCreate()` method.
 
 endif::[]
@@ -89,7 +89,7 @@ Prior to initiating the listener you may execute a peer discovery phase.
 
 // For the passive peer, this involves advertising the service using, for example _Bonjour_, and waiting for an invite from the active peer.
 For the passive peer, this involves advertising the service using, for example
-ifeval::["{param-platform}"=="{platform-android}"]
+ifdef::is-android[]
 _Network Service Discovery_ (see: https://developer.android.com/training/connect-devices-wirelessly/nsd)
 endif::[]
 ifeval::["{param-platform}"=="{platform-ios}"]
@@ -146,7 +146,7 @@ include::{snippet-p2psync-ws}[tags=listener-config-port, indent=0]
 
 <.> To use a canonical port -- one known to other applications -- specify it explicitly using the {url-api-references-urlendpointconfiguration-port} method shown here.
 Ensure that any port you do specify is not blocked by firewall rules.
-ifeval::["{param-platform}"=="{platform-android}"]
+ifdef::is-android[]
 You can query the port using {url-api-references-urlendpointconfiguration-port-get}.
 endif::[]
 ====
@@ -237,7 +237,7 @@ However, it _can_ be disabled, for example for development and-or test environme
 
 When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity -- see <<configure-tls-identity-for-listener>>.
 
-ifeval::["{param-platform}"=="{platform-android}"]
+ifdef::is-android[]
 [NOTE]
 --
 include::{root-partials}_block-caveats.adoc[tags=android-manifest-cleartext]
@@ -261,11 +261,11 @@ NOTE: Typically, you will configure the listener's TLS Identity once during init
 [{tabs}]
 ====
 
-ifeval::["{param-platform}"!="{platform-android}"]
+ifndef::is-android[]
 Import::
 +
 --
-// ifeval::["{param-platform}"=="{platform-android}"]
+// ifdef::is-android[]
 // Importing an existing keystore entry is difficult to do securely -- see: https://developer.android.com/training/articles/keystore. A better approach is to create the entry using `TLSIdentity.createIdentity`.
 
 // .For development and testing purposes only:
@@ -288,7 +288,7 @@ include::{snippet-p2psync-ws}[tags="listener-config-tls-id-full;!listener-config
 
 //include::{example_callouts}[tags="listener-config-tls-id-caCert", indent=0]
 
-// ifeval::["{param-platform}"=="{platform-android}"]
+// ifdef::is-android[]
 // <.> The alias ("server" in this case) must refer to an entry in Android's canonical keystore, which has a private key and at least one certificate.
 // endif::[]
 
@@ -474,10 +474,10 @@ It must return a boolean value; with `true` denoting the client supplied certifi
 [#delete-tls-identity]
 === Delete Entry
 
-ifeval::["{param-platform}"=="{platform-android}"]
+ifdef::is-android[]
 You can remove unwanted entries from {securestorage} using the {securestorage-api} (see -- https://developer.android.com/reference/java/security/KeyStore#deleteEntry(java.lang.String)).
 endif::[]
-ifeval::["{param-platform}"!="{platform-android}"]
+ifndef::is-android[]
 You can remove unwanted TLS identities from {securestorage} using the convenience API.
 endif::[]
 

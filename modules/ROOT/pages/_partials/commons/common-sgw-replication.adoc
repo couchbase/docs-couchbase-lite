@@ -1,0 +1,427 @@
+// BEGIN -- inclusion -- common-sgw-replication.adoc
+
+// DO NOT DELETE
+// Include standard header
+:param-related: {xref-cbl-pg-conflict} | {xref-cbl-pg-dbreplica} | xref:{cbl-pg-p2psync-websocket}[Peer-to-Peer]
+:topic-group: Topic Group -- Replication
+include::{root-partials}block-abstract.adoc[]
+// DO NOT DELETE
+
+ifdef::is-android[]
+include::{root-partials}_block-caveats.adoc[tags=android-constraints]
+endif::[]
+include::{root-partials}_block-caveats.adoc[tags=code-disclaimer]
+
+== Introduction
+
+Couchbase Lite for {param-title} provides API support for secure, bi-directional, synchronization of data changes between mobile applications and a central server database.
+It does so by using a replicator to interact with Sync Gateway.
+Simply put, the replicator is designed to send documents from a source to a target database.
+In this case, between a local Couchbase Lite database and remote Sync Gateway database (server or cloud).
+
+This content provides sample code and configuration examples covering the implementation of a replication using Sync Gateway.
+
+Your application runs a replicator (also referred to here as a client), which  will initiate connection with a Sync Gateway (also referred to here as a server) and participate in the replication of database changes to bring both local and remote databases into sync.
+
+Subsequent sections provide additional details and examples for the main configuration options.
+
+
+== Replication Protocol
+
+Couchbase Mobile uses a replication protocol based on WebSockets fof replication.
+To use this protocol the replication URL should specify WebSockets as the URL scheme (see the <<lbl-cfg-tgt>> section below).
+
+Incompatibilities::
+Couchbase Lite's replication protocol is *incompatible* with CouchDB-based databases.
+And since Couchbase Lite 2.x+ only supports the new protocol, you will need to run a version of Sync Gateway that supports it -- see: {xref-cbl-pg-compatibility}.
+
+Legacy Compatibility::
+Clients using Couchbase Lite 1.x can continue to use `http` as the URL scheme.
+Sync Gateway 2.x+ will automatically use:
+* The 1.x replication protocol when a Couchbase Lite 1.x client connects through `\http://localhost:4984/db`
+* The 2.0 replication protocol when a Couchbase Lite 2.0 client connects through `ws://localhost:4984/db`.
+
+You can find further information in our blog: {url-cb-blog-replication}.
+
+// include::{root-partials}_block-caveats.adoc[tags=securestorage]
+
+// tag::replicator-config-sample[]
+== Configuration Summary
+You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
+<<ex-simple-repl>> shows the configuration and initialization process.
+
+// Example 1
+[#ex-simple-repl]
+.Replication configuration and initialization
+// [%collapsible]
+====
+
+[source, {source-language}]
+----
+
+include::{snippet-p2psync-ws}[tags=p2p-act-rep-func, indent=0]
+
+----
+ifdef::is-android[]
+[NOTE]
+--
+include::{root-partials}_block-caveats.adoc[tags=android-threads]
+--
+endif::[]
+
+*Notes on Example*
+
+<.> Use the {url-api-class-replicator-config} class's constructor -- {url-api-constructor-replicator-config-db-tgt} -- to initialize the replicator configuration with the local database -- see also: <<lbl-cfg-tgt>>
+
+<.> Configure how the client will authenticate the server.
+Here we say connect only to servers presenting a self-signed certificate.
+By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<lbl-svr-auth>>.
+
+<.> Configure the credentials the client will present to the server.
+Here we say to provide _Basic Authentication_ credentials. Other options are available -- see: <<lbl-client-auth>>.
+
+<.> Configure how the replication should handle conflict resolution -- see: {xref-cbl-pg-conflict} topic for mor on conflict resolution.
+
+<.> Initialize the replicator using your configuration object -- see: <<lbl-repl-start>>.
+
+<.> Optionally, register an observer, which will notify you of changes to the replication status -- see: <<lbl-repl-status>>
+
+<.> Start the replicator  -- see: <<lbl-repl-start>>.
+====
+
+[#lbl-init-repl]
+== Initialize Replication
+In this section::
+ <<lbl-cfg-tgt>>  |  <<lbl-cfg-sync>>  |  <<lbl-svr-auth>>  | <<lbl-client-auth>> | <<lbl-repl-evnts>> |  <<lbl-repl-hdrs>> |  <<lbl-repl-ckpt>> |  <<lbl-repl-fltrs>> | <<lbl-repl-start>>
+
+[#lbl-cfg-tgt]
+=== Configure Target
+
+Use the
+{url-api-class-replicator-config} class and {url-api-constructor-replicator-config-db-tgt} constructor to initialize the replication configuration with local and remote database locations.
+
+The constructor provides:
+
+* the name of the local database to be sync'd
+* the server's URL (including the port number and the name of the remote database to sync with)
++
+--
+It is expected that the app will identify the IP address and URL and append the remote database name to the URL endpoint, producing for example: `wss://10.0.2.2:4984/travel-sample`
+
+The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) prefixes.
+ifdef::is-android[]
+include::{root-partials}_block-caveats.adoc[tags=android-manifest-cleartext]
+endif::[]
+--
+
+// Example 2
+.Add Target to Configuration
+====
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="sgw-act-rep-initialize", indent=0]
+----
+
+*Notes on Example*
+
+<.> Note use of the `wss://` prefix to ensure TLS encryption (strongly recommended in production)
+
+====
+
+[#lbl-cfg-sync]
+=== Sync Mode
+
+include::{root-commons}sgw-replication-cfg-sync-mode.adoc[]
+
+
+[#lbl-svr-auth]
+=== Server Authentication
+
+Define the credentials your app (the client) is expecting to receive from the Sync Gateway (the server) in order to ensure it is prepared to continue with the sync.
+
+include::{root-commons}set-server-authentication.adoc[]
+
+This all assumes that you have configured the Sync Gateway to provide the appropriate SSL certificates, and have included the appropriate certificate in your app bundle -- for more on this see: <<lbl-cert-pinning>>.
+
+
+[#lbl-client-auth]
+=== Client Authentication
+
+include::{root-partials}authentication.adoc[]
+
+[#lbl-repl-evnts]
+=== Replication Events
+
+You can choose to register for document updates during a replication.
+
+TIP: You should register the listener before starting your replication, to avoid having to do a restart to activate it.
+
+For example, the code snippet in <<ex-reg-doc-listener>> registers a listener to monitor document replication performed by the replicator referenced by the variable `replicator`.
+It prints the document ID of each document received and sent.
+Stop the listener as shown in <<ex-stop-doc-listener>>.
+
+[#ex-reg-doc-listener]
+.Register a document listener
+====
+[source]
+----
+include::{snippet}[tag=add-document-replication-listener,indent=0]
+----
+====
+
+
+[#ex-stop-doc-listener]
+.Stop document listener
+====
+This code snippet shows how to stop the document listener using the token from the previous example.
+
+[source]
+----
+include::{snippet}[tag=remove-document-replication-listener,indent=0]
+----
+====
+
+.Document Access Removal Behavior
+--
+When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
+--
+
+
+[#lbl-repl-hdrs]
+=== Custom{nbsp}Headers
+
+include::{root-partials}replication-custom-header.adoc[]
+
+[#ex-cust-hdr]
+.Setting custom headers
+====
+[source]
+----
+include::{snippet}[tag=replication-custom-header,indent=0]
+----
+====
+
+[#lbl-repl-ckpt]
+=== Replication Checkpoint Reset
+
+include::{root-partials}replication-checkpoint.adoc[]
+
+[#ex-repl-ckpt]
+.Resetting checkpoints
+====
+[source]
+----
+include::{snippet}[tag=replication-reset-checkpoint,indent=0]
+----
+====
+
+[#lbl-repl-fltrs]
+=== Replication Filters
+
+include::{root-partials}replication-filters.adoc[]
+
+[#lbl-repl-start]
+=== Start Replicator
+
+include::{root-commons}sgw-replication-init.adoc[]
+
+[#lbl-repl-status]
+[#monitor-sync]
+== Replication Status
+
+The `replication.status.activity` property can be used to check the status of a replication.
+For example, when the replication is actively transferring data and when it has stopped.
+
+[#ex-cust-hdr]
+.Adding a Change Listener
+====
+
+[source]
+----
+include::{snippet}[tag=replication-status,indent=0]
+----
+====
+
+See <<tbl-states>> for a list of the different activity levels reported in the API; and the meaning of each.
+
+.Replicator activity levels
+[#tbl-states,cols="1,2"]
+|===
+|State |Meaning
+
+|`STOPPED`
+|The replication is finished or hit a fatal error.
+
+|`OFFLINE`
+|The replicator is offline as the remote host is unreachable.
+
+|`CONNECTING`
+|The replicator is connecting to the remote host.
+
+|`IDLE`
+|The replication caught up with all the changes available from the server.
+The `IDLE` state is only used in continuous replications.
+
+|`BUSY`
+|The replication is actively transferring data.
+|===
+
+NOTE: The replication change object also has properties to track the progress (`change.status.completed` and `change.status.total`).
+But since the replication occurs in batches and the total count can vary through the course of a replication, those progress indicators are not very useful from the standpoint of an app user.
+Hence, these should not be used for tracking the actual progress of the replication.
+
+include::{root-commons}sgw-replication-rep-status.adoc[tags={param-platform}]
+
+[#lbl-nwk-errs]
+== Handling Network Errors
+
+When _replicator_ detects a network error it updates its status depending on the error type (permanent or temporary) and returns an appropriate HTTP error code.
+
+The following code snippet adds a `Change Listener`, which monitors a replication for errors and logs the the returned error code.
+
+.Monitoring for network errors
+====
+[source]
+----
+include::{snippet}[tags=replication-error-handling,indent=0]
+----
+====
+
+*For permanent network errors* (for example, `404` not found, or `401` unauthorized):
+_Replicator_ will stop permanently, whether `setContinuous`  is _true_ or _false_. Of course, it sets its status to `STOPPED`
+
+*For recoverable or temporary errors:* _Replicator_ sets its status to `OFFLINE`, then:
+
+* If `setContinuous=_true_` it retries the connection indefinitely
+* If `setContinuous=_false_` (one-shot) it retries the connection a limited number of times.
+
+The following error codes are considered temporary by the Couchbase Lite replicator and thus will trigger a connection retry.
+
+* `408`: Request Timeout
+* `429`: Too Many Requests
+* `500`: Internal Server Error
+* `502`: Bad Gateway
+* `503`: Service Unavailable
+* `504`: Gateway Timeout
+* `1001`: DNS resolution error
+
+== Channels
+
+include::{root-partials}replication-channels.adoc[]
+
+== Delta Sync
+
+// tag::rep-delta-sync-concept[]
+
+include::{root-partials}_block-caveats.adoc[tag=ee-only-feature]
+
+With Delta Sync footnote:[Couchbase Mobile 2.5+], only the changed parts of a Couchbase document are replicated.
+This can result in significant savings in bandwidth consumption as well as throughput improvements, especially when network bandwidth is typically constrained.
+
+Replications to a <<starting-sync-gateway, URLEndpoint>> (i.e Sync Gateway) automatically use delta sync if the xref:sync-gateway:ROOT:refer/config-properties.adoc#databases-foo_db-delta_sync[databases.$db.delta_sync.enabled] property is set to `true` in Sync Gateway's configuration file.
+
+Replications to a <<database-replicas, DatabaseEndpoint>> automatically *disable* delta sync and replications to a <<peer-to-peer-sync, MessageEndpoint>> automatically *enable* delta sync.
+// end::rep-delta-sync-concept[]
+
+
+== Load Balancers
+
+Couchbase Lite footnote:[From 2.0] uses WebSockets as the communication protocol to transmit data.
+Some load balancers are not configured for WebSocket connections by default (NGINX for example);
+so it might be necessary to explicitly enable them in the load balancer's configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
+
+By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
+The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway:ROOT:refer/config-properties.adoc#replicator_compression[`replicator_compression`]).
+
+
+=== Replicator Notifications on a Custom Executor
+
+[#lbl-repl-ord]
+== Replication Ordering
+
+To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
+So we don't recommend to rely on that when using the replication or database change listeners for example.
+
+ifdef::is-android[]
+include::{module-partials}sgw-replication-custom-executor.adoc[]
+endif::[]
+
+[#lbl-cert-pinning]
+== Certificate Pinning
+
+Couchbase Lite for {param-title} supports certificate pinning.
+
+Certificate pinning is a technique that can be used by applications to "pin" a host to its certificate.
+The certificate is typically delivered to the client by an out-of-band channel and bundled with the client.
+In this case, Couchbase Lite uses this embedded certificate to verify the trustworthiness of the server (for example, a Sync Gateway) and no longer needs to rely on a trusted third party for that (commonly referred to as the Certificate Authority).
+
+The following steps describe how to configure certificate pinning between Couchbase Lite and Sync Gateway.
+
+. xref:sync-gateway::security.adoc#creating-your-own-self-signed-certificate[Create your own self-signed certificate] with the `openssl` command.
+After completing this step, you should have 3 files: `cert.pem`, `cert.cer` and `privkey.pem`.
+. xref:sync-gateway::security.adoc#installing-the-certificate[Configure Sync Gateway] with the `cert.pem` and `privkey.pem` files.
+After completing this step, Sync Gateway is reachable over `https`/`wss`.
+. On the Couchbase Lite side, the replication must point to a URL with the `wss` scheme and configured with the `cert.cer` file created in step 1.
++
+[#ex-crt-pinning]
+====
+This example loads the certificate from the application sandbox, then converts it to the appropriate type to configure the replication object.
+[source]
+----
+include::{snippet}[tag=certificate-pinning,indent=0]
+----
+====
+. Build and run your app.
+The replication should now run successfully over https/wss with certificate pinning.
+
+For more on pinning certificates see the blog entry: {url-cb-cbl-cert-pinning}
+
+[#lbl-trouble]
+== Troubleshooting
+
+=== Logs
+As always, when there is a problem with replication, logging is your friend.
+You can increase the log output for activity related to replication with Sync Gateway -- see <<ex-logs>>.
+
+[#ex-logs]
+.Set logging verbosity
+====
+[source]
+----
+include::{snippet}[tag=replication-logging,indent=0]
+----
+====
+
+For more on troubleshooting with logs, see: {xref-cbl-pg-troubleshooting-logs}.
+
+=== Authentication Errors
+If Sync Gateway is configured with a self signed certificate but your app points to a `ws` scheme instead of `wss` you will encounter an error with status code `11006` -- see: <<ex-11006>>
+
+[#ex-11006]
+.Protocol Mismatch
+====
+[source,console]
+----
+CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: WebSocket error 1006 "connection closed abnormally"
+----
+====
+
+If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't using the certificate you will encounter an error with status code `5011` -- see: <<ex-5011>>
+
+[#ex-5011]
+.Certificate Mismatch or Not Found
+
+====
+[source,text]
+----
+CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "server TLS certificate is self-signed or has unknown root cert"
+----
+====
+
+
+// DO NOT DELETE
+// Include standard footer
+include::{root-partials}block-related-content-std.adoc[]
+// DO NOT DELETE
+
+// END -- inclusion -- common-sgw-replication.adoc
