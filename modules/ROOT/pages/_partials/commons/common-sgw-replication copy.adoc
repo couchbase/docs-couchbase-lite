@@ -1,0 +1,237 @@
+// BEGIN -- inclusion -- common-sgw-replication.adoc
+include::{root-partials}_set-platform.adoc[]
+
+ifdef::is-android[]
+include::{root-partials}_block-caveats.adoc[tags=android-constraints]
+endif::[]
+
+== Introduction
+
+Couchbase Lite for {source-language} provides API support for secure, bi-directional, synchronization of data changes between mobile applications and a central server database.
+It does so by using a replicator to interact with Sync Gateway.
+Simply put, the replicator is designed to send documents from a source to a target database.
+In this case, between a local Couchbase Lite database and remote Sync Gateway database (server or cloud).
+
+Use the API to configure and initiate your replication.
+
+=== Replication Protocol
+
+Couchbase Mobile uses a replication protocol based on WebSockets fof replication.
+To use this protocol the replication URL should specify WebSockets as the URL scheme (see the <<Starting a Replication>> section below).
+
+Incompatibilities::
+Couchbase Lite's replication protocol is *incompatible* with CouchDB-based databases.
+And since Couchbase Lite 2.x+ only supports the new protocol, you will need to run a version of Sync Gateway that supports it -- see: {xref-cbl-pg-compatibility}.
+
+Legacy Compatibility::
+Clients using Couchbase Lite 1.x can continue to use `http` as the URL scheme.
+Sync Gateway 2.x+ will automatically use:
+* The 1.x replication protocol when a Couchbase Lite 1.x client connects through `\http://localhost:4984/db`
+* The 2.0 replication protocol when a Couchbase Lite 2.0 client connects through `ws://localhost:4984/db`.
+
+== Starting a Replication
+
+TIP: If you need to download Couchbase Lite or Sync Gateway see: {url-cb-downloads}[Couchbase Mobile Downloads]
+
+You can start Sync Gateway from the command line as shown in <<ex-start-sgw>>.
+
+[#ex-start-sgw]
+.Start Sync Gateway from Command Line
+====
+include::{root-commons}sgw-replication-start-cmd.adoc[tags={param-platform}]
+
+====
+
+For platform specific installation instructions, refer to the Sync Gateway guide {xref-sgw-pg-install}.
+
+Replication can be bidirectional, this means you can start a `push`/`pull` replication with a single instance.
+The replication's parameters can be specified through the {url-repl-cfg}
+object; for example, if you wish to start a `push` only or `pull` only replication -- see: <<ex-pull-repl>>, which  creates a `pull` replication with Sync Gateway.
+
+[#ex-pull-repl]
+.Create a Pull Replication
+====
+
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags=sgw-repl-pull, indent=0]
+
+----
+
+include::{snippet-p2psync-ws}[tags=sgw-repl-pull-callouts, indent=0]
+
+====
+
+=== Verify the Replication
+
+include::{root-partials}verify-replication.adoc[]
+
+
+== Delta Sync
+
+// tag::rep-delta-sync-concept[]
+
+include::{root-partials}_block-caveats.adoc[tag=ee-only-feature]
+
+With Delta Sync footnote:[Couchbase Mobile 2.5+], only the changed parts of a Couchbase document are replicated.
+This can result in significant savings in bandwidth consumption as well as throughput improvements, especially when network bandwidth is typically constrained.
+
+Replications to a <<starting-sync-gateway, URLEndpoint>> (i.e Sync Gateway) automatically use delta sync if the xref:sync-gateway:ROOT:refer/config-properties.adoc#databases-foo_db-delta_sync[databases.$db.delta_sync.enabled] property is set to `true` in Sync Gateway's configuration file.
+
+Replications to a <<database-replicas, DatabaseEndpoint>> automatically *disable* delta sync and replications to a <<peer-to-peer-sync, MessageEndpoint>> automatically *enable* delta sync.
+// end::rep-delta-sync-concept[]
+
+== Server Authentication
+
+Define the credentials your app (the client) is expecting to receive from the Sync Gateway (the server) in order to ensure it is prepared to continue with the sync.
+
+include::{root-commons}set-server-authentication.adoc[]
+
+== Client Authentication
+
+include::{root-partials}authentication.adoc[]
+
+== Replication Events
+
+include::{root-partials}replication-events.adoc[leveloffset=-1]
+
+== Custom Headers
+
+include::{root-partials}replication-custom-header.adoc[]
+
+[source]
+----
+include::{snippet}[tag=replication-custom-header,indent=0]
+----
+
+== Channels
+
+include::{root-partials}replication-channels.adoc[]
+
+== Replication Checkpoint Reset
+
+include::{root-partials}replication-checkpoint.adoc[]
+
+[source]
+----
+include::{snippet}[tag=replication-reset-checkpoint,indent=0]
+----
+
+== Replication Filters
+
+include::{root-partials}replication-filters.adoc[]
+
+
+== Load Balancers
+
+Couchbase Lite footnote:[From 2.0] uses WebSockets as the communication protocol to transmit data.
+Some load balancers are not configured for WebSocket connections by default (NGINX for example);
+so it might be necessary to explicitly enable them in the load balancer's configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
+
+By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
+The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway:ROOT:refer/config-properties.adoc#replicator_compression[`replicator_compression`]).
+
+== Replication Ordering
+
+To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
+So we don't recommend to rely on that when using the replication or database change listeners for example.
+
+ifdef::is-android[]
+
+=== Replicator Notifications on a Custom Executor
+
+include::{module-partials}sgw-replication-custom-executor.adoc[]
+endif::[]
+
+
+== Troubleshooting
+
+As always, when there is a problem with replication, logging is your friend.
+You can increase the log output for activity related to replication with Sync Gateway -- see <<ex-logs>>.
+
+[#ex-logs]
+.Set logging verbosity
+====
+[source]
+----
+include::{snippet}[tag=replication-logging,indent=0]
+----
+====
+
+For more on troubleshooting with logs, see: {xref-cbl-pg-troubleshooting-logs}.
+
+== Replication Status
+
+The `replication.status.activity` property can be used to check the status of a replication.
+For example, when the replication is actively transferring data and when it has stopped.
+
+[source]
+----
+include::{snippet}[tag=replication-status,indent=0]
+----
+
+See <<tbl-states>> for a list of the different activity levels reported in the API; and the meaning of each.
+
+.Replicator activity levels
+[#tbl-states,cols="1,2"]
+|===
+|State |Meaning
+
+|`STOPPED`
+|The replication is finished or hit a fatal error.
+
+|`OFFLINE`
+|The replicator is offline as the remote host is unreachable.
+
+|`CONNECTING`
+|The replicator is connecting to the remote host.
+
+|`IDLE`
+|The replication caught up with all the changes available from the server.
+The `IDLE` state is only used in continuous replications.
+
+|`BUSY`
+|The replication is actively transferring data.
+|===
+
+NOTE: The replication change object also has properties to track the progress (`change.status.completed` and `change.status.total`).
+But since the replication occurs in batches and the total count can vary through the course of a replication, those progress indicators are not very useful from the standpoint of an app user.
+Hence, these should not be used for tracking the actual progress of the replication.
+
+include::{root-commons}sgw-replication-rep-status.adoc[tags={param-platform}]
+
+
+== Handling Network Errors
+
+When _replicator_ detects a network error it updates its status depending on the error type (permanent or temporary) and returns an appropriate HTTP error code.
+
+The following code snippet adds a `Change Listener`, which monitors a replication for errors and logs the the returned error code.
+
+.Monitoring for network errors
+====
+[source]
+----
+include::{snippet}[tags=replication-error-handling,indent=0]
+----
+====
+
+*For permanent network errors* (for example, `404` not found, or `401` unauthorized):
+_Replicator_ will stop permanently, whether `setContinuous`  is _true_ or _false_. Of course, it sets its status to `STOPPED`
+
+*For recoverable or temporary errors:* _Replicator_ sets its status to `OFFLINE`, then:
+
+* If `setContinuous=_true_` it retries the connection indefinitely
+* If `setContinuous=_false_` (one-shot) it retries the connection a limited number of times.
+
+The following error codes are considered temporary by the Couchbase Lite replicator and thus will trigger a connection retry.
+
+* `408`: Request Timeout
+* `429`: Too Many Requests
+* `500`: Internal Server Error
+* `502`: Bad Gateway
+* `503`: Service Unavailable
+* `504`: Gateway Timeout
+* `1001`: DNS resolution error
+
+
+// END -- inclusion -- common-sgw-replication.adoc

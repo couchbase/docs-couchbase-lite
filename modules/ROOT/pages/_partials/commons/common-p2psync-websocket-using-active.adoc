@@ -4,13 +4,14 @@
 :param-abstract: How to set up a Replicator to connect with a Listener and replicate changes using peer-to-peer sync
 include::{root-partials}block-related-howto-p2psync-ws.adoc[]
 include::{root-partials}block-abstract.adoc[]
+// DO NOT EDIT
 
 include::{root-partials}_block-caveats.adoc[tag=enterprise-only]
-ifeval::["{param-platform}"=="{platform-android}"]
+
+ifdef::is-android[]
 include::{root-partials}_block-caveats.adoc[tags=android-constraints]
 endif::[]
 include::{root-partials}_block-caveats.adoc[tags=code-disclaimer]
-// DO NOT EDIT
 
 [#introduction]
 == Introduction
@@ -39,7 +40,7 @@ You should configure and initialize a replicator for each Couchbase Lite databas
 include::{snippet-p2psync-ws}[tags=p2p-act-rep-func, indent=0]
 
 ----
-ifeval::["{param-platform}"=="{platform-android}"]
+ifdef::is-android[]
 [NOTE]
 --
 include::{root-partials}_block-caveats.adoc[tags=android-threads]
@@ -78,7 +79,7 @@ Prior to connecting with a listener you may execute a peer discovery phase to dy
 ifeval::["{param-platform}"=="{platform-ios}"]
 For the active peer this involves browsing-for and selecting the appropriate service using a zero-config protocol such as _Bonjour_-- see: https://developer.apple.com/bonjour/.
 endif::[]
-ifeval::["{param-platform}"=="{platform-android}"]
+ifdef::is-android[]
 For the active peer this involves browsing-for and selecting the appropriate service using a zero-config protocol such as _Network Service Discovery_ -- see: https://developer.android.com/training/connect-devices-wirelessly/nsd.
 endif::[]
 
@@ -88,140 +89,18 @@ endif::[]
 In this section: <<configure-target>>  |  <<sync-mode>>  |  <<authenticating-the-listener>>  | <<client-authentication>>
 
 === Configure Target
-Use the
-{url-api-class-replicator-config} class and {url-api-constructor-replicator-config-db-tgt} constructor to initialize the replication configuration with local and remote database locations.
 
-The constructor provides
-
-* the name of the local database to be sync'd
-* the listener's URL (including its port and the name of the remote database to sync with) -- whether pre-configured or gathered during a discovery phase.
-+
---
-It is expected that the app will identify the IP address and URL and append the remote database name to the URL endpoint (this is similar to the way you would handle a Sync Gateway endpoint.
-
-The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) prefixes.
-ifeval::[{param-platform}=={android-platform}]
-include::{root-partials}_block-caveats.adoc[tags=android-manifest-cleartext]
-endif::[]
---
-
-// Example 2
-.Set target and database config properties
-====
-[source, {source-language}]
-----
-include::{snippet-p2psync-ws}[tags="p2p-act-rep-initialize", indent=0]
-----
-
-*Notes on Example*
-
-<.> Note use of the `wss://` prefix to ensure TLS encryption (strongly recommended in production).
-====
+include::{root-commons}sgw-replication-cfg-tgt.adoc[]
 
 === Sync Mode
-Here we define the direction and type of replication we want to initiate.
 
-We use `{url-api-class-replicator-config}` class's {url-api-prop-replicator-config-rep-type} and
-`{url-api-prop-replicator-config-cont}` parameters, to tell the replicator:
-
-* The direction of the replication:
-ifeval::["{param-platform}"=="{platform-android}"]
-`*PUSH_AND_PULL*`; `PULL`; `PUSH`
-endif::[]
-ifeval::["{param-platform}"!="{platform-android}"]
-`*pushAndPull*`; `pull`; `push`
-endif::[]
-* The type of replication, that is:
-** Continuous -- remaining active indefinitely to replicate changed documents (`continuous=true`).
-** Ad-hoc -- a one-shot replication of changed documents (`continuous=false`).
-
-// Example 3
-.Configure replicator type and mode
-====
-
-[source, {source-language}]
-----
-include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-type, indent=0]
-include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-cont, indent=0]
-
-----
-
-====
+include::{root-commons}sgw-replication-cfg-sync-mode.adoc[]
 
 === Authenticating the Listener
-Define the credentials the client is expecting fom the server in order to ensure that the server (listener) is one it is prepared to interact with.
 
-Note that the client cannot authenticate the server if TLS is turned off. When TLS is enabled (default) the client _must_ authenticate the server. If the server cannot provide acceptable credentials then the connection will fail.
+Define the credentials the your app (the client) is expecting to receive from the server (listener) in order to ensure that the server is one it is prepared to interact with.
 
-:this-prop:
-:this-prop:
-Use `{url-api-class-replicator-config}` methods  {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} and {url-api-prop-replicator-config-setPinnedServerCertificate}, to tell the replicator how to verify server-supplied TLS server certificates.
-
-* If there is a pinned certificate, nothing else matters, the server cert must *exactly* match the pinned certificate.
-* If there are no pinned certs and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
-* If there are no pinned certificates and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `false` (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
-
-// Example 4
-.Set Server TLS security
-=====
-[{tabs}]
-====
-
-CA Cert::
-+
---
-Set the client to expect and accept only CA attested certificates.
-
-[source, {source-language}]
-----
-
-include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-cacert, indent=0]
-
-----
-*Notes on Example*
-
-<.> This is the default.
-Only certificate chains with roots signed by a trusted CA are allowed.
-Self signed certificates are not allowed.
-
---
-
-Self Signed Cert::
-+
---
-Set the client to expect and accept only self-signed certificates
-
-[source, {source-language}]
-----
-
-include::{snippet-p2psync-ws}[tags=p2p-act-rep-config-self-cert, indent=0]
-
-----
-*Notes on Example*
-
-<.> Set this to `true` to accept any self signed cert.
-Any certificates that are not self-signed are rejected.
-
---
-
-
-Pinned Certificate::
-+
---
-Set the client to expect and accept only a pinned certificate.
-
-[source, {source-language}]
-----
-
-include::{snippet-p2psync-ws}[tag=p2p-act-rep-config-cacert-pinned, indent=0]
-
-----
-
-include::{snippet-p2psync-ws}[tag=p2p-act-rep-config-cacert-pinned-callouts, indent=0]
-
---
-====
-=====
+include::{root-commons}set-server-authentication.adoc[]
 
 === Client Authentication
 Here we define the credentials that the client can present to the server if prompted to do so in order that the server can authenticate it.
@@ -254,7 +133,7 @@ NOTE: The *server* (listener) must have `disableTLS` set `false` and have a {url
 
 The certificate to be presented to the server will need to be signed by the root certificates or be valid based on the authentication callback set to the listener via ListenerCertificateAuthenticator.
 
-ifeval::["{param-platform}"=="{platform-android}"]
+ifdef::is-android[]
 TLSIdentity.getIdentity uses the Android keystore.  Please see (Android developers documentation (for example https://developer.android.com/training/articles/keystore) for more information about how to import a keychain.
 endif::[]
 
@@ -274,34 +153,16 @@ include::{snippet-p2psync-ws}[tags=p2p-tlsid-tlsidentity-with-label, indent=0]
 ----
 
 *Notes on Example*
+
 <.> Get an identity from secure storage and create a TLS Identity object
 // <.> Import and create an identity from the given PKCS12 data containing private key, public key, and certificates
 <.> Set the authenticator to {url-api-class-replicator-config-cert-auth} and configure it to use the retrieved identity
 
 ====
 
-
 == Initialize Replicator
 
-Use the `{url-api-class-replicator}` class's {url-api-constructor-replicator-init-config} constructor, to initialize the replicator with the configuration you have defined.
-You can, optionally, add a change listener (see <<monitor-sync>>) before starting the replicator running using {url-api-method-replicator-start}.
-
-// Example 7
-.Initialize and run replicator
-====
-[source, {source-language}]
-----
-
-include::{snippet-p2psync-ws}[tags=p2p-act-rep-start-full;!p2p-act-rep-add-change-listener, indent=0]
-
-----
-
-*Notes on Example*
-
-<.> Initialize the replicator with the configuration
-<.> Start the replicator
-
-====
+include::{root-commons}sgw-replication-init.adoc[]
 
 == Monitor Sync
 

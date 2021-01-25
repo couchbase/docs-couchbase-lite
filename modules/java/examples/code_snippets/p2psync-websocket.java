@@ -805,3 +805,51 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [th
     TLSIdentity thisIdentity = new TLSIdentity.getIdentity("server"); // <.>
 
     // end::beta-listener-config-tls-id-caCert[]
+
+
+
+    / For replications
+
+// BEGIN -- snippets --
+//    Purpose -- code samples for use in replication topic
+
+// tag::sgw-repl-pull[]
+class MyClass {
+  Database database;
+  Replicator replicator; // <1>
+
+  void startReplication() {
+      URI uri = null;
+      try {
+          uri = new URI("wss://10.0.2.2:4984/db"); // <2>
+      } catch (URISyntaxException e) {
+          e.printStackTrace();
+      }
+      Endpoint endpoint = new URLEndpoint(uri);
+      ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
+      config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
+      this.replicator = new Replicator(config);
+      this.replicator.start();
+  }
+
+}
+
+// end::sgw-repl-pull[]
+
+// tag::sgw-repl-pull-callouts[]
+<.> A replication is an asynchronous operation.
+To keep a reference to the `replicator` object, you can set it as an instance property.
+<.> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
+You should now use `ws:`, or `wss:` for SSL/TLS connections.
+In this example the hostname is `10.0.2.2`.
+
+// end::sgw-repl-pull-callouts[]
+
+// tag::sgw-act-rep-initialize[]
+// initialize the replicator configuration
+final ReplicatorConfiguration thisConfig
+    = new ReplicatorConfiguration(
+      thisDB,
+      URLEndpoint(URI("wss://listener.com:8954/travel-sample"))); // <.>
+
+// end::sgw-act-rep-initialize[]

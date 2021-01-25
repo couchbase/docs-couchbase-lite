@@ -1227,3 +1227,43 @@ func fMyCaCertPinned() {
     // Configure the client authenticator to validate using ROOT CA <.>
 
     // end::old-listener-config-client-root-ca[]
+
+    // For replications
+
+// BEGIN -- snippets --
+//    Purpose -- code samples for use in replication topic
+
+// tag::sgw-repl-pull[]
+class MyClass {
+    var database: Database?
+    var replicator: Replicator? // <1>
+
+    func startReplicator() {
+        let url = URL(string: "ws://localhost:4984/db")! // <2>
+        let target = URLEndpoint(url: url)
+        let config = ReplicatorConfiguration(database: database!, target: target)
+        config.replicatorType = .pull
+
+        self.replicator = Replicator(config: config)
+        self.replicator?.start()
+    }
+}
+
+// end::sgw-repl-pull[]
+
+// tag::sgw-repl-pull-callouts[]
+
+<.> A replication is an asynchronous operation.
+To keep a reference to the `replicator` object, you can set it as an instance property.
+<.> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
+You should now use `ws:`, or `wss:` for SSL/TLS connections.
+
+
+// end::sgw-repl-pull-callouts[]
+
+    // tag::sgw-act-rep-initialize[]
+    let tgtUrl = URL(string: "wss://10.1.1.12:8092/travel-sample")!
+    let targetEndpoint = URLEndpoint(url: tgtUrl)
+    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) // <.>
+
+    // end::sgw-act-rep-initialize[]
