@@ -13,9 +13,11 @@ https://help.apple.com/xcode/mac/current/#/devbbdc5ce4f[Bitcode] is an intermedi
 When submitting a build of your application to the App Store you must ensure that it doesn't contain any simulator architecture otherwise the upload will fail with the error message "Unsupported Architecture.
 Your executable contains unsupported architecture '[x86_64, i386]'."
 
-The steps to remove the simulator architecture (x86_64) from **CouchbaseLite.framework** are outlined below.
+The steps to remove the simulator architecture (x86_64) from **CouchbaseLite.framework** are outlined below in <<ex-rmvsimarc>>.
 They depend on the method you chose to install Couchbase Lite:
 
+
+[#ex-rmvsimarc]
 [{tabs}]
 ====
 Frameworks::
@@ -41,6 +43,45 @@ Carthage::
 The link:https://github.com/Carthage/Carthage/blob/5fd867c4895b4f59d70181dec169a1644f4430e3/README.md#adding-frameworks-to-an-application[following link] describes how to set up a build phase in Xcode and run a Carthage script in order to remove the simulator architecture (x86_64).
 --
 ====
+
+[#lbl-tgtinterr]
+=== Target Integrity Error
+
+You may encounter a `Target Integrity Error` when building for iOS Simulator.
+This is because the embedded framework `CouchbaseLiteSwift.framework` was built for iOS + iOS Simulator.
+
+TIP: Using XCFrameworks will ensure that the binaries used have the right architectures for the different platforms you target.
+
+As a workaround, you are recommended to strip the unnecessary architecture from the fat binary as described in <<ex-wkaround>>
+
+[#ex-wkaround]
+.Thinning the Framework
+=====
+Within the folder containing the framework, use the `lipo` command to convert the universal binary to a single architecture file.
+
+[tabs]
+====
+Simulator::
++
+--
+[source, bash]
+----
+lipo CouchbaseLiteSwift.framework/CouchbaseLiteSwift -thin x86_64 -output  CouchbaseLiteSwift.framework/CouchbaseLiteSwift
+----
+
+--
++
+Device::
++
+--
+[source, bash]
+----
+lipo CouchbaseLiteSwift.framework/CouchbaseLiteSwift -thin arm64 -output  CouchbaseLiteSwift.framework/CouchbaseLiteSwift
+----
+--
+
+=====
+
 
 === Should you disable bitcode?
 
