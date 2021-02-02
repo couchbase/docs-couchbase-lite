@@ -1500,6 +1500,29 @@ apply plugin: 'java'
         // end::replication-pull-filter[]
     }
 
+    //
+    public void testCustomHeartbeat() throws URISyntaxException {
+    // tag::replication-set-heartbeat[]
+        URLEndpoint target =
+            new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+        ReplicatorConfiguration config =
+            new ReplicatorConfiguration(database, target);
+
+        //  other config as required . . .
+
+        config.setHeartbeat(60L); // <.>
+
+        //  other config as required . . .
+
+        Replicator repl = new Replicator(config);
+
+    // end::replication-set-heartbeat[]
+    }
+
+
+
+
     public void testDatabaseReplica() throws CouchbaseLiteException {
         DatabaseConfiguration config = new DatabaseConfiguration();
         Database database1 = new Database(DB_NAME, config);
