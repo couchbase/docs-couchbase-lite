@@ -1,0 +1,70 @@
+// BEGIN -- inclusion -- common-sgw-replication-monitor.adoc
+//  Usage:
+//  Params:
+//    :is-p2p:  set when including from P2P topic such as common-p2psync-websocket-using-active
+//  Included-by:
+//    {root-commons}p2psync-websocket-using-active.adoc
+//    {root-commons}sgw-replication.adoc
+//  ####
+
+[#lbl-repl-chng]
+== Change Listeners
+
+TIP: You should register the listener before starting your replication, to avoid having to do a restart to activate it.
+
+Use the {url-api-class-replicator} class to add a change listener as a callback to the Replicator ({url-api-method-replicator-add-change-listener}) -- see: <<ex-repl-mon>>.
+You will then be asynchronously notified of state changes.
+
+Use this to monitor changes and to inform on sync progress; this is an optional step.
+
+[#lbl-repl-status]
+== Replicator Status
+
+You can use the {url-api-class-replicator} class's {url-api-property-replicator-status} property to check the replicator status.
+That is, whether it is actively transferring data or if it has stopped -- see: <<ex-repl-mon>>.
+
+// // ifeval::["{source-language"=="objc"]
+// Alternatively, use the {url-api-class-replicator-status} class to get status information.
+The returned _ReplicationStatus_ structure comprises:
+
+* {url-api-enum-replicator-activity} -- stopped, offline, connecting, idle or busy
+* {url-api-enum-replicator-progress}
+** completed -- the total number of changes completed
+** total -- the total number of changes to be processed
+* {url-api-enum-replicator-error} -- the current error, if any
+
+ifdef::is-p2p[]
+For more on replication status, see: {xref-cbl-pg-replication--status}
+endif::[]
+
+// Example 8
+[[ex-repl-mon]]
+.Monitor replication
+=====
+[{tabs}]
+====
+Adding a Change Listener::
++
+--
+[source, {source-language}]
+----
+
+include::{snippet-p2psync-ws}[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
+
+----
+--
++
+Using replicator.status::
++
+--
+[source, {source-language}]
+----
+
+include::{snippet-p2psync-ws}[tags=p2p-act-rep-status,indent=0]
+
+----
+--
+====
+=====
+
+// END -- inclusion -- common-sgw-replication-monitor.adoc
