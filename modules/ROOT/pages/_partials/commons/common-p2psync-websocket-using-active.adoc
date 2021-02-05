@@ -4,6 +4,9 @@
 :param-abstract: How to set up a Replicator to connect with a Listener and replicate changes using peer-to-peer sync
 include::{root-partials}block-related-howto-p2psync-ws.adoc[]
 include::{root-partials}block-abstract.adoc[]
+
+// Set is-p2p on for inclusions that may use it
+:is-p2p:
 // DO NOT EDIT
 
 include::{root-partials}_block-caveats.adoc[tag=enterprise-only]
@@ -164,78 +167,15 @@ include::{snippet-p2psync-ws}[tags=p2p-tlsid-tlsidentity-with-label, indent=0]
 
 include::{root-commons}sgw-replication-init.adoc[]
 
+[#lbl-repl-mon]
 == Monitor Sync
 
-=== Change Listeners
-Use the {url-api-class-replicator} class to add a change listener as a callback to the Replicator ({url-api-method-replicator-add-change-listener}) -- see <<monitor-replication>>.
-You will then be asynchronously notified of state changes.
-Use this to monitor changes and to inform on sync progress, as shown below; this is an optional step.
+include::{root-commons}sgw-replication-monitor.adoc[leveloffset=+1]
 
-=== Replicator Status
-You can use the {url-api-class-replicator} class's {url-api-property-replicator-status} property to check the replicator status.
-That is, whether it is actively transferring data or if it has stopped.
-
-// // ifeval::["{source-language"=="objc"]
-// Alternatively, use the {url-api-class-replicator-status} class to get status information.
-The returned _ReplicationStatus_ structure comprises:
-
-* {url-api-enum-replicator-activity} -- stopped, offline, connecting, idle or busy
-* {url-api-enum-replicator-progress}
-** completed -- the total number of changes completed
-** total -- the total number of changes to be processed
-* {url-api-enum-replicator-error} -- the current error, if any
-
-For more on replication status, see: {xref-cbl-pg-replication--status}
-
-// Example 8
-[[monitor-replication]]
-.Monitor replication
-=====
-[{tabs}]
-====
-Adding a Change Listener::
-+
---
-[source, {source-language}]
-----
-
-include::{snippet-p2psync-ws}[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
-
-----
---
-+
-Using replicator.status::
-+
---
-[source, {source-language}]
-----
-
-include::{snippet-p2psync-ws}[tags=p2p-act-rep-status,indent=0]
-
-----
---
-====
-=====
-
+[#lbl-repl-stop]
 == Stop Sync
 
-TIP: If you added an optional change listener (see <<monitor-sync>> for how) you should also remove it using the {url-api-method-replicator-rmv-change-listener} method.
-
-// Example 9
-.Stop replicator
-====
-[source, {source-language}]
-----
-
-include::{snippet-p2psync-ws}[tags=p2p-act-rep-stop, indent=0]
-
-----
-
-*Notes on Example*
-
-<.> Stopping the replication is straightforward using the {url-api-method-replicator-stop} method.
-
-====
+include::{root-commons}sgw-replication-stop.adoc[]
 
 == Conflict Resolution
 
@@ -268,5 +208,7 @@ If delta sync is enabled on the listener, then replication will use delta sync.
 // * Replicator Delta Sync concept -- see: {xref-cbl-pg-replication--delta-sync}
 
 // DO NOT EDIT OR REMOVE
+// Unset is-p2p flag
+:is-p2p!:
 include::{root-partials}block-related-content-p2psync.adoc[]
 // DO NOT EDIT OR REMOVE
