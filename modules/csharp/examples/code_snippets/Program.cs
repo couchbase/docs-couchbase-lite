@@ -1002,7 +1002,9 @@ var query =
         private static void EnableCustomLogging()
         {
             // tag::set-custom-logging[]
-            Database.Log.Custom = new LogTestLogger(LogLevel.Warning); // <.>
+            Database.Log.Custom = new LogTestLogger(); // <.>
+            or
+            Database.Log.Custom = new LogTestLogger { Level = LogLevel.Warning };
 
             // end::set-custom-logging[]
         }
