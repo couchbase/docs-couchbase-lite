@@ -166,8 +166,8 @@
 
 - (void) dontTestEnableConsoleLogging {
     // tag::console-logging[]
-    [CBLDatabase.log.console setLevel: kCBLLogDomainAll]; // <.>
-    [CBLDatabase.log.console setDomain: kCBLLogLevelVerbose]; // <.>
+    CBLDatabase.log.console.domains = kCBLLogDomainAll; // <.>
+    CBLDatabase.log.console.level = kCBLLogLevelVerbose; // <.>
 
     // end::console-logging[]
 }
