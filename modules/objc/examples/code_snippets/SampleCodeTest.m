@@ -164,18 +164,30 @@
     // end::logging[]
 }
 
+- (void) dontTestEnableConsoleLogging {
+    // tag::console-logging[]
+    CBLDatabase.log.console.domains = kCBLLogDomainAll; // <.>
+    CBLDatabase.log.console.level = kCBLLogLevelVerbose; // <.>
+
+    // end::console-logging[]
+}
+
 - (void) dontTestFileLogging {
     // tag::file-logging[]
     NSString* tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent:@"cbllog"];
-    CBLLogFileConfiguration* config = [[CBLLogFileConfiguration alloc] initWithDirectory:tempFolder];
+    CBLLogFileConfiguration* config = [[CBLLogFileConfiguration alloc] initWithDirectory:tempFolder]; // <.>
+    config.maxRotateCount = 2; // <.>
+    config.maxSize = 1024; // <.>
+    config.usePlainText = YES; // <.>
     [CBLDatabase.log.file setConfig:config];
-    [CBLDatabase.log.file setLevel: kCBLLogLevelInfo];
+    [CBLDatabase.log.file setLevel: kCBLLogLevelInfo]; // <.>
     // end::file-logging[]
 }
 
 - (void) dontTestEnableCustomLogging {
     // tag::set-custom-logging[]
-    [CBLDatabase.log setCustom:[[LogTestLogger alloc] init]];
+    [CBLDatabase.log setCustom:[[LogTestLogger alloc] initWithLogLevel: kCBLLogLevelWarning]];
+
     // end::set-custom-logging[]
 }
 

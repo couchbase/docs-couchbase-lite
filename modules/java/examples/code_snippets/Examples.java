@@ -748,8 +748,10 @@ apply plugin: 'java'
     // ### Logging
     public void testLogging() {
         // tag::logging[]
+        // deprecated
         Database.setLogLevel(LogDomain.REPLICATOR, LogLevel.VERBOSE);
         Database.setLogLevel(LogDomain.QUERY, LogLevel.VERBOSE);
+
         // end::logging[]
     }
 
@@ -757,17 +759,32 @@ apply plugin: 'java'
         // tag::set-custom-logging[]
         // this custom logger will never be asked to log an event
         // with a log level < WARNING
-        Database.log.setCustom(new LogTestLogger(LogLevel.WARNING));
+        Database.log.setCustom(new LogTestLogger(LogLevel.WARNING)); // <.>
         // end::set-custom-logging[]
+    }
+
+
+    // ### Console logging
+    public void testConsoleLogging() throws CouchbaseLiteException {
+      // tag::console-logging[]
+          Database.log.getConsole().setDomain(LogDomain.ALL_DOMAINS); // <.>
+          Database.log.getConsole().setLevel(LogLevel.VERBOSE); // <.>
+
+      // end::console-logging[]
     }
 
 
     // ### File logging
     public void testFileLogging() throws CouchbaseLiteException {
        // tag::file-logging[]
-        final File path = new File("/usr/local/MyApp/logs")
-        Database.log.getFile().setConfig(new LogFileConfiguration(path.toString()));
-        Database.log.getFile().setLevel(LogLevel.INFO);
+          LogFileConfiguration LogCfg = new LogFileConfiguration(
+              (System.getProperty("user.dir") + "/MyApp/logs")); // <.>
+          LogCfg.setMaxSize(10240); // <.>
+          LogCfg.setMaxRotateCount(5); // <.>
+          LogCfg.setUsePlainText(false); // <.>
+          Database.log.getFile().setConfig(LogCfg);
+          Database.log.getFile().setLevel(LogLevel.INFO); // <.>
+
         // end::file-logging[]
     }
 
