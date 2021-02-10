@@ -60,7 +60,7 @@ class SampleCodeTest {
 
     func dontTestConsoleLogging() throws {
         // tag::console-logging[]
-        Database.log.Console.domains = LogDomains.all // <.>
+        Database.log.console.domains = .all // <.>
         Database.log.Console.level = LogLevel.verbose // <.>
 
         // end::console-logging[]
