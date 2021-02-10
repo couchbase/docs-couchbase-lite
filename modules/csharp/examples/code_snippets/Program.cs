@@ -968,25 +968,64 @@ var query =
         private static void VerboseReplicatorLogging()
         {
             // tag::replication-logging[]
+            // deprecated
             Database.SetLogLevel(LogDomain.Replicator, LogLevel.Verbose);
             Database.SetLogLevel(LogDomain.Network, LogLevel.Verbose);
             // end::replication-logging[]
+        }
+
+        private static void ConsoleLogging()
+        {
+            // tag::console-logging[]
+            Database.Log.Console.Domains = LogDomain.All; // <.>
+            Database.Log.Console.LogLevel = LogLevel.Verbose; // <.>
+
+            // end::console-logging[]
         }
 
         private static void FileLogging()
         {
             // tag::file-logging[]
             var tempFolder = Path.Combine(Service.GetInstance<IDefaultDirectoryResolver>().DefaultDirectory(), "cbllog");
-            Database.Log.File.Config = new LogFileConfiguration(tempFolder);
-            Database.Log.File.Level = LogLevel.Info;
+            var config = new LogFileConfiguration(tempFolder) // <.>
+            {
+                MaxRotateCount = 5, // <.>
+                MaxSize = 10240, // <.>
+                UsePlainText = false  // <.>
+            };
+            Database.Log.File.Config = config; // Apply configuration
+            Database.Log.File.Level = LogLevel.Info; // <.>
+
             // end::file-logging[]
         }
 
         private static void EnableCustomLogging()
         {
             // tag::set-custom-logging[]
-            Database.Log.Custom = new LogTestLogger();
+            Database.Log.Custom = new LogTestLogger(LogLevel.Warning); // <.>
+
             // end::set-custom-logging[]
+        }
+
+        private static void WriteConsoleLog()
+        {
+            // tag::write-console-logmsg[]
+            Database.Log.Console.Log(LogLevel.Warning, LogDomain.Replicator, "Any old log message");
+            // end::write-console-logmsg[]
+        }
+        private static void WriteCustomLog()
+        {
+            // tag::write-custom-logmsg[]
+            Database.Log.Custom?.Log(LogLevel.Warning, LogDomain.Replicator, "Any old log message");
+            // end::write-custom-logmsg[]
+        }
+
+
+        private static void WriteFileLog()
+        {
+            // tag::write-file-logmsg[]
+            Database.Log.File.Log(LogLevel.Warning, LogDomain.Replicator, "Any old log message");
+            // end::write-file-logmsg[]
         }
 
         private static void EnableBasicAuth()

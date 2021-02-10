@@ -58,17 +58,28 @@ class SampleCodeTest {
         // end::logging[]
     }
 
+    func dontTestConsoleLogging() throws {
+        // tag::console-logging[]
+        Database.log.Console.domains = LogDomains.all // <.>
+        Database.log.Console.level = LogLevel.verbose // <.>
+
+        // end::console-logging[]
+    }
+
     func dontTestFileLogging() throws {
         // tag::file-logging[]
         let tempFolder = NSTemporaryDirectory().appending("cbllog")
-        Database.log.file.config = LogFileConfiguration(directory: tempFolder)
-        Database.log.file.level = .info
+        let config = LogFileConfiguration(directory: tempFolder) // <.>
+        config.usePlainText = true // <.>
+        config.maxSize = 1024 // <.>
+        Database.log.file.config = config // <.>
+        Database.log.file.level = .info // <.>
         // end::file-logging[]
     }
 
     func dontTestEnableCustomLogging() throws {
         // tag::set-custom-logging[]
-        Database.log.custom = LogTestLogger()
+        Database.log.custom = LogTestLogger(LogLevel.warning) // <.>
         // end::set-custom-logging[]
     }
 

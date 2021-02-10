@@ -28,18 +28,18 @@
 // BEGIN -- Define API References for this module
 //  These attributes s
 :api-pfx:
-:url-api-references: {url-api-references-java}
-//:url-api-references-structs: {url-api-references}/Structs
-:url-api-references-classes: {url-api-references}/com/couchbase/lite/
-// :url-api-references-classes: {url-api-references}/Classes
+:url-api-references: {url-api-references-java}/index.html?
+//:url-api-references-structs: {url-api-references}Structs
+:url-api-references-classes: {url-api-references}com/couchbase/lite/
+// :url-api-references-classes: {url-api-references}Classes
 :url-api-references-structs: {url-api-references-classes}
-:url-api-references-enums: {url-api-references}/Enums
+:url-api-references-enums: {url-api-references}Enums
 
 :url-api-references-database: {url-api-references-classes}{api-pfx}Database.html
 :url-api-class-database: {url-api-references-database}[Database]
 :url-api-method-database: {url-api-references-database}{sep}
 :url-api-method-database-close: {url-api-method-database}close--[Database.close()]
-
+:url-api-method-database-setloglevel: {url-api-method-database}setLogLevel-com.couchbase.lite.LogDomain-com.couchbase.lite.LogLevel-[Database.setLogLevel()]
 
 //Database.SAVE
 :url-api-method-database-save-doc: {url-api-method-database}save-com.couchbase.lite.MutableDocument-[database.save(MutableDocument document)]
@@ -280,5 +280,54 @@
 // END -- Define API References for this module
 
 // diag: Env+Module {param-module}
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: {url-api-references}Logging.html[Logging classes]
+
+:url-api-references-class-log: {url-api-references-classes}Log.html
+:url-api-class-log: {url-api-references-class-log}[Log]
+:url-api-class-log-prop-console: {url-api-references-class-log}{sep}getConsole--[Log.getConsole]
+:url-api-class-log-prop-file: {url-api-references-class-log}{sep}getFile--[Log.getFile]
+:url-api-class-log-prop-custom: {url-api-references-class-log}{sep}getCustom--[Log.getCustom]
+
+:url-api-references-class-log-cons: {url-api-references-classes}ConsoleLogger.html
+:url-api-class-log-console: {url-api-references-class-log-cons}[ConsoleLogger]
+:url-api-class-log-console-getcons: {url-api-references-class-log}[log.getConsole()]
+:url-api-class-log-console-getcons-setdmn: {url-api-references-class-log-cons}{sep}setDomains-java.util.EnumSet-[log.getConsole().setDomain()]
+:url-api-class-log-console-getcons-setlvl: {url-api-references-class-log-cons}{sep}setLevel-com.couchbase.lite.LogLevel-[log.getConsole().setLevel()]
+
+:url-api-references-class-log-cust: {url-api-references-classes}Logger.html
+:url-api-iface-log-custom: {url-api-references-class-log-cust}[Logger]
+:url-api-class-log-custom: {url-api-iface-log-custom}
+:url-api-class-log-custom-getcust: {url-api-references-class-log}[log.getCustom()]
+:url-api-class-log-custom-setcust: {url-api-references-class-log}[log.setCustom()]
+:url-api-class-log-custom-getcust-setlvl: {url-api-references-class-log-cust}{sep}{sep}setLevel-com.couchbase.lite.LogLevel-[log.getCustom().setLevel()]
+:url-api-class-log-custom-getfile-logmsg: {url-api-references-class-log-cust}[log.getCustom().log(LogLevel,LogDomain,String message)]
+
+:url-api-references-class-log-file: {url-api-references-classes}FileLogger.html
+:url-api-class-log-file: {url-api-references-class-log-file}[FileLogger]
+:url-api-class-log-file-getfile: {url-api-references-class-log}[log.getFile()]
+:url-api-class-log-file-getfile-setcfg: {url-api-references-class-log-file}{sep}setConfig-com.couchbase.lite.LogFileConfiguration-[log.getFile().setConfig(LogConfiguration)]
+:url-api-class-log-file-getfile-setlvl: {url-api-references-class-log-file}{sep}setLevel-com.couchbase.lite.LogLevel-[log.getFile().setLevel()]
+:url-api-class-log-file-getfile-logmsg: {url-api-references-class-log-file}[log.getFile().log(LogLevel,LogDomain,String message)]
+
+:url-api-enum-log-domain: {url-api-references-classes}LogDomain.html[LogDomain]
+:url-api-enum-log-level: {url-api-references-classes}LogLevel.html[LogLevel]
+:url-api-references-class-log-config: {url-api-references-classes}LogFileConfiguration.html
+:url-api-class-log-config: {url-api-references-class-log-config}[LogFileConfiguration(String directory)]
+:url-api-class-log-config-prop-dir: {url-api-references-class-log-config}{sep}LogFileConfiguration-java.lang.String-com.couchbase.lite.LogFileConfiguration-[LogFileConfiguration(Directory)]
+:url-api-class-log-config-prop-maxsz: {url-api-references-class-log-config}setMaxSize-long-[LogFileConfiguration.setMaxSize()]
+:url-api-class-log-config-prop-maxcnt: {url-api-references-class-log-config}{sep}setMaxRotateCount-int-[LogFileConfiguration.setMaxRotateCount()]
+:url-api-class-log-config-prop-plain: {url-api-references-class-log-config}{sep}setUsePlaintext-boolean-[LogFileConfiguration.setUsePlainText()]
+
+// END  Logs and logging references
+
+
+
+
+
+
 
 // END -- _attributes-module.adoc -- Java

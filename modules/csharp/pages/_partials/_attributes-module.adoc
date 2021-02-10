@@ -1,4 +1,6 @@
-// Begin define module specific attributes
+// BEGIN -- attributes inclusion -- _attributes_module
+// Objective -- module specific attributes
+// Used-by -- {ROOT}_std-hdr-cbl.adoc
 
 // BEGIN::module page attributes
 :module: {param-module}
@@ -14,13 +16,15 @@
 
 // END::Local page attributes
 
+
 :url-api-references-sfx: /api/Couchbase.Lite.
 :url-api-references-method-pfx: Couchbase_Lite_
 :url-api-references: {url-api-references-csharp}
 :url-api-references2: {url-api-references-csharp}{url-api-references-sfx}
 :url-api-references-di: {url-api-references2}DI
 :url-api-references-entquery: {url-api-references2}Enterprise.Query
-:url-api-references-log: {url-api-references2}Logging
+:url-api-references-logging: {url-api-references2}Logging
+:url-api-references-log: {url-api-references2}Logging.Log.html
 :url-api-references-p2p: {url-api-references2}P2P
 :url-api-references-query: {url-api-references2}Query
 :url-api-references-query-function: {url-api-references-query}.Function.html
@@ -58,8 +62,7 @@
 
 :url-api-method-database-performMaintenance: {url-api-method-database}PerformMaintenance-com.couchbase.lite.MaintenanceType-[Database.PerformMaintenance()]
 
-
-
+:url-api-method-database-setloglevel: {url-api-method-database}Couchbase_Lite_Database_SetLogLevel_Couchbase_Lite_Logging_LogDomain_Couchbase_Lite_Logging_LogLevel_[Database.SetLogLevel()]
 
 
 // links for documents pages
@@ -300,10 +303,51 @@
 
 
 
+// BEGIN Logs and logging references
+:url-api-class-logging: {url-api-references2}Logging.html[Logging classes]
+:url-api-references-class-log: {url-api-references2}Logging.Log.html
+:url-api-class-log: {url-api-references-class-log}[Log]
+:url-api-class-log-prop-console: {url-api-references-class-log}{sep}Couchbase_Lite_Logging_Log_Console[Log Console Property]
+:url-api-class-log-prop-file: {url-api-references-class-log}{sep}Couchbase_Lite_Logging_Log_File[Log File Property]
+:url-api-class-log-prop-custom: {url-api-references-class-log}{sep}Couchbase_Lite_Logging_Log_Custom[Log Custom Property]
 
+:url-api-references-class-log-cons: {url-api-references-classes}ConsoleLogger.html
+:url-api-class-log-console: {url-api-references2}Logging.IConsoleLogger.html[IConsoleLogger]
+:url-api-class-log-console-getcons: {url-api-references-class-log}{sep}Couchbase_Lite_Logging_Log_Console[log.getConsole()]
+:url-api-class-log-console-getcons-setdmn: {url-api-references-class-log-cons}{sep}Couchbase_Lite_Logging_IConsoleLogger_Domains[log.getConsole().setDomain()]
+:url-api-class-log-console-getcons-setlvl: {url-api-references-class-log-cons}{sep}Couchbase_Lite_Logging_IConsoleLogger_Domains[log.getConsole().setLevel()]
+
+
+:url-api-references-class-log-cust: {url-api-references-classes}ILogger.html
+:url-api-iface-log-custom: {url-api-references2}Logging.ILogger.html[ILogger]
+:url-api-class-log-custom: {url-api-iface-log-custom}
+:url-api-class-log-custom-getcust: {url-api-references-class-log}{sep}Couchbase_Lite_Logging_Log_Custom[log.getCustom()]
+:url-api-class-log-custom-setcust: {url-api-references-class-log}{sep}Couchbase_Lite_Logging_Log_Custom[log.setCustom()]
+:url-api-class-log-custom-getcust-setlvl: {url-api-references-class-log-cust}{sep}Couchbase_Lite_Logging_ILogger_Level[log.getCustom().setLevel()]
+:url-api-class-log-custom-getfile-logmsg: {url-api-references-class-log-cust}{sep}Couchbase_Lite_Logging_ILogger_Log_Couchbase_Lite_Logging_LogLevel_Couchbase_Lite_Logging_LogDomain_System_String_[log.getCustom().log(LogLevel,LogDomain,String message)]
+
+:url-api-references-class-log-file:  {url-api-references2}Logging.FileLogger.html
+:url-api-class-log-file: {url-api-references-class-log-file}[FileLogger]
+:url-api-class-log-file-getfile: {url-api-references-class-log}{sep}Couchbase_Lite_Logging_Log_File[log.getFile()]
+:url-api-class-log-file-getfile-setcfg: {url-api-references-class-log-file}{sep}Couchbase_Lite_Logging_FileLogger_Config[log.getFile().setConfig(LogConfiguration)]
+:url-api-class-log-file-getfile-setlvl: {url-api-references-class-log-file}{sep}Couchbase_Lite_Logging_FileLogger_Level[log.getFile().setLevel()]
+:url-api-class-log-file-getfile-logmsg: {url-api-references-class-log-file}[log.getFile().log(LogLevel,LogDomain,String message)]
+
+:url-api-enum-log-domain: {url-api-references2}Logging.LogDomain.html[LogDomain]
+:url-api-enum-log-level: {url-api-references2}Logging.LogLevel.html[LogLevel]
+
+
+:url-api-references-class-log-config: {url-api-references2}Logging.LogFileConfiguration.html
+:url-api-class-log-config: {url-api-references-class-log-config}[LogFileConfiguration]
+:url-api-class-log-config-prop-dir: {url-api-references-class-log-config}{sep}Couchbase_Lite_Logging_LogFileConfiguration_MaxSize[LogFileConfiguration Directory]
+:url-api-class-log-config-prop-maxsz: {url-api-references-class-log-config}{sep}Couchbase_Lite_Logging_LogFileConfiguration_MaxSize[LogFileConfiguration MaxSize]
+:url-api-class-log-config-prop-maxcnt: {url-api-references-class-log-config}{sep}Couchbase_Lite_Logging_LogFileConfiguration_MaxRotationCount[LogFileConfiguration MaxRotationCount]
+:url-api-class-log-config-prop-plain: {url-api-references-class-log-config}{sep}Couchbase_Lite_Logging_LogFileConfiguration_UsePlaintext[LogFileConfiguration UsePlainText]
+
+// END  Logs and logging references
+
+// End -- API References attributes
 
 // End define module specific attributes
 
-
-// diag: Env+Module {param-module}
-// End define module specific attributes
+// End -- _attributes_module

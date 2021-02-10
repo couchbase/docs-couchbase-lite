@@ -237,28 +237,64 @@ public class Examples {
   // ### Logging
   public void testLogging() {
     // tag::logging[]
-    Database.setLogLevel(LogDomain.REPLICATOR, LogLevel.VERBOSE);
-        Database.setLogLevel(LogDomain.QUERY, LogLevel.VERBOSE);
-        // end::logging[]
+    Database.setLogLevel(LogDomain.DATABASE, LogLevel.VERBOSE);
+    Database.setLogLevel(LogDomain.QUERY, LogLevel.VERBOSE);
+    // end::logging[]
     }
 
     public void testEnableCustomLogging() {
         // tag::set-custom-logging[]
         // this custom logger will never be asked to log an event
         // with a log level < WARNING
-        Database.log.setCustom(new LogTestLogger(LogLevel.WARNING));
+        Database.log.setCustom(new LogTestLogger(LogLevel.WARNING)); // <.>
         // end::set-custom-logging[]
     }
 
+    // ### Console logging
+    public void testConsoleLogging() throws CouchbaseLiteException {
+      // tag::console-logging[]
+          Database.log.getConsole().setDomain(LogDomain.ALL_DOMAINS);  // <.>
+          Database.log.getConsole().setLevel(LogLevel.VERBOSE); // <.>
+      // end::console-logging[]
+    }
 
     // ### File logging
     public void testFileLogging() throws CouchbaseLiteException {
         // tag::file-logging[]
         final File path = context.getCacheDir();
-        Database.log.getFile().setConfig(new LogFileConfiguration(path.toString()));
-        Database.log.getFile().setLevel(LogLevel.INFO);
+
+        LogFileConfiguration LogCfg =
+          new LogFileConfiguration(path.toString()); // <.>
+        LogCfg.setMaxSize(10240); // <.>
+        LogCfg.setMaxRotateCount(5); // <.>
+        LogCfg.setUsePlainText(false); // <.>
+        Database.log.getFile().setConfig(LogCfg);
+        Database.log.getFile().setLevel(LogLevel.INFO); // <.>
         // end::file-logging[]
     }
+
+    public void writeConsoleLog()
+    {
+        // tag::write-console-logmsg[]
+        Database.log.Console.Log(LogLevel.Warning, LogDomain.Replicator, "Any old log message");
+        // end::write-console-logmsg[]
+    }
+    public void writeCustomLog()
+    {
+        // tag::write-custom-logmsg[]
+        Database.log.Custom?.Log(LogLevel.Warning, LogDomain.Replicator, "Any old log message");
+        // end::write-custom-logmsg[]
+    }
+
+
+    public void writeFileLog()
+    {
+        // tag::write-file-logmsg[]
+        Database.log.File.Log(LogLevel.Warning, LogDomain.Replicator, "Any old log message");
+        // end::write-file-logmsg[]
+    }
+
+
 
 
     // ### Loading a pre-built database
