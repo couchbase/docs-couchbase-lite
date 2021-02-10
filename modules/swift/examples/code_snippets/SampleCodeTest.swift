@@ -79,7 +79,7 @@ class SampleCodeTest {
 
     func dontTestEnableCustomLogging() throws {
         // tag::set-custom-logging[]
-        Database.log.custom = LogTestLogger(LogLevel.warning) // <.>
+        Database.log.custom = LogTestLogger(.warning) // <.>
         // end::set-custom-logging[]
     }
 
