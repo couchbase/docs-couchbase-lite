@@ -186,7 +186,7 @@
 
 - (void) dontTestEnableCustomLogging {
     // tag::set-custom-logging[]
-    [CBLDatabase.log setCustom:[[LogTestLogger alloc] init]];
+    [CBLDatabase.log setCustom:[[LogTestLogger alloc] initWithLogLevel: kCBLLogLevelWarning]];
     [CBLDatabase.log setCustom:[LogLevel CBLLogLevel.kCBLLogLevelWarning]]; // <.>
 
     // end::set-custom-logging[]
