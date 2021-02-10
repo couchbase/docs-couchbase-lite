@@ -777,7 +777,7 @@ apply plugin: 'java'
     // ### File logging
     public void testFileLogging() throws CouchbaseLiteException {
        // tag::file-logging[]
-          final File path = new File("/usr/local/MyApp/logs")
+          final File path = new File(System.getProperty("user.dir").concat("/MyApp/logs"));
           LogFileConfiguration LogCfg =
             new LogFileConfiguration(path.toString()); // <.>
           LogCfg.setMaxSize(10240); // <.>
