@@ -693,6 +693,45 @@ class SampleCodeTest {
         // end::replication-status[]
     }
 
+
+//  BEGIN PendingDocuments IB -- 11/Feb/21 --
+    func dontTestReplicationPendingDocs() throws {
+      // tag::replication-pendingdocuments[]
+
+      let url = URL(string: "ws://localhost:4984/mydatabase")!
+      let target = URLEndpoint(url: url)
+
+      let config = ReplicatorConfiguration(database: database, target: target)
+      config.replicatorType = .push
+
+      // tag::replication-push-pendingdocumentids[]
+      self.replicator = Replicator(config: config)
+      let mydocids:Set = self.replicator.pendingDocumentIds() // <.>
+
+      // end::replication-push-pendingdocumentids[]
+      if(!mydocids.isEmpty) {
+        print("There are \(mydocids.count) documents pending")
+
+        self.replicator.addChangeListener { (change) in
+          print("Replicator activity level is \(change.status.activity.toString())")
+          // iterate and report-on previously
+          // retrieved pending docids 'list'
+          for thisId in mydocids.sorted() {
+            // tag::replication-push-isdocumentpending[]
+            if(!self.replicator.isDocumentPending(thisid)) { // <.>
+              print("Doc ID \(thisId) now pushed")
+            }
+            // end::replication-push-isdocumentpending[]
+          }
+        }
+
+        self.replicator.start()
+        // end::replication-pendingdocuments[]
+    }
+
+//  END test PendingDocuments IB -- 11/Feb/21 --
+
+
     func dontTestReplicatorDocumentEvent() throws {
         // tag::add-document-replication-listener[]
         let token = self.replicator.addDocumentReplicationListener { (replication) in

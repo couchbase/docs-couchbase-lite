@@ -1389,6 +1389,89 @@ apply plugin: 'java'
         // end::replication-status[]
     }
 
+    //  BEGIN PendingDocuments BM -- 19/Feb/21 --
+    import android.support.annotation.NonNull;
+    import android.util.Log;
+
+    import java.net.URI;
+    import java.net.URISyntaxException;
+    import java.util.Iterator;
+    import java.util.Set;
+
+    import com.couchbase.lite.CouchbaseLiteException;
+    import com.couchbase.lite.Database;
+    import com.couchbase.lite.Endpoint;
+    import com.couchbase.lite.Replicator;
+    import com.couchbase.lite.ReplicatorConfiguration;
+    import com.couchbase.lite.URLEndpoint;
+
+    class PendingDocsExample {
+        private static final String TAG = "SCRATCH";
+
+        private Database database;
+        private Replicator replicator;
+
+        //  BEGIN PendingDocuments IB -- 11/Feb/21 --
+        public void testReplicationPendingDocs() throws URISyntaxException, CouchbaseLiteException {
+            // tag::replication-pendingdocuments[]
+            // ... include other code as required
+            //
+            final Endpoint endpoint =
+              new URLEndpoint(new URI("ws://localhost:4984/db"));
+
+            final ReplicatorConfiguration config =
+              new ReplicatorConfiguration(database, endpoint)
+            .setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH);
+            // tag::replication-push-pendingdocumentids[]
+
+            replicator = new Replicator(config);
+            final Set<String> pendingDocs =
+              replicator.getPendingDocumentIds(); // <.>
+
+            // end::replication-push-pendingdocumentids[]
+
+            replicator.addChangeListener(change -> {
+              onStatusChanged(pendingDocs, change.getStatus()); });
+
+            replicator.start();
+
+            // ... include other code as required
+            // end::replication-pendingdocuments[]
+          }
+        //
+        // tag::replication-pendingdocuments[]
+        //
+        private void onStatusChanged(
+          @NonNull final Set<String> pendingDocs,
+          @NonNull final Replicator.Status status) {
+          // ... sample onStatusChanged function
+          //
+          Log.i(TAG,
+            "Replicator activity level is " + status.getActivityLevel().toString());
+
+          // iterate and report-on previously
+          // retrieved pending docids 'list'
+          for (Iterator<String> itr = pendingDocs.iterator(); itr.hasNext(); ) {
+            final String docId = itr.next();
+            try {
+              // tag::replication-push-isdocumentpending[]
+              if (!replicator.isDocumentPending(docId)) { continue; } // <.>
+              // end::replication-push-isdocumentpending[]
+
+              itr.remove();
+              Log.i(TAG, "Doc ID " + docId + " has been pushed");
+            }
+            catch (CouchbaseLiteException e) {
+              Log.w(TAG, "isDocumentPending failed", e); }
+          }
+        }
+        // end::replication-pendingdocuments[]
+        //  END PendingDocuments BM -- 19/Feb/21 --
+    }
+
+
+
+
     public void testHandlingNetworkErrors() throws URISyntaxException {
         Endpoint endpoint = new URLEndpoint(new URI("ws://localhost:4984/db"));
         ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);

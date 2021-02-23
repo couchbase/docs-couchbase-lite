@@ -1074,6 +1074,55 @@ var query =
             // end::replication-status[]
         }
 
+
+
+
+    //  BEGIN PendingDocuments IB -- 11/Feb/21 --
+    private static void ReplicatorPendingDocuments()
+    {
+        // tag::replication-pendingdocuments[]
+        var url = new Uri("ws://localhost:4984/mydatabase");
+        var target = new URLEndpoint(url);
+        var database = new Database("myDB");
+        var config = new ReplicatorConfiguration(database, target);
+        config.ReplicatorType  = ReplicatorType.Push;
+
+        // tag::replication-push-pendingdocumentids[]
+        var replicator = new Replicator(config);
+
+        var mydocids =
+          new HashSet <string> (replicator.GetPendingDocumentIDs()); // <.>
+
+        // end::replication-push-pendingdocumentids[]
+
+        if (mydocids.Count > 0)
+        {
+            Console.WriteLine($"There are {mydocids.Count} documents pending");
+            replicator.AddChangeListener((sender, change) =>
+            {
+                Console.WriteLine($"Replicator activity level is " +
+                                  change.Status.Activity.ToString());
+                // iterate and report-on previously
+                // retrieved pending docids 'list'
+                foreach (var thisId in mydocids)
+                    // tag::replication-push-isdocumentpending[]
+                    if (!replicator.IsDocumentPending(thisId)) // <.>
+                    {
+                        Console.WriteLine($"Doc ID {thisId} now pushed");
+                    };
+                // end::replication-push-isdocumentpending[]
+            });
+
+            replicator.Start();
+        }
+    // end::replication-pendingdocuments[]
+    }
+
+
+//  END PendingDocuments IB -- 11/Feb/21 --
+
+
+
 		private static void ReplicatorDocumentEvent()
         {
             var replicator = _Replicator;
@@ -1572,4 +1621,3 @@ var query =
         }
     }
     // end::merge-conflict-resolver[]
-}

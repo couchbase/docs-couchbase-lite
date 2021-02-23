@@ -836,6 +836,62 @@
     // end::replication-status[]
 }
 
+
+//  BEGIN PendingDocuments IB -- 11/Feb/21 --
+//    public void testReplicationPendingDocs() throws URISyntaxException {
+      // tag::replication-pendingdocuments[]
+
+      CBLDatabase *database = self.db;
+      NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
+      CBLURLEndpoint *target =
+        [[CBLURLEndpoint alloc] initWithURL: url];
+      CBLReplicatorConfiguration *config =
+        [[CBLReplicatorConfiguration alloc]
+          initWithDatabase:database
+          target:target];
+
+      config.replicatorType = kCBLReplicatorTypePush;
+
+      // tag::replication-push-pendingdocumentids[]
+      CBLReplicator *replicator =
+        [[CBLReplicator alloc] initWithConfig:config];
+
+      // Get list of pending doc IDs
+      NSError* err = nil;
+      NSSet *mydocids =
+        [NSSet setWithSet:[replicator pendingDocumentIDs:&err]]; // <.>
+
+      // end::replication-push-pendingdocumentids[]
+
+      if ([mydocids count] > 0) {
+
+        NSLog(@"There are %lu documents pending", (unsigned long)[mydocids count]);
+
+        [replicator addChangeListener:^(CBLReplicatorChange *change) {
+
+          NSLog(@"Replicator activity level is %u", change.status.activity);
+          // iterate and report-on the pending doc IDs  in 'mydocids'
+          for (thisid in mydocids) {
+
+            // tag::replication-push-isdocumentpending[]
+            NSError* err = nil;
+            if (![replicator isDocumentPending: thisid error: &err]) { // <.>
+              NSLog(@"Doc ID %@ now pushed", thisid);
+            }
+            // end::replication-push-isdocumentpending[]
+          }
+
+        }];
+        [replicator start];
+
+      };
+
+      // end::replication-pendingdocuments[]
+    }
+//  END PendingDocuments IB -- 11/Feb/21 --
+
+
+
 - (void) dontTestReplicatorDocumentEvent {
     CBLDatabase *database = self.db;
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
