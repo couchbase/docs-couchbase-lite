@@ -236,7 +236,7 @@ include::{snippet}[tag=replication-reset-checkpoint,indent=0]
 == Monitoring
 
 In this section::
-<<lbl-repl-chng>>  |  <<lbl-repl-status>>  |  <<lbl-repl-evnts>>
+<<lbl-repl-chng>>  |  <<lbl-repl-status>>  |  <<lbl-repl-evnts>> | <<lbl-repl-pend>>
 
 You can monitor a replication’s status by using a combination of <<lbl-repl-chng>> and the `replication.status.activity` property -- see; {url-api-enum-replicator-activity}.
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
@@ -319,6 +319,35 @@ include::{snippet}[tag=remove-document-replication-listener,indent=0]
 When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
 --
 
+[#lbl-repl-pend]
+=== Documents Pending Push
+
+TIP: {url-api-method-replicator-isDocumentPending} is quicker and more efficient.
+Use it in preference to returning a list of pending document IDs, where possible.
+
+You can check whether documents are waiting to be pushed in any forthcoming sync by using either of the following API methods:
+
+* Use the {url-api-method-replicator-getPendingDocumentIds} method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.
++
+This can be very useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it is safe to exit.
+
+* Use the {url-api-method-replicator-isDocumentPending} method to quickly check whether an individual document is pending a push.
+
+[#ex-pending]
+.Use Pending Document ID API
+====
+
+[source, {source-language}]
+----
+include::{snippet}[tags=replication-pendingdocuments, indent=0]
+
+----
+<.> {url-api-method-replicator-getPendingDocumentIds} returns a list of the document IDs for all documents waiting to be pushed.
+This is a snapshot and may have changed by the time the response is received and processed.
+
+<.> {url-api-method-replicator-isDocumentPending} returns `true` if the document is waiting to be pushed, and `false` otherwise.
+
+====
 
 [#lbl-repl-stop]
 == Stop Sync
