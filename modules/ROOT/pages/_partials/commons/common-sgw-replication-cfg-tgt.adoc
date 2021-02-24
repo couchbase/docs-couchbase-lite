@@ -1,0 +1,37 @@
+// BEGIN -- inclusion -- common-sgw-replication-cfg-tgt.adoc
+//  Used-by:
+//    common-p2psync-websocket-using-active.adoc
+//    common-sgw-replication.adoc
+//
+
+Use the
+{url-api-class-replicator-config} class and {url-api-constructor-replicator-config-db-tgt} constructor to initialize the replication configuration with local and remote database locations.
+
+The constructor provides:
+
+* the name of the local database to be sync'd
+* the server's URL (including the port number and the name of the remote database to sync with)
++
+--
+It is expected that the app will identify the IP address and URL and append the remote database name to the URL endpoint, producing for example: `wss://10.0.2.2:4984/travel-sample`
+
+The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) prefixes.
+ifdef::is-android[]
+include::{root-partials}_block-caveats.adoc[tags=android-manifest-cleartext]
+endif::[]
+--
+
+// Example 2
+.Add Target to Configuration
+====
+[source, {source-language}]
+----
+include::{snippet-p2psync-ws}[tags="sgw-act-rep-initialize", indent=0]
+----
+
+*Notes on Example*
+
+<.> Note use of the `wss://` prefix to ensure TLS encryption (strongly recommended in production)
+
+====
+// END -- inclusion -- common-sgw-replication-cfg-tgt.adoc
