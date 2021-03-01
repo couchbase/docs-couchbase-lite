@@ -829,6 +829,23 @@ class SampleCodeTest {
         // end::replication-pull-filter[]
     }
 
+//  Added 2/Feb/21 - Ian Bridge
+    func testCustomHeartbeat() {
+        // tag::replication-set-heartbeat[]
+        let target =
+          URLEndpoint(url: URL(string: "ws://foo.couchbase.com/db")!)
+
+        let config =
+          self.config(target: target,
+            type: .pushAndPull,
+            continuous: true)
+
+        config.heartbeat = 60 // <.>
+        repl = Replicator(config: config)
+
+        // end::replication-set-heartbeat[]
+    }
+
     #if COUCHBASE_ENTERPRISE
     func dontTestDatabaseReplica() throws {
         let database2 = try self.openDB(name: "db2")
