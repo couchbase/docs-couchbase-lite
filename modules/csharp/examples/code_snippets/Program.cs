@@ -1272,7 +1272,7 @@ var query =
             // end::replication-pull-filter[]
         }
 
-        public void TestReplicatorHeartbeatGetSet()
+        public void TestCustomHeartbeat()
         {
         // tag::replication-set-heartbeat[]
             var url = new Uri("ws://localhost:4984/mydatabase");
