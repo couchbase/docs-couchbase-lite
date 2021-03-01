@@ -1008,10 +1008,10 @@
         id target =
           [[CBLURLEndpoint alloc] initWithURL: [NSURL URLWithString: @"ws://foo.cbl.com/db"]];
 
-        CBLReplicatorConfiguration* config = [self configWithTarget: target
-                                                            type: kCBLReplicatorTypePush
-                                                      continuous: YES];
-
+        CBLReplicatorConfiguration* config = 
+            [[CBLReplicatorConfiguration alloc] initWithDatabase: db target: target];
+        config.type = kCBLReplicatorTypePush;
+        config.continuous: YES];
         config.heartbeat = 60; // <.>
         repl = [[CBLReplicator alloc] initWithConfig: config];
 
