@@ -835,11 +835,9 @@ class SampleCodeTest {
         let target =
           URLEndpoint(url: URL(string: "ws://foo.couchbase.com/db")!)
 
-        let config =
-          self.config(target: target,
-            type: .pushAndPull,
-            continuous: true)
-
+        let config =  ReplicatorConfiguration(database: database, target: targetDatabase)
+        config.type = .pushAndPull
+        config.continuous = true
         config.heartbeat = 60 // <.>
         repl = Replicator(config: config)
 
