@@ -1011,8 +1011,10 @@
         CBLReplicatorConfiguration* config = 
             [[CBLReplicatorConfiguration alloc] initWithDatabase: db target: target];
         config.type = kCBLReplicatorTypePush;
-        config.continuous: YES];
+        config.continuous: YES;
+        //  other config as required . . .
         config.heartbeat = 60; // <.>
+        //  other config as required . . .
         repl = [[CBLReplicator alloc] initWithConfig: config];
 
         // Cleanup:
