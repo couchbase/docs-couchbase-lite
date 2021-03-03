@@ -1002,6 +1002,27 @@
     // end::replication-pull-filter[]
 }
 
+//  Added 2/Feb/21 - Ian Bridge
+    - void dontTestCustomHeartbeat {
+    // tag::replication-set-heartbeat[]
+        id target =
+          [[CBLURLEndpoint alloc] initWithURL: [NSURL URLWithString: @"ws://foo.cbl.com/db"]];
+
+        CBLReplicatorConfiguration* config = 
+            [[CBLReplicatorConfiguration alloc] initWithDatabase: db target: target];
+        config.type = kCBLReplicatorTypePush;
+        config.continuous: YES;
+        //  other config as required . . .
+        config.heartbeat = 60; // <.>
+        //  other config as required . . .
+        repl = [[CBLReplicator alloc] initWithConfig: config];
+
+        // Cleanup:
+        repl = nil;
+    // end::replication-set-heartbeat[]
+    }
+
+
 #ifdef COUCHBASE_ENTERPRISE
 - (void) dontTestDatabaseReplica {
     CBLDatabase *database = self.db;
