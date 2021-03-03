@@ -1272,6 +1272,26 @@ var query =
             // end::replication-pull-filter[]
         }
 
+        public void TestCustomHeartbeat()
+        {
+        // tag::replication-set-heartbeat[]
+            var url = new Uri("ws://localhost:4984/mydatabase");
+            var target = new URLEndpoint(url);
+
+            var config = new ReplicatorConfiguration(database, target);
+
+        //  other config as required . . .
+
+            config.Heartbeat = TimeSpan.FromSeconds(60); //  <.>
+
+        //  other config as required . . .
+
+            var repl = new Replicator(config);
+
+        // end::replication-set-heartbeat[]
+        }
+
+
         private static void UsePredictiveModel()
         {
             using (var db = new Database("mydb")) {

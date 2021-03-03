@@ -1,0 +1,34 @@
+// BEGIN -- inclusion --
+//  Use - output text pertaining to replication heartbeat parameter
+//  Params:
+//    :is-p2p: - sets the server as a listener and not a Sync Gateway
+//
+
+:this-svr: Sync Gateway
+ifdef::is-p2p[]
+:this-svr: listener
+endif::[]
+
+A point to consider when initiating a replication, particularly a continuous replication, is keeping the connection alive.
+Couchbase Lite minimizes the chance of dropped connections by having the replicator maintain a heartbeat; essentially pinging the {this-svr} at a configurable interval.
+
+When necessary you can adjust this interval using  {url-api-prop-replicator-config-setHeartbeat} as shown in -- <<ex-htbt>>.
+ifndef::is-p2p[]
+// included only for Sync Gateways
+You may need to do this when, for example, when the Sync Gateway is behind a load balancer, which may have its own keep-alive parameters -- see Sync Gateway's topic {xref-sgw-bmk-load-balancer-keepalive}.
+endif::[]
+
+The default heartbeat value is 300 (5 minutes).
+
+.Setting heartbeat interval
+[#ex-htbt]
+====
+[source, {source-language}]
+----
+include::{snippet}[tags=replication-set-heartbeat, indent=0]
+
+----
+<.> The `heartbeat` value sets the interval (in seconds) between the heartbeat pulses.
+
+====
+
