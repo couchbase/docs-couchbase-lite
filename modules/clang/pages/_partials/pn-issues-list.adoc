@@ -1,0 +1,115 @@
+// BEGIN: tagged-inclusion -- issues-list for C
+
+=== 2.8.4
+// tag::issues-2-8-4[]
+==== Deprecated
+// tag::deprecated-2-8-4[]
+// end::deprecated-2-8-4[]
+
+==== Enhancements
+// tag::enhancements-2-8-4[]
+include::{root-partials}pn-issues-list-litecore.adoc[tag=enhancements-2-8-4]
+
+* https://issues.couchbase.com/browse/CBL-1474[CBL-1474] -- https://issues.couchbase.com/browse/CBL-1474[Support Apple Silicon (M1)]
+* https://issues.couchbase.com/browse/CBL-1580[CBL-1580] -- https://issues.couchbase.com/browse/CBL-1580[Replication Heartbeat]
+* https://issues.couchbase.com/browse/CBL-1601[CBL-1601] -- https://issues.couchbase.com/browse/CBL-1601[Replication Heartbeat Unit tests ]
+
+// end::enhancements-2-8-4[]
+
+==== Fixed
+// tag::fixed-2-8-4[]
+include::{root-partials}pn-issues-list-litecore.adoc[tag=fixed-2-8-4]
+
+* https://issues.couchbase.com/browse/CBL-399[CBL-399] -- https://issues.couchbase.com/browse/CBL-399[CouchbaseLite Mac Catalyst compatible build]
+* https://issues.couchbase.com/browse/CBL-1477[CBL-1477] -- https://issues.couchbase.com/browse/CBL-1477[AcceptOnlySelfSigned may accept non-self-signed certificates]
+* https://issues.couchbase.com/browse/CBL-1570[CBL-1570] -- https://issues.couchbase.com/browse/CBL-1570[Discussion on `.framework` vs `.xcframework` ]
+* https://issues.couchbase.com/browse/CBL-1602[CBL-1602] -- https://issues.couchbase.com/browse/CBL-1602[Cherry pick 2.8.4 release items]
+* https://issues.couchbase.com/browse/CBL-1606[CBL-1606] -- https://issues.couchbase.com/browse/CBL-1606[Verify 2.8.4 binary before QE handover]
+* https://issues.couchbase.com/browse/CBL-1610[CBL-1610] -- https://issues.couchbase.com/browse/CBL-1610[Update the Jenkins to test all Mac variant]
+// end::fixed-2-8-4[]
+
+==== Known Issues
+// tag::knownissues-2-8-4[]
+include::{root-partials}pn-issues-list-litecore.adoc[tag=knownissues-2-8-4]
+
+// end::knownissues-2-8-4[]
+// end::issues-2-8-4[]
+
+=== 2.8.1
+// tag::issues-2-8-1[]
+==== Deprecated
+// tag::deprecated-2-8-1[]
+// end::deprecated-2-8-1[]
+
+==== Enhancements
+// tag::enhancements-2-8-1[]
+// end::enhancements-2-8-1[]
+
+==== Fixed
+// tag::fixed-2-8-1[]
+* https://issues.couchbase.com/browse/CBL-1423[CBL-1423] -- Fixes Carthage build failure [{enterprise}]
+* https://issues.couchbase.com/browse/CBL-1403[CBL-1403] -- Compiling an app archive for distribution with the `Rebuild from Bitcode` option enabled will result in compiler errors.
+
+// end::fixed-2-8-1[]
+
+==== Known Issues
+// tag::knownissues-2-8-1[]
+* https://issues.couchbase.com/browse/CBL-216[CBL-216] -- Ordering null values inconsistent with N1QL expectations
+* https://issues.couchbase.com/browse/CBL-95[CBL-95] -- Pending conflicts could be resolved by a wrong replicator
+* https://issues.couchbase.com/browse/CBL-49[CBL-49] -- Need a way to distinguish boolean types
+
+// end::knownissues-2-8-1[]
+// end::issues-2-8-1[]
+
+=== 2.8.0
+// tag::issues-2-8-0[]
+==== Deprecated
+// tag::deprecated-2-8-0[]
+* https://issues.couchbase.com/browse/CBL-1010[CBL-1010] -- The `resetCheckpoint()` API is deprecated at version 2.8. Use `Replicator.start(reset)`, where reset is a boolean value.
+
+// end::deprecated-2-8-0[]
+
+==== Enhancements
+// tag::enhancements-2-8-0[]
+* https://issues.couchbase.com/browse/CBL-991[CBL-991] -- Add Maintenance API.
+* https://issues.couchbase.com/browse/CBL-954[CBL-954] -- Return 403 for forbidden listener requests
+
+// end::enhancements-2-8-0[]
+
+==== Fixed
+// tag::fixed-2-8-0[]
+* https://issues.couchbase.com/browse/CBL-1141[CBL-1141] -- Android cannot use unlinked files
+* https://issues.couchbase.com/browse/CBL-1107[CBL-1107] -- Properties beginning with dollar sign not handled correctly
+* https://issues.couchbase.com/browse/CBL-1045[CBL-1045] -- Data race in log rollover
+* https://issues.couchbase.com/browse/CBL-978[CBL-978] -- Math errors with float -> int implicit fleece conversion
+* https://issues.couchbase.com/browse/CBL-977[CBL-977] -- Full text search with Left Outer Join causes fields to be null
+* https://issues.couchbase.com/browse/CBL-859[CBL-859] -- ChangeEncryptionKey() and save document after creating a brand new Database throws CouchbaseLiteException (SQLiteDomain / 21): bad parameter or other API misuse.
+* https://issues.couchbase.com/browse/CBL-789[CBL-789] -- Crash when accessing `connection->name()`
+* https://issues.couchbase.com/browse/CBL-745[CBL-745] -- Save fails when NSDate inserted with [CBLMutableDocument setData]
+* https://issues.couchbase.com/browse/CBL-707[CBL-707] -- Compaction is ineffective (auto_vacuum not enabled)
+* https://issues.couchbase.com/browse/CBL-624[CBL-624] -- Revision flags get cleared while saving resolved document in iOS
+* https://issues.couchbase.com/browse/CBL-614[CBL-614] -- Closing a read only database causes errors
+* https://issues.couchbase.com/browse/CBL-609[CBL-609] -- Fleece thinks a boolean is a Long
+* https://issues.couchbase.com/browse/CBL-594[CBL-594] -- Local to Local replication duplicates remote ID
+* https://issues.couchbase.com/browse/CBL-590[CBL-590] -- Investigate handling of BLIP 500 errors
+* https://issues.couchbase.com/browse/CBL-578[CBL-578] -- Receive rev#1 after rev#2 is saved to DB
+* https://issues.couchbase.com/browse/CBL-565[CBL-565] -- Crashes apparently caused by attempting to log after failure
+* https://issues.couchbase.com/browse/CBL-564[CBL-564] -- Property alias not working under certain cases
+* https://issues.couchbase.com/browse/CBL-530[CBL-530] -- Certain keys in a query can cause segmentation faults
+* https://issues.couchbase.com/browse/CBL-529[CBL-529] -- Cannot create an offset query without limit
+* https://issues.couchbase.com/browse/CBL-384[CBL-384] -- Platform WebSocket code should manage HTTP cookies
+* https://issues.couchbase.com/browse/CBL-358[CBL-358] -- xsockets doesn't account for POSIX variations
+
+//end::fixed-2-8-0[]
+
+==== Known Issues
+// tag::knownissues-2-8-0[]
+* https://issues.couchbase.com/browse/CBL-1403[CBL-1403] -- Compiling an app archive for distribution with the `Rebuild from Bitcode` option enabled will result in compiler errors. Disable `bitcode` to allow your compilation to proceed.
+* https://issues.couchbase.com/browse/CBL-216[CBL-216] -- Ordering null values inconsistent with N1QL expectations
+* https://issues.couchbase.com/browse/CBL-95[CBL-95] -- Pending conflicts could be resolved by a wrong replicator
+* https://issues.couchbase.com/browse/CBL-49[CBL-49] -- Need a way to distinguish boolean types
+
+// end::knownissues-2-8-0[]
+
+// end::issues-2-8-0[]
+// END: tagged-inclusion -- issues-list for C
