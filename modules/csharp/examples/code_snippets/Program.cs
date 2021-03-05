@@ -1272,9 +1272,9 @@ var query =
             // end::replication-pull-filter[]
         }
 
-        public void TestCustomHeartbeat()
+        public void TestCustomRetryConfig()
         {
-        // tag::replication-set-heartbeat[]
+        // tag::replication-retry-config[]
             var url = new Uri("ws://localhost:4984/mydatabase");
             var target = new URLEndpoint(url);
 
@@ -1282,13 +1282,21 @@ var query =
 
         //  other config as required . . .
 
-            config.Heartbeat = TimeSpan.FromSeconds(60); //  <.>
+        // tag::replication-set-heartbeat[]
+            config.Heartbeat = TimeSpan.FromSeconds(120); //  <.>
+        // end::replication-set-heartbeat[]
+        // tag::replication-set-maxretries[]
+            config.MaxRetries = 20; //  <.>
+        // end::replication-set-maxretries[]
+        // tag::replication-set-maxretrywaittime[]
+            config.MaxRetryWaitTime = TimeSpan.FromSeconds(600); //  <.>
+        // end::replication-set-maxretrywaittime[]
 
         //  other config as required . . .
 
             var repl = new Replicator(config);
 
-        // end::replication-set-heartbeat[]
+        // end::replication-retry-config[]
         }
 
 

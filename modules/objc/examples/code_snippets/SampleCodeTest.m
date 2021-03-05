@@ -1003,23 +1003,37 @@
 }
 
 //  Added 2/Feb/21 - Ian Bridge
-    - void dontTestCustomHeartbeat {
-    // tag::replication-set-heartbeat[]
+    - void dontTestCustomRetryConfig {
+        // tag::replication-retry-config[]
         id target =
           [[CBLURLEndpoint alloc] initWithURL: [NSURL URLWithString: @"ws://foo.cbl.com/db"]];
 
-        CBLReplicatorConfiguration* config = 
+        CBLReplicatorConfiguration* config =
             [[CBLReplicatorConfiguration alloc] initWithDatabase: db target: target];
         config.type = kCBLReplicatorTypePush;
         config.continuous: YES;
         //  other config as required . . .
-        config.heartbeat = 60; // <.>
+
+        // tag::replication-heartbeat[]
+        config.heartbeat = 150; // <.>
+
+        // end::replication-heartbeat[]
+        // tag::replication-maxretries[]
+        config.maxretries = 20; // <.>
+
+        // end::replication-maxretries[]
+        // tag::replication-maxretrywaittime[]
+        config.maxretrywaittime = 600; // <.>
+
+        // end::replication-maxretrywaittime[]
         //  other config as required . . .
         repl = [[CBLReplicator alloc] initWithConfig: config];
 
         // Cleanup:
         repl = nil;
-    // end::replication-set-heartbeat[]
+
+        // end::replication-retry-config[]
+
     }
 
 

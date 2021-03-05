@@ -1601,8 +1601,8 @@ apply plugin: 'java'
     }
 
     //
-    public void testCustomHeartbeat() throws URISyntaxException {
-    // tag::replication-set-heartbeat[]
+    public void testCustomRetryConfig() throws URISyntaxException {
+    // tag::replication-retry-config[]
         URLEndpoint target =
             new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
@@ -1610,14 +1610,21 @@ apply plugin: 'java'
             new ReplicatorConfiguration(database, target);
 
         //  other config as required . . .
-
-        config.setHeartbeat(60L); // <.>
+        // tag::replication-heartbeat-config[]
+        config.setHeartbeat(150L); // <.>
+        // end::replication-heartbeat-config[]
+        // tag::replication-maxretries-config[]
+        config.setMaxRetries(20L); // <.>
+        // end::replication-maxretries-config[]
+        // tag::replication-maxretrywaittime-config[]
+        config.setMaxRetryWaitTime(600L); // <.>
+        // end::replication-maxretrywaittime-config[]
 
         //  other config as required . . .
 
         Replicator repl = new Replicator(config);
 
-    // end::replication-set-heartbeat[]
+    // end::replication-retry-config[]
     }
 
 
