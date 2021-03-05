@@ -830,18 +830,30 @@ class SampleCodeTest {
     }
 
 //  Added 2/Feb/21 - Ian Bridge
-    func testCustomHeartbeat() {
-        // tag::replication-set-heartbeat[]
+//  Changed for 3.0.0 - Ian Bridge 3/Mar/21
+    func testCustomRetryConfig() {
+        // tag::replication-retry-config[]
         let target =
           URLEndpoint(url: URL(string: "ws://foo.couchbase.com/db")!)
 
         let config =  ReplicatorConfiguration(database: database, target: targetDatabase)
         config.type = .pushAndPull
         config.continuous = true
-        config.heartbeat = 60 // <.>
-        repl = Replicator(config: config)
+        // tag::replication-set-heartbeat[]
+        config.heartbeat = 150 // <.>
 
         // end::replication-set-heartbeat[]
+        // tag::replication-set-maxretries[]
+        config.maxretries = 20 // <.>
+
+        // end::replication-set-maxretries[]
+        // tag::replication-set-maxretrywaittime[]
+        config.maxretrywaittime = 600 // <.>
+        repl = Replicator(config: config)
+
+        // end::replication-set-maxretrywaittime[]
+
+        // end::replication-retry-config[]
     }
 
     #if COUCHBASE_ENTERPRISE
