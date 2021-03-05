@@ -3,6 +3,9 @@
 :topic-group: Topic Group -- Data Model
 include::{root-partials}block-abstract.adoc[]
 
+:fn-rsvd-wds: footnote:fn1[Any change to this reserved key will be detected when it is saved and will result in a Couchbase exception (Error Code 5 -- `CorruptRevisionData`)]
+:fnref-rsvd-wds: footnote:fn1[]
+
 == Overview
 
 In Couchbase Lite, a document's body takes the form of a JSON object -- a collection of key/value pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
@@ -46,6 +49,8 @@ Changes to the document are persisted to the database when the `save` method is 
 include::{snippet}[tag=update-document,indent=0]
 ----
 ====
+
+NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<document-constraints>>.
 
 
 == Typed Accessors
@@ -113,6 +118,7 @@ include::{snippet}[tag=document-listener,indent=0]
 
 include::{root-partials}document-expiration.adoc[]
 
+[#lbl-doc-constraints]
 == Document Constraints
 
 Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
@@ -130,10 +136,11 @@ For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway
 .Reserved Keys List
 ====
 * _attachments
-* _id
-* _deleted
+* _deleted {fn-rsvd-wds}
+* _id {fnref-rsvd-wds}
 * _removed
-* _rev
+* _rev {fnref-rsvd-wds}
+* _sequence
 ====
 
 
