@@ -1,0 +1,986 @@
+= Couchbase Lite API for C#.Net
+:page-aliases: refer/csharp-ref-api.adoc
+include::ROOT:partial$_attributes-local.adoc[]
+// :cbl-log-version: {version-full}
+// :idprefix:
+// :idseparator: -
+// :snippet: example$csharp/Program.cs
+// :source-language: {langCsharp}
+// :blank-field: ____
+// :url-issues-net: https://github.com/couchbase/couchbase-lite-net/issues
+// :url-api-references: http://docs.couchbase.com/mobile/{version-full}/couchbase-lite-net
+//
+// End header
+== API References
+
+{url-api-references}[C# SDK API References]
+
+== Upgrading
+
+=== Visual Studio
+
+The public facing API has completely changed in Couchbase Lite 2.0 and will require a re-write to upgrade an application that is using Couchbase Lite 1.x.
+To update an Xcode project built with Couchbase Lite 1.x:
+
+* Remove the existing Couchbase Lite nuget package from the Visual Studio project.
+* Remove all the Couchbase Lite 1.x dependencies (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/{source-language}.html#getting-started[1.x installation guide]).
+* Install the Couchbase Lite 2.0 framework in your project (see the <<getting-started, Getting Started>> section).
+At this point, there will be many compiler warnings.
+Refer to the examples on this page to learn about the new API.
+* Build & run your application.
+
+=== Database Upgrade
+
+Databases that were created with Couchbase Lite 1.2 or later can be used with Couchbase Lite 2.0.
+Upon detecting it is a 1.x database file, Couchbase Lite will automatically upgrade it to 2.0.
+This feature is only available for the default storage type (i.e., not a ForestDB database).
+Additionally, the automatic migration feature does not support encrypted databases, so if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/{source-language}.html#database-encryption[1.x Database Guide]).
+
+==== Handling of Existing Conflicts
+
+For conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new 2.0 database and does NOT copy any conflicting revisions.
+This functionality is related to the way conflicts are being handled in Couchbase Lite 2.0 -- {xref-cbl-pg-conflict}
+Optionally, existing conflicts in the 1.x database can be resolved with the https://docs-archive.couchbase.com/couchbase-lite/1.4/{source-language}.html#resolving-conflicts[1.x API] prior to the database being upgraded to 2.0.
+
+==== Handling of Existing Attachments
+
+Attachments that were persisted in the 1.x database will be copied to the 2.0 database.
+In Couchbase Lite 2.0, the `Attachment` API has been renamed to `Blob` API.
+The functionally is identical but the internal schema for attachments has changed.
+In 1.x they were stored under the `_attachments` field and in Couchbase Lite 2.0 they are stored anywhere in the document like other value types.
+The automatic upgrade functionality will not update the internal schema for attachments, so they will still be accessible under the `_attachments` field.
+The following example shows how to retrieve an attachment that was created in a 1.x database with the 2.0 API.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=1x-attachment,indent=0]
+----
+
+=== Replication Compatibility
+
+The replication protocol used in Couchbase Lite 2.0 has been re-designed from the ground up and it is not backwards compatible with the 1.x replication protocol.
+Therefore, to use replication with Couchbase Lite 2.x, the target Sync Gateway instance must also be upgraded to 2.x.
+
+Sync Gateway 2.x will continue to accept clients that connect through the 1.x protocol.
+It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through ws://localhost:4984/db.
+This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
+
+== Database
+
+=== New Database
+
+As the top-level entity in the API, new databases can be created using the `Database` class by passing in a name, configuration, or both.
+The following example creates a database using the `Database(string name)` method.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=new-database,indent=0]
+----
+
+Just as before, the database will be created in a default location.
+Alternatively, the `Database(string name, DatabaseConfiguration config)` initializer can be used to provide specific options in the {url-api-references}/api/Couchbase.Lite.DatabaseConfiguration.html[`DatabaseConfiguration`] object such as the database directory.
+
+=== Database Encryption
+
+.Enterprise Edition only
+IMPORTANT: Database encryption is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+
+The Couchbase Lite 2.1 release includes the ability to encrypt Couchbase Lite databases.
+This allows mobile applications to secure the data at rest, when it is being stored on the device.
+The algorithm used to encrypt the database is 256-bit AES.
+
+:param-language: {param-name}
+include::{root-partials}database-encryption.adoc[]
+
+=== Finding a Database File
+
+Where a database goes by default depends on the platform it is running on.
+Here are the defaults for each platform:
+
+* .NET Core: `Path.Combine(AppContext.BaseDirectory, "CouchbaseLite")` (unless the app context is altered [e.g. by XUnit], this will be the same directory as the output binary)
+* UWP: `Windows.Storage.ApplicationData.Current.LocalFolder.Path` (Inside the installed app sandbox.
+Note that this sandbox gets deleted sometimes when debugging from inside Visual Studio when the app is shutdown)
+* Xamarin iOS: In a folder named CouchbaseLite inside of `ApplicationSupportDirectory` (this can be retrieved more easily from the simulator using the https://simpholders.com/3/[SimPholders] utility)
+* Xamarin Android: Using the `Context` passed in the `Activate()` method, `Context.FilesDir.AbsolutePath` (database can be retrieved using adb)
+
+=== CLI tool
+
+`cblite` is a command-line tool for inspecting and querying Couchbase Lite 2.x databases.
+
+You can download and build it from the couchbaselabs https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md[GitHub repository].
+Note that the `cblite` tool is not supported by the https://www.couchbase.com/support-policy[Couchbase Support Policy].
+
+=== Logging
+
+If you are using a Couchbase Lite release prior to 2.5 see <<Logging functionality prior to Release 2.5, Deprecated functionality>>
+
+include::partial$logging.adoc[leveloffset=+2]
+
+==== Logging functionality prior to Release 2.5
+
+include::{root-partials}logging-pre2.5.adoc[]
+
+[source, {source-language}]
+
+----
+include::{snippet}[tags=logging,indent=0]
+----
+
+=== Loading a pre-built database
+
+If your app needs to sync a lot of data initially, but that data is fairly static and won't change much, it can be a lot more efficient to bundle a database in your application and install it on the first launch.
+Even if some of the content changes on the server after you create the app, the app's first pull replication will bring the database up to date.
+
+To use a prebuilt database, you need to set up the database, build the database into your app bundle as a resource, and install the database during the initial launch.
+After your app launches, it needs to check whether the database exists.
+If the database does not exist, the app should copy it from the app bundle using the {url-api-references}/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Copy_System_String_System_String_Couchbase_Lite_DatabaseConfiguration_[`Database.Copy(string, DatabaseConfiguration)`] method as shown below.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=prebuilt-database,indent=0]
+----
+
+== Document
+
+In Couchbase Lite, a document's body takes the form of a JSON object--a collection of key/value pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
+Every document is identified by a document ID, which can be automatically generated (as a UUID) or specified programmatically;
+the only constraints are that it must be unique within the database, and it can't be changed.
+
+=== Initializers
+
+The following methods/initializers can be used:
+
+* The `MutableDocument()` constructor can be used to create a new document where the document ID is randomly generated by the database.
+* The `MutableDocument(string documentID)` constructor can be used to create a new document with a specific ID.
+* The `database.GetDocument(string documentID)` method can be used to get a document.
+If it doesn't exist in the database, it will return `null`.
+This method can be used to check if a document with a given ID already exists in the database.
+
+The following code example creates a document and persists it to the database.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=initializer,indent=0]
+----
+
+=== Mutability
+
+By default, when a document is read from the database it is immutable.
+The `document.toMutable()` method should be used to create an instance of the document which can be updated.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=update-document,indent=0]
+----
+
+Changes to the document are persisted to the database when the `saveDocument` method is called.
+
+=== Typed Accessors
+
+The `Document` class now offers a set of {url-api-references}/api/Couchbase.Lite.DictionaryObject.html[`property accessors`] for various scalar types, including boolean, integers, floating-point and strings.
+These accessors take care of converting to/from JSON encoding, and make sure you get the type you're expecting.
+
+In addition, as a convenience we offer `DateTimeOffset` accessors.
+Dates are a common data type, but JSON doesn't natively support them, so the convention is to store them as strings in ISO-8601 format.
+The following example sets the date on the `createdAt` property and reads it back using the `document.GetDate(string key)` accessor method.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=date-getter,indent=0]
+----
+
+If the property doesn't exist in the document it will return the default value for that getter method (0 for `getInt`, 0.0 for `getFloat` etc.).
+To check whether a given property exists in the document, you should use the {url-api-references}/api/Couchbase.Lite.Document.html#Couchbase_Lite_Document_Contains_System_String_[`Document.Contains(string key)`] method.
+
+=== Batch operations
+
+If you're making multiple changes to a database at once, it's faster to group them together.
+The following example persists a few documents in batch.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=batch,indent=0]
+----
+
+At the *local* level this operation is still transactional: no other `Database` instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
+But Couchbase Mobile is a distributed system, and due to the way replication works, there's no guarantee that Sync Gateway or other devices will receive your changes all at once.
+
+=== Document Expiration
+
+include::{root-partials}document-expiration.adoc[]
+
+== Blobs
+
+We've renamed "attachments" to "blobs".
+The new behavior should be clearer too: a `Blob` is now a normal object that can appear in a document as a property value.
+In other words, you just instantiate a `Blob` and set it as the value of a property, and then later you can get the property value, which will be a `Blob` object.
+The following code example adds a blob to the document under the `avatar` property.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=blob,indent=0]
+----
+
+The `Blob` API lets you access the contents as in-memory data (a `Data` object) or as a `InputStream`.
+It also supports an optional `type` property that by convention stores the MIME type of the contents.
+
+In the example above, "image/jpeg" is the MIME type and "avatar" is the key which references that `Blob`.
+That key can be used to retrieve the `Blob` object at a later time.
+
+On Couchbase Lite, blobs can be arbitrarily large, and are only read on demand, not when you load a `Document` object.
+On Sync Gateway, the maximum content size is 20 MB per blob.
+If a document's blob is over 20 MB, the document will be replicated but not the blob.
+
+When a document is synchronized, the Couchbase Lite replicator will add an `_attachments` dictionary to the document's properties if it contains a blob.
+A random access name will be generated for each `Blob` which is different to the "avatar" key that was used in the example above.
+On the image below, the document now contains the `_attachments` dictionary when viewed in the Couchbase Server Admin Console.
+
+image::attach-replicated.png[]
+
+A blob also has properties such as `"digest"` (a SHA-1 digest of the data), `"length"` (the length in bytes), and optionally `"content_type"` (the MIME type).
+The data is not stored in the document, but in a separate content-addressable store, indexed by the digest.
+
+This `Blob` can be retrieved on the Sync Gateway REST API at \http://localhost:4984/justdoit/user.david/blob_1.
+Notice that the blob identifier in the URL path is "blob_1" (not "avatar").
+
+== Query
+
+Database queries have changed significantly.
+Instead of the map/reduce views used in 1.x, they're now based on expressions, of the form "return {blank-field} from documents where {blank-field}, ordered by {blank-field}", with semantics based on Couchbase's N1QL query language.
+
+There are several parts to specifying a query:
+
+SELECT:: Specifies the projection, which is the part of the document that is to be returned.
+FROM:: Specifies the database to query the documents from.
+JOIN:: Specifies the matching criteria in which to join multiple documents.
+WHERE:: Specifies the query criteria that the result must satisfy.
+GROUP BY:: Specifies the query criteria to group rows by.
+ORDER BY:: Specifies the query criteria to sort the rows in the result.
+
+=== Indexing
+
+Before we begin querying documents, let's briefly mention the importance of having a query index.
+A query can only be fast if there's a pre-existing database index it can search to narrow down the set of documents to examine.
+
+The following example creates a new index for the `type` and `name` properties.
+
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "Apple Droid"
+}
+----
+
+[source, {source-language}]
+----
+include::{snippet}[tag=query-index,indent=0]
+----
+
+If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.
+
+NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
+Thus, good performance depends on designing and creating the _right_ indexes to go along with your queries.
+
+=== SELECT statement
+
+With the SELECT statement, you can query and manipulate JSON data.
+With projections, you retrieve just the fields that you need and not the entire document.
+
+A SelectResult represents a single return value of the query statement.
+You can specify a comma separated list of `SelectResult` expressions in the select statement of your query.
+For instance the following select statement queries for the document `_id` as well as the `type` and `name` properties of all documents in the database.
+In the query result, we print the `_id` and `name` properties of each row using the property name getter method.
+
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "Apple Droid"
+}
+----
+
+[source, {source-language}]
+----
+include::{snippet}[tag=query-select-meta,indent=0]
+----
+
+The `SelectResult.all()` method can be used to query all the properties of a document.
+In this case, the document in the result is embedded in a dictionary where the key is the database name.
+The following snippet shows the same query using `SelectResult.all()` and the result in JSON.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=query-select-all,indent=0]
+----
+
+[source,json]
+----
+[
+    {
+        "travel-sample": {
+            "callsign": "MILE-AIR",
+            "country": "United States",
+            "iata": "Q5",
+            "icao": "MLA",
+            "id": 10,
+            "name": "40-Mile Air",
+            "type": "airline"
+        }
+    },
+    {
+        "travel-sample": {
+            "callsign": "TXW",
+            "country": "United States",
+            "iata": "TQ",
+            "icao": "TXW",
+            "id": 10123,
+            "name": "Texas Wings",
+            "type": "airline"
+        }
+    }
+]
+----
+
+=== WHERE statement
+
+Similar to SQL, you can use the where clause to filter the documents to be returned as part of the query.
+The select statement takes in an `Expression`.
+You can chain any number of Expressions in order to implement sophisticated filtering capabilities.
+
+==== Comparison
+
+The {url-api-references}/api/Couchbase.Lite.Query.IExpression.html[comparison operators] can be used in the WHERE statement to specify on which property to match documents.
+In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
+
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "Apple Droid"
+}
+----
+
+[source, {source-language}]
+----
+include::{snippet}[tag=query-where,indent=0]
+----
+
+==== Collection Operators
+
+{url-api-references}/api/Couchbase.Lite.Query.ArrayFunction.html[Collection operators] are useful to check if a given value is present in an array.
+
+===== CONTAINS Operator
+
+The following example uses the `Function.arrayContains` to find documents whose `public_likes` array property contain a value equal to "Armani Langworth".
+
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "name": "Apple Droid",
+    "public_likes": ["Armani Langworth", "Elfrieda Gutkowski", "Maureen Ruecker"]
+}
+----
+
+[source, {source-language}]
+----
+include::{snippet}[tag=query-collection-operator-contains,indent=0]
+----
+
+===== IN Operator
+
+The `IN` operator is useful when you need to explicitly list out the values to test against.
+The following example looks for documents whose `first`, `last` or `username` property value equals "Armani".
+
+[source, {source-language}]
+----
+include::{snippet}[tag=query-collection-operator-in,indent=0]
+----
+
+==== Like Operator
+
+The {url-api-references}/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_Like_Couchbase_Lite_Query_IExpression_[`like`] operator can be used for string matching.
+
+The `like` operator performs **case sensitive** matches.
+So if you want to make the string matching case insensitive, you would have to use `Function.lower` or `Function.upper` to transform the matched string to lowercase or uppercase equivalents.
+
+In the example below, we are looking for documents of type `landmark` where the name property exactly matches the string "Royal engineers museum".
+Note that since `like` does a case sensitive match, we use `Function.lower` to transform the matched string to the lowercase equivalent.
+So the following query will return "landmark" type documents with the name matching "Royal Engineers Museum", "royal engineers museum", "ROYAL ENGINEERS MUSEUM" and so on.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=query-like-operator,indent=0]
+----
+
+==== Wildcard Match
+
+We can use `%` sign within a `like` expression to do a wildcard match against zero or more characters.
+Using wildcards allows you to have some fuzziness in your search string.
+
+In the example below, we are looking for documents of `type` "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
+Once again, we are using `Function.lower` to make the search case insensitive.
+
+The following query will return "landmark" `type` documents with name matching "Engineers", "engine", "english egg" , "England Eagle" and so on.
+Notice that the matches may span word boundaries.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=query-like-operator-wildcard-match,indent=0]
+----
+
+==== Wildcard Character Match
+
+We can use an `_` sign within a like expression to do a wildcard match against a single character.
+
+In the example below, we are looking for documents of type "landmark" where the `name` property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
+The following query will return "landmark" `type` documents with the `name` matching "Engineer", "engineer" and so on.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=query-like-operator-wildcard-character-match,indent=0]
+----
+
+==== Regex Operator
+
+Similar to wildcard `like` expressions, `regex` expressions based pattern matching allow you to have some fuzziness in your search string.
+
+The {url-api-references}/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_Regex_Couchbase_Lite_Query_IExpression_[`regex`] operator is case sensitive.
+
+In the example below, we are looking for documents of `type` "landmark" where the name property matches any string (on word boundaries) that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
+The following query will return "landmark" type documents with name matching "Engine", "engine" and so on.
+Note that the `\b` specifies that the match must occur on word boundaries.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=query-regex-operator,indent=0]
+----
+
+==== Deleted Document
+
+Starting in Couchbase Lite 2.5, you can query documents that have been deleted (tombstones).
+The following example shows how to query deleted documents in the database.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=query-deleted-documents,indent=0]
+----
+
+=== JOIN statement
+
+The JOIN clause enables you to create new input objects by combining two or more source objects.
+
+The following example uses a JOIN clause to find the airline details which have routes that start from RIX.
+This example JOINS the document of type "route" with documents of type "airline" using the document ID (`_id`) on the "airline" document and `airlineid` on the "route" document.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=query-join,indent=0]
+----
+
+=== GROUP BY statement
+
+You can perform further processing on the data in your result set before the final projection is generated.
+The following example looks for the number of airports at an altitude of 300 ft or higher and groups the results by country and timezone.
+
+[source,json]
+----
+{
+    "_id": "airport123",
+    "type": "airport",
+    "country": "United States",
+    "geo": { "alt": 456 },
+    "tz": "America/Anchorage"
+}
+----
+
+[source, {source-language}]
+----
+include::{snippet}[tag=query-groupby,indent=0]
+----
+
+[source,text]
+----
+There are 138 airports on the Europe/Paris timezone located in France and above 300 ft
+There are 29 airports on the Europe/London timezone located in United Kingdom and above 300 ft
+There are 50 airports on the America/Anchorage timezone located in United States and above 300 ft
+There are 279 airports on the America/Chicago timezone located in United States and above 300 ft
+There are 123 airports on the America/Denver timezone located in United States and above 300 ft
+----
+
+=== ORDER BY statement
+
+It is possible to sort the results of a query based on a given expression result.
+The example below returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=query-orderby,indent=0]
+----
+
+[source,text]
+----
+Aberdyfi
+Achiltibuie
+Altrincham
+Ambleside
+Annan
+Ardèche
+Armagh
+Avignon
+----
+
+=== Date/Time Functions
+
+include::partial$query/date-time-functions.adoc[]
+
+== Live Query
+
+A live query stays active and monitors the database for changes.
+A live query is a great way to build reactive user interfaces, especially table/list views, that keep themselves up to date.
+For example, as the replicator runs and pulls new data from the server, a live query-driven UI will automatically update to show the data without the user having to manually refresh.
+This helps your app feel quick and responsive.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=live-query,indent=0]
+----
+<1> To start a live query, you must call `query.execute()`.
+This will immediately execute the query and post the result to the change listener.
+When there's a change it re-runs itself automatically, and posts the new query result to any observers (change listeners).
+
+The following example stops the live query with the token from the previous example.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=stop-live-query,indent=0]
+----
+
+== Indexing
+
+Creating indexes can speed up the performance of queries.
+While indexes make queries faster, they also make writes slightly slower, and the Couchbase Lite database file slightly larger.
+As such, it is best to only create indexes when you need to optimize a specific case for better query performance.
+
+The following example creates a new index for the `type` and `name` properties.
+
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "Apple Droid"
+}
+----
+
+[source, {source-language}]
+----
+include::{snippet}[tag=query-index,indent=0]
+----
+
+If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.
+
+NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
+Thus, good performance depends on designing and creating the _right_ indexes to go along with your queries.
+
+== Predictive Query
+
+include::{root-partials}predictive-query.adoc[]
+
+== Full-Text Search
+
+To run a full-text search (FTS) query, you must have created a full-text index on the expression being matched.
+Unlike queries, the index is not optional.
+The following example inserts documents and creates an FTS index on the `name` property.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=fts-index,indent=0]
+----
+
+Multiple properties to index can be specified in the `IndexBuilder.FullTextIndex(params FullTextIndexItem[] items)` method.
+
+With the index created, an FTS query on the property that is being indexed can be constructed and ran.
+The full-text search criteria is defined as a `FullTextExpression`.
+The left-hand side is the full-text index to use and the right-hand side is the pattern to match.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=fts-query,indent=0]
+----
+
+In the example above, the pattern to match is a word, the full-text search query matches all documents that contain the word "buy" in the value of the `doc.name` property.
+
+Search is supported for all languages that use whitespace to separate words.
+
+Stemming, which is the process of fuzzy matching parts of speech, like "fast" and "faster", is supported in the following languages: danish, dutch, english, finnish, french, german, hungarian, italian, norwegian, portuguese, romanian, russian, spanish, swedish and turkish.
+
+The pattern to match can also be in the following forms:
+
+prefix queries::
+The query expression used to search for a term prefix is the prefix itself with a "*" character appended to it.
+For example:
++
+....
+"'lin*'"
+-- Query for all documents containing a term with the prefix "lin". This will match
+-- all documents that contain "linux", but also those that contain terms "linear",
+--"linker", "linguistic" and so on.
+....
+
+overriding the property name that is being indexed::
+Normally, a token or token prefix query is matched against the document property specified as the left-hand side of the `match` operator.
+This may be overridden by specifying a property name followed by a ":" character before a basic term query.
+There may be space between the ":" and the term to query for, but not between the property name and the ":" character.
+For example:
++
+....
+'title:linux problems'
+-- Query the database for documents for which the term "linux" appears in
+-- the document title, and the term "problems" appears in either the title
+-- or body of the document.
+....
+
+phrase queries::
+A phrase query is a query that retrieves all documents that contain a nominated set of terms or term prefixes in a specified order with no intervening tokens.
+Phrase queries are specified by enclosing a space separated sequence of terms or term prefixes in double quotes (").
+For example:
++
+....
+"'"linux applications"'"
+-- Query for all documents that contain the phrase "linux applications".
+....
+
+NEAR queries::
+A NEAR query is a query that returns documents that contain a two or more nominated terms or phrases within a specified proximity of each other (by default with 10 or less intervening terms).
+A NEAR query is specified by putting the keyword "NEAR" between two phrase, token or token prefix queries.
+To specify a proximity other than the default, an operator of the form "NEAR/" may be used, where is the maximum number of intervening terms allowed.
+For example:
++
+....
+"'database NEAR/2 "replication"'"
+-- Search for a document that contains the phrase "replication" and the term
+-- "database" with not more than 2 terms separating the two.
+....
+
+AND, OR & NOT query operators::
+The enhanced query syntax supports the AND, OR and NOT binary set operators.
+Each of the two operands to an operator may be a basic FTS query, or the result of another AND, OR or NOT set operation.
+Operators must be entered using capital letters.
+Otherwise, they are interpreted as basic term queries instead of set operators.
+For example:
++
+....
+'couchbase AND database'
+-- Return the set of documents that contain the term "couchbase", and the
+-- term "database". This query will return the document with docid 3 only.
+....
++
+When using the enhanced query syntax, parenthesis may be used to specify the precedence of the various operators.
+For example:
++
+....
+'("couchbase database" OR "sqlite library") AND linux'
+-- Query for the set of documents that contains the term "linux", and at least
+-- one of the phrases "couchbase database" and "sqlite library".
+....
+
+=== Ordering results
+
+It's very common to sort full-text results in descending order of relevance.
+This can be a very difficult heuristic to define, but Couchbase Lite comes with a fairly simple ranking function you can use.
+In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the property or expression being searched, to represent the ranking of the result.
+
+== Replication
+
+include::{root-partials}replication-introduction.adoc[]
+
+=== Compatibility
+
+WARNING: The new protocol is *incompatible* with CouchDB-based databases.
+And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that xref:sync-gateway:ROOT:prodnotes/pn-compatibility.adoc[supports it].
+
+To use this protocol with Couchbase Lite 2.0, the replication URL should specify WebSockets as the URL scheme (see the "Starting a Replication" section below).
+Mobile clients using Couchbase Lite 1.x can continue to use *http* as the URL scheme.
+Sync Gateway 2.0 will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through "http://localhost:4984/db" and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through "ws://localhost:4984/db".
+
+=== Starting Sync Gateway
+
+https://www.couchbase.com/downloads[Download Sync Gateway] and start it from the command line with the configuration file created above.
+
+.Windows
+ powershell & 'C:\Program Files (x86)\Couchbase\sync_gateway.exe' sync-gateway-config.json
+
+.Unix
+ bash ~/Downloads/couchbase-sync-gateway/bin/sync_gateway
+
+For platform specific installation instructions, refer to the Sync Gateway xref:sync-gateway::start/gs-sgw-install.adoc[installation guide].
+
+=== Starting a Replication
+
+Replication objects are now bidirectional, this means you can start a `push`/`pull` replication with a single instance.
+The replication's parameters can be specified through the {url-api-references}/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html[`ReplicatorConfiguration`] object;
+for example, if you wish to start a `push` only or `pull` only replication.
+
+The following example creates a `pull` replication with Sync Gateway.
+
+[source, {source-language}]
+----
+public class MyClass
+{
+    public Database Database { get; set; }
+    public Replicator Replicator { get; set; } // <1>
+
+    public void StartReplication()
+    {
+        var url = new Uri("ws://localhost:4984/db"); // <2>
+        var target = new URLEndpoint(url);
+        var config = new ReplicatorConfiguration(Database, target)
+        {
+            ReplicatorType = ReplicatorType.Pull
+        };
+
+        Replicator = new Replicator(config);
+        Replicator.Start();
+    }
+}
+----
+<1> A replication is an asynchronous operation.
+To keep a reference to the `replicator` object, you can set it as an instance property.
+<2> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
+You should now use `ws:`, or `wss:` for SSL/TLS connections.
+
+include::partial$verify-replication.adoc[]
+
+Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit data.
+Some load balancers are not configured for WebSocket connections by default (NGINX for example);
+so it might be necessary to explicitly enable them in the load balancer's configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
+
+By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
+The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway:ROOT:refer/config-properties.adoc#replicator_compression[`replicator_compression`]).
+
+==== Replication Ordering
+
+To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
+So we don't recommend to rely on that when using the replication or database change listeners for example.
+
+=== Troubleshooting
+
+As always, when there is a problem with replication, logging is your friend.
+The following example increases the log output for activity related to replication with Sync Gateway.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=replication-logging,indent=0]
+----
+
+=== Authentication
+
+By default, Sync Gateway does not enable authentication.
+This is to make it easier to get up and running with synchronization.
+You can enable authentication with the following properties in the configuration file:
+
+[source,json]
+----
+{
+  "databases": {
+    "mydatabase": {
+      "users": {
+        "GUEST": {"disabled": true}
+      }
+    }
+  }
+}
+----
+
+To authenticate with Sync Gateway, an associated user must first be created.
+Sync Gateway users can be created through the xref:sync-gateway:ROOT:refer/rest-api-admin.adoc#/user/post\__db___user_[`+POST /{tkn-db}/_user+`] endpoint on the Admin REST API.
+Provided that the user exists on Sync Gateway, there are two ways to authenticate from a Couchbase Lite client: Basic Authentication or Session Authentication.
+
+==== Basic Authentication
+
+You can provide a user name and password to the basic authenticator class method.
+Under the hood, the replicator will send the credentials in the first request to retrieve a `SyncGatewaySession` cookie and use it for all subsequent requests during the replication.
+This is the recommended way of using basic authentication.
+The following example initiates a one-shot replication as the user *john* with the password *pass*.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=basic-authentication,indent=0]
+----
+
+==== Session Authentication
+
+Session authentication is another way to authenticate with Sync Gateway.
+A user session must first be created through the xref:sync-gateway:ROOT:refer/rest-api-public.adoc#/session/post\__db___session[`+POST /{tkn-db}/_session+`] endpoint on the Public REST API.
+The HTTP response contains a session ID which can then be used to authenticate as the user it was created for.
+The following example initiates a one-shot replication with the session ID that is returned from the `+POST /{tkn-db}/_session+` endpoint.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=session-authentication,indent=0]
+----
+
+=== Replication Status
+
+The `replication.Status.Activity` property can be used to check the status of a replication.
+For example, when the replication is actively transferring data and when it has stopped.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=replication-status,indent=0]
+----
+
+The following table lists the different activity levels in the API and the meaning of each one.
+
+[cols="1,2"]
+|===
+|State |Meaning
+
+|`STOPPED`
+|The replication is finished or hit a fatal error.
+
+|`OFFLINE`
+|The replicator is offline as the remote host is unreachable.
+
+|`CONNECTING`
+|The replicator is connecting to the remote host.
+
+|`IDLE`
+|The replication caught up with all the changes available from the server.
+The `IDLE` state is only used in continuous replications.
+
+|`BUSY`
+|The replication is actively transferring data.
+|===
+
+NOTE: The replication change object also has properties to track the progress (`change.status.completed` and `change.status.total`).
+But since the replication occurs in batches and the total count can vary through the course of a replication, those progress indicators are not very useful from the standpoint of an app user.
+Hence, these should not be used for tracking the actual progress of the replication.
+
+==== Replication Status and App Life Cycle
+
+Couchbase Lite doesn't react to OS backgrounding or foregrounding events and replication(s) will continue running as long as the remote system does not terminate the connection and the app does not terminate.
+It is generally recommended to stop replications before going into the background otherwise socket connections may be closed by the OS and this may interfere with the replication process.
+
+=== Handling Network Errors
+
+If an error occurs, the replication status will be updated with an `Error` which follows the standard HTTP error codes.
+The following example monitors the replication for errors and logs the error code to the console.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=replication-error-handling,indent=0]
+----
+
+When a permanent error occurs (i.e., `404`: not found, `401`: unauthorized), the replicator (continuous or one-shot) will stop permanently.
+If the error is temporary (i.e., waiting for the network to recover), a continuous replication will retry to connect indefinitely and if the replication is one-shot it will retry for a limited number of times.
+The following error codes are considered temporary by the Couchbase Lite replicator and thus will trigger a connection retry.
+
+* `408`: Request Timeout
+* `429`: Too Many Requests
+* `500`: Internal Server Error
+* `502`: Bad Gateway
+* `503`: Service Unavailable
+* `504`: Gateway Timeout
+* `1001`: DNS resolution error
+
+=== Replication Events
+
+include::{root-partials}replication-events.adoc[]
+
+=== Custom Headers
+
+include::{root-partials}replication-custom-header.adoc[]
+
+[source, {source-language}]
+----
+include::{snippet}[tag=replication-custom-header,indent=0]
+----
+
+=== Replication Checkpoint Reset
+
+include::{root-partials}replication-checkpoint.adoc[]
+
+[source, {source-language}]
+----
+include::{snippet}[tag=replication-reset-checkpoint,indent=0]
+----
+
+=== Replication Filters
+
+include::{root-partials}replication-filters.adoc[]
+
+== Handling Conflicts
+
+include::partial$handling-conflicts.adoc[]
+
+== Database Replicas
+
+Database replicas is available in the *Enterprise Edition* only (https://www.couchbase.com/downloads).
+Starting in Couchbase Lite 2.0, replication between two local databases is now supported.
+It allows a Couchbase Lite replicator to store data on secondary storage.
+It would be especially useful in scenarios where a user's device is damaged and the data needs to be moved to a different device.
+Note that the code below won't compile if you're running the *Community Edition* of Couchbase Lite.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=database-replica,indent=0]
+----
+
+== Certificate Pinning
+
+include::partial$::{root-commons}cert-pinning.adoc
+
+== Peer-to-Peer Sync
+
+.Enterprise Edition only
+IMPORTANT: Peer-to-Peer Synchronization is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+You must purchase the Enterprise License which includes official https://www.couchbase.com/support-policy[Couchbase Support] to use it in production (also see the https://www.couchbase.com/licensing-and-support-faq[FAQ]).
+
+Peer-to-Peer Synchronization allows devices running Couchbase Lite to directly sync data with each other.
+As part of this, Couchbase Lite is responsible for storing the data and keeping track of the data exchange, but isn't responsible for the data transfer itself.
+Sending and receiving data must be handled by the platform APIs or a third party framework.
+In this section, we will refer to these third party frameworks as communication frameworks.
+
+On .NET, the https://docs.microsoft.com/en-us/uwp/api/windows.devices.enumeration.devicewatcher[DeviceWatcher], https://docs.microsoft.com/en-us/uwp/api/windows.networking.servicediscovery.dnssd.dnssdserviceinstance[DnssdServiceInstance] and https://docs.microsoft.com/en-us/uwp/api/windows.networking.sockets.streamsocketlistener[StreamSocketListener] APIs would be a good choice for the Communication Framework.
+Those APIs handle sending and receiving messages over WiFi or Bluetooth.
+
+Thus, to enable peer-to-peer sync with Couchbase Lite, the application must use the Communication Framework with Couchbase Lite.
+The following sections describe a typical peer-to-peer workflow.
+Where applicable, we discuss how to integrate Couchbase Lite into the workflow.
+
+In Couchbase Lite, a peer can take on one of these two roles:
+
+Active Peer::
+The peer that initializes the connection and replication (i.e the "client" side).
+Passive Peer::
+The passive side reacts to things that it receives but does not initiate any communication on its own (i.e. the "server" side).
+
+=== Peer Discovery
+
+include::{root-partials}p2p-peer-discovery.adoc[]
+
+=== Peer Selection and Connection Setup
+
+include::{root-partials}p2p-peer-selection.adoc[]
+
+=== Replication Setup
+
+include::{root-partials}p2p-replication-setup.adoc[]
+
+=== Push/Pull Replication
+
+include::{root-partials}p2p-push-pull-repl.adoc[]
+
+=== Connection Teardown
+
+include::{root-partials}p2p-connection-teardown.adoc[]
+
+== Thread Safety
+
+The Couchbase Lite API is thread safe except for calls to mutable objects: `MutableDocument`, `MutableDictionary` and `MutableArray`.

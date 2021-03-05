@@ -1,0 +1,61 @@
+= Build and Run
+:page-aliases: start/clang-gs-build.adoc
+:page-layout: article
+:description: Build and run a starter app to validate your install of Couchbase Lite on C
+:keywords: mobile edge nosql api c web-app device-app
+
+include::partial$_std-cbl-hdr-clang.adoc[]
+
+// include::shared-mobile::partial$_attributes-shared.adoc[]
+// include::ROOT:partial$_page-index.adoc[]
+// include::ROOT:partial$_glossary-links.adoc[]
+// include::ROOT:partial$_attributes-local.adoc[]
+// include::{lang-mod-clang}:partial$_attributes-module.adoc[]
+
+// // BEGIN::Local page attributes
+// :blank-field: ____
+// :lang-title: {lang-title-clang}
+// :module: {lang-mod-clang}
+// :packageNm: couchbase-lite-{module}
+// :source-language: {lang-name-clang}
+// :snippet: {snippets-content--clang}
+// :url-issues: {url-github-cbl}{module}/issues
+
+// END::Local page attributes
+include::{root-partials}block-abstract.adoc[]
+
+
+== Starter code
+
+Open *ViewController.m* in Xcode and copy the following code in the `viewDidLoad` method.
+This snippet demonstrates how to run basic CRUD operations, a simple Query and running bi-directional replications with Sync Gateway.
+
+[source]
+----
+include::{snippet}[tag=getting-started,indent=0]
+----
+
+Build and run.
+You should see the document ID and property printed to the console.
+The document was successfully persisted to the database.
+
+image::getting-started-ios.png[]
+
+Before synchronizing documents to Sync Gateway you will need to disable App Transport Security.
+In the Xcode navigator, right-click on *Info.plist* and open it as a source file.
+
+image::info-plist.png[]
+
+Append the following inside of the `<dict>` XML tags to disable ATS.
+
+[source,xml]
+----
+<key>NSAppTransportSecurity</key>
+<dict>
+<key>NSAllowsArbitraryLoads</key><true/>
+</dict>
+----
+
+See: {xref-sgw-pg-install}
+
+include::{root-partials}block-related-content-start.adoc[]
