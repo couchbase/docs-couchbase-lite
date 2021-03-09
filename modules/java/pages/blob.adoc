@@ -1,0 +1,63 @@
+= Blobs
+:page-aliases: learn/java-blob.adoc
+:page-layout: article
+:page-status:
+:page-edition:
+:page-role:
+:description: Working with Couchbase Lite's data model -- handling data store attachments blobs's
+
+// Define our environment
+include::partial$_std-cbl-hdr-java.adoc[]
+
+:param-abstract!:
+:param-related: {xref-cbl-pg-database} | {xref-cbl-pg-document} | {xref-cbl-pg-indexing}
+:topic-group: Data Model
+include::{root-partials}block-abstract.adoc[]
+
+== What Are Blobs?
+
+We've renamed "attachments" to "blobs".
+The new behavior should be clearer too, as a `Blob` is now a normal object that can appear in a document as a property value.
+
+== Using Blobs
+So to uses a `blob`, you just instantiate it and set it as the value of a property.
+Later you can get the property value, which will be a `Blob` object.
+
+[#add-a-blob]
+.Add a blob to a document
+====
+This example shows code that adds a blob to the document under the `avatar` property.
+
+[source, {source-language}]
+----
+
+include::{snippet}[tags=blob,indent=0]
+
+----
+====
+
+The `Blob` API lets you access the contents as an in-memory byte array (
+`public byte[] getContent()`) or as an `InputStream` (`public InputStream getContentStream()`).
+It also supports an optional `type` property that by convention stores the MIME type of the contents.
+
+In <<add-a-blob>>, "image/jpeg" is the MIME type and "avatar" is the key which references that `Blob`.
+That key can be used to retrieve the `Blob` object at a later time.
+
+== Synchronization Behaviour
+When a document is synchronized, the Couchbase Lite replicator will add an `_attachments` dictionary to the document's properties if it contains a blob.
+
+A random access name will be generated for each `Blob` which is different to the "avatar" key that was used in the example above.
+
+On the image below, the document now contains the `_attachments` dictionary when viewed in the Couchbase Server Admin Console.
+
+image::ROOT:attach-replicated.png[]
+
+This `Blob` can be retrieved on the Sync Gateway REST API at \http://localhost:4984/justdoit/user.david/blob_1.
+Notice that the blob identifier in the URL path is "blob_1" (not "avatar").
+
+== Properties
+A blob also has properties such as `"digest"` (a SHA-1 digest of the data), `"length"` (the length in bytes), and optionally `"content_type"` (the MIME type).
+The data is not stored in the document, but in a separate content-addressable store, indexed by the digest.
+
+
+include::{root-partials}block-related-content-data.adoc[]
