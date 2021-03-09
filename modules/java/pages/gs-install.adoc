@@ -1,0 +1,384 @@
+= Couchbase Lite on Java -- Installing
+:page-aliases: start/java-gs-install.adoc
+:page-layout: article
+:page-status:
+:page-edition:
+:page-role:
+:description: Couchbase Lite on Java -- a framework for developing offline-first Java applications for mobile and edge
+:keywords: mobile edge nosql api Java JVM web-app device-app
+
+include::partial$_std-cbl-hdr-java.adoc[]
+
+:tabs:
+
+
+// DO NOT EDIT
+:param-abstract: This content provides instructions that enable you to deploy Couchbase Lite on {param-name}
+:param-related: {xref-cbl-pg-install} | {xref-cbl-pg-prereqs} | {xref-cbl-pg-build}
+:topic-group:
+include::{root-partials}block-abstract.adoc[]
+// include::{root-partials}block-related-get-started.adoc[]
+// DO NOT EDIT
+
+
+== GET STARTED
+
+Couchbase Lite on Java enables development and deployment of Couchbase Lite applications to a JVM environment.
+You can deploy to a desktop or web server (for example, {gpWebServerEnv}), including embedded {gpWebServerEnv} deployments.
+
+Use this page to familiarize yourself with the product, its components, deployment, and use.
+
+You will learn:
+
+* Where to get the necessary binaries -- <<Where to Get Binaries>>
+* What the binaries contain -- <<Using Downloaded Binaries>>
+* How to deploy {cblJP} -- <<Preparing Your Build Environment>>
+* How to use {cblJP} to create a simple application -- {xref-cbl-pg-build}
+
+NOTE: We use _{gpIDE}_, _{gpBuildTool}_, _Maven_ and _{gpWebServerEnv}_ as tools to build and run the examples presented in this content.
+You are free to use the tools of your choice.
+
+== Where to Get Binaries
+{cblJP} binaries are available for both Community (CE) and Enterprise (EE) editions from the _Maven_ repositories -- see: <<Preparing Your Build Environment>> for how.
+
+Alternatively, you can download a version in `.zip` format -- see: <<Using Downloaded Binaries>> for how.
+
+== Preparing Your Build Environment
+
+=== Prerequisites
+
+* Planning to sync with a {svr}?
++
+You will need to have runnable instances of {svr} and {sg} installed.
+If you have not already done so see <<Preparatory Steps>>
+* Running on Microsoft Windows?
++
+Windows requires {Cpp} runtime installed.
+Please install the Visual {Cpp} Redistribution package from this link:
+https://www.microsoft.com/en-us/download/details.aspx?id=52685
+* Running on Linux?
++
+You must have loaded the shared libraries as described in <<Additional Steps for Linux>>
+
+=== Assumptions
+
+This section shows how to set up and use {cblJP} to build desktop and web applications using {gpBuildTool}, Maven, {gpWebServerEnv} and {gpIDE} Community Edition.
+
+It assumes a familiarity with these products, however you are free to use your own choice of development tools.
+
+The contents of your `build.gradle` file will depend on the type of project you are building, whether you are using Community or Enterprise edition and whether you prefer to use Maven-distributed binaries or a zip download.
+
+TIP: If you wish to use a downloaded zip instead of Maven then see - <<Using Downloaded Binaries>>
+
+NOTE: If you are deploying to Linux, you will need the {cbl} `support` library, which is available _only_ on the zip download distributable -- see <<Additional Steps for Linux>>
+
+anchor:bmkUsingMavenRepos[Using Maven repositories]
+
+=== Defining Dependencies and Repositories
+
+[{tabs}]
+====
+
+Console App Development::
++
+--
+*Steps*
+
+. Create a project folder
+. Initialize it for a Gradle Java application
+. Include the following in the `build.gradle` file:
+
+Community edition::
++
+Compile options
++
+[source,groovy]
+----
+include::partial$gsBuildGradleJava.adoc[tag=compileOptions]
+----
+Dependencies
++
+[source,groovy]
+----
+include::partial$gsBuildGradleJava.adoc[tag=dependenciesCE]
+----
+
+Enterprise Edition::
++
+Compile options
++
+[source,groovy]
+----
+include::partial$gsBuildGradleJava.adoc[tag=compileOptions]
+----
+Dependencies
++
+[source,groovy]
+----
+include::partial$gsBuildGradleJava.adoc[tag=dependencies]
+----
+Repositories
++
+[source,groovy]
+----
+include::partial$gsBuildGradleJava.adoc[tag=repositories]
+----
+
+. Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
++
+TIP: If you don't have auto-import set for Gradle projects, then accept the   *Import Gradle Project* prompt that is displayed bottom-right of the screen
+
++
+Note the Gradle menu at the extreme right of the screen:
++
+
+image::GradleMenuWebApp.png[,300]
+
+
+That's it. You're all set to start building your own {cblJP} applications -- see <<Building a Getting Started App>> for an example of how to do that.
+
+
+.Sample build.gradle content
+
+[source,groovy]
+----
+include::partial$gsBuildGradleJava.adoc[tag=allContent]
+----
+
+--
+
+Web App Development::
++
+--
+
+This section explains how to set-up a build project to create {cblJP} web apps using {gpBuildTool} and {gpIDE}.
+
+*The WebApp Build Environment*
+
+In our examples here we build and deploy web apps using a {gpBuildTool} plugin based on the `com.bmuschko.tomcat` plugin. It provides a simple {gpWebServerEnv} harness that can be used from within {gpIDEce} or the command-line.
+
+Of course if you are using {gpIDEee} you can use its integrated tomcat features to achieve the same results.
+
+For more about this plugin and its use see <<Using the Gradle WebApp Plugin>>
+
+anchor:bmkMultCblJapps[Running multiple {cblJP} web apps]
+*Running multiple {cblJP} web apps*
+Each web application has its own *class loader (WebappX). This loads the classes, jars, and resources found in the application's `WEB-INF/classes` and `WEB-INF/lib` folders, together with any shared jar files from `$CATALINA_BASE/lib` -- see link:https://tomcat.apache.org/tomcat-9.0-doc/class-loader-howto.html[tomcat documentation] for more.
+
+So, if you are running multiple {cbl} web applications, deploy your {cbljp} library `<pathToCbl>/libs` to `$CATALINA_BASE/lib`. This means you do not need to deploy it in each web app and *minimizes the size of each app*.
+
+NOTE:  Configuring {cbl} logging functionality will affect the logging of all web applications as the _common class loader_ shares _{cbl} Console, File_ and _Custom logging functionalities_  across all  web apps.
+
+For information about building a WAR file see <<Deploying a WAR file to tomcat>>
+
+*Prerequisites*
+
+* Ensure your build environment matches the runtime {gpWebServerEnv} environment. Specifically, that the Java and  {gpWebServerEnv} versions are the same.
+* If your {gpWebServerEnv} server runs Linux, declare the _shared libraries_ (`<pathToCbl>/support` --  as discussed in <<bmkLinuxSharedLibs>>) in the `$CATALINA_HOME/bin/setenv.sh` script file.
+* Ensure the {cbl} jars (`<pathToCbl>/lib`) are on the executable path within {gpWebServerEnv} -- see: <<bmkMultCblJapps>>
++
+
+TIP: This also means you should declare the dependencies as `providedCompile` to avoid them being bundled into the `WEB-INF/libs` folder
+
+*Steps*
+
+. Create a project folder and initialize it for a Gradle Java application
++
+[source, bashrc]
+----
+gradle init
+----
+
+. Create your `build.gradle` file, including the following repositories and dependencies:
+
+* For Community edition
++
+[source,groovy,subs=attributes+]
+----
+include::partial$gsBuildGradleJava.adoc[tag=dependenciesCE]
+----
+
+* For Enterprise Edition
++
+[source,groovy]
+
+----
+include::partial$gsBuildGradleJava.adoc[tag=repositories]
+include::partial$gsBuildGradleJava.adoc[tag=dependencies]
+----
+
+. Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
+
++
+TIP: If you don't have auto-import set for Gradle projects, then accept the   *Import Gradle Project* prompt that is displayed bottom-right of the screen
+
++
+Note the Gradle menu at the extreme right of the screen:
++
+
+image::GradleMenuWebApp.png[,300]
+
+If you want to deploy your app to a local tomcat container then see <<Deploying a WAR file to tomcat>>
+
+
+That's it. You're all set to start building your own {cblJP} applications -- see <<Building a Getting Started App>> for an example of how to do that.
+
+.Sample build.gradle content
+
+[source,groovy,subs=attributes+]
+----
+include::{snippet}[tags=GsEmbeddedTomcatBuildGradle,indent=0]
+----
+
+--
+
+====
+
+== SUPPLEMENTARY INFORMATION
+
+=== Preparatory Steps
+
+anchor:bmkSetupSyncAndServer[Setting up Sync Gateway]
+
+*Install {svr} and {sg}*
+
+Before you can run any {cbljp} app you will need to have runnable instances of {svr} and {sg}.
+If you have not already done so:
+
+
+Install _{svr}_ and _{sg}_ -- see {xref-sgw-pg-install}
+
+*Create the Getting Started App Database*
+
+[{orderedList}]
+. Within {svr}, create a bucket named {nmSampleAppDb}
++
+For instructions -- see {xref-sgw-pg-svr-cfg-bmk-createbucket}
++
+[{steps}]
+. Create a RBAC user for {sg}
++
+For instructions -- see {xref-sgw-pg-svr-cfg-bmk-createuser}
+[{steps2}]
+** Set username to `sync-gateway`
+** Set password to `password`
+
+Back to <<Preparing Your Build Environment>>
+
+=== Using Downloaded Binaries
+
+*Package Contents*
+
+The download package contains a license file, jar libraries for the appropriate edition of the {cbl} and a set of Linux _shared libraries_.
+
+Get the download package from the link:{url-downloads-mobile}[{nmCBdwnlds}] page.
+
+* Community Edition -- {packageNmCE}
+* Enterprise Edition -- {packageNmEE}
+
+When unpacked the package contains the following:
+
+* A `lib` folder containing all necessary JAR files:
+** {packageNmCE} or for EE {packageNmEE}
+** okhttp-3.14.7.jar
+** okio-1.17.2.jar
+
+* A `support` folder containing the Linux native libraries:
++
+NOTE: This means you do not need to download and-or build compatible versions of system libraries for the Linux platform of choice.
+
+** `libz` (requires zlib v.1.2.11+)
+** `lib{cpp}` requires libc++ v.3.6.0+)
+** `libicu` (requires ICU4C v.5.4.1+)
+
+Go back to <<GET STARTED>>
+
+*Steps*
+
+. Download the _zip_ file from the link:{url-downloads-mobile}[{nmCBdwnlds}] page.
+. Unpack the downloaded file to a location accessible to -- and usable by -- your chosen *build* environment.
++
+We'll refer to that location -- `<your dir>/{packageNmCE}` -- as the `<pathToCbl>`.
+
+. Include the following dependency in your `build.gradle` file, you can remove any {cbl} Maven references:
++
+----
+Dependencies {
+  implementation fileTree(include: ['*.jar'], dir: <pathToCbl>/lib>
+}
+----
+
+Where <pathToCbl> is the location of the downloaded {cbl} library.
+
+.Sample build gradle
+----
+include::{snippet}[tags=GsWebAppBuildGradle,indent=0]
+----
+
+Back to <<Preparing Your Build Environment>>
+
+=== Additional Steps for Linux
+
+== Using Native Libraries for Linux
+
+include::partial$gs-additional-steps-for-linux.adoc[]
+
+Back to <<Preparing Your Build Environment>>
+
+=== Using the Gradle WebApp Plugin
+
+The simplest way to build and deploy your {cblJP} web app is to use a {gpBuildTool} plugin that provides a simple {gpWebServerEnv} harness.
+
+Our examples are based on the `com.bmuschko.tomcat` plugin -- see https://github.com/bmuschko/gradle-tomcat-plugin[com.bmuschko.tomcat on Github].
+
+Including the plugin in your `build.gradle` file make a number of tomcat tasks available to you. View them using:
+
+[source, bashrc]
+
+----
+./gradlew tasks
+----
+
+This shows that the following web application tasks are now available:
+
+** `tomcatJasper` - Runs the JSP compiler and turns JSP pages into Java source.
+** `tomcatRun` - Uses your files as and where they are and deploys them to Tomcat.
+** `tomcatRunWar` - Assembles the web app into a war and deploys it to Tomcat.
+** `tomcatStop` - Stops Tomcat.
+
+So, to run the app use:
+
+----
+tomcatRun
+----
+
+Back to <<Preparing Your Build Environment>>
+
+=== Deploying a WAR file to tomcat
+
+If you want to deploy your web app to a local Tomcat instance then you will need to generate a WAR file.
+However, you should note that when creating a war file, if you use the `implementation` dependency type then your _Couchbase Lite_ jar files will be bundled into WEB-INF/lib of the web application.
+To exclude Couchbase Lite jar files from getting bundled and to use Couchbase Lite in multiple web applications, change the dependency type from *`implementation`* to *`providedCompile`*
+
+. You can do this using the Gradle command below from within your project folder:
+[source, bashrc]
++
+----
+./gradlew war
+----
++
+NOTE:  The generated war file will be at <PROJECT ROOT>/build/libs.
+
+
+. Deploy the war file to Tomcat, by copying it to $CATALINA_BASE/webapps
++
+TIP: You can also use Tomcat’s Manager App to deploy the war file -- see link:https://tomcat.apache.org/tomcat-9.0-doc/manager-howto.html[tomcat's Manager App] documentation for more detail.
+
+. To use common class loader approach to load Couchbase Lite libraries, copy all of the Couchbase Lite jar files in $CATALINA_BASE/lib.
++
+NOTE: For linux platform see also -- <<Additional Steps for Linux>>
+
+Back to <<Preparing Your Build Environment>>
+
+
+include::{root-partials}block-related-content-start.adoc[]

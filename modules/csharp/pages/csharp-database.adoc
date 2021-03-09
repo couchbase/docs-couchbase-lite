@@ -1,0 +1,75 @@
+= Working with Databases -- Data Model
+:page-aliases: learn/csharp-database.adoc
+:page-layout: article
+:page-status:
+:page-edition:
+:page-role:
+:description: Working with Couchbase Lite Databases
+
+include::partial$_std-cbl-hdr-csharp.adoc[]
+
+:param-related: {xref-cbl-pg-blob} | {xref-cbl-pg-document} | {xref-cbl-pg-indexing} |
+:topic-group: Topic Group -- Data Model
+include::{root-partials}block-abstract.adoc[]
+
+
+== New Database
+
+As the top-level entity in the API, new databases can be created using the `Database` class by passing in a name, configuration, or both.
+The following example creates a database using the `Database(string name)` method.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=new-database,indent=0]
+----
+
+Just as before, the database will be created in a default location.
+Alternatively, the `Database(string name, DatabaseConfiguration config)` initializer can be used to provide specific options in the {url-api-references}/api/Couchbase.Lite.DatabaseConfiguration.html[`DatabaseConfiguration`] object such as the database directory.
+
+== Database Encryption
+
+// .Enterprise Edition only
+// IMPORTANT: Database encryption is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+
+// The Couchbase Lite 2.1 release includes the ability to encrypt Couchbase Lite databases.
+// This allows mobile applications to secure the data at rest, when it is being stored on the device.
+// The algorithm used to encrypt the database is 256-bit AES.
+:param-language: {param-name}
+include::{root-partials}database-encryption.adoc[]
+
+== Finding a Database File
+
+Where a database goes by default depends on the platform it is running on.
+Here are the defaults for each platform:
+
+* .NET Core: `Path.Combine(AppContext.BaseDirectory, "CouchbaseLite")` (unless the app context is altered [e.g. by XUnit], this will be the same directory as the output binary)
+* UWP: `Windows.Storage.ApplicationData.Current.LocalFolder.Path` (Inside the installed app sandbox.
+Note that this sandbox gets deleted sometimes when debugging from inside Visual Studio when the app is shutdown)
+* Xamarin iOS: In a folder named CouchbaseLite inside of `ApplicationSupportDirectory` (this can be retrieved more easily from the simulator using the https://simpholders.com/3/[SimPholders] utility)
+* Xamarin Android: Using the `Context` passed in the `Activate()` method, `Context.FilesDir.AbsolutePath` (database can be retrieved using adb)
+
+== CLI tool
+
+include::{root-partials}cli-tool.adoc[]
+
+== Logging
+
+If you are using a Couchbase Lite release prior to 2.5 see <<Logging functionality prior to Release 2.5, Deprecated functionality>>
+
+include::partial$logging.adoc[leveloffset=+2]
+
+=== Logging functionality prior to Release 2.5
+
+include::{root-partials}logging-pre2.5.adoc[]
+
+[source, {source-language}]
+
+----
+include::{snippet}[tags=logging,indent=0]
+----
+
+// == Loading a pre-built database
+
+// include::{root-partials}database-load-prebuilt.adoc[]
+
+include::{root-partials}block-related-content-std.adoc[]
