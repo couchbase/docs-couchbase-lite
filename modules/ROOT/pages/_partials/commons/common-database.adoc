@@ -60,6 +60,17 @@ Alternatively, the `Database(string name, DatabaseConfiguration config)` initial
 <.> Here we are specifying the database directory path.
 ====
 
+* Remember that:
+** Opening (or creating) a database is asynchronous.
+** Closing a database is a *synchronous* operation, it is effective immediately
+
+[NOTE]
+--
+You cannot close a database that is not fully open.
+
+So issuing a close immediately after initiating an open/create, may result in an error if that process has not completed.
+--
+
 == Database Encryption
 // tag::database-encryption[]
 include::{root-partials}_block-caveats.adoc[tag=ee-only-feature]
