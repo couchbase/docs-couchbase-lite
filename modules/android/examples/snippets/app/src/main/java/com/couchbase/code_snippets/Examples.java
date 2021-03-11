@@ -222,6 +222,11 @@ public class Examples {
     Database database = new Database("my-database", config);
     // end::new-database[]
 
+    // tag::close-database[]
+    database.close()
+
+    // end::close-database[]
+
     database.delete();
   }
 
@@ -256,6 +261,10 @@ public class Examples {
           Database.log.getConsole().setDomain(LogDomain.ALL_DOMAINS);  // <.>
           Database.log.getConsole().setLevel(LogLevel.VERBOSE); // <.>
       // end::console-logging[]
+      // tag::console-logging-db[]
+          Database.log.getConsole().setDomain(LogDomain.DATABASE);
+
+      // end::console-logging-db[]
     }
 
     // ### File logging
@@ -531,7 +540,7 @@ public class Examples {
 
             // Adds a query change listener.
             // Changes will be posted on the main queue.
-            ListenerToken token = query.addChangeListener(change -> {
+            ListenerToken token = query.addChangeListener(change -> { // <.>
                 for (Result result : change.getResults()) {
                     Log.d(TAG, "results: " + result.getKeys());
                     /* Update UI */
@@ -539,11 +548,12 @@ public class Examples {
             });
 
             // Start live query.
-            query.execute(); // <1>
+            query.execute(); // <.>
             // end::live-query[]
 
             // tag::stop-live-query[]
-            query.removeChangeListener(token);
+            query.removeChangeListener(token); // <.>
+
             // end::stop-live-query[]
 
             ResultSet rs = query.execute();

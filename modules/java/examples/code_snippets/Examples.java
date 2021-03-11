@@ -733,8 +733,14 @@ apply plugin: 'java'
         Database database = new Database(DB_NAME, config);
         // end::new-database[]
 
+
         database.delete();
-    }
+      }
+
+      // tag::close-database[]
+      database.close()
+
+      // end::close-database[]
 
     // ### Database Encryption
     public void testDatabaseEncryption() throws CouchbaseLiteException {
@@ -771,6 +777,11 @@ apply plugin: 'java'
           Database.log.getConsole().setLevel(LogLevel.VERBOSE); // <.>
 
       // end::console-logging[]
+
+      // tag::console-logging-db[]
+      Database.log.getConsole().setDomain(LogDomain.DATABASE);
+
+  // end::console-logging-db[]
     }
 
 
@@ -1020,7 +1031,7 @@ apply plugin: 'java'
 
             // Adds a query change listener.
             // Changes will be posted on the main queue.
-            ListenerToken token = query.addChangeListener(change -> {
+            ListenerToken token = query.addChangeListener(change -> { // <.>
                 for (Result result : change.getResults()) {
                     Log.d(TAG, "results: " + result.getKeys());
                     /* Update UI */
@@ -1032,7 +1043,7 @@ apply plugin: 'java'
             // end::live-query[]
 
             // tag::stop-live-query[]
-            query.removeChangeListener(token);
+            query.removeChangeListener(token); // <.>
             // end::stop-live-query[]
 
             for (Result result : query.execute()) {
