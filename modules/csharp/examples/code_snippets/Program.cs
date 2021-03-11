@@ -400,6 +400,14 @@ namespace api_walkthrough
             _Database = db;
         }
 
+        private static void CloseDatabase()
+        {
+          // tag::close-database[]
+          database.close()
+
+          // end::close-database[]
+        }
+
         private static void ChangeLogging()
         {
             // tag::logging[]
@@ -598,7 +606,7 @@ namespace api_walkthrough
 
             // Adds a query change listener.
             // Changes will be posted on the main queue.
-            var token = query.AddChangeListener((sender, args) =>
+            var token = query.AddChangeListener((sender, args) => // <.>
             {
                 var allResult = args.Results.AllResults();
                 foreach (var result in allResult) {
@@ -981,6 +989,11 @@ var query =
             Database.Log.Console.LogLevel = LogLevel.Verbose; // <.>
 
             // end::console-logging[]
+
+            // tag::console-logging-db[]
+            Database.Log.Console.Domains = LogDomain.Database;
+
+            // end::console-logging-db[]
         }
 
         private static void FileLogging()

@@ -7,6 +7,9 @@ include::{root-partials}_set-platform.adoc[]
 :topic-group: Topic Group -- Data Model
 include::{root-partials}block-abstract.adoc[]
 
+:fn-2-8: footnote:fn28[Commencing with Release 2.8]
+:fnref-2-8: footnote:fn28[]
+
 // BEGIN: Conditional Block -- applies to Android and JVM Java
 ifdef::is-android,is-java[]
 // Output block only for Android and Java modules
@@ -26,27 +29,35 @@ include::{snippet}[tag=sdk-initializer,indent=0]
 endif::[]
 // END: Conditional Block -- applies to Android and JVM Java
 
-// == Default Database Location
-// By default, _Couchbase Lite on {param-title}_ creates databases in the following path location shown in <<default-path>>.
-
-// [#default-path]
-// .Default database path
-// ====
-// [source, {console}]
-// ----
-// <root dir>/.couchbase/<db name>.cblite // <.>
-// ----
-
-// ifdef::is-java[<.> Where the <root dir> is the directory in which JVM was started.]
-// ifdef::is-android[<.> Where the <root dir> can be identified using `context.getFilesDir()`]
-
-// ====
-
 [#open-db]
-== New Database
-As the top-level entity in the API, new databases can be created using the `Database` class by passing in a name, configuration, or both.
-The following example opens, or creates, a database using the `Database(String name, DatabaseConfiguration config)` method.
+== Create or Open Database
 
+You can create a new database and-or open and existing database, using the {url-api-class-database} class.
+Just pass in a database name and optionally a {url-api-class-databasecfg} -- see <<ex-dbopen>>.
+
+Things to watch for include:
+
+* Opening/Creating a database is an asynchronous process
+* If the named database does not exist in the specified, or default, location then a new one is created
+* The database is created in a default location unless you  specify a directory for it -- see: {url-api-class-databasecfg} and {url-api-method-databasecfg-setdir}
++
+--
+TIP: Best Practice is to always specify the path to the database explicitly.
+
+Typically, the default location for {param-title} is
+ifndef::is-csharp[]
+the application sandbox.
+endif::[]
+ifdef::is-csharp[]
+a platform-dependant location:
+
+include::{module-partials}database-finding-file.adoc[tags=list-only]
+endif::[]
+
+See also <<lbl-find-db-loc>>.
+--
+
+[#ex-dbopen]
 .Open or create a database
 ====
 [source, {source-language}]
@@ -54,101 +65,92 @@ The following example opens, or creates, a database using the `Database(String n
 include::{snippet}[tag=new-database,indent=0]
 ----
 
-Just as before, the database will be created in a default location.
-Alternatively, the `Database(string name, DatabaseConfiguration config)` initializer can be used to provide specific options in the {url-api-references}/com/couchbase/lite/DatabaseConfiguration.html[`DatabaseConfiguration`] object.
-
 <.> Here we are specifying the database directory path.
+
 ====
 
-* Remember that:
-** Opening (or creating) a database is asynchronous.
-** Closing a database is a *synchronous* operation, it is effective immediately
+== Close Database
+You are advised to incorporate the closing of all open databases into your application workflow.
 
-[NOTE]
---
-You cannot close a database that is not fully open.
+Closing a database is a simple, just use {url-api-method-database-close} -- see: <<ex-dbclose>>. +
+However, there are a number of things to be aware of:
 
+* Closing a database is a *synchronous* operation, it is effective immediately
+* You cannot close a database that is not open. +
+Remember that opening (or creating) a database is asynchronous.
 So issuing a close immediately after initiating an open/create, may result in an error if that process has not completed.
+
+* Closing a database {fn-2-8} also closes any active replications, listeners and-or live queries attached to the database. +
+Closing a database immediately after kicking-off a replication could cause the sync to generate an exception. +
+For example: +
+`IllegalStateException: Attempt to perform an operation on a closed database`
+
+.Safely Closing a Database pre 2.8
+[TIP]
+--
+. Stop any active live queries -- by removing the query's change listener
+. Remove any active replication change listeners
+. Stop any active replications -- this is an asynchronous operation
+. Wait for all active replications to fully stop -- for this you can monitor the replication status -- see: {xref-cbl-pg-replication--monitor-status}.
+. Finally, close the database
+
 --
 
-== Database Encryption
-// tag::database-encryption[]
-include::{root-partials}_block-caveats.adoc[tag=ee-only-feature]
-
-_Couchbase Lite on {param-title}_ includes the ability to encrypt Couchbase Lite databases.
-This allows mobile applications to secure the data at rest, when it is being stored on the device.
-The algorithm used to encrypt the database is 256-bit AES.
-
-To enable encryption, you must set the `DatabaseConfiguration.encryptionKey` property to the encryption key of your choice.
-Provide this encryption key every time the database is opened.
-
-.Database encryption
+[#ex-dbclose]
+.Close a Database
 ====
 [source, {source-language}]
 ----
-include::{snippet}[tag=database-encryption,indent=0]
+include::{snippet}[tag=close-database,indent=0]
 ----
+
 ====
 
-Couchbase Lite does not persist the key.
-It is the application's responsibility to manage the key and store it in a platform specific secure store such as Apple's https://developer.apple.com/documentation/security/keychain_services[Keychain] or Android's https://developer.android.com/training/articles/keystore[Keystore].
+== Database Encryption
 
-An encrypted database can only be opened with the same language SDK that was used to encrypt it in the first place.
-So a database encrypted using the Swift SDK, and then exported, is readable only by the Swift SDK.
+:param-language: {param-name}
+include::{root-partials}database-encryption.adoc[]
 
-=== Upgrading from 1.x when Encryption is Enabled
 
-If you're migrating an application from Couchbase Lite 1.x to 2.x, note that the <<database-upgrade,automatic database upgrade>> functionality is *not supported* for encrypted databases.
-Thus, to upgrade an encrypted 1.x database, you should do the following:
-
-// set the correct language name for 1.4 pages
-ifeval::["{param-name}"=="{lang-name-android}"]
-:param-language: {lang-name-java}
-endif::[]
-. Disable encryption using the Couchbase Lite 1.x framework (see https://docs-archive.couchbase.com/couchbase-lite/1.4/{param-name}.html#database-encryption[1.x encryption guide])
-. Open the database file with encryption enabled using the Couchbase Lite 2.x framework.
-
-Since it is not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in the same application this upgrade path would require two successive upgrades.
-If you are using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.
-
-// end::database-encryption[]
-
+[#lbl-find-db-loc]
 == Finding a Database File
 
-include::{module-partials}database-finding-file.adoc[]
+:tags: {empty}
+ifdef::is-csharp[]
+:tags: "tags=list-only"
+endif::[]
+
+include::{module-partials}database-finding-file.adoc[{tags}]
 
 
 [#cli-tool]
 == Command Line Tool
 
 // tag::cli-tool[]
-
-`cblite` is a command-line tool for inspecting and querying Couchbase Lite 2.x databases.
-
-You can download and build it from the couchbaselabs https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md[GitHub repository].
-
-NOTE: The `cblite` tool is not covered under the  https://www.couchbase.com/support-policy[Couchbase Support Policy].
+include::{root-partials}cli-tool.adoc[]
 
 // end::cli-tool[]
 
-== Logging
+== Troubleshooting
+You should use Couchbase's console logs as your first source of diagnostic information.
+If the information in the default logging level is insufficient you can focus it on database errors and generate more verbose messages -- see: <<ex-logdb>>.
 
-If you are using a Couchbase Lite release prior to 2.5 see <<pre-2x5-logging, Deprecated functionality>>
+For more on using Couchbase logs -- see: {xref-cbl-pg-troubleshooting-logs}.
 
-include::{root-commons}logging.adoc[leveloffset=+2]
+[#ex-logdb]
+.Increase Level of Database Log Messages
+====
+[source, {source-language}]
+----
+include::{snippet}[tag=console-logging-db, indent=0]
 
-[#pre-2x5-logging]
-=== Logging functionality prior to Release 2.5
+----
+====
 
-include::{root-partials}logging-pre2.5.adoc[]
-
-
-// == Loading a pre-built database
-
-// include::{root-partials}database-load-prebuilt.adoc[]
 
 // DO NOT DELETE
-// Include standard footer
+// Include standard
+
 include::{root-partials}block-related-content-std.adoc[]
 // DO NOT DELETE
 

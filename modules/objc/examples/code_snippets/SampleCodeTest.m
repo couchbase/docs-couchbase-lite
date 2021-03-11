@@ -140,6 +140,13 @@
         NSLog(@"Cannot open the database: %@", error);
     }
     // end::new-database[]
+
+    // tag::close-database[]
+    tbd
+
+    // end::close-database[]
+
+
 }
 
 #if COUCHBASE_ENTERPRISE
@@ -170,6 +177,11 @@
     CBLDatabase.log.console.level = kCBLLogLevelVerbose; // <.>
 
     // end::console-logging[]
+
+    // tag::console-logging-db[]
+    CBLDatabase.log.console.domains = kCBLLogDomainAll;
+
+    // end::console-logging-db[]
 }
 
 - (void) dontTestFileLogging {
@@ -385,7 +397,7 @@
 
     // Adds a query change listener.
     // Changes will be posted on the main queue.
-    id<CBLListenerToken> token = [query addChangeListener:^(CBLQueryChange * _Nonnull change) {
+    id<CBLListenerToken> token = [query addChangeListener:^(CBLQueryChange * _Nonnull change) // <.>{
         for (CBLQueryResultSet *result in [change results]) {
             NSLog(@"%@", result);
             /* Update UI */
@@ -393,11 +405,11 @@
     }];
 
     // Start live query.
-    [query execute: &error]; // <1>
+    [query execute: &error]; // <.>
     // end::live-query[]
 
     // tag::stop-live-query[]
-    [query removeChangeListenerWithToken:token];
+    [query removeChangeListenerWithToken:token]; // <.>
     // end::stop-live-query[]
 }
 

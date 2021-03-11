@@ -34,18 +34,18 @@ ifeval::["{param-platform}"=="{platform-net}"]
 :logging-classes: {url-api-class-logging}
 endif::[]
 
-ifdef::is-android[]
 .Constraints
-endif::[]
-
 [NOTE]
 --
-The retrieval of logs from the device is out of scope of this feature.
-
 ifdef::is-android[]
-The value returned by `LogLevel.getValue()` is not the Android log level.
+* The value returned by `LogLevel.getValue()` is not the Android log level.
 Do not use this API call.
 endif::[]
+
+* The retrieval of logs from the device is out of scope of this feature.
+* This content applies to the post 2.5 versions.
+If you are using a Couchbase Lite release prior to 2.5 see <<pre-2x5-logging, Deprecated functionality>>
+
 --
 
 
@@ -265,6 +265,12 @@ $ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
 --
 ====
 =====
+
+[#pre-2x5-logging]
+=== Logging functionality prior to Release 2.5
+
+include::{root-partials}logging-pre2.5.adoc[]
+
 
 // Begin - Output related content unless this inclusion is used as part of an encompassing page
 ifdef::param-fullpage[]
