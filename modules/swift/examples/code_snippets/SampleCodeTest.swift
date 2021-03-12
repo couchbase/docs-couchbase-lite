@@ -39,6 +39,15 @@ class SampleCodeTest {
             print(error)
         }
         // end::new-database[]
+
+        // tag::close-database[]
+        do {
+            try userDb.close()
+        }
+
+        // end::close-database[]
+
+
     }
 
     #if COUCHBASE_ENTERPRISE
@@ -64,6 +73,11 @@ class SampleCodeTest {
         Database.log.console.level = .verbose // <.>
 
         // end::console-logging[]
+        // tag::console-logging-db[]
+
+        Database.log.console.domains = .database
+
+        // end::console-logging-db[]
     }
 
     func dontTestFileLogging() throws {
@@ -282,7 +296,7 @@ class SampleCodeTest {
 
         // Adds a query change listener.
         // Changes will be posted on the main queue.
-        let token = query.addChangeListener { (change) in
+        let token = query.addChangeListener { (change) in // <.>
             for result in change.results! {
                 print(result.keys)
                 /* Update UI */
@@ -290,11 +304,12 @@ class SampleCodeTest {
         }
 
         // Start live query.
-        query.execute(); // <1>
+        query.execute(); // <.>
         // end::live-query[]
 
         // tag::stop-live-query[]
-        query.removeChangeListener(withToken: token)
+        query.removeChangeListener(withToken: token) // <.>
+
         // end::stop-live-query[]
 
         print("\(query)")

@@ -7,15 +7,26 @@
 //    {root-commons}sgw-replication.adoc
 //  ####
 
+In this section::
+<<lbl-repl-chng>>  |  <<lbl-repl-status>>  |  <<lbl-repl-evnts>> | <<lbl-repl-pend>>
+
+You can monitor a replication’s status by using a combination of <<lbl-repl-chng>> and the `replication.status.activity` property -- see; {url-api-enum-replicator-activity}.
+This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
+
+You can also choose to monitor document changes -- see: <<lbl-repl-evnts>>.
+
 [#lbl-repl-chng]
 == Change Listeners
+Use this to monitor changes and to inform on sync progress; this is an optional step.
 
-TIP: You should register the listener before starting your replication, to avoid having to do a restart to activate it.
+.Best Practice
+TIP: You should register the listener before starting your replication, to avoid having to do a restart to activate it ... and don't forget to save the token so you can remove the listener later
 
 Use the {url-api-class-replicator} class to add a change listener as a callback to the Replicator ({url-api-method-replicator-add-change-listener}) -- see: <<ex-repl-mon>>.
 You will then be asynchronously notified of state changes.
 
-Use this to monitor changes and to inform on sync progress; this is an optional step.
+Remove your change listener before stopping the replicator -- use the {url-api-method-replicator-rmv-change-listener} method to do this.
+
 
 [#lbl-repl-status]
 == Replicator Status
@@ -32,7 +43,6 @@ The returned _ReplicationStatus_ structure comprises:
 ** completed -- the total number of changes completed
 ** total -- the total number of changes to be processed
 * {url-api-enum-replicator-error} -- the current error, if any
-
 
 // Example 8
 [[ex-repl-mon]]
@@ -162,7 +172,6 @@ This can be very useful in tracking the progress of a push sync, enabling the ap
 include::{snippet}[tags=replication-pendingdocuments, indent=0]
 
 ----
-
 <.> {url-api-method-replicator-getPendingDocumentIds} returns a list of the document IDs for all documents waiting to be pushed.
 This is a snapshot and may have changed by the time the response is received and processed.
 

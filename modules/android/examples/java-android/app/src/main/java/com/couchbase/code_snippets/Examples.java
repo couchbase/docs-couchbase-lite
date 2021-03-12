@@ -1,764 +1,250 @@
-package com.couchbase.examples;
+//
+// Copyright (c) 2019 Couchbase, Inc All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+package com.couchbase.code_snippets;
 
-import com.couchbase.lite.*;
-
-import java.net.URI;
-
-public class Examples {
-
-// tag::getting-started[]
-import com.couchbase.lite.*;
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
-public class GettingStarted {
+import com.couchbase.lite.ArrayFunction;
+import com.couchbase.lite.BasicAuthenticator;
+import com.couchbase.lite.Blob;
+import com.couchbase.lite.Conflict;
+import com.couchbase.lite.ConflictResolver;
+import com.couchbase.lite.CouchbaseLite;
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.DataSource;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.DatabaseConfiguration;
+import com.couchbase.lite.DatabaseEndpoint;
+import com.couchbase.lite.Dictionary;
+import com.couchbase.lite.Document;
+import com.couchbase.lite.DocumentFlag;
+import com.couchbase.lite.EncryptionKey;
+import com.couchbase.lite.Endpoint;
+import com.couchbase.lite.Expression;
+import com.couchbase.lite.FullTextExpression;
+import com.couchbase.lite.FullTextIndexItem;
+import com.couchbase.lite.Function;
+import com.couchbase.lite.IndexBuilder;
+import com.couchbase.lite.Join;
+import com.couchbase.lite.ListenerToken;
+import com.couchbase.lite.LogDomain;
+import com.couchbase.lite.LogFileConfiguration;
+import com.couchbase.lite.LogLevel;
+import com.couchbase.lite.Logger;
+import com.couchbase.lite.Message;
+import com.couchbase.lite.MessageEndpoint;
+import com.couchbase.lite.MessageEndpointConnection;
+import com.couchbase.lite.MessageEndpointDelegate;
+import com.couchbase.lite.MessageEndpointListener;
+import com.couchbase.lite.MessageEndpointListenerConfiguration;
+import com.couchbase.lite.MessagingCloseCompletion;
+import com.couchbase.lite.MessagingCompletion;
+import com.couchbase.lite.Meta;
+import com.couchbase.lite.MutableDictionary;
+import com.couchbase.lite.MutableDocument;
+import com.couchbase.lite.Ordering;
+import com.couchbase.lite.PredictionFunction;
+import com.couchbase.lite.PredictiveIndex;
+import com.couchbase.lite.PredictiveModel;
+import com.couchbase.lite.ProtocolType;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.ReplicatedDocument;
+import com.couchbase.lite.Replicator;
+import com.couchbase.lite.ReplicatorConfiguration;
+import com.couchbase.lite.ReplicatorConnection;
+import com.couchbase.lite.Result;
+import com.couchbase.lite.ResultSet;
+import com.couchbase.lite.SelectResult;
+import com.couchbase.lite.SessionAuthenticator;
+import com.couchbase.lite.URLEndpoint;
+import com.couchbase.lite.ValueIndex;
+import com.couchbase.lite.ValueIndexItem;
+import com.couchbase.lite.Where;
 
-private static final String DB_NAME = "getting-started";
-/*      Credentials declared this way purely for expediency in this demo - use OAUTH in production code */
-private static final String DB_USER = "sync_gateway";
-private static final String DB_PASS = "password"; // <3>
-//    private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/db" + DB_NAME;
-private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/getting-started"; // <1>
-private static final String DB_PATH = new File("").getAbsolutePath()+"/resources";
+// tag::example-app[]
+public class Examples {
+  private static final String TAG = "EXAMPLE";
 
+  private static final String DATABASE_NAME = "database";
 
-public static void main (String [] args) throws CouchbaseLiteException, InterruptedException, URISyntaxException {
-    Random RANDOM = new Random();
-    int randPtrLang = RANDOM.nextInt(5) ;
-    int randPtrType = RANDOM.nextInt(5) ;
-    int numRows = 0;
+  private final Context context;
+  private Database database;
+  private Replicator replicator;
 
-    Double randVn = RANDOM.nextDouble() + 1;
+  public Examples(Context context) { this.context = context; }
 
-    List<String> listLangs = new ArrayList<String> (Arrays.asList("Java","Swift","C#.Net","Objective-C","C++","Cobol"));
-//        List<String> listTypes = new ArrayList<String>();
-    List<String> listTypes = new ArrayList<String> (Arrays.asList("SDK","API","Framework","Methodology","Language","IDE"));
+  //@Test
+  public void testGettingStarted() throws CouchbaseLiteException, URISyntaxException {
+    // tag::getting-started[]
 
-    String Prop_Id ="id";
-    String Prop_Language = "language";
-    String Prop_Type = "type";
-    String Prop_Version = "version";
-    String searchStringType = "SDK";
-    String dirPath = new File("").getAbsolutePath()+"/resources";
-
-
-    // Initialize Couchbase Lite
-    CouchbaseLite.init(); // <2>
+    // Initialize the Couchbase Lite system
+    CouchbaseLite.init(context);
 
     // Get the database (and create it if it doesn’t exist).
     DatabaseConfiguration config = new DatabaseConfiguration();
 
-    config.setDirectory(context.getFilesDir().getAbsolutePath()); // <5>
+    config.setDirectory(context.getFilesDir().getAbsolutePath());
 
-    config.setEncryptionKey(new EncryptionKey(DB_PASS)); // <3>
-    Database database = new Database(DB_NAME, config);
+    Database database = new Database("getting-started", config);
+
 
     // Create a new document (i.e. a record) in the database.
     MutableDocument mutableDoc = new MutableDocument()
-            .setDouble(Prop_Version, randVn)
-            .setString(Prop_Type,listTypes.get(randPtrType));
+    .setFloat("version", 2.0F)
+    .setString("type", "SDK");
 
     // Save it to the database.
     database.save(mutableDoc);
 
     // Update a document.
     mutableDoc = database.getDocument(mutableDoc.getId()).toMutable();
-    mutableDoc.setString(Prop_Language, listLangs.get(randPtrLang));
+    mutableDoc.setString("language", "Java");
     database.save(mutableDoc);
-
     Document document = database.getDocument(mutableDoc.getId());
     // Log the document ID (generated by the database) and properties
-    System.out.println("Document ID is :: " + document.getId());
-    System.out.println("Learning " + document.getString(Prop_Language));
+    Log.i(TAG, "Document ID :: " + document.getId());
+    Log.i(TAG, "Learning " + document.getString("language"));
 
     // Create a query to fetch documents of type SDK.
-    System.out.println("== Executing Query 1");
     Query query = QueryBuilder.select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(Expression.property(Prop_Type).equalTo(Expression.string(searchStringType)));
+    .from(DataSource.database(database))
+    .where(Expression.property("type").equalTo(Expression.string("SDK")));
     ResultSet result = query.execute();
-    System.out.println(String.format("Query returned %d rows of type %s", result.allResults().size(), searchStringType));
+    Log.i(TAG, "Number of rows ::  " + result.allResults().size());
 
-    // Create a query to fetch all documents.
-    System.out.println("== Executing Query 2");
-    Query queryAll = QueryBuilder.select(SelectResult.expression(Meta.id),
-            SelectResult.property(Prop_Language),
-            SelectResult.property(Prop_Version),
-            SelectResult.property(Prop_Type))
-        .from(DataSource.database(database));
-        try {
-            for (Result thisDoc : queryAll.execute()) {
-              numRows++;
-              System.out.println(String.format("%d ... Id: %s is learning: %s version: %.2f type is %s",
-                  numRows,
-                  thisDoc.getString(Prop_Id),
-                  thisDoc.getString(Prop_Language),
-                  thisDoc.getDouble(Prop_Version),
-                  thisDoc.getString(Prop_Type)));
-              }
-        } catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-        }
-    System.out.println(String.format("Total rows returned by query = %d", numRows));
-
-    Endpoint targetEndpoint = new URLEndpoint(new URI(SYNC_GATEWAY_URL));
+    // Create replicators to push and pull changes to and from the cloud.
+    Endpoint targetEndpoint = new URLEndpoint(new URI("ws://localhost:4984/getting-started-db"));
     ReplicatorConfiguration replConfig = new ReplicatorConfiguration(database, targetEndpoint);
     replConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
 
     // Add authentication.
-    replConfig.setAuthenticator(new BasicAuthenticator(DB_USER, DB_PASS));
+    replConfig.setAuthenticator(new BasicAuthenticator("sync-gateway", "password"));
 
     // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
     Replicator replicator = new Replicator(replConfig);
 
     // Listen to replicator change events.
     replicator.addChangeListener(change -> {
-        if (change.getStatus().getError() != null) {
-            System.err.println("Error code ::  " + change.getStatus().getError().getCode());
-        }
+      if (change.getStatus().getError() != null) {
+        Log.i(TAG, "Error code ::  " + change.getStatus().getError().getCode());
+      }
     });
 
     // Start replication.
     replicator.start();
 
-    // Check status of replication and wait till it is completed
-    while (replicator.getStatus().getActivityLevel() != Replicator.ActivityLevel.STOPPED) {
-        Thread.sleep(1000);
+    // end::getting-started[]
+
+    database.delete();
+  }
+  // end::example-app[]
+
+  public void test1xAttachments() throws CouchbaseLiteException, IOException {
+    // if db exist, delete it
+    deleteDB("android-sqlite", context.getFilesDir());
+
+    ZipUtils.unzip(getAsset("replacedb/android140-sqlite.cblite2.zip"), context.getFilesDir());
+
+    Database db = new Database("android-sqlite", new DatabaseConfiguration());
+    try {
+
+      Document doc = db.getDocument("doc1");
+
+      // For Validation
+      Dictionary attachments = doc.getDictionary("_attachments");
+      Blob blob = attachments.getBlob("attach1");
+      byte[] content = blob.getContent();
+      // For Validation
+
+      byte[] attach = String.format(Locale.ENGLISH, "attach1").getBytes();
+      Arrays.equals(attach, content);
+
+    } finally {
+      // close db
+      db.close();
+      // if db exist, delete it
+      deleteDB("android-sqlite", context.getFilesDir());
     }
 
-    System.out.println("Finish!");
-
-    System.exit(0); // <4>
-}
-// end::getting-started[]
-
-// tag::getting-startedGradle[]
-
-plugins {
-    id 'java'
-    id 'application'
-}
-
-// Comment out the below line if no source code is Kotlin
-kotlinOptions { jvmTarget = '1.8' }
-
-// Set minimum JVM level to ensure availability of, for example, lambda expressions
-compileOptions
-{
-    targetCompatibility 1.8
-    sourceCompatibility 1.8
-} 
-
-// Declare repositories
-repositories {
-    // Add your Maven/Ivy/file repository here.
-    jcenter()
-    mavenCentral()
-}
-
-// USE THESE FOR MAVEN
-dependencies {
-//  Use for Enterprise version
-//    implementation "com.couchbase.lite:couchbase-lite-java-ee:2.7.0"
-//  Use for community versions
-//    implementation "com.couchbase.lite:couchbase-lite-java:2.7.0"
-  implementation fileTree(include: ['*.jar'], dir: libs>
-}
-
-application {
-    // Define the main class for the application.
-    mainClassName = 'gettingstarted.GettingStarted'
-}
-
-// end::getting-startedGradle[]
-
-
-// tag::gsGradleMavenExample[]
-plugins {
-    id 'java'
-    id 'application'
-}
-
-// Comment out the below line if no source code is Kotlin
-kotlinOptions { jvmTarget = '1.8' }
-
-// Set minimum JVM level to ensure availability of, for example, lambda expressions
-compileOptions
-{
-    targetCompatibility 1.8
-    sourceCompatibility 1.8
-} 
-
-repositories {
-    maven {
-        url "https://mobile.maven.couchbase.com/maven2/dev/"
-    }
-    google()
-    jcenter()
-}
-
-
-dependencies {
-//  Comment out below line if using Enterprise version
-    implementation "com.couchbase.lite:couchbase-lite-java:2.7.0"
-//  Comment out below line if using Community version
-    implementation "com.couchbase.lite:couchbase-lite-java-ee:2.7.0"
-}
-
-application {
-    // Define the main class for the application.
-    mainClassName = 'gettingstarted.GettingStarted'
-}
-
-// end::gsGradleMavenExample[]
-
-
-
-// tag::GsWebApp_GettingStarted[]
-import com.couchbase.lite.*;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
-@WebServlet( value = "/GettingStarted")
-public class GettingStarted extends javax.servlet.http.HttpServlet {
-    private static final String DB_DIR = "/usr/local/var/tomcat/data"; // <1>
-    private static final String DB_NAME = "getting-started";
-    /*      Credentials declared this way purely for expediency in this demo - use OAUTH in production code */
-    private static final String DB_USER = "sync_gateway";
-    private static final String DB_PASS = "password";
-    //    private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/db" + DB_NAME;
-    private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/getting-started"; // <2>
-    private static final String NEWLINETAG = "<br />";
-    private String MYRESULTS;
-    private int NUMROWS;
-    private Random RANDOM = new Random();
-
-    protected void doGet(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse
-            response) throws javax.servlet.ServletException, IOException {
-        outputMessage("Servlet started :: doGet Invoked");
-        doPost(request, response);
-    }
-
-    protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse
-            response) throws javax.servlet.ServletException, IOException {
-        NUMROWS = 0;
-        MYRESULTS = "";
-        outputMessage("Servlet started :: doPost Invoked");
-        String url = "/showDbItems.jsp";
-        try {
-            MYRESULTS = testCouchbaseLite();
-        } catch (CouchbaseLiteException | URISyntaxException | InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            outputMessage(String.format("CouchbaseLite Test Ended :: There are %d rows in DB", NUMROWS));
-        }
-        request.setAttribute("myRowCount", NUMROWS);
-        request.setAttribute("myResults", MYRESULTS);
-        getServletContext()
-                .getRequestDispatcher(url)
-                .forward(request, response);
-        outputMessage("Servlet Ended :: doPost Exits");
-    }
-
-    public String testCouchbaseLite() throws CouchbaseLiteException, URISyntaxException, InterruptedException, ServletException {
-
-        int randPtr = RANDOM.nextInt(5) + 1;
-        long syncTotal = 0;
-        Double randVn = RANDOM.nextDouble() + 1;
-        List<String> listLangs = new ArrayList<String>(Arrays.asList("Java", "Swift", "C#.Net", "Objective-C", "C++", "Cobol"));
-        List<String> listTypes = new ArrayList<String>(Arrays.asList("SDK", "API", "Framework", "Methodology", "Language", "IDE"));
-
-        String Prop_Id = "id";
-        String Prop_Language = "language";
-        String Prop_Type = "type";
-        String Prop_Version = "version";
-        String searchStringType = "SDK";
-
-        // Get and configure database
-        // Note initialisation of CouchbaseLite is done in ServletContextListener
-        outputMessage("== Opening DB and doing initial sync");
-        Database database = DatabaseManager.manager().getDatabase(DB_NAME,DB_DIR,DB_PASS);
-
-        // Initial DB sync prior to local updates
-        syncTotal = DatabaseManager.manager().runOneShotReplication(database, SYNC_GATEWAY_URL, DB_USER, DB_PASS);
-        outputMessage(String.format("Inital number of rows synchronised = %d", syncTotal));
-
-        // Create a new document (i.e. a record) in the database.
-        outputMessage("== Adding a record");
-        MutableDocument mutableDoc = new MutableDocument()
-                .setDouble(Prop_Version, randVn)
-                .setString(Prop_Type, listTypes.get(RANDOM.nextInt(listTypes.size() - 1)));
-
-        // Save it to the database.
-        try {
-            database.save(mutableDoc);
-        } catch (CouchbaseLiteException e) {
-            throw new ServletException("Error saving a document", e);
-        }
-
-        // Update a document.
-        outputMessage("== Updating added record");
-        mutableDoc = database.getDocument(mutableDoc.getId()).toMutable();
-        mutableDoc.setString(Prop_Language, listLangs.get(RANDOM.nextInt(listLangs.size() - 1)));
-        // Save it to the database.
-        try {
-            database.save(mutableDoc);
-        } catch (CouchbaseLiteException e) {
-            throw new ServletException("Error saving a document", e);
-        }
-
-        outputMessage("== Retrieving record by id");
-        Document newDoc = database.getDocument(mutableDoc.getId());
-        // Show the document ID (generated by the database) and properties
-        outputMessage("Document ID :: " + newDoc.getId());
-        outputMessage("Learning " + newDoc.getString(Prop_Language));
-
-        // Create a query to fetch documents of type SDK.
-        outputMessage("== Executing Query 1");
-        Query query = QueryBuilder.select(SelectResult.all())
-                .from(DataSource.database(database))
-                .where(Expression.property(Prop_Type).equalTo(Expression.string(searchStringType)));
-        try{
-            ResultSet result = query.execute();
-            outputMessage(String.format("Query returned %d rows of type %s", result.allResults().size(), searchStringType));
-        } catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-        }
-
-        // Create a query to fetch all documents.
-        outputMessage("== Executing Query 2");
-        Query queryAll = QueryBuilder.select(SelectResult.expression(Meta.id),
-                SelectResult.property(Prop_Language),
-                SelectResult.property(Prop_Version),
-                SelectResult.property(Prop_Type))
-                .from(DataSource.database(database));
-        try {
-            for (Result thisDoc : queryAll.execute()) {
-              NUMROWS++;
-                outputMessage(String.format("%d ... Id: %s is learning: %s version: %.2f type is %s",
-                  NUMROWS,
-                  thisDoc.getString(Prop_Id),
-                  thisDoc.getString(Prop_Language),
-                  thisDoc.getDouble(Prop_Version),
-                  thisDoc.getString(Prop_Type)));
-              }
-            } catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-        }
-        outputMessage(String.format("Total rows returned by query = %d", NUMROWS));
-
-//      Do final single-shot replication to incorporate changed NumRows
-        outputMessage("== Doing final single-shot sync");
-        syncTotal = DatabaseManager.manager().runOneShotReplication(database, SYNC_GATEWAY_URL, DB_USER, DB_PASS);
-        outputMessage(String.format("Total rows synchronised = %d", syncTotal));
-        database.close();
-        return MYRESULTS;
-    }
-
-    public void outputMessage(String msg) {
-        String thisMsg = "Null message";
-        if (msg.length() > 0) {
-            thisMsg = msg;
-        }
-        System.out.println(msg);
-        MYRESULTS = MYRESULTS + msg + NEWLINETAG;
-    }
-}
-// end::GsWebApp_GettingStarted[]
-
-// tag::GsWebApp_Listener[]
-    import javax.servlet.ServletContextEvent;
-    import javax.servlet.ServletContextListener;
-    import javax.servlet.annotation.WebListener;
-
-    @WebListener
-    public class Application implements ServletContextListener {
-      @Override
-      public void contextInitialized(ServletContextEvent event) {
-          DatabaseManager.manager().init();
-      }
-    }
-// end::GsWebApp_Listener[]
-
-// tag::GsWebApp_DbManager[]
-import com.couchbase.lite.*;
-import java.net.URI;
-import java.net.URISyntaxException;
-
-public class DatabaseManager {
-
-    private static DatabaseManager instance;
-    private Database database;
-    public static synchronized DatabaseManager manager() {
-        if (instance == null) {
-            instance = new DatabaseManager();
-        }
-        return instance;
-    }
-    public synchronized void init() {
-        CouchbaseLite.init(); // <1>
-    }
-    public synchronized Database getDatabase(String parDbname, String parDbDir,  String parDbPass) {
-        if (database == null) {
-            try {
-                DatabaseConfiguration config = new DatabaseConfiguration();
-                config.setDirectory(parDbDir); // <2>
-                config.setEncryptionKey(new EncryptionKey(parDb_PASS)); // <3>
-                database = new Database(parDbname, config);
-            }
-            catch (CouchbaseLiteException e) {
-                throw new IllegalStateException("Cannot create database", e);
-            }
-        }
-        return database;
-    }
-
-    public synchronized long runOneShotReplication( Database parDb, String parURL, String parName, String parPassword) throws InterruptedException {
-        long syncTotal = 0;
-        // Set replicator endpoint
-        URI sgURI = null;
-        try {
-            sgURI = new URI(parURL);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        URLEndpoint targetEndpoint = new URLEndpoint(sgURI);
-
-        // Configure replication
-        System.out.println("== Synchronising DB :: Configuring replicator");
-        ReplicatorConfiguration replConfig = new ReplicatorConfiguration(parDb, targetEndpoint);
-
-        replConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
-        replConfig.setContinuous(false);    // make this a single-shot replication cf. a continuous replication
-
-        // Add authentication.
-//        outputMessage("== Synchronising DB :: Setting authenticator");
-        replConfig.setAuthenticator(new BasicAuthenticator(parName, parPassword));
-
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-//        outputMessage("== Synchronising DB :: Creating replicator");
-        Replicator replicator = new Replicator(replConfig);
-
-        // Listen to replicator change events.
-//        System.out.println("== Synchronising DB :: Adding listener");
-        replicator.addChangeListener(change -> {
-            if (change.getStatus().getError() != null) {
-                System.err.println("Error code ::  " + change.getStatus().getError().getCode());
-            }
-        });
-
-        // Start replication.
-//        outputMessage("== Synchronising DB :: Starting");
-        replicator.start();
-        // Check status of replication and wait till it is completed
-        while ((replicator.getStatus().getActivityLevel() != Replicator.ActivityLevel.STOPPED) && (replicator.getStatus().getActivityLevel() != Replicator.ActivityLevel.IDLE)) {
-            Thread.sleep(1000);
-        }
-
-        syncTotal = replicator.getStatus().getProgress().getTotal();
-        replicator.stop();
-//        outputMessage("== Synchronising DB :: Completed ");
-        return replicator.getStatus().getProgress().getTotal();
-
-        }
-}
-
-// end::GsWebApp_DbManager[]
-
-// tag::GsWebApp_Index[]
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title>Couchbase Lite (Java Jvm) :: Getting Started App</title>
-</head>
-<body>
-<h1>Couchbase Lite (Java Jvm) :: Getting Started App</h1>
-
-<p>To invoke the GettingStarted servlet click <a href="GettingStarted">here</a></p>
-
-</body>
-</html>
-// end::GsWebApp_Index[]
-
-// tag::GsWebApp_ShowDbItems[]
-<html>
-<head>
-    <title>Couchbase Lite (Java Jvm) :: Getting Started App</title>
-</head>
-<body>
-<h1>Couchbase Lite (Java Jvm) :: Getting Started App</h1>
-<h2>List all current DB rows</h2>
-<hr>
-<p>NumRows = ${myRowCount}</p>
-<hr>
-${myResults}
-<hr>
-</body>
-</html>
-// end::GsWebApp_ShowDbItems[]
-
-
-// tag::GsWebAppBuildGradle[]
-apply plugin: 'java'
-apply plugin: 'jar'
-// apply plugin: 'war'
-sourceCompatibility = 1.8
-repositories {
-  jcenter()
-}
-dependencies {
-    implementation fileTree(dir: 'libs', include: '*.jar')
-    compileOnly "javax.servlet:javax.servlet-api:4.0.1"
-}
-// end::GsWebAppBuildGradle[]
-
-// tag::GsEmbeddedTomcatBuildGradle[]
-
-ext{
-  TOMCAT_VERSION="9.0.24"
-}
-
-apply plugin: 'java'
-apply plugin: 'war'
-apply plugin: 'com.bmuschko.tomcat'
-
-sourceCompatibility = 1.8
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
-    }
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    //  Use for Enterprise version
-    compileOnly "com.couchbase.lite:couchbase-lite-java-ee:2.7.0"
-    //  Use for community versions
-    //    compileOnly "com.couchbase.lite:couchbase-lite-java:2.7.0"
-    compileOnly "javax.servlet:javax.servlet-api:4.0.1"
-    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${TOMCAT_VERSION}",
-        "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
-        "org.apache.tomcat.embed:tomcat-embed-jasper:${TOMCAT_VERSION}"
-}
-
-tomcat {
-    httpPort = 8080
-    httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
-    ajpProtocol  = 'org.apache.coyote.ajp.AjpNio2Protocol'
-    contextPath = '/'
-}
-
-[tomcatRun, tomcatRunWar].each { task ->
-    fileTree("libs").visit { FileVisitDetails details ->
-        task.additionalRuntimeResources << file(details.file.path)
-    }
-}
-
-// end::GsEmbeddedTomcatBuildGradle[]
-
-
-
-// tag::tcWebAppHarness[]
-package com.couchbase.tcWebAppHarness;
-
-import javax.servlet.ServletException;
-import javax.servlet.ServletContext.*;
-import org.apache.catalina.Context;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.startup.Tomcat;
-
-public class tcWebHarness {
-    public static void main(String[] args) throws ServletException, LifecycleException {
-        String myTCbase="temp";
-        String yourWebAppWarName = args[0];
-        String contextPath = "/GettingStarted"; /* the URL path to your web app */
-        String warPath = "libMyWar/" + "gettingstarted.war"; /* the war file to be embedded */
-//        Context deployedContext = new Context;
-        String portNum="8080";
-        Tomcat tomcat = new Tomcat();
-
-        tomcat.setBaseDir(myTCbase);
-        tomcat.setPort(portNum);                 /* port of your choice */
-        tomcat.addWebapp(contextPath, warPath);
-        tomcat.getHost().setAppBase(".");
-        tomcat.start();
-        tomcat.getServer().await();
-    }
-}
-// end::tcWebAppHarness[]
-
-
-// tag::tcWebAppHarness-setup[]
-mkdir tcWebAppHarness
-cd tcWebAppHarness
-gradle init
-mkdir libs
-mkdir libs/libMyWar
-mkdir libs/libMyJar
-// avoid ascii docs parsing error caused by /* by using /**/ (closing comment immediately)
-// cp -R <path-to-downloaded-couchbase-lib>/lib/**/.jar libs/libCBL
-cp -R <pathToTomcatDownload>/**/.jar libs/libMyJar
-
-// end::tcWebAppHarness-setup[]
-
-// tag::embeddedTomcat[]
-ext{
-  TOMCAT_VERSION="9.0.24"
-}
-
-apply plugin: 'java'
-    apply plugin: 'war'
-    apply plugin: 'com.bmuschko.tomcat'
-
-    sourceCompatibility = 1.8
-
-    buildscript {
-        repositories {
-            jcenter()
-        }
-        dependencies {
-            classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
-        }
-    }
-
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        testCompile group: 'junit', name: 'junit', version: '4.12'
-
-        implementation fileTree(dir: 'libs', include: '*.jar')
-
-        compileOnly "javax.servlet:javax.servlet-api:4.0.1"
-
-        tomcat "org.apache.tomcat.embed:tomcat-embed-core:${TOMCAT_VERSION}",
-                "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
-                "org.apache.tomcat.embed:tomcat-embed-jasper:${TOMCAT_VERSION}"
-    }
-
-    tomcat {
-        httpPort = 8080
-        httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
-        ajpProtocol  = 'org.apache.coyote.ajp.AjpNio2Protocol'
-        contextPath = '/'
-    }
-
-[tomcatRun, tomcatRunWar].each { task ->
-            fileTree("libs").visit { FileVisitDetails details ->
-        task.additionalRuntimeResources << file(details.file.path)
-    }
-    }
-// end::embeddedTomcat[]
-
-
-
-
-// Check context validity for JVM cf Android
-// Needs JVM alterative to ZipUtils
-    public void test1xAttachments() throws CouchbaseLiteException, IOException {
-        // if db exist, delete it
-        private string final DB_NAME = "cbl-sqlite"
-        File dbPath=new File(“.").getAbsolutePath();
-        deleteDB(DB_NAME, context.getFilesDir());
-
-        ZipUtils.unzip(getAsset("replacedb/android140-sqlite.cblite2.zip"), context.getFilesDir());
-
-        Database db = new Database(DB_NAME, new DatabaseConfiguration());
-        try {
-
-            Document doc = db.getDocument("doc1");
-
-            // For Validation
-            Dictionary attachments = doc.getDictionary("_attachments");
-            Blob blob = attachments.getBlob("attach1");
-            byte[] content = blob.getContent();
-            // For Validation
-
-            byte[] attach = String.format(Locale.ENGLISH, "attach1").getBytes();
-            Arrays.equals(attach, content);
-
-        } finally {
-            // close db
-            db.close();
-            // if db exist, delete it
-            deleteDB(DB_NAME, context.getFilesDir());
-        }
-
-        Document document = new MutableDocument();
-
-        // tag::1x-attachment[]
-        Dictionary attachments = document.getDictionary("_attachments");
-        Blob blob = attachments != null ? attachments.getBlob("avatar") : null;
-        byte[] content = blob != null ? blob.getContent() : null;
-        // end::1x-attachment[]
-    }
-
-    // ### Initializer
-    public void testInitializer() {
-        // tag::sdk-initializer[]
-        // Initialize the Couchbase Lite system
-        CouchbaseLite.init();
-        // end::sdk-initializer[]
-    }
-
-    // ### New Database
-    public void testNewDatabase() throws CouchbaseLiteException {
-        // tag::new-database[]
-        DatabaseConfiguration config = new DatabaseConfiguration();
-
-        config.setDirectory(context.getFilesDir().getAbsolutePath());
-
-        Database database = new Database(DB_NAME, config);
-        // end::new-database[]
-
-
-        database.delete();
-      }
-
-      // tag::close-database[]
-      database.close()
-
-      // end::close-database[]
-
-    // ### Database Encryption
-    public void testDatabaseEncryption() throws CouchbaseLiteException {
-        // tag::database-encryption[]
-        DatabaseConfiguration config = new DatabaseConfiguration();
-        config.setEncryptionKey(new EncryptionKey("PASSWORD"));
-        Database database = new Database(DB_NAME, config);
-        // end::database-encryption[]
-    }
-
-    // ### Logging
-    public void testLogging() {
-        // tag::logging[]
-        // deprecated
-        Database.setLogLevel(LogDomain.REPLICATOR, LogLevel.VERBOSE);
-        Database.setLogLevel(LogDomain.QUERY, LogLevel.VERBOSE);
-
-        // end::logging[]
+    Document document = new MutableDocument();
+
+    // tag::1x-attachment[]
+    Dictionary attachments = document.getDictionary("_attachments");
+    Blob blob = attachments != null ? attachments.getBlob("avatar") : null;
+    byte[] content = blob != null ? blob.getContent() : null;
+    // end::1x-attachment[]
+  }
+
+  // ### Initializer
+  public void testInitializer() {
+    // tag::sdk-initializer[]
+    // Initialize the Couchbase Lite system
+    CouchbaseLite.init(context);
+    // end::sdk-initializer[]
+  }
+
+  // ### New Database
+  public void testNewDatabase() throws CouchbaseLiteException {
+    // tag::new-database[]
+    final DatabaseConfiguration config = new DatabaseConfiguration();
+    config.setDirectory(context.getFilesDir().getAbsolutePath()); // <.>
+
+    Database database = new Database("my-database", config);
+    // end::new-database[]
+
+    // tag::close-database[]
+    database.close()
+
+    // end::close-database[]
+
+    database.delete();
+  }
+
+  // ### Database Encryption
+  public void testDatabaseEncryption() throws CouchbaseLiteException {
+    // tag::database-encryption[]
+    DatabaseConfiguration config = new DatabaseConfiguration();
+    config.setEncryptionKey(new EncryptionKey("PASSWORD"));
+    Database database = new Database("mydb", config);
+    // end::database-encryption[]
+  }
+
+  // ### Logging
+  public void testLogging() {
+    // tag::logging[]
+    Database.setLogLevel(LogDomain.DATABASE, LogLevel.VERBOSE);
+    Database.setLogLevel(LogDomain.QUERY, LogLevel.VERBOSE);
+    // end::logging[]
     }
 
     public void testEnableCustomLogging() {
@@ -769,46 +255,67 @@ apply plugin: 'java'
         // end::set-custom-logging[]
     }
 
-
     // ### Console logging
     public void testConsoleLogging() throws CouchbaseLiteException {
       // tag::console-logging[]
-          Database.log.getConsole().setDomain(LogDomain.ALL_DOMAINS); // <.>
+          Database.log.getConsole().setDomain(LogDomain.ALL_DOMAINS);  // <.>
           Database.log.getConsole().setLevel(LogLevel.VERBOSE); // <.>
-
       // end::console-logging[]
-
       // tag::console-logging-db[]
-      Database.log.getConsole().setDomain(LogDomain.DATABASE);
+          Database.log.getConsole().setDomain(LogDomain.DATABASE);
 
-  // end::console-logging-db[]
+      // end::console-logging-db[]
     }
-
 
     // ### File logging
     public void testFileLogging() throws CouchbaseLiteException {
-       // tag::file-logging[]
-          LogFileConfiguration LogCfg = new LogFileConfiguration(
-              (System.getProperty("user.dir") + "/MyApp/logs")); // <.>
-          LogCfg.setMaxSize(10240); // <.>
-          LogCfg.setMaxRotateCount(5); // <.>
-          LogCfg.setUsePlainText(false); // <.>
-          Database.log.getFile().setConfig(LogCfg);
-          Database.log.getFile().setLevel(LogLevel.INFO); // <.>
+        // tag::file-logging[]
+        final File path = context.getCacheDir();
 
+        LogFileConfiguration LogCfg =
+          new LogFileConfiguration(path.toString()); // <.>
+        LogCfg.setMaxSize(10240); // <.>
+        LogCfg.setMaxRotateCount(5); // <.>
+        LogCfg.setUsePlainText(false); // <.>
+        Database.log.getFile().setConfig(LogCfg);
+        Database.log.getFile().setLevel(LogLevel.INFO); // <.>
         // end::file-logging[]
     }
 
-    // ### Loading a pre-built database
+    public void writeConsoleLog()
+    {
+        // tag::write-console-logmsg[]
+        Database.log.Console.Log(LogLevel.Warning, LogDomain.Replicator, "Any old log message");
+        // end::write-console-logmsg[]
+    }
+    public void writeCustomLog()
+    {
+        // tag::write-custom-logmsg[]
+        Database.log.Custom?.Log(LogLevel.Warning, LogDomain.Replicator, "Any old log message");
+        // end::write-custom-logmsg[]
+    }
 
+
+    public void writeFileLog()
+    {
+        // tag::write-file-logmsg[]
+        Database.log.File.Log(LogLevel.Warning, LogDomain.Replicator, "Any old log message");
+        // end::write-file-logmsg[]
+    }
+
+
+
+
+    // ### Loading a pre-built database
     public void testPreBuiltDatabase() throws IOException {
-        // tag::prebuilt-database[]
-        // Note: Getting the path to a database is platform-specific.
-        DatabaseConfiguration configuration = new DatabaseConfiguration();
-        if (!Database.exists("travel-sample", APP_DB_DIR)) {
-            File tmpDir = new File(System.getProperty("java.io.tmpdir"));
-            ZipUtils.unzip(getAsset("travel-sample.cblite2.zip"), tmpDir);
-            File path = new File(tmpDir, "travel-sample");
+      // tag::prebuilt-database[]
+      // Note: Getting the path to a database is platform-specific.
+      // For Android you need to extract it from your
+      // assets to a temporary directory and then pass that path to Database.copy()
+      DatabaseConfiguration configuration = new DatabaseConfiguration();
+      if (!Database.exists("travel-sample", context.getFilesDir())) {
+            ZipUtils.unzip(getAsset("travel-sample.cblite2.zip"), context.getFilesDir());
+            File path = new File(context.getFilesDir(), "travel-sample");
             try {
                 Database.copy(path, "travel-sample", configuration);
             } catch (CouchbaseLiteException e) {
@@ -986,7 +493,8 @@ apply plugin: 'java'
                 .orderBy(Ordering.expression(Meta.id));
 
             try {
-                for (Result result : query.execute()) {
+                ResultSet rs = query.execute();
+                for (Result result : rs) {
                     Log.i("Sample", String.format("hotel id -> %s", result.getString("id")));
                     Log.i("Sample", String.format("hotel name -> %s", result.getString("name")));
                 }
@@ -1006,7 +514,8 @@ apply plugin: 'java'
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("airport")))
                 .orderBy(Ordering.expression(Meta.id));
-            for (Result result : query.execute()) {
+            ResultSet rs = query.execute();
+            for (Result result : rs) {
                 Log.w("Sample", String.format("airport id -> %s", result.getString("id")));
                 Log.w("Sample", String.format("airport id -> %s", result.getString(0)));
             }
@@ -1039,14 +548,16 @@ apply plugin: 'java'
             });
 
             // Start live query.
-            query.execute(); // <1>
+            query.execute(); // <.>
             // end::live-query[]
 
             // tag::stop-live-query[]
             query.removeChangeListener(token); // <.>
+
             // end::stop-live-query[]
 
-            for (Result result : query.execute()) {
+            ResultSet rs = query.execute();
+            for (Result result : rs) {
                 Log.i(
                     "Sample",
                     String.format("hotel -> %s", result.getDictionary(DATABASE_NAME).toMap()));
@@ -1064,7 +575,8 @@ apply plugin: 'java'
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("hotel")))
                 .limit(Expression.intValue(10));
-            for (Result result : query.execute()) {
+            ResultSet rs = query.execute();
+            for (Result result : rs) {
                 Dictionary all = result.getDictionary(DATABASE_NAME);
                 Log.i("Sample", String.format("name -> %s", all.getString("name")));
                 Log.i("Sample", String.format("type -> %s", all.getString("type")));
@@ -1098,7 +610,8 @@ apply plugin: 'java'
                 .where(Expression.property("type").equalTo(Expression.string("hotel"))
                     .and(ArrayFunction
                         .contains(Expression.property("public_likes"), Expression.string("Armani Langworth"))));
-            for (Result result : query.execute()) {
+            ResultSet rs = query.execute();
+            for (Result result : rs) {
                 Log.i(
                     "Sample",
                     String.format("public_likes -> %s", result.getArray("public_likes").toList()));
@@ -1123,11 +636,10 @@ apply plugin: 'java'
                 .where(Expression.string("Armani").in(values));
             // end::query-collection-operator-in[]
 
-            for (Result result : query.execute()) {
-                { Log.w("Sample", String.format("%s", result.toMap().toString()));
-                }
-             }
+            ResultSet rs = query.execute();
+            for (Result result : rs) { Log.w("Sample", String.format("%s", result.toMap().toString())); }
         }
+    }
 
     // Pattern Matching
     public void testPatternMatching() throws CouchbaseLiteException {
@@ -1142,9 +654,8 @@ apply plugin: 'java'
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("landmark"))
                     .and(Function.lower(Expression.property("name")).like(Function.Expression.string("royal engineers museum")))));
-            for (Result result : query.execute()) {
-                Log.i("Sample", String.format("name -> %s", result.getString("name")));
-            }
+            ResultSet rs = query.execute();
+            for (Result result : rs) { Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
             // end::query-like-operator[]
         }
     }
@@ -1161,9 +672,9 @@ apply plugin: 'java'
                     SelectResult.property("name"))
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("landmark"))
-                .and(Function.lower(Expression.property("name")).like(Expression.string("eng%e%"))));
-            for (Result result : query.execute()) {
-                Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
+                    .and(Function.lower(Expression.property("name")).like(Expression.string("eng%e%"))));
+            ResultSet rs = query.execute();
+            for (Result result : rs) { Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
             // end::query-like-operator-wildcard-match[]
         }
     }
@@ -1180,9 +691,9 @@ apply plugin: 'java'
                     SelectResult.property("name"))
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("landmark"))
-                .and(Function.lower(Expression.property("name")).like(Expression.string("eng____r"))));
-            for (Result result : query.execute()) {
-                Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
+                    .and(Function.lower(Expression.property("name")).like(Expression.string("eng____r"))));
+            ResultSet rs = query.execute();
+            for (Result result : rs) { Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
             // end::query-like-operator-wildcard-character-match[]
         }
     }
@@ -1199,9 +710,9 @@ apply plugin: 'java'
                     SelectResult.property("name"))
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("landmark"))
-                .and(Function.lower(Expression.property("name")).regex(Expression.string("\\beng.*r\\b"))));            ResultSet rs = query.execute();
-            for (Result result : query.execute()) {
-                Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
+                    .and(Function.lower(Expression.property("name")).regex(Expression.string("\\beng.*r\\b"))));
+            ResultSet rs = query.execute();
+            for (Result result : rs) { Log.i("Sample", String.format("name -> %s", result.getString("name"))); }
             // end::query-regex-operator[]
         }
     }
@@ -1223,9 +734,8 @@ apply plugin: 'java'
                 .where(Expression.property("type").from("route").equalTo(Expression.string("route"))
                     .and(Expression.property("type").from("airline").equalTo(Expression.string("airline")))
                     .and(Expression.property("sourceairport").from("route").equalTo(Expression.string("RIX"))));
-            for (Result result : query.execute()) {
-                     Log.w("Sample", String.format("%s", result.toMap().toString()));
-            }
+            ResultSet rs = query.execute();
+            for (Result result : rs) { Log.w("Sample", String.format("%s", result.toMap().toString())); }
             // end::query-join[]
         }
     }
@@ -1246,7 +756,8 @@ apply plugin: 'java'
                     Expression.property("country"),
                     Expression.property("tz"))
                 .orderBy(Ordering.expression(Function.count(Expression.string("*"))).descending());
-            for (Result result : query.execute()) {
+            ResultSet rs = query.execute();
+            for (Result result : rs) {
                 Log.i(
                     "Sample",
                     String.format(
@@ -1261,70 +772,67 @@ apply plugin: 'java'
 
     // ### ORDER BY statement
     public void testOrderByStatement() throws CouchbaseLiteException {
-        // For Documentation
-        {
-            // tag::query-orderby[]
-            Query query = QueryBuilder
-                .select(
-                    SelectResult.expression(Meta.id),
-                    SelectResult.property("name"))
-                .from(DataSource.database(database))
-                .where(Expression.property("type").equalTo(Expression.string("hotel")))
-                .orderBy(Ordering.property("name").ascending())
-                .limit(Expression.intValue(10));
-            For (Result result : query.execute()) {
-                Log.i("Sample", String.format("%s", result.toMap()));
-            }
-            // end::query-orderby[]
+      // For Documentation
+      {
+        // tag::query-orderby[]
+        Query query = QueryBuilder
+        .select(
+          SelectResult.expression(Meta.id),
+          SelectResult.property("name"))
+          .from(DataSource.database(database))
+          .where(Expression.property("type").equalTo(Expression.string("hotel")))
+          .orderBy(Ordering.property("name").ascending())
+          .limit(Expression.intValue(10));
+          ResultSet rs = query.execute();
+          for (Result result : rs) { Log.i("Sample", String.format("%s", result.toMap())); }
+          // end::query-orderby[]
         }
-    }
-
-    // EXPLAIN statement
-    public void testExplainStatement() throws CouchbaseLiteException {
-    // For Documentation
-            // tag::query-explain-all[]
-            Query query = QueryBuilder
-              .select(SelectResult.all())
-              .from(DataSource.database(database))
-              .where(Expression.property("type").equalTo(Expression.string("university")))
-              .groupBy(Expression.property("country"))
-              .orderBy(Ordering.property("name").descending()); // <.>
-            Log.i(query.explain()); // <.>
-            // end::query-explain-all[]
-            // tag::query-explain-like[]
-            Query query = QueryBuilder
-              .select(SelectResult.all())
-              .from(DataSource.database(database))
-              .where(Expression.property("type").like(Expression.string("%hotel%"))); // <.>
-            Log.i(query.explain());
-            // end::query-explain-like[]
-            // tag::query-explain-nopfx[]
-            Query query = QueryBuilder
-              .select(SelectResult.all())
-              .from(DataSource.database(database))
-              .where(Expression.property("type").like(Expression.string("hotel%")) // <.>
-                .and(Expression.property("name").like(Expression.string("%royal%"))));
-            Log.i(query.explain());
-            // end::query-explain-nopfx[]
-            // tag::query-explain-function[]
-            Query query = QueryBuilder
-              .select(SelectResult.all())
-              .from(DataSource.database(database))
-              .where(Function.lower(Expression.property("type").equalTo(Expression.string("hotel")))); // <.>
-            Log.i(query.explain());
-            // end::query-explain-function[]
-            // tag::query-explain-nofunction[]
-            Query query = QueryBuilder
-              .select(SelectResult.all())
-              .from(DataSource.database(database))
-              .where(Expression.property("type").equalTo(Expression.string("hotel"))); // <.>
-            Log.i(query.explain());
-            // end::query-explain-nofunction[]
-
-    }
-    // end query-explain
-
-
+      }
+      // ### EXPLAIN statement
+      public void testExplainStatement() throws CouchbaseLiteException {
+          // For Documentation
+          {
+              // tag::query-explain-all[]
+              Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.database(database))
+                .where(Expression.property("type").equalTo(Expression.string("university")))
+                .groupBy(Expression.property("country"))
+                .orderBy(Ordering.property("name").descending()); // <.>
+              Log.i(query.explain()); // <.>
+              // end::query-explain-all[]
+              // tag::query-explain-like[]
+              Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.database(database))
+                .where(Expression.property("type").like(Expression.string("%hotel%"))); // <.>
+              Log.i(query.explain());
+              // end::query-explain-like[]
+              // tag::query-explain-nopfx[]
+              Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.database(database))
+                .where(Expression.property("type").like(Expression.string("hotel%")) // <.>
+                  .and(Expression.property("name").like(Expression.string("%royal%"))));
+              Log.i(query.explain());
+              // end::query-explain-nopfx[]
+              // tag::query-explain-function[]
+              Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.database(database))
+                .where(Function.lower(Expression.property("type").equalTo(Expression.string("hotel")))); // <.>
+              Log.i(query.explain());
+              // end::query-explain-function[]
+              // tag::query-explain-nofunction[]
+              Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.database(database))
+                .where(Expression.property("type").equalTo(Expression.string("hotel"))); // <.>
+              Log.i(query.explain());
+              // end::query-explain-nofunction[]
+          }
+      }
+      // end query-explain
 
     void prepareIndex() throws CouchbaseLiteException {
         // tag::fts-index[]
@@ -1396,9 +904,9 @@ apply plugin: 'java'
             if (change.getStatus().getActivityLevel() == Replicator.ActivityLevel.STOPPED) {
                 Log.i(TAG, "Replication stopped");
             }
-        });
-        // end::replication-status[]
-    }
+          });
+          // end::replication-status[]
+        }
 
     //  BEGIN PendingDocuments BM -- 19/Feb/21 --
     import android.support.annotation.NonNull;
@@ -1479,8 +987,6 @@ apply plugin: 'java'
         // end::replication-pendingdocuments[]
         //  END PendingDocuments BM -- 19/Feb/21 --
     }
-
-
 
 
     public void testHandlingNetworkErrors() throws URISyntaxException {
@@ -1611,7 +1117,6 @@ apply plugin: 'java'
         // end::replication-pull-filter[]
     }
 
-    //
     public void testCustomHeartbeat() throws URISyntaxException {
     // tag::replication-set-heartbeat[]
         URLEndpoint target =
@@ -1620,7 +1125,7 @@ apply plugin: 'java'
         ReplicatorConfiguration config =
             new ReplicatorConfiguration(database, target);
 
-        //  other config as required . . .
+            //  other config as required . . .
 
         config.setHeartbeat(60L); // <.>
 
@@ -1634,12 +1139,13 @@ apply plugin: 'java'
 
 
 
+
     public void testDatabaseReplica() throws CouchbaseLiteException {
         DatabaseConfiguration config = new DatabaseConfiguration();
-        Database database1 = new Database(DB_NAME, config);
+        Database database1 = new Database("mydb", config);
 
         config = new DatabaseConfiguration();
-        Database database2 = new Database(DB_NAME2, config);
+        Database database2 = new Database("db2", config);
 
         /* EE feature: code below might throw a compilation error
            if it's compiled against CBL Android Community. */
@@ -1656,7 +1162,7 @@ apply plugin: 'java'
 
     public void testPredictiveModel() throws CouchbaseLiteException {
         DatabaseConfiguration config = new DatabaseConfiguration();
-        Database database = new Database(DB_NAME, config);
+        Database database = new Database("mydb", config);
 
         // tag::register-model[]
         Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());
@@ -1674,7 +1180,7 @@ apply plugin: 'java'
 
     public void testPredictiveIndex() throws CouchbaseLiteException {
         DatabaseConfiguration config = new DatabaseConfiguration();
-        Database database = new Database(DB_NAME, config);
+        Database database = new Database("mydb", config);
 
         // tag::predictive-query-predictive-index[]
         Map<String, Object> inputMap = new HashMap<>();
@@ -1688,7 +1194,7 @@ apply plugin: 'java'
 
     public void testPredictiveQuery() throws CouchbaseLiteException {
         DatabaseConfiguration config = new DatabaseConfiguration();
-        Database database = new Database(DB_NAME, config);
+        Database database = new Database("mydb", config);
 
         // tag::predictive-query[]
         Map<String, Object> inputProperties = new HashMap<>();
@@ -1729,18 +1235,33 @@ apply plugin: 'java'
 
         database.save(
             mutableDocument,
-            (newDoc, curDoc) -> {
-                if (curDoc == null) { return false; }
+            (newDoc, curDoc) -> { // <.>
+                if (curDoc == null) { return false; } // <.>
                 Map<String, Object> dataMap = curDoc.toMap();
-                dataMap.putAll(newDoc.toMap());
+                dataMap.putAll(newDoc.toMap()); // <.>
                 newDoc.setData(dataMap);
-                return true;
-            });
+                return true; // <.>
+            }); // <.>
         // end::update-document-with-conflict-handler[]
+      }
     }
-}
+
+// tag::update-document-with-conflict-handler-callouts[]
+
+<.> The conflict handler code is provided as a lambda.
+
+<.> If the handler cannot resolve a conflict, it can return false.
+In this case, the save method will cancel the save operation and return false the same way as using the save() method with the failOnConflict concurrency control.
+
+<.> Within the conflict handler, you can modify the document parameter which is the same instance of Document that is passed to the save() method. So in effect, you will be directly modifying the document that is being saved.
+
+<.> When handling is done, the method must return true (for  successful resolution) or false (if it was unable to resolve the conflict).
+
+<.> If there is an exception thrown in the handle() method, the exception will be caught and re-thrown in the save() method
+// end::update-document-with-conflict-handler-callouts[]
 
 // tag::local-win-conflict-resolver[]
+// Using replConfig.setConflictResolver(new LocalWinConflictResolver());
 class LocalWinConflictResolver implements ConflictResolver {
     public Document resolve(Conflict conflict) {
         return conflict.getLocalDocument();
@@ -1749,6 +1270,7 @@ class LocalWinConflictResolver implements ConflictResolver {
 // end::local-win-conflict-resolver[]
 
 // tag::remote-win-conflict-resolver[]
+// Using replConfig.setConflictResolver(new RemoteWinConflictResolver());
 class RemoteWinConflictResolver implements ConflictResolver {
     public Document resolve(Conflict conflict) {
         return conflict.getRemoteDocument();
@@ -1757,6 +1279,7 @@ class RemoteWinConflictResolver implements ConflictResolver {
 // end::remote-win-conflict-resolver[]
 
 // tag::merge-conflict-resolver[]
+// Using replConfig.setConflictResolver(new MergeConflictResolver());
 class MergeConflictResolver implements ConflictResolver {
     public Document resolve(Conflict conflict) {
         Map<String, Object> merge = conflict.getLocalDocument().toMap();
@@ -1775,13 +1298,12 @@ class BrowserSessionManager implements MessageEndpointDelegate {
     private final Context context;
     private Replicator replicator;
 
-// Check context validity for JVM cf Android
-private BrowserSessionManager(Context context) { this.context = context; }
+    private BrowserSessionManager(Context context) { this.context = context; }
 
     public void initCouchbase() throws CouchbaseLiteException {
         // tag::message-endpoint[]
         DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration(context);
-        Database database = new Database(DB_NAME, databaseConfiguration);
+        Database database = new Database("mydb", databaseConfiguration);
 
         // The delegate must implement the `MessageEndpointDelegate` protocol.
         MessageEndpoint messageEndpointTarget = new MessageEndpoint(
@@ -1863,7 +1385,6 @@ class ActivePeerConnection implements MessageEndpointConnection {
 /* ---------------------  PASSIVE SIDE  ---------------------- */
 /* ----------------------------------------------------------- */
 
-// Check context validity for JVM cf Android
 class PassivePeerConnection implements MessageEndpointConnection {
     private final Context context;
 
@@ -1875,7 +1396,7 @@ class PassivePeerConnection implements MessageEndpointConnection {
     public void startListener() throws CouchbaseLiteException {
         // tag::listener[]
         DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration();
-        Database database = new Database(DB_NAME, databaseConfiguration);
+        Database database = new Database("mydb", databaseConfiguration);
         MessageEndpointListenerConfiguration listenerConfiguration = new MessageEndpointListenerConfiguration(
             database,
             ProtocolType.MESSAGE_STREAM);
@@ -1985,31 +1506,341 @@ class LogTestLogger implements Logger {
 
 
 
-// tag::ziputils-unzip[]
-public class ZipUtils {
-    public static void unzip(InputStream in, File destination) throws IOException {
-        byte[] buffer = new byte[1024];
-        ZipInputStream zis = new ZipInputStream(in);
-        ZipEntry ze = zis.getNextEntry();
-        while (ze != null) {
-            String fileName = ze.getName();
-            File newFile = new File(destination, fileName);
-            if (ze.isDirectory()) {
-                newFile.mkdirs();
-            } else {
-                new File(newFile.getParent()).mkdirs();
-                FileOutputStream fos = new FileOutputStream(newFile);
-                int len;
-                while ((len = zis.read(buffer)) > 0) {
-                    fos.write(buffer, 0, len);
-                }
-                fos.close();
+// tag::certAuthListener-full[]
+
+//
+// Copyright (c) 2020 Couchbase, Inc All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+package com.couchbase.android.fruitsnveg.examples;
+
+import android.content.Context;
+import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+
+import com.couchbase.lite.AbstractReplicator;
+import com.couchbase.lite.ClientCertificateAuthenticator;
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.ListenerCertificateAuthenticator;
+import com.couchbase.lite.MutableDocument;
+import com.couchbase.lite.Replicator;
+import com.couchbase.lite.ReplicatorConfiguration;
+import com.couchbase.lite.TLSIdentity;
+import com.couchbase.lite.URLEndpoint;
+import com.couchbase.lite.URLEndpointListener;
+import com.couchbase.lite.URLEndpointListenerConfiguration;
+
+
+public class CertAuthListener {
+    private static final String TAG = "PWD";
+
+    private static final Map<String, String> CERT_ATTRIBUTES;
+    static {
+        final Map<String, String> m = new HashMap<>();
+        m.put(TLSIdentity.CERT_ATTRIBUTE_COMMON_NAME, "CBL Test");
+        m.put(TLSIdentity.CERT_ATTRIBUTE_ORGANIZATION, "Couchbase");
+        m.put(TLSIdentity.CERT_ATTRIBUTE_ORGANIZATION_UNIT, "Mobile");
+        m.put(TLSIdentity.CERT_ATTRIBUTE_EMAIL_ADDRESS, "lite@couchbase.com");
+        CERT_ATTRIBUTES = Collections.unmodifiableMap(m);
+    }
+    // start a server and connect to it with a replicator
+    public void run() throws CouchbaseLiteException, IOException {
+        final Database localDb = new Database("localDb");
+        MutableDocument doc = new MutableDocument();
+        doc.setString("dog", "woof");
+        localDb.save(doc);
+
+        Database remoteDb = new Database("remoteDb");
+        doc = new MutableDocument();
+        doc.setString("cat", "meow");
+        localDb.save(doc);
+
+        TLSIdentity serverIdentity = TLSIdentity.createIdentity(true, CERT_ATTRIBUTES, null, "server");
+        TLSIdentity clientIdentity = TLSIdentity.createIdentity(false, CERT_ATTRIBUTES, null, "client");
+
+        final URI uri = startServer(remoteDb, serverIdentity, clientIdentity.getCerts());
+        if (uri == null) { throw new IOException("Failed to start the server"); }
+
+        new Thread(() -> {
+            try {
+                startClient(uri, serverIdentity.getCerts().get(0), clientIdentity, localDb);
+                Log.e(TAG, "Success!!");
+                deleteIdentity("server");
+                Log.e(TAG, "Alias deleted: server");
+                deleteIdentity("client");
+                Log.e(TAG, "Alias deleted: client");
             }
-            ze = zis.getNextEntry();
-        }
-        zis.closeEntry();
-        zis.close();
-        in.close();
+            catch (Exception e) { Log.e(TAG, "Failed!!", e); }
+        }).start();
+    }
+
+    // start a client replicator
+    public void startClient(
+        @NonNull URI uri,
+        @NonNull Certificate cert,
+        @NonNull TLSIdentity clientIdentity,
+        @NonNull Database db) throws CertificateEncodingException, InterruptedException {
+        final ReplicatorConfiguration config = new ReplicatorConfiguration(db, new URLEndpoint(uri));
+        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+        config.setContinuous(false);
+
+        configureClientCerts(config, cert, clientIdentity);
+
+        final CountDownLatch completionLatch = new CountDownLatch(1);
+        final Replicator repl = new Replicator(config);
+        repl.addChangeListener(change -> {
+            if (change.getStatus().getActivityLevel() == AbstractReplicator.ActivityLevel.STOPPED) {
+                completionLatch.countDown();
+            }
+        });
+
+        repl.start(false);
+        completionLatch.await();
+    }
+    // tag::listener-config-auth-cert-full[]
+    /**
+     * Snippet 2: create a ListenerCertificateAuthenticator and configure the listener with it
+     * <p>
+     * Start a listener for db that accepts connections from a client identified by any of the passed certs
+     *
+     * @param db    the database to which the listener is attached
+     * @param certs the name of the single valid user
+     * @return the url at which the listener can be reached.
+     * @throws CouchbaseLiteException on failure
+     */
+    @Nullable
+    public URI startServer(@NonNull Database db, @NonNull TLSIdentity serverId, @NonNull List<Certificate> certs)
+    throws CouchbaseLiteException {
+      final URLEndpointListenerConfiguration config = new URLEndpointListenerConfiguration(db);
+
+      config.setPort(0); // this is the default
+      config.setDisableTls(false);
+      config.setTlsIdentity(serverId);
+      config.setAuthenticator(new ListenerCertificateAuthenticator(certs));
+
+      final URLEndpointListener listener = new URLEndpointListener(config);
+      listener.start();
+
+      final List<URI> urls = listener.getUrls();
+      if (urls.isEmpty()) { return null; }
+      return urls.get(0);
+    }
+    // end::listener-config-auth-cert-full[]
+    // tag::listener-config-delete-cert-full[]
+
+    /**
+     * Delete an identity from the keystore
+     *
+     * @param alias the alias for the identity to be deleted
+     */
+    public void deleteIdentity(String alias)
+    throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
+
+      final KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+      keyStore.load(null);
+
+      keyStore.deleteEntry(alias); // <.>
+    }
+    // end::listener-config-delete-cert-full[]
+
+    // tag::p2p-tlsid-tlsidentity-with-label[]
+    /**
+     * Snippet 4: Create a ClientCertificateAuthenticator and use it in a replicator
+     * Snippet 5: Specify a pinned certificate as a byte array
+     * <p>
+     * Configure Client (active) side certificates
+     *
+     * @param config         The replicator configuration
+     * @param cert           The expected server side certificate
+     * @param clientIdentity the identity offered to the server as authentication
+     * @throws CertificateEncodingException on certifcate encoding error
+     */
+    private void configureClientCerts(
+      ReplicatorConfiguration config,
+      @NonNull Certificate cert,
+      @NonNull TLSIdentity clientIdentity)
+      throws CertificateEncodingException {
+
+        // Snippet 4: create an authenticator that provides the client identity
+        config.setAuthenticator(new ClientCertificateAuthenticator(clientIdentity));
+
+        // Configure the pinned certificate passing a byte array.
+        config.setPinnedServerCertificate(cert.getEncoded());
+      }
+      // end::p2p-tlsid-tlsidentity-with-label[]
+
+    /**
+     * Snippet 5 (supplement): Copy a cert from a resource bundle
+     * <p>
+     * Configure Client (active) side certificates
+     *
+     * @param context Android context
+     * @param resId   resource id for resource: R.id.foo
+     * @throws IOException on copy error
+     */
+    private byte[] readCertMaterialFromBundle(@NonNull Context context, int resId) throws IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final InputStream in = context.getResources().openRawResource(resId);
+        final byte buf[] = new byte[1024];
+        int n;
+        while ((n = in.read(buf)) >= 0) { out.write(buf, 0, n); }
+        return out.toByteArray();
     }
 }
-// end::ziputils-unzip[]
+// end::certAuthListener-full[]
+
+
+// tag::passwordAuthListener-full[]
+
+//
+// Copyright (c) 2020 Couchbase, Inc All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+package com.couchbase.android.fruitsnveg.examples;
+
+import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
+import com.couchbase.lite.AbstractReplicator;
+import com.couchbase.lite.BasicAuthenticator;
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.ListenerPasswordAuthenticator;
+import com.couchbase.lite.MutableDocument;
+import com.couchbase.lite.Replicator;
+import com.couchbase.lite.ReplicatorConfiguration;
+import com.couchbase.lite.URLEndpoint;
+import com.couchbase.lite.URLEndpointListener;
+import com.couchbase.lite.URLEndpointListenerConfiguration;
+
+
+public class PasswordAuthListener {
+    private static final String TAG = "PWD";
+
+    // start a server and connect to it with a replicator
+    public void run() throws CouchbaseLiteException, IOException {
+        final Database localDb = new Database("localDb");
+        MutableDocument doc = new MutableDocument();
+        doc.setString("dog", "woof");
+        localDb.save(doc);
+
+        Database remoteDb = new Database("remoteDb");
+        doc = new MutableDocument();
+        doc.setString("cat", "meow");
+        localDb.save(doc);
+
+        final URI uri = startServer(remoteDb, "fox", "wa-pa-pa-pa-pa-pow".toCharArray());
+        if (uri == null) { throw new IOException("Failed to start the server"); }
+
+        new Thread(() -> {
+            try {
+                runClient(uri, "fox", "wa-pa-pa-pa-pa-pow".toCharArray(), localDb);
+                Log.e(TAG, "Success!!");
+            }
+            catch (Exception e) { Log.e(TAG, "Failed!!", e); }
+        }).start();
+    }
+
+    // start a client replicator
+    public void runClient(
+        @NonNull URI uri,
+        @NonNull String username,
+        @NonNull char[] password,
+        @NonNull Database db) throws InterruptedException {
+        final ReplicatorConfiguration config = new ReplicatorConfiguration(db, new URLEndpoint(uri));
+        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+        config.setContinuous(false);
+        config.setAuthenticator(new BasicAuthenticator(username, password));
+
+        final CountDownLatch completionLatch = new CountDownLatch(1);
+        final Replicator repl = new Replicator(config);
+        repl.addChangeListener(change -> {
+            if (change.getStatus().getActivityLevel() == AbstractReplicator.ActivityLevel.STOPPED) {
+                completionLatch.countDown();
+            }
+        });
+
+        repl.start(false);
+        completionLatch.await();
+    }
+    // tag::listener-config-client-auth-pwd-full[]
+    /**
+     *
+     * Start a listener for db that accepts connections using exactly the passed username and password
+
+     *
+     * @param db       the database to which the listener is attached
+     * @param username the name of the single valid user
+     * @param password the password for the user
+     * @return the url at which the listener can be reached.
+     * @throws CouchbaseLiteException on failure
+     */
+    @Nullable
+    public URI startServer(@NonNull Database db, @NonNull String username, @NonNull char[] password) <.>
+    throws CouchbaseLiteException {
+      final URLEndpointListenerConfiguration config = new URLEndpointListenerConfiguration(db);
+
+      config.setPort(0); // this is the default
+      config.setDisableTls(true);
+      config.setAuthenticator(new ListenerPasswordAuthenticator(
+        (validUser, pwd) -> username.equals(validUser) && Arrays.equals(validPassword, pwd)));
+
+        final URLEndpointListener listener = new URLEndpointListener(config);
+        listener.start();
+
+        final List<URI> urls = listener.getUrls();
+        if (urls.isEmpty()) { return null; }
+        return urls.get(0);
+      }
+      // end::listener-config-client-auth-pwd-full[]
+    }
+
+
+// end::passwordAuthListener-full[]
