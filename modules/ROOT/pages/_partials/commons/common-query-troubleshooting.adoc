@@ -154,6 +154,7 @@ Minimizing, if not eliminating, this ordering and re-ordering will obviously red
 Ask "is the grouping and-or ordering absolutely necessary?": if it isn't, drop it or modify it to minimize its impact.
 
 == Queries and Indexes
+
 include::{root-commons}indexing.adoc[tag=overview]
 
 The Query optimizer converts your query into a parse tree that groups zero or more _and-connected_ clauses together (as dictated by your `where` conditionals) for effective query engine processing.
@@ -162,6 +163,22 @@ Ideally a query will be be able to satisfy its requirements entirely by either d
 Less good is if the query must scan the whole index; although the compact nature of most indexes means this is still much faster than the alternative of scanning the entire database with no help from the indexes at all.
 
 Searches that begin with or rely upon an inequality with the primary key are inherently less effective than those using a primary key equality.
+
+== Working with the Query Optimizer
+You may have noticed that sometimes a query runs faster on a second run, or after re-opening the database, or after deleting and recreating an index.
+This typically happens when SQL Query Optimizer has gathered sufficient stats to recognize a means of optimizing a sub-optimal query.
+
+If only those stats were available from the start.
+In fact they are gathered after certain events, such as:
+
+* Following index creation
+* On a database close
+* When running a database compact.
+
+So, if your analysis of the <<qe-output, Query Explain output>> indicates a sub-optimal query and your rewrites fail to sufficiently optimize it, consider compacting the database.
+Then re-generate the Query Explain and note any improvements in optimization.
+They may not, in themselves, resolve the issue entirely; but they can provide a uesful guide toward further optimizing changes you could make.
+
 
 [#use-like-based-queries]
 == Wildcard and Like-based Queries
@@ -258,6 +275,7 @@ include::{snippet}[tag="query-explain-nofunction", indent=0]
 Knowing this, you can consider how you create the index; for example, using {url-api-method-function-lower} when you create the index and then always using lowercase comparisons.
 
 == Optimization Considerations
+
 Try to minimize the amount of data retrieved.
 Reduce it down to the few properties you really *do* need to achieve the required result.
 
