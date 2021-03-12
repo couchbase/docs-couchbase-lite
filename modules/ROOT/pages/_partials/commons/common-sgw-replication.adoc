@@ -104,10 +104,10 @@ Here we say to provide _Basic Authentication_ credentials. Other options are ava
 ====
 
 [#lbl-cfg-repl]
-== Configuration
+== Configure
 
 In this section::
-<<lbl-cfg-tgt>>  |  <<lbl-cfg-sync>>  |  <<lbl-cfg-htbt>>  |  <<lbl-svr-auth>>  | <<lbl-client-auth>> | <<lbl-repl-evnts>> |  <<lbl-repl-hdrs>> |  <<lbl-repl-ckpt>> |  <<lbl-repl-fltrs>> | <<lbl-repl-chan>> | <<lbl-repl-delta>>
+<<lbl-cfg-tgt>>  |  <<lbl-cfg-sync>>  |  <<lbl-cfg-keep-alive>>  |  <<lbl-svr-auth>>  | <<lbl-client-auth>> | <<lbl-repl-evnts>> |  <<lbl-repl-hdrs>> |  <<lbl-repl-ckpt>> |  <<lbl-repl-fltrs>> | <<lbl-repl-chan>> | <<lbl-repl-delta>>
 
 
 [#lbl-cfg-tgt]
@@ -121,7 +121,7 @@ include::{root-commons}sgw-replication-cfg-tgt.adoc[]
 
 include::{root-commons}sgw-replication-cfg-sync-mode.adoc[]
 
-[#lbl-cfg-htbt]
+[#lbl-cfg-keep-alive]
 === Heartbeat
 
 include::{root-commons}sgw-replication-cfg-heartbeat.adoc[]
@@ -184,7 +184,7 @@ Replications to a Server (for example, a Sync Gateway, or passive listener) auto
 
 
 [#lbl-init-repl]
-== Initialization
+== Initialize
 
 In this section::
 <<lbl-repl-start>>  | <<lbl-repl-ckpt>>
@@ -209,126 +209,14 @@ include::{snippet}[tag=replication-reset-checkpoint,indent=0]
 ----
 ====
 
-
 [#lbl-repl-mon]
-== Monitoring
+== Monitor
 
-In this section::
-<<lbl-repl-chng>>  |  <<lbl-repl-status>>  |  <<lbl-repl-evnts>> | <<lbl-repl-pend>>
-
-You can monitor a replication’s status by using a combination of <<lbl-repl-chng>> and the `replication.status.activity` property -- see; {url-api-enum-replicator-activity}.
-This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
-
-You can also choose to monitor document changes -- see: <<lbl-repl-evnts>>.
-
-// Include change listener and replication status topics
-// [#lbl-repl-status]
-// === Replication Status
-:is-p2p!:
 include::{root-commons}sgw-replication-monitor.adoc[leveloffset=+1]
 
-[#lbl-repl-states]
-
-==== Replication States
-
-See <<tbl-states>> for a list of the different activity levels reported in the API; and the meaning of each.
-
-.Replicator activity levels
-[#tbl-states,cols="1,2"]
-|===
-|State |Meaning
-
-|`STOPPED`
-|The replication is finished or hit a fatal error.
-
-|`OFFLINE`
-|The replicator is offline as the remote host is unreachable.
-
-|`CONNECTING`
-|The replicator is connecting to the remote host.
-
-|`IDLE`
-|The replication caught up with all the changes available from the server.
-The `IDLE` state is only used in continuous replications.
-
-|`BUSY`
-|The replication is actively transferring data.
-|===
-
-NOTE: The replication change object also has properties to track the progress (`change.status.completed` and `change.status.total`).
-But since the replication occurs in batches and the total count can vary through the course of a replication, those progress indicators are not very useful from the standpoint of an app user.
-Hence, these should not be used for tracking the actual progress of the replication.
-
-include::{root-commons}sgw-replication-rep-status.adoc[tags={param-platform}]
-
-[#lbl-repl-evnts]
-=== Replication Events
-
-You can choose to register for document updates during a replication.
-
-TIP: You should register the listener before starting your replication, to avoid having to do a restart to activate it.
-
-For example, the code snippet in <<ex-reg-doc-listener>> registers a listener to monitor document replication performed by the replicator referenced by the variable `replicator`.
-It prints the document ID of each document received and sent.
-Stop the listener as shown in <<ex-stop-doc-listener>>.
-
-[#ex-reg-doc-listener]
-.Register a document listener
-====
-[source]
-----
-include::{snippet}[tag=add-document-replication-listener,indent=0]
-----
-====
-
-[#ex-stop-doc-listener]
-.Stop document listener
-====
-This code snippet shows how to stop the document listener using the token from the previous example.
-
-[source]
-----
-include::{snippet}[tag=remove-document-replication-listener,indent=0]
-----
-====
-
-.Document Access Removal Behavior
---
-When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
---
-
-[#lbl-repl-pend]
-=== Documents Pending Push
-
-TIP: {url-api-method-replicator-isDocumentPending} is quicker and more efficient.
-Use it in preference to returning a list of pending document IDs, where possible.
-
-You can check whether documents are waiting to be pushed in any forthcoming sync by using either of the following API methods:
-
-* Use the {url-api-method-replicator-getPendingDocumentIds} method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.
-+
-This can be very useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it is safe to exit.
-
-* Use the {url-api-method-replicator-isDocumentPending} method to quickly check whether an individual document is pending a push.
-
-[#ex-pending]
-.Use Pending Document ID API
-====
-
-[source, {source-language}]
-----
-include::{snippet}[tags=replication-pendingdocuments, indent=0]
-
-----
-<.> {url-api-method-replicator-getPendingDocumentIds} returns a list of the document IDs for all documents waiting to be pushed.
-This is a snapshot and may have changed by the time the response is received and processed.
-
-<.> {url-api-method-replicator-isDocumentPending} returns `true` if the document is waiting to be pushed, and `false` otherwise.
-
-====
 
 [#lbl-repl-stop]
-== Stop Sync
+== Stop
 
 include::{root-commons}sgw-replication-stop.adoc[]
 

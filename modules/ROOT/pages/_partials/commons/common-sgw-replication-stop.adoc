@@ -7,7 +7,20 @@
 //    {root-commons}sgw-replication.adoc
 //  ####
 
-TIP: If you added an optional change listener (see <<lbl-repl-chng>> for how) you should also remove it using the {url-api-method-replicator-rmv-change-listener} method.
+Stopping a replication is straightforward.
+It is done using {url-api-method-replicator-stop}.
+This initiates an asynchronous operation and so is not necessarily immediate.
+Your app should account for this potential delay before attempting any subsequent operations, for example closing the database.
+
+You can find further information on database operations in {xref-cbl-gp-database}.
+
+.Best Practice
+[TIP]
+--
+. When you start a change listener, save the returned token, you will need it when you remove the listener
+. Remove any active change listener prior to stopping your replication
+. Ensure the replication has completely stopped by checking for a replication status = STOPPED, before closing any associated database
+--
 
 // Example 9
 .Stop replicator
@@ -19,9 +32,9 @@ include::{snippet-p2psync-ws}[tags=p2p-act-rep-stop, indent=0]
 
 ----
 
-*Notes on Example*
-
-<.> Stopping the replication is straightforward using the {url-api-method-replicator-stop} method.
+<.> First we stop our change listener
+<.> Here we initiate the stopping of the replication using the {url-api-method-replicator-stop} method. +
+Remove any active <<lbl-repl-chng, change listener>> before stopping the replicator.
 
 ====
 

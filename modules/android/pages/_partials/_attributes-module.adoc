@@ -1,45 +1,41 @@
-// Begin define module specific attributes
+// BEGIN -- inclusion -- {module-partials}_attributes-module.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: {root-partials}_std_cbl_hdr.adoc
 
 // BEGIN::module page attributes
 :module: {param-module}
 :packageNm: couchbase-lite-{module}
-// :source-language: Java
-:snippet: {snippets-content--android}
 :snippet-p2psync-ws: {snippets-p2psync-ws--android}
+:snippet: {snippets-content--android}
 :url-issues: {url-issues-android}
-:sep: #
 :ziputils: {examplesdir}/java-android/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
 
-// :sep: #/
-
-// END::Local page attributes
+// END::module page attributes
 
 
-// :module-partials: {param-module}:partial$
-// :snippet: {snippets-content--android}
-// :snippet-p2psync: {snippets-content--android}
-// :source-language: Java
-// :module: {lang-mod-android}
-// :packageNm: couchbase-lite-android
-//:snippet-p2psync-ws: {snippets-p2psync-ws--android}
-
+// BEGIN - Set attributes pointing to API references for this module
+:sep: #
 :api-pfx:
-:url-api-references: {url-api-references-android}/
-//:url-api-references-structs: {url-api-references}Structs
-:url-api-references-classes: {url-api-references}index.html?com/couchbase/lite/
-// :url-api-references-classes: {url-api-references}com/couchbase/lite/
-// :url-api-references-classes: {url-api-references}Classes
-:url-api-references-structs: {url-api-references-classes}
-// :url-api-references-enums: {url-api-references}Enums
 
+:url-api-references: {url-api-references-android}/
+:url-api-references-classes: {url-api-references}index.html?com/couchbase/lite/
+:url-api-references-structs: {url-api-references-classes}
 
 :url-api-references-database: {url-api-references-classes}{api-pfx}Database.html
 :url-api-class-database: {url-api-references-database}[Database]
 :url-api-method-database: {url-api-references-database}{sep}
+:url-api-method-database-open: {url-api-method-database}Database-java.lang.String-[Database(String db-name)]
 :url-api-method-database-close: {url-api-method-database}close--[Database.close()]
 :url-api-method-database-delete: {url-api-method-database}delete--[Database.delete()]
 
-
+// Begin -- DatabaseConfiguration
+:url-api-references-databasecfg: {url-api-references-classes}{api-pfx}DatabaseConfiguration.html
+:url-api-class-databasecfg: {url-api-references-databasecfg}[DatabaseConfiguration]
+:url-api-method-databasecfg: {url-api-references-databasecfg}{sep}
+:url-api-method-databasecfg-setdir: {url-api-method-databasecfg}setDirectory-java.lang.String-[DatabaseConfiguration.setDirectory()]
+:url-api-method-databasecfg-encryption: {url-api-method-databasecfg}setEncryptionKey-com.couchbase.lite.EncryptionKey-[DatabaseConfiguration.setEncryptionKey()]
+// End -- DatabaseConfiguration
 
 //Database.SAVE
 :url-api-method-database-save-doc: {url-api-method-database}save-com.couchbase.lite.MutableDocument-[database.save(MutableDocument document)]
@@ -52,10 +48,6 @@
 :url-api-method-database-deletedoc-doc: {url-api-method-database}delete-com.couchbase.lite.Document-[database.delete(Document document)]
 
 :url-api-method-database-deletedoc-concctrl: {url-api-method-database}delete-com.couchbase.lite.Document-com.couchbase.lite.ConcurrencyControl-[database.delete(Document document, ConcurrencyControl concurrencyControl)]
-
-
-
-
 
 :url-api-method-database-compact: {url-api-method-database}compact--[Database.compact()]
 :url-api-method-database-copy: {url-api-method-database}copy-java.io.File-java.lang.String-com.couchbase.lite.DatabaseConfiguration-[Database.copy()]
@@ -327,12 +319,8 @@
 
 // END  Logs and logging references
 
-
-
-
+// END - Set attributes pointing to API references for this module
 
 // End define module specific attributes
 
-
-// diag: Env+Module {param-module}
-// End define module specific attributes
+// END -- inclusion -- {module-partials}_attributes-module.adoc
