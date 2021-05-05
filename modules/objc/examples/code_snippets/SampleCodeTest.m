@@ -494,7 +494,7 @@
     CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
 
     CBLQueryExpression *type = [[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"landmark"]];
-    CBLQueryExpression *like = [[CBLQueryFunction lower:[CBLQueryExpression property:@"name"]] like:[CBLQueryExpression string:@"Royal engineers museum"]];
+    CBLQueryExpression *like = [[CBLQueryFunction lower:[CBLQueryExpression property:@"name"]] like:[CBLQueryExpression string:@"royal engineers museum"]];
 
     CBLQuery *query = [CBLQueryBuilder select:@[id, country, name]
                                          from:[CBLQueryDataSource database:database]
@@ -1020,7 +1020,7 @@
         id target =
           [[CBLURLEndpoint alloc] initWithURL: [NSURL URLWithString: @"ws://foo.cbl.com/db"]];
 
-        CBLReplicatorConfiguration* config = 
+        CBLReplicatorConfiguration* config =
             [[CBLReplicatorConfiguration alloc] initWithDatabase: db target: target];
         config.type = kCBLReplicatorTypePush;
         config.continuous: YES;
@@ -1580,3 +1580,156 @@
 }
 // end::passive-peer-close[]
 @end
+
+
+
+// QUERY RESULT SET HANDLING EXAMPLES
+
+// tag::query-syntax-all[]
+CBLQuery *listQuery;
+
+*listQuery = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
+             from:[CBLQueryDataSource database:dbName] // <.>
+
+// end::query-syntax-all[]
+
+
+// tag::query-access-all[]
+CBLMutableArray* matches = [[CBLMutableArray alloc] init];
+
+CBLQueryResultSet* resultset = [listQuery execute:&error];
+
+for (CBLQueryResult *result in resultset) {
+
+    CBLDictionary *match = [result valueForKey:@dbName];
+
+    [matches addDictionary: *match] // <.>
+    // NSLog(@"document name :: %@", [match stringForKey:@"name"]);
+
+// <.>
+    *docid = [match stringForKey:@"id"]
+    *name =  [match stringForKey:@"name"]
+    *type =  [match stringForKey:@"type"]
+    *city =  [match stringForKey:@"city"]
+
+} // end for
+
+// end::query-access-all[]
+
+
+// tag::query-syntax-props[]
+CBLQuery *listQuery;
+
+CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
+
+CBLQuerySelectResult *type = [CBLQuerySelectResult property:@"type"];
+
+CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
+
+CBLQuerySelectResult *city = [CBLQuerySelectResult property:@"city"];
+
+*listQuery = [CBLQueryBuilder select:@[id, type, name, city]
+             from:[CBLQueryDataSource database:dbName]] // <.>
+
+// end::query-syntax-props[]
+
+// tag::query-access-props[]
+CBLDictionary *match;
+
+CBLMutableArray* matches = [[CBLMutableArray alloc] init];
+
+CBLQueryResultSet* resultset = [listQuery execute:&error];
+
+for (CBLQueryResult *result in resultset) {
+
+  *match = [result toDictionary];
+
+  [matches addDictionary: *match] // <.>
+
+// <.>
+  *docid = [match stringForKey:@"id"]
+  *name =  [match stringForKey:@"name"]
+  *type =  [match stringForKey:@"type"]
+  *city =  [match stringForKey:@"city"]
+
+} // end for
+
+// end::query-access-props[]
+
+
+
+// tag::query-syntax-count-only[]
+CBLQuerySelectResult *count =
+  [CBLQuerySelectResult expression:[CBLQueryFunction count:   [CBLQueryExpression all]]];
+
+*listQuery = [CBLQueryBuilder select:@[count]
+             from:[CBLQueryDataSource database:dbName]] // <.>
+
+// end::query-syntax-count-only[]
+
+// tag::query-access-count-only[]
+CBLDictionary *match;
+
+CBLMutableArray* matches = [[CBLMutableArray alloc] init];
+
+CBLQueryResultSet* resultset = [listQuery execute:&error];
+
+for (CBLQueryResult *result in resultset) {
+
+  *match = [result toDictionary];
+
+  *thisCount = [match intForKey:@"mycount"] // <.>
+
+} // end for
+
+// end::query-access-count-only[]
+
+
+// tag::query-syntax-id[]
+CBLQuery *listQuery;
+
+CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
+
+*listQuery = [CBLQueryBuilder select:@[id]
+             from:[CBLQueryDataSource database:dbName]]
+
+// end::query-syntax-id[]
+
+// tag::query-access-id[]
+
+CBLDictionary *match;
+
+CBLMutableArray* matches = [[CBLMutableArray alloc] init];
+
+CBLQueryResultSet* resultset = [listQuery execute:&error];
+
+for (CBLQueryResult *result in resultset) {
+
+  *match = [result toDictionary];
+
+  *thisDocsId = [match stringForKey:@"id"] // <.>
+
+  // Now you can get the document using its ID
+  // for example using
+  CBLMutableDocument* thisDoc =
+    [thisDB documentWithID: thisDocsId]
+
+} // end for
+
+// end::query-access-id[]
+
+
+// tag::query-syntax-pagination[]
+int thisOffset = 0;
+int thisLimit = 20;
+
+CBLQuery* listQuery =
+            [CBLQueryBuilder
+                select: @[[CBLQuerySelectResult all]]
+                from: [CBLQueryDataSource database: this_Db]
+                limit: [CBLQueryLimit
+                            limit: [CBLQueryExpression integer: thisLimit]
+                            offset: [CBLQueryExpression integer: thisOffset]]
+            ];
+
+// end::query-syntax-pagination[]

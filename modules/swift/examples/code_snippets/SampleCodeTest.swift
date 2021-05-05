@@ -257,10 +257,30 @@ class SampleCodeTest {
         // end::query-index[]
     }
 
-    func dontTestSelect() throws {
+    func dontTestSelectMeta() throws {
         database = self.db
 
         // tag::query-select-meta[]
+        let query = QueryBuilder
+            .select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(database))
+
+        do {
+            for result in try query.execute() {
+                print("document id :: \(result.string(forKey: "id")!)")
+                print("document name :: \(result.string(forKey: "name")!)")
+            }
+        } catch {
+            print(error)
+        }
+        // end::query-select-meta[]
+    }
+
+
+    func dontTestSelectProps() throws {
+        database = self.db
+
+        // tag::query-select-props[]
         let query = QueryBuilder
             .select(
                 SelectResult.expression(Meta.id),
@@ -277,7 +297,7 @@ class SampleCodeTest {
         } catch {
             print(error)
         }
-        // end::query-select-meta[]
+        // end::query-select-props[]
     }
 
     func dontTestSelectAll() throws {
@@ -374,7 +394,11 @@ class SampleCodeTest {
         database = self.db
 
         // tag::query-collection-operator-in[]
-        let values = [Expression.property("first"), Expression.property("last"), Expression.property("username")]
+        let values = [
+            Expression.property("first"),
+            Expression.property("last"),
+            Expression.property("username")
+            ]
 
         QueryBuilder
             .select(SelectResult.all())
@@ -396,7 +420,7 @@ class SampleCodeTest {
             )
             .from(DataSource.database(database))
             .where(Expression.property("type").equalTo(Expression.string("landmark"))
-                .and(Function.lower(Expression.property("name")).like(Expression.string("Royal engineers museum")))
+                .and(Function.lower(Expression.property("name")).like(Expression.string("royal engineers museum")))
             )
             .limit(Expression.int(10))
 
@@ -467,7 +491,7 @@ class SampleCodeTest {
             )
             .from(DataSource.database(database))
             .where(Expression.property("type").equalTo(Expression.string("landmark"))
-                .and(Expression.property("name").regex(Expression.string("\\bEng.*e\\b")))
+                .and(Expression.property("name").regex(Expression.string("\\bEng.*e\\b"))) // <.>
             )
             .limit(Expression.int(10))
         // end::query-regex-operator[]
@@ -2047,3 +2071,116 @@ extension URLEndpointListener {
 }
 
 // END URLENDPOINTLISTENER SAMPLES
+
+
+
+
+
+// QUERY RESULT SET HANDLING EXAMPLES
+// tag::query-syntax-all[]
+let listQuery = QueryBuilder.select(SelectResult.all)
+            .from(DataSource.database(dbName)) // <.>
+
+// end::query-syntax-all[]
+
+
+// tag::query-access-all[]
+
+do {
+    for (_,result) in try listQuery.execute().enumerated() {
+
+        if let match = row.dictionary(forKey: dbName) {
+            matches.append(match.toDictionary())
+        } // <.>
+
+        if let thisDocsProperties = match.toDictionary()] as? [String:Any] {
+          let docid = thisDocsProperties["id"]
+          let name = thisDocsProperties["name"]
+          let type = thisDocsProperties["type"]
+          let city = thisDocsProperties["city"]
+        } // <.>
+
+    } // end for
+    catch {
+        // ... handle errors as required
+    }
+// end::query-access-all[]
+
+
+// tag::query-syntax-props[]
+let listQuery = QueryBuilder
+            .select(SelectResult.expression(Meta.id),
+                    SelectResult.expression(Expression.property("name")),
+                    SelectResult.expression(Expression.property("city")),
+                    SelectResult.expression(Expression.property("type")))
+            .from(DataSource.database(dbName))
+
+// end::query-syntax-props[]
+
+
+// tag::query-access-props[]
+for (_,result) in try! listQuery.execute().enumerated() {
+  if let thisDoc = result.toDictionary()] as? [String:Any] {
+      let docid = thisDoc["id"]
+      let name = thisDoc["name"]
+      let city = thisDoc["city"]
+      let type = thisDoc["type"]
+      //
+      // ... process document properties as required
+  }
+}
+
+// end::query-access-props[]
+
+
+// tag::query-syntax-count-only[]
+listQuery = QueryBuilder
+    .select(SelectResult.expression(Function.count(Expression.all())).as("mycount"))
+    .from (DataSource.database(dbName)).groupBy(Expression.property("type"))
+
+
+// end::query-syntax-count-only[]
+
+
+// tag::query-access-count-only[]
+for result in try! listQuery.execute() {
+    if let dict = result.toDictionary() as? [String: Int] {
+        let thiscount = dict["mycount"]! // <.>
+        print("There are ", thiscount, " rows")
+    }
+}
+
+// end::query-access-count-only[]
+
+
+// tag::query-syntax-id[]
+let listQuery = QueryBuilder.select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(dbName))
+
+// end::query-syntax-id[]
+
+
+// tag::query-access-id[]
+for result in try listQuery.execute() {
+  if let thisResult = result.toDictionary()? as [String:Any],
+  let thisDocsID = thisResult["id"] as? String { // <.>
+    // Now you can get the document using the ID
+    let thisDoc = try yourDb.document(withID: thisDocsId)
+  }
+}
+
+// end::query-access-id[]
+
+
+// tag::query-syntax-pagination[]
+let thisOffset = 0;
+let thisLimit = 20;
+
+let listQuery = QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.database(dbName))
+        .limit(Expression.int(thisLimit),
+          offset: Expression.int(thisOffset))
+
+// end::query-syntax-pagination[]
+

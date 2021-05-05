@@ -2013,3 +2013,187 @@ public class ZipUtils {
     }
 }
 // end::ziputils-unzip[]
+
+
+
+
+
+
+
+
+
+
+
+
+// QUERY RESULT SET HANDLING EXAMPLES
+
+public void testQuerySyntaxAll() throws CouchbaseLiteException {
+  // For Documentation
+  Database this_Db = new Database("dbName");
+  List<Hotel> hotels = new ArrayList<>();
+//        Map<String,Object> thisDocsProps;
+//        Dictionary thisDocsProps = new D
+  String thisDocsId;
+  String thisDocsName;
+  String thisDocsType;
+  String thisDocsCity;
+
+// tag::query-syntax-all[]
+  Query listQuery = QueryBuilder.select(SelectResult.all())
+          .from(DataSource.database(this_Db)); // <.>
+
+// end::query-syntax-all[]
+
+
+// tag::query-access-all[]
+  try {
+      for (Result result : listQuery.execute()) {
+
+//                thisDocsProps = result.getDictionary("dbname");
+
+          thisDocsProps = result.getDictionary(result.getString(1)); // get the k-v pair array into a dictionary
+
+          final Hotel hotel = Hotel.fromDictionary(result.getString(0), result.getDictionary(1));
+//                final Hotel hotel = new Hotel(fromDictionary(result));
+
+          hotels.add(hotel); // <.>
+
+          thisDocsName = thisDocsProps.getString("name"); // <.>
+          thisDocsType = thisDocsProps.getString("type");
+          thisDocsCity = thisDocsProps.getString("city");
+      } // <.>
+  } catch (CouchbaseLiteException e) {
+      e.printStackTrace();
+  }
+
+// end::query-access-all[]
+}
+
+public void testQuerySyntaxProps() throws CouchbaseLiteException {
+// For Documentation
+  Database this_Db = new Database("dbName");
+  List<Hotel> hotels = new ArrayList<>();
+  String thisDocsId;
+  String thisDocsName;
+  String thisDocsType;
+  String thisDocsCity;
+
+// tag::query-syntax-props[]
+  Query listQuery =
+          QueryBuilder.select(SelectResult.expression(Meta.id),
+                  SelectResult.property("name"),
+                  SelectResult.property("type"),
+                  SelectResult.property("city"))
+                  .from(DataSource.database(this_Db));
+
+// end::query-syntax-props[]
+
+// tag::query-access-props[]
+
+  try {
+      for (Result result : listQuery.execute()) {
+
+          final Hotel hotel = Hotel.fromDictionary(result.getDictionary(0));
+
+          thisDocsProps = result.getDictionary(0); // get the k-v pairs into a dictionary
+
+          hotels.add(hotel); // <.>
+
+          thisDocsId = thisDocsProps.getString("id"); // <.>
+          thisDocsName = thisDocsProps.getString("name");
+          thisDocsType = thisDocsProps.getString("type");
+          thisDocsCity = thisDocsProps.getString("city");
+
+      } // <.>
+  } catch (CouchbaseLiteException e) {
+      e.printStackTrace();
+  }
+
+// end::query-access-props[]
+}
+
+
+public void testQuerySyntaxCount() throws CouchbaseLiteException {
+  // For Documentation
+  Database this_Db = new Database("dbName");
+  List<Hotel> hotels = new ArrayList<>();
+//        Result thisDocsProps;
+  String thisDocsId;
+  String thisDocsName;
+  String thisDocsType;
+  String thisDocsCity;
+
+// tag::query-syntax-count-only[]
+  Query listQuery = QueryBuilder.select(
+          SelectResult.expression(Function.count(Expression.string("*"))).as("mycount"))
+          .from(DataSource.database(this_Db));
+
+// end::query-syntax-count-only[]
+
+
+// tag::query-access-count-only[]
+  try {
+      for (Result result : listQuery.execute()) {
+
+          thisDocsProps = result.getDictionary(0); // get the k-v pairs into a dictionary
+
+          thisDocsId = thisDocsProps.getString("mycount"); // <.>
+
+      }
+  } catch (CouchbaseLiteException e) {
+      e.printStackTrace();
+  }
+// end::query-access-count-only[]
+}
+
+
+public void testQuerySyntaxId() throws CouchbaseLiteException {
+  // For Documentation
+  Database this_Db = new Database("dbName");
+  List<Hotel> hotels = new ArrayList<>();
+  String thisDocsId;
+  String thisDocsName;
+  String thisDocsType;
+  String thisDocsCity;
+
+// tag::query-syntax-id[]
+  Query listQuery =
+          QueryBuilder.select(SelectResult.expression(Meta.id))
+                  .from(DataSource.database(this_Db));
+
+// end::query-syntax-id[]
+
+
+// tag::query-access-id[]
+
+  try {
+      for (Result result : listQuery.execute()) {
+
+          thisDocsProps = result.getDictionary(0); // get the k-v pair array into a dictionary
+
+          thisDocsId = thisDocsProps.getString("id"); // <.>
+
+          Document thisDoc = this_Db.getDocument(thisDocsId);
+          // Process document as required
+
+      } // <.>
+  } catch (CouchbaseLiteException e) {
+      e.printStackTrace();
+  }
+
+// end::query-access-id[]
+
+}
+
+
+// tag::query-syntax-pagination[]
+int thisOffset = 0;
+int thisLimit = 20;
+
+Query listQuery =
+        QueryBuilder
+          .select(SelectResult.all())
+          .from(DataSource.database(this_Db))
+          .limit(thisLimit, thisOffset); // <.>
+
+// end::query-syntax-pagination[]
