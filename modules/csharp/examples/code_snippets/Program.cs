@@ -434,7 +434,7 @@ namespace api_walkthrough
             _Database = new Database("travel-sample");
         }
 
-	private static void QueryDeletedDocuments()
+        private static void QueryDeletedDocuments()
         {
             // tag::query-deleted-documents[]
             // Query documents that have been deleted
@@ -518,7 +518,7 @@ namespace api_walkthrough
 
         private static void DocumentExpiration()
         {
-	    var db = _Database;
+            var db = _Database;
 
             // tag::document-expiration[]
             // Purge the document one day from now

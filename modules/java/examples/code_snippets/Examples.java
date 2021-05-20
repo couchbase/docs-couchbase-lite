@@ -763,8 +763,6 @@ apply plugin: 'java'
 
     public void testEnableCustomLogging() {
         // tag::set-custom-logging[]
-        // this custom logger will never be asked to log an event
-        // with a log level < WARNING
         Database.log.setCustom(new LogTestLogger(LogLevel.WARNING)); // <.>
         // end::set-custom-logging[]
     }
@@ -1983,8 +1981,7 @@ class LogTestLogger implements Logger {
 
     @Override
     public void log(@NonNull LogLevel level, @NonNull LogDomain domain, @NonNull String message) {
-        // this method will never be called if param level < this.level
-        // handle the message, for example piping it to a third party framework
+
     }
 }
 // end::custom-logging[]
