@@ -1,20 +1,20 @@
-// 
+//
 // Program.cs
-// 
+//
 // Copyright (c) 2017 Couchbase, Inc All rights reserved.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 // http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-// 
+//
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -188,8 +188,8 @@ namespace api_walkthrough
             _Database.Close();
             _Database = new Database("travel-sample");
         }
-		
-	private static void QueryDeletedDocuments()
+
+        private static void QueryDeletedDocuments()
         {
             // tag::query-deleted-documents[]
             // Query documents that have been deleted
@@ -273,8 +273,8 @@ namespace api_walkthrough
 
         private static void DocumentExpiration()
         {
-	    var db = _Database;
-			
+            var db = _Database;
+
             // tag::document-expiration[]
             // Purge the document one day from now
             var ttl = DateTimeOffset.UtcNow.AddDays(1);
@@ -303,7 +303,7 @@ namespace api_walkthrough
                 newTask.SetBlob("avatar", blob);
                 db.Save(newTask);
                 // end::blob[]
-                
+
                 var taskBlob = newTask.GetBlob("avatar");
                 using (var bitmap = SKBitmap.Decode(taskBlob.ContentStream)) {
                     Console.WriteLine($"Bitmap dimensions: {bitmap.Width} x {bitmap.Height} ({bitmap.BytesPerPixel} bytes per pixel)");
@@ -332,7 +332,7 @@ namespace api_walkthrough
             // tag::query-select-meta[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
-                    SelectResult.Property("type"), 
+                    SelectResult.Property("type"),
                     SelectResult.Property("name"))
                 .From(DataSource.Database(db))) {
                 foreach (var result in query.Execute()) {
@@ -369,7 +369,7 @@ namespace api_walkthrough
                     /* Update UI */
                 }
             });
-			
+
             // Start live query.
             query.Execute(); // <1>
             // end::live-query[]
@@ -669,7 +669,7 @@ namespace api_walkthrough
             Database.SetLogLevel(LogDomain.Network, LogLevel.Verbose);
             // end::replication-logging[]
         }
-        
+
         private static void FileLogging()
         {
             // tag::file-logging[]
@@ -689,7 +689,7 @@ namespace api_walkthrough
         private static void EnableBasicAuth()
         {
             var database = _Database;
-            
+
             // tag::basic-authentication[]
             var url = new Uri("ws://localhost:4984/mydatabase");
             var target = new URLEndpoint(url);
@@ -700,11 +700,11 @@ namespace api_walkthrough
             replicator.Start();
             // end::basic-authentication[]
         }
-        
+
         private static void EnableSessionAuth()
         {
             var database = _Database;
-            
+
             // tag::session-authentication[]
             var url = new Uri("ws://localhost:4984/mydatabase");
             var target = new URLEndpoint(url);
@@ -729,11 +729,11 @@ namespace api_walkthrough
             });
             // end::replication-status[]
         }
-		
-		private static void ReplicatorDocumentEvent()
+
+        private static void ReplicatorDocumentEvent()
         {
             var replicator = _Replicator;
-			
+
             // tag::add-document-replication-listener[]
             var token = replicator.AddDocumentReplicationListener((sender, args) =>
             {
@@ -818,18 +818,18 @@ namespace api_walkthrough
             };
             // end::certificate-pinning[]
         }
-        
+
         private static void ReplicationCustomHeaders()
         {
             var url = new Uri("ws://localhost:4984/mydatabase");
             var target = new URLEndpoint(url);
-            
+
             // tag::replication-custom-header[]
             var config = new ReplicatorConfiguration(database, target)
             {
-                Headers = new Dictionary<string, string> 
+                Headers = new Dictionary<string, string>
                 {
-                    ["CustomHeaderName"] = "Value"   
+                    ["CustomHeaderName"] = "Value"
                 }
             };
             // end::replication-custom-header[]
@@ -947,7 +947,7 @@ namespace api_walkthrough
             DoBatchOperation();
             UseBlob();
             SelectMeta();
-            
+
             LoadPrebuilt();
             CreateIndex();
             SelectWhere();
