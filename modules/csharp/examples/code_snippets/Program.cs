@@ -1654,3 +1654,213 @@ var query =
         }
     }
     // end::merge-conflict-resolver[]
+
+
+
+// QUERY RESULT SET HANDLING EXAMPLES
+
+    public static void testQuerySyntaxAll()
+    {
+        // For Documentation
+        var dbName = "travel-sample";
+        var this_Db = new Database(dbName) ;
+
+        string thisDocsId;
+        string thisDocsName;
+        string thisDocsType;
+        string thisDocsCity;
+        Dictionary<string,object> hotel = new Dictionary<string,object>();
+
+        // tag::query-syntax-all[]
+        var query = QueryBuilder
+              .Select(SelectResult.All())
+              .From(DataSource.Database(this_Db)); // <.>
+
+        // end::query-syntax-all[]
+
+        // tag::query-access-all[]
+        var results = query.Execute().AllResults();
+
+        if (results?.Count > 0)
+        {
+            List<Dictionary<string,object>> hotels = new List<Dictionary<string,object>>();
+            foreach (var result in results)
+            {
+                // get the result into our dictionary object
+                var thisDocsProps = result.GetDictionary(dbName); // <.>
+
+                if (thisDocsProps != null)
+                {
+                    thisDocsId = thisDocsProps.GetString("id"); // <.>
+                    thisDocsName = thisDocsProps.GetString("name");
+                    thisDocsCity = thisDocsProps.GetString("city");
+                    thisDocsType = thisDocsProps.GetString("type");
+                    hotel = thisDocsProps.ToDictionary();
+                    hotels.Add(hotel);
+                }
+
+            }
+        }
+        // end::query-access-all[]
+    }
+
+
+    private static void testQuerySyntaxProps()
+    {
+        // For Documentation
+        var dbName = "travel-sample";
+        var this_Db = new Database(dbName);
+
+        string thisDocsName;
+        string thisDocsType;
+        string thisDocsCity;
+        // tag::query-syntax-props[]
+        Dictionary<string, object> hotel = new Dictionary<string, object>();
+        List<Dictionary<string, object>> hotels = new List<Dictionary<string, object>>();
+
+        var query = QueryBuilder.Select(
+                SelectResult.Property("type"),
+                SelectResult.Property("name"),
+                SelectResult.Property("city")).From(DataSource.Database(this_Db));
+        // end::query-syntax-props[]
+
+        // tag::query-access-props[]
+        var results = query.Execute().AllResults();
+        foreach (var result in results)
+        {
+
+            // get the returned array of k-v pairs into a dictionary
+            hotel = result.ToDictionary();
+
+            // add hotel dictionary to list of hotel dictionaries
+            hotels.Add(hotel);
+
+            // use the properties of the returned array of k-v pairs directly
+            thisDocsType = result.GetString("type");
+            thisDocsName = result.GetString("name");
+            thisDocsCity = result.GetString("city");
+
+        }
+
+
+    // end::query-access-props[]
+    } // test-query-access-props
+
+
+
+    private static void testQuerySyntaxCount()
+    {
+        // For Documentation
+        var dbName = "travel-sample";
+        var this_Db = new Database(dbName);
+
+        Dictionary<string, object> hotel = new Dictionary<string, object>();
+        List<Dictionary<string, object>> hotels = new List<Dictionary<string, object>>();
+
+        // tag::query-syntax-count-only[]
+
+        var query =
+          QueryBuilder
+            .Select(SelectResult.Expression(Function.Count(Expression.All())).As("mycount")) // <.>
+            .From(DataSource.Database(this_Db));
+
+        // end::query-syntax-count-only[]
+
+
+        // tag::query-access-count-only[]
+
+        var results = query.Execute().AllResults();
+
+        foreach (var result in results)
+        {
+
+            var numberOfDocs = result.GetInt("mycount"); // <.>
+
+        }
+
+        // end::query-access-count-only[]
+    }
+
+
+
+
+    private static void ibQueryForID()
+    {
+
+        // For Documentation
+        var dbName = "travel-sample";
+        var this_Db = new Database(dbName);
+
+        Dictionary<string, object> hotel = new Dictionary<string, object>();
+        List<Dictionary<string, object>> hotels = new List<Dictionary<string, object>>();
+
+
+        // tag::query-syntax-id[]
+
+        var query = QueryBuilder
+                .Select(SelectResult.Expression(Meta.ID).As("this_ID"))
+                .From(DataSource.Database(this_Db));
+
+        // end::query-syntax-id[]
+
+
+        // tag::query-access-id[]
+        var results = query.Execute().AllResults();
+        foreach (var result in results)
+        {
+
+            var thisDocsID = result.GetString("this_ID"); // <.>
+            var doc = this_Db.GetDocument(thisDocsID);
+        }
+
+        // end::query-access-id[]
+    }
+
+
+// tag::query-syntax-pagination-all[]
+    private static void testQueryPagination()
+    {
+      // For Documentation
+      var dbName = "travel-sample";
+      var this_Db = new Database(dbName);
+
+    // tag::query-syntax-pagination[]
+
+      var thisLimit = 20;
+      var thisOffset = 0;
+
+      // get a count of the number of docs matching the query
+      var countQuery =
+          QueryBuilder
+              .Select(SelectResult.Expression(Function.Count(Expression.All())).As("mycount"))
+              .From(DataSource.Database(this_Db));
+      var numberOfDocs =
+          countQuery.Execute().AllResults().ElementAt(0).GetInt("mycount");
+
+      if (numberOfDocs < thisLimit) {
+          thisLimit = numberOfDocs;
+      }
+
+      while (thisOffset < numberOfDocs)
+      {
+          var listQuery =
+              QueryBuilder
+                  .Select(SelectResult.All())
+                  .From(DataSource.Database(this_Db))
+                  .Limit(Expression.Int(thisLimit), Expression.Int(thisOffset)); // <.>
+
+          foreach (var result in listQuery.Execute().AllResults())
+          {
+              // Display and or process query results batch
+
+          }
+
+          thisOffset = thisOffset + thisLimit;
+
+      } // end while
+
+// end::query-syntax-pagination[]
+// end::query-syntax-pagination-all[]
+    }
+  }
+
