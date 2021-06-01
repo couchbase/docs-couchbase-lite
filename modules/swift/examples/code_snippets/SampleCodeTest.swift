@@ -2102,7 +2102,7 @@ class QueryResultSets {
 //        seedHotel()
 
 // QUERY RESULT SET HANDLING EXAMPLES
-// tag::query-syntax-all[
+// tag::query-syntax-all[]
 
         let listQuery = QueryBuilder.select(SelectResult.all())
             .from(DataSource.database( db))
@@ -2117,14 +2117,15 @@ class QueryResultSets {
 
                 print(row.toDictionary())
 
-                if let hotel = row.dictionary(forKey: "_doc") {
+                if let hotel = row.dictionary(forKey: "_doc") { // <.>
 
                     let hotelid = hotel["id"].string!
 
                     hotels[hotelid] = hotel.toDictionary()
 
 
-                    if let thisDocsProperties = hotel.toDictionary() as? [String:Any] {
+                    if let thisDocsProperties =
+                             hotel.toDictionary() as? [String:Any] { // <.>
 
                         let docid = thisDocsProperties["id"] as! String
 
@@ -2136,7 +2137,7 @@ class QueryResultSets {
 
                         print("thisDocsProperties are: ", docid,name,type,city)
 
-                    } // end if <.>
+                    } // end if
 
                 } // end if
 
@@ -2147,42 +2148,6 @@ class QueryResultSets {
         } //end do-block
 
     // end::query-access-all[]
-
-    // tag::query-access-json[]
-
-        do {
-
-            for (_, row) in
-                try! listQuery.execute().allResults().enumerated() {
-
-                let jsonString = row.dictionary(forKey: "_doc")!.toJSON()
-
-                let thisJsonObj =
-                        try! JSONSerialization.jsonObject(
-                                with: jsonString.data(using: .utf8)! , options:[])
-                                    as? [String: Any]
-
-                let docid = thisJsonObj!["id"] as! String
-
-                let name = thisJsonObj!["name"] as! String
-
-                let type = thisJsonObj!["type"] as! String
-
-                let city = thisJsonObj!["city"] as! String
-
-                print("the JSON Object's propertiess are: ", docid,name,type,city)
-
-            } // end for
-
-        } catch let err {
-            print(err.localizedDescription)
-
-        } // end do
-
-
-    } // end func dontTestQueryAll
-
-    // end::query-access-json[]
 
 //
     func dontTestQueryProps () throws {
