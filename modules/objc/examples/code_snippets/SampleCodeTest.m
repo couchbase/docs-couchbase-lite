@@ -267,7 +267,7 @@
             [doc setValue:@"user" forKey:@"type"];
             [doc setValue:[NSString stringWithFormat:@"user %d", i] forKey:@"name"];
             [doc setBoolean:NO forKey:@"admin"];
-            [database saveDocument:doc error:nil];
+            [database saveDocument:doc error: &error];
         }
     }];
     // end::batch[]
@@ -1416,7 +1416,7 @@
     self = [super init];
     if (self) {
         // tag::message-endpoint[]
-        CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"dbname" error:nil];
+        CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"dbname" error: &error];
 
         // The delegate must implement the `CBLMessageEndpointDelegate` protocol.
         NSString* id = @"";
@@ -1515,7 +1515,7 @@
 
 - (void)startListener {
     // tag::listener[]
-    CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"mydb" error:nil];
+    CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"mydb" error: &error];
 
     CBLMessageEndpointListenerConfiguration *config =
     [[CBLMessageEndpointListenerConfiguration alloc] initWithDatabase:database
@@ -1586,38 +1586,38 @@
 // QUERY RESULT SET HANDLING EXAMPLES
 
 // tag::query-syntax-all[]
+CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &error];
+
 CBLQuery *listQuery;
 
 *listQuery = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
-             from:[CBLQueryDataSource database:dbName] // <.>
+             from:[CBLQueryDataSource database:db]] // <.>
 
 // end::query-syntax-all[]
 
 
 // tag::query-access-all[]
-CBLMutableArray* matches = [[CBLMutableArray alloc] init];
+NSMutableArray* matches = [[NSMutableArray alloc] init]; // add to native dictionary
+    CBLQueryResultSet* resultset = [listQuery execute:&error];
 
-CBLQueryResultSet* resultset = [listQuery execute:&error];
+    for (CBLQueryResult *result in resultset.allResults) { // access the resultSet.allResults
 
-for (CBLQueryResult *result in resultset) {
+        CBLDictionary *match = [result valueAtIndex: 0];
 
-    CBLDictionary *match = [result valueForKey:@dbName];
+        [matches addObject: [match toDictionary]];
 
-    [matches addDictionary: *match] // <.>
-    // NSLog(@"document name :: %@", [match stringForKey:@"name"]);
-
-// <.>
-    *docid = [match stringForKey:@"id"]
-    *name =  [match stringForKey:@"name"]
-    *type =  [match stringForKey:@"type"]
-    *city =  [match stringForKey:@"city"]
-
-} // end for
+        NSLog(@"id = %@", [match stringForKey:@"id"]);
+        NSLog(@"name = %@", [match stringForKey:@"name"]);
+        NSLog(@"type = %@", [match stringForKey:@"type"]);
+        NSLog(@"city = %@", [match stringForKey:@"city"]);
+    } // end for
 
 // end::query-access-all[]
 
 
 // tag::query-syntax-props[]
+CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &error];
+
 CBLQuery *listQuery;
 
 CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
@@ -1629,41 +1629,38 @@ CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
 CBLQuerySelectResult *city = [CBLQuerySelectResult property:@"city"];
 
 *listQuery = [CBLQueryBuilder select:@[id, type, name, city]
-             from:[CBLQueryDataSource database:dbName]] // <.>
+             from:[CBLQueryDataSource database:db]] // <.>
 
 // end::query-syntax-props[]
 
 // tag::query-access-props[]
-CBLDictionary *match;
+    NSMutableArray* matches = [[NSMutableArray alloc] init]; // save to native array
 
-CBLMutableArray* matches = [[CBLMutableArray alloc] init];
+    CBLQueryResultSet* resultset = [listQuery execute:&error];
 
-CBLQueryResultSet* resultset = [listQuery execute:&error];
+    for (CBLQueryResult *result in resultset.allResults) { // all results
 
-for (CBLQueryResult *result in resultset) {
+        [matches addObject: [result toDictionary]];
 
-  *match = [result toDictionary];
+        NSLog(@"id = %@", [result stringForKey:@"id"]);
+        NSLog(@"name = %@", [result stringForKey:@"name"]);
+        NSLog(@"type = %@", [result stringForKey:@"type"]);
+        NSLog(@"city = %@", [result stringForKey:@"city"]);
 
-  [matches addDictionary: *match] // <.>
-
-// <.>
-  *docid = [match stringForKey:@"id"]
-  *name =  [match stringForKey:@"name"]
-  *type =  [match stringForKey:@"type"]
-  *city =  [match stringForKey:@"city"]
-
-} // end for
+    } // end for
 
 // end::query-access-props[]
 
 
 
 // tag::query-syntax-count-only[]
+CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &error];
+
 CBLQuerySelectResult *count =
   [CBLQuerySelectResult expression:[CBLQueryFunction count:   [CBLQueryExpression all]]];
 
 *listQuery = [CBLQueryBuilder select:@[count]
-             from:[CBLQueryDataSource database:dbName]] // <.>
+             from:[CBLQueryDataSource database:db]] // <.>
 
 // end::query-syntax-count-only[]
 
@@ -1686,12 +1683,14 @@ for (CBLQueryResult *result in resultset) {
 
 
 // tag::query-syntax-id[]
+CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &error];
+
 CBLQuery *listQuery;
 
 CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
 
 *listQuery = [CBLQueryBuilder select:@[id]
-             from:[CBLQueryDataSource database:dbName]]
+             from:[CBLQueryDataSource database:db]]
 
 // end::query-syntax-id[]
 
@@ -1722,11 +1721,12 @@ for (CBLQueryResult *result in resultset) {
 // tag::query-syntax-pagination[]
 int thisOffset = 0;
 int thisLimit = 20;
+CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &error];
 
 CBLQuery* listQuery =
             [CBLQueryBuilder
                 select: @[[CBLQuerySelectResult all]]
-                from: [CBLQueryDataSource database: this_Db]
+                from: [CBLQueryDataSource database: db]
                 limit: [CBLQueryLimit
                             limit: [CBLQueryExpression integer: thisLimit]
                             offset: [CBLQueryExpression integer: thisOffset]]
