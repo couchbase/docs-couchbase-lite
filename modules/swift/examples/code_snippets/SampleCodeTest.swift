@@ -2103,6 +2103,9 @@ class QueryResultSets {
 
 // QUERY RESULT SET HANDLING EXAMPLES
 // tag::query-syntax-all[]
+        let db = try! Database(name: "hotel")
+        var hotels = [String:Any]()
+        var hotel:Hotel = Hotel.init()
 
         let listQuery = QueryBuilder.select(SelectResult.all())
             .from(DataSource.database( db))
@@ -2113,38 +2116,27 @@ class QueryResultSets {
 
         do {
 
-            for (row) in try! listQuery.execute() {
+            for row in try! listQuery.execute() {
 
-                print(row.toDictionary())
+                let thisDocsProps =
+                    row.dictionary(at: 0)?.toDictionary() // <.>
 
-                if let hotel = row.dictionary(forKey: "_doc") { // <.>
+                let docid = thisDocsProps!["id"] as! String
 
-                    let hotelid = hotel["id"].string!
+                let name = thisDocsProps!["name"] as! String
 
-                    hotels[hotelid] = hotel.toDictionary()
+                let type = thisDocsProps!["type"] as! String
 
+                let city = thisDocsProps!["city"] as! String
 
-                    if let thisDocsProperties =
-                             hotel.toDictionary() as? [String:Any] { // <.>
+                let hotel = row.dictionary(at: 0)?.toDictionary()  //<.>
 
-                        let docid = thisDocsProperties["id"] as! String
+                let hotelId = hotel!["id"] as! String
 
-                        let name = thisDocsProperties["name"] as! String
-
-                        let type = thisDocsProperties["type"] as! String
-
-                        let city = thisDocsProperties["city"] as! String
-
-                        print("thisDocsProperties are: ", docid,name,type,city)
-
-                    } // end if
-
-                } // end if
+                hotels[hotelId] = hotel
 
             } // end for
-        } catch let err {
-            print(err.localizedDescription)
-            // ... handle errors as required
+
         } //end do-block
 
     // end::query-access-all[]
@@ -2152,6 +2144,10 @@ class QueryResultSets {
 //
     func dontTestQueryProps () throws {
         // tag::query-syntax-props[]
+        let db = try! Database(name: "hotel")
+        var hotels = [String:Any]()
+        var hotel:Hotel = Hotel.init()
+
         let listQuery = QueryBuilder
             .select(SelectResult.expression(Meta.id).as("metaId"),
                     SelectResult.expression(Expression.property("id")),
@@ -2165,25 +2161,25 @@ class QueryResultSets {
         // tag::query-access-props[]
         for (_, result) in try! listQuery.execute().enumerated() {
 
-            print(result.toDictionary())
 
-            if let thisDoc = result.toDictionary() as? [String:Any] {
+            let thisDoc = result.toDictionary() as? [String:Any]  // <.>
+                // Store dictionary data in hotel object and save in array
+            hotel.id = thisDoc!["id"] as! String
+            hotel.name = thisDoc!["name"] as! String
+            hotel.city = thisDoc!["city"] as! String
+            hotel.type = thisDoc!["type"] as! String
+            hotels[hotel.id] = hotel
 
-                let docid = thisDoc["metaId"] as! String
+            // Use result content directly
+            let docid = result.string(forKey: "metaId")
+            let hotelId = result.string(forKey: "id")
+            let name = result.string(forKey: "name")
+            let city = result.string(forKey: "city")
+            let type = result.string(forKey: "type")
 
-                let hotelId = thisDoc["id"] as! String
-
-                let name = thisDoc["name"] as! String
-
-                let city = thisDoc["city"] as! String
-
-                let type = thisDoc["type"] as! String
-
-                // ... process document properties as required
-                print("Result properties are: ", docid, hotelId,name, city, type)
-          }
-}
-
+            // ... process document properties as required
+            print("Result properties are: ", docid, hotelId,name, city, type)
+          } // end for
 // end::query-access-props[]
     }
 
@@ -2191,6 +2187,7 @@ class QueryResultSets {
     func dontTestQueryCount () throws {
 
     // tag::query-syntax-count-only[]
+        let db = try! Database(name: "hotel")
         do {
             let listQuery = QueryBuilder
                 .select(SelectResult.expression(Function.count(Expression.all())).as("mycount"))
@@ -2200,13 +2197,15 @@ class QueryResultSets {
 
 
             // tag::query-access-count-only[]
+
             for result in try! listQuery.execute() {
-                if let dict = result.toDictionary() as? [String: Int] {
-                    let thiscount = dict["mycount"]! // <.>
-                    print("There are ", thiscount, " rows")
-                }
-            }
+                let dict = result.toDictionary() as? [String: Int]
+                let thiscount = dict!["mycount"]! // <.>
+                print("There are ", thiscount, " rows")
+            } // end for
+
         } // end do
+
     } // end function
 
 // end::query-access-count-only[]
@@ -2215,6 +2214,7 @@ class QueryResultSets {
     func dontTestQueryId () throws {
 
         // tag::query-syntax-id[]
+        let db = try! Database(name: "hotel")
         let listQuery = QueryBuilder.select(SelectResult.expression(Meta.id).as("metaId"))
                     .from(DataSource.database(db))
 
