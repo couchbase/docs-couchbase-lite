@@ -1663,7 +1663,6 @@ var query =
     {
         // For Documentation
         var dbName = "travel-sample";
-        var this_Db = new Database(dbName) ;
 
         string thisDocsId;
         string thisDocsName;
@@ -1672,9 +1671,11 @@ var query =
         Dictionary<string,object> hotel = new Dictionary<string,object>();
 
         // tag::query-syntax-all[]
+        var this_Db = new Database("hotels") ;
+
         var query = QueryBuilder
               .Select(SelectResult.All())
-              .From(DataSource.Database(this_Db)); // <.>
+              .From(DataSource.Database(this_Db));
 
         // end::query-syntax-all[]
 
@@ -1709,13 +1710,16 @@ var query =
     {
         // For Documentation
         var dbName = "travel-sample";
-        var this_Db = new Database(dbName);
+        // var this_Db = new Database(dbName);
 
         string thisDocsName;
         string thisDocsType;
         string thisDocsCity;
         // tag::query-syntax-props[]
+        var this_Db = new Database("hotels") ;
+
         Dictionary<string, object> hotel = new Dictionary<string, object>();
+
         List<Dictionary<string, object>> hotels = new List<Dictionary<string, object>>();
 
         var query = QueryBuilder.Select(
@@ -1742,7 +1746,6 @@ var query =
 
         }
 
-
     // end::query-access-props[]
     } // test-query-access-props
 
@@ -1752,12 +1755,13 @@ var query =
     {
         // For Documentation
         var dbName = "travel-sample";
-        var this_Db = new Database(dbName);
+        // var this_Db = new Database(dbName);
 
         Dictionary<string, object> hotel = new Dictionary<string, object>();
         List<Dictionary<string, object>> hotels = new List<Dictionary<string, object>>();
 
         // tag::query-syntax-count-only[]
+        var this_Db = new Database("hotels") ;
 
         var query =
           QueryBuilder
@@ -1789,13 +1793,14 @@ var query =
 
         // For Documentation
         var dbName = "travel-sample";
-        var this_Db = new Database(dbName);
+        // var this_Db = new Database(dbName);
 
         Dictionary<string, object> hotel = new Dictionary<string, object>();
         List<Dictionary<string, object>> hotels = new List<Dictionary<string, object>>();
 
 
         // tag::query-syntax-id[]
+        var this_Db = new Database("hotels") ;
 
         var query = QueryBuilder
                 .Select(SelectResult.Expression(Meta.ID).As("this_ID"))
@@ -1822,9 +1827,10 @@ var query =
     {
       // For Documentation
       var dbName = "travel-sample";
-      var this_Db = new Database(dbName);
+      // var this_Db = new Database(dbName);
 
     // tag::query-syntax-pagination[]
+      var this_Db = new Database("hotels") ;
 
       var thisLimit = 20;
       var thisOffset = 0;

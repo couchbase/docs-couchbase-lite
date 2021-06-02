@@ -1899,8 +1899,7 @@ public class TestQueries {
         }
 
       Query listQuery = QueryBuilder.select(SelectResult.all())
-              .from(DataSource.database(this_Db)); // <.>
-
+              .from(DataSource.database(this_Db));
         // end::query-syntax-all[]
 
         // tag::query-access-all[]

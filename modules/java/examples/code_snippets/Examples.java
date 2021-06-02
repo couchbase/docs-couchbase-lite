@@ -2028,213 +2028,242 @@ public class ZipUtils {
 /*
  QUERY RESULT SET HANDLING EXAMPLES
 */
-
 package com.example.docsnippet;
-import android.app.Application.*;
-import android.content.Context;
-import android.content.Context.*;
-import java.lang.Object;
-import java.security.Key;
-import java.util.*;
-import com.couchbase.lite.*;
-import com.couchbase.lite.Dictionary;
+        import android.app.Application.*;
+        import android.content.Context;
+        import android.content.Context.*;
+        import java.lang.Object;
+        import java.security.Key;
+        import java.util.*;
+        import com.couchbase.lite.*;
+        import com.couchbase.lite.Dictionary;
 
-    public class TestQueries {
+public class TestQueries {
 
-        // For Documentation
+    // For Documentation
 
-        Datastore ds = new Datastore();
+    Datastore ds = new Datastore();
 
-        Database this_Db = ds.getDB();
+    Database this_Db = ds.getDB();
 
-        String dbName = this_Db.getName();
+    String dbName = this_Db.getName();
 
-        HashMap<String, Object> hotels = new HashMap<>();
+    HashMap<String, Object> hotels = new HashMap<>();
 
-        Dictionary thisDocsProps;
-        String thisDocsId;
-        String thisDocsName;
-        String thisDocsType;
-        String thisDocsCity;
+    Dictionary thisDocsProps;
+    String thisDocsId;
+    String thisDocsName;
+    String thisDocsType;
+    String thisDocsCity;
 
 
 
-        static {
-            init();
+    static {
+        init();
+    }
+
+    private static void init() {
+    }
+
+
+
+    public void testQuerySyntaxAll() throws CouchbaseLiteException {
+
+        // tag::query-syntax-all[]
+        try {
+          this_Db = new Database("hotels");
+        } catch (CouchbaseLiteException e) {
+          e.printStackTrace();
         }
 
-        private static void init() {
-        }
+      Query listQuery = QueryBuilder.select(SelectResult.all())
+              .from(DataSource.database(this_Db));
 
+        // end::query-syntax-all[]
 
+        // tag::query-access-all[]
+        try {
+            for (Result result : listQuery.execute().allResults()) {
+                             // get the k-v pairs from the 'hotel' key's value into a dictionary
+                thisDocsProps = result.getDictionary(0)); // <.>
+                thisDocsId = thisDocsProps.getString("id");
+                thisDocsName = thisDocsProps.getString("Name");
+                thisDocsType = thisDocsProps.getString("Type");
+                thisDocsCity = thisDocsProps.getString("City");
 
-        public void testQuerySyntaxAll() throws CouchbaseLiteException {
+                // Alternatively, access results value dictionary directly
+                final Hotel hotel = new Hotel();
+                hotel.Id = result.getDictionary(0).getString("id"); // <.>
+                hotel.Type = result.getDictionary(0).getString("Type");
+                hotel.Name = result.getDictionary(0).getString("Name");
+                hotel.City = result.getDictionary(0).getString("City");
+                hotel.Country= result.getDictionary(0).getString("Country");
+                hotel.Description = result.getDictionary(0).getString("Description");
+                hotels.put(hotel.Id, hotel);
 
-            // tag::query-syntax-all[]
-            Query listQuery = QueryBuilder.select(SelectResult.all())
-                    .from(DataSource.database(this_Db)); // <.>
-
-            // end::query-syntax-all[]
-
-            // tag::query-access-all[]
-            try {
-                for (Result result : listQuery.execute().allResults()) {
-                    int x = result.count();
-                    // get the k-v pairs from the 'hotel' key's value into a dictionary
-                    thisDocsProps = result.getDictionary(dbName); // <.>
-                    thisDocsId = thisDocsProps.getString("id");
-                    thisDocsName = thisDocsProps.getString("Name");
-                    thisDocsType = thisDocsProps.getString("Type");
-                    thisDocsCity = thisDocsProps.getString("City");
-
-                    // Alternatively, access results value dictionary directly
-                    final Hotel hotel = new Hotel();
-                    hotel.Id = result.getDictionary(dbName).getString("id"); // <.>
-                    hotel.Type = result.getDictionary(dbName).getString("Type");
-                    hotel.Name = result.getDictionary(dbName).getString("Name");
-                    hotel.City = result.getDictionary(dbName).getString("City");
-                    hotel.Country= result.getDictionary(dbName).getString("Country");
-                    hotel.Description = result.getDictionary(dbName).getString("Description");
-                    hotels.put(hotel.Id, hotel);
-
-                }
-            } catch (CouchbaseLiteException e) {
-                e.printStackTrace();
             }
-
-            // end::query-access-all[]
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
         }
 
-        public void testQuerySyntaxProps() throws CouchbaseLiteException {
+        // end::query-access-all[]
+    }
 
-            // tag::query-syntax-props[]
-            Query listQuery =
-                    QueryBuilder.select(SelectResult.expression(Meta.id),
-                            SelectResult.property("name"),
-                            SelectResult.property("Name"),
-                            SelectResult.property("Type"),
-                            SelectResult.property("City"))
-                            .from(DataSource.database(this_Db));
+    public void testQuerySyntaxProps() throws CouchbaseLiteException {
 
-            // end::query-syntax-props[]
+        // tag::query-syntax-props[]
+        try {
+          this_Db = new Database("hotels");
+        } catch (CouchbaseLiteException e) {
+          e.printStackTrace();
+        }
 
-            // tag::query-access-props[]
+        Query listQuery =
+                QueryBuilder.select(SelectResult.expression(Meta.id),
+                        SelectResult.property("name"),
+                        SelectResult.property("Name"),
+                        SelectResult.property("Type"),
+                        SelectResult.property("City"))
+                        .from(DataSource.database(this_Db));
 
-            try {
-                for (Result result : listQuery.execute().allResults()) {
+        // end::query-syntax-props[]
 
-                    // get data direct from result k-v pairs
-                    final Hotel hotel = new Hotel();
-                    hotel.Id = result.getString("id");
-                    hotel.Type = result.getString("Type");
-                    hotel.Name = result.getString("Name");
-                    hotel.City = result.getString("City");
+        // tag::query-access-props[]
 
-                    // Store created hotel object in a hashmap of hotels
-                    hotels.put(hotel.Id, hotel);
+        try {
+            for (Result result : listQuery.execute().allResults()) {
 
-                    // Get result k-v pairs into a 'dictionary' object
-                    Map<String, Object> thisDocsProps = result.toMap();
-                    thisDocsId =
-                            thisDocsProps.getOrDefault("id",null).toString();
-                    thisDocsName =
-                            thisDocsProps.getOrDefault("Name",null).toString();
-                    thisDocsType =
-                            thisDocsProps.getOrDefault("Type",null).toString();
-                    thisDocsCity =
-                            thisDocsProps.getOrDefault("City",null).toString();
+                // get data direct from result k-v pairs
+                final Hotel hotel = new Hotel();
+                hotel.Id = result.getString("id");
+                hotel.Type = result.getString("Type");
+                hotel.Name = result.getString("Name");
+                hotel.City = result.getString("City");
 
-                }
-            } catch (CouchbaseLiteException e) {
-                e.printStackTrace();
+                // Store created hotel object in a hashmap of hotels
+                hotels.put(hotel.Id, hotel);
+
+                // Get result k-v pairs into a 'dictionary' object
+                Map <String, Object> thisDocsProps = result.toMap();
+                thisDocsId =
+                        thisDocsProps.getOrDefault("id",null).toString();
+                thisDocsName =
+                        thisDocsProps.getOrDefault("Name",null).toString();
+                thisDocsType =
+                        thisDocsProps.getOrDefault("Type",null).toString();
+                thisDocsCity =
+                        thisDocsProps.getOrDefault("City",null).toString();
+
             }
-
-            // end::query-access-props[]
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
         }
 
-
-        public void testQuerySyntaxCount() throws CouchbaseLiteException {
-
-            // tag::query-syntax-count-only[]
-            Query listQuery = QueryBuilder.select(
-                    SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) // <.>
-                    .from(DataSource.database(this_Db));
-
-            // end::query-syntax-count-only[]
+        // end::query-access-props[]
+    }
 
 
-            // tag::query-access-count-only[]
-            try {
-                for (Result result : listQuery.execute()) {
+    public void testQuerySyntaxCount() throws CouchbaseLiteException {
+      try {
+        this_Db = new Database("hotels");
+      } catch (CouchbaseLiteException e) {
+        e.printStackTrace();
+      }
 
-                    // Retrieve count using key 'mycount'
-                    Integer altDocId = result.getInt("mycount");
+      // tag::query-syntax-count-only[]
+      Query listQuery = QueryBuilder.select(
+              SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) // <.>
+              .from(DataSource.database(this_Db));
 
-                    // Alternatively, use the index
-                    Integer orDocId = result.getInt(0);
-                }
-                // Or even
-                Integer resultCount = listQuery.execute().next().getInt("mycount");
+      // end::query-syntax-count-only[]
 
-            } catch (CouchbaseLiteException e) {
-                e.printStackTrace();
+
+        // tag::query-access-count-only[]
+        try {
+            for (Result result : listQuery.execute()) {
+
+                // Retrieve count using key 'mycount'
+                Integer altDocId = result.getInt("mycount");
+
+                // Alternatively, use the index
+                Integer orDocId = result.getInt(0);
             }
-            // end::query-access-count-only[]
+            // Or even miss out the for-loop altogether
+            Integer resultCount = listQuery.execute().next().getInt("mycount");
+
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
         }
+        // end::query-access-count-only[]
+    }
 
 
-        public void testQuerySyntaxId() throws CouchbaseLiteException {
-            // tag::query-syntax-id[]
-            Query listQuery =
-                    QueryBuilder.select(SelectResult.expression(Meta.id).as("metaID"))
-                            .from(DataSource.database(this_Db));
+    public void testQuerySyntaxId() throws CouchbaseLiteException {
+      // tag::query-syntax-id[]
+      try {
+        this_Db = new Database("hotels");
+      } catch (CouchbaseLiteException e) {
+        e.printStackTrace();
+      }
 
-            // end::query-syntax-id[]
+      Query listQuery =
+              QueryBuilder.select(SelectResult.expression(Meta.id).as("metaID"))
+                      .from(DataSource.database(this_Db));
+
+      // end::query-syntax-id[]
 
 
-            // tag::query-access-id[]
+        // tag::query-access-id[]
 
-            try {
-                for (Result result : listQuery.execute().allResults()) {
+        try {
+            for (Result result : listQuery.execute().allResults()) {
 
-                    // get the ID form the result's k-v pair array
-                    thisDocsId = result.getString("metaID"); // <.>
+                // get the ID form the result's k-v pair array
+                thisDocsId = result.getString("metaID"); // <.>
 
-                    // Get document from DB using retrieved ID
-                    Document thisDoc = this_Db.getDocument(thisDocsId);
+                // Get document from DB using retrieved ID
+                Document thisDoc = this_Db.getDocument(thisDocsId);
 
-                    // Process document as required
-                    thisDocsName = thisDoc.getString("Name");
+                // Process document as required
+                thisDocsName = thisDoc.getString("Name");
 
-                }
-            } catch (CouchbaseLiteException e) {
-                e.printStackTrace();
             }
-
-            // end::query-access-id[]
-
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
         }
 
+        // end::query-access-id[]
 
-        // tag::query-syntax-pagination-all[]
-        public void testQueryPagination() throws CouchbaseLiteException {
+    }
 
 
-            // tag::query-syntax-pagination[]
-            int thisOffset = 0;
-            int thisLimit = 20;
+    // tag::query-syntax-pagination-all[]
+    public void testQueryPagination() throws CouchbaseLiteException {
 
-            Query listQuery =
-                    QueryBuilder
-                            .select(SelectResult.all())
-                            .from(DataSource.database(this_Db))
-                            .limit(Expression.intValue(thisLimit), Expression.intValue(thisOffset)); // <.>
 
-            // end::query-syntax-pagination[]
-
+        // tag::query-syntax-pagination[]
+        try {
+          this_Db = new Database("hotels");
+        } catch (CouchbaseLiteException e) {
+          e.printStackTrace();
         }
 
-        // end::query-syntax-pagination-all[]
+        int thisOffset = 0;
+        int thisLimit = 20;
+
+        Query listQuery =
+                QueryBuilder
+                        .select(SelectResult.all())
+                        .from(DataSource.database(this_Db))
+                        .limit(Expression.intValue(thisLimit),
+                                  Expression.intValue(thisOffset)); // <.>
+
+        // end::query-syntax-pagination[]
+
+    }
+
+    // end::query-syntax-pagination-all[]
+
 
 
 
