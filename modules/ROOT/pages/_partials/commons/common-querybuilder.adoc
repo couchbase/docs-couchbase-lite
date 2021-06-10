@@ -688,18 +688,56 @@ TIP: For more on using the QueryBuilder API, see our blog: {url-cb-blog-query-in
 
 Couchbase Lite for {param-title} provides a convenience API to convert query results to JSON strings.
 
-Use {url-api-class-result-toJSON} to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<ex-json>> for a working example.
-
+Use {url-api-method-result-toJSON} to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<ex-json>> for a working example.
 
 [#ex-json]
 .Using JSON Results
 ====
-[{code-snippet}]
+
+ifdef::is-android[]
+
+[{tabs}]
+=====
+
+Kotlin::
++
+--
+
+[source, kotlin]
 ----
 
-include::{snippet}[tags=query-access-json]
+include::{snippet-alt}[tags=query-access-json, indent=0]
 
 ----
+
+--
+
+Java::
++
+--
+
+endif::is-android[]
+
+[source, {source-language}]
+----
+
+include::{snippet}[tags=query-access-json, indent=0]
+
+----
+
+ifdef::is-android[]
+
+--
+
+=====
+
+endif::is-android[]
+
+<.> Get the Query result as a JSON string
+
+<.> Get a JSON object from the JSON string
+
+<.> Get a native object from the JSON object
 
 ====
 
