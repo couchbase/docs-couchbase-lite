@@ -1598,35 +1598,91 @@
 
 
 // QUERY RESULT SET HANDLING EXAMPLES
+- (void) dontTestQuerySyntaxJson {
+    // tag::query-syntax-all[]
+    NSError *error;
 
-// tag::query-syntax-all[]
-CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &error];
+    CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &error];
 
-CBLQuery *listQuery;
+    CBLQuery *listQuery = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
+                                             from:[CBLQueryDataSource database:db]]; // <.>
 
-*listQuery = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
-             from:[CBLQueryDataSource database:db]] // <.>
-
-// end::query-syntax-all[]
+    // end::query-syntax-all[]
 
 
-// tag::query-access-all[]
-NSMutableArray* matches = [[NSMutableArray alloc] init]; // add to native dictionary
-    CBLQueryResultSet* resultset = [listQuery execute:&error];
+    // tag::query-access-all[]
+        NSMutableArray* matches =
+          [[NSMutableArray alloc] init];
 
-    for (CBLQueryResult *result in resultset.allResults) { // access the resultSet.allResults
+        CBLQueryResultSet* resultset = [listQuery execute:&error];
 
-        CBLDictionary *match = [result valueAtIndex: 0];
+        for (CBLQueryResult *result in resultset.allResults) { // access the resultSet.allResults
 
-        [matches addObject: [match toDictionary]];
+            NSDictionary *match = [result valueAtIndex: 0] ;
+//             toDictionary];
 
-        NSLog(@"id = %@", [match stringForKey:@"id"]);
-        NSLog(@"name = %@", [match stringForKey:@"name"]);
-        NSLog(@"type = %@", [match stringForKey:@"type"]);
-        NSLog(@"city = %@", [match stringForKey:@"city"]);
-    } // end for
+            // Store dictionary in array
+            [matches addObject: match];
 
-// end::query-access-all[]
+            // Use dictionary values
+            NSLog(@"id = %@", [match valueForKey:@"id"]);
+            NSLog(@"name = %@", [match valueForKey:@"name"]);
+            NSLog(@"type = %@", [match valueForKey:@"type"]);
+            NSLog(@"city = %@", [match valueForKey:@"city"]);
+
+        } // end for
+
+    // end::query-access-all[]
+
+    // tag::query-access-json[]
+    NSMutableArray<Hotel *> *hotels = NSMutableArray.new;
+    for (CBLQueryResult* result in [listQuery execute:&error]) {
+
+        // Get result as a JSON string
+
+        NSString* thisJsonString =
+                    [result toJSON]; // <.>
+        //  ALTERNATIVELY
+        NSString* thisJsonString =
+                    [[result valueAtIndex:0 ] toJSON]; // <.>
+
+        // Get an native Obj-C object from the Json String
+        NSDictionary *thisDictFromJSON =
+                [NSJSONSerialization JSONObjectWithData:
+                 [thisJsonString dataUsingEncoding: NSUTF8StringEncoding]
+                       options: NSJSONReadingAllowFragments
+                       error: &error]; // <.>
+        if (error) {
+            NSLog(@"Error in serialization: %@",error);
+            return;
+        }
+
+
+        // Populate a custom object from native dictionary
+        Hotel *hotelFromJson = Hotel.new;
+
+        hotelFromJson.id = thisDictFromJSON[@"id"];  // <.>
+        hotelFromJson.name = thisDictFromJSON[@"name"];
+        hotelFromJson.city = thisDictFromJSON[@"city"];
+        hotelFromJson.country = thisDictFromJSON[@"country"];
+        hotelFromJson.descriptive = thisDictFromJSON[@"description"];
+
+        [hotels addObject:hotelFromJson];
+
+
+        // Log generated Json and Native objects
+        // For demo/example purposes
+        NSLog(@"Json String %@", thisJsonString);
+        NSLog(@"Native Object %@", thisDictFromJSON);
+        NSLog(@"Custom Object: id: %@ name: %@ city: %@ country: %@ descriptive: %@", hotelFromJson.id, hotelFromJson.name, hotelFromJson.city, hotelFromJson.country, hotelFromJson.descriptive);
+
+       }; // end for
+
+    // end::query-access-json[]
+
+} // end function
+
+
 
 
 // tag::query-syntax-props[]

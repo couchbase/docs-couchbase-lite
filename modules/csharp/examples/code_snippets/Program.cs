@@ -1711,7 +1711,43 @@ var query =
             }
         }
         // end::query-access-all[]
-    }
+
+    // tag::query-access-json[]
+
+    foreach (var result in query.Execute().AsEnumerable()) {
+
+        // get the result into a JSON String
+        var  thisDocsJSONString = result.GetDictionary(dbName).ToJSON();// <.>
+        // ALTERNATIVELY
+        thisDocsJSONString = result.GetDictionary(0).ToJSON();// <.>
+
+        // Get a native dictionary object using the JSON string
+        var dictFromJSONstring =
+              JsonConvert.
+                DeserializeObject<Dictionary<string, object>>
+                  (thisDocsJSONString); // <.>
+
+        // use the created dictionary
+        if (dictFromJSONstring != null)
+        {
+            thisDocsId = dictFromJSONstring["id"].ToString();
+            thisDocsName = dictFromJSONstring["name"].ToString();
+            thisDocsCity = dictFromJSONstring["city"].ToString();
+            thisDocsType = dictFromJSONstring["type"].ToString();
+        }
+
+        //Get a custom object using the JSON string
+        Hotel this_hotel =
+            JsonConvert.DeserializeObject<Hotel>(thisDocsJSONString); // <.>
+
+        // Store this hotel object in a list of hotels
+        hotels.Add(
+            this_hotel.Id.ToString(),
+                this_hotel);
+
+    } // end foreach result
+    // end::query-access-json[]
+  }
 
 
     private static void testQuerySyntaxProps()
