@@ -138,7 +138,7 @@ class SampleCodeTest {
     }
 
     func dontTestTypedAcessors() throws {
-        let newTask = MutableDocument()
+        let newTask = Document()
 
         // tag::date-getter[]
         newTask.setValue(Date(), forKey: "createdAt")
@@ -146,8 +146,14 @@ class SampleCodeTest {
         // end::date-getter[]
 
         // tag::to-dictionary[]
-        newTask.toDictionary() // returns a Dictionary<String, Any>
+        newTask.toDictionary() // <.>
+
         // end::to-dictionary[]
+
+        // tag::to-json[]
+        newTask.toJSON() // <.>
+
+        // end::to-json[]
 
         print("\(date!)")
     }
@@ -685,6 +691,102 @@ class SampleCodeTest {
         // end::fts-query[]
     }
 
+
+    func dontTestToJson-ArrayObject() throws {
+        database = self.db
+        // demonstrate use of JSON string
+        // tag::tojson-array[]
+
+
+
+
+        // end::tojson-array[]
+    }
+
+
+    func dontTestToJson-Blob() throws {
+        database = self.db
+        // demonstrate use of JSON string
+        // add notes showing:
+        // 1 - retrieval of document
+        // 2 - test for blobness
+        // 3 - conversion to Json (metadata only)
+        // 4 - use of retrieved json data
+        // tag::tojson-blob[]
+
+        var thisdoc =
+              database.document(withID: "thisdoc-id").toDictionary(); // <.>
+
+        // var image: UIImage!
+
+        // let appleImage = UIImage(named: "avatar.jpg")!
+        // let imageData = UIImageJPEGRepresentation(appleImage, 1)!
+
+        // let blob = Blob(contentType: "image/jpeg", data: imageData)
+        // newTask.setBlob(blob, forKey: "avatar")
+        // try database.saveDocument(newTask)
+
+        if thisdoc.isBlob() { // <.>
+          let blobdata = thisdoc.toJson() // <.>
+          var blobtype = blobdata["type"] // <.>
+          var bloblength = blobdata["length"]
+        }
+        // end::tojson-blob[]
+    }
+
+
+    func dontTestToJson-Dictionary() throws {
+        database = self.db
+        // demonstrate use of JSON string
+        // tag::tojson-dictionary[]
+
+
+        // end::tojson-dictionary[]
+    }
+
+
+    func dontTestToJson-Document() throws {
+        database = self.db
+        // demonstrate use of JSON string
+        // tag::tojson-document[]
+
+
+        // end::tojson-document[]
+    }
+
+
+    func dontTestToJson-Result() throws {
+        database = self.db
+        // demonstrate use of JSON string
+        // tag::tojson-result[]
+        let ourJSON =  "{{\"id\": \"hotel-ted\"},{\"name\": \"Hotel Ted\"},{\"city\": \"Paris\"},{\"type\": \"hotel\"}}"
+        let ourDoc = try MutableDocument(id: "doc", json: ourJSON)
+        try database.saveDocument(ourDoc)
+
+        let query = QueryBuilder
+                      .select(SelectResult.all)
+                      .from(DataSource.database(database)))
+                      .where(Expression.property("id").equalTo(Expression.string("hotel-ted"))))
+
+        for (_,result) in try! query.execute().enumerated() {
+          if let thisJSON = result.toJSON().toJSONObj() as? [String:Any] {
+              // ... process document properties as required e.g.
+              let docid = thisJSON["id"]
+              let name = thisJSON["name"]
+              let city = thisJSON["city"]
+              let type = thisJSON["type"]
+              //
+          }
+
+        // end::tojson-result[]
+    }
+
+
+
+
+
+
+
     // MARK: Replication
 
     /* The `tag::replication[]` example is inlined in swift.adoc */
@@ -731,7 +833,6 @@ class SampleCodeTest {
         }
         // end::replication-status[]
     }
-
 
 //  BEGIN PendingDocuments IB -- 11/Feb/21 --
     func dontTestReplicationPendingDocs() throws {
@@ -2348,7 +2449,221 @@ class QueryResultSets {
 //
 //
 
+
+    func dontTestJSONdocument() {
+        // tag::query-get-all[]
+        let db = try! Database(name: "hotel")
+        let dbnew = try! Database(name: "newhotels")
+        var hotels = [String:Any]()
+
+        let listQuery = QueryBuilder
+            .select(SelectResult.expression(Meta.id).as("metaId"))
+            .from(DataSource.database(db))
+
+
+        for row in try! listQuery.execute() {
+        // end::query-get-all[]
+
+        // tag::toJson-document[]
+            var thisId = row.string(forKey: "metaId")! as String
+
+            var thisJSONstring = try! db.document(withID: thisId)!.toJSON() // <.>
+
+            print("JSON String = ", thisJSONstring as! String)
+
+            let hotelFromJSON:MutableDocument = // <.>
+                    try! MutableDocument(id: thisId as? String, json: thisJSONstring)
+
+            try! dbnew.saveDocument(hotelFromJSON)
+
+            let newhotel = dbnew.document(withID: thisId)
+
+            let keys = newhotel!.keys
+            for key in keys { // <.>
+                print(key, newhotel!.value(forKey: key) as! String)
+            }
+
+            // end::toJson-document[]
+
+        /*
+        // tag::toJson-document-output[]
+             JSON String =  {"description":"Very good and central","id":"1000","country":"France","name":"Hotel Ted","type":"hotel","city":"Paris"}
+             type hotel
+             id 1000
+             country France
+             city Paris
+             description Very good and central
+             name Hotel Ted
+        // end::toJson-document-output[]
+         */
+        } // end  query for loop
+
+
+        // tag::toJson-array[]
+
+        let thisJSONstring = """
+            [{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hotel Ted\",\"city\":\"Paris\",
+            \"country\":\"France\",\"description\":\"Undefined description for Hotel Ted\"},
+            {\"id\":\"1001\",\"type\":\"hotel\",\"name\":\"Hotel Fred\",\"city\":\"London\",
+            \"country\":\"England\",\"description\":\"Undefined description for Hotel Fred\"},
+            {\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",
+            \"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\",
+            \"features\":[\"Cable TV\",\"Toaster\",\"Microwave\"]}]
+            """
+        let myArray:MutableArrayObject =
+            try! MutableArrayObject.init(json: thisJSONstring) // <.>
+
+        for i in 0...myArray.count-1 {
+
+            print(i+1, myArray.dictionary(at: i)!.string(forKey: "name")!)
+
+            var docid = myArray.dictionary(at: i)!.string(forKey: "id")
+
+            var newdoc:MutableDocument = // <.>
+                try! MutableDocument(id: docid,
+                         data: (myArray.dictionary(at: i)?.toDictionary())! )
+
+            try! dbnew.saveDocument(newdoc)
+
+        }
+
+        let extendedDoc = dbnew.document(withID: "1002")
+        let features =
+            extendedDoc!.array(forKey: "features")?.toArray() // <.>
+        for i in 0...features!.count-1 {
+            print(features![i])
+        }
+
+        print( extendedDoc!.array(
+                forKey: "features")?.toJSON() as! String) // <.>
+
+        // end::toJson-array[]
+
+        /*
+        // tag::toJson-array-output[]
+
+         1 Hotel Ted
+         2 Hotel Fred
+         3 Hotel Ned
+
+         Cable TV
+         Toaster
+         Microwave
+
+         ["Cable TV","Toaster","Microwave"]
+         // end::toJson-array-output[]
+        */
+
+
+        // tag::toJson-dictionary[]
+
+        var aJSONstring = """
+            {\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",
+            \"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\"}
+            """
+
+        let myDict:MutableDictionaryObject =
+            try! MutableDictionaryObject(json: aJSONstring) // <.>
+        print(myDict)
+
+        let name = myDict.string(forKey: "name")
+        print("Details for: ", name!)
+
+        for key in myDict {
+
+            print(key, myDict.value(forKey: key) as! String)
+
+        }
+
+
+        // end::toJson-dictionary[]
+
+        /*
+        // tag::toJson-dictionary-output[]
+
+         Details for:  Hotel Ned
+         description Undefined description for Hotel Ned
+         id 1002
+         name Hotel Ned
+         country Australia
+         type hotel
+         city Balmain
+
+         // end::toJson-dictionary-output[]
+        */
+    public func JsonApiBlob() throws {
+
+
+        // tag::toJson-blob[]
+
+        // Get a document
+        let thisDoc = db.document(withID: "1000")?.toMutable() // <.>
+
+
+        // Get the image and add as a blob to the document
+        let contentType = "";
+        let ourImage = UIImage(named: "couchbaseimage.png")!
+        let imageData = ourImage.jpegData(compressionQuality: 1)! // <.>
+        thisDoc?.setBlob(
+            Blob(contentType: contentType, data: imageData), forKey: "avatar") //<.>
+
+       let theBlobAsJSONstringFails =
+              thisDoc?.blob(forKey: "avatar")!.toJSON(); // <.>
+
+        // Save blob as part of doc or alternatively as a blob
+
+        try! db.saveDocument(thisDoc!);
+        try! db.saveBlob(
+                blob: Blob(contentType: contentType, data: imageData)); //<.>;
+
+        // Retrieve saved blob as a JSON, reconstitue and check still blob
+        let sameDoc = db.document(withID: "1000")?.toMutable()
+        let theBlobAsJSONstring = sameDoc?.blob(forKey: "avatar")!.toJSON(); // <.>
+        let reconstitutedBlob =
+             MutableDictionaryObject().
+                setDictionary(try MutableDictionaryObject().
+                    setJSON(theBlobAsJSONstring!), forKey: "blobCOPY")
+        for (key, value) in sameDoc!.toDictionary() {
+             print( "Data -- {0) = {1}", key, value);
+        }
+
+        if(Blob.isBlob(properties: reconstitutedBlob.dictionary(forKey: "blobCOPY")!.toDictionary())) // <.>
+        {
+            print(theBlobAsJSONstring);
+        }
+
+        // end::toJson-blob[]
+
+
+    }
+
+
+
+
+
+//    } // end func testjson
+
+//        } // end query loop
+
+
+    } // end jsonapi func
+
+
+}
+
+    extension String {
+
+        func toJSONObj() -> Any {
+
+            let d1 = self.data(using: .utf8)
+
+            return try! JSONSerialization.jsonObject(
+                with: d1!, options:[])
+        }
+    }
+
+
+
+
+
 } // end class
-
-
-

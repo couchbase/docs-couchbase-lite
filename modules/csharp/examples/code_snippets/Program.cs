@@ -1876,5 +1876,281 @@ var query =
 // end::query-syntax-pagination[]
 // end::query-syntax-pagination-all[]
     }
-  }
+
+    // JSONAPIMETHODS
+
+
+
+        public void JsonApiDocument()
+        {
+
+            // tag::toJson-document[]
+            Database this_DB = new Database("travel-sample");
+            Database newDb = new Database("ournewdb");
+
+            // Get a document
+            var thisDoc = this_Db.GetDocument("hotel_10025");
+
+            // Get document data as JSON String
+            var thisDocAsJsonString = thisDoc?.ToJSON(); // <.>
+
+            // Get Json Object from the Json String
+            JObject myJsonObj = JObject.Parse(thisDocAsJsonString);
+
+            // Get Native Object (anhotel) from JSON String
+            List<Hotel> thehotels = new List<Hotel>();
+
+            Hotel anhotel = new Hotel();
+            anhotel = JsonConvert.DeserializeObject<Hotel>(thisDocAsJsonString);
+            thehotels.Add(anhotel);
+
+            // Update the retrieved native object
+            anhotel.Name = "A Copy of " + anhotel.Name;
+            anhotel.Id = "2001";
+
+            // Convert the updated object back to a JSON string
+            var newJsonString = JsonConvert.SerializeObject(anhotel);
+
+            // Update new document with JSOn String
+            MutableDocument newhotel =
+                new MutableDocument(anhotel.Id, newJsonString); // <.>
+
+            foreach (string key in newhotel.ToDictionary().Keys)
+            {
+                System.Console.WriteLine("Data -- {0} = {1}",
+                    key, newhotel.GetValue(key));
+            }
+
+            newDb.Save(newhotel);
+
+            var thatDoc = newDb.GetDocument("2001").ToJSON(); // <.>
+            System.Console.Write(thatDoc);
+
+            // end::toJson-document[]
+
+
+        //    // tag::toJson-document-output[]
+        //    JSON String = { "description":"Very good and central","id":"1000","country":"France","name":"Hotel Ted","type":"hotel","city":"Paris"}
+        //             type = hotel
+        //             id = 1000
+        //             country = France
+        //             city = Paris
+        //             description = Very good and central
+        //             name = Hotel Ted
+        //        // end::toJson-document-output[]
+        //         */
+
+        } // End JSONAPIDocument
+
+
+    public void JsonApiArray()
+        {
+            // Init for docs
+            //var this_Db = DataStore.getDbHandle();
+            var ourdbname = "ournewdb";
+
+            if (Database.Exists(ourdbname, "/"))
+            {
+                Database.Delete(ourdbname, "/");
+            }
+
+        // tag::toJson-array[]
+
+            Database dbNew = new Database(ourdbname);
+
+            // JSON String -- an Array (3 elements. including embedded arrays)
+            var thisJSONstring = "[{'id':'1000','type':'hotel','name':'Hotel Ted','city':'Paris','country':'France','description':'Undefined description for Hotel Ted'},{'id':'1001','type':'hotel','name':'Hotel Fred','city':'London','country':'England','description':'Undefined description for Hotel Fred'},                        {'id':'1002','type':'hotel','name':'Hotel Ned','city':'Balmain','country':'Australia','description':'Undefined description for Hotel Ned','features':['Cable TV','Toaster','Microwave']}]".Replace("'", "\"");
+
+            // Get JSON Array from JSON String
+            JArray myJsonObj = JArray.Parse(thisJSONstring);
+
+            // Create mutable array using JSON String Array
+            var myArray = new MutableArrayObject();
+            myArray.SetJSON(thisJSONstring);  // <.>
+
+
+            // Create a new documenty for each array element
+            for (int i = 0; i < myArray.Count; i++)
+            {
+                var dict = myArray.GetDictionary(i);
+                var docid = myArray[i].Dictionary.GetString("id");
+                var newdoc = new MutableDocument(docid, dict.ToDictionary()); // <.>
+                dbNew.Save(newdoc);
+            }
+
+            // Get one of the created docs and iterate through one of the embedded arrays
+            var extendedDoc = dbNew.GetDocument("1002");
+            var features = extendedDoc.GetArray("features");
+            // <.>
+            foreach (string feature in features) {
+                System.Console.Write(feature);
+                //process array item as required
+            }
+            var featuresJSON = extendedDoc.GetArray("features").ToJSON(); // <.>
+
+            // end::toJson-array[]
+        }
+
+
+        public void JsonApiDictionary()
+        {
+
+            var ourdbname = "ournewdb";
+
+            if (Database.Exists(ourdbname, "/"))
+            {
+                Database.Delete(ourdbname, "/");
+            }
+            Database dbNew = new Database(ourdbname);
+
+            // tag::toJson-dictionary[]
+
+            // Get dictionary from JSONstring
+            var aJSONstring = "{'id':'1002','type':'hotel','name':'Hotel Ned','city':'Balmain','country':'Australia','description':'Undefined description for Hotel Ned','features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
+            var myDict = new MutableDictionaryObject(json: aJSONstring); // <.>
+
+            // use dictionary to get name value
+            var name = myDict.GetString("name");
+
+
+            // Iterate through keys
+            foreach (string key in myDict.Keys)
+            {
+                System.Console.WriteLine("Data -- {0} = {1}", key, myDict.GetValue(key).ToString());
+
+            }
+            // end::toJson-dictionary[]
+
+            /*
+            // tag::toJson-dictionary-output[]
+
+                mono-stdout: Data -- id = 1002
+                mono-stdout: Data -- type = hotel
+                mono-stdout: Data -- name = Hotel Ned
+                mono-stdout: Data -- city = Balmain
+                mono-stdout: Data -- country = Australia
+                mono-stdout: Data -- description = Undefined description for Hotel Ned
+                mono-stdout: Data -- features = Couchbase.Lite.MutableArrayObject
+
+            // end::toJson-dictionary-output[]
+            */
+        } /* end of func */
+
+
+         public void JsonApiBlob()
+        {
+            // Init
+            var ourpath = DataStore.getUserFolder();
+            var ourdbname = "ournewdb";
+            var userName = "ian";
+            //ourpath = Path.Combine(ourpath,userName);
+
+            if (Database.Exists(ourdbname, ourpath))
+            {
+                Database.Delete(ourdbname, ourpath);
+            }
+            var dbCfg = new DatabaseConfiguration();
+            dbCfg.Directory=ourpath;
+            Database dbNew = new Database(ourdbname,dbCfg);
+
+            // tag::toJson-blob[]
+
+            // Initialize base document for blob from a JSON string
+            var docId = "1002";
+            var aJSONstring = "{'ref':'hotel_1002','type':'hotel','name':'Hotel Ned'," +
+                "'city':'Balmain','country':'Australia'," +
+                "'description':'Undefined description for Hotel Ned'," +
+                "'features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
+            var myDoc = new MutableDocument(docId, aJSONstring); // <.>
+
+
+            // Get the content (an image), create blob and add to doc)
+            var defaultDirectory =
+                Path.Combine(Service.GetInstance<IDefaultDirectoryResolver>()
+                            .DefaultDirectory(),
+                                userName);
+            var myImagePath = Path.Combine(defaultDirectory, "avatarimage.jpg");
+            var myImageUri = new Uri(myImagePath.ToString());
+            var myBlob = new Blob("image/jpg", myImageUri); // <.>
+            myDoc.SetBlob("avatar", myBlob); // <.>
+
+
+            // This example generates a 'blob not saved' exception
+            try { Console.WriteLine("myBlob (unsaved) as JSON = {0}", myBlob.ToJSON());}
+                catch (Exception e)
+                    {Console.WriteLine("Exception = {0}", e.Message);}
+
+            dbNew.Save(myDoc);
+
+            // Alternatively -- depending on use case
+            dbNew.SaveBlob(new Blob("image/jpg", myImageUri)); // <.>
+
+
+            // Retrieve saved doc, get blob as JSON andheck its still a 'blob'
+            var sameDoc = dbNew.GetDocument(docId);
+            var reconstitutedBlob = new MutableDictionaryObject().
+                SetDictionary("blobCOPY", new MutableDictionaryObject(sameDoc.GetBlob("avatar").ToJSON())); // <.>
+
+            if (Blob.IsBlob(
+                    reconstitutedBlob.GetDictionary("blobCOPY").ToDictionary()))  //<.>
+            {
+               //... process accordingly
+               Console.WriteLine("Its a Blob!!");
+            }
+
+            // end::toJson-blob[]
+            var datavalue = "";
+            foreach (string key in myDoc.Keys)
+            {
+                if (key == "features")
+                {
+                    datavalue = "features are: ";
+                    foreach (string item in myDoc.GetArray(key))
+                    {
+                        datavalue = datavalue + ", " + item;
+                    }
+                }
+                else if (key == "avatar")
+                {
+                    datavalue = sameDoc.GetBlob(key).ToJSON();
+                }
+                else
+                {
+                    datavalue = sameDoc.GetValue(key).ToString();
+                }
+
+                System.Console.WriteLine(" Data -- {0} = {1}", key, datavalue);
+            }
+
+            // System.Console.WriteLine(" reconstitutedBlob = {0}", reconstitutedBlob.GetDictionary("blobCOPY").ToJSON());
+
+
+
+            //}
+
+            /*
+            // tag::toJson-blob-output[]
+
+
+                Exception = Missing Digest Due To Blob Is Not Saved To Database yet.
+
+                Data -- id = 1002
+                Data -- type = hotel
+                Data -- name = Hotel Ned
+                Data -- city = Balmain
+                Data -- country = Australia
+                Data -- description = Undefined description for Hotel Ned
+                Data -- features = features are: , Cable TV, Toaster, Microwave
+                Data -- avatar = {"digest":"sha1-sdCxeOeP3IZV4FEvVVlvtulpWA8=","length":2975,"content_type":"image/jpg","@type":"blob"}
+
+                blobAsJSONstring = {"digest":"sha1-sdCxeOeP3IZV4FEvVVlvtulpWA8=","length":2975,"content_type":"image/jpg","@type":"blob"}
+
+            // end::toJson-blob-output[]
+            */
+        } /* end of func */
+
+
+
+
+  } // end of class
 

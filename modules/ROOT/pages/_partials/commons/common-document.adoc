@@ -6,11 +6,34 @@ include::{root-partials}block-abstract.adoc[]
 :fn-rsvd-wds: footnote:fn1[Any change to this reserved key will be detected when it is saved and will result in a Couchbase exception (Error Code 5 -- `CorruptRevisionData`)]
 :fnref-rsvd-wds: footnote:fn1[]
 
+:to-dictionary: pass:a,q[`toDictionary()`]
+:to-array: pass:a,q[`toArray()`]
+:set-json: pass:a,q[`setJSON()`]
+:to-json: pass:a,q[`toJSON()`]
+ifdef::is-android,is-java[]
+:to-dictionary: pass:a,q[`toMap()`]
+endif::[]
+ifdef::is-csharp[]
+:to-dictionary: pass:a,q[`ToDictionary()`]
+:to-json: pass:a,q[`ToJSON()`]
+:set-json: pass:a,q[`SetJSON()`]
+:to-array: pass:a,q[`ToArray()`]
+endif::[]
+
+
 == Overview
 
-In Couchbase Lite, a document's body takes the form of a JSON object -- a collection of key/value pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
+In Couchbase Lite, a document's body is stored in an internal, efficient, binary form.
+This internal form is easily converted into a manageable native dictionary format for manipulation in applications by using the {to-dictionary} method.
+It then appears as collection of key-value (k-v) pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
+
 Every document is identified by a document ID, which can be automatically generated (as a UUID) or specified programmatically;
 the only constraints are that it must be unique within the database, and it can't be changed.
+
+Couchbase Lite also provides for the direct handling of JSON data, whether as an object or a string. This applied to native types such as documents, blobs and arrays).
+This approach is implemented in most cases by the provision of a {to-json} method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array) -- see <<lbl-json-data>>.
+Used in conjunction with an appropriate serialization/de-serialization strategy this provides for a flexible data manipulation.
+
 
 == Initializers
 
@@ -77,19 +100,186 @@ If the property doesn't exist in the document it will return the default value f
 
 ifeval::["{param-module}"=="swift"]
 
-=== Document to dictionary
-A `Document` can be converted to a plain dictionary type.
-That's often useful to pass the document contents as a plain object to another method.
+=== Document Conversion
+A `Document` can be converted to a plain dictionary type and-or to a JSON string.
+This can often be useful to pass the document contents as a plain object to another method.
 
-.Convert to dictionary type
+.Convert document
 ====
 [source]
 ----
 include::{snippet}[tag=to-dictionary,indent=0]
+
+include::{snippet}[tag=to-json,indent=0]
+
 ----
+
+<.> Returns a Dictionary<String, Any>
+
+<.> Returns a JSON string
+
 ====
 
 endif::[]
+
+[#lbl-json-data]
+== Working with JSON Data
+In this section::
+<<lbl-array>>
+| <<lbl-blob>>
+| <<lbl-dictionary>>
+| <<lbl-document>>
+| <<lbl-result>>
+
+
+The {to-json} typed-accessor means you can easily work with JSON data, native and Couchbase Lite objects.
+
+[#lbl-array]
+=== Arrays
+
+Convert an `ArrayObject` to and from JSON using the {to-json} and `toArray` methods -- see: <<ex-array>>.
+
+Additionally you can:
+
+* Initialize a 'MutableArrayObject' using data supplied as a JSON string.
+This is done using the `init(json)` constructor-- see: <<ex-array>>
+* Convert an `ArrayFragment` object to a JSON String
+* Set data with a JSON string using `setJSON()`
+
+[#ex-array]
+.Arrays as JSON strings
+====
+[source]
+----
+include::{snippet}[tag=toJson-array,indent=0]
+
+----
+
+<.> Initialize array with JSON string
+<.> Create and save new document using the array
+<.> Get native array object from new doc and print its elements
+<.> Get an array from the document as a JSON string
+
+
++
+[source, {source-language} ]
+----
+
+include::{snippet}[tag=toJson-array-output,indent=0]
+
+----
+
+
+====
+
+
+[#lbl-blob]
+=== Blobs
+
+Convert a `Blob` to JSON using the `toJSON` method -- see <<ex-blob>>.
+
+You can also check whether a given dictionary object is a blob, or not, using `isBlob()` -- again, see <<ex-blob>>.
+
+Note that the blob object must first be saved to the database (generating required metadata) before you can use the `toJSON` method.
+
+[#ex-blob]
+.Blobs as JSON strings
+====
+[source]
+----
+include::{snippet}[tag=tojson-blob,indent=0]
+----
+====
+
+
+[#lbl-dictionary]
+=== Dictionaries
+
+Convert a `DictionaryObject` to and from JSON using the `toJSON` and `toDictionary` methods -- see <<ex-dictionary>>.
+
+Additionally you can:
+
+* Initialize a 'MutableDictionaryObject' using data supplied as a JSON string.
+This is done using the `init(json)` constructor-- see: <<ex-dictionary>>
+* Set data with a JSON string using `setJSON()`
+
+[#ex-dictionary]
+.Dictionaries as JSON strings
+====
+[source]
+----
+
+include::{snippet}[tag=toJson-dictionary,indent=0]
+
+----
+
+<.> Set the dictionary using a JSON string
+
++
+.Output
+
+[source, {source-language} ]
+----
+
+include::{snippet}[tag=toJson-dictionary-output,indent=0]
+
+----
+
+
+
+
+====
+
+
+[#lbl-document]
+=== Documents
+
+Convert a `Document` to and from JSON strings using the {to-json} and {set-json} methods -- see <<ex-document>>.
+
+Additionally you can:
+
+* Initialize a 'MutableDocument' using data supplied as a JSON string.
+This is done using the `init(json)` and-or `init(id: json:)` constructor-- see: <<ex-document>>
+* Set data with a JSON string using `setJSON()`
+
+
+[#ex-document]
+.Documents as JSON strings
+====
+
+[source, {source-language} ]
+----
+
+include::{snippet}[tags=query-get-all;toJson-document,indent=0]
+
+----
+
+<.> Get as document as a JSON string
+
+<.> Initialize a MutableDocument using the JSON string and save to a seperate database
+
+<.> Retrieve the document created from JSON and print values
+
++
+[source, {source-language} ]
+----
+
+include::{snippet}[tag=toJson-document-output,indent=0]
+
+----
+
+
+
+====
+
+
+[#lbl-result]
+=== Query Results as JSON
+
+Convert a `Query Result` to JSON using its {to-JSON} accessor method.
+
+include::{root-commons}querybuilder-jsonresult.adoc[subs="macros,attributes"]
+
 
 == Batch operations
 
