@@ -1642,9 +1642,6 @@
 
         NSString* thisJsonString =
                     [result toJSON]; // <.>
-        //  ALTERNATIVELY
-        NSString* thisJsonString =
-                    [[result valueAtIndex:0 ] toJSON]; // <.>
 
         // Get an native Obj-C object from the Json String
         NSDictionary *thisDictFromJSON =

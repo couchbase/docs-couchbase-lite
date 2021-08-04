@@ -1717,9 +1717,7 @@ var query =
     foreach (var result in query.Execute().AsEnumerable()) {
 
         // get the result into a JSON String
-        var  thisDocsJSONString = result.GetDictionary(dbName).ToJSON();// <.>
-        // ALTERNATIVELY
-        thisDocsJSONString = result.GetDictionary(0).ToJSON();// <.>
+                var thisDocsJSONString = result.ToJSON();// <.>
 
         // Get a native dictionary object using the JSON string
         var dictFromJSONstring =
