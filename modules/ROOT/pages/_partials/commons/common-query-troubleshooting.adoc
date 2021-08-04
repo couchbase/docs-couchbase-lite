@@ -7,7 +7,7 @@ ifdef::param-fullpage[]
 // Only include this abstract if the inclusion is used as a full page, rather than as a component
 // Allow for over-riding of default abstract parameter values
 :tslinks: {xref-cbl-pg-troubleshooting-logs}
-ifeval::["{param-platform}"=="{platform-ios}"]
+ifdef::is-ios[]
 :tslinks: {tslinks} | {xref-cbl-pg-troubleshooting-crashes}
 endif::[]
 ifndef::param-abstract[]
@@ -31,16 +31,40 @@ You can embed the call inside your app, or use it interactively within a `cblite
 
 [#use-qe]
 .Using Query Explain
-=====
-[{tabs}]
 ====
-In App::
+[{tabs}]
+=====
+In-App::
 +
 --
+
+ifdef::is-android[]
+[{tabs}]
+======
+{source-language}::
++
+---
+endif::is-android[]
+
 [source, {source-language}]
 ----
-include::{snippet}[tag="query-explain-all", indent=0]
+include::{snippet}[tags=query-explain-all, indent=0]
 ----
+
+ifdef::is-android[]
+---
+
+{source-language-alt}::
++
+---
+[source, {source-language-alt}]
+----
+include::{snippet}[tags=query-explain-all, indent=0]
+----
+---
+======
+endif::is-android[]
+
 <.> Construct your query as normal
 <.> Call the query's `explain` method; All output is sent to the application's log file.
 --
@@ -62,8 +86,11 @@ cblite <your-database-name>.cblite2 // <.>
 <.> Here the query is entered as a JSON-string using `query`
 
 --
-====
+
 =====
+
+====
+
 
 === Output
 The output from `{url-api-method-query-explain}` remains the same whether invoked by an app, or `cblite` -- see <<qe-output>> for an example of how it looks.
@@ -93,7 +120,10 @@ This output (<<qe-output>>) comprises three main elements:
 You can use this to identify potential issues and so optimize problematic queries.
 <.> The query in JSON-string format, which you can copy-and-paste directly into the _cblite_ tool.
 
+
 == The Query Plan
+
+
 === Format
 The query plan section of the output displays a tabular form of the translated query's execution plan.
 It primarily shows how the data will be retrieved and, where appropriate, how it will be sorted for navigation and-or presentation purposes.
@@ -153,6 +183,7 @@ Minimizing, if not eliminating, this ordering and re-ordering will obviously red
 
 Ask "is the grouping and-or ordering absolutely necessary?": if it isn't, drop it or modify it to minimize its impact.
 
+
 == Queries and Indexes
 
 include::{root-commons}indexing.adoc[tag=overview]
@@ -163,6 +194,7 @@ Ideally a query will be be able to satisfy its requirements entirely by either d
 Less good is if the query must scan the whole index; although the compact nature of most indexes means this is still much faster than the alternative of scanning the entire database with no help from the indexes at all.
 
 Searches that begin with or rely upon an inequality with the primary key are inherently less effective than those using a primary key equality.
+
 
 == Working with the Query Optimizer
 You may have noticed that sometimes a query runs faster on a second run, or after re-opening the database, or after deleting and recreating an index.
@@ -191,21 +223,18 @@ Like-based searches can use the index(es) only if:
 
 To illustrate this we can use a modified query from the Mobile Travel Sample application; replacing a simple equality test with a 'LIKE'
 
-In the first example (<<like-wild-pfx-qry>>) we use a wildcard prefix and suffix.
+In <<like-wild-pfx-qry>> we use a wildcard prefix and suffix.
 You can see that the query plan decides on a retrieval method of `Scan Table`.
 
-For more on indexes -- see: {xref-cbl-pg-indexing}
+TIP: For more on indexes -- see: {xref-cbl-pg-indexing}
 
-[#like-wild-pfx-qry]
 .Like with Wildcard Prefix
-====
-[source, {source-language}]
-----
-include::{snippet}[tag="query-explain-like", indent=0]
-
-----
-
+[#like-wild-pfx-qry]
+:param-tags: query-explain-like
+include::{root-partials}_block_tabbed_code_block.adoc[]
+:param-tags!:
 <.> The indexed property, TYPE, cannot use its index because of the wildcard prefix.
+
 
 .Resulting Query Plan
 [source, console]
@@ -213,20 +242,14 @@ include::{snippet}[tag="query-explain-like", indent=0]
 2|0|0| SCAN TABLE kv_default AS _doc
 ----
 
-====
-
 By contrast, by removing the wildcard prefix `%` (in <<like-no-wild-pfx-qry>>), we see that the query plan's retrieval method changes to become an index search.
 Where practical, simple changes like this can make significant differences in query performance.
 
-[#like-no-wild-pfx-qry]
 .Like with No Wildcard-prefix
-====
-[source, {source-language}]
-----
-include::{snippet}[tag="query-explain-nopfx", indent=0]
-
-----
-
+[#like-no-wild-pfx-qry]
+:param-tags: query-explain-nopfx
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 <.> Simply removing the wildcard prefix enables the query optimizer to access the `typeIndex`, which results in a more efficient search.
 
 .Resulting Query Plan
@@ -234,7 +257,6 @@ include::{snippet}[tag="query-explain-nopfx", indent=0]
 ----
 3|0|0| SEARCH TABLE kv_default AS _doc USING INDEX typeIndex (<expr>>? AND <expr><?)
 ----
-====
 
 == Use Functions Wisely
 
@@ -243,11 +265,10 @@ Functions are a very useful tool in building queries, but be aware that they can
 For example, you can observe a similar situation to that shown in <<use-like-based-queries>> when using the `{url-api-method-function-lower}` function on an indexed property.
 
 .Query
-[source, {source-language}]
-----
-include::{snippet}[tag="query-explain-function", indent=0]
-
-----
+[#use-like-based-queries]
+:param-tags: query-explain-function
+include::{root-partials}_block_tabbed_code_block.adoc[]
+:param-tags!:
 <.> Here we use the `{url-api-method-function-lower}` function in the _Where_ expression
 
 .Query Plan:
@@ -261,10 +282,9 @@ include::{snippet}[tag="query-explain-function", indent=0]
 But removing the `{url-api-method-function-lower}` function, changes things:
 
 .Query
-----
-include::{snippet}[tag="query-explain-nofunction", indent=0]
-
-----
+:param-tags: query-explain-nofunction
+include::{root-partials}_block_tabbed_code_block.adoc[]
+:param-tags!:
 <.> Here we have removed `{url-api-method-function-lower}` from the _Where_ expression
 
 .Query plan

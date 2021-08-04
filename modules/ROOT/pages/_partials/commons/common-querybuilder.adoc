@@ -55,31 +55,33 @@ TIP: We recommend working through the query section of the {url-tutorial-mobile-
 == Indexing
 
 Before we begin querying documents, let's briefly mention the importance of having a query index.
-A query can only be fast if there's a pre-existing database index it can search to narrow down the set of documents to examine -- see: <<ex-indexing>>, which shows how to create an index and our {xref-cbl-pg-query-troubleshooting} topic.
+A query can only be fast if there's a pre-existing database index it can search to narrow down the set of documents to examine -- see: <<lb-indexing>>, which shows how to create an index and our {xref-cbl-pg-query-troubleshooting} topic.
 
 TIP: See the {indexing--xref} topic to learn more about indexing.
 
-[#ex-indexing]
-.Creating a New Index
-====
+[#lbl-indexing]
+=== Creating a New Index
+
 This example creates a new index for the `type` and `name` properties in the <<lbl-data-format>> shown.
 
 [#lbl-data-format]
-.Data Format
+.Index Query Data Format
+====
 [{json-snippet}]
 ----
 include::{root-examples}query-snippets.adoc[tags=query-result-format-props]
 ----
-
-.Code to Create Index
-[{code-snippet}]
-----
-include::{snippet}[tag=query-index,indent=0]
-----
 ====
 
+
+.Code to Create Index
+[#ex-query-index]
+:param-tags: query-index
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
 NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
-Thus, good performance depends on designing and creating the _right_ indexes to go along with your queries.
+Good performance depends on designing and creating the _right_ indexes to go along with your queries.
 
 
 [#lbl-select]
@@ -99,28 +101,23 @@ You can opt to retrieve entire documents, or just the specific properties you ne
 === Return All Properties
 Use the `SelectResult.all()` method to return all the properties of selected documents -- see: <<ex-select-all>>.
 
-[#ex-select-all]
 .Using SELECT to Retrieve All Properties
-====
-This query shows how to retrieve all properties from all documents in your database.
-
-[{code-snippet}]
-----
-include::{snippet}[tag=query-select-all,indent=0]
-----
-====
+[#ex-select-all]
+:param-tags: query-select-all
+:param-leader: pass:q,a[This query shows how to retrieve all properties from all documents in your database.]
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
 
 The query.execute statement returns the results in a dictionary, where the key is the database name -- see <<ex-return-all>>.
 
 
 [#ex-return-all]
-.Return Data Format from SelectResult.all()
+.ResultSet Format from SelectResult.all()
 ====
 [{json-snippet}]
 ----
-
 include::{root-examples}query-snippets.adoc[tags=query-result-format-all]
-
 ----
 <.> Here we see the result for the first document matching the query criteria.
 <.> Here we see the result for the next document matching the query criteria.
@@ -136,14 +133,10 @@ To access only specific properties, specify a comma separated list of `SelectRes
 
 [#ex-select-properties]
 .Using SELECT to Retrieve Specific Properties
-====
-In this query we retrieve and then print the `_id`, `type` and `name` properties of each document.
-
-[{code-snippet}]
-----
-include::{snippet}[tag=query-select-props,indent=0]
-----
-====
+:param-tags: query-select-props
+:param-leader: pass:q,a[In this query we retrieve and then print the `_id`, `type` and `name` properties of each document.]
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 
 The `query.execute` statement returns one or more key-value pairs, one for each SelectResult expression, with the property-name as the key -- see <<ex-return-properties>>
 
@@ -186,15 +179,14 @@ In the example below, we use the `equalTo` operator to query documents where the
 
 [{json-snippet}]
 ----
-
 include::{root-examples}query-snippets.adoc[tags=query-result-format-props]
-
 ----
 
-[{code-snippet}]
-----
-include::{snippet}[tag=query-where,indent=0]
-----
+.Using Where
+:param-tags: query-where
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
 
 
 [#lbl-coll-ops]
@@ -214,21 +206,18 @@ The following example uses the `{url-api-classes-query-arrayfunction}` to find d
 }
 ----
 
-[{code-snippet}]
-----
-include::{snippet}[tag=query-collection-operator-contains,indent=0]
-----
-
+:param-tags: query-collection-operator-contains
+include::{root-partials}_block_tabbed_code_block.adoc[]
+:param-tags!:
 
 ==== IN Operator
 
 The `IN` operator is useful when you need to explicitly list out the values to test against.
 The following example looks for documents whose `first`, `last` or `username` property value equals "Armani".
 
-[{code-snippet}]
-----
-include::{snippet}[tag=query-collection-operator-in,indent=0]
-----
+:param-tags: query-collection-operator-in
+include::{root-partials}_block_tabbed_code_block.adoc[]
+:param-tags!:
 
 
 [#lbl-like-ops]
@@ -240,23 +229,21 @@ In this section::
 
 [#lbl-string-match]
 ==== String Matching
-The {url-api-method-expression-like} operator can be used for string matching.
+The {url-api-method-expression-like} operator can be used for string matching -- see <<ex-like-case-insensitive>>
 
-The `like` operator performs **case sensitive** matches. +
+NOTE: The `like` operator performs **case sensitive** matches. +
 To perform case insensitive matching, use `Function.lower` or `Function.upper` to ensure all comparators have the same case, thereby removing the case issue.
 
-[#ex-like-case-insensitive]
-.Case-insensitive Matching
-====
 This query returns `landmark` type documents where the `name` matches the string "Royal Engineers Museum", regardless of how it is capitalized (so, it selects "royal engineers museum", "ROYAL ENGINEERS MUSEUM" and so on).
 
-Note the use of `Function.lower` to transform `name` values to the same case as the literal comparator.
+.Like with case-insensitive matching
+[#ex-like-case-insensitive]
+:param-tags: query-like-operator
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 
-[{code-snippet}]
-----
-include::{snippet}[tag=query-like-operator,indent=0]
-----
-====
+*Note* the use of `Function.lower` to transform `name` values to the same case as the literal comparator.
+
 
 [#lbl-wild-match]
 ==== Wildcard Match
@@ -264,100 +251,86 @@ include::{snippet}[tag=query-like-operator,indent=0]
 We can use `%` sign within a `like` expression to do a wildcard match against zero or more characters.
 Using wildcards allows you to have some fuzziness in your search string.
 
-In the example below, we are looking for documents of `type` "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
+In <<ex-wldcd-match>> below, we are looking for documents of `type` "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
 Once again, we are using `Function.lower` to make the search case insensitive.
 
-The following query will return "landmark" `type` documents with name matching "Engineers", "engine", "english egg" , "England Eagle" and so on.
+So "landmark" documents with names such as "Engineers", "engine", "english egg" and "England Eagle".
 Notice that the matches may span word boundaries.
 
-[{code-snippet}]
-----
-include::{snippet}[tag=query-like-operator-wildcard-match,indent=0]
-----
-
+.Wildcard Matches
+[#ex-wldcd-match]
+:param-tags: query-like-operator-wildcard-match
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 
 [#lbl-wild-chars]
 ==== Wildcard Character Match
 
 We can use an `_` sign within a like expression to do a wildcard match against a single character.
 
-In the example below, we are looking for documents of type "landmark" where the `name` property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
-The following query will return "landmark" `type` documents with the `name` matching "Engineer", "engineer" and so on.
+In <<ex-wldcd-char-match>> below, we are looking for documents of type "landmark" where the `name` property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
+The query returns "landmark" type documents with names such as "Engineer", "engineer" and so on.
 
-[{code-snippet}]
-----
-include::{snippet}[tag=query-like-operator-wildcard-character-match,indent=0]
-----
+.Wildcard Character Matching
+[#ex-wldcd-char-match]
+:param-tags: query-like-operator-wildcard-character-match
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 
 
 [#lbl-regex-ops]
 === Regex Operator
 
-Similar to the wildcards in `like` expressions, `regex` based pattern matching allow you to introduce an element of fuzziness in your search string.
+Similar to the wildcards in `like` expressions, `regex` based pattern matching allow you to introduce an element of fuzziness in your search string -- see the code shown in <<ex-regex>>.
 
-*Note* though, that the `regex` operator is case sensitive.
-
-TIP: For more on the regex spec used by {cbl} see http://www.cplusplus.com/reference/regex/ECMAScript/[cplusplus regex reference page^]
-
-The code shown in <<ex-regex>> executes a query that will return documents of type "landmark" with a name matching "Engine", "engine" and so on.
-
+NOTE: The `regex` operator is case sensitive, use `upper` or `lower` functions to mitigate this if required.
 
 [#ex-regex]
 .Using Regular Expressions
-====
-This example returns documents with a `type` of "landmark" and a `name` property that matches any string that begins with "eng" and ends in the letter "e".
-
-[{code-snippet}]
-----
-include::{snippet}[tag=query-regex-operator,indent=0]
-----
+:param-tags: query-regex-operator,indent=0]
+:param-leader: This example returns documents with a `type` of "landmark" and a `name` property that matches any string that begins with "eng" and ends in the letter "e".
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
 <.> The `\b` specifies that the match must occur on word boundaries.
-====
+
+TIP: For more on the regex spec used by {cbl} see http://www.cplusplus.com/reference/regex/ECMAScript/[cplusplus regex reference page^]
 
 // ISNULLORMISSING / NOTNULLORMISING
 // For the QueryBuilder API, isNullOrMissing and NotNullOrMissing operators will be deprecated and the isValued and isNotValued operators will be added.
 
-
-
 [#lbl-deleted-ops]
 === Deleted Document
 You can query documents that have been deleted (tombstones)
-footnote:[Starting in Couchbase Lite 2.5].
+footnote:[Starting in Couchbase Lite 2.5] as shown in <<ex-del-qry>>.
 
-[#ex-del-qry]
 .Query to select Deleted Documents
-====
-This example shows how to query deleted documents in the database.
-The result set it returns is an array of key-value pairs.
-One for each document matching the criteria -- see <<lbl-id-sel>> for how to work with this result set.
+[#ex-del-qry]
+:param-leader: pass:q,a[This example shows how to query deleted documents in the database. It returns is an array of key-value pairs.]
+:param-tags: query-deleted-documents
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
 
-[{code-snippet}]
-----
-
-include::{snippet}[tag=query-deleted-documents,indent=0]
-
-----
-====
 
 [#lbl-join]
 == JOIN statement
-The JOIN clause enables you to select data from multiple documents that have been linked by criteria specified in the JOIN statement. For example to combine airline details with route details, linked by the airline id -- see <<ex-join>>.
+The JOIN clause enables you to select data from multiple documents that have been linked by criteria specified in the JOIN statement.
+For example to combine airline details with route details, linked by the airline id -- see <<ex-join>>.
 
-[#ex-join]
 .Using JOIN to Combine Document Details
-====
-This example JOINS the document of type `route` with documents of type `airline` using the document ID (`_id`) on the _airline_ document and `airlineid` on the _route_ document.
-
-[{code-snippet}]
-----
-include::{snippet}[tag=query-join,indent=0]
-----
-====
+[#ex-join]
+:param-tags: query-join
+:param-leader: pass:q,a[This example JOINS the document of type `route` with documents of type `airline` using the document ID (`_id`) on the _airline_ document and `airlineid` on the _route_ document.]
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
 
 
 [#lbl-group]
 == GROUP BY statement
 You can perform further processing on the data in your result set before the final projection is generated.
+
 The following example looks for the number of airports at an altitude of 300 ft or higher and groups the results by country and timezone.
 
 .Data Model for Example
@@ -374,15 +347,12 @@ The following example looks for the number of airports at an altitude of 300 ft 
 
 [#ex-grpby-qry]
 .Query using GroupBy
-====
-This example shows a query that selects all airports with an altitude above 300ft.
-The output (a count, $1) is grouped by country, within timezone.
+:param-tags: query-groupby
+:param-leader: pass:q,a[This example shows a query that selects all airports with an altitude above 300ft. The output (a count, $1) is grouped by country, within timezone.]
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
 
-[{code-snippet}]
-----
-include::{snippet}[tag=query-groupby,indent=0]
-----
-====
 
 The query shown in <<ex-grpby-qry>> generates the following output:
 --
@@ -397,19 +367,15 @@ There are 123 airports on the America/Denver timezone located in United States a
 [#lbl-order]
 == ORDER BY statement
 
-It is possible to sort the results of a query based on a given expression result.
-The example below returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.
-
+It is possible to sort the results of a query based on a given expression result -- see <<ex-orderby-qry>>
 
 [#ex-orderby-qry]
 .Query using OrderBy
-====
-
-[{code-snippet}]
-----
-include::{snippet}[tag=query-orderby,indent=0]
-----
-====
+:param-tags: query-orderby
+:param-leader: pass:q,a[This example shows a query that returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.]
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
 
 The query shown in <<ex-orderby-qry>> generates the following output:
 [{text-snippet}]
@@ -469,22 +435,17 @@ To unpack these result sets you need to iterate this array.
 [#lbl-all-sel]
 === Select All Properties
 
-.Query
+==== Query
 The `Select` statement for this type of query, which returns all document properties for each document matching the query criteria, is fairly straightforward -- see <<ex-all-qry>>
 
-[#ex-all-qry]
 .Query selecting All Properties
-====
-[{code-snippet}]
-----
+[#ex-all-qry]
+:param-tags: query-syntax-all
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
 
-include::{snippet}[tags=query-syntax-all]
-
-----
-
-====
-
-.Result Set Format
+==== Result Set Format
 The result set returned by queries using `SelectResult.all` is an array of dictionary objects -- one for each document matching the query criteria.
 
 For each result object, the key is the database name and the 'value' is a dictionary representing each document property as a key-value pair -- see: <<ex-all-rtn>>.
@@ -503,46 +464,34 @@ include::{root-examples}query-snippets.adoc[tags=query-result-format-all]
 
 ====
 
-.Result Set Access
+==== Result Set Access
 
 In this case access the retrieved document properties by converting each row's value, in turn, to a dictionary -- as shown in <<ex-all-acc>>.
 
-[#ex-all-acc]
 .Using Document Properties (All)
-====
-[{code-snippet}]
-----
-
-include::{snippet}[tags=query-access-all]
-
-----
+[#ex-all-acc]
+:param-tags: query-access-all
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
 <.> Here we get the dictionary of document properties using the database name as the key.
 You can add this dictionary to an array of returned matches, for processing elsewhere in the app.
-
 <.> Alternatively you can access the document properties here, by using the property names as keys to the dictionary object.
-
-====
 
 
 [#lbl-specific-sel]
 === Select Specific Properties
 
-.Query
+==== Query
 Here we use `SelectResult.expression(property("<property-name>")))` to specify the document properties we want our query to return -- see: <<ex-specific-qry>>.
 
-[#ex-specific-qry]
 .Query selecting Specific Properties
-====
-[{code-snippet}]
-----
+[#ex-specific-qry]
+:param-tags: query-syntax-props
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 
-include::{snippet}[tags=query-syntax-props]
-
-----
-
-====
-
-.Result Set Format
+==== Result Set Format
 The result set returned when selecting only specific document properties is an array of dictionary objects -- one for each document matching the query criteria.
 
 Each result object comprises a key-value pair for each selected document property -- see <<ex-specific-rtn>>
@@ -560,36 +509,30 @@ include::{root-examples}query-snippets.adoc[tags=query-result-format-props]
 <.> Here we see the result for the next document matching the query criteria.
 ====
 
-.Result Set Access
+==== Result Set Access
 Access the retrieved properties by converting each row into a dictionary -- as shown in <<ex-specific-acc>>.
 
-[#ex-specific-acc]
 .Using Returned Document Properties (Specific Properties)
-====
-[{code-snippet}]
-----
-include::{snippet}[tags=query-access-props]
-
-----
-====
+[#ex-specific-acc]
+:param-tags: query-access-props
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 
 
 [#lbl-id-sel]
 === Select Document Id Only
 
-.Query
+==== Query
 You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time -- see: <<ex-id-qry>>.
 
-[#ex-id-qry]
 .Query selecting only Doc Id
-====
-[{code-snippet}]
-----
-include::{snippet}[tags=query-syntax-id]
-----
-====
+[#ex-id-qry]
+:param-tags: query-syntax-id
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 
-.Result Set Format
+
+==== Result Set Format
 The result set returned by queries using a SelectResult expression of the form `SelectResult.expression(meta.id)` is an array of dictionary objects -- one for each document matching the query criteria.
 Each result object has `id` as the key and the ID value as its value -- -see <<ex-id-rtn>>.
 
@@ -604,40 +547,32 @@ include::{root-examples}query-snippets.adoc[tags=query-result-format-id]
 ----
 ====
 
-.Result Set Access
+==== Result Set Access
+
 In this case, access the required document's properties by unpacking the `id` and using it to get the document from the database -- see: <<ex-id-acc>>.
 
 .Using Returned Document Properties (Document Id)
 [#ex-id-acc]
-====
-[{code-snippet}]
-----
-
-include::{snippet}[tags=query-access-id]
-
-----
-
+:param-tags: query-access-id
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 <.> Extract the Id value from the dictionary and use it to get the document from the database
-
-====
 
 
 [#lbl-count-sel]
 === Select Count-only
 
-[#ex-count-qry]
+
+==== Query
+
 .Query selecting a Count-only
-====
-[{code-snippet}]
-----
-
-include::{snippet}[tags=query-syntax-count-only]
-
-----
+[#ex-count-qry]
+:param-tags: query-syntax-count-only
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 <.> The alias name, `mycount`, is used to access the count value.
-====
 
-.Result Set Format
+==== Result Set Format
 The result set returned by a count such as `Select.expression(Function.count(Expression.all)))` is a key-value pair.
 The key is the count name, as defined using `SelectResult.as` -- see: <<ex-count-rtn>> for the format and <<ex-count-qry>> for the query.
 
@@ -653,21 +588,16 @@ include::{root-examples}query-snippets.adoc[tags=query-result-format-count]
 <.> Here we see the key-value pair returned by a count.
 ====
 
-.Result Set Access
+==== Result Set Access
 
 Access the count using its alias name (`mycount` in this example) -- see <<ex-count-acc>>
 
 [#ex-count-acc]
 .Using Returned Document Properties (Count)
-====
-[{code-snippet}]
-----
-
-include::{snippet}[tags=query-access-count-only]
-
-----
+:param-tags: query-access-count-only
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 <.> Get the count using the `SelectResult.as` alias, which is used as its key.
-====
 
 [#lbl-pagination]
 === Handling Pagination
@@ -677,14 +607,10 @@ Use the `limit` and `offset` feature, to return a defined number of results star
 
 [#ex-pagination]
 .Query Pagination
-====
-[{code-snippet}]
-----
-include::{snippet}[tags=query-syntax-pagination]
-----
+:param-tags: query-syntax-pagination
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 <.> Return a maximum of `limit` results starting from result number `offset`
-====
-
 
 TIP: For more on using the QueryBuilder API, see our blog: {url-cb-blog-query-interface}
 
@@ -714,28 +640,33 @@ To run a predictive query with a model as the one shown above, you must implemen
 . <<register-the-model,Register the Model>>
 . <<create-an-index,Create an Index (Optional)>>
 . <<run-a-prediction-query,Run a Prediction Query>>
-. <<unregister-the-model,Unregister the Model>>
+. <<Deregister-the-model,Deregister the Model>>
+
 
 === Integrate the Model
 
-To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `predict()`.
+To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `predict()` -- see: <<int-pred-model>>.
 
-[source]
-----
-include::{snippet}[tag=predictive-model,indent=0]
-----
+.Integrating a predictive model
+[#int-pred-model]
+:param-tags: predictive-model
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 <1> The `predict(input) ++->++ output` method provides the input and expects the result of using the machine learning model.
 The input and output of the predictive model is a `DictionaryObject`.
 Therefore, the supported data type will be constrained by the data type that the `DictionaryObject` supports.
+
 
 === Register the Model
 
 To register the model you must create a new instance and pass it to the `Database.prediction.registerModel` static method.
 
-[source]
-----
-include::{snippet}[tag=register-model,indent=0]
-----
+.Registering a predictive model
+[#reg-pred-model]
+:param-tags: register-model
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
 
 === Create an Index
 
@@ -752,42 +683,51 @@ There are two types of indexes for predictive queries:
 The code below creates a value index from the "label" value of the prediction result.
 When documents are added or updated, the index will call the prediction function to update the city value in the index.
 
-[source]
-----
-include::{snippet}[tag=predictive-query-value-index,indent=0]
-----
+.Creating a value index
+[#crt-val-index]
+:param-tags: predictive-query-value-index
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
 
 ==== Predictive Index
 
 Predictive Index is a new index type used for predictive query.
-The Predictive Index is different from the value index in that the Predictive Index caches the predictive result and creates the value index from the cached predictive result when the predictive results values are specified.
+It differs from the value index in that it caches the predictive results and creates a value index from that cache when the predictive results values are specified.
 
-The code below creates a predictive index from the "label" value of the prediction result.
+.Creating a predictive index
+[#crt-val-index]
+:param-tags: predictive-query-predictive-index
+:param-leader: pass:q,a[Here we create a predictive index from the `label` value of the prediction result.]
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
 
-[source]
-----
-include::{snippet}[tag=predictive-query-predictive-index,indent=0]
-----
 
 === Run a Prediction Query
 
 The code below creates a query that calls the prediction function to return the "label" value for the first 10 results in the database.
 
-[source]
-----
-include::{snippet}[tag=predictive-query,indent=0]
-----
+.Creating a value index
+[#crt-val-index]
+:param-tags: predictive-query
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 <1> The `PredictiveModel.predict()` method returns a constructed Prediction Function object which can be used further to specify a property value extracted from the output dictionary of the `PredictiveModel.predict()` function.
 +
 NOTE: The null value returned by the prediction method will be interpreted as MISSING value in queries.
 
-=== Unregister the Model
 
-To unregister the model you must call the `Database.prediction.unregisterModel` static method.
+=== Deregister the Model
 
-[source]
-----
-include::{snippet}[tag=unregister-model,indent=0]
-----
+To deregister the model you must call the `Database.prediction.unregisterModel` static method.
+
+.Deregister a value index
+[#dereg-val-index]
+:param-tags: unregister-model
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
+
 
 // END --- inclusion -- querybuilder.adoc

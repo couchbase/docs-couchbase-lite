@@ -6,14 +6,18 @@
 //    {root-commons}p2psync-websocket-using-active.adoc
 //    {root-commons}sgw-replication.adoc
 //  ####
+// :is-p2p:
 
 In this section::
-<<lbl-repl-chng>>  |  <<lbl-repl-status>>  |  <<lbl-repl-evnts>> | <<lbl-repl-pend>>
+<<lbl-repl-chng>>  |
+<<lbl-repl-status>>  |
+ifndef::is-p2p[<<lbl-repl-evnts>> |  ]
+<<lbl-repl-pend>>
 
 You can monitor a replication’s status by using a combination of <<lbl-repl-chng>> and the `replication.status.activity` property -- see; {url-api-enum-replicator-activity}.
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
-You can also choose to monitor document changes -- see: <<lbl-repl-evnts>>.
+ifndef::is-p2p[You can also choose to monitor document changes -- see: <<lbl-repl-evnts>>.]
 
 [#lbl-repl-chng]
 == Change Listeners
@@ -44,12 +48,21 @@ The returned _ReplicationStatus_ structure comprises:
 ** total -- the total number of changes to be processed
 * {url-api-enum-replicator-error} -- the current error, if any
 
+// :is-android:
 // Example 8
 [[ex-repl-mon]]
 .Monitor replication
-=====
-[{tabs}]
 ====
+
+ifdef::is-android[]
+[{tabs}]
+=====
+{source-language}::
++
+endif::is-android[]
+
+[{tabs}]
+======
 Adding a Change Listener::
 +
 --
@@ -71,8 +84,37 @@ include::{snippet}[tags=p2p-act-rep-status,indent=0]
 
 ----
 --
-====
+======
+
+
+ifdef::is-android[]
+
+{source-language-alt}::
++
+[{tabs}]
+======
+Adding a Change Listener::
++
+--
+[source, {source-language-alt}]
+----
+include::{snippet-alt}[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
+----
+--
++
+Using replicator.status::
++
+--
+[source, {source-language-alt}]
+----
+include::{snippet-alt}[tags=p2p-act-rep-status,indent=0]
+----
+--
+======
 =====
+endif::is-android[]
+
+====
 
 
 [#lbl-repl-states]
@@ -120,33 +162,26 @@ For example, the code snippet in <<ex-reg-doc-listener>> registers a listener to
 It prints the document ID of each document received and sent.
 Stop the listener as shown in <<ex-stop-doc-listener>>.
 
-[#ex-reg-doc-listener]
 .Register a document listener
-====
-[source, {source-language}]
-----
-include::{snippet}[tag=add-document-replication-listener,indent=0]
-----
-====
+[#ex-reg-doc-listener]
+:param-tags: add-document-replication-listener,indent=0]
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
 
 [#ex-stop-doc-listener]
 .Stop document listener
-====
-This code snippet shows how to stop the document listener using the token from the previous example.
-
-[source, {source-language}]
-----
-include::{snippet}[tag=remove-document-replication-listener,indent=0]
-
-----
-
-====
+:param-tags: remove-document-replication-listener
+:param-leader: This code snippet shows how to stop the document listener using the token from the previous example.
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
 
 === Document Access Removal Behavior
 
 When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
 
-endif::[]
+endif::is-p2p[]
 // end inclusion of document changes text
 
 [#lbl-repl-pend]
@@ -165,21 +200,11 @@ This can be very useful in tracking the progress of a push sync, enabling the ap
 
 [#ex-pending]
 .Use Pending Document ID API
-====
-
-[source, {source-language}]
-----
-include::{snippet}[tags=replication-pendingdocuments, indent=0]
-
-----
+:param-tags: replication-pendingdocuments
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 <.> {url-api-method-replicator-getPendingDocumentIds} returns a list of the document IDs for all documents waiting to be pushed.
 This is a snapshot and may have changed by the time the response is received and processed.
-
 <.> {url-api-method-replicator-isDocumentPending} returns `true` if the document is waiting to be pushed, and `false` otherwise.
-
-====
-
-
-
 
 // END -- inclusion -- common-sgw-replication-monitor.adoc

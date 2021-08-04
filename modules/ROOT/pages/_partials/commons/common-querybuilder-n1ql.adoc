@@ -63,48 +63,14 @@ TIP: We recommend working through the {url-n1ql-tutorial} as a good way to build
 Use the N1QLQuery class to define the N1QL query string on the database to be queried.
 Then run the query using the`.execute()` method -- see
 
-The result set produced by N1QL and {querybuilder--xref)} queries is the same -- see <<lbl-resultsets>>.
+The result set produced by N1QL and {querybuilder--xref)} queries is the same -- see {query-resultsets--xref}.
 
 
 .Running a N1QL Query
 [#ex-samplerun]
-[source, {source-language}]
-----
-include::{snippet}[tags=query-syntax-n1ql-params, indent=0]
-----
-
-// :param-tags: query-syntax-n1ql-params
-// include::partial$_block_show_snippet.adoc[]
-// :param-tags!:
-
-// == Indexing
-
-// Before we begin querying documents, let's briefly mention the importance of having a query index.
-// A query can only be fast if there's a pre-existing database index it can search to narrow down the set of documents to examine -- see: <<ex-indexing>>, which shows how to create an index and our {xref-cbl-pg-query-troubleshooting} topic.
-
-// TIP: See the {indexing--xref} topic to learn more about indexing.
-
-// [#ex-indexing]
-// .Creating a New Index
-// ====
-// This example creates a new index for the `type` and `name` properties in the <<lbl-data-format>> shown.
-
-// [#lbl-data-format]
-// .Data Format
-// [{json-snippet}]
-// ----
-// include::{root-examples}query-snippets.adoc[tag=n1ql-result-format-props]
-// ----
-
-// .Code to Create Index
-// [{code-snippet}]
-// ----
-// include::{snippet}[tag=n1ql-index,indent=0]
-// ----
-// ====
-
-// NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
-// Thus, good performance depends on designing and creating the _right_ indexes to go along with your queries.
+:param-tags: query-syntax-n1ql-params
+include::partial$_block_tabbed_code_example.adoc[]
+:param-tags!:
 
 
 [#lbl-select]
@@ -260,7 +226,6 @@ SELECT * FROM travel-sample r JOIN travel-sample a ON r.airlineid = a.meta.id WH
 ====
 This example JOINS the document of type `route` with documents of type `airline` using the document ID (`_id`) on the _airline_ document and `airlineid` on the _route_ document.
 
-// include::{snippet}[tag=n1ql-join,indent=0]
 [source, sql]
 ----
 SELECT * FROM travel-sample r JOIN travel-sample a ON r.airlineid = a.meta.id WHERE a.country = "France"
@@ -342,43 +307,6 @@ SELECT COUNT(empno), city FROM db GROUP BY city HAVING COUNT(empno) > 100 WHERE 
 ----
 
 
-
-// The following example looks for the number of airports at an altitude of 300 ft or higher and groups the results by country and timezone.
-
-// .Data Model for Example
-// [{json-snippet}]
-// ----
-// {
-//     "_id": "airport123",
-//     "type": "airport",
-//     "country": "United States",
-//     "geo": { "alt": 456 },
-//     "tz": "America/Anchorage"
-// }
-// ----
-
-// [#ex-grpby-qry]
-// .Query using GroupBy
-// ====
-// This example shows a query that selects all airports with an altitude above 300ft.
-// The output (a count, $1) is grouped by country, within timezone.
-
-// [{code-snippet}]
-// ----
-// include::{snippet}[tag=n1ql-groupby,indent=0]
-// ----
-// ====
-
-// The query shown in <<ex-grpby-qry>> generates the following output:
-// --
-// There are 138 airports on the Europe/Paris timezone located in France and above 300 ft +
-// There are 29 airports on the Europe/London timezone located in United Kingdom and above 300 ft +
-// There are 50 airports on the America/Anchorage timezone located in United States and above 300 ft +
-// There are 279 airports on the America/Chicago timezone located in United States and above 300 ft +
-// There are 123 airports on the America/Denver timezone located in United States and above 300 ft
-// --
-
-
 [#lbl-order]
 == ORDER BY statement
 
@@ -420,31 +348,6 @@ SELECT name, score FROM db  ORDER BY name ASC, score DESC
 
 ----
 ====
-
-// [#ex-orderby-qry]
-// .Query using OrderBy
-// ====
-// This example returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.
-
-// [{code-snippet}]
-// ----
-// include::{snippet}[tag=n1ql-orderby,indent=0]
-// ----
-// ====
-
-// The query shown in <<ex-orderby-qry>> generates the following output:
-// [{text-snippet}]
-// ----
-// Aberdyfi
-// Achiltibuie
-// Altrincham
-// Ambleside
-// Annan
-// Ardèche
-// Armagh
-// Avignon
-// ----
-
 
 
 [#lbl-limit]
@@ -1152,20 +1055,6 @@ This is different from QueryBuilder, in which they operate as equivalents of `==
 
 |===
 
-// ===== Example
-// In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
-
-// [{json-snippet}]
-// ----
-
-// include::{root-examples}query-snippets.adoc[tag=n1ql-result-format-props]
-
-// ----
-
-// [{code-snippet}]
-// ----
-// include::{snippet}[tag=n1ql-where,indent=0]
-// ----
 
 [#lbl-ops-logical]
 ==== Logical Operators

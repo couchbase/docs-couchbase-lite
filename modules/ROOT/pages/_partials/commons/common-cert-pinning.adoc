@@ -19,11 +19,14 @@ After completing this step, you should have 3 files: `cert.pem`, `cert.cer` and 
 After completing this step, Sync Gateway is reachable over `https`/`wss`.
 . On the Couchbase Lite side, the replication must point to a URL with the `wss` scheme and configured with the `cert.cer` file created in step 1.
 +
-[source, {source-language}]
-----
-include::{snippet}[tag=certificate-pinning,indent=0]
-----
 This example loads the certificate from the application sandbox, then converts it to the appropriate type to configure the replication object.
++
+.Cert Pinnings
+[#ex-use-blob]
+:param-tags: certificate-pinning
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
 . Build and run your app.
 The replication should now run successfully over https with certificate pinning.
 

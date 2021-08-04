@@ -67,15 +67,11 @@ You should configure and initialize a replicator for each Couchbase Lite databas
 // Example 1
 [#ex-simple-repl]
 .Replication configuration and initialization
-// [%collapsible]
-====
 
-[source, {source-language}]
-----
+:param-tags: p2p-act-rep-func
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 
-include::{snippet}[tags=p2p-act-rep-func, indent=0]
-
-----
 ifdef::is-android[]
 [NOTE]
 --
@@ -147,14 +143,12 @@ include::{root-partials}authentication.adoc[]
 
 include::{root-partials}replication-custom-header.adoc[]
 
-[#ex-cust-hdr]
 .Setting custom headers
-====
-[source]
-----
-include::{snippet}[tag=replication-custom-header,indent=0]
-----
-====
+[#ex-cust-hdr]
+:param-tags: replication-custom-header
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
 
 [#lbl-repl-fltrs]
 === Replication Filters
@@ -200,14 +194,12 @@ include::{root-commons}sgw-replication-init.adoc[]
 
 include::{root-partials}replication-checkpoint.adoc[]
 
-[#ex-repl-ckpt]
 .Resetting checkpoints
-====
-[source]
-----
-include::{snippet}[tag=replication-reset-checkpoint,indent=0]
-----
-====
+[#ex-repl-ckpt]
+:param-tags: replication-reset-checkpoint
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
 
 [#lbl-repl-mon]
 == Monitor
@@ -229,12 +221,9 @@ When _replicator_ detects a network error it updates its status depending on the
 The following code snippet adds a `Change Listener`, which monitors a replication for errors and logs the the returned error code.
 
 .Monitoring for network errors
-====
-[source]
-----
-include::{snippet}[tags=replication-error-handling,indent=0]
-----
-====
+:param-tags: replication-error-handling
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 
 *For permanent network errors* (for example, `404` not found, or `401` unauthorized):
 _Replicator_ will stop permanently, whether `setContinuous`  is _true_ or _false_. Of course, it sets its status to `STOPPED`
@@ -283,14 +272,14 @@ After completing this step, you should have 3 files: `cert.pem`, `cert.cer` and 
 After completing this step, Sync Gateway is reachable over `https`/`wss`.
 . On the Couchbase Lite side, the replication must point to a URL with the `wss` scheme and configured with the `cert.cer` file created in step 1.
 +
-[#ex-crt-pinning]
-====
 This example loads the certificate from the application sandbox, then converts it to the appropriate type to configure the replication object.
-[source]
-----
-include::{snippet}[tag=certificate-pinning,indent=0]
-----
-====
+
+.Cert Pinnings
+[#ex-crt-pinning]
+:param-tags: certificate-pinning
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
 . Build and run your app.
 The replication should now run successfully over https/wss with certificate pinning.
 
@@ -305,12 +294,10 @@ You can increase the log output for activity related to replication with Sync Ga
 
 [#ex-logs]
 .Set logging verbosity
-====
-[source]
-----
-include::{snippet}[tag=replication-logging,indent=0]
-----
-====
+:param-tags: replication-logging
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
 
 For more on troubleshooting with logs, see: {xref-cbl-pg-troubleshooting-logs}.
 

@@ -20,19 +20,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import com.couchbase.lite.ArrayFunction;
 import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.Blob;
@@ -93,8 +80,21 @@ import com.couchbase.lite.Where;
 import com.example.docsnippet.Datastore;
 import com.example.docsnippet.Hotel;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 // tag::example-app[]
-public class Examples {
+public class docOnly_Examples {
   private static final String TAG = "EXAMPLE";
 
   private static final String DATABASE_NAME = "database";
@@ -103,7 +103,7 @@ public class Examples {
   private Database database;
   private Replicator replicator;
 
-  public Examples(Context context) { this.context = context; }
+  public docOnly_Examples(Context context) { this.context = context; }
 
   //@Test
   public void testGettingStarted() throws CouchbaseLiteException, URISyntaxException {
@@ -225,7 +225,7 @@ public class Examples {
     // end::new-database[]
 
     // tag::close-database[]
-    database.close()
+    database.close();
 
     // end::close-database[]
 
@@ -932,7 +932,7 @@ public class Examples {
 
         //  BEGIN PendingDocuments IB -- 11/Feb/21 --
         public void testReplicationPendingDocs() throws URISyntaxException, CouchbaseLiteException {
-            // tag::replication-pendingdocuments[]
+            // nottag::replication-pendingdocuments[]
             // ... include other code as required
             //
             final Endpoint endpoint =
@@ -955,7 +955,7 @@ public class Examples {
             replicator.start();
 
             // ... include other code as required
-            // end::replication-pendingdocuments[]
+            // notend::replication-pendingdocuments[]
           }
         //
         // tag::replication-pendingdocuments[]
@@ -1675,13 +1675,8 @@ public class CertAuthListener {
     }
     // end::listener-config-delete-cert-full[]
 
-    // tag::p2p-tlsid-tlsidentity-with-label[]
-    /**
-     * Snippet 4: Create a ClientCertificateAuthenticator and use it in a replicator
-     * Snippet 5: Specify a pinned certificate as a byte array
-     * <p>
-     * Configure Client (active) side certificates
-     *
+    // nottag::p2p-tlsid-tlsidentity-with-label[]
+    /* Configure Client (active) side certificates
      * @param config         The replicator configuration
      * @param cert           The expected server side certificate
      * @param clientIdentity the identity offered to the server as authentication
@@ -1693,19 +1688,16 @@ public class CertAuthListener {
       @NonNull TLSIdentity clientIdentity)
       throws CertificateEncodingException {
 
-        // Snippet 4: create an authenticator that provides the client identity
+        // Create an authenticator that provides the client identity
         config.setAuthenticator(new ClientCertificateAuthenticator(clientIdentity));
 
         // Configure the pinned certificate passing a byte array.
         config.setPinnedServerCertificate(cert.getEncoded());
       }
-      // end::p2p-tlsid-tlsidentity-with-label[]
+      // notend::p2p-tlsid-tlsidentity-with-label[]
 
     /**
-     * Snippet 5 (supplement): Copy a cert from a resource bundle
-     * <p>
-     * Configure Client (active) side certificates
-     *
+     * Copy a cert from a resource bundle
      * @param context Android context
      * @param resId   resource id for resource: R.id.foo
      * @throws IOException on copy error
@@ -1943,14 +1935,14 @@ import com.couchbase.lite.ValueIndex;
 import com.couchbase.lite.ValueIndexItem;
 import com.couchbase.lite.Where;
 
-public class Examples {
+public class docOnly_ReplicationExamples {
   private static final String TAG = "EXAMPLE ACTIVE PEER";
   private static final String thisDBNAME = "local-database";
   private final Context context;
   // private Database database;
   // private Replicator replicator;
 
-  public Examples(Context context) { this.context = context; }
+  public docOnly_ReplicationExamples(Context context) { this.context = context; }
 
   String user = "syncuser";
   String password = "sync9455";
@@ -2397,14 +2389,16 @@ private void ibP2PUrlEndpointListener() {
 
     // end::p2p-act-rep-config-tls-full[]
     // tag::p2p-tlsid-tlsidentity-with-label[]
-    // ... other replicator configuration
+    // ... your other replicator configuration
+
     // Provide a client certificate to the server for authentication
     final TLSIdentity thisClientId = TLSIdentity.getIdentity("clientId"); // <.>
 
     if (thisClientId == null) { throw new IllegalStateException("Cannot find client id"); }
 
     thisConfig.setAuthenticator(new ClientCertificateAuthenticator(thisClientId)); // <.>
-    // ... other replicator configuration
+
+    // ... your other replicator configuration
     final thisReplicator= new Replicator(thisConfig);
 
     // end::p2p-tlsid-tlsidentity-with-label[]

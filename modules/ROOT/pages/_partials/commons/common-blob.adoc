@@ -80,17 +80,10 @@ To support this the API provides a couple of additional methods:
 Just instantiate a blob and set it as the value of a property.
 Then later get the property value, which will be a blob object.
 
-The following code example adds a blob to the document under the `blob1` property.
-
 // :state: undefined
 // ifdef::is-android[:state: Defined]
 
-:tags: toJson-blob
-
-[#ex-usingblobs]
-.Using Blobs
-====
-In this example we:
+In <<ex-usingblobs>> we:
 
 * Create a blob
 * Save it in a document
@@ -102,39 +95,12 @@ We use the key to retrieve the blob object later.
 
 You will see that a random access name is generated for each blob, this is different to the `avatar` key and is used to locate the blob content -- see the blob structure in <<ex-blobobj>>
 
-ifdef::is-android[]
 
-[tabs]
-=====
-{source-language}::
-+
---
-endif::[]
-
-[source, {source-language}]
-----
-include::{snippet}[tag="{tags}",indent=0]
-----
-
-ifdef::is-android[]
---
-+
-{source-language-alt}::
-+
---
-[source, {source-language-alt}]
-----
-
-include::{snippet-alt}[tag="{tags}",indent=0]
-
-----
-
---
-
-=====
-
-endif::[]
-
+[#ex-usingblobs]
+.Using Blobs
+:param-tags: tojson-blob
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 
 <.> Here we prepare a document to use for the example
 <.> Create the blob using the retrieved image
@@ -143,8 +109,6 @@ endif::[]
 It does not need to be a part of a document.
 <.> Retrieve a blob from a saved document as a JSON string
 <.> Check the reconstituted blob is 'still' a blob.
-
-====
 
 If we use the Couchbase Server Admin Console to examine the position after a Sync Gateway replication we will see that the saved and sync'd document now contains an `_attachments` dictionary `blob_1` -- see: <<img-blob>>
 

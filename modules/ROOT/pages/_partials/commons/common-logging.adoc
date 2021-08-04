@@ -20,7 +20,7 @@ ifndef::snippet[:snippet: UNDEFINED-SNIPPET-PATH]
 // Allow for external over-ride of default content
 ifdef::param-fullpage[]
 :tslinks: {xref-cbl-pg-troubleshooting-queries}
-ifeval::["{param-platform}"=="{platform-ios}"]
+ifdef::is-ios[]
 :tslinks: {tslinks} | {xref-cbl-pg-troubleshooting-crashes}
 endif::[]
 ifndef::param-related[:param-related: {tslinks}]
@@ -96,20 +96,13 @@ endif::[]
 
 [#eg-cons-log]
 .Change Console Logging Settings
-====
-
-This example enables and defines console-based logging settings.
-
-[source]
-----
-include::{snippet}[tag=console-logging,indent=0]
-----
-
+:param-leader: This example enables and defines console-based logging settings.
+:param-tags: console-logging
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 <.> Define the required domain ; here we turn on logging for all available domains -- see: {url-api-class-log-console-getcons-setdmn} and enum {url-api-enum-log-domain}
 <.> Here we turn on the most verbose log level -- see: {url-api-class-log-console-getcons-setlvl} and enum {url-api-enum-log-level}. +
 To disable logging for the specified {url-api-enum-log-domain} set the {url-api-enum-log-level} to `None`.
-
-====
 
 Related::
 {url-api-class-log} | {url-api-class-log-console-getcons} | {url-api-class-log-console}
@@ -143,13 +136,9 @@ You can over ride that where necessary and output a plain text log.
 
 [#eg-file-log]
 .Enabling file logging
-====
-This example enables file based logging.
-[source]
-----
-include::{snippet}[tag=file-logging,indent=0]
-
-----
+:param-tags: file-logging
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 <.> Set the log file directory
 <.> Here we change the max rotation count from the default (1) to 5. +
 *Note* this means six files may exist at any one time; the five rotated log files, plus the active log file
@@ -159,8 +148,6 @@ include::{snippet}[tag=file-logging,indent=0]
 +
 *Note* that the use of {url-api-method-database-setloglevel} is now deprecated.
 Further, you can no longer set a log level for a specific domain.
-
-====
 
 Related::
  {url-api-class-log} |
@@ -173,31 +160,24 @@ Couchbase Lite allows for the registration of a callback function to receive Cou
 
 To do this, apps must implement the {url-api-class-log-custom} interface -- see <<eg-impl-log>> -- and enable custom logging using {url-api-class-log-custom-setcust} -- see <<eg-cust-log>>.
 
+
 [#eg-impl-log]
 .Implementing logger interface
-====
-Here we introduce the code that implements the {url-api-class-log-custom} interface.
+:param-tags: custom-logging
+:param-leader: pass:q,a[Here we introduce the code that implements the {url-api-class-log-custom} interface.]
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 
-[source, {source-language}]
-----
-include::{snippet}[tag=custom-logging,indent=0]
-----
-====
 
 [#eg-cust-log]
 .Enabling custom logging
-====
-This example show how to enable the custom logger from <<eg-impl-log>>.
-
-[source, {source-language}]
-----
-include::{snippet}[tag=set-custom-logging,indent=0]
-----
-
+:param-tags: set-custom-logging
+:param-leader: pass:q,a[This example show how to enable the custom logger from <<eg-impl-log>>.]
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 <.> Here we set the custom logger with a level of 'warning'.
 The custom logger is called with every log and may choose to filter it, using its configured level.
 
-====
 
 Related::
 {url-api-class-log} | {url-api-class-log-custom-getcust} | {url-api-class-log-custom}

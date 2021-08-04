@@ -39,7 +39,7 @@ namespace cblQueryEgAppProj.ViewModels
         public void JsonApiDocument()
         {
 
-            // tag::toJson-document[]
+            // tag::tojson-document[]
             Database this_DB = new Database("travel-sample");
             Database newDb = new Database("ournewdb");
 
@@ -81,10 +81,10 @@ namespace cblQueryEgAppProj.ViewModels
             var thatDoc = newDb.GetDocument("2001").ToJSON(); // <.>
             System.Console.Write(thatDoc);
 
-            // end::toJson-document[]
+            // end::tojson-document[]
 
 
-        //    // tag::toJson-document-output[]
+        //    // tag::tojson-document-output[]
         //    JSON String = { "description":"Very good and central","id":"1000","country":"France","name":"Hotel Ted","type":"hotel","city":"Paris"}
         //             type = hotel
         //             id = 1000
@@ -92,7 +92,7 @@ namespace cblQueryEgAppProj.ViewModels
         //             city = Paris
         //             description = Very good and central
         //             name = Hotel Ted
-        //        // end::toJson-document-output[]
+        //        // end::tojson-document-output[]
         //         */
 
         } // End JSONAPIDocument
@@ -109,7 +109,7 @@ namespace cblQueryEgAppProj.ViewModels
                 Database.Delete(ourdbname, "/");
             }
 
-        // tag::toJson-array[]
+        // tag::tojson-array[]
 
             Database dbNew = new Database(ourdbname);
 
@@ -144,7 +144,7 @@ namespace cblQueryEgAppProj.ViewModels
 
             var featuresJSON = extendedDoc.GetArray("features").ToJSON(); // <.>
 
-            // end::toJson-array[]
+            // end::tojson-array[]
         }
 
 
@@ -159,7 +159,7 @@ namespace cblQueryEgAppProj.ViewModels
             }
             Database dbNew = new Database(ourdbname);
 
-            // tag::toJson-dictionary[]
+            // tag::tojson-dictionary[]
 
             // Get dictionary from JSONstring
             var aJSONstring = "{'id':'1002','type':'hotel','name':'Hotel Ned','city':'Balmain','country':'Australia','description':'Undefined description for Hotel Ned','features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
@@ -175,10 +175,10 @@ namespace cblQueryEgAppProj.ViewModels
                 System.Console.WriteLine("Data -- {0} = {1}", key, myDict.GetValue(key).ToString());
 
             }
-            // end::toJson-dictionary[]
+            // end::tojson-dictionary[]
 
             /*
-            // tag::toJson-dictionary-output[]
+            // tag::tojson-dictionary-output[]
 
                 mono-stdout: Data -- id = 1002
                 mono-stdout: Data -- type = hotel
@@ -188,7 +188,7 @@ namespace cblQueryEgAppProj.ViewModels
                 mono-stdout: Data -- description = Undefined description for Hotel Ned
                 mono-stdout: Data -- features = Couchbase.Lite.MutableArrayObject
 
-            // end::toJson-dictionary-output[]
+            // end::tojson-dictionary-output[]
             */
         } /* end of func */
 

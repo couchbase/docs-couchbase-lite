@@ -1,5 +1,8 @@
 // BEGIN -- inclusion -- common-conflict.adoc
 //  Location: {root-commons}
+//  Params:
+//    :no-footer: define to suppress output of the
+//                related content footer when not using tags
 //  Used-by:  {param-module}-conflict.adoc files
 
 :this-leveloffset: {leveloffset}
@@ -91,9 +94,18 @@ Apps have the following strategies for resolving conflicts:
 
 // tag::handling-conflicts-conflict-resolvers[]
 .Using conflict resolvers
-=====
-[{tabs}]
 ====
+// :is-android:
+ifdef::is-android[]
+[{tabs}]
+======
+
+{source-language}::
++
+endif::is-android[]
+
+[{tabs}]
+=====
 Local Wins::
 +
 --
@@ -131,12 +143,47 @@ include::{snippet}[tag=merge-conflict-resolver,indent=0]
 ----
 
 --
-
-====
 =====
+
+ifdef::is-android[]
+{source-language-alt}::
++
+[{tabs}]
+=====
+Local Wins::
++
+--
+[source, {source-language-alt}]
+----
+include::{snippet-alt}[tag=local-win-conflict-resolver,indent=0]
+----
+--
+
+Remote Wins::
++
+--
+[source, {source-language-alt}]
+----
+include::{snippet}[tag=remote-win-conflict-resolver,indent=0]
+----
+--
+
+Merge::
++
+--
+[source, {source-language-alt}]
+----
+include::{snippet-alt}[tag=merge-conflict-resolver,indent=0]
+----
+--
+=====
+======
+endif::is-android[]
+====
 // end::handling-conflicts-conflict-resolvers[]
 
 When a null document is returned by the resolver, the conflict will be resolved as a document deletion.
+
 
 === Important Guidelines and Best Practices
 
@@ -170,12 +217,10 @@ The default value of the conflictResolver is `null`.
 When the value is `null`, the default conflict resolution will be applied.
 
 .A Conflict Resolver
-====
-[source]
-----
-include::{snippet}[tag=replication-conflict-resolver,indent=0]
-----
-====
+[#wx-conflict-resolver]
+:param-tags: replication-conflict-resolver
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 
 == Conflicts when Updating
 
@@ -226,7 +271,7 @@ In this case, the app can detect the error that is being thrown, and handle it b
 ====
 
 === Custom Conflict Handlers
-
+// :no-footer:
 Developers can hook a conflict handler when saving a document so they can easily handle the conflict in a single save method call.
 
 To implement custom conflict resolution when saving a document, apps must call the `save` method with a conflict handler block ( {url-api-method-database-save-conflict}).
@@ -236,20 +281,21 @@ The following code snippet shows an example of merging properties from the exist
 In the event of conflicting keys, it will pick the key value from `new`.
 
 .Merging document properties
-====
-[source]
-----
-include::{snippet}[tag=update-document-with-conflict-handler,indent=0]
-----
+[#ex-merge-props]
+:param-tags: update-document-with-conflict-handler
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 
 include::{snippet}[tag=update-document-with-conflict-handler-callouts,indent=0]
 
-====
 
 
+// end::handling-conflicts-custom-merge[]
 
 // DO NOT EDIT OR REMOVE
 :leveloffset: {this-leveloffset}
+ifndef::no-footer[]
 include::{root-partials}block-related-content-p2psync.adoc[]
+endif::no-footer[]
 // DO NOT EDIT OR REMOVE
 // END -- inclusion -- common-conflict.adoc

@@ -27,25 +27,25 @@ class JsonApi {
             var country: String
             var description: String
         }
-                
-        
-        
+
+
+
         var x = try Query().dontTestQueryProps()
         print(x)
         // Get a document
         let thisDoc = db.document(withID: "1000")
-        
+
         // Get document data as JSON String
         let thisDocAsJsonString = thisDoc?.toJSON()
-        
+
         // Get Json Object from the Json String
         var myJsonObj = thisDocAsJsonString?.toJSONObj()
         print(myJsonObj)
         print( (myJsonObj as! [String:Any])["name"] )
         print( (myJsonObj as! [String:Any])["city"] )
-        
+
         let jsonData = thisDocAsJsonString?.data(using: .utf8)!
-        
+
         // Get Json Object as Native Object (anhotel)
         var thehotels:[hotelStruct] = []
         var anhotel:hotelStruct =
@@ -53,38 +53,38 @@ class JsonApi {
 
         print(anhotel.name)
         thehotels.append(anhotel)
-        
+
         // Update the retrieved Object
         anhotel.name = "A Copy of " + anhotel.name
         anhotel.id = "2001"
-        
+
         // Convert the updated object to json string
         let newJsonData = try! JSONEncoder().encode(anhotel)
         let newJsonString = String(data: newJsonData, encoding: .utf8)!
-        
-        // tag::toJson-document[]
-        
+
+        // tag::tojson-document[]
+
         // Create a new document using the updated JSON String
-        
+
         let hotel:MutableDocument = MutableDocument.init(id: anhotel.id)
-        
+
         try! hotel.setJSON(newJsonString)
-        
-        // end::toJson-document[]
+
+        // end::tojson-document[]
 
         try! db.saveDocument(hotel)
-        
+
         print(db.document(withID: anhotel.id)?.toDictionary())
-        
-        
+
+
 //        var b:Blob = Blob(contentType: "", contentStream: "")
-        
+
     }
-    
-    
+
+
     public func JsonApiBlob() throws {
-        
-        
+
+
     //         seedHotel()
         struct hotelStruct : Codable {
             var id: String
@@ -94,25 +94,25 @@ class JsonApi {
             var country: String
             var description: String
         }
-        // tag::toJson-blob[]
-        
+        // tag::tojson-blob[]
+
         // Get a document
         let thisDoc = db.document(withID: "1000")?.toMutable() // <.>
-        
+
 
         // Get the image and add as a blob to the document
         let contentType = "";
         let ourImage = UIImage(named: "couchbaseimage.png")!
         let imageData = ourImage.jpegData(compressionQuality: 1)! // <.>
         thisDoc?.setBlob( Blob(contentType: contentType, data: imageData), forKey: "avatar") //<.>
-        
+
 //        let theBlobAsJSONstringFails = thisDoc?.blob(forKey: "avatar")!.toJSON(); // <.>
-        
+
         // Save blob as part of doc or alternatively as a blob
-        
+
         try! db.saveDocument(thisDoc!);
         try! db.saveBlob(blob: Blob(contentType: contentType, data: imageData)); //<.>;
-        
+
         // Retrieve saved blob as a JSON, reconstitue and check still blob
         let sameDoc = db.document(withID: "1000")?.toMutable()
         let theBlobAsJSONstring = sameDoc?.blob(forKey: "avatar")!.toJSON(); // <.>
@@ -120,24 +120,24 @@ class JsonApi {
         for (key, value) in sameDoc!.toDictionary() {
              print( "Data -- {0) = {1}", key, value);
         }
-        
+
         if(Blob.isBlob(properties: reconstitutedBlob.dictionary(forKey: "blobCOPY")!.toDictionary())) // <.>
         {
             print(theBlobAsJSONstring);
         }
-        
-        // end::toJson-blob[]
-        
-        
+
+        // end::tojson-blob[]
+
+
     }
-    
-    
-    
-    
+
+
+
+
     func seedHotel() {
 
         print(db.document(withID: "2001")?.dictionary(forKey: "2001"))
-        
+
       try! db.delete()
 
         db = try! Database(name: "hotel")
@@ -157,23 +157,23 @@ class JsonApi {
             for x in 0 ... key.count-1 {
                 hotel.setString(val[i][x], forKey: key[x])
             }
-            
+
             try! db.saveDocument(hotel)
             print(hotel.id)
 
-            
+
 //            let hotel:md = MutableDocument.init(id: "J1000", json: <#T##String#>)
-            
-            
-            
-            
+
+
+
+
         }
 
     }
-    
-    
-    
-    
+
+
+
+
     func dontTestJSONdocument() {
         // tag::query-get-all[]
         let db = try! Database(name: "hotel")
@@ -188,29 +188,29 @@ class JsonApi {
         for row in try! listQuery.execute() {
         // end::query-get-all[]
 
-        // tag::toJson-document[]
+        // tag::tojson-document[]
             var thisId = row.string(forKey: "metaId")! as String
-            
+
             var thisJSONstring = try! db.document(withID: thisId)!.toJSON() // <.>
-            
+
             print("JSON String = ", thisJSONstring as! String)
-            
+
             let hotelFromJSON:MutableDocument = // <.>
                     try! MutableDocument(id: thisId as? String, json: thisJSONstring)
-            
+
             try! dbnew.saveDocument(hotelFromJSON)
-            
+
             let newhotel = dbnew.document(withID: thisId)
-            
+
             let keys = newhotel!.keys
             for key in keys { // <.>
                 print(key, newhotel!.value(forKey: key) as! String)
             }
-            
-            // end::toJson-document[]
-            
+
+            // end::tojson-document[]
+
         /*
-        // tag::toJson-document-output[]
+        // tag::tojson-document-output[]
              JSON String =  {"description":"Very good and central","id":"1000","country":"France","name":"Hotel Ted","type":"hotel","city":"Paris"}
              type hotel
              id 1000
@@ -218,13 +218,13 @@ class JsonApi {
              city Paris
              description Very good and central
              name Hotel Ted
-        // end::toJson-document-output[]
+        // end::tojson-document-output[]
          */
         } // end  query for loop
-        
 
-        // tag::toJson-array[]
-        
+
+        // tag::tojson-array[]
+
         var thisJSONstring = """
             [{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hotel Ted\",\"city\":\"Paris\",
             \"country\":\"France\",\"description\":\"Undefined description for Hotel Ted\"},
@@ -236,19 +236,19 @@ class JsonApi {
             """
         let myArray:MutableArrayObject =
             try! MutableArrayObject.init(json: thisJSONstring) // <.>
-       
+
         for i in 0...myArray.count-1 {
-            
+
             print(i+1, myArray.dictionary(at: i)!.string(forKey: "name")!)
-            
+
             var docid = myArray.dictionary(at: i)!.string(forKey: "id")
 
             var newdoc:MutableDocument = // <.>
                 try! MutableDocument(id: docid,
                          data: (myArray.dictionary(at: i)?.toDictionary())! )
-            
+
             try! dbnew.saveDocument(newdoc)
-            
+
         }
 
         let extendedDoc = dbnew.document(withID: "1002")
@@ -257,39 +257,39 @@ class JsonApi {
         for i in 0...features!.count-1 {
             print(features![i])
         }
-    
+
         print( extendedDoc!.array(
                 forKey: "features")?.toJSON() as! String) // <.>
-            
-        // end::toJson-array[]
-        
-        
-        // tag::toJson-dictionary[]
-        
+
+        // end::tojson-array[]
+
+
+        // tag::tojson-dictionary[]
+
         var aJSONstring = """
             {\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",
             \"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\"}
             """
-        
+
         let myDict:MutableDictionaryObject =
             try! MutableDictionaryObject(json: aJSONstring) // <.>
         print(myDict)
-        
+
         let name = myDict.string(forKey: "name")
         print("Details for: ", name!)
-        
+
         for key in myDict {
-            
+
             print(key, myDict.value(forKey: key) as! String)
-            
+
         }
-        
+
         try! dontTestTypedAcessors()
-            
-        // end::toJson-dictionary[]
-        
+
+        // end::tojson-dictionary[]
+
         /*
-        // tag::toJson-dictionary-output[]
+        // tag::tojson-dictionary-output[]
 
          Details for:  Hotel Ned
          description Undefined description for Hotel Ned
@@ -298,24 +298,24 @@ class JsonApi {
          country Australia
          type hotel
          city Balmain
-         
-         // end::toJson-dictionary-output[]
+
+         // end::tojson-dictionary-output[]
         */
-    
-        
+
+
 //    } // end func testjson
 
 //        } // end query loop
 
-    
+
     } // end jsonapi func
-    
+
     func dontTestTypedAcessors() throws {
 //        let db = try! Database(name: "hotel")
 //        db.
-        
+
         var newTask:Document = try! db.document(withID: "1001")! // <.>
-        
+
 //        let newTask = Document()
 
 //        // tag::date-getter[]
@@ -332,18 +332,18 @@ class JsonApi {
         // end::to-json[]
 
 //        print("\(date!)")
-        
+
     }
 
-    
+
 }
-    
+
     extension String {
-        
+
         func toJSONObj() -> Any {
-            
+
             let d1 = self.data(using: .utf8)
-            
+
             return try! JSONSerialization.jsonObject(
                 with: d1!, options:[])
         }

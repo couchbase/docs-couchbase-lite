@@ -19,10 +19,9 @@ To run a predictive query with a model as the one shown above, you must implemen
 
 To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `predict()`.
 
-[source]
-----
-include::{snippet}[tag=predictive-model,indent=0]
-----
+:param-tags: predictive-model
+include::{root-partials}_block_tabbed_code_block.adoc[]
+:param-tags!:
 <1> The `predict(input) ++->++ output` method provides the input and expects the result of using the machine learning model.
 The input and output of the predictive model is a `DictionaryObject`.
 Therefore, the supported data type will be constrained by the data type that the `DictionaryObject` supports.
@@ -31,10 +30,9 @@ Therefore, the supported data type will be constrained by the data type that the
 
 To register the model you must create a new instance and pass it to the `Database.prediction.registerModel` static method.
 
-[source]
-----
-include::{snippet}[tag=register-model,indent=0]
-----
+:param-tags: register-model
+include::{root-partials}_block_tabbed_code_block.adoc[]
+:param-tags!:
 
 === Create an Index
 
@@ -51,10 +49,9 @@ There are two types of indexes for predictive queries:
 The code below creates a value index from the "label" value of the prediction result.
 When documents are added or updated, the index will call the prediction function to update the city value in the index.
 
-[source]
-----
-include::{snippet}[tag=predictive-query-value-index,indent=0]
-----
+:param-tags: predictive-query-value-index
+include::{root-partials}_block_tabbed_code_block.adoc[]
+:param-tags!:
 
 ==== Predictive Index
 
@@ -63,19 +60,17 @@ The Predictive Index is different from the value index in that the Predictive In
 
 The code below creates a predictive index from the "label" value of the prediction result.
 
-[source]
-----
-include::{snippet}[tag=predictive-query-predictive-index,indent=0]
-----
+:param-tags: predictive-query-predictive-index
+include::{root-partials}_block_tabbed_code_block.adoc[]
+:param-tags!:
 
 === Run a Prediction Query
 
 The code below creates a query that calls the prediction function to return the "label" value for the first 10 results in the database.
 
-[source]
-----
-include::{snippet}[tag=predictive-query,indent=0]
-----
+:param-tags: predictive-query
+include::{root-partials}_block_tabbed_code_block.adoc[]
+:param-tags!:
 <1> The `PredictiveModel.predict()` method returns a constructed Prediction Function object which can be used further to specify a property value extracted from the output dictionary of the `PredictiveModel.predict()` function.
 +
 NOTE: The null value returned by the prediction method will be interpreted as MISSING value in queries.
@@ -84,7 +79,6 @@ NOTE: The null value returned by the prediction method will be interpreted as MI
 
 To unregister the model you must call the `Database.prediction.unregisterModel` static method.
 
-[source]
-----
-include::{snippet}[tag=unregister-model,indent=0]
-----
+:param-tags: unregister-model
+include::{root-partials}_block_tabbed_code_block.adoc[]
+:param-tags!:

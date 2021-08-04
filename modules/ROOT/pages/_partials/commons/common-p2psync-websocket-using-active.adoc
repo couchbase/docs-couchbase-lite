@@ -31,18 +31,6 @@ include::{root-partials}_block-caveats.adoc[tags=securestorage]
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
 <<simple-replication-to-listener>> shows the initialization and configuration process.
 
-// Example 1
-[#simple-replication-to-listener]
-.Replication configuration and initialization
-// [%collapsible]
-====
-
-[source, {source-language}]
-----
-
-include::{snippet}[tags=p2p-act-rep-func, indent=0]
-
-----
 ifdef::is-android[]
 [NOTE]
 --
@@ -50,25 +38,21 @@ include::{root-partials}_block-caveats.adoc[tags=android-threads]
 --
 endif::[]
 
-*Notes on Example*
-
-<.> Use the {url-api-class-replicator-config} class's constructor -- {url-api-constructor-replicator-config-db-tgt} -- to initialize the replicator configuration with the local database -- see also: <<configure-target>>
-
+[#simple-replication-to-listener]
+.Replication configuration and initialization
+:param-tags: p2p-act-rep-func
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 <.> Configure how the client will authenticate the server.
 Here we say connect only to servers presenting a self-signed certificate.
-By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<authenticating-the-listener>>.
-
+By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<authenticate-listener>>.
 <.> Configure the credentials the client will present to the server.
-Here we say to provide _Basic Authentication_ credentials. Other options are available -- see: <<client-authentication>>.
-
+Here we say to provide _Basic Authentication_ credentials. Other options are available -- see: <<configuring-client-authentication>>.
 <.> Configure how the replication should perform <<conflict-resolution>>.
-
 <.> Initialize the replicator using your configuration object.
-
 <.> Register an observer, which will notify you of changes to the replication status.
-
 <.> Start the replicator.
-====
+
 
 == API References
 
@@ -79,7 +63,7 @@ You can find {url-api-references}[{param-title} API References] here.
 
 Prior to connecting with a listener you may execute a peer discovery phase to dynamically discover peers.
 
-ifeval::["{param-platform}"=="{platform-ios}"]
+ifdef::is-ios[]
 For the active peer this involves browsing-for and selecting the appropriate service using a zero-config protocol such as _Bonjour_-- see: https://developer.apple.com/bonjour/.
 endif::[]
 ifdef::is-android[]
@@ -90,7 +74,7 @@ endif::[]
 
 == Configure Replicator
 In this section::
-<<lbl-cfg-tgt>>  |  <<lbl-cfg-sync>>  |  <<lbl-cfg-retry>>  |  <<lbl-auth-lstnr>>  | <<lbl-authclnt>>
+<<lbl-cfg-tgt>>  |  <<lbl-cfg-sync>>  |  <<lbl-cfg-retry>>  |  <<authenticate-listener>>  | <<lbl-authclnt>>
 
 [#lbl-cfg-tgt]
 === Configure Target
@@ -107,7 +91,8 @@ include::{root-commons}sgw-replication-cfg-sync-mode.adoc[]
 
 include::{root-commons}sgw-replication-cfg-retry.adoc[]
 
-[#lbl-auth-lstnr]
+
+[#authenticate-listener]
 === Authenticating the Listener
 
 Define the credentials the your app (the client) is expecting to receive from the server (listener) in order to ensure that the server is one it is prepared to interact with.
@@ -126,16 +111,12 @@ Use the `{url-api-class-replicator-config-basic-auth}` to supply basic authentic
 // Example 5
 [[basic-authentication]]
 .Basic Authentication
-====
+:param-tags: p2p-act-rep-auth
+:param-leader: This example shows basic authentication using user name and password:
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
 
-This example shows basic authentication using user name and password:
-
-[source, {source-language}]
-----
-include::{snippet}[tags="p2p-act-rep-auth", indent=0]
-
-----
-====
 
 ==== Certificate Authentication
 
@@ -153,25 +134,16 @@ endif::[]
 
 // See {xref-cbl-pg-p2p-manage-tls-id} for more on how to do this.
 // Example 6
-[[configuring-client-authentication]]
 .Client Cert Authentication
-====
-This example shows client certificate authentication using an identity from secure storage.
-
-[source, {source-language}]
-----
-
-include::{snippet}[tags=p2p-tlsid-tlsidentity-with-label, indent=0]
-
-----
-
-*Notes on Example*
-
+[#configuring-client-authentication]
+:param-tags: p2p-tlsid-tlsidentity-with-label
+:param-leader: This example shows client certificate authentication using an identity from secure storage.
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
 <.> Get an identity from secure storage and create a TLS Identity object
-// <.> Import and create an identity from the given PKCS12 data containing private key, public key, and certificates
 <.> Set the authenticator to {url-api-class-replicator-config-cert-auth} and configure it to use the retrieved identity
 
-====
 
 == Initialize Replicator
 
@@ -179,15 +151,17 @@ include::{root-commons}sgw-replication-init.adoc[]
 
 [#lbl-repl-mon]
 == Monitor Sync
-In this section::
-<<lbl-repl-chng>>  |  <<lbl-repl-status>>  |  <<lbl-repl-pend>>
 
+:is-p2p:
 include::{root-commons}sgw-replication-monitor.adoc[leveloffset=+1]
+:is-p2p!:
+
 
 [#lbl-repl-stop]
 == Stop Sync
 
 include::{root-commons}sgw-replication-stop.adoc[]
+
 
 == Conflict Resolution
 
@@ -201,23 +175,18 @@ For more complex solutions you can provide a custom conflict resolver - see: {xr
 [#using-conflict-resolvers]
 include::{root-commons}conflict.adoc[tags=handling-conflicts-conflict-resolvers]
 
-Just as a replicator may observe a conflict -- when updating a document that has changed both in the local database and in a remote database -- any attempt to save a document may also observe a conflict, if a replication has taken place since the local app retrieved the document from the database. To address that possibility, a version of the `Database.save()` method also takes a conflict resolver as shown in <<merging-document-properties>>.
-
-// Example 11
-[#merging-document-properties]
+Just as a replicator may observe a conflict -- when updating a document that has changed both in the local database and in a remote database -- any attempt to save a document may also observe a conflict, if a replication has taken place since the local app retrieved the document from the database.
+To address that possibility, a version of the `Database.save()` method also takes a conflict resolver as shown in <<ex-merge-props>>.
 
 include::{root-commons}conflict.adoc[tags=handling-conflicts-custom-merge]
 
 For more on replicator conflict resolution see: {xref-cbl-pg-conflict}.
 
+
 == Delta Sync
 // DONE: Add reference to listener section tht includes enableDeltaSync parameter being set to true
 If delta sync is enabled on the listener, then replication will use delta sync.
 
-// For more on how to:
-
-// * Enable delta sync on the listener -- see: {xref-cbl-pg-dbo-p2psync-websocket-using-passive--delta-sync}
-// * Replicator Delta Sync concept -- see: {xref-cbl-pg-replication--delta-sync}
 
 // DO NOT EDIT OR REMOVE
 // Unset is-p2p flag
