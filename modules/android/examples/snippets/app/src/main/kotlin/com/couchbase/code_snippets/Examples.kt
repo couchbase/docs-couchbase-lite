@@ -2394,3 +2394,99 @@ class ExamplesP2p(private val context: Context) {
   // end::sgw-repl-pull-callouts[]
   */
 }
+
+
+
+
+
+    fun testQuerySyntaxAll() {
+
+        // tag::query-syntax-all[]
+//        try {
+//            this_Db = new Database("hotels");
+//        } catch (CouchbaseLiteException e) {
+//            e.printStackTrace();
+//        }
+        val db = openOrCreateDatabaseForUser(currentUser)
+        val listQuery: Query = QueryBuilder.select(SelectResult.all())
+                .from(DataSource.database(db!!))
+        // end::query-syntax-all[]
+
+        // tag::query-access-all[]
+        val hotels: HashMap<String, Hotel> = HashMap<String, Hotel>()
+        try {
+            for (result in listQuery.execute().allResults()) {
+                // get the k-v pairs from the 'hotel' key's value into a dictionary
+                val thisDocsProps = result.getDictionary(0) // <.>
+                val thisDocsId = thisDocsProps!!.getString("id")
+                val thisDocsName = thisDocsProps.getString("name")
+                val thisDocsType = thisDocsProps.getString("type")
+                val thisDocsCity = thisDocsProps.getString("city")
+
+                // Alternatively, access results value dictionary directly
+                val hotel = Hotel()
+                hotel.id = result.getDictionary(0)!!.getString("id").toString() // <.>
+                hotel.type = result.getDictionary(0)!!.getString("type").toString()
+                hotel.name = result.getDictionary(0)!!.getString("name").toString()
+                hotel.city = result.getDictionary(0)!!.getString("city").toString()
+                hotel.country = result.getDictionary(0)!!.getString("country").toString()
+                hotel.description = result.getDictionary(0)!!.getString("description").toString()
+                hotels[hotel.id] = hotel
+            }
+        } catch (e: CouchbaseLiteException) {
+            e.printStackTrace()
+        }
+
+        // end::query-access-all[]
+    }
+
+    @Throws(CouchbaseLiteException::class, JSONException::class)
+    fun testQuerySyntaxJson() {
+        val db = openOrCreateDatabaseForUser(currentUser)
+        // tag::query-syntax-json[]
+        // Example assumes Hotel class object defined elsewhere
+//        Database db = null;
+//        try {
+//                db = new Database(dbName);
+//        } catch (CouchbaseLiteException e) {
+//            e.printStackTrace();
+//        }
+
+        // Build the query
+        val listQuery: Query = QueryBuilder.select(SelectResult.all())
+                .from(DataSource.database(db!!))
+
+        // end::query-syntax-json[]
+
+      // tag::query-access-json[]
+        // Uses Jackson JSON processor
+        val mapper = ObjectMapper();
+        val hotels: ArrayList<Hotel> = ArrayList<Hotel>()
+
+        for (result in listQuery.execute()) {
+
+          // Get result as JSON string
+          val thisJsonString1: String = result.toJSON() // <.>
+          // ALTERNATIVELY
+          val thisJsonString = result.getDictionary(0)?.toJSON() // <.>
+
+
+          // Get Hashmap from JSON string
+          val dictFromJSONstring =
+              mapper.readValue(thisJsonString, HashMap::class.java) // <.>
+
+          // Use created hashmap
+          val hotelId = dictFromJSONstring["id"].toString() //
+          val hotelType = dictFromJSONstring["type"].toString()
+          val hotelname = dictFromJSONstring["name"].toString()
+
+
+          // Get custom object from JSON strin
+          val thisHotel =
+              mapper.readValue(thisJsonString, Hotel::class.java) // <.>
+          hotels.add(thisHotel)
+
+      }
+      // end::query-access-json[]
+    }
+    /* end func testQuerySyntaxJson */

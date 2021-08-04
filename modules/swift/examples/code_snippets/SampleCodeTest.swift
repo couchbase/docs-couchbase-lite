@@ -2225,7 +2225,7 @@ class QueryResultSets {
 
 // end::query-syntax-all[]
 
-// tag::query-access-all[]
+    // tag::query-access-all[]
 
         do {
 
@@ -2261,22 +2261,28 @@ class QueryResultSets {
             for (_, row) in
                 try! listQuery.execute().allResults().enumerated() {
 
-                let jsonString = row.dictionary(forKey: "_doc")!.toJSON()
+                let jsonString = row.toJSON() // <.>
+                // ALTERNATIVELY:
+                let jsonString = row.dictionary(at: 0)!.toJSON() // <.>
 
-                let thisJsonObj =
-                        try! JSONSerialization.jsonObject(
-                                with: jsonString.data(using: .utf8)! , options:[])
-                                    as? [String: Any]
 
-                let docid = thisJsonObj!["id"] as! String
+                // Get native dictionary from JSON string
+                let thisDictFromJSON:Dictionary =
+                    try! (JSONSerialization.jsonObject(
+                            with: jsonString.data(using: .utf8)! , options:[])
+                            as? [String: Any])! // <.>
 
-                let name = thisJsonObj!["name"] as! String
+                // Use new dictionary to  populate objects with the JSON data
+                anhotelId = thisDictFromJSON!["id"] as! String
+                anhotelNname = thisDictFromJSON!["name"] as! String
 
-                let type = thisJsonObj!["type"] as! String
 
-                let city = thisJsonObj!["city"] as! String
+                // Get custom object from JSON string
+                let this_hotel:Hotel =
+                  (try JSONDecoder().decode(Hotel.self,
+                         from: jsonString.data(using: .utf8)!)) // <.>
 
-                print("the JSON Object's propertiess are: ", docid,name,type,city)
+                hotels[this_hotel.id] = this_hotel
 
             } // end for
 
@@ -2284,6 +2290,13 @@ class QueryResultSets {
             print(err.localizedDescription)
 
         } // end do
+
+
+    } // end func dontTestQueryAll
+
+    // end::query-access-json[]
+
+
 
 
     } // end func dontTestQueryAll

@@ -2116,6 +2116,42 @@ public class TestQueries {
         // end::query-access-all[]
     }
 
+
+  // tag::query-access-json[]
+    // Uses Jackson JSON processor
+
+    ArrayList<Hotel> hotels = new ArrayList<Hotel>();
+    HashMap<String, Object> dictFromJSONstring;
+    for (Result result : listQuery.execute()) {
+
+      // Get result as JSON string
+      String thisJsonString = result.toJSON(); // <.>
+      // ALTERNATIVELY
+      String thisJsonString =
+        result.getDictionary(0).toJSON(); // <.>
+
+
+      // Get Java  Hashmap from JSON string
+      HashMap<String, Object> dictFromJSONstring =
+              mapper.readValue(thisJsonString, HashMap.class); // <.>
+
+
+      // Use created hashmap
+      String hotelId = dictFromJSONstring.get("id").toString();
+      String hotelType = dictFromJSONstring.get("type").toString();
+      String hotelname = dictFromJSONstring.get("name").toString();
+
+
+      // Get custom object from Native 'dictionary' object
+      Hotel thisHotel =
+              mapper.readValue(thisJsonString, Hotel.class); // <.>
+      hotels.add(thisHotel);
+
+    }
+
+  // end::query-access-json[]
+            }
+
     public void testQuerySyntaxProps() throws CouchbaseLiteException {
 
         // tag::query-syntax-props[]
