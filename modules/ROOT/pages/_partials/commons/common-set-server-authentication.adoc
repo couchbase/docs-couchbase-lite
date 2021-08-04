@@ -16,12 +16,18 @@ Use `{url-api-class-replicator-config}` properties {url-api-prop-replicator-conf
 * If there are no pinned certs and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
 * If there are no pinned certificates and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `false` (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
 
+// :is-android:
 // Example 4
 .Set Server TLS security
-=====
-[{tabs}]
 ====
-
+ifdef::is-android[]
+[{tabs}]
+=====
+{source-language}::
++
+endif::is-android[]
+[{tabs}]
+======
 CA Cert::
 +
 --
@@ -29,16 +35,11 @@ Set the client to expect and accept only CA attested certificates.
 
 [source, {source-language}]
 ----
-
 include::{snippet}[tags=p2p-act-rep-config-cacert, indent=0]
-
 ----
-*Notes on Example*
-
 <.> This is the default.
 Only certificate chains with roots signed by a trusted CA are allowed.
 Self signed certificates are not allowed.
-
 --
 
 Self Signed Cert::
@@ -48,17 +49,11 @@ Set the client to expect and accept only self-signed certificates
 
 [source, {source-language}]
 ----
-
 include::{snippet}[tags=p2p-act-rep-config-self-cert, indent=0]
-
 ----
-*Notes on Example*
-
 <.> Set this to `true` to accept any self signed cert.
 Any certificates that are not self-signed are rejected.
-
 --
-
 
 Pinned Certificate::
 +
@@ -67,16 +62,64 @@ Set the client to expect and accept only a pinned certificate.
 
 [source, {source-language}]
 ----
-
 include::{snippet}[tag=p2p-act-rep-config-cacert-pinned, indent=0]
-
 ----
 
 include::{snippet}[tag=p2p-act-rep-config-cacert-pinned-callouts, indent=0]
-
 --
-====
-=====
 
+======
+
+ifdef::is-android[]
+
+{source-language-alt}::
++
+[{tabs}]
+======
+CA Cert::
++
+--
+Set the client to expect and accept only CA attested certificates.
+
+[source, {source-language-alt}]
+----
+include::{snippet-alt}[tags=p2p-act-rep-config-cacert, indent=0]
+----
+<.> This is the default.
+Only certificate chains with roots signed by a trusted CA are allowed.
+Self signed certificates are not allowed.
+--
+
+Self Signed Cert::
++
+--
+Set the client to expect and accept only self-signed certificates
+
+[source, {source-language-alt}]
+----
+include::{snippet-alt}[tags=p2p-act-rep-config-self-cert, indent=0]
+----
+<.> Set this to `true` to accept any self signed cert.
+Any certificates that are not self-signed are rejected.
+--
+
+Pinned Certificate::
++
+--
+Set the client to expect and accept only a pinned certificate.
+[source, {source-language-alt}]
+----
+
+include::{snippet-alt}[tag=p2p-act-rep-config-cacert-pinned, indent=0]
+
+----
+
+include::{snippet-alt}[tag=p2p-act-rep-config-cacert-pinned-callouts, indent=0]
+--
+======
+=====
+endif::is-android[]
+
+====
 //
 // END -- inclusion -- common-set-server-authentication.adoc

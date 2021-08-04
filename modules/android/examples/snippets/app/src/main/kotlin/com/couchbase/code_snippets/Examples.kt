@@ -469,6 +469,7 @@ class Examples(private val context: Context) {
                     ValueIndexItem.property("name")
                 )
             )
+            // end::query-index[]
         }
     }
 
@@ -599,6 +600,7 @@ class Examples(private val context: Context) {
                     java.lang.String.format("type -> %s", all.getString("type"))
                 )
             }
+            // end::query-where[]
         }
     }
 
@@ -646,6 +648,7 @@ class Examples(private val context: Context) {
                     )
                 )
             }
+            // end::query-collection-operator-contains[]
         }
     }
 
@@ -672,6 +675,7 @@ class Examples(private val context: Context) {
                     java.lang.String.format("%s", result.toMap().toString())
                 )
             }
+            // end::query-collection-operator-in[]
         }
     }
 
@@ -703,6 +707,7 @@ class Examples(private val context: Context) {
                     java.lang.String.format("name -> %s", result.getString("name"))
                 )
             }
+            // end::query-like-operator[]
         }
     }
 
@@ -734,6 +739,7 @@ class Examples(private val context: Context) {
                     java.lang.String.format("name -> %s", result.getString("name"))
                 )
             }
+            // end::query-like-operator-wildcard-match[]
         }
     }
 
@@ -764,6 +770,7 @@ class Examples(private val context: Context) {
                     "Sample",
                     java.lang.String.format("name -> %s", result.getString("name"))
                 )
+            // end::query-like-operator-wildcard-character-match[]
             }
         }
     }
@@ -796,6 +803,7 @@ class Examples(private val context: Context) {
                     java.lang.String.format("name -> %s", result.getString("name"))
                 )
             }
+            // end::query-regex-operator[]
         }
     }
 
@@ -839,6 +847,7 @@ class Examples(private val context: Context) {
                     java.lang.String.format("%s", result.toMap().toString())
                 )
             }
+            // end::query-join[]
         }
     }
 
@@ -879,6 +888,7 @@ class Examples(private val context: Context) {
                     )
                 )
             }
+            // end::query-groupby[]
         }
     }
 
@@ -902,6 +912,7 @@ class Examples(private val context: Context) {
             for (result in rs) {
                 Log.i("Sample", java.lang.String.format("%s", result.toMap()))
             }
+            // end::query-orderby[]
         }
     }
 
@@ -954,10 +965,10 @@ class Examples(private val context: Context) {
                 .from(DataSource.database(database))
                 .where(Expression.property("type").equalTo(Expression.string("hotel"))) // <.>
             Log.i(query.explain())
+            // end::query-explain-nofunction[]
         }
-    }
-
-    // end query-explain
+    } // end query-explain
+    // end::query-explain[]
     @Throws(CouchbaseLiteException::class)
     fun prepareIndex() {
         // tag::fts-index[]
@@ -1043,7 +1054,7 @@ class Examples(private val context: Context) {
         //  BEGIN PendingDocuments IB -- 11/Feb/21 --
         @Throws(URISyntaxException::class, CouchbaseLiteException::class)
         fun testReplicationPendingDocs() {
-            // tag::replication-pendingdocuments[]
+            // nottag::replication-pendingdocuments[]
             // ... include other code as required
             //
             val endpoint: Endpoint = URLEndpoint(URI("ws://localhost:4984/db"))
@@ -1063,7 +1074,7 @@ class Examples(private val context: Context) {
             replicator.start()
 
             // ... include other code as required
-            // end::replication-pendingdocuments[]
+            // notend::replication-pendingdocuments[]
         }
 
         //
@@ -1391,7 +1402,22 @@ class Examples(private val context: Context) {
         private const val DATABASE_NAME = "database"
     }
 
-} // end::update-document-with-conflict-handler-callouts[]
+}
+
+// tag::update-document-with-conflict-handler-callouts[]
+
+<.> The conflict handler code is provided as a lambda.
+
+<.> If the handler cannot resolve a conflict, it can return false.
+In this case, the save method will cancel the save operation and return false the same way as using the save() method with the failOnConflict concurrency control.
+
+<.> Within the conflict handler, you can modify the document parameter which is the same instance of Document that is passed to the save() method. So in effect, you will be directly modifying the document that is being saved.
+
+<.> When handling is done, the method must return true (for  successful resolution) or false (if it was unable to resolve the conflict).
+
+<.> If there is an exception thrown in the handle() method, the exception will be caught and re-thrown in the save() method
+// end::update-document-with-conflict-handler-callouts[]
+
 
 // tag::local-win-conflict-resolver[]
 // Using replConfig.setConflictResolver(new LocalWinConflictResolver());
@@ -1767,7 +1793,7 @@ class CertAuthListener {
         keyStore.deleteEntry(alias) // <.>
     }
     // end::listener-config-delete-cert-full[]
-    // tag::p2p-tlsid-tlsidentity-with-label[]
+    // nottag::p2p-tlsid-tlsidentity-with-label[]
     /**
      * Snippet 4: Create a ClientCertificateAuthenticator and use it in a replicator
      * Snippet 5: Specify a pinned certificate as a byte array
@@ -1793,7 +1819,7 @@ class CertAuthListener {
         // Configure the pinned certificate passing a byte array.
         config.setPinnedServerCertificate(cert.getEncoded())
     }
-    // end::p2p-tlsid-tlsidentity-with-label[]
+    // notend::p2p-tlsid-tlsidentity-with-label[]
     /**
      * Snippet 5 (supplement): Copy a cert from a resource bundle
      *
@@ -1933,15 +1959,15 @@ class ExamplesP2p(private val context: Context) {
     fun ibListenerSimple() {
         // tag::listener-simple[]
         val thisConfig =
-            URLEndpointListenerConfiguration(thisDB) /* <.> */
+            URLEndpointListenerConfiguration(thisDB) // <.>
         thisConfig.setAuthenticator(
             ListenerPasswordAuthenticator { username, password ->
                 username.equals("valid.User") &&
                         Arrays.equals(password, valid.password.string)
             }
-        ) /* <.> */
-        val thisListener = URLEndpointListener(thisConfig) /* <.> */
-        thisListener.start() /* <.> */
+        ) // <.>
+        val thisListener = URLEndpointListener(thisConfig) // <.>
+        thisListener.start() // <.>
 
         // end::listener-simple[]
     }
@@ -1954,17 +1980,17 @@ class ExamplesP2p(private val context: Context) {
         } catch (e: URISyntaxException) {
             e.printStackTrace()
         }
-        val theListenerEndpoint: Endpoint = URLEndpoint(uri) /* <.> */
+        val theListenerEndpoint: Endpoint = URLEndpoint(uri) // <.>
         val thisConfig =
-            ReplicatorConfiguration(database, theListenerEndpoint) /* <.> */
-        thisConfig.setAcceptOnlySelfSignedServerCertificate(true) /* <.> */
+            ReplicatorConfiguration(database, theListenerEndpoint) // <.>
+        thisConfig.setAcceptOnlySelfSignedServerCertificate(true) // <.>
         val thisAuth = BasicAuthenticator(
             "valid.user",
             "valid.password.string"
         )
-        thisConfig.setAuthenticator(thisAuth) /* <.> */
-        replicator = Replicator(config) /* <.> */
-        replicator.start() /* <.> */
+        thisConfig.setAuthenticator(thisAuth) // <.>
+        replicator = Replicator(config) // <.>
+        replicator.start() // <.>
 
         // end::replicator-simple[]
     }
@@ -1975,30 +2001,30 @@ class ExamplesP2p(private val context: Context) {
         // tag::listener-config-db[]
         // Initialize the listener config
         val thisConfig =
-            URLEndpointListenerConfiguration(thisDB) /* <.> */
+            URLEndpointListenerConfiguration(thisDB) // <.>
 
         // end::listener-config-db[]
         // tag::listener-config-port[]
-        thisConfig.setPort(55990) /* <.> */
+        thisConfig.setPort(55990) // <.>
 
         // end::listener-config-port[]
         // tag::listener-config-netw-iface[]
-        thisConfig.setNetworkInterface("10.1.1.10") /* <.> */
+        thisConfig.setNetworkInterface("10.1.1.10") // <.>
 
         // end::listener-config-netw-iface[]
         // tag::listener-config-delta-sync[]
-        thisConfig.setEnableDeltaSync(false) /* <.> */
+        thisConfig.setEnableDeltaSync(false) // <.>
 
         // end::listener-config-delta-sync[]
         // tag::listener-config-tls-full[]
         // Configure server security
         // tag::listener-config-tls-enable[]
-        thisConfig.setDisableTls(false) /* <.> */
+        thisConfig.setDisableTls(false) // <.>
 
         // end::listener-config-tls-enable[]
         // tag::listener-config-tls-id-anon[]
         // Use an Anonymous Self-Signed Cert
-        thisConfig.setTlsIdentity(null) /* <.> */
+        thisConfig.setTlsIdentity(null) // <.>
 
         // end::listener-config-tls-id-anon[]
 
@@ -2015,10 +2041,10 @@ class ExamplesP2p(private val context: Context) {
         // end::listener-config-client-auth-pwd[]
         // tag::listener-start[]
         // Initialize the listener
-        val thisListener = URLEndpointListener(thisConfig) /* <.> */
+        val thisListener = URLEndpointListener(thisConfig) // <.>
 
         // Start the listener
-        thisListener.start() /* <.> */
+        thisListener.start() // <.>
 
         // end::listener-start[]
         // end::listener-initialize[]
@@ -2041,7 +2067,7 @@ class ExamplesP2p(private val context: Context) {
     fun ibListenerLocalDb() {
         // tag::listener-local-db[]
         // . . . preceding application logic . . .
-        CouchbaseLite.init(context) /* <.> */
+        CouchbaseLite.init(context) // <.>
         val thisDB = Database("passivepeerdb")
 
         // end::listener-local-db[]
@@ -2049,7 +2075,7 @@ class ExamplesP2p(private val context: Context) {
 
     fun ibListenerConfigTlsDisable() {
         // tag::listener-config-tls-disable[]
-        thisConfig.setDisableTls(true) /* <.> */
+        thisConfig.setDisableTls(true) // <.>
 
         // end::listener-config-tls-disable[]
     }
@@ -2061,7 +2087,7 @@ class ExamplesP2p(private val context: Context) {
         // Import a key pair into secure storage
         // Create a TLSIdentity from the imported key-pair
         val thisKeyPair: InputStream = FileInputStream()
-        thisKeyPair.javaClass.getResourceAsStream("serverkeypair.p12") /* <.> */
+        thisKeyPair.javaClass.getResourceAsStream("serverkeypair.p12") // <.>
         val thisIdentity: TLSIdentity = importIdentity(
             EXTERNAL_KEY_STORE_TYPE,  // KeyStore type, eg: "PKCS12"
             thisKeyPair,  // An InputStream from the keystore
@@ -2075,7 +2101,7 @@ class ExamplesP2p(private val context: Context) {
 
         // tag::listener-config-tls-id-set[]
         // Set the TLS Identity
-        thisConfig.setTlsIdentity(thisIdentity) /* <.> */
+        thisConfig.setTlsIdentity(thisIdentity) // <.>
 
         // end::listener-config-tls-id-set[]
 // end::listener-config-tls-id-full[]
@@ -2095,7 +2121,7 @@ class ExamplesP2p(private val context: Context) {
         thisConfig.setTlsIdentity(validId)
         thisConfig.setAuthenticator(
             ListenerCertificateAuthenticator(validId.getCerts())
-        ) /* <.> */
+        ) // <.>
         // accept only clients signed by the corp cert
         val thisListener = URLEndpointListener(thisConfig)
 
@@ -2113,9 +2139,9 @@ class ExamplesP2p(private val context: Context) {
 
     fun ibListenerStatusCheck() {
         // tag::listener-status-check[]
-        val connectionCount: Int = thisListener.getStatus().getConnectionCount() /* <.> */
+        val connectionCount: Int = thisListener.getStatus().getConnectionCount() // <.>
         val activeConnectionCount: Int =
-            thisListener.getStatus().getActiveConnectionCount() /* <.> */
+            thisListener.getStatus().getActiveConnectionCount() // <.>
 
         // end::listener-status-check[]
     }
@@ -2139,7 +2165,7 @@ class ExamplesP2p(private val context: Context) {
         val thisConfig = ReplicatorConfiguration(
             thisDB,
             URLEndpoint(URI("wss://listener.com:8954"))
-        ) /* <.> */
+        ) // <.>
 
         // end::p2p-act-rep-initialize[]
         // tag::p2p-act-rep-config-type[]
@@ -2157,26 +2183,26 @@ class ExamplesP2p(private val context: Context) {
         // tag::p2p-act-rep-config-self-cert[]
         // Configure Server Authentication --
         // only accept self-signed certs
-        thisConfig.setAcceptOnlySelfSignedServerCertificate(true) /* <.> */
+        thisConfig.setAcceptOnlySelfSignedServerCertificate(true) // <.>
 
         // end::p2p-act-rep-config-self-cert[]
         // tag::p2p-act-rep-auth[]
         // Configure the credentials the
         // client will provide if prompted
-        val thisAuth: BasicAuthenticator /* <.> */
+        val thisAuth: BasicAuthenticator // <.>
         thisAuth = BasicAuthenticator("Our Username", "Our PasswordValue")
         thisConfig.setAuthenticator(thisAuth)
 
         // end::p2p-act-rep-auth[]
         // tag::p2p-act-rep-config-conflict[]
-        /* Optionally set custom conflict resolver call back */thisConfig.setConflictResolver() /* <.> */
+        /* Optionally set custom conflict resolver call back */thisConfig.setConflictResolver() // <.>
 
         // end::p2p-act-rep-config-conflict[]
         // tag::p2p-act-rep-start-full[]
         // Create replicator
         // Consider holding a reference somewhere
         // to prevent the Replicator from being GCed
-        val thisReplicator = Replicator(thisConfig) /* <.> */
+        val thisReplicator = Replicator(thisConfig) // <.>
 
         // tag::p2p-act-rep-add-change-listener[]
         // tag::p2p-act-rep-add-change-listener-label[]
@@ -2196,7 +2222,7 @@ class ExamplesP2p(private val context: Context) {
         // end::p2p-act-rep-add-change-listener[]
         // tag::p2p-act-rep-start[]
         // Start replicator
-        thisReplicator.start(false) /* <.> */
+        thisReplicator.start(false) // <.>
 
         // end::p2p-act-rep-start[]
         // end::p2p-act-rep-start-full[]
@@ -2209,7 +2235,7 @@ class ExamplesP2p(private val context: Context) {
         // tag::p2p-act-rep-config-cacert[]
         // Configure Server Security
         // -- only accept CA attested certs
-        thisConfig.setAcceptOnlySelfSignedServerCertificate(false) /* <.> */
+        thisConfig.setAcceptOnlySelfSignedServerCertificate(false) // <.>
 
         // end::p2p-act-rep-config-cacert[]
         // tag::p2p-act-rep-config-pinnedcert[]
@@ -2224,8 +2250,8 @@ class ExamplesP2p(private val context: Context) {
         // ... other replicator configuration
         // Provide a client certificate to the server for authentication
         val thisClientId: TLSIdentity = TLSIdentity.getIdentity("clientId")
-            ?: throw IllegalStateException("Cannot find client id") /* <.> */
-        thisConfig.setAuthenticator(ClientCertificateAuthenticator(thisClientId)) /* <.> */
+            ?: throw IllegalStateException("Cannot find client id") // <.>
+        thisConfig.setAuthenticator(ClientCertificateAuthenticator(thisClientId)) // <.>
         // ... other replicator configuration
         val thisReplicator = Replicator(thisConfig)
 
@@ -2233,7 +2259,7 @@ class ExamplesP2p(private val context: Context) {
         // tag::p2p-act-rep-config-cacert-pinned[]
 
         // Use the pinned certificate from the byte array (cert)
-        thisConfig.setPinnedServerCertificate(cert.getEncoded()) /* <.> */
+        thisConfig.setPinnedServerCertificate(cert.getEncoded()) // <.>
         // end::p2p-act-rep-config-cacert-pinned[]
     }
 
@@ -2266,13 +2292,13 @@ class ExamplesP2p(private val context: Context) {
     fun ibP2pReplicatorStop() {
         // tag::p2p-act-rep-stop[]
         // Stop replication.
-        thisReplicator.stop() /* <.> */
+        thisReplicator.stop() // <.>
         // end::p2p-act-rep-stop[]
     }
 
     fun ibP2pListener() {
         CouchbaseLite.init(context)
-        val thisDB = Database("passivepeerdb") /* <.> */
+        val thisDB = Database("passivepeerdb") // <.>
         // Initialize the listener config
         val thisConfig =
             URLEndpointListenerConfiguration(database)
@@ -2283,14 +2309,14 @@ class ExamplesP2p(private val context: Context) {
         // Configure the client authenticator (if using basic auth)
         val auth = ListenerPasswordAuthenticator(
             "username", "password"
-        ) /* <.> */
-        thisConfig.setAuthenticator(auth) /* <.> */
+        ) // <.>
+        thisConfig.setAuthenticator(auth) // <.>
 
         // Initialize the listener
-        val listener = URLEndpointListener(thisConfig) /* <.> */
+        val listener = URLEndpointListener(thisConfig) // <.>
 
         // Start the listener
-        listener.start() /* <.> */
+        listener.start() // <.>
 
 
         // tag::createTlsIdentity[]
@@ -2328,10 +2354,10 @@ class ExamplesP2p(private val context: Context) {
     // tag::sgw-repl-pull[]
     fun ibRplicatorPull() {
         var database: Database
-        var replicator: Replicator /* <.> */
+        var replicator: Replicator // <.>
         var uri: URI? = null
         try {
-            uri = URI("wss://10.0.2.2:4984/db") /* <.> */
+            uri = URI("wss://10.0.2.2:4984/db") // <.>
         } catch (e: URISyntaxException) {
             e.printStackTrace()
         }
@@ -2348,7 +2374,7 @@ class ExamplesP2p(private val context: Context) {
     val thisConfig: ReplicatorConfiguration = ReplicatorConfiguration(
         thisDB,
         URLEndpoint(URI("wss://10.0.2.2:8954/travel-sample"))
-    ) /* <.> */ // end::sgw-act-rep-initialize[]
+    ) // <.> // end::sgw-act-rep-initialize[]
 
     /* C A L L O U T S
 
@@ -2394,3 +2420,99 @@ class ExamplesP2p(private val context: Context) {
   // end::sgw-repl-pull-callouts[]
   */
 }
+
+
+
+
+
+    fun testQuerySyntaxAll() {
+
+        // tag::query-syntax-all[]
+//        try {
+//            this_Db = new Database("hotels");
+//        } catch (CouchbaseLiteException e) {
+//            e.printStackTrace();
+//        }
+        val db = openOrCreateDatabaseForUser(currentUser)
+        val listQuery: Query = QueryBuilder.select(SelectResult.all())
+                .from(DataSource.database(db!!))
+        // end::query-syntax-all[]
+
+        // tag::query-access-all[]
+        val hotels: HashMap<String, Hotel> = HashMap<String, Hotel>()
+        try {
+            for (result in listQuery.execute().allResults()) {
+                // get the k-v pairs from the 'hotel' key's value into a dictionary
+                val thisDocsProps = result.getDictionary(0) // <.>
+                val thisDocsId = thisDocsProps!!.getString("id")
+                val thisDocsName = thisDocsProps.getString("name")
+                val thisDocsType = thisDocsProps.getString("type")
+                val thisDocsCity = thisDocsProps.getString("city")
+
+                // Alternatively, access results value dictionary directly
+                val hotel = Hotel()
+                hotel.id = result.getDictionary(0)!!.getString("id").toString() // <.>
+                hotel.type = result.getDictionary(0)!!.getString("type").toString()
+                hotel.name = result.getDictionary(0)!!.getString("name").toString()
+                hotel.city = result.getDictionary(0)!!.getString("city").toString()
+                hotel.country = result.getDictionary(0)!!.getString("country").toString()
+                hotel.description = result.getDictionary(0)!!.getString("description").toString()
+                hotels[hotel.id] = hotel
+            }
+        } catch (e: CouchbaseLiteException) {
+            e.printStackTrace()
+        }
+
+        // end::query-access-all[]
+    }
+
+    @Throws(CouchbaseLiteException::class, JSONException::class)
+    fun testQuerySyntaxJson() {
+        val db = openOrCreateDatabaseForUser(currentUser)
+        // tag::query-syntax-json[]
+        // Example assumes Hotel class object defined elsewhere
+//        Database db = null;
+//        try {
+//                db = new Database(dbName);
+//        } catch (CouchbaseLiteException e) {
+//            e.printStackTrace();
+//        }
+
+        // Build the query
+        val listQuery: Query = QueryBuilder.select(SelectResult.all())
+                .from(DataSource.database(db!!))
+
+        // end::query-syntax-json[]
+
+      // tag::query-access-json[]
+        // Uses Jackson JSON processor
+        val mapper = ObjectMapper();
+        val hotels: ArrayList<Hotel> = ArrayList<Hotel>()
+
+        for (result in listQuery.execute()) {
+
+          // Get result as JSON string
+          val thisJsonString1: String = result.toJSON() // <.>
+          // ALTERNATIVELY
+          val thisJsonString = result.getDictionary(0)?.toJSON() // <.>
+
+
+          // Get Hashmap from JSON string
+          val dictFromJSONstring =
+              mapper.readValue(thisJsonString, HashMap::class.java) // <.>
+
+          // Use created hashmap
+          val hotelId = dictFromJSONstring["id"].toString() //
+          val hotelType = dictFromJSONstring["type"].toString()
+          val hotelname = dictFromJSONstring["name"].toString()
+
+
+          // Get custom object from JSON strin
+          val thisHotel =
+              mapper.readValue(thisJsonString, Hotel::class.java) // <.>
+          hotels.add(thisHotel)
+
+      }
+      // end::query-access-json[]
+    }
+    /* end func testQuerySyntaxJson */

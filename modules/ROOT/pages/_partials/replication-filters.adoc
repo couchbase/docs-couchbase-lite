@@ -7,10 +7,10 @@ For instance, high-priority documents could be pushed first, or documents in a "
 
 The following example filters out documents whose `type` property is equal to `draft`.
 
-[source]
-----
-include::{snippet}[tag=replication-push-filter,indent=0]
-----
+:param-tags: replication-push-filter
+include::{root-partials}_block_tabbed_code_block.adoc[]
+:param-tags!:
+
 <1> The callback should follow the semantics of a https://en.wikipedia.org/wiki/Pure_function[pure function^].
 Otherwise, long running functions would slow down the replicator considerably.
 Furthermore, your callback should not make assumptions about what thread it is being called on.
@@ -23,10 +23,9 @@ This is an important security mechanism in a peer-to-peer topology with peers th
 NOTE: Pull replication filters are not a substitute for channels.
 Sync Gateway xref:sync-gateway::data-routing.adoc[channels] are designed to be scalable (documents are filtered on the server) whereas a pull replication filter is applied to a document once it has been downloaded.
 
-[source]
-----
-include::{snippet}[tag=replication-pull-filter,indent=0]
-----
+:param-tags: replication-pull-filter
+include::{root-partials}_block_tabbed_code_block.adoc[]
+:param-tags!:
 <1> The callback should follow the semantics of a https://en.wikipedia.org/wiki/Pure_function[pure function^].
 Otherwise, long running functions would slow down the replicator considerably.
 Furthermore, your callback should not make assumptions about what thread it is being called on.

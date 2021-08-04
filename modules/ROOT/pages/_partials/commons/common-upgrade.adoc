@@ -18,11 +18,13 @@ NOTE: The relevant Couchbase Lite API is now called the `Blob` API not the `Atta
 The functionally is identical but the internal schema for attachments has changed.
 Blobs are stored anywhere in the document, just like other value types, whereas in 1.x they were stored under the `_attachments` field.
 The automatic upgrade functionality *does not* update the internal schema for attachments, so they remain accessible under the `_attachments` field.
-The following example shows how to retrieve an attachment that was created in a 1.x database with a 2.x API.
-[source]
-----
-include::{snippet}[tag=1x-attachment,indent=0]
-----
+See <<ex-get-att>> for how to retrieve an attachment that was created in a 1.x database with a 2.x API.
+
+.Retrieve 1.x Attachment
+[#ex-get-att]
+:param-tags: 1x-attachment
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 
 == Replication Compatibility
 

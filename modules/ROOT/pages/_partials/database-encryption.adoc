@@ -6,12 +6,14 @@ This allows mobile applications to secure the data at rest, when it is being sto
 The algorithm used to encrypt the database is 256-bit AES.
 
 To enable encryption, you must set the `DatabaseConfiguration.encryptionKey` property to the encryption key of your choice.
-Provide this encryption key every time the database is opened.
+Provide this encryption key every time the database is opened -- see <<ex-sdb-encrypt>>.
 
-[source]
-----
-include::{snippet}[tag=database-encryption,indent=0]
-----
+.Database Encryption
+[#ex-sdb-encrypt]
+:param-tags: database-encryption
+include::{root-partials}_block_show_snippet.adoc[]
+:param-tags!:
+
 
 Couchbase Lite does not persist the key.
 It is the application's responsibility to manage the key and store it in a platform specific secure store such as Apple's https://developer.apple.com/documentation/security/keychain_services[Keychain] or Android's https://developer.android.com/training/articles/keystore[Keystore].

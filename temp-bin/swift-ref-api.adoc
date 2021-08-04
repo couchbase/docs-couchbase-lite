@@ -1,0 +1,555 @@
+= Swift
+:page-status:
+:page-edition:
+:page-layout: article
+:page-content-type: procedural
+:page-roles:
+:page-aliases:, refer/swift-ref-api.adoc
+:description: Couchbase Lite Swift API Reference Document
+:keywords: edge nosql api
+// End of Page Definition Statements
+
+include::shared-mobile::partial$_attributes-shared.adoc[]
+include::ROOT:partial$_attributes-local.adoc[]
+include::swift:partial$_attributes-module.adoc[]
+
+// BEGIN:: SET LOCAL ENVIRONMENT ATTRIBUTES
+//:snippets: {snippets-content--swift}
+//:source-language: {lang-name-swift}
+//:packageNm: couchbase-lite-swift
+//:url-issues: {url-issues-swift}
+//:url-api-references: {url-api-references-swift}
+// END:: SET LOCAL ENVIRONMENT ATTRIBUTES
+
+== API References
+
+{url-api-references}[Swift API References]
+
+== Database
+
+=== New Database
+
+As the top-level entity in the API, new databases can be created using the `Database` class by passing in a name, configuration, or both.
+The following example creates a database using the `Database(name: String)` method.
+
+[source]
+----
+include::{snippet}[tag=new-database,indent=0]
+----
+
+Just as before, the database will be created in a default location.
+Alternatively, the `Database(name: Strings, config: DatabaseConfiguration?)` initializer can be used to provide specific options in the {url-api-references}/Classes/DatabaseConfiguration.html[`DatabaseConfiguration`] object such as the database directory.
+
+=== Database Encryption
+
+:param-language: {param-name}
+include::{root-partials}database-encryption.adoc[]
+
+=== Finding a Database File
+
+When the application is running on the iOS simulator, you can locate the application's sandbox directory using the https://simpholders.com/3/[SimPholders] utility.
+
+=== CLI tool
+
+include::{root-partials}cli-tool.adoc[]
+
+=== Logging
+
+If you are using a Couchbase Lite release prior to 2.5 see <<Logging functionality prior to Release 2.5, Deprecated functionality>>
+
+include::{root-commons}logging.adoc[leveloffset=+2]
+
+==== Logging functionality prior to Release 2.5
+
+include::{root-partials}logging-pre2.5.adoc[]
+
+[source, {source-language}]
+
+----
+include::{snippet}[tags=logging,indent=0]
+----
+
+=== Loading a pre-built database
+
+include::{root-partials}database-load-prebuilt.adoc[]
+
+If the database does not exist, your application should use the {url-api-references}/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC4copyySS8fromPath_SS02toD0AA0D13ConfigurationVSg10withConfigtKFZ[`Database.copy(fromPath:toDatabase:withConfig:)`] method to copy the database from the app bundle.
+
+[source]
+----
+include::{snippet}[tag=prebuilt-database,indent=0]
+----
+
+== Document
+
+include::{root-partials}document.adoc[]
+
+=== Mutability
+
+By default, when a document is read from the database it is immutable.
+The `document.toMutable()` method should be used to create an instance of the document which can be updated.
+
+[source]
+----
+include::{snippet}[tag=update-document,indent=0]
+----
+
+Changes to the document are persisted to the database when the `saveDocument` method is called.
+
+=== Typed Accessors
+
+The `Document` class now offers a set of {url-api-references}/Classes/Document.html#/DictionaryProtocol[`property accessors`] for various scalar types, including boolean, integers, floating-point and strings.
+These accessors take care of converting to/from JSON encoding, and make sure you get the type you're expecting.
+
+In addition, as a convenience we offer `Date` accessors.
+Dates are a common data type, but JSON doesn't natively support them, so the convention is to store them as strings in ISO-8601 format.
+The following example sets the date on the `createdAt` property and reads it back using the `document.date(forKey: String)` accessor method.
+
+[source]
+----
+include::{snippet}[tag=date-getter,indent=0]
+----
+
+If the property doesn't exist in the document it will return the default value for that  getter method (0 for `getInt`, 0.0 for `getFloat` etc.).
+
+If you need to determine whether a given property exists in the document, you should use the {url-api-references}/Classes/Document.html#/s:18CouchbaseLiteSwift8DocumentC8containsSbSS3key_tF[`Document.Contains(key: String)`] method.
+
+A `Document` can be converted to a plain dictionary type.
+That's often useful to pass the document contents as a plain object to another method.
+
+[source]
+----
+include::{snippet}[tag=to-dictionary,indent=0]
+----
+
+=== Batch operations
+
+include::ROOT:document-batch-ops.adoc[]
+
+=== Document change events
+
+include::ROOT:document-change-events.adoc[]
+
+=== Document Expiration
+
+include::{root-partials}document-expiration.adoc[]
+
+== Blobs
+
+include::{root-partials}blobs.adoc[]
+
+== Live Query
+
+include::{root-partials}live-query.adoc[]
+
+== Predictive Query
+
+include::{root-commons}query-predictive.adoc[]
+
+=== Integrate a Model with CoreMLPredictiveModel (iOS only)
+
+`CoreMLPredictiveModel` is a Core ML based implementation of the `PredictiveModel` protocol that facilitates the integration of Core ML models with Couchbase Lite.
+
+
+The following example describes how to load a Core ML model using `CoreMLPredictiveModel`.
+All other steps (register, indexing, query, unregister) are the same as with a model that is integrated using your own `PredictiveModel` implementation.
+
+[source]
+----
+include::{snippet}[tag=coreml-predictive-model,indent=0]
+----
+
+== Indexing
+
+Creating indexes can speed up the performance of queries.
+While indexes make queries faster, they also make writes slightly slower, and the Couchbase Lite database file slightly larger.
+As such, it is best to only create indexes when you need to optimize a specific case for better query performance.
+
+The following example creates a new index for the `type` and `name` properties.
+
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "Apple Droid"
+}
+----
+
+[source]
+----
+include::{snippet}[tag=query-index,indent=0]
+----
+
+If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.
+
+NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
+Thus, good performance depends on designing and creating the _right_ indexes to go along with your queries.
+
+== Full-Text Search
+
+To run a full-text search (FTS) query, you must have created a full-text index on the expression being matched.
+Unlike queries, the index is not optional.
+The following example inserts documents and creates an FTS index on the `name` property.
+
+[source]
+----
+include::{snippet}[tag=fts-index,indent=0]
+----
+
+Multiple properties to index can be specified in the `Index.fullTextIndex(withItems: [FullTextIndexItem])` method.
+
+With the index created, an FTS query on the property that is being indexed can be constructed and ran.
+The full-text search criteria is defined as a `FullTextExpression`.
+The left-hand side is the full-text index to use and the right-hand side is the pattern to match.
+
+[source]
+----
+include::{snippet}[tag=fts-query,indent=0]
+----
+
+In the example above, the pattern to match is a word, the full-text search query matches all documents that contain the word "buy" in the value of the `doc.name` property.
+
+Search is supported for all languages that use whitespace to separate words.
+
+Stemming, which is the process of fuzzy matching parts of speech, like "fast" and "faster", is supported in the following languages: danish, dutch, english, finnish, french, german, hungarian, italian, norwegian, portuguese, romanian, russian, spanish, swedish and turkish.
+
+The pattern to match can also be in the following forms:
+
+prefix queries::
+The query expression used to search for a term prefix is the prefix itself with a "*" character appended to it.
+For example:
++
+....
+"'lin*'"
+-- Query for all documents containing a term with the prefix "lin". This will match
+-- all documents that contain "linux", but also those that contain terms "linear",
+--"linker", "linguistic" and so on.
+....
+
+overriding the property name that is being indexed::
+Normally, a token or token prefix query is matched against the document property specified as the left-hand side of the `match` operator.
+This may be overridden by specifying a property name followed by a ":" character before a basic term query.
+There may be space between the ":" and the term to query for, but not between the property name and the ":" character.
+For example:
++
+....
+'title:linux problems'
+-- Query the database for documents for which the term "linux" appears in
+-- the document title, and the term "problems" appears in either the title
+-- or body of the document.
+....
+
+phrase queries::
+A phrase query is a query that retrieves all documents that contain a nominated set of terms or term prefixes in a specified order with no intervening tokens.
+Phrase queries are specified by enclosing a space separated sequence of terms or term prefixes in double quotes (").
+For example:
++
+....
+"'"linux applications"'"
+-- Query for all documents that contain the phrase "linux applications".
+....
+
+NEAR queries::
+A NEAR query is a query that returns documents that contain a two or more nominated terms or phrases within a specified proximity of each other (by default with 10 or less intervening terms).
+A NEAR query is specified by putting the keyword "NEAR" between two phrase, token or token prefix queries.
+To specify a proximity other than the default, an operator of the form "NEAR/" may be used, where is the maximum number of intervening terms allowed.
+For example:
++
+....
+"'database NEAR/2 "replication"'"
+-- Search for a document that contains the phrase "replication" and the term
+-- "database" with not more than 2 terms separating the two.
+....
+
+AND, OR & NOT query operators::
+The enhanced query syntax supports the AND, OR and NOT binary set operators.
+Each of the two operands to an operator may be a basic FTS query, or the result of another AND, OR or NOT set operation.
+Operators must be entered using capital letters.
+Otherwise, they are interpreted as basic term queries instead of set operators.
+For example:
++
+....
+'couchbase AND database'
+-- Return the set of documents that contain the term "couchbase", and the
+-- term "database". This query will return the document with docid 3 only.
+....
++
+When using the enhanced query syntax, parenthesis may be used to specify the precedence of the various operators.
+For example:
++
+....
+'("couchbase database" OR "sqlite library") AND linux'
+-- Query for the set of documents that contains the term "linux", and at least
+-- one of the phrases "couchbase database" and "sqlite library".
+....
+
+=== Ordering results
+
+It's very common to sort full-text results in descending order of relevance.
+This can be a very difficult heuristic to define, but Couchbase Lite comes with a ranking function you can use.
+In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the property or expression being searched, to represent the ranking of the result.
+
+== Replication
+
+include::{root-partials}replication-introduction.adoc[]
+
+=== Compatibility
+
+WARNING: The new protocol is *incompatible* with CouchDB-based databases.
+And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that xref:sync-gateway::prodnotes/pn-compatibility.adoc[supports it].
+
+To use this protocol with Couchbase Lite 2.0, the replication URL should specify WebSockets as the URL scheme (see the "Starting a Replication" section below).
+Mobile clients using Couchbase Lite 1.x can continue to use *http* as the URL scheme.
+Sync Gateway 2.0 will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through "http://localhost:4984/db" and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through "ws://localhost:4984/db".
+
+=== Starting Sync Gateway
+
+https://www.couchbase.com/downloads[Download Sync Gateway] and start it from the command line with the configuration file created above.
+
+[source,bash]
+----
+~/Downloads/couchbase-sync-gateway/bin/sync_gateway
+----
+
+For platform specific installation instructions, refer to the Sync Gateway xref:sync-gateway::start/gs-sgw-install.adoc[installation guide].
+
+=== Starting a Replication
+
+Replication can be bidirectional, this means you can start a `push`/`pull` replication with a single instance.
+The replication's parameters can be specified through the {url-api-references}/Classes/ReplicatorConfiguration.html[`ReplicatorConfiguration`] object;
+for example, if you wish to start a `push` only or `pull` only replication.
+
+The following example creates a `pull` replication with Sync Gateway.
+
+[source]
+----
+class MyClass {
+    var database: Database?
+    var replicator: Replicator? // <1>
+
+    func startReplicator() {
+        let url = URL(string: "ws://localhost:4984/db")! // <2>
+        let target = URLEndpoint(url: url)
+        let config = ReplicatorConfiguration(database: database!, target: target)
+        config.replicatorType = .pull
+
+        self.replicator = Replicator(config: config)
+        self.replicator?.start()
+    }
+}
+----
+<1> A replication is an asynchronous operation.
+To keep a reference to the `replicator` object, you can set it as an instance property.
+<2> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
+You should now use `ws:`, or `wss:` for SSL/TLS connections.
+
+include::{root-partials}verify-replication.adoc[]
+
+Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit data.
+Some load balancers are not configured for WebSocket connections by default (NGINX for example);
+so it might be necessary to explicitly enable them in the load balancer's configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
+
+By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
+The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway:ROOT:refer/config-properties.adoc#replicator_compression[`replicator_compression`]).
+
+=== Replication Ordering
+
+To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
+So we don't recommend to rely on that when using the replication or database change listeners for example.
+
+=== Delta Sync
+
+NOTE: Delta Sync is an Enterprise Edition feature on Sync Gateway and Couchbase Lite.
+
+Couchbase Mobile 2.5 introduces delta sync.
+Delta Sync is the ability to replicate only parts of the Couchbase document that have changed.
+This can result in significant savings in bandwidth consumption as well as throughput improvements, especially when network bandwidth is typically constrained.
+
+Replications to a <<starting-sync-gateway, URLEndpoint>> (i.e Sync Gateway) automatically use delta sync if the xref:sync-gateway:ROOT:refer/config-properties.adoc#databases-foo_db-delta_sync[databases.$db.delta_sync.enabled] property is set to `true` in Sync Gateway's configuration file.
+
+Replications to a <<database-replicas, DatabaseEndpoint>> automatically *disable* delta sync and replications to a <<peer-to-peer-sync, MessageEndpoint>> automatically *enable* delta sync.
+
+=== Troubleshooting
+
+As always, when there is a problem with replication, logging is your friend.
+The following example increases the log output for activity related to replication with Sync Gateway.
+
+[source]
+----
+include::{snippet}[tag=replication-logging,indent=0]
+----
+
+=== Authentication
+
+include::{root-partials}authentication.adoc[]
+
+=== Replication Status
+
+The `replication.status.activity` property can be used to check the status of a replication.
+For example, when the replication is actively transferring data and when it has stopped.
+
+[source]
+----
+include::{snippet}[tag=replication-status,indent=0]
+----
+
+The following table lists the different activity levels in the API and the meaning of each one.
+
+[cols="1,2"]
+|===
+|State |Meaning
+
+|`STOPPED`
+|The replication is finished or hit a fatal error.
+
+|`OFFLINE`
+|The replicator is offline as the remote host is unreachable.
+
+|`CONNECTING`
+|The replicator is connecting to the remote host.
+
+|`IDLE`
+|The replication caught up with all the changes available from the server.
+The `IDLE` state is only used in continuous replications.
+
+|`BUSY`
+|The replication is actively transferring data.
+|===
+
+NOTE: The replication change object also has properties to track the progress (`change.status.completed` and `change.status.total`).
+But since the replication occurs in batches and the total count can vary through the course of a replication, those progress indicators are not very useful from the standpoint of an app user.
+Hence, these should not be used for tracking the actual progress of the replication.
+
+==== Replication Status and App Life Cycle
+
+The following diagram describes the status changes when the application starts a replication, and when the application is being backgrounded or foregrounded by the OS.
+It applies to iOS only.
+
+image::{param-module}:replicator-states.png[]
+
+Additionally, on iOS, an app already in the background may be terminated.
+In this case, the `Database` and `Replicator` instances will be `null` when the app returns to the foreground.
+Therefore, as preventive measure, it is recommended to do a `null` check when the app enters the foreground, and to re-initialize the database and replicator if any of those is `null`.
+
+On other platforms, Couchbase Lite doesn't react to OS backgrounding or foregrounding events and replication(s) will continue running as long as the remote system does not terminate the connection and the app does not terminate.
+It is generally recommended to stop replications before going into the background otherwise socket connections may be closed by the OS and this may interfere with the replication process.
+
+=== Handling Network Errors
+
+If an error occurs, the replication status will be updated with an `Error` which follows the standard HTTP error codes.
+The following example monitors the replication for errors and logs the error code to the console.
+
+[source]
+----
+include::{snippet}[tag=replication-error-handling,indent=0]
+----
+
+When a permanent error occurs (i.e., `404`: not found, `401`: unauthorized), the replicator (continuous or one-shot) will stop permanently.
+If the error is temporary (i.e., waiting for the network to recover), a continuous replication will retry to connect indefinitely and if the replication is one-shot it will retry for a limited number of times.
+The following error codes are considered temporary by the Couchbase Lite replicator and thus will trigger a connection retry.
+
+* `408`: Request Timeout
+* `429`: Too Many Requests
+* `500`: Internal Server Error
+* `502`: Bad Gateway
+* `503`: Service Unavailable
+* `504`: Gateway Timeout
+* `1001`: DNS resolution error
+
+=== Replication Events
+
+include::{root-partials}replication-events.adoc[]
+
+=== Custom Headers
+
+include::{root-partials}replication-custom-header.adoc[]
+
+[source]
+----
+include::{snippet}[tag=replication-custom-header,indent=0]
+----
+
+=== Channels
+
+include::{root-partials}replication-channels.adoc[]
+
+=== Replication Checkpoint Reset
+
+include::{root-partials}replication-checkpoint.adoc[]
+
+[source]
+----
+include::{snippet}[tag=replication-reset-checkpoint,indent=0]
+----
+
+=== Replication Filters
+
+include::{root-partials}replication-filters.adoc[]
+
+== Handling Conflicts
+
+include::{root-partials}handling-conflicts.adoc[]
+
+== Database Replicas
+
+include::{root-partials}database-replicas.adoc[]
+
+== Certificate Pinning
+
+include::{root-commons}cert-pinning.adoc
+
+== Peer-to-Peer Sync
+
+.Enterprise Edition only
+IMPORTANT: Peer-to-Peer Synchronization is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+You must purchase the Enterprise License which includes official https://www.couchbase.com/support-policy[Couchbase Support] to use it in production (also see the https://www.couchbase.com/licensing-and-support-faq[FAQ]).
+
+Peer-to-Peer Synchronization allows devices running Couchbase Lite to directly sync data with each other.
+As part of this, Couchbase Lite is responsible for storing the data and keeping track of the data exchange, but isn't responsible for the data transfer itself.
+Sending and receiving data must be handled by the platform APIs or a third party framework.
+In this section, we will refer to these third party frameworks as communication frameworks.
+
+On iOS, Apple's https://developer.apple.com/documentation/multipeerconnectivity[Multipeer Connectivity Framework] would be a good choice for the Communication Framework.
+
+Thus, to enable peer-to-peer sync with Couchbase Lite, the application must use the Communication Framework with Couchbase Lite.
+The following sections describe a typical peer-to-peer workflow.
+Where applicable, we discuss how to integrate Couchbase Lite into the workflow.
+
+In Couchbase Lite, a peer can take on one of these two roles:
+
+Active Peer::
+The peer that initializes the connection and replication (i.e the "client" side).
+Passive Peer::
+The passive side reacts to things that it receives but does not initiate any communication on its own (i.e. the "server" side).
+
+=== Peer Discovery
+
+include::{root-partials}p2p-peer-discovery.adoc[]
+
+=== Peer Selection and Connection Setup
+
+include::{root-partials}p2p-peer-selection.adoc[]
+
+=== Replication Setup
+
+include::{root-partials}p2p-replication-setup.adoc[]
+
+=== Push/Pull Replication
+
+include::{root-partials}p2p-push-pull-repl.adoc[]
+
+=== Connection Teardown
+
+include::{root-partials}p2p-connection-teardown.adoc[]
+
+== Thread Safety
+
+The Couchbase Lite API is thread safe except for calls to mutable objects: `MutableDocument`, `MutableDictionary` and `MutableArray`.
+
+== Troubleshooting
+
+=== Symbolicate iOS Crash logs
+
+include::{root-partials}symbolicate-iOS.adoc[leveloffset=2]
+
