@@ -2190,18 +2190,19 @@ extension URLEndpointListener {
 //  QueryResultSets.swift
 //  sampleQueryResults
 //
-//  Created by Ian Bridge on 28/05/2021.
+//  Created by Ian Bridge on 28/07/2021.
 //
 
 import Foundation
 import CouchbaseLiteSwift
 import MultipeerConnectivity
+
 //import CoreML
 
 
-class QueryResultSets {
+class Query {
 
-    static var thisHotel = Hotel()
+    var this_hotel:Hotel = Hotel()
 
     let dbName = "hotel"
     //    let dbName = "hotel"
@@ -2212,18 +2213,21 @@ class QueryResultSets {
 
     func dontTestQueryAll() throws {
 
-//        seedHotel()
 
-// QUERY RESULT SET HANDLING EXAMPLES
-// tag::query-syntax-all[]
+
+
+
+    //        seedHotel()
+
+    // QUERY RESULT SET HANDLING EXAMPLES
+    // tag::query-syntax-all[]
         let db = try! Database(name: "hotel")
         var hotels = [String:Any]()
-        var hotel:Hotel = Hotel.init()
 
         let listQuery = QueryBuilder.select(SelectResult.all())
             .from(DataSource.database( db))
 
-// end::query-syntax-all[]
+    // end::query-syntax-all[]
 
     // tag::query-access-all[]
 
@@ -2243,11 +2247,8 @@ class QueryResultSets {
                 let city = thisDocsProps!["city"] as! String
 
                 let hotel = row.dictionary(at: 0)?.toDictionary()  //<.>
-
                 let hotelId = hotel!["id"] as! String
-
                 hotels[hotelId] = hotel
-
             } // end for
 
         } //end do-block
@@ -2256,35 +2257,56 @@ class QueryResultSets {
 
     // tag::query-access-json[]
 
+    // In this example the Hotel class is defined using Codable
+    //
+    // class Hotel : Codable {
+    //   var id : String = "undefined"
+    //   var type : String = "hotel"
+    //   var name : String = "undefined"
+    //   var city : String = "undefined"
+    //   var country : String = "undefined"
+    //   var description : String? = ""
+    //   var text : String? = ""
+    //   ... other class content
+    // }
+
+
         do {
+            var results = try! listQuery.execute()
+            for row in  results {
 
-            for (_, row) in
-                try! listQuery.execute().allResults().enumerated() {
+                // If Query selected ALL,
+                //    unpack items from encompassing dictionary // <.>
+                let jsonString = row.dictionary(at: 0)!.toJSON()
+                // ALTERNATIVELY: If Query selected specific items
+                let jsonString = row.toJSON()
 
-                let jsonString = row.toJSON() // <.>
-                // ALTERNATIVELY:
-                let jsonString = row.dictionary(at: 0)!.toJSON() // <.>
-
-
-                // Get native dictionary from JSON string
-                let thisDictFromJSON:Dictionary =
+                let thisJsonObj:Dictionary =
                     try! (JSONSerialization.jsonObject(
-                            with: jsonString.data(using: .utf8)! , options:[])
+                            with: jsonString.data(using: .utf8)!,
+                                                  options: .allowFragments)
                             as? [String: Any])! // <.>
 
-                // Use new dictionary to  populate objects with the JSON data
-                anhotelId = thisDictFromJSON!["id"] as! String
-                anhotelNname = thisDictFromJSON!["name"] as! String
-
-
-                // Get custom object from JSON string
+                // Use Json Object to populate Native object
+                // Use Codable class to unpack JSON data to native object // <.>
                 let this_hotel:Hotel =
-                  (try JSONDecoder().decode(Hotel.self,
-                         from: jsonString.data(using: .utf8)!)) // <.>
+                    (try JSONDecoder().decode(
+                        Hotel.self,
+                        from: jsonString.data(using: .utf8)!
+                        )
+                    )
 
+                // ALTERNATIVELY unpack in steps
+                this_hotel.id = thisJsonObj["id"] as! String
+                this_hotel.name = thisJsonObj["name"] as! String
+                this_hotel.type = thisJsonObj["type"] as! String
+                this_hotel.city = thisJsonObj["city"] as! String
                 hotels[this_hotel.id] = this_hotel
 
+
             } // end for
+
+            // end::query-access-json[]
 
         } catch let err {
             print(err.localizedDescription)
@@ -2292,18 +2314,11 @@ class QueryResultSets {
         } // end do
 
 
-    } // end func dontTestQueryAll
-
-    // end::query-access-json[]
-
-
-
 
     } // end func dontTestQueryAll
 
-    // end::query-access-json[]
 
-//
+
     func dontTestQueryProps () throws {
         // tag::query-syntax-props[]
         let db = try! Database(name: "hotel")
@@ -2325,7 +2340,7 @@ class QueryResultSets {
 
 
             let thisDoc = result.toDictionary() as? [String:Any]  // <.>
-                // Store dictionary data in hotel object and save in array
+                // Store dictionary data in hotel object and save in arry
             hotel.id = thisDoc!["id"] as! String
             hotel.name = thisDoc!["name"] as! String
             hotel.city = thisDoc!["city"] as! String
@@ -2342,8 +2357,9 @@ class QueryResultSets {
             // ... process document properties as required
             print("Result properties are: ", docid, hotelId,name, city, type)
           } // end for
+
 // end::query-access-props[]
-    }
+    }// end func
 
 //
     func dontTestQueryCount () throws {
@@ -2364,10 +2380,13 @@ class QueryResultSets {
                 let dict = result.toDictionary() as? [String: Int]
                 let thiscount = dict!["mycount"]! // <.>
                 print("There are ", thiscount, " rows")
+
+                // Alternatively
+                print ( result["mycount"] )
+
             } // end for
 
         } // end do
-
     } // end function
 
 // end::query-access-count-only[]
@@ -2447,7 +2466,7 @@ class QueryResultSets {
         let maxrecs=val.count-1
         for i in 0 ... maxrecs {
 
-            let hotel:MutableDocument = MutableDocument()
+            let hotel:MutableDocument = MutableDocument(id: val[0][i])
 
             for x in 0 ... key.count-1 {
                 hotel.setString(val[i][x], forKey: key[x])
@@ -2459,8 +2478,98 @@ class QueryResultSets {
         }
 
     }
+
 //
+// N1QL QUERY EXAMPLES
 //
+
+    func dontTestQueryN1QL() throws {
+
+
+    // tag::query-syntax-n1ql[]
+        let db = try! Database(name: "hotel")
+
+        let listQuery =  db.createQuery( query:
+            "SELECT META().id AS thisId FROM \(db.name) WHERE type = 'hotel'" // <.>
+        )
+
+        let results: ResultSet = try listQuery.execute()
+
+    // end::query-syntax-n1ql[]
+
+        if (results.allResults().count>0) {
+            try! dontTestProcessResults(results: results)
+        }
+
+    } // dontTestQueryN1QL
+
+
+    func dontTestQueryN1QLparams() throws {
+
+    // tag::query-syntax-n1ql-params[]
+        let db = try! Database(name: "hotel")
+
+        let listQuery =
+            db.createQuery( query:
+                   "SELECT META().id AS thisId FROM _ WHERE type = $type" // <.>
+                )
+
+        listQuery.parameters =
+            Parameters().setString("hotel", forName: "type") // <.>
+
+        let results: ResultSet = try listQuery.execute()
+
+    // end::query-syntax-n1ql-params[]
+
+        if (results.allResults().count>0) {
+            try! dontTestProcessResults(results: results)
+        }
+
+    } // dontTestQueryN1QLparams()
+
+
+    func dontTestProcessResults(results: ResultSet) throws {
+        // tag::query-access-n1ql[]
+        // tag::query-process-results[]
+
+        do {
+
+            for row in results {
+
+                print(row["thisId"].string!)
+
+                let thisDocsId = row["thisId"].string!
+
+                // Now you can get the document using the ID
+                var thisDoc = db.document(withID: thisDocsId)!.toDictionary()
+
+                let hotelId = thisDoc["id"] as! String
+
+                let name = thisDoc["name"] as! String
+
+                let city = thisDoc["city"] as! String
+
+                let type = thisDoc["type"] as! String
+
+                // ... process document properties as required
+                print("Result properties are: ", hotelId,name, city, type)
+
+            } // end for
+            // end::query-access-n1ql[]
+            // end::query-process-results[]
+
+        } //end do-block
+
+    } // end dontTestProcessResults
+
+} // end class
+
+
+
+
+
+
+//  JSAON API SNIPPETS
 
 
     func dontTestJSONdocument() {
@@ -2677,6 +2786,3 @@ class QueryResultSets {
 
 
 
-
-
-} // end class

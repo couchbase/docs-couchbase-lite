@@ -1,0 +1,2075 @@
+// BEGIN -- inclusion -- common-querybuilder.adoc
+//  Purpose -- describes the use of the query syntax
+//
+// // BEGIN::REQUIRED EXTERNALS
+// :this-module: {par-module}
+// :this-lang-title: {par-lang-title}
+// :this-packageNm: {par-packageNm}
+// :this-source-language: {par-source-language}
+// :snippet: {par-snippet}
+//:this-url-issues: {par-url-issues}
+// END::REQUIRED EXTERNALS
+
+// BEGIN::Local page attributes
+:blank-field: ____
+:menuitem-delimiter: {nbsp}{nbsp}|{nbsp}{nbsp}
+:count-result-text: The result set representing a count is a key-value pair. The key being the count name, as defined using `SelectResult.as`
+
+
+
+// END::Local page attributes
+
+NOTE: The examples used in this topic are based on the _Travel Sample_ app and data introduced in the {url-tutorial-mobile-workshop} tutorial
+
+
+== Introduction
+
+Developers using Couchbase Lite for {param-title} can provide N1QL query strings using the N1QL Query API.
+This API uses query statements of the form shown in <<ex-query-form>>.
+The structure and semantics of the query format are based on that of Couchbase Server's N1QL query language -- see {svr-n1ql-reference--xref} and {svr-n1ql-datamodel--xref}.
+
+[#ex-query-form]
+.Query Format
+====
+[source, SQL, subs="+attributes, +macros"]
+----
+SELECT {blank-field} // <.>
+FROM 'database' // <.>
+WHERE {blank-field}, // <.>
+JOIN {blank-field} // <.>
+GROUP BY {blank-field} // <.>
+ORDER BY {blank-field} // <.>
+LIMIT {blank-field} // <.>
+OFFSET {blank-field} // <.>
+
+----
+
+Query Components::
+<.> The <<lbl-select>> specifies the properties to be returned in the result set
+<.> <<lbl-from>> specifies the data source to be queried
+<.> <<lbl-where>> specifies the query criteria. +
+The `SELECT`ed properties of documents matching this criteria will be returned in the result set
+<.> <<lbl-join>> specifies the criteria for joining multiple documents
+<.> <<lbl-group>> specifies the criteria used to group returned items in the result set
+<.> <<lbl-order>> specifies the criteria used to order the items in the result set
+<.> <<lbl-limit>> specifies the maximum number of results to be returned
+<.> <<lbl-offset>> specifies the number of results to be skipped before starting to return results
+====
+
+TIP: We recommend working through the {url-n1ql-tutorial} as a good way to build your N1QL skills.
+
+== Running
+
+Use the N1QLQuery class to define the N1QL query string on the database to be queried.
+Then run the query using the`.execute()` method -- see
+
+The result set produced by N1QL and {querybuilder--xref)} queries is the same -- see <<lbl-resultsets>>.
+
+.Running a N1QL Query
+[#ex-samplerun]
+:param-tags: query-syntax-n1ql-params
+include::partial$_block_show_snippet.adoc[]
+:param-tags!:
+
+// == Indexing
+
+// Before we begin querying documents, let's briefly mention the importance of having a query index.
+// A query can only be fast if there's a pre-existing database index it can search to narrow down the set of documents to examine -- see: <<ex-indexing>>, which shows how to create an index and our {xref-cbl-pg-query-troubleshooting} topic.
+
+// TIP: See the {indexing--xref} topic to learn more about indexing.
+
+// [#ex-indexing]
+// .Creating a New Index
+// ====
+// This example creates a new index for the `type` and `name` properties in the <<lbl-data-format>> shown.
+
+// [#lbl-data-format]
+// .Data Format
+// [{json-snippet}]
+// ----
+// include::{root-examples}query-snippets.adoc[tag=n1ql-result-format-props]
+// ----
+
+// .Code to Create Index
+// [{code-snippet}]
+// ----
+// include::{snippet}[tag=n1ql-index,indent=0]
+// ----
+// ====
+
+// NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
+// Thus, good performance depends on designing and creating the _right_ indexes to go along with your queries.
+
+
+[#lbl-select]
+== SELECT statement
+
+=== Purpose
+Projects the result returned by the query, identifying the columns it will contain.
+
+=== Syntax
+
+.N1QL Select Syntax
+====
+[source, sql]
+----
+select = SELECT _ ( DISTINCT | ALL )? selectResult // <.>
+
+selectResults = selectResult ( _ ',' _ selectResult )* <.>
+
+selectResult = expression ( _ (AS)? columnAlias )? // <.>
+
+columnAlias = IDENTIFIER
+----
+====
+
+=== Arguments
+
+<.> The select clause begins with the SELECT keyword.
++
+--
+* The optional `ALL` argument is used to specify tha the query should return ALL results (the default)
+* The optional `DISTINCT` argument specifies that the query should remove duplicated results.
+--
+
+<.> selectResults is a list of columns projected in the query result. Each column is an expression which could be a property expression or any expressions or functions.
+
+<.> Use the optional `AS` argument to provides an alias name for a property. Each property can be aliased by putting the `AS <alias name>` after the column name.
+
+=== Example
+
+.SELECT properties
+====
+[source, sql]
+----
+
+SELECT * <.>
+
+SELECT db.* AS data <.>
+
+SELECT name fullName <.>
+
+SELECT db.name fullName <.>
+
+SELECT DISTINCT address.city <.>
+
+----
+
+<.> Use the `*` wildcard to select all properties
+<.> Select all properties from the `db` data source. Give the object an alias name of `data`
+<.> Select  pair of properties
+<.> Select a specific property from the `db` data source.
+<.> Select the property item `city` from its parent property `address`.
+
+====
+
+See: <<lbl-resultsets>> for more on processing query results.
+
+[#lbl-from]
+== FROM
+
+=== Purpose
+Specifies the data source, or sources, and optionally applies an alias ( `AS`).
+It is mandatory.
+
+=== Syntax
+
+[source, sql]
+----
+FROM dataSource  <.>
+      (optional JOIN joinClause )  <.>
+
+----
+
+=== Arguments
+
+<.> `dataSource` -- this is the database name against which the query is to run.
+Use `AS` to give the database an alias you can use within the query.
+
+<.> `JOIN joinclause` -- use this optional argument to link datasources -- see <<lbl-join>>
+
+=== Example
+
+.FROM clause
+====
+[source, sql]
+----
+SELECT name FROM db
+SELECT store.name FROM db AS store
+SELECT store.name FROM db store
+----
+
+====
+
+
+[#lbl-join]
+== JOIN statement
+
+=== Purpose
+The JOIN clause enables you to select data from multiple data sources linked by criteria specified in the JOIN statement.
+
+Currently only self-joins are supported.
+For example to combine airline details with route details, linked by the airline id -- see <<ex-join>>.
+// You cannot perform queries from multiple databases.
+
+=== Syntax
+
+[source, sql]
+----
+joinClause = ( join )*
+
+join = joinOperator _ dataSource _  (constraint)? <.>
+
+joinOperator = ( LEFT (OUTER)? | INNER | CROSS )? JOIN <.>
+
+dataSource = databaseName ( ( AS | _ )? databaseAlias )?
+
+constraint ( ON expression )? <.>
+----
+
+=== Arguments
+
+<.> The join clause starts with a JOIN operator followed by the data source. +
+
+<.> Five JOIN operators are supported: +
+JOIN, LEFT JOIN, LEFT OUTER JOIN, INNER JOIN, and CROSS JOIN. +
+Note: JOIN and INNER JOIN are the same, LEFT JOIN and LEFT OUTER JOIN are the same.
+
+<.> The join constraint starts with the ON keyword followed by the expression that defines the joining constraints.
+
+=== Example
+
+[source,sql]
+----
+SELECT db.prop1, other.prop2 FROM db JOIN db AS other ON db.key = other.key
+
+SELECT db.prop1, other.prop2 FROM db LEFT JOIN db other ON db.key = other.key
+
+SELECT * FROM travel-sample r JOIN travel-sample a ON r.airlineid = a.meta.id WHERE a.country = "France"
+----
+
+
+[#ex-join]
+.Using JOIN to Combine Document Details
+====
+This example JOINS the document of type `route` with documents of type `airline` using the document ID (`_id`) on the _airline_ document and `airlineid` on the _route_ document.
+
+// include::{snippet}[tag=n1ql-join,indent=0]
+[source, sql]
+----
+SELECT * FROM travel-sample r JOIN travel-sample a ON r.airlineid = a.meta.id WHERE a.country = "France"
+
+----
+====
+
+[#lbl-where]
+== WHERE statement
+
+=== Purpose
+Specifies the selecion criteria used to filter results.
+
+As with SQL, use the `WHERE` statement to choose which documents are returned by your query.
+
+=== Syntax
+
+[source, sql]
+----
+where = WHERE expression <.>
+
+----
+
+=== Arguments
+
+<.> WHERE evalates `expression` to a BOOLEAN value.
+You can chain any number of Expressions in order to implement sophisticated filtering capabilities.
+
+See also -- <<lbl-operators>> for more on building expressions
+
+=== Examples
+
+[source, sql]
+----
+
+SELECT name FROM db WHERE department = ‘engineer’ AND group = ‘mobile
+
+----
+
+
+[#lbl-group]
+== GROUP BY statement
+
+=== Purpose
+Use `group by` to arrange values in groups of one or more properties.
+
+=== Syntax
+
+[Source, sql]
+----
+groupBy = grouping _( having )? <.>
+
+grouping = GROUP BY expression( _ ',' _ expression )* <.>
+
+having = HAVING expression <.>
+
+----
+
+=== Arguments
+<.> The group by clause starts with the GROUP BY keyword followed by one or more expressions.
+
+<.> Grouping
++
+The group by clause is normally used together with the aggregate functions (e.g. COUNT, MAX, MIN, SUM, AVG)
+
+<.> Having -- allows you to filter the result based on aggregate functions -- for example, `HAVING count(empnum)>100`
+
+
+=== Examples
+
+[source,sql]
+----
+SELECT COUNT(empno), city FROM db GROUP BY city
+
+SELECT COUNT(empno), city FROM db GROUP BY city HAVING COUNT(empno) > 100
+
+SELECT COUNT(empno), city FROM db GROUP BY city HAVING COUNT(empno) > 100 WHERE state = ‘CA’
+
+----
+
+
+
+// The following example looks for the number of airports at an altitude of 300 ft or higher and groups the results by country and timezone.
+
+// .Data Model for Example
+// [{json-snippet}]
+// ----
+// {
+//     "_id": "airport123",
+//     "type": "airport",
+//     "country": "United States",
+//     "geo": { "alt": 456 },
+//     "tz": "America/Anchorage"
+// }
+// ----
+
+// [#ex-grpby-qry]
+// .Query using GroupBy
+// ====
+// This example shows a query that selects all airports with an altitude above 300ft.
+// The output (a count, $1) is grouped by country, within timezone.
+
+// [{code-snippet}]
+// ----
+// include::{snippet}[tag=n1ql-groupby,indent=0]
+// ----
+// ====
+
+// The query shown in <<ex-grpby-qry>> generates the following output:
+// --
+// There are 138 airports on the Europe/Paris timezone located in France and above 300 ft +
+// There are 29 airports on the Europe/London timezone located in United Kingdom and above 300 ft +
+// There are 50 airports on the America/Anchorage timezone located in United States and above 300 ft +
+// There are 279 airports on the America/Chicago timezone located in United States and above 300 ft +
+// There are 123 airports on the America/Denver timezone located in United States and above 300 ft
+// --
+
+
+[#lbl-order]
+== ORDER BY statement
+
+=== Purpose
+Sort query results based on a given expression result.
+
+=== Syntax
+
+[source, sql]
+----
+orderBy = ORDER BY ordering ( _ ',' _ ordering )* <.>
+
+ordering = expression ( _ order )? <.>
+
+order = ( ASC / DESC ) <.>
+
+----
+
+=== Arguments
+
+<.> orderBy -- The order by clause starts with the ORDER BY keyword followed by the ordering clause.
+
+<.> Ordering -- The ordering clause specifies the properties or expressions to use for ordering the results.
+
+<.> Order -- In each ordering clause, the sorting direction is specified using the optional ASC (ascending) or DESC (descending) directives. Default is ASC.
+
+
+=== Examples
+
+.Simple usage
+====
+[source, sql]
+----
+SELECT name FROM db  ORDER BY name
+
+SELECT name FROM db  ORDER BY name DESC
+
+SELECT name, score FROM db  ORDER BY name ASC, score DESC
+
+----
+====
+
+// [#ex-orderby-qry]
+// .Query using OrderBy
+// ====
+// This example returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.
+
+// [{code-snippet}]
+// ----
+// include::{snippet}[tag=n1ql-orderby,indent=0]
+// ----
+// ====
+
+// The query shown in <<ex-orderby-qry>> generates the following output:
+// [{text-snippet}]
+// ----
+// Aberdyfi
+// Achiltibuie
+// Altrincham
+// Ambleside
+// Annan
+// Ardèche
+// Armagh
+// Avignon
+// ----
+
+
+
+[#lbl-limit]
+== LIMIT statement
+
+=== Purpose
+Specifies the maximum number of results to be returned by the query.
+
+=== Syntax
+
+[source, sql]
+----
+limit = LIMIT expression <.>
+
+----
+
+=== Arguments
+
+<.> The LIMIT clause starts with the LIMIT keyword followed by an expression that will be evaluated as a number.
+
+
+=== Examples
+
+.Simple usage
+====
+[source, sql]
+----
+
+SELECT name FROM db LIMIT 10 <.>
+
+----
+<.> Return only 10 results
+====
+
+[#lbl-offset]
+== OFFSET statement
+
+=== Purpose
+Specifies the number of results to be skipped by the query.
+
+=== Syntax
+
+[source, sql]
+----
+offset = OFFSET expression <.>
+
+----
+
+=== Arguments
+
+<.> The offset clause starts with the OFFSET keyword followed by an expression that will be evaluated as a number that represents the number of results ignored before the query begins returning results.
+
+=== Examples
+
+.Simple usage
+====
+[source, sql]
+----
+
+SELECT name FROM db OFFSET 10 <.>
+
+SELECT name FROM db  LIMIT 10 OFFSET 10 <.>
+
+----
+
+<.> Ignore first 10 results
+
+<.> Ignore first 10 results then return the next 10 results
+
+====
+
+
+[#lbl-literals]
+== Expressions
+In this section::
+  <<lbl-exp-literals>>{menuitem-delimiter}
+  <<lbl-exp-ident>>{menuitem-delimiter}
+  <<lbl-exp-prop>>{menuitem-delimiter}
+  <<lbl-exp-any>>{menuitem-delimiter}
+  <<lbl-exp-param>>{menuitem-delimiter}
+  <<lbl-exp-paren>>
+
+Expressions are references to identifiers that resolve to values.
+Categories of expression comprise the elements covered in this section (see above), together with <<lbl-operators>> and <<lbl-functions>>, which are covered in their own sections
+
+
+[#lbl-exp-literals]
+=== Literals
+<<lbl-lit-bool>>{menuitem-delimiter}
+<<lbl-lit-numbers>>{menuitem-delimiter}
+<<lbl-lit-string>>{menuitem-delimiter}
+<<lbl-lit-null>>{menuitem-delimiter}
+<<lbl-lit-missing>>{menuitem-delimiter}
+<<lbl-lit-array>>{menuitem-delimiter}
+<<lbl-lit-dict>>{menuitem-delimiter}
+
+
+
+[#lbl-lit-bool]
+==== Boolean
+
+===== Purpose
+Represents a true or false value.
+
+===== Syntax
+
+`TRUE | FALSE`
+
+===== Example
+
+[source,sql]
+----
+SELECT value FROM db  WHERE value = true
+SELECT value FROM db  WHERE value = false
+----
+
+[#lbl-lit-numbers]
+==== Numeric
+
+===== Purpose
+Represents a numeric value.
+Numbers may be signed or unsigned digits.
+They have optional fractional and exponent components.
+
+===== Syntax
+
+[source,sql]
+----
+'-'? (('.' DIGIT+) | (DIGIT+ ('.' DIGIT*)?)) ( [Ee] [-+]? DIGIT+ )? WB
+
+DIGIT = [0-9]
+----
+
+===== Example
+
+[source,sql]
+----
+SELECT value FROM db  WHERE value = 10
+SELECT value FROM db  WHERE value = 0
+SELECT value FROM db WHERE value = -10
+SELECT value FROM db WHERE value = 10.25
+SELECT value FROM db WHERE value = 10.25e2
+SELECT value FROM db WHERE value = 10.25E2
+SELECT value FROM db WHERE value = 10.25E+2
+SELECT value FROM db WHERE value = 10.25E-2
+----
+
+[#lbl-lit-string]
+==== String
+
+===== Purpose
+The string literal represents a string or sequence of characters.
+
+
+===== Syntax
+
+[source,sql]
+----
+“characters” |  ‘characters’ <.>
+----
+
+<.> The string literal can be double-quoted as well as single-quoted.
+
+===== Example
+[source,sql]
+----
+SELECT firstName, lastName FROM db WHERE middleName = “middle”
+SELECT firstName, lastName FROM db WHERE middleName = ‘middle’
+----
+
+[#lbl-lit-null]
+==== NULL
+
+===== Purpose
+The literal NULL represents an empty value.
+
+===== Syntax
+
+[source,sql]
+----
+NULL
+----
+
+===== Example
+[source,sql]
+----
+SELECT firstName, lastName FROM db WHERE middleName IS NULL
+
+----
+
+[#lbl-lit-missing]
+==== MISSING
+
+===== Purpose
+The MISSING literal represents a missing name-value pair in a document.
+===== Syntax
+
+[source,sql]
+----
+MISSING
+----
+
+===== Example
+[source,sql]
+----
+SELECT firstName, lastName FROM db WHERE middleName IS MISSING
+----
+
+[#lbl-lit-array]
+==== Array
+
+===== Purpose
+Represents an Array
+
+===== Syntax
+
+[source,sql]
+----
+arrayLiteral = '[' _ (expression ( _ ',' _ e2:expression )* )? ']'
+----
+
+===== Example
+[source,sql]
+----
+SELECT [“a”, “b”, “c”] FROM db
+SELECT [ property1, property2, property3] FROM db
+SELECT * FROM db WHERE name IN [“James”, “John”, “Jack”
+----
+
+[#lbl-lit-dict]
+==== Dictionary
+
+===== Purpose
+Represents a dictionary literal
+
+===== Syntax
+
+[source,sql]
+----
+dictionaryLiteral = '{' _ ( STRING_LITERAL ':' e:expression
+  ( _ ',' _ STRING_LITERAL ':' _ expression )* )?
+   '}'
+
+----
+
+===== Example
+[source,sql]
+----
+SELECT { ‘name’: ‘James’, ‘department’: 10 } FROM db
+SELECT { ‘name’: ‘James’, ‘department’: dept } FROM db
+SELECT { ‘name’: ‘James’, ‘phones’: [‘650-100-1000’, ‘650-100-2000’] } FROM db
+----
+
+
+
+[#lbl-exp-ident]
+=== Identifiers
+
+==== Purpose
+
+Identifiers provide symbolic references.
+Use them for example to identify: column alias names, database names, database alias names, property names, parameter names, function names, and FTS index names.
+
+==== Syntax
+
+[source, sql]
+----
+<[a-zA-Z_] [a-zA-Z0-9_$]*> _ | "`" ( [^`] | "``"   )* "`"  _ <.>
+----
+
+<.> The identifier allows a-z, A-Z, 0-9, _ (underscore), and $ character. +
+The identifier is case sensitive.
+
+TIP: To use other characters in the identifier, surround the identifier with the backticks ` character.
+
+==== Example
+
+
+.Identifiers
+====
+
+[source, sql]
+----
+SELECT * FROM db
+
+SELECT * FROM `db-1` <.>
+
+SELECT key FROM db
+
+SELECT key$1 FROM db_1
+
+SELECT `key-1` FROM db
+----
+
+<.> Use of backticks allows a hyphen as part of the identifier name.
+
+====
+
+
+
+
+
+[#lbl-exp-prop]
+=== Property Expressions
+
+==== Purpose
+The property expression is used to reference a property in a document
+
+==== Syntax
+
+[source,sql]
+----
+property = '*'| dataSourceName '.' _ '*'  | propertyPath <.>
+
+propertyPath = propertyName (
+    ('.' _ propertyName ) |  <.>
+    ('[' _ INT_LITERAL _ ']' _  ) <.>
+    )* <.>
+
+propertyName = IDENTIFIER
+----
+<.> Prefix the property expression with the data  source name or alias to indicate its origin
+
+<.> Use dot syntax to refer to nested properties in the propertyPath. +
+<.> Use bracket ([index]) syntax to refer to an item in an array. +
+<.> Use the asterisk (*) character to represents _all properties_. This can only be used in the result list of the SELECT clause.
+
+==== Example
+
+.Property Expressions
+====
+[source,sql]
+----
+SELECT *
+  FROM db
+  WHERE contact.name = "daniel"
+
+SELECT db.*
+  FROM db
+  WHERE contact.name = "daniel"
+
+SELECT db.contact.address.city
+  FROM db
+  WHERE contact.name = "daniel"
+
+SELECT contact.address.city, contact.phones[0]
+  FROM db
+  WHERE contact.name = "daniel"
+
+----
+
+====
+
+[#lbl-exp-any]
+=== Any and Every Expressions
+
+==== Purpose
+Evaluates expressions over items in an array object.
+
+
+==== Syntax
+
+[source,sql]
+----
+arrayExpression = <.>
+  anyEvery _ variableName <.>
+     _ IN <.>  _ expression <.>
+       _ SATISFIES _ expression <.>
+    END <.>
+
+anyEvery = anyOrSome AND EVERY | anyOrSome | EVERY
+
+anyOrSome = ANY | SOME
+----
+
+<.> The array expression starts with `ANY/SOME`, `EVERY`, or `ANY/SOME AND EVERY`, each of which has a different function as described below, and is terminated by `END`
++
+--
+* `ANY/SOME` : Returns `TRUE` if at least one item in the array satisfies the expression, otherwise returns `FALSE`. +
+NOTE: `ANY` and `SOME` are interchangeable
+* `EVERY`: Returns `TRUE` if all items in the array satisfies the expression, otherwise return `FALSE`. If the array is empty, returns `TRUE`.
+* `ANY/SOME AND EVERY`: Same as `EVERY` but returns false if the array is empty.
+--
+
+<.> The variable name represents each item in the array.
+
+<.> The IN keyword is used for specifying the array to be evaluated.
+
+<.> The SATISFIES keyword is used for evaluating each item in the array.
+<.> END terminates the array expression.
+
+==== Example
+
+.ALL and Every Expressions
+====
+[source,sql]
+----
+SELECT name
+  FROM db
+  WHERE ANY v
+          IN contacts
+          SATISFIES v.city = ’San Mateo’
+        END
+----
+====
+
+[#lbl-exp-param]
+=== Parameter Expressions
+
+==== Purpose
+
+Parameter expressions specify a value to be assigned from the parameter map presented when executing the query.
+
+NOTE: If parameters are specified in the query string, but the parameter and value mapping is not specified in the query object, an error will be  thrown when executing the query.
+
+==== Syntax
+
+[source,sql]
+----
+
+$IDENTIFIER
+
+----
+
+
+==== Examples
+
+.Parameter Expression
+====
+[source,sql]
+----
+
+SELECT name
+  FROM db
+  WHERE department = $department
+
+----
+====
+
+.Using a Parameter
+====
+
+[source,java]
+----
+
+let q = Query(
+          query: “SELECT name
+                    WHERE department = $department”,
+          database: db
+        );
+
+q.parameters =
+      Parameters().setValue(
+        “E001”, forName: "department"); // <.>
+
+let result = try q.execute();
+
+----
+
+<.> The query resolves to
+`SELECT name WHERE department = "E001"`
+
+====
+
+
+[#lbl-exp-paren]
+=== Parenthesis Expressions
+
+==== Purpose
+
+Use parentheses to group expressions together to make them more readable or to establish operator precedences.
+
+==== Example
+
+.Parenthesis Expression
+====
+[source,sql]
+----
+SELECT (value1 + value2) * value 3 // <.>
+  FROM db
+
+SELECT *
+  FROM db
+  WHERE ((value1 + value2) * value3) + value4 = 10
+
+SELECT *
+  FROM db
+  WHERE (value1 = value2)
+     OR (value3 = value4) // <.>
+----
+
+<.> Establish the desired operator precedence; do the addition *before* the multiplication
+
+<.> Clarify the conditional grouping
+
+====
+
+
+[#lbl-operators]
+== Operators
+In this section::
+<<lbl-ops-binary>>{menuitem-delimiter}
+<<lbl-ops-unary>>{menuitem-delimiter}
+<<lbl-ops-coll>>{menuitem-delimiter}
+<<lbl-ops-cond>>
+
+
+// <<lbl-regex-ops>>{menuitem-delimiter}
+// <<lbl-deleted-ops>>
+
+//3321
+[#lbl-ops-binary]
+=== Binary Operators
+<<lbl-ops-maths>>{menuitem-delimiter}
+<<lbl-comp-ops>>{menuitem-delimiter}
+<<lbl-ops-logical>>{menuitem-delimiter}
+<<lbl-ops-string>>
+// <<lbl-ops-like>>{menuitem-delimiter}
+
+==== Supported
+
+
+==== Syntax
+
+[#lbl-ops-maths]
+==== Maths
+
+.Maths Operators
+[ops-maths, cols="^1m,2,2m", options="header"]
+|===
+
+|Op
+|Desc
+|Example
+
+|+
+|Add
+|WHERE v1 + v2 = 10
+
+|-
+|Subtract
+|WHERE v1 - v2 = 10
+
+|*
+|Multiply
+|WHERE v1 * v2 = 10
+
+|/
+|Divide -- see note ^1^
+
+|WHERE v1 / v2 = 10
+
+|%
+|Modulo
+|WHERE v1 % v2 = 0
+
+|===
+
+^1^ If both operands are integers, integer division is  used, but if one is a floating number, then float division is used.
+This differs from Server N1QL, which performs float division regardless. Use `DIV(x, y)` to force float division in CBL N1QL
+
+[#lbl-comp-ops]
+==== Comparison Operators
+
+===== Purpose
+The {url-api-classes-query-expression-comparators} can be used in the WHERE statement to specify on which property to match documents.
+
+.Comparison Operators
+[#tbl-ops-comp]
+[ops-comp, cols="^1m,2,2m", options="header"]
+|===
+
+|Op
+|Desc
+|Example
+
+a|`=` or `==`
+|Equals
+|WHERE v1 = v2 +
+WHERE v1 == v2
+
+a|`!=` or `<>`
+|Not Equal to
+|WHERE v1 != v2 +
+WHERE v1 <> v2
+
+|>
+|Greater than
+|WHERE v1 > v2
+
+|>=
+|Greater than or equal to
+|WHERE v1 >= v2
+
+|>
+|Less than
+|WHERE v1 < v2
+
+|>=
+|Less than or equal to
+|WHERE v1 <= v2
+
+|IN
+|Returns TRUE if the value is in the list or array of values specified by the right hand side expression; Otherwise returns FALSE.
+|WHERE “James” IN contactsList
+
+|LIKE
+a|String wildcard pattern matching ^2^ comparison.
+Two wildcards are supported:
+
+`%` Matches zero or more characters. +
+`_` Matches a single character.
+
+
+|WHERE name LIKE ‘a%’ +
+WHERE name LIKE ‘%a’ +
+WHERE name LIKE ‘%or% +
+WHERE name LIKE ‘a%o%’ +
+WHERE name LIKE ‘%_r%’ +
+WHERE name LIKE ‘%a_%’ +
+WHERE name LIKE ‘%a__%’ +
+WHERE name LIKE ‘aldo’
+
+
+|MATCH
+|String matching using FTS see <<lbl-ops-match>>
+|WHERE v1-index MATCH "value"
+
+|BETWEEN
+|Logically equivalent to v1>=X and v1<=X+z
+|WHERE v1 BETWEEN 10 and 100
+
+|IS ^3^ NULL
+|Equal to null
+|WHERE v1 IS NULL
+
+|IS NOT NULL
+|Not equal to null
+|WHERE v1 IS NOT NULL
+
+|IS MISSING
+|Equal to MISSING
+|WHERE v1 IS MISSING
+
+|IS NOT MISSING
+|Not equal to MISSING
+|WHERE v1 IS NOT MISSING
+
+|IS VALUED
+|IS NOT NULL AND MISSING
+|WHERE v1 IS VALUED
+
+|IS NOT VALUED
+|IS NULL OR MISSING
+|WHERE v1 IS NOT VALUED
+
+
+|===
+
+^2^ Matching is case-insensitive for ASCII characters, case-sensitive for non-ASCII (default).
+
+
+^3^ Use of `IS` and `IS NOT` is limited to comparing `NULL` and `MISSING` values (this encompasses `VALUED`).
+This is different from QueryBuilder, in which they operate as equivalents of `==` and `!=`.
+
+.Comparing NULL and MISSING values using IS.
+[#tbl-ops-isnot]
+[ops-comp, cols="^1,^1,^1,^1", options="header"]
+|===
+
+|OP
+|NON-NULL Value
+|NULL
+|MISSING
+
+|IS NULL
+|FALSE
+|TRUE
+|MISSING
+
+|IS NOT NULL
+|TRUE
+|FALSE
+|MISSING
+
+|IS MISSING
+|FALSE
+|FALSE
+|TRUE
+
+|IS NOT MISSING
+|TRUE
+|TRUE
+|FALSE
+
+|IS VALUED
+|TRUE
+|FALSE
+|FALSE
+
+|IS NOT VALUED
+|FALSE
+|TRUE
+|TRUE
+
+|===
+
+// ===== Example
+// In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
+
+// [{json-snippet}]
+// ----
+
+// include::{root-examples}query-snippets.adoc[tag=n1ql-result-format-props]
+
+// ----
+
+// [{code-snippet}]
+// ----
+// include::{snippet}[tag=n1ql-where,indent=0]
+// ----
+
+[#lbl-ops-logical]
+==== Logical Operators
+
+===== Purpose
+Logical operators combine expressions using the following Boolean Logic Rules:
+
+* TRUE is TRUE, and FALSE is FALSE
+* Numbers 0 or 0.0 are FALSE
+* Arrays and dictionaries are FALSE
+* String and Blob are TRUE if the values are casted as a non-zero or FALSE if the values are casted as 0 or 0.0
+* NULL is FALSE
+* MISSING is MISSING
+
+[NOTE]
+--
+This is different from Server N1QL, where:
+
+* MISSING, NULL and FALSE are FALSE
+* Numbers 0 is FALSE
+* Empty strings, arrays, and objects are FALSE
+* All other values are TRUE
+
+TIP: Use TOBOOLEAN(expr) function to convert a value based on Server N1QL boolean value rules,
+--
+
+.Logical Operators
+[#tbl-ops-logical]
+[ops-comp, cols="^1m,2,2m", options="header"]
+|===
+
+|Op
+|Description
+|Example
+
+|AND
+|Returns TRUE if the operand expressions evaluate to TRUE; otherwise FALSE.
+
+If an operand is MISSING and the other is TRUE returns MISSING, if the other operand is FALSE it returns FALSE.
+
+If an operand is NULL and the other is TRUE returns NULL, if the other operand is FALSE it returns FALSE.
+
+|WHERE city = “San Francisco” AND status = true
+
+
+|OR
+|Returns TRUE if one of the operand expressions is evaluated to TRUE; otherwise returns FALSE.
+
+If an operand is MISSING, the operation will result in MISSING if the other operand is FALSE or TRUE if the other operand is TRUE.
+
+If an operand is NULL, the operation will result in NULL if the other operand is FALSE or TRUE if the other operand is TRUE.
+
+|WHERE city = “San Francisco” OR city = “Santa Clara”
+
+
+|===
+
+.Logical Operation Table
+[tbl-ops-logtbl,cols="1,1,1,1", options="header"]
+|===
+
+|a
+|b
+|a AND b
+|a OR b
+
+.4+|TRUE
+
+|TRUE
+|TRUE
+|TRUE
+
+|FALSE
+|FALSE
+|TRUE
+
+|NULL
+|FALSE	^5-1^
+|TRUE
+
+|MISSING
+|MISSING
+|TRUE
+
+.4+|FALSE
+
+|TRUE
+|FALSE
+|TRUE
+
+|FALSE
+|FALSE
+|FALSE
+
+|NULL
+|FALSE
+|FALSE ^5-1^
+
+|MISSING
+|FALSE
+|MISSING
+
+.4+|NULL
+
+|TRUE
+|FALSE ^5-1^
+|TRUE
+
+|FALSE
+|FALSE
+|FALSE ^5-1^
+
+|NULL
+|FALSE ^5-1^
+|FALSE ^5-1^
+
+|MISSING
+|FALSE  ^5-2^
+|MISSING  ^5-3^
+
+.4+|MISSING
+
+|TRUE
+|MISSING
+|TRUE
+
+|FALSE
+|FALSE
+|MISSING
+
+|NULL
+|FALSE  ^5-2^
+|MISSING  ^5-3^
+
+|MISSING
+|MISSING
+|MISSING
+
+|===
+
+[NOTE]
+This differs from Server N1QL in the following instances: +
+ ^5-1^ Server will return: NULL instead of FALSE +
+ ^5-2^ Server will return: MISSING instead of FALSE +
+ ^5-3^ Server will return: NULL instead of MISSING +
+
+
+[#lbl-ops-string]
+==== String Operator
+
+===== Purpose
+A single string operator is provided.
+It enables string concatenation.
+
+.String Operators
+[#tbl-ops-logical]
+[ops-comp, cols="^1m,2,2m", options="header"]
+|===
+
+|Op
+|Description
+|Example
+
+a|`\|\|`
+|Concatenating
+|SELECT firstnm \|\| lastnm AS fullname FROM db
+
+|===
+
+
+//3322
+[#lbl-ops-unary]
+=== Unary Operators
+
+==== Purpose
+Three unary operators are provided.
+They operate by modifying an expression, making it numerically positive or negative, or by logically negating its value (TRUE becomes FALSE).
+
+==== Syntax
+
+[source, sql]
+----
+
+UNARY_OP _ expr
+
+----
+
+.Unary Operators
+[#tbl-ops-logical]
+[ops-comp, cols="^1m,2,2m", options="header"]
+|===
+
+|Op
+|Description
+|Example
+
+|+
+|Positive value
+|WHERE v1 = +10
+
+|+
+|Negative value
+|WHERE v1 = -10
+
+|NOT
+|Logical Negate operator ^*^
+|WHERE "James" NOT IN contactsList
+
+|===
+
+^*^ The NOT operator is often used in conjunction with operators such as IN, LIKE, MATCH, and BETWEEN operators. +
+NOT operation on NULL value returns NULL. +
+NOT operation on MISSING value returns MISSING.
+
+.NOT Operation TABLE
+[tbl-ops-not,cols="^1,^1", options="header"]
+|===
+
+|a
+|NOT a
+
+|TRUE
+|FALSE
+
+|FALSE
+|TRUE
+
+|NULL
+|FALSE
+
+|MISSING
+|MISSING
+|===
+
+
+[#lbl-ops-coll]
+=== COLLATE Operators
+
+==== Purpose
+Collate operators specify how the string comparison is conducted.
+
+==== Usage
+The collate operator is used in conjunction with string comparison expressions and ORDER BY clauses.
+It allows for one or more collations.
+
+If multiple collations are used, the collations need to be specified in a parenthesis. When only one collation is used, the parenthesis is optional.
+
+NOTE: Collate is not supported by Server N1QL
+
+==== Syntax
+
+[source, sql]
+----
+collate = COLLATE collation | '(' collation (_ collation )* ')'
+
+collation = NO? (UNICODE | CASE | DIACRITICS) WB <.>
+----
+
+==== Arguments
+
+<.> The available collation options are:
++
+--
+* UNICODE: Conduct a Unicode comparison; the default is to do ASCII comparison.
+* CASE: Conduct case-sensitive comparison
+* DIACRITIC: Take account of accents and diacritics in the comparison; On by default.
+* NO: This can be used as a prefix to the other collations, to disable thm (for example: `NOCASE` to enable case-insensitive comparison)
+
+--
+
+==== Example
+
+[source, sql]
+----
+SELECT department FROM db WHERE (name = "fred") COLLATE UNICODE
+
+----
+
+
+[source, sql]
+----
+SELECT department FROM db WHERE (name = "fred")
+COLLATE (UNICODE)
+----
+
+
+[source, sql]
+----
+SELECT department FROM db WHERE (name = "fred") COLLATE (UNICODE CASE)
+
+----
+
+
+[source, sql]
+----
+SELECT name FROM db ORDER BY name COLLATE (UNICODE DIACRITIC)
+
+----
+
+// {url-api-classes-query-arrayfunction-collection-ops} are useful to check if a given value is present in an array.
+
+
+
+
+
+
+[#lbl-ops-cond]
+=== CONDITIONAL Operator
+
+==== Purpose
+
+The Conditional (or `CASE`) operator evaluates conditional logic in a similar way to the IF/ELSE operator.
+
+==== Syntax
+
+[source,sql]
+----
+CASE (expression) (WHEN expression THEN expression)+ (ELSE expression)? END <.>
+
+CASE (expression)? (!WHEN expression)?
+  (WHEN expression THEN expression)+ (ELSE expression)? END <.>
+----
+
+Both _Simple Case_ and _Searched Case_ expressions are supported.
+The syntactic difference being that the _Simple Case_ expression has an expression after the CASE keyword.
+
+<.> Simple Case Expression
++
+--
+* If the CASE expression is equal to the first WHEN expression, the result is the THEN expression.
+* Otherwise, any subsequent WHEN clauses are evaluated in the same way.
+* If no match is found, the result of the CASE expression is the ELSE expression, NULL if no ELSE expression was provided.
+--
+
+<.> Searched Case Expression
++
+--
+* If the first WHEN expression is TRUE, the result of this expression is its THEN expression.
+* Otherwise, subsequent WHEN clauses are evaluated in the same way.
+If no WHEN clause evaluate to TRUE, then the result of the expression is the ELSE expression, or NULL if no ELSE expression was provided.
+--
+
+==== Example
+
+.Simple Case
+====
+[source,sql]
+----
+SELECT CASE state WHEN ‘CA’ THEN ‘Local’ ELSE ‘Non-Local’ END FROM DB
+----
+
+====
+
+.Searched Case
+====
+
+[source,sql]
+----
+
+SELECT CASE WHEN shippedOn IS NOT NULL THEN ‘SHIPPED’ ELSE "NOT-SHIPPED" END FROM db
+
+----
+
+====
+
+
+[#lbl-functions]
+== Functions
+In this section::
+<<lbl-func-agg>>{menuitem-delimiter}
+<<lbl-func-array>>{menuitem-delimiter}
+<<lbl-func-cond>>{menuitem-delimiter}
+<<lbl-func-date>>{menuitem-delimiter}
+<<lbl-func-fts>>{menuitem-delimiter}
+<<lbl-func-maths>>{menuitem-delimiter}
+<<lbl-func-meta>>{menuitem-delimiter}
+<<lbl-func-pattern>>{menuitem-delimiter}
+<<lbl-func-string>>{menuitem-delimiter}
+<<lbl-func-typecheck>>{menuitem-delimiter}
+<<lbl-func-typeconv>>
+
+=== Purpose
+
+Functions are also expressions.
+
+=== Syntax
+The function syntax is the same as Java’s method syntax.
+It starts with the function name, followed by optional arguments inside parentheses.
+
+[source, sql]
+----
+function = functionName parenExprs
+
+functionName  = IDENTIFIER
+
+parenExprs = '(' ( expression (_ ',' _ expression )* )? ')'
+
+----
+
+
+[#lbl-func-agg]
+=== Aggregation Functions
+
+.Aggregation Functions
+[tbl-func-agg,cols="1m,4", options="header"]
+|===
+
+|Function
+|Description
+
+|AVG(expr)
+|Returns average value of the number values in the group
+
+|COUNT(expr)
+|Returns a count of all values in the group
+
+|MIN(expr)
+|Returns the minimum value in the group
+
+|MAX(expr)
+|Returns the maximum value in the group
+
+|SUM(expr)
+|Returns the sum of all number values in the group
+
+|===
+
+[#lbl-func-array]
+=== Array Functions
+
+.Array Functions
+[tbl-func-agg,cols="1m,4", options="header"]
+|===
+
+|Function
+|Description
+
+|ARRAY_AGG(expr)
+|Returns an array of the non-MISSING group values in the input expression, including NULL values.
+
+|ARRAY_AVG(expr)
+|Returns the average of all non-NULL number values in the array; or NULL if there are none
+
+|ARRAY_CONTAINS(expr)
+|Returns TRUE if the value exists in the array; otherwise FALSE
+
+|ARRAY_COUNT(expr)
+|Returns the number of non-null values in the array
+
+|ARRAY_IFNULL(expr)
+|Returns the first non-null value in the array
+
+|ARRAY_MAX(expr)
+|Returns the largest non-NULL, non_MISSING value in the array
+
+|ARRAY_MIN(expr)
+|Returns the smallest non-NULL, non_MISSING value in the array
+
+|ARRAY_LENGTH(expr)
+|Returns the length of the array
+
+|ARRAY_SUM(expr)
+|Returns the sum of all non-NULL numeric value in the array
+|
+
+|===
+
+[#lbl-func-cond]
+=== Conditional Functions
+
+.Conditional Functions
+[tbl-func-agg,cols="2m,3", options="header"]
+|===
+
+|Function
+|Description
+
+|IFMISSING(expr1, expr2, ...)
+|Returns the first non-MISSING value, or NULL if all values are MISSING
+
+|IFMISSINGRONULL(expr1, expr2, ...)
+|Returns the first non-NULL and non-MISSING value, or NULL if all values are NULL or MISSING
+
+|IFNULL(expr1, expr2, ...)
+|Returns the first non-NULL, or NULL if all values are NULL
+
+|MISSINGIF(expr1, expr2)
+|Returns `MISSING` when `expr1 = expr2`; otherwise returns `expr1`. +
+Returns `MISSING` if either or both expressions are `MISSING`. +
+Returns `NULL` if either or both expressions are `NULL`.+
+
+|NULLF(expr1, expr2)
+|Returns `NULL` when `expr1 = expr2`; otherwise returns `expr1`. +
+Returns `MISSING` if either or both expressions are `MISSING`. +
+Returns `NULL` if either or both expressions are `NULL`.+
+
+|===
+
+
+[#lbl-func-date]
+=== Date and Time Functions
+
+.Date and Time Functions
+[tbl-func-agg,cols="1m,4", options="header"]
+|===
+
+|Function
+|Description
+
+|STR_TO_MILLIS(expr)
+|Returns the number of milliseconds since the unix epoch of the given ISO 8601 date input string.
+
+|STR_TO_UTC(expr)
+|Returns the ISO 8601 UTC date time string of the given ISO 8601 date input string.
+
+|MILLIS_TO_STR(expr)
+|Returns a ISO 8601 date time string in device local timezone of the given number of milliseconds since the unix epoch expression.
+
+|MILLIS_TO_UTC(expr)
+|Returns the UTC ISO 8601 date time string of the given number of milliseconds since the unix epoch expression.
+
+|===
+
+
+
+[#lbl-func-fts]
+=== Full Text Search Functions
+
+.FTS Functions
+[tbl-func-fts,cols="1m,2,2m", options="header"]
+|===
+
+|Function
+|Description
+|Example
+
+|MATCH(indexName, term)
+|Returns `TRUE` if `term` expression matches the FTS indexed term. `indexName` identifies the FTS index, `term` expression to search for matching.
+|WHERE MATCH (description, “couchbase”)
+
+|RANK(indexName)
+|Returns a numeric value indicating how well the current query result matches the full-text query when performing the `MATCH`. `indexName` is an IDENTIFIER for the FTS index.
+|WHERE MATCH (description, “couchbase”) ORDER BY RANK(description)
+
+
+|===
+
+
+
+[#lbl-func-maths]
+=== Maths Functions
+
+.Maths Functions
+[tbl-func-maths,cols="1m,4", options="header"]
+|===
+
+|Function
+|Description
+
+|ABS(expr)
+|Returns the absolute value of a number.
+
+|ACOS(expr)
+|Returns the arc cosine in radians.
+
+|ASIN(expr)
+|Returns the arcsine in radians.
+
+|ATAN(expr)
+|Returns the arctangent in radians.
+
+|ATAN2(expr1,expr2)
+|Returns the arctangent of expr2/expr1.
+
+|CEIL(expr)
+|Returns the smallest integer not less than the number.
+
+|COS(expr)
+|Returns the cosine value of the expression.
+
+|DIV(expr1, expr2)
+|Returns float division of expr1 and expr2. +
+Both expr1 and expr2 are cast to a double number before division. +
+The returned result is always a double.
+
+|IDIV(expr1, expr2)
+|Returns integer division of expr1 and expr2. +
+Both expr1 and expr2 are cast to an integer number before division. +
+The returned result is always an integer.
+
+|DEGREES(expr)
+|Converts radians to degrees.
+
+|E()
+|Returns base of natural logarithms.
+
+|EXP(expr)
+|Returns expr value
+
+|FLOOR(expr)
+|Returns largest integer not greater than the number.
+
+|IDIV(expr1, expr2)
+|Returns integer division of expr1 and expr2.
+
+|LN(expr)
+|Returns log base e value.
+
+|LOG(expr)
+|Returns log base 10 value.
+
+|PI()
+|Return PI value.
+
+|POWER(expr1, expr2)
+|Returns expr1expr2 value.
+
+|RADIANS(expr)
+|Returns degrees to radians.
+
+|ROUND(expr (, digits_expr)?)
+|Returns the rounded value to the given number of integer digits to the right of the decimal point (left if digits is negative). Digits are 0 if not given. +
+The function uses `Rounding Away From Zero` convention to round midpoint values to the next number away from zero (so, for example, `ROUND(1.75)` returns 1.8 but `ROUND(1.85)` returns 1.9. ^*^
+
+
+|ROUND_EVEN(expr (, digits_expr)?)
+|Returns rounded value to the given number of integer digits to the right of the decimal point (left if digits is negative). Digits are 0 if not given.
+
+The function uses _Rounding to Nearest Even_ (Banker’s Rounding) convention which rounds midpoint values to the nearest even number (for example, both `ROUND_EVEN(1.75)` and `ROUND_EVEN(1.85)` return 1.8).
+
+|SIGN(expr)
+|Returns -1 for negative, 0 for zero, and 1 for positive numbers.
+
+|SIN(expr)
+|Returns sine value.
+
+|SQRT(expr)
+|Returns square root value.
+
+|TAN(expr)
+|Returns tangent value.
+
+|TRUNC (expr (, digits, expr)?)
+|Returns a truncated number to the given number of integer digits to the right of the decimal point (left if digits is negative). Digits are 0 if not given.
+
+|===
+
+^*^ The behavior of the ROUND() function is different from Server N1QL ROUND(), which rounds the midpoint values using _Rounding to Nearest Even_ convention.
+
+
+
+[#lbl-func-meta]
+=== Metadata Functions
+
+.Metadata Functions
+[tbl-func-meta,cols="1m,2,2m", options="header"]
+|===
+
+
+|Function
+|Description
+|Example
+
+|META(dataSourceName?)
+
+a|Returns a dictionary containing metadata properties including:
+
+* id : document identifier
+* sequence : document mutating sequence number
+* deleted : flag indicating whether document is deleted or not
+* expiration : document expiration date in timestamp format
+
+The optional dataSourceName identifies the database  or the database alias name. +
+To access a specific metadata property, use the dot expression.
+
+|SELECT META() FROM db
+
+SELECT META().id, META().sequence, META().deleted, META().expiration FROM db
+
+SELECT p.name, r.rating FROM product as p INNER JOIN reviews AS r ON META(r).id IN p.reviewList WHERE META(p).id = "product320"
+
+
+|===
+
+
+
+[#lbl-func-pattern]
+=== Pattern Searching Functions
+
+.Pattern Searching Functions
+[tbl-func-meta,cols="1m,4", options="header"]
+|===
+
+|Function
+|Description
+
+|REGEXP_CONTAINS(expr, pattern)
+|Returns TRUE if the string value contains any sequence that matches the regular expression pattern.
+
+|REGEXP_LIKE(expr, pattern)
+|Return TRUE if the string value exactly matches the regular expression pattern.
+
+|REGEXP_POSITION(expr, pattern)
+|Returns the first position of the occurrence of the regular expression pattern within the input string expression. Return -1 if no match is found. Position counting starts from zero.
+
+|REGEXP_REPLACE(expr, pattern, repl [, n])
+|Returns new string with occurrences of pattern replaced with repl. If n is given, at the most n replacements are performed. If n is not given, all matching occurrences are replaced.
+
+|===
+
+[#lbl-func-string]
+=== String Functions
+
+.String Functions
+[tbl-func-str,cols="1m,4", options="header"]
+|===
+
+|Function
+|Description
+
+|CONTAINS(expr, substring_expr)
+|Returns true if the substring exists within the input string, otherwise returns false.
+|LENGTH(expr)
+|Returns the length of a string. The length is defined as the number of characters within the string.
+|LOWER(expr)
+|Returns the lowercase string of the input string.
+
+|LTRIM(expr)
+|Returns the string with all leading whitespace characters removed.
+
+|RTRIM(expr)
+|Returns the string with all trailing whitespace characters removed.
+
+|TRIM(expr)
+|Returns the string with all leading and trailing whitespace characters removed.
+
+|UPPER(expr)
+|Returns the uppercase string of the input string.
+
+|===
+
+
+[#lbl-func-typecheck]
+=== Type Checking Functions
+
+.Type Checking Functions
+[tbl-func-tpcheck,cols="1m,4", options="header"]
+|===
+
+|Function
+|Description
+
+|ISARRAY(expr)
+|Returns TRUE if expression is an array, otherwise returns MISSING, NULL or FALSE.
+
+|ISATOM(expr)
+|Returns TRUE if expression is a Boolean, number, or string, otherwise returns MISSING, NULL or FALSE.
+
+|ISBOOLEAN(expr)
+|Returns TRUE if expression is a Boolean, otherwise returns MISSING, NULL or FALSE.
+
+|ISNUMBER(expr)
+|Returns TRUE if expression is a number, otherwise returns MISSING, NULL or FALSE.
+
+|ISOBJECT(expr)
+|Returns TRUE if expression is an object (dictionary), otherwise returns MISSING, NULL or FALSE.
+
+|ISSTRING(expr)
+|Returns TRUE if expression is a string, otherwise returns MISSING, NULL or FALSE.
+
+|TYPE(expr)
+a|Returns one of the following strings, based on the value of expression:
+
+* “missing”
+* “null”
+* “boolean”
+* “number”
+* “string”
+* “array”
+* “object”
+* “binary”
+
+|===
+
+
+
+[#lbl-func-typeconv]
+=== Type Conversion Functions
+
+.Type Conversion Functions
+[tbl-func-tpconv,cols="3,7", options="header"]
+|===
+
+|Function
+|Description
+
+.4+m|TOARRAY(expr)
+|Returns MISSING if the value is MISSING.
+
+|Returns NULL if the value is NULL.
+|Returns the array itself.
+|Returns all other values wrapped in an array.
+
+
+.6+m|TOATOM(expr)
+|Returns MISSING if the value is MISSING.
+
+|Returns NULL if the value is NULL.
+|Returns an array of a single item if the value is an array.
+|Returns an object of a single key/value pair if the value is an object.
+|Returns boolean, numbers, or strings
+|Returns NULL for all other values.
+
+.6+m|TOBOOLEAN(expr)
+|Returns MISSING if the value is MISSING.
+
+|Returns NULL if the value is NULL.
+|Returns FALSE if the value is FALSE.
+|Returns FALSE if the value is 0 or NaN.
+|Returns FALSE if the value is an empty string, array, and object.
+|Return TRUE for all other values.
+
+.7+m|TONUMBER(expr)
+|Returns MISSING if the value is MISSING.
+
+|Returns NULL if the value is NULL.
+|Returns 0 if the value is FALSE.
+|Returns 1 if the value is TRUE.
+|Returns NUMBER if the value is NUMBER.
+|Returns NUMBER parsed from the string value.
+|Returns NULL for all other values.
+
+.4+m|TOOBJECT(expr)
+|Returns MISSING if the value is MISSING.
+
+|Returns NULL if the value is NULL.
+|Returns the object if the value is an object.
+|Returns an empty object for all other  values.
+
+.8+m|TOSTRING(expr)
+|Returns MISSING if the value is MISSING.
+
+|Returns NULL if the value is NULL.
+|Returns “false” if the value is FALSE.
+|Returns “true” if the value is TRUE.
+|Returns NUMBER in String if the value is NUMBER.
+|Returns the string value if the value is a string.
+|Returns NULL for all other values.
+
+|===
+
+
+== QueryBuilder Differences
+
+Couchbase Lite N1QL Query supports all QueryBuilder features, except _Predictive Query_ and _Index_. See <<tbl-qbldr-diffs>> for the features supported by N1QL but not by QueryBuilder.
+
+
+.QueryBuilder Differences
+[#tbl-qbldr-diffs,cols="4,6m", options="header"]
+|===
+
+|Category
+|Components
+
+|Conditional Operator
+|CASE(WHEN ... THEN ... ELSE ..)
+
+|Array Functions
+|ARRAY_AGG
+ARRAY_AVG
+ARRAY_COUNT
+ARRAY_IFNULL
+ARRAY_MAX
+ARRAY_MIN
+ARRAY_SUM
+
+|Conditional Functions
+|IFMISSING
+IFMISSINGORNULL
+IFNULL
+MISSINGIF
+NULLIF
+Match Functions
+DIV
+IDIV
+ROUND_EVEN
+
+|Pattern Matching Functions
+|REGEXP_CONTAINS
+REGEXP_LIKE
+REGEXP_POSITION
+REGEXP_REPLACE
+
+|Type Checking Functions
+|ISARRAY
+ISATOM
+ISBOOLEAN
+ISNUMBER
+ISOBJECT
+ISSTRING
+TYPE
+
+|Type Conversion Functions
+|TOARRAY
+TOATOM
+TOBOOLEAN
+TONUMBER
+TOOBJECT
+TOSTRING
+|===
+
+
+// END --- inclusion -- common-querybuilder-n1ql.adoc
