@@ -2980,12 +2980,8 @@ public class TestQueries {
 
       // Get result as JSON string
       String thisJsonString = result.toJSON(); // <.>
-      // ALTERNATIVELY
-      String thisJsonString =
-        result.getDictionary(0).toJSON(); // <.>
 
-
-      // Get Java  Hashmap from JSON string
+            // Get Java  Hashmap from JSON string
       HashMap<String, Object> dictFromJSONstring =
               mapper.readValue(thisJsonString, HashMap.class); // <.>
 

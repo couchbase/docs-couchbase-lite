@@ -704,6 +704,7 @@ class SampleCodeTest {
     }
 
 
+
     func dontTestToJson-Blob() throws {
         database = self.db
         // demonstrate use of JSON string
@@ -2275,11 +2276,8 @@ class Query {
             var results = try! listQuery.execute()
             for row in  results {
 
-                // If Query selected ALL,
-                //    unpack items from encompassing dictionary // <.>
-                let jsonString = row.dictionary(at: 0)!.toJSON()
-                // ALTERNATIVELY: If Query selected specific items
-                let jsonString = row.toJSON()
+                // get the result into a JSON String
+                let jsonString = row.toJSON() // <.>
 
                 let thisJsonObj:Dictionary =
                     try! (JSONSerialization.jsonObject(
@@ -2288,13 +2286,13 @@ class Query {
                             as? [String: Any])! // <.>
 
                 // Use Json Object to populate Native object
-                // Use Codable class to unpack JSON data to native object // <.>
+                // Use Codable class to unpack JSON data to native object
                 let this_hotel:Hotel =
                     (try JSONDecoder().decode(
                         Hotel.self,
                         from: jsonString.data(using: .utf8)!
                         )
-                    )
+                    ) // <.>
 
                 // ALTERNATIVELY unpack in steps
                 this_hotel.id = thisJsonObj["id"] as! String

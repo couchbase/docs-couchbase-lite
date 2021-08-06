@@ -2493,9 +2493,6 @@ class ExamplesP2p(private val context: Context) {
 
           // Get result as JSON string
           val thisJsonString1: String = result.toJSON() // <.>
-          // ALTERNATIVELY
-          val thisJsonString = result.getDictionary(0)?.toJSON() // <.>
-
 
           // Get Hashmap from JSON string
           val dictFromJSONstring =
