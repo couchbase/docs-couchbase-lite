@@ -1,0 +1,169 @@
+= Build and Run
+:page-aliases: start/java-gs-build.adoc
+:page-layout: article
+:description: Build and run a starter app to validate your install of Couchbase Lite on Java
+:keywords: mobile edge nosql api Java JVM web-app device-app
+
+include::partial$_std-cbl-hdr-java.adoc[]
+
+// :JP: Java
+:tabs:
+
+
+// DO NOT EDIT
+:param-abstract: This content provides sample code and instructions that enable you to test your Couchbase Lite for {param-name} installation.
+:param-related: {xref-cbl-pg-install} | {xref-cbl-pg-prereqs} | {xref-cbl-pg-build} |
+:topic-group:
+include::{root-partials}block-abstract.adoc[]
+// include::{root-partials}block-related-get-started.adoc[]
+// DO NOT EDIT
+
+
+== Build a Getting Started App
+
+This section explains how to validate your configured build environment by building a starter app that uses many of {cblJP}'s more common features.
+
+// TIP: The {nmMobStarterApp} app can be downloaded from GitHub link:{url-cb-mobStarterApp}[{nmMobStarterApp}].
+
+The {nmMobStarterApp} app demonstrates how to use {cblJP}. Console and Web App versions are available.
+
+.Development-type Scenarios
+[{tabs}]
+====
+
+Console App::
++
+--
+
+TIP: Ensure you added the {cbl} dependency to your `build.gradle` file
+
+Create, build and run a new project using the following `GettingStarted.java` code:
+
+
+
+[source,java]
+
+----
+include::{snippet}[tags=getting-started,indent=0]
+----
+<1> The app will start a replicator pointing to `ws://localhost:4984/db`, where `db` is the name of your {sg} database
+<2> This is the only API that differs from the {android} version. It accepts no parameters and should be called once only
+<3> You can optionally AES-256 encrypt the database by providing a key
+<4> This is needed for a tidy closedown of work executors
+<5> It is advisable to set a specific directory path for the database.
+
+On running the app, you should see the document ID and property printed to the console together with a query result showing the number of rows in the database.
+
+This shows the document was successfully persisted to the database.
+
+See <<About the Getting Started App>> for more on the app itself
+
+--
+
+Web App::
++
+--
+
+This section explains how to set-up a build project to create {cblJP} web apps using {gpBuildTool} and {gpIDE}.
+
+*Steps*
+
+. Create a new project folder and add a `build.gradle` file containing the following:
++
+[source,groovy,subs=attributes+]
+----
+include::{snippet}[tags=GsEmbeddedTomcatBuildGradle,indent=0]
+----
+
+. Within {gpIDE}, open the new project folder
++
+If you don't have auto-import enabled, then accept the *Import from Gradle* prompt that appears at the bottom right of the screen.
+. Create a Java class _GettingStarted_ using this code:
++
+[source, java]
+
+----
+include::{snippet}[tags=GsWebApp_GettingStarted,indent=0]
+----
++
+<1> It is advisable to set a specific directory path for the database.
+<2> The app will start a replicator pointing to `ws://localhost:4984/db`, where `db` is the name of your {sg} database
++
+. Create a Java class _Listener_ using this code:
++
+[source, java]
+
+----
+include::{snippet}[tags=GsWebApp_Listener,indent=0]
+----
++
+
+. Create a Java class _Database Manager_ using this code:
++
+[source, java]
+
+----
+include::{snippet}[tags=GsWebApp_DbManager,indent=0]
+----
++
+<1> This is the only API that differs from the {android} version. It accepts no parameters and should be called once only
+<2> It is advisable to set a specific directory path for the database.
+<3> You can optionally AES-256 encrypt the database by providing a key
++
+. Create an `index.html` file in `src/main/web app` with the following content:
++
+[source, html]
+
+----
+include::{snippet}[tags=GsWebApp_Index,indent=0]
+----
+
+. Create a `showDbItems.jsp` file in `src/main/web app` with the following content:
++
+[source, html]
+
+----
+include::{snippet}[tags=GsWebApp_ShowDbItems,indent=0]
+----
+
+. Build, deploy and run the app using `tomcatRun`
++
+image::GradleMenuWebApp.png[,300]
+
+.. Point your browser to: `localhost:8080/gettingstarted`
++
+This opens the browser at your index.html page.
+..  Select the *here* link
++
+This launches the servlet and displays the results in `showdDbItems.jsp`.
+They are also added to the _catalina.out_ log file.
+
+
+--
+
++
+About the Starter App::
++
+--
+
+anchor:bmkAboutGettingStarted[]
+The {nmMobStarterApp} app will:
+
+* Create a database
++
+The app creates its database in the `{nmSampleAppDbPath}` directory relative to its root location when run (See: {databases--xref-bmk-findfile}).
+
+TIP: Explicitly state your required database location when creating your database (see: {databases--xref-bmk-findfile} for how to do this)
+
+* Add content to the DB
+* Run a simple query counting the DB rows
+* Start a one-shot, bi-directional replication using {sg} and {svr}
+* Produce a simple report on the db Contents
++
+image::java:cblOutput.png[,400]
+
+NOTE: Before starting your app ensure you have started both your {svr} and {sg} instances.
+
+--
+
+====

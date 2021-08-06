@@ -1,0 +1,117 @@
+== URLEndpointListener
+// <<URLEndpointListener-class>> |
+// <<URLEndpointListener-props>> |
+// <<URLEndpointListener-constructors>> |
+// <<URLEndpointListener-methods>>
+
+The `URLEndpointListener` is the listener for peer-to-peer synchronization.
+It acts like a passive replicator, in the same way that Sync Gateway does in a 'standard' replication.
+On the client side, the listener's endpoint is used to point the replicator to the listener.
+
+Core functionalities of the listener are:
+--
+* Users can initialize the class using a _URLEndpointListenerConfiguration_ object.
+* The listener can be started, or can be stopped.
+* Once the listener is started, a total number of connections or active connections can be checked.
+--
+
+API Reference: {url-api-class-urlendpointlistener}
+
+== URLEndpointListenerConfiguration
+Use this to create a configuration object you can then use to initialize the listener.
+
+Port::
++
+--
+This is the port that the listener will listen to.
+
+If the port is null or zero, the listener will auto-assign an available  port to listen on.
+
+Default value is null or zero depending on platform.
+When the listener is not started, the port is null (or zero if the platform requires).
+--
+
+Network Interface::
++
+--
+Use this to select a specific Network Interface to use, in the form of the IP Address or network interface name.
+
+If the network interface is specified, only that interface wil be used.
+
+If the network interface is not specified, all available network interfaces will be used.
+
+The value is null if the listener is not started.
+--
+
+disableTLS::
++
+--
+// tag::config-disable-tls[]
+You can use {url-api-class-urlendpointconfiguration}'s {url-api-references-urlendpointconfiguration-disable-tls} method to disable TLS communication if necessary
+
+The `disableTLS` setting must be 'false' when _Client Cert Authentication_ is required.
+
+Basic Authentication can be used with, or without, TLS.
+
+{url-api-references-urlendpointconfiguration-disable-tls} works in conjunction with `TLSIdentity`, to enable developers to define the key and certificate to be used.
+
+* If `disableTLS` is true -- TLS communication is disabled and TLS identity is ignored.
+Active peers will use the `ws://` URL scheme used to connect to the listener.
+* If `disableTLS` is false or not specified -- TLS communication is enabled.
++
+Active peers will use the `wss://` URL scheme to connect to the listener.
+
+// end::config-disable-tls[]
+API Reference:  {url-api-references-urlendpointconfiguration-disable-tls}
+--
+
+tlsIdentity::
++
+--
+// tag::config-tls-id[]
+Use {url-api-class-urlendpointconfiguration}'s
+{url-api-references-urlendpointconfiguration-tls-id} method to configure the TLS Identity used in TLS communication.
+
+If `TLSIdentity` is not set, then the listener uses an auto-generated anonymous self-signed identity (unless `disableTLS = true`).
+Whilst the client cannot use this to authenticate the server, it will use it to encrypt communication, giving a more secure option than non-TLS communication.
+
+The auto-generated anonymous self-signed identity is saved in {securestorage} for future use to obviate the need to re-generate it.
+
+// end::config-tls-id[]
+
+When the listener is not started, the identity is null.
+When TLS is disabled, the identity is always null.
+
+API Reference:  {url-api-references-urlendpointconfiguration-tls-id}
+
+--
+
+authenticator::
++
+--
+Use this to specify the authenticator the listener uses to authenticate the client's connection request.
+This should be set to one of the following:
+
+* ListenerPasswordAuthenticator
+* ListenerCertificateAuthenticator
+* Null -- there is no authentication.
+// tag::config-auth-default[]
+
+API Reference:  {url-api-references-urlendpointconfiguration-auth}
+--
+
+readOnly::
++
+--
+Use this to allow only pull replication.
+Default value is false.
+--
+
+enableDeltaSync::
++
+--
+The option to enable Delta Sync and replicate only changed data also depends on the delta sync settings at database level.
+The default value is false.
+
+API Reference: {url-api-class-urlendpointconfiguration}
+--

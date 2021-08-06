@@ -1,0 +1,38 @@
+== Activating a Live Query
+A live query is a query that, once activated, remains active and monitors the database for changes; refreshing the result set whenever a change occurs.
+As such, it is a great way to build reactive user interfaces -- especially table/list views -- that keep themselves up to date.
+
+*So, a simple use case may be:* A replicator running and pulling new data from a server, whilst a live-query-driven UI automatically updates to show the data without the user having to manually refresh.
+This helps your app feel quick and responsive.
+
+[#ex-qry-start]
+.Starting a LIve Query
+====
+[source]
+----
+include::{snippet}[tag=live-query,indent=0]
+
+----
+
+<.> Build the query statements using the QuerybUilder
+<.> Activate the _live_ query by attaching a listener. +
+Save the token in order to detach the listener and stop the query later -- se <<ex-qry-stop>>
+<.> Start the query +
+This will immediately execute the live query and post the result to the change listener.
+When a change is detected the query automatically runs, and posts the new query result to any observers (change listeners).
+
+====
+
+[#ex-qry-stop]
+.Stop a LIve Query
+====
+[source]
+----
+include::{snippet}[tag=stop-live-query,indent=0]
+
+----
+
+<.> Here we use the change lister token from <<ex-qry-start>> to remove the listeners.
+Doing so stops the live query.
+
+====
