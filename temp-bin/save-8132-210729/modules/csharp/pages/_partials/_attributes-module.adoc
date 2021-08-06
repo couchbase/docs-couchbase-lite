@@ -1,0 +1,383 @@
+// BEGIN -- inclusion -- {module-partials}_attributes-module.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: {root-partials}_std_cbl_hdr.adoc
+
+// BEGIN::module page attributes
+:module: {param-module}
+:packageNm: couchbase-lite-{module}
+// :source-language: Java
+:snippet: {snippets-content--csharp}
+
+// :snippet-p2psync-ws: {snippets-p2psync-ws--csharp}
+:url-issues: {url-issues-csharp}
+
+// END::module page attributes
+
+
+// BEGIN - Set attributes pointing to API references for this module
+:sep: #
+:api-pfx:
+
+:url-api-references-sfx: /api/Couchbase.Lite.
+:url-api-references-method-pfx: Couchbase_Lite_
+:url-api-references: {url-api-references-csharp}
+:url-api-references2: {url-api-references-csharp}{url-api-references-sfx}
+:url-api-references-di: {url-api-references2}DI
+:url-api-references-entquery: {url-api-references2}Enterprise.Query
+:url-api-references-logging: {url-api-references2}Logging
+:url-api-references-log: {url-api-references2}Logging.Log.html
+:url-api-references-p2p: {url-api-references2}P2P
+:url-api-references-query: {url-api-references2}Query
+:url-api-references-query-function: {url-api-references-query}.Function.html
+:url-api-references-query-where: {url-api-references-query}.IWhere.html
+:url-api-references-query-orderby: {url-api-references-query}.IOrderBy.html
+:url-api-references-query-groupby: {url-api-references-query}.IGroupBy.html
+:url-api-references-sync: {url-api-references2}Sync
+:url-api-references-classes: {url-api-references2}
+:url-api-references-classes-p2p: {url-api-references-p2p}.
+:url-api-references-classes-sync: {url-api-references-sync}.
+
+// DATABASE CLASSES
+:url-api-references-database: {url-api-references-classes}{api-pfx}Database.html
+:url-api-class-database: {url-api-references-database}[Database]
+:url-api-method-database: {url-api-references-database}{sep}{url-api-references-method-pfx}Database_
+:url-api-method-database-close: {url-api-method-database}Close[Database.Close()]
+:url-api-method-database-copy: {url-api-method-database}Couchbase_Lite_Database_Copy_System_String_System_String_Couchbase_Lite_DatabaseConfiguration_[Database.Copy()]
+:url-api-method-database-delete: {url-api-method-database}Delete[Database.Delete()]
+
+:url-api-references-databasecfg: {url-api-references-classes}{api-pfx}DatabaseConfiguration.html
+:url-api-class-databasecfg: {url-api-references-databasecfg}[DatabaseConfiguration]
+:url-api-method-databasecfg: {url-api-references-databasecfg}{sep}Couchbase_Lite_DatabaseConfiguration_
+:url-api-method-databasecfg-setdir: {url-api-method-databasecfg}directory[DatabaseConfiguration.Directory()]
+:url-api-method-databasecfg-encryption: {url-api-method-databasecfg}EncryptionKey[DatabaseConfiguration.EncryptionKey()]
+
+
+//Database.SAVE
+:url-api-method-database-save-doc: {url-api-method-database}Save_Couchbase_Lite_MutableDocument_[Database.Save(MutableDocument)]
+
+:url-api-method-database-save-concctrl: {url-api-method-database}Save_Couchbase_Lite_MutableDocument_Couchbase_Lite_ConcurrencyControl_[Database.Save(MutableDocument, ConcurrencyControl)]
+
+:url-api-method-database-save-conflict: {url-api-method-database}Save_Couchbase_Lite_MutableDocument_System_Func_Couchbase_Lite_MutableDocument_Couchbase_Lite_Document_System_Boolean__[Database.Save(MutableDocument, Func<MutableDocument, Document, Boolean>)]
+
+//Database.DELETE
+:url-api-method-database-deletedoc-doc: {url-api-method-database}Delete_Couchbase_Lite_Document_[Database.Delete(Document)]
+
+:url-api-method-database-deletedoc-concctrl: {url-api-method-database}Delete_Couchbase_Lite_Document_Couchbase_Lite_ConcurrencyControl_[Database.Delete(Document, ConcurrencyControl)]
+
+
+
+:url-api-method-database-compact: {url-api-method-database}Compact[Database.Compact()]
+
+:url-api-method-database-performMaintenance: {url-api-method-database}PerformMaintenance-com.couchbase.lite.MaintenanceType-[Database.PerformMaintenance()]
+
+:url-api-method-database-setloglevel: {url-api-method-database}Couchbase_Lite_Database_SetLogLevel_Couchbase_Lite_Logging_LogDomain_Couchbase_Lite_Logging_LogLevel_[Database.SetLogLevel()]
+
+
+// links for documents pages
+:url-api-method-database-getdocument: {url-api-method-database}GetDocument_System_String_[Database.GetDocument()]
+:url-api-method-database-save: {url-api-method-database}Save_Couchbase_Lite_MutableDocument_[Database.Save()]
+
+:url-api-references-document: {url-api-references-classes}{api-pfx}Document.html
+:url-api-method-document: {url-api-references-document}{sep}{url-api-references-method-pfx}Document_
+:url-api-class-document: {url-api-references-document}[Document]
+:url-api-method-document-tomutable: {url-api-method-document}ToMutable[Document.ToMutable()]
+:url-api-method-document-contains: {url-api-method-document}Contains_System_String_[Document.Contains(String key)]
+:url-api-method-document-getdate: {url-api-method-document}GetDate_System_String_[Document.GetDate()]
+:url-api-method-document-getfloat: {url-api-method-document}GetFloat_System_String_[Document.GetFloat()]
+:url-api-method-document-getint: {url-api-method-document}GetInt_System_String_[Document.GetInt()]
+:url-api-references-dictionary: {url-api-references-classes}{api-pfx}DictionaryObject.html
+:url-api-class-dictionary: {url-api-references-dictionary}[property accessors]
+
+:url-api-references-mutabledocument: {url-api-references-classes}{api-pfx}MutableDocument.html
+:url-api-class-mutabledocument: {url-api-references-mutabledocument}[MutableDocument()]
+:url-api-method-mutabledocument: {url-api-references-mutabledocument}{sep}{url-api-references-method-pfx}MutableDocument_
+:url-api-method-mutabledocument-init: {url-api-method-mutabledocument}_ctor[MutableDocument()]
+:url-api-method-mutabledocument-initid: {url-api-method-mutabledocument}Item_System_String_[MutableDocument(String id)]
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+:url-api-classes-result-pfx: {url-api-references-classes}{api-pfx}Query.Result.html
+
+:url-api-class-result: {url-api-classes-result-pfx}[{api-pfx}Result]
+
+:url-api-method-result-toJSON: {url-api-classes-result-pfx}{url-api-references-method-sep}Couchbase_Lite_Query_Result_ToJson[{api-pfx}Result.ToJson()]
+
+:url-api-method-result-toDictionary: {url-api-classes-result-pfx}{url-api-references-method-sep}Couchbase_Lite_Query_Result_ToDictionary[{api-pfx}Result.ToDictionary()]
+
+:url-api-method-result-toList: {url-api-classes-result-pfx}{url-api-references-method-sep}Couchbase_Lite_Query_Result_ToList[{api-pfx}Result.ToList()]
+
+// Query class and methods
+:url-api-references-query: {url-api-references2}Query
+:url-api-classes-query-pfx: {url-api-references-query}.
+:url-api-class-query: {url-api-classes-query-pfx}[IQuery]
+:url-api-method-query-explain: {url-api-classes-query-pfx}{sep}{url-api-references-method-pfx}_Query_IQuery_Explain[Explain()]
+:url-api-method-query-execute: {sep}{url-api-references-method-pfx}_Query_IQuery_Execute--[Execute()]
+
+// Expression class and methods
+:url-api-method-expression-pfx: {url-api-classes-query-pfx}IExpression.html#Couchbase_Lite_Query_IExpression_
+// :url-api-method-expression-like: {url-api-method-expression-pfx}Like_Couchbase_Lite_Query_IExpression_
+:url-api-method-expression-like: {url-api-method-expression-pfx}Like_Couchbase_Lite_Query_IExpression_[Like()]
+:url-api-method-expression-collate: {url-api-method-expression-pfx}Collate_Couchbase_Lite_Query_ICollation_[Collate()]
+:url-api-classes-query-expression: {url-api-method-expression-pfx}[IExpression]
+:url-api-classes-query-expression-comparators: {url-api-method-expression-pfx}[Expression Comparators]
+:url-api-method-expression-: {url-api-method-expression-pfx}[Expression]
+
+// ArrayFunction class and methods
+:url-api-method-arrayfunction-pfx: {url-api-classes-query-pfx}ArrayFunction.html
+:url-api-classes-query-arrayfunction: {url-api-method-arrayfunction-pfx}[ArrayFunction]
+:url-api-classes-query-arrayfunction-collection-ops: {url-api-method-arrayfunction-pfx}[ArrayFunction Collection Operators]
+
+
+// Function class and methods
+//
+:url-api-references-query-function: {url-api-references-query}.Function.html
+:url-api-classes-function-pfx: {url-api-references-query-function}
+:url-api-class-function: {url-api-classes-function-pfx}[Function]
+:url-api-method-function-lower: {url-api-classes-function-pfx}{sep}{url-api-references-method-pfx}Query_Function_Lower_{url-api-references-method-pfx}Query_IExpression_[Lower()]
+:url-api-method-function-count: {url-api-classes-function-pfx}{sep}{url-api-references-method-pfx}Query_Function_Count_{url-api-references-method-pfx}Query_IExpression_[Count()]
+
+// Where class and methods
+//
+:url-api-references-query-where: {url-api-references-query}.IWhere.html
+:url-api-classes-where-pfx: {url-api-references-query-where}
+:url-api-class-where: {url-api-classes-where-pfx}[IWhere]
+
+// orderby class and methods
+//
+:url-api-references-query-orderby: {url-api-references-query}.IOrderBy.html
+:url-api-classes-orderby-pfx: {url-api-references-query-orderby}
+:url-api-class-orderby: {url-api-classes-orderby-pfx}[IOrderBy]
+
+// GroupBy class and methods
+//
+:url-api-references-query-groupby: {url-api-references-query}.IGroupBy.html
+:url-api-classes-groupby-pfx: {url-api-references-query-groupby}
+:url-api-class-groupby: {url-api-classes-groupby-pfx}[IGroupBy]
+
+
+
+
+
+// PEER-TO-PEER CLASSES
+:url-api-references-p2p-classes: {url-api-references-classes-p2p}.html[P2P Class index]
+
+// URLENDPOINT CLASSES
+:url-api-references-urlendpointlistener: {url-api-references-classes-p2p}{api-pfx}URLEndpointListener.html
+:url-api-class-urlendpointlistener: {url-api-references-urlendpointlistener}[URLEndpointListener]
+:url-api-references-urlendpointlistener-method: {url-api-references-urlendpointlistener}{sep}{url-api-references-method-pfx}P2P_URLEndpointListener_
+:url-api-references-urlendpointlistener-property: {url-api-references-urlendpointlistener-method}
+:url-api-method-urlendpointlistener-start: {url-api-references-urlendpointlistener-method}Start[Start()]
+:url-api-property-urlendpointlistener-status: {url-api-references-urlendpointlistener-property}Status[Status]
+:url-api-property-urlendpointlistener-urls: {url-api-references-urlendpointlistener-property}Urls[Urls]
+
+:url-api-class-connection-status: {url-api-references-classes-p2p}{api-pfx}ConnectionStatus.html[ConnectionStatus]
+
+:url-api-references-urlendpointconfiguration: {url-api-references-classes-p2p}{api-pfx}URLEndpointListenerConfiguration.html
+:url-api-class-urlendpointconfiguration: {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]
+
+:url-api-references-tlsidentity: {url-api-references-classes-p2p}{api-pfx}TLSIdentity.html
+:url-api-class-tlsidentity: {url-api-references-tlsidentity}[TLSIdentity]
+
+// :url-api-references-tlsidentity-property: {url-api-references-tlsidentity}{sep}{url-api-references-method-pfx}P2P_TLSIdentity_
+:url-api-references-tlsidentity-method: {url-api-references-tlsidentity}{sep}{url-api-references-method-pfx}P2P_TLSIdentity_
+
+:url-api-method-tls-identity-create: {url-api-references-tlsidentity-method}CreateIdentity_System_Boolean_System_Collections_Generic_Dictionary_System_String_System_String__System_Nullable_System_DateTimeOffset__System_Security_Cryptography_X509Certificates_X509Store_System_String_System_String_[CreateIdentity()]
+
+:url-api-method-tls-identity-delete: {url-api-references-tlsidentity-method}DeleteIdentity_System_Security_Cryptography_X509Certificates_X509Store_System_String_System_String_[DeleteIdentity()]
+
+:url-api-method-tls-identity-get: {url-api-references-tlsidentity-method}GetIdentity_System_Security_Cryptography_X509Certificates_X509Store_System_String_System_String_[GetIdentity(X509Store, String, String)]
+
+:url-api-method-tls-identity-getcoln: {url-api-references-tlsidentity-method}GetIdentity_System_Security_Cryptography_X509Certificates_X509Certificate2Collection_[GetIdentity(X509Certificate2Collection)]
+
+:url-api-method-tls-identity-import: {url-api-references-tlsidentity-method}ImportIdentity_System_Security_Cryptography_X509Certificates_X509Store_System_Byte___System_String_System_String_System_String_[ImportIdentity()]
+
+
+:url-api-references-urlendpointconfiguration-property: {url-api-references-urlendpointconfiguration}{sep}{url-api-references-method-pfx}P2P_URLEndpointListenerConfiguration_
+// https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-csharp/com/couchbase/lite/URLEndpointListenerConfiguration.html#setPort-int-
+:url-api-references-urlendpointconfiguration-auth: {url-api-references-urlendpointconfiguration-property}Authenticator[Authenticator]
+
+:url-api-references-urlendpointconfiguration-port: {url-api-references-urlendpointconfiguration-property}Port[Port]
+
+:url-api-references-urlendpointconfiguration-netwk-iface: {url-api-references-urlendpointconfiguration-property}NetworkInterface[NetworkInterface]
+
+:url-api-references-urlendpointconfiguration-database: {url-api-references-urlendpointconfiguration-property}Database[Database]
+
+:url-api-references-urlendpointconfiguration-initdb: {url-api-references-urlendpointconfiguration-property}_ctor_Couchbase_Lite_Database_[(Database database)]
+// :url-api-references-urlendpointconfiguration-initcfg: {url-api-references-urlendpointconfiguration-property}initWithConfig::[-initWithConfig:]
+// :url-api-references-urlendpointconfiguration-init: {url-api-references-urlendpointconfiguration-property}init:[-init:]
+
+:url-api-references-urlendpointconfiguration-disable-tls: {url-api-references-urlendpointconfiguration-property}DisableTLS[DisableTLS]
+
+:url-api-references-urlendpointconfiguration-tls-id: {url-api-references-urlendpointconfiguration-property}TlsIdentity[TlsIdentity]
+
+:url-api-references-urlendpointconfiguration-delta-sync: {url-api-references-urlendpointconfiguration-property}EnableDeltaSync[EnableDeltaSync]
+
+// diag: Env+Module {param-module}
+
+:url-api-class-ListenerPasswordAuthenticator: {url-api-references-classes-p2p}{api-pfx}ListenerPasswordAuthenticator.html[ListenerPasswordAuthenticator]
+:url-api-class-ListenerCertificateAuthenticator: {url-api-references-classes-p2p}{api-pfx}ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator]
+
+// AUTHENTICATORS
+:url-api-references-authenticator: {url-api-references-classes-sync}{api-pfx}Authenticator.html
+:url-api-class-authenticator: {url-api-references-authenticator}[Authenticator]
+
+:url-api-references-basicauthenticator: {url-api-references-classes-sync}{api-pfx}BasicAuthenticator.html
+:url-api-class-basicauthenticator: {url-api-references-basicauthenticator}[BasicAuthenticator]
+
+:url-api-references-cca-authenticator: {url-api-references-classes-p2p}{api-pfx}ClientCertificateAuthenticator.html
+:url-api-class-cca-authenticator: {url-api-references-cca-authenticator}[ClientCertificateAuthenticator]
+
+
+// REPLICATOR API CLASSES
+:url-api-references-replicator: {url-api-references-classes-sync}{api-pfx}Replicator.html
+:url-api-class-replicator: {url-api-references-replicator}[Replicator]
+:url-api-properties-replicator: {url-api-references-replicator}{sep}{url-api-references-method-pfx}Sync_Replicator_
+
+// :url-api-references-replicator-abs: {url-api-references-classes-sync}{api-pfx}AbstractReplicator.html
+// :url-api-class-replicator-abs: {url-api-references-replicator-abs}[AbstractReplicator]
+// :url-api-properties-replicator-abs: {url-api-references-replicator-abs}{sep}{api-pfx}
+
+:url-api-constructor-replicator-init-config: {url-api-properties-replicator}_ctor_Couchbase_Lite_Sync_ReplicatorConfiguration_[(ReplicatorConfiguration config)]
+
+:url-api-method-replicator-add-change-listener: {url-api-properties-replicator}AddChangeListener_System_EventHandler_Couchbase_Lite_Sync_ReplicatorStatusChangedEventArgs__[addChangeListener()]
+
+:url-api-method-replicator-rmv-change-listener: {url-api-properties-replicator}RemoveChangeListener_Couchbase_Lite_ListenerToken_[RemoveChangeListener(ListenerToken)]
+
+:url-api-method-replicator-getPendingDocumentIds: {url-api-properties-replicator}GetPendingDocumentIDs[Replicator.GetPendingDocumentIDs()]
+
+:url-api-method-replicator-isDocumentPending: {url-api-properties-replicator}IsDocumentPending_System_String_[Replicator.IsDocumentPending()]
+
+:url-api-method-replicator-start: {url-api-properties-replicator}Start[Start()]
+
+:url-api-method-replicator-stop: {url-api-properties-replicator}Stop[Stop()]
+
+:url-api-property-replicator-status: {url-api-properties-replicator}Status[Replicator.Status]
+
+//:url-api-property-replicator-status-activity: {url-api-references-replicator}{sep}s:18CouchbaseLitecsharp10ReplicatorC13ActivityLevelO
+
+
+// REPLICATORSTATUS
+:url-api-references-replicator-status: {url-api-references-classes-sync}{api-pfx}ReplicatorStatus.html
+:url-api-class-replicator-status: {url-api-references-replicator-status}[ReplicatorStatus]
+:url-api-properties-replicator-status: {url-api-references-replicator-status}{sep}{url-api-references-method-pfx}Sync_ReplicatorStatus_
+
+:url-api-enum-replicator-activity: {url-api-properties-replicator-status}Activity[Activity]
+:url-api-enum-replicator-progress: {url-api-properties-replicator-status}Progress[Progress]
+:url-api-enum-replicator-error: {url-api-properties-replicator-status}Error[Error]
+
+// ReplicatorConfiguration API
+:url-api-references-replicator-config: {url-api-references-classes-sync}{api-pfx}ReplicatorConfiguration.html
+
+:url-api-class-replicator-config: {url-api-references-replicator-config}[ReplicatorConfiguration]
+
+:url-api-references-replicator-config-prop: {url-api-references-replicator-config}{sep}{url-api-references-method-pfx}Sync_ReplicatorConfiguration_
+
+:url-api-constructor-replicator-config-db-tgt: {url-api-references-replicator-config-prop}_ctor_Couchbase_Lite_Database_Couchbase_Lite_Sync_IEndpoint[ReplicatorConfiguration(Database database, IEndpoint target)]
+
+:url-api-constructor-replicator-config-cfg: {url-api-references-replicator-config-prop}ReplicatorConfiguration-com.couchbase.lite.ReplicatorConfiguration-[ReplicatorConfiguration config]
+
+// :url-api-prop-replicator-config-auth-get: {url-api-references-replicator-config-prop}getAuthenticator--[getAuthenticator]
+
+
+:url-api-prop-replicator-config-setPinnedServerCertificate: {url-api-references-replicator-config-prop}PinnedServerCertificate[PinnedServerCertificate]
+
+// Begin Replicator Retry Config
+:url-api-prop-replicator-config-setHeartbeat: {url-api-references-replicator-config-prop}Heartbeat[Heartbeat()]
+:url-api-prop-replicator-config-getHeartbeat: {url-api-references-replicator-config-prop}Heartbeat[Heartbeat()]
+:url-api-prop-replicator-config-setMaxRetries: {url-api-references-replicator-config-prop}MaxRetries[MaxRetries()]
+:url-api-prop-replicator-config-getMaxRetries: {url-api-references-replicator-config-prop}MaxRetries[MaxRetries()]
+:url-api-prop-replicator-config-setMaxRetryWaitTime: {url-api-references-replicator-config-prop}MaxRetryWaitTime[MaxRetryWaitTime()]
+:url-api-prop-replicator-config-getMaxRetryWaitTime: {url-api-references-replicator-config-prop}MaxRetryWaitTime[MaxRetryWaitTime()]
+// End Replicator Retry Config
+
+:url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate: {url-api-references-replicator-config-prop}AcceptOnlySelfSignedServerCertificate[AcceptOnlySelfSignedServerCertificate]
+:url-api-prop-replicator-config-auth: {url-api-references-replicator-config-prop}Authenticator[Authenticator]
+:url-api-prop-replicator-config-conflict: {url-api-references-replicator-config-prop}ConflictResolver[ConflictResolver]
+
+:url-api-prop-replicator-config-cont: {url-api-references-replicator-config-prop}Continuous[Continuous]
+:url-api-prop-replicator-config-database: {url-api-references-replicator-config-prop}Database[Database]
+
+:url-api-prop-replicator-config-rep-type: {url-api-references-replicator-config-prop}ReplicatorType[ReplicatorType]
+
+:url-api-prop-replicator-config-target: {url-api-references-replicator-config-prop}Target[Target]
+// replaced
+// replaced
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: {url-api-references-replicator-config}{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+// // replaces ^^
+// :url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate: {url-api-references-replicator-config-prop}setAcceptOnlySelfSignedServerCertificate-boolean-[setAcceptOnlySelfSignedServerCertificate]
+
+
+
+
+
+
+
+
+
+:url-api-class-replicator-config-basic-auth: {url-api-references-basicauthenticator}[BasicAuthenticator]
+:url-api-class-replicator-config-cert-auth: {url-api-references-cca-authenticator}[ClientCertificateAuthenticator]
+
+
+
+
+
+// Meta API
+:url-api-references-meta: {url-api-classes-query-pfx}{api-pfx}Meta.html
+
+:url-api-property-meta-revisionid: {url-api-references-meta}{sep}{url-api-references-method-pfx}Query_Meta_RevisionID[Meta.revisionID]
+
+
+
+// BEGIN Logs and logging references
+:url-api-class-logging: {url-api-references2}Logging.html[Logging classes]
+:url-api-references-class-log: {url-api-references2}Logging.Log.html
+:url-api-class-log: {url-api-references-class-log}[Log]
+:url-api-class-log-prop-console: {url-api-references-class-log}{sep}Couchbase_Lite_Logging_Log_Console[Log Console Property]
+:url-api-class-log-prop-file: {url-api-references-class-log}{sep}Couchbase_Lite_Logging_Log_File[Log File Property]
+:url-api-class-log-prop-custom: {url-api-references-class-log}{sep}Couchbase_Lite_Logging_Log_Custom[Log Custom Property]
+
+:url-api-references-class-log-cons: {url-api-references-classes}ConsoleLogger.html
+:url-api-class-log-console: {url-api-references2}Logging.IConsoleLogger.html[IConsoleLogger]
+:url-api-class-log-console-getcons: {url-api-references-class-log}{sep}Couchbase_Lite_Logging_Log_Console[log.getConsole()]
+:url-api-class-log-console-getcons-setdmn: {url-api-references-class-log-cons}{sep}Couchbase_Lite_Logging_IConsoleLogger_Domains[log.getConsole().setDomain()]
+:url-api-class-log-console-getcons-setlvl: {url-api-references-class-log-cons}{sep}Couchbase_Lite_Logging_IConsoleLogger_Domains[log.getConsole().setLevel()]
+
+
+:url-api-references-class-log-cust: {url-api-references-classes}ILogger.html
+:url-api-iface-log-custom: {url-api-references2}Logging.ILogger.html[ILogger]
+:url-api-class-log-custom: {url-api-iface-log-custom}
+:url-api-class-log-custom-getcust: {url-api-references-class-log}{sep}Couchbase_Lite_Logging_Log_Custom[log.getCustom()]
+:url-api-class-log-custom-setcust: {url-api-references-class-log}{sep}Couchbase_Lite_Logging_Log_Custom[log.setCustom()]
+:url-api-class-log-custom-getcust-setlvl: {url-api-references-class-log-cust}{sep}Couchbase_Lite_Logging_ILogger_Level[log.getCustom().setLevel()]
+:url-api-class-log-custom-getfile-logmsg: {url-api-references-class-log-cust}{sep}Couchbase_Lite_Logging_ILogger_Log_Couchbase_Lite_Logging_LogLevel_Couchbase_Lite_Logging_LogDomain_System_String_[log.getCustom().log(LogLevel,LogDomain,String message)]
+
+:url-api-references-class-log-file:  {url-api-references2}Logging.FileLogger.html
+:url-api-class-log-file: {url-api-references-class-log-file}[FileLogger]
+:url-api-class-log-file-getfile: {url-api-references-class-log}{sep}Couchbase_Lite_Logging_Log_File[log.getFile()]
+:url-api-class-log-file-getfile-setcfg: {url-api-references-class-log-file}{sep}Couchbase_Lite_Logging_FileLogger_Config[log.getFile().setConfig(LogConfiguration)]
+:url-api-class-log-file-getfile-setlvl: {url-api-references-class-log-file}{sep}Couchbase_Lite_Logging_FileLogger_Level[log.getFile().setLevel()]
+:url-api-class-log-file-getfile-logmsg: {url-api-references-class-log-file}[log.getFile().log(LogLevel,LogDomain,String message)]
+
+:url-api-enum-log-domain: {url-api-references2}Logging.LogDomain.html[LogDomain]
+:url-api-enum-log-level: {url-api-references2}Logging.LogLevel.html[LogLevel]
+
+
+:url-api-references-class-log-config: {url-api-references2}Logging.LogFileConfiguration.html
+:url-api-class-log-config: {url-api-references-class-log-config}[LogFileConfiguration]
+:url-api-class-log-config-prop-dir: {url-api-references-class-log-config}{sep}Couchbase_Lite_Logging_LogFileConfiguration_MaxSize[LogFileConfiguration Directory]
+:url-api-class-log-config-prop-maxsz: {url-api-references-class-log-config}{sep}Couchbase_Lite_Logging_LogFileConfiguration_MaxSize[LogFileConfiguration MaxSize]
+:url-api-class-log-config-prop-maxcnt: {url-api-references-class-log-config}{sep}Couchbase_Lite_Logging_LogFileConfiguration_MaxRotationCount[LogFileConfiguration MaxRotationCount]
+:url-api-class-log-config-prop-plain: {url-api-references-class-log-config}{sep}Couchbase_Lite_Logging_LogFileConfiguration_UsePlaintext[LogFileConfiguration UsePlainText]
+
+// END  Logs and logging references
+
+// End -- API References attributes
+
+// END - Set attributes pointing to API references for this module
+
+// END -- inclusion -- {module-partials}_attributes-module.adoc

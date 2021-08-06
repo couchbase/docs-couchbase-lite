@@ -1,0 +1,85 @@
+// BEGIN -- inclusion -- common-sgw-replication-cfg-retryadoc
+//  Begin -- inclusion definition
+//    Use - output text pertaining to replication retry logic and config
+//    Params:
+//      :is-p2p: - sets the server as a listener and not a Sync Gateway
+//    Location -- modules/ROOT/pages/_partials/commons/
+//
+//    Inclusions and Attributes:
+//      Uses attributes from the _attributes-module.adoc to links to
+//      REST API properties (eg {url-api-prop-<blah>})
+//      You can find _attributes-module.adoc in this location for each platform:
+//        modules/<platform>/pages/_partials/
+//
+//  End -- inclusion definition
+
+:this-svr: Sync Gateway
+ifdef::is-p2p[]
+:this-svr: listener
+endif::[]
+
+Couchbase Lite for {param-title}'s replication retry logic assures a resilient connection.
+
+The replicator minimizes the chance and impact of dropped connections by maintaining a heartbeat; essentially pinging the {this-svr} at a configurable interval to ensure the connection remains alive.
+
+In the event it detects a transient error, the replicator will attempt to reconnect, stopping only when the connection is re-established, or the number of retries exceeds the retry limit (9 times for a single-shot replication and unlimited for a continuous replication).
+
+On each retry the interval between attempts is increased exponentially (exponential backoff) up to the maximum wait time limit (5 minutes).
+
+The REST API provides configurable control over this replication retry logic using a set of configiurable properties -- see: <<tbl-repl-retry>>.
+
+.Replication Retry Configuration Properties
+[#tbl-repl-retry,cols="2,3,5"]
+|===
+
+h|Property
+h|Use cases
+h|Description
+
+|{url-api-prop-replicator-config-setHeartbeat}
+a|* Reduce to detect connection errors sooner
+* Align to load-balancer or proxy `keep-alive` interval -- see Sync Gateway's topic {xref-sgw-bmk-load-balancer-keepalive}
+a|The interval (in seconds) between the heartbeat pulses.
+
+Default: The replicator pings the {this-svr} every 300 seconds.
+
+|{url-api-prop-replicator-config-setMaxRetries}
+|Change this to limit or extend the number of retry attempts.
+a| The maximum number of retry attempts
+
+* Set this to zero (0) to prevent any retry attempt
+* The retry attempt count is reset when the replicator is able to connect and replicate
+* Default values are:
+** Single-shot replication = 9;
+** Continuous replication = maximum integer value
+* Negative values generate a Couchbase exception `InvalidArgumentException`
+
+|{url-api-prop-replicator-config-setMaxRetryWaitTime}
+|Change this to adjust the interval between retries.
+a|The maximum interval between retry attempts
+
+Whilst you can configure the *maximum permitted* wait time,  each individual interval is calculated by the replicator's exponential backoff algorithm and is not configurable.
+
+* Default value: 300 seconds (5 minutes)
+* Zero or negative values generate a Couchbase exception, `InvalidArgumentException`.
+
+|===
+
+When necessary you can adjust any or all of those configurable values -- see: <<ex-repl-retry>> for how to do this.
+
+.Configuring Replication Retries
+[#ex-repl-retry]
+====
+[source, {source-language}]
+----
+include::{snippet}[tags=replication-retry-config, indent=0]
+
+----
+
+<.> Here we use {url-api-prop-replicator-config-setHeartbeat} to set the required interval (in seconds) between the heartbeat pulses
+<.> Here we use {url-api-prop-replicator-config-setMaxRetries} to set the required number of retry attempts
+<.> Here we use {url-api-prop-replicator-config-setMaxRetryWaitTime} to set the required interval between retry attempts.
+
+====
+
+// END -- inclusion -- common-sgw-replication-cfg-retryadoc

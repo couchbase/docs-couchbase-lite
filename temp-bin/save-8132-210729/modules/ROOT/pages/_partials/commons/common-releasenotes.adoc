@@ -1,0 +1,163 @@
+// BEGIN inclusion commons-releasenote.adoc
+// Release note body content for all platforms
+
+// BEGIN DO NOT REMOVE
+:param-abstract: This content describes the key features and changes implemented by release {version} of Couchbase Lite on {param-title}
+:param-related: {xref-cbl-pg-whatsnew}  |  {compatibility--xref} | {supported-os--xref}
+include::{root-partials}block-abstract.adoc[]
+
+// END DO NOT REMOVE
+
+// BEGIN: Decide which releases are relevant for this platform
+//
+// Android Maintenance Releases
+ifeval::["{param-module}"=="{platform-android}"]
+:param-3-0-0:
+endif::[]
+//
+// C Maintenance Releases
+ifeval::["{param-module}"=="{lang-mod-c}"]
+:param-3-0-0:
+endif::[]
+//
+// C# Maintenance Releases
+ifeval::["{param-module}"=="{lang-mod-csharp}"]
+:param-3-0-0:
+endif::[]
+//
+// Java Maintenance Releases
+ifeval::["{param-module}"=="{lang-mod-java}"]
+:param-3-0-0:
+endif::[]
+//
+// iOS Maintenance Releases
+ifeval::["{param-platform}"=="{platform-ios}"]
+:param-3-0-0:
+endif::[]
+//
+// END: Decide which releases are relevant for this platform
+
+// BEGIN: Show Maintenance Releases
+
+// Begin -- Release 3.0.x (All) -- mmm ccyy
+ifdef::param-3-0-x[]
+
+[#maint-latest]
+[#maint-3.0.x]
+== 3.0.x -- mmm ccyy
+Version 3.0.x of Couchbase Lite for {param-title} delivers a number of enhancements and bug fixes.
+
+=== Enhancements
+
+Enhancement highlights include the ability to vary the replicator heartbeat, which keeps continuous replication connections alive when idle -- see: xref:{replication--page}#lbl-cfg-htbt[Remote Sync Gateway -- Set heartbeat]
+
+ifdef::is-ios,is-java[]
+Couchbase Lite for {param-title} will now support Apple Silicon (M1)
+ifdef::is-ios[]
+and Mac Catalyst
+endif::[]
+.
+endif::[]
+
+include::{module-partials}pn-issues-list.adoc[tag=enhancements-3.0.x]
+
+[#issues-and-resolutions-3.0.x]
+=== Issues and Resolutions
+==== Known Issues
+
+include::{module-partials}pn-issues-list.adoc[tag=knownissues-3.0.x]
+
+==== Fixed Issues
+include::{module-partials}pn-issues-list.adoc[tag=fixed-3.0.x]
+
+endif::[]
+// End -- Release 3.0.x (All) -- Mar 2021
+
+// BEGIN -- Major Release
+[#major]
+== 3.0.0 -- xxxxember 20yy
+====
+_Quick Links_: <<new-features-3-0-0>> *|* <<improvements-3-0-0>> *|* <<issues-and-resolutions-3-0-0>> *|* <<support-notices-3-0-0>> *|* <<Related Content>>
+====
+
+[#new-features-3-0-0]
+=== New Features
+// tag::feature-highlights[]
+:param-link1: {xref-cbl-pg-landing-p2psync}
+include::{root-partials}pn-change-log-content.adoc[tag=all-new-3-0, leveloffset=+1]
+
+// end::feature-highlights[]
+[#improvements-3-0-0]
+=== Improvements
+
+==== Feature Changes
+// tag::feature-changes[]
+include::{root-partials}pn-change-log-content.adoc[tag=all-changed-features-3-0, leveloffset=+1]
+
+// end::feature-changes[]
+==== Other Enhancements
+include::{module-partials}pn-issues-list.adoc[tag=enhancements-3-0-0]
+
+==== API Changes
+// – identify any REST API changes
+// tag::api-changes[]
+include::{root-partials}pn-change-log-content.adoc[tag=all-changed-api-3-0, leveloffset=+1]
+
+// end::api-changes[]
+
+[#issues-and-resolutions-3-0-0]
+=== Issues and Resolutions
+==== Known Issues
+include::{module-partials}pn-issues-list.adoc[tag=knownissues-3-0-0]
+
+==== Fixed Issues
+include::{module-partials}pn-issues-list.adoc[tag=fixed-3-0-0]
+
+[#support-notices-3-0-0]
+=== Support Notices
+This section documents any support-related notes, constraints and changes
+
+==== Deprecation Notices
+Items (features and-or functionality) are marked as deprecated when a more current, and usually enhanced, alternative is available.
+
+Whilst the deprecated item will remain usable, it is no longer supported, and will be removed in a future release.
+You should plan to move to an alternative, supported, solution as soon as practical.
+
+===== This Release
+// include::{root-partials}block-deprecations.adoc[tag={param-platform}-new]
+include::{module-partials}pn-issues-list.adoc[tag=deprecated-3-0-0]
+* {empty}
++
+include::{root-partials}block-deprecations.adoc[tag=any-platform-new]
+
+===== Ongoing
+include::{root-partials}block-deprecations.adoc[tag=any-platform-ongoing]
+include::{root-partials}block-deprecations.adoc[tag={param-platform}-ongoing]
+
+// === End of Life
+// include::{root-partials}block-deprecations.adoc[tag=any-platform-eol]
+// include::{root-partials}block-deprecations.adoc[tag={param-platform}-eol]
+
+// === End of Support
+// {ns-this}
+
+==== Other Notices
+===== New
+include::{root-partials}block-supportnotices.adoc[tag=any-platform-new]
+include::{root-partials}block-supportnotices.adoc[tag={param-platform}-new]
+
+===== Ongoing
+include::{root-partials}block-supportnotices.adoc[tag=any-platform-ongoing]
+include::{root-partials}block-supportnotices.adoc[tag={param-platform}-ongoing]
+
+
+// DO NOT EDIT -- Footer Related Content Block
+include::{root-partials}block-related-content-prod.adoc[]
+// DO NOT EDIT
+
+// BEGIN: Destroy local param attributes
+:param-3.0.0!:
+// END: Destroy local param attributes
+
+
+// END inclusion commons-releasenotes.adoc

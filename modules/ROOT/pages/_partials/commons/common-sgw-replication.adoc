@@ -2,7 +2,7 @@
 
 // DO NOT DELETE
 // Include standard header
-:param-related: {xref-cbl-pg-conflict} | {xref-cbl-pg-dbreplica} | xref:{cbl-pg-p2psync-websocket}[Peer-to-Peer]
+:param-related: {conflict--xref} | {dbreplica--xref} | xref:{p2psync-websocket--page}[Peer-to-Peer]
 :topic-group: Topic Group -- Replication
 include::{root-partials}block-abstract.adoc[]
 :is-p2p!:
@@ -37,7 +37,7 @@ To use this protocol the replication URL should specify WebSockets as the URL sc
 
 Incompatibilities::
 Couchbase Lite's replication protocol is *incompatible* with CouchDB-based databases.
-And since Couchbase Lite 2.x+ only supports the new protocol, you will need to run a version of Sync Gateway that supports it -- see: {xref-cbl-pg-compatibility}.
+And since Couchbase Lite 2.x+ only supports the new protocol, you will need to run a version of Sync Gateway that supports it -- see: {compatibility--xref}.
 
 Legacy Compatibility::
 Clients using Couchbase Lite 1.x can continue to use `http` as the URL scheme.
@@ -90,7 +90,7 @@ By default, clients accept only servers presenting certificates that can be veri
 <.> Configure the credentials the client will present to the server.
 Here we say to provide _Basic Authentication_ credentials. Other options are available -- see: <<lbl-client-auth>>.
 
-<.> Configure how the replication should handle conflict resolution -- see: {xref-cbl-pg-conflict} topic for mor on conflict resolution.
+<.> Configure how the replication should handle conflict resolution -- see: {conflict--xref} topic for mor on conflict resolution.
 
 <.> Initialize the replicator using your configuration object -- see: <<lbl-init-repl>>.
 
@@ -172,7 +172,7 @@ This can result in significant savings in bandwidth consumption as well as throu
 
 Replications to a Server (for example, a Sync Gateway, or passive listener) automatically use delta sync if the property is enabled at database level by the server -- see: xref:sync-gateway:ROOT:refer/config-properties.adoc#databases-foo_db-delta_sync[databases.$db.delta_sync.enabled].
 
-{xref-cbl-pg-dbreplica} replications automatically *disable* delta sync, whilst xref:{cbl-pg-p2psync-websocket}[Peer-to-Peer] replications automatically *enable* delta sync.
+{dbreplica--xref} replications automatically *disable* delta sync, whilst xref:{p2psync-websocket--page}[Peer-to-Peer] replications automatically *enable* delta sync.
 
 // end::rep-delta-sync-concept[]
 
@@ -299,7 +299,7 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 :param-tags!:
 
 
-For more on troubleshooting with logs, see: {xref-cbl-pg-troubleshooting-logs}.
+For more on troubleshooting with logs, see: {troubleshooting-logs--xref}.
 
 === Authentication Errors
 If Sync Gateway is configured with a self signed certificate but your app points to a `ws` scheme instead of `wss` you will encounter an error with status code `11006` -- see: <<ex-11006>>

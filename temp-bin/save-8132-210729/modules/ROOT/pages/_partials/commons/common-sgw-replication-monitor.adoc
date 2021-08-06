@@ -1,0 +1,185 @@
+// BEGIN -- inclusion -- common-sgw-replication-monitor.adoc
+//  Usage:
+//  Params:
+//    :is-p2p:  set when including from P2P topic such as common-p2psync-websocket-using-active
+//  Included-by:
+//    {root-commons}p2psync-websocket-using-active.adoc
+//    {root-commons}sgw-replication.adoc
+//  ####
+
+In this section::
+<<lbl-repl-chng>>  |  <<lbl-repl-status>>  |  <<lbl-repl-evnts>> | <<lbl-repl-pend>>
+
+You can monitor a replication’s status by using a combination of <<lbl-repl-chng>> and the `replication.status.activity` property -- see; {url-api-enum-replicator-activity}.
+This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
+
+You can also choose to monitor document changes -- see: <<lbl-repl-evnts>>.
+
+[#lbl-repl-chng]
+== Change Listeners
+Use this to monitor changes and to inform on sync progress; this is an optional step.
+
+.Best Practice
+TIP: You should register the listener before starting your replication, to avoid having to do a restart to activate it ... and don't forget to save the token so you can remove the listener later
+
+Use the {url-api-class-replicator} class to add a change listener as a callback to the Replicator ({url-api-method-replicator-add-change-listener}) -- see: <<ex-repl-mon>>.
+You will then be asynchronously notified of state changes.
+
+Remove your change listener before stopping the replicator -- use the {url-api-method-replicator-rmv-change-listener} method to do this.
+
+
+[#lbl-repl-status]
+== Replicator Status
+
+You can use the {url-api-class-replicator} class's {url-api-property-replicator-status} property to check the replicator status.
+That is, whether it is actively transferring data or if it has stopped -- see: <<ex-repl-mon>>.
+
+// // ifeval::["{source-language"=="objc"]
+// Alternatively, use the {url-api-class-replicator-status} class to get status information.
+The returned _ReplicationStatus_ structure comprises:
+
+* {url-api-enum-replicator-activity} -- stopped, offline, connecting, idle or busy -- see states described in: <<tbl-states>>
+* {url-api-enum-replicator-progress}
+** completed -- the total number of changes completed
+** total -- the total number of changes to be processed
+* {url-api-enum-replicator-error} -- the current error, if any
+
+// Example 8
+[[ex-repl-mon]]
+.Monitor replication
+=====
+[{tabs}]
+====
+Adding a Change Listener::
++
+--
+[source, {source-language}]
+----
+
+include::{snippet}[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
+
+----
+--
++
+Using replicator.status::
++
+--
+[source, {source-language}]
+----
+
+include::{snippet}[tags=p2p-act-rep-status,indent=0]
+
+----
+--
+====
+=====
+
+
+[#lbl-repl-states]
+=== Replication States
+<<tbl-states>> shows the different states, or activity levels, reported in the API; and the meaning of each.
+
+.Replicator activity levels
+[#tbl-states,cols="^1,4"]
+|===
+h|State
+h|Meaning
+
+|`STOPPED`
+|The replication is finished or hit a fatal error.
+
+|`OFFLINE`
+|The replicator is offline as the remote host is unreachable.
+
+|`CONNECTING`
+|The replicator is connecting to the remote host.
+
+|`IDLE`
+|The replication caught up with all the changes available from the server.
+The `IDLE` state is only used in continuous replications.
+
+|`BUSY`
+|The replication is actively transferring data.
+|===
+
+NOTE: The replication change object also has properties to track the progress (`change.status.completed` and `change.status.total`).
+Since the replication occurs in batches the total count can vary through the course of a replication.
+
+include::{root-commons}sgw-replication-rep-status.adoc[tags={param-platform}]
+
+// begin inclusion of document changes text
+ifndef::is-p2p[]
+[#lbl-repl-evnts]
+== Monitor Document Changes
+
+You can choose to register for document updates during a replication.
+
+TIP: You should register the listener before starting your replication, to avoid having to do a restart to activate it.
+
+For example, the code snippet in <<ex-reg-doc-listener>> registers a listener to monitor document replication performed by the replicator referenced by the variable `replicator`.
+It prints the document ID of each document received and sent.
+Stop the listener as shown in <<ex-stop-doc-listener>>.
+
+[#ex-reg-doc-listener]
+.Register a document listener
+====
+[source, {source-language}]
+----
+include::{snippet}[tag=add-document-replication-listener,indent=0]
+----
+====
+
+[#ex-stop-doc-listener]
+.Stop document listener
+====
+This code snippet shows how to stop the document listener using the token from the previous example.
+
+[source, {source-language}]
+----
+include::{snippet}[tag=remove-document-replication-listener,indent=0]
+
+----
+
+====
+
+=== Document Access Removal Behavior
+
+When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
+
+endif::[]
+// end inclusion of document changes text
+
+[#lbl-repl-pend]
+== Documents Pending Push
+
+TIP: {url-api-method-replicator-isDocumentPending} is quicker and more efficient.
+Use it in preference to returning a list of pending document IDs, where possible.
+
+You can check whether documents are waiting to be pushed in any forthcoming sync by using either of the following API methods:
+
+* Use the {url-api-method-replicator-getPendingDocumentIds} method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.
++
+This can be very useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it is safe to exit.
+
+* Use the {url-api-method-replicator-isDocumentPending} method to quickly check whether an individual document is pending a push.
+
+[#ex-pending]
+.Use Pending Document ID API
+====
+
+[source, {source-language}]
+----
+include::{snippet}[tags=replication-pendingdocuments, indent=0]
+
+----
+<.> {url-api-method-replicator-getPendingDocumentIds} returns a list of the document IDs for all documents waiting to be pushed.
+This is a snapshot and may have changed by the time the response is received and processed.
+
+<.> {url-api-method-replicator-isDocumentPending} returns `true` if the document is waiting to be pushed, and `false` otherwise.
+
+====
+
+
+
+
+// END -- inclusion -- common-sgw-replication-monitor.adoc
