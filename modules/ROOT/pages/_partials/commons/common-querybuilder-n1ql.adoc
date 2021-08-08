@@ -15,7 +15,7 @@
 :menuitem-delimiter: {nbsp}{nbsp}|{nbsp}{nbsp}
 :count-result-text: The result set representing a count is a key-value pair. The key being the count name, as defined using `SelectResult.as`
 
-
+include::_block-caveats.adoc[tags="code-disclaimer"]
 
 // END::Local page attributes
 
@@ -63,7 +63,7 @@ TIP: We recommend working through the {url-n1ql-tutorial} as a good way to build
 Use the N1QLQuery class to define the N1QL query string on the database to be queried.
 Then run the query using the`.execute()` method -- see
 
-The result set produced by N1QL and {querybuilder--xref)} queries is the same -- see {query-resultsets--xref}.
+The result set produced by N1QL and {querybuilder--xref} queries is the same -- see {query-resultsets--xref}.
 
 
 .Running a N1QL Query
@@ -155,8 +155,9 @@ FROM dataSource  <.>
 
 === Arguments
 
-<.> `dataSource` -- this is the database name against which the query is to run.
-Use `AS` to give the database an alias you can use within the query.
+<.> Here `dataSource` is the database name against which the query is to run.
+Use `AS` to give the database an alias you can use within the query. +
+To use the current database, without specifying a name, use `_` as the datasource.
 
 <.> `JOIN joinclause` -- use this optional argument to link datasources -- see <<lbl-join>>
 
@@ -169,6 +170,9 @@ Use `AS` to give the database an alias you can use within the query.
 SELECT name FROM db
 SELECT store.name FROM db AS store
 SELECT store.name FROM db store
+SELECT name FROM _
+SELECT store.name FROM _ AS store
+SELECT store.name FROM _ store
 ----
 
 ====
@@ -543,6 +547,7 @@ SELECT firstName, lastName FROM db WHERE middleName IS NULL
 
 ===== Purpose
 The MISSING literal represents a missing name-value pair in a document.
+
 ===== Syntax
 
 [source,sql]
@@ -572,9 +577,9 @@ arrayLiteral = '[' _ (expression ( _ ',' _ e2:expression )* )? ']'
 ===== Example
 [source,sql]
 ----
-SELECT [“a”, “b”, “c”] FROM db
-SELECT [ property1, property2, property3] FROM db
-SELECT * FROM db WHERE name IN [“James”, “John”, “Jack”
+SELECT [“a”, “b”, “c”] FROM _
+SELECT [ property1, property2, property3] FROM _
+SELECT * FROM _ WHERE name IN [“James”, “John”, “Jack”]
 ----
 
 [#lbl-lit-dict]
@@ -631,7 +636,7 @@ TIP: To use other characters in the identifier, surround the identifier with the
 
 [source, sql]
 ----
-SELECT * FROM db
+SELECT * FROM _
 
 SELECT * FROM `db-1` <.>
 
@@ -714,7 +719,7 @@ Evaluates expressions over items in an array object.
 ----
 arrayExpression = <.>
   anyEvery _ variableName <.>
-     _ IN <.>  _ expression <.>
+     _ IN  _ expression <.>
        _ SATISFIES _ expression <.>
     END <.>
 
@@ -958,22 +963,22 @@ WHERE v1 <> v2
 a|String wildcard pattern matching ^2^ comparison.
 Two wildcards are supported:
 
-`%` Matches zero or more characters. +
-`_` Matches a single character.
+* `%` Matches zero or more characters. +
+* `_` Matches a single character.
 
 
 |WHERE name LIKE ‘a%’ +
 WHERE name LIKE ‘%a’ +
 WHERE name LIKE ‘%or% +
 WHERE name LIKE ‘a%o%’ +
-WHERE name LIKE ‘%_r%’ +
+WHERE name LIKE ‘%\_r%’ +
 WHERE name LIKE ‘%a_%’ +
 WHERE name LIKE ‘%a__%’ +
 WHERE name LIKE ‘aldo’
 
 
 |MATCH
-|String matching using FTS see <<lbl-ops-match>>
+|String matching using FTS see <<lbl-func-fts>>
 |WHERE v1-index MATCH "value"
 
 |BETWEEN
@@ -1007,7 +1012,7 @@ WHERE name LIKE ‘aldo’
 
 |===
 
-^2^ Matching is case-insensitive for ASCII characters, case-sensitive for non-ASCII (default).
+^2^ Matching is case-insensitive for ASCII characters, case-sensitive for non-ASCII.
 
 
 ^3^ Use of `IS` and `IS NOT` is limited to comparing `NULL` and `MISSING` values (this encompasses `VALUED`).
@@ -1627,7 +1632,7 @@ Returns `NULL` if either or both expressions are `NULL`.+
 |Returns the arctangent in radians.
 
 |ATAN2(expr1,expr2)
-|Returns the arctangent of expr2/expr1.
+|Returns the arctangent of expr1/expr2.
 
 |CEIL(expr)
 |Returns the smallest integer not less than the number.
@@ -1639,11 +1644,6 @@ Returns `NULL` if either or both expressions are `NULL`.+
 |Returns float division of expr1 and expr2. +
 Both expr1 and expr2 are cast to a double number before division. +
 The returned result is always a double.
-
-|IDIV(expr1, expr2)
-|Returns integer division of expr1 and expr2. +
-Both expr1 and expr2 are cast to an integer number before division. +
-The returned result is always an integer.
 
 |DEGREES(expr)
 |Converts radians to degrees.
