@@ -1947,7 +1947,6 @@ class ExamplesP2p(private val context: Context) {
     //@Test
     @Throws(CouchbaseLiteException::class, URISyntaxException::class)
     fun testGettingStarted() {
-        // tag::getting-started[]
 
         // Initialize the Couchbase Lite system
         CouchbaseLite.init(context)
@@ -2159,7 +2158,6 @@ class ExamplesP2p(private val context: Context) {
     @Throws(CouchbaseLiteException::class, URISyntaxException::class)
     fun testActPeerSync() {
         // tag::p2p-act-rep-func[]
-        // tag::getting-started[]
         // tag::p2p-act-rep-initialize[]
         // initialize the replicator configuration
         val thisConfig = ReplicatorConfiguration(
