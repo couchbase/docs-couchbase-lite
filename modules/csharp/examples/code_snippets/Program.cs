@@ -1664,6 +1664,39 @@ var query =
     // end::merge-conflict-resolver[]
 
 
+// N1QL QUERY
+
+
+  public  List<Result> testN1QLQueryString (Database argDB)
+  {
+      // For Documentation
+      DatabaseConfiguration dbCfg = new DatabaseConfiguration();
+      dbCfg.Directory =
+          Path.Combine(Service.GetInstance<IDefaultDirectoryResolver>().DefaultDirectory(), username);
+      // tag::query-syntax-n1ql[]
+      Database thisDb = new Database(dbName, dbCfg);
+
+      var thisQuery =
+          thisDb.CreateQuery(
+              "SELECT META().id AS thisId FROM $thisDb.name " +
+              "WHERE type = $type"); // <.>
+
+      thisQuery.Parameters.SetString("type", "hotel"); // <.>
+
+      var results = thisQuery.Execute().AllResults();
+
+      return results;
+      // end::query-syntax-n1ql[]
+  }
+
+    // tag::query-syntax-n1ql-params[]
+    tbd
+    // end::query-syntax-n1ql-params[]
+
+    // tag::query-access-n1ql[]
+    tbd
+    // end::query-access-n1ql[]
+
 
 // QUERY RESULT SET HANDLING EXAMPLES
 
