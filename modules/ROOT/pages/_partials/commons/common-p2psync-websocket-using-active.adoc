@@ -46,11 +46,19 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 <.> Configure how the client will authenticate the server.
 Here we say connect only to servers presenting a self-signed certificate.
 By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<authenticate-listener>>.
+
+<.> By default pull replications will auto-purge documents that this user no longer has access to -- see: <<lbl-auto-purge-on-revoke>>.
+Here we over-ride this behavior by setting its flag false.
+
 <.> Configure the credentials the client will present to the server.
 Here we say to provide _Basic Authentication_ credentials. Other options are available -- see: <<configuring-client-authentication>>.
+
 <.> Configure how the replication should perform <<conflict-resolution>>.
+
 <.> Initialize the replicator using your configuration object.
+
 <.> Register an observer, which will notify you of changes to the replication status.
+
 <.> Start the replicator.
 
 
@@ -74,17 +82,25 @@ endif::[]
 
 == Configure Replicator
 In this section::
-<<lbl-cfg-tgt>>  |  <<lbl-cfg-sync>>  |  <<lbl-cfg-retry>>  |  <<authenticate-listener>>  | <<lbl-authclnt>>
+<<lbl-cfg-tgt>>
+|  <<lbl-cfg-sync>>
+|  <<lbl-cfg-retry>>
+|  <<authenticate-listener>>
+|  <<lbl-authclnt>>
+| <<lbl-auto-purge-on-revoke>>
+
 
 [#lbl-cfg-tgt]
 === Configure Target
 
 include::{root-commons}sgw-replication-cfg-tgt.adoc[]
 
+
 [#lbl-cfg-sync]
 === Sync Mode
 
 include::{root-commons}sgw-replication-cfg-sync-mode.adoc[]
+
 
 [#lbl-cfg-retry]
 === Retry Configuration
@@ -143,6 +159,12 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 :param-leader!:
 <.> Get an identity from secure storage and create a TLS Identity object
 <.> Set the authenticator to {url-api-class-replicator-config-cert-auth} and configure it to use the retrieved identity
+
+
+[#lbl-auto-purge-on-revoke]
+=== Auto-purge on Channel Access Revocation
+
+include::{root-commons}sgw-replication-cfg-autopurge.adoc[]
 
 
 == Initialize Replicator
