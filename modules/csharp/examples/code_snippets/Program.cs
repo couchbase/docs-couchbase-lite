@@ -2688,6 +2688,12 @@ public class Examples {
     thisConfig.ReplicatorType = ReplicatorType.PushAndPull;
 
     // end::p2p-act-rep-config-type[]
+    // tag::autopurge-override[]
+    // Set autopurge option
+    // here we override its default
+    thisConfig.EnableAutoPurge = false; // <.>
+
+    // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
     // Configure Sync Mode
     thisConfig.Continuous = true; // default value

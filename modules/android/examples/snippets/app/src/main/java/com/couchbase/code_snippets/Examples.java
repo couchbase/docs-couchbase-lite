@@ -1142,7 +1142,17 @@ public class docOnly_Examples {
     }
 
 
+    public void docsSetAutoPurge() throws CouchbaseliteException {
 
+      DatabaseConfiguration config = new DatabaseConfiguration();
+      Database database1 = new Database("mydb", config);
+
+      ReplicatorConfiguration repcfg =
+      new ReplicatorConfiguration(database, target);
+
+      repcfg.setAutoPurgeEnabled(true) // <.>
+
+    }
 
 
     public void testDatabaseReplica() throws CouchbaseLiteException {
@@ -2320,6 +2330,11 @@ private void ibP2PUrlEndpointListener() {
     thisConfig.setContinuous(false); // default value
 
     // end::p2p-act-rep-config-cont[]
+    // tag::autopurge-override[]
+    // set auto-purge behavior (here we override default)
+    thisConfig.setAutoPurgeEnabled(false); // <.>
+
+    // end::autopurge-override[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Authentication --
     // only accept self-signed certs

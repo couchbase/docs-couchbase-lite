@@ -2178,6 +2178,16 @@ class ExamplesP2p(private val context: Context) {
         thisConfig.setContinuous(false) // default value
 
         // end::p2p-act-rep-config-cont[]
+
+        // tag::autopurge-override[]
+        // set auto-purge behavior
+        // (here we override default)
+        thisConfig.setAutoPurgeEnabled(false) // <.>
+
+        // end::autopurge-override[]
+
+
+
         // tag::p2p-act-rep-config-self-cert[]
         // Configure Server Authentication --
         // only accept self-signed certs
