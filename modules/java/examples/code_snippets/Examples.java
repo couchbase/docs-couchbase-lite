@@ -2535,6 +2535,11 @@ public class Examples {
       ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
 
     // end::p2p-act-rep-config-type[]
+    // tag::autopurge-override[]
+    // set auto-purge behavior (here we override default)
+    thisConfig.setAutoPurgeEnabled(false); // <.>
+
+    // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
     // Configure Sync Mode
     thisConfig.setContinuous(false); // default value

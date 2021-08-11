@@ -64,14 +64,6 @@ endif::[]
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
 <<ex-simple-repl>> shows the configuration and initialization process.
 
-// Example 1
-[#ex-simple-repl]
-.Replication configuration and initialization
-
-:param-tags: p2p-act-rep-func
-include::{root-partials}_block_tabbed_code_example.adoc[]
-:param-tags!:
-
 ifdef::is-android[]
 [NOTE]
 --
@@ -79,9 +71,19 @@ include::{root-partials}_block-caveats.adoc[tags=android-threads]
 --
 endif::[]
 
+// Example 1
+[#ex-simple-repl]
+.Replication configuration and initialization
+:param-tags: p2p-act-rep-func
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
 *Notes on Example*
 
 <.> Use the {url-api-class-replicator-config} class's constructor -- {url-api-constructor-replicator-config-db-tgt} -- to initialize the replicator configuration with the local database -- see also: <<lbl-cfg-tgt>>
+
+<.> The default is to auto-purge documents that this user no longer has access to -- see: <<anchor-auto-purge-on-revoke>>.
+Here we over-ride this behavior by setting its flag false.
 
 <.> Configure how the client will authenticate the server.
 Here we say connect only to servers presenting a self-signed certificate.
@@ -97,14 +99,26 @@ Here we say to provide _Basic Authentication_ credentials. Other options are ava
 <.> Optionally, register an observer, which will notify you of changes to the replication status -- see: <<lbl-repl-mon>>
 
 <.> Start the replicator  -- see: <<lbl-repl-start>>.
-====
 
 [#lbl-cfg-repl]
 == Configure
 
 In this section::
-<<lbl-cfg-tgt>>  |  <<lbl-cfg-sync>>  |  <<lbl-cfg-keep-alive>>  |  <<lbl-svr-auth>>  | <<lbl-client-auth>> | <<lbl-repl-evnts>> |  <<lbl-repl-hdrs>> |  <<lbl-repl-ckpt>> |  <<lbl-repl-fltrs>> | <<lbl-repl-chan>> | <<lbl-repl-delta>>
-
++
+--
+<<lbl-cfg-tgt>>
+|  <<lbl-cfg-sync>>
+|  <<lbl-cfg-keep-alive>>
+|  <<lbl-svr-auth>>
+|  <<lbl-client-auth>>
+|  <<lbl-repl-evnts>>
+|  <<lbl-repl-hdrs>>
+|  <<lbl-repl-ckpt>>
+|  <<lbl-repl-fltrs>>
+|  <<lbl-repl-chan>>
+|  <<anchor-auto-purge-on-revoke>>
+|  <<lbl-repl-delta>>
+--
 
 [#lbl-cfg-tgt]
 === Configure Target
@@ -159,6 +173,148 @@ include::{root-partials}replication-filters.adoc[]
 === Channels
 
 include::{root-partials}replication-channels.adoc[]
+
+
+[#anchor-auto-purge-on-revoke]
+=== Auto-purge on Channel Access Revocation
+
+.Breaking Change
+[CAUTION]
+--
+By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of user’s other channels) are auto-purged from the local database (in devices belonging to the user). +
+_In release 2.x these documents will remain in the local database._
+--
+
+==== Behavior
+Users may lose access to channels in a number of ways:
+
+* User loses direct access to channel
+* User is removed from a role
+* A role that user belongs to is revoked access to channel
+
+In 3.x, by default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user’s other channels -- see: <<tbl-revoke-behavior>>.
+
+Documents that exist in multiple channels belonging to the user (even if they are not actively replicating that channel) are not auto-purged unless the user loses access to all channels.
+
+Users will be receive an `AccessRemoved` notification from the DocumentListener if they lose document access due to channel access revocation; this is sent regardless of the current auto-purge setting.
+Clients wanting to control whether to sync previous auto purged versions of documents (rather than pull down purged documents) must also move the documents out of all of the users' channels so they are not synced down again.
+
+.Behavior following access revocation
+[#tbl-revoke-behavior, cols="^1h,2a,2a", options="header"]
+|===
+
+2+|System State
+^|Impact on Sync
+
+.>h|Replication Type
+^.>h|Access Control on Sync Gateway
+^.>h|Expected behavior when _enable_auto_purge=true_
+
+|Pull only
+|User revoked access to channel.
+
+Sync Function includes `requireAccess(revokedChannel)`
+|Previously synced documents are auto purged on local
+
+|Push only
+|User revoked access to channel. Sync Function includes `requireAccess(revokedChannel)`
+|No impact of auto-purge
+
+Documents get pushed but are rejected by Sync Gateway
+
+|Push-pull
+|User revoked access to channel +
+Sync Function includes `requireAccess(revokedChannel)`
+|Previously synced documents are auto purged on Couchbase Lite.
+
+Local changes continue to be  pushed to remote but are rejected by Sync Gateway
+
+|===
+
+
+If a user subsequently regains access to a lost channel, then any previously auto-purged documents still assigned to any of their channels are automatically pulled down by the active Sync Gateway -- see behavior summary in <<tbl-regain-behavior>>
+
+.Behavior if access is regained
+[#tbl-regain-behavior, cols="^1h,2a,2a", options="header"]
+|===
+
+2+|System State
+^|Impact on Sync
+
+.>h|Replication Type
+^.>h|Access Control on Sync Gateway
+^.>h|Expected behavior when _enable_auto_purge=true_
+
+|Pull only
+|User REASSIGNED access to channel
+|Previously purged documents that are still in the channel are automatically pulled by couchbase lite
+
+|Push only
+|User REASSIGNED access to channel
+Sync Function includes requireAccess
+(reassignedChannel)
+No impact of auto-purge
+|Local changes previously rejected by Sync Gateway will not be automatically pushed to remote unless resetCheckpoint is involved on CBL.
+Document changes subsequent to the channel reassignment will be pushed up as usual.
+
+|Push-pull
+|User REASSIGNED access to channel
+
+Sync Function includes requireAccess
+(reassignedChannel)
+|Previously purged documents are automatically pulled by couchbase lite
+
+Local changes previously rejected by Sync Gateway will not be automatically pushed to remote unless resetCheckpoint is involved.
+Document changes subsequent to the channel reassignment will be pushed up as usual
+
+|===
+
+
+==== Config
+
+Auto-purge behavior is controlled primarily by the ReplicationConfiguration option {url-api-prop-replicator-config-autopurge}.
+Changing the state of this will impact *only* future replications; the replicator will not attempt to sync revisions that were auto purged on channel access removal.
+Clients wishing to sync previously removed documents must use the resetCheckpoint API to resync from the start.
+
+
+.Setting auto-purge
+[#ex-set-auto-purge]
+:param-tags: autopurge-override
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+<.> Here we have opted to turn off the auto purge behavior. By default this is ON (true)
+
+==== Overrides
+Where necessary, clients can override the default auto-purge behavior.
+This can be done either by setting {url-api-prop-replicator-config-autopurge} to false, or for finer control by applying pull-filters -- see: <<tbl-pull-filters>> and <<lbl-repl-fltrs>>
+This ensures backwards compatible with 2.8 clients that use pull filters to prevent auto purge of removed docs.
+
+.Impact of Pull-Filters
+[#tbl-pull-filters,cols="^1,2,2"]
+|===
+
+.2+.^h|purge_on_removal setting
+
+2+^h|Pull Filter
+
+^h|Not Defined
+^h|Defined to filter removals/revoked docs
+
+|disabled
+2+a|Doc remains in local database
+
+App notified of “accessRemoved” if a _Documentlistener_ is registered
+
+|enabled (DEFAULT)
+a|Doc is auto purged
+
+App notified of “accessRemoved” if _Documentlistener_ registered
+a|Doc remains in local database
+
+App notified of “Rejected Rev(403)” if _Documentlistener_ registered
+
+|===
+
 
 [#lbl-repl-delta]
 === Delta Sync
