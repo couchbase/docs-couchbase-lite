@@ -40,15 +40,12 @@ endif::[]
 
 [#simple-replication-to-listener]
 .Replication configuration and initialization
-:param-tags: p2p-act-rep-func
+:param-tags: p2p-act-rep-func;!autopurge-override
 include::{root-partials}_block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Configure how the client will authenticate the server.
 Here we say connect only to servers presenting a self-signed certificate.
 By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<authenticate-listener>>.
-
-<.> By default pull replications will auto-purge documents that this user no longer has access to -- see: <<lbl-auto-purge-on-revoke>>.
-Here we over-ride this behavior by setting its flag false.
 
 <.> Configure the credentials the client will present to the server.
 Here we say to provide _Basic Authentication_ credentials. Other options are available -- see: <<configuring-client-authentication>>.
@@ -87,7 +84,7 @@ In this section::
 |  <<lbl-cfg-retry>>
 |  <<authenticate-listener>>
 |  <<lbl-authclnt>>
-| <<lbl-auto-purge-on-revoke>>
+// | <<lbl-auto-purge-on-revoke>>
 
 
 [#lbl-cfg-tgt]
@@ -161,10 +158,10 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 <.> Set the authenticator to {url-api-class-replicator-config-cert-auth} and configure it to use the retrieved identity
 
 
-[#lbl-auto-purge-on-revoke]
-=== Auto-purge on Channel Access Revocation
+// [#lbl-auto-purge-on-revoke]
+// === Auto-purge on Channel Access Revocation
 
-include::{root-commons}sgw-replication-cfg-autopurge.adoc[]
+// include::{root-commons}sgw-replication-cfg-autopurge.adoc[]
 
 
 == Initialize Replicator
