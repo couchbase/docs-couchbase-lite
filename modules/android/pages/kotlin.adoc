@@ -1,6 +1,6 @@
 = Kotlin
 :page-edition: 3.0
-:description: Couchbase Lite database data model concepts - blobs
+:description: Couchbase Lite for Android -- Kotlin support
 
 include::partial$_std-cbl-hdr-android.adoc[]
 // :param-name: {lang-name-android}
@@ -12,9 +12,133 @@ include::partial$_std-cbl-hdr-android.adoc[]
 include::{root-partials}block-abstract.adoc[]
 
 
-== Placeholder Only
+== Introduction
 
-Content tbd
+Couchbase Lite for Android 3.0 introduces full idiomatic support for Kotlin apps, out-of-the-box.
 
+Kotlin developers can now build apps using https://developer.android.com/kotlin/common-patterns[common Kotlin Patterns], that integrate seamlessly with Couchbase Lite for Android and have full feature parity with the Java API; no need for custom extensions.
+
+Java support and functionality continues for Android.
+
+
+== Kotlin-specific API methods
+
+A number of Kotlin-specific API calls are available, which take advantage of Kotlin features such as, for example, Kotlin https://developer.android.com/kotlin/flow[Flows].
+
+
+
+=== Config constructors
+
+These constructors allow use of named parameters to specify property settings.
+
+==== Database
+----
+val DatabaseConfigurationFactory: DatabaseConfiguration? = null
+
+fun DatabaseConfiguration?.create(
+    databasePath: String? = null,
+    encryptionKey: EncryptionKey? = null
+)
+----
+
+==== Replication
+
+----
+val ReplicatorConfigurationFactory: ReplicatorConfiguration? = null
+
+fun ReplicatorConfiguration?.create(
+    database: Database? = null,
+    target: Endpoint? = null,
+    type: ReplicatorType? = null,
+    continuous: Boolean? = null,
+    authenticator: Authenticator? = null,
+    headers: Map<String, String>? = null,
+    pinnedServerCertificate: ByteArray? = null,
+    channels: List<String>? = null,
+    documentIDs: List<String>? = null,
+    pushFilter: ReplicationFilter? = null,
+    pullFilter: ReplicationFilter? = null,
+    conflictResolver: ConflictResolver? = null,
+    maxAttempts: Int? = null,
+    maxAttemptWaitTime: Int? = null,
+    heartbeat: Int? = null,
+    enableAutoPurge: Boolean? = null,
+    acceptOnlySelfSignedServerCertificate: Boolean? = null
+)
+
+val MessageEndpointListenerConfigurationFactory: MessageEndpointListenerConfiguration? = null
+
+fun MessageEndpointListenerConfiguration?.create(
+    database: Database? = null,
+    protocolType: ProtocolType? = null
+)
+----
+
+==== Inter-Sync Gateway Replication
+----
+val URLEndpointListenerConfigurationFactory: URLEndpointListenerConfiguration? = null
+
+fun URLEndpointListenerConfiguration?.create(
+    database: Database? = null,
+    networkInterface: String? = null,
+    port: Int? = null,
+    disableTls: Boolean? = null,
+    identity: TLSIdentity? = null,
+    authenticator: ListenerAuthenticator? = null,
+    readOnly: Boolean? = null,
+    enableDeltaSync: Boolean? = null,
+)
+----
+
+==== Full Text Search
+----
+val FullTextIndexConfigurationFactory: FullTextIndexConfiguration? = null
+
+fun FullTextIndexConfiguration?.create(expression: String? = null)
+----
+
+==== Indexing
+----
+val ValueIndexConfigurationFactory: ValueIndexConfiguration? = null
+
+fun ValueIndexConfiguration?.create(vararg expressions: String = emptyArray())
+----
+
+==== Logs
+
+----
+val LogFileConfigurationFactory: LogFileConfiguration? = null
+
+fun LogFileConfiguration?.create(
+    directory: String? = null,
+    maxSize: Long? = null,
+    maxRotateCount: Int? = null,
+    usePlainText: Boolean? = null
+)
+----
+
+=== Flows
+
+These wrappers use _Flowables_ to return changes and query results
+
+----
+@ExperimentalCoroutinesApi
+fun Database.databaseChangeFlow(executor: Executor? = null)
+
+@ExperimentalCoroutinesApi
+fun Database.documentChangeFlow(documentId: String, executor: Executor? = null)
+
+@ExperimentalCoroutinesApi
+fun Replicator.replicatorChangesFlow(executor: Executor? = null)
+
+@ExperimentalCoroutinesApi
+fun Replicator.documentReplicationFlow(executor: Executor? = null)
+
+@ExperimentalCoroutinesApi
+fun Query.queryChangeFlow(executor: Executor? = null)
+
+@ExperimentalCoroutinesApi
+fun MessageEndpointListener.messageEndpointChangeFlow(executor: Executor? = null)
+----
 
 include::{root-partials}block-related-content-data.adoc[]
