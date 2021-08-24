@@ -10,10 +10,234 @@
 //:this-url-issues: {par-url-issues}
 // END::REQUIRED EXTERNALS
 
-// BEGIN::Local page attributes
 
-== Placeholder
+== Introduction
 
-TBD
+There are several minor but notable behavior differences between N1QL queries on Couchbase Lite and N1QL on Couchbase Server.
+
+In some instance you can, if required, force Couchbase Lite to work in the same way as Couchbase Server. These instances are noted in the content below.
+
+
+=== OrderBy
+
+In Couchbase Lite N1QL, result sequencing is based on the SQLite ordering described in https://sqlite.org/lang_select.html[SQLite select overview]
+
+The ordering of _Dictionary_ and _Array_ objects is based on binary ordering.
+
+For Couchbase Server, result sequencing is based on specific rules described in {svr-n1ql-reference-orderby--xref}
+
+
+== Boolean Logic Rules
+
+Couchbase Lite N1QL's boolean logic rules are based on SQLite’s, so:
+
+* TRUE is TRUE, and FALSE is FALSE
+* Numbers 0 or 0.0 are FALSE
+* Arrays and dictionaries are FALSE
+* String and Blob are TRUE if the values are casted as a non-zero or FALSE if the values are casted as 0 or 0.0 (See SQLITE’s CAST and Boolean expressions here for more details)
+* NULL is FALSE
+* MISSING is MISSING
+
+Couchbase Server operates in the same way as Couchbase Lite, except:
+
+* MISSING, NULL and FALSE are FALSE
+* Numbers 0 is FALSE
+* Empty strings, arrays, and objects are FALSE
+* All other values are TRUE
+
+====
+You can choose to use _Couchbase Server's N1QL rules_ by using the `TOBOOLEAN(expr)` function to convert a value to its boolean value.
+====
+
+
+=== Logical Operations
+
+Couchbase Lite logical operations will return one of three possible values; `TRUE`, `FALSE`, or `MISSING`.
+
+Logical operations with the `MISSING` value could result in `TRUE` or `FALSE` if the result can be determined regardless of the missing value, otherwise the result will be `MISSING`.
+
+In Couchbase Lite N1QL -- unlike Couchbase Server N1QL -- `NULL` is implicitly converted to `FALSE` before evaluating logical operations.
+<<tbl-logops>> summarizes the result of logical operations with different operand values and also shows where the Couchbase Server behavior differs.
+
+
+.Logical Operations Comparison
+[#tbl-logops, cols="^1m,^1m,^1m,^1m,^1m,^1m,^1m", options-"header"]
+|===
+
+.2+.>h| Operand +
+a
+3+h|Couchbase Lite
+3+h|Couchbase Server
+
+h| b
+h| a AND b
+h| a OR b
+h| b
+h| a AND b
+h| a OR b
+
+.4+| TRUE
+| TRUE
+| TRUE
+| TRUE
+// | TRUE
+// | TRUE
+// | TRUE
+|-|-|-
+
+| FALSE
+| FALSE
+| TRUE
+|-|-|-
+// | FALSE
+// | FALSE
+// | TRUE
+
+| NULL
+| FALSE
+| TRUE
+|-
+// | NULL
+| *NULL*
+|-
+// | TRUE
+
+| MISSING
+| MISSING
+| TRUE
+|-|-|-
+// | MISSING
+// | MISSING
+// | TRUE
+
+.4+| FALSE
+| TRUE
+| FALSE
+| TRUE
+|-|-|-
+// | TRUE
+// | FALSE
+// | TRUE
+
+| FALSE
+| FALSE
+| FALSE
+|-|-|-
+// | FALSE
+// | FALSE
+// | FALSE
+
+| NULL
+| FALSE
+| FALSE
+|-|-
+// | NULL
+// | FALSE
+| *NULL*
+
+| MISSING
+| FALSE
+| MISSING
+|-|-|-
+// | MISSING
+// | FALSE
+// | MISSING
+
+.4+| NULL
+| TRUE
+| FALSE
+| TRUE
+// | TRUE
+|-
+| *NULL*
+|-
+// | TRUE
+
+| FALSE
+| FALSE
+| FALSE
+| -
+| -
+// | FALSE
+// | FALSE
+| *NULL*
+
+| NULL
+| FALSE
+| FALSE
+// | NULL
+| -
+| *NULL*
+| *NULL*
+
+| MISSING
+| FALSE
+| MISSING
+| -
+// | MISSING
+| *MISSING*
+| *NULL*
+
+.4+|MISSING
+| TRUE
+| MISSING
+| TRUE
+|-|-|-
+// | TRUE
+// | MISSING
+// | TRUE
+
+| FALSE
+| FALSE
+| MISSING
+|-|-|-
+// | FALSE
+// | FALSE
+// | MISSING
+
+| NULL
+| FALSE
+| MISSING
+// | NULL
+|-
+| *MISSING*
+| *NULL*
+
+| MISSING
+| MISSING
+| MISSING
+|-|-|-
+// | MISSING
+// | MISSING
+// | MISSING
+
+
+|===
+
+
+=== Division Operator
+
+In Couchbase Lite N1QL, the operands' type determines the
+ division operation performed.
+If both are integers, integer division is used.
+If one is a floating number, then float division is used.
+
+In contrast, Couchbase Server N1QL always performs float division regardless of the types of the operands.
+====
+You can force this behavior in Couchbase Lite N1QL by using the `DIV(x, y)` function.
+====
+
+=== Round Function
+
+In Couchbase Lite N1QL, the `ROUND()` function returns a value to the given number of integer digits to the right of the decimal point (left if digits is negative).
+Digits are 0 if not given.
+Midpoint values are handled using the _Rounding Away From Zero_ convention, which rounds them to the next number away from zero (for example, `ROUND(1.85)` returns 1.9).
+
+In Couchbase Server N1QL `ROUND()` uses the _Rounding to Nearest Even_ convention (for example, `ROUND(1.85)` returns 1.8).
+====
+You can force this behavior in Couchbase Lite by using the `ROUND_EVEN()` function.
+====
+
+
 
 // END --- inclusion -- common-querybuilder-n1ql.adoc
