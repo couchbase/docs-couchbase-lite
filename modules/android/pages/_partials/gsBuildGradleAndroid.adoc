@@ -4,22 +4,28 @@
 application {mainClassName = 'gettingstarted.GettingStarted'}
 
 plugins {
-    id 'java'
-    id 'application'
+  id 'java'
+  id 'application'
 //   ... other section content as required by user
 }
 
 
 // tag::compileOptions[]
-android {
-    // Required only if your project has some Kotlin source code
-    kotlinOptions { jvmTarget = '1.8' }
 
-    // Set minimum JVM level to ensure availability of, for example, lambda expressions
-    compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
-    } 
+// Set Couchbase Lite version
+def version = '3.0.0' // <1>
+
+// Set minimum JVM level to ensure availability of, for example, lambda expressions
+def jvmversion = '1.8'
+
+android {
+// Required only if your project has some Kotlin source code
+  kotlinOptions { jvmTarget = ${jvmversion}`}
+
+  compileOptions {
+      targetCompatibility ${jvmversion}
+      sourceCompatibility ${jvmversion}
+  } 
 
 //   ... other section content as required by user
 }
@@ -27,7 +33,9 @@ android {
 
 // tag::dependencies[]
 dependencies {
-    implementation "com.couchbase.lite:couchbase-lite-android-ee:${version}"
+
+  implementation "com.couchbase.lite.kotlin:couchbase-lite-kt-android-ee:${version}" // <2>
+  implementation "com.couchbase.lite.kotlin:couchbase-lite-android-ee:${version}" // <3>
 
 //   ... other section content as required by user
 }
@@ -35,9 +43,7 @@ dependencies {
 
 // tag::repositories[]
 repositories {
-    maven { url 'https://mobile.maven.couchbase.com/maven2/dev/' }
-    google()
-    jcenter()
+  maven { url 'https://mobile.maven.couchbase.com/maven2/dev/' }
 
 //   ... other section content as required by user
 }
@@ -47,7 +53,9 @@ repositories {
 
 // tag::dependenciesCE[]
 dependencies {
-    implementation "com.couchbase.lite:couchbase-lite-android:${version}"
+
+  implementation "com.couchbase.lite.kotlin:couchbase-lite-kt-android:${version}" // <2>
+  implementation "com.couchbase.lite.kotlin:couchbase-lite-android:${version}" // <3>
 
 //   ... other section content as required by user
 }
