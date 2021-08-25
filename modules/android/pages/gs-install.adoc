@@ -11,14 +11,25 @@ include::{root-partials}block-abstract.adoc[]
 // include::{root-partials}block-related-get-started.adoc[]
 // DO NOT EDIT
 
+== Introduction
+
+Couchbase Lite on Android 3.x supports the development of applications in Java or {kotlin--xref}.
+You can install Kotlin and-or Java from (separate) downloads or by using the Maven repository.
+
+When using Maven, selecting Kotlin will also pull-in the pure Java version.
+Users requiring only Java can choose to just pull the Java version.
+
+== Install
+
 Create or open an existing Android Studio project and install Couchbase Lite using the following method.
 
-Make the following additions to the module-level `build.gradle` file (typically in the *app* folder).
-*Note:* In the gradle examples replace the `${version}` token with the required Couchbase Lite version number.
+Add the following entries to the module-level `build.gradle` file (typically in the *app* folder).
 
 
-[{tabs}]
+
 ====
+[{tabs}]
+=====
 Community::
 +
 --
@@ -61,6 +72,15 @@ include::partial$gsBuildGradleAndroid.adoc[tag=dependencies]
 include::partial$gsBuildGradleAndroid.adoc[tag=repositories]
 ----
 --
+
+=====
+
+<1> Set the variable `\{version\}` to the Couchbase Lite version number, for example 3.0.0.
+
+<2> If you require Kotlin, add only this line to dependencies; it will also include the Java version
+
+<3> If you require just Java, add only this line to dependencies
+
 ====
 
 include::{root-partials}block-related-content-start.adoc[]
