@@ -15,10 +15,10 @@ include::{root-partials}_get-started-topic-group.adoc[]
 
 :rootdir: pass:q,a[`libcblite-3.0.0`]
 
-== Package
+== Download Contents
 
 _Couchbase Lite for C_ **beta** is available as a compressed binary download -- see: https://tbd
-The unpacked released package contains these directories within the root directory ({rootdir}):
+The unpacked download's root directory ({rootdir}) contains these directories:
 
 * `lib` +
   The `lib` folder contains binaries and other packaging components
@@ -27,15 +27,12 @@ The unpacked released package contains these directories within the root directo
 * `bin` (*Windows-only*) +
    Contains the Couchbase Lite for C `.dll` files.
 
-Installation will vary by platform and compiler, but you can use these steps to install Couchbase Lite for C on any of the supported platforms:
+Installation will vary by platform and compiler, but you can use these steps to install Couchbase Lite for C on any of the supported platforms -- see <<lbl-steps>>.
 
-<<lbl-linux-steps,  Linux>>  |
-<<lbl-windows-steps,  Windows>>  |
-<<lbl-mac-steps,  Mac OS>>
 
 == Platforms
 
-WARNING: For BETA releases, only the downloadable release package option is available
+WARNING: For BETA releases, only the downloadable binary release option is available
 
 .Couchbase Lite for C installation options
 [#tbl-inst-opts,cols="^1,2m,2a", options="header"]
@@ -44,7 +41,7 @@ WARNING: For BETA releases, only the downloadable release package option is avai
 |Platform
 2+^|Options
 
-|GNU/Linux
+|Linux
 a|* <<lbl-linux-repos,apt>>
 * binary libraries
 .3+.^|It may also be downloaded from: https://tbd
@@ -59,54 +56,51 @@ a|* <<lbl-linux-repos,apt>>
 |===
 
 
-
-== Linux
-
-=== Release Package
+[#lbl-steps]
+== How-to Install
+====
+[{tabs}]
+=====
+Linux::
++
+--
 [#lbl-linux-repos]
-// include::{root-partials}_block-caveats.adoc[tags="not-beta"]
-
 The various Linux distributions contain the following packages within the root directory, {rootdir}:
 
 [#tbl-linux-pkgs,cols="1,4", options="noheader"]
 |===
 
-|``**lcblite**``
+|`lib`
 | The core library package for running
 
-|``**lcblite-dev**``
+|`include`
 |The headers and development files for _inclusion_
 
 |===
 
-=== Install from Download
 
 [#lbl-linux-steps]
-====
-. *Download* and *Unpack* the release package
-. From within the root directory, {rootdir},
-.. Copy the following directories to a location already in the system path (for example, `/usr/include` or `/usr/local/lib`)
-**  lcblite
-**  lcblite-dev
-+
-Your compiler will detect them automatically with no alterations needed
+. *Download* and *Unpack* the binary release
+. From within the root directory, {rootdir}, copy the following directories to an appropriate location
+***  lib
+***  include
 
-.. Alternatively:
-... Add the `lcblite` location to your compiler's include path -- `<path-to>/lcblite`
-... Add the `lcblite-dev` location to your compiler's linker search path -- `<path-to>/lcblite`
++
+TIP: If you copy these to locations already in the system path (for example, `/usr/include` or `/usr/local/lib`), then your compiler will detect them automatically with no alterations needed
+
+. Add the `lib` location to your compiler library search path (`-L`) -- `<path-to>/lib`
+. Add the `include` location to your compiler's include path (`-I`) -- `<path-to>/include`
 
 . Link with the binaries library using, for example, `gcc  -lcblite`.
-====
-
 
 If you are familiar with _CMake_, then you can use this as a method of creating cross-platform projects; including Couchbase Lite itself.
 As a convenience, the release package includes a _CMake_ file in `lib/cmake/CouchbaseLite`
+--
 
-
-[#install-windows]
-== Windows
-
-To install the Couchbase for C libraries on Windows from a downloaded release package:
+Windows::
++
+--
+To install the Couchbase for C libraries on Windows from a downloaded release binary:
 
 [#lbl-windows-steps]
 . Download and extract the release package from http://tbd
@@ -119,35 +113,37 @@ Ensure you select the correct package for your application's compiler and archit
 .. *Create* a new C++ project
 +
 Be sure to select x64 for 64-bit builds
-.. Within *Project Properties* -> *C++ directories* -> *Include Directories*
-... *Add* `<path-to-deployed-directories>/include`
-... *Add* `<path-to-deployed-directories>/lib`
+.. Within *Project Properties* -> *C++ directories* -> *Library Directories*, *Add* `<path-to-deployed-directories>/lib`
+.. Within *Project Properties* -> *C++ directories* -> *Include Directories*, *Add* `<path-to-deployed-directories>/include`
 .. Within *Project Properties* -> *Linker* -> *Input* -> *Additional Dependencies*, *Add* `cblite.lib`
 . *Copy* `<path-to-deployed-directories>/bin/cblite.dll` to your build location
 +
 Couchbase Lite for C does not have any preferred installation path for the `.dll`.
 It is up to you to determine where best to place it so it is available during execution, though copying to a location on the system path is not recommended on Windows
+--
 
-You will now be able to build and run your app .
-
-
-== Mac OS
+Mac OS::
++
+--
 
 To install the Couchbase for C libraries on Mac OS X from a downloaded release package:
 
 [#lbl-mac-steps]
 . Download and extract the release package from http://tbd
 // codesign -sv <location>/lib/libcblite.3.dylib (note if you don't have an Apple developer account this won't work)
-. From within the root directory, {rootdir}, *Copy* the `include` and `lib` folders to `/usr/local/`
+. Ootionally ... From within the root directory, {rootdir}, *Copy* the `include` and `lib` folders to `/usr/local/`
 . Within  _Xcode_:
 .. *Create* a new project
-.. *Add* `/usr/local/include` to the project's _Header Search Path_
-.. *Add* `/usr/local/lib` to the project's _Library Search Path_
+.. *Add* `<path/to>/include` to the project's _Header Search Path_
+.. *Add* `<path/to>/lib` to the project's _Library Search Path_
 .. *Drag* `libcblite.3.dylib` into your Xcode project, then within the dialog:
 ... *Select* _Create Folder References If Needed_
 ... *Check* the correct target is selected
+--
+=====
 
-You will now be able to build and run your app from Xcode.
+On completion of the above steps you will be able to build and run your app.
 
+====
 
 include::{root-partials}block-related-content-start.adoc[]
