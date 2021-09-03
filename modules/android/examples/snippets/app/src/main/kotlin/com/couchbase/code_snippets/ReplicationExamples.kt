@@ -25,7 +25,6 @@ import com.couchbase.lite.DatabaseConfiguration
 import com.couchbase.lite.DatabaseEndpoint
 import com.couchbase.lite.Document
 import com.couchbase.lite.DocumentFlag
-import com.couchbase.lite.ListenerToken
 import com.couchbase.lite.MutableDocument
 import com.couchbase.lite.Replicator
 import com.couchbase.lite.ReplicatorActivityLevel
@@ -75,6 +74,7 @@ fun InputStream.toByteArray(): ByteArray {
 
 // tag::local-win-conflict-resolver[]
 // Using replConfig.setConflictResolver(new LocalWinConflictResolver());
+@Suppress("unused")
 object LocalWinsResolver : ConflictResolver {
     override fun resolve(conflict: Conflict) = conflict.localDocument
 }
@@ -82,6 +82,7 @@ object LocalWinsResolver : ConflictResolver {
 
 // tag::remote-win-conflict-resolver[]
 // Using replConfig.setConflictResolver(new RemoteWinConflictResolver());
+@Suppress("unused")
 object RemoteWinsResolver : ConflictResolver {
     override fun resolve(conflict: Conflict) = conflict.remoteDocument
 }
@@ -89,6 +90,7 @@ object RemoteWinsResolver : ConflictResolver {
 
 // tag::merge-conflict-resolver[]
 // Using replConfig.setConflictResolver(new MergeConflictResolver());
+@Suppress("unused")
 object MergeConflictResolver : ConflictResolver {
     override fun resolve(conflict: Conflict): Document {
         val localDoc = conflict.localDocument?.toMap()
@@ -160,7 +162,7 @@ object MergeConflictResolver : ConflictResolver {
 
             // tag::replication-status[]
             repl.addChangeListener { change ->
-                if (change.status.activityLevel === ReplicatorActivityLevel.STOPPED) {
+                if (change.status.activityLevel == ReplicatorActivityLevel.STOPPED) {
                     Log.i(TAG, "Replication stopped")
                 }
             }
@@ -206,14 +208,14 @@ object MergeConflictResolver : ConflictResolver {
                 Log.i(TAG, "Replication type: ${if (replication.isPush) "push" else "pull"}")
 
                 for (document in replication.documents) {
-                    document.let {
+                    document.let { doc ->
                         Log.i(TAG, "Doc ID: ${document.id}")
-                        it.error?.let {
+                        doc.error?.let {
                             // There was an error
                             Log.e(TAG, "Error replicating document: ", it)
                             return@addDocumentReplicationListener
                         }
-                        if (it.flags.contains(DocumentFlag.DELETED)) {
+                        if (doc.flags.contains(DocumentFlag.DELETED)) {
                             Log.i(TAG, "Successfully replicated a deleted document")
                         }
                     }

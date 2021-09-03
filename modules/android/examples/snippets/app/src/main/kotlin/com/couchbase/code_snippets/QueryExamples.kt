@@ -26,18 +26,27 @@ import com.couchbase.lite.FullTextIndexItem
 import com.couchbase.lite.Function
 import com.couchbase.lite.IndexBuilder
 import com.couchbase.lite.Join
-import com.couchbase.lite.ListenerToken
 import com.couchbase.lite.Meta
 import com.couchbase.lite.Ordering
 import com.couchbase.lite.Query
 import com.couchbase.lite.QueryBuilder
-import com.couchbase.lite.ResultSet
 import com.couchbase.lite.SelectResult
 import com.couchbase.lite.ValueIndexItem
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.json.JSONException
 
 
 private const val TAG = "QUERY"
 private const val DATABASE_NAME = "database"
+
+data class Hotel(
+    var description: String? = null,
+    var country: String? = null,
+    var city: String? = null,
+    var name: String? = null,
+    var type: String? = null,
+    var id: String? = null
+)
 
 @Suppress("unused")
 class QueryExamples(private val database: Database) {
@@ -385,32 +394,32 @@ class QueryExamples(private val database: Database) {
             }
             // end::query-groupby[]
         }
-
-
-        // ### ORDER BY statement
-        @Throws(CouchbaseLiteException::class)
-        fun testOrderByStatement() {
-            // tag::query-orderby[]
-            val rs = QueryBuilder
-                .select(
-                    SelectResult.expression(Meta.id),
-                    SelectResult.property("name")
-                )
-                .from(DataSource.database(database))
-                .where(Expression.property("type").equalTo(Expression.string("hotel")))
-                .orderBy(Ordering.property("name").ascending())
-                .limit(Expression.intValue(10))
-                .execute()
-
-            for (result in rs) {
-                Log.i(TAG, "${result.toMap()}")
-            }
-            // end::query-orderby[]
-        }
     }
 
+    // ### ORDER BY statement
+    @Throws(CouchbaseLiteException::class)
+    fun testOrderByStatement() {
+        // tag::query-orderby[]
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("name")
+            )
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("hotel")))
+            .orderBy(Ordering.property("name").ascending())
+            .limit(Expression.intValue(10))
+            .execute()
+
+        for (result in rs) {
+            Log.i(TAG, "${result.toMap()}")
+        }
+        // end::query-orderby[]
+    }
+
+
     // ### EXPLAIN statement
-// tag::query-explain[]
+    // tag::query-explain[]
     @Throws(CouchbaseLiteException::class)
     fun testExplainStatement() {
         // tag::query-explain-all[]
@@ -486,4 +495,91 @@ class QueryExamples(private val database: Database) {
         }
         // end::fts-query[]
     }
+
+
+    fun testQuerySyntaxAll(currentUser: String) {
+
+        // tag::query-syntax-all[]
+//        try {
+//            this_Db = new Database("hotels");
+//        } catch (CouchbaseLiteException e) {
+//            e.printStackTrace();
+//        }
+
+        val listQuery: Query = QueryBuilder.select(SelectResult.all())
+            .from(DataSource.database(openOrCreateDatabaseForUser(currentUser)))
+        // end::query-syntax-all[]
+
+        // tag::query-access-all[]
+        val hotels: HashMap<String, Hotel> = HashMap()
+
+        for (result in listQuery.execute().allResults()) {
+            // get the k-v pairs from the 'hotel' key's value into a dictionary
+            val thisDocsProps = result.getDictionary(0) // <.>
+            val thisDocsId = thisDocsProps!!.getString("id")
+            val thisDocsName = thisDocsProps.getString("name")
+            val thisDocsType = thisDocsProps.getString("type")
+            val thisDocsCity = thisDocsProps.getString("city")
+
+            // Alternatively, access results value dictionary directly
+            val id = result.getDictionary(0)?.getString("id").toString() // <.>
+            hotels[id] = Hotel(
+                id,
+                result.getDictionary(0)?.getString("type"),
+                result.getDictionary(0)?.getString("name"),
+                result.getDictionary(0)?.getString("city"),
+                result.getDictionary(0)?.getString("country"),
+                result.getDictionary(0)?.getString("description")
+            )
+        }
+
+        // end::query-access-all[]
+    }
+
+    @Throws(CouchbaseLiteException::class, JSONException::class)
+    fun testQuerySyntaxJson(currentUser: String) {
+        val db = openOrCreateDatabaseForUser(currentUser)
+        // tag::query-syntax-json[]
+        // Example assumes Hotel class object defined elsewhere
+//        Database db = null;
+//        try {
+//                db = new Database(dbName);
+//        } catch (CouchbaseLiteException e) {
+//            e.printStackTrace();
+//        }
+
+        // Build the query
+        val listQuery: Query = QueryBuilder.select(SelectResult.all())
+            .from(DataSource.database(db))
+
+        // end::query-syntax-json[]
+
+        // tag::query-access-json[]
+        // Uses Jackson JSON processor
+        val mapper = ObjectMapper()
+        val hotels: ArrayList<Hotel> = ArrayList()
+
+        for (result in listQuery.execute()) {
+
+            // Get result as JSON string
+            val json = result.toJSON() // <.>
+
+            // Get Hashmap from JSON string
+            val dictFromJSONstring = mapper.readValue(json, HashMap::class.java) // <.>
+
+            // Use created hashmap
+            val hotelId = dictFromJSONstring["id"].toString() //
+            val hotelType = dictFromJSONstring["type"].toString()
+            val hotelname = dictFromJSONstring["name"].toString()
+
+
+            // Get custom object from JSON string
+            val thisHotel = mapper.readValue(json, Hotel::class.java) // <.>
+            hotels.add(thisHotel)
+        }
+        // end::query-access-json[]
+    }
+/* end func testQuerySyntaxJson */
+
+    fun openOrCreateDatabaseForUser(user: String): Database = Database(user)
 }

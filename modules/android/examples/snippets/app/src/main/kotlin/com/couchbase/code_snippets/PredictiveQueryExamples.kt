@@ -16,37 +16,55 @@
 package com.couchbase.code_snippets
 
 import android.util.Log
+import com.couchbase.lite.Blob
 import com.couchbase.lite.CouchbaseLiteException
 import com.couchbase.lite.DataSource
 import com.couchbase.lite.Database
-import com.couchbase.lite.DatabaseConfiguration
+import com.couchbase.lite.Dictionary
 import com.couchbase.lite.Expression
+import com.couchbase.lite.Function
 import com.couchbase.lite.IndexBuilder
+import com.couchbase.lite.MutableDictionary
 import com.couchbase.lite.PredictionFunction
 import com.couchbase.lite.PredictiveIndex
 import com.couchbase.lite.PredictiveModel
-import com.couchbase.lite.Query
 import com.couchbase.lite.QueryBuilder
-import com.couchbase.lite.ResultSet
 import com.couchbase.lite.SelectResult
 import com.couchbase.lite.ValueIndex
 import com.couchbase.lite.ValueIndexItem
 
 
+private const val TAG = "PREDICT"
 
+// `tensorFlowModel` is a fake implementation
+object TensorFlowModel {
+    fun predictImage(data: ByteArray?) = mapOf<String, Any?>()
+}
+
+object ImageClassifierModel : PredictiveModel {
+    const val name = "ImageClassifier"
+
+    override fun predict(input: Dictionary): Dictionary? {
+        val blob: Blob = input.getBlob("photo") ?: return null
+
+        // this would be the implementation of the ml model you have chosen
+        return MutableDictionary(TensorFlowModel.predictImage(blob.content)) // <1>
+    }
+} // end::predictive-model[]
+
+
+@Suppress("unused")
 class PredictiveQueryExamples {
     @Throws(CouchbaseLiteException::class)
     fun testPredictiveModel() {
-        val config = DatabaseConfiguration()
-        val database = Database("mydb", config)
+        val database = Database("mydb")
 
         // tag::register-model[]
-        Database.prediction.registerModel("ImageClassifier", Examples.ImageClassifierModel())
+        Database.prediction.registerModel("ImageClassifier", ImageClassifierModel)
         // end::register-model[]
 
         // tag::predictive-query-value-index[]
-        val index: ValueIndex =
-            IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")))
+        val index: ValueIndex = IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")))
         database.createIndex("value-index-image-classifier", index)
         // end::predictive-query-value-index[]
 
@@ -57,12 +75,10 @@ class PredictiveQueryExamples {
 
     @Throws(CouchbaseLiteException::class)
     fun testPredictiveIndex() {
-        val config = DatabaseConfiguration()
-        val database = Database("mydb", config)
+        val database = Database("mydb")
 
         // tag::predictive-query-predictive-index[]
-        val inputMap: MutableMap<String, Any> =
-            HashMap()
+        val inputMap: MutableMap<String, Any> = mutableMapOf()
         inputMap["numbers"] = Expression.property("photo")
         val input: Expression = Expression.map(inputMap)
         val index: PredictiveIndex = IndexBuilder.predictiveIndex("ImageClassifier", input, null)
@@ -72,16 +88,16 @@ class PredictiveQueryExamples {
 
     @Throws(CouchbaseLiteException::class)
     fun testPredictiveQuery() {
-        val config = DatabaseConfiguration()
-        val database = Database("mydb", config)
+        val database = Database("mydb")
 
         // tag::predictive-query[]
-        val inputProperties: MutableMap<String, Any> =
-            HashMap()
-        inputProperties["photo"] = Expression.property("photo")
-        val input: Expression = Expression.map(inputProperties)
-        val prediction: PredictionFunction = PredictiveModel.predict(input) // <1>
-        val query: Query = QueryBuilder
+        val prediction: PredictionFunction = Function.prediction(
+            ImageClassifierModel.name,
+            Expression.map(mutableMapOf("photo" to Expression.property("photo")) as Map<String, Any>?) // <1>
+        )
+
+        // !!! Is this query using that prediction function, at all?
+        val rs = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
             .where(
@@ -91,10 +107,9 @@ class PredictiveQueryExamples {
                             .greaterThanOrEqualTo(Expression.doubleValue(0.8))
                     )
             )
+            .execute()
 
-        // Run the query.
-        val result: ResultSet = query.execute()
-        Log.d(TAG, "Number of rows: " + result.allResults().size())
+        Log.d(TAG, "Number of rows: ${rs.allResults().size}")
         // end::predictive-query[]
     }
 }

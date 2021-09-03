@@ -26,20 +26,18 @@ import com.couchbase.lite.DataSource
 import com.couchbase.lite.Database
 import com.couchbase.lite.DatabaseConfiguration
 import com.couchbase.lite.DatabaseConfigurationFactory
-import com.couchbase.lite.Document
 import com.couchbase.lite.EncryptionKey
 import com.couchbase.lite.Expression
 import com.couchbase.lite.LogDomain
 import com.couchbase.lite.LogFileConfigurationFactory
 import com.couchbase.lite.LogLevel
+import com.couchbase.lite.Logger
 import com.couchbase.lite.Meta
 import com.couchbase.lite.MutableDocument
-import com.couchbase.lite.Query
 import com.couchbase.lite.QueryBuilder
 import com.couchbase.lite.Replicator
 import com.couchbase.lite.ReplicatorConfigurationFactory
 import com.couchbase.lite.ReplicatorType
-import com.couchbase.lite.ResultSet
 import com.couchbase.lite.SelectResult
 import com.couchbase.lite.URLEndpoint
 import com.couchbase.lite.UnitOfWork
@@ -58,6 +56,16 @@ import java.util.Date
 
 private const val TAG = "BASIC"
 
+// tag::custom-logging[]
+class LogTestLogger(private val level: LogLevel) : Logger {
+    override fun getLevel() = level
+
+    override fun log(level: LogLevel, domain: LogDomain, message: String) {
+        // this method will never be called if param level < this.level
+        // handle the message, for example piping it to a third party framework
+    }
+}
+
 // tag::example-app[]
 @Suppress("unused")
 class BasicExamples(private val context: Context) {
@@ -68,9 +76,10 @@ class BasicExamples(private val context: Context) {
         CouchbaseLite.init(context)
 
         // Get the database (and create it if it doesn’t exist).
-        val config = DatabaseConfiguration()
-        config.directory = context.filesDir.absolutePath
-        database = Database("getting-started", config)
+        database = Database(
+            "getting-started",
+            DatabaseConfigurationFactory.create(context.filesDir.absolutePath)
+        )
     }
 
     @Test
@@ -132,7 +141,7 @@ class BasicExamples(private val context: Context) {
         deleteDB("android-sqlite", context.filesDir)
         ZipUtils.unzip(PlatformUtils.getAsset("replacedb/android140-sqlite.cblite2.zip"), context.filesDir)
 
-        val db = Database("android-sqlite", DatabaseConfiguration())
+        val db = Database("android-sqlite")
         try {
             // For Validation
             Arrays.equals(
@@ -187,7 +196,7 @@ class BasicExamples(private val context: Context) {
     fun testEnableCustomLogging() {
         // tag::set-custom-logging[]
         // this custom logger will not log an event with a log level < WARNING
-        Database.log.custom = Examples.LogTestLogger(LogLevel.WARNING) // <.>
+        Database.log.custom = LogTestLogger(LogLevel.WARNING) // <.>
         // end::set-custom-logging[]
     }
 
