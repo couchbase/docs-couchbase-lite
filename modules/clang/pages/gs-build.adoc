@@ -15,64 +15,16 @@ include::{root-partials}_get-started-topic-group.adoc[]
 
 Now you have _Couchbase Lite for C_ installed, you can verify that your apps build correctly.
 
-Enter the C code in <<ex-clang-starter>> into your editor of choice and build it.
+Enter the C code from <<ex-clang-starter>> into your editor of choice and build it.
 
 Running it will create a database, add a document, retrieve the document, update the document and then delete the document.
 
 .Sample code
 [#ex-clang-starter]
 ====
-[source, c]
+[source, {source-language}]
 ----
-#include <stdio.h>
-#include "cbl/CBLDatabase.h"
-#include "cbl/CBLDocument.h"
-#include "cbl/CBLQuery.h"
-#include "fleece/Fleece+CoreFoundation.h"
-
-int main(int argc, const char * argv[]) {
-
-    const FLSlice dbnm = FLStr("mydb");
-    bool success = false;
-
-    // Open DB
-    CBLError error;
-    CBLDatabaseConfiguration config = {"/tmp"};
-    CBLDatabase* db = CBLDatabase_Open(dbnm, &config, &error);
-
-    // Create document
-    CBLDocument* doc = CBLDocument_CreateWithID(FLStr("1000"));
-    FLMutableDict props = CBLDocument_MutableProperties(doc);
-    FLSlot_SetString(FLMutableDict_Set(props, FLStr("type")), FLStr("pet"));
-    FLSlot_SetString(FLMutableDict_Set(props, FLStr("name")), FLStr("Scooby Doo"));
-    FLSlot_SetString(FLMutableDict_Set(props, FLStr("owner")), FLStr("Shaggy"));
-
-    // Save document
-    success = CBLDatabase_SaveDocument( db, doc, &error);
-    CBLDocument_Release(doc);
-
-    // Retrieve document
-    const CBLDocument *readDoc = CBLDatabase_GetDocument(db, FLStr("1000"), &error);
-    FLDict readProps = CBLDocument_Properties(readDoc);
-    FLSlice petname = FLValue_AsString( FLDict_Get(readProps, FLStr("name")) );
-    CBLDocument_Release(readDoc);
-
-    // Update document
-    CBLDocument  *updtDoc = CBLDatabase_GetMutableDocument(db, FLStr("1000"), &error);
-    FLMutableDict updtDocProps = CBLDocument_MutableProperties(updtDoc);
-    FLSlot_SetString(FLMutableDict_Set(updtDocProps, FLStr("name")), FLStr("Scrappy Doo"));
-    success = CBLDatabase_SaveDocument( db, updtDoc, &error);
-    CBLDocument_Release(updtDoc);
-
-    // Delete document
-    CBLDocument  *delDoc = CBLDatabase_GetMutableDocument(db, FLStr("1000"), &error);
-    success = CBLDatabase_DeleteDocument(db, delDoc, &error);
-    CBLDocument_Release(delDoc);
-
-    return 0;
-
-}
-
+include::{snippet}[tag=getting-started,indent=0]
 ----
 ====
 
