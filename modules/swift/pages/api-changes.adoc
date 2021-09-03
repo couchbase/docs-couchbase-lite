@@ -1,0 +1,179 @@
+= API Changes
+:page-status:
+:page-edition:
+:page-role:
+:description:
+
+include::partial$_std-cbl-hdr-swift.adoc[]
+
+
+== Removed APIs
+
+=== ResetCheckpoint
+// |https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC15resetCheckpointyyF
+
+.Alternative
+// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC5start5resetySb_tF
+  `replicator.start(reset:)`
+
+.Before
+----
+replicator.resetCheckpoint()
+replicator.start()
+----
+
+.After
+----
+replicator.start(true)
+----
+
+=== Database.setLogLevel
+// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC11setLogLevel_6domainyAA0fG0O_AA0F6DomainOtFZ[]
+
+.Alternative
+`Database.log.console`
+
+.Before
+----
+Database.setLogLevel(.verbose, domain: .all)
+----
+
+.After
+----
+Database.log.console.domain = .all
+Database.log.console.level = .verbose
+----
+
+=== Database.compact
+// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC7compactyyKF[
+.Alternative
+`performMaintenance(type:﹚`
+// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC18performMaintenance4typeyAA0F4TypeO_tKF
+
+.Before
+----
+try testdb.compact()
+----
+
+.After
+----
+try testdb.performMaintenance(type: .compact)
+----
+
+
+
+== Deprected API
+
+=== Match
+// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/FullTextExpression.html#/s:18CouchbaseLiteSwift18FullTextExpressionC5indexyAA0deF8Protocol_pSSFZ[MATCH]
+.Alternative
+`FullTextFunction.match(indexName:)`
+
+.Before
+----
+let index = FullTextExpression.index ("indexName")
+let q = QueryBuilder.select([SelectResult.
+expression(Meta.id)])
+            .from(DataSource.database(testdb)) +
+            .where(index.match("'queryString'"))
+----
+
+.After
+----
+let q = QueryBuilder.select([SelectResult.expression(Meta.id)])
+            .from(DataSource.database(testdb))
+            .where(FullTextFunction.match(indexName: "indexName", query: "'queryString'"))
+----
+
+
+=== isNullOrMissing and notNullOrMissing
+// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Protocols/ExpressionProtocol.html#/s:18CouchbaseLiteSwift18ExpressionProtocolP15isNullOrMissingAaB_pyF[
+// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Protocols/ExpressionProtocol.html#/s:18CouchbaseLiteSwift18ExpressionProtocolP16notNullOrMissingAaB_pyF[notNullOrMissing/notNullOrMissing]
+
+.Alternatives
+`isNotValued()` +
+`isValued()`
+
+.Before
+----
+|let q1 = QueryBuilder.select([SelectResult.expression(Meta.id)])
+            .from(DataSource.database(testdb))
+            .where(Expression.property("missingProp").isNullOrMissing())
+
+let q2 = QueryBuilder.select([SelectResult.expression(Meta.id)])
+            .from(DataSource.database(testdb))
+            .where(Expression.property("notMissingProp").notNullOrMissing())
+----
+
+.After
+----
+let q1 = QueryBuilder.select([SelectResult.expression(Meta.id)])
+            .from(DataSource.database(testdb))
+            .where(Expression.property("missingProp").isNotValued())
+
+let q2 = QueryBuilder.select([SelectResult.expression(Meta.id)])
+            .from(DataSource.database(testdb))
+            .where(Expression.property("notMissingProp").isValued())
+----
+
+== Updated API
+
+=== Configuration
+The following classes are changed to Swift struct.
+
+* DatabaseConfiguration
+* ReplicatorConfiguration
+* URLEndpointListenerConfiguration
+
+.Before
+----
+// use of let won't stop from editing instance later)
+
+let config = DatabaseConfiguration()
+config.encryptionKey = EncryptionKey.password(password!)
+
+let config = ReplicatorConfiguration(database: db, target: target)
+config.continuous = true
+----
+
+.After
+----
+var config = DatabaseConfiguration()
+config.encryptionKey = EncryptionKey.password(password!)
+
+var config = ReplicatorConfiguration(database: db, target: target)
+config.continuous = true
+----
+
+=== ATAN2
+
+CAUTION: Breaking change
+
+`ATAN2(x, y)` now becomes `ATAN2(y, x)`
+
+.Before
+[source, {source-language}]
+----
+let p = Expression.property("number")
+let q = QueryBuilder.select([SelectResult.expression(Function.atan2(x: Expression.int(90), y: p))])
+            .from(DataSource.database(testdb))
+----
+
+.After
+[source, {source-language}]
+----
+let q = QueryBuilder.select([SelectResult.expression(Function.atan2(y: Expression.int(90), x: p))])
+            .from(DataSource.database(testdb))
+----
+
+
+// DO NOT DELETE
+// Include standard
+
+include::{root-partials}block-related-content-std.adoc[]
+// DO NOT DELETE
+
+// DO NOT DELETE
+include::{root-partials}_unset-platform.adoc[]
+// DO NOT DELETE
+// END: inclusion-page - common-database.adoc[]
