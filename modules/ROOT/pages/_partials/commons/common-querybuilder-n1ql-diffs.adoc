@@ -1,3 +1,6 @@
+// = N1QL for Analytics vs. N1QL for Query
+// :description: A comparison between N1QL for Analytics and N1QL for Query.
+// :page-edition: Enterprise Edition
 // BEGIN -- inclusion -- common-querybuilder.adoc
 //  Purpose -- describes the use of the query syntax
 //
@@ -11,20 +14,122 @@
 // END::REQUIRED EXTERNALS
 
 
-== Introduction
+// == Introduction
 
-There are several minor but notable behavior differences between N1QL queries on Couchbase Lite and N1QL on Couchbase Server.
+There are several minor but notable behavior differences between N1QL queries on Couchbase Lite and N1QL on Couchbase Server, ashown in  <<tbl-diffs>>.
 
 In some instance you can, if required, force Couchbase Lite to work in the same way as Couchbase Server. These instances are noted in the content below.
 
+.N1QL Query Comparison (Couchbase Server _cf_ Couchbase Lite)
+[#tbl-diffs, cols="^1,2a,2a, options="header"]
+|===
 
-=== OrderBy
+|
+2+^h|N1QL Comparison
 
-In Couchbase Lite N1QL, result sequencing is based on the SQLite ordering described in https://sqlite.org/lang_select.html[SQLite select overview]
+h| Feature
+h| Couchbase Server
+h| Couchbase Lite
+
+| USE KEYS
+| SELECT fname, email FROM tutorial USE KEYS ["dave", "ian"];
+| SELECT fname, email FROM tutorial WHERE meta().id IN ["dave", "ian"];
+
+| ON KEYS
+| SELECT * FROM user u +
+JOIN orders o ON KEYS ARRAY s.order_id FOR s IN u.order_history END;
+| SELECT * FROM user u, u.order_history s +
+JOIN orders o ON s.order_id = meta(o).id;
+
+| ON KEY
+| SELECT * FROM user u +
+JOIN orders o ON KEY o.user_id FOR u;
+| SELECT * FROM user u +
+JOIN orders o ON meta(u).id = o.user_id;
+
+| NEST
+| SELECT * FROM user u +
+NEST orders orders +
+ON KEYS ARRAY s.order_id FOR s IN u.order_history END;
+| SELECT u, orders FROM users u +
+LET orders=(SELECT VALUE o FROM u.order_history s, orders o WHERE meta(o).id = s.order_id) +
+WHERE EXISTS orders;
+
+| LEFT OUTER NEST
+| SELECT * FROM user u +
+LEFT OUTER NEST orders orders +
+ON KEYS ARRAY s.order_id FOR s IN u.order_history END;
+| SELECT u, (SELECT VALUE o FROM u.order_history s, orders o WHERE meta(o).id = s.order_id) orders +
+FROM users u;
+
+| ARRAY
+| ARRAY i FOR i IN [1, 2] END
+| (SELECT VALUE i FROM [1, 2] AS i)
+
+| ARRAY FIRST
+| ARRAY FIRST arr
+| arr[0]
+
+| LIMIT l OFFSET o
+| Allows OFFSET without LIMIT
+| Doesn't support OFFSET without LIMIT
+
+| UNION, INTERSECT, and EXCEPT
+| All three are supported (with ALL and DISTINCT variants)
+| Only UNION ALL is supported (and necessary for query expressability)
+
+| OUTER JOIN
+| Both LEFT and RIGHT OUTER JOIN supported
+| Only LEFT OUTER JOIN supported (and necessary for query expressability)
+
+| <, \<=, =, etc. operators
+| Can compare either complex values or scalar values
+| Only scalar values may be compared
+
+| ORDER BY
+|Result sequencing is based on specific rules described in {svr-n1ql-reference-orderby--xref}
+|Result sequencing is based on the SQLite ordering described in https://sqlite.org/lang_select.html[SQLite select overview]
 
 The ordering of _Dictionary_ and _Array_ objects is based on binary ordering.
 
-For Couchbase Server, result sequencing is based on specific rules described in {svr-n1ql-reference-orderby--xref}
+
+| SELECT DISTINCT
+| Supported
+| SELECT DISTINCT VALUE is supported when the returned values are scalars
+
+| CREATE INDEX
+| Supported
+| Supported but different (e.g., typed)
+
+| INSERT/UPSERT/DELETE
+| Supported
+| Unsupported (by design)
+|===
+
+// N1QL for Analytics generalizes N1QL for Query's syntax constructs such as `USE KEYS`, `ON KEYS`, `ON KEY`, `NEST`,
+// `LEFT OUTER NEST` and `ARRAY` and thus eliminates cases where must-be-indexed or must-use-keys
+// restrictions are required for certain N1QL for Query queries or expressions to be acceptable.
+// In addition, the general composability of N1QL for Analytics queries eliminates the need for some of N1QL for Query's
+// special syntax; for example, N1QL for Analytics does not require or support the IN/WITHIN subclauses of
+// N1QL for Query's existential (SOME, ANY, or EVERY) expressions.
+
+// Note that INSERT/UPSERT/DELETE are not supported at all in the Couchbase Analytics Service.
+// Data is mutated in Couchbase Server, using the Couchbase Server SDK or N1QL for Query mutation, and
+// the mutations will then be automatically synchronized into the Couchbase Analytics Service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 == Boolean Logic Rules
