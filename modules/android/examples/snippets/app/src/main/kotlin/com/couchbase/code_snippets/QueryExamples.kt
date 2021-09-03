@@ -1,0 +1,489 @@
+//
+// Copyright (c) 2021 Couchbase, Inc All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+package com.couchbase.code_snippets
+
+import android.util.Log
+import com.couchbase.lite.ArrayFunction
+import com.couchbase.lite.CouchbaseLiteException
+import com.couchbase.lite.DataSource
+import com.couchbase.lite.Database
+import com.couchbase.lite.Expression
+import com.couchbase.lite.FullTextExpression
+import com.couchbase.lite.FullTextIndexItem
+import com.couchbase.lite.Function
+import com.couchbase.lite.IndexBuilder
+import com.couchbase.lite.Join
+import com.couchbase.lite.ListenerToken
+import com.couchbase.lite.Meta
+import com.couchbase.lite.Ordering
+import com.couchbase.lite.Query
+import com.couchbase.lite.QueryBuilder
+import com.couchbase.lite.ResultSet
+import com.couchbase.lite.SelectResult
+import com.couchbase.lite.ValueIndexItem
+
+
+private const val TAG = "QUERY"
+private const val DATABASE_NAME = "database"
+
+@Suppress("unused")
+class QueryExamples(private val database: Database) {
+
+    // ### Indexing
+    @Throws(CouchbaseLiteException::class)
+    fun testIndexing() {
+        // tag::query-index[]
+        database.createIndex(
+            "TypeNameIndex",
+            IndexBuilder.valueIndex(
+                ValueIndexItem.property("type"),
+                ValueIndexItem.property("name")
+            )
+        )
+        // end::query-index[]
+    }
+
+    // ### SELECT statement
+    fun testSelectStatement() {
+        // tag::query-select-meta[]
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("name"),
+                SelectResult.property("type")
+            )
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("hotel")))
+            .orderBy(Ordering.expression(Meta.id))
+            .execute()
+
+        for (result in rs) {
+            Log.i(TAG, "hotel id ->${result.getString("id")}")
+            Log.i(TAG, "hotel name -> ${result.getString("name")}")
+        }
+        // end::query-select-meta[]
+    }
+
+    // META function
+    @Throws(CouchbaseLiteException::class)
+    fun testMetaFunction() {
+        val rs = QueryBuilder
+            .select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("airport")))
+            .orderBy(Ordering.expression(Meta.id))
+            .execute()
+
+        for (result in rs) {
+            Log.w(TAG, "airport id ->${result.getString("id")}")
+            Log.w(TAG, "airport id -> ${result.getString(0)}")
+        }
+    }
+
+    // ### all(*)
+    @Throws(CouchbaseLiteException::class)
+    fun testSelectAll() {
+        // tag::query-select-all[]
+        val queryAll = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("hotel")))
+        // end::query-select-all[]
+
+        // tag::live-query[]
+        val query = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+
+        // Adds a query change listener.
+        // Changes will be posted on the main queue.
+        val token = query.addChangeListener { change ->
+            change.results?.let {
+                for (result in it) {
+                    Log.d(TAG, "results: ${result.keys}")
+                    /* Update UI */
+                }
+            }
+        }
+
+        // Start live query.
+        query.execute() // <1>
+        // end::live-query[]
+
+        // tag::stop-live-query[]
+        query.removeChangeListener(token)
+        // end::stop-live-query[]
+
+        for (result in query.execute()) {
+            Log.i(TAG, "hotel -> ${result.getDictionary(DATABASE_NAME)?.toMap()}")
+        }
+    }
+
+
+    // ###　WHERE statement
+    @Throws(CouchbaseLiteException::class)
+    fun testWhereStatement() {
+        // tag::query-where[]
+        val rs = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("hotel")))
+            .limit(Expression.intValue(10))
+            .execute()
+        for (result in rs) {
+            result.getDictionary(DATABASE_NAME)?.let {
+                Log.i(TAG, "name -> ${it.getString("name")}")
+                Log.i(TAG, "type -> ${it.getString("type")}")
+            }
+        }
+        // end::query-where[]
+    }
+
+    fun testQueryDeletedDocuments() {
+        // tag::query-deleted-documents[]
+        // Query documents that have been deleted
+        val query = QueryBuilder
+            .select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(database))
+            .where(Meta.deleted)
+        // end::query-deleted-documents[]
+    }
+
+    // ####　Collection Operators
+    @Throws(CouchbaseLiteException::class)
+    fun testCollectionStatement() {
+        // tag::query-collection-operator-contains[]
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("name"),
+                SelectResult.property("public_likes")
+            )
+            .from(DataSource.database(database))
+            .where(
+                Expression.property("type").equalTo(Expression.string("hotel"))
+                    .and(
+                        ArrayFunction.contains(
+                            Expression.property("public_likes"),
+                            Expression.string("Armani Langworth")
+                        )
+                    )
+            )
+            .execute()
+        for (result in rs) {
+            Log.i(TAG, "public_likes -> ${result.getArray("public_likes")?.toList()}")
+        }
+        // end::query-collection-operator-contains[]
+    }
+
+    // IN operator
+    @Throws(CouchbaseLiteException::class)
+    fun testInOperator() {
+        // tag::query-collection-operator-in[]
+        val rs = QueryBuilder.select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(
+                Expression.string("Armani").`in`(
+                    Expression.property("first"),
+                    Expression.property("last"),
+                    Expression.property("username")
+                )
+            )
+            .execute()
+
+        for (result in rs) {
+            Log.i(TAG, "public_likes -> ${result.toMap()}")
+        }
+        // end::query-collection-operator-in[]
+    }
+
+    // Pattern Matching
+    @Throws(CouchbaseLiteException::class)
+    fun testPatternMatching() {
+        // tag::query-like-operator[]
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("country"),
+                SelectResult.property("name")
+            )
+            .from(DataSource.database(database))
+            .where(
+                Expression.property("type").equalTo(Expression.string("landmark"))
+                    .and(
+                        Function.lower(Expression.property("name"))
+                            .like(Expression.string("royal engineers museum"))
+                    )
+            )
+            .execute()
+
+        for (result in rs) {
+            Log.i(TAG, "name -> ${result.getString("name")}")
+        }
+        // end::query-like-operator[]
+    }
+
+    // ### Wildcard Match
+    @Throws(CouchbaseLiteException::class)
+    fun testWildcardMatch() {
+        // tag::query-like-operator-wildcard-match[]
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("country"),
+                SelectResult.property("name")
+            )
+            .from(DataSource.database(database))
+            .where(
+                Expression.property("type").equalTo(Expression.string("landmark"))
+                    .and(
+                        Function.lower(Expression.property("name"))
+                            .like(Expression.string("eng%e%"))
+                    )
+            )
+            .execute()
+
+        for (result in rs) {
+            Log.i(TAG, "name -> ${result.getString("name")}")
+        }
+        // end::query-like-operator-wildcard-match[]
+    }
+
+    // Wildcard Character Match
+    @Throws(CouchbaseLiteException::class)
+    fun testWildCharacterMatch() {
+        // tag::query-like-operator-wildcard-character-match[]
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("country"),
+                SelectResult.property("name")
+            )
+            .from(DataSource.database(database))
+            .where(
+                Expression.property("type").equalTo(Expression.string("landmark"))
+                    .and(
+                        Function.lower(Expression.property("name"))
+                            .like(Expression.string("eng____r"))
+                    )
+            )
+            .execute()
+
+        for (result in rs) {
+            Log.i(TAG, "name -> ${result.getString("name")}")
+        }
+        // end::query-like-operator-wildcard-character-match[]
+    }
+
+    // ### Regex Match
+    @Throws(CouchbaseLiteException::class)
+    fun testRegexMatch() {
+        // tag::query-regex-operator[]
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("country"),
+                SelectResult.property("name")
+            )
+            .from(DataSource.database(database))
+            .where(
+                Expression.property("type").equalTo(Expression.string("landmark"))
+                    .and(
+                        Function.lower(Expression.property("name"))
+                            .regex(Expression.string("\\beng.*r\\b"))
+                    )
+            )
+            .execute()
+        for (result in rs) {
+            Log.i(TAG, "name -> ${result.getString("name")}")
+        }
+        // end::query-regex-operator[]
+    }
+
+    // JOIN statement
+    @Throws(CouchbaseLiteException::class)
+    fun testJoinStatement() {
+        // tag::query-join[]
+        val rs = QueryBuilder.select(
+            SelectResult.expression(Expression.property("name").from("airline")),
+            SelectResult.expression(Expression.property("callsign").from("airline")),
+            SelectResult.expression(Expression.property("destinationairport").from("route")),
+            SelectResult.expression(Expression.property("stops").from("route")),
+            SelectResult.expression(Expression.property("airline").from("route"))
+        )
+            .from(DataSource.database(database).`as`("airline"))
+            .join(
+                Join.join(DataSource.database(database).`as`("route"))
+                    .on(
+                        Meta.id.from("airline")
+                            .equalTo(Expression.property("airlineid").from("route"))
+                    )
+            )
+            .where(
+                Expression.property("type").from("route").equalTo(Expression.string("route"))
+                    .and(
+                        Expression.property("type").from("airline")
+                            .equalTo(Expression.string("airline"))
+                    )
+                    .and(
+                        Expression.property("sourceairport").from("route")
+                            .equalTo(Expression.string("RIX"))
+                    )
+            )
+            .execute()
+
+        for (result in rs) {
+            Log.i(TAG, "name -> ${result.toMap()}")
+        }
+        // end::query-join[]
+    }
+
+
+    // ### GROUPBY statement
+    @Throws(CouchbaseLiteException::class)
+    fun testGroupByStatement() {
+        // tag::query-groupby[]
+        val rs = QueryBuilder.select(
+            SelectResult.expression(Function.count(Expression.string("*"))),
+            SelectResult.property("country"),
+            SelectResult.property("tz")
+        )
+            .from(DataSource.database(database))
+            .where(
+                Expression.property("type").equalTo(Expression.string("airport"))
+                    .and(Expression.property("geo.alt").greaterThanOrEqualTo(Expression.intValue(300)))
+            )
+            .groupBy(
+                Expression.property("country"), Expression.property("tz")
+            )
+            .orderBy(Ordering.expression(Function.count(Expression.string("*"))).descending())
+            .execute()
+
+        for (result in rs) {
+            result.let {
+                Log.i(
+                    TAG,
+                    "There are ${it.getInt("$1")} airports on the ${
+                        it.getString("tz")
+                    } timezone located in ${
+                        it.getString("country")
+                    } and above 300ft"
+                )
+            }
+            // end::query-groupby[]
+        }
+
+
+        // ### ORDER BY statement
+        @Throws(CouchbaseLiteException::class)
+        fun testOrderByStatement() {
+            // tag::query-orderby[]
+            val rs = QueryBuilder
+                .select(
+                    SelectResult.expression(Meta.id),
+                    SelectResult.property("name")
+                )
+                .from(DataSource.database(database))
+                .where(Expression.property("type").equalTo(Expression.string("hotel")))
+                .orderBy(Ordering.property("name").ascending())
+                .limit(Expression.intValue(10))
+                .execute()
+
+            for (result in rs) {
+                Log.i(TAG, "${result.toMap()}")
+            }
+            // end::query-orderby[]
+        }
+    }
+
+    // ### EXPLAIN statement
+// tag::query-explain[]
+    @Throws(CouchbaseLiteException::class)
+    fun testExplainStatement() {
+        // tag::query-explain-all[]
+        var query: Query = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("university")))
+            .groupBy(Expression.property("country"))
+            .orderBy(Ordering.property("name").descending()) // <.>
+        Log.i(TAG, query.explain()) // <.>
+        // end::query-explain-all[]
+
+        // tag::query-explain-like[]
+        query = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(Expression.property("type").like(Expression.string("%hotel%"))) // <.>
+        Log.i(TAG, query.explain())
+        // end::query-explain-like[]
+
+        // tag::query-explain-nopfx[]
+        query = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(
+                Expression.property("type").like(Expression.string("hotel%")) // <.>
+                    .and(Expression.property("name").like(Expression.string("%royal%")))
+            )
+        Log.i(TAG, query.explain())
+        // end::query-explain-nopfx[]
+
+        // tag::query-explain-function[]
+        query = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(
+                Function.lower(
+                    Expression.property("type").equalTo(Expression.string("hotel"))
+                )
+            ) // <.>
+        Log.i(TAG, query.explain())
+        // end::query-explain-function[]
+
+        // tag::query-explain-nofunction[]
+        query = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("hotel"))) // <.>
+        Log.i(TAG, query.explain())
+        // end::query-explain-nofunction[]
+    }
+// end::query-explain[]
+
+    @Throws(CouchbaseLiteException::class)
+    fun prepareIndex() {
+        // tag::fts-index[]
+        database.createIndex(
+            "nameFTSIndex",
+            IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false)
+        )
+        // end::fts-index[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun testFTS() {
+        // tag::fts-query[]
+        val rs = QueryBuilder.select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(database))
+            .where(FullTextExpression.index("nameFTSIndex").match("buy"))
+            .execute()
+        for (result in rs) {
+            Log.i(TAG, "document properties${result.getString(0)}")
+        }
+        // end::fts-query[]
+    }
+}
