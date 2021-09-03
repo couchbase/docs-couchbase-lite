@@ -15,7 +15,7 @@
 :menuitem-delimiter: {nbsp}{nbsp}|{nbsp}{nbsp}
 :count-result-text: The result set representing a count is a key-value pair. The key being the count name, as defined using `SelectResult.as`
 
-include::_block-caveats.adoc[tags="code-disclaimer"]
+include::{root-partials}_block-caveats.adoc[tags="code-disclaimer"]
 
 // END::Local page attributes
 
@@ -26,7 +26,25 @@ NOTE: The examples used in this topic are based on the _Travel Sample_ app and d
 
 Developers using Couchbase Lite for {param-title} can provide N1QL query strings using the N1QL Query API.
 This API uses query statements of the form shown in <<ex-query-form>>.
+
 The structure and semantics of the query format are based on that of Couchbase Server's N1QL query language -- see {svr-n1ql-reference--xref} and {svr-n1ql-datamodel--xref}.
+
+
+== Running
+
+Use the N1QLQuery class to define the N1QL query string on the database to be queried.
+Then run the query using the`.execute()` method -- see {query-resultsets--xref} for how to work with result sets.
+
+.Running a N1QL Query
+[#ex-samplerun]
+:param-tags: query-syntax-n1ql-params
+include::partial$_block_tabbed_code_example.adoc[]
+:param-tags!:
+
+
+== Query Format
+
+The API uses query statements of the form shown in <<ex-query-form>>.
 
 [#ex-query-form]
 .Query Format
@@ -58,19 +76,6 @@ The `SELECT`ed properties of documents matching this criteria will be returned i
 
 TIP: We recommend working through the {url-n1ql-tutorial} as a good way to build your N1QL skills.
 
-== Running
-
-Use the N1QLQuery class to define the N1QL query string on the database to be queried.
-Then run the query using the`.execute()` method -- see
-
-The result set produced by N1QL and {querybuilder--xref} queries is the same -- see {query-resultsets--xref}.
-
-
-.Running a N1QL Query
-[#ex-samplerun]
-:param-tags: query-syntax-n1ql-params
-include::partial$_block_tabbed_code_example.adoc[]
-:param-tags!:
 
 
 [#lbl-select]
@@ -100,13 +105,49 @@ columnAlias = IDENTIFIER
 <.> The select clause begins with the SELECT keyword.
 +
 --
-* The optional `ALL` argument is used to specify tha the query should return ALL results (the default)
+* The optional `ALL` argument is used to specify that the query should return ALL results (the default)
 * The optional `DISTINCT` argument specifies that the query should remove duplicated results.
 --
 
-<.> selectResults is a list of columns projected in the query result. Each column is an expression which could be a property expression or any expressions or functions.
+<.> selectResults is a list of columns projected in the query result.
+Each column is an expression which could be a property expression or any expressions or functions.
+You can use the wildcard *** to select all columns -- see <<Select Wildcard>>
 
 <.> Use the optional `AS` argument to provides an alias name for a property. Each property can be aliased by putting the `AS <alias name>` after the column name.
+
+==== Select Wildcard
+When using the `SELECT *` option the column name (key) of the N1QL string is one of:
+
+* The alias name if one was specified
+* The data source name (or its alias if provided) as specified in the `FROM` clause.
+
+This behavior is inline with that of Couchbase Server N1QL -- see example in <<tbl-selstar>>.
+
+
+.Example Column Names for SELECT ***
+[#tbl-selstar,cols="3m,2m"]
+|===
+| Query| Column Name
+
+| SELECT * AS data FROM _
+| data
+
+| SELECT * FROM _
+| _
+
+| SELECT * FROM _default
+| _default
+
+|SELECT * FROM db
+|db
+
+|SELECT * FROM db AS store
+|store
+
+|===
+
+
+
 
 === Example
 
@@ -135,7 +176,7 @@ SELECT DISTINCT address.city <.>
 
 ====
 
-See: <<lbl-resultsets>> for more on processing query results.
+See: {query-resultsets--xref} for more on processing query results.
 
 [#lbl-from]
 == FROM
@@ -1907,6 +1948,8 @@ a|Returns one of the following strings, based on the value of expression:
 |===
 
 
+ifndef::is-c[]
+// Section not valid for C
 == QueryBuilder Differences
 
 Couchbase Lite N1QL Query supports all QueryBuilder features, except _Predictive Query_ and _Index_. See <<tbl-qbldr-diffs>> for the features supported by N1QL but not by QueryBuilder.
@@ -1965,6 +2008,7 @@ TONUMBER
 TOOBJECT
 TOSTRING
 |===
+endif::is-c[]
 
 
 // END --- inclusion -- common-querybuilder-n1ql.adoc

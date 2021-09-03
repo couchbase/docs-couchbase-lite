@@ -80,11 +80,12 @@ static void getting_started() {
     FLString retrievedLanguage = FLValue_AsString(FLDict_Get(retrievedProperties, FLSTR("language")));
     printf("Document ID :: %.*s", (int)retrievedID.size, (const char *)retrievedID.buf);
     printf("Learning %.*s", (int)retrievedLanguage.size, (const char *)retrievedLanguage.buf);
-    
+
     CBLDocument_Release(mutableDoc);
     CBLDocument_Release(docAgain);
     FLSliceResult_Release(id);
 
+    // tag::query-syntax-n1ql-params[]
     // Create a query to fetch documents of type SDK
     int errorPos;
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage, FLSTR("SELECT * FROM _ WHERE type = \"SDK\""), &errorPos, &err);
@@ -100,6 +101,7 @@ static void getting_started() {
         // Failed to run query, do error handling as above
         return;
     }
+    // end::query-syntax-n1ql-params[]
 
     // TODO: Result set count?
     CBLResultSet_Release(result);
@@ -118,7 +120,7 @@ static void getting_started() {
     replConfig.database = database;
     replConfig.endpoint = targetEndpoint;
     replConfig.authenticator = basicAuth;
-    
+
     CBLReplicator* replicator = CBLReplicator_Create(&replConfig, &err);
     CBLAuth_Free(basicAuth);
     CBLEndpoint_Free(targetEndpoint);
@@ -173,7 +175,7 @@ static void test_replicator_conflict_resolve() {
     // end::replication-conflict-resolver[]
 }
 
-static bool custom_conflict_handler(void* context, CBLDocument* documentBeingSaved, 
+static bool custom_conflict_handler(void* context, CBLDocument* documentBeingSaved,
     const CBLDocument* conflictingDocument) {
     FLDict currentProps = CBLDocument_Properties(conflictingDocument);
     FLDict updatedProps = CBLDocument_Properties(documentBeingSaved);
@@ -205,7 +207,7 @@ static void test_save_with_conflict_handler() {
     FLDict properties = CBLDocument_MutableProperties(mutableDocument);
 
     /*
-    static bool custom_conflict_handler(void* context, CBLDocument* documentBeingSaved, 
+    static bool custom_conflict_handler(void* context, CBLDocument* documentBeingSaved,
         const CBLDocument* conflictingDocument) {
         FLDict currentProps = CBLDocument_Properties(conflictingDocument);
         FLDict updatedProps = CBLDocument_Properties(documentBeingSaved);
@@ -327,9 +329,9 @@ static void load_prebuilt() {
     CBL_DeleteDatabase(FLSTR("travel-sample.cblite2"), kFLSliceNull, NULL);
 
     // tag::prebuilt-database[]
-    // Note: Getting the path to a database is platform-specific.  For desktop (including RPi) 
-    // this can be a simple filesystem path.  For iOS you need to get the path from the 
-    // main bundle.  For Android you need to extract it from your assets to a temporary directory 
+    // Note: Getting the path to a database is platform-specific.  For desktop (including RPi)
+    // this can be a simple filesystem path.  For iOS you need to get the path from the
+    // main bundle.  For Android you need to extract it from your assets to a temporary directory
     // and then pass that path.
 
     // NOTE: No error handling, for brevity (see getting started)
@@ -354,7 +356,7 @@ static void query_deleted_document() {
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
-    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage, 
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id FROM _ WHERE meta().deleted"), NULL, &err);
     // end::query-deleted-documents[]
 
@@ -447,7 +449,7 @@ static void database_change_listener() {
     }
     */
 
-    CBLListenerToken* token = CBLDatabase_AddDocumentChangeListener(db, FLSTR("user.john"), 
+    CBLListenerToken* token = CBLDatabase_AddDocumentChangeListener(db, FLSTR("user.john"),
         document_listener, NULL);
     // end::document-listener[]
 }
@@ -455,3 +457,12 @@ static void database_change_listener() {
 int main(int argc, char** argv) {
     return 0;
 }
+
+
+// tag::query-index[]
+// placeholder
+// tag::query-index[]
+
+// tag::fts-index[]
+// placeholder
+// tag::fts-index[]
