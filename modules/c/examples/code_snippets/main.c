@@ -14,7 +14,7 @@ static bool kNeedsExtraDocs;
 
 static void getting_started_change_listener(void* context, CBLReplicator* repl, const CBLReplicatorStatus* status) {
     if(status->error.code != 0) {
-        printf("Error %d / %d", status->error.domain, status->error.code);
+        printf("Error %d / %d\n", status->error.domain, status->error.code);
     }
 }
 
@@ -26,9 +26,9 @@ static void getting_started() {
     if(!database) {
         // Error handling.  For brevity, this is truncated in the rest of the snippet
         // and omitted in other doc code snippets
-        fprintf(stderr, "Error opening database (%d / %d)", err.domain, err.code);
+        fprintf(stderr, "Error opening database (%d / %d)\n", err.domain, err.code);
         FLSliceResult msg = CBLError_Message(&err);
-        fprintf(stderr, "%.*s", (int)msg.size, (const char *)msg.buf);
+        fprintf(stderr, "%.*s\n", (int)msg.size, (const char *)msg.buf);
         FLSliceResult_Release(msg);
         return;
     }
@@ -78,8 +78,8 @@ static void getting_started() {
     FLString retrievedID = CBLDocument_ID(docAgain);
     FLDict retrievedProperties = CBLDocument_Properties(docAgain);
     FLString retrievedLanguage = FLValue_AsString(FLDict_Get(retrievedProperties, FLSTR("language")));
-    printf("Document ID :: %.*s", (int)retrievedID.size, (const char *)retrievedID.buf);
-    printf("Learning %.*s", (int)retrievedLanguage.size, (const char *)retrievedLanguage.buf);
+    printf("Document ID :: %.*s\n", (int)retrievedID.size, (const char *)retrievedID.buf);
+    printf("Learning %.*s\n", (int)retrievedLanguage.size, (const char *)retrievedLanguage.buf);
 
     CBLDocument_Release(mutableDoc);
     CBLDocument_Release(docAgain);
@@ -133,7 +133,7 @@ static void getting_started() {
     //
     // static void getting_started_change_listener(void* context, CBLReplicator* repl, const CBLReplicatorStatus* status) {
     //     if(status->error.code != 0) {
-    //         printf("Error %d / %d", status->error.domain, status->error.code);
+    //         printf("Error %d / %d\n", status->error.domain, status->error.code);
     //     }
     // }
 
@@ -183,14 +183,15 @@ static bool custom_conflict_handler(void* context, CBLDocument* documentBeingSav
 
     FLDictIterator d;
     FLDictIterator_Begin(currentProps, &d);
-    FLSlice currentKey = FLDictIterator_GetKeyString(&d);
-    for(; currentKey.buf; currentKey = FLDictIterator_GetKeyString(&d)) {
+    FLValue currentValue;
+    while(currentValue = FLDictIterator_GetValue(&d)) {
+        FLString currentKey = FLDictIterator_GetKeyString(&d);
         if(FLDict_Get(newProps, currentKey)) {
             continue;
         }
 
-        FLValue currentValue = FLDictIterator_GetValue(&d);
         FLMutableDict_SetValue(newProps, currentKey, currentValue);
+        FLDictIterator_Next(&d);
     }
 
     return true;
@@ -418,7 +419,7 @@ static void do_batch_operation() {
         FLMutableDict_SetBool(properties, FLSTR("admin"), false);
         CBLDatabase_SaveDocument(db, doc, &err);
         CBLDocument_Release(doc);
-        printf("Saved user document %s", buffer);
+        printf("Saved user document %s\n", buffer);
     }
 
     CBLDatabase_EndTransaction(db, true, &err);
@@ -430,7 +431,7 @@ static void document_listener(void* context, const CBLDatabase* db, FLString id)
     const CBLDocument* doc = CBLDatabase_GetDocument(db, id, &err);
     FLDict properties = CBLDocument_Properties(doc);
     FLString verified_account = FLValue_AsString(FLDict_Get(properties, FLSTR("verified_account")));
-    printf("Status :: %.*s", (int)verified_account.size, (const char *)verified_account.buf);
+    printf("Status :: %.*s\n", (int)verified_account.size, (const char *)verified_account.buf);
     CBLDocument_Release(doc);
 }
 
@@ -444,7 +445,7 @@ static void database_change_listener() {
         const CBLDocument* doc = CBLDatabase_GetDocument(db, id, &err);
         FLDict properties = CBLDocument_Properties(doc);
         FLString verified_account = FLValue_AsString(FLDict_Get(properties, FLSTR("verified_account")));
-        printf("Status :: %.*s", (int)verified_account.size, (const char *)verified_account.buf);
+        printf("Status :: %.*s\n", (int)verified_account.size, (const char *)verified_account.buf);
         CBLDocument_Release(doc);
     }
     */
@@ -452,6 +453,361 @@ static void database_change_listener() {
     CBLListenerToken* token = CBLDatabase_AddDocumentChangeListener(db, FLSTR("user.john"),
         document_listener, NULL);
     // end::document-listener[]
+}
+
+static void document_expiration() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::document-expiration[]
+    // Purge the document one day from now
+
+    // Overly simplistic for example purposes
+    // NOTE: API takes milliseconds
+    // NOTE: No error handling, for brevity (see getting started)
+    time_t ttl = time(NULL) + 24 * 60 * 60;
+    ttl *= 1000;
+
+    CBLError err;
+    CBLDatabase_SetDocumentExpiration(db, FLSTR("doc123"), ttl, &err);
+
+    // Reset expiration
+    CBLDatabase_SetDocumentExpiration(db, FLSTR("doc1"), 0, &err);
+
+    // Query documents that will be expired in less than five minutes
+    time_t fiveMinutesFromNow = time(NULL) + 5 * 60;
+    fiveMinutesFromNow *= 1000;
+    FLMutableDict parameters = FLMutableDict_New();
+    FLMutableDict_SetInt(parameters, FLSTR("five_minutes"), fiveMinutesFromNow);
+
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id FROM _ WHERE meta().expiration < $five_minutes"), NULL, &err);
+    CBLQuery_SetParameters(query, parameters);
+    FLMutableDict_Release(parameters);
+    // end::document-expiration[]
+}
+
+static void use_blob() {
+    CBLDatabase* db = kDatabase;
+
+    CBLDocument* newTask = CBLDocument_Create();
+
+    // tag::blob[]
+    // Note: Reading the data is implementation dependent, as with prebuilt databases
+    // NOTE: No error handling, for brevity (see getting started)
+
+    uint8_t buffer[128000];
+    FILE* avatar_file = fopen("avatar.jpg", "rb");
+    size_t read = fread(buffer, 1, 128000, avatar_file);
+
+    FLSliceResult avatar = FLSliceResult_CreateWith(buffer, read);
+    CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("image/jpeg"), FLSliceResult_AsSlice(avatar));
+    FLSliceResult_Release(avatar);
+
+    // TODO: Create shortcut blob method
+    CBLError err;
+    FLMutableDict properties = CBLDocument_MutableProperties(newTask);
+    FLSlot_SetBlob(FLMutableDict_Set(properties, FLSTR("avatar")), blob);
+    CBLDatabase_SaveDocument(db, newTask, &err);
+    // end::blob[]
+
+    CBLDocument_Release(newTask);
+    CBLBlob_Release(blob);
+}
+
+static void create_index() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-index[]
+    // For value types, this is optional but provides performance enhancements
+    // NOTE: No error handling, for brevity (see getting started)
+
+    // Syntax for second argument is the same as taking from a N1QL SELECT
+    // i.e. SELECT (type, name) FROM _;
+    CBLValueIndexConfiguration config = {
+        kCBLN1QLLanguage,
+        FLSTR("type, name")
+    };
+
+    CBLError err;
+    CBLDatabase_CreateValueIndex(db, FLSTR("TypeNameIndex"), config, &err);
+    // end::query-index[]
+}
+
+static void select_meta() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-select-meta[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id, type, name FROM _"), NULL, &err);
+    CBLResultSet* results = CBLQuery_Execute(query, &err);
+    while(CBLResultSet_Next(results)) {
+        FLString id = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("id")));
+        FLString name = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("name")));
+        printf("Document ID :: %.*s\n", (int)id.size, (const char *)id.buf);
+        printf("Document Name :: %.*s\n", (int)name.size, (const char *)name.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-select-meta[]
+}
+
+static void query_change_listener(void* context, CBLQuery* query, CBLListenerToken* token) {
+    CBLError err;
+    CBLResultSet* results = CBLQuery_CopyCurrentResults(query, token, &err);
+    while(CBLResultSet_Next(results)) {
+        // Update UI
+    }
+}
+
+static void select_all() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-select-all[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _"), NULL, &err);
+
+    // All results will be available from the above query
+    CBLQuery_Release(query);
+    // end::query-select-all[]
+
+    // tag::live-query[]
+    /*
+    static void query_change_listener(void* context, CBLQuery* query, CBLListenerToken* token) {
+        CBLError err;
+        CBLResultSet* results = CBLQuery_CopyCurrentResults(query, token, &err);
+        while(CBLResultSet_Next(results)) {
+            // Update UI
+        }
+    }
+    */
+
+    query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _"), NULL, &err);
+    CBLListenerToken* token = CBLQuery_AddChangeListener(query, query_change_listener, NULL);
+    // end::live-query[]
+
+    // tag::stop-live-query[]
+    CBLListener_Remove(token); // The token received from AddChangeListener
+    CBLQuery_Release(query);
+    // end::stop-live-query[]
+}
+
+static void select_where() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-where[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _ WHERE type = \"hotel\" LIMIT 10"), NULL, &err);
+    CBLResultSet* results = CBLQuery_Execute(query, &err);
+    while(CBLResultSet_Next(results)) {
+        FLDict dict = FLValue_AsDict(CBLResultSet_ValueForKey(results, FLSTR("_")));
+        FLString name = FLValue_AsString(FLDict_Get(dict, FLSTR("name")));
+        printf("Document Name :: %.*s\n", (int)name.size, (const char *)name.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-where[]
+}
+
+static void use_collection_contains() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-collection-operator-contains[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id, name, public_likes FROM _ WHERE type = \"hotel\" "
+              "AND ARRAY_CONTAINS(public_likes, \"Armani Langworth\""), NULL, &err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &err);
+    while(CBLResultSet_Next(results)) {
+        FLArray publicLikes = FLValue_AsArray(CBLResultSet_ValueForKey(results, FLSTR("public_likes")));
+        FLStringResult json = FLValue_ToJSON((FLValue)publicLikes);
+        printf("Public Likes :: %.*s\n", (int)json.size, (const char *)json.buf);
+        FLSliceResult_Release(json);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-collection-operator-contains[]
+}
+
+static void use_collection_in() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-collection-operator-in[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _ WHERE \"Armani\" IN (first, last, username)"),
+        NULL, &err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &err);
+    while(CBLResultSet_Next(results)) {
+        FLDict body = FLValue_AsDict(CBLResultSet_ValueAtIndex(results, 0));
+        FLStringResult json = FLValue_ToJSON((FLValue)body);
+        printf("In results :: %.*s\n", (int)json.size, (const char *)json.buf);
+        FLSliceResult_Release(json);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-collection-operator-in[]
+}
+
+static void select_like() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-like-operator[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id, name FROM _ WHERE type = \"landmark\" "
+              "AND lower(name) LIKE \"Royal Engineers Museum\" LIMIT 10"),
+        NULL, &err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &err);
+    while(CBLResultSet_Next(results)) {
+        FLString name = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("name")));
+        printf("Name Property :: %.*s\n", (int)name.size, (const char *)name.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-like-operator[]
+}
+
+static void select_wildcard_like() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-like-operator-wildcard-match[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+     CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id, name FROM _ WHERE type = \"landmark\" "
+              "AND lower(name) LIKE \"Eng%e%\" LIMIT 10"),
+        NULL, &err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &err);
+    while(CBLResultSet_Next(results)) {
+        FLString name = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("name")));
+        printf("Name Property :: %.*s\n", (int)name.size, (const char *)name.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-like-operator-wildcard-match[]
+}
+
+static void select_wildcard_character_like() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-like-operator-wildcard-character-match[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id, name FROM _ WHERE type = \"landmark\" "
+              "AND lower(name) LIKE \"Royal Eng____rs Museum\" LIMIT 10"),
+        NULL, &err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &err);
+    while(CBLResultSet_Next(results)) {
+        FLString name = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("name")));
+        printf("Name Property :: %.*s\n", (int)name.size, (const char *)name.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-like-operator-wildcard-character-match[]
+}
+
+static void select_regex() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-regex-operator[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id, name FROM _ WHERE type = \"landmark\" "
+              "AND regexp_like(name, \"\\bEng.*e\\b\") LIMIT 10"),
+        NULL, &err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &err);
+    while(CBLResultSet_Next(results)) {
+        FLString name = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("name")));
+        printf("Name Property :: %.*s\n", (int)name.size, (const char *)name.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-regex-operator[]
+}
+
+static void select_join() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-join[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT airline.name, airline.callsign, route.destinationairport, route.stops, route.airline "
+              "FROM _ AS airline INNER JOIN _ AS route ON meta(airline).id = route.airlineid "
+              "WHERE route.type = \"route\" AND airline.type = \"airline\" AND route.sourceairport = \"RIX\""),
+        NULL, &err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &err);
+    while(CBLResultSet_Next(results)) {
+        FLString name = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("name")));
+        printf("Name Property :: %.*s\n", (int)name.size, (const char *)name.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-join[]
+}
+
+static void group_by() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-groupby[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT count(*), country, tz FROM _ WHERE type = \"airport\" AND geo.alt >= 300 "
+              "GROUP BY country, tz"),
+        NULL, &err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &err);
+    while(CBLResultSet_Next(results)) {
+        int64_t count = FLValue_AsInt(CBLResultSet_ValueForKey(results, FLSTR("$1")));
+        FLString tz = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("tz")));
+        FLString country = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("country")));
+        printf("There are %lld airports in the %.*s timezone located in %.*s and above 300 ft\n",
+            count, (int)tz.size, (const char *)tz.buf, (int)country.size, (const char *)country.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-groupby[]
 }
 
 int main(int argc, char** argv) {
