@@ -63,6 +63,7 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 <.> Here we are specifying the database directory path.
 
 == Close Database
+
 You are advised to incorporate the closing of all open databases into your application workflow.
 
 Closing a database is a simple, just use {url-api-method-database-close} -- see: <<ex-dbclose>>. +
@@ -73,11 +74,13 @@ However, there are a number of things to be aware of:
 Remember that opening (or creating) a database is asynchronous.
 So issuing a close immediately after initiating an open/create, may result in an error if that process has not completed.
 
-* Closing a database {fn-2-8} also closes any active replications, listeners and-or live queries attached to the database. +
+* Closing a database
+ifndef::is-c[{fn-2-8}]
+ also closes any active replications, listeners and-or live queries attached to the database. +
 Closing a database immediately after kicking-off a replication could cause the sync to generate an exception. +
 For example: +
 `IllegalStateException: Attempt to perform an operation on a closed database`
-
+ifndef::is-c[]
 .Safely Closing a Database pre 2.8
 [TIP]
 --
@@ -88,6 +91,7 @@ For example: +
 . Finally, close the database
 
 --
+endif::is-c[]
 
 [#ex-dbclose]
 .Close a Database
@@ -122,7 +126,7 @@ include::{root-partials}cli-tool.adoc[]
 // end::cli-tool[]
 
 == Troubleshooting
-You should use Couchbase's console logs as your first source of diagnostic information.
+You should use console logs as your first source of diagnostic information.
 If the information in the default logging level is insufficient you can focus it on database errors and generate more verbose messages -- see: <<ex-logdb>>.
 
 For more on using Couchbase logs -- see: {troubleshooting-logs--xref}.
