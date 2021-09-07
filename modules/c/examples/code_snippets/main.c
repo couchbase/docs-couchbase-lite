@@ -1,16 +1,20 @@
 #include <cbl/CouchbaseLite.h>
 
 #include <time.h>
+#include <inttypes.h>
 #ifdef _MSC_VER
 #include <direct.h>
+#include <Shlwapi.h>
+
+void usleep(unsigned int us) {
+    Sleep(us / 1000);
+}
 #else
 #include <unistd.h>
 #endif
 
 static CBLDatabase* kDatabase;
 static CBLReplicator* kReplicator;
-static CBLListenerToken* kListenerToken;
-static bool kNeedsExtraDocs;
 
 static void getting_started_change_listener(void* context, CBLReplicator* repl, const CBLReplicatorStatus* status) {
     if(status->error.code != 0) {
@@ -144,6 +148,7 @@ static void getting_started() {
     // Later, stop and release the replicator
     // end::getting-started[]
 
+    CBLListener_Remove(token);
     kReplicator = replicator;
 }
 
@@ -185,7 +190,7 @@ static bool custom_conflict_handler(void* context, CBLDocument* documentBeingSav
     FLDictIterator d;
     FLDictIterator_Begin(currentProps, &d);
     FLValue currentValue;
-    while(currentValue = FLDictIterator_GetValue(&d)) {
+    while((currentValue = FLDictIterator_GetValue(&d))) {
         FLString currentKey = FLDictIterator_GetKeyString(&d);
         if(FLDict_Get(newProps, currentKey)) {
             continue;
@@ -206,7 +211,8 @@ static void test_save_with_conflict_handler() {
 
     CBLError err;
     CBLDocument* mutableDocument = CBLDatabase_GetMutableDocument(database, FLSTR("xyz"), &err);
-    FLDict properties = CBLDocument_MutableProperties(mutableDocument);
+    FLMutableDict properties = CBLDocument_MutableProperties(mutableDocument);
+    FLMutableDict_SetString(properties, FLSTR("name"), FLSTR("apples"));
 
     /*
     static bool custom_conflict_handler(void* context, CBLDocument* documentBeingSaved,
@@ -455,6 +461,8 @@ static void database_change_listener() {
     CBLListenerToken* token = CBLDatabase_AddDocumentChangeListener(db, FLSTR("user.john"),
         document_listener, NULL);
     // end::document-listener[]
+
+    CBLListener_Remove(token);
 }
 
 static void document_expiration() {
@@ -803,7 +811,7 @@ static void group_by() {
         int64_t count = FLValue_AsInt(CBLResultSet_ValueForKey(results, FLSTR("$1")));
         FLString tz = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("tz")));
         FLString country = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("country")));
-        printf("There are %lld airports in the %.*s timezone located in %.*s and above 300 ft\n",
+        printf("There are %" PRIi64 " airports in the %.*s timezone located in %.*s and above 300 ft\n",
             count, (int)tz.size, (const char *)tz.buf, (int)country.size, (const char *)country.buf);
     }
 
@@ -812,7 +820,239 @@ static void group_by() {
     // end::query-groupby[]
 }
 
+static void order_by() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-orderby[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage, 
+        FLSTR("SELECT meta().id, title FROM _ WHERE type = \"hotel\" ORDER BY title ASC LIMIT 10"),
+        NULL, &err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &err);
+    while(CBLResultSet_Next(results)) {
+        FLString title = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("title")));
+        printf("Title :: %.*s\n", (int)title.size, (const char *)title.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-orderby[]
+}
+
+static void test_explain_statement() {
+    CBLDatabase* db = kDatabase;
+
+    {
+    // tag::query-explain-all[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage, 
+        FLSTR("SELECT * FROM _ WHERE type = \"hotel\" GROUP BY country ORDER BY title ASC LIMIT 10"),
+        NULL, &err);
+
+    FLSliceResult explanation = CBLQuery_Explain(query);
+    printf("%.*s", (int)explanation.size, (const char *)explanation.buf);
+    FLSliceResult_Release(explanation);
+    // end::query-explain-all[]
+    }
+
+    // DOCS NOTE: Others omitted for now
+}
+
+static void create_full_text_index() {
+    CBLDatabase* db = kDatabase;
+
+    const char* tasks[] = { "buy groceries", "play chess", "book travels", "buy museum tickets" };
+    char idBuffer[7];
+    for(int i = 0; i < 4; i++) {
+        const char* task = tasks[i];
+        sprintf(idBuffer, "extra%d", i);
+        const CBLDocument* doc = CBLDatabase_GetDocument(db, FLStr(idBuffer), NULL);
+        if(doc) {
+            CBLDocument_Release(doc);
+            continue;
+        }
+
+        CBLDocument* mutableDoc = CBLDocument_CreateWithID(FLStr(idBuffer));
+        FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
+        FLMutableDict_SetString(properties, FLSTR("type"), FLSTR("task"));
+        FLMutableDict_SetString(properties, FLSTR("task"), FLStr(task));
+        CBLDatabase_SaveDocument(db, mutableDoc, NULL);
+        CBLDocument_Release(mutableDoc);
+    }
+
+    // tag::fts-index[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLFullTextIndexConfiguration config = {
+        kCBLN1QLLanguage,
+        FLSTR("name"),
+        false
+    };
+
+    CBLDatabase_CreateFullTextIndex(db, FLSTR("nameFTSIndex"), config, &err);
+    // end::fts-index[]
+}
+
+static void full_text_search() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::fts-query[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage, 
+        FLSTR("SELECT meta().id FROM _ WHERE MATCH(nameFTSIndex, \"'buy'\")"),
+        NULL, &err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &err);
+    while(CBLResultSet_Next(results)) {
+        FLString id = FLValue_AsString(CBLResultSet_ValueAtIndex(results, 0));
+        printf("Document id :: %.*s\n", (int)id.size, (const char *)id.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::fts-query[]
+}
+
+static void start_replication() {
+    CBLDatabase* db = kDatabase;
+
+    /*
+    * This requires Sync Gateway running with the following config, or equivalent:
+    *
+    * {
+    *     "log":["*"],
+    *     "databases": {
+    *         "db": {
+    *             "server":"walrus:",
+    *             "users": {
+    *                 "GUEST": {"disabled": false, "admin_channels": ["*"] }
+    *             }
+    *         }
+    *     }
+    * }
+    */
+
+    // tag::replication[]
+    // NOTE: No error handling, for brevity (see getting started)
+    // Note: Android emulator needs to use 10.0.2.2 for localhost (10.0.3.2 for GenyMotion)
+
+    CBLError err;
+    FLString url = FLSTR("ws://localhost:4984/db");
+    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &err);
+    CBLReplicatorConfiguration config;
+    memset(&config, 0, sizeof(CBLReplicatorConfiguration));
+    config.database = db;
+    config.endpoint = target;
+    config.replicatorType = kCBLReplicatorTypePull;
+
+    CBLReplicator* replicator = CBLReplicator_Create(&config, &err);
+    CBLEndpoint_Free(target);
+    CBLReplicator_Start(replicator, false);
+    // end::replication[]
+
+    kReplicator = replicator;
+}
+
+// Console logging domain methods not applicable to C
+
+static void file_logging() {
+    // tag::file-logging[]
+    // NOTE: No error handling, for brevity (see getting started)
+    // NOTE: You will need to use a platform appropriate method for finding
+    // a temporary directory
+
+    FLString tempFolder = FLSTR("/tmp/cbllog");
+
+    CBLLogFileConfiguration config; // Don't bother zeroing, since we set all properties
+    config.level = kCBLLogInfo;
+    config.directory = tempFolder;
+    config.maxRotateCount = 5;
+    config.maxSize = 10240;
+    config.usePlaintext = false;
+
+    CBLError err;
+    CBLLog_SetFileConfig(config, &err);
+    // end::file-logging[]
+}
+
+// tag::custom-logging[]
+static void custom_log_callback(CBLLogDomain domain, CBLLogLevel level, FLString message) {
+    // handle the message, for example piping it to
+    // a third party framework
+}
+// end::custom-logging[]
+
+static void enable_custom_logging() {
+    // tag::set-custom-logging[]
+    CBLLog_SetCallback(custom_log_callback);
+    // end::set-custom-logging[]
+}
+
+static void enable_basic_auth() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::basic-authentication[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    FLString url = FLSTR("ws://localhost:4984/mydatabase");
+    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &err);
+    CBLAuthenticator* basicAuth = CBLAuth_CreatePassword(FLSTR("john"), FLSTR("pass"));
+
+    CBLReplicatorConfiguration config;
+    memset(&config, 0, sizeof(CBLReplicatorConfiguration));
+    config.database = db;
+    config.endpoint = target;
+    config.authenticator = basicAuth;
+
+    CBLReplicator* replicator = CBLReplicator_Create(&config, &err);
+    CBLEndpoint_Free(target);
+    CBLAuth_Free(basicAuth);
+
+    CBLReplicator_Start(replicator, false);
+    // end::basic-authentication[]
+}
+
 int main(int argc, char** argv) {
+    create_new_database();
+    create_document();
+    update_document();
+    do_batch_operation();
+    use_blob();
+    select_meta();
+
+    load_prebuilt();
+    create_index();
+    select_where();
+    use_collection_contains();
+    select_like();
+    select_wildcard_like();
+    select_wildcard_character_like();
+    select_regex();
+    select_join();
+    group_by();
+    order_by();
+
+    create_full_text_index();
+    full_text_search();
+    start_replication();
+
+    CBLReplicator_Stop(kReplicator);
+    while(CBLReplicator_Status(kReplicator).activity != kCBLReplicatorStopped) {
+        printf("Waiting for replicator to stop...");
+        usleep(200000);
+    }
+
+    CBLDatabase_Close(kDatabase, NULL);
+
     return 0;
 }
 
