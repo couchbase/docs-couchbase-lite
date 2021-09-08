@@ -371,10 +371,18 @@ namespace api_walkthrough
             var target = new URLEndpoint(url);
             var config = new ReplicatorConfiguration(database, target);
             using (var replicator = new Replicator(config)) {
-                // tag::replication-reset-checkpoint[]
-                // replicator is a Replicator instance
-                replicator.ResetCheckpoint();
-                replicator.Start();
+              // tag::replication-reset-checkpoint[]
+              // replicator is a Replicator instance
+              if (resetCheckpointRequired_Example) {
+                  replicator.Start(true); // <.>
+              else
+                replicator.Start(false);
+              }
+              // end::replication-reset-checkpoint[]
+
+
+
+
                 // end::replication-reset-checkpoint[]
             }
         }

@@ -263,8 +263,8 @@ object MergeConflictResolver : ConflictResolver {
 
         // ### Reset replicator checkpoint
         @Throws(URISyntaxException::class)
+        // tag::replication-startup[]
         fun testReplicationResetCheckpoint() {
-            // tag::replication-reset-checkpoint[]
             val repl = Replicator(
                 ReplicatorConfigurationFactory.create(
                     database = database,
@@ -272,12 +272,20 @@ object MergeConflictResolver : ConflictResolver {
                     type = ReplicatorType.PULL
                 )
             )
-            repl.start()
-            repl.stop()
 
-            repl.start(true)
+            // tag::replication-reset-checkpoint[]
+            if (resetCheckpointRequired_Example) {
+              repl.start(resetCheckpoint = true) // <.>
+            else
+              repl.start(resetCheckpoint = false)
+            }
             // end::replication-reset-checkpoint[]
+
+            // ... at some later time
+
             repl.stop()
+        // end::replication-startup[]
+
         }
 
         @Throws(URISyntaxException::class)

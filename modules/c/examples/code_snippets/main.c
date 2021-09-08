@@ -138,8 +138,15 @@ static void getting_started() {
     // }
 
     CBLListenerToken* token = CBLReplicator_AddChangeListener(replicator, getting_started_change_listener, NULL);
-    CBLReplicator_Start(replicator, false);
 
+    // tag::replication-reset-checkpoint[]
+    if(resetCheckpointExample) {
+      CBLReplicator_Start(replicator, true);
+    else
+      CBLReplicator_Start(replicator, false);
+    }
+
+    // end::replication-reset-checkpoint[]
     // Later, stop and release the replicator
     // end::getting-started[]
 

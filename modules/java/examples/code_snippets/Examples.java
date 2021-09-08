@@ -1580,8 +1580,11 @@ apply plugin: 'java'
         replicator.start();
 
         // tag::replication-reset-checkpoint[]
-        replicator.resetCheckpoint();
-        replicator.start();
+        if(resetCheckpointExample) {
+          replicator.start(true);
+        else
+          replicator.start(false);
+        }
         // end::replication-reset-checkpoint[]
 
         replicator.stop();
