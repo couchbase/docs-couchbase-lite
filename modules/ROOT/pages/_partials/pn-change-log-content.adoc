@@ -36,26 +36,51 @@
 == New Features
 // tag::all-new-3-0[]
 
-// tag::all-new-mobile-attachments-3-0[]
-=== Mobile Attachment Clean-up
+// tag::all-new-cbl-for-kotlin-3-0[]
+=== Kotlin Support in Android
+
+_Couchbase Lite for Android_ delivers an idiomatic Kotlin API out-of-the-box.
+This enables seamless integration with Android apps developed in Kotlin without the need for custom extensions.
 
 
-// end::all-new-mobile-attachments-3-0[]
-// tag::all-new-version-vectors-3-0[]
-=== Version Vectors
+Kotlin developers can now build apps using https://developer.android.com/kotlin/common-patterns[common Kotlin Patterns] and use familiar Kotlin features such as:
 
-Read More . . . {param-link1}
+* Nullability annotations
+* Named parameters
+* Kotlin Flows
 
-// end::all-new-version-vectors-3-0[]
+Java support and functionality continues for Android.
+You can choose whether to use the Kotlin extensions API or continue using the Java api.
+
+ifdef::param-link[Read More . . . {param-link}]
+
+// end::all-new-cbl-for-kotlin-3-0[]
+
+
+// tag::all-new-cbl-for-c-3-0[]
+=== Couchbase Lite for C
+
+_Couchbase Lite_ now has an officially supported *C API*, which builds on the success of the well-received engineering labs _C API for Couchbase Lite_.
+
+The C API now includes support for Enterprise-grade features like database encryption.
+This optimized implementation is ensured feature parity with our other Couchbase Lite platforms and is supported on a wide-reange of mobile and desktop platforms -- see: {supported-os--xref}.
+
+The ease of building language bindings on top of the C API means  application developers can build for edge and embedded IoT devices using their preferred languages to harness the power of Couchbase Lite.
+
+ifdef::param-link[Read More . . . {param-link}]
+
+// end::all-new-cbl-for-c-3-0[]
 
 // tag::all-new-n1ql-string-3-0[]
-=== N!QL Query Strings
+=== N1QL Query Strings
 
-Couchbase Lite's new N1QL query API vastly simplifies the integration of Couchbase Lite within hybrid/cross platform apps.
+Couchbase Lite's N1QL for Mobile query API vastly simplifies the integration of Couchbase Lite within hybrid/cross platform apps.
+
+N1QL for Mobile is an implementation of the emerging SQL-for-JSON query language specification (SQL++).
 It provides native, hybrid and cross-platform mobile app developers with a consistent, convenient and flexible interface to query JSON documents within the embedded database using a SQL-based syntax.
 This means developers can reuse queries across platforms, reducing development, testing and maintenance costs.
 
-Read More . . . {param-link1}
+ifdef::param-link[Read More . . . {param-link}]
 
 // end::all-new-n1ql-string-3-0[]
 
@@ -66,7 +91,34 @@ Read More . . . {param-link1}
 
 === Features
 // tag::all-changed-features-3-0[]
-{ns-this}
+
+// tag::all-changed-features-access-revocation-3-0[]
+=== Auto-purge on Channel Access Revocation
+
+An auto-purge feature is introduced for loss of access to channels and the documents in them.
+This is important for enforcement of data governance and data retention policies.
+
+Channels are the fundamental mechanism for enforcement of access control using Sync Gateway.
+They guarantee that only users with access to a specific channel can access documents in that channel.
+
+When a user loses access to a channel (_and so to its documents_) Couchbase Lite clients will auto purge all local documents on devices that belong to the revoked channel (during Pull or PushAndPull replication), unless the user has access to the document via some other channel.
+
+ifdef::param-link[Read More . . . {param-link}]
+
+// end::all-changed-features-access-revocation-3-0[]
+
+// tag::all-changed-features-access-json-api-3-0[]
+=== Document API Support for JSON Data
+
+The Couchbase Lite API now offers out-of-the box support for document data in JSON format.
+This will make it easier for developers' applications to store, transform and manipulate JSON data in the database.
+
+The API offers JSON support for Documents, MutableDocuments, Arrays, MutableArrays, Dictionaries, MutableDictionaries and Query Results.
+
+ifdef::param-link[Read More . . . {param-link}]
+
+// end::all-changed-features-access-json-api-3-0[]
+
 
 // end::all-changed-features-3-0[]
 

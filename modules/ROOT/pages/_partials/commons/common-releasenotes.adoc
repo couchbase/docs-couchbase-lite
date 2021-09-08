@@ -40,68 +40,114 @@ endif::[]
 // BEGIN: Show Maintenance Releases
 
 // Begin -- Release 3.0.x (All) -- mmm ccyy
-ifdef::param-3-0-x[]
+// ifdef::param-3-0-x[]
 
-[#maint-latest]
-[#maint-3.0.x]
-== 3.0.x -- mmm ccyy
-Version 3.0.x of Couchbase Lite for {param-title} delivers a number of enhancements and bug fixes.
+// [#maint-latest]
+// [#maint-3.0.x]
+// == 3.0.x -- mmm ccyy
+// Version 3.0.x of Couchbase Lite for {param-title} delivers a number of enhancements and bug fixes.
 
-=== Enhancements
+// === Enhancements
 
-Enhancement highlights include the ability to vary the replicator heartbeat, which keeps continuous replication connections alive when idle -- see: xref:{replication--page}#lbl-cfg-htbt[Remote Sync Gateway -- Set heartbeat]
+// Enhancement highlights include the ability to vary the replicator heartbeat, which keeps continuous replication connections alive when idle -- see: xref:{replication--page}#lbl-cfg-htbt[Remote Sync Gateway -- Set heartbeat]
 
-ifdef::is-ios,is-java[]
-Couchbase Lite for {param-title} will now support Apple Silicon (M1)
-ifdef::is-ios[]
-and Mac Catalyst
-endif::[]
-.
-endif::[]
+// ifdef::is-ios,is-java[]
+// Couchbase Lite for {param-title} will now support Apple Silicon (M1)
+// ifdef::is-ios[]
+// and Mac Catalyst
+// endif::[]
+// .
+// endif::[]
 
-include::{module-partials}pn-issues-list.adoc[tag=enhancements-3.0.x]
+// include::{module-partials}pn-issues-list.adoc[tag=enhancements-3.0.x]
 
-[#issues-and-resolutions-3.0.x]
-=== Issues and Resolutions
-==== Known Issues
+// [#issues-and-resolutions-3.0.x]
+// === Issues and Resolutions
+// ==== Known Issues
 
-include::{module-partials}pn-issues-list.adoc[tag=knownissues-3.0.x]
+// include::{module-partials}pn-issues-list.adoc[tag=knownissues-3.0.x]
 
-==== Fixed Issues
-include::{module-partials}pn-issues-list.adoc[tag=fixed-3.0.x]
+// ==== Fixed Issues
+// include::{module-partials}pn-issues-list.adoc[tag=fixed-3.0.x]
 
-endif::[]
+// endif::[]
 // End -- Release 3.0.x (All) -- Mar 2021
 
 // BEGIN -- Major Release
 [#major]
-== 3.0.0 -- xxxxember 20yy
-====
-_Quick Links_: <<new-features-3-0-0>> *|* <<improvements-3-0-0>> *|* <<issues-and-resolutions-3-0-0>> *|* <<support-notices-3-0-0>> *|* <<Related Content>>
-====
+== 3.0.0 -- September 2021
+
+.Release Notes for Couchbase Lite on {param-title} {version}
+ifndef::i-c[]
+_Quick Links_::
+ <<new-features-3-0-0>> *|* <<improvements-3-0-0>> *|* <<issues-and-resolutions-3-0-0>> *|* <<support-notices-3-0-0>> *|* <<Related Content>>
+endif::is-c[]
 
 [#new-features-3-0-0]
 === New Features
 // tag::feature-highlights[]
-:param-link1: {xref-cbl-pg-landing-p2psync}
-include::{root-partials}pn-change-log-content.adoc[tag=all-new-3-0, leveloffset=+1]
+// tag::cbl-for-c[]
 
+ifdef::is-c[]
+:param-link: xref:couchbase-lite:c:index.adoc[Couchbase Lite for C]
+include::{root-partials}pn-change-log-content.adoc[tags=all-new-cbl-for-c-3-0, leveloffset=+1]
+:param-link!:
+// end::cbl-for-c[]
+endif::is-c[]
+
+ifdef::is-android[]
+// tag::cbl-for-kotlin[]
+:param-link: xref:couchbase-lite:android:kotlin.adoc[Couchbase Lite for Kotlin]
+include::{root-partials}pn-change-log-content.adoc[tags=all-new-cbl-for-kotlin-3-0, leveloffset=+1]
+:param-link!:
+// end::cbl-for-kotlin[]
+endif::is-android[]
+
+// tag::n1ql-for-mobile[]
+
+:param-link: xref:couchbase-lite:swift:querybuilder-n1ql.adoc[Swift]  |  xref:couchbase-lite:objc:querybuilder-n1ql.adoc[Objective-C]  |  xref:couchbase-lite:java:querybuilder-n1ql.adoc[Java]  |  xref:couchbase-lite:android:querybuilder-n1ql.adoc[Android]  |  xref:couchbase-lite:csharp:querybuilder-n1ql.adoc[.Net] |  xref:couchbase-lite:c:querybuilder-n1ql.adoc[C]
+include::{root-partials}pn-change-log-content.adoc[tags=all-new-n1ql-string-3-0, leveloffset=+1]
+:param-link!:
+
+// end::n1ql-for-mobile[]
 // end::feature-highlights[]
+ifndef::is-c[]
 [#improvements-3-0-0]
 === Improvements
+endif::is-c[]
+// tag::improvements[]
 
-==== Feature Changes
+// ==== Feature Changes
 // tag::feature-changes[]
-include::{root-partials}pn-change-log-content.adoc[tag=all-changed-features-3-0, leveloffset=+1]
 
+// === Auto-purge on Channel Access Revocation
+// tag::docs-autopurge[]
+:param-link: {replication--xref--auto-purge}
+include::{root-partials}pn-change-log-content.adoc[tags=all-changed-features-access-revocation-3-0, leveloffset=+1]
+:param-link!:
+// end::docs-autopurge[]
+
+// ==== JSON API
+// tag::docs-json-api[]
+
+:param-link: {document--xref} | {blob--xref}
+include::{root-partials}pn-change-log-content.adoc[tags=all-changed-features-access-json-api-3-0, leveloffset=+1]
+:param-link!:
+// end::docs-json-api[]
+
+==== Replicator Retry Logic
+// tag::replicator-retry[]
+
+
+// end::replicator-retry[]
+// end::improvements[]
 // end::feature-changes[]
-==== Other Enhancements
-include::{module-partials}pn-issues-list.adoc[tag=enhancements-3-0-0]
 
+ifndef::is-c[]
 ==== API Changes
 // – identify any REST API changes
 // tag::api-changes[]
-include::{root-partials}pn-change-log-content.adoc[tag=all-changed-api-3-0, leveloffset=+1]
+include::api-changes[tag=content, leveloffset=+2]
 
 // end::api-changes[]
 
@@ -150,6 +196,7 @@ include::{root-partials}block-supportnotices.adoc[tag={param-platform}-new]
 include::{root-partials}block-supportnotices.adoc[tag=any-platform-ongoing]
 include::{root-partials}block-supportnotices.adoc[tag={param-platform}-ongoing]
 
+endif::is-c[]
 
 // DO NOT EDIT -- Footer Related Content Block
 include::{root-partials}block-related-content-prod.adoc[]
