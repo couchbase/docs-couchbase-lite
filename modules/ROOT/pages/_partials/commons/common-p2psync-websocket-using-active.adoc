@@ -112,11 +112,20 @@ Define the credentials the your app (the client) is expecting to receive from th
 
 include::{root-commons}set-server-authentication.adoc[]
 
+
 [#lbl-authclnt]
 === Client Authentication
+ifdef::is-c[]
+Couchbase Lite for C only supports the ability to replicate with a remote Sync Gateway *without TLS enabled* (`disableTLS=true`) at this release.
+
+
+endif::is-c[]
+
 Here we define the credentials that the client can present to the server if prompted to do so in order that the server can authenticate it.
 
-We use {url-api-class-replicator-config}'s {url-api-prop-replicator-config-auth} method to define the authentication method to the replicator - see <<configuring-client-authentication>>.
+We use {url-api-class-replicator-config}'s {url-api-prop-replicator-config-auth} method to define the authentication method to the replicator.
+
+ifndef::is-c[]
 
 ==== Basic Authentication
 Use the `{url-api-class-replicator-config-basic-auth}` to supply basic authentication credentials (username and password).
@@ -132,7 +141,6 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 
 
 ==== Certificate Authentication
-
 Use the `{url-api-class-replicator-config-cert-auth}` to configure the client TLS certificates to be presented to the server, on connection.
 This applies only to the {url-api-class-urlendpointlistener}.
 
@@ -142,7 +150,7 @@ The certificate to be presented to the server will need to be signed by the root
 
 ifdef::is-android[]
 TLSIdentity.getIdentity uses the Android keystore.  Please see (Android developers documentation (for example https://developer.android.com/training/articles/keystore) for more information about how to import a keychain.
-endif::[]
+endif::is-android[]
 
 
 // See {xref-cbl-pg-p2p-manage-tls-id} for more on how to do this.
@@ -157,6 +165,7 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 <.> Get an identity from secure storage and create a TLS Identity object
 <.> Set the authenticator to {url-api-class-replicator-config-cert-auth} and configure it to use the retrieved identity
 
+endif::is-c[]
 
 // [#lbl-auto-purge-on-revoke]
 // === Auto-purge on Channel Access Revocation

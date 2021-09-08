@@ -15,51 +15,50 @@
 
 
 // BEGIN - Set attributes pointing to API references for this module
-:sep: #/
-:api-pfx: CBL
+:sep: #
+:api-pfx:
 
 
 :url-api-references: {url-api-references-c}
 //:url-api-references-structs: {url-api-references}/Structs
-:url-api-references-classes: {url-api-references}/Classes/
+:url-api-references-classes: {url-api-references}/group__
 :url-api-references-protocols: {url-api-references}/Protocols/
-:url-api-references-structs: {url-api-references-classes}
+:url-api-references-structs: {url-api-references}/struct_c_b_l_
 :url-api-references-enums: {url-api-references}/Enums/
-:url-api-references-method-sep: {sep}c:c(cs)
+:url-api-references-method-sep: {sep}
 
-// DATABASE CLASSES
-:url-api-references-database: {url-api-references-classes}{api-pfx}Database.html
+// DATABASE module and functions
+// https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/group__database.html
+:url-api-references-database: {url-api-references-classes}{api-pfx}database.html
 :url-api-class-database: {url-api-references-database}[{api-pfx}Database]
-:url-api-method-database: {url-api-references-database}{url-api-references-method-sep}{api-pfx}Database(im)
-:url-api-method-database-close: {url-api-method-database}close:[{api-pfx}Database.Close()]
-:url-api-method-database-delete: {url-api-method-database}delete:[{api-pfx}Database.Delete()]
+:url-api-method-database: {url-api-references-database}{url-api-references-method-sep}{api-pfx}
+// Database(im)
+:url-api-method-database-close: {url-api-method-database}ga4d448b2d6809d6f9633d810d3ac6dcfa[{api-pfx}CBLDatabase_Close()]
+:url-api-method-database-compact: {url-api-method-database}gaa4b06dcb7427cafeabde8486f5f03f10[{api-pfx}CBLDatabase.PeformMaintenance()]
+:url-api-method-database-performMaintenance: {url-api-method-database}gaa4b06dcb7427cafeabde8486f5f03f10[{api-pfx}CBLDatabase.performMaintenance()]
+:url-api-method-database-copy: {url-api-method-database}ga027d34b2de65b040ecf42a2a83bf6720[{api-pfx}CBL_CopyDatabase()]
+:url-api-method-database-delete: {url-api-method-database}ga8a974247d3c99e7100b2324144100fe3:[{api-pfx}CBLDatabase_Delete()]
+:url-api-method-database-setloglevel: {url-api-references-database}{sep}c:c(cs)CBLDatabase(cm)setLogLevel:domain:[{api-pfx}Database.setLogLevel()]
 
 // Begin -- DatabaseConfiguration
-:url-api-references-databasecfg: {url-api-references-classes}{api-pfx}DatabaseConfiguration.html
+:url-api-references-databasecfg: {url-api-references-structs}{api-pfx}database_configuration.html
 :url-api-class-databasecfg: {url-api-references-databasecfg}[DatabaseConfiguration]
-:url-api-method-databasecfg: {url-api-references-databasecfg}{sep}c:c(cs)CBLDatabaseConfiguration(py)
-:url-api-method-databasecfg-setdir: {url-api-method-databasecfg}directory[DatabaseConfiguration.directory()]
-:url-api-method-databasecfg-encryption: {url-api-method-databasecfg}encryptionKey[DatabaseConfiguration.encryptionKey()]
+:url-api-method-databasecfg: {url-api-references-databasecfg}{sep}
+:url-api-method-databasecfg-setdir: {url-api-method-databasecfg}a844a5e7d02dd4ceb072dff39c7e88591[CBLDatabaseConfiguration.directory()]
+:url-api-method-databasecfg-encryption: {url-api-method-databasecfg}aaab04fb9d092ff02693eea611efefc55[CBLDatabaseConfiguration.encryptionKey()]
 // End -- DatabaseConfiguration
 
-//Database.SAVE
-:url-api-method-database-save-doc: {url-api-method-database}saveDocument:error:[{api-pfx}Database saveDocument:error:]
 
-:url-api-method-database-save-concctrl: {url-api-method-database}saveDocument:concurrencyControl:error:[{api-pfx}Database saveDocument:concurrencyControl:error:]
+// DOCUMENTS
+:url-api-references-documents: {url-api-references-classes}{api-pfx}documents.html
+:url-api-class-documents: {url-api-references-documents}[{api-pfx}Documents]
 
-:url-api-method-database-save-conflict: {url-api-method-database}saveDocument:conflictHandler:error:[{api-pfx}Database saveDocument:conflictHandler:error:]
+:url-api-method-database-save-doc: {url-api-references-documents}{sep}[{api-pfx}CBLDatabase_SaveDocument()]
+:url-api-method-database-save-concctrl: {url-api-references-documents}{sep}gae37e21b95f62419762e521f70850b9c7[{api-pfx}CBLDatabase_SaveDocumentWithConcurrencyControl()]
+:url-api-method-database-save-conflict: {url-api-references-documents}{sep}ga9c45bcf02e6e2977c702c493a7fe0b54[{api-pfx}CBLDatabase_SaveDocumentWithConflictHandler()]
+:url-api-method-database-deletedoc-doc: {url-api-method-database}gad9d878c8636a75898d3993537af7e88c[{api-pfx}CBLDatabase_DeleteDocument()]
+:url-api-method-database-deletedoc-concctrl: {url-api-method-database}ga01b4cf9725de18c41e8bb002255adb9a[{api-pfx}CBLDatabase_DeleteDocumentWithConcurrencyControl()]
 
-//Database.DELETE
-:url-api-method-database-deletedoc-doc: {url-api-method-database}deleteDocument:error:[{api-pfx}Database deleteDocument:error:]
-
-:url-api-method-database-deletedoc-concctrl: {url-api-method-database}deleteDocument:concurrencyControl:error:[{api-pfx}Database -deleteDocument:concurrencyControl:error:]
-
-//Database.COMPACT
-:url-api-method-database-compact: {url-api-method-database}compact:[{api-pfx}Database.compact()]
-:url-api-method-database-copy: {url-api-references-database}{url-api-references-method-sep}CBLDatabase(cm)copyFromPath:toDatabase:withConfig:error:[copyFromPath()]
-:url-api-method-database-performMaintenance: {url-api-method-database}performMaintenance:error:[{api-pfx}Database.performMaintenance()]
-
-:url-api-method-database-setloglevel: {url-api-references-database}{sep}c:c(cs)CBLDatabase(cm)setLogLevel:domain:[{api-pfx}Database.setLogLevel()]
 
 
 // QUERY RELATED CLASSES and METHODS
@@ -73,7 +72,7 @@
 :url-api-method-result-toJSON: {url-api-classes-result-pfx}{url-api-references-method-sep}{api-pfx}QueryResult(im)toJSON[{api-pfx}Result.toJSON]
 
 // Query class and methods
-:url-api-classes-query-pfx: {url-api-references-classes}{api-pfx}Query.html
+:url-api-classes-query-pfx: {url-api-references-classes}{api-pfx}queries.html
 :url-api-class-query: {url-api-classes-query-pfx}[{api-pfx}Query]
 :url-api-method-query-explain: {url-api-classes-query-pfx}{url-api-references-method-sep}CBLQuery(im)explain:[explain()]
 :url-api-method-query-execute: {url-api-classes-query-pfx}{sep}execute--[execute()]
@@ -184,12 +183,12 @@
 :url-api-class-ListenerCertificateAuthenticator: {url-api-references-classes}{api-pfx}ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator]
 
 // Replicator API
-:url-api-references-replicator: {url-api-references-classes}{api-pfx}Replicator.html
-:url-api-class-replicator: {url-api-references-replicator}[Replicator]
+:url-api-references-replicator: {url-api-references-classes}{api-pfx}replication.html
+:url-api-class-replicator: {url-api-references-replicator}[Replication]
 
-:url-api-properties-replicator: {url-api-references-replicator}{url-api-references-method-sep}{api-pfx}Replicator
+:url-api-properties-replicator: {url-api-references-replicator}{url-api-references-method-sep}{api-pfx}
 
-:url-api-method-replicator: {url-api-properties-replicator}(im)
+:url-api-method-replicator: {url-api-properties-replicator}
 
 :url-api-constructor-replicator-init-config: {url-api-properties-replicator}(im)initWithConfig:[initWith(config:)]
 
@@ -197,15 +196,12 @@
 
 :url-api-method-replicator-rmv-change-listener: {url-api-properties-replicator}(im)removeChangeListenerWithToken[removeChangeListenerWithToken({api-pfx}ListenerToken:)]
 
-:url-api-method-replicator-getPendingDocumentIds: {url-api-method-replicator}pendingDocumentIDs:[{api-pfx}Replicator.pendingDocumentIDs()]
+:url-api-method-replicator-getPendingDocumentIds: {url-api-method-replicator}ga6e9902ae56d5fec0fc19b29c28f1828f[{api-pfx}CBLReplicator_PendingDocumentIDs()]
 
-:url-api-method-replicator-isDocumentPending: {url-api-method-replicator}isDocumentPending:error:[{api-pfx}Replicator.isDocumentPending()]
-
-:url-api-method-replicator-start: {url-api-properties-replicator}(im)start[start()]
-
-:url-api-method-replicator-stop: {url-api-properties-replicator}(im)stop[stop()]
-
-:url-api-property-replicator-status: {url-api-properties-replicator}(py)status[status]
+:url-api-method-replicator-isDocumentPending: {url-api-method-replicator}ga493eeac915dd54a274b907a010664a2e[{api-pfx}CBLReplicator.isDocumentPending()]
+:url-api-method-replicator-start: {url-api-method-replicator}ga224926daa794a424c470bf86dd57aaf9[CBLReplicator_Start()]
+:url-api-method-replicator-stop: {url-api-method-replicator}ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()]
+:url-api-method-replicator-status: {url-api-method-replicator}ga7c3c372bade18f88b0a519c87fdb28b8[CBLReplicator_Status()]
 
 // Note there is a replicator.status property AND
 // a ReplicationStatus class/struct --- oh yes, easy to confuse.
@@ -225,36 +221,40 @@
 :url-api-enum-replicator-error: {url-api-properties-replicator-status}(py)error[error enum]
 
 // ReplicatorConfiguration API
-:url-api-references-replicator-config: {url-api-references-classes}{api-pfx}ReplicatorConfiguration.html
+:url-api-references-replicator-config: {url-api-references-structs}{api-pfx}replicator_configuration.html
 
-:url-api-class-replicator-config: {url-api-references-replicator-config}[ReplicatorConfiguration]
+:url-api-class-replicator-config: {url-api-references-replicator-config}[CBLReplicatorConfiguration]
 
-:url-api-references-replicator-config-prop: {url-api-references-replicator-config}{url-api-references-method-sep}{api-pfx}ReplicatorConfiguration
+:url-api-references-replicator-config-prop: {url-api-references-replicator-config}{url-api-references-method-sep}
 
 :url-api-constructor-replicator-config-db-tgt: {url-api-references-replicator-config-prop}(im)initWithDatabase:target:[-initWithDatabase:target:]
+
+// Repl Cfg Props
 
 :url-api-constructor-replicator-config-cfg: {url-api-references-replicator-config-prop}(im)initWithConfig:[-initWithConfig:config:]
 
 :url-api-prop-replicator-config-auth: {url-api-references-replicator-config-prop}(py)authenticator[authenticator]
 
-:url-api-prop-replicator-config-cont: {url-api-references-replicator-config-prop}(py)continuous[continuous]
+:url-api-prop-replicator-config-cont: {url-api-references-replicator-config-prop}a3d17159fc65a7491c2cde2f56a5016df[continuous]
 
-:url-api-prop-replicator-config-rep-type: {url-api-references-replicator-config-prop}(py)replicatorType[replicatorType]
+:url-api-prop-replicator-config-rep-type: {url-api-references-replicator-config-prop}a40f3195389ab0578aa17e63dd832a390[replicatorType]
 
-:url-api-prop-replicator-config-autopurge: {url-api-references-replicator-config-prop}EnableAutoPurge[EnableAutoPurge]
+:url-api-prop-replicator-config-autopurge: {url-api-references-replicator-config-prop}a3795c0097264ccd1ed612d9a0746d58d[disableAutoPurge]
 
-:url-api-prop-replicator-config-setPinnedServerCertificate: {url-api-references-replicator-config-prop}(py)pinnedServerCertificate[setPinnedServerCertificate()]
+:url-api-prop-replicator-config-setPinnedServerCertificate: {url-api-references-replicator-config-prop}a4a96fb9fba93dc93f8373b76c3816af6[pinnedServerCertificate()]
+:url-api-prop-replicator-config-propertyDecryptor: {url-api-references-replicator-config-prop}ab6a0d9e0830755d284039018a09c27d6[propertyDecryptor()]
+:url-api-prop-replicator-config-propertyEncryptor: {url-api-references-replicator-config-prop}ab731bf9f140158d6967c1af645d8744a[propertyEncryptor()]
 
 // Begin Replicator Retry Config
-:url-api-prop-replicator-config-setheartbeat: {url-api-references-replicator-config-prop}(py)heartbeat[heartbeat()]
-:url-api-prop-replicator-config-getheartbeat: {url-api-references-replicator-config-prop}(py)heartbeat[heartbeat()]
-:url-api-prop-replicator-config-setmaxRetries: {url-api-references-replicator-config-prop}(py)maxRetries[maxRetries()]
-:url-api-prop-replicator-config-getmaxRetries: {url-api-references-replicator-config-prop}(py)maxRetries[maxRetries()]
-:url-api-prop-replicator-config-setmaxRetryWaitTime: {url-api-references-replicator-config-prop}(py)maxRetryWaitTime[maxRetryWaitTime()]
-:url-api-prop-replicator-config-getmaxRetryWaitTime: {url-api-references-replicator-config-prop}(py)maxRetryWaitTime[maxRetryWaitTime()]
+:url-api-prop-replicator-config-setheartbeat: {url-api-references-replicator-config-prop}a524408f9430d13c783762dce32f1126e[heartbeat]
+:url-api-prop-replicator-config-getheartbeat: {url-api-references-replicator-config-prop}a524408f9430d13c783762dce32f1126e[heartbeat]
+:url-api-prop-replicator-config-setmaxRetries: {url-api-references-replicator-config-prop}a5b6435c711d93f71566d8814506e0dff[maxAttempts]
+:url-api-prop-replicator-config-getmaxRetries: {url-api-references-replicator-config-prop}a5b6435c711d93f71566d8814506e0dff[maxAttempts]
+:url-api-prop-replicator-config-setmaxRetryWaitTime: {url-api-references-replicator-config-prop}a5b6435c711d93f71566d8814506e0dff[maxAttemptWaitTime]
+:url-api-prop-replicator-config-getmaxRetryWaitTime: {url-api-references-replicator-config-prop}a5b6435c711d93f71566d8814506e0dff[maxAttemptWaitTime]
 // End Replicator Retry Config
 
-:url-api-prop-replicator-config-acceptOnlySelfSignedServerCertificate: {url-api-references-replicator-config-prop}(py)acceptOnlySelfSignedServerCertificate[acceptOnlySelfSignedServerCertificate]
+:url-api-prop-replicator-config-acceptOnlySelfSignedServerCertificate: {url-api-references-replicator-config-prop}abba75db71f5e08718a924d76bc1a0e1e[acceptOnlySelfSignedServerCertificate]
 
 // :url-api-prop-replicator-config-ServerCertificateVerificationMode: {url-api-references-replicator-config-prop}(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
 
@@ -271,6 +271,9 @@
 
 :url-api-class-replicator-config-cert-auth: {url-api-references-structs}{api-pfx}ClientCertificateAuthenticator.html[ClientCertificateAuthenticator]
 
+// CBLPropertyEncryptor gab116a23be8bd24b86349379f370ef60c
+// CBLPropertyDecryptor ga24a60a3d6f9816e1d32464cc31a15c0c
+// CBLEncryptable gaaf20d661f9684632a005f0a4e52656b3
 
 // Meta API
 :url-api-references-meta: {url-api-references-classes}{api-pfx}QueryMeta.html
