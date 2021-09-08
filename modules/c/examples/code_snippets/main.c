@@ -85,7 +85,7 @@ static void getting_started() {
     CBLDocument_Release(docAgain);
     FLSliceResult_Release(id);
 
-    // tag::query-syntax-n1ql-params[]
+    // tag::query-syntax-n1ql[]
     // Create a query to fetch documents of type SDK
     int errorPos;
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage, FLSTR("SELECT * FROM _ WHERE type = \"SDK\""), &errorPos, &err);
@@ -101,7 +101,7 @@ static void getting_started() {
         // Failed to run query, do error handling as above
         return;
     }
-    // end::query-syntax-n1ql-params[]
+    // end::query-syntax-n1ql[]
 
     // TODO: Result set count?
     CBLResultSet_Release(result);
@@ -810,6 +810,44 @@ static void group_by() {
     // end::query-groupby[]
 }
 
+static void docsonly_N1QL_Params() {
+    /* Documentation Only query-syntax-n1ql-params
+        Declared elsewhere
+          CBLDatabase* database = kDatabase;
+    */
+
+    // tag::query-syntax-n1ql-params[]
+    int errorPos;
+
+    FLSTR n1qlstr = "SELECT * FROM _ WHERE type = $type";
+
+    n1qlparams = FLMutableDict_New();
+
+    FLSlot_SetString(FLMutableDict_Set(n1qlparams, "type"_sl), "hotel"_sl);
+
+    CBLQuery* query = CBLDatabase_CreateQuery(database,
+                          kCBLN1QLLanguage,
+                          n1qlstr,
+                          &errorPos,
+                          &err);
+
+    CBLQuery_SetParameters(query, n1qlparams);
+
+    if(!query) {
+        // Failed to create query, do error handling as above
+        // Note that errorPos will contain the position in the N1QL string
+        // that the parse failed, if applicable
+        return;
+    }
+
+    CBLResultSet* result = CBLQuery_Execute(query, &err);
+    if(!result) {
+        // Failed to run query, do error handling as above
+        return;
+    }
+    // end::query-syntax-n1ql-params[]
+}
+
 int main(int argc, char** argv) {
     return 0;
 }
@@ -828,11 +866,7 @@ Placeholder for Date accessors.
 
 // end::date-getter[]
 
-
-// tag::query-index[]
-// placeholder
-// end::query-index[]
-
 // tag::fts-index[]
 // placeholder
 // end::fts-index[]
+

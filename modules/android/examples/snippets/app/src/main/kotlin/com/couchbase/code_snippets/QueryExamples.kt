@@ -581,5 +581,69 @@ class QueryExamples(private val database: Database) {
     }
 /* end func testQuerySyntaxJson */
 
+
+
+    @Throws(CouchbaseLiteException::class, JSONException::class)
+    fun docsonlyQuerySyntaxN1QL (
+          argUser: String,
+          argDB: Database)
+    {
+      // For Documentation -- N1QL Query using parameters
+      // tag::query-syntax-n1ql[]
+      /*  Declared elsewhere:
+              var argDB = "travel-sample";
+              var argUser = "ian";
+      */
+      val thisDb = argdb
+      val thisUser = argUser
+      val n1qlstr =
+          """
+            SELECT META().id AS thisId FROM _
+            WHERE type = "hotel"
+          """ // <.>
+
+      var thisQuery =
+          thisDb.CreateQuery( query = n1qlstr)
+
+      var results = thisQuery.Execute()
+
+      // end::query-syntax-n1ql[]
+      return results;
+  }
+
+    @Throws(CouchbaseLiteException::class, JSONException::class)
+    fun docsonlyQuerySyntaxN1QLParams (
+          argUser: String,
+          argDB: Database)
+    {
+      // For Documentation -- N1QL Query using parameters
+      // tag::query-syntax-n1ql-params[]
+      /*  Declared elsewhere:
+              var argDB = "travel-sample";
+              var argUser = "ian";
+      */
+      val thisDb = argdb
+      val thisUser = argUser
+      val doc_type = "hotel"
+      val n1qlstr = """
+            SELECT META().id AS thisId FROM _
+            WHERE type = $type
+            """ // <.>
+
+      var thisQuery =
+          thisDb.CreateQuery( query = n1qlstr)
+
+      thisQuery.Parameters.SetString(
+                      name = "type",
+                      value = "hotel") // <.>
+
+      var results = thisQuery.Execute()
+
+      // end::query-syntax-n1ql-params[]
+      return results;
+  }
+
+
+
     fun openOrCreateDatabaseForUser(user: String): Database = Database(user)
 }

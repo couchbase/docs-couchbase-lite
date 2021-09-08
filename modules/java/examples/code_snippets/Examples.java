@@ -3139,30 +3139,80 @@ public class TestQueries {
     public void testQueryPagination() throws CouchbaseLiteException {
 
 
-        // tag::query-syntax-pagination[]
-        try {
-          this_Db = new Database("hotels");
-        } catch (CouchbaseLiteException e) {
-          e.printStackTrace();
-        }
+      // tag::query-syntax-pagination[]
+      try {
+        this_Db = new Database("hotels");
+      } catch (CouchbaseLiteException e) {
+        e.printStackTrace();
+      }
 
-        int thisOffset = 0;
-        int thisLimit = 20;
+      int thisOffset = 0;
+      int thisLimit = 20;
 
-        Query listQuery =
-                QueryBuilder
-                        .select(SelectResult.all())
-                        .from(DataSource.database(this_Db))
-                        .limit(Expression.intValue(thisLimit),
-                                  Expression.intValue(thisOffset)); // <.>
+      Query listQuery =
+      QueryBuilder
+      .select(SelectResult.all())
+      .from(DataSource.database(this_Db))
+      .limit(Expression.intValue(thisLimit),
+      Expression.intValue(thisOffset)); // <.>
 
-        // end::query-syntax-pagination[]
+      // end::query-syntax-pagination[]
 
     }
 
     // end::query-syntax-pagination-all[]
 
 
+    public void docsonlyQuerySyntaxN1QL (
+      String argUser,
+      Database argDB)
+      throws CouchbaseLiteException  JSONException
+    {
+      /* For Documentation -- N1QL Query using parameters
+      // tag::query-syntax-n1ql[]
+        *  Declared elsewhere:
+              var dbName = "travel-sample";
+              var username = "ian";
+      */
+      Database thisDb = argdb;
+      String thisUser = argUser;
+      String n1qlstr = "SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""; // <.>
 
+      Query thisQuery =
+          thisDb.CreateQuery( query = n1qlstr);
 
-    } // class
+      ResultSet results = thisQuery.Execute().AllResults();
+
+      // end::query-syntax-n1ql[]
+      return results;
+  }
+
+    public void docsonlyQuerySyntaxN1QLParams (
+      String argUser,
+      Database argDB)
+      throws CouchbaseLiteException  JSONException
+    {
+      /* For Documentation -- N1QL Query using parameters
+      // tag::query-syntax-n1ql-params[]
+        *  Declared elsewhere:
+              var dbName = "travel-sample";
+              var username = "ian";
+      */
+      Database thisDb = argdb;
+      String thisUser = argUser;
+      String n1qlstr = "SELECT META().id AS thisId FROM _ WHERE type = $type"; // <.>
+
+      Query thisQuery =
+          thisDb.CreateQuery( query = n1qlstr);
+
+      thisQuery.Parameters.SetString(
+                      name = "type",
+                      value = "hotel"); // <.>
+
+      ResultSet results = thisQuery.Execute().AllResults();
+
+      // end::query-syntax-n1ql-params[]
+      return results;
+  }
+
+} // class

@@ -1674,6 +1674,36 @@ var query =
       dbCfg.Directory =
           Path.Combine(Service.GetInstance<IDefaultDirectoryResolver>().DefaultDirectory(), username);
       // tag::query-syntax-n1ql[]
+      // dbname; dbcfg defined elsewhere ...
+
+      Database thisDb = new Database(dbName, dbCfg);
+
+      var n1qlstr =
+        "SELECT META().id AS thisId FROM _ WHERE type = "hotel");  // <.>
+
+      var thisQuery = thisDb.CreateQuery(n1qlstr);
+
+      var results = thisQuery.Execute().AllResults();
+
+      // end::query-syntax-n1ql[]
+      return results;
+  }
+
+  public  List<Result> docsonlyN1QLQueryString (Database argDB)
+  {
+      /* For Documentation -- N1QL Query using parameters
+        *  Declared elsewhere:
+              var dbName = "travel-sample";
+              var username = "ian";
+      */
+
+      // tag::query-syntax-n1ql-params[]
+      var doc_type = "hotel";
+
+      DatabaseConfiguration dbCfg = new DatabaseConfiguration();
+      dbCfg.Directory =
+          Path.Combine(Service.GetInstance<IDefaultDirectoryResolver>().DefaultDirectory(), username);
+
       Database thisDb = new Database(dbName, dbCfg);
 
       var thisQuery =
@@ -1685,17 +1715,9 @@ var query =
 
       var results = thisQuery.Execute().AllResults();
 
+      // end::query-syntax-n1ql-params[]
       return results;
-      // end::query-syntax-n1ql[]
   }
-
-    // tag::query-syntax-n1ql-params[]
-    tbd
-    // end::query-syntax-n1ql-params[]
-
-    // tag::query-access-n1ql[]
-    tbd
-    // end::query-access-n1ql[]
 
 
 // QUERY RESULT SET HANDLING EXAMPLES
