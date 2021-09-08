@@ -37,9 +37,10 @@ Then run the query using the`.execute()` method -- see {query-resultsets--xref} 
 
 .Running a N1QL Query
 [#ex-samplerun]
-:param-tags: query-syntax-n1ql-params
+:param-tags: query-syntax-n1ql
 include::partial$_block_tabbed_code_example.adoc[]
 :param-tags!:
+<.> Here we are accessing th current database using the shorthand notation *`_`* -- see the <<lbl-from>> clause for more on data source selection and <<lbl-query-params>> for more on parameterized queries.
 
 
 == Query Format
@@ -145,8 +146,6 @@ This behavior is inline with that of Couchbase Server N1QL -- see example in <<t
 |store
 
 |===
-
-
 
 
 === Example
@@ -299,7 +298,7 @@ where = WHERE expression <.>
 <.> WHERE evalates `expression` to a BOOLEAN value.
 You can chain any number of Expressions in order to implement sophisticated filtering capabilities.
 
-See also -- <<lbl-operators>> for more on building expressions
+See also -- <<lbl-operators>> for more on building expressions and <<lbl-query-params>> for more on parameterized queries.
 
 === Examples
 
@@ -2010,5 +2009,20 @@ TOSTRING
 |===
 endif::is-c[]
 
+[#lbl-query-params]
+== Query Parameters
+
+You can provide runtime parameters to yur N1QL query to make it more flexible.
+
+To specify substitutable parameters within your query string prefix the name with *`$`*, `$type` -- see: <<ex-sample-params>>.
+
+.Running a N1QL Query
+[#ex-sample-params]
+:param-tags: query-syntax-n1ql-params
+include::partial$_block_tabbed_code_example.adoc[]
+:param-tags!:
+
+<.> Define a parameter placeholder `$type`
+<.> Set the value of the `$type` parameter
 
 // END --- inclusion -- common-querybuilder-n1ql.adoc

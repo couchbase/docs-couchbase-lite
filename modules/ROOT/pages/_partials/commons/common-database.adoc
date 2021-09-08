@@ -1,6 +1,7 @@
 // BEGIN -- page-inclusion -- common-database.adoc
 // Applies to all platforms with some platform-specific differences
 
+
 include::{root-partials}_set-platform.adoc[]
 
 :param-related: {blob--xref} | {document--xref} | {indexing--xref}
@@ -30,12 +31,11 @@ endif::[]
 [#open-db]
 == Create or Open Database
 
-You can create a new database and-or open and existing database, using the {url-api-class-database} class.
+You can create a new database and-or open an existing database, using the {url-api-class-database} class.
 Just pass in a database name and optionally a {url-api-class-databasecfg} -- see <<ex-dbopen>>.
 
 Things to watch for include:
 
-* Opening/Creating a database is an asynchronous process
 * If the named database does not exist in the specified, or default, location then a new one is created
 * The database is created in a default location unless you  specify a directory for it -- see: {url-api-class-databasecfg} and {url-api-method-databasecfg-setdir}
 +
@@ -43,14 +43,14 @@ Things to watch for include:
 TIP: Best Practice is to always specify the path to the database explicitly.
 
 Typically, the default location for {param-title} is
-ifndef::is-csharp[]
-the application sandbox.
-endif::[]
+ifndef::is-csharp[the application sandbox]
+ifdef::is-c[or current working directory]
+.
 ifdef::is-csharp[]
 a platform-dependant location:
 
 include::{module-partials}database-finding-file.adoc[tags=list-only]
-endif::[]
+endif::is-csharp[]
 
 See also <<lbl-find-db-loc>>.
 --
@@ -60,41 +60,26 @@ See also <<lbl-find-db-loc>>.
 :param-tags: new-database
 include::{root-partials}_block_tabbed_code_example.adoc[]
 :param-tags!:
-<.> Here we are specifying the database directory path.
+// <.> Here we are specifying the database directory path.
 
 == Close Database
 
 You are advised to incorporate the closing of all open databases into your application workflow.
 
-Closing a database is a simple, just use {url-api-method-database-close} -- see: <<ex-dbclose>>. +
-However, there are a number of things to be aware of:
-
-* Closing a database is a *synchronous* operation, it is effective immediately
-* You cannot close a database that is not open. +
-Remember that opening (or creating) a database is asynchronous.
-So issuing a close immediately after initiating an open/create, may result in an error if that process has not completed.
-
-* Closing a database
+Closing a database is a simple, just use {url-api-method-database-close} -- see: <<ex-dbclose>>.
+This also closes
 ifndef::is-c[{fn-2-8}]
- also closes any active replications, listeners and-or live queries attached to the database. +
-Closing a database immediately after kicking-off a replication could cause the sync to generate an exception. +
-For example: +
-`IllegalStateException: Attempt to perform an operation on a closed database`
+active replications, listeners and-or live queries connected to the database.
+
+NOTE: Closing a database soon after starting a replication involving it can cause an exception as the asynchronous `replicator (start)` may not yet be `connected`.
+
 ifndef::is-c[]
 .Safely Closing a Database pre 2.8
-[TIP]
---
-. Stop any active live queries -- by removing the query's change listener
-. Remove any active replication change listeners
-. Stop any active replications -- this is an asynchronous operation
-. Wait for all active replications to fully stop -- for this you can monitor the replication status -- see: {xref-cbl-pg-replication--monitor-status}.
-. Finally, close the database
-
---
+TIP: Before closing, check that any attached listeners (query/replication/change) indicate they are at least at `connected` status before closing -- see for example: {xref-cbl-pg-replication--monitor-status}.
 endif::is-c[]
 
-[#ex-dbclose]
 .Close a Database
+[#ex-dbclose]
 :param-tags: close-database
 include::{root-partials}_block_tabbed_code_example.adoc[]
 :param-tags!:
