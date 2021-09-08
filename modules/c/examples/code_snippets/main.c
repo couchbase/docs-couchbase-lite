@@ -815,10 +815,24 @@ int main(int argc, char** argv) {
 }
 
 
+// tag::console-logging-db[]
+Placeholder for code to increase level of console logging for kCBLLogDomainDatabase domain
+// end::console-logging-db[]
+
+// tag::console-logging[]
+Placeholder for code to increase level of console logging for all domains
+// end::console-logging[]
+
+// tag::date-getter[]
+Placeholder for Date accessors.
+
+// end::date-getter[]
+
+
 // tag::query-index[]
 // placeholder
-// tag::query-index[]
+// end::query-index[]
 
 // tag::fts-index[]
 // placeholder
-// tag::fts-index[]
+// end::fts-index[]

@@ -2,8 +2,10 @@
 
 // over-ride important-caption to create a MUST DO block instead
 :save-important-caption: {important-caption}
-:important-caption: Must Do
+// :important-caption: Must Do
 :listing-caption: Code Example
+
+
 == Overview
 
 Couchbase Lite’s support for pre-built databases means you can pre-load your app with data instead of syncing it down from Sync Gateway during startup.
@@ -80,21 +82,11 @@ During the application start-up logic, check if database exists in the required 
 
 . Copy the pre-packaged database to the required location
 +
-Use the API's {url-api-method-database-copy} method; this ensures that a UUID is generated for each copy -- see: <<copy-db>>
+Use the API's {url-api-method-database-copy} method -- see: <<lbl-code>>; this ensures that a UUID is generated for each copy
+//  -- see: <<copy-db>>
 +
-[IMPORTANT]
---
-*Do not copy the database using any other method*
-
+IMPORTANT: *Do not copy the database using any other method* +
 *Otherwise:* Each copy of the app will invalidate the other apps’ {glos-term-checkpoints} because a new UUID was not generated.
-
---
-+
-.Copy database using API
-[#copy-db]
-:param-tags: prebuilt-database
-include::{root-partials}_block_tabbed_code_example.adoc[]
-:param-tags!:
 
 . Open the database; you can now start querying the data and using it
 
@@ -115,6 +107,14 @@ This is caused by a URL discrepancy, which arises because `cblite` automatically
 NOTE: Start your normal application logic immediately, unless it is essential to have the absolute up-to-date data set to begin.
 That way the user is not kept hanging around watching a progress indicator.
 They can begin interacting with your app whilst any out-of-data data is being updated.
+
+.Copy database using API
+[#lbl-code]
+:param-tags: prebuilt-database
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
+
 
 // Reset important-caption
 :important-caption: {save-important-caption}
