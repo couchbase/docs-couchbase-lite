@@ -138,6 +138,7 @@ static void getting_started() {
     // }
 
     CBLListenerToken* token = CBLReplicator_AddChangeListener(replicator, getting_started_change_listener, NULL);
+
     CBLReplicator_Start(replicator, false);
 
     // Later, stop and release the replicator
@@ -269,10 +270,11 @@ static void reset_replicator_checkpoint() {
     CBLReplicator* replicator = CBLReplicator_Create(&config, NULL);
     CBLEndpoint_Free(target);
 
-    // tag::replication-reset-checkpoint[]
+    // tag::replication-reset-checkpoint-full[]
     // replicator is a CBLReplicator* instance
-    CBLReplicator_Start(replicator, true);
-    // end::replication-reset-checkpoint[]
+    CBLReplicator_Start(replicator, true); // <.>
+
+    // end::replication-reset-checkpoint-full[]
 
     CBLReplicator_Release(replicator);
 }

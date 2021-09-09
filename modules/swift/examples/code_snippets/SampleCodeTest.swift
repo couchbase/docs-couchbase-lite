@@ -929,8 +929,12 @@ class SampleCodeTest {
 
     func dontTestReplicationResetCheckpoint() throws {
         // tag::replication-reset-checkpoint[]
-        self.replicator.resetCheckpoint()
-        self.replicator.start()
+        if (resetCheckpointRequired_Example) {
+          self.replicator.start(reset: true)  // <.>
+        else
+          self.replicator.start()
+        }
+
         // end::replication-reset-checkpoint[]
     }
 

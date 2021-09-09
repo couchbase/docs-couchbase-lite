@@ -1081,12 +1081,16 @@ public class docOnly_Examples {
         config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         replicator = new Replicator(config);
-        replicator.start();
 
         // tag::replication-reset-checkpoint[]
-        replicator.resetCheckpoint();
-        replicator.start();
+        if (resetCheckpointRequired_Example) {
+          replicator.start(true); // <.>
+        else
+          replicator.start(false);
+        }
         // end::replication-reset-checkpoint[]
+
+        // ... at some later time
 
         replicator.stop();
     }

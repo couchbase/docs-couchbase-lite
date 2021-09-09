@@ -969,8 +969,11 @@
     CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
 
     // tag::replication-reset-checkpoint[]
-    [replicator resetCheckpoint];
-    [replicator start];
+    if (resetCheckpointRequired_Example) {
+      [replicator startWithReset];  // <.>
+    else
+      [replicator start];
+    }
     // end::replication-reset-checkpoint[]
 }
 
