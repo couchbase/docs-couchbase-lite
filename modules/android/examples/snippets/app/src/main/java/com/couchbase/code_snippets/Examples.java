@@ -1092,8 +1092,6 @@ public class docOnly_Examples {
 
         // ... at some later time
 
-          repl.stop()
-
         replicator.stop();
     }
 
