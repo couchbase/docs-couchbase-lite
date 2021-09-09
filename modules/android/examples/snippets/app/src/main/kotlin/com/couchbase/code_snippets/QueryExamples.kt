@@ -581,5 +581,38 @@ class QueryExamples(private val database: Database) {
     }
 /* end func testQuerySyntaxJson */
 
+
+  fun docsOnlyQuerySyntaxN1QL(argDB: Database): List<Result> {
+      // For Documentation -- N1QL Query using parameters
+      // tag::query-syntax-n1ql[]
+      // Declared elsewhere: Database argDB
+
+      val thisQuery = argDB.createQuery(
+            "SELECT META().id AS id FROM _ WHERE type = \"hotel\"") // <.>
+
+      return thisQuery.execute().allResults()
+
+      // end::query-syntax-n1ql[]
+  }
+
+
+  fun docsOnlyQuerySyntaxN1QLParams(argDB: Database): List<Result> {
+      // For Documentation -- N1QL Query using parameters
+      // tag::query-syntax-n1ql-params[]
+      // Declared elsewhere: Database argDB
+
+      val thisQuery = argDB.createQuery(
+            "SELECT META().id AS id FROM _ WHERE type = \$type") // <.>
+
+      thisQuery.parameters = Parameters().setString("type", "hotel") // <.>
+
+      return thisQuery.execute().allResults()
+
+      // end::query-syntax-n1ql-params[]
+  }
+
+
+
+
     fun openOrCreateDatabaseForUser(user: String): Database = Database(user)
 }

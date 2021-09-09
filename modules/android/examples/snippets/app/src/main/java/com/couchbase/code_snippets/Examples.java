@@ -2839,5 +2839,44 @@ public class TestQueries {
     // end::query-syntax-pagination-all[]
 
 
+    public List<Result> docsonly_QuerySyntaxN1QL (Database argDB)
+    {
+      // For Documentation -- N1QL Query using parameters
+      // tag::query-syntax-n1ql[]
+      //  Declared elsewhere: Database argDB
+
+      Database thisDb = argDB;
+
+      Query thisQuery =
+      thisDb.createQuery(
+        "SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""); // <.
+
+        return thisQuery.execute().allResults();
+
+        // end::query-syntax-n1ql[]
+      }
+
+
+    public List<Result> docsonly_QuerySyntaxN1QLParams (Database argDB)
+    {
+      // For Documentation -- N1QL Query using parameters
+      // tag::query-syntax-n1ql-params[]
+      //  Declared elsewhere: Database argDB
+
+      Database thisDb = argDB;
+
+      Query thisQuery =
+          thisDb.createQuery(
+              "SELECT META().id AS thisId FROM _ WHERE type = $type"); // <.
+
+      thisQuery.parameters =
+          Parameters.setString("type", "hotel"); // <.>
+
+      return thisQuery.execute().allResults();
+
+      // end::query-syntax-n1ql-params[]
+  }
+
+
 
 } // class

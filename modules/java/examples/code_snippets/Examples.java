@@ -3142,24 +3142,24 @@ public class TestQueries {
     public void testQueryPagination() throws CouchbaseLiteException {
 
 
-        // tag::query-syntax-pagination[]
-        try {
-          this_Db = new Database("hotels");
-        } catch (CouchbaseLiteException e) {
-          e.printStackTrace();
-        }
+      // tag::query-syntax-pagination[]
+      try {
+        this_Db = new Database("hotels");
+      } catch (CouchbaseLiteException e) {
+        e.printStackTrace();
+      }
 
-        int thisOffset = 0;
-        int thisLimit = 20;
+      int thisOffset = 0;
+      int thisLimit = 20;
 
-        Query listQuery =
-                QueryBuilder
-                        .select(SelectResult.all())
-                        .from(DataSource.database(this_Db))
-                        .limit(Expression.intValue(thisLimit),
-                                  Expression.intValue(thisOffset)); // <.>
+      Query listQuery =
+      QueryBuilder
+      .select(SelectResult.all())
+      .from(DataSource.database(this_Db))
+      .limit(Expression.intValue(thisLimit),
+      Expression.intValue(thisOffset)); // <.>
 
-        // end::query-syntax-pagination[]
+      // end::query-syntax-pagination[]
 
     }
 
@@ -3167,5 +3167,43 @@ public class TestQueries {
 
 
 
+    public List<Result> docsonly_QuerySyntaxN1QL (Database argDB)
+    {
+      // For Documentation -- N1QL Query using parameters
+      // tag::query-syntax-n1ql[]
+      //  Declared elsewhere: Database argDB
 
-    } // class
+      Database thisDb = argDB;
+
+      Query thisQuery =
+      thisDb.createQuery(
+        "SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""); // <.
+
+        return thisQuery.execute().allResults();
+
+        // end::query-syntax-n1ql[]
+      }
+
+
+    public List<Result> docsonly_QuerySyntaxN1QLParams (Database argDB)
+    {
+      // For Documentation -- N1QL Query using parameters
+      // tag::query-syntax-n1ql-params[]
+      //  Declared elsewhere: Database argDB
+
+      Database thisDb = argDB;
+
+      Query thisQuery =
+          thisDb.createQuery(
+              "SELECT META().id AS thisId FROM _ WHERE type = $type"); // <.
+
+      thisQuery.parameters =
+          Parameters.setString("type", "hotel"); // <.>
+
+      return thisQuery.execute().allResults();
+
+      // end::query-syntax-n1ql-params[]
+  }
+
+
+} // class
