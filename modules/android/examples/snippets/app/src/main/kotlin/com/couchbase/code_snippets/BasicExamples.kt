@@ -208,6 +208,10 @@ class BasicExamples(private val context: Context) {
         Database.log.console.level = LogLevel.VERBOSE // <.>
         // end::console-logging[]
     }
+        // tag::console-logging-db[]
+        Database.log.console.domains = LogDomain.DATABASE // <.>
+
+        // end::console-logging-db[]
 
     // ### File logging
     @Throws(CouchbaseLiteException::class)
