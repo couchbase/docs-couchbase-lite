@@ -705,34 +705,20 @@ class SampleCodeTest {
 
 
 
-    func dontTestToJson-Blob() throws {
+    func dontTestGetBlobAsJSONstring() throws {
         database = self.db
-        // demonstrate use of JSON string
-        // add notes showing:
-        // 1 - retrieval of document
-        // 2 - test for blobness
-        // 3 - conversion to Json (metadata only)
-        // 4 - use of retrieved json data
-        // tag::tojson-blob[]
+
+        // tag::tojson-getblobasstring[]
 
         var thisdoc =
               database.document(withID: "thisdoc-id").toDictionary(); // <.>
-
-        // var image: UIImage!
-
-        // let appleImage = UIImage(named: "avatar.jpg")!
-        // let imageData = UIImageJPEGRepresentation(appleImage, 1)!
-
-        // let blob = Blob(contentType: "image/jpeg", data: imageData)
-        // newTask.setBlob(blob, forKey: "avatar")
-        // try database.saveDocument(newTask)
 
         if thisdoc.isBlob() { // <.>
           let blobdata = thisdoc.toJson() // <.>
           var blobtype = blobdata["type"] // <.>
           var bloblength = blobdata["length"]
         }
-        // end::tojson-blob[]
+        // end::tojson-getblobasstring[]
     }
 
 
@@ -2492,7 +2478,7 @@ class Query {
         let db = try! Database(name: "hotel")
 
         let listQuery =  db.createQuery( query:
-            "SELECT META().id AS thisId FROM \(db.name) WHERE type = 'hotel'" // <.>
+            "SELECT META().id AS thisId FROM _ WHERE type = 'hotel'" // <.>
         )
 
         let results: ResultSet = try listQuery.execute()
