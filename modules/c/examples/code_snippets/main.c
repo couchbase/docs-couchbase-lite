@@ -85,7 +85,7 @@ static void getting_started() {
     CBLDocument_Release(docAgain);
     FLSliceResult_Release(id);
 
-    // tag::query-syntax-n1ql-params[]
+    // tag::query-syntax-n1ql[]
     // Create a query to fetch documents of type SDK
     int errorPos;
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage, FLSTR("SELECT * FROM _ WHERE type = \"SDK\""), &errorPos, &err);
@@ -101,7 +101,7 @@ static void getting_started() {
         // Failed to run query, do error handling as above
         return;
     }
-    // end::query-syntax-n1ql-params[]
+    // end::query-syntax-n1ql[]
 
     // TODO: Result set count?
     CBLResultSet_Release(result);
@@ -812,6 +812,43 @@ static void group_by() {
     // end::query-groupby[]
 }
 
+static void docsonly_N1QL_Params() {
+    CBLDatabase* database = kDatabase;
+
+    // tag::query-syntax-n1ql-params[]
+    int errorPos;
+
+    CBLError err;
+
+    FLString n1qlstr = FLSTR("SELECT * FROM _ WHERE type = $type");
+
+    FLMutableDict n1qlparams = FLMutableDict_New();
+    FLMutableDict_SetString(n1qlparams, FLSTR("type"), FLSTR("hotel"));
+
+    CBLQuery* query = CBLDatabase_CreateQuery(database,
+                          kCBLN1QLLanguage,
+                          n1qlstr,
+                          &errorPos,
+                          &err);
+
+    CBLQuery_SetParameters(query, n1qlparams);
+
+    if(!query) {
+        /* Do appropriate error handling ...
+            Note that (where applicable) errorPos contains the position
+            in the N1QL string that the parse failed
+        */
+        return;
+    }
+
+    CBLResultSet* result = CBLQuery_Execute(query, &err);
+    if(!result) {
+        // Failed to run query, do error handling ...
+        return;
+    }
+    // end::query-syntax-n1ql-params[]
+}
+
 int main(int argc, char** argv) {
     return 0;
 }
@@ -830,11 +867,7 @@ Placeholder for Date accessors.
 
 // end::date-getter[]
 
-
-// tag::query-index[]
-// placeholder
-// end::query-index[]
-
 // tag::fts-index[]
 // placeholder
 // end::fts-index[]
+
