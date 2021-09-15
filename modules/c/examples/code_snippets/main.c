@@ -524,6 +524,108 @@ static void use_blob() {
     CBLBlob_Release(blob);
 }
 
+static void doc_json() {
+    CBLDatabase* db = kDatabase;
+    
+    // tag::tojson-document[]
+    // NOTE: No error handling, for brevity (see getting started)
+    
+    FLString json = FLSTR("{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",\"country\":\"Australia\"}");
+    
+    // Create a document and set the JSON data to the document
+    CBLError err;
+    CBLDocument* newDoc = CBLDocument_CreateWithID(FLSTR("hotel_1002"));
+    CBLDocument_SetJSON(newDoc, json, &err);
+    
+    // Save the document to the database
+    CBLDatabase_SaveDocument(db, newDoc, &err);
+    
+    // Release created doc after using it
+    CBLDocument_Release(newDoc);
+    
+    // Get the document from the database
+    const CBLDocument* doc = CBLDatabase_GetDocument(db, FLSTR("hotel_1002"), &err);
+    
+    // Get document body as JSON
+    FLSliceResult docJson = CBLDocument_CreateJSON(doc);
+    printf("Document in JSON :: %.*s\n", (int)docJson.size, (const char *)docJson.buf);
+    
+    // Release JSON data after using it
+    FLSliceResult_Release(docJson);
+    
+    // Release doc read from the database after using it
+    CBLDocument_Release(doc);
+    // end::tojson-document[]
+}
+
+static void dict_json() {
+    // tag::tojson-dictionary[]
+    // NOTE: No error handling, for brevity (see getting started)
+    
+    FLString json = FLSTR("{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",\"country\":\"Australia\"}");
+    
+    // Create a dictionary from the JSON string
+    FLError err;
+    FLDoc doc = FLDoc_FromJSON(json, &err);
+    FLDict hotel = FLValue_AsDict(FLDoc_GetRoot(doc));
+    
+    // Iterate through the dictionary
+    FLDictIterator iter;
+    FLDictIterator_Begin(hotel, &iter);
+    FLValue value;
+    while (NULL != (value = FLDictIterator_GetValue(&iter))) {
+        FLString key = FLDictIterator_GetKeyString(&iter);
+        FLString strValue = FLValue_AsString(value);
+        printf("%.*s :: %.*s\n", (int)key.size, (const char*)key.buf, (int)strValue.size, (const char*)strValue.buf);
+        FLDictIterator_Next(&iter);
+    }
+    
+    // Convert the dictionary to JSON
+    FLSliceResult hotelJson = FLValue_ToJSON((FLValue)hotel);
+    printf("Hotel in JSON :: %.*s\n", (int)hotelJson.size, (const char *)hotelJson.buf);
+    
+    // Release JSON data after finish using it
+    FLSliceResult_Release(hotelJson);
+    
+    // Release doc after finish using it
+    FLDoc_Release(doc);
+    // end::tojson-dictionary[]
+}
+
+static void array_json() {
+    // tag::tojson-array[]
+    // NOTE: No error handling, for brevity (see getting started)
+    
+    FLString json = FLSTR("[\"Hotel Ned\", \"Hotel Ted\"]");
+    
+    // Create an array from the JSON string
+    FLError err;
+    FLDoc doc = FLDoc_FromJSON(json, &err);
+    FLArray hotels = FLValue_AsArray(FLDoc_GetRoot(doc));
+    
+    // Iterate through the array
+    FLArrayIterator iter;
+    FLArrayIterator_Begin(hotels, &iter);
+    FLValue value;
+    while (NULL != (value = FLArrayIterator_GetValue(&iter))) {
+        FLString hotel = FLValue_AsString(value);
+        printf("Hotel :: %.*s\n", (int)hotel.size, (const char *)hotel.buf);
+        FLArrayIterator_Next(&iter);
+    }
+    
+    // Convert the array to JSON
+    FLSliceResult hotelsJson = FLValue_ToJSON((FLValue)hotels);
+    printf("Hotels in JSON :: %.*s\n", (int)hotelsJson.size, (const char *)hotelsJson.buf);
+    
+    // Release JSON data after finish using it
+    FLSliceResult_Release(hotelsJson);
+    
+    // Release doc after finish using it
+    FLDoc_Release(doc);
+    // end::tojson-array[]
+}
+
+
 static void create_index() {
     CBLDatabase* db = kDatabase;
 
@@ -639,8 +741,8 @@ static void use_collection_contains() {
     CBLError err;
     CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id, name, public_likes FROM _ WHERE type = \"hotel\" "
-              "AND ARRAY_CONTAINS(public_likes, \"Armani Langworth\""), NULL, &err);
-
+              "AND ARRAY_CONTAINS(public_likes, \"Armani Langworth\")"), NULL, &err);
+    
     CBLResultSet* results = CBLQuery_Execute(query, &err);
     while(CBLResultSet_Next(results)) {
         FLArray publicLikes = FLValue_AsArray(CBLResultSet_ValueForKey(results, FLSTR("public_likes")));
@@ -1088,11 +1190,14 @@ int main(int argc, char** argv) {
     create_document();
     update_document();
     do_batch_operation();
-    use_blob();
-    select_meta();
-
+    // Disable use_blob() as no avatar.jpg to load and crash
+    // use_blob();
+    doc_json();
+    dict_json();
+    array_json();
     load_prebuilt();
     create_index();
+    select_meta();
     select_where();
     use_collection_contains();
     select_like();
@@ -1119,15 +1224,13 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-
 // tag::console-logging-db[]
-// Placeholder for code to increase level of console logging for kCBLLogDomainDatabase domain
+// Placeholder for code to increase level of console logging for kCBLLogDomainDatabase domain (Not Applicable for C)
 // end::console-logging-db[]
 
 // tag::console-logging[]
-// Placeholder for code to increase level of console logging for all domains
+// Placeholder for code to increase level of console logging for all domains (Not Applicable for C)
 // end::console-logging[]
 
 // tag::date-getter[]
-// Placeholder for Date accessors.
-// end::date-getter[]
+// Placeholder for Date accessors (Not Applicable for C)
