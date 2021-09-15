@@ -1670,24 +1670,18 @@ var query =
         }
     }
     // end::merge-conflict-resolver[]
-
+}
 
 // N1QL QUERY
 
   public List<Result> docsonly_N1QLQueryString(Database argDB)
   {
-      var doc_type = "hotel";
-
       DatabaseConfiguration dbCfg = new DatabaseConfiguration();
-      dbCfg.Directory =
-          Path.Combine(Service.GetInstance<IDefaultDirectoryResolver>().DefaultDirectory(), username);
 
       Database thisDb = new Database(dbName, dbCfg);
 
       // For Documentation -- N1QL Query
       // tag::query-syntax-n1ql[]
-      // Declared elsewhere: Database argDB
-
       var thisQuery =
           thisDb.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""); // <.>
 
@@ -1699,11 +1693,7 @@ var query =
 
   public  List<Result> docsonly_N1QLQueryStringParams(Database argDB)
   {
-      var doc_type = "hotel";
-
       DatabaseConfiguration dbCfg = new DatabaseConfiguration();
-      dbCfg.Directory =
-          Path.Combine(Service.GetInstance<IDefaultDirectoryResolver>().DefaultDirectory(), username);
 
       Database thisDb = new Database(dbName, dbCfg);
 
