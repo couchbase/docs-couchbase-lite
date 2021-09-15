@@ -1808,12 +1808,11 @@ CBLQuery* listQuery =
     /* Documentation Only query-syntax-n1ql
         Declared elsewhere: CBLDatabase* argDb
     */
-
-    // tag::query-syntax-n1ql[]
     NSError *error;
 
     CBLDatabase *db == argDB;
 
+    // tag::query-syntax-n1ql[]
     NSString *n1qlstr = "SELECT * FROM _ WHERE type = \"hotel\""; // <.>
 
     CBLQuery* thisQuery = [db createQuery: n1qlstr];
@@ -1828,11 +1827,11 @@ CBLQuery* listQuery =
         Declared elsewhere: CBLDatabase* argDB
     */
 
-    // tag::query-syntax-n1ql-params[]
     NSError *error;
 
     CBLDatabase *db = argDB;
 
+    // tag::query-syntax-n1ql-params[]
     NSString *n1qlstr = "SELECT * FROM _ WHERE type = $type"; // <.>
 
     CBLQuery* thisQuery = [db createQuery: n1qlstr];
@@ -1900,9 +1899,6 @@ _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; // <.>
 [_thisReplicator start]; // <.>
 
 // end::replicator-simple[]
-
-
-
 
 //
 // Stuff I adapted
