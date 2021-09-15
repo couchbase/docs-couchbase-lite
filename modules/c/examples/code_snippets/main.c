@@ -863,6 +863,31 @@ static void test_explain_statement() {
     // DOCS NOTE: Others omitted for now
 }
 
+static void query_result_json() {
+    CBLDatabase* db = kDatabase;
+    
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id as id, name, city, type FROM _ LIMIT 10"),
+        NULL, &err);
+
+    // tag::query-access-json[]
+    // NOTE: No error handling, for brevity (see getting started)
+    
+    CBLResultSet* results = CBLQuery_Execute(query, &err);
+    while(CBLResultSet_Next(results)) {
+        FLDict result = CBLResultSet_ResultDict(results);
+        FLStringResult json = FLValue_ToJSON((FLValue)result);
+        printf("JSON Result :: %.*s\n", (int)json.size, (const char *)json.buf);
+        FLSliceResult_Release(json);
+    }
+    CBLResultSet_Release(results);
+    
+    // end::query-access-json[]
+    
+    CBLQuery_Release(query);
+}
+
 static void create_full_text_index() {
     CBLDatabase* db = kDatabase;
 
@@ -1040,6 +1065,7 @@ int main(int argc, char** argv) {
     select_join();
     group_by();
     order_by();
+    query_result_json();
 
     create_full_text_index();
     full_text_search();
@@ -1058,23 +1084,13 @@ int main(int argc, char** argv) {
 
 
 // tag::console-logging-db[]
-Placeholder for code to increase level of console logging for kCBLLogDomainDatabase domain
+// Placeholder for code to increase level of console logging for kCBLLogDomainDatabase domain
 // end::console-logging-db[]
 
 // tag::console-logging[]
-Placeholder for code to increase level of console logging for all domains
+// Placeholder for code to increase level of console logging for all domains
 // end::console-logging[]
 
 // tag::date-getter[]
-Placeholder for Date accessors.
-
+// Placeholder for Date accessors.
 // end::date-getter[]
-
-
-// tag::query-index[]
-// placeholder
-// end::query-index[]
-
-// tag::fts-index[]
-// placeholder
-// end::fts-index[]
