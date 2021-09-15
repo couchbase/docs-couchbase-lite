@@ -1804,7 +1804,47 @@ CBLQuery* listQuery =
 
 // end::query-syntax-pagination[]
 
+- (void) docsonly_QuerySyntaxN1QL() {
+    /* Documentation Only query-syntax-n1ql
+        Declared elsewhere: CBLDatabase* argDb
+    */
+    NSError *error;
 
+    CBLDatabase *db == argDB;
+
+    // tag::query-syntax-n1ql[]
+    NSString *n1qlstr = "SELECT * FROM _ WHERE type = \"hotel\""; // <.>
+
+    CBLQuery* thisQuery = [db createQuery: n1qlstr];
+
+    CBLQueryResultSet* resultset =  [thisQuery execute:&error];
+
+    // end::query-syntax-n1ql[]
+}
+
+- (void) docsonly_QuerySyntaxN1QLParams() {
+    /* Documentation Only query-syntax-n1ql-params
+        Declared elsewhere: CBLDatabase* argDB
+    */
+
+    NSError *error;
+
+    CBLDatabase *db = argDB;
+
+    // tag::query-syntax-n1ql-params[]
+    NSString *n1qlstr = "SELECT * FROM _ WHERE type = $type"; // <.>
+
+    CBLQuery* thisQuery = [db createQuery: n1qlstr];
+
+    CBLQueryParameters* n1qlparams = [[CBLQueryParameters alloc] init];
+    [params setString: @"hotel" forName: @"type"]; // <.>
+
+    thisQuery.parameters = n1qlparams;
+
+    CBLQueryResultSet* resultset =  [thisQuery execute:&error];
+
+    // end::query-syntax-n1ql-params[]
+}
 
 // PEER-to-PEER
 
@@ -1859,9 +1899,6 @@ _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; // <.>
 [_thisReplicator start]; // <.>
 
 // end::replicator-simple[]
-
-
-
 
 //
 // Stuff I adapted
