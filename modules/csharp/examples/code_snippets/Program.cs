@@ -1674,36 +1674,54 @@ var query =
 
 // N1QL QUERY
 
-
-  public  List<Result> testN1QLQueryString (Database argDB)
+  public List<Result> docsonly_N1QLQueryString(Database argDB)
   {
-      // For Documentation
+      var doc_type = "hotel";
+
       DatabaseConfiguration dbCfg = new DatabaseConfiguration();
       dbCfg.Directory =
           Path.Combine(Service.GetInstance<IDefaultDirectoryResolver>().DefaultDirectory(), username);
-      // tag::query-syntax-n1ql[]
+
       Database thisDb = new Database(dbName, dbCfg);
 
+      // For Documentation -- N1QL Query
+      // tag::query-syntax-n1ql[]
+      // Declared elsewhere: Database argDB
+
       var thisQuery =
-          thisDb.CreateQuery(
-              "SELECT META().id AS thisId FROM $thisDb.name " +
-              "WHERE type = $type"); // <.>
+          thisDb.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""); // <.>
 
-      thisQuery.Parameters.SetString("type", "hotel"); // <.>
+      return thisQuery.Execute().AllResults();
 
-      var results = thisQuery.Execute().AllResults();
-
-      return results;
       // end::query-syntax-n1ql[]
   }
 
-    // tag::query-syntax-n1ql-params[]
-    tbd
-    // end::query-syntax-n1ql-params[]
 
-    // tag::query-access-n1ql[]
-    tbd
-    // end::query-access-n1ql[]
+  public  List<Result> docsonly_N1QLQueryStringParams(Database argDB)
+  {
+      var doc_type = "hotel";
+
+      DatabaseConfiguration dbCfg = new DatabaseConfiguration();
+      dbCfg.Directory =
+          Path.Combine(Service.GetInstance<IDefaultDirectoryResolver>().DefaultDirectory(), username);
+
+      Database thisDb = new Database(dbName, dbCfg);
+
+      // For Documentation -- N1QL Query
+      // tag::query-syntax-n1ql-params[]
+      // Declared elsewhere: Database argDB
+
+      var thisQuery =
+          thisDb.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = $type"); // <.>
+
+      var n1qlParams = new Parameters();
+      n1qlParams.SetString("type", "hotel"); // <.>
+      thisQuery.Parameters = n1qlParams;
+
+      return thisQuery.Execute().AllResults();
+
+      // end::query-syntax-n1ql-params[]
+  }
 
 
 // QUERY RESULT SET HANDLING EXAMPLES
