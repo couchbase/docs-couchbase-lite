@@ -566,8 +566,8 @@ static void dict_json() {
     
     // Create a dictionary from the JSON string
     FLError err;
-    FLDoc doc = FLDoc_FromJSON(json, &err);
-    FLDict hotel = FLValue_AsDict(FLDoc_GetRoot(doc));
+    FLSliceResult jsonData1 = FLData_ConvertJSON(json, &err);
+    FLDict hotel = FLValue_AsDict(FLValue_FromData(FLSliceResult_AsSlice(jsonData1), kFLTrusted));
     
     // Iterate through the dictionary
     FLDictIterator iter;
@@ -581,14 +581,12 @@ static void dict_json() {
     }
     
     // Convert the dictionary to JSON
-    FLSliceResult hotelJson = FLValue_ToJSON((FLValue)hotel);
-    printf("Hotel in JSON :: %.*s\n", (int)hotelJson.size, (const char *)hotelJson.buf);
+    FLSliceResult jsonData2 = FLValue_ToJSON((FLValue)hotel);
+    printf("Hotel in JSON :: %.*s\n", (int)jsonData2.size, (const char *)jsonData2.buf);
     
     // Release JSON data after finish using it
-    FLSliceResult_Release(hotelJson);
-    
-    // Release doc after finish using it
-    FLDoc_Release(doc);
+    FLSliceResult_Release(jsonData1);
+    FLSliceResult_Release(jsonData2);
     // end::tojson-dictionary[]
 }
 
@@ -600,8 +598,8 @@ static void array_json() {
     
     // Create an array from the JSON string
     FLError err;
-    FLDoc doc = FLDoc_FromJSON(json, &err);
-    FLArray hotels = FLValue_AsArray(FLDoc_GetRoot(doc));
+    FLSliceResult jsonData1 = FLData_ConvertJSON(json, &err);
+    FLArray hotels = FLValue_AsArray(FLValue_FromData(FLSliceResult_AsSlice(jsonData1), kFLTrusted));
     
     // Iterate through the array
     FLArrayIterator iter;
@@ -614,14 +612,12 @@ static void array_json() {
     }
     
     // Convert the array to JSON
-    FLSliceResult hotelsJson = FLValue_ToJSON((FLValue)hotels);
-    printf("Hotels in JSON :: %.*s\n", (int)hotelsJson.size, (const char *)hotelsJson.buf);
+    FLSliceResult jsonData2 = FLValue_ToJSON((FLValue)hotels);
+    printf("Hotels in JSON :: %.*s\n", (int)jsonData2.size, (const char *)jsonData2.buf);
     
     // Release JSON data after finish using it
-    FLSliceResult_Release(hotelsJson);
-    
-    // Release doc after finish using it
-    FLDoc_Release(doc);
+    FLSliceResult_Release(jsonData1);
+    FLSliceResult_Release(jsonData2);
     // end::tojson-array[]
 }
 
