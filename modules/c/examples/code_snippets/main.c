@@ -89,7 +89,7 @@ static void getting_started() {
     CBLDocument_Release(docAgain);
     FLSliceResult_Release(id);
 
-    // tag::query-syntax-n1ql-params[]
+    // tag::query-syntax-n1ql[]
     // Create a query to fetch documents of type SDK
     int errorPos;
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage, FLSTR("SELECT * FROM _ WHERE type = \"SDK\""), &errorPos, &err);
@@ -105,7 +105,7 @@ static void getting_started() {
         // Failed to run query, do error handling as above
         return;
     }
-    // end::query-syntax-n1ql-params[]
+    // end::query-syntax-n1ql[]
 
     // TODO: Result set count?
     CBLResultSet_Release(result);
@@ -827,7 +827,7 @@ static void order_by() {
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
-    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage, 
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id, title FROM _ WHERE type = \"hotel\" ORDER BY title ASC LIMIT 10"),
         NULL, &err);
 
@@ -850,7 +850,7 @@ static void test_explain_statement() {
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
-    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage, 
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
         FLSTR("SELECT * FROM _ WHERE type = \"hotel\" GROUP BY country ORDER BY title ASC LIMIT 10"),
         NULL, &err);
 
@@ -865,7 +865,7 @@ static void test_explain_statement() {
 
 static void query_result_json() {
     CBLDatabase* db = kDatabase;
-    
+
     CBLError err;
     CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id as id, name, city, type FROM _ LIMIT 10"),
@@ -873,7 +873,7 @@ static void query_result_json() {
 
     // tag::query-access-json[]
     // NOTE: No error handling, for brevity (see getting started)
-    
+
     CBLResultSet* results = CBLQuery_Execute(query, &err);
     while(CBLResultSet_Next(results)) {
         FLDict result = CBLResultSet_ResultDict(results);
@@ -882,9 +882,9 @@ static void query_result_json() {
         FLSliceResult_Release(json);
     }
     CBLResultSet_Release(results);
-    
+
     // end::query-access-json[]
-    
+
     CBLQuery_Release(query);
 }
 
@@ -931,7 +931,7 @@ static void full_text_search() {
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
-    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage, 
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id FROM _ WHERE MATCH(nameFTSIndex, \"'buy'\")"),
         NULL, &err);
 
@@ -1044,6 +1044,41 @@ static void enable_basic_auth() {
 
     CBLReplicator_Start(replicator, false);
     // end::basic-authentication[]
+static void docsonly_N1QL_Params() {
+    CBLDatabase* database = kDatabase;
+
+    // tag::query-syntax-n1ql-params[]
+    int errorPos;
+
+    CBLError err;
+
+    FLString n1qlstr = FLSTR("SELECT * FROM _ WHERE type = $type");
+
+    FLMutableDict n1qlparams = FLMutableDict_New();
+    FLMutableDict_SetString(n1qlparams, FLSTR("type"), FLSTR("hotel"));
+
+    CBLQuery* query = CBLDatabase_CreateQuery(database,
+                          kCBLN1QLLanguage,
+                          n1qlstr,
+                          &errorPos,
+                          &err);
+
+    CBLQuery_SetParameters(query, n1qlparams);
+
+    if(!query) {
+        /* Do appropriate error handling ...
+            Note that (where applicable) errorPos contains the position
+            in the N1QL string that the parse failed
+        */
+        return;
+    }
+
+    CBLResultSet* result = CBLQuery_Execute(query, &err);
+    if(!result) {
+        // Failed to run query, do error handling ...
+        return;
+    }
+    // end::query-syntax-n1ql-params[]
 }
 
 int main(int argc, char** argv) {
