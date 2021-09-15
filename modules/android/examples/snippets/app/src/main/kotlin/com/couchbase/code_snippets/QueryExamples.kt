@@ -498,18 +498,11 @@ class QueryExamples(private val database: Database) {
 
 
     fun testQuerySyntaxAll(currentUser: String) {
-
         // tag::query-syntax-all[]
-//        try {
-//            this_Db = new Database("hotels");
-//        } catch (CouchbaseLiteException e) {
-//            e.printStackTrace();
-//        }
-
         val listQuery: Query = QueryBuilder.select(SelectResult.all())
             .from(DataSource.database(openOrCreateDatabaseForUser(currentUser)))
-        // end::query-syntax-all[]
 
+            // end::query-syntax-all[]
         // tag::query-access-all[]
         val hotels: HashMap<String, Hotel> = HashMap()
 
@@ -537,23 +530,16 @@ class QueryExamples(private val database: Database) {
     }
 
     @Throws(CouchbaseLiteException::class, JSONException::class)
-    fun testQuerySyntaxJson(currentUser: String) {
-        val db = openOrCreateDatabaseForUser(currentUser)
+    fun testQuerySyntaxJson(currentUser: String, argDb: Database) {
+        Database db = argDb
         // tag::query-syntax-json[]
         // Example assumes Hotel class object defined elsewhere
-//        Database db = null;
-//        try {
-//                db = new Database(dbName);
-//        } catch (CouchbaseLiteException e) {
-//            e.printStackTrace();
-//        }
 
         // Build the query
         val listQuery: Query = QueryBuilder.select(SelectResult.all())
             .from(DataSource.database(db))
 
         // end::query-syntax-json[]
-
         // tag::query-access-json[]
         // Uses Jackson JSON processor
         val mapper = ObjectMapper()
@@ -581,13 +567,11 @@ class QueryExamples(private val database: Database) {
     }
 /* end func testQuerySyntaxJson */
 
-
-  fun docsOnlyQuerySyntaxN1QL(argDB: Database): List<Result> {
+  fun docsOnlyQuerySyntaxN1QL(argDb: Database): List<Result> {
       // For Documentation -- N1QL Query using parameters
+      Database db=argDb
       // tag::query-syntax-n1ql[]
-      // Declared elsewhere: Database argDB
-
-      val thisQuery = argDB.createQuery(
+      val thisQuery = dbcreateQuery(
             "SELECT META().id AS id FROM _ WHERE type = \"hotel\"") // <.>
 
       return thisQuery.execute().allResults()
@@ -595,13 +579,10 @@ class QueryExamples(private val database: Database) {
       // end::query-syntax-n1ql[]
   }
 
-
-  fun docsOnlyQuerySyntaxN1QLParams(argDB: Database): List<Result> {
+  fun docsOnlyQuerySyntaxN1QLParams(argDb: Database): List<Result> {
       // For Documentation -- N1QL Query using parameters
       // tag::query-syntax-n1ql-params[]
-      // Declared elsewhere: Database argDB
-
-      val thisQuery = argDB.createQuery(
+      val thisQuery = dbcreateQuery(
             "SELECT META().id AS id FROM _ WHERE type = \$type") // <.>
 
       thisQuery.parameters = Parameters().setString("type", "hotel") // <.>
@@ -611,8 +592,5 @@ class QueryExamples(private val database: Database) {
       // end::query-syntax-n1ql-params[]
   }
 
-
-
-
-    fun openOrCreateDatabaseForUser(user: String): Database = Database(user)
+    fun openOrCreateDatabaseForUser(argUser: String): Database = Database(argUser)
 }
