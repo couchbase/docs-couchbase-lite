@@ -1044,6 +1044,8 @@ static void enable_basic_auth() {
 
     CBLReplicator_Start(replicator, false);
     // end::basic-authentication[]
+}
+
 static void docsonly_N1QL_Params() {
     CBLDatabase* database = kDatabase;
 
