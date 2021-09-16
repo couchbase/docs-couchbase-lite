@@ -742,6 +742,27 @@ static void select_meta() {
     // end::query-select-meta[]
 }
 
+static void select_id() {
+    CBLDatabase* db = kDatabase;
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id FROM _"), NULL, &err);
+    
+    // tag::query-access-id[]
+    // NOTE: No error handling, for brevity (see getting started)
+    
+    CBLResultSet* results = CBLQuery_Execute(query, &err);
+    while(CBLResultSet_Next(results)) {
+        FLString id = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("id")));
+        printf("Document ID :: %.*s\n", (int)id.size, (const char *)id.buf);
+    }
+    // end::query-access-id[]
+    
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+}
+
 static void query_change_listener(void* context, CBLQuery* query, CBLListenerToken* token) {
     CBLError err;
     CBLResultSet* results = CBLQuery_CopyCurrentResults(query, token, &err);
@@ -784,6 +805,65 @@ static void select_all() {
     CBLListener_Remove(token); // The token received from AddChangeListener
     CBLQuery_Release(query);
     // end::stop-live-query[]
+}
+
+static void select_and_access_all() {
+    CBLDatabase* db = kDatabase;
+    
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _"), NULL, &err);
+    
+    // tag::query-access-all[]
+    // NOTE: No error handling, for brevity (see getting started)
+    
+    CBLResultSet* results = CBLQuery_Execute(query, &err);
+    while(CBLResultSet_Next(results)) {
+        FLDict dict = FLValue_AsDict(CBLResultSet_ValueForKey(results, FLSTR("_")));
+        
+        FLString id = FLValue_AsString(FLDict_Get(dict, FLSTR("id")));
+        FLString type = FLValue_AsString(FLDict_Get(dict, FLSTR("type")));
+        FLString name = FLValue_AsString(FLDict_Get(dict, FLSTR("name")));
+        FLString city = FLValue_AsString(FLDict_Get(dict, FLSTR("city")));
+        
+        printf("ID :: %.*s\n", (int)id.size, (const char *)id.buf);
+        printf("Type :: %.*s\n", (int)type.size, (const char *)type.buf);
+        printf("Name :: %.*s\n", (int)name.size, (const char *)name.buf);
+        printf("City :: %.*s\n", (int)city.size, (const char *)city.buf);
+    }
+    
+    // All results will be available from the above query
+    CBLResultSet_Release(results);
+    // end::query-access-all[]
+    
+    CBLQuery_Release(query);
+}
+
+static void select_props() {
+    CBLDatabase* db = kDatabase;
+    
+    // tag::query-access-props[]
+    // NOTE: No error handling, for brevity (see getting started)
+    
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT type, name, city FROM _"), NULL, &err);
+    
+    CBLResultSet* results = CBLQuery_Execute(query, &err);
+    while(CBLResultSet_Next(results)) {
+        FLString type = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("type")));
+        FLString name = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("name")));
+        FLString city = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("city")));
+        
+        printf("Type :: %.*s\n", (int)type.size, (const char *)type.buf);
+        printf("Name :: %.*s\n", (int)name.size, (const char *)name.buf);
+        printf("City :: %.*s\n", (int)city.size, (const char *)city.buf);
+    }
+    // end::query-access-props[]
+    
+    // All results will be available from the above query
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
 }
 
 static void select_where() {
@@ -1654,7 +1734,11 @@ int main(int argc, char** argv) {
     array_json();
     load_prebuilt();
     create_index();
+    select_all();
+    select_and_access_all();
+    select_props();
     select_meta();
+    select_id();
     select_where();
     use_collection_contains();
     select_like();
