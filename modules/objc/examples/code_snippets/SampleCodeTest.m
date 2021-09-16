@@ -2552,3 +2552,124 @@ CBLReplicatorConfiguration *thisConfig
 
 // end::sgw-act-rep-initialize[]
 // END -- snippets --
+
+
+
+// FOR JSON API Methods
+
+// tag::tojson-array[]
+NSString* thisJSONstring = @"[{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hotel Ted\",\"city\":\"Paris\","
+    "\"country\":\"France\",\"description\":\"Undefined description for Hotel Ted\"},"
+    "{\"id\":\"1001\",\"type\":\"hotel\",\"name\":\"Hotel Fred\",\"city\":\"London\","
+    "\"country\":\"England\",\"description\":\"Undefined description for Hotel Fred\"},"
+    "{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\","
+    "\"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\","
+    "\"features\":[\"Cable TV\",\"Toaster\",\"Microwave\"]}]";
+
+    NSError* error = nil;
+    CBLMutableArray* myArray = [[CBLMutableArray alloc] initWithJSON: thisJSONstring error: &error];
+
+    for (NSUInteger i = 0 ; i < myArray.count; i++) {
+        NSLog(@"%lu %@", i+1, [[myArray dictionaryAtIndex: i] stringForKey: @"name"]);
+
+        NSString* docID = [[myArray dictionaryAtIndex: i] stringForKey: @"ID"];
+
+        CBLMutableDocument* newdoc = [[CBLMutableDocument alloc] initWithID: docID data: [[myArray dictionaryAtIndex: i] toDictionary]];
+
+        [db saveDocument: newdoc error: &error];
+    }
+
+    CBLDocument* extendedDoc = [newdb documentWithID: @"1002"];
+    NSArray* features = [[extendedDoc arrayForKey: @"features"] toArray];
+    for (NSUInteger i = 0; i < features.count; i++) {
+        NSLog(@"%@", features[i]);
+    }
+
+    NSLog( @"%@", [[extendedDoc arrayForKey: @"features"] toJSON]);
+
+// end::tojson-array[]
+
+// Example 2. Using Blobs
+// tag::tojson-blob[]
+
+    // Get a document
+    CBLMutableDocument* thisDoc = [[db documentWithID: @"1000"] toMutable];
+
+    // Get the image and add as a blob to the document
+    NSString* contentType = @"";
+    UIImage* ourImage = [UIImage imageNamed: @"couchbaseimage.png"];
+    NSData* imageData = UIImageJPEGRepresentation(ourImage, 1);
+    CBLBlob* thisBlob = [[CBLBlob alloc] initWithContentType: contentType data: imageData];
+    [thisDoc setBlob: thisBlob forKey: @"avatar"];
+
+    NSString* theBlobAsJSONstringFails = [[thisDoc blobForKey: @"avatar"] toJSON];
+
+    // Save blob as part of doc or alternatively as a blob
+
+    NSError* error = nil;
+    [db saveDocument: thisDoc error: &error];
+    [db saveBlob: thisBlob error: &error]; // <.>
+
+    // Retrieve saved blob as a JSON, reconstitue and check still blob
+
+    CBLDocument* sameDoc = [db documentWithID: @"1000"];
+    CBLBlob* sameBlob = [sameDoc blobForKey: @"avatar"];
+    NSString* theBlobAsJSONstring = [sameBlob toJSON];
+    NSDictionary* dict = sameDoc.toDictionary;
+    for (id key in dict) {
+        NSLog(@"Data -- {%@) = {%@}", key, [dict valueForKey: key]);
+    }
+
+    if ([CBLBlob isBlob: sameBlob.properties]) {
+        NSLog(@"%@", theBlobAsJSONstring);
+    }
+
+// end::tojson-blob[]
+
+// Example 6. Dictionaries as JSON strings
+// tag::tojson-dictionary[]
+    NSString* aJSONstring = @"{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\","
+    "\"city\":\"Balmain\",\"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\"}";
+
+    NSError* error = nil;
+    CBLMutableDictionary* myDict = [[CBLMutableDictionary alloc] initWithJSON: aJSONstring error: &error];
+    NSLog(@"%@", myDict);
+
+    NSString* name = [myDict stringForKey: @"name"];
+    NSLog(@"Details for: %@", name);
+
+    for (NSString* key in myDict) {
+        NSLog(@"%@ %@", key, [myDict valueForKey: key]);
+    }
+
+// end:tojson-dictionary[]
+
+// Example 7. Documents as JSON strings
+// tag::tojson-document[]
+    NSError* error = nil;
+    CBLDatabase* db = [[CBLDatabase alloc] initWithName: @"hotel" error: &error];
+    CBLDatabase* dbnew = [[CBLDatabase alloc] initWithName: @"newhotels" error: &error];
+
+    CBLQuery* listQuery = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id] as: @"metaId"]]
+                                             from: [CBLQueryDataSource database: db]];
+
+
+    CBLQueryResultSet* rs = [listQuery execute: &error];
+    for (CBLQueryResult* r in rs.allObjects) {
+        NSString* thisId = [r stringForKey: @"metaId"];
+        NSString* thisJSONstring = [[db documentWithID: thisId] toJSON];
+
+        NSLog(@"JSON String = %@", thisJSONstring);
+
+        NSError* docError = nil;
+        CBLMutableDocument* hotelFromJSON = [[CBLMutableDocument alloc] initWithID: thisId json: thisJSONstring error: &docError];
+
+        [dbnew saveDocument: hotelFromJSON error: &error];
+        CBLDocument* newhotel = [dbnew documentWithID: thisId];
+        NSArray* keys = newhotel.keys;
+        for (NSString* key in keys) {
+            NSLog(@"%@ %@", key, [newhotel valueForKey: key]);
+        }
+    }
+
+// end::tojson-document[]
