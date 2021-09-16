@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    maven {
+        url "http://proget.build.couchbase.com/maven2/internalmaven"
+        allowInsecureProtocol = true
+    }
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.jetbrains:annotations:22.0.0'
+
+    implementation "com.couchbase.lite:couchbase-lite-java-ee:3.0.0-179"
+}
+
+test {
+    useJUnitPlatform()
+}
