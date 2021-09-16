@@ -706,17 +706,16 @@ class SampleCodeTest {
 
 
     func dontTestGetBlobAsJSONstring() throws {
-        database = self.db
+        db = self.db
 
         // tag::tojson-getblobasstring[]
 
-        var thisdoc =
-              database.document(withID: "thisdoc-id").toDictionary(); // <.>
+        let thisdoc = db.document(withID: "thisdoc-id")!.toDictionary();
+        let thisBlob =  thisdoc["avatar"] as! Blob
 
-        if thisdoc.isBlob() { // <.>
-          let blobdata = thisdoc.toJson() // <.>
-          var blobtype = blobdata["type"] // <.>
-          var bloblength = blobdata["length"]
+        if Blob.isBlob(properties: thisBlob.properties) {
+          var blobtype = thisBlob.properties["content_type"]
+          var bloblength = thisBlob.properties["length"]
         }
         // end::tojson-getblobasstring[]
     }
@@ -2557,7 +2556,7 @@ class Query {
 
 
 
-//  JSAON API SNIPPETS
+//  JSON API SNIPPETS
 
 
     func dontTestJSONdocument() {
@@ -2702,42 +2701,36 @@ class Query {
          // end::tojson-dictionary-output[]
         */
     public func JsonApiBlob() throws {
-
-
         // tag::tojson-blob[]
-
-        // Get a document
+      // Get a document
         let thisDoc = db.document(withID: "1000")?.toMutable() // <.>
 
-
         // Get the image and add as a blob to the document
-        let contentType = "";
+        let contentType = "image/jpg";
         let ourImage = UIImage(named: "couchbaseimage.png")!
-        let imageData = ourImage.jpegData(compressionQuality: 1)! // <.>
+        let imageData = ourImage.jpegData(compressionQuality: 1)!
         thisDoc?.setBlob(
-            Blob(contentType: contentType, data: imageData), forKey: "avatar") //<.>
+            Blob(contentType: contentType, data: imageData), forKey: "avatar") // <.>
 
        let theBlobAsJSONstringFails =
-              thisDoc?.blob(forKey: "avatar")!.toJSON(); // <.>
+              thisDoc?.blob(forKey: "avatar")!.toJSON();
 
         // Save blob as part of doc or alternatively as a blob
 
         try! db.saveDocument(thisDoc!);
         try! db.saveBlob(
-                blob: Blob(contentType: contentType, data: imageData)); //<.>;
+                blob: Blob(contentType: contentType, data: imageData)); // <.>
 
         // Retrieve saved blob as a JSON, reconstitue and check still blob
-        let sameDoc = db.document(withID: "1000")?.toMutable()
-        let theBlobAsJSONstring = sameDoc?.blob(forKey: "avatar")!.toJSON(); // <.>
-        let reconstitutedBlob =
-             MutableDictionaryObject().
-                setDictionary(try MutableDictionaryObject().
-                    setJSON(theBlobAsJSONstring!), forKey: "blobCOPY")
+        let sameDoc = db.document(withID: "1000")
+        let sameBlob = sameDoc?.blob(forKey: "avatar")
+        let theBlobAsJSONstring = sameBlob!.toJSON(); // <.>
+
         for (key, value) in sameDoc!.toDictionary() {
              print( "Data -- {0) = {1}", key, value);
         }
 
-        if(Blob.isBlob(properties: reconstitutedBlob.dictionary(forKey: "blobCOPY")!.toDictionary())) // <.>
+        if(Blob.isBlob(properties: sameBlob!.properties)) // <.>
         {
             print(theBlobAsJSONstring);
         }
@@ -2747,14 +2740,9 @@ class Query {
 
     }
 
-
-
-
-
 //    } // end func testjson
 
 //        } // end query loop
-
 
     } // end jsonapi func
 
