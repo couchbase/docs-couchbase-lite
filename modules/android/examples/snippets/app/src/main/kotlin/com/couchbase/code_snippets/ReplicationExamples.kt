@@ -333,11 +333,11 @@ object MergeConflictResolver : ConflictResolver {
                     // tag::replication-heartbeat-config[]
                     heartbeat = 150, // <1>
                     // end::replication-heartbeat-config[]
-                    // tag::replication-maxretries-config[]
+                    // tag::replication-maxattempts-config[]
                     maxAttempts = 20,
-                    // end::replication-maxretries-config[]
+                    // end::replication-maxattempts-config[]
                     maxAttemptWaitTime = 600
-                    // end::replication-maxretrywaittime-config[]
+                    // end::replication-maxattemptwaittime-config[]
                 )
             )
 

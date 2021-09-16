@@ -973,15 +973,15 @@ class SampleCodeTest {
         config.heartbeat = 150 // <.>
 
         // end::replication-set-heartbeat[]
-        // tag::replication-set-maxretries[]
-        config.maxretries = 20 // <.>
+        // tag::replication-set-maxattempts[]
+        config.maxattempts = 20 // <.>
 
-        // end::replication-set-maxretries[]
-        // tag::replication-set-maxretrywaittime[]
-        config.maxretrywaittime = 600 // <.>
+        // end::replication-set-maxattempts[]
+        // tag::replication-set-maxattemptwaittime[]
+        config.maxattemptwaittime = 600 // <.>
         repl = Replicator(config: config)
 
-        // end::replication-set-maxretrywaittime[]
+        // end::replication-set-maxattemptwaittime[]
 
         // end::replication-retry-config[]
     }
