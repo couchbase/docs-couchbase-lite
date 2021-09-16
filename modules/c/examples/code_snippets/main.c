@@ -28,10 +28,10 @@ static CBLReplicator* kReplicator;
 // tag::p2p-act-rep-func[]
 // tag::p2p-act-rep-add-change-listener[]
 // Purpose -- illustrate a simple change listener
-static void simpleChangeListener(
-                void* context,
-                CBLReplicator* repl,
-                const CBLReplicatorStatus* status) {
+static void simpleChangeListener(void* context,
+                                 CBLReplicator* repl,
+                                 const CBLReplicatorStatus* status)
+{
      if(status->error.code != 0) {
          printf("Error %d / %d\n",
                 status->error.domain,
@@ -40,20 +40,18 @@ static void simpleChangeListener(
  }
 
 // end::p2p-act-rep-add-change-listener[]
-
 // tag::local-win-conflict-resolver[]
 // Purpose -- illustrate a simple conflict resolver function
 static const CBLDocument* simpleConflictResolver_localWins(
-        void* context, FLString documentID,
-        const CBLDocument* localDocument,
-        const CBLDocument* remoteDocument) {
-        return localDocument;
-    }
+                                void* context, FLString documentID,
+                                const CBLDocument* localDocument,
+                                const CBLDocument* remoteDocument)
+{
+    return localDocument;
+}
 
 // end::local-win-conflict-resolver[]
 // end::p2p-act-rep-func[]
-
-
 
 // tag::replication-push-filter[]
 // tag::replication-pull-filter[]
@@ -69,17 +67,15 @@ static bool simpleReplicationFilter(void* context,
 // end::replication-push-filter[]
 // end::replication-pull-filter[]
 
-
-
 // tag::SimpleReplicationDocumentListener[]
 // Purpose -- Illustrate a simple replication document listener
 static void SimpleReplicationDocumentListener(
-                                              void *context,
-                                              CBLReplicator *replicator,
-                                              bool isPush,
-                                              unsigned numDocuments,
-                                              const CBLReplicatedDocument *documents) {
-
+                                  void *context,
+                                  CBLReplicator *replicator,
+                                  bool isPush,
+                                  unsigned numDocuments,
+                                  const CBLReplicatedDocument *documents)
+{
     if(isPush) {
         printf("We pushed %d documents",numDocuments);
     }
@@ -88,14 +84,14 @@ static void SimpleReplicationDocumentListener(
 // END lower-level function declarations
 
 
-
-
-static void getting_started_change_listener(void* context, CBLReplicator* repl, const CBLReplicatorStatus* status) {
+static void getting_started_change_listener(void* context,
+                                            CBLReplicator* repl,
+                                            const CBLReplicatorStatus* status)
+{
     if(status->error.code != 0) {
         printf("Error %d / %d\n", status->error.domain, status->error.code);
     }
 }
-
 
 // Page=build and run
 // url=https://docs-staging.couchbase.com/couchbase-lite/current/c/gs-build.html
@@ -227,6 +223,8 @@ static void getting_started() {
     // Later, stop and release the replicator
     // end::getting-started[]
 
+    // When finished release resources ... eg
+    CBLReplicator_Release(replicator);
     CBLListener_Remove(token);
     kReplicator = replicator;
 }
@@ -237,6 +235,7 @@ static const CBLDocument* local_win_conflict_resolver(void* context, FLString do
     const CBLDocument* localDocument, const CBLDocument* remoteDocument) {
     return localDocument;
 }
+
 // end::local-win-conflict-resolver[]
 
 static void test_replicator_conflict_resolve() {
@@ -244,7 +243,6 @@ static void test_replicator_conflict_resolve() {
 
     // tag::replication-conflict-resolver[]
     // NOTE: No error handling, for brevity (see getting started)
-
     CBLError err;
     CBLEndpoint* target = CBLEndpoint_CreateWithURL(FLSTR("ws://localhost:4984/mydatabase"), &err);
 
@@ -261,8 +259,10 @@ static void test_replicator_conflict_resolve() {
     // end::replication-conflict-resolver[]
 }
 
-static bool custom_conflict_handler(void* context, CBLDocument* documentBeingSaved,
-    const CBLDocument* conflictingDocument) {
+static bool custom_conflict_handler(void* context,
+                                    CBLDocument* documentBeingSaved,
+                                    const CBLDocument* conflictingDocument)
+{
     FLDict currentProps = CBLDocument_Properties(conflictingDocument);
     FLDict updatedProps = CBLDocument_Properties(documentBeingSaved);
     FLMutableDict newProps = FLDict_MutableCopy(updatedProps, kFLDefaultCopy);
@@ -537,8 +537,7 @@ static void database_change_listener() {
         CBLDocument_Release(doc);
     }
     */
-
-        CBLListenerToken* token = CBLDatabase_AddDocumentChangeListener(db, FLSTR("user.john"),
+    CBLListenerToken* token = CBLDatabase_AddDocumentChangeListener(db, FLSTR("user.john"),
         document_listener, NULL);
     // end::document-listener[]
 
@@ -1164,9 +1163,7 @@ static void start_replication() {
     kReplicator = replicator;
 }
 
-
-
-// Console logging domain methods not applicable to C
+// Console logging domain methods are not applicable to C
 
 static void file_logging() {
     // tag::file-logging[]
@@ -1226,8 +1223,9 @@ static void enable_basic_auth() {
     // end::basic-authentication-full[]
 }
 
-static void docsonly_N1QL_Params() {
-    CBLDatabase* database = kDatabase;
+static void docsonly_N1QL_Params(CBLDatabase* argDb)
+{
+    CBLDatabase* database = argDb;
 
     // tag::query-syntax-n1ql-params[]
     int errorPos;
@@ -1252,6 +1250,8 @@ static void docsonly_N1QL_Params() {
             Note that (where applicable) errorPos contains the position
             in the N1QL string that the parse failed
         */
+        FLMutableDict_Release(n1qlparams);
+        CBLQuery_Release(query);
         return;
     }
 
@@ -1260,6 +1260,16 @@ static void docsonly_N1QL_Params() {
         // Failed to run query, do error handling ...
         return;
     }
+
+    // Release query when finished with
+    FLMutableDict_Release(n1qlparams);
+    CBLQuery_Release(query);
+
+    // ... process results as required
+
+    // Release result set then finished with
+    CBLResultSet_Release(result);
+
     // end::query-syntax-n1ql-params[]
 }
 
@@ -1357,16 +1367,13 @@ int main(int argc, char** argv) {
 // placeholder
 // end::query-index[]
 
-// tag::fts-index[]
-// placeholder
-// end::fts-index[]
 
 // DOCS NOTE
 // Page=Data Sync >> Configuration Summary
 // URL=https://docs.couchbase.com/couchbase-lite/current/c/replication.html#configuration-summary
-
-static void docs_act_replication() {
-    CBLDatabase* db = kDatabase;
+static void docs_act_replication(CBLDatabase* argDb)
+{
+    CBLDatabase* database = argDb;
 
     /*
     * This requires Sync Gateway running with the following config, or equivalent:
@@ -1396,13 +1403,14 @@ static void docs_act_replication() {
 
     CBLReplicatorConfiguration config;
     memset(&config, 0, sizeof(CBLReplicatorConfiguration));
-    config.database = db;
+    config.database = database;
     config.endpoint = target; // <.>
 
     // tag::p2p-act-rep-config-cont[]
     // Set replication direction and mode
     config.replicatorType = kCBLReplicatorTypePull; // <.>
     config.continuous = true;
+    
     // end::p2p-act-rep-config-cont[]
 
     // Optionally, set auto-purge behavior (here we override default)
@@ -1412,7 +1420,8 @@ static void docs_act_replication() {
     // Here we are using to Basic Authentication,
     // Providing username and password credentials
     CBLAuthenticator* basicAuth =
-        CBLAuth_CreatePassword(FLSTR("username"), FLSTR("passwd")); // <.>
+        CBLAuth_CreatePassword(FLSTR("username"),
+                               FLSTR("passwd")); // <.>
     config.authenticator = basicAuth;
 
     // Optionally, configure how we handle conflicts
@@ -1432,12 +1441,18 @@ static void docs_act_replication() {
 
     // Start replication
     CBLReplicator_Start(replicator, false); // <.>
+    
     // end::p2p-act-rep-func[]
 
     kReplicator = replicator;
+    
+    //    ... other processing as required
+    
+    // When finished release resources e.g.
+    CBLAuth_Free(basicAuth);
+    CBLReplicator_Release(replicator);
 }
 // END configuration summary snippets
-
 
 
 // DOCS NOTE:
@@ -1448,9 +1463,9 @@ static void docs_act_replication() {
 // and the snippets within it are used individually or in sets
 // to illustrate specific points as required
 //
-static void docs_act_replication_config_section_snippets() {
+static void docs_act_replication_config_section_snippets()
+{
     CBLDatabase* db = kDatabase;
-    bool docs_example_resetRequired = false;
     bool docs_example_ShowBasicAuth = false;
     bool docs_example_ShowSessionAuth = false;
 
@@ -1469,11 +1484,9 @@ static void docs_act_replication_config_section_snippets() {
     *     }
     * }
     */
-
     // tag::p2p-act-rep-func-full[]
     // NOTE: No error handling, for brevity (see getting started)
     // Note: Android emulator needs to use 10.0.2.2 for localhost (10.0.3.2 for GenyMotion)
-
 
     // tag::sgw-act-rep-initialize[]
     // Initialize the configuration object and set db target
@@ -1491,26 +1504,27 @@ static void docs_act_replication_config_section_snippets() {
 
     //    tag::p2p-act-rep-config-type[]
     config.replicatorType = kCBLReplicatorTypePull;
+    
     //    end::p2p-act-rep-config-type[]
     //    tag::p2p-act-rep-config-cont[]
     config.continuous = true;
+    
     //    end::p2p-act-rep-config-cont[]
-
-
     // tag::replication-retry-config[]
     // Configure replication retries
     // tag::replication-set-heartbeat[]
     config.heartbeat = 120; //  <.>
+    
     // end::replication-set-heartbeat[]
     // tag::replication-set-maxattempts[]
     config.maxAttempts = 20; //  <.>
+    
     // end::replication-set-maxattempts[]
     // tag::replication-set-maxattemptwaittime[]
     config.maxAttemptWaitTime = 600; //  <.>
+    
     // end::replication-set-maxattemptwaittime[]
-
     // end::replication-retry-config[]
-
     // tag::basic-authentication[]
     // Configure Client Authentication to Basic Authentication
     // Providing username and password credentials
@@ -1533,7 +1547,6 @@ static void docs_act_replication_config_section_snippets() {
     // end::session-authentication[]
 
     // tag::replication-custom-header[]
-
     // Optionally, add custom headers
     FLMutableDict customHdrs = FLMutableDict_New();
     FLMutableDict_SetString(customHdrs,
@@ -1543,13 +1556,10 @@ static void docs_act_replication_config_section_snippets() {
     config.headers = customHdrs;
 
     // end::replication-custom-header[]
-
     // FILTERS
-
     // tag::replication-push-filter[]
     // tag::replication-pull-filter[]
     // Purpose - Illustrate use of push and-or pull filter functions
-
     config.pushFilter = simpleReplicationFilter;
 
     config.pullFilter = simpleReplicationFilter;
@@ -1557,19 +1567,14 @@ static void docs_act_replication_config_section_snippets() {
     // end::replication-pull-filter[]
     // end::replication-push-filter[]
 
-
     //  Auto-purge over-ride
     // tag::autopurge-override[]
     config.disableAutoPurge = true; // <.>
 
     // end::autopurge-override[]
-    // tag::[]
-
     // Initialize replicator with created config
     CBLReplicator* replicator =
         CBLReplicator_Create(&config, &err); // <.>
-
-    // end::[]
 
     CBLEndpoint_Free(target);
 
@@ -1578,12 +1583,8 @@ static void docs_act_replication_config_section_snippets() {
         CBLReplicator_AddChangeListener(replicator,
                                         simpleChangeListener,
                                         NULL); // <.>
-
-
 }
 // END replication.html >> configure section
-
-
 
 
 // PAGE=Data Sync >> Initialize section
@@ -1593,19 +1594,15 @@ static CBLReplicator* docs_act_replication_Intialize(
                         CBLReplicatorConfiguration argConfig,
                         bool argResetRequired)
 {
-
     CBLError err;
-
     bool docs_example_resetRequired = argResetRequired;
     // tag::p2p-act-rep-start-full[]
-
     CBLReplicator* thisRepl =
-        CBLReplicator_Create(&argConfig, &err); // <.>
+    CBLReplicator_Create(&argConfig, &err); // <.>
 
     // end::p2p-act-rep-start-full[]
     if(!docs_example_resetRequired) {
     // tag::p2p-act-rep-start-full[]
-
       CBLReplicator_Start(thisRepl,false); // <.>
 
     // end::p2p-act-rep-start-full[]
@@ -1615,25 +1612,17 @@ static CBLReplicator* docs_act_replication_Intialize(
 
     // end::replication-reset-checkpoint[]
     }
-
     return thisRepl;
-
 }
-
 // END replication.html >> initialize section
 
-// PAGE=Data Sync >> Monitor
+// PAGE=Data Sync >> Monitor section
 // URL=https://docs.couchbase.com/couchbase-lite/current/c/replication.html#lbl-repl-mon
-// BEGIN replication.html >> Monitor section
-//
 static void docs_act_replication_Monitor(
                                        void* context,
                                        CBLReplicator* argRepl) {
-
     CBLError err;
-
     CBLReplicator* thisRepl = argRepl;
-
     // tag::p2p-act-rep-add-change-listener[]
     // Purpose -- illustrate addition of a Replicator change listener
     CBLListenerToken* token_ReplChangeListener =
@@ -1653,49 +1642,39 @@ static void docs_act_replication_Monitor(
     // end::add-document-replication-listener[]
     // tag::remove-document-replication-listener[]
     // Purpose -- illustrate removal of a listener
-
     CBLListener_Remove(token_ReplDocListener);
-
     CBLListener_Remove(token_ReplChangeListener);
 
     // end::remove-document-replication-listener[]
 
     // tag::p2p-act-rep-status[]
     // Purpose -- illustrate use of CBLReplicator_Status()
-
     CBLReplicatorStatus thisState = CBLReplicator_Status(thisRepl);
-
     if(thisState.activity==kCBLReplicatorStopped) {
         if(thisState.error.code==0) {
             CBLReplicator_Start(thisRepl,false);
         } else {
             printf("Replicator stopped -- code %d", thisState.error.code);
             // ... handle error ...
+            CBLReplicator_Release(thisRepl);
         }
     }
 
     // end::p2p-act-rep-status[]
-
-
     // tag::replication-pendingdocuments[]
-
     FLDict thisPendingIdList =
         CBLReplicator_PendingDocumentIDs(thisRepl, &err); // <.>
-
     if(!FLDict_IsEmpty(thisPendingIdList)) {
         FLDictIterator item;
         FLDictIterator_Begin(thisPendingIdList, &item);
         FLValue itemValue;
         FLString pendingId;
-
-        while(NULL != (FLDictIterator_GetValue(&item))) {
+        while(NULL != (itemValue = FLDictIterator_GetValue(&item))) {
             pendingId = FLValue_AsString(itemValue);
-
             if(CBLReplicator_IsDocumentPending(thisRepl,
                                                pendingId,
                                                &err)) {
                 // ... process the still pending docid as required <.>
-
             } else {
                 // Doc Id no longer pending
                 if(err.code==0) {
@@ -1709,43 +1688,29 @@ static void docs_act_replication_Monitor(
             }
             FLDictIterator_Next(&item);
         }
-
         FLDictIterator_End(&item);
         FLValue_Release(itemValue);
-
     } else {
         printf("No Pending Id Docs to process");
     }
+    FLDict_Release(thisPendingIdList);
+
     // end::replication-pendingdocuments[]
-
-
-
 }
-
 // END replication.html >> Monitor section
 
 // BEGIN replication.html >> Stop section
 // PAGE=Data Sync >> Stop
 // URL=https://docs.couchbase.com/couchbase-lite/current/c/replication.html#lbl-repl-stop
-
 static void docs_act_replication_Stop(
                                        void* context,
                                        CBLReplicator* argRepl) {
     // tag::p2p-act-rep-stop[]
     // Purpose -- show how to stop a replication
-
     if(CBLReplicator_Status(argRepl).activity!=kCBLReplicatorStopped) {
         CBLReplicator_Stop(argRepl);
     }
 
     // end::p2p-act-rep-stop[]
 }
-
 // END replication.html >> Stop section
-
-
-
-
-
-//CBLReplicator_PendingDocumentIDs(<#CBLReplicator * _Nonnull#>, <#CBLError * _Nullable outError#>)
-
