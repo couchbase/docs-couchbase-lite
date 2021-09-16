@@ -1306,12 +1306,12 @@ var query =
         // tag::replication-set-heartbeat[]
             config.Heartbeat = TimeSpan.FromSeconds(120); //  <.>
         // end::replication-set-heartbeat[]
-        // tag::replication-set-maxretries[]
-            config.MaxRetries = 20; //  <.>
-        // end::replication-set-maxretries[]
-        // tag::replication-set-maxretrywaittime[]
-            config.MaxRetryWaitTime = TimeSpan.FromSeconds(600); //  <.>
-        // end::replication-set-maxretrywaittime[]
+        // tag::replication-set-maxattempts[]
+            config.Maxattempts = 20; //  <.>
+        // end::replication-set-maxattempts[]
+        // tag::replication-set-maxattemptwaittime[]
+            config.MaxAttemptWaitTime = TimeSpan.FromSeconds(600); //  <.>
+        // end::replication-set-maxattemptwaittime[]
 
         //  other config as required . . .
 
@@ -3131,11 +3131,11 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 public class MyClass
 {
     public Database Database { get; set; }
-    public Replicator Replicator { get; set; } // <1>
+    public Replicator Replicator { get; set; } // <.>
 
     public void StartReplication()
     {
-        var url = new Uri("ws://localhost:4984/db"); // <2>
+        var url = new Uri("wss://localhost:4984/db"); // <.>
         var target = new URLEndpoint(url);
         var config = new ReplicatorConfiguration(Database, target)
         {
@@ -3150,9 +3150,9 @@ public class MyClass
 // end::sgw-repl-pull[]
 
 // tag::sgw-repl-pull-callouts[]
-<1> A replication is an asynchronous operation.
+<.> A replication is an asynchronous operation.
 To keep a reference to the `replicator` object, you can set it as an instance property.
-<2> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
+<.> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
 You should now use `ws:`, or `wss:` for SSL/TLS connections.
 // end::sgw-repl-pull-callouts[]
 

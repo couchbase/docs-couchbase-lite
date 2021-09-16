@@ -1629,12 +1629,12 @@ apply plugin: 'java'
         // tag::replication-heartbeat-config[]
         config.setHeartbeat(150L); // <.>
         // end::replication-heartbeat-config[]
-        // tag::replication-maxretries-config[]
-        config.setMaxRetries(20L); // <.>
-        // end::replication-maxretries-config[]
-        // tag::replication-maxretrywaittime-config[]
-        config.setMaxRetryWaitTime(600L); // <.>
-        // end::replication-maxretrywaittime-config[]
+        // tag::replication-maxattempts-config[]
+        config.setMaxattempts(20L); // <.>
+        // end::replication-maxattempts-config[]
+        // tag::replication-maxattemptwaittime-config[]
+        config.setMaxAttemptWaitTime(600L); // <.>
+        // end::replication-maxattemptwaittime-config[]
 
         //  other config as required . . .
 

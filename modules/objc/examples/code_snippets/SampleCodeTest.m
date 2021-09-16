@@ -1033,14 +1033,14 @@
         config.heartbeat = 150; // <.>
 
         // end::replication-heartbeat[]
-        // tag::replication-maxretries[]
-        config.maxretries = 20; // <.>
+        // tag::replication-maxattempts[]
+        config.maxattempts = 20; // <.>
 
-        // end::replication-maxretries[]
-        // tag::replication-maxretrywaittime[]
-        config.maxretrywaittime = 600; // <.>
+        // end::replication-maxattempts[]
+        // tag::replication-maxattemptwaittime[]
+        config.maxattemptwaittime = 600; // <.>
 
-        // end::replication-maxretrywaittime[]
+        // end::replication-maxattemptwaittime[]
         //  other config as required . . .
         repl = [[CBLReplicator alloc] initWithConfig: config];
 
@@ -2222,12 +2222,14 @@ class myActPeerClass {
     // tag::p2p-act-rep-func[]
     // tag::p2p-act-rep-initialize[]
     // Set listener DB endpoint
-    NSURL *url = [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
-    CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
+    NSURL *url =
+      [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
+    CBLURLEndpoint *thisListener =
+      [[CBLURLEndpoint alloc] initWithURL:url]; // <.>
 
-    CBLReplicatorConfiguration *thisConfig
-      = [[CBLReplicatorConfiguration alloc]
-          initWithDatabase:thisDB target:thisListener]; // <.>
+    CBLReplicatorConfiguration *thisConfig =
+      [[CBLReplicatorConfiguration alloc]
+        initWithDatabase:thisDB target:thisListener]; // <.>
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config[]
