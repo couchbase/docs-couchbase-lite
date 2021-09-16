@@ -52,6 +52,7 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.Arrays
 import java.util.Date
+import java.util.EnumSet
 
 
 private const val TAG = "BASIC"
@@ -207,11 +208,11 @@ class BasicExamples(private val context: Context) {
         Database.log.console.domains = LogDomain.ALL_DOMAINS // <.>
         Database.log.console.level = LogLevel.VERBOSE // <.>
         // end::console-logging[]
-    }
-        // tag::console-logging-db[]
-        Database.log.console.domains = LogDomain.DATABASE // <.>
 
+        // tag::console-logging-db[]
+        Database.log.console.domains = EnumSet.of(LogDomain.DATABASE) // <.>
         // end::console-logging-db[]
+    }
 
     // ### File logging
     @Throws(CouchbaseLiteException::class)
