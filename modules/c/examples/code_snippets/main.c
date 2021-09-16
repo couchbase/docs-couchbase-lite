@@ -1273,81 +1273,7 @@ static void docsonly_N1QL_Params(CBLDatabase* argDb)
     // end::query-syntax-n1ql-params[]
 }
 
-static void docsonly_N1QL_Params() {
-    CBLDatabase* database = kDatabase;
 
-    // tag::query-syntax-n1ql-params[]
-    int errorPos;
-
-    CBLError err;
-
-    FLString n1qlstr = FLSTR("SELECT * FROM _ WHERE type = $type");
-
-    FLMutableDict n1qlparams = FLMutableDict_New();
-    FLMutableDict_SetString(n1qlparams, FLSTR("type"), FLSTR("hotel"));
-
-    CBLQuery* query = CBLDatabase_CreateQuery(database,
-                          kCBLN1QLLanguage,
-                          n1qlstr,
-                          &errorPos,
-                          &err);
-
-    CBLQuery_SetParameters(query, n1qlparams);
-
-    if(!query) {
-        /* Do appropriate error handling ...
-            Note that (where applicable) errorPos contains the position
-            in the N1QL string that the parse failed
-        */
-        return;
-    }
-
-    CBLResultSet* result = CBLQuery_Execute(query, &err);
-    if(!result) {
-        // Failed to run query, do error handling ...
-        return;
-    }
-    // end::query-syntax-n1ql-params[]
-}
-
-int main(int argc, char** argv) {
-    create_new_database();
-    create_document();
-    update_document();
-    do_batch_operation();
-    // Disable use_blob() as no avatar.jpg to load and crash
-    // use_blob();
-    doc_json();
-    dict_json();
-    array_json();
-    load_prebuilt();
-    create_index();
-    select_meta();
-    select_where();
-    use_collection_contains();
-    select_like();
-    select_wildcard_like();
-    select_wildcard_character_like();
-    select_regex();
-    select_join();
-    group_by();
-    order_by();
-    query_result_json();
-
-    create_full_text_index();
-    full_text_search();
-    start_replication();
-
-    CBLReplicator_Stop(kReplicator);
-    while(CBLReplicator_Status(kReplicator).activity != kCBLReplicatorStopped) {
-        printf("Waiting for replicator to stop...");
-        usleep(200000);
-    }
-
-    CBLDatabase_Close(kDatabase, NULL);
-
-    return 0;
-}
 
 // tag::console-logging-db[]
 //Placeholder for code to increase level of console logging for kCBLLogDomainDatabase domain
@@ -1410,7 +1336,7 @@ static void docs_act_replication(CBLDatabase* argDb)
     // Set replication direction and mode
     config.replicatorType = kCBLReplicatorTypePull; // <.>
     config.continuous = true;
-    
+
     // end::p2p-act-rep-config-cont[]
 
     // Optionally, set auto-purge behavior (here we override default)
@@ -1441,13 +1367,13 @@ static void docs_act_replication(CBLDatabase* argDb)
 
     // Start replication
     CBLReplicator_Start(replicator, false); // <.>
-    
+
     // end::p2p-act-rep-func[]
 
     kReplicator = replicator;
-    
+
     //    ... other processing as required
-    
+
     // When finished release resources e.g.
     CBLAuth_Free(basicAuth);
     CBLReplicator_Release(replicator);
@@ -1504,25 +1430,25 @@ static void docs_act_replication_config_section_snippets()
 
     //    tag::p2p-act-rep-config-type[]
     config.replicatorType = kCBLReplicatorTypePull;
-    
+
     //    end::p2p-act-rep-config-type[]
     //    tag::p2p-act-rep-config-cont[]
     config.continuous = true;
-    
+
     //    end::p2p-act-rep-config-cont[]
     // tag::replication-retry-config[]
     // Configure replication retries
     // tag::replication-set-heartbeat[]
     config.heartbeat = 120; //  <.>
-    
+
     // end::replication-set-heartbeat[]
     // tag::replication-set-maxattempts[]
     config.maxAttempts = 20; //  <.>
-    
+
     // end::replication-set-maxattempts[]
     // tag::replication-set-maxattemptwaittime[]
     config.maxAttemptWaitTime = 600; //  <.>
-    
+
     // end::replication-set-maxattemptwaittime[]
     // end::replication-retry-config[]
     // tag::basic-authentication[]
@@ -1714,3 +1640,43 @@ static void docs_act_replication_Stop(
     // end::p2p-act-rep-stop[]
 }
 // END replication.html >> Stop section
+
+
+int main(int argc, char** argv) {
+    create_new_database();
+    create_document();
+    update_document();
+    do_batch_operation();
+    // Disable use_blob() as no avatar.jpg to load and crash
+    // use_blob();
+    doc_json();
+    dict_json();
+    array_json();
+    load_prebuilt();
+    create_index();
+    select_meta();
+    select_where();
+    use_collection_contains();
+    select_like();
+    select_wildcard_like();
+    select_wildcard_character_like();
+    select_regex();
+    select_join();
+    group_by();
+    order_by();
+    query_result_json();
+
+    create_full_text_index();
+    full_text_search();
+    start_replication();
+
+    CBLReplicator_Stop(kReplicator);
+    while(CBLReplicator_Status(kReplicator).activity != kCBLReplicatorStopped) {
+        printf("Waiting for replicator to stop...");
+        usleep(200000);
+    }
+
+    CBLDatabase_Close(kDatabase, NULL);
+
+    return 0;
+}

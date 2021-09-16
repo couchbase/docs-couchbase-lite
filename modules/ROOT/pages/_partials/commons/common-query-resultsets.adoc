@@ -116,23 +116,31 @@ You access the retrieved document properties by converting each row's value, in 
 
 [#ex-acc-all]
 .Access All Properties
-====
-[{code-snippet}]
-----
-let yourQuery = QueryBuilder.select(SelectResult.all)
-            .from(DataSource.database(yourDb))
+:param-tags: query-access-all
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
+<.> Here we get the dictionary of document properties using the database name as the key.
+You can add this dictionary to an array of returned matches, for processing elsewhere in the app.
+<.> Alternatively you can access the document properties here, by using the property names as keys to the dictionary object.
 
-for dataRow in try yourQuery.execute() {
-  if let yourDoc = dict[dataRow.toDictionary()] as? [String:Any] {
-      let docid = yourDoc["id"]
-      let name = yourDoc["name"]
-      let type = yourDoc["type"]
-      let city = yourDoc["city"]
-  }
-}
+// ====
+// [{code-snippet}]
+// ----
+// let yourQuery = QueryBuilder.select(SelectResult.all)
+//             .from(DataSource.database(yourDb))
 
-----
-====
+// for dataRow in try yourQuery.execute() {
+//   if let yourDoc = dict[dataRow.toDictionary()] as? [String:Any] {
+//       let docid = yourDoc["id"]
+//       let name = yourDoc["name"]
+//       let type = yourDoc["type"]
+//       let city = yourDoc["city"]
+//   }
+// }
+
+// ----
+// ====
 
 
 [#lbl-acc-id]
@@ -143,27 +151,32 @@ This is something you may do when retrieval of the properties directly by the qu
 
 In this case each array element is a dictionary structure where `ID` is the key and the required document ID is the value.
 
-Access the required document properties by retrieving the document from the database using its document ID -- as shown in <<ex-acc-all>>.
+Access the required document properties by retrieving the document from the database using its document ID -- as shown in <<ex-acc-id>>.
 
 [#ex-acc-id]
-.Access Properties using Doc ID
-====
-[{code-snippet}]
-----
-let yourQuery = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(yourDb))
+:param-tags: query-access-id
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+<.> Extract the Id value from the dictionary and use it to get the document from the database
 
-for dataRow in try yourQuery.execute() {
-  if let yourDocID = dict[dataRow["id"] {
-      let yourDoc = try yourDb.document(withID: yourDocId)
-      let name = yourDoc.name
-      let type = yourDoc.type
-      let city = yourDoc.city
-  }
-}
+// .Access Properties using Doc ID
+// ====
+// [{code-snippet}]
+// ----
+// let yourQuery = QueryBuilder.select(SelectResult.expression(Meta.id))
+//             .from(DataSource.database(yourDb))
 
-----
-====
+// for dataRow in try yourQuery.execute() {
+//   if let yourDocID = dict[dataRow["id"] {
+//       let yourDoc = try yourDb.document(withID: yourDocId)
+//       let name = yourDoc.name
+//       let type = yourDoc.type
+//       let city = yourDoc.city
+//   }
+// }
+
+// ----
+// ====
 
 
 [#lbl-acc-specific]
@@ -172,28 +185,34 @@ Here we look at how to access properties when you have used SelectResult to get 
 
 In this case each array element is an array of key value pairs (property name/property value).
 
-Access the retrieved properties by converting each row into a dictionary -- as shown in <<ex-acc-all>>.
+Access the retrieved properties by converting each row into a dictionary -- as shown in <<ex-acc-specific>>.
 
-[#ex-acc-all]
-.Access All Properties
-====
-[{code-snippet}]
-----
-let yoursearchQuery = QueryBuilder
-            .select(SelectResult.expression(Meta.id),
-                    SelectResult.expression(Expression.property("name")),
-                    SelectResult.expression(Expression.property("city")),
-                    SelectResult.expression(Expression.property("type")))
-            .from(DataSource.database(yourDb))
+[#ex-acc-specific]
+:param-tags: query-access-props
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
 
-for dataRow in try yourQuery.execute() {
-  if let yourDoc = dict[dataRow.toDictionary()] as? [String:Any] {
-      let docid = yourDoc["id"]
-      let name = yourDoc["name"]
-      let type = yourDoc["type"]
-  }
-}
 
-----
-====
+// [#ex-acc-all]
+// .Access All Properties
+// ====
+// [{code-snippet}]
+// ----
+// let yoursearchQuery = QueryBuilder
+//             .select(SelectResult.expression(Meta.id),
+//                     SelectResult.expression(Expression.property("name")),
+//                     SelectResult.expression(Expression.property("city")),
+//                     SelectResult.expression(Expression.property("type")))
+//             .from(DataSource.database(yourDb))
+
+// for dataRow in try yourQuery.execute() {
+//   if let yourDoc = dict[dataRow.toDictionary()] as? [String:Any] {
+//       let docid = yourDoc["id"]
+//       let name = yourDoc["name"]
+//       let type = yourDoc["type"]
+//   }
+// }
+
+// ----
+// ====
 // END -- inclusion -- common-query-resultsets.adoc
