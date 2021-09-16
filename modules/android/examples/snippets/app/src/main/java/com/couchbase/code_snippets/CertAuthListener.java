@@ -14,12 +14,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package com.couchbase.android.fruitsnveg.examples;
+package com.couchbase.code_snippets;
 
 import android.content.Context;
 import android.util.Log;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -44,6 +44,7 @@ import com.couchbase.lite.Database;
 import com.couchbase.lite.ListenerCertificateAuthenticator;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Replicator;
+import com.couchbase.lite.ReplicatorActivityLevel;
 import com.couchbase.lite.ReplicatorConfiguration;
 import com.couchbase.lite.TLSIdentity;
 import com.couchbase.lite.URLEndpoint;
@@ -51,7 +52,7 @@ import com.couchbase.lite.URLEndpointListener;
 import com.couchbase.lite.URLEndpointListenerConfiguration;
 
 
-public class CertAuthListener {
+class CertAuthListener {
     private static final String TAG = "PWD";
 
     private static final Map<String, String> CERT_ATTRIBUTES;
@@ -109,7 +110,7 @@ public class CertAuthListener {
         final CountDownLatch completionLatch = new CountDownLatch(1);
         final Replicator repl = new Replicator(config);
         repl.addChangeListener(change -> {
-            if (change.getStatus().getActivityLevel() == AbstractReplicator.ActivityLevel.STOPPED) {
+            if (change.getStatus().getActivityLevel() == ReplicatorActivityLevel.STOPPED) {
                 completionLatch.countDown();
             }
         });
