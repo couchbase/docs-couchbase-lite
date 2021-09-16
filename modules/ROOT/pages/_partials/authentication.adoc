@@ -1,23 +1,4 @@
-By default, Sync Gateway does not enable authentication.
-This is to make it easier to get up and running with synchronization.
-You can enable authentication with the following properties in the configuration file:
-
-[source,json]
-----
-{
-  "databases": {
-    "mydatabase": {
-      "users": {
-        "GUEST": {"disabled": true}
-      }
-    }
-  }
-}
-----
-
-To authenticate with Sync Gateway, an associated user must first be created.
-Sync Gateway users can be created through the xref:sync-gateway:ROOT:refer/rest-api-admin.adoc#/user/post\__db___user_[`+POST /{tkn-db}/_user+`] endpoint on the Admin REST API.
-Provided that the user exists on Sync Gateway, there are two ways to authenticate from a Couchbase Lite client: Basic Authentication or Session Authentication.
+There are two ways to authenticate from a Couchbase Lite client: <<Basic Authentication>> or <<Session Authentication>>.
 
 ==== Basic Authentication
 

@@ -1,19 +1,25 @@
 Replication Filters allow you to have quick control over which documents are stored as the result of a push and/or pull replication.
 
+
+
 ==== Push Filter
 
 A push filter allows an app to push a subset of a database to the server, which can be very useful in some circumstances.
 For instance, high-priority documents could be pushed first, or documents in a "draft" state could be skipped.
 
-The following example filters out documents whose `type` property is equal to `draft`.
-
 :param-tags: replication-push-filter
+// pass:q,a,m[include::{root-partials}_block_tabbed_code_block.adoc[]]
+.Push Filter
 include::{root-partials}_block_tabbed_code_block.adoc[]
 :param-tags!:
 
+ifndef::is-c[]
 <1> The callback should follow the semantics of a https://en.wikipedia.org/wiki/Pure_function[pure function^].
 Otherwise, long running functions would slow down the replicator considerably.
 Furthermore, your callback should not make assumptions about what thread it is being called on.
+endif::is-c[]
+ifdef::is-c[<1> Do not provide long running functions, which could slow down the replicator. Nor make assumptions about the thread the function is being called on.]
+
 
 ==== Pull Filter
 
@@ -26,9 +32,12 @@ Sync Gateway xref:sync-gateway::data-routing.adoc[channels] are designed to be s
 :param-tags: replication-pull-filter
 include::{root-partials}_block_tabbed_code_block.adoc[]
 :param-tags!:
+ifndef::is-c[]
 <1> The callback should follow the semantics of a https://en.wikipedia.org/wiki/Pure_function[pure function^].
 Otherwise, long running functions would slow down the replicator considerably.
 Furthermore, your callback should not make assumptions about what thread it is being called on.
+endif::is-c[]
+ifdef::is-c[<1> Do not provide long running functions, which could slow down the replicator. Nor make assumptions about the thread the function is being called on.]
 
 NOTE: Losing access to a document (via the Sync Function) also triggers the pull replication filter.
 Filtering out such an event would retain the document locally.

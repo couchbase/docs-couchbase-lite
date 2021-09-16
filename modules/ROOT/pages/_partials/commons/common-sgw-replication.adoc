@@ -17,11 +17,12 @@ include::{root-partials}_block-caveats.adoc[tags=code-disclaimer]
 == Introduction
 
 Couchbase Lite for {param-title} provides API support for secure, bi-directional, synchronization of data changes between mobile applications and a central server database.
-It does so by using a replicator to interact with Sync Gateway.
-Simply put, the replicator is designed to send documents from a source to a target database.
-In this case, between a local Couchbase Lite database and remote Sync Gateway database (server or cloud).
+It does so by using a _replicator_ to interact with Sync Gateway.
 
-This content provides sample code and configuration examples covering the implementation of a replication using Sync Gateway.
+The _replicator_ is designed to manage replication of documents and-or document changes between a source and a target database.
+For example, between a local Couchbase Lite database and remote Sync Gateway database, which is ultimately mapped to a bucket in a Couchbase Server instance in the cloud or on a server.
+
+This page shows sample code and configuration examples covering the implementation of a replication using Sync Gateway.
 
 Your application runs a replicator (also referred to here as a client), which  will initiate connection with a Sync Gateway (also referred to here as a server) and participate in the replication of database changes to bring both local and remote databases into sync.
 
@@ -32,7 +33,7 @@ Subsequent sections provide additional details and examples for the main configu
 
 === Scheme
 
-Couchbase Mobile uses a replication protocol based on WebSockets fof replication.
+Couchbase Mobile uses a replication protocol based on WebSockets for replication.
 To use this protocol the replication URL should specify WebSockets as the URL scheme (see the <<lbl-cfg-tgt>> section below).
 
 Incompatibilities::
@@ -80,25 +81,37 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 
 *Notes on Example*
 
+<.> get endpoint for target DB
+ifndef::is-c[]
 <.> Use the {url-api-class-replicator-config} class's constructor -- {url-api-constructor-replicator-config-db-tgt} -- to initialize the replicator configuration with the local database -- see also: <<lbl-cfg-tgt>>
-
+endif::is-c[]
+ifdef::is-c[]
+<.> Set local database and target endpoint
+endif::is-c[]
 <.> The default is to auto-purge documents that this user no longer has access to -- see: <<anchor-auto-purge-on-revoke>>.
 Here we over-ride this behavior by setting its flag false.
 
 <.> Configure how the client will authenticate the server.
 Here we say connect only to servers presenting a self-signed certificate.
 By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<lbl-svr-auth>>.
-
-<.> Configure the credentials the client will present to the server.
-Here we say to provide _Basic Authentication_ credentials. Other options are available -- see: <<lbl-client-auth>>.
+endif::is-c[]
+<.> Configure the client-authentication credentials (if required).
+These are the credential the client will present to {sgw} if requested to do so. +
+Here we configure to provide _Basic Authentication_ credentials.
+Other options are available -- see: <<lbl-client-auth>>.
 
 <.> Configure how the replication should handle conflict resolution -- see: {conflict--xref} topic for mor on conflict resolution.
 
-<.> Initialize the replicator using your configuration object -- see: <<lbl-init-repl>>.
+<.> Initialize the replicator using your configuration -- see: <<lbl-init-repl>>.
 
 <.> Optionally, register an observer, which will notify you of changes to the replication status -- see: <<lbl-repl-mon>>
 
 <.> Start the replicator  -- see: <<lbl-repl-start>>.
+endif::is-c[]
+ifdef::is-c[]
+
+endif::is-c[]
+
 
 [#lbl-cfg-repl]
 == Configure
@@ -109,7 +122,8 @@ In this section::
 <<lbl-cfg-tgt>>
 |  <<lbl-cfg-sync>>
 |  <<lbl-cfg-keep-alive>>
-|  <<lbl-svr-auth>>
+|  <<lbl-user-auth>>
+ifndef::is-c[|  <<lbl-svr-auth>>]
 |  <<lbl-client-auth>>
 |  <<lbl-repl-evnts>>
 |  <<lbl-repl-hdrs>>
@@ -136,6 +150,12 @@ include::{root-commons}sgw-replication-cfg-sync-mode.adoc[]
 
 include::{root-commons}sgw-replication-cfg-retry.adoc[]
 
+[#lbl-user-auth]
+=== User Authorization
+
+include::{root-partials}authorization.adoc[]
+
+ifndef::is-c[]
 [#lbl-svr-auth]
 === Server Authentication
 
@@ -144,6 +164,8 @@ Define the credentials your app (the client) is expecting to receive from the Sy
 include::{root-commons}set-server-authentication.adoc[]
 
 This all assumes that you have configured the Sync Gateway to provide the appropriate SSL certificates, and have included the appropriate certificate in your app bundle -- for more on this see: <<lbl-cert-pinning>>.
+
+endif::is-c[]
 
 
 [#lbl-client-auth]
@@ -221,7 +243,7 @@ include::{root-partials}replication-checkpoint.adoc[]
 include::{root-partials}_block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Set start's reset option to `true`. +
-The default `false` is shown here for completeness only; it is unlikely you would explicitly use it in practice.
+ifndef::is-c[The default `false` is shown here for completeness only; it is unlikely you would explicitly use it in practice.]
 
 [#lbl-repl-mon]
 == Monitor
