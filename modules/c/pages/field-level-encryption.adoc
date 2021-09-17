@@ -1,6 +1,6 @@
 = Field Level Encryption
 :page-edition: {release}
-:page-status: {prerelease}
+:page-status: pass:q,a[{prerelease} Enterprise]
 :page-role:
 :description: Client-side Field Level Encryption on Couchbase Lite C Clients
 
@@ -10,67 +10,222 @@ include::partial$_std-cbl-hdr-c.adoc[]
 // :param-title: {lang-title-c}
 // :param-module: {lang-mod-c}
 
-== Overview
+include::{root-partials}_block-caveats.adoc[tag=ee-only-feature]
 
-Couchbase Lite for C 3.x supports client-side, field-Level encryption on replications, allowing applications to encrypt/decrypt sensitive fields in documents using an encryption framework of choice.
+.Community Edition
+[CAUTION]
+--
+* The push replicator will detect encryptable values inside a document. It will fail to replicate unencrypted encryptable values with a crypto error.
+* The pull replicator will *not* detect encryptable values inside pulled documents.
+The document will be saved as it was received.
+This *may* include Server SDK encrypted fields
+--
+
+
+== Overview
+Couchbase Lite for C 3.0.0-BETA supports client-side, field-Level encryption on replications, allowing applications to encrypt/decrypt sensitive fields in documents using an encryption framework of choice.
 
 Using the new client-side encryption capability, Couchbase Lite C applications can
-designate selected fields for encryption and have the client automatically handle the encryption and-or decryption process prior to syncing with Couchbase Server.
+designate selected fields for encryption and have the client automatically handle the encryption and-or decryption at property level during the replication.
 
-This means only clients with access to the correct encryption keys can decrypt and read the protected data.
+Only clients with access to the correct encryption keys can decrypt and read the protected data.
 
 The client-side encryption is compatible with the Couchbase server SDK field-level encryption format -- see, for example, https://docs.couchbase.com/python-sdk/current/concept-docs/encryption.html#format
 
-== Use
 
-Encrypted properties are created using a new dictionary structure, which represents a property value that will be automatically recognized by the replicator for encryption.
+== Encryptable Type
 
-// The format of the dictionary is as follows:
-[#ex-fldlevenc]
-.Format
+The API includes a `CBLEncryptable` type, representing an encryptable value to be automatically encrypted/decryped the replicator -- see <<ex-encryptabe-type>>.
+
+You declare  properties requiring encryption by the replicator, as a dictionary with the structure shown in <<ex-encryptabe-type>>.
+
+[#ex-encryptabe-type]
+.Encryptable-type Dictionary Structure
+====
 [source, {source-langauge}]
 ----
 {
-  "@type": "EncryptedProperty",
-  "value": <Non-Encrypted Value>
-}
+  "@type": "encryptable",
+  “value” : <Decrypted Value>
+} // <.>
+
+{
+  "@type": "encryptable",
+  “ciphertext”: <Encrypted Value in BASE64 String>
+} // <.>
+
 ----
+The key for the value can be either of the following:
 
-Construct properties requiring encryption by the replicator, as a dictionary with the structure shown in <<ex-fldlevenc>>.
+<.> Use `value` as the key when storing a decrypted value, which can be any type (string, number, boolean, dictionary, array or null).
 
-Replicator will replace the _value_ key with `encrypted_value` in BASE64 format. The result dictionary for the encrypted value is as follows:
+<.> Use `cyphertext` as the key when storing a encrypted value, which must be a BASE-64 String.
+====
+
+
+== Replicator Decryption
+Pull replication detects `encryptable` values before saving them to the local database and decrypts them using the property decryption callback function -- see: <<lbl-decryption-callback>> for more on the decryption callback function.
+
+On successful decryption the replicator saves the property in encryptable dictionary format (removing the `encrypted$` prefix) -- see: <<ex-encryptabe-type>>.
+
+
+== Replicator Encryption
+Push replication detects `encryptable` values before pushing them to the remote database and encrypts them using the property encryption callback function -- see: <<lbl-encryption-callback>>.
+
+On successful encryption the replicator transforms the property into a format compatible with Couchbase Server SDK -- see: <<ex-server-encryptable>>.
+
+
+== Server SDK compatibility
+Couchbase Lite's replicator ensures compatibility with Server SDK’s field level.
+Both Push and Pull replication transform Couchbase Lite's encryptable dictionary to-and-from Server SDK Encrypted Field dictionary structure -- see: <<ex-server-encryptable>>.
+
+Push replicator::
+* Adds the prefix `encrypted$` to the key.
+* Sets the SDK'` `alg` either to a user-specified algorithm name or the default `CB_MOBILE_CUSTOM`.
+* Set the value's key as `ciphertext`
+* Stores the encrypted value as a BASE64 string.
++
+.Stored Encryptable
+====
+[source]
 ----
 {
-  "@type": "EncryptedProperty",
-  "encrypted_value": "<BASE64>"
+    “alg”: <User-Specified or CB_MOBILE_CUSTOM>,
+    “ciphertext” : <Encrypted Value in BASE64 String>
 }
 ----
+====
 
-When the replicator pulls and saves a document into the local database, it will automatically recognize the EncryptedProperty dictionary and use it to decrypt the value.
+Pull replicator::
 
-Encrypted properties can be queried using the value, for example: +
+* Detects encrypted encryptable values by looking for  dictionary keys prefixed with “encrypted$”.
+* Transforms the dictionary by:
+** Removing `alg`
+** Replacing the `ciphertext` key with the `value`
+** Storing the decrypted key/value in <<ex-encryptabe-type,CBLEncryptable>> format
+
+
+.Server SDK Encrypted Field Structure
+[#ex-server-encryptable]
+====
+Server SDK's field (property) level encryption uses key mangling, by add a prefix to the field name (`encrypted$`).
+Its directory structure differs CBL's encryptable dictionary when serializing the encrypted fields; as shown here.
+
+[source]
 ----
-SELECT ssn.value FROM db WHERE ssn.value = "123-45-6789"
+{
+    encrypted$mykey: {
+        “alg” : “AEAD_AES_256_CBC_HMAC_SHA512”, // <.>
+        “kid” : “my-key-id”,
+        “ciphertext”: “<BASE64-TEXT>”
+    }
+}
+----
+<.> Here `alg` identifies the encryption algorithm and is the only required field.
+
+====
+
+== Callback Definition
+
+[#lbl-encryption-callback]
+=== Encryption
+
+Provide an encryption callback function {url-api-callback-encryptor} to encrypt encryptable properties during replication.
+
+After encryption the FLSliceResult is released and the returned value zeroed.
+See <<ex-get-att>> for an example encryptor callback function.
+
+If you return a null slice the replicator will fail and log a crypto error message.
+
+[#lbl-decryption-callback]
+=== Decryption
+
+Provide a decryption callback function {url-api-callback-decryptor} to decrypt any encryptable properties.
+After decryption the FLSliceResult is released and the returned value zeroed.
+See <<ex-get-att>> for an example decryptor callback function.
+
+If you return a null slice without an error the replicator skips and saves the property as received.
+
+If you return a null slice with an error the replicator logs the error and does not replicate the document.
+
+
+.Simple Encryption-Decryption Callback
+[#ex-get-att]
+====
+// :param-tags: replicator_property_encryptor_decryptor_sample
+// include::{root-partials}_block_tabbed_code_example.adoc[]
+// :param-tags!:
+[source, C]
+----
+include::{snippet}[tag=replicator_property_encryptor_decryptor_sample]
+----
+====
+
+== Callback Configuration
+
+You register the callback function for use by declaring them in the replicator configuration using {url-api-prop-replicator-config-propertyEncryptor} and-or {url-api-prop-replicator-config-propertyDecryptor} -- see: <<ex-callback-config>>
+
+If you do not provide an encryption callback:
+
+* The push replicator always detects encrypted encryptable values in a document and will fail the document replication, flagging a crypto error.
+
+* The pull replicator does *not* detect encrypted encryptables in pulled documents and will save documents as received; this could include SDK encrypted field dictionaries.
+
+
+.Simple Callback Replicator Configuration
+[#ex-callback-config]
+====
+[source, C]
+----
+incude::{snippet}[tag=replicator_property_encryption]
+----
+====
+// :param-tags: replicator_property_encryption
+// include::{root-partials}_block_tabbed_code_example.adoc[]
+// :param-tags!:
+
+
+
+== Querying Encryptables
+Encrypted values can be queried -- see <<ex-query>>.
+The query result of an encryptable value is `CBLEncryptable`
+
+CBLEncryptable exposes a _value_ property for query purposes.
+If this value is encrypted the query will return _MISSING_.
+
+[#ex-query]
+.A Simple Encryptabe Query
+====
+[source, nql]
+----
+SELECT  ssn,  // <.>
+        ssn.value  // <.>
+FROM db WHERE ssn.value = "123-45-6789"
 ----
 
-== Encryption Callback
+<.> The returned `ssn` columm is in the form of an encryptable dictionary
+<.> The returned `ssn.value` columm is the actual value, unless it is still encrypted in which case it returns MISSING
+====
 
-Use the following callback to set the replicator's configuration for encryption/decryption.
-----
-bool (*CBLPropertyEncryption)(
-     void *context,
-     boolean isEncrypting,
-     FLString docID,
-     FLDict properties,
-     FLString keyPath,
-     FLSlice input,
-     void *output,
-     size_t *outLen);
-----
 
-When the callback returns false, the document will fail to replicate with a crypto error; the replicator will skip the document and report the error.
 
-If the replicator detects an EncryptedProperty but there is no callback set to the replicator, the document will be failed to replicate with a crypto error as well.
+== Constraints
+
+==== Nesting
+In the case of nested `encryptable` types, the replicator only encrypts the outer `encryptable`.
+
+==== Arrays
+For compatibility with Server SDKS, encryptables are not supported within arrays.
+
+The push replicator should detect and report an error if an encrypted property is found in an array.
+
+==== Blobs
+Encrypting blob’s content is not supported.
+
+Where a Blob as a Fleece dictionary is specified in the encrypted property value, only the dictionary is encrypted; *not* the blob’s content.
+
+==== Delta Sync
+Delta Sync will be disabled and a warning message logged when `propertyEncryption` is configured.
 
 
 include::{root-partials}block-related-content-data.adoc[]
