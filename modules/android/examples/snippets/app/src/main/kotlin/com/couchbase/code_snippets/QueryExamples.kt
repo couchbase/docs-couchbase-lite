@@ -115,7 +115,7 @@ class QueryExamples(private val database: Database) {
         // tag::live-query[]
         val query = QueryBuilder
             .select(SelectResult.all())
-            .from(DataSource.database(database))
+            .from(DataSource.database(database)) // <.>
 
         // Adds a query change listener.
         // Changes will be posted on the main queue.
@@ -125,11 +125,9 @@ class QueryExamples(private val database: Database) {
                     Log.d(TAG, "results: ${result.keys}")
                     /* Update UI */
                 }
-            }
+            } // <.>
         }
 
-        // Start live query.
-        query.execute() // <1>
         // end::live-query[]
 
         // tag::stop-live-query[]

@@ -606,11 +606,11 @@ static void use_blob() {
     FLMutableDict properties = CBLDocument_MutableProperties(newTask);
     FLSlot_SetBlob(FLMutableDict_Set(properties, FLSTR("avatar")), blob);
     CBLDatabase_SaveDocument(db, newTask, &err); // <.>
-    
+
     // end::blob[]
 
-    
-    
+
+
     CBLDocument_Release(newTask);
     CBLBlob_Release(blob);
 }
@@ -809,8 +809,9 @@ static void select_all() {
     */
 
     query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
-        FLSTR("SELECT * FROM _"), NULL, &err);
-    CBLListenerToken* token = CBLQuery_AddChangeListener(query, query_change_listener, NULL);
+        FLSTR("SELECT * FROM _"), NULL, &err); // <.>
+
+    CBLListenerToken* token = CBLQuery_AddChangeListener(query, query_change_listener, NULL); // <.>
     // end::live-query[]
 
     // tag::stop-live-query[]

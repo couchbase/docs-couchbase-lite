@@ -5,22 +5,25 @@ As such, it is a great way to build reactive user interfaces -- especially table
 *So, a simple use case may be:* A replicator running and pulling new data from a server, whilst a live-query-driven UI automatically updates to show the data without the user having to manually refresh.
 This helps your app feel quick and responsive.
 
-.Starting a LIve Query
+To activate a LiveQuery just add a change listener to the query statement.
+It will be immediately active.
+When a change is detected the query automatically runs, and posts the new query result to any observers (change listeners).
+
+
+.Starting a Live Query
 [#ex-qry-start]
 :param-tags: live-query
 include::{root-partials}_block_tabbed_code_example.adoc[]
 :param-tags!:
-<.> Build the query statements using the QuerybUilder
-<.> Activate the _live_ query by attaching a listener. +
+<.> Build the query statements
+<.> Activate the _live_ query by attaching a listener.
 Save the token in order to detach the listener and stop the query later -- se <<ex-qry-stop>>
-<.> Start the query +
-This will immediately execute the live query and post the result to the change listener.
-When a change is detected the query automatically runs, and posts the new query result to any observers (change listeners).
+
 
 .Stop a LIve Query
 [#ex-qry-stop]
 :param-tags: stop-live-query
 include::{root-partials}_block_tabbed_code_example.adoc[]
 :param-tags!:
-<.> Here we use the change lister token from <<ex-qry-start>> to remove the listeners.
+<.> Here we use the change lister token from <<ex-qry-start>> to remove the listener.
 Doing so stops the live query.

@@ -610,7 +610,7 @@ namespace api_walkthrough
             // tag::live-query[]
             var query = QueryBuilder
                 .Select(SelectResult.All())
-                .From(DataSource.Database(db));
+                .From(DataSource.Database(db)); // <.>
 
             // Adds a query change listener.
             // Changes will be posted on the main queue.
@@ -623,8 +623,6 @@ namespace api_walkthrough
                 }
             });
 
-            // Start live query.
-            query.Execute(); // <1>
             // end::live-query[]
 
             // tag::stop-live-query[]
