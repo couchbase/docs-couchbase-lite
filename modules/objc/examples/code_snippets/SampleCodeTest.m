@@ -317,10 +317,10 @@
 
     // tag::blob[]
     UIImage *appleImage = [UIImage imageNamed:@"avatar.jpg"];
-    NSData *imageData = UIImageJPEGRepresentation(appleImage, 1.0);
+    NSData *imageData = UIImageJPEGRepresentation(appleImage, 1.0);  // <.>
 
-    CBLBlob *blob = [[CBLBlob alloc] initWithContentType:@"image/jpeg" data:imageData];
-    [newTask setBlob:blob forKey:@"avatar"];
+    CBLBlob *blob = [[CBLBlob alloc] initWithContentType:@"image/jpeg" data:imageData];  // <.>
+    [newTask setBlob:blob forKey:@"avatar"]; // <.>
     [database saveDocument:newTask error:&error];
 
     CBLDocument *savedTask = [database documentWithID: @"task1"];

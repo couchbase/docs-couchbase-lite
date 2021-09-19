@@ -551,9 +551,9 @@ namespace api_walkthrough
             using (var newTask = new MutableDocument()) {
                 // tag::blob[]
                 // Note: Reading the data is implementation dependent, as with prebuilt databases
-                var image = File.ReadAllBytes("avatar.jpg");
-                var blob = new Blob("image/jpeg", image);
-                newTask.SetBlob("avatar", blob);
+                var image = File.ReadAllBytes("avatar.jpg"); // <.>
+                var blob = new Blob("image/jpeg", image); // <.>
+                 newTask.SetBlob("avatar", blob); // <.>
                 db.Save(newTask);
                 // end::blob[]
 

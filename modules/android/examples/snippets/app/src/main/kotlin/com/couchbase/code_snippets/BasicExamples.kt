@@ -373,8 +373,8 @@ class BasicExamples(private val context: Context) {
         val mDoc = MutableDocument()
 
         // tag::blob[]
-        PlatformUtils.getAsset("avatar.jpg")?.use {
-            mDoc.setBlob("avatar", Blob("image/jpeg", it))
+        PlatformUtils.getAsset("avatar.jpg")?.use { // <.>
+            mDoc.setBlob("avatar", Blob("image/jpeg", it)) // <.> <.>
             database.save(mDoc)
         }
 
