@@ -1,6 +1,5 @@
 // CBL Version 3.0.0 BETA
 #include <cbl/CouchbaseLite.h>
-
 #include <time.h>
 #include <inttypes.h>
 #ifdef _MSC_VER
@@ -596,19 +595,22 @@ static void use_blob() {
 
     uint8_t buffer[128000];
     FILE* avatar_file = fopen("avatar.jpg", "rb");
-    size_t read = fread(buffer, 1, 128000, avatar_file);
+    size_t read = fread(buffer, 1, 128000, avatar_file); // <.>
 
     FLSliceResult avatar = FLSliceResult_CreateWith(buffer, read);
-    CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("image/jpeg"), FLSliceResult_AsSlice(avatar));
+    CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("image/jpeg"), FLSliceResult_AsSlice(avatar)); // <.>
     FLSliceResult_Release(avatar);
 
     // TODO: Create shortcut blob method
     CBLError err;
     FLMutableDict properties = CBLDocument_MutableProperties(newTask);
     FLSlot_SetBlob(FLMutableDict_Set(properties, FLSTR("avatar")), blob);
-    CBLDatabase_SaveDocument(db, newTask, &err);
+    CBLDatabase_SaveDocument(db, newTask, &err); // <.>
+    
     // end::blob[]
 
+    
+    
     CBLDocument_Release(newTask);
     CBLBlob_Release(blob);
 }

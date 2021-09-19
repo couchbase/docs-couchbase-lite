@@ -447,11 +447,11 @@ public class docOnly_Examples {
         MutableDocument newTask = new MutableDocument();
 
         // tag::blob[]
-        InputStream is = getAsset("avatar.jpg");
+        InputStream is = getAsset("avatar.jpg"); // <.>
         if (is == null) { return; }
         try {
-            Blob blob = new Blob("image/jpeg", is);
-            newTask.setBlob("avatar", blob);
+            Blob blob = new Blob("image/jpeg", is); // <.>
+            newTask.setBlob("avatar", blob); // <.>
             database.save(newTask);
 
             Blob taskBlob = newTask.getBlob("avatar");

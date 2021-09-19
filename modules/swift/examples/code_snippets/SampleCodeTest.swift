@@ -222,10 +222,10 @@ class SampleCodeTest {
 
         // tag::blob[]
         let appleImage = UIImage(named: "avatar.jpg")!
-        let imageData = UIImageJPEGRepresentation(appleImage, 1)!
+        let imageData = UIImageJPEGRepresentation(appleImage, 1)! // <.>
 
-        let blob = Blob(contentType: "image/jpeg", data: imageData)
-        newTask.setBlob(blob, forKey: "avatar")
+        let blob = Blob(contentType: "image/jpeg", data: imageData) // <.>
+        newTask.setBlob(blob, forKey: "avatar") // <.>
         try database.saveDocument(newTask)
 
         if let taskBlob = newTask.blob(forKey: "image") {
