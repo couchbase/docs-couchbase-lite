@@ -3697,7 +3697,7 @@ class myActPeerClass {
     // end::p2p-act-rep-config-type[]
     // tag::autopurge-override[]
     // set auto-purge behavior (here we override default)
-    thisConfig.enableAutoPurge = false; // <.>
+    thisConfig.enableAutoPurge = false // <.>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]

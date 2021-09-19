@@ -1152,7 +1152,7 @@ public class docOnly_Examples {
       ReplicatorConfiguration repcfg =
       new ReplicatorConfiguration(database, target);
 
-      repcfg.setAutoPurgeEnabled(true) // <.>
+      repcfg.setAutoPurgeEnabled(true); // <.>
 
     }
 
