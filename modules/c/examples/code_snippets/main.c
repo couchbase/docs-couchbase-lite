@@ -233,7 +233,7 @@ static void getting_started() {
 
     // When finished release resources ... eg
     CBLListener_Remove(token);
-    
+
     stop_replicator(replicator);
 }
 
@@ -265,7 +265,7 @@ static void test_replicator_conflict_resolve() {
     CBLReplicator_Start(replicator, false);
 
     // end::replication-conflict-resolver[]
-    
+
     stop_replicator(replicator);
 }
 
@@ -371,7 +371,7 @@ static void reset_replicator_checkpoint() {
     CBLReplicator_Start(replicator, true); // <.>
 
     // end::replication-reset-checkpoint-full[]
-    
+
     stop_replicator(replicator);
 }
 
@@ -758,17 +758,17 @@ static void select_id() {
     CBLError err;
     CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id FROM _"), NULL, &err);
-    
+
     // tag::query-access-id[]
     // NOTE: No error handling, for brevity (see getting started)
-    
+
     CBLResultSet* results = CBLQuery_Execute(query, &err);
     while(CBLResultSet_Next(results)) {
         FLString id = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("id")));
         printf("Document ID :: %.*s\n", (int)id.size, (const char *)id.buf);
     }
     // end::query-access-id[]
-    
+
     CBLResultSet_Release(results);
     CBLQuery_Release(query);
 }
@@ -819,58 +819,58 @@ static void select_all() {
 
 static void select_and_access_all() {
     CBLDatabase* db = kDatabase;
-    
+
     CBLError err;
     CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
         FLSTR("SELECT * FROM _"), NULL, &err);
-    
+
     // tag::query-access-all[]
     // NOTE: No error handling, for brevity (see getting started)
-    
+
     CBLResultSet* results = CBLQuery_Execute(query, &err);
     while(CBLResultSet_Next(results)) {
         FLDict dict = FLValue_AsDict(CBLResultSet_ValueForKey(results, FLSTR("_")));
-        
+
         FLString id = FLValue_AsString(FLDict_Get(dict, FLSTR("id")));
         FLString type = FLValue_AsString(FLDict_Get(dict, FLSTR("type")));
         FLString name = FLValue_AsString(FLDict_Get(dict, FLSTR("name")));
         FLString city = FLValue_AsString(FLDict_Get(dict, FLSTR("city")));
-        
+
         printf("ID :: %.*s\n", (int)id.size, (const char *)id.buf);
         printf("Type :: %.*s\n", (int)type.size, (const char *)type.buf);
         printf("Name :: %.*s\n", (int)name.size, (const char *)name.buf);
         printf("City :: %.*s\n", (int)city.size, (const char *)city.buf);
     }
-    
+
     // All results will be available from the above query
     CBLResultSet_Release(results);
     // end::query-access-all[]
-    
+
     CBLQuery_Release(query);
 }
 
 static void select_props() {
     CBLDatabase* db = kDatabase;
-    
+
     // tag::query-access-props[]
     // NOTE: No error handling, for brevity (see getting started)
-    
+
     CBLError err;
     CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
         FLSTR("SELECT type, name, city FROM _"), NULL, &err);
-    
+
     CBLResultSet* results = CBLQuery_Execute(query, &err);
     while(CBLResultSet_Next(results)) {
         FLString type = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("type")));
         FLString name = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("name")));
         FLString city = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("city")));
-        
+
         printf("Type :: %.*s\n", (int)type.size, (const char *)type.buf);
         printf("Name :: %.*s\n", (int)name.size, (const char *)name.buf);
         printf("City :: %.*s\n", (int)city.size, (const char *)city.buf);
     }
     // end::query-access-props[]
-    
+
     // All results will be available from the above query
     CBLResultSet_Release(results);
     CBLQuery_Release(query);
@@ -1311,7 +1311,7 @@ static void enable_basic_auth() {
 
     CBLReplicator_Start(replicator, false);
     // end::basic-authentication-full[]
-    
+
     stop_replicator(replicator);
 }
 
@@ -1733,7 +1733,7 @@ static void docs_act_replication_Stop(
 
 static void create_encryptable() {
     #ifdef COUCHBASE_ENTERPRISE
-    
+
     // tag::encryptable[]
     // NOTE: No error handling, for brevity (see getting started)
 
@@ -1745,23 +1745,23 @@ static void create_encryptable() {
     CBLEncryptable* encFloat = CBLEncryptable_CreateWithFloat(1.2);
     CBLEncryptable* encDouble = CBLEncryptable_CreateWithDouble(100.50);
     CBLEncryptable* encString = CBLEncryptable_CreateWithString(FLSTR("foo"));
-    
+
     // Create with dictionary
     FLMutableDict dict = FLMutableDict_New();
     FLSlot_SetString(FLMutableDict_Set(dict, FLSTR("greeting")), FLSTR("hello"));
     CBLEncryptable* encDict = CBLEncryptable_CreateWithDict(dict);
-    
+
     // Create with array
     FLMutableArray array = FLMutableArray_New();
     FLSlot_SetString(FLMutableArray_Append(array), FLSTR("item1"));
     CBLEncryptable* encArray = CBLEncryptable_CreateWithArray(array);
-    
+
     // Create with FLValue
     FLMutableDict dict2 = FLMutableDict_New();
     FLSlot_SetString(FLMutableDict_Set(dict2, FLSTR("greeting")), FLSTR("hello"));
     CBLEncryptable* encValue = CBLEncryptable_CreateWithValue((FLValue)dict2);
     // end::encryptable[]
-    
+
     // Release after using it
     CBLEncryptable_Release(encNull);
     CBLEncryptable_Release(encBool);
@@ -1774,7 +1774,7 @@ static void create_encryptable() {
     CBLEncryptable_Release(encDict);
     CBLEncryptable_Release(encArray);
     CBLEncryptable_Release(encValue);
-    
+
     FLMutableDict_Release(dict);
     FLMutableDict_Release(dict2);
     FLMutableArray_Release(array);
@@ -1784,46 +1784,46 @@ static void create_encryptable() {
 
 static void release_encryptable() {
     #ifdef COUCHBASE_ENTERPRISE
-    
+
     CBLEncryptable* encValue = CBLEncryptable_CreateWithString(FLSTR("foo"));
     // tag::release_encryptable[]
     // Release the encryptable value after finish using it
     CBLEncryptable_Release(encValue);
     // end::release_encryptable[]
-    
+
     #endif
 }
 
 static void use_encryptable() {
     #ifdef COUCHBASE_ENTERPRISE
-    
+
     CBLDatabase* db = kDatabase;
-    
+
     // tag::use_encryptable[]
     // NOTE: No error handling, for brevity (see getting started)
     CBLDocument* doc = CBLDocument_CreateWithID(FLSTR("doc1"));
-    
+
     // Set encryptable:
     FLMutableDict props = CBLDocument_MutableProperties(doc);
     CBLEncryptable* encryptable = CBLEncryptable_CreateWithString(FLSTR("My secret"));
     FLSlot_SetEncryptableValue(FLMutableDict_Set(props, FLSTR("secret")), encryptable);
-    
+
     CBLError error;
     CBLDatabase_SaveDocument(db, doc, &error);
-    
+
     // Release
     CBLDocument_Release(doc);
     CBLEncryptable_Release(encryptable);
     // end::release_encryptable[]
-    
+
     #endif
 }
 
 static void query_encryptable() {
     #ifdef COUCHBASE_ENTERPRISE
-    
+
     CBLDatabase* db = kDatabase;
-    
+
     // tag::use_encryptable[]
     // NOTE: No error handling, for brevity (see getting started)
     CBLError err;
@@ -1836,7 +1836,7 @@ static void query_encryptable() {
         const CBLEncryptable* encValue = FLValue_GetEncryptableValue(value);
         FLString secretStr = FLValue_AsString(CBLEncryptable_Value(encValue));
         printf("Secret :: %.*s\n", (int)secretStr.size, (const char *)secretStr.buf);
-        
+
         // Get secret value directly
         value = CBLResultSet_ValueForKey(results, FLSTR("secretValue"));
         secretStr = FLValue_AsString(value);
@@ -1846,21 +1846,22 @@ static void query_encryptable() {
     CBLResultSet_Release(results);
     CBLQuery_Release(query);
     // end::release_encryptable[]
-    
+
     #endif
 }
 
 #ifdef COUCHBASE_ENTERPRISE
 
+// tag::replicator_property_encryption[]
 // tag::replicator_property_encryptor_decryptor_sample[]
-
+// Purpose: Declare property-level encryptor callback functions
 static FLSliceResult my_cipher_function(FLSlice input) {
     FLSliceResult result = FLSliceResult_New(input.size);
     for(int i = 0; i < input.size; ++i) {
-        ((uint8_t*)(result.buf))[i] = ((uint8_t*)input.buf)[i] ^ 'K';
-    }
+        ((uint8_t*)(result.buf))[i] = ((uint8_t*)input.buf)[i] ^ 'K';}
     return result;
 }
+
 
 static FLSliceResult property_encryptor(void* context, FLString docID, FLDict props, FLString path,
                                         FLSlice input, FLStringResult* algorithm, FLStringResult* keyID, CBLError* error) {
@@ -1868,64 +1869,49 @@ static FLSliceResult property_encryptor(void* context, FLString docID, FLDict pr
     return my_cipher_function(input);
 }
 
+
 static FLSliceResult property_decryptor(void* context, FLString documentID, FLDict properties, FLString keyPath,
                                         FLSlice input, FLString algorithm, FLString keyID, CBLError* error) {
     return my_cipher_function(input);
 }
 
 // end::replicator_property_encryptor_decryptor_sample[]
+// end::replicator_property_encryption[]
 
 #endif
 
+// PAGE=Field Level Encryption
+// URL=https://docs.couchbase.com/couchbase-lite/current/c/field-level-encryption.html
+//
 static void replicator_property_encryption() {
     #ifdef COUCHBASE_ENTERPRISE
-    
+
     CBLDatabase* db = kDatabase;
-    
+
     // tag::replicator_property_encryption[]
+    // Purpose: Show how to declare en(de)cryptors in replicator config
     // NOTE: No error handling, for brevity (see getting started)
-    
-    /*
-     static FLSliceResult my_cipher_function(FLSlice input) {
-         FLSliceResult result = FLSliceResult_New(input.size);
-         for(int i = 0; i < input.size; ++i) {
-             ((uint8_t*)(result.buf))[i] = ((uint8_t*)input.buf)[i] ^ 'K';
-         }
-         return result;
-     }
 
-     static FLSliceResult property_encryptor(void* context, FLString docID, FLDict props, FLString path,
-                                             FLSlice input, FLStringResult* algorithm, FLStringResult* keyID, CBLError* error) {
-         *algorithm = FLSlice_Copy(FLSTR("MyEnc"));
-         return my_cipher_function(input);
-     }
-
-     static FLSliceResult property_decryptor(void* context, FLString documentID, FLDict properties, FLString keyPath,
-                                             FLSlice input, FLString algorithm, FLString keyID, CBLError* error) {
-         return my_cipher_function(input);
-     }
-     */
-    
     CBLError err;
     FLString url = FLSTR("ws://localhost:4984/db");
     CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &err);
-    
+
     CBLReplicatorConfiguration config;
     memset(&config, 0, sizeof(CBLReplicatorConfiguration));
-    
+
     config.database = db;
     config.endpoint = target;
-    config.propertyEncryptor = property_encryptor;
-    config.propertyDecryptor = property_decryptor;
-    
+    config.propertyEncryptor = property_encryptor; // <.>
+    config.propertyDecryptor = property_decryptor; // <.>
+
     CBLReplicator* replicator = CBLReplicator_Create(&config, &err);
     CBLEndpoint_Free(target);
-    
+
     CBLReplicator_Start(replicator, false);
     // end::replicator_property_encryption[]
-    
+
     stop_replicator(replicator);
-    
+
     #endif
 }
 
@@ -1961,7 +1947,7 @@ int main(int argc, char** argv) {
     full_text_search();
     start_replication();
     replicator_property_encryption();
-    
+
     CBLDatabase_Close(kDatabase, NULL);
 
     return 0;
