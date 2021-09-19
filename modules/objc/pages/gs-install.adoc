@@ -15,20 +15,26 @@ include::{root-partials}block-abstract.adoc[]
 
 Create or open an existing _Xcode_ project and install Couchbase Lite using one of the <<lbl-install-tabs>> methods shown.
 
-include::{root-partials}_block-caveats.adoc[tag=xcode-12x3-fix]
+// include::{root-partials}_block-caveats.adoc[tag=xcode-12x3-fix]
+
+[NOTE]
+--
+* The minimum required version of Cocoapods is *1.9*
+* The minimum required version of Carthage is *38.0*
+--
 
 
 [#lbl-install-tabs]
 === Install Methods
 [{tabs}]
 ====
-Frameworks::
+xcframework::
 +
 --
 * https://www.couchbase.com/downloads[Download] Couchbase Lite.
-* Drag *CouchbaseLite.framework* from your Finder to the Xcode navigator.
-* Click on Project > General > Embedded Binary and add *CouchbaseLite.framework* to this section.
-* Import the framework and start using it in your project.
+* Drag *CouchbaseLite.xcframework* from your Finder to the Xcode navigator.
+* Click on Project > General > Embedded Binary and add *CouchbaseLite.xcframework* to this section.
+* Import the xcframework and start using it in your project.
 +
 [source]
 ----
@@ -40,6 +46,9 @@ Frameworks::
 Carthage::
 +
 --
+NOTE:  The minimum required version of Carthage is *38.0*
+
+
 . https://github.com/Carthage/Carthage#installing-carthage[Install Carthage]
 . In your *Cartfile*, add the following.
 +
@@ -55,14 +64,16 @@ binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/Couc
 binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Enterprise.json" ~> {version}
 ----
 
-. Run `carthage update --platform ios`.
-. Drag *CouchbaseLite.framework* from *Carthage/Build/* to the Xcode navigator.
-. Click on Project > General > Embedded Binary and add *CouchbaseLite.framework* to this section.
+. Run `carthage update --use-xcframework --platform ios`.
+. Drag *CouchbaseLite.xcframework* from *Carthage/Build/* to the Xcode navigator.
+. Click on Project > General > Embedded Binary and add *CouchbaseLite.xcframework* to this section.
 --
 
 CocoaPods::
 +
 --
+NOTE: The minimum required version of Cocoapods is *1.9*
+
 . https://guides.cocoapods.org/using/getting-started.html[Install Cocoapods]
 . In your *Podfile*, add the following.
 +
