@@ -79,12 +79,14 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<document-constraints>>.
 
 
+ifndef::-is-c[]
 == Typed Accessors
 
 === Scalar type
 The `Document` class now offers a set of {url-api-class-dictionary} for various scalar types, including boolean, integers, floating-point and strings.
 These accessors take care of converting to/from JSON encoding, and make sure you get the type you're expecting.
-
+endif::[]
+ifndef::-is-c[]
 === Date accessors
 // DateTimeOffset c#
 In addition, as a convenience we offer `Date` accessors.
@@ -97,6 +99,7 @@ Dates are a common data type, but JSON doesn't natively support them, so the con
 include::{root-partials}_block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
+endif::[]
 
 
 === Checking for properties
