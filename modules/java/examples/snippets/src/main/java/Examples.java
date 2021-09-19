@@ -1029,7 +1029,7 @@ apply plugin: 'java'
             // tag::live-query[]
             Query query = QueryBuilder
                 .select(SelectResult.all())
-                .from(DataSource.database(database));
+                .from(DataSource.database(database)); // <.>
 
             // Adds a query change listener.
             // Changes will be posted on the main queue.
@@ -1040,8 +1040,6 @@ apply plugin: 'java'
                 }
             });
 
-            // Start live query.
-            query.execute(); // <1>
             // end::live-query[]
 
             // tag::stop-live-query[]

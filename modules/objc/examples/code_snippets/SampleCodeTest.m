@@ -393,7 +393,7 @@
 
     // tag::live-query[]
     CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
-                                         from:[CBLQueryDataSource database:database]];
+                                         from:[CBLQueryDataSource database:database]]; // <.>
 
     // Adds a query change listener.
     // Changes will be posted on the main queue.
@@ -402,10 +402,8 @@
             NSLog(@"%@", result);
             /* Update UI */
         }
-    }];
+    }]; // <.>
 
-    // Start live query.
-    [query execute: &error]; // <.>
     // end::live-query[]
 
     // tag::stop-live-query[]

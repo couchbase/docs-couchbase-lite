@@ -318,7 +318,7 @@ class SampleCodeTest {
         // tag::live-query[]
         let query = QueryBuilder
             .select(SelectResult.all())
-            .from(DataSource.database(database))
+            .from(DataSource.database(database)) // <.>
 
         // Adds a query change listener.
         // Changes will be posted on the main queue.
@@ -327,10 +327,8 @@ class SampleCodeTest {
                 print(result.keys)
                 /* Update UI */
             }
-        }
+        } // <.>
 
-        // Start live query.
-        query.execute(); // <.>
         // end::live-query[]
 
         // tag::stop-live-query[]
