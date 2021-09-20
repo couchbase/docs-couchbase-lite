@@ -6,6 +6,8 @@
 :description: How to install Couchbase Lite on Android
 :keywords: edge nosql api android java
 
+:this-release: 3.0.0-beta01
+
 // DO NOT EDIT
 include::partial$_std-cbl-hdr-android.adoc[]
 
@@ -14,7 +16,7 @@ include::{root-partials}block-abstract.adoc[]
 // include::{root-partials}block-related-get-started.adoc[]
 // DO NOT EDIT
 
-:cbl-version-text: pass:q,a[Set the variable `\{version\}` to the Couchbase Lite version number, for example 3.0.0-beta01.]
+:cbl-version-text: pass:q,a[Set the variable `\{version\}` to the Couchbase Lite version number, for example {this-release}.]
 
 
 == Introduction
@@ -37,11 +39,11 @@ Community Edition::
 --
 . Include the following in the `android {}` section:
 +
-[source,groovy]
+[source,groovy, subs="attributes+"]
 ----
 
 // Set Couchbase Lite version
-def version = '3.0.0-beta01' // <.>
+def version = '{this-release}' // <.>
 
 // Set minimum JVM level to ensure availability of, for example, lambda expressions
 def jvmversion = '1.8'
@@ -82,10 +84,10 @@ Enterprise Edition::
 --
 . Include the following in the `android {}` section:
 +
-[source,groovy]
+[source,groovy, subs="attributes+"]
 ----
 // Set Couchbase Lite version
-def version = '3.0.0-beta01' // <.>
+def version = '{this-release}' // <.>
 
 // Set minimum JVM level to ensure availability of, for example, lambda expressions
 def jvmversion = '1.8'
@@ -112,8 +114,7 @@ android {
 ----
 dependencies {
 
-  implementation "com.couchbase.lite.kotlin:couchbase-lite-android-ee-ktx
- :${version}"
+  implementation "com.couchbase.lite.kotlin:couchbase-lite-android-ee-ktx:${version}"
 
 //   ... other section content as required by user
 }
@@ -150,9 +151,10 @@ Community::
 --
 . Include the following in the `android {}` section:
 +
-[source,groovy]
+[source,groovy, subs="attributes+"]
 ----
-def version = '3.0.0' // <1>
+// Set Couchbase Lite version
+def version = '{this-release}' // <.>
 
 // Set minimum JVM level to ensure availability of, for example, lambda expressions
 def jvmversion = '1.8'
@@ -187,10 +189,10 @@ Enterprise::
 --
 . Include the following in the `android {}` section:
 +
-[source,groovy]
+[source,groovy, subs="attributes+"]
 ----
 // Set Couchbase Lite version
-def version = '3.0.0-beta01' // <.>
+def version = '{this-release}' // <.>
 
 // Set minimum JVM level to ensure availability of, for example, lambda expressions
 def jvmversion = '1.8'
