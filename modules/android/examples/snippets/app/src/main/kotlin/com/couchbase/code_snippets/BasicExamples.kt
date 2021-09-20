@@ -124,6 +124,8 @@ class BasicExamples(private val context: Context) {
         )
 
         // Listen to replicator change events.
+        // Version using Kotlin Flows to follow shortly ...
+
         replicator.addChangeListener { change ->
             val err = change.status.error
             if (err != null) Log.i(TAG, "Error code ::  ${err.code}")
@@ -361,6 +363,8 @@ class BasicExamples(private val context: Context) {
     @Throws(CouchbaseLiteException::class)
     fun testDocumentChangeListener() {
         // tag::document-listener[]
+        // Version using Kotlin Flows to follow shortly ...
+
         database.addDocumentChangeListener("user.john") { change ->
             database.getDocument(change.documentID)?.let {
                 Toast.makeText(context, "Status: ${it.getString("verified_account")}", Toast.LENGTH_SHORT).show()
