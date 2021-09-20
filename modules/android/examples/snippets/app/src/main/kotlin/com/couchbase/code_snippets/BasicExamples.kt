@@ -59,14 +59,15 @@ private const val TAG = "BASIC"
 
 // tag::custom-logging[]
 class LogTestLogger(private val level: LogLevel) : Logger {
-    override fun getLevel() = level
+  override fun getLevel() = level
 
-    override fun log(level: LogLevel, domain: LogDomain, message: String) {
-        // this method will never be called if param level < this.level
-        // handle the message, for example piping it to a third party framework
-    }
+  override fun log(level: LogLevel, domain: LogDomain, message: String) {
+    // this method will never be called if param level < this.level
+    // handle the message, for example piping it to a third party framework
+  }
 }
 
+// end::custom-logging[]
 // tag::example-app[]
 @Suppress("unused")
 class BasicExamples(private val context: Context) {
