@@ -161,6 +161,7 @@ object MergeConflictResolver : ConflictResolver {
             )
 
             // tag::replication-status[]
+            // Version using Kotlin Flows to follow shortly ...
             repl.addChangeListener { change ->
                 if (change.status.activityLevel == ReplicatorActivityLevel.STOPPED) {
                     Log.i(TAG, "Replication stopped")
@@ -182,6 +183,7 @@ object MergeConflictResolver : ConflictResolver {
             )
 
             // tag::replication-error-handling[]
+            // Version using Kotlin Flows to follow shortly ...
             repl.addChangeListener { change ->
                 change.status.error?.let {
                     Log.w(TAG, "Error code: ${it.code}")

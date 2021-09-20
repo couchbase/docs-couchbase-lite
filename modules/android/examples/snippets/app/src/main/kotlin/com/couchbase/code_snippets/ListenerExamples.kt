@@ -258,6 +258,8 @@ class PasswordAuthListener {
         config.setAuthenticator(BasicAuthenticator(username, password))
         val completionLatch = CountDownLatch(1)
         val repl = Replicator(config)
+
+        // Version using Kotlin Flows to follow shortly ...
         repl.addChangeListener { change ->
             if (change.status
                     .activityLevel == ReplicatorActivityLevel.STOPPED
