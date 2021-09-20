@@ -16,11 +16,12 @@
 
 // == Introduction
 
-There are several minor but notable behavior differences between N1QL queries on Couchbase Lite and N1QL on Couchbase Server, ashown in  <<tbl-diffs>>.
+There are several minor but notable behavior differences between _N1QL for Mobile_ queries and _N1QL for Server_, as shown in  <<tbl-diffs>>.
 
-In some instance you can, if required, force Couchbase Lite to work in the same way as Couchbase Server. These instances are noted in the content below.
+In some instances, if required, you can force N1QL for Mobile to work in the same way as N1QL for Server.
+These instances are noted in the content below.
 
-.N1QL Query Comparison (Couchbase Server _cf_ Couchbase Lite)
+.N1QL Query Comparison
 [#tbl-diffs, cols="^1,2a,2a, options="header"]
 |===
 
@@ -28,8 +29,8 @@ In some instance you can, if required, force Couchbase Lite to work in the same 
 2+^h|N1QL Comparison
 
 h| Feature
-h| Couchbase Server
-h| Couchbase Lite
+h| N1QL for Couchbase Server
+h| N1QL for Mobile
 
 | USE KEYS
 | SELECT fname, email FROM tutorial USE KEYS ["dave", "ian"];
@@ -51,16 +52,13 @@ JOIN orders o ON meta(u).id = o.user_id;
 | SELECT * FROM user u +
 NEST orders orders +
 ON KEYS ARRAY s.order_id FOR s IN u.order_history END;
-| SELECT u, orders FROM users u +
-LET orders=(SELECT VALUE o FROM u.order_history s, orders o WHERE meta(o).id = s.order_id) +
-WHERE EXISTS orders;
+| NEST/UNNEST not supported
 
 | LEFT OUTER NEST
 | SELECT * FROM user u +
 LEFT OUTER NEST orders orders +
 ON KEYS ARRAY s.order_id FOR s IN u.order_history END;
-| SELECT u, (SELECT VALUE o FROM u.order_history s, orders o WHERE meta(o).id = s.order_id) orders +
-FROM users u;
+| NEST/UNNEST not supported
 
 | ARRAY
 | ARRAY i FOR i IN [1, 2] END
@@ -72,11 +70,11 @@ FROM users u;
 
 | LIMIT l OFFSET o
 | Allows OFFSET without LIMIT
-| Doesn't support OFFSET without LIMIT
+| Allows OFFSET without LIMIT
 
 | UNION, INTERSECT, and EXCEPT
 | All three are supported (with ALL and DISTINCT variants)
-| Only UNION ALL is supported (and necessary for query expressability)
+| Not supported
 
 | OUTER JOIN
 | Both LEFT and RIGHT OUTER JOIN supported
@@ -99,71 +97,49 @@ The ordering of _Dictionary_ and _Array_ objects is based on binary ordering.
 
 | CREATE INDEX
 | Supported
-| Supported but different (e.g., typed)
+| Not Supported
 
 | INSERT/UPSERT/DELETE
 | Supported
-| Unsupported (by design)
+| Not Supported
 |===
-
-// N1QL for Analytics generalizes N1QL for Query's syntax constructs such as `USE KEYS`, `ON KEYS`, `ON KEY`, `NEST`,
-// `LEFT OUTER NEST` and `ARRAY` and thus eliminates cases where must-be-indexed or must-use-keys
-// restrictions are required for certain N1QL for Query queries or expressions to be acceptable.
-// In addition, the general composability of N1QL for Analytics queries eliminates the need for some of N1QL for Query's
-// special syntax; for example, N1QL for Analytics does not require or support the IN/WITHIN subclauses of
-// N1QL for Query's existential (SOME, ANY, or EVERY) expressions.
-
-// Note that INSERT/UPSERT/DELETE are not supported at all in the Couchbase Analytics Service.
-// Data is mutated in Couchbase Server, using the Couchbase Server SDK or N1QL for Query mutation, and
-// the mutations will then be automatically synchronized into the Couchbase Analytics Service.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 == Boolean Logic Rules
 
-Couchbase Lite N1QL's boolean logic rules are based on SQLite’s, so:
+[,cols="1a,1a", options="header"]
+|===
+^| N1QL for Couchbase Server ^| N1QL for Mobile
 
-* TRUE is TRUE, and FALSE is FALSE
-* Numbers 0 or 0.0 are FALSE
-* Arrays and dictionaries are FALSE
-* String and Blob are TRUE if the values are casted as a non-zero or FALSE if the values are casted as 0 or 0.0 (See SQLITE’s CAST and Boolean expressions here for more details)
-* NULL is FALSE
-* MISSING is MISSING
 
-Couchbase Server operates in the same way as Couchbase Lite, except:
+|Couchbase Server operates in the same way as Couchbase Lite, except:
 
 * MISSING, NULL and FALSE are FALSE
 * Numbers 0 is FALSE
 * Empty strings, arrays, and objects are FALSE
 * All other values are TRUE
 
-====
 You can choose to use _Couchbase Server's N1QL rules_ by using the `TOBOOLEAN(expr)` function to convert a value to its boolean value.
-====
+
+|N1QL for Mobile's boolean logic rules are based on SQLite’s, so:
+
+* TRUE is TRUE, and FALSE is FALSE
+* Numbers 0 or 0.0 are FALSE
+* Arrays and dictionaries are FALSE
+* String and Blob are TRUE if the values are casted as a non-zero or FALSE if the values are casted as 0 or 0.0 -- see: https://sqlite.org/lang_expr.html[SQLITE’s CAST and Boolean expressions]^ for more details)
+* NULL is FALSE
+* MISSING is MISSING
+
+|===
 
 
 === Logical Operations
 
-Couchbase Lite logical operations will return one of three possible values; `TRUE`, `FALSE`, or `MISSING`.
+In N1QL for Mobile logical operations will return one of three possible values; `TRUE`, `FALSE`, or `MISSING`.
 
 Logical operations with the `MISSING` value could result in `TRUE` or `FALSE` if the result can be determined regardless of the missing value, otherwise the result will be `MISSING`.
 
-In Couchbase Lite N1QL -- unlike Couchbase Server N1QL -- `NULL` is implicitly converted to `FALSE` before evaluating logical operations.
+In N1QL for Mobile -- unlike N1QL for Server -- `NULL` is implicitly converted to `FALSE` before evaluating logical operations.
 <<tbl-logops>> summarizes the result of logical operations with different operand values and also shows where the Couchbase Server behavior differs.
-
 
 .Logical Operations Comparison
 [#tbl-logops, cols="^1m,^1m,^1m,^1m,^1m,^1m,^1m", options-"header"]
@@ -171,8 +147,8 @@ In Couchbase Lite N1QL -- unlike Couchbase Server N1QL -- `NULL` is implicitly c
 
 .2+.>h| Operand +
 a
-3+h|Couchbase Lite
-3+h|Couchbase Server
+3+h| N1QL for Mobile
+3+h| N1QL for Server
 
 h| b
 h| a AND b
@@ -319,29 +295,45 @@ h| a OR b
 
 |===
 
+== CRUD Operations
+N1QL for Mobile only supports Read or Query operations.
+
+N1QL for Server fully supports CRUD operation.
+
+== Functions
 
 === Division Operator
 
-In Couchbase Lite N1QL, the operands' type determines the
- division operation performed.
-If both are integers, integer division is used.
+[,colse="1a,1a", options="header"]
+|===
+^| N1QL for Server ^| N1QL for Mobile
+
+| N1QL for Server always performs float division regardless of the types of the operands.
+
+You can force this behavior in N1QL for Mobile by using the `DIV(x, y)` function.
+
+|The operand types determine the
+ division operation performed. +
+If both are integers, integer division is used. +
 If one is a floating number, then float division is used.
 
-In contrast, Couchbase Server N1QL always performs float division regardless of the types of the operands.
-====
-You can force this behavior in Couchbase Lite N1QL by using the `DIV(x, y)` function.
-====
+|===
 
 === Round Function
+[,cols="1a,1a", options="header"]
+|===
+^| N1QL for Server ^| N1QL for Mobile
 
-In Couchbase Lite N1QL, the `ROUND()` function returns a value to the given number of integer digits to the right of the decimal point (left if digits is negative).
-Digits are 0 if not given.
-Midpoint values are handled using the _Rounding Away From Zero_ convention, which rounds them to the next number away from zero (for example, `ROUND(1.85)` returns 1.9).
+| N1QL for Server `ROUND()` uses the _Rounding to Nearest Even_ convention (for example, `ROUND(1.85)` returns 1.8).
 
-In Couchbase Server N1QL `ROUND()` uses the _Rounding to Nearest Even_ convention (for example, `ROUND(1.85)` returns 1.8).
-====
 You can force this behavior in Couchbase Lite by using the `ROUND_EVEN()` function.
-====
+
+| The `ROUND()` function returns a value to the given number of integer digits to the right of the decimal point (left if digits is negative).
+
+* Digits are 0 if not given.
+* Midpoint values are handled using the _Rounding Away From Zero_ convention, which rounds them to the next number away from zero (for example, `ROUND(1.85)` returns 1.9).
+
+|===
 
 
 
