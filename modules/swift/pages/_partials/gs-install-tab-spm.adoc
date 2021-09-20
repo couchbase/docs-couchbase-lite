@@ -4,7 +4,7 @@
 :url-ce: https://github.com/couchbase/couchbase-lite-ios.git
 :saved-caption: {example-caption}
 :example-caption!:
-
+:this-release: 3.0.0-beta01
 This tab explains how to include the CouchbaseLiteSwift package within your app +
 See: <<case-1>> | <<case-2>>
 
@@ -16,12 +16,12 @@ Here we will add the `CouchbaseLiteSwift` dependency to your Parent Swift packag
 . Add the CouchbaseLiteSwift package as dependency by including the following in the parent package manifest:
 
 +
-[source, {source-language}]
+[source, {source-language}, subs="attributes+"]
 ----
 dependencies: [
   .package(name: "CouchbaseLiteSwift",
     url: "insert Couchbase Lite URL", // <.>
-    from: "2.8.0"),
+    from: "{this-release}"),
   ],
 ----
 +
@@ -57,7 +57,7 @@ class ParentPackageSomeClass {
 [#sample]
 :listing-caption: Example
 .Simple Manifest
-[source, {source-language}]
+[source, {source-language},subs="attributes+"]
 ----
 // swift-tools-version:5.3
 import PackageDescription
@@ -70,7 +70,7 @@ products: [
   ],
 dependencies: [
   .package(name: "CouchbaseLiteSwift",
-    url: "https://github.com/couchbase/couchbase-lite-swift-ee.git", from: "2.8.0"),
+    url: "https://github.com/couchbase/couchbase-lite-swift-ee.git", from: "{this-release}"),
   ],
 targets: [
   .target(
@@ -111,7 +111,7 @@ For example: {url-ee}
 +
 image::spm-3.png[]
 
-. *Enter* the *_Version_* and btn:[Next] to continue
+. *Enter* the *_Version_* ({this-release}) and btn:[Next] to continue
 +
 image::spm-4.png[]
 
