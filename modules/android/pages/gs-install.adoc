@@ -14,23 +14,135 @@ include::{root-partials}block-abstract.adoc[]
 // include::{root-partials}block-related-get-started.adoc[]
 // DO NOT EDIT
 
+:cbl-version-text: pass:q,a[Set the variable `\{version\}` to the Couchbase Lite version number, for example 3.0.0-beta01.]
+
+
 == Introduction
 
-Couchbase Lite on Android 3.x supports the development of applications in Java or {kotlin--xref}.
+Couchbase Lite on Android 3.0 BETA supports the development of applications in Java or {kotlin--xref}.
 You can install Kotlin and-or Java from (separate) downloads or by using the Maven repository.
 
 When using Maven, selecting Kotlin will also pull-in the pure Java version.
 Users requiring only Java can choose to just pull the Java version.
 
-== Install
 
-Create or open an existing Android Studio project and install Couchbase Lite using the following method.
+== Kotlin
 
-Add the following entries to the module-level `build.gradle` file (typically in the *app* folder).
+Create or open an existing Android Studio project and include the following entries in the app-level `build.gradle` file (typically in the *app* folder).
+
+[{tabs}]
+=====
+Community Edition::
++
+--
+. Include the following in the `android {}` section:
++
+[source,groovy]
+----
+
+// Set Couchbase Lite version
+def version = '3.0.0-beta01' // <.>
+
+// Set minimum JVM level to ensure availability of, for example, lambda expressions
+def jvmversion = '1.8'
+
+android {
+// Required only if your project has some Kotlin source code
+  kotlinOptions { jvmTarget = ${jvmversion}`}
+
+  compileOptions {
+      targetCompatibility ${jvmversion}
+      sourceCompatibility ${jvmversion}
+  } 
+
+//   ... other section content as required by user
+}
+
+----
+<.> {cbl-version-text}
+
+
+. Include the following in the `dependencies{}` section:
++
+[source,groovy]
+----
+dependencies {
+
+  implementation "com.couchbase.lite.kotlin:couchbase-lite-android-ktx
+ :${version}"
+
+//   ... other section content as required by user
+}
+
+----
+
+--
+Enterprise Edition::
++
+--
+. Include the following in the `android {}` section:
++
+[source,groovy]
+----
+// Set Couchbase Lite version
+def version = '3.0.0-beta01' // <.>
+
+// Set minimum JVM level to ensure availability of, for example, lambda expressions
+def jvmversion = '1.8'
+
+android {
+// Required only if your project has some Kotlin source code
+  kotlinOptions { jvmTarget = ${jvmversion}`}
+
+  compileOptions {
+      targetCompatibility ${jvmversion}
+      sourceCompatibility ${jvmversion}
+  } 
+
+//   ... other section content as required by user
+}
+
+----
+<.> {cbl-version-text}
+
+
+. Include the following in the `dependencies{}` section:
++
+[source,groovy]
+----
+dependencies {
+
+  implementation "com.couchbase.lite.kotlin:couchbase-lite-android-ee-ktx
+ :${version}"
+
+//   ... other section content as required by user
+}
+
+----
++
+. Include the following in the `repositories {}` section:
++
+[source,groovy]
+----
+repositories {
+  maven { url 'https://mobile.maven.couchbase.com/maven2/dev/' }
+
+//   ... other section content as required by user
+}
+----
+--
+
+=====
 
 
 
-====
+== Java
+
+Create or open an existing _Android Studio_ project and install Couchbase Lite using the following method.
+
+Include the following entries to the app-level `build.gradle` file (typically in the *app* folder).
+
+
 [{tabs}]
 =====
 Community::
@@ -40,13 +152,33 @@ Community::
 +
 [source,groovy]
 ----
-include::partial$gsBuildGradleAndroid.adoc[tag=compileOptions]
+def version = '3.0.0' // <1>
+
+// Set minimum JVM level to ensure availability of, for example, lambda expressions
+def jvmversion = '1.8'
+
+android {
+// Required only if your project has some Kotlin source code
+  kotlinOptions { jvmTarget = ${jvmversion}`}
+
+  compileOptions {
+      targetCompatibility ${jvmversion}
+      sourceCompatibility ${jvmversion}
+  } 
+
+//   ... other section content as required by user
+}
 ----
+<.> {cbl-version-text}
+
 . Include the following in the `dependencies{}` section:
 +
 [source,groovy]
 ----
-include::partial$gsBuildGradleAndroid.adoc[tag=dependenciesCE]
+dependencies {
+  implementation "com.couchbase.lite:couchbase-lite-android:${version}"
+//   ... other section content as required by user
+}
 ----
 
 --
@@ -57,33 +189,55 @@ Enterprise::
 +
 [source,groovy]
 ----
-include::partial$gsBuildGradleAndroid.adoc[tag=compileOptions]
-----
+// Set Couchbase Lite version
+def version = '3.0.0-beta01' // <.>
 
+// Set minimum JVM level to ensure availability of, for example, lambda expressions
+def jvmversion = '1.8'
+
+android {
+// Required only if your project has some Kotlin source code
+  kotlinOptions { jvmTarget = ${jvmversion}`}
+
+  compileOptions {
+      targetCompatibility ${jvmversion}
+      sourceCompatibility ${jvmversion}
+  } 
+
+//   ... other section content as required by user
+}
+----
+<.> {cbl-version-text}
 
 . Include the following in the `dependencies{}` section:
 +
 [source,groovy]
 ----
-include::partial$gsBuildGradleAndroid.adoc[tag=dependencies]
+dependencies {
+
+  implementation "com.couchbase.lite:couchbase-lite-android-ee.
+ :${version}"
+
+//   ... other section content as required by user
+}
 ----
 +
 . Include the following in the `repositories {}` section:
 +
 [source,groovy]
 ----
-include::partial$gsBuildGradleAndroid.adoc[tag=repositories]
+repositories {
+  maven { url 'https://mobile.maven.couchbase.com/maven2/dev/' }
+
+//   ... other section content as required by user
+}
 ----
 --
 
 =====
 
-<1> Set the variable `\{version\}` to the Couchbase Lite version number, for example 3.0.0.
+// <.> Set the variable `\{version\}` to the Couchbase Lite version number, for example `3.0.0-beta01`.
 
-<2> If you require Kotlin, add only this line to dependencies; it will also include the Java version
 
-<3> If you require just Java, add only this line to dependencies
-
-====
 
 include::{root-partials}block-related-content-start.adoc[]
