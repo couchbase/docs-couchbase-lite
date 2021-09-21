@@ -48,11 +48,18 @@ namespace api_walkthrough
         private static void GettingStarted()
         {
             // tag::getting-started[]
+
+            // using System;
+            // using Couchbase.Lite;
+            // using Couchbase.Lite.Query;
+            // using Couchbase.Lite.Sync;
+
             // Get the database (and create it if it doesn't exist)
             var database = new Database("mydb");
             // Create a new document (i.e. a record) in the database
             string id = null;
-            using (var mutableDoc = new MutableDocument()) {
+            using (var mutableDoc = new MutableDocument())
+            {
                 mutableDoc.SetFloat("version", 2.0f)
                     .SetString("type", "SDK");
 
@@ -63,11 +70,13 @@ namespace api_walkthrough
 
             // Update a document
             using (var doc = database.GetDocument(id))
-            using (var mutableDoc = doc.ToMutable()) {
+            using (var mutableDoc = doc.ToMutable())
+            {
                 mutableDoc.SetString("language", "C#");
                 database.Save(mutableDoc);
 
-                using (var docAgain = database.GetDocument(id)) {
+                using (var docAgain = database.GetDocument(id))
+                {
                     Console.WriteLine($"Document ID :: {docAgain.Id}");
                     Console.WriteLine($"Learning {docAgain.GetString("language")}");
                 }
@@ -77,10 +86,11 @@ namespace api_walkthrough
             // i.e. SELECT * FROM database WHERE type = "SDK"
             using (var query = QueryBuilder.Select(SelectResult.All())
                 .From(DataSource.Database(database))
-                .Where(Expression.Property("type").EqualTo(Expression.String("SDK")))) {
+                .Where(Expression.Property("type").EqualTo(Expression.String("SDK"))))
+            {
                 // Run the query
                 var result = query.Execute();
-                Console.WriteLine($"Number of rows :: {result.Count()}");
+                Console.WriteLine($"Number of rows :: {result.AllResults().Count}");
             }
 
             // Create replicator to push and pull changes to and from the cloud
@@ -92,19 +102,22 @@ namespace api_walkthrough
 
             // Create replicator (make sure to add an instance or static variable
             // named _Replicator)
-            _Replicator = new Replicator(replConfig);
+            var _Replicator = new Replicator(replConfig);
             _Replicator.AddChangeListener((sender, args) =>
             {
-                if (args.Status.Error != null) {
+                if (args.Status.Error != null)
+                {
                     Console.WriteLine($"Error :: {args.Status.Error}");
                 }
             });
 
             _Replicator.Start();
 
-            // Later, stop and dispose the replicator *before* closing/disposing the database
-            // end::getting-started[]
+            // Later, stop and dispose the replicator *before* closing/disposing the
         }
+    }
+}
+
 
         private static void TestReplicatorConflictResolver()
         {
