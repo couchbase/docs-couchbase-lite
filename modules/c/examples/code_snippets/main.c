@@ -46,7 +46,7 @@ static void simpleChangeListener(void* context,
                 status->error.code);
      }
 }
-// end::replication-error-handling
+// end::replication-error-handling[]
 // end::p2p-act-rep-add-change-listener[]
 // end::p2p-act-rep-func[]
 
@@ -264,7 +264,7 @@ static const CBLDocument* merge_conflict_resolver(void* context,
     FLDict localProps = CBLDocument_Properties(localDocument);
     FLDict remoteProps = CBLDocument_Properties(remoteDocument);
     FLMutableDict mergeProps = FLDict_MutableCopy(localProps, kFLDefaultCopy);
-    
+
     FLDictIterator d;
     FLDictIterator_Begin(localProps, &d);
     FLValue value;
@@ -277,10 +277,10 @@ static const CBLDocument* merge_conflict_resolver(void* context,
         FLMutableDict_SetValue(mergeProps, key, value);
         FLDictIterator_Next(&d);
     }
-    
+
     CBLDocument* mergeDocument = CBLDocument_CreateWithID(documentID);
     CBLDocument_SetProperties(mergeDocument, mergeProps);
-    
+
     return mergeDocument;
 }
 // end::merge-conflict-resolver[]
@@ -1613,7 +1613,7 @@ static void docs_act_replication_config_section_snippets()
                             FLSTR("customHeaderValue"));
 
     config.headers = customHdrs;
-    
+
     // tag::certificate-pinning[]
     char cert_buf[10000];
     FILE* cert_file = fopen("cert.pem", "r");
@@ -1793,9 +1793,9 @@ static void replication_error_handling() {
 
     CBLReplicator* replicator = CBLReplicator_Create(&config, &err);
     CBLEndpoint_Free(target);
-    
-    
-    
+
+
+
     stop_replicator(replicator);
 }
 
