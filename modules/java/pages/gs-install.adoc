@@ -9,8 +9,7 @@
 include::partial$_std-cbl-hdr-java.adoc[]
 
 :tabs:
-:this-release: 3.0.0-beta01
-
+:this-release: {version-full}
 
 // DO NOT EDIT
 :param-abstract: This content provides instructions that enable you to deploy Couchbase Lite on {param-name}
@@ -22,7 +21,10 @@ include::{root-partials}block-abstract.adoc[]
 
 == 3.0 BETA Release
 
-This release is available through Maven and also as a direct download, which you can get from this link: https://packages.couchbase.com/releases/couchbase-lite-java/3.0.0-beta01/couchbase-lite-java-ee-3.0.0-beta01.zip[couchbase-lite-java-ee-3.0.0-beta01.zip]
+This release is available through Maven and also as a direct download, which you can get from these links:
+
+* Enterprise -- https://packages.couchbase.com/releases/couchbase-lite-java/{version-full}/couchbase-lite-java-ee-{version-full}.zip[couchbase-lite-java-ee-{version-full}.zip]
+* Community -- https://packages.couchbase.com/releases/couchbase-lite-java/{version-full}/couchbase-lite-java-{version-full}.zip[couchbase-lite-java-{version-full}.zip]
 
 == GET STARTED
 
@@ -95,36 +97,71 @@ Community edition::
 +
 Compile options
 +
-[source,groovy]
+[source,groovy, subs="attributes+"]]
 ----
-include::partial$gsBuildGradleJava.adoc[tag=compileOptions]
+// Required only if your project has some Kotlin source code
+kotlinOptions { jvmTarget = '1.8' }
+
+// Set minimum JVM level to ensure availability of, for example, lambda expressions
+compileOptions {
+    targetCompatibility 1.8
+    sourceCompatibility 1.8
+
+//   ... other section content as required by user
+} 
+
 ----
 Dependencies
 +
-[source,groovy]
+[source,groovy, subs="attributes+"]]
 ----
-include::partial$gsBuildGradleJava.adoc[tag=dependenciesCE]
+dependencies {
+    implementation "com.couchbase.lite:couchbase-lite-java:{version-full}"
+
+//   ... other section content as required by user
+}
+
 ----
 
 Enterprise Edition::
 +
 Compile options
 +
-[source,groovy]
+[source,groovy, subs="attributes+"]]
 ----
-include::partial$gsBuildGradleJava.adoc[tag=compileOptions]
+// Required only if your project has some Kotlin source code
+kotlinOptions { jvmTarget = '1.8' }
+
+// Set minimum JVM level to ensure availability of, for example, lambda expressions
+compileOptions {
+    targetCompatibility 1.8
+    sourceCompatibility 1.8
+
+//   ... other section content as required by user
+} 
+
 ----
 Dependencies
 +
-[source,groovy]
+[source,groovy, subs="attributes+"]]
 ----
-include::partial$gsBuildGradleJava.adoc[tag=dependencies]
+dependencies {
+    implementation "com.couchbase.lite:couchbase-lite-java:{version-full}"
+
+//   ... other section content as required by user
+}
+
 ----
 Repositories
 +
-[source,groovy]
+[source,groovy, subs="attributes+"]]
 ----
-include::partial$gsBuildGradleJava.adoc[tag=repositories]
+dependencies {
+    implementation "com.couchbase.lite:couchbase-lite-java-ee:{version-full}"
+
+//   ... other section content as required by user
+    }
+
 ----
 
 . Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
@@ -139,14 +176,6 @@ image::GradleMenuWebApp.png[,300]
 
 
 That's it. You're all set to start building your own {cblJP} applications -- see <<Building a Getting Started App>> for an example of how to do that.
-
-
-.Sample build.gradle content
-
-[source,groovy]
-----
-include::partial$gsBuildGradleJava.adoc[tag=allContent]
-----
 
 --
 
@@ -198,16 +227,31 @@ gradle init
 +
 [source,groovy,subs=attributes+]
 ----
-include::partial$gsBuildGradleJava.adoc[tag=dependenciesCE]
+dependencies {
+    implementation "com.couchbase.lite:couchbase-lite-java:{version-full}"
+
+//   ... other section content as required by user
+}
+
 ----
 
 * For Enterprise Edition
 +
-[source,groovy]
+[source,groovy, subs="attributes+"]]
 
 ----
-include::partial$gsBuildGradleJava.adoc[tag=repositories]
-include::partial$gsBuildGradleJava.adoc[tag=dependencies]
+repositories {
+    maven {url 'https://mobile.maven.couchbase.com/maven2/dev/'}
+
+//   ... other section content as required by user
+    }
+
+dependencies {
+    implementation "com.couchbase.lite:couchbase-lite-java-ee:{version-full}"
+
+//   ... other section content as required by user
+    }
+
 ----
 
 . Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
@@ -273,11 +317,19 @@ Back to <<Preparing Your Build Environment>>
 *Package Contents*
 
 The download package contains a license file, jar libraries for the appropriate edition of the {cbl} and a set of Linux _shared libraries_.
+ifdef::is-beta[]
+Get the download package from one of these links:
 
+* Enterprise -- https://packages.couchbase.com/releases/couchbase-lite-java/{version-full}/couchbase-lite-java-ee-{version-full}.zip[couchbase-lite-java-ee-{version-full}.zip]
+* Community -- https://packages.couchbase.com/releases/couchbase-lite-java/{version-full}/couchbase-lite-java-{version-full}.zip[couchbase-lite-java-{version-full}.zip]
+
+endif::is-beta[]
+ifndef::is-beta[]
 Get the download package from the link:{url-downloads-mobile}[{nmCBdwnlds}] page.
 
 * Community Edition -- {packageNmCE}
 * Enterprise Edition -- {packageNmEE}
+endif::is-beta[]
 
 When unpacked the package contains the following:
 
