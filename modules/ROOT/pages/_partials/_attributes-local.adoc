@@ -27,12 +27,8 @@
 :url-cb-forum-mobile: https://forums.couchbase.com/c/mobile/14
 :url-jira: https://issues.couchbase.com/browse
 :url-downloads: https://www.couchbase.com/downloads/?family=mobile
-:major: 3
-:minor: 0
-:version: {major}.{minor}
-:version-full: {major}.{minor}.0
-:version_cao: 2.0
-:version_caoFull: 2.0.0
+
+
 :component-sgw: sync-gateway
 :component-cbl: couchbase-lite
 // :component-mob: shared-mobile
@@ -83,24 +79,36 @@
 // End Definition:
 
 // BEGIN -- Product and Versioning Attributes
-//
+// COMPONENT Names
+
 :product: {cbl}
 :prodTechNm: {cblTechNm}
-
-:version-patch: 0
-:vrsnLatestRel: {major}.{minor}
-:vrsnLatestRelFull: {version-full}
-:vrsnMaintRelFull: {major}.{minor}.{version-patch}
-//:version: {major}.{minor}
-//:version-full: {major}.{minor}.0
-//
-// End Product Versioning attributes
-
-// Component Features
 :ftr_jPlatNm: {product} for Java
 :ftr_jAndNM: {product} for Android
 :ftr_SwiftNM: {product} for Swift
+
+// COMPONENT VERSIONS
+// From antora.yml
+// {release} - {is-beta} - {major} - {minor} - {base} - {releasetag}
+
+// Basic version
+:version: {major}.{minor}
+// Base three digit version including optional tag
+ifdef::releasetag[:tag: -{releasetag}]
+:version-full: {major}.{minor}.{base}{tag}
+:version-full-untagged: {major}.{minor}.{base}
+// Full version including maintenance release -- this is set in attributes-module as it will vary by module -- here at component level it is always same as version-full
+:version-maintenance: {version-full}
+// CAO versions used
+:version_cao: 2.0
+:version_caoFull: 2.0.0
+
+// END COMPONENT VERSIONS
+//
+// Component Features
 // End of Component Features
+// End Product Versioning attributes
+
 
 
 // List styles
