@@ -26,7 +26,7 @@ This release is available through Maven and also as a direct download, which you
 * Enterprise -- https://packages.couchbase.com/releases/couchbase-lite-java/{version-full}/couchbase-lite-java-ee-{version-full}.zip[couchbase-lite-java-ee-{version-full}.zip]
 * Community -- https://packages.couchbase.com/releases/couchbase-lite-java/{version-full}/couchbase-lite-java-{version-full}.zip[couchbase-lite-java-{version-full}.zip]
 
-== GET STARTED
+== Introduction
 
 _Couchbase Lite on Java {this-release}_ enables development and deployment of Couchbase Lite applications to a JVM environment.
 You can deploy to a desktop or web server (for example, {gpWebServerEnv}), including embedded {gpWebServerEnv} deployments.
@@ -79,24 +79,31 @@ NOTE: If you are deploying to Linux, you will need the {cbl} `support` library, 
 
 anchor:bmkUsingMavenRepos[Using Maven repositories]
 
-=== Defining Dependencies and Repositories
-
-[{tabs}]
-====
-
-Console App Development::
-+
---
-*Steps*
+== Console App Development
 
 . Create a project folder
 . Initialize it for a Gradle Java application
-. Include the following in the `build.gradle` file:
+. Include the content shown in <<ex-bgf1>> in your app-level `build.gradle` file
+. Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
++
+--
+TIP: If you don't have auto-import set for Gradle projects, then accept the   *Import Gradle Project* prompt that is displayed bottom-right of the screen +
+Note the Gradle menu at the extreme right of the screen:
+image::GradleMenuWebApp.png[,300]
+--
 
+That's it.
+You're all set to start building your own {cblJP} applications -- see xref:gs-build.adoc[Building a Getting Started App] for an example of how to do that.
+
+.build.gradle file content
+[#ex-bgf1]
+====
+[{tabs}]
+=====
 Community edition::
 +
-Compile options
-+
+--
+.Compile options
 [source,groovy, subs="attributes+"]]
 ----
 // Required only if your project has some Kotlin source code
@@ -111,8 +118,8 @@ compileOptions {
 } 
 
 ----
-Dependencies
-+
+
+.Dependencies
 [source,groovy, subs="attributes+"]]
 ----
 dependencies {
@@ -122,11 +129,12 @@ dependencies {
 }
 
 ----
+--
 
 Enterprise Edition::
 +
-Compile options
-+
+--
+.Compile options
 [source,groovy, subs="attributes+"]]
 ----
 // Required only if your project has some Kotlin source code
@@ -141,8 +149,9 @@ compileOptions {
 } 
 
 ----
-Dependencies
-+
+
+.Dependencies
+
 [source,groovy, subs="attributes+"]]
 ----
 dependencies {
@@ -152,37 +161,24 @@ dependencies {
 }
 
 ----
-Repositories
-+
+
+.Repositories
 [source,groovy, subs="attributes+"]]
 ----
-dependencies {
-    implementation "com.couchbase.lite:couchbase-lite-java-ee:{version-full}"
+repositories {
+    maven {url 'https://mobile.maven.couchbase.com/maven2/dev/'}
 
 //   ... other section content as required by user
     }
 
 ----
 
-. Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
-+
-TIP: If you don't have auto-import set for Gradle projects, then accept the   *Import Gradle Project* prompt that is displayed bottom-right of the screen
-
-+
-Note the Gradle menu at the extreme right of the screen:
-+
-
-image::GradleMenuWebApp.png[,300]
-
-
-That's it. You're all set to start building your own {cblJP} applications -- see <<Building a Getting Started App>> for an example of how to do that.
-
 --
 
-Web App Development::
-+
---
+=====
+====
 
+== Web App Development
 This section explains how to set-up a build project to create {cblJP} web apps using {gpBuildTool} and {gpIDE}.
 
 *The WebApp Build Environment*
@@ -221,10 +217,29 @@ TIP: This also means you should declare the dependencies as `providedCompile` to
 gradle init
 ----
 
-. Create your `build.gradle` file, including the following repositories and dependencies:
+. Create your `build.gradle` file, including the <<ex-bgf2>> in your app-level build.gradle:
 
-* For Community edition
+. Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
+
+TIP: If you don't have auto-import set for Gradle projects, then accept the   *Import Gradle Project* prompt that is displayed bottom-right of the screen. +
+Note the Gradle menu at the extreme right of the screen: +
+image::GradleMenuWebApp.png[,300]
+
+If you want to deploy your app to a local tomcat container then see <<Deploying a WAR file to tomcat>>
+
+That's it.
+You're all set to start building your own {cblJP} applications -- see xref:gs-build.adoc[Building a Getting Started App] for an example of how to do that.
+
+.build.gradle file content
+[#ex-bgf2]
+====
+[{tabs}]
+=====
+
+Community::
 +
+--
+
 [source,groovy,subs=attributes+]
 ----
 dependencies {
@@ -235,8 +250,11 @@ dependencies {
 
 ----
 
-* For Enterprise Edition
+--
+
+Enterprise::
 +
+--
 [source,groovy, subs="attributes+"]]
 
 ----
@@ -253,33 +271,9 @@ dependencies {
     }
 
 ----
-
-. Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
-
-+
-TIP: If you don't have auto-import set for Gradle projects, then accept the   *Import Gradle Project* prompt that is displayed bottom-right of the screen
-
-+
-Note the Gradle menu at the extreme right of the screen:
-+
-
-image::GradleMenuWebApp.png[,300]
-
-If you want to deploy your app to a local tomcat container then see <<Deploying a WAR file to tomcat>>
-
-
-That's it. You're all set to start building your own {cblJP} applications -- see <<Building a Getting Started App>> for an example of how to do that.
-
-// .Sample build.gradle content
-
-// [source,groovy,subs=attributes+]
-// ----
-// include::{snippet}[tags=GsEmbeddedTomcatBuildGradle,indent=0]
-// ----
-
-// --
-
+=====
 ====
+
 
 == SUPPLEMENTARY INFORMATION
 
