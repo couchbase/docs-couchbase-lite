@@ -6,7 +6,7 @@
 :description: How to install Couchbase Lite on .Net
 :keywords: edge nosql api .Net C# xamarin
 
-:this-release: 3.0.0-beta01
+:beta-url: https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/
 
 include::partial$_std-cbl-hdr-csharp.adoc[]
 
@@ -16,29 +16,142 @@ include::{root-partials}block-abstract.adoc[]
 // include::{root-partials}block-related-get-started.adoc[]
 // DO NOT EDIT
 
+.3.0 BETA Downloads
+[IMPORTANT]
+--
+You can install Community and-or Enterprise editions of the 3.0.0 BETA as _nuget_ packages or get direct download binaries here <<tbl-beta-downloads>>.
 
-To install _Couchbase Lite for .NET {this-release}_, create or open an existing Visual Studio project and use one of the following methods.
+To access these beta packages, you will need to select the `prerelease` option in the _Manage Nuget Packages_ dialog
+--
+
+== Quick Steps
+====
+To install _Couchbase Lite for .NET {version-full}_,
+
+. Create or open an existing Visual Studio project
 
 . Install either of the following packages from Nuget.
 +
-.Couchbase Lite Community Edition
-Install the `Couchbase.Lite` package for {this-release}
-+
-.Couchbase Lite Enterprise Edition
-Install the `Couchbase.Lite.Enterprise` package for {this-release}
-+
-NOTE: Nuget packages can be installed via `PackageReference` or `packages.config`.
-It is recommended to use the `PackageReference` style of dependency management because there is a strict version requirement between Couchbase Lite and its dependent Support library (`Couchbase.Lite.Support.<Platform>` and `Couchbase.Lite.Enterprise.Support.<Platform>` for Community and Enterprise respectively).
-If you are using `packages.config`, you must take extra care when upgrading the package to make sure that the support library is also updated to the exact same version.
-Versions that are not the same are incompatible with each other.
-+
+* Community Edition -- `Couchbase.Lite` package for {version-full}
+
+* Enterprise Edition -- `Couchbase.Lite.Enterprise` package for {version-full}
+
+. Within your app, include a call the relevant `Activate()` function inside of the class that is included in the support assembly.
+====
+
+That's it! +
+You should be ready to build you app using this version.
+The rest of this content contains more detail, for those who want tp know more about the install or who encountered issues
+
+
+== Install Methods
+
+Nuget packages can be installed via _PackageReference_ or _packages.config_.
+
+=== Package Reference
+This is the recommended method of dependency management because it supports the strict version requirement between the core _Couchbase Lite for .Net_ package and its dependent Support library, which comprises:
+
+.`Couchbase.Lite.Enterprise`
+* `Couchbase.Lite.Enterprise.Support.UWP`
+* `Couchbase.Lite.Enterprise.Support.ios`
+* `Couchbase.Lite.Enterprise.Support.android`
+* `Couchbase.Lite.Enterprise.Support.NetDesktop`
+
+.`Couchbase.Lite`
+* `Couchbase.Lite.Support.UWP`
+* `Couchbase.Lite.Support.ios`
+* `Couchbase.Lite.Support.android`
+* `Couchbase.Lite.Support.NetDesktop`
+
+
+=== Package Config
+
+If you are using `packages.config`, you must take extra care when upgrading the package to make sure that the support libraries you require are also updated to the exact same version.
+
+NOTE: Versions that are not the same are incompatible with each other -- see:
 https://www.couchbase.com/products/editions[Comparative Table]
-. Your app must call the relevant `Activate()` function inside of the class that is included in the support assembly.
+
+
+== Activating
+
+Within your app, include a call the relevant `Activate()` function inside of the class that is included in the support assembly.
+
 There is only one public class in each support assembly, and the support assembly itself is a nuget dependency.
-+
-For example, UWP looks like `Couchbase.Lite.Support.UWP.Activate()`.
-Currently the support assemblies provide dependency injected mechanisms for default directory logic, and platform specific logging (i.e., csharp will log to logcat with correct log levels and tags.
-No more "mono-stdout" always at info level.)
+
+For example, UWP looks like: +
+`Couchbase.Lite.Support.UWP.Activate()`
+
+Currently the support assemblies provide dependency injected mechanisms for default directory logic, and platform specific logging (So, C# will log to logcat with correct log levels and tags. No more "mono-stdout" always at info level.)
+
+
+== Using Downloaded Packages
+
+You will need to add the location of your unpacked download package as a local nuget feed.
+
+Within Visual Studio::
+. menu:Settings[Options > Nuget Package Manager > Package Sources]
+. btn:[Add] and add the path/to/your/unpacked/download
+. btn:[OK] to continue
+
+. Within Nuget Package Manger, select the *New Source* from _Package Sources_ drop down list
+. Select *Use Prereleases* to access Couchbase Lite Beta packages
+
+You should now be able to add the nuget package as normal.
+
+
+== Downloads for {param-title} {version-full}
+
+.Downloads List
+[#tbl-beta-downloads,cols="1,1,4,4", options="header"]
+|===
+| Edition | Platform | Download | SHA
+
+
+.5+| Enterprise
+
+| .Net
+| {beta-url}Couchbase.Lite.Enterprise.3.0.0-beta01.nupkg[Couchbase.Lite.Enterprise.3.0.0-beta01.nupkg]
+| {beta-url}Couchbase.Lite.Enterprise.3.0.0-beta01.nupkg.sha256[Couchbase.Lite.Enterprise.3.0.0-beta01.nupkg.sha256]
+
+| Desktop
+| {beta-url}Couchbase.Lite.Enterprise.Support.NetDesktop.3.0.0-beta01.nupkg[Couchbase.Lite.Enterprise.Support.NetDesktop.3.0.0-beta01.nupkg]
+| {beta-url}Couchbase.Lite.Enterprise.Support.NetDesktop.3.0.0-beta01.nupkg.sha256[Couchbase.Lite.Enterprise.Support.NetDesktop.3.0.0-beta01.nupkg.sha256]
+
+| Android
+| {beta-url}Couchbase.Lite.Enterprise.Support.Android.3.0.0-beta01.nupkg[Couchbase.Lite.Enterprise.Support.Android.3.0.0-beta01.nupkg]
+| {beta-url}Couchbase.Lite.Enterprise.Support.Android.3.0.0-beta01.nupkg.sha256[Couchbase.Lite.Enterprise.Support.Android.3.0.0-beta01.nupkg.sha256]
+
+| iOS
+| {beta-url}Couchbase.Lite.Enterprise.Support.iOS.3.0.0-beta01.nupkg[Couchbase.Lite.Enterprise.Support.iOS.3.0.0-beta01.nupkg]
+| {beta-url}Couchbase.Lite.Enterprise.Support.iOS.3.0.0-beta01.nupkg.sha256[Couchbase.Lite.Enterprise.Support.iOS.3.0.0-beta01.nupkg.sha256]
+
+| UWP
+| {beta-url}Couchbase.Lite.Enterprise.Support.UWP.3.0.0-beta01.nupkg[Couchbase.Lite.Enterprise.Support.UWP.3.0.0-beta01.nupkg]
+| {beta-url}Couchbase.Lite.Enterprise.Support.UWP.3.0.0-beta01.nupkg.sha256[Couchbase.Lite.Enterprise.Support.UWP.3.0.0-beta01.nupkg.sha256]
+
+.5+| Community
+
+| .Net
+| {beta-url}Couchbase.Lite.3.0.0-beta01.nupkg[Couchbase.Lite.3.0.0-beta01.nupkg]
+| {beta-url}Couchbase.Lite.3.0.0-beta01.nupkg.sha256[Couchbase.Lite.3.0.0-beta01.nupkg.sha256]
+
+| Desktop
+| {beta-url}Couchbase.Lite.Support.NetDesktop.3.0.0-beta01.nupkg[Couchbase.Lite.Support.NetDesktop.3.0.0-beta01.nupkg]
+| {beta-url}Couchbase.Lite.Support.NetDesktop.3.0.0-beta01.nupkg.sha256[Couchbase.Lite.Support.NetDesktop.3.0.0-beta01.nupkg.sha256]
+
+| Android
+| {beta-url}Couchbase.Lite.Support.Android.3.0.0-beta01.nupkg[Couchbase.Lite.Support.Android.3.0.0-beta01.nupkg]
+| {beta-url}Couchbase.Lite.Support.Android.3.0.0-beta01.nupkg.sha256[Couchbase.Lite.Support.Android.3.0.0-beta01.nupkg.sha256]
+
+| iOS
+| {beta-url}Couchbase.Lite.Support.iOS.3.0.0-beta01.nupkg[Couchbase.Lite.Support.iOS.3.0.0-beta01.nupkg]
+| {beta-url}Couchbase.Lite.Support.iOS.3.0.0-beta01.nupkg.sha256[Couchbase.Lite.Support.iOS.3.0.0-beta01.nupkg.sha256]
+
+| UWP
+| {beta-url}Couchbase.Lite.Support.UWP.3.0.0-beta01.nupkg[Couchbase.Lite.Support.UWP.3.0.0-beta01.nupkg]
+| {beta-url}Couchbase.Lite.Support.UWP.3.0.0-beta01.nupkg.sha256[Couchbase.Lite.Support.UWP.3.0.0-beta01.nupkg.sha256]
+
+|===
 
 
 // DO NOT EDIT -- Footer Related Content Block

@@ -117,7 +117,7 @@ namespace api_walkthrough
         }
     }
 }
-
+// end::getting-started[]
 
         private static void TestReplicatorConflictResolver()
         {

@@ -42,17 +42,18 @@ TIP: Ensure you added the {cbl} dependency to your `build.gradle` file
 Create, build and run a new project using the following `GettingStarted.java` code:
 
 
-
 [source,java]
+----
+include::example$getting-started/src/com/couchbase/gettingStarted/Main.java[tags=getting-started,indent=0]
+----
 
-----
-include::{snippet}[tags=getting-started,indent=0]
-----
-<1> The app will start a replicator pointing to `ws://localhost:4984/db`, where `db` is the name of your {sg} database
-<2> This is the only API that differs from the {android} version. It accepts no parameters and should be called once only
-<3> You can optionally AES-256 encrypt the database by providing a key
-<4> This is needed for a tidy closedown of work executors
-<5> It is advisable to set a specific directory path for the database.
+<.> Create a database
+<.> Create a mutable document
+<.> Save document to database
+<.> Retrieve the document as mutable and change the `language` to `Java` and save it
+<.> Retrieve document as immutable and log it ID
+<.> Query the database output count and id to log
+<.> Optionally, initiate a replication
 
 On running the app, you should see the document ID and property printed to the console together with a query result showing the number of rows in the database.
 
