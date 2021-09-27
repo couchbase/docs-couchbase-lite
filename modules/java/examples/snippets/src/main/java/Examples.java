@@ -2521,7 +2521,6 @@ public class Examples {
   //@Test
   public void testActPeerSync() throws CouchbaseLiteException, URISyntaxException {
 // tag::p2p-act-rep-func[]
-    // tag::getting-started[]
     // tag::p2p-act-rep-initialize[]
     // initialize the replicator configuration
     final ReplicatorConfiguration thisConfig
