@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.getstarted_ktx
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatActivity
