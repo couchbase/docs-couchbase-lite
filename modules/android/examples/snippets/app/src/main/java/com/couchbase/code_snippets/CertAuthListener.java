@@ -18,8 +18,8 @@ package com.couchbase.code_snippets;
 
 import android.content.Context;
 import android.util.Log;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import com.couchbase.lite.AbstractReplicator;
 import com.couchbase.lite.ClientCertificateAuthenticator;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
@@ -102,7 +101,7 @@ class CertAuthListener {
         @NonNull TLSIdentity clientIdentity,
         @NonNull Database db) throws CertificateEncodingException, InterruptedException {
         final ReplicatorConfiguration config = new ReplicatorConfiguration(db, new URLEndpoint(uri));
-        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+        config.setType(ReplicatorType.PUSH_AND_PULL);
         config.setContinuous(false);
 
         configureClientCerts(config, cert, clientIdentity);
@@ -200,7 +199,7 @@ class CertAuthListener {
     private byte[] readCertMaterialFromBundle(@NonNull Context context, int resId) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final InputStream in = context.getResources().openRawResource(resId);
-        final byte buf[] = new byte[1024];
+        final byte[] buf = new byte[1024];
         int n;
         while ((n = in.read(buf)) >= 0) { out.write(buf, 0, n); }
         return out.toByteArray();

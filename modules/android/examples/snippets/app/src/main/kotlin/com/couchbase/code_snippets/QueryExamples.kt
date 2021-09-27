@@ -16,22 +16,8 @@
 package com.couchbase.code_snippets
 
 import android.util.Log
-import com.couchbase.lite.ArrayFunction
-import com.couchbase.lite.CouchbaseLiteException
-import com.couchbase.lite.DataSource
-import com.couchbase.lite.Database
-import com.couchbase.lite.Expression
-import com.couchbase.lite.FullTextExpression
-import com.couchbase.lite.FullTextIndexItem
+import com.couchbase.lite.*
 import com.couchbase.lite.Function
-import com.couchbase.lite.IndexBuilder
-import com.couchbase.lite.Join
-import com.couchbase.lite.Meta
-import com.couchbase.lite.Ordering
-import com.couchbase.lite.Query
-import com.couchbase.lite.QueryBuilder
-import com.couchbase.lite.SelectResult
-import com.couchbase.lite.ValueIndexItem
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.json.JSONException
 
@@ -530,7 +516,7 @@ class QueryExamples(private val database: Database) {
 
     @Throws(CouchbaseLiteException::class, JSONException::class)
     fun testQuerySyntaxJson(currentUser: String, argDb: Database) {
-        Database db = argDb
+        val db = argDb
         // tag::query-syntax-json[]
         // Example assumes Hotel class object defined elsewhere
 
@@ -568,9 +554,9 @@ class QueryExamples(private val database: Database) {
 
   fun docsOnlyQuerySyntaxN1QL(argDb: Database): List<Result> {
       // For Documentation -- N1QL Query using parameters
-      Database db=argDb
+      val db = argDb
       // tag::query-syntax-n1ql[]
-      val thisQuery = dbcreateQuery(
+      val thisQuery = db.createQuery(
             "SELECT META().id AS id FROM _ WHERE type = \"hotel\"") // <.>
 
       return thisQuery.execute().allResults()
@@ -580,8 +566,9 @@ class QueryExamples(private val database: Database) {
 
   fun docsOnlyQuerySyntaxN1QLParams(argDb: Database): List<Result> {
       // For Documentation -- N1QL Query using parameters
+      val db = argDb
       // tag::query-syntax-n1ql-params[]
-      val thisQuery = dbcreateQuery(
+      val thisQuery = db.createQuery(
             "SELECT META().id AS id FROM _ WHERE type = \$type") // <.>
 
       thisQuery.parameters = Parameters().setString("type", "hotel") // <.>

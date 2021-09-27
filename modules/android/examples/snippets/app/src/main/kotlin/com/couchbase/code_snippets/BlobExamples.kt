@@ -21,7 +21,7 @@ import com.couchbase.lite.Blob
 import com.couchbase.lite.Database
 import com.couchbase.lite.MutableDictionary
 
-class BlobExamples {
+class KtBlobExamples {
 
     // Example 2: Using Blobs
     fun example2(context: Context, db: Database) {
