@@ -17,69 +17,78 @@ include::{root-partials}block-abstract.adoc[]
 
 == Introduction
 
-
 .3.0 BETA Downloads
 [IMPORTANT]
 You can install Community and-or Enterprise editions of the 3.0.0 BETA from Maven or get direct download binaries of Couchbase Lite for Android here <<lbl-betadownloads>>.
-
 
 Couchbase Lite on Android 3.0 BETA supports the development of applications in Java or {kotlin--xref}.
 You can install Kotlin and-or Java from (separate) downloads or by using the Maven repository.
 When using Maven, selecting Kotlin will also pull-in the pure Java version.
 Users requiring only Java can choose to just pull the Java version.
 
+== Quick Steps
+For experienced developers, all you need to get up and running with Couchbase Lite for Android
 
-== Kotlin
+[{tabs}]
+=====
+
+Kotlin - Enterprise::
++
+--
+. Create a Kotlin Android app project in Android Studio
+. Add Couchbase Lite as a dependency in your app-level `build.gradle` +
+`implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{version-full}'`
+. Add the following _maven_ repo to your repositories (in `build.gradle` or `settings.gradle` as required +
+`https://mobile.maven.couchbase.com/maven2/dev/`
+Build the project and it will pull Couchbase Lite down.
+--
+
+Kotlin - Community::
++
+--
+. Create a Kotlin Android app project in Android Studio
+. Add Couchbase Lite as a dependency in your app-level `build.gradle` +
+`implementation 'com.couchbase.lite:couchbase-lite-android-ktx:{version-full}'`
+. Check you have `mavenCentral()` in `repositories` (or in `settings.gradle`)
+. Build the project and it will pull Couchbase Lite down.
+--
+
+Java - Enterprise::
++
+--
+. Create a Java Android app project in Android Studio
+. Add Couchbase Lite as a dependency in your app-level `build.gradle` +
+`implementation 'com.couchbase.lite:couchbase-lite-android-ee:{version-full}'`
+. Add the following _maven_ repo to your repositories (in `build.gradle` or `settings.gradle` as required +
+`https://mobile.maven.couchbase.com/maven2/dev/`
+. Build the project and it will pull Couchbase Lite down.
+--
+
+Java - Community::
++
+--
+. Create a Java Android app project in Android Studio
+. Add Couchbase Lite as a dependency in your app-level `build.gradle` +
+`implementation 'com.couchbase.lite:couchbase-lite-android:{version-full}'`
+. Check you have `mavenCentral()` in `repositories` (or in `settings.gradle`)
+. That's all.
+Build the project and it will pull Couchbase Lite down.
+--
+
+That's it!
+You''re all set to begin developing powerful Couchbase Lite applications.
+
+Now, try the xref:gs-build.adoc[Getting Started] application, which demonstrates use of key CRUD functionality.
+=====
+
+== Kotlin - Step-by-step Install
+
+More detailed instructions on getting up and running with Couchbase Lite for Android (Kotlin).
 
 Create or open an existing Android Studio project and include the following entries in the app-level `build.gradle` file (typically in the *app* folder).
 
 [{tabs}]
 =====
-Community Edition::
-+
---
-. Set the Java Version, include the following in the `android {}` section:
-+
-[source,kotlin, subs="attributes+"]
-----
-android {
-  compileOptions {
-      sourceCompatibility JavaVersion.VERSION_1_8
-      targetCompatibility JavaVersion.VERSION_1_8
-  } 
-//   ... other section content as required by user
-}
-
-----
-
-. Ensure your `repositories` section includes `mavencentral()`
-+
-[source,kotlin, subs="attributes+"]
-----
-
-repositories {
-
-  mavenCentral()
-
-  //   ... other section content as required by user
-}
-
-----
-
-. Add {cbl-te} to the `dependencies{}` section:
-+
-[source,kotlin, subs="attributes+"]
-----
-dependencies {
-
-  implementation "com.couchbase.lite:couchbase-lite-android-ktx:{version-full}"
-
-//   ... other section content as required by user
-}
-
-----
-
---
 
 Enterprise Edition::
 +
@@ -127,11 +136,60 @@ dependencies {
 ----
 --
 
+
+Community Edition::
++
+--
+. Set the Java Version, include the following in the `android {}` section:
++
+[source,kotlin, subs="attributes+"]
+----
+android {
+  compileOptions {
+      sourceCompatibility JavaVersion.VERSION_1_8
+      targetCompatibility JavaVersion.VERSION_1_8
+  } 
+//   ... other section content as required by user
+}
+
+----
+
+. Ensure your `repositories` section includes `mavencentral()`
++
+[source,kotlin, subs="attributes+"]
+----
+
+repositories {
+
+  mavenCentral()
+
+  //   ... other section content as required by user
+}
+
+----
+
+. Add {cbl-te} to the `dependencies{}` section:
++
+[source,kotlin, subs="attributes+"]
+----
+dependencies {
+
+  implementation "com.couchbase.lite:couchbase-lite-android-ktx:{version-full}"
+
+//   ... other section content as required by user
+}
+
+----
+
+--
+
 =====
 
 
 
-== Java
+== Java - Step-by-step Install
+
+More detailed instructions on getting up and running with Couchbase Lite for Android (Java).
 
 Create or open an existing _Android Studio_ project and install Couchbase Lite using the following method.
 
@@ -140,6 +198,52 @@ Include the following entries to the app-level `build.gradle` file (typically in
 
 [{tabs}]
 =====
+
+Enterprise::
++
+--
+. Set the Java Version, include the following in the `android {}` section:
++
+[source,groovy, subs="attributes+"]
+----
+
+android {
+// Required only if your project has some Kotlin source code
+  kotlinOptions { jvmTarget = 1.8}
+
+  compileOptions {
+      targetCompatibility 1.8
+      sourceCompatibility 1.8
+  } 
+
+//   ... other section content as required by user
+}
+----
++
+. Add the following in the `repositories {}` section:
++
+[source,groovy, subs="attributes+"]
+----
+repositories {
+  maven { url 'https://mobile.maven.couchbase.com/maven2/dev/' }
+
+//   ... other section content as required by user
+}
+----
+
+. Add {cbl-te} to your `dependencies{}` section:
++
+[source,groovy]
+----
+dependencies {
+
+  implementation 'com.couchbase.lite:couchbase-lite-android-ee:{version-full}'
+
+//   ... other section content as required by user
+}
+----
+--
+
 
 Community::
 +
@@ -189,57 +293,12 @@ dependencies {
 
 --
 
-Enterprise::
-+
---
-. Set the Java Version, include the following in the `android {}` section:
-+
-[source,groovy, subs="attributes+"]
-----
-
-android {
-// Required only if your project has some Kotlin source code
-  kotlinOptions { jvmTarget = 1.8}
-
-  compileOptions {
-      targetCompatibility 1.8
-      sourceCompatibility 1.8
-  } 
-
-//   ... other section content as required by user
-}
-----
-+
-. Add the following in the `repositories {}` section:
-+
-[source,groovy, subs="attributes+"]
-----
-repositories {
-  maven { url 'https://mobile.maven.couchbase.com/maven2/dev/' }
-
-//   ... other section content as required by user
-}
-----
-
-. Add {cbl-te} to your `dependencies{}` section:
-+
-[source,groovy]
-----
-dependencies {
-
-  implementation 'com.couchbase.lite:couchbase-lite-android-ee:{version-full}'
-
-//   ... other section content as required by user
-}
-----
---
-
 =====
 
 [#lbl-betadownloads]
 == 3.0.0 BETA Downloads
 
-:beta-url: https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/
+:beta-url: https://packages.couchbase.com/releases/couchbase-lite-android/3.0.0-beta01/
 
 [#tbl-beta-downloads-ee,cols="1,1,4,4", options="header"]
 |===
