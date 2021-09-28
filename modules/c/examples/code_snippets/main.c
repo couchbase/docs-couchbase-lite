@@ -280,6 +280,7 @@ static const CBLDocument* merge_conflict_resolver(void* context,
 
     CBLDocument* mergeDocument = CBLDocument_CreateWithID(documentID);
     CBLDocument_SetProperties(mergeDocument, mergeProps);
+    FLMutableDict_Release(mergeProps);
 
     return mergeDocument;
 }
