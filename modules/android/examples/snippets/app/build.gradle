@@ -36,7 +36,6 @@ android {
 }
 
 repositories {
-    mavenLocal()
     maven {
         allowInsecureProtocol = true
         url "http://proget.build.couchbase.com/maven2/internalmaven"
@@ -46,15 +45,22 @@ repositories {
 }
 
 dependencies {
-    compileOnly "com.android.support:support-annotations:28.0.0"
+    compileOnly 'androidx.annotation:annotation:1.2.0'
 
-    implementation 'com.android.support.constraint:constraint-layout:2.0.4'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.21"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1"
+
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
+
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.1'
 
-    implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:3.0.0-SNAPSHOT'
+    implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:3.0.0-178'
 
-    implementation 'junit:junit:4.13.1'
+    implementation 'junit:junit:4.13.2'
 
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

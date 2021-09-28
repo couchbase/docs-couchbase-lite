@@ -48,7 +48,7 @@ import java.util.concurrent.CountDownLatch
 private const val TAG = "LISTEN"
 
 @Suppress("unused")
-class CertAuthListener {
+class KtCertAuthListener {
     companion object {
         private val CERT_ATTRIBUTES = mapOf(
             TLSIdentity.CERT_ATTRIBUTE_COMMON_NAME to "CBL Test",

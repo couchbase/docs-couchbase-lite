@@ -16,24 +16,7 @@
 package com.couchbase.code_snippets
 
 import android.util.Log
-import com.couchbase.lite.BasicAuthenticator
-import com.couchbase.lite.Conflict
-import com.couchbase.lite.ConflictResolver
-import com.couchbase.lite.CouchbaseLiteException
-import com.couchbase.lite.Database
-import com.couchbase.lite.DatabaseConfiguration
-import com.couchbase.lite.DatabaseEndpoint
-import com.couchbase.lite.Document
-import com.couchbase.lite.DocumentFlag
-import com.couchbase.lite.MutableDocument
-import com.couchbase.lite.Replicator
-import com.couchbase.lite.ReplicatorActivityLevel
-import com.couchbase.lite.ReplicatorConfiguration
-import com.couchbase.lite.ReplicatorConfigurationFactory
-import com.couchbase.lite.ReplicatorType
-import com.couchbase.lite.SessionAuthenticator
-import com.couchbase.lite.URLEndpoint
-import com.couchbase.lite.create
+import com.couchbase.lite.*
 import com.couchbase.lite.internal.utils.PlatformUtils
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -276,17 +259,13 @@ object MergeConflictResolver : ConflictResolver {
             )
 
             // tag::replication-reset-checkpoint[]
-            if (resetCheckpointRequired_Example) {
-              repl.start(resetCheckpoint = true) // <.>
-            else
-              repl.start(resetCheckpoint = false)
-            }
+            repl.start(resetCheckpoint = resetCheckpointRequired_Example) // <.>
             // end::replication-reset-checkpoint[]
 
             // ... at some later time
 
             repl.stop()
-        // end::replication-startup[]
+            // end::replication-startup[]
 
         }
 

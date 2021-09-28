@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package com.couchbase.android.fruitsnveg.examples;
+package com.couchbase.code_snippets;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -25,14 +25,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import com.couchbase.lite.AbstractReplicator;
 import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.ListenerPasswordAuthenticator;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Replicator;
+import com.couchbase.lite.ReplicatorActivityLevel;
 import com.couchbase.lite.ReplicatorConfiguration;
+import com.couchbase.lite.ReplicatorType;
 import com.couchbase.lite.URLEndpoint;
 import com.couchbase.lite.URLEndpointListener;
 import com.couchbase.lite.URLEndpointListenerConfiguration;
@@ -72,14 +73,14 @@ public class PasswordAuthListener {
         @NonNull char[] password,
         @NonNull Database db) throws InterruptedException {
         final ReplicatorConfiguration config = new ReplicatorConfiguration(db, new URLEndpoint(uri));
-        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+        config.setType(ReplicatorType.PUSH_AND_PULL);
         config.setContinuous(false);
         config.setAuthenticator(new BasicAuthenticator(username, password));
 
         final CountDownLatch completionLatch = new CountDownLatch(1);
         final Replicator repl = new Replicator(config);
         repl.addChangeListener(change -> {
-            if (change.getStatus().getActivityLevel() == AbstractReplicator.ActivityLevel.STOPPED) {
+            if (change.getStatus().getActivityLevel() == ReplicatorActivityLevel.STOPPED) {
                 completionLatch.countDown();
             }
         });
