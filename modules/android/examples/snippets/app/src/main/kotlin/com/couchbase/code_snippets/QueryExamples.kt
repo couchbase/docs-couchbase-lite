@@ -105,7 +105,6 @@ class QueryExamples(private val database: Database) {
 
         // Adds a query change listener.
         // Changes will be posted on the main queue.
-        // Version using Kotlin Flows to follow shortly ...
         val token = query.addChangeListener { change ->
             change.results?.let {
                 for (result in it) {
