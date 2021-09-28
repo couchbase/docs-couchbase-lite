@@ -29,7 +29,19 @@ TIP: You should register the listener before starting your replication, to avoid
 Use the {url-api-class-replicator} class to add a change listener as a callback to the Replicator ({url-api-method-replicator-add-change-listener}) -- see: <<ex-repl-mon>>.
 You will then be asynchronously notified of state changes.
 
-Remove your change listener before stopping the replicator -- use the {url-api-method-replicator-rmv-change-listener} method to do this.
+You can remove a change listener with {url-api-method-replicator-rmv-change-listener}.
+
+ifdef::is-android[]
+
+=== Using Kotlin Flows and LiveData
+Android Kotlin developers can take advantage of Flows and LiveData to monitor replicators.
+
+[source, Kotlin, subs="attributes+"]
+----
+include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt[tag="flow-as-replicator-change-listener"]
+----
+endif::is-android[]
+
 
 
 [#lbl-repl-status]
