@@ -22,11 +22,34 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.map
 
 
-class FlowExamples(repl: Replicator) {
-    val replState: LiveData<ReplicatorActivityLevel> = repl.replicatorChangesFlow()
+class FlowExamples(argDb: Database,
+                   argRepl: Replicator,
+                   argQuery: Query,
+                   argDocOwner: String) {
+
+    // tag::flow-as-replicator-change-listener[]
+    val replState: LiveData<ReplicatorActivityLevel> = argRepl.replicatorChangesFlow()
         .map { it.status.activityLevel }
         .asLiveData()
 
+    // end::flow-as-replicator-change-listener[]
+    // tag::flow-as-database-change-listener[]
+    val dbChanges: LiveData<MutableList<String>> = argDb.databaseChangeFlow()
+        .map { it.documentIDs }
+        .asLiveData()
+
+    // end::flow-as-database-change-listener[]
+    // tag::flow-as-document-change-listener[]
+    val docChanges: LiveData<DocumentChange?> = argDb.documentChangeFlow("1001")
+        .map {
+            it.takeUnless {
+                it.database.getDocument(it.documentID)?.getString("owner").equals(argDocOwner)
+            }
+        }
+        .asLiveData()
+
+    // end::flow-as-document-change-listener[]
+    // tag::flow-as-query-change-listener[]
     var liveQuery: LiveData<List<Any>?>? = null
 
     @ExperimentalCoroutinesApi
@@ -43,4 +66,5 @@ class FlowExamples(repl: Replicator) {
         liveQuery = queryFlow
         return queryFlow
     }
+    // end::flow-as-query-change-listener[]
 }
