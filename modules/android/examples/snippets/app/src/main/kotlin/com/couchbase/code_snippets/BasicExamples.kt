@@ -43,6 +43,7 @@ import com.couchbase.lite.URLEndpoint
 import com.couchbase.lite.UnitOfWork
 import com.couchbase.lite.create
 import com.couchbase.lite.internal.utils.PlatformUtils
+import org.json.JSONObject
 import org.junit.Test
 import java.io.File
 import java.io.IOException
@@ -177,8 +178,15 @@ class BasicExamples(private val context: Context) {
     @Throws(CouchbaseLiteException::class)
     fun testNewDatabase() {
         // tag::new-database[]
-        val db = Database("my-db", DatabaseConfigurationFactory.create(context.filesDir.absolutePath)) // <.>
+        val database = Database("my-db",
+                    DatabaseConfigurationFactory.create(
+                                context.filesDir.absolutePath)) // <.>
         // end::new-database[]
+        // tag::close-database[]
+        database.close()
+
+        // end::close-database[]
+
         db.delete()
     }
 
@@ -186,7 +194,10 @@ class BasicExamples(private val context: Context) {
     @Throws(CouchbaseLiteException::class)
     fun testDatabaseEncryption() {
         // tag::database-encryption[]
-        val db = Database("my-db", DatabaseConfigurationFactory.create(encryptionKey = EncryptionKey("PASSWORD")))
+        val db = Database("my-db",
+                    DatabaseConfigurationFactory.create(
+                            encryptionKey = EncryptionKey("PASSWORD")))
+
         // end::database-encryption[]
     }
 
@@ -236,19 +247,22 @@ class BasicExamples(private val context: Context) {
 
     fun writeConsoleLog() {
         // tag::write-console-logmsg[]
-        Database.log.console.log(LogLevel.WARNING, LogDomain.REPLICATOR, "Any old log message")
+        Database.log.console.log(LogLevel.WARNING,
+                    LogDomain.REPLICATOR, "Any old log message")
         // end::write-console-logmsg[]
     }
 
     fun writeCustomLog() {
         // tag::write-custom-logmsg[]
-        Database.log.custom?.log(LogLevel.WARNING, LogDomain.REPLICATOR, "Any old log message")
+        Database.log.custom?.log(LogLevel.WARNING,
+                    LogDomain.REPLICATOR, "Any old log message")
         // end::write-custom-logmsg[]
     }
 
     fun writeFileLog() {
         // tag::write-file-logmsg[]
-        Database.log.file.log(LogLevel.WARNING, LogDomain.REPLICATOR, "Any old log message")
+        Database.log.file.log(LogLevel.WARNING,
+                    LogDomain.REPLICATOR, "Any old log message")
         // end::write-file-logmsg[]
     }
 
@@ -256,8 +270,8 @@ class BasicExamples(private val context: Context) {
     fun testTroubleshooting() {
         // tag::replication-logging[]
         Database.log.console.let {
-            it.level = LogLevel.VERBOSE
-            it.domains = LogDomain.ALL_DOMAINS
+                    it.level = LogLevel.VERBOSE
+                    it.domains = LogDomain.ALL_DOMAINS
         }
         // end::replication-logging[]
     }
@@ -337,6 +351,19 @@ class BasicExamples(private val context: Context) {
         })
         // end::batch[]
     }
+
+
+    // toJSON
+    fun testToJsonOperations(argDb: Database) {
+        val db = argDb
+
+    }
+
+
+
+
+
+
 
     // ### Document Expiration
     @Throws(CouchbaseLiteException::class)

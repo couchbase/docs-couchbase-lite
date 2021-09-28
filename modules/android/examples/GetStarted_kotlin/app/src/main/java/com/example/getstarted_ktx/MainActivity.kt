@@ -5,21 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 
 import android.content.Context
-import com.couchbase.lite.Database
-import com.couchbase.lite.DatabaseConfigurationFactory
-import com.couchbase.lite.ReplicatorConfigurationFactory
-import com.couchbase.lite.Replicator
-import com.couchbase.lite.MutableDocument
-import com.couchbase.lite.Expression
-import com.couchbase.lite.QueryBuilder
-import com.couchbase.lite.CouchbaseLite
-import com.couchbase.lite.SelectResult
-import com.couchbase.lite.create
-import com.couchbase.lite.URLEndpoint
-import com.couchbase.lite.ReplicatorType
-import com.couchbase.lite.BasicAuthenticator
-import com.couchbase.lite.DataSource
 import android.util.Log
+import com.couchbase.lite.*
 import java.net.URI
 
 
@@ -96,7 +83,20 @@ class MainActivity : AppCompatActivity() {
         // Start replication.
         replicator.start()
 
+        jsonstuff(argDb = database)
+
     }
+
+
+    fun jsonstuff (argDb: Database) {
+
+
+        var array1: MutableArray = MutableArray().setArray(1, ["a","b"])
+        var arrayJson1 = array1.to
+
+    }
+
+
 }
 // end::getting-started[]
 
