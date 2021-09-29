@@ -22,9 +22,10 @@ ifndef::is-p2p[You can also choose to monitor document changes -- see: <<lbl-rep
 [#lbl-repl-chng]
 == Change Listeners
 Use this to monitor changes and to inform on sync progress; this is an optional step.
+You can add and a replicator change listener at any point; it will report changes from the point it is registered.
 
 .Best Practice
-TIP: You should register the listener before starting your replication, to avoid having to do a restart to activate it ... and don't forget to save the token so you can remove the listener later
+TIP: Don't forget to save the token so you can remove the listener later
 
 Use the {url-api-class-replicator} class to add a change listener as a callback to the Replicator ({url-api-method-replicator-add-change-listener}) -- see: <<ex-repl-mon>>.
 You will then be asynchronously notified of state changes.
@@ -41,7 +42,6 @@ Android Kotlin developers can take advantage of Flows and LiveData to monitor re
 include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt[tag="flow-as-replicator-change-listener"]
 ----
 endif::is-android[]
-
 
 
 [#lbl-repl-status]
@@ -162,13 +162,11 @@ Since the replication occurs in batches the total count can vary through the cou
 include::{root-commons}sgw-replication-rep-status.adoc[tags={param-platform}]
 
 // begin inclusion of document changes text
-ifndef::is-p2p[]
 [#lbl-repl-evnts]
+ifndef::is-p2p[]
 == Monitor Document Changes
 
 You can choose to register for document updates during a replication.
-
-TIP: You should register the listener before starting your replication, to avoid having to do a restart to activate it.
 
 For example, the code snippet in <<ex-reg-doc-listener>> registers a listener to monitor document replication performed by the replicator referenced by the variable `replicator`.
 It prints the document ID of each document received and sent.
