@@ -215,7 +215,7 @@ class KtCertAuthListener {
 }
 
 @Suppress("unused")
-class PasswordAuthListener {
+class KtPasswordAuthListener {
     companion object {
         private const val VALID_USER = "Minnie"
         private val VALID_PASSWORD = "let me in!".toCharArray()

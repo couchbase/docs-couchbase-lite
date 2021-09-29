@@ -18,32 +18,8 @@ package com.couchbase.code_snippets
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import com.couchbase.lite.BasicAuthenticator
-import com.couchbase.lite.Blob
-import com.couchbase.lite.CouchbaseLite
-import com.couchbase.lite.CouchbaseLiteException
-import com.couchbase.lite.DataSource
-import com.couchbase.lite.Database
-import com.couchbase.lite.DatabaseConfiguration
-import com.couchbase.lite.DatabaseConfigurationFactory
-import com.couchbase.lite.EncryptionKey
-import com.couchbase.lite.Expression
-import com.couchbase.lite.LogDomain
-import com.couchbase.lite.LogFileConfigurationFactory
-import com.couchbase.lite.LogLevel
-import com.couchbase.lite.Logger
-import com.couchbase.lite.Meta
-import com.couchbase.lite.MutableDocument
-import com.couchbase.lite.QueryBuilder
-import com.couchbase.lite.Replicator
-import com.couchbase.lite.ReplicatorConfigurationFactory
-import com.couchbase.lite.ReplicatorType
-import com.couchbase.lite.SelectResult
-import com.couchbase.lite.URLEndpoint
-import com.couchbase.lite.UnitOfWork
-import com.couchbase.lite.create
+import com.couchbase.lite.*
 import com.couchbase.lite.internal.utils.PlatformUtils
-import org.json.JSONObject
 import org.junit.Test
 import java.io.File
 import java.io.IOException
@@ -51,21 +27,19 @@ import java.net.URI
 import java.net.URISyntaxException
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.Arrays
-import java.util.Date
-import java.util.EnumSet
+import java.util.*
 
 
 private const val TAG = "BASIC"
 
 // tag::custom-logging[]
 class LogTestLogger(private val level: LogLevel) : Logger {
-  override fun getLevel() = level
+    override fun getLevel() = level
 
-  override fun log(level: LogLevel, domain: LogDomain, message: String) {
-    // this method will never be called if param level < this.level
-    // handle the message, for example piping it to a third party framework
-  }
+    override fun log(level: LogLevel, domain: LogDomain, message: String) {
+        // this method will never be called if param level < this.level
+        // handle the message, for example piping it to a third party framework
+    }
 }
 
 // end::custom-logging[]
@@ -142,7 +116,10 @@ class BasicExamples(private val context: Context) {
     fun test1xAttachments() {
         // if db exist, delete it
         deleteDB("android-sqlite", context.filesDir)
-        ZipUtils.unzip(PlatformUtils.getAsset("replacedb/android140-sqlite.cblite2.zip"), context.filesDir)
+        ZipUtils.unzip(
+            PlatformUtils.getAsset("replacedb/android140-sqlite.cblite2.zip"),
+            context.filesDir
+        )
 
         val db = Database("android-sqlite")
         try {
@@ -176,25 +153,31 @@ class BasicExamples(private val context: Context) {
     @Throws(CouchbaseLiteException::class)
     fun testNewDatabase() {
         // tag::new-database[]
-        val database = Database("my-db",
-                    DatabaseConfigurationFactory.create(
-                                context.filesDir.absolutePath)) // <.>
+        val database = Database(
+            "my-db",
+            DatabaseConfigurationFactory.create(
+                context.filesDir.absolutePath
+            )
+        ) // <.>
         // end::new-database[]
         // tag::close-database[]
         database.close()
 
         // end::close-database[]
 
-        db.delete()
+        database.delete()
     }
 
     // ### Database Encryption
     @Throws(CouchbaseLiteException::class)
     fun testDatabaseEncryption() {
         // tag::database-encryption[]
-        val db = Database("my-db",
-                    DatabaseConfigurationFactory.create(
-                            encryptionKey = EncryptionKey("PASSWORD")))
+        val db = Database(
+            "my-db",
+            DatabaseConfigurationFactory.create(
+                encryptionKey = EncryptionKey("PASSWORD")
+            )
+        )
 
         // end::database-encryption[]
     }
@@ -245,22 +228,28 @@ class BasicExamples(private val context: Context) {
 
     fun writeConsoleLog() {
         // tag::write-console-logmsg[]
-        Database.log.console.log(LogLevel.WARNING,
-                    LogDomain.REPLICATOR, "Any old log message")
+        Database.log.console.log(
+            LogLevel.WARNING,
+            LogDomain.REPLICATOR, "Any old log message"
+        )
         // end::write-console-logmsg[]
     }
 
     fun writeCustomLog() {
         // tag::write-custom-logmsg[]
-        Database.log.custom?.log(LogLevel.WARNING,
-                    LogDomain.REPLICATOR, "Any old log message")
+        Database.log.custom?.log(
+            LogLevel.WARNING,
+            LogDomain.REPLICATOR, "Any old log message"
+        )
         // end::write-custom-logmsg[]
     }
 
     fun writeFileLog() {
         // tag::write-file-logmsg[]
-        Database.log.file.log(LogLevel.WARNING,
-                    LogDomain.REPLICATOR, "Any old log message")
+        Database.log.file.log(
+            LogLevel.WARNING,
+            LogDomain.REPLICATOR, "Any old log message"
+        )
         // end::write-file-logmsg[]
     }
 
@@ -268,8 +257,8 @@ class BasicExamples(private val context: Context) {
     fun testTroubleshooting() {
         // tag::replication-logging[]
         Database.log.console.let {
-                    it.level = LogLevel.VERBOSE
-                    it.domains = LogDomain.ALL_DOMAINS
+            it.level = LogLevel.VERBOSE
+            it.domains = LogDomain.ALL_DOMAINS
         }
         // end::replication-logging[]
     }
@@ -285,7 +274,11 @@ class BasicExamples(private val context: Context) {
             return
         }
         ZipUtils.unzip(PlatformUtils.getAsset("travel-sample.cblite2.zip"), context.filesDir)
-        Database.copy(File(context.filesDir, "travel-sample"), "travel-sample", DatabaseConfiguration())
+        Database.copy(
+            File(context.filesDir, "travel-sample"),
+            "travel-sample",
+            DatabaseConfiguration()
+        )
         // end::prebuilt-database[]
     }
 
@@ -358,17 +351,15 @@ class BasicExamples(private val context: Context) {
     }
 
 
-
-
-
-
-
     // ### Document Expiration
     @Throws(CouchbaseLiteException::class)
     fun documentExpiration() {
         // tag::document-expiration[]
         // Purge the document one day from now
-        database.setDocumentExpiration("doc123", Date(Instant.now().plus(1, ChronoUnit.DAYS).toEpochMilli()))
+        database.setDocumentExpiration(
+            "doc123",
+            Date(Instant.now().plus(1, ChronoUnit.DAYS).toEpochMilli())
+        )
 
         // Reset expiration
         database.setDocumentExpiration("doc1", null)
@@ -390,7 +381,11 @@ class BasicExamples(private val context: Context) {
         // tag::document-listener[]
         database.addDocumentChangeListener("user.john") { change ->
             database.getDocument(change.documentID)?.let {
-                Toast.makeText(context, "Status: ${it.getString("verified_account")}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Status: ${it.getString("verified_account")}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
         // end::document-listener[]

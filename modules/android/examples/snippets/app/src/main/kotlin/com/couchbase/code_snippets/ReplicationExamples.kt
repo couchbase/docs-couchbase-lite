@@ -255,8 +255,9 @@ object MergeConflictResolver : ConflictResolver {
                 )
             )
 
+            val resetCheckpointRequired_Example = false
             // tag::replication-reset-checkpoint[]
-            repl.start(resetCheckpoint = resetCheckpointRequired_Example) // <.>
+            repl.start(resetCheckpointRequired_Example) // <.>
             // end::replication-reset-checkpoint[]
 
             // ... at some later time
@@ -352,7 +353,7 @@ object MergeConflictResolver : ConflictResolver {
             // tag::replication-conflict-resolver[]
             val target = URLEndpoint(URI("ws://localhost:4984/mydatabase"))
             val config = ReplicatorConfiguration(database, target)
-            config.conflictResolver = LocalWinConflictResolver()
+            config.conflictResolver = LocalWinsResolver
             val replication = Replicator(config)
             replication.start()
             // end::replication-conflict-resolver[]
