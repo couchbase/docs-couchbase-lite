@@ -1,6 +1,6 @@
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -19,24 +19,7 @@
 package com.couchbase.code_snippets
 
 import android.util.Log
-import com.couchbase.lite.BasicAuthenticator
-import com.couchbase.lite.Conflict
-import com.couchbase.lite.ConflictResolver
-import com.couchbase.lite.CouchbaseLiteException
-import com.couchbase.lite.Database
-import com.couchbase.lite.DatabaseConfiguration
-import com.couchbase.lite.DatabaseEndpoint
-import com.couchbase.lite.Document
-import com.couchbase.lite.DocumentFlag
-import com.couchbase.lite.MutableDocument
-import com.couchbase.lite.Replicator
-import com.couchbase.lite.ReplicatorActivityLevel
-import com.couchbase.lite.ReplicatorConfiguration
-import com.couchbase.lite.ReplicatorConfigurationFactory
-import com.couchbase.lite.ReplicatorType
-import com.couchbase.lite.SessionAuthenticator
-import com.couchbase.lite.URLEndpoint
-import com.couchbase.lite.create
+import com.couchbase.lite.*
 import com.couchbase.lite.internal.utils.PlatformUtils
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -163,8 +146,6 @@ object MergeConflictResolver : ConflictResolver {
                 )
             )
 
-            // tag::replication-status[]
-            // Version using Kotlin Flows to follow shortly ...
             repl.addChangeListener { change ->
                 if (change.status.activityLevel == ReplicatorActivityLevel.STOPPED) {
                     Log.i(TAG, "Replication stopped")
@@ -186,7 +167,6 @@ object MergeConflictResolver : ConflictResolver {
             )
 
             // tag::replication-error-handling[]
-            // Version using Kotlin Flows to follow shortly ...
             repl.addChangeListener { change ->
                 change.status.error?.let {
                     Log.w(TAG, "Error code: ${it.code}")
@@ -278,18 +258,15 @@ object MergeConflictResolver : ConflictResolver {
                 )
             )
 
+            val resetCheckpointRequired_Example = false
             // tag::replication-reset-checkpoint[]
-            if (resetCheckpointRequired_Example) {
-              repl.start(resetCheckpoint = true) // <.>
-            else
-              repl.start(resetCheckpoint = false)
-            }
+            repl.start(resetCheckpointRequired_Example) // <.>
             // end::replication-reset-checkpoint[]
 
             // ... at some later time
 
             repl.stop()
-        // end::replication-startup[]
+            // end::replication-startup[]
 
         }
 
@@ -379,7 +356,7 @@ object MergeConflictResolver : ConflictResolver {
             // tag::replication-conflict-resolver[]
             val target = URLEndpoint(URI("ws://localhost:4984/mydatabase"))
             val config = ReplicatorConfiguration(database, target)
-            config.conflictResolver = LocalWinConflictResolver()
+            config.conflictResolver = LocalWinsResolver
             val replication = Replicator(config)
             replication.start()
             // end::replication-conflict-resolver[]
@@ -406,11 +383,11 @@ object MergeConflictResolver : ConflictResolver {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -431,30 +408,7 @@ package com.couchbase.code_snippets
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import com.couchbase.lite.BasicAuthenticator
-import com.couchbase.lite.Blob
-import com.couchbase.lite.CouchbaseLite
-import com.couchbase.lite.CouchbaseLiteException
-import com.couchbase.lite.DataSource
-import com.couchbase.lite.Database
-import com.couchbase.lite.DatabaseConfiguration
-import com.couchbase.lite.DatabaseConfigurationFactory
-import com.couchbase.lite.EncryptionKey
-import com.couchbase.lite.Expression
-import com.couchbase.lite.LogDomain
-import com.couchbase.lite.LogFileConfigurationFactory
-import com.couchbase.lite.LogLevel
-import com.couchbase.lite.Logger
-import com.couchbase.lite.Meta
-import com.couchbase.lite.MutableDocument
-import com.couchbase.lite.QueryBuilder
-import com.couchbase.lite.Replicator
-import com.couchbase.lite.ReplicatorConfigurationFactory
-import com.couchbase.lite.ReplicatorType
-import com.couchbase.lite.SelectResult
-import com.couchbase.lite.URLEndpoint
-import com.couchbase.lite.UnitOfWork
-import com.couchbase.lite.create
+import com.couchbase.lite.*
 import com.couchbase.lite.internal.utils.PlatformUtils
 import org.junit.Test
 import java.io.File
@@ -463,21 +417,19 @@ import java.net.URI
 import java.net.URISyntaxException
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.Arrays
-import java.util.Date
-import java.util.EnumSet
+import java.util.*
 
 
 private const val TAG = "BASIC"
 
 // tag::custom-logging[]
 class LogTestLogger(private val level: LogLevel) : Logger {
-  override fun getLevel() = level
+    override fun getLevel() = level
 
-  override fun log(level: LogLevel, domain: LogDomain, message: String) {
-    // this method will never be called if param level < this.level
-    // handle the message, for example piping it to a third party framework
-  }
+    override fun log(level: LogLevel, domain: LogDomain, message: String) {
+        // this method will never be called if param level < this.level
+        // handle the message, for example piping it to a third party framework
+    }
 }
 
 // end::custom-logging[]
@@ -537,8 +489,6 @@ class BasicExamples(private val context: Context) {
         )
 
         // Listen to replicator change events.
-        // Version using Kotlin Flows to follow shortly ...
-
         replicator.addChangeListener { change ->
             val err = change.status.error
             if (err != null) Log.i(TAG, "Error code ::  ${err.code}")
@@ -556,7 +506,10 @@ class BasicExamples(private val context: Context) {
     fun test1xAttachments() {
         // if db exist, delete it
         deleteDB("android-sqlite", context.filesDir)
-        ZipUtils.unzip(PlatformUtils.getAsset("replacedb/android140-sqlite.cblite2.zip"), context.filesDir)
+        ZipUtils.unzip(
+            PlatformUtils.getAsset("replacedb/android140-sqlite.cblite2.zip"),
+            context.filesDir
+        )
 
         val db = Database("android-sqlite")
         try {
@@ -590,16 +543,32 @@ class BasicExamples(private val context: Context) {
     @Throws(CouchbaseLiteException::class)
     fun testNewDatabase() {
         // tag::new-database[]
-        val db = Database("my-db", DatabaseConfigurationFactory.create(context.filesDir.absolutePath)) // <.>
+        val database = Database(
+            "my-db",
+            DatabaseConfigurationFactory.create(
+                context.filesDir.absolutePath
+            )
+        ) // <.>
         // end::new-database[]
-        db.delete()
+        // tag::close-database[]
+        database.close()
+
+        // end::close-database[]
+
+        database.delete()
     }
 
     // ### Database Encryption
     @Throws(CouchbaseLiteException::class)
     fun testDatabaseEncryption() {
         // tag::database-encryption[]
-        val db = Database("my-db", DatabaseConfigurationFactory.create(encryptionKey = EncryptionKey("PASSWORD")))
+        val db = Database(
+            "my-db",
+            DatabaseConfigurationFactory.create(
+                encryptionKey = EncryptionKey("PASSWORD")
+            )
+        )
+
         // end::database-encryption[]
     }
 
@@ -649,19 +618,28 @@ class BasicExamples(private val context: Context) {
 
     fun writeConsoleLog() {
         // tag::write-console-logmsg[]
-        Database.log.console.log(LogLevel.WARNING, LogDomain.REPLICATOR, "Any old log message")
+        Database.log.console.log(
+            LogLevel.WARNING,
+            LogDomain.REPLICATOR, "Any old log message"
+        )
         // end::write-console-logmsg[]
     }
 
     fun writeCustomLog() {
         // tag::write-custom-logmsg[]
-        Database.log.custom?.log(LogLevel.WARNING, LogDomain.REPLICATOR, "Any old log message")
+        Database.log.custom?.log(
+            LogLevel.WARNING,
+            LogDomain.REPLICATOR, "Any old log message"
+        )
         // end::write-custom-logmsg[]
     }
 
     fun writeFileLog() {
         // tag::write-file-logmsg[]
-        Database.log.file.log(LogLevel.WARNING, LogDomain.REPLICATOR, "Any old log message")
+        Database.log.file.log(
+            LogLevel.WARNING,
+            LogDomain.REPLICATOR, "Any old log message"
+        )
         // end::write-file-logmsg[]
     }
 
@@ -686,7 +664,11 @@ class BasicExamples(private val context: Context) {
             return
         }
         ZipUtils.unzip(PlatformUtils.getAsset("travel-sample.cblite2.zip"), context.filesDir)
-        Database.copy(File(context.filesDir, "travel-sample"), "travel-sample", DatabaseConfiguration())
+        Database.copy(
+            File(context.filesDir, "travel-sample"),
+            "travel-sample",
+            DatabaseConfiguration()
+        )
         // end::prebuilt-database[]
     }
 
@@ -751,12 +733,23 @@ class BasicExamples(private val context: Context) {
         // end::batch[]
     }
 
+
+    // toJSON
+    fun testToJsonOperations(argDb: Database) {
+        val db = argDb
+
+    }
+
+
     // ### Document Expiration
     @Throws(CouchbaseLiteException::class)
     fun documentExpiration() {
         // tag::document-expiration[]
         // Purge the document one day from now
-        database.setDocumentExpiration("doc123", Date(Instant.now().plus(1, ChronoUnit.DAYS).toEpochMilli()))
+        database.setDocumentExpiration(
+            "doc123",
+            Date(Instant.now().plus(1, ChronoUnit.DAYS).toEpochMilli())
+        )
 
         // Reset expiration
         database.setDocumentExpiration("doc1", null)
@@ -776,11 +769,13 @@ class BasicExamples(private val context: Context) {
     @Throws(CouchbaseLiteException::class)
     fun testDocumentChangeListener() {
         // tag::document-listener[]
-        // Version using Kotlin Flows to follow shortly ...
-
         database.addDocumentChangeListener("user.john") { change ->
             database.getDocument(change.documentID)?.let {
-                Toast.makeText(context, "Status: ${it.getString("verified_account")}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Status: ${it.getString("verified_account")}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
         // end::document-listener[]
@@ -804,11 +799,11 @@ class BasicExamples(private val context: Context) {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -926,11 +921,89 @@ class PredictiveQueryExamples {
 }
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt 
+//
+// Copyright (c) 2021 Couchbase, Inc All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+package com.couchbase.code_snippets
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
+import com.couchbase.lite.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.map
+
+
+class FlowExamples(argDb: Database,
+                   argRepl: Replicator,
+                   argQuery: Query,
+                   argDocOwner: String) {
+
+    // tag::flow-as-replicator-change-listener[]
+    val replState: LiveData<ReplicatorActivityLevel> = argRepl.replicatorChangesFlow()
+        .map { it.status.activityLevel }
+        .asLiveData()
+
+    // end::flow-as-replicator-change-listener[]
+    // tag::flow-as-database-change-listener[]
+    val dbChanges: LiveData<MutableList<String>> = argDb.databaseChangeFlow()
+        .map { it.documentIDs }
+        .asLiveData()
+
+    // end::flow-as-database-change-listener[]
+    // tag::flow-as-document-change-listener[]
+    val docChanges: LiveData<DocumentChange?> = argDb.documentChangeFlow("1001")
+        .map {
+            it.takeUnless {
+                it.database.getDocument(it.documentID)?.getString("owner").equals(argDocOwner)
+            }
+        }
+        .asLiveData()
+
+    // end::flow-as-document-change-listener[]
+    // tag::flow-as-query-change-listener[]
+    var liveQuery: LiveData<List<Any>?>? = null
+
+    @ExperimentalCoroutinesApi
+    fun watchQuery(query: Query): LiveData<List<Any>?> {
+        val queryFlow = query.queryChangeFlow()
+            .map {
+                val err = it.error
+                if (err != null) {
+                    throw err
+                }
+                it.results?.allResults()?.flatMap { it.toList() }
+            }
+            .asLiveData()
+        liveQuery = queryFlow
+        return queryFlow
+    }
+    // end::flow-as-query-change-listener[]
+}
+
+
+
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt 
+
+
+
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -984,11 +1057,11 @@ class PendingDocsExample(private var replicator: Replicator) {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -1518,11 +1591,11 @@ Although `wss:` protocol URLs are not affected, in order to use the `ws:` protoc
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -1573,7 +1646,7 @@ import java.util.concurrent.CountDownLatch
 private const val TAG = "LISTEN"
 
 @Suppress("unused")
-class CertAuthListener {
+class KtCertAuthListener {
     companion object {
         private val CERT_ATTRIBUTES = mapOf(
             TLSIdentity.CERT_ATTRIBUTE_COMMON_NAME to "CBL Test",
@@ -1740,7 +1813,7 @@ class CertAuthListener {
 }
 
 @Suppress("unused")
-class PasswordAuthListener {
+class KtPasswordAuthListener {
     companion object {
         private const val VALID_USER = "Minnie"
         private val VALID_PASSWORD = "let me in!".toCharArray()
@@ -1784,7 +1857,6 @@ class PasswordAuthListener {
         val completionLatch = CountDownLatch(1)
         val repl = Replicator(config)
 
-        // Version using Kotlin Flows to follow shortly ...
         repl.addChangeListener { change ->
             if (change.status
                     .activityLevel == ReplicatorActivityLevel.STOPPED
@@ -1833,11 +1905,11 @@ class PasswordAuthListener {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -2025,11 +2097,11 @@ class PassivePeerConnection private constructor() : MessageEndpointConnection {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -2048,22 +2120,8 @@ class PassivePeerConnection private constructor() : MessageEndpointConnection {
 package com.couchbase.code_snippets
 
 import android.util.Log
-import com.couchbase.lite.ArrayFunction
-import com.couchbase.lite.CouchbaseLiteException
-import com.couchbase.lite.DataSource
-import com.couchbase.lite.Database
-import com.couchbase.lite.Expression
-import com.couchbase.lite.FullTextExpression
-import com.couchbase.lite.FullTextIndexItem
+import com.couchbase.lite.*
 import com.couchbase.lite.Function
-import com.couchbase.lite.IndexBuilder
-import com.couchbase.lite.Join
-import com.couchbase.lite.Meta
-import com.couchbase.lite.Ordering
-import com.couchbase.lite.Query
-import com.couchbase.lite.QueryBuilder
-import com.couchbase.lite.SelectResult
-import com.couchbase.lite.ValueIndexItem
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.json.JSONException
 
@@ -2151,7 +2209,6 @@ class QueryExamples(private val database: Database) {
 
         // Adds a query change listener.
         // Changes will be posted on the main queue.
-        // Version using Kotlin Flows to follow shortly ...
         val token = query.addChangeListener { change ->
             change.results?.let {
                 for (result in it) {
@@ -2562,7 +2619,7 @@ class QueryExamples(private val database: Database) {
 
     @Throws(CouchbaseLiteException::class, JSONException::class)
     fun testQuerySyntaxJson(currentUser: String, argDb: Database) {
-        Database db = argDb
+        val db = argDb
         // tag::query-syntax-json[]
         // Example assumes Hotel class object defined elsewhere
 
@@ -2600,9 +2657,9 @@ class QueryExamples(private val database: Database) {
 
   fun docsOnlyQuerySyntaxN1QL(argDb: Database): List<Result> {
       // For Documentation -- N1QL Query using parameters
-      Database db=argDb
+      val db = argDb
       // tag::query-syntax-n1ql[]
-      val thisQuery = dbcreateQuery(
+      val thisQuery = db.createQuery(
             "SELECT META().id AS id FROM _ WHERE type = \"hotel\"") // <.>
 
       return thisQuery.execute().allResults()
@@ -2612,8 +2669,9 @@ class QueryExamples(private val database: Database) {
 
   fun docsOnlyQuerySyntaxN1QLParams(argDb: Database): List<Result> {
       // For Documentation -- N1QL Query using parameters
+      val db = argDb
       // tag::query-syntax-n1ql-params[]
-      val thisQuery = dbcreateQuery(
+      val thisQuery = db.createQuery(
             "SELECT META().id AS id FROM _ WHERE type = \$type") // <.>
 
       thisQuery.parameters = Parameters().setString("type", "hotel") // <.>
@@ -2628,11 +2686,135 @@ class QueryExamples(private val database: Database) {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt 
+//
+// Copyright (c) 2021 Couchbase, Inc All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+package com.couchbase.code_snippets
+
+import android.util.Log
+import com.couchbase.lite.*
+import org.json.JSONException
+import org.json.JSONObject
+
+
+const val JSON = """[{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hotel Ted\",\"city\":\"Paris\",
+        \"country\":\"France\",\"description\":\"Undefined description for Hotel Ted\"},
+        {\"id\":\"1001\",\"type\":\"hotel\",\"name\":\"Hotel Fred\",\"city\":\"London\",
+        \"country\":\"England\",\"description\":\"Undefined description for Hotel Fred\"},
+        {\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",
+        \"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\",
+        \"features\":[\"Cable TV\",\"Toaster\",\"Microwave\"]}]"""
+
+
+class KtJSONExamples {
+    private val TAG = "SNIPPETS"
+
+    fun jsonArrayExample(db: Database) {
+        // tag::tojson-array[]
+        // github tag=tojson-array
+        val mArray = MutableArray(JSON) // <.>
+        for (i in 0 until mArray.count()) {
+            mArray.getDictionary(i)?.apply {
+                Log.i(TAG, getString("name") ?: "unknown")
+                db.save(MutableDocument(getString("id"), toMap()))
+            } // <.>
+        }
+
+        db.getDocument("1002")?.getArray("features")?.apply {
+            for (feature in toList()) {
+                Log.i(TAG, "$feature")
+            } // <.>
+            Log.i(TAG, toJSON())
+        } // <.>
+        // end::tojson-array[]
+    }
+
+    fun jsonBlobExample(db: Database) {
+        // tag::tojson-blob[]
+        // github tag=tojson-blob
+        val thisBlob = db.getDocument("thisdoc-id")!!.toMap()
+        if (!Blob.isBlob(thisBlob)) {
+          return
+        }
+        val blobType = thisBlob["content_type"].toString()
+        val blobLength = thisBlob["length"] as Number?
+        // end::tojson-blob[]
+    }
+
+    fun jsonDictionaryExample() {
+        // tag::tojson-dictionary[]
+        // github tag=tojson-dictionary
+        val mDict = MutableDictionary(JSON) // <.>
+        Log.i(TAG, "$mDict")
+        Log.i(TAG, "Details for: ${mDict.getString("name")}")
+        for (key in mDict.keys) {
+          Log.i(TAG, key + " => " + mDict.getValue(key))
+        }
+        // end::tojson-dictionary[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun jsonDocumentExample(srcDb: Database, dstDb: Database) {
+        QueryBuilder
+            .select(SelectResult.expression(Meta.id).`as`("metaId"))
+            .from(DataSource.database(srcDb))
+            .execute()
+            .forEach {
+                it.getString("metaId")?.let { thisId ->
+                    srcDb.getDocument(thisId)?.toJSON()?.let { json -> // <.>
+                        Log.i(TAG, "JSON String = $json")
+                        val hotelFromJSON = MutableDocument(thisId, json) // <.>
+                        dstDb.save(hotelFromJSON)
+                        dstDb.getDocument(thisId)?.toMap()?.forEach { e ->
+                            Log.i(TAG, "$e.key => $e.value")
+                        } // <.>
+                    }
+                }
+            }
+    }
+
+    @Throws(CouchbaseLiteException::class, JSONException::class)
+    fun jsonQueryExample(query: Query) {
+        query.execute().forEach {
+
+            // Use a Json Object to populate Native object
+            JSONObject(it.toJSON()).apply {
+                val (description, country, city, name, type, id) = Hotel(
+                    id = getString("id"),
+                    type = getString("type"),
+                    name = getString("name"),
+                    city = getString("city"),
+                    country = "Ghana, West Africa",
+                    description = "this hotel"
+                )
+            }
+        }
+    }
+}
+
+
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt 
+
+
+
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -2656,7 +2838,7 @@ import com.couchbase.lite.Blob
 import com.couchbase.lite.Database
 import com.couchbase.lite.MutableDictionary
 
-class BlobExamples {
+class KtBlobExamples {
 
     // Example 2: Using Blobs
     fun example2(context: Context, db: Database) {
@@ -2694,5 +2876,5 @@ class BlobExamples {
 }
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt 
 

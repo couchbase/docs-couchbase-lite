@@ -34,38 +34,47 @@ class KtJSONExamples {
     private val TAG = "SNIPPETS"
 
     fun jsonArrayExample(db: Database) {
-        val mArray = MutableArray(JSON)
+        // tag::tojson-array[]
+        // github tag=tojson-array
+        val mArray = MutableArray(JSON) // <.>
         for (i in 0 until mArray.count()) {
             mArray.getDictionary(i)?.apply {
                 Log.i(TAG, getString("name") ?: "unknown")
                 db.save(MutableDocument(getString("id"), toMap()))
-            }
+            } // <.>
         }
 
         db.getDocument("1002")?.getArray("features")?.apply {
             for (feature in toList()) {
                 Log.i(TAG, "$feature")
-            }
+            } // <.>
             Log.i(TAG, toJSON())
-        }
+        } // <.>
+        // end::tojson-array[]
     }
 
     fun jsonBlobExample(db: Database) {
+        // tag::tojson-blob[]
+        // github tag=tojson-blob
         val thisBlob = db.getDocument("thisdoc-id")!!.toMap()
         if (!Blob.isBlob(thisBlob)) {
-            return
+          return
         }
         val blobType = thisBlob["content_type"].toString()
         val blobLength = thisBlob["length"] as Number?
+        // end::tojson-blob[]
     }
 
     fun jsonDictionaryExample() {
-        val mDict = MutableDictionary(JSON)
+        // tag::tojson-dictionary[]
+        // github tag=tojson-dictionary
+        val mDict = MutableDictionary(JSON) // <.>
         Log.i(TAG, "$mDict")
         Log.i(TAG, "Details for: ${mDict.getString("name")}")
         for (key in mDict.keys) {
-            Log.i(TAG, key + " => " + mDict.getValue(key))
+          Log.i(TAG, key + " => " + mDict.getValue(key))
         }
+        // end::tojson-dictionary[]
     }
 
     @Throws(CouchbaseLiteException::class)
@@ -76,13 +85,13 @@ class KtJSONExamples {
             .execute()
             .forEach {
                 it.getString("metaId")?.let { thisId ->
-                    srcDb.getDocument(thisId)?.toJSON()?.let { json ->
+                    srcDb.getDocument(thisId)?.toJSON()?.let { json -> // <.>
                         Log.i(TAG, "JSON String = $json")
-                        val hotelFromJSON = MutableDocument(thisId, json)
+                        val hotelFromJSON = MutableDocument(thisId, json) // <.>
                         dstDb.save(hotelFromJSON)
                         dstDb.getDocument(thisId)?.toMap()?.forEach { e ->
                             Log.i(TAG, "$e.key => $e.value")
-                        }
+                        } // <.>
                     }
                 }
             }
