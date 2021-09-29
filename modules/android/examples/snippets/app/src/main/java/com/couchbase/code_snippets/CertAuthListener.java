@@ -45,6 +45,7 @@ import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Replicator;
 import com.couchbase.lite.ReplicatorActivityLevel;
 import com.couchbase.lite.ReplicatorConfiguration;
+import com.couchbase.lite.ReplicatorType;
 import com.couchbase.lite.TLSIdentity;
 import com.couchbase.lite.URLEndpoint;
 import com.couchbase.lite.URLEndpointListener;
