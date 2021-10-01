@@ -1,6 +1,6 @@
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -383,11 +383,11 @@ object MergeConflictResolver : ConflictResolver {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -799,11 +799,11 @@ class BasicExamples(private val context: Context) {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -921,11 +921,11 @@ class PredictiveQueryExamples {
 }
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -999,11 +999,11 @@ class FlowExamples(argDb: Database,
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -1057,11 +1057,11 @@ class PendingDocsExample(private var replicator: Replicator) {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -1591,11 +1591,11 @@ Although `wss:` protocol URLs are not affected, in order to use the `ws:` protoc
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -1905,11 +1905,11 @@ class KtPasswordAuthListener {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -2097,11 +2097,11 @@ class PassivePeerConnection private constructor() : MessageEndpointConnection {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -2686,11 +2686,11 @@ class QueryExamples(private val database: Database) {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -2810,11 +2810,11 @@ class KtJSONExamples {
 }
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -2876,5 +2876,5 @@ class KtBlobExamples {
 }
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt 
 

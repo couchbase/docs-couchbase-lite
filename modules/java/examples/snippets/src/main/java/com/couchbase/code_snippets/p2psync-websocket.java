@@ -1,3 +1,4 @@
+subsumed-p2p
 // PASSIVE PEER STUFF
 // Stuff I adapted
 //
@@ -492,7 +493,6 @@ public class Examples {
   //@Test
   public void testActPeerSync() throws CouchbaseLiteException, URISyntaxException {
 // tag::p2p-act-rep-func[]
-    // tag::getting-started[]
     // tag::p2p-act-rep-initialize[]
     // initialize the replicator configuration
     final ReplicatorConfiguration thisConfig
@@ -507,6 +507,11 @@ public class Examples {
       ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
 
     // end::p2p-act-rep-config-type[]
+    // tag::autopurge-override[]
+    // set auto-purge behavior (here we override default)
+    thisConfig.setAutoPurgeEnabled(false); // <.>
+
+    // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
     // Configure Sync Mode
     thisConfig.setContinuous(false); // default value
@@ -853,3 +858,5 @@ final ReplicatorConfiguration thisConfig
       URLEndpoint(URI("wss://listener.com:8954/travel-sample"))); // <.>
 
 // end::sgw-act-rep-initialize[]
+
+// END=subsumed-p2p
