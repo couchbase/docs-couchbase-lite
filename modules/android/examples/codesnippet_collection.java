@@ -1,6 +1,6 @@
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/java/com/couchbase/code_snippets/PasswordAuthListener.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/PasswordAuthListener.java 
 //
 // Copyright (c) 2020 Couchbase, Inc All rights reserved.
 //
@@ -130,11 +130,11 @@ public class PasswordAuthListener {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/java/com/couchbase/code_snippets/PasswordAuthListener.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/PasswordAuthListener.java 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/java/com/couchbase/code_snippets/BlobExamples.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/BlobExamples.java 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -213,11 +213,11 @@ class BlobExamples {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/java/com/couchbase/code_snippets/BlobExamples.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/BlobExamples.java 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/java/com/couchbase/code_snippets/MainActivity.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/MainActivity.java 
 package com.couchbase.code_snippets;
 
 import android.os.Bundle;
@@ -234,11 +234,11 @@ public class MainActivity extends AppCompatActivity {
 }
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/java/com/couchbase/code_snippets/MainActivity.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/MainActivity.java 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/java/com/couchbase/code_snippets/CertAuthListener.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/CertAuthListener.java 
 
 //
 // Copyright (c) 2020 Couchbase, Inc All rights reserved.
@@ -450,11 +450,11 @@ class CertAuthListener {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/java/com/couchbase/code_snippets/CertAuthListener.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/CertAuthListener.java 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java 
 //
 // Copyright (c) 2019 Couchbase, Inc All rights reserved.
 //
@@ -3338,11 +3338,11 @@ public class TestQueries {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java 
 package com.couchbase.code_snippets;
 
 import java.io.File;
@@ -3382,11 +3382,11 @@ public class ZipUtils {
 // end::ziputils-unzip[]
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/java/com/couchbase/code_snippets/JSONExamples.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/JSONExamples.java 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -3528,5 +3528,5 @@ public class JSONExamples {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/java/com/couchbase/code_snippets/JSONExamples.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/JSONExamples.java 
 
