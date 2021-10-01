@@ -1,4 +1,4 @@
-subsumed-p2p
+// subsumed-p2p
 // PASSIVE PEER STUFF
 // Stuff I adapted
 //
@@ -492,79 +492,79 @@ public class Examples {
 
   //@Test
   public void testActPeerSync() throws CouchbaseLiteException, URISyntaxException {
-// tag::p2p-act-rep-func[]
-    // tag::p2p-act-rep-initialize[]
-    // initialize the replicator configuration
-    final ReplicatorConfiguration thisConfig
-       = new ReplicatorConfiguration(
-          thisDB,
-          URLEndpoint(URI("wss://listener.com:8954"))); // <.>
+    // tag::p2p-act-rep-func[]
+        // tag::p2p-act-rep-initialize[]
+        // initialize the replicator configuration
+        final ReplicatorConfiguration thisConfig
+           = new ReplicatorConfiguration(
+              thisDB,
+              URLEndpoint(URI("wss://listener.com:8954"))); // <.> <.>
 
-    // end::p2p-act-rep-initialize[]
-    // tag::p2p-act-rep-config-type[]
-    // Set replicator type
-    thisConfig.setReplicatorType(
-      ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+        // end::p2p-act-rep-initialize[]
+        // tag::p2p-act-rep-config-type[]
+        // Set replicator type
+        thisConfig.setReplicatorType(
+          ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
 
-    // end::p2p-act-rep-config-type[]
-    // tag::autopurge-override[]
-    // set auto-purge behavior (here we override default)
-    thisConfig.setAutoPurgeEnabled(false); // <.>
+        // end::p2p-act-rep-config-type[]
+        // tag::autopurge-override[]
+        // set auto-purge behavior (here we override default)
+        thisConfig.setAutoPurgeEnabled(false); // <.>
 
-    // end::autopurge-override[]
-    // tag::p2p-act-rep-config-cont[]
-    // Configure Sync Mode
-    thisConfig.setContinuous(false); // default value
+        // end::autopurge-override[]
+        // tag::p2p-act-rep-config-cont[]
+        // Configure Sync Mode
+        thisConfig.setContinuous(false); // default value
 
-    // end::p2p-act-rep-config-cont[]
-    // tag::p2p-act-rep-config-self-cert[]
-    // Configure Server Security --
-    // only accept self-signed certs
-    thisConfig.setAcceptOnlySelfSignedServerCertificate(true); // <.>
+        // end::p2p-act-rep-config-cont[]
+        // tag::p2p-act-rep-config-self-cert[]
+        // Configure Server Security --
+        // only accept self-signed certs
+        thisConfig.setAcceptOnlySelfSignedServerCertificate(true); // <.>
 
-    // end::p2p-act-rep-config-self-cert[]
-    // Configure Client Security // <.>
-    // tag::p2p-act-rep-auth[]
-    // Configure basic auth using user credentials
-    final BasicAuthenticator thisAuth
-      = new BasicAuthenticator(
-          "Our Username",
-          "Our PasswordValue"));
+        // end::p2p-act-rep-config-self-cert[]
+        // Configure Client Security //
+        // tag::p2p-act-rep-auth[]
+        // Configure basic auth using user credentials
+        final BasicAuthenticator thisAuth
+          = new BasicAuthenticator(
+              "Our Username",
+              "Our PasswordValue")); // <.>
 
-    thisConfig.setAuthenticator(thisAuth)
+        thisConfig.setAuthenticator(thisAuth)
 
-    // end::p2p-act-rep-auth[]
-    // tag::p2p-act-rep-config-conflict[]
-    /* Optionally set custom conflict resolver call back */
-    thisConfig.setConflictResolver( /* user supplied code */ ); // <.>
+        // end::p2p-act-rep-auth[]
+        // tag::p2p-act-rep-config-conflict[]
+        /* Optionally set custom conflict resolver call back */
+        thisConfig.setConflictResolver( /* user supplied code */ ); // <.>
 
-    // end::p2p-act-rep-config-conflict[]
-    // tag::p2p-act-rep-start-full[]
-    // Create replicator
-    final Replicator thisReplicator = new Replicator(thisConfig); // <.>
+        // end::p2p-act-rep-config-conflict[]
+        // tag::p2p-act-rep-start-full[]
+        // Create replicator
+        final Replicator thisReplicator = new Replicator(thisConfig); // <.>
 
-    // tag::p2p-act-rep-add-change-listener[]
-    // tag::p2p-act-rep-add-change-listener-label[]
-    // Optionally add a change listener <.>
-    // end::p2p-act-rep-add-change-listener-label[]
-    ListenerToken thisListener
-      = new thisReplicator.addChangeListener(change -> {
-        if (change.getStatus().getError() != null) {
-          Log.i(TAG, "Error code ::  " +
-            change.getStatus().getError().getCode());
-        }
-      });
+        // tag::p2p-act-rep-add-change-listener[]
+        // tag::p2p-act-rep-add-change-listener-label[]
+        // Optionally add a change listener
+        // end::p2p-act-rep-add-change-listener-label[]
+        ListenerToken thisListener
+          = new thisReplicator.addChangeListener(change -> {
+            if (change.getStatus().getError() != null) {
+              Log.i(TAG, "Error code ::  " +
+                change.getStatus().getError().getCode());
+            }
+          }); // <.>
+        // end::p2p-act-rep-add-change-listener[]
+        // tag::p2p-act-rep-start[]
+        // Start replicator
+        thisReplicator.start(false); // <.>
 
-    // end::p2p-act-rep-add-change-listener[]
-    // tag::p2p-act-rep-start[]
-    // Start replicator
-    thisReplicator.start(false); // <.>
+        // end::p2p-act-rep-start[]
+        // end::p2p-act-rep-start-full[]
+        // end::p2p-act-rep-func[]         ***** End p2p-act-rep-func
+      }
+    }
 
-    // end::p2p-act-rep-start[]
-    // end::p2p-act-rep-start-full[]
-    // end::p2p-act-rep-func[]         ***** End p2p-act-rep-func
-  }
-}
 
 
 // BEGIN additoinal active snippet
