@@ -2775,7 +2775,7 @@ private void ibP2PUrlEndpointListener() {
     final ReplicatorConfiguration thisConfig
        = new ReplicatorConfiguration(
           thisDB,
-          URLEndpoint(URI("wss://listener.com:8954")));
+          URLEndpoint(URI("wss://listener.com:8954"))); // <.> <.>
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config-type[]
@@ -2833,7 +2833,7 @@ private void ibP2PUrlEndpointListener() {
          if (err != null) {
            Log.i(TAG, "Error code ::  " + err.getCode(), e);
          }
-      });
+      }); // <.>
 
     // end::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-start[]

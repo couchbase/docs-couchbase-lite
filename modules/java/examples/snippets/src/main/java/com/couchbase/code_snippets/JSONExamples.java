@@ -50,9 +50,11 @@ public class JSONExamples {
         + "\"features\":[\"Cable TV\",\"Toaster\",\"Microwave\"]}]";
 
     public void jsonArrayExample(Database db) throws CouchbaseLiteException {
-        final MutableArray mArray = new MutableArray(JSON);
+        // tag::tojson-array[]
+        // github tag=tojson-array
+        final MutableArray mArray = new MutableArray(JSON); // <.>
 
-        for (int i = 0; i < mArray.count(); i++) {
+        for (int i = 0; i < mArray.count(); i++) { // <.>
             final Dictionary dict = mArray.getDictionary(i);
             System.out.println(dict.getString("name"));
             db.save(new MutableDocument(dict.getString("id"), dict.toMap()));
@@ -60,28 +62,37 @@ public class JSONExamples {
 
         final Array features = db.getDocument("1002").getArray("features");
         for (Object feature: features.toList()) { System.out.println(feature.toString()); }
-        System.out.println(features.toJSON());
+        System.out.println(features.toJSON()); // <.>
+        // end::tojson-array[]
     }
 
     public void jsonBlobExample(Database db) {
-        final Map<String, ?> thisBlob = db.getDocument("thisdoc-id").toMap();
+      // tag::tojson-blob[]
+      // github tag=tojson-blob
+      final Map<String, ?> thisBlob = db.getDocument("thisdoc-id").toMap();
         if (!Blob.isBlob(thisBlob)) { return; }
 
         final String blobType = thisBlob.get("content_type").toString();
         final Number blobLength = (Number) thisBlob.get("length");
+      // end::tojson-blob[]
     }
 
     public void jsonDictionaryExample(Database db) {
-        final MutableDictionary mDict = new MutableDictionary(JSON);
+        // tag::tojson-dictionary[]
+        // github tag=tojson-dictionary
+        final MutableDictionary mDict = new MutableDictionary(JSON); // <.>
         System.out.println(mDict.toString());
 
         System.out.println("Details for: " + mDict.getString("name"));
         for (String key: mDict.getKeys()) {
             System.out.println(key + " => " + mDict.getValue(key));
         }
-    }
+        // end::tojson-dictionary[]
+      }
 
     public void jsonDocumentExample(Database srcDb, Database dstDb) throws CouchbaseLiteException {
+        // tag::tojson-document[]
+        // github tag=tojson-document
         final Query listQuery = QueryBuilder
             .select(SelectResult.expression(Meta.id).as("metaId"))
             .from(DataSource.database(srcDb));
@@ -89,17 +100,18 @@ public class JSONExamples {
         for (Result row: listQuery.execute()) {
             final String thisId = row.getString("metaId");
 
-            final String json = srcDb.getDocument(thisId).toJSON();
+            final String json = srcDb.getDocument(thisId).toJSON(); // <.>
             System.out.println("JSON String = " + json);
 
-            final MutableDocument hotelFromJSON = new MutableDocument(thisId, json);
+            final MutableDocument hotelFromJSON = new MutableDocument(thisId, json); // <.>
 
             dstDb.save(hotelFromJSON);
 
             for (Map.Entry entry: dstDb.getDocument(thisId).toMap().entrySet()) {
-                System.out.println(entry.getKey() + " => " + entry.getValue());
+                System.out.println(entry.getKey() + " => " + entry.getValue()); // <.>
             }
         }
+        // end::tojson-document[]
     }
 
     public void jsonQueryExample(Query query) throws CouchbaseLiteException, JSONException {
