@@ -4,11 +4,37 @@ import com.couchbase.lite.*;
 import com.example.docsnippet.Datastore;
 import com.example.docsnippet.Hotel;
 
+import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import com.couchbase.lite.*;
 
-public class Examples {
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
+import com.couchbase.lite.Array;
+import com.couchbase.lite.Blob;
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.DataSource;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.Dictionary;
+import com.couchbase.lite.Meta;
+import com.couchbase.lite.MutableArray;
+import com.couchbase.lite.MutableDictionary;
+import com.couchbase.lite.MutableDocument;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.Result;
+import com.couchbase.lite.SelectResult;
 
 // tag::getting-started[]
 import com.couchbase.lite.*;
@@ -20,6 +46,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+
+public class Examples {
+}
 
 public class GettingStarted {
 
@@ -58,7 +87,8 @@ public static void main (String [] args) throws CouchbaseLiteException, Interrup
     // Get the database (and create it if it doesn’t exist).
     DatabaseConfiguration config = new DatabaseConfiguration();
 
-    config.setDirectory(context.getFilesDir().getAbsolutePath()); // <5>
+//    config.setDirectory(
+//            (context.getFilesDir().getAbsolutePath()); // <5>
 
     config.setEncryptionKey(new EncryptionKey(DB_PASS)); // <3>
     Database database = new Database(DB_NAME, config);
@@ -142,103 +172,13 @@ public static void main (String [] args) throws CouchbaseLiteException, Interrup
 }
 // end::getting-started[]
 
-// tag::getting-startedGradle[]
-
-plugins {
-    id 'java'
-    id 'application'
-}
-
-// Comment out the below line if no source code is Kotlin
-kotlinOptions { jvmTarget = '1.8' }
-
-// Set minimum JVM level to ensure availability of, for example, lambda expressions
-compileOptions
-{
-    targetCompatibility 1.8
-    sourceCompatibility 1.8
-} 
-
-// Declare repositories
-repositories {
-    // Add your Maven/Ivy/file repository here.
-    jcenter()
-    mavenCentral()
-}
-
-// USE THESE FOR MAVEN
-dependencies {
-//  Use for Enterprise version
-//    implementation "com.couchbase.lite:couchbase-lite-java-ee:2.7.0"
-//  Use for community versions
-//    implementation "com.couchbase.lite:couchbase-lite-java:2.7.0"
-  implementation fileTree(include: ['*.jar'], dir: libs>
-}
-
-application {
-    // Define the main class for the application.
-    mainClassName = 'gettingstarted.GettingStarted'
-}
-
-// end::getting-startedGradle[]
-
-
-// tag::gsGradleMavenExample[]
-plugins {
-    id 'java'
-    id 'application'
-}
-
-// Comment out the below line if no source code is Kotlin
-kotlinOptions { jvmTarget = '1.8' }
-
-// Set minimum JVM level to ensure availability of, for example, lambda expressions
-compileOptions
-{
-    targetCompatibility 1.8
-    sourceCompatibility 1.8
-} 
-
-repositories {
-    maven {
-        url "https://mobile.maven.couchbase.com/maven2/dev/"
-    }
-    google()
-    jcenter()
-}
-
-
-dependencies {
-//  Comment out below line if using Enterprise version
-    implementation "com.couchbase.lite:couchbase-lite-java:2.7.0"
-//  Comment out below line if using Community version
-    implementation "com.couchbase.lite:couchbase-lite-java-ee:2.7.0"
-}
-
-application {
-    // Define the main class for the application.
-    mainClassName = 'gettingstarted.GettingStarted'
-}
-
-// end::gsGradleMavenExample[]
-
 
 
 // tag::GsWebApp_GettingStarted[]
-import com.couchbase.lite.*;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
-@WebServlet( value = "/GettingStarted")
-public class GettingStarted extends javax.servlet.http.HttpServlet {
+//@WebServlet( value = "/GettingStarted")
+//public class GettingStartedWebApp extends javax.servlet.http.HttpServlet {
+public class GettingStartedWebApp {
     private static final String DB_DIR = "/usr/local/var/tomcat/data"; // <1>
     private static final String DB_NAME = "getting-started";
     /*      Credentials declared this way purely for expediency in this demo - use OAUTH in production code */
@@ -385,12 +325,13 @@ public class GettingStarted extends javax.servlet.http.HttpServlet {
 // end::GsWebApp_GettingStarted[]
 
 // tag::GsWebApp_Listener[]
-    import javax.servlet.ServletContextEvent;
-    import javax.servlet.ServletContextListener;
-    import javax.servlet.annotation.WebListener;
-
-    @WebListener
-    public class Application implements ServletContextListener {
+//    import javax.servlet.ServletContextEvent;
+//    import javax.servlet.ServletContextListener;
+//    import javax.servlet.annotation.WebListener;
+//
+//    @WebListener
+//    public class Application implements ServletContextListener {
+public class GsWebApp_Listener {
       @Override
       public void contextInitialized(ServletContextEvent event) {
           DatabaseManager.manager().init();
@@ -399,9 +340,9 @@ public class GettingStarted extends javax.servlet.http.HttpServlet {
 // end::GsWebApp_Listener[]
 
 // tag::GsWebApp_DbManager[]
-import com.couchbase.lite.*;
-import java.net.URI;
-import java.net.URISyntaxException;
+//import com.couchbase.lite.*;
+//import java.net.URI;
+//import java.net.URISyntaxException;
 
 public class DatabaseManager {
 
@@ -482,201 +423,6 @@ public class DatabaseManager {
 }
 
 // end::GsWebApp_DbManager[]
-
-// tag::GsWebApp_Index[]
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title>Couchbase Lite (Java Jvm) :: Getting Started App</title>
-</head>
-<body>
-<h1>Couchbase Lite (Java Jvm) :: Getting Started App</h1>
-
-<p>To invoke the GettingStarted servlet click <a href="GettingStarted">here</a></p>
-
-</body>
-</html>
-// end::GsWebApp_Index[]
-
-// tag::GsWebApp_ShowDbItems[]
-<html>
-<head>
-    <title>Couchbase Lite (Java Jvm) :: Getting Started App</title>
-</head>
-<body>
-<h1>Couchbase Lite (Java Jvm) :: Getting Started App</h1>
-<h2>List all current DB rows</h2>
-<hr>
-<p>NumRows = ${myRowCount}</p>
-<hr>
-${myResults}
-<hr>
-</body>
-</html>
-// end::GsWebApp_ShowDbItems[]
-
-
-// tag::GsWebAppBuildGradle[]
-apply plugin: 'java'
-apply plugin: 'jar'
-// apply plugin: 'war'
-sourceCompatibility = 1.8
-repositories {
-  jcenter()
-}
-dependencies {
-    implementation fileTree(dir: 'libs', include: '*.jar')
-    compileOnly "javax.servlet:javax.servlet-api:4.0.1"
-}
-// end::GsWebAppBuildGradle[]
-
-// tag::GsEmbeddedTomcatBuildGradle[]
-
-ext{
-  TOMCAT_VERSION="9.0.24"
-}
-
-apply plugin: 'java'
-apply plugin: 'war'
-apply plugin: 'com.bmuschko.tomcat'
-
-sourceCompatibility = 1.8
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
-    }
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    //  Use for Enterprise version
-    compileOnly "com.couchbase.lite:couchbase-lite-java-ee:2.7.0"
-    //  Use for community versions
-    //    compileOnly "com.couchbase.lite:couchbase-lite-java:2.7.0"
-    compileOnly "javax.servlet:javax.servlet-api:4.0.1"
-    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${TOMCAT_VERSION}",
-        "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
-        "org.apache.tomcat.embed:tomcat-embed-jasper:${TOMCAT_VERSION}"
-}
-
-tomcat {
-    httpPort = 8080
-    httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
-    ajpProtocol  = 'org.apache.coyote.ajp.AjpNio2Protocol'
-    contextPath = '/'
-}
-
-[tomcatRun, tomcatRunWar].each { task ->
-    fileTree("libs").visit { FileVisitDetails details ->
-        task.additionalRuntimeResources << file(details.file.path)
-    }
-}
-
-// end::GsEmbeddedTomcatBuildGradle[]
-
-
-
-// tag::tcWebAppHarness[]
-package com.couchbase.tcWebAppHarness;
-
-import javax.servlet.ServletException;
-import javax.servlet.ServletContext.*;
-import org.apache.catalina.Context;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.startup.Tomcat;
-
-public class tcWebHarness {
-    public static void main(String[] args) throws ServletException, LifecycleException {
-        String myTCbase="temp";
-        String yourWebAppWarName = args[0];
-        String contextPath = "/GettingStarted"; /* the URL path to your web app */
-        String warPath = "libMyWar/" + "gettingstarted.war"; /* the war file to be embedded */
-//        Context deployedContext = new Context;
-        String portNum="8080";
-        Tomcat tomcat = new Tomcat();
-
-        tomcat.setBaseDir(myTCbase);
-        tomcat.setPort(portNum);                 /* port of your choice */
-        tomcat.addWebapp(contextPath, warPath);
-        tomcat.getHost().setAppBase(".");
-        tomcat.start();
-        tomcat.getServer().await();
-    }
-}
-// end::tcWebAppHarness[]
-
-
-// tag::tcWebAppHarness-setup[]
-mkdir tcWebAppHarness
-cd tcWebAppHarness
-gradle init
-mkdir libs
-mkdir libs/libMyWar
-mkdir libs/libMyJar
-// avoid ascii docs parsing error caused by /* by using /**/ (closing comment immediately)
-// cp -R <path-to-downloaded-couchbase-lib>/lib/**/.jar libs/libCBL
-cp -R <pathToTomcatDownload>/**/.jar libs/libMyJar
-
-// end::tcWebAppHarness-setup[]
-
-// tag::embeddedTomcat[]
-ext{
-  TOMCAT_VERSION="9.0.24"
-}
-
-apply plugin: 'java'
-    apply plugin: 'war'
-    apply plugin: 'com.bmuschko.tomcat'
-
-    sourceCompatibility = 1.8
-
-    buildscript {
-        repositories {
-            jcenter()
-        }
-        dependencies {
-            classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
-        }
-    }
-
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        testCompile group: 'junit', name: 'junit', version: '4.12'
-
-        implementation fileTree(dir: 'libs', include: '*.jar')
-
-        compileOnly "javax.servlet:javax.servlet-api:4.0.1"
-
-        tomcat "org.apache.tomcat.embed:tomcat-embed-core:${TOMCAT_VERSION}",
-                "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
-                "org.apache.tomcat.embed:tomcat-embed-jasper:${TOMCAT_VERSION}"
-    }
-
-    tomcat {
-        httpPort = 8080
-        httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
-        ajpProtocol  = 'org.apache.coyote.ajp.AjpNio2Protocol'
-        contextPath = '/'
-    }
-
-[tomcatRun, tomcatRunWar].each { task ->
-            fileTree("libs").visit { FileVisitDetails details ->
-        task.additionalRuntimeResources << file(details.file.path)
-    }
-    }
-// end::embeddedTomcat[]
-
-
 
 
 // Check context validity for JVM cf Android
