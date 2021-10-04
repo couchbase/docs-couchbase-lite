@@ -12,39 +12,49 @@ include::{root-partials}block-abstract.adoc[]
 
 NOTE: You may encounter a `Target Integrity Error` when building for iOS Simulator(or iOS) -- see xref:{cbl-pg-prereqs}#lbl-tgtinterr[Dealing with Target Integrity Error]
 
-== Starter Code
+== Quick Steps
 
-Open *ViewController.swift* in Xcode and copy the following code in the `viewDidLoad` method.
-This snippet demonstrates how to run basic CRUD operations, a simple Query and running bi-directional replications with Sync Gateway.
+. Create a new Swift project as outlined in xref:{param-module}:gs-install.adoc[Install]
+. Open the new project's *ViewController.swift* module in Xcode
+. Replace the boiler-plate code with the code shown in <<ex-starter-code>>
+. Build and run the 'app' +
+You should see -- <<img-starter-code>> -- the document ID and property printed to the 'console log', indicating that a document was created successfully persisted to the database, updated and queried.
 
-[source]
-----
-include::{snippet}[tag=getting-started,indent=0]
-----
-
-Build and run.
-You should see the document ID and property printed to the console.
-The document was successfully persisted to the database.
-
+[#img-starter-code]
+.Example app output
 image::getting-started-ios.png[]
 
-In the next step, you will setup Sync Gateway.
-Before synchronizing documents to Sync Gateway you will need to disable App Transport Security (ATS) on iOS.
-App Transport Security is enabled by default since iOS 9 and enforces applications to use HTTPS exclusively.
-For this getting started guide, you will disable it but we recommend to enable it in production (and xref:sync-gateway::security.adoc#connection-to-sync-gateway[enable HTTPS on Sync Gateway]).
-In the Xcode navigator, right-click on *Info.plist* and open it as a source file.
+[#ex-starter-code]
+.Code snippet
+====
+This snippet demonstrates how to run basic CRUD operations, a simple Query and optionally running bi-directional replications with Sync Gateway.
 
-image::info-plist.png[]
-
-Append the following inside of the `<dict>` XML tags to disable ATS.
-
-[source,xml]
+[source, {source-language}, subs="attributes+, macros+"]
 ----
-<key>NSAppTransportSecurity</key>
-<dict>
-<key>NSAllowsArbitraryLoads</key><true/>
-</dict>
+
+include::example$code_snippets/Getting-Started.swift[]
+
 ----
+
+====
+
+// In the next step, you will setup Sync Gateway.
+// Before synchronizing documents to Sync Gateway you will need to disable App Transport Security (ATS) on iOS.
+// App Transport Security is enabled by default since iOS 9 and enforces applications to use HTTPS exclusively.
+// For this getting started guide, you will disable it but we recommend to enable it in production (and xref:sync-gateway::security.adoc#connection-to-sync-gateway[enable HTTPS on Sync Gateway]).
+// In the Xcode navigator, right-click on *Info.plist* and open it as a source file.
+
+// image::info-plist.png[]
+
+// Append the following inside of the `<dict>` XML tags to disable ATS.
+
+// [source,xml]
+// ----
+// <key>NSAppTransportSecurity</key>
+// <dict>
+// <key>NSAllowsArbitraryLoads</key><true/>
+// </dict>
+// ----
 
 // {xref-pg-sgw-gs-install}
 

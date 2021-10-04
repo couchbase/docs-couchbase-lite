@@ -27,21 +27,32 @@ include::partial$_std-cbl-hdr-objc.adoc[]
 include::{root-partials}block-abstract.adoc[]
 
 
-== Starter code
+== Quick Steps
 
-Open *ViewController.m* in Xcode and copy the following code in the `viewDidLoad` method.
+. Within XCode, create a new Objective-C app project
+. Within the *ViewController.m* file, replace the boilerplate codein with that shown in <<ex-starter-code>>.
+Note you can also get this from github.
+. Build and Run the code. +
+You should see the document ID and property printed to the console, indicating that the document was successfully persisted to the database as shown in <<img-starter-code>>
+
+[#img-starter-code]
+.Console log output
+image::getting-started-ios.png[]
+
+
+.Get Started code example
+[#ex-starter-code]
+====
 This snippet demonstrates how to run basic CRUD operations, a simple Query and running bi-directional replications with Sync Gateway.
 
-[source]
-----
-include::{snippet}[tag=getting-started,indent=0]
+[source, {source-language}, subs="attributes+, macros+"]
 ----
 
-Build and run.
-You should see the document ID and property printed to the console.
-The document was successfully persisted to the database.
+include::example$code_snippets/GettingStarted.m[]
 
-image::getting-started-ios.png[]
+----
+
+====
 
 Before synchronizing documents to Sync Gateway you will need to disable App Transport Security.
 In the Xcode navigator, right-click on *Info.plist* and open it as a source file.
