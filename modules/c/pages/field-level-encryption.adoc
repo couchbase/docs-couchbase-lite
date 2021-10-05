@@ -35,14 +35,14 @@ The client-side encryption is compatible with the Couchbase server SDK field-lev
 
 == Encryptable Type
 
-The API includes a `CBLEncryptable` type, representing an encryptable value to be automatically encrypted/decryped the replicator -- see <<ex-encryptabe-type>>.
+The API includes a `CBLEncryptable` type, representing an encryptable value to be automatically encrypted/decrypted the replicator -- see <<ex-encryptable-type>>.
 
-You declare  properties requiring encryption by the replicator, as a dictionary with the structure shown in <<ex-encryptabe-type>>.
+You declare  properties requiring encryption by the replicator, as a dictionary with the structure shown in <<ex-encryptable-type>>.
 
-[#ex-encryptabe-type]
+[#ex-encryptable-type]
 .Encryptable-type Dictionary Structure
 ====
-[source, {source-langauge}]
+[source, {source-language}]
 ----
 {
   "@type": "encryptable",
@@ -66,7 +66,7 @@ The key for the value can be either of the following:
 == Replicator Decryption
 Pull replication detects `encryptable` values before saving them to the local database and decrypts them using the property decryption callback function -- see: <<lbl-decryption-callback>> for more on the decryption callback function.
 
-On successful decryption the replicator saves the property in encryptable dictionary format (removing the `encrypted$` prefix) -- see: <<ex-encryptabe-type>>.
+On successful decryption the replicator saves the property in encryptable dictionary format (removing the `encrypted$` prefix) -- see: <<ex-encryptable-type>>.
 
 
 == Replicator Encryption
@@ -102,7 +102,7 @@ Pull replicator::
 * Transforms the dictionary by:
 ** Removing `alg`
 ** Replacing the `ciphertext` key with the `value`
-** Storing the decrypted key/value in <<ex-encryptabe-type,CBLEncryptable>> format
+** Storing the decrypted key/value in <<ex-encryptable-type,CBLEncryptable>> format
 
 
 .Server SDK Encrypted Field Structure
@@ -194,7 +194,7 @@ CBLEncryptable exposes a _value_ property for query purposes.
 If this value is encrypted the query will return _MISSING_.
 
 [#ex-query]
-.A Simple Encryptabe Query
+.A Simple encryptable Query
 ====
 [source, nql]
 ----
@@ -203,8 +203,8 @@ SELECT  ssn,  // <.>
 FROM db WHERE ssn.value = "123-45-6789"
 ----
 
-<.> The returned `ssn` columm is in the form of an encryptable dictionary
-<.> The returned `ssn.value` columm is the actual value, unless it is still encrypted in which case it returns MISSING
+<.> The returned `ssn` column is in the form of an encryptable dictionary
+<.> The returned `ssn.value` column is the actual value, unless it is still encrypted in which case it returns MISSING
 ====
 
 
