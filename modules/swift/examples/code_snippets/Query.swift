@@ -289,10 +289,8 @@ class Query {
     // tag::query-syntax-n1ql[]
         let db = try! Database(name: "hotel")
         
-        let listQuery =  db.createQuery( query:
-            "SELECT META().id AS thisId FROM \(db.name) WHERE type = 'hotel'" // <.>
-        )
-       
+        let listQuery =  db.createQuery("SELECT META().id AS thisId FROM \(db.name) WHERE type = 'hotel'") // <.>
+        
         let results: ResultSet = try listQuery.execute()
 
     // end::query-syntax-n1ql[]
@@ -310,9 +308,7 @@ class Query {
         let db = try! Database(name: "hotel")
                 
         let listQuery =
-            db.createQuery( query:
-                   "SELECT META().id AS thisId FROM _ WHERE type = $type" // <.>
-                )
+            db.createQuery("SELECT META().id AS thisId FROM _ WHERE type = $type") // <.>
         
         listQuery.parameters =
             Parameters().setString("hotel", forName: "type") // <.>
