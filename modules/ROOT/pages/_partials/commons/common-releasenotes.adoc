@@ -78,22 +78,21 @@ endif::[]
 :param-release-tag: -3-0-0-BETA
 // :this-release: {version-full}
 
-[#major]
-== {version-full} -- September 2021
+:ql-sep: pass:q,a[ *|* ]
 
-.Release Notes for Couchbase Lite on {param-title} {version-full}
-ifndef::is-c[]
+[#major]
+== {this-release} -- September 2021
 _Quick Links_::
-<<new-features-3-0-0>> *|*
-<<improvements-3-0-0>> *|*
-<<issues-and-resolutions-3-0-0>> *|*
-<<lbl-api-changes>> *|*
-<<support-notices-3-0-0>> *|*
-<<Related Content>>
-endif::is-c[]
+<<new-features-3-0-0>> {ql-sep}
+<<improvements-3-0-0>> {ql-sep}
+ifndef::is-c[<<lbl-api-changes>> {ql-sep}]
+<<lbl-know-issues-this-release>> {ql-sep}
+<<lbl-fixed-this-release>> {ql-sep}
+<<lbl-deprecated-this-release>> {ql-sep}
+<<lbl-removed-this-release>> {ql-sep}
+<<lbl-support-notices>> {ql-sep}
 
 include::{root-partials}_block-caveats.adoc[tag="cbl-3-0-0-reindexing"]
-
 
 [#new-features-3-0-0]
 === New Features
@@ -123,10 +122,9 @@ include::{root-partials}pn-change-log-content.adoc[tags=all-new-n1ql-string-3-0,
 
 // end::n1ql-for-mobile[]
 // end::feature-highlights[]
-ifndef::is-c[]
 [#improvements-3-0-0]
-=== Improvements
-endif::is-c[]
+ifndef::is-c[]
+=== Enhancements
 // tag::improvements[]
 
 // ==== Feature Changes
@@ -153,10 +151,13 @@ include::{root-partials}pn-change-log-content.adoc[tags=all-changed-features-acc
 
 // end::replicator-retry[]
 === Other Enhancements
+endif::is-c[]
+
 include::{module-partials}pn-issues-list.adoc[tag=enhancements{param-release-tag}]
 // end::improvements[]
 // end::feature-changes[]
 
+// No C changes this release
 ifndef::is-c[]
 [#lbl-api-changes]
 === API Changes
@@ -166,35 +167,41 @@ include::{module-partials}api-changes.adoc[tag=content, leveloffset=+2]
 
 
 // end::api-changes[]
+endif::is-c[]
 
 [#issues-and-resolutions-3-0-0]
-=== Issues and Resolutions
-==== Known Issues
+// === Issues and Resolutions
+
+[#lbl-know-issues-this-release]
+=== Known Issues
 include::{module-partials}pn-issues-list.adoc[tag=knownissues{param-release-tag}]
 
-==== Fixed Issues
+
+[#lbl-fixed-this-release]
+=== Fixed Issues
 include::{module-partials}pn-issues-list.adoc[tag=fixed{param-release-tag}]
 
-[#support-notices-3-0-0]
-=== Support Notices
-This section documents any support-related notes, constraints and changes
-
-==== Deprecation Notices
+[#lbl-deprecated-this-release]
+=== Deprecated in this Release
 Items (features and-or functionality) are marked as deprecated when a more current, and usually enhanced, alternative is available.
 
-Whilst the deprecated item will remain usable, it is no longer supported, and will be removed in a future release.
+Whilst the deprecated item will remain usable, it is no longer supported, and will be removed in a future release -- see also: <<lbl-removed-this-release>>
 You should plan to move to an alternative, supported, solution as soon as practical.
 
-===== This Release
 // include::{root-partials}block-deprecations.adoc[tag={param-platform}-new]
 include::{module-partials}pn-issues-list.adoc[tag=deprecated{param-release-tag}]
 * {empty}
 +
 include::{root-partials}block-deprecations.adoc[tag=any-platform-new]
 
-===== Ongoing
+==== Previously Deprecated
 include::{root-partials}block-deprecations.adoc[tag=any-platform-ongoing]
 include::{root-partials}block-deprecations.adoc[tag={param-platform}-ongoing]
+
+[#lbl-removed-this-release]
+=== Removed in this Release
+// include::{root-partials}block-deprecations.adoc[tag={param-platform}-new]
+include::{module-partials}pn-issues-list.adoc[tag=removed{param-release-tag}]
 
 // === End of Life
 // include::{root-partials}block-deprecations.adoc[tag=any-platform-eol]
@@ -203,16 +210,21 @@ include::{root-partials}block-deprecations.adoc[tag={param-platform}-ongoing]
 // === End of Support
 // {ns-this}
 
-==== Other Notices
-===== New
+
+[#lbl-support-notices]
+=== Support Notices
+This section documents any support-related notes, constraints and changes
+
+==== New
 include::{root-partials}block-supportnotices.adoc[tag=any-platform-new]
 include::{root-partials}block-supportnotices.adoc[tag={param-platform}-new]
 
-===== Ongoing
+==== Ongoing
 include::{root-partials}block-supportnotices.adoc[tag=any-platform-ongoing]
 include::{root-partials}block-supportnotices.adoc[tag={param-platform}-ongoing]
 
-endif::is-c[]
+// endif::is-c[]
+// No C changes this release
 
 // DO NOT EDIT -- Footer Related Content Block
 include::{root-partials}block-related-content-prod.adoc[]
