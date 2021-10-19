@@ -5,10 +5,209 @@
 :page-role:
 :description:
 
+
 include::partial$_std-cbl-hdr-java.adoc[]
 
 // tag::content[]
-placeholder
+:source-header: pass:q,a[source, {source-language},subs="attributes+, macros+"]
+:url-api-references-2-8-0: https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/
+:url-api-references-3-0-0: https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-java/com/couchbase/lite/
+
+
+This content introduces the changes made to the {cbl-t} for {param-title} API for release {version-full}.
+
+== Removed
+
+=== ResetCheckpoint
+
+The method {url-api-references-2-8-0}AbstractReplicator.html#resetCheckpoint--[Replicator.resetCheckpoint()] method has been removed. +
+Instead, use {url-api-references-3-0-0}AbstractReplicator.html#start-boolean-[Replicator.resetCheckpoint(boolean reset)].
+
+.Before
+[{source-header}]
+----
+replicator.resetCheckpoint()
+replicator.start()
+----
+
+.After
+[{source-header}]
+----
+replicator.start(true)
+----
+
+=== Database.setLogLevel
+
+The method {url-api-references-2-8-0}Database.html#setLogLevel-com.couchbase.lite.LogDomain-com.couchbase.lite.LogLevel-[Database.setLogLevel()]
+has been removed. +
+Instead:
+
+. Set the logging levels for loggers, individually
+. Set the domains to be logged by the console logger, explicitly.
+
+.Before
+[{source-header}]
+----
+Database.setLogLevel(LogDomain.ALL, LogLevel.VERBOSE)
+
+----
+
+.After
+[{source-header}]
+----
+Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS)
+Database.log.getConsole().setLevel(LogLevel.VERBOSE)
+Database.log.getFile().setDomains(LogLevel.DEBUG)
+----
+
+=== Database.compact
+The {url-api-references-2-8-0}Database.html#compact--[Database.compact()] method has been removed. +
+It is replaced by the new {url-api-references-3-0-0}Database.html#performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance(MaintenanceType)] method, and the maintenance operations represented in the enum {url-api-references-3-0-0}MaintenanceType.html[MaintenanceType]
+
+.Before
+[{source-header}]
+----
+try testdb.compact()
+
+----
+
+.After
+[{source-header}]
+----
+testdb.performMaintenance(MaintenanceType.COMPACT)
+----
+
+
+== Deprected in the API
+
+=== MATCH
+The class, {url-api-references-2-8-0}FullTextExpression.html[FullTextExpression]
+has been deprecated. +
+Use {url-api-references-3-0-0}FullTextFunction.html[FullTextFunction] instead.
+
+.Before
+[{source-header}]
+----
+FullTextExpression index = FullTextExpression.index("indexName")
+Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
+  .from(DataSource.database(testdb))
+  .where(index.match(queryString))
+
+----
+
+.After
+[{source-header}]
+----
+Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
+  .from(DataSource.database(testdb))
+  .where(FullTextFunction.match("indexName", queryString))
+
+----
+
+=== isNullOrMissing/notNullOrMissing
+
+The functions {url-api-references-2-8-0}Expression.html#isNullOrMissing--[Expression.isNullOrMissing] and {url-api-references-2-8-0}Expression.html#notNullOrMissing--[Expression.notNullOrMissing] have been deprecated. +
+Use `isNotValued()` and-or `isValued()` instead.
+
+
+.Before
+[{source-header}]
+----
+Query q =
+  QueryBuilder
+    .select([SelectResult.expression(Meta.id)])
+    .from(DataSource.database(testdb))
+    .where(
+      Expression.property("missingProp").isNullOrMissing())
+
+Query q =
+  QueryBuilder
+    .select([SelectResult.expression(Meta.id)])
+    .from(DataSource.database(testdb))
+    .where(Expression.property("notMissingProp").notNullOrMissing())
+
+----
+.After
+[{source-header}]
+----
+Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
+  .from(DataSource.database(testdb))
+  .where(Expression.property("missingProp").isNotValued())
+
+Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
+  .from(DataSource.database(testdb))
+  .where(Expression.property("notMissingProp").isValued())
+
+----
+
+
+=== AbstractReplicatorConfiguration
+
+The enum {url-api-references-2-8-0}ReplicatorConfiguration.html#setReplicatorType-com.couchbase.lite.AbstractReplicatorConfiguration.ReplicatorType-[AbstractReplicatorConfiguration.ReplicatorType]
+and the methods
+{url-api-references-2-8-0}ReplicatorConfiguration.html#setReplicatorType--[
+ReplicatorConfiguration.setReplicatorType]
+and
+{url-api-references-2-8-0}ReplicatorConfiguration.html#getReplicatorType--[
+ReplicatorConfiguration.getReplicatorType]
+have all been deprecated. +
+Instead, use the methods `ReplicatorConfiguration.setType` and `ReplicatorConfiguration.getType`, and the top level enum `ReplicatorType`.
+
+.Before
+[{source-header}]
+----
+ReplicatorConfiguration config =
+  new ReplicatorConfiguration().setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+----
+.After
+[{source-header}]
+----
+ReplicatorConfiguration config =
+  new ReplicatorConfiguration().setType(ReplicatorType.PUSH_AND_PULL);
+----
+
+
+== Moved in the API
+
+The enum {url-api-references-2-8-0}AbstractReplicator.ActivityLevel.html[AbstractReplicator.ActivityLevel] and the classes {url-api-references-2-8-0}AbstractReplicator.Progress.html[AbstractReplicator.Progress] and {url-api-references-2-8-0}AbstractReplicator.Status.html[AbstractReplicator.Status] have all been moved to be top level definitions. +
+They are replaced by these definitions:
+
+* {url-api-references-3-0-0}ReplicatorActivityLevel.html[ReplicatorActivityLevel]
+* {url-api-references-3-0-0}ReplicatorProgress.html[ReplicatorProgress]
+* {url-api-references-3-0-0}ReplicatorStates.html[ReplicatorStates]
+
+
+
+.Before
+[{source-header}]
+----
+ListenerToken token =
+  replicator.addChangeListener(
+    testSerialExecutor,
+    change -> {
+      final AbstractReplicator.Status status = change.getStatus()
+      if (status.getActivityLevel() == AbstractReplicator.ActivityLevel.BUSY)
+      { AbstractReplicator.Progress progress =
+          status.getProgress(); Logger.log("Progress: " + progress.completed + "/" progress.total);
+      }
+    });
+
+----
+.After
+[{source-header}]
+----
+ListenerToken token =
+  replicator.addChangeListener(
+    testSerialExecutor,
+    change -> {
+      final ReplicatorStatus status = change.getStatus()
+      if (status.getActivityLevel() == ReplicatorActivityLevel.BUSY)
+      { ReplicatorProgress progress =
+          status.getProgress(); Logger.log("Progress: " + progress.completed + "/" progress.total);
+      }
+    });
+
+----
 
 // end::content[]
 

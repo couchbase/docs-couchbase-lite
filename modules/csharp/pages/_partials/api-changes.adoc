@@ -10,73 +10,202 @@ include::partial$_std-cbl-hdr-csharp.adoc[]
 :param-abstract!:
 // DO NOT EDIT
 include::{root-partials}block-abstract.adoc[]
-// include::{root-partials}block-related-get-started.adoc[]
 // DO NOT EDIT
+
 // tag::content[]
+:source-header: pass:q,a[source, java,subs="attributes+, macros+"]
+:url-api-references-2-8-0: https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.
+:url-api-references-3-0-0: https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-net/api/Couchbase.Lite.
 
-== .Net Specific Changes for 2.x to 3.x Migration
+This content introduces the changes made to the {cbl-t} for {param-title} API for release {version-full}.
 
-* Starting from Couchbase Lite 3.0.0 (beta), .Net requires
-** _Visual Studio 2019+_
-** .Net Core 3.1 (updating from .Net Core 2.0)
-* `ATAN2(x, y)` now becomes `ATAN2(y, x)` +
-*IMPORTANT*: Breaking change https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Atan2_Couchbase_Lite_Query_IExpression_Couchbase_Lite_Query_IExpression_[atan2()]
-+
-* The (now) obsolete method `Activate()` is removed from *all* platform support libraries *except* `Support.Android` (Xamarin Android)
+Starting from this release {cbl-t} for {param-title} requires _Visual Studio 2019+_ and uses .Net Core 3.1 (updating from .Net Core 2.0).
+
+== Breaking Change
+
+The function {url-api-references-2-8-0}Query.Function.html#Couchbase_Lite_Query_Function_Atan2_Couchbase_Lite_Query_IExpression_Couchbase_Lite_Query_IExpression_[ATAN2(x, y)],
+which returns the principal value of the arc tangent of y/x, now becomes
+{url-api-references-3-0-0}Query.Function.html#Couchbase_Lite_Query_Function_Atan2_Couchbase_Lite_Query_IExpression_Couchbase_Lite_Query_IExpression_[ATAN2(y, x)]
+; that is, the arguments are reversed in line with common notation.
 
 
-== Obsolete Methods
+== Removed
 
-[,cols="1,4"]
-|===
-| Method| Note
+=== Activate
 
-| Activate()
-| We have removed the obsolete method `Activate()` from all the platform support libraries except `Support.Android` (Xamarin Android)
+We have removed the method `Activate()` from *all* platform support libraries *except* `Support.Android` (Xamarin Android)
 
-| EnableTextLogging()
-| We have removed the obsolete method `EnableTextLogging()` from all the platform support libraries.
-|===
 
-== Removed API
+=== EnableTextLogging()
+We have removed the obsolete method `EnableTextLogging()` from all the platform support libraries.
 
-[,cols="1m,1m", options="header"]
-|===
 
-|Removed
-|Alternative
+=== ResetCheckpoint
 
-| https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_ResetCheckpoint[ResetCheckpoint()]
-| `replicator.start(reset:)`
+The method
+{url-api-references-2-8-0}Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_ResetCheckpoint[ResetCheckpoint()]
+has been removed.
+Use the `reset:` argument when starting the replicator instead.
 
-| https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_SetLogLevel_Couchbase_Lite_Logging_LogDomain_Couchbase_Lite_Logging_LogLevel_[Database.setLogLevel()]
-| Database.log.console
+==== Before
+[{source-header}]
+----
+replicator.ResetCheckpoint();
+replicator.Start();
+----
 
-| https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Compact[Database.compact()]
-| performMaintenance(type:﹚
+==== After
+[{source-header}]
+----
+replicator.Start(true) // <.>
 
-|===
+----
+<.> Set the `reset:` argument `true` to initiate a replicator checkpoint reset
+
+=== SetLogLevel()
+We have removed the method
+{url-api-references-2-8-0}Database.html#Couchbase_Lite_Database_SetLogLevel_Couchbase_Lite_Logging_LogDomain_Couchbase_Lite_Logging_LogLevel_[Database.setLogLevel()] +
+Use
+{url-api-references-3-0-0}Logging.Log.html#Couchbase_Lite_Logging_Log_Console[
+Database.log.console]
+instead:
+
+==== Before
+[{source-header}]
+----
+Database.SetLogLevel(LogDomain.Replicator, LogLevel.Verbose);
+Database.SetLogLevel(LogDomain.Query, LogLevel.Verbose);
+----
+
+==== After
+[{source-header}]
+----
+Database.Log.Console.Domains = LogDomain.All;
+Database.Log.Console.LogLevel = LogLevel.Verbose;
+
+----
+
+
+== Database.Compact
+We have removed the method
+{url-api-references-2-8-0}Database.html#Couchbase_Lite_Database_Compact[Database.compact()]. +
+Use the method
+{url-api-references-3-0-0}Database.html#Couchbase_Lite_Database_PerformMaintenance_Couchbase_Lite_MaintenanceType_[Database.PerformaMaintenance()] and the enum
+{url-api-references-3-0-0}MaintenanceType.html[MaintenanceType]
+instead
+
+==== Before
+[{source-header}]
+----
+var db = new Database("thisdb");
+db.Compact()
+----
+
+==== After
+[{source-header}]
+----
+var db = new Database("thisdb");
+
+db.PerformMaintenance(MaintenanceType.Compact)
+
+----
+
 
 == Deprecated API
 
-These will be removed in the next major release.
 
-[,cols="1m,1m", options="header"]
-|===
+=== Match
+We will remove
+{url-api-references-2-8-0}Query.IFullTextExpression.html#Couchbase_Lite_Query_IFullTextExpression_Match_System_String_[Match]
+at the next major release. +
+You should plan to switch to using the alternative
+{url-api-references-3-0-0}Query.FullTextFunction.htmlFullTextFunction.match(indexName:)[FullTextFunction.match(indexName:)]
+at the earliest opportunity.
 
-|Removed
-|Alternative
+==== Before
+[{source-header}]
+----
+var whereClause =
+        FullTextExpression.Index("nameFTSIndex").Match("'querystring'");
+using (var query = QueryBuilder.Select(SelectResult.Expression(Meta.ID))
+    .From(DataSource.Database(db))
+    .Where(whereClause)) {
+    foreach (var result in query.Execute()) {
+        Console.WriteLine($"Document id {result.GetString(0)}");
+    }
+}
+----
 
-| https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.IFullTextExpression.html#Couchbase_Lite_Query_IFullTextExpression_Match_System_String_[Match]
-| FullTextFunction.match(indexName:)
+==== After
+[{source-header}]
+----
+var whereClause =
+      FullTextFunction.Match("nameFTSIndex"),"'querystring'"); // <.>
+using (var query =
+    QueryBuilder.Select(SelectResult.Expression(Meta.ID))
+      .From(DataSource.Database(db))
+      .Where(whereClause)) {
+      foreach (var result in query.Execute()) {
+        Console.WriteLine($"Document id {result.GetString(0)}");
+      }
+  }
+----
+<.> Here we use {url-api-references-3-0-0}Query.FullTextFunction.htmlFullTextFunction.match(indexName:)[FullTextFunction.match(indexName:)]
+to build the query
 
-| https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsNullOrMissing[isNullOrMissing]
-| isValued()
+=== IsNullOrMissing
+We will remove
+{url-api-references-2-8-0}Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsNullOrMissing[isNullOrMissing] +
+You should plan to switch to using the alternative
+{url-api-references-3-0-0}Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsNotValued[IsNotValued()]
 
-| https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_NotNullOrMissing[notNullOrMissing]
+at the earliest opportunity.
+
+==== Before
+[{source-header}]
+----
+var query = QueryBuilder.Select(SelectResult.All())
+    .From(DataSource.Database(db))
+    .Where(Expression.Property("missingprop").IsNullOrMissing())
+----
+
+==== After
+[{source-header}]
+----
+var query = QueryBuilder.Select(SelectResult.All())
+    .From(DataSource.Database(db))
+    .Where(Expression.Property("missingprop").IsNotValued())
+----
+
+
+=== NotNullOrMissing
+We will remove
+{url-api-references-2-8-0}Query.IExpression.html#Couchbase_Lite_Query_IExpression_NotNullOrMissing[notNullOrMissing]. +
+You should plan to switch to using the alternative
+{url-api-references-3-0-0}Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsValued[isValued()]
+at the earliest opportunity.
+
+
 | isNotValued()
 
-|===
+
+==== Before
+[{source-header}]
+----
+var query = QueryBuilder.Select(SelectResult.All())
+    .From(DataSource.Database(db))
+    .Where(Expression.Property("notmissingprop").NotNullOrMissing())
+----
+
+==== After
+[{source-header}]
+----
+var query = QueryBuilder.Select(SelectResult.All())
+    .From(DataSource.Database(db))
+    .Where(Expression.Property("notmissingprop").IsValued())
+
+----
+
 // end::content[]
 
 
