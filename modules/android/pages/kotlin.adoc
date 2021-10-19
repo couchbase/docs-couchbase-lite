@@ -10,17 +10,17 @@ include::partial$_std-cbl-hdr-android.adoc[]
 :topic-group: Topic Group -- Data Model
 include::{root-partials}block-abstract.adoc[]
 
-:url-api-references-kotlin: https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android-ktx/com/couchbase/lite/
+:url-api-references-kotlin: https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-android-ktx/com/couchbase/lite/
 :url-api-references-kotlin-config-factories: {url-api-references-kotlin}ConfigurationFactoriesKt.html
 :url-api-references-kotlin-common-config-factories: {url-api-references-kotlin}CommonConfigurationFactoriesKt.html
 :url-api-references-kotlin-common-flows: {url-api-references-kotlin}CommonFlowsKt.html
 
 
-:config-factories: {url-api-references-kotlin-config-factories}[ConfigurationFactories()]
+:config-factories: {url-api-references-kotlin-config-factories}[ConfigurationFactories]
 :database-configuration-factory: {url-api-references-kotlin-config-factories}#DatabaseConfigurationFactory[DatabaseConfigurationFactory]
 :replicator-configuration-factory: {url-api-references-kotlin-config-factories}#ReplicatorConfigurationFactory[ReplicatorConfigurationFactory]
 
-:common-config-factories: {url-api-references-kotlin-common-config-factories}[CommonConfigurationFactories()]
+:common-config-factories: {url-api-references-kotlin-common-config-factories}[CommonConfigurationFactories]
 :fulltextindex-configuration-factory: {url-api-references-kotlin-common-config-factories}#FullTextIndexConfigurationFactory[FullTextIndexConfigurationFactory]
 :valueindex-configuration-factory: {url-api-references-kotlin-common-config-factories}#ValueIndexConfigurationFactory[ValueIndexConfigurationFactory]
 :logfile-configuration-factory: {url-api-references-kotlin-common-config-factories}#LogFileConfigurationFactory[LogFileConfigurationFactory]
@@ -39,7 +39,7 @@ include::{root-partials}block-abstract.adoc[]
 
 {cbl-te} _{param-title} {version-full}_ introduces full idiomatic support for Kotlin apps, out-of-the-box.
 
-Kotlin developers can now build apps using https://developer.android.com/kotlin/common-patterns[common Kotlin Patterns], that integrate seamlessly with Couchbase Lite for Android and have full feature parity with the Java API; no need for custom extensions.
+Kotlin developers can now build apps using https://developer.android.com/kotlin/common-patterns[common Kotlin Patterns], that integrate seamlessly with Couchbase Lite for Android and have full feature parity with the Java API; including some convenient Kotlin Extensions to get you started.
 
 Key features include:
 
@@ -49,21 +49,25 @@ Key features include:
 
 Java support and functionality continues for Android.
 
-You can choose whether to use the Kotlin extensions API or continue using the Java API.
+
+== Kotlin Extensions
+
+In addition to having full co-compatible access to the existing Java API, Kotlin developers can also access a number of Kotlin Extensions.
+
+The
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}-{releasetag}/couchbase-lite-android-ktx[Kotlin Extensions]
+package includes:
+
+* <<lbl-factories>> for the configuration of important Couchbase Lite objects such as _Databases_, _Replicators_ and _Listeners_.
+* Change Flows that monitor key  Couchbase Lite objects fpr change using Kotlin features such as, Co-routines and https://developer.android.com/kotlin/flow[Flows].
+
+See: https://docs.couchbase.com/mobile/{major}.{minor}.{base}-{releasetag}/couchbase-lite-android-ktx[Kotlin Extensions] for extension API docs
 
 
-== Kotlin-specific API
+[#lbl-factories]
+== Configuration Factories
 
-In addition to having full co-compatible access to the existing Java API, Kotlin developers can also access a number of Kotlin-specific API calls.
-
-These
-https://docs.couchbase.com/mobile/{major}.{minor}.{base}-{releasetag}/couchbase-lite-android-ktx[Kotlin Specific API]
-take advantage of Kotlin features such as, Co-routines and https://developer.android.com/kotlin/flow[Flows].
-
-
-== Configuration Factory Constructors
-
-{cbl-t} provides a set of {config-factories} and {common-config-factories}, these constructors allow use of named parameters to specify property settings.
+{cbl-t} provides a set of {config-factories} and {common-config-factories}, these allow use of named parameters to specify property settings.
 
 === Database
 Use
@@ -234,7 +238,7 @@ In Use::
 --
 [{source-header}]
 ----
-include::{snippets_root}BasicExamples.kt
+
 include::{snippets_root}BasicExamples.kt[tags=file-logging-config-factory]
 
 ----
@@ -263,7 +267,7 @@ fun LogFileConfiguration?.create(
 
 These wrappers use _Flowables_ to monitor for changes.
 
-=== Database Change Listener
+=== Database Change Flow
 
 Use the
 {flows-database-change}
@@ -279,7 +283,9 @@ In Use::
 [{source-header}]
 ----
 
-include::{snippets_root}FlowExamples.kt[tags=flow-as-database-change-listener]
+val updatedDocs = db.databaseChangeFlow()
+    .map { it.documentIDs }
+    .asLiveData()
 
 ----
 --
@@ -299,7 +305,7 @@ fun Database.databaseChangeFlow(executor: Executor? = null)
 =====
 
 
-=== Document Change Listener
+=== Document Change Flow
 Use
 {flows-document-change}
 to monitor changes to a document.
@@ -314,7 +320,9 @@ In Use::
 [{source-header}]
 ----
 
-include::{snippets_root}FlowExamples.kt[tags=flow-as-document-change-listener]
+val docModDate = db.documentChangeFlow("1001", null)
+    .map { it.database.getDocument(it.documentID)?.getString("lastModified") }
+    .asLiveData()
 
 ----
 --
@@ -334,7 +342,7 @@ fun Database.documentChangeFlow(documentId: String, executor: Executor? = null)
 
 =====
 
-=== Replicator Change Listener
+=== Replicator Change Flow
 Use
 {flows-replicator-changes}
 to monitor replicator changes.
@@ -349,7 +357,9 @@ In Use::
 [{source-header}]
 ----
 
-include::{snippets_root}FlowExamples.kt[tags=flow-as-replicator-change-listener]
+val replState = repl.replicatorChangesFlow()
+    .map { it.status.activityLevel }
+    .asLiveData()
 
 ----
 --
@@ -367,7 +377,7 @@ fun Replicator.replicatorChangesFlow(executor: Executor? = null)
 =====
 
 
-=== Document Replicator Change Listener
+=== Document Replicator Change Flow
 Use
 {flows-document-replication}
 to monitor document changes during replication.
@@ -381,8 +391,11 @@ In Use::
 
 [{source-header}]
 ----
-// Placeholder -- content to be provided by GA
-include::{snippets_root}FlowExamples.kt[tags=flow-as-document-replicator-change-listener]
+
+val replicatedDocs = repl.documentReplicationFlow(testSerialExecutor)
+    .map { update -> update.documents }
+    .onEach { listView.setUpdated(it) }
+    .collect()
 
 ----
 --
@@ -403,7 +416,7 @@ fun Replicator.documentReplicationFlow(executor: Executor? = null)
 =====
 
 
-=== Query Change Listener
+=== Query Change Flow
 Use
 {flows-query-changes}
 to monitor document changes during replication.
