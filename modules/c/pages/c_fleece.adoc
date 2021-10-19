@@ -12,6 +12,8 @@ include::partial$_std-cbl-hdr-c.adoc[]
 
 :url_flslice_hdr: https://github.com/couchbaselabs/fleece/blob/master/API/fleece/FLSlice.h[FLSlice.h]
 
+:param-related!:
+include::{root-partials}block-abstract.adoc[]
 
 == Introduction
 
@@ -47,190 +49,267 @@ For more information, see::
 {url_using_fleece} |
 {url_fleece_hdr}
 
-=== Values
 
-FLValue is Fleece's ubiquitous data type.
-It is a reference to a value of any type.
+== Values
 
-.FLValue
-[source,{source-language}, subs="attributes+, nacros+"}]
+Fleece’s data types are almost identical to those of JSON, with the notable addition of binary data types.
+
+Basically Fleece provides seven data types: _null_, _boolean_, _numbers_, _strings_, _arrays_, _dictionaries_, and _data_.
+Arrays can contain any data type and dictionaries have strings as keys, with values of any data type.
+
+The basic Fleece data type is *FLValue*, an opaque pointer reference to a value of any type.
+
+Use the _FLValue_GetType_ API to check the value's actual type and _FLValue_As<Type Name>_ to get the actual value as shown in <<ex-flvalue>>
+
+.Use FLValue
+[#ex-flvalue]
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
-FLString verified_account = FLValue_AsString(FLDict_Get(properties, FLSTR("verified_account"))); // <.>
+FLDict props = CBLDocument_Properties(doc);
+FLValue value = FLDict_Get(props, FLSTR("name”));
+FLValueType type = FLValue_GetType(value); // <.>
+if (type == kFLString) {
+    FLString name = FLValue_AsString(value);
+    doSomethingWith(name); // <.>
+}
+
 ----
-<.> Here we retrieve a property value as a string.
+<.> Find the values data type
+<.> Cast to appropriate type
 
-== Slices
+See: {url_fleece_hdr} for more details.
 
-Another basic Fleece data type, `FLSlice` is a simple struct consisting of a pointer and a length.
-It points to a range of memory, without  implying ownership
-A lot of utility methods rely on it, including ones to convert to and from C++ and C strings.
 
-An `FLSlice` literal can be written as FLSTR("something").
+== Slices and Strings
 
-It has utility functions such as:
+=== FLSlice
+Another basic Fleece data type, _FLSlice_ a simple struct consisting of a pointer and a length.
+It points to a block of memory, without implying ownership of that memory.
+FLSlice is used to represent both binary data and strings.
+
+=== FLString
+_FLString_ is a typedef of FLSlice, which explicitly represents a string value.
+Use the _FLSTR(“Some String”)_ macro to create an FLString from a string literal -- see: <<ex-flstr>>
+
+
+.Create an FLString
+[#ex-flstr]
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+
+CBLDatabase* db = CBLDatabase_Open( (FLSTR("my-database"), NULL, &err); // <.>
+
+----
+<.> FLSTR("My-database") creates the FLString from the given string literal.
+
+
+=== FLSliceResult/FLStringResult
+
+FLSlice doesn’t imply an ownership of memory.
+However, _FLSliceResult_/_FLStringResult_ is an FLSlice type which _does_ own memory and is reference-counted. +
+
+In general, whenever an FLSliceResult/FLStringResult is returned from an API call, you are responsible for calling FLSliceResult_Release when you are done using it.
+
+For an example of `FLSliceResult` in use, see: <<ex-flsliceresult>>.
+
+[#ex-flsliceresult]
+.Using FLStringResult
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+
+FLStringResult path = CBLDatabase_Path(db);
+doSomethingWith(path);
+FLSliceResult_Release(path); // <.>
+
+----
+<.> You are responsible for calling FLSliceResult_Release when you are done using it.
+
+
+FLSlice and FLSliceResult have utility functions such as:
 
 * `FLSlice_Equal` -- compares two slices for equality.
 * `FLSlice_Compare` -- a 3-way comparison, like strcmp().
+* `FLSlice_Copy`
+* `FLSliceResult_New`
+* `FLSliceResults_Release`
 
-The `FLSliceResult` type is a subclass of FLSLice, which *does* own memory. +
-It always points to a heap block that it manages.
-You are responsible for calling FLSliceResult_Release when you're done with it.
 
-For an example of `FLSliceResult` in use, see: <<ex-create-array>>.
-It has functions which can be used to create new  `FLSliceResults` and to Release them when necessary.
+=== Null Slices
+The null slice {NULL, 0} is represented by the constant `kFLSliceNull`. +
+You test a slice for null by comparing its pointer (buf) with NULL -- see: <<ex-flnullslice>>
 
-* FLSliceResult_New
-* FLSlice_Copy
-* FLSliceResults_Release
-
-NOTE: The null slice {NULL, 0} is represented by the constant `kFLSliceNull`. +
-You test a slice for null by comparing its pointer (buf) with NULL.
-
-Reference-counting is a manual exercise, see: xref:{param-module}:c_notes.adoc#lbl-ref-counted-objects[C Reference counted objects].
-Whenever an `FLSliceResult` is returned from an API call, you are responsible for calling `FLSliceResult_Release` when you're done with it.
-
-See: {url_flslice_hdr} for more details.
-
-== Strings
-
-Use the Fleece `FLSTR` function to provide string arguments to {cbl-t}
-
-.Strings
-[source,{source-language}, subs="attributes+, nacros+"}]
+[#ex-flnullslice]
+.Test for null slice
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
-CBLDatabase* db = CBLDatabase_Open(FLSTR("my-database"), NULL, &err);
+FLValue value = FLDict_Get(props, FLSTR("name”));
+FLString name = FLValue_AsString(value);
+if (name.buf != NULL) {
+    doSomethingWith(name);
+}
 ----
+
+
+See: {url_flslice_hdr} for more details on data slices.
+
 
 == Dictionaries
 
-Use `FLMutableDict` to add K/V pairs to dictionaries and document as shown here.
+=== Immutable
+_FLDict_ represents an immutable dictionary type in Fleece. +
+To access a value with a string key from a dictionary, use FLDict_Get -- as shown in: <<ex-flget>>.
 
-[source,{source-language}, subs="attributes+, nacros+"}]
+[#ex-flget]
+.Get dictionary value
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
-CBLDocument* newTask = CBLDocument_CreateWithID(FLSTR("xyz"));
-FLMutableDict properties = CBLDocument_MutableProperties(newTask);
-FLMutableDict_SetString(properties, FLSTR("type"), FLSTR("task"));
-FLMutableDict_SetString(properties, FLSTR("owner"), FLSTR("todo"));
+
+FLDict props = CBLDocument_Properties(doc);
+FLValue value = FLDict_Get(props, FLSTR("name”));
+doSomethingWith(value);
+
 ----
-<.> don't forget to release resources once you have finished with them +
-`FLMutableDict_Release(properties);`
+
+
+To iterate through each key-value pair in the dictionary, use _FLDictIterator_, as shown in: <<ex-fliterator>>
+
+[#ex-fliterator]
+.Iterate key-value pairs in dictionary
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+
+FLDictIterator iter;
+FLDictIterator_Begin(myDict, &iter);
+FLValue value;
+while (NULL != (value = FLDictIterator_GetValue(&iter))) {
+    FLString key = FLDictIterator_GetKeyString(&iter);
+    doSomethingWith(key, value);
+    FLDictIterator_Next(&iter);
+}
+----
+
+
+=== Mutable
+
+*FLMutableDictionary* is a mutable dictionary type that allows editing.
+
+To create a new mutable dictionary, use FLMutableDict_New() -- see: <<ex-flmutabledict-new>>.
+
+[#ex-flmutabledict-new]
+.Set dictionary value
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+FLMutableDict myDict = FLMutableDict_New()
+FLMutableDict_SetString(myDict, FLSTR(“name”), FLSTR(“John Doe”));
+doSomethingWith(myDict);
+FLMutableDict_Release(myDict); // <.>
+----
+<.> don't forget to release resources once you have finished with them
+
 
 [#lbl-fleece-arrays]
 == Arrays
 
-Use the FLValue function FLValue_AsArray to create an array from existing data.
+=== Immutable
+_FLArray_ represents an immutable array type in Fleece. +
+use _FLArray_Count_ and _FLArray_Get_ respectively, to get the numbers of values in an array and to get a value using with an index -- as shown in <<ex-flarray-get>>.
 
-[#ex-create-array]
-.Create arrays
-[source,{source-language}, subs="attributes+, nacros+"}]
+[#ex-flarray-get]
+.Use arrays
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
-// Create an array from the JSON string
-FLError err;
-FLSliceResult jsonData1 = FLData_ConvertJSON(json, &err); // <.>
-FLArray hotels = FLValue_AsArray(FLValue_FromData(FLSliceResult_AsSlice(jsonData1), kFLTrusted));
+int count = FLArray_Count(myArray);
+if (count > 0) {
+    FLValue value = FLArray_Get(0);
+    doSomethingWith(value);
+}
 
-FLSliceResult_Release(jsonData1);
 ----
-<.> Here the FLSliceResult points to a Json string representing an array of hotels.
 
-Use `FLArrayIterator` to iterate through arrays as shown in
+
+Use _FLArrayIterator_ to iterate through arrays, as shown in : <<ex-array-iteration>>.
 
 [#ex-array-iteration]
 .Array iteration
 // Iterate through the array
-[source,{source-language}, subs="attributes+, nacros+"}]
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
 FLArrayIterator iter;
-FLArrayIterator_Begin(hotels, &iter);
+FLArrayIterator_Begin(myArray, &iter);
 FLValue value;
 while (NULL != (value = FLArrayIterator_GetValue(&iter))) {
-    FLString hotel = FLValue_AsString(value);
-    printf("Hotel :: %.*s\n", (int)hotel.size, (const char *)hotel.buf);
+    doSomethingWith(value);
     FLArrayIterator_Next(&iter);
 }
+
 ----
 
-== Encoding a Fleece Object
+=== Mutable
 
-. Construct an Encoder
-. Tell the encoder to begin a collection: beginArray or beginDict
-. Write values to the encoder, which adds them to the collection:
-. If the collection is a dictionary, call writeKey to define the key for the value.
-. To write a collection, recursively perform steps 2–4: Begin the collection, write . values, end it. +
-To write a scalar, call: writeNull, writeBool, writeInt, etc.
-. End the collection: endArray or endDict
-. Call finish, which returns the encoded data
+_FLMutableArray_ is a mutable array type that allows editing. +
 
+To create a new mutable array, use _FLMutableArray_New_.
 
-[#ex-encoding]
-.Encoding  a Fleece object
-====
-// Iterate through the array
-[source,{source-language}, subs="attributes+, nacros+"}]
+To append a value into the array, use _FLMutableArray_Append<Type Name>_.
+
+[#ex-flmutable-array-append]
+.Append values to array
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
-Encoder enc;
-enc.beginDict(); // <.>
-enc.writeKey("dimensions"); // <.>
-  enc.beginArray();
-    enc.writeInt(10);
-    enc.writeInt(16);
-  enc.endArray();
-enc.writeKey("color"); // <.>
-enc.writeString("blue");
-enc.endDict();
-FLSliceResult encodedData = enc.finish(); // <.>
+FLMutableArray myArray = FLMutableArray_New();
+FLMutableArray_AppendString(myArray, FLSTR(“String 1”));
+FLMutableArray_AppendString(myArray, FLSTR(“String 2”)); // <.>
+doSomethingWith(myArray);
+FLMutableArray_Release(myArray)
 ----
-<.> Start the dictionary collection
-<.> Here we create a property with the key _dimensions_ and a value comprising an array of two integer values representing, say, length and width
-<.> Here we create a property with the key _color_ and a value "blue"
-<.> Finish and return the slice as `encodedData`
+<.> To set a value at a specific array index, use FLMutableArraySet<Type Name>.
 
-====
 
-== Encryptables
+== JSON Support
 
-You can use the Fleece Extension API for setting and getting CBLEncryptable objects.
+Fleece provides a JSON utility that allows you to parse JSON string into Fleece or generate JSON from Fleece.
 
-.Setter
-[source, {source-language}, subs="attributes+, macros+"]
+=== Parsing JSON
+Use *FLDoc_FromJSON* to convert JSON Dictionary or Array into Fleece Dictionary or Array.
+
+[#ex-json-parse]
+.Parse JSON data to Fleece
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+FLError error;
+FLDoc doc = FLDoc_FromJSON(jsonString, &error);
+if (doc) {
+    FLValue value = FLDoc_GetRoot(doc);
+    FLDict dict = FLValue_AsDict(value);
+    doSomethingWith(dict);
+}
+FLDoc_Release(doc);
 ----
 
-void FLSlot_SetEncryptableValue(FLSlot slot, CBLEncryptable *encryptable);
-----
+=== Generating JSON
+Use FLValue_ToJSON to convert FLValue into JSON string
 
-.Getter
-[source, {source-language}, subs="attributes+, macros+"]
+[#ex-json-from-fleese]
+.Convert to JSON
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
-// Getter
-CBLEncryptable* FLValue_GetEncryptableValue(FLValue v);
-----
-
-.IsEncryptable?
-[source, {source-language}, subs="attributes+, macros+"]
-----
-
-// Check whether the value is an encrypted property or not
-static bool FLValue_IsEncryptableValue(FLValue v);
+FLDict props = CBLDocument_Properties(doc);
+FLStringResult jsonString = FLValue_ToJSON((FLValue) props);
+doSomethingWith(jsonString);
+FLSliceResult_Release(jsonString);
 ----
 
 
-.Encryption Constraints
-[#tbl-encryption-constraints, cols="1h,4a", options="noheader"]
-|===
 
-| Document
-| In the case of nested `encryptable` types, the replicator only encrypts the outer `encryptable`.
+== Memory Management
+In general, Mutable objects are _reference counted_: with MutableArray and Mutable Dictionary each having  _retain_ and _release_ functions. +
+The lifespan of Immutable objects is the same as that of the memory block from which they are parsed.
+They cannot be individually released or retained.
 
-| Arrays
-a| For compatibility with Server SDKS, encryptables are not supported within arrays.
+For more see: +
+https://github.com/couchbaselabs/fleece/wiki/Using-Fleece#5-memory-management[Fleece Mememory Management] |
+https://github.com/couchbaselabs/fleece/wiki/Advanced-Fleece#for-memory-management[Advanced Fleece Mememory Management]
 
-The push replicator should detect and report an error if an encrypted property is found in an array.
 
-| Blobs
-| Encrypting blob’s content is not supported.
-
-Where a Blob as a Fleece dictionary is specified in the encrypted property value, only the dictionary is encrypted; *not* the blob’s content.
-
-|===
 
 include::{root-partials}block-related-content-data.adoc[]
