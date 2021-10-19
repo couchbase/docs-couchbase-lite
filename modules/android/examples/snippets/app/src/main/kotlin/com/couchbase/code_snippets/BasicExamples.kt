@@ -219,7 +219,7 @@ class BasicExamples(private val context: Context) {
     @Throws(CouchbaseLiteException::class)
     fun testFileLogging() {
         // tag::file-logging[]
-        // tag::logging-config-factory[]
+        // tag::file-logging-config-factory[]
         Database.log.file.let {
           it.config = LogFileConfigurationFactory.create(
             context.cacheDir.absolutePath, // <.>
