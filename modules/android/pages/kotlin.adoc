@@ -5,18 +5,39 @@
 :description: Couchbase Lite for Android -- Kotlin support
 
 include::partial$_std-cbl-hdr-android.adoc[]
-// :param-name: {lang-name-android}
-// :param-title: {lang-title-android}
-// :param-module: {lang-mod-android}
 
 :param-related: {database--xref} | {document--xref} | {indexing--xref} |
 :topic-group: Topic Group -- Data Model
 include::{root-partials}block-abstract.adoc[]
 
+:url-api-references-kotlin: https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android-ktx/com/couchbase/lite/
+:url-api-references-kotlin-config-factories: {url-api-references-kotlin}ConfigurationFactoriesKt.html
+:url-api-references-kotlin-common-config-factories: {url-api-references-kotlin}CommonConfigurationFactoriesKt.html
+:url-api-references-kotlin-common-flows: {url-api-references-kotlin}CommonFlowsKt.html
+
+
+:config-factories: {url-api-references-kotlin-config-factories}[ConfigurationFactories()]
+:database-configuration-factory: {url-api-references-kotlin-config-factories}#DatabaseConfigurationFactory[DatabaseConfigurationFactory]
+:replicator-configuration-factory: {url-api-references-kotlin-config-factories}#ReplicatorConfigurationFactory[ReplicatorConfigurationFactory]
+
+:common-config-factories: {url-api-references-kotlin-common-config-factories}[CommonConfigurationFactories()]
+:fulltextindex-configuration-factory: {url-api-references-kotlin-common-config-factories}#FullTextIndexConfigurationFactory[FullTextIndexConfigurationFactory]
+:valueindex-configuration-factory: {url-api-references-kotlin-common-config-factories}#ValueIndexConfigurationFactory[ValueIndexConfigurationFactory]
+:logfile-configuration-factory: {url-api-references-kotlin-common-config-factories}#LogFileConfigurationFactory[LogFileConfigurationFactory]
+
+:flows-database-change: {url-api-references-kotlin-common-flows}#databaseChangeFlow(Database,Executor)[databaseChangeFlow(Database,Executor)]
+:flows-document-change: {url-api-references-kotlin-common-flows}#documentChangeFlow(Database,String,Executor)[documentChangeFlow(Database,String,Executor)]
+:flows-replicator-changes: {url-api-references-kotlin-common-flows}#replicatorChangeFlow(Replicator,Executor)[replicatorChangeFlow(Replicator,Executor)]
+:flows-document-replication: {url-api-references-kotlin-common-flows}#documentReplicationFlow(Replicator,Executor)[documentReplicationFlow(Replicator,Executor)]
+:flows-query-changes: {url-api-references-kotlin-common-flows}#queryChangeFlow(Query,Executor)[queryChangeFlow(Query,Executor)]
+
+:source-header: pass:q,a[source, kotlin, subs="attributes+,macros+", indent=0]
+:snippets_root: example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/
+
 
 == Introduction
 
-Couchbase Lite for Android 3.0 BETA introduces full idiomatic support for Kotlin apps, out-of-the-box.
+{cbl-te} _{param-title} {version-full}_ introduces full idiomatic support for Kotlin apps, out-of-the-box.
 
 Kotlin developers can now build apps using https://developer.android.com/kotlin/common-patterns[common Kotlin Patterns], that integrate seamlessly with Couchbase Lite for Android and have full feature parity with the Java API; no need for custom extensions.
 
@@ -27,20 +48,46 @@ Key features include:
 * Kotlin Flows, for asynchronous event notifications
 
 Java support and functionality continues for Android.
-You can choose whether to use the Kotlin extensions API or continue using the Java api.
+
+You can choose whether to use the Kotlin extensions API or continue using the Java API.
 
 
-== Kotlin-specific API methods
+== Kotlin-specific API
 
-A number of Kotlin-specific API calls are available, which take advantage of Kotlin features such as, for example, Kotlin https://developer.android.com/kotlin/flow[Flows].
+In addition to having full co-compatible access to the existing Java API, Kotlin developers can also access a number of Kotlin-specific API calls.
+
+These
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}-{releasetag}/couchbase-lite-android-ktx[Kotlin Specific API]
+take advantage of Kotlin features such as, Co-routines and https://developer.android.com/kotlin/flow[Flows].
 
 
+== Configuration Factory Constructors
 
-=== Config constructors
+{cbl-t} provides a set of {config-factories} and {common-config-factories}, these constructors allow use of named parameters to specify property settings.
 
-These constructors allow use of named parameters to specify property settings.
+=== Database
+Use
+{database-configuration-factory}
+to create a `DatabaseConfiguration` object, overriding the receiver's values with the passed parameters.
 
-==== Database
+[{tabs}]
+=====
+
+In Use::
++
+--
+[{source-header}]
+----
+
+include::{snippets_root}BasicExamples.kt[tags=database-config-factory]
+
+----
+--
+
+Definition::
++
+--
+[{source-header}]
 ----
 val DatabaseConfigurationFactory: DatabaseConfiguration? = null
 
@@ -49,9 +96,32 @@ fun DatabaseConfiguration?.create(
     encryptionKey: EncryptionKey? = null
 )
 ----
+--
+=====
 
-==== Replication
+=== Replication
+Use
+{replicator-configuration-factory}
+to create a `ReplicatorConfiguration` object, overriding the receiver's values with the passed parameters.
 
+[{tabs}]
+=====
+
+In Use::
++
+--
+[{source-header}]
+----
+
+include::{snippets_root}BasicExamples.kt[tags=replicator-config-factory]
+
+----
+--
+
+Definition::
++
+--
+[{source-header}]
 ----
 val ReplicatorConfigurationFactory: ReplicatorConfiguration? = null
 
@@ -82,41 +152,101 @@ fun MessageEndpointListenerConfiguration?.create(
     protocolType: ProtocolType? = null
 )
 ----
+--
+=====
 
-==== Inter-Sync Gateway Replication
+//
+=== Full Text Search
+Use
+{fulltextindex-configuration-factory}
+to create a `FullTextIndexConfiguration` object, overriding the receiver's values with the passed parameters.
+
+[{tabs}]
+=====
+
+In Use::
++
+--
+[{source-header}]
 ----
-val URLEndpointListenerConfigurationFactory: URLEndpointListenerConfiguration? = null
 
-fun URLEndpointListenerConfiguration?.create(
-    database: Database? = null,
-    networkInterface: String? = null,
-    port: Int? = null,
-    disableTls: Boolean? = null,
-    identity: TLSIdentity? = null,
-    authenticator: ListenerAuthenticator? = null,
-    readOnly: Boolean? = null,
-    enableDeltaSync: Boolean? = null,
-)
+db.createIndex("fts_index",
+      FullTextIndexConfigurationFactory.create(expressions = ["name","location"])
+    )
+
 ----
+--
 
-==== Full Text Search
+Definition::
++
+--
 ----
 val FullTextIndexConfigurationFactory: FullTextIndexConfiguration? = null
 
 fun FullTextIndexConfiguration?.create(expression: String? = null)
 ----
+--
+=====
 
-==== Indexing
+
+=== Indexing
+Use
+{valueindex-configuration-factory}
+to create a `ValueIndexConfiguration` object, overriding the receiver's values with the passed parameters.
+
+[{tabs}]
+=====
+
+In Use::
++
+--
+[{source-header}]
+----
+
+db.createIndex("name_and_location_index",
+      ValueIndexConfigurationFactory.create(expressions = ["name","location"])
+    )
+
+----
+--
+
+Definition::
++
+--
 ----
 val ValueIndexConfigurationFactory: ValueIndexConfiguration? = null
 
 fun ValueIndexConfiguration?.create(vararg expressions: String = emptyArray())
 ----
+--
+=====
 
-==== Logs
+=== Logs
+Use
+{logfile-configuration-factory}
+to create a `LogFileConfiguration` object, overriding the receiver's values with the passed parameters.
+
+[{tabs}]
+=====
+
+In Use::
++
+--
+[{source-header}]
+----
+
+include::{snippets_root}BasicExamples.kt[tags=file-logging-config-factory]
 
 ----
+--
+
+Definition::
++
+--
+----
 val LogFileConfigurationFactory: LogFileConfiguration? = null
+
+.LogFileConfiguration.create()
 
 fun LogFileConfiguration?.create(
     directory: String? = null,
@@ -125,29 +255,188 @@ fun LogFileConfiguration?.create(
     usePlainText: Boolean? = null
 )
 ----
+--
+=====
 
-=== Flows
 
-These wrappers use _Flowables_ to return changes and query results
+== Flows
+
+These wrappers use _Flowables_ to monitor for changes.
+
+=== Database Change Listener
+
+Use the
+{flows-database-change}
+to monitor database change events.
+
+[{tabs}]
+=====
+
+In Use::
++
+--
+
+[{source-header}]
+----
+
+include::{snippets_root}FlowExamples.kt[tags=flow-as-database-change-listener]
 
 ----
+--
+
+Definition::
++
+--
+
+[{source-header}]
+----
+
 @ExperimentalCoroutinesApi
 fun Database.databaseChangeFlow(executor: Executor? = null)
+----
+--
 
+=====
+
+
+=== Document Change Listener
+Use
+{flows-document-change}
+to monitor changes to a document.
+
+[{tabs}]
+=====
+
+In Use::
++
+--
+
+[{source-header}]
+----
+
+include::{snippets_root}FlowExamples.kt[tags=flow-as-document-change-listener]
+
+----
+--
+
+Definition::
++
+--
+
+[{source-header}]
+----
 @ExperimentalCoroutinesApi
+
 fun Database.documentChangeFlow(documentId: String, executor: Executor? = null)
 
+----
+--
+
+=====
+
+=== Replicator Change Listener
+Use
+{flows-replicator-changes}
+to monitor replicator changes.
+
+[{tabs}]
+=====
+
+In Use::
++
+--
+
+[{source-header}]
+----
+
+include::{snippets_root}FlowExamples.kt[tags=flow-as-replicator-change-listener]
+
+----
+--
+
+Definition::
++
+--
+
+[{source-header}]
+----
 @ExperimentalCoroutinesApi
 fun Replicator.replicatorChangesFlow(executor: Executor? = null)
+----
+--
+=====
+
+
+=== Document Replicator Change Listener
+Use
+{flows-document-replication}
+to monitor document changes during replication.
+
+[{tabs}]
+=====
+
+In Use::
++
+--
+
+[{source-header}]
+----
+// Placeholder -- content to be provided by GA
+include::{snippets_root}FlowExamples.kt[tags=flow-as-document-replicator-change-listener]
+
+----
+--
+
+Definition::
++
+--
+
+[{source-header}]
+----
 
 @ExperimentalCoroutinesApi
 fun Replicator.documentReplicationFlow(executor: Executor? = null)
 
+
+----
+--
+=====
+
+
+=== Query Change Listener
+Use
+{flows-query-changes}
+to monitor document changes during replication.
+
+[{tabs}]
+=====
+
+In Use::
++
+--
+
+[{source-header}]
+----
+
+include::{snippets_root}FlowExamples.kt[tags=flow-as-query-change-listener]
+
+----
+--
+
+Definition::
++
+--
+
+[{source-header}]
+----
+
 @ExperimentalCoroutinesApi
 fun Query.queryChangeFlow(executor: Executor? = null)
 
-@ExperimentalCoroutinesApi
-fun MessageEndpointListener.messageEndpointChangeFlow(executor: Executor? = null)
 ----
+--
+=====
 
+
+//
 include::{root-partials}block-related-content-data.adoc[]
