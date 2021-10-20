@@ -2,14 +2,16 @@
 
 // tag::android[]
 == Officially Supported Versions
-The operating systems listed below refer to "Certified" versions of Android.
+The operating systems listed in <<supported-os-versions>> refer to "Certified" versions of Android. +
 We do not test against, nor guarantee support for, uncertified Android versions such as versions built from source.
 
 :msg_component: API 19 and 21
-:msg_action:  Please plan to migrate your apps to use API versions greater than API 21
+:msg_action:  Please plan to migrate your apps to use API version 22+
 :msg_release: 2.6
 include::{root-partials}deprecationNotice.adoc[]
 
+.Supported versions
+[#supported-os-versions]
 [%autowidth.stretch]
 |===
 |Platform |Runtime architectures |Minimum API Level
@@ -50,7 +52,7 @@ BETA releases are available only as compressed binary downloads; additional inst
 |===
 .>| API | x86 | x64 .>| ARM 32 .>| ARM 64
 
-| 22+ | x |  | x |
+| 22+ | x | x | x | x
 
 |===
 
@@ -75,7 +77,7 @@ BETA releases are available only as compressed binary downloads; additional inst
 |===
 .>| Version | x64 | ARM 64
 
-| Catalina+ |  x | x
+| OSX 10.14 (Mojave) |  x | x
 
 |===
 
@@ -103,12 +105,13 @@ BETA releases are available only as compressed binary downloads; additional inst
 
 === Windows
 
-[cols="^1,^1",options="header"]
+[cols="1,^1,^1",options="header"]
 //  frame=none]
 |===
-.>| Version | x64
+.>|| Version | x64
 
-| 10+ |  x
+| Desktop | 10+ |  x
+// | UWP | 10.0.16299+ |  x
 
 |===
 
@@ -119,30 +122,34 @@ BETA releases are available only as compressed binary downloads; additional inst
 // inclusion == Supported Versions -- C#
 == Officially Supported Versions
 
-Couchbase Lite .NET is a .NET Standard 2.0 library.
+Couchbase Lite .NET is a .NET Core 3.1 library.
 The following table identifies the supported platforms.
 
+Run-times which have received more testing and are *officially* supported are shown in <<supported-os-versions>>:
 
-Runtimes which have received more testing and are *officially* supported are:
-
+.Supported versions
+[#supported-os-versions]
+[cols="1,^2,^2", options="header"]
 |===
-|.NET Runtime |Minimum Runtime Version |Minimum OS version
+.>|.NET Runtime .>|Minimum Runtime Version .>|Minimum OS version
 
 |.NET Core Win
-|2.0
-|10 (any Microsoft supported)
+|  3.1
+a| Windows 10 +
+ (any Microsoft supported)
 
-|.NET Framework
-|4.6.1
-|10 (any Microsoft supported)
+| .NET Framework
+| 4.6.1
+a| Windows 10 +
+ (any Microsoft supported)
 
 |UWP
 |6.0.1
 |10.0.16299
 
 |Xamarin iOS
-|10.14
-|10.3.1
+|10+
+|10+
 
 |Xamarin Android
 |8
@@ -150,23 +157,22 @@ Runtimes which have received more testing and are *officially* supported are:
 
 |===
 
-NOTE: Support for API 19, API 20 and API 21 is deprecated in this release.
-Support will be removed within two (non-maintenance) releases following the deprecation announcement.
+NOTE: Support for API 19, API 20and API 21 is deprecated and will be removed in a future release; you should plan to migrate as soon as possible.
 
 == Not Officially Supported
 
-The following run times are also compatible but are not QE tested.
-So they are not officially supported.
+The following run-times are compatible but are not QE tested, and so are not officially supported.
 
+[cols="1,^2,^2", options="header"]
 |===
-|.NET Runtime |Minimum Runtime Version |Minimum OS version
+.>|.NET Runtime .>|Minimum Runtime Version .>|Minimum OS version
 
 |.NET Core Mac
-|2.0
+| 3.0
 |10.12
 
 |.NET Core Linux
-|2.0
+| 3.1
 |n/a*
 |===
 
@@ -182,8 +188,10 @@ Comparing this to the https://docs-archive.couchbase.com/couchbase-lite/1.4/csha
 // tag::objc[]
 
 == Officially Supported Versions
-The following table identifies the supported platforms.
+The following table identifies the <<supported-os-versions,supported platforms>>.
 
+.Supported versions
+[#supported-os-versions]
 [#supported, cols="1,^1"]
 |===
 |Platform |Minimum OS version
@@ -192,11 +200,11 @@ The following table identifies the supported platforms.
 |10.0
 
 |macOS
-|10.12.6 (High Sierra)
+| 10.14 (Mojave)
 |===
 
-NOTE: Couchbase Lite for {param-title} provides native support for both Apple's Mac Catalyst and the Apple M1 chip.
-You will need to download our `xcframeworks` version to take advantage of this -- see {url-cb-downloads} .
+NOTE: Couchbase Lite for {param-title} provides native support for both Mac Catalyst and M1.
+
 
 == Deprecated Versions
 
@@ -205,16 +213,30 @@ You will need to download our `xcframeworks` version to take advantage of this -
 h|Operating System|Version|Deprecation Release
 
 |macOS
-|OSX 10.11
-|2.8
+| 10.12.6 (High Sierra)
+| 3.0.0 (beta)
 
-|iOS
-|iOS 9
-|2.6
+|===
 
-|macOS
-|OSX 10.9 and 10.10
-|2.5
+== Removed Versions
+
+[#removed, cols="^1,^1,^1,^1"]
+|===
+
+^.>|Operating System
+^.>|Version
+^.>|Removed
+^.>|Deprecation Release
+
+| macOS
+| OSX 10.11
+| 3.0.0 (beta)
+| 2.8
+
+| iOS
+| iOS 9
+| 3.0.0 (beta)
+| 2.6
 
 |===
 // end::objc[]
@@ -226,6 +248,7 @@ h|Operating System|Version|Deprecation Release
 Couchbase Lite on Java is supported on x86 64-bit platforms.
 The targeted OS versions are given in  <<supported-os-versions>>
 
+.Supported versions
 [#supported-os-versions]
 [cols="1,2,2"]
 |===
@@ -243,33 +266,47 @@ The targeted OS versions are given in  <<supported-os-versions>>
 |7
 |Desktop & Web Service/Servlet (Tomcat)
 
-|Ubuntu
-|16.0
-|Desktop & Web Service/Servlet (Tomcat)
+.3+|Ubuntu
+
+| 20.04 LTS
+| Desktop & Web Service/Servlet (Tomcat)
+
+| 18.04 LTS
+| Desktop & Web Service/Servlet (Tomcat)
+
+| 16.04 LTS
+| Deprecated
 
 |Debian
-|GNU/Linux 8
+|GNU/Linux 9 +
+GNU/Linux 8 +
+
 |Desktop & Web Service/Servlet (Tomcat)
 
-.2+|Microsoft Server
+.3+|Microsoft Server
+|Windows Server 2019 (64-bit)
+|Web Service/Servlet (Tomcat)
 |Windows Server 2016 (64-bit)
 |Web Service/Servlet (Tomcat)
 |Windows Server 2012 (64-bit)
-|Web Service/Servlet (Tomcat)
+| Deprecated
 
 |Microsoft
 |Windows 10
 |Desktop
 
 .3+|Apple
+|OSX 11 (Big Sur)
+|Desktop
 |OSX v10.15 (Catalina)
-|Desktop & Web Service/Servlet (Tomcat)
+|Desktop
 
 |OSX v10.14 (Mojave)
+|Desktop
 |Desktop & Web Service/Servlet (Tomcat)
 
-|OSX v10.1.12.6 (High Sierra) -- Deprecated
-|Desktop & Web Service/Servlet (Tomcat)
+// |OSX v10.1.12.6 (High Sierra) -- Deprecated
+// |Desktop & Web Service/Servlet (Tomcat)
 
 |===
 

@@ -53,10 +53,12 @@ class BasicExamples(private val context: Context) {
         CouchbaseLite.init(context)
 
         // Get the database (and create it if it doesn’t exist).
+        // tag::database-config-factory[]
         database = Database(
-            "getting-started",
-            DatabaseConfigurationFactory.create(context.filesDir.absolutePath)
-        )
+          "getting-started",
+          DatabaseConfigurationFactory.create(context.filesDir.absolutePath)
+          )
+        // end::database-config-factory[]
     }
 
     @Test
@@ -89,14 +91,18 @@ class BasicExamples(private val context: Context) {
 
         // Create a replicator to push and pull changes to and from the cloud.
         // Be sure to hold a reference somewhere to prevent the Replicator from being GCed
-        val replicator = Replicator(
+        //  tag::replicator-config-factory[]
+        val replicator =
+          Replicator(
             ReplicatorConfigurationFactory.create(
-                database = database,
-                target = URLEndpoint(URI("ws://localhost:4984/getting-started-db")),
-                type = ReplicatorType.PUSH_AND_PULL,
-                authenticator = BasicAuthenticator("sync-gateway", "password".toCharArray())
-            )
-        )
+              database = database,
+              target = URLEndpoint(URI("ws://localhost:4984/getting-started-db")),
+              type = ReplicatorType.PUSH_AND_PULL,
+              authenticator = BasicAuthenticator("sync-gateway", "password".toCharArray())
+              )
+          )
+
+        //  end::replicator-config-factory[]
 
         // Listen to replicator change events.
         replicator.addChangeListener { change ->
@@ -213,17 +219,19 @@ class BasicExamples(private val context: Context) {
     @Throws(CouchbaseLiteException::class)
     fun testFileLogging() {
         // tag::file-logging[]
+        // tag::file-logging-config-factory[]
         Database.log.file.let {
-            it.config = LogFileConfigurationFactory.create(
-                context.cacheDir.absolutePath, // <.>
-                maxSize = 10240, // <.>
-                maxRotateCount = 5, // <.>
-                usePlainText = false
+          it.config = LogFileConfigurationFactory.create(
+            context.cacheDir.absolutePath, // <.>
+            maxSize = 10240, // <.>
+            maxRotateCount = 5, // <.>
+            usePlainText = false
             ) // <.>
             it.level = LogLevel.INFO // <.>
 
             // end::file-logging[]
-        }
+          }
+        // end::file-logging-config-factory[]
     }
 
     fun writeConsoleLog() {

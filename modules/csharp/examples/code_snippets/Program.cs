@@ -596,6 +596,7 @@ namespace api_walkthrough
             var db = _Database;
 
             // tag::query-select-meta[]
+            // tag::query-select-props[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("type"),
@@ -606,6 +607,7 @@ namespace api_walkthrough
                     Console.WriteLine($"Document Name :: {result.GetString("name")}");
                 }
             }
+            // end::query-select-props[]
             // end::query-select-meta[]
         }
 

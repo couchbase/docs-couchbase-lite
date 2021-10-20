@@ -1,0 +1,315 @@
+= Fleece C API
+:page-edition: {release}
+:page-status: pass:q,a[{prerelease}]
+:page-role:
+:description: Introducing the key concepts of the Fleece C API
+
+include::partial$_std-cbl-hdr-c.adoc[]
+
+:url_fleece_on_github: https://github.com/couchbaselabs/fleece[Fleece on GitHub]
+:url_using_fleece: https://github.com/couchbaselabs/fleece/wiki/Using-Fleece[Using Fleece]
+:url_fleece_hdr: https://github.com/couchbaselabs/fleece/blob/master/API/fleece/Fleece.h[Fleece Header File]
+
+:url_flslice_hdr: https://github.com/couchbaselabs/fleece/blob/master/API/fleece/FLSlice.h[FLSlice.h]
+
+:param-related!:
+include::{root-partials}block-abstract.adoc[]
+
+== Introduction
+
+{cbl-te} for C makes extensive use of the Fleece C API for accessing document data.
+This content introduces some basic Fleece API concepts and examples.
+
+Fleece is a binary encoding for semi-structured data.
+Its data model is a superset of JSON, adding support for binary data (blobs) to give seven data types: null, boolean, numbers, strings, data, arrays, and dictionaries.
+Arrays can contain any data types.
+Dictionary keys are strings, with values of any data type.
+
+Fleece is designed to be:
+
+* Very fast to read: +
+No parsing is needed, and the data can be navigated and read without any heap allocation.
+Fleece objects are internal pointers into the raw data.
+Arrays and dictionaries can be random-accessed.
+Performance on real-world-scale data has been clocked at 20x that of JSON.
+* Compact: +
+Simple values will be about the same size as JSON.
+Complex ones may be much smaller, since repeated values, especially strings, only need to be stored once.
+* Efficient to convert into native objects: +
+Numbers are binary, strings are raw UTF-8 without quoting, binary data is not base64-encoded.
+Storing repeated values once means they only need to be converted into native objects once.
+* Appendable: +
+Fleece is what's known as a persistent data structure.
+A Fleece document can be mutated by appending data to it.
+The mutation is in effect a delta, so it's usually much smaller than the original document.
+And the original document is unchanged, which is great for concurrency as well as (simple) version control.
+
+For more information, see::
+{url_fleece_on_github} |
+{url_using_fleece} |
+{url_fleece_hdr}
+
+
+== Values
+
+Fleece’s data types are almost identical to those of JSON, with the notable addition of binary data types.
+
+Basically Fleece provides seven data types: _null_, _boolean_, _numbers_, _strings_, _arrays_, _dictionaries_, and _data_.
+Arrays can contain any data type and dictionaries have strings as keys, with values of any data type.
+
+The basic Fleece data type is *FLValue*, an opaque pointer reference to a value of any type.
+
+Use the _FLValue_GetType_ API to check the value's actual type and _FLValue_As<Type Name>_ to get the actual value as shown in <<ex-flvalue>>
+
+.Use FLValue
+[#ex-flvalue]
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+FLDict props = CBLDocument_Properties(doc);
+FLValue value = FLDict_Get(props, FLSTR("name”));
+FLValueType type = FLValue_GetType(value); // <.>
+if (type == kFLString) {
+    FLString name = FLValue_AsString(value);
+    doSomethingWith(name); // <.>
+}
+
+----
+<.> Find the values data type
+<.> Cast to appropriate type
+
+See: {url_fleece_hdr} for more details.
+
+
+== Slices and Strings
+
+=== FLSlice
+Another basic Fleece data type, _FLSlice_ a simple struct consisting of a pointer and a length.
+It points to a block of memory, without implying ownership of that memory.
+FLSlice is used to represent both binary data and strings.
+
+=== FLString
+_FLString_ is a typedef of FLSlice, which explicitly represents a string value.
+Use the _FLSTR(“Some String”)_ macro to create an FLString from a string literal -- see: <<ex-flstr>>
+
+
+.Create an FLString
+[#ex-flstr]
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+
+CBLDatabase* db = CBLDatabase_Open( (FLSTR("my-database"), NULL, &err); // <.>
+
+----
+<.> FLSTR("My-database") creates the FLString from the given string literal.
+
+
+=== FLSliceResult/FLStringResult
+
+FLSlice doesn’t imply an ownership of memory.
+However, _FLSliceResult_/_FLStringResult_ is an FLSlice type which _does_ own memory and is reference-counted. +
+
+In general, whenever an FLSliceResult/FLStringResult is returned from an API call, you are responsible for calling FLSliceResult_Release when you are done using it.
+
+For an example of `FLSliceResult` in use, see: <<ex-flsliceresult>>.
+
+[#ex-flsliceresult]
+.Using FLStringResult
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+
+FLStringResult path = CBLDatabase_Path(db);
+doSomethingWith(path);
+FLSliceResult_Release(path); // <.>
+
+----
+<.> You are responsible for calling FLSliceResult_Release when you are done using it.
+
+
+FLSlice and FLSliceResult have utility functions such as:
+
+* `FLSlice_Equal` -- compares two slices for equality.
+* `FLSlice_Compare` -- a 3-way comparison, like strcmp().
+* `FLSlice_Copy`
+* `FLSliceResult_New`
+* `FLSliceResults_Release`
+
+
+=== Null Slices
+The null slice {NULL, 0} is represented by the constant `kFLSliceNull`. +
+You test a slice for null by comparing its pointer (buf) with NULL -- see: <<ex-flnullslice>>
+
+[#ex-flnullslice]
+.Test for null slice
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+FLValue value = FLDict_Get(props, FLSTR("name”));
+FLString name = FLValue_AsString(value);
+if (name.buf != NULL) {
+    doSomethingWith(name);
+}
+----
+
+
+See: {url_flslice_hdr} for more details on data slices.
+
+
+== Dictionaries
+
+=== Immutable
+_FLDict_ represents an immutable dictionary type in Fleece. +
+To access a value with a string key from a dictionary, use FLDict_Get -- as shown in: <<ex-flget>>.
+
+[#ex-flget]
+.Get dictionary value
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+
+FLDict props = CBLDocument_Properties(doc);
+FLValue value = FLDict_Get(props, FLSTR("name”));
+doSomethingWith(value);
+
+----
+
+
+To iterate through each key-value pair in the dictionary, use _FLDictIterator_, as shown in: <<ex-fliterator>>
+
+[#ex-fliterator]
+.Iterate key-value pairs in dictionary
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+
+FLDictIterator iter;
+FLDictIterator_Begin(myDict, &iter);
+FLValue value;
+while (NULL != (value = FLDictIterator_GetValue(&iter))) {
+    FLString key = FLDictIterator_GetKeyString(&iter);
+    doSomethingWith(key, value);
+    FLDictIterator_Next(&iter);
+}
+----
+
+
+=== Mutable
+
+*FLMutableDictionary* is a mutable dictionary type that allows editing.
+
+To create a new mutable dictionary, use FLMutableDict_New() -- see: <<ex-flmutabledict-new>>.
+
+[#ex-flmutabledict-new]
+.Set dictionary value
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+FLMutableDict myDict = FLMutableDict_New()
+FLMutableDict_SetString(myDict, FLSTR(“name”), FLSTR(“John Doe”));
+doSomethingWith(myDict);
+FLMutableDict_Release(myDict); // <.>
+----
+<.> don't forget to release resources once you have finished with them
+
+
+[#lbl-fleece-arrays]
+== Arrays
+
+=== Immutable
+_FLArray_ represents an immutable array type in Fleece. +
+use _FLArray_Count_ and _FLArray_Get_ respectively, to get the numbers of values in an array and to get a value using with an index -- as shown in <<ex-flarray-get>>.
+
+[#ex-flarray-get]
+.Use arrays
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+int count = FLArray_Count(myArray);
+if (count > 0) {
+    FLValue value = FLArray_Get(0);
+    doSomethingWith(value);
+}
+
+----
+
+
+Use _FLArrayIterator_ to iterate through arrays, as shown in : <<ex-array-iteration>>.
+
+[#ex-array-iteration]
+.Array iteration
+// Iterate through the array
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+FLArrayIterator iter;
+FLArrayIterator_Begin(myArray, &iter);
+FLValue value;
+while (NULL != (value = FLArrayIterator_GetValue(&iter))) {
+    doSomethingWith(value);
+    FLArrayIterator_Next(&iter);
+}
+
+----
+
+=== Mutable
+
+_FLMutableArray_ is a mutable array type that allows editing. +
+
+To create a new mutable array, use _FLMutableArray_New_.
+
+To append a value into the array, use _FLMutableArray_Append<Type Name>_.
+
+[#ex-flmutable-array-append]
+.Append values to array
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+FLMutableArray myArray = FLMutableArray_New();
+FLMutableArray_AppendString(myArray, FLSTR(“String 1”));
+FLMutableArray_AppendString(myArray, FLSTR(“String 2”)); // <.>
+doSomethingWith(myArray);
+FLMutableArray_Release(myArray)
+----
+<.> To set a value at a specific array index, use FLMutableArraySet<Type Name>.
+
+
+== JSON Support
+
+Fleece provides a JSON utility that allows you to parse JSON string into Fleece or generate JSON from Fleece.
+
+=== Parsing JSON
+Use *FLDoc_FromJSON* to convert JSON Dictionary or Array into Fleece Dictionary or Array.
+
+[#ex-json-parse]
+.Parse JSON data to Fleece
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+FLError error;
+FLDoc doc = FLDoc_FromJSON(jsonString, &error);
+if (doc) {
+    FLValue value = FLDoc_GetRoot(doc);
+    FLDict dict = FLValue_AsDict(value);
+    doSomethingWith(dict);
+}
+FLDoc_Release(doc);
+----
+
+=== Generating JSON
+Use FLValue_ToJSON to convert FLValue into JSON string
+
+[#ex-json-from-fleese]
+.Convert to JSON
+[source,{source-language}, subs="attributes+, macros+"}]
+----
+FLDict props = CBLDocument_Properties(doc);
+FLStringResult jsonString = FLValue_ToJSON((FLValue) props);
+doSomethingWith(jsonString);
+FLSliceResult_Release(jsonString);
+----
+
+
+
+== Memory Management
+In general, Mutable objects are _reference counted_: with MutableArray and Mutable Dictionary each having  _retain_ and _release_ functions. +
+The lifespan of Immutable objects is the same as that of the memory block from which they are parsed.
+They cannot be individually released or retained.
+
+For more see: +
+https://github.com/couchbaselabs/fleece/wiki/Using-Fleece#5-memory-management[Fleece Mememory Management] |
+https://github.com/couchbaselabs/fleece/wiki/Advanced-Fleece#for-memory-management[Advanced Fleece Mememory Management]
+
+
+
+include::{root-partials}block-related-content-data.adoc[]
