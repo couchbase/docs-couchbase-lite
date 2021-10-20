@@ -24,7 +24,7 @@ endif::[]
 // :this-release: {version-full}
 
 
-:install-closure: pass:q,a[At this point you are ready to start building the xref:gs-build.adoc[Getting Started] app.]
+:install-closure: pass:q,a[At this point you are ready to start building the xref:gs-build.adoc[Getting Started] app], or doing your own thing with _Couchbase Lite for C_]
 
 :download-path: {url-downloads-mobile}
 :beta-url: https://packages.couchbase.com/releases/couchbase-lite-c/{version-full}/
@@ -65,9 +65,137 @@ The binary release download comprises a root directory ({release-dirs}), which c
 
 * For Android, a _ready-to-adapt_, skeleton application project.
 
-== Linux
+:barsep: pass:q,a[ {nbsp}|{nbsp} ]
 
-=== Linux .deb package
+== Linux
+<<lbl-apt>> {barsep}
+<<lbl-deb>> {barsep}
+<<lbl-man>> {barsep}
+
+[#lbl-apt]
+=== Using APT
+
+:url-apt-pkg-file: couchbase-release-1.0-noarch.deb
+:url-apt-pkg:  pass:q,a[https://packages.couchbase.com/releases/couchbase-release/{url-apt-pkg-file}]
+
+Using the Advanced Package Tool (apt) is the easiest way to install {cbl-t} on Ubuntu and Debian platforms.
+Just download the meta package that _apt_ requires to automatically get and install {cbl-t}, including any dependencies.
+
+. Download the meta package
++
+[{tabs}]
+=====
+
+curl::
++
+--
+[source, linux, subs="attributes+"]
+----
+curl -O {url-apt-pkg}
+----
+--
+
+wget::
++
+--
+[source, linux, subs="attributes+"]
+----
+wget {url-apt-pkg}
+----
+--
+=====
+
+. Install the meta package
++
+[{tabs}]
+=====
+
+apt::
++
+--
+[source, linux, subs="attributes+"]
+----
+sudo apt install ./{url-apt-pkg-file}
+----
+--
+
+dpkg::
++
+--
+[source, linux, subs="attributes+"]
+----
+sudo dpkg -i ./{url-apt-pkg-file}
+----
+--
+=====
+
+. Edit meta package list +
+NOTE: This step is required only for the BETA release
+
++
+Locate and edit the downloaded file `/etc/apt/sources.list.d/couchbase.list`
++
+----
+deb [ arch=amd64 ] http://packages.couchbase.com/releases/couchbase-server/enterprise/deb/ %DCODE_SERVER% %DCODE_SERVER%/main
+deb [ arch=amd64 ] http://packages.couchbase.com/releases/couchbase-server/community/deb/ %DCODE_SERVER% %DCODE_SERVER%/main
+deb http://packages.couchbase.com/releases/couchbase-lite-repo/enterprise/deb/ %DCODE_SERVER% %DCODE_SERVER%/main
+deb http://packages.couchbase.com/releases/couchbase-lite-repo/community/deb/ %DCODE_SERVER% %DCODE_SERVER%/main
+# deb [ arch=amd64 ] http://beta-packages.couchbase.com/releases/couchbase-server/enterprise/deb/ %DCODE_SERVER% %DCODE_SERVER%/main
+# deb [ arch=amd64 ] http://beta-packages.couchbase.com/releases/couchbase-server/community/deb/ %DCODE_SERVER% %DCODE_SERVER%/main
+// <.>
+# deb http://beta-packages.couchbase.com/releases/couchbase-lite-repo/enterprise/deb/ %DCODE_SERVER% %DCODE_SERVER%/main
+# deb http://beta-packages.couchbase.com/releases/couchbase-lite-repo/community/deb/ %DCODE_SERVER% %DCODE_SERVER%/main
+----
+<.> Uncomment the two beta-package lines (those containing `couchbase-lite` in the URL)
+
+. Update the local package database
++
+[source, linux, subs="attributes+,macros+"]
+----
+sudo apt update
+----
+
+. Install the required release package(s)
++
+[{tabs}]
+=====
+Enterprise::
++
+--
+.Runtime Only
+[source, linux, subs="attributes+,macros+"]
+----
+sudo apt install libcblite
+----
+.Development
+[source, linux, subs="attributes+,macros+"]
+----
+sudo apt install libcblite-dev
+----
+--
+
+Community::
++
+--
+.Runtime Only
+[source, linux, subs="attributes+,macros+"]
+----
+sudo apt install libcblite-community
+----
+.Development
+[source, linux, subs="attributes+,macros+"]
+----
+sudo apt install libcblite-dev-community
+----
+--
+=====
+
+That's it.
+{install-closure}
+
+
+[#lbl-deb]
+=== Using .deb Package
 
 Use your package manager to install from a local `.deb` file.
 
@@ -101,7 +229,8 @@ You just need to pass the `-lcblite` command-line flag to the compiler when you 
 
 {install-closure}
 
-=== Linux (manual)
+[#lbl-man]
+=== Manually
 
 ifdef::is-beta[NOTE: These manual steps will not be needed beyond this BETA stage]
 
@@ -139,8 +268,6 @@ As a convenience, the release package includes a _CMake_ file in `lib/cmake/Couc
 
 
 == Windows
-
-
 To install the Couchbase for C libraries on Windows from a downloaded release binary:
 
 [#lbl-windows-steps]
