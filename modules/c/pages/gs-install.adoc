@@ -17,6 +17,7 @@ include::{root-partials}block-abstract.adoc[]
 :param-page: {page-relative-src-path}
 include::{root-partials}_get-started-topic-group.adoc[]
 
+ifndef::bash-header[:bash-header: pass:q,a[source, bash, subs="attributes+", "macros+"]]
 
 ifeval::["{prerelease}"=="BETA"]
 :is-beta:
@@ -24,7 +25,7 @@ endif::[]
 // :this-release: {version-full}
 
 
-:install-closure: pass:q,a[At this point you are ready to start building the xref:gs-build.adoc[Getting Started] app], or doing your own thing with _Couchbase Lite for C_]
+:install-closure: pass:q,a[At this point you are ready to start building the xref:gs-build.adoc[Getting Started] app, or doing your own thing with _Couchbase Lite for C_]
 
 :download-path: {url-downloads-mobile}
 :beta-url: https://packages.couchbase.com/releases/couchbase-lite-c/{version-full}/
@@ -43,9 +44,12 @@ endif::[]
 :release-dirs: pass:q,a[`{release-dir}` or `{release-dir-ee}`]
 
 
-== Introduction
 
+
+[#lbl-get-binaries]
+== Download
 _Couchbase Lite for C {version-full}_ is available for all supported platforms -- see: <<lbl-beta-platforms>>.
+
 You can obtain the downloads here:
 
 * _Android_, _iOS_ and _Windows_ -- {downloads-mobile--xref}.
@@ -67,10 +71,17 @@ The binary release download comprises a root directory ({release-dirs}), which c
 
 :barsep: pass:q,a[ {nbsp}|{nbsp} ]
 
-== Linux
-<<lbl-apt>> {barsep}
-<<lbl-deb>> {barsep}
-<<lbl-man>>
+For install instructions, see: +
+<<lbl-android>> {barsep}
+<<lbl-apt, Install for Linux (APT)>> {barsep}
+<<lbl-debt, Install for Linux (.deb)>> {barsep}
+<<lbl-macos>> {barsep}
+<<lbl-ios>> {barsep}
+<<lbl-windows>>
+
+
+[#lbl-linux]
+== Install for Linux
 
 [#lbl-apt]
 === Using APT
@@ -89,7 +100,7 @@ Just download the meta package that _apt_ requires to automatically get and inst
 curl::
 +
 --
-[source, linux, subs="attributes+"]
+[{bash-header}]
 ----
 curl -O {url-apt-pkg}
 ----
@@ -98,7 +109,7 @@ curl -O {url-apt-pkg}
 wget::
 +
 --
-[source, linux, subs="attributes+"]
+[{bash-header}]
 ----
 wget {url-apt-pkg}
 ----
@@ -113,7 +124,7 @@ wget {url-apt-pkg}
 apt::
 +
 --
-[source, linux, subs="attributes+"]
+[{bash-header}]
 ----
 sudo apt install ./{url-apt-pkg-file}
 ----
@@ -122,7 +133,7 @@ sudo apt install ./{url-apt-pkg-file}
 dpkg::
 +
 --
-[source, linux, subs="attributes+"]
+[{bash-header}]
 ----
 sudo dpkg -i ./{url-apt-pkg-file}
 ----
@@ -135,22 +146,29 @@ NOTE: This step is required only for the BETA release
 +
 Locate and edit the downloaded file `/etc/apt/sources.list.d/couchbase.list`
 +
+.Sample file contents
+====
+Here is an example of the `/etc/apt/sources.list.d/couchbase.list` file. The contents may differ slightly depending upon your Linux distro.
+
+
+[{bash-header}]
 ----
-deb [ arch=amd64 ] http://packages.couchbase.com/releases/couchbase-server/enterprise/deb/ %DCODE_SERVER% %DCODE_SERVER%/main
-deb [ arch=amd64 ] http://packages.couchbase.com/releases/couchbase-server/community/deb/ %DCODE_SERVER% %DCODE_SERVER%/main
-deb http://packages.couchbase.com/releases/couchbase-lite-repo/enterprise/deb/ %DCODE_SERVER% %DCODE_SERVER%/main
-deb http://packages.couchbase.com/releases/couchbase-lite-repo/community/deb/ %DCODE_SERVER% %DCODE_SERVER%/main
-# deb [ arch=amd64 ] http://beta-packages.couchbase.com/releases/couchbase-server/enterprise/deb/ %DCODE_SERVER% %DCODE_SERVER%/main
-# deb [ arch=amd64 ] http://beta-packages.couchbase.com/releases/couchbase-server/community/deb/ %DCODE_SERVER% %DCODE_SERVER%/main
-// <.>
-# deb http://beta-packages.couchbase.com/releases/couchbase-lite-repo/enterprise/deb/ %DCODE_SERVER% %DCODE_SERVER%/main
-# deb http://beta-packages.couchbase.com/releases/couchbase-lite-repo/community/deb/ %DCODE_SERVER% %DCODE_SERVER%/main
+deb [ arch=amd64 ] http://packages.couchbase.com/releases/couchbase-server/enterprise/deb/ focal focal/main
+deb [ arch=amd64 ] http://packages.couchbase.com/releases/couchbase-server/community/deb/ focal focal/main
+deb http://packages.couchbase.com/releases/couchbase-lite-repo/enterprise/deb/ focal focal/main
+deb http://packages.couchbase.com/releases/couchbase-lite-repo/community/deb/ focal focal/main
+# deb [ arch=amd64 ] http://beta-packages.couchbase.com/releases/couchbase-server/enterprise/deb/ focal focal/main
+# deb [ arch=amd64 ] http://beta-packages.couchbase.com/releases/couchbase-server/community/deb/ focal focal/main
+<.>
+# deb http://beta-packages.couchbase.com/releases/couchbase-lite-repo/enterprise/deb/ focal focal/main
+# deb http://beta-packages.couchbase.com/releases/couchbase-lite-repo/community/deb/ focal focal/main
 ----
-<.> Uncomment the two beta-package lines (those containing `couchbase-lite` in the URL)
+<.> Uncomment the two _beta-packages_ lines containing `couchbase-lite` in the URL.
+====
 
 . Update the local package database
 +
-[source, linux, subs="attributes+,macros+"]
+[{bash-header}]
 ----
 sudo apt update
 ----
@@ -163,12 +181,12 @@ Enterprise::
 +
 --
 .Runtime Only
-[source, linux, subs="attributes+,macros+"]
+[{bash-header}]
 ----
 sudo apt install libcblite
 ----
 .Development
-[source, linux, subs="attributes+,macros+"]
+[{bash-header}]
 ----
 sudo apt install libcblite-dev
 ----
@@ -178,12 +196,12 @@ Community::
 +
 --
 .Runtime Only
-[source, linux, subs="attributes+,macros+"]
+[{bash-header}]
 ----
 sudo apt install libcblite-community
 ----
 .Development
-[source, linux, subs="attributes+,macros+"]
+[{bash-header}]
 ----
 sudo apt install libcblite-dev-community
 ----
@@ -205,7 +223,7 @@ Use your package manager to install from a local `.deb` file.
 
 ** For community version:
 +
-[source, bash, subs="attributes+, macros+"]
+[{bash-header}]
 ----
 
 sudo apt install ./{release-dir}
@@ -216,7 +234,7 @@ sudo apt install ./{release-dir-dev}
 
 ** For enterprise version:
 +
-[source, bash, subs="normal"]
+[{bash-header}]
 ----
 sudo apt install ./{release-dir-ee}
 
@@ -229,46 +247,46 @@ You just need to pass the `-lcblite` command-line flag to the compiler when you 
 
 {install-closure}
 
-[#lbl-man]
-=== Manually
+// [#lbl-man]
+// === Manually
 
-ifdef::is-beta[NOTE: These manual steps will not be needed beyond this BETA stage]
+// ifdef::is-beta[NOTE: These manual steps will not be needed beyond this BETA stage]
 
-[#lbl-linux-steps]
-. Install dependencies
-+
-Users of `.zip` downloads will need to use their package manager to install the following dependencies: `libatomic1`, `libicu` footnote:[Use whichever version ships with your linux distro] and `zlib1g`.
-+
-For example to install for ARM32 on ARM64, you might do:
-+
-[source, bash, subs="normal"]
-----
-sudo dpkg --add-architecture armhf
-sudo apt install -y libatomic1:armhf libicu57:armhf zlib1g:armhf // <.>
-----
-<.> This example uses Debian{nbsp}9 libicu version; you should use the appropriate version for your distro.
+// [#lbl-linux-steps]
+// . Install dependencies
+// +
+// Users of `.zip` downloads will need to use their package manager to install the following dependencies: `libatomic1`, `libicu` footnote:[Use whichever version ships with your linux distro] and `zlib1g`.
+// +
+// For example to install for ARM32 on ARM64, you might do:
+// +
+// [{bash-header}]
+// ----
+// sudo dpkg --add-architecture armhf
+// sudo apt install -y libatomic1:armhf libicu57:armhf zlib1g:armhf // <.>
+// ----
+// <.> This example uses Debian{nbsp}9 libicu version; you should use the appropriate version for your distro.
 
-. *Download* and *Unpack* the binary release -- see: {downloads-mobile--xref}
+// . *Download* and *Unpack* the binary release -- see: {downloads-mobile--xref}
 
-. Copy {release-dirs} to an appropriate location, for example `/usr/`
+// . Copy {release-dirs} to an appropriate location, for example `/usr/`
 
-. Confirm that `LD_LIBRARY_PATH` contains the path to either
-{release-dirs-lib}
+// . Confirm that `LD_LIBRARY_PATH` contains the path to either
+// {release-dirs-lib}
 
-. Add the appropriate {release-dirs-lib} path to your
- compiler library search path (`-L`)
+// . Add the appropriate {release-dirs-lib} path to your
+//  compiler library search path (`-L`)
 
-. Add the appropriate {release-dirs-include} path to your compiler's include path (`-I`)
+// . Add the appropriate {release-dirs-include} path to your compiler's include path (`-I`)
 
-. Link with the binaries library using `-lcblite`
+// . Link with the binaries library using `-lcblite`
 
-{install-closure}
+// {install-closure}
 
-If you are familiar with _CMake_, then you can use this as a method of creating cross-platform projects; including Couchbase Lite itself.
-As a convenience, the release package includes a _CMake_ file in `lib/cmake/CouchbaseLite`
+// If you are familiar with _CMake_, then you can use this as a method of creating cross-platform projects; including Couchbase Lite itself.
+// As a convenience, the release package includes a _CMake_ file in `lib/cmake/CouchbaseLite`
 
-
-== Windows
+[#lbl-windows]
+== Install for Windows
 To install the Couchbase for C libraries on Windows from a downloaded release binary:
 
 [#lbl-windows-steps]
@@ -289,8 +307,9 @@ Couchbase Lite for C does not have any preferred installation path for the `.dll
 It is up to you to determine where best to place it so it is available during execution, though copying to a location on the system path is not recommended on Windows
 
 
-== Mac OS
-To install the Couchbase for C libraries on Mac OS X from a downloaded release package:
+[#lbl-macos]
+== Install for macOS
+To install the Couchbase for C libraries on macOS from a downloaded release package:
 
 CAUTION: Direct access from Swift to Couchbase Lite for C is not possible in this *3.0.0 (beta)* release.
 This will be available in the next release.
@@ -308,7 +327,8 @@ This will be available in the next release.
 
 {install-closure}
 
-== iOS
+[#lbl-ios]
+== Install for iOS
 CAUTION: Direct access from Swift to Couchbase Lite for C is not possible in this *3.0.0 (beta)*  release.
 This will be available in the next release.
 
@@ -327,7 +347,8 @@ If you encounter a build error -- Include of non-modular header inside framework
 `allow non-modular includes in framework module` to `Yes`.
 
 
-== Android
+[#lbl-android]
+== Install for Android
 This install assumes use of the _Android Studio_ IDE.
 In addition to the Couchbase Lite for C download you also require the following tool chain dependencies, all installable from within _Android Studio_ if necessary:
 
