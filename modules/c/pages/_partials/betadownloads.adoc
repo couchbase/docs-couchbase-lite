@@ -24,27 +24,31 @@
 // :not-fullpage:
 // include::{root-partials}supported-versions.adoc[tag={param-module}]
 // :not-fullpage!:
-ifndef::not-fullpage[CAUTION: For BETA ONLY]
+ifdef::is-fullpage[CAUTION: For BETA ONLY]
 
 
-ifndef::not-fullpage[== Beta Download Links]
+ifdef::is-fullpage[== Beta Download Links]
 
 _Couchbase Lite for C_ **beta** is available for all {supported-os--xref}.
-You can obtain the downloads from the links here in:
+You can obtain downloads for _Linux_ and _macOS_ from the <<tbl-downloads,links here in the downloads table>>.
 
-* Enterprise -- <<tbl-beta-downloads-ee>>.
-* Community -- <<tbl-beta-downloads-ce>>.
+ifdef::is-fullpage[]
+For _Android_, _iOS_ and _Windows_ downloads, see the Couchbase Downloads page here -- {downloads-mobile--xref}.
+
+Alternatively, check the xref:gs-install.adoc[install] page, for how to get them using a package manager.
+
+endif::is-fullpage[]
+
 
 Ensure you select the correct package for your application's compiler and architecture.
 
-// Note that you can also get downloads from the following places depending on platform:
+.Download link table
+[#tbl-downloads, {tabs}]
+=====
 
-// * iOS --  Cocoapods, Carthage or SPM
-// * Windows -- nuget
-// * Android -- Maven
-:beta-url: https://packages.couchbase.com/releases/couchbase-lite-c/{version-full}/
-
-.Enterprise Downloads
+Enterprise Edition::
++
+--
 [#tbl-beta-downloads-ee,cols="1,4,4", options="header"]
 |===
 | Platform | Download | SHA
@@ -151,9 +155,11 @@ Ensure you select the correct package for your application's compiler and archit
 | {beta-url}libcblite-enterprise_{version-full}-ubuntu20.04_armhf.deb.sha256[libcblite-enterprise_{version-full}-ubuntu20.04_armhf.deb.sha256]
 
 |===
+--
 
-
-.Community Downloads
+Community Edition::
++
+--
 [#tbl-beta-downloads-ce,cols="1,4,4", options="header"]
 |===
 | Platform | Download | SHA
@@ -259,4 +265,4 @@ Ensure you select the correct package for your application's compiler and archit
 | {beta-url}libcblite-dev-community_{version-full}-ubuntu20.04_armhf.deb.sha256[libcblite-dev-community_{version-full}-ubuntu20.04_armhf.deb.sha256]
 
 |===
-
+=====
