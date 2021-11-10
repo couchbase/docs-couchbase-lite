@@ -1680,6 +1680,188 @@
     // end::replicator-simple[]
 }
 
+- (void) dontTestP2PURLEndpointListener {
+    // tag::p2p-ws-api-urlendpointlistener[]
+    // FIXME: can we use the docsn site to show the interface of the Listener class?
+    // https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-objc/Classes/CBLURLEndpointListener.html
+    // end::p2p-ws-api-urlendpointlistener[]
+}
+
+- (void) dontTestURLEndpointListenerConstructor {
+    CBLDatabase* otherDB = self.db;
+    NSUInteger wssPort = 4985;
+    NSUInteger wsPort = 4984;
+    BOOL isTLS = NO;
+    CBLListenerPasswordAuthenticator* auth = [[CBLListenerPasswordAuthenticator alloc] initWithBlock:^BOOL(NSString * _Nonnull username, NSString * _Nonnull password) {
+        return YES;
+    }];
+    CBLURLEndpointListener* _listener;
+    
+    // tag::p2p-ws-api-urlendpointlistener-constructor[]
+    CBLURLEndpointListenerConfiguration* config = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: otherDB];
+    config.port = isTLS ? wssPort : wsPort;
+    config.disableTLS = !isTLS;
+    config.authenticator = auth;
+    
+    _listener = [[CBLURLEndpointListener alloc] initWithConfig: config]; // <1>
+    // end::p2p-ws-api-urlendpointlistener-constructor[]
+}
+
+- (void) dontTestMyActivePeer {
+    NSError* error = nil;
+    CBLDatabase* thisDB = self.db;
+    // let validUser = "syncthisUser"
+    // let validPassword = "sync9455"
+    // let cert:SecCertificate?
+    // let passivePeerEndpoint = "10.1.1.12:8920"
+    // let passivePeerPort = "8920"
+    // let passiveDbName = "userdb"
+    // var actDb:Database?
+    // var thisReplicator:Replicator?
+    // var replicatorListener:ListenerToken?
+    
+    CBLReplicator *_thisReplicator;
+    
+    CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"thisDB" error:&error];
+    if (!database) {
+        NSLog(@"Cannot open the database: %@", error);
+    };
+    
+    // tag::p2p-act-rep-func[]
+    // tag::p2p-act-rep-initialize[]
+    // Set listener DB endpoint
+    NSURL *url =
+    [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
+    CBLURLEndpoint *thisListener =
+    [[CBLURLEndpoint alloc] initWithURL:url]; // <.>
+    
+    CBLReplicatorConfiguration *thisConfig =
+    [[CBLReplicatorConfiguration alloc]
+     initWithDatabase: thisDB target:thisListener]; // <.>
+    
+    // end::p2p-act-rep-initialize[]
+    // tag::p2p-act-rep-config[]
+    // tag::p2p-act-rep-config-type[]
+    thisConfig.replicatorType = kCBLReplicatorTypePush;
+    
+    // end::p2p-act-rep-config-type[]
+    // tag::autopurge-override[]
+    // set auto-purge behavior (here we override default)
+    thisConfig.enableAutoPurge = NO; // <.>
+    
+    // end::autopurge-override[]
+    // tag::p2p-act-rep-config-cont[]
+    thisConfig.continuous = YES;
+    
+    // end::p2p-act-rep-config-cont[]
+    // tag::p2p-act-rep-config-tls-full[]
+    // tag::p2p-act-rep-config-self-cert[]
+    // Configure Server Authentication
+    // Here - expect and accept self-signed certs
+    thisConfig.acceptOnlySelfSignedServerCertificate = YES; // <.>
+    
+    // end::p2p-act-rep-config-self-cert[]
+    // Configure Client Authentication
+    // tag::p2p-act-rep-auth[]
+    // Here set client to use basic authentication
+    // Providing username and password credentials
+    // If prompted for them by server
+    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; // <.>
+    
+    // end::p2p-act-rep-auth[]
+    // end::p2p-act-rep-config-tls-full[]
+    // tag::p2p-act-rep-config-conflict[]
+    /* Optionally set custom conflict resolver call back */
+    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] init]; // <.>
+    
+    // end::p2p-act-rep-config-conflict[]    //
+    // end::p2p-act-rep-config[]
+    // tag::p2p-act-rep-start-full[]
+    // Apply configuration settings to the replicator
+    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; // <.>
+    
+    // tag::p2p-act-rep-add-change-listener[]
+    // tag::p2p-act-rep-add-change-listener-label[]
+    // Optionally add a change listener <.>
+    // end::p2p-act-rep-add-change-listener-label[]
+    // Retain token for use in deletion
+    id<CBLListenerToken> thisListenerToken = [_thisReplicator addChangeListener:^(CBLReplicatorChange *thisChange) {
+        // tag::p2p-act-rep-status[]
+        if (thisChange.status.activity == kCBLReplicatorStopped) {
+            NSLog(@"Replication stopped");
+        } else {
+            NSLog(@"Status: %d", thisChange.status.activity);
+        };
+        // end::p2p-act-rep-status[]
+    }];
+    // end::p2p-act-rep-add-change-listener[]
+    // tag::p2p-act-rep-start[]
+    // Run the replicator using the config settings
+    [_thisReplicator start]; // <.>
+    
+    // end::p2p-act-rep-start[]
+    // end::p2p-act-rep-start-full[]
+    // end::p2p-act-rep-func[]
+    
+    NSLog(@"print to avoid warning %@", thisListenerToken);
+}
+
+- (void) dontTestReplicatorStop {
+    id<CBLListenerToken> thisListenerToken;
+    CBLReplicator* thisReplicator;
+    
+    // tag::p2p-act-rep-stop[]
+    // Remove the change listener
+    [thisReplicator removeChangeListenerWithToken: thisListenerToken];
+    
+    // Stop the replicator
+    [thisReplicator stop];
+    // end::p2p-act-rep-stop[]
+    
+}
+
+// Additional Snippets from above
+
+- (void) dontTestReplicatorConfigCerts {
+    CBLReplicatorConfiguration* thisConfig;
+    SecCertificateRef thisCert;
+    // tag::p2p-act-rep-config-cacert[]
+    // Configure Server Security -- only accept CA Certs
+    thisConfig.acceptOnlySelfSignedServerCertificate = NO; // <.>
+    
+    // end::p2p-act-rep-config-cacert[]
+    
+    
+    // tag::p2p-act-rep-config-pinnedcert[]
+    // Return the remote pinned cert (the listener's cert)
+    thisConfig.pinnedServerCertificate = thisCert; // Get listener cert if pinned
+    
+    // end::p2p-act-rep-config-pinnedcert[]
+    
+}
+
+// tag::p2p-act-rep-config-cacert-pinned-func[]
+- (void) dontTestCACertPinned {
+    CBLDatabase* database;
+    
+    // tag::p2p-act-rep-config-cacert-pinned[]
+    NSURL *certURL = [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"cer"];
+    NSData *data = [[NSData alloc] initWithContentsOfURL: certURL];
+    SecCertificateRef certificate = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
+
+    NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
+    CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
+    CBLReplicatorConfiguration *thisConfig = [[CBLReplicatorConfiguration alloc] initWithDatabase:database
+                                                                                           target:target];
+    thisConfig.pinnedServerCertificate = (SecCertificateRef)CFAutorelease(certificate);
+
+    thisConfig.acceptOnlySelfSignedServerCertificate=false;
+
+  // end::p2p-act-rep-config-cacert-pinned[]
+    
+}
+// end::p2p-act-rep-config-cacert-pinned-func[]
+
 #pragma mark - Listener
 
 - (void) dontTestListener {
@@ -1935,190 +2117,6 @@
 
     // end::listener-config-client-auth-self-signed[]
 }
-
-#pragma mark - P2P
-
-- (void) dontTestP2PURLEndpointListener {
-    // tag::p2p-ws-api-urlendpointlistener[]
-    // FIXME: can we use the docsn site to show the interface of the Listener class?
-    // https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-objc/Classes/CBLURLEndpointListener.html
-    // end::p2p-ws-api-urlendpointlistener[]
-}
-
-- (void) dontTestURLEndpointListenerConstructor {
-    CBLDatabase* otherDB = self.db;
-    NSUInteger wssPort = 4985;
-    NSUInteger wsPort = 4984;
-    BOOL isTLS = NO;
-    CBLListenerPasswordAuthenticator* auth = [[CBLListenerPasswordAuthenticator alloc] initWithBlock:^BOOL(NSString * _Nonnull username, NSString * _Nonnull password) {
-        return YES;
-    }];
-    CBLURLEndpointListener* _listener;
-    
-    // tag::p2p-ws-api-urlendpointlistener-constructor[]
-    CBLURLEndpointListenerConfiguration* config = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: otherDB];
-    config.port = isTLS ? wssPort : wsPort;
-    config.disableTLS = !isTLS;
-    config.authenticator = auth;
-    
-    _listener = [[CBLURLEndpointListener alloc] initWithConfig: config]; // <1>
-    // end::p2p-ws-api-urlendpointlistener-constructor[]
-}
-
-- (void) dontTestMyActivePeer {
-    NSError* error = nil;
-    CBLDatabase* thisDB = self.db;
-    // let validUser = "syncthisUser"
-    // let validPassword = "sync9455"
-    // let cert:SecCertificate?
-    // let passivePeerEndpoint = "10.1.1.12:8920"
-    // let passivePeerPort = "8920"
-    // let passiveDbName = "userdb"
-    // var actDb:Database?
-    // var thisReplicator:Replicator?
-    // var replicatorListener:ListenerToken?
-    
-    CBLReplicator *_thisReplicator;
-    
-    CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"thisDB" error:&error];
-    if (!database) {
-        NSLog(@"Cannot open the database: %@", error);
-    };
-    
-    // tag::p2p-act-rep-func[]
-    // tag::p2p-act-rep-initialize[]
-    // Set listener DB endpoint
-    NSURL *url =
-    [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
-    CBLURLEndpoint *thisListener =
-    [[CBLURLEndpoint alloc] initWithURL:url]; // <.>
-    
-    CBLReplicatorConfiguration *thisConfig =
-    [[CBLReplicatorConfiguration alloc]
-     initWithDatabase: thisDB target:thisListener]; // <.>
-    
-    // end::p2p-act-rep-initialize[]
-    // tag::p2p-act-rep-config[]
-    // tag::p2p-act-rep-config-type[]
-    thisConfig.replicatorType = kCBLReplicatorTypePush;
-    
-    // end::p2p-act-rep-config-type[]
-    // tag::autopurge-override[]
-    // set auto-purge behavior (here we override default)
-    thisConfig.enableAutoPurge = NO; // <.>
-    
-    // end::autopurge-override[]
-    // tag::p2p-act-rep-config-cont[]
-    thisConfig.continuous = YES;
-    
-    // end::p2p-act-rep-config-cont[]
-    // tag::p2p-act-rep-config-tls-full[]
-    // tag::p2p-act-rep-config-self-cert[]
-    // Configure Server Authentication
-    // Here - expect and accept self-signed certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = YES; // <.>
-    
-    // end::p2p-act-rep-config-self-cert[]
-    // Configure Client Authentication
-    // tag::p2p-act-rep-auth[]
-    // Here set client to use basic authentication
-    // Providing username and password credentials
-    // If prompted for them by server
-    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; // <.>
-    
-    // end::p2p-act-rep-auth[]
-    // end::p2p-act-rep-config-tls-full[]
-    // tag::p2p-act-rep-config-conflict[]
-    /* Optionally set custom conflict resolver call back */
-    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] init]; // <.>
-    
-    // end::p2p-act-rep-config-conflict[]    //
-    // end::p2p-act-rep-config[]
-    // tag::p2p-act-rep-start-full[]
-    // Apply configuration settings to the replicator
-    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; // <.>
-    
-    // tag::p2p-act-rep-add-change-listener[]
-    // tag::p2p-act-rep-add-change-listener-label[]
-    // Optionally add a change listener <.>
-    // end::p2p-act-rep-add-change-listener-label[]
-    // Retain token for use in deletion
-    id<CBLListenerToken> thisListenerToken = [_thisReplicator addChangeListener:^(CBLReplicatorChange *thisChange) {
-        // tag::p2p-act-rep-status[]
-        if (thisChange.status.activity == kCBLReplicatorStopped) {
-            NSLog(@"Replication stopped");
-        } else {
-            NSLog(@"Status: %d", thisChange.status.activity);
-        };
-        // end::p2p-act-rep-status[]
-    }];
-    // end::p2p-act-rep-add-change-listener[]
-    // tag::p2p-act-rep-start[]
-    // Run the replicator using the config settings
-    [_thisReplicator start]; // <.>
-    
-    // end::p2p-act-rep-start[]
-    // end::p2p-act-rep-start-full[]
-    // end::p2p-act-rep-func[]
-    
-    NSLog(@"print to avoid warning %@", thisListenerToken);
-}
-
-- (void) dontTestReplicatorStop {
-    id<CBLListenerToken> thisListenerToken;
-    CBLReplicator* thisReplicator;
-    
-    // tag::p2p-act-rep-stop[]
-    // Remove the change listener
-    [thisReplicator removeChangeListenerWithToken: thisListenerToken];
-    
-    // Stop the replicator
-    [thisReplicator stop];
-    // end::p2p-act-rep-stop[]
-    
-}
-
-// Additional Snippets from above
-
-- (void) dontTestReplicatorConfigCerts {
-    CBLReplicatorConfiguration* thisConfig;
-    SecCertificateRef thisCert;
-    // tag::p2p-act-rep-config-cacert[]
-    // Configure Server Security -- only accept CA Certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = NO; // <.>
-    
-    // end::p2p-act-rep-config-cacert[]
-    
-    
-    // tag::p2p-act-rep-config-pinnedcert[]
-    // Return the remote pinned cert (the listener's cert)
-    thisConfig.pinnedServerCertificate = thisCert; // Get listener cert if pinned
-    
-    // end::p2p-act-rep-config-pinnedcert[]
-    
-}
-
-// tag::p2p-act-rep-config-cacert-pinned-func[]
-- (void) dontTestCACertPinned {
-    CBLDatabase* database;
-    
-    // tag::p2p-act-rep-config-cacert-pinned[]
-    NSURL *certURL = [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"cer"];
-    NSData *data = [[NSData alloc] initWithContentsOfURL: certURL];
-    SecCertificateRef certificate = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
-
-    NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
-    CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
-    CBLReplicatorConfiguration *thisConfig = [[CBLReplicatorConfiguration alloc] initWithDatabase:database
-                                                                                           target:target];
-    thisConfig.pinnedServerCertificate = (SecCertificateRef)CFAutorelease(certificate);
-
-    thisConfig.acceptOnlySelfSignedServerCertificate=false;
-
-  // end::p2p-act-rep-config-cacert-pinned[]
-    
-}
-// end::p2p-act-rep-config-cacert-pinned-func[]
 
 #pragma mark - JSON API
 
@@ -2512,13 +2510,15 @@
 // tag::p2p-tlsid-manage-func[]
 @interface MyGetCert1 : NSObject
 
+- (CBLTLSIdentity*) fMyGetCert;
+
 @end
 
 @implementation MyGetCert1
 
 - (CBLTLSIdentity*) fMyGetCert {
     NSError* error = nil;
-    CBLReplicatorConfiguration* thisConfig; // TODO: Are we sure? thi is setting to Replicator config?
+    CBLReplicatorConfiguration* thisConfig; // TODO: Are we sure? this is Replicator config?
     // tag::p2p-tlsid-tlsidentity-with-label[]
     // tag::p2p-tlsid-check-keychain[]
     // Check if Id exists in keychain and if so, use it
