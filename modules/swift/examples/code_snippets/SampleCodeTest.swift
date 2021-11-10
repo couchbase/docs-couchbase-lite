@@ -21,6 +21,25 @@ import CouchbaseLiteSwift
 import MultipeerConnectivity
 import CoreML
 
+// tag::custom-logging[]
+fileprivate class LogTestLogger: Logger {
+
+    // set the log level
+    var level: LogLevel = .none
+    
+    // constructor for easiness
+    init(_ level: LogLevel) {
+        self.level = level
+    }
+
+    func log(level: LogLevel, domain: LogDomain, message: String) {
+        // handle the message, for example piping it to
+        // a third party framework
+    }
+
+}
+// end::custom-logging[]
+
 
 class SampleCodeTest {
 
@@ -32,6 +51,8 @@ class SampleCodeTest {
     // MARK: Database
 
     func dontTestNewDatabase() throws {
+        let userDb: Database = self.db;
+
         // tag::new-database[]
         do {
             self.database = try Database(name: "my-database")
@@ -62,8 +83,13 @@ class SampleCodeTest {
 
     func dontTestLogging() throws {
         // tag::logging[]
-        Database.setLogLevel(.verbose, domain: .replicator)
-        Database.setLogLevel(.verbose, domain: .query)
+        // verbose / replicator
+        Database.log.console.level = .verbose
+        Database.log.console.domains = .replicator
+        
+        // verbose / query
+        Database.log.console.level = .verbose
+        Database.log.console.domains = .query
         // end::logging[]
     }
 
@@ -93,7 +119,8 @@ class SampleCodeTest {
 
     func dontTestEnableCustomLogging() throws {
         // tag::set-custom-logging[]
-        Database.log.custom = LogTestLogger(.warning) // <.>
+        let logger = LogTestLogger(.warning)
+        Database.log.custom =  logger // <.>
         // end::set-custom-logging[]
     }
 
@@ -138,7 +165,7 @@ class SampleCodeTest {
     }
 
     func dontTestTypedAcessors() throws {
-        let newTask = Document()
+        let newTask = MutableDocument()
 
         // tag::date-getter[]
         newTask.setValue(Date(), forKey: "createdAt")
@@ -146,12 +173,12 @@ class SampleCodeTest {
         // end::date-getter[]
 
         // tag::to-dictionary[]
-        newTask.toDictionary() // <.>
+        print(newTask.toDictionary())  // <.>
 
         // end::to-dictionary[]
 
         // tag::to-json[]
-        newTask.toJSON() // <.>
+        print(newTask.toJSON()) // <.>
 
         // end::to-json[]
 
@@ -211,7 +238,7 @@ class SampleCodeTest {
                 )
             )
         // end::document-expiration[]
-
+        print(query)
     }
 
     func dontTestBlob() throws {
@@ -316,7 +343,7 @@ class SampleCodeTest {
         // end::query-select-all[]
 
         // tag::live-query[]
-        let query = QueryBuilder
+        query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database)) // <.>
 
@@ -1287,20 +1314,6 @@ class ImageClassifierModel: PredictiveModel {
     }
 }
 // end::predictive-model[]
-
-// tag::custom-logging[]
-fileprivate class LogTestLogger: Logger {
-
-    // set the log level
-    var level: LogLevel = .none
-
-    func log(level: LogLevel, domain: LogDomain, message: String) {
-        // handle the message, for example piping it to
-        // a third party framework
-    }
-
-}
-// end::custom-logging[]
 
 // tag::local-win-conflict-resolver[]
 class LocalWinConflictResolver: ConflictResolverProtocol {
