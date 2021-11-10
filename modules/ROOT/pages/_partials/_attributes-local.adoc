@@ -11,14 +11,16 @@
 :product: {cbl}
 :prodTechNm: {cblTechNm}
 
-:version-patch: 4
-:vrsnLatestRel: {major}.{minor}
-:vrsnLatestRelFull: {version-full}
-:vrsnMaintRelFull: {major}.{minor}.{version-patch}
-//:version: {major}.{minor}
-//:version-full: {major}.{minor}.0
-//
-// End Product Versioning attributes
+// BEGIN Product versions
+ifndef::maintenance[:maintenance: 4]
+ifndef::api-vn[:api-vn: 4]
+ifndef::version[:version: {major}.{minor}]
+ifndef::version-full[:version-full: {major}.{minor}.0]
+ifndef::version-maintenance[:version-maintenance: {major}.{minor}.{maintenance}]
+ifndef::version-api[:version-api: {major}.{minor}.{api-vn}]
+
+// END Product versions
+
 
 // Component Features
 :ftr_jPlatNm: {product} for Java
@@ -129,22 +131,13 @@
 :url-downloads-mobile: {url-cb-downloads}
 // deprecated that
 
-:url-download-swift: https://packages.couchbase.com/releases/couchbase-lite-ios/2.8.0-beta/couchbase-lite-swift_community_2.8.0.zip[Couchbase Lite Swift]
-:url-download-objc: https://packages.couchbase.com/releases/couchbase-lite-ios/2.8.0-beta/couchbase-lite-objc_community_2.8.0.zip[Couchbase Lite ObjC]
-:url-download-android: https://packages.couchbase.com/releases/couchbase-lite-android/2.8.0-beta/couchbase-lite-android_community_2.8.0.zip[Couchbase Lite Android]
-:url-download-java: https://packages.couchbase.com/releases/couchbase-lite-java/2.8.0-beta/couchbase-lite-java_community_2.8.0.zip[Couchbase Lite Java]
-:url-download-csharp: https://www.nuget.org/packages/Couchbase.Lite.Community/[Nuget]
-// END -- download urls
-
 // API Reference Links
-// :url-api-references: http://docs.couchbase.com/mobile/{version}/couchbase-lite-{module}
-:url-api-references-staging: https://ibsoln.github.io/stage/api/mobile/{version-full}/couchbase-lite-
-:url-api-references-beta: https://ibsoln.github.io/betasites/api/mobile/{version-full}/couchbase-lite-
-:url-api-references-production: http://docs.couchbase.com/mobile/{version-full}/couchbase-lite-
+:url-api-references-staging: https://ibsoln.github.io/stage/api/mobile/{version-api}/couchbase-lite-
+:url-api-references-beta: https://ibsoln.github.io/betasites/api/mobile/{version-api}/couchbase-lite-
+:url-api-references-production: http://docs.couchbase.com/mobile/{version-api}/couchbase-lite-
 :url-api-references-pfx: {url-api-references-production}
 :url-api-references-android: {url-api-references-pfx}{lang-mod-android}
 :url-api-references-csharp: {url-api-references-pfx}net
-// :url-api-references-csharp: {url-api-references-pfx}{lang-mod-csharp}
 :url-api-references-java: {url-api-references-pfx}{lang-mod-java}
 :url-api-references-objc: {url-api-references-pfx}{lang-mod-objc}
 :url-api-references-swift: {url-api-references-pfx}{lang-mod-swift}
