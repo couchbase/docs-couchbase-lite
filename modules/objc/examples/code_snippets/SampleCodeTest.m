@@ -1936,6 +1936,337 @@
     // end::listener-config-client-auth-self-signed[]
 }
 
+#pragma mark - P2P
+
+- (void) dontTestP2PURLEndpointListener {
+    // tag::p2p-ws-api-urlendpointlistener[]
+    // FIXME: can we use the docsn site to show the interface of the Listener class?
+    // https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-objc/Classes/CBLURLEndpointListener.html
+    // end::p2p-ws-api-urlendpointlistener[]
+}
+
+- (void) dontTestURLEndpointListenerConstructor {
+    CBLDatabase* otherDB = self.db;
+    NSUInteger wssPort = 4985;
+    NSUInteger wsPort = 4984;
+    BOOL isTLS = NO;
+    CBLListenerPasswordAuthenticator* auth = [[CBLListenerPasswordAuthenticator alloc] initWithBlock:^BOOL(NSString * _Nonnull username, NSString * _Nonnull password) {
+        return YES;
+    }];
+    CBLURLEndpointListener* _listener;
+    
+    // tag::p2p-ws-api-urlendpointlistener-constructor[]
+    CBLURLEndpointListenerConfiguration* config = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: otherDB];
+    config.port = isTLS ? wssPort : wsPort;
+    config.disableTLS = !isTLS;
+    config.authenticator = auth;
+    
+    _listener = [[CBLURLEndpointListener alloc] initWithConfig: config]; // <1>
+    // end::p2p-ws-api-urlendpointlistener-constructor[]
+}
+
+- (void) dontTestMyActivePeer {
+    NSError* error = nil;
+    CBLDatabase* thisDB = self.db;
+    // let validUser = "syncthisUser"
+    // let validPassword = "sync9455"
+    // let cert:SecCertificate?
+    // let passivePeerEndpoint = "10.1.1.12:8920"
+    // let passivePeerPort = "8920"
+    // let passiveDbName = "userdb"
+    // var actDb:Database?
+    // var thisReplicator:Replicator?
+    // var replicatorListener:ListenerToken?
+    
+    CBLReplicator *_thisReplicator;
+    
+    CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"thisDB" error:&error];
+    if (!database) {
+        NSLog(@"Cannot open the database: %@", error);
+    };
+    
+    // tag::p2p-act-rep-func[]
+    // tag::p2p-act-rep-initialize[]
+    // Set listener DB endpoint
+    NSURL *url =
+    [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
+    CBLURLEndpoint *thisListener =
+    [[CBLURLEndpoint alloc] initWithURL:url]; // <.>
+    
+    CBLReplicatorConfiguration *thisConfig =
+    [[CBLReplicatorConfiguration alloc]
+     initWithDatabase: thisDB target:thisListener]; // <.>
+    
+    // end::p2p-act-rep-initialize[]
+    // tag::p2p-act-rep-config[]
+    // tag::p2p-act-rep-config-type[]
+    thisConfig.replicatorType = kCBLReplicatorTypePush;
+    
+    // end::p2p-act-rep-config-type[]
+    // tag::autopurge-override[]
+    // set auto-purge behavior (here we override default)
+    thisConfig.enableAutoPurge = NO; // <.>
+    
+    // end::autopurge-override[]
+    // tag::p2p-act-rep-config-cont[]
+    thisConfig.continuous = YES;
+    
+    // end::p2p-act-rep-config-cont[]
+    // tag::p2p-act-rep-config-tls-full[]
+    // tag::p2p-act-rep-config-self-cert[]
+    // Configure Server Authentication
+    // Here - expect and accept self-signed certs
+    thisConfig.acceptOnlySelfSignedServerCertificate = YES; // <.>
+    
+    // end::p2p-act-rep-config-self-cert[]
+    // Configure Client Authentication
+    // tag::p2p-act-rep-auth[]
+    // Here set client to use basic authentication
+    // Providing username and password credentials
+    // If prompted for them by server
+    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; // <.>
+    
+    // end::p2p-act-rep-auth[]
+    // end::p2p-act-rep-config-tls-full[]
+    // tag::p2p-act-rep-config-conflict[]
+    /* Optionally set custom conflict resolver call back */
+    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] init]; // <.>
+    
+    // end::p2p-act-rep-config-conflict[]    //
+    // end::p2p-act-rep-config[]
+    // tag::p2p-act-rep-start-full[]
+    // Apply configuration settings to the replicator
+    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; // <.>
+    
+    // tag::p2p-act-rep-add-change-listener[]
+    // tag::p2p-act-rep-add-change-listener-label[]
+    // Optionally add a change listener <.>
+    // end::p2p-act-rep-add-change-listener-label[]
+    // Retain token for use in deletion
+    id<CBLListenerToken> thisListenerToken = [_thisReplicator addChangeListener:^(CBLReplicatorChange *thisChange) {
+        // tag::p2p-act-rep-status[]
+        if (thisChange.status.activity == kCBLReplicatorStopped) {
+            NSLog(@"Replication stopped");
+        } else {
+            NSLog(@"Status: %d", thisChange.status.activity);
+        };
+        // end::p2p-act-rep-status[]
+    }];
+    // end::p2p-act-rep-add-change-listener[]
+    // tag::p2p-act-rep-start[]
+    // Run the replicator using the config settings
+    [_thisReplicator start]; // <.>
+    
+    // end::p2p-act-rep-start[]
+    // end::p2p-act-rep-start-full[]
+    // end::p2p-act-rep-func[]
+    
+    NSLog(@"print to avoid warning %@", thisListenerToken);
+}
+
+- (void) dontTestReplicatorStop {
+    id<CBLListenerToken> thisListenerToken;
+    CBLReplicator* thisReplicator;
+    
+    // tag::p2p-act-rep-stop[]
+    // Remove the change listener
+    [thisReplicator removeChangeListenerWithToken: thisListenerToken];
+    
+    // Stop the replicator
+    [thisReplicator stop];
+    // end::p2p-act-rep-stop[]
+    
+}
+
+// Additional Snippets from above
+
+- (void) dontTestReplicatorConfigCerts {
+    CBLReplicatorConfiguration* thisConfig;
+    SecCertificateRef thisCert;
+    // tag::p2p-act-rep-config-cacert[]
+    // Configure Server Security -- only accept CA Certs
+    thisConfig.acceptOnlySelfSignedServerCertificate = NO; // <.>
+    
+    // end::p2p-act-rep-config-cacert[]
+    
+    
+    // tag::p2p-act-rep-config-pinnedcert[]
+    // Return the remote pinned cert (the listener's cert)
+    thisConfig.pinnedServerCertificate = thisCert; // Get listener cert if pinned
+    
+    // end::p2p-act-rep-config-pinnedcert[]
+    
+}
+
+// tag::p2p-act-rep-config-cacert-pinned-func[]
+- (void) dontTestCACertPinned {
+    CBLDatabase* database;
+    
+    // tag::p2p-act-rep-config-cacert-pinned[]
+    NSURL *certURL = [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"cer"];
+    NSData *data = [[NSData alloc] initWithContentsOfURL: certURL];
+    SecCertificateRef certificate = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
+
+    NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
+    CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
+    CBLReplicatorConfiguration *thisConfig = [[CBLReplicatorConfiguration alloc] initWithDatabase:database
+                                                                                           target:target];
+    thisConfig.pinnedServerCertificate = (SecCertificateRef)CFAutorelease(certificate);
+
+    thisConfig.acceptOnlySelfSignedServerCertificate=false;
+
+  // end::p2p-act-rep-config-cacert-pinned[]
+    
+}
+// end::p2p-act-rep-config-cacert-pinned-func[]
+
+#pragma mark - JSON API
+
+- (void) dontTestToJSONBlob {
+    CBLDatabase* db = self.db;
+    // Example 2. Using Blobs
+    // tag::tojson-blob[]
+
+        // Get a document
+        CBLMutableDocument* thisDoc = [[db documentWithID: @"1000"] toMutable];
+
+        // Get the image and add as a blob to the document
+        NSString* contentType = @"";
+        UIImage* ourImage = [UIImage imageNamed: @"couchbaseimage.png"];
+        NSData* imageData = UIImageJPEGRepresentation(ourImage, 1);
+        CBLBlob* thisBlob = [[CBLBlob alloc] initWithContentType: contentType data: imageData];
+        [thisDoc setBlob: thisBlob forKey: @"avatar"];
+
+        NSString* theBlobAsJSONstringFails = [[thisDoc blobForKey: @"avatar"] toJSON];
+
+        // Save blob as part of doc or alternatively as a blob
+
+        NSError* error = nil;
+        [db saveDocument: thisDoc error: &error];
+        [db saveBlob: thisBlob error: &error]; // <.>
+
+        // Retrieve saved blob as a JSON, reconstitue and check still blob
+
+        CBLDocument* sameDoc = [db documentWithID: @"1000"];
+        CBLBlob* sameBlob = [sameDoc blobForKey: @"avatar"];
+        NSString* theBlobAsJSONstring = [sameBlob toJSON];
+        NSDictionary* dict = sameDoc.toDictionary;
+        for (id key in dict) {
+            NSLog(@"Data -- {%@) = {%@}", key, [dict valueForKey: key]);
+        }
+
+        if ([CBLBlob isBlob: sameBlob.properties]) {
+            NSLog(@"%@", theBlobAsJSONstring);
+        }
+
+    // end::tojson-blob[]
+    NSLog(@"print to avoid warning %@", theBlobAsJSONstringFails);
+}
+
+- (void) dontTestToJSONDictionary {
+    // Example 6. Dictionaries as JSON strings
+    // tag::tojson-dictionary[]
+        NSString* aJSONstring = @"{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\","
+        "\"city\":\"Balmain\",\"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\"}";
+
+        NSError* error = nil;
+        CBLMutableDictionary* myDict = [[CBLMutableDictionary alloc] initWithJSON: aJSONstring error: &error];
+        NSLog(@"%@", myDict);
+
+        NSString* name = [myDict stringForKey: @"name"];
+        NSLog(@"Details for: %@", name);
+
+        for (NSString* key in myDict) {
+            NSLog(@"%@ %@", key, [myDict valueForKey: key]);
+        }
+
+    // end:tojson-dictionary[]
+}
+
+- (void) dontTestToJSONDocument {
+    // Example 7. Documents as JSON strings
+    // tag::tojson-document[]
+    NSError* error = nil;
+    CBLDatabase* db = [[CBLDatabase alloc] initWithName: @"hotel" error: &error];
+    CBLDatabase* dbnew = [[CBLDatabase alloc] initWithName: @"newhotels" error: &error];
+    
+    CBLQuery* listQuery = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id] as: @"metaId"]]
+                                             from: [CBLQueryDataSource database: db]];
+    
+    
+    CBLQueryResultSet* rs = [listQuery execute: &error];
+    for (CBLQueryResult* r in rs.allObjects) {
+        NSString* thisId = [r stringForKey: @"metaId"];
+        NSString* thisJSONstring = [[db documentWithID: thisId] toJSON];
+        
+        NSLog(@"JSON String = %@", thisJSONstring);
+        
+        NSError* docError = nil;
+        CBLMutableDocument* hotelFromJSON = [[CBLMutableDocument alloc] initWithID: thisId json: thisJSONstring error: &docError];
+        
+        [dbnew saveDocument: hotelFromJSON error: &error];
+        CBLDocument* newhotel = [dbnew documentWithID: thisId];
+        NSArray* keys = newhotel.keys;
+        for (NSString* key in keys) {
+            NSLog(@"%@ %@", key, [newhotel valueForKey: key]);
+        }
+    }
+    // end::tojson-document[]
+}
+
+- (void) dontTestToJSONArray {
+    CBLDatabase* db = self.db;
+    CBLDatabase* newdb = self.db;
+    
+    // tag::tojson-array[]
+    NSString* thisJSONstring = @"[{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hotel Ted\",\"city\":\"Paris\","
+        "\"country\":\"France\",\"description\":\"Undefined description for Hotel Ted\"},"
+        "{\"id\":\"1001\",\"type\":\"hotel\",\"name\":\"Hotel Fred\",\"city\":\"London\","
+        "\"country\":\"England\",\"description\":\"Undefined description for Hotel Fred\"},"
+        "{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\","
+        "\"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\","
+        "\"features\":[\"Cable TV\",\"Toaster\",\"Microwave\"]}]";
+
+        NSError* error = nil;
+        CBLMutableArray* myArray = [[CBLMutableArray alloc] initWithJSON: thisJSONstring error: &error];
+
+        for (NSUInteger i = 0 ; i < myArray.count; i++) {
+            NSLog(@"%lu %@", i+1, [[myArray dictionaryAtIndex: i] stringForKey: @"name"]);
+
+            NSString* docID = [[myArray dictionaryAtIndex: i] stringForKey: @"ID"];
+
+            CBLMutableDocument* newdoc = [[CBLMutableDocument alloc] initWithID: docID data: [[myArray dictionaryAtIndex: i] toDictionary]];
+
+            [db saveDocument: newdoc error: &error];
+        }
+
+        CBLDocument* extendedDoc = [newdb documentWithID: @"1002"];
+        NSArray* features = [[extendedDoc arrayForKey: @"features"] toArray];
+        for (NSUInteger i = 0; i < features.count; i++) {
+            NSLog(@"%@", features[i]);
+        }
+
+        NSLog( @"%@", [[extendedDoc arrayForKey: @"features"] toJSON]);
+
+    // end::tojson-array[]
+}
+
+#pragma mark - SGW
+- (void) dontTestSGWActiveReplicatorInitialize {
+    CBLDatabase* thisDB = self.db;
+    
+    // tag::sgw-act-rep-initialize[]
+    // Set listener DB endpoint
+    NSURL *url = [NSURL URLWithString:@"ws://10.0.2.2.com:55990/travel-sample"];
+    CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
+
+    CBLReplicatorConfiguration *thisConfig = [[CBLReplicatorConfiguration alloc]
+                                              initWithDatabase:thisDB target:thisListener]; // <.>
+
+    // end::sgw-act-rep-initialize[]
+    // END -- snippets --
+    NSLog(@"print to aviod warning %@", thisConfig.description);
+}
 
 @end
 
@@ -2167,181 +2498,7 @@
 // end::passive-peer-close[]
 @end
 
-
-
-
-// tag::p2p-ws-api-urlendpointlistener[]
-public class URLEndpointListener {
-    // Properties // <1>
-    public let config: URLEndpointListenerConfiguration
-    public let port UInt16?
-    public let tlsIdentity: TLSIdentity?
-    public let urls: Array<URL>?
-    public let status: ConnectionStatus?
-    // Constructors <2>
-    public init(config: URLEndpointListenerConfiguration)
-    // Methods <3>
-    public func start() throws
-    public func stop()
-}
-
-// end::p2p-ws-api-urlendpointlistener[]
-
-
-// tag::p2p-ws-api-urlendpointlistener-constructor[]
-let config = URLEndpointListenerConfiguration.init(database: self.oDB)
-thisConfig.port = tls ? wssPort : wsPort
-thisConfig.disableTLS = !tls
-thisConfig.authenticator = auth
-self.listener = URLEndpointListener.init(config: config) // <1>
-
-// end::p2p-ws-api-urlendpointlistener-constructor[]
-
-
-// Active Peer Connection Snippets
-
-//
-//  my Other Bits.swift
-//  doco-sync
-//
-//  Created by Ian Bridge on 19/06/2020.
-//  Copyright © 2020 Couchbase Inc. All rights reserved.
-//
-
-import Foundation
-import CouchbaseLiteSwift
-import MultipeerConnectivity
-
-class myActPeerClass {
-
-  func fMyActPeer() {
-    // let validUser = "syncthisUser"
-    // let validPassword = "sync9455"
-    // let cert:SecCertificate?
-    // let passivePeerEndpoint = "10.1.1.12:8920"
-    // let passivePeerPort = "8920"
-    // let passiveDbName = "userdb"
-    // var actDb:Database?
-    // var thisReplicator:Replicator?
-    // var replicatorListener:ListenerToken?
-
-    CBLReplicator *_thisReplicator;
-
-    CBLListenerToken *_thisListenerToken;
-
-    CBLDatabase *database
-      = [[CBLDatabase alloc] initWithName:@"thisDB" error:&error];
-        if (!database) {
-          NSLog(@"Cannot open the database: %@", error);
-        };
-
-    // tag::p2p-act-rep-func[]
-    // tag::p2p-act-rep-initialize[]
-    // Set listener DB endpoint
-    NSURL *url =
-      [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
-    CBLURLEndpoint *thisListener =
-      [[CBLURLEndpoint alloc] initWithURL:url]; // <.>
-
-    CBLReplicatorConfiguration *thisConfig =
-      [[CBLReplicatorConfiguration alloc]
-        initWithDatabase:thisDB target:thisListener]; // <.>
-
-    // end::p2p-act-rep-initialize[]
-    // tag::p2p-act-rep-config[]
-    // tag::p2p-act-rep-config-type[]
-    thisConfig.replicatorType = kCBLReplicatorTypePush;
-
-    // end::p2p-act-rep-config-type[]
-    // tag::autopurge-override[]
-    // set auto-purge behavior (here we override default)
-    thisConfig.enableAutoPurge = NO; // <.>
-
-    // end::autopurge-override[]
-    // tag::p2p-act-rep-config-cont[]
-    thisConfig.continuous = YES;
-
-    // end::p2p-act-rep-config-cont[]
-    // tag::p2p-act-rep-config-tls-full[]
-    // tag::p2p-act-rep-config-self-cert[]
-    // Configure Server Authentication
-    // Here - expect and accept self-signed certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = YES; // <.>
-
-    // end::p2p-act-rep-config-self-cert[]
-    // Configure Client Authentication
-    // tag::p2p-act-rep-auth[]
-    // Here set client to use basic authentication
-    // Providing username and password credentials
-    // If prompted for them by server
-    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; // <.>
-
-    // end::p2p-act-rep-auth[]
-    // end::p2p-act-rep-config-tls-full[]
-    // tag::p2p-act-rep-config-conflict[]
-    /* Optionally set custom conflict resolver call back */
-    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] // <.>
-
-    // end::p2p-act-rep-config-conflict[]    //
-    // end::p2p-act-rep-config[]
-    // tag::p2p-act-rep-start-full[]
-    // Apply configuration settings to the replicator
-    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; // <.>
-
-    // tag::p2p-act-rep-add-change-listener[]
-    // tag::p2p-act-rep-add-change-listener-label[]
-    // Optionally add a change listener <.>
-    // end::p2p-act-rep-add-change-listener-label[]
-    // Retain token for use in deletion
-    id<CBLListenerToken> thisListenerToken
-      = [thisReplicator addChangeListener:^(CBLReplicatorChange *thisChange) {
-    // tag::p2p-act-rep-status[]
-          if (thisChange.status.activity == kCBLReplicatorStopped) {
-            NSLog(@"Replication stopped");
-            } else {
-            NSLog(@"Status: %d", thisChange.status.activity);
-            };
-    // end::p2p-act-rep-status[]
-        }];
-// end::p2p-act-rep-add-change-listener[]
-// tag::p2p-act-rep-start[]
-    // Run the replicator using the config settings
-    [thisReplicator start]; // <.>
-
-// end::p2p-act-rep-start[]
-// end::p2p-act-rep-start-full[]
-// end::p2p-act-rep-func[]
-    }
-
-    func mystopfunc() {
-// tag::p2p-act-rep-stop[]
-    // Remove the change listener
-    [thisReplicator removeChangeListenerWithToken: thisListenerToken];
-
-    // Stop the replicator
-    [thisReplicator stop];
-// end::p2p-act-rep-stop[]
-}
-
-// Additional Snippets from above
-    // tag::p2p-act-rep-config-cacert[]
-    // Configure Server Security -- only accept CA Certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = NO; // <.>
-
-    // end::p2p-act-rep-config-cacert[]
-
-
-    // tag::p2p-act-rep-config-pinnedcert[]
-    // Return the remote pinned cert (the listener's cert)
-    thisConfig.pinnedServerCertificate = thisCert; // Get listener cert if pinned
-
-    // end::p2p-act-rep-config-pinnedcert[]
-
-
-
-
-
-
+#pragma mark - TLS Manage Functions
 
 // tag::p2p-tlsid-manage-func[]
 //
@@ -2352,177 +2509,138 @@ class myActPeerClass {
 //  Copyright © 2020 Couchbase Inc. All rights reserved.
 //
 
-import Foundation
-import Foundation
-import CouchbaseLiteSwift
-import MultipeerConnectivity
+// tag::p2p-tlsid-manage-func[]
+@interface MyGetCert1 : NSObject
 
+@end
 
-class cMyGetCert1{
+@implementation MyGetCert1
 
-    let kListenerCertLabel = "doco-sync-server"
-    let kListenerCertKeyP12File = "listener-cert-pkey"
-    let kListenerPinnedCertFile = "listener-pinned-cert"
-    let kListenerCertKeyExportPassword = "couchbase"
-    //var importedItems : NSArray
-    let thisData : CFData?
-    var items : CFArray?
+- (CBLTLSIdentity*) fMyGetCert {
+    NSError* error = nil;
+    CBLReplicatorConfiguration* thisConfig; // TODO: Are we sure? thi is setting to Replicator config?
+    // tag::p2p-tlsid-tlsidentity-with-label[]
+    // tag::p2p-tlsid-check-keychain[]
+    // Check if Id exists in keychain and if so, use it
+    CBLTLSIdentity* identity = [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &error]; // <.>
 
-    func fMyGetCert() ->TLSIdentity? {
-        var kcStatus = errSecSuccess // Zero
-        let thisLabel : String? = "doco-sync-server"
+    // end::p2p-tlsid-check-keychain[]
+    thisConfig.authenticator = [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; // <.>
 
-        //var thisData : CFData?
-        // tag::p2p-tlsid-tlsidentity-with-label[]
-        // tag::p2p-tlsid-check-keychain[]
-        // Check if Id exists in keychain and if so, use it
-        CBLTLSIdentity* identity =
-          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &error]; // <.>
-
-        // end::p2p-tlsid-check-keychain[]
-        thisConfig.authenticator =
-          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; // <.>
-
-        // end::p2p-tlsid-tlsidentity-with-label[]
-
-
-// tag::p2p-tlsid-check-bundled[]
-// CREATE IDENTITY FROM BUNDLED RESOURCE IF FOUND
-
-        // Check for a resource bundle with required label to generate identity from
-        // return nil identify if not found
-        guard let pathToCert = Bundle.main.path(forResource: "doco-sync-server", ofType: "p12"),
-                let thisData = NSData(contentsOfFile: pathToCert)
-            else
-                {return nil}
-// end::p2p-tlsid-check-bundled[]
-
-// tag::p2p-tlsid-import-from-bundled[]
-        // Use SecPKCS12Import to import the contents (identities and certificates)
-        // of the required resource bundle (PKCS #12 formatted blob).
-        //
-        // Set passphrase using kSecImportExportPassphrase.
-        // This passphrase should correspond to what was specified when .p12 file was created
-        kcStatus = SecPKCS12Import(thisData as CFData, [String(kSecImportExportPassphrase): "couchbase"] as CFDictionary, &items)
-            if kcStatus != errSecSuccess {
-             print("failed to import data from provided with error :\(kcStatus) ")
-             return nil
-            }
-        let importedItems = items! as NSArray
-        let thisItem = importedItems[0] as! [String: Any]
-
-        // Get SecIdentityRef representing the item's id
-        let thisSecId = thisItem[String(kSecImportItemIdentity)]  as! SecIdentity
-
-        // Get Id's Private Key, return nil id if fails
-        var thisPrivateKey : SecKey?
-        kcStatus = SecIdentityCopyPrivateKey(thisSecId, &thisPrivateKey)
-            if kcStatus != errSecSuccess {
-                print("failed to import private key from provided with error :\(kcStatus) ")
-                return nil
-            }
-
-        // Get all relevant certs [SecCertificate] from the ID's cert chain using kSecImportItemCertChain
-        let thisCertChain = thisItem[String(kSecImportItemCertChain)] as? [SecCertificate]
-
-        // Return nil Id if errors in key or cert chain at this stage
-        guard let pKey = thisPrivateKey, let pubCerts = thisCertChain else {
-            return nil
+    // end::p2p-tlsid-tlsidentity-with-label[]
+    
+    // tag::p2p-tlsid-check-bundled[]
+    // CREATE IDENTITY FROM BUNDLED RESOURCE IF FOUND
+    
+    // Check for a resource bundle with required label to generate identity from
+    // return nil identify if not found
+    NSString* path = [[NSBundle mainBundle] pathForResource: @"doco-sync-server" ofType: @"p12"];
+    NSData* thisData = [NSData dataWithContentsOfFile: path
+                                              options: 0
+                                                error: &error];
+    if (!thisData)
+        return nil;
+    
+    // end::p2p-tlsid-check-bundled[]
+    
+    // tag::p2p-tlsid-import-from-bundled[]
+    // Use SecPKCS12Import to import the contents (identities and certificates)
+    // of the required resource bundle (PKCS #12 formatted blob).
+    //
+    // Set passphrase using kSecImportExportPassphrase.
+    // This passphrase should correspond to what was specified when .p12 file was created
+    CFArrayRef result = NULL;
+    NSDictionary* options = @{ (id)kSecImportExportPassphrase: @"couchbase" };
+    OSStatus status = SecPKCS12Import((__bridge CFDataRef)thisData, (__bridge CFDictionaryRef)options, &result);
+    if (status != errSecSuccess) {
+        NSLog(@"Failed to import data from provided with error :%d ", (int)status);
+        return nil;
+    }
+    
+    NSArray* importedItems = (NSArray*)CFBridgingRelease(result);
+    NSDictionary* item = importedItems[0];
+    
+    // Get SecIdentityRef representing the item's id
+    SecIdentityRef identityRef = (__bridge SecIdentityRef) item[(id)kSecImportItemIdentity];
+    
+    // Get Id's Private Key, return nil id if fails
+    SecKeyRef thisPrivateKey;
+    status = SecIdentityCopyPrivateKey(identityRef, &thisPrivateKey);
+    if (status != errSecSuccess) {
+        NSLog(@"Failed to import private key from provided with error :%d ", (int)status);
+        return nil;
+    }
+    CFAutorelease(thisPrivateKey);
+    
+    // Get all relevant certs [SecCertificate] from the ID's cert chain using kSecImportItemCertChain
+    NSArray* thisCertChain = item[(id)kSecImportItemCertChain];
+    
+    // Return nil Id if errors in key or cert chain at this stage
+    if (!thisCertChain || !thisPrivateKey)
+        return nil;
+    
+    // end::p2p-tlsid-import-from-bundled[]
+    
+    // tag::p2p-tlsid-store-in-keychain[]
+    // STORE THE IDENTITY AND ITS CERT CHAIN IN THE KEYCHAIN
+    
+    // Store Private Key in Keychain
+    NSDictionary* params = @{
+        (id)kSecClass:              (id)kSecClassKey,
+        (id)kSecAttrKeyType:        (id)kSecAttrKeyTypeRSA,
+        (id)kSecAttrKeyClass:       (id)kSecAttrKeyClassPrivate,
+        (id)kSecReturnRef:          @NO,
+        (id)kSecValueRef:           (__bridge id)thisPrivateKey
+    };
+    
+    status = SecItemAdd((CFDictionaryRef)params, NULL);
+    if (status != errSecSuccess) {
+        NSLog(@"Unable to store private key");
+        return nil;
+    }
+    
+    // Store all Certs for Id in Keychain:
+    int i = 0;
+    for (id cert in thisCertChain) {
+        NSMutableDictionary* params = [NSMutableDictionary dictionaryWithDictionary: @{
+            (id)kSecClass:              (id)kSecClassCertificate,
+            (id)kSecReturnRef:          @NO,
+            (id)kSecValueRef:           cert
+        }];
+        NSString* label = [NSString stringWithFormat: @"doco-sync-server-%d", i++];
+        if (label)
+            params[(id)kSecAttrLabel] = label;
+        
+        status = SecItemAdd((CFDictionaryRef)params, NULL);
+        if (status != errSecSuccess) {
+            NSLog(@"Unable to store certs");
+            return nil;
         }
-// end::p2p-tlsid-import-from-bundled[]
-
-// tag::p2p-tlsid-store-in-keychain[]
-// STORE THE IDENTITY AND ITS CERT CHAIN IN THE KEYCHAIN
-
-        // Store Private Key in Keychain
-        let params: [String : Any] = [
-            String(kSecClass):          kSecClassKey,
-            String(kSecAttrKeyType):    kSecAttrKeyTypeRSA,
-            String(kSecAttrKeyClass):   kSecAttrKeyClassPrivate,
-            String(kSecValueRef):       pKey
-        ]
-        kcStatus = SecItemAdd(params as CFDictionary, nil)
-            if kcStatus != errSecSuccess {
-                print("Unable to store private key")
-                return nil
-            }
-       // Store all Certs for Id in Keychain:
-       var i = 0;
-       for cert in thisCertChain! {
-            let params: [String : Any] = [
-                String(kSecClass):      kSecClassCertificate,
-                String(kSecValueRef):   cert,
-                String(kSecAttrLabel):  "doco-sync-server"
-                ]
-            kcStatus = SecItemAdd(params as CFDictionary, nil)
-                if kcStatus != errSecSuccess {
-                    print("Unable to store certs")
-                    return nil
-                }
-            i=i+1
-        }
-// end::p2p-tlsid-store-in-keychain[]
-
-// tag::p2p-tlsid-return-id-from-keychain[]
-// RETURN A TLSIDENTITY FROM THE KEYCHAIN FOR USE IN CONFIGURING TLS COMMUNICATION
-do {
-    return try TLSIdentity.identity(withIdentity: thisSecId, certs: [pubCerts[0]])
-} catch {
-    print("Error while loading self signed cert : \(error)")
-    return nil
+    }
+    
+    // end::p2p-tlsid-store-in-keychain[]
+    
+    // tag::p2p-tlsid-return-id-from-keychain[]
+    // RETURN A TLSIDENTITY FROM THE KEYCHAIN FOR USE IN CONFIGURING TLS COMMUNICATION
+    return [CBLTLSIdentity identityWithIdentity: identityRef
+                                          certs: @[thisCertChain[1]]
+                                          error: &error];
+    // end::p2p-tlsid-return-id-from-keychain[]
 }
-// end::p2p-tlsid-return-id-from-keychain[]
-    } // fMyGetCert
-} // cMyGetCert
 
+- (void) dontTestDeleteTLSIdentityFromKeychain {
+    NSError* error;
+    // tag::p2p-tlsid-delete-id-from-keychain[]
 
-// tag::p2p-tlsid-delete-id-from-keychain[]
+    [CBLTLSIdentity deleteIdentityWithLabel: @"doco-sync-server-1" error: &error];
 
-[CBLTLSIdentity deleteIdentityWithLabel:thisSecId error: &error];
+    // end::p2p-tlsid-delete-id-from-keychain[]
+}
 
-// end::p2p-tlsid-delete-id-from-keychain[]
-
-
-
+@end
 // end::p2p-tlsid-manage-func[]
 
-
-
-// tag::p2p-act-rep-config-cacert-pinned-func[]
-func fMyCaCertPinned() {
-  // do {
-  let tgtUrl = URL(string: "wss://10.1.1.12:8092/actDb")!
-  let targetEndpoint = URLEndpoint(url: tgtUrl)
-  let actDb:Database?
-  let config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint)
-  // tag::p2p-act-rep-config-cacert-pinned[]
-    NSURL *certURL =
-      [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"cer"];
-    NSData *data =
-      [[NSData alloc] initWithContentsOfURL: certURL];
-    SecCertificateRef certificate =
-      SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
-
-    NSURL *url =
-      [NSURL URLWithString:@"ws://localhost:4984/db"];
-
-    CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
-
-    CBLReplicatorConfiguration *thisConfig =
-      [[CBLReplicatorConfiguration alloc] initWithDatabase:database
-                                          target:target];
-    thisConfig.pinnedServerCertificate =
-      (SecCertificateRef)CFAutorelease(certificate);
-
-    thisConfig.acceptOnlySelfSignedServerCertificate=false;
-
-  // end::p2p-act-rep-config-cacert-pinned[]
-  // end::p2p-act-rep-config-cacert-pinned-func[]
-}
-
-
-
-// For replications
+#pragma mark - For replications
 
 // BEGIN -- snippets --
 //    Purpose -- code samples for use in replication topic
@@ -2550,6 +2668,7 @@ func fMyCaCertPinned() {
 
 // end::sgw-repl-pull[]
 
+/*
 // tag::sgw-repl-pull-callouts[]
 <1> A replication is an asynchronous operation.
 To keep a reference to the `replicator` object, you can set it as an instance property.
@@ -2558,136 +2677,4 @@ You should now use `ws:`, or `wss:` for SSL/TLS connections.
 
 
 // end::sgw-repl-pull-callouts[]
-
-// tag::sgw-act-rep-initialize[]
-// Set listener DB endpoint
-NSURL *url = [NSURL URLWithString:@"ws://10.0.2.2.com:55990/travel-sample"];
-CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
-
-CBLReplicatorConfiguration *thisConfig
-  = [[CBLReplicatorConfiguration alloc]
-      initWithDatabase:thisDB target:thisListener]; // <.>
-
-// end::sgw-act-rep-initialize[]
-// END -- snippets --
-
-
-
-// FOR JSON API Methods
-
-// tag::tojson-array[]
-NSString* thisJSONstring = @"[{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hotel Ted\",\"city\":\"Paris\","
-    "\"country\":\"France\",\"description\":\"Undefined description for Hotel Ted\"},"
-    "{\"id\":\"1001\",\"type\":\"hotel\",\"name\":\"Hotel Fred\",\"city\":\"London\","
-    "\"country\":\"England\",\"description\":\"Undefined description for Hotel Fred\"},"
-    "{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\","
-    "\"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\","
-    "\"features\":[\"Cable TV\",\"Toaster\",\"Microwave\"]}]";
-
-    NSError* error = nil;
-    CBLMutableArray* myArray = [[CBLMutableArray alloc] initWithJSON: thisJSONstring error: &error];
-
-    for (NSUInteger i = 0 ; i < myArray.count; i++) {
-        NSLog(@"%lu %@", i+1, [[myArray dictionaryAtIndex: i] stringForKey: @"name"]);
-
-        NSString* docID = [[myArray dictionaryAtIndex: i] stringForKey: @"ID"];
-
-        CBLMutableDocument* newdoc = [[CBLMutableDocument alloc] initWithID: docID data: [[myArray dictionaryAtIndex: i] toDictionary]];
-
-        [db saveDocument: newdoc error: &error];
-    }
-
-    CBLDocument* extendedDoc = [newdb documentWithID: @"1002"];
-    NSArray* features = [[extendedDoc arrayForKey: @"features"] toArray];
-    for (NSUInteger i = 0; i < features.count; i++) {
-        NSLog(@"%@", features[i]);
-    }
-
-    NSLog( @"%@", [[extendedDoc arrayForKey: @"features"] toJSON]);
-
-// end::tojson-array[]
-
-// Example 2. Using Blobs
-// tag::tojson-blob[]
-
-    // Get a document
-    CBLMutableDocument* thisDoc = [[db documentWithID: @"1000"] toMutable];
-
-    // Get the image and add as a blob to the document
-    NSString* contentType = @"";
-    UIImage* ourImage = [UIImage imageNamed: @"couchbaseimage.png"];
-    NSData* imageData = UIImageJPEGRepresentation(ourImage, 1);
-    CBLBlob* thisBlob = [[CBLBlob alloc] initWithContentType: contentType data: imageData];
-    [thisDoc setBlob: thisBlob forKey: @"avatar"];
-
-    NSString* theBlobAsJSONstringFails = [[thisDoc blobForKey: @"avatar"] toJSON];
-
-    // Save blob as part of doc or alternatively as a blob
-
-    NSError* error = nil;
-    [db saveDocument: thisDoc error: &error];
-    [db saveBlob: thisBlob error: &error]; // <.>
-
-    // Retrieve saved blob as a JSON, reconstitue and check still blob
-
-    CBLDocument* sameDoc = [db documentWithID: @"1000"];
-    CBLBlob* sameBlob = [sameDoc blobForKey: @"avatar"];
-    NSString* theBlobAsJSONstring = [sameBlob toJSON];
-    NSDictionary* dict = sameDoc.toDictionary;
-    for (id key in dict) {
-        NSLog(@"Data -- {%@) = {%@}", key, [dict valueForKey: key]);
-    }
-
-    if ([CBLBlob isBlob: sameBlob.properties]) {
-        NSLog(@"%@", theBlobAsJSONstring);
-    }
-
-// end::tojson-blob[]
-
-// Example 6. Dictionaries as JSON strings
-// tag::tojson-dictionary[]
-    NSString* aJSONstring = @"{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\","
-    "\"city\":\"Balmain\",\"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\"}";
-
-    NSError* error = nil;
-    CBLMutableDictionary* myDict = [[CBLMutableDictionary alloc] initWithJSON: aJSONstring error: &error];
-    NSLog(@"%@", myDict);
-
-    NSString* name = [myDict stringForKey: @"name"];
-    NSLog(@"Details for: %@", name);
-
-    for (NSString* key in myDict) {
-        NSLog(@"%@ %@", key, [myDict valueForKey: key]);
-    }
-
-// end:tojson-dictionary[]
-
-// Example 7. Documents as JSON strings
-// tag::tojson-document[]
-    NSError* error = nil;
-    CBLDatabase* db = [[CBLDatabase alloc] initWithName: @"hotel" error: &error];
-    CBLDatabase* dbnew = [[CBLDatabase alloc] initWithName: @"newhotels" error: &error];
-
-    CBLQuery* listQuery = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id] as: @"metaId"]]
-                                             from: [CBLQueryDataSource database: db]];
-
-
-    CBLQueryResultSet* rs = [listQuery execute: &error];
-    for (CBLQueryResult* r in rs.allObjects) {
-        NSString* thisId = [r stringForKey: @"metaId"];
-        NSString* thisJSONstring = [[db documentWithID: thisId] toJSON];
-
-        NSLog(@"JSON String = %@", thisJSONstring);
-
-        NSError* docError = nil;
-        CBLMutableDocument* hotelFromJSON = [[CBLMutableDocument alloc] initWithID: thisId json: thisJSONstring error: &docError];
-
-        [dbnew saveDocument: hotelFromJSON error: &error];
-        CBLDocument* newhotel = [dbnew documentWithID: thisId];
-        NSArray* keys = newhotel.keys;
-        for (NSString* key in keys) {
-            NSLog(@"%@ %@", key, [newhotel valueForKey: key]);
-        }
-    }
-
-// end::tojson-document[]
+ */
