@@ -14,7 +14,7 @@ extension SampleCodeTest {
     // MARK: Database
     
     func dontTestNewDatabase() throws {
-        let userDb: Database = self.db;
+        let userDb: Database = self.database;
         
         // tag::new-database[]
         do {
@@ -105,8 +105,6 @@ extension SampleCodeTest {
     // MARK: Document
     
     func dontTestInitializer() throws {
-        database = self.db
-        
         // tag::initializer[]
         let newTask = MutableDocument()
             .setString("task", forKey: "type")
@@ -117,8 +115,6 @@ extension SampleCodeTest {
     }
     
     func dontTestMutability() throws {
-        database = self.db
-        
         // tag::update-document[]
         guard let document = database.document(withID: "xyz") else { return }
         let mutableDocument = document.toMutable()
@@ -168,8 +164,6 @@ extension SampleCodeTest {
     }
     
     func dontTestChangeListener() throws {
-        database = self.db
-        
         // tag::document-listener[]
         database.addDocumentChangeListener(withID: "user.john") { (change) in
             if let document = self.database.document(withID: change.documentID) {
@@ -180,21 +174,19 @@ extension SampleCodeTest {
     }
     
     func dontTestDocumentExpiration() throws {
-        database = self.db
-        
         // tag::document-expiration[]
         // Purge the document one day from now
         let ttl = Calendar.current.date(byAdding: .day, value: 1, to: Date())
         try database.setDocumentExpiration(withID: "doc123", expiration: ttl)
         
         // Reset expiration
-        try db.setDocumentExpiration(withID: "doc1", expiration: nil)
+        try database.setDocumentExpiration(withID: "doc1", expiration: nil)
         
         // Query documents that will be expired in less than five minutes
         let fiveMinutesFromNow = Date(timeIntervalSinceNow: 60 * 5).timeIntervalSince1970
         let query = QueryBuilder
             .select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(db))
+            .from(DataSource.database(database))
             .where(
                 Meta.expiration.lessThan(
                     Expression.double(fiveMinutesFromNow)
@@ -206,7 +198,6 @@ extension SampleCodeTest {
     
     func dontTestBlob() throws {
 #if TARGET_OS_IPHONE
-        database = self.db
         let newTask = MutableDocument()
         var image: UIImage!
         
@@ -228,7 +219,6 @@ extension SampleCodeTest {
     }
     
     func dontTest1xAttachment() throws {
-        database = self.db
         let document = MutableDocument()
         
         // tag::1x-attachment[]
@@ -243,8 +233,6 @@ extension SampleCodeTest {
     // MARK: Query
     
     func dontTestIndexing() throws {
-        database = self.db
-        
         // tag::query-index[]
         let index = IndexBuilder.valueIndex(items:
                                                 ValueIndexItem.expression(Expression.property("type")),
@@ -254,8 +242,6 @@ extension SampleCodeTest {
     }
     
     func dontTestSelectMeta() throws {
-        database = self.db
-        
         // tag::query-select-meta[]
         let query = QueryBuilder
             .select(SelectResult.expression(Meta.id))
@@ -274,8 +260,6 @@ extension SampleCodeTest {
     
     
     func dontTestSelectProps() throws {
-        database = self.db
-        
         // tag::query-select-props[]
         let query = QueryBuilder
             .select(
@@ -297,7 +281,6 @@ extension SampleCodeTest {
     }
     
     func dontTestSelectAll() throws {
-        database = self.db
         var query: Query
         
         // tag::query-select-all[]
@@ -331,8 +314,6 @@ extension SampleCodeTest {
     }
     
     func dontTestWhere() throws {
-        database = self.db
-        
         // tag::query-where[]
         let query = QueryBuilder
             .select(SelectResult.all())
@@ -357,15 +338,13 @@ extension SampleCodeTest {
         // Query documents that have been deleted
         let query = QueryBuilder
             .select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(db))
+            .from(DataSource.database(database))
             .where(Meta.isDeleted)
         // end::query-deleted-documents[]
         print(query)
     }
     
     func dontTestCollectionOperatorContains() throws {
-        database = self.db
-        
         // tag::query-collection-operator-contains[]
         let query = QueryBuilder
             .select(
@@ -387,8 +366,6 @@ extension SampleCodeTest {
     }
     
     func dontTestCollectionOperatorIn() throws {
-        database = self.db
-        
         // tag::query-collection-operator-in[]
         let values = [
             Expression.property("first"),
@@ -396,18 +373,16 @@ extension SampleCodeTest {
             Expression.property("username")
         ]
         
-        QueryBuilder.select(SelectResult.all())
+        let query = QueryBuilder.select(SelectResult.all())
             .from(DataSource.database(database))
             .where(Expression.string("Armani").in(values))
         // end::query-collection-operator-in[]
         
-        
+        print(query)
     }
     
     
     func dontTestLikeOperator() throws {
-        database = self.db
-        
         // tag::query-like-operator[]
         let query = QueryBuilder
             .select(
@@ -430,8 +405,6 @@ extension SampleCodeTest {
     }
     
     func dontTestWildCardMatch() throws {
-        database = self.db
-        
         // tag::query-like-operator-wildcard-match[]
         let query = QueryBuilder
             .select(
@@ -454,8 +427,6 @@ extension SampleCodeTest {
     }
     
     func dontTestWildCardCharacterMatch() throws {
-        database = self.db
-        
         // tag::query-like-operator-wildcard-character-match[]
         let query = QueryBuilder
             .select(
@@ -478,8 +449,6 @@ extension SampleCodeTest {
     }
     
     func dontTestRegexMatch() throws {
-        database = self.db
-        
         // tag::query-regex-operator[]
         let query = QueryBuilder
             .select(
@@ -501,8 +470,6 @@ extension SampleCodeTest {
     }
     
     func dontTestJoin() throws {
-        database = self.db
-        
         // tag::query-join[]
         let query = QueryBuilder
             .select(
@@ -537,8 +504,6 @@ extension SampleCodeTest {
     }
     
     func dontTestGroupBy() throws {
-        database = self.db
-        
         // tag::query-groupby[]
         let query = QueryBuilder
             .select(
@@ -563,8 +528,6 @@ extension SampleCodeTest {
     }
     
     func dontTestOrderBy() throws {
-        database = self.db
-        
         // tag::query-orderby[]
         let query = QueryBuilder
             .select(
@@ -580,77 +543,71 @@ extension SampleCodeTest {
     }
     
     func dontTestExplainAll() throws {
-        database = self.db
         // tag::query-explain-all[]
-        let thisQuery = QueryBuilder
+        let query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
             .where(Expression.property("type").equalTo(Expression.string("university")))
             .groupBy(Expression.property("country"))
             .orderBy(Ordering.property("name").ascending())  // <.>
         
-        print(try thisQuery.explain()) // <.>
+        print(try query.explain()) // <.>
         // end::query-explain-all[]
     }
     
     func dontTestExplainLike() throws {
-        database = self.db
-        
         // tag::query-explain-like[]
-        let thisQuery = QueryBuilder
+        let query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
             .where(Expression.property("type").like(Expression.string("%hotel%")) // <.>
                     .and(Expression.property("name").like(Expression.string("%royal%"))));
         
-        print(try thisQuery.explain())
+        print(try query.explain())
         
         // end::query-explain-like[]
     }
     
     func dontTestExplainNoOp() throws {
         // tag::query-explain-nopfx[]
-        let thisQuery = QueryBuilder
+        let query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
             .where(Expression.property("type").like(Expression.string("hotel%")) // <.>
                     .and(Expression.property("name").like(Expression.string("%royal%"))));
         
-        print(try thisQuery.explain());
+        print(try query.explain());
         
         // end::query-explain-nopfx[]
     }
     
     func dontTestExplainFunction() throws {
         // tag::query-explain-function[]
-        let thisQuery = QueryBuilder
+        let query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
             .where(Function.lower(Expression.property("type").equalTo(Expression.string("hotel")))) // <.>
         
-        print(try thisQuery.explain());
+        print(try query.explain());
         
         // end::query-explain-function[]
     }
     
     func dontTestExplainNoFunction() throws {
-        database = self.db
         // tag::query-explain-nofunction[]
-        let thisQuery = QueryBuilder
+        let query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
             .where(
                 Expression.property("type").equalTo(Expression.string("hotel"))); // <.>
         
-        print(try thisQuery.explain());
+        print(try query.explain());
         
         // end::query-explain-nofunction[]
     }
     
     
     func dontTestCreateFullTextIndex() throws {
-        database = self.db
-        
         // tag::fts-index[]
         // Insert documents
         let tasks = ["buy groceries", "play chess", "book travels", "buy museum tickets"]
@@ -672,8 +629,6 @@ extension SampleCodeTest {
     }
     
     func dontTestFullTextSearch() throws {
-        database = self.db
-        
         // tag::fts-query[]
         
         let whereClause = FullTextFunction.match(indexName: "nameFTSIndex", query: "'buy'")
@@ -693,7 +648,6 @@ extension SampleCodeTest {
     
     
     func dontTestToJsonArrayObject() throws {
-        database = self.db
         // demonstrate use of JSON string
         // tag::tojson-array[]
         
@@ -708,21 +662,20 @@ extension SampleCodeTest {
     func dontTestGetBlobAsJSONstring() throws {
         // tag::tojson-getblobasstring[]
         
-        let thisdoc = db.document(withID: "thisdoc-id")!.toDictionary();
-        let thisBlob =  thisdoc["avatar"] as! Blob
+        let doc = database.document(withID: "doc-id")!.toDictionary();
+        let blob =  doc["avatar"] as! Blob
         
-        if Blob.isBlob(properties: thisBlob.properties) {
-            let blobtype = thisBlob.properties["content_type"]
-            let bloblength = thisBlob.properties["length"]
+        if Blob.isBlob(properties: blob.properties) {
+            let blobType = blob.properties["content_type"]
+            let blobLength = blob.properties["length"]
             
-            print("\(blobtype): \(bloblength)")
+            print("\(blobType): \(blobLength)")
         }
         // end::tojson-getblobasstring[]
     }
     
     
     func dontTestToJsonDictionary() throws {
-        database = self.db
         // demonstrate use of JSON string
         // tag::tojson-dictionary[]
         
@@ -732,7 +685,6 @@ extension SampleCodeTest {
     
     
     func dontTestToJsonDocument() throws {
-        database = self.db
         // demonstrate use of JSON string
         // tag::tojson-document[]
         
@@ -742,7 +694,6 @@ extension SampleCodeTest {
     
     
     func dontTestToJsonResult() throws {
-        database = self.db
         // demonstrate use of JSON string
         // tag::tojson-result[]
         let ourJSON =  "{{\"id\": \"hotel-ted\"},{\"name\": \"Hotel Ted\"},{\"city\": \"Paris\"},{\"type\": \"hotel\"}}"
@@ -987,7 +938,7 @@ extension SampleCodeTest {
         // end::replication-set-maxattempts[]
         // tag::replication-set-maxattemptwaittime[]
         config.maxAttemptWaitTime = 600 // <.>
-        replicator = Replicator(config: config)
+        self.replicator = Replicator(config: config)
         // end::replication-set-maxattemptwaittime[]
         
         // end::replication-retry-config[]
@@ -1226,7 +1177,7 @@ extension SampleCodeTest {
     
     func dontTestInitListener() throws {
         // tag::init-urllistener[]
-        var config = URLEndpointListenerConfiguration(database: db)
+        var config = URLEndpointListenerConfiguration(database: otherDB)
         config.tlsIdentity = nil; // Use with anonymous self signed cert
         config.authenticator = ListenerPasswordAuthenticator(authenticator: { (username, password) -> Bool in
             return self.isValidCredentials(username, password: password)

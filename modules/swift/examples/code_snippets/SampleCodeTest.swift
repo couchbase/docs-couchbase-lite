@@ -22,27 +22,36 @@ import MultipeerConnectivity
 import CoreML
 
 class SampleCodeTest {
+    /**
+     For consistency in code snippets:
+        1. we will use `self.database`/ `database` for database, query, replicator-db related code snippets.
+        2. we will use `self.otherDB` / `otherDB` for listener-db
+     */
+    
     var database: Database!
-    var db: Database!
     var otherDB: Database!
     
+    /**
+     For consistency:
+        1. we will use replicator with `self.replicator` and listener with `self.listener`
+     */
     var replicator: Replicator!
     var listener: URLEndpointListener!
 }
 
 // tag::sgw-repl-pull[]
 class MyClass {
-    var database: Database?
-    var replicator: Replicator? // <1>
+    var database: Database!
+    var replicator: Replicator! // <1>
 
     func startReplicator() {
         let url = URL(string: "ws://localhost:4984/db")! // <2>
         let target = URLEndpoint(url: url)
-        var config = ReplicatorConfiguration(database: database!, target: target)
+        var config = ReplicatorConfiguration(database: database, target: target)
         config.replicatorType = .pull
 
         self.replicator = Replicator(config: config)
-        self.replicator?.start()
+        self.replicator.start()
     }
 }
 
@@ -62,7 +71,7 @@ class MyClass {
  // tag::sgw-act-rep-initialize[]
  let tgtUrl = URL(string: "wss://10.1.1.12:8092/travel-sample")!
  let targetEndpoint = URLEndpoint(url: tgtUrl)
- var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) // <.>
+ var config = ReplicatorConfiguration(database: database!, target: targetEndpoint) // <.>
 
  // end::sgw-act-rep-initialize[]
 
