@@ -160,6 +160,19 @@
     // end::close-database[]
 }
 
+- (void) dontTestLogging {
+    // tag::logging[]
+    
+    // Replicator / Verbose
+    CBLDatabase.log.console.level = kCBLLogLevelVerbose;
+    CBLDatabase.log.console.domains = kCBLLogDomainReplicator;
+    
+    // Query /  Verbose
+    CBLDatabase.log.console.level = kCBLLogLevelVerbose;
+    CBLDatabase.log.console.domains = kCBLLogDomainQuery;
+    // end::logging[]
+}
+
 #if COUCHBASE_ENTERPRISE
 - (void) dontTestDatabaseEncryption {
     // tag::database-encryption[]
@@ -863,12 +876,9 @@
     
     CBLDatabase *database = self.db;
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
-    CBLURLEndpoint *target =
-    [[CBLURLEndpoint alloc] initWithURL: url];
-    CBLReplicatorConfiguration *config =
-    [[CBLReplicatorConfiguration alloc]
-     initWithDatabase:database
-     target:target];
+    CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
+    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database
+                                                                                       target:target];
     
     config.replicatorType = kCBLReplicatorTypePush;
     
@@ -878,8 +888,7 @@
     
     // Get list of pending doc IDs
     NSError* err = nil;
-    NSSet *mydocids =
-    [NSSet setWithSet:[replicator pendingDocumentIDs:&err]]; // <.>
+    NSSet *mydocids = [NSSet setWithSet:[replicator pendingDocumentIDs:&err]]; // <.>
     
     // end::replication-push-pendingdocumentids[]
     
@@ -1050,9 +1059,6 @@
     // end::replication-maxattemptwaittime[]
     //  other config as required . . .
     repl = [[CBLReplicator alloc] initWithConfig: config];
-    
-    // Cleanup:
-    repl = nil;
     
     // end::replication-retry-config[]
 }
@@ -1384,31 +1390,30 @@
     
     CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &error];
     
-    CBLQuery *listQuery = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
+    CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
                                              from:[CBLQueryDataSource database:db]]; // <.>
     
     // end::query-syntax-all[]
     
     
     // tag::query-access-all[]
-    NSMutableArray* matches =
-    [[NSMutableArray alloc] init];
+    NSMutableArray* matches = [[NSMutableArray alloc] init];
     
-    CBLQueryResultSet* resultset = [listQuery execute:&error];
+    CBLQueryResultSet* resultset = [query execute:&error];
     
-    for (CBLQueryResult *result in resultset.allResults) { // access the resultSet.allResults
+    for (CBLQueryResult *result in resultset) {
         
-        NSDictionary *match = [result valueAtIndex: 0] ;
+        NSDictionary *data = [result valueAtIndex: 0] ;
         //             toDictionary];
         
         // Store dictionary in array
-        [matches addObject: match];
+        [matches addObject: data];
         
         // Use dictionary values
-        NSLog(@"id = %@", [match valueForKey:@"id"]);
-        NSLog(@"name = %@", [match valueForKey:@"name"]);
-        NSLog(@"type = %@", [match valueForKey:@"type"]);
-        NSLog(@"city = %@", [match valueForKey:@"city"]);
+        NSLog(@"id = %@", [data valueForKey:@"id"]);
+        NSLog(@"name = %@", [data valueForKey:@"name"]);
+        NSLog(@"type = %@", [data valueForKey:@"type"]);
+        NSLog(@"city = %@", [data valueForKey:@"city"]);
         
     } // end for
     
@@ -1416,19 +1421,17 @@
     
     // tag::query-access-json[]
     NSMutableArray<Hotel *> *hotels = NSMutableArray.new;
-    for (CBLQueryResult* result in [listQuery execute:&error]) {
+    CBLQueryResultSet* results = [query execute:&error];
+    for (CBLQueryResult* result in results) {
         
         // Get result as a JSON string
         
-        NSString* thisJsonString =
-        [result toJSON]; // <.>
+        NSString* json = [result toJSON]; // <.>
         
         // Get an native Obj-C object from the Json String
-        NSDictionary *thisDictFromJSON =
-        [NSJSONSerialization JSONObjectWithData:
-         [thisJsonString dataUsingEncoding: NSUTF8StringEncoding]
-                                        options: NSJSONReadingAllowFragments
-                                          error: &error]; // <.>
+        NSDictionary *thisDictFromJSON = [NSJSONSerialization JSONObjectWithData: [json dataUsingEncoding: NSUTF8StringEncoding]
+                                                                         options: NSJSONReadingAllowFragments
+                                                                           error: &error]; // <.>
         if (error) {
             NSLog(@"Error in serialization: %@",error);
             return;
@@ -1448,7 +1451,7 @@
         
         // Log generated Json and Native objects
         // For demo/example purposes
-        NSLog(@"Json String %@", thisJsonString);
+        NSLog(@"Json String %@", json);
         NSLog(@"Native Object %@", thisDictFromJSON);
         NSLog(@"Custom Object: id: %@ name: %@ city: %@ country: %@ descriptive: %@", hotelFromJson.id, hotelFromJson.name, hotelFromJson.city, hotelFromJson.country, hotelFromJson.descriptive);
         
@@ -1476,20 +1479,16 @@
                                              from:[CBLQueryDataSource database:db]]; // <.>
     
     // tag::query-access-props[]
-    NSMutableArray* matches = [[NSMutableArray alloc] init]; // save to native array
     
     CBLQueryResultSet* resultset = [listQuery execute:&error];
     
     for (CBLQueryResult *result in resultset.allResults) { // all results
-        
-        [matches addObject: [result toDictionary]];
-        
         NSLog(@"id = %@", [result stringForKey:@"id"]);
         NSLog(@"name = %@", [result stringForKey:@"name"]);
         NSLog(@"type = %@", [result stringForKey:@"type"]);
         NSLog(@"city = %@", [result stringForKey:@"city"]);
         
-    } // end for
+    }
     
     // end::query-access-props[]
 }
@@ -1500,7 +1499,7 @@
     CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &error];
 
     CBLQuerySelectResult *count =
-      [CBLQuerySelectResult expression:[CBLQueryFunction count:   [CBLQueryExpression all]]];
+      [CBLQuerySelectResult expression:[CBLQueryFunction count: [CBLQueryExpression all]]];
 
     CBLQuery *listQuery = [CBLQueryBuilder select:@[count]
                                              from:[CBLQueryDataSource database:db]]; // <.>
