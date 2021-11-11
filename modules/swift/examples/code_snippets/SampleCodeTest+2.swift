@@ -134,7 +134,7 @@ extension SampleCodeTest {
     
     func dontTestQuerySyntaxProps() throws {
         // tag::query-syntax-props[]
-        let db = try! Database(name: "hotel")
+        let database = try! Database(name: "hotel")
         
         let query = QueryBuilder
             .select(SelectResult.expression(Meta.id).as("metaId"),
@@ -142,7 +142,7 @@ extension SampleCodeTest {
                     SelectResult.expression(Expression.property("name")),
                     SelectResult.expression(Expression.property("city")),
                     SelectResult.expression(Expression.property("type")))
-            .from(DataSource.database(db))
+            .from(DataSource.database(database))
         
         // end::query-syntax-props[]
         print(query)
@@ -184,10 +184,10 @@ extension SampleCodeTest {
     
     func dontTestQueryCount() throws {
         // tag::query-syntax-count-only[]
-        let db = try Database(name: "hotel")
+        let database = try Database(name: "hotel")
         let query = QueryBuilder
             .select(SelectResult.expression(Function.count(Expression.all())).as("mycount"))
-            .from (DataSource.database(db)).groupBy(Expression.property("type"))
+            .from (DataSource.database(database)).groupBy(Expression.property("type"))
         
         // end::query-syntax-count-only[]
         
@@ -205,11 +205,10 @@ extension SampleCodeTest {
     }
     
     func dontTestQueryId () throws {
-        
         // tag::query-syntax-id[]
-        let db = try Database(name: "hotel")
+        let database = try Database(name: "hotel")
         let query = QueryBuilder.select(SelectResult.expression(Meta.id).as("metaId"))
-            .from(DataSource.database(db))
+            .from(DataSource.database(database))
         
         // end::query-syntax-id[]
         
@@ -224,7 +223,7 @@ extension SampleCodeTest {
             let docId = result["metaId"].string! // <.>
             
             // Now you can get the document using the ID
-            let doc = db.document(withID: docId)!.toDictionary()
+            let doc = database.document(withID: docId)!.toDictionary()
             
             let hotelId = doc["id"] as! String
             
@@ -259,9 +258,9 @@ extension SampleCodeTest {
     func dontTestQueryN1QL() throws {
         
         // tag::query-syntax-n1ql[]
-        let db = try Database(name: "hotel")
+        let database = try Database(name: "hotel")
         
-        let query =  db.createQuery(query: "SELECT META().id AS thisId FROM _ WHERE type = 'hotel'") // <.>
+        let query =  database.createQuery(query: "SELECT META().id AS thisId FROM _ WHERE type = 'hotel'") // <.>
         
         let results: ResultSet = try query.execute()
         
@@ -273,10 +272,10 @@ extension SampleCodeTest {
     func dontTestQueryN1QLparams() throws {
         
         // tag::query-syntax-n1ql-params[]
-        let db = try! Database(name: "hotel")
+        let database = try! Database(name: "hotel")
         
         let query =
-        db.createQuery(query: "SELECT META().id AS thisId FROM _ WHERE type = $type") // <.>
+        database.createQuery(query: "SELECT META().id AS thisId FROM _ WHERE type = $type") // <.>
         
         query.parameters =
         Parameters().setString("hotel", forName: "type") // <.>
@@ -395,7 +394,7 @@ extension SampleCodeTest {
     func dontTestReplicatorSimple() throws {
         // tag::replicator-simple[]
 
-        let tgtUrl = URL(string: "wss://10.1.1.12:8092/actDb")!
+        let tgtUrl = URL(string: "wss://10.1.1.12:8092/otherDB")!
         let targetEndpoint = URLEndpoint(url: tgtUrl) //  <.>
 
         var thisConfig = ReplicatorConfiguration(database: database, target: targetEndpoint) // <.>
@@ -415,7 +414,7 @@ extension SampleCodeTest {
     // FIXME: Could you please check, whether this is necessary? it was a unit test helper function!
     // tag::xctListener-start-func[]
     func listen(tls: Bool, auth: ListenerAuthenticator?) throws -> URLEndpointListener {
-        let thisDB = try? Database(name: "thisDB")
+        let otherDB = try? Database(name: "thisDB")
         let wssPort: UInt16 = 4985
         let wsPort: UInt16 = 4984
         // Stop if already running :
@@ -429,12 +428,12 @@ extension SampleCodeTest {
         //  ... fragment preceded by other user code, including
         //  ... Couchbase Lite Database initialization that returns `thisDB`
 
-        guard let db = thisDB else {
+        guard let otherDB = otherDB else {
             fatalError("DatabaseNotInitialized")
             // ... take appropriate actions
         }
         
-        var config = URLEndpointListenerConfiguration.init(database: db)
+        var config = URLEndpointListenerConfiguration.init(database: otherDB)
         config.port = tls ? wssPort : wsPort
         config.disableTLS = !tls
         config.authenticator = auth
@@ -479,7 +478,6 @@ extension SampleCodeTest {
     }
 
     func testTLSIdentityCA() throws {
-        let otherDB = try Database(name: "otherDB")
         // tag::xctListener-auth-tls-tlsidentity-ca[]
         // User Identity:
         let attrs = [certAttrCommonName: "CBL-Server"]
@@ -497,8 +495,6 @@ extension SampleCodeTest {
     }
 
     func testPasswordAuthenticator() throws {
-        let otherDB = try Database(name: "otherDB")
-        
         // tag::xctListener-auth-basic-pwd-full[]
         // Listener:
         // tag::xctListener-auth-basic-pwd[]
@@ -514,7 +510,6 @@ extension SampleCodeTest {
     // end::xctListener-auth-basic-pwd-full[]
 
     func testClientCertAuthenticatorWithRootCerts() throws {
-        let otherDB = try Database(name: "otherDB")
         // tag::xctListener-auth-tls-CCA-Root-full[]
         // tag::xctListener-auth-tls-CCA-Root[]
         // Root Cert:
@@ -552,7 +547,6 @@ extension SampleCodeTest {
     }
 
     func testServerCertVerificationModeSelfSignedCert() throws {
-        let otherDB = try Database(name: "otherDB")
         // tag::xctListener-auth-tls-self-signed-full[]
         // tag::xctListener-auth-tls-self-signed[]
         // Listener:
@@ -577,7 +571,6 @@ extension SampleCodeTest {
 
     // tag::xctListener-auth-tls-ca-cert-full[]
     func testServerCertVerificationModeCACert() throws {
-        let otherDB = try Database(name: "otherDB")
         // Listener:
         // tag::xctListener-auth-tls-ca-cert[]
         let rootCertPath = Bundle.main.path(forResource: "identity/certs", ofType: "p12")
@@ -610,7 +603,6 @@ extension SampleCodeTest {
     // end::xctListener-status-check-full[]
 
     func dontTestListenerBasicAuthPassword() throws {
-        let otherDB = try Database(name: "otherDB")
         var config = URLEndpointListenerConfiguration(database: otherDB)
         // tag::xctListener-auth-password-basic[]
         config.authenticator = ListenerPasswordAuthenticator { self.isValidCredentials($0, password: $1) }
@@ -618,7 +610,6 @@ extension SampleCodeTest {
     }
 
     func dontTestListenerAuthCertRoots() throws {
-        let otherDB = try Database(name: "otherDB")
         // tag::xctListener-auth-cert-roots[]
         let path = Bundle.main.path(forResource: "identity/client-ca", ofType: "der")
         let rootCertData = try NSData(contentsOfFile: path!, options: []) as Data
@@ -803,7 +794,7 @@ extension SampleCodeTest {
         // tag::p2p-act-rep-func[]
         
         // tag::p2p-act-rep-initialize[]
-        guard let targetURL = URL(string: "wss://10.1.1.12:8092/actDb") else {
+        guard let targetURL = URL(string: "wss://10.1.1.12:8092/otherDB") else {
             fatalError("Invalid URL")
         }
         let targetEndpoint = URLEndpoint(url: targetURL)
@@ -1083,7 +1074,7 @@ extension SampleCodeTest {
 
     // tag::p2p-act-rep-config-cacert-pinned-func[]
     func myCaCertPinned() {
-        let targetURL = URL(string: "wss://10.1.1.12:8092/actDb")!
+        let targetURL = URL(string: "wss://10.1.1.12:8092/otherDB")!
         let targetEndpoint = URLEndpoint(url: targetURL)
         var config = ReplicatorConfiguration(database: database, target: targetEndpoint)
         // tag::p2p-act-rep-config-cacert-pinned[]
@@ -1121,10 +1112,10 @@ extension SampleCodeTest {
     
     func dontTestQueryGetAll() throws {
         // tag::query-get-all[]
-        let db = try Database(name: "hotel")
+        let database = try Database(name: "hotel")
         let query = QueryBuilder
             .select(SelectResult.expression(Meta.id).as("metaId"))
-            .from(DataSource.database(db))
+            .from(DataSource.database(database))
         
         // end::query-get-all[]
         print(query)
@@ -1170,8 +1161,6 @@ extension SampleCodeTest {
     }
     
     func dontTestToJSONArray() throws {
-        let dbnew = try Database(name: "dbnew")
-        
         // tag::tojson-array[]
         let thisJSONstring = """
             [{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hotel Ted\",\"city\":\"Paris\",
@@ -1193,11 +1182,11 @@ extension SampleCodeTest {
             
             let newdoc:MutableDocument = MutableDocument(id: docid, data: (myArray.dictionary(at: i)?.toDictionary())! ) // <.>
             
-            try! dbnew.saveDocument(newdoc)
+            try! database.saveDocument(newdoc)
             
         }
         
-        let extendedDoc = dbnew.document(withID: "1002")
+        let extendedDoc = database.document(withID: "1002")
         let features = extendedDoc!.array(forKey: "features")?.toArray() // <.>
         for i in 0...features!.count-1 {
             print(features![i])
@@ -1264,7 +1253,7 @@ extension SampleCodeTest {
 #if TARGET_OS_IPHONE
         // tag::tojson-blob[]
         // Get a document
-        let doc = db.document(withID: "1000")?.toMutable() // <.>
+        let doc = database.document(withID: "1000")?.toMutable() // <.>
         
         // Get the image and add as a blob to the document
         let contentType = "image/jpg";
@@ -1277,11 +1266,11 @@ extension SampleCodeTest {
         
         // Save blob as part of doc or alternatively as a blob
         
-        try! db.saveDocument(doc!);
-        try! db.saveBlob(blob: Blob(contentType: contentType, data: imageData)) // <.>
+        try! database.saveDocument(doc!);
+        try! database.saveBlob(blob: Blob(contentType: contentType, data: imageData)) // <.>
         
         // Retrieve saved blob as a JSON, reconstitue and check still blob
-        let sameDoc = db.document(withID: "1000")
+        let sameDoc = database.document(withID: "1000")
         let sameBlob = sameDoc?.blob(forKey: "avatar")
         let theBlobAsJSONstring = sameBlob!.toJSON() // <.>
         
