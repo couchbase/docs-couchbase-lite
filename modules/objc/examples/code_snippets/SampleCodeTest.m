@@ -21,6 +21,17 @@
 #import <CouchbaseLite/CouchbaseLite.h>
 #import <CoreML/CoreML.h>
 
+
+/*
+ FIXME: For consistency:
+ 
+ 1. We will keep the '*' with instance after the space.
+    `NSDictionary *dict = [NSDictionary dictionary];`
+ 
+ 2. For making more space in single line: we will avoid space after the ':'
+    `[myMLModel predictImage:imageData];`
+ */
+
 // tag::predictive-model[]
 // `myMLModel` is a fake implementation
 // this would be the implementation of the ml model you have chosen
@@ -137,6 +148,8 @@
 
 @interface SampleCodeTest : NSObject
 @property(nonatomic) CBLDatabase* db;
+@property(nonatomic) CBLURLEndpointListener* listener;
+@property(nonatomic) CBLReplicator* replicator;
 @property(nonatomic) NSArray* _allowlistedUsers;
 @end
 
@@ -1475,12 +1488,12 @@
     
     CBLQuerySelectResult *city = [CBLQuerySelectResult property:@"city"];
     
-    CBLQuery *listQuery = [CBLQueryBuilder select:@[id, type, name, city]
-                                             from:[CBLQueryDataSource database:db]]; // <.>
+    CBLQuery *query = [CBLQueryBuilder select:@[id, type, name, city]
+                                         from:[CBLQueryDataSource database:db]]; // <.>
     
     // tag::query-access-props[]
     
-    CBLQueryResultSet* resultset = [listQuery execute:&error];
+    CBLQueryResultSet* resultset = [query execute:&error];
     
     for (CBLQueryResult *result in resultset.allResults) { // all results
         NSLog(@"id = %@", [result stringForKey:@"id"]);
@@ -1498,23 +1511,23 @@
     // tag::query-syntax-count-only[]
     CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &error];
 
-    CBLQuerySelectResult *count =
-      [CBLQuerySelectResult expression:[CBLQueryFunction count: [CBLQueryExpression all]]];
+    CBLQuerySelectResult *count = [CBLQuerySelectResult
+                                   expression: [CBLQueryFunction count: [CBLQueryExpression all]]];
 
-    CBLQuery *listQuery = [CBLQueryBuilder select:@[count]
-                                             from:[CBLQueryDataSource database:db]]; // <.>
-
+    CBLQuery *query = [CBLQueryBuilder select:@[count]
+                                         from:[CBLQueryDataSource database:db]]; // <.>
+    
     // end::query-syntax-count-only[]
-    NSLog(@"print to avoid warning %@", listQuery);
+    NSLog(@"print to avoid warning %@", query);
 }
 
 - (void) dontTestQueryAccessCountOnly {
-    CBLQuery* listQuery;
+    CBLQuery* query;
     NSInteger thisCount;
     NSError* error = nil;
     
     // tag::query-access-count-only[]
-    CBLQueryResultSet* resultset = [listQuery execute:&error];
+    CBLQueryResultSet* resultset = [query execute:&error];
     
     for (CBLQueryResult *result in resultset) {
         
@@ -1533,20 +1546,20 @@
     
     CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
     
-    CBLQuery *listQuery = [CBLQueryBuilder select:@[id]
-                                             from:[CBLQueryDataSource database:db]];
+    CBLQuery *query = [CBLQueryBuilder select:@[id]
+                                         from:[CBLQueryDataSource database:db]];
     
     // end::query-syntax-id[]
-    NSLog(@"print to avoid warning %@", listQuery);
+    NSLog(@"print to avoid warning %@", query);
 }
 
 - (void) dontTestQueryAccessID {
-    CBLQuery* listQuery;
+    CBLQuery* query;
     NSError* error = nil;
     CBLDatabase* thisDB = self.db;
     // tag::query-access-id[]
     
-    CBLQueryResultSet* resultset = [listQuery execute:&error];
+    CBLQueryResultSet* resultset = [query execute:&error];
     
     for (CBLQueryResult *result in resultset) {
         
@@ -1567,20 +1580,21 @@
     NSError* error = nil;
     
     // tag::query-syntax-pagination[]
-    int thisOffset = 0;
-    int thisLimit = 20;
+    int offset = 0;
+    int limit = 20;
     CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &error];
     
-    CBLQuery* listQuery = [CBLQueryBuilder select: @[[CBLQuerySelectResult all]]
-                                             from: [CBLQueryDataSource database: db]
-                                            where: nil
-                                          groupBy: nil
-                                           having: nil
-                                          orderBy: nil
-                                            limit: [CBLQueryLimit limit: [CBLQueryExpression integer: thisLimit]
-                                                                 offset: [CBLQueryExpression integer: thisOffset]]];
+    CBLQueryLimit* queryLimit = [CBLQueryLimit limit: [CBLQueryExpression integer: limit]
+                                              offset: [CBLQueryExpression integer: offset]];
+    CBLQuery* query = [CBLQueryBuilder select: @[[CBLQuerySelectResult all]]
+                                         from: [CBLQueryDataSource database: db]
+                                        where: nil
+                                      groupBy: nil
+                                       having: nil
+                                      orderBy: nil
+                                        limit: queryLimit];
     // end::query-syntax-pagination[]
-    NSLog(@"print to avoid warning %@", listQuery);
+    NSLog(@"print to avoid warning %@", query);
 }
 
 - (void) dontTestDocsOnly_QuerySyntaxN1QL {
@@ -1593,11 +1607,11 @@
     CBLDatabase *db = argDB;
 
     // tag::query-syntax-n1ql[]
-    NSString *n1qlstr = @"SELECT * FROM _ WHERE type = \"hotel\""; // <.>
+    NSString *queryString = @"SELECT * FROM _ WHERE type = \"hotel\""; // <.>
 
-    CBLQuery* thisQuery = [db createQuery: n1qlstr];
+    CBLQuery* query = [db createQuery: queryString];
 
-    CBLQueryResultSet* resultset =  [thisQuery execute:&error];
+    CBLQueryResultSet* resultset =  [query execute:&error];
 
     // end::query-syntax-n1ql[]
     NSLog(@"resultset.count = %lu", (unsigned long)resultset.allResults.count);
@@ -1615,11 +1629,11 @@
 
     // tag::query-syntax-n1ql-params[]
     NSString* type = @"hotel";
-    NSString* n1qlstr = [NSString stringWithFormat: @"SELECT * FROM _ WHERE type = %@", type]; // <.>
+    NSString* queryString = [NSString stringWithFormat: @"SELECT * FROM _ WHERE type = %@", type]; // <.>
     
-    CBLQuery* thisQuery = [db createQuery: n1qlstr];
+    CBLQuery* query = [db createQuery: queryString];
 
-    CBLQueryResultSet* resultset =  [thisQuery execute:&error];
+    CBLQueryResultSet* resultset =  [query execute:&error];
 
     // end::query-syntax-n1ql-params[]
     NSLog(@"resultset.count = %lu", (unsigned long)resultset.allResults.count);
@@ -1632,22 +1646,17 @@
     NSError* error = nil;
     
     // tag::listener-simple[]
-    CBLURLEndpointListenerConfiguration* thisConfig;
-    thisConfig = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: database]; // <.>
+    CBLURLEndpointListenerConfiguration* config = [[CBLURLEndpointListenerConfiguration alloc]
+                                                   initWithDatabase: database]; // <.>
     
-    thisConfig.authenticator = [[CBLListenerPasswordAuthenticator alloc]
+    config.authenticator = [[CBLListenerPasswordAuthenticator alloc]
                                 initWithBlock: ^BOOL(NSString * validUser, NSString * validPassword) {
-        if ([self isValidCredentials: validUser password:validPassword]) {
-            return  YES;
-        }
-        return NO;
+        return [self isValidCredentials: validUser password:validPassword];
     }]; // <.>
     
-    CBLURLEndpointListener* thisListener = nil;
-    thisListener =
-    [[CBLURLEndpointListener alloc] initWithConfig: thisConfig]; // <.>
+    self.listener = [[CBLURLEndpointListener alloc] initWithConfig: config]; // <.>
     
-    BOOL success = [thisListener startWithError: &error];
+    BOOL success = [self.listener startWithError: &error];
     if (!success) {
         NSLog(@"Cannot start the listener: %@", error);
     } // <.>
@@ -1656,25 +1665,22 @@
 }
 
 - (void) dontTestReplicatorSimple {
-    CBLDatabase* thisDB = self.db;
-    
     // tag::replicator-simple[]
     NSURL *url = [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
-    CBLURLEndpoint *theListenerURL = [[CBLURLEndpoint alloc] initWithURL:url]; // <.>
+    CBLURLEndpoint *endpoint = [[CBLURLEndpoint alloc] initWithURL:url]; // <.>
 
-    CBLReplicatorConfiguration *thisConfig = [[CBLReplicatorConfiguration alloc] initWithDatabase:thisDB
-                                                                                           target:theListenerURL]; // <.>
+    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.db
+                                                                                           target:endpoint]; // <.>
 
-    thisConfig.acceptOnlySelfSignedServerCertificate = YES; // <.>
+    config.acceptOnlySelfSignedServerCertificate = YES; // <.>
 
-    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"valid.user"
+    config.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"valid.user"
                                                                       password:@"valid.password.string"]; // <.>
 
 
-    CBLReplicator *_thisReplicator;
-    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; // <.>
+    self.replicator = [[CBLReplicator alloc] initWithConfig:config]; // <.>
 
-    [_thisReplicator start]; // <.>
+    [self.replicator start]; // <.>
 
     // end::replicator-simple[]
 }
@@ -1694,7 +1700,6 @@
     CBLListenerPasswordAuthenticator* auth = [[CBLListenerPasswordAuthenticator alloc] initWithBlock:^BOOL(NSString * _Nonnull username, NSString * _Nonnull password) {
         return YES;
     }];
-    CBLURLEndpointListener* _listener;
     
     // tag::p2p-ws-api-urlendpointlistener-constructor[]
     CBLURLEndpointListenerConfiguration* config = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: otherDB];
@@ -1702,7 +1707,7 @@
     config.disableTLS = !isTLS;
     config.authenticator = auth;
     
-    _listener = [[CBLURLEndpointListener alloc] initWithConfig: config]; // <1>
+    self.listener = [[CBLURLEndpointListener alloc] initWithConfig: config]; // <1>
     // end::p2p-ws-api-urlendpointlistener-constructor[]
 }
 
@@ -1731,33 +1736,31 @@
     // Set listener DB endpoint
     NSURL *url =
     [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
-    CBLURLEndpoint *thisListener =
-    [[CBLURLEndpoint alloc] initWithURL:url]; // <.>
+    CBLURLEndpoint *endpoint = [[CBLURLEndpoint alloc] initWithURL:url]; // <.>
     
-    CBLReplicatorConfiguration *thisConfig =
-    [[CBLReplicatorConfiguration alloc]
-     initWithDatabase: thisDB target:thisListener]; // <.>
+    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc]
+                                          initWithDatabase: self.db target:endpoint]; // <.>
     
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config[]
     // tag::p2p-act-rep-config-type[]
-    thisConfig.replicatorType = kCBLReplicatorTypePush;
+    config.replicatorType = kCBLReplicatorTypePush;
     
     // end::p2p-act-rep-config-type[]
     // tag::autopurge-override[]
     // set auto-purge behavior (here we override default)
-    thisConfig.enableAutoPurge = NO; // <.>
+    config.enableAutoPurge = NO; // <.>
     
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
-    thisConfig.continuous = YES;
+    config.continuous = YES;
     
     // end::p2p-act-rep-config-cont[]
     // tag::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Authentication
     // Here - expect and accept self-signed certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = YES; // <.>
+    config.acceptOnlySelfSignedServerCertificate = YES; // <.>
     
     // end::p2p-act-rep-config-self-cert[]
     // Configure Client Authentication
@@ -1765,56 +1768,55 @@
     // Here set client to use basic authentication
     // Providing username and password credentials
     // If prompted for them by server
-    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; // <.>
+    config.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; // <.>
     
     // end::p2p-act-rep-auth[]
     // end::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-conflict[]
     /* Optionally set custom conflict resolver call back */
-    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] init]; // <.>
+    config.conflictResolver = [[LocalWinConflictResolver alloc] init]; // <.>
     
     // end::p2p-act-rep-config-conflict[]    //
     // end::p2p-act-rep-config[]
     // tag::p2p-act-rep-start-full[]
     // Apply configuration settings to the replicator
-    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; // <.>
+    self.replicator = [[CBLReplicator alloc] initWithConfig:config]; // <.>
     
     // tag::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-add-change-listener-label[]
     // Optionally add a change listener <.>
     // end::p2p-act-rep-add-change-listener-label[]
     // Retain token for use in deletion
-    id<CBLListenerToken> thisListenerToken = [_thisReplicator addChangeListener:^(CBLReplicatorChange *thisChange) {
+    id<CBLListenerToken> listenerToken = [self.replicator addChangeListener:^(CBLReplicatorChange *change) {
         // tag::p2p-act-rep-status[]
-        if (thisChange.status.activity == kCBLReplicatorStopped) {
+        if (change.status.activity == kCBLReplicatorStopped) {
             NSLog(@"Replication stopped");
         } else {
-            NSLog(@"Status: %d", thisChange.status.activity);
+            NSLog(@"Status: %d", change.status.activity);
         };
         // end::p2p-act-rep-status[]
     }];
     // end::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-start[]
     // Run the replicator using the config settings
-    [_thisReplicator start]; // <.>
+    [self.replicator start]; // <.>
     
     // end::p2p-act-rep-start[]
     // end::p2p-act-rep-start-full[]
     // end::p2p-act-rep-func[]
     
-    NSLog(@"print to avoid warning %@", thisListenerToken);
+    NSLog(@"print to avoid warning %@", listenerToken);
 }
 
 - (void) dontTestReplicatorStop {
-    id<CBLListenerToken> thisListenerToken;
-    CBLReplicator* thisReplicator;
+    id<CBLListenerToken> listenerToken;
     
     // tag::p2p-act-rep-stop[]
     // Remove the change listener
-    [thisReplicator removeChangeListenerWithToken: thisListenerToken];
+    [self.replicator removeChangeListenerWithToken: listenerToken];
     
     // Stop the replicator
-    [thisReplicator stop];
+    [self.replicator stop];
     // end::p2p-act-rep-stop[]
     
 }
@@ -2187,11 +2189,11 @@
     CBLDatabase* db = [[CBLDatabase alloc] initWithName: @"hotel" error: &error];
     CBLDatabase* dbnew = [[CBLDatabase alloc] initWithName: @"newhotels" error: &error];
     
-    CBLQuery* listQuery = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id] as: @"metaId"]]
-                                             from: [CBLQueryDataSource database: db]];
+    CBLQuery* query = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id] as: @"metaId"]]
+                                         from: [CBLQueryDataSource database: db]];
     
     
-    CBLQueryResultSet* rs = [listQuery execute: &error];
+    CBLQueryResultSet* rs = [query execute: &error];
     for (CBLQueryResult* r in rs.allObjects) {
         NSString* thisId = [r stringForKey: @"metaId"];
         NSString* thisJSONstring = [[db documentWithID: thisId] toJSON];
