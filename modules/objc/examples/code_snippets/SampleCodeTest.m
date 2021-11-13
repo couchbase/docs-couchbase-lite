@@ -1559,10 +1559,13 @@
     NSError *error;
 
     // tag::query-syntax-n1ql-params[]
-    NSString* type = @"hotel";
-    NSString* queryString = [NSString stringWithFormat: @"SELECT * FROM _ WHERE type = %@", type]; // <.>
+    NSString* queryString = [NSString stringWithFormat: @"SELECT * FROM _ WHERE type = $type"]; // <.>
     
     CBLQuery* query = [self.database createQuery: queryString];
+    
+    CBLQueryParameters* params = [[CBLQueryParameters alloc] init];
+    [params setString: @"hotel" forName: @"type"]; // <.>
+    query.parameters = params;
 
     CBLQueryResultSet* resultset =  [query execute:&error];
 
