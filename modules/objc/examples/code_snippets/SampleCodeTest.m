@@ -28,7 +28,7 @@
  1. We will keep the '*' with instance after the space.
     `NSDictionary *dict = [NSDictionary dictionary];`
  
- 2. For making more space in single line: we will avoid space after the ':'
+ 2. For making more space in single line: we will avoid space after the ':' in function call.
     `[myMLModel predictImage:imageData];`
  
  3. Will only keep `self.database` when using database, query and replicator related code snippet.
@@ -57,14 +57,14 @@
 @implementation ImageClassifierModel
 
 - (nullable CBLDictionary*) predict: (CBLDictionary*)input; {
-    CBLBlob* blob = [input blobForKey:@"photo"];
+    CBLBlob *blob = [input blobForKey:@"photo"];
 
-    NSData* imageData = blob.content;
+    NSData *imageData = blob.content;
     // `myMLModel` is a fake implementation
     // this would be the implementation of the ml model you have chosen
-    NSDictionary* modelOutput = [myMLModel predictImage:imageData];
+    NSDictionary *modelOutput = [myMLModel predictImage:imageData];
 
-    CBLMutableDictionary* output = [[CBLMutableDictionary alloc] initWithData: modelOutput];
+    CBLMutableDictionary *output = [[CBLMutableDictionary alloc] initWithData: modelOutput];
     return output; // <1>
 }
 
@@ -142,11 +142,11 @@
 // end::merge-conflict-resolver[]
 
 @interface Hotel : NSObject
-@property (nonatomic) NSString* id;
-@property (nonatomic) NSString* name;
-@property (nonatomic) NSString* city;
-@property (nonatomic) NSString* country;
-@property (nonatomic) NSString* descriptive;
+@property (nonatomic) NSString *id;
+@property (nonatomic) NSString *name;
+@property (nonatomic) NSString *city;
+@property (nonatomic) NSString *country;
+@property (nonatomic) NSString *descriptive;
 @end
 
 @implementation Hotel
@@ -154,10 +154,10 @@
 @end
 
 @interface SampleCodeTest : NSObject
-@property(nonatomic) CBLDatabase* database;
-@property(nonatomic) CBLDatabase* otherDB;
-@property(nonatomic) CBLURLEndpointListener* listener;
-@property(nonatomic) CBLReplicator* replicator;
+@property(nonatomic) CBLDatabase *database;
+@property(nonatomic) CBLDatabase *otherDB;
+@property(nonatomic) CBLURLEndpointListener *listener;
+@property(nonatomic) CBLReplicator *replicator;
 @end
 
 @implementation SampleCodeTest
@@ -167,7 +167,7 @@
 - (void) dontTestNewDatabase {
     // tag::new-database[]
     NSError *error;
-    CBLDatabase* database = [[CBLDatabase alloc] initWithName:@"my-database" error:&error];
+    CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"my-database" error:&error];
     if (!database) {
         NSLog(@"Cannot open the database: %@", error);
     }
@@ -224,8 +224,8 @@
 
 - (void) dontTestFileLogging {
     // tag::file-logging[]
-    NSString* tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent:@"cbllog"];
-    CBLLogFileConfiguration* config = [[CBLLogFileConfiguration alloc] initWithDirectory:tempFolder]; // <.>
+    NSString *tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent:@"cbllog"];
+    CBLLogFileConfiguration *config = [[CBLLogFileConfiguration alloc] initWithDirectory:tempFolder]; // <.>
     config.maxRotateCount = 2; // <.>
     config.maxSize = 1024; // <.>
     config.usePlainText = YES; // <.>
@@ -236,7 +236,7 @@
 
 - (void) dontTestEnableCustomLogging {
     // tag::set-custom-logging[]
-    LogTestLogger* logger = [[LogTestLogger alloc] init];
+    LogTestLogger *logger = [[LogTestLogger alloc] init];
     logger.level = kCBLLogLevelWarning;
     [CBLDatabase.log setCustom: logger];
 
@@ -248,7 +248,7 @@
     // Note: Getting the path to a database is platform-specific.
     // For iOS you need to get the path from the main bundle.
     if (![CBLDatabase databaseExists:@"travel-sample" inDirectory:nil]) {
-        NSError*error;
+        NSError *error;
         NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"travel-sample" ofType:@"cblite2"];
         if (![CBLDatabase copyFromPath:path toDatabase:@"travel-sample" withConfig:nil error:&error]) {
             [NSException raise:NSInternalInconsistencyException
@@ -305,7 +305,7 @@
             [doc setValue:[NSString stringWithFormat:@"user %d", i] forKey:@"name"];
             [doc setBoolean:NO forKey:@"admin"];
             
-            NSError* err = nil;
+            NSError *err = nil;
             [self.database saveDocument:doc error: &err];
         }
     }];
@@ -313,21 +313,21 @@
 }
 
 - (void) dontTestChangeListener {
-    __block SampleCodeTest* wSelf = self;
+    __block SampleCodeTest *wSelf = self;
     // tag::document-listener[]
-    [self.database addDocumentChangeListenerWithID: @"user.john" listener:^(CBLDocumentChange * change) {
-        CBLDocument* document = [wSelf.database documentWithID: change.documentID];
+    [self.database addDocumentChangeListenerWithID: @"user.john" listener:^(CBLDocumentChange  *change) {
+        CBLDocument *document = [wSelf.database documentWithID: change.documentID];
         NSLog(@"Status :: %@)", [document stringForKey: @"verified_account"]);
     }];
     // end::document-listener[]
 }
 
 - (void) dontTestDocumentExpiration {
-    NSError* error;
+    NSError *error;
 
     // tag::document-expiration[]
     // Purge the document one day from now
-    NSDate* ttl = [[NSCalendar currentCalendar] dateByAddingUnit: NSCalendarUnitDay
+    NSDate *ttl = [[NSCalendar currentCalendar] dateByAddingUnit: NSCalendarUnitDay
                                                            value: 1
                                                           toDate: [NSDate date]
                                                          options: 0];
@@ -338,7 +338,7 @@
 
     // Query documents that will be expired in less than five minutes
     NSTimeInterval fiveMinutesFromNow = [[NSDate dateWithTimeIntervalSinceNow:60 * 5] timeIntervalSince1970];
-    CBLQuery* query = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+    CBLQuery *query = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
                                          from: [CBLQueryDataSource database: self.database]
                                         where: [[CBLQueryMeta expiration]
                                                 lessThan: [CBLQueryExpression double: fiveMinutesFromNow]]];
@@ -388,7 +388,7 @@
     // tag::query-index[]
     CBLValueIndexItem *type = [CBLValueIndexItem property:@"type"];
     CBLValueIndexItem *name = [CBLValueIndexItem property:@"name"];
-    CBLIndex* index = [CBLIndexBuilder valueIndexWithItems:@[type, name]];
+    CBLIndex *index = [CBLIndexBuilder valueIndexWithItems:@[type, name]];
     [self.database createIndex:index withName:@"TypeNameIndex" error:&error];
     // end::query-index[]
 }
@@ -402,7 +402,7 @@
                                         where:[[[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression value:@"user"]] andExpression:
                                                [[CBLQueryExpression property:@"admin"] equalTo:[CBLQueryExpression boolean:NO]]]];
 
-    NSEnumerator* rs = [query execute:&error];
+    NSEnumerator *rs = [query execute:&error];
     for (CBLQueryResult *result in rs) {
         NSLog(@"user name :: %@", [result stringAtIndex:0]);
     }
@@ -425,9 +425,9 @@
 
     // Adds a query change listener.
     // Changes will be posted on the main queue.
-    id<CBLListenerToken> token = [query addChangeListener:^(CBLQueryChange * _Nonnull change) { // <.>
-        for (CBLQueryResultSet *result in [change results]) {
-            NSLog(@"%@", result);
+    id<CBLListenerToken> token = [query addChangeListener:^(CBLQueryChange  *change) { // <.>
+        for (CBLQueryResultSet *results in [change results]) {
+            NSLog(@"%@", results);
             /* Update UI */
         }
     }]; // <.>
@@ -448,7 +448,7 @@
                                       groupBy:nil having:nil orderBy:nil
                                         limit:[CBLQueryLimit limit:[CBLQueryExpression integer:10]]];
 
-    NSEnumerator* rs = [query execute:&error];
+    NSEnumerator *rs = [query execute:&error];
     for (CBLQueryResult *result in rs) {
         CBLDictionary *dict = [result valueForKey:@"travel-sample"];
         NSLog(@"document name :: %@", [dict stringForKey:@"name"]);
@@ -461,7 +461,7 @@
 - (void) dontTestQueryDeletedDocuments {
     // tag::query-deleted-documents[]
     // Query documents that have been deleted
-    CBLQuery* query = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression:CBLQueryMeta.id]]
+    CBLQuery *query = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression:CBLQueryMeta.id]]
                                          from: [CBLQueryDataSource database:self.database]
                                         where: CBLQueryMeta.isDeleted];
     // end::query-deleted-documents[]
@@ -484,7 +484,7 @@
                                          from:[CBLQueryDataSource database:self.database]
                                         where:[type andExpression: contains]];
 
-    NSEnumerator* rs = [query execute:&error];
+    NSEnumerator *rs = [query execute:&error];
     for (CBLQueryResult *result in rs) {
         NSLog(@"public_likes :: %@", [[result arrayForKey:@"public_likes"] toArray]);
     }
@@ -517,7 +517,7 @@
                                          from:[CBLQueryDataSource database:self.database]
                                         where:[type andExpression: like]];
 
-    NSEnumerator* rs = [query execute:&error];
+    NSEnumerator *rs = [query execute:&error];
     for (CBLQueryResult *result in rs) {
         NSLog(@"name property :: %@", [result stringForKey:@"name"]);
     }
@@ -787,7 +787,7 @@
     NSError *error;
 
     // tag::fts-query[]
-    CBLQueryExpression* where = [CBLQueryFullTextFunction matchWithIndexName: @"nameFTSIndex"
+    CBLQueryExpression *where = [CBLQueryFullTextFunction matchWithIndexName: @"nameFTSIndex"
                                                                        query: @"'buy'"];
     CBLQuery *query =
       [CBLQueryBuilder
@@ -795,7 +795,7 @@
         from:[CBLQueryDataSource database:self.database]
         where:where];
 
-    NSEnumerator* rs = [query execute:&error];
+    NSEnumerator *rs = [query execute:&error];
     for (CBLQueryResult *result in rs) {
         NSLog(@"document id %@", [result stringAtIndex:0]);
     }
@@ -873,25 +873,25 @@
     self.replicator = [[CBLReplicator alloc] initWithConfig:config];
     
     // Get list of pending doc IDs
-    NSError* err = nil;
-    NSSet *mydocids = [NSSet setWithSet:[self.replicator pendingDocumentIDs:&err]]; // <.>
+    NSError *err = nil;
+    NSSet *pendingDocIds = [self.replicator pendingDocumentIDs:&err]; // <.>
     
     // end::replication-push-pendingdocumentids[]
     
-    if ([mydocids count] > 0) {
+    if ([pendingDocIds count] > 0) {
         
-        NSLog(@"There are %lu documents pending", (unsigned long)[mydocids count]);
+        NSLog(@"There are %lu documents pending", (unsigned long)[pendingDocIds count]);
         
         [self.replicator addChangeListener:^(CBLReplicatorChange *change) {
             
             NSLog(@"Replicator activity level is %u", change.status.activity);
             // iterate and report-on the pending doc IDs  in 'mydocids'
-            for (NSString* thisid in mydocids) {
+            for (NSString *docID in pendingDocIds) {
                 
                 // tag::replication-push-isdocumentpending[]
-                NSError* err = nil;
-                if (![change.replicator isDocumentPending: thisid error: &err]) { // <.>
-                    NSLog(@"Doc ID %@ now pushed", thisid);
+                NSError *err = nil;
+                if (![change.replicator isDocumentPending: docID error: &err]) { // <.>
+                    NSLog(@"Doc ID %@ now pushed", docID);
                 }
                 // end::replication-push-isdocumentpending[]
             }
@@ -913,9 +913,9 @@
     self.replicator = [[CBLReplicator alloc] initWithConfig:config];
 
     // tag::add-document-replication-listener[]
-    id token = [self.replicator addDocumentReplicationListener:^(CBLDocumentReplication * _Nonnull replication) {
+    id token = [self.replicator addDocumentReplicationListener:^(CBLDocumentReplication  *replication) {
         NSLog(@"Replication type :: %@", replication.isPush ? @"Push" : @"Pull");
-        for (CBLReplicatedDocument* document in replication.documents) {
+        for (CBLReplicatedDocument *document in replication.documents) {
             if (document.error == nil) {
                 NSLog(@"Doc ID :: %@", document.id);
                 if ((document.flags & kCBLDocumentFlagsDeleted) == kCBLDocumentFlagsDeleted) {
@@ -980,7 +980,7 @@
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
 
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database target:target];
-    config.pushFilter = ^BOOL(CBLDocument * _Nonnull document, CBLDocumentFlags flags) { // <1>
+    config.pushFilter = ^BOOL(CBLDocument *document, CBLDocumentFlags flags) { // <1>
         if ([[document stringForKey: @"type"] isEqualToString: @"draft"]) {
             return false;
         }
@@ -999,7 +999,7 @@
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
 
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database target:target];
-    config.pullFilter = ^BOOL(CBLDocument * _Nonnull document, CBLDocumentFlags flags) { // <1>
+    config.pullFilter = ^BOOL(CBLDocument *document, CBLDocumentFlags flags) { // <1>
         if ((flags & kCBLDocumentFlagsDeleted) == kCBLDocumentFlagsDeleted) {
             return false;
         }
@@ -1016,7 +1016,7 @@
     // tag::replication-retry-config[]
     id target = [[CBLURLEndpoint alloc] initWithURL: [NSURL URLWithString: @"ws://foo.cbl.com/db"]];
     
-    CBLReplicatorConfiguration* config = [[CBLReplicatorConfiguration alloc] initWithDatabase: self.database
+    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase: self.database
                                                                                        target: target];
     config.replicatorType = kCBLReplicatorTypePush;
     config.continuous = YES;
@@ -1113,8 +1113,8 @@
                                          where:type];
 
     // Run the query
-    CBLQueryResultSet *result = [query execute:&error];
-    NSLog(@"Number of rows :: %lu", (unsigned long)[[result allResults] count]);
+    CBLQueryResultSet *results = [query execute:&error];
+    NSLog(@"Number of rows :: %lu", (unsigned long)[[results allResults] count]);
 
     // Create replicators to push and pull changes to and from the cloud.
     NSURL *url = [[NSURL alloc] initWithString:@"ws://localhost:4984/getting-started-db"];
@@ -1146,15 +1146,15 @@
     self.database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
 
     // tag::register-model[]
-    ImageClassifierModel* model = [[ImageClassifierModel alloc] init];
+    ImageClassifierModel *model = [[ImageClassifierModel alloc] init];
     [[CBLDatabase prediction] registerModel:model withName:@"ImageClassifier"];
     // end::register-model[]
 
     // tag::predictive-query-value-index[]
-    CBLQueryExpression* input = [CBLQueryExpression dictionary: @{@"photo":[CBLQueryExpression property:@"photo"]}];
-    CBLQueryPredictionFunction* prediction = [CBLQueryFunction predictionUsingModel:@"ImageClassifier" input:input];
+    CBLQueryExpression *input = [CBLQueryExpression dictionary: @{@"photo":[CBLQueryExpression property:@"photo"]}];
+    CBLQueryPredictionFunction *prediction = [CBLQueryFunction predictionUsingModel:@"ImageClassifier" input:input];
 
-    CBLValueIndex* index = [CBLIndexBuilder valueIndexWithItems:@[[CBLValueIndexItem expression:[prediction property:@"label"]]]];
+    CBLValueIndex *index = [CBLIndexBuilder valueIndexWithItems:@[[CBLValueIndexItem expression:[prediction property:@"label"]]]];
     [self.database createIndex:index withName:@"value-index-image-classifier" error:&error];
     // end::predictive-query-value-index[]
 
@@ -1168,9 +1168,9 @@
     self.database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
 
     // tag::predictive-query-predictive-index[]
-    CBLQueryExpression* input = [CBLQueryExpression dictionary:@{@"photo":[CBLQueryExpression property:@"photo"]}];
+    CBLQueryExpression *input = [CBLQueryExpression dictionary:@{@"photo":[CBLQueryExpression property:@"photo"]}];
 
-    CBLPredictiveIndex* index = [CBLIndexBuilder predictiveIndexWithModel:@"ImageClassifier" input:input properties:nil];
+    CBLPredictiveIndex *index = [CBLIndexBuilder predictiveIndexWithModel:@"ImageClassifier" input:input properties:nil];
     [self.database createIndex:index withName:@"predictive-index-image-classifier" error:&error];
     // end::predictive-query-predictive-index[]
 }
@@ -1180,18 +1180,18 @@
     self.database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
 
     // tag::predictive-query[]
-    CBLQueryExpression* input = [CBLQueryExpression dictionary: @{@"photo":[CBLQueryExpression property:@"photo"]}];
-    CBLQueryPredictionFunction* prediction = [CBLQueryFunction predictionUsingModel:@"ImageClassifier" input:input]; // <1>
+    CBLQueryExpression *input = [CBLQueryExpression dictionary: @{@"photo":[CBLQueryExpression property:@"photo"]}];
+    CBLQueryPredictionFunction *prediction = [CBLQueryFunction predictionUsingModel:@"ImageClassifier" input:input]; // <1>
 
-    CBLQueryExpression* condition = [[[prediction property:@"label"] equalTo:[CBLQueryExpression string:@"car"]]
+    CBLQueryExpression *condition = [[[prediction property:@"label"] equalTo:[CBLQueryExpression string:@"car"]]
                                      andExpression:[[prediction property:@"probablity"] greaterThanOrEqualTo:[CBLQueryExpression double:0.8]]];
-    CBLQuery* query = [CBLQueryBuilder select: @[[CBLQuerySelectResult all]]
+    CBLQuery *query = [CBLQueryBuilder select: @[[CBLQuerySelectResult all]]
                                          from: [CBLQueryDataSource database:self.database]
                                         where: condition];
 
     // Run the query.
-    CBLQueryResultSet *result = [query execute:&error];
-    NSLog(@"Number of rows :: %lu", (unsigned long)[[result allResults] count]);
+    CBLQueryResultSet *results = [query execute:&error];
+    NSLog(@"Number of rows :: %lu", (unsigned long)[[results allResults] count]);
     // end::predictive-query[]
 }
 
@@ -1200,10 +1200,10 @@
 
     // tag::coreml-predictive-model[]
     // Load MLModel from `ImageClassifier.mlmodel`
-    NSURL* modelURL = [[NSBundle mainBundle] URLForResource:@"ImageClassifier" withExtension:@"mlmodel"];
-    NSURL* compiledModelURL = [MLModel compileModelAtURL:modelURL error:&error];
-    MLModel* model = [MLModel modelWithContentsOfURL:compiledModelURL error:&error];
-    CBLCoreMLPredictiveModel* predictiveModel = [[CBLCoreMLPredictiveModel alloc] initWithMLModel:model];
+    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"ImageClassifier" withExtension:@"mlmodel"];
+    NSURL *compiledModelURL = [MLModel compileModelAtURL:modelURL error:&error];
+    MLModel *model = [MLModel modelWithContentsOfURL:compiledModelURL error:&error];
+    CBLCoreMLPredictiveModel *predictiveModel = [[CBLCoreMLPredictiveModel alloc] initWithMLModel:model];
 
     // Register model
     [[CBLDatabase prediction] registerModel:predictiveModel withName:@"ImageClassifier"];
@@ -1254,31 +1254,23 @@
 
 - (void) dontTestInitListener {
     // tag::init-urllistener[]
-    CBLURLEndpointListenerConfiguration* config;
+    CBLURLEndpointListenerConfiguration *config;
     config = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: self.database];
     config.tlsIdentity = nil; // Use with anonymous self signed cert
-    config.authenticator =
-        [[CBLListenerPasswordAuthenticator alloc]
-            initWithBlock: ^BOOL(
-                NSString * username,
-                NSString * password)
-                {
-                if ([self isValidCredentials: username password:password]) {
-                    return  YES;
-                }
-                return NO;
-            }];
+    config.authenticator = [[CBLListenerPasswordAuthenticator alloc]
+                            initWithBlock: ^BOOL( NSString *username, NSString *password) {
+        return [self isValidCredentials: username password:password];
+    }];
 
     self.listener = [[CBLURLEndpointListener alloc] initWithConfig: config];
     // end::init-urllistener[]
 }
 
 - (void) dontTestListenerStart {
-    NSError* error = nil;
-    CBLURLEndpointListener* listener = nil;
+    NSError *error = nil;
 
     // tag::start-urllistener[]
-    BOOL success = [listener startWithError: &error];
+    BOOL success = [self.listener startWithError: &error];
     if (!success) {
         NSLog(@"Cannot start the listener: %@", error);
     }
@@ -1286,22 +1278,20 @@
 }
 
 - (void) dontTestListenerStop {
-    CBLURLEndpointListener* listener = nil;
-
     // tag::stop-urllistener[]
-    [listener stop];
+    [self.listener stop];
     // end::stop-urllistener[]
 }
 
 - (void) dontTestCreateSelfSignedCert {
-    NSError* error = nil;
-    CBLTLSIdentity* identity = nil;
+    NSError *error = nil;
+    CBLTLSIdentity *identity = nil;
     // <site-rooot>/objc/advance/objc-p2psync-websocket-using-passive.html
     // Example-6
     // tag::create-self-signed-cert[]
     // tag::listener-config-tls-id-SelfSigned[]
 
-    NSDictionary* attrs = @{ kCBLCertAttrCommonName: @"Couchbase Inc" };
+    NSDictionary *attrs = @{ kCBLCertAttrCommonName: @"Couchbase Inc" };
     identity =
       [CBLTLSIdentity createIdentityForServer: YES /* isServer */
         attributes: attrs
@@ -1313,7 +1303,7 @@
 }
 
 - (void) dontTestListenerCertificateAuthenticatorRootCert {
-    CBLURLEndpointListenerConfiguration* config;
+    CBLURLEndpointListenerConfiguration *config;
 
     // Example 8-tab1
     // tag::listener-certificate-authenticator-root-urllistener[]
@@ -1330,12 +1320,12 @@
 }
 
 - (void) dontTestListenerCertificateAuthenticatorCallback {
-    CBLURLEndpointListenerConfiguration* config;
+    CBLURLEndpointListenerConfiguration *config;
     // Example 8-tab2
     // tag::listener-certificate-authenticator-callback-urllistener[]
     // tag::listener-config-client-auth-lambda[]
 
-    CBLListenerCertificateAuthenticator* listenerAuth =
+    CBLListenerCertificateAuthenticator *listenerAuth =
     [[CBLListenerCertificateAuthenticator alloc] initWithBlock: ^BOOL(NSArray *certs) {
         return [self isValidCertificates: certs];
     }];
@@ -1360,17 +1350,12 @@
     
     
     // tag::query-access-all[]
-    NSMutableArray* matches = [[NSMutableArray alloc] init];
+    CBLQueryResultSet *results = [query execute:&error];
     
-    CBLQueryResultSet* resultset = [query execute:&error];
-    
-    for (CBLQueryResult *result in resultset) {
+    for (CBLQueryResult *result in results) {
         
         NSDictionary *data = [result valueAtIndex: 0] ;
         //             toDictionary];
-        
-        // Store dictionary in array
-        [matches addObject: data];
         
         // Use dictionary values
         NSLog(@"id = %@", [data valueForKey:@"id"]);
@@ -1383,40 +1368,21 @@
     // end::query-access-all[]
     
     // tag::query-access-json[]
-    NSMutableArray<Hotel *> *hotels = NSMutableArray.new;
-    CBLQueryResultSet* results = [query execute:&error];
-    for (CBLQueryResult* result in results) {
+    CBLQueryResultSet *rs = [query execute:&error];
+    for (CBLQueryResult *result in rs) {
         
         // Get result as a JSON string
-        
-        NSString* json = [result toJSON]; // <.>
+        NSString *json = [result toJSON]; // <.>
         
         // Get an native Obj-C object from the Json String
-        NSDictionary *thisDictFromJSON = [NSJSONSerialization JSONObjectWithData: [json dataUsingEncoding: NSUTF8StringEncoding]
+        NSDictionary *dict = [NSJSONSerialization JSONObjectWithData: [json dataUsingEncoding: NSUTF8StringEncoding]
                                                                          options: NSJSONReadingAllowFragments
                                                                            error: &error]; // <.>
-        if (error) {
-            NSLog(@"Error in serialization: %@",error);
-            return;
-        }
-        
-        
-        // Populate a custom object from native dictionary
-        Hotel *hotelFromJson = Hotel.new;
-        hotelFromJson.id = thisDictFromJSON[@"id"];  // <.>
-        hotelFromJson.name = thisDictFromJSON[@"name"];
-        hotelFromJson.city = thisDictFromJSON[@"city"];
-        hotelFromJson.country = thisDictFromJSON[@"country"];
-        hotelFromJson.descriptive = thisDictFromJSON[@"description"];
-        
-        [hotels addObject:hotelFromJson];
-        
         
         // Log generated Json and Native objects
         // For demo/example purposes
         NSLog(@"Json String %@", json);
-        NSLog(@"Native Object %@", thisDictFromJSON);
-        NSLog(@"Custom Object: id: %@ name: %@ city: %@ country: %@ descriptive: %@", hotelFromJson.id, hotelFromJson.name, hotelFromJson.city, hotelFromJson.country, hotelFromJson.descriptive);
+        NSLog(@"Native Object %@", dict);
         
     }; // end for
     
@@ -1425,7 +1391,7 @@
 } // end function
 
 - (void) dontTestQuerySyntaxAndAccessProps {
-    NSError* error = nil;
+    NSError *error = nil;
     
     // tag::query-syntax-props[]
     CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &error];
@@ -1443,9 +1409,9 @@
     
     // tag::query-access-props[]
     
-    CBLQueryResultSet* resultset = [query execute:&error];
+    CBLQueryResultSet *results = [query execute:&error];
     
-    for (CBLQueryResult *result in resultset.allResults) { // all results
+    for (CBLQueryResult *result in results) { // all results
         NSLog(@"id = %@", [result stringForKey:@"id"]);
         NSLog(@"name = %@", [result stringForKey:@"name"]);
         NSLog(@"type = %@", [result stringForKey:@"type"]);
@@ -1457,12 +1423,12 @@
 }
 
 - (void) dontTestQuerySyntaxCount {
-    NSError* error = nil;
+    NSError *error = nil;
     NSInteger count = 0;
     // tag::query-syntax-count-only[]
     CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"hotels" error: &error];
 
-    CBLQueryExpression* countExpression = [CBLQueryFunction count: [CBLQueryExpression all]];
+    CBLQueryExpression *countExpression = [CBLQueryFunction count: [CBLQueryExpression all]];
     CBLQuerySelectResult *selectResult = [CBLQuerySelectResult expression: countExpression
                                                                        as: @"myCount"];
 
@@ -1470,9 +1436,9 @@
                                          from:[CBLQueryDataSource database:database]]; // <.>
     
     // tag::query-access-count-only[]
-    CBLQueryResultSet* resultset = [query execute:&error];
+    CBLQueryResultSet *results = [query execute:&error];
     
-    for (CBLQueryResult *result in resultset) {
+    for (CBLQueryResult *result in results) {
         count = [result integerForKey: @"myCount"]; // <.>
         
     } // end for
@@ -1484,7 +1450,7 @@
 }
 
 - (void) dontTestQuerySyntaxID {
-    NSError* error = nil;
+    NSError *error = nil;
     
     // tag::query-syntax-id[]
     CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"hotels" error: &error];
@@ -1499,14 +1465,14 @@
 }
 
 - (void) dontTestQueryAccessID {
-    CBLQuery* query;
-    NSError* error = nil;
+    CBLQuery *query;
+    NSError *error = nil;
     // tag::query-access-id[]
     
-    CBLQueryResultSet* resultSet = [query execute:&error];
-    CBLDocument* doc = nil;
-    NSString* docId = nil;
-    for (CBLQueryResult *result in resultSet) {
+    CBLQueryResultSet *results = [query execute:&error];
+    CBLDocument *doc = nil;
+    NSString *docId = nil;
+    for (CBLQueryResult *result in results) {
         docId = [result stringForKey:@"id"]; // <.>
         
         // Now you can get the document using its ID
@@ -1524,9 +1490,9 @@
     int offset = 0;
     int limit = 20;
     
-    CBLQueryLimit* queryLimit = [CBLQueryLimit limit: [CBLQueryExpression integer: limit]
+    CBLQueryLimit *queryLimit = [CBLQueryLimit limit: [CBLQueryExpression integer: limit]
                                               offset: [CBLQueryExpression integer: offset]];
-    CBLQuery* query = [CBLQueryBuilder select: @[[CBLQuerySelectResult all]]
+    CBLQuery *query = [CBLQueryBuilder select: @[[CBLQuerySelectResult all]]
                                          from: [CBLQueryDataSource database: self.database]
                                         where: nil
                                       groupBy: nil
@@ -1538,52 +1504,50 @@
 }
 
 - (void) dontTestDocsOnly_QuerySyntaxN1QL {
-    /* Documentation Only query-syntax-n1ql
-    */
+    // Documentation Only query-syntax-n1ql
     NSError *error;
 
     // tag::query-syntax-n1ql[]
     NSString *queryString = @"SELECT * FROM _ WHERE type = \"hotel\""; // <.>
 
-    CBLQuery* query = [self.database createQuery: queryString];
+    CBLQuery *query = [self.database createQuery: queryString];
 
-    CBLQueryResultSet* resultset = [query execute:&error];
+    CBLQueryResultSet *results = [query execute:&error];
 
     // end::query-syntax-n1ql[]
-    NSLog(@"resultset.count = %lu", (unsigned long)resultset.allResults.count);
+    NSLog(@"resultset.count = %lu", (unsigned long)results.allResults.count);
 }
 
 - (void) dontTestDocsOnly_QuerySyntaxN1QLParams {
-    /* Documentation Only query-syntax-n1ql-params
-    */
+    // Documentation Only query-syntax-n1ql-params
     NSError *error;
 
     // tag::query-syntax-n1ql-params[]
-    NSString* queryString = [NSString stringWithFormat: @"SELECT * FROM _ WHERE type = $type"]; // <.>
+    NSString *queryString = [NSString stringWithFormat: @"SELECT * FROM _ WHERE type = $type"]; // <.>
     
-    CBLQuery* query = [self.database createQuery: queryString];
+    CBLQuery *query = [self.database createQuery: queryString];
     
-    CBLQueryParameters* params = [[CBLQueryParameters alloc] init];
+    CBLQueryParameters *params = [[CBLQueryParameters alloc] init];
     [params setString: @"hotel" forName: @"type"]; // <.>
     query.parameters = params;
 
-    CBLQueryResultSet* resultset =  [query execute:&error];
+    CBLQueryResultSet *results =  [query execute:&error];
 
     // end::query-syntax-n1ql-params[]
-    NSLog(@"resultset.count = %lu", (unsigned long)resultset.allResults.count);
+    NSLog(@"resultset.count = %lu", (unsigned long)results.allResults.count);
 }
 
 #pragma mark - PEER-to-PEER
 
 - (void) dontTestListenerSimple {
-    NSError* error = nil;
+    NSError *error = nil;
     
     // tag::listener-simple[]
-    CBLURLEndpointListenerConfiguration* config = [[CBLURLEndpointListenerConfiguration alloc]
+    CBLURLEndpointListenerConfiguration *config = [[CBLURLEndpointListenerConfiguration alloc]
                                                    initWithDatabase: self.database]; // <.>
     
     config.authenticator = [[CBLListenerPasswordAuthenticator alloc]
-                                initWithBlock: ^BOOL(NSString * validUser, NSString * validPassword) {
+                                initWithBlock: ^BOOL(NSString  *validUser, NSString  *validPassword) {
         return [self isValidCredentials: validUser password:validPassword];
     }]; // <.>
     
@@ -1605,7 +1569,7 @@
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database
                                                                                        target:endpoint]; // <.>
 
-    config.acceptOnlySelfSignedServerCertificate = YES; // <.>
+    config.acceptOnlySelfSignedServerCertificate = YES; // <.> //FIXME: Remove this from doc!
 
     config.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"valid.user"
                                                                   password:@"valid.password.string"]; // <.>
@@ -1629,13 +1593,13 @@
     NSUInteger wssPort = 4985;
     NSUInteger wsPort = 4984;
     BOOL isTLS = NO;
-    CBLListenerPasswordAuthenticator* auth = [[CBLListenerPasswordAuthenticator alloc]
+    CBLListenerPasswordAuthenticator *auth = [[CBLListenerPasswordAuthenticator alloc]
                                               initWithBlock:^BOOL(NSString *username, NSString *password) {
         return YES;
     }];
     
     // tag::p2p-ws-api-urlendpointlistener-constructor[]
-    CBLURLEndpointListenerConfiguration* config = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: self.otherDB];
+    CBLURLEndpointListenerConfiguration *config = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: self.otherDB];
     config.port = isTLS ? wssPort : wsPort;
     config.disableTLS = !isTLS;
     config.authenticator = auth;
@@ -1645,7 +1609,7 @@
 }
 
 - (void) dontTestMyActivePeer {
-    NSError* error = nil;
+    NSError *error = nil;
     self.database = [[CBLDatabase alloc] initWithName:@"database" error:&error];
     if (!self.database) {
         NSLog(@"Cannot open the database: %@", error);
@@ -1743,7 +1707,7 @@
 // Additional Snippets from above
 
 - (void) dontTestReplicatorConfigCerts {
-    CBLReplicatorConfiguration* config;
+    CBLReplicatorConfiguration *config;
     SecCertificateRef cert;
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA Certs
@@ -1783,12 +1747,12 @@
 #pragma mark - Listener
 
 - (void) dontTestListener {
-    NSError* error = nil;
+    NSError *error = nil;
     
     // tag::listener-initialize[]
     // tag::listener-config-db[]
     // Initialize the listener config <.>
-    CBLURLEndpointListenerConfiguration* config = [[CBLURLEndpointListenerConfiguration alloc]
+    CBLURLEndpointListenerConfiguration *config = [[CBLURLEndpointListenerConfiguration alloc]
                                                    initWithDatabase: self.database];
     
     // end::listener-config-db[]
@@ -1819,7 +1783,7 @@
     // Configure Client Security using an Authenticator
     // For example, Basic Authentication <.>
     config.authenticator = [[CBLListenerPasswordAuthenticator alloc]
-                            initWithBlock: ^BOOL(NSString * username, NSString * password) {
+                            initWithBlock: ^BOOL(NSString *username, NSString *password) {
         return [self isValidCredentials: username password:password];
     }];
     
@@ -1853,9 +1817,9 @@
 }
 
 - (void) dontTestListenerGetURLList {
-    NSError* error = nil;
+    NSError *error = nil;
     // tag::listener-get-url-list[]
-    CBLURLEndpointListenerConfiguration* config = [[CBLURLEndpointListenerConfiguration alloc]
+    CBLURLEndpointListenerConfiguration *config = [[CBLURLEndpointListenerConfiguration alloc]
                                                    initWithDatabase: self.otherDB];
     self.listener = [[CBLURLEndpointListener alloc] initWithConfig: config];
 
@@ -1867,7 +1831,7 @@
 }
 
 - (void) dontTestlistenerConfigClientAuth {
-    CBLURLEndpointListenerConfiguration* config = [[CBLURLEndpointListenerConfiguration alloc]
+    CBLURLEndpointListenerConfiguration *config = [[CBLURLEndpointListenerConfiguration alloc]
                                                    initWithDatabase: self.database];
     // EXAMPLE 8
     // tag::listener-config-client-auth-root[]
@@ -1883,7 +1847,7 @@
 }
 
 - (void) dontTestListenerLocalDB {
-    NSError* error = nil;
+    NSError *error = nil;
     SecCertificateRef cert;
     // tag::listener-local-db[]
     // . . . preceding application logic . . .
@@ -1891,7 +1855,7 @@
     // Include websockets listener initializer code
     // end::listener-local-db[]
     
-    CBLURLEndpointListenerConfiguration* config = [[CBLURLEndpointListenerConfiguration alloc]
+    CBLURLEndpointListenerConfiguration *config = [[CBLURLEndpointListenerConfiguration alloc]
                                                    initWithDatabase: self.otherDB];
     // tag::listener-config-tls-full[]
     // Configure server authentication
@@ -1909,7 +1873,7 @@
     NSURL *certURL = [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"p12"]; // <.>
     
     NSData *data = [[NSData alloc] initWithContentsOfURL: certURL];
-    CBLTLSIdentity* tlsIdentity = [CBLTLSIdentity importIdentityWithData: data
+    CBLTLSIdentity *tlsIdentity = [CBLTLSIdentity importIdentityWithData: data
                                                                 password: @"123"
                                                                    label: @"couchbase-docs-cert"
                                                                    error: &error]; // <.>
@@ -1919,7 +1883,7 @@
     // end::listener-config-tls-id-caCert[]
     // tag::listener-config-tls-id-SelfSigned[]
     // Use a self-signed certificate
-    NSDictionary* attrs = @{ kCBLCertAttrCommonName: @"Couchbase Inc" }; // <.>
+    NSDictionary *attrs = @{ kCBLCertAttrCommonName: @"Couchbase Inc" }; // <.>
     
     tlsIdentity = [CBLTLSIdentity createIdentityForServer: YES /* isServer */
                                                attributes: attrs
@@ -1940,7 +1904,7 @@
     // tag::listener-config-client-auth-lambda[]
     // Authenticate self-signed cert
     // using application logic
-    CBLListenerCertificateAuthenticator* authenticator = [[CBLListenerCertificateAuthenticator alloc]
+    CBLListenerCertificateAuthenticator *authenticator = [[CBLListenerCertificateAuthenticator alloc]
                                                           initWithBlock: ^BOOL(NSArray *certs) {
         return [self isValidCertificates: certs];
     }];  // <.>
@@ -1988,7 +1952,7 @@
     // end::old-listener-config-client-auth-root[]
     
     // tag::listener-config-client-auth-self-signed[]
-    config.authenticator = [[CBLListenerCertificateAuthenticator alloc] initWithBlock: ^BOOL(NSArray * _Nonnull certs) {
+    config.authenticator = [[CBLListenerCertificateAuthenticator alloc] initWithBlock: ^BOOL(NSArray *certs) {
         return [self isValidCertificates: certs];
     }];
     
@@ -2010,19 +1974,19 @@
 }
 
 - (void) dontTestDictionaryAsJSON {
-    NSError* error = nil;
+    NSError *error = nil;
     // Example 6. Dictionaries as JSON strings
     // tag::tojson-dictionary[]
-    NSString* aJSONstring = @"{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\","
+    NSString *aJSONstring = @"{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\","
     "\"city\":\"Balmain\",\"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\"}";
     
     
-    CBLMutableDictionary* myDict = [[CBLMutableDictionary alloc] initWithJSON: aJSONstring
+    CBLMutableDictionary *myDict = [[CBLMutableDictionary alloc] initWithJSON: aJSONstring
                                                                         error: &error];
     
-    NSString* name = [myDict stringForKey: @"name"];
+    NSString *name = [myDict stringForKey: @"name"];
     
-    for (NSString* key in myDict) {
+    for (NSString *key in myDict) {
         NSLog(@"%@ %@", key, [myDict valueForKey: key]);
     }
     
@@ -2042,13 +2006,13 @@
 }
 
 - (void) dontTestJSONAsArray {
-    NSError* error = nil;
+    NSError *error = nil;
     // tag::tojson-array[]
-    NSString* json = @"[\"1000\",\"1001\",\"1002\",\"1003\"]";
+    NSString *json = @"[\"1000\",\"1001\",\"1002\",\"1003\"]";
     
-    CBLMutableArray* myArray = [[CBLMutableArray alloc] initWithJSON: json error: &error];
+    CBLMutableArray *myArray = [[CBLMutableArray alloc] initWithJSON: json error: &error];
     
-    for (NSString* item in myArray) {
+    for (NSString *item in myArray) {
         NSLog(@"%@", item);
     }
     
@@ -2132,12 +2096,12 @@
 - (instancetype) init {
     self = [super init];
     if (self) {
-        NSError* error = nil;
+        NSError *error = nil;
         // tag::message-endpoint[]
         CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"dbname" error: &error];
 
         // The delegate must implement the `CBLMessageEndpointDelegate` protocol.
-        NSString* id = @"";
+        NSString *id = @"";
         CBLMessageEndpoint *endpoint = [[CBLMessageEndpoint alloc] initWithUID:@"UID:123"
                                                                         target:id
                                                                   protocolType:kCBLProtocolTypeMessageStream
@@ -2177,7 +2141,7 @@
 
 // tag::active-peer-open[]
 /* implementation of CBLMessageEndpointConnection */
-- (void)open:(nonnull id<CBLReplicatorConnection>)connection completion:(nonnull void (^)(BOOL, CBLMessagingError * _Nullable))completion {
+- (void)open:(nonnull id<CBLReplicatorConnection>)connection completion:(nonnull void (^)(BOOL, CBLMessagingError  *_Nullable))completion {
     _replicatorConnection = connection;
     completion(YES, nil);
 }
@@ -2185,7 +2149,7 @@
 
 // tag::active-peer-send[]
 /* implementation of CBLMessageEndpointConnection */
-- (void)send:(nonnull CBLMessage *)message completion:(nonnull void (^)(BOOL, CBLMessagingError * _Nullable))completion {
+- (void)send:(nonnull CBLMessage *)message completion:(nonnull void (^)(BOOL, CBLMessagingError  *_Nullable))completion {
     NSData *data = [message toData];
     NSLog(@"%@", data);
     /* send the data to the other peer */
@@ -2231,7 +2195,7 @@
 }
 
 - (void)startListener {
-    NSError* error = nil;
+    NSError *error = nil;
     // tag::listener[]
     CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"mydb" error: &error];
 
@@ -2263,7 +2227,7 @@
 
 // tag::passive-peer-open[]
 /* implementation of CBLMessageEndpointConnection */
-- (void)open:(nonnull id<CBLReplicatorConnection>)connection completion:(nonnull void (^)(BOOL, CBLMessagingError * _Nullable))completion {
+- (void)open:(nonnull id<CBLReplicatorConnection>)connection completion:(nonnull void (^)(BOOL, CBLMessagingError *_Nullable))completion {
     _replicatorConnection = connection;
     completion(YES, nil);
 }
@@ -2271,7 +2235,7 @@
 
 // tag::passive-peer-send[]
 /* implementation of CBLMessageEndpointConnection */
-- (void)send:(nonnull CBLMessage *)message completion:(nonnull void (^)(BOOL, CBLMessagingError * _Nullable))completion {
+- (void)send:(nonnull CBLMessage *)message completion:(nonnull void (^)(BOOL, CBLMessagingError *_Nullable))completion {
     NSData *data = [message toData];
     NSLog(@"%@", data);
     /* send the data to the other peer */
@@ -2320,15 +2284,15 @@
 @implementation MyGetCert1
 
 - (CBLTLSIdentity*) fMyGetCert {
-    NSError* error = nil;
-    CBLReplicatorConfiguration* thisConfig; // TODO: Are we sure? this is Replicator config?
+    NSError *error = nil;
+    CBLReplicatorConfiguration *config; // FIXME: Are we sure? this is Replicator config?
     // tag::p2p-tlsid-tlsidentity-with-label[]
     // tag::p2p-tlsid-check-keychain[]
     // Check if Id exists in keychain and if so, use it
-    CBLTLSIdentity* identity = [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &error]; // <.>
+    CBLTLSIdentity *identity = [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &error]; // <.>
 
     // end::p2p-tlsid-check-keychain[]
-    thisConfig.authenticator = [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; // <.>
+    config.authenticator = [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; // <.>
 
     // end::p2p-tlsid-tlsidentity-with-label[]
     
@@ -2337,11 +2301,11 @@
     
     // Check for a resource bundle with required label to generate identity from
     // return nil identify if not found
-    NSString* path = [[NSBundle mainBundle] pathForResource: @"doco-sync-server" ofType: @"p12"];
-    NSData* thisData = [NSData dataWithContentsOfFile: path
+    NSString *path = [[NSBundle mainBundle] pathForResource: @"doco-sync-server" ofType: @"p12"];
+    NSData *data = [NSData dataWithContentsOfFile: path
                                               options: 0
                                                 error: &error];
-    if (!thisData)
+    if (!data)
         return nil;
     
     // end::p2p-tlsid-check-bundled[]
@@ -2353,86 +2317,51 @@
     // Set passphrase using kSecImportExportPassphrase.
     // This passphrase should correspond to what was specified when .p12 file was created
     CFArrayRef result = NULL;
-    NSDictionary* options = @{ (id)kSecImportExportPassphrase: @"couchbase" };
-    OSStatus status = SecPKCS12Import((__bridge CFDataRef)thisData, (__bridge CFDictionaryRef)options, &result);
+    NSDictionary *options = @{ (id)kSecImportExportPassphrase: @"couchbase" };
+    OSStatus status = SecPKCS12Import((__bridge CFDataRef)data, (__bridge CFDictionaryRef)options, &result);
     if (status != errSecSuccess) {
         NSLog(@"Failed to import data from provided with error :%d ", (int)status);
         return nil;
     }
     
-    NSArray* importedItems = (NSArray*)CFBridgingRelease(result);
-    NSDictionary* item = importedItems[0];
+    NSArray *importedItems = (NSArray*)CFBridgingRelease(result);
+    NSDictionary *item = importedItems[0];
     
     // Get SecIdentityRef representing the item's id
     SecIdentityRef identityRef = (__bridge SecIdentityRef) item[(id)kSecImportItemIdentity];
     
     // Get Id's Private Key, return nil id if fails
-    SecKeyRef thisPrivateKey;
-    status = SecIdentityCopyPrivateKey(identityRef, &thisPrivateKey);
+    SecKeyRef privateKey;
+    status = SecIdentityCopyPrivateKey(identityRef, &privateKey);
     if (status != errSecSuccess) {
         NSLog(@"Failed to import private key from provided with error :%d ", (int)status);
         return nil;
     }
-    CFAutorelease(thisPrivateKey);
+    CFAutorelease(privateKey);
     
     // Get all relevant certs [SecCertificate] from the ID's cert chain using kSecImportItemCertChain
-    NSArray* thisCertChain = item[(id)kSecImportItemCertChain];
+    NSArray *certChain = item[(id)kSecImportItemCertChain];
     
     // Return nil Id if errors in key or cert chain at this stage
-    if (!thisCertChain || !thisPrivateKey)
+    if (!certChain || !privateKey)
         return nil;
     
     // end::p2p-tlsid-import-from-bundled[]
     
     // tag::p2p-tlsid-store-in-keychain[]
-    // STORE THE IDENTITY AND ITS CERT CHAIN IN THE KEYCHAIN
-    
-    // Store Private Key in Keychain
-    NSDictionary* params = @{
-        (id)kSecClass:              (id)kSecClassKey,
-        (id)kSecAttrKeyType:        (id)kSecAttrKeyTypeRSA,
-        (id)kSecAttrKeyClass:       (id)kSecAttrKeyClassPrivate,
-        (id)kSecReturnRef:          @NO,
-        (id)kSecValueRef:           (__bridge id)thisPrivateKey
-    };
-    
-    status = SecItemAdd((CFDictionaryRef)params, NULL);
-    if (status != errSecSuccess) {
-        NSLog(@"Unable to store private key");
-        return nil;
-    }
-    
-    // Store all Certs for Id in Keychain:
-    int i = 0;
-    for (id cert in thisCertChain) {
-        NSMutableDictionary* params = [NSMutableDictionary dictionaryWithDictionary: @{
-            (id)kSecClass:              (id)kSecClassCertificate,
-            (id)kSecReturnRef:          @NO,
-            (id)kSecValueRef:           cert
-        }];
-        NSString* label = [NSString stringWithFormat: @"doco-sync-server-%d", i++];
-        if (label)
-            params[(id)kSecAttrLabel] = label;
-        
-        status = SecItemAdd((CFDictionaryRef)params, NULL);
-        if (status != errSecSuccess) {
-            NSLog(@"Unable to store certs");
-            return nil;
-        }
-    }
-    
+    // FIXME: Use the same tag as tag: [create-self-signed-cert]
     // end::p2p-tlsid-store-in-keychain[]
     
     // tag::p2p-tlsid-return-id-from-keychain[]
     // RETURN A TLSIDENTITY FROM THE KEYCHAIN FOR USE IN CONFIGURING TLS COMMUNICATION
     return [CBLTLSIdentity identityWithIdentity: identityRef
-                                          certs: @[thisCertChain[1]]
+                                          certs: @[certChain[1]]
                                           error: &error];
     // end::p2p-tlsid-return-id-from-keychain[]
 }
 
 - (void) dontTestDeleteTLSIdentityFromKeychain {
-    NSError* error;
+    NSError *error;
     // tag::p2p-tlsid-delete-id-from-keychain[]
 
     [CBLTLSIdentity deleteIdentityWithLabel: @"doco-sync-server-1" error: &error];
