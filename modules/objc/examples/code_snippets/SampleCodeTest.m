@@ -22,8 +22,9 @@
 #import <CoreML/CoreML.h>
 
 
-/*
- FIXME: For consistency:
+#pragma mark - !!!Note
+/**
+ Note for Consistency across the code snippets:
  
  1. We will keep the '*' with instance after the space.
     `NSDictionary *dict = [NSDictionary dictionary];`
@@ -38,6 +39,8 @@
  
  5. While using replicator/listener, we will use as ivar `self.replicator` and `self.listener` resp.
  */
+
+#pragma mark -
 
 // tag::predictive-model[]
 // `myMLModel` is a fake implementation
