@@ -253,7 +253,7 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 <.> Simply removing the wildcard prefix enables the query optimizer to access the `typeIndex`, which results in a more efficient search.
 
 .Resulting Query Plan
-[source, {console}]
+[source, bash]
 ----
 3|0|0| SEARCH TABLE kv_default AS _doc USING INDEX typeIndex (<expr>>? AND <expr><?)
 ----
@@ -272,7 +272,7 @@ include::{root-partials}_block_tabbed_code_block.adoc[]
 <.> Here we use the `{url-api-method-function-lower}` function in the _Where_ expression
 
 .Query Plan:
-[source, {console}]
+[source, bash]
 ----
 2|0|0| SCAN TABLE kv_default AS _doc
 ----

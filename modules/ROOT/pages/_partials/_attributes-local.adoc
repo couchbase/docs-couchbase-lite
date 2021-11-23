@@ -1,9 +1,31 @@
+
+// COMPONENT VERSIONS
+// From antora.yml
+// {release} - {is-beta} - {major} - {minor} - {base} - {releasetag}
+
+// Basic version
+:version: {major}.{minor}
+// Base three digit version including optional tag
+:tag: {empty}
+ifdef::releasetag[:tag: -{releasetag}]
+:version-full: {major}.{minor}.{base}{tag}
+:version-full-untagged: {major}.{minor}.{base}
+// Full version including maintenance release -- this is set in attributes-module as it will vary by module -- here at component level it is always same as version-full
+:version-maintenance: {version-full}
+// CAO versions used
+:version_cao: 2.0
+:version_caoFull: 2.0.0
+
+// END COMPONENT VERSIONS
+//
+
+
 // BEGIN  -- TEMP -- merged from docs-mobile -- resolve after  3.0 beta
-:_page-status-beta: beta
-:_page-status-gamma: gamma
-:_page-status-review: in-review
-:xrefstyle: full
-:more: Read More
+// :_page-status-beta: beta
+// :_page-status-gamma: gamma
+// :_page-status-review: in-review
+// :xrefstyle: full
+// :more: Read More
 :idprefix:
 :idseparator: -
 :blank-field: ____
@@ -22,9 +44,17 @@
 :entshort: ee
 :community: community
 :commshort: ce
+
 :url-cb-jira: https://issues.couchbase.com/browse
 :url-cb-forum: https://forums.couchbase.com/
 :url-cb-forum-mobile: https://forums.couchbase.com/c/mobile/14
+:url-tutorials: https://docs.couchbase.com/tutorials/
+
+:couchbase-blog--xref: {url-cb-blog}[Blog]
+:couchbase-forum--xref: {url-cb-forum}[Forum]
+:couchbase-mobile-forum--xref: {url-cb-forum-mobile}[Mobile Forum]
+:couchbase-tutorials--xref: {url-tutorials}[Tutorials]
+
 :url-jira: https://issues.couchbase.com/browse
 :url-downloads: https://www.couchbase.com/downloads/?family=mobile
 
@@ -58,15 +88,15 @@
 :cblFrmWk: {cbl} Java Framework
 :svr: {component-title-svr}
 :svrTechNM: {component-svr}
-:xref-pfx-sgw: xref:{version}@{component-sgw}:
-:xref-pfx-cbl: xref:{version}@{component-cbl}:
-:xref-pfx-svr: xref:{component-svr}:
-:xref-pfx-cao: xref:{component-cao}:
-// :xref-pfx-shared: xref:{component-mob}:
-:xref-url-downloads-mobile: {downloads-mobile--xref}[Couchbase Downloads page]
-:xref-url-cb-blog: {url-cb-blog}[Blog]
-:xref-url-cb-forum: {url-cb-forum}[Forum]
-:xref-url-cb-forum-mobile: {url-cb-forum-mobile}[Forum]
+:sgw--xref: xref:{version}@{component-sgw}:
+:cbl--xref: xref:{version}@{component-cbl}:
+:svr--xref: xref:{component-svr}:
+:cao--xref: xref:{component-cao}:
+:url-cb-pfx: https://www.couchbase.com/
+:url-downloads-all: {url-cb-pfx}downloads
+:downloads-all--xref: {url-downloads-all}[Get Started with Couchbase Today]
+:url-downloads-mobile: {url-downloads-all}#extend-with-mobile
+:downloads-mobile--xref: {url-downloads-mobile}[Extend with Mobile]
 
 // END -- TEMP -- merged from docs-mobile -- resolve after  3.0 beta
 
@@ -87,25 +117,6 @@
 :ftr_jAndNM: {product} for Android
 :ftr_SwiftNM: {product} for Swift
 
-// COMPONENT VERSIONS
-// From antora.yml
-// {release} - {is-beta} - {major} - {minor} - {base} - {releasetag}
-
-// Basic version
-:version: {major}.{minor}
-// Base three digit version including optional tag
-:tag: {empty}
-ifdef::releasetag[:tag: -{releasetag}]
-:version-full: {major}.{minor}.{base}{tag}
-:version-full-untagged: {major}.{minor}.{base}
-// Full version including maintenance release -- this is set in attributes-module as it will vary by module -- here at component level it is always same as version-full
-:version-maintenance: {version-full}
-// CAO versions used
-:version_cao: 2.0
-:version_caoFull: 2.0.0
-
-// END COMPONENT VERSIONS
-//
 :sgw: pass:q,a[sync{nbsp}gateway]
 :sgw-s: pass:q,a[Sync{nbsp}gateway]
 :sgw-t: pass:q,a[Sync{nbsp}Gateway]
@@ -165,8 +176,7 @@ ifdef::releasetag[:tag: -{releasetag}]
 :lang-title-swift: Swift
 
 // End -- Source Languages
-:nmCbBlogLink: {url-cb-blog}[The Couchbase Blog]
-:nmCBdwnlds: Couchbase Downloads
+
 :nmSampleAppDb: getting-started.cblite2
 // :nmSampleAppDbPath: /resources/getting-started.cblite2
 :nmSampleAppDbPath: /getting-started.cblite2
@@ -202,18 +212,25 @@ endif::[]
 :url-support-policy: {url-cb-website}support-policy[Couchbase Support]
 :url-license-and-supp-faq: {url-cb-website}licensing-and-support-faq
 [Licensing]
-:url-cb-blog: https://blog.couchbase.com/
+:url-cb-blog: https://blog.couchbase.com/category/couchbase-mobile/?ref=blog-menu
+
 :url-cb-blog-replication: {url-cb-blog}data-replication-couchbase-mobile/[Introducing the Data Replication Protocol^]
 :url-cb-blog-cert-pinning: {url-cb-blog}certificate-pinning-android-with-couchbase-mobile/[Certificate Pinning with Couchbase Mobile^]
 :url-cb-blog-query-interface: {url-cb-blog}sql-for-json-query-interface-couchbase-mobile/[Introducing the Query Interface in Couchbase Mobile^]
 
 :url-cb-blog-link: {url-cb-blog}[The Couchbase Blog]
 
-// BEGIN -- download urls
+:url-blog-cat-conflicts: {url-cb-blog}tag/conflict-resolution/[Conflict Resolution (category)]
+
+:url-blog-doc-conflicts-auto-resolutions: {url-cb-blog}document-conflicts-couchbase-mobile/[Automatic Conflict Resolution]
+
+:url-blog--pfx-conflicts-demystifying: {url-cb-blog}conflict-resolution-couchbase-mobile/
+:url-blog-doc-conflicts-demystifying: {url-blog--pfx-conflicts-demystifying}[Demystifying Conflict Resolution]
+:url-blog-doc-conflicts-demystifying-mvcc: {url-blog--pfx-conflicts-demystifying}#multi-version-concurrency-control[MVCC -- Demystifying Conflict Resolution]
+
 :url-downloads-all: {url-cb-website}downloads
 :downloads-all--xref: {url-downloads-all}[Get Started with Couchbase Today]
 :url-downloads-mobile: {url-downloads-all}#extend-with-mobile
-:downloads-mobile--xref: {url-downloads-mobile}[Extend with Mobile]
 
 :url-download-swift: https://packages.couchbase.com/releases/couchbase-lite-ios/2.8.0-beta/couchbase-lite-swift_community_2.8.0.zip[Couchbase Lite Swift]
 :url-download-c: https://packages.couchbase.com/releases/couchbase-lite-c/2.8.0-beta/couchbase-lite-objc_community_2.8.0.zip[Couchbase Lite C]
@@ -224,7 +241,7 @@ endif::[]
 // END -- download urls
 
 // API Reference Links
-:url-api-references-staging: https://ibsoln.github.io/api/mobile/{vrsnLatestRel}/couchbase-lite-
+:url-api-references-staging: https://ibsoln.github.io/api/mobile/{version-full}/couchbase-lite-
 :url-api-references-beta: https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-
 :url-api-references-production: http://docs.couchbase.com/mobile/{version-full}/couchbase-lite-
 :url-api-references-pfx: {url-api-references-staging}
@@ -261,7 +278,7 @@ ifdef::is-beta[:url-api-references-pfx: {url-api-references-beta}]
 :url-issues-objc: {url-github-cbl}-ios/issues
 :url-issues-swift: {url-github-cbl}-ios/issues
 
-:url-tutorials: https://docs.couchbase.com/tutorials/
+
 
 :url-tutorial-mobile-workshop: {url-tutorials}mobile-travel-sample/introduction.html[Couchbase Mobile Workshop]
 
@@ -301,7 +318,7 @@ ifdef::is-beta[:url-api-references-pfx: {url-api-references-beta}]
 :pg-sgw-gs-install: gs-sgw-install.adoc
 
 // SGW Xrefs
-:xref-pg-sgw-gs-install: {xref-pfx-sgw}:{pg-sgw-gs-install}[Install Sync Gateway]
+:xref-pg-sgw-gs-install: {sgw--xref}:{pg-sgw-gs-install}[Install Sync Gateway]
 
 
 // BEGIN -- SET SNIPPET HEADERS
@@ -318,8 +335,8 @@ ifdef::is-beta[:url-api-references-pfx: {url-api-references-beta}]
 // Couchbase Lite Pages
 
 // :component-mob-status: {_page-status-gamma}
-:component-cbl-status: {_page-status-gamma}
-:component-sgw-status: {_page-status-gamma}
+// :component-cbl-status: {_page-status-gamma}
+// :component-sgw-status: {_page-status-gamma}
 
 //
 // End Standard URL Attributes
