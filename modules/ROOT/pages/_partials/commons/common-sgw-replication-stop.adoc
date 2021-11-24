@@ -18,8 +18,7 @@ You can find further information on database operations in {xref-cbl-pg-database
 [TIP]
 --
 . When you start a change listener, save the returned token, you will need it when you remove the listener
-. Remove any active change listener prior to stopping your replication
-. Ensure the replication has completely stopped by checking for a replication status = STOPPED, before closing any associated database
+. You can ensure the replication has completely stopped by checking for a replication status = STOPPED
 --
 
 // Example 9
@@ -32,9 +31,8 @@ include::{snippet-p2psync-ws}[tags=p2p-act-rep-stop, indent=0]
 
 ----
 
-<.> First we stop our change listener
-<.> Here we initiate the stopping of the replication using the {url-api-method-replicator-stop} method. +
-Remove any active <<lbl-repl-chng, change listener>> before stopping the replicator.
+<.> Here we initiate the stopping of the replication using the {url-api-method-replicator-stop} method.
+We can then remove any active <<lbl-repl-chng, change listener>>.
 
 ====
 

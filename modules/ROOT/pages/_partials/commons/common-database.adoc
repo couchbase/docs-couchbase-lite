@@ -85,16 +85,6 @@ Closing a database immediately after kicking-off a replication could cause the s
 For example: +
 `IllegalStateException: Attempt to perform an operation on a closed database`
 
-.Safely Closing a Database pre 2.8
-[TIP]
---
-. Stop any active live queries -- by removing the query's change listener
-. Remove any active replication change listeners
-. Stop any active replications -- this is an asynchronous operation
-. Wait for all active replications to fully stop -- for this you can monitor the replication status -- see: {xref-cbl-pg-replication--status}.
-. Finally, close the database
-
---
 
 [#ex-dbclose]
 .Close a Database
