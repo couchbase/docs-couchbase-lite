@@ -44,11 +44,9 @@ class SampleCodeTest {
     // MARK: Database
     
     func dontTestNewDatabase() throws {
-        let userDb: Database = self.database;
         // tag::new-database[]
-        var database: Database!
         do {
-            database = try Database(name: "my-database")
+            self.database = try Database(name: "my-database")
         } catch {
             print(error)
         }
@@ -56,10 +54,9 @@ class SampleCodeTest {
         
         // tag::close-database[]
         do {
-            try userDb.close()
+            try self.database.close()
         }
         // end::close-database[]
-        print(database)
     }
     
 #if COUCHBASE_ENTERPRISE
@@ -686,11 +683,13 @@ class SampleCodeTest {
     func dontTestToJsonArrayObject() throws {
         // demonstrate use of JSON string
         // tag::tojson-array[]
-        let json = "[\"1000\",\"1001\",\"1002\",\"1003\"]"
-        let myArray = try MutableArrayObject(json: json)
-        
-        for item in myArray {
-            print(item)
+        if let doc = database.document(withID: "1000") {// <.>
+            guard let array = doc.array(forKey: "list") else {
+                return
+            }
+            
+            let json = array.toJSON() // <.>
+            print(json)
         }
         // end::tojson-array[]
     }
@@ -698,12 +697,13 @@ class SampleCodeTest {
     func dontTestToJsonDictionary() throws {
         // demonstrate use of JSON string
         // tag::tojson-dictionary[]
-        let json = "{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\"}"
-        let myDict = try MutableDictionaryObject(json: json)
-        for key in myDict {
-            if let value = myDict.value(forKey: key) {
-                print("\(key): \(value)")
+        if let doc = database.document(withID: "1000") {// <.>
+            guard let dictionary = doc.dictionary(forKey: "dictionary") else {
+                return
             }
+            
+            let json = dictionary.toJSON() // <.>
+            print(json)
         }
         // end::tojson-dictionary[]
     }
@@ -749,10 +749,10 @@ class SampleCodeTest {
     
     func dontTestIsBlob() throws {
         let digest = ""
-        let dict = ["@type":"blob", "digest": digest]
         
         // tag::[dictionary-isblob]
-        if(Blob.isBlob(properties: dict)) { // <.>
+        if(Blob.isBlob(properties: [Blob.typeProperty: Blob.blobType,
+                                    Blob.blobDigestProperty: digest])) { // <.>
             print("Yes! I am a blob");
         }
         // end::[dictionary-isblob]
@@ -821,29 +821,25 @@ class SampleCodeTest {
         
         // tag::replication-push-pendingdocumentids[]
         self.replicator = Replicator(config: config)
-        let mydocids:Set = try self.replicator.pendingDocumentIds() // <.>
+        let myDocIDs = try self.replicator.pendingDocumentIds() // <.>
         
         // end::replication-push-pendingdocumentids[]
-        if(!mydocids.isEmpty) {
-            print("There are \(mydocids.count) documents pending")
-            let thisid = mydocids.first!
+        if(!myDocIDs.isEmpty) {
+            print("There are \(myDocIDs.count) documents pending")
+            let thisID = myDocIDs.first!
             
             self.replicator.addChangeListener { (change) in
                 print("Replicator activity level is \(change.status.activity)")
-                // iterate and report-on previously
-                // retrieved pending docids 'list'
-                for thisId in mydocids.sorted() {
-                    // tag::replication-push-isdocumentpending[]
-                    do {
-                        let isPending = try self.replicator.isDocumentPending(thisid)
-                        if(!isPending) { // <.>
-                            print("Doc ID \(thisId) now pushed")
-                        }
-                    } catch {
-                        print(error)
+                // tag::replication-push-isdocumentpending[]
+                do {
+                    let isPending = try self.replicator.isDocumentPending(thisID)
+                    if(!isPending) { // <.>
+                        print("Doc ID \(thisID) now pushed")
                     }
-                    // end::replication-push-isdocumentpending[]
+                } catch {
+                    print(error)
                 }
+                // end::replication-push-isdocumentpending[]
             }
             
             self.replicator.start()
@@ -1305,16 +1301,18 @@ class SampleCodeTest {
         // tag::query-access-all[]
         let results = try query.execute()
         for row in results {
-            let docsProps = row.dictionary(at: 0)?.toDictionary() // <.>
+            let docsProps = row.dictionary(at: 0)! // <.>
             
-            let docid = docsProps!["id"] as! String
-            let name = docsProps!["name"] as! String
-            let type = docsProps!["type"] as! String
-            let city = docsProps!["city"] as! String
+            let docid = docsProps.string(forKey: "id")
+            let name = docsProps.string(forKey: "name")
+            let type = docsProps.string(forKey: "type")
+            let city = docsProps.string(forKey: "city")
             
             print("\(docid): \(name), \(type), \(city)")
-            let hotel = row.dictionary(at: 0)?.toDictionary()  //<.>
-            let hotelId = hotel!["id"] as! String
+            let hotel = row.dictionary(at: 0)!  //<.>
+            guard let hotelId = hotel.string(forKey: "id") else {
+                continue
+            }
             
             hotels[hotelId] = hotel
         }
@@ -1392,29 +1390,15 @@ class SampleCodeTest {
         
         // tag::query-access-props[]
         for result in try! query.execute() {
+            let docID = result.string(forKey: "metaId")!
+            print("processing doc: \(docID)")
             
-            
-            let doc = result.toDictionary()  // <.>
-            
-            // Store dictionary data in hotel object and save in arry
-            guard let id = doc["id"] as? String else {
-                continue
-            }
+            let id = result.string(forKey: "id")!
             var hotel = Hotel(id: id)
-            hotel.name = doc["name"] as? String
-            hotel.city = doc["city"] as? String
-            hotel.type = doc["type"] as? String
+            hotel.name = result.string(forKey: "name")
+            hotel.city = result.string(forKey: "city")
+            hotel.type = result.string(forKey: "type")
             hotels[id] = hotel
-            
-            // Use result content directly
-            let docid = result.string(forKey: "metaId") // Selected (Meta.id).as("metaId")
-            let hotelId = result.string(forKey: "id")
-            let name = result.string(forKey: "name")
-            let city = result.string(forKey: "city")
-            let type = result.string(forKey: "type")
-            
-            // ... process document properties as required
-            print("Result properties are: ", docid, hotelId,name, city, type)
         } // end for
         
         // end::query-access-props[]
@@ -1431,13 +1415,8 @@ class SampleCodeTest {
         
         // tag::query-access-count-only[]
         for result in try query.execute() {
-            let dict = result.toDictionary() as? [String: Int]
-            let thiscount = dict!["mycount"]! // <.>
-            print("There are ", thiscount, " rows")
-            
-            // Alternatively
-            print ( result["mycount"] )
-            
+            let count = result.int(forKey: "mycount") // <.>
+            print("There are ", count, " rows")
         }
         // end::query-access-count-only[]
     }
@@ -1456,23 +1435,23 @@ class SampleCodeTest {
         for result in results {
             
             print(result.toDictionary())
-            print("Document Id is -- ", result["metaId"].string!)
             
-            let docId = result["metaId"].string! // <.>
+            let docId = result.string(forKey: "metaId")! // <.>
+            print("Document Id is -- \(docId)")
             
             // Now you can get the document using the ID
-            let doc = database.document(withID: docId)!.toDictionary()
+            let doc = database.document(withID: docId)!
             
-            let hotelId = doc["id"] as! String
+            let hotelId = doc.string(forKey: "id")!
             
-            let name = doc["name"] as! String
+            let name = doc.string(forKey: "name")
             
-            let city = doc["city"] as! String
-            
-            let type = doc["type"] as! String
+            let city = doc.string(forKey: "city")
+
+            let type = doc.string(forKey: "type")
             
             // ... process document properties as required
-            print("Result properties are: ", hotelId,name, city, type)
+            print("Result properties are: \(hotelId), \(name), \(city), \(type)")
             
             
         }
@@ -1498,7 +1477,7 @@ class SampleCodeTest {
         // tag::query-syntax-n1ql[]
         let database = try Database(name: "hotel")
         
-        let query =  database.createQuery(query: "SELECT META().id AS thisId FROM _ WHERE type = 'hotel'") // <.>
+        let query = try database.createQuery("SELECT META().id AS thisId FROM _ WHERE type = 'hotel'") // <.>
         
         let results: ResultSet = try query.execute()
         
@@ -1512,11 +1491,9 @@ class SampleCodeTest {
         // tag::query-syntax-n1ql-params[]
         let database = try! Database(name: "hotel")
         
-        let query =
-        database.createQuery(query: "SELECT META().id AS thisId FROM _ WHERE type = $type") // <.>
+        let query = try database.createQuery("SELECT META().id AS thisId FROM _ WHERE type = $type") // <.>
         
-        query.parameters =
-        Parameters().setString("hotel", forName: "type") // <.>
+        query.parameters = Parameters().setString("hotel", forName: "type") // <.>
         
         let results: ResultSet = try query.execute()
         
@@ -1535,18 +1512,18 @@ class SampleCodeTest {
             let docsId = row["thisId"].string!
             
             // Now you can get the document using the ID
-            let doc = database.document(withID: docsId)!.toDictionary()
+            let doc = database.document(withID: docsId)!
             
-            let hotelId = doc["id"] as! String
+            let hotelId = doc.string(forKey: "id")!
             
-            let name = doc["name"] as! String
+            let name = doc.string(forKey: "name")
             
-            let city = doc["city"] as! String
+            let city = doc.string(forKey: "city")
             
-            let type = doc["type"] as! String
+            let type = doc.string(forKey: "type")
             
             // ... process document properties as required
-            print("Result properties are: ", hotelId,name, city, type)
+            print("Result properties are: \(hotelId), \(name), \(city), \(type)")
             
         }
         // end::query-access-n1ql[]
@@ -1649,233 +1626,7 @@ class SampleCodeTest {
         // end::replicator-simple[]
     }
     
-    // FIXME: Could you please check, whether this is necessary? it was a unit test helper function!
-    // tag::xctListener-start-func[]
-    func listen(tls: Bool, auth: ListenerAuthenticator?) throws -> URLEndpointListener {
-        let otherDB = try? Database(name: "thisDB")
-        let wssPort: UInt16 = 4985
-        let wsPort: UInt16 = 4984
-        // Stop if already running :
-        if let listener = self.listener {
-            listener.stop()
-        }
-        
-        // Listener:
-        // tag::xctListener-start[]
-        // tag::xctListener-config[]
-        //  ... fragment preceded by other user code, including
-        //  ... Couchbase Lite Database initialization that returns `thisDB`
-        
-        guard let otherDB = otherDB else {
-            fatalError("DatabaseNotInitialized")
-            // ... take appropriate actions
-        }
-        
-        var config = URLEndpointListenerConfiguration.init(database: otherDB)
-        config.port = tls ? wssPort : wsPort
-        config.disableTLS = !tls
-        config.authenticator = auth
-        listener = URLEndpointListener.init(config: config)
-        //  ... fragment followed by other user code
-        // end::xctListener-config[]
-        
-        // Start:
-        try listener.start()
-        // end::xctListener-start[]
-        
-        return listener
-    }
-    // end::xctListener-start-func[]
-    
-    
-    func dontTestStopListener(listener: URLEndpointListener) throws {
-        // tag::xctListener-stop-func[]
-        listener.stop()
-        // end::xctListener-stop-func[]
-        
-        // FIXME: Removed an internal only function 'deleteFromKeyChain'; Not public API to expose!
-    }
-    
-    // FIXME: this is only for tests: Internal only: Don't expose this!!
-    //    func dontTestDeleteAnonymousIds() throws {
-    // tag::xctListener-delete-anon-ids[]
-    //        FIXME: try URLEndpointListener.deleteAnonymousIdentities()
-    // end::xctListener-delete-anon-ids[]
-    //    }
-    
-    func dontTestTLSIdentityAnonym() throws {
-        // tag::xctListener-auth-tls-tlsidentity-anon[]
-        // Anonymous Identity:
-        let config = URLEndpointListenerConfiguration.init(database: database)
-        self.listener = URLEndpointListener.init(config: config)
-        try self.listener.start()
-        
-        
-        print(self.listener.tlsIdentity!.certs) // Anonymous `self.listener.tlsIdentity`
-        // end::xctListener-auth-tls-tlsidentity-anon[]
-    }
-    
-    func testTLSIdentityCA() throws {
-        // tag::xctListener-auth-tls-tlsidentity-ca[]
-        // User Identity:
-        let attrs = [certAttrCommonName: "CBL-Server"]
-        let identity = try TLSIdentity.createIdentity(forServer: true,
-                                                      attributes: attrs,
-                                                      expiration: nil,
-                                                      label: "couchbaselite-server-cert-label")
-        var config = URLEndpointListenerConfiguration.init(database: otherDB)
-        config.tlsIdentity = identity
-        self.listener = URLEndpointListener.init(config: config)
-        
-        try self.listener.start()
-        print(self.listener.tlsIdentity!.certs) // 'couchbaselite-server-cert-label' tlsIdentity
-        // end::xctListener-auth-tls-tlsidentity-ca[]
-    }
-    
-    func testPasswordAuthenticator() throws {
-        // tag::xctListener-auth-basic-pwd-full[]
-        // Listener:
-        // tag::xctListener-auth-basic-pwd[]
-        var config = URLEndpointListenerConfiguration(database: otherDB)
-        config.authenticator = ListenerPasswordAuthenticator.init { username, password -> Bool in
-            return username == "daniel" && password == "123"
-        }
-        
-        self.listener = URLEndpointListener(config: config)
-        try self.listener.start()
-        // end::xctListener-auth-basic-pwd[]
-    }
-    // end::xctListener-auth-basic-pwd-full[]
-    
-    func testClientCertAuthenticatorWithRootCerts() throws {
-        // tag::xctListener-auth-tls-CCA-Root-full[]
-        // tag::xctListener-auth-tls-CCA-Root[]
-        // Root Cert:
-        let path = Bundle.main.path(forResource: "identity/client-ca", ofType: "der")
-        let rootCertData = try NSData(contentsOfFile: path!, options: []) as Data
-        let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
-        
-        // Listener:
-        var config = URLEndpointListenerConfiguration(database: otherDB)
-        config.authenticator = ListenerCertificateAuthenticator.init(rootCerts: [rootCert])
-        self.listener = URLEndpointListener(config: config)
-        
-        try self.listener.start()
-        // end::xctListener-auth-tls-CCA-Root[]
-        
-        
-        // Create client identity:
-        let clientCertPath = Bundle.main.path(forResource: "identity/client", ofType: "p12")
-        let clientCertData = try NSData(contentsOfFile: clientCertPath!, options: []) as Data
-        let identity = try TLSIdentity.importIdentity(withData: clientCertData,
-                                                      password: "123",
-                                                      label: "couchbaselite-client-cert-label")
-        
-        // Replicator:
-        let target = URLEndpoint(url: URL(string: "wss://localhost:4985/otherDB")!)
-        var replicatorConfig = ReplicatorConfiguration(database: database, target: target)
-        replicatorConfig.replicatorType = .pushAndPull
-        replicatorConfig.continuous = false
-        replicatorConfig.authenticator = ClientCertificateAuthenticator.init(identity: identity)
-        replicatorConfig.pinnedServerCertificate = self.listener.tlsIdentity!.certs[0]
-        self.replicator = Replicator(config: replicatorConfig)
-        
-        self.replicator.start()
-        // end::xctListener-auth-tls-CCA-Root-full[]
-    }
-    
-    func testServerCertVerificationModeSelfSignedCert() throws {
-        // tag::xctListener-auth-tls-self-signed-full[]
-        // tag::xctListener-auth-tls-self-signed[]
-        // Listener:
-        let config = URLEndpointListenerConfiguration(database: otherDB)
-        self.listener = URLEndpointListener(config: config)
-        try self.listener.start()
-        
-        print(self.listener.tlsIdentity!.certs) // Anonymous `self.listener.tlsIdentity`
-        // end::xctListener-auth-tls-self-signed[]
-        
-        // Connect replicator with accept only self signed config
-        let target = URLEndpoint(url: URL(string: "wss://localhost:4985/otherDB")!)
-        var replicatorConfig = ReplicatorConfiguration(database: database, target: target)
-        replicatorConfig.replicatorType = .pushAndPull
-        replicatorConfig.continuous = false
-        replicatorConfig.acceptOnlySelfSignedServerCertificate = true
-        self.replicator = Replicator(config: replicatorConfig)
-        self.replicator.start()
-        
-        // end::xctListener-auth-tls-self-signed-full[]
-    }
-    
-    // tag::xctListener-auth-tls-ca-cert-full[]
-    func testServerCertVerificationModeCACert() throws {
-        // Listener:
-        // tag::xctListener-auth-tls-ca-cert[]
-        let rootCertPath = Bundle.main.path(forResource: "identity/certs", ofType: "p12")
-        let rootCertData = try NSData(contentsOfFile: rootCertPath!, options: []) as Data
-        var config = URLEndpointListenerConfiguration(database: otherDB)
-        let identity = try TLSIdentity.importIdentity(withData: rootCertData,
-                                                      password: "123",
-                                                      label: "couchbaselite-server-cert-label")
-        config.tlsIdentity = identity
-        self.listener = URLEndpointListener(config: config)
-        try self.listener.start()
-        
-        print(self.listener.tlsIdentity!.certs) // `self.listener.tlsIdentity` TLSIdentity with CA
-        
-        // Replicator
-        let target = URLEndpoint(url: URL(string: "wss://localhost:4985/otherDB")!)
-        var replicatorConfig = ReplicatorConfiguration(database: database, target: target)
-        replicatorConfig.replicatorType = .pushAndPull
-        replicatorConfig.continuous = false
-        replicatorConfig.pinnedServerCertificate = self.listener.tlsIdentity!.certs[0]
-        self.replicator = Replicator(config: replicatorConfig)
-        self.replicator.start()
-        // end::xctListener-auth-tls-ca-cert[]
-    }
-    
-    // tag::xctListener-status-check-full[]
-    // FIXME: Can we link to the unit test??
-    // https://github.com/couchbase/couchbase-lite-ios/blob/release/lithium/Swift/Tests/URLEndpointListenerTest.swift#L626-L676
-    // ??
-    // end::xctListener-status-check-full[]
-    
-    func dontTestListenerBasicAuthPassword() throws {
-        var config = URLEndpointListenerConfiguration(database: otherDB)
-        // tag::xctListener-auth-password-basic[]
-        config.authenticator = ListenerPasswordAuthenticator { self.isValidCredentials($0, password: $1) }
-        // end::xctListener-auth-password-basic[]
-    }
-    
-    func dontTestListenerAuthCertRoots() throws {
-        // tag::xctListener-auth-cert-roots[]
-        let path = Bundle.main.path(forResource: "identity/client-ca", ofType: "der")
-        let rootCertData = try NSData(contentsOfFile: path!, options: []) as Data
-        let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
-        
-        var config = URLEndpointListenerConfiguration(database: otherDB)
-        config.authenticator = ListenerCertificateAuthenticator.init(rootCerts: [rootCert])
-        listener = URLEndpointListener(config: config)
-        // end::xctListener-auth-cert-roots[]
-        
-        // tag::xctListener-auth-cert-auth[]
-        let listenerAuth = ListenerCertificateAuthenticator { self.isValidCertificates($0) }
-        // end::xctListener-auth-cert-auth[]
-        print(listenerAuth)
-    }
-    
-    func dontTestBasicAuth() throws {
-        var config = URLEndpointListenerConfiguration(database: otherDB)
-        
-        // tag::xctListener-config-basic-auth[]
-        config = URLEndpointListenerConfiguration(database: otherDB)
-        
-        config.authenticator = ListenerPasswordAuthenticator { self.isValidCredentials($0, password: $1) }
-        
-        self.listener = URLEndpointListener(config: config)
-        // end::xctListener-config-basic-auth[]
-    }
-    
+  
     // MARK: Append
     
     func dontTestGetURLList() throws {
@@ -2161,10 +1912,10 @@ class SampleCodeTest {
     // tag::p2p-tlsid-manage-func[]
     func myGetCert() throws -> TLSIdentity? {
         var osStatus: OSStatus
-        let thisLabel : String? = "doco-sync-server"
+        let target = DatabaseEndpoint(database: self.otherDB)
+        var config = ReplicatorConfiguration(database: self.database, target: target)
         
         //var thisData : CFData?
-        // tag::old-p2p-tlsid-tlsidentity-with-label[]
         // tag::p2p-tlsid-check-keychain[]
         // USE KEYCHAIN IDENTITY IF EXISTS
         // Check if Id exists in keychain. If so use that Id
@@ -2172,13 +1923,13 @@ class SampleCodeTest {
             print("An identity with label : doco-sync-server already exists in keychain")
             return tlsIdentity
         }
-        
         // end::p2p-tlsid-check-keychain[]
-        //        thisAuthenticator.ClientCertificateAuthenticator(identity: thisIdentity )
-        //        config.thisAuthenticator
-        //        FIXME: Not sure, whats done here? Is this client side / server side authenticator?
-        // end::old-p2p-tlsid-tlsidentity-with-label[]
         
+        // FIXME: since old-p2p-tlsid-tlsidentity-with-label[] is removed, this code is not under any tag?
+        guard let tlsIdentity = try TLSIdentity.identity(withLabel: "doco-sync-server") else {
+            return nil
+        }
+        config.authenticator = ClientCertificateAuthenticator(identity: tlsIdentity)
         
         // tag::p2p-tlsid-check-bundled[]
         // CREATE IDENTITY FROM BUNDLED RESOURCE IF FOUND
@@ -2296,20 +2047,6 @@ class SampleCodeTest {
         
     }
     
-    func dontTestReplicatorConfigSelfCert() throws {
-        let target = DatabaseEndpoint(database: otherDB)
-        var config = ReplicatorConfiguration(database: database, target: target)
-        // tag::old-p2p-act-rep-config-self-cert[]
-        // acceptOnlySelfSignedServerCertificate = true -- accept Slf-Signed Certs
-        //        FIXME: !!
-        //          `disableTLS` is for listener and it is 'false' by default.
-        //          `acceptOnlySelfSignedServerCertificate` is for replicator
-        //        config.disableTLS = false
-        config.acceptOnlySelfSignedServerCertificate = true
-        
-        // end::old-p2p-act-rep-config-self-cert[]
-    }
-    
     // tag::p2p-act-rep-config-cacert-pinned-func[]
     func myCaCertPinned() {
         let targetURL = URL(string: "wss://10.1.1.12:8092/otherDB")!
@@ -2329,8 +2066,8 @@ class SampleCodeTest {
             let pinnedCert = SecCertificateCreateWithData(nil, localCertificate)
         else { /* process error */  return }
         
-        // Add `pinnedCert` and `acceptOnlySelfSignedServerCertificate=false` to `ReplicatorConfiguration`
-        config.acceptOnlySelfSignedServerCertificate = false
+        // Add `pinnedCert` and `acceptOnlySelfSignedServerCertificate=false`(by default)
+        // to `ReplicatorConfiguration`
         config.pinnedServerCertificate = pinnedCert
         // end::p2p-act-rep-config-cacert-pinned[]
         // end::p2p-act-rep-config-cacert-pinned-func[]
@@ -2359,17 +2096,13 @@ class SampleCodeTest {
                                   user: String?,
                                   pass: String?,
                                   handler: @escaping (PeerConnectionStatus, Error?) -> Void) throws {
-        guard let userDb = self.database else {
-            fatalError("DatabaseNotInitialized")
-            // ... take appropriate actions
-        }
         guard let validUser = user, let validPassword = pass else {
             fatalError("UserCredentialsNotProvided")
             // ... take appropriate actions
         }
         
         // tag::replicator-start-func-config-init[]
-        let replicator = self.replicatorsToPeers[peer]
+        var replicator = self.replicatorsToPeers[peer]
         
         if replicator == nil {
             // Start replicator to connect to the URLListenerEndpoint
@@ -2378,7 +2111,7 @@ class SampleCodeTest {
                 // ... take appropriate actions
             }
             
-            var config = ReplicatorConfiguration.init(database: userDb, target: URLEndpoint.init(url:targetUrl)) //<1>
+            var config = ReplicatorConfiguration.init(database: self.database, target: URLEndpoint.init(url:targetUrl)) //<1>
             // end::replicator-start-func-config-init[]
             
             // tag::replicator-start-func-config-more[]
@@ -2393,10 +2126,10 @@ class SampleCodeTest {
             // end::replicator-start-func-config-auth[]
             
             // tag::replicator-start-func-repl-init[]
-            let temp = Replicator.init(config: config)
-            self.replicatorsToPeers[peer] = temp
+            replicator = Replicator.init(config: config)
+            self.replicatorsToPeers[peer] = replicator
             
-            let token = registerForEventsForReplicator(temp, handler: handler)
+            let token = registerForEventsForReplicator(replicator!, handler: handler)
             self.replicatorListenerTokens[peer] = token
             
             // end::replicator-start-func-repl-init[]
@@ -2444,6 +2177,18 @@ class SampleCodeTest {
         }
     }
     // end::replicator-register-for-events[]
+    
+    func startListener() {
+        var messageEndpointListener: MessageEndpointListener!
+        
+        // tag::listener[]
+        let database = try! Database(name: "mydb")
+        let config = MessageEndpointListenerConfiguration(database: database, protocolType: .messageStream)
+        messageEndpointListener = MessageEndpointListener(config: config)
+        // end::listener[]
+        
+        print(messageEndpointListener.connections.count)
+    }
 }
 
 // tag::sgw-repl-pull[]
@@ -2787,24 +2532,7 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
 
 // MARK: -- QUESTIONS
 
-// tag::listener[]
-// FIXME: Not sure why we need a tag like this???
-
-// end::start-replication[]
-// FIXME: Not seeing where its started?
-
-// FIXME: not used???
-// tag::listener-config-tls-full[]
-
 // tag::p2p-ws-api-urlendpointlistener[]
 // FIXME: can we use the docsn site to show the interface of the Listener class?
 // https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/URLEndpointListener.html
 // end::p2p-ws-api-urlendpointlistener[]
-
-// tag::1x-attachment[]
-// FIXME: Removed!!
-// end::1x-attachment[]
-
-// tag::tojson-getblobasstring[]
-// FIXME: this tag is same as tag[tojson-blob[]]
-// end::tojson-getblobasstring[]
