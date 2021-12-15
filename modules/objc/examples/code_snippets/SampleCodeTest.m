@@ -412,6 +412,23 @@
     // end::query-select-meta[]
 }
 
+- (void) dontTestSelectProps {
+    NSError *error;
+    // tag::query-select-props[]
+    CBLQuerySelectResult *metaId = [CBLQuerySelectResult expression: CBLQueryMeta.id as:@"id"];
+    CBLQuerySelectResult *type = [CBLQuerySelectResult property:@"type"];
+    CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
+    CBLQuery *query = [CBLQueryBuilder select:@[metaId, type, name]
+                                         from:[CBLQueryDataSource database:self.database]];
+
+    NSEnumerator *rs = [query execute:&error];
+    for (CBLQueryResult *result in rs) {
+        NSLog(@"document id :: %@", [result stringForKey:@"id"]);
+        NSLog(@"document name :: %@", [result stringForKey:@"name"]);
+    }
+    // end::query-select-props[]
+}
+
 - (void) dontTestSelectAll {
     // tag::query-select-all[]
     CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
@@ -1062,7 +1079,7 @@
 - (void) dontTestCertificatePinning {
     // Active - Example 4
     // tag::certificate-pinning[]
-    // tag=p2p-act-rep-config-cacert-pinned[]
+    // tag::p2p-act-rep-config-cacert-pinned[]
     NSURL *certURL = [[NSBundle mainBundle] URLForResource:@"cert" withExtension:@"cer"];
     NSData *data = [[NSData alloc] initWithContentsOfURL:certURL];
     SecCertificateRef certificate = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
@@ -1074,9 +1091,8 @@
                                                                                        target:target];
     config.pinnedServerCertificate = (SecCertificateRef)CFAutorelease(certificate);
 
-    // end=p2p-act-rep-config-cacert-pinned[]
+    // end::p2p-act-rep-config-cacert-pinned[]
     // end::certificate-pinning[]
-
     NSLog(@"%@", config);
 }
 
@@ -1357,8 +1373,7 @@
     
     for (CBLQueryResult *result in results) {
         
-        NSDictionary *data = [result valueAtIndex:0] ;
-        //             toDictionary];
+        NSDictionary *data = [result valueAtIndex:0];
         
         // Use dictionary values
         NSLog(@"id = %@", [data valueForKey:@"id"]);
@@ -1409,6 +1424,7 @@
     
     CBLQuery *query = [CBLQueryBuilder select:@[id, type, name, city]
                                          from:[CBLQueryDataSource database:db]]; // <.>
+    // end::query-syntax-props[]
     
     // tag::query-access-props[]
     
@@ -1993,7 +2009,7 @@
         NSLog(@"%@ %@", key, [myDict valueForKey:key]);
     }
     
-    // end:tojson-dictionary[]
+    // end::tojson-dictionary[]
     NSLog(@"%@", name);
 }
 
