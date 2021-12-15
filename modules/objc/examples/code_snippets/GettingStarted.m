@@ -1,18 +1,15 @@
 //
-//  ViewController.m
+//  GettingStarted.m
 //  threeBeta01prod
 //
 //  Created by Ian Bridge on 04/10/2021.
 //
 
-#import "ViewController.h"
-#import "CouchbaseLite/CouchbaseLite.h"
+#import "GettingStarted.h"
+#import <CouchbaseLite/CouchbaseLite.h>
 
-@interface ViewController ()
+@implementation GettingStarted
 
-@end
-
-@implementation ViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
