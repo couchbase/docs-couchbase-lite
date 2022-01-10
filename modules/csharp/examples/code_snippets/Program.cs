@@ -115,8 +115,8 @@ namespace api_walkthrough
 
             // Later, stop and dispose the replicator *before* closing/disposing the
         }
-    }
-}
+
+
 // end::getting-started[]
 
         private static void TestReplicatorConflictResolver()
@@ -577,19 +577,27 @@ namespace api_walkthrough
             }
         }
 
-        private static void CreateIndex()
+        public void CreateIndex()
         {
-            var db = _Database;
-
             // tag::query-index[]
+            var db = _database;
+            string[] indexProperties = new string[] {"type", "name" };
+            var config = new ValueIndexConfiguration(indexProperties);
+            db.CreateIndex("TypeNameIndex", config);
+            // end::query-index[]
+        }
+
+        public void CreateIndex_Querybuilder()
+        {
+            // tag::query-index_Querybuilder[]
             // For value types, this is optional but provides performance enhancements
+            var db = _database;
             var index = IndexBuilder.ValueIndex(
                 ValueIndexItem.Expression(Expression.Property("type")),
                 ValueIndexItem.Expression(Expression.Property("name"))); // <.>
             db.CreateIndex("TypeNameIndex", index);
-            // end::query-index[]
+            // end::query-index_Querybuilder[]
         }
-
         private static void SelectMeta()
         {
             Console.WriteLine("Select Meta");
@@ -919,12 +927,37 @@ var query =
       // end query-explain
 
 
-
-
-
-        private static void CreateFullTextIndex()
+        public void CreateFullTextIndex()
         {
+            // tag::fts-index[]
+            string[] indexProperties = new string[] { "overview", "name" };
+            var config = new FullTextIndexConfiguration(indexProperties);
+            db.CreateIndex("overviewFTSIndex", config);
+            // end::fts-index[]
+        }
+
+        public void FullTextSearch()
+        {
+            Console.WriteLine("Full text search");
+            // tag::fts-query[]
+
+            var db = _database;
+            var ftsQuery = db.CreateQuery("SELECT * FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan') ORDER BY RANK(overviewFTSIndex)");
+            foreach (var result in ftsQuery.Execute())
+            {
+                Console.WriteLine($"Document id {result.GetString(0)}");
+            }
+            }
+            // end::fts-query[]
+        }
+
+
+        private static void CreateFullTextIndex_Querybuilder()
+        {
+            // tag::fts-index_Querybuilder[]
             var db = _Database;
+
+            // end::fts-index_Querybuilder[]
             if (_NeedsExtraDocs) {
                 var tasks = new[] { "buy groceries", "play chess", "book travels", "buy museum tickets" };
                 foreach (var task in tasks) {
@@ -936,19 +969,21 @@ var query =
                 }
             }
 
-            // tag::fts-index[]
-            var index = IndexBuilder.FullTextIndex(FullTextIndexItem.Property("name")).IgnoreAccents(false);
-            db.CreateIndex("nameFTSIndex", index);
-            // end::fts-index[]
+            // tag::fts-index_Querybuilder[]
+
+            var index = IndexBuilder.FullTextIndex(FullTextIndexItem.Property("overview")).IgnoreAccents(false);
+            db.CreateIndex("overviewFTSIndex", index);
+            // end::fts-index_Querybuilder[]
         }
 
-        private static void FullTextSearch()
+        private static void FullTextSearch_Querybuilder()
         {
             Console.WriteLine("Full text search");
             var db = _Database;
 
-            // tag::fts-query[]
-            var whereClause = FullTextExpression.Index("nameFTSIndex").Match("'buy'");
+            // tag::fts-query_Querybuilder[]
+            var whereClause = FullTextFunction.Match("overviewFTSIndex", "'michigan'");
+
             using (var query = QueryBuilder.Select(SelectResult.Expression(Meta.ID))
                 .From(DataSource.Database(db))
                 .Where(whereClause)) {
@@ -956,7 +991,7 @@ var query =
                     Console.WriteLine($"Document id {result.GetString(0)}");
                 }
             }
-            // end::fts-query[]
+            // end::fts-query_Querybuilder[]
         }
         private static void StartReplication()
         {
@@ -3135,45 +3170,49 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
     // end::p2p-tlsid-tlsidentity-with-label[]
 
 
-// For replications
+  // For replications
 
-// BEGIN -- snippets --
-//    Purpose -- code samples for use in replication topic
+  // BEGIN -- snippets --
+  //    Purpose -- code samples for use in replication topic
 
-// tag::sgw-repl-pull[]
-public class MyClass
-{
-    public Database Database { get; set; }
-    public Replicator Replicator { get; set; } // <.>
+  // tag::sgw-repl-pull[]
+  public class MyClass
+  {
+      public Database Database { get; set; }
+      public Replicator Replicator { get; set; } // <.>
 
-    public void StartReplication()
-    {
-        var url = new Uri("wss://localhost:4984/db"); // <.>
-        var target = new URLEndpoint(url);
-        var config = new ReplicatorConfiguration(Database, target)
-        {
-            ReplicatorType = ReplicatorType.Pull
-        };
+      public void StartReplication()
+      {
 
-        Replicator = new Replicator(config);
-        Replicator.Start();
-    }
-}
+          var url = new Uri("wss://localhost:4984/db"); // <.>
+          var target = new URLEndpoint(url);
+          var config = new ReplicatorConfiguration(Database, target)
+          {
+              ReplicatorType = ReplicatorType.Pull
+          };
 
-// end::sgw-repl-pull[]
+          Replicator = new Replicator(config);
+          Replicator.Start();
+      }
+      // end::sgw-repl-pull[]
 
-// tag::sgw-repl-pull-callouts[]
-<.> A replication is an asynchronous operation.
-To keep a reference to the `replicator` object, you can set it as an instance property.
-<.> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
-You should now use `ws:`, or `wss:` for SSL/TLS connections.
-// end::sgw-repl-pull-callouts[]
+      // tag::sgw-repl-pull-callouts[]
+      // <.> A replication is an asynchronous operation.
+      // To keep a reference to the `replicator` object, you can set it as an instance property.
+      // <.> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
+      // You should now use `ws:`, or `wss:` for SSL/TLS connections.
+      // end::sgw-repl-pull-callouts[]
 
+      public void InitReplication()
+      {
+        // tag::sgw-act-rep-initialize[]
+        // initialize the replicator configuration
 
-    // tag::sgw-act-rep-initialize[]
-    // initialize the replicator configuration
+        var thisUrl = new URLEndpoint("wss://l10.0.2.2:4984/anotherDB"); // <.>
+        var config = new ReplicatorConfiguration(thisDB, thisUrl);
 
-    var thisUrl = new URLEndpoint("wss://l10.0.2.2:4984/anotherDB"); // <.>
-    var config = new ReplicatorConfiguration(thisDB, thisUrl);
-
-    // end::sgw-act-rep-initialize[]
+        // end::sgw-act-rep-initialize[]
+      }
+  }
+ }
+ }
