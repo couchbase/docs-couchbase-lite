@@ -753,6 +753,144 @@ static void array_json() {
     // end::tojson-array[]
 }
 
+static void datatype_dictionary()
+{
+    CBLDatabase *db = kDatabase;
+
+    // tag::datatype_dictionary[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    const CBLDocument *doc = CBLDatabase_GetDocument(db, FLSTR("doc1"), &err);
+    FLDict properties = CBLDocument_Properties(doc);
+
+    // Getting a dictionary from the document's properties
+    FLValue dictValue = FLDict_Get(properties, FLSTR("address"));
+    FLDict dict = FLValue_AsDict(dictValue);
+
+    // Access a value with a key from the dictionary
+    FLValue streetVal = FLDict_Get(dict, FLSTR("street"));
+    FLString street = FLValue_AsString(streetVal);
+
+    // Iterate dictionary
+    FLDictIterator iter;
+    FLDictIterator_Begin(dict, &iter);
+    FLValue value;
+    while (NULL != (value = FLDictIterator_GetValue(&iter))) {
+        FLString key = FLDictIterator_GetKeyString(&iter);
+        FLString strValue = FLValue_AsString(value);
+        printf("Key :: %.*s\n", (int)key.size, (const char *)key.buf);
+        printf("Value :: %.*s\n", (int)strValue.size, (const char *)strValue.buf);
+        // ...
+        FLDictIterator_Next(&iter);
+    }
+    
+    // Create a mutable copy.
+    // kFLDefaultCopy is shallow which means the nested dictionaries and arrays will be
+    // referenced but not copied. Use kFLDeepCopyImmutables for the deep copy.
+    FLMutableDict mutableDict = FLDict_MutableCopy(dict, kFLDefaultCopy);
+    
+    // Release when finish using it
+    FLMutableDict_Release(mutableDict);
+    // end::datatype_dictionary[]
+}
+
+static void datatype_mutable_dictionary()
+{
+    CBLDatabase *db = kDatabase;
+
+    // tag::datatype_mutable_dictionary[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    // Create a new mutable dictionary and populate some keys/values
+    FLMutableDict dict = FLMutableDict_New();
+    FLMutableDict_SetString(dict, FLSTR("street"), FLSTR("1 Main st."));
+    FLMutableDict_SetString(dict, FLSTR("city"), FLSTR("San Francisco"));
+
+    // Set the dictionary to document's properties and save the document
+    CBLDocument *doc = CBLDocument_Create();
+    FLMutableDict properties = CBLDocument_MutableProperties(doc);
+    FLMutableDict_SetDict(properties, FLSTR("address"), dict);
+    CBLError err;
+    CBLDatabase_SaveDocument(db, doc, &err);
+    CBLDocument_Release(doc);
+
+    // Release when finish using it
+    FLMutableDict_Release(dict);
+    // end::datatype_mutable_dictionary[]
+}
+
+static void datatype_array()
+{
+    CBLDatabase *db = kDatabase;
+
+    // tag::datatype_array[]
+    // NOTE: No error handling, for brevity (see getting started)
+    
+    CBLError err;
+    const CBLDocument *doc = CBLDatabase_GetDocument(db, FLSTR("doc1"), &err);
+    FLDict properties = CBLDocument_Properties(doc);
+
+    // Getting a phones array from the document's properties
+    FLValue arrayValue = FLDict_Get(properties, FLSTR("phones"));
+    FLArray array = FLValue_AsArray(arrayValue);
+    
+    // Get element count
+    int count = FLArray_Count(array);
+    printf("Count :: %d\n", count);
+
+    // Access an array element by index
+    if (!FLArray_IsEmpty(array)) {
+        FLValue phoneVal = FLArray_Get(array, 0);
+        FLString phone = FLValue_AsString(phoneVal);
+        printf("Value :: %.*s\n", (int)phone.size, (const char *)phone.buf);
+    }
+
+    // Iterate array
+    FLArrayIterator iter;
+    FLArrayIterator_Begin(array, &iter);
+    FLValue val;
+    while (NULL != (val = FLArrayIterator_GetValue(&iter)))
+    {
+        FLString str = FLValue_AsString(val);
+        printf("Value :: %.*s\n", (int)str.size, (const char *)str.buf);
+        FLArrayIterator_Next(&iter);
+    }
+    // end::datatype_array[]
+    
+    // Create a mutable copy.
+    // kFLDefaultCopy is shallow which means the nested dictionaries and arrays will be
+    // referenced but not copied. Use kFLDeepCopyImmutables for the deep copy.
+    FLMutableArray mutableArray = FLArray_MutableCopy(array, kFLDefaultCopy);
+    
+    // Release when finish using it
+    FLMutableArray_Release(mutableArray);
+}
+
+static void datatype_mutable_array()
+{
+    CBLDatabase *db = kDatabase;
+
+    // tag::datatype_mutable_array[]
+    // NOTE: No error handling, for brevity (see getting started)
+    
+    // Create a new mutable array and populate data into the array
+    FLMutableArray phones = FLMutableArray_New();
+    FLMutableArray_AppendString(phones, FLSTR("650-000-0000"));
+    FLMutableArray_AppendString(phones, FLSTR("650-000-0001"));
+
+    // Set the array to document's properties and save the document
+    CBLDocument *doc = CBLDocument_Create();
+    FLMutableDict properties = CBLDocument_MutableProperties(doc);
+    FLMutableDict_SetArray(properties, FLSTR("phones"), phones);
+    CBLError err;
+    CBLDatabase_SaveDocument(db, doc, &err);
+    CBLDocument_Release(doc);
+
+    // Release the created dictionary
+    FLMutableArray_Release(phones);
+    // end::datatype_mutable_array[]
+}
 
 static void create_index() {
     CBLDatabase* db = kDatabase;
