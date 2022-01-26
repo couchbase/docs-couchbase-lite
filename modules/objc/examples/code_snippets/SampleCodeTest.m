@@ -297,6 +297,88 @@
     NSLog(@"Date:%@", date);
 }
 
+- (void) dontTestDataTypeDictionary {
+    // tag::datatype_dictionary[]
+    CBLDocument *document = [self.database documentWithID:@"doc1"];
+    
+    // Getting a dictionary value from the document
+    CBLDictionary *dict = [document dictionaryForKey:@"address"];
+    
+    // Access a value from the dictionary
+    NSString *street = [dict stringForKey:@"street"];
+    NSLog(@"Street:: %@", street);
+    
+    // Iterate dictionary
+    for (NSString *key in dict) {
+        id value = [dict valueForKey:key];
+        NSLog(@"Value:: %@", value);
+    }
+    
+    // Create a mutable copy
+    CBLMutableDictionary *mutableDict = [dict toMutable];
+    [mutableDict setString:@"1 Great sts" forKey:@"street"];
+    // end::datatype_dictionary[]
+}
+
+- (void) dontTestDataTypeMutableDictionary {
+    // tag::datatype_mutable_dictionary[]
+    
+    // Create a new mutable dictionary and populate some keys/values
+    CBLMutableDictionary *dict = [[CBLMutableDictionary alloc] init];
+    [dict setString:@"1 Main st" forKey:@"street"];
+    [dict setString:@"San Francisco" forKey:@"city"];
+    
+    // Set the dictionary to a document and save the document
+    CBLMutableDocument *document = [[CBLMutableDocument alloc] init];
+    [document setDictionary:dict forKey:@"address"];
+    NSError *error;
+    [self.database saveDocument:document error:&error];
+    // end::datatype_mutable_dictionary[]
+}
+
+- (void) dontTestDataTypeArray {
+    // tag::datatype_array[]
+    CBLDocument *document = [self.database documentWithID:@"doc1"];
+    
+    // Getting an array value from the document
+    CBLArray *array = [document arrayForKey:@"phones"];
+    
+    // Get element count
+    NSUInteger count = array.count;
+    NSLog(@"Count:: %lu", (unsigned long)count);
+    
+    // Access an array element by index
+    if (count > 0) {
+        id value = [array valueAtIndex:0];
+        NSLog(@"Value:: %@", value);
+    }
+    
+    // Iterate the array
+    for (id value in array) {
+        NSLog(@"Value:: %@", value);
+    }
+    
+    // Create a mutable copy
+    CBLMutableArray *mutableArray = [array toMutable];
+    [mutableArray addString:@"650-000-0002"];
+    // end::datatype_array[]
+}
+
+- (void) dontTestDataTypeMutableArray {
+    // tag::datatype_mutable_array[]
+    // Create a new mutable array and populate data into the array
+    CBLMutableArray *array = [[CBLMutableArray alloc] init];
+    [array addString:@"650-000-0000"];
+    [array addString:@"650-000-0001"];
+    
+    // Set the array to a document and save the document
+    CBLMutableDocument *document = [[CBLMutableDocument alloc] init];
+    [document setArray:array forKey:@"address"];
+    NSError *error;
+    [self.database saveDocument:document error:&error];
+    // end::datatype_mutable_array[]
+}
+
 - (void) dontTestBatchOperations {
     NSError *error;
 
