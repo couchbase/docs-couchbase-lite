@@ -16,16 +16,40 @@ This is a one-way conversion.
 include::{module-partials}api-changes.adoc[tag=content, leveloffset=+1]
 
 
-== Database Upgrade
+[#lbl-db-upgrades]
+== 1.x Databases Upgrades to 2.x
 
 Databases created using Couchbase Lite 1.2 or later can still be used with Couchbase Lite 2.x; but will be automatically updated to the  current 2.x version.
 This feature is only available for the default storage type (i.e., not a ForestDB database).
-Additionally, the automatic migration feature does not support encrypted databases, so if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/{source-language}.html#database-encryption[1.x Database Guide]).
+
+=== Encrypted Databases
+The automatic migration feature does not support encrypted databases.
+So if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/{source-language}.html#database-encryption[1.x Database Guide]).
+
+Thus, to upgrade an encrypted 1.x database, you should do the following:
+
+// set the correct language name for 1.4 pages
+ifndef::param-language:[:param-language: {param-name}]
+ifeval::["{param-language}"=="{lang-name-android}"]
+:param-language: {lang-name-java}
+endif::[]
+.Upgrading Encrypted Databases
+****
+. Disable encryption using the Couchbase Lite 1.x framework (see https://docs-archive.couchbase.com/couchbase-lite/1.4/{param-language}.html#database-encryption[1.x encryption guide])
+. Open the database file with encryption enabled using the Couchbase Lite 2.x framework.
+****
+
+Since it is not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in the same application this upgrade path would require two successive upgrades.
+
+If you are using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.
+
 
 === Handling of Existing Conflicts
 
 If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
+
 This functionality is related to the way conflicts are now being handled in Couchbase Lite -- see {conflict--xref}.
+
 Optionally, existing conflicts in the 1.x database can be resolved with the https://docs-archive.couchbase.com/couchbase-lite/1.4/{source-language}.html#resolving-conflicts[1.x API] prior to the database being upgraded.
 
 === Handling of Existing Attachments
@@ -34,7 +58,10 @@ Attachments persisted in a 1.x database are copied to the new database.
 NOTE: The relevant Couchbase Lite API is now called the `Blob` API not the `Attachments` API.
 
 The functionally is identical but the internal schema for attachments has changed.
-Blobs are stored anywhere in the document, just like other value types, whereas in 1.x they were stored under the `_attachments` field.
+
+Blobs are stored anywhere in the document, just like other value types.
+Whereas in 1.x they were stored under the `_attachments` field.
+
 The automatic upgrade functionality *does not* update the internal schema for attachments, so they remain accessible under the `_attachments` field.
 See <<ex-get-att>> for how to retrieve an attachment that was created in a 1.x database with a 2.x API.
 
