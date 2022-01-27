@@ -1698,7 +1698,7 @@ class PassivePeerConnection implements MessageEndpointConnection {
 }
 
 // tag::predictive-model[]
-// `tensorFlowModel` is a fake implementation
+// tensorFlowModel is a fake implementation
 // this would be the implementation of the ml model you have chosen
 class ImageClassifierModel implements PredictiveModel {
     @Override
@@ -1706,7 +1706,7 @@ class ImageClassifierModel implements PredictiveModel {
         Blob blob = input.getBlob("photo");
         if (blob == null) { return null; }
 
-        // `tensorFlowModel` is a fake implementation
+        // tensorFlowModel is a fake implementation
         // this would be the implementation of the ml model you have chosen
         return new MutableDictionary(TensorFlowModel.predictImage(blob.getContent())); // <1>
     }

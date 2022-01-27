@@ -259,6 +259,7 @@ class QueryExamples(private val database: Database) {
     @Throws(CouchbaseLiteException::class)
     fun testWildCharacterMatch() {
         // tag::query-like-operator-wildcard-character-match[]
+
         val rs = QueryBuilder
             .select(
                 SelectResult.expression(Meta.id),
@@ -551,7 +552,69 @@ class QueryExamples(private val database: Database) {
     }
 /* end func testQuerySyntaxJson */
 
-  fun docsOnlyQuerySyntaxN1QL(argDb: Database): List<Result> {
+
+
+    fun testQuerySyntaxProps(currentUser: String) {
+        // tag::query-select-props[]
+        // tag::query-syntax-props[]
+
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("country"),
+                SelectResult.property("name")
+            )
+            .from(DataSource.database(database))
+
+        // end::query-syntax-props[]
+
+        // tag::query-access-props[]
+        for (result in rs.execute().allResults()) {
+            Log.i(TAG, "Hotel name -> ${result.getString("name")}, in ${result.getString("country")}" )
+        }
+        // end::query-access-props[]
+        // end::query-select-props[]
+    }
+
+    fun testQuerySyntaxCount(currentUser: String) {
+        // tag::query-syntax-count-only[]
+
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) // <.>
+            .from(DataSource.database(database))
+
+        // end::query-syntax-count-only[]
+
+        // tag::query-access-count-only[]
+        for (result in rs.execute().allResults()) {
+            Log.i(TAG, "name -> ${result.getInt("mycount").toString()}")
+        }
+        // end::query-access-count-only[]
+    }
+
+
+    fun testQuerySyntaxId(currentUser: String) {
+        // tag::query-select-meta
+        // tag::query-syntax-id[]
+
+        val rs = QueryBuilder
+        .select(
+          SelectResult.expression(Meta.id).as("hotelId"))
+          .from(DataSource.database(database))
+
+          // end::query-syntax-id[]
+
+        // tag::query-access-id[]
+        for (result in rs.execute().allResults()) {
+          Log.i(TAG, "hotel id ->${result.getString("hotelId")}")
+        }
+        // end::query-access-id[]
+        // end::query-select-meta
+    }
+
+
+    fun docsOnlyQuerySyntaxN1QL(argDb: Database): List<Result> {
       // For Documentation -- N1QL Query using parameters
       val db = argDb
       // tag::query-syntax-n1ql[]
@@ -577,5 +640,20 @@ class QueryExamples(private val database: Database) {
       // end::query-syntax-n1ql-params[]
   }
 
-    fun openOrCreateDatabaseForUser(argUser: String): Database = Database(argUser)
-}
+  fun testQuerySyntaxPagination(currentUser: String) {
+    // tag::query-syntax-pagination[]
+    val limit = 20
+    val offset = 0
+
+    val rs = QueryBuilder
+      .select(SelectResult.all())
+      .from(DataSource.database(database))
+      .where(Expression.property("type").equalTo(Expression.string("hotel")))
+      .limit(Expression.intValue(limit), Expression.intValue(offset))
+
+    // end::query-syntax-pagination[]
+  }
+
+    fun openOrCreateDatabaseForUser(argUser: String): Database = Database(argUser) {
+
+    }

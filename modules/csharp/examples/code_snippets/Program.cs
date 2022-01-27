@@ -1602,7 +1602,7 @@ var query =
     }
 
     // tag::predictive-model[]
-    // `TensorFlowModel` is a fake implementation
+    // tensorFlowModel is a fake implementation
     // this would be the implementation of the ml model you have chosen
     class TensorFlowModel
     {
@@ -1623,7 +1623,7 @@ var query =
             }
 
             var imageData = blob.Content;
-            // `TensorFlowModel` is a fake implementation
+            // tensorFlowModel is a fake implementation
             // this would be the implementation of the ml model you have chosen
             var modelOutput = TensorFlowModel.PredictImage(imageData);
             return new MutableDictionaryObject(modelOutput); // <1>

@@ -53,35 +53,32 @@ TIP: We recommend working through the query section of the {couchbase-tutorials-
 
 
 == Indexing
-
-Before we begin querying documents, let's briefly mention the importance of having a query index.
-A query can only be fast if there's a pre-existing database index it can search to narrow down the set of documents to examine -- see: <<lb-indexing>>, which shows how to create an index and our {query-troubleshooting--xref} topic.
-
 TIP: See the {indexing--xref} topic to learn more about indexing.
 
-[#lbl-indexing]
-=== Creating a New Index
+Before we begin querying documents, let's briefly mention the importance of having a query index.
 
-This example creates a new index for the `type` and `name` properties in the <<lbl-data-format>> shown.
+A query can only be fast if there's a pre-existing database index it can search to narrow down the set of documents to examine -- see: <<ex-indexing>>, which shows how to create an index and our {query-troubleshooting--xref} topic.
 
-[#lbl-data-format]
-.Index Query Data Format
-====
+However, every index has to be updated whenever a document is updated.
+So too many indexes can hurt performance.
+
+Good performance depends on designing and creating the _right_ indexes to go along with your queries.
+
+
+[#ex-indexing]
+.Creating a New Index
+:param-tags: query-index
+:param-leader: This example creates a new index for the `type` and `name` properties in the <<ex-data-format>>.
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
+
+[#ex-data-format]
+.Data Model
 [{json-snippet}]
 ----
 include::{root-examples}query-snippets.adoc[tags=query-result-format-props]
 ----
-====
-
-
-.Code to Create Index
-[#ex-query-index]
-:param-tags: query-index
-include::{root-partials}_block_tabbed_code_example.adoc[]
-:param-tags!:
-
-NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
-Good performance depends on designing and creating the _right_ indexes to go along with your queries.
 
 
 [#lbl-select]
