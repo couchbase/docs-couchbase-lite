@@ -1,6 +1,6 @@
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -383,11 +383,11 @@ object MergeConflictResolver : ConflictResolver {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -798,12 +798,104 @@ class BasicExamples(private val context: Context) {
 }
 
 
+class supportingDatatypes
+{
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
+    private val database  = Database("mydb")
+
+    fun datatype_dictionary() {
+
+        // tag::datatype_dictionary[]
+        // NOTE: No error handling, for brevity (see getting started)
+        val document = database!!.getDocument("doc1")
+
+        // Getting a dictionary from the document's properties
+        val dict = document?.getDictionary("address")
+
+        // Access a value with a key from the dictionary
+        val street = dict?.getString("street")
+
+        // Iterate dictionary
+        for (key in dict!!.keys) {
+            println("Key ${key} = ${dict.getValue(key)}")
+        }
+
+    // Create a mutable copy
+    val mutable_Dict = dict.toMutable()
+    // end::datatype_dictionary[]
+}
+
+    fun datatype_mutable_dictionary() {
+
+        // tag::datatype_mutable_dictionary[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        // Create a new mutable dictionary and populate some keys/values
+        val mutable_dict = MutableDictionary()
+        mutable_dict.setString("street", "1 Main st.")
+        mutable_dict.setString("city", "San Francisco")
+
+        // Add the dictionary to a document's properties and save the document
+        val mutable_doc = MutableDocument("doc1")
+        mutable_doc.setDictionary("address", mutable_dict)
+        database!!.save(mutable_doc)
+
+    // end::datatype_mutable_dictionary[]
+}
+
+
+    fun datatype_array() {
+
+        // tag::datatype_array[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        val document = database?.getDocument("doc1")
+
+        // Getting a phones array from the document's properties
+        val array = document?.getArray("phones")
+
+        // Get element count
+        val count = array?.count()
+
+        // Access an array element by index
+        val phone = array?.getString(1)
+
+        // Iterate array
+        for ( (index, item) in array!!) {
+            println("Row  ${index} = ${item}")
+        }
+
+        // Create a mutable copy
+        val mutable_array = array.toMutable()
+        // end::datatype_array[]
+    }
+
+    fun datatype_mutable_array() {
+
+        // tag::datatype_mutable_array[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        // Create a new mutable array and populate data into the array
+        val mutable_array = MutableArray()
+        mutable_array.addString("650-000-0000")
+        mutable_array.addString("650-000-0001")
+
+        // Set the array to document's properties and save the document
+        val mutable_doc = MutableDocument("doc1")
+        mutable_doc.setArray("phones", mutable_array)
+        database?.save(mutable_doc)
+        // end::datatype_mutable_array[]
+    }
+
+} // end  class supporting_datatypes
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt
+
+
+
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -841,8 +933,9 @@ import com.couchbase.lite.ValueIndexItem
 
 
 private const val TAG = "PREDICT"
+// tag::predictive-model[]
+// tensorFlowModel is a fake implementation
 
-// `tensorFlowModel` is a fake implementation
 object TensorFlowModel {
     fun predictImage(data: ByteArray?) = mapOf<String, Any?>()
 }
@@ -856,7 +949,8 @@ object ImageClassifierModel : PredictiveModel {
         // this would be the implementation of the ml model you have chosen
         return MutableDictionary(TensorFlowModel.predictImage(blob.content)) // <1>
     }
-} // end::predictive-model[]
+}
+// end::predictive-model[]
 
 
 @Suppress("unused")
@@ -902,15 +996,12 @@ class PredictiveQueryExamples {
             Expression.map(mutableMapOf("photo" to Expression.property("photo")) as Map<String, Any>?) // <1>
         )
 
-        // !!! Is this query using that prediction function, at all?
         val rs = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
             .where(
-                Expression.property("label").equalTo(Expression.string("car"))
-                    .and(
-                        Expression.property("probability")
-                            .greaterThanOrEqualTo(Expression.doubleValue(0.8))
+                prediction.property("label").equalTo(Expression.string("car"))
+                .and(prediction.property("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))
                     )
             )
             .execute()
@@ -921,11 +1012,11 @@ class PredictiveQueryExamples {
 }
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -999,11 +1090,11 @@ class FlowExamples(argDb: Database,
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -1057,11 +1148,11 @@ class PendingDocsExample(private var replicator: Replicator) {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -1591,11 +1682,11 @@ Although `wss:` protocol URLs are not affected, in order to use the `ws:` protoc
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -1905,11 +1996,11 @@ class KtPasswordAuthListener {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -2093,15 +2184,15 @@ class PassivePeerConnection private constructor() : MessageEndpointConnection {
         // end::passive-peer-receive[]
     }
 
-} // tag::predictive-model[]
+}
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -2363,6 +2454,7 @@ class QueryExamples(private val database: Database) {
     @Throws(CouchbaseLiteException::class)
     fun testWildCharacterMatch() {
         // tag::query-like-operator-wildcard-character-match[]
+
         val rs = QueryBuilder
             .select(
                 SelectResult.expression(Meta.id),
@@ -2655,7 +2747,69 @@ class QueryExamples(private val database: Database) {
     }
 /* end func testQuerySyntaxJson */
 
-  fun docsOnlyQuerySyntaxN1QL(argDb: Database): List<Result> {
+
+
+    fun testQuerySyntaxProps(currentUser: String) {
+        // tag::query-select-props[]
+        // tag::query-syntax-props[]
+
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("country"),
+                SelectResult.property("name")
+            )
+            .from(DataSource.database(database))
+
+        // end::query-syntax-props[]
+
+        // tag::query-access-props[]
+        for (result in rs.execute().allResults()) {
+            Log.i(TAG, "Hotel name -> ${result.getString("name")}, in ${result.getString("country")}" )
+        }
+        // end::query-access-props[]
+        // end::query-select-props[]
+    }
+
+    fun testQuerySyntaxCount(currentUser: String) {
+        // tag::query-syntax-count-only[]
+
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) // <.>
+            .from(DataSource.database(database))
+
+        // end::query-syntax-count-only[]
+
+        // tag::query-access-count-only[]
+        for (result in rs.execute().allResults()) {
+            Log.i(TAG, "name -> ${result.getInt("mycount").toString()}")
+        }
+        // end::query-access-count-only[]
+    }
+
+
+    fun testQuerySyntaxId(currentUser: String) {
+        // tag::query-select-meta
+        // tag::query-syntax-id[]
+
+        val rs = QueryBuilder
+        .select(
+          SelectResult.expression(Meta.id).as("hotelId"))
+          .from(DataSource.database(database))
+
+          // end::query-syntax-id[]
+
+        // tag::query-access-id[]
+        for (result in rs.execute().allResults()) {
+          Log.i(TAG, "hotel id ->${result.getString("hotelId")}")
+        }
+        // end::query-access-id[]
+        // end::query-select-meta
+    }
+
+
+    fun docsOnlyQuerySyntaxN1QL(argDb: Database): List<Result> {
       // For Documentation -- N1QL Query using parameters
       val db = argDb
       // tag::query-syntax-n1ql[]
@@ -2681,16 +2835,31 @@ class QueryExamples(private val database: Database) {
       // end::query-syntax-n1ql-params[]
   }
 
-    fun openOrCreateDatabaseForUser(argUser: String): Database = Database(argUser)
-}
+  fun testQuerySyntaxPagination(currentUser: String) {
+    // tag::query-syntax-pagination[]
+    val limit = 20
+    val offset = 0
+
+    val rs = QueryBuilder
+      .select(SelectResult.all())
+      .from(DataSource.database(database))
+      .where(Expression.property("type").equalTo(Expression.string("hotel")))
+      .limit(Expression.intValue(limit), Expression.intValue(offset))
+
+    // end::query-syntax-pagination[]
+  }
+
+    fun openOrCreateDatabaseForUser(argUser: String): Database = Database(argUser) {
+
+    }
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -2768,26 +2937,28 @@ class KtJSONExamples {
           Log.i(TAG, key + " => " + mDict.getValue(key))
         }
         // end::tojson-dictionary[]
-    }
+      }
 
-    @Throws(CouchbaseLiteException::class)
-    fun jsonDocumentExample(srcDb: Database, dstDb: Database) {
+      @Throws(CouchbaseLiteException::class)
+      fun jsonDocumentExample(srcDb: Database, dstDb: Database) {
+        // tag::tojson-document[]
         QueryBuilder
-            .select(SelectResult.expression(Meta.id).`as`("metaId"))
-            .from(DataSource.database(srcDb))
-            .execute()
-            .forEach {
-                it.getString("metaId")?.let { thisId ->
-                    srcDb.getDocument(thisId)?.toJSON()?.let { json -> // <.>
-                        Log.i(TAG, "JSON String = $json")
-                        val hotelFromJSON = MutableDocument(thisId, json) // <.>
-                        dstDb.save(hotelFromJSON)
-                        dstDb.getDocument(thisId)?.toMap()?.forEach { e ->
-                            Log.i(TAG, "$e.key => $e.value")
-                        } // <.>
-                    }
-                }
+        .select(SelectResult.expression(Meta.id).as("metaId"))
+        .from(DataSource.database(srcDb))
+        .execute()
+        .forEach {
+          it.getString("metaId")?.let { thisId ->
+            srcDb.getDocument(thisId)?.toJSON()?.let { json -> // <.>
+              Log.i(TAG, "JSON String = $json")
+              val hotelFromJSON = MutableDocument(thisId, json) // <.>
+              dstDb.save(hotelFromJSON)
+              dstDb.getDocument(thisId)?.toMap()?.forEach { e ->
+                Log.i(TAG, "$e.key => $e.value")
+              } // <.>
             }
+          }
+        }
+        // end::tojson-document[]
     }
 
     @Throws(CouchbaseLiteException::class, JSONException::class)
@@ -2810,11 +2981,11 @@ class KtJSONExamples {
 }
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -2876,5 +3047,5 @@ class KtBlobExamples {
 }
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt
 

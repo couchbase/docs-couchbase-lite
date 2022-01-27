@@ -1937,7 +1937,7 @@ class PassivePeerConnection implements MessageEndpointConnection {
 }
 
 // tag::predictive-model[]
-// `tensorFlowModel` is a fake implementation
+// tensorFlowModel is a fake implementation
 // this would be the implementation of the ml model you have chosen
 class ImageClassifierModel implements PredictiveModel {
     @Override
@@ -1945,7 +1945,7 @@ class ImageClassifierModel implements PredictiveModel {
         Blob blob = input.getBlob("photo");
         if (blob == null) { return null; }
 
-        // `tensorFlowModel` is a fake implementation
+        // tensorFlowModel is a fake implementation
         // this would be the implementation of the ml model you have chosen
         return new MutableDictionary(TensorFlowModel.predictImage(blob.getContent())); // <1>
     }
@@ -3139,7 +3139,7 @@ public class TestQueries {
 
 
     public void testQuerySyntaxProps() throws CouchbaseLiteException {
-
+        // tag::query-select-props[]
         // tag::query-syntax-props[]
         try {
           this_Db = new Database("hotels");
@@ -3148,47 +3148,48 @@ public class TestQueries {
         }
 
         Query listQuery =
-                QueryBuilder.select(SelectResult.expression(Meta.id),
-                        SelectResult.property("name"),
-                        SelectResult.property("Name"),
-                        SelectResult.property("Type"),
-                        SelectResult.property("City"))
-                        .from(DataSource.database(this_Db));
+        QueryBuilder.select(SelectResult.expression(Meta.id),
+        SelectResult.property("name"),
+        SelectResult.property("Name"),
+        SelectResult.property("Type"),
+        SelectResult.property("City"))
+        .from(DataSource.database(this_Db));
 
         // end::query-syntax-props[]
 
         // tag::query-access-props[]
 
         try {
-            for (Result result : listQuery.execute().allResults()) {
+          for (Result result : listQuery.execute().allResults()) {
 
-                // get data direct from result k-v pairs
-                final Hotel hotel = new Hotel();
-                hotel.Id = result.getString("id");
-                hotel.Type = result.getString("Type");
-                hotel.Name = result.getString("Name");
-                hotel.City = result.getString("City");
+            // get data direct from result k-v pairs
+            final Hotel hotel = new Hotel();
+            hotel.Id = result.getString("id");
+            hotel.Type = result.getString("Type");
+            hotel.Name = result.getString("Name");
+            hotel.City = result.getString("City");
 
-                // Store created hotel object in a hashmap of hotels
-                hotels.put(hotel.Id, hotel);
+            // Store created hotel object in a hashmap of hotels
+            hotels.put(hotel.Id, hotel);
 
-                // Get result k-v pairs into a 'dictionary' object
-                Map <String, Object> thisDocsProps = result.toMap();
-                thisDocsId =
-                        thisDocsProps.getOrDefault("id",null).toString();
-                thisDocsName =
-                        thisDocsProps.getOrDefault("Name",null).toString();
-                thisDocsType =
-                        thisDocsProps.getOrDefault("Type",null).toString();
-                thisDocsCity =
-                        thisDocsProps.getOrDefault("City",null).toString();
+            // Get result k-v pairs into a 'dictionary' object
+            Map <String, Object> thisDocsProps = result.toMap();
+            thisDocsId =
+            thisDocsProps.getOrDefault("id",null).toString();
+            thisDocsName =
+            thisDocsProps.getOrDefault("Name",null).toString();
+            thisDocsType =
+            thisDocsProps.getOrDefault("Type",null).toString();
+            thisDocsCity =
+            thisDocsProps.getOrDefault("City",null).toString();
 
-            }
+          }
         } catch (CouchbaseLiteException e) {
-            e.printStackTrace();
+          e.printStackTrace();
         }
 
         // end::query-access-props[]
+        // end::query-select-props[]
     }
 
 
