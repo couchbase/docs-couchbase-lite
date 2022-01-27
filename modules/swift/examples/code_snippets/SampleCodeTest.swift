@@ -65,6 +65,7 @@ class SampleCodeTest {
         let config = DatabaseConfiguration()
         config.encryptionKey = EncryptionKey.password("secretpassword")
         self.database = try Database(name: "my-database", config: config)
+        self.database.EncryptionKey(
         // end::database-encryption[]
     }
 #endif
@@ -306,6 +307,7 @@ class SampleCodeTest {
         } catch {
             print(error)
         }
+        
         // end::query-select-props[]
     }
 

@@ -11,9 +11,9 @@
 :snippet: {snippets-content--c}
 :source-language: {lang-name-c}
 :url-issues: {url-issues-c}
-// SET full maintennce version number
-:maintenance: 0
-:version-maintenance: {version}.{maintenance}{tag}
+// SET full maintenance version number
+ifndef::maintenance[:maintenence: 0]
+ifndef::version-maintenance[:version-maintenance: {version}.{maintenance}{tag}]
 
 // END::module page attributes
 
@@ -23,7 +23,7 @@
 :api-pfx:
 
 
-:url-api-references: {url-api-references-c}
+:url-api-references: {url-api-references-c}/C/html
 //:url-api-references-structs: {url-api-references}/Structs
 :url-api-references-classes: {url-api-references}/group__
 :url-api-references-protocols: {url-api-references}/Protocols/
@@ -42,17 +42,19 @@
 
 
 // DATABASE module and functions
-// https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/group__database.html
 :url-api-references-database: {url-api-references-classes}{api-pfx}database.html
-:url-api-class-database: {url-api-references-database}[{api-pfx}Database]
+:url-api-class-database: {url-api-references-database}[CBLDatabase]
 :url-api-method-database: {url-api-references-database}{url-api-references-method-sep}{api-pfx}
 // Database(im)
-:url-api-method-database-close: {url-api-method-database}ga4d448b2d6809d6f9633d810d3ac6dcfa[{api-pfx}CBLDatabase_Close()]
-:url-api-method-database-compact: {url-api-method-database}gaa4b06dcb7427cafeabde8486f5f03f10[{api-pfx}CBLDatabase.PeformMaintenance()]
-:url-api-method-database-performMaintenance: {url-api-method-database}gaa4b06dcb7427cafeabde8486f5f03f10[{api-pfx}CBLDatabase.performMaintenance()]
-:url-api-method-database-copy: {url-api-method-database}ga027d34b2de65b040ecf42a2a83bf6720[{api-pfx}CBL_CopyDatabase()]
-:url-api-method-database-delete: {url-api-method-database}ga8a974247d3c99e7100b2324144100fe3:[{api-pfx}CBLDatabase_Delete()]
-:url-api-method-database-setloglevel: {url-api-references-database}{sep}c:c(cs)CBLDatabase(cm)setLogLevel:domain:[{api-pfx}Database.setLogLevel()]
+:url-api-method-database-close: {url-api-method-database}ga4d448b2d6809d6f9633d810d3ac6dcfa[CBLDatabase_Close()]
+:url-api-method-database-compact: {url-api-method-database}gaa4b06dcb7427cafeabde8486f5f03f10[CBLDatabase_PerformMaintenance()]
+:url-api-method-database-change-encryption-key: {url-api-method-database}ga76a603bc678ceae18c9610b8a8274a09[CBLDatabase_ChangeEncryptionKey()]
+
+
+:url-api-method-database-performMaintenance: {url-api-method-database}gaa4b06dcb7427cafeabde8486f5f03f10[CBLDatabase_PerformMaintenance()]
+:url-api-method-database-copy: {url-api-method-database}ga027d34b2de65b040ecf42a2a83bf6720[CBL_CopyDatabase()]
+:url-api-method-database-delete: {url-api-method-database}ga8a974247d3c99e7100b2324144100fe3:[CBLDatabase_Delete()]
+:url-api-method-database-setloglevel: {url-api-references-database}{sep}c:c(cs)CBLDatabase(cm)setLogLevel:domain:[CBLDatabase_SetLogLevel()]
 
 // Begin -- DatabaseConfiguration
 :url-api-references-databasecfg: {url-api-references-structs}{api-pfx}database_configuration.html
@@ -65,7 +67,7 @@
 
 // DOCUMENTS
 :url-api-references-documents: {url-api-references-classes}{api-pfx}documents.html
-:url-api-class-documents: {url-api-references-documents}[{api-pfx}Documents]
+:url-api-class-documents: {url-api-references-documents}[CBLDocuments]
 
 :url-api-method-document-init: {url-api-references-documents}#ga226f555fffb7543558048af20b18b737[CBLDocument_Create()]
 :url-api-method-mutabledocument-init: {url-api-references-documents}#ga226f555fffb7543558048af20b18b737[CBLDocument_Create()]
@@ -73,13 +75,13 @@
 :url-api-method-mutabledocument-copy: {url-api-references-documents}#ga0356b98d2f1798adc8f549510d3eef67[CBLDocument_MutableCopy()]
 :url-api-method-document-tomutable: {url-api-method-mutabledocument-copy}
 
-:url-api-method-database-getdocument: {url-api-references-documents}#ga214b7d6c7d58bde09de10f1ed418a16b[ CBLDatabase_GetDocument()]
+:url-api-method-database-getdocument: {url-api-references-documents}#ga214b7d6c7d58bde09de10f1ed418a16b[CBLDatabase_GetDocument()]
 
-:url-api-method-database-save-doc: {url-api-references-documents}{sep}[{api-pfx}CBLDatabase_SaveDocument()]
-:url-api-method-database-save-concctrl: {url-api-references-documents}{sep}gae37e21b95f62419762e521f70850b9c7[{api-pfx}CBLDatabase_SaveDocumentWithConcurrencyControl()]
-:url-api-method-database-save-conflict: {url-api-references-documents}{sep}ga9c45bcf02e6e2977c702c493a7fe0b54[{api-pfx}CBLDatabase_SaveDocumentWithConflictHandler()]
-:url-api-method-database-deletedoc-doc: {url-api-method-database}gad9d878c8636a75898d3993537af7e88c[{api-pfx}CBLDatabase_DeleteDocument()]
-:url-api-method-database-deletedoc-concctrl: {url-api-method-database}ga01b4cf9725de18c41e8bb002255adb9a[{api-pfx}CBLDatabase_DeleteDocumentWithConcurrencyControl()]
+:url-api-method-database-save-doc: {url-api-references-documents}{sep}[CBLDatabase_SaveDocument()]
+:url-api-method-database-save-concctrl: {url-api-references-documents}{sep}gae37e21b95f62419762e521f70850b9c7[CBLDatabase_SaveDocumentWithConcurrencyControl()]
+:url-api-method-database-save-conflict: {url-api-references-documents}{sep}ga9c45bcf02e6e2977c702c493a7fe0b54[CBLDatabase_SaveDocumentWithConflictHandler()]
+:url-api-method-database-deletedoc-doc: {url-api-method-database}gad9d878c8636a75898d3993537af7e88c[CBLDatabase_DeleteDocument()]
+:url-api-method-database-deletedoc-concctrl: {url-api-method-database}ga01b4cf9725de18c41e8bb002255adb9a[CBLDatabase_DeleteDocumentWithConcurrencyControl()]
 
 
 
@@ -89,13 +91,13 @@
 
 :url-api-classes-result-pfx: {url-api-references-classes}{api-pfx}QueryResult.html
 
-:url-api-class-result: {url-api-classes-result-pfx}[{api-pfx}Result]
+:url-api-class-result: {url-api-classes-result-pfx}[CBLResult]
 
-:url-api-method-result-toJSON: {url-api-classes-result-pfx}{url-api-references-method-sep}{api-pfx}QueryResult(im)toJSON[{api-pfx}Result.toJSON]
+:url-api-method-result-toJSON: {url-api-classes-result-pfx}{url-api-references-method-sep}{api-pfx}QueryResult(im)toJSON[CBLResult.toJSON]
 
 // Query class and methods
 :url-api-classes-query-pfx: {url-api-references-classes}{api-pfx}queries.html
-:url-api-class-query: {url-api-classes-query-pfx}[{api-pfx}Query]
+:url-api-class-query: {url-api-classes-query-pfx}[CBLQuery]
 :url-api-method-query-explain: {url-api-classes-query-pfx}{url-api-references-method-sep}CBLQuery(im)explain:[explain()]
 :url-api-method-query-execute: {url-api-classes-query-pfx}{sep}execute--[execute()]
 
@@ -106,10 +108,10 @@
 // Expression class and methods
 // :url-api-references-query-classes: {url-api-references-classes}[Query Class index]
 :url-api-classes-expression-pfx: {url-api-references-classes}{api-pfx}QueryExpression.html
-:url-api-class-expression: {url-api-classes-expression-pfx}[{api-pfx}QueryExpression]
+:url-api-class-expression: {url-api-classes-expression-pfx}[CBLQueryExpression]
 
 :url-api-classes-query-expression-pfx: {url-api-classes-expression-pfx}
-:url-api-classes-query-expression: {url-api-classes-expression-pfx}[{api-pfx}QueryExpression]
+:url-api-classes-query-expression: {url-api-classes-expression-pfx}[CBLQueryExpression]
 :url-api-classes-query-expression-comparators: {url-api-classes-query-expression-pfx}{sep}Comparison%20operators:[Expression Comparators]
 :url-api-method-expression-pfx: {url-api-classes-query-expression-pfx}{sep}
 :url-api-method-expression-like: {url-api-method-expression-pfx}c:c(cs)CBLQueryExpression(im)like:[Like()]
@@ -117,7 +119,7 @@
 
 // ArrayFunction class and methods
 :url-api-classes-query-arrayfunction-pfx: {url-api-references-classes}{api-pfx}QueryArrayFunction.html
-:url-api-classes-query-arrayfunction: {url-api-classes-query-arrayfunction-pfx}[{api-pfx}QueryArrayFunction]
+:url-api-classes-query-arrayfunction: {url-api-classes-query-arrayfunction-pfx}[CBLQueryArrayFunction]
 :url-api-classes-query-arrayfunction-collection-ops: {url-api-references-classes}{api-pfx}QueryArrayFunction.html[ArrayFunction Collection Operators]
 :url-api-method-arrayfunction-pfx: {url-api-classes-query-arrayfunction-pfx}{sep}
 
@@ -128,7 +130,7 @@
 // Function class and methods
 //
 :url-api-classes-function-pfx: {url-api-references-classes}{api-pfx}QueryFunction.html
-:url-api-class-function: {url-api-classes-function-pfx}[{api-pfx}QueryFunction]
+:url-api-class-function: {url-api-classes-function-pfx}[CBLQueryFunction]
 :url-api-method-function-lower: {url-api-classes-function-pfx}{url-api-references-method-sep}CBLQueryFunction(cm)lower:[lower()]
 :url-api-method-function-count: {url-api-classes-function-pfx}{url-api-references-method-sep}CBLQueryFunction(cm)count:[count()]
 
@@ -218,9 +220,9 @@
 
 :url-api-method-replicator-rmv-change-listener: {url-api-properties-replicator}(im)removeChangeListenerWithToken[removeChangeListenerWithToken({api-pfx}ListenerToken:)]
 
-:url-api-method-replicator-getPendingDocumentIds: {url-api-method-replicator}ga6e9902ae56d5fec0fc19b29c28f1828f[{api-pfx}CBLReplicator_PendingDocumentIDs()]
+:url-api-method-replicator-getPendingDocumentIds: {url-api-method-replicator}ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()]
 
-:url-api-method-replicator-isDocumentPending: {url-api-method-replicator}ga493eeac915dd54a274b907a010664a2e[{api-pfx}CBLReplicator.isDocumentPending()]
+:url-api-method-replicator-isDocumentPending: {url-api-method-replicator}ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()]
 :url-api-method-replicator-start: {url-api-method-replicator}ga224926daa794a424c470bf86dd57aaf9[CBLReplicator_Start()]
 :url-api-method-replicator-stop: {url-api-method-replicator}ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()]
 :url-api-method-replicator-status: {url-api-method-replicator}ga7c3c372bade18f88b0a519c87fdb28b8[CBLReplicator_Status()]
@@ -233,7 +235,7 @@
 
 :url-api-references-replicator-status: {url-api-references-classes}{api-pfx}ReplicatorStatus.html
 
-:url-api-class-replicator-status: {url-api-references-replicator-status}[{api-pfx}ReplicatorStatus]
+:url-api-class-replicator-status: {url-api-references-replicator-status}[CBLReplicatorStatus]
 
 :url-api-properties-replicator-status: {url-api-references-replicator-status}{url-api-references-method-sep}{api-pfx}ReplicatorStatus
 :url-api-property-replicator-status: {url-api-properties-replicator-status
@@ -303,51 +305,51 @@
 // Meta API
 :url-api-references-meta: {url-api-references-classes}{api-pfx}QueryMeta.html
 
-:url-api-property-meta-revisionid: {url-api-references-meta}{url-api-references-method-sep}CBLQueryMeta(cm)revisionID[{api-pfx}QueryMeta.revisionID]
+:url-api-property-meta-revisionid: {url-api-references-meta}{url-api-references-method-sep}CBLQueryMeta(cm)revisionID[CBLQueryMeta.revisionID]
 
 
 
 // BEGIN Logs and logging references
-// :url-api-class-logging: {url-api-references}Logging.html[{api-pfx}Logging classes]
+// :url-api-class-logging: {url-api-references}Logging.html[CBLLogging classes]
 
 :url-api-references-class-log: {url-api-references-classes}{api-pfx}Log.html
-:url-api-class-log: {url-api-references-class-log}[{api-pfx}Log]
-:url-api-class-log-prop-console: {url-api-references-class-log}{sep}3LogC7consoleAA13ConsoleLoggerCvp[{api-pfx}Log.console]
-:url-api-class-log-prop-file: {url-api-references-class-log}{url-api-references-method-sep}CBLLog(py)file[{api-pfx}Log.file]
-:url-api-class-log-prop-custom: {url-api-references-class-log}{url-api-references-method-sep}CBLLog(py)custom[{api-pfx}Log.custom]
+:url-api-class-log: {url-api-references-class-log}[CBLLog]
+:url-api-class-log-prop-console: {url-api-references-class-log}{sep}3LogC7consoleAA13ConsoleLoggerCvp[CBLLog.console]
+:url-api-class-log-prop-file: {url-api-references-class-log}{url-api-references-method-sep}CBLLog(py)file[CBLLog.file]
+:url-api-class-log-prop-custom: {url-api-references-class-log}{url-api-references-method-sep}CBLLog(py)custom[CBLLog.custom]
 
 :url-api-references-class-log-cons: {url-api-references-classes}{api-pfx}ConsoleLogger.html
-:url-api-class-log-console: {url-api-references-class-log-cons}[{api-pfx}ConsoleLogger]
-:url-api-class-log-console-getcons: {url-api-references-class-log}{url-api-references-method-sep}CBLLog(py)console[{api-pfx}Log.console]
-:url-api-class-log-console-getcons-setlvl: {url-api-references-class-log-cons}{url-api-references-method-sep}CBLConsoleLogger(py)level[{api-pfx}Log.console.level]
-:url-api-class-log-console-getcons-setdmn: {url-api-references-class-log-cons}{url-api-references-method-sep}CBLConsoleLogger(py)domains[{api-pfx}Log.console.domains]
+:url-api-class-log-console: {url-api-references-class-log-cons}[CBLConsoleLogger]
+:url-api-class-log-console-getcons: {url-api-references-class-log}{url-api-references-method-sep}CBLLog(py)console[CBLLog.console]
+:url-api-class-log-console-getcons-setlvl: {url-api-references-class-log-cons}{url-api-references-method-sep}CBLConsoleLogger(py)level[CBLLog.console.level]
+:url-api-class-log-console-getcons-setdmn: {url-api-references-class-log-cons}{url-api-references-method-sep}CBLConsoleLogger(py)domains[CBLLog.console.domains]
 
 :url-api-references-class-log-cust: {url-api-references-protocols}{api-pfx}Logger.html
-:url-api-iface-log-custom: {url-api-references-class-log-cust}[{api-pfx}Logger]
+:url-api-iface-log-custom: {url-api-references-class-log-cust}[CBLLogger]
 :url-api-class-log-custom: {url-api-iface-log-custom}
-:url-api-class-log-custom-getcust: {url-api-references-class-log}{url-api-references-method-sep}CBLLog(py)custom[{api-pfx}Log.custom]
-:url-api-class-log-custom-setcust: {url-api-references-class-log}{url-api-references-method-sep}CBLLog(py)custom[{api-pfx}Log.custom]
-:url-api-class-log-custom-getcust-setlvl: {url-api-references-class-log-cust}{url-api-references-method-sep}CBLLogger(py)level[{api-pfx}Log.custom.setLevel()]
-:url-api-class-log-custom-getfile-logmsg: {url-api-references-class-log-cust}{url-api-references-method-sep})CBLLogger(im)logWithLevel:domain:message:[{api-pfx}Log(logWithlevel:,domain:, message:)]
+:url-api-class-log-custom-getcust: {url-api-references-class-log}{url-api-references-method-sep}CBLLog(py)custom[CBLLog.custom]
+:url-api-class-log-custom-setcust: {url-api-references-class-log}{url-api-references-method-sep}CBLLog(py)custom[CBLLog.custom]
+:url-api-class-log-custom-getcust-setlvl: {url-api-references-class-log-cust}{url-api-references-method-sep}CBLLogger(py)level[CBLLog.custom.setLevel()]
+:url-api-class-log-custom-getfile-logmsg: {url-api-references-class-log-cust}{url-api-references-method-sep})CBLLogger(im)logWithLevel:domain:message:[CBLLog(logWithlevel:,domain:, message:)]
 
 :url-api-references-class-log-file: {url-api-references-classes}{api-pfx}FileLogger.html
-:url-api-class-log-file: {url-api-references-class-log-file}[{api-pfx}FileLogger]
-:url-api-class-log-file-getfile: {url-api-references-class-log}{url-api-references-method-sep}CBLLog(py)file[{api-pfx}Log.file]
-:url-api-class-log-file-getfile-setcfg: {url-api-references-class-log-file}{url-api-references-method-sep}CBLFileLogger(py)config[{api-pfx}Log.file.config: LogConfiguration(directory:)]
-:url-api-class-log-file-getfile-setlvl: {url-api-references-class-log-file}{url-api-references-method-sep})CBLFileLogger(py)level[{api-pfx}Log.file.level: LogLevel]
+:url-api-class-log-file: {url-api-references-class-log-file}[CBLFileLogger]
+:url-api-class-log-file-getfile: {url-api-references-class-log}{url-api-references-method-sep}CBLLog(py)file[CBLLog.file]
+:url-api-class-log-file-getfile-setcfg: {url-api-references-class-log-file}{url-api-references-method-sep}CBLFileLogger(py)config[CBLLog.file.config: LogConfiguration(directory:)]
+:url-api-class-log-file-getfile-setlvl: {url-api-references-class-log-file}{url-api-references-method-sep})CBLFileLogger(py)level[CBLLog.file.level: LogLevel]
 
-:url-api-class-log-file-getfile-logmsg: {url-api-references-class-log}{url-api-references-method-sep}[{api-pfx}Log(level: LogLevel, domain: LogDomain, message: String)]
+:url-api-class-log-file-getfile-logmsg: {url-api-references-class-log}{url-api-references-method-sep}[CBLLog(level: LogLevel, domain: LogDomain, message: String)]
 
-:url-api-enum-log-domain: {url-api-references-enums}{api-pfx}LogDomain.html[{api-pfx}LogDomain]
-:url-api-enum-log-level: {url-api-references-enums}{api-pfx}LogLevel.html[{api-pfx}LogLevel]
+:url-api-enum-log-domain: {url-api-references-enums}{api-pfx}LogDomain.html[CBLLogDomain]
+:url-api-enum-log-level: {url-api-references-enums}{api-pfx}LogLevel.html[CBLLogLevel]
 :url-api-references-class-log-config: {url-api-references-classes}{api-pfx}LogFileConfiguration.html
-:url-api-class-log-config: {url-api-references-class-log-config}[{api-pfx}LogFileConfiguration]
+:url-api-class-log-config: {url-api-references-class-log-config}[CBLLogFileConfiguration]
 :url-api-class-log-config-props: {url-api-references-class-log-config}{url-api-references-method-sep}
-:url-api-class-log-config-prop-dir: {url-api-class-log-config-props}CBLLogFileConfiguration(py)directory[{api-pfx}LogFileConfiguration(Directory)]
-:url-api-class-log-config-prop-initdir: {url-api-class-log-config-props}20LogFileConfigurationC9directoryACSS_tcfc[{api-pfx}LogFileConfiguration.init((directory:)]
-:url-api-class-log-config-prop-maxsz: {url-api-class-log-config-props}CBLLogFileConfiguration(py)maxSize[{api-pfx}LogFileConfiguration.maxSize()]
-:url-api-class-log-config-prop-maxcnt: {url-api-class-log-config-props}CBLLogFileConfiguration(py)maRotateCount[{api-pfx}LogFileConfiguration.maxRotateCount()]
-:url-api-class-log-config-prop-plain: {url-api-class-log-config-props}CBLLogFileConfiguration(py)usePlainText[{api-pfx}LogFileConfiguration.usePlainText()]
+:url-api-class-log-config-prop-dir: {url-api-class-log-config-props}CBLLogFileConfiguration(py)directory[CBLLogFileConfiguration(Directory)]
+:url-api-class-log-config-prop-initdir: {url-api-class-log-config-props}20LogFileConfigurationC9directoryACSS_tcfc[CBLLogFileConfiguration.init((directory:)]
+:url-api-class-log-config-prop-maxsz: {url-api-class-log-config-props}CBLLogFileConfiguration(py)maxSize[CBLLogFileConfiguration.maxSize()]
+:url-api-class-log-config-prop-maxcnt: {url-api-class-log-config-props}CBLLogFileConfiguration(py)maRotateCount[CBLLogFileConfiguration.maxRotateCount()]
+:url-api-class-log-config-prop-plain: {url-api-class-log-config-props}CBLLogFileConfiguration(py)usePlainText[CBLLogFileConfiguration.usePlainText()]
 
 // END  Logs and logging references
 

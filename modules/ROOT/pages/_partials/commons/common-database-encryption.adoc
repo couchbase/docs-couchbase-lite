@@ -1,0 +1,37 @@
+
+include::{root-partials}_block-caveats.adoc[tag=ee-only-feature]
+
+_Couchbase Lite on {param-title}_ includes the ability to encrypt Couchbase Lite databases.
+This allows mobile applications to secure the data at rest, when ito is being stored on the device.
+The algorithm used to encrypt the database is 256-bit AES.
+
+=== Enabling
+To enable encryption, use {url-api-method-databasecfg-encryption} t set the encryption key of your choice.
+Provide this encryption key every time the database is opened -- see <<ex-sdb-encrypt>>.
+
+.Configure Database Encryption
+[#ex-sdb-encrypt]
+:param-tags: database-encryption
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
+=== Persisting
+Couchbase Lite does not persist the key.
+It is the application's responsibility to manage the key and store it in a platform specific secure store such as Apple's https://developer.apple.com/documentation/security/keychain_services[Keychain] or Android's https://developer.android.com/training/articles/keystore[Keystore].
+
+=== Opening
+An encrypted database can only be opened with the same language SDK that was used to encrypt it in the first place.
+So a database encrypted using the {param-title} SDK, and then exported, is readable only by the {param-title} SDK.
+
+=== Changing
+To change an existing encryption key, open the database using its existing encryption-key and use {url-api-method-database-change-encryption-key}
+to set the required new encryption-key value.
+
+
+=== Removing
+To remove encryption, open the database using its existing encryption-key and use
+{url-api-method-database-change-encryption-key}
+with a null value as the encryption key.
+
+=== Upgrading
+To upgrade an encrypted database see: {upgrade--xref-db-upgrades}
