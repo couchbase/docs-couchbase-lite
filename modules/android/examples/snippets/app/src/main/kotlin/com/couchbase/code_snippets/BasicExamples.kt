@@ -414,3 +414,95 @@ class BasicExamples(private val context: Context) {
         // end::blob[]
     }
 }
+
+
+class supportingDatatypes
+{
+
+    private val database  = Database("mydb")
+
+    fun datatype_dictionary() {
+
+        // tag::datatype_dictionary[]
+        // NOTE: No error handling, for brevity (see getting started)
+        val document = database!!.getDocument("doc1")
+
+        // Getting a dictionary from the document's properties
+        val dict = document?.getDictionary("address")
+
+        // Access a value with a key from the dictionary
+        val street = dict?.getString("street")
+
+        // Iterate dictionary
+        for (key in dict!!.keys) {
+            println("Key ${key} = ${dict.getValue(key)}")
+        }
+
+    // Create a mutable copy
+    val mutable_Dict = dict.toMutable()
+    // end::datatype_dictionary[]
+}
+
+    fun datatype_mutable_dictionary() {
+
+        // tag::datatype_mutable_dictionary[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        // Create a new mutable dictionary and populate some keys/values
+        val mutable_dict = MutableDictionary()
+        mutable_dict.setString("street", "1 Main st.")
+        mutable_dict.setString("city", "San Francisco")
+
+        // Add the dictionary to a document's properties and save the document
+        val mutable_doc = MutableDocument("doc1")
+        mutable_doc.setDictionary("address", mutable_dict)
+        database!!.save(mutable_doc)
+
+    // end::datatype_mutable_dictionary[]
+}
+
+
+    fun datatype_array() {
+
+        // tag::datatype_array[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        val document = database?.getDocument("doc1")
+
+        // Getting a phones array from the document's properties
+        val array = document?.getArray("phones")
+
+        // Get element count
+        val count = array?.count()
+
+        // Access an array element by index
+        val phone = array?.getString(1)
+
+        // Iterate array
+        for ( (index, item) in array!!) {
+            println("Row  ${index} = ${item}")
+        }
+
+        // Create a mutable copy
+        val mutable_array = array.toMutable()
+        // end::datatype_array[]
+    }
+
+    fun datatype_mutable_array() {
+
+        // tag::datatype_mutable_array[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        // Create a new mutable array and populate data into the array
+        val mutable_array = MutableArray()
+        mutable_array.addString("650-000-0000")
+        mutable_array.addString("650-000-0001")
+
+        // Set the array to document's properties and save the document
+        val mutable_doc = MutableDocument("doc1")
+        mutable_doc.setArray("phones", mutable_array)
+        database?.save(mutable_doc)
+        // end::datatype_mutable_array[]
+    }
+
+} // end  class supporting_datatypes

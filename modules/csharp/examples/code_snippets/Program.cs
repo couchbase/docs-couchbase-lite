@@ -3160,6 +3160,112 @@ public class MyClass
     }
 }
 
+
+    public class supporting_datatypes
+    {
+        public void datatype_dictionary()
+        {
+            var database = new Database(name: "mydb");
+
+            // tag::datatype_dictionary[]
+            // NOTE: No error handling, for brevity (see getting started)
+            var document = database.GetDocument("doc1");
+
+            // Getting a dictionary from the document's properties
+            var dict = document.GetDictionary("address");
+
+            // Access a value with a key from the dictionary
+            var street = dict.GetString("street");
+
+            // Iterate dictionary
+            foreach (var key in dict.Keys)
+            {
+                Console.WriteLine($"Key {key} = {dict.GetValue(key)}");
+            }
+
+            // Create a mutable copy
+            var mutDict = dict.ToMutable();
+            // end::datatype_dictionary[]
+        }
+
+        public void datatype_mutable_dictionary()
+        {
+
+            var database = new Database("mydb");
+
+            // tag::datatype_mutable_dictionary[]
+            // NOTE: No error handling, for brevity (see getting started)
+
+            // Create a new mutable dictionary and populate some keys/values
+            var mutable_dict = new MutableDictionaryObject();
+            mutable_dict.SetString("street", "1 Main st.");
+            mutable_dict.SetString("city", "San Francisco");
+
+            // Add the dictionary to a document's properties and save the document
+            var doc = new MutableDocument("doc1");
+            doc.SetDictionary("address", mutable_dict);
+            database.Save(doc);
+
+            // end::datatype_mutable_dictionary[]
+        }
+
+
+        public void datatype_array()
+        {
+            var database = new Database("mydb");
+
+            // tag::datatype_array[]
+            // NOTE: No error handling, for brevity (see getting started)
+
+            var document = database.GetDocument("doc1");
+
+            // Getting a phones array from the document's properties
+            var array = document.GetArray("phones");
+
+            // Get element count
+            var count = array.Count();
+
+            // Access an array element by index
+            if (count >= 0) { var phone = array[1]; }
+
+            // Iterate dictionary
+            for (int i = 0; i < count; i++)
+            {
+                Console.WriteLine($"Item {i.ToString()} = {array[i]}");
+            }
+
+            // Create a mutable copy
+            var mutable_array = array.ToMutable();
+            // end::datatype_array[]
+
+
+        }
+
+         public void datatype_mutable_array()
+        {
+            var database = new Database("mydb");
+
+            // tag::datatype_mutable_array[]
+            // NOTE: No error handling, for brevity (see getting started)
+
+            // Create a new mutable array and populate data into the array
+            var mutable_array = new MutableArrayObject();
+            mutable_array.AddString("650-000-0000");
+            mutable_array.AddString("650-000-0001");
+
+            // Set the array to document's properties and save the document
+            var doc = new MutableDocument("doc1");
+            doc.SetArray("phones", mutable_array);
+            database.Save(doc);
+            // end::datatype_mutable_array[]
+        }
+
+    } // end  class supporting_datatypes
+
+  }
+
+
+
 // end::sgw-repl-pull[]
 
 // tag::sgw-repl-pull-callouts[]

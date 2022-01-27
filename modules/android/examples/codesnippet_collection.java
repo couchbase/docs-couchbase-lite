@@ -3082,7 +3082,7 @@ public class TestQueries {
         try {
             for (Result result : listQuery.execute().allResults()) {
                              // get the k-v pairs from the 'hotel' key's value into a dictionary
-                thisDocsProps = result.getDictionary(0)); // <.>
+                thisDocsProps = result.getDictionary(0); // <.>
                 thisDocsId = thisDocsProps.getString("id");
                 thisDocsName = thisDocsProps.getString("Name");
                 thisDocsType = thisDocsProps.getString("Type");
@@ -3097,14 +3097,14 @@ public class TestQueries {
                 hotel.Country= result.getDictionary(0).getString("Country");
                 hotel.Description = result.getDictionary(0).getString("Description");
                 hotels.put(hotel.Id, hotel);
-
             }
+
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
 
         // end::query-access-all[]
-      }
+
 
 // tag::query-access-json[]
     // Uses Jackson JSON processor
@@ -3132,10 +3132,11 @@ public class TestQueries {
               mapper.readValue(thisJsonString, Hotel.class); // <.>
       hotels.add(thisHotel);
 
-    }
+
 
   // end::query-access-json[]
             }
+        }
 
 
     public void testQuerySyntaxProps() throws CouchbaseLiteException {
@@ -3333,9 +3334,108 @@ public class TestQueries {
       // end::query-syntax-n1ql-params[]
   }
 
-
-
 } // class
+
+
+
+public class supportingDatatypes
+{
+    private static final String TAG = "info";
+
+    public void datatype_dictionary() throws CouchbaseLiteException {
+        Database database = new Database("mydb");
+
+        // tag::datatype_dictionary[]
+        // NOTE: No error handling, for brevity (see getting started)
+        Document document = database.getDocument("doc1");
+
+        // Getting a dictionary from the document's properties
+        Dictionary dict = document.getDictionary("address");
+
+        // Access a value with a key from the dictionary
+        String street = dict.getString("street");
+
+        // Iterate dictionary
+        for (String key : dict) {
+            dict.getValue(key);
+            Log.i("x", "Key %s, = %s", key, dict.getValue(key));
+        }
+
+        // Create a mutable copy
+        MutableDictionary mutable_Dict = dict.toMutable();
+        // end::datatype_dictionary[]
+    }
+
+    public void datatype_mutable_dictionary() throws CouchbaseLiteException {
+
+        Database database = new Database("mydb");
+
+        // tag::datatype_mutable_dictionary[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        // Create a new mutable dictionary and populate some keys/values
+        MutableDictionary mutable_dict = new MutableDictionary();
+        mutable_dict.setString("street", "1 Main st.");
+        mutable_dict.setString("city", "San Francisco");
+
+        // Add the dictionary to a document's properties and save the document
+        MutableDocument mutable_doc = new MutableDocument("doc1");
+        mutable_doc.setDictionary("address", mutable_dict);
+        database.save(mutable_doc);
+
+        // end::datatype_mutable_dictionary[]
+    }
+
+
+    public void datatype_array() throws CouchbaseLiteException {
+        Database database = new Database("mydb");
+
+        // tag::datatype_array[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        Document document = database.getDocument("doc1");
+
+        // Getting a phones array from the document's properties
+        Array array = document.getArray("phones");
+
+        // Get element count
+        int count = array.count();
+
+        // Access an array element by index
+        if (count >= 0) { String phone = array.getString(1); }
+
+        // Iterate dictionary
+        for (int i = 0; i < count; i++)
+        {
+            Log.i("tag", "Item %d = %s", i, array.getString(i));
+        }
+
+        // Create a mutable copy
+        MutableArray mutable_array = array.toMutable();
+        // end::datatype_array[]
+
+
+    }
+
+    public void datatype_mutable_array() throws CouchbaseLiteException {
+        Database database = new Database("mydb");
+
+        // tag::datatype_mutable_array[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        // Create a new mutable array and populate data into the array
+        MutableArray mutable_array = new MutableArray();
+        mutable_array.addString("650-000-0000");
+        mutable_array.addString("650-000-0001");
+
+        // Set the array to document's properties and save the document
+        MutableDocument mutable_doc = new MutableDocument("doc1");
+        mutable_doc.setArray("phones", mutable_array);
+        database.save(mutable_doc);
+        // end::datatype_mutable_array[]
+    }
+
+} // end  class supporting_datatypes
 
 
 
