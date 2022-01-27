@@ -2334,6 +2334,13 @@ class QueryExamples(private val database: Database) {
     @Throws(CouchbaseLiteException::class)
     fun testIndexing() {
         // tag::query-index[]
+        database.createIndex( "TypeNameIndex",
+              ValueIndexConfiguration( "type", "name")
+        // end::query-index[]
+    }
+
+    fun testIndexing_Querybuilder() {
+        // tag::query-index_Querybuilder[]
         database.createIndex(
             "TypeNameIndex",
             IndexBuilder.valueIndex(
@@ -2341,12 +2348,12 @@ class QueryExamples(private val database: Database) {
                 ValueIndexItem.property("name")
             )
         )
-        // end::query-index[]
+        // end::query-index_Querybuilder[]
     }
 
     // ### SELECT statement
     fun testSelectStatement() {
-        // tag::query-select-meta[]
+        // tag::query-select-props[]
         val rs = QueryBuilder
             .select(
                 SelectResult.expression(Meta.id),
@@ -2362,26 +2369,28 @@ class QueryExamples(private val database: Database) {
             Log.i(TAG, "hotel id ->${result.getString("id")}")
             Log.i(TAG, "hotel name -> ${result.getString("name")}")
         }
-        // end::query-select-meta[]
-    }
+        // end::query-select-props[]
+      }
 
-    // META function
-    @Throws(CouchbaseLiteException::class)
-    fun testMetaFunction() {
+      // META function
+      @Throws(CouchbaseLiteException::class)
+      fun testMetaFunction() {
+        // tag::query-select-meta[]
         val rs = QueryBuilder
-            .select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("airport")))
-            .orderBy(Ordering.expression(Meta.id))
-            .execute()
+        .select(SelectResult.expression(Meta.id))
+        .from(DataSource.database(database))
+        .where(Expression.property("type").equalTo(Expression.string("airport")))
+        .orderBy(Ordering.expression(Meta.id))
+        .execute()
 
         for (result in rs) {
-            Log.w(TAG, "airport id ->${result.getString("id")}")
-            Log.w(TAG, "airport id -> ${result.getString(0)}")
+          Log.w(TAG, "airport id ->${result.getString("id")}")
+          Log.w(TAG, "airport id -> ${result.getString(0)}")
         }
-    }
+        // end::query-select-meta[]
+      }
 
-    // ### all(*)
+      // ### all(*)
     @Throws(CouchbaseLiteException::class)
     fun testSelectAll() {
         // tag::query-select-all[]
@@ -2754,24 +2763,55 @@ class QueryExamples(private val database: Database) {
     @Throws(CouchbaseLiteException::class)
     fun prepareIndex() {
         // tag::fts-index[]
-        database.createIndex(
-            "nameFTSIndex",
-            IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false)
-        )
+        val config = FullTextIndexConfiguration("overview").ignoreAccents(false)
+
+        database.createIndex( "overviewFTSIndex", config);
         // end::fts-index[]
     }
 
     @Throws(CouchbaseLiteException::class)
     fun testFTS() {
         // tag::fts-query[]
-        val rs = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(FullTextExpression.index("nameFTSIndex").match("buy"))
-            .execute()
-        for (result in rs) {
-            Log.i(TAG, "document properties${result.getString(0)}")
+
+        val ftsQuery =
+              database.createQuery(
+                "SELECT _id, overview FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)")
+
+        ftsQuery.execute().allResults().forEach {
+          Log.i(TAG, "${result.getString("id")}: ${result.getString("overview")}")
         }
+
         // end::fts-query[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun prepareIndex_Querybuilder() {
+        // tag::fts-index_Querybuilder[]
+        database.createIndex(
+            "overviewFTSIndex",
+            IndexBuilder.fullTextIndex(FullTextIndexItem.property("overview")).ignoreAccents(false)
+        )
+        // end::fts-index_Querybuilder[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun testFTS_Querybuilder() {
+        // tag::fts-query_Querybuilder[]
+
+        val ftsQuery =
+              QueryBuilder.select(SelectResult.expression(Meta.id),
+                                  SelectResult.expression(overview))
+                          .from(DataSource.database(database))
+                          .where(FullTextFunction.match("overviewFTSIndex", "michigan"))
+                          .execute()
+
+        ftsQuery.execute().allResults().forEach {
+          Log.i(TAG, "${result.getString("Meta.id")}: ${result.getString("overview")}")
+          }
+
+
+
+        // end::fts-query_Querybuilder[]
     }
 
 

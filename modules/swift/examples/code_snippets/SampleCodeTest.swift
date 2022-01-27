@@ -257,11 +257,17 @@ class SampleCodeTest {
     }
 
     func dontTestIndexing() throws {
+        // N1QL and Querybuilder versions
         // tag::query-index[]
+        let config = ValueIndexConfiguration(["type", "name"])
+        try database.createIndex(index, withName: "TypeNameIndex")
+        // end::query-index[]
+
+        // tag::query-index_Querybuilder[]
         let index = IndexBuilder.valueIndex(items: ValueIndexItem.expression(Expression.property("type")),
                                             ValueIndexItem.expression(Expression.property("name")))
         try database.createIndex(index, withName: "TypeNameIndex")
-        // end::query-index[]
+        // end::query-index_Querybuilder[]
     }
 
     func dontTestSelectMeta() throws {
@@ -640,43 +646,69 @@ class SampleCodeTest {
 
 
     func dontTestCreateFullTextIndex() throws {
-        // tag::fts-index[]
+        // tag::fts-build-content[]
         // Insert documents
-        let tasks = ["buy groceries", "play chess", "book travels", "buy museum tickets"]
-        for task in tasks {
+        let overviews = ["Handy for the nice beaches in Southport", "Close to Turnpike.", "By Michigan football's Big House"]
+        for overview in overviews {
             let doc = MutableDocument()
-            doc.setString("task", forKey: "type")
-            doc.setString(task, forKey: "name")
+            doc.setString("overview", forKey: "type")
+            doc.setString(overview, forKey: "overview")
             try database.saveDocument(doc)
         }
+        // end::fts-build-content[]
 
-        // Create index
+        // tag::fts-index[]
+        // Create index with N1QL
         do {
-            let index = IndexBuilder.fullTextIndex(items: FullTextIndexItem.property("name")).ignoreAccents(false)
-            try database.createIndex(index, withName: "nameFTSIndex")
+            let index = FullTextIndexConfiguration(["overview"])
+            try database.createIndex(index, withName: "overviewFTSIndex")
         } catch let error {
             print(error.localizedDescription)
         }
         // end::fts-index[]
     }
 
+    func dontTestCreateFullTextIndex_Querybuilder() throws {
+
+        // tag::fts-index_Querybuilder[]
+        // Create index with Querybuilder
+        let index = IndexBuilder.fullTextIndex(items: FullTextIndexItem.property("overview")).ignoreAccents(false)
+        try database.createIndex(index, withName: "overviewFTSIndex")
+        // end::fts-index_Querybuilder[]
+    }
+
+
     func dontTestFullTextSearch() throws {
         // tag::fts-query[]
 
-        let whereClause = FullTextFunction.match(indexName: "nameFTSIndex", query: "'buy'")
-        let query = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(whereClause)
+        let ftsStr = "SELECT Meta().id FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan') ORDER BY RANK(overviewFTSIndex)"
 
-        do {
-            for result in try query.execute() {
-                print("document id \(result.string(at: 0)!)")
-            }
-        } catch let error {
-            print(error.localizedDescription)
+        let query = database.createQuery(query: ftsStr)
+
+        let rs = try query.execute()
+        for result in rs {
+            print("document id \(result.string(at: 0)!)")
         }
+
         // end::fts-query[]
     }
+
+
+
+    func dontTestFullTextSearch_Querybuilder() throws {
+        database = self.db
+
+        // tag::fts-query_Querybuilder[]
+        let whereClause = FullTextFunction.match(indexName: "overviewFTSIndex"), query: "'michigan'")
+        let query = QueryBuilder
+            .select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(database))
+            .where(whereClause)
+        for result in try query.execute() {
+            print("document id \(result.string(at: 0)!)")
+        }
+        // end::fts-query_Querybuilder[]
+
 
     // MARK: toJSON
 

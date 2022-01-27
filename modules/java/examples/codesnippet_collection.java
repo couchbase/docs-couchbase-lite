@@ -1664,19 +1664,30 @@ public class DatabaseManager {
         // For Documentation
         {
             // tag::query-index[]
-            database.createIndex(
-                "TypeNameIndex",
-                IndexBuilder.valueIndex(
-                    ValueIndexItem.property("type"),
-                    ValueIndexItem.property("name")));
+
+            database.createIndex(ValueIndexConfiguration(["type", "name"]), "TypeNameIndex");
+
             // end::query-index[]
         }
     }
 
+    public void testIndexing_Querybuilder() throws CouchbaseLiteException {
+      // For Documentation
+      {
+          // tag::query-index_Querybuilder[]
+          database.createIndex(
+              "TypeNameIndex",
+              IndexBuilder.valueIndex(
+                  ValueIndexItem.property("type"),
+                  ValueIndexItem.property("name")));
+          // end::query-index_Querybuilder[]
+      }
+  }
+
     // ### SELECT statement
     public void testSelectStatement() {
         {
-            // tag::query-select-meta[]
+            // tag::query-select-props[]
             Query query = QueryBuilder
                 .select(
                     SelectResult.expression(Meta.id),
@@ -1694,24 +1705,26 @@ public class DatabaseManager {
             } catch (CouchbaseLiteException e) {
                 Log.e("Sample", e.getLocalizedMessage());
             }
-            // end::query-select-meta[]
+            // end::query-select-props[]
+          }
         }
-    }
 
-    // META function
-    public void testMetaFunction() throws CouchbaseLiteException {
-        // For Documentation
-        {
+        // META function
+        public void testMetaFunction() throws CouchbaseLiteException {
+          // For Documentation
+          {
+            // tag::query-select-meta[]
             Query query = QueryBuilder
-                .select(SelectResult.expression(Meta.id))
-                .from(DataSource.database(database))
-                .where(Expression.property("type").equalTo(Expression.string("airport")))
-                .orderBy(Ordering.expression(Meta.id));
+            .select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("airport")))
+            .orderBy(Ordering.expression(Meta.id));
             for (Result result : query.execute()) {
-                Log.w("Sample", String.format("airport id -> %s", result.getString("id")));
-                Log.w("Sample", String.format("airport id -> %s", result.getString(0)));
+              Log.w("Sample", String.format("airport id -> %s", result.getString("id")));
+              Log.w("Sample", String.format("airport id -> %s", result.getString(0)));
             }
-        }
+            // end::query-select-meta[]
+          }
     }
 
     // ### all(*)
@@ -2027,26 +2040,55 @@ public class DatabaseManager {
 
     void prepareIndex() throws CouchbaseLiteException {
         // tag::fts-index[]
-        database.createIndex(
-            "nameFTSIndex",
-            IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false));
+
+        FullTextIndexConfiguration config = new FullTextIndexConfiguration("Overview").ignoreAccents(false)
+
+        database.createIndex( config, "overviewFTSIndex")
+
         // end::fts-index[]
     }
 
-    public void testFTS() throws CouchbaseLiteException {
-        // tag::fts-query[]
-        Expression whereClause = FullTextExpression.index("nameFTSIndex").match("buy");
-        Query ftsQuery = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(whereClause);
-        ResultSet ftsQueryResult = ftsQuery.execute();
-        for (Result result : ftsQueryResult) {
-            Log.i(
-                TAG,
-                String.format("document properties %s", result.getString(0)));
-        }
-        // end::fts-query[]
+    void prepareIndex_Querybuilder() throws CouchbaseLiteException {
+      // tag::fts-index_Querybuilder[]
+      database.createIndex(
+          "overviewFTSIndex",
+          IndexBuilder.fullTextIndex(FullTextIndexItem.property("overviewFTSIndex")).ignoreAccents(false));
+      // end::fts-index_Querybuilder[]
     }
+
+
+    public void testFTS() throws CouchbaseLiteException {
+      // tag::fts-query[]
+
+      Query ftsQuery =
+            database.createQuery(
+            "SELECT _id, overview FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)");
+
+      for (result in ftsQuery.execute().allResults()) {
+        Log.i(TAG, "${result.getString("id")}: ${result.getString("overview")}");
+      }
+
+      // end::fts-query[]
+  }
+  public void testFTS_Querybuilder() throws CouchbaseLiteException {
+      // tag::fts-query_Querybuilder[]
+
+      Expression whereClause = FullTextFunction.match("overviewFTSIndex", "'michigan'");
+      Query ftsQuery =
+              QueryBuilder.select(SelectResult.expression(Meta.id),
+                                  SelectResult.expression(overview)
+                                )
+          .from(DataSource.database(database))
+          .where(whereClause);
+
+          for (result in ftsQuery.execute().allResults()) {
+            Log.i(TAG, "${result.getString("id")}: ${result.getString("overview")}");
+          }
+
+      // end::fts-query_Querybuilder[]
+  }
+
+
 
     /* The `tag::replication[]` example is inlined in java.adoc */
 
