@@ -24,7 +24,9 @@ endif::[]
 == Overview
 
 
-In Couchbase Lite, a document's body is stored in an internal, efficient, binary form.
+In Couchbase Lite, a document's body is stored in an internal, efficient, binary form (
+https://github.com/couchbaselabs/fleece#readme[Fleece]
+). +
 This internal form is easily converted into a manageable native dictionary format for manipulation in applications by using the {to-dictionary} method.
 It then appears as collection of key-value (k-v) pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
 
@@ -61,6 +63,18 @@ a|* String
 
 |===
 
+
+ifdef::is-android[]
+.Fleece data encoding
+[NOTE]
+--
+Care should be taken when storing and recovering data in a document or converting that document to JSON and back. +
+Data encoding (Fleece) can result in `Long` values being converted to `Float` instead of `Double`. +
+Interpreting data as boolean can also give inconsistent results.
+--
+
+endif::is-android[]
+
 In addition to these basic data types Couchbase Lite provides for the following:
 
 [,cols="1,1", grid=none ]
@@ -76,7 +90,7 @@ a|*  Blob -- represents an arbitrary piece of binary data |
 
 |===
 
-endif::[]
+// endif::[]
 
 
 ifndef::is-c[]
@@ -99,7 +113,8 @@ endif::[]
 .API References
 
 * {url-api-class-dictionary}
-ifndef::is-c:[* {url-api-class-mutabledictionary}]
+
+ifndef::is-c[* {url-api-class-mutabledictionary}]
 
 
 .Read Only
