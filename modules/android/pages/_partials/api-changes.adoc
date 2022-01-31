@@ -9,13 +9,16 @@ ifdef::prerelease[:page-status: {prerelease}]
 include::partial$_std-cbl-hdr-android.adoc[]
 
 // tag::content[]
-:source-header: pass:q,a[source, java,subs="attributes+, macros+"]
+
+:source-header: pass:q,a[source, java, subs="attributes+, macros+"]
 :url-api-references-2-8-0: https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/
 :url-api-references-3-0-0: https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-android/com/couchbase/lite/
 
 This content introduces the changes made to the {cbl-t} for {param-title} API for release {version-full}.
 
+
 == Removed
+
 
 === ResetCheckpoint
 
@@ -23,7 +26,7 @@ The method {url-api-references-2-8-0}AbstractReplicator.html#resetCheckpoint--[R
 Instead, use {url-api-references-3-0-0}AbstractReplicator.html#start-boolean-[Replicator.resetCheckpoint(boolean reset)].
 
 .Before
-[{source-header}]
+[source, java]
 ----
 replicator.resetCheckpoint()
 replicator.start()
@@ -79,6 +82,7 @@ testdb.performMaintenance(MaintenanceType.COMPACT)
 
 == Deprecated in the API
 
+
 === MATCH
 The class, {url-api-references-2-8-0}FullTextExpression.html[FullTextExpression]
 has been deprecated. +
@@ -107,7 +111,6 @@ Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
 
 The functions {url-api-references-2-8-0}Expression.html#isNullOrMissing--[Expression.isNullOrMissing] and {url-api-references-2-8-0}Expression.html#notNullOrMissing--[Expression.notNullOrMissing] have been deprecated. +
 Use `isNotValued()` and-or `isValued()` instead.
-
 
 .Before
 [{source-header}]
@@ -139,7 +142,6 @@ Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
 
 ----
 
-
 === AbstractReplicatorConfiguration
 
 The enum {url-api-references-2-8-0}ReplicatorConfiguration.html#setReplicatorType-com.couchbase.lite.AbstractReplicatorConfiguration.ReplicatorType-[AbstractReplicatorConfiguration.ReplicatorType]
@@ -167,6 +169,7 @@ ReplicatorConfiguration config =
 
 
 == Moved in the API
+
 
 The enum {url-api-references-2-8-0}AbstractReplicator.ActivityLevel.html[AbstractReplicator.ActivityLevel] and the classes {url-api-references-2-8-0}AbstractReplicator.Progress.html[AbstractReplicator.Progress] and {url-api-references-2-8-0}AbstractReplicator.Status.html[AbstractReplicator.Status] have all been moved to be top level definitions. +
 They are replaced by these definitions:
