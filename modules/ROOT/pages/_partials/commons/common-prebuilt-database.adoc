@@ -6,6 +6,7 @@
 :listing-caption: Code Example
 
 
+
 == Overview
 
 Couchbase Lite’s support for pre-built databases means you can pre-load your app with data instead of syncing it down from Sync Gateway during startup.
@@ -19,17 +20,20 @@ Even if the data is not static, you can still benefit from preloading it and onl
 
 The initial sync of any pre-built database will pull-in any content changes on the server that occurred after its incorporation into the app, quickly bringing the database up to date.
 
-.*To use a prebuilt database:*
+.To use a prebuilt database:
+****
+. Create a new Couchbase Lite database with the required data set -- see <<crt-db>>
+. Incorporate the pre-built database with your app bundle as an asset/resource -- see <<bundle-db>>
+. Adjust the start-up logic of your app to check for the presence of the required database. +
+If the database doesn't already exist, create one using the bundled pre-built database.
+Then initiate a sync to update the data -- see <<deploy-db>>
+****
 
-* Create a new Couchbase Lite database with the required data set -- see <<crt-db>>
-* Incorporate the pre-built database with your app bundle as an asset/resource -- see <<bundle-db>>
-* Adjust the start-up logic of your app to check for the presence of the required database.
-If it doesn't already exist, it should create one using the bundled pre-built database, before initiating a sync to update the data -- see <<deploy-db>>
 
 [#crt-db]
 == Creating Pre-built database
 
-These steps would typically be part of your build and release process:
+These steps should form part of your build and release process:
 
 . Create a fresh Couchbase Lite database (every time)
 +
@@ -62,9 +66,9 @@ NOTE: Couchbase accepts no responsibility for the ongoing availability, maintena
 
 . Create the *same* indexes the app will use (wait for the replication to finish before doing this).
 
-[#bundle-db]
-== Bundle Database with Application
 
+[#bundle-db]
+== Bundle a Database with an Application
 Copy the database into your app package.
 
 Put it in an appropriate place (for example, an assets or resource folder).
@@ -72,6 +76,23 @@ Put it in an appropriate place (for example, an assets or resource folder).
 Where the platform permits you can zip the database.
 
 *Alternatively* {ellipsis} rather than bundling the database within the app, the app could pull the database down from a CDN server on launch.
+
+
+== Database Encryption
+include::{root-partials}_block-caveats.adoc[tag=ee-only-feature]
+
+If you are using en encrypted database, note that
+{url-api-method-database-copy}
+does not change the encryption key.
+The encryption key specified in the config when opening the database is the encryption key used for both the original database and copied database.
+
+If you copied an un-encrypted database and want to apply encryption to the copy, or if you want to change (or remove) the encryption key applied to the copy:
+
+. Provide the original encryption-key (if any) in the database copy's configuration using {url-api-method-databasecfg-encryption}
+. Open the database copy
+. Use {url-api-method-database-change-encryption-key} on the database copy to set the required encryption key. +
+NOTE: To remove encryption on the copy, provide a null encryption-key
+
 
 [#deploy-db]
 == Using Pre-built Database on App Launch
