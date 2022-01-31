@@ -438,10 +438,11 @@ class supportingDatatypes
             println("Key ${key} = ${dict.getValue(key)}")
         }
 
-    // Create a mutable copy
-    val mutable_Dict = dict.toMutable()
-    // end::datatype_dictionary[]
-}
+      // Create a mutable copy
+      val mutable_Dict = dict.toMutable()
+
+      // end::datatype_dictionary[]
+    }
 
     fun datatype_mutable_dictionary() {
 
