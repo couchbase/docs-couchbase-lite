@@ -34,10 +34,35 @@ the only constraints are that it must be unique within the database, and it can'
 The document also has a value which contains the actual application data.
 This value is stored as a dictionary collection of key-value (k-v) pairs where the values themselves may comprise different types of data such as numbers, strings, arrays or even nested objects -- see: <<Data Types>>
 
+=== Data Encoding
+
 The document body is stored in an internal, efficient, binary form (
 https://github.com/couchbaselabs/fleece#readme[Fleece]
 ). +
 This internal form is easily converted into a manageable native dictionary format for manipulation in applications.
+
+Fleece data is stored in the smallest format that will hold the value, whilst maintaining the integrity of the value.
+
+ifdef::is-android[]
+.Fleece data encoding
+--
+When working with Android-Java, the Fleece encoding cycle can result in the Java type information being lost.
+
+So, care should be taken when storing and recovering data in a document - or converting that document to JSON and back - using non-explicit functions such as `toArray()` or `toMap()`.
+
+Always use explicit creation of the expected type, whenever the type of result is not itself explicit. For example:
+
+For example:
+[source, Java]
+----
+Map<String, Object> doc = db.getDocument(someDoc.getId()).toMap();
+Long testVal = Long.valueOf(doc.get(“test”))
+----
+
+Similarly, interpreting data not stored as `boolean` as a boolean value can give inconsistent results.
+--
+
+endif::is-android[]
 
 === Data Types
 
