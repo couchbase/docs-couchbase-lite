@@ -1,6 +1,6 @@
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/PasswordAuthListener.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/PasswordAuthListener.java
 //
 // Copyright (c) 2020 Couchbase, Inc All rights reserved.
 //
@@ -130,11 +130,11 @@ public class PasswordAuthListener {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/PasswordAuthListener.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/PasswordAuthListener.java
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/BlobExamples.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/BlobExamples.java
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -213,11 +213,11 @@ class BlobExamples {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/BlobExamples.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/BlobExamples.java
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/MainActivity.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/MainActivity.java
 package com.couchbase.code_snippets;
 
 import android.os.Bundle;
@@ -234,11 +234,11 @@ public class MainActivity extends AppCompatActivity {
 }
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/MainActivity.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/MainActivity.java
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/CertAuthListener.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/CertAuthListener.java
 
 //
 // Copyright (c) 2020 Couchbase, Inc All rights reserved.
@@ -450,11 +450,11 @@ class CertAuthListener {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/CertAuthListener.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/CertAuthListener.java
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java
 //
 // Copyright (c) 2019 Couchbase, Inc All rights reserved.
 //
@@ -3380,6 +3380,87 @@ public class supportingDatatypes
 {
     private static final String TAG = "info";
 
+
+    public void datatype_usage() throws CouchbaseLiteException {
+
+
+        // tag::datatype_usage[]
+        // tag::datatype_usage_createdb[]
+        // Initialize the Couchbase Lite system
+        CouchbaseLite.init(context);
+
+        // Get the database (and create it if it doesn’t exist).
+        DatabaseConfiguration config = new DatabaseConfiguration();
+
+        config.setDirectory(context.getFilesDir().getAbsolutePath());
+
+        Database database = new Database("getting-started", config);
+
+        // end::datatype_usage_createdb[]
+        // tag::datatype_usage_createdoc[]
+        // Create your new document
+        // The lack of 'const' indicates this document is mutable
+        MutableDocument mutableDoc = new MutableDocument();
+
+        // end::datatype_usage_createdoc[]
+        // tag::datatype_usage_mutdict[]
+        // Create and populate mutable dictionary
+        // Create a new mutable dictionary and populate some keys/values
+        MutableDictionary address = new MutableDictionary();
+        address.setString("street", "1 Main st.");
+        address.setString("city", "San Francisco");
+        address.setString("state", "CA");
+        address.setString("country", "USA");
+        address.setString("code"), "90210");
+
+        // end::datatype_usage_mutdict[]
+        // tag::datatype_usage_mutarray[]
+        // Create and populate mutable array
+        MutableArray phones = new MutableArray();
+        phones.addString("650-000-0000");
+        phones.addString("650-000-0001");
+
+        // end::datatype_usage_mutarray[]
+        // tag::datatype_usage_populate[]
+        // Initialize and populate the document
+
+        // Add document type to document properties <.>
+        mutable_doc.setString("type", "hotel"));
+
+        // Add hotel name string to document properties <.>
+        mutable_doc.setString("name", "Hotel Java Mo"));
+
+        // Add float to document properties <.>
+        mutable_doc.setFloat("room_rate", 121.75f);
+
+        // Add dictionary to document's properties <.>
+        mutable_doc.setDictionary("address", address);
+
+
+        // Add array to document's properties <.>
+        mutable_doc.setArray("phones", phones);
+
+        // end::datatype_usage_populate[]
+        // tag::datatype_usage_persist[]
+        // Save the document changes <.>
+        database.save(mutable_doc);
+
+        // end::datatype_usage_persist[]
+        // tag::datatype_usage_closedb[]
+        // Close the database <.>
+        database.close();
+
+        // end::datatype_usage_closedb[]
+
+        // end::datatype_usage[]
+
+    }
+
+
+
+
+
+
     public void datatype_dictionary() throws CouchbaseLiteException {
         Database database = new Database("mydb");
 
@@ -3477,11 +3558,11 @@ public class supportingDatatypes
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
 package com.couchbase.code_snippets;
 
 import java.io.File;
@@ -3521,11 +3602,11 @@ public class ZipUtils {
 // end::ziputils-unzip[]
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/JSONExamples.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/JSONExamples.java
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -3667,5 +3748,5 @@ public class JSONExamples {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/JSONExamples.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/JSONExamples.java
 
