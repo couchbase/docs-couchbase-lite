@@ -784,12 +784,12 @@ static void datatype_dictionary()
         // ...
         FLDictIterator_Next(&iter);
     }
-    
+
     // Create a mutable copy.
     // kFLDefaultCopy is shallow which means the nested dictionaries and arrays will be
     // referenced but not copied. Use kFLDeepCopyImmutables for the deep copy.
     FLMutableDict mutableDict = FLDict_MutableCopy(dict, kFLDefaultCopy);
-    
+
     // Release when finish using it
     FLMutableDict_Release(mutableDict);
     // end::datatype_dictionary[]
@@ -802,15 +802,19 @@ static void datatype_mutable_dictionary()
     // tag::datatype_mutable_dictionary[]
     // NOTE: No error handling, for brevity (see getting started)
 
+    // tag::datatype_mutable_dictionary-create[]
     // Create a new mutable dictionary and populate some keys/values
     FLMutableDict dict = FLMutableDict_New();
     FLMutableDict_SetString(dict, FLSTR("street"), FLSTR("1 Main st."));
     FLMutableDict_SetString(dict, FLSTR("city"), FLSTR("San Francisco"));
+    // end::datatype_mutable_dictionary-create[]
 
+    // tag::datatype_mutable_dictionary-add-to-doc[]
     // Set the dictionary to document's properties and save the document
     CBLDocument *doc = CBLDocument_Create();
     FLMutableDict properties = CBLDocument_MutableProperties(doc);
     FLMutableDict_SetDict(properties, FLSTR("address"), dict);
+    // end::datatype_mutable_dictionary-add-to-doc[]
     CBLError err;
     CBLDatabase_SaveDocument(db, doc, &err);
     CBLDocument_Release(doc);
@@ -826,7 +830,7 @@ static void datatype_array()
 
     // tag::datatype_array[]
     // NOTE: No error handling, for brevity (see getting started)
-    
+
     CBLError err;
     const CBLDocument *doc = CBLDatabase_GetDocument(db, FLSTR("doc1"), &err);
     FLDict properties = CBLDocument_Properties(doc);
@@ -834,7 +838,7 @@ static void datatype_array()
     // Getting a phones array from the document's properties
     FLValue arrayValue = FLDict_Get(properties, FLSTR("phones"));
     FLArray array = FLValue_AsArray(arrayValue);
-    
+
     // Get element count
     int count = FLArray_Count(array);
     printf("Count :: %d\n", count);
@@ -857,12 +861,12 @@ static void datatype_array()
         FLArrayIterator_Next(&iter);
     }
     // end::datatype_array[]
-    
+
     // Create a mutable copy.
     // kFLDefaultCopy is shallow which means the nested dictionaries and arrays will be
     // referenced but not copied. Use kFLDeepCopyImmutables for the deep copy.
     FLMutableArray mutableArray = FLArray_MutableCopy(array, kFLDefaultCopy);
-    
+
     // Release when finish using it
     FLMutableArray_Release(mutableArray);
 }
@@ -873,16 +877,20 @@ static void datatype_mutable_array()
 
     // tag::datatype_mutable_array[]
     // NOTE: No error handling, for brevity (see getting started)
-    
+
+    // tag::datatype_mutable_array-create[]
     // Create a new mutable array and populate data into the array
     FLMutableArray phones = FLMutableArray_New();
     FLMutableArray_AppendString(phones, FLSTR("650-000-0000"));
     FLMutableArray_AppendString(phones, FLSTR("650-000-0001"));
+    // end::datatype_mutable_array-create[]
 
+    // tag::datatype_mutable_array-add-to-doc[]
     // Set the array to document's properties and save the document
     CBLDocument *doc = CBLDocument_Create();
     FLMutableDict properties = CBLDocument_MutableProperties(doc);
     FLMutableDict_SetArray(properties, FLSTR("phones"), phones);
+    // end::datatype_mutable_array-add-to-doc[]
     CBLError err;
     CBLDatabase_SaveDocument(db, doc, &err);
     CBLDocument_Release(doc);
@@ -891,6 +899,93 @@ static void datatype_mutable_array()
     FLMutableArray_Release(phones);
     // end::datatype_mutable_array[]
 }
+
+
+static void datatype_usage() {
+
+    // tag::datatype_usage[]
+    // tag::datatype_usage_createdb[]
+    // Open or create DB if it doesn't exist
+    CBLError err;
+    CBLDatabase* database = CBLDatabase_Open(FLSTR("mydb"), NULL, &err);
+    if(!database) {
+        // Error handling.  For brevity, this is truncated in the rest of the snippet
+        // and omitted in other doc code snippets
+        fprintf(stderr, "Error opening database (%d / %d)\n", err.domain, err.code);
+        FLSliceResult msg = CBLError_Message(&err);
+        fprintf(stderr, "%.*s\n", (int)msg.size, (const char *)msg.buf);
+        FLSliceResult_Release(msg);
+        return;
+    }
+
+    // end::datatype_usage_createdb[]
+    // tag::datatype_usage_createdoc[]
+    // Create your new document
+    // The lack of 'const' indicates this document is mutable
+    CBLDocument* mutableDoc = CBLDocument_Create();
+    FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
+
+    // end::datatype_usage_createdoc[]
+    // tag::datatype_usage_mutdict[]
+    // Create and populate mutable dictionary
+    FLMutableDict address = FLMutableDict_New();
+    FLMutableDict_SetString(address, FLSTR("street"), FLSTR("1 Main st."));
+    FLMutableDict_SetString(address, FLSTR("city"), FLSTR("San Francisco"));
+    FLMutableDict_SetString(address, FLSTR("state"), FLSTR("CA"));
+    FLMutableDict_SetString(address, FLSTR("country"), FLSTR("USA"));
+    FLMutableDict_SetString(address, FLSTR("code"), FLSTR("90210"));
+
+    // end::datatype_usage_mutdict[]
+    // tag::datatype_usage_mutarray[]
+    // Create and populate mutable array
+    FLMutableArray phones = FLMutableArray_New();
+    FLMutableArray_AppendString(phones, FLSTR("650-000-0000"));
+    FLMutableArray_AppendString(phones, FLSTR("650-000-0001"));
+
+    // end::datatype_usage_mutarray[]
+    // tag::datatype_usage_populate[]
+    // Initialize and populate the document
+
+    // Add document type to document properties <.>
+    FLMutableDict_SetString(properties, FLSTR("type"), FLSTR("hotel"));
+
+    // Add hotel name string to document properties <.>
+    FLMutableDict_SetString(properties, FLSTR("hotel"), FLSTR(""));
+
+    // Add float to document properties <.>
+    FLMutableDict_SetFloat(properties, FLSTR("room_rate"), 121.75f);
+
+    // Add dictionary to document's properties <.>
+    FLMutableDict_SetDict(properties, FLSTR("address"), dict);
+
+    // Add array to document's properties <.>
+    FLMutableDict_SetArray(properties, FLSTR("phones"), phones);
+
+    // end::datatype_usage_populate[]
+    // tag::datatype_usage_persist[]
+    // Save the document changes <.>
+    CBLError err;
+    CBLDatabase_SaveDocument(database, doc, &err);
+
+    // end::datatype_usage_persist[]
+    // tag::datatype_usage_closedb[]
+    // Close the database <.>
+    CBLError err;
+    CBLDatabase_Close(database, &err);
+
+    // end::datatype_usage_closedb[]
+    // tag::datatype_usage_release[]
+    // Release the created items <.>
+    CBLDatabase_Release(database);
+    CBLDocument_Release(doc);
+    FLMutableDict_Release(dict);
+    FLMutableArray_Release(phones);
+    // end::datatype_usage_release[]
+
+    // end::datatype_usage[]
+
+} // end datatype_usage()
+
 
 static void create_index() {
     CBLDatabase* db = kDatabase;

@@ -3221,6 +3221,75 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
   public class supporting_datatypes
   {
+    public void datatype_usage()
+    {
+
+        // tag::datatype_usage[]
+        // tag::datatype_usage_createdb[]
+        // Get the database (and create it if it doesn’t exist).
+        var database = new Database("hoteldb");
+
+        // end::datatype_usage_createdb[]
+        // tag::datatype_usage_createdoc[]
+        // Create your new document
+
+        // Add the dictionary to a document's properties and save the document
+        var doc = new MutableDocument("hoteldoc");
+
+        // end::datatype_usage_createdoc[]
+        // tag::datatype_usage_mutdict[]
+        // Create and populate mutable dictionary
+        var address = new MutableDictionaryObject();
+        address.SetString("street", "1 Main st.");
+        address.SetString("city", "San Francisco");
+        address.SetString("state", "CA");
+        address.SetString("country", "USA");
+        address.SetString("code", "90210");
+
+        // end::datatype_usage_mutdict[]
+        // tag::datatype_usage_mutarray[]
+        // Create and populate mutable array
+        var phones = MutableArrayObject();
+        phones.AddString("650-000-0000");
+        phones.AddString("650-000-0001");
+
+        // end::datatype_usage_mutarray[]
+        // tag::datatype_usage_populate[]
+        // Initialize and populate the document
+
+        // Add document type to document properties <.>
+        doc.SetString("type", "hotel");
+
+        // Add hotel name string to document properties <.>
+        doc.SetString("name", "Hotel Java Mo");
+
+        // Add float to document properties <.>
+        doc.SetFloat("room_rate", 121.75);
+
+        // Add dictionary to document's properties <.>
+        doc.SetDictionary("address", address);
+
+        // Add array to document's properties <.>
+        doc.SetArray("phones", phones);
+
+        // end::datatype_usage_populate[]
+        // tag::datatype_usage_persist[]
+        // Save the document changes <.>
+        database.Save(doc);
+
+        // end::datatype_usage_persist[]
+        // tag::datatype_usage_closedb[]
+        // Close the database <.>
+        database.close();
+
+        // end::datatype_usage_closedb[]
+
+        // end::datatype_usage[]
+
+     }
+
+
+
       public void datatype_dictionary()
       {
           var database = new Database(name: "mydb");

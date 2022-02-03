@@ -2565,6 +2565,76 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
 public class Supporting_Datatypes
 {
 
+    func datatype_usage()
+    {
+
+        // tag::datatype_usage[]
+        // tag::datatype_usage_createdb[]
+        // Get the database (and create it if it doesn’t exist).
+        var database = try!Database(name: "hoteldb");
+    
+        // end::datatype_usage_createdb[]
+        // tag::datatype_usage_createdoc[]
+        // Create your new document
+        // The lack of 'const' indicates this document is mutable
+        var mutableDoc = MutableDocument(id: "doc1");
+    
+        // end::datatype_usage_createdoc[]
+        // tag::datatype_usage_mutdict[]
+        // Create and populate mutable dictionary
+        // Create a new mutable dictionary and populate some keys/values
+        var address = MutableDictionaryObject();
+        address.setString("1 Main st.", forKey: "street");
+        address.setString("San Francisco", forKey: "city");
+        address.setString("CA", forKey: "state");
+        address.setString("USA", forKey: "country");
+        address.setString("90210", forKey: "code");
+    
+        // end::datatype_usage_mutdict[]
+        // tag::datatype_usage_mutarray[]
+        // Create and populate mutable array
+        var phones = MutableArrayObject();
+        phones.addString("650-000-0000");
+        phones.addString("650-000-0001");
+    
+        // end::datatype_usage_mutarray[]
+        // tag::datatype_usage_populate[]
+        // Initialize and populate the document
+    
+        // Add document type to document properties <.>
+        mutableDoc.setString("hotel", forKey:"type");
+    
+        // Add hotel name string to document properties <.>
+        mutableDoc.setString("Hotel Java Mo", forKey:"name");
+    
+        // Add float to document properties <.>
+        mutableDoc.setFloat(121.75, forKey:"room_rate");
+    
+        // Add dictionary to document's properties <.>
+        mutableDoc.setDictionary(address, forKey: "address");
+    
+        // Add array to document's properties <.>
+        mutableDoc.setArray(phones, forKey:"phones");
+    
+        // end::datatype_usage_populate[]
+        // tag::datatype_usage_persist[]
+        // Save the document changes <.>
+        try!database.saveDocument(mutableDoc);
+
+        // end::datatype_usage_persist[]
+        // tag::datatype_usage_closedb[]
+        // Close the database <.>
+        do {
+            try self.database.close()
+        }
+
+        // end::datatype_usage_closedb[]
+    
+        // end::datatype_usage[]
+    
+    } // end func datatype_usage()
+    
+    
     func datatype_dictionary()
     {
 
