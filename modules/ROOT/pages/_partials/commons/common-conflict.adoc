@@ -21,8 +21,8 @@ Document conflicts can occur if multiple changes are made to the same version of
 
 Such conflicts can occur after either of the following events:
 
-* *A replication saves a document change* -- in which case the change with the _most-revisions wins_ (unless one change is a delete). See the example <<Case 1: Conflicts when a replication is in progress>>
-* *An application saves a document change directly to a database instance* -- in which case, _last write wins_, unless one change is a delete -- see <<Case 2: Conflicts when saving a document>>
+* *A replication saves a document change* -- in which case the change with the _most-revisions wins_ (unless one change is a delete). See the example <<lbl-conflicts-when-replicating, Case 1: Conflicts when a replication is in progress>>
+* *An application saves a document change directly to a database instance* -- in which case, _last write wins_, unless one change is a delete -- see <<conflicts-when-saving,Case 2: Conflicts when saving a document>>
 
 NOTE: *_Deletes_ always win.* So, in either of the above cases, if one of the changes was a _Delete_ then that change wins.
 
@@ -32,6 +32,7 @@ The following sections discuss each scenario in more detail.
 .Dive deeper ...
 Read more about link:{url-cb-blog}/document-conflicts-couchbase-mobile[Document Conflicts and Automatic Conflict Resolution in Couchbase Mobile].
 
+[#lbl-conflicts-when-replicating]
 == Conflicts when Replicating
 
 There's no practical way to prevent a conflict when incompatible changes to a document are be made in multiple instances of an app.
@@ -222,7 +223,10 @@ When the value is `null`, the default conflict resolution will be applied.
 include::{root-partials}_block_tabbed_code_example.adoc[]
 :param-tags!:
 
+
+[#conflicts-when-saving]
 == Conflicts when Updating
+
 
 When updating a document, you need to consider the possibility of update conflicts.
 Update conflicts can occur when you try to update a document that’s been updated since you read it.

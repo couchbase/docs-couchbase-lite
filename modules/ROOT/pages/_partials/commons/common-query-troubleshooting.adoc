@@ -24,54 +24,25 @@ endif::param-fullpage[]
 // DO NOT EDIT
 :url-sql-query-plan: https://www.sqlite.org/eqp.html
 
+
 == Query Explain
+
+
 === Using
 Query's {url-api-method-query-explain} method can provide useful insight when you are trying to diagnose query performance issues and-or optimize queries.
-You can embed the call inside your app, or use it interactively within a `cblite` shell, to examine how your query is working -- see: <<use-qe>> for how to use it in either scenario.
+To examine how your query is working, either embed the call inside your app (see: <<use-qe-app>>), or use it interactively within a `cblite` shell (see: <<use-qe-cblite>>).
 
-[#use-qe]
-.Using Query Explain
-====
-[{tabs}]
-=====
-In-App::
-+
---
-
-ifdef::is-android[]
-[{tabs}]
-======
-{source-language}::
-+
----
-endif::is-android[]
-
-[source, {source-language}]
-----
-include::{snippet}[tags=query-explain-all, indent=0]
-----
-
-ifdef::is-android[]
----
-
-{source-language-alt}::
-+
----
-[source, {source-language-alt}]
-----
-include::{snippet}[tags=query-explain-all, indent=0]
-----
----
-======
-endif::is-android[]
-
+[#use-qe-app]
+.Using Query Explain in App
+:param-tags: query-explain-all
+include::{root-partials}_block_tabbed_code_example.adoc[]
 <.> Construct your query as normal
 <.> Call the query's `explain` method; All output is sent to the application's log file.
---
+:param-tags!:
 
-In cblite::
-+
---
+[#use-qe-cblite]
+.Using Query Explain in cblite
+====
 [source, console]
 ----
 cblite <your-database-name>.cblite2 // <.>
@@ -84,11 +55,6 @@ cblite <your-database-name>.cblite2 // <.>
 <.> Within a terminal session open your database with `cblite` and enter your query
 <.> Here the query is entered as a N1QL-query using `select` +
 <.> Here the query is entered as a JSON-string using `query`
-
---
-
-=====
-
 ====
 
 
@@ -228,8 +194,8 @@ You can see that the query plan decides on a retrieval method of `Scan Table`.
 
 TIP: For more on indexes -- see: {indexing--xref}
 
-.Like with Wildcard Prefix
 [#like-wild-pfx-qry]
+.Like with Wildcard Prefix
 :param-tags: query-explain-like
 include::{root-partials}_block_tabbed_code.adoc[]
 :param-tags!:
@@ -312,7 +278,8 @@ Optimize document size in design.
 Smaller docs load more quickly.
 Break your data into logical linked units.
 
-Consider Using Full Text Search instead of complex like or regex patterns -- see {fts--xref}.
+Consider Using Full Text Search instead of complex like or regex patterns -- see {fts--xref}. +
+{empty}
 
 ifdef::param-fullpage[]
 include::{root-partials}block-related-content-query.adoc[]

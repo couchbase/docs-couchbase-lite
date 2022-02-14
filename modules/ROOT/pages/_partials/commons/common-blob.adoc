@@ -12,12 +12,12 @@
 
 == Introduction
 
-Couchbase Lite for {param-title} uses _blobs_ to store the contents of images, other media files and similar format files as binary objects.
+{cbl} for {param-title} uses _blobs_ to store the contents of images, other media files and similar format files as binary objects.
 
 The blob itself is not stored in the document.
 It is held in a separate content-addressable store indexed from the document and retrieved only on-demand.
 
-When a document is synchronized, the Couchbase Lite replicator adds an `_attachments` dictionary to the document's properties if it contains a blob -- see <<img-blob>>.
+When a document is synchronized, the {cbl} replicator adds an `_attachments` dictionary to the document's properties if it contains a blob -- see <<img-blob>>.
 
 
 == Blob Objects
@@ -31,11 +31,11 @@ The blob's data (an image, audio or video content) is not stored in the document
 
 === Constraints
 
-* Couchbase Lite +
+* {cbl} +
 Blobs can be arbitrarily large.
 They are only read on demand, not when you load a the _document_.
 
-* Sync Gateway +
+* {sgw} +
 The maximum content size is 20 MB per blob.
 If a document's blob is over 20 MB, the document will be replicated but not the blob.
 
@@ -63,10 +63,10 @@ The `digest` key will be the same as generated when we saved the blob document.
 
 
 == Syncing
-When a document containing a blob object is synchronized, the Couchbase Lite replicator generates an `_attachments` dictionary with an auto-generated name for each blob attachment.
+When a document containing a blob object is synchronized, the {cbl} replicator generates an `_attachments` dictionary with an auto-generated name for each blob attachment.
 This is different to the `avatar` key and is used internally to access the blob content.
 
-If you view a sync'd blob document in Couchbase Server Admin Console, you will see something similar to <<img-blob>>, which shows the document with its generated `_attachments` dictionary, including the `digest`.
+If you view a sync'd blob document in {cbs} Admin Console, you will see something similar to <<img-blob>>, which shows the document with its generated `_attachments` dictionary, including the `digest`.
 
 .Sample Blob Document
 [#img-blob]
