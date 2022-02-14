@@ -41,8 +41,11 @@ class QueryExamples(private val database: Database) {
     @Throws(CouchbaseLiteException::class)
     fun testIndexing() {
         // tag::query-index[]
-        database.createIndex( "TypeNameIndex",
-              ValueIndexConfiguration( "type", "name")
+        database.createIndex(
+          "TypeNameIndex",
+          ValueIndexConfigurationFactory.create(expressions = ["type","name"])
+        )
+
         // end::query-index[]
     }
 
@@ -327,9 +330,9 @@ class QueryExamples(private val database: Database) {
             SelectResult.expression(Expression.property("stops").from("route")),
             SelectResult.expression(Expression.property("airline").from("route"))
         )
-            .from(DataSource.database(database).`as`("airline"))
+            .from(DataSource.database(database).as("airline"))
             .join(
-                Join.join(DataSource.database(database).`as`("route"))
+                Join.join(DataSource.database(database).as("route"))
                     .on(
                         Meta.id.from("airline")
                             .equalTo(Expression.property("airlineid").from("route"))
@@ -470,9 +473,13 @@ class QueryExamples(private val database: Database) {
     @Throws(CouchbaseLiteException::class)
     fun prepareIndex() {
         // tag::fts-index[]
-        val config = FullTextIndexConfiguration("overview").ignoreAccents(false)
 
-        database.createIndex( "overviewFTSIndex", config);
+      database.createIndex("overviewFTSIndex",
+                      FullTextIndexConfigurationFactory.create(
+                        expressions = ["overview"]
+                      )
+                    )
+
         // end::fts-index[]
     }
 
