@@ -23,13 +23,14 @@ include::{root-partials}block-abstract.adoc[]
 
 == Introduction
 
-_Couchbase Lite on Java {version-full}_ enables development and deployment of Couchbase Lite applications to a JVM environment.
+
+{cbl-te} on Java {version-full}_ enables development and deployment of {cbl} applications to a JVM environment.
 You can deploy Standalone (Java Desktop/Console) apps or Web Apps (using, for example, {gpWebServerEnv}; including embedded {gpWebServerEnv} deployments).
 
 
 .Quick Steps
 ****
-For experienced developers, this is all you need to add _Couchbase Lite for {param-title} {version-full}_ to your application projects.
+For experienced developers, this is all you need to add _{cbl} for {param-title} {version-full}_ to your application projects.
 
 [{tabs}]
 =====
@@ -41,14 +42,14 @@ Include the following in your Gradle `build.gradle` or Maven `pom.xml` file, as 
 * The Couchbase Enterprise Edition repository +
 `https://mobile.maven.couchbase.com/maven2/dev/`
 
-* The Couchbase Lite Enterprise Edition dependency: +
+* The {cbl} Enterprise Edition dependency: +
 `couchbase-lite-java-ee:{version-full}`
 --
 
 Community Edition::
 +
 --
-. Include the Couchbase Lite for Java dependency in your Gradle `build.gradle` or Maven `pom.xml` file, as appropriate: +
+. Include the {cbl} for Java dependency in your Gradle `build.gradle` or Maven `pom.xml` file, as appropriate: +
 `couchbase-lite-java:{version-full}`
 . For Gradle: +
 Check you have `mavenCentral()` in `repositories` (or in `settings.gradle`). +
@@ -57,13 +58,14 @@ Maven automatically checks its own repo for dependencies.
 =====
 ****
 That's it!
-You''re all set to begin developing powerful Couchbase Lite applications.
+You''re all set to begin developing powerful {cbl} applications.
 
 Now, try the xref:gs-build.adoc[Getting Started] application, which demonstrates use of key CRUD functionality.
 
 
 
 == Preparing Your Build Environment
+
 
 This section shows how to set up and use {cblJP} to build desktop and web applications using {gpBuildTool}, Maven, {gpWebServerEnv} and {gpIDE} Community Edition.
 It assumes a familiarity with these products, however you are free to use your own choice of development tools.
@@ -91,6 +93,7 @@ See the _Additional Steps for Linux_ section in {gs-prereqs--xref}}
 
 
 == Standalone Apps
+
 
 === Using Gradle
 
@@ -290,7 +293,16 @@ Enterprise Edition::
 
 == Web App Development
 
+
 This section explains how to set-up a build project to create {cblJP} web apps using {gpBuildTool} and {gpIDE}.
+
+For examples of how to do this using Maven POM files, see --
+
+* https://github.com/couchbaselabs/mobile-travel-sample/tree/master/java/TravelSample[Couchbase Mobile Workshop]
+
+* https://github.com/couchbaselabs/mobile-training-todo/tree/release/lithium/java-ws/server/Todo[Mobile Taining To Do App]
+
+
 
 === Tomcat
 
@@ -418,8 +430,8 @@ So, to run the app use:
 == Deploying a WAR File
 
 To deploy your web app to a local Tomcat instance you need to generate a WAR file.
-However, you should note that when creating a war file, if you use the `implementation` dependency type then your _Couchbase Lite_ jar files will be bundled into WEB-INF/lib of the web application.
-To exclude Couchbase Lite jar files from getting bundled and to use Couchbase Lite in multiple web applications, change the dependency type from *`implementation`* to *`providedCompile`*
+However, you should note that when creating a war file, if you use the `implementation` dependency type then your _{cbl}_ jar files will be bundled into WEB-INF/lib of the web application.
+To exclude {cbl} jar files from getting bundled and to use {cbl} in multiple web applications, change the dependency type from *`implementation`* to *`providedCompile`*
 
 . You can do this using the Gradle command below from within your project folder:
 [source, bashrc]
@@ -435,7 +447,7 @@ NOTE:  The generated war file will be at <PROJECT ROOT>/build/libs.
 +
 TIP: You can also use Tomcat’s Manager App to deploy the war file -- see https://tomcat.apache.org/tomcat-9.0-doc/manager-howto.html[Tomcat's Manager App] documentation for more detail.
 
-. To use common class loader approach to load Couchbase Lite libraries, copy all of the Couchbase Lite jar files in $CATALINA_BASE/lib.
+. To use common class loader approach to load {cbl} libraries, copy all of the {cbl} jar files in $CATALINA_BASE/lib.
 +
 NOTE: For linux platform see also -- _Using Native Libraries for Linux_ in {gs-prereqs--xref}
 
