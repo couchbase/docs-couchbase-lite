@@ -58,7 +58,7 @@ Maven automatically checks its own repo for dependencies.
 =====
 ****
 That's it!
-You''re all set to begin developing powerful {cbl} applications.
+You're all set to begin developing powerful {cbl} applications.
 
 Now, try the xref:gs-build.adoc[Getting Started] application, which demonstrates use of key CRUD functionality.
 
@@ -88,8 +88,8 @@ Please install the Visual {Cpp} Redistribution package from this link:
 https://www.microsoft.com/en-us/download/details.aspx?id=52685
 
 * Deploying to Linux? +
-You need to deploy yhe {cbl} `support` library, which is available _only_ on the zip download distributable.
-See the _Additional Steps for Linux_ section in {gs-prereqs--xref}}
+You need to deploy the {cbl} `support` library, which is available _only_ on the zip download distributable.
+See the _Additional Steps for Linux_ section in {gs-prereqs--xref}.
 
 
 == Standalone Apps
@@ -105,6 +105,7 @@ See the _Additional Steps for Linux_ section in {gs-prereqs--xref}}
 --
 TIP: If you don't have auto-import set for Gradle projects, then accept the *Import Gradle Project* prompt that is displayed bottom-right of the screen +
 Note the Gradle menu at the extreme right of the screen:
+
 image::GradleMenuWebApp.png[,300]
 --
 
@@ -120,7 +121,7 @@ Community edition::
 +
 --
 .Compile options
-[source,groovy, subs="attributes+"]]
+[source,groovy, subs="attributes+"]
 ----
 // Required only if your project has some Kotlin source code
 kotlinOptions { jvmTarget = '1.8' }
@@ -131,12 +132,12 @@ compileOptions {
     sourceCompatibility 1.8
 
 //   ... other section content as required by user
-} 
+}
 
 ----
 
 .Dependencies
-[source,groovy, subs="attributes+"]]
+[source,groovy, subs="attributes+"]
 ----
 dependencies {
     implementation "com.couchbase.lite:couchbase-lite-java:{version-full}"
@@ -151,7 +152,7 @@ Enterprise Edition::
 +
 --
 .Compile options
-[source,groovy, subs="attributes+"]]
+[source,groovy, subs="attributes+"]
 ----
 // Required only if your project has some Kotlin source code
 kotlinOptions { jvmTarget = '1.8' }
@@ -168,7 +169,7 @@ compileOptions {
 
 .Dependencies
 
-[source,groovy, subs="attributes+"]]
+[source,groovy, subs="attributes+"]
 ----
 dependencies {
     implementation "com.couchbase.lite:couchbase-lite-java:{version-full}"
@@ -179,7 +180,7 @@ dependencies {
 ----
 
 .Repositories
-[source,groovy, subs="attributes+"]]
+[source,groovy, subs="attributes+"]
 ----
 repositories {
     maven {url 'https://mobile.maven.couchbase.com/maven2/dev/'}
@@ -256,7 +257,7 @@ Enterprise Edition::
 
 .Dependencies
 
-[source, XML, subs="attributes+"]]
+[source, XML, subs="attributes+"]
 ----
 <dependencies>
 
@@ -272,7 +273,7 @@ Enterprise Edition::
 ----
 
 .Repositories
-[source,xml, subs="attributes+"]]
+[source,xml, subs="attributes+"]
 ----
 <repositories>
   <repository>
@@ -296,12 +297,15 @@ Enterprise Edition::
 
 This section explains how to set-up a build project to create {cblJP} web apps using {gpBuildTool} and {gpIDE}.
 
+.Using Maven
+[TIP]
+--
 For examples of how to do this using Maven POM files, see --
 
 * https://github.com/couchbaselabs/mobile-travel-sample/tree/master/java/TravelSample[Couchbase Mobile Workshop]
 
 * https://github.com/couchbaselabs/mobile-training-todo/tree/release/lithium/java-ws/server/Todo[Mobile Taining To Do App]
-
+--
 
 
 === Tomcat
@@ -325,7 +329,7 @@ For information about building a WAR file see <<lbl-war>>
 
 * Ensure your build environment matches the runtime {gpWebServerEnv} environment.
 Specifically, that the Java and {gpWebServerEnv} versions are the same.
-* If your {gpWebServerEnv} server runs Linux, declare the _shared libraries_ (`<pathToCbl>/support` --  as discussed in <<bmkLinuxSharedLibs>>) in the `$CATALINA_HOME/bin/setenv.sh` script file.
+* If your {gpWebServerEnv} server runs Linux, declare the _shared libraries_ (`<pathToCbl>/support`) in the `$CATALINA_HOME/bin/setenv.sh` script file -- see: _Additional Steps for Linux_ section in {gs-prereqs--xref}.
 * Ensure the {cbl} jars (`<pathToCbl>/lib`) are on the executable path within {gpWebServerEnv} -- see: <<bmkMultCblJapps>>
 +
 
