@@ -32,13 +32,19 @@ https://ionic.io/docs/couchbase-lite/tutorials/hotel-search
 
 .Resources
 ****
-* Docs: https://ionic.io/docs/couchbase-lite. +
+* Docs:
+https://ionic.io/docs/couchbase-lite. +
 
-* Tutorial: https://ionic.io/docs/couchbase-lite/tutorials/hotel-search +
+* Tutorial:
+https://ionic.io/docs/couchbase-lite/tutorials/hotel-search +
 
-* Demo: https://github.com/ionic-team/demo-couchbaselite-hotels  +
+* Demo:
+https://github.com/ionic-team/demo-couchbaselite-hotels  +
 
-// * Downloading the plugin:
+* *Download*:
+Reach out to _Ionic_ sales to get access, either from the
+https://ionic.io/docs/couchbase-lite[docs page] or this
+https://ionic.io/integrations/couchbase-lite[landing page]
 
 ****
 
@@ -47,67 +53,36 @@ https://ionic.io/docs/couchbase-lite/tutorials/hotel-search
 You can build your own native plugin on top of Couchbase Lite's native API for iOS and Android.
 The plugin is independent of the application's UI layer and can be used to access native functionality from within your Ionic apps.
 
-// Hide for now 31/01/22
-// You have two options:
-
-// * Capacitor: +
-// END Hide for now 31/01/22
 Ionic recommends use of
 https://capacitorjs.com/docs/plugins[Capacitor]
 , so building a capacitor plugin would be preferred option
-
-// Hide for now 31/01/22
-//
-// * Cordova: +
-// Alternatively, you have the option of building a Cordova Plugin and using that within your Ionic app.
-// +
-// We have some reference implementation of a Cordova plugin and a sample Ionic app that uses the Cordova plugin.
-// You can use the samples in the tutorials as a starting point and expand it to suit your application requirements.
-
-// .Resources:
-// ****
-// * Reference Plugin (Android): https://github.com/rajagp/couchbase-lite-cordova-plugin-android
-// * Sample App: https://github.com/rajagp/userprofile-couchbase-mobile-cordova-android
-
-// ****
-// END Hide for now 31/01/22
-
-
-== React Native
-
-
-https://facebook.github.io/react-native/docs/native-modules-ios[React Native Modules] make it easy to access native platform functionality from within your JavaScript based React Native apps.
-You can leverage this to https://blog.couchbase.com/couchbase-lite-react-native/[build] your own React Native plugin on top of Couchbase Lite's native API for iOS and Android.
-
-// Hide for now 31/01/22
-// We have a couple of tutorials that describe how you can build your plugin for https://docs.couchbase.com/tutorials/hotel-finder/android.html[Android] and https://docs.couchbase.com/tutorials/hotel-finder/ios.html[iOS] respectively.
-// You can use the samples as a starting point and expand it to suit your application requirements.
-// As described in the tutorials, it is recommended that your plugin implement a subset of native APIs that is relevant to your application.
-// END Hide for now 31/01/22
 
 
 == Cordova
 
 
-You also have the option of building a Cordova Plugin that exports a subset of Couchbase Lite native APIs to Javascript.
-Within your Ionic app, you can then use Couchbase Lite as an embedded datastore for offline data storage and Sync Gateway/Couchbase Server for remote data sync.
+In order to use Couchbase Lite as an embedded database within your Cordova-based app, you will need a way to access Couchbase Lite's iOS and Android native APIs from within your Cordova web application.
 
-// Hide for now 31/01/22
-// We have some reference implementations of a Cordova plugin and a sample Ionic app that uses the Cordova plugin.
-// You can use the samples in the tutorials as a starting point and expand it to suit your application requirements.
+https://cordova.apache.org/docs/en/10.x/guide/hybrid/plugins/index.html[Cordova Native Plugins]
+allow web-based apps running in a Cordova webview to access native platform functionality through a Javascript interface.
+So in order to use Couchbase Lite within your Cordova apps, you will have to implement a Cordova native plugin that exports the Couchbase Lite Android and iOS APIs to Javascript.
+It is typical to start with exporting the minimal subset of APIs that your app needs and extend as needed.
 
-// .Resources
-// ****
-// * Reference Plugin (Android): https://github.com/rajagp/couchbase-lite-cordova-plugin-android
-// * Sample App: https://github.com/rajagp/userprofile-couchbase-mobile-cordova-android
-// ****
-// END Hide for now 31/01/22
+*Note:* A reference implementation of a Cordova plugin will be available shortly.
 
 
-== Electron
+== React Native
 
 
-You can develop your own https://electronjs.org[Electron.js] wrapper on top of xref:csharp:quickstart.adoc[Couchbase Lite's C#.NET] API.
+In order to use Couchbase Lite as embedded database within your React Native app, you will need a way to access Couchbase Lite's iOS and Android native APIs from within your React Native JS application.
+
+https://reactnative.dev/docs/native-modules-intro[React Native Modules]
+allow mobile apps written in React Native to access native platform APIs.
+So in order to use Couchbase Lite within your React Native apps, you will have to implement a React Native plugin that exports the Couchbase Lite Android and iOS APIs to Javascript.
+It is typical to start with exporting the minimal subset of APIs that your app needs.
+
+A reference implementation of a React Native plugin will be available shortly.
+
 
 // DO NOT EDIT -- Footer Related Content Block
 // include::{root-partials}block-related-content-std.adoc[]
