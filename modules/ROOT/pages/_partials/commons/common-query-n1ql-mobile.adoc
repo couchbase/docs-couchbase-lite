@@ -13,6 +13,7 @@
 // BEGIN::Local page attributes
 :blank-field: ____
 :menuitem-delimiter: {nbsp}{nbsp}|{nbsp}{nbsp}
+
 :count-result-text: The result set representing a count is a key-value pair. The key being the count name, as defined using `SelectResult.as`
 
 include::{root-partials}_block-caveats.adoc[tags="code-disclaimer"]
@@ -193,6 +194,7 @@ FROM dataSource  <.>
 
 ----
 
+
 === Arguments
 
 <.> Here `dataSource` is the database name against which the query is to run.
@@ -318,7 +320,7 @@ Use `group by` to arrange values in groups of one or more properties.
 
 === Syntax
 
-[Source, sql]
+[source, sql]
 ----
 groupBy = grouping _( having )? <.>
 
@@ -830,6 +832,7 @@ SELECT name
   WHERE department = $department
 
 ----
+
 ====
 
 .Using a Parameter
@@ -845,10 +848,9 @@ let q = Query(
         );
 
 q.parameters =
-      Parameters().setValue(
-        “E001”, forName: "department"); // <.>
+      Parameters().setValue(“E001”, forName: "department"); // <.>
 
-let result = try q.execute();
+let result = q.execute();
 
 ----
 
@@ -869,7 +871,8 @@ Use parentheses to group expressions together to make them more readable or to e
 
 .Parenthesis Expression
 ====
-[source,sql]
+
+[source, sql]
 ----
 SELECT (value1 + value2) * value 3 // <.>
   FROM db
@@ -912,10 +915,10 @@ In this section::
 <<lbl-ops-string>>
 // <<lbl-ops-like>>{menuitem-delimiter}
 
-==== Supported
+// ==== Supported
 
 
-==== Syntax
+// ==== Syntax
 
 [#lbl-ops-maths]
 ==== Maths
@@ -958,7 +961,7 @@ This differs from Server N1QL, which performs float division regardless. Use `DI
 ==== Comparison Operators
 
 ===== Purpose
-The {url-api-classes-query-expression-comparators} can be used in the WHERE statement to specify on which property to match documents.
+The _comparison operators_ are used in the WHERE statement to specify the condition on which to match documents.
 
 .Comparison Operators
 [#tbl-ops-comp]
@@ -1007,14 +1010,14 @@ Two wildcards are supported:
 * `_` Matches a single character.
 
 
-|WHERE name LIKE ‘a%’ +
-WHERE name LIKE ‘%a’ +
-WHERE name LIKE ‘%or% +
-WHERE name LIKE ‘a%o%’ +
-WHERE name LIKE ‘%\_r%’ +
-WHERE name LIKE ‘%a_%’ +
-WHERE name LIKE ‘%a__%’ +
-WHERE name LIKE ‘aldo’
+|WHERE name LIKE 'a%' +
+WHERE name LIKE '%a' +
+WHERE name LIKE '%or%'‘ +
+WHERE name LIKE 'a%o%' +
+WHERE name LIKE '%\_r%' +
+WHERE name LIKE '%a_%' +
+WHERE name LIKE '%a__%' +
+WHERE name LIKE 'aldo'
 
 
 |MATCH
@@ -1270,7 +1273,6 @@ a|`\|\|`
 |===
 
 
-//3322
 [#lbl-ops-unary]
 === Unary Operators
 
@@ -1280,11 +1282,10 @@ They operate by modifying an expression, making it numerically positive or negat
 
 ==== Syntax
 
-[source, sql]
+[source]
 ----
 
-UNARY_OP _ expr
-
+// UNARY_OP _ expr
 ----
 
 .Unary Operators

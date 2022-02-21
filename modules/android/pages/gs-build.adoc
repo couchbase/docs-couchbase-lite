@@ -1,7 +1,7 @@
 = Build and Run
 :page-aliases: start/java-android-gs-build.adoc
-:page-edition: {release}
-:page-status: {prerelease}
+ifdef::show_edition[:page-edition: {release}]
+ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Build and run a starter app to validate your install of Couchbase Lite on Android
 :keywords: edge nosql api android java
@@ -18,29 +18,30 @@ include::{root-partials}block-abstract.adoc[]
 // include::{root-partials}block-related-get-started.adoc[]
 // DO NOT EDIT
 
+
 // :ziputils: ROOT:example$/java-android/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
 == Introduction
 
-The Getting Started app is a very basic Android app comprising a simple activity, which runs a set of Couchbase Lite CRUD functions, logging progress and output.
+
+The Getting Started app is a very basic Android app comprising a simple activity, which runs a set of {cbl-te} CRUD functions, logging progress and output.
 
 You can access the `GettingStarted` project on github here: +
 {url-getting-started-ktx} |  {url-getting-started-java}
 
-== Quick Steps
-
-====
+.Quick Steps
+****
 . Get the project and open it in Android Studio: {url-getting-started-ktx} |  {url-getting-started-java}
 . Build it
 . Run it
 +
 Android Studio's Logcat panel will show `INFO` output similar to that in <<img-output>>:
 . That's it.
-====
+****
 
 If you had problems, or just want more information on the app, there's more below.
 
 Those errors at the end of the run?
-They're because no Sync Gateway was running.
+They are because no Sync Gateway was running.
 That's optional code -- see below.
 Comment-it-out or remove it if you aren't planning on running {sgw-te}.
 
@@ -62,7 +63,9 @@ The Getting Started app shows examples of the essential Couchbase for Android CR
 
 Whilst no exemplar of a real application, it will give you a good idea how to get started using Couchbase Lite.
 
+
 == Add the App to Your Own Project
+
 
 . Create a new 'empty activity' project
  in Android Studio
@@ -116,19 +119,18 @@ include::example$GetStarted_java/app/src/main/java/com/example/getstarted_java/M
 
 == Snags and Pitfalls
 
+
 Mostly around Gradle and versions.
 You may find you need to change the project settings to use Java 11 for instance.
 
-Using this with Sync Gateway and Couchbase Server requires you have working versions of both .
-
-Configuration details for this will be added to the project and this content page prior to 3.0 GA.
-
-
+Using this app with Sync Gateway and Couchbase Server obviously requires you have, or install, working versions of both.
 See also -- {sgw-install--xref}
 
 
 == Minification
-An application that enables minification must ensure that certain pieces of Couchbase Lite library code are not changed -- see <<ruleset>> for a near-minimal rule set that retains the needed code:
+
+
+An application that enables minification must ensure that certain pieces of {cbl} library code are not changed -- see <<ruleset>> for a near-minimal rule set that retains the needed code:
 
 [#ruleset]
 .Ruleset
@@ -145,8 +147,6 @@ An application that enables minification must ensure that certain pieces of Couc
 ----
 
 ====
-
-
 
 
 include::{root-partials}block-related-content-start.adoc[]

@@ -1,6 +1,6 @@
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/BlobExamples.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/BlobExamples.java
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -77,11 +77,11 @@ public class BlobExamples {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/BlobExamples.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/BlobExamples.java
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/p2psync-websocket.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/p2psync-websocket.java
 // subsumed-p2p
 // PASSIVE PEER STUFF
 // Stuff I adapted
@@ -946,22 +946,48 @@ final ReplicatorConfiguration thisConfig
 // END=subsumed-p2p
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/p2psync-websocket.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/p2psync-websocket.java
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/Examples.java 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/Examples.java
 package com.couchbase.examples;
 
 import com.couchbase.lite.*;
 import com.example.docsnippet.Datastore;
 import com.example.docsnippet.Hotel;
 
+import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import com.couchbase.lite.*;
 
-public class Examples {
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
+import com.couchbase.lite.Array;
+import com.couchbase.lite.Blob;
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.DataSource;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.Dictionary;
+import com.couchbase.lite.Meta;
+import com.couchbase.lite.MutableArray;
+import com.couchbase.lite.MutableDictionary;
+import com.couchbase.lite.MutableDocument;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.Result;
+import com.couchbase.lite.SelectResult;
 
 // tag::getting-started[]
 import com.couchbase.lite.*;
@@ -973,6 +999,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+
+public class Examples {
+}
 
 public class GettingStarted {
 
@@ -1011,7 +1040,8 @@ public static void main (String [] args) throws CouchbaseLiteException, Interrup
     // Get the database (and create it if it doesn’t exist).
     DatabaseConfiguration config = new DatabaseConfiguration();
 
-    config.setDirectory(context.getFilesDir().getAbsolutePath()); // <5>
+//    config.setDirectory(
+//            (context.getFilesDir().getAbsolutePath()); // <5>
 
     config.setEncryptionKey(new EncryptionKey(DB_PASS)); // <3>
     Database database = new Database(DB_NAME, config);
@@ -1095,103 +1125,13 @@ public static void main (String [] args) throws CouchbaseLiteException, Interrup
 }
 // end::getting-started[]
 
-// tag::getting-startedGradle[]
-
-plugins {
-    id 'java'
-    id 'application'
-}
-
-// Comment out the below line if no source code is Kotlin
-kotlinOptions { jvmTarget = '1.8' }
-
-// Set minimum JVM level to ensure availability of, for example, lambda expressions
-compileOptions
-{
-    targetCompatibility 1.8
-    sourceCompatibility 1.8
-} 
-
-// Declare repositories
-repositories {
-    // Add your Maven/Ivy/file repository here.
-    jcenter()
-    mavenCentral()
-}
-
-// USE THESE FOR MAVEN
-dependencies {
-//  Use for Enterprise version
-//    implementation "com.couchbase.lite:couchbase-lite-java-ee:2.7.0"
-//  Use for community versions
-//    implementation "com.couchbase.lite:couchbase-lite-java:2.7.0"
-  implementation fileTree(include: ['*.jar'], dir: libs>
-}
-
-application {
-    // Define the main class for the application.
-    mainClassName = 'gettingstarted.GettingStarted'
-}
-
-// end::getting-startedGradle[]
-
-
-// tag::gsGradleMavenExample[]
-plugins {
-    id 'java'
-    id 'application'
-}
-
-// Comment out the below line if no source code is Kotlin
-kotlinOptions { jvmTarget = '1.8' }
-
-// Set minimum JVM level to ensure availability of, for example, lambda expressions
-compileOptions
-{
-    targetCompatibility 1.8
-    sourceCompatibility 1.8
-} 
-
-repositories {
-    maven {
-        url "https://mobile.maven.couchbase.com/maven2/dev/"
-    }
-    google()
-    jcenter()
-}
-
-
-dependencies {
-//  Comment out below line if using Enterprise version
-    implementation "com.couchbase.lite:couchbase-lite-java:2.7.0"
-//  Comment out below line if using Community version
-    implementation "com.couchbase.lite:couchbase-lite-java-ee:2.7.0"
-}
-
-application {
-    // Define the main class for the application.
-    mainClassName = 'gettingstarted.GettingStarted'
-}
-
-// end::gsGradleMavenExample[]
-
 
 
 // tag::GsWebApp_GettingStarted[]
-import com.couchbase.lite.*;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
-@WebServlet( value = "/GettingStarted")
-public class GettingStarted extends javax.servlet.http.HttpServlet {
+//@WebServlet( value = "/GettingStarted")
+//public class GettingStartedWebApp extends javax.servlet.http.HttpServlet {
+public class GettingStartedWebApp {
     private static final String DB_DIR = "/usr/local/var/tomcat/data"; // <1>
     private static final String DB_NAME = "getting-started";
     /*      Credentials declared this way purely for expediency in this demo - use OAUTH in production code */
@@ -1338,12 +1278,13 @@ public class GettingStarted extends javax.servlet.http.HttpServlet {
 // end::GsWebApp_GettingStarted[]
 
 // tag::GsWebApp_Listener[]
-    import javax.servlet.ServletContextEvent;
-    import javax.servlet.ServletContextListener;
-    import javax.servlet.annotation.WebListener;
-
-    @WebListener
-    public class Application implements ServletContextListener {
+//    import javax.servlet.ServletContextEvent;
+//    import javax.servlet.ServletContextListener;
+//    import javax.servlet.annotation.WebListener;
+//
+//    @WebListener
+//    public class Application implements ServletContextListener {
+public class GsWebApp_Listener {
       @Override
       public void contextInitialized(ServletContextEvent event) {
           DatabaseManager.manager().init();
@@ -1352,9 +1293,9 @@ public class GettingStarted extends javax.servlet.http.HttpServlet {
 // end::GsWebApp_Listener[]
 
 // tag::GsWebApp_DbManager[]
-import com.couchbase.lite.*;
-import java.net.URI;
-import java.net.URISyntaxException;
+//import com.couchbase.lite.*;
+//import java.net.URI;
+//import java.net.URISyntaxException;
 
 public class DatabaseManager {
 
@@ -1435,201 +1376,6 @@ public class DatabaseManager {
 }
 
 // end::GsWebApp_DbManager[]
-
-// tag::GsWebApp_Index[]
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title>Couchbase Lite (Java Jvm) :: Getting Started App</title>
-</head>
-<body>
-<h1>Couchbase Lite (Java Jvm) :: Getting Started App</h1>
-
-<p>To invoke the GettingStarted servlet click <a href="GettingStarted">here</a></p>
-
-</body>
-</html>
-// end::GsWebApp_Index[]
-
-// tag::GsWebApp_ShowDbItems[]
-<html>
-<head>
-    <title>Couchbase Lite (Java Jvm) :: Getting Started App</title>
-</head>
-<body>
-<h1>Couchbase Lite (Java Jvm) :: Getting Started App</h1>
-<h2>List all current DB rows</h2>
-<hr>
-<p>NumRows = ${myRowCount}</p>
-<hr>
-${myResults}
-<hr>
-</body>
-</html>
-// end::GsWebApp_ShowDbItems[]
-
-
-// tag::GsWebAppBuildGradle[]
-apply plugin: 'java'
-apply plugin: 'jar'
-// apply plugin: 'war'
-sourceCompatibility = 1.8
-repositories {
-  jcenter()
-}
-dependencies {
-    implementation fileTree(dir: 'libs', include: '*.jar')
-    compileOnly "javax.servlet:javax.servlet-api:4.0.1"
-}
-// end::GsWebAppBuildGradle[]
-
-// tag::GsEmbeddedTomcatBuildGradle[]
-
-ext{
-  TOMCAT_VERSION="9.0.24"
-}
-
-apply plugin: 'java'
-apply plugin: 'war'
-apply plugin: 'com.bmuschko.tomcat'
-
-sourceCompatibility = 1.8
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
-    }
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    //  Use for Enterprise version
-    compileOnly "com.couchbase.lite:couchbase-lite-java-ee:2.7.0"
-    //  Use for community versions
-    //    compileOnly "com.couchbase.lite:couchbase-lite-java:2.7.0"
-    compileOnly "javax.servlet:javax.servlet-api:4.0.1"
-    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${TOMCAT_VERSION}",
-        "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
-        "org.apache.tomcat.embed:tomcat-embed-jasper:${TOMCAT_VERSION}"
-}
-
-tomcat {
-    httpPort = 8080
-    httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
-    ajpProtocol  = 'org.apache.coyote.ajp.AjpNio2Protocol'
-    contextPath = '/'
-}
-
-[tomcatRun, tomcatRunWar].each { task ->
-    fileTree("libs").visit { FileVisitDetails details ->
-        task.additionalRuntimeResources << file(details.file.path)
-    }
-}
-
-// end::GsEmbeddedTomcatBuildGradle[]
-
-
-
-// tag::tcWebAppHarness[]
-package com.couchbase.tcWebAppHarness;
-
-import javax.servlet.ServletException;
-import javax.servlet.ServletContext.*;
-import org.apache.catalina.Context;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.startup.Tomcat;
-
-public class tcWebHarness {
-    public static void main(String[] args) throws ServletException, LifecycleException {
-        String myTCbase="temp";
-        String yourWebAppWarName = args[0];
-        String contextPath = "/GettingStarted"; /* the URL path to your web app */
-        String warPath = "libMyWar/" + "gettingstarted.war"; /* the war file to be embedded */
-//        Context deployedContext = new Context;
-        String portNum="8080";
-        Tomcat tomcat = new Tomcat();
-
-        tomcat.setBaseDir(myTCbase);
-        tomcat.setPort(portNum);                 /* port of your choice */
-        tomcat.addWebapp(contextPath, warPath);
-        tomcat.getHost().setAppBase(".");
-        tomcat.start();
-        tomcat.getServer().await();
-    }
-}
-// end::tcWebAppHarness[]
-
-
-// tag::tcWebAppHarness-setup[]
-mkdir tcWebAppHarness
-cd tcWebAppHarness
-gradle init
-mkdir libs
-mkdir libs/libMyWar
-mkdir libs/libMyJar
-// avoid ascii docs parsing error caused by /* by using /**/ (closing comment immediately)
-// cp -R <path-to-downloaded-couchbase-lib>/lib/**/.jar libs/libCBL
-cp -R <pathToTomcatDownload>/**/.jar libs/libMyJar
-
-// end::tcWebAppHarness-setup[]
-
-// tag::embeddedTomcat[]
-ext{
-  TOMCAT_VERSION="9.0.24"
-}
-
-apply plugin: 'java'
-    apply plugin: 'war'
-    apply plugin: 'com.bmuschko.tomcat'
-
-    sourceCompatibility = 1.8
-
-    buildscript {
-        repositories {
-            jcenter()
-        }
-        dependencies {
-            classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
-        }
-    }
-
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        testCompile group: 'junit', name: 'junit', version: '4.12'
-
-        implementation fileTree(dir: 'libs', include: '*.jar')
-
-        compileOnly "javax.servlet:javax.servlet-api:4.0.1"
-
-        tomcat "org.apache.tomcat.embed:tomcat-embed-core:${TOMCAT_VERSION}",
-                "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
-                "org.apache.tomcat.embed:tomcat-embed-jasper:${TOMCAT_VERSION}"
-    }
-
-    tomcat {
-        httpPort = 8080
-        httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
-        ajpProtocol  = 'org.apache.coyote.ajp.AjpNio2Protocol'
-        contextPath = '/'
-    }
-
-[tomcatRun, tomcatRunWar].each { task ->
-            fileTree("libs").visit { FileVisitDetails details ->
-        task.additionalRuntimeResources << file(details.file.path)
-    }
-    }
-// end::embeddedTomcat[]
-
-
 
 
 // Check context validity for JVM cf Android
@@ -1918,19 +1664,30 @@ apply plugin: 'java'
         // For Documentation
         {
             // tag::query-index[]
-            database.createIndex(
-                "TypeNameIndex",
-                IndexBuilder.valueIndex(
-                    ValueIndexItem.property("type"),
-                    ValueIndexItem.property("name")));
+
+            database.createIndex(ValueIndexConfiguration(["type", "name"]), "TypeNameIndex");
+
             // end::query-index[]
         }
     }
 
+    public void testIndexing_Querybuilder() throws CouchbaseLiteException {
+      // For Documentation
+      {
+          // tag::query-index_Querybuilder[]
+          database.createIndex(
+              "TypeNameIndex",
+              IndexBuilder.valueIndex(
+                  ValueIndexItem.property("type"),
+                  ValueIndexItem.property("name")));
+          // end::query-index_Querybuilder[]
+      }
+  }
+
     // ### SELECT statement
     public void testSelectStatement() {
         {
-            // tag::query-select-meta[]
+            // tag::query-select-props[]
             Query query = QueryBuilder
                 .select(
                     SelectResult.expression(Meta.id),
@@ -1948,24 +1705,26 @@ apply plugin: 'java'
             } catch (CouchbaseLiteException e) {
                 Log.e("Sample", e.getLocalizedMessage());
             }
-            // end::query-select-meta[]
+            // end::query-select-props[]
+          }
         }
-    }
 
-    // META function
-    public void testMetaFunction() throws CouchbaseLiteException {
-        // For Documentation
-        {
+        // META function
+        public void testMetaFunction() throws CouchbaseLiteException {
+          // For Documentation
+          {
+            // tag::query-select-meta[]
             Query query = QueryBuilder
-                .select(SelectResult.expression(Meta.id))
-                .from(DataSource.database(database))
-                .where(Expression.property("type").equalTo(Expression.string("airport")))
-                .orderBy(Ordering.expression(Meta.id));
+            .select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("airport")))
+            .orderBy(Ordering.expression(Meta.id));
             for (Result result : query.execute()) {
-                Log.w("Sample", String.format("airport id -> %s", result.getString("id")));
-                Log.w("Sample", String.format("airport id -> %s", result.getString(0)));
+              Log.w("Sample", String.format("airport id -> %s", result.getString("id")));
+              Log.w("Sample", String.format("airport id -> %s", result.getString(0)));
             }
-        }
+            // end::query-select-meta[]
+          }
     }
 
     // ### all(*)
@@ -2281,26 +2040,55 @@ apply plugin: 'java'
 
     void prepareIndex() throws CouchbaseLiteException {
         // tag::fts-index[]
-        database.createIndex(
-            "nameFTSIndex",
-            IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false));
+
+        FullTextIndexConfiguration config = new FullTextIndexConfiguration("Overview").ignoreAccents(false)
+
+        database.createIndex( config, "overviewFTSIndex")
+
         // end::fts-index[]
     }
 
-    public void testFTS() throws CouchbaseLiteException {
-        // tag::fts-query[]
-        Expression whereClause = FullTextExpression.index("nameFTSIndex").match("buy");
-        Query ftsQuery = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(whereClause);
-        ResultSet ftsQueryResult = ftsQuery.execute();
-        for (Result result : ftsQueryResult) {
-            Log.i(
-                TAG,
-                String.format("document properties %s", result.getString(0)));
-        }
-        // end::fts-query[]
+    void prepareIndex_Querybuilder() throws CouchbaseLiteException {
+      // tag::fts-index_Querybuilder[]
+      database.createIndex(
+          "overviewFTSIndex",
+          IndexBuilder.fullTextIndex(FullTextIndexItem.property("overviewFTSIndex")).ignoreAccents(false));
+      // end::fts-index_Querybuilder[]
     }
+
+
+    public void testFTS() throws CouchbaseLiteException {
+      // tag::fts-query[]
+
+      Query ftsQuery =
+            database.createQuery(
+            "SELECT _id, overview FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)");
+
+      for (result in ftsQuery.execute().allResults()) {
+        Log.i(TAG, "${result.getString("id")}: ${result.getString("overview")}");
+      }
+
+      // end::fts-query[]
+  }
+  public void testFTS_Querybuilder() throws CouchbaseLiteException {
+      // tag::fts-query_Querybuilder[]
+
+      Expression whereClause = FullTextFunction.match("overviewFTSIndex", "'michigan'");
+      Query ftsQuery =
+              QueryBuilder.select(SelectResult.expression(Meta.id),
+                                  SelectResult.expression(overview)
+                                )
+          .from(DataSource.database(database))
+          .where(whereClause);
+
+          for (result in ftsQuery.execute().allResults()) {
+            Log.i(TAG, "${result.getString("id")}: ${result.getString("overview")}");
+          }
+
+      // end::fts-query_Querybuilder[]
+  }
+
+
 
     /* The `tag::replication[]` example is inlined in java.adoc */
 
@@ -2905,7 +2693,7 @@ class PassivePeerConnection implements MessageEndpointConnection {
 }
 
 // tag::predictive-model[]
-// `tensorFlowModel` is a fake implementation
+// tensorFlowModel is a fake implementation
 // this would be the implementation of the ml model you have chosen
 class ImageClassifierModel implements PredictiveModel {
     @Override
@@ -2913,7 +2701,7 @@ class ImageClassifierModel implements PredictiveModel {
         Blob blob = input.getBlob("photo");
         if (blob == null) { return null; }
 
-        // `tensorFlowModel` is a fake implementation
+        // tensorFlowModel is a fake implementation
         // this would be the implementation of the ml model you have chosen
         return new MutableDictionary(TensorFlowModel.predictImage(blob.getContent())); // <1>
     }
@@ -3295,13 +3083,190 @@ public class TestQueries {
 
 } // class
 
+public class Supporting_Datatypes {
+    private static final String TAG = "info";
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/Examples.java 
+
+    public void datatype_usage() throws CouchbaseLiteException {
+
+
+        // tag::datatype_usage[]
+        // tag::datatype_usage_createdb[]
+        // Initialize the Couchbase Lite system
+        CouchbaseLite.init(context);
+
+        // Get the database (and create it if it doesn’t exist).
+        DatabaseConfiguration config = new DatabaseConfiguration();
+
+        config.setDirectory(context.getFilesDir().getAbsolutePath());
+
+        Database database = new Database("getting-started", config);
+
+        // end::datatype_usage_createdb[]
+        // tag::datatype_usage_createdoc[]
+        // Create your new document
+        // The lack of 'const' indicates this document is mutable
+        MutableDocument mutableDoc = new MutableDocument();
+
+        // end::datatype_usage_createdoc[]
+        // tag::datatype_usage_mutdict[]
+        // Create and populate mutable dictionary
+        // Create a new mutable dictionary and populate some keys/values
+        MutableDictionary address = new MutableDictionary();
+        address.setString("street", "1 Main st.");
+        address.setString("city", "San Francisco");
+        address.setString("state", "CA");
+        address.setString("country", "USA");
+        address.setString("code"), "90210");
+
+        // end::datatype_usage_mutdict[]
+        // tag::datatype_usage_mutarray[]
+        // Create and populate mutable array
+        MutableArray phones = new MutableArray();
+        phones.addString("650-000-0000");
+        phones.addString("650-000-0001");
+
+        // end::datatype_usage_mutarray[]
+        // tag::datatype_usage_populate[]
+        // Initialize and populate the document
+
+        // Add document type to document properties <.>
+        mutable_doc.setString("type", "hotel"));
+
+        // Add hotel name string to document properties <.>
+        mutable_doc.setString("name", "Hotel Java Mo"));
+
+        // Add float to document properties <.>
+        mutable_doc.setFloat("room_rate", 121.75f);
+
+        // Add dictionary to document's properties <.>
+        mutable_doc.setDictionary("address", address);
+
+
+        // Add array to document's properties <.>
+        mutable_doc.setArray("phones", phones);
+
+        // end::datatype_usage_populate[]
+        // tag::datatype_usage_persist[]
+        // Save the document changes <.>
+        database.save(mutable_doc);
+
+        // end::datatype_usage_persist[]
+        // tag::datatype_usage_closedb[]
+        // Close the database <.>
+        database.close();
+
+        // end::datatype_usage_closedb[]
+
+        // end::datatype_usage[]
+
+    }
+
+
+    public void datatype_dictionary() throws CouchbaseLiteException {
+        Database database = new Database("mydb");
+
+        // tag::datatype_dictionary[]
+        // NOTE: No error handling, for brevity (see getting started)
+        Document document = database.getDocument("doc1");
+
+        // Getting a dictionary from the document's properties
+        Dictionary dict = document.getDictionary("address");
+
+        // Access a value with a key from the dictionary
+        String street = dict.getString("street");
+
+        // Iterate dictionary
+        for (String key : dict) {
+            dict.getValue(key);
+            Log.i("x", "Key %s, = %s", key, dict.getValue(key));
+        }
+
+        // Create a mutable copy
+        MutableDictionary mutable_Dict = dict.toMutable();
+        // end::datatype_dictionary[]
+    }
+
+    public void datatype_mutable_dictionary() throws CouchbaseLiteException {
+
+        Database database = new Database("mydb");
+
+        // tag::datatype_mutable_dictionary[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        // Create a new mutable dictionary and populate some keys/values
+        MutableDictionary mutable_dict = new MutableDictionary();
+        mutable_dict.setString("street", "1 Main st.");
+        mutable_dict.setString("city", "San Francisco");
+
+        // Add the dictionary to a document's properties and save the document
+        MutableDocument mutable_doc = new MutableDocument("doc1");
+        mutable_doc.setDictionary("address", mutable_dict);
+        database.save(mutable_doc);
+
+        // end::datatype_mutable_dictionary[]
+    }
+
+
+    public void datatype_array() throws CouchbaseLiteException {
+        Database database = new Database("mydb");
+
+        // tag::datatype_array[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        Document document = database.getDocument("doc1");
+
+        // Getting a phones array from the document's properties
+        Array array = document.getArray("phones");
+
+        // Get element count
+        int count = array.count();
+
+        // Access an array element by index
+        if (count >= 0) { String phone = array.getString(1); }
+
+        // Iterate dictionary
+        for (int i = 0; i < count; i++)
+        {
+            Log.i("tag", "Item %d = %s", i, array.getString(i));
+        }
+
+        // Create a mutable copy
+        MutableArray mutable_array = array.toMutable();
+        // end::datatype_array[]
+
+
+    }
+
+    public void datatype_mutable_array() throws CouchbaseLiteException {
+        Database database = new Database("mydb");
+
+        // tag::datatype_mutable_array[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        // Create a new mutable array and populate data into the array
+        MutableArray mutable_array = new MutableArray();
+        mutable_array.addString("650-000-0000");
+        mutable_array.addString("650-000-0001");
+
+        // Set the array to document's properties and save the document
+        MutableDocument mutable_doc = new MutableDocument("doc1");
+        mutable_doc.setArray("phones", mutable_array);
+        database.save(mutable_doc);
+        // end::datatype_mutable_array[]
+    }
+
+} // end  class supporting_datatypes
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/JSONExamples.java 
+
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/Examples.java
+
+
+
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/JSONExamples.java
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -3524,5 +3489,5 @@ class Hotel {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/JSONExamples.java 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/JSONExamples.java
 

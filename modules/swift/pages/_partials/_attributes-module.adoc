@@ -30,6 +30,15 @@
 :url-api-references-structs: {url-api-references}/Structs/
 :url-api-references-swift-sep: {sep}s:18CouchbaseLiteSwift
 
+
+
+// Supporting Data Type Classes
+:url-api-class-array: {url-api-references-classes}{api-pfx}ArrayObject.html[ArrayObject]
+:url-api-class-mutablearray: {url-api-references-classes}{api-pfx}MutableArrayObject.html[MutableArrayObject]
+:url-api-class-dictionary: {url-api-references-classes}{api-pfx}DictionaryObject.html[DictionaryObject]
+:url-api-class-mutabledictionary: {url-api-references-classes}{api-pfx}MutableDictionaryObject.html[MutableDictionaryObject]
+
+
 // DATABASE CLASSES
 
 :url-api-references-database: {url-api-references-classes}{api-pfx}Database.html
@@ -38,12 +47,17 @@
 :url-api-method-database-close: {url-api-method-database}C5closeyyKF[Database.close()]
 :url-api-method-database-delete: {url-api-method-database}C6deleteyyKF:[Database.delete()]
 
+
+
+
+
 // Begin -- DatabaseConfiguration
-:url-api-references-databasecfg: {url-api-references-classes}{api-pfx}DatabaseConfiguration.html
-:url-api-class-databasecfg: {url-api-references-databasecfg}[DatabaseConfiguration]
-:url-api-method-databasecfg: {url-api-references-databasecfg}{sep}s:18CouchbaseLiteSwift21DatabaseConfiguration
-:url-api-method-databasecfg-setdir: {url-api-method-databasecfg}C9directorySSvp[DatabaseConfiguration.directory()]
-:url-api-method-databasecfg-encryption: {url-api-method-databasecfg}C13encryptionKeyAA010EncryptionG0OSgvp[DatabaseConfiguration.encryptionKey()]
+:url-api-references-databasecfg: {url-api-references-structs}{api-pfx}DatabaseConfiguration.html
+:url-api-class-databasecfg: {url-api-references-databasecfg}[{api-pfx}DatabaseConfiguration]
+:url-api-struct-databasecfg: {url-api-references-databasecfg}{url-api-references-swift-sep}21DatabaseConfiguration
+:url-api-method-databasecfg: {url-api-struct-databasecfg}[DatabaseConfiguration]
+:url-api-method-databasecfg-setdir: {url-api-struct-databasecfg}C9directorySSvp[DatabaseConfiguration.directory()]
+:url-api-method-databasecfg-encryption: {url-api-struct-databasecfg}V13encryptionKeyAA010EncryptionG0OSgvp[DatabaseConfiguration.encryptionKey()]
 // End -- DatabaseConfiguration
 
 :url-api-method-database-save-doc: {url-api-references-database}{url-api-references-swift-sep}8DatabaseC12saveDocumentyyAA07MutableF0CKF[Database.saveDocument(_:)]
@@ -52,9 +66,13 @@
 
 :url-api-method-database-save-conflict: {url-api-references-database}{sep}C12saveDocument_15conflictHandlerSbAA07MutableF0C_SbAG_AA0F0CSgtctKF[Database.saveDocument(_:conflictHandler:)]
 
-
-:url-api-method-database-compact: {url-api-method-database}C7compactyyKF[Database.compact()]
+// deprecated 2.8
+:url-api-method-database-compact: [Database.compact()]
+//
+// :url-api-method-database-compact: {url-api-method-database}C7compactyyKF[Database.compact()]
 :url-api-method-database-copy: {url-api-method-database}eC4copy8fromPath02toD010withConfigySS_SSAA0D13ConfigurationCSgtKFZ[Database.copy()]
+
+:url-api-method-database-change-encryption-key: {url-api-method-database}C19changeEncryptionKeyyyAA0fG0OSgKF[Database.changeEncryptionKey()]
 
 :url-api-method-database-setloglevel: {url-api-method-database}C11setLogLevel_6domainyAA0fG0O_AA0F6DomainOtFZ[Database.setLogLevel()]
 
@@ -123,8 +141,7 @@
 
 :url-api-classes-result-pfx: {url-api-references-classes}{api-pfx}Result.html
 :url-api-class-result: {url-api-classes-result-pfx}[{api-pfx}Result]
-
-:url-api-method-result-toJSON: {url-api-classes-result-pfx}{api-pfx}s:18CouchbaseLiteSwift6ResultC6toJSONSSyF[result.toJSON()]
+:url-api-method-result-toJSON: {url-api-classes-result-pfx}{sep}{api-pfx}s:18CouchbaseLiteSwift6ResultC6toJSONSSyF[result.toJSON()]
 
 // Function class and methods
 //
@@ -222,12 +239,12 @@
 
 // Replicator Status
 :url-api-references-replicator-status: {url-api-references-classes}Replicator/Status.html
-:url-api-property-replicator-status-pfx: {url-api-references-replicator-status}{url-api-references-swift-sep}10ReplicatorC6Status
+:url-api-properties-replicator-status-pfx: {url-api-references-replicator-status}{url-api-references-swift-sep}10ReplicatorC6Status
 
-:url-api-property-replicator-status: {url-api-property-replicator-status-pfx}[Status]
-:url-api-enum-replicator-activity: {url-api-property-replicator-status-pfx}V8activityAC13ActivityLevelOvp[Activity]
-:url-api-enum-replicator-progress: {url-api-property-replicator-status-pfx}V8progressAC8ProgressVvp[Progress]
-:url-api-enum-replicator-error: {url-api-property-replicator-status-pfx}V5errors5Error_pSgvp[Error]
+:url-api-properties-replicator-status: {url-api-properties-replicator-status-pfx}[Status]
+:url-api-enum-replicator-activity: {url-api-properties-replicator-status-pfx}V8activityAC13ActivityLevelOvp[Activity]
+:url-api-enum-replicator-progress: {url-api-properties-replicator-status-pfx}V8progressAC8ProgressVvp[Progress]
+:url-api-enum-replicator-error: {url-api-properties-replicator-status-pfx}V5errors5Error_pSgvp[Error]
 
 
 // :url-api-enum-replicator-status: {url-api-references-classes}Replicator/Status.html[Status struct]

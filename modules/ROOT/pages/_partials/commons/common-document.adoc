@@ -23,24 +23,318 @@ endif::[]
 
 == Overview
 
-In Couchbase Lite, a document's body is stored in an internal, efficient, binary form.
-This internal form is easily converted into a manageable native dictionary format for manipulation in applications by using the {to-dictionary} method.
-It then appears as collection of key-value (k-v) pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.
 
-Every document is identified by a document ID, which can be automatically generated (as a UUID) or specified programmatically;
+=== Document Structure
+
+In {cbl-te} the term 'document' refers to an entry in the database; a record, or row in a table if you like.
+
+Each document has an ID (primary key in other databases) by which it can be located.
+This ID can be automatically generated (as a UUID) or specified programmatically;
 the only constraints are that it must be unique within the database, and it can't be changed.
+The document also has a value which contains the actual application data.
+This value is stored as a dictionary collection of key-value (k-v) pairs where the values themselves may comprise different types of data such as numbers, strings, arrays or even nested objects -- see: <<Data Types>>
 
-Couchbase Lite also provides for the direct handling of JSON data, whether as an object or a string. This applied to native types such as documents, blobs and arrays).
-This approach is implemented in most cases by the provision of a {to-json} method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array) -- see <<lbl-json-data>>.
-Used in conjunction with an appropriate serialization/de-serialization strategy this provides for a flexible data manipulation.
+=== Data Encoding
+
+The document body is stored in an internal, efficient, binary form (
+https://github.com/couchbaselabs/fleece#readme[Fleece]
+). +
+This internal form is easily converted into a manageable native dictionary format for manipulation in applications.
+
+Fleece data is stored in the smallest format that will hold the value, whilst maintaining the integrity of the value.
 
 
-== Initializers
+ifdef::is-android[]
+[discrete]
+=== Fleece data encoding
+
+When working with Android-Java, the Fleece encoding cycle can result in the Java type information being lost.
+So, care should be taken when storing and recovering data in a document - or converting that document to JSON and back - using non-explicit functions such as `toArray()` or `toMap()`.
+
+Always use explicit creation of the expected type, whenever the type of result is not itself explicit. For example:
+
+[source, Java]
+----
+Map<String, Object> doc = db.getDocument(someDoc.getId()).toMap();
+Long testVal = Long.valueOf(doc.get(“test”))
+----
+
+Similarly, interpreting data not stored as `boolean` as a boolean value can give inconsistent results.
+
+
+endif::is-android[]
+
+=== Data Types
+
+The `Document` class offers a set of property accessors for various scalar types, including boolean, integers, floating-point and strings.
+These accessors take care of converting to/from JSON encoding, and make sure you get the type you're expecting.
+
+So your document content may well comprise one or more supporting data types such as:
+
+[,cols="1,1,1,1", grid=none ]
+|===
+
+a|* Boolean
+a|* Date
+a|* Double
+a|* Float
+a|* Int
+a|* Long
+a|* String
+
+|===
+
+In addition to these basic data types Couchbase Lite provides for the following:
+
+[,cols="1,1", grid=none ]
+|===
+
+a|*  Dictionary -- represents a read-only key-value pair collection
+*  MutableDictionary -- represents a writeable key-value pair collection
+
+a|*  Array -- represents a readonly ordered collection of objects
+*  MutableArray -- represents a writeable collection of objects
+
+a|*  Blob -- represents an arbitrary piece of binary data |
+
+|===
+
+=== JSON
+
+Couchbase Lite also provides for the direct handling of JSON data implemented in most cases by the provision of a {to-json} method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array) -- see <<lbl-json-data>>.
+
+
+== Constructing a Document
+
+
+An individual document often represents a single instance of an object in application code.
+A document might be considered equivalent to a row in a relational table; with each of the document’s attributes being equivalent to a column.
+
+Documents can contain nested structures.
+This allows developers to express many-to-many relationships without requiring a reference or junction table; and is naturally expressive of hierarchical data.
+
+Most apps will work with one or more documents, persisting them to a local database and optionally syncing them, either centrally or to the cloud.
+
+In this section we provide an example of how you might create a `hotel` document, which provides basic contact details and price data.
+
+.Data Model
+[source]
+----
+
+hotel: {
+  type: string (value = `hotel`)
+  name: string
+  address: dictionary {
+    street: string
+    city: string
+    state: string
+    country: string
+    code: string
+  }
+  phones: array
+  rate: float
+}
+
+----
+
+[#ex-usage]
+=== Open a Database
+
+First we open your database.
+If the database does not already exist, Couchbase Lite will create it for us.
+
+:param-tags: datatype_usage_createdb
+include::{root-partials}_block_tabbed_code.adoc[]
+:param-tags!:
+
+See: {database--xref} for more information
+
+=== Create a Document
+
+Now we create a new document to hold our application's data.
+
+Because we will be adding data to the document we must use its mutable form.
+
+:param-tags: datatype_usage_createdoc
+include::{root-partials}_block_tabbed_code.adoc[]
+:param-tags!:
+
+For more on using *Documents*, see: <<Document Initializers>> and <<Mutability>>.
+
+=== Create a Dictionary
+
+Here we create a dictionary (`address`).
+Because we want to add values into the dictionary, we must create it in _mutable_ form.
+
+When the dictionary is retrieved, each element's value is directly accessible via its own key.
+
+:param-tags: datatype_usage_mutdict
+include::{root-partials}_block_tabbed_code.adoc[]
+:param-tags!:
+
+For more on using *Dictionaries*, see: <<Using Dictionaries>>
+
+=== Create an Array
+
+Since our hotel may have multiple lines we provide an array (`phones`) to hold contact numbers.
+Again, because we want to add values into the array, we create it in _mutable_ form.
+
+:param-tags: datatype_usage_mutarray
+include::{root-partials}_block_tabbed_code.adoc[]
+:param-tags!:
+
+For more on using *Arrays*, see: <<Using Arrays>>
+
+=== Populate a Document
+
+Here we add our data to the mutable document we created earlier. Each data item is stored as a key-value pair.
+
+:param-tags: datatype_usage_populate
+include::{root-partials}_block_tabbed_code.adoc[]
+:param-tags!:
+
+<.> Add hotel name (string)
+
+<.> Add average room rate (float)
+
+<.> Add document type (string) +
+Couchbase recommend using a `type` attribute to define each logical document type.
+
+<.> Add address (dictionary)
+The `address` dictionary is added to the document and stored with the key `address`. We will use this to retrieve it when needed.
+
+<.> Add phone numbers (array)
+The `phones` arrary is added to the document and stored with the key `phones`. We will use this to retrieve it when needed.
+
+=== Save a Document
+
+With the document now populated, we can persist to our Couchbase Lite database, auto-generating the document id.
+
+:param-tags: datatype_usage_persist
+include::{root-partials}_block_tabbed_code.adoc[]
+:param-tags!:
+
+=== Close the Database
+
+With our document saved, we can now close our Couchbase Lite database.
+
+:param-tags: datatype_usage_closedb
+include::{root-partials}_block_tabbed_code.adoc[]
+:param-tags!:
+
+ifdef::is-c[]
+=== Release resources
+
+Now we have finished and can release the resources.
+
+:param-tags: datatype_usage_release
+include::{root-partials}_block_tabbed_code.adoc[]
+:param-tags!:
+endif::is-c[]
+
+
+== Working with Data
+
+
+ifndef::is-c,is-objc[]
+=== Checking a Document's Properties
+
+To check whether a given property exists in the document, you should use the {url-api-method-document-contains} method.
+
+If the property doesn't exist, the call will return the default value for that getter method (0 for {url-api-method-document-getint} 0.0 for {url-api-method-document-getfloat} etc.).
+endif::[]
+
+ifdef::is-android[]
+.Fleece data encoding
+[NOTE]
+--
+Care should be taken when storing and recovering data in a document or converting that document to JSON and back. +
+Data encoding (Fleece) can result in `Long` values being converted to `Float` instead of `Double`. +
+Interpreting data as boolean can also give inconsistent results.
+--
+
+endif::is-android[]
+
+ifndef::is-c[]
+=== Date accessors
+
+As a convenience Couchbase Lite offers _Date_ accessors.
+Dates are a common data type, but JSON doesn't natively support them, so the convention is to store them as strings in ISO-8601 format.
+
+.Date Getter
+[#ex-date-getter]
+:param-tags: date-getter
+:param-leader: pass:q,a[This example sets the date on the `createdAt` property and reads it back using the {url-api-method-document-getdate} accessor method.]
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
+endif::[]
+
+
+=== Using Dictionaries
+
+.API References
+
+* {url-api-class-dictionary}
+
+ifndef::is-c[* {url-api-class-mutabledictionary}]
+
+
+.Read Only
+[#ex-dict]
+:param-tags: datatype_dictionary
+// :param-leader: pass:q,a[Changes to the document are persisted to the database when the `save` method is called.]
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
+
+
+.Mutable
+[#ex-mutdict]
+:param-tags: datatype_mutable_dictionary
+// :param-leader: pass:q,a[Changes to the document are persisted to the database when the `save` method is called.]
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
+
+=== Using Arrays
+
+.API References
+* {url-api-class-array}
+
+ifndef::is-c:[* {url-api-class-mutablearray}]
+
+.Read Only
+[#ex-array]
+:param-tags: datatype_array
+// :param-leader: pass:q,a[Changes to the document are persisted to the database when the `save` method is called.]
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
+
+.Mutable
+[#ex-mutarray]
+:param-tags: datatype_mutable_array
+// :param-leader: pass:q,a[Changes to the document are persisted to the database when the `save` method is called.]
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
+
+
+=== Using Blobs
+
+For more on working with blobs -- see {blob--xref}
+
+
+== Document Initializers
+
 
 The following methods/initializers can be used:
 
 * The {url-api-method-mutabledocument-init} initializer can be used to create a new document where the document ID is randomly generated by the database.
+
 * The {url-api-method-mutabledocument-initid} initializer can be used to create a new document with a specific ID.
+
 * The {url-api-method-database-getdocument} method can be used to get a document.
 If it doesn't exist in the database, it will return `null`.
 This method can be used to check if a document with a given ID already exists in the database.
@@ -56,6 +350,7 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 
 
 == Mutability
+
 
 ifdef::is-c[]
 Couchbase Lite for C's document objects `CBLDocument*` can be either mutable or immutable.
@@ -87,42 +382,10 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<lbl-doc-constraints>>.
 
 
-ifndef::is-c[]
-== Typed Accessors
-
-=== Scalar type
-The `Document` class now offers a set of property accessors for various scalar types, including boolean, integers, floating-point and strings.
-These accessors take care of converting to/from JSON encoding, and make sure you get the type you're expecting.+
-See: {url-api-class-dictionary}.
-
-endif::[]
-ifndef::is-c[]
-=== Date accessors
-// DateTimeOffset c#
-In addition, as a convenience we offer `Date` accessors.
-Dates are a common data type, but JSON doesn't natively support them, so the convention is to store them as strings in ISO-8601 format.
-
-.Date Getter
-[#ex-date-getter]
-:param-tags: date-getter
-:param-leader: pass:q,a[This example sets the date on the `createdAt` property and reads it back using the {url-api-method-document-getdate} accessor method.]
-include::{root-partials}_block_tabbed_code_example.adoc[]
-:param-tags!:
-:param-leader!:
-endif::[]
-
-
-ifndef::is-c,is-objc[]
-=== Checking for properties
-To check whether a given property exists in the document, you should use the {url-api-method-document-contains} method.
-
-If the property doesn't exist in the document it will return the default value for that getter method (0 for {url-api-method-document-getint} 0.0 for {url-api-method-document-getfloat} etc.).
-endif::[]
-
-
 ifeval::["{param-module}"=="swift"]
+== Document Conversion
 
-=== Document Conversion
+
 A `Document` can be converted to a plain dictionary type and-or to a JSON string.
 This can often be useful to pass the document contents as a plain object to another method.
 
@@ -137,8 +400,112 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 
 endif::[]
 
+
+== Batch operations
+
+
+If you're making multiple changes to a database at once, it's faster to group them together.
+The following example persists a few documents in batch.
+
+.Batch operations
+[#ex-batch-ops]
+:param-tags: batch
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
+At the *local* level this operation is still transactional: no other `Database` instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
+But Couchbase Mobile is a distributed system, and due to the way replication works, there's no guarantee that Sync Gateway or other devices will receive your changes all at once.
+
+
+== Document change events
+
+
+It is possible to register for document changes.
+The following example registers for changes to the document with ID `user.john` and prints the `verified_account` property when a change is detected.
+
+
+.Document change events
+[#ex-doc-events]
+:param-tags: document-listener
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
+ifdef::is-android[]
+
+=== Using Kotlin Flows and LiveData
+
+Kotlin users can also take advantage of Flows and LiveData to monitor for changes.
+
+The following methods show how to watch for document changes in a given database or for changes to a specific document.
+
+[{tabs}]
+=====
+Database Changes::
++
+--
+[source, Kotlin, subs="attributes+"]
+----
+include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt[tag="flow-as-database-change-listener"]
+----
+--
+
+Document Changes::
++
+--
+[source, Kotlin, subs="attributes+"]
+----
+
+include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt[tag="flow-as-document-change-listener"]
+----
+--
+=====
+
+endif::is-android[]
+
+
+== Document Expiration
+
+
+include::{root-partials}document-expiration.adoc[]
+
+
+[#lbl-doc-constraints]
+== Document Constraints
+
+
+Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
+This is to facilitate the creation of documents for use either in _local only_ mode where documents are not synced, or when used exclusively in peer-to-peer sync.
+
+NOTE: "_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes -- see <<res-keys>>.
+
+Users are cautioned that any attempt to sync such documents to Sync Gateway will result in an error.
+To be future proof, you are advised to avoid creating such documents.
+Use of these attributes for user-level data may result in undefined system behavior.
+
+For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway - data modeling guidelines]
+
+[#res-keys]
+.Reserved Keys List
+====
+
+* _attachments
+
+* _deleted {fn-rsvd-wds}
+
+* _id {fnref-rsvd-wds}
+
+* _removed
+
+* _rev {fnref-rsvd-wds}
+
+* _sequence
+====
+
+
 [#lbl-json-data]
 == Working with JSON Data
+
+
 In this section::
 <<lbl-array>>
 ifndef::is-c[| <<lbl-blob>>]
@@ -158,7 +525,9 @@ Additionally you can:
 
 * Initialize a 'MutableArrayObject' using data supplied as a JSON string.
 This is done using the `init(json)` constructor-- see: <<ex-array>>
+
 * Convert an `ArrayFragment` object to a JSON String
+
 * Set data with a JSON string using `setJSON()`
 
 .Arrays as JSON strings
@@ -166,9 +535,13 @@ This is done using the `init(json)` constructor-- see: <<ex-array>>
 :param-tags: tojson-array
 include::{root-partials}_block_tabbed_code_example.adoc[]
 :param-tags!:
+
 <.> Initialize array with JSON string
+
 <.> Create and save new document using the array
+
 <.> Get native array object from new doc and print its elements
+
 <.> Get an array from the document as a JSON string
 
 // .Output
@@ -203,6 +576,7 @@ Additionally you can:
 
 * Initialize a 'MutableDictionaryObject' using data supplied as a JSON string.
 This is done using the `init(json)` constructor-- see: <<ex-dictionary>>
+
 * Set data with a JSON string using `setJSON()`
 
 [#ex-dictionary]
@@ -211,11 +585,6 @@ This is done using the `init(json)` constructor-- see: <<ex-dictionary>>
 include::{root-partials}_block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Set the dictionary using a JSON string
-
-// .Output
-// ----
-// include::{snippet}[tag=tojson-dictionary-output,indent=0]
-// ----
 
 
 [#lbl-document]
@@ -227,22 +596,20 @@ Additionally you can:
 
 * Initialize a 'MutableDocument' using data supplied as a JSON string.
 This is done using the `init(json)` and-or `init(id: json:)` constructor-- see: <<ex-document>>
-* Set data with a JSON string using `setJSON()`
 
+* Set data with a JSON string using `setJSON()`
 
 .Documents as JSON strings
 [#ex-document]
 :param-tags: query-get-all;tojson-document
 include::{root-partials}_block_tabbed_code_example.adoc[]
 :param-tags!:
-<.> Get a document as a JSON string
-<.> Initialize a MutableDocument using the JSON string and save to a separate database
-<.> Retrieve the document created from JSON and print values
 
-// .Output
-// ----
-// include::{snippet}[tag=tojson-document-output,indent=0]
-// ----
+<.> Get a document as a JSON string
+
+<.> Initialize a MutableDocument using the JSON string and save to a separate database
+
+<.> Retrieve the document created from JSON and print values
 
 
 [#lbl-result]
@@ -252,93 +619,6 @@ Convert a `Query Result` to JSON using its {to-JSON} accessor method.
 
 include::{root-commons}querybuilder-jsonresult.adoc[subs="macros,attributes"]
 
-
-== Batch operations
-
-If you're making multiple changes to a database at once, it's faster to group them together.
-The following example persists a few documents in batch.
-
-.Batch operations
-[#ex-batch-ops]
-:param-tags: batch
-include::{root-partials}_block_tabbed_code_example.adoc[]
-:param-tags!:
-
-At the *local* level this operation is still transactional: no other `Database` instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
-But Couchbase Mobile is a distributed system, and due to the way replication works, there's no guarantee that Sync Gateway or other devices will receive your changes all at once.
-
-== Document change events
-
-It's also possible to register for document changes.
-The following example registers for changes to the document with ID `user.john` and prints the `verified_account` property.
-
-
-.Document change events
-[#ex-doc-events]
-:param-tags: document-listener
-include::{root-partials}_block_tabbed_code_example.adoc[]
-:param-tags!:
-
-ifdef::is-android[]
-
-=== Using Kotlin Flows and LiveData
-Kotlin users can also take advantage of Flows and LiveData to monitor for changes.
-
-The following methods show how to watch for document changes in a given database or for changes to a specific document.
-
-[{tabs}]
-=====
-Database Changes::
-+
---
-[source, Kotlin, subs="attributes+"]
-----
-include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt[tag="flow-as-database-change-listener"]
-
---
-
-Document Changes::
-+
---
-[source, Kotlin, subs="attributes+"]
-----
-
-include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt[tag="flow-as-document-change-listener"]
-----
---
-=====
-
-endif::is-android[]
-
-== Document Expiration
-
-include::{root-partials}document-expiration.adoc[]
-
-
-[#lbl-doc-constraints]
-== Document Constraints
-
-Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
-This is to facilitate the creation of documents for use either in _local only_ mode where documents are not synced, or when used exclusively in peer-to-peer sync.
-
-NOTE: "_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes -- see <<res-keys>>.
-
-Users are cautioned that any attempt to sync such documents to Sync Gateway will result in an error.
-To be future proof, you are advised to avoid creating such documents.
-Use of these attributes for user-level data may result in undefined system behavior.
-
-For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway - data modeling guidelines]
-
-[#res-keys]
-.Reserved Keys List
-====
-* _attachments
-* _deleted {fn-rsvd-wds}
-* _id {fnref-rsvd-wds}
-* _removed
-* _rev {fnref-rsvd-wds}
-* _sequence
-====
 
 
 include::{root-partials}block-related-content-data.adoc[]

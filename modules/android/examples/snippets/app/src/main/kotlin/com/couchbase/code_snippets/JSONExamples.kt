@@ -75,26 +75,28 @@ class KtJSONExamples {
           Log.i(TAG, key + " => " + mDict.getValue(key))
         }
         // end::tojson-dictionary[]
-    }
+      }
 
-    @Throws(CouchbaseLiteException::class)
-    fun jsonDocumentExample(srcDb: Database, dstDb: Database) {
+      @Throws(CouchbaseLiteException::class)
+      fun jsonDocumentExample(srcDb: Database, dstDb: Database) {
+        // tag::tojson-document[]
         QueryBuilder
-            .select(SelectResult.expression(Meta.id).`as`("metaId"))
-            .from(DataSource.database(srcDb))
-            .execute()
-            .forEach {
-                it.getString("metaId")?.let { thisId ->
-                    srcDb.getDocument(thisId)?.toJSON()?.let { json -> // <.>
-                        Log.i(TAG, "JSON String = $json")
-                        val hotelFromJSON = MutableDocument(thisId, json) // <.>
-                        dstDb.save(hotelFromJSON)
-                        dstDb.getDocument(thisId)?.toMap()?.forEach { e ->
-                            Log.i(TAG, "$e.key => $e.value")
-                        } // <.>
-                    }
-                }
+        .select(SelectResult.expression(Meta.id).as("metaId"))
+        .from(DataSource.database(srcDb))
+        .execute()
+        .forEach {
+          it.getString("metaId")?.let { thisId ->
+            srcDb.getDocument(thisId)?.toJSON()?.let { json -> // <.>
+              Log.i(TAG, "JSON String = $json")
+              val hotelFromJSON = MutableDocument(thisId, json) // <.>
+              dstDb.save(hotelFromJSON)
+              dstDb.getDocument(thisId)?.toMap()?.forEach { e ->
+                Log.i(TAG, "$e.key => $e.value")
+              } // <.>
             }
+          }
+        }
+        // end::tojson-document[]
     }
 
     @Throws(CouchbaseLiteException::class, JSONException::class)

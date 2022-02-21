@@ -115,8 +115,8 @@ namespace api_walkthrough
 
             // Later, stop and dispose the replicator *before* closing/disposing the
         }
-    }
-}
+
+
 // end::getting-started[]
 
         private static void TestReplicatorConflictResolver()
@@ -577,19 +577,27 @@ namespace api_walkthrough
             }
         }
 
-        private static void CreateIndex()
+        public void CreateIndex()
         {
-            var db = _Database;
-
             // tag::query-index[]
+            var db = _database;
+            string[] indexProperties = new string[] {"type", "name" };
+            var config = new ValueIndexConfiguration(indexProperties);
+            db.CreateIndex("TypeNameIndex", config);
+            // end::query-index[]
+        }
+
+        public void CreateIndex_Querybuilder()
+        {
+            // tag::query-index_Querybuilder[]
             // For value types, this is optional but provides performance enhancements
+            var db = _database;
             var index = IndexBuilder.ValueIndex(
                 ValueIndexItem.Expression(Expression.Property("type")),
                 ValueIndexItem.Expression(Expression.Property("name"))); // <.>
             db.CreateIndex("TypeNameIndex", index);
-            // end::query-index[]
+            // end::query-index_Querybuilder[]
         }
-
         private static void SelectMeta()
         {
             Console.WriteLine("Select Meta");
@@ -919,12 +927,37 @@ var query =
       // end query-explain
 
 
-
-
-
-        private static void CreateFullTextIndex()
+        public void CreateFullTextIndex()
         {
+            // tag::fts-index[]
+            string[] indexProperties = new string[] { "overview", "name" };
+            var config = new FullTextIndexConfiguration(indexProperties);
+            db.CreateIndex("overviewFTSIndex", config);
+            // end::fts-index[]
+        }
+
+        public void FullTextSearch()
+        {
+            Console.WriteLine("Full text search");
+            // tag::fts-query[]
+
+            var db = _database;
+            var ftsQuery = db.CreateQuery("SELECT * FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan') ORDER BY RANK(overviewFTSIndex)");
+            foreach (var result in ftsQuery.Execute())
+            {
+                Console.WriteLine($"Document id {result.GetString(0)}");
+            }
+            }
+            // end::fts-query[]
+        }
+
+
+        private static void CreateFullTextIndex_Querybuilder()
+        {
+            // tag::fts-index_Querybuilder[]
             var db = _Database;
+
+            // end::fts-index_Querybuilder[]
             if (_NeedsExtraDocs) {
                 var tasks = new[] { "buy groceries", "play chess", "book travels", "buy museum tickets" };
                 foreach (var task in tasks) {
@@ -936,19 +969,21 @@ var query =
                 }
             }
 
-            // tag::fts-index[]
-            var index = IndexBuilder.FullTextIndex(FullTextIndexItem.Property("name")).IgnoreAccents(false);
-            db.CreateIndex("nameFTSIndex", index);
-            // end::fts-index[]
+            // tag::fts-index_Querybuilder[]
+
+            var index = IndexBuilder.FullTextIndex(FullTextIndexItem.Property("overview")).IgnoreAccents(false);
+            db.CreateIndex("overviewFTSIndex", index);
+            // end::fts-index_Querybuilder[]
         }
 
-        private static void FullTextSearch()
+        private static void FullTextSearch_Querybuilder()
         {
             Console.WriteLine("Full text search");
             var db = _Database;
 
-            // tag::fts-query[]
-            var whereClause = FullTextExpression.Index("nameFTSIndex").Match("'buy'");
+            // tag::fts-query_Querybuilder[]
+            var whereClause = FullTextFunction.Match("overviewFTSIndex", "'michigan'");
+
             using (var query = QueryBuilder.Select(SelectResult.Expression(Meta.ID))
                 .From(DataSource.Database(db))
                 .Where(whereClause)) {
@@ -956,7 +991,7 @@ var query =
                     Console.WriteLine($"Document id {result.GetString(0)}");
                 }
             }
-            // end::fts-query[]
+            // end::fts-query_Querybuilder[]
         }
         private static void StartReplication()
         {
@@ -1602,7 +1637,7 @@ var query =
     }
 
     // tag::predictive-model[]
-    // `TensorFlowModel` is a fake implementation
+    // tensorFlowModel is a fake implementation
     // this would be the implementation of the ml model you have chosen
     class TensorFlowModel
     {
@@ -1623,7 +1658,7 @@ var query =
             }
 
             var imageData = blob.Content;
-            // `TensorFlowModel` is a fake implementation
+            // tensorFlowModel is a fake implementation
             // this would be the implementation of the ml model you have chosen
             var modelOutput = TensorFlowModel.PredictImage(imageData);
             return new MutableDictionaryObject(modelOutput); // <1>
@@ -3135,45 +3170,221 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
     // end::p2p-tlsid-tlsidentity-with-label[]
 
 
-// For replications
+  // For replications
 
-// BEGIN -- snippets --
-//    Purpose -- code samples for use in replication topic
+  // BEGIN -- snippets --
+  //    Purpose -- code samples for use in replication topic
 
-// tag::sgw-repl-pull[]
-public class MyClass
-{
-    public Database Database { get; set; }
-    public Replicator Replicator { get; set; } // <.>
+  // tag::sgw-repl-pull[]
+  public class MyClass
+  {
+      public Database Database { get; set; }
+      public Replicator Replicator { get; set; } // <.>
 
-    public void StartReplication()
+      public void StartReplication()
+      {
+  }
+
+          var url = new Uri("wss://localhost:4984/db"); // <.>
+          var target = new URLEndpoint(url);
+          var config = new ReplicatorConfiguration(Database, target)
+          {
+              ReplicatorType = ReplicatorType.Pull
+          };
+
+          Replicator = new Replicator(config);
+          Replicator.Start();
+      }
+      // end::sgw-repl-pull[]
+
+      // tag::sgw-repl-pull-callouts[]
+      // <.> A replication is an asynchronous operation.
+      // To keep a reference to the `replicator` object, you can set it as an instance property.
+      // <.> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
+      // You should now use `ws:`, or `wss:` for SSL/TLS connections.
+      // end::sgw-repl-pull-callouts[]
+
+      public void InitReplication()
+      {
+        // tag::sgw-act-rep-initialize[]
+        // initialize the replicator configuration
+
+        var thisUrl = new URLEndpoint("wss://l10.0.2.2:4984/anotherDB"); // <.>
+        var config = new ReplicatorConfiguration(thisDB, thisUrl);
+
+        // end::sgw-act-rep-initialize[]
+      }
+  }
+ }
+
+
+
+  public class supporting_datatypes
+  {
+    public void datatype_usage()
     {
-        var url = new Uri("wss://localhost:4984/db"); // <.>
-        var target = new URLEndpoint(url);
-        var config = new ReplicatorConfiguration(Database, target)
-        {
-            ReplicatorType = ReplicatorType.Pull
-        };
 
-        Replicator = new Replicator(config);
-        Replicator.Start();
-    }
-}
+        // tag::datatype_usage[]
+        // tag::datatype_usage_createdb[]
+        // Get the database (and create it if it doesn’t exist).
+        var database = new Database("hoteldb");
 
-// end::sgw-repl-pull[]
+        // end::datatype_usage_createdb[]
+        // tag::datatype_usage_createdoc[]
+        // Create your new document
 
-// tag::sgw-repl-pull-callouts[]
-<.> A replication is an asynchronous operation.
-To keep a reference to the `replicator` object, you can set it as an instance property.
-<.> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
-You should now use `ws:`, or `wss:` for SSL/TLS connections.
-// end::sgw-repl-pull-callouts[]
+        // Add the dictionary to a document's properties and save the document
+        var doc = new MutableDocument("hoteldoc");
+
+        // end::datatype_usage_createdoc[]
+        // tag::datatype_usage_mutdict[]
+        // Create and populate mutable dictionary
+        var address = new MutableDictionaryObject();
+        address.SetString("street", "1 Main st.");
+        address.SetString("city", "San Francisco");
+        address.SetString("state", "CA");
+        address.SetString("country", "USA");
+        address.SetString("code", "90210");
+
+        // end::datatype_usage_mutdict[]
+        // tag::datatype_usage_mutarray[]
+        // Create and populate mutable array
+        var phones = MutableArrayObject();
+        phones.AddString("650-000-0000");
+        phones.AddString("650-000-0001");
+
+        // end::datatype_usage_mutarray[]
+        // tag::datatype_usage_populate[]
+        // Initialize and populate the document
+
+        // Add document type to document properties <.>
+        doc.SetString("type", "hotel");
+
+        // Add hotel name string to document properties <.>
+        doc.SetString("name", "Hotel Java Mo");
+
+        // Add float to document properties <.>
+        doc.SetFloat("room_rate", 121.75);
+
+        // Add dictionary to document's properties <.>
+        doc.SetDictionary("address", address);
+
+        // Add array to document's properties <.>
+        doc.SetArray("phones", phones);
+
+        // end::datatype_usage_populate[]
+        // tag::datatype_usage_persist[]
+        // Save the document changes <.>
+        database.Save(doc);
+
+        // end::datatype_usage_persist[]
+        // tag::datatype_usage_closedb[]
+        // Close the database <.>
+        database.close();
+
+        // end::datatype_usage_closedb[]
+
+        // end::datatype_usage[]
+
+     }
 
 
-    // tag::sgw-act-rep-initialize[]
-    // initialize the replicator configuration
 
-    var thisUrl = new URLEndpoint("wss://l10.0.2.2:4984/anotherDB"); // <.>
-    var config = new ReplicatorConfiguration(thisDB, thisUrl);
+      public void datatype_dictionary()
+      {
+          var database = new Database(name: "mydb");
 
-    // end::sgw-act-rep-initialize[]
+          // tag::datatype_dictionary[]
+          // NOTE: No error handling, for brevity (see getting started)
+          var document = database.GetDocument("doc1");
+
+          // Getting a dictionary from the document's properties
+          var dict = document.GetDictionary("address");
+
+          // Access a value with a key from the dictionary
+          var street = dict.GetString("street");
+
+          // Iterate dictionary
+          foreach (var key in dict.Keys)
+          {
+              Console.WriteLine($"Key {key} = {dict.GetValue(key)}");
+          }
+
+          // Create a mutable copy
+          var mutDict = dict.ToMutable();
+          // end::datatype_dictionary[]
+      }
+
+      public void datatype_mutable_dictionary()
+      {
+
+          var database = new Database("mydb");
+
+          // tag::datatype_mutable_dictionary[]
+          // NOTE: No error handling, for brevity (see getting started)
+
+          // Create a new mutable dictionary and populate some keys/values
+          var mutable_dict = new MutableDictionaryObject();
+          mutable_dict.SetString("street", "1 Main st.");
+          mutable_dict.SetString("city", "San Francisco");
+
+          // Add the dictionary to a document's properties and save the document
+          var doc = new MutableDocument("doc1");
+          doc.SetDictionary("address", mutable_dict);
+          database.Save(doc);
+
+          // end::datatype_mutable_dictionary[]
+      }
+
+
+      public void datatype_array()
+      {
+          var database = new Database("mydb");
+
+          // tag::datatype_array[]
+          // NOTE: No error handling, for brevity (see getting started)
+
+          var document = database.GetDocument("doc1");
+
+          // Getting a phones array from the document's properties
+          var array = document.GetArray("phones");
+
+          // Get element count
+          var count = array.Count();
+
+          // Access an array element by index
+          if (count >= 0) { var phone = array[1]; }
+
+          // Iterate dictionary
+          for (int i = 0; i < count; i++)
+          {
+              Console.WriteLine($"Item {i.ToString()} = {array[i]}");
+          }
+
+          // Create a mutable copy
+          var mutable_array = array.ToMutable();
+          // end::datatype_array[]
+
+
+      }
+
+        public void datatype_mutable_array()
+      {
+          var database = new Database("mydb");
+
+          // tag::datatype_mutable_array[]
+          // NOTE: No error handling, for brevity (see getting started)
+
+          // Create a new mutable array and populate data into the array
+          var mutable_array = new MutableArrayObject();
+          mutable_array.AddString("650-000-0000");
+          mutable_array.AddString("650-000-0001");
+
+          // Set the array to document's properties and save the document
+          var doc = new MutableDocument("doc1");
+          doc.SetArray("phones", mutable_array);
+          database.Save(doc);
+          // end::datatype_mutable_array[]
+      }
+
+  } // end  class supporting_datatypes

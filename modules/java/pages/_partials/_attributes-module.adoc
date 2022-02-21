@@ -9,7 +9,7 @@
 
 // BEGIN -- module page attributes
 // Begin workaround for 2.8.1 mis-release, to avoid unnecessary install of 2.8.0
-// SET full maintennce version number
+// SET full maintenance version number
 :maintenance: 0
 :version-maintenance: {version}.{maintenance}{tag}
 :module-partials: {param-module}:partial$
@@ -32,7 +32,7 @@
 
 // BEGIN -- Define API References for this module
 //  These attributes s
-:url-api-references: {url-api-references-java}/index.html?
+:url-api-references: {url-api-references-java}/
 //:url-api-references-structs: {url-api-references}Structs
 :url-api-references-classes: {url-api-references}com/couchbase/lite/
 // :url-api-references-classes: {url-api-references}Classes
@@ -46,12 +46,22 @@
 :url-api-method-database-close: {url-api-method-database}close--[Database.close()]
 :url-api-method-database-setloglevel: {url-api-method-database}setLogLevel-com.couchbase.lite.LogDomain-com.couchbase.lite.LogLevel-[Database.setLogLevel()]
 
+
+
+// Supporting Data Type Classes
+:url-api-class-array: {url-api-references-classes}{api-pfx}Array.html[Array]
+:url-api-class-mutablearray: {url-api-references-classes}{api-pfx}MutableArray.html[MutableArray]
+:url-api-class-dictionary: {url-api-references-classes}{api-pfx}Dictionary.html[Dictionary]
+:url-api-class-mutabledictionary: {url-api-references-classes}{api-pfx}MutableDictionary.html[MutableDictionary]
+
+
+
 // DatabaseConfiguration
 :url-api-references-databasecfg: {url-api-references-classes}{api-pfx}DatabaseConfiguration.html
 :url-api-class-databasecfg: {url-api-references-databasecfg}[DatabaseConfiguration]
 :url-api-method-databasecfg: {url-api-references-databasecfg}{sep}
 :url-api-method-databasecfg-setdir: {url-api-method-databasecfg}setDirectory-java.lang.String-[DatabaseConfiguration.setDirectory()]
-:url-api-method-databasecfg-encryption: {url-api-method-databasecfg}setEncryptionKey-com.couchbase.lite.EncryptionKey-[DatabaseConfiguration.setEncryptionKey()]
+:url-api-method-databasecfg-encryption: {url-api-method-databasecfg}setEncryptionKey(com.couchbase.lite.EncryptionKey)[DatabaseConfiguration.setEncryptionKey()]
 
 
 //Database.SAVE
@@ -69,9 +79,15 @@
 :url-api-method-database-delete: {url-api-method-database}delete--[Database.delete()]
 
 
+// deprecated 2.8
+:url-api-method-database-compact: [Database.compact()]
+//
+// :url-api-method-database-compact: {url-api-method-database}compact--[Database.compact()]
+:url-api-method-database-copy: {url-api-method-database}copy(java.io.File,java.lang.String,com.couchbase.lite.DatabaseConfiguration)[Database.copy()]
+// was copy-java.io.File-java.lang.String-com.couchbase.lite.DatabaseConfiguration-[Database.copy()]
 
-:url-api-method-database-compact: {url-api-method-database}compact--[Database.compact()]
-:url-api-method-database-copy: {url-api-method-database}copy-java.io.File-java.lang.String-com.couchbase.lite.DatabaseConfiguration-[Database.copy()]
+:url-api-method-database-change-encryption-key: {url-api-method-database}changeEncryptionKey(com.couchbase.lite.EncryptionKey)[Database.changeEncryptionKey()]
+
 
 :url-api-method-database-performMaintenance: {url-api-method-database}performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance()]
 
@@ -88,7 +104,7 @@
 :url-api-method-database-getdocument: {url-api-method-database}getDocument-java.lang.String-[Database.getDocument()]
 
 :url-api-references-dictionary: {url-api-references-classes}{api-pfx}Dictionary.html
-:url-api-class-dictionary: {url-api-references-dictionary}[property accessors]
+// :url-api-class-dictionary: {url-api-references-dictionary}[property accessors]
 :url-api-references-mutabledocument: {url-api-references-classes}{api-pfx}MutableDocument.html
 :url-api-class-mutabledocument: {url-api-references-mutabledocument}[MutableDocument()]
 :url-api-method-mutabledocument: {url-api-references-mutabledocument}{api-pfx}{sep}s:18CouchbaseLiteSwift15MutableDocument
