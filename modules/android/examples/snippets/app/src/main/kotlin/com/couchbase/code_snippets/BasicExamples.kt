@@ -414,3 +414,175 @@ class BasicExamples(private val context: Context) {
         // end::blob[]
     }
 }
+
+
+class supportingDatatypes
+{
+
+    private val database  = Database("mydb")
+
+
+
+    fun datatype_usage() {
+
+
+        // tag::datatype_usage[]
+        // tag::datatype_usage_createdb[]
+        // Initialize the Couchbase Lite system
+        CouchbaseLite.init(context)
+
+        // Get the database (and create it if it doesn’t exist).
+        DatabaseConfiguration config = new DatabaseConfiguration()
+
+        config.setDirectory(context.getFilesDir().getAbsolutePath())
+
+        Database database = new Database("getting-started", config)
+
+        // end::datatype_usage_createdb[]
+        // tag::datatype_usage_createdoc[]
+        // Create your new document
+        // The lack of 'const' indicates this document is mutable
+        MutableDocument mutableDoc = new MutableDocument()
+
+        // end::datatype_usage_createdoc[]
+        // tag::datatype_usage_mutdict[]
+        // Create and populate mutable dictionary
+        // Create a new mutable dictionary and populate some keys/values
+        MutableDictionary address = new MutableDictionary()
+        address.setString("street", "1 Main st.")
+        address.setString("city", "San Francisco")
+        address.setString("state", "CA")
+        address.setString("country", "USA")
+        address.setString("code"), "90210")
+
+        // end::datatype_usage_mutdict[]
+        // tag::datatype_usage_mutarray[]
+        // Create and populate mutable array
+        MutableArray phones = new MutableArray()
+        phones.addString("650-000-0000")
+        phones.addString("650-000-0001")
+
+        // end::datatype_usage_mutarray[]
+        // tag::datatype_usage_populate[]
+        // Initialize and populate the document
+
+        // Add document type to document properties <.>
+        mutable_doc.setString("type", "hotel"))
+
+        // Add hotel name string to document properties <.>
+        mutable_doc.setString("name", "Hotel Java Mo"))
+
+        // Add float to document properties <.>
+        mutable_doc.setFloat("room_rate", 121.75f)
+
+        // Add dictionary to document's properties <.>
+        mutable_doc.setDictionary("address", address)
+
+
+        // Add array to document's properties <.>
+        mutable_doc.setArray("phones", phones)
+
+        // end::datatype_usage_populate[]
+        // tag::datatype_usage_persist[]
+        // Save the document changes <.>
+        database.save(mutable_doc)
+
+        // end::datatype_usage_persist[]
+        // tag::datatype_usage_closedb[]
+        // Close the database <.>
+        database.close()
+
+        // end::datatype_usage_closedb[]
+
+        // end::datatype_usage[]
+
+    }
+
+
+
+    fun datatype_dictionary() {
+
+        // tag::datatype_dictionary[]
+        // NOTE: No error handling, for brevity (see getting started)
+        val document = database!!.getDocument("doc1")
+
+        // Getting a dictionary from the document's properties
+        val dict = document?.getDictionary("address")
+
+        // Access a value with a key from the dictionary
+        val street = dict?.getString("street")
+
+        // Iterate dictionary
+        for (key in dict!!.keys) {
+            println("Key ${key} = ${dict.getValue(key)}")
+        }
+
+      // Create a mutable copy
+      val mutable_Dict = dict.toMutable()
+
+      // end::datatype_dictionary[]
+    }
+
+    fun datatype_mutable_dictionary() {
+
+        // tag::datatype_mutable_dictionary[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        // Create a new mutable dictionary and populate some keys/values
+        val mutable_dict = MutableDictionary()
+        mutable_dict.setString("street", "1 Main st.")
+        mutable_dict.setString("city", "San Francisco")
+
+        // Add the dictionary to a document's properties and save the document
+        val mutable_doc = MutableDocument("doc1")
+        mutable_doc.setDictionary("address", mutable_dict)
+        database!!.save(mutable_doc)
+
+    // end::datatype_mutable_dictionary[]
+}
+
+
+    fun datatype_array() {
+
+        // tag::datatype_array[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        val document = database?.getDocument("doc1")
+
+        // Getting a phones array from the document's properties
+        val array = document?.getArray("phones")
+
+        // Get element count
+        val count = array?.count()
+
+        // Access an array element by index
+        val phone = array?.getString(1)
+
+        // Iterate array
+        for ( (index, item) in array!!) {
+            println("Row  ${index} = ${item}")
+        }
+
+        // Create a mutable copy
+        val mutable_array = array.toMutable()
+        // end::datatype_array[]
+    }
+
+    fun datatype_mutable_array() {
+
+        // tag::datatype_mutable_array[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        // Create a new mutable array and populate data into the array
+        val mutable_array = MutableArray()
+        mutable_array.addString("650-000-0000")
+        mutable_array.addString("650-000-0001")
+
+        // Set the array to document's properties and save the document
+        val mutable_doc = MutableDocument("doc1")
+        mutable_doc.setArray("phones", mutable_array)
+        database?.save(mutable_doc)
+        // end::datatype_mutable_array[]
+    }
+
+} // end  class supporting_datatypes

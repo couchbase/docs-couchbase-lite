@@ -13,20 +13,26 @@ Unless mitigated, for example by using a custom executor, this policy can result
 NOTE: If no listeners are registered to listen to a replicator at the time of the most recent `start(. . .)`, then no subsequently registered listeners will receive notifications.
 
 An executor manages a pool of threads and, perhaps, a queue in front of the executor, to handle the asynchronous callbacks.
-Couchbase Lite API calls which are processed by an executor are listed below.
+Couchbase Lite API calls processed by an executor include:
+--
+* Query.addChangeListener
 
-[source]
-----
-Query.addChangeListener
-MessageEndpointListerner.addChangeListener
-LiveQuery.addChangeListener
-AbstractReplicator.addDocumentReplicationListener
-AbstractReplicator.addChangeListener
-Database.addChangeListener
-Database.addDocumentChangeListener
-Database.addDatabaseChangeListener
-Database.addChangeListener
-----
+* MessageEndpointListerner.addChangeListener
+
+* LiveQuery.addChangeListener
+
+* AbstractReplicator.addDocumentReplicationListener
+
+* AbstractReplicator.addChangeListener
+
+* Database.addChangeListener
+
+* Database.addDocumentChangeListener
+
+* Database.addDatabaseChangeListener
+
+* Database.addChangeListener
+--
 
 Couchbase Lite {fnref-2x6} sometimes uses its own internal executor to run asynchronous client code.
 While this is fine for small tasks, larger tasks -- those that take significant compute time, or that perform I/O -- can block Couchbase processing.
@@ -67,7 +73,7 @@ public class InOrderExample {
 
 *Maximum Throughput*
 
-[source,]
+[source,java]
 ----
 /**
  * This version maximizes throughput.  It will deliver change notifications as quickly
@@ -99,7 +105,7 @@ public class MaxThroughputExample {
 
 *Extreme Configurability*
 
-[source]
+[source, java]
 ----
 /**
  * This version demonstrates the extreme configurability of the CouchBase Lite replicator callback system.

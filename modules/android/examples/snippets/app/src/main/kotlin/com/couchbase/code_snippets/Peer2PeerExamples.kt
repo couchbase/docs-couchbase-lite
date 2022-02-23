@@ -181,4 +181,4 @@ class PassivePeerConnection private constructor() : MessageEndpointConnection {
         // end::passive-peer-receive[]
     }
 
-} // tag::predictive-model[]
+}

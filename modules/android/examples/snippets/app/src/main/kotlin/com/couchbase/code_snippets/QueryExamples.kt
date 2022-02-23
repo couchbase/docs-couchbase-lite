@@ -42,18 +42,28 @@ class QueryExamples(private val database: Database) {
     fun testIndexing() {
         // tag::query-index[]
         database.createIndex(
+          "TypeNameIndex",
+          ValueIndexConfigurationFactory.create(expressions = ["type","name"])
+        )
+
+        // end::query-index[]
+    }
+
+    fun testIndexing_Querybuilder() {
+        // tag::query-index_Querybuilder[]
+        database.createIndex(
             "TypeNameIndex",
             IndexBuilder.valueIndex(
                 ValueIndexItem.property("type"),
                 ValueIndexItem.property("name")
             )
         )
-        // end::query-index[]
+        // end::query-index_Querybuilder[]
     }
 
     // ### SELECT statement
     fun testSelectStatement() {
-        // tag::query-select-meta[]
+        // tag::query-select-props[]
         val rs = QueryBuilder
             .select(
                 SelectResult.expression(Meta.id),
@@ -69,26 +79,28 @@ class QueryExamples(private val database: Database) {
             Log.i(TAG, "hotel id ->${result.getString("id")}")
             Log.i(TAG, "hotel name -> ${result.getString("name")}")
         }
-        // end::query-select-meta[]
-    }
+        // end::query-select-props[]
+      }
 
-    // META function
-    @Throws(CouchbaseLiteException::class)
-    fun testMetaFunction() {
+      // META function
+      @Throws(CouchbaseLiteException::class)
+      fun testMetaFunction() {
+        // tag::query-select-meta[]
         val rs = QueryBuilder
-            .select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("airport")))
-            .orderBy(Ordering.expression(Meta.id))
-            .execute()
+        .select(SelectResult.expression(Meta.id))
+        .from(DataSource.database(database))
+        .where(Expression.property("type").equalTo(Expression.string("airport")))
+        .orderBy(Ordering.expression(Meta.id))
+        .execute()
 
         for (result in rs) {
-            Log.w(TAG, "airport id ->${result.getString("id")}")
-            Log.w(TAG, "airport id -> ${result.getString(0)}")
+          Log.w(TAG, "airport id ->${result.getString("id")}")
+          Log.w(TAG, "airport id -> ${result.getString(0)}")
         }
-    }
+        // end::query-select-meta[]
+      }
 
-    // ### all(*)
+      // ### all(*)
     @Throws(CouchbaseLiteException::class)
     fun testSelectAll() {
         // tag::query-select-all[]
@@ -259,6 +271,7 @@ class QueryExamples(private val database: Database) {
     @Throws(CouchbaseLiteException::class)
     fun testWildCharacterMatch() {
         // tag::query-like-operator-wildcard-character-match[]
+
         val rs = QueryBuilder
             .select(
                 SelectResult.expression(Meta.id),
@@ -317,9 +330,9 @@ class QueryExamples(private val database: Database) {
             SelectResult.expression(Expression.property("stops").from("route")),
             SelectResult.expression(Expression.property("airline").from("route"))
         )
-            .from(DataSource.database(database).`as`("airline"))
+            .from(DataSource.database(database).as("airline"))
             .join(
-                Join.join(DataSource.database(database).`as`("route"))
+                Join.join(DataSource.database(database).as("route"))
                     .on(
                         Meta.id.from("airline")
                             .equalTo(Expression.property("airlineid").from("route"))
@@ -460,24 +473,59 @@ class QueryExamples(private val database: Database) {
     @Throws(CouchbaseLiteException::class)
     fun prepareIndex() {
         // tag::fts-index[]
-        database.createIndex(
-            "nameFTSIndex",
-            IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false)
-        )
+
+      database.createIndex("overviewFTSIndex",
+                      FullTextIndexConfigurationFactory.create(
+                        expressions = ["overview"]
+                      )
+                    )
+
         // end::fts-index[]
     }
 
     @Throws(CouchbaseLiteException::class)
     fun testFTS() {
         // tag::fts-query[]
-        val rs = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(FullTextExpression.index("nameFTSIndex").match("buy"))
-            .execute()
-        for (result in rs) {
-            Log.i(TAG, "document properties${result.getString(0)}")
+
+        val ftsQuery =
+              database.createQuery(
+                "SELECT _id, overview FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)")
+
+        ftsQuery.execute().allResults().forEach {
+          Log.i(TAG, "${result.getString("id")}: ${result.getString("overview")}")
         }
+
         // end::fts-query[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun prepareIndex_Querybuilder() {
+        // tag::fts-index_Querybuilder[]
+        database.createIndex(
+            "overviewFTSIndex",
+            IndexBuilder.fullTextIndex(FullTextIndexItem.property("overview")).ignoreAccents(false)
+        )
+        // end::fts-index_Querybuilder[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun testFTS_Querybuilder() {
+        // tag::fts-query_Querybuilder[]
+
+        val ftsQuery =
+              QueryBuilder.select(SelectResult.expression(Meta.id),
+                                  SelectResult.expression(overview))
+                          .from(DataSource.database(database))
+                          .where(FullTextFunction.match("overviewFTSIndex", "michigan"))
+                          .execute()
+
+        ftsQuery.execute().allResults().forEach {
+          Log.i(TAG, "${result.getString("Meta.id")}: ${result.getString("overview")}")
+          }
+
+
+
+        // end::fts-query_Querybuilder[]
     }
 
 
@@ -551,7 +599,69 @@ class QueryExamples(private val database: Database) {
     }
 /* end func testQuerySyntaxJson */
 
-  fun docsOnlyQuerySyntaxN1QL(argDb: Database): List<Result> {
+
+
+    fun testQuerySyntaxProps(currentUser: String) {
+        // tag::query-select-props[]
+        // tag::query-syntax-props[]
+
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("country"),
+                SelectResult.property("name")
+            )
+            .from(DataSource.database(database))
+
+        // end::query-syntax-props[]
+
+        // tag::query-access-props[]
+        for (result in rs.execute().allResults()) {
+            Log.i(TAG, "Hotel name -> ${result.getString("name")}, in ${result.getString("country")}" )
+        }
+        // end::query-access-props[]
+        // end::query-select-props[]
+    }
+
+    fun testQuerySyntaxCount(currentUser: String) {
+        // tag::query-syntax-count-only[]
+
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) // <.>
+            .from(DataSource.database(database))
+
+        // end::query-syntax-count-only[]
+
+        // tag::query-access-count-only[]
+        for (result in rs.execute().allResults()) {
+            Log.i(TAG, "name -> ${result.getInt("mycount").toString()}")
+        }
+        // end::query-access-count-only[]
+    }
+
+
+    fun testQuerySyntaxId(currentUser: String) {
+        // tag::query-select-meta
+        // tag::query-syntax-id[]
+
+        val rs = QueryBuilder
+        .select(
+          SelectResult.expression(Meta.id).as("hotelId"))
+          .from(DataSource.database(database))
+
+          // end::query-syntax-id[]
+
+        // tag::query-access-id[]
+        for (result in rs.execute().allResults()) {
+          Log.i(TAG, "hotel id ->${result.getString("hotelId")}")
+        }
+        // end::query-access-id[]
+        // end::query-select-meta
+    }
+
+
+    fun docsOnlyQuerySyntaxN1QL(argDb: Database): List<Result> {
       // For Documentation -- N1QL Query using parameters
       val db = argDb
       // tag::query-syntax-n1ql[]
@@ -577,5 +687,20 @@ class QueryExamples(private val database: Database) {
       // end::query-syntax-n1ql-params[]
   }
 
-    fun openOrCreateDatabaseForUser(argUser: String): Database = Database(argUser)
-}
+  fun testQuerySyntaxPagination(currentUser: String) {
+    // tag::query-syntax-pagination[]
+    val limit = 20
+    val offset = 0
+
+    val rs = QueryBuilder
+      .select(SelectResult.all())
+      .from(DataSource.database(database))
+      .where(Expression.property("type").equalTo(Expression.string("hotel")))
+      .limit(Expression.intValue(limit), Expression.intValue(offset))
+
+    // end::query-syntax-pagination[]
+  }
+
+    fun openOrCreateDatabaseForUser(argUser: String): Database = Database(argUser) {
+
+    }

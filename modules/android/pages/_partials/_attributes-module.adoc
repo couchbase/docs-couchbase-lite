@@ -27,7 +27,7 @@
 :api-pfx:
 
 :url-api-references: {url-api-references-android}/
-:url-api-references-classes: {url-api-references}index.html?com/couchbase/lite/
+:url-api-references-classes: {url-api-references}com/couchbase/lite/
 :url-api-references-structs: {url-api-references-classes}
 :url-api-references-method-sep: {sep}
 
@@ -37,6 +37,16 @@
 :url-api-method-database-open: {url-api-method-database}Database-java.lang.String-[Database(String db-name)]
 :url-api-method-database-close: {url-api-method-database}close--[Database.close()]
 :url-api-method-database-delete: {url-api-method-database}delete--[Database.delete()]
+
+
+// Supporting Data Type Classes
+:url-api-class-array: {url-api-references-classes}{api-pfx}Array.html[Array]
+:url-api-class-mutablearray: {url-api-references-classes}{api-pfx}MutableArray.html[MutableArray]
+:url-api-class-dictionary: {url-api-references-classes}{api-pfx}Dictionary.html[Dictionary]
+:url-api-class-mutabledictionary: {url-api-references-classes}{api-pfx}MutableDictionary.html[MutableDictionary]
+
+
+
 
 // Begin -- DatabaseConfiguration
 :url-api-references-databasecfg: {url-api-references-classes}{api-pfx}DatabaseConfiguration.html
@@ -58,8 +68,16 @@
 
 :url-api-method-database-deletedoc-concctrl: {url-api-method-database}delete-com.couchbase.lite.Document-com.couchbase.lite.ConcurrencyControl-[database.delete(Document document, ConcurrencyControl concurrencyControl)]
 
-:url-api-method-database-compact: {url-api-method-database}compact--[Database.compact()]
-:url-api-method-database-copy: {url-api-method-database}copy-java.io.File-java.lang.String-com.couchbase.lite.DatabaseConfiguration-[Database.copy()]
+// deprecated 2.8
+:url-api-method-database-compact: [Database.compact()]
+//
+// :url-api-method-database-compact: {url-api-method-database}compact--[Database.compact()]
+:url-api-method-database-copy: {url-api-method-database}copy(java.io.File,java.lang.String,com.couchbase.lite.DatabaseConfiguration)[Database.copy()]
+
+// was copy-java.io.File-java.lang.String-com.couchbase.lite.DatabaseConfiguration-
+
+:url-api-method-database-change-encryption-key: {url-api-method-database}changeEncryptionKey(com.couchbase.lite.EncryptionKey)[Database.changeEncryptionKey()]
+
 :url-api-method-database-performMaintenance: {url-api-method-database}performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance()]
 
 :url-api-method-database-setloglevel: {url-api-method-database}setLogLevel-com.couchbase.lite.LogDomain-com.couchbase.lite.LogLevel-[Database.setLogLevel()]
@@ -78,7 +96,7 @@
 :url-api-method-database-save: {url-api-method-database}save-com.couchbase.lite.MutableDocument-[Database.save()]
 
 :url-api-references-dictionary: {url-api-references-classes}{api-pfx}Dictionary.html
-:url-api-class-dictionary: {url-api-references-dictionary}[property accessors]
+// :url-api-class-dictionary: {url-api-references-dictionary}[property accessors]
 :url-api-references-mutabledocument: {url-api-references-classes}{api-pfx}MutableDocument.html
 :url-api-class-mutabledocument: {url-api-references-mutabledocument}[MutableDocument()]
 :url-api-method-mutabledocument: {url-api-references-mutabledocument}{sep}s:18CouchbaseLiteSwift15MutableDocument
@@ -239,13 +257,13 @@
 
 // ReplicatorStatus
 
-:url-api-references-replicator-status: {url-api-references-classes}{api-pfx}AbstractReplicator.Status.html
-:url-api-class-replicator-status: {url-api-references-replicator-status}{api-pfx}[AbstractReplicator.Status]
+:url-api-references-replicator-status: {url-api-references-classes}{api-pfx}ReplicatorStatus.html
+:url-api-class-replicator-status: {url-api-references-replicator-status}{api-pfx}[ReplicatorStatus()]
 :url-api-properties-replicator-status: {url-api-references-replicator-status}{sep}{api-pfx}
 
-:url-api-enum-replicator-activity: {url-api-properties-replicator-status}getActivityLevel--[getActivityLevel()]
-:url-api-enum-replicator-progress: {url-api-properties-replicator-status}getProgress--[getProgress()]
-:url-api-enum-replicator-error: {url-api-properties-replicator-status}getError--[getError()]
+:url-api-enum-replicator-activity: {url-api-properties-replicator-status}getActivityLevel()[getActivityLevel()]
+:url-api-enum-replicator-progress: {url-api-properties-replicator-status}getProgress()[getProgress()]
+:url-api-enum-replicator-error: {url-api-properties-replicator-status}getError[getError()]
 
 // ReplicatorConfiguration API
 :url-api-references-replicator-config: {url-api-references-classes}{api-pfx}ReplicatorConfiguration.html

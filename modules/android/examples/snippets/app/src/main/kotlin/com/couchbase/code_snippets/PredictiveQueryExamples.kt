@@ -35,8 +35,9 @@ import com.couchbase.lite.ValueIndexItem
 
 
 private const val TAG = "PREDICT"
+// tag::predictive-model[]
+// tensorFlowModel is a fake implementation
 
-// `tensorFlowModel` is a fake implementation
 object TensorFlowModel {
     fun predictImage(data: ByteArray?) = mapOf<String, Any?>()
 }
@@ -50,7 +51,8 @@ object ImageClassifierModel : PredictiveModel {
         // this would be the implementation of the ml model you have chosen
         return MutableDictionary(TensorFlowModel.predictImage(blob.content)) // <1>
     }
-} // end::predictive-model[]
+}
+// end::predictive-model[]
 
 
 @Suppress("unused")
@@ -96,15 +98,12 @@ class PredictiveQueryExamples {
             Expression.map(mutableMapOf("photo" to Expression.property("photo")) as Map<String, Any>?) // <1>
         )
 
-        // !!! Is this query using that prediction function, at all?
         val rs = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
             .where(
-                Expression.property("label").equalTo(Expression.string("car"))
-                    .and(
-                        Expression.property("probability")
-                            .greaterThanOrEqualTo(Expression.doubleValue(0.8))
+                prediction.property("label").equalTo(Expression.string("car"))
+                .and(prediction.property("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))
                     )
             )
             .execute()

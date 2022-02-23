@@ -27,22 +27,22 @@ class SampleCodeTest {
      1. we will use `self.database`/ `database` for database, query, replicator-db related code snippets.
      2. we will use `self.otherDB` / `otherDB` for listener-db
      */
-    
+
     var database: Database!
     var otherDB: Database!
-    
+
     /**
      For consistency:
      1. we will use replicator with `self.replicator` and listener with `self.listener`
      */
     var replicator: Replicator!
     var listener: URLEndpointListener!
-    
+
     var replicatorsToPeers = [String: Replicator]()
     var replicatorListenerTokens = [String: Any]()
-    
+
     // MARK: Database
-    
+
     func dontTestNewDatabase() throws {
         // tag::new-database[]
         do {
@@ -51,49 +51,50 @@ class SampleCodeTest {
             print(error)
         }
         // end::new-database[]
-        
+
         // tag::close-database[]
         do {
             try self.database.close()
         }
         // end::close-database[]
     }
-    
+
 #if COUCHBASE_ENTERPRISE
     func dontTestDatabaseEncryption() throws {
         // tag::database-encryption[]
         let config = DatabaseConfiguration()
         config.encryptionKey = EncryptionKey.password("secretpassword")
         self.database = try Database(name: "my-database", config: config)
+        self.database.EncryptionKey(
         // end::database-encryption[]
     }
 #endif
-    
+
     func dontTestLogging() throws {
         // tag::logging[]
         // verbose / replicator
         Database.log.console.level = .verbose
         Database.log.console.domains = .replicator
-        
+
         // verbose / query
         Database.log.console.level = .verbose
         Database.log.console.domains = .query
         // end::logging[]
     }
-    
+
     func dontTestConsoleLogging() throws {
         // tag::console-logging[]
         Database.log.console.domains = .all // <.>
         Database.log.console.level = .verbose // <.>
-        
+
         // end::console-logging[]
         // tag::console-logging-db[]
-        
+
         Database.log.console.domains = .database
-        
+
         // end::console-logging-db[]
     }
-    
+
     func dontTestFileLogging() throws {
         // tag::file-logging[]
         let tempFolder = NSTemporaryDirectory().appending("cbllog")
@@ -104,14 +105,14 @@ class SampleCodeTest {
         Database.log.file.level = .info // <.>
         // end::file-logging[]
     }
-    
+
     func dontTestEnableCustomLogging() throws {
         // tag::set-custom-logging[]
         let logger = LogTestLogger(.warning)
         Database.log.custom =  logger // <.>
         // end::set-custom-logging[]
     }
-    
+
     func dontTestLoadingPrebuilt() throws {
         // tag::prebuilt-database[]
         // Note: Getting the path to a database is platform-specific.
@@ -126,9 +127,9 @@ class SampleCodeTest {
         }
         // end::prebuilt-database[]
     }
-    
+
     // MARK: Document
-    
+
     func dontTestInitializer() throws {
         // tag::initializer[]
         let newTask = MutableDocument()
@@ -138,7 +139,7 @@ class SampleCodeTest {
         try database.saveDocument(newTask)
         // end::initializer[]
     }
-    
+
     func dontTestMutability() throws {
         // tag::update-document[]
         guard let document = database.document(withID: "xyz") else { return }
@@ -147,28 +148,28 @@ class SampleCodeTest {
         try database.saveDocument(mutableDocument)
         // end::update-document[]
     }
-    
+
     func dontTestTypedAcessors() throws {
         let newTask = MutableDocument()
-        
+
         // tag::date-getter[]
         newTask.setValue(Date(), forKey: "createdAt")
         let date = newTask.date(forKey: "createdAt")
         // end::date-getter[]
-        
+
         // tag::to-dictionary[]
         print(newTask.toDictionary())  // <.>
-        
+
         // end::to-dictionary[]
-        
+
         // tag::to-json[]
         print(newTask.toJSON()) // <.>
-        
+
         // end::to-json[]
-        
+
         print("\(date!)")
     }
-    
+
     func dontTestBatchOperations() throws {
         // tag::batch[]
         do {
@@ -187,7 +188,7 @@ class SampleCodeTest {
         }
         // end::batch[]
     }
-    
+
     func dontTestChangeListener() throws {
         // tag::document-listener[]
         database.addDocumentChangeListener(withID: "user.john") { (change) in
@@ -197,16 +198,16 @@ class SampleCodeTest {
         }
         // end::document-listener[]
     }
-    
+
     func dontTestDocumentExpiration() throws {
         // tag::document-expiration[]
         // Purge the document one day from now
         let ttl = Calendar.current.date(byAdding: .day, value: 1, to: Date())
         try database.setDocumentExpiration(withID: "doc123", expiration: ttl)
-        
+
         // Reset expiration
         try database.setDocumentExpiration(withID: "doc1", expiration: nil)
-        
+
         // Query documents that will be expired in less than five minutes
         let fiveMinutesFromNow = Date(timeIntervalSinceNow: 60 * 5).timeIntervalSince1970
         let query = QueryBuilder
@@ -220,56 +221,62 @@ class SampleCodeTest {
         // end::document-expiration[]
         print(query)
     }
-    
+
     func dontTestBlob() throws {
 #if TARGET_OS_IPHONE
         let newTask = MutableDocument()
         var image: UIImage!
-        
+
         // tag::blob[]
         let appleImage = UIImage(named: "avatar.jpg")!
         let imageData = UIImageJPEGRepresentation(appleImage, 1)! // <.>
-        
+
         let blob = Blob(contentType: "image/jpeg", data: imageData) // <.>
         newTask.setBlob(blob, forKey: "avatar") // <.>
         try database.saveDocument(newTask)
-        
+
         if let taskBlob = newTask.blob(forKey: "image") {
             image = UIImage(data: taskBlob.content!)
         }
         // end::blob[]
-        
+
         print("\(image)")
 #endif
     }
-    
+
     // MARK: Query
-    
+
     func dontTestQueryGetAll() throws {
         // tag::query-get-all[]
         let database = try Database(name: "hotel")
         let query = QueryBuilder
             .select(SelectResult.expression(Meta.id).as("metaId"))
             .from(DataSource.database(database))
-        
+
         // end::query-get-all[]
         print(query)
     }
-    
+
     func dontTestIndexing() throws {
+        // N1QL and Querybuilder versions
         // tag::query-index[]
+        let config = ValueIndexConfiguration(["type", "name"])
+        try database.createIndex(index, withName: "TypeNameIndex")
+        // end::query-index[]
+
+        // tag::query-index_Querybuilder[]
         let index = IndexBuilder.valueIndex(items: ValueIndexItem.expression(Expression.property("type")),
                                             ValueIndexItem.expression(Expression.property("name")))
         try database.createIndex(index, withName: "TypeNameIndex")
-        // end::query-index[]
+        // end::query-index_Querybuilder[]
     }
-    
+
     func dontTestSelectMeta() throws {
         // tag::query-select-meta[]
         let query = QueryBuilder
             .select(SelectResult.expression(Meta.id))
             .from(DataSource.database(database))
-        
+
         do {
             for result in try query.execute() {
                 print("document id :: \(result.string(forKey: "id")!)")
@@ -280,8 +287,8 @@ class SampleCodeTest {
         }
         // end::query-select-meta[]
     }
-    
-    
+
+
     func dontTestSelectProps() throws {
         // tag::query-select-props[]
         let query = QueryBuilder
@@ -291,7 +298,7 @@ class SampleCodeTest {
                 SelectResult.property("name")
             )
             .from(DataSource.database(database))
-        
+
         do {
             for result in try query.execute() {
                 print("document id :: \(result.string(forKey: "id")!)")
@@ -300,23 +307,24 @@ class SampleCodeTest {
         } catch {
             print(error)
         }
+        
         // end::query-select-props[]
     }
-    
+
     func dontTestSelectAll() throws {
         var query: Query
-        
+
         // tag::query-select-all[]
         query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
         // end::query-select-all[]
-        
+
         // tag::live-query[]
         query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database)) // <.>
-        
+
         // Adds a query change listener.
         // Changes will be posted on the main queue.
         let token = query.addChangeListener { (change) in // <.>
@@ -325,17 +333,17 @@ class SampleCodeTest {
                 /* Update UI */
             }
         } // <.>
-        
+
         // end::live-query[]
-        
+
         // tag::stop-live-query[]
         query.removeChangeListener(withToken: token) // <.>
-        
+
         // end::stop-live-query[]
-        
+
         print("\(query)")
     }
-    
+
     func dontTestWhere() throws {
         // tag::query-where[]
         let query = QueryBuilder
@@ -343,7 +351,7 @@ class SampleCodeTest {
             .from(DataSource.database(database))
             .where(Expression.property("type").equalTo(Expression.string("hotel")))
             .limit(Expression.int(10))
-        
+
         do {
             for result in try query.execute() {
                 if let dict = result.dictionary(forKey: "travel-sample") {
@@ -355,7 +363,7 @@ class SampleCodeTest {
         }
         // end::query-where[]
     }
-    
+
     func dontTestQueryDeletedDocuments() throws {
         // tag::query-deleted-documents[]
         // Query documents that have been deleted
@@ -366,7 +374,7 @@ class SampleCodeTest {
         // end::query-deleted-documents[]
         print(query)
     }
-    
+
     func dontTestCollectionOperatorContains() throws {
         // tag::query-collection-operator-contains[]
         let query = QueryBuilder
@@ -380,7 +388,7 @@ class SampleCodeTest {
                     .and(ArrayFunction.contains(Expression.property("public_likes"),
                                                 value: Expression.string("Armani Langworth")))
             )
-        
+
         do {
             for result in try query.execute() {
                 print("public_likes :: \(result.array(forKey: "public_likes")!.toArray())")
@@ -388,7 +396,7 @@ class SampleCodeTest {
         }
         // end::query-collection-operator-contains[]
     }
-    
+
     func dontTestCollectionOperatorIn() throws {
         // tag::query-collection-operator-in[]
         let values = [
@@ -396,16 +404,16 @@ class SampleCodeTest {
             Expression.property("last"),
             Expression.property("username")
         ]
-        
+
         let query = QueryBuilder.select(SelectResult.all())
             .from(DataSource.database(database))
             .where(Expression.string("Armani").in(values))
         // end::query-collection-operator-in[]
-        
+
         print(query)
     }
-    
-    
+
+
     func dontTestLikeOperator() throws {
         // tag::query-like-operator[]
         let query = QueryBuilder
@@ -420,7 +428,7 @@ class SampleCodeTest {
                             .like(Expression.string("royal engineers museum")))
             )
             .limit(Expression.int(10))
-        
+
         do {
             for result in try query.execute() {
                 print("name property :: \(result.string(forKey: "name")!)")
@@ -428,7 +436,7 @@ class SampleCodeTest {
         }
         // end::query-like-operator[]
     }
-    
+
     func dontTestWildCardMatch() throws {
         // tag::query-like-operator-wildcard-match[]
         let query = QueryBuilder
@@ -444,14 +452,14 @@ class SampleCodeTest {
             )
             .limit(Expression.int(10))
         // end::query-like-operator-wildcard-match[]
-        
+
         do {
             for result in try query.execute() {
                 print("name property :: \(result.string(forKey: "name")!)")
             }
         }
     }
-    
+
     func dontTestWildCardCharacterMatch() throws {
         // tag::query-like-operator-wildcard-character-match[]
         let query = QueryBuilder
@@ -466,14 +474,14 @@ class SampleCodeTest {
             )
             .limit(Expression.int(10))
         // end::query-like-operator-wildcard-character-match[]
-        
+
         do {
             for result in try query.execute() {
                 print("name property :: \(result.string(forKey: "name")!)")
             }
         }
     }
-    
+
     func dontTestRegexMatch() throws {
         // tag::query-regex-operator[]
         let query = QueryBuilder
@@ -487,14 +495,14 @@ class SampleCodeTest {
             )
             .limit(Expression.int(10))
         // end::query-regex-operator[]
-        
+
         do {
             for result in try query.execute() {
                 print("name property :: \(result.string(forKey: "name")!)")
             }
         }
     }
-    
+
     func dontTestJoin() throws {
         // tag::query-join[]
         let query = QueryBuilder
@@ -523,14 +531,14 @@ class SampleCodeTest {
                             .equalTo(Expression.string("RIX")))
             )
         // end::query-join[]
-        
+
         do {
             for result in try query.execute() {
                 print("name property :: \(result.string(forKey: "name")!)")
             }
         }
     }
-    
+
     func dontTestGroupBy() throws {
         // tag::query-groupby[]
         let query = QueryBuilder
@@ -546,7 +554,7 @@ class SampleCodeTest {
                 Expression.property("country"),
                 Expression.property("tz")
             )
-        
+
         do {
             for result in try query.execute() {
                 print("""
@@ -558,7 +566,7 @@ class SampleCodeTest {
         }
         // end::query-groupby[]
     }
-    
+
     func dontTestOrderBy() throws {
         // tag::query-orderby[]
         let query = QueryBuilder
@@ -570,10 +578,10 @@ class SampleCodeTest {
             .orderBy(Ordering.property("title").ascending())
             .limit(Expression.int(10))
         // end::query-orderby[]
-        
+
         print("\(query)")
     }
-    
+
     func dontTestExplainAll() throws {
         // tag::query-explain-all[]
         let query = QueryBuilder
@@ -582,11 +590,11 @@ class SampleCodeTest {
             .where(Expression.property("type").equalTo(Expression.string("university")))
             .groupBy(Expression.property("country"))
             .orderBy(Ordering.property("name").ascending())  // <.>
-        
+
         print(try query.explain()) // <.>
         // end::query-explain-all[]
     }
-    
+
     func dontTestExplainLike() throws {
         // tag::query-explain-like[]
         let query = QueryBuilder
@@ -594,12 +602,12 @@ class SampleCodeTest {
             .from(DataSource.database(database))
             .where(Expression.property("type").like(Expression.string("%hotel%")) // <.>
                     .and(Expression.property("name").like(Expression.string("%royal%"))));
-        
+
         print(try query.explain())
-        
+
         // end::query-explain-like[]
     }
-    
+
     func dontTestExplainNoOp() throws {
         // tag::query-explain-nopfx[]
         let query = QueryBuilder
@@ -607,24 +615,24 @@ class SampleCodeTest {
             .from(DataSource.database(database))
             .where(Expression.property("type").like(Expression.string("hotel%")) // <.>
                     .and(Expression.property("name").like(Expression.string("%royal%"))));
-        
+
         print(try query.explain());
-        
+
         // end::query-explain-nopfx[]
     }
-    
+
     func dontTestExplainFunction() throws {
         // tag::query-explain-function[]
         let query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
             .where(Function.lower(Expression.property("type").equalTo(Expression.string("hotel")))) // <.>
-        
+
         print(try query.explain());
-        
+
         // end::query-explain-function[]
     }
-    
+
     func dontTestExplainNoFunction() throws {
         // tag::query-explain-nofunction[]
         let query = QueryBuilder
@@ -632,54 +640,80 @@ class SampleCodeTest {
             .from(DataSource.database(database))
             .where(
                 Expression.property("type").equalTo(Expression.string("hotel"))); // <.>
-        
+
         print(try query.explain());
-        
+
         // end::query-explain-nofunction[]
     }
-    
-    
+
+
     func dontTestCreateFullTextIndex() throws {
-        // tag::fts-index[]
+        // tag::fts-build-content[]
         // Insert documents
-        let tasks = ["buy groceries", "play chess", "book travels", "buy museum tickets"]
-        for task in tasks {
+        let overviews = ["Handy for the nice beaches in Southport", "Close to Turnpike.", "By Michigan football's Big House"]
+        for overview in overviews {
             let doc = MutableDocument()
-            doc.setString("task", forKey: "type")
-            doc.setString(task, forKey: "name")
+            doc.setString("overview", forKey: "type")
+            doc.setString(overview, forKey: "overview")
             try database.saveDocument(doc)
         }
-        
-        // Create index
+        // end::fts-build-content[]
+
+        // tag::fts-index[]
+        // Create index with N1QL
         do {
-            let index = IndexBuilder.fullTextIndex(items: FullTextIndexItem.property("name")).ignoreAccents(false)
-            try database.createIndex(index, withName: "nameFTSIndex")
+            let index = FullTextIndexConfiguration(["overview"])
+            try database.createIndex(index, withName: "overviewFTSIndex")
         } catch let error {
             print(error.localizedDescription)
         }
         // end::fts-index[]
     }
-    
+
+    func dontTestCreateFullTextIndex_Querybuilder() throws {
+
+        // tag::fts-index_Querybuilder[]
+        // Create index with Querybuilder
+        let index = IndexBuilder.fullTextIndex(items: FullTextIndexItem.property("overview")).ignoreAccents(false)
+        try database.createIndex(index, withName: "overviewFTSIndex")
+        // end::fts-index_Querybuilder[]
+    }
+
+
     func dontTestFullTextSearch() throws {
         // tag::fts-query[]
-        
-        let whereClause = FullTextFunction.match(indexName: "nameFTSIndex", query: "'buy'")
-        let query = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(whereClause)
-        
-        do {
-            for result in try query.execute() {
-                print("document id \(result.string(at: 0)!)")
-            }
-        } catch let error {
-            print(error.localizedDescription)
+
+        let ftsStr = "SELECT Meta().id FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan') ORDER BY RANK(overviewFTSIndex)"
+
+        let query = database.createQuery(query: ftsStr)
+
+        let rs = try query.execute()
+        for result in rs {
+            print("document id \(result.string(at: 0)!)")
         }
+
         // end::fts-query[]
     }
-    
+
+
+
+    func dontTestFullTextSearch_Querybuilder() throws {
+        database = self.db
+
+        // tag::fts-query_Querybuilder[]
+        let whereClause = FullTextFunction.match(indexName: "overviewFTSIndex"), query: "'michigan'")
+        let query = QueryBuilder
+            .select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(database))
+            .where(whereClause)
+        for result in try query.execute() {
+            print("document id \(result.string(at: 0)!)")
+        }
+        // end::fts-query_Querybuilder[]
+
+
     // MARK: toJSON
-    
+
     func dontTestToJsonArrayObject() throws {
         // demonstrate use of JSON string
         // tag::tojson-array[]
@@ -687,13 +721,13 @@ class SampleCodeTest {
             guard let array = doc.array(forKey: "list") else {
                 return
             }
-            
+
             let json = array.toJSON() // <.>
             print(json)
         }
         // end::tojson-array[]
     }
-    
+
     func dontTestToJsonDictionary() throws {
         // demonstrate use of JSON string
         // tag::tojson-dictionary[]
@@ -701,13 +735,13 @@ class SampleCodeTest {
             guard let dictionary = doc.dictionary(forKey: "dictionary") else {
                 return
             }
-            
+
             let json = dictionary.toJSON() // <.>
             print(json)
         }
         // end::tojson-dictionary[]
     }
-    
+
     func dontTestToJsonDocument() throws {
         // demonstrate use of JSON string
         // tag::tojson-document[]
@@ -717,10 +751,10 @@ class SampleCodeTest {
         }
         // end::tojson-document[]
     }
-    
+
     func dontTestQueryResultToJSON() throws {
         let query = QueryBuilder.select(SelectResult.all()).from(DataSource.database(database))
-        
+
         // demonstrate use of JSON string
         // tag::tojson-result[]
         let resultSet = try query.execute()
@@ -730,7 +764,7 @@ class SampleCodeTest {
             // end::tojson-result[]
         }
     }
-    
+
     func dontTestBlobToJSON() throws {
         // tag::tojson-blob[]
         // Get a document
@@ -738,18 +772,18 @@ class SampleCodeTest {
             guard let blob = doc.blob(forKey: "avatar") else {
                 return
             }
-            
+
             let json = blob.toJSON() // <.>
             print(json)
         }
         // end::tojson-blob[]
-        
+
         // FIXME: check below function to validate whether the given property dictionary is a valid blob or not
     }
-    
+
     func dontTestIsBlob() throws {
         let digest = ""
-        
+
         // tag::[dictionary-isblob]
         if(Blob.isBlob(properties: [Blob.typeProperty: Blob.blobType,
                                     Blob.blobDigestProperty: digest])) { // <.>
@@ -758,47 +792,47 @@ class SampleCodeTest {
         // end::[dictionary-isblob]
     }
     // -- !!!
-    
+
     // MARK: Replication
-    
+
     /* The `tag::replication[]` example is inlined in swift.adoc */
-    
+
     func dontTestEnableReplicatorLogging() throws {
         // tag::replication-logging[]
         // Verbose / Replicator
         Database.log.console.level = .verbose
         Database.log.console.domains = .replicator
-        
+
         // Verbose / Network
         Database.log.console.level = .verbose
         Database.log.console.domains = .network
         // end::replication-logging[]
     }
-    
+
     func dontTestReplicationBasicAuthentication() throws {
         // tag::basic-authentication[]
         let url = URL(string: "ws://localhost:4984/mydatabase")!
         let target = URLEndpoint(url: url)
         var config = ReplicatorConfiguration(database: database, target: target)
         config.authenticator = BasicAuthenticator(username: "john", password: "pass")
-        
+
         self.replicator = Replicator(config: config)
         self.replicator.start()
         // end::basic-authentication[]
     }
-    
+
     func dontTestReplicationSessionAuthentication() throws {
         // tag::session-authentication[]
         let url = URL(string: "ws://localhost:4984/mydatabase")!
         let target = URLEndpoint(url: url)
         var config = ReplicatorConfiguration(database: database, target: target)
         config.authenticator = SessionAuthenticator(sessionID: "904ac010862f37c8dd99015a33ab5a3565fd8447")
-        
+
         self.replicator = Replicator(config: config)
         self.replicator.start()
         // end::session-authentication[]
     }
-    
+
     func dontTestReplicatorStatus() throws {
         // tag::replication-status[]
         self.replicator.addChangeListener { (change) in
@@ -808,26 +842,26 @@ class SampleCodeTest {
         }
         // end::replication-status[]
     }
-    
+
     //  BEGIN PendingDocuments IB -- 11/Feb/21 --
     func dontTestReplicationPendingDocs() throws {
         // tag::replication-pendingdocuments[]
-        
+
         let url = URL(string: "ws://localhost:4984/mydatabase")!
         let target = URLEndpoint(url: url)
-        
+
         var config = ReplicatorConfiguration(database: database, target: target)
         config.replicatorType = .push
-        
+
         // tag::replication-push-pendingdocumentids[]
         self.replicator = Replicator(config: config)
         let myDocIDs = try self.replicator.pendingDocumentIds() // <.>
-        
+
         // end::replication-push-pendingdocumentids[]
         if(!myDocIDs.isEmpty) {
             print("There are \(myDocIDs.count) documents pending")
             let thisID = myDocIDs.first!
-            
+
             self.replicator.addChangeListener { (change) in
                 print("Replicator activity level is \(change.status.activity)")
                 // tag::replication-push-isdocumentpending[]
@@ -841,15 +875,15 @@ class SampleCodeTest {
                 }
                 // end::replication-push-isdocumentpending[]
             }
-            
+
             self.replicator.start()
             // end::replication-pendingdocuments[]
         }
     }
-    
+
     //  END test PendingDocuments IB -- 11/Feb/21 --
-    
-    
+
+
     func dontTestReplicatorDocumentEvent() throws {
         // tag::add-document-replication-listener[]
         let token = self.replicator.addDocumentReplicationListener { (replication) in
@@ -865,35 +899,35 @@ class SampleCodeTest {
                 }
             }
         }
-        
+
         self.replicator.start()
         // end::add-document-replication-listener[]
-        
+
         // tag::remove-document-replication-listener[]
         self.replicator.removeChangeListener(withToken: token)
         // end::remove-document-replication-listener[]
     }
-    
+
     func dontTestReplicationCustomHeader() throws {
         let url = URL(string: "ws://localhost:4984/mydatabase")!
         let target = URLEndpoint(url: url)
-        
+
         // tag::replication-custom-header[]
         var config = ReplicatorConfiguration(database: database, target: target)
         config.headers = ["CustomHeaderName": "Value"]
         // end::replication-custom-header[]
     }
-    
+
     func dontTestReplicationChannels() throws {
         let url = URL(string: "ws://localhost:4984/mydatabase")!
         let target = URLEndpoint(url: url)
-        
+
         // tag::replication-channels[]
         var config = ReplicatorConfiguration(database: database, target: target)
         config.channels = ["channel_name"]
         // end::replication-channels[]
     }
-    
+
     func dontTestHandlingReplicationError() throws {
         // tag::replication-error-handling[]
         self.replicator.addChangeListener { (change) in
@@ -903,26 +937,26 @@ class SampleCodeTest {
         }
         // end::replication-error-handling[]
     }
-    
+
     func dontTestReplicationResetCheckpoint() throws {
         let doResetCheckpointRequired = Bool.random()
-        
+
         // tag::replication-reset-checkpoint[]
-        
+
         if doResetCheckpointRequired {
             self.replicator.start(reset: true)  // <.>
         } else {
             self.replicator.start()
         }
-        
+
         // end::replication-reset-checkpoint[]
     }
-    
+
     func dontTestReplicationPushFilter() throws {
         // tag::replication-push-filter[]
         let url = URL(string: "ws://localhost:4984/mydatabase")!
         let target = URLEndpoint(url: url)
-        
+
         var config = ReplicatorConfiguration(database: database, target: target)
         config.pushFilter = { (document, flags) in // <1>
             if (document.string(forKey: "type") == "draft") {
@@ -930,17 +964,17 @@ class SampleCodeTest {
             }
             return true
         }
-        
+
         self.replicator = Replicator(config: config)
         self.replicator.start()
         // end::replication-push-filter[]
     }
-    
+
     func dontTestReplicationPullFilter() throws {
         // tag::replication-pull-filter[]
         let url = URL(string: "ws://localhost:4984/mydatabase")!
         let target = URLEndpoint(url: url)
-        
+
         var config = ReplicatorConfiguration(database: database, target: target)
         config.pullFilter = { (document, flags) in // <1>
             if (flags.contains(.deleted)) {
@@ -948,73 +982,73 @@ class SampleCodeTest {
             }
             return true
         }
-        
+
         self.replicator = Replicator(config: config)
         self.replicator.start()
         // end::replication-pull-filter[]
     }
-    
+
     //  Added 2/Feb/21 - Ian Bridge
     //  Changed for 3.0.0 - Ian Bridge 3/Mar/21
     func testCustomRetryConfig() {
         // tag::replication-retry-config[]
         let target = URLEndpoint(url: URL(string: "ws://foo.couchbase.com/db")!)
-        
+
         var config =  ReplicatorConfiguration(database: database, target: target)
         config.replicatorType = .pushAndPull
         config.continuous = true
         // tag::replication-set-heartbeat[]
         config.heartbeat = 150 // <.>
-        
+
         // end::replication-set-heartbeat[]
         // tag::replication-set-maxattempts[]
         config.maxAttempts = 20 // <.>
-        
+
         // end::replication-set-maxattempts[]
         // tag::replication-set-maxattemptwaittime[]
         config.maxAttemptWaitTime = 600 // <.>
         self.replicator = Replicator(config: config)
         // end::replication-set-maxattemptwaittime[]
-        
+
         // end::replication-retry-config[]
     }
-    
+
 #if COUCHBASE_ENTERPRISE
     func dontTestDatabaseReplica() throws {
         let database2 = try self.openDB(name: "db2")
-        
+
         /* EE feature: code below might throw a compilation error
          if it's compiled against CBL Swift Community. */
         // tag::database-replica[]
         let targetDatabase = DatabaseEndpoint(database: database2)
         let config = ReplicatorConfiguration(database: database, target: targetDatabase)
         config.replicatorType = .push
-        
+
         self.replicator = Replicator(config: config)
         self.replicator.start()
         // end::database-replica[]
-        
+
         try database2.delete()
     }
 #endif
-    
+
     func dontTestCertificatePinning() throws {
-        
+
         // tag::certificate-pinning[]
         let certURL = Bundle.main.url(forResource: "cert", withExtension: "cer")!
         let data = try! Data(contentsOf: certURL)
         let certificate = SecCertificateCreateWithData(nil, data as CFData)
-        
+
         let url = URL(string: "wss://localhost:4985/db")!
         let target = URLEndpoint(url: url)
-        
+
         var config = ReplicatorConfiguration(database: database, target: target)
         config.pinnedServerCertificate = certificate
         // end::certificate-pinning[]
-        
+
         print("\(config)")
     }
-    
+
     func dontTestGettingStarted() throws {
         // tag::getting-started[]
         // Get the database (and create it if it doesn’t exist).
@@ -1024,25 +1058,25 @@ class SampleCodeTest {
         } catch {
             fatalError("Error opening database")
         }
-        
+
         // Create a new document (i.e. a record) in the database.
         let mutableDoc = MutableDocument()
             .setFloat(2.0, forKey: "version")
             .setString("SDK", forKey: "type")
-        
+
         // Save it to the database.
         do {
             try database.saveDocument(mutableDoc)
         } catch {
             fatalError("Error saving document")
         }
-        
+
         // Update a document.
         if let mutableDoc = database.document(withID: mutableDoc.id)?.toMutable() {
             mutableDoc.setString("Swift", forKey: "language")
             do {
                 try database.saveDocument(mutableDoc)
-                
+
                 let document = database.document(withID: mutableDoc.id)!
                 // Log the document ID (generated by the database)
                 // and properties
@@ -1052,13 +1086,13 @@ class SampleCodeTest {
                 fatalError("Error updating document")
             }
         }
-        
+
         // Create a query to fetch documents of type SDK.
         let query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
             .where(Expression.property("type").equalTo(Expression.string("SDK")))
-        
+
         // Run the query.
         do {
             let result = try query.execute()
@@ -1066,30 +1100,30 @@ class SampleCodeTest {
         } catch {
             fatalError("Error running the query")
         }
-        
+
         // Create replicators to push and pull changes to and from the cloud.
         let targetEndpoint = URLEndpoint(url: URL(string: "ws://localhost:4984/getting-started-db")!)
         var replConfig = ReplicatorConfiguration(database: database, target: targetEndpoint)
         replConfig.replicatorType = .pushAndPull
-        
+
         // Add authentication.
         replConfig.authenticator = BasicAuthenticator(username: "john", password: "pass")
-        
+
         // Create replicator (make sure to add an instance or static variable named replicator)
         self.replicator = Replicator(config: replConfig)
-        
+
         // Listen to replicator change events.
         self.replicator.addChangeListener { (change) in
             if let error = change.status.error as NSError? {
                 print("Error code :: \(error.code)")
             }
         }
-        
+
         // Start replication.
         self.replicator.start()
         // end::getting-started[]
     }
-    
+
     func dontTestPredictiveModel() throws {
         let database: Database
         do {
@@ -1097,25 +1131,25 @@ class SampleCodeTest {
         } catch {
             fatalError("Error opening database")
         }
-        
+
         // tag::register-model[]
         let model = ImageClassifierModel()
         Database.prediction.registerModel(model, withName: "ImageClassifier")
         // end::register-model[]
-        
+
         // tag::predictive-query-value-index[]
         let input = Expression.dictionary(["photo": Expression.property("photo")])
         let prediction = Function.prediction(model: "ImageClassifier", input: input)
-        
+
         let index = IndexBuilder.valueIndex(items: ValueIndexItem.expression(prediction.property("label")))
         try database.createIndex(index, withName: "value-index-image-classifier")
         // end::predictive-query-value-index[]
-        
+
         // tag::unregister-model[]
         Database.prediction.unregisterModel(withName: "ImageClassifier")
         // end::unregister-model[]
     }
-    
+
     func dontTestPredictiveIndex() throws {
         let database: Database
         do {
@@ -1123,15 +1157,15 @@ class SampleCodeTest {
         } catch {
             fatalError("Error opening database")
         }
-        
+
         // tag::predictive-query-predictive-index[]
         let input = Expression.dictionary(["photo": Expression.property("photo")])
-        
+
         let index = IndexBuilder.predictiveIndex(model: "ImageClassifier", input: input)
         try database.createIndex(index, withName: "predictive-index-image-classifier")
         // end::predictive-query-predictive-index[]
     }
-    
+
     func dontTestPredictiveQuery() throws {
         let database: Database
         do {
@@ -1139,11 +1173,11 @@ class SampleCodeTest {
         } catch {
             fatalError("Error opening database")
         }
-        
+
         // tag::predictive-query[]
         let input = Expression.dictionary(["photo": Expression.property("photo")])
         let prediction = Function.prediction(model: "ImageClassifier", input: input) // <1>
-        
+
         let query = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
@@ -1154,7 +1188,7 @@ class SampleCodeTest {
                             .greaterThanOrEqualTo(Expression.double(0.8))
                     )
             )
-        
+
         // Run the query.
         do {
             let result = try query.execute()
@@ -1164,7 +1198,7 @@ class SampleCodeTest {
         }
         // end::predictive-query[]
     }
-    
+
     func dontTestCoreMLPredictiveModel() throws {
         // tag::coreml-predictive-model[]
         // Load MLModel from `ImageClassifier.mlmodel`
@@ -1172,25 +1206,25 @@ class SampleCodeTest {
         let compiledModelURL = try MLModel.compileModel(at: modelURL)
         let model = try MLModel(contentsOf: compiledModelURL)
         let predictiveModel = CoreMLPredictiveModel(mlModel: model)
-        
+
         // Register model
         Database.prediction.registerModel(predictiveModel, withName: "ImageClassifier")
         // end::coreml-predictive-model[]
     }
-    
+
     func dontTestReplicatorConflictResolver() throws {
         // tag::replication-conflict-resolver[]
         let url = URL(string: "wss://localhost:4984/mydatabase")!
         let target = URLEndpoint(url: url)
-        
+
         var config = ReplicatorConfiguration(database: database, target: target)
         config.conflictResolver = LocalWinConflictResolver()
-        
+
         self.replicator = Replicator(config: config)
         self.replicator.start()
         // end::replication-conflict-resolver[]
     }
-    
+
     func dontTestSaveWithConflictHandler() throws {
         // tag::update-document-with-conflict-handler[]
         guard let document = database.document(withID: "xyz") else { return }
@@ -1204,12 +1238,12 @@ class SampleCodeTest {
             return true
         })
         // end::update-document-with-conflict-handler[]
-        
+
     }
-    
+
     // helper
     func isValidCredentials(_ u: String, password: String) -> Bool { return true }
-    
+
     func dontTestInitListener() throws {
         // tag::init-urllistener[]
         var config = URLEndpointListenerConfiguration(database: otherDB)
@@ -1217,24 +1251,24 @@ class SampleCodeTest {
         config.authenticator = ListenerPasswordAuthenticator(authenticator: { (username, password) -> Bool in
             return self.isValidCredentials(username, password: password)
         })
-        
+
         // end::init-urllistener[]
     }
-    
+
     func dontTestListenerStart() throws {
         // tag::start-urllistener[]
         try listener.start()
-        
+
         // end::start-urllistener[]
     }
-    
+
     func dontTestListenerStop() throws {
         // tag::stop-urllistener[]
         listener.stop()
-        
+
         // end::stop-urllistener[]
     }
-    
+
     func dontTestCreateSelfSignedCert() throws {
         // <site-rooot>/objc/advance/objc-p2psync-websocket-using-passive.html
         // Example-6
@@ -1250,7 +1284,7 @@ class SampleCodeTest {
         // end::create-self-signed-cert[]
         print("\(identity.expiration)") // to avoid warning
     }
-    
+
     // MARK: -- URLEndpointListener
     func dontTestTLSIdentityCreate() throws {
         // tag::p2psync-act-tlsid-create[]
@@ -1263,16 +1297,16 @@ class SampleCodeTest {
         // end::p2psync-act-tlsid-create[]
         print(identity)
     }
-    
+
     func dontTestDeleteIdentity() throws {
         // tag::p2psync-act-tlsid-delete[]
         try TLSIdentity.deleteIdentity(withLabel: "couchbaselite-client-cert-label")
         // end::p2psync-act-tlsid-delete[]
     }
-    
+
     func dontTestImportTLSIdentity() throws {
         // tag::p2psync-act-tlsid-import[]
-        
+
         let path = Bundle.main.path(forResource: "identity/client", ofType: "p12")
         let clientCertData = try NSData(contentsOfFile: path!, options: []) as Data
         let identity = try TLSIdentity.importIdentity(withData: clientCertData,
@@ -1281,52 +1315,52 @@ class SampleCodeTest {
         // end::p2psync-act-tlsid-import[]
         print(identity)
     }
-    
+
     // MARK: -- QUERY RESULT SET HANDLING EXAMPLES
-    
+
     func donTestQuerySyntaxAll() throws {
         // tag::query-syntax-all[]
         let database = try Database(name: "hotel")
         let query = QueryBuilder.select(SelectResult.all()).from(DataSource.database(database))
-        
+
         // end::query-syntax-all[]
-        
+
         print(query)
     }
-    
+
     func dontTestQueryAccessAll() throws {
         let query = QueryBuilder.select(SelectResult.all()).from(DataSource.database(database))
         var hotels = [String: Any]()
-        
+
         // tag::query-access-all[]
         let results = try query.execute()
         for row in results {
             let docsProps = row.dictionary(at: 0)! // <.>
-            
+
             let docid = docsProps.string(forKey: "id")
             let name = docsProps.string(forKey: "name")
             let type = docsProps.string(forKey: "type")
             let city = docsProps.string(forKey: "city")
-            
+
             print("\(docid): \(name), \(type), \(city)")
             let hotel = row.dictionary(at: 0)!  //<.>
             guard let hotelId = hotel.string(forKey: "id") else {
                 continue
             }
-            
+
             hotels[hotelId] = hotel
         }
-        
+
         // end::query-access-all[]
     }
-    
-    
-    
+
+
+
     func dontTestQueryAccessJSON() throws {
         let query = QueryBuilder.select(SelectResult.all()).from(DataSource.database(database))
         var hotels = [String:Hotel]()
         // tag::query-access-json[]
-        
+
         // In this example the Hotel class is defined using Codable
         //
         // class Hotel : Codable {
@@ -1339,39 +1373,39 @@ class SampleCodeTest {
         //   var text : String? = ""
         //   ... other class content
         // }
-        
+
         let results = try query.execute()
         for row in  results {
-            
+
             // get the result into a JSON String
             let jsonString = row.toJSON() // <.>
-            
+
             let thisJsonObj:Dictionary =
             try (JSONSerialization.jsonObject(
                 with: jsonString.data(using: .utf8)!,
                 options: .allowFragments)
                  as? [String: Any])! // <.>
-            
+
             // Use Json Object to populate Native object
             // Use Codable class to unpack JSON data to native object
             var this_hotel: Hotel = try JSONDecoder().decode(Hotel.self, from: jsonString.data(using: .utf8)!) // <.>
-            
+
             // ALTERNATIVELY unpack in steps
             this_hotel.id = thisJsonObj["id"] as! String
             this_hotel.name = thisJsonObj["name"] as! String
             this_hotel.type = thisJsonObj["type"] as! String
             this_hotel.city = thisJsonObj["city"] as! String
             hotels[this_hotel.id] = this_hotel
-            
+
         } // end for
-        
+
         // end::query-access-json[]
     }
-    
+
     func dontTestQuerySyntaxProps() throws {
         // tag::query-syntax-props[]
         let database = try! Database(name: "hotel")
-        
+
         let query = QueryBuilder
             .select(SelectResult.expression(Meta.id).as("metaId"),
                     SelectResult.expression(Expression.property("id")),
@@ -1379,20 +1413,20 @@ class SampleCodeTest {
                     SelectResult.expression(Expression.property("city")),
                     SelectResult.expression(Expression.property("type")))
             .from(DataSource.database(database))
-        
+
         // end::query-syntax-props[]
         print(query)
     }
-    
+
     func dontTestQueryAccessProps () throws {
         let query = QueryBuilder.select(SelectResult.all()).from(DataSource.database(database))
         var hotels = [String: Hotel]()
-        
+
         // tag::query-access-props[]
         for result in try! query.execute() {
             let docID = result.string(forKey: "metaId")!
             print("processing doc: \(docID)")
-            
+
             let id = result.string(forKey: "id")!
             var hotel = Hotel(id: id)
             hotel.name = result.string(forKey: "name")
@@ -1400,19 +1434,19 @@ class SampleCodeTest {
             hotel.type = result.string(forKey: "type")
             hotels[id] = hotel
         } // end for
-        
+
         // end::query-access-props[]
     }// end func
-    
+
     func dontTestQueryCount() throws {
         // tag::query-syntax-count-only[]
         let database = try Database(name: "hotel")
         let query = QueryBuilder
             .select(SelectResult.expression(Function.count(Expression.all())).as("mycount"))
             .from (DataSource.database(database)).groupBy(Expression.property("type"))
-        
+
         // end::query-syntax-count-only[]
-        
+
         // tag::query-access-count-only[]
         for result in try query.execute() {
             let count = result.int(forKey: "mycount") // <.>
@@ -1420,44 +1454,44 @@ class SampleCodeTest {
         }
         // end::query-access-count-only[]
     }
-    
+
     func dontTestQueryId () throws {
         // tag::query-syntax-id[]
         let database = try Database(name: "hotel")
         let query = QueryBuilder.select(SelectResult.expression(Meta.id).as("metaId"))
             .from(DataSource.database(database))
-        
+
         // end::query-syntax-id[]
-        
-        
+
+
         // tag::query-access-id[]
         let results = try query.execute()
         for result in results {
-            
+
             print(result.toDictionary())
-            
+
             let docId = result.string(forKey: "metaId")! // <.>
             print("Document Id is -- \(docId)")
-            
+
             // Now you can get the document using the ID
             let doc = database.document(withID: docId)!
-            
+
             let hotelId = doc.string(forKey: "id")!
-            
+
             let name = doc.string(forKey: "name")
-            
+
             let city = doc.string(forKey: "city")
 
             let type = doc.string(forKey: "type")
-            
+
             // ... process document properties as required
             print("Result properties are: \(hotelId), \(name), \(city), \(type)")
-            
-            
+
+
         }
         // end::query-access-id[]
     }
-    
+
     func query_pagination () throws {
         //tag::query-syntax-pagination[]
         let offset = 0;
@@ -1467,72 +1501,72 @@ class SampleCodeTest {
             .select(SelectResult.all())
             .from(DataSource.database(database))
             .limit(Expression.int(limit), offset: Expression.int(offset))
-        
+
         // end::query-syntax-pagination[]
         print(query)
     }
-    
+
     func dontTestQueryN1QL() throws {
-        
+
         // tag::query-syntax-n1ql[]
         let database = try Database(name: "hotel")
-        
+
         let query = try database.createQuery("SELECT META().id AS thisId FROM _ WHERE type = 'hotel'") // <.>
-        
+
         let results: ResultSet = try query.execute()
-        
+
         // end::query-syntax-n1ql[]
-        
+
         print(results.allResults().count)
     }
-    
+
     func dontTestQueryN1QLparams() throws {
-        
+
         // tag::query-syntax-n1ql-params[]
         let database = try! Database(name: "hotel")
-        
+
         let query = try database.createQuery("SELECT META().id AS thisId FROM _ WHERE type = $type") // <.>
-        
+
         query.parameters = Parameters().setString("hotel", forName: "type") // <.>
-        
+
         let results: ResultSet = try query.execute()
-        
+
         // end::query-syntax-n1ql-params[]
-        
+
         print(results.allResults().count)
     }
-    
+
     func dontTestProcessResults(results: ResultSet) throws {
         // tag::query-access-n1ql[]
         // tag::query-process-results[]
-        
+
         for row in results {
             print(row["thisId"].string!)
-            
+
             let docsId = row["thisId"].string!
-            
+
             // Now you can get the document using the ID
             let doc = database.document(withID: docsId)!
-            
+
             let hotelId = doc.string(forKey: "id")!
-            
+
             let name = doc.string(forKey: "name")
-            
+
             let city = doc.string(forKey: "city")
-            
+
             let type = doc.string(forKey: "type")
-            
+
             // ... process document properties as required
             print("Result properties are: \(hotelId), \(name), \(city), \(type)")
-            
+
         }
         // end::query-access-n1ql[]
         // end::query-process-results[]
-        
+
     }
-    
+
     // MARK: -- Listener
-    
+
     func dontTestListenerSimple() throws {
         let database = try Database(name: "database")
         // tag::listener-simple[]
@@ -1540,45 +1574,45 @@ class SampleCodeTest {
         config.authenticator = ListenerPasswordAuthenticator { username, password in
             return "valid.user" == username && "valid.password.string" == String(password)
         } // <.>
-        
+
         let listener = URLEndpointListener(config: config) // <.>
-        
+
         try listener.start()  // <.>
-        
+
         // end::listener-simple[]
     }
-    
+
     func dontTestListenerInitialize() throws {
         let otherDB = try Database(name: "otherDB")
         // tag::listener-initialize[]
-        
+
         // tag::listener-config-db[]
         var config = URLEndpointListenerConfiguration(database: otherDB) // <.>
-        
+
         // end::listener-config-db[]
         // tag::listener-config-port[]
         /* optionally */ let wsPort: UInt16 = 55991
         /* optionally */ let wssPort: UInt16 = 55990
         config.port =  wssPort // <.>
-        
+
         // end::listener-config-port[]
         // tag::listener-config-netw-iface[]
         config.networkInterface = "10.1.1.10"  // <.>
-        
+
         // end::listener-config-netw-iface[]
         // tag::listener-config-delta-sync[]
         config.enableDeltaSync = true // <.>
-        
+
         // end::listener-config-delta-sync[]
         // tag::listener-config-tls-enable[]
         config.disableTLS  = false // <.>
-        
+
         // end::listener-config-tls-enable[]
         // tag::listener-config-tls-id-anon[]
         // Set the credentials the server presents the client
         // Use an anonymous self-signed cert
         config.tlsIdentity = nil // <.>
-        
+
         // end::listener-config-tls-id-anon[]
         // tag::listener-config-client-auth-pwd[]
         // Configure how the client is to be authenticated
@@ -1586,9 +1620,9 @@ class SampleCodeTest {
         config.authenticator = ListenerPasswordAuthenticator(authenticator: { uname, pword -> Bool in
             return self.isValidCredentials(uname, password: pword)
         }) // <.>
-        
+
         // end::listener-config-client-auth-pwd[]
-        
+
         // tag::listener-start[]
         // Initialize the listener
         self.listener = URLEndpointListener(config: config) // <.>
@@ -1596,180 +1630,180 @@ class SampleCodeTest {
             fatalError("ListenerError Not Initialized")
             // ... take appropriate actions
         }
-        
+
         // Start the listener
         try self.listener.start() // <.>
-        
+
         // end::listener-start[]
         // end::listener-initialize[]
-        
+
         print(wsPort)
     }
-    
+
     func dontTestReplicatorSimple() throws {
         // tag::replicator-simple[]
-        
+
         let tgtUrl = URL(string: "wss://10.1.1.12:8092/otherDB")!
         let targetEndpoint = URLEndpoint(url: tgtUrl) //  <.>
-        
+
         var thisConfig = ReplicatorConfiguration(database: database, target: targetEndpoint) // <.>
-        
+
         thisConfig.acceptOnlySelfSignedServerCertificate = true // <.>
-        
+
         let thisAuthenticator = BasicAuthenticator(username: "valid.user", password: "valid.password.string")
         thisConfig.authenticator = thisAuthenticator // <.>
-        
+
         self.replicator = Replicator(config: thisConfig) // <.>
-        
+
         self.replicator.start(); // <.>
-        
+
         // end::replicator-simple[]
     }
-    
-  
+
+
     // MARK: Append
-    
+
     func dontTestGetURLList() throws {
         // tag::listener-get-url-list[]
         let config = URLEndpointListenerConfiguration(database: otherDB)
         let listener = URLEndpointListener(config: config)
         try listener.start()
-        
+
         if let urls = listener.urls {
             print("URLs are: \(urls)")
         }
-        
+
         // end::listener-get-url-list[]
     }
-    
-    
+
+
     func dontTestListenerConfigDisableTLSUpdate() throws {
         var config = URLEndpointListenerConfiguration(database: otherDB)
         // tag::listener-config-tls-full-enable[]
         config.disableTLS  = false // <.>
-        
+
         // end::listener-config-tls-full-enable[]
         // tag::listener-config-tls-disable[]
         config.disableTLS  = true // <.>
-        
+
         // end::listener-config-tls-disable[]
     }
-    
+
     func dontTestListenerConfigTLSIdentity() throws {
         var config = URLEndpointListenerConfiguration(database: otherDB)
-        
+
         // tag::listener-config-tls-id-full[]
         // tag::listener-config-tls-id-caCert[]
         guard let path = Bundle.main.path(forResource: "cert", ofType: "p12") else {
             /* process error */ return
         }
-        
+
         guard let certData = try? NSData(contentsOfFile: path) as Data else {
             /* process error */ return
         } // <.>
-        
+
         let tlsIdentity = try TLSIdentity.importIdentity(withData: certData,
                                                          password: "123",
                                                          label: "Server-Cert-Label") // <.>
-        
+
         // end::listener-config-tls-id-caCert[]
         // tag::listener-config-tls-id-SelfSigned[]
         let attrs = [certAttrCommonName: "Couchbase Inc"] // <.>
-        
+
         let identity = try TLSIdentity.createIdentity(forServer: true, /* isServer */
                                                       attributes: attrs,
                                                       expiration: Date().addingTimeInterval(86400),
                                                       label: "Server-Cert-Label") // <.>
-        
+
         // end::listener-config-tls-id-SelfSigned[]
         // tag::listener-config-tls-id-full-set[]
         // Set the credentials the server presents the client
         config.tlsIdentity = tlsIdentity    // <.>
-        
+
         // end::listener-config-tls-id-full-set[]
         // end::listener-config-tls-id-full[]
-        
+
         print("To avoid waring: \(identity)")
     }
-    
+
     func dontTestListenerConfigClientRootCA() throws {
         var config = URLEndpointListenerConfiguration(database: otherDB)
         let cert = self.listener.tlsIdentity!.certs[0]
-        
+
         // tag::listener-config-client-root-ca[]
         // tag::listener-config-client-auth-root[]
         // Authenticate using Cert Authority
-        
+
         // cert is a pre-populated object of type:SecCertificate representing a certificate
         let rootCertData = SecCertificateCopyData(cert) as Data // <.>
         let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)! //
-        
+
         config.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert]) // <.> <.>
-        
+
         // end::listener-config-client-auth-root[]
         // end::listener-config-client-root-ca[]
     }
-    
+
     func isValidCertificates(_ certs: [SecCertificate]) -> Bool { return true }
-    
+
     func dontTestClientAuthLambda() throws {
         var config = URLEndpointListenerConfiguration(database: otherDB)
-        
+
         // tag::listener-config-client-auth-lambda[]
         // tag::listener-config-client-auth-self-signed[]
         // Authenticate self-signed cert using application logic
-        
+
         config.authenticator = ListenerCertificateAuthenticator { certs -> Bool in // <.>
             // Validate the cert
             return self.isValidCertificates(certs)
         } // <.>
-        
+
         // end::listener-config-client-auth-self-signed[]
         // end::listener-config-client-auth-lambda[]
     }
-    
+
     func dontTestListenerConfigUpdate() throws {
         var config = URLEndpointListenerConfiguration(database: otherDB)
         let cert = self.listener.tlsIdentity!.certs[0]
-        
+
         // tag::old-listener-config-tls-id-nil[]
         config.tlsIdentity = nil
-        
+
         // end::old-listener-config-tls-id-nil[]
         // tag::old-listener-config-delta-sync[]
         config.enableDeltaSync = true
-        
+
         // end::old-listener-config-delta-sync[]
         // tag::listener-status-check[]
         let totalConnections = self.listener.status.connectionCount
         let activeConnections = self.listener.status.activeConnectionCount
-        
+
         // end::listener-status-check[]
         // tag::listener-stop[]
         self.listener.stop()
-        
+
         // end::listener-stop[]
         // tag::old-listener-config-client-auth-root[]
         // cert is a pre-populated object of type:SecCertificate representing a certificate
         let rootCertData = SecCertificateCopyData(cert) as Data
         let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
-        
+
         config.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert])
-        
+
         // end::old-listener-config-client-auth-root[]
         // tag::old-listener-config-client-auth-self-signed[]
         config.authenticator = ListenerCertificateAuthenticator { self.isValidCertificates($0) }
         // end::old-listener-config-client-auth-self-signed[]
-        
+
         print("to avoid warnings: \(activeConnections)/\(totalConnections) ")
     }
-    
+
     func dontTestURLEndpointListenerConstructor() throws {
         let enableTLS = Bool.random()
         let wssPort: UInt16 = 4985
         let wsPort: UInt16 = 4984
         let auth = ListenerPasswordAuthenticator { self.isValidCredentials($0, password: $1)}
-        
+
         // tag::p2p-ws-api-urlendpointlistener-constructor[]
         var config = URLEndpointListenerConfiguration.init(database: otherDB)
         config.port = enableTLS ? wssPort : wsPort
@@ -1778,56 +1812,56 @@ class SampleCodeTest {
         self.listener = URLEndpointListener.init(config: config) // <1>
         // end::p2p-ws-api-urlendpointlistener-constructor[]
     }
-    
+
     func fMyActPeer() {
         // tag::p2p-act-rep-func[]
-        
+
         // tag::p2p-act-rep-initialize[]
         guard let targetURL = URL(string: "wss://10.1.1.12:8092/otherDB") else {
             fatalError("Invalid URL")
         }
         let targetEndpoint = URLEndpoint(url: targetURL)
         var config = ReplicatorConfiguration(database: database, target: targetEndpoint) // <.>
-        
+
         // end::p2p-act-rep-initialize[]
         // tag::p2p-act-rep-config[]
         // tag::p2p-act-rep-config-type[]
         config.replicatorType = .pushAndPull
-        
+
         // end::p2p-act-rep-config-type[]
         // tag::autopurge-override[]
         // set auto-purge behavior (here we override default)
         config.enableAutoPurge = false // <.>
-        
+
         // end::autopurge-override[]
         // tag::p2p-act-rep-config-cont[]
         // Configure Sync Mode
         config.continuous = true
-        
+
         // end::p2p-act-rep-config-cont[]
         // tag::p2p-act-rep-config-self-cert[]
         // Configure Server Security -- only accept self-signed certs
         config.acceptOnlySelfSignedServerCertificate = true; // <.>
-        
+
         // end::p2p-act-rep-config-self-cert[]
         // Configure Client Security // <.>
         // tag::p2p-act-rep-auth[]
         //  Set Authentication Mode
         config.authenticator = BasicAuthenticator(username: "cbl-user-01",
                                                   password: "secret")
-        
+
         // end::p2p-act-rep-auth[]
         // tag::p2p-act-rep-config-conflict[]
         /* Optionally set custom conflict resolver call back
          config.conflictResolver = LocalWinConflictResolver()  // <.>
          */
-        
+
         // end::p2p-act-rep-config-conflict[]
         // end::p2p-act-rep-config[]
         // tag::p2p-act-rep-start-full[]
         // Apply configuration settings to the replicator
         self.replicator = Replicator.init( config: config) // <.>
-        
+
         // tag::p2p-act-rep-add-change-listener[]
         // Optionally add a change listener
         // Retain token for use in deletion
@@ -1841,33 +1875,33 @@ class SampleCodeTest {
         }
         // end::p2p-act-rep-status[]
         // end::p2p-act-rep-add-change-listener[]
-        
+
         // tag::p2p-act-rep-start[]
         // Run the replicator using the config settings
         self.replicator.start()  // <.>
-        
+
         // end::p2p-act-rep-start[]
         // end::p2p-act-rep-start-full[]
-        
-        
+
+
         // end::p2p-act-rep-func[]
         self.replicator.removeChangeListener(withToken: token)
     }
-    
-    
+
+
     func dontTestReplicatorStop() {
         let token = self.replicator.addChangeListener { change in }
         // tag::p2p-act-rep-stop[]
-        
+
         // Remove the change listener
         self.replicator.removeChangeListener(withToken: token)
-        
+
         // Stop the replicator
         self.replicator.stop()
-        
+
         // end::p2p-act-rep-stop[]
     }
-    
+
     func dontTestAdditionalListenerConfigs() throws {
         let target = DatabaseEndpoint(database: otherDB)
         var config = ReplicatorConfiguration(database: database, target: target)
@@ -1878,43 +1912,43 @@ class SampleCodeTest {
         // tag::p2p-act-rep-config-cacert[]
         // Configure Server Security -- only accept CA Certs
         config.acceptOnlySelfSignedServerCertificate = false // <.>
-        
+
         // end::p2p-act-rep-config-cacert[]
         // tag::p2p-act-rep-config-self-cert[]
         // Configure Server Security -- only accept self-signed certs
         config.acceptOnlySelfSignedServerCertificate = true // <.>
-        
+
         // end::p2p-act-rep-config-self-cert[]
         // tag::p2p-act-rep-config-pinnedcert[]
         // Return the remote pinned cert (the listener's cert)
         config.pinnedServerCertificate = cert // Get listener cert if pinned
-        
+
         // end::p2p-act-rep-config-pinnedcert[]
         // Configure Client Security // <.>
         // tag::p2p-act-rep-auth[]
         //  Set Authentication Mode
         config.authenticator = BasicAuthenticator(username: validUsername, password: validPassword)
-        
+
         // end::p2p-act-rep-auth[]
         // end::p2p-act-rep-config-tls-full[]
-        
+
         // tag::p2p-tlsid-tlsidentity-with-label[]
         // Check if Id exists in keychain and if so, use that Id
         if let tlsIdentity = try TLSIdentity.identity(withLabel: "doco-sync-server") { // <.>
             print("An identity with label : doco-sync-server already exists in keychain")
             config.authenticator = ClientCertificateAuthenticator(identity: tlsIdentity) // <.>
         }
-        
+
         // end::p2p-tlsid-check-keychain[]
         // end::p2p-tlsid-tlsidentity-with-label[]
     }
-    
+
     // tag::p2p-tlsid-manage-func[]
     func myGetCert() throws -> TLSIdentity? {
         var osStatus: OSStatus
         let target = DatabaseEndpoint(database: self.otherDB)
         var config = ReplicatorConfiguration(database: self.database, target: target)
-        
+
         //var thisData : CFData?
         // tag::p2p-tlsid-check-keychain[]
         // USE KEYCHAIN IDENTITY IF EXISTS
@@ -1924,16 +1958,16 @@ class SampleCodeTest {
             return tlsIdentity
         }
         // end::p2p-tlsid-check-keychain[]
-        
+
         // FIXME: since old-p2p-tlsid-tlsidentity-with-label[] is removed, this code is not under any tag?
         guard let tlsIdentity = try TLSIdentity.identity(withLabel: "doco-sync-server") else {
             return nil
         }
         config.authenticator = ClientCertificateAuthenticator(identity: tlsIdentity)
-        
+
         // tag::p2p-tlsid-check-bundled[]
         // CREATE IDENTITY FROM BUNDLED RESOURCE IF FOUND
-        
+
         // Check for a resource bundle with required label to generate identity from
         // return nil identify if not found
         guard let path = Bundle.main.path(forResource: "doco-sync-server", ofType: "p12"),
@@ -1942,7 +1976,7 @@ class SampleCodeTest {
             return nil
         }
         // end::p2p-tlsid-check-bundled[]
-        
+
         // tag::p2p-tlsid-import-from-bundled[]
         // Use SecPKCS12Import to import the contents (identities and certificates)
         // of the required resource bundle (PKCS #12 formatted blob).
@@ -1957,10 +1991,10 @@ class SampleCodeTest {
         }
         let importedItems = result! as NSArray
         let item = importedItems[0] as! [String: Any]
-        
+
         // Get SecIdentityRef representing the item's id
         let secIdentity = item[String(kSecImportItemIdentity)]  as! SecIdentity
-        
+
         // Get Id's Private Key, return nil id if fails
         var privateKey : SecKey?
         osStatus = SecIdentityCopyPrivateKey(secIdentity, &privateKey)
@@ -1968,17 +2002,17 @@ class SampleCodeTest {
             print("Failed to import private key from provided with error :\(osStatus) ")
             return nil
         }
-        
+
         // Get all relevant certs [SecCertificate] from the ID's cert chain using kSecImportItemCertChain
         let certChain = item[String(kSecImportItemCertChain)] as? [SecCertificate]
-        
-        
+
+
         // Return nil, if errors in key, certChain at this stage
         guard let privateKey = privateKey, let certChain = certChain else {
             return nil
         }
         // end::p2p-tlsid-import-from-bundled[]
-        
+
         // tag::p2p-tlsid-store-in-keychain[]
         // STORE THE IDENTITY AND ITS CERT CHAIN IN THE KEYCHAIN
 #if os(iOS)
@@ -2016,13 +2050,13 @@ class SampleCodeTest {
             String(kSecClass):          kSecClassCertificate,
             String(kSecValueRef):       certs[0]
         ]
-        
+
         let update: [String: Any] = [
             String(kSecClass):          kSecClassCertificate,
             String(kSecValueRef):       certs[0],
             String(kSecAttrLabel):      label
         ]
-        
+
         osStatus = SecItemUpdate(query as CFDictionary, update as CFDictionary)
         if osStatus != errSecSuccess {
             print("Unable to update certs \(osStatus)")
@@ -2030,58 +2064,58 @@ class SampleCodeTest {
         }
 #endif
         // end::p2p-tlsid-store-in-keychain[]
-        
+
         // tag::p2p-tlsid-return-id-from-keychain[]
-        
+
         // RETURN A TLSIDENTITY FROM THE KEYCHAIN FOR USE IN CONFIGURING TLS COMMUNICATION
         return try TLSIdentity.identity(withIdentity: secIdentity, certs: [certChain[1]])
         // end::p2p-tlsid-return-id-from-keychain[]
     }
-    
+
     func dontTestDeleteIDFromKeychain() throws {
         // tag::p2p-tlsid-delete-id-from-keychain[]
-        
+
         try TLSIdentity.deleteIdentity(withLabel: "doco-sync-server")
-        
+
         // end::p2p-tlsid-delete-id-from-keychain[]
-        
+
     }
-    
+
     // tag::p2p-act-rep-config-cacert-pinned-func[]
     func myCaCertPinned() {
         let targetURL = URL(string: "wss://10.1.1.12:8092/otherDB")!
         let targetEndpoint = URLEndpoint(url: targetURL)
         var config = ReplicatorConfiguration(database: database, target: targetEndpoint)
         // tag::p2p-act-rep-config-cacert-pinned[]
-        
+
         // Get bundled resource and read into localcert
         guard
             let pathToCert = Bundle.main.path(forResource: "listener-pinned-cert", ofType: "cer"),
             let localCertificate:NSData = NSData(contentsOfFile: pathToCert)
         else { /* process error */ return }
-        
+
         // Create certificate
         // using its DER representation as a CFData
         guard
             let pinnedCert = SecCertificateCreateWithData(nil, localCertificate)
         else { /* process error */  return }
-        
+
         // Add `pinnedCert` and `acceptOnlySelfSignedServerCertificate=false`(by default)
         // to `ReplicatorConfiguration`
         config.pinnedServerCertificate = pinnedCert
         // end::p2p-act-rep-config-cacert-pinned[]
         // end::p2p-act-rep-config-cacert-pinned-func[]
-        
+
     }
-    
+
     func dontTestOldListenerConfigClientRootCA() throws {
         // tag::old-listener-config-client-root-ca[]
         // Configure the client authenticator to validate using ROOT CA <.>
         // end::old-listener-config-client-root-ca[]
     }
-    
+
     // end::p2p-tlsid-manage-func[]
-    
+
     // tag::replication-start-func[]
     enum PeerConnectionStatus: UInt8 {
         case stopped = 0;
@@ -2090,7 +2124,7 @@ class SampleCodeTest {
         case idle
         case busy
     }
-    
+
     func dontTestReplicationStart(_ peer: String,
                                   peerDBName: String,
                                   user: String?,
@@ -2100,47 +2134,47 @@ class SampleCodeTest {
             fatalError("UserCredentialsNotProvided")
             // ... take appropriate actions
         }
-        
+
         // tag::replicator-start-func-config-init[]
         var replicator = self.replicatorsToPeers[peer]
-        
+
         if replicator == nil {
             // Start replicator to connect to the URLListenerEndpoint
             guard let targetUrl = URL(string: "ws://\(peer)/\(peerDBName)") else {
                 fatalError("URLInvalid")
                 // ... take appropriate actions
             }
-            
+
             var config = ReplicatorConfiguration.init(database: self.database, target: URLEndpoint.init(url:targetUrl)) //<1>
             // end::replicator-start-func-config-init[]
-            
+
             // tag::replicator-start-func-config-more[]
-            
+
             config.replicatorType = .pushAndPull // <2>
             config.continuous =  true // <3>
-            
+
             // end::replicator-start-func-config-more[]
-            
+
             // tag::replicator-start-func-config-auth[]
             config.authenticator = BasicAuthenticator(username: validUser, password: validPassword)
             // end::replicator-start-func-config-auth[]
-            
+
             // tag::replicator-start-func-repl-init[]
             replicator = Replicator.init(config: config)
             self.replicatorsToPeers[peer] = replicator
-            
+
             let token = registerForEventsForReplicator(replicator!, handler: handler)
             self.replicatorListenerTokens[peer] = token
-            
+
             // end::replicator-start-func-repl-init[]
         }
-        
+
         // tag::replicator-start-func-repl-start[]
         replicator?.start()
         // end::replicator-start-func-repl-start[]
     }
     // end::replication-start-func[]
-    
+
     // tag::replicator-register-for-events[]
     func registerForEventsForReplicator(_ replicator: Replicator,
                                         handler: @escaping (PeerConnectionStatus, Error?) -> Void) -> ListenerToken {
@@ -2149,7 +2183,7 @@ class SampleCodeTest {
                 handler(.stopped, change.status.error)
                 return
             }
-            
+
             switch change.status.activity {
             case .connecting:
                 print("Replicator Connecting to Peer")
@@ -2162,7 +2196,7 @@ class SampleCodeTest {
             case .stopped:
                 print("Replicator is stopped")
             }
-            
+
             let progress = change.status.progress
             if progress.completed == progress.total {
                 print("All documents synced")
@@ -2170,23 +2204,23 @@ class SampleCodeTest {
             else {
                 print("Documents \(progress.total - progress.completed) still pending sync")
             }
-            
+
             if let customStatus = PeerConnectionStatus(rawValue: change.status.activity.rawValue) {
                 handler(customStatus, nil)
             }
         }
     }
     // end::replicator-register-for-events[]
-    
+
     func startListener() {
         var messageEndpointListener: MessageEndpointListener!
-        
+
         // tag::listener[]
         let database = try! Database(name: "mydb")
         let config = MessageEndpointListenerConfiguration(database: database, protocolType: .messageStream)
         messageEndpointListener = MessageEndpointListener(config: config)
         // end::listener[]
-        
+
         print(messageEndpointListener.connections.count)
     }
 }
@@ -2195,13 +2229,13 @@ class SampleCodeTest {
 class MyClass {
     var database: Database!
     var replicator: Replicator! // <1>
-    
+
     func startReplicator() {
         let url = URL(string: "ws://localhost:4984/db")! // <2>
         let target = URLEndpoint(url: url)
         var config = ReplicatorConfiguration(database: database, target: target)
         config.replicatorType = .pull
-        
+
         self.replicator = Replicator(config: config)
         self.replicator.start()
     }
@@ -2211,22 +2245,22 @@ class MyClass {
 
 /*
  // tag::sgw-repl-pull-callouts[]
- 
+
  <.> A replication is an asynchronous operation.
  To keep a reference to the `replicator` object, you can set it as an instance property.
  <.> The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
  You should now use `ws:`, or `wss:` for SSL/TLS connections.
- 
- 
+
+
  // end::sgw-repl-pull-callouts[]
- 
+
  // tag::sgw-act-rep-initialize[]
  let tgtUrl = URL(string: "wss://10.1.1.12:8092/travel-sample")!
  let targetEndpoint = URLEndpoint(url: tgtUrl)
  var config = ReplicatorConfiguration(database: database!, target: targetEndpoint) // <.>
- 
+
  // end::sgw-act-rep-initialize[]
- 
+
  */
 
 // MARK: -- Conflict Resolver Helpers
@@ -2274,12 +2308,12 @@ class ImageClassifierModel: PredictiveModel {
         guard let blob = input.blob(forKey: "photo") else {
             return nil
         }
-        
+
         let imageData = blob.content!
         // `myMLModel` is a fake implementation
         // this would be the implementation of the ml model you have chosen
         let modelOutput = myMLModel.predictImage(data: imageData)
-        
+
         let output = MutableDictionaryObject(data: modelOutput)
         return output // <1>
     }
@@ -2288,30 +2322,30 @@ class ImageClassifierModel: PredictiveModel {
 
 // MARK: Prediction Model
 class TestPredictiveModel: PredictiveModel {
-    
+
     class var name: String {
         return "Untitled"
     }
-    
+
     var numberOfCalls = 0
-    
+
     func predict(input: DictionaryObject) -> DictionaryObject? {
         numberOfCalls = numberOfCalls + 1
         return self.doPredict(input: input)
     }
-    
+
     func doPredict(input: DictionaryObject) -> DictionaryObject? {
         return nil
     }
-    
+
     func registerModel() {
         Database.prediction.registerModel(self, withName: type(of: self).name)
     }
-    
+
     func unregisterModel() {
         Database.prediction.unregisterModel(withName: type(of: self).name)
     }
-    
+
     func reset() {
         numberOfCalls = 0
     }
@@ -2321,15 +2355,15 @@ class TestPredictiveModel: PredictiveModel {
 
 // tag::custom-logging[]
 class LogTestLogger: Logger {
-    
+
     // set the log level
     var level: LogLevel = .none
-    
+
     // constructor for easiness
     init(_ level: LogLevel) {
         self.level = level
     }
-    
+
     func log(level: LogLevel, domain: LogDomain, message: String) {
         // handle the message, for example piping it to
         // a third party framework
@@ -2355,7 +2389,7 @@ class SomeClass {
             // do something with this `interface`
         }
     }
-    
+
     // . . .
 }
 
@@ -2369,27 +2403,27 @@ class SomeClass {
 /* ---------------  stubs for documentation  ----------------- */
 /* ----------------------------------------------------------- */
 class ActivePeer: MessageEndpointDelegate {
-    
+
     init() throws {
         let id = ""
-        
+
         // tag::message-endpoint[]
         let database = try Database(name: "dbname")
-        
+
         // The delegate must implement the `MessageEndpointDelegate` protocol.
         let messageEndpointTarget = MessageEndpoint(uid: "UID:123", target: id, protocolType: .messageStream, delegate: self)
         // end::message-endpoint[]
-        
+
         // tag::message-endpoint-replicator[]
         let config = ReplicatorConfiguration(database: database, target: messageEndpointTarget)
-        
+
         // Create the replicator object.
         let replicator = Replicator(config: config)
         // Start the replication.
         replicator.start()
         // end::message-endpoint-replicator[]
     }
-    
+
     // tag::create-connection[]
     /* implementation of MessageEndpointDelegate */
     func createConnection(endpoint: MessageEndpoint) -> MessageEndpointConnection {
@@ -2397,21 +2431,21 @@ class ActivePeer: MessageEndpointDelegate {
         return connection
     }
     // end::create-connection[]
-    
+
 }
 
 class ActivePeerConnection: MessageEndpointConnection {
-    
+
     var replicatorConnection: ReplicatorConnection?
-    
+
     init() {}
-    
+
     func disconnect() {
         // tag::active-replicator-close[]
         replicatorConnection?.close(error: nil)
         // end::active-replicator-close[]
     }
-    
+
     // tag::active-peer-open[]
     /* implementation of MessageEndpointConnection */
     func open(connection: ReplicatorConnection, completion: @escaping (Bool, MessagingError?) -> Void) {
@@ -2419,7 +2453,7 @@ class ActivePeerConnection: MessageEndpointConnection {
         completion(true, nil)
     }
     // end::active-peer-open[]
-    
+
     // tag::active-peer-send[]
     /* implementation of MessageEndpointConnection */
     func send(message: Message, completion: @escaping (Bool, MessagingError?) -> Void) {
@@ -2430,14 +2464,14 @@ class ActivePeerConnection: MessageEndpointConnection {
         completion(true, nil)
     }
     // end::active-peer-send[]
-    
+
     func receive(data: Data) {
         // tag::active-peer-receive[]
         let message = Message.fromData(data)
         replicatorConnection?.receive(message: message)
         // end::active-peer-receive[]
     }
-    
+
     // tag::active-peer-close[]
     /* implementation of MessageEndpointConnection */
     func close(error: Error?, completion: @escaping () -> Void) {
@@ -2447,7 +2481,7 @@ class ActivePeerConnection: MessageEndpointConnection {
         completion()
     }
     // end::active-peer-close[]
-    
+
 }
 
 /* ----------------------------------------------------------- */
@@ -2455,14 +2489,14 @@ class ActivePeerConnection: MessageEndpointConnection {
 /* ---------------  stubs for documentation  ----------------- */
 /* ----------------------------------------------------------- */
 class PassivePeerConnection: NSObject, MessageEndpointConnection {
-    
+
     var messageEndpointListener: MessageEndpointListener?
     var replicatorConnection: ReplicatorConnection?
-    
+
     override init() {
         super.init()
     }
-    
+
     func startListener() {
         // tag::listener[]
         let database = try! Database(name: "mydb")
@@ -2470,26 +2504,26 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
         messageEndpointListener = MessageEndpointListener(config: config)
         // end::listener[]
     }
-    
+
     func stopListener() {
         // tag::passive-stop-listener[]
         messageEndpointListener?.closeAll()
         // end::passive-stop-listener[]
     }
-    
+
     func acceptConnection() {
         // tag::advertizer-accept[]
         let connection = PassivePeerConnection() /* implements MessageEndpointConnection */
         messageEndpointListener?.accept(connection: connection)
         // end::advertizer-accept[]
     }
-    
+
     func disconnect() {
         // tag::passive-replicator-close[]
         replicatorConnection?.close(error: nil)
         // end::passive-replicator-close[]
     }
-    
+
     // tag::passive-peer-open[]
     /* implementation of MessageEndpointConnection */
     func open(connection: ReplicatorConnection, completion: @escaping (Bool, MessagingError?) -> Void) {
@@ -2497,7 +2531,7 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
         completion(true, nil)
     }
     // end::passive-peer-open[]
-    
+
     // tag::passive-peer-send[]
     /* implementation of MessageEndpointConnection */
     func send(message: Message, completion: @escaping (Bool, MessagingError?) -> Void) {
@@ -2509,14 +2543,14 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
         completion(true, nil)
     }
     // end::passive-peer-send[]
-    
+
     func receive(data: Data) {
         // tag::passive-peer-receive[]
         let message = Message.fromData(data)
         replicatorConnection?.receive(message: message)
         // end::passive-peer-receive[]
     }
-    
+
     // tag::passive-peer-close[]
     /* implementation of MessageEndpointConnection */
     func close(error: Error?, completion: @escaping () -> Void) {
@@ -2527,6 +2561,175 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
     }
     // end::passive-peer-close[]
 }
+
+public class Supporting_Datatypes
+{
+
+    func datatype_usage()
+    {
+
+        // tag::datatype_usage[]
+        // tag::datatype_usage_createdb[]
+        // Get the database (and create it if it doesn’t exist).
+        var database = try!Database(name: "hoteldb");
+    
+        // end::datatype_usage_createdb[]
+        // tag::datatype_usage_createdoc[]
+        // Create your new document
+        // The lack of 'const' indicates this document is mutable
+        var mutableDoc = MutableDocument(id: "doc1");
+    
+        // end::datatype_usage_createdoc[]
+        // tag::datatype_usage_mutdict[]
+        // Create and populate mutable dictionary
+        // Create a new mutable dictionary and populate some keys/values
+        var address = MutableDictionaryObject();
+        address.setString("1 Main st.", forKey: "street");
+        address.setString("San Francisco", forKey: "city");
+        address.setString("CA", forKey: "state");
+        address.setString("USA", forKey: "country");
+        address.setString("90210", forKey: "code");
+    
+        // end::datatype_usage_mutdict[]
+        // tag::datatype_usage_mutarray[]
+        // Create and populate mutable array
+        var phones = MutableArrayObject();
+        phones.addString("650-000-0000");
+        phones.addString("650-000-0001");
+    
+        // end::datatype_usage_mutarray[]
+        // tag::datatype_usage_populate[]
+        // Initialize and populate the document
+    
+        // Add document type to document properties <.>
+        mutableDoc.setString("hotel", forKey:"type");
+    
+        // Add hotel name string to document properties <.>
+        mutableDoc.setString("Hotel Java Mo", forKey:"name");
+    
+        // Add float to document properties <.>
+        mutableDoc.setFloat(121.75, forKey:"room_rate");
+    
+        // Add dictionary to document's properties <.>
+        mutableDoc.setDictionary(address, forKey: "address");
+    
+        // Add array to document's properties <.>
+        mutableDoc.setArray(phones, forKey:"phones");
+    
+        // end::datatype_usage_populate[]
+        // tag::datatype_usage_persist[]
+        // Save the document changes <.>
+        try!database.saveDocument(mutableDoc);
+
+        // end::datatype_usage_persist[]
+        // tag::datatype_usage_closedb[]
+        // Close the database <.>
+        do {
+            try self.database.close()
+        }
+
+        // end::datatype_usage_closedb[]
+    
+        // end::datatype_usage[]
+    
+    } // end func datatype_usage()
+    
+    
+    func datatype_dictionary()
+    {
+
+        let database = try?Database(name: "mydb");
+
+        // tag::datatype_dictionary[]
+        // NOTE: No error handling, for brevity (see getting started)
+        let document = database?.document(withID:"doc1");
+
+        // Getting a dictionary from the document's properties
+        let dict = document?.dictionary(forKey: "address");
+
+        // Access a value with a key from the dictionary
+        let street = dict?.string(forKey: "street");
+
+        // Iterate dictionary
+        for key in dict!.keys {
+            print("Key \(key) = \(dict!.value(forKey:key))");
+        }
+
+        // Create a mutable copy
+        let mutable_dict = dict?.toMutable();
+        // end::datatype_dictionary[]
+    }
+
+    func datatype_mutable_dictionary()
+    {
+
+        var database = try!Database(name: "mydb");
+
+        // tag::datatype_mutable_dictionary[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        // Create a new mutable dictionary and populate some keys/values
+        var mutable_dict = MutableDictionaryObject();
+        mutable_dict.setString("1 Main st.", forKey: "street");
+        mutable_dict.setString("San Francisco", forKey: "city");
+
+        // Add the dictionary to a document's properties and save the document
+        var mutable_doc = MutableDocument(id: "doc1");
+        mutable_doc.setDictionary(mutable_dict, forKey: "address");
+        try!database.saveDocument(mutable_doc);
+
+        // end::datatype_mutable_dictionary[]
+    }
+
+
+    func datatype_array()
+    {
+        let database = try!Database(name: "mydb");
+
+        // tag::datatype_array[]
+        // NOTE: No error handling, for brevity (see getting started)
+        let document = database.document(withID:"doc1");
+
+        // Getting a phones array from the document's properties
+        let array = document?.array(forKey: "phones")
+
+        // Get element count
+        let count = array!.count;
+
+        // Access an array element by index
+        if count >= 0 { let phone = array![1]; }
+
+        // Iterate dictionary
+        for (index, element) in array!.enumerated() {
+            print("Index \(index) = \(element)");
+        }
+
+        // Create a mutable copy
+        var mutable_array = array!.toMutable();
+        // end::datatype_array[]
+
+    }
+
+    func datatype_mutable_array()
+    {
+        var database = try!Database(name: "mydb");
+
+        // tag::datatype_mutable_array[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        // Create a new mutable array and populate data into the array
+        var mutable_array = MutableArrayObject();
+        mutable_array.addString("650-000-0000");
+        mutable_array.addString("650-000-0001");
+
+            // Set the array to document's properties and save the document
+        var mutable_doc = MutableDocument(id: "doc1");
+        mutable_doc.setArray(mutable_array, forKey:"phones");
+        try!database.saveDocument(mutable_doc);
+        // end::datatype_mutable_array[]
+    }
+
+} // end class supporting_datatypes
 
 
 
