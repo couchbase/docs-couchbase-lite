@@ -39,27 +39,70 @@ include::{root-partials}_block-caveats.adoc[tag=index-partial-value]
 
 == Creating a new index
 
+You can use N1QL or QueryBuilder syntaxes to create an index
+
+// === N1QL
+// N1QL provides a configuration object to define indexes --
+// `ValueIndexConfiguration`.
+
+// The following example inserts documents and creates an FTS index on the `name and type` properties.
+
+// .Using N1QL's ValueIndexConfiguration
+// [#ex-indexbuilder]
+// :param-tags: fts-index
+// include::{root-partials}_block_tabbed_code_example.adoc[]
+// :param-tags!:
+
+// .Using the IndexBuilder method
+// [#ex-indexbuilder]
+// :param-tags: fts-index
+// include::{root-partials}_block_tabbed_code_example.adoc[]
+// :param-tags!:
+
+
 <<ex-create-index>> creates a new index for the `type` and `name` properties, shown in this data model:
 
+[#ex-datamodel]
 .Data Model
 ====
 [source,json]
 ----
 {
     "_id": "hotel123",
-    "type": "hotel", <.>
-    "name": "Apple Droid"
+    "type": "hotel",
+    "name": "The Michigander",
+    "overview": "Ideally situated for exploration of the Motor City and the wider state of Michigan. Tripadvisor rated the hotel ...",
+    "state": "Michigan"
 }
 ----
 ====
+
+=== N1QL
 
 The code to create the index will look something like this:
 
 .Create index
 [#ex-create-index]
+
 :param-tags: query-index
 include::{root-partials}_block_tabbed_code_example.adoc[]
 :param-tags!:
+
+ifndef::is-c[]
+=== QueryBuilder
+
+The code to create the index will look something like this:
+
+.Create index with QueryBuilder
+[#ex-create-index]
+
+:param-tags: query-index_Querybuilder
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
+endif::is-c[]
+
+== Summary
 
 When planning the indexes you need for your database, remember that while indexes make queries faster, they may also:
 

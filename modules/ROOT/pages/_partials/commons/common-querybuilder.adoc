@@ -14,6 +14,8 @@
 :blank-field: ____
 :menuitem-delimiter: {nbsp}{nbsp}|{nbsp}{nbsp}
 :count-result-text: The result set representing a count is a key-value pair. The key being the count name, as defined using `SelectResult.as`
+:fn2x5: footnote:fn2x5[Starting in Couchbase Lite 2.5]
+:fnref_2x5: footnote:fn2x5[]
 
 // END::Local page attributes
 
@@ -54,34 +56,36 @@ TIP: We recommend working through the query section of the {couchbase-tutorials-
 
 == Indexing
 
-Before we begin querying documents, let's briefly mention the importance of having a query index.
-A query can only be fast if there's a pre-existing database index it can search to narrow down the set of documents to examine -- see: <<lb-indexing>>, which shows how to create an index and our {query-troubleshooting--xref} topic.
 
 TIP: See the {indexing--xref} topic to learn more about indexing.
 
-[#lbl-indexing]
-=== Creating a New Index
+Before we begin querying documents, let's briefly mention the importance of having a query index.
+A query can only be fast if there's a pre-existing database index it can search to narrow down the set of documents to examine -- see: <<ex-indexing>>, which shows how to create an index, and also the {query-troubleshooting--xref} topic.
 
-This example creates a new index for the `type` and `name` properties in the <<lbl-data-format>> shown.
+TIP: See the {indexing--xref} topic to learn more about indexing.
 
-[#lbl-data-format]
-.Index Query Data Format
-====
+A query can only be fast if there's a pre-existing database index it can search to narrow down the set of documents to examine -- see: <<ex-indexing>>, which shows how to create an index and our {query-troubleshooting--xref} topic.
+
+However, every index has to be updated whenever a document is updated.
+So too many indexes can hurt performance.
+
+Good performance depends on designing and creating the _right_ indexes to go along with your queries.
+
+
+[#ex-indexing]
+.Creating a New Index
+:param-tags: query-index
+:param-leader: This example creates a new index for the `type` and `name` properties in the <<ex-data-format>>.
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+:param-leader!:
+
+[#ex-data-format]
+.Data Model
 [{json-snippet}]
 ----
 include::{root-examples}query-snippets.adoc[tags=query-result-format-props]
 ----
-====
-
-
-.Code to Create Index
-[#ex-query-index]
-:param-tags: query-index
-include::{root-partials}_block_tabbed_code_example.adoc[]
-:param-tags!:
-
-NOTE: Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
-Good performance depends on designing and creating the _right_ indexes to go along with your queries.
 
 
 [#lbl-select]
@@ -207,7 +211,7 @@ The following example uses the `{url-api-classes-query-arrayfunction}` to find d
 ----
 
 :param-tags: query-collection-operator-contains
-include::{root-partials}_block_tabbed_code_block.adoc[]
+include::{root-partials}_block_tabbed_code.adoc[]
 :param-tags!:
 
 ==== IN Operator
@@ -216,7 +220,7 @@ The `IN` operator is useful when you need to explicitly list out the values to t
 The following example looks for documents whose `first`, `last` or `username` property value equals "Armani".
 
 :param-tags: query-collection-operator-in
-include::{root-partials}_block_tabbed_code_block.adoc[]
+include::{root-partials}_block_tabbed_code.adoc[]
 :param-tags!:
 
 
@@ -301,8 +305,7 @@ TIP: For more on the regex spec used by {cbl} see http://www.cplusplus.com/refer
 
 [#lbl-deleted-ops]
 === Deleted Document
-You can query documents that have been deleted (tombstones)
-footnote:[Starting in Couchbase Lite 2.5] as shown in <<ex-del-qry>>.
+You can query documents that have been deleted (tombstones) {fn2x5} as shown in <<ex-del-qry>>.
 
 .Query to select Deleted Documents
 [#ex-del-qry]

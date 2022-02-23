@@ -443,10 +443,12 @@ class BasicExamples(private val context: Context) {
         CouchbaseLite.init(context)
 
         // Get the database (and create it if it doesn’t exist).
+        // tag::database-config-factory[]
         database = Database(
-            "getting-started",
-            DatabaseConfigurationFactory.create(context.filesDir.absolutePath)
-        )
+          "getting-started",
+          DatabaseConfigurationFactory.create(context.filesDir.absolutePath)
+          )
+        // end::database-config-factory[]
     }
 
     @Test
@@ -479,14 +481,18 @@ class BasicExamples(private val context: Context) {
 
         // Create a replicator to push and pull changes to and from the cloud.
         // Be sure to hold a reference somewhere to prevent the Replicator from being GCed
-        val replicator = Replicator(
+        //  tag::replicator-config-factory[]
+        val replicator =
+          Replicator(
             ReplicatorConfigurationFactory.create(
-                database = database,
-                target = URLEndpoint(URI("ws://localhost:4984/getting-started-db")),
-                type = ReplicatorType.PUSH_AND_PULL,
-                authenticator = BasicAuthenticator("sync-gateway", "password".toCharArray())
-            )
-        )
+              database = database,
+              target = URLEndpoint(URI("ws://localhost:4984/getting-started-db")),
+              type = ReplicatorType.PUSH_AND_PULL,
+              authenticator = BasicAuthenticator("sync-gateway", "password".toCharArray())
+              )
+          )
+
+        //  end::replicator-config-factory[]
 
         // Listen to replicator change events.
         replicator.addChangeListener { change ->
@@ -603,17 +609,19 @@ class BasicExamples(private val context: Context) {
     @Throws(CouchbaseLiteException::class)
     fun testFileLogging() {
         // tag::file-logging[]
+        // tag::file-logging-config-factory[]
         Database.log.file.let {
-            it.config = LogFileConfigurationFactory.create(
-                context.cacheDir.absolutePath, // <.>
-                maxSize = 10240, // <.>
-                maxRotateCount = 5, // <.>
-                usePlainText = false
+          it.config = LogFileConfigurationFactory.create(
+            context.cacheDir.absolutePath, // <.>
+            maxSize = 10240, // <.>
+            maxRotateCount = 5, // <.>
+            usePlainText = false
             ) // <.>
             it.level = LogLevel.INFO // <.>
 
             // end::file-logging[]
-        }
+          }
+        // end::file-logging-config-factory[]
     }
 
     fun writeConsoleLog() {
@@ -798,6 +806,178 @@ class BasicExamples(private val context: Context) {
 }
 
 
+class supportingDatatypes
+{
+
+    private val database  = Database("mydb")
+
+
+
+    fun datatype_usage() {
+
+
+        // tag::datatype_usage[]
+        // tag::datatype_usage_createdb[]
+        // Initialize the Couchbase Lite system
+        CouchbaseLite.init(context)
+
+        // Get the database (and create it if it doesn’t exist).
+        DatabaseConfiguration config = new DatabaseConfiguration()
+
+        config.setDirectory(context.getFilesDir().getAbsolutePath())
+
+        Database database = new Database("getting-started", config)
+
+        // end::datatype_usage_createdb[]
+        // tag::datatype_usage_createdoc[]
+        // Create your new document
+        // The lack of 'const' indicates this document is mutable
+        MutableDocument mutableDoc = new MutableDocument()
+
+        // end::datatype_usage_createdoc[]
+        // tag::datatype_usage_mutdict[]
+        // Create and populate mutable dictionary
+        // Create a new mutable dictionary and populate some keys/values
+        MutableDictionary address = new MutableDictionary()
+        address.setString("street", "1 Main st.")
+        address.setString("city", "San Francisco")
+        address.setString("state", "CA")
+        address.setString("country", "USA")
+        address.setString("code"), "90210")
+
+        // end::datatype_usage_mutdict[]
+        // tag::datatype_usage_mutarray[]
+        // Create and populate mutable array
+        MutableArray phones = new MutableArray()
+        phones.addString("650-000-0000")
+        phones.addString("650-000-0001")
+
+        // end::datatype_usage_mutarray[]
+        // tag::datatype_usage_populate[]
+        // Initialize and populate the document
+
+        // Add document type to document properties <.>
+        mutable_doc.setString("type", "hotel"))
+
+        // Add hotel name string to document properties <.>
+        mutable_doc.setString("name", "Hotel Java Mo"))
+
+        // Add float to document properties <.>
+        mutable_doc.setFloat("room_rate", 121.75f)
+
+        // Add dictionary to document's properties <.>
+        mutable_doc.setDictionary("address", address)
+
+
+        // Add array to document's properties <.>
+        mutable_doc.setArray("phones", phones)
+
+        // end::datatype_usage_populate[]
+        // tag::datatype_usage_persist[]
+        // Save the document changes <.>
+        database.save(mutable_doc)
+
+        // end::datatype_usage_persist[]
+        // tag::datatype_usage_closedb[]
+        // Close the database <.>
+        database.close()
+
+        // end::datatype_usage_closedb[]
+
+        // end::datatype_usage[]
+
+    }
+
+
+
+    fun datatype_dictionary() {
+
+        // tag::datatype_dictionary[]
+        // NOTE: No error handling, for brevity (see getting started)
+        val document = database!!.getDocument("doc1")
+
+        // Getting a dictionary from the document's properties
+        val dict = document?.getDictionary("address")
+
+        // Access a value with a key from the dictionary
+        val street = dict?.getString("street")
+
+        // Iterate dictionary
+        for (key in dict!!.keys) {
+            println("Key ${key} = ${dict.getValue(key)}")
+        }
+
+      // Create a mutable copy
+      val mutable_Dict = dict.toMutable()
+
+      // end::datatype_dictionary[]
+    }
+
+    fun datatype_mutable_dictionary() {
+
+        // tag::datatype_mutable_dictionary[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        // Create a new mutable dictionary and populate some keys/values
+        val mutable_dict = MutableDictionary()
+        mutable_dict.setString("street", "1 Main st.")
+        mutable_dict.setString("city", "San Francisco")
+
+        // Add the dictionary to a document's properties and save the document
+        val mutable_doc = MutableDocument("doc1")
+        mutable_doc.setDictionary("address", mutable_dict)
+        database!!.save(mutable_doc)
+
+    // end::datatype_mutable_dictionary[]
+}
+
+
+    fun datatype_array() {
+
+        // tag::datatype_array[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        val document = database?.getDocument("doc1")
+
+        // Getting a phones array from the document's properties
+        val array = document?.getArray("phones")
+
+        // Get element count
+        val count = array?.count()
+
+        // Access an array element by index
+        val phone = array?.getString(1)
+
+        // Iterate array
+        for ( (index, item) in array!!) {
+            println("Row  ${index} = ${item}")
+        }
+
+        // Create a mutable copy
+        val mutable_array = array.toMutable()
+        // end::datatype_array[]
+    }
+
+    fun datatype_mutable_array() {
+
+        // tag::datatype_mutable_array[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        // Create a new mutable array and populate data into the array
+        val mutable_array = MutableArray()
+        mutable_array.addString("650-000-0000")
+        mutable_array.addString("650-000-0001")
+
+        // Set the array to document's properties and save the document
+        val mutable_doc = MutableDocument("doc1")
+        mutable_doc.setArray("phones", mutable_array)
+        database?.save(mutable_doc)
+        // end::datatype_mutable_array[]
+    }
+
+} // end  class supporting_datatypes
+
+
 
 // MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
 
@@ -841,8 +1021,9 @@ import com.couchbase.lite.ValueIndexItem
 
 
 private const val TAG = "PREDICT"
+// tag::predictive-model[]
+// tensorFlowModel is a fake implementation
 
-// `tensorFlowModel` is a fake implementation
 object TensorFlowModel {
     fun predictImage(data: ByteArray?) = mapOf<String, Any?>()
 }
@@ -856,7 +1037,8 @@ object ImageClassifierModel : PredictiveModel {
         // this would be the implementation of the ml model you have chosen
         return MutableDictionary(TensorFlowModel.predictImage(blob.content)) // <1>
     }
-} // end::predictive-model[]
+}
+// end::predictive-model[]
 
 
 @Suppress("unused")
@@ -902,15 +1084,12 @@ class PredictiveQueryExamples {
             Expression.map(mutableMapOf("photo" to Expression.property("photo")) as Map<String, Any>?) // <1>
         )
 
-        // !!! Is this query using that prediction function, at all?
         val rs = QueryBuilder
             .select(SelectResult.all())
             .from(DataSource.database(database))
             .where(
-                Expression.property("label").equalTo(Expression.string("car"))
-                    .and(
-                        Expression.property("probability")
-                            .greaterThanOrEqualTo(Expression.doubleValue(0.8))
+                prediction.property("label").equalTo(Expression.string("car"))
+                .and(prediction.property("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))
                     )
             )
             .execute()
@@ -2093,7 +2272,7 @@ class PassivePeerConnection private constructor() : MessageEndpointConnection {
         // end::passive-peer-receive[]
     }
 
-} // tag::predictive-model[]
+}
 
 
 
@@ -2146,18 +2325,28 @@ class QueryExamples(private val database: Database) {
     fun testIndexing() {
         // tag::query-index[]
         database.createIndex(
+          "TypeNameIndex",
+          ValueIndexConfigurationFactory.create(expressions = ["type","name"])
+        )
+
+        // end::query-index[]
+    }
+
+    fun testIndexing_Querybuilder() {
+        // tag::query-index_Querybuilder[]
+        database.createIndex(
             "TypeNameIndex",
             IndexBuilder.valueIndex(
                 ValueIndexItem.property("type"),
                 ValueIndexItem.property("name")
             )
         )
-        // end::query-index[]
+        // end::query-index_Querybuilder[]
     }
 
     // ### SELECT statement
     fun testSelectStatement() {
-        // tag::query-select-meta[]
+        // tag::query-select-props[]
         val rs = QueryBuilder
             .select(
                 SelectResult.expression(Meta.id),
@@ -2173,26 +2362,28 @@ class QueryExamples(private val database: Database) {
             Log.i(TAG, "hotel id ->${result.getString("id")}")
             Log.i(TAG, "hotel name -> ${result.getString("name")}")
         }
-        // end::query-select-meta[]
-    }
+        // end::query-select-props[]
+      }
 
-    // META function
-    @Throws(CouchbaseLiteException::class)
-    fun testMetaFunction() {
+      // META function
+      @Throws(CouchbaseLiteException::class)
+      fun testMetaFunction() {
+        // tag::query-select-meta[]
         val rs = QueryBuilder
-            .select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("airport")))
-            .orderBy(Ordering.expression(Meta.id))
-            .execute()
+        .select(SelectResult.expression(Meta.id))
+        .from(DataSource.database(database))
+        .where(Expression.property("type").equalTo(Expression.string("airport")))
+        .orderBy(Ordering.expression(Meta.id))
+        .execute()
 
         for (result in rs) {
-            Log.w(TAG, "airport id ->${result.getString("id")}")
-            Log.w(TAG, "airport id -> ${result.getString(0)}")
+          Log.w(TAG, "airport id ->${result.getString("id")}")
+          Log.w(TAG, "airport id -> ${result.getString(0)}")
         }
-    }
+        // end::query-select-meta[]
+      }
 
-    // ### all(*)
+      // ### all(*)
     @Throws(CouchbaseLiteException::class)
     fun testSelectAll() {
         // tag::query-select-all[]
@@ -2363,6 +2554,7 @@ class QueryExamples(private val database: Database) {
     @Throws(CouchbaseLiteException::class)
     fun testWildCharacterMatch() {
         // tag::query-like-operator-wildcard-character-match[]
+
         val rs = QueryBuilder
             .select(
                 SelectResult.expression(Meta.id),
@@ -2421,9 +2613,9 @@ class QueryExamples(private val database: Database) {
             SelectResult.expression(Expression.property("stops").from("route")),
             SelectResult.expression(Expression.property("airline").from("route"))
         )
-            .from(DataSource.database(database).`as`("airline"))
+            .from(DataSource.database(database).as("airline"))
             .join(
-                Join.join(DataSource.database(database).`as`("route"))
+                Join.join(DataSource.database(database).as("route"))
                     .on(
                         Meta.id.from("airline")
                             .equalTo(Expression.property("airlineid").from("route"))
@@ -2564,24 +2756,59 @@ class QueryExamples(private val database: Database) {
     @Throws(CouchbaseLiteException::class)
     fun prepareIndex() {
         // tag::fts-index[]
-        database.createIndex(
-            "nameFTSIndex",
-            IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false)
-        )
+
+      database.createIndex("overviewFTSIndex",
+                      FullTextIndexConfigurationFactory.create(
+                        expressions = ["overview"]
+                      )
+                    )
+
         // end::fts-index[]
     }
 
     @Throws(CouchbaseLiteException::class)
     fun testFTS() {
         // tag::fts-query[]
-        val rs = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(FullTextExpression.index("nameFTSIndex").match("buy"))
-            .execute()
-        for (result in rs) {
-            Log.i(TAG, "document properties${result.getString(0)}")
+
+        val ftsQuery =
+              database.createQuery(
+                "SELECT _id, overview FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)")
+
+        ftsQuery.execute().allResults().forEach {
+          Log.i(TAG, "${result.getString("id")}: ${result.getString("overview")}")
         }
+
         // end::fts-query[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun prepareIndex_Querybuilder() {
+        // tag::fts-index_Querybuilder[]
+        database.createIndex(
+            "overviewFTSIndex",
+            IndexBuilder.fullTextIndex(FullTextIndexItem.property("overview")).ignoreAccents(false)
+        )
+        // end::fts-index_Querybuilder[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun testFTS_Querybuilder() {
+        // tag::fts-query_Querybuilder[]
+
+        val ftsQuery =
+              QueryBuilder.select(SelectResult.expression(Meta.id),
+                                  SelectResult.expression(overview))
+                          .from(DataSource.database(database))
+                          .where(FullTextFunction.match("overviewFTSIndex", "michigan"))
+                          .execute()
+
+        ftsQuery.execute().allResults().forEach {
+          Log.i(TAG, "${result.getString("Meta.id")}: ${result.getString("overview")}")
+          }
+
+
+
+        // end::fts-query_Querybuilder[]
     }
 
 
@@ -2655,7 +2882,69 @@ class QueryExamples(private val database: Database) {
     }
 /* end func testQuerySyntaxJson */
 
-  fun docsOnlyQuerySyntaxN1QL(argDb: Database): List<Result> {
+
+
+    fun testQuerySyntaxProps(currentUser: String) {
+        // tag::query-select-props[]
+        // tag::query-syntax-props[]
+
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("country"),
+                SelectResult.property("name")
+            )
+            .from(DataSource.database(database))
+
+        // end::query-syntax-props[]
+
+        // tag::query-access-props[]
+        for (result in rs.execute().allResults()) {
+            Log.i(TAG, "Hotel name -> ${result.getString("name")}, in ${result.getString("country")}" )
+        }
+        // end::query-access-props[]
+        // end::query-select-props[]
+    }
+
+    fun testQuerySyntaxCount(currentUser: String) {
+        // tag::query-syntax-count-only[]
+
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) // <.>
+            .from(DataSource.database(database))
+
+        // end::query-syntax-count-only[]
+
+        // tag::query-access-count-only[]
+        for (result in rs.execute().allResults()) {
+            Log.i(TAG, "name -> ${result.getInt("mycount").toString()}")
+        }
+        // end::query-access-count-only[]
+    }
+
+
+    fun testQuerySyntaxId(currentUser: String) {
+        // tag::query-select-meta
+        // tag::query-syntax-id[]
+
+        val rs = QueryBuilder
+        .select(
+          SelectResult.expression(Meta.id).as("hotelId"))
+          .from(DataSource.database(database))
+
+          // end::query-syntax-id[]
+
+        // tag::query-access-id[]
+        for (result in rs.execute().allResults()) {
+          Log.i(TAG, "hotel id ->${result.getString("hotelId")}")
+        }
+        // end::query-access-id[]
+        // end::query-select-meta
+    }
+
+
+    fun docsOnlyQuerySyntaxN1QL(argDb: Database): List<Result> {
       // For Documentation -- N1QL Query using parameters
       val db = argDb
       // tag::query-syntax-n1ql[]
@@ -2681,8 +2970,23 @@ class QueryExamples(private val database: Database) {
       // end::query-syntax-n1ql-params[]
   }
 
-    fun openOrCreateDatabaseForUser(argUser: String): Database = Database(argUser)
-}
+  fun testQuerySyntaxPagination(currentUser: String) {
+    // tag::query-syntax-pagination[]
+    val limit = 20
+    val offset = 0
+
+    val rs = QueryBuilder
+      .select(SelectResult.all())
+      .from(DataSource.database(database))
+      .where(Expression.property("type").equalTo(Expression.string("hotel")))
+      .limit(Expression.intValue(limit), Expression.intValue(offset))
+
+    // end::query-syntax-pagination[]
+  }
+
+    fun openOrCreateDatabaseForUser(argUser: String): Database = Database(argUser) {
+
+    }
 
 
 
@@ -2768,26 +3072,28 @@ class KtJSONExamples {
           Log.i(TAG, key + " => " + mDict.getValue(key))
         }
         // end::tojson-dictionary[]
-    }
+      }
 
-    @Throws(CouchbaseLiteException::class)
-    fun jsonDocumentExample(srcDb: Database, dstDb: Database) {
+      @Throws(CouchbaseLiteException::class)
+      fun jsonDocumentExample(srcDb: Database, dstDb: Database) {
+        // tag::tojson-document[]
         QueryBuilder
-            .select(SelectResult.expression(Meta.id).`as`("metaId"))
-            .from(DataSource.database(srcDb))
-            .execute()
-            .forEach {
-                it.getString("metaId")?.let { thisId ->
-                    srcDb.getDocument(thisId)?.toJSON()?.let { json -> // <.>
-                        Log.i(TAG, "JSON String = $json")
-                        val hotelFromJSON = MutableDocument(thisId, json) // <.>
-                        dstDb.save(hotelFromJSON)
-                        dstDb.getDocument(thisId)?.toMap()?.forEach { e ->
-                            Log.i(TAG, "$e.key => $e.value")
-                        } // <.>
-                    }
-                }
+        .select(SelectResult.expression(Meta.id).as("metaId"))
+        .from(DataSource.database(srcDb))
+        .execute()
+        .forEach {
+          it.getString("metaId")?.let { thisId ->
+            srcDb.getDocument(thisId)?.toJSON()?.let { json -> // <.>
+              Log.i(TAG, "JSON String = $json")
+              val hotelFromJSON = MutableDocument(thisId, json) // <.>
+              dstDb.save(hotelFromJSON)
+              dstDb.getDocument(thisId)?.toMap()?.forEach { e ->
+                Log.i(TAG, "$e.key => $e.value")
+              } // <.>
             }
+          }
+        }
+        // end::tojson-document[]
     }
 
     @Throws(CouchbaseLiteException::class, JSONException::class)

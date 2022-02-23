@@ -7,49 +7,106 @@
 include::{root-partials}block-abstract.adoc[]
 // DO NOT EDIT
 
+
 == Overview
-To run a full-text search (FTS) query, you must have created a full-text index on the expression being matched.
+To run a full-text search (FTS) query, you must create a full-text index on the expression being matched.
 Unlike regular queries, the index is not optional.
 
-== Using IndexBuilder
-The following example inserts documents and creates an FTS index on the `name` property.
+ifndef::is-c[You can choose to use N1QL or QueryBuilder syntaxes to create and use FTS indexes.]
 
-.Using the IndexBuilder method
+The following examples use the data model introduced in {indexing--xref}.
+They create and use an FTS index built from the hotel's `Overview` text.
+
+ifdef::is-c[== Create Index]
+ifndef::is-c[]
+== N1QL
+
+=== Create Index
+endif::is-c[]
+
+N1QL provides a configuration object to define Full Text Search indexes -- `FullTextIndexConfiguration`.
+
+.Using N1QL's FullTextIndexConfiguration
 [#ex-indexbuilder]
 :param-tags: fts-index
 include::{root-partials}_block_tabbed_code_example.adoc[]
 :param-tags!:
 
-.Indexing multiple properties
-====
-Multiple properties to index can be specified using the following method:
+ifndef::is-c[=== Use Index]
+ifdef::is-c[== Use Index]
 
-[source, {source-language}]
-----
-IndexBuilder.FullTextIndex(params FullTextIndexItem[] items)
-----
-====
+FullTextSearch is enabled using the N1QL match() function.
 
-== Constructing a Query
+With the index created, you can construct and run a Full-text search (FTS) query using the indexed properties.
 
-With the index created, you can construct and run a Full-text search (FTS) query on the indexed properties.
+The following example finds all hotels mentioning _Michigan_ in their _Overview_ text.
 
-The full-text search criteria is defined as a `FullTextExpression`.
-The left-hand side is the _full-text index_ to use and the right-hand side is the _pattern to match_.
-
-.Using the build index
-[#ex-use-build-index]
+.Using N1QL Full Text Search
+[#ex-indexbuilder]
 :param-tags: fts-query
 include::{root-partials}_block_tabbed_code_example.adoc[]
 :param-tags!:
 
-In the example above, the pattern to match is a word, the full-text search query matches all documents that contain the word "buy" in the value of the `doc.name` property.
+ifndef::is-c[]
+== QueryBuilder
+
+=== Create Index
+The following example creates an FTS index on the `overview` property.
+
+.Using the IndexBuilder method
+[#ex-indexbuilder-queyrbuilder]
+:param-tags: fts-index_Querybuilder
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
+
+=== Use Index
+With the index created, you can construct and run a Full-text search (FTS) query using the indexed properties.
+
+The following example finds all hotels mentioning _Michigan_ in their _Overview_ text.
+
+.Using QueryBuilder Full Text Search
+[#ex-indexbuilder]
+:param-tags: fts-query_Querybuilder
+include::{root-partials}_block_tabbed_code_example.adoc[]
+:param-tags!:
+
+// .Indexing multiple properties
+// ====
+// Multiple properties to index can be specified using the following method:
+
+// [source, {source-language}]
+// ----
+// IndexBuilder.FullTextIndex(params FullTextIndexItem[] items)
+// ----
+// ====
+
+// == Constructing a Query
+
+// FullTextSearch is enabled using the N1QL match() function.
+// With the index created, you can construct and run a Full-text search (FTS) query on the indexed properties.
+
+
+// .Using the build index
+// [#ex-use-build-index]
+// :param-tags: fts-query_Querybuilder
+// include::{root-partials}_block_tabbed_code_example.adoc[]
+// :param-tags!:
+
+endif::is-c[]
+
+== Operation
+
+In the examples above, the pattern to match is a word, the full-text search query matches all documents that contain the word "michigan" in the value of the `doc.overview` property.
 
 Search is supported for all languages that use whitespace to separate words.
 
-Stemming, which is the process of fuzzy matching parts of speech, like "fast" and "faster", is supported in the following languages: danish, dutch, english, finnish, french, german, hungarian, italian, norwegian, portuguese, romanian, russian, spanish, swedish and turkish.
+Stemming, which is the process of fuzzy matching parts of speech, like "fast" and "faster", is supported in the following languages: Danish, Dutch, English, Finnish, French, German, Hungarian, Italian, Norwegian, Portuguese, Romanian, Russian, Spanish, Swedish and Turkish.
+
 
 == Pattern Matching Formats
+
+
 As well as providing specific words or strings to match against, you can provide the pattern to match in these formats.
 
 === Prefix Queries
@@ -60,7 +117,7 @@ The query expression used to search for a term prefix is the prefix itself with 
 ====
 Query for all documents containing a term with the prefix "lin".
 ....
-"'lin*'"
+"lin*"
 ....
 
 This will match
@@ -70,6 +127,7 @@ This will match
 ====
 
 === Overriding the Property Name
+
 Normally, a token or token prefix query is matched against the document property specified as the left-hand side of the `match` operator.
 This may be overridden by specifying a property name followed by a ":" character before a basic term query.
 There may be space between the ":" and the term to query for, but not between the property name and the ":" character.
@@ -85,14 +143,15 @@ Query the database for documents for which the term "linux" appears in the docum
 
 === Phrase Queries
 
-A phrase query is a query that retrieves all documents that contain a nominated set of terms or term prefixes in a specified order with no intervening tokens.
+A _phrase query_ is one that retrieves all documents containing a nominated set of terms or term prefixes in a specified order with no intervening tokens.
+
 Phrase queries are specified by enclosing a space separated sequence of terms or term prefixes in double quotes (").
 
 .Phrase query
 ====
 Query for all documents that contain the phrase "linux applications".
 ....
-"'"linux applications"'"
+"linux applications"
 ....
 ====
 
@@ -105,7 +164,7 @@ To specify a proximity other than the default, an operator of the form "NEAR/" m
 ====
 Search for a document that contains the phrase "replication" and the term "database" with not more than 2 terms separating the two.
 ....
-"'database NEAR/2 "replication"'"
+"database NEAR/2 replication"
 ....
 ====
 
@@ -119,7 +178,7 @@ Otherwise, they are interpreted as basic term queries instead of set operators.
 ====
 Return the set of documents that contain the term "couchbase", and the term "database".
 ....
-'couchbase AND database'
+"couchbase AND database"
 ....
 
 ====
@@ -131,7 +190,7 @@ When using the enhanced query syntax, parenthesis may be used to specify the pre
 ====
 Query for the set of documents that contains the term "linux", and at least one of the phrases "couchbase database" and "sqlite library".
 ....
-'("couchbase database" OR "sqlite library") AND linux'
+'("couchbase database" OR "sqlite library") AND "linux"'
 ....
 ====
 

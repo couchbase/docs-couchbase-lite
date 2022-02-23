@@ -927,19 +927,30 @@ public class docOnly_Examples {
         // For Documentation
         {
             // tag::query-index[]
+
+            database.createIndex(ValueIndexConfiguration(["type", "name"]), "TypeNameIndex");
+
+            // end::query-index[]
+        }
+    }
+
+    public void testIndexing_Querybuilder() throws CouchbaseLiteException {
+        // For Documentation
+        {
+            // tag::query-index_Querybuilder[]
             database.createIndex(
                 "TypeNameIndex",
                 IndexBuilder.valueIndex(
                     ValueIndexItem.property("type"),
                     ValueIndexItem.property("name")));
-            // end::query-index[]
+            // end::query-index_Querybuilder[]
         }
     }
 
     // ### SELECT statement
     public void testSelectStatement() {
         {
-            // tag::query-select-meta[]
+            // tag::query-select-props[]
             Query query = QueryBuilder
                 .select(
                     SelectResult.expression(Meta.id),
@@ -958,24 +969,26 @@ public class docOnly_Examples {
             } catch (CouchbaseLiteException e) {
                 Log.e("Sample", e.getLocalizedMessage());
             }
-            // end::query-select-meta[]
+            // end::query-select-props[]
+          }
         }
-    }
 
-    // META function
-    public void testMetaFunction() throws CouchbaseLiteException {
-        // For Documentation
-        {
-            Query query = QueryBuilder
-                .select(SelectResult.expression(Meta.id))
-                .from(DataSource.database(database))
-                .where(Expression.property("type").equalTo(Expression.string("airport")))
-                .orderBy(Ordering.expression(Meta.id));
-            ResultSet rs = query.execute();
-            for (Result result : rs) {
-                Log.w("Sample", String.format("airport id -> %s", result.getString("id")));
-                Log.w("Sample", String.format("airport id -> %s", result.getString(0)));
-            }
+        // META function
+        public void testMetaFunction() throws CouchbaseLiteException {
+          // For Documentation
+          {
+          // tag::query-select-meta[]
+          Query query = QueryBuilder
+          .select(SelectResult.expression(Meta.id))
+          .from(DataSource.database(database))
+          .where(Expression.property("type").equalTo(Expression.string("airport")))
+          .orderBy(Ordering.expression(Meta.id));
+          ResultSet rs = query.execute();
+          for (Result result : rs) {
+            Log.w("Sample", String.format("airport id -> %s", result.getString("id")));
+            Log.w("Sample", String.format("airport id -> %s", result.getString(0)));
+          }
+          // end::query-select-meta[]
         }
     }
 
@@ -1291,25 +1304,50 @@ public class docOnly_Examples {
 
     void prepareIndex() throws CouchbaseLiteException {
         // tag::fts-index[]
-        database.createIndex(
-            "nameFTSIndex",
-            IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false));
+
+        FullTextIndexConfiguration config = new FullTextIndexConfiguration("Overview").ignoreAccents(false)
+
+        database.createIndex( config, "overviewFTSIndex")
+
         // end::fts-index[]
     }
 
+    void prepareIndex_Querybuilder() throws CouchbaseLiteException {
+      // tag::fts-index_Querybuilder[]
+      database.createIndex(
+          "overviewFTSIndex",
+          IndexBuilder.fullTextIndex(FullTextIndexItem.property("overview")).ignoreAccents(false));
+      // end::fts-index_Querybuilder[]
+  }
+
     public void testFTS() throws CouchbaseLiteException {
         // tag::fts-query[]
-        Expression whereClause = FullTextExpression.index("nameFTSIndex").match("buy");
-        Query ftsQuery = QueryBuilder.select(SelectResult.expression(Meta.id))
+
+        Query ftsQuery =
+                database.createQuery(
+                "SELECT _id, overview FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)");
+
+        for (result in ftsQuery.execute().allResults()) {
+          Log.i(TAG, "${result.getString("id")}: ${result.getString("overview")}");
+        }
+
+        // end::fts-query[]
+    }
+    public void testFTS_Querybuilder() throws CouchbaseLiteException {
+        // tag::fts-query_Querybuilder[]
+        Expression whereClause = FullTextFunction.match("overviewFTSIndex", "'michigan'");
+        Query ftsQuery =
+                QueryBuilder.select(SelectResult.expression(Meta.id),
+                                    SelectResult.expression(overview)
+                                  )
             .from(DataSource.database(database))
             .where(whereClause);
-        ResultSet ftsQueryResult = ftsQuery.execute();
-        for (Result result : ftsQueryResult) {
-            Log.i(
-                TAG,
-                String.format("document properties %s", result.getString(0)));
-        }
-        // end::fts-query[]
+
+            for (result in ftsQuery.execute().allResults()) {
+              Log.i(TAG, "${result.getString("id")}: ${result.getString("overview")}");
+            }
+
+        // end::fts-query_Querybuilder[]
     }
 
     /* The `tag::replication[]` example is inlined in java.adoc */
@@ -1937,7 +1975,7 @@ class PassivePeerConnection implements MessageEndpointConnection {
 }
 
 // tag::predictive-model[]
-// `tensorFlowModel` is a fake implementation
+// tensorFlowModel is a fake implementation
 // this would be the implementation of the ml model you have chosen
 class ImageClassifierModel implements PredictiveModel {
     @Override
@@ -1945,7 +1983,7 @@ class ImageClassifierModel implements PredictiveModel {
         Blob blob = input.getBlob("photo");
         if (blob == null) { return null; }
 
-        // `tensorFlowModel` is a fake implementation
+        // tensorFlowModel is a fake implementation
         // this would be the implementation of the ml model you have chosen
         return new MutableDictionary(TensorFlowModel.predictImage(blob.getContent())); // <1>
     }
@@ -3082,7 +3120,7 @@ public class TestQueries {
         try {
             for (Result result : listQuery.execute().allResults()) {
                              // get the k-v pairs from the 'hotel' key's value into a dictionary
-                thisDocsProps = result.getDictionary(0)); // <.>
+                thisDocsProps = result.getDictionary(0); // <.>
                 thisDocsId = thisDocsProps.getString("id");
                 thisDocsName = thisDocsProps.getString("Name");
                 thisDocsType = thisDocsProps.getString("Type");
@@ -3097,14 +3135,14 @@ public class TestQueries {
                 hotel.Country= result.getDictionary(0).getString("Country");
                 hotel.Description = result.getDictionary(0).getString("Description");
                 hotels.put(hotel.Id, hotel);
-
             }
+
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
 
         // end::query-access-all[]
-      }
+
 
 // tag::query-access-json[]
     // Uses Jackson JSON processor
@@ -3132,14 +3170,15 @@ public class TestQueries {
               mapper.readValue(thisJsonString, Hotel.class); // <.>
       hotels.add(thisHotel);
 
-    }
+
 
   // end::query-access-json[]
             }
+        }
 
 
     public void testQuerySyntaxProps() throws CouchbaseLiteException {
-
+        // tag::query-select-props[]
         // tag::query-syntax-props[]
         try {
           this_Db = new Database("hotels");
@@ -3148,47 +3187,48 @@ public class TestQueries {
         }
 
         Query listQuery =
-                QueryBuilder.select(SelectResult.expression(Meta.id),
-                        SelectResult.property("name"),
-                        SelectResult.property("Name"),
-                        SelectResult.property("Type"),
-                        SelectResult.property("City"))
-                        .from(DataSource.database(this_Db));
+        QueryBuilder.select(SelectResult.expression(Meta.id),
+        SelectResult.property("name"),
+        SelectResult.property("Name"),
+        SelectResult.property("Type"),
+        SelectResult.property("City"))
+        .from(DataSource.database(this_Db));
 
         // end::query-syntax-props[]
 
         // tag::query-access-props[]
 
         try {
-            for (Result result : listQuery.execute().allResults()) {
+          for (Result result : listQuery.execute().allResults()) {
 
-                // get data direct from result k-v pairs
-                final Hotel hotel = new Hotel();
-                hotel.Id = result.getString("id");
-                hotel.Type = result.getString("Type");
-                hotel.Name = result.getString("Name");
-                hotel.City = result.getString("City");
+            // get data direct from result k-v pairs
+            final Hotel hotel = new Hotel();
+            hotel.Id = result.getString("id");
+            hotel.Type = result.getString("Type");
+            hotel.Name = result.getString("Name");
+            hotel.City = result.getString("City");
 
-                // Store created hotel object in a hashmap of hotels
-                hotels.put(hotel.Id, hotel);
+            // Store created hotel object in a hashmap of hotels
+            hotels.put(hotel.Id, hotel);
 
-                // Get result k-v pairs into a 'dictionary' object
-                Map <String, Object> thisDocsProps = result.toMap();
-                thisDocsId =
-                        thisDocsProps.getOrDefault("id",null).toString();
-                thisDocsName =
-                        thisDocsProps.getOrDefault("Name",null).toString();
-                thisDocsType =
-                        thisDocsProps.getOrDefault("Type",null).toString();
-                thisDocsCity =
-                        thisDocsProps.getOrDefault("City",null).toString();
+            // Get result k-v pairs into a 'dictionary' object
+            Map <String, Object> thisDocsProps = result.toMap();
+            thisDocsId =
+            thisDocsProps.getOrDefault("id",null).toString();
+            thisDocsName =
+            thisDocsProps.getOrDefault("Name",null).toString();
+            thisDocsType =
+            thisDocsProps.getOrDefault("Type",null).toString();
+            thisDocsCity =
+            thisDocsProps.getOrDefault("City",null).toString();
 
-            }
+          }
         } catch (CouchbaseLiteException e) {
-            e.printStackTrace();
+          e.printStackTrace();
         }
 
         // end::query-access-props[]
+        // end::query-select-props[]
     }
 
 
@@ -3332,9 +3372,189 @@ public class TestQueries {
       // end::query-syntax-n1ql-params[]
   }
 
-
-
 } // class
+
+
+
+public class supportingDatatypes
+{
+    private static final String TAG = "info";
+
+
+    public void datatype_usage() throws CouchbaseLiteException {
+
+
+        // tag::datatype_usage[]
+        // tag::datatype_usage_createdb[]
+        // Initialize the Couchbase Lite system
+        CouchbaseLite.init(context);
+
+        // Get the database (and create it if it doesn’t exist).
+        DatabaseConfiguration config = new DatabaseConfiguration();
+
+        config.setDirectory(context.getFilesDir().getAbsolutePath());
+
+        Database database = new Database("getting-started", config);
+
+        // end::datatype_usage_createdb[]
+        // tag::datatype_usage_createdoc[]
+        // Create your new document
+        // The lack of 'const' indicates this document is mutable
+        MutableDocument mutableDoc = new MutableDocument();
+
+        // end::datatype_usage_createdoc[]
+        // tag::datatype_usage_mutdict[]
+        // Create and populate mutable dictionary
+        // Create a new mutable dictionary and populate some keys/values
+        MutableDictionary address = new MutableDictionary();
+        address.setString("street", "1 Main st.");
+        address.setString("city", "San Francisco");
+        address.setString("state", "CA");
+        address.setString("country", "USA");
+        address.setString("code"), "90210");
+
+        // end::datatype_usage_mutdict[]
+        // tag::datatype_usage_mutarray[]
+        // Create and populate mutable array
+        MutableArray phones = new MutableArray();
+        phones.addString("650-000-0000");
+        phones.addString("650-000-0001");
+
+        // end::datatype_usage_mutarray[]
+        // tag::datatype_usage_populate[]
+        // Initialize and populate the document
+
+        // Add document type to document properties <.>
+        mutable_doc.setString("type", "hotel"));
+
+        // Add hotel name string to document properties <.>
+        mutable_doc.setString("name", "Hotel Java Mo"));
+
+        // Add float to document properties <.>
+        mutable_doc.setFloat("room_rate", 121.75f);
+
+        // Add dictionary to document's properties <.>
+        mutable_doc.setDictionary("address", address);
+
+
+        // Add array to document's properties <.>
+        mutable_doc.setArray("phones", phones);
+
+        // end::datatype_usage_populate[]
+        // tag::datatype_usage_persist[]
+        // Save the document changes <.>
+        database.save(mutable_doc);
+
+        // end::datatype_usage_persist[]
+        // tag::datatype_usage_closedb[]
+        // Close the database <.>
+        database.close();
+
+        // end::datatype_usage_closedb[]
+
+        // end::datatype_usage[]
+
+    }
+
+
+
+
+
+
+    public void datatype_dictionary() throws CouchbaseLiteException {
+        Database database = new Database("mydb");
+
+        // tag::datatype_dictionary[]
+        // NOTE: No error handling, for brevity (see getting started)
+        Document document = database.getDocument("doc1");
+
+        // Getting a dictionary from the document's properties
+        Dictionary dict = document.getDictionary("address");
+
+        // Access a value with a key from the dictionary
+        String street = dict.getString("street");
+
+        // Iterate dictionary
+        for (String key : dict) {
+            dict.getValue(key);
+            Log.i("x", "Key %s, = %s", key, dict.getValue(key));
+        }
+
+        // Create a mutable copy
+        MutableDictionary mutable_Dict = dict.toMutable();
+        // end::datatype_dictionary[]
+    }
+
+    public void datatype_mutable_dictionary() throws CouchbaseLiteException {
+
+        Database database = new Database("mydb");
+
+        // tag::datatype_mutable_dictionary[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        // Create a new mutable dictionary and populate some keys/values
+        MutableDictionary mutable_dict = new MutableDictionary();
+        mutable_dict.setString("street", "1 Main st.");
+        mutable_dict.setString("city", "San Francisco");
+
+        // Add the dictionary to a document's properties and save the document
+        MutableDocument mutable_doc = new MutableDocument("doc1");
+        mutable_doc.setDictionary("address", mutable_dict);
+        database.save(mutable_doc);
+
+        // end::datatype_mutable_dictionary[]
+    }
+
+
+    public void datatype_array() throws CouchbaseLiteException {
+        Database database = new Database("mydb");
+
+        // tag::datatype_array[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        Document document = database.getDocument("doc1");
+
+        // Getting a phones array from the document's properties
+        Array array = document.getArray("phones");
+
+        // Get element count
+        int count = array.count();
+
+        // Access an array element by index
+        if (count >= 0) { String phone = array.getString(1); }
+
+        // Iterate dictionary
+        for (int i = 0; i < count; i++)
+        {
+            Log.i("tag", "Item %d = %s", i, array.getString(i));
+        }
+
+        // Create a mutable copy
+        MutableArray mutable_array = array.toMutable();
+        // end::datatype_array[]
+
+
+    }
+
+    public void datatype_mutable_array() throws CouchbaseLiteException {
+        Database database = new Database("mydb");
+
+        // tag::datatype_mutable_array[]
+        // NOTE: No error handling, for brevity (see getting started)
+
+        // Create a new mutable array and populate data into the array
+        MutableArray mutable_array = new MutableArray();
+        mutable_array.addString("650-000-0000");
+        mutable_array.addString("650-000-0001");
+
+        // Set the array to document's properties and save the document
+        MutableDocument mutable_doc = new MutableDocument("doc1");
+        mutable_doc.setArray("phones", mutable_array);
+        database.save(mutable_doc);
+        // end::datatype_mutable_array[]
+    }
+
+} // end  class supporting_datatypes
 
 
 
