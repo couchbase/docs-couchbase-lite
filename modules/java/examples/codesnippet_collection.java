@@ -1,6 +1,6 @@
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/BlobExamples.java
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/BlobExamples.java 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -77,11 +77,11 @@ public class BlobExamples {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/BlobExamples.java
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/BlobExamples.java 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/p2psync-websocket.java
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/p2psync-websocket.java 
 // subsumed-p2p
 // PASSIVE PEER STUFF
 // Stuff I adapted
@@ -946,11 +946,11 @@ final ReplicatorConfiguration thisConfig
 // END=subsumed-p2p
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/p2psync-websocket.java
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/p2psync-websocket.java 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/Examples.java
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/Examples.java 
 package com.couchbase.examples;
 
 import com.couchbase.lite.*;
@@ -3262,11 +3262,11 @@ public class Supporting_Datatypes {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/Examples.java
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/Examples.java 
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/JSONExamples.java
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/JSONExamples.java 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -3489,5 +3489,5 @@ class Hotel {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/JSONExamples.java
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/snippets/src/main/java/com/couchbase/code_snippets/JSONExamples.java 
 
