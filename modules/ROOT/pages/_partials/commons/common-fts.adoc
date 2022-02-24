@@ -12,14 +12,14 @@ include::{root-partials}block-abstract.adoc[]
 To run a full-text search (FTS) query, you must create a full-text index on the expression being matched.
 Unlike regular queries, the index is not optional.
 
-ifndef::is-c[You can choose to use N1QL or QueryBuilder syntaxes to create and use FTS indexes.]
+ifndef::is-c[You can choose to use {sqlpp} or QueryBuilder syntaxes to create and use FTS indexes.]
 
 The following examples use the data model introduced in {indexing--xref}.
 They create and use an FTS index built from the hotel's `Overview` text.
 
 ifdef::is-c[== Create Index]
 ifndef::is-c[]
-== N1QL
+== {sqlpp}
 
 === Create Index
 endif::is-c[]
@@ -35,13 +35,13 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 ifndef::is-c[=== Use Index]
 ifdef::is-c[== Use Index]
 
-FullTextSearch is enabled using the N1QL match() function.
+FullTextSearch is enabled using the {sqlpp} match() function.
 
 With the index created, you can construct and run a Full-text search (FTS) query using the indexed properties.
 
 The following example finds all hotels mentioning _Michigan_ in their _Overview_ text.
 
-.Using N1QL Full Text Search
+.Using {sqlpp} Full Text Search
 [#ex-indexbuilder]
 :param-tags: fts-query
 include::{root-partials}_block_tabbed_code_example.adoc[]
@@ -83,7 +83,7 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 
 // == Constructing a Query
 
-// FullTextSearch is enabled using the N1QL match() function.
+// FullTextSearch is enabled using the {sqlpp} match() function.
 // With the index created, you can construct and run a Full-text search (FTS) query on the indexed properties.
 
 
