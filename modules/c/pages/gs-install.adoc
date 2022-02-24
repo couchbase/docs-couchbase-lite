@@ -32,25 +32,20 @@ endif::is-beta[]
 :beta-url: https://packages.couchbase.com/releases/couchbase-lite-c/{version-full}/
 
 // :release-dir-ee: pass:q,a[libcblite-{version-full}]
-:release-dir: pass:q,a[libcblite-{version-full}]
-:release-dir-ee: {release-dir}
-:release-dir-dev: pass:q,a[libcblite-dev-{version-full}]
-// :release-dir-dev-ee: pass:q,a[libcblite-dev-enterprise-{version-full}]
-:release-dir-dev-ee: {release-dir-dev}
-// :release-dir-dev-ee: pass:q,a[libcblite-dev-{version-full}]
-// :release-dir-dev: pass:q,a[libcblite-dev-community-{version-full}]
+:release-dir-ce: pass:q,a[libcblite-community]
+:release-dir-ee: pass:q,a[libcblite]
+:release-dir-dev-ce: pass:q,a[libcblite-dev-community]
+:release-dir-dev-ee: pass:q,a[libcblite-dev]
 
 :release-dir-ee-include: pass:q,a[{release-dir-ee}/include/]
 :release-dir-ee-lib: pass:q,a[{release-dir-ee}/lib/]
-:release-dir-include: pass:q,a[{release-dir}/include/]
-:release-dir-lib: pass:q,a[{release-dir}/lib/]
-:release-dirs-include: pass:q,a[`{release-dir-include}` or `{release-dir-ee-include}`]
-// :release-dirs-lib: pass:q,a[`{release-dir-lib}` or `{release-dir-ee-lib}`]
-:release-dirs-lib: pass:q,a[`{release-dir-lib}`]
-// :release-dirs: pass:q,a[`{release-dir}` or `{release-dir-ee}`]
-:release-dirs: pass:q,a[`{release-dir}`]
-
-
+:release-dir-ce-include: pass:q,a[{release-dir-ce}/include/]
+:release-dir-ce-lib:  pass:q,a[{release-dir-ce}/lib/]
+:release-dirs-include: pass:q,a[`{release-dir-ce-include}` or `{release-dir-ee-include}`]
+// :release-dirs-ce-lib: pass:q,a[`{release-dir-ce-lib}` or `{release-dir-ee-lib}`]
+// :release-dirs-ce-lib: pass:q,a[`{release-dir-ce-lib}`]
+// :release-dirs: pass:q,a[`{release-dir-ce}` or `{release-dir-ee}`]
+// :release-dirs: pass:q,a[`{release-dir-ce}`]
 
 
 [#lbl-get-binaries]
@@ -64,7 +59,7 @@ You can obtain the downloads here:
 * _Android_, _iOS_ and _Windows_ -- {downloads-mobile--xref}.
 * _Linux_ and _macOS_ -- <<lbl-downloads, downloads table>>
 
-The binary release download comprises a root directory ({release-dir}), which contains:
+The binary release download comprises a root directory ({release-dir-ce}), which contains:
 
 * For Linux, Windows and Mac OS:
 
@@ -192,12 +187,12 @@ Community::
 .Runtime Only
 [{bash-header}]
 ----
-sudo apt install {release-dir}
+sudo apt install {release-dir-ce}
 ----
 .Development
 [{bash-header}]
 ----
-sudo apt install {release-dir-dev}
+sudo apt install {release-dir-dev-ce}
 ----
 --
 =====
@@ -220,9 +215,9 @@ Use your package manager to install from a local `.deb` file.
 [{bash-header}]
 ----
 
-sudo apt install ./{release-dir}
+sudo apt install ./{release-dir-ce}
 
-sudo apt install ./{release-dir-dev}
+sudo apt install ./{release-dir-dev-ce}
 
 ----
 
@@ -250,7 +245,7 @@ To install the Couchbase for C libraries on Windows from a downloaded release bi
 [#lbl-windows-steps]
 . Download and extract the release package -- see: {downloads-mobile--xref}
 
-. From within the root directory, {release-dir}, deploy the `lib`, `include` and `bin` libraries to a location accessible to your compiler.
+. From within the root directory, {release-dir-ce}, deploy the `lib`, `include` and `bin` libraries to a location accessible to your compiler.
 
 . Within  _Visual Studio_:
 .. *Create* a new C++ project
@@ -281,12 +276,12 @@ To install the Couchbase for C libraries on macOS from a downloaded release pack
 
 [#lbl-mac-steps]
 . Download and extract the release package here -- <<lbl-downloads, downloads table>>.
-. Optionally ... From within the root directory, {release-dir}, *Copy* the `include` and `lib` directories to `/usr/local/`
+. Optionally ... From within the root directory, {release-dir-ce}, *Copy* the `include` and `lib` directories to `/usr/local/`
 . Within  _Xcode_:
 .. *Create* a new project
 .. *Add* `<path/to>/include` to the project's _Header Search Path_
 .. *Add* `<path/to>/lib` to the project's _Library Search Path_
-.. *Drag* `{release-dir}.dylib` into your Xcode project.
+.. *Drag* `{release-dir-ce}.dylib` into your Xcode project.
 Then, within the dialog:
 ... *Select* _Create Directory References If Needed_
 ... *Check* the correct target is selected
@@ -302,7 +297,7 @@ CAUTION: Direct access from Swift to Couchbase Lite for C is not possible in thi
 [NOTE]
 --
 Coming soon! Simplified installation using the Homebrew +
-`brew install {release-dir}`
+`brew install {release-dir-ce}`
 --
 
 To install the Couchbase for C libraries for iOS from a downloaded release package:
@@ -335,7 +330,7 @@ In this instance the release comprises a _ready to adapt_ application project.
 
 . *Download* and *Unpack* the binary release here -- {downloads-mobile--xref}
 
-. Within _Android Studio_, select and open the project folder (within the {release-dir} folder)
+. Within _Android Studio_, select and open the project folder (within the {release-dir-ce} folder)
 
 . menu:Tools[SDK Manager > SDK Tools]
 
