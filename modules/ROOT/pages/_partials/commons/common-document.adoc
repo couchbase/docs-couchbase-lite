@@ -1,7 +1,7 @@
 // Inclusion
 :param-related: {database--xref} | {blob--xref} | {indexing--xref} |
 :topic-group: Topic Group -- Data Model
-include::{root-partials}block-abstract.adoc[]
+include::{root-partials}_show_page_header_block.adoc[]
 
 :fn-rsvd-wds: footnote:fn1[Any change to this reserved key will be detected when it is saved and will result in a Couchbase exception (Error Code 5 -- `CorruptRevisionData`)]
 :fnref-rsvd-wds: footnote:fn1[]
@@ -144,7 +144,7 @@ First we open your database.
 If the database does not already exist, Couchbase Lite will create it for us.
 
 :param-tags: datatype_usage_createdb
-include::{root-partials}_block_tabbed_code.adoc[]
+include::{root-partials}block_tabbed_code.adoc[]
 :param-tags!:
 
 See: {database--xref} for more information
@@ -156,7 +156,7 @@ Now we create a new document to hold our application's data.
 Because we will be adding data to the document we must use its mutable form.
 
 :param-tags: datatype_usage_createdoc
-include::{root-partials}_block_tabbed_code.adoc[]
+include::{root-partials}block_tabbed_code.adoc[]
 :param-tags!:
 
 For more on using *Documents*, see: <<Document Initializers>> and <<Mutability>>.
@@ -169,7 +169,7 @@ Because we want to add values into the dictionary, we must create it in _mutable
 When the dictionary is retrieved, each element's value is directly accessible via its own key.
 
 :param-tags: datatype_usage_mutdict
-include::{root-partials}_block_tabbed_code.adoc[]
+include::{root-partials}block_tabbed_code.adoc[]
 :param-tags!:
 
 For more on using *Dictionaries*, see: <<Using Dictionaries>>
@@ -180,7 +180,7 @@ Since our hotel may have multiple lines we provide an array (`phones`) to hold c
 Again, because we want to add values into the array, we create it in _mutable_ form.
 
 :param-tags: datatype_usage_mutarray
-include::{root-partials}_block_tabbed_code.adoc[]
+include::{root-partials}block_tabbed_code.adoc[]
 :param-tags!:
 
 For more on using *Arrays*, see: <<Using Arrays>>
@@ -190,7 +190,7 @@ For more on using *Arrays*, see: <<Using Arrays>>
 Here we add our data to the mutable document we created earlier. Each data item is stored as a key-value pair.
 
 :param-tags: datatype_usage_populate
-include::{root-partials}_block_tabbed_code.adoc[]
+include::{root-partials}block_tabbed_code.adoc[]
 :param-tags!:
 
 <.> Add hotel name (string)
@@ -211,7 +211,7 @@ The `phones` arrary is added to the document and stored with the key `phones`. W
 With the document now populated, we can persist to our Couchbase Lite database, auto-generating the document id.
 
 :param-tags: datatype_usage_persist
-include::{root-partials}_block_tabbed_code.adoc[]
+include::{root-partials}block_tabbed_code.adoc[]
 :param-tags!:
 
 === Close the Database
@@ -219,7 +219,7 @@ include::{root-partials}_block_tabbed_code.adoc[]
 With our document saved, we can now close our Couchbase Lite database.
 
 :param-tags: datatype_usage_closedb
-include::{root-partials}_block_tabbed_code.adoc[]
+include::{root-partials}block_tabbed_code.adoc[]
 :param-tags!:
 
 ifdef::is-c[]
@@ -228,7 +228,7 @@ ifdef::is-c[]
 Now we have finished and can release the resources.
 
 :param-tags: datatype_usage_release
-include::{root-partials}_block_tabbed_code.adoc[]
+include::{root-partials}block_tabbed_code.adoc[]
 :param-tags!:
 endif::is-c[]
 
@@ -265,7 +265,7 @@ Dates are a common data type, but JSON doesn't natively support them, so the con
 [#ex-date-getter]
 :param-tags: date-getter
 :param-leader: pass:q,a[This example sets the date on the `createdAt` property and reads it back using the {url-api-method-document-getdate} accessor method.]
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 endif::[]
@@ -284,7 +284,7 @@ ifndef::is-c[* {url-api-class-mutabledictionary}]
 [#ex-dict]
 :param-tags: datatype_dictionary
 // :param-leader: pass:q,a[Changes to the document are persisted to the database when the `save` method is called.]
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -293,7 +293,7 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 [#ex-mutdict]
 :param-tags: datatype_mutable_dictionary
 // :param-leader: pass:q,a[Changes to the document are persisted to the database when the `save` method is called.]
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -308,7 +308,7 @@ ifndef::is-c:[* {url-api-class-mutablearray}]
 [#ex-array]
 :param-tags: datatype_array
 // :param-leader: pass:q,a[Changes to the document are persisted to the database when the `save` method is called.]
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -316,7 +316,7 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 [#ex-mutarray]
 :param-tags: datatype_mutable_array
 // :param-leader: pass:q,a[Changes to the document are persisted to the database when the `save` method is called.]
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -344,7 +344,7 @@ This method can be used to check if a document with a given ID already exists in
 [#ex-persists-doc]
 :param-tags: initializer
 :param-leader: pass:q,a[The following code example creates a document and persists it to the database.]
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -375,7 +375,7 @@ endif::is-c[]
 [#ex-update-doc]
 :param-tags: update-document
 :param-leader: pass:q,a[Changes to the document are persisted to the database when the `save` method is called.]
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -392,7 +392,7 @@ This can often be useful to pass the document contents as a plain object to anot
 .Convert document
 [#ex-conv-doc]
 :param-tags: to-dictionary;to-json
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 <.> Returns a Dictionary<String, Any>
 <.> Returns a JSON string
 :param-tags!:
@@ -410,7 +410,7 @@ The following example persists a few documents in batch.
 .Batch operations
 [#ex-batch-ops]
 :param-tags: batch
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
 At the *local* level this operation is still transactional: no other `Database` instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
@@ -427,7 +427,7 @@ The following example registers for changes to the document with ID `user.john` 
 .Document change events
 [#ex-doc-events]
 :param-tags: document-listener
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
 ifdef::is-android[]
@@ -533,7 +533,7 @@ This is done using the `init(json)` constructor-- see: <<ex-array>>
 .Arrays as JSON strings
 [#ex-array]
 :param-tags: tojson-array
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
 <.> Initialize array with JSON string
@@ -561,7 +561,7 @@ Note that the blob object must first be saved to the database (generating requir
 [#ex-blob]
 .Blobs as JSON strings
 :param-tags: tojson-blob
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
 See also: {blob--xref}
@@ -582,7 +582,7 @@ This is done using the `init(json)` constructor-- see: <<ex-dictionary>>
 [#ex-dictionary]
 .Dictionaries as JSON strings
 :param-tags: tojson-dictionary
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Set the dictionary using a JSON string
 
@@ -602,7 +602,7 @@ This is done using the `init(json)` and-or `init(id: json:)` constructor-- see: 
 .Documents as JSON strings
 [#ex-document]
 :param-tags: query-get-all;tojson-document
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
 <.> Get a document as a JSON string

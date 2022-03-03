@@ -76,7 +76,7 @@ Good performance depends on designing and creating the _right_ indexes to go alo
 .Creating a New Index
 :param-tags: query-index
 :param-leader: This example creates a new index for the `type` and `name` properties in the <<ex-data-format>>.
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -109,7 +109,7 @@ Use the `SelectResult.all()` method to return all the properties of selected doc
 [#ex-select-all]
 :param-tags: query-select-all
 :param-leader: pass:q,a[This query shows how to retrieve all properties from all documents in your database.]
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -139,7 +139,7 @@ To access only specific properties, specify a comma separated list of `SelectRes
 .Using SELECT to Retrieve Specific Properties
 :param-tags: query-select-props
 :param-leader: pass:q,a[In this query we retrieve and then print the `_id`, `type` and `name` properties of each document.]
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
 The `query.execute` statement returns one or more key-value pairs, one for each SelectResult expression, with the property-name as the key -- see <<ex-return-properties>>
@@ -188,7 +188,7 @@ include::{root-examples}query-snippets.adoc[tags=query-result-format-props]
 
 .Using Where
 :param-tags: query-where
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -211,7 +211,7 @@ The following example uses the `{url-api-classes-query-arrayfunction}` to find d
 ----
 
 :param-tags: query-collection-operator-contains
-include::{root-partials}_block_tabbed_code.adoc[]
+include::{root-partials}block_tabbed_code.adoc[]
 :param-tags!:
 
 ==== IN Operator
@@ -220,7 +220,7 @@ The `IN` operator is useful when you need to explicitly list out the values to t
 The following example looks for documents whose `first`, `last` or `username` property value equals "Armani".
 
 :param-tags: query-collection-operator-in
-include::{root-partials}_block_tabbed_code.adoc[]
+include::{root-partials}block_tabbed_code.adoc[]
 :param-tags!:
 
 
@@ -243,7 +243,7 @@ This query returns `landmark` type documents where the `name` matches the string
 .Like with case-insensitive matching
 [#ex-like-case-insensitive]
 :param-tags: query-like-operator
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
 *Note* the use of `Function.lower` to transform `name` values to the same case as the literal comparator.
@@ -264,7 +264,7 @@ Notice that the matches may span word boundaries.
 .Wildcard Matches
 [#ex-wldcd-match]
 :param-tags: query-like-operator-wildcard-match
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
 [#lbl-wild-chars]
@@ -278,7 +278,7 @@ The query returns "landmark" type documents with names such as "Engineer", "engi
 .Wildcard Character Matching
 [#ex-wldcd-char-match]
 :param-tags: query-like-operator-wildcard-character-match
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
 
@@ -293,7 +293,7 @@ NOTE: The `regex` operator is case sensitive, use `upper` or `lower` functions t
 .Using Regular Expressions
 :param-tags: query-regex-operator,indent=0]
 :param-leader: This example returns documents with a `type` of "landmark" and a `name` property that matches any string that begins with "eng" and ends in the letter "e".
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 <.> The `\b` specifies that the match must occur on word boundaries.
@@ -311,7 +311,7 @@ You can query documents that have been deleted (tombstones) {fn2x5} as shown in 
 [#ex-del-qry]
 :param-leader: pass:q,a[This example shows how to query deleted documents in the database. It returns is an array of key-value pairs.]
 :param-tags: query-deleted-documents
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -325,7 +325,7 @@ For example to combine airline details with route details, linked by the airline
 [#ex-join]
 :param-tags: query-join
 :param-leader: pass:q,a[This example JOINS the document of type `route` with documents of type `airline` using the document ID (`_id`) on the _airline_ document and `airlineid` on the _route_ document.]
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -352,7 +352,7 @@ The following example looks for the number of airports at an altitude of 300 ft 
 .Query using GroupBy
 :param-tags: query-groupby
 :param-leader: pass:q,a[This example shows a query that selects all airports with an altitude above 300ft. The output (a count, $1) is grouped by country, within timezone.]
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -376,7 +376,7 @@ It is possible to sort the results of a query based on a given expression result
 .Query using OrderBy
 :param-tags: query-orderby
 :param-leader: pass:q,a[This example shows a query that returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.]
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -444,7 +444,7 @@ The `Select` statement for this type of query, which returns all document proper
 .Query selecting All Properties
 [#ex-all-qry]
 :param-tags: query-syntax-all
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -474,7 +474,7 @@ In this case access the retrieved document properties by converting each row's v
 .Using Document Properties (All)
 [#ex-all-acc]
 :param-tags: query-access-all
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 <.> Here we get the dictionary of document properties using the database name as the key.
@@ -491,7 +491,7 @@ Here we use `SelectResult.expression(property("<property-name>")))` to specify t
 .Query selecting Specific Properties
 [#ex-specific-qry]
 :param-tags: query-syntax-props
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
 ==== Result Set Format
@@ -518,7 +518,7 @@ Access the retrieved properties by converting each row into a dictionary -- as s
 .Using Returned Document Properties (Specific Properties)
 [#ex-specific-acc]
 :param-tags: query-access-props
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
 
@@ -531,7 +531,7 @@ You would typically use this type of query if retrieval of document properties d
 .Query selecting only Doc Id
 [#ex-id-qry]
 :param-tags: query-syntax-id
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
 
@@ -557,7 +557,7 @@ In this case, access the required document's properties by unpacking the `id` an
 .Using Returned Document Properties (Document Id)
 [#ex-id-acc]
 :param-tags: query-access-id
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Extract the Id value from the dictionary and use it to get the document from the database
 
@@ -571,7 +571,7 @@ include::{root-partials}_block_tabbed_code_example.adoc[]
 .Query selecting a Count-only
 [#ex-count-qry]
 :param-tags: query-syntax-count-only
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> The alias name, `mycount`, is used to access the count value.
 
@@ -598,7 +598,7 @@ Access the count using its alias name (`mycount` in this example) -- see <<ex-co
 [#ex-count-acc]
 .Using Returned Document Properties (Count)
 :param-tags: query-access-count-only
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Get the count using the `SelectResult.as` alias, which is used as its key.
 
@@ -611,7 +611,7 @@ Use the `limit` and `offset` feature, to return a defined number of results star
 [#ex-pagination]
 .Query Pagination
 :param-tags: query-syntax-pagination
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Return a maximum of `limit` results starting from result number `offset`
 
@@ -653,7 +653,7 @@ To integrate a model with Couchbase Lite, you must implement the `PredictiveMode
 .Integrating a predictive model
 [#int-pred-model]
 :param-tags: predictive-model
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 <1> The `predict(input) ++->++ output` method provides the input and expects the result of using the machine learning model.
 The input and output of the predictive model is a `DictionaryObject`.
@@ -667,7 +667,7 @@ To register the model you must create a new instance and pass it to the `Databas
 .Registering a predictive model
 [#reg-pred-model]
 :param-tags: register-model
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
 
@@ -689,7 +689,7 @@ When documents are added or updated, the index will call the prediction function
 .Creating a value index
 [#crt-val-index]
 :param-tags: predictive-query-value-index
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
 
@@ -702,7 +702,7 @@ It differs from the value index in that it caches the predictive results and cre
 [#crt-val-index]
 :param-tags: predictive-query-predictive-index
 :param-leader: pass:q,a[Here we create a predictive index from the `label` value of the prediction result.]
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -714,7 +714,7 @@ The code below creates a query that calls the prediction function to return the 
 .Creating a value index
 [#crt-val-index]
 :param-tags: predictive-query
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 <1> The `PredictiveModel.predict()` method returns a constructed Prediction Function object which can be used further to specify a property value extracted from the output dictionary of the `PredictiveModel.predict()` function.
 +
@@ -728,7 +728,7 @@ To deregister the model you must call the `Database.prediction.unregisterModel` 
 .Deregister a value index
 [#dereg-val-index]
 :param-tags: unregister-model
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
 
