@@ -94,28 +94,28 @@ For the most part the documentation for each platform is derived from common tex
 == Significant files
 
 
-* `_std-cbl-hdr.adoc` +
-The contents of the `modules/ROOT/pages/_partials/_std-cbl-hdr.adoc` file are used to set-up the environment for each page.
+* `_set_page_context.adoc` +
+The contents of the `modules/ROOT/pages/_partials/_set_page_context.adoc` file are used to set-up the environment for each page.
 +
 This file is called with the appropriate platform parameters by each platform's equivalent `std-cbl-hdr-<platform>.adoc` file.
-It in turn calls `_page-index.adoc`, `_attributes-local.adoc` and the appropriate `_attributes-module.adoc`.
+It in turn calls `_define_page_index.adoc`, `_define_component_attributes.adoc` and the appropriate `_define_module_attributes.adoc`.
 +
 Together, these included files define a tailored, platform-specific environment, whilst utilizing common text files to describe Couchbase Lite functionality.
 
-* `_attributes-local.adoc` +
+* `_define_component_attributes.adoc` +
 The
 `modules/ROOT/pages/_partials/_attributes_local.adoc`
 file sets the value of attributes common across all platforms.
 
-* `_attributes-module.adoc` +
+* `_define_module_attributes.adoc` +
 Each platform contains a platform-specific
 `modules/<platform>/pages/_partials/_attributes_module.adoc`
 file.
 The principal purpose of this file is to define cross-reference links into the platform's API documentation.
 
-* `_page-index.adoc` +
+* `_define_page_index.adoc` +
 This file sets the page xref attributes used in cross-references throughout the documentation.
-It picks-up the platform parameters from the `_std-cbl-hdr.adoc`
+It picks-up the platform parameters from the `_set_page_context.adoc`
 
 * `commons` folder +
 As stated above the `commons` folder holds common re-usable text shared across all platforms.
@@ -124,19 +124,19 @@ As stated above the `commons` folder holds common re-usable text shared across a
 == Page Structure
 
 
-Within the platform folder, each page calls its own, platform specific, `_std-cbl-hdr-<platform>.adoc` file, which in turn:
+Within the platform folder, each page calls its own, platform specific, `_set_page_context_for_<platform>.adoc` file, which in turn:
 
 . Sets the platform name and other parameters
 
-. Invokes the common `ROOT:_std-cbl-hdr.adoc` file
+. Invokes the common `ROOT:_set_page_context.adoc` file
 +
 This common header file, then invokes:
 
-.. `_attributes-local.adoc` to set common attributes
+.. `_define_component_attributes.adoc` to set common attributes
 
-.. `_page-index.adoc` to set up xref attribute for page cross-references
+.. `_define_page_index.adoc` to set up xref attribute for page cross-references
 
-.. `_attributes-module.adoc` to set platform specific attributes (such as links into API)
+.. `_define_module_attributes.adoc` to set platform specific attributes (such as links into API)
 
 . Includes the appropriate `common` text file imbuing it with platform specific details as set by the aforementioned header file.
 

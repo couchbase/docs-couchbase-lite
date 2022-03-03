@@ -19,7 +19,7 @@ endif::[]
 ifndef::topic-group[]
 :topic-group: Troubleshooting
 endif::[]
-include::{root-partials}_block-abstract.adoc[]
+include::{root-partials}_show_page_header_block.adoc[]
 endif::param-fullpage[]
 // DO NOT EDIT
 :url-sql-query-plan: https://www.sqlite.org/eqp.html
@@ -35,7 +35,7 @@ To examine how your query is working, either embed the call inside your app (see
 [#use-qe-app]
 .Using Query Explain in App
 :param-tags: query-explain-all
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 <.> Construct your query as normal
 <.> Call the query's `explain` method; All output is sent to the application's log file.
 :param-tags!:
@@ -197,7 +197,7 @@ TIP: For more on indexes -- see: {indexing--xref}
 [#like-wild-pfx-qry]
 .Like with Wildcard Prefix
 :param-tags: query-explain-like
-include::{root-partials}_block_tabbed_code.adoc[]
+include::{root-partials}block_tabbed_code.adoc[]
 :param-tags!:
 <.> The indexed property, TYPE, cannot use its index because of the wildcard prefix.
 
@@ -214,7 +214,7 @@ Where practical, simple changes like this can make significant differences in qu
 .Like with No Wildcard-prefix
 [#like-no-wild-pfx-qry]
 :param-tags: query-explain-nopfx
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Simply removing the wildcard prefix enables the query optimizer to access the `typeIndex`, which results in a more efficient search.
 
@@ -233,7 +233,7 @@ For example, you can observe a similar situation to that shown in <<use-like-bas
 .Query
 [#use-like-based-queries]
 :param-tags: query-explain-function
-include::{root-partials}_block_tabbed_code.adoc[]
+include::{root-partials}block_tabbed_code.adoc[]
 :param-tags!:
 <.> Here we use the `{url-api-method-function-lower}` function in the _Where_ expression
 
@@ -249,7 +249,7 @@ But removing the `{url-api-method-function-lower}` function, changes things:
 
 .Query
 :param-tags: query-explain-nofunction
-include::{root-partials}_block_tabbed_code.adoc[]
+include::{root-partials}block_tabbed_code.adoc[]
 :param-tags!:
 <.> Here we have removed `{url-api-method-function-lower}` from the _Where_ expression
 

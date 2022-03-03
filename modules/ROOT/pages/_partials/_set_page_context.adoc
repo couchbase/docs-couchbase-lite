@@ -1,0 +1,39 @@
+ifdef::is_diag[_set_page_context.adoc]
+// BEGIN -- inclusion -- _set_page_context.adoc -- Standard page initialization
+// REQUIRES:
+//  :param-module: {param-module}
+//  :param-name: {param-name}
+//  :param-title: {param-title}
+// INVOKED-BY:
+//  each of the <module>:partial$_set_page_context_for_<module>.adoc files
+
+ifndef::param-name[:param-name: all]
+
+include::ROOT:partial$_define_component_attributes.adoc[]
+
+ifndef::param_is_root[]
+ifdef::is_diag[_define_module_attributes.adoc({param-module})]
+include::{param-module}:partial$_define_module_attributes.adoc[]
+endif::param_is_root[]
+
+include::ROOT:partial$_define_page_index.adoc[]
+
+include::ROOT:partial$_show_glossary_links.adoc[]
+
+// sets a flag to indicate what platform is on
+include::{root-partials}_set-platform.adoc[]
+
+// Set common code snippet header
+ifndef::param_is_root[:code-snippet: source, {source-language}, subs="{gen-subs}"]
+
+ifdef::param_is_root[]
+:url-api-method-replicator-getPendingDocumentIds: Replicator Get Pending Document
+:url-api-method-replicator-isDocumentPending: Replicator Is Document Pending
+:url-api-class-database: Database
+:url-api-method-database-delete: Database Delete
+:url-api-method-database-close: Database Close
+:url-api-property-meta-revisionid: Meta Revision ID
+endif::param_is_root[]
+
+
+// END -- inclusion -- _set_page_context.adoc -- Standard page initialization

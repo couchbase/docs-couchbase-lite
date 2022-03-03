@@ -3,18 +3,18 @@
 // DO NOT EDIT
 :param-abstract: How to set up a Replicator to connect with a Listener and replicate changes using peer-to-peer sync
 include::{root-partials}block-related-howto-p2psync-ws.adoc[]
-include::{root-partials}block-abstract.adoc[]
+include::{root-partials}_show_page_header_block.adoc[]
 
 // Set is-p2p on for inclusions that may use it
 :is-p2p:
 // DO NOT EDIT
 
-include::{root-partials}_block-caveats.adoc[tag=enterprise-only]
+include::{root-partials}block-caveats.adoc[tag=enterprise-only]
 
 ifdef::is-android[]
-include::{root-partials}_block-caveats.adoc[tags=android-constraints]
+include::{root-partials}block-caveats.adoc[tags=android-constraints]
 endif::[]
-include::{root-partials}_block-caveats.adoc[tags=code-disclaimer]
+include::{root-partials}block-caveats.adoc[tags=code-disclaimer]
 
 [#introduction]
 == Introduction
@@ -25,7 +25,7 @@ This _active peer_ (also referred to as a client and-or a replicator) will initi
 
 Subsequent sections provide additional details and examples for the main configuration options.
 
-include::{root-partials}_block-caveats.adoc[tags=securestorage]
+include::{root-partials}block-caveats.adoc[tags=securestorage]
 
 == Configuration Summary
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
@@ -34,14 +34,14 @@ You should configure and initialize a replicator for each Couchbase Lite databas
 ifdef::is-android[]
 [NOTE]
 --
-include::{root-partials}_block-caveats.adoc[tags=android-threads]
+include::{root-partials}block-caveats.adoc[tags=android-threads]
 --
 endif::[]
 
 [#simple-replication-to-listener]
 .Replication configuration and initialization
 :param-tags: p2p-act-rep-func;!autopurge-override
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Configure how the client will authenticate the server.
 Here we say connect only to servers presenting a self-signed certificate.
@@ -135,7 +135,7 @@ Use the `{url-api-class-replicator-config-basic-auth}` to supply basic authentic
 .Basic Authentication
 :param-tags: p2p-act-rep-auth
 :param-leader: This example shows basic authentication using user name and password:
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -159,7 +159,7 @@ endif::is-android[]
 [#configuring-client-authentication]
 :param-tags: p2p-tlsid-tlsidentity-with-label
 :param-leader: This example shows client certificate authentication using an identity from secure storage.
-include::{root-partials}_block_tabbed_code_example.adoc[]
+include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 <.> Get an identity from secure storage and create a TLS Identity object
