@@ -23,6 +23,8 @@ This *may* include Server SDK encrypted fields
 
 
 == Overview
+
+
 Couchbase Lite for C 3.0.0  supports client-side, field-Level encryption on replications, allowing applications to encrypt/decrypt sensitive fields in documents using an encryption framework of choice.
 
 Using the new client-side encryption capability, Couchbase Lite C applications can
@@ -30,10 +32,12 @@ designate selected fields for encryption and have the client automatically handl
 
 Only clients with access to the correct encryption keys can decrypt and read the protected data.
 
-The client-side encryption is compatible with the Couchbase server SDK field-level encryption format -- see, for example, https://docs.couchbase.com/python-sdk/current/concept-docs/encryption.html#format
+The client-side encryption is compatible with the Couchbase server SDK field-level encryption format -- see, for example,
+https://docs.couchbase.com/python-sdk/current/concept-docs/encryption.html#format
 
 
 == Encryptable Type
+
 
 The API includes a `CBLEncryptable` type, representing an encryptable value to be automatically encrypted/decrypted the replicator -- see <<ex-encryptable-type>>.
 
@@ -64,18 +68,24 @@ The key for the value can be either of the following:
 
 
 == Replicator Decryption
+
+
 Pull replication detects `encryptable` values before saving them to the local database and decrypts them using the property decryption callback function -- see: <<lbl-decryption-callback>> for more on the decryption callback function.
 
 On successful decryption the replicator saves the property in encryptable dictionary format (removing the `encrypted$` prefix) -- see: <<ex-encryptable-type>>.
 
 
 == Replicator Encryption
+
+
 Push replication detects `encryptable` values before pushing them to the remote database and encrypts them using the property encryption callback function -- see: <<lbl-encryption-callback>>.
 
 On successful encryption the replicator transforms the property into a format compatible with Couchbase Server SDK -- see: <<ex-server-encryptable>>.
 
 
 == Server SDK compatibility
+
+
 Couchbase Lite's replicator ensures compatibility with Server SDK’s field level.
 Both Push and Pull replication transform Couchbase Lite's encryptable dictionary to-and-from Server SDK Encrypted Field dictionary structure -- see: <<ex-server-encryptable>>.
 
@@ -126,6 +136,7 @@ Its directory structure differs CBL's encryptable dictionary when serializing th
 ====
 
 == Callback Definition
+
 
 [#lbl-encryption-callback]
 === Encryption
@@ -185,8 +196,9 @@ incude::{snippet}[tag=replicator_property_encryption]
 // :param-tags!:
 
 
-
 == Querying Encryptables
+
+
 Encrypted values can be queried -- see <<ex-query>>.
 The query result of an encryptable value is `CBLEncryptable`
 
@@ -208,24 +220,76 @@ FROM db WHERE ssn.value = "123-45-6789"
 ====
 
 
-
 == Constraints
 
-==== Nesting
+
+=== Nesting
 In the case of nested `encryptable` types, the replicator only encrypts the outer `encryptable`.
 
-==== Arrays
+=== Arrays
 For compatibility with Server SDKS, encryptables are not supported within arrays.
 
 The push replicator should detect and report an error if an encrypted property is found in an array.
 
-==== Blobs
+=== Blobs
 Encrypting blob’s content is not supported.
 
 Where a Blob as a Fleece dictionary is specified in the encrypted property value, only the dictionary is encrypted; *not* the blob’s content.
 
-==== Delta Sync
+=== Delta Sync
 Delta Sync will be disabled and a warning message logged when `propertyEncryption` is configured.
 
+
+=== Brute-Force Susceptibility
+
+Any document with simple encrypted fields (for example, fields containing a subset of values) may be brute-force computed with all possible values using the document revId.
+This will be fixed in a future release.
+In the meantime, adding an encrypted field including a nonce or random value to the document can mitigate against such brute-force computation -- as shown in <<example-brute-force-mitigation>>.
+
+
+[#example-brute-force-mitigation]
+.Sample brute-force mitigation code
+====
+[source, C]
+----
+void secureRandomize(void *bytes, size_t count) {
+    // This sample code uses Apple’s Common Crypto API to generate a secure random bytes.
+    CCRandomGenerateBytes(bytes, count);
+}
+----
+
+
+[source, C]
+----
+…
+
+auto doc = CBLDocument_CreateWithID("doc1"_sl);
+FLMutableDict props = CBLDocument_MutableProperties(doc);
+
+// Create a random bytes in base64:
+uint8_t nonceBuf[64];
+secureRandomize(nonceBuf, sizeof(nonceBuf));
+FLValue nonceValue = FLValue_NewData({nonceBuf, sizeof(nonceBuf)});
+FLSliceResult nonceBase64 = FLValue_ToJSON(nonceValue);
+FLValue_Release(nonceValue);
+
+// Create an encryptable value from the random bytes and add to the document’s property:
+auto nonce = CBLEncryptable_CreateWithString({nonceBase64.buf, nonceBase64.size});
+FLMutableDict_SetEncryptableValue(props, "nonce"_sl, nonce);
+
+…
+
+// Save doc:
+CBLError error;
+CHECK(CBLDatabase_SaveDocument(db, doc, &error));
+
+// Release:
+CBLDocument_Release(doc);
+FLSliceResult_Release(nonceBase64);
+CBLEncryptable_Release(nonce);
+
+----
+
+====
 
 include::{root-partials}block-related-content-data.adoc[]
