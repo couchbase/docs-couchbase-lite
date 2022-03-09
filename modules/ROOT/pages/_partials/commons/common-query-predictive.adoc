@@ -71,8 +71,9 @@ The code below creates a query that calls the prediction function to return the 
 :param-tags: predictive-query
 include::{root-partials}block_tabbed_code.adoc[]
 :param-tags!:
-<1> The `PredictiveModel.predict()` method returns a constructed Prediction Function object which can be used further to specify a property value extracted from the output dictionary of the `PredictiveModel.predict()` function.
-+
+
+<1> The `PredictiveModel.predict()` method returns a constructed Prediction Function object which can be used further to specify a property value extracted from the output dictionary of the `PredictiveModel.predict()` function. +
+
 NOTE: The null value returned by the prediction method will be interpreted as MISSING value in queries.
 
 === Unregister the Model
@@ -92,12 +93,14 @@ NOTE: iOS Only
 
 `CoreMLPredictiveModel` is a Core ML based implementation of the `PredictiveModel` protocol that facilitates the integration of Core ML models with Couchbase Lite.
 
-
 The following example describes how to load a Core ML model using `CoreMLPredictiveModel`.
 All other steps (register, indexing, query, unregister) are the same as with a model that is integrated using your own `PredictiveModel` implementation.
 
 [source]
 ----
+
 include::{snippet}[tag=coreml-predictive-model,indent=0]
+
 ----
+
 endif::is-ios[]
