@@ -14,7 +14,9 @@ include::{root-partials}block-caveats.adoc[tags=android-constraints]
 endif::[]
 include::{root-partials}block-caveats.adoc[tags=code-disclaimer]
 
+
 == Introduction
+
 
 Couchbase Lite for {param-title} provides API support for secure, bi-directional, synchronization of data changes between mobile applications and a central server database.
 It does so by using a _replicator_ to interact with Sync Gateway.
@@ -30,6 +32,7 @@ Subsequent sections provide additional details and examples for the main configu
 
 
 == Replication Protocol
+
 
 === Scheme
 
@@ -116,6 +119,7 @@ endif::is-c[]
 [#lbl-cfg-repl]
 == Configure
 
+
 In this section::
 +
 --
@@ -153,7 +157,34 @@ include::{root-commons}sgw-replication-cfg-retry.adoc[]
 [#lbl-user-auth]
 === User Authorization
 
-include::{root-partials}authorization.adoc[]
+// include::{root-partials}authorization.adoc[]
+
+By default, Sync Gateway does not enable user authorization.
+This makes it easier to get up and running with synchronization.
+
+You can enable authorization in the {sgw} configuration file, as shown in <<example-enable-authorization>>.
+
+.Enable Authorization
+[#example-enable-authorization]
+====
+[source,json]
+----
+{
+  "databases": {
+    "mydatabase": {
+      "users": {
+        "GUEST": {"disabled": true}
+      }
+    }
+  }
+}
+----
+====
+
+To authorize with Sync Gateway, an associated user must first be created.
+Sync Gateway users can be created through the xref:sync-gateway:ROOT:refer/rest-api-admin.adoc#/user/post\__db___user_[`+POST /{tkn-db}/_user+`] endpoint on the Admin REST API.
+
+
 
 ifndef::is-c[]
 [#lbl-svr-auth]
@@ -171,13 +202,49 @@ endif::is-c[]
 [#lbl-client-auth]
 === Client Authentication
 
-include::{root-partials}authentication.adoc[]
+// include::{root-partials}authentication.adoc[]
+There are two ways to authenticate from a Couchbase Lite client: <<Basic Authentication>> or <<Session Authentication>>.
+
+==== Basic Authentication
+
+You can provide a user name and password to the basic authenticator class method.
+Under the hood, the replicator will send the credentials in the first request to retrieve a `SyncGatewaySession` cookie and use it for all subsequent requests during the replication.
+This is the recommended way of using basic authentication.
+<<ex-base-auth>> shows how to initiate a one-shot replication as the user *username* with the password *password*.
+
+.Basic Authentication
+[#ex-base-auth]
+:param-tags: basic-authentication
+include::{root-partials}block_tabbed_code_example.adoc[]
+:param-tags!:
+
+==== Session Authentication
+
+Session authentication is another way to authenticate with Sync Gateway.
+
+A user session must first be created through the
+xref:sync-gateway:ROOT:refer/rest-api-public.adoc#/session/post\__db___session[`+POST /{tkn-db}/_session+`]
+endpoint on the Public REST API.
+
+The HTTP response contains a session ID which can then be used to authenticate as the user it was created for.
+
+See <<ex-session-auth>>, which shows how to initiate a one-shot replication with the session ID returned from the `+POST /{tkn-db}/_session+` endpoint.
+
+.Session Authentication
+[#ex-session-auth]
+:param-tags: session-authentication
+include::{root-partials}block_tabbed_code_example.adoc[]
+:param-tags!:
 
 
 [#lbl-repl-hdrs]
 === Custom{nbsp}Headers
 
-include::{root-partials}replication-custom-header.adoc[]
+// include::{root-partials}replication-custom-header.adoc[]
+Custom headers can be set on the configuration object.
+The replicator will then include those headers in every request.
+
+This feature is useful in passing additional credentials, perhaps when an authentication or authorization step is being done by a proxy server (between Couchbase Lite and Sync Gateway) -- see <<ex-cust-hdr>>.
 
 .Setting custom headers
 [#ex-cust-hdr]
@@ -185,22 +252,228 @@ include::{root-partials}replication-custom-header.adoc[]
 include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
-
 [#lbl-repl-fltrs]
 === Replication Filters
+// include::{root-partials}replication-filters.adoc[]
+Replication Filters allow you to have quick control over the documents stored as the result of a push and/or pull replication.
 
-include::{root-partials}replication-filters.adoc[]
+==== Push Filter
+
+The push filter allows an app to push a subset of a database to the server.
+This can be very useful.
+For instance, high-priority documents could be pushed first, or documents in a "draft" state could be skipped.
+
+:param-tags: replication-push-filter
+// pass:q,a,m[include::{root-partials}block_tabbed_code.adoc[]]
+.Push Filter
+include::{root-partials}block_tabbed_code.adoc[]
+:param-tags!:
+
+ifndef::is-c[]
+<1> The callback should follow the semantics of a https://en.wikipedia.org/wiki/Pure_function[pure function^].
+Otherwise, long running functions would slow down the replicator considerably.
+Furthermore, your callback should not make assumptions about what thread it is being called on.
+endif::is-c[]
+ifdef::is-c[<1> Do not provide long running functions, which could slow down the replicator. Nor make assumptions about the thread the function is being called on.]
+
+==== Pull Filter
+
+The pull filter gives an app the ability to validate documents being pulled, and skip ones that fail.
+This is an important security mechanism in a peer-to-peer topology with peers that are not fully trusted.
+
+NOTE: Pull replication filters are not a substitute for channels.
+Sync Gateway
+xref:sync-gateway::data-routing.adoc[channels]
+are designed to be scalable (documents are filtered on the server) whereas a pull replication filter is applied to a document once it has been downloaded.
+
+:param-tags: replication-pull-filter
+include::{root-partials}block_tabbed_code.adoc[]
+:param-tags!:
+
+ifndef::is-c[]
+<1> The callback should follow the semantics of a
+https://en.wikipedia.org/wiki/Pure_function[pure function].
+Otherwise, long running functions would slow down the replicator considerably.
+Furthermore, your callback should not make assumptions about what thread it is being called on.
+endif::is-c[]
+ifdef::is-c[<1> Do not provide long running functions, which could slow down the replicator. Nor make assumptions about the thread the function is being called on.]
+
+.Losing access to a document via the Sync Function.
+****
+Losing access to a document (via the Sync Function) also triggers the pull replication filter.
+
+Filtering out such an event would retain the document locally.
+
+As a result, there would be a local copy of the document disjointed from the one that resides on Couchbase Server.
+
+Further updates to the document stored on Couchbase Server would not be received in pull replications and further local edits could be potentially pushed, which would result in `409` errors since access has been revoked.
+****
 
 [#lbl-repl-chan]
 === Channels
 
-include::{root-partials}replication-channels.adoc[]
+// include::{root-partials}replication-channels.adoc[]
+By default, Couchbase Lite gets all the channels to which the configured user account has access.
 
+This behavior is suitable for most apps that rely on
+xref:sync-gateway::learn/authentication.adoc[user authentication]
+and the
+xref:sync-gateway::sync-function-api.adoc[sync function]
+to specify which data to pull for each user.
+
+Optionally, it's also possible to specify a comma-separated list of channel names on Couchbase Lite's replicator configuration object.
+In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
 
 [#anchor-auto-purge-on-revoke]
 === Auto-purge on Channel Access Revocation
 
-include::{root-commons}sgw-replication-cfg-autopurge.adoc[]
+// include::{root-commons}sgw-replication-cfg-autopurge.adoc[]
+[CAUTION]
+--
+This is a Breaking Change at 3.0
+--
+==== New outcome
+
+By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user’s other channels) are auto-purged from the local database (in devices belonging to the user).
+
+==== Prior outcome
+
+_Previously these documents remained in the local database_
+
+Prior to this relese, CBL auto-purged only in the case when the user loses access to a document by removing the doc from all of the channels belong to the user.
+Now, in addition to 2.x auto purge, Couchbase Lite will also auto-purges the docs when the user loses access to the doc via channel access revocation.
+This feature is enabled by default, but an opt-out is available.
+
+==== Behavior
+
+Users may lose access to channels in a number of ways:
+
+* User loses direct access to channel
+
+* User is removed from a role
+
+* A channel is removed from a role the user is assigned to
+
+By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user’s other channels -- see: <<tbl-revoke-behavior>>.
+
+Documents that exist in multiple channels belonging to the user (even if they are not actively replicating that channel) are not auto-purged unless the user loses access to all channels.
+
+Users will be receive an `AccessRemoved` notification from the DocumentListener if they lose document access due to channel access revocation; this is sent regardless of the current auto-purge setting.
+
+.Behavior following access revocation
+[#tbl-revoke-behavior, cols="^1h,2a,2a", options="header"]
+|===
+
+2+|System State
+^|Impact on Sync
+
+.>h|Replication Type
+^.>h|Access Control on Sync Gateway
+^.>h|Expected behavior when _enable_auto_purge=true_
+
+|Pull only
+|User revoked access to channel.
+
+Sync Function includes `requireAccess(revokedChannel)`
+|Previously synced documents are auto purged on local
+
+|Push only
+|User revoked access to channel. Sync Function includes `requireAccess(revokedChannel)`
+|No impact of auto-purge
+
+Documents get pushed but are rejected by Sync Gateway
+
+|Push-pull
+|User revoked access to channel +
+Sync Function includes `requireAccess(revokedChannel)`
+|Previously synced documents are auto purged on Couchbase Lite.
+
+Local changes continue to be  pushed to remote but are rejected by Sync Gateway
+
+|===
+
+If a user subsequently regains access to a lost channel, then any previously auto-purged documents still assigned to any of their channels are automatically pulled down by the active Sync Gateway when they are next updated -- see behavior summary in <<tbl-regain-behavior>>
+
+.Behavior if access is regained
+[#tbl-regain-behavior, cols="^1h,2a,2a", options="header"]
+|===
+
+2+|System State
+^|Impact on Sync
+
+.>h|Replication Type
+^.>h|Access Control on Sync Gateway
+^.>h|Expected behavior when _enable_auto_purge=true_
+
+|Pull only
+|User REASSIGNED access to channel
+|Previously purged documents that are still in the channel are automatically pulled by Couchbase Lite when they are next updated
+
+|Push only
+|User REASSIGNED access to channel
+Sync Function includes requireAccess
+(reassignedChannel)
+No impact of auto-purge
+|Local changes previously rejected by Sync Gateway will not be automatically pushed to remote unless resetCheckpoint is involved on CBL.
+Document changes subsequent to the channel reassignment will be pushed up as usual.
+
+|Push-pull
+|User REASSIGNED access to channel
+
+Sync Function includes requireAccess
+(reassignedChannel)
+|Previously purged documents are automatically pulled by couchbase lite
+
+Local changes previously rejected by Sync Gateway will not be automatically pushed to remote unless resetCheckpoint is involved.
+Document changes subsequent to the channel reassignment will be pushed up as usual
+
+|===
+
+
+==== Config
+
+Auto-purge behavior is controlled primarily by the ReplicationConfiguration option {url-api-prop-replicator-config-autopurge}.
+Changing the state of this will impact *only* future replications; the replicator will not attempt to sync revisions that were auto purged on channel access removal.
+Clients wishing to sync previously removed documents must use the resetCheckpoint API to resync from the start.
+
+
+.Setting auto-purge
+[#ex-set-auto-purge]
+:param-tags: autopurge-override
+include::{root-partials}block_tabbed_code_example.adoc[]
+:param-tags!:
+<.> Here we have opted to turn off the auto purge behavior. By default this is ON (true)
+
+==== Overrides
+Where necessary, clients can override the default auto-purge behavior.
+This can be done either by setting {url-api-prop-replicator-config-autopurge} to false, or for finer control by applying pull-filters -- see: <<tbl-pull-filters>> and <<lbl-repl-fltrs>>
+This ensures backwards compatible with 2.8 clients that use pull filters to prevent auto purge of removed docs.
+
+.Impact of Pull-Filters
+[#tbl-pull-filters,cols="^1,2,2"]
+|===
+
+.2+.^h|purge_on_removal setting
+
+2+^h|Pull Filter
+
+^h|Not Defined
+^h|Defined to filter removals/revoked docs
+
+|disabled
+2+a|Doc remains in local database
+
+App notified of “accessRemoved” if a _Documentlistener_ is registered
+
+|enabled (DEFAULT)
+a|Doc is auto purged
+
+App notified of “accessRemoved” if _Documentlistener_ registered
+a|Doc remains in local database
+
+App notified of “Rejected Rev(403)” if _Documentlistener_ registered
+
+|===
 
 
 [#lbl-repl-delta]
@@ -213,9 +486,13 @@ include::{root-partials}block-caveats.adoc[tag=ee-only-feature]
 With Delta Sync footnote:[Couchbase Mobile 2.5+], only the changed parts of a Couchbase document are replicated.
 This can result in significant savings in bandwidth consumption as well as throughput improvements, especially when network bandwidth is typically constrained.
 
-Replications to a Server (for example, a Sync Gateway, or passive listener) automatically use delta sync if the property is enabled at database level by the server -- see: xref:sync-gateway:ROOT:refer/config-properties.adoc#databases-foo_db-delta_sync[databases.$db.delta_sync.enabled].
+Replications to a Server (for example, a Sync Gateway, or passive listener) automatically use delta sync if the property is enabled at database level by the server -- see:
+xref:sync-gateway:ROOT:refer/config-properties.adoc#databases-foo_db-delta_sync[databases.$db.delta_sync.enabled].
 
-{dbreplica--xref} replications automatically *disable* delta sync, whilst xref:{p2psync-websocket--page}[Peer-to-Peer] replications automatically *enable* delta sync.
+{dbreplica--xref}
+replications automatically *disable* delta sync, whilst
+xref:{p2psync-websocket--page}[Peer-to-Peer]
+replications automatically *enable* delta sync.
 
 // end::rep-delta-sync-concept[]
 
@@ -234,8 +511,14 @@ include::{root-commons}sgw-replication-init.adoc[]
 
 [#lbl-repl-ckpt]
 === Checkpoint Starts
+// include::{root-partials}replication-checkpoint.adoc[]
 
-include::{root-partials}replication-checkpoint.adoc[]
+Replicators use {glos-term-checkpoints} to keep track of documents sent to the target database.
+
+Without {glos-term-checkpoints} , Couchbase Lite would replicate the entire database content to the target database on each connection, even though previous replications may already have replicated some or all of that content.
+
+This functionality is generally not a concern to application developers.
+However, if you do want to force the replication to start again from zero, use the {glos-term-checkpoint} reset argument when starting the replicator -- as shown in <<ex-repl-ckpt>>.
 
 .Resetting checkpoints
 [#ex-repl-ckpt]
@@ -311,8 +594,10 @@ The level of compression is set on Sync Gateway and can be tuned in the configur
 
 // === Replicator Notifications on a Custom Executor
 
+
 [#lbl-cert-pinning]
 == Certificate Pinning
+
 
 Couchbase Lite for {param-title} supports certificate pinning.
 
@@ -322,10 +607,14 @@ In this case, Couchbase Lite uses this embedded certificate to verify the trustw
 
 The following steps describe how to configure certificate pinning between Couchbase Lite and Sync Gateway.
 
-. xref:sync-gateway::security.adoc#creating-your-own-self-signed-certificate[Create your own self-signed certificate] with the `openssl` command.
+. xref:sync-gateway::security.adoc#creating-your-own-self-signed-certificate[Create your own self-signed certificate]
+with the `openssl` command.
 After completing this step, you should have 3 files: `cert.pem`, `cert.cer` and `privkey.pem`.
-. xref:sync-gateway::security.adoc#installing-the-certificate[Configure Sync Gateway] with the `cert.pem` and `privkey.pem` files.
+
+. xref:sync-gateway::security.adoc#installing-the-certificate[Configure Sync Gateway]
+with the `cert.pem` and `privkey.pem` files.
 After completing this step, Sync Gateway is reachable over `https`/`wss`.
+
 . On the Couchbase Lite side, the replication must point to a URL with the `wss` scheme and configured with the `cert.cer` file created in step 1.
 +
 This example loads the certificate from the application sandbox, then converts it to the appropriate type to configure the replication object.

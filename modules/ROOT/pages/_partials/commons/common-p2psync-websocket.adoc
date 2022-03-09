@@ -244,7 +244,114 @@ The implementation of this storage differs from platform to platform.
 .Secure storage details
 [#secure-storage-details,cols="1,4"]
 |===
-include::{root-partials}secure-storage.adoc[tag={param-platform}]
+
+|Key |Value
+
+// tag::android[]
+|Platform
+|Android
+
+|Key Storage
+|Android System KeyStore
+
+|Certificate Storage
+|Android System KeyStore
+
+|Notes
+a|* Android KeyStore was introduced from Android API 18.
+* Android KeyStore security has evolved over time to provide more secure support. Please check this document for more info: https://source.android.com/security/keystore
+
+|Reference
+|https://developer.android.com/training/articles/keystore
+// end::android[]
+
+// tag::ios[]
+|Platform
+|MacOS/iOS
+
+|Key Storage
+|KeyChain
+
+|Certificate Storage
+|KeyChain
+
+|Notes
+a|Use kSecAttrLabel of the SecCertificate to store the TLSIdentity’s label
+
+|Reference
+|https://developer.apple.com/documentation/security/keychain_services
+// end::ios[]
+
+// tag::jvm[]
+|Platform
+|Java
+
+|Key Storage
+|User Specified KeyStore
+
+|Certificate Storage
+|User Specified KeyStore
+
+|Notes
+a|* The KeyStore represents a storage facility for cryptographic keys and certificates. It’s users’ choice to decide whether to persist the KeyStore or not.
+* The supported KeyStore types are PKCS12 (Default from Java 9) and JKS (Default on Java 8 and below).
+
+|Reference
+|https://docs.oracle.com/javase/7/docs/api/java/security/KeyStore.html
+// end::jvm[]
+
+// tag::net[]
+// tag::Net-exXamarin[]
+|Platform
+|.Net (excluding Xamarin)
+
+|Key Storage
+|Opaque; Keys are stored automatically by the runtime when storing the certificate with the PersistKeySet flag set.
+
+|Certificate Storage
+|User specified X509Store
+
+|Notes
+a|* Use a map file to map the stored certificates and TLSIdentity’s labels.
+* The actual store of X509Store depends on platform implementation:
+** Windows -- OS KeyStore
+** macOS -- KeyChain
+** Linux -- file on filesystem
+
+|Reference
+a|* Opaque Keys: https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x509certificate2collection.import?view=netstandard-2.0#System_Security_Cryptography_X509Certificates_X509Certificate2Collection_Import_System_Byte___System_String_System_Security_Cryptography_X509Certificates_X509KeyStorageFlags_
+* X509Store Reference: https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x509store?view=netcore-3.1
+
+// end::Net-exXamarin[]
+
+|===
+
+[cols="1,1"]
+|===
+
+// tag::Xamarin[]
+|Platform
+|Xamarin
+
+|Key Storage
+|RSACryptoServiceProvider provided by Xamarin.
+
+|Certificate Storage
+|User specified X509Store
+
+|Notes
+a|* Use a map file to map the stored certificates and TLSIdentity’s labels.
+* The same label is used  to persist the key
+* The current Xamarin’s RSACryptoServiceProvider implementation stores keys in files.
+* Users can use TLSIdentity.getIdentity(X509Certificate2Collection) to create a TLSIdentity object if they would like to manage the keys and certificates themselves.
+
+
+|Reference
+a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/security/how-to-store-asymmetric-keys-in-a-key-container
+* X509Store Reference -- https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x509store?view=netcore-3.1
+// end::Xamarin[]
+// end::net[]
+
 |===
 
 // == Sizing
