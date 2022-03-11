@@ -13,8 +13,16 @@ ifdef::is_diag[_define_component_attributes.adoc]
 ifdef::releasetag[:tag: -{releasetag}]
 :version-full: {major}.{minor}.{base}{tag}
 :version-full-untagged: {major}.{minor}.{base}
-// Full version including maintenance release -- this is set in attributes-module as it will vary by module -- here at component level it is always same as version-full
-:version-maintenance: {version-full}
+
+// version-maintenance is the full version including maintenance release number.
+// Note that the maintenance release is set at module level in the `_define_module_attributes.adoc` file
+// here at component level it is always same as version-full
+:version-maintenance-android: {major}.{minor}.{maintenance-android}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}
+
 // CAO versions used
 :version_cao: 2.0
 :version_caoFull: 2.0.0
@@ -245,24 +253,25 @@ endif::[]
 // END -- download urls
 
 // API Reference Links
-:url-api-references-staging: https://ibsoln.github.io/api/mobile/{version-full}/couchbase-lite-
-:url-api-references-beta: https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-
-:url-api-references-production: http://docs.couchbase.com/mobile/{version-full}/couchbase-lite-
+:!is-live:
+:!is-beta:
+:url-api-references-staging: https://ibsoln.github.io/api/mobile/
+:url-api-references-beta: https://docs.couchbase.com/mobile/
+:url-api-references-production: http://docs.couchbase.com/mobile/
 :url-api-references-pfx: {url-api-references-staging}
 ifdef::is-live[:url-api-references-pfx: {url-api-references-production}]
 ifdef::is-beta[:url-api-references-pfx: {url-api-references-beta}]
 
-// :url-api-references-android: {url-api-references-pfx}{lang-mod-android}
-:url-api-references-android: {url-api-references-pfx}{lang-mod-android}
-:url-api-references-kotlin: {url-api-references-pfx}{lang-mod-android}-ktx
+:url-api-references-android: {url-api-references-pfx}{version-maintenance-android}/couchbase-lite-{lang-mod-android}
+:url-api-references-kotlin: {url-api-references-pfx}{version-maintenance-android}/couchbase-lite-{lang-mod-android}-ktx
 
-:url-api-references-c: {url-api-references-pfx}{lang-mod-c}
-:url-api-references-csharp: {url-api-references-pfx}net
+:url-api-references-c: {url-api-references-pfx}{version-maintenance-c}/couchbase-lite-{lang-mod-c}/C/html
+:url-api-references-csharp: {url-api-references-pfx}{version-maintenance-net}/couchbase-lite-net
 // :url-api-references-csharp: {url-api-references-pfx}{lang-mod-csharp}
 // :url-api-references-java: {url-api-references-pfx}{lang-mod-java}
-:url-api-references-java: {url-api-references-pfx}{lang-mod-java}
-:url-api-references-objc: {url-api-references-pfx}{lang-mod-objc}
-:url-api-references-swift: {url-api-references-pfx}{lang-mod-swift}
+:url-api-references-java: {url-api-references-pfx}{version-maintenance-java}/couchbase-lite-{lang-mod-java}
+:url-api-references-objc: {url-api-references-pfx}{version-maintenance-ios}/couchbase-lite-{lang-mod-objc}
+:url-api-references-swift: {url-api-references-pfx}{version-maintenance-ios}/couchbase-lite-{lang-mod-swift}
 
 // GitHub links
 :url-github-cbl: https://github.com/couchbase/couchbase-lite-
