@@ -17,6 +17,8 @@ endif::[]
 //
 // C Maintenance Releases
 ifeval::["{param-module}"=="{lang-mod-c}"]
+:param-3-0-0:
+:param-3-0-1:
 endif::[]
 //
 // C# Maintenance Releases
@@ -32,45 +34,48 @@ endif::[]
 // iOS Maintenance Releases
 ifdef::is-ios[]
 :param-3-0-0:
+:param-3-0-1:
 endif::[]
 //
 // END: Decide which releases are relevant for this platform
 
 // BEGIN: Show Maintenance Releases
 
-// Begin -- Release 3.0.x (All) -- mmm ccyy
-// ifdef::param-3-0-x[]
+// Begin -- Release 3-0-1 (All) -- March 2022
+ifdef::param-3-0-1[]
+:param-release-tag: -3-0-1
 
-// [#maint-latest]
-// [#maint-3.0.x]
-// == 3.0.x -- mmm ccyy
-// Version 3.0.x of Couchbase Lite for {param-title} delivers a number of enhancements and bug fixes.
+[#maint-latest]
+[#maint-3-0-1]
+== 3.0.1 -- March 2022
 
-// === Enhancements
+Version 3.0.1 of Couchbase Lite for {param-title} delivers a number of fixes
+ifdef::is-ios[ and enhancements]
+.
 
-// Enhancement highlights include the ability to vary the replicator heartbeat, which keeps continuous replication connections alive when idle -- see: xref:{replication--page}#lbl-cfg-htbt[Remote Sync Gateway -- Set heartbeat]
+=== Enhancements
+ifdef::is-ios[]
 
-// ifdef::is-ios,is-java[]
-// Couchbase Lite for {param-title} will now support Apple Silicon (M1)
-// ifdef::is-ios[]
-// and Mac Catalyst
-// endif::[]
-// .
-// endif::[]
+Couchbase Lite for {param-title} provides an enhancement to the Replicator Configuration API, which now allows you to specify the network interface to use for connecting to the remote target (for example, `en0` or `pdp_ip0`) -- see:
+xref:{param-module}:replication.adoc#lbl-network-interface[Configure Network Interface].
 
-// include::{module-partials}pn-issues-list.adoc[tag=enhancements-3.0.x]
+endif::is-ios[]
 
-// [#issues-and-resolutions-3.0.x]
-// === Issues and Resolutions
-// ==== Known Issues
+==== Other Enhancements
+include::{module-partials}pn-issues-list.adoc[tag=Enhancements{param-release-tag}]
 
-// include::{module-partials}pn-issues-list.adoc[tag=knownissues-3.0.x]
+[#issues-and-resolutions-3-0-1]
+=== Issues and Resolutions
+==== Known Issues
 
-// ==== Fixed Issues
-// include::{module-partials}pn-issues-list.adoc[tag=fixed-3.0.x]
+include::{module-partials}pn-issues-list.adoc[tag=KI{param-release-tag}]
 
-// endif::[]
-// End -- Release 3.0.x (All) -- Mar 2021
+==== Fixed Issues
+include::{module-partials}pn-issues-list.adoc[tag=Fixed{param-release-tag}]
+
+endif::param-3-0-1[]
+
+// End -- Release 3-0-1 (All) -- Mar 2021
 
 // BEGIN -- Major Release
 
