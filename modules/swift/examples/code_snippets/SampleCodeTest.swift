@@ -307,7 +307,7 @@ class SampleCodeTest {
         } catch {
             print(error)
         }
-        
+
         // end::query-select-props[]
     }
 
@@ -807,6 +807,19 @@ class SampleCodeTest {
         Database.log.console.level = .verbose
         Database.log.console.domains = .network
         // end::replication-logging[]
+    }
+
+    func dontTestReplicationNetworkInterface() throws {
+        // tag::sgw-act-rep-network-interface[]
+        let url = URL(string: "ws://localhost:4984/mydatabase")!
+        let target = URLEndpoint(url: url)
+        var config = ReplicatorConfiguration(database: database, target: target)
+        config.networkInterface = "en0"
+
+        // end::sgw-act-rep-network-interface[]
+        self.replicator = Replicator(config: config)
+        self.replicator.start()
+
     }
 
     func dontTestReplicationBasicAuthentication() throws {
@@ -2572,13 +2585,13 @@ public class Supporting_Datatypes
         // tag::datatype_usage_createdb[]
         // Get the database (and create it if it doesn’t exist).
         var database = try!Database(name: "hoteldb");
-    
+
         // end::datatype_usage_createdb[]
         // tag::datatype_usage_createdoc[]
         // Create your new document
         // The lack of 'const' indicates this document is mutable
         var mutableDoc = MutableDocument(id: "doc1");
-    
+
         // end::datatype_usage_createdoc[]
         // tag::datatype_usage_mutdict[]
         // Create and populate mutable dictionary
@@ -2589,33 +2602,33 @@ public class Supporting_Datatypes
         address.setString("CA", forKey: "state");
         address.setString("USA", forKey: "country");
         address.setString("90210", forKey: "code");
-    
+
         // end::datatype_usage_mutdict[]
         // tag::datatype_usage_mutarray[]
         // Create and populate mutable array
         var phones = MutableArrayObject();
         phones.addString("650-000-0000");
         phones.addString("650-000-0001");
-    
+
         // end::datatype_usage_mutarray[]
         // tag::datatype_usage_populate[]
         // Initialize and populate the document
-    
+
         // Add document type to document properties <.>
         mutableDoc.setString("hotel", forKey:"type");
-    
+
         // Add hotel name string to document properties <.>
         mutableDoc.setString("Hotel Java Mo", forKey:"name");
-    
+
         // Add float to document properties <.>
         mutableDoc.setFloat(121.75, forKey:"room_rate");
-    
+
         // Add dictionary to document's properties <.>
         mutableDoc.setDictionary(address, forKey: "address");
-    
+
         // Add array to document's properties <.>
         mutableDoc.setArray(phones, forKey:"phones");
-    
+
         // end::datatype_usage_populate[]
         // tag::datatype_usage_persist[]
         // Save the document changes <.>
@@ -2629,12 +2642,12 @@ public class Supporting_Datatypes
         }
 
         // end::datatype_usage_closedb[]
-    
+
         // end::datatype_usage[]
-    
+
     } // end func datatype_usage()
-    
-    
+
+
     func datatype_dictionary()
     {
 
