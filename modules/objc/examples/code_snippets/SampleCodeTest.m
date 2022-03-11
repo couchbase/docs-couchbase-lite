@@ -306,14 +306,14 @@
 
     NSError *error;
     CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"hoteldb" error:&error];
-       
+
     // end::datatype_usage_createdb[]
     // tag::datatype_usage_createdoc[]
     // Create your new document
     // The lack of 'const' indicates this document is mutable
     CBLMutableDocument *mutableDoc = [[CBLMutableDocument alloc] init];
 
-    
+
     // end::datatype_usage_createdoc[]
     // tag::datatype_usage_mutdict[]
     // Create and populate mutable dictionary
@@ -331,23 +331,23 @@
     CBLMutableArray *phones = [[CBLMutableArray alloc] init];
     [phones addString:@"650-000-0000"];
     [phones addString:@"650-000-0001"];
-        
+
     // end::datatype_usage_mutarray[]
     // tag::datatype_usage_populate[]
     // Initialize and populate the document
 
     // Add document type to document properties <.>
     [mutableDoc setString:@"hotel" forKey:@"type"];
-    
+
     // Add hotel name string to document properties <.>
     [mutableDoc setString:@"Hotel Java Mo" forKey:@"name"];
-    
+
     // Add float to document properties <.>
     [mutableDoc setFloat:121.75 forKey:@"room_rate"];
-    
+
     // Add dictionary to document's properties <.>
     [mutableDoc setDictionary:address forKey:@"address"];
-    
+
     // Add array to document's properties <.>
     [mutableDoc setArray:phones forKey:@"phones"];
 
@@ -363,29 +363,29 @@
         NSLog(@"Error closing db:%@", error);
 
     // end::datatype_usage_closedb[]
-    
+
     // end::datatype_usage[]
-        
+
 }
 
 
 - (void) dontTestDataTypeDictionary {
     // tag::datatype_dictionary[]
     CBLDocument *document = [self.database documentWithID:@"doc1"];
-    
+
     // Getting a dictionary value from the document
     CBLDictionary *dict = [document dictionaryForKey:@"address"];
-    
+
     // Access a value from the dictionary
     NSString *street = [dict stringForKey:@"street"];
     NSLog(@"Street:: %@", street);
-    
+
     // Iterate dictionary
     for (NSString *key in dict) {
         id value = [dict valueForKey:key];
         NSLog(@"Value:: %@", value);
     }
-    
+
     // Create a mutable copy
     CBLMutableDictionary *mutableDict = [dict toMutable];
     [mutableDict setString:@"1 Great sts" forKey:@"street"];
@@ -394,12 +394,12 @@
 
 - (void) dontTestDataTypeMutableDictionary {
     // tag::datatype_mutable_dictionary[]
-    
+
     // Create a new mutable dictionary and populate some keys/values
     CBLMutableDictionary *dict = [[CBLMutableDictionary alloc] init];
     [dict setString:@"1 Main st" forKey:@"street"];
     [dict setString:@"San Francisco" forKey:@"city"];
-    
+
     // Set the dictionary to a document and save the document
     CBLMutableDocument *document = [[CBLMutableDocument alloc] init];
     [document setDictionary:dict forKey:@"address"];
@@ -411,25 +411,25 @@
 - (void) dontTestDataTypeArray {
     // tag::datatype_array[]
     CBLDocument *document = [self.database documentWithID:@"doc1"];
-    
+
     // Getting an array value from the document
     CBLArray *array = [document arrayForKey:@"phones"];
-    
+
     // Get element count
     NSUInteger count = array.count;
     NSLog(@"Count:: %lu", (unsigned long)count);
-    
+
     // Access an array element by index
     if (count > 0) {
         id value = [array valueAtIndex:0];
         NSLog(@"Value:: %@", value);
     }
-    
+
     // Iterate the array
     for (id value in array) {
         NSLog(@"Value:: %@", value);
     }
-    
+
     // Create a mutable copy
     CBLMutableArray *mutableArray = [array toMutable];
     [mutableArray addString:@"650-000-0002"];
@@ -442,7 +442,7 @@
     CBLMutableArray *array = [[CBLMutableArray alloc] init];
     [array addString:@"650-000-0000"];
     [array addString:@"650-000-0001"];
-    
+
     // Set the array to a document and save the document
     CBLMutableDocument *document = [[CBLMutableDocument alloc] init];
     [document setArray:array forKey:@"address"];
@@ -1176,6 +1176,19 @@
     [self.replicator removeChangeListenerWithToken:token];
     // end::remove-document-replication-listener[]
 }
+
+// tag::sgw-act-rep-network-interface[]
+- (void) dontTestCustomReplicationNetworkInterface {
+    NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
+    CBLURLEndpoint *endpoint = [[CBLURLEndpoint alloc] initWithURL:url];
+
+        // tag::replication-custom-header[]
+    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database target:endpoint];
+    config.networkInterface = @"en0";
+        // end::replication-custom-header[]
+}
+
+// end::sgw-act-rep-network-interface[]
 
 - (void) dontTestCustomReplicationHeader {
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
