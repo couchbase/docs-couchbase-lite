@@ -100,12 +100,27 @@ include::{root-commons}database-encryption.adoc[]
 [#lbl-find-db-loc]
 == Finding a Database File
 
+
 :tags: {empty}
 ifdef::is-csharp[]
 :tags: "tags=list-only"
 endif::[]
 
 include::{module-partials}database-finding-file.adoc[{tags}]
+
+
+[#lbl-db-util]
+== Database Maintenance
+
+From time to time it may be necessary to perform certain maintenance activities on your database, for example to
+compact the database file, removing unused documents and blobs no longer referenced by any documents.
+
+Couchbase Lite's API provides the {url-api-method-database-performMaintenance} method.
+The available maintenance operations, including `compact` are as shown in the enum {url-api-enum-database-maintenance-type} to accomplish this.
+
+This is a resource intensive operation and is not performed automatically.
+It should be run on-demand using the API.
+If in doubt, consult Couchbase support.
 
 
 [#cli-tool]
