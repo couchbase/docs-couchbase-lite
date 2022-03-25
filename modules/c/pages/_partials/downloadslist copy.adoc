@@ -6,17 +6,8 @@
 //    param-version -- the required maintenance release version
 //
 
-ifdef::param-version[]
-:our-version: {param-version}
-endif::[]
-ifdef::param-version-hyphenated[]
-:our-version-hyphenated: {param-version-hyphenated}
-endif::[]
-ifndef::param-version[]
-:our-version: {version-maintenance}
-:our-version-hyphenated: {version-maintenance-hyphenated}
-endif::[]
-ifndef::our-version-hyphenated[:our-version-hyphenated: x]
+ifdef::param-version[:our-version: {param-version}]
+ifndef::param-version[:our-version: {version-maintenance}]
 
 :download-path: {url-downloads-mobile}
 :source_url: https://packages.couchbase.com/releases/couchbase-lite-c/{our-version}/
@@ -51,26 +42,14 @@ page, for how to get the software using a package manager.
 Ensure you select the correct package for your application's compiler and architecture.
 endif::is-fullpage[]
 
-[#release-{our-version-hyphenated}]
+
 == Release {our-version}
 
-.Available platforms are:
-****
-<<macos-{our-version-hyphenated}>>  |
-<<windows-{our-version-hyphenated}>>  |
-<<debian-{our-version-hyphenated}>>  |
-<<raspbian-{our-version-hyphenated}>>  |
-<<ubuntu-{our-version-hyphenated}>>  |
-****
 
 [#tbl-downloads-{our-version}]
-
-[#macos-{our-version-hyphenated}]
-=== MacOS
 .Download link table
 [{tabs}]
 =====
-
 
 Enterprise Edition::
 +
@@ -84,84 +63,10 @@ Enterprise Edition::
 | {source_url}couchbase-lite-c-enterprise-{our-version}-macos.zip.sha256[couchbase-lite-c-enterprise-{our-version}-macos.zip.sha256]
 | {source_url}couchbase-lite-c-enterprise-{our-version}-macos-symbols.zip[couchbase-lite-c-enterprise-{our-version}-macos-symbols.zip]
 
-|===
---
-
-Community Edition::
-+
---
-[#tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
-|===
-| Platform | Download | SHA | Debug Symbols
-
-| MacOS
-| {source_url}couchbase-lite-c-community-{our-version}-macos.zip[couchbase-lite-c-community-{our-version}-macos.zip]
-| {source_url}couchbase-lite-c-community-{our-version}-macos.zip.sha256[couchbase-lite-c-community-{our-version}-macos.zip.sha256]
-| {source_url}couchbase-lite-c-community-{our-version}-macos-symbols.zip[couchbase-lite-c-community-{our-version}-macos-symbols.zip]
-
-|===
-
---
-
-=====
-
-[#windows-{our-version-hyphenated}]
-=== Windows
-
-[#tbl-downloads-{our-version}]
-.Download link table
-[{tabs}]
-=====
-
-
-Enterprise Edition::
-+
---
-[#tbl-downloads-ee,cols="1,4,4,4", options="header"]
-|===
-| Platform | Download | SHA | Debug Symbols
-
 .1+| Windows
 | {empty}
 | {empty}
 | {source_url}couchbase-lite-c-enterprise-{our-version}-windows-x86_64-symbols.zip[couchbase-lite-c-enterprise-{our-version}-windows-x86_64-symbols.zip]
-
-|===
---
-
-Community Edition::
-+
---
-[#tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
-|===
-| Platform | Download | SHA | Debug Symbols
-
-.1+| Windows
-| {empty}
-| {empty}
-| {source_url}couchbase-lite-c-community-{our-version}-windows-x86_64-symbols.zip[couchbase-lite-c-community-{our-version}-windows-x86_64-symbols.zip]
-
-|===
-
---
-
-=====
-
-[#debian-{our-version-hyphenated}]
-=== Debian
-
-[#tbl-downloads-{our-version}]
-.Download link table
-[{tabs}]
-=====
-
-
-Enterprise Edition::
-+
---
-[#tbl-downloads-ee,cols="1,4,4,4", options="header"]
-|===
-| Platform | Download | SHA | Debug Symbols
 
 .12+|  Debian
 | {source_url}couchbase-lite-c-enterprise-{our-version}-debian10-x86_64.tar.gz[couchbase-lite-c-enterprise-{our-version}-debian10-x86_64.tar.gz]
@@ -212,6 +117,83 @@ Enterprise Edition::
 | {source_url}libcblite-enterprise_{our-version}-debian9_armhf.deb.sha256[libcblite-enterprise_{our-version}-debian9_armhf.deb.sha256]
 |
 
+
+.9+| Raspbian
+
+| {source_url}couchbase-lite-c-enterprise-{our-version}-raspbian9.tar.gz[couchbase-lite-c-enterprise-{our-version}-raspbian9.tar.gz]
+| {source_url}couchbase-lite-c-enterprise-{our-version}-raspbian9.tar.gz.sha256[couchbase-lite-c-enterprise-{our-version}-raspbian9.tar.gz.sha256]
+| {source_url}couchbase-lite-c-enterprise-{our-version}-raspbian9-symbols.tar.gz[couchbase-lite-c-enterprise-{our-version}-raspbian9-symbols.tar.gz]
+
+| {source_url}couchbase-lite-c-enterprise-{our-version}-raspios10-arm64.tar.gz[couchbase-lite-c-enterprise-{our-version}-raspios10-arm64.tar.gz]
+| {source_url}couchbase-lite-c-enterprise-{our-version}-raspios10-arm64.tar.gz.sha256[couchbase-lite-c-enterprise-{our-version}-raspios10-arm64.tar.gz.sha256]
+| {source_url}couchbase-lite-c-enterprise-{our-version}-raspios10-arm64-symbols.tar.gz[couchbase-lite-c-enterprise-{our-version}-raspios10-arm64-symbols.tar.gz]
+
+| {source_url}couchbase-lite-c-enterprise-{our-version}-raspios10-armhf.tar.gz[couchbase-lite-c-enterprise-{our-version}-raspios10-armhf.tar.gz]
+| {source_url}couchbase-lite-c-enterprise-{our-version}-raspios10-armhf.tar.gz.sha256[couchbase-lite-c-enterprise-{our-version}-raspios10-armhf.tar.gz.sha256]
+| {source_url}couchbase-lite-c-enterprise-{our-version}-raspios10-armhf-symbols.tar.gz[couchbase-lite-c-enterprise-{our-version}-raspios10-armhf-symbols.tar.gz]
+
+| {source_url}libcblite-dev-enterprise_{our-version}-raspbian9_armhf.deb[libcblite-dev-enterprise_{our-version}-raspbian9_armhf.deb]
+| {source_url}libcblite-dev-enterprise_{our-version}-raspbian9_armhf.deb.sha256[libcblite-dev-enterprise_{our-version}-raspbian9_armhf.deb.sha256]
+|
+
+| {source_url}libcblite-dev-enterprise_{our-version}-raspios10_arm64.deb[libcblite-dev-enterprise_{our-version}-raspios10_arm64.deb]
+| {source_url}libcblite-dev-enterprise_{our-version}-raspios10_arm64.deb.sha256[libcblite-dev-enterprise_{our-version}-raspios10_arm64.deb.sha256]
+|
+
+| {source_url}libcblite-dev-enterprise_{our-version}-raspios10_armhf.deb[libcblite-dev-enterprise_{our-version}-raspios10_armhf.deb]
+| {source_url}libcblite-dev-enterprise_{our-version}-raspios10_armhf.deb.sha256[libcblite-dev-enterprise_{our-version}-raspios10_armhf.deb.sha256]
+|
+
+| {source_url}libcblite-enterprise_{our-version}-raspbian9_armhf.deb[libcblite-enterprise_{our-version}-raspbian9_armhf.deb]
+| {source_url}libcblite-enterprise_{our-version}-raspbian9_armhf.deb.sha256[libcblite-enterprise_{our-version}-raspbian9_armhf.deb.sha256]
+|
+
+| {source_url}libcblite-enterprise_{our-version}-raspios10_arm64.deb[libcblite-enterprise_{our-version}-raspios10_arm64.deb]
+| {source_url}libcblite-enterprise_{our-version}-raspios10_arm64.deb.sha256[libcblite-enterprise_{our-version}-raspios10_arm64.deb.sha256]
+|
+
+| {source_url}libcblite-enterprise_{our-version}-raspios10_armhf.deb[libcblite-enterprise_{our-version}-raspios10_armhf.deb]
+| {source_url}libcblite-enterprise_{our-version}-raspios10_armhf.deb.sha256[libcblite-enterprise_{our-version}-raspios10_armhf.deb.sha256]
+|
+
+.9+| Ubuntu
+
+| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-arm64.tar.gz[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-arm64.tar.gz]
+| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-arm64.tar.gz.sha256[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-arm64.tar.gz.sha256]
+| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-arm64-symbols.tar.gz[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-arm64-symbols.tar.gz]
+
+| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-armhf.tar.gz[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-armhf.tar.gz]
+| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-armhf.tar.gz.sha256[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-armhf.tar.gz.sha256]
+| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-armhf-symbols.tar.gz[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-armhf-symbols.tar.gz]
+
+| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-x86_64.tar.gz[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-x86_64.tar.gz]
+| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-x86_64.tar.gz.sha256[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-x86_64.tar.gz.sha256]
+| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-x86_64-symbols.tar.gz[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-x86_64-symbols.tar.gz]
+
+| {source_url}libcblite-dev-enterprise_{our-version}-ubuntu20.04_amd64.deb[libcblite-dev-enterprise_{our-version}-ubuntu20.04_amd64.deb]
+| {source_url}libcblite-dev-enterprise_{our-version}-ubuntu20.04_amd64.deb.sha256[libcblite-dev-enterprise_{our-version}-ubuntu20.04_amd64.deb.sha256]
+|
+
+| {source_url}libcblite-dev-enterprise_{our-version}-ubuntu20.04_arm64.deb[libcblite-dev-enterprise_{our-version}-ubuntu20.04_arm64.deb]
+| {source_url}libcblite-dev-enterprise_{our-version}-ubuntu20.04_arm64.deb.sha256[libcblite-dev-enterprise_{our-version}-ubuntu20.04_arm64.deb.sha256]
+|
+
+| {source_url}libcblite-dev-enterprise_{our-version}-ubuntu20.04_armhf.deb[libcblite-dev-enterprise_{our-version}-ubuntu20.04_armhf.deb]
+| {source_url}libcblite-dev-enterprise_{our-version}-ubuntu20.04_armhf.deb.sha256[libcblite-dev-enterprise_{our-version}-ubuntu20.04_armhf.deb.sha256]
+|
+
+| {source_url}libcblite-enterprise_{our-version}-ubuntu20.04_amd64.deb[libcblite-enterprise_{our-version}-ubuntu20.04_amd64.deb]
+| {source_url}libcblite-enterprise_{our-version}-ubuntu20.04_amd64.deb.sha256[libcblite-enterprise_{our-version}-ubuntu20.04_amd64.deb.sha256]
+|
+
+| {source_url}libcblite-enterprise_{our-version}-ubuntu20.04_arm64.deb[libcblite-enterprise_{our-version}-ubuntu20.04_arm64.deb]
+| {source_url}libcblite-enterprise_{our-version}-ubuntu20.04_arm64.deb.sha256[libcblite-enterprise_{our-version}-ubuntu20.04_arm64.deb.sha256]
+|
+
+| {source_url}libcblite-enterprise_{our-version}-ubuntu20.04_armhf.deb[libcblite-enterprise_{our-version}-ubuntu20.04_armhf.deb]
+| {source_url}libcblite-enterprise_{our-version}-ubuntu20.04_armhf.deb.sha256[libcblite-enterprise_{our-version}-ubuntu20.04_armhf.deb.sha256]
+|
+
 |===
 --
 
@@ -221,6 +203,18 @@ Community Edition::
 [#tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
 |===
 | Platform | Download | SHA | Debug Symbols
+
+| MacOS
+| {source_url}couchbase-lite-c-community-{our-version}-macos.zip[couchbase-lite-c-community-{our-version}-macos.zip]
+| {source_url}couchbase-lite-c-community-{our-version}-macos.zip.sha256[couchbase-lite-c-community-{our-version}-macos.zip.sha256]
+| {source_url}couchbase-lite-c-community-{our-version}-macos-symbols.zip[couchbase-lite-c-community-{our-version}-macos-symbols.zip]
+
+
+.1+| Windows
+| {empty}
+| {empty}
+| {source_url}couchbase-lite-c-community-{our-version}-windows-x86_64-symbols.zip[couchbase-lite-c-community-{our-version}-windows-x86_64-symbols.zip]
+
 
 .12+| Debian
 
@@ -272,75 +266,6 @@ Community Edition::
 | {source_url}libcblite-dev-community_{our-version}-debian9_armhf.deb.sha256[libcblite-dev-community_{our-version}-debian9_armhf.deb.sha256]
 |
 
-
-|===
-
---
-
-=====
-
-[#raspbian-{our-version-hyphenated}]
-=== Raspbian
-
-[#tbl-downloads-{our-version}]
-.Download link table
-[{tabs}]
-=====
-
-Enterprise Edition::
-+
---
-[#tbl-downloads-ee,cols="1,4,4,4", options="header"]
-|===
-| Platform | Download | SHA | Debug Symbols
-.9+| Raspbian
-
-| {source_url}couchbase-lite-c-enterprise-{our-version}-raspbian9.tar.gz[couchbase-lite-c-enterprise-{our-version}-raspbian9.tar.gz]
-| {source_url}couchbase-lite-c-enterprise-{our-version}-raspbian9.tar.gz.sha256[couchbase-lite-c-enterprise-{our-version}-raspbian9.tar.gz.sha256]
-| {source_url}couchbase-lite-c-enterprise-{our-version}-raspbian9-symbols.tar.gz[couchbase-lite-c-enterprise-{our-version}-raspbian9-symbols.tar.gz]
-
-| {source_url}couchbase-lite-c-enterprise-{our-version}-raspios10-arm64.tar.gz[couchbase-lite-c-enterprise-{our-version}-raspios10-arm64.tar.gz]
-| {source_url}couchbase-lite-c-enterprise-{our-version}-raspios10-arm64.tar.gz.sha256[couchbase-lite-c-enterprise-{our-version}-raspios10-arm64.tar.gz.sha256]
-| {source_url}couchbase-lite-c-enterprise-{our-version}-raspios10-arm64-symbols.tar.gz[couchbase-lite-c-enterprise-{our-version}-raspios10-arm64-symbols.tar.gz]
-
-| {source_url}couchbase-lite-c-enterprise-{our-version}-raspios10-armhf.tar.gz[couchbase-lite-c-enterprise-{our-version}-raspios10-armhf.tar.gz]
-| {source_url}couchbase-lite-c-enterprise-{our-version}-raspios10-armhf.tar.gz.sha256[couchbase-lite-c-enterprise-{our-version}-raspios10-armhf.tar.gz.sha256]
-| {source_url}couchbase-lite-c-enterprise-{our-version}-raspios10-armhf-symbols.tar.gz[couchbase-lite-c-enterprise-{our-version}-raspios10-armhf-symbols.tar.gz]
-
-| {source_url}libcblite-dev-enterprise_{our-version}-raspbian9_armhf.deb[libcblite-dev-enterprise_{our-version}-raspbian9_armhf.deb]
-| {source_url}libcblite-dev-enterprise_{our-version}-raspbian9_armhf.deb.sha256[libcblite-dev-enterprise_{our-version}-raspbian9_armhf.deb.sha256]
-|
-
-| {source_url}libcblite-dev-enterprise_{our-version}-raspios10_arm64.deb[libcblite-dev-enterprise_{our-version}-raspios10_arm64.deb]
-| {source_url}libcblite-dev-enterprise_{our-version}-raspios10_arm64.deb.sha256[libcblite-dev-enterprise_{our-version}-raspios10_arm64.deb.sha256]
-|
-
-| {source_url}libcblite-dev-enterprise_{our-version}-raspios10_armhf.deb[libcblite-dev-enterprise_{our-version}-raspios10_armhf.deb]
-| {source_url}libcblite-dev-enterprise_{our-version}-raspios10_armhf.deb.sha256[libcblite-dev-enterprise_{our-version}-raspios10_armhf.deb.sha256]
-|
-
-| {source_url}libcblite-enterprise_{our-version}-raspbian9_armhf.deb[libcblite-enterprise_{our-version}-raspbian9_armhf.deb]
-| {source_url}libcblite-enterprise_{our-version}-raspbian9_armhf.deb.sha256[libcblite-enterprise_{our-version}-raspbian9_armhf.deb.sha256]
-|
-
-| {source_url}libcblite-enterprise_{our-version}-raspios10_arm64.deb[libcblite-enterprise_{our-version}-raspios10_arm64.deb]
-| {source_url}libcblite-enterprise_{our-version}-raspios10_arm64.deb.sha256[libcblite-enterprise_{our-version}-raspios10_arm64.deb.sha256]
-|
-
-| {source_url}libcblite-enterprise_{our-version}-raspios10_armhf.deb[libcblite-enterprise_{our-version}-raspios10_armhf.deb]
-| {source_url}libcblite-enterprise_{our-version}-raspios10_armhf.deb.sha256[libcblite-enterprise_{our-version}-raspios10_armhf.deb.sha256]
-|
-
-|===
---
-
-Community Edition::
-+
---
-[#tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
-|===
-| Platform | Download | SHA | Debug Symbols
-
 .9+| Raspbian
 
 | {source_url}couchbase-lite-c-community-{our-version}-raspbian9.tar.gz[couchbase-lite-c-community-{our-version}-raspbian9.tar.gz]
@@ -378,77 +303,6 @@ Community Edition::
 | {source_url}libcblite-dev-community_{our-version}-raspios10_armhf.deb[libcblite-dev-community_{our-version}-raspios10_armhf.deb]
 | {source_url}libcblite-dev-community_{our-version}-raspios10_armhf.deb.sha256[libcblite-dev-community_{our-version}-raspios10_armhf.deb.sha256]
 |
-
-|===
-
---
-
-=====
-
-[#ubuntu-{our-version-hyphenated}]
-=== Ubuntu
-
-[#tbl-downloads-{our-version}]
-.Download link table
-[{tabs}]
-=====
-
-
-Enterprise Edition::
-+
---
-[#tbl-downloads-ee,cols="1,4,4,4", options="header"]
-|===
-| Platform | Download | SHA | Debug Symbols
-
-.9+| Ubuntu
-
-| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-arm64.tar.gz[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-arm64.tar.gz]
-| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-arm64.tar.gz.sha256[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-arm64.tar.gz.sha256]
-| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-arm64-symbols.tar.gz[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-arm64-symbols.tar.gz]
-
-| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-armhf.tar.gz[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-armhf.tar.gz]
-| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-armhf.tar.gz.sha256[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-armhf.tar.gz.sha256]
-| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-armhf-symbols.tar.gz[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-armhf-symbols.tar.gz]
-
-| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-x86_64.tar.gz[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-x86_64.tar.gz]
-| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-x86_64.tar.gz.sha256[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-x86_64.tar.gz.sha256]
-| {source_url}couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-x86_64-symbols.tar.gz[couchbase-lite-c-enterprise-{our-version}-ubuntu20.04-x86_64-symbols.tar.gz]
-
-| {source_url}libcblite-dev-enterprise_{our-version}-ubuntu20.04_amd64.deb[libcblite-dev-enterprise_{our-version}-ubuntu20.04_amd64.deb]
-| {source_url}libcblite-dev-enterprise_{our-version}-ubuntu20.04_amd64.deb.sha256[libcblite-dev-enterprise_{our-version}-ubuntu20.04_amd64.deb.sha256]
-|
-
-| {source_url}libcblite-dev-enterprise_{our-version}-ubuntu20.04_arm64.deb[libcblite-dev-enterprise_{our-version}-ubuntu20.04_arm64.deb]
-| {source_url}libcblite-dev-enterprise_{our-version}-ubuntu20.04_arm64.deb.sha256[libcblite-dev-enterprise_{our-version}-ubuntu20.04_arm64.deb.sha256]
-|
-
-| {source_url}libcblite-dev-enterprise_{our-version}-ubuntu20.04_armhf.deb[libcblite-dev-enterprise_{our-version}-ubuntu20.04_armhf.deb]
-| {source_url}libcblite-dev-enterprise_{our-version}-ubuntu20.04_armhf.deb.sha256[libcblite-dev-enterprise_{our-version}-ubuntu20.04_armhf.deb.sha256]
-|
-
-| {source_url}libcblite-enterprise_{our-version}-ubuntu20.04_amd64.deb[libcblite-enterprise_{our-version}-ubuntu20.04_amd64.deb]
-| {source_url}libcblite-enterprise_{our-version}-ubuntu20.04_amd64.deb.sha256[libcblite-enterprise_{our-version}-ubuntu20.04_amd64.deb.sha256]
-|
-
-| {source_url}libcblite-enterprise_{our-version}-ubuntu20.04_arm64.deb[libcblite-enterprise_{our-version}-ubuntu20.04_arm64.deb]
-| {source_url}libcblite-enterprise_{our-version}-ubuntu20.04_arm64.deb.sha256[libcblite-enterprise_{our-version}-ubuntu20.04_arm64.deb.sha256]
-|
-
-| {source_url}libcblite-enterprise_{our-version}-ubuntu20.04_armhf.deb[libcblite-enterprise_{our-version}-ubuntu20.04_armhf.deb]
-| {source_url}libcblite-enterprise_{our-version}-ubuntu20.04_armhf.deb.sha256[libcblite-enterprise_{our-version}-ubuntu20.04_armhf.deb.sha256]
-|
-
-|===
---
-
-Community Edition::
-+
---
-[#tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
-|===
-| Platform | Download | SHA | Debug Symbols
-
 
 .9+| Ubuntu
 
