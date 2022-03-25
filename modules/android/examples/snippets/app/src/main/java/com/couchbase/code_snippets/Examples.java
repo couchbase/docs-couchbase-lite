@@ -2080,7 +2080,7 @@ private void ibReplicatorSimple() {
   = new BasicAuthenticator(
       "valid.user",
       "valid.password.string");
-  thisConfig.setAuthenticator(thisAuth) // <.>
+  thisConfig.setAuthenticator(thisAuth); // <.>
 
   this.replicator = new Replicator(config); // <.>
   this.replicator.start(); // <.>
