@@ -424,7 +424,7 @@ namespace api_walkthrough
         private static void CloseDatabase()
         {
           // tag::close-database[]
-          database.close()
+          database.Close()
 
           // end::close-database[]
         }
@@ -3280,7 +3280,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         // end::datatype_usage_persist[]
         // tag::datatype_usage_closedb[]
         // Close the database <.>
-        database.close();
+        database.Close();
 
         // end::datatype_usage_closedb[]
 
