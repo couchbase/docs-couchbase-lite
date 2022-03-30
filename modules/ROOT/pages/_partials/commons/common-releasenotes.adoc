@@ -8,7 +8,8 @@ include::{root-partials}_show_page_header_block.adoc[]
 
 // END DO NOT REMOVE
 
-// BEGIN: Decide which releases are relevant for this platform
+
+// BEGIN RELEASE SELECTION BLOCK: Decide which releases are relevant for a given platform
 //
 // Android Maintenance Releases
 ifeval::["{param-module}"=="{platform-android}"]
@@ -37,12 +38,15 @@ ifdef::is-ios[]
 :param-3-0-1:
 endif::[]
 //
-// END: Decide which releases are relevant for this platform
+// END RELEASE SELECTION BLOCK -- Decide which releases are relevant for a given platform
 
-// BEGIN: Show Maintenance Releases
 
-// Begin -- Release 3-0-1 (All) -- March 2022
+
+
+// BEGIN RELEASE BLOCK -- Release 3-0-1 (All) -- March 2022
+// Clone this block for each maintenance release and edit release nos as required
 ifdef::param-3-0-1[]
+// Set release number
 :param-release-tag: -3-0-1
 
 [#maint-latest]
@@ -75,15 +79,13 @@ include::{module-partials}pn-issues-list.adoc[tag=Fixed{param-release-tag}]
 include::{module-partials}pn-issues-list.adoc[tag=KI{param-release-tag}]
 
 endif::param-3-0-1[]
-// End -- Release 3-0-1 (All) -- Mar 2021
+// END RELEASE BLOCK -- Release 3-0-1 (All) -- Mar 2021
 
 
 
-// BEGIN -- Major Release 3-0 March 2022
+// BEGIN MAJOR/MINOR RELEASE BLOCK -- Major Release 3-0 March 2022
 //
 :param-release-tag: -3-0-0
-:ql-sep: pass:q,a[ *|* ]
-
 :ql-sep: pass:q,a[ *|* ]
 
 
@@ -241,6 +243,9 @@ include::{root-partials}block-supportnotices.adoc[tag={param-platform}-new]
 include::{root-partials}block-supportnotices.adoc[tag=any-platform-ongoing]
 
 include::{root-partials}block-supportnotices.adoc[tag={param-platform}-ongoing]
+
+// END RELEASE BLOCK -- -- Major Release 3-0 March 2022
+
 
 
 // DO NOT EDIT -- Footer Related Content Block
