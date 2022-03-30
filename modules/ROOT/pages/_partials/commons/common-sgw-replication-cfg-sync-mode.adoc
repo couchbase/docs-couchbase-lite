@@ -11,8 +11,11 @@ endif::[]
 ifndef::is-android[]
 `*pushAndPull*`; `pull`; `push`
 endif::[]
-* The replication mode, that is:
+
+* The replication mode, that is either of:
+
 ** Continuous -- remaining active indefinitely to replicate changed documents (`continuous=true`).
+
 ** Ad-hoc -- a one-shot replication of changed documents (`continuous=false`).
 
 // Example 3
@@ -22,3 +25,9 @@ endif::[]
 include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
+[TIP]
+--
+Unless there is a solid use-case not to, always initiate a single `PUSH_AND_PULL` replication rather than identical separate `PUSH` and `PULL` replications.
+
+This prevents the replications generating the same checkpoint `docID` resulting in multiple conflicts.
+--

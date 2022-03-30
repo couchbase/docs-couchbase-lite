@@ -61,10 +61,11 @@ ifdef::is-android[]
 include::{module-partials}sgw-replication-custom-executor.adoc[]
 endif::[]
 
-// include::{root-partials}block-caveats.adoc[tags=securestorage]
 
 // tag::replicator-config-sample[]
 == Configuration Summary
+
+
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
 <<ex-simple-repl>> shows the configuration and initialization process.
 
@@ -192,7 +193,9 @@ You can enable authorization in the {sgw} configuration file, as shown in <<exam
 ====
 
 To authorize with Sync Gateway, an associated user must first be created.
-Sync Gateway users can be created through the xref:sync-gateway:ROOT:refer/rest-api-admin.adoc#/user/post\__db___user_[`+POST /{tkn-db}/_user+`] endpoint on the Admin REST API.
+Sync Gateway users can be created through the
+xref:sync-gateway:ROOT:refer/rest-api-admin.adoc#/user/post\__db___user_[`+POST /{tkn-db}/_user+`]
+endpoint on the Admin REST API.
 
 
 
@@ -510,6 +513,7 @@ replications automatically *enable* delta sync.
 [#lbl-init-repl]
 == Initialize
 
+
 In this section::
 <<lbl-repl-start>>  | <<lbl-repl-ckpt>>
 
@@ -525,7 +529,7 @@ include::{root-commons}sgw-replication-init.adoc[]
 
 Replicators use {glos-term-checkpoints} to keep track of documents sent to the target database.
 
-Without {glos-term-checkpoints} , Couchbase Lite would replicate the entire database content to the target database on each connection, even though previous replications may already have replicated some or all of that content.
+Without {glos-term-checkpoints}, Couchbase Lite would replicate the entire database content to the target database on each connection, even though previous replications may already have replicated some or all of that content.
 
 This functionality is generally not a concern to application developers.
 However, if you do want to force the replication to start again from zero, use the {glos-term-checkpoint} reset argument when starting the replicator -- as shown in <<ex-repl-ckpt>>.
@@ -538,14 +542,17 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 <.> Set start's reset option to `true`. +
 ifndef::is-c[The default `false` is shown here for completeness only; it is unlikely you would explicitly use it in practice.]
 
+
 [#lbl-repl-mon]
 == Monitor
+
 
 include::{root-commons}sgw-replication-monitor.adoc[leveloffset=+1]
 
 
 [#lbl-repl-stop]
 == Stop
+
 
 include::{root-commons}sgw-replication-stop.adoc[]
 
@@ -569,16 +576,23 @@ _Replicator_ will stop permanently, whether `setContinuous`  is _true_ or _false
 *For recoverable or temporary errors:* _Replicator_ sets its status to `OFFLINE`, then:
 
 * If `setContinuous=_true_` it retries the connection indefinitely
+
 * If `setContinuous=_false_` (one-shot) it retries the connection a limited number of times.
 
 The following error codes are considered temporary by the Couchbase Lite replicator and thus will trigger a connection retry.
 
 * `408`: Request Timeout
+
 * `429`: Too Many Requests
+
 * `500`: Internal Server Error
+
 * `502`: Bad Gateway
+
 * `503`: Service Unavailable
+
 * `504`: Gateway Timeout
+
 * `1001`: DNS resolution error
 
 ifdef::is-android[]
@@ -595,14 +609,13 @@ endif::is-android[]
 
 == Load Balancers
 
+
 Couchbase Lite footnote:[From 2.0] uses WebSockets as the communication protocol to transmit data.
 Some load balancers are not configured for WebSocket connections by default (NGINX for example);
 so it might be necessary to explicitly enable them in the load balancer's configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
 
 By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
 The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway:ROOT:refer/config-properties.adoc#replicator_compression[`replicator_compression`]).
-
-// === Replicator Notifications on a Custom Executor
 
 
 [#lbl-cert-pinning]
@@ -640,9 +653,11 @@ The replication should now run successfully over https/wss with certificate pinn
 
 For more on pinning certificates see the blog entry: {url-cb-blog-cert-pinning}
 
+
 ifndef::is-c[]
 [#lbl-trouble]
 == Troubleshooting
+
 
 === Logs
 As always, when there is a problem with replication, logging is your friend.
@@ -654,10 +669,8 @@ You can increase the log output for activity related to replication with Sync Ga
 include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
-
 For more on troubleshooting with logs, see: {troubleshooting-logs--xref}.
 endif::is-c[]
-
 
 === Authentication Errors
 If Sync Gateway is configured with a self signed certificate but your app points to a `ws` scheme instead of `wss` you will encounter an error with status code `11006` -- see: <<ex-11006>>
