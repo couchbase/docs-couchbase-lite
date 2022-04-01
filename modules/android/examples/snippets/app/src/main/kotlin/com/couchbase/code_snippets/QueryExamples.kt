@@ -330,9 +330,9 @@ class QueryExamples(private val database: Database) {
             SelectResult.expression(Expression.property("stops").from("route")),
             SelectResult.expression(Expression.property("airline").from("route"))
         )
-            .from(DataSource.database(database).as("airline"))
+            .from(DataSource.database(database).`as`("airline"))
             .join(
-                Join.join(DataSource.database(database).as("route"))
+                Join.join(DataSource.database(database).`as`("route"))
                     .on(
                         Meta.id.from("airline")
                             .equalTo(Expression.property("airlineid").from("route"))
@@ -628,7 +628,7 @@ class QueryExamples(private val database: Database) {
 
         val rs = QueryBuilder
             .select(
-                SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) // <.>
+                SelectResult.expression(Function.count(Expression.string("*"))).`as`("mycount")) // <.>
             .from(DataSource.database(database))
 
         // end::query-syntax-count-only[]
@@ -647,7 +647,7 @@ class QueryExamples(private val database: Database) {
 
         val rs = QueryBuilder
         .select(
-          SelectResult.expression(Meta.id).as("hotelId"))
+          SelectResult.expression(Meta.id).`as`("hotelId"))
           .from(DataSource.database(database))
 
           // end::query-syntax-id[]
