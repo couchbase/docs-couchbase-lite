@@ -735,6 +735,7 @@ class BasicExamples(private val context: Context) {
                     it.setValue("name", "user $i")
                     it.setBoolean("admin", false)
                 }
+                database.save(doc)
                 Log.i(TAG, "saved user document: ${doc.getString("name")}")
             }
         })
