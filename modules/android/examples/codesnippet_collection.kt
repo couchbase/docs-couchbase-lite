@@ -2326,7 +2326,7 @@ class QueryExamples(private val database: Database) {
         // tag::query-index[]
         database.createIndex(
           "TypeNameIndex",
-          ValueIndexConfigurationFactory.create(expressions = ["type","name"])
+          ValueIndexConfigurationFactory.create("type","name")
         )
 
         // end::query-index[]
