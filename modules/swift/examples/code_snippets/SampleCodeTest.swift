@@ -58,14 +58,20 @@ class SampleCodeTest {
         }
         // end::close-database[]
     }
+    
+    // helper
+    func isValidCredentials(_ u: String, password: String) -> Bool { return true }
+    func isValidCertificates(_ certs: [SecCertificate]) -> Bool { return true }
+
 
 #if COUCHBASE_ENTERPRISE
+    
     func dontTestDatabaseEncryption() throws {
         // tag::database-encryption[]
-        let config = DatabaseConfiguration()
+        var config = DatabaseConfiguration()
         config.encryptionKey = EncryptionKey.password("secretpassword")
+        
         self.database = try Database(name: "my-database", config: config)
-        self.database.EncryptionKey(
         // end::database-encryption[]
     }
 #endif
@@ -261,7 +267,7 @@ class SampleCodeTest {
         // N1QL and Querybuilder versions
         // tag::query-index[]
         let config = ValueIndexConfiguration(["type", "name"])
-        try database.createIndex(index, withName: "TypeNameIndex")
+        try database.createIndex(config, name: "TypeNameIndex")
         // end::query-index[]
 
         // tag::query-index_Querybuilder[]
@@ -663,7 +669,7 @@ class SampleCodeTest {
         // Create index with N1QL
         do {
             let index = FullTextIndexConfiguration(["overview"])
-            try database.createIndex(index, withName: "overviewFTSIndex")
+            try database.createIndex(index, name: "overviewFTSIndex")
         } catch let error {
             print(error.localizedDescription)
         }
@@ -685,7 +691,7 @@ class SampleCodeTest {
 
         let ftsStr = "SELECT Meta().id FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan') ORDER BY RANK(overviewFTSIndex)"
 
-        let query = database.createQuery(query: ftsStr)
+        let query = try database.createQuery(ftsStr)
 
         let rs = try query.execute()
         for result in rs {
@@ -698,10 +704,8 @@ class SampleCodeTest {
 
 
     func dontTestFullTextSearch_Querybuilder() throws {
-        database = self.db
-
         // tag::fts-query_Querybuilder[]
-        let whereClause = FullTextFunction.match(indexName: "overviewFTSIndex"), query: "'michigan'")
+        let whereClause = FullTextFunction.match(indexName: "overviewFTSIndex", query: "'michigan'")
         let query = QueryBuilder
             .select(SelectResult.expression(Meta.id))
             .from(DataSource.database(database))
@@ -710,6 +714,7 @@ class SampleCodeTest {
             print("document id \(result.string(at: 0)!)")
         }
         // end::fts-query_Querybuilder[]
+    }
 
 
     // MARK: toJSON
@@ -777,8 +782,6 @@ class SampleCodeTest {
             print(json)
         }
         // end::tojson-blob[]
-
-        // FIXME: check below function to validate whether the given property dictionary is a valid blob or not
     }
 
     func dontTestIsBlob() throws {
@@ -1253,9 +1256,6 @@ class SampleCodeTest {
         // end::update-document-with-conflict-handler[]
 
     }
-
-    // helper
-    func isValidCredentials(_ u: String, password: String) -> Bool { return true }
 
     func dontTestInitListener() throws {
         // tag::init-urllistener[]
@@ -1756,8 +1756,6 @@ class SampleCodeTest {
         // end::listener-config-client-auth-root[]
         // end::listener-config-client-root-ca[]
     }
-
-    func isValidCertificates(_ certs: [SecCertificate]) -> Bool { return true }
 
     func dontTestClientAuthLambda() throws {
         var config = URLEndpointListenerConfiguration(database: otherDB)
@@ -2578,13 +2576,12 @@ class PassivePeerConnection: NSObject, MessageEndpointConnection {
 public class Supporting_Datatypes
 {
 
-    func datatype_usage()
-    {
+    func datatype_usage() {
 
         // tag::datatype_usage[]
         // tag::datatype_usage_createdb[]
         // Get the database (and create it if it doesn’t exist).
-        var database = try!Database(name: "hoteldb");
+        let database = try!Database(name: "hoteldb");
 
         // end::datatype_usage_createdb[]
         // tag::datatype_usage_createdoc[]
@@ -2638,7 +2635,9 @@ public class Supporting_Datatypes
         // tag::datatype_usage_closedb[]
         // Close the database <.>
         do {
-            try self.database.close()
+            try database.close()
+        } catch {
+            print(error)
         }
 
         // end::datatype_usage_closedb[]
@@ -2743,12 +2742,3 @@ public class Supporting_Datatypes
     }
 
 } // end class supporting_datatypes
-
-
-
-// MARK: -- QUESTIONS
-
-// tag::p2p-ws-api-urlendpointlistener[]
-// FIXME: can we use the docsn site to show the interface of the Listener class?
-// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/URLEndpointListener.html
-// end::p2p-ws-api-urlendpointlistener[]

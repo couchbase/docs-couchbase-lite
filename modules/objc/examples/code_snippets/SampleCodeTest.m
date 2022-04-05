@@ -544,12 +544,10 @@
 
     // tag::query-index[]
 
-    CBLValueIndexConfiguration* config =
-                [[CBLValueIndexConfiguration alloc]
-                    initWithExpression: @[@"type", @"name"]];
+    CBLValueIndexConfiguration* config = [[CBLValueIndexConfiguration alloc]
+                                          initWithExpression: @[@"type", @"name"]];
 
     [self.database createIndexWithConfig: config name: @"TypeNameIndex" error: &error];
-
 
     // end::query-index[]
 }
@@ -968,19 +966,19 @@
     }
 
     // Create index
-    CBLFullTextIndexConfiguration* config =
-        [[CBLFullTextIndexConfiguration alloc]
-            initWithExpression: @[@"overview"]
-            ignoreAccents: NO language: nil];
+    CBLFullTextIndexConfiguration* config = [[CBLFullTextIndexConfiguration alloc]
+                                             initWithExpression: @[@"overview"]
+                                             ignoreAccents: NO
+                                             language: nil];
 
-    [self.database createIndexWithConfig: config
-            name: @"overviewFTSIndex" error: &error];
+    [self.database createIndexWithConfig: config name: @"overviewFTSIndex" error: &error];
 
     // end::fts-index[]
 }
 
 - (void) dontTestFullTextSearch {
     NSError *error;
+    CBLQuery* ftsQuery;
 
     // tag::fts-query[]
     NSString *ftsQueryString =
@@ -1764,7 +1762,7 @@
     // tag::query-syntax-n1ql[]
     NSString *queryString = @"SELECT * FROM _ WHERE type = \"hotel\""; // <.>
 
-    CBLQuery *query = [self.database createQuery:queryString];
+    CBLQuery *query = [self.database createQuery:queryString error: &error];
 
     CBLQueryResultSet *results = [query execute:&error];
 
@@ -1779,7 +1777,7 @@
     // tag::query-syntax-n1ql-params[]
     NSString *queryString = [NSString stringWithFormat:@"SELECT * FROM _ WHERE type = $type"]; // <.>
 
-    CBLQuery *query = [self.database createQuery:queryString];
+    CBLQuery *query = [self.database createQuery:queryString error: &error];
 
     CBLQueryParameters *params = [[CBLQueryParameters alloc] init];
     [params setString:@"hotel" forName:@"type"]; // <.>
