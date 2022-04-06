@@ -544,12 +544,10 @@
 
     // tag::query-index[]
 
-    CBLValueIndexConfiguration* config =
-                [[CBLValueIndexConfiguration alloc]
-                    initWithExpression: @[@"type", @"name"]];
+    CBLValueIndexConfiguration* config = [[CBLValueIndexConfiguration alloc]
+                                          initWithExpression: @[@"type", @"name"]];
 
     [self.database createIndexWithConfig: config name: @"TypeNameIndex" error: &error];
-
 
     // end::query-index[]
 }
@@ -968,19 +966,19 @@
     }
 
     // Create index
-    CBLFullTextIndexConfiguration* config =
-        [[CBLFullTextIndexConfiguration alloc]
-            initWithExpression: @[@"overview"]
-            ignoreAccents: NO language: nil];
+    CBLFullTextIndexConfiguration* config = [[CBLFullTextIndexConfiguration alloc]
+                                             initWithExpression: @[@"overview"]
+                                             ignoreAccents: NO
+                                             language: nil];
 
-    [self.database createIndexWithConfig: config
-            name: @"overviewFTSIndex" error: &error];
+    [self.database createIndexWithConfig: config name: @"overviewFTSIndex" error: &error];
 
     // end::fts-index[]
 }
 
 - (void) dontTestFullTextSearch {
     NSError *error;
+    CBLQuery* ftsQuery;
 
     // tag::fts-query[]
     NSString *ftsQueryString =
@@ -1764,7 +1762,7 @@
     // tag::query-syntax-n1ql[]
     NSString *queryString = @"SELECT * FROM _ WHERE type = \"hotel\""; // <.>
 
-    CBLQuery *query = [self.database createQuery:queryString];
+    CBLQuery *query = [self.database createQuery:queryString error: &error];
 
     CBLQueryResultSet *results = [query execute:&error];
 
@@ -1779,7 +1777,7 @@
     // tag::query-syntax-n1ql-params[]
     NSString *queryString = [NSString stringWithFormat:@"SELECT * FROM _ WHERE type = $type"]; // <.>
 
-    CBLQuery *query = [self.database createQuery:queryString];
+    CBLQuery *query = [self.database createQuery:queryString error: &error];
 
     CBLQueryParameters *params = [[CBLQueryParameters alloc] init];
     [params setString:@"hotel" forName:@"type"]; // <.>
@@ -1823,8 +1821,6 @@
     CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database
                                                                                        target:endpoint]; // <.>
 
-    config.acceptOnlySelfSignedServerCertificate = YES; // <.> //FIXME: Remove this from doc!
-
     config.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"valid.user"
                                                                   password:@"valid.password.string"]; // <.>
 
@@ -1834,13 +1830,6 @@
     [self.replicator start]; // <.>
 
     // end::replicator-simple[]
-}
-
-- (void) dontTestP2PURLEndpointListener {
-    // tag::p2p-ws-api-urlendpointlistener[]
-    // FIXME: can we use the docsn site to show the interface of the Listener class?
-    // https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-objc/Classes/CBLURLEndpointListener.html
-    // end::p2p-ws-api-urlendpointlistener[]
 }
 
 - (void) dontTestURLEndpointListenerConstructor {
@@ -2103,12 +2092,6 @@
 - (void) dontTestListenerLocalDB {
     NSError *error = nil;
     SecCertificateRef cert;
-    // tag::listener-local-db[]
-    // . . . preceding application logic . . .
-    // FIXME: anything??
-    // Include websockets listener initializer code
-    // end::listener-local-db[]
-
     CBLURLEndpointListenerConfiguration *config = [[CBLURLEndpointListenerConfiguration alloc]
                                                    initWithDatabase:self.otherDB];
     // tag::listener-config-tls-full[]
@@ -2539,7 +2522,7 @@
 
 - (CBLTLSIdentity*) fMyGetCert {
     NSError *error = nil;
-    CBLReplicatorConfiguration *config; // FIXME: Are we sure? this is Replicator config?
+    CBLReplicatorConfiguration *config;
     // tag::p2p-tlsid-tlsidentity-with-label[]
     // tag::p2p-tlsid-check-keychain[]
     // Check if Id exists in keychain and if so, use it
@@ -2601,10 +2584,6 @@
         return nil;
 
     // end::p2p-tlsid-import-from-bundled[]
-
-    // tag::p2p-tlsid-store-in-keychain[]
-    // FIXME: Use the same tag as tag: [create-self-signed-cert]
-    // end::p2p-tlsid-store-in-keychain[]
 
     // tag::p2p-tlsid-return-id-from-keychain[]
     // RETURN A TLSIDENTITY FROM THE KEYCHAIN FOR USE IN CONFIGURING TLS COMMUNICATION
