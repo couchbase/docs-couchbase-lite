@@ -2389,7 +2389,7 @@ private void ibP2PUrlEndpointListener() {
           "Our Username",
           "Our PasswordValue")); // <.>
 
-    thisConfig.setAuthenticator(thisAuth)
+    thisConfig.setAuthenticator(thisAuth);
 
     // end::p2p-act-rep-auth[]
     // tag::p2p-act-rep-config-conflict[]

@@ -122,7 +122,7 @@ final BasicAuthenticator thisAuth
 = new BasicAuthenticator(
     "valid.user",
     "valid.password.string"));
-thisConfig.setAuthenticator(thisAuth) // <.>
+thisConfig.setAuthenticator(thisAuth); // <.>
 
 this.replicator = new Replicator(config); // <.>
 this.replicator.start(); // <.>
@@ -615,7 +615,7 @@ public class Examples {
               "Our Username",
               "Our PasswordValue")); // <.>
 
-        thisConfig.setAuthenticator(thisAuth)
+        thisConfig.setAuthenticator(thisAuth);
 
         // end::p2p-act-rep-auth[]
         // tag::p2p-act-rep-config-conflict[]
