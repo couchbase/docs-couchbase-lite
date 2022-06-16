@@ -2271,6 +2271,137 @@
     NSLog(@"print to aviod warning %@", config.description);
 }
 
+- (void) dontTestAPIChanges3_0 {
+    NSURL *url = [NSURL URLWithString:@"ws://10.0.2.2.com:55990/travel-sample"];
+    CBLURLEndpoint *listener = [[CBLURLEndpoint alloc] initWithURL:url];
+    CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database target:listener];
+    CBLReplicator* replicator = [[CBLReplicator alloc] initWithConfig: config];
+    CBLDatabase* testdb = self.database;
+    NSError* error = nil;
+    
+    // ---------------
+    // REMOVED APIs
+    /* commented due to compilation error.
+    // tag::alt-api-change-resetcheckpoint
+    '[replicator startWithReset:];'
+    // end::alt-api-change-resetcheckpoint
+     */
+    
+    /* commented due to compilation error.
+    // tag::before-api-change-resetcheckpoint
+    
+    [replicator resetCheckpoint];
+    [replicator start];
+    
+     // end::before-api-change-resetcheckpoint
+     */
+    
+    // tag::after-api-change-resetcheckpoint
+    [replicator startWithReset: YES];
+    // end::after-api-change-resetcheckpoint
+    
+    
+    /* commented due to compilation error.
+    // tag::alt-api-change-log
+    'CBLDatabase.log.console'
+    // end::alt-api-change-log
+     */
+    
+    /* commented due to compilation error.
+    // tag::before-api-change-log
+    [CBLDatabase setLogLevel:kCBLLogLevelVerbose domain: kCBLLogDomainAll];
+    // end::before-api-change-log
+     */
+    
+    // tag::after-api-change-log
+    CBLDatabase.log.console.level = kCBLLogLevelVerbose;
+    CBLDatabase.log.console.domains = kCBLLogDomainAll;
+    // end::after-api-change-log
+    
+    
+    /* commented due to compilation error.
+    // tag::alt-api-change-db-compact
+    '[db performMaintenance:error:]'
+    // end::alt-api-change-db-compact
+     */
+    
+    /* commented due to compilation error.
+    // tag::before-api-change-db-compact
+    [testdb compact: &error];
+    // end::before-api-change-db-compact
+     */
+    
+    // tag::after-api-change-db-compact
+    [testdb performMaintenance:kCBLMaintenanceTypeCompact error:&error];
+    // end::after-api-change-db-compact
+    
+    // ---------------
+    // DEPRECATED APIs
+    /* commented due to compilation error.
+    // tag::alt-api-change-match
+    '[CBLQueryFullTextFunction matchWithIndexName: query:]'
+    // end::alt-api-change-match
+     */
+    
+    CBLQuery* q;
+    // tag::before-api-change-match
+    CBLQueryFullTextExpression* index = [CBLQueryFullTextExpression indexWithName: @"indexName"];
+    q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+                           from: [CBLQueryDataSource database: self.database]
+                          where: [index match: @"'queryString'"]];
+    // end::before-api-change-match
+    
+    // tag::after-api-change-match
+    q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+                           from: [CBLQueryDataSource database: self.database]
+                          where: [CBLQueryFullTextFunction matchWithIndexName: @"indexName"
+                                                                        query: @"'queryString'"]];
+    // end::after-api-change-match
+    NSLog(@"to avoid warning: %@", q);
+    
+    CBLQueryExpression* exp;
+    // tag::alt-api-change-isNullOrMissing
+    [exp isValued];
+    [exp isNotValued];
+    // end::alt-api-change-isNullOrMissing
+    
+    CBLQuery* q2;
+    // tag::before-api-change-isNullOrMissing
+    q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+                           from: [CBLQueryDataSource database: self.database]
+                          where: [[CBLQueryExpression property: @"missingProp"] isNullOrMissing]];
+    
+    q2 = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+                            from: [CBLQueryDataSource database: self.database]
+                           where: [[CBLQueryExpression property: @"notMissingProp"] notNullOrMissing]];
+    // end::before-api-change-isNullOrMissing
+    
+    // tag::after-api-change-isNullOrMissing
+    q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+                           from: [CBLQueryDataSource database: self.database]
+                          where: [[CBLQueryExpression property: @"missingProp"] isNotValued]];
+    
+    q2 = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+                            from: [CBLQueryDataSource database: self.database]
+                           where: [[CBLQueryExpression property: @"notMissingProp"] isValued]];
+    // end::after-api-change-isNullOrMissing
+    
+    // UPDATED SECTION
+    CBLQueryExpression* p = [CBLQueryExpression property: @"number"];
+    
+    /* commented due to build error
+    // tag::before-api-change-atan2
+    q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryFunction atan2: p y: [CBLQueryExpression integer: 90]]]]
+                           from: [CBLQueryDataSource database: self.database]];
+    // end::before-api-change-atan2
+     */
+    
+    // tag::after-api-change-atan2
+    q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryFunction atan2: [CBLQueryExpression integer: 90] x: p]]]
+                           from: [CBLQueryDataSource database: self.database]];
+    // end::after-api-change-atan2
+}
+
 @end
 
 #pragma mark -
