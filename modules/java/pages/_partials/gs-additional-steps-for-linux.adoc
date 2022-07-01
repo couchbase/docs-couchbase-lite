@@ -1,6 +1,6 @@
 // inclusion
 
-:ld-library-path: LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/:$LD_LIBRARY_PATH
+:ld-library-path: LD_LIBRARY_PATH=<path-to-support-files>/:$LD_LIBRARY_PATH
 
 [#bmkLinuxSharedLibs]
 .Additional Steps for Linux]
@@ -14,13 +14,12 @@ NOTE: These libraries are provided only in the `.zip` distributable.
 Web Service/Tomcat::
 +
 --
+. Locate the support files appropriate for your environment.
 . Copy the _native libraries_ (`<pathToCbl>/support`) to a location accessible to -- and usable by -- your build and runtime environments.
-. Add the following libraries to the `LD_LIBRARY_PATH` in `$CATALINA_BASE/bin/setenv.sh:
+. Add the path of the libraries to  `LD_LIBRARY_PATH` in `$CATALINA_BASE/bin/setenv.sh.
+(If the setenv.sh file doesn't exist, you will need to create a new file.)
 +
-NOTE: If the setenv.sh file doesn’t exist, you will need to create a new file.
-
-+
-[source, bashrc, subs="normal"]
+[source, bashrc, subs="attributes"]
 ----
 {ld-library-path}
 ----
@@ -29,8 +28,9 @@ NOTE: If the setenv.sh file doesn’t exist, you will need to create a new file.
 Desktop::
 +
 --
+. Locate the support files appropriate for your environment.
 . Copy the _native libraries_ (`<pathToCbl>/support`) to a location accessible to -- and usable by -- your build and runtime environments.
-. Add the following libraries to the `LD_LIBRARY_PATH` in the .bashrc file:
+. Add the path the to  `LD_LIBRARY_PATH` in the .bashrc file:
 
 +
 [source, bashrc, subs="normal"]
