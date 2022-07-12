@@ -58,19 +58,19 @@ class SampleCodeTest {
         }
         // end::close-database[]
     }
-    
+
     // helper
     func isValidCredentials(_ u: String, password: String) -> Bool { return true }
     func isValidCertificates(_ certs: [SecCertificate]) -> Bool { return true }
 
 
 #if COUCHBASE_ENTERPRISE
-    
+
     func dontTestDatabaseEncryption() throws {
         // tag::database-encryption[]
         var config = DatabaseConfiguration()
         config.encryptionKey = EncryptionKey.password("secretpassword")
-        
+
         self.database = try Database(name: "my-database", config: config)
         // end::database-encryption[]
     }
@@ -155,6 +155,21 @@ class SampleCodeTest {
         // end::update-document[]
     }
 
+    func dontTest1xAttachment() throws {
+
+
+
+       // tag::1x-attachment[]
+       if let attachments = doc.dictionary(forKey: "_attachments") {
+                let avatar = attachments?.blob(forKey: "avatar")
+                let content = avatar?.content
+            }
+
+       // end::1x-attachment[]
+
+    }
+
+
     func dontTestTypedAcessors() throws {
         let newTask = MutableDocument()
 
@@ -175,6 +190,8 @@ class SampleCodeTest {
 
         print("\(date!)")
     }
+
+
 
     func dontTestBatchOperations() throws {
         // tag::batch[]

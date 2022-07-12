@@ -15,50 +15,50 @@ include::partial$_set_page_context_for_objc.adoc[]
 
 .Alternative
 // https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC5start5resetySb_tF
-  `replicator.start(reset:)`
+  `[replicator startWithReset:];`
 
 .Before
 ----
-replicator.resetCheckpoint()
-replicator.start()
+[replicator resetCheckpoint];
+[replicator start];
 ----
 
 .After
 ----
-replicator.start(true)
+[replicator startWithReset: YES];
 ----
 
 === Database.setLogLevel
 // https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC11setLogLevel_6domainyAA0fG0O_AA0F6DomainOtFZ[]
 
 .Alternative
-`Database.log.console`
+`CBLDatabase.log.console`
 
 .Before
 ----
-Database.setLogLevel(.verbose, domain: .all)
+[CBLDatabase setLogLevel:kCBLLogLevelVerbose domain: kCBLLogDomainAll];
 ----
 
 .After
 ----
-Database.log.console.domain = .all
-Database.log.console.level = .verbose
+CBLDatabase.log.console.level = kCBLLogLevelVerbose;
+CBLDatabase.log.console.domains = kCBLLogDomainAll;
 ----
 
 === Database.compact
 // https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC7compactyyKF[
 .Alternative
-`performMaintenance(type:﹚`
+`[db performMaintenance:error:]`
 // https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC18performMaintenance4typeyAA0F4TypeO_tKF
 
 .Before
 ----
-try testdb.compact()
+[testdb compact: &error];
 ----
 
 .After
 ----
-try testdb.performMaintenance(type: .compact)
+[testdb performMaintenance:kCBLMaintenanceTypeCompact error:&error];
 ----
 
 
@@ -68,22 +68,22 @@ try testdb.performMaintenance(type: .compact)
 === Match
 // https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/FullTextExpression.html#/s:18CouchbaseLiteSwift18FullTextExpressionC5indexyAA0deF8Protocol_pSSFZ[MATCH]
 .Alternative
-`FullTextFunction.match(indexName:)`
+`[CBLQueryFullTextFunction matchWithIndexName: query:]`
 
 .Before
 ----
-let index = FullTextExpression.index ("indexName")
-let q = QueryBuilder.select([SelectResult.
-expression(Meta.id)])
-            .from(DataSource.database(testdb)) +
-            .where(index.match("'queryString'"))
+CBLQueryFullTextExpression* index = [CBLQueryFullTextExpression indexWithName: @"indexName"];
+q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+                        from: [CBLQueryDataSource database: self.database]
+                        where: [index match: @"'queryString'"]];
 ----
 
 .After
 ----
-let q = QueryBuilder.select([SelectResult.expression(Meta.id)])
-            .from(DataSource.database(testdb))
-            .where(FullTextFunction.match(indexName: "indexName", query: "'queryString'"))
+    q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+                           from: [CBLQueryDataSource database: self.database]
+                          where: [CBLQueryFullTextFunction matchWithIndexName: @"indexName"
+                                                                        query: @"'queryString'"]];
 ----
 
 
@@ -92,59 +92,35 @@ let q = QueryBuilder.select([SelectResult.expression(Meta.id)])
 // https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Protocols/ExpressionProtocol.html#/s:18CouchbaseLiteSwift18ExpressionProtocolP16notNullOrMissingAaB_pyF[notNullOrMissing/notNullOrMissing]
 
 .Alternatives
-`isNotValued()` +
-`isValued()`
+----
+[exp isValued];
+[exp isNotValued];
+----
 
 .Before
 ----
-|let q1 = QueryBuilder.select([SelectResult.expression(Meta.id)])
-            .from(DataSource.database(testdb))
-            .where(Expression.property("missingProp").isNullOrMissing())
+    q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+                           from: [CBLQueryDataSource database: self.database]
+                          where: [[CBLQueryExpression property: @"missingProp"] isNullOrMissing]];
 
-let q2 = QueryBuilder.select([SelectResult.expression(Meta.id)])
-            .from(DataSource.database(testdb))
-            .where(Expression.property("notMissingProp").notNullOrMissing())
+    q2 = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+                            from: [CBLQueryDataSource database: self.database]
+                           where: [[CBLQueryExpression property: @"notMissingProp"] notNullOrMissing]];
 ----
 
 .After
 ----
-let q1 = QueryBuilder.select([SelectResult.expression(Meta.id)])
-            .from(DataSource.database(testdb))
-            .where(Expression.property("missingProp").isNotValued())
+    q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+                           from: [CBLQueryDataSource database: self.database]
+                          where: [[CBLQueryExpression property: @"missingProp"] isNotValued]];
 
-let q2 = QueryBuilder.select([SelectResult.expression(Meta.id)])
-            .from(DataSource.database(testdb))
-            .where(Expression.property("notMissingProp").isValued())
+    q2 = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+                            from: [CBLQueryDataSource database: self.database]
+                           where: [[CBLQueryExpression property: @"notMissingProp"] isValued]];
 ----
 
 == Updated API
 
-=== Configuration
-The following classes are changed to Swift struct.
-
-* DatabaseConfiguration
-* ReplicatorConfiguration
-* URLEndpointListenerConfiguration
-
-.Before
-----
-// use of let won't stop from editing instance later)
-
-let config = DatabaseConfiguration()
-config.encryptionKey = EncryptionKey.password(password!)
-
-let config = ReplicatorConfiguration(database: db, target: target)
-config.continuous = true
-----
-
-.After
-----
-var config = DatabaseConfiguration()
-config.encryptionKey = EncryptionKey.password(password!)
-
-var config = ReplicatorConfiguration(database: db, target: target)
-config.continuous = true
-----
 
 === ATAN2
 
@@ -155,16 +131,15 @@ CAUTION: Breaking change
 .Before
 [source, {source-language}]
 ----
-let p = Expression.property("number")
-let q = QueryBuilder.select([SelectResult.expression(Function.atan2(x: Expression.int(90), y: p))])
-            .from(DataSource.database(testdb))
+q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryFunction atan2: p y: [CBLQueryExpression integer: 90]]]]
+                            from: [CBLQueryDataSource database: self.database]];
 ----
 
 .After
 [source, {source-language}]
 ----
-let q = QueryBuilder.select([SelectResult.expression(Function.atan2(y: Expression.int(90), x: p))])
-            .from(DataSource.database(testdb))
+q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryFunction atan2: [CBLQueryExpression integer: 90] x: p]]]
+                           from: [CBLQueryDataSource database: self.database]];
 ----
 // end::content[]
 
