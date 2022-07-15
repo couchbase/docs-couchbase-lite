@@ -70,6 +70,18 @@ See: https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-android-ktx
 
 {cbl-t} provides a set of {config-factories} and {common-config-factories}, these allow use of named parameters to specify property settings.
 
+This makes it simple to create variant configurations, by simply overriding named parameters:
+
+.Example of overriding configuration
+[source,kotlin]
+----
+val listener8080 = URLEndpointListenerConfigurationFactory.create(
+    networkInterface="en0",
+    port=8080)
+
+val listener8081 = listener8080.create(port=8081)
+----
+
 === Database
 Use
 {database-configuration-factory}
