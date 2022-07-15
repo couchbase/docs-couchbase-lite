@@ -1,6 +1,6 @@
 // inclusion
 
-:ld-library-path: LD_LIBRARY_PATH=<path-to-support-files>/:$LD_LIBRARY_PATH
+:ld-library-path: LD_LIBRARY_PATH=<path-to-support-files>/libc++:<path-to-support-files>/libicu:$LD_LIBRARY_PATH
 
 [#bmkLinuxSharedLibs]
 .Additional Steps for Linux
@@ -15,8 +15,11 @@ Web Service/Tomcat::
 +
 --
 . Within the `.zip` file, locate the support files appropriate for your environment.
-. Copy the directories in `<pathToCbl>/support` to a location accessible and executable by your build and runtime environments.
-. Add the path of the directories to  `LD_LIBRARY_PATH` in `$CATALINA_BASE/bin/setenv.sh.
+. Copy the directory `<pathToCbl>/support` to a location accessible and executable by your build and runtime environments.
++
+include::partial$directory-diagrams.adoc[tag=couchbase-lite-zip]
++
+. Add the path of the directories `libc++` and `libicu` to  `LD_LIBRARY_PATH` in `$CATALINA_BASE/bin/setenv.sh.
 (If the setenv.sh file doesn't exist, you will need to create a new file.)
 +
 [source, bashrc, subs="attributes"]
@@ -29,8 +32,11 @@ Desktop::
 +
 --
 . Within the `.zip` file, locate the support files appropriate for your environment.
-. Copy the directories in `<pathToCbl>/support` to a location accessible and executable by your build and runtime environments.
-. Add the path of the directories to  `LD_LIBRARY_PATH` in the .bashrc file:
+. Copy the directory `<pathToCbl>/support` to a location accessible and executable by your build and runtime environments.
++
+include::partial$directory-diagrams.adoc[tag=couchbase-lite-zip]
++
+. Add the path of the directories `libc++` and `libicu` to  `LD_LIBRARY_PATH` in the .bashrc file:
 +
 [source, bashrc, subs="normal"]
 ----
@@ -40,4 +46,6 @@ export {ld-library-path}
 ====
 
 Please refer to the Linux Platform Support section for the minimum version requirements of those libraries.
+
+
 
