@@ -1,10 +1,10 @@
 // inclusion
 
-:ld-library-path: LD_LIBRARY_PATH=<pathToCbl>/support/linux/x86_64/:$LD_LIBRARY_PATH
+:ld-library-path: LD_LIBRARY_PATH=<lib-directory>/support/libc++:<lib-directory>/support/libicu:$LD_LIBRARY_PATH
 
 [#bmkLinuxSharedLibs]
-.Additional Steps for Linux]
-In addition to setting-up your build environment, you also need to make the supplied native libraries (`<pathToCbl/support`) available:
+.Additional Steps for Linux
+In addition to setting-up your build environment, you also need to make the supplied support libraries available:
 
 NOTE: These libraries are provided only in the `.zip` distributable.
 
@@ -14,13 +14,14 @@ NOTE: These libraries are provided only in the `.zip` distributable.
 Web Service/Tomcat::
 +
 --
-. Copy the _native libraries_ (`<pathToCbl>/support`) to a location accessible to -- and usable by -- your build and runtime environments.
-. Add the following libraries to the `LD_LIBRARY_PATH` in `$CATALINA_BASE/bin/setenv.sh:
+. Copy the directory `<exploded-distribution-zip>/support` to a location accessible and executable by your build and runtime environments.
 +
-NOTE: If the setenv.sh file doesn’t exist, you will need to create a new file.
-
+include::partial$directory-diagrams.adoc[tag=couchbase-lite-zip]
 +
-[source, bashrc, subs="normal"]
+. Add the paths of the directories `libc++` and `libicu` to  `LD_LIBRARY_PATH` in `$CATALINA_BASE/bin/setenv.sh.
+(If the setenv.sh file doesn't exist, you will need to create a new file.)
++
+[source, bashrc, subs="attributes"]
 ----
 {ld-library-path}
 ----
@@ -29,9 +30,11 @@ NOTE: If the setenv.sh file doesn’t exist, you will need to create a new file.
 Desktop::
 +
 --
-. Copy the _native libraries_ (`<pathToCbl>/support`) to a location accessible to -- and usable by -- your build and runtime environments.
-. Add the following libraries to the `LD_LIBRARY_PATH` in the .bashrc file:
-
+. Copy the directory `<exploded-distribution-zip>/support` to a location accessible and executable by your build and runtime environments.
++
+include::partial$directory-diagrams.adoc[tag=couchbase-lite-zip]
++
+. Add the paths of the directories `<lib-directory>/support/libc++` and `<lib-directory>/support/libicu` to  `LD_LIBRARY_PATH` in the .bashrc file:
 +
 [source, bashrc, subs="normal"]
 ----
@@ -39,6 +42,9 @@ export {ld-library-path}
 ----
 
 --
+====
 
 Please refer to the Linux Platform Support section for the minimum version requirements of those libraries.
-====
+
+
+
