@@ -39,6 +39,9 @@ FullTextSearch is enabled using the {sqlpp_cbm} match() function.
 
 With the index created, you can construct and run a Full-text search (FTS) query using the indexed properties.
 
+The index will omit a set of common words, to avoid words like "I", "the", "an" from overly influencing your queries.
+See the https://github.com/couchbasedeps/sqlite3-unicodesn/blob/HEAD/stopwords_en.h[full list of these **stopwords**].
+
 The following example finds all hotels mentioning _Michigan_ in their _Overview_ text.
 
 .Using {sqlpp_cbm} Full Text Search
