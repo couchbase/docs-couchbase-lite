@@ -37,6 +37,9 @@ IndexBuilder.FullTextIndex(params FullTextIndexItem[] items)
 
 With the index created, you can construct and run a Full-text search (FTS) query on the indexed properties.
 
+The index will omit a set of common words, to avoid words like "I", "the", "an" from overly influencing your queries.
+See  https://github.com/couchbasedeps/sqlite3-unicodesn/blob/HEAD/stopwords_en.h[full list of these **stopwords**].
+
 The full-text search criteria is defined as a `FullTextExpression`.
 The left-hand side is the _full-text index_ to use and the right-hand side is the _pattern to match_.
 
