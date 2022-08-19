@@ -621,12 +621,20 @@ The level of compression is set on Sync Gateway and can be tuned in the configur
 [#lbl-cert-pinning]
 == Certificate Pinning
 
-
 Couchbase Lite for {param-title} supports certificate pinning.
 
 Certificate pinning is a technique that can be used by applications to "pin" a host to its certificate.
 The certificate is typically delivered to the client by an out-of-band channel and bundled with the client.
 In this case, Couchbase Lite uses this embedded certificate to verify the trustworthiness of the server (for example, a Sync Gateway) and no longer needs to rely on a trusted third party for that (commonly referred to as the Certificate Authority).
+
+[.status]#Couchbase Lite 3.0.2#
+
+For the 3.02. release, changes have been made to the way certificates on the host are matched:
+[horizontal]
+
+Prior to CBL3.0.2:: The pinned certificate was only compared with the leaf certificate of the host. This is not always suitable as leaf certificates are usually valid for shorter periods of time.
+CBL-3.0.2{plus}:: The pinned certificate will be compared against any certificate in the server's certificate chain.
+
 
 The following steps describe how to configure certificate pinning between Couchbase Lite and Sync Gateway.
 
