@@ -19,10 +19,9 @@ Here we will add the `CouchbaseLiteSwift` dependency to your Parent Swift packag
 [source, {source-language}, subs="attributes+"]
 ----
 dependencies: [
-  .package(name: "CouchbaseLiteSwift",
-    url: "insert Couchbase Lite URL", // <.>
-    from: "{version-maintenance}"), // <.>
-  ],
+.package(url: "insert Couchbase Lite URL",  // <.>
+         from: "{version-maintenance}"),    //<.>
+],
 ----
 
 +
@@ -32,19 +31,23 @@ For Community Edition use: {url-ce} +
 For Enterprise Edition use: {url-ee}
 
 +
-<.> Include the required version number here, for example the latest version is {version-maintenance}
+<.> Include the required version number here.
+For example, the latest version is {version-maintenance}
 
-. Add the dependent package product name, to the target:
+. Add the dependent package product name to the target:
 +
 [source, {source-language}]
 ----
-targets: [
-  .target(name: "ParentPackage",
-    dependencies: ["CouchbaseLiteSwift"]),
-  ]
+targets: [ .target(name: "ParentPackage",
+.target(
+name: "ParentPackage",
+dependencies: [.product(name: "CouchbaseLiteSwift",
+                package: "couchbase-lite-swift-ee")]),  //<.>
+ ]
 ----
-
-. Import CouchbaseLiteSwift, and use it:
+<.> If you are using the enterprise edition, then set `package` to `couchbase-lite-swift-ee`.
+If you are using the community edition, then set  `package` to `couchbase-lite-ios`.
+. Import CouchbaseLiteSwift and use it:
 +
 [source, {source-language}]
 ----
@@ -73,13 +76,14 @@ products: [
     targets: ["ParentPackage"]),
   ],
 dependencies: [
-  .package(name: "CouchbaseLiteSwift",
-    url: "https://github.com/couchbase/couchbase-lite-swift-ee.git", from: "{version-maintenance}"),
+  .package(url: "https://github.com/couchbase/couchbase-lite-swift-ee.git",
+           from: "{version-maintenance}"),
   ],
 targets: [
   .target(
     name: "ParentPackage",
-    dependencies: ["CouchbaseLiteSwift"]),
+    dependencies: [.product(name: "CouchbaseLiteSwift",
+                    package: "couchbase-lite-swift-ee")]),
   .testTarget(
     name: "ParentPackageTests",
     dependencies: ["ParentPackage"]),
@@ -127,7 +131,7 @@ Xcode displays the name, version and URL of the added CouchbaseLiteSwift Package
 +
 image::spm-6.png[]
 
-. You can now import CouchbaseLiteSwift, and use it in your app
+. You can now import CouchbaseLiteSwift and use it in your app
 +
 image::spm-7.png[]
 
