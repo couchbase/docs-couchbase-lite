@@ -11,10 +11,58 @@ include::{root-partials}_show_page_header_block.adoc[]
 :fn-2-8: footnote:fn28[Commencing with Release 2.8]
 :fnref-2-8: footnote:fn28[]
 
+[#database-concepts]
+== Database Concepts
+
+Databases created on Couchbase Lite can share the same hierarchical structure as Capella databases.
+This makes it easier to sync data between mobile applications and applications built using Capella.
+
+.Couchbase Lite Database Hierarchy
+include::partial$diagram-definitions.adoc[tag=couchbase-hierarchy]
+
+Although the terminology is different, the structure can be mapped to relational database terms:
+
+
+.Relational Database -> Couchbase
+[width=70%,grid=none]
+|===
+|Relational database |Couchbase
+
+|Database
+|Database
+
+|Schema
+|Scope
+
+|Table
+|Collection
+|===
+
+This structure gives you plenty of choices when it comes to partitioning your data.
+The most basic structure is to use the single default scope with a single default collection; or you could opt for a structure that allow you to split your collections into logical scopes.
+
+[#cbl-database-structure]
+.Couchbase Lite Examples
+include::partial$diagram-definitions.adoc[tag=couchbase-lite-example-structure]
+
+If a scope is not explicitly referenced in calls to the database, then scope is assumed to `_default`. Likewise, if no collection name is given then then the `_default` collection is assumed.
+
+.Storing local configuration
+****
+It's likely that you will not need to sync all the data related for a particular application, in which case you can set up a scope that syncs data, and a second stop that doesn't.
+
+One reason for doing this is to store local configuration data (such as the preferred screen orientation or keyboard layout). Since this information only relates to a particular device, there is no need to sync it:
+
+[horizontal]
+local data scope:: Contains information pertaining to the device.
+
+syncing data scope:: Contains information pertaining to the user, which can be synced back to the cloud for use on the web or another device.
+
+****
+
 // BEGIN: Conditional Block -- applies to Android and JVM Java
 ifdef::is-android,is-java[]
 // Output block only for Android and Java modules
-
 
 == Initializer
 
@@ -31,7 +79,6 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 
 endif::[]
 // END: Conditional Block -- applies to Android and JVM Java
-
 
 [#open-db]
 == Create or Open Database
