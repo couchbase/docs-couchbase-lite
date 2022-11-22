@@ -336,29 +336,25 @@
     // tag::datatype_usage_populate[]
     // Initialize and populate the document
 
-    // Add document type to document properties <.>
+    // Add document type and hotel name as string
     [mutableDoc setString:@"hotel" forKey:@"type"];
-
-    // Add hotel name string to document properties <.>
     [mutableDoc setString:@"Hotel Java Mo" forKey:@"name"];
 
-    // Add float to document properties <.>
+    // Add average room rate (float)
     [mutableDoc setFloat:121.75 forKey:@"room_rate"];
 
-    // Add dictionary to document's properties <.>
+    // Add address (dictionary)
     [mutableDoc setDictionary:address forKey:@"address"];
 
-    // Add array to document's properties <.>
+    // Add phone numbers(array)
     [mutableDoc setArray:phones forKey:@"phones"];
 
     // end::datatype_usage_populate[]
     // tag::datatype_usage_persist[]
-    // Save the document changes <.>
     [self.database saveDocument:mutableDoc error:&error];
 
     // end::datatype_usage_persist[]
     // tag::datatype_usage_closedb[]
-    // Close the database <.>
     if (![self.database close:&error])
         NSLog(@"Error closing db:%@", error);
 
@@ -1623,12 +1619,12 @@
     for (CBLQueryResult *result in rs) {
 
         // Get result as a JSON string
-        NSString *json = [result toJSON]; // <.>
+        NSString *json = [result toJSON];
 
         // Get an native Obj-C object from the Json String
         NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:[json dataUsingEncoding:NSUTF8StringEncoding]
                                                                          options:NSJSONReadingAllowFragments
-                                                                           error:&error]; // <.>
+                                                                           error:&error];
 
         // Log generated Json and Native objects
         // For demo/example purposes

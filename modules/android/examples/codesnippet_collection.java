@@ -3152,11 +3152,11 @@ public class TestQueries {
     for (Result result : listQuery.execute()) {
 
       // Get result as JSON string
-      String thisJsonString = result.toJSON(); // <.>
+      String thisJsonString = result.toJSON();
 
       // Get Java  Hashmap from JSON string
       HashMap<String, Object> dictFromJSONstring =
-              mapper.readValue(thisJsonString, HashMap.class); // <.>
+              mapper.readValue(thisJsonString, HashMap.class);
 
 
       // Use created hashmap
@@ -3167,7 +3167,7 @@ public class TestQueries {
 
       // Get custom object from JSON string
       Hotel thisHotel =
-              mapper.readValue(thisJsonString, Hotel.class); // <.>
+              mapper.readValue(thisJsonString, Hotel.class);
       hotels.add(thisHotel);
 
 
@@ -3424,30 +3424,25 @@ public class supportingDatatypes
         // tag::datatype_usage_populate[]
         // Initialize and populate the document
 
-        // Add document type to document properties <.>
+        // Add document type and hotel name as string
         mutable_doc.setString("type", "hotel"));
-
-        // Add hotel name string to document properties <.>
         mutable_doc.setString("name", "Hotel Java Mo"));
 
-        // Add float to document properties <.>
+        // Add average room rate (float)
         mutable_doc.setFloat("room_rate", 121.75f);
 
-        // Add dictionary to document's properties <.>
+        // Add address (dictionary)
         mutable_doc.setDictionary("address", address);
 
-
-        // Add array to document's properties <.>
+        // Add phone numbers(array)
         mutable_doc.setArray("phones", phones);
 
         // end::datatype_usage_populate[]
         // tag::datatype_usage_persist[]
-        // Save the document changes <.>
         database.save(mutable_doc);
 
         // end::datatype_usage_persist[]
         // tag::datatype_usage_closedb[]
-        // Close the database <.>
         database.close();
 
         // end::datatype_usage_closedb[]
@@ -3465,7 +3460,6 @@ public class supportingDatatypes
         Database database = new Database("mydb");
 
         // tag::datatype_dictionary[]
-        // NOTE: No error handling, for brevity (see getting started)
         Document document = database.getDocument("doc1");
 
         // Getting a dictionary from the document's properties
@@ -3490,8 +3484,6 @@ public class supportingDatatypes
         Database database = new Database("mydb");
 
         // tag::datatype_mutable_dictionary[]
-        // NOTE: No error handling, for brevity (see getting started)
-
         // Create a new mutable dictionary and populate some keys/values
         MutableDictionary mutable_dict = new MutableDictionary();
         mutable_dict.setString("street", "1 Main st.");
@@ -3510,8 +3502,6 @@ public class supportingDatatypes
         Database database = new Database("mydb");
 
         // tag::datatype_array[]
-        // NOTE: No error handling, for brevity (see getting started)
-
         Document document = database.getDocument("doc1");
 
         // Getting a phones array from the document's properties
@@ -3540,8 +3530,6 @@ public class supportingDatatypes
         Database database = new Database("mydb");
 
         // tag::datatype_mutable_array[]
-        // NOTE: No error handling, for brevity (see getting started)
-
         // Create a new mutable array and populate data into the array
         MutableArray mutable_array = new MutableArray();
         mutable_array.addString("650-000-0000");
@@ -3661,24 +3649,28 @@ public class JSONExamples {
 
     public void jsonArrayExample(Database db) throws CouchbaseLiteException {
         // tag::tojson-array[]
-        // github tag=tojson-array
-        final MutableArray mArray = new MutableArray(JSON); // <.>
+        // initialize array from JSON string
+        final MutableArray mArray = new MutableArray(JSON);
 
-        for (int i = 0; i < mArray.count(); i++) { // <.>
+        // Create and save new document using the array
+        for (int i = 0; i < mArray.count(); i++) {
           final Dictionary dict = mArray.getDictionary(i);
           Log.i(TAG, dict.getString("name"));
           db.save(new MutableDocument(dict.getString("id"), dict.toMap()));
         }
 
-        final Array features = db.getDocument("1002").getArray("features"); // <.>
-        for (Object feature: features.toList()) { Log.i(TAG, feature.toString()); }
-        Log.i(TAG, features.toJSON()); // <.>
+        // Get an array from the document as a JSON string
+        final Array features = db.getDocument("1002").getArray("features");
+        // Print its elements
+        for (Object feature: features.toList()) {
+            Log.i(TAG, feature.toString());
+        }
+        Log.i(TAG, features.toJSON());
         // end::tojson-array[]
       }
 
       public void jsonBlobExample(Database db) {
         // tag::tojson-blob[]
-        // github tag=tojson-blob
         final Map<String, ?> thisBlob = db.getDocument("thisdoc-id").toMap();
         if (!Blob.isBlob(thisBlob)) { return; }
 
@@ -3689,8 +3681,7 @@ public class JSONExamples {
 
       public void jsonDictionaryExample(Database db) {
         // tag::tojson-dictionary[]
-        // github tag=tojson-dictionary
-        final MutableDictionary mDict = new MutableDictionary(JSON); // <.>
+        final MutableDictionary mDict = new MutableDictionary(JSON);
         Log.i(TAG, mDict.toString());
 
         Log.i(TAG, "Details for: " + mDict.getString("name"));
@@ -3702,7 +3693,6 @@ public class JSONExamples {
 
     public void jsonDocumentExample(Database srcDb, Database dstDb) throws CouchbaseLiteException {
         // tag::tojson-document[]
-        // github tag=tojson-document
         final Query listQuery = QueryBuilder
         .select(SelectResult.expression(Meta.id).as("metaId"))
         .from(DataSource.database(srcDb));
@@ -3710,16 +3700,18 @@ public class JSONExamples {
         for (Result row: listQuery.execute()) {
           final String thisId = row.getString("metaId");
 
-          final String json = srcDb.getDocument(thisId).toJSON(); // <.>
+        // Get a document as a JSON string
+          final String json = srcDb.getDocument(thisId).toJSON();
           Log.i(TAG, "JSON String = " + json);
 
-          final MutableDocument hotelFromJSON = new MutableDocument(thisId, json); // <.>
-
+          // Initialize a MutableDocument using the JSON string and save to a separate database
+          final MutableDocument hotelFromJSON = new MutableDocument(thisId, json);
           dstDb.save(hotelFromJSON);
 
+          // Retrieve the document created from JSON and print values
           for (Map.Entry entry: dstDb.getDocument(thisId).toMap().entrySet()) {
             Log.i(TAG, entry.getKey() + " => " + entry.getValue());
-          } // <.>
+          }
         }
         // end::tojson-document[]
       }

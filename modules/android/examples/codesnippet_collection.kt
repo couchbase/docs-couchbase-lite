@@ -854,33 +854,29 @@ class supportingDatatypes
         phones.addString("650-000-0001")
 
         // end::datatype_usage_mutarray[]
+        
         // tag::datatype_usage_populate[]
         // Initialize and populate the document
 
-        // Add document type to document properties <.>
+        // Add document type and hotel name as string
         mutable_doc.setString("type", "hotel"))
-
-        // Add hotel name string to document properties <.>
         mutable_doc.setString("name", "Hotel Java Mo"))
 
-        // Add float to document properties <.>
+        // Add average room rate (float)
         mutable_doc.setFloat("room_rate", 121.75f)
 
-        // Add dictionary to document's properties <.>
+        // Add address (dictionary)
         mutable_doc.setDictionary("address", address)
 
-
-        // Add array to document's properties <.>
+        // Add phone numbers(array)
         mutable_doc.setArray("phones", phones)
 
         // end::datatype_usage_populate[]
         // tag::datatype_usage_persist[]
-        // Save the document changes <.>
         database.save(mutable_doc)
 
         // end::datatype_usage_persist[]
         // tag::datatype_usage_closedb[]
-        // Close the database <.>
         database.close()
 
         // end::datatype_usage_closedb[]
@@ -894,7 +890,6 @@ class supportingDatatypes
     fun datatype_dictionary() {
 
         // tag::datatype_dictionary[]
-        // NOTE: No error handling, for brevity (see getting started)
         val document = database!!.getDocument("doc1")
 
         // Getting a dictionary from the document's properties
@@ -917,8 +912,6 @@ class supportingDatatypes
     fun datatype_mutable_dictionary() {
 
         // tag::datatype_mutable_dictionary[]
-        // NOTE: No error handling, for brevity (see getting started)
-
         // Create a new mutable dictionary and populate some keys/values
         val mutable_dict = MutableDictionary()
         mutable_dict.setString("street", "1 Main st.")
@@ -936,8 +929,6 @@ class supportingDatatypes
     fun datatype_array() {
 
         // tag::datatype_array[]
-        // NOTE: No error handling, for brevity (see getting started)
-
         val document = database?.getDocument("doc1")
 
         // Getting a phones array from the document's properties
@@ -962,8 +953,6 @@ class supportingDatatypes
     fun datatype_mutable_array() {
 
         // tag::datatype_mutable_array[]
-        // NOTE: No error handling, for brevity (see getting started)
-
         // Create a new mutable array and populate data into the array
         val mutable_array = MutableArray()
         mutable_array.addString("650-000-0000")
@@ -1371,6 +1360,7 @@ class IBExamples(private val context: Context, private val caCert: Certificate) 
                 authenticator = ListenerPasswordAuthenticator { username, paassword ->
                     (username === validUser) && (paassword === validPassword)
                 }
+                // end::listener-config-client-auth-pwd[]
             ))
 
         // Start the listener
@@ -2864,10 +2854,10 @@ class QueryExamples(private val database: Database) {
         for (result in listQuery.execute()) {
 
             // Get result as JSON string
-            val json = result.toJSON() // <.>
+            val json = result.toJSON()
 
             // Get Hashmap from JSON string
-            val dictFromJSONstring = mapper.readValue(json, HashMap::class.java) // <.>
+            val dictFromJSONstring = mapper.readValue(json, HashMap::class.java)
 
             // Use created hashmap
             val hotelId = dictFromJSONstring["id"].toString() //
@@ -2876,7 +2866,7 @@ class QueryExamples(private val database: Database) {
 
 
             // Get custom object from JSON string
-            val thisHotel = mapper.readValue(json, Hotel::class.java) // <.>
+            val thisHotel = mapper.readValue(json, Hotel::class.java)
             hotels.add(thisHotel)
         }
         // end::query-access-json[]
@@ -3033,27 +3023,30 @@ class KtJSONExamples {
 
     fun jsonArrayExample(db: Database) {
         // tag::tojson-array[]
-        // github tag=tojson-array
-        val mArray = MutableArray(JSON) // <.>
+        // initialize array from JSON string
+        val mArray = MutableArray(JSON)
+        
+        // Create and save new document using the array
         for (i in 0 until mArray.count()) {
             mArray.getDictionary(i)?.apply {
                 Log.i(TAG, getString("name") ?: "unknown")
                 db.save(MutableDocument(getString("id"), toMap()))
-            } // <.>
+            }
         }
-
+        
+        // Get an array from the document as a JSON string
         db.getDocument("1002")?.getArray("features")?.apply {
+            // Print its elements
             for (feature in toList()) {
                 Log.i(TAG, "$feature")
-            } // <.>
+            }
             Log.i(TAG, toJSON())
-        } // <.>
+        }
         // end::tojson-array[]
     }
 
     fun jsonBlobExample(db: Database) {
         // tag::tojson-blob[]
-        // github tag=tojson-blob
         val thisBlob = db.getDocument("thisdoc-id")!!.toMap()
         if (!Blob.isBlob(thisBlob)) {
           return
@@ -3065,8 +3058,7 @@ class KtJSONExamples {
 
     fun jsonDictionaryExample() {
         // tag::tojson-dictionary[]
-        // github tag=tojson-dictionary
-        val mDict = MutableDictionary(JSON) // <.>
+        val mDict = MutableDictionary(JSON)
         Log.i(TAG, "$mDict")
         Log.i(TAG, "Details for: ${mDict.getString("name")}")
         for (key in mDict.keys) {
@@ -3084,13 +3076,18 @@ class KtJSONExamples {
         .execute()
         .forEach {
           it.getString("metaId")?.let { thisId ->
-            srcDb.getDocument(thisId)?.toJSON()?.let { json -> // <.>
+            // Get a document as a JSON string
+            srcDb.getDocument(thisId)?.toJSON()?.let { json ->
               Log.i(TAG, "JSON String = $json")
-              val hotelFromJSON = MutableDocument(thisId, json) // <.>
+              
+              // Initialize a MutableDocument using the JSON string and save to a separate database
+              val hotelFromJSON = MutableDocument(thisId, json)
               dstDb.save(hotelFromJSON)
+              
+              // Retrieve the document created from JSON and print values
               dstDb.getDocument(thisId)?.toMap()?.forEach { e ->
                 Log.i(TAG, "$e.key => $e.value")
-              } // <.>
+              }
             }
           }
         }
