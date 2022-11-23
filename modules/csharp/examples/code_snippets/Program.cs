@@ -1814,13 +1814,13 @@ var query =
     foreach (var result in query.Execute().AsEnumerable()) {
 
         // get the result into a JSON String
-                var thisDocsJSONString = result.ToJSON();// <.>
+                var thisDocsJSONString = result.ToJSON();
 
         // Get a native dictionary object using the JSON string
         var dictFromJSONstring =
               JsonConvert.
                 DeserializeObject<Dictionary<string, object>>
-                  (thisDocsJSONString); // <.>
+                  (thisDocsJSONString);
 
         // use the created dictionary
         if (dictFromJSONstring != null)
@@ -1833,7 +1833,7 @@ var query =
 
         //Get a custom object using the JSON string
         Hotel this_hotel =
-            JsonConvert.DeserializeObject<Hotel>(thisDocsJSONString); // <.>
+            JsonConvert.DeserializeObject<Hotel>(thisDocsJSONString);
 
         // Store this hotel object in a list of hotels
         hotels.Add(
@@ -2023,7 +2023,7 @@ var query =
             var thisDoc = this_Db.GetDocument("hotel_10025");
 
             // Get document data as JSON String
-            var thisDocAsJsonString = thisDoc?.ToJSON(); // <.>
+            var thisDocAsJsonString = thisDoc?.ToJSON();
 
             // Get Json Object from the Json String
             JObject myJsonObj = JObject.Parse(thisDocAsJsonString);
@@ -2044,7 +2044,7 @@ var query =
 
             // Update new document with JSOn String
             MutableDocument newhotel =
-                new MutableDocument(anhotel.Id, newJsonString); // <.>
+                new MutableDocument(anhotel.Id, newJsonString);
 
             foreach (string key in newhotel.ToDictionary().Keys)
             {
@@ -2054,7 +2054,7 @@ var query =
 
             newDb.Save(newhotel);
 
-            var thatDoc = newDb.GetDocument("2001").ToJSON(); // <.>
+            var thatDoc = newDb.GetDocument("2001").ToJSON();
             System.Console.Write(thatDoc);
 
             // end::tojson-document[]
@@ -2097,27 +2097,27 @@ var query =
 
             // Create mutable array using JSON String Array
             var myArray = new MutableArrayObject();
-            myArray.SetJSON(thisJSONstring);  // <.>
+            myArray.SetJSON(thisJSONstring); 
 
 
-            // Create a new documenty for each array element
+            // Create a new document for each array element
             for (int i = 0; i < myArray.Count; i++)
             {
                 var dict = myArray.GetDictionary(i);
                 var docid = myArray[i].Dictionary.GetString("id");
-                var newdoc = new MutableDocument(docid, dict.ToDictionary()); // <.>
-                dbNew.Save(newdoc);
+                var newdoc = new MutableDocument(docid, dict.ToDictionary());
             }
 
             // Get one of the created docs and iterate through one of the embedded arrays
             var extendedDoc = dbNew.GetDocument("1002");
             var features = extendedDoc.GetArray("features");
-            // <.>
+            
+            // Print its elements
             foreach (string feature in features) {
                 System.Console.Write(feature);
                 //process array item as required
             }
-            var featuresJSON = extendedDoc.GetArray("features").ToJSON(); // <.>
+            var featuresJSON = extendedDoc.GetArray("features").ToJSON();
 
             // end::tojson-array[]
         }
@@ -2138,7 +2138,7 @@ var query =
 
             // Get dictionary from JSONstring
             var aJSONstring = "{'id':'1002','type':'hotel','name':'Hotel Ned','city':'Balmain','country':'Australia','description':'Undefined description for Hotel Ned','features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
-            var myDict = new MutableDictionaryObject(json: aJSONstring); // <.>
+            var myDict = new MutableDictionaryObject(json: aJSONstring);
 
             // use dictionary to get name value
             var name = myDict.GetString("name");
@@ -2192,7 +2192,7 @@ var query =
                 "'city':'Balmain','country':'Australia'," +
                 "'description':'Undefined description for Hotel Ned'," +
                 "'features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
-            var myDoc = new MutableDocument(docId, aJSONstring); // <.>
+            var myDoc = new MutableDocument(docId, aJSONstring);
 
 
             // Get the content (an image), create blob and add to doc)
@@ -2202,8 +2202,8 @@ var query =
                                 userName);
             var myImagePath = Path.Combine(defaultDirectory, "avatarimage.jpg");
             var myImageUri = new Uri(myImagePath.ToString());
-            var myBlob = new Blob("image/jpg", myImageUri); // <.>
-            myDoc.SetBlob("avatar", myBlob); // <.>
+            var myBlob = new Blob("image/jpg", myImageUri);
+            myDoc.SetBlob("avatar", myBlob);
 
 
             // This example generates a 'blob not saved' exception
@@ -2214,16 +2214,16 @@ var query =
             dbNew.Save(myDoc);
 
             // Alternatively -- depending on use case
-            dbNew.SaveBlob(new Blob("image/jpg", myImageUri)); // <.>
+            dbNew.SaveBlob(new Blob("image/jpg", myImageUri));
 
 
             // Retrieve saved doc, get blob as JSON andheck its still a 'blob'
             var sameDoc = dbNew.GetDocument(docId);
             var reconstitutedBlob = new MutableDictionaryObject().
-                SetDictionary("blobCOPY", new MutableDictionaryObject(sameDoc.GetBlob("avatar").ToJSON())); // <.>
+                SetDictionary("blobCOPY", new MutableDictionaryObject(sameDoc.GetBlob("avatar").ToJSON()));
 
             if (Blob.IsBlob(
-                    reconstitutedBlob.GetDictionary("blobCOPY").ToDictionary()))  //<.>
+                    reconstitutedBlob.GetDictionary("blobCOPY").ToDictionary()))
             {
                //... process accordingly
                Console.WriteLine("Its a Blob!!");
@@ -3257,29 +3257,25 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         // tag::datatype_usage_populate[]
         // Initialize and populate the document
 
-        // Add document type to document properties <.>
+        // Add document type and hotel name as string
         doc.SetString("type", "hotel");
-
-        // Add hotel name string to document properties <.>
         doc.SetString("name", "Hotel Java Mo");
 
-        // Add float to document properties <.>
+        // Add average room rate (float)
         doc.SetFloat("room_rate", 121.75);
 
-        // Add dictionary to document's properties <.>
+        // Add address (dictionary)
         doc.SetDictionary("address", address);
 
-        // Add array to document's properties <.>
+        // Add phone numbers(array)
         doc.SetArray("phones", phones);
 
         // end::datatype_usage_populate[]
         // tag::datatype_usage_persist[]
-        // Save the document changes <.>
         database.Save(doc);
 
         // end::datatype_usage_persist[]
         // tag::datatype_usage_closedb[]
-        // Close the database <.>
         database.Close();
 
         // end::datatype_usage_closedb[]
@@ -3295,7 +3291,6 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
           var database = new Database(name: "mydb");
 
           // tag::datatype_dictionary[]
-          // NOTE: No error handling, for brevity (see getting started)
           var document = database.GetDocument("doc1");
 
           // Getting a dictionary from the document's properties
@@ -3321,8 +3316,6 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
           var database = new Database("mydb");
 
           // tag::datatype_mutable_dictionary[]
-          // NOTE: No error handling, for brevity (see getting started)
-
           // Create a new mutable dictionary and populate some keys/values
           var mutable_dict = new MutableDictionaryObject();
           mutable_dict.SetString("street", "1 Main st.");
@@ -3342,8 +3335,6 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
           var database = new Database("mydb");
 
           // tag::datatype_array[]
-          // NOTE: No error handling, for brevity (see getting started)
-
           var document = database.GetDocument("doc1");
 
           // Getting a phones array from the document's properties
@@ -3373,8 +3364,6 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
           var database = new Database("mydb");
 
           // tag::datatype_mutable_array[]
-          // NOTE: No error handling, for brevity (see getting started)
-
           // Create a new mutable array and populate data into the array
           var mutable_array = new MutableArrayObject();
           mutable_array.AddString("650-000-0000");

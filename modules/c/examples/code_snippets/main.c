@@ -660,8 +660,6 @@ static void doc_json() {
     CBLDatabase* db = kDatabase;
 
     // tag::tojson-document[]
-    // NOTE: No error handling, for brevity (see getting started)
-
     FLString json = FLSTR("{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",\"country\":\"Australia\"}");
 
     // Create a document and set the JSON data to the document
@@ -692,8 +690,6 @@ static void doc_json() {
 
 static void dict_json() {
     // tag::tojson-dictionary[]
-    // NOTE: No error handling, for brevity (see getting started)
-
     FLString json = FLSTR("{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",\"country\":\"Australia\"}");
 
     // Create a dictionary from the JSON string
@@ -724,8 +720,6 @@ static void dict_json() {
 
 static void array_json() {
     // tag::tojson-array[]
-    // NOTE: No error handling, for brevity (see getting started)
-
     FLString json = FLSTR("[\"Hotel Ned\", \"Hotel Ted\"]");
 
     // Create an array from the JSON string
@@ -758,8 +752,6 @@ static void datatype_dictionary()
     CBLDatabase *db = kDatabase;
 
     // tag::datatype_dictionary[]
-    // NOTE: No error handling, for brevity (see getting started)
-
     CBLError err;
     const CBLDocument *doc = CBLDatabase_GetDocument(db, FLSTR("doc1"), &err);
     FLDict properties = CBLDocument_Properties(doc);
@@ -800,8 +792,6 @@ static void datatype_mutable_dictionary()
     CBLDatabase *db = kDatabase;
 
     // tag::datatype_mutable_dictionary[]
-    // NOTE: No error handling, for brevity (see getting started)
-
     // tag::datatype_mutable_dictionary-create[]
     // Create a new mutable dictionary and populate some keys/values
     FLMutableDict dict = FLMutableDict_New();
@@ -829,8 +819,6 @@ static void datatype_array()
     CBLDatabase *db = kDatabase;
 
     // tag::datatype_array[]
-    // NOTE: No error handling, for brevity (see getting started)
-
     CBLError err;
     const CBLDocument *doc = CBLDatabase_GetDocument(db, FLSTR("doc1"), &err);
     FLDict properties = CBLDocument_Properties(doc);
@@ -876,8 +864,6 @@ static void datatype_mutable_array()
     CBLDatabase *db = kDatabase;
 
     // tag::datatype_mutable_array[]
-    // NOTE: No error handling, for brevity (see getting started)
-
     // tag::datatype_mutable_array-create[]
     // Create a new mutable array and populate data into the array
     FLMutableArray phones = FLMutableArray_New();
@@ -946,36 +932,31 @@ static void datatype_usage() {
     // tag::datatype_usage_populate[]
     // Initialize and populate the document
 
-    // Add document type to document properties <.>
+        // Add document type and hotel name as string
     FLMutableDict_SetString(properties, FLSTR("type"), FLSTR("hotel"));
-
-    // Add hotel name string to document properties <.>
     FLMutableDict_SetString(properties, FLSTR("hotel"), FLSTR(""));
 
-    // Add float to document properties <.>
+    // Add average room rate (float)
     FLMutableDict_SetFloat(properties, FLSTR("room_rate"), 121.75f);
 
-    // Add dictionary to document's properties <.>
+    // Add address (dictionary)
     FLMutableDict_SetDict(properties, FLSTR("address"), dict);
 
-    // Add array to document's properties <.>
+        // Add phone numbers(array)
     FLMutableDict_SetArray(properties, FLSTR("phones"), phones);
 
     // end::datatype_usage_populate[]
     // tag::datatype_usage_persist[]
-    // Save the document changes <.>
     CBLError err;
     CBLDatabase_SaveDocument(database, doc, &err);
 
     // end::datatype_usage_persist[]
     // tag::datatype_usage_closedb[]
-    // Close the database <.>
     CBLError err;
     CBLDatabase_Close(database, &err);
 
     // end::datatype_usage_closedb[]
     // tag::datatype_usage_release[]
-    // Release the created items <.>
     CBLDatabase_Release(database);
     CBLDocument_Release(doc);
     FLMutableDict_Release(dict);
@@ -1102,8 +1083,6 @@ static void select_and_access_all() {
         FLSTR("SELECT * FROM _"), NULL, &err);
 
     // tag::query-access-all[]
-    // NOTE: No error handling, for brevity (see getting started)
-
     CBLResultSet* results = CBLQuery_Execute(query, &err);
     while(CBLResultSet_Next(results)) {
         FLDict dict = FLValue_AsDict(CBLResultSet_ValueForKey(results, FLSTR("_")));
@@ -1416,8 +1395,6 @@ static void query_result_json() {
         NULL, &err);
 
     // tag::query-access-json[]
-    // NOTE: No error handling, for brevity (see getting started)
-
     CBLResultSet* results = CBLQuery_Execute(query, &err);
     while(CBLResultSet_Next(results)) {
         FLDict result = CBLResultSet_ResultDict(results);

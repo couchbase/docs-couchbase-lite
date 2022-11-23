@@ -179,12 +179,12 @@ class SampleCodeTest {
         // end::date-getter[]
 
         // tag::to-dictionary[]
-        print(newTask.toDictionary())  // <.>
+        print(newTask.toDictionary())
 
         // end::to-dictionary[]
 
         // tag::to-json[]
-        print(newTask.toJSON()) // <.>
+        print(newTask.toJSON())
 
         // end::to-json[]
 
@@ -739,12 +739,12 @@ class SampleCodeTest {
     func dontTestToJsonArrayObject() throws {
         // demonstrate use of JSON string
         // tag::tojson-array[]
-        if let doc = database.document(withID: "1000") {// <.>
+        if let doc = database.document(withID: "1000") {
             guard let array = doc.array(forKey: "list") else {
                 return
             }
 
-            let json = array.toJSON() // <.>
+            let json = array.toJSON()
             print(json)
         }
         // end::tojson-array[]
@@ -753,12 +753,12 @@ class SampleCodeTest {
     func dontTestToJsonDictionary() throws {
         // demonstrate use of JSON string
         // tag::tojson-dictionary[]
-        if let doc = database.document(withID: "1000") {// <.>
+        if let doc = database.document(withID: "1000") {
             guard let dictionary = doc.dictionary(forKey: "dictionary") else {
                 return
             }
 
-            let json = dictionary.toJSON() // <.>
+            let json = dictionary.toJSON()
             print(json)
         }
         // end::tojson-dictionary[]
@@ -790,12 +790,12 @@ class SampleCodeTest {
     func dontTestBlobToJSON() throws {
         // tag::tojson-blob[]
         // Get a document
-        if let doc = database.document(withID: "1000") {// <.>
+        if let doc = database.document(withID: "1000") {
             guard let blob = doc.blob(forKey: "avatar") else {
                 return
             }
 
-            let json = blob.toJSON() // <.>
+            let json = blob.toJSON()
             print(json)
         }
         // end::tojson-blob[]
@@ -1408,13 +1408,13 @@ class SampleCodeTest {
         for row in  results {
 
             // get the result into a JSON String
-            let jsonString = row.toJSON() // <.>
+            let jsonString = row.toJSON()
 
             let thisJsonObj:Dictionary =
             try (JSONSerialization.jsonObject(
                 with: jsonString.data(using: .utf8)!,
                 options: .allowFragments)
-                 as? [String: Any])! // <.>
+                 as? [String: Any])!
 
             // Use Json Object to populate Native object
             // Use Codable class to unpack JSON data to native object
@@ -2628,29 +2628,25 @@ public class Supporting_Datatypes
         // tag::datatype_usage_populate[]
         // Initialize and populate the document
 
-        // Add document type to document properties <.>
+        // Add document type and hotel name as string
         mutableDoc.setString("hotel", forKey:"type");
-
-        // Add hotel name string to document properties <.>
         mutableDoc.setString("Hotel Java Mo", forKey:"name");
 
-        // Add float to document properties <.>
+        // Add average room rate (float)
         mutableDoc.setFloat(121.75, forKey:"room_rate");
 
-        // Add dictionary to document's properties <.>
+        // Add address (dictionary)
         mutableDoc.setDictionary(address, forKey: "address");
 
-        // Add array to document's properties <.>
+        // Add phone numbers(array)
         mutableDoc.setArray(phones, forKey:"phones");
 
         // end::datatype_usage_populate[]
         // tag::datatype_usage_persist[]
-        // Save the document changes <.>
         try!database.saveDocument(mutableDoc);
 
         // end::datatype_usage_persist[]
         // tag::datatype_usage_closedb[]
-        // Close the database <.>
         do {
             try database.close()
         } catch {
@@ -2695,8 +2691,6 @@ public class Supporting_Datatypes
         var database = try!Database(name: "mydb");
 
         // tag::datatype_mutable_dictionary[]
-        // NOTE: No error handling, for brevity (see getting started)
-
         // Create a new mutable dictionary and populate some keys/values
         var mutable_dict = MutableDictionaryObject();
         mutable_dict.setString("1 Main st.", forKey: "street");
@@ -2716,7 +2710,6 @@ public class Supporting_Datatypes
         let database = try!Database(name: "mydb");
 
         // tag::datatype_array[]
-        // NOTE: No error handling, for brevity (see getting started)
         let document = database.document(withID:"doc1");
 
         // Getting a phones array from the document's properties
@@ -2744,8 +2737,6 @@ public class Supporting_Datatypes
         var database = try!Database(name: "mydb");
 
         // tag::datatype_mutable_array[]
-        // NOTE: No error handling, for brevity (see getting started)
-
         // Create a new mutable array and populate data into the array
         var mutable_array = MutableArrayObject();
         mutable_array.addString("650-000-0000");
