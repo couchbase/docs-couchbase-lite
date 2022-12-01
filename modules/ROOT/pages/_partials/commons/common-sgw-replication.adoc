@@ -30,9 +30,31 @@ Your application runs a replicator (also referred to here as a client), which  w
 
 Subsequent sections provide additional details and examples for the main configuration options.
 
+== Replication Concepts
+
+Couchbase Lite allows for one database for each application running on the mobile device.
+This database can contain one or more scopes.
+Each scope can contain one or more collections.
+
+To learn about Scopes and Collections, see xref:{param-module}:database.adoc[]
+
+You can set up a replication scheme across any of the three data levels:
+
+Database:: All scopes and collections in the database are synced,
+including the `_default` scope and the `_default` collection.
+
+Scope:: All the collections in a named scope.
+
+Collection:: A specific collection in a scope.
+
+As part of the syncing setup, the Gateway has to map the Couchbase Lite database to the database being synced against on Capella. These mappings can be `implicit` or `explicit`.
+
+=== Implicit Mapping
+This will sync between databases that share the same keyspace names.
+
+
 
 == Replication Protocol
-
 
 === Scheme
 
