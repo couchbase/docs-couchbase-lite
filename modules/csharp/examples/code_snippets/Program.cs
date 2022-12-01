@@ -56,26 +56,28 @@ namespace api_walkthrough
 
             // Get the database (and create it if it doesn't exist)
             var database = new Database("mydb");
+            var collection = database.GetDefaultCollection();
+            
             // Create a new document (i.e. a record) in the database
             string id = null;
-            using (var mutableDoc = new MutableDocument())
+            using (var mutable_doc = new MutableDocument())
             {
-                mutableDoc.SetFloat("version", 2.0f)
+                mutable_doc.SetFloat("version", 2.0f)
                     .SetString("type", "SDK");
 
                 // Save it to the database
-                database.Save(mutableDoc);
+                collection.Save(mutableDoc);
                 id = mutableDoc.Id;
             }
 
             // Update a document
-            using (var doc = database.GetDocument(id))
-            using (var mutableDoc = doc.ToMutable())
+            using (var doc = collection.GetDocument(id))
+            using (var mutable_doc = doc.ToMutable())
             {
-                mutableDoc.SetString("language", "C#");
-                database.Save(mutableDoc);
+                mutable_doc.SetString("language", "C#");
+                collection.Save(mutableDoc);
 
-                using (var docAgain = database.GetDocument(id))
+                using (var docAgain = collection.GetDocument(id))
                 {
                     Console.WriteLine($"Document ID :: {docAgain.Id}");
                     Console.WriteLine($"Learning {docAgain.GetString("language")}");
@@ -85,7 +87,7 @@ namespace api_walkthrough
             // Create a query to fetch documents of type SDK
             // i.e. SELECT * FROM database WHERE type = "SDK"
             using (var query = QueryBuilder.Select(SelectResult.All())
-                .From(DataSource.Database(database))
+                .From(DataSource.Collection(collection))
                 .Where(Expression.Property("type").EqualTo(Expression.String("SDK"))))
             {
                 // Run the query
@@ -134,10 +136,10 @@ namespace api_walkthrough
         private static void TestSaveWithConflictHandler()
         {
             // tag::update-document-with-conflict-handler[]
-            using (var document = database.GetDocument("xyz"))
-            using (var mutableDocument = document.ToMutable()) {
-                mutableDocument.SetString("name", "apples");
-                database.Save(mutableDocument, (updated, current) =>
+            using (var doc = collection.GetDocument("xyz"))
+            using (var mutable_doc = document.ToMutable()) {
+                mutable_doc.SetString("name", "apples");
+                collection.Save(mutableDocument, (updated, current) =>
                 {
                     var currentDict = current.ToDictionary();
                     var newDict = updated.ToDictionary();
@@ -403,9 +405,9 @@ namespace api_walkthrough
         private static void Read1xAttachment()
         {
             var db = _Database;
-            using (var document = new MutableDocument()) {
+            using (var doc = new MutableDocument()) {
                 // tag::1x-attachment[]
-                var attachments = document.GetDictionary("_attachments");
+                var attachments = doc.GetDictionary("_attachments");
                 var avatar = attachments.GetBlob("avatar");
                 var content = avatar?.Content;
                 // end::1x-attachment[]
@@ -475,7 +477,7 @@ namespace api_walkthrough
                     .SetString("owner", "todo")
                     .SetDate("createdAt", DateTimeOffset.UtcNow);
 
-                db.Save(newTask);
+                collection.Save(newTask);
             }
             // end::initializer[]
         }
@@ -484,10 +486,10 @@ namespace api_walkthrough
         {
             var db = _Database;
             // tag::update-document[]
-            using(var document = db.GetDocument("xyz"))
-            using (var mutableDocument = document.ToMutable()) {
-                mutableDocument.SetString("name", "apples");
-                db.Save(mutableDocument);
+            using(var doc = collection.GetDocument("xyz"))
+            using (var mutable_doc = document.ToMutable()) {
+                mutable_doc.SetString("name", "apples");
+                collection.Save(mutable_document);
             }
             // end::update-document[]
         }
@@ -515,7 +517,7 @@ namespace api_walkthrough
                         doc.SetString("type", "user");
                         doc.SetString("name", $"user {i}");
                         doc.SetBoolean("admin", false);
-                        db.Save(doc);
+                        collection.Save(doc);
                         Console.WriteLine($"Saved user document {doc.GetString("name")}");
                     }
                 }
@@ -528,9 +530,9 @@ namespace api_walkthrough
             var db = _Database;
 
             // tag::document-listener[]
-            db.AddDocumentChangeListener("user.john", (sender, args) =>
+            collection.AddDocumentChangeListener("user.john", (sender, args) =>
             {
-                using (var doc = Db.GetDocument(args.DocumentID)) {
+                using (var doc = collection.GetDocument(args.DocumentID)) {
                     Console.WriteLine($"Status :: {doc.GetString("verified_account")}");
                 }
             });
@@ -544,16 +546,16 @@ namespace api_walkthrough
             // tag::document-expiration[]
             // Purge the document one day from now
             var ttl = DateTimeOffset.UtcNow.AddDays(1);
-            db.SetDocumentExpiration("doc123", ttl);
+            collection.SetDocumentExpiration("doc123", ttl);
 
             // Reset expiration
-            db.SetDocumentExpiration("doc1", null);
+            collection.SetDocumentExpiration("doc1", null);
 
             // Query documents that will be expired in less than five minutes
             var fiveMinutesFromNow = DateTimeOffset.UtcNow.AddMinutes(5).ToUnixTimeMilliseconds();
             var query = QueryBuilder
                 .Select(SelectResult.Expression(Meta.ID))
-                .From(DataSource.Database(db))
+                .From(DataSource.Collection(collection))
                 .Where(Meta.Expiration.LessThan(Expression.Double(fiveMinutesFromNow)));
             // end::document-expiration[]
         }
@@ -567,7 +569,7 @@ namespace api_walkthrough
                 var image = File.ReadAllBytes("avatar.jpg"); // <.>
                 var blob = new Blob("image/jpeg", image); // <.>
                  newTask.SetBlob("avatar", blob); // <.>
-                db.Save(newTask);
+                collection.Save(newTask);
                 // end::blob[]
 
                 var taskBlob = newTask.GetBlob("avatar");
@@ -964,7 +966,7 @@ var query =
                     using (var doc = new MutableDocument()) {
                         doc.SetString("type", "task");
                         doc.SetString("name", task);
-                        db.Save(doc);
+                        collection.Save(doc);
                     }
                 }
             }
@@ -1201,10 +1203,10 @@ var query =
             {
                 var direction = args.IsPush ? "Push" : "Pull";
                 Console.WriteLine($"Replication type :: {direction}");
-                foreach (var document in args.Documents) {
-                    if (document.Error == null) {
-                        Console.WriteLine($"Doc ID :: {document.Id}");
-                        if (document.Flags.HasFlag(DocumentFlags.Deleted)) {
+                foreach (var doc in args.Documents) {
+                    if (doc.Error == null) {
+                        Console.WriteLine($"Doc ID :: {doc.Id}");
+                        if (doc.Flags.HasFlag(DocumentFlags.Deleted)) {
                             Console.WriteLine("Successfully replicated a deleted document");
                         }
                     } else {
@@ -2016,11 +2018,9 @@ var query =
         {
 
             // tag::tojson-document[]
-            Database this_DB = new Database("travel-sample");
-            Database newDb = new Database("ournewdb");
 
             // Get a document
-            var thisDoc = this_Db.GetDocument("hotel_10025");
+            var thisDoc = collection.GetDocument("hotel_10025");
 
             // Get document data as JSON String
             var thisDocAsJsonString = thisDoc?.ToJSON();
@@ -2052,9 +2052,9 @@ var query =
                     key, newhotel.GetValue(key));
             }
 
-            newDb.Save(newhotel);
+            collection.Save(newhotel);
 
-            var thatDoc = newDb.GetDocument("2001").ToJSON();
+            var thatDoc = collection.GetDocument("2001").ToJSON();
             System.Console.Write(thatDoc);
 
             // end::tojson-document[]
@@ -2087,7 +2087,6 @@ var query =
 
         // tag::tojson-array[]
 
-            Database dbNew = new Database(ourdbname);
 
             // JSON String -- an Array (3 elements. including embedded arrays)
             var thisJSONstring = "[{'id':'1000','type':'hotel','name':'Hotel Ted','city':'Paris','country':'France','description':'Undefined description for Hotel Ted'},{'id':'1001','type':'hotel','name':'Hotel Fred','city':'London','country':'England','description':'Undefined description for Hotel Fred'},                        {'id':'1002','type':'hotel','name':'Hotel Ned','city':'Balmain','country':'Australia','description':'Undefined description for Hotel Ned','features':['Cable TV','Toaster','Microwave']}]".Replace("'", "\"");
@@ -2106,10 +2105,11 @@ var query =
                 var dict = myArray.GetDictionary(i);
                 var docid = myArray[i].Dictionary.GetString("id");
                 var newdoc = new MutableDocument(docid, dict.ToDictionary());
+                collection.Save(newdoc);
             }
 
             // Get one of the created docs and iterate through one of the embedded arrays
-            var extendedDoc = dbNew.GetDocument("1002");
+            var extendedDoc = collection.GetDocument("1002");
             var features = extendedDoc.GetArray("features");
             
             // Print its elements
@@ -2132,7 +2132,6 @@ var query =
             {
                 Database.Delete(ourdbname, "/");
             }
-            Database dbNew = new Database(ourdbname);
 
             // tag::tojson-dictionary[]
 
@@ -2182,7 +2181,6 @@ var query =
             }
             var dbCfg = new DatabaseConfiguration();
             dbCfg.Directory=ourpath;
-            Database dbNew = new Database(ourdbname,dbCfg);
 
             // tag::tojson-blob[]
 
@@ -2211,14 +2209,14 @@ var query =
                 catch (Exception e)
                     {Console.WriteLine("Exception = {0}", e.Message);}
 
-            dbNew.Save(myDoc);
+            collection.Save(myDoc);
 
             // Alternatively -- depending on use case
-            dbNew.SaveBlob(new Blob("image/jpg", myImageUri));
+            collection.SaveBlob(new Blob("image/jpg", myImageUri));
 
 
             // Retrieve saved doc, get blob as JSON andheck its still a 'blob'
-            var sameDoc = dbNew.GetDocument(docId);
+            var sameDoc = collection.GetDocument(docId);
             var reconstitutedBlob = new MutableDictionaryObject().
                 SetDictionary("blobCOPY", new MutableDictionaryObject(sameDoc.GetBlob("avatar").ToJSON()));
 
@@ -3228,12 +3226,11 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         // tag::datatype_usage_createdb[]
         // Get the database (and create it if it doesn’t exist).
         var database = new Database("hoteldb");
+        var collection = database.GetDefaultCollection();
 
         // end::datatype_usage_createdb[]
         // tag::datatype_usage_createdoc[]
         // Create your new document
-
-        // Add the dictionary to a document's properties and save the document
         var doc = new MutableDocument("hoteldoc");
 
         // end::datatype_usage_createdoc[]
@@ -3249,7 +3246,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         // end::datatype_usage_mutdict[]
         // tag::datatype_usage_mutarray[]
         // Create and populate mutable array
-        var phones = MutableArrayObject();
+        var phones = new MutableArrayObject();
         phones.AddString("650-000-0000");
         phones.AddString("650-000-0001");
 
@@ -3262,7 +3259,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         doc.SetString("name", "Hotel Java Mo");
 
         // Add average room rate (float)
-        doc.SetFloat("room_rate", 121.75);
+        doc.SetFloat("room_rate", 121.75f);
 
         // Add address (dictionary)
         doc.SetDictionary("address", address);
@@ -3272,7 +3269,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
         // end::datatype_usage_populate[]
         // tag::datatype_usage_persist[]
-        database.Save(doc);
+        collection.Save(doc);
 
         // end::datatype_usage_persist[]
         // tag::datatype_usage_closedb[]
@@ -3291,10 +3288,10 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
           var database = new Database(name: "mydb");
 
           // tag::datatype_dictionary[]
-          var document = database.GetDocument("doc1");
+          var doc = collection.GetDocument("doc1");
 
           // Getting a dictionary from the document's properties
-          var dict = document.GetDictionary("address");
+          var dict = doc.GetDictionary("address");
 
           // Access a value with a key from the dictionary
           var street = dict.GetString("street");
@@ -3306,7 +3303,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
           }
 
           // Create a mutable copy
-          var mutDict = dict.ToMutable();
+          var mutable_dict = dict.ToMutable();
           // end::datatype_dictionary[]
       }
 
@@ -3324,7 +3321,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
           // Add the dictionary to a document's properties and save the document
           var doc = new MutableDocument("doc1");
           doc.SetDictionary("address", mutable_dict);
-          database.Save(doc);
+          collection.Save(doc);
 
           // end::datatype_mutable_dictionary[]
       }
@@ -3335,7 +3332,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
           var database = new Database("mydb");
 
           // tag::datatype_array[]
-          var document = database.GetDocument("doc1");
+          doc = collection.GetDocument("doc1");
 
           // Getting a phones array from the document's properties
           var array = document.GetArray("phones");
@@ -3372,7 +3369,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
           // Set the array to document's properties and save the document
           var doc = new MutableDocument("doc1");
           doc.SetArray("phones", mutable_array);
-          database.Save(doc);
+          collection.Save(doc);
           // end::datatype_mutable_array[]
       }
 

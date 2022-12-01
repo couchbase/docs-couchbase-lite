@@ -35,11 +35,12 @@ This ID is similar to a primary key in other databases.
 You can specify the ID programmatically.
 If you omit it, it will be automatically generated as a UUID.
 
-NOTE: the ID must be unique within the database.
+NOTE: Couchbase documents are assigned to a xref:database.adoc#database-concepts[Collection].
+The ID of a document must be unique within the Collection it is written to.
 You cannot change it after you have written the document.
 
 The document also has a value which contains the actual application data.
-This value is stored as a dictionary collection of key-value (k-v) pairs.
+This value is stored as a dictionary of key-value (k-v) pairs.
 The values can be made of up several different <<Data Types>> such as numbers, strings, arrays, and nested objects.
 
 
@@ -66,7 +67,7 @@ Always use explicit creation of the expected type, whenever the type of result i
 
 [source, Java]
 ----
-Map<String, Object> doc = db.getDocument(someDoc.getId()).toMap();
+Map<String, Object> doc = collection.getDocument(someDoc.getId()).toMap();
 Long testVal = Long.valueOf(doc.get(“test”))
 ----
 
@@ -146,6 +147,9 @@ hotel: {
 
 First open your database.
 If the database does not already exist, Couchbase Lite will create it for you.
+
+Couchbase documents are assigned to a xref:database.adoc#database-concepts[Collection].
+All the CRUD examples in this document operate on a `collection` object (here, the Default Collection).
 
 :param-tags: datatype_usage_createdb
 include::{root-partials}block_tabbed_code.adoc[]
@@ -330,9 +334,9 @@ You can use the following methods/initializers:
 
 * Use the {url-api-method-mutabledocument-initid} initializer to create a new document with a specific ID.
 
-* Use the {url-api-method-database-getdocument} method to get a document.
-If the document doesn't exist in the database, the method will return `null`.
-You can use this behavior to check if a document with a given ID already exists in the database.
+* Use the {url-api-method-collection-getdocument} method to get a document.
+If the document doesn't exist in the collection, the method will return `null`.
+You can use this behavior to check if a document with a given ID already exists in the collection.
 
 
 .Persist a document
@@ -468,6 +472,7 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
+You can set expiration for a whole Collection 
 
 [#lbl-doc-constraints]
 == Document Constraints
