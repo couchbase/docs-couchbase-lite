@@ -472,8 +472,8 @@ namespace api_walkthrough
         {
             var db = _Database;
             // tag::initializer[]
-            using (var newTask = new MutableDocument("xyz")) {
-                newTask.SetString("type", "task")
+            using (var doc = new MutableDocument("xyz")) {
+                doc.SetString("type", "task")
                     .SetString("owner", "todo")
                     .SetDate("createdAt", DateTimeOffset.UtcNow);
 
@@ -496,10 +496,10 @@ namespace api_walkthrough
 
         private static void UseTypedAccessors()
         {
-            using (var newTask = new MutableDocument()) {
+            using (var doc = new MutableDocument()) {
                 // tag::date-getter[]
-                newTask.SetValue("createdAt", DateTimeOffset.UtcNow);
-                var date = newTask.GetDate("createdAt");
+                doc.SetValue("createdAt", DateTimeOffset.UtcNow);
+                var date = doc.GetDate("createdAt");
                 // end::date-getter[]
 
                 Console.WriteLine(date);
