@@ -24,14 +24,9 @@ using Couchbase.Lite.Query;
 using Couchbase.Lite.Sync;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.NetworkInformation;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 
 namespace api_walkthrough
 {
@@ -47,8 +42,6 @@ namespace api_walkthrough
         private static Database _Database;
         private static Replicator _Replicator;
         private static URLEndpointListener _listener;
-        private static ListenerToken _ListenerToken;
-        private static bool _NeedsExtraDocs;
 
         public void GettingStarted()
         {
@@ -309,6 +302,7 @@ namespace api_walkthrough
         private static void TestClientCertAuthenticator()
         {
             var db = new Database("other-database");
+            var collection = db.GetDefaultCollection();
 
             X509Store _store = new X509Store(StoreName.My);
             TLSIdentity identity;
@@ -327,7 +321,7 @@ namespace api_walkthrough
             });
 
             // Create URL Endpoint Listener
-            var listenerConfig = new URLEndpointListenerConfiguration(db);
+            var listenerConfig = new URLEndpointListenerConfiguration(new[] { collection  });
             listenerConfig.DisableTLS = false; //The default value is false which means that the TLS will be enabled by default.
             listenerConfig.Authenticator = auth;
             _listener = new URLEndpointListener(listenerConfig);
@@ -994,7 +988,7 @@ namespace api_walkthrough
             var collection = _Database.GetDefaultCollection();
 
             // tag::fts-query_Querybuilder[]
-            var whereClause = FullTextFunction.Match("overviewFTSIndex", "'michigan'");
+            var whereClause = FullTextFunction.Match(Expression.FullTextIndex("overviewFTSIndex"), "'michigan'");
 
             using (var query = QueryBuilder.Select(SelectResult.Expression(Meta.ID))
                 .From(DataSource.Collection(collection))
@@ -1798,7 +1792,6 @@ namespace api_walkthrough
         public void P2PListenerSimple()
         {
             var collection = _Database.GetDefaultCollection();
-            var validPassword = "password";
 
             // tag::listener-simple[]
             var thisConfig = new URLEndpointListenerConfiguration(new[] { collection }); // <.>
