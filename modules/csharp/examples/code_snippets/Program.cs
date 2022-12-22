@@ -2544,3 +2544,27 @@ public class MyClass
         // end::sgw-act-rep-initialize[]
     }
 }
+
+// tag::scopes-manage-create-scope[]
+// We need to add a code sample to create a new scope
+// end::scopes-manage-create-scope[]
+
+// tag::scopes-manage-create-collection[]
+// We need to add a code sample to create a new collection in a scope
+// end::scopes-manage-create-collection[]
+
+// tag::scopes-manage-index-collection[]
+// We need to add a code sample to index a collection
+// end::scopes-manage-index-collection[]
+
+// tag::scopes-manage-drop-scope[]
+// We need to add a code sample to drop a scope
+// end::scopes-manage-drop-scope[]
+
+// tag::scopes-manage-drop-collection[]
+// We need to add a code sample to drop a collection
+// end::scopes-manage-drop-collection[]
+
+// tag::scopes-manage-list[]
+// We need to add a code sample to list scopes and collections
+// end::scopes-manage-list[]
