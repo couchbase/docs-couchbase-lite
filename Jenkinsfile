@@ -5,9 +5,19 @@ pipeline {
     }
     stages {
         stage("Validate Build") {
-            agent { label 's61113u16 (litecore)' }
-            steps {
-                sh 'jenkins/dotnet_build.sh'
+            parallel {
+                stage("Validate C#") {
+                    agent { label 's61113u16 (litecore)' }
+                    steps {
+                        sh 'jenkins/dotnet_build.sh'
+                    }
+                }
+                stage("Validate C") {
+                    agent { label 's61113u16 (litecore)' }
+                    steps {
+                        sh 'jenkins/c_build.sh 3.1.0'
+                    }
+                }
             }
         }
     }
