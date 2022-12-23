@@ -1,0 +1,101 @@
+
+
+// tag::couchbase-lite-example-structure[]
+
+[plantuml]
+----
+@startuml
+
+
+database "Couchbase Lite database" as db1 {
+
+      node "_default scope" as dfs1 {
+
+        folder "_default collection" as dfc1 {
+
+        }
+      }
+
+}
+
+database "Couchbase Lite database" as db2 {
+
+
+    node "_default scope" as dfs2 {
+
+      folder "_default collection" as dfc2 {
+
+      }
+
+        folder "Collection A" as collectionA {
+
+        }
+    }
+
+    node "Scope A" as scopeA {
+
+      folder "Collection A" as collectionA2 {
+
+      }
+
+        folder "Collection B" as collectionB {
+
+        }
+    }
+
+}
+
+collectionA2 -D[hidden]-> collectionB
+collectionA -D[hidden]-> dfc2
+@enduml
+----
+// end::couchbase-lite-example-structure[]
+
+
+
+// tag::couchbase-hierarchy[]
+[plantuml]
+----
+@startuml
+
+
+database "Database" as db
+
+rectangle "Scope" as scope
+
+folder "Collection" as collection
+
+
+
+file "Document" as document1
+file "Document" as document2
+file "Document" as document3
+
+db --> scope
+scope --> collection
+collection --> document1
+collection --> document2
+collection --> document3
+
+
+note left of scope
+
+  Maximum of 1000 per database
+  
+end note
+
+note right of collection
+
+  Maximum of 1000 per scope
+  
+end note
+
+note right of db
+
+  One database per application
+
+end note
+
+@enduml
+----
+// end::couchbase-hierarchy[]
