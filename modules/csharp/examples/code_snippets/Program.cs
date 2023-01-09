@@ -449,6 +449,41 @@ namespace api_walkthrough
             // end::close-database[]
         }
 
+        private static void CreateCollection() 
+        {
+            // tag::scopes-manage-create-collection[]
+            var collectionWithDefaultScope = _Database.CreateCollection("colA");
+            var collection = _Database.CreateCollection("colA", "scopeA"); // Scope with named scopeA will be created if it's not existed. There is no public API to create a Scope. 
+            // end::scopes-manage-create-collection[]
+        }
+
+        private static void DeleteCollection()
+        {
+            // tag::scopes-manage-drop-collection[]
+            _Database.DeleteCollection("colA", "scopeA"); // Scope with named scopeA will be deleted if there is no collections in the scope after the last collection is deleted via this API. There is no public API to remove a Scope.
+            // end::scopes-manage-drop-collection[]
+        }
+
+        /* NOTE: There is no "index a collection"
+         * If you mean create query index via Collection, you already have them
+         * tag::query-index[]
+         * tag::query-index_Querybuilder[]
+         */
+        // tag::scopes-manage-index-collection[]
+        // We need to add a code sample to index a collection
+        // end::scopes-manage-index-collection[]
+
+        private static void ListCollectionsAndScopes()
+        {
+            // tag::scopes-manage-list[]
+            // Get Scopes
+            var scopes = _Database.GetScopes();
+            // Get Collections of a Scope named scopeA
+            var scopeA = _Database.GetScope("scopeA");
+            var collectionsInScopeA = scopeA.GetCollections();
+            // end::scopes-manage-list[]
+        }
+
         private static void ChangeLogging()
         {
             // tag::logging[]
@@ -2544,27 +2579,3 @@ public class MyClass
         // end::sgw-act-rep-initialize[]
     }
 }
-
-// tag::scopes-manage-create-scope[]
-// We need to add a code sample to create a new scope
-// end::scopes-manage-create-scope[]
-
-// tag::scopes-manage-create-collection[]
-// We need to add a code sample to create a new collection in a scope
-// end::scopes-manage-create-collection[]
-
-// tag::scopes-manage-index-collection[]
-// We need to add a code sample to index a collection
-// end::scopes-manage-index-collection[]
-
-// tag::scopes-manage-drop-scope[]
-// We need to add a code sample to drop a scope
-// end::scopes-manage-drop-scope[]
-
-// tag::scopes-manage-drop-collection[]
-// We need to add a code sample to drop a collection
-// end::scopes-manage-drop-collection[]
-
-// tag::scopes-manage-list[]
-// We need to add a code sample to list scopes and collections
-// end::scopes-manage-list[]
