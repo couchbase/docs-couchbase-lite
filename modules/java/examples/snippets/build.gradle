@@ -1,5 +1,14 @@
-plugins {
-    id 'java'
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'com.bmuschko.tomcat'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
+    }
 }
 
 group 'org.example'
@@ -7,17 +16,32 @@ version '1.0-SNAPSHOT'
 
 repositories {
     maven {
-        allowInsecureProtocol = true
-        url "http://proget.build.couchbase.com/maven2/internalmaven"
+        url "https://proget.sc.couchbase.com/maven2/internalmaven"
     }
     mavenCentral()
     mavenLocal()
+    google()
 }
 
 dependencies {
     implementation 'org.jetbrains:annotations:22.0.0'
+    implementation 'com.couchbase.lite:couchbase-lite-java-ee:3+'
+    compileOnly 'androidx.annotation:annotation:1.5.0'
+    providedCompile "javax.servlet:javax.servlet-api:4.0.1"
+}
 
-    implementation 'com.couchbase.lite:couchbase-lite-java-ee:3.0.0-179'
+dependencies {
+    def tomcatVersion = '9.0.1'
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+            "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
+            "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}",
+            "com.couchbase.lite:couchbase-lite-java-ee:3+"
+}
+
+tomcat {
+    contextPath = '/'
+    httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
+    ajpProtocol  = 'org.apache.coyote.ajp.AjpNio2Protocol'
 }
 
 test {
