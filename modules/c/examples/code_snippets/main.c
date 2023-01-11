@@ -466,6 +466,43 @@ static void close_database() {
     // end::close-database[]
 }
 
+static void create_collection() {
+    CBLDatabase *db = kDatabase;
+    // tag::scopes-manage-create-collection[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLDatabase_CreateCollection(db, FLSTR("first-collection"), FLSTR("scopeA"), &err);
+    //end::scopes-manage-create-collection[]
+}
+
+// tag::scopes-manage-index-collection[]
+// We need to add a code sample to index a collection
+// end::scopes-manage-index-collection[]
+
+static void delete_collection(){
+    CBLDatabase *db = kDatabase;
+    // tag::scopes-manage-drop-collection[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLDatabase_DeleteCollection(db, FLSTR("first-collection"), FLSTR("scopeA"), &err);
+    // end::scopes-manage-drop-collection[]
+}
+
+static void list_scopes_and_collections(){
+    CBLDatabase *db = kDatabase;
+    // tag::scopes-manage-list[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    // Get Scopes
+    FLMutableArray scopes = CBLDatabase_ScopeNames(db, &err);
+    // Get Collections of a Scope named scopeA
+    FLMutableArray collections = CBLDatabase_CollectionNames(db, FLSTR("scopeA"), &err);
+    // end::scopes-manage-list[]
+}
+
 static void change_logging() {
     // tag::logging[]
     // For output to stdout
