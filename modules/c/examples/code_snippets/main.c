@@ -469,7 +469,6 @@ static void close_database() {
 static void create_collection() {
     CBLDatabase *db = kDatabase;
     // tag::scopes-manage-create-collection[]
-    // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
     CBLDatabase_CreateCollection(db, FLSTR("first-collection"), FLSTR("scopeA"), &err);
@@ -483,7 +482,6 @@ static void create_collection() {
 static void delete_collection(){
     CBLDatabase *db = kDatabase;
     // tag::scopes-manage-drop-collection[]
-    // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
     CBLDatabase_DeleteCollection(db, FLSTR("first-collection"), FLSTR("scopeA"), &err);
@@ -493,7 +491,6 @@ static void delete_collection(){
 static void list_scopes_and_collections(){
     CBLDatabase *db = kDatabase;
     // tag::scopes-manage-list[]
-    // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
     // Get Scopes
