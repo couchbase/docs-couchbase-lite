@@ -346,10 +346,11 @@ static bool custom_conflict_handler(void* context,
 }
 
 static void test_save_with_conflict_handler() {
-    CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
-
     // tag::update-document-with-conflict-handler[]
+    CBLDatabase* database = kDatabase;
+    CBLCollection* collection = CBLDatabase_DefaultCollection(database, NULL);
     CBLError err;
+    
     CBLDocument* mutableDoc = CBLCollection_GetMutableDocument(collection, FLSTR("xyz"), &err);
     FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
     FLMutableDict_SetString(properties, FLSTR("name"), FLSTR("apples"));
