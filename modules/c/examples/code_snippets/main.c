@@ -141,7 +141,7 @@ static void getting_started() {
     CBLDocument_Release(mutableDoc);
 
     // Update a document
-    mutableDoc = CBLCollection_GetmutableDoc(collection, FLSliceResult_AsSlice(id), &err);
+    mutableDoc = CBLCollection_CBLCollection_GetMutableDocument(collection, FLSliceResult_AsSlice(id), &err);
     if(!mutableDoc) {
         // Failed to retrieve, do error handling as above.  NOTE: error code 0 simply means
         // the document does not exist.
@@ -346,13 +346,11 @@ static bool custom_conflict_handler(void* context,
 }
 
 static void test_save_with_conflict_handler() {
-    CBLDatabase* database = kDatabase;
+    CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::update-document-with-conflict-handler[]
-    // NOTE: No error handling, for brevity (see getting started)
-
     CBLError err;
-    CBLDocument* mutableDoc = CBLDatabase_GetmutableDoc(database, FLSTR("xyz"), &err);
+    CBLDocument* mutableDoc = CBLCollection_GetMutableDocument(collection, FLSTR("xyz"), &err);
     FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
     FLMutableDict_SetString(properties, FLSTR("name"), FLSTR("apples"));
 
@@ -378,7 +376,7 @@ static void test_save_with_conflict_handler() {
         return true;
     }
     */
-    CBLDatabase_SaveDocumentWithConflictHandler(database, mutableDoc, custom_conflict_handler, NULL, &err);
+    CBLCollection_SaveDocumentWithConflictHandler(collection, mutableDoc, custom_conflict_handler, NULL, &err);
 
     // end::update-document-with-conflict-handler[]
 }
@@ -539,7 +537,7 @@ static void update_document() {
     // tag::update-document[]
 
     CBLError err;
-    CBLDocument* mutableDoc = CBLCollection_GetmutableDoc(collection, FLSTR("xyz"), &err);
+    CBLDocument* mutableDoc = CBLCollection_CBLCollection_GetMutableDocument(collection, FLSTR("xyz"), &err);
     FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
     FLMutableDict_SetString(properties, FLSTR("name"), FLSTR("apples"));
     CBLCollection_SaveDocument(collection, mutableDoc, &err);
