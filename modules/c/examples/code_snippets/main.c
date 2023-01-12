@@ -141,7 +141,7 @@ static void getting_started() {
     CBLDocument_Release(mutableDoc);
 
     // Update a document
-    mutableDoc = CBLCollection_GetMutableDocument(collection, FLSliceResult_AsSlice(id), &err);
+    mutableDoc = CBLCollection_GetmutableDoc(collection, FLSliceResult_AsSlice(id), &err);
     if(!mutableDoc) {
         // Failed to retrieve, do error handling as above.  NOTE: error code 0 simply means
         // the document does not exist.
@@ -352,8 +352,8 @@ static void test_save_with_conflict_handler() {
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
-    CBLDocument* mutableDocument = CBLDatabase_GetMutableDocument(database, FLSTR("xyz"), &err);
-    FLMutableDict properties = CBLDocument_MutableProperties(mutableDocument);
+    CBLDocument* mutableDoc = CBLDatabase_GetmutableDoc(database, FLSTR("xyz"), &err);
+    FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
     FLMutableDict_SetString(properties, FLSTR("name"), FLSTR("apples"));
 
     /*
@@ -378,7 +378,7 @@ static void test_save_with_conflict_handler() {
         return true;
     }
     */
-    CBLDatabase_SaveDocumentWithConflictHandler(database, mutableDocument, custom_conflict_handler, NULL, &err);
+    CBLDatabase_SaveDocumentWithConflictHandler(database, mutableDoc, custom_conflict_handler, NULL, &err);
 
     // end::update-document-with-conflict-handler[]
 }
@@ -518,10 +518,9 @@ static void create_document() {
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::initializer[]
-    // NOTE: No error handling, for brevity (see getting started)
 
-    CBLDocument* newTask = CBLDocument_CreateWithID(FLSTR("xyz"));
-    FLMutableDict properties = CBLDocument_MutableProperties(newTask);
+    CBLDocument* doc = CBLDocument_CreateWithID(FLSTR("xyz"));
+    FLMutableDict properties = CBLDocument_MutableProperties(doc);
     FLMutableDict_SetString(properties, FLSTR("type"), FLSTR("task"));
     FLMutableDict_SetString(properties, FLSTR("owner"), FLSTR("todo"));
 
@@ -529,8 +528,8 @@ static void create_document() {
     FLMutableDict_SetUInt(properties, FLSTR("createdAt"), time(NULL) * 1000);
 
     CBLError err;
-    CBLCollection_SaveDocument(collection, newTask, &err);
-    CBLDocument_Release(newTask);
+    CBLCollection_SaveDocument(collection, doc, &err);
+    CBLDocument_Release(doc);
     // end::initializer[]
 }
 
@@ -538,14 +537,13 @@ static void update_document() {
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::update-document[]
-    // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
-    CBLDocument* mutableDocument = CBLCollection_GetMutableDocument(collection, FLSTR("xyz"), &err);
-    FLMutableDict properties = CBLDocument_MutableProperties(mutableDocument);
+    CBLDocument* mutableDoc = CBLCollection_GetmutableDoc(collection, FLSTR("xyz"), &err);
+    FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
     FLMutableDict_SetString(properties, FLSTR("name"), FLSTR("apples"));
-    CBLCollection_SaveDocument(collection, mutableDocument, &err);
-    CBLDocument_Release(mutableDocument);
+    CBLCollection_SaveDocument(collection, mutableDoc, &err);
+    CBLDocument_Release(mutableDoc);
     // end::update-document[]
 }
 
@@ -556,7 +554,6 @@ static void do_batch_operation() {
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::batch[]
-    // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
     CBLDatabase_BeginTransaction(database, &err);
@@ -616,7 +613,6 @@ static void document_expiration() {
 
     // Overly simplistic for example purposes
     // NOTE: API takes milliseconds
-    // NOTE: No error handling, for brevity (see getting started)
     time_t ttl = time(NULL) + 24 * 60 * 60;
     ttl *= 1000;
 
@@ -908,10 +904,13 @@ static void datatype_usage() {
     // Open or create DB if it doesn't exist
     CBLError err;
     CBLDatabase* database = CBLDatabase_Open(FLSTR("mydb"), NULL, &err);
+    
     if(!database) {
-        // NOTE: No error handling, for brevity (see getting started)
         return;
     }
+
+    // Get default collections
+    CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // end::datatype_usage_createdb[]
     // tag::datatype_usage_createdoc[]
@@ -958,7 +957,7 @@ static void datatype_usage() {
     {
     // tag::datatype_usage_persist[]
     CBLError err;
-    CBLDatabase_SaveDocument(database, mutableDoc, &err);
+    CBLCollection_SaveDocument(collection, mutableDoc, &err);
     // end::datatype_usage_persist[]
     }
 
