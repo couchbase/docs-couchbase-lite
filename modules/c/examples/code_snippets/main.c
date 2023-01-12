@@ -137,11 +137,11 @@ static void getting_started() {
     // Since we will release the document, make a copy of the ID since it
     // is an internal pointer.  Whenever we create or get an FLSliceResult
     // or FLStringResult we will need to free it later too!
-    FLStringResult id = FLSlice_Copy(CBLDocument_ID(mutableDoc));
+    FLString id = CBLDocument_ID(mutableDoc);
     CBLDocument_Release(mutableDoc);
 
     // Update a document
-    mutableDoc = CBLCollection_CBLCollection_GetMutableDocument(collection, FLSliceResult_AsSlice(id), &err);
+    mutableDoc = CBLCollection_GetMutableDocument(collection, id, &err);
     if(!mutableDoc) {
         // Failed to retrieve, do error handling as above.  NOTE: error code 0 simply means
         // the document does not exist.
@@ -156,7 +156,7 @@ static void getting_started() {
     }
 
     // Note const here, means readonly
-    const CBLDocument* docAgain = CBLCollection_GetDocument(collection, FLSliceResult_AsSlice(id), &err);
+    const CBLDocument* docAgain = CBLCollection_GetDocument(collection, id, &err);
     if(!docAgain) {
         // Failed to retrieve, do error handling as above.  NOTE: error code 0 simply means
         // the document does not exist.
@@ -172,7 +172,6 @@ static void getting_started() {
 
     CBLDocument_Release(mutableDoc);
     CBLDocument_Release(docAgain);
-    FLSliceResult_Release(id);
 
     // tag::query-syntax-n1ql[]
     // Create a query to fetch documents of type SDK
@@ -538,7 +537,7 @@ static void update_document() {
     // tag::update-document[]
 
     CBLError err;
-    CBLDocument* mutableDoc = CBLCollection_CBLCollection_GetMutableDocument(collection, FLSTR("xyz"), &err);
+    CBLDocument* mutableDoc = CBLCollection_GetMutableDocument(collection, FLSTR("xyz"), &err);
     FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
     FLMutableDict_SetString(properties, FLSTR("name"), FLSTR("apples"));
     CBLCollection_SaveDocument(collection, mutableDoc, &err);
