@@ -221,7 +221,7 @@ class SampleCodeTest {
             }
         }
         // end::document-listener[]
-        print(token) // to avoid the warning!
+        token.remove()
     }
 
     func dontTestDocumentExpiration() throws {
@@ -572,10 +572,9 @@ class SampleCodeTest {
     }
 
     func dontTestJoin() throws {
-        guard let collection = try self.database.defaultCollection() else {
-            fatalError("For sample code snippet, collection should be present!")
-        }
         // tag::query-join[]
+        guard let airlines = try self.database.collection(name: "airlines") else { return }
+        guard let routes = try self.database.collection(name: "routes") else { return }
         let query = QueryBuilder
             .select(
                 SelectResult.expression(Expression.property("name").from("airline")),
@@ -585,10 +584,10 @@ class SampleCodeTest {
                 SelectResult.expression(Expression.property("airline").from("route"))
             )
             .from(
-                DataSource.collection(collection).as("airline")
+                DataSource.collection(airlines).as("airline")
             )
             .join(
-                Join.join(DataSource.collection(collection).as("route"))
+                Join.join(DataSource.collection(routes).as("route"))
                     .on(
                         Meta.id.from("airline")
                             .equalTo(Expression.property("airlineid").from("route"))
