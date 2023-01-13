@@ -1401,11 +1401,13 @@
 }
 
 - (void) dontTestGettingStarted {
-    CBLCollection *collection = [self.database defaultCollection:nil];
     // tag::getting-started[]
     // Get the database (and create it if it doesn’t exist).
     NSError *error;
     self.database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
+    CBLCollection *collection = [self.database createCollectionWithName:@"mycol"
+                                                                  scope:@"myscope"
+                                                                  error:&error];
 
     // Create a new document (i.e. a record) in the database.
     CBLMutableDocument *mutableDoc = [[CBLMutableDocument alloc] init];
