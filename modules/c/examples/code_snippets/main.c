@@ -755,6 +755,21 @@ static void array_json() {
     // end::tojson-array[]
 }
 
+static void blob_json() {
+    // tag::tojson-blob[]
+    const char *content = "This is the content of blob 1.";
+    const size_t bufferSize = strlen(content);
+    char buffer[bufferSize];
+    FLSliceResult contentSlice = FLSliceResult_CreateWith(content, bufferSize);
+
+    CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("text/plain"), FLSliceResult_AsSlice(contentSlice));
+    FLSliceResult_Release(contentSlice);
+    // Blob to json
+    FLStringResult json = CBLBlob_CreateJSON(blob);
+    CBLBlob_Release(blob);
+    // end::tojson-blob[]
+}
+
 static void datatype_dictionary()
 {
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
