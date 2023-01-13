@@ -466,6 +466,49 @@ static void close_database() {
     // end::close-database[]
 }
 
+static void create_collection() {
+    CBLDatabase *db = kDatabase;
+    // tag::scopes-manage-create-collection[]
+
+    CBLError err;
+    CBLDatabase_CreateCollection(db, FLSTR("collA"), FLSTR("scopeA"), &err);
+    //end::scopes-manage-create-collection[]
+}
+
+// tag::scopes-manage-index-collection[]
+// We need to add a code sample to index a collection
+// end::scopes-manage-index-collection[]
+
+static void delete_collection(){
+    CBLDatabase *db = kDatabase;
+    // tag::scopes-manage-drop-collection[]
+
+    CBLError err;
+    CBLDatabase_DeleteCollection(db, FLSTR("collA"), FLSTR("scopeA"), &err);
+    // end::scopes-manage-drop-collection[]
+}
+
+static void list_scopes_and_collections(){
+    CBLDatabase *db = kDatabase;
+    // tag::scopes-manage-list[]
+
+    CBLError err;
+    
+    // Get Scopes
+    FLMutableArray scopes = CBLDatabase_ScopeNames(db, &err);
+    // Get default Scope
+    CBLScope *scope = CBLDatabase_DefaultScope(db, &err);
+    // Get specific Scope named scopeA
+    CBLScope *scopeA = CBLDatabase_Scope(db, FLSTR("scopeA"), &err);
+    // Get Collections of a specific Scope named scopeA
+    FLMutableArray collections = CBLDatabase_CollectionNames(db, FLSTR("scopeA"), &err);
+    // Get default Collection
+    CBLCollection *collection = CBLDatabase_DefaultCollection(db, &err);
+    // Get specific Collection named collA of a specific Scope named scopeA
+    CBLCollection *collA = CBLDatabase_Collection(db, FLSTR("collA"), FLSTR("scopeA"), &err);
+    // end::scopes-manage-list[]
+}
+
 static void change_logging() {
     // tag::logging[]
     // For output to stdout
