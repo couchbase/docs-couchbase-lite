@@ -269,11 +269,11 @@
     CBLCollection *collection = [self.database defaultCollection:&error];
 
     // tag::initializer[]
-    CBLMutableDocument *newTask = [[CBLMutableDocument alloc] init];
-    [newTask setString:@"task" forKey:@"task"];
-    [newTask setString:@"todo" forKey:@"owner"];
-    [newTask setString:@"task" forKey:@"createdAt"];
-    [collection saveDocument:newTask error:&error];
+    CBLMutableDocument *doc = [[CBLMutableDocument alloc] init];
+    [doc setString:@"task" forKey:@"task"];
+    [doc setString:@"todo" forKey:@"owner"];
+    [doc setString:@"task" forKey:@"createdAt"];
+    [collection saveDocument:doc error:&error];
     // end::initializer[]
 }
 
@@ -282,19 +282,19 @@
     CBLCollection *collection = [self.database defaultCollection:&error];
 
     // tag::update-document[]
-    CBLDocument *document = [collection documentWithID:@"xyz" error:&error];
-    CBLMutableDocument *mutableDocument = [document toMutable];
+    CBLDocument *doc = [collection documentWithID:@"xyz" error:&error];
+    CBLMutableDocument *mutableDocument = [doc toMutable];
     [mutableDocument setString:@"apples" forKey:@"name"];
     [collection saveDocument:mutableDocument error:&error];
     // end::update-document[]
 }
 
 - (void) dontTestTypedAcessors {
-    CBLMutableDocument *newTask = [[CBLMutableDocument alloc] init];
+    CBLMutableDocument *doc = [[CBLMutableDocument alloc] init];
 
     // tag::date-getter[]
-    [newTask setValue:[NSDate date] forKey:@"createdAt"];
-    NSDate *date = [newTask dateForKey:@"createdAt"];
+    [doc setValue:[NSDate date] forKey:@"createdAt"];
+    NSDate *date = [doc dateForKey:@"createdAt"];
     // end::date-getter[]
 
     NSLog(@"Date:%@", date);
@@ -373,10 +373,10 @@
     NSError *error;
     CBLCollection *collection = [self.database defaultCollection:&error];
     // tag::datatype_dictionary[]
-    CBLDocument *document = [collection documentWithID:@"doc1" error:&error];
+    CBLDocument *doc = [collection documentWithID:@"doc1" error:&error];
 
     // Getting a dictionary value from the document
-    CBLDictionary *dict = [document dictionaryForKey:@"address"];
+    CBLDictionary *dict = [doc dictionaryForKey:@"address"];
 
     // Access a value from the dictionary
     NSString *street = [dict stringForKey:@"street"];
@@ -404,10 +404,10 @@
     [dict setString:@"San Francisco" forKey:@"city"];
 
     // Set the dictionary to a document and save the document
-    CBLMutableDocument *document = [[CBLMutableDocument alloc] init];
-    [document setDictionary:dict forKey:@"address"];
+    CBLMutableDocument *doc = [[CBLMutableDocument alloc] init];
+    [doc setDictionary:dict forKey:@"address"];
     NSError *error;
-    [collection saveDocument:document error:&error];
+    [collection saveDocument:doc error:&error];
     // end::datatype_mutable_dictionary[]
 }
 
@@ -415,10 +415,10 @@
     CBLCollection *collection = [self.database defaultCollection:nil];
     // tag::datatype_array[]
     NSError *error;
-    CBLDocument *document = [collection documentWithID:@"doc1" error:&error];
+    CBLDocument *doc = [collection documentWithID:@"doc1" error:&error];
 
     // Getting an array value from the document
-    CBLArray *array = [document arrayForKey:@"phones"];
+    CBLArray *array = [doc arrayForKey:@"phones"];
 
     // Get element count
     NSUInteger count = array.count;
@@ -450,19 +450,20 @@
     [array addString:@"650-000-0001"];
 
     // Set the array to a document and save the document
-    CBLMutableDocument *document = [[CBLMutableDocument alloc] init];
-    [document setArray:array forKey:@"address"];
+    CBLMutableDocument *doc = [[CBLMutableDocument alloc] init];
+    [doc setArray:array forKey:@"address"];
     NSError *error;
-    [collection saveDocument:document error:&error];
+    [collection saveDocument:doc error:&error];
     // end::datatype_mutable_array[]
 }
 
 - (void) dontTestBatchOperations {
     NSError *error;
     CBLCollection *collection = [self.database defaultCollection:nil];
-
+    CBLDatabase* database = self.database;
+    
     // tag::batch[]
-    [self.database inBatch:&error usingBlock:^{
+    [database inBatch:&error usingBlock:^{
         for (int i = 0; i < 10; i++) {
             CBLMutableDocument *doc = [[CBLMutableDocument alloc] init];
             [doc setValue:@"user" forKey:@"type"];
@@ -482,8 +483,8 @@
     // tag::document-listener[]
     [collection addDocumentChangeListenerWithID:@"user.john" listener:^(CBLDocumentChange  *change) {
         NSError *error;
-        CBLDocument *document = [wCollection documentWithID:change.documentID error:&error];
-        NSLog(@"Status ::%@)", [document stringForKey:@"verified_account"]);
+        CBLDocument *doc = [wCollection documentWithID:change.documentID error:&error];
+        NSLog(@"Status ::%@)", [doc stringForKey:@"verified_account"]);
     }];
     // end::document-listener[]
 }
@@ -537,10 +538,10 @@
 }
 
 - (void) dontTest1xAttachment {
-    CBLMutableDocument *document = [[CBLMutableDocument alloc] initWithID:@"task1"];
+    CBLMutableDocument *doc = [[CBLMutableDocument alloc] initWithID:@"task1"];
 
     // tag::1x-attachment[]
-    CBLDictionary *attachments = [document dictionaryForKey:@"_attachments"];
+    CBLDictionary *attachments = [doc dictionaryForKey:@"_attachments"];
     CBLBlob *avatar = [attachments blobForKey:@"avatar"];
     NSData *content = [avatar content];
     // end::1x-attachment[]
@@ -549,6 +550,20 @@
 }
 
 #pragma mark - Query
+
+- (void) dontTestQueryGetAll {
+    NSError *error;
+    // tag::query-get-all[] 
+    CBLCollection *collection = [self.database createCollectionWithName:@"hotel"
+                                                                  scope:nil
+                                                                  error:&error];
+    CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult expression:[CBLQueryMeta id]
+                                                                              as:@"metaId"]]
+                                         from:[CBLQueryDataSource collection:collection]];
+    
+    // end::query-get-all[]
+    NSLog(@"query explain: %@", [query explain: &error]);
+}
 
 - (void) dontTestIndexing {
     NSError *error;
@@ -1200,10 +1215,10 @@
     // tag::add-document-replication-listener[]
     id token = [self.replicator addDocumentReplicationListener:^(CBLDocumentReplication  *replication) {
         NSLog(@"Replication type ::%@", replication.isPush ? @"Push" :@"Pull");
-        for (CBLReplicatedDocument *document in replication.documents) {
-            if (document.error == nil) {
-                NSLog(@"Doc ID ::%@", document.id);
-                if ((document.flags & kCBLDocumentFlagsDeleted) == kCBLDocumentFlagsDeleted) {
+        for (CBLReplicatedDocument *doc in replication.documents) {
+            if (doc.error == nil) {
+                NSLog(@"Doc ID ::%@", doc.id);
+                if ((doc.flags & kCBLDocumentFlagsDeleted) == kCBLDocumentFlagsDeleted) {
                     NSLog(@"Successfully replicated a deleted document");
                 }
             } else {
@@ -1287,8 +1302,8 @@
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
     
     CBLCollectionConfiguration *collectionConfig = [[CBLCollectionConfiguration alloc] init];
-    collectionConfig.pushFilter = ^BOOL(CBLDocument *document, CBLDocumentFlags flags) { // <1>
-        if ([[document stringForKey:@"type"] isEqualToString:@"draft"]) {
+    collectionConfig.pushFilter = ^BOOL(CBLDocument *doc, CBLDocumentFlags flags) { // <1>
+        if ([[doc stringForKey:@"type"] isEqualToString:@"draft"]) {
             return false;
         }
         return true;
@@ -1310,7 +1325,7 @@
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
     
     CBLCollectionConfiguration *collectionConfig = [[CBLCollectionConfiguration alloc] init];
-    collectionConfig.pullFilter = ^BOOL(CBLDocument *document, CBLDocumentFlags flags) { // <1>
+    collectionConfig.pullFilter = ^BOOL(CBLDocument *doc, CBLDocumentFlags flags) { // <1>
         if ((flags & kCBLDocumentFlagsDeleted) == kCBLDocumentFlagsDeleted) {
             return false;
         }
@@ -1422,11 +1437,11 @@
     [mutableDoc2 setString:@"Swift" forKey:@"language"];
     [collection saveDocument:mutableDoc2 error:&error];
 
-    CBLDocument *document = [collection documentWithID:mutableDoc2.id error:&error];
+    CBLDocument *doc = [collection documentWithID:mutableDoc2.id error:&error];
     // Log the document ID (generated by the database)
     // and properties
-    NSLog(@"Document ID ::%@", document.id);
-    NSLog(@"Learning %@", [document stringForKey:@"language"]);
+    NSLog(@"Document ID ::%@", doc.id);
+    NSLog(@"Learning %@", [doc stringForKey:@"language"]);
 
     // Create a query to fetch documents of type SDK.
     CBLQueryExpression *type = [[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"SDK"]];
@@ -1557,8 +1572,8 @@
     CBLCollection *collection = [self.database defaultCollection:nil];
 
     // tag::update-document-with-conflict-handler[]
-    CBLDocument *document = [collection documentWithID:@"xyz" error:&error];
-    CBLMutableDocument *mutableDocument = [document toMutable];
+    CBLDocument *doc = [collection documentWithID:@"xyz" error:&error];
+    CBLMutableDocument *mutableDocument = [doc toMutable];
     [mutableDocument setString:@"apples" forKey:@"name"];
 
     [collection saveDocument:mutableDocument
@@ -2305,19 +2320,19 @@
     NSError *error = nil;
     // Example 6. Dictionaries as JSON strings
     // tag::tojson-dictionary[]
-    NSString *aJSONstring = @"{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\","
+    NSString *json = @"{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\","
     "\"city\":\"Balmain\",\"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\"}";
-
-
-    CBLMutableDictionary *myDict = [[CBLMutableDictionary alloc] initWithJSON:aJSONstring
-                                                                        error:&error];
-
-    NSString *name = [myDict stringForKey:@"name"];
-
-    for (NSString *key in myDict) {
-        NSLog(@"%@ %@", key, [myDict valueForKey:key]);
+    
+    
+    CBLMutableDictionary *dict = [[CBLMutableDictionary alloc] initWithJSON:json
+                                                                      error:&error];
+    
+    NSString *name = [dict stringForKey:@"name"];
+    
+    for (NSString *key in dict) {
+        NSLog(@"%@ %@", key, [dict valueForKey:key]);
     }
-
+    
     // end::tojson-dictionary[]
     NSLog(@"%@", name);
 }
@@ -2340,9 +2355,9 @@
     // tag::tojson-array[]
     NSString *json = @"[\"1000\",\"1001\",\"1002\",\"1003\"]";
 
-    CBLMutableArray *myArray = [[CBLMutableArray alloc] initWithJSON:json error:&error];
+    CBLMutableArray *array = [[CBLMutableArray alloc] initWithJSON:json error:&error];
 
-    for (NSString *item in myArray) {
+    for (NSString *item in array) {
         NSLog(@"%@", item);
     }
 
