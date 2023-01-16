@@ -1216,13 +1216,11 @@ class SampleCodeTest {
     }
 
     func dontTestGettingStarted() throws {
-        guard let collection = try self.database.defaultCollection() else {
-            fatalError("For sample code snippet, collection should be present!")
-        }
         // tag::getting-started[]
         // Get the database (and create it if it doesn’t exist).
         do {
             self.database = try Database(name: "mydb")
+            let collection = try self.database.createCollection(name: "mycol", scope: "myscope")
         } catch {
             fatalError("Error opening database")
         }
