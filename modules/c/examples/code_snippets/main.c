@@ -1038,6 +1038,7 @@ static void datatype_usage() {
 
 static void create_index() {
     CBLDatabase* database = kDatabase;
+    CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::query-index[]
     // For value types, this is optional but provides performance enhancements
@@ -1051,7 +1052,7 @@ static void create_index() {
     };
 
     CBLError err;
-    CBLDatabase_CreateValueIndex(database, FLSTR("TypeNameIndex"), config, &err);
+    CBLCollection_CreateValueIndex(collection, FLSTR("TypeNameIndex"), config, &err);
     // end::query-index[]
 }
 
@@ -1512,7 +1513,6 @@ static void create_full_text_index() {
     }
 
     // tag::fts-index[]
-    // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
     CBLFullTextIndexConfiguration config = {
@@ -1521,7 +1521,7 @@ static void create_full_text_index() {
         false
     };
 
-    CBLDatabase_CreateFullTextIndex(database, FLSTR("nameFTSIndex"), config, &err);
+    CBLCollection_CreateFullTextIndex(collection, FLSTR("nameFTSIndex"), config, &err);
     // end::fts-index[]
 }
 
@@ -1529,7 +1529,6 @@ static void full_text_search() {
     CBLDatabase* database = kDatabase;
 
     // tag::fts-query[]
-    // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
@@ -1711,27 +1710,6 @@ static void docsonly_N1QL_Params(CBLDatabase* argDb)
 
     // end::query-syntax-n1ql-params[]
 }
-
-
-
-// tag::console-logging-db[]
-//Placeholder for code to increase level of console logging for kCBLLogDomainDatabase domain
-// end::console-logging-db[]
-
-// tag::console-logging[]
-//Placeholder for code to increase level of console logging for all domains
-// end::console-logging[]
-
-// tag::date-getter[]
-//Placeholder for Date accessors.
-
-// end::date-getter[]
-
-
-// tag::query-index[]
-// placeholder
-// end::query-index[]
-
 
 // DOCS NOTE
 // Page=Data Sync >> Configuration Summary
