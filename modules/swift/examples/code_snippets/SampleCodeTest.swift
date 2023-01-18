@@ -2013,6 +2013,31 @@ class SampleCodeTest {
         self.listener = URLEndpointListener.init(config: config) // <1>
         // end::p2p-ws-api-urlendpointlistener-constructor[]
     }
+    
+    func dontTestManageCollection() throws {
+        guard let database = self.database else { return }
+        
+        // tag::scopes-manage-create-collection[]
+        let collection = try database.createCollection(name: "myCollectionName", scope: "myScopeName")
+        // end::scopes-manage-create-collection[]
+        
+        // tag::scopes-manage-index-collection[]
+        let config = FullTextIndexConfiguration(["overview"])
+        try collection.createIndex(withName: "overviewFTSIndex", config: config)
+        // end::scopes-manage-index-collection[]
+        
+        // tag::scopes-manage-list[]
+        let scopes = try database.scopes()
+        let collections = try database.collections(scope: "myScopeName")
+        print("I have \(scopes.count) scopes and \(collections.count) collections")
+        // end::scopes-manage-list[]
+        
+        // tag::scopes-manage-drop-collection[]
+        try database.deleteCollection(name: "myCollectionName", scope: "myScopeName")
+        // end::scopes-manage-drop-collection[]
+    }
+    
+    // MARK: --
 
     func fMyActPeer() throws {
         guard let collection = try self.database.defaultCollection() else {
