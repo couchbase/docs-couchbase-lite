@@ -1711,6 +1711,57 @@ static void docsonly_N1QL_Params(CBLDatabase* argDb)
     // end::query-syntax-n1ql-params[]
 }
 
+static void date_getter(){
+    CBLDatabase* database = kDatabase;
+    CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
+    CBLError err;
+
+    // tag::date-getter[]
+
+    // Create doc and get its properties
+    CBLDocument* mutableDoc = CBLDocument_Create();
+    FLMutableDict mutableProperties = CBLDocument_MutableProperties(mutableDoc);
+
+    // Get current time
+    FLTimestamp time = FLTimestamp_Now();
+    FLStringResult timeString = FLTimestamp_ToString(time, false);
+
+    // Set createdAt attribute
+    FLMutableDict_SetString(mutableProperties, FLSTR("createdAt"), FLSliceResult_AsSlice(timeString));
+
+    // Save it to the database
+    if(!CBLCollection_SaveDocument(collection, mutableDoc, &err)) {
+        // Failed to save, do error handling as above
+        return;
+    }
+
+    // Since we will release the document, make a copy of the ID since it
+    // is an internal pointer.  Whenever we create or get an FLSliceResult
+    // or FLStringResult we will need to free it later too!
+    FLString id = CBLDocument_ID(mutableDoc);
+    CBLDocument_Release(mutableDoc);
+    FLSliceResult_Release(timeString);
+
+    // Get doc from collection
+    CBLDocument* doc = CBLCollection_GetDocument(collection, id, &err);
+    if(!doc) {
+        // Failed to retrieve, do error handling as above.  NOTE: error code 0 simply means
+        // the document does not exist.
+        return;
+    }
+
+    FLDict properties = CBLDocument_Properties(doc);
+
+    // Get date
+    FLValue docTime = FLDict_Get(properties, FLSTR("createdAt"));
+    FLStringResult newTimeString = FLValue_ToString(docTime);
+
+    // Release after is not needed anymore
+    FLSliceResult_Release(newTimeString);
+
+    // end::date-getter[]
+}
+
 // DOCS NOTE
 // Page=Data Sync >> Configuration Summary
 // URL=https://docs.couchbase.com/couchbase-lite/current/c/replication.html#configuration-summary
