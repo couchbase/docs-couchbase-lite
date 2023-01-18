@@ -2440,6 +2440,18 @@ class SampleCodeTest {
 
         print(messageEndpointListener.connections.count)
     }
+    
+    func initialize() throws {
+        guard let collection = try self.database.defaultCollection() else { return }
+        
+        // tag::sgw-act-rep-initialize[]
+        let targetURL = URL(string: "wss://10.1.1.12:8092/travel-sample")!
+        let targetEndpoint = URLEndpoint(url: targetURL)
+        var config = ReplicatorConfiguration(target: targetEndpoint) // <.>
+        config.addCollection(collection)
+
+        // end::sgw-act-rep-initialize[]
+    }
 }
 
 // tag::sgw-repl-pull[]
@@ -2473,12 +2485,7 @@ class MyClass {
 
  // end::sgw-repl-pull-callouts[]
 
- // tag::sgw-act-rep-initialize[]
- let tgtUrl = URL(string: "wss://10.1.1.12:8092/travel-sample")!
- let targetEndpoint = URLEndpoint(url: tgtUrl)
- var config = ReplicatorConfiguration(database: database!, target: targetEndpoint) // <.>
 
- // end::sgw-act-rep-initialize[]
 
  */
 
