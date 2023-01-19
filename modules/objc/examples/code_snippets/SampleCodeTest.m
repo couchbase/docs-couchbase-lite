@@ -1373,15 +1373,17 @@
 
 #ifdef COUCHBASE_ENTERPRISE
 - (void) dontTestDatabaseReplica {
-    CBLCollection *collection = [self.database defaultCollection:nil];
+    CBLDatabase* database = self.database;
     /* EE feature:code below might throw a compilation error
      if it's compiled against CBL Swift Community. */
     // tag::database-replica[]
     CBLDatabaseEndpoint *targetDatabase = [[CBLDatabaseEndpoint alloc] initWithDatabase:self.otherDB];
     CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithTarget:targetDatabase];
-    [replConfig addCollection:collection config:nil];
+    replConfig.replicatorType = kCBLReplicatorTypePush;
     
-    config.replicatorType = kCBLReplicatorTypePush;
+    NSError* error = nil;
+    CBLCollection *collection = [database collectionWithName:@"collection1" scope:@"scope1" error:&error];
+    [replConfig addCollection:collection config:nil];
 
     self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
     [self.replicator start];

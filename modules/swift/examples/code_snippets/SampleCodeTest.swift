@@ -1184,7 +1184,10 @@ class SampleCodeTest {
          if it's compiled against CBL Swift Community. */
         // tag::database-replica[]
         let targetDatabase = DatabaseEndpoint(database: database2)
-        let config = ReplicatorConfiguration(database: database, target: targetDatabase)
+        var config = ReplicatorConfiguration(target: targetDatabase)
+        
+        guard let collection1 = try database.collection(name: "collection1", scope: "scope1") else { return }
+        config.addCollection(collection1)
         config.replicatorType = .push
 
         self.replicator = Replicator(config: config)
