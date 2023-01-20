@@ -1,25 +1,39 @@
-package com.couchbase.code_snippets;
-
-import com.couchbase.lite.*;
+package com.couchbase.codesnippets;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import com.couchbase.lite.BasicAuthenticator;
+import com.couchbase.lite.CouchbaseLite;
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.DatabaseConfiguration;
+import com.couchbase.lite.EncryptionKey;
+import com.couchbase.lite.Replicator;
+import com.couchbase.lite.ReplicatorActivityLevel;
+import com.couchbase.lite.ReplicatorConfiguration;
+import com.couchbase.lite.ReplicatorType;
+import com.couchbase.lite.URLEndpoint;
+
 
 // tag::GsWebApp_DbManager[]
 public class DatabaseManager {
 
     private static DatabaseManager instance;
     private Database database;
+
     public static synchronized DatabaseManager manager() {
         if (instance == null) {
             instance = new DatabaseManager();
         }
         return instance;
     }
+
     public synchronized void init() {
         CouchbaseLite.init(); // <1>
     }
-    public synchronized Database getDatabase(String parDbname, String parDbDir,  String parDbPass) {
+
+    public synchronized Database getDatabase(String parDbname, String parDbDir, String parDbPass) {
         if (database == null) {
             try {
                 DatabaseConfiguration config = new DatabaseConfiguration();
@@ -34,12 +48,18 @@ public class DatabaseManager {
         return database;
     }
 
-    public synchronized long runOneShotReplication( Database parDb, String parURL, String parName, String parPassword) throws InterruptedException {
+    public synchronized long runOneShotReplication(
+        Database parDb,
+        String parURL,
+        String parName,
+        String parPassword)
+        throws InterruptedException {
         // Set replicator endpoint
         URI sgURI = null;
         try {
             sgURI = new URI(parURL);
-        } catch (URISyntaxException e) {
+        }
+        catch (URISyntaxException e) {
             e.printStackTrace();
         }
         URLEndpoint targetEndpoint = new URLEndpoint(sgURI);
@@ -49,7 +69,8 @@ public class DatabaseManager {
         ReplicatorConfiguration replConfig = new ReplicatorConfiguration(targetEndpoint);
         try {
             replConfig.addCollection(parDb.getDefaultCollection(), null);
-        } catch(CouchbaseLiteException ex) {
+        }
+        catch (CouchbaseLiteException ex) {
             ex.printStackTrace();
             return -1;
         }
@@ -73,14 +94,16 @@ public class DatabaseManager {
         // Start replication.
         replicator.start();
         // Check status of replication and wait till it is completed
-        while ((replicator.getStatus().getActivityLevel() != ReplicatorActivityLevel.STOPPED) && (replicator.getStatus().getActivityLevel() != ReplicatorActivityLevel.IDLE)) {
+        while (
+            (replicator.getStatus().getActivityLevel() != ReplicatorActivityLevel.STOPPED)
+                && (replicator.getStatus().getActivityLevel() != ReplicatorActivityLevel.IDLE)) {
+            // do something useful...
             Thread.sleep(1000);
         }
 
         replicator.stop();
         replicator.close();
         return replicator.getStatus().getProgress().getTotal();
-
     }
 }
 

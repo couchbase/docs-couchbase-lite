@@ -1,27 +1,11 @@
-package com.couchbase.code_snippets;
-
-import com.couchbase.lite.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+package com.couchbase.codesnippets;
 
 import androidx.annotation.NonNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import java.io.IOException;
-import java.io.InputStream;
-
-// tag::getting-started[]
-
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.cert.CertificateException;
@@ -32,14 +16,98 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebListener;
+import javax.servlet.annotation.WebServlet;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import com.couchbase.lite.ArrayFunction;
+import com.couchbase.lite.BasicAuthenticator;
+import com.couchbase.lite.Blob;
+import com.couchbase.lite.Collection;
+import com.couchbase.lite.CollectionConfiguration;
+import com.couchbase.lite.Conflict;
+import com.couchbase.lite.ConflictResolver;
+import com.couchbase.lite.CouchbaseLite;
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.DataSource;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.DatabaseConfiguration;
+import com.couchbase.lite.DatabaseEndpoint;
+import com.couchbase.lite.Dictionary;
+import com.couchbase.lite.Document;
+import com.couchbase.lite.DocumentFlag;
+import com.couchbase.lite.EncryptionKey;
+import com.couchbase.lite.Endpoint;
+import com.couchbase.lite.Expression;
+import com.couchbase.lite.FullTextFunction;
+import com.couchbase.lite.FullTextIndexConfiguration;
+import com.couchbase.lite.FullTextIndexItem;
+import com.couchbase.lite.Function;
+import com.couchbase.lite.IndexBuilder;
+import com.couchbase.lite.Join;
+import com.couchbase.lite.ListenerToken;
+import com.couchbase.lite.LogDomain;
+import com.couchbase.lite.LogFileConfiguration;
+import com.couchbase.lite.LogLevel;
+import com.couchbase.lite.Logger;
+import com.couchbase.lite.Message;
+import com.couchbase.lite.MessageEndpoint;
+import com.couchbase.lite.MessageEndpointConnection;
+import com.couchbase.lite.MessageEndpointDelegate;
+import com.couchbase.lite.MessageEndpointListener;
+import com.couchbase.lite.MessageEndpointListenerConfiguration;
+import com.couchbase.lite.MessagingCloseCompletion;
+import com.couchbase.lite.MessagingCompletion;
+import com.couchbase.lite.Meta;
+import com.couchbase.lite.MutableDictionary;
+import com.couchbase.lite.MutableDocument;
+import com.couchbase.lite.Ordering;
+import com.couchbase.lite.PredictionFunction;
+import com.couchbase.lite.PredictiveIndex;
+import com.couchbase.lite.PredictiveModel;
+import com.couchbase.lite.ProtocolType;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.ReplicatedDocument;
+import com.couchbase.lite.Replicator;
+import com.couchbase.lite.ReplicatorActivityLevel;
+import com.couchbase.lite.ReplicatorConfiguration;
+import com.couchbase.lite.ReplicatorConnection;
+import com.couchbase.lite.ReplicatorType;
+import com.couchbase.lite.Result;
+import com.couchbase.lite.ResultSet;
+import com.couchbase.lite.SelectResult;
+import com.couchbase.lite.SessionAuthenticator;
+import com.couchbase.lite.URLEndpoint;
+import com.couchbase.lite.ValueIndex;
+import com.couchbase.lite.ValueIndexConfiguration;
+import com.couchbase.lite.ValueIndexItem;
+
+
 public class Examples {
+    @NonNull
+    private final Database database;
+    @NonNull
+    private final Collection defaultCollection;
+
+    private Examples(@NonNull Database db) throws CouchbaseLiteException {
+        this.database = db;
+        this.defaultCollection = db.getDefaultCollection();
+    }
 
     private static final String DB_NAME = "getting-started";
     private static final String DB_NAME2 = "other";
@@ -48,22 +116,33 @@ public class Examples {
     private static final String DB_PASS = "password"; // <3>
     //    private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/db" + DB_NAME;
     private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/getting-started"; // <1>
-    private static final String DB_PATH = new File("").getAbsolutePath()+"/resources";
 
 
-    public static void main (String [] args) throws CouchbaseLiteException, InterruptedException, URISyntaxException {
+    public static void main(String[] args) throws CouchbaseLiteException, InterruptedException, URISyntaxException {
         Random random = new Random();
-        int randPtrLang = random.nextInt(5) ;
-        int randPtrType = random.nextInt(5) ;
+        int randPtrLang = random.nextInt(5);
+        int randPtrType = random.nextInt(5);
         int numRows = 0;
 
-        Double randVn = random.nextDouble() + 1;
+        double randVn = random.nextDouble() + 1;
 
-        List<String> listLangs = new ArrayList<String> (Arrays.asList("Java","Swift","C#.Net","Objective-C","C++","Cobol"));
-    //        List<String> listTypes = new ArrayList<String>();
-        List<String> listTypes = new ArrayList<String> (Arrays.asList("SDK","API","Framework","Methodology","Language","IDE"));
+        List<String> listLangs = new ArrayList<>(Arrays.asList(
+            "Java",
+            "Swift",
+            "C#.Net",
+            "Objective-C",
+            "C++",
+            "Cobol"));
+        //        List<String> listTypes = new ArrayList<String>();
+        List<String> listTypes = new ArrayList<>(Arrays.asList(
+            "SDK",
+            "API",
+            "Framework",
+            "Methodology",
+            "Language",
+            "IDE"));
 
-        String propId ="id";
+        String propId = "id";
         String propLanguage = "language";
         String propType = "type";
         String propVersion = "version";
@@ -76,8 +155,8 @@ public class Examples {
         // Get the database (and create it if it doesn’t exist).
         DatabaseConfiguration config = new DatabaseConfiguration();
 
-    //    config.setDirectory(
-    //            (context.getFilesDir().getAbsolutePath()); // <5>
+        //    config.setDirectory(
+        //            (context.getFilesDir().getAbsolutePath()); // <5>
 
         config.setEncryptionKey(new EncryptionKey(DB_PASS)); // <3>
         Database database = new Database(DB_NAME, config);
@@ -85,8 +164,8 @@ public class Examples {
 
         // Create a new document (i.e. a record) in the database.
         MutableDocument mutableDoc = new MutableDocument()
-                .setDouble(propVersion, randVn)
-                .setString(propType,listTypes.get(randPtrType));
+            .setDouble(propVersion, randVn)
+            .setString(propType, listTypes.get(randPtrType));
 
         // Save it to the database.
         collection.save(mutableDoc);
@@ -104,32 +183,38 @@ public class Examples {
         // Create a query to fetch documents of type SDK.
         System.out.println("== Executing Query 1");
         Query query = QueryBuilder.select(SelectResult.all())
-                .from(DataSource.collection(collection))
-                .where(Expression.property(propType).equalTo(Expression.string(searchStringType)));
+            .from(DataSource.collection(collection))
+            .where(Expression.property(propType).equalTo(Expression.string(searchStringType)));
         ResultSet result = query.execute();
-        System.out.println(String.format("Query returned %d rows of type %s", result.allResults().size(), searchStringType));
+        System.out.println(String.format(
+            "Query returned %d rows of type %s",
+            result.allResults().size(),
+            searchStringType));
 
         // Create a query to fetch all documents.
         System.out.println("== Executing Query 2");
-        Query queryAll = QueryBuilder.select(SelectResult.expression(Meta.id),
+        Query queryAll = QueryBuilder.select(
+                SelectResult.expression(Meta.id),
                 SelectResult.property(propLanguage),
                 SelectResult.property(propVersion),
                 SelectResult.property(propType))
             .from(DataSource.collection(collection));
-            try {
-                for (Result thisDoc : queryAll.execute()) {
+        try (ResultSet results = queryAll.execute()) {
+            for (Result thisDoc: results) {
                 numRows++;
-                System.out.println(String.format("%d ... Id: %s is learning: %s version: %.2f type is %s",
+                System.out.println(String.format(
+                    "%d ... Id: %s is learning: %s version: %.2f type is %s",
                     numRows,
                     thisDoc.getString(propId),
                     thisDoc.getString(propLanguage),
                     thisDoc.getDouble(propVersion),
                     thisDoc.getString(propType)));
-                }
-            } catch (CouchbaseLiteException e) {
-                e.printStackTrace();
             }
-        System.out.println(String.format("Total rows returned by query = %d", numRows));
+        }
+        catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Total rows returned by query = " + numRows);
 
         Endpoint targetEndpoint = new URLEndpoint(new URI(SYNC_GATEWAY_URL));
         ReplicatorConfiguration replConfig = new ReplicatorConfiguration(targetEndpoint);
@@ -154,6 +239,7 @@ public class Examples {
 
         // Check status of replication and wait till it is completed
         while (replicator.getStatus().getActivityLevel() != ReplicatorActivityLevel.STOPPED) {
+            // Do something useful, here
             Thread.sleep(1000);
         }
 
@@ -167,7 +253,7 @@ public class Examples {
 
     // tag::GsWebApp_GettingStarted[]
 
-    @WebServlet( value = "/GettingStarted")
+    @WebServlet(value = "/GettingStarted")
     public class GettingStartedWebApp extends javax.servlet.http.HttpServlet {
         private static final String DB_DIR = "/usr/local/var/tomcat/data"; // <1>
         private static final String DB_NAME = "getting-started";
@@ -176,42 +262,60 @@ public class Examples {
         private static final String DB_PASS = "password";
         private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/getting-started"; // <2>
         private static final String NEWLINE_TAG = "<br />";
+
+        private final Random random = new Random();
         private String myResults;
         private int numRows;
-        private Random random = new Random();
 
-        protected void doGet(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse
-                response) throws javax.servlet.ServletException, IOException {
+        protected void doGet(
+            javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse
+            response) throws javax.servlet.ServletException, IOException {
             outputMessage("Servlet started :: doGet Invoked");
             doPost(request, response);
         }
 
-        protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse
-                response) throws javax.servlet.ServletException, IOException {
+        protected void doPost(
+            javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse
+            response) throws javax.servlet.ServletException, IOException {
             numRows = 0;
             myResults = "";
             outputMessage("Servlet started :: doPost Invoked");
             String url = "/showDbItems.jsp";
             try {
                 myResults = testCouchbaseLite();
-            } catch (CouchbaseLiteException | URISyntaxException | InterruptedException e) {
+            }
+            catch (CouchbaseLiteException | URISyntaxException | InterruptedException e) {
                 e.printStackTrace();
-            } finally {
+            }
+            finally {
                 outputMessage(String.format("CouchbaseLite Test Ended :: There are %d rows in DB", numRows));
             }
             request.setAttribute("myRowCount", numRows);
             request.setAttribute("myResults", myResults);
             getServletContext()
-                    .getRequestDispatcher(url)
-                    .forward(request, response);
+                .getRequestDispatcher(url)
+                .forward(request, response);
             outputMessage("Servlet Ended :: doPost Exits");
         }
 
-        public String testCouchbaseLite() throws CouchbaseLiteException, URISyntaxException, InterruptedException, ServletException {
-            long syncTotal = 0;
-            Double randVn = random.nextDouble() + 1;
-            List<String> listLangs = new ArrayList<String>(Arrays.asList("Java", "Swift", "C#.Net", "Objective-C", "C++", "Cobol"));
-            List<String> listTypes = new ArrayList<String>(Arrays.asList("SDK", "API", "Framework", "Methodology", "Language", "IDE"));
+        public String testCouchbaseLite()
+            throws CouchbaseLiteException, URISyntaxException, InterruptedException, ServletException {
+            long syncTotal;
+            double randVn = random.nextDouble() + 1;
+            List<String> listLangs = new ArrayList<>(Arrays.asList(
+                "Java",
+                "Swift",
+                "C#.Net",
+                "Objective-C",
+                "C++",
+                "Cobol"));
+            List<String> listTypes = new ArrayList<>(Arrays.asList(
+                "SDK",
+                "API",
+                "Framework",
+                "Methodology",
+                "Language",
+                "IDE"));
 
             String propId = "id";
             String propLanguage = "language";
@@ -222,7 +326,7 @@ public class Examples {
             // Get and configure database
             // Note initialisation of CouchbaseLite is done in ServletContextListener
             outputMessage("== Opening DB and doing initial sync");
-            Database database = DatabaseManager.manager().getDatabase(DB_NAME,DB_DIR,DB_PASS);
+            Database database = DatabaseManager.manager().getDatabase(DB_NAME, DB_DIR, DB_PASS);
             Collection defaultCollection = database.getDefaultCollection();
 
             // Initial DB sync prior to local updates
@@ -232,13 +336,14 @@ public class Examples {
             // Create a new document (i.e. a record) in the database.
             outputMessage("== Adding a record");
             MutableDocument mutableDoc = new MutableDocument()
-                    .setDouble(propVersion, randVn)
-                    .setString(propType, listTypes.get(random.nextInt(listTypes.size() - 1)));
+                .setDouble(propVersion, randVn)
+                .setString(propType, listTypes.get(random.nextInt(listTypes.size() - 1)));
 
             // Save it to the database.
             try {
                 defaultCollection.save(mutableDoc);
-            } catch (CouchbaseLiteException e) {
+            }
+            catch (CouchbaseLiteException e) {
                 throw new ServletException("Error saving a document", e);
             }
 
@@ -249,7 +354,8 @@ public class Examples {
             // Save it to the database.
             try {
                 defaultCollection.save(mutableDoc);
-            } catch (CouchbaseLiteException e) {
+            }
+            catch (CouchbaseLiteException e) {
                 throw new ServletException("Error saving a document", e);
             }
 
@@ -262,38 +368,44 @@ public class Examples {
             // Create a query to fetch documents of type SDK.
             outputMessage("== Executing Query 1");
             Query query = QueryBuilder.select(SelectResult.all())
-                    .from(DataSource.collection(defaultCollection))
-                    .where(Expression.property(propType).equalTo(Expression.string(searchStringType)));
-            try{
-                ResultSet result = query.execute();
-                outputMessage(String.format("Query returned %d rows of type %s", result.allResults().size(), searchStringType));
-            } catch (CouchbaseLiteException e) {
+                .from(DataSource.collection(defaultCollection))
+                .where(Expression.property(propType).equalTo(Expression.string(searchStringType)));
+            try (ResultSet result = query.execute()) {
+                outputMessage(String.format(
+                    "Query returned %d rows of type %s",
+                    result.allResults().size(),
+                    searchStringType));
+            }
+            catch (CouchbaseLiteException e) {
                 e.printStackTrace();
             }
 
             // Create a query to fetch all documents.
             outputMessage("== Executing Query 2");
-            Query queryAll = QueryBuilder.select(SelectResult.expression(Meta.id),
+            Query queryAll = QueryBuilder.select(
+                    SelectResult.expression(Meta.id),
                     SelectResult.property(propLanguage),
                     SelectResult.property(propVersion),
                     SelectResult.property(propType))
-                    .from(DataSource.collection(defaultCollection));
-            try {
-                for (Result thisDoc : queryAll.execute()) {
-                numRows++;
-                    outputMessage(String.format("%d ... Id: %s is learning: %s version: %.2f type is %s",
-                    numRows,
-                    thisDoc.getString(propId),
-                    thisDoc.getString(propLanguage),
-                    thisDoc.getDouble(propVersion),
-                    thisDoc.getString(propType)));
+                .from(DataSource.collection(defaultCollection));
+            try (ResultSet results = queryAll.execute()) {
+                for (Result thisDoc: results) {
+                    numRows++;
+                    outputMessage(String.format(
+                        "%d ... Id: %s is learning: %s version: %.2f type is %s",
+                        numRows,
+                        thisDoc.getString(propId),
+                        thisDoc.getString(propLanguage),
+                        thisDoc.getDouble(propVersion),
+                        thisDoc.getString(propType)));
                 }
-                } catch (CouchbaseLiteException e) {
+            }
+            catch (CouchbaseLiteException e) {
                 e.printStackTrace();
             }
             outputMessage(String.format("Total rows returned by query = %d", numRows));
 
-    //      Do final single-shot replication to incorporate changed NumRows
+            //      Do final single-shot replication to incorporate changed NumRows
             outputMessage("== Doing final single-shot sync");
             syncTotal = DatabaseManager.manager().runOneShotReplication(database, SYNC_GATEWAY_URL, DB_USER, DB_PASS);
             outputMessage(String.format("Total rows synchronised = %d", syncTotal));
@@ -334,7 +446,8 @@ public class Examples {
                 try {
                     Database.delete(name, dir);
                     break;
-                } catch (CouchbaseLiteException ex) {
+                }
+                catch (CouchbaseLiteException ex) {
                     try { Thread.sleep(300); }
                     catch (InterruptedException ignore) { }
                 }
@@ -345,7 +458,7 @@ public class Examples {
     public void test1xAttachments() throws CouchbaseLiteException, IOException {
         // if db exist, delete it
         final String DB_NAME = "cbl-sqlite";
-        final File filesDir = null;
+        final File filesDir = new File(database.getPath());
         deleteDB(DB_NAME, filesDir);
 
         ZipUtils.unzip(getAsset("replacedb/android140-sqlite.cblite2.zip"), filesDir);
@@ -362,10 +475,10 @@ public class Examples {
             byte[] content = blob.getContent();
             // For Validation
 
-            byte[] attach = String.format(Locale.ENGLISH, "attach1").getBytes();
-            Arrays.equals(attach, content);
-
-        } finally {
+            byte[] attach = "attach1".getBytes();
+            assert Arrays.equals(attach, content);
+        }
+        finally {
             // close db
             db.close();
             // if db exist, delete it
@@ -389,7 +502,7 @@ public class Examples {
     }
 
     public void testNewDatabase() throws CouchbaseLiteException {
-        final String customDir = null;
+        final String customDir = "/foo/bar";
         // tag::new-database[]
         DatabaseConfiguration config = new DatabaseConfiguration();
         config.setDirectory(customDir);
@@ -413,7 +526,7 @@ public class Examples {
 
     public void testLogging() {
         // tag::logging[]
-        
+
         // Set the overall logging level
         Database.log.getConsole().setLevel(LogLevel.VERBOSE);
 
@@ -428,18 +541,18 @@ public class Examples {
         // end::set-custom-logging[]
     }
 
-    public void testConsoleLogging() throws CouchbaseLiteException {
+    public void testConsoleLogging() {
         // tag::console-logging[]
         Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS); // <.>
         Database.log.getConsole().setLevel(LogLevel.VERBOSE); // <.>
         // end::console-logging[]
-  
+
         // tag::console-logging-db[]
         Database.log.getConsole().setDomains(LogDomain.DATABASE);
         // end::console-logging-db[]
     }
 
-    public void testFileLogging() throws CouchbaseLiteException {
+    public void testFileLogging() {
         // tag::file-logging[]
         LogFileConfiguration LogCfg = new LogFileConfiguration(
             (System.getProperty("user.dir") + "/MyApp/logs")); // <.>
@@ -452,7 +565,7 @@ public class Examples {
     }
 
     public void testPreBuiltDatabase() throws IOException {
-        final File appDbDir = null;
+        final File appDbDir = new File(database.getPath());
 
         // tag::prebuilt-database[]
         // Note: Getting the path to a database is platform-specific.
@@ -463,7 +576,8 @@ public class Examples {
             File path = new File(tmpDir, "travel-sample");
             try {
                 Database.copy(path, "travel-sample", configuration);
-            } catch (CouchbaseLiteException e) {
+            }
+            catch (CouchbaseLiteException e) {
                 e.printStackTrace();
             }
         }
@@ -480,7 +594,8 @@ public class Examples {
         newTask.setDate("createdAt", new Date());
         try {
             collection.save(newTask);
-        } catch (CouchbaseLiteException e) {
+        }
+        catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
         // end::initializer[]
@@ -491,10 +606,11 @@ public class Examples {
 
         // tag::update-document[]
         Document document;
-        
+
         try {
             document = collection.getDocument("xyz");
-        } catch(CouchbaseLiteException e) {
+        }
+        catch (CouchbaseLiteException e) {
             e.printStackTrace();
             return;
         }
@@ -503,7 +619,8 @@ public class Examples {
         mutableDocument.setString("name", "apples");
         try {
             collection.save(mutableDocument);
-        } catch (CouchbaseLiteException e) {
+        }
+        catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
         // end::update-document[]
@@ -532,20 +649,22 @@ public class Examples {
                     doc.setBoolean("admin", false);
                     try {
                         collection.save(doc);
-                    } catch (CouchbaseLiteException e) {
+                    }
+                    catch (CouchbaseLiteException e) {
                         e.printStackTrace();
                     }
-                    System.out.println(String.format("saved user document %s", doc.getString("name")));
+                    System.out.println("saved user document " + doc.getString("name"));
                 }
             });
-        } catch (CouchbaseLiteException e) {
+        }
+        catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
         // end::batch[]
     }
 
     public void DocumentExpiration() throws CouchbaseLiteException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
 
         // tag::document-expiration[]
         // Purge the document one day from now
@@ -564,7 +683,7 @@ public class Examples {
         // end::document-expiration[]
     }
 
-    public void testDocumentChangeListener() throws CouchbaseLiteException {
+    public void testDocumentChangeListener() {
         final Collection collection = null;
 
         // tag::document-listener[]
@@ -576,7 +695,8 @@ public class Examples {
                     if (doc != null) {
                         System.out.println("Status: " + doc.getString("verified_account"));
                     }
-                } catch(CouchbaseLiteException e) {
+                }
+                catch (CouchbaseLiteException e) {
                     e.printStackTrace();
                 }
             });
@@ -597,9 +717,11 @@ public class Examples {
 
             Blob taskBlob = newTask.getBlob("avatar");
             byte[] bytes = taskBlob.getContent();
-        } catch (CouchbaseLiteException e) {
+        }
+        catch (CouchbaseLiteException e) {
             e.printStackTrace();
-        } finally {
+        }
+        finally {
             try { is.close(); }
             catch (IOException ignore) { }
         }
@@ -627,7 +749,7 @@ public class Examples {
     }
 
     public void testSelectStatement() {
-        final Collection collection = null;
+        final Collection collection = getCollection();
 
         // tag::query-select-props[]
         Query query = QueryBuilder
@@ -639,23 +761,20 @@ public class Examples {
             .where(Expression.property("type").equalTo(Expression.string("hotel")))
             .orderBy(Ordering.expression(Meta.id));
 
-        ResultSet resultSet = null;
-        try {
-            resultSet = query.execute();
-            for (Result result : resultSet) {
-                System.out.println(String.format("hotel id -> %s", result.getString("id")));
-                System.out.println(String.format("hotel name -> %s", result.getString("name")));
+        try (ResultSet resultSet = query.execute()) {
+            for (Result result: resultSet) {
+                System.out.println("hotel id -> " + result.getString("id"));
+                System.out.println("hotel name -> " + result.getString("name"));
             }
-        } catch (CouchbaseLiteException e) {
+        }
+        catch (CouchbaseLiteException e) {
             e.printStackTrace();
-        } finally {
-            if(resultSet != null) resultSet.close();
         }
         // end::query-select-props[]
     }
 
-    public void testMetaFunction() throws CouchbaseLiteException {
-        final Collection collection = null;
+    public void testMetaFunction() {
+        final Collection collection = getCollection();
 
         // tag::query-select-meta[]
         Query query = QueryBuilder
@@ -664,59 +783,56 @@ public class Examples {
             .where(Expression.property("type").equalTo(Expression.string("airport")))
             .orderBy(Ordering.expression(Meta.id));
 
-        ResultSet resultSet = null;
-        try {
-            resultSet = query.execute();
-            for (Result result : resultSet) {
-                System.out.println(String.format("airport id -> %s", result.getString("id")));
-                System.out.println(String.format("airport id -> %s", result.getString(0)));
+        try (ResultSet resultSet = query.execute()) {
+            for (Result result: resultSet) {
+                System.out.println("airport id -> " + result.getString("id"));
+                System.out.println("airport id -> " + result.getString(0));
             }
-        } catch (CouchbaseLiteException e) {
+        }
+        catch (CouchbaseLiteException e) {
             e.printStackTrace();
-        } finally {
-            if(resultSet != null) resultSet.close();
         }
         // end::query-select-meta[]
     }
 
-    public void testSelectAll() throws CouchbaseLiteException {
-        final Collection collection = null;
+    public void testSelectAll() {
+        final Collection collection = getCollection();
 
         {
-        // tag::query-select-all[]
-        Query query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.collection(collection))
-            .where(Expression.property("type").equalTo(Expression.string("hotel")));
-        // end::query-select-all[]
+            // tag::query-select-all[]
+            Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.collection(collection))
+                .where(Expression.property("type").equalTo(Expression.string("hotel")));
+            // end::query-select-all[]
         }
 
         {
-        // tag::live-query[]
-        Query query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.collection(collection)); // <.>
+            // tag::live-query[]
+            Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.collection(collection)); // <.>
 
-        // Adds a query change listener.
-        // Changes will be posted on the main queue.
-        ListenerToken token = query.addChangeListener(change -> { // <.>
-            for (Result result : change.getResults()) {
-                System.out.println("results: " + result.getKeys());
-                /* Update UI */
-            }
-        });
+            // Adds a query change listener.
+            // Changes will be posted on the main queue.
+            ListenerToken token = query.addChangeListener(change -> { // <.>
+                for (Result result: change.getResults()) {
+                    System.out.println("results: " + result.getKeys());
+                    /* Update UI */
+                }
+            });
 
-        // end::live-query[]
+            // end::live-query[]
 
-        // tag::stop-live-query[]
-        token.remove(); // <.>
-        // end::stop-live-query[]
+            // tag::stop-live-query[]
+            token.remove(); // <.>
+            // end::stop-live-query[]
         }
     }
 
-    public void testWhereStatement() throws CouchbaseLiteException {
-        final Collection collection = null;
-        final String collectionName = null;
+    public void testWhereStatement() {
+        final Collection collection = getCollection();
+        final String collectionName = "theStuff";
 
         // tag::query-where[]
         Query query = QueryBuilder
@@ -725,24 +841,21 @@ public class Examples {
             .where(Expression.property("type").equalTo(Expression.string("hotel")))
             .limit(Expression.intValue(10));
 
-        ResultSet resultSet = null;
-        try {
-            resultSet = query.execute();
-            for (Result result : resultSet) {
+        try (ResultSet resultSet = query.execute()) {
+            for (Result result: resultSet) {
                 Dictionary all = result.getDictionary(collectionName);
-                System.out.println(String.format("name -> %s", all.getString("name")));
-                System.out.println(String.format("type -> %s", all.getString("type")));
+                System.out.println("name -> " + all.getString("name"));
+                System.out.println("type -> " + all.getString("type"));
             }
-        } catch(CouchbaseLiteException e) {
+        }
+        catch (CouchbaseLiteException e) {
             e.printStackTrace();
-        } finally {
-            if(resultSet != null) resultSet.close();
         }
         // end::query-where[]
     }
 
     public void testQueryDeletedDocuments() {
-        final Collection collection = null;
+        final Collection collection = getCollection();
 
         // tag::query-deleted-documents[]
         // Query documents that have been deleted
@@ -754,7 +867,7 @@ public class Examples {
     }
 
     public void testCollectionStatement() throws CouchbaseLiteException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
 
         // tag::query-collection-operator-contains[]
         Query query = QueryBuilder
@@ -766,14 +879,16 @@ public class Examples {
             .where(Expression.property("type").equalTo(Expression.string("hotel"))
                 .and(ArrayFunction
                     .contains(Expression.property("public_likes"), Expression.string("Armani Langworth"))));
-        for (Result result : query.execute()) {
-            System.out.println(String.format("public_likes -> %s", result.getArray("public_likes").toList()));
+        try (ResultSet results = query.execute()) {
+            for (Result result: results) {
+                System.out.println("public_likes -> " + result.getArray("public_likes").toList());
+            }
         }
         // end::query-collection-operator-contains[]
     }
 
     public void testInOperator() throws CouchbaseLiteException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
 
         // tag::query-collection-operator-in[]
         Expression[] values = new Expression[] {
@@ -787,19 +902,15 @@ public class Examples {
             .where(Expression.string("Armani").in(values));
         // end::query-collection-operator-in[]
 
-        ResultSet resultSet = null;
-        try {
-            resultSet = query.execute();
-            for (Result result : resultSet) {
-                System.out.println(String.format("%s", result.toMap().toString()));
+        try (ResultSet resultSet = query.execute()) {
+            for (Result result: resultSet) {
+                System.out.println(result.toMap());
             }
-        } finally {
-            if(resultSet != null) resultSet.close();
         }
     }
 
     public void testPatternMatching() throws CouchbaseLiteException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
 
         // tag::query-like-operator[]
         Query query = QueryBuilder
@@ -811,20 +922,16 @@ public class Examples {
             .where(Expression.property("type").equalTo(Expression.string("landmark"))
                 .and(Function.lower(Expression.property("name")).like(Expression.string("royal engineers museum"))));
 
-        ResultSet resultSet = null;
-        try {
-            resultSet = query.execute();
-            for (Result result : resultSet) {
-                System.out.println(String.format("name -> %s", result.getString("name")));
+        try (ResultSet resultSet = query.execute()) {
+            for (Result result: resultSet) {
+                System.out.println("name -> " + result.getString("name"));
             }
-        } finally {
-            if(resultSet != null) resultSet.close();
         }
         // end::query-like-operator[]
     }
 
     public void testWildcardMatch() throws CouchbaseLiteException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
 
         // tag::query-like-operator-wildcard-match[]
         Query query = QueryBuilder
@@ -834,22 +941,18 @@ public class Examples {
                 SelectResult.property("name"))
             .from(DataSource.collection(collection))
             .where(Expression.property("type").equalTo(Expression.string("landmark"))
-            .and(Function.lower(Expression.property("name")).like(Expression.string("eng%e%"))));
+                .and(Function.lower(Expression.property("name")).like(Expression.string("eng%e%"))));
 
-        ResultSet resultSet = null;
-        try {
-            resultSet = query.execute();
-            for (Result result : resultSet) {
-                System.out.println(String.format("name -> %s", result.getString("name")));
+        try (ResultSet resultSet = query.execute()) {
+            for (Result result: resultSet) {
+                System.out.println("name ->  " + result.getString("name"));
             }
-        } finally {
-            if(resultSet != null) resultSet.close();
         }
         // end::query-like-operator-wildcard-match[]
     }
 
     public void testWildCharacterMatch() throws CouchbaseLiteException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         // tag::query-like-operator-wildcard-character-match[]
         Query query = QueryBuilder
             .select(
@@ -858,53 +961,45 @@ public class Examples {
                 SelectResult.property("name"))
             .from(DataSource.collection(collection))
             .where(Expression.property("type").equalTo(Expression.string("landmark"))
-            .and(Function.lower(Expression.property("name")).like(Expression.string("eng____r"))));
-        
-        ResultSet resultSet = null;
-        try {
-            resultSet = query.execute();
-            for (Result result : resultSet) {
-                System.out.println(String.format("name -> %s", result.getString("name")));
+                .and(Function.lower(Expression.property("name")).like(Expression.string("eng____r"))));
+
+        try (ResultSet resultSet = query.execute()) {
+            for (Result result: resultSet) {
+                System.out.println("name -> " + result.getString("name"));
             }
-        } finally {
-            if(resultSet != null) resultSet.close();
         }
         // end::query-like-operator-wildcard-character-match[]
     }
 
     public void testRegexMatch() throws CouchbaseLiteException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         // tag::query-regex-operator[]
         Query query = QueryBuilder
             .select(
                 SelectResult.expression(Meta.id),
                 SelectResult.property("country"),
                 SelectResult.property("name"))
-                .from(DataSource.collection(collection))
+            .from(DataSource.collection(collection))
             .where(Expression.property("type").equalTo(Expression.string("landmark"))
-            .and(Function.lower(Expression.property("name")).regex(Expression.string("\\beng.*r\\b"))));
-            
-        ResultSet resultSet = null;
-        try {
-            resultSet = query.execute();
-            for (Result result : resultSet) {
-                System.out.println(String.format("name -> %s", result.getString("name")));
+                .and(Function.lower(Expression.property("name")).regex(Expression.string("\\beng.*r\\b"))));
+
+        try (ResultSet resultSet = query.execute()) {
+            for (Result result: resultSet) {
+                System.out.println("name -> " + result.getString("name"));
             }
-        } finally {
-            if(resultSet != null) resultSet.close();
         }
         // end::query-regex-operator[]
     }
 
     public void testJoinStatement() throws CouchbaseLiteException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         // tag::query-join[]
         Query query = QueryBuilder.select(
-            SelectResult.expression(Expression.property("name").from("airline")),
-            SelectResult.expression(Expression.property("callsign").from("airline")),
-            SelectResult.expression(Expression.property("destinationairport").from("route")),
-            SelectResult.expression(Expression.property("stops").from("route")),
-            SelectResult.expression(Expression.property("airline").from("route")))
+                SelectResult.expression(Expression.property("name").from("airline")),
+                SelectResult.expression(Expression.property("callsign").from("airline")),
+                SelectResult.expression(Expression.property("destinationairport").from("route")),
+                SelectResult.expression(Expression.property("stops").from("route")),
+                SelectResult.expression(Expression.property("airline").from("route")))
             .from(DataSource.collection(collection).as("airline"))
             .join(Join.join(DataSource.collection(collection).as("route"))
                 .on(Meta.id.from("airline").equalTo(Expression.property("airlineid").from("route"))))
@@ -912,25 +1007,22 @@ public class Examples {
                 .and(Expression.property("type").from("airline").equalTo(Expression.string("airline")))
                 .and(Expression.property("sourceairport").from("route").equalTo(Expression.string("RIX"))));
 
-        ResultSet resultSet = null;
-        try {
-            resultSet = query.execute();
-            for (Result result : resultSet) {
-                System.out.println(String.format("%s", result.toMap().toString()));
+
+        try (ResultSet resultSet = query.execute()) {
+            for (Result result: resultSet) {
+                System.out.println(result.toMap());
             }
-        } finally {
-            if(resultSet != null) resultSet.close();
         }
         // end::query-join[]
     }
 
     public void testGroupByStatement() throws CouchbaseLiteException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         // tag::query-groupby[]
         Query query = QueryBuilder.select(
-            SelectResult.expression(Function.count(Expression.string("*"))),
-            SelectResult.property("country"),
-            SelectResult.property("tz"))
+                SelectResult.expression(Function.count(Expression.string("*"))),
+                SelectResult.property("country"),
+                SelectResult.property("tz"))
             .from(DataSource.collection(collection))
             .where(Expression.property("type").equalTo(Expression.string("airport"))
                 .and(Expression.property("geo.alt").greaterThanOrEqualTo(Expression.intValue(300))))
@@ -939,99 +1031,93 @@ public class Examples {
                 Expression.property("tz"))
             .orderBy(Ordering.expression(Function.count(Expression.string("*"))).descending());
 
-        ResultSet resultSet = null;
-        try {
-            resultSet = query.execute();
-            for (Result result : resultSet) {
+
+        try (ResultSet resultSet = query.execute()) {
+            for (Result result: resultSet) {
                 System.out.println(String.format(
                     "There are %d airports on the %s timezone located in %s and above 300ft",
                     result.getInt("$1"),
                     result.getString("tz"),
                     result.getString("country")));
             }
-        } finally {
-            if(resultSet != null) resultSet.close();
         }
         // end::query-groupby[]
     }
 
     public void testOrderByStatement() throws CouchbaseLiteException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         // tag::query-orderby[]
         Query query = QueryBuilder
             .select(
                 SelectResult.expression(Meta.id),
                 SelectResult.property("name"))
-                .from(DataSource.collection(collection))
+            .from(DataSource.collection(collection))
             .where(Expression.property("type").equalTo(Expression.string("hotel")))
             .orderBy(Ordering.property("name").ascending())
             .limit(Expression.intValue(10));
 
-        ResultSet resultSet = null;
-        try {
-            resultSet = query.execute();
-            for (Result result : resultSet) {
-                System.out.println(String.format("%s", result.toMap()));
+
+        try (ResultSet resultSet = query.execute()) {
+            for (Result result: resultSet) {
+                System.out.println(result.toMap());
             }
-        } finally {
-            if(resultSet != null) resultSet.close();
         }
         // end::query-orderby[]
     }
 
     public void testExplainStatement() throws CouchbaseLiteException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         {
-        // tag::query-explain-all[]
-        Query query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.collection(collection))
-            .where(Expression.property("type").equalTo(Expression.string("university")))
-            .groupBy(Expression.property("country"))
-            .orderBy(Ordering.property("name").descending()); // <.>
-        System.out.println(query.explain()); // <.>
-        // end::query-explain-all[]
+            // tag::query-explain-all[]
+            Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.collection(collection))
+                .where(Expression.property("type").equalTo(Expression.string("university")))
+                .groupBy(Expression.property("country"))
+                .orderBy(Ordering.property("name").descending()); // <.>
+            System.out.println(query.explain()); // <.>
+            // end::query-explain-all[]
         }
 
         {
-        // tag::query-explain-like[]
-        Query query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.collection(collection))
-            .where(Expression.property("type").like(Expression.string("%hotel%"))); // <.>
-        System.out.println(query.explain());
-        // end::query-explain-like[]
+            // tag::query-explain-like[]
+            Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.collection(collection))
+                .where(Expression.property("type").like(Expression.string("%hotel%"))); // <.>
+            System.out.println(query.explain());
+            // end::query-explain-like[]
         }
 
         {
-        // tag::query-explain-nopfx[]
-        Query query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.collection(collection))
-            .where(Expression.property("type").like(Expression.string("hotel%")) // <.>
-            .and(Expression.property("name").like(Expression.string("%royal%"))));
-        System.out.println(query.explain());
-        // end::query-explain-nopfx[]
+            // tag::query-explain-nopfx[]
+            Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.collection(collection))
+                .where(Expression.property("type").like(Expression.string("hotel%")) // <.>
+                    .and(Expression.property("name").like(Expression.string("%royal%"))));
+            System.out.println(query.explain());
+            // end::query-explain-nopfx[]
         }
 
         {
-        // tag::query-explain-function[]
-        Query query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.collection(collection))
-            .where(Function.lower(Expression.property("type").equalTo(Expression.string("hotel")))); // <.>
-        System.out.println(query.explain());
-        // end::query-explain-function[]
+            // tag::query-explain-function[]
+            Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.collection(collection))
+                .where(Function.lower(Expression.property("type").equalTo(Expression.string("hotel")))); // <.>
+            System.out.println(query.explain());
+            // end::query-explain-function[]
         }
 
         {
-        // tag::query-explain-nofunction[]
-        Query query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.collection(collection))
-            .where(Expression.property("type").equalTo(Expression.string("hotel"))); // <.>
-        System.out.println(query.explain());
-        // end::query-explain-nofunction[]
+            // tag::query-explain-nofunction[]
+            Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.collection(collection))
+                .where(Expression.property("type").equalTo(Expression.string("hotel"))); // <.>
+            System.out.println(query.explain());
+            // end::query-explain-nofunction[]
         }
         // end query-explain
     }
@@ -1057,39 +1143,37 @@ public class Examples {
         final Database database = null;
         // tag::fts-query[]
         Query ftsQuery =
-              database.createQuery(
-              "SELECT _id, overview FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)");
-  
-        ResultSet resultSet = null;
-        try {
-            resultSet = ftsQuery.execute();
-            for (Result result : resultSet) {
-                System.out.println(String.format("%s: %s", result.getString("id"), result.getString("overview")));
+            database.createQuery(
+                "SELECT _id, overview FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK"
+                    + "(overviewFTSIndex)");
+
+
+        try (ResultSet resultSet = ftsQuery.execute()) {
+            for (Result result: resultSet) {
+                System.out.println(result.getString("id") + ": " + result.getString("overview"));
             }
-        } finally {
-            if(resultSet != null) resultSet.close();
         }
         // end::fts-query[]
     }
 
     public void testFTS_Querybuilder() throws CouchbaseLiteException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         // tag::fts-query_Querybuilder[]
-        Expression whereClause = FullTextFunction.match("overviewFTSIndex", "'michigan'");
+        Expression whereClause = FullTextFunction.match(
+            Expression.fullTextIndex("overviewFTSIndex"),
+            "'michigan'");
         Query ftsQuery =
-                QueryBuilder.select(SelectResult.expression(Meta.id),
-                                    SelectResult.property("overview"))
-            .from(DataSource.collection(collection))
-            .where(whereClause);
+            QueryBuilder.select(
+                    SelectResult.expression(Meta.id),
+                    SelectResult.property("overview"))
+                .from(DataSource.collection(collection))
+                .where(whereClause);
 
-        ResultSet resultSet = null;
-        try {
-            resultSet = ftsQuery.execute();
-            for (Result result : resultSet) {
-                System.out.println(String.format("%s: %s", result.getString("id"), result.getString("overview")));
+
+        try (ResultSet resultSet = ftsQuery.execute()) {
+            for (Result result: resultSet) {
+                System.out.println(result.getString("id") + ": " + result.getString("overview"));
             }
-        } finally {
-            if(resultSet != null) resultSet.close();
         }
         // end::fts-query_Querybuilder[]
     }
@@ -1102,7 +1186,7 @@ public class Examples {
     }
 
     public void testReplicationBasicAuthentication() throws URISyntaxException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         // tag::basic-authentication[]
         URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
@@ -1119,7 +1203,7 @@ public class Examples {
     }
 
     public void testReplicationSessionAuthentication() throws URISyntaxException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         // tag::session-authentication[]
         URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
@@ -1136,7 +1220,7 @@ public class Examples {
     }
 
     public void testReplicationStatus() throws URISyntaxException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         URI uri = new URI("ws://localhost:4984/db");
         Endpoint endpoint = new URLEndpoint(uri);
         ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
@@ -1157,26 +1241,26 @@ public class Examples {
     }
 
     public void testReplicationPendingDocs() throws URISyntaxException, CouchbaseLiteException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         final Endpoint endpoint =
-          new URLEndpoint(new URI("ws://localhost:4984/db"));
+            new URLEndpoint(new URI("ws://localhost:4984/db"));
 
         final ReplicatorConfiguration config =
-          new ReplicatorConfiguration( endpoint)
-            .setType(ReplicatorType.PUSH);
+            new ReplicatorConfiguration(endpoint)
+                .setType(ReplicatorType.PUSH);
         config.addCollection(collection, null);
 
         // tag::replication-push-pendingdocumentids[]
         Replicator replicator = new Replicator(config);
         final Set<String> pendingDocs =
-          replicator.getPendingDocumentIds(collection); // <.>
+            replicator.getPendingDocumentIds(collection); // <.>
         // end::replication-push-pendingdocumentids[]
 
         replicator.close();
     }
 
     public void testHandlingNetworkErrors() throws URISyntaxException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         Endpoint endpoint = new URLEndpoint(new URI("ws://localhost:4984/db"));
         ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
         config.addCollection(collection, null);
@@ -1187,7 +1271,7 @@ public class Examples {
         // tag::replication-error-handling[]
         replicator.addChangeListener(change -> {
             CouchbaseLiteException error = change.getStatus().getError();
-            if (error != null) { System.out.println(String.format("Error code:: %d", error)); }
+            if (error != null) { System.out.println("Error code:: " + error); }
         });
         replicator.start();
         // end::replication-error-handling[]
@@ -1197,7 +1281,7 @@ public class Examples {
     }
 
     public void testReplicatorDocumentEvent() throws URISyntaxException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         Endpoint endpoint = new URLEndpoint(new URI("ws://localhost:4984/db"));
         ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
         config.addCollection(collection, null);
@@ -1208,7 +1292,7 @@ public class Examples {
         // tag::add-document-replication-listener[]
         ListenerToken token = replicator.addDocumentReplicationListener(replication -> {
             System.out.println("Replication type: " + ((replication.isPush()) ? "Push" : "Pull"));
-            for (ReplicatedDocument document : replication.getDocuments()) {
+            for (ReplicatedDocument document: replication.getDocuments()) {
                 System.out.println("Doc ID: " + document.getID());
 
                 CouchbaseLiteException err = document.getError();
@@ -1238,7 +1322,7 @@ public class Examples {
     public void testReplicationCustomHeader() throws URISyntaxException {
         URI uri = new URI("ws://localhost:4984/db");
         Endpoint endpoint = new URLEndpoint(uri);
-        final Collection collection = null;
+        final Collection collection = getCollection();
 
         // tag::replication-custom-header[]
         ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
@@ -1249,8 +1333,8 @@ public class Examples {
         // end::replication-custom-header[]
     }
 
-    public void testCertificatePinning() throws URISyntaxException, IOException, CertificateException {
-        final Collection collection = null;
+    public void testCertificatePinning() throws URISyntaxException, CertificateException {
+        final Collection collection = getCollection();
         URI uri = new URI("wss://localhost:4984/db");
         Endpoint endpoint = new URLEndpoint(uri);
         ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
@@ -1258,14 +1342,14 @@ public class Examples {
 
         // tag::certificate-pinning[]
         InputStream is = getAsset("cert.cer");
-        X509Certificate cert = (X509Certificate)CertificateFactory.getInstance("X.509").generateCertificate(is);
+        X509Certificate cert = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(is);
         config.setPinnedServerX509Certificate(cert);
         // end::certificate-pinning[]
     }
 
     public void testReplicationResetCheckpoint() throws URISyntaxException {
         boolean resetCheckpointExample = false;
-        final Collection collection = null;
+        final Collection collection = getCollection();
         URI uri = new URI("ws://localhost:4984/db");
         Endpoint endpoint = new URLEndpoint(uri);
         ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
@@ -1275,11 +1359,7 @@ public class Examples {
         Replicator replicator = new Replicator(config);
 
         // tag::replication-reset-checkpoint[]
-        if(resetCheckpointExample) {
-            replicator.start(true);
-        } else {
-            replicator.start(false);
-        }
+        replicator.start(resetCheckpointExample);
         // end::replication-reset-checkpoint[]
 
         replicator.stop();
@@ -1287,7 +1367,7 @@ public class Examples {
     }
 
     public void testReplicationPushFilter() throws URISyntaxException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         // tag::replication-push-filter[]
         URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
@@ -1306,7 +1386,7 @@ public class Examples {
     }
 
     public void testReplicationPullFilter() throws URISyntaxException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         // tag::replication-pull-filter[]
         URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
@@ -1325,7 +1405,7 @@ public class Examples {
     }
 
     public void testCustomRetryConfig() throws URISyntaxException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         // tag::replication-retry-config[]
         URLEndpoint target =
             new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
@@ -1355,7 +1435,7 @@ public class Examples {
 
     public void testDatabaseReplica() throws CouchbaseLiteException {
         Database database2 = new Database(DB_NAME2);
-        final Collection collection = null;
+        final Collection collection = getCollection();
 
         /* EE feature: code below will throw a compilation error
            if it's compiled against CBL Android Community. */
@@ -1374,7 +1454,7 @@ public class Examples {
     }
 
     public void testPredictiveModel() throws CouchbaseLiteException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
 
         // tag::register-model[]
         Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());
@@ -1404,7 +1484,7 @@ public class Examples {
     }
 
     public void testPredictiveQuery() throws CouchbaseLiteException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
 
         // tag::predictive-query[]
         Map<String, Object> inputProperties = new HashMap<>();
@@ -1419,13 +1499,14 @@ public class Examples {
                 .and(prediction.propertyPath("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))));
 
         // Run the query.
-        ResultSet result = query.execute();
-        System.out.println("Number of rows: " + result.allResults().size());
+        try (ResultSet result = query.execute()) {
+            System.out.println("Number of rows: " + result.allResults().size());
+        }
         // end::predictive-query[]
     }
 
     public void testReplicationWithCustomConflictResolver() throws URISyntaxException {
-        final Collection collection = null;
+        final Collection collection = getCollection();
         // tag::replication-conflict-resolver[]
         URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
@@ -1466,23 +1547,23 @@ public class Examples {
         // tag::query-syntax-all[]
         Database database;
         try {
-          database = new Database("hotels");
-        } catch (CouchbaseLiteException e) {
-          e.printStackTrace();
-          return;
+            database = new Database("hotels");
+        }
+        catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+            return;
         }
 
         Collection collection = database.getDefaultCollection();
         Query listQuery = QueryBuilder.select(SelectResult.all())
-              .from(DataSource.collection(collection));
+            .from(DataSource.collection(collection));
         // end::query-syntax-all[]
 
         // tag::query-access-all[]
-        ResultSet resultSet = listQuery.execute();
-        Map<String, Hotel> hotels = new HashMap<String, Hotel>();
-        try {
-            for (Result result : resultSet) {
-                             // get the k-v pairs from the 'hotel' key's value into a dictionary
+        Map<String, Hotel> hotels = new HashMap<>();
+        try (ResultSet resultSet = listQuery.execute()) {
+            for (Result result: resultSet) {
+                // get the k-v pairs from the 'hotel' key's value into a dictionary
                 Dictionary docsProp = result.getDictionary(0); // <.>
                 String docsId = docsProp.getString("id");
                 String docsName = docsProp.getString("Name");
@@ -1491,17 +1572,16 @@ public class Examples {
 
                 // Alternatively, access results value dictionary directly
                 final Hotel hotel = new Hotel();
-                hotel.Id = result.getDictionary(0).getString("id"); // <.>
-                hotel.Type = result.getDictionary(0).getString("Type");
-                hotel.Name = result.getDictionary(0).getString("Name");
-                hotel.City = result.getDictionary(0).getString("City");
-                hotel.Country= result.getDictionary(0).getString("Country");
-                hotel.Description = result.getDictionary(0).getString("Description");
-                hotels.put(hotel.Id, hotel);
-
+                hotel.setId(result.getDictionary(0).getString("id")); // <.>
+                hotel.setType(result.getDictionary(0).getString("Type"));
+                hotel.setName(result.getDictionary(0).getString("Name"));
+                hotel.setCity(result.getDictionary(0).getString("City"));
+                hotel.setCountry(result.getDictionary(0).getString("Country"));
+                hotel.setDescription(result.getDictionary(0).getString("Description"));
+                hotels.put(hotel.getId(), hotel);
             }
-        } finally {
-            if(resultSet != null) resultSet.close();
+        }
+        finally {
             database.close();
         }
         // end::query-access-all[]
@@ -1511,29 +1591,30 @@ public class Examples {
         Database database;
         try {
             database = new Database("hotels");
-        } catch (CouchbaseLiteException e) {
+        }
+        catch (CouchbaseLiteException e) {
             e.printStackTrace();
             return;
         }
 
         Collection collection = database.getDefaultCollection();
         Query listQuery = QueryBuilder.select(SelectResult.all())
-              .from(DataSource.collection(collection));
+            .from(DataSource.collection(collection));
 
         // tag::query-access-json[]
         ObjectMapper mapper = new ObjectMapper();
-        ArrayList<Hotel> hotels = new ArrayList<Hotel>();
+        ArrayList<Hotel> hotels = new ArrayList<>();
         HashMap<String, Object> dictFromJSONstring;
-        ResultSet resultSet = listQuery.execute();
-        try {
-            for (Result result : resultSet) {
+
+        try (ResultSet resultSet = listQuery.execute()) {
+            for (Result result: resultSet) {
 
                 // Get result as JSON string
                 String thisJsonString = result.toJSON(); // <.>
 
                 // Get Java  Hashmap from JSON string
                 dictFromJSONstring =
-                        mapper.readValue(thisJsonString, HashMap.class); // <.>
+                    mapper.readValue(thisJsonString, HashMap.class); // <.>
 
 
                 // Use created hashmap
@@ -1544,11 +1625,9 @@ public class Examples {
 
                 // Get custom object from Native 'dictionary' object
                 Hotel thisHotel =
-                        mapper.readValue(thisJsonString, Hotel.class); // <.>
+                    mapper.readValue(thisJsonString, Hotel.class); // <.>
                 hotels.add(thisHotel);
             }
-        } finally {
-            if(resultSet != null) resultSet.close();
         }
         // end::query-access-json[]
 
@@ -1561,7 +1640,8 @@ public class Examples {
         Database database;
         try {
             database = new Database("hotels");
-        } catch (CouchbaseLiteException e) {
+        }
+        catch (CouchbaseLiteException e) {
             e.printStackTrace();
             return;
         }
@@ -1569,45 +1649,46 @@ public class Examples {
         Collection collection = database.getDefaultCollection();
 
         Query listQuery =
-                QueryBuilder.select(SelectResult.expression(Meta.id),
-                        SelectResult.property("name"),
-                        SelectResult.property("Name"),
-                        SelectResult.property("Type"),
-                        SelectResult.property("City"))
-                        .from(DataSource.collection(collection));
+            QueryBuilder.select(
+                    SelectResult.expression(Meta.id),
+                    SelectResult.property("name"),
+                    SelectResult.property("Name"),
+                    SelectResult.property("Type"),
+                    SelectResult.property("City"))
+                .from(DataSource.collection(collection));
 
         // end::query-syntax-props[]
 
         // tag::query-access-props[]
         ResultSet resultSet = listQuery.execute();
-        HashMap<String, Hotel> hotels = new HashMap<String, Hotel>();
+        HashMap<String, Hotel> hotels = new HashMap<>();
         try {
-            for (Result result : resultSet) {
+            for (Result result: resultSet) {
 
                 // get data direct from result k-v pairs
                 final Hotel hotel = new Hotel();
-                hotel.Id = result.getString("id");
-                hotel.Type = result.getString("Type");
-                hotel.Name = result.getString("Name");
-                hotel.City = result.getString("City");
+                hotel.setId(result.getString("id"));
+                hotel.setType(result.getString("Type"));
+                hotel.setName(result.getString("Name"));
+                hotel.setCity(result.getString("City"));
 
                 // Store created hotel object in a hashmap of hotels
-                hotels.put(hotel.Id, hotel);
+                hotels.put(hotel.getId(), hotel);
 
                 // Get result k-v pairs into a 'dictionary' object
-                Map <String, Object> thisDocsProps = result.toMap();
+                Map<String, Object> thisDocsProps = result.toMap();
                 String docId =
-                        thisDocsProps.getOrDefault("id",null).toString();
+                    thisDocsProps.getOrDefault("id", null).toString();
                 String docName =
-                        thisDocsProps.getOrDefault("Name",null).toString();
+                    thisDocsProps.getOrDefault("Name", null).toString();
                 String docType =
-                        thisDocsProps.getOrDefault("Type",null).toString();
+                    thisDocsProps.getOrDefault("Type", null).toString();
                 String docCity =
-                        thisDocsProps.getOrDefault("City",null).toString();
-
+                    thisDocsProps.getOrDefault("City", null).toString();
             }
-        } finally {
-            if(resultSet != null) resultSet.close();
+        }
+        finally {
+            if (resultSet != null) { resultSet.close(); }
             database.close();
         }
         // end::query-access-props[]
@@ -1617,26 +1698,27 @@ public class Examples {
         Database database;
         try {
             database = new Database("hotels");
-        } catch (CouchbaseLiteException e) {
+        }
+        catch (CouchbaseLiteException e) {
             e.printStackTrace();
             return;
         }
 
         Collection collection = database.getDefaultCollection();
-  
+
         // tag::query-syntax-count-only[]
         Query listQuery = QueryBuilder.select(
                 SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) // <.>
-                .from(DataSource.collection(collection));
-  
+            .from(DataSource.collection(collection));
+
         // end::query-syntax-count-only[]
-  
-  
+
+
         // tag::query-access-count-only[]
         ResultSet resultSet = listQuery.execute();
         ResultSet resultSet2 = null;
         try {
-            for (Result result : resultSet) {
+            for (Result result: resultSet) {
 
                 // Retrieve count using key 'mycount'
                 Integer altDocId = result.getInt("mycount");
@@ -1647,26 +1729,22 @@ public class Examples {
             // Or even miss out the for-loop altogether
             resultSet2 = listQuery.execute();
             Integer resultCount = resultSet2.next().getInt("mycount");
-
-        } catch (CouchbaseLiteException e) {
+        }
+        catch (CouchbaseLiteException e) {
             e.printStackTrace();
-        } finally {
-            if(resultSet != null) resultSet.close();
-            if(resultSet2 != null) resultSet2.close();
+        }
+        finally {
+            if (resultSet != null) { resultSet.close(); }
+            if (resultSet2 != null) { resultSet2.close(); }
         }
         // end::query-access-count-only[]
 
         database.close();
     }
-}
 
-class Hotel {
-    public String Id;
-    public String Type;
-    public String Name;
-    public String City;
-    public String Country;
-    public String Description;
+
+    @NonNull
+    private Collection getCollection() { return defaultCollection; }
 }
 
 // tag::predictive-model[]
@@ -1686,29 +1764,24 @@ class ImageClassifierModel implements PredictiveModel {
 
 // tag::ziputils-unzip[]
 class ZipUtils {
-    public static void unzip(InputStream in, File destination) throws IOException {
+    public static void unzip(InputStream src, File dst) throws IOException {
         byte[] buffer = new byte[1024];
-        ZipInputStream zis = new ZipInputStream(in);
-        ZipEntry ze = zis.getNextEntry();
-        while (ze != null) {
-            String fileName = ze.getName();
-            File newFile = new File(destination, fileName);
-            if (ze.isDirectory()) {
-                newFile.mkdirs();
-            } else {
-                new File(newFile.getParent()).mkdirs();
-                FileOutputStream fos = new FileOutputStream(newFile);
-                int len;
-                while ((len = zis.read(buffer)) > 0) {
-                    fos.write(buffer, 0, len);
+        try (InputStream in = src; ZipInputStream zis = new ZipInputStream(in)) {
+            ZipEntry ze = zis.getNextEntry();
+            while (ze != null) {
+                File newFile = new File(dst, ze.getName());
+                if (ze.isDirectory()) { newFile.mkdirs(); }
+                else {
+                    new File(newFile.getParent()).mkdirs();
+                    try (FileOutputStream fos = new FileOutputStream(newFile)) {
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) { fos.write(buffer, 0, len); }
+                    }
                 }
-                fos.close();
+                ze = zis.getNextEntry();
             }
-            ze = zis.getNextEntry();
+            zis.closeEntry();
         }
-        zis.closeEntry();
-        zis.close();
-        in.close();
     }
 }
 // end::ziputils-unzip[]
@@ -1864,7 +1937,7 @@ class PassivePeerConnection implements MessageEndpointConnection {
         // tag::listener[]
         Database database = new Database("dbName");
         MessageEndpointListenerConfiguration listenerConfiguration = new MessageEndpointListenerConfiguration(
-            new HashSet<Collection>(Arrays.asList(database.getDefaultCollection())),
+            new HashSet<>(Arrays.asList(database.getDefaultCollection())),
             ProtocolType.MESSAGE_STREAM);
         this.messageEndpointListener = new MessageEndpointListener(listenerConfiguration);
         // end::listener[]

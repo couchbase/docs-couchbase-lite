@@ -1,3 +1,14 @@
+
+
+THIS FILE IS A COMPLETE DISASTER.
+
+THE CODE IN IT IS INCOORECT ON SEVERAL LEVELS:
+- It is not java code
+- if it were java code, it wouldn't compile
+- if it could be made to compile, it would not run
+
+
+
 // subsumed-p2p
 // PASSIVE PEER STUFF
 // Stuff I adapted

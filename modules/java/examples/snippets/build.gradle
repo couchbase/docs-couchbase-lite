@@ -2,6 +2,12 @@ apply plugin: 'java'
 apply plugin: 'war'
 apply plugin: 'com.bmuschko.tomcat'
 
+ext {
+   CBL_VERSION='3.1.0-SNAPSHOT'
+   TOMCAT_VERSION = '9.0.1'
+}
+def USE_LOCAL_MAVEN = project.hasProperty("useLocalMaven")
+
 buildscript {
     repositories {
         jcenter()
@@ -12,31 +18,33 @@ buildscript {
 }
 
 group 'org.example'
-version '1.0-SNAPSHOT'
+version '3.1-SNAPSHOT'
 
 repositories {
-    maven {
-        url "https://proget.sc.couchbase.com/maven2/internalmaven"
+    if (USE_LOCAL_MAVEN) { mavenLocal() }
+    else {
+        maven {
+            url "http://proget.build.couchbase.com/maven2/cimaven"
+            allowInsecureProtocol = true
+        }
     }
+
     mavenCentral()
-    mavenLocal()
     google()
 }
 
 dependencies {
-    implementation 'org.jetbrains:annotations:22.0.0'
-    implementation 'com.couchbase.lite:couchbase-lite-java-ee:3+'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
     compileOnly 'androidx.annotation:annotation:1.5.0'
-    providedCompile "javax.servlet:javax.servlet-api:4.0.1"
+    compileOnly "javax.servlet:javax.servlet-api:4.0.1"
+    implementation "com.couchbase.lite:couchbase-lite-java-ee-macos:${CBL_VERSION}"
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
 }
 
 dependencies {
-    def tomcatVersion = '9.0.1'
-    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${TOMCAT_VERSION}",
             "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
-            "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}",
-            "com.couchbase.lite:couchbase-lite-java-ee:3+"
+            "org.apache.tomcat.embed:tomcat-embed-jasper:${TOMCAT_VERSION}",
+            "com.couchbase.lite:couchbase-lite-java-ee::${CBL_VERSION}"
 }
 
 tomcat {
