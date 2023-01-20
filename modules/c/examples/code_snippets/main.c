@@ -2316,6 +2316,31 @@ static void replicator_property_encryption() {
     #endif
 }
 
+static void database_replica(){
+    #ifdef COUCHBASE_ENTERPRISE
+
+    CBLError err;
+    CBLDatabase* database1 = kDatabase;
+    CBLDatabase* database2 = CBLDatabase_Open(FLSTR("mydb"), NULL, &err);
+
+    // tag::database-replica[]
+    CBLEndpoint* target = CBLEndpoint_CreateWithLocalDB(database2);
+
+    CBLReplicatorConfiguration replConfig;
+    replConfig.database = db;
+    replConfig.endpoint = target;
+
+    CBLReplicator* replicator = CBLReplicator_Create(&replConfig, &err);
+    CBLEndpoint_Free(target);
+
+    CBLReplicator_Start(repl, false);
+    // end::database-replica[]
+
+    CBLDatabase_Close(database2, &err);
+
+    #endif
+}
+
 int main(int argc, char** argv) {
     create_new_database();
     create_document();
