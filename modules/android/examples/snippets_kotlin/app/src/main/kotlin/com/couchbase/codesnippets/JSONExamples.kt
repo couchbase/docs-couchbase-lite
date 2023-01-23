@@ -13,7 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package com.couchbase.code_snippets
+@file:Suppress("UNUSED_VARIABLE", "unused")
+package com.couchbase.codesnippets
 
 import android.util.Log
 import com.couchbase.lite.*
@@ -29,9 +30,10 @@ const val JSON = """[{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hotel Ted\",
         \"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\",
         \"features\":[\"Cable TV\",\"Toaster\",\"Microwave\"]}]"""
 
+private const val TAG = "SNIPPETS"
 
 class KtJSONExamples {
-    private val TAG = "SNIPPETS"
+
 
     fun jsonArrayExample(db: Database) {
         // tag::tojson-array[]
@@ -81,7 +83,7 @@ class KtJSONExamples {
       fun jsonDocumentExample(srcDb: Database, dstDb: Database) {
         // tag::tojson-document[]
         QueryBuilder
-        .select(SelectResult.expression(Meta.id).as("metaId"))
+        .select(SelectResult.expression(Meta.id).`as`("metaId"))
         .from(DataSource.database(srcDb))
         .execute()
         .forEach {

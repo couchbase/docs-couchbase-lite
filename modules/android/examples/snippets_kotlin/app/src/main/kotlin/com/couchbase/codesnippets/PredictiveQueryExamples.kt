@@ -13,7 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package com.couchbase.code_snippets
+@file:Suppress("UNUSED_VARIABLE", "unused")
+package com.couchbase.codesnippets
 
 import android.util.Log
 import com.couchbase.lite.Blob
@@ -102,8 +103,8 @@ class PredictiveQueryExamples {
             .select(SelectResult.all())
             .from(DataSource.database(database))
             .where(
-                prediction.property("label").equalTo(Expression.string("car"))
-                .and(prediction.property("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))
+                prediction.propertyPath("label").equalTo(Expression.string("car"))
+                .and(prediction.propertyPath("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))
                     )
             )
             .execute()

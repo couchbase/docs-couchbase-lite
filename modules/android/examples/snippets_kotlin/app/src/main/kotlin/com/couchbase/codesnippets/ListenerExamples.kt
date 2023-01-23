@@ -13,7 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package com.couchbase.code_snippets
+@file:Suppress("UNUSED_VARIABLE", "unused")
+package com.couchbase.codesnippets
 
 import android.content.Context
 import android.util.Log
@@ -182,7 +183,7 @@ class KtCertAuthListener {
     ) {
 
         // Snippet 4: create an authenticator that provides the client identity
-        config.setAuthenticator(ClientCertificateAuthenticator(clientIdentity))
+        config.authenticator =ClientCertificateAuthenticator(clientIdentity)
 
         // Configure the pinned certificate passing a byte array.
         config.pinnedServerCertificate = cert.encoded
@@ -255,7 +256,7 @@ class KtPasswordAuthListener {
         val config = ReplicatorConfiguration(db, URLEndpoint(uri))
         config.type = ReplicatorType.PUSH_AND_PULL
         config.isContinuous = false
-        config.setAuthenticator(BasicAuthenticator(username, password))
+        config.authenticator = BasicAuthenticator(username, password)
         val completionLatch = CountDownLatch(1)
         val repl = Replicator(config)
 

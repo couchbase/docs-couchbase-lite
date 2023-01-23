@@ -13,7 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package com.couchbase.code_snippets
+@file:Suppress("UNUSED_VARIABLE", "unused")
+package com.couchbase.codesnippets
 
 import android.util.Log
 import com.couchbase.lite.*
@@ -255,9 +256,9 @@ object MergeConflictResolver : ConflictResolver {
                 )
             )
 
-            val resetCheckpointRequired_Example = false
+            val resetCheckpointRequiredExample = false
             // tag::replication-reset-checkpoint[]
-            repl.start(resetCheckpointRequired_Example) // <.>
+            repl.start(resetCheckpointRequiredExample) // <.>
             // end::replication-reset-checkpoint[]
 
             // ... at some later time

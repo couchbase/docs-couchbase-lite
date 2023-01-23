@@ -13,7 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package com.couchbase.code_snippets
+@file:Suppress("UNUSED_VARIABLE", "unused")
+
+package com.couchbase.codesnippets
 
 import android.content.Context
 import android.util.Log
@@ -22,12 +24,15 @@ import com.couchbase.lite.*
 import com.couchbase.lite.internal.utils.PlatformUtils
 import org.junit.Test
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
 import java.net.URI
 import java.net.URISyntaxException
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
+import java.util.zip.ZipInputStream
 
 
 private const val TAG = "BASIC"
@@ -44,7 +49,6 @@ class LogTestLogger(private val level: LogLevel) : Logger {
 
 // end::custom-logging[]
 // tag::example-app[]
-@Suppress("unused")
 class BasicExamples(private val context: Context) {
     private val database: Database
 
@@ -55,9 +59,9 @@ class BasicExamples(private val context: Context) {
         // Get the database (and create it if it doesn’t exist).
         // tag::database-config-factory[]
         database = Database(
-          "getting-started",
-          DatabaseConfigurationFactory.create(context.filesDir.absolutePath)
-          )
+            "getting-started",
+            DatabaseConfigurationFactory.create(context.filesDir.absolutePath)
+        )
         // end::database-config-factory[]
     }
 
@@ -93,14 +97,14 @@ class BasicExamples(private val context: Context) {
         // Be sure to hold a reference somewhere to prevent the Replicator from being GCed
         //  tag::replicator-config-factory[]
         val replicator =
-          Replicator(
-            ReplicatorConfigurationFactory.create(
-              database = database,
-              target = URLEndpoint(URI("ws://localhost:4984/getting-started-db")),
-              type = ReplicatorType.PUSH_AND_PULL,
-              authenticator = BasicAuthenticator("sync-gateway", "password".toCharArray())
-              )
-          )
+            Replicator(
+                ReplicatorConfigurationFactory.create(
+                    database = database,
+                    target = URLEndpoint(URI("ws://localhost:4984/getting-started-db")),
+                    type = ReplicatorType.PUSH_AND_PULL,
+                    authenticator = BasicAuthenticator("sync-gateway", "password".toCharArray())
+                )
+            )
 
         //  end::replicator-config-factory[]
 
@@ -221,16 +225,16 @@ class BasicExamples(private val context: Context) {
         // tag::file-logging[]
         // tag::file-logging-config-factory[]
         Database.log.file.let {
-          it.config = LogFileConfigurationFactory.create(
-            context.cacheDir.absolutePath, // <.>
-            maxSize = 10240, // <.>
-            maxRotateCount = 5, // <.>
-            usePlainText = false
+            it.config = LogFileConfigurationFactory.create(
+                context.cacheDir.absolutePath, // <.>
+                maxSize = 10240, // <.>
+                maxRotateCount = 5, // <.>
+                usePlainText = false
             ) // <.>
             it.level = LogLevel.INFO // <.>
 
             // end::file-logging[]
-          }
+        }
         // end::file-logging-config-factory[]
     }
 
@@ -415,50 +419,40 @@ class BasicExamples(private val context: Context) {
     }
 }
 
+class SupportingDatatypes(private val context: Context, private val database: Database) {
 
-class supportingDatatypes
-{
-
-    private val database  = Database("mydb")
-
-
-
-    fun datatype_usage() {
-
-
+    @Throws(CouchbaseLiteException::class)
+    fun datatypeUsage() {
         // tag::datatype_usage[]
         // tag::datatype_usage_createdb[]
         // Initialize the Couchbase Lite system
         CouchbaseLite.init(context)
 
         // Get the database (and create it if it doesn’t exist).
-        DatabaseConfiguration config = new DatabaseConfiguration()
-
-        config.setDirectory(context.getFilesDir().getAbsolutePath())
-
-        Database database = new Database("getting-started", config)
+        val config = DatabaseConfiguration()
+        config.directory = context.filesDir.absolutePath
+        val database = Database("getting-started", config)
 
         // end::datatype_usage_createdb[]
         // tag::datatype_usage_createdoc[]
         // Create your new document
-        // The lack of 'const' indicates this document is mutable
-        MutableDocument mutableDoc = new MutableDocument()
+        val mutableDoc = MutableDocument()
 
         // end::datatype_usage_createdoc[]
         // tag::datatype_usage_mutdict[]
         // Create and populate mutable dictionary
         // Create a new mutable dictionary and populate some keys/values
-        MutableDictionary address = new MutableDictionary()
+        val address = MutableDictionary()
         address.setString("street", "1 Main st.")
         address.setString("city", "San Francisco")
         address.setString("state", "CA")
         address.setString("country", "USA")
-        address.setString("code"), "90210")
+        address.setString("code", "90210")
 
         // end::datatype_usage_mutdict[]
         // tag::datatype_usage_mutarray[]
         // Create and populate mutable array
-        MutableArray phones = new MutableArray()
+        val phones = MutableArray()
         phones.addString("650-000-0000")
         phones.addString("650-000-0001")
 
@@ -467,25 +461,25 @@ class supportingDatatypes
         // Initialize and populate the document
 
         // Add document type to document properties <.>
-        mutable_doc.setString("type", "hotel"))
+        mutableDoc.setString("type", "hotel")
 
         // Add hotel name string to document properties <.>
-        mutable_doc.setString("name", "Hotel Java Mo"))
+        mutableDoc.setString("name", "Hotel Java Mo")
 
         // Add float to document properties <.>
-        mutable_doc.setFloat("room_rate", 121.75f)
+        mutableDoc.setFloat("room_rate", 121.75f)
 
         // Add dictionary to document's properties <.>
-        mutable_doc.setDictionary("address", address)
+        mutableDoc.setDictionary("address", address)
 
 
         // Add array to document's properties <.>
-        mutable_doc.setArray("phones", phones)
+        mutableDoc.setArray("phones", phones)
 
         // end::datatype_usage_populate[]
         // tag::datatype_usage_persist[]
         // Save the document changes <.>
-        database.save(mutable_doc)
+        database.save(mutableDoc)
 
         // end::datatype_usage_persist[]
         // tag::datatype_usage_closedb[]
@@ -495,16 +489,14 @@ class supportingDatatypes
         // end::datatype_usage_closedb[]
 
         // end::datatype_usage[]
-
     }
 
 
-
-    fun datatype_dictionary() {
+    fun datatypeDictionary() {
 
         // tag::datatype_dictionary[]
         // NOTE: No error handling, for brevity (see getting started)
-        val document = database!!.getDocument("doc1")
+        val document = database.getDocument("doc1")
 
         // Getting a dictionary from the document's properties
         val dict = document?.getDictionary("address")
@@ -517,37 +509,37 @@ class supportingDatatypes
             println("Key ${key} = ${dict.getValue(key)}")
         }
 
-      // Create a mutable copy
-      val mutable_Dict = dict.toMutable()
+        // Create a mutable copy
+        val mutableDict = dict.toMutable()
 
-      // end::datatype_dictionary[]
+        // end::datatype_dictionary[]
     }
 
-    fun datatype_mutable_dictionary() {
+    fun datatypeMutableDictionary() {
 
         // tag::datatype_mutable_dictionary[]
         // NOTE: No error handling, for brevity (see getting started)
 
         // Create a new mutable dictionary and populate some keys/values
-        val mutable_dict = MutableDictionary()
-        mutable_dict.setString("street", "1 Main st.")
-        mutable_dict.setString("city", "San Francisco")
+        val mutableDict = MutableDictionary()
+        mutableDict.setString("street", "1 Main st.")
+        mutableDict.setString("city", "San Francisco")
 
         // Add the dictionary to a document's properties and save the document
-        val mutable_doc = MutableDocument("doc1")
-        mutable_doc.setDictionary("address", mutable_dict)
-        database!!.save(mutable_doc)
+        val mutableDoc = MutableDocument("doc1")
+        mutableDoc.setDictionary("address", mutableDict)
+        database.save(mutableDoc)
 
-    // end::datatype_mutable_dictionary[]
-}
+        // end::datatype_mutable_dictionary[]
+    }
 
 
-    fun datatype_array() {
+    fun datatypeArray() {
 
         // tag::datatype_array[]
         // NOTE: No error handling, for brevity (see getting started)
 
-        val document = database?.getDocument("doc1")
+        val document = database.getDocument("doc1")
 
         // Getting a phones array from the document's properties
         val array = document?.getArray("phones")
@@ -559,30 +551,58 @@ class supportingDatatypes
         val phone = array?.getString(1)
 
         // Iterate array
-        for ( (index, item) in array!!) {
-            println("Row  ${index} = ${item}")
-        }
+        array?.forEachIndexed { index, item -> println("Row  ${index} = ${item}") }
 
         // Create a mutable copy
-        val mutable_array = array.toMutable()
+        val mutableArray = array?.toMutable()
         // end::datatype_array[]
     }
 
-    fun datatype_mutable_array() {
+    fun datatypeMutableArray() {
 
         // tag::datatype_mutable_array[]
         // NOTE: No error handling, for brevity (see getting started)
 
         // Create a new mutable array and populate data into the array
-        val mutable_array = MutableArray()
-        mutable_array.addString("650-000-0000")
-        mutable_array.addString("650-000-0001")
+        val mutableArray = MutableArray()
+        mutableArray.addString("650-000-0000")
+        mutableArray.addString("650-000-0001")
 
         // Set the array to document's properties and save the document
-        val mutable_doc = MutableDocument("doc1")
-        mutable_doc.setArray("phones", mutable_array)
-        database?.save(mutable_doc)
+        val mutableDoc = MutableDocument("doc1")
+        mutableDoc.setArray("phones", mutableArray)
+        database.save(mutableDoc)
         // end::datatype_mutable_array[]
     }
 
 } // end  class supporting_datatypes
+
+
+// tag::ziputils-unzip[]
+object ZipUtils {
+    @Throws(IOException::class)
+    fun unzip(src: InputStream?, dst: File?) {
+        val buffer = ByteArray(1024)
+        src?.use { sis ->
+            ZipInputStream(sis).use { zis ->
+                var ze = zis.nextEntry
+                while (ze != null) {
+                    val newFile = File(dst, ze.name)
+                    if (ze.isDirectory) {
+                        newFile.mkdirs()
+                    } else {
+                        File(newFile.parent!!).mkdirs()
+                        FileOutputStream(newFile).use { fos ->
+                            var len: Int
+                            while (zis.read(buffer).also { len = it } > 0) {
+                                fos.write(buffer, 0, len)
+                            }
+                        }
+                    }
+                    ze = zis.nextEntry
+                }
+                zis.closeEntry()
+            }
+        }
+    }
+}
