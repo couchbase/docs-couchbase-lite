@@ -142,11 +142,11 @@ class SampleCodeTest {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::initializer[]
-        let newTask = MutableDocument()
+        let doc = MutableDocument()
             .setString("task", forKey: "type")
             .setString("todo", forKey: "owner")
             .setDate(Date(), forKey: "createdAt")
-        try collection.save(document: newTask)
+        try collection.save(document: doc)
         // end::initializer[]
     }
 
@@ -156,35 +156,37 @@ class SampleCodeTest {
         }
         
         // tag::update-document[]
-        guard let document = try collection.document(id: "xyz") else { return }
-        let mutableDocument = document.toMutable()
+        guard let doc = try collection.document(id: "xyz") else { return }
+        let mutableDocument = doc.toMutable()
         mutableDocument.setString("apples", forKey: "name")
         try collection.save(document: mutableDocument)
         // end::update-document[]
     }
 
-    func dontTestTypedAcessors() throws {
-        let newTask = MutableDocument()
-
+    func dontTestDateGetter() throws {
         // tag::date-getter[]
-        newTask.setValue(Date(), forKey: "createdAt")
-        let date = newTask.date(forKey: "createdAt")
+        let mutableDoc = MutableDocument(id: "xyz")
+        mutableDoc.setValue(Date(), forKey: "createdAt")
+        
+        guard let doc = try collection.document(id: "xyz") else { return }
+        let date = doc.date(forKey: "createdAt")
         // end::date-getter[]
-
-        // tag::to-dictionary[]
-        print(newTask.toDictionary())
-
-        // end::to-dictionary[]
-
-        // tag::to-json[]
-        print(newTask.toJSON())
-
-        // end::to-json[]
-
         print("\(date!)")
     }
 
-
+    func dontTestToDictionary() throws {
+        // tag::to-dictionary[]
+        guard let doc = try collection.document(id: "xyz") else { return }
+        print(doc.toDictionary())
+        // end::to-dictionary[]
+    }
+    
+    func dontTestToJSON() throws {
+        // tag::to-json[]
+        guard let doc = try collection.document(id: "xyz") else { return }
+        print(doc.toJSON())
+        // end::to-json[]
+    }
 
     func dontTestBatchOperations() throws {
         guard let collection = try self.database.defaultCollection() else {
@@ -215,9 +217,10 @@ class SampleCodeTest {
         }
         
         // tag::document-listener[]
+        weak var wCollection = collection
         let token = collection.addDocumentChangeListener(id: "user.john") { (change) in
-            if let document = try? self.collection.document(id: change.documentID) {
-                print("Status :: \(document?.string(forKey: "verified_account") ?? "--")")
+            if let doc = try? wCollection?.document(id: change.documentID) {
+                print("Status :: \(doc?.string(forKey: "verified_account") ?? "--")")
             }
         }
         // end::document-listener[]
@@ -1184,7 +1187,10 @@ class SampleCodeTest {
          if it's compiled against CBL Swift Community. */
         // tag::database-replica[]
         let targetDatabase = DatabaseEndpoint(database: database2)
-        let config = ReplicatorConfiguration(database: database, target: targetDatabase)
+        var config = ReplicatorConfiguration(target: targetDatabase)
+        
+        guard let collection1 = try database.collection(name: "collection1", scope: "scope1") else { return }
+        config.addCollection(collection1)
         config.replicatorType = .push
 
         self.replicator = Replicator(config: config)
@@ -2013,6 +2019,31 @@ class SampleCodeTest {
         self.listener = URLEndpointListener.init(config: config) // <1>
         // end::p2p-ws-api-urlendpointlistener-constructor[]
     }
+    
+    func dontTestManageCollection() throws {
+        guard let database = self.database else { return }
+        
+        // tag::scopes-manage-create-collection[]
+        let collection = try database.createCollection(name: "myCollectionName", scope: "myScopeName")
+        // end::scopes-manage-create-collection[]
+        
+        // tag::scopes-manage-index-collection[]
+        let config = FullTextIndexConfiguration(["overview"])
+        try collection.createIndex(withName: "overviewFTSIndex", config: config)
+        // end::scopes-manage-index-collection[]
+        
+        // tag::scopes-manage-list[]
+        let scopes = try database.scopes()
+        let collections = try database.collections(scope: "myScopeName")
+        print("I have \(scopes.count) scopes and \(collections.count) collections")
+        // end::scopes-manage-list[]
+        
+        // tag::scopes-manage-drop-collection[]
+        try database.deleteCollection(name: "myCollectionName", scope: "myScopeName")
+        // end::scopes-manage-drop-collection[]
+    }
+    
+    // MARK: --
 
     func fMyActPeer() throws {
         guard let collection = try self.database.defaultCollection() else {
@@ -2440,6 +2471,18 @@ class SampleCodeTest {
 
         print(messageEndpointListener.connections.count)
     }
+    
+    func initialize() throws {
+        guard let collection = try self.database.defaultCollection() else { return }
+        
+        // tag::sgw-act-rep-initialize[]
+        let targetURL = URL(string: "wss://10.1.1.12:8092/travel-sample")!
+        let targetEndpoint = URLEndpoint(url: targetURL)
+        var config = ReplicatorConfiguration(target: targetEndpoint) // <.>
+        config.addCollection(collection)
+
+        // end::sgw-act-rep-initialize[]
+    }
 }
 
 // tag::sgw-repl-pull[]
@@ -2473,12 +2516,7 @@ class MyClass {
 
  // end::sgw-repl-pull-callouts[]
 
- // tag::sgw-act-rep-initialize[]
- let tgtUrl = URL(string: "wss://10.1.1.12:8092/travel-sample")!
- let targetEndpoint = URLEndpoint(url: tgtUrl)
- var config = ReplicatorConfiguration(database: database!, target: targetEndpoint) // <.>
 
- // end::sgw-act-rep-initialize[]
 
  */
 
@@ -2865,10 +2903,10 @@ public class Supporting_Datatypes
 
         // tag::datatype_dictionary[]
         // NOTE: No error handling, for brevity (see getting started)
-        guard let document = try collection.document(id:"doc1") else { return }
+        guard let doc = try collection.document(id:"doc1") else { return }
 
         // Getting a dictionary from the document's properties
-        guard let dict = document.dictionary(forKey: "address") else { return }
+        guard let dict = doc.dictionary(forKey: "address") else { return }
 
         // Access a value with a key from the dictionary
         guard let street = dict.string(forKey: "street") else { return }
@@ -2879,10 +2917,10 @@ public class Supporting_Datatypes
         }
 
         // Create a mutable copy
-        let mutable_dict = dict.toMutable()
+        let mutableDict = dict.toMutable()
         // end::datatype_dictionary[]
         
-        print("street \(street) dict \(mutable_dict)")
+        print("street \(street) dict \(mutableDict)")
     }
 
     func datatype_mutable_dictionary() throws {
@@ -2894,14 +2932,14 @@ public class Supporting_Datatypes
 
         // tag::datatype_mutable_dictionary[]
         // Create a new mutable dictionary and populate some keys/values
-        let mutable_dict = MutableDictionaryObject()
-        mutable_dict.setString("1 Main st.", forKey: "street")
-        mutable_dict.setString("San Francisco", forKey: "city")
+        let mutableDict = MutableDictionaryObject()
+        mutableDict.setString("1 Main st.", forKey: "street")
+        mutableDict.setString("San Francisco", forKey: "city")
 
         // Add the dictionary to a document's properties and save the document
-        let mutable_doc = MutableDocument(id: "doc1")
-        mutable_doc.setDictionary(mutable_dict, forKey: "address")
-        try! collection.save(document:mutable_doc)
+        let mutableDoc = MutableDocument(id: "doc1")
+        mutableDoc.setDictionary(mutableDict, forKey: "address")
+        try! collection.save(document:mutableDoc)
 
         // end::datatype_mutable_dictionary[]
     }
@@ -2915,10 +2953,10 @@ public class Supporting_Datatypes
         var phone = "--"
 
         // tag::datatype_array[]
-        guard let document = try collection.document(id:"doc1") else { return }
+        guard let doc = try collection.document(id:"doc1") else { return }
 
         // Getting a phones array from the document's properties
-        guard let array = document.array(forKey: "phones") else { return }
+        guard let array = doc.array(forKey: "phones") else { return }
 
         // Access an array element by index
         if array.count >= 0, let val = array.string(at: 0) {
@@ -2931,10 +2969,10 @@ public class Supporting_Datatypes
         }
 
         // Create a mutable copy
-        let mutable_array = array.toMutable()
+        let mutableArray = array.toMutable()
         // end::datatype_array[]
         
-        print("phone is \(phone). mutable array is \(mutable_array)")
+        print("phone is \(phone). mutable array is \(mutableArray)")
 
     }
 
@@ -2946,14 +2984,14 @@ public class Supporting_Datatypes
 
         // tag::datatype_mutable_array[]
         // Create a new mutable array and populate data into the array
-        var mutable_array = MutableArrayObject()
-        mutable_array.addString("650-000-0000")
-        mutable_array.addString("650-000-0001")
+        var mutableArray = MutableArrayObject()
+        mutableArray.addString("650-000-0000")
+        mutableArray.addString("650-000-0001")
 
             // Set the array to document's properties and save the document
-        let mutable_doc = MutableDocument(id: "doc1")
-        mutable_doc.setArray(mutable_array, forKey:"phones")
-        try collection.save(document:mutable_doc)
+        let mutableDoc = MutableDocument(id: "doc1")
+        mutableDoc.setArray(mutableArray, forKey:"phones")
+        try collection.save(document:mutableDoc)
         // end::datatype_mutable_array[]
     }
 

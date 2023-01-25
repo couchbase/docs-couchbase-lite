@@ -20,6 +20,8 @@
 #import <UIKit/UIKit.h>
 #import <CouchbaseLite/CouchbaseLite.h>
 #import <CoreML/CoreML.h>
+#import <ifaddrs.h>
+#import <net/if.h>
 
 
 #pragma mark - !!!Note
@@ -587,7 +589,7 @@
     CBLValueIndexItem *type = [CBLValueIndexItem property:@"type"];
     CBLValueIndexItem *name = [CBLValueIndexItem property:@"name"];
     CBLIndex *index = [CBLIndexBuilder valueIndexWithItems:@[type, name]];
-    [self.database createIndex:index withName:@"TypeNameIndex" error:&error];
+    [collection createIndex:index name:@"TypeNameIndex" error:&error];
     // end::query-index_Querybuilder[]
 }
 
@@ -1061,7 +1063,7 @@
     // Create index
     CBLFullTextIndex *index = [CBLIndexBuilder fullTextIndexWithItems:@[[CBLFullTextIndexItem property:@"name"]]];
     index.ignoreAccents = NO;
-    [self.database createIndex:index withName:@"nameFTSIndex" error:&error];
+    [collection createIndex:index name:@"nameFTSIndex" error:&error];
     // end::fts-index_Querybuilder[]
 }
 
@@ -1070,8 +1072,9 @@
     CBLCollection *collection = [self.database defaultCollection:nil];
 
     // tag::fts-query_Querybuilder[]
-    CBLQueryExpression *where = [CBLQueryFullTextFunction matchWithIndexName:@"nameFTSIndex"
-                                                                       query:@"'buy'"];
+    id exp = [CBLQueryExpression fullTextIndex:@"nameFTSIndex"];
+    CBLQueryExpression *where = [CBLQueryFullTextFunction matchWithIndex:exp query:@"'buy'"];
+    
     CBLQuery *query =
       [CBLQueryBuilder
         select:@[[CBLQuerySelectResult expression:[CBLQueryMeta id]]]
@@ -1373,15 +1376,17 @@
 
 #ifdef COUCHBASE_ENTERPRISE
 - (void) dontTestDatabaseReplica {
-    CBLCollection *collection = [self.database defaultCollection:nil];
+    CBLDatabase* database = self.database;
     /* EE feature:code below might throw a compilation error
      if it's compiled against CBL Swift Community. */
     // tag::database-replica[]
     CBLDatabaseEndpoint *targetDatabase = [[CBLDatabaseEndpoint alloc] initWithDatabase:self.otherDB];
     CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithTarget:targetDatabase];
-    [replConfig addCollection:collection config:nil];
+    replConfig.replicatorType = kCBLReplicatorTypePush;
     
-    config.replicatorType = kCBLReplicatorTypePush;
+    NSError* error = nil;
+    CBLCollection *collection = [database collectionWithName:@"collection1" scope:@"scope1" error:&error];
+    [replConfig addCollection:collection config:nil];
 
     self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
     [self.replicator start];
@@ -1480,7 +1485,9 @@
 
 - (void) dontTestPredictiveModel {
     NSError *error;
-    self.database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
+    CBLDatabase* database = self.database;
+    CBLCollection* collection = [database defaultCollection: &error];
+    
 
     // tag::register-model[]
     ImageClassifierModel *model = [[ImageClassifierModel alloc] init];
@@ -1492,7 +1499,7 @@
     CBLQueryPredictionFunction *prediction = [CBLQueryFunction predictionUsingModel:@"ImageClassifier" input:input];
 
     CBLValueIndex *index = [CBLIndexBuilder valueIndexWithItems:@[[CBLValueIndexItem expression:[prediction property:@"label"]]]];
-    [self.database createIndex:index withName:@"value-index-image-classifier" error:&error];
+    [collection createIndex: index name:@"value-index-image-classifier" error:&error];
     // end::predictive-query-value-index[]
 
     // tag::unregister-model[]
@@ -1502,20 +1509,21 @@
 
 - (void) dontTestPredictiveIndex {
     NSError *error;
-    self.database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
+    CBLDatabase* database = self.database;
+    CBLCollection* collection = [database defaultCollection: &error];
 
     // tag::predictive-query-predictive-index[]
     CBLQueryExpression *input = [CBLQueryExpression dictionary:@{@"photo":[CBLQueryExpression property:@"photo"]}];
 
     CBLPredictiveIndex *index = [CBLIndexBuilder predictiveIndexWithModel:@"ImageClassifier" input:input properties:nil];
-    [self.database createIndex:index withName:@"predictive-index-image-classifier" error:&error];
+    [collection createIndex:index name:@"predictive-index-image-classifier" error:&error];
     // end::predictive-query-predictive-index[]
 }
 
 - (void) dontTestPredictiveQuery {
     NSError *error;
-    self.database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
-    CBLCollection *collection = [self.database defaultCollection:nil];
+    CBLDatabase* database = self.database;
+    CBLCollection *collection = [database defaultCollection:nil];
 
     // tag::predictive-query[]
     CBLQueryExpression *input = [CBLQueryExpression dictionary:@{@"photo":[CBLQueryExpression property:@"photo"]}];
@@ -1681,13 +1689,14 @@
 # pragma mark - QUERY RESULT SET HANDLING EXAMPLES
 
 - (void) dontTestQuerySyntaxJson {
+    
+    CBLDatabase *database = self.database;
     // tag::query-syntax-all[]
     NSError *error;
-
-    CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error:&error];
+    CBLCollection* collection = [database createCollectionWithName:@"hotels" scope:nil error:&error];
 
     CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
-                                             from:[CBLQueryDataSource collection:[db defaultCollection:&error]]]; // <.>
+                                             from:[CBLQueryDataSource collection:collection]]; // <.>
 
     // end::query-syntax-all[]
 
@@ -1734,9 +1743,11 @@
 
 - (void) dontTestQuerySyntaxAndAccessProps {
     NSError *error = nil;
-
+    CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"hotels" error:&error];
     // tag::query-syntax-props[]
-    CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error:&error];
+    CBLCollection* collection = [database createCollectionWithName:@"hotels"
+                                                             scope:nil
+                                                             error:&error];
 
     CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
 
@@ -1747,7 +1758,7 @@
     CBLQuerySelectResult *city = [CBLQuerySelectResult property:@"city"];
 
     CBLQuery *query = [CBLQueryBuilder select:@[id, type, name, city]
-                                         from:[CBLQueryDataSource collection:[db defaultCollection:&error]]]; // <.>
+                                         from:[CBLQueryDataSource collection:collection]]; // <.>
     // end::query-syntax-props[]
 
     // tag::query-access-props[]
@@ -1766,17 +1777,19 @@
 }
 
 - (void) dontTestQuerySyntaxCount {
-    NSError *error = nil;
+    
     NSInteger count = 0;
+    CBLDatabase *database = self.database;
     // tag::query-syntax-count-only[]
-    CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"hotels" error:&error];
+    NSError *error = nil;
+    CBLCollection *collection = [database createCollectionWithName:@"hotels" scope:nil error:&error];
 
     CBLQueryExpression *countExpression = [CBLQueryFunction count:[CBLQueryExpression all]];
     CBLQuerySelectResult *selectResult = [CBLQuerySelectResult expression:countExpression
                                                                        as:@"myCount"];
 
     CBLQuery *query = [CBLQueryBuilder select:@[selectResult]
-                                         from:[CBLQueryDataSource collection:[database defaultCollection:&error]]]; // <.>
+                                         from:[CBLQueryDataSource collection:collection]]; // <.>
 
     // tag::query-access-count-only[]
     CBLQueryResultSet *results = [query execute:&error];
@@ -1794,14 +1807,15 @@
 
 - (void) dontTestQuerySyntaxID {
     NSError *error = nil;
-
-    // tag::query-syntax-id[]
     CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"hotels" error:&error];
+    // tag::query-syntax-id[]
+    
+    CBLCollection *collection = [database createCollectionWithName:@"hotels" scope:nil error:&error];
 
     CBLQuerySelectResult *selectResult = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
 
     CBLQuery *query = [CBLQueryBuilder select:@[selectResult]
-                                         from:[CBLQueryDataSource collection:[database defaultCollection:&error]]];
+                                         from:[CBLQueryDataSource collection:collection]];
 
     // end::query-syntax-id[]
     NSLog(@"print to avoid warning %@", query);
@@ -2155,8 +2169,15 @@
 
 - (void) dontTestListenerGetNetworkInterfaces {
     // tag::listener-get-network-interfaces[]
-    // . . .  code snippet to be provided
-
+    struct ifaddrs *ifaddrs;
+    getifaddrs(&ifaddrs);
+    for (struct ifaddrs *ifa = ifaddrs; ifa != NULL; ifa = ifa->ifa_next) {
+        NSLog(@"%@", [NSString stringWithUTF8String: ifa->ifa_name]);
+        
+        // do something with this `ifa`
+    }
+    
+    freeifaddrs(ifaddrs);
     // end::listener-get-network-interfaces[]
 }
 
@@ -2514,6 +2535,40 @@
     // end::after-api-change-atan2
 }
 
+- (void) dontTestManageCollection {
+    CBLDatabase* database = self.database;
+    // tag::scopes-manage-create-collection[]
+    NSError* error = nil;
+    CBLCollection* collection = [database createCollectionWithName:@"myCollectionName"
+                                                             scope:@"myScopeName"
+                                                             error:&error];
+    // end::scopes-manage-create-collection[]
+    
+    // tag::scopes-manage-index-collection[]
+    CBLFullTextIndexConfiguration* config = [[CBLFullTextIndexConfiguration alloc]
+                                             initWithExpression: @[@"overview"]
+                                             ignoreAccents: NO
+                                             language: nil];
+
+    [collection createIndexWithName: @"overviewFTSIndex" config:config error: &error];
+    // end::scopes-manage-index-collection[]
+    
+    // tag::scopes-manage-list[]
+    NSArray* scopes = [database scopes: &error];
+    NSArray* collections = [database collections:@"myScopeName" error:&error];
+    NSLog(@"I have %d scopes and %d collections", (int)scopes.count, (int)collections.count);
+    // end::scopes-manage-list[]
+    
+    // tag::scopes-manage-drop-collection[]
+    BOOL success = [database deleteCollectionWithName:@"myCollectionName"
+                                                scope:@"myScopeName"
+                                                error:&error];
+    if (!success) {
+        NSLog(@"Failed to delete the collection %@", error);
+    }
+    // end::scopes-manage-drop-collection[]
+}
+
 @end
 
 #pragma mark -
@@ -2830,6 +2885,59 @@
         return nil;
 
     // end::p2p-tlsid-import-from-bundled[]
+    
+    // tag::p2p-tlsid-store-in-keychain[]
+    // STORE THE IDENTITY AND ITS CERT CHAIN IN THE KEYCHAIN
+#ifdef TARGET_OS_IPHONE
+    // For iOS, need to save the identity into the KeyChain.
+    // Save or Update identity with a label so that it could be cleaned up easily
+    // Store Private Key in Keychain
+    NSDictionary *params = @{
+        (id)kSecClass           : (id)kSecClassKey,
+        (id)kSecAttrKeyType     : (id)kSecAttrKeyTypeRSA,
+        (id)kSecAttrKeyClass    : (id)kSecAttrKeyClassPrivate,
+        (id)kSecValueRef        : (__bridge id)privateKey,
+    };
+    
+    status = SecItemAdd((CFDictionaryRef)params, nil);
+    if (status != errSecSuccess) {
+        NSLog(@"Unable to store private key");
+        return nil;
+    }
+    // Store all Certs for Id in Keychain:
+    int i = 0;
+    for (id cert in certChain) {
+        params = @{
+            (id)kSecClass           : (id)kSecClassCertificate,
+            (id)kSecValueRef        : cert,
+            (id)kSecAttrLabel       : @"doco-sync-server",
+        };
+        status = SecItemAdd((CFDictionaryRef)params, nil);
+        if (status != errSecSuccess) {
+            NSLog(@"Unable to store certs");
+            return nil;
+        }
+        i = i+1;
+    }
+#else
+    NSDictionary* query = @{
+        (id)kSecClass           : (id)kSecClassCertificate,
+        (id)kSecValueRef        : certChain[0],
+    };
+    
+    NSDictionary* update = @{
+        (id)kSecClass           : (id)kSecClassCertificate,
+        (id)kSecValueRef        : certChain[0],
+        (id)kSecAttrLabel       : @"doco-sync-server",
+    };
+
+    status = SecItemUpdate((CFDictionaryRef)query, (CFDictionaryRef)update);
+    if (status != errSecSuccess) {
+        NSLog(@"Unable to update certs");
+        return nil;
+    }
+#endif
+    // end::p2p-tlsid-store-in-keychain[]
 
     // tag::p2p-tlsid-return-id-from-keychain[]
     // RETURN A TLSIDENTITY FROM THE KEYCHAIN FOR USE IN CONFIGURING TLS COMMUNICATION

@@ -191,7 +191,6 @@ static void getting_started() {
     }
     // end::query-syntax-n1ql[]
 
-    // TODO: Result set count?
     CBLResultSet_Release(result);
     CBLQuery_Release(query);
 
@@ -693,16 +692,12 @@ static void use_blob() {
     CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("image/jpeg"), FLSliceResult_AsSlice(avatar)); // <.>
     FLSliceResult_Release(avatar);
 
-    // TODO: Create shortcut blob method
     CBLError err;
     FLMutableDict properties = CBLDocument_MutableProperties(newTask);
     FLSlot_SetBlob(FLMutableDict_Set(properties, FLSTR("avatar")), blob);
     CBLCollection_SaveDocument(collection, newTask, &err); // <.>
 
     // end::blob[]
-
-
-
     CBLDocument_Release(newTask);
     CBLBlob_Release(blob);
 }
@@ -1968,6 +1963,7 @@ static void docs_act_replication_config_section_snippets()
         CBLReplicator_AddChangeListener(replicator,
                                         simpleChangeListener,
                                         NULL); // <.>
+    
 }
 // END replication.html >> configure section
 
@@ -2047,6 +2043,7 @@ static void docs_act_replication_Monitor(
     }
 
     // end::p2p-act-rep-status[]
+    // end::p2p-act-rep-func-full[]
     // tag::replication-pendingdocuments[]
     FLDict thisPendingIdList =
         CBLReplicator_PendingDocumentIDs2(replicator, collection, &err); // <.>
