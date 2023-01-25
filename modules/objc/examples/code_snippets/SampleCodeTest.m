@@ -20,6 +20,8 @@
 #import <UIKit/UIKit.h>
 #import <CouchbaseLite/CouchbaseLite.h>
 #import <CoreML/CoreML.h>
+#import <ifaddrs.h>
+#import <net/if.h>
 
 
 #pragma mark - !!!Note
@@ -2165,8 +2167,15 @@
 
 - (void) dontTestListenerGetNetworkInterfaces {
     // tag::listener-get-network-interfaces[]
-    // . . .  code snippet to be provided
-
+    struct ifaddrs *ifaddrs;
+    getifaddrs(&ifaddrs);
+    for (struct ifaddrs *ifa = ifaddrs; ifa != NULL; ifa = ifa->ifa_next) {
+        NSLog(@"%@", [NSString stringWithUTF8String: ifa->ifa_name]);
+        
+        // do something with this `ifa`
+    }
+    
+    freeifaddrs(ifaddrs);
     // end::listener-get-network-interfaces[]
 }
 
@@ -2874,6 +2883,59 @@
         return nil;
 
     // end::p2p-tlsid-import-from-bundled[]
+    
+    // tag::p2p-tlsid-store-in-keychain[]
+    // STORE THE IDENTITY AND ITS CERT CHAIN IN THE KEYCHAIN
+#ifdef TARGET_OS_IPHONE
+    // For iOS, need to save the identity into the KeyChain.
+    // Save or Update identity with a label so that it could be cleaned up easily
+    // Store Private Key in Keychain
+    NSDictionary *params = @{
+        (id)kSecClass           : (id)kSecClassKey,
+        (id)kSecAttrKeyType     : (id)kSecAttrKeyTypeRSA,
+        (id)kSecAttrKeyClass    : (id)kSecAttrKeyClassPrivate,
+        (id)kSecValueRef        : (__bridge id)privateKey,
+    };
+    
+    status = SecItemAdd((CFDictionaryRef)params, nil);
+    if (status != errSecSuccess) {
+        NSLog(@"Unable to store private key");
+        return nil;
+    }
+    // Store all Certs for Id in Keychain:
+    int i = 0;
+    for (id cert in certChain) {
+        params = @{
+            (id)kSecClass           : (id)kSecClassCertificate,
+            (id)kSecValueRef        : cert,
+            (id)kSecAttrLabel       : @"doco-sync-server",
+        };
+        status = SecItemAdd((CFDictionaryRef)params, nil);
+        if (status != errSecSuccess) {
+            NSLog(@"Unable to store certs");
+            return nil;
+        }
+        i = i+1;
+    }
+#else
+    NSDictionary* query = @{
+        (id)kSecClass           : (id)kSecClassCertificate,
+        (id)kSecValueRef        : certChain[0],
+    };
+    
+    NSDictionary* update = @{
+        (id)kSecClass           : (id)kSecClassCertificate,
+        (id)kSecValueRef        : certChain[0],
+        (id)kSecAttrLabel       : @"doco-sync-server",
+    };
+
+    status = SecItemUpdate((CFDictionaryRef)query, (CFDictionaryRef)update);
+    if (status != errSecSuccess) {
+        NSLog(@"Unable to update certs");
+        return nil;
+    }
+#endif
+    // end::p2p-tlsid-store-in-keychain[]
 
     // tag::p2p-tlsid-return-id-from-keychain[]
     // RETURN A TLSIDENTITY FROM THE KEYCHAIN FOR USE IN CONFIGURING TLS COMMUNICATION
