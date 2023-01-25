@@ -2514,6 +2514,40 @@
     // end::after-api-change-atan2
 }
 
+- (void) dontTestManageCollection {
+    CBLDatabase* database = self.database;
+    // tag::scopes-manage-create-collection[]
+    NSError* error = nil;
+    CBLCollection* collection = [database createCollectionWithName:@"myCollectionName"
+                                                             scope:@"myScopeName"
+                                                             error:&error];
+    // end::scopes-manage-create-collection[]
+    
+    // tag::scopes-manage-index-collection[]
+    CBLFullTextIndexConfiguration* config = [[CBLFullTextIndexConfiguration alloc]
+                                             initWithExpression: @[@"overview"]
+                                             ignoreAccents: NO
+                                             language: nil];
+
+    [collection createIndexWithName: @"overviewFTSIndex" config:config error: &error];
+    // end::scopes-manage-index-collection[]
+    
+    // tag::scopes-manage-list[]
+    NSArray* scopes = [database scopes: &error];
+    NSArray* collections = [database collections:@"myScopeName" error:&error];
+    NSLog(@"I have %d scopes and %d collections", (int)scopes.count, (int)collections.count);
+    // end::scopes-manage-list[]
+    
+    // tag::scopes-manage-drop-collection[]
+    BOOL success = [database deleteCollectionWithName:@"myCollectionName"
+                                                scope:@"myScopeName"
+                                                error:&error];
+    if (!success) {
+        NSLog(@"Failed to delete the collection %@", error);
+    }
+    // end::scopes-manage-drop-collection[]
+}
+
 @end
 
 #pragma mark -
