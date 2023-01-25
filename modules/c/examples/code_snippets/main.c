@@ -1033,6 +1033,7 @@ static void datatype_usage() {
 
 static void create_index() {
     CBLDatabase* database = kDatabase;
+    CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::query-index[]
     // For value types, this is optional but provides performance enhancements
@@ -1046,7 +1047,7 @@ static void create_index() {
     };
 
     CBLError err;
-    CBLDatabase_CreateValueIndex(database, FLSTR("TypeNameIndex"), config, &err);
+    CBLCollection_CreateValueIndex(collection, FLSTR("TypeNameIndex"), config, &err);
     // end::query-index[]
 }
 
@@ -1507,7 +1508,6 @@ static void create_full_text_index() {
     }
 
     // tag::fts-index[]
-    // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
     CBLFullTextIndexConfiguration config = {
@@ -1516,7 +1516,7 @@ static void create_full_text_index() {
         false
     };
 
-    CBLDatabase_CreateFullTextIndex(database, FLSTR("nameFTSIndex"), config, &err);
+    CBLCollection_CreateFullTextIndex(collection, FLSTR("nameFTSIndex"), config, &err);
     // end::fts-index[]
 }
 
@@ -1524,7 +1524,6 @@ static void full_text_search() {
     CBLDatabase* database = kDatabase;
 
     // tag::fts-query[]
-    // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
@@ -1707,26 +1706,56 @@ static void docsonly_N1QL_Params(CBLDatabase* argDb)
     // end::query-syntax-n1ql-params[]
 }
 
+static void date_getter(){
+    CBLDatabase* database = kDatabase;
+    CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
+    CBLError err;
 
+    // tag::date-getter[]
 
-// tag::console-logging-db[]
-//Placeholder for code to increase level of console logging for kCBLLogDomainDatabase domain
-// end::console-logging-db[]
+    // Create doc and get its properties
+    CBLDocument* mutableDoc = CBLDocument_Create();
+    FLMutableDict mutableProperties = CBLDocument_MutableProperties(mutableDoc);
 
-// tag::console-logging[]
-//Placeholder for code to increase level of console logging for all domains
-// end::console-logging[]
+    // Get current time
+    FLTimestamp time = FLTimestamp_Now();
+    FLStringResult timeString = FLTimestamp_ToString(time, false);
 
-// tag::date-getter[]
-//Placeholder for Date accessors.
+    // Set createdAt attribute
+    FLMutableDict_SetString(mutableProperties, FLSTR("createdAt"), FLSliceResult_AsSlice(timeString));
 
-// end::date-getter[]
+    // Save it to the database
+    if(!CBLCollection_SaveDocument(collection, mutableDoc, &err)) {
+        // Failed to save, do error handling as above
+        return;
+    }
 
+    // Since we will release the document, make a copy of the ID since it
+    // is an internal pointer.  Whenever we create or get an FLSliceResult
+    // or FLStringResult we will need to free it later too!
+    FLString id = CBLDocument_ID(mutableDoc);
+    CBLDocument_Release(mutableDoc);
+    FLSliceResult_Release(timeString);
 
-// tag::query-index[]
-// placeholder
-// end::query-index[]
+    // Get doc from collection
+    CBLDocument* doc = CBLCollection_GetDocument(collection, id, &err);
+    if(!doc) {
+        // Failed to retrieve, do error handling as above.  NOTE: error code 0 simply means
+        // the document does not exist.
+        return;
+    }
 
+    FLDict properties = CBLDocument_Properties(doc);
+
+    // Get date
+    FLValue docTime = FLDict_Get(properties, FLSTR("createdAt"));
+    FLStringResult newTimeString = FLValue_ToString(docTime);
+
+    // Release after is not needed anymore
+    FLSliceResult_Release(newTimeString);
+
+    // end::date-getter[]
+}
 
 // DOCS NOTE
 // Page=Data Sync >> Configuration Summary
