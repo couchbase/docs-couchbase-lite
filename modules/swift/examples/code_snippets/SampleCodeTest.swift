@@ -141,7 +141,7 @@ class SampleCodeTest {
         guard let collection = try self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
-        // tag::ne[]
+        // tag::initializer[]
         let doc = MutableDocument()
             .setString("task", forKey: "type")
             .setString("todo", forKey: "owner")
