@@ -1480,7 +1480,9 @@
 
 - (void) dontTestPredictiveModel {
     NSError *error;
-    self.database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
+    CBLDatabase* database = self.database;
+    CBLCollection* collection = [database defaultCollection: &error];
+    
 
     // tag::register-model[]
     ImageClassifierModel *model = [[ImageClassifierModel alloc] init];
@@ -1492,7 +1494,7 @@
     CBLQueryPredictionFunction *prediction = [CBLQueryFunction predictionUsingModel:@"ImageClassifier" input:input];
 
     CBLValueIndex *index = [CBLIndexBuilder valueIndexWithItems:@[[CBLValueIndexItem expression:[prediction property:@"label"]]]];
-    [self.database createIndex:index withName:@"value-index-image-classifier" error:&error];
+    [collection createIndex: index name:@"value-index-image-classifier" error:&error];
     // end::predictive-query-value-index[]
 
     // tag::unregister-model[]
@@ -1502,20 +1504,21 @@
 
 - (void) dontTestPredictiveIndex {
     NSError *error;
-    self.database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
+    CBLDatabase* database = self.database;
+    CBLCollection* collection = [database defaultCollection: &error];
 
     // tag::predictive-query-predictive-index[]
     CBLQueryExpression *input = [CBLQueryExpression dictionary:@{@"photo":[CBLQueryExpression property:@"photo"]}];
 
     CBLPredictiveIndex *index = [CBLIndexBuilder predictiveIndexWithModel:@"ImageClassifier" input:input properties:nil];
-    [self.database createIndex:index withName:@"predictive-index-image-classifier" error:&error];
+    [collection createIndex:index name:@"predictive-index-image-classifier" error:&error];
     // end::predictive-query-predictive-index[]
 }
 
 - (void) dontTestPredictiveQuery {
     NSError *error;
-    self.database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
-    CBLCollection *collection = [self.database defaultCollection:nil];
+    CBLDatabase* database = self.database;
+    CBLCollection *collection = [database defaultCollection:nil];
 
     // tag::predictive-query[]
     CBLQueryExpression *input = [CBLQueryExpression dictionary:@{@"photo":[CBLQueryExpression property:@"photo"]}];
@@ -1681,13 +1684,14 @@
 # pragma mark - QUERY RESULT SET HANDLING EXAMPLES
 
 - (void) dontTestQuerySyntaxJson {
+    
+    CBLDatabase *database = self.database;
     // tag::query-syntax-all[]
     NSError *error;
-
-    CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error:&error];
+    CBLCollection* collection = [database createCollectionWithName:@"hotels" scope:nil error:&error];
 
     CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
-                                             from:[CBLQueryDataSource collection:[db defaultCollection:&error]]]; // <.>
+                                             from:[CBLQueryDataSource collection:collection]]; // <.>
 
     // end::query-syntax-all[]
 
@@ -1734,9 +1738,11 @@
 
 - (void) dontTestQuerySyntaxAndAccessProps {
     NSError *error = nil;
-
+    CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"hotels" error:&error];
     // tag::query-syntax-props[]
-    CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error:&error];
+    CBLCollection* collection = [database createCollectionWithName:@"hotels"
+                                                             scope:nil
+                                                             error:&error];
 
     CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
 
@@ -1747,7 +1753,7 @@
     CBLQuerySelectResult *city = [CBLQuerySelectResult property:@"city"];
 
     CBLQuery *query = [CBLQueryBuilder select:@[id, type, name, city]
-                                         from:[CBLQueryDataSource collection:[db defaultCollection:&error]]]; // <.>
+                                         from:[CBLQueryDataSource collection:collection]]; // <.>
     // end::query-syntax-props[]
 
     // tag::query-access-props[]
@@ -1766,17 +1772,19 @@
 }
 
 - (void) dontTestQuerySyntaxCount {
-    NSError *error = nil;
+    
     NSInteger count = 0;
+    CBLDatabase *database = self.database;
     // tag::query-syntax-count-only[]
-    CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"hotels" error:&error];
+    NSError *error = nil;
+    CBLCollection *collection = [database createCollectionWithName:@"hotels" scope:nil error:&error];
 
     CBLQueryExpression *countExpression = [CBLQueryFunction count:[CBLQueryExpression all]];
     CBLQuerySelectResult *selectResult = [CBLQuerySelectResult expression:countExpression
                                                                        as:@"myCount"];
 
     CBLQuery *query = [CBLQueryBuilder select:@[selectResult]
-                                         from:[CBLQueryDataSource collection:[database defaultCollection:&error]]]; // <.>
+                                         from:[CBLQueryDataSource collection:collection]]; // <.>
 
     // tag::query-access-count-only[]
     CBLQueryResultSet *results = [query execute:&error];
@@ -1794,14 +1802,15 @@
 
 - (void) dontTestQuerySyntaxID {
     NSError *error = nil;
-
-    // tag::query-syntax-id[]
     CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"hotels" error:&error];
+    // tag::query-syntax-id[]
+    
+    CBLCollection *collection = [database createCollectionWithName:@"hotels" scope:nil error:&error];
 
     CBLQuerySelectResult *selectResult = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
 
     CBLQuery *query = [CBLQueryBuilder select:@[selectResult]
-                                         from:[CBLQueryDataSource collection:[database defaultCollection:&error]]];
+                                         from:[CBLQueryDataSource collection:collection]];
 
     // end::query-syntax-id[]
     NSLog(@"print to avoid warning %@", query);
