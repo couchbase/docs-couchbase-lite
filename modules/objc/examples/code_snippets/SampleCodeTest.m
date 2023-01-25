@@ -587,7 +587,7 @@
     CBLValueIndexItem *type = [CBLValueIndexItem property:@"type"];
     CBLValueIndexItem *name = [CBLValueIndexItem property:@"name"];
     CBLIndex *index = [CBLIndexBuilder valueIndexWithItems:@[type, name]];
-    [self.database createIndex:index withName:@"TypeNameIndex" error:&error];
+    [collection createIndex:index name:@"TypeNameIndex" error:&error];
     // end::query-index_Querybuilder[]
 }
 
@@ -1061,7 +1061,7 @@
     // Create index
     CBLFullTextIndex *index = [CBLIndexBuilder fullTextIndexWithItems:@[[CBLFullTextIndexItem property:@"name"]]];
     index.ignoreAccents = NO;
-    [self.database createIndex:index withName:@"nameFTSIndex" error:&error];
+    [collection createIndex:index name:@"nameFTSIndex" error:&error];
     // end::fts-index_Querybuilder[]
 }
 
@@ -1070,8 +1070,9 @@
     CBLCollection *collection = [self.database defaultCollection:nil];
 
     // tag::fts-query_Querybuilder[]
-    CBLQueryExpression *where = [CBLQueryFullTextFunction matchWithIndexName:@"nameFTSIndex"
-                                                                       query:@"'buy'"];
+    id exp = [CBLQueryExpression fullTextIndex:@"nameFTSIndex"];
+    CBLQueryExpression *where = [CBLQueryFullTextFunction matchWithIndex:exp query:@"'buy'"];
+    
     CBLQuery *query =
       [CBLQueryBuilder
         select:@[[CBLQuerySelectResult expression:[CBLQueryMeta id]]]
