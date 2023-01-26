@@ -162,7 +162,7 @@ class IBExamples(private val context: Context, private val caCert: Certificate) 
     }
 
 
-    // !!! USERS SHOULD BE CAUTIONED THAT THIS IS INSECURE
+    // !!!GBM: USERS SHOULD BE CAUTIONED THAT THIS IS INSECURE
     // Android has much better ways of importing keys
     fun ibListenerConfigTlsIdFull() {
         // tag::listener-config-tls-id-full[]

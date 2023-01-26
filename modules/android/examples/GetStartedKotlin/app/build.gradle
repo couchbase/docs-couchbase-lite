@@ -1,17 +1,19 @@
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
+    id 'org.jetbrains.kotlin.android'
 }
 
 // Set true to use mavenLocal instead of Proget
 def USE_LOCAL_MAVEN = project.hasProperty("useLocalMaven")
 
 android {
+    namespace "com.couchbase.android.getstarted.kotlin"
+
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.getstarted.java"
-        minSdk 26
+        applicationId "com.couchbase.android.getstarted.kotlin"
+        minSdk 24
         targetSdk 33
         versionCode 3
         versionName "3.1"
@@ -23,13 +25,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
+
+    kotlinOptions { jvmTarget = "11" }
 }
 
 repositories {
@@ -45,22 +47,18 @@ repositories {
 }
 
 dependencies {
-     compileOnly 'androidx.annotation:annotation:1.2.0'
+    // Dependency injection
+    implementation "io.insert-koin:koin-core:3.2.1"
+    implementation "io.insert-koin:koin-android:3.2.1"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
+    // Kotlin core
+    implementation 'androidx.core:core-ktx:1.9.0'
 
-
+    // Simple view
     implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.android.material:material:1.8.0'
 
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
-
-    implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:${CBL_VERSION}"
-
-    implementation 'junit:junit:4.13.2'
-
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    // Couchbase
+    implementation "com.couchbase.lite:couchbase-lite-android-ee-ktx:${CBL_VERSION}"
 }
