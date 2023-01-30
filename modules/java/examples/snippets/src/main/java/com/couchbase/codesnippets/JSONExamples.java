@@ -37,6 +37,7 @@ import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 
 
+@SuppressWarnings({"unused", "ConstantConditions"})
 public class JSONExamples {
     public static final String JSON
         = "[{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hotel Ted\",\"city\":\"Paris\","

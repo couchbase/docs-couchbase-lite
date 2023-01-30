@@ -1,0 +1,30 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'org.gretty'
+
+buildscript {
+    repositories { mavenCentral() }
+    dependencies { classpath 'org.gretty:gretty:4.0.3' }
+}
+
+group 'com.couchbase.gettingstarted'
+version 3.1.0
+
+repositories {
+    maven { url "https://mobile.maven.couchbase.com/maven2/dev" }
+    mavenCentral()
+    google()
+}
+
+dependencies {
+    compileOnly 'androidx.annotation:annotation:1.5.0'
+
+    implementation "javax.servlet:javax.servlet-api:4.0.1"
+
+    implementation "com.couchbase.lite:couchbase-lite-java-ee:3.1.0"
+}
+
+gretty {
+    contextPath = '/'
+}
+
