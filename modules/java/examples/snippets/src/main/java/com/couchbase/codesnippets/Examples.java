@@ -26,7 +26,6 @@ import java.util.zip.ZipInputStream;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.couchbase.lite.ArrayFunction;
 import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.Blob;
 import com.couchbase.lite.Collection;
@@ -50,7 +49,6 @@ import com.couchbase.lite.FullTextIndexConfiguration;
 import com.couchbase.lite.FullTextIndexItem;
 import com.couchbase.lite.Function;
 import com.couchbase.lite.IndexBuilder;
-import com.couchbase.lite.Join;
 import com.couchbase.lite.ListenerToken;
 import com.couchbase.lite.LogDomain;
 import com.couchbase.lite.LogFileConfiguration;
@@ -68,8 +66,6 @@ import com.couchbase.lite.Meta;
 import com.couchbase.lite.MutableDictionary;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
-import com.couchbase.lite.PredictionFunction;
-import com.couchbase.lite.PredictiveIndex;
 import com.couchbase.lite.PredictiveModel;
 import com.couchbase.lite.ProtocolType;
 import com.couchbase.lite.Query;
@@ -85,8 +81,6 @@ import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 import com.couchbase.lite.SessionAuthenticator;
 import com.couchbase.lite.URLEndpoint;
-import com.couchbase.lite.ValueIndex;
-import com.couchbase.lite.ValueIndexConfiguration;
 import com.couchbase.lite.ValueIndexItem;
 
 
@@ -399,14 +393,6 @@ public class Examples {
         // end::blob[]
     }
 
-    public void testIndexing() throws CouchbaseLiteException {
-        final Collection collection = null;
-
-        // tag::query-index[]
-        collection.createIndex("TypeNameIndex", new ValueIndexConfiguration("type", "name"));
-        // end::query-index[]
-    }
-
     public void testIndexing_Querybuilder() throws CouchbaseLiteException {
         final Collection collection = null;
 
@@ -417,31 +403,6 @@ public class Examples {
                 ValueIndexItem.property("type"),
                 ValueIndexItem.property("name")));
         // end::query-index_Querybuilder[]
-    }
-
-    public void testSelectStatement() {
-        final Collection collection = getCollection();
-
-        // tag::query-select-props[]
-        Query query = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("name"),
-                SelectResult.property("type"))
-            .from(DataSource.collection(collection))
-            .where(Expression.property("type").equalTo(Expression.string("hotel")))
-            .orderBy(Ordering.expression(Meta.id));
-
-        try (ResultSet resultSet = query.execute()) {
-            for (Result result: resultSet) {
-                System.out.println("hotel id -> " + result.getString("id"));
-                System.out.println("hotel name -> " + result.getString("name"));
-            }
-        }
-        catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-        }
-        // end::query-select-props[]
     }
 
     public void testMetaFunction() {
@@ -464,276 +425,6 @@ public class Examples {
             e.printStackTrace();
         }
         // end::query-select-meta[]
-    }
-
-    public void testSelectAll() {
-        final Collection collection = getCollection();
-
-        {
-            // tag::query-select-all[]
-            Query query = QueryBuilder
-                .select(SelectResult.all())
-                .from(DataSource.collection(collection))
-                .where(Expression.property("type").equalTo(Expression.string("hotel")));
-            // end::query-select-all[]
-        }
-
-        {
-            // tag::live-query[]
-            Query query = QueryBuilder
-                .select(SelectResult.all())
-                .from(DataSource.collection(collection)); // <.>
-
-            // Adds a query change listener.
-            // Changes will be posted on the main queue.
-            ListenerToken token = query.addChangeListener(change -> { // <.>
-                for (Result result: change.getResults()) {
-                    System.out.println("results: " + result.getKeys());
-                    /* Update UI */
-                }
-            });
-
-            // end::live-query[]
-
-            // tag::stop-live-query[]
-            token.remove(); // <.>
-            // end::stop-live-query[]
-        }
-    }
-
-    public void testWhereStatement() {
-        final Collection collection = getCollection();
-        final String collectionName = "theStuff";
-
-        // tag::query-where[]
-        Query query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.collection(collection))
-            .where(Expression.property("type").equalTo(Expression.string("hotel")))
-            .limit(Expression.intValue(10));
-
-        try (ResultSet resultSet = query.execute()) {
-            for (Result result: resultSet) {
-                Dictionary all = result.getDictionary(collectionName);
-                System.out.println("name -> " + all.getString("name"));
-                System.out.println("type -> " + all.getString("type"));
-            }
-        }
-        catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-        }
-        // end::query-where[]
-    }
-
-    public void testQueryDeletedDocuments() {
-        final Collection collection = getCollection();
-
-        // tag::query-deleted-documents[]
-        // Query documents that have been deleted
-        Query query = QueryBuilder
-            .select(SelectResult.expression(Meta.id))
-            .from(DataSource.collection(collection))
-            .where(Meta.deleted);
-        // end::query-deleted-documents[]
-    }
-
-    public void testCollectionStatement() throws CouchbaseLiteException {
-        final Collection collection = getCollection();
-
-        // tag::query-collection-operator-contains[]
-        Query query = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("name"),
-                SelectResult.property("public_likes"))
-            .from(DataSource.collection(collection))
-            .where(Expression.property("type").equalTo(Expression.string("hotel"))
-                .and(ArrayFunction
-                    .contains(Expression.property("public_likes"), Expression.string("Armani Langworth"))));
-        try (ResultSet results = query.execute()) {
-            for (Result result: results) {
-                System.out.println("public_likes -> " + result.getArray("public_likes").toList());
-            }
-        }
-        // end::query-collection-operator-contains[]
-    }
-
-    public void testInOperator() throws CouchbaseLiteException {
-        final Collection collection = getCollection();
-
-        // tag::query-collection-operator-in[]
-        Expression[] values = new Expression[] {
-            Expression.property("first"),
-            Expression.property("last"),
-            Expression.property("username")
-        };
-
-        Query query = QueryBuilder.select(SelectResult.all())
-            .from(DataSource.collection(collection))
-            .where(Expression.string("Armani").in(values));
-        // end::query-collection-operator-in[]
-
-        try (ResultSet resultSet = query.execute()) {
-            for (Result result: resultSet) {
-                System.out.println(result.toMap());
-            }
-        }
-    }
-
-    public void testPatternMatching() throws CouchbaseLiteException {
-        final Collection collection = getCollection();
-
-        // tag::query-like-operator[]
-        Query query = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("country"),
-                SelectResult.property("name"))
-            .from(DataSource.collection(collection))
-            .where(Expression.property("type").equalTo(Expression.string("landmark"))
-                .and(Function.lower(Expression.property("name")).like(Expression.string("royal engineers museum"))));
-
-        try (ResultSet resultSet = query.execute()) {
-            for (Result result: resultSet) {
-                System.out.println("name -> " + result.getString("name"));
-            }
-        }
-        // end::query-like-operator[]
-    }
-
-    public void testWildcardMatch() throws CouchbaseLiteException {
-        final Collection collection = getCollection();
-
-        // tag::query-like-operator-wildcard-match[]
-        Query query = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("country"),
-                SelectResult.property("name"))
-            .from(DataSource.collection(collection))
-            .where(Expression.property("type").equalTo(Expression.string("landmark"))
-                .and(Function.lower(Expression.property("name")).like(Expression.string("eng%e%"))));
-
-        try (ResultSet resultSet = query.execute()) {
-            for (Result result: resultSet) {
-                System.out.println("name ->  " + result.getString("name"));
-            }
-        }
-        // end::query-like-operator-wildcard-match[]
-    }
-
-    public void testWildCharacterMatch() throws CouchbaseLiteException {
-        final Collection collection = getCollection();
-        // tag::query-like-operator-wildcard-character-match[]
-        Query query = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("country"),
-                SelectResult.property("name"))
-            .from(DataSource.collection(collection))
-            .where(Expression.property("type").equalTo(Expression.string("landmark"))
-                .and(Function.lower(Expression.property("name")).like(Expression.string("eng____r"))));
-
-        try (ResultSet resultSet = query.execute()) {
-            for (Result result: resultSet) {
-                System.out.println("name -> " + result.getString("name"));
-            }
-        }
-        // end::query-like-operator-wildcard-character-match[]
-    }
-
-    public void testRegexMatch() throws CouchbaseLiteException {
-        final Collection collection = getCollection();
-        // tag::query-regex-operator[]
-        Query query = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("country"),
-                SelectResult.property("name"))
-            .from(DataSource.collection(collection))
-            .where(Expression.property("type").equalTo(Expression.string("landmark"))
-                .and(Function.lower(Expression.property("name")).regex(Expression.string("\\beng.*r\\b"))));
-
-        try (ResultSet resultSet = query.execute()) {
-            for (Result result: resultSet) {
-                System.out.println("name -> " + result.getString("name"));
-            }
-        }
-        // end::query-regex-operator[]
-    }
-
-    public void testJoinStatement() throws CouchbaseLiteException {
-        final Collection collection = getCollection();
-        // tag::query-join[]
-        Query query = QueryBuilder.select(
-                SelectResult.expression(Expression.property("name").from("airline")),
-                SelectResult.expression(Expression.property("callsign").from("airline")),
-                SelectResult.expression(Expression.property("destinationairport").from("route")),
-                SelectResult.expression(Expression.property("stops").from("route")),
-                SelectResult.expression(Expression.property("airline").from("route")))
-            .from(DataSource.collection(collection).as("airline"))
-            .join(Join.join(DataSource.collection(collection).as("route"))
-                .on(Meta.id.from("airline").equalTo(Expression.property("airlineid").from("route"))))
-            .where(Expression.property("type").from("route").equalTo(Expression.string("route"))
-                .and(Expression.property("type").from("airline").equalTo(Expression.string("airline")))
-                .and(Expression.property("sourceairport").from("route").equalTo(Expression.string("RIX"))));
-
-
-        try (ResultSet resultSet = query.execute()) {
-            for (Result result: resultSet) {
-                System.out.println(result.toMap());
-            }
-        }
-        // end::query-join[]
-    }
-
-    public void testGroupByStatement() throws CouchbaseLiteException {
-        final Collection collection = getCollection();
-        // tag::query-groupby[]
-        Query query = QueryBuilder.select(
-                SelectResult.expression(Function.count(Expression.string("*"))),
-                SelectResult.property("country"),
-                SelectResult.property("tz"))
-            .from(DataSource.collection(collection))
-            .where(Expression.property("type").equalTo(Expression.string("airport"))
-                .and(Expression.property("geo.alt").greaterThanOrEqualTo(Expression.intValue(300))))
-            .groupBy(
-                Expression.property("country"),
-                Expression.property("tz"))
-            .orderBy(Ordering.expression(Function.count(Expression.string("*"))).descending());
-
-
-        try (ResultSet resultSet = query.execute()) {
-            for (Result result: resultSet) {
-                System.out.println(String.format(
-                    "There are %d airports on the %s timezone located in %s and above 300ft",
-                    result.getInt("$1"),
-                    result.getString("tz"),
-                    result.getString("country")));
-            }
-        }
-        // end::query-groupby[]
-    }
-
-    public void testOrderByStatement() throws CouchbaseLiteException {
-        final Collection collection = getCollection();
-        // tag::query-orderby[]
-        Query query = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("name"))
-            .from(DataSource.collection(collection))
-            .where(Expression.property("type").equalTo(Expression.string("hotel")))
-            .orderBy(Ordering.property("name").ascending())
-            .limit(Expression.intValue(10));
-
-
-        try (ResultSet resultSet = query.execute()) {
-            for (Result result: resultSet) {
-                System.out.println(result.toMap());
-            }
-        }
-        // end::query-orderby[]
     }
 
     public void testExplainStatement() throws CouchbaseLiteException {
@@ -1124,58 +815,6 @@ public class Examples {
         replicator.close();
     }
 
-    public void testPredictiveModel() throws CouchbaseLiteException {
-        final Collection collection = getCollection();
-
-        // tag::register-model[]
-        Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());
-        // end::register-model[]
-
-        // tag::predictive-query-value-index[]
-        ValueIndex index = IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")));
-        collection.createIndex("value-index-image-classifier", index);
-        // end::predictive-query-value-index[]
-
-        // tag::unregister-model[]
-        Database.prediction.unregisterModel("ImageClassifier");
-        // end::unregister-model[]
-    }
-
-    public void testPredictiveIndex() throws CouchbaseLiteException {
-        final Collection collection = null;
-
-        // tag::predictive-query-predictive-index[]
-        Map<String, Object> inputMap = new HashMap<>();
-        inputMap.put("numbers", Expression.property("photo"));
-        Expression input = Expression.map(inputMap);
-
-        PredictiveIndex index = IndexBuilder.predictiveIndex("ImageClassifier", input, null);
-        collection.createIndex("predictive-index-image-classifier", index);
-        // end::predictive-query-predictive-index[]
-    }
-
-    public void testPredictiveQuery() throws CouchbaseLiteException {
-        final Collection collection = getCollection();
-
-        // tag::predictive-query[]
-        Map<String, Object> inputProperties = new HashMap<>();
-        inputProperties.put("photo", Expression.property("photo"));
-        Expression input = Expression.map(inputProperties);
-        PredictionFunction prediction = Function.prediction("ImageClassifier", input); // <1>
-
-        Query query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.collection(collection))
-            .where(Expression.property("label").equalTo(Expression.string("car"))
-                .and(prediction.propertyPath("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))));
-
-        // Run the query.
-        try (ResultSet result = query.execute()) {
-            System.out.println("Number of rows: " + result.allResults().size());
-        }
-        // end::predictive-query[]
-    }
-
     public void testReplicationWithCustomConflictResolver() throws URISyntaxException {
         final Collection collection = getCollection();
         // tag::replication-conflict-resolver[]
@@ -1212,50 +851,6 @@ public class Examples {
                 return true;
             });
         // end::update-document-with-conflict-handler[]
-    }
-
-    public void testQuerySyntaxAll() throws CouchbaseLiteException {
-        // tag::query-syntax-all[]
-        Database database;
-        try {
-            database = new Database("hotels");
-        }
-        catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        Collection collection = database.getDefaultCollection();
-        Query listQuery = QueryBuilder.select(SelectResult.all())
-            .from(DataSource.collection(collection));
-        // end::query-syntax-all[]
-
-        // tag::query-access-all[]
-        Map<String, Hotel> hotels = new HashMap<>();
-        try (ResultSet resultSet = listQuery.execute()) {
-            for (Result result: resultSet) {
-                // get the k-v pairs from the 'hotel' key's value into a dictionary
-                Dictionary docsProp = result.getDictionary(0); // <.>
-                String docsId = docsProp.getString("id");
-                String docsName = docsProp.getString("Name");
-                String docsType = docsProp.getString("Type");
-                String docsCity = docsProp.getString("City");
-
-                // Alternatively, access results value dictionary directly
-                final Hotel hotel = new Hotel();
-                hotel.setId(result.getDictionary(0).getString("id")); // <.>
-                hotel.setType(result.getDictionary(0).getString("Type"));
-                hotel.setName(result.getDictionary(0).getString("Name"));
-                hotel.setCity(result.getDictionary(0).getString("City"));
-                hotel.setCountry(result.getDictionary(0).getString("Country"));
-                hotel.setDescription(result.getDictionary(0).getString("Description"));
-                hotels.put(hotel.getId(), hotel);
-            }
-        }
-        finally {
-            database.close();
-        }
-        // end::query-access-all[]
     }
 
     public void testQueryAccessJson() throws CouchbaseLiteException, JsonProcessingException {
@@ -1305,115 +900,6 @@ public class Examples {
         database.close();
     }
 
-    public void testQuerySyntaxProps() throws CouchbaseLiteException {
-
-        // tag::query-syntax-props[]
-        Database database;
-        try {
-            database = new Database("hotels");
-        }
-        catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        Collection collection = database.getDefaultCollection();
-
-        Query listQuery =
-            QueryBuilder.select(
-                    SelectResult.expression(Meta.id),
-                    SelectResult.property("name"),
-                    SelectResult.property("Name"),
-                    SelectResult.property("Type"),
-                    SelectResult.property("City"))
-                .from(DataSource.collection(collection));
-
-        // end::query-syntax-props[]
-
-        // tag::query-access-props[]
-        ResultSet resultSet = listQuery.execute();
-        HashMap<String, Hotel> hotels = new HashMap<>();
-        try {
-            for (Result result: resultSet) {
-
-                // get data direct from result k-v pairs
-                final Hotel hotel = new Hotel();
-                hotel.setId(result.getString("id"));
-                hotel.setType(result.getString("Type"));
-                hotel.setName(result.getString("Name"));
-                hotel.setCity(result.getString("City"));
-
-                // Store created hotel object in a hashmap of hotels
-                hotels.put(hotel.getId(), hotel);
-
-                // Get result k-v pairs into a 'dictionary' object
-                Map<String, Object> thisDocsProps = result.toMap();
-                String docId =
-                    thisDocsProps.getOrDefault("id", null).toString();
-                String docName =
-                    thisDocsProps.getOrDefault("Name", null).toString();
-                String docType =
-                    thisDocsProps.getOrDefault("Type", null).toString();
-                String docCity =
-                    thisDocsProps.getOrDefault("City", null).toString();
-            }
-        }
-        finally {
-            if (resultSet != null) { resultSet.close(); }
-            database.close();
-        }
-        // end::query-access-props[]
-    }
-
-    public void testQuerySyntaxCount() throws CouchbaseLiteException {
-        Database database;
-        try {
-            database = new Database("hotels");
-        }
-        catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        Collection collection = database.getDefaultCollection();
-
-        // tag::query-syntax-count-only[]
-        Query listQuery = QueryBuilder.select(
-                SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) // <.>
-            .from(DataSource.collection(collection));
-
-        // end::query-syntax-count-only[]
-
-
-        // tag::query-access-count-only[]
-        ResultSet resultSet = listQuery.execute();
-        ResultSet resultSet2 = null;
-        try {
-            for (Result result: resultSet) {
-
-                // Retrieve count using key 'mycount'
-                Integer altDocId = result.getInt("mycount");
-
-                // Alternatively, use the index
-                Integer orDocId = result.getInt(0);
-            }
-            // Or even miss out the for-loop altogether
-            resultSet2 = listQuery.execute();
-            Integer resultCount = resultSet2.next().getInt("mycount");
-        }
-        catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-        }
-        finally {
-            if (resultSet != null) { resultSet.close(); }
-            if (resultSet2 != null) { resultSet2.close(); }
-        }
-        // end::query-access-count-only[]
-
-        database.close();
-    }
-
-
     @NonNull
     private Collection getCollection() { return defaultCollection; }
 }
@@ -1421,8 +907,6 @@ public class Examples {
 
 @SuppressWarnings({"unused", "ConstantConditions"})
 // tag::predictive-model[]
-// tensorFlowModel is a fake implementation
-// this would be the implementation of the ml model you have chosen
 class ImageClassifierModel implements PredictiveModel {
     @Override
     public Dictionary predict(@NonNull Dictionary input) {

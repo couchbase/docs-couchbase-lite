@@ -14,11 +14,11 @@
 // limitations under the License.
 //
 @file:Suppress("UNUSED_VARIABLE", "unused")
+
 package com.couchbase.codesnippets
 
 import android.util.Log
-import com.couchbase.lite.Blob
-import com.couchbase.lite.CouchbaseLiteException
+import com.couchbase.lite.Collection
 import com.couchbase.lite.DataSource
 import com.couchbase.lite.Database
 import com.couchbase.lite.Dictionary
@@ -27,89 +27,84 @@ import com.couchbase.lite.Function
 import com.couchbase.lite.IndexBuilder
 import com.couchbase.lite.MutableDictionary
 import com.couchbase.lite.PredictionFunction
-import com.couchbase.lite.PredictiveIndex
 import com.couchbase.lite.PredictiveModel
 import com.couchbase.lite.QueryBuilder
 import com.couchbase.lite.SelectResult
-import com.couchbase.lite.ValueIndex
 import com.couchbase.lite.ValueIndexItem
 
 
 private const val TAG = "PREDICT"
+
 // tag::predictive-model[]
 // tensorFlowModel is a fake implementation
-
 object TensorFlowModel {
-    fun predictImage(data: ByteArray?) = mapOf<String, Any?>()
+    fun predictImage(data: ByteArray?): Map<String, Any?> = TODO()
 }
 
 object ImageClassifierModel : PredictiveModel {
     const val name = "ImageClassifier"
 
-    override fun predict(input: Dictionary): Dictionary? {
-        val blob: Blob = input.getBlob("photo") ?: return null
-
-        // this would be the implementation of the ml model you have chosen
-        return MutableDictionary(TensorFlowModel.predictImage(blob.content)) // <1>
+    // this would be the implementation of the ml model you have chosen
+    override fun predict(input: Dictionary) = input.getBlob("photo")?.let {
+        MutableDictionary(TensorFlowModel.predictImage(it.content)) // <1>
     }
 }
 // end::predictive-model[]
 
 
-@Suppress("unused")
-class PredictiveQueryExamples {
-    @Throws(CouchbaseLiteException::class)
-    fun testPredictiveModel() {
-        val database = Database("mydb")
+fun predictiveModelExamples(collection: Collection) {
 
-        // tag::register-model[]
-        Database.prediction.registerModel("ImageClassifier", ImageClassifierModel)
-        // end::register-model[]
+    // tag::register-model[]
+    Database.prediction.registerModel("ImageClassifier", ImageClassifierModel)
+    // end::register-model[]
 
-        // tag::predictive-query-value-index[]
-        val index: ValueIndex = IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")))
-        database.createIndex("value-index-image-classifier", index)
-        // end::predictive-query-value-index[]
+    // tag::predictive-query-value-index[]
+    collection.createIndex(
+        "value-index-image-classifier",
+        IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")))
+    )
+    // end::predictive-query-value-index[]
 
-        // tag::unregister-model[]
-        Database.prediction.unregisterModel("ImageClassifier")
-        // end::unregister-model[]
-    }
+    // tag::unregister-model[]
+    Database.prediction.unregisterModel("ImageClassifier")
+    // end::unregister-model[]
+}
 
-    @Throws(CouchbaseLiteException::class)
-    fun testPredictiveIndex() {
-        val database = Database("mydb")
 
-        // tag::predictive-query-predictive-index[]
-        val inputMap: MutableMap<String, Any> = mutableMapOf()
-        inputMap["numbers"] = Expression.property("photo")
-        val input: Expression = Expression.map(inputMap)
-        val index: PredictiveIndex = IndexBuilder.predictiveIndex("ImageClassifier", input, null)
-        database.createIndex("predictive-index-image-classifier", index)
-        // end::predictive-query-predictive-index[]
-    }
+fun predictiveIndexExamples(collection: Collection) {
 
-    @Throws(CouchbaseLiteException::class)
-    fun testPredictiveQuery() {
-        val database = Database("mydb")
+    // tag::predictive-query-predictive-index[]
+    val inputMap: Map<String, Any?> = mutableMapOf("numbers" to Expression.property("photo"))
+    collection.createIndex(
+        "predictive-index-image-classifier",
+        IndexBuilder.predictiveIndex("ImageClassifier", Expression.map(inputMap), null)
+    )
+    // end::predictive-query-predictive-index[]
+}
 
-        // tag::predictive-query[]
-        val prediction: PredictionFunction = Function.prediction(
-            ImageClassifierModel.name,
-            Expression.map(mutableMapOf("photo" to Expression.property("photo")) as Map<String, Any>?) // <1>
+
+fun predictiveQueryExamples(collection: Collection) {
+
+    // tag::predictive-query[]
+    val inputMap: Map<String, Any?> = mutableMapOf("photo" to Expression.property("photo"))
+    val prediction: PredictionFunction = Function.prediction(
+        ImageClassifierModel.name,
+        Expression.map(inputMap) // <1>
+    )
+
+    val query = QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.collection(collection))
+        .where(
+            prediction.propertyPath("label").equalTo(Expression.string("car"))
+                .and(
+                    prediction.propertyPath("probability")
+                        .greaterThanOrEqualTo(Expression.doubleValue(0.8))
+                )
         )
 
-        val rs = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(
-                prediction.propertyPath("label").equalTo(Expression.string("car"))
-                .and(prediction.propertyPath("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))
-                    )
-            )
-            .execute()
-
-        Log.d(TAG, "Number of rows: ${rs.allResults().size}")
-        // end::predictive-query[]
+    query.execute().use {
+        Log.d(TAG, "Number of rows: ${it.allResults().size}")
     }
+    // end::predictive-query[]
 }

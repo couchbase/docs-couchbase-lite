@@ -18,572 +18,640 @@
 package com.couchbase.codesnippets
 
 import android.util.Log
-import com.couchbase.lite.*
+import com.couchbase.lite.ArrayFunction
+import com.couchbase.lite.Collection
+import com.couchbase.lite.DataSource
+import com.couchbase.lite.Database
+import com.couchbase.lite.Expression
+import com.couchbase.lite.FullTextFunction
+import com.couchbase.lite.FullTextIndexConfigurationFactory
+import com.couchbase.lite.FullTextIndexItem
 import com.couchbase.lite.Function
+import com.couchbase.lite.IndexBuilder
+import com.couchbase.lite.Join
+import com.couchbase.lite.Meta
+import com.couchbase.lite.Ordering
+import com.couchbase.lite.Parameters
+import com.couchbase.lite.QueryBuilder
+import com.couchbase.lite.Result
+import com.couchbase.lite.SelectResult
+import com.couchbase.lite.ValueIndexConfigurationFactory
+import com.couchbase.lite.newConfig
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.json.JSONException
-import kotlin.String
-import kotlin.Suppress
-import kotlin.Throws
-import kotlin.let
-import kotlin.toString
 
 
 private const val TAG = "QUERY"
-private const val DATABASE_NAME = "database"
 
-data class Hotel(
-    var description: String? = null,
-    var country: String? = null,
-    var city: String? = null,
-    var name: String? = null,
-    var type: String? = null,
-    var id: String? = null
-)
+// ### Indexing
+fun indexingExample(collection: Collection) {
 
-@Suppress("unused")
-class QueryExamples(private val database: Database) {
+    // tag::query-index[]
+    collection.createIndex(
+        "TypeNameIndex",
+        ValueIndexConfigurationFactory.newConfig("type", "name")
+    )
+    // end::query-index[]
+}
 
-    // ### Indexing
-    @Throws(CouchbaseLiteException::class)
-    fun testIndexing() {
-        // tag::query-index[]
-        database.createIndex(
-            "TypeNameIndex",
-            ValueIndexConfigurationFactory.create("type", "name")
+// ### SELECT statement
+fun selectStatementExample(collection: Collection) {
+
+    // tag::query-select-props[]
+    val query = QueryBuilder
+        .select(
+            SelectResult.expression(Meta.id),
+            SelectResult.property("name"),
+            SelectResult.property("type")
         )
+        .from(DataSource.collection(collection))
+        .where(Expression.property("type").equalTo(Expression.string("hotel")))
+        .orderBy(Ordering.expression(Meta.id))
 
-        // end::query-index[]
-    }
-
-    fun testIndexingQuerybuilder() {
-        // tag::query-index_Querybuilder[]
-        database.createIndex(
-            "TypeNameIndex",
-            IndexBuilder.valueIndex(
-                ValueIndexItem.property("type"),
-                ValueIndexItem.property("name")
-            )
-        )
-        // end::query-index_Querybuilder[]
-    }
-
-    // ### SELECT statement
-    fun testSelectStatement() {
-        // tag::query-select-props[]
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("name"),
-                SelectResult.property("type")
-            )
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("hotel")))
-            .orderBy(Ordering.expression(Meta.id))
-            .execute()
-
-        for (result in rs) {
-            Log.i(TAG, "hotel id ->${result.getString("id")}")
-            Log.i(TAG, "hotel name -> ${result.getString("name")}")
-        }
-        // end::query-select-props[]
-    }
-
-    // META function
-    @Throws(CouchbaseLiteException::class)
-    fun testMetaFunction() {
-        // tag::query-select-meta[]
-        val rs = QueryBuilder
-            .select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("airport")))
-            .orderBy(Ordering.expression(Meta.id))
-            .execute()
-
-        for (result in rs) {
-            Log.w(TAG, "airport id ->${result.getString("id")}")
-            Log.w(TAG, "airport id -> ${result.getString(0)}")
-        }
-        // end::query-select-meta[]
-    }
-
-    // ### all(*)
-    @Throws(CouchbaseLiteException::class)
-    fun testSelectAll() {
-        // tag::query-select-all[]
-        val queryAll = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("hotel")))
-        // end::query-select-all[]
-
-        // tag::live-query[]
-        val query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database)) // <.>
-
-        // Adds a query change listener.
-        // Changes will be posted on the main queue.
-        val token = query.addChangeListener { change ->
-            change.results?.let {
-                for (result in it) {
-                    Log.d(TAG, "results: ${result.keys}")
-                    /* Update UI */
-                }
-            } // <.>
-        }
-
-        // end::live-query[]
-
-        // tag::stop-live-query[]
-        query.removeChangeListener(token)
-        // end::stop-live-query[]
-
-        for (result in query.execute()) {
-            Log.i(TAG, "hotel -> ${result.getDictionary(DATABASE_NAME)?.toMap()}")
+    query.execute().use { rs ->
+        rs.forEach {
+            Log.i(TAG, "hotel id ->${it.getString("id")}")
+            Log.i(TAG, "hotel name -> ${it.getString("name")}")
         }
     }
+    // end::query-select-props[]
+}
 
+fun whereStatementExample(collection: Collection) {
 
-    // ###　WHERE statement
-    @Throws(CouchbaseLiteException::class)
-    fun testWhereStatement() {
-        // tag::query-where[]
-        val rs = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("hotel")))
-            .limit(Expression.intValue(10))
-            .execute()
-        for (result in rs) {
-            result.getDictionary(DATABASE_NAME)?.let {
+    // tag::query-where[]
+    val query = QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.collection(collection))
+        .where(Expression.property("type").equalTo(Expression.string("hotel")))
+        .limit(Expression.intValue(10))
+
+    query.execute().use { rs ->
+        rs.forEach { result ->
+            result.getDictionary("myDatabase")?.let {
                 Log.i(TAG, "name -> ${it.getString("name")}")
                 Log.i(TAG, "type -> ${it.getString("type")}")
             }
         }
-        // end::query-where[]
     }
+    // end::query-where[]
+}
 
-    fun testQueryDeletedDocuments() {
-        // tag::query-deleted-documents[]
-        // Query documents that have been deleted
-        val query = QueryBuilder
-            .select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(Meta.deleted)
-        // end::query-deleted-documents[]
-    }
-
-    // ####　Collection Operators
-    @Throws(CouchbaseLiteException::class)
-    fun testCollectionStatement() {
-        // tag::query-collection-operator-contains[]
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("name"),
-                SelectResult.property("public_likes")
-            )
-            .from(DataSource.database(database))
-            .where(
-                Expression.property("type").equalTo(Expression.string("hotel"))
-                    .and(
-                        ArrayFunction.contains(
-                            Expression.property("public_likes"),
-                            Expression.string("Armani Langworth")
-                        )
+// ####　Collection Operators
+fun collectionStatementExample(collection: Collection) {
+    // tag::query-collection-operator-contains[]
+    val query = QueryBuilder
+        .select(
+            SelectResult.expression(Meta.id),
+            SelectResult.property("name"),
+            SelectResult.property("public_likes")
+        )
+        .from(DataSource.collection(collection))
+        .where(
+            Expression.property("type").equalTo(Expression.string("hotel"))
+                .and(
+                    ArrayFunction.contains(
+                        Expression.property("public_likes"),
+                        Expression.string("Armani Langworth")
                     )
-            )
-            .execute()
-        for (result in rs) {
-            Log.i(TAG, "public_likes -> ${result.getArray("public_likes")?.toList()}")
-        }
-        // end::query-collection-operator-contains[]
-    }
-
-    // IN operator
-    @Throws(CouchbaseLiteException::class)
-    fun testInOperator() {
-        // tag::query-collection-operator-in[]
-        val rs = QueryBuilder.select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(
-                Expression.string("Armani").`in`(
-                    Expression.property("first"),
-                    Expression.property("last"),
-                    Expression.property("username")
                 )
-            )
-            .execute()
-
-        for (result in rs) {
-            Log.i(TAG, "public_likes -> ${result.toMap()}")
+        )
+    query.execute().use { rs ->
+        rs.forEach {
+            Log.i(TAG, "public_likes -> ${it.getArray("public_likes")?.toList()}")
         }
-        // end::query-collection-operator-in[]
     }
+    // end::query-collection-operator-contains[]
+}
 
-    // Pattern Matching
-    @Throws(CouchbaseLiteException::class)
-    fun testPatternMatching() {
-        // tag::query-like-operator[]
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("country"),
-                SelectResult.property("name")
-            )
-            .from(DataSource.database(database))
-            .where(
-                Expression.property("type").equalTo(Expression.string("landmark"))
-                    .and(
-                        Function.lower(Expression.property("name"))
-                            .like(Expression.string("royal engineers museum"))
-                    )
-            )
-            .execute()
-
-        for (result in rs) {
-            Log.i(TAG, "name -> ${result.getString("name")}")
+// Pattern Matching
+fun patternMatchingExample(collection: Collection) {
+    // tag::query-like-operator[]
+    val query = QueryBuilder
+        .select(
+            SelectResult.expression(Meta.id),
+            SelectResult.property("country"),
+            SelectResult.property("name")
+        )
+        .from(DataSource.collection(collection))
+        .where(
+            Expression.property("type").equalTo(Expression.string("landmark"))
+                .and(
+                    Function.lower(Expression.property("name"))
+                        .like(Expression.string("royal engineers museum"))
+                )
+        )
+    query.execute().use { rs ->
+        rs.forEach {
+            Log.i(TAG, "name -> ${it.getString("name")}")
         }
-        // end::query-like-operator[]
     }
+    // end::query-like-operator[]
+}
 
-    // ### Wildcard Match
-    @Throws(CouchbaseLiteException::class)
-    fun testWildcardMatch() {
-        // tag::query-like-operator-wildcard-match[]
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("country"),
-                SelectResult.property("name")
-            )
-            .from(DataSource.database(database))
-            .where(
-                Expression.property("type").equalTo(Expression.string("landmark"))
-                    .and(
-                        Function.lower(Expression.property("name"))
-                            .like(Expression.string("eng%e%"))
-                    )
-            )
-            .execute()
-
-        for (result in rs) {
-            Log.i(TAG, "name -> ${result.getString("name")}")
+// ### Wildcard Match
+fun wildcardMatchExample(collection: Collection) {
+    // tag::query-like-operator-wildcard-match[]
+    val query = QueryBuilder
+        .select(
+            SelectResult.expression(Meta.id),
+            SelectResult.property("country"),
+            SelectResult.property("name")
+        )
+        .from(DataSource.collection(collection))
+        .where(
+            Expression.property("type").equalTo(Expression.string("landmark"))
+                .and(
+                    Function.lower(Expression.property("name"))
+                        .like(Expression.string("eng%e%"))
+                )
+        )
+    query.execute().use { rs ->
+        rs.forEach {
+            Log.i(TAG, "name -> ${it.getString("name")}")
         }
-        // end::query-like-operator-wildcard-match[]
     }
+    // end::query-like-operator-wildcard-match[]
+}
 
-    // Wildcard Character Match
-    @Throws(CouchbaseLiteException::class)
-    fun testWildCharacterMatch() {
-        // tag::query-like-operator-wildcard-character-match[]
-
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("country"),
-                SelectResult.property("name")
-            )
-            .from(DataSource.database(database))
-            .where(
-                Expression.property("type").equalTo(Expression.string("landmark"))
-                    .and(
-                        Function.lower(Expression.property("name"))
-                            .like(Expression.string("eng____r"))
-                    )
-            )
-            .execute()
-
-        for (result in rs) {
-            Log.i(TAG, "name -> ${result.getString("name")}")
+// Wildcard Character Match
+fun wildCharacterMatchExample(collection: Collection) {
+    // tag::query-like-operator-wildcard-character-match[]
+    val query = QueryBuilder
+        .select(
+            SelectResult.expression(Meta.id),
+            SelectResult.property("country"),
+            SelectResult.property("name")
+        )
+        .from(DataSource.collection(collection))
+        .where(
+            Expression.property("type").equalTo(Expression.string("landmark"))
+                .and(
+                    Function.lower(Expression.property("name"))
+                        .like(Expression.string("eng____r"))
+                )
+        )
+    query.execute().use { rs ->
+        rs.forEach {
+            Log.i(TAG, "name -> ${it.getString("name")}")
         }
-        // end::query-like-operator-wildcard-character-match[]
     }
+    // end::query-like-operator-wildcard-character-match[]
+}
 
-    // ### Regex Match
-    @Throws(CouchbaseLiteException::class)
-    fun testRegexMatch() {
-        // tag::query-regex-operator[]
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("country"),
-                SelectResult.property("name")
-            )
-            .from(DataSource.database(database))
-            .where(
-                Expression.property("type").equalTo(Expression.string("landmark"))
-                    .and(
-                        Function.lower(Expression.property("name"))
-                            .regex(Expression.string("\\beng.*r\\b"))
-                    )
-            )
-            .execute()
-        for (result in rs) {
-            Log.i(TAG, "name -> ${result.getString("name")}")
+// ### Regex Match
+fun regexMatchExample(collection: Collection) {
+    // tag::query-regex-operator[]
+    val query = QueryBuilder
+        .select(
+            SelectResult.expression(Meta.id),
+            SelectResult.property("country"),
+            SelectResult.property("name")
+        )
+        .from(DataSource.collection(collection))
+        .where(
+            Expression.property("type").equalTo(Expression.string("landmark"))
+                .and(
+                    Function.lower(Expression.property("name"))
+                        .regex(Expression.string("\\beng.*r\\b"))
+                )
+        )
+    query.execute().use { rs ->
+        rs.forEach {
+            Log.i(TAG, "name -> ${it.getString("name")}")
         }
-        // end::query-regex-operator[]
     }
+    // end::query-regex-operator[]
+}
 
-    // JOIN statement
-    @Throws(CouchbaseLiteException::class)
-    fun testJoinStatement() {
-        // tag::query-join[]
-        val rs = QueryBuilder.select(
+// ###　WHERE statement
+fun queryDeletedDocumentsExample(collection: Collection) {
+    // tag::query-deleted-documents[]
+    // Query documents that have been deleted
+    val query = QueryBuilder
+        .select(SelectResult.expression(Meta.id))
+        .from(DataSource.collection(collection))
+        .where(Meta.deleted)
+    // end::query-deleted-documents[]
+}
+
+// JOIN statement
+fun joinStatementExample(collection: Collection) {
+    // tag::query-join[]
+    val query = QueryBuilder
+        .select(
             SelectResult.expression(Expression.property("name").from("airline")),
             SelectResult.expression(Expression.property("callsign").from("airline")),
             SelectResult.expression(Expression.property("destinationairport").from("route")),
             SelectResult.expression(Expression.property("stops").from("route")),
             SelectResult.expression(Expression.property("airline").from("route"))
         )
-            .from(DataSource.database(database).`as`("airline"))
-            .join(
-                Join.join(DataSource.database(database).`as`("route"))
-                    .on(
-                        Meta.id.from("airline")
-                            .equalTo(Expression.property("airlineid").from("route"))
-                    )
-            )
-            .where(
-                Expression.property("type").from("route").equalTo(Expression.string("route"))
-                    .and(
-                        Expression.property("type").from("airline")
-                            .equalTo(Expression.string("airline"))
-                    )
-                    .and(
-                        Expression.property("sourceairport").from("route")
-                            .equalTo(Expression.string("RIX"))
-                    )
-            )
-            .execute()
-
-        for (result in rs) {
-            Log.i(TAG, "name -> ${result.toMap()}")
+        .from(DataSource.collection(collection).`as`("airline"))
+        .join(
+            Join.join(DataSource.collection(collection).`as`("route"))
+                .on(
+                    Meta.id.from("airline")
+                        .equalTo(Expression.property("airlineid").from("route"))
+                )
+        )
+        .where(
+            Expression.property("type").from("route").equalTo(Expression.string("route"))
+                .and(
+                    Expression.property("type").from("airline")
+                        .equalTo(Expression.string("airline"))
+                )
+                .and(
+                    Expression.property("sourceairport").from("route")
+                        .equalTo(Expression.string("RIX"))
+                )
+        )
+    query.execute().use { rs ->
+        rs.forEach {
+            Log.i(TAG, "name -> ${it.toMap()}")
         }
-        // end::query-join[]
     }
+    // end::query-join[]
+}
 
-
-    // ### GROUPBY statement
-    @Throws(CouchbaseLiteException::class)
-    fun testGroupByStatement() {
-        // tag::query-groupby[]
-        val rs = QueryBuilder.select(
+// ### GROUPBY statement
+fun groupByStatementExample(collection: Collection) {
+    // tag::query-groupby[]
+    val query = QueryBuilder
+        .select(
             SelectResult.expression(Function.count(Expression.string("*"))),
             SelectResult.property("country"),
             SelectResult.property("tz")
         )
-            .from(DataSource.database(database))
-            .where(
-                Expression.property("type").equalTo(Expression.string("airport"))
-                    .and(Expression.property("geo.alt").greaterThanOrEqualTo(Expression.intValue(300)))
-            )
-            .groupBy(
-                Expression.property("country"), Expression.property("tz")
-            )
-            .orderBy(Ordering.expression(Function.count(Expression.string("*"))).descending())
-            .execute()
-
-        for (result in rs) {
-            result.let {
-                Log.i(
-                    TAG,
-                    "There are ${it.getInt("$1")} airports on the ${
-                        it.getString("tz")
-                    } timezone located in ${
-                        it.getString("country")
-                    } and above 300ft"
-                )
-            }
-            // end::query-groupby[]
-        }
-    }
-
-    // ### ORDER BY statement
-    @Throws(CouchbaseLiteException::class)
-    fun testOrderByStatement() {
-        // tag::query-orderby[]
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("name")
-            )
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("hotel")))
-            .orderBy(Ordering.property("name").ascending())
-            .limit(Expression.intValue(10))
-            .execute()
-
-        for (result in rs) {
-            Log.i(TAG, "${result.toMap()}")
-        }
-        // end::query-orderby[]
-    }
-
-
-    // ### EXPLAIN statement
-    // tag::query-explain[]
-    @Throws(CouchbaseLiteException::class)
-    fun testExplainStatement() {
-        // tag::query-explain-all[]
-        var query: Query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("university")))
-            .groupBy(Expression.property("country"))
-            .orderBy(Ordering.property("name").descending()) // <.>
-        Log.i(TAG, query.explain()) // <.>
-        // end::query-explain-all[]
-
-        // tag::query-explain-like[]
-        query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(Expression.property("type").like(Expression.string("%hotel%"))) // <.>
-        Log.i(TAG, query.explain())
-        // end::query-explain-like[]
-
-        // tag::query-explain-nopfx[]
-        query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(
-                Expression.property("type").like(Expression.string("hotel%")) // <.>
-                    .and(Expression.property("name").like(Expression.string("%royal%")))
-            )
-        Log.i(TAG, query.explain())
-        // end::query-explain-nopfx[]
-
-        // tag::query-explain-function[]
-        query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(
-                Function.lower(
-                    Expression.property("type").equalTo(Expression.string("hotel"))
-                )
-            ) // <.>
-        Log.i(TAG, query.explain())
-        // end::query-explain-function[]
-
-        // tag::query-explain-nofunction[]
-        query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("hotel"))) // <.>
-        Log.i(TAG, query.explain())
-        // end::query-explain-nofunction[]
-    }
-// end::query-explain[]
-
-    @Throws(CouchbaseLiteException::class)
-    fun prepareIndex() {
-        // tag::fts-index[]
-
-        database.createIndex("overviewFTSIndex", FullTextIndexConfigurationFactory.create("overview"))
-
-        // end::fts-index[]
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun testFTS() {
-        // tag::fts-query[]
-
-        val ftsQuery =
-            database.createQuery(
-                "SELECT _id, overview FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)"
-            )
-
-        ftsQuery.execute().allResults().forEach {
-            Log.i(TAG, "${it.getString("id")}: ${it.getString("overview")}")
-        }
-
-        // end::fts-query[]
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun prepareIndexQuerybuilder() {
-        // tag::fts-index_Querybuilder[]
-        database.createIndex(
-            "overviewFTSIndex",
-            IndexBuilder.fullTextIndex(FullTextIndexItem.property("overview")).ignoreAccents(false)
+        .from(DataSource.collection(collection))
+        .where(
+            Expression.property("type").equalTo(Expression.string("airport"))
+                .and(Expression.property("geo.alt").greaterThanOrEqualTo(Expression.intValue(300)))
         )
-        // end::fts-index_Querybuilder[]
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun testFTSQuerybuilder() {
-        // tag::fts-query_Querybuilder[]
-
-        val ftsQuery =
-            QueryBuilder.select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("overview")
+        .groupBy(
+            Expression.property("country"), Expression.property("tz")
+        )
+        .orderBy(Ordering.expression(Function.count(Expression.string("*"))).descending())
+    query.execute().use { rs ->
+        rs.forEach {
+            Log.i(
+                TAG,
+                "There are ${it.getInt("$1")} airports on the ${
+                    it.getString("tz")
+                } timezone located in ${
+                    it.getString("country")
+                } and above 300ft"
             )
-                .from(DataSource.database(database))
-                .where(FullTextFunction.match("overviewFTSIndex", "michigan"))
-
-        ftsQuery.execute().allResults().forEach {
-            Log.i(TAG, "${it.getString("Meta.id")}: ${it.getString("overview")}")
         }
-
-
-        // end::fts-query_Querybuilder[]
     }
+    // end::query-groupby[]
+}
 
+// ### ORDER BY statement
+fun orderByStatementExample(collection: Collection) {
+    // tag::query-orderby[]
+    val query = QueryBuilder
+        .select(
+            SelectResult.expression(Meta.id),
+            SelectResult.property("name")
+        )
+        .from(DataSource.collection(collection))
+        .where(Expression.property("type").equalTo(Expression.string("hotel")))
+        .orderBy(Ordering.property("name").ascending())
+        .limit(Expression.intValue(10))
 
-    fun testQuerySyntaxAll(currentUser: String) {
-        // tag::query-syntax-all[]
-        val listQuery: Query = QueryBuilder.select(SelectResult.all())
-            .from(DataSource.database(openOrCreateDatabaseForUser(currentUser)))
+    query.execute().use { rs ->
+        rs.forEach {
+            Log.i(TAG, "${it.toMap()}")
+        }
+    }
+    // end::query-orderby[]
+}
 
-        // end::query-syntax-all[]
-        // tag::query-access-all[]
-        val hotels: HashMap<String, Hotel> = HashMap()
+fun querySyntaxAllExample(collection: Collection) {
+    // tag::query-syntax-all[]
+    val listQuery = QueryBuilder.select(SelectResult.all())
+        .from(DataSource.collection(collection))
+    // end::query-syntax-all[]
 
-        for (result in listQuery.execute().allResults()) {
+    // tag::query-access-all[]
+    val hotels = mutableMapOf<String, Hotel>()
+    listQuery.execute().use { rs ->
+        rs.allResults().forEach {
             // get the k-v pairs from the 'hotel' key's value into a dictionary
-            val thisDocsProps = result.getDictionary(0) // <.>
+            val thisDocsProps = it.getDictionary(0) // <.>
             val thisDocsId = thisDocsProps!!.getString("id")
             val thisDocsName = thisDocsProps.getString("name")
             val thisDocsType = thisDocsProps.getString("type")
             val thisDocsCity = thisDocsProps.getString("city")
 
             // Alternatively, access results value dictionary directly
-            val id = result.getDictionary(0)?.getString("id").toString() // <.>
+            val id = it.getDictionary(0)?.getString("id").toString() // <.>
             hotels[id] = Hotel(
                 id,
-                result.getDictionary(0)?.getString("type"),
-                result.getDictionary(0)?.getString("name"),
-                result.getDictionary(0)?.getString("city"),
-                result.getDictionary(0)?.getString("country"),
-                result.getDictionary(0)?.getString("description")
+                it.getDictionary(0)?.getString("type"),
+                it.getDictionary(0)?.getString("name"),
+                it.getDictionary(0)?.getString("city"),
+                it.getDictionary(0)?.getString("country"),
+                it.getDictionary(0)?.getString("description")
             )
         }
+    }
+    // end::query-access-all[]
+}
 
-        // end::query-access-all[]
+fun querySyntaxIdExample(collection: Collection) {
+    // tag::query-select-meta
+    // tag::query-syntax-id[]
+    val query = QueryBuilder
+        .select(
+            SelectResult.expression(Meta.id).`as`("hotelId")
+        )
+        .from(DataSource.collection(collection))
+
+    // end::query-syntax-id[]
+
+    // tag::query-access-id[]
+    query.execute().use { rs ->
+        rs.allResults().forEach {
+            Log.i(TAG, "hotel id ->${it.getString("hotelId")}")
+        }
+    }
+    // end::query-access-id[]
+    // end::query-select-meta
+}
+
+fun querySyntaxCountExample(collection: Collection) {
+    // tag::query-syntax-count-only[]
+
+    val query = QueryBuilder
+        .select(
+            SelectResult.expression(Function.count(Expression.string("*"))).`as`("mycount")
+        ) // <.>
+        .from(DataSource.collection(collection))
+
+    // end::query-syntax-count-only[]
+
+    // tag::query-access-count-only[]
+    query.execute().use { rs ->
+        rs.allResults().forEach {
+            Log.i(TAG, "name -> ${it.getInt("mycount")}")
+        }
+    }
+    // end::query-access-count-only[]
+}
+
+fun querySyntaxPropsExample(collection: Collection) {
+    // tag::query-syntax-props[]
+
+    val query = QueryBuilder
+        .select(
+            SelectResult.expression(Meta.id),
+            SelectResult.property("country"),
+            SelectResult.property("name")
+        )
+        .from(DataSource.collection(collection))
+
+    // end::query-syntax-props[]
+
+    // tag::query-access-props[]
+    query.execute().use { rs ->
+        rs.allResults().forEach {
+            Log.i(TAG, "Hotel name -> ${it.getString("name")}, in ${it.getString("country")}")
+        }
+    }
+    // end::query-access-props[]
+}
+
+// IN operator
+fun inOperatorExample(collection: Collection) {
+    // tag::query-collection-operator-in[]
+    val query = QueryBuilder.select(SelectResult.all())
+        .from(DataSource.collection(collection))
+        .where(
+            Expression.string("Armani").`in`(
+                Expression.property("first"),
+                Expression.property("last"),
+                Expression.property("username")
+            )
+        )
+
+    query.execute().use { rs ->
+        rs.forEach {
+            Log.i(TAG, "public_likes -> ${it.toMap()}")
+        }
+    }
+    // end::query-collection-operator-in[]
+}
+
+
+// tag::query-syntax-pagination-all[]
+fun queryPaginationExample(collection: Collection) {
+    // tag::query-syntax-pagination[]
+    val thisOffset = 0
+    val thisLimit = 20
+    val listQuery = QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.collection(collection))
+        .limit(
+            Expression.intValue(thisLimit),
+            Expression.intValue(thisOffset)
+        ) // <.>
+
+    // end::query-syntax-pagination[]
+}
+// end::query-syntax-pagination-all[]
+
+// ### all(*)
+fun selectAllExample(collection: Collection) {
+    // tag::query-select-all[]
+    val queryAll = QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.collection(collection))
+        .where(Expression.property("type").equalTo(Expression.string("hotel")))
+    // end::query-select-all[]
+
+}
+
+fun liveQueryExample(collection: Collection) {
+    // tag::live-query[]
+    val query = QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.collection(collection)) // <.>
+
+    // Adds a query change listener.
+    // Changes will be posted on the main queue.
+    val token = query.addChangeListener { change ->
+        change.results?.let { rs ->
+            rs.forEach {
+                Log.d(TAG, "results: ${it.keys}")
+                /* Update UI */
+            }
+        } // <.>
     }
 
-    @Throws(CouchbaseLiteException::class, JSONException::class)
-    fun testQuerySyntaxJson(db: Database) {
-        // tag::query-syntax-json[]
-        // Example assumes Hotel class object defined elsewhere
+    // end::live-query[]
 
-        // Build the query
-        val listQuery: Query = QueryBuilder.select(SelectResult.all())
-            .from(DataSource.database(db))
+    // tag::stop-live-query[]
+    token.remove()
+    // end::stop-live-query[]
+}
 
-        // end::query-syntax-json[]
-        // tag::query-access-json[]
-        // Uses Jackson JSON processor
-        val mapper = ObjectMapper()
-        val hotels: ArrayList<Hotel> = ArrayList()
 
-        for (result in listQuery.execute()) {
+////////////////////////////////////////////  NOT IN JAVA
+
+
+// META function
+fun metaFunctionExample(collection: Collection) {
+
+    // tag::query-select-meta[]
+    val query = QueryBuilder
+        .select(SelectResult.expression(Meta.id))
+        .from(DataSource.collection(collection))
+        .where(Expression.property("type").equalTo(Expression.string("airport")))
+        .orderBy(Ordering.expression(Meta.id))
+
+    query.execute().use { rs ->
+        rs.forEach {
+            Log.w(TAG, "airport id ->${it.getString("id")}")
+            Log.w(TAG, "airport id -> ${it.getString(0)}")
+        }
+    }
+    // end::query-select-meta[]
+}
+
+
+// ### EXPLAIN statement
+// tag::query-explain[]
+fun explainAllExample(collection: Collection) {
+    // tag::query-explain-all[]
+    val query = QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.collection(collection))
+        .where(Expression.property("type").equalTo(Expression.string("university")))
+        .groupBy(Expression.property("country"))
+        .orderBy(Ordering.property("name").descending()) // <.>
+
+    Log.i(TAG, query.explain()) // <.>
+    // end::query-explain-all[]
+}
+
+fun explainLikeExample(collection: Collection) {
+    // tag::query-explain-like[]
+    val query = QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.collection(collection))
+        .where(Expression.property("type").like(Expression.string("%hotel%"))) // <.>
+    Log.i(TAG, query.explain())
+    // end::query-explain-like[]
+
+}
+
+fun explainNoPFXExample(collection: Collection) {
+
+    // tag::query-explain-nopfx[]
+    val query = QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.collection(collection))
+        .where(
+            Expression.property("type").like(Expression.string("hotel%")) // <.>
+                .and(Expression.property("name").like(Expression.string("%royal%")))
+        )
+    Log.i(TAG, query.explain())
+    // end::query-explain-nopfx[]
+}
+
+fun explainFnExample(collection: Collection) {
+
+    // tag::query-explain-function[]
+    val query = QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.collection(collection))
+        .where(
+            Function.lower(Expression.property("type").equalTo(Expression.string("hotel")))
+        ) // <.>
+    Log.i(TAG, query.explain())
+    // end::query-explain-function[]
+
+}
+
+fun explainNoFnExample(collection: Collection) {
+
+    // tag::query-explain-nofunction[]
+    val query = QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.collection(collection))
+        .where(Expression.property("type").equalTo(Expression.string("hotel"))) // <.>
+    Log.i(TAG, query.explain())
+    // end::query-explain-nofunction[]
+}
+// end::query-explain[]
+
+fun prepareIndex(collection: Collection) {
+    // tag::fts-index[]
+    collection.createIndex("overviewFTSIndex", FullTextIndexConfigurationFactory.newConfig("overview"))
+    // end::fts-index[]
+}
+
+fun ftsExample(database: Database) {
+    // tag::fts-query[]
+    val ftsQuery = database.createQuery(
+        "SELECT _id, overview FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)"
+    )
+    ftsQuery.execute().use { rs ->
+        rs.allResults().forEach {
+            Log.i(TAG, "${it.getString("id")}: ${it.getString("overview")}")
+        }
+    }
+    // end::fts-query[]
+}
+
+fun prepareIndexBuilderExample(collection: Collection) {
+    // tag::fts-index_Querybuilder[]
+    collection.createIndex(
+        "overviewFTSIndex",
+        IndexBuilder.fullTextIndex(FullTextIndexItem.property("overview")).ignoreAccents(false)
+    )
+    // end::fts-index_Querybuilder[]
+}
+
+fun ftsQueryBuilderExample(collection: Collection) {
+    // tag::fts-query_Querybuilder[]
+    val ftsQuery =
+        QueryBuilder.select(
+            SelectResult.expression(Meta.id),
+            SelectResult.property("overview")
+        )
+            .from(DataSource.collection(collection))
+            .where(FullTextFunction.match(Expression.fullTextIndex("overviewFTSIndex"), "michigan"))
+
+    ftsQuery.execute().use { rs ->
+        rs.allResults().forEach {
+            Log.i(TAG, "${it.getString("Meta.id")}: ${it.getString("overview")}")
+        }
+    }
+
+    // end::fts-query_Querybuilder[]
+}
+
+
+fun querySyntaxJsonExample(collection: Collection) {
+    // tag::query-syntax-json[]
+    // Example assumes Hotel class object defined elsewhere
+
+    // Build the query
+    val listQuery = QueryBuilder.select(SelectResult.all())
+        .from(DataSource.collection(collection))
+
+    // end::query-syntax-json[]
+    // tag::query-access-json[]
+    // Uses Jackson JSON processor
+    val mapper = ObjectMapper()
+    val hotels = mutableListOf<Hotel>()
+
+    listQuery.execute().use { rs ->
+        rs.forEach {
 
             // Get result as JSON string
-            val json = result.toJSON() // <.>
+            val json = it.toJSON() // <.>
 
             // Get Hashmap from JSON string
             val dictFromJSONstring = mapper.readValue(json, HashMap::class.java) // <.>
@@ -598,112 +666,32 @@ class QueryExamples(private val database: Database) {
             val thisHotel = mapper.readValue(json, Hotel::class.java) // <.>
             hotels.add(thisHotel)
         }
-        // end::query-access-json[]
     }
-/* end func testQuerySyntaxJson */
-
-
-    fun testQuerySyntaxProps(currentUser: String) {
-        // tag::query-select-props[]
-        // tag::query-syntax-props[]
-
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("country"),
-                SelectResult.property("name")
-            )
-            .from(DataSource.database(database))
-
-        // end::query-syntax-props[]
-
-        // tag::query-access-props[]
-        for (result in rs.execute().allResults()) {
-            Log.i(TAG, "Hotel name -> ${result.getString("name")}, in ${result.getString("country")}")
-        }
-        // end::query-access-props[]
-        // end::query-select-props[]
-    }
-
-    fun testQuerySyntaxCount(currentUser: String) {
-        // tag::query-syntax-count-only[]
-
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Function.count(Expression.string("*"))).`as`("mycount")
-            ) // <.>
-            .from(DataSource.database(database))
-
-        // end::query-syntax-count-only[]
-
-        // tag::query-access-count-only[]
-        for (result in rs.execute().allResults()) {
-            Log.i(TAG, "name -> ${result.getInt("mycount")}")
-        }
-        // end::query-access-count-only[]
-    }
-
-
-    fun testQuerySyntaxId(currentUser: String) {
-        // tag::query-select-meta
-        // tag::query-syntax-id[]
-
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id).`as`("hotelId")
-            )
-            .from(DataSource.database(database))
-
-        // end::query-syntax-id[]
-
-        // tag::query-access-id[]
-        for (result in rs.execute().allResults()) {
-            Log.i(TAG, "hotel id ->${result.getString("hotelId")}")
-        }
-        // end::query-access-id[]
-        // end::query-select-meta
-    }
-
-
-    fun docsOnlyQuerySyntaxN1QL(db: Database): List<Result> {
-        // For Documentation -- N1QL Query using parameters
-        // tag::query-syntax-n1ql[]
-        val thisQuery = db.createQuery(
-            "SELECT META().id AS id FROM _ WHERE type = \"hotel\""
-        ) // <.>
-
-        return thisQuery.execute().allResults()
-
-        // end::query-syntax-n1ql[]
-    }
-
-    fun docsOnlyQuerySyntaxN1QLParams(db: Database): List<Result> {
-        // For Documentation -- N1QL Query using parameters
-        // tag::query-syntax-n1ql-params[]
-        val thisQuery = db.createQuery(
-            "SELECT META().id AS id FROM _ WHERE type = \$type"
-        ) // <.>
-
-        thisQuery.parameters = Parameters().setString("type", "hotel") // <.>
-
-        return thisQuery.execute().allResults()
-
-        // end::query-syntax-n1ql-params[]
-    }
-
-    fun testQuerySyntaxPagination(currentUser: String) {
-        // tag::query-syntax-pagination[]
-        val limit = 20
-        val offset = 0
-
-        val rs = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("hotel")))
-            .limit(Expression.intValue(limit), Expression.intValue(offset))
-
-        // end::query-syntax-pagination[]
-    }
-
-    fun openOrCreateDatabaseForUser(argUser: String) = Database(argUser)
+    // end::query-access-json[]
 }
+
+fun docsOnlyQuerySyntaxN1QL(database: Database): List<Result> {
+    // For Documentation -- N1QL Query using parameters
+    // tag::query-syntax-n1ql[]
+    val thisQuery = database.createQuery(
+        "SELECT META().id AS id FROM _ WHERE type = \"hotel\""
+    ) // <.>
+
+    return thisQuery.execute().use { rs -> rs.allResults() }
+    // end::query-syntax-n1ql[]
+}
+
+fun docsOnlyQuerySyntaxN1QLParams(database: Database): List<Result> {
+    // For Documentation -- N1QL Query using parameters
+    // tag::query-syntax-n1ql-params[]
+    val thisQuery = database.createQuery(
+        "SELECT META().id AS id FROM _ WHERE type = \$type"
+    ) // <.>
+
+    thisQuery.parameters = Parameters().setString("type", "hotel") // <.>
+
+    return thisQuery.execute().allResults()
+
+    // end::query-syntax-n1ql-params[]
+}
+
