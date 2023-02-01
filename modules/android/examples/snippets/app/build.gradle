@@ -1,0 +1,65 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+
+// Set true to use mavenLocal instead of Proget
+def USE_LOCAL_MAVEN = project.hasProperty("useLocalMaven")
+
+android {
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.example.getstarted.java"
+        minSdk 26
+        targetSdk 33
+        versionCode 3
+        versionName "3.1"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+repositories {
+    if (USE_LOCAL_MAVEN) { mavenLocal() }
+    else {
+        maven {
+            url "http://proget.build.couchbase.com/maven2/cimaven"
+            allowInsecureProtocol = true
+        }
+    }
+    google()
+    mavenCentral()
+}
+
+dependencies {
+     compileOnly 'androidx.annotation:annotation:1.2.0'
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.20"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
+
+    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
+
+    implementation "com.couchbase.lite:couchbase-lite-android-ee-ktx:${CBL_VERSION}"
+
+    implementation 'junit:junit:4.13.2'
+
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
