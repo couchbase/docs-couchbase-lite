@@ -1,24 +1,20 @@
 apply plugin: 'java'
-apply plugin: 'war'
-apply plugin: 'com.bmuschko.tomcat'
 
-ext {
-   CBL_VERSION='3.1.0-SNAPSHOT'
-   TOMCAT_VERSION = '9.0.1'
-}
+ext { CBL_VERSION='3.1.0-SNAPSHOT' }
+
 def USE_LOCAL_MAVEN = project.hasProperty("useLocalMaven")
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
+group 'com.couchbase'
+version '3.1.0'
+
+sourceSets {
+    main {
+        java.srcDirs = [
+            "${projectDir}/common/main/java",
+            "${projectDir}/src/main/java",
+        ]
     }
 }
-
-group 'org.example'
-version '3.1-SNAPSHOT'
 
 repositories {
     if (USE_LOCAL_MAVEN) { mavenLocal() }
@@ -29,30 +25,14 @@ repositories {
         }
     }
 
-    mavenCentral()
     google()
+    mavenCentral()
 }
 
 dependencies {
     compileOnly 'androidx.annotation:annotation:1.5.0'
-    compileOnly "javax.servlet:javax.servlet-api:4.0.1"
+
     implementation "com.couchbase.lite:couchbase-lite-java-ee-macos:${CBL_VERSION}"
+
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
-}
-
-dependencies {
-    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${TOMCAT_VERSION}",
-            "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
-            "org.apache.tomcat.embed:tomcat-embed-jasper:${TOMCAT_VERSION}",
-            "com.couchbase.lite:couchbase-lite-java-ee::${CBL_VERSION}"
-}
-
-tomcat {
-    contextPath = '/'
-    httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
-    ajpProtocol  = 'org.apache.coyote.ajp.AjpNio2Protocol'
-}
-
-test {
-    useJUnitPlatform()
 }
