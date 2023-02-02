@@ -13,7 +13,7 @@ mkdir -p downloaded
 
 pushd downloaded
 DOWNLOAD_DIR=$(pwd)
-wget http://latestbuilds.service.couchbase.com/builds/latestbuilds/couchbase-lite-c/$version/$build_num/couchbase-lite-c-enterprise-$version-$build_num-ubuntu20.04-x86_64.tar.gz
+wget http://latestbuilds.service.couchbase.com/builds/latestbuilds/couchbase-lite-c/$version/$build_num/couchbase-lite-c-enterprise-$version-$build_num-linux-x86_64.tar.gz
 tar xf couchbase-lite-c-enterprise-$version-$build_num-ubuntu20.04-x86_64.tar.gz
 rm couchbase-lite-c-enterprise-$version-$build_num-ubuntu20.04-x86_64.tar.gz
 popd
