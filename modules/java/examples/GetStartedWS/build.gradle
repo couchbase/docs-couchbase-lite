@@ -13,15 +13,19 @@ buildscript {
     dependencies { classpath 'org.gretty:gretty:4.0.3' }
 }
 
-
 group 'com.couchbase.gettingstarted'
-version CBL_VERSION
+version '3.1.0'
+
+java {
+    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_1_8
+}
 
 repositories {
     if (USE_LOCAL_MAVEN) { mavenLocal() }
     else {
         maven {
-            url "http://proget.build.couchbase.com/maven2/cimaven"
+            url "https://proget.sc.couchbase.com/maven2/internalmaven/"
             allowInsecureProtocol = true
         }
     }

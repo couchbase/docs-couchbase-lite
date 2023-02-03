@@ -18,11 +18,10 @@
 package com.couchbase.codesnippets
 
 import android.content.Context
-import com.couchbase.codesnippets.util.Logger.Companion.log
+import com.couchbase.codesnippets.util.log
 import com.couchbase.lite.BasicAuthenticator
 import com.couchbase.lite.ClientCertificateAuthenticator
 import com.couchbase.lite.CouchbaseLite
-import com.couchbase.lite.CouchbaseLiteException
 import com.couchbase.lite.Database
 import com.couchbase.lite.Endpoint
 import com.couchbase.lite.KeyStoreUtils
@@ -38,7 +37,6 @@ import com.couchbase.lite.URLEndpointListener
 import com.couchbase.lite.URLEndpointListenerConfigurationFactory
 import com.couchbase.lite.create
 import java.net.URI
-import java.net.URISyntaxException
 import java.security.KeyStore
 import java.security.cert.Certificate
 
@@ -243,86 +241,6 @@ class IBExamples(private val context: Context, private val caCert: Certificate) 
         // end::listener-stop[]
     }
 
-    // ACTIVE PEER STUFF
-// Replication code
-    @Throws(CouchbaseLiteException::class, URISyntaxException::class)
-    fun testActPeerSync() {
-        // tag::p2p-act-rep-start-full[]
-        // Create replicator
-        // Consider holding a reference somewhere
-        // to prevent the Replicator from being GCed
-        val repl = Replicator( // <.>
-
-            // tag::p2p-act-rep-func[]
-            // tag::p2p-act-rep-initialize[]
-            // initialize the replicator configuration
-            ReplicatorConfigurationFactory.create(
-                database = database,
-                target = URLEndpoint(URI("wss://listener.com:8954")), // <.>
-
-                // end::p2p-act-rep-initialize[]
-                // tag::p2p-act-rep-config-type[]
-                // Set replicator type
-                type = ReplicatorType.PUSH_AND_PULL,
-
-                // end::p2p-act-rep-config-type[]
-                // tag::p2p-act-rep-config-cont[]
-                // Configure Sync Mode
-                continuous = false, // default value
-
-                // end::p2p-act-rep-config-cont[]
-
-                // tag::autopurge-override[]
-                // set auto-purge behavior
-                // (here we override default)
-                enableAutoPurge = false, // <.>
-
-                // end::autopurge-override[]
-
-
-                // tag::p2p-act-rep-config-self-cert[]
-                // Configure Server Authentication --
-                // only accept self-signed certs
-                acceptOnlySelfSignedServerCertificate = true, // <.>
-
-                // end::p2p-act-rep-config-self-cert[]
-                // tag::p2p-act-rep-auth[]
-                // Configure the credentials the
-                // client will provide if prompted
-                authenticator = BasicAuthenticator("Our Username", "Our PasswordValue".toCharArray()), // <.>
-
-
-                // end::p2p-act-rep-auth[]
-                // tag::p2p-act-rep-config-conflict[]
-                /* Optionally set custom conflict resolver call back */
-                conflictResolver = null // <.>
-            )
-        )
-
-        // end::p2p-act-rep-config-conflict[]
-
-        // tag::p2p-act-rep-add-change-listener[]
-        // tag::p2p-act-rep-add-change-listener-label[]
-        // Optionally add a change listener <.>
-        // end::p2p-act-rep-add-change-listener-label[]
-        val thisListener = repl.addChangeListener { change ->
-            val err: CouchbaseLiteException? = change.status.error
-            if (err != null) {
-                log("Error code ::  ${err.code}", err)
-            }
-        }
-
-        // end::p2p-act-rep-add-change-listener[]
-        // tag::p2p-act-rep-start[]
-        // Start replicator
-        repl.start(false) // <.>
-        thisReplicator = repl
-
-        // end::p2p-act-rep-start[]
-        // end::p2p-act-rep-start-full[]
-        // end::p2p-act-rep-func[]         ***** End p2p-act-rep-func
-    }
-
     fun ibReplicatorConfig() {
         // BEGIN additional snippets
         // tag::p2p-act-rep-config-tls-full[]
@@ -362,29 +280,6 @@ class IBExamples(private val context: Context, private val caCert: Certificate) 
 
         thisReplicator = repl
         // end::p2p-tlsid-tlsidentity-with-label[]
-    }
-
-    fun ibP2pReplicatorStatus() {
-        // tag::p2p-act-rep-status[]
-        thisReplicator?.status?.let {
-            log("The Replicator is currently ${it.activityLevel}")
-            log("The Replicator has processed ${it.progress}")
-            log(
-                if (it.activityLevel === ReplicatorActivityLevel.BUSY) {
-                    "Replication Processing"
-                } else {
-                    "It has completed ${it.progress.total} changes"
-                }
-            )
-        }
-        // end::p2p-act-rep-status[]
-    }
-
-    fun ibP2pReplicatorStop() {
-        // tag::p2p-act-rep-stop[]
-        // Stop replication.
-        thisReplicator?.stop() // <.>
-        // end::p2p-act-rep-stop[]
     }
 
     fun ibP2pListener() {
@@ -472,14 +367,6 @@ class IBExamples(private val context: Context, private val caCert: Certificate) 
         repl.start()
         thisReplicator = repl
     }
-
-    // end::sgw-repl-pull[]
-// tag::sgw-act-rep-initialize[]
-// initialize the replicator configuration
-    val thisConfig = ReplicatorConfigurationFactory.create(
-        database = database,
-        target = URLEndpoint(URI("wss://10.0.2.2:8954/travel-sample"))
-    ) // <.> // end::sgw-act-rep-initialize[]
 
 /* C A L L O U T S
 

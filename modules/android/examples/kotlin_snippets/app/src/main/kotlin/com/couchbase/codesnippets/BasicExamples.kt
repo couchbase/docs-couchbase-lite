@@ -18,16 +18,14 @@
 package com.couchbase.codesnippets
 
 import android.content.Context
-import com.couchbase.codesnippets.util.Logger.Companion.log
-import com.couchbase.codesnippets.util.Utils.Companion.getAsset
+import com.couchbase.codesnippets.util.getAsset
+import com.couchbase.codesnippets.util.log
 import com.couchbase.lite.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.net.URI
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.zip.ZipInputStream
 
@@ -220,7 +218,7 @@ class BasicExamples(private val context: Context) {
     }
 
     /* The `tag::replication[]` example is inlined in java.adoc */
-    fun testTroubleshooting() {
+    fun troubleshootingExample() {
         // tag::replication-logging[]
         Database.log.console.let {
             it.level = LogLevel.VERBOSE
@@ -324,7 +322,7 @@ class BasicExamples(private val context: Context) {
         // Purge the document one day from now
         database.setDocumentExpiration(
             "doc123",
-            Date(Instant.now().plus(1, ChronoUnit.DAYS).toEpochMilli())
+            Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24))
         )
 
         // Reset expiration
@@ -336,7 +334,7 @@ class BasicExamples(private val context: Context) {
             .from(DataSource.database(database))
             .where(
                 Meta.expiration.lessThan(
-                    Expression.longValue(Instant.now().plus(5, ChronoUnit.MINUTES).toEpochMilli())
+                    Expression.longValue(System.currentTimeMillis() + (1000 * 60 * 5))
                 )
             )
         // end::document-expiration[]
