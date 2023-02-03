@@ -60,7 +60,7 @@ public class ExecutionPolicyExamples {
         repl.start();
         thisReplicator = repl;
     }
-    // tag::execution-inorder[]
+    // end::execution-inorder[]
 
 
     // tag::execution-maxthroughput[]

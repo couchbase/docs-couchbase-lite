@@ -10,18 +10,21 @@ def USE_LOCAL_MAVEN = project.hasProperty("useLocalMaven")
 group 'com.couchbase'
 version '3.1.0'
 
-sourceCompatibility = 8
-targetCompatibility = 8
 
-application {
-    mainClassName = "com.couchbase.gettingstarted.Main"
+java {
+    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_1_8
+
+    application {
+        mainClassName = "com.couchbase.gettingstarted.Main"
+    }
 }
 
 repositories {
     if (USE_LOCAL_MAVEN) { mavenLocal() }
     else {
         maven {
-            url "http://proget.build.couchbase.com/maven2/cimaven"
+            url "https://proget.sc.couchbase.com/maven2/internalmaven/"
             allowInsecureProtocol = true
         }
     }
@@ -31,6 +34,8 @@ repositories {
  
 dependencies {
     compileOnly 'androidx.annotation:annotation:1.5.0'
+
+    print "CBL VERSION: ${CBL_VERSION}"
 
     implementation "com.couchbase.lite:couchbase-lite-java-ee-macos:${CBL_VERSION}"
 

@@ -128,7 +128,7 @@ class DBManager {
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
                 target = URLEndpoint(URI("ws://localhost:4984/getting-started-db")),
-                collections = mapOf(coll to collConfig),
+                collections = mapOf(setOf(coll) to collConfig),
                 type = ReplicatorType.PUSH_AND_PULL,
                 authenticator = BasicAuthenticator("sync-gateway", "password".toCharArray())
             )

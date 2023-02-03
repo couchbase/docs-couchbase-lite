@@ -7,12 +7,17 @@ def USE_LOCAL_MAVEN = project.hasProperty("useLocalMaven")
 group 'com.couchbase'
 version '3.1.0'
 
-sourceSets {
-    main {
-        java.srcDirs = [
-            "${projectDir}/common/main/java",
-            "${projectDir}/src/main/java",
-        ]
+java {
+    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_1_8
+
+    sourceSets {
+        main {
+            java.srcDirs = [
+                "${projectDir}/common/main/java",
+                "${projectDir}/src/main/java",
+            ]
+        }
     }
 }
 
@@ -20,7 +25,7 @@ repositories {
     if (USE_LOCAL_MAVEN) { mavenLocal() }
     else {
         maven {
-            url "http://proget.build.couchbase.com/maven2/cimaven"
+            url "https://proget.sc.couchbase.com/maven2/internalmaven/"
             allowInsecureProtocol = true
         }
     }
