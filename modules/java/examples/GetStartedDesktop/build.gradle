@@ -1,4 +1,7 @@
-plugins { id 'java' }
+plugins {
+    id 'java'
+    id 'application'
+}
 
 ext { CBL_VERSION='3.1.0-SNAPSHOT' }
 
@@ -9,6 +12,10 @@ version '3.1.0'
 
 sourceCompatibility = 8
 targetCompatibility = 8
+
+application {
+    mainClassName = "com.couchbase.gettingstarted.Main"
+}
 
 repositories {
     if (USE_LOCAL_MAVEN) { mavenLocal() }
@@ -30,3 +37,9 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
 }
 
+task appRun(type: JavaExec) {
+    group = "Execution"
+    description = "Run the main class with JavaExecTask"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.couchbase.gettingstarted.Main"
+}
