@@ -8,9 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -27,7 +24,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.couchbase.codesnippets.utils.Logger;
-import com.couchbase.lite.BasicAuthenticator;
+import com.couchbase.codesnippets.utils.Utils;
 import com.couchbase.lite.Blob;
 import com.couchbase.lite.Collection;
 import com.couchbase.lite.CollectionConfiguration;
@@ -44,10 +41,6 @@ import com.couchbase.lite.DocumentFlag;
 import com.couchbase.lite.EncryptionKey;
 import com.couchbase.lite.Endpoint;
 import com.couchbase.lite.Expression;
-import com.couchbase.lite.FullTextFunction;
-import com.couchbase.lite.FullTextIndexConfiguration;
-import com.couchbase.lite.FullTextIndexItem;
-import com.couchbase.lite.IndexBuilder;
 import com.couchbase.lite.ListenerToken;
 import com.couchbase.lite.LogDomain;
 import com.couchbase.lite.LogFileConfiguration;
@@ -76,79 +69,16 @@ import com.couchbase.lite.ReplicatorType;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
-import com.couchbase.lite.SessionAuthenticator;
 import com.couchbase.lite.URLEndpoint;
-import com.couchbase.lite.ValueIndexItem;
 
 
 @SuppressWarnings({"unused", "ConstantConditions"})
 public class Examples {
-    @NonNull
-    private final Database database;
-    @NonNull
-    private final Collection defaultCollection;
-
-    private Examples(@NonNull Database db) throws CouchbaseLiteException {
-        this.database = db;
-        this.defaultCollection = db.getDefaultCollection();
-    }
-
     private static final String DB_NAME = "getting-started";
     private static final String DB_NAME2 = "other";
 
-    private InputStream getAsset(String path) {
-        return null;
-    }
-
-    private void deleteDB(String name, File dir) {
-        // database exist, delete it
-        if (Database.exists(name, dir)) {
-            // sometimes, db is still in used, wait for a while. Maximum 3 sec
-            for (int i = 0; i < 10; i++) {
-                try {
-                    Database.delete(name, dir);
-                    break;
-                }
-                catch (CouchbaseLiteException ex) {
-                    try { Thread.sleep(300); }
-                    catch (InterruptedException ignore) { }
-                }
-            }
-        }
-    }
-
-    public void test1xAttachments() throws CouchbaseLiteException, IOException {
-        // if db exist, delete it
-        final String DB_NAME = "cbl-sqlite";
-        final File filesDir = new File(database.getPath());
-        deleteDB(DB_NAME, filesDir);
-
-        ZipUtils.unzip(getAsset("replacedb/android140-sqlite.cblite2.zip"), filesDir);
-
-        Database db = new Database(DB_NAME, new DatabaseConfiguration());
-        Collection collection = db.getDefaultCollection();
-        try {
-
-            Document doc = collection.getDocument("doc1");
-
-            // For Validation
-            Dictionary attachments = doc.getDictionary("_attachments");
-            Blob blob = attachments.getBlob("attach1");
-            byte[] content = blob.getContent();
-            // For Validation
-
-            byte[] attach = "attach1".getBytes();
-            assert Arrays.equals(attach, content);
-        }
-        finally {
-            // close db
-            db.close();
-            // if db exist, delete it
-            deleteDB(DB_NAME, filesDir);
-        }
-
+    public void test1xAttachments(Database database) {
         Document document = new MutableDocument();
-
         // tag::1x-attachment[]
         Dictionary attachments = document.getDictionary("_attachments");
         Blob blob = attachments != null ? attachments.getBlob("avatar") : null;
@@ -219,7 +149,7 @@ public class Examples {
         // end::file-logging[]
     }
 
-    public void testPreBuiltDatabase() throws IOException {
+    public void testPreBuiltDatabase(Database database) throws IOException, CouchbaseLiteException {
         final File appDbDir = new File(database.getPath());
 
         // tag::prebuilt-database[]
@@ -227,57 +157,28 @@ public class Examples {
         DatabaseConfiguration configuration = new DatabaseConfiguration();
         if (!Database.exists("travel-sample", appDbDir)) {
             File tmpDir = new File(System.getProperty("java.io.tmpdir"));
-            ZipUtils.unzip(getAsset("travel-sample.cblite2.zip"), tmpDir);
+            ZipUtils.unzip(Utils.getAsset("travel-sample.cblite2.zip"), tmpDir);
             File path = new File(tmpDir, "travel-sample");
-            try {
-                Database.copy(path, "travel-sample", configuration);
-            }
-            catch (CouchbaseLiteException e) {
-                e.printStackTrace();
-            }
+            Database.copy(path, "travel-sample", configuration);
         }
         // end::prebuilt-database[]
     }
 
-    public void testInitializers() {
-        final Collection collection = null;
-
+    public void testInitializers(Collection collection) throws CouchbaseLiteException {
         // tag::initializer[]
         MutableDocument newTask = new MutableDocument();
         newTask.setString("type", "task");
         newTask.setString("owner", "todo");
         newTask.setDate("createdAt", new Date());
-        try {
-            collection.save(newTask);
-        }
-        catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-        }
+        collection.save(newTask);
         // end::initializer[]
     }
 
-    public void testMutability() {
-        final Collection collection = null;
-
+    public void testMutability(Collection collection) throws CouchbaseLiteException {
         // tag::update-document[]
-        Document document;
-
-        try {
-            document = collection.getDocument("xyz");
-        }
-        catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        MutableDocument mutableDocument = document.toMutable();
+        MutableDocument mutableDocument = collection.getDocument("xyz").toMutable();
         mutableDocument.setString("name", "apples");
-        try {
-            collection.save(mutableDocument);
-        }
-        catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-        }
+        collection.save(mutableDocument);
         // end::update-document[]
     }
 
@@ -290,37 +191,24 @@ public class Examples {
         // end::date-getter[]
     }
 
-    public void testBatchOperations() {
-        final Database database = null;
-        final Collection collection = null;
-
+    public void testBatchOperations(Database database, Collection collection) throws CouchbaseLiteException {
         // tag::batch[]
-        try {
-            database.inBatch(() -> {
-                for (int i = 0; i < 10; i++) {
-                    MutableDocument doc = new MutableDocument();
-                    doc.setValue("type", "user");
-                    doc.setValue("name", "user " + i);
-                    doc.setBoolean("admin", false);
-                    try {
-                        collection.save(doc);
-                    }
-                    catch (CouchbaseLiteException e) {
-                        e.printStackTrace();
-                    }
-                    Logger.log("saved user document " + doc.getString("name"));
-                }
-            });
-        }
-        catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-        }
+        database.inBatch(() -> {
+            for (int i = 0; i < 10; i++) {
+                MutableDocument doc = new MutableDocument();
+                doc.setValue("type", "user");
+                doc.setValue("name", "user " + i);
+                doc.setBoolean("admin", false);
+
+                collection.save(doc);
+
+                Logger.log("saved user document " + doc.getString("name"));
+            }
+        });
         // end::batch[]
     }
 
-    public void DocumentExpiration() throws CouchbaseLiteException {
-        final Collection collection = getCollection();
-
+    public void DocumentExpiration(Collection collection) throws CouchbaseLiteException {
         // tag::document-expiration[]
         // Purge the document one day from now
         Instant ttl = Instant.now().plus(1, ChronoUnit.DAYS);
@@ -338,34 +226,30 @@ public class Examples {
         // end::document-expiration[]
     }
 
-    public void testDocumentChangeListener() {
-        final Collection collection = null;
-
+    public void testDocumentChangeListener(Collection collection) {
         // tag::document-listener[]
         collection.addDocumentChangeListener(
             "user.john",
             change -> {
+                String docId = change.getDocumentID();
                 try {
-                    Document doc = collection.getDocument(change.getDocumentID());
+                    Document doc = collection.getDocument(docId);
                     if (doc != null) {
                         Logger.log("Status: " + doc.getString("verified_account"));
                     }
                 }
                 catch (CouchbaseLiteException e) {
-                    e.printStackTrace();
+                    Logger.log("Failed getting doc : " + docId);
                 }
             });
         // end::document-listener[]
     }
 
-    public void testBlobs() {
-        final Collection collection = null;
+    public void testBlobs(Collection collection) throws IOException, CouchbaseLiteException {
         MutableDocument newTask = new MutableDocument();
 
         // tag::blob[]
-        InputStream is = getAsset("avatar.jpg"); // <.>
-        if (is == null) { return; }
-        try {
+        try (InputStream is = Utils.getAsset("avatar.jpg")) { // <.>
             Blob blob = new Blob("image/jpeg", is);  // <.>
             newTask.setBlob("avatar", blob); // <.>
             collection.save(newTask);
@@ -373,59 +257,10 @@ public class Examples {
             Blob taskBlob = newTask.getBlob("avatar");
             byte[] bytes = taskBlob.getContent();
         }
-        catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-        }
-        finally {
-            try { is.close(); }
-            catch (IOException ignore) { }
-        }
         // end::blob[]
     }
 
-    public void testTroubleshooting() {
-        // tag::replication-logging[]
-        Database.log.getConsole().setDomains(LogDomain.REPLICATOR);
-        Database.log.getConsole().setLevel(LogLevel.VERBOSE);
-        // end::replication-logging[]
-    }
-
-    public void testReplicationBasicAuthentication() throws URISyntaxException {
-        final Collection collection = getCollection();
-        // tag::basic-authentication[]
-        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
-
-        ReplicatorConfiguration config = new ReplicatorConfiguration(target);
-        config.addCollection(collection, null);
-        config.setAuthenticator(new BasicAuthenticator("username", "password".toCharArray()));
-
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        Replicator replicator = new Replicator(config);
-        replicator.start();
-        // end::basic-authentication[]
-
-        replicator.close();
-    }
-
-    public void testReplicationSessionAuthentication() throws URISyntaxException {
-        final Collection collection = getCollection();
-        // tag::session-authentication[]
-        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
-
-        ReplicatorConfiguration config = new ReplicatorConfiguration(target);
-        config.addCollection(collection, null);
-        config.setAuthenticator(new SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447"));
-
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        Replicator replicator = new Replicator(config);
-        replicator.start();
-        // end::session-authentication[]
-
-        replicator.close();
-    }
-
-    public void testReplicationStatus() throws URISyntaxException {
-        final Collection collection = getCollection();
+    public void testReplicationStatus(Collection collection) throws URISyntaxException {
         URI uri = new URI("ws://localhost:4984/db");
         Endpoint endpoint = new URLEndpoint(uri);
         ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
@@ -445,8 +280,7 @@ public class Examples {
         replicator.close();
     }
 
-    public void testReplicationPendingDocs() throws URISyntaxException, CouchbaseLiteException {
-        final Collection collection = getCollection();
+    public void testReplicationPendingDocs(Collection collection) throws URISyntaxException, CouchbaseLiteException {
         final Endpoint endpoint =
             new URLEndpoint(new URI("ws://localhost:4984/db"));
 
@@ -464,183 +298,8 @@ public class Examples {
         replicator.close();
     }
 
-    public void testHandlingNetworkErrors() throws URISyntaxException {
-        final Collection collection = getCollection();
-        Endpoint endpoint = new URLEndpoint(new URI("ws://localhost:4984/db"));
-        ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
-        config.addCollection(collection, null);
-        config.setType(ReplicatorType.PULL);
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        Replicator replicator = new Replicator(config);
-
-        // tag::replication-error-handling[]
-        replicator.addChangeListener(change -> {
-            CouchbaseLiteException error = change.getStatus().getError();
-            if (error != null) { Logger.log("Error code:: " + error); }
-        });
-        replicator.start();
-        // end::replication-error-handling[]
-
-        replicator.stop();
-        replicator.close();
-    }
-
-    public void testReplicatorDocumentEvent() throws URISyntaxException {
-        final Collection collection = getCollection();
-        Endpoint endpoint = new URLEndpoint(new URI("ws://localhost:4984/db"));
-        ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
-        config.addCollection(collection, null);
-        config.setType(ReplicatorType.PULL);
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        Replicator replicator = new Replicator(config);
-
-        // tag::add-document-replication-listener[]
-        ListenerToken token = replicator.addDocumentReplicationListener(replication -> {
-            Logger.log("Replication type: " + ((replication.isPush()) ? "Push" : "Pull"));
-            for (ReplicatedDocument document: replication.getDocuments()) {
-                Logger.log("Doc ID: " + document.getID());
-
-                CouchbaseLiteException err = document.getError();
-                if (err != null) {
-                    // There was an error
-                    Logger.log("Error replicating document: ");
-                    err.printStackTrace();
-                    return;
-                }
-
-                if (document.getFlags().contains(DocumentFlag.DELETED)) {
-                    Logger.log("Successfully replicated a deleted document");
-                }
-            }
-        });
-
-        replicator.start();
-        // end::add-document-replication-listener[]
-
-        // tag::remove-document-replication-listener[]
-        token.remove();
-        // end::remove-document-replication-listener[]
-
-        replicator.close();
-    }
-
-    public void testReplicationCustomHeader() throws URISyntaxException {
-        URI uri = new URI("ws://localhost:4984/db");
-        Endpoint endpoint = new URLEndpoint(uri);
-        final Collection collection = getCollection();
-
-        // tag::replication-custom-header[]
-        ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
-        config.addCollection(collection, null);
-        Map<String, String> headers = new HashMap<>();
-        headers.put("CustomHeaderName", "Value");
-        config.setHeaders(headers);
-        // end::replication-custom-header[]
-    }
-
-    public void testCertificatePinning() throws URISyntaxException, CertificateException {
-        final Collection collection = getCollection();
-        URI uri = new URI("wss://localhost:4984/db");
-        Endpoint endpoint = new URLEndpoint(uri);
-        ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
-        config.addCollection(collection, null);
-
-        // tag::certificate-pinning[]
-        InputStream is = getAsset("cert.cer");
-        X509Certificate cert = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(is);
-        config.setPinnedServerX509Certificate(cert);
-        // end::certificate-pinning[]
-    }
-
-    public void testReplicationResetCheckpoint() throws URISyntaxException {
-        boolean resetCheckpointExample = false;
-        final Collection collection = getCollection();
-        URI uri = new URI("ws://localhost:4984/db");
-        Endpoint endpoint = new URLEndpoint(uri);
-        ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
-        config.addCollection(collection, null);
-        config.setType(ReplicatorType.PULL);
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        Replicator replicator = new Replicator(config);
-
-        // tag::replication-reset-checkpoint[]
-        replicator.start(resetCheckpointExample);
-        // end::replication-reset-checkpoint[]
-
-        replicator.stop();
-        replicator.close();
-    }
-
-    public void testReplicationPushFilter() throws URISyntaxException {
-        final Collection collection = getCollection();
-        // tag::replication-push-filter[]
-        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
-
-        CollectionConfiguration collectionConfig = new CollectionConfiguration()
-            .setPushFilter((document, flags) -> flags.contains(DocumentFlag.DELETED)); // <1>
-
-        ReplicatorConfiguration replConfig = new ReplicatorConfiguration(target);
-        replConfig.addCollection(collection, collectionConfig);
-
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        Replicator replicator = new Replicator(replConfig);
-        replicator.start();
-        // end::replication-push-filter[]
-
-        replicator.close();
-    }
-
-    public void testReplicationPullFilter() throws URISyntaxException {
-        final Collection collection = getCollection();
-        // tag::replication-pull-filter[]
-        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
-
-        CollectionConfiguration collectionConfig = new CollectionConfiguration()
-            .setPullFilter((document, flags) -> "draft".equals(document.getString("type"))); // <1>
-
-        ReplicatorConfiguration replConfig = new ReplicatorConfiguration(target);
-        replConfig.addCollection(collection, collectionConfig);
-
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        Replicator replicator = new Replicator(replConfig);
-        replicator.start();
-        // end::replication-pull-filter[]
-
-        replicator.close();
-    }
-
-    public void testCustomRetryConfig() throws URISyntaxException {
-        final Collection collection = getCollection();
-        // tag::replication-retry-config[]
-        URLEndpoint target =
-            new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
-
-        ReplicatorConfiguration config =
-            new ReplicatorConfiguration(target);
-        config.addCollection(collection, null);
-
-        //  other config as required . . .
-        // tag::replication-heartbeat-config[]
-        config.setHeartbeat(150); // <.>
-        // end::replication-heartbeat-config[]
-        // tag::replication-maxattempts-config[]
-        config.setMaxAttempts(20); // <.>
-        // end::replication-maxattempts-config[]
-        // tag::replication-maxattemptwaittime-config[]
-        config.setMaxAttemptWaitTime(600); // <.>
-        // end::replication-maxattemptwaittime-config[]
-
-        //  other config as required . . .
-
-        Replicator repl = new Replicator(config);
-        // end::replication-retry-config[]
-
-        repl.close();
-    }
-
-    public void testDatabaseReplica() throws CouchbaseLiteException {
+    public void testDatabaseReplica(Collection collection) throws CouchbaseLiteException {
         Database database2 = new Database(DB_NAME2);
-        final Collection collection = getCollection();
 
         /* EE feature: code below will throw a compilation error
            if it's compiled against CBL Android Community. */
@@ -658,8 +317,7 @@ public class Examples {
         replicator.close();
     }
 
-    public void testReplicationWithCustomConflictResolver() throws URISyntaxException {
-        final Collection collection = getCollection();
+    public void testReplicationWithCustomConflictResolver(Collection collection) throws URISyntaxException {
         // tag::replication-conflict-resolver[]
         URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
@@ -676,8 +334,7 @@ public class Examples {
         replication.close();
     }
 
-    public void testSaveWithCustomConflictResolver() throws CouchbaseLiteException {
-        final Collection collection = null;
+    public void testSaveWithCustomConflictResolver(Collection collection) throws CouchbaseLiteException {
         // tag::update-document-with-conflict-handler[]
         Document doc = collection.getDocument("xyz");
         if (doc == null) { return; }
@@ -697,14 +354,7 @@ public class Examples {
     }
 
     public void testQueryAccessJson() throws CouchbaseLiteException, JsonProcessingException {
-        Database database;
-        try {
-            database = new Database("hotels");
-        }
-        catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-            return;
-        }
+        Database database= new Database("hotels");
 
         Collection collection = database.getDefaultCollection();
         Query listQuery = QueryBuilder.select(SelectResult.all())
@@ -742,9 +392,6 @@ public class Examples {
 
         database.close();
     }
-
-    @NonNull
-    private Collection getCollection() { return defaultCollection; }
 }
 
 

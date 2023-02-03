@@ -13,13 +13,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package com.couchbase.codesnippets.util
+package com.couchbase.codesnippets;
 
-import java.io.InputStream
-import java.security.cert.X509Certificate
+import com.couchbase.lite.Database;
+import com.couchbase.lite.LogDomain;
+import com.couchbase.lite.LogLevel;
 
-fun log(msg: String, err: Exception? = null): Unit = TODO()
 
-fun getAsset(assetName: String): InputStream? = TODO()
-
-fun getCertificate(certName: String): X509Certificate = TODO()
+@SuppressWarnings({"unused", "ConstantConditions"})
+public class BasicExamples  {
+    public void troubleshootingExample() {
+        // tag::replication-logging[]
+        Database.log.getConsole().setDomains(LogDomain.REPLICATOR);
+        Database.log.getConsole().setLevel(LogLevel.VERBOSE);
+        // end::replication-logging[]
+    }
+}

@@ -18,7 +18,7 @@
 package com.couchbase.codesnippets
 
 import android.content.Context
-import com.couchbase.codesnippets.util.Logger.Companion.log
+import com.couchbase.codesnippets.util.log
 import com.couchbase.lite.BasicAuthenticator
 import com.couchbase.lite.ClientCertificateAuthenticator
 import com.couchbase.lite.CouchbaseLiteException

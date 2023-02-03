@@ -17,7 +17,7 @@
 
 package com.couchbase.codesnippets
 
-import com.couchbase.codesnippets.util.Logger.Companion.log
+import com.couchbase.codesnippets.util.log
 import com.couchbase.lite.*
 import org.json.JSONException
 import org.json.JSONObject

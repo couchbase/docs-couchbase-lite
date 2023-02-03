@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021 Couchbase, Inc All rights reserved.
+// Copyright (c) 2023 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,369 +13,378 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-@file:Suppress("UNUSED_VARIABLE", "unused")
+@file:Suppress("UNUSED_VARIABLE", "unused", "UNUSED_PARAMETER")
 
 package com.couchbase.codesnippets
 
-import com.couchbase.codesnippets.util.Logger.Companion.log
-import com.couchbase.lite.*
-import com.couchbase.lite.internal.utils.PlatformUtils
-import java.io.ByteArrayOutputStream
-import java.io.IOException
-import java.io.InputStream
+import com.couchbase.codesnippets.util.log
+import com.couchbase.lite.BasicAuthenticator
+import com.couchbase.lite.Collection
+import com.couchbase.lite.CollectionConfigurationFactory
+import com.couchbase.lite.Conflict
+import com.couchbase.lite.ConflictResolver
+import com.couchbase.lite.CouchbaseLiteException
+import com.couchbase.lite.DocumentFlag
+import com.couchbase.lite.ListenerToken
+import com.couchbase.lite.Replicator
+import com.couchbase.lite.ReplicatorConfigurationFactory
+import com.couchbase.lite.ReplicatorType
+import com.couchbase.lite.SessionAuthenticator
+import com.couchbase.lite.URLEndpoint
+import com.couchbase.lite.newConfig
 import java.net.URI
-import java.net.URISyntaxException
+import java.security.KeyStore
+import java.security.cert.X509Certificate
 
-
-private const val TAG = "REPLICATION"
-
-@Throws(IOException::class)
-fun InputStream.toByteArray(): ByteArray {
-    val buffer = ByteArray(1024)
-    val output = ByteArrayOutputStream()
-
-    var n: Int
-    while (-1 < this.read(buffer).also { n = it }) {
-        output.write(buffer, 0, n)
+class ReplicationExamples {
+    object MyResolver : ConflictResolver {
+        override fun resolve(conflict: Conflict) = TODO()
     }
 
-    return output.toByteArray()
-}
+    private var thisReplicator: Replicator? = null
+    private var thisToken: ListenerToken? = null
 
-// tag::update-document-with-conflict-handler-callouts[]
-//
-//        <.> The conflict handler code is provided as a lambda.
-//
-//        <.> If the handler cannot resolve a conflict, it can return false.
-//        In this case, the save method will cancel the save operation and return false the same way as using the save() method with the failOnConflict concurrency control.
-//
-//        <.> Within the conflict handler, you can modify the document parameter which is the same instance of Document that is passed to the save() method. So in effect, you will be directly modifying the document that is being saved.
-//
-//        <.> When handling is done, the method must return true (for  successful resolution) or false (if it was unable to resolve the conflict).
-//
-//        <.> If there is an exception thrown in the handle() method, the exception will be caught and re-thrown in the save() method
-// end::update-document-with-conflict-handler-callouts[]
+    fun activeReplicatorExample(collections: Set<Collection>) {
+        // tag::p2p-act-rep-start-full[]
+        // Create replicator
+        // Consider holding a reference somewhere
+        // to prevent the Replicator from being GCed
+        val repl = Replicator( // <.>
 
+            // tag::p2p-act-rep-func[]
+            // tag::p2p-act-rep-initialize[]
+            // initialize the replicator configuration
+            ReplicatorConfigurationFactory.newConfig(
+                target = URLEndpoint(URI("wss://listener.com:8954")), // <.>
 
-// tag::local-win-conflict-resolver[]
-// Using replConfig.setConflictResolver(new LocalWinConflictResolver());
-@Suppress("unused")
-object LocalWinsResolver : ConflictResolver {
-    override fun resolve(conflict: Conflict) = conflict.localDocument
-}
-// end::local-win-conflict-resolver[]
+                collections = mapOf(collections to null),
 
-// tag::remote-win-conflict-resolver[]
-// Using replConfig.setConflictResolver(new RemoteWinConflictResolver());
-@Suppress("unused")
-object RemoteWinsResolver : ConflictResolver {
-    override fun resolve(conflict: Conflict) = conflict.remoteDocument
-}
-// end::remote-win-conflict-resolver[]
+                // end::p2p-act-rep-initialize[]
+                // tag::p2p-act-rep-config-type[]
+                // Set replicator type
+                type = ReplicatorType.PUSH_AND_PULL,
 
-// tag::merge-conflict-resolver[]
-// Using replConfig.setConflictResolver(new MergeConflictResolver());
-@Suppress("unused")
-object MergeConflictResolver : ConflictResolver {
-    override fun resolve(conflict: Conflict): Document {
-        val localDoc = conflict.localDocument?.toMap()
-        val remoteDoc = conflict.remoteDocument?.toMap()
+                // end::p2p-act-rep-config-type[]
+                // tag::p2p-act-rep-config-cont[]
+                // Configure Sync Mode
+                continuous = false, // default value
 
-        val merge: MutableMap<String, Any>?
-        if (localDoc == null) {
-            merge = remoteDoc
-        } else {
-            merge = localDoc
-            if (remoteDoc != null) {
-                merge.putAll(remoteDoc)
+                // end::p2p-act-rep-config-cont[]
+
+                // tag::autopurge-override[]
+                // set auto-purge behavior
+                // (here we override default)
+                enableAutoPurge = false, // <.>
+
+                // end::autopurge-override[]
+
+                // tag::p2p-act-rep-config-self-cert[]
+                // Configure Server Authentication --
+                // only accept self-signed certs
+                acceptOnlySelfSignedServerCertificate = true, // <.>
+
+                // end::p2p-act-rep-config-self-cert[]
+                // tag::p2p-act-rep-auth[]
+                // Configure the credentials the
+                // client will provide if prompted
+                authenticator = BasicAuthenticator("Our Username", "Our PasswordValue".toCharArray()) // <.>
+
+                // end::p2p-act-rep-auth[]
+            )
+        )
+
+        // tag::p2p-act-rep-add-change-listener[]
+        // tag::p2p-act-rep-add-change-listener-label[]
+        // Optionally add a change listener <.>
+        // end::p2p-act-rep-add-change-listener-label[]
+        val token = repl.addChangeListener { change ->
+            val err: CouchbaseLiteException? = change.status.error
+            if (err != null) {
+                log("Error code ::  ${err.code}", err)
             }
         }
 
-        return if (merge == null) {
-            MutableDocument(conflict.documentId)
-        } else {
-            MutableDocument(conflict.documentId, merge)
-        }
+        // end::p2p-act-rep-add-change-listener[]
+        // tag::p2p-act-rep-start[]
+        // Start replicator
+        repl.start(false) // <.>
+
+        // end::p2p-act-rep-start[]
+
+        thisReplicator = repl
+        thisToken = token
+
+        // end::p2p-act-rep-start-full[]
+        // end::p2p-act-rep-func[]
     }
-// end::merge-conflict-resolver[]
 
-    @Suppress("unused")
-    class ReplicationExamples(private val database: Database) {
-        private var replicator: Replicator? = null
+    fun replicationBasicAuthenticationExample(collections: Set<Collection>) {
+        // tag::basic-authentication[]
 
-        @Throws(URISyntaxException::class)
-        fun testReplicationBasicAuthentication() {
-            // tag::basic-authentication[]
-
-            // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-            val repl = Replicator(
-                ReplicatorConfigurationFactory.create(
-                    database = database,
-                    target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                    authenticator = BasicAuthenticator("username", "password".toCharArray())
-                )
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
+                collections = mapOf(collections to null),
+                authenticator = BasicAuthenticator("username", "password".toCharArray())
             )
-            repl.start()
-            replicator = repl
-            // end::basic-authentication[]
-        }
+        )
+        repl.start()
+        thisReplicator = repl
+        // end::basic-authentication[]
+    }
 
-        @Throws(URISyntaxException::class)
-        fun testReplicationSessionAuthentication() {
-            // tag::session-authentication[]
-            val repl = Replicator(
-                ReplicatorConfigurationFactory.create(
-                    database = database,
-                    target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                    authenticator = SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447")
-                )
+    fun replicationSessionAuthenticationExample(collections: Set<Collection>) {
+        // tag::session-authentication[]
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
+                collections = mapOf(collections to null),
+                authenticator = SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447")
             )
-            repl.start()
-            replicator = repl
-            // end::session-authentication[]
-        }
+        )
+        repl.start()
+        thisReplicator = repl
+        // end::session-authentication[]
+    }
 
-        @Throws(URISyntaxException::class)
-        fun testReplicationStatus() {
-            val repl = Replicator(
-                ReplicatorConfigurationFactory.create(
-                    database = database,
-                    target = URLEndpoint(URI("ws://localhost:4984/db")),
-                    type = ReplicatorType.PULL
-                )
+    fun replicationCustomHeaderExample(collections: Set<Collection>) {
+        // tag::replication-custom-header[]
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
+                collections = mapOf(collections to null),
+                headers = mapOf("CustomHeaderName" to "Value")
             )
+        )
+        repl.start()
+        thisReplicator = repl
+        // end::replication-custom-header[]
+    }
 
-            repl.addChangeListener { change ->
-                if (change.status.activityLevel == ReplicatorActivityLevel.STOPPED) {
-                    log("Replication stopped")
-                }
+    fun testReplicationPushFilter(collections: Set<Collection>) {
+        // tag::replication-push-filter[]
+        val collectionConfig = CollectionConfigurationFactory.newConfig(
+            pushFilter = { _, flags -> flags.contains(DocumentFlag.DELETED) } // <1>
+        )
+
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
+                collections = mapOf(collections to collectionConfig)
+            )
+        )
+        repl.start()
+        thisReplicator = repl
+        // end::replication-push-filter[]
+    }
+
+    fun replicationPullFilterExample(collections: Set<Collection>) {
+        // tag::replication-pull-filter[]
+        val collectionConfig = CollectionConfigurationFactory.newConfig(
+            pullFilter = { document, _ -> "draft" == document.getString("type") } // <1>
+        )
+
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
+                collections = mapOf(collections to collectionConfig)
+            )
+        )
+        repl.start()
+        thisReplicator = repl
+        // end::replication-pull-filter[]
+    }
+
+    // ### Reset replicator checkpoint
+    fun replicationResetCheckpointExample(collections: Set<Collection>) {
+        // tag::replication-startup[]
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
+                collections = mapOf(collections to null)
+            )
+        )
+
+        // tag::replication-reset-checkpoint[]
+        repl.start(true)
+        // end::replication-reset-checkpoint[]
+
+        // ... at some later time
+
+        repl.stop()
+        // end::replication-startup[]
+    }
+
+    fun handlingNetworkErrorExample(collections: Set<Collection>) {
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
+                collections = mapOf(collections to null)
+            )
+        )
+
+        // tag::replication-error-handling[]
+        repl.addChangeListener { change ->
+            change.status.error?.let {
+                log("Error code: ${it.code}")
             }
-
-            repl.start()
-            replicator = repl
-            // end::replication-status[]
         }
+        repl.start()
+        thisReplicator = repl
+        // end::replication-error-handling[]
+    }
 
-        @Throws(URISyntaxException::class)
-        fun testHandlingNetworkErrors() {
-            val repl = Replicator(
-                ReplicatorConfigurationFactory.create(
-                    database = database,
-                    target = URLEndpoint(URI("ws://localhost:4984/db"))
-                )
+    // ### Certificate Pinning
+    fun certificatePinningExample(collections: Set<Collection>, keyStoreName: String, certAlias: String) {
+        // tag::certificate-pinning[]
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
+                collections = mapOf(collections to null),
+                pinnedServerCertificate = KeyStore.getInstance(keyStoreName)
+                    .getCertificate(certAlias) as X509Certificate
             )
+        )
+        repl.start()
+        thisReplicator = repl
+        // end::certificate-pinning[]
+    }
 
-            // tag::replication-error-handling[]
-            repl.addChangeListener { change ->
-                change.status.error?.let {
-                    log("Error code: ${it.code}")
-                }
-            }
-            repl.start()
-            replicator = repl
-            // end::replication-error-handling[]
+    fun replicatorConfigExample(collections: Set<Collection>) {
+        // tag::sgw-act-rep-initialize[]
+        // initialize the replicator configuration
+        val thisConfig = ReplicatorConfigurationFactory.newConfig(
+            target = URLEndpoint(URI("wss://10.0.2.2:8954/travel-sample")), // <.>
+            collections = mapOf(collections to null)
+        )
+        // end::sgw-act-rep-initialize[]
+    }
 
-            repl.stop()
+    fun p2pReplicatorStatusExample(repl: Replicator) {
+        // tag::p2p-act-rep-status[]
+        repl.status.let {
+            val progress = it.progress
+            log(
+                "The Replicator is ${
+                    it.activityLevel
+                } and has processed ${
+                    progress.completed
+                } of ${progress.total} changes"
+            )
         }
+        // end::p2p-act-rep-status[]
+    }
 
-        @Throws(URISyntaxException::class)
-        fun testReplicatorDocumentEvent() {
-            val repl = Replicator(
-                ReplicatorConfigurationFactory.create(
-                    database = database,
-                    target = URLEndpoint(URI("ws://localhost:4984/db"))
-                )
+    fun p2pReplicatorStopExample(repl: Replicator) {
+        // tag::p2p-act-rep-stop[]
+        // Stop replication.
+        repl.stop() // <.>
+        // end::p2p-act-rep-stop[]
+    }
+
+    fun testCustomRetryConfig(collections: Set<Collection>) {
+        // tag::replication-retry-config[]
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
+                collections = mapOf(collections to null),
+                //  other config params as required . .
+                // tag::replication-heartbeat-config[]
+                heartbeat = 150, // <1>
+                // end::replication-heartbeat-config[]
+                // tag::replication-maxattempts-config[]
+                maxAttempts = 20,
+                // end::replication-maxattempts-config[]
+                // tag::replication-maxattemptwaittime-config[]
+                maxAttemptWaitTime = 600
+                // end::replication-maxattemptwaittime-config[]
             )
+        )
+        repl.start()
+        thisReplicator = repl
+        // end::replication-retry-config[]
+    }
 
-            // tag::add-document-replication-listener[]
-            val token = repl.addDocumentReplicationListener { replication ->
-                log("Replication type: ${if (replication.isPush) "push" else "pull"}")
+    fun replicatorDocumentEventExample(collections: Set<Collection>) {
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
+                collections = mapOf(collections to null),
+            )
+        )
 
-                for (document in replication.documents) {
-                    document.let { doc ->
-                        log("Doc ID: ${document.id}")
-                        doc.error?.let {
-                            // There was an error
-                            log("Error replicating document: ", it)
-                            return@addDocumentReplicationListener
-                        }
-                        if (doc.flags.contains(DocumentFlag.DELETED)) {
-                            log("Successfully replicated a deleted document")
-                        }
+        // tag::add-document-replication-listener[]
+        val token = repl.addDocumentReplicationListener { replication ->
+            log("Replication type: ${if (replication.isPush) "push" else "pull"}")
+
+            for (document in replication.documents) {
+                document.let { doc ->
+                    log("Doc ID: ${document.id}")
+
+                    doc.error?.let {
+                        // There was an error
+                        log("Error replicating document: ", it)
+                        return@addDocumentReplicationListener
+                    }
+
+                    if (doc.flags.contains(DocumentFlag.DELETED)) {
+                        log("Successfully replicated a deleted document")
                     }
                 }
             }
+        }
+
+        repl.start()
+        thisReplicator = repl
+        // end::add-document-replication-listener[]
+
+        // tag::remove-document-replication-listener[]
+        token.remove()
+        // end::remove-document-replication-listener[]
+    }
+
+    private fun replicationPendingDocumentsExample(collection: Collection) {
+        // tag::replication-pendingdocuments[]
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
+                collections = mapOf(setOf(collection) to null),
+                type = ReplicatorType.PUSH
+            )
+        )
+
+        // tag::replication-push-pendingdocumentids[]
+        val pendingDocs = repl.getPendingDocumentIds(collection)
+        // end::replication-push-pendingdocumentids[]
+
+        // iterate and report on previously
+        // retrieved pending docids 'list'
+        if (pendingDocs.isNotEmpty()) {
+            log("There are ${pendingDocs.size} documents pending")
+
+            val firstDoc = pendingDocs.first()
+            repl.addChangeListener { change ->
+                log("Replicator activity level is ${change.status.activityLevel}")
+                // tag::replication-push-isdocumentpending[]
+                try {
+                    if (!repl.isDocumentPending(firstDoc, collection)) {
+                        log("Doc ID ${firstDoc} has been pushed")
+                    }
+                } catch (err: CouchbaseLiteException) {
+                    log("Failed getting pending docs", err)
+                }
+                // end::replication-push-isdocumentpending[]
+            }
 
             repl.start()
-            replicator = repl
-            // end::add-document-replication-listener[]
-
-            // tag::remove-document-replication-listener[]
-            repl.removeChangeListener(token)
-            // end::remove-document-replication-listener[]
+            thisReplicator = repl
         }
-
-        @Throws(URISyntaxException::class)
-        fun testReplicationCustomHeader() {
-            // tag::replication-custom-header[]
-            val repl = Replicator(
-                ReplicatorConfigurationFactory.create(
-                    database = database,
-                    target = URLEndpoint(URI("ws://localhost:4984/db")),
-                    headers = mapOf("CustomHeaderName" to "Value")
-                )
-            )
-            replicator = repl
-            // end::replication-custom-header[]
-        }
-
-        // ### Certificate Pinning
-        @Throws(URISyntaxException::class, IOException::class)
-        fun testCertificatePinning() {
-            // tag::certificate-pinning[]
-            val repl = Replicator(
-                ReplicatorConfigurationFactory.create(
-                    database = database,
-                    target = URLEndpoint(URI("ws://localhost:4984/db")),
-                    headers = mapOf("CustomHeaderName" to "Value"),
-                    pinnedServerCertificate = PlatformUtils.getAsset("cert.cer")?.toByteArray()
-                )
-            )
-            replicator = repl
-            // end::certificate-pinning[]
-        }
-
-        // ### Reset replicator checkpoint
-        @Throws(URISyntaxException::class)
-        // tag::replication-startup[]
-        fun testReplicationResetCheckpoint() {
-            val repl = Replicator(
-                ReplicatorConfigurationFactory.create(
-                    database = database,
-                    target = URLEndpoint(URI("ws://localhost:4984/db")),
-                    type = ReplicatorType.PULL
-                )
-            )
-
-            val resetCheckpointRequiredExample = false
-            // tag::replication-reset-checkpoint[]
-            repl.start(resetCheckpointRequiredExample) // <.>
-            // end::replication-reset-checkpoint[]
-
-            // ... at some later time
-
-            repl.stop()
-            // end::replication-startup[]
-
-        }
-
-        @Throws(URISyntaxException::class)
-        fun testReplicationPushFilter() {
-            // tag::replication-push-filter[]
-            val repl = Replicator(
-                ReplicatorConfigurationFactory.create(
-                    database = database,
-                    target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                    pushFilter = { _, flags -> flags.contains(DocumentFlag.DELETED) } // <1>
-                )
-            )
-
-            // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-            repl.start()
-            replicator = repl
-            // end::replication-push-filter[]
-        }
-
-        @Throws(URISyntaxException::class)
-        fun testReplicationPullFilter() {
-            // tag::replication-pull-filter[]
-            val repl = Replicator(
-                ReplicatorConfigurationFactory.create(
-                    database = database,
-                    target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                    pushFilter = { document, _ -> "draft" == document.getString("type") } // <1>
-                )
-            )
-
-            // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-            repl.start()
-            replicator = repl
-            // end::replication-pull-filter[]
-        }
-
-        @Throws(URISyntaxException::class)
-        fun testCustomRetryConfig() {
-            // tag::replication-retry-config[]
-            val repl = Replicator(
-                ReplicatorConfigurationFactory.create(
-                    database = database,
-                    target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                    //  other config params as required . .
-                    // tag::replication-heartbeat-config[]
-                    heartbeat = 150, // <1>
-                    // end::replication-heartbeat-config[]
-                    // tag::replication-maxattempts-config[]
-                    maxAttempts = 20,
-                    // end::replication-maxattempts-config[]
-                    maxAttemptWaitTime = 600
-                    // end::replication-maxattemptwaittime-config[]
-                )
-            )
-
-            repl.start()
-            replicator = repl
-            // end::replication-retry-config[]
-        }
-
-        @Throws(CouchbaseLiteException::class)
-        fun testDatabaseReplica() {
-            val config = DatabaseConfiguration()
-            val database1 = Database("mydb", config)
-            val database2 = Database("db2", config)
-
-            /* EE feature: code below might throw a compilation error
-               if it's compiled against CBL Android Community. */
-            // tag::database-replica[]
-            val repl = Replicator(
-                ReplicatorConfigurationFactory.create(
-                    database = database1,
-                    target = DatabaseEndpoint(database2),
-                    type = ReplicatorType.PULL
-                )
-            )
-
-            // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-            repl.start()
-            replicator = repl
-            // end::database-replica[]
-        }
-
-        @Throws(URISyntaxException::class)
-        fun testReplicationWithCustomConflictResolver() {
-            // tag::replication-conflict-resolver[]
-            val target = URLEndpoint(URI("ws://localhost:4984/mydatabase"))
-            val config = ReplicatorConfiguration(database, target)
-            config.conflictResolver = LocalWinsResolver
-            val replication = Replicator(config)
-            replication.start()
-            // end::replication-conflict-resolver[]
-        }
-
-        @Throws(CouchbaseLiteException::class)
-        fun testSaveWithCustomConflictResolver() {
-            // tag::update-document-with-conflict-handler[]
-            val mutableDocument = database.getDocument("xyz")?.toMutable() ?: return
-            mutableDocument.setString("name", "apples")
-            database.save(mutableDocument) { newDoc, curDoc ->  // <.>
-                if (curDoc == null) {
-                    return@save false
-                } // <.>
-                val dataMap: MutableMap<String, Any> = curDoc.toMap()
-                dataMap.putAll(newDoc.toMap()) // <.>
-                newDoc.setData(dataMap)
-                true // <.>
-            } // <.>
-            // end::update-document-with-conflict-handler[]
-        }
+        // end::replication-pendingdocuments[]
     }
 }
