@@ -464,11 +464,6 @@ namespace api_walkthrough
             // end::scopes-manage-drop-collection[]
         }
 
-        /* NOTE: There is no "index a collection"
-         * If you mean create query index via Collection, you already have them
-         * tag::query-index[]
-         * tag::query-index_Querybuilder[]
-         */
         // tag::scopes-manage-index-collection[]
         // We need to add a code sample to index a collection
         // end::scopes-manage-index-collection[]
