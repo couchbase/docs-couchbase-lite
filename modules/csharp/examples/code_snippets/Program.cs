@@ -24,14 +24,9 @@ using Couchbase.Lite.Query;
 using Couchbase.Lite.Sync;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.NetworkInformation;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 
 namespace api_walkthrough
 {
@@ -44,11 +39,9 @@ namespace api_walkthrough
 
     class Program
     {
-        private static Database _Database;
-        private static Replicator _Replicator;
-        private static URLEndpointListener _listener;
-        private static ListenerToken _ListenerToken;
-        private static bool _NeedsExtraDocs;
+        private static readonly Database _Database = null;
+        private static readonly Replicator _Replicator = null;
+        private static readonly URLEndpointListener _listener = null;
 
         public void GettingStarted()
         {
@@ -64,37 +57,35 @@ namespace api_walkthrough
             var collection = database.GetDefaultCollection();
 
             // Create a new document (i.e. a record) in the database
-            string id = null;
-            using (var mutable_doc = new MutableDocument()) {
-                mutable_doc.SetFloat("version", 2.0f)
-                    .SetString("type", "SDK");
+            var id = default(string);
+            using var createdDoc = new MutableDocument();
+            createdDoc.SetFloat("version", 2.0f)
+                .SetString("type", "SDK");
 
-                // Save it to the database
-                collection.Save(mutable_doc);
-                id = mutable_doc.Id;
-            }
+            // Save it to the database
+            collection.Save(createdDoc);
+            id = createdDoc.Id;
 
             // Update a document
-            using (var doc = collection.GetDocument(id))
-            using (var mutable_doc = doc.ToMutable()) {
-                mutable_doc.SetString("language", "C#");
-                collection.Save(mutable_doc);
+            using var doc = collection.GetDocument(id);
+            using var mutableDoc = doc.ToMutable();
+            createdDoc.SetString("language", "C#");
+            collection.Save(createdDoc);
 
-                using (var docAgain = collection.GetDocument(id)) {
-                    Console.WriteLine($"Document ID :: {docAgain.Id}");
-                    Console.WriteLine($"Learning {docAgain.GetString("language")}");
-                }
-            }
+            using var docAgain = collection.GetDocument(id);
+            Console.WriteLine($"Document ID :: {docAgain.Id}");
+            Console.WriteLine($"Learning {docAgain.GetString("language")}");
+
 
             // Create a query to fetch documents of type SDK
             // i.e. SELECT * FROM database WHERE type = "SDK"
-            using (var query = QueryBuilder.Select(SelectResult.All())
+            using var query = QueryBuilder.Select(SelectResult.All())
                 .From(DataSource.Collection(collection))
-                .Where(Expression.Property("type").EqualTo(Expression.String("SDK")))) {
-                // Run the query
-                var result = query.Execute();
-                Console.WriteLine($"Number of rows :: {result.AllResults().Count}");
-            }
+                .Where(Expression.Property("type").EqualTo(Expression.String("SDK")));
+
+            // Run the query
+            var result = query.Execute();
+            Console.WriteLine($"Number of rows :: {result.AllResults().Count}");
 
             // Create replicator to push and pull changes to and from the cloud
             var targetEndpoint = new URLEndpoint(new Uri("ws://localhost:4984/getting-started-db"));
@@ -143,33 +134,33 @@ namespace api_walkthrough
             var collection = _Database.GetDefaultCollection();
 
             // tag::update-document-with-conflict-handler[]
-            using (var document = collection.GetDocument("xyz"))
-            using (var mutable_doc = document.ToMutable()) {
-                mutable_doc.SetString("name", "apples");
-                collection.Save(mutable_doc, (updated, current) =>
-                {
-                    var currentDict = current.ToDictionary();
-                    var newDict = updated.ToDictionary();
-                    var result = newDict.Concat(currentDict)
-                        .GroupBy(kv => kv.Key)
-                        .ToDictionary(g => g.Key, g => g.First().Value);
-                    updated.SetData(result);
-                    return true;
-                });
-            }
+            using var doc = collection.GetDocument("xyz");
+            using var mutableDoc = doc.ToMutable();
+            mutableDoc.SetString("name", "apples");
+            collection.Save(mutableDoc, (updated, current) =>
+            {
+                var currentDict = current.ToDictionary();
+                var newDict = updated.ToDictionary();
+                var result = newDict.Concat(currentDict)
+                    .GroupBy(kv => kv.Key)
+                    .ToDictionary(g => g.Key, g => g.First().Value);
+                updated.SetData(result);
+                return true;
+            });
             // end::update-document-with-conflict-handler[]
         }
 
         private static bool IsValidCredential(string name, SecureString password) { return true; } // helper
         private static void TestInitListener()
         {
-            var db = new Database("other-database");
+            var database = new Database("other-database");
+            var collection = database.GetDefaultCollection();
 
 #warning init-urllistener Unused?
             // tag::init-urllistener[]
-            var config = new URLEndpointListenerConfiguration(new[] { db.GetDefaultCollection() });
-            config.TlsIdentity = null; // Use with anonymous self-signed cert
-            config.Authenticator = new ListenerPasswordAuthenticator((sender, username, password) =>
+            var endpointConfig = new URLEndpointListenerConfiguration(new[] { collection });
+            endpointConfig.TlsIdentity = null; // Use with anonymous self-signed cert
+            endpointConfig.Authenticator = new ListenerPasswordAuthenticator((sender, username, password) =>
             {
                 if (IsValidCredential(username, password)) {
                     return true;
@@ -178,32 +169,33 @@ namespace api_walkthrough
                 return false;
             });
 
-            _listener = new URLEndpointListener(config);
+            var listener = new URLEndpointListener(endpointConfig);
             // end::init-urllistener[]
         }
 
         private static void TestListenerStart()
         {
+            var listener = _listener;
 #warning start-urllistener Unused?
             // tag::start-urllistener[]
             // CouchbaseLiteException will be thrown when the listener cannot be started. The most common error
             // would be that the configured port has already been used.
-            _listener.Start();
+            listener.Start();
             // end::start-urllistener[]
         }
 
         private static void TestListenerStop()
         {
+            var listener = _listener;
 #warning stop-urllistener Unused?
             // tag::stop-urllistener[]
-            _listener.Stop();
+            listener.Stop();
             // end::stop-urllistener[]
         }
 
         private static void TestCreateSelfSignedCert()
         {
-            TLSIdentity identity;
-            X509Store _store =
+            X509Store store =
              new X509Store(StoreName.My);
             // The identity will be stored in the secure
             // storage using the given label.
@@ -211,7 +203,7 @@ namespace api_walkthrough
 
             // tag::create-self-signed-cert[]
             // tag::listener-config-tls-id-SelfSigned[]
-            identity = TLSIdentity.CreateIdentity(true, /* isServer */
+            var identity = TLSIdentity.CreateIdentity(true, /* isServer */
                 new Dictionary<string, string>() { { Certificate.CommonNameAttribute, "Couchbase Inc" } },
                 // The common name attribute is required
                 // when creating a CSR. If it is not presented
@@ -219,7 +211,7 @@ namespace api_walkthrough
                 fiveMinToExpireCert,
                 // If the expiration date is not specified,
                 // the certs expiration will be 365 days
-                _store,
+                store,
                 "CBL-Server-Cert",
                 null);  // The key label to get cert in certificate map.
                         // If null, the same default directory
@@ -231,13 +223,12 @@ namespace api_walkthrough
 
         private static void TestImportTLSIdentity()
         {
-            TLSIdentity identity;
-            X509Store _store = new X509Store(StoreName.My); // The identity will be stored in the secure storage using the given label
+            X509Store store = new X509Store(StoreName.My); // The identity will be stored in the secure storage using the given label
             byte[] data = File.ReadAllBytes("C:\\client.p12"); // PKCS12 data containing private key, public key, and certificates
 
             // tag::import-tls-identity[]
             // tag::listener-config-tls-id-caCert[]
-            identity = TLSIdentity.ImportIdentity(_store,
+            var identity = TLSIdentity.ImportIdentity(store,
                 data,
                 "123", // The password that is needed to access the certificate data
                 "CBL-Client-Cert",
@@ -250,10 +241,10 @@ namespace api_walkthrough
 
         private static void TestClientCertAuthenticatorRootCerts()
         {
-            var db = new Database("other-database");
+            var otherDatabase = new Database("other-database");
+            var collection = otherDatabase.GetDefaultCollection();
 
-            X509Store _store = new X509Store(StoreName.My);
-            TLSIdentity identity;
+            X509Store store = new X509Store(StoreName.My);
 
 #warning client-cert-authenticator-root-certs unused?
             // tag::client-cert-authenticator-root-certs[]
@@ -266,14 +257,14 @@ namespace api_walkthrough
             var auth = new ListenerCertificateAuthenticator(new X509Certificate2Collection(rootCert));
 
             // Create URL Endpoint Listener
-            var listenerConfig = new URLEndpointListenerConfiguration(new[] { db.GetDefaultCollection() });
+            var listenerConfig = new URLEndpointListenerConfiguration(new[] { collection });
             listenerConfig.DisableTLS = false; //The default value is false which means that the TLS will be enabled by default.
             listenerConfig.Authenticator = auth;
-            _listener = new URLEndpointListener(listenerConfig);
-            _listener.Start();
+            var listener = new URLEndpointListener(listenerConfig);
+            listener.Start();
 
             // Client identity
-            identity = TLSIdentity.ImportIdentity(_store,
+            var identity = TLSIdentity.ImportIdentity(store,
                 clientData,
                 "123",
                 "CBL-Client-Cert",
@@ -284,34 +275,34 @@ namespace api_walkthrough
             var builder = new UriBuilder(
                 "wss",
                 "localhost",
-                _listener.Port,
-                $"/{_listener.Config.Collections.First().Name}"
+                listener.Port,
+                $"/{listener.Config.Collections.First().Name}"
             );
 
             var url = builder.Uri;
             var target = new URLEndpoint(url);
             var config = new ReplicatorConfiguration(target);
-            config.AddCollection(db.GetDefaultCollection());
+            config.AddCollection(database.GetDefaultCollection());
             config.ReplicatorType = ReplicatorType.PushAndPull;
             config.Continuous = false;
             config.Authenticator = new ClientCertificateAuthenticator(identity);
             config.AcceptOnlySelfSignedServerCertificate = true;
             config.PinnedServerCertificate = _listener.TlsIdentity.Certs[0];
-            using (var replicator = new Replicator(config)) {
-                replicator.Start();
-            }
+            var replicator = new Replicator(config);
+            replicator.Start(); // Dispose after stop
+            
 
             // Stop listener after replicator is stopped
-            _listener.Stop();
+            listener.Stop();
             // end::client-cert-authenticator-root-certs[]
         }
 
         private static void TestClientCertAuthenticator()
         {
-            var db = new Database("other-database");
+            var otherDatabase = new Database("other-database");
+            var collection = otherDatabase.GetDefaultCollection();
 
-            X509Store _store = new X509Store(StoreName.My);
-            TLSIdentity identity;
+            X509Store store = new X509Store(StoreName.My);
 
 #warning client-cert-authenticator unused?
             // tag::client-cert-authenticator[]
@@ -327,17 +318,17 @@ namespace api_walkthrough
             });
 
             // Create URL Endpoint Listener
-            var listenerConfig = new URLEndpointListenerConfiguration(db);
+            var listenerConfig = new URLEndpointListenerConfiguration(new[] { collection  });
             listenerConfig.DisableTLS = false; //The default value is false which means that the TLS will be enabled by default.
             listenerConfig.Authenticator = auth;
-            _listener = new URLEndpointListener(listenerConfig);
-            _listener.Start();
+            var listener = new URLEndpointListener(listenerConfig);
+            listener.Start();
 
             // User Identity
-            identity = TLSIdentity.CreateIdentity(false,
+            var identity = TLSIdentity.CreateIdentity(false,
                 new Dictionary<string, string>() { { Certificate.CommonNameAttribute, "couchbase" } },
                 null,
-                _store,
+                store,
                 "ClientCertLabel",
                 null);
 
@@ -346,46 +337,44 @@ namespace api_walkthrough
             var builder = new UriBuilder(
                 "wss",
                 "localhost",
-                _listener.Port,
-                $"/{_listener.Config.Collections.First().Name}"
+                listener.Port,
+                $"/{listener.Config.Collections.First().Name}"
             );
 
             var url = builder.Uri;
             var target = new URLEndpoint(url);
             var config = new ReplicatorConfiguration(target);
-            config.AddCollection(db.GetDefaultCollection());
+            config.AddCollection(database.GetDefaultCollection());
             config.ReplicatorType = ReplicatorType.PushAndPull;
             config.Continuous = false;
             config.Authenticator = new ClientCertificateAuthenticator(identity);
             config.AcceptOnlySelfSignedServerCertificate = false;
             config.PinnedServerCertificate = _listener.TlsIdentity.Certs[0];
-            using (var replicator = new Replicator(config)) {
-                replicator.Start();
-            }
+            var replicator = new Replicator(config);
+            replicator.Start(); // Dispose after stopped
 
             // Stop listener after replicator is stopped
-            _listener.Stop();
+            listener.Stop();
             // end::client-cert-authenticator[]
         }
 
         public void IdentityWithLabel()
         {
-            TLSIdentity thisIdentity;
             X509Store store = null;
             byte[] clientData = null;
-            var thisConfig = new ReplicatorConfiguration(null);
+            var replConfig = new ReplicatorConfiguration(null);
 
             // tag::p2p-tlsid-tlsidentity-with-label[]
             // Client identity
-            thisIdentity =
+            var identity =
               TLSIdentity.ImportIdentity(store,
                 clientData,
                 "123",
                 "CBL-Client-Cert",
                 null); // <.>
 
-            thisConfig.Authenticator =
-              new ClientCertificateAuthenticator(thisIdentity); // <.>
+            replConfig.Authenticator =
+              new ClientCertificateAuthenticator(identity); // <.>
 
             // end::p2p-tlsid-tlsidentity-with-label[]
         }
@@ -402,51 +391,52 @@ namespace api_walkthrough
                 EncryptionKey = new EncryptionKey("password")
             };
 
-            using (var db = new Database("seekrit", config)) {
-                // Change the encryption key (or add encryption if the DB is unencrypted)
-                db.ChangeEncryptionKey(new EncryptionKey("betterpassw0rd"));
+            using var database = new Database("seekrit", config);
 
-                // Remove encryption
-                db.ChangeEncryptionKey(null);
-            }
+            // Change the encryption key (or add encryption if the DB is unencrypted)
+            database.ChangeEncryptionKey(new EncryptionKey("betterpassw0rd"));
+
+            // Remove encryption
+            database.ChangeEncryptionKey(null);
             // end::database-encryption[]
         }
 
         private static void ResetReplicatorCheckpoint()
         {
-            var database = _Database;
             var url = new Uri("ws://localhost:4984/db");
             var target = new URLEndpoint(url);
             var config = new ReplicatorConfiguration(target);
             bool resetCheckpointRequired_Example = true;
-            config.AddCollection(database.GetDefaultCollection());
-            using (var replicator = new Replicator(config)) {
-                // tag::replication-reset-checkpoint[]
-                // replicator is a Replicator instance
-                if (resetCheckpointRequired_Example) {
-                    replicator.Start(true); // <.>
-                } else { 
-                    replicator.Start(false);
-                }
-                // end::replication-reset-checkpoint[]
+            config.AddCollection(_Database.GetDefaultCollection());
+            var replicator = new Replicator(config);
+            // tag::replication-reset-checkpoint[]
+            // replicator is a Replicator instance
+            if (resetCheckpointRequired_Example) {
+                replicator.Start(true); // <.>
+            } else { 
+                replicator.Start(false);
             }
+
+            // Stop and dispose replicator later
+            // end::replication-reset-checkpoint[]
+            
         }
 
         private static void Read1xAttachment()
         {
-            using (var doc = new MutableDocument()) {
-                // tag::1x-attachment[]
-                var attachments = doc.GetDictionary("_attachments");
-                var avatar = attachments.GetBlob("avatar");
-                var content = avatar?.Content;
-                // end::1x-attachment[]
-            }
+            using var doc = new MutableDocument();
+            // tag::1x-attachment[]
+            var attachments = doc.GetDictionary("_attachments");
+            var avatar = attachments.GetBlob("avatar");
+            var content = avatar?.Content;
+            // end::1x-attachment[]
+            
         }
 
         private static void CreateNewDatabase()
         {
             // tag::new-database[]
-            var db = new Database("my-database");
+            var database = new Database("my-database");
             // end::new-database[]
         }
 
@@ -457,6 +447,36 @@ namespace api_walkthrough
             // tag::close-database[]
             database.Close();
             // end::close-database[]
+        }
+
+        private static void CreateCollection() 
+        {
+            // tag::scopes-manage-create-collection[]
+            var collectionWithDefaultScope = _Database.CreateCollection("colA");
+            var collection = _Database.CreateCollection("colA", "scopeA"); // Scope with named scopeA will be created if it's not existed. There is no public API to create a Scope. 
+            // end::scopes-manage-create-collection[]
+        }
+
+        private static void DeleteCollection()
+        {
+            // tag::scopes-manage-drop-collection[]
+            _Database.DeleteCollection("colA", "scopeA"); // Scope with named scopeA will be deleted if there is no collections in the scope after the last collection is deleted via this API. There is no public API to remove a Scope.
+            // end::scopes-manage-drop-collection[]
+        }
+
+        // tag::scopes-manage-index-collection[]
+        // We need to add a code sample to index a collection
+        // end::scopes-manage-index-collection[]
+
+        private static void ListCollectionsAndScopes()
+        {
+            // tag::scopes-manage-list[]
+            // Get Scopes
+            var scopes = _Database.GetScopes();
+            // Get Collections of a Scope named scopeA
+            var scopeA = _Database.GetScope("scopeA");
+            var collectionsInScopeA = scopeA.GetCollections();
+            // end::scopes-manage-list[]
         }
 
         private static void ChangeLogging()
@@ -486,13 +506,13 @@ namespace api_walkthrough
 
         private static void QueryDeletedDocuments()
         {
-            var db = _Database;
+            var collection = _Database.GetDefaultCollection();
 
             // tag::query-deleted-documents[]
             // Query documents that have been deleted
             var query = QueryBuilder
                 .Select(SelectResult.Expression(Meta.ID))
-                .From(DataSource.Collection(db.GetDefaultCollection()))
+                .From(DataSource.Collection(collection))
                 .Where(Meta.IsDeleted);
             // end::query-deleted-documents[]
         }
@@ -501,13 +521,12 @@ namespace api_walkthrough
         {
             var collection = _Database.GetDefaultCollection();
             // tag::initializer[]
-            using (var doc = new MutableDocument("xyz")) {
-                doc.SetString("type", "task")
-                    .SetString("owner", "todo")
-                    .SetDate("createdAt", DateTimeOffset.UtcNow);
+            using var mutableDoc = new MutableDocument("xyz");
+            mutableDoc.SetString("type", "task")
+                .SetString("owner", "todo")
+                .SetDate("createdAt", DateTimeOffset.UtcNow);
 
-                collection.Save(doc);
-            }
+            collection.Save(mutableDoc);
             // end::initializer[]
         }
 
@@ -516,41 +535,38 @@ namespace api_walkthrough
             var collection = _Database.GetDefaultCollection();
 
             // tag::update-document[]
-            using (var doc = collection.GetDocument("xyz"))
-            using (var mutable_doc = doc.ToMutable()) {
-                mutable_doc.SetString("name", "apples");
-                collection.Save(mutable_doc);
-            }
+            using var doc = collection.GetDocument("xyz");
+            using var mutableDoc = doc.ToMutable();
+            mutableDoc.SetString("name", "apples");
+            collection.Save(mutableDoc);
             // end::update-document[]
         }
 
         private static void UseTypedAccessors()
         {
-            using (var doc = new MutableDocument()) {
-                // tag::date-getter[]
-                doc.SetValue("createdAt", DateTimeOffset.UtcNow);
-                var date = doc.GetDate("createdAt");
-                // end::date-getter[]
+            using var mutableDoc = new MutableDocument();
+            // tag::date-getter[]
+            mutableDoc.SetValue("createdAt", DateTimeOffset.UtcNow);
+            var date = mutableDoc.GetDate("createdAt");
+            // end::date-getter[]
 
-                Console.WriteLine(date);
-            }
+            Console.WriteLine(date);
         }
 
         private static void DoBatchOperation()
         {
-            var db = _Database;
-            var collection = db.GetDefaultCollection();
+            var database = _Database;
+            var collection = database.GetDefaultCollection();
             // tag::batch[]
-            db.InBatch(() =>
+            database.InBatch(() =>
             {
                 for (var i = 0; i < 10; i++) {
-                    using (var doc = new MutableDocument()) {
-                        doc.SetString("type", "user");
-                        doc.SetString("name", $"user {i}");
-                        doc.SetBoolean("admin", false);
-                        collection.Save(doc);
-                        Console.WriteLine($"Saved user document {doc.GetString("name")}");
-                    }
+                    using var mutableDoc = new MutableDocument();
+                    mutableDoc.SetString("type", "user");
+                    mutableDoc.SetString("name", $"user {i}");
+                    mutableDoc.SetBoolean("admin", false);
+                    collection.Save(mutableDoc);
+                    Console.WriteLine($"Saved user document {mutableDoc.GetString("name")}");
                 }
             });
             // end::batch[]
@@ -563,9 +579,8 @@ namespace api_walkthrough
             // tag::document-listener[]
             collection.AddDocumentChangeListener("user.john", (sender, args) =>
             {
-                using (var doc = collection.GetDocument(args.DocumentID)) {
-                    Console.WriteLine($"Status :: {doc.GetString("verified_account")}");
-                }
+                using var doc = collection.GetDocument(args.DocumentID);
+                Console.WriteLine($"Status :: {doc.GetString("verified_account")}");
             });
             // end::document-listener[]
         }
@@ -584,25 +599,25 @@ namespace api_walkthrough
 
             // Query documents that will be expired in less than five minutes
             var fiveMinutesFromNow = DateTimeOffset.UtcNow.AddMinutes(5).ToUnixTimeMilliseconds();
-            var query = QueryBuilder
+            using var query = QueryBuilder
                 .Select(SelectResult.Expression(Meta.ID))
                 .From(DataSource.Collection(collection))
                 .Where(Meta.Expiration.LessThan(Expression.Double(fiveMinutesFromNow)));
+
             // end::document-expiration[]
         }
 
         private static void UseBlob()
         {
             var collection = _Database.GetDefaultCollection();
-            using (var newTask = new MutableDocument()) {
-                // tag::blob[]
-                // Note: Reading the data is implementation dependent, as with prebuilt databases
-                var image = File.ReadAllBytes("avatar.jpg"); // <.>
-                var blob = new Blob("image/jpeg", image); // <.>
-                newTask.SetBlob("avatar", blob); // <.>
-                collection.Save(newTask);
-                // end::blob[]
-            }
+            using var newTask = new MutableDocument();
+            // tag::blob[]
+            // Note: Reading the data is implementation dependent, as with prebuilt databases
+            var image = File.ReadAllBytes("avatar.jpg"); // <.>
+            var blob = new Blob("image/jpeg", image); // <.>
+            newTask.SetBlob("avatar", blob); // <.>
+            collection.Save(newTask);
+            // end::blob[]
         }
 
         public void CreateIndex()
@@ -635,15 +650,15 @@ namespace api_walkthrough
 #warning query-select-meta unused?
             // tag::query-select-meta[]
             // tag::query-select-props[]
-            using (var query = QueryBuilder.Select(
-                    SelectResult.Expression(Meta.ID),
-                    SelectResult.Property("type"),
-                    SelectResult.Property("name"))
-                .From(DataSource.Collection(collection))) {
-                foreach (var result in query.Execute()) {
-                    Console.WriteLine($"Document ID :: {result.GetString("id")}");
-                    Console.WriteLine($"Document Name :: {result.GetString("name")}");
-                }
+            using var query = QueryBuilder.Select(
+                SelectResult.Expression(Meta.ID),
+                SelectResult.Property("type"),
+                SelectResult.Property("name"))
+            .From(DataSource.Collection(collection));
+
+            foreach (var result in query.Execute()) {
+                Console.WriteLine($"Document ID :: {result.GetString("id")}");
+                Console.WriteLine($"Document Name :: {result.GetString("name")}");
             }
             // end::query-select-props[]
             // end::query-select-meta[]
@@ -655,7 +670,7 @@ namespace api_walkthrough
 
             {
                 // tag::query-select-all[]
-                var query = QueryBuilder.Select(SelectResult.All())
+                using var query = QueryBuilder.Select(SelectResult.All())
                     .From(DataSource.Collection(collection));
                 // end::query-select-all[]
             }
@@ -691,14 +706,14 @@ namespace api_walkthrough
             var collection = _Database.GetDefaultCollection();
 
             // tag::query-where[]
-            using (var query = QueryBuilder.Select(SelectResult.All())
+            using var query = QueryBuilder.Select(SelectResult.All())
                 .From(DataSource.Collection(collection))
                 .Where(Expression.Property("type").EqualTo(Expression.String("hotel")))
-                .Limit(Expression.Int(10))) {
-                foreach (var result in query.Execute()) {
-                    var dict = result.GetDictionary(collection.Name);
-                    Console.WriteLine($"Document Name :: {dict?.GetString("name")}");
-                }
+                .Limit(Expression.Int(10));
+
+            foreach (var result in query.Execute()) {
+                var dict = result.GetDictionary(collection.Name);
+                Console.WriteLine($"Document Name :: {dict?.GetString("name")}");
             }
             // end::query-where[]
         }
@@ -708,19 +723,19 @@ namespace api_walkthrough
             var collection = _Database.GetDefaultCollection();
 
             // tag::query-collection-operator-contains[]
-            using (var query = QueryBuilder.Select(
+            using var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("name"),
                     SelectResult.Property("public_likes"))
                 .From(DataSource.Collection(collection))
                 .Where(Expression.Property("type").EqualTo(Expression.String("hotel"))
                     .And(ArrayFunction.Contains(Expression.Property("public_likes"),
-                        Expression.String("Armani Langworth"))))) {
-                foreach (var result in query.Execute()) {
-                    var publicLikes = result.GetArray("public_likes");
-                    var jsonString = JsonConvert.SerializeObject(publicLikes);
-                    Console.WriteLine($"Public Likes :: {jsonString}");
-                }
+                        Expression.String("Armani Langworth"))));
+
+            foreach (var result in query.Execute()) {
+                var publicLikes = result.GetArray("public_likes");
+                var jsonString = JsonConvert.SerializeObject(publicLikes);
+                Console.WriteLine($"Public Likes :: {jsonString}");
             }
             // end::query-collection-operator-contains[]
         }
@@ -733,16 +748,17 @@ namespace api_walkthrough
             var values = new IExpression[]
                 { Expression.Property("first"), Expression.Property("last"), Expression.Property("username") };
 
-            using (var query = QueryBuilder.Select(
+            using var query = QueryBuilder.Select(
                     SelectResult.All())
                 .From(DataSource.Collection(collection))
-                .Where(Expression.String("Armani").In(values))) {
-                foreach (var result in query.Execute()) {
-                    var body = result.GetDictionary(0);
-                    var jsonString = JsonConvert.SerializeObject(body);
-                    Console.WriteLine($"In results :: {jsonString}");
-                }
+                .Where(Expression.String("Armani").In(values));
+
+            foreach (var result in query.Execute()) {
+                var body = result.GetDictionary(0);
+                var jsonString = JsonConvert.SerializeObject(body);
+                Console.WriteLine($"In results :: {jsonString}");
             }
+            
             // end::query-collection-operator-in[]
         }
 
@@ -751,16 +767,16 @@ namespace api_walkthrough
             var collection = _Database.GetDefaultCollection();
 
             // tag::query-like-operator[]
-            using (var query = QueryBuilder.Select(
+            using var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("name"))
                 .From(DataSource.Collection(collection))
                 .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
                     .And(Function.Lower(Expression.Property("name")).Like(Expression.String("Royal Engineers Museum"))))
-                .Limit(Expression.Int(10))) {
-                foreach (var result in query.Execute()) {
-                    Console.WriteLine($"Name Property :: {result.GetString("name")}");
-                }
+                .Limit(Expression.Int(10));
+
+            foreach (var result in query.Execute()) {
+                Console.WriteLine($"Name Property :: {result.GetString("name")}");
             }
             // end::query-like-operator[]
         }
@@ -770,16 +786,16 @@ namespace api_walkthrough
             var collection = _Database.GetDefaultCollection();
 
             // tag::query-like-operator-wildcard-match[]
-            using (var query = QueryBuilder.Select(
+            using var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("name"))
                 .From(DataSource.Collection(collection))
                 .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
                     .And(Function.Lower(Expression.Property("name")).Like(Expression.String("Eng%e%"))))
-                .Limit(Expression.Int(10))) {
-                foreach (var result in query.Execute()) {
-                    Console.WriteLine($"Name Property :: {result.GetString("name")}");
-                }
+                .Limit(Expression.Int(10));
+
+            foreach (var result in query.Execute()) {
+                Console.WriteLine($"Name Property :: {result.GetString("name")}");
             }
             // end::query-like-operator-wildcard-match[]
         }
@@ -789,17 +805,18 @@ namespace api_walkthrough
             var collection = _Database.GetDefaultCollection();
 
             // tag::query-like-operator-wildcard-character-match[]
-            using (var query = QueryBuilder.Select(
+            using var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("name"))
                 .From(DataSource.Collection(collection))
                 .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
                     .And(Expression.Property("name").Like(Expression.String("Royal Eng____rs Museum"))))
-                .Limit(Expression.Int(10))) {
-                foreach (var result in query.Execute()) {
-                    Console.WriteLine($"Name Property :: {result.GetString("name")}");
-                }
+                .Limit(Expression.Int(10));
+
+            foreach (var result in query.Execute()) {
+                Console.WriteLine($"Name Property :: {result.GetString("name")}");
             }
+            
             // end::query-like-operator-wildcard-character-match[]
         }
 
@@ -808,16 +825,16 @@ namespace api_walkthrough
             var collection = _Database.GetDefaultCollection();
 
             // tag::query-regex-operator[]
-            using (var query = QueryBuilder.Select(
+            using var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("name"))
                 .From(DataSource.Collection(collection))
                 .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
                     .And(Expression.Property("name").Regex(Expression.String("\\bEng.*e\\b"))))
-                .Limit(Expression.Int(10))) {
-                foreach (var result in query.Execute()) {
-                    Console.WriteLine($"Name Property :: {result.GetString("name")}");
-                }
+                .Limit(Expression.Int(10));
+
+            foreach (var result in query.Execute()) {
+                Console.WriteLine($"Name Property :: {result.GetString("name")}");
             }
             // end::query-regex-operator[]
         }
@@ -828,7 +845,7 @@ namespace api_walkthrough
             var collection2 = _Database.GetDefaultCollection();
 
             // tag::query-join[]
-            using (var query = QueryBuilder.Select(
+            using var query = QueryBuilder.Select(
                     SelectResult.Expression(Expression.Property("name").From("airline")),
                     SelectResult.Expression(Expression.Property("callsign").From("airline")),
                     SelectResult.Expression(Expression.Property("destinationairport").From("route")),
@@ -839,10 +856,10 @@ namespace api_walkthrough
                     .On(Meta.ID.From("airline").EqualTo(Expression.Property("airlineid").From("route"))))
                 .Where(Expression.Property("type").From("route").EqualTo(Expression.String("route"))
                     .And(Expression.Property("type").From("airline").EqualTo(Expression.String("airline")))
-                    .And(Expression.Property("sourceairport").From("route").EqualTo(Expression.String("RIX"))))) {
-                foreach (var result in query.Execute()) {
-                    Console.WriteLine($"Name Property :: {result.GetString("name")}");
-                }
+                    .And(Expression.Property("sourceairport").From("route").EqualTo(Expression.String("RIX"))));
+
+            foreach (var result in query.Execute()) {
+                Console.WriteLine($"Name Property :: {result.GetString("name")}");
             }
             // end::query-join[]
         }
@@ -852,18 +869,18 @@ namespace api_walkthrough
             var collection = _Database.GetDefaultCollection();
 
             // tag::query-groupby[]
-            using (var query = QueryBuilder.Select(
+            using var query = QueryBuilder.Select(
                     SelectResult.Expression(Function.Count(Expression.All())),
                     SelectResult.Property("country"),
                     SelectResult.Property("tz"))
                 .From(DataSource.Collection(collection))
                 .Where(Expression.Property("type").EqualTo(Expression.String("airport"))
                     .And(Expression.Property("geo.alt").GreaterThanOrEqualTo(Expression.Int(300))))
-                .GroupBy(Expression.Property("country"), Expression.Property("tz"))) {
-                foreach (var result in query.Execute()) {
-                    Console.WriteLine(
-                        $"There are {result.GetInt("$1")} airports in the {result.GetString("tz")} timezone located in {result.GetString("country")} and above 300 ft");
-                }
+                .GroupBy(Expression.Property("country"), Expression.Property("tz"));
+
+            foreach (var result in query.Execute()) {
+                Console.WriteLine(
+                    $"There are {result.GetInt("$1")} airports in the {result.GetString("tz")} timezone located in {result.GetString("country")} and above 300 ft");
             }
             // end::query-groupby[]
         }
@@ -873,16 +890,16 @@ namespace api_walkthrough
             var collection = _Database.GetDefaultCollection();
 
             // tag::query-orderby[]
-            using (var query = QueryBuilder.Select(
+            using var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("title"))
                 .From(DataSource.Collection(collection))
                 .Where(Expression.Property("type").EqualTo(Expression.String("hotel")))
                 .OrderBy(Ordering.Property("title").Ascending())
-                .Limit(Expression.Int(10))) {
-                foreach (var result in query.Execute()) {
-                    Console.WriteLine($"Title :: {result.GetString("title")}");
-                }
+                .Limit(Expression.Int(10));
+
+            foreach (var result in query.Execute()) {
+                Console.WriteLine($"Title :: {result.GetString("title")}");
             }
             // end::query-orderby[]
         }
@@ -893,7 +910,7 @@ namespace api_walkthrough
 
             {
                 // tag::query-explain-all[]
-                var query =
+                using var query =
                   QueryBuilder
                     .Select(SelectResult.All())
                     .From(DataSource.Collection(collection))
@@ -907,7 +924,7 @@ namespace api_walkthrough
 
             {
                 // tag::query-explain-like[]
-                var query =
+                using var query =
                   QueryBuilder
                     .Select(SelectResult.All())
                     .From(DataSource.Collection(collection))
@@ -919,7 +936,7 @@ namespace api_walkthrough
 
             {
                 // tag::query-explain-nopfx[]
-                var query =
+                using var query =
                   QueryBuilder
                     .Select(SelectResult.All())
                     .From(DataSource.Collection(collection))
@@ -932,7 +949,7 @@ namespace api_walkthrough
 
             {
                 // tag::query-explain-function[]
-                var query =
+                using var query =
                   QueryBuilder
                     .Select(SelectResult.All())
                     .From(DataSource.Collection(collection))
@@ -944,7 +961,7 @@ namespace api_walkthrough
 
             {
                 // tag::query-explain-nofunction[]
-                var query =
+                using var query =
                   QueryBuilder
                     .Select(SelectResult.All())
                     .From(DataSource.Collection(collection))
@@ -971,8 +988,8 @@ namespace api_walkthrough
             var collection = _Database.GetDefaultCollection();
 
             // tag::fts-query[]
-            var ftsQuery = collection.CreateQuery("SELECT * FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan') ORDER BY RANK(overviewFTSIndex)");
-            foreach (var result in ftsQuery.Execute()) {
+            var query = collection.CreateQuery("SELECT * FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan') ORDER BY RANK(overviewFTSIndex)");
+            foreach (var result in query.Execute()) {
                 Console.WriteLine($"Document id {result.GetString(0)}");
             }
             // end::fts-query[]
@@ -994,17 +1011,18 @@ namespace api_walkthrough
             var collection = _Database.GetDefaultCollection();
 
             // tag::fts-query_Querybuilder[]
-            var whereClause = FullTextFunction.Match("overviewFTSIndex", "'michigan'");
+            var whereClause = FullTextFunction.Match(Expression.FullTextIndex("overviewFTSIndex"), "'michigan'");
 
-            using (var query = QueryBuilder.Select(SelectResult.Expression(Meta.ID))
+            using var query = QueryBuilder.Select(SelectResult.Expression(Meta.ID))
                 .From(DataSource.Collection(collection))
-                .Where(whereClause)) {
-                foreach (var result in query.Execute()) {
-                    Console.WriteLine($"Document id {result.GetString(0)}");
-                }
+                .Where(whereClause);
+
+            foreach (var result in query.Execute()) {
+                Console.WriteLine($"Document id {result.GetString(0)}");
             }
             // end::fts-query_Querybuilder[]
         }
+
         private static void StartReplication()
         {
             var collection = _Database.GetDefaultCollection();
@@ -1147,24 +1165,24 @@ namespace api_walkthrough
             // tag::replication-push-pendingdocumentids[]
             var replicator = new Replicator(config);
 
-            var mydocids =
+            var pendingDocIDs =
               new HashSet<string>(replicator.GetPendingDocumentIDs(database.GetDefaultCollection())); // <.>
             // end::replication-push-pendingdocumentids[]
 
-            if (mydocids.Count > 0) {
-                Console.WriteLine($"There are {mydocids.Count} documents pending");
+            if (pendingDocIDs.Count > 0) {
+                Console.WriteLine($"There are {pendingDocIDs.Count} documents pending");
                 replicator.AddChangeListener((sender, change) =>
                 {
                     Console.WriteLine($"Replicator activity level is " +
                                       change.Status.Activity.ToString());
                     // iterate and report-on previously
                     // retrieved pending docids 'list'
-                    foreach (var thisId in mydocids)
+                    foreach (var docID in pendingDocIDs)
 #warning replication-push-isdocumentpending unused?
                         // tag::replication-push-isdocumentpending[]
-                        if (!replicator.IsDocumentPending(thisId, database.GetDefaultCollection())) // <.>
+                        if (!replicator.IsDocumentPending(docID, database.GetDefaultCollection())) // <.>
                         {
-                            Console.WriteLine($"Doc ID {thisId} now pushed");
+                            Console.WriteLine($"Doc ID {docID} now pushed");
                         };
                         // end::replication-push-isdocumentpending[]
                 });
@@ -1361,7 +1379,7 @@ namespace api_walkthrough
 
             //  other config as required . . .
 
-            var repl = new Replicator(config);
+            var replicator = new Replicator(config);
 
             // end::replication-retry-config[]
         }
@@ -1369,8 +1387,8 @@ namespace api_walkthrough
 
         private static void UsePredictiveModel()
         {
-            using (var db = new Database("mydb")) {
-                var collection = db.GetDefaultCollection();
+            using (var database = new Database("mydb")) {
+                var collection = database.GetDefaultCollection();
                 // tag::register-model[]
                 var model = new ImageClassifierModel();
                 Database.Prediction.RegisterModel("ImageClassifier", model);
@@ -1389,8 +1407,8 @@ namespace api_walkthrough
 
         private static void UsePredictiveIndex()
         {
-            using (var db = new Database("mydb")) {
-                var collection = db.GetDefaultCollection();
+            using (var database = new Database("mydb")) {
+                var collection = database.GetDefaultCollection();
                 // tag::predictive-query-predictive-index[]
                 var input = Expression.Dictionary(new Dictionary<string, object>
                 {
@@ -1405,8 +1423,8 @@ namespace api_walkthrough
 
         private static void DoPredictiveQuery()
         {
-            using (var db = new Database("mydb")) {
-                var collection = db.GetDefaultCollection();
+            using (var database = new Database("mydb")) {
+                var collection = database.GetDefaultCollection();
                 // tag::predictive-query[]
                 var input = Expression.Dictionary(new Dictionary<string, object>
                 {
@@ -1414,63 +1432,55 @@ namespace api_walkthrough
                 });
                 var prediction = Function.Prediction("ImageClassifier", input); // <1>
 
-                using (var q = QueryBuilder.Select(SelectResult.All())
+                using var query = QueryBuilder.Select(SelectResult.All())
                     .From(DataSource.Collection(collection))
                     .Where(prediction.Property("label").EqualTo(Expression.String("car"))
-                        .And(prediction.Property("probability").GreaterThanOrEqualTo(Expression.Double(0.8))))) {
-                    var result = q.Execute();
-                    Console.WriteLine($"Number of rows: {result.Count()}");
-                }
+                        .And(prediction.Property("probability").GreaterThanOrEqualTo(Expression.Double(0.8))));
+
+                var result = query.Execute();
+                Console.WriteLine($"Number of rows: {result.Count()}");
                 // end::predictive-query[]
             }
         }
 
         public List<Result> docsonly_N1QLQueryString(Database argDB)
         {
-            DatabaseConfiguration dbCfg = new DatabaseConfiguration();
+            DatabaseConfiguration config = new DatabaseConfiguration();
 
-            Database thisDb = new Database("dbName", dbCfg);
+            Database database = new Database("dbName", config);
 
             // tag::query-syntax-n1ql[]
-            var thisQuery =
-                thisDb.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""); // <.>
+            using var query =
+                database.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""); // <.>
 
-            return thisQuery.Execute().AllResults();
+            return query.Execute().AllResults();
             // end::query-syntax-n1ql[]
         }
 
         public void docsonly_N1QLQueryStringParams(Database argDB)
         {
-            var thisDb = _Database;
+            var database = _Database;
 
             // tag::query-syntax-n1ql-params[]
-            var thisQuery =
-                thisDb.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = $type"); // <.>
+            using var query =
+                database.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = $type"); // <.>
 
             var n1qlParams = new Parameters();
             n1qlParams.SetString("type", "hotel"); // <.>
-            thisQuery.Parameters = n1qlParams;
+            query.Parameters = n1qlParams;
 
-            var results = thisQuery.Execute().AllResults();
+            var results = query.Execute().AllResults();
             // end::query-syntax-n1ql-params[]
         }
 
         public void testQuerySyntaxAll()
         {
-            var dbName = "travel-sample";
-
-            string thisDocsId;
-            string thisDocsName;
-            string thisDocsType;
-            string thisDocsCity;
-            Dictionary<string, object> hotel = new Dictionary<string, object>();
-
             // tag::query-syntax-all[]
-            var this_Db = new Database("hotels");
+            var database = new Database("hotels");
 
             var query = QueryBuilder
                   .Select(SelectResult.All())
-                  .From(DataSource.Collection(this_Db.GetDefaultCollection()));
+                  .From(DataSource.Collection(database.GetDefaultCollection()));
             // end::query-syntax-all[]
 
             // tag::query-access-all[]
@@ -1480,14 +1490,14 @@ namespace api_walkthrough
             if (results?.Count > 0) {
                 foreach (var result in results) {
                     // get the result into our dictionary object
-                    var thisDocsProps = result.GetDictionary(dbName); // <.>
+                    var thisDocsProps = result.GetDictionary("hotels"); // <.>
 
                     if (thisDocsProps != null) {
-                        thisDocsId = thisDocsProps.GetString("id"); // <.>
-                        thisDocsName = thisDocsProps.GetString("name");
-                        thisDocsCity = thisDocsProps.GetString("city");
-                        thisDocsType = thisDocsProps.GetString("type");
-                        hotel = thisDocsProps.ToDictionary();
+                        var docID = thisDocsProps.GetString("id"); // <.>
+                        var docName = thisDocsProps.GetString("name");
+                        var docCity = thisDocsProps.GetString("city");
+                        var docType = thisDocsProps.GetString("type");
+                        var hotel = thisDocsProps.ToDictionary();
                         hotels.Add(hotel);
                     }
 
@@ -1496,28 +1506,28 @@ namespace api_walkthrough
             // end::query-access-all[]
 
             // tag::query-access-json[]
-            foreach (var result in query.Execute().AsEnumerable()) {
+            foreach (var result in query.Execute()) {
 
                 // get the result into a JSON String
-                var thisDocsJSONString = result.ToJSON();
+                var docJSONString = result.ToJSON();
 
                 // Get a native dictionary object using the JSON string
                 var dictFromJSONstring =
                       JsonConvert.
                         DeserializeObject<Dictionary<string, object>>
-                          (thisDocsJSONString);
+                          (docJSONString);
 
                 // use the created dictionary
                 if (dictFromJSONstring != null) {
-                    thisDocsId = dictFromJSONstring["id"].ToString();
-                    thisDocsName = dictFromJSONstring["name"].ToString();
-                    thisDocsCity = dictFromJSONstring["city"].ToString();
-                    thisDocsType = dictFromJSONstring["type"].ToString();
+                    var docID = dictFromJSONstring["id"].ToString();
+                    var docName = dictFromJSONstring["name"].ToString();
+                    var docCity = dictFromJSONstring["city"].ToString();
+                    var docType = dictFromJSONstring["type"].ToString();
                 }
 
                 //Get a custom object using the JSON string
-                Hotel this_hotel =
-                    JsonConvert.DeserializeObject<Hotel>(thisDocsJSONString);
+                Hotel hotel =
+                    JsonConvert.DeserializeObject<Hotel>(docJSONString);
 
             } 
             // end::query-access-json[]
@@ -1525,21 +1535,15 @@ namespace api_walkthrough
 
         public void testQuerySyntaxProps()
         {
-            string thisDocsName;
-            string thisDocsType;
-            string thisDocsCity;
-
             // tag::query-syntax-props[]
-            var this_Db = new Database("hotels");
-
-            Dictionary<string, object> hotel = new Dictionary<string, object>();
+            var database = new Database("hotels");
 
             List<Dictionary<string, object>> hotels = new List<Dictionary<string, object>>();
 
             var query = QueryBuilder.Select(
                     SelectResult.Property("type"),
                     SelectResult.Property("name"),
-                    SelectResult.Property("city")).From(DataSource.Collection(this_Db.GetDefaultCollection()));
+                    SelectResult.Property("city")).From(DataSource.Collection(database.GetDefaultCollection()));
             // end::query-syntax-props[]
 
             // tag::query-access-props[]
@@ -1547,15 +1551,15 @@ namespace api_walkthrough
             foreach (var result in results) {
 
                 // get the returned array of k-v pairs into a dictionary
-                hotel = result.ToDictionary();
+                var hotel = result.ToDictionary();
 
                 // add hotel dictionary to list of hotel dictionaries
                 hotels.Add(hotel);
 
                 // use the properties of the returned array of k-v pairs directly
-                thisDocsType = result.GetString("type");
-                thisDocsName = result.GetString("name");
-                thisDocsCity = result.GetString("city");
+                var docType = result.GetString("type");
+                var docName = result.GetString("name");
+                var docCity = result.GetString("city");
 
             }
             // end::query-access-props[]
@@ -1584,19 +1588,19 @@ namespace api_walkthrough
         public void ibQueryForID()
         {
             // tag::query-syntax-id[]
-            var this_Db = new Database("hotels");
+            var database = new Database("hotels");
 
             var query = QueryBuilder
                     .Select(SelectResult.Expression(Meta.ID).As("this_ID"))
-                    .From(DataSource.Collection(this_Db.GetDefaultCollection()));
+                    .From(DataSource.Collection(database.GetDefaultCollection()));
             // end::query-syntax-id[]
 
             // tag::query-access-id[]
             var results = query.Execute().AllResults();
             foreach (var result in results) {
 
-                var thisDocsID = result.GetString("this_ID"); // <.>
-                var doc = this_Db.GetDefaultCollection().GetDocument(thisDocsID);
+                var docID = result.GetString("this_ID"); // <.>
+                var doc = database.GetDefaultCollection().GetDocument(docID);
             }
             // end::query-access-id[]
         }
@@ -1606,34 +1610,34 @@ namespace api_walkthrough
         public void testQueryPagination()
         {
             // tag::query-syntax-pagination[]
-            var this_Db = new Database("hotels");
-            var thisLimit = 20;
-            var thisOffset = 0;
+            var database = new Database("hotels");
+            var limit = 20;
+            var offset = 0;
 
             // get a count of the number of docs matching the query
             var countQuery =
                 QueryBuilder
                     .Select(SelectResult.Expression(Function.Count(Expression.All())).As("mycount"))
-                    .From(DataSource.Collection(this_Db.GetDefaultCollection()));
+                    .From(DataSource.Collection(database.GetDefaultCollection()));
             var numberOfDocs =
-                countQuery.Execute().AllResults().ElementAt(0).GetInt("mycount");
+                countQuery.Execute().First().GetInt("mycount");
 
-            if (numberOfDocs < thisLimit) {
-                thisLimit = numberOfDocs;
+            if (numberOfDocs < limit) {
+                limit = numberOfDocs;
             }
 
-            while (thisOffset < numberOfDocs) {
+            while (offset < numberOfDocs) {
                 var listQuery =
                     QueryBuilder
                         .Select(SelectResult.All())
-                        .From(DataSource.Collection(this_Db.GetDefaultCollection()))
-                        .Limit(Expression.Int(thisLimit), Expression.Int(thisOffset)); // <.>
+                        .From(DataSource.Collection(database.GetDefaultCollection()))
+                        .Limit(Expression.Int(limit), Expression.Int(offset)); // <.>
 
-                foreach (var result in listQuery.Execute().AllResults()) {
+                foreach (var result in listQuery.Execute()) {
                     // Display and or process query results batch
                 }
 
-                thisOffset = thisOffset + thisLimit;
+                offset = offset + limit;
             }
 
             // end::query-syntax-pagination[]
@@ -1645,30 +1649,29 @@ namespace api_walkthrough
             var collection = _Database.GetDefaultCollection();
             // tag::tojson-document[]
             // Get a document
-            var thisDoc = collection.GetDocument("hotel_10025");
+            var doc = collection.GetDocument("hotel_10025");
 
             // Get document data as JSON String
-            var thisDocAsJsonString = thisDoc?.ToJSON();
+            var docJSONString = doc?.ToJSON();
 
             // Get Json Object from the Json String
-            JObject myJsonObj = JObject.Parse(thisDocAsJsonString);
+            JObject jsonObject = JObject.Parse(docJSONString);
 
             // Get Native Object (anhotel) from JSON String
-            List<Hotel> thehotels = new List<Hotel>();
+            List<Hotel> hotels = new List<Hotel>();
 
-            Hotel anhotel = new Hotel();
-            anhotel = JsonConvert.DeserializeObject<Hotel>(thisDocAsJsonString);
-            thehotels.Add(anhotel);
+            var hotel = JsonConvert.DeserializeObject<Hotel>(docJSONString);
+            hotels.Add(hotel);
 
             // Update the retrieved native object
-            anhotel.Name = "A Copy of " + anhotel.Name;
-            anhotel.Id = "2001";
+            hotel.Name = "A Copy of " + hotel.Name;
+            hotel.Id = "2001";
 
             // Convert the updated object back to a JSON string
-            var newJsonString = JsonConvert.SerializeObject(anhotel);
+            var newJsonString = JsonConvert.SerializeObject(hotel);
 
             // Update new document with JSOn String
-            MutableDocument newhotel = thisDoc.ToMutable();
+            MutableDocument newhotel = doc.ToMutable();
             newhotel.SetJSON(newJsonString);
             
 
@@ -1678,8 +1681,8 @@ namespace api_walkthrough
             }
 
             collection.Save(newhotel);
-            var thatDoc = collection.GetDocument("2001").ToJSON();
-            Console.Write(thatDoc);
+            var retrievedDoc = collection.GetDocument("2001").ToJSON();
+            Console.Write(retrievedDoc);
             // end::tojson-document[]
 
         }
@@ -1690,21 +1693,21 @@ namespace api_walkthrough
 
             // tag::tojson-array[]
             // JSON String -- an Array (3 elements. including embedded arrays)
-            var thisJSONstring = "[{'id':'1000','type':'hotel','name':'Hotel Ted','city':'Paris','country':'France','description':'Undefined description for Hotel Ted'},{'id':'1001','type':'hotel','name':'Hotel Fred','city':'London','country':'England','description':'Undefined description for Hotel Fred'},                        {'id':'1002','type':'hotel','name':'Hotel Ned','city':'Balmain','country':'Australia','description':'Undefined description for Hotel Ned','features':['Cable TV','Toaster','Microwave']}]".Replace("'", "\"");
+            var jsonString = "[{'id':'1000','type':'hotel','name':'Hotel Ted','city':'Paris','country':'France','description':'Undefined description for Hotel Ted'},{'id':'1001','type':'hotel','name':'Hotel Fred','city':'London','country':'England','description':'Undefined description for Hotel Fred'},                        {'id':'1002','type':'hotel','name':'Hotel Ned','city':'Balmain','country':'Australia','description':'Undefined description for Hotel Ned','features':['Cable TV','Toaster','Microwave']}]".Replace("'", "\"");
 
             // Get JSON Array from JSON String
-            JArray myJsonObj = JArray.Parse(thisJSONstring);
+            var jsonArray = JArray.Parse(jsonString);
 
             // Create mutable array using JSON String Array
-            var myArray = new MutableArrayObject();
-            myArray.SetJSON(thisJSONstring);
+            var mutableArray = new MutableArrayObject();
+            mutableArray.SetJSON(jsonString);
 
             // Create a new document for each array element
-            for (int i = 0; i < myArray.Count; i++) {
-                var dict = myArray.GetDictionary(i);
-                var docid = myArray[i].Dictionary.GetString("id");
-                var newdoc = new MutableDocument(docid, dict.ToDictionary());
-                collection.Save(newdoc);
+            for (int i = 0; i < mutableArray.Count; i++) {
+                var dict = mutableArray.GetDictionary(i);
+                var docid = mutableArray[i].Dictionary.GetString("id");
+                var mutableDoc = new MutableDocument(docid, dict.ToDictionary());
+                collection.Save(mutableDoc);
             }
 
             // Get one of the created docs and iterate through one of the embedded arrays
@@ -1713,7 +1716,8 @@ namespace api_walkthrough
 
             // Print its elements
             foreach (string feature in features) {
-                System.Console.Write(feature);
+                Console.Write($"{feature} ");
+
                 //process array item as required
             }
             var featuresJSON = extendedDoc.GetArray("features").ToJSON();
@@ -1729,15 +1733,15 @@ namespace api_walkthrough
 
             // tag::tojson-dictionary[]
             // Get dictionary from JSONstring
-            var aJSONstring = "{'id':'1002','type':'hotel','name':'Hotel Ned','city':'Balmain','country':'Australia','description':'Undefined description for Hotel Ned','features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
-            var myDict = new MutableDictionaryObject(json: aJSONstring);
+            var jsonString = "{'id':'1002','type':'hotel','name':'Hotel Ned','city':'Balmain','country':'Australia','description':'Undefined description for Hotel Ned','features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
+            var mutableDict = new MutableDictionaryObject(json: jsonString);
 
             // use dictionary to get name value
-            var name = myDict.GetString("name");
+            var name = mutableDict.GetString("name");
 
             // Iterate through keys
-            foreach (string key in myDict.Keys) {
-                Console.WriteLine("Data -- {0} = {1}", key, myDict.GetValue(key).ToString());
+            foreach (string key in mutableDict.Keys) {
+                Console.WriteLine("Data -- {0} = {1}", key, mutableDict.GetValue(key).ToString());
 
             }
             // end::tojson-dictionary[]
@@ -1752,33 +1756,33 @@ namespace api_walkthrough
             // tag::tojson-blob[]
             // Initialize base document for blob from a JSON string
             var docId = "1002";
-            var aJSONstring = "{'ref':'hotel_1002','type':'hotel','name':'Hotel Ned'," +
+            var jsonString = "{'ref':'hotel_1002','type':'hotel','name':'Hotel Ned'," +
                 "'city':'Balmain','country':'Australia'," +
                 "'description':'Undefined description for Hotel Ned'," +
                 "'features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
-            var myDoc = new MutableDocument(docId, aJSONstring);
+            var mutableDoc = new MutableDocument(docId, jsonString);
 
             // Get the content (an image), create blob and add to doc)
             var defaultDirectory =
                 Path.Combine(Service.GetInstance<IDefaultDirectoryResolver>()
                             .DefaultDirectory(),
                                 userName);
-            var myImagePath = Path.Combine(defaultDirectory, "avatarimage.jpg");
-            var myImageUri = new Uri(myImagePath.ToString());
-            var myBlob = new Blob("image/jpg", myImageUri);
-            myDoc.SetBlob("avatar", myBlob);
+            var imagePath = Path.Combine(defaultDirectory, "avatarimage.jpg");
+            var imageUri = new Uri(imagePath.ToString());
+            var imageBlob = new Blob("image/jpg", imageUri);
+            mutableDoc.SetBlob("avatar", imageBlob);
 
             // This example generates a 'blob not saved' exception
             try { 
-                Console.WriteLine("myBlob (unsaved) as JSON = {0}", myBlob.ToJSON()); 
+                Console.WriteLine("myBlob (unsaved) as JSON = {0}", imageBlob.ToJSON()); 
             } catch (Exception e) { 
                 Console.WriteLine("Exception = {0}", e.Message); 
             }
 
-            collection.Save(myDoc);
+            collection.Save(mutableDoc);
 
             // Alternatively -- depending on use case
-            database.SaveBlob(new Blob("image/jpg", myImageUri));
+            database.SaveBlob(new Blob("image/jpg", imageUri));
 
             // Retrieve saved doc, get blob as JSON andheck its still a 'blob'
             var sameDoc = collection.GetDocument(docId);
@@ -1798,12 +1802,11 @@ namespace api_walkthrough
         public void P2PListenerSimple()
         {
             var collection = _Database.GetDefaultCollection();
-            var validPassword = "password";
 
             // tag::listener-simple[]
-            var thisConfig = new URLEndpointListenerConfiguration(new[] { collection }); // <.>
+            var endpointConfig = new URLEndpointListenerConfiguration(new[] { collection }); // <.>
 
-            thisConfig.Authenticator =
+            endpointConfig.Authenticator =
               new ListenerPasswordAuthenticator(
                 (sender, username, password) =>
                 {
@@ -1814,7 +1817,7 @@ namespace api_walkthrough
                 }
               ); // <.>
 
-            var listener = new URLEndpointListener(thisConfig); // <.>
+            var listener = new URLEndpointListener(endpointConfig); // <.>
             listener.Start(); // <.>
             // end::listener-simple[]
         }
@@ -1824,16 +1827,16 @@ namespace api_walkthrough
             var collection = _Database.GetDefaultCollection();
 
             // tag::replicator-simple[]
-            var theListenerEndpoint = new URLEndpoint(new Uri("wss://listener.com:4984/otherDB")); // <.>
+            var endpointConfig = new URLEndpoint(new Uri("wss://listener.com:4984/otherDB")); // <.>
 
-            var thisConfig = new ReplicatorConfiguration(theListenerEndpoint); // <.>
-            thisConfig.AddCollection(collection);
-            thisConfig.AcceptOnlySelfSignedServerCertificate = true; // <.>
-            thisConfig.Authenticator =
+            var replConfig = new ReplicatorConfiguration(endpointConfig); // <.>
+            replConfig.AddCollection(collection);
+            replConfig.AcceptOnlySelfSignedServerCertificate = true; // <.>
+            replConfig.Authenticator =
               new BasicAuthenticator("valid.user", "valid.password.string"); // <.>
 
-            var thisReplicator = new Replicator(thisConfig); // <.>
-            thisReplicator.Start(); // <.>
+            var replicator = new Replicator(replConfig); // <.>
+            replicator.Start(); // <.>
             // end::replicator-simple[]
         }
 
@@ -1844,30 +1847,30 @@ namespace api_walkthrough
             // tag::listener-initialize[]
             // tag::listener-config-db[]
             // Initialize the listener config
-            var thisConfig = new URLEndpointListenerConfiguration(new[] { collection }); // <.>
+            var endpointConfig = new URLEndpointListenerConfiguration(new[] { collection }); // <.>
             // end::listener-config-db[]
 
             // tag::listener-config-port[]
-            thisConfig.Port = 55990; //<.>
+            endpointConfig.Port = 55990; //<.>
             // end::listener-config-port[]
 
             // tag::listener-config-netw-iface[]
-            thisConfig.NetworkInterface = "10.1.1.10"; // <.>
+            endpointConfig.NetworkInterface = "10.1.1.10"; // <.>
             // end::listener-config-netw-iface[]
 
             // tag::listener-config-delta-sync[]
-            thisConfig.EnableDeltaSync = true; // <.>
+            endpointConfig.EnableDeltaSync = true; // <.>
                                                // end::listener-config-delta-sync[]
 
 #warning listener-config-tls-full unused?
             // tag::listener-config-tls-full[]
             // tag::listener-config-tls-enable[]
-            thisConfig.DisableTLS = false; // <.>
+            endpointConfig.DisableTLS = false; // <.>
             // end::listener-config-tls-enable[]
 
             // tag::listener-config-tls-id-anon[]
             // Use an Anonymous Self-Signed Cert
-            thisConfig.TlsIdentity = null; // <.>
+            endpointConfig.TlsIdentity = null; // <.>
             // end::listener-config-tls-id-anon[]
 
             // tag::listener-config-client-auth-pwd[]
@@ -1876,7 +1879,7 @@ namespace api_walkthrough
             SecureString validPassword = new SecureString(); /* example only */
             // Get SecureString input for validPassword
             var validUser = "valid.username";
-            thisConfig.Authenticator = new ListenerPasswordAuthenticator(
+            endpointConfig.Authenticator = new ListenerPasswordAuthenticator(
             (sender, username, password) =>
             {
                 // Implement your own ValidatePassword function
@@ -1887,7 +1890,7 @@ namespace api_walkthrough
 
             // tag::listener-start[]
             // Initialize the listener
-            var listener = new URLEndpointListener(thisConfig); // <.>
+            var listener = new URLEndpointListener(endpointConfig); // <.>
 
             // Start the listener
             listener.Start(); // <.>
@@ -1896,18 +1899,18 @@ namespace api_walkthrough
 
 #warning old-listener-config-tls-disable unused?
             // tag::old-listener-config-tls-disable[]
-            thisConfig.DisableTLS = true;
+            endpointConfig.DisableTLS = true;
             // end::old-listener-config-tls-disable[]
 
 #warning listener-config-tls-id-nil-2 unused?
             // tag::listener-config-tls-id-nil-2[]
             // Use “anonymous” cert. These are self signed certs created by the system
-            thisConfig.TlsIdentity = null;
+            endpointConfig.TlsIdentity = null;
             // end::listener-config-tls-id-nil-2[]
 
 #warning old-listener-config-delta-sync unused?
             // tag::old-listener-config-delta-sync[]
-            thisConfig.EnableDeltaSync = true;
+            endpointConfig.EnableDeltaSync = true;
             // end::old-listener-config-delta-sync[]
 
             // tag::listener-status-check[]
@@ -1936,8 +1939,8 @@ namespace api_walkthrough
             {
 #warning listener-get-url-list unused?
                 // tag::listener-get-url-list[]
-                var config = new URLEndpointListenerConfiguration(new[] { collection });
-                var listener = new URLEndpointListener(config);
+                var endpointConfig = new URLEndpointListenerConfiguration(new[] { collection });
+                var listener = new URLEndpointListener(endpointConfig);
 
                 listener.Start();
 
@@ -1947,7 +1950,7 @@ namespace api_walkthrough
 
 #warning listener-config-tls-disable unused?
                 // tag::listener-config-tls-disable[]
-                config.DisableTLS = true; // <.>
+                endpointConfig.DisableTLS = true; // <.>
                                           // end::listener-config-tls-disable[]
 
 #warning listener-local-db unused?
@@ -1966,7 +1969,7 @@ namespace api_walkthrough
                   new X509Store(StoreName.My); // create and label x509 store
 
                 // Get keys and certificates from PKCS12 data
-                byte[] thisIdData =
+                byte[] certData =
                   File.ReadAllBytes("c:client.p12"); // <.>
                                                      // . . . other user code . . .
 
@@ -1974,7 +1977,7 @@ namespace api_walkthrough
                 // tag::import-tls-identity[]
                 TLSIdentity identity = TLSIdentity.ImportIdentity(
                   store,
-                  thisIdData, // <.>
+                  certData, // <.>
                   "123", // Password to access certificate data
                   "couchbase-demo-cert",
                   null); // Label to get cert in certificate map
@@ -1987,19 +1990,19 @@ namespace api_walkthrough
 
                 // tag::listener-config-tls-id-anon[]
                 // Use an Anonymous Self-Signed Cert
-                config.TlsIdentity = null; // <.>
+                endpointConfig.TlsIdentity = null; // <.>
                 // end::listener-config-tls-id-anon[]
 
 #warning listener-config-tls-id-set unused?
                 // tag::listener-config-tls-id-set[]
                 // Set the TLS Identity
-                config.TlsIdentity = identity; // <.>
+                endpointConfig.TlsIdentity = identity; // <.>
                 // end::listener-config-tls-id-set[]
                 // end::listener-config-tls-id-full[]
             }
 
             {
-                var config = new URLEndpointListenerConfiguration(new[] { collection });
+                var endpointConfig = new URLEndpointListenerConfiguration(new[] { collection });
 
                 // tag::listener-config-client-auth-root[]
                 // Configure the client authenticator
@@ -2017,10 +2020,10 @@ namespace api_walkthrough
                 // Configure the authenticator to use the root certs
                 var certAuth = new ListenerCertificateAuthenticator(new X509Certificate2Collection(rootCert));
 
-                config.Authenticator = certAuth; // <.>
+                endpointConfig.Authenticator = certAuth; // <.>
 
                 // Initialize the listener using the config
-                var listener = new URLEndpointListener(config);
+                var listener = new URLEndpointListener(endpointConfig);
                 // end::listener-config-client-auth-root[]
 
                 // tag::listener-config-client-auth-lambda[]
@@ -2044,7 +2047,7 @@ namespace api_walkthrough
                         return true;
                     }); // <.>
 
-                config.Authenticator = callbackAuth; // <.>
+                endpointConfig.Authenticator = callbackAuth; // <.>
                 // end::listener-config-client-auth-lambda[]
             }
         }
@@ -2055,13 +2058,13 @@ namespace api_walkthrough
             // tag::datatype_usage[]
             // tag::datatype_usage_createdb[]
             // Get the database (and create it if it doesn’t exist).
-            var database = new Database("hoteldb");
+            using var database = new Database("hoteldb");
             var collection = database.GetDefaultCollection();
             // end::datatype_usage_createdb[]
 
             // tag::datatype_usage_createdoc[]
             // Create your new document
-            var doc = new MutableDocument("hoteldoc");
+            using var mutableDoc = new MutableDocument("hoteldoc");
             // end::datatype_usage_createdoc[]
 
             // tag::datatype_usage_mutdict[]
@@ -2085,21 +2088,21 @@ namespace api_walkthrough
             // Initialize and populate the document
 
             // Add document type and hotel name as string
-            doc.SetString("type", "hotel");
-            doc.SetString("name", "Hotel Java Mo");
+            mutableDoc.SetString("type", "hotel");
+            mutableDoc.SetString("name", "Hotel Java Mo");
 
             // Add average room rate (float)
-            doc.SetFloat("room_rate", 121.75f);
+            mutableDoc.SetFloat("room_rate", 121.75f);
 
             // Add address (dictionary)
-            doc.SetDictionary("address", address);
+            mutableDoc.SetDictionary("address", address);
 
             // Add phone numbers(array)
-            doc.SetArray("phones", phones);
+            mutableDoc.SetArray("phones", phones);
             // end::datatype_usage_populate[]
 
             // tag::datatype_usage_persist[]
-            collection.Save(doc);
+            collection.Save(mutableDoc);
             // end::datatype_usage_persist[]
 
             // tag::datatype_usage_closedb[]
@@ -2127,7 +2130,7 @@ namespace api_walkthrough
             }
 
             // Create a mutable copy
-            var mutable_dict = dict.ToMutable();
+            var mutableDict = dict.ToMutable();
             // end::datatype_dictionary[]
         }
 
@@ -2137,14 +2140,14 @@ namespace api_walkthrough
 
             // tag::datatype_mutable_dictionary[]
             // Create a new mutable dictionary and populate some keys/values
-            var mutable_dict = new MutableDictionaryObject();
-            mutable_dict.SetString("street", "1 Main st.");
-            mutable_dict.SetString("city", "San Francisco");
+            var mutableDict = new MutableDictionaryObject();
+            mutableDict.SetString("street", "1 Main st.");
+            mutableDict.SetString("city", "San Francisco");
 
             // Add the dictionary to a document's properties and save the document
-            var doc = new MutableDocument("doc1");
-            doc.SetDictionary("address", mutable_dict);
-            collection.Save(doc);
+            using var mutableDoc = new MutableDocument("doc1");
+            mutableDoc.SetDictionary("address", mutableDict);
+            collection.Save(mutableDoc);
             // end::datatype_mutable_dictionary[]
         }
 
@@ -2170,7 +2173,7 @@ namespace api_walkthrough
             }
 
             // Create a mutable copy
-            var mutable_array = array.ToMutable();
+            var mutableArray = array.ToMutable();
             // end::datatype_array[]
         }
 
@@ -2180,14 +2183,14 @@ namespace api_walkthrough
 
             // tag::datatype_mutable_array[]
             // Create a new mutable array and populate data into the array
-            var mutable_array = new MutableArrayObject();
-            mutable_array.AddString("650-000-0000");
-            mutable_array.AddString("650-000-0001");
+            var mutableArray = new MutableArrayObject();
+            mutableArray.AddString("650-000-0000");
+            mutableArray.AddString("650-000-0001");
 
             // Set the array to document's properties and save the document
-            var doc = new MutableDocument("doc1");
-            doc.SetArray("phones", mutable_array);
-            collection.Save(doc);
+            using var mutableDoc = new MutableDocument("doc1");
+            mutableDoc.SetArray("phones", mutableArray);
+            collection.Save(mutableDoc);
             // end::datatype_mutable_array[]
         }
 
@@ -2218,11 +2221,11 @@ namespace api_walkthrough
             // end::message-endpoint[]
 
             // tag::message-endpoint-replicator[]
-            var config = new ReplicatorConfiguration(messageEndpointTarget);
-            config.AddCollection(database.GetDefaultCollection());
+            var replConfig = new ReplicatorConfiguration(messageEndpointTarget);
+            replConfig.AddCollection(database.GetDefaultCollection());
 
             // Create the replicator object
-            var replicator = new Replicator(config);
+            var replicator = new Replicator(replConfig);
             // Start the replicator
             replicator.Start();
             // end::message-endpoint-replicator[]
@@ -2238,6 +2241,7 @@ namespace api_walkthrough
         // end::create-connection[]
     }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
     class ActivePeerConnection : IMessageEndpointConnection
     {
         private IReplicatorConnection _replicatorConnection;
@@ -2288,6 +2292,7 @@ namespace api_walkthrough
         // end::active-peer-send[]
     }
 
+
     /* ----------------------------------------------------------- */
     /* ---------------------  PASSIVE SIDE  ---------------------- */
     /* ---------------  stubs for documentation  ----------------- */
@@ -2301,8 +2306,8 @@ namespace api_walkthrough
         {
             // tag::listener[]
             var database = new Database("mydb");
-            var config = new MessageEndpointListenerConfiguration(new[] { database.GetDefaultCollection() }, ProtocolType.MessageStream);
-            _messageEndpointListener = new MessageEndpointListener(config);
+            var endpointConfig = new MessageEndpointListenerConfiguration(new[] { database.GetDefaultCollection() }, ProtocolType.MessageStream);
+            _messageEndpointListener = new MessageEndpointListener(endpointConfig);
             // end::listener[]
         }
 
@@ -2366,6 +2371,8 @@ namespace api_walkthrough
         }
         // end::passive-peer-send[]
     }
+
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
 
     // tag::predictive-model[]
     // tensorFlowModel is a fake implementation
@@ -2561,7 +2568,7 @@ public class MyClass
         // initialize the replicator configuration
 
         var url = new URLEndpoint(new Uri("wss://10.0.2.2:4984/anotherDB")); // <.>
-        var config = new ReplicatorConfiguration(url);
+        var replConfig = new ReplicatorConfiguration(url);
         // Add collections to the config now
 
         // end::sgw-act-rep-initialize[]

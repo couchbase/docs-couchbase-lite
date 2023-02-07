@@ -12,21 +12,21 @@ include::{root-partials}_show_page_header_block.adoc[]
 To run a full-text search (FTS) query, you must create a full-text index on the expression being matched.
 Unlike regular queries, the index is not optional.
 
-ifndef::is-c[You can choose to use {sqlpp_cbm} or QueryBuilder syntaxes to create and use FTS indexes.]
+ifndef::is-c[You can choose to use {sqlpp} or QueryBuilder syntaxes to create and use FTS indexes.]
 
 The following examples use the data model introduced in {indexing--xref}.
 They create and use an FTS index built from the hotel's `Overview` text.
 
 ifdef::is-c[== Create Index]
 ifndef::is-c[]
-== {sqlpp_cbm}
+== {sqlpp}
 
 === Create Index
 endif::is-c[]
 
-N1QL provides a configuration object to define Full Text Search indexes -- `FullTextIndexConfiguration`.
+{sqlpp} provides a configuration object to define Full Text Search indexes -- `FullTextIndexConfiguration`.
 
-.Using N1QL's FullTextIndexConfiguration
+.Using {sqlpp}'s FullTextIndexConfiguration
 [#ex-indexbuilder]
 :param-tags: fts-index
 include::{root-partials}block_tabbed_code_example.adoc[]
@@ -35,7 +35,7 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 ifndef::is-c[=== Use Index]
 ifdef::is-c[== Use Index]
 
-FullTextSearch is enabled using the {sqlpp_cbm} match() function.
+FullTextSearch is enabled using the {sqlpp} match() function.
 
 With the index created, you can construct and run a Full-text search (FTS) query using the indexed properties.
 
@@ -44,7 +44,7 @@ See https://github.com/couchbasedeps/sqlite3-unicodesn/blob/HEAD/stopwords_en.h[
 
 The following example finds all hotels mentioning _Michigan_ in their _Overview_ text.
 
-.Using {sqlpp_cbm} Full Text Search
+.Using {sqlpp} Full Text Search
 [#ex-indexbuilder]
 :param-tags: fts-query
 include::{root-partials}block_tabbed_code_example.adoc[]
@@ -86,7 +86,7 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 
 // == Constructing a Query
 
-// FullTextSearch is enabled using the {sqlpp_cbm} match() function.
+// FullTextSearch is enabled using the {sqlpp} match() function.
 // With the index created, you can construct and run a Full-text search (FTS) query on the indexed properties.
 
 

@@ -1,0 +1,24 @@
+
+ext { CBL_VERSION='3.1.0-SNAPSHOT' }
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20"
+        classpath 'com.android.tools.build:gradle:7.3.1'
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+task smokeTest(dependsOn: [
+    ':GetStartedKotlin:app:clean', ':GetStartedJava:app:clean', ':kotlin_snippets:app:clean', ':java_snippets:app:clean',
+    ':GetStartedKotlin:app:compileDebugSources', ':GetStartedJava:app:compileDebugSources', ':kotlin_snippets:app:compileDebugSources', ':java_snippets:app:compileDebugSources',
+    ':GetStartedKotlin:app:lint', ':GetStartedJava:app:lint', ':java_snippets:app:lint', ':kotlin_snippets:app:lint'
+])
+
