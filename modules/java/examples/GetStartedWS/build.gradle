@@ -1,0 +1,51 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'org.gretty'
+
+ext {
+    CBL_VERSION = '3.1.0-SNAPSHOT'
+}
+
+def USE_LOCAL_MAVEN = project.hasProperty("useLocalMaven")
+
+buildscript {
+    repositories { mavenCentral() }
+    dependencies { classpath 'org.gretty:gretty:4.0.3' }
+}
+
+group 'com.couchbase.gettingstarted'
+version '3.1.0'
+
+java {
+    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_1_8
+}
+
+repositories {
+    if (USE_LOCAL_MAVEN) { mavenLocal() }
+    else {
+        maven {
+            url "https://proget.sc.couchbase.com/maven2/internalmaven/"
+            allowInsecureProtocol = true
+        }
+    }
+
+    mavenCentral()
+    google()
+}
+
+dependencies {
+    compileOnly 'androidx.annotation:annotation:1.5.0'
+
+    implementation "javax.servlet:javax.servlet-api:4.0.1"
+
+    implementation "com.couchbase.lite:couchbase-lite-java-ee-macos:${CBL_VERSION}"
+}
+
+gretty {
+    contextPath = '/'
+    //consoleLogEnabled = true
+    //consoleLogEnabled = true
+    fileLogEnabled = true
+}
+
