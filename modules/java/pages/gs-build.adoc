@@ -36,7 +36,7 @@ The {nmMobStarterApp} app demonstrates how to use {cblJP}. Console and Web App v
 [{tabs}]
 ====
 
-Console App::
+Desktop App::
 +
 --
 
@@ -47,14 +47,15 @@ Create, build and run a new project using the following `GettingStarted.java` co
 
 [source,java]
 ----
-include::example$getting-started/src/com/couchbase/gettingStarted/Main.java[tags=getting-started,indent=0]
+include::example$GetStartedDesktop/src/main/java/com/couchbase/gettingstarted/Main.java[tags=getting-started,indent=0]
 ----
 
+<.> Initialize the library
 <.> Create a database
-<.> Create a mutable document
-<.> Save document to database
-<.> Retrieve the document as mutable and change the `language` to `Java` and save it
-<.> Retrieve document as immutable and log it ID
+<.> Create a collection
+<.> Create a new document
+<.> Retrieve document and log its ID
+<.> Retrieve the document as mutable and change the `language` to `Kotlin` and save it
 <.> Query the database output count and id to log
 <.> Optionally, initiate a replication
 
@@ -74,54 +75,32 @@ This section explains how to set-up a build project to create {cblJP} web apps u
 
 *Steps*
 
-. Create a new project folder and add a `build.gradle` file containing the following:
+. Create a new project folder and add a `build.gradle` file similar to this one.
 +
 [source,groovy,subs=attributes+]
 ----
-include::{snippet}[tags=GsEmbeddedTomcatBuildGradle,indent=0]
+include::example$GetStartedWS/build.gradle.sample
 ----
 
 . Within {gpIDE}, open the new project folder
 +
 If you don't have auto-import enabled, then accept the *Import from Gradle* prompt that appears at the bottom right of the screen.
-. Create a Java class _GettingStarted_ using this code:
+. Create a Java class _DBManager_ using this code:
 +
 [source, java]
 
 ----
-include::{snippet}[tags=GsWebApp_GettingStarted,indent=0]
+include::example$GetStartedWS/src/main/java/com/couchbase/gettingstarted/DBManager.java[tags=getting-started,indent=0]
 ----
-+
-<1> It is advisable to set a specific directory path for the database.
-<2> The app will start a replicator pointing to `ws://localhost:4984/db`, where `db` is the name of your {sg} database
-+
-. Create a Java class _Listener_ using this code:
-+
-[source, java]
 
-----
-include::{snippet}[tags=GsWebApp_Listener,indent=0]
-----
-+
-
-. Create a Java class _Database Manager_ using this code:
-+
-[source, java]
-
-----
-include::{snippet}[tags=GsWebApp_DbManager,indent=0]
-----
-+
-<1> This is the only API that differs from the {android} version. It accepts no parameters and should be called once only
-<2> It is advisable to set a specific directory path for the database.
-<3> You can optionally AES-256 encrypt the database by providing a key
+. Create a Servlet similar to the one found in the example GettingStartedServlet
 +
 . Create an `index.html` file in `src/main/web app` with the following content:
 +
 [source, html]
 
 ----
-include::{snippet}[tags=GsWebApp_Index,indent=0]
+include::example$GetStartedWS/src/main/webapp/index.html
 ----
 
 . Create a `showDbItems.jsp` file in `src/main/web app` with the following content:
@@ -129,23 +108,26 @@ include::{snippet}[tags=GsWebApp_Index,indent=0]
 [source, html]
 
 ----
-include::{snippet}[tags=GsWebApp_ShowDbItems,indent=0]
+include::example$GetStartedWS/src/main/webapp/showDbItems.jsp
 ----
 
-. Build, deploy and run the app using `tomcatRun`
+. Build, deploy and run the app using `jettyRun`
 +
+// !!!GBM: THIS IMAGE PROBABLY NEEDS UPDATING
 image::GradleMenuWebApp.png[,300]
 
-.. Point your browser to: `localhost:8080/gettingstarted`
+.. Point your browser to: `localhost:8080/'
 +
 This opens the browser at your index.html page.
 ..  Select the *here* link
 +
 This launches the servlet and displays the results in `showdDbItems.jsp`.
-They are also added to the _catalina.out_ log file.
-
 
 --
+
+
+// !!!GBM: I DON"T THINK THIS SHOULD BE A TAB
+// It seems like it ought to be just text under the tabbed section.
 
 +
 About the Starter App::
@@ -166,6 +148,7 @@ TIP: Explicitly state your required database location when creating your databas
 * Start a one-shot, bi-directional replication using {sg} and {svr}
 * Produce a simple report on the db Contents
 +
+// !!!GBM: THIS IMAGE PROBABLY NEEDS UPDATING
 image::java:cblOutput.png[,400]
 
 NOTE: Before starting your app ensure you have started both your {svr} and {sg} instances.
