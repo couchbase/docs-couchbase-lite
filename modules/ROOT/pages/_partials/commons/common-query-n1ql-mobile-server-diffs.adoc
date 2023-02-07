@@ -31,25 +31,35 @@ h| Feature
 h| {sqlpp} for Couchbase Server
 h| {sqlpp} for Mobile
 
+| Scopes and Collections
+| SELECT * + 
+FROM \`travel-sample`.inventory.airport
+| SELECT * +
+FROM inventory.airport
+
 | USE KEYS
-| SELECT fname, email FROM tutorial USE KEYS ("dave", "ian");
+| SELECT fname, email FROM tutorial USE KEYS ["dave", "ian"];
 | SELECT fname, email FROM tutorial WHERE meta().id IN ("dave", "ian");
 
 | ON KEYS
-| SELECT * FROM user u +
-JOIN orders o ON KEYS ARRAY s.order_id FOR s IN u.order_history END;
+| SELECT * +
+FROM \`user` u +
+JOIN orders o ON KEYS ARRAY s.order_id +
+FOR s IN u.order_history END;
 | SELECT * FROM user u, u.order_history s +
 JOIN orders o ON s.order_id = meta(o).id;
 
 | ON KEY
-| SELECT * FROM user u +
+| SELECT * +
+FROM \`user` u
 JOIN orders o ON KEY o.user_id FOR u;
 | SELECT * FROM user u +
 JOIN orders o ON meta(u).id = o.user_id;
 
 | NEST
-| SELECT * FROM user u +
-NEST orders orders +
+| SELECT * +
+FROM \`user` u
+NEST orders orders
 ON KEYS ARRAY s.order_id FOR s IN u.order_history END;
 | NEST/UNNEST not supported
 
