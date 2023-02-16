@@ -25,18 +25,18 @@ NOTE: The examples used in this topic are based on the _Travel Sample_ app and d
 
 == Introduction
 
-Developers using Couchbase Lite for {param-title} can provide {sqlpp_cbm} query strings using the {sqlpp_cbm} Query API.
+Developers using Couchbase Lite for {param-title} can provide {sqlpp} query strings using the {sqlpp} Query API.
 This API uses query statements of the form shown in <<ex-query-form>>.
 
-The structure and semantics of the query format are based on that of Couchbase Server's {sqlpp_cbm} query language -- see {svr-n1ql-reference--xref} and {svr-n1ql-datamodel--xref}.
+The structure and semantics of the query format are based on that of Couchbase Server's {sqlpp} query language -- see {svr-n1ql-reference--xref} and {svr-n1ql-datamodel--xref}.
 
 
 == Running
 
-Use the N1QLQuery class to define the {sqlpp_cbm} query string on the database to be queried.
+Use the N1QLQuery class to define the {sqlpp} query string on the database to be queried.
 Then run the query using the`.execute()` method -- see {query-resultsets--xref} for how to work with result sets.
 
-.Running a {sqlpp_cbm} Query
+.Running a {sqlpp} Query
 [#ex-samplerun]
 :param-tags: query-syntax-n1ql
 include::partial$block_tabbed_code_example.adoc[]
@@ -53,31 +53,51 @@ The API uses query statements of the form shown in <<ex-query-form>>.
 ====
 [source, SQL, subs="+attributes, +macros"]
 ----
-SELECT {blank-field} // <.>
-FROM 'database' // <.>
-WHERE {blank-field}, // <.>
-JOIN {blank-field} // <.>
-GROUP BY {blank-field} // <.>
-ORDER BY {blank-field} // <.>
-LIMIT {blank-field} // <.>
-OFFSET {blank-field} // <.>
+SELECT {blank-field} 
+FROM 'data-source' 
+WHERE {blank-field}, 
+JOIN {blank-field} 
+GROUP BY {blank-field} 
+ORDER BY {blank-field} 
+LIMIT {blank-field} 
+OFFSET {blank-field} 
 
 ----
 
-Query Components::
-<.> The <<lbl-select>> specifies the properties to be returned in the result set
-<.> <<lbl-from>> specifies the data source to be queried
-<.> <<lbl-where>> specifies the query criteria. +
-The `SELECT`ed properties of documents matching this criteria will be returned in the result set
-<.> <<lbl-join>> specifies the criteria for joining multiple documents
-<.> <<lbl-group>> specifies the criteria used to group returned items in the result set
-<.> <<lbl-order>> specifies the criteria used to order the items in the result set
-<.> <<lbl-limit>> specifies the maximum number of results to be returned
-<.> <<lbl-offset>> specifies the number of results to be skipped before starting to return results
 ====
 
-TIP: We recommend working through the {url-n1ql-tutorial} as a good way to build your {sqlpp_cbm} skills.
+Query Components::
+|====
+| Component | Description
 
+| <<lbl-select>> 
+a| The document properties that will be returned in the result set 
+
+| FROM 
+a| The data source to be queried
+
+ | <<lbl-where>> 
+a| The query criteria +
+The `SELECT`ed properties of documents matching this criteria will be returned in the result set
+
+| <<lbl-join>> 
+a| The criteria for joining multiple documents
+
+| <<lbl-group>> 
+a| The criteria used to group returned items in the result set
+
+| <<lbl-order>> 
+a| The criteria used to order the items in the result set
+
+| <<lbl-limit>> 
+a| The maximum number of results to be returned
+
+| <<lbl-offset>> 
+a| The number of results to be skipped before starting to return results
+|====
+
+
+TIP: We recommend working through the {url-n1ql-tutorial} to build your {sqlpp} skills.
 
 
 [#lbl-select]
@@ -88,7 +108,7 @@ Projects the result returned by the query, identifying the columns it will conta
 
 === Syntax
 
-.N1QL Select Syntax
+.{sqlpp} Select Syntax
 ====
 [source, sql]
 ----
@@ -118,12 +138,12 @@ You can use the wildcard *** to select all columns -- see <<Select Wildcard>>
 <.> Use the optional `AS` argument to provides an alias name for a property. Each property can be aliased by putting the `AS <alias name>` after the column name.
 
 ==== Select Wildcard
-When using the `SELECT *` option the column name (key) of the {sqlpp_cbm} string is one of:
+When using the `SELECT *` option the column name (key) of the {sqlpp} string is one of:
 
 * The alias name if one was specified
 * The data source name (or its alias if provided) as specified in the `FROM` clause.
 
-This behavior is inline with that of Couchbase Server {sqlpp_cbm} -- see example in <<tbl-selstar>>.
+This behavior is inline with that of Couchbase Server {sqlpp} -- see example in <<tbl-selstar>>.
 
 
 .Example Column Names for SELECT ***
@@ -955,7 +975,7 @@ In this section::
 |===
 
 ^1^ If both operands are integers, integer division is  used, but if one is a floating number, then float division is used.
-This differs from Server N1QL, which performs float division regardless. Use `DIV(x, y)` to force float division in CBL N1QL
+This differs from Server {sqlpp}, which performs float division regardless. Use `DIV(x, y)` to force float division in CBL {sqlpp}
 
 [#lbl-comp-ops]
 ==== Comparison Operators
@@ -1119,14 +1139,14 @@ Logical operators combine expressions using the following Boolean Logic Rules:
 
 [NOTE]
 --
-This is different from Server N1QL, where:
+This is different from Server {sqlpp}, where:
 
 * MISSING, NULL and FALSE are FALSE
 * Numbers 0 is FALSE
 * Empty strings, arrays, and objects are FALSE
 * All other values are TRUE
 
-TIP: Use TOBOOLEAN(expr) function to convert a value based on Server {sqlpp_cbm} boolean value rules,
+TIP: Use TOBOOLEAN(expr) function to convert a value based on Server {sqlpp} boolean value rules,
 --
 
 .Logical Operators
@@ -1244,7 +1264,7 @@ If an operand is NULL, the operation will result in NULL if the other operand is
 |===
 
 [NOTE]
-This differs from Server {sqlpp_cbm} in the following instances: +
+This differs from Server {sqlpp} in the following instances: +
  ^5-1^ Server will return: NULL instead of FALSE +
  ^5-2^ Server will return: MISSING instead of FALSE +
  ^5-3^ Server will return: NULL instead of MISSING +
@@ -1348,7 +1368,7 @@ It allows for one or more collations.
 
 If multiple collations are used, the collations need to be specified in a parenthesis. When only one collation is used, the parenthesis is optional.
 
-NOTE: Collate is not supported by Server N1QL
+NOTE: Collate is not supported by Server {sqlpp}
 
 ==== Syntax
 
@@ -1367,7 +1387,7 @@ collation = NO? (UNICODE | CASE | DIACRITICS) WB <.>
 * UNICODE: Conduct a Unicode comparison; the default is to do ASCII comparison.
 * CASE: Conduct case-sensitive comparison
 * DIACRITIC: Take account of accents and diacritics in the comparison; On by default.
-* NO: This can be used as a prefix to the other collations, to disable thm (for example: `NOCASE` to enable case-insensitive comparison)
+* NO: This can be used as a prefix to the other collations, to disable them (for example: `NOCASE` to enable case-insensitive comparison)
 
 --
 
@@ -1743,7 +1763,7 @@ The function uses _Rounding to Nearest Even_ (Banker’s Rounding) convention wh
 
 |===
 
-^*^ The behavior of the ROUND() function is different from Server {sqlpp_cbm} ROUND(), which rounds the midpoint values using _Rounding to Nearest Even_ convention.
+^*^ The behavior of the ROUND() function is different from Server {sqlpp} ROUND(), which rounds the midpoint values using _Rounding to Nearest Even_ convention.
 
 
 
@@ -1952,7 +1972,7 @@ ifndef::is-c[]
 // Section not valid for C
 == QueryBuilder Differences
 
-Couchbase Lite {sqlpp_cbm} Query supports all QueryBuilder features, except _Predictive Query_ and _Index_. See <<tbl-qbldr-diffs>> for the features supported by {sqlpp_cbm} but not by QueryBuilder.
+Couchbase Lite {sqlpp} Query supports all QueryBuilder features, except _Predictive Query_ and _Index_. See <<tbl-qbldr-diffs>> for the features supported by {sqlpp} but not by QueryBuilder.
 
 
 .QueryBuilder Differences
@@ -2013,11 +2033,11 @@ endif::is-c[]
 [#lbl-query-params]
 == Query Parameters
 
-You can provide runtime parameters to your {sqlpp_cbm} query to make it more flexible.
+You can provide runtime parameters to your {sqlpp} query to make it more flexible.
 
 To specify substitutable parameters within your query string prefix the name with *`$`*, `$type` -- see: <<ex-sample-params>>.
 
-.Running a {sqlpp_cbm} Query
+.Running a {sqlpp} Query
 [#ex-sample-params]
 :param-tags: query-syntax-n1ql-params
 include::partial$block_tabbed_code_example.adoc[]

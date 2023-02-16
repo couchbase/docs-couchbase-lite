@@ -1,4 +1,4 @@
-// :description: A comparison between {sqlpp_cbm} for Mobil and {sqlpp} for Server.
+// :description: A comparison between {sqlpp} for Mobil and {sqlpp} for Server.
 // :page-edition: Enterprise Edition
 //
 // // BEGIN::REQUIRED EXTERNALS
@@ -15,21 +15,27 @@ include::{root-partials}block-caveats.adoc[tag="N1QL-SQL"]
 
 // == Introduction
 
-There are several minor but notable behavior differences between _{sqlpp_cbm} for Mobile_ queries and _{sqlpp} for Server_, as shown in  <<tbl-diffs>>.
+There are several minor but notable behavior differences between _{sqlpp} for Mobile_ queries and _{sqlpp} for Server_, as shown in  <<tbl-diffs>>.
 
-In some instances, if required, you can force {sqlpp_cbm} for Mobile to work in the same way as {sqlpp} for Server.
+In some instances, if required, you can force {sqlpp} for Mobile to work in the same way as {sqlpp} for Server.
 These instances are listed below.
 
-.{sqlpp_cbm} Query Comparison
+.{sqlpp} Query Comparison
 [#tbl-diffs, cols="^1,2a,2a, options="header"]
 |===
 
 |
-2+^h|{sqlpp_cbm} Comparison
+2+^h|{sqlpp} Comparison
 
 h| Feature
 h| {sqlpp} for Couchbase Server
-h| {sqlpp_cbm} for Mobile
+h| {sqlpp} for Mobile
+
+| Scopes and Collections
+| SELECT * + 
+FROM \`travel-sample`.inventory.airport
+| SELECT * +
+FROM inventory.airport
 
 | Scopes and Collections
 | SELECT * + 
@@ -117,7 +123,7 @@ The ordering of _Dictionary_ and _Array_ objects is based on binary ordering.
 
 [,cols="1a,1a", options="header"]
 |===
-^| {sqlpp} for Couchbase Server ^| {sqlpp_cbm} for Mobile
+^| {sqlpp} for Couchbase Server ^| {sqlpp} for Mobile
 
 
 |Couchbase Server operates in the same way as Couchbase Lite, except:
@@ -129,7 +135,7 @@ The ordering of _Dictionary_ and _Array_ objects is based on binary ordering.
 
 You can choose to use _Couchbase Server's {sqlpp} rules_ by using the `TOBOOLEAN(expr)` function to convert a value to its boolean value.
 
-|{sqlpp_cbm} for Mobile's boolean logic rules are based on SQLite’s, so:
+|{sqlpp} for Mobile's boolean logic rules are based on SQLite’s, so:
 
 * TRUE is TRUE, and FALSE is FALSE
 * Numbers 0 or 0.0 are FALSE
@@ -143,11 +149,11 @@ You can choose to use _Couchbase Server's {sqlpp} rules_ by using the `TOBOOLEAN
 
 === Logical Operations
 
-In {sqlpp_cbm} for Mobile logical operations will return one of three possible values; `TRUE`, `FALSE`, or `MISSING`.
+In {sqlpp} for Mobile logical operations will return one of three possible values; `TRUE`, `FALSE`, or `MISSING`.
 
 Logical operations with the `MISSING` value could result in `TRUE` or `FALSE` if the result can be determined regardless of the missing value, otherwise the result will be `MISSING`.
 
-In {sqlpp_cbm} for Mobile -- unlike {sqlpp} for Server -- `NULL` is implicitly converted to `FALSE` before evaluating logical operations.
+In {sqlpp} for Mobile -- unlike {sqlpp} for Server -- `NULL` is implicitly converted to `FALSE` before evaluating logical operations.
 <<tbl-logops>> summarizes the result of logical operations with different operand values and also shows where the Couchbase Server behavior differs.
 
 .Logical Operations Comparison
@@ -156,7 +162,7 @@ In {sqlpp_cbm} for Mobile -- unlike {sqlpp} for Server -- `NULL` is implicitly c
 
 .2+.>h| Operand +
 a
-3+h| {sqlpp_cbm} for Mobile
+3+h| {sqlpp} for Mobile
 3+h| {sqlpp} for Server
 
 h| b
@@ -305,9 +311,9 @@ h| a OR b
 |===
 
 == CRUD Operations
-{sqlpp_cbm} for Mobile only supports Read or Query operations.
+{sqlpp} for Mobile only supports Read or Query operations.
 
-{sqlpp_cbm} for Server fully supports CRUD operation.
+{sqlpp} for Server fully supports CRUD operation.
 
 == Functions
 
@@ -315,11 +321,11 @@ h| a OR b
 
 [,colse="1a,1a", options="header"]
 |===
-^| {sqlpp} for Server ^| {sqlpp_cbm} for Mobile
+^| {sqlpp} for Server ^| {sqlpp} for Mobile
 
 | {sqlpp} for Server always performs float division regardless of the types of the operands.
 
-You can force this behavior in {sqlpp_cbm} for Mobile by using the `DIV(x, y)` function.
+You can force this behavior in {sqlpp} for Mobile by using the `DIV(x, y)` function.
 
 |The operand types determine the
  division operation performed. +
@@ -331,7 +337,7 @@ If one is a floating number, then float division is used.
 === Round Function
 [,cols="1a,1a", options="header"]
 |===
-^| {sqlpp} for Server ^| {sqlpp_cbm} for Mobile
+^| {sqlpp} for Server ^| {sqlpp} for Mobile
 
 | {sqlpp} for Server `ROUND()` uses the _Rounding to Nearest Even_ convention (for example, `ROUND(1.85)` returns 1.8).
 
@@ -346,4 +352,4 @@ You can force this behavior in Couchbase Lite by using the `ROUND_EVEN()` functi
 
 
 
-// END --- inclusion -- common-query-{sqlpp_cbm}-mobile.adoc
+// END --- inclusion -- common-query-{sqlpp}-mobile.adoc

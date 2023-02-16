@@ -1,0 +1,54 @@
+plugins {
+    id 'com.android.application'
+}
+
+// Set true to use mavenLocal instead of Proget
+def USE_LOCAL_MAVEN = project.hasProperty("useLocalMaven")
+
+android {
+    namespace "com.couchbase.android.getstarted.java"
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.couchbase.android.getstarted.java"
+        minSdk 26
+        targetSdk 33
+        versionCode 3
+        versionName "3.1"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+}
+
+repositories {
+    if (USE_LOCAL_MAVEN) { mavenLocal() }
+    else {
+        maven {
+            url "https://proget.sc.couchbase.com/maven2/internalmaven/"
+            allowInsecureProtocol = true
+        }
+    }
+    google()
+    mavenCentral()
+}
+
+dependencies {
+    // Simple view
+    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.android.material:material:1.8.0'
+
+    // Couchbase
+    implementation "com.couchbase.lite:couchbase-lite-android-ee:${CBL_VERSION}"
+}
+

@@ -27,10 +27,15 @@
 
 == Introduction
 // tag::overview[]
-Before we begin querying documents, let's briefly mention the importance of having an appropriate and balanced approach to indexes.
+Querying documents using a pre-existing database index is much faster because an index narrows down the set of documents to examine -- see: the {query-troubleshooting--xref} topic.
 
-Creating indexes can speed up the performance of queries.
-A query will typically return results more quickly if it can take advantage of an existing database index to search, narrowing down the set of documents to be examined.
+When planning the indexes you need for your database, remember that while indexes make queries faster, they may also:
+
+* Make writes slightly slower, because each index must be updated whenever a document is updated
+* Make your Couchbase Lite database slightly larger.
+
+Too many indexes may hurt performance.
+Optimal performance depends on designing and creating the _right_ indexes to go along with your queries.
 
 include::{root-partials}block-caveats.adoc[tag=index-partial-value]
 
@@ -39,10 +44,10 @@ include::{root-partials}block-caveats.adoc[tag=index-partial-value]
 
 == Creating a new index
 
-You can use {sqlpp_cbm} or QueryBuilder syntaxes to create an index
+You can use {sqlpp} or QueryBuilder syntaxes to create an index
 
 // === N1QL
-// {sqlpp_cbm} provides a configuration object to define indexes --
+// {sqlpp} provides a configuration object to define indexes --
 // `ValueIndexConfiguration`.
 
 // The following example inserts documents and creates an FTS index on the `name and type` properties.
@@ -77,7 +82,7 @@ You can use {sqlpp_cbm} or QueryBuilder syntaxes to create an index
 ----
 ====
 
-=== N1QL
+=== {sqlpp}
 
 The code to create the index will look something like this:
 
@@ -91,6 +96,8 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 ifndef::is-c[]
 === QueryBuilder
 
+TIP: See the {querybuilder--xref} topic to learn more about QueryBuilder.
+
 The code to create the index will look something like this:
 
 .Create index with QueryBuilder
@@ -102,12 +109,6 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 
 endif::is-c[]
 
-== Summary
 
-When planning the indexes you need for your database, remember that while indexes make queries faster, they may also:
 
-* Make writes slightly slower, because each index must be updated whenever a document is updated
-* Make your Couchbase Lite database slightly larger.
 
-So too many indexes may hurt performance.
-Optimal performance depends on designing and creating the _right_ indexes to go along with your queries.

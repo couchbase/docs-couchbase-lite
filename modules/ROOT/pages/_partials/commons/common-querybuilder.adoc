@@ -19,73 +19,57 @@
 
 // END::Local page attributes
 
-NOTE: The examples used in this topic are based on the _Travel Sample_ app and data introduced in the {couchbase-tutorials--mobile-workshop--xref} tutorial
+NOTE: The examples used here are based on the _Travel Sample_ app and data introduced in the {couchbase-tutorials--mobile-workshop--xref} tutorial
 
 == Introduction
 
-Couchbase Lite for {param-title} provides two ways to build and run database queries; the QueryBuilder API described in this topic and the {query-n1ql-mobile--xref}.
+Couchbase Lite for {param-title} provides two ways to build and run database queries; the QueryBuilder API described in this topic and {query-n1ql-mobile--xref}.
 
-Database queries defined with the QueryBuilder API use query statements of the form shown in <<ex-query-form>>.
-The structure and semantics of the query format are based on that of Couchbase's xref:server:learn:data/n1ql-versus-sql.adoc[{sqlpp_cbm} query language].
+Database queries defined with the QueryBuilder API use the query statement format shown in <<ex-query-form>>.
+The structure and semantics of the query format are based on Couchbase's xref:server:learn:data/n1ql-versus-sql.adoc[{sqlpp} query language].
+
 
 [#ex-query-form]
 .Query Format
 ====
 [source, SQL, subs="+attributes, +macros"]
 ----
-SELECT {blank-field} // <.>
-FROM 'database' // <.>
-WHERE {blank-field}, // <.>
-JOIN {blank-field} // <.>
-GROUP BY {blank-field} // <.>
-ORDER BY {blank-field} // <.>
+SELECT {blank-field}  
+FROM 'data-source'  
+WHERE {blank-field},  
+JOIN {blank-field}  
+GROUP BY {blank-field}  
+ORDER BY {blank-field}  
 ----
 
-Query Components::
-<.> The <<lbl-select>> specifies the document properties that will be returned in the result set
-<.> FROM specifies the database to query the documents from
-<.> <<lbl-where>> specifies the query criteria. +
-The `SELECT`ed properties of documents matching this criteria will be returned in the result set
-<.> <<lbl-join>> specifies the criteria for joining multiple documents
-<.> <<lbl-group>> specifies the criteria used to group returned items in the result set
-<.> <<lbl-order>> specifies the criteria used to order the items in the result set
 ====
+Query Components::
+|====
+| Component | Description
+
+| <<lbl-select>> 
+a| The document properties that will be returned in the result set 
+
+| FROM 
+a| The data source to query the documents from - the collection of the database.
+
+ | <<lbl-where>> 
+a| The query criteria +
+The `SELECT`ed properties of documents matching this criteria will be returned in the result set
+
+| <<lbl-join>> 
+a| The criteria for joining multiple documents
+
+| <<lbl-group>> 
+a| The criteria used to group returned items in the result set
+
+| <<lbl-order>> 
+a| The criteria used to order the items in the result set
+|====
+
 
 TIP: We recommend working through the query section of the {couchbase-tutorials--mobile-workshop--xref} tutorial as a good way to build your skills in this area.
 
-
-== Indexing
-
-
-TIP: See the {indexing--xref} topic to learn more about indexing.
-
-Before we begin querying documents, let's briefly mention the importance of having a query index.
-A query can only be fast if there's a pre-existing database index it can search to narrow down the set of documents to examine -- see: <<ex-indexing>>, which shows how to create an index, and also the {query-troubleshooting--xref} topic.
-
-TIP: See the {indexing--xref} topic to learn more about indexing.
-
-A query can only be fast if there's a pre-existing database index it can search to narrow down the set of documents to examine -- see: <<ex-indexing>>, which shows how to create an index and our {query-troubleshooting--xref} topic.
-
-However, every index has to be updated whenever a document is updated.
-So too many indexes can hurt performance.
-
-Good performance depends on designing and creating the _right_ indexes to go along with your queries.
-
-
-[#ex-indexing]
-.Creating a New Index
-:param-tags: query-index
-:param-leader: This example creates a new index for the `type` and `name` properties in the <<ex-data-format>>.
-include::{root-partials}block_tabbed_code_example.adoc[]
-:param-tags!:
-:param-leader!:
-
-[#ex-data-format]
-.Data Model
-[{json-snippet}]
-----
-include::{root-examples}query-snippets.adoc[tags=query-result-format-props]
-----
 
 
 [#lbl-select]
@@ -123,8 +107,8 @@ The query.execute statement returns the results in a dictionary, where the key i
 ----
 include::{root-examples}query-snippets.adoc[tags=query-result-format-all]
 ----
-<.> Here we see the result for the first document matching the query criteria.
-<.> Here we see the result for the next document matching the query criteria.
+<.> The result for the first document matching the query criteria.
+<.> The result for the next document matching the query criteria.
 
 ====
 
@@ -133,7 +117,7 @@ See: <<lbl-resultsets>> for more on processing query results.
 
 [#lbl-return-properties]
 === Return Selected Properties
-To access only specific properties, specify a comma separated list of `SelectResult` expressions, one for each property, in the select statement of your query  -- see: <<ex-select-properties>>
+To access only specific properties, specify a comma-separated list of `SelectResult` expressions, one for each property, in the select statement of your query  -- see: <<ex-select-properties>>
 
 [#ex-select-properties]
 .Using SELECT to Retrieve Specific Properties
@@ -153,8 +137,8 @@ The `query.execute` statement returns one or more key-value pairs, one for each 
 include::{root-examples}query-snippets.adoc[tags=query-result-format-props]
 
 ----
-<.> Here we see the result for the first document matching the query criteria.
-<.> Here we see the result for the next document matching the query criteria.
+<.> The result for the first document matching the query criteria.
+<.> The result for the next document matching the query criteria.
 
 ====
 
@@ -458,7 +442,7 @@ To unpack these result sets you need to iterate this array.
 === Select All Properties
 
 ==== Query
-The `Select` statement for this type of query, which returns all document properties for each document matching the query criteria, is fairly straightforward -- see <<ex-all-qry>>
+The `Select` statement for this type of query, returns all document properties for each document matching the query criteria -- see <<ex-all-qry>>
 
 .Query selecting All Properties
 [#ex-all-qry]
@@ -481,8 +465,8 @@ For each result object, the key is the database name and the 'value' is a dictio
 include::{root-examples}query-snippets.adoc[tags=query-result-format-all]
 
 ----
-<.> Here we see the result for the first document matching the query criteria.
-<.> Here we see the result for the next document matching the query criteria.
+<.> The result for the first document matching the query criteria.
+<.> The result for the next document matching the query criteria.
 
 ====
 
@@ -496,7 +480,7 @@ In this case access the retrieved document properties by converting each row's v
 include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
-<.> Here we get the dictionary of document properties using the database name as the key.
+<.> The dictionary of document properties using the database name as the key.
 You can add this dictionary to an array of returned matches, for processing elsewhere in the app.
 <.> Alternatively you can access the document properties here, by using the property names as keys to the dictionary object.
 
@@ -527,8 +511,8 @@ Each result object comprises a key-value pair for each selected document propert
 include::{root-examples}query-snippets.adoc[tags=query-result-format-props]
 
 ----
-<.> Here we see the result for the first document matching the query criteria.
-<.> Here we see the result for the next document matching the query criteria.
+<.> The result for the first document matching the query criteria.
+<.> The result for the next document matching the query criteria.
 ====
 
 ==== Result Set Access
@@ -607,7 +591,7 @@ The key is the count name, as defined using `SelectResult.as` -- see: <<ex-count
 include::{root-examples}query-snippets.adoc[tags=query-result-format-count]
 
 ----
-<.> Here we see the key-value pair returned by a count.
+<.> The key-value pair returned by a count.
 ====
 
 ==== Result Set Access

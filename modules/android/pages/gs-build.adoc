@@ -6,8 +6,8 @@ ifdef::prerelease[:page-status: {prerelease}]
 :description: Build and run a starter app to validate your install of Couchbase Lite on Android
 :keywords: edge nosql api android java
 
-:url-getting-started-ktx: https://github.com/couchbase/docs-couchbase-lite/tree/release/3.0/modules/android/examples/GetStarted_kotlin[Kotlin]
-:url-getting-started-java: https://github.com/couchbase/docs-couchbase-lite/tree/release/3.0/modules/android/examples/GetStarted_java[Java]
+:url-getting-started-ktx: https://github.com/couchbase/docs-couchbase-lite/tree/release/3.1/modules/android/examples/GetStartedKotlin[Kotlin]
+:url-getting-started-java: https://github.com/couchbase/docs-couchbase-lite/tree/release/3.1/modules/android/examples/GetStartedJava[Java]
 
 
 // DO NOT EDIT
@@ -23,7 +23,7 @@ include::{root-partials}_show_page_header_block.adoc[]
 == Introduction
 
 
-The Getting Started app is a very basic Android app comprising a simple activity, which runs a set of {cbl-te} CRUD functions, logging progress and output.
+The Getting Started app is a very basic Android app that uses a database manager singleton.
 
 You can access the `GettingStarted` project on github here: +
 {url-getting-started-ktx} |  {url-getting-started-java}
@@ -33,18 +33,13 @@ You can access the `GettingStarted` project on github here: +
 . Get the project and open it in Android Studio: {url-getting-started-ktx} |  {url-getting-started-java}
 . Build it
 . Run it
-+
-Android Studio's Logcat panel will show `INFO` output similar to that in <<img-output>>:
+. Push the "Run it!" Button
 . That's it.
 ****
 
 If you had problems, or just want more information on the app, there's more below.
 
-Those errors at the end of the run?
-They are because no Sync Gateway was running.
-That's optional code -- see below.
-Comment-it-out or remove it if you aren't planning on running {sgw-te}.
-
+// !!!GBM: THIS IMAGE NEEDS TO BE REPLACED
 [#img-output]
 .Logcat Output from Android Studio
 image::ROOT:getstarted-output-ktx.png[,600]
@@ -53,13 +48,14 @@ image::ROOT:getstarted-output-ktx.png[,600]
 == Getting Started App
 The Getting Started app shows examples of the essential Couchbase for Android CRUD operations, including:
 
+* Initialize the library
 * Create database
-* Create and save a document
+* Create collection
+* Create a document
 * Retrieve a document
 * Update a document
 * Query documents
-* Configure a replication
-* Initiate a replication
+* Create and run a replicator
 
 Whilst no exemplar of a real application, it will give you a good idea how to get started using Couchbase Lite.
 
@@ -69,15 +65,14 @@ Whilst no exemplar of a real application, it will give you a good idea how to ge
 
 . Create a new 'empty activity' project
  in Android Studio
-. Open the `MainActivity`
-. Delete the exiting generated content
-. Paste-in the code show in <<ex-test-code>>
+. Create a new Application class, similar to the GettingStartedApplication class
+. Copy the DBManager class to your project
+. Create a ViewModel and an Activity, like the ones in the sample
 . Build and run. +
-You should see the document ID and property printed to the console.
-The document was successfully persisted to the database.
+You should be able to create a document and persist it to the database.
 
 
-.Sample code to test install
+=== Sample Code in Detail
 [#ex-test-code]
 ====
 [{tabs}]
@@ -88,7 +83,7 @@ Kotlin::
 --
 [source, Kotlin]
 ----
-include::example$GetStarted_kotlin/app/src/main/java/com/example/getstarted_ktx/MainActivity.kt[tag="getting-started"]
+include::example$examples/GetStartedKotlin/app/src/main/java/com/couchbase/android/getstarted/java/DBManager.java[tag="getting-started"]
 ----
 --
 
@@ -97,17 +92,19 @@ Java::
 --
 [source, Java]
 ----
-include::example$GetStarted_java/app/src/main/java/com/example/getstarted_java/MainActivity.java[tag="getting-started"]
+include::example$examples/GetStartedJava/app/src/main/java/com/couchbase/android/getstarted/java/DBManager.java[tag="getting-started"]
 ----
 --
 
+
 =====
+<.> Initialize the Library
 <.> Create a database
-<.> Create a mutable document
-<.> Save document to database
-<.> Retrieve the document as mutable and change the `language` to `Java` and save it
-<.> Retrieve document as immutable and log it ID
-<.> Query the database output count and id to log
+<.> Create a collection
+<.> Create a new document
+<.> Retrieve document from the database collection and log it
+<.> Retrieve the document as mutable, change the `language` to `Kotlin` and update it
+<.> Query the collection for documents with language == "Java" and log the count
 <.> Optionally, initiate a replication
 ====
 
@@ -121,7 +118,7 @@ include::example$GetStarted_java/app/src/main/java/com/example/getstarted_java/M
 
 
 Mostly around Gradle and versions.
-You may find you need to change the project settings to use Java 11 for instance.
+You may find you need to change IDE Build Tools settings to use Java 11 for Gradle, for instance.
 
 Using this app with Sync Gateway and Couchbase Server obviously requires you have, or install, working versions of both.
 See also -- {sgw-install--xref}

@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+ext { CBL_VERSION='3.1.0-SNAPSHOT' }
+
+def USE_LOCAL_MAVEN = project.hasProperty("useLocalMaven")
+
+group 'com.couchbase'
+version '3.1.0'
+
+
+java {
+    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_1_8
+
+    application {
+        mainClassName = "com.couchbase.gettingstarted.Main"
+    }
+}
+
+repositories {
+    if (USE_LOCAL_MAVEN) { mavenLocal() }
+    else {
+        maven {
+            url "https://proget.sc.couchbase.com/maven2/internalmaven/"
+            allowInsecureProtocol = true
+        }
+    }
+  google()
+  mavenCentral()
+}
+ 
+dependencies {
+    compileOnly 'androidx.annotation:annotation:1.5.0'
+
+    print "CBL VERSION: ${CBL_VERSION}"
+
+    implementation "com.couchbase.lite:couchbase-lite-java-ee-macos:${CBL_VERSION}"
+
+    testImplementation 'junit:junit:4.13.2'
+}
+
+task appRun(type: JavaExec) {
+    group = "Execution"
+    description = "Run the main class with JavaExecTask"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.couchbase.gettingstarted.Main"
+}

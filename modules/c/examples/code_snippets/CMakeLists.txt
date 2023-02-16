@@ -13,6 +13,10 @@ if(DEFINED CBL_MACOS_ARCH)
     set(CMAKE_OSX_ARCHITECTURES ${CBL_MACOS_ARCH})
 endif()
 
+if(NOT DEFINED CBL_VERSION)
+    set(CBL_VERSION 3.1.0)
+endif()
+
 project(code-snippets)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -21,7 +25,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/out)
 
-find_package(CouchbaseLite 3.0.0 REQUIRED)
+find_package(CouchbaseLite ${CBL_VERSION} REQUIRED)
 
 add_executable(
     code-snippets

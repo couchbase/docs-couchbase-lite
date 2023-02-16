@@ -1,0 +1,98 @@
+// = Manage Scopes and Collections
+// :page-aliases: 
+// ifdef::show_edition[:page-edition: {release}]
+// ifdef::prerelease[:page-status: {prerelease}]
+// :page-role:
+// :description: Scopes and collections allow you to organize your documents within a database.
+
+[abstract]
+{description}
+
+
+[sidebar]
+.At a glance
+****
+
+**Use collections to organize your content in a database**
+
+For example, if your database contains travel information, airport documents can be assigned to an airports collection, hotel documents can be assigned to a hotels collection, and so on.
+
+* You can create up to 1000 collections per database. 
+* Document names must be unique within their collection.
+* Applications can be assigned per-collection access-rights.
+
+
+
+**Use scopes to group multiple collections** 
+
+Collections can be assigned to different scopes according to content-type or deployment-phase (for example, test versus production). 
+
+* You can create up to 1000 scopes per database. 
+* Collection names must be unique within their scope. 
+* Applications can be assigned per-scope access-rights so they can only access the scopes they require.
+
+****
+
+== Default Scopes and Collections
+
+Every database you create contains a default scope and a default collection named _default. 
+
+If you create a document in the database and don’t specify a specific scope or collection, it is saved in the default collection, in the default scope. 
+
+If you upgrade from a version of Couchbase Lite prior to 3.1, all existing data is automatically placed in the default scope and default collection.
+
+The default scope  and collection cannot be dropped. 
+
+
+
+== Create a Scope and Collection
+
+In addition to the default scope and collection, you can create your own scope and collection when you create a document.
+
+Naming conventions for collections and scopes:
+
+* Must be between 1 and 251 characters in length.
+* Can only contain the characters `A-Z`, `a-z`, `0-9`, and the symbols `_`, `-`, and `%`. 
+* Cannot start with `_` or `%`.
+* Scope names must be unique in databases. 
+* Collection names must be unique within a scope.
+
+NOTE: Scope and collection names are case sensitive.
+
+.Create a scope and collection
+:param-tags: scopes-manage-create-scope
+include::{root-partials}block_tabbed_code_example.adoc[]
+:param-tags!:
+
+
+== Index a Collection
+
+.Index a Collection
+:param-tags: scopes-manage-index-collection
+include::{root-partials}block_tabbed_code_example.adoc[]
+:param-tags!:
+
+
+== Drop a Scope
+
+.Drop a Scope
+:param-tags: scopes-manage-drop-scope
+include::{root-partials}block_tabbed_code_example.adoc[]
+:param-tags!:
+
+
+== Drop a Collection
+
+.Drop a Collection
+:param-tags: scopes-manage-drop-collection
+include::{root-partials}block_tabbed_code_example.adoc[]
+:param-tags!:
+
+
+== List Scopes and Collections
+
+.List Scopes and Collections
+:param-tags: scopes-manage-list
+include::{root-partials}block_tabbed_code_example.adoc[]
+:param-tags!:
+
