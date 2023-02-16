@@ -45,11 +45,13 @@ The most basic structure is to use the single default scope with a single defaul
 .Couchbase Lite Examples
 include::partial$diagram-definitions.adoc[tag=couchbase-lite-example-structure]
 
-If a scope is not explicitly referenced in calls to the database, then scope is assumed to `_default`. Likewise, if no collection name is given then then the `_default` collection is assumed.
+If a scope is not explicitly referenced in calls to the database, the `_default` scope is used. 
+
+If no collection name is given, the `_default` collection is used.
 
 .Storing local configuration
 ****
-It's likely that you will not need to sync all the data related for a particular application, in which case you can set up a scope that syncs data, and a second stop that doesn't.
+You may not need to sync all the data related for a particular application. You can set up a scope that syncs data, and a second scope that doesn't.
 
 One reason for doing this is to store local configuration data (such as the preferred screen orientation or keyboard layout). Since this information only relates to a particular device, there is no need to sync it:
 
@@ -119,7 +121,7 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 
 You are advised to incorporate the closing of all open databases into your application workflow.
 
-Closing a database is simple, just use {url-api-method-database-close} -- see: <<ex-dbclose>>.
+To close a database, use {url-api-method-database-close} -- see: <<ex-dbclose>>.
 This also closes
 ifndef::is-c[{fn-2-8}]
 active replications, listeners and-or live queries connected to the database.
