@@ -18,8 +18,18 @@
 package com.couchbase.codesnippets
 
 import com.couchbase.codesnippets.util.log
-import com.couchbase.lite.*
-import com.couchbase.lite.internal.utils.PlatformUtils
+import com.couchbase.lite.Conflict
+import com.couchbase.lite.ConflictResolver
+import com.couchbase.lite.CouchbaseLiteException
+import com.couchbase.lite.Database
+import com.couchbase.lite.Document
+import com.couchbase.lite.MutableDocument
+import com.couchbase.lite.Replicator
+import com.couchbase.lite.ReplicatorActivityLevel
+import com.couchbase.lite.ReplicatorConfigurationFactory
+import com.couchbase.lite.ReplicatorType
+import com.couchbase.lite.URLEndpoint
+import com.couchbase.lite.create
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -122,40 +132,6 @@ class OldReplicationExamples(private val database: Database) {
         repl.start()
         replicator = repl
         // end::replication-status[]
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun testDatabaseReplica() {
-        val config = DatabaseConfiguration()
-        val database1 = Database("mydb", config)
-        val database2 = Database("db2", config)
-
-        /* EE feature: code below might throw a compilation error
-           if it's compiled against CBL Android Community. */
-        // tag::database-replica[]
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.create(
-                database = database1,
-                target = DatabaseEndpoint(database2),
-                type = ReplicatorType.PULL
-            )
-        )
-
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        repl.start()
-        replicator = repl
-        // end::database-replica[]
-    }
-
-    @Throws(URISyntaxException::class)
-    fun testReplicationWithCustomConflictResolver() {
-        // tag::replication-conflict-resolver[]
-        val target = URLEndpoint(URI("ws://localhost:4984/mydatabase"))
-        val config = ReplicatorConfiguration(database, target)
-        config.conflictResolver = LocalWinsResolver
-        val replication = Replicator(config)
-        replication.start()
-        // end::replication-conflict-resolver[]
     }
 
     @Throws(CouchbaseLiteException::class)

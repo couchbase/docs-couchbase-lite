@@ -24,6 +24,8 @@ import com.couchbase.lite.CollectionConfigurationFactory
 import com.couchbase.lite.Conflict
 import com.couchbase.lite.ConflictResolver
 import com.couchbase.lite.CouchbaseLiteException
+import com.couchbase.lite.Database
+import com.couchbase.lite.DatabaseEndpoint
 import com.couchbase.lite.DocumentFlag
 import com.couchbase.lite.ListenerToken
 import com.couchbase.lite.Replicator
@@ -33,6 +35,7 @@ import com.couchbase.lite.SessionAuthenticator
 import com.couchbase.lite.URLEndpoint
 import com.couchbase.lite.newConfig
 import java.net.URI
+import java.net.URISyntaxException
 import java.security.KeyStore
 import java.security.cert.X509Certificate
 
@@ -386,5 +389,47 @@ class ReplicationExamples {
             thisReplicator = repl
         }
         // end::replication-pendingdocuments[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun testDatabaseReplication(srcCollections: Set<Collection>, targetDb: Database) {
+        // tag::database-replica[]
+        // This is an Enterprise feature:
+        // the code below will generate a compilation error
+        // if it's compiled against CBL Android Community Edition.
+        // Note: the target database must already contain the
+        //       source collections or the replication will fail.
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                target = DatabaseEndpoint(targetDb),
+                collections = mapOf(srcCollections to null),
+                type = ReplicatorType.PUSH
+            )
+        )
+
+        // Start the replicator
+        // (be sure to hold a reference somewhere that will prevent it from being GCed)
+        repl.start()
+        thisReplicator = repl
+        // end::database-replica[]
+    }
+
+    @Throws(URISyntaxException::class)
+    fun testReplicationWithCustomConflictResolver(srcCollections: Set<Collection>) {
+        // tag::replication-conflict-resolver[]
+
+        val collectionConfig = CollectionConfigurationFactory.newConfig(conflictResolver = LocalWinsResolver)
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
+                collections = mapOf(srcCollections to collectionConfig)
+            )
+        )
+
+        // Start the replicator
+        // (be sure to hold a reference somewhere that will prevent it from being GCed)
+        repl.start()
+        thisReplicator = repl
+        // end::replication-conflict-resolver[]
     }
 }

@@ -298,42 +298,6 @@ public class Examples {
         replicator.close();
     }
 
-    public void testDatabaseReplica(Collection collection) throws CouchbaseLiteException {
-        Database database2 = new Database(DB_NAME2);
-
-        /* EE feature: code below will throw a compilation error
-           if it's compiled against CBL Android Community. */
-        // tag::database-replica[]
-        DatabaseEndpoint targetDatabase = new DatabaseEndpoint(database2);
-        ReplicatorConfiguration replicatorConfig = new ReplicatorConfiguration(targetDatabase);
-        replicatorConfig.addCollection(collection, null);
-        replicatorConfig.setType(ReplicatorType.PUSH);
-
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        Replicator replicator = new Replicator(replicatorConfig);
-        replicator.start();
-        // end::database-replica[]
-
-        replicator.close();
-    }
-
-    public void testReplicationWithCustomConflictResolver(Collection collection) throws URISyntaxException {
-        // tag::replication-conflict-resolver[]
-        URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
-
-        CollectionConfiguration collectionConfig = new CollectionConfiguration()
-            .setConflictResolver(new LocalWinConflictResolver());
-
-        ReplicatorConfiguration config = new ReplicatorConfiguration(target);
-        config.addCollection(collection, collectionConfig);
-
-        Replicator replication = new Replicator(config);
-        replication.start();
-        // end::replication-conflict-resolver[]
-
-        replication.close();
-    }
-
     public void testSaveWithCustomConflictResolver(Collection collection) throws CouchbaseLiteException {
         // tag::update-document-with-conflict-handler[]
         Document doc = collection.getDocument("xyz");
