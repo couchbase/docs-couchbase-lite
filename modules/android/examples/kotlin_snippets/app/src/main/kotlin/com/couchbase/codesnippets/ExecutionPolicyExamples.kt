@@ -58,7 +58,7 @@ class InOrderExecutionExample {
                 .setContinuous(false)
         )
 
-        thisToken = repl.addChangeListener(IN_ORDER_EXEC) { change -> TODO() }
+        thisToken = repl.addChangeListener(IN_ORDER_EXEC) { TODO() }
 
         repl.start()
         thisReplicator = repl
@@ -90,7 +90,7 @@ class MaxThroughputExecutionExample {
                 .setType(ReplicatorType.PUSH_AND_PULL)
                 .setContinuous(false)
         )
-        thisToken = repl.addChangeListener(MAX_THROUGHPUT_EXEC) { change -> TODO() }
+        thisToken = repl.addChangeListener(MAX_THROUGHPUT_EXEC) { TODO() }
 
         repl.start()
         thisReplicator = repl
@@ -106,7 +106,7 @@ class PoliciedExecutionExample {
     companion object {
         private val CPUS = Runtime.getRuntime().availableProcessors()
         private val BACKUP_EXEC: AtomicReference<ThreadPoolExecutor> = AtomicReference()
-        private val BACKUP_EXECUTION = RejectedExecutionHandler { r, e ->
+        private val BACKUP_EXECUTION = RejectedExecutionHandler { r, _ ->
             val exec = BACKUP_EXEC.get()
             if (exec != null) {
                 exec.execute(r)
@@ -155,7 +155,7 @@ class PoliciedExecutionExample {
                 .setType(ReplicatorType.PUSH_AND_PULL)
                 .setContinuous(false)
         )
-        thisToken = repl.addChangeListener(STANDARD_EXEC) { change -> TODO() }
+        thisToken = repl.addChangeListener(STANDARD_EXEC) { TODO() }
         repl.start()
         thisReplicator = repl
     }

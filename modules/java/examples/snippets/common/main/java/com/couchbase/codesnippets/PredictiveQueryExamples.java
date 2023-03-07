@@ -53,12 +53,12 @@ public class PredictiveQueryExamples {
         }
     }
 
-    public class ImageClassifierModel implements PredictiveModel {
+    public static class ImageClassifierModel implements PredictiveModel {
         @Override
         public Dictionary predict(@NonNull Dictionary input) {
             Blob blob = input.getBlob("photo");
 
-            // tensorFlowModel is a fake implementationq
+            // tensorFlowModel is a fake implementation
             // this would be the implementation of the ml model you have chosen
             return (blob == null)
                 ? null
@@ -114,6 +114,4 @@ public class PredictiveQueryExamples {
         }
         // end::predictive-query[]
     }
-
-    private Collection getCollection() { return null; }
 }

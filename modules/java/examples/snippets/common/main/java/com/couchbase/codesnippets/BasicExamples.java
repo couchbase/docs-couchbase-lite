@@ -20,12 +20,6 @@ import com.couchbase.lite.LogDomain;
 import com.couchbase.lite.LogLevel;
 
 
-@SuppressWarnings({"unused", "ConstantConditions"})
-public class BasicExamples  {
-    public void troubleshootingExample() {
-        // tag::replication-logging[]
-        Database.log.getConsole().setDomains(LogDomain.REPLICATOR);
-        Database.log.getConsole().setLevel(LogLevel.VERBOSE);
-        // end::replication-logging[]
-    }
+@SuppressWarnings("unused")
+public class BasicExamples {
 }

@@ -35,7 +35,7 @@ import com.couchbase.lite.ReplicatorConfiguration;
 import com.couchbase.lite.ReplicatorType;
 
 
-@SuppressWarnings({"unused", "ConstantConditions"})
+@SuppressWarnings("unused")
 public class ExecutionPolicyExamples {
     private Replicator thisReplicator;
     private ListenerToken thisToken;
@@ -94,15 +94,15 @@ public class ExecutionPolicyExamples {
     private static final AtomicReference<ThreadPoolExecutor> BACKUP_EXEC = new AtomicReference<>();
 
     private static final RejectedExecutionHandler BACKUP_EXECUTION = (r, e) -> {
-            ExecutorService exec = BACKUP_EXEC.get();
-            if (exec != null) {
-                exec.execute(r);
-                return;
-            }
+        ExecutorService exec = BACKUP_EXEC.get();
+        if (exec != null) {
+            exec.execute(r);
+            return;
+        }
 
-            BACKUP_EXEC.compareAndSet(null, createBackupExecutor());
-            BACKUP_EXEC.get().execute(r);
-        };
+        BACKUP_EXEC.compareAndSet(null, createBackupExecutor());
+        BACKUP_EXEC.get().execute(r);
+    };
 
     private static ThreadPoolExecutor createBackupExecutor() {
         ThreadPoolExecutor exec = new ThreadPoolExecutor(

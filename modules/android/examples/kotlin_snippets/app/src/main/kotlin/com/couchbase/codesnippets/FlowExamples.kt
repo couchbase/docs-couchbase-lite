@@ -19,64 +19,63 @@ package com.couchbase.codesnippets
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
-import com.couchbase.lite.Database
+import com.couchbase.lite.Collection
 import com.couchbase.lite.DocumentChange
 import com.couchbase.lite.Query
 import com.couchbase.lite.Replicator
 import com.couchbase.lite.ReplicatorActivityLevel
-import com.couchbase.lite.databaseChangeFlow
+import com.couchbase.lite.Result
+import com.couchbase.lite.collectionChangeFlow
 import com.couchbase.lite.documentChangeFlow
 import com.couchbase.lite.queryChangeFlow
 import com.couchbase.lite.replicatorChangesFlow
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 
 
-class FlowExamples(
-    argDb: Database,
-    argRepl: Replicator,
-    argQuery: Query,
-    argDocOwner: String
-) {
+class FlowExamples {
 
-    // tag::flow-as-replicator-change-listener[]
-    val replState: LiveData<ReplicatorActivityLevel> = argRepl.replicatorChangesFlow()
-        .map { it.status.activityLevel }
-        .asLiveData()
+    fun replChangeFlowExample(repl: Replicator): LiveData<ReplicatorActivityLevel> {
+        // tag::flow-as-replicator-change-listener[]
+        return repl.replicatorChangesFlow()
+            .map { it.status.activityLevel }
+            .asLiveData()
+    }
 
-    // end::flow-as-replicator-change-listener[]
-    // tag::flow-as-database-change-listener[]
-    val dbChanges: LiveData<MutableList<String>> = argDb.databaseChangeFlow()
-        .map { it.documentIDs }
-        .asLiveData()
+    fun replChangeFlowExample(collection: Collection): LiveData<MutableList<String>> {
+        // end::flow-as-replicator-change-listener[]
+        // tag::flow-as-database-change-listener[]
+        return collection.collectionChangeFlow(null)
+            .map { it.documentIDs }
+            .asLiveData()
+    }
 
-    // end::flow-as-database-change-listener[]
-    // tag::flow-as-document-change-listener[]
-    val docChanges: LiveData<DocumentChange?> = argDb.documentChangeFlow("1001")
-        .map {
-            it.takeUnless {
-                it.database.getDocument(it.documentID)?.getString("owner").equals(argDocOwner)
+    fun docChangeFlowExample(collection: Collection, owner: String): LiveData<DocumentChange?> {
+        // end::flow-as-database-change-listener[]
+        // tag::flow-as-document-change-listener[]
+        return collection.documentChangeFlow("1001")
+            .mapNotNull { change ->
+                change.takeUnless {
+                    collection.getDocument(it.documentID)?.getString("owner").equals(owner)
+                }
             }
-        }
-        .asLiveData()
+            .asLiveData()
+    }
 
     // end::flow-as-document-change-listener[]
     // tag::flow-as-query-change-listener[]
-    var liveQuery: LiveData<List<Any>?>? = null
-
     @ExperimentalCoroutinesApi
-    fun watchQuery(query: Query): LiveData<List<Any>?> {
-        val queryFlow = query.queryChangeFlow()
-            .map {
-                val err = it.error
+    fun watchQuery(query: Query): LiveData<List<Result>> {
+        return query.queryChangeFlow()
+            .mapNotNull { change ->
+                val err = change.error
                 if (err != null) {
                     throw err
                 }
-                it.results?.allResults()?.flatMap { it.toList() }
+                change.results?.allResults()
             }
             .asLiveData()
-        liveQuery = queryFlow
-        return queryFlow
+        // end::flow-as-query-change-listener[]
     }
-    // end::flow-as-query-change-listener[]
 }
