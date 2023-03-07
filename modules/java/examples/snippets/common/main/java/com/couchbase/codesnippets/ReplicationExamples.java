@@ -15,6 +15,8 @@
 //
 package com.couchbase.codesnippets;
 
+import androidx.annotation.NonNull;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.KeyStore;
@@ -29,6 +31,8 @@ import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.Collection;
 import com.couchbase.lite.CollectionConfiguration;
 import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.DatabaseEndpoint;
 import com.couchbase.lite.DocumentFlag;
 import com.couchbase.lite.ListenerToken;
 import com.couchbase.lite.ReplicatedDocument;
@@ -41,7 +45,7 @@ import com.couchbase.lite.SessionAuthenticator;
 import com.couchbase.lite.URLEndpoint;
 
 
-@SuppressWarnings({"unused", "ConstantConditions"})
+@SuppressWarnings({"unused"})
 public class ReplicationExamples {
     private Replicator thisReplicator;
     private ListenerToken thisToken;
@@ -372,5 +376,41 @@ public class ReplicationExamples {
         }
         // end::replication-pendingdocuments[]
     }
+
+    public void testDatabaseReplicator(@NonNull Set<Collection> srcCollections, @NonNull Database targetDb) {
+        // tag::database-replica[]
+        // This is an Enterprise feature:
+        // the code below will generate a compilation error
+        // if it's compiled against CBL Android Community Edition.
+        // Note: the target database must already contain the
+        //       source collections or the replication will fail.
+        final Replicator repl = new Replicator(
+            new ReplicatorConfiguration(new DatabaseEndpoint(targetDb))
+                .addCollections(srcCollections, null)
+                .setType(ReplicatorType.PUSH));
+
+        // Start the replicator
+        // (be sure to hold a reference somewhere that will prevent it from being GCed)
+        repl.start();
+        thisReplicator = repl;
+        // end::database-replica[]
+    }
+
+    public void testReplicationWithCustomConflictResolver(Set<Collection> srcCollections, URI targetUri) {
+        // tag::replication-conflict-resolver[]
+        Replicator repl = new Replicator(
+            new ReplicatorConfiguration(new URLEndpoint(targetUri))
+                .addCollections(
+                    srcCollections,
+                    new CollectionConfiguration()
+                        .setConflictResolver(new LocalWinConflictResolver())));
+
+        // Start the replicator
+        // (be sure to hold a reference somewhere that will prevent it from being GCed)
+        repl.start();
+        thisReplicator = repl;
+        // end::replication-conflict-resolver[]
+    }
 }
+
 
