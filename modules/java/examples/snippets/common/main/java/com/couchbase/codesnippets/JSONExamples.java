@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import com.couchbase.codesnippets.utils.Logger;
 import com.couchbase.lite.Array;
 import com.couchbase.lite.Blob;
+import com.couchbase.lite.Collection;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
@@ -49,7 +50,7 @@ public class JSONExamples {
         + "\"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\","
         + "\"features\":[\"Cable TV\",\"Toaster\",\"Microwave\"]}]";
 
-    public void jsonArrayExample(Database db) throws CouchbaseLiteException {
+    public void jsonArrayExample(Collection collection) throws CouchbaseLiteException {
         // tag::tojson-array[]
         // github tag=tojson-array
         final MutableArray mArray = new MutableArray(JSON); // <.>
@@ -57,19 +58,19 @@ public class JSONExamples {
         for (int i = 0; i < mArray.count(); i++) { // <.>
             final Dictionary dict = mArray.getDictionary(i);
             Logger.log(dict.getString("name"));
-            db.save(new MutableDocument(dict.getString("id"), dict.toMap()));
+            collection.save(new MutableDocument(dict.getString("id"), dict.toMap()));
         }
 
-        final Array features = db.getDocument("1002").getArray("features");
+        final Array features = collection.getDocument("1002").getArray("features");
         for (Object feature: features.toList()) { Logger.log(feature.toString()); }
         Logger.log(features.toJSON()); // <.>
         // end::tojson-array[]
     }
 
-    public void jsonBlobExample(Database db) {
+    public void jsonBlobExample(Collection collection) throws CouchbaseLiteException {
         // tag::tojson-blob[]
         // github tag=tojson-blob
-        final Map<String, ?> thisBlob = db.getDocument("thisdoc-id").toMap();
+        final Map<String, ?> thisBlob = collection.getDocument("thisdoc-id").toMap();
         if (!Blob.isBlob(thisBlob)) { return; }
 
         final String blobType = thisBlob.get("content_type").toString();
@@ -90,25 +91,25 @@ public class JSONExamples {
         // end::tojson-dictionary[]
     }
 
-    public void jsonDocumentExample(Database srcDb, Database dstDb) throws CouchbaseLiteException {
+    public void jsonDocumentExample(Collection srcColl, Collection dstColl) throws CouchbaseLiteException {
         // tag::tojson-document[]
         // github tag=tojson-document
         final Query listQuery = QueryBuilder
             .select(SelectResult.expression(Meta.id).as("metaId"))
-            .from(DataSource.database(srcDb));
+            .from(DataSource.collection(srcColl));
 
         try (ResultSet results = listQuery.execute()) {
             for (Result row: results) {
                 final String thisId = row.getString("metaId");
 
-                final String json = srcDb.getDocument(thisId).toJSON(); // <.>
+                final String json = srcColl.getDocument(thisId).toJSON(); // <.>
                 Logger.log("JSON String = " + json);
 
                 final MutableDocument hotelFromJSON = new MutableDocument(thisId, json); // <.>
 
-                dstDb.save(hotelFromJSON);
+                dstColl.save(hotelFromJSON);
 
-                for (Map.Entry<String, Object> entry: dstDb.getDocument(thisId).toMap().entrySet()) {
+                for (Map.Entry<String, Object> entry: dstColl.getDocument(thisId).toMap().entrySet()) {
                     Logger.log(entry.getKey() + " => " + entry.getValue()); // <.>
                 }
             }

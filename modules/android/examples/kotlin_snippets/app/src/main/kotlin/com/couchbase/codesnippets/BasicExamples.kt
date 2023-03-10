@@ -20,10 +20,35 @@ package com.couchbase.codesnippets
 import android.content.Context
 import com.couchbase.codesnippets.util.getAsset
 import com.couchbase.codesnippets.util.log
-import com.couchbase.lite.*
+import com.couchbase.lite.BasicAuthenticator
+import com.couchbase.lite.Blob
+import com.couchbase.lite.Collection
+import com.couchbase.lite.CouchbaseLite
+import com.couchbase.lite.DataSource
+import com.couchbase.lite.Database
+import com.couchbase.lite.DatabaseConfiguration
+import com.couchbase.lite.DatabaseConfigurationFactory
+import com.couchbase.lite.Document
+import com.couchbase.lite.EncryptionKey
+import com.couchbase.lite.Expression
+import com.couchbase.lite.LogDomain
+import com.couchbase.lite.LogFileConfigurationFactory
+import com.couchbase.lite.LogLevel
+import com.couchbase.lite.Logger
+import com.couchbase.lite.Meta
+import com.couchbase.lite.MutableArray
+import com.couchbase.lite.MutableDictionary
+import com.couchbase.lite.MutableDocument
+import com.couchbase.lite.QueryBuilder
+import com.couchbase.lite.Replicator
+import com.couchbase.lite.ReplicatorConfigurationFactory
+import com.couchbase.lite.ReplicatorType
+import com.couchbase.lite.SelectResult
+import com.couchbase.lite.URLEndpoint
+import com.couchbase.lite.UnitOfWork
+import com.couchbase.lite.newConfig
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.io.InputStream
 import java.net.URI
 import java.util.*
@@ -44,7 +69,7 @@ class LogTestLogger(private val level: LogLevel) : Logger {
 
 // end::custom-logging[]
 class BasicExamples(private val context: Context) {
-    private val database: Database
+    private var database: Database? = null
 
     init {
         // Initialize the Couchbase Lite system
@@ -54,17 +79,17 @@ class BasicExamples(private val context: Context) {
         // tag::database-config-factory[]
         database = Database(
             "getting-started",
-            DatabaseConfigurationFactory.create(context.filesDir.absolutePath)
+            DatabaseConfigurationFactory.newConfig()
         )
         // end::database-config-factory[]
     }
 
-    fun replicatorConfigFactory() {
+    fun replicatorConfigFactory(db: Database) {
         //  tag::replicator-config-factory[]
         val replicator =
             Replicator(
-                ReplicatorConfigurationFactory.create(
-                    database = database,
+                ReplicatorConfigurationFactory.newConfig(
+                    collections = mapOf(db.collections to null),
                     target = URLEndpoint(URI("ws://localhost:4984/getting-started-db")),
                     type = ReplicatorType.PUSH_AND_PULL,
                     authenticator = BasicAuthenticator("sync-gateway", "password".toCharArray())
@@ -73,53 +98,18 @@ class BasicExamples(private val context: Context) {
         //  end::replicator-config-factory[]
     }
 
-
-    @Throws(CouchbaseLiteException::class, IOException::class)
-    fun test1xAttachments() {
-        // if db exist, delete it
-        deleteDB("android-sqlite", context.filesDir)
-        ZipUtils.unzip(
-            getAsset("replacedb/android140-sqlite.cblite2.zip"),
-            context.filesDir
-        )
-
-        val db = Database("android-sqlite")
-        try {
-            // For Validation
-            Arrays.equals(
-                "attach1".toByteArray(),
-                db.getDocument("doc1")?.getDictionary("_attachments")?.getBlob("attach1")?.content
-            )
-        } finally {
-            // close db
-            db.close()
-            // if db exist, delete it
-            deleteDB("android-sqlite", context.filesDir)
-        }
-        val document = MutableDocument()
-
+    fun oneXAttachmentsExample(document: Document) {
         // tag::1x-attachment[]
         val content = document.getDictionary("_attachments")?.getBlob("avatar")?.content
         // end::1x-attachment[]
     }
 
-    // ### Initializer
-    fun testInitializer() {
-        // tag::sdk-initializer[]
-        // Initialize the Couchbase Lite system
-        CouchbaseLite.init(context)
-        // end::sdk-initializer[]
-    }
-
     // ### New Database
-    @Throws(CouchbaseLiteException::class)
-    fun testNewDatabase() {
+    fun newDatabaseExample() {
         // tag::new-database[]
         val database = Database(
             "my-db",
-            DatabaseConfigurationFactory.create(
-                context.filesDir.absolutePath
-            )
+            DatabaseConfigurationFactory.newConfig()
         ) // <.>
         // end::new-database[]
         // tag::close-database[]
@@ -131,12 +121,11 @@ class BasicExamples(private val context: Context) {
     }
 
     // ### Database Encryption
-    @Throws(CouchbaseLiteException::class)
-    fun testDatabaseEncryption() {
+    fun databaseEncryptionExample() {
         // tag::database-encryption[]
         val db = Database(
             "my-db",
-            DatabaseConfigurationFactory.create(
+            DatabaseConfigurationFactory.newConfig(
                 encryptionKey = EncryptionKey("PASSWORD")
             )
         )
@@ -146,12 +135,12 @@ class BasicExamples(private val context: Context) {
 
     // ### Logging
     // !!!GBM: OBSOLETE in 3.0
-    fun testLogging() {
+    fun loggingExample() {
         // tag::logging[]
         // end::logging[]
     }
 
-    fun testEnableCustomLogging() {
+    fun enableCustomLoggingExample() {
         // tag::set-custom-logging[]
         // this custom logger will not log an event with a log level < WARNING
         Database.log.custom = LogTestLogger(LogLevel.WARNING) // <.>
@@ -159,8 +148,7 @@ class BasicExamples(private val context: Context) {
     }
 
     // ### Console logging
-    @Throws(CouchbaseLiteException::class)
-    fun testConsoleLogging() {
+    fun consoleLoggingExample() {
         // tag::console-logging[]
         Database.log.console.domains = LogDomain.ALL_DOMAINS // <.>
         Database.log.console.level = LogLevel.VERBOSE // <.>
@@ -172,12 +160,11 @@ class BasicExamples(private val context: Context) {
     }
 
     // ### File logging
-    @Throws(CouchbaseLiteException::class)
-    fun testFileLogging() {
+    fun fileLoggingExample() {
         // tag::file-logging[]
         // tag::file-logging-config-factory[]
         Database.log.file.let {
-            it.config = LogFileConfigurationFactory.create(
+            it.config = LogFileConfigurationFactory.newConfig(
                 context.cacheDir.absolutePath, // <.>
                 maxSize = 10240, // <.>
                 maxRotateCount = 5, // <.>
@@ -217,19 +204,8 @@ class BasicExamples(private val context: Context) {
         // end::write-file-logmsg[]
     }
 
-    /* The `tag::replication[]` example is inlined in java.adoc */
-    fun troubleshootingExample() {
-        // tag::replication-logging[]
-        Database.log.console.let {
-            it.level = LogLevel.VERBOSE
-            it.domains = LogDomain.ALL_DOMAINS
-        }
-        // end::replication-logging[]
-    }
-
     // ### Loading a pre-built database
-    @Throws(IOException::class)
-    fun testPreBuiltDatabase() {
+    fun preBuiltDatabaseExample() {
         // tag::prebuilt-database[]
         // Note: Getting the path to a database is platform-specific.
         // For Android you need to extract the database from your assets
@@ -246,42 +222,34 @@ class BasicExamples(private val context: Context) {
         // end::prebuilt-database[]
     }
 
-    // helper methods
-    // if db exist, delete it
-    fun deleteDB(name: String, dir: File) {
-        // database exist, delete it
-        if (Database.exists(name, dir)) {
-            Database.delete(name, dir)
+    // ### Initializers
+    fun initializersExample(collection: Collection) {
+        // tag::initializer[]
+        val doc = MutableDocument()
+        doc.let {
+            it.setString("type", "task")
+            it.setString("owner", "todo")
+            it.setDate("createdAt", Date())
         }
-
-        // ### Initializers
-        fun testInitializers() {
-            // tag::initializer[]
-            val doc = MutableDocument()
-            doc.let {
-                it.setString("type", "task")
-                it.setString("owner", "todo")
-                it.setDate("createdAt", Date())
-            }
-            database.save(doc)
-            // end::initializer[]
-        }
+        collection.save(doc)
+        // end::initializer[]
     }
 
+
     // ### Mutability
-    fun testMutability() {
-        database.save(MutableDocument("xyz"))
+    fun mutabilityExample(collection: Collection) {
+        collection.save(MutableDocument("xyz"))
 
         // tag::update-document[]
-        database.getDocument("xyz")?.toMutable()?.let {
+        collection.getDocument("xyz")?.toMutable()?.let {
             it.setString("name", "apples")
-            database.save(it)
+            collection.save(it)
         }
         // end::update-document[]
     }
 
     // ### Typed Accessors
-    fun testTypedAccessors() {
+    fun typedAccessorsExample() {
         val doc = MutableDocument()
 
         // tag::date-getter[]
@@ -291,7 +259,7 @@ class BasicExamples(private val context: Context) {
     }
 
     // ### Batch operations
-    fun testBatchOperations() {
+    fun batchOperationsExample(database: Database) {
         // tag::batch[]
         database.inBatch(UnitOfWork {
             for (i in 0..9) {
@@ -309,29 +277,28 @@ class BasicExamples(private val context: Context) {
 
 
     // toJSON
-    fun testToJsonOperations(argDb: Database) {
+    fun toJsonOperationsExample(argDb: Database) {
         val db = argDb
 
     }
 
 
     // ### Document Expiration
-    @Throws(CouchbaseLiteException::class)
-    fun documentExpiration() {
+    fun documentExpiration(collection: Collection) {
         // tag::document-expiration[]
         // Purge the document one day from now
-        database.setDocumentExpiration(
+        collection.setDocumentExpiration(
             "doc123",
             Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24))
         )
 
         // Reset expiration
-        database.setDocumentExpiration("doc1", null)
+        collection.setDocumentExpiration("doc1", null)
 
         // Query documents that will be expired in less than five minutes
         val query = QueryBuilder
             .select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
+            .from(DataSource.collection(collection))
             .where(
                 Meta.expiration.lessThan(
                     Expression.longValue(System.currentTimeMillis() + (1000 * 60 * 5))
@@ -340,11 +307,10 @@ class BasicExamples(private val context: Context) {
         // end::document-expiration[]
     }
 
-    @Throws(CouchbaseLiteException::class)
-    fun testDocumentChangeListener() {
+    fun documentChangeListenerExample(collection: Collection) {
         // tag::document-listener[]
-        database.addDocumentChangeListener("user.john") { change ->
-            database.getDocument(change.documentID)?.let {
+        collection.addDocumentChangeListener("user.john") { change ->
+            collection.getDocument(change.documentID)?.let {
                 log("Status: ${it.getString("verified_account")}")
             }
         }
@@ -352,24 +318,23 @@ class BasicExamples(private val context: Context) {
     }
 
     // ### Blobs
-    fun testBlobs() {
+    fun blobsExample(collection: Collection) {
         val mDoc = MutableDocument()
 
         // tag::blob[]
         getAsset("avatar.jpg")?.use { // <.>
             mDoc.setBlob("avatar", Blob("image/jpeg", it)) // <.> <.>
-            database.save(mDoc)
+            collection.save(mDoc)
         }
 
-        val doc = database.getDocument(mDoc.id)
+        val doc = collection.getDocument(mDoc.id)
         val bytes = doc?.getBlob("avatar")?.content
         // end::blob[]
     }
 }
 
-class SupportingDatatypes(private val context: Context, private val database: Database) {
+class SupportingDatatypes(private val context: Context) {
 
-    @Throws(CouchbaseLiteException::class)
     fun datatypeUsage() {
         // tag::datatype_usage[]
         // tag::datatype_usage_createdb[]
@@ -380,6 +345,8 @@ class SupportingDatatypes(private val context: Context, private val database: Da
         val config = DatabaseConfiguration()
         config.directory = context.filesDir.absolutePath
         val database = Database("getting-started", config)
+        val collection = database.getCollection("myCollection")
+            ?: throw IllegalStateException("collection not found")
 
         // end::datatype_usage_createdb[]
         // tag::datatype_usage_createdoc[]
@@ -427,7 +394,7 @@ class SupportingDatatypes(private val context: Context, private val database: Da
         // end::datatype_usage_populate[]
         // tag::datatype_usage_persist[]
         // Save the document changes <.>
-        database.save(mutableDoc)
+        collection.save(mutableDoc)
 
         // end::datatype_usage_persist[]
         // tag::datatype_usage_closedb[]
@@ -440,11 +407,11 @@ class SupportingDatatypes(private val context: Context, private val database: Da
     }
 
 
-    fun datatypeDictionary() {
+    fun datatypeDictionary(collection: Collection) {
 
         // tag::datatype_dictionary[]
         // NOTE: No error handling, for brevity (see getting started)
-        val document = database.getDocument("doc1")
+        val document = collection.getDocument("doc1")
 
         // Getting a dictionary from the document's properties
         val dict = document?.getDictionary("address")
@@ -463,7 +430,7 @@ class SupportingDatatypes(private val context: Context, private val database: Da
         // end::datatype_dictionary[]
     }
 
-    fun datatypeMutableDictionary() {
+    fun datatypeMutableDictionary(collection: Collection) {
 
         // tag::datatype_mutable_dictionary[]
         // NOTE: No error handling, for brevity (see getting started)
@@ -476,18 +443,18 @@ class SupportingDatatypes(private val context: Context, private val database: Da
         // Add the dictionary to a document's properties and save the document
         val mutableDoc = MutableDocument("doc1")
         mutableDoc.setDictionary("address", mutableDict)
-        database.save(mutableDoc)
+        collection.save(mutableDoc)
 
         // end::datatype_mutable_dictionary[]
     }
 
 
-    fun datatypeArray() {
+    fun datatypeArray(collection: Collection) {
 
         // tag::datatype_array[]
         // NOTE: No error handling, for brevity (see getting started)
 
-        val document = database.getDocument("doc1")
+        val document = collection.getDocument("doc1")
 
         // Getting a phones array from the document's properties
         val array = document?.getArray("phones")
@@ -506,7 +473,7 @@ class SupportingDatatypes(private val context: Context, private val database: Da
         // end::datatype_array[]
     }
 
-    fun datatypeMutableArray() {
+    fun datatypeMutableArray(collection: Collection) {
 
         // tag::datatype_mutable_array[]
         // NOTE: No error handling, for brevity (see getting started)
@@ -519,7 +486,7 @@ class SupportingDatatypes(private val context: Context, private val database: Da
         // Set the array to document's properties and save the document
         val mutableDoc = MutableDocument("doc1")
         mutableDoc.setArray("phones", mutableArray)
-        database.save(mutableDoc)
+        collection.save(mutableDoc)
         // end::datatype_mutable_array[]
     }
 
@@ -528,7 +495,6 @@ class SupportingDatatypes(private val context: Context, private val database: Da
 
 // tag::ziputils-unzip[]
 object ZipUtils {
-    @Throws(IOException::class)
     fun unzip(src: InputStream?, dst: File?) {
         val buffer = ByteArray(1024)
         src?.use { sis ->

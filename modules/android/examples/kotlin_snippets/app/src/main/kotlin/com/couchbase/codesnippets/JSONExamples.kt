@@ -18,8 +18,16 @@
 package com.couchbase.codesnippets
 
 import com.couchbase.codesnippets.util.log
-import com.couchbase.lite.*
-import org.json.JSONException
+import com.couchbase.lite.Blob
+import com.couchbase.lite.Collection
+import com.couchbase.lite.DataSource
+import com.couchbase.lite.Meta
+import com.couchbase.lite.MutableArray
+import com.couchbase.lite.MutableDictionary
+import com.couchbase.lite.MutableDocument
+import com.couchbase.lite.Query
+import com.couchbase.lite.QueryBuilder
+import com.couchbase.lite.SelectResult
 import org.json.JSONObject
 
 
@@ -36,18 +44,18 @@ private const val TAG = "SNIPPETS"
 class KtJSONExamples {
 
 
-    fun jsonArrayExample(db: Database) {
+    fun jsonArrayExample(collection: Collection) {
         // tag::tojson-array[]
         // github tag=tojson-array
         val mArray = MutableArray(JSON) // <.>
         for (i in 0 until mArray.count()) {
             mArray.getDictionary(i)?.apply {
                 log(getString("name") ?: "unknown")
-                db.save(MutableDocument(getString("id"), toMap()))
+                collection.save(MutableDocument(getString("id"), toMap()))
             } // <.>
         }
 
-        db.getDocument("1002")?.getArray("features")?.apply {
+        collection.getDocument("1002")?.getArray("features")?.apply {
             for (feature in toList()) {
                 log("$feature")
             } // <.>
@@ -56,10 +64,10 @@ class KtJSONExamples {
         // end::tojson-array[]
     }
 
-    fun jsonBlobExample(db: Database) {
+    fun jsonBlobExample(collection: Collection) {
         // tag::tojson-blob[]
         // github tag=tojson-blob
-        val thisBlob = db.getDocument("thisdoc-id")!!.toMap()
+        val thisBlob = collection.getDocument("thisdoc-id")!!.toMap()
         if (!Blob.isBlob(thisBlob)) {
             return
         }
@@ -80,20 +88,19 @@ class KtJSONExamples {
         // end::tojson-dictionary[]
     }
 
-    @Throws(CouchbaseLiteException::class)
-    fun jsonDocumentExample(srcDb: Database, dstDb: Database) {
+    fun jsonDocumentExample(srcColl: Collection, dstColl: Collection) {
         // tag::tojson-document[]
         QueryBuilder
             .select(SelectResult.expression(Meta.id).`as`("metaId"))
-            .from(DataSource.database(srcDb))
+            .from(DataSource.collection(srcColl))
             .execute()
             .forEach {
                 it.getString("metaId")?.let { thisId ->
-                    srcDb.getDocument(thisId)?.toJSON()?.let { json -> // <.>
+                    srcColl.getDocument(thisId)?.toJSON()?.let { json -> // <.>
                         log("JSON String = $json")
                         val hotelFromJSON = MutableDocument(thisId, json) // <.>
-                        dstDb.save(hotelFromJSON)
-                        dstDb.getDocument(thisId)?.toMap()?.forEach { e ->
+                        dstColl.save(hotelFromJSON)
+                        dstColl.getDocument(thisId)?.toMap()?.forEach { e ->
                             log("$e.key => $e.value")
                         } // <.>
                     }
@@ -102,7 +109,6 @@ class KtJSONExamples {
         // end::tojson-document[]
     }
 
-    @Throws(CouchbaseLiteException::class, JSONException::class)
     fun jsonQueryExample(query: Query) {
         query.execute().forEach {
 

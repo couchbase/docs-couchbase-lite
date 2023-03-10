@@ -17,24 +17,14 @@
 
 package com.couchbase.codesnippets
 
-import com.couchbase.codesnippets.util.log
+import com.couchbase.lite.Collection
 import com.couchbase.lite.Conflict
 import com.couchbase.lite.ConflictResolver
-import com.couchbase.lite.CouchbaseLiteException
-import com.couchbase.lite.Database
 import com.couchbase.lite.Document
 import com.couchbase.lite.MutableDocument
-import com.couchbase.lite.Replicator
-import com.couchbase.lite.ReplicatorActivityLevel
-import com.couchbase.lite.ReplicatorConfigurationFactory
-import com.couchbase.lite.ReplicatorType
-import com.couchbase.lite.URLEndpoint
-import com.couchbase.lite.create
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.net.URI
-import java.net.URISyntaxException
 
 
 private const val TAG = "REPLICATION"
@@ -107,39 +97,12 @@ object MergeConflictResolver : ConflictResolver {
         }
     }
 // end::merge-conflict-resolver[]
-}
 
-@Suppress("unused")
-class OldReplicationExamples(private val database: Database) {
-    private var replicator: Replicator? = null
-
-    @Throws(URISyntaxException::class)
-    fun testReplicationStatus() {
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.create(
-                database = database,
-                target = URLEndpoint(URI("ws://localhost:4984/db")),
-                type = ReplicatorType.PULL
-            )
-        )
-
-        repl.addChangeListener { change ->
-            if (change.status.activityLevel == ReplicatorActivityLevel.STOPPED) {
-                log("Replication stopped")
-            }
-        }
-
-        repl.start()
-        replicator = repl
-        // end::replication-status[]
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun testSaveWithCustomConflictResolver() {
+    fun testSaveWithCustomConflictResolver(collection: Collection) {
         // tag::update-document-with-conflict-handler[]
-        val mutableDocument = database.getDocument("xyz")?.toMutable() ?: return
+        val mutableDocument = collection.getDocument("xyz")?.toMutable() ?: return
         mutableDocument.setString("name", "apples")
-        database.save(mutableDocument) { newDoc, curDoc ->  // <.>
+        collection.save(mutableDocument) { newDoc, curDoc ->  // <.>
             if (curDoc == null) {
                 return@save false
             } // <.>

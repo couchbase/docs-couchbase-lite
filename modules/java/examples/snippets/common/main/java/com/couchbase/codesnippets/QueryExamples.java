@@ -657,7 +657,6 @@ public class QueryExamples {
         // end::query-syntax-n1ql[]
     }
 
-
     public List<Result> docsonlyQuerySyntaxN1QLParams(Database thisDb) throws CouchbaseLiteException {
         // For Documentation -- N1QL Query using parameters
         // tag::query-syntax-n1ql-params[]

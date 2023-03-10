@@ -15,17 +15,31 @@
 //
 package com.couchbase.codesnippets;
 
-import android.content.Context;
+import android.app.Application;
 
 import com.couchbase.lite.CouchbaseLite;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.LogDomain;
+import com.couchbase.lite.LogLevel;
 
 
-public class Application {
+public class SnippetApplication extends Application {
 
-    public void testInitializer(Context context) {
-        // tag::sdk-initializer[]
+    // tag::sdk-initializer[]
+    @Override
+    public void onCreate() {
+        super.onCreate();
         // Initialize the Couchbase Lite system
-        CouchbaseLite.init(context);
-        // end::sdk-initializer[]
+        CouchbaseLite.init(this);
+    }
+    // end::sdk-initializer[]
+
+    public void troubleshootingExample() {
+        // tag::replication-logging[]
+        CouchbaseLite.init(this, true);
+
+        Database.log.getConsole().setDomains(LogDomain.REPLICATOR);
+        Database.log.getConsole().setLevel(LogLevel.DEBUG);
+        // end::replication-logging[]
     }
 }

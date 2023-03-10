@@ -19,31 +19,28 @@ package com.couchbase.codesnippets
 
 import com.couchbase.codesnippets.util.log
 import com.couchbase.lite.BasicAuthenticator
+import com.couchbase.lite.ClientCertificateAuthenticator
 import com.couchbase.lite.Collection
 import com.couchbase.lite.CollectionConfigurationFactory
-import com.couchbase.lite.Conflict
-import com.couchbase.lite.ConflictResolver
 import com.couchbase.lite.CouchbaseLiteException
 import com.couchbase.lite.Database
 import com.couchbase.lite.DatabaseEndpoint
 import com.couchbase.lite.DocumentFlag
+import com.couchbase.lite.Endpoint
 import com.couchbase.lite.ListenerToken
 import com.couchbase.lite.Replicator
 import com.couchbase.lite.ReplicatorConfigurationFactory
 import com.couchbase.lite.ReplicatorType
 import com.couchbase.lite.SessionAuthenticator
+import com.couchbase.lite.TLSIdentity
 import com.couchbase.lite.URLEndpoint
 import com.couchbase.lite.newConfig
 import java.net.URI
-import java.net.URISyntaxException
 import java.security.KeyStore
 import java.security.cert.X509Certificate
 
-class ReplicationExamples {
-    object MyResolver : ConflictResolver {
-        override fun resolve(conflict: Conflict) = TODO()
-    }
 
+class ReplicationExamples {
     private var thisReplicator: Replicator? = null
     private var thisToken: ListenerToken? = null
 
@@ -87,10 +84,11 @@ class ReplicationExamples {
                 acceptOnlySelfSignedServerCertificate = true, // <.>
 
                 // end::p2p-act-rep-config-self-cert[]
+
                 // tag::p2p-act-rep-auth[]
                 // Configure the credentials the
                 // client will provide if prompted
-                authenticator = BasicAuthenticator("Our Username", "Our PasswordValue".toCharArray()) // <.>
+                authenticator = BasicAuthenticator("PRIVUSER", "let me in".toCharArray())  // <.>
 
                 // end::p2p-act-rep-auth[]
             )
@@ -391,8 +389,7 @@ class ReplicationExamples {
         // end::replication-pendingdocuments[]
     }
 
-    @Throws(CouchbaseLiteException::class)
-    fun testDatabaseReplication(srcCollections: Set<Collection>, targetDb: Database) {
+    fun collectionReplicationExample(srcCollections: Set<Collection>, targetDb: Database) {
         // tag::database-replica[]
         // This is an Enterprise feature:
         // the code below will generate a compilation error
@@ -414,7 +411,61 @@ class ReplicationExamples {
         // end::database-replica[]
     }
 
-    @Throws(URISyntaxException::class)
+    fun replicatorConfigurationExample(srcCollections: Set<Collection>, targetUrl: URI) {
+        // tag::p2p-act-rep-config-tls-full[]
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                target = URLEndpoint(targetUrl),
+
+                collections = mapOf(srcCollections to null),
+
+                // tag::p2p-act-rep-config-cacert[]
+                // Configure Server Security
+                // -- only accept CA attested certs
+                acceptOnlySelfSignedServerCertificate = false, // <.>
+
+                // end::p2p-act-rep-config-cacert[]
+
+                // tag::p2p-act-rep-config-cacert-pinned[]
+                // Use the pinned certificate from the byte array (cert)
+                pinnedServerCertificate =
+                TLSIdentity.getIdentity("Our Corporate Id")?.certs?.get(0) as? X509Certificate // <.>
+                    ?: throw IllegalStateException("Cannot find corporate id"),
+                // end::p2p-act-rep-config-cacert-pinned[]
+
+
+                // end::p2p-act-rep-config-tls-full[]
+                // tag::p2p-tlsid-tlsidentity-with-label[]
+                // Provide a client certificate to the server for authentication
+                authenticator = ClientCertificateAuthenticator(
+                    TLSIdentity.getIdentity("clientId")
+                        ?: throw IllegalStateException("Cannot find client id")
+                ) // <.>
+
+                // ... other replicator configuration
+            )
+        )
+
+        thisReplicator = repl
+        // end::p2p-tlsid-tlsidentity-with-label[]
+    }
+
+    fun ibReplicatorSimple(collections: Set<Collection>) {
+        // tag::replicator-simple[]
+        val theListenerEndpoint: Endpoint = URLEndpoint(URI("wss://10.0.2.2:4984/db")) // <.>
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                collections = mapOf(collections to null),
+                target = theListenerEndpoint,
+                authenticator = BasicAuthenticator("valid.user", "valid.password.string".toCharArray()), // <.>
+                acceptOnlySelfSignedServerCertificate = true
+            )
+        )
+        repl.start() // <.>
+        thisReplicator = repl
+        // end::replicator-simple[]
+    }
+
     fun testReplicationWithCustomConflictResolver(srcCollections: Set<Collection>) {
         // tag::replication-conflict-resolver[]
 
@@ -433,3 +484,48 @@ class ReplicationExamples {
         // end::replication-conflict-resolver[]
     }
 }
+
+/* C A L L O U T S
+
+// Listener Callouts
+
+// tag::listener-callouts-full[]
+
+// tag::listener-start-callouts[]
+<.> Initialize the listener instance using the configuration settings.
+<.> Start the listener, ready to accept connections and incoming data from active peers.
+
+// end::listener-start-callouts[]
+
+// tag::listener-status-check-callouts[]
+
+<.> `connectionCount` -- the total number of connections served by the listener
+<.> `activeConnectionCount` -- the number of active (BUSY) connections currently being served by the listener
+//
+// end::listener-status-check-callouts[]
+
+// end::listener-callouts-full[]
+
+
+// tag::p2p-act-rep-config-cacert-pinned-callouts[]
+<.> Configure the pinned certificate using data from the byte array `cert`
+// end::p2p-act-rep-config-cacert-pinned-callouts[]
+
+// tag::p2p-tlsid-tlsidentity-with-label-callouts[]
+<.> Attempt to get the identity from secure storage
+<.> Set the authenticator to ClientCertificateAuthenticator and configure it to use the retrieved identity
+
+// end::p2p-tlsid-tlsidentity-with-label-callouts[]
+
+// tag::sgw-repl-pull-callouts[]
+<.> A replication is an asynchronous operation.
+To keep a reference to the `replicator` object, you can set it as an instance property.
+<.> The URL scheme for remote database URLs uses `ws:`, or `wss:` for SSL/TLS connections over wb sockets.
+In this example the hostname is `10.0.2.2` because the Android emulator runs in a VM that is generally accessible on `10.0.2.2` from the host machine (see https://developer.android.com/studio/run/emulator-networking[Android Emulator networking] documentation).
++
+NOTE: As of Android Pie, version 9, API 28, cleartext support is disabled, by default.
+Although `wss:` protocol URLs are not affected, in order to use the `ws:` protocol, applications must target API 27 or lower, or must configure application network security as described https://developer.android.com/training/articles/security-config#CleartextTrafficPermitted[here].
+
+// end::sgw-repl-pull-callouts[]
+*/
+
