@@ -324,13 +324,13 @@ class ListenerExamples {
     }
 
     fun overrideConfigExample(db: Database) {
-        // tag::DOC-10214-override-config
+        // tag::override-config[]
         val listener8080 = URLEndpointListenerConfigurationFactory.newConfig(
             networkInterface = "en0",
             port = 8080
         )
         val listener8081 = listener8080.newConfig(port = 8081)
-        // end::DOC-10214-override-config
+        // end::override-config[]
     }
 
     fun listenerStatusCheckExample(db: Database) {

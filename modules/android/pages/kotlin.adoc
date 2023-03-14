@@ -31,8 +31,7 @@ include::{root-partials}_show_page_header_block.adoc[]
 :flows-document-replication: {url-api-references-kotlin-common-flows}#documentReplicationFlow(Replicator,Executor)[documentReplicationFlow(Replicator,Executor)]
 :flows-query-changes: {url-api-references-kotlin-common-flows}#queryChangeFlow(Query,Executor)[queryChangeFlow(Query,Executor)]
 
-:source-header: pass:q,a[source, kotlin, subs="attributes+,macros+", indent=0]
-:snippets_root: example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/
+:source-header: pass:q,a[source, kotlin, indent=0]
 
 
 == Introduction
@@ -70,6 +69,14 @@ See: https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-android-ktx
 
 {cbl-t} provides a set of {config-factories} and {common-config-factories}, these allow use of named parameters to specify property settings.
 
+This makes it simple to create variant configurations, by simply overriding named parameters:
+
+.Example of overriding configuration
+[{source-header}]
+----
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ListenerExamples.kt[tag=override-config]
+----
+
 === Database
 Use
 {database-configuration-factory}
@@ -84,7 +91,7 @@ In Use::
 [{source-header}]
 ----
 
-include::{snippets_root}BasicExamples.kt[tags=database-config-factory]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=database-config-factory]
 
 ----
 --
@@ -118,7 +125,7 @@ In Use::
 [{source-header}]
 ----
 
-include::{snippets_root}BasicExamples.kt[tags=replicator-config-factory]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=replicator-config-factory]
 
 ----
 --
@@ -174,11 +181,7 @@ In Use::
 --
 [{source-header}]
 ----
-
-db.createIndex("fts_index",
-      FullTextIndexConfigurationFactory.create(expressions = ["name","location"])
-    )
-
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/QueryExamples.kt[tag=fts-index]
 ----
 --
 
@@ -207,11 +210,7 @@ In Use::
 --
 [{source-header}]
 ----
-
-db.createIndex("name_and_location_index",
-      ValueIndexConfigurationFactory.create(expressions = ["name","location"])
-    )
-
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/QueryExamples.kt[tag=query-index]
 ----
 --
 
@@ -240,7 +239,7 @@ In Use::
 [{source-header}]
 ----
 
-include::{snippets_root}BasicExamples.kt[tags=file-logging-config-factory]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=file-logging-config-factory]
 
 ----
 --
@@ -432,7 +431,7 @@ In Use::
 [{source-header}]
 ----
 
-include::{snippets_root}FlowExamples.kt[tags=flow-as-query-change-listener]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/FlowExamples.kt[tags=flow-as-query-change-listener]
 
 ----
 --
