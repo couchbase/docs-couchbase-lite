@@ -1,4 +1,4 @@
-//= Using Peer-to-Peer Synchronization (websockets)
+//= Using Peer-to-Peer Synchronization (WebSockets)
 
 // DO NOT EDIT
 :param-abstract: How to set up a Replicator to connect with a Listener and replicate changes using peer-to-peer sync
@@ -18,10 +18,10 @@ include::{root-partials}block-caveats.adoc[tags=code-disclaimer]
 
 [#introduction]
 == Introduction
-This content provides sample code and configuration examples covering the implementation of {glos-term-peer-to-peer-sync} over websockets.
+This content provides sample code and configuration examples covering the implementation of {glos-term-peer-to-peer-sync} over WebSockets.
 Specifically it covers the implementation of an {glos-term-active-peer}.
 
-This _active peer_ (also referred to as a client and-or a replicator) will initiate connection with a {glos-term-passive-peer} (also referred to as a server and-or listener) and participate in the replication of database changes to bring both databases into sync.
+This _active peer_ (also referred to as a client and-or a replicator) will initiate the connection with a {glos-term-passive-peer} (also referred to as a server and-or listener) and participate in the replication of database changes to bring both databases into sync.
 
 Subsequent sections provide additional details and examples for the main configuration options.
 
@@ -58,21 +58,20 @@ Here we say to provide _Basic Authentication_ credentials. Other options are ava
 
 <.> Start the replicator.
 
-
 == API References
 
 You can find {url-api-references}[{param-title} API References] here.
 
 == Device Discovery
-*This phase is optional:* If the listener is initialized on a well known URL endpoint (for example, a static IP Address or well known DNS address) then you can configure active peers to connect to those.
+*This phase is optional:* If the listener is initialized on a well known URL endpoint (for example, a static IP Address or well known DNS address) then you can configure Active Peers to connect to those.
 
-Prior to connecting with a listener you may execute a peer discovery phase to dynamically discover peers.
+Prior to connecting with a listener you may execute a Peer discovery phase to dynamically discover Peers.
 
 ifdef::is-ios[]
-For the active peer this involves browsing-for and selecting the appropriate service using a zero-config protocol such as _Bonjour_-- see: https://developer.apple.com/bonjour/.
+For the Active Peer this involves browsing-for and selecting the appropriate service using a zero-config protocol such as _Bonjour_-- see: https://developer.apple.com/bonjour/.
 endif::[]
 ifdef::is-android[]
-For the active peer this involves browsing-for and selecting the appropriate service using a zero-config protocol such as _Network Service Discovery_ -- see: https://developer.android.com/training/connect-devices-wirelessly/nsd.
+For the Active Peer this involves browsing-for and selecting the appropriate service using a zero-config protocol such as _Network Service Discovery_ -- see: https://developer.android.com/training/connect-devices-wirelessly/nsd.
 endif::[]
 
 // image::ROOT:replication.svg[,800]
@@ -128,7 +127,7 @@ We use {url-api-class-replicator-config}'s {url-api-prop-replicator-config-auth}
 ifndef::is-c[]
 
 ==== Basic Authentication
-Use the `{url-api-class-replicator-config-basic-auth}` to supply basic authentication credentials (username and password).
+Use the `{url-api-class-replicator-config-basic-auth}` to supply basic authentication credentials (username and word).
 
 // Example 5
 [[basic-authentication]]
