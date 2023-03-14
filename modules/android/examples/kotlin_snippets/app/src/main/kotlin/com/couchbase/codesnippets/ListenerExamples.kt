@@ -18,7 +18,6 @@
 package com.couchbase.codesnippets
 
 import com.couchbase.codesnippets.util.log
-import com.couchbase.lite.Collection
 import com.couchbase.lite.CouchbaseLiteException
 import com.couchbase.lite.Database
 import com.couchbase.lite.KeyStoreUtils
@@ -322,6 +321,16 @@ class ListenerExamples {
         thisListener = listener
 
         // end::listener-simple[]
+    }
+
+    fun overrideConfigExample(db: Database) {
+        // tag::override-config[]
+        val listener8080 = URLEndpointListenerConfigurationFactory.newConfig(
+            networkInterface = "en0",
+            port = 8080
+        )
+        val listener8081 = listener8080.newConfig(port = 8081)
+        // end::override-config[]
     }
 
     fun listenerStatusCheckExample(db: Database) {

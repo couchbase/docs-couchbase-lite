@@ -577,7 +577,9 @@ fun explainNoFnExample(collection: Collection) {
 
 fun prepareIndex(collection: Collection) {
     // tag::fts-index[]
-    collection.createIndex("overviewFTSIndex", FullTextIndexConfigurationFactory.newConfig("overview"))
+    collection.createIndex(
+        "overviewFTSIndex",
+        FullTextIndexConfigurationFactory.newConfig("overview"))
     // end::fts-index[]
 }
 
