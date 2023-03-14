@@ -46,12 +46,14 @@ private const val TAG = "QUERY"
 // ### Indexing
 fun indexingExample(collection: Collection) {
 
+    // tag::DOC-10214-create-value-index
     // tag::query-index[]
     collection.createIndex(
         "TypeNameIndex",
         ValueIndexConfigurationFactory.newConfig("type", "name")
     )
     // end::query-index[]
+    // end::DOC-10214-create-value-index
 }
 
 // ### SELECT statement
@@ -576,9 +578,13 @@ fun explainNoFnExample(collection: Collection) {
 // end::query-explain[]
 
 fun prepareIndex(collection: Collection) {
+    // tag::DOC-10214-create-fts-index
     // tag::fts-index[]
-    collection.createIndex("overviewFTSIndex", FullTextIndexConfigurationFactory.newConfig("overview"))
+    collection.createIndex(
+        "overviewFTSIndex",
+        FullTextIndexConfigurationFactory.newConfig("overview"))
     // end::fts-index[]
+    // end::DOC-10214-create-fts-index
 }
 
 fun prepareIndexBuilderExample(collection: Collection) {
