@@ -68,6 +68,7 @@ public class DBManager {
 
     // <.>
     // One-off initialization
+    // tag::datatype_usage_createdb[]
     private void init() {
         CouchbaseLite.init(GettingStartedApplication.getAppContext());
         Log.i(TAG, "CBL Initialized");
@@ -87,7 +88,9 @@ public class DBManager {
         collection = database.createCollection(collName);
         Log.i(TAG, "Collection created: " + collection);
     }
+    // end::datatype_usage_createdb[]
 
+    // tag::datatype_usage_createdoc[]
     // <.>
     // Create a new document (i.e. a record)
     // and save it in a collection in the database.
@@ -98,6 +101,7 @@ public class DBManager {
         collection.save(mutableDocument);
         return mutableDocument.getId();
     }
+    // end::datatype_usage_createdoc[]
 
     // <.>
     // Retrieve immutable document and log the database generated
