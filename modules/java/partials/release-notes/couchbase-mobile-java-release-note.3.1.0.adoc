@@ -1,0 +1,335 @@
+
+
+
+
+[#maint-3-1-0]
+== 3.1.0 -- March 2023
+
+Version 3.1.0 for {param-title} delivers the following features and enhancements:
+
+
+=== Enhancements
+
+* https://issues.couchbase.com/browse/CBL-4319[++CBL-4319 - New Scope and Collection API++]
+
+* https://issues.couchbase.com/browse/CBL-4131[++CBL-4131 - SQL++ : Enhance COLLATE syntax to support locales for UNICODE Collator++]
+
+* https://issues.couchbase.com/browse/CBL-4121[++CBL-4121 - Implement AcceptParentDomainCookies API++]
+
+* https://issues.couchbase.com/browse/CBL-4098[++CBL-4098 - Provide option to Save Cookie with Domain being a parent domain of the request++]
+
+* https://issues.couchbase.com/browse/CBL-4009[++CBL-4009 - New QueryBuilder's FullTextIndexExpression++]
+
+* https://issues.couchbase.com/browse/CBL-3949[++CBL-3949 - Support GCLB Cookies++]
+
+* https://issues.couchbase.com/browse/CBL-3945[++CBL-3945 - Kotlin/Java: Support GCLB Cookies++]
+
+* https://issues.couchbase.com/browse/CBL-3916[++CBL-3916 - Report invalid / unknown network interface using kC4NetErrUnknownInterface++]
+
+* https://issues.couchbase.com/browse/CBL-3651[++CBL-3651 - Only send port in HTTP Host header if non-standard++]
+
+* https://issues.couchbase.com/browse/CBL-3573[++CBL-3573 - Add info about enhanced certificate pinning++]
+
+* https://issues.couchbase.com/browse/CBL-3414[++CBL-3414 - Update message for error code CBLErrorNotOpen++]
+
+* https://issues.couchbase.com/browse/CBL-3211[++CBL-3211 - Stop mallocing stuff++]
+
+* https://issues.couchbase.com/browse/CBL-3135[++CBL-3135 - Correct/document DB operations allowed in a batch transaction++]
+
+* https://issues.couchbase.com/browse/CBL-3121[++CBL-3121 - Add ListenerToken.remove()++]
+
+* https://issues.couchbase.com/browse/CBL-3093[++CBL-3093 - Add DB closed recommendation to docs for Database.close++]
+
+* https://issues.couchbase.com/browse/CBL-3085[++CBL-3085 - Make SSLException a recoverable error in AbstractCBLWebSocket: 3.1++]
+
+* https://issues.couchbase.com/browse/CBL-2974[++CBL-2974 - Implement enhanced pinned server certificate feature++]
+
+* https://issues.couchbase.com/browse/CBL-2654[++CBL-2654 - Fix close process in MessageSocket++]
+
+* https://issues.couchbase.com/browse/CBL-2623[++CBL-2623 - Make debug and verbose logs conditional on debugging flag++]
+
+* https://issues.couchbase.com/browse/CBL-2270[++CBL-2270 - Explicitly close c4Documents++]
+
+* https://issues.couchbase.com/browse/CBL-1794[++CBL-1794 - Make better use of C4DocContentLevel++]
+
+
+=== Issues and Resolutions
+
+
+* https://issues.couchbase.com/browse/CBL-3807[++CBL-3807 — Server Certificate can disappear during authentication++]
+
+* https://issues.couchbase.com/browse/CBL-4293[++CBL-4293 - ReplicatorConfiguration.setAuthenticator should allow a null argument++]
+
+* https://issues.couchbase.com/browse/CBL-4235[++CBL-4235 - Update test's sync functions according to the recent change in the default sync function in SG++]
+
+* https://issues.couchbase.com/browse/CBL-4293[++CBL-4293 -	ReplicatorConfiguration.setAuthenticator should allow a null argument++]
+
+* https://issues.couchbase.com/browse/CBL-4235[++CBL-4235 - Update test's sync functions according to the recent change in the default sync function in SG++]
+
+* https://issues.couchbase.com/browse/CBL-4219[++CBL-4219 - URLEndpointListener.getURLs returns an empty list on Android v>=11++]
+
+* https://issues.couchbase.com/browse/CBL-4205[++CBL-4205 - Replicator may hang in this error condition++]
+
+* https://issues.couchbase.com/browse/CBL-4128[++CBL-4128 - Fix mem leak in NativeC4Listener_getUrls++]
+
+* https://issues.couchbase.com/browse/CBL-4071[++CBL-4071 - "Push & Pull Deletion SG" add channel filter++]
+
+* https://issues.couchbase.com/browse/CBL-3952[++CBL-3952 - MessageEndpointListener's C4Socket is getting GC'd prematurely++]
+
+* https://issues.couchbase.com/browse/CBL-3921[++CBL-3921 - Error when sending _bulk_docs request with large number of docs++]
+
+* https://issues.couchbase.com/browse/CBL-3907[++CBL-3907 - BAD_ACCESS err with ReplParams++]
+
+* https://issues.couchbase.com/browse/CBL-3872[++CBL-3872 - MaxAttempt when set NSUIntegerMax, converts to Zero++]
+
+* https://issues.couchbase.com/browse/CBL-3866[++CBL-3866 - Fix WebSocket error 1006, "connection closed abnormally" crash++]
+
+* https://issues.couchbase.com/browse/CBL-3824[++CBL-3824 - Re-opening a database with an Index causes failure++]
+
+* https://issues.couchbase.com/browse/CBL-3808[++CBL-3808 - Server Certificate can disappear during authentication++]
+
+* https://issues.couchbase.com/browse/CBL-3682[++CBL-3682 - LiteCore fails, apparently attempting to destruct a db while in a transaction++]
+
+* https://issues.couchbase.com/browse/CBL-3626[++CBL-3626 - setDocumentExpiration hangs inside a batch transaction++]
+
+* https://issues.couchbase.com/browse/CBL-3624[++CBL-3624 - Double free of BLIPIO++]
+
+* https://issues.couchbase.com/browse/CBL-3612[++CBL-3612 - Sequence out of sync after out-of-memory error++]
+
+* https://issues.couchbase.com/browse/CBL-3574[++CBL-3574 - Set expiration on deleted doc doesn't throw exception++]
+
+* https://issues.couchbase.com/browse/CBL-3526[++CBL-3526 - Continuous Pull Replicator went to stopped instead of idle++]
+
+* https://issues.couchbase.com/browse/CBL-3384[++CBL-3384 - Worker::childChangedStatus may lose child after enqueued++]
+
+* https://issues.couchbase.com/browse/CBL-3379[++CBL-3379 - PR #1508 segment violation on Windows++]
+
+* https://issues.couchbase.com/browse/CBL-3366[++CBL-3366 - fleece::Doc constructor leaks memory++]
+
+* https://issues.couchbase.com/browse/CBL-3339[++CBL-3339 - Support null argument to COUNT()++]
+
+* https://issues.couchbase.com/browse/CBL-3257[++CBL-3257 - c4db_scopeNames doesn't return the name of the default scope if it is empty.++]
+
+* https://issues.couchbase.com/browse/CBL-3251[++CBL-3251 - Assertion when destructing database after calling beginTransaction() on the closed database++]
+
+* https://issues.couchbase.com/browse/CBL-3218[++CBL-3218 - Enable F_BARRIERFSYNC in SQLite++]
+
+* https://issues.couchbase.com/browse/CBL-3193[++CBL-3193 - Native crash freeing a C4DocumentObserver (c4docobs_free)++]
+
+* https://issues.couchbase.com/browse/CBL-3192[++CBL-3192 - Queries don't support result alias with dot++]
+
+* https://issues.couchbase.com/browse/CBL-3087[++CBL-3087 - ARRAY_COUNT() returns incorrect result++]
+
+* https://issues.couchbase.com/browse/CBL-3075[++CBL-3075 - Database could be corrupted after being copied in linux platform++]
+
+* https://issues.couchbase.com/browse/CBL-3055[++CBL-3055 - Malformed hostname can cause a crash.++]
+
+* https://issues.couchbase.com/browse/CBL-3046[++CBL-3046 - Connection Timeout is set to 15000000 Milliseconds on Non Windows Platforms++]
+
+* https://issues.couchbase.com/browse/CBL-3043[++CBL-3043 - QueryParser wrong for a case of JOIN++]
+
+* https://issues.couchbase.com/browse/CBL-3013[++CBL-3013 - Continuous replicator does not push docs which are being observed++]
+
+* https://issues.couchbase.com/browse/CBL-3010[++CBL-3010 - LiteCore delivers unrecoverable error in BUSY state++]
+
+* https://issues.couchbase.com/browse/CBL-2994[++CBL-2994 - c4DbChanges in AbstractDatabase.postDatabaseChanged may contain nulls++]
+
+* https://issues.couchbase.com/browse/CBL-2980[++CBL-2980 - Crash in LC Websocket-impl++]
+
+* https://issues.couchbase.com/browse/CBL-2948[++CBL-2948 - revpos is missing in the changed attachment body when using delta sync (Port)++]
+
+* https://issues.couchbase.com/browse/CBL-2944[++CBL-2944 - LiveQuery could crash when removing the listener++]
+
+* https://issues.couchbase.com/browse/CBL-2922[++CBL-2922 - Message Socket does not correctly handle recoverable errors++]
+
+* https://issues.couchbase.com/browse/CBL-2873[++CBL-2873 - Unable to compile with GCC 11.2++]
+
+* https://issues.couchbase.com/browse/CBL-2867[++CBL-2867 - Cannot update the same field again after reopening the database (Port Fix)++]
+
+* https://issues.couchbase.com/browse/CBL-2809[++CBL-2809 - Mark FLErrorDomain as FLEECE_PUBLIC++]
+
+* https://issues.couchbase.com/browse/CBL-2779[++CBL-2779 - N1QL : Meta().<property> column name returned as $<num>++]
+
+* https://issues.couchbase.com/browse/CBL-2773[++CBL-2773 - Call to `c4socket_closed` causes native crash.++]
+
+* https://issues.couchbase.com/browse/CBL-2736[++CBL-2736 - Incorrect key for SQL++ Query: "SELECT * FROM _default"++]
+
+* https://issues.couchbase.com/browse/CBL-2734[++CBL-2734 - Database GetDocumentExpiration returns null instead of expected date++]
+
+* https://issues.couchbase.com/browse/CBL-2721[++CBL-2721 - Database is closed while replicator change listener is still executing++]
+
+* https://issues.couchbase.com/browse/CBL-2694[++CBL-2694 - CBL sending rev list with gaps, when sync'ing more than 20 revs++]
+
+* https://issues.couchbase.com/browse/CBL-2693[++CBL-2693 - LiveQuerier could be leaked as liveQuerierStopped() delegate might not be called++]
+
+* https://issues.couchbase.com/browse/CBL-4219[++CBL-4219 - URLEndpointListener.getURLs returns an empty list on Android v>=11++]
+
+* https://issues.couchbase.com/browse/CBL-4205[++CBL-4205 - Replicator may hang in this error condition++]
+
+* https://issues.couchbase.com/browse/CBL-4128[++CBL-4128 - Fix mem leak in NativeC4Listener_getUrls++]
+
+* https://issues.couchbase.com/browse/CBL-4071[++CBL-4071 - "Push & Pull Deletion SG" add channel filter++]
+
+* https://issues.couchbase.com/browse/CBL-3952[++CBL-3952 - MessageEndpointListener's C4Socket is getting GC'd prematurely++]
+
+* https://issues.couchbase.com/browse/CBL-3921[++CBL-3921 - Error when sending _bulk_docs request with large number of docs++]
+
+* https://issues.couchbase.com/browse/CBL-3907[++CBL-3907 - BAD_ACCESS err with ReplParams++]
+
+* https://issues.couchbase.com/browse/CBL-3872[++CBL-3872 - MaxAttempt when set NSUIntegerMax, converts to Zero++]
+
+* https://issues.couchbase.com/browse/CBL-3866[++CBL-3866 - Fix WebSocket error 1006, "connection closed abnormally" crash++]
+
+* https://issues.couchbase.com/browse/CBL-3824[++CBL-3824 - Re-opening a database with an Index causes failure++]
+
+* https://issues.couchbase.com/browse/CBL-3808[++CBL-3808 - Server Certificate can disappear during authentication++]
+
+* https://issues.couchbase.com/browse/CBL-3682[++CBL-3682 - LiteCore fails, apparently attempting to destruct a db while in a transaction++]
+
+* https://issues.couchbase.com/browse/CBL-3626[++CBL-3626 - setDocumentExpiration hangs inside a batch transaction++]
+
+* https://issues.couchbase.com/browse/CBL-3624[++CBL-3624 - Double free of BLIPIO++]
+
+* https://issues.couchbase.com/browse/CBL-3612[++CBL-3612 - Sequence out of sync after out-of-memory error++]
+
+* https://issues.couchbase.com/browse/CBL-3574[++CBL-3574 - Set expiration on deleted doc doesn't throw exception++]
+
+* https://issues.couchbase.com/browse/CBL-3526[++CBL-3526 - Continuous Pull Replicator went to stopped instead of idle++]
+
+* https://issues.couchbase.com/browse/CBL-3384[++CBL-3384 - Worker::childChangedStatus may lose child after enqueued++]
+
+* https://issues.couchbase.com/browse/CBL-3379[++CBL-3379 - PR #1508 segment violation on Windows++]
+
+* https://issues.couchbase.com/browse/CBL-3366[++CBL-3366 - fleece::Doc constructor leaks memory++]
+
+* https://issues.couchbase.com/browse/CBL-3339[++CBL-3339 - Support null argument to COUNT()++]
+
+* https://issues.couchbase.com/browse/CBL-3257[++CBL-3257 - c4db_scopeNames doesn't return the name of the default scope if it is empty.++]
+
+* https://issues.couchbase.com/browse/CBL-3251[++CBL-3251 - Assertion when destructing database after calling beginTransaction() on the closed database++]
+
+* https://issues.couchbase.com/browse/CBL-3218[++CBL-3218 - Enable F_BARRIERFSYNC in SQLite++]
+
+* https://issues.couchbase.com/browse/CBL-3193[++CBL-3193 - Native crash freeing a C4DocumentObserver (c4docobs_free)++]
+
+* https://issues.couchbase.com/browse/CBL-3192[++CBL-3192 - Queries don't support result alias with dot++]
+
+* https://issues.couchbase.com/browse/CBL-3087[++CBL-3087 - ARRAY_COUNT() returns incorrect result++]
+
+* https://issues.couchbase.com/browse/CBL-3075[++CBL-3075 - Database could be corrupted after being copied in linux platform++]
+
+* https://issues.couchbase.com/browse/CBL-3055[++CBL-3055 - Malformed hostname can cause a crash.++]
+
+* https://issues.couchbase.com/browse/CBL-3046[++CBL-3046 - Connection Timeout is set to 15000000 Milliseconds on Non Windows Platforms++]
+
+* https://issues.couchbase.com/browse/CBL-3043[++CBL-3043 - QueryParser wrong for a case of JOIN++]
+
+* https://issues.couchbase.com/browse/CBL-3013[++CBL-3013 - Continuous replicator does not push docs which are being observed++]
+
+* https://issues.couchbase.com/browse/CBL-3010[++CBL-3010 - LiteCore delivers unrecoverable error in BUSY state++]
+
+* https://issues.couchbase.com/browse/CBL-2994[++CBL-2994 - c4DbChanges in AbstractDatabase.postDatabaseChanged may contain nulls++]
+
+* https://issues.couchbase.com/browse/CBL-2980[++CBL-2980 - Crash in LC Websocket-impl++]
+
+* https://issues.couchbase.com/browse/CBL-2948[++CBL-2948 - revpos is missing in the changed attachment body when using delta sync (Port)++]
+
+* https://issues.couchbase.com/browse/CBL-2944[++CBL-2944 - LiveQuery could crash when removing the listener++]
+
+* https://issues.couchbase.com/browse/CBL-2922[++CBL-2922 - Message Socket does not correctly handle recoverable errors++]
+
+* https://issues.couchbase.com/browse/CBL-2873[++CBL-2873 - Unable to compile with GCC 11.2++]
+
+* https://issues.couchbase.com/browse/CBL-2867[++CBL-2867 - Cannot update the same field again after reopening the database (Port Fix)++]
+
+* https://issues.couchbase.com/browse/CBL-2809[++CBL-2809 - Mark FLErrorDomain as FLEECE_PUBLIC++]
+
+* https://issues.couchbase.com/browse/CBL-2779[++CBL-2779 - N1QL : Meta().<property> column name returned as $<num>++]
+
+* https://issues.couchbase.com/browse/CBL-2773[++CBL-2773 - Call to `c4socket_closed` causes native crash.++]
+
+* https://issues.couchbase.com/browse/CBL-2736[++CBL-2736 - Incorrect key for SQL++ Query: "SELECT * FROM _default"++]
+
+* https://issues.couchbase.com/browse/CBL-2734[++CBL-2734 - Database GetDocumentExpiration returns null instead of expected date++]
+
+* https://issues.couchbase.com/browse/CBL-2721[++CBL-2721 - Database is closed while replicator change listener is still executing++]
+
+* https://issues.couchbase.com/browse/CBL-2694[++CBL-2694 - CBL sending rev list with gaps, when sync'ing more than 20 revs++]
+
+* https://issues.couchbase.com/browse/CBL-2693[++CBL-2693 - LiveQuerier could be leaked as liveQuerierStopped() delegate might not be called++]
+
+* https://issues.couchbase.com/browse/CBL-2692[++CBL-2692 - Closing db with active live query causes crash++]
+
+* https://issues.couchbase.com/browse/CBL-2676[++CBL-2676 - 409 retry can result in invalid remote ancestor ID++]
+
+* https://issues.couchbase.com/browse/CBL-2637[++CBL-2637 - Replication unable to continue after termination between rev and ack++]
+
+* https://issues.couchbase.com/browse/CBL-2614[++CBL-2614 - Fix Memory leak when rapidly restarting replicator++]
+
+* https://issues.couchbase.com/browse/CBL-2610[++CBL-2610 - Cleanup bundle folder when creating a database fails++]
+
+* https://issues.couchbase.com/browse/CBL-2592[++CBL-2592 - Fix dereference of empty Optional++]
+
+* https://issues.couchbase.com/browse/CBL-2586[++CBL-2586 - LiveQuerier is running after having been stopped, causing a crash++]
+
+* https://issues.couchbase.com/browse/CBL-2563[++CBL-2563 - Unable to create N1QL Query with Newline++]
+
+* https://issues.couchbase.com/browse/CBL-2540[++CBL-2540 - Fix memory leak in NativeC4Listener.startTls++]
+
+* https://issues.couchbase.com/browse/CBL-2532[++CBL-2532 - Assertion failure when stopping replicator while replicator is connecting++]
+
+* https://issues.couchbase.com/browse/CBL-2501[++CBL-2501 - Replicator won't stop++]
+
+* https://issues.couchbase.com/browse/CBL-2477[++CBL-2477 - Tear down DBAccess on stopped instead of on release++]
+
+* https://issues.couchbase.com/browse/CBL-2460[++CBL-2460 - Different C4QueryObservers share the same C4QueryEnumerator++]
+
+* https://issues.couchbase.com/browse/CBL-2459[++CBL-2459 - A second, new Query observer should be notified immediately.++]
+
+* https://issues.couchbase.com/browse/CBL-2458[++CBL-2458 - Changing a Query's parameters should re-notify observers++]
+
+* https://issues.couchbase.com/browse/CBL-2450[++CBL-2450 - Intermittent: `_keyStore` not true when calling litecore::KeyStore++]
+
+* https://issues.couchbase.com/browse/CBL-2443[++CBL-2443 - Race with expiration date set vs get++]
+
+* https://issues.couchbase.com/browse/CBL-2374[++CBL-2374 - Slowness from reindexing the database when opening database++]
+
+* https://issues.couchbase.com/browse/CBL-1517[++CBL-1517 - Crash in C4Query.init with null handle++]
+
+
+=== Known Issues
+
+* https://issues.couchbase.com/browse/CBL-637[++CBL-637 - Java Console app doesn't exit++]
+
+
+=== Deprecations 
+
+* https://issues.couchbase.com/browse/CBL-4316[++CBL-4316 - Replicator's getPendingDocumentIds() and isDocumentPending(String id) are deprecated++]
+
+* https://issues.couchbase.com/browse/CBL-4315[++CBL-4315 - ReplicatorConfiguration's filters and conflict resolver properties are deprecated++]
+
+* https://issues.couchbase.com/browse/CBL-4314[++CBL-4314 - ReplicatorConfiguration APIs with Database object are deprecated++]
+
+* https://issues.couchbase.com/browse/CBL-4313[++CBL-4313 - MessageEndpointListenerConfiguration APIs using Database object are deprecated++]
+
+* https://issues.couchbase.com/browse/CBL-4312[++CBL-4312 - URLEndpointListenerConfiguration APIs using Database object are deprecated++]
+
+* https://issues.couchbase.com/browse/CBL-4311[++CBL-4311 - QueryBuilder : isNullOrMissing() and notNullOrMissing() are deprecated++]
+
+* https://issues.couchbase.com/browse/CBL-4310[++CBL-4310 - QueryBuilder : FullTextFunction's rank(String index) and match(String index, String query) are deprecated++]
+
+* https://issues.couchbase.com/browse/CBL-4309[++CBL-4309 - QueryBuilder : DataSource's database() is deprecated++]
+
+* https://issues.couchbase.com/browse/CBL-4307[++CBL-4307 - DocumentChange's database property is deprecated++]
+
+* https://issues.couchbase.com/browse/CBL-4306[++CBL-4306 - DatabaseChange and DatabaseChangeListener are deprecated++]
+
+* https://issues.couchbase.com/browse/CBL-4305[++CBL-4305 - Database's removeChangeListener() is deprecated++]
+
+* https://issues.couchbase.com/browse/CBL-4304[++CBL-4304 - Database's Document APIs are deprecated++]
+
+* https://issues.couchbase.com/browse/CBL-4264[++CBL-4264 - Increased security: store BasicAuthenticator password as a char[] and zero before release++]
+
+* https://issues.couchbase.com/browse/CBL-4262[++CBL-4262 - ReplicatorConfiguration.setPinnedServerCertificate should take a Certificate++]
+
+* https://issues.couchbase.com/browse/CBL-1727[++CBL-1727 - Improved naming for AbstractReplicatorConfiguration.ReplicatorType++]
