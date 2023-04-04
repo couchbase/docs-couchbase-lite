@@ -83,6 +83,44 @@ ifdef::is-android[]
 include::{module-partials}sgw-replication-custom-executor.adoc[]
 endif::[]
 
+== Scopes and Collections
+
+Scopes and Collections allow you to organize your documents in Couchbase Lite. 
+
+When syncing, you can configure the collections to be synced. 
+
+The collections specified in the Couchbase Lite replicator setup must exist (both scope and collection name must be identical) on the Sync Gateway side, otherwise starting the Couchbase Lite replicator will result in an error.
+
+During replication:
+
+. If Sync Gateway config (or server) is updated to remove a collection that is being synced, the client replicator will be offline and will be stopped after the first retry. An error will be reported.
+
+. If Sync Gateway config is updated to add a collection to a scope that is being synchronized, the replication will ignore the collection. The added collection will not automatically sync until the Couchbase Lite replicator's configuration is updated.
+
+=== Default Collection 
+
+When upgrading Couchbase Lite to 3.1, the existing documents in the database will be automatically migrated to the default collection. 
+
+For backward compatibility with the code prior to 3.1, when you set up the replicator with the database, the default collection will be set up to sync with the default collection on Sync Gateway.
+
+.Sync Couchbase Lite database with the default collection on Sync Gateway
+image:ROOT:cbl-replication-scopes-collections-1.png[Sync Couchbase Lite database with the default collection on Sync Gateway,500,,align="left"]
+ 
+
+.Sync Couchbase Lite default collection with default collection on Sync Gateway
+image:ROOT:cbl-replication-scopes-collections-2.png[Sync Couchbase Lite default collection with default collection on Sync Gateway,500,,align="left"]
+
+
+=== User-Defined Collections
+
+The user-defined collections specified in the Couchbase Lite replicator setup must exist (and be identical) on the Sync Gateway side to sync. 
+
+.Syncing scope with user-defined collections. 
+image:ROOT:cbl-replication-scopes-collections-3.png["Syncing scope with user-defined collections.",500,,align="left"]
+
+.Syncing scope with user-defined collections. Couchbase Lite has more collections than the Sync Gateway configuration (with collection filters)
+image:ROOT:cbl-replication-scopes-collections-4.png["Syncing scope with user-defined collections. Couchbase Lite has more collections than the Sync Gateway configuration (with collection filters)",500,,align="left"]
+
 
 // tag::replicator-config-sample[]
 == Configuration Summary
