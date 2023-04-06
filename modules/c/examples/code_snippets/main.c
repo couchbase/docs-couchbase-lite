@@ -627,16 +627,6 @@ static void database_change_listener() {
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::document-listener[]
-    /*
-    static void document_listener(void* context, const CBLDocumentChange* change) {
-    CBLError err;
-        const CBLDocument* doc = CBLCollection_GetDocument(change->collection, change->docID, &err);
-        FLDict properties = CBLDocument_Properties(doc);
-        FLString verified_account = FLValue_AsString(FLDict_Get(properties, FLSTR("verified_account")));
-        printf("Status :: %.*s\n", (int)verified_account.size, (const char *)verified_account.buf);
-        CBLDocument_Release(doc);
-    }
-    */
     CBLListenerToken* token = CBLCollection_AddDocumentChangeListener(collection, FLSTR("user.john"),
         document_listener, NULL);
     // end::document-listener[]
