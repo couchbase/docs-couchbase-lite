@@ -30,19 +30,11 @@ This API uses query statements of the form shown in <<ex-query-form>>.
 
 The structure and semantics of the query format are based on that of Couchbase Server's {sqlpp} query language -- see {svr-n1ql-reference--xref} and {svr-n1ql-datamodel--xref}.
 
-== Datasource
-
-A datasource can be:
-
-* < database-name > : default collection
-* _ (underscore) : default collection
-* < scope-name >.< collection-name > : a collection in a scope
-* < collection-name > : a collection in the default scope
 
 == Running
 
-Use the N1QLQuery class to define the {sqlpp} query string on the database to be queried.
-Then run the query using the`.execute()` method -- see {query-resultsets--xref} for how to work with result sets.
+The database can create a query object with the SQL++ string.
+See {query-resultsets--xref} for how to work with result sets.
 
 .Running a {sqlpp} Query
 [#ex-samplerun]
@@ -81,7 +73,7 @@ Query Components::
 | <<lbl-select>> 
 a| The document properties that will be returned in the result set 
 
-| FROM 
+| <<lbl-from>> 
 a| The data source to be queried
 
  | <<lbl-where>> 
@@ -222,10 +214,19 @@ FROM dataSource  <.>
 
 ----
 
+=== Datasource
+
+A datasource can be:
+
+* < database-name > : default collection
+* _ (underscore) : default collection
+* < scope-name >.< collection-name > : a collection in a scope
+* < collection-name > : a collection in the default scope
+
 
 === Arguments
 
-<.> Here `dataSource` is the database name against which the query is to run.
+<.> Here `dataSource` is the database name against which the query is to run or the <scope>.<collection>.
 Use `AS` to give the database an alias you can use within the query. +
 To use the current datasource without specifying a name, use `_` as the datasource.
 
@@ -238,6 +239,7 @@ To use the current datasource without specifying a name, use `_` as the datasour
 [source, sql]
 ----
 SELECT name FROM db
+SELECT name FROM scope.collection
 SELECT store.name FROM db AS store
 SELECT store.name FROM db store
 SELECT name FROM _
@@ -765,7 +767,7 @@ SELECT db.*
   WHERE contact.name = "daniel"
 
 SELECT db.contact.address.city
-  FROM db
+  FROM scope.collection
   WHERE contact.name = "daniel"
 
 SELECT contact.address.city, contact.phones[0]

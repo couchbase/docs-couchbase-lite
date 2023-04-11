@@ -47,10 +47,9 @@ Scope:: All the collections in a named scope.
 
 Collection:: A specific collection in a scope.
 
-As part of the syncing setup, the Gateway has to map the Couchbase Lite database to the database being synced against on Capella. These mappings can be `implicit` or `explicit`.
+As part of the syncing setup, the Gateway has to map the Couchbase Lite database to the database being synced against on Capella. 
 
-=== Implicit Mapping
-This will sync between databases that share the same keyspace names.
+
 
 
 
@@ -379,7 +378,9 @@ Filtering out such an event would retain the document locally.
 
 As a result, there would be a local copy of the document disjointed from the one that resides on Couchbase Server.
 
-Further updates to the document stored on Couchbase Server would not be received in pull replications and further local edits could be potentially pushed, which would result in `409` errors since access has been revoked.
+Further updates to the document stored on Couchbase Server would not be received in pull replications and further local edits could be potentially pushed, which would result in `409` errors since access has been revoked. 
+
+For more information, see <<auto-purge-on-revoke, Auto Purge on Revoke>>.
 ****
 
 [#lbl-repl-chan]
@@ -515,7 +516,7 @@ Clients wishing to sync previously removed documents must use the resetCheckpoin
 :param-tags: autopurge-override
 include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
-<.> Here we have opted to turn off the auto purge behavior. By default this is ON (true)
+<.> Here we have opted to turn off the auto purge behavior. By default auto purge is enabled (false)
 
 ==== Overrides
 Where necessary, clients can override the default auto-purge behavior.
