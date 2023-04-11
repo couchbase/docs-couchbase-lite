@@ -59,10 +59,12 @@ a| The maximum number of retry attempts
 |Change this to adjust the interval between retries.
 a|The maximum interval between retry attempts
 
-Whilst you can configure the *maximum permitted* wait time,  each individual interval is calculated by the replicator's exponential backoff algorithm and is not configurable.
+While you can configure the *maximum permitted* wait time,  the replicator's exponential backoff algorithm calculates each individual interval which is not configurable.
 
 * Default value: 300 seconds (5 minutes)
-* Zero or negative values generate a Couchbase exception, `InvalidArgumentException`.
+* Zero sets the maximum interval between retries to the default of 300 seconds
+* 300 sets the maximum interval between retries to the default of 300 seconds 
+* A negative value generates a Couchbase exception, `InvalidArgumentException`
 
 |===
 

@@ -293,7 +293,7 @@ SELECT db.prop1, other.prop2 FROM db JOIN db AS other ON db.key = other.key
 
 SELECT db.prop1, other.prop2 FROM db LEFT JOIN db other ON db.key = other.key
 
-SELECT * FROM travel-sample r JOIN travel-sample a ON r.airlineid = a.meta.id WHERE a.country = "France"
+SELECT * FROM route r JOIN airline a ON r.airlineid = meta(a).id WHERE a.country = "France"
 ----
 
 
@@ -766,7 +766,7 @@ SELECT db.*
   FROM db
   WHERE contact.name = "daniel"
 
-SELECT db.contact.address.city
+SELECT collection.contact.address.city
   FROM scope.collection
   WHERE contact.name = "daniel"
 
