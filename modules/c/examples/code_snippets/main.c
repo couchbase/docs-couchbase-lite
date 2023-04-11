@@ -1448,6 +1448,66 @@ static void test_explain_statement() {
     // end::query-explain-all[]
     }
 
+    {
+    // tag::query-explain-like[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _ WHERE type LIKE \"%hotel%\" AND name LIKE \"%royal%\""),
+        NULL, &err);
+
+    FLSliceResult explanation = CBLQuery_Explain(query);
+    printf("%.*s", (int)explanation.size, (const char *)explanation.buf);
+    FLSliceResult_Release(explanation);
+    // end::query-explain-like[]
+    }
+
+    {
+    // tag::query-explain-nopfx[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _ WHERE type LIKE \"hotel%\" AND name LIKE \"%royal%\""),
+        NULL, &err);
+
+    FLSliceResult explanation = CBLQuery_Explain(query);
+    printf("%.*s", (int)explanation.size, (const char *)explanation.buf);
+    FLSliceResult_Release(explanation);
+    // end::query-explain-nopfx[]
+    }
+
+    {
+    // tag::query-explain-function[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _ WHERE lower(type) = \"hotel\""),
+        NULL, &err);
+
+    FLSliceResult explanation = CBLQuery_Explain(query);
+    printf("%.*s", (int)explanation.size, (const char *)explanation.buf);
+    FLSliceResult_Release(explanation);
+    // end::query-explain-function[]
+    }
+
+    {
+    // tag::query-explain-nofunction[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _ WHERE type = \"hotel\""),
+        NULL, &err);
+
+    FLSliceResult explanation = CBLQuery_Explain(query);
+    printf("%.*s", (int)explanation.size, (const char *)explanation.buf);
+    FLSliceResult_Release(explanation);
+    // end::query-explain-nofunction[]
+    }
+    
     // DOCS NOTE: Others omitted for now
 }
 
