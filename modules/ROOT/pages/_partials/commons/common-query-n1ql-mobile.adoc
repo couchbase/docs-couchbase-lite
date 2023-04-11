@@ -764,11 +764,15 @@ SELECT *
 
 SELECT db.*
   FROM db
-  WHERE contact.name = "daniel"
+  WHERE collection.contact.name = "daniel"
 
 SELECT collection.contact.address.city
   FROM scope.collection
-  WHERE contact.name = "daniel"
+  WHERE collection.contact.name = "daniel"
+
+SELECT contact.address.city
+  FROM scope.collection
+  WHERE contact.name = "daniel"  
 
 SELECT contact.address.city, contact.phones[0]
   FROM db
