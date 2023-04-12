@@ -17,102 +17,32 @@
 
 package com.couchbase.codesnippets
 
-import android.content.Context
 import com.couchbase.codesnippets.util.log
-import com.couchbase.lite.BasicAuthenticator
-import com.couchbase.lite.ClientCertificateAuthenticator
 import com.couchbase.lite.CouchbaseLiteException
 import com.couchbase.lite.Database
+import com.couchbase.lite.KeyStoreUtils
 import com.couchbase.lite.ListenerCertificateAuthenticator
 import com.couchbase.lite.ListenerPasswordAuthenticator
-import com.couchbase.lite.MutableDocument
-import com.couchbase.lite.Replicator
-import com.couchbase.lite.ReplicatorActivityLevel
-import com.couchbase.lite.ReplicatorConfiguration
-import com.couchbase.lite.ReplicatorConfigurationFactory
-import com.couchbase.lite.ReplicatorType
 import com.couchbase.lite.TLSIdentity
-import com.couchbase.lite.URLEndpoint
 import com.couchbase.lite.URLEndpointListener
+import com.couchbase.lite.URLEndpointListenerConfiguration
 import com.couchbase.lite.URLEndpointListenerConfigurationFactory
-import com.couchbase.lite.create
-import java.io.ByteArrayOutputStream
+import com.couchbase.lite.newConfig
+import java.io.File
 import java.io.IOException
 import java.net.URI
 import java.security.KeyStore
 import java.security.KeyStoreException
 import java.security.NoSuchAlgorithmException
 import java.security.cert.Certificate
-import java.security.cert.CertificateEncodingException
 import java.security.cert.CertificateException
-import java.util.concurrent.CountDownLatch
 
 private const val TAG = "LISTEN"
 
 @Suppress("unused")
-class KtCertAuthListener {
-    companion object {
-        private val CERT_ATTRIBUTES = mapOf(
-            TLSIdentity.CERT_ATTRIBUTE_COMMON_NAME to "CBL Test",
-            TLSIdentity.CERT_ATTRIBUTE_ORGANIZATION to "Couchbase",
-            TLSIdentity.CERT_ATTRIBUTE_ORGANIZATION_UNIT to "Mobile",
-            TLSIdentity.CERT_ATTRIBUTE_EMAIL_ADDRESS to "lite@couchbase.com",
-        )
-    }
+class ListenerExamples {
+    private var thisListener: URLEndpointListener? = null
 
-    // start a server and connect to it with a replicator
-    @Throws(CouchbaseLiteException::class, IOException::class)
-    fun run() {
-        val localDb = Database("localDb")
-        var doc = MutableDocument()
-        doc.setString("dog", "woof")
-        localDb.save(doc)
-
-        val remoteDb = Database("remoteDb")
-        doc = MutableDocument()
-        doc.setString("cat", "meow")
-        remoteDb.save(doc)
-
-        val serverIdentity = TLSIdentity.createIdentity(true, CERT_ATTRIBUTES, null, "server")
-
-        val clientIdentity = TLSIdentity.createIdentity(false, CERT_ATTRIBUTES, null, "client")
-        val uri = startServer(remoteDb, serverIdentity, clientIdentity.certs)
-            ?: throw IOException("Failed to start the server")
-
-        Thread {
-            startClient(localDb, uri, clientIdentity, serverIdentity.certs[0])
-            log("Success!!")
-            deleteIdentity("server")
-            log("Alias deleted: server")
-            deleteIdentity("client")
-            log("Alias deleted: client")
-        }.start()
-    }
-
-    // start a client replicator
-    @Throws(CertificateEncodingException::class, InterruptedException::class)
-    fun startClient(db: Database, uri: URI, clientIdentity: TLSIdentity, cert: Certificate) {
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.create(
-                database = db,
-                target = URLEndpoint(uri),
-                type = ReplicatorType.PUSH_AND_PULL,
-                continuous = false,
-                authenticator = ClientCertificateAuthenticator(clientIdentity),
-                pinnedServerCertificate = cert.encoded
-            )
-        )
-
-        val completionLatch = CountDownLatch(1)
-
-        repl.addChangeListener { change ->
-            if (change.status.activityLevel == ReplicatorActivityLevel.STOPPED) {
-                completionLatch.countDown()
-            }
-        }
-        repl.start(false)
-        completionLatch.await()
-    }
     // tag::listener-config-auth-cert-full[]
     /**
      * Snippet 2: create a ListenerCertificateAuthenticator and configure the listener with it
@@ -120,16 +50,16 @@ class KtCertAuthListener {
      *
      * Start a listener for db that accepts connections from a client identified by any of the passed certs
      *
-     * @param db    the database to which the listener is attached
+     * @param collections the collections to which the listener is attached
      * @param certs the name of the single valid user
      * @return the url at which the listener can be reached.
      * @throws CouchbaseLiteException on failure
      */
     @Throws(CouchbaseLiteException::class)
-    fun startServer(db: Database, serverId: TLSIdentity, certs: List<Certificate?>): URI? {
+    fun startServer(collections: Set<Collection>, serverId: TLSIdentity, certs: List<Certificate?>): URI? {
         val listener = URLEndpointListener(
-            URLEndpointListenerConfigurationFactory.create(
-                database = db,
+            URLEndpointListenerConfigurationFactory.newConfig(
+                collections = collections,
                 port = 0, // this is the default
                 disableTls = false,
                 identity = serverId,
@@ -145,6 +75,7 @@ class KtCertAuthListener {
         }
     }
     // end::listener-config-auth-cert-full[]
+
     // tag::listener-config-delete-cert-full[]
     /**
      * Delete an identity from the keystore
@@ -163,134 +94,128 @@ class KtCertAuthListener {
         keyStore.deleteEntry(alias) // <.>
     }
     // end::listener-config-delete-cert-full[]
-    // nottag::p2p-tlsid-tlsidentity-with-label[]
-    /**
-     * Snippet 4: Create a ClientCertificateAuthenticator and use it in a replicator
-     * Snippet 5: Specify a pinned certificate as a byte array
-     *
-     *
-     * Configure Client (active) side certificates
-     *
-     * @param config         The replicator configuration
-     * @param cert           The expected server side certificate
-     * @param clientIdentity the identity offered to the server as authentication
-     * @throws CertificateEncodingException on certifcate encoding error
-     */
-    @Throws(CertificateEncodingException::class)
-    private fun configureClientCerts(
-        config: ReplicatorConfiguration,
-        cert: Certificate,
-        clientIdentity: TLSIdentity
-    ) {
 
-        // Snippet 4: create an authenticator that provides the client identity
-        config.authenticator = ClientCertificateAuthenticator(clientIdentity)
 
-        // Configure the pinned certificate passing a byte array.
-        config.pinnedServerCertificate = cert.encoded
+    fun listenerConfigClientAuthLambdaExample(thisConfig: URLEndpointListenerConfiguration) {
+        // tag::listener-config-client-auth-lambda[]
+        // Configure authentication using application logic
+        val thisCorpId = TLSIdentity.getIdentity("OurCorp") // <.>
+            ?: throw IllegalStateException("Cannot find corporate id")
+
+        thisConfig.tlsIdentity = thisCorpId
+
+        thisConfig.authenticator = ListenerCertificateAuthenticator { certs ->
+            // supply logic that returns boolean
+            // true for authenticate, false if not
+            // For instance:
+            certs[0] == thisCorpId.certs[0]
+        } // <.> <.>
+
+
+        val thisListener = URLEndpointListener(thisConfig)
+
+        // end::listener-config-client-auth-lambda[]
     }
-    // notend::p2p-tlsid-tlsidentity-with-label[]
-    /**
-     * Snippet 5 (supplement): Copy a cert from a resource bundle
-     *
-     *
-     * Configure Client (active) side certificates
-     *
-     * @param context Android context
-     * @param resId   resource id for resource: R.id.foo
-     * @throws IOException on copy error
-     */
-    @Throws(IOException::class)
-    private fun readCertMaterialFromBundle(
-        context: Context,
-        resId: Int
-    ): ByteArray {
-        val out = ByteArrayOutputStream()
-        val `in` = context.resources.openRawResource(resId)
-        val buf = ByteArray(1024)
-        var n: Int
-        while (`in`.read(buf).also { n = it } >= 0) {
-            out.write(buf, 0, n)
+
+    fun listenerConfigClientAuthRootExample(collections: Set<Collection>) {
+        // tag::listener-config-client-root-ca[]
+        // tag::listener-config-client-auth-root[]
+        // Configure the client authenticator
+        // to validate using ROOT CA
+        // thisClientID.certs is a list containing a client cert to accept
+        // and any other certs needed to complete a chain between the client cert
+        // and a CA
+        val validId = TLSIdentity.getIdentity("Our Corporate Id")
+            ?: throw IllegalStateException("Cannot find corporate id")
+
+        // accept only clients signed by the corp cert
+        val listener = URLEndpointListener(
+            URLEndpointListenerConfigurationFactory.newConfig(
+                // get the identity <.>
+                collections = collections,
+                identity = validId,
+                authenticator = ListenerCertificateAuthenticator(validId.certs)
+            )
+        ) // <.>
+
+        // end::listener-config-client-auth-root[]
+        // end::listener-config-client-root-ca[]
+    }
+
+    fun listenerConfigTlsIdFullExample(keyFile: File, collections: Set<Collection>) {
+        // tag::listener-config-tls-id-full[]
+        // tag::listener-config-tls-id-caCert[]
+
+        // Import a key pair into secure storage
+        // Create a TLSIdentity from the imported key-pair
+        // This only needs to happen once.  Once the key is in the internal store
+        // it can be referenced using its alias
+        // This method of importing a key is insecure
+        // Android has better ways of importing keys
+        keyFile.inputStream().use { // <.>
+            KeyStoreUtils.importEntry(
+                "PKCS12",  // KeyStore type, eg: "PKCS12"
+                it,  // An InputStream from the keystore
+                "let me in".toCharArray(),  // The keystore password
+                "topSekritKey",  // The alias to be used (in external keystore)
+                null,  // The key password or null if the key has none
+                "test-alias" // The alias for the imported key
+            )
         }
-        return out.toByteArray()
-    }
-}
 
-@Suppress("unused")
-class KtPasswordAuthListener {
-    companion object {
-        private const val VALID_USER = "Minnie"
-        private val VALID_PASSWORD = "let me in!".toCharArray()
-    }
+        // tag::listener-config-tls-id-set[]
+        // Set the TLS Identity
+        URLEndpointListenerConfigurationFactory.newConfig(
+            collections,
+            identity = TLSIdentity.getIdentity("test-alias")
+        ) // <.>
+        // end::listener-config-tls-id-caCert[]
 
-    // start a server and connect to it with a replicator
-    @Throws(CouchbaseLiteException::class, IOException::class)
-    fun run() {
-        val localDb = Database("localDb")
-        var doc = MutableDocument()
-        doc.setString("dog", "woof")
-        localDb.save(doc)
-        val remoteDb = Database("remoteDb")
-        doc = MutableDocument()
-        doc.setString("cat", "meow")
-        localDb.save(doc)
-        val uri = startServer(remoteDb, "fox", "wa-pa-pa-pa-pa-pow".toCharArray())
-            ?: throw IOException("Failed to start the server")
-        Thread {
-            try {
-                runClient(uri, "fox", "wa-pa-pa-pa-pa-pow".toCharArray(), localDb)
-                log("Success!!")
-            } catch (e: Exception) {
-                log("Failed!!", e)
-            }
-        }.start()
+        // end::listener-config-tls-id-set[]
+        // end::listener-config-tls-id-full[]
     }
 
-    // start a client replicator
-    @Throws(InterruptedException::class)
-    fun runClient(
-        uri: URI,
-        username: String,
-        password: CharArray,
-        db: Database
-    ) {
-        val config = ReplicatorConfiguration(db, URLEndpoint(uri))
-        config.type = ReplicatorType.PUSH_AND_PULL
-        config.isContinuous = false
-        config.authenticator = BasicAuthenticator(username, password)
-        val completionLatch = CountDownLatch(1)
-        val repl = Replicator(config)
+    fun deleteIdentityExample(alias: String) {
+        // tag::deleteTlsIdentity[]
+        // tag::p2p-tlsid-delete-id-from-keychain[]
+        val thisKeyStore = KeyStore.getInstance("AndroidKeyStore")
+        thisKeyStore.load(null)
+        thisKeyStore.deleteEntry(alias)
 
-        repl.addChangeListener { change ->
-            if (change.status
-                    .activityLevel == ReplicatorActivityLevel.STOPPED
-            ) {
-                completionLatch.countDown()
-            }
-        }
-        repl.start(false)
-        completionLatch.await()
+        // end::p2p-tlsid-delete-id-from-keychain[]
+        // end::deleteTlsIdentity[]
     }
+
+    fun listenerGetNetworkInterfacesExample(collections: Set<Collection>) {
+        // tag::listener-get-network-interfaces[]
+        val listener = URLEndpointListener(URLEndpointListenerConfigurationFactory.newConfig(collections))
+        listener.start()
+        thisListener = listener
+        log("URLS are ${listener.urls}")
+        // end::listener-get-network-interfaces[]
+    }
+
+
     // tag::listener-config-client-auth-pwd-full[]
     /**
      *
      * Start a listener for db that accepts connections using exactly the passed username and password
      *
      *
-     * @param db       the database to which the listener is attached
+     * @param collections       the set of collections to which the listener is attached
      * @param username the name of the single valid user
      * @param password the password for the user
      * @return the url at which the listener can be reached.
      * @throws CouchbaseLiteException on failure
      */
-    fun startServer(db: Database, username: String, password: CharArray): URI? {
+    fun startServer(collections: Set<Collection>, username: String, password: CharArray): URI? {
         val listener = URLEndpointListener(
-            URLEndpointListenerConfigurationFactory.create(
-                database = db,
+            URLEndpointListenerConfigurationFactory.newConfig(
+                collections = collections,
                 port = 0,// this is the default
                 disableTls = true,
                 authenticator = ListenerPasswordAuthenticator { usr, pwd ->
-                    (usr == username) && pwd.contentEquals(password)
+                    (usr == username) && (pwd.contentEquals(password))
                 })
         )
 
@@ -302,7 +227,134 @@ class KtPasswordAuthListener {
             urls[0]
         }
     }
-// end::listener-config-client-auth-pwd-full[]
+    // notend::listener-config-client-auth-pwd-full[]
+
+
+    // tag::listener-config-tls-id-SelfSigned[]
+    // Use a self-signed certificate
+    // Create a TLSIdentity for the server using convenience API.
+    // System generates self-signed cert
+    companion object {
+        val CERT_ATTRIBUTES = mapOf( //<.>
+            TLSIdentity.CERT_ATTRIBUTE_COMMON_NAME to "Couchbase Demo",
+            TLSIdentity.CERT_ATTRIBUTE_ORGANIZATION to "Couchbase",
+            TLSIdentity.CERT_ATTRIBUTE_ORGANIZATION_UNIT to "Mobile",
+            TLSIdentity.CERT_ATTRIBUTE_EMAIL_ADDRESS to "noreply@couchbase.com"
+        )
+    }
+
+    // Store the TLS identity in secure storage
+    // under the label 'couchbase-docs-cert'
+    fun listenerWithSelfSignedCert(thisConfig: URLEndpointListenerConfiguration) {
+        val thisIdentity = TLSIdentity.createIdentity(
+            true,
+            CERT_ATTRIBUTES,
+            null,
+            "couchbase-docs-cert"
+        ) // <.>
+
+        // end::listener-config-tls-id-SelfSigned[]
+
+        // tag::listener-config-tls-id-set[]
+        // Set the TLS Identity
+        thisConfig.tlsIdentity = thisIdentity // <.>
+
+        // end::listener-config-tls-id-set[]
+    }
+
+    fun passiveListenerExample(collections: Set<Collection>, validUser: String, validPass: CharArray) {
+        // EXAMPLE 1
+        // tag::listener-start[]
+        // Initialize the listener
+        // tag::listener-initialize[]
+        val listener = URLEndpointListener(
+            URLEndpointListenerConfigurationFactory.newConfig(
+                // tag::listener-config-db[]
+                collections = collections, // <.>
+                // end::listener-config-db[]
+                // tag::listener-config-port[]
+                port = 55990, // <.>
+                // end::listener-config-port[]
+                // tag::listener-config-netw-iface[]
+                networkInterface = "wlan0", // <.>
+
+                // end::listener-config-netw-iface[]
+                // tag::listener-config-delta-sync[]
+                enableDeltaSync = false, // <.>
+
+                // end::listener-config-delta-sync[]
+                // tag::listener-config-tls-full[]
+                // Configure server security
+                // tag::listener-config-tls-enable[]
+                disableTls = false, // <.>
+
+                // end::listener-config-tls-enable[]
+                // tag::listener-config-tls-id-anon[]
+                // Use an Anonymous Self-Signed Cert
+                identity = null, // <.>
+                // end::listener-config-tls-id-anon[]
+
+                // tag::listener-config-client-auth-pwd[]
+                // Configure Client Security using an Authenticator
+                // For example, Basic Authentication <.>
+                authenticator = ListenerPasswordAuthenticator { usr, pwd ->
+                    (usr === validUser) && (validPass.contentEquals(pwd))
+                }
+            ))
+
+        // Start the listener
+        listener.start() // <.>
+        // end::listener-initialize[]
+        // end::listener-start[]
+    }
+
+    fun simpleListenerExample(db: Database) {
+        // tag::listener-simple[]
+        val listener = URLEndpointListener(
+            URLEndpointListenerConfigurationFactory.newConfig(
+                collections = db.collections,
+                authenticator = ListenerPasswordAuthenticator { user, pwd ->
+                    (user == "daniel") && (String(pwd) == "123")  // <.>
+                })
+        )
+        listener.start() // <.>
+        thisListener = listener
+
+        // end::listener-simple[]
+    }
+
+    fun overrideConfigExample(db: Database) {
+        // tag::override-config[]
+        val listener8080 = URLEndpointListenerConfigurationFactory.newConfig(
+            networkInterface = "en0",
+            port = 8080
+        )
+        val listener8081 = listener8080.newConfig(port = 8081)
+        // end::override-config[]
+    }
+
+    fun listenerStatusCheckExample(db: Database) {
+        val listener = URLEndpointListener(
+            URLEndpointListenerConfigurationFactory
+                .newConfig(collections = db.collections)
+        )
+        listener.start()
+        thisListener = listener
+        // tag::listener-status-check[]
+        val connectionCount = listener.status?.connectionCount // <.>
+        val activeConnectionCount = listener.status?.activeConnectionCount // <.>
+        // end::listener-status-check[]
+    }
+
+    fun listenerStopExample() {
+        // tag::listener-stop[]
+        val listener = thisListener
+        thisListener = null
+        listener?.stop()
+
+        // end::listener-stop[]
+    }
+
 }
 
 

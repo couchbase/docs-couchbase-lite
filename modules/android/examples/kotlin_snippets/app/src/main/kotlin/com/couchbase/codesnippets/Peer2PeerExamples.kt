@@ -17,8 +17,8 @@
 
 package com.couchbase.codesnippets
 
+import com.couchbase.lite.Collection
 import com.couchbase.lite.CouchbaseLiteException
-import com.couchbase.lite.Database
 import com.couchbase.lite.Message
 import com.couchbase.lite.MessageEndpoint
 import com.couchbase.lite.MessageEndpointConnection
@@ -31,17 +31,15 @@ import com.couchbase.lite.ProtocolType
 import com.couchbase.lite.Replicator
 import com.couchbase.lite.ReplicatorConfigurationFactory
 import com.couchbase.lite.ReplicatorConnection
-import com.couchbase.lite.create
+import com.couchbase.lite.newConfig
 
 
 @Suppress("unused")
 class BrowserSessionManager : MessageEndpointDelegate {
     private var replicator: Replicator? = null
 
-    @Throws(CouchbaseLiteException::class)
-    fun initCouchbase() {
+    fun initCouchbase(collections: Set<Collection>) {
         // tag::message-endpoint[]
-        val database = Database("mydb")
 
         // The delegate must implement the `MessageEndpointDelegate` protocol.
         val messageEndpoint = MessageEndpoint("UID:123", "active", ProtocolType.MESSAGE_STREAM, this)
@@ -49,7 +47,13 @@ class BrowserSessionManager : MessageEndpointDelegate {
 
         // tag::message-endpoint-replicator[]
         // Create the replicator object.
-        val repl = Replicator(ReplicatorConfigurationFactory.create(database = database, target = messageEndpoint))
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                collections = mapOf(collections to null),
+                target = messageEndpoint
+            )
+        )
+
         // Start the replication.
         repl.start()
         replicator = repl
@@ -83,8 +87,8 @@ class ActivePeerConnection : MessageEndpointConnection {
         replicatorConnection = connection
         completion.complete(true, null)
     }
-
     // end::active-peer-open[]
+
     // tag::active-peer-close[]
     override fun close(error: Exception?, completion: MessagingCloseCompletion) {
         /* disconnect with communications framework */
@@ -92,8 +96,8 @@ class ActivePeerConnection : MessageEndpointConnection {
         /* call completion handler */
         completion.complete()
     }
-
     // end::active-peer-close[]
+
     // tag::active-peer-send[]
     /* implementation of MessageEndpointConnection */
     override fun send(message: Message, completion: MessagingCompletion) {
@@ -116,30 +120,29 @@ class ActivePeerConnection : MessageEndpointConnection {
 /* ----------------------------------------------------------- */
 
 @Suppress("unused")
-class PassivePeerConnection private constructor() : MessageEndpointConnection {
-    private var messageEndpointListener: MessageEndpointListener? = null
+class PassivePeerConnection : MessageEndpointConnection {
+    private var listener: MessageEndpointListener? = null
     private var replicatorConnection: ReplicatorConnection? = null
 
     @Throws(CouchbaseLiteException::class)
-    fun startListener() {
+    fun startListener(collections: Set<Collection>) {
         // tag::listener[]
-        val database = Database("mydb")
-        messageEndpointListener = MessageEndpointListener(
-            MessageEndpointListenerConfigurationFactory.create(database, ProtocolType.MESSAGE_STREAM)
+        listener = MessageEndpointListener(
+            MessageEndpointListenerConfigurationFactory.newConfig(collections, ProtocolType.MESSAGE_STREAM)
         )
         // end::listener[]
     }
 
     fun stopListener() {
         // tag::passive-stop-listener[]
-        messageEndpointListener?.closeAll()
+        listener?.closeAll()
         // end::passive-stop-listener[]
     }
 
     fun accept() {
         // tag::advertizer-accept[]
         val connection = PassivePeerConnection() /* implements MessageEndpointConnection */
-        messageEndpointListener?.accept(connection)
+        listener?.accept(connection)
         // end::advertizer-accept[]
     }
 

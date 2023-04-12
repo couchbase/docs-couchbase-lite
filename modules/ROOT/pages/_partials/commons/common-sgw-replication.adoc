@@ -38,19 +38,15 @@ Each scope can contain one or more collections.
 
 To learn about Scopes and Collections, see xref:{param-module}:database.adoc[]
 
-You can set up a replication scheme across any of the three data levels:
+You can set up a replication scheme across these data levels:
 
-Database:: All scopes and collections in the database are synced,
-including the `_default` scope and the `_default` collection.
+Database:: The `_default` collection is synced.
 
-Scope:: All the collections in a named scope.
+Collection:: A specific collection or a set of collections is synced.
 
-Collection:: A specific collection in a scope.
+As part of the syncing setup, the Gateway has to map the Couchbase Lite database to the database being synced on Capella. 
 
-As part of the syncing setup, the Gateway has to map the Couchbase Lite database to the database being synced against on Capella. These mappings can be `implicit` or `explicit`.
 
-=== Implicit Mapping
-This will sync between databases that share the same keyspace names.
 
 
 
@@ -82,6 +78,44 @@ So we don't recommend to rely on that when using the replication or database cha
 ifdef::is-android[]
 include::{module-partials}sgw-replication-custom-executor.adoc[]
 endif::[]
+
+== Scopes and Collections
+
+Scopes and Collections allow you to organize your documents in Couchbase Lite. 
+
+When syncing, you can configure the collections to be synced. 
+
+The collections specified in the Couchbase Lite replicator setup must exist (both scope and collection name must be identical) on the Sync Gateway side, otherwise starting the Couchbase Lite replicator will result in an error.
+
+During replication:
+
+. If Sync Gateway config (or server) is updated to remove a collection that is being synced, the client replicator will be offline and will be stopped after the first retry. An error will be reported.
+
+. If Sync Gateway config is updated to add a collection to a scope that is being synchronized, the replication will ignore the collection. The added collection will not automatically sync until the Couchbase Lite replicator's configuration is updated.
+
+=== Default Collection 
+
+When upgrading Couchbase Lite to 3.1, the existing documents in the database will be automatically migrated to the default collection. 
+
+For backward compatibility with the code prior to 3.1, when you set up the replicator with the database, the default collection will be set up to sync with the default collection on Sync Gateway.
+
+.Sync Couchbase Lite database with the default collection on Sync Gateway
+image:ROOT:cbl-replication-scopes-collections-1.png[Sync Couchbase Lite database with the default collection on Sync Gateway,500,,align="left"]
+ 
+
+.Sync Couchbase Lite default collection with default collection on Sync Gateway
+image:ROOT:cbl-replication-scopes-collections-2.png[Sync Couchbase Lite default collection with default collection on Sync Gateway,500,,align="left"]
+
+
+=== User-Defined Collections
+
+The user-defined collections specified in the Couchbase Lite replicator setup must exist (and be identical) on the Sync Gateway side to sync. 
+
+.Syncing scope with user-defined collections. 
+image:ROOT:cbl-replication-scopes-collections-3.png["Syncing scope with user-defined collections.",500,,align="left"]
+
+.Syncing scope with user-defined collections. Couchbase Lite has more collections than the Sync Gateway configuration (with collection filters)
+image:ROOT:cbl-replication-scopes-collections-4.png["Syncing scope with user-defined collections. Couchbase Lite has more collections than the Sync Gateway configuration (with collection filters)",500,,align="left"]
 
 
 // tag::replicator-config-sample[]
@@ -341,7 +375,9 @@ Filtering out such an event would retain the document locally.
 
 As a result, there would be a local copy of the document disjointed from the one that resides on Couchbase Server.
 
-Further updates to the document stored on Couchbase Server would not be received in pull replications and further local edits could be potentially pushed, which would result in `409` errors since access has been revoked.
+Further updates to the document stored on Couchbase Server would not be received in pull replications and further local edits could be pushed but the updated versions will not be visible. 
+
+For more information, see <<auto-purge-on-revoke, Auto Purge on Revoke>>.
 ****
 
 [#lbl-repl-chan]
@@ -356,7 +392,7 @@ and the
 xref:sync-gateway::sync-function-api.adoc[sync function]
 to specify which data to pull for each user.
 
-Optionally, it's also possible to specify a comma-separated list of channel names on Couchbase Lite's replicator configuration object.
+Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's replicator configuration object.
 In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
 
 [#anchor-auto-purge-on-revoke]
@@ -477,7 +513,7 @@ Clients wishing to sync previously removed documents must use the resetCheckpoin
 :param-tags: autopurge-override
 include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
-<.> Here we have opted to turn off the auto purge behavior. By default this is ON (true)
+<.> Here we have opted to turn off the auto purge behavior. By default auto purge is enabled.
 
 ==== Overrides
 Where necessary, clients can override the default auto-purge behavior.
@@ -506,7 +542,7 @@ a|Doc is auto purged
 App notified of “accessRemoved” if _Documentlistener_ registered
 a|Doc remains in local database
 
-App notified of “Rejected Rev(403)” if _Documentlistener_ registered
+
 
 |===
 

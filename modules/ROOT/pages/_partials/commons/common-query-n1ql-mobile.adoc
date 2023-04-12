@@ -16,7 +16,7 @@
 
 :count-result-text: The result set representing a count is a key-value pair. The key being the count name, as defined using `SelectResult.as`
 
-include::{root-partials}block-caveats.adoc[tag="N1QL-SQL"]
+//include::{root-partials}block-caveats.adoc[tag="N1QL-SQL"]
 
 // END::Local page attributes
 
@@ -33,8 +33,8 @@ The structure and semantics of the query format are based on that of Couchbase S
 
 == Running
 
-Use the N1QLQuery class to define the {sqlpp} query string on the database to be queried.
-Then run the query using the`.execute()` method -- see {query-resultsets--xref} for how to work with result sets.
+The database can create a query object with the SQL++ string.
+See {query-resultsets--xref} for how to work with result sets.
 
 .Running a {sqlpp} Query
 [#ex-samplerun]
@@ -73,7 +73,7 @@ Query Components::
 | <<lbl-select>> 
 a| The document properties that will be returned in the result set 
 
-| FROM 
+| <<lbl-from>> 
 a| The data source to be queried
 
  | <<lbl-where>> 
@@ -214,10 +214,19 @@ FROM dataSource  <.>
 
 ----
 
+=== Datasource
+
+A datasource can be:
+
+* < database-name > : default collection
+* _ (underscore) : default collection
+* < scope-name >.< collection-name > : a collection in a scope
+* < collection-name > : a collection in the default scope
+
 
 === Arguments
 
-<.> Here `dataSource` is the database name against which the query is to run.
+<.> Here `dataSource` is the database name against which the query is to run or the <scope>.<collection>.
 Use `AS` to give the database an alias you can use within the query. +
 To use the current datasource without specifying a name, use `_` as the datasource.
 
@@ -230,6 +239,7 @@ To use the current datasource without specifying a name, use `_` as the datasour
 [source, sql]
 ----
 SELECT name FROM db
+SELECT name FROM scope.collection
 SELECT store.name FROM db AS store
 SELECT store.name FROM db store
 SELECT name FROM _
@@ -283,7 +293,7 @@ SELECT db.prop1, other.prop2 FROM db JOIN db AS other ON db.key = other.key
 
 SELECT db.prop1, other.prop2 FROM db LEFT JOIN db other ON db.key = other.key
 
-SELECT * FROM travel-sample r JOIN travel-sample a ON r.airlineid = a.meta.id WHERE a.country = "France"
+SELECT * FROM route r JOIN airline a ON r.airlineid = meta(a).id WHERE a.country = "France"
 ----
 
 
@@ -754,11 +764,15 @@ SELECT *
 
 SELECT db.*
   FROM db
-  WHERE contact.name = "daniel"
+  WHERE collection.contact.name = "daniel"
 
-SELECT db.contact.address.city
-  FROM db
-  WHERE contact.name = "daniel"
+SELECT collection.contact.address.city
+  FROM scope.collection
+  WHERE collection.contact.name = "daniel"
+
+SELECT contact.address.city
+  FROM scope.collection
+  WHERE contact.name = "daniel"  
 
 SELECT contact.address.city, contact.phones[0]
   FROM db

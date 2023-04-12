@@ -7,17 +7,18 @@ include::{root-partials}_show_page_header_block.adoc[]
 
 .Enterprise Edition only
 IMPORTANT: Peer-to-Peer Synchronization is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
-You must purchase the Enterprise License which includes official https://www.couchbase.com/support-policy[Couchbase Support] to use it in production (also see the https://www.couchbase.com/licensing-and-support-faq[FAQ]).
+You must purchase the Enterprise License, which includes official https://www.couchbase.com/support-policy[Couchbase Support]. 
+To use it in production (also see the https://www.couchbase.com/licensing-and-support-faq[FAQ]).
 
-This content covers how to integrate a custom __MessageEndpointListener__ solution with Couchbase Lite to handle the data transfer; the sending and receiving of data.
+This content covers how to integrate a custom __MessageEndpointListener__ solution with Couchbase Lite to handle the data transfer, which is the sending and receiving of data.
 Where applicable, we discuss how to integrate Couchbase Lite into the workflow.
 
-The following sections describe a typical peer-to-peer workflow.
+The following sections describe a typical Peer-to-Peer workflow.
 
 == Peer Discovery
 
 Peer discovery is the first step.
-The communication framework will generally include a peer discovery API for devices to advertise themselves on the network and to browse for other peers.
+The communication framework will generally include a Peer discovery API for devices to advertise themselves on the network and to browse for other Peers.
 
 image::ROOT:discovery.png[]
 
@@ -27,8 +28,8 @@ The first step is to initialize the Couchbase Lite database.
 
 ==== Passive Peer
 
-In addition to initializing the database, the passive peer must initialize the `MessageEndpointListener`.
-The `MessageEndpointListener` acts as as a listener for incoming connections.
+In addition to initializing the database, the Passive Peer must initialize the `MessageEndpointListener`.
+The `MessageEndpointListener` acts as a Listener for incoming connections.
 
 [source]
 ----
@@ -39,14 +40,14 @@ include::{snippet}[tag=listener,indent=0]
 == Peer Selection and Connection Setup
 
 
-Once a peer device is found, it is the application code's responsibility to decide whether it should establish a connection with that peer.
-This step includes inviting a peer to a session and peer authentication.
+Once a Peer device is found, the application code must decide whether it should establish a connection with that Peer.
+This step includes inviting a Peer to a session and Peer authentication.
 
 This is handled by the Communication Framework.
 
 image::ROOT:selection.png[]
 
-Once the remote peer has been authenticated, the next step is to connect with that peer and initialize the Message Endpoint API.
+Once the remote Peer has been authenticated, the next step is to connect with that Peer and initialize the Message Endpoint API.
 
 
 == Replication Setup
@@ -56,7 +57,7 @@ image::ROOT:connection.png[]
 
 ==== Active Peer
 
-When the connection is established, the active peer must instantiate a `MessageEndpoint` object corresponding to the remote peer.
+When the connection is established, the active Peer must instantiate a `MessageEndpoint` object corresponding to the remote Peer.
 
 [source]
 ----
@@ -65,8 +66,8 @@ include::{snippet}[tag=message-endpoint,indent=0]
 
 The `MessageEndpoint` initializer takes the following arguments.
 
-. `uid`: a unique ID that represents the remote active peer.
-. `target`: This represents the remote passive peer and could be any suitable representation of the remote peer.
+. `uid`: a unique ID that represents the remote active Peer.
+. `target`: This represents the remote passive Peer and could be any suitable representation of the remote Peer.
 It could be an Id, URL etc.
 If using the MultiPeerConnectivity Framework, this could be the MCPeerID.
 . `protocolType`: specifies the kind of transport you intend to implement.
@@ -103,13 +104,13 @@ include::{snippet}[tag=active-peer-open,indent=0]
 The connection argument is then set on an instance variable.
 The application code must keep track of every `ReplicatorConnection` associated with every `MessageEndpointConnection`.
 
-The `MessageError` argument in the completion block is used to specify if the error is recoverable or not.
-If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection` instance.
+The `MessageError` argument in the completion block specifies whether the error is recoverable or not.
+If it is a recoverable error, the replicator will begin a retry process, creating a new `MessageEndpointConnection` instance.
 
 ==== Passive Peer
 
-The first step after connection establishment on the passive peer is to initialize a new `MessageEndpointConnection` and pass it to the listener.
-This tells the listener to accept incoming data from that peer.
+After connection establishment on the Passive Peer, the first step is to initialize a new `MessageEndpointConnection` and pass it to the listener.
+This message tells the listener to accept incoming data from that Peer.
 
 [source]
 ----
@@ -118,7 +119,7 @@ include::{snippet}[tag=advertizer-accept,indent=0]
 
 `messageEndpointListener` is the instance of the `MessageEndpointListener` that was created in the first step (xref:#peer-discovery[Peer Discovery])
 
-Couchbase Lite will then call back the application code through the `MessageEndpointConnection.open` method.
+Couchbase Lite will call the application code back through the `MessageEndpointConnection.open` method.
 
 [source]
 ----
@@ -128,14 +129,14 @@ include::{snippet}[tag=passive-peer-open,indent=0]
 The `connection` argument is then set on an instance variable.
 The application code must keep track of every `ReplicatorConnection` associated with every `MessageEndpointConnection`.
 
-At this point, the connection is established and both peers are ready to exchange data.
+At this point, the connection is established, and both Peers are ready to exchange data.
 
 
 
 == Push/Pull Replication
 
 Typically, an application needs to send data and receive data.
-Directionality of the replication could be any of the following.
+The directionality of the replication could be any of the following.
 
 * *Push only:* The data is pushed from the local database to the remote database.
 
@@ -143,8 +144,8 @@ Directionality of the replication could be any of the following.
 
 * *Push and Pull:* The data is exchanged both ways.
 
-Usually, the remote is a Sync Gateway database which is identified through a URL.
-In the context of peer-to-peer syncing, the remote is another Couchbase Lite database.
+Usually, the remote is a Sync Gateway database identified through a URL.
+In Peer-to-Peer syncing, the remote is another Couchbase Lite database.
 
 image::ROOT:replication.png[]
 
@@ -152,7 +153,7 @@ The replication lifecycle is handled through the `MessageEndpointConnection`.
 
 ==== Active Peer
 
-When Couchbase Lite calls back the application code through the `MessageEndpointConnection.send` method, you should send that data to the other peer using the communication framework.
+When Couchbase Lite calls back the application code through the `MessageEndpointConnection.send` method, you should send that data to the other Peer using the communication framework.
 
 [source]
 ----
@@ -160,22 +161,22 @@ include::{snippet}[tag=active-peer-send,indent=0]
 ----
 
 Once the data is sent, call the completion block to acknowledge the completion.
-You can use the `MessageError` in the completion block to specify if the error is recoverable or not.
-If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection`.
+You can use the `MessageError` in the completion block to specify whether the error is recoverable.
+If it is a recoverable error, the replicator will begin a retry process, creating a new `MessageEndpointConnection`.
 
 
-When data is received from the passive peer via the Communication Framework, you call the `ReplicatorConnection.receive` method.
+When data is received from the passive Peer via the Communication Framework, you call the `ReplicatorConnection.receive` method.
 
 [source]
 ----
 include::{snippet}[tag=active-peer-receive,indent=0]
 ----
 
-The replication connection's `receive` method is called which then processes the data in order to persist it to the local database.
+The replication connection's `receive` method is called. Which then processes the data to persist to the local database.
 
 ==== Passive Peer
 
-As in the case of the active peer, the passive peer must implement the `MessageEndpointConnection.send` method to send data to the other peer.
+As in the case of the active Peer, the passive Peer must implement the `MessageEndpointConnection.send` method to send data to the other Peer.
 
 [source]
 ----
@@ -183,10 +184,10 @@ include::{snippet}[tag=passive-peer-send,indent=0]
 ----
 
 Once the data is sent, call the completion block to acknowledge the completion.
-You can use the `MessageError` in the completion block to specify if the error is recoverable or not.
-If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new `MessageEndpointConnection`.
+You can use the `MessageError` in the completion block to specify whether the error is recoverable.
+If it is a recoverable error, the replicator will begin a retry process, creating a new `MessageEndpointConnection`.
 
-When data is received from the active peer via the Communication Framework, you call the `ReplicatorConnection.receive` method.
+When data is received from the active Peer via the Communication Framework, you call the `ReplicatorConnection.receive` method.
 
 [source]
 ----
@@ -196,9 +197,9 @@ include::{snippet}[tag=passive-peer-receive,indent=0]
 
 == Connection Teardown
 
-When a peer disconnects from a peer-to-peer network, all connected peers are notified.
+When a Peer disconnects from a Peer-to-Peer network, all connected Peers are notified.
 The disconnect notification is a good opportunity to close and remove a replication connection.
-The steps to teardown the connection are slightly different depending on whether it is the active or passive peer that disconnects first.
+The steps to Teardown the connection are slightly different depending on whether the active or passive Peer disconnects first.
 We will cover each case below.
 
 ==== Initiated by Active Peer
@@ -207,14 +208,14 @@ image::ROOT:dis-active.png[]
 
 ===== Active Peer
 
-When an active peer disconnects, it must call the `ReplicatorConnection.close` method.
+When an active Peer disconnects, it must call the `ReplicatorConnection.close` method.
 
 [source]
 ----
 include::{snippet}[tag=active-replicator-close,indent=0]
 ----
 
-Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to give the application a chance to disconnect with the Communication Framework.
+Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to allow the application to disconnect with the Communication Framework.
 
 [source]
 ----
@@ -223,14 +224,14 @@ include::{snippet}[tag=active-peer-close,indent=0]
 
 ===== Passive Peer
 
-When the passive peer receives the corresponding disconnect notification from the Communication Framework, it must call the `ReplicatorConnection.close` method.
+When the passive Peer receives the corresponding disconnect notification from the Communication Framework, it must call the `ReplicatorConnection.close` method.
 
 [source]
 ----
 include::{snippet}[tag=passive-replicator-close,indent=0]
 ----
 
-Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to give the application a chance to disconnect with the Communication Framework.
+Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to allow the application to disconnect with the Communication Framework.
 
 [source]
 ----
@@ -250,7 +251,7 @@ When the passive disconnects, it must class the `MessageEndpointListener.closeAl
 include::{snippet}[tag=passive-stop-listener,indent=0]
 ----
 
-Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to give the application a chance to disconnect with the Communication Framework.
+Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to allow the application to disconnect with the Communication Framework.
 
 [source]
 ----
@@ -259,14 +260,14 @@ include::{snippet}[tag=passive-peer-close,indent=0]
 
 ===== Active Peer
 
-When the active peer receives the corresponding disconnect notification from the Communication Framework, it must call the `ReplicatorConnection.close` method.
+When the active Peer receives the corresponding disconnect notification from the Communication Framework, it must call the `ReplicatorConnection.close` method.
 
 [source]
 ----
 include::{snippet}[tag=active-replicator-close,indent=0]
 ----
 
-Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to give the application a chance to disconnect with the Communication Framework.
+Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to allow the application to disconnect with the Communication Framework.
 
 [source]
 ----

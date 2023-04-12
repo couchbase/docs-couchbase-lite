@@ -27,21 +27,17 @@ import com.couchbase.codesnippets.utils.Logger;
 import com.couchbase.codesnippets.utils.Utils;
 import com.couchbase.lite.Blob;
 import com.couchbase.lite.Collection;
-import com.couchbase.lite.CollectionConfiguration;
 import com.couchbase.lite.Conflict;
 import com.couchbase.lite.ConflictResolver;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.DatabaseConfiguration;
-import com.couchbase.lite.DatabaseEndpoint;
 import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Document;
-import com.couchbase.lite.DocumentFlag;
 import com.couchbase.lite.EncryptionKey;
 import com.couchbase.lite.Endpoint;
 import com.couchbase.lite.Expression;
-import com.couchbase.lite.ListenerToken;
 import com.couchbase.lite.LogDomain;
 import com.couchbase.lite.LogFileConfiguration;
 import com.couchbase.lite.LogLevel;
@@ -60,7 +56,6 @@ import com.couchbase.lite.PredictiveModel;
 import com.couchbase.lite.ProtocolType;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
-import com.couchbase.lite.ReplicatedDocument;
 import com.couchbase.lite.Replicator;
 import com.couchbase.lite.ReplicatorActivityLevel;
 import com.couchbase.lite.ReplicatorConfiguration;
@@ -77,7 +72,7 @@ public class Examples {
     private static final String DB_NAME = "getting-started";
     private static final String DB_NAME2 = "other";
 
-    public void test1xAttachments(Database database) {
+    public void oneXAttachmentsExample(Database database) {
         Document document = new MutableDocument();
         // tag::1x-attachment[]
         Dictionary attachments = document.getDictionary("_attachments");
@@ -86,7 +81,7 @@ public class Examples {
         // end::1x-attachment[]
     }
 
-    public void testNewDatabase() throws CouchbaseLiteException {
+    public void newDatabaseExample() throws CouchbaseLiteException {
         final String customDir = "/foo/bar";
         // tag::new-database[]
         DatabaseConfiguration config = new DatabaseConfiguration();
@@ -101,7 +96,7 @@ public class Examples {
         database.delete();
     }
 
-    public void testDatabaseEncryption() throws CouchbaseLiteException {
+    public void databaseEncryptionExample() throws CouchbaseLiteException {
         // tag::database-encryption[]
         DatabaseConfiguration config = new DatabaseConfiguration();
         config.setEncryptionKey(new EncryptionKey("PASSWORD"));
@@ -109,7 +104,7 @@ public class Examples {
         // end::database-encryption[]
     }
 
-    public void testLogging() {
+    public void loggingExample() {
         // tag::logging[]
 
         // Set the overall logging level
@@ -120,13 +115,13 @@ public class Examples {
         // end::logging[]
     }
 
-    public void testEnableCustomLogging() {
+    public void enableCustomLoggingExample() {
         // tag::set-custom-logging[]
         Database.log.setCustom(new LogTestLogger(LogLevel.WARNING)); // <.>
         // end::set-custom-logging[]
     }
 
-    public void testConsoleLogging() {
+    public void consoleLoggingExample() {
         // tag::console-logging[]
         Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS); // <.>
         Database.log.getConsole().setLevel(LogLevel.VERBOSE); // <.>
@@ -137,7 +132,7 @@ public class Examples {
         // end::console-logging-db[]
     }
 
-    public void testFileLogging() {
+    public void fileLoggingExample() {
         // tag::file-logging[]
         LogFileConfiguration LogCfg = new LogFileConfiguration(
             (System.getProperty("user.dir") + "/MyApp/logs")); // <.>
@@ -149,7 +144,7 @@ public class Examples {
         // end::file-logging[]
     }
 
-    public void testPreBuiltDatabase(Database database) throws IOException, CouchbaseLiteException {
+    public void preBuiltDatabaseExample(Database database) throws IOException, CouchbaseLiteException {
         final File appDbDir = new File(database.getPath());
 
         // tag::prebuilt-database[]
@@ -164,7 +159,7 @@ public class Examples {
         // end::prebuilt-database[]
     }
 
-    public void testInitializers(Collection collection) throws CouchbaseLiteException {
+    public void initializersExample(Collection collection) throws CouchbaseLiteException {
         // tag::initializer[]
         MutableDocument newTask = new MutableDocument();
         newTask.setString("type", "task");
@@ -174,7 +169,7 @@ public class Examples {
         // end::initializer[]
     }
 
-    public void testMutability(Collection collection) throws CouchbaseLiteException {
+    public void mutabilityExample(Collection collection) throws CouchbaseLiteException {
         // tag::update-document[]
         MutableDocument mutableDocument = collection.getDocument("xyz").toMutable();
         mutableDocument.setString("name", "apples");
@@ -182,7 +177,7 @@ public class Examples {
         // end::update-document[]
     }
 
-    public void testTypedAccessors() {
+    public void typedAccessorsExample() {
         MutableDocument newTask = new MutableDocument();
 
         // tag::date-getter[]
@@ -191,7 +186,7 @@ public class Examples {
         // end::date-getter[]
     }
 
-    public void testBatchOperations(Database database, Collection collection) throws CouchbaseLiteException {
+    public void batchOperationsExample(Database database, Collection collection) throws CouchbaseLiteException {
         // tag::batch[]
         database.inBatch(() -> {
             for (int i = 0; i < 10; i++) {
@@ -226,7 +221,7 @@ public class Examples {
         // end::document-expiration[]
     }
 
-    public void testDocumentChangeListener(Collection collection) {
+    public void documentChangeListenerExample(Collection collection) {
         // tag::document-listener[]
         collection.addDocumentChangeListener(
             "user.john",
@@ -245,7 +240,7 @@ public class Examples {
         // end::document-listener[]
     }
 
-    public void testBlobs(Collection collection) throws IOException, CouchbaseLiteException {
+    public void blobsExample(Collection collection) throws IOException, CouchbaseLiteException {
         MutableDocument newTask = new MutableDocument();
 
         // tag::blob[]
@@ -260,7 +255,7 @@ public class Examples {
         // end::blob[]
     }
 
-    public void testReplicationStatus(Collection collection) throws URISyntaxException {
+    public void replicationStatusExample(Collection collection) throws URISyntaxException {
         URI uri = new URI("ws://localhost:4984/db");
         Endpoint endpoint = new URLEndpoint(uri);
         ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
@@ -280,7 +275,7 @@ public class Examples {
         replicator.close();
     }
 
-    public void testReplicationPendingDocs(Collection collection) throws URISyntaxException, CouchbaseLiteException {
+    public void replicationPendingDocsExample(Collection collection) throws URISyntaxException, CouchbaseLiteException {
         final Endpoint endpoint =
             new URLEndpoint(new URI("ws://localhost:4984/db"));
 
@@ -298,7 +293,7 @@ public class Examples {
         replicator.close();
     }
 
-    public void testSaveWithCustomConflictResolver(Collection collection) throws CouchbaseLiteException {
+    public void saveWithCustomConflictResolverExample(Collection collection) throws CouchbaseLiteException {
         // tag::update-document-with-conflict-handler[]
         Document doc = collection.getDocument("xyz");
         if (doc == null) { return; }
@@ -317,8 +312,8 @@ public class Examples {
         // end::update-document-with-conflict-handler[]
     }
 
-    public void testQueryAccessJson() throws CouchbaseLiteException, JsonProcessingException {
-        Database database= new Database("hotels");
+    public void queryAccessJsonExample() throws CouchbaseLiteException, JsonProcessingException {
+        Database database = new Database("hotels");
 
         Collection collection = database.getDefaultCollection();
         Query listQuery = QueryBuilder.select(SelectResult.all())
@@ -398,7 +393,7 @@ class ZipUtils {
 }
 // end::ziputils-unzip[]
 
-@SuppressWarnings({"unused", "ConstantConditions"})
+@SuppressWarnings("unused")
 class LogTestLogger implements com.couchbase.lite.Logger {
     @NonNull
     private final LogLevel level;
@@ -415,7 +410,7 @@ class LogTestLogger implements com.couchbase.lite.Logger {
     }
 }
 
-@SuppressWarnings({"unused", "ConstantConditions"})
+@SuppressWarnings("unused")
 class TensorFlowModel {
     public static Map<String, Object> predictImage(byte[] data) {
         return null;
@@ -423,7 +418,7 @@ class TensorFlowModel {
 }
 // end::predictive-model[]
 
-@SuppressWarnings({"unused", "ConstantConditions"})
+@SuppressWarnings("unused")
 // tag::local-win-conflict-resolver[]
 class LocalWinConflictResolver implements ConflictResolver {
     public Document resolve(Conflict conflict) {
@@ -432,7 +427,7 @@ class LocalWinConflictResolver implements ConflictResolver {
 }
 // end::local-win-conflict-resolver[]
 
-@SuppressWarnings({"unused", "ConstantConditions"})
+@SuppressWarnings("unused")
 // tag::remote-win-conflict-resolver[]
 class RemoteWinConflictResolver implements ConflictResolver {
     public Document resolve(Conflict conflict) {
@@ -495,9 +490,8 @@ class BrowserSessionManager implements MessageEndpointDelegate {
     // end::create-connection[]
 }
 
-@SuppressWarnings({"unused", "ConstantConditions"})
+@SuppressWarnings("unused")
 class ActivePeerConnection implements MessageEndpointConnection {
-
     private ReplicatorConnection replicatorConnection;
 
     public void disconnect() {
@@ -547,7 +541,7 @@ class ActivePeerConnection implements MessageEndpointConnection {
 /* ---------------------  PASSIVE SIDE  ---------------------- */
 /* ----------------------------------------------------------- */
 
-@SuppressWarnings({"unused", "ConstantConditions"})
+@SuppressWarnings("unused")
 // Check context validity for JVM cf Android
 class PassivePeerConnection implements MessageEndpointConnection {
     private MessageEndpointListener messageEndpointListener;

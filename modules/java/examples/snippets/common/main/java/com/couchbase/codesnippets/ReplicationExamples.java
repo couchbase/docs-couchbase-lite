@@ -34,6 +34,7 @@ import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.DatabaseEndpoint;
 import com.couchbase.lite.DocumentFlag;
+import com.couchbase.lite.Endpoint;
 import com.couchbase.lite.ListenerToken;
 import com.couchbase.lite.ReplicatedDocument;
 import com.couchbase.lite.Replicator;
@@ -92,7 +93,7 @@ public class ReplicationExamples {
                 // tag::p2p-act-rep-auth[]
                 // Configure the credentials the
                 // client will provide if prompted
-                .setAuthenticator(new BasicAuthenticator("Our Username", "Our PasswordValue".toCharArray())) // <.>
+                .setAuthenticator(new BasicAuthenticator("Our Username", "Our Password".toCharArray())) // <.>
 
             // end::p2p-act-rep-auth[]
         );
@@ -118,6 +119,29 @@ public class ReplicationExamples {
 
         // end::p2p-act-rep-start-full[]
         // end::p2p-act-rep-func[]
+    }
+
+    public void replicatorSimpleExample(Set<Collection> collections) throws URISyntaxException {
+        // tag::replicator-simple[]
+        Endpoint theListenerEndpoint
+            = new URLEndpoint(new URI("wss://10.0.2.2:4984/db")); // <.>
+
+        ReplicatorConfiguration thisConfig =
+            new ReplicatorConfiguration(theListenerEndpoint) // <.>
+                .addCollections(collections, null) // default configuration
+
+                .setAcceptOnlySelfSignedServerCertificate(true) // <.>
+                .setAuthenticator(new BasicAuthenticator(
+                    "valid.user",
+                    "valid.password".toCharArray())); // <.>
+
+        Replicator repl = new Replicator(thisConfig); // <.>
+        // Start the replicator
+        repl.start(); // <.>
+        // (be sure to hold a reference somewhere that will prevent it from being GCed)
+        thisReplicator = repl;
+
+        // end::replicator-simple[]
     }
 
     public void replicationBasicAuthenticationExample(
@@ -377,7 +401,7 @@ public class ReplicationExamples {
         // end::replication-pendingdocuments[]
     }
 
-    public void testDatabaseReplicator(@NonNull Set<Collection> srcCollections, @NonNull Database targetDb) {
+    public void databaseReplicatorExample(@NonNull Set<Collection> srcCollections, @NonNull Database targetDb) {
         // tag::database-replica[]
         // This is an Enterprise feature:
         // the code below will generate a compilation error
@@ -396,7 +420,7 @@ public class ReplicationExamples {
         // end::database-replica[]
     }
 
-    public void testReplicationWithCustomConflictResolver(Set<Collection> srcCollections, URI targetUri) {
+    public void replicationWithCustomConflictResolverExample(Set<Collection> srcCollections, URI targetUri) {
         // tag::replication-conflict-resolver[]
         Replicator repl = new Replicator(
             new ReplicatorConfiguration(new URLEndpoint(targetUri))

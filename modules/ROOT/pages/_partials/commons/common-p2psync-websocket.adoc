@@ -18,102 +18,104 @@ endif::[]
 == Introduction
 // tag::introduction-full[]
 // tag::introduction[]
-Couchbase Lite's peer-to-peer synchronization solution offers secure storage and bidirectional synchronization of data between edge devices without the need for a centralized cloud-based control point.
-
-The solution provides an out-of-the-box implementation of a websocket based listener for use in peer-to-peer applications communicating over in IP-based networks.
+Couchbase Lite’s Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronisation between edge devices without needing a centralized cloud-based control point. 
 
 // end::introduction[]
 
-This implementation enables customers to:
+Couchbase Lite’s Peer-to-Peer data synchronization provides: 
 
-* Simplify application development by enabling sync with just a few lines of code
-* Optimize network bandwidth usage and reduce data transfer cost with Delta Sync support
-* Securely sync data with built-in support for TLS encryption and authentication support
-* Significantly reduce complexity of managing document conflicts from concurrent writes with built-in conflict resolution support.
-* Take advantage of built-in network resiliency
+* Instant WebSocket-based listener for use in Peer-to-Peer applications communicating over IP-based networks
+
+* Simple application development, enabling sync with a short amount of code
+
+* Optimized network bandwidth usage and reduced data transfer costs with Delta Sync support
+
+* Securely sync data with built-in support for Transport Layer Security (TLS) encryption and authentication support
+
+* Document management. Reducing conflicts in concurrent writes with built-in conflict management support
+
+* Built-in network resiliency
 
 // end::introduction-full[]
 
 == Overview
-At its most basic, peer-to-peer synchronization requires one peer to act as the listener to the other peer's replicator.
+Peer-to-Peer synchronization requires one Peer to act as the Listener to the other Peer’s replicator.
 
 image::ROOT:docs-listener-diagram.png[,600]
 
-So, in order to use peer-to-peer synchronization in your application you must configure one peer to act as this listener using the provided listener API, the most important of which include _URLEndpointListener_ and _URLEndpointListenerConfiguration_.
-Using these building blocks, developers can quickly implement peer-to-peer synchronization.
+Peer-to-Peer synchronization requires one Peer to act as the Listener to the other Peer’s replicator.
+Therefore, to use Peer-to-Peer synchronization in your application, you must configure one Peer to act as a Listener using the Couchbase Listener API, the most important of which include _URLEndpointListener_ and _URLEndpointListenerConfiguration_.
 
 .Simple workflow
 ====
-. Configure the listener (_passive peer_, or _server_)
-. Initialize the listener, which listens for incoming websocket connections (on a user-defined, or auto-selected, port)
+. Configure the Listener (_passive peer_, or _server_)
+. Initialize the Listener, which listens for incoming WebSocket connections (on a user-defined, or auto-selected, port)
 . Configure a replicator (_active peer_, or _client_)
-. Use some form of discovery phase perhaps with a zero-config protocol {zero-config}, or use known URL endpoints, to identify a listener
-. Point the replicator at the listener
+. Use some form of discovery phase, perhaps with a zero-config protocol {zero-config}, or use known URL endpoints, to identify a Listener
+. Point the replicator at the Listener
 . Initialize the replicator +
-. Replicator and listener engage in the configured security protocol exchanges to confirm connection
+. Replicator and Listener engage in the configured security protocol exchanges to confirm connection
 . If connection is confirmed then replication will commence, synchronizing the two data stores.
 
 ====
 
-As you can see this involves configuring a {p2psync-websocket-using-passive--xref} and an
-*** {p2psync-websocket-using-active--xref}; you can find the instructions to do that on those two links and see a simple listener configuration in <<simple-configuration>>
+Here you can see configuration involves a {p2psync-websocket-using-passive--xref} and an {p2psync-websocket-using-active--xref} and a user-friendly Listener configuration in <<simple-configuration>>
 
-You can also learn more about how to implement peer-to-peer synchronization by referring to our tutorial -- see: {tutorial--xref--p2psync}.
+You can also learn how to implement Peer-to-Peer synchronization by referring to our tutorial -- see: {tutorial--xref--p2psync}.
 
 == Features
 
-Couchbase Lite for {param-title}'s peer-to-peer synchronization solution provides support for cross-platform synchronization; for example, between Android and iOS devices.
+Couchbase Lite for {param-title}'s Peer-to-Peer synchronization solution provides support for cross-platform synchronization, for example, between Android and iOS devices.
 
-Each listener instance serves one Couchbase Lite database.
-But there is no hard limit on the number of listener instances that you can associate with a database.
+Each listener instance serves one Couchbase Lite database. However, there is no hard limit on the number of Listener instances you can associate with a database.
 
-Nor does having a listener on a database prevent you opening replications to the other clients.
-So, for example, whilst listening for connections, a listener is able to actively initiate replications to other listeners.
-This can be for the same or a different database.
+Having a Listener on a database still allows you to open replications to the other clients. 
+For example, a Listener can actively begin replicating to other Listeners while listening for connections. 
+These replications can be for the same or a different database.
 
-The listener will automatically select a port to use or will use a user-specified port.
-It will also listen on all available networks, unless you specify a specific network to use.
+The Listener will automatically select a port to use or a user-specified port.
+It will also listen on all available networks, unless you specify a specific network.
 
 === Security
 
-peer-to-peer synchronization supports encryption and authentication over TLS with multiple modes, including:
+Couchbases Lite's Peer-to-Peer synchronization supports encryption and authentication over TLS with multiple modes, including:
 
-* No encryption, that-is, clear text.
+* No encryption, for example, clear text.
 * CA Cert
 * Self-signed Cert
 * Anonymous Self-signed -- an auto-generated anonymous TLS identity is generated if no identity is specified.
-This provides encryption but *not* authentication. +
+This TLS identity provides encryption but *not* authentication. +
 Any self-signed certificates generated by the convenience API are stored in {securestorage}.
 
-The replicator (client) can handle certificates pinned by the listener for authentication purposes.
+The replicator (client) can handle certificates pinned by the Listener for authentication purposes.
 
 Support is also provided for basic authentication using username and password credentials.
 Whilst this can be used in clear text mode, developers are strongly advised to use TLS encryption.
 
-For testing and development purposes, support is provided for the client (active, replicator) to skip verification of self-signed certificates; this mode ought not be used in production.
+For testing and development purposes, support is provided for the client (active, replicator) to skip verification of self-signed certificates; this mode should not be used in production.
 
 === Error Handling
 
-When a listener is stopped, then all connected replicators are notified by a websocket error. Your application should distinguish between transient and permanent connectivity errors.
+When a Listener is stopped, then all connected replicators are notified by a WebSocket error. Your application should distinguish between transient and permanent connectivity errors.
 
 ==== Passive peers
-A passive peer losing connectivity with an active peer will clean up any associated endpoint connections to that peer. The active peer may attempt to reconnect to the passive peer.
+A Passive Peer losing connectivity with an Active Peer will clean up any associated endpoint connections to that Peer. The Active Peer may attempt to reconnect to the Passive Peer.
 
 ==== Active peers
-An active peer permanently losing connectivity with a passive peer will cease replicating.
+An Active Peer permanently losing connectivity with a Passive Peer will cease replicating.
 
-An active peer temporarily losing connectivity with a passive peer will use exponential backoff functionality to attempt reconnection.
+An Active Peer temporarily losing connectivity with a passive Peer will use exponential backoff functionality to attempt reconnection.
 
 === Delta Sync
 
-Optional delta-sync support is provided but is off by default.
+Optional delta-sync support is provided but is inactive by default.
 
 Delta-sync can be enabled on a per-replication basis provided that the databases involved are also configured to permit it.
 Statistics on delta-sync usage are available, including the total number of revisions sent as deltas.
 
 === Conflict Resolution
 
-Conflict resolution for peer-to-peer synchronization works in the same way as it does for Sync Gateway replication, with both custom and automatic resolution available.
+Conflict resolution for Peer-to-Peer synchronization works in the same way as it does for Sync Gateway replication, with both custom and automatic resolution available.
 
 ifdef::is-ios[]
 
@@ -126,7 +128,7 @@ endif::is-ios[]
 
 [#simple-configuration]
 == Basic Setup
-You can configure a peer-to-peer synchronization with just a few lines of code as shown here in <<ex-simple-listener>> and <<ex-simple-replicator>>.
+You can configure a Peer-to-Peer synchronization with just a short amount of code as shown here in <<ex-simple-listener>> and <<ex-simple-replicator>>.
 
 .Simple Listener
 [#ex-simple-listener]
@@ -135,24 +137,24 @@ You can configure a peer-to-peer synchronization with just a few lines of code a
 include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
-<.> Initialize the listener configuration
+<.> Initialize the Listener configuration
 <.> Configure the client authenticator to require basic authentication
-<.> Initialize the listener
-<.> Start the listener
+<.> Initialize the Listener
+<.> Start the Listener
 
 
 .Simple Replicator
 [#ex-simple-replicator]
 :param-tags: replicator-simple
-:param-leader: pass:q,a[This simple replicator configuration will give you an encrypted, bi-directional peer-to-peer synchronization with automatic conflict resolution.]
+:param-leader: pass:q,a[This simple replicator configuration will give you an encrypted, bi-directional Peer-to-Peer synchronization with automatic conflict resolution.]
 include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
-<.> Get the listener's endpoint.
+<.> Get the Listener's endpoint.
 Here we use a known URL, but it could be a URL established dynamically in a discovery phase.
-<.> Initialize the replicator configuration with the database to be synchronized and the listener it is to synchronize with
-<.> Configure the replicator to expect a self-signed certificate from the listener
-<.> Configure the replicator to present basic authentication credentials if the listener prompts for them (client authentication is optional)
+<.> Initialize the replicator configuration with the database to be synchronized and the Listener it is to synchronize with
+<.> Configure the replicator to expect a self-signed certificate from the Listener
+<.> Configure the replicator to present basic authentication credentials if the Listener prompts for them (client authentication is optional)
 <.> Initialize the replicator
 <.> Start the replicator
 
@@ -183,7 +185,7 @@ Here we use a known URL, but it could be a URL established dynamically in a disc
 // Simple Replicator::
 // +
 // --
-// This simple replicator configuration will give you an encrypted, bi-directional peer-to-peer synchronization with automatic conflict resolution.
+// This simple replicator configuration will give you an encrypted, bi-directional Peer-to-Peer synchronization with automatic conflict resolution.
 
 // [source, {source-language}]
 // ----
@@ -214,30 +216,30 @@ include::{root-partials}p2p-api.adoc[leveloffset=+1]
 === Authentication
 // include::{root-partials}p2p-security.adoc[leveloffset=+1]
 
-Peer-to-peer sync supports <<using-basic-authentication, Basic Authentication>> and <<using-tls,TLS Authentication>>.
-For anything other than test deployments, we strongly encourage the use of TLS. In fact, peer-to-peer sync using URLEndpointListener is encrypted using TLS by default.
+Peer-to-Peer sync supports <<using-basic-authentication, Basic Authentication>> and <<using-tls,TLS Authentication>>.
+For anything other than test deployments, we strongly encourage the use of TLS. In fact, Peer-to-Peer sync using URLEndpointListener is encrypted using TLS by default.
 
-The authentication mechanism used is defined at endpoint level, meaning that it is independent of the database being replicated.
-So when replicating multiple database instances you may use basic on one instance an another authentication method on other instances.
+The authentication mechanism is defined at the endpoint level, meaning that it is independent of the database being replicated.
+For example, you may use basic authentication on one instance and TLS authentication on another when replicating multiple database instances.
 
 NOTE: The Minimum supported version of TLS is TLS 1.2.
 
-Peer-to-Peer Synchronization using URLEndpointListener supports certificate based authentication of the server and-or listener:
+Peer-to-Peer synchronization using URLEndpointListener supports certificate based authentication of the server and-or Listener:
 
 * Replicator certificates can be: self signed, from trusted CA or anonymous (system generated).
 * Listeners certificates may be: self signed or trusted CA signed.
 +
-Where a TLS certificate is not explicitly specified for the listener, the Listener implementation will generate anonymous certificate to use for encryption
+Where a TLS certificate is not explicitly specified for the Listener, the Listener implementation will generate anonymous certificate to use for encryption
 
 * The URLEndpointListener supports the ability to opt out of TLS encryption communication.
 +
-Active clients replicating with a URLEndpointListener have the option to skip validation of server certificates when the listener is configured with self-signed certificates.
+Active clients replicating with a URLEndpointListener have the option to skip validation of server certificates when the Listener is configured with self-signed certificates.
 +
 This option is ignored when dealing with CA certificates.
 
 [#using-secure-storage]
 === Using Secure Storage
-The use of TLS, its associated keys and certificates requires using secure storage to minimize the chances of a security breach.
+TLS and its associated keys and certificates might require using secure storage to minimize the chances of a security breach.
 The implementation of this storage differs from platform to platform.
 <<secure-storage-details>> summarizes the secure storage used to store keys and certificates for {param-title}.
 
@@ -359,4 +361,3 @@ a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/s
 
 // DO NOT EDIT OR REMOVE
 include::{root-partials}block-related-content-p2psync.adoc[]
-// DO NOT EDIT OR REMOVE
