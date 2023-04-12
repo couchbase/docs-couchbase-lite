@@ -1031,6 +1031,7 @@ static void create_index() {
 
     // Syntax for second argument is the same as taking from a N1QL SELECT
     // i.e. SELECT (type, name) FROM _;
+    // tag::scopes-manage-index-collection[]
     CBLValueIndexConfiguration config = {
         kCBLN1QLLanguage,
         FLSTR("type, name")
@@ -1038,6 +1039,7 @@ static void create_index() {
 
     CBLError err;
     CBLCollection_CreateValueIndex(collection, FLSTR("TypeNameIndex"), config, &err);
+    // end::scopes-manage-index-collection[]
     // end::query-index[]
 }
 

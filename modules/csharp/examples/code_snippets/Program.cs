@@ -625,9 +625,11 @@ namespace api_walkthrough
             var collection = _Database.GetDefaultCollection();
 
             // tag::query-index[]
+            // tag::scopes-manage-index-collection[]
             string[] indexProperties = new string[] { "type", "name" };
             var config = new ValueIndexConfiguration(indexProperties);
             collection.CreateIndex("TypeNameIndex", config);
+            // end::scopes-manage-index-collection[]
             // end::query-index[]
         }
 
