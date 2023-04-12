@@ -47,7 +47,8 @@ Default: The replicator pings the {this-svr} every 300 seconds.
 |Change this to limit or extend the number of retry attempts.
 a| The maximum number of retry attempts
 
-* Set this to zero (0) to prevent any retry attempt
+* Set to zero (0) to use default values
+* Set to zero (1) to prevent any retry attempt
 * The retry attempt count is reset when the replicator is able to connect and replicate
 * Default values are:
 ** Single-shot replication = 9;
@@ -58,10 +59,12 @@ a| The maximum number of retry attempts
 |Change this to adjust the interval between retries.
 a|The maximum interval between retry attempts
 
-Whilst you can configure the *maximum permitted* wait time,  each individual interval is calculated by the replicator's exponential backoff algorithm and is not configurable.
+While you can configure the *maximum permitted* wait time,  the replicator's exponential backoff algorithm calculates each individual interval which is not configurable.
 
 * Default value: 300 seconds (5 minutes)
-* Zero or negative values generate a Couchbase exception, `InvalidArgumentException`.
+* Zero sets the maximum interval between retries to the default of 300 seconds
+* 300 sets the maximum interval between retries to the default of 300 seconds 
+* A negative value generates a Couchbase exception, `InvalidArgumentException`
 
 |===
 
