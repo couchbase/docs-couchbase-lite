@@ -627,16 +627,6 @@ static void database_change_listener() {
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::document-listener[]
-    /*
-    static void document_listener(void* context, const CBLDocumentChange* change) {
-    CBLError err;
-        const CBLDocument* doc = CBLCollection_GetDocument(change->collection, change->docID, &err);
-        FLDict properties = CBLDocument_Properties(doc);
-        FLString verified_account = FLValue_AsString(FLDict_Get(properties, FLSTR("verified_account")));
-        printf("Status :: %.*s\n", (int)verified_account.size, (const char *)verified_account.buf);
-        CBLDocument_Release(doc);
-    }
-    */
     CBLListenerToken* token = CBLCollection_AddDocumentChangeListener(collection, FLSTR("user.john"),
         document_listener, NULL);
     // end::document-listener[]
@@ -1458,6 +1448,66 @@ static void test_explain_statement() {
     // end::query-explain-all[]
     }
 
+    {
+    // tag::query-explain-like[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _ WHERE type LIKE \"%hotel%\" AND name LIKE \"%royal%\""),
+        NULL, &err);
+
+    FLSliceResult explanation = CBLQuery_Explain(query);
+    printf("%.*s", (int)explanation.size, (const char *)explanation.buf);
+    FLSliceResult_Release(explanation);
+    // end::query-explain-like[]
+    }
+
+    {
+    // tag::query-explain-nopfx[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _ WHERE type LIKE \"hotel%\" AND name LIKE \"%royal%\""),
+        NULL, &err);
+
+    FLSliceResult explanation = CBLQuery_Explain(query);
+    printf("%.*s", (int)explanation.size, (const char *)explanation.buf);
+    FLSliceResult_Release(explanation);
+    // end::query-explain-nopfx[]
+    }
+
+    {
+    // tag::query-explain-function[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _ WHERE lower(type) = \"hotel\""),
+        NULL, &err);
+
+    FLSliceResult explanation = CBLQuery_Explain(query);
+    printf("%.*s", (int)explanation.size, (const char *)explanation.buf);
+    FLSliceResult_Release(explanation);
+    // end::query-explain-function[]
+    }
+
+    {
+    // tag::query-explain-nofunction[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _ WHERE type = \"hotel\""),
+        NULL, &err);
+
+    FLSliceResult explanation = CBLQuery_Explain(query);
+    printf("%.*s", (int)explanation.size, (const char *)explanation.buf);
+    FLSliceResult_Release(explanation);
+    // end::query-explain-nofunction[]
+    }
+    
     // DOCS NOTE: Others omitted for now
 }
 
