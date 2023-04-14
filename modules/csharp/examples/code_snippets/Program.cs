@@ -464,10 +464,6 @@ namespace api_walkthrough
             // end::scopes-manage-drop-collection[]
         }
 
-        // tag::scopes-manage-index-collection[]
-        // We need to add a code sample to index a collection
-        // end::scopes-manage-index-collection[]
-
         private static void ListCollectionsAndScopes()
         {
             // tag::scopes-manage-list[]

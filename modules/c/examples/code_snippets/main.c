@@ -472,9 +472,6 @@ static void create_collection() {
     //end::scopes-manage-create-collection[]
 }
 
-// tag::scopes-manage-index-collection[]
-// We need to add a code sample to index a collection
-// end::scopes-manage-index-collection[]
 
 static void delete_collection(){
     CBLDatabase *db = kDatabase;
