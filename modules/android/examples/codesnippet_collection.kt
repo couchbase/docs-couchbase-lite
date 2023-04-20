@@ -3010,7 +3010,7 @@ class SnippetApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         // Initialize the Couchbase Lite system
-        CouchbaseLite.init(this)
+        CouchbaseLite.init(this code)
     }
 
     // end::sdk-initializer[]
