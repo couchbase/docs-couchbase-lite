@@ -65,7 +65,6 @@ class FlowExamples {
 
     // end::flow-as-document-change-listener[]
     // tag::flow-as-query-change-listener[]
-    @ExperimentalCoroutinesApi
     fun watchQuery(query: Query): LiveData<List<Result>> {
         return query.queryChangeFlow()
             .mapNotNull { change ->
