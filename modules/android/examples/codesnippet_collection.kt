@@ -560,9 +560,9 @@ class CollectionExamples {
         collection1 = db.defaultScope.getCollection("Verlaine")
 
         // create the collection "Verlaine" in the scope "Television"
-        var collection2: Collection? = db.createCollection("Television", "Verlaine")
+        var collection2: Collection? = db.createCollection("Verlaine", "Television")
         // both of these retrieve  collection2 created above
-        collection2 = db.getCollection("Television", "Verlaine")
+        collection2 = db.getCollection("Verlaine", "Television")
         collection2 = db.getScope("Television")!!.getCollection("Verlaine")
         // end::scopes-manage-create-collection[]
     }
