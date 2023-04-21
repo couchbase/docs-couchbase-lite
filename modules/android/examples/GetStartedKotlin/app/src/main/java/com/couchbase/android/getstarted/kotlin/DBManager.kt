@@ -93,7 +93,7 @@ class DBManager {
     }
 
     // <.>
-    // Retrieve immutable document update `language` property
+    // Retrieve immutable document and update `language` property
     // document ID and some document properties
     fun updateDoc(docId: String) {
         collection?.getDocument(docId)?.let {
