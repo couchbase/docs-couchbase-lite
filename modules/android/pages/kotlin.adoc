@@ -320,7 +320,7 @@ In Use::
 ----
 
 val docModDate = db.documentChangeFlow("1001", null)
-    .map { it.collection.getDocument(it.collection)?.getString("lastModified") }
+    .map { it.collection.getDocument(it.documentID)?.getString("lastModified") }
     .asLiveData()
 
 ----
