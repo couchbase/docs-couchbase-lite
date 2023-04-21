@@ -3004,14 +3004,18 @@ import com.couchbase.lite.Database
 import com.couchbase.lite.LogDomain
 import com.couchbase.lite.LogLevel
 
-
-class SnippetApplication : Application() {
-    // tag::sdk-initializer[]
+// tag::sdk-initializer[]
+class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        // Initialize the Couchbase Lite system
-        CouchbaseLite.init(this code)
+        
+        // ...
+        
+        CouchbaseLite.init(this)
     }
+    
+    // ...
+}
 
     // end::sdk-initializer[]
     fun troubleshootingExample() {
