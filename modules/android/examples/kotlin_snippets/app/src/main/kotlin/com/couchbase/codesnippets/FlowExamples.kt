@@ -41,18 +41,18 @@ class FlowExamples {
         return repl.replicatorChangesFlow()
             .map { it.status.activityLevel }
             .asLiveData()
+        // end::flow-as-replicator-change-listener[]
     }
 
     fun replChangeFlowExample(collection: Collection): LiveData<MutableList<String>> {
-        // end::flow-as-replicator-change-listener[]
         // tag::flow-as-database-change-listener[]
         return collection.collectionChangeFlow(null)
             .map { it.documentIDs }
             .asLiveData()
+        // end::flow-as-database-change-listener[]
     }
 
     fun docChangeFlowExample(collection: Collection, owner: String): LiveData<DocumentChange?> {
-        // end::flow-as-database-change-listener[]
         // tag::flow-as-document-change-listener[]
         return collection.documentChangeFlow("1001")
             .mapNotNull { change ->
@@ -61,9 +61,9 @@ class FlowExamples {
                 }
             }
             .asLiveData()
+        // end::flow-as-document-change-listener[]
     }
 
-    // end::flow-as-document-change-listener[]
     // tag::flow-as-query-change-listener[]
     fun watchQuery(query: Query): LiveData<List<Result>> {
         return query.queryChangeFlow()
@@ -75,6 +75,6 @@ class FlowExamples {
                 change.results?.allResults()
             }
             .asLiveData()
-        // end::flow-as-query-change-listener[]
     }
+    // end::flow-as-query-change-listener[]
 }
