@@ -93,7 +93,7 @@ class DBManager {
     }
 
     // <.>
-    // Retrieve immutable document and log the database generated
+    // Retrieve immutable document and update `language` property
     // document ID and some document properties
     fun updateDoc(docId: String) {
         collection?.getDocument(docId)?.let {
@@ -118,7 +118,7 @@ class DBManager {
     // <.>
     // OPTIONAL -- if you have Sync Gateway Installed you can try replication too.
     // Create a replicator to push and pull changes to and from the cloud.
-    // Be sure to hold a reference somewhere to prevent the Replicator from being GCed
+    // Be sure to hold a reference to the Replicator to prevent it from being GCed
     fun replicate(): Flow<ReplicatorChange>? {
         val coll = collection ?: return null
 
