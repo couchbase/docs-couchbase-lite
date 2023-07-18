@@ -387,7 +387,6 @@ class SupportingDatatypes(private val context: Context) {
         // Add dictionary to document's properties <.>
         mutableDoc.setDictionary("address", address)
 
-
         // Add array to document's properties <.>
         mutableDoc.setArray("phones", phones)
 
