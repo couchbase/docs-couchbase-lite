@@ -387,7 +387,6 @@ class SupportingDatatypes(private val context: Context) {
         // Add dictionary to document's properties <.>
         mutableDoc.setDictionary("address", address)
 
-
         // Add array to document's properties <.>
         mutableDoc.setArray("phones", phones)
 
@@ -560,9 +559,9 @@ class CollectionExamples {
         collection1 = db.defaultScope.getCollection("Verlaine")
 
         // create the collection "Verlaine" in the scope "Television"
-        var collection2: Collection? = db.createCollection("Verlaine", "Television")
+        var collection2: Collection? = db.createCollection("Television", "Verlaine")
         // both of these retrieve  collection2 created above
-        collection2 = db.getCollection("Verlaine", "Television")
+        collection2 = db.getCollection("Television", "Verlaine")
         collection2 = db.getScope("Television")!!.getCollection("Verlaine")
         // end::scopes-manage-create-collection[]
     }
@@ -815,18 +814,18 @@ class FlowExamples {
         return repl.replicatorChangesFlow()
             .map { it.status.activityLevel }
             .asLiveData()
+        // end::flow-as-replicator-change-listener[]
     }
 
     fun replChangeFlowExample(collection: Collection): LiveData<MutableList<String>> {
-        // end::flow-as-replicator-change-listener[]
         // tag::flow-as-database-change-listener[]
         return collection.collectionChangeFlow(null)
             .map { it.documentIDs }
             .asLiveData()
+        // end::flow-as-database-change-listener[]
     }
 
     fun docChangeFlowExample(collection: Collection, owner: String): LiveData<DocumentChange?> {
-        // end::flow-as-database-change-listener[]
         // tag::flow-as-document-change-listener[]
         return collection.documentChangeFlow("1001")
             .mapNotNull { change ->
@@ -835,11 +834,10 @@ class FlowExamples {
                 }
             }
             .asLiveData()
+        // end::flow-as-document-change-listener[]
     }
 
-    // end::flow-as-document-change-listener[]
     // tag::flow-as-query-change-listener[]
-    @ExperimentalCoroutinesApi
     fun watchQuery(query: Query): LiveData<List<Result>> {
         return query.queryChangeFlow()
             .mapNotNull { change ->
@@ -850,8 +848,8 @@ class FlowExamples {
                 change.results?.allResults()
             }
             .asLiveData()
-        // end::flow-as-query-change-listener[]
     }
+    // end::flow-as-query-change-listener[]
 }
 package com.couchbase.codesnippets
 
@@ -1009,7 +1007,6 @@ class KtJSONExamples {
 package com.couchbase.codesnippets
 
 import com.couchbase.codesnippets.util.log
-import com.couchbase.lite.Collection
 import com.couchbase.lite.CouchbaseLiteException
 import com.couchbase.lite.Database
 import com.couchbase.lite.KeyStoreUtils
@@ -1313,6 +1310,16 @@ class ListenerExamples {
         thisListener = listener
 
         // end::listener-simple[]
+    }
+
+    fun overrideConfigExample(db: Database) {
+        // tag::override-config[]
+        val listener8080 = URLEndpointListenerConfigurationFactory.newConfig(
+            networkInterface = "en0",
+            port = 8080
+        )
+        val listener8081 = listener8080.newConfig(port = 8081)
+        // end::override-config[]
     }
 
     fun listenerStatusCheckExample(db: Database) {
@@ -2335,7 +2342,9 @@ fun explainNoFnExample(collection: Collection) {
 
 fun prepareIndex(collection: Collection) {
     // tag::fts-index[]
-    collection.createIndex("overviewFTSIndex", FullTextIndexConfigurationFactory.newConfig("overview"))
+    collection.createIndex(
+        "overviewFTSIndex",
+        FullTextIndexConfigurationFactory.newConfig("overview"))
     // end::fts-index[]
 }
 
@@ -3004,18 +3013,14 @@ import com.couchbase.lite.Database
 import com.couchbase.lite.LogDomain
 import com.couchbase.lite.LogLevel
 
-// tag::sdk-initializer[]
-class MyApplication : Application() {
+
+class SnippetApplication : Application() {
+    // tag::sdk-initializer[]
     override fun onCreate() {
         super.onCreate()
-        
-        // ...
-        
+        // Initialize the Couchbase Lite system
         CouchbaseLite.init(this)
     }
-    
-    // ...
-}
 
     // end::sdk-initializer[]
     fun troubleshootingExample() {
