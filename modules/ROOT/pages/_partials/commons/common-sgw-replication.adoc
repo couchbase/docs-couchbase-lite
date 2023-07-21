@@ -125,12 +125,11 @@ image:ROOT:cbl-replication-scopes-collections-4.png["Syncing scope with user-def
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
 <<ex-simple-repl>> shows the configuration and initialization process.
 
-ifdef::is-android[]
-[NOTE]
---
-include::{root-partials}block-caveats.adoc[tags=android-threads]
---
-endif::[]
+NOTE: You need Couchbase Lite 3.1+ and Sync Gateway 3.1+ to use `custom` Scopes and Collections. +
+If you’re using Capella App Services or Sync Gateway releases that are older than version 3.1, you won’t be able to access `custom` Scopes and Collections. 
+To use Couchbase Lite 3.1+ with these older versions, you can use the `default` Collection as a backup option.
+
+For detailed examples, see: link:https://github.com/couchbase/docs-couchbase-lite/blob/25350f73f3b8305ffd0f0405896e8a92ab310c4d/modules/android/examples/codesnippet_collection.kt[Kotlin] and link:https://github.com/couchbase/docs-couchbase-lite/blob/25350f73f3b8305ffd0f0405896e8a92ab310c4d/modules/android/examples/codesnippet_collection.java[Java].
 
 // Example 1
 [#ex-simple-repl]
@@ -138,6 +137,13 @@ endif::[]
 :param-tags: p2p-act-rep-func
 include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
+
+ifdef::is-android[]
+[NOTE]
+--
+include::{root-partials}block-caveats.adoc[tags=android-threads]
+--
+endif::[]
 
 *Notes on Example*
 
