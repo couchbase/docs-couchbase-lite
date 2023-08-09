@@ -275,6 +275,13 @@ class BasicExamples(private val context: Context) {
         // end::batch[]
     }
 
+    fun useExplicitType(collection: Collection, someDoc: Document) {
+        // tag::fleece-data-encoding[]
+        val doc = collection.getDocument (someDoc.id)
+        // force longVal to be type Long, even if it could be represented as an Int.
+        val longVal = doc?.getLong(("test"))
+        // end::fleece-data-encoding[]
+    }
 
     // toJSON
     fun toJsonOperationsExample(argDb: Database) {
