@@ -65,11 +65,26 @@ or converting that document to JSON and back.
 
 Always use explicit creation of the expected type, whenever the type of result is not itself explicit. For example:
 
-[source, Java]
+[{tabs}]
+=====
+Java::
++
+--
+[source, Java, indent=0]
 ----
-Map<String, Object> doc = collection.getDocument(someDoc.getId()).toMap();
-Long testVal = Long.valueOf(doc.get(“test”))
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/BasicExamples.java[tag=fleece-data-encoding]
 ----
+--
+
+Kotlin::
++
+--
+[source, Kotlin, indent=0]
+----
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tag=fleece-data-encoding]
+----
+--
+=====
 
 Similarly, interpreting data not stored as `boolean` as a boolean value can give inconsistent results.
 
