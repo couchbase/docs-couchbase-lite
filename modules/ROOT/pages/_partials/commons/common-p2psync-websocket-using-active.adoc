@@ -2,19 +2,19 @@
 
 // DO NOT EDIT
 :param-abstract: How to set up a Replicator to connect with a Listener and replicate changes using peer-to-peer sync
-include::{root-partials}block-related-howto-p2psync-ws.adoc[]
-include::{root-partials}_show_page_header_block.adoc[]
+include::ROOT:partial$block-related-howto-p2psync-ws.adoc[]
+include::ROOT:partial$_show_page_header_block.adoc[]
 
 // Set is-p2p on for inclusions that may use it
 :is-p2p:
 // DO NOT EDIT
 
-include::{root-partials}block-caveats.adoc[tag=enterprise-only]
+include::ROOT:partial$block-caveats.adoc[tag=enterprise-only]
 
 ifdef::is-android[]
-include::{root-partials}block-caveats.adoc[tags=android-constraints]
+include::ROOT:partial$block-caveats.adoc[tags=android-constraints]
 endif::[]
-include::{root-partials}block-caveats.adoc[tags=code-disclaimer]
+include::ROOT:partial$block-caveats.adoc[tags=code-disclaimer]
 
 [#introduction]
 == Introduction
@@ -25,7 +25,7 @@ This _active peer_ (also referred to as a client and-or a replicator) will initi
 
 Subsequent sections provide additional details and examples for the main configuration options.
 
-include::{root-partials}block-caveats.adoc[tags=securestorage]
+include::ROOT:partial$block-caveats.adoc[tags=securestorage]
 
 == Configuration Summary
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
@@ -34,14 +34,14 @@ You should configure and initialize a replicator for each Couchbase Lite databas
 ifdef::is-android[]
 [NOTE]
 --
-include::{root-partials}block-caveats.adoc[tags=android-threads]
+include::ROOT:partial$block-caveats.adoc[tags=android-threads]
 --
 endif::[]
 
 [#simple-replication-to-listener]
 .Replication configuration and initialization
 :param-tags: p2p-act-rep-func;!autopurge-override
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Configure how the client will authenticate the server.
 Here we say connect only to servers presenting a self-signed certificate.
@@ -89,19 +89,19 @@ In this section::
 [#lbl-cfg-tgt]
 === Configure Target
 
-include::{root-commons}sgw-replication-cfg-tgt.adoc[]
+include::ROOT:partial$commons/common-sgw-replication-cfg-tgt.adoc[]
 
 
 [#lbl-cfg-sync]
 === Sync Mode
 
-include::{root-commons}sgw-replication-cfg-sync-mode.adoc[]
+include::ROOT:partial$commons/common-sgw-replication-cfg-sync-mode.adoc[]
 
 
 [#lbl-cfg-retry]
 === Retry Configuration
 
-include::{root-commons}sgw-replication-cfg-retry.adoc[]
+include::ROOT:partial$commons/common-sgw-replication-cfg-retry.adoc[]
 
 
 [#authenticate-listener]
@@ -109,7 +109,7 @@ include::{root-commons}sgw-replication-cfg-retry.adoc[]
 
 Define the credentials the your app (the client) is expecting to receive from the server (listener) in order to ensure that the server is one it is prepared to interact with.
 
-include::{root-commons}set-server-authentication.adoc[]
+include::ROOT:partial$commons/common-set-server-authentication.adoc[]
 
 
 [#lbl-authclnt]
@@ -134,7 +134,7 @@ Use the `{url-api-class-replicator-config-basic-auth}` to supply basic authentic
 .Basic Authentication
 :param-tags: p2p-act-rep-auth
 :param-leader: This example shows basic authentication using user name and password:
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
@@ -158,7 +158,7 @@ endif::is-android[]
 [#configuring-client-authentication]
 :param-tags: p2p-tlsid-tlsidentity-with-label
 :param-leader: This example shows client certificate authentication using an identity from secure storage.
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 <.> Get an identity from secure storage and create a TLS Identity object
@@ -170,20 +170,20 @@ endif::is-c[]
 == Initialize Replicator
 
 
-include::{root-commons}sgw-replication-init.adoc[]
+include::ROOT:partial$commons/common-sgw-replication-init.adoc[]
 
 [#lbl-repl-mon]
 == Monitor Sync
 
 :is-p2p:
-include::{root-commons}sgw-replication-monitor.adoc[leveloffset=+1]
+include::ROOT:partial$commons/common-sgw-replication-monitor.adoc[leveloffset=+1]
 :is-p2p!:
 
 
 [#lbl-repl-stop]
 == Stop Sync
 
-include::{root-commons}sgw-replication-stop.adoc[]
+include::ROOT:partial$commons/common-sgw-replication-stop.adoc[]
 
 
 == Conflict Resolution
@@ -196,12 +196,12 @@ For more complex solutions you can provide a custom conflict resolver - see: {co
 
 // Example 10
 [#using-conflict-resolvers]
-include::{root-commons}conflict.adoc[tags=handling-conflicts-conflict-resolvers]
+include::ROOT:partial$commons/common-conflict.adoc[tags=handling-conflicts-conflict-resolvers]
 
 Just as a replicator may observe a conflict -- when updating a document that has changed both in the local database and in a remote database -- any attempt to save a document may also observe a conflict, if a replication has taken place since the local app retrieved the document from the database.
 To address that possibility, a version of the `Database.save()` method also takes a conflict resolver as shown in <<ex-merge-props>>.
 
-include::{root-commons}conflict.adoc[tags=handling-conflicts-custom-merge]
+include::ROOT:partial$commons/common-conflict.adoc[tags=handling-conflicts-custom-merge]
 
 For more on replicator conflict resolution see: {conflict--xref}.
 
@@ -214,5 +214,5 @@ If delta sync is enabled on the listener, then replication will use delta sync.
 // DO NOT EDIT OR REMOVE
 // Unset is-p2p flag
 :is-p2p!:
-include::{root-partials}block-related-content-p2psync.adoc[]
+include::ROOT:partial$block-related-content-p2psync.adoc[]
 // DO NOT EDIT OR REMOVE

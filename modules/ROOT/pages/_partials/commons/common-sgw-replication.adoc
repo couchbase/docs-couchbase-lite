@@ -4,15 +4,15 @@
 // Include standard header
 :param-related: {conflict--xref} | {dbreplica--xref} | xref:{p2psync-websocket--page}[Peer-to-Peer]
 :topic-group: Topic Group -- Replication
-include::{root-partials}_show_page_header_block.adoc[]
+include::ROOT:partial$_show_page_header_block.adoc[]
 :is-p2p!:
 :is-sgw:
 // DO NOT DELETE
 
 ifdef::is-android[]
-include::{root-partials}block-caveats.adoc[tags=android-constraints]
+include::ROOT:partial$block-caveats.adoc[tags=android-constraints]
 endif::[]
-include::{root-partials}block-caveats.adoc[tags=code-disclaimer]
+include::ROOT:partial$block-caveats.adoc[tags=code-disclaimer]
 
 
 == Introduction
@@ -135,13 +135,13 @@ Click the *GitHub* tab in the code examples for further details.
 [#ex-simple-repl]
 .Replication configuration and initialization
 :param-tags: p2p-act-rep-func
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 ifdef::is-android[]
 [NOTE]
 --
-include::{root-partials}block-caveats.adoc[tags=android-threads]
+include::ROOT:partial$block-caveats.adoc[tags=android-threads]
 --
 endif::[]
 
@@ -205,14 +205,14 @@ ifndef::is-c[|  <<lbl-svr-auth>>]
 [#lbl-cfg-tgt]
 === Configure Target
 
-include::{root-commons}sgw-replication-cfg-tgt.adoc[]
+include::ROOT:partial$commons/common-sgw-replication-cfg-tgt.adoc[]
 
 
 [#lbl-network-interface]
 ifdef::is-ios[]
 === Network Interface
 
-include::{root-commons}sgw-replication-cfg-network-interface.adoc[]
+include::ROOT:partial$commons/common-sgw-replication-cfg-network-interface.adoc[]
 
 endif::is-ios[]
 
@@ -220,17 +220,17 @@ endif::is-ios[]
 [#lbl-cfg-sync]
 === Sync Mode
 
-include::{root-commons}sgw-replication-cfg-sync-mode.adoc[]
+include::ROOT:partial$commons/common-sgw-replication-cfg-sync-mode.adoc[]
 
 [#lbl-cfg-keep-alive]
 === Retry Configuration
 
-include::{root-commons}sgw-replication-cfg-retry.adoc[]
+include::ROOT:partial$commons/common-sgw-replication-cfg-retry.adoc[]
 
 [#lbl-user-auth]
 === User Authorization
 
-// include::{root-partials}authorization.adoc[]
+// include::ROOT:partial$authorization.adoc[]
 
 By default, Sync Gateway does not enable user authorization.
 This makes it easier to get up and running with synchronization.
@@ -267,7 +267,7 @@ ifndef::is-c[]
 
 Define the credentials your app (the client) is expecting to receive from the Sync Gateway (the server) in order to ensure it is prepared to continue with the sync.
 
-include::{root-commons}set-server-authentication.adoc[]
+include::ROOT:partial$commons/common-set-server-authentication.adoc[]
 
 This all assumes that you have configured the Sync Gateway to provide the appropriate SSL certificates, and have included the appropriate certificate in your app bundle -- for more on this see: <<lbl-cert-pinning>>.
 
@@ -277,7 +277,7 @@ endif::is-c[]
 [#lbl-client-auth]
 === Client Authentication
 
-// include::{root-partials}authentication.adoc[]
+// include::ROOT:partial$authentication.adoc[]
 There are two ways to authenticate from a Couchbase Lite client: <<Basic Authentication>> or <<Session Authentication>>.
 
 ==== Basic Authentication
@@ -290,7 +290,7 @@ This is the recommended way of using basic authentication.
 .Basic Authentication
 [#ex-base-auth]
 :param-tags: basic-authentication
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 ==== Session Authentication
@@ -308,14 +308,14 @@ See <<ex-session-auth>>, which shows how to initiate a one-shot replication with
 .Session Authentication
 [#ex-session-auth]
 :param-tags: session-authentication
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 
 [#lbl-repl-hdrs]
 === Custom{nbsp}Headers
 
-// include::{root-partials}replication-custom-header.adoc[]
+// include::ROOT:partial$replication-custom-header.adoc[]
 Custom headers can be set on the configuration object.
 The replicator will then include those headers in every request.
 
@@ -324,12 +324,12 @@ This feature is useful in passing additional credentials, perhaps when an authen
 .Setting custom headers
 [#ex-cust-hdr]
 :param-tags: replication-custom-header
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 [#lbl-repl-fltrs]
 === Replication Filters
-// include::{root-partials}replication-filters.adoc[]
+// include::ROOT:partial$replication-filters.adoc[]
 Replication Filters allow you to have quick control over the documents stored as the result of a push and/or pull replication.
 
 ==== Push Filter
@@ -339,9 +339,9 @@ This can be very useful.
 For instance, high-priority documents could be pushed first, or documents in a "draft" state could be skipped.
 
 :param-tags: replication-push-filter
-// pass:q,a,m[include::{root-partials}block_tabbed_code.adoc[]]
+// pass:q,a,m[include::ROOT:partial$block_tabbed_code.adoc[]]
 .Push Filter
-include::{root-partials}block_tabbed_code.adoc[]
+include::ROOT:partial$block_tabbed_code.adoc[]
 :param-tags!:
 
 ifndef::is-c[]
@@ -362,7 +362,7 @@ xref:sync-gateway::data-routing.adoc[channels]
 are designed to be scalable (documents are filtered on the server) whereas a pull replication filter is applied to a document once it has been downloaded.
 
 :param-tags: replication-pull-filter
-include::{root-partials}block_tabbed_code.adoc[]
+include::ROOT:partial$block_tabbed_code.adoc[]
 :param-tags!:
 
 ifndef::is-c[]
@@ -389,7 +389,7 @@ For more information, see <<auto-purge-on-revoke, Auto Purge on Revoke>>.
 [#lbl-repl-chan]
 === Channels
 
-// include::{root-partials}replication-channels.adoc[]
+// include::ROOT:partial$replication-channels.adoc[]
 By default, Couchbase Lite gets all the channels to which the configured user account has access.
 
 This behavior is suitable for most apps that rely on
@@ -404,7 +404,7 @@ In this case, the replication from Sync Gateway will only pull documents tagged 
 [#anchor-auto-purge-on-revoke]
 === Auto-purge on Channel Access Revocation
 
-// include::{root-commons}sgw-replication-cfg-autopurge.adoc[]
+// include::ROOT:partial$commons/common-sgw-replication-cfg-autopurge.adoc[]
 [CAUTION]
 --
 This is a Breaking Change at 3.0
@@ -517,7 +517,7 @@ Clients wishing to sync previously removed documents must use the resetCheckpoin
 .Setting auto-purge
 [#ex-set-auto-purge]
 :param-tags: autopurge-override
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Here we have opted to turn off the auto purge behavior. By default auto purge is enabled.
 
@@ -558,7 +558,7 @@ a|Doc remains in local database
 
 // tag::rep-delta-sync-concept[]
 
-include::{root-partials}block-caveats.adoc[tag=ee-only-feature]
+include::ROOT:partial$block-caveats.adoc[tag=ee-only-feature]
 
 With Delta Sync footnote:[Couchbase Mobile 2.5+], only the changed parts of a Couchbase document are replicated.
 This can result in significant savings in bandwidth consumption as well as throughput improvements, especially when network bandwidth is typically constrained.
@@ -584,12 +584,12 @@ In this section::
 [#lbl-repl-start]
 === Start Replicator
 
-include::{root-commons}sgw-replication-init.adoc[]
+include::ROOT:partial$commons/common-sgw-replication-init.adoc[]
 
 
 [#lbl-repl-ckpt]
 === Checkpoint Starts
-// include::{root-partials}replication-checkpoint.adoc[]
+// include::ROOT:partial$replication-checkpoint.adoc[]
 
 Replicators use {glos-term-checkpoints} to keep track of documents sent to the target database.
 
@@ -601,7 +601,7 @@ However, if you do want to force the replication to start again from zero, use t
 .Resetting checkpoints
 [#ex-repl-ckpt]
 :param-tags: replication-reset-checkpoint
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Set start's reset option to `true`. +
 ifndef::is-c[The default `false` is shown here for completeness only; it is unlikely you would explicitly use it in practice.]
@@ -611,14 +611,14 @@ ifndef::is-c[The default `false` is shown here for completeness only; it is unli
 == Monitor
 
 
-include::{root-commons}sgw-replication-monitor.adoc[leveloffset=+1]
+include::ROOT:partial$commons/common-sgw-replication-monitor.adoc[leveloffset=+1]
 
 
 [#lbl-repl-stop]
 == Stop
 
 
-include::{root-commons}sgw-replication-stop.adoc[]
+include::ROOT:partial$commons/common-sgw-replication-stop.adoc[]
 
 
 [#lbl-nwk-errs]
@@ -631,7 +631,7 @@ The following code snippet adds a `Change Listener`, which monitors a replicatio
 
 .Monitoring for network errors
 :param-tags: replication-error-handling
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 *For permanent network errors* (for example, `404` not found, or `401` unauthorized):
@@ -717,7 +717,7 @@ This example loads the certificate from the application sandbox, then converts i
 .Cert Pinnings
 [#ex-crt-pinning]
 :param-tags: certificate-pinning
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 . Build and run your app.
@@ -738,7 +738,7 @@ You can increase the log output for activity related to replication with Sync Ga
 [#ex-logs]
 .Set logging verbosity
 :param-tags: replication-logging
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 For more on troubleshooting with logs, see: {troubleshooting-logs--xref}.
@@ -770,7 +770,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 
 // DO NOT DELETE
 // Include standard footer
-include::{root-partials}block-related-content-std.adoc[]
+include::ROOT:partial$block-related-content-std.adoc[]
 :is-sgw!:
 // DO NOT DELETE
 
