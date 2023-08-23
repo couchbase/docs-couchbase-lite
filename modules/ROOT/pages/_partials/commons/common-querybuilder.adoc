@@ -19,7 +19,7 @@
 
 // END::Local page attributes
 
-NOTE: The examples used here are based on the _Travel Sample_ app and data introduced in the {couchbase-tutorials--mobile-workshop--xref} tutorial
+NOTE: The examples used here are based on the _Travel Sample_ app and data introduced in the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial
 
 == Introduction
 
@@ -68,7 +68,7 @@ a| The criteria used to order the items in the result set
 |====
 
 
-TIP: We recommend working through the query section of the {couchbase-tutorials--mobile-workshop--xref} tutorial as a good way to build your skills in this area.
+TIP: We recommend working through the query section of the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial as a good way to build your skills in this area.
 
 
 
@@ -103,7 +103,7 @@ The query.execute statement returns the results in a dictionary, where the key i
 [#ex-return-all]
 .ResultSet Format from SelectResult.all()
 ====
-[{json-snippet}]
+[pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
 include::ROOT:examples$query-snippets.adoc[tags=query-result-format-all]
 ----
@@ -131,7 +131,7 @@ The `query.execute` statement returns one or more key-value pairs, one for each 
 [#ex-return-properties]
 .Select Result Format
 ====
-[{json-snippet}]
+[pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
 
 include::ROOT:examples$query-snippets.adoc[tags=query-result-format-props]
@@ -165,7 +165,7 @@ You can chain any number of Expressions in order to implement sophisticated filt
 The {url-api-classes-query-expression-comparators} can be used in the WHERE statement to specify on which property to match documents.
 In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
 
-[{json-snippet}]
+[pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
 include::ROOT:examples$query-snippets.adoc[tags=query-result-format-props]
 ----
@@ -185,7 +185,7 @@ include::ROOT:partial$block_tabbed_code_example.adoc[]
 ==== CONTAINS Operator
 The following example uses the `{url-api-classes-query-arrayfunction}` to find documents where the `public_likes` array property contains a value equal to "Armani Langworth".
 
-[{json-snippet}]
+[pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
 {
     "_id": "hotel123",
@@ -282,7 +282,7 @@ include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-leader!:
 <.> The `\b` specifies that the match must occur on word boundaries.
 
-TIP: For more on the regex spec used by {cbl} see http://www.cplusplus.com/reference/regex/ECMAScript/[cplusplus regex reference page^]
+TIP: For more on the regex spec used by pass:q,a[Couchbase{nbsp}Lite] see http://www.cplusplus.com/reference/regex/ECMAScript/[cplusplus regex reference page^]
 
 // ISNULLORMISSING / NOTNULLORMISING
 // For the QueryBuilder API, isNullOrMissing and NotNullOrMissing operators will be deprecated and the isValued and isNotValued operators will be added.
@@ -321,7 +321,7 @@ You can perform further processing on the data in your result set before the fin
 The following example looks for the number of airports at an altitude of 300 ft or higher and groups the results by country and timezone.
 
 .Data Model for Example
-[{json-snippet}]
+[pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
 {
     "_id": "airport123",
@@ -365,7 +365,7 @@ include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-leader!:
 
 The query shown in <<ex-orderby-qry>> generates the following output:
-[{text-snippet}]
+[pass:q,a[source, text, subs="+attributes, +macros"]]
 ----
 Aberdyfi
 Achiltibuie
@@ -459,7 +459,7 @@ For each result object, the key is the database name and the 'value' is a dictio
 .Format of Result Set (All Properties)
 [#ex-all-rtn]
 ====
-[{json-snippet}]
+[pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
 
 include::ROOT:examples$query-snippets.adoc[tags=query-result-format-all]
@@ -505,7 +505,7 @@ Each result object comprises a key-value pair for each selected document propert
 .Format of Result Set (Specific Properties)
 [#ex-specific-rtn]
 ====
-[{json-snippet}]
+[pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
 
 include::ROOT:examples$query-snippets.adoc[tags=query-result-format-props]
@@ -545,7 +545,7 @@ Each result object has `id` as the key and the ID value as its value -- -see <<e
 .Format of Result Set (Doc Id only)
 [#ex-id-rtn]
 ====
-[{json-snippet}]
+[pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
 
 include::ROOT:examples$query-snippets.adoc[tags=query-result-format-id]
@@ -585,7 +585,7 @@ The key is the count name, as defined using `SelectResult.as` -- see: <<ex-count
 .Format of Result Set (Count)
 [#ex-count-rtn]
 ====
-[{json-snippet}]
+[pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
 
 include::ROOT:examples$query-snippets.adoc[tags=query-result-format-count]
@@ -618,7 +618,7 @@ include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Return a maximum of `limit` results starting from result number `offset`
 
-TIP: For more on using the QueryBuilder API, see our blog: {url-cb-blog-query-interface}
+TIP: For more on using the QueryBuilder API, see our blog: https://blog.couchbase.com/sql-for-json-query-interface-couchbase-mobile/[Introducing the Query Interface in Couchbase Mobile]
 
 
 == JSON Result Sets
