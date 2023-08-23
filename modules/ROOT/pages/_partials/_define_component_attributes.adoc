@@ -1,369 +1,43 @@
+// BEGIN -- _define_component_attributes.adoc -- Couchbase Lite
 // define and initialize the attributes common to all modules in this component
-//
 
 // COMPONENT VERSIONS
 // These are now sourced from the `antora.yml` attributes
 // {release} - {is-beta} - {major} - {minor} - {base} - {releasetag}
-
-// Basic version
 :version: {major}.{minor}
-// Base three digit version including optional tag
 :tag: {empty}
 ifdef::releasetag[:tag: -{releasetag}]
+
 :version-full: {major}.{minor}.{base}{tag}
 :version-full-hyphenated: {major}-{minor}-{base}{tag}
-:version-full-untagged: {major}.{minor}.{base}
 
-// version-maintenance is the full version including maintenance release number.
-// Note that the maintenance release is set at module level in the `_define_module_attributes.adoc` file
-// here at component level it is always same as version-full
 :version-maintenance-android: {major}.{minor}.{maintenance-android}
 :version-maintenance-c: {major}.{minor}.{maintenance-c}
 :version-maintenance-net: {major}.{minor}.{maintenance-net}
 :version-maintenance-java: {major}.{minor}.{maintenance-java}
 :version-maintenance-ios: {major}.{minor}.{maintenance-ios}
-
-// CAO versions used
-// :version_cao: 2.0
-// :version_caoFull: 2.0.0
-
 // END COMPONENT VERSIONS
-//
 
+
+// Miscellaneous attributes
 :blank-field: ____
-
 :sgw: pass:q,a[sync{nbsp}gateway]
-
-
-// BEGIN  -- TEMP -- merged from docs-mobile -- resolve after  3.0 beta
-// :_page-status-beta: beta
-// :_page-status-gamma: gamma
-// :_page-status-review: in-review
-// :xrefstyle: full
-// :more: Read More
-// :sqlpp: pass:q,a[{sqlpp}]
-// :idprefix:
-// :idseparator: -
-// :natt: None at this time
-// :ke: Known issues
-// :fixed: Fixed at this Release
-// :enh: Enhancements
-// :nftr: New Features
-// :api: API Changes
-// :gpWebServerEnv: Tomcat
-// :gpBuildTool: gradle
-// :gpIDE: Intellij IDEA
-// :gpIDEce: gpIDE Community Edition
-// :gpIDEee: gpIDE Ultimate Edition
-// :enterprise: enterprise
-// :entshort: ee
-// :community: community
-// :commshort: ce
-
-// :url-jira: https://issues.couchbase.com/browse
-// :url-cb-jira: https://issues.couchbase.com/browse
-
-// :url-cb-forum: https://forums.couchbase.com/
-// :url-cb-forum-mobile: https://forums.couchbase.com/c/mobile/14
-// :url-tutorials: https://docs.couchbase.com/tutorials/
-
-// :couchbase-blog--xref: https://blog.couchbase.com/[Blog]
-// :couchbase-forum--xref: https://forums.couchbase.com/[Forum]
-// :couchbase-mobile-forum--xref: https://forums.couchbase.com/c/mobile/14[Mobile Forum]
-// :couchbase-tutorials--xref: https://docs.couchbase.com/tutorials/[Tutorials]
-// 
-// :url-downloads: https://www.couchbase.com/downloads/?family=mobile
-
-
-// :component-sgw: sync-gateway
-// :component-cbl: couchbase-lite
-// // :component-mob: shared-mobile
-// :component-svr: server
-// :component-cao: operator
-// :component-svr-status:
-// :component-cao-status:
-// :sgw-s: pass:q,a[Sync{nbsp}gateway]
-// :sgw-t: pass:q,a[Sync{nbsp}Gateway]
-// :sgw-te: pass:q,a[_pass:q,a[Sync{nbsp}Gateway]_]
-// :cbl: pass:q,a[Couchbase{nbsp}Lite]
-// :cbl-s: pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]
-// :cbl-t: pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]
-// :cbl-te: pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]
-
-// :component-title-sgw: pass:q,a[_Sync{nbsp}Gateway_]
-// :component-title-cbl: pass:q,a[_Couchbase{nbsp}Lite_]
-// 
-// :component-title-mob: pass:q,a[_Couchbase{nbsp}Mobile_]
-// :component-title-svr: pass:q,a[_Couchbase{nbsp}Server_]
-// :component-title-cao: pass:q,a[_Couchbase{nbsp}Autonomous{nbsp}Operator_]
-// :cbm: pass:q,a[_Couchbase{nbsp}Mobile_]
-// :cao: pass:q,a[_Couchbase{nbsp}Autonomous{nbsp}Operator_]
-// :sg: pass:q,a[_Sync{nbsp}Gateway_]
-// :sgTechNm: sync-gateway
-// :cbl: pass:q,a[_Couchbase{nbsp}Lite_]
-// :cblTechNM: couchbase-lite
-// :cblFrmWk: pass:q,a[Couchbase{nbsp}Lite] Java Framework
-// :svr: pass:q,a[_Couchbase{nbsp}Server_]
-// :svrTechNM: server
-// :sgw--xref: xref:{version}@sync-gateway:
-// :cbl--xref: xref:{version}@couchbase-lite:
-// :svr--xref: xref:server:
-// :cao--xref: xref:operator:
-// :url-cb-pfx: https://www.couchbase.com/
-// :url-downloads-all: https://www.couchbase.com/downloads
-// :downloads-all--xref: https://www.couchbase.com/downloads[Get Started with Couchbase Today]
-// :url-downloads-mobile: https://www.couchbase.com/downloads#extend-with-mobile
-// :downloads-mobile--xref: https://www.couchbase.com/downloads#extend-with-mobile[Extend with Mobile]
-
-// END -- TEMP -- merged from docs-mobile -- resolve after  3.0 beta
-
-// BEGIN -- _define_component_attributes.adoc -- Couchbase Lite
-//
-// Definition:
-//    Objective: This adoc defines values for attributes specific to pages within Couchbase Lite (any module, including ROOT)
-//    Invoked-by: ROOT:_partials/_std_cbl_hdr.adoc (from within module/_partials_set_page_context_for_{module name}.adoc)
-//    Parameters: none
-// End Definition:
-
-// BEGIN -- Product and Versioning Attributes
-// COMPONENT Names
-
-// :product: pass:q,a[Couchbase{nbsp}Lite]
-// :prodTechNm: {cblTechNm}
-// :ftr_jPlatNm: pass:q,a[Couchbase{nbsp}Lite] for Java
-// :ftr_jAndNM: pass:q,a[Couchbase{nbsp}Lite] for Android
-// :ftr_SwiftNM: pass:q,a[Couchbase{nbsp}Lite] for Swift
-
-// :sgw: pass:q,a[sync{nbsp}gateway]
-// :sgw-s: pass:q,a[Sync{nbsp}gateway]
-// :sgw-t: pass:q,a[Sync{nbsp}Gateway]
-// :sgw-te: pass:q,a[_pass:q,a[Sync{nbsp}Gateway]_]
-// 
-// :cbl: pass:q,a[Couchbase{nbsp}Lite]
-// :cbl-s: pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]
-// :cbl-t: pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]
-// :cbl-te: pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]
-// Component Features
-// End of Component Features
-// End Product Versioning attributes
-
-
-
-// List styles
-// :list-style--ordered: [loweralpha]
-// :list-style--unordered:
-// :list-style--steps: [arabic]
-// :list-style--steps2: [lowerroman]
-// :list-style--steps3: [loweralpha]
-//
-
-// :platform-android: android
-// :platform-c: c
-// :platform-jvm: jvm
-// :platform-ios: ios
-// :platform-web: web
-// :platform-net: net
-
-// Couchbase Lite
-// :lang-mod-android: android
-// :lang-mod-c: c
-// :lang-mod-csharp: csharp
-// :lang-mod-java: java
-// :lang-mod-objc: objc
-// :lang-mod-swift: swift
-// :lang-name-android: kotlin
-// :lang-name-c: c
-// :lang-name-csharp: csharp
-// :lang-name-java: java
-// :lang-name-objc: objc
-// :lang-name-swift: swift
-// :lang-name-javascript: javascript
-// :lang-platform-android: android
-// :lang-platform-c: c
-// :lang-platform-csharp: net
-// :lang-platform-java: jvm
-// :lang-platform-objc: ios
-// :lang-platform-swift: ios
-// :lang-platform-javascript: web
-// :lang-title-android: Android
-// :lang-title-c: C
-// :lang-title-csharp: C#/.Net
-// :lang-title-java: Java
-// :lang-title-objc: Objective C
-// :lang-title-swift: Swift
-
-// End -- Source Languages
-
-// :nmSampleAppDb: getting-started.cblite2
-// // :nmSampleAppDbPath: /resources/getting-started.cblite2
-// :nmSampleAppDbPath: /getting-started.cblite2
-// :nmMobStarterApp: GettingStarted
-// :nmStarterCode: StarterCode1.0
-// :nmSampleAppUser: admin
-// :nmSampleAppPassword: password
-// 
-// :tknwip: Under Construction
-// :tknwip-note: This page is Under Construction and is included as a place holder only.
-// :ns: None specified
-:ns-this: None specified in this release
 :ellipsis: ...
 
-// :build-local: https://localhost:5000
-// :build-staging: https://docs-staging.couchbase.com
-// :build-beta: https://docs-betacouchbase.com
-// :build-sandbox: https://docs-sandbox.couchbase.com
-// :build-production: https://docs.couchbase.com
-//
-// :is-live!:
-// ifeval::[{site-key} == {build-production}]
-// :is-live:
-// endif::[]
-
-// BEGIN -- Common Couchbase Lite URL Declarations
-//
-// General CB links
-// :url-cb-website: https://www.couchbase.com/
-
-// :url-enterprise: https://www.couchbase.com/products/editions[Enterprise Edition]
-// :url-community: https://www.couchbase.com/products/editions[Community Edition]
-// :url-support-policy: https://www.couchbase.com/support-policy[Couchbase Support]
-// :url-license-and-supp-faq: https://www.couchbase.com/licensing-and-support-faq[Licensing]
-// :url-cb-blog: https://blog.couchbase.com/
-// :url-cb-blog-mobile: https://blog.couchbase.com/category/couchbase-mobile/?ref=blog-menu
-
-// :url-cb-blog-replication: https://blog.couchbase.com/data-replication-couchbase-mobile/[Introducing the Data Replication Protocol]
-// :url-cb-blog-cert-pinning: https://blog.couchbase.com/certificate-pinning-android-with-couchbase-mobile/[Certificate Pinning with Couchbase Mobile]
-// :url-cb-blog-query-interface: https://blog.couchbase.com/sql-for-json-query-interface-couchbase-mobile/[Introducing the Query Interface in Couchbase Mobile]
-
-// :url-cb-blog-link: https://blog.couchbase.com/[The Couchbase Blog]
-
-// :url-blog-cat-conflicts: https://blog.couchbase.com/tag/conflict-resolution/[Conflict Resolution (category)]
-
-// :url-blog-doc-conflicts-auto-resolutions: https://blog.couchbase.com/document-conflicts-couchbase-mobile/[Automatic Conflict Resolution]
-
-// :url-blog--pfx-conflicts-demystifying: https://blog.couchbase.com/conflict-resolution-couchbase-mobile/
-// :url-blog-doc-conflicts-demystifying: https://blog.couchbase.com/conflict-resolution-couchbase-mobile/[Demystifying Conflict Resolution]
-// :url-blog-doc-conflicts-demystifying-mvcc: https://blog.couchbase.com/conflict-resolution-couchbase-mobile/#multi-version-concurrency-control[MVCC -- Demystifying Conflict Resolution]
-
-// :url-downloads-all: https://www.couchbase.com/downloads
-// :downloads-all--xref: https://www.couchbase.com/downloads[Get Started with Couchbase Today]
-// :url-downloads-mobile: https://www.couchbase.com/downloads#extend-with-mobile
-
-// :url-download-swift: https://packages.couchbase.com/releases/couchbase-lite-ios/2.8.0-beta/couchbase-lite-swift_community_2.8.0.zip[Couchbase Lite Swift]
-// :url-download-c: https://packages.couchbase.com/releases/couchbase-lite-c/2.8.0-beta/couchbase-lite-objc_community_2.8.0.zip[Couchbase Lite C]
-// :url-download-objc: https://packages.couchbase.com/releases/couchbase-lite-ios/2.8.0-beta/couchbase-lite-objc_community_2.8.0.zip[Couchbase Lite ObjC]
-// :url-download-android: https://packages.couchbase.com/releases/couchbase-lite-android/2.8.0-beta/couchbase-lite-android_community_2.8.0.zip[Couchbase Lite Android]
-// :url-download-java: https://packages.couchbase.com/releases/couchbase-lite-java/2.8.0-beta/couchbase-lite-java_community_2.8.0.zip[Couchbase Lite Java]
-// :url-download-csharp: https://www.nuget.org/packages/Couchbase.Lite.Community/[Nuget]
-// END -- download urls
 
 // API Reference Links
-:!is-live:
-:!is-beta:
-
-// :url-api-references-pfx: http://docs.couchbase.com/mobile/
-
 :url-api-references-android: https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android
 :url-api-references-kotlin: https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android-ktx
-
 :url-api-references-c: https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html
 :url-api-references-csharp: https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net
-// :url-api-references-csharp: https://docs.couchbase.com/mobile/csharp
-// :url-api-references-java: https://docs.couchbase.com/mobile/java
 :url-api-references-java: https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java
 :url-api-references-objc: https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc
 :url-api-references-swift: https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift
 
-// GitHub links
-// :url-github-cbl: https://github.com/couchbase/couchbase-lite-
-// :url-github-repo-pfx-mobile-tools: https://github.com/couchbaselabs/couchbase-mobile-tools
-// :url-github-repo-mobile-tools: https://github.com/couchbaselabs/couchbase-mobile-tools.git[Couchbase Mobile Tools]
-// :url-github-repo-mobile-tools-cblite: https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md[cblite on GitHub]
-// :url-github-cblite-docs: https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/Documentation.md
-// :url-github-cblite-docs-cp: https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/Documentation.md#cp-aka-export-import-push-pull[cblite cp (export, import, push, pull)]
 
-// :url-cb-mobStarterApp: https://github.com/ibsoln/cblGettingStarted.git
-
-// Issue Links
-// :url-issues-android: https://github.com/couchbase/couchbase-lite--android/issues
-// :url-issues-c: https://github.com/couchbase/couchbase-lite--c/issues
-// :url-issues-csharp: https://github.com/couchbase/couchbase-lite--csharp/issues
-// :url-issues-java: https://github.com/couchbase/couchbase-lite--android/issues
-// :url-issues-objc: https://github.com/couchbase/couchbase-lite--ios/issues
-// :url-issues-swift: https://github.com/couchbase/couchbase-lite--ios/issues
-
-
-// :url-tutorial-mobile-workshop: https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html
-
-// :couchbase-tutorials--mobile-workshop--xref: https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop]
-
-
-
-// :url-n1ql-tutorial: https://query-tutorial.couchbase.com/tutorial/#1[{sqlpp} Tutorials]
-
-// END URLs
-
-
-
-// BEGIN -- Snippets and Partials Links
-// :root-examples: ROOT:example$
-// :root-partials: ROOT:partial$
-// :root-commons: ROOT:partial$commons/common-
-// //:root-images: ROOT:assets/images/
-// :root-images: ROOT:assets/images/
-// :root-attachments: ROOT:assets/attachments/
-
-// :android-pages: {lang-mod-android}:page$
-// :android-examples: {lang-mod-android}:example$
-// :c-examples: {lang-mod-c}:example$
-// :csharp-examples: {lang-mod-csharp}:example$
-// :java-examples: {lang-mod-java}:example$
-// :objc-examples: {lang-mod-objc}:example$
-// :swift-examples: {lang-mod-swift}:example$
-
-// :snippets-pfx: example$code_snippets/
-
-// :snippets-content--android-kotlin: android:example$codesnippet_collection.kt
-// :snippets-content--android-java: android:example$codesnippet_collection.java
-// :snippets-content--java: java:example$codesnippet_collection.java
-// :snippets-content--c: c:example$code_snippets/main.c
-// :snippets-content--csharp: csharp:example$code_snippets/Program.cs
-// :snippets-content--objc: objc:example$code_snippets/SampleCodeTest.m
-// :snippets-content--swift: swift:example$code_snippets/SampleCodeTest.swift
-
-// SGW Pages
-// :pg-sgw-gs-install: gs-sgw-install.adoc
-
-// SGW Xrefs
-// :xref-pg-sgw-gs-install: xref:{version}@sync-gateway::gs-sgw-install.adoc[Install Sync Gateway]
-
-
-// BEGIN -- SET SNIPPET HEADERS
-// :gen-subs: +attributes, +macros
-// :bash-snippet: pass:q,a[source, bash, subs="+attributes, +macros"]
-// // :code-snippet: pass:q,a[source, {source-language}, subs="+attributes, +macros"]
-// :json-snippet: pass:q,a[source, json, subs="+attributes, +macros"]
-// :text-snippet: pass:q,a[source, text, subs="+attributes, +macros"]
-
-// END -- SET SNIPPET HEADERS
-
-
-
-// Couchbase Lite Pages
-
-// :component-mob-status: {_page-status-gamma}
-// :component-cbl-status: {_page-status-gamma}
-// :component-sgw-status: {_page-status-gamma}
-
-//
-// End Standard URL Attributes
-
-// diag: Env+Local(ROOT)
-
-
+// Secure Storage: default (to override for android/iOS)
 :securestorage: secure storage
 :securestorage-api: secure storage API
-
 
 ifdef::is-android[]
 :securestorage: Keystore

@@ -24,13 +24,13 @@ include::ROOT:partial$_show_page_header_block.adoc[]
 == Introduction
 
 
-pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] on Java {version-full}_ enables development and deployment of pass:q,a[Couchbase{nbsp}Lite] applications to a JVM environment.
+Couchbase Lite on Java {version-full}_ enables development and deployment of  Couchbase Lite applications to a JVM environment.
 You can deploy Standalone (Java Desktop/Console) apps or Web Apps (using, for example, Tomcat; including embedded Tomcat deployments).
 
 
 .Quick Steps
 ****
-For experienced developers, this is all you need to add _pass:q,a[Couchbase{nbsp}Lite] for {param-title} {version-full}_ to your application projects.
+For experienced developers, this is all you need to add Couchbase Lite for {param-title} {version-full}_ to your application projects.
 
 [{tabs}]
 =====
@@ -42,14 +42,14 @@ Include the following in your Gradle `build.gradle` or Maven `pom.xml` file, as 
 * The Couchbase Enterprise Edition repository +
 `https://mobile.maven.couchbase.com/maven2/dev/`
 
-* The pass:q,a[Couchbase{nbsp}Lite] Enterprise Edition dependency: +
+* The Couchbase Lite Enterprise Edition dependency: +
 `couchbase-lite-java-ee:{version-full}`
 --
 
 Community Edition::
 +
 --
-. Include the pass:q,a[Couchbase{nbsp}Lite] for Java dependency in your Gradle `build.gradle` or Maven `pom.xml` file, as appropriate: +
+. Include the Couchbase Lite for Java dependency in your Gradle `build.gradle` or Maven `pom.xml` file, as appropriate: +
 `couchbase-lite-java:{version-full}`
 . For Gradle: +
 Check you have `mavenCentral()` in `repositories` (or in `settings.gradle`). +
@@ -58,7 +58,7 @@ Maven automatically checks its own repo for dependencies.
 =====
 ****
 That's it!
-You're all set to begin developing powerful pass:q,a[Couchbase{nbsp}Lite] applications.
+You're all set to begin developing powerful Couchbase Lite applications.
 
 Now, try the xref:gs-build.adoc[Getting Started] application, which demonstrates use of key CRUD functionality.
 
@@ -77,9 +77,9 @@ Alternatively, you can download compressed binaries -- see the _Downloaded Binar
 
 === Prerequisites
 
-* Planning to sync with a pass:q,a[_Couchbase{nbsp}Server_]?
+* Planning to sync with a  _Couchbase Server_?
 +
-You will need to have runnable instances of pass:q,a[_Couchbase{nbsp}Server_] and pass:q,a[_Sync{nbsp}Gateway_] installed.
+You will need to have runnable instances of _Couchbase Server_ and _Sync Gateway_ installed.
 If you have not already done so see {sgw-prepare--xref}
 * Running on Microsoft Windows?
 +
@@ -88,7 +88,7 @@ Please install the Visual {Cpp} Redistribution package from this link:
 https://www.microsoft.com/en-us/download/details.aspx?id=52685
 
 * Deploying to Linux? +
-You need to deploy the pass:q,a[Couchbase{nbsp}Lite] `support` library, which is available _only_ on the zip download distributable.
+You need to deploy the Couchbase Lite `support` library, which is available _only_ on the zip download distributable.
 See the _Additional Steps for Linux_ section in {gs-prereqs--xref}.
 
 
@@ -319,9 +319,9 @@ It provides a simple Tomcat harness that can be used from within Intellij IDEA o
 Each web application has its own *class loader (WebappX).
 This loads the classes, jars, and resources found in the application's `WEB-INF/classes` and `WEB-INF/lib` folders, together with any shared jar files from `$CATALINA_BASE/lib` -- see https://tomcat.apache.org/tomcat-9.0-doc/class-loader-howto.html[tomcat documentation] for more.
 
-So, if you are running multiple pass:q,a[Couchbase{nbsp}Lite] web applications, deploy your {cbljp} library `<pathToCbl>/libs` to `$CATALINA_BASE/lib`. This means you do not need to deploy it in each web app and *minimizes the size of each app*.
+So, if you are running multiple Couchbase Lite web applications, deploy your {cbljp} library `<pathToCbl>/libs` to `$CATALINA_BASE/lib`. This means you do not need to deploy it in each web app and *minimizes the size of each app*.
 
-NOTE:  Configuring pass:q,a[Couchbase{nbsp}Lite] logging functionality will affect the logging of all web applications as the _common class loader_ shares _pass:q,a[Couchbase{nbsp}Lite] Console, File_ and _Custom logging functionalities_  across all  web apps.
+NOTE:  Configuring Couchbase Lite logging functionality will affect the logging of all web applications as the _common class loader_ shares Couchbase Lite Console, File_ and _Custom logging functionalities_  across all  web apps.
 
 For information about building a WAR file see <<lbl-war>>
 
@@ -330,7 +330,7 @@ For information about building a WAR file see <<lbl-war>>
 * Ensure your build environment matches the runtime Tomcat environment.
 Specifically, that the Java and Tomcat versions are the same.
 * If your Tomcat server runs Linux, declare the _shared libraries_ (`<pathToCbl>/support`) in the `$CATALINA_HOME/bin/setenv.sh` script file -- see: _Additional Steps for Linux_ section in {gs-prereqs--xref}.
-* Ensure the pass:q,a[Couchbase{nbsp}Lite] jars (`<pathToCbl>/lib`) are on the executable path within Tomcat -- see: <<bmkMultCblJapps>>
+* Ensure the Couchbase Lite jars (`<pathToCbl>/lib`) are on the executable path within Tomcat -- see: <<bmkMultCblJapps>>
 +
 
 TIP: This also means you should declare the dependencies as `providedCompile` to avoid them being bundled into the `WEB-INF/libs` folder
@@ -434,8 +434,8 @@ So, to run the app use:
 == Deploying a WAR File
 
 To deploy your web app to a local Tomcat instance you need to generate a WAR file.
-However, you should note that when creating a war file, if you use the `implementation` dependency type then your _pass:q,a[Couchbase{nbsp}Lite]_ jar files will be bundled into WEB-INF/lib of the web application.
-To exclude pass:q,a[Couchbase{nbsp}Lite] jar files from getting bundled and to use pass:q,a[Couchbase{nbsp}Lite] in multiple web applications, change the dependency type from *`implementation`* to *`providedCompile`*
+However, you should note that when creating a war file, if you use the `implementation` dependency type then your _Couchbase{nbsp}Lite_ jar files will be bundled into WEB-INF/lib of the web application.
+To exclude Couchbase{nbsp}Lite jar files from getting bundled and to use Couchbase{nbsp}Lite in multiple web applications, change the dependency type from *`implementation`* to *`providedCompile`*
 
 . You can do this using the Gradle command below from within your project folder:
 [source, bashrc]
@@ -451,7 +451,7 @@ NOTE:  The generated war file will be at <PROJECT ROOT>/build/libs.
 +
 TIP: You can also use Tomcat’s Manager App to deploy the war file -- see https://tomcat.apache.org/tomcat-9.0-doc/manager-howto.html[Tomcat's Manager App] documentation for more detail.
 
-. To use common class loader approach to load pass:q,a[Couchbase{nbsp}Lite] libraries, copy all of the pass:q,a[Couchbase{nbsp}Lite] jar files in $CATALINA_BASE/lib.
+. To use common class loader approach to load Couchbase{nbsp}Lite libraries, copy all of the Couchbase{nbsp}Lite jar files in $CATALINA_BASE/lib.
 +
 NOTE: For linux platform see also -- _Using Native Libraries for Linux_ in {gs-prereqs--xref}
 

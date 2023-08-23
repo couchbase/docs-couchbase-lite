@@ -12,12 +12,12 @@
 
 == Introduction
 
-pass:q,a[Couchbase{nbsp}Lite] for {param-title} uses _blobs_ to store the contents of images, other media files and similar format files as binary objects.
+Couchbase{nbsp}Lite for {param-title} uses _blobs_ to store the contents of images, other media files and similar format files as binary objects.
 
 The blob itself is not stored in the document.
 It is held in a separate content-addressable store indexed from the document and retrieved only on-demand.
 
-When a document is synchronized, the pass:q,a[Couchbase{nbsp}Lite] replicator adds an `_attachments` dictionary to the document's properties if it contains a blob -- see <<img-blob>>.
+When a document is synchronized, the Couchbase{nbsp}Lite replicator adds an `_attachments` dictionary to the document's properties if it contains a blob -- see <<img-blob>>.
 
 
 == Blob Objects
@@ -31,7 +31,7 @@ The blob's data (an image, audio or video content) is not stored in the document
 
 === Constraints
 
-* pass:q,a[Couchbase{nbsp}Lite] +
+* Couchbase{nbsp}Lite +
 Blobs can be arbitrarily large.
 They are only read on demand, not when you load a the _document_.
 
@@ -63,7 +63,7 @@ The `digest` key will be the same as generated when we saved the blob document.
 
 
 == Syncing
-When a document containing a blob object is synchronized, the pass:q,a[Couchbase{nbsp}Lite] replicator generates an `_attachments` dictionary with an auto-generated name for each blob attachment.
+When a document containing a blob object is synchronized, the Couchbase{nbsp}Lite replicator generates an `_attachments` dictionary with an auto-generated name for each blob attachment.
 This is different to the `avatar` key and is used internally to access the blob content.
 
 If you view a sync'd blob document in {cbs} Admin Console, you will see something similar to <<img-blob>>, which shows the document with its generated `_attachments` dictionary, including the `digest`.
