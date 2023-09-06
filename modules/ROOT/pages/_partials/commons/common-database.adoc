@@ -2,13 +2,13 @@
 // Applies to all platforms with some platform-specific differences
 
 
-// include::{root-partials}_set-platform.adoc[]
+// include::ROOT:partial$_set-platform.adoc[]
 
-:param-related: {blob--xref} | {document--xref} | {indexing--xref}
+:param-related: {cbl--xref} blob.adoc[Blobs] | {cbl--xref} document.adoc[Documents] | {cbl--xref} indexing.adoc[Indexing]
 :topic-group: Topic Group -- Data Model
-include::{root-partials}_show_page_header_block.adoc[]
+include::ROOT:partial$_show_page_header_block.adoc[]
 
-:fn-2-8: footnote:fn28[Commencing with Release 2.8]
+// :fn-2-8: footnote:fn28[Commencing with Release 2.8]
 :fnref-2-8: footnote:fn28[]
 
 [#database-concepts]
@@ -72,7 +72,7 @@ An exception is raised if any other API method is invoked before the initializer
 .Initializer code
 [#ex-init-cdl]
 :param-tags: sdk-initializer
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 
@@ -110,7 +110,7 @@ See also <<lbl-find-db-loc>>.
 [#ex-dbopen]
 .Open or create a database
 :param-tags: new-database
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 // <.> Here we are specifying the database directory path.
 
@@ -120,27 +120,27 @@ You are advised to incorporate the closing of all open databases into your appli
 
 To close a database, use {url-api-method-database-close} -- see: <<ex-dbclose>>.
 This also closes
-ifndef::is-c[{fn-2-8}]
+ifndef::is-c[footnote:fn28[Commencing with Release 2.8]]
 active replications, listeners and-or live queries connected to the database.
 
 NOTE: Closing a database soon after starting a replication involving it can cause an exception as the asynchronous `replicator (start)` may not yet be `connected`.
 
 ifndef::is-c[]
 .Safely Closing a Database pre 2.8
-TIP: Before closing, check that any attached listeners (query/replication/change) indicate they are at least at `connected` status before closing -- see for example: {replication--xref--monitor-status}.
+TIP: Before closing, check that any attached listeners (query/replication/change) indicate they are at least at `connected` status before closing -- see for example: {cbl--xref} replication.adoc#lbl-repl-mon[Monitor Status].
 endif::is-c[]
 
 .Close a Database
 [#ex-dbclose]
 :param-tags: close-database
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 
 == Database Encryption
 
 :param-language: {param-name}
-include::{root-commons}database-encryption.adoc[]
+include::ROOT:partial$commons/common-database-encryption.adoc[]
 
 
 [#lbl-find-db-loc]
@@ -185,22 +185,22 @@ ifndef::is-c[]
 You should use console logs as your first source of diagnostic information.
 If the information in the default logging level is insufficient you can focus it on database errors and generate more verbose messages -- see: <<ex-logdb>>.
 
-For more on using Couchbase logs -- see: {troubleshooting-logs--xref}.
+For more on using Couchbase logs -- see: {cbl--xref} troubleshooting-logs.adoc[Using Logs].
 
 [#ex-logdb]
 .Increase Level of Database Log Messages
 :param-tags: console-logging-db
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 endif::is-c[]
 
 // DO NOT DELETE
 // Include standard
 
-include::{root-partials}block-related-content-std.adoc[]
+include::ROOT:partial$block-related-content-std.adoc[]
 // DO NOT DELETE
 
 // DO NOT DELETE
-// include::{root-partials}_unset-platform.adoc[]
+// include::ROOT:partial$_unset-platform.adoc[]
 // DO NOT DELETE
 // END: inclusion-page - common-database.adoc[]

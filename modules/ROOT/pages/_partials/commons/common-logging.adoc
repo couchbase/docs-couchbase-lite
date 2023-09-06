@@ -13,24 +13,24 @@
 ifndef::version-full[:version-full: UNDEFINED-VERSION]
 ifndef::cbl-log-version[:cbl-log-version: {version-full}]
 ifndef::snippet[:snippet: UNDEFINED-SNIPPET-PATH]
-:url-cbl-log-binaries: https://packages.couchbase.com/releases/couchbase-lite-log/{cbl-log-version}/couchbase-lite-log-{cbl-log-version}
+// :url-cbl-log-binaries: https://packages.couchbase.com/releases/couchbase-lite-log/{cbl-log-version}/couchbase-lite-log-{cbl-log-version}
 //  End required attributes
 
 // Begin -- Output an abstract unless this inclusion is being used as part of an encompassing page
 // Allow for external over-ride of default content
 ifdef::param-fullpage[]
-:tslinks: {troubleshooting-queries--xref}
+:tslinks: {cbl--xref} troubleshooting-queries.adoc[Troubleshooting Queries]
 ifdef::is-ios[]
-:tslinks: {tslinks} | {troubleshooting-crashes--xref}
+:tslinks: {tslinks} | {cbl--xref} troubleshooting-crashes.adoc[Decoding Crash Logs]
 endif::[]
 ifndef::param-related[:param-related: {tslinks}]
 ifndef::topic-group[:topic-group: Troubleshooting]
-include::{root-partials}_show_page_header_block.adoc[]
+include::ROOT:partial$_show_page_header_block.adoc[]
 endif::[]
 // End -- Output an abstract unless this inclusion is being used as part of an encompassing page
 
 :logging-classes: {url-api-class-log}, {url-api-class-log-file} and {url-api-class-log-config}
-ifeval::["{param-platform}"=="{platform-net}"]
+ifeval::["{param-platform}"=="net"]
 :logging-classes: {url-api-class-logging}
 endif::[]
 
@@ -98,7 +98,7 @@ endif::[]
 .Change Console Logging Settings
 :param-leader: This example enables and defines console-based logging settings.
 :param-tags: console-logging
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Define the required domain ; here we turn on logging for all available domains -- see: {url-api-class-log-console-getcons-setdmn} and enum {url-api-enum-log-domain}
 <.> Here we turn on the most verbose log level -- see: {url-api-class-log-console-getcons-setlvl} and enum {url-api-enum-log-level}. +
@@ -137,7 +137,7 @@ You can over ride that where necessary and output a plain text log.
 [#eg-file-log]
 .Enabling file logging
 :param-tags: file-logging
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Set the log file directory
 <.> Here we change the max rotation count from the default (1) to 5. +
@@ -165,7 +165,7 @@ To do this, apps must implement the {url-api-class-log-custom} interface -- see 
 .Implementing logger interface
 :param-tags: custom-logging
 :param-leader: pass:q,a[Here we introduce the code that implements the {url-api-class-log-custom} interface.]
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 
@@ -173,7 +173,7 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 .Enabling custom logging
 :param-tags: set-custom-logging
 :param-leader: pass:q,a[This example show how to enable the custom logger from <<eg-impl-log>>.]
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Here we set the custom logger with a level of 'warning'.
 The custom logger is called with every log and may choose to filter it, using its configured level.
@@ -198,7 +198,7 @@ Download the *cbl-log* tool using `wget`.
 
 [source,console,subs="attributes"]
 ----
-wget {url-cbl-log-binaries}-macos.zip
+wget https://packages.couchbase.com/releases/couchbase-lite-log/{cbl-log-version}/couchbase-lite-log-{cbl-log-version}-macos.zip
 ----
 
 Navigate to the *bin* directory and run the `cbl-log` executable.
@@ -216,7 +216,7 @@ Download the *cbl-log* tool using `wget`.
 
 [source,console, subs="attributes"]
 ----
-wget {url-cbl-log-binaries}-centos.zip
+wget https://packages.couchbase.com/releases/couchbase-lite-log/{cbl-log-version}/couchbase-lite-log-{cbl-log-version}-centos.zip
 ----
 
 Navigate to the *bin* directory and run the `cbl-log` executable.
@@ -234,7 +234,7 @@ Download the *cbl-log* tool using PowerShell.
 
 [source,powershell, subs="attributes"]
 ----
-Invoke-WebRequest {url-cbl-log-binaries}-windows.zip -OutFile couchbase-lite-log-{cbl-log-version}-windows.zip
+Invoke-WebRequest https://packages.couchbase.com/releases/couchbase-lite-log/{cbl-log-version}/couchbase-lite-log-{cbl-log-version}-windows.zip -OutFile couchbase-lite-log-{cbl-log-version}-windows.zip
 ----
 
 Run the `cbl-log` executable.
@@ -252,20 +252,20 @@ $ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
 
 .Deprecation
 [NOTE]
-include::{root-partials}block-deprecations.adoc[tag=logging25]
+include::ROOT:partial$block-deprecations.adoc[tag=logging25]
 
 The log messages are split into different domains (`LogDomains`) which can be tuned to different log levels.
 
 .Enable verbose logging on a domain
 :param-tags: logging
 :param-leader: The following example enables `verbose` logging for the `replicator` and `query` domains.
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 
 // Begin - Output related content unless this inclusion is used as part of an encompassing page
 ifdef::param-fullpage[]
-include::{root-partials}block-related-content-query.adoc[]
+include::ROOT:partial$block-related-content-query.adoc[]
 endif::[]
 // End - Output related content unless this inclusion is used as part of an encompassing page
 

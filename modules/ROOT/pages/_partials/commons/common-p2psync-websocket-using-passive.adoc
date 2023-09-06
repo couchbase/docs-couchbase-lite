@@ -2,29 +2,29 @@
 // DO NOT EDIT
 :param-abstract: How to set up a Listener to accept a Replicator connection and sync using peer-to-peer
 
-include::{root-partials}block-related-howto-p2psync-ws.adoc[]
-include::{root-partials}_show_page_header_block.adoc[]
+include::ROOT:partial$block-related-howto-p2psync-ws.adoc[]
+include::ROOT:partial$_show_page_header_block.adoc[]
 
-include::{root-partials}block-caveats.adoc[tag=enterprise-only]
+include::ROOT:partial$block-caveats.adoc[tag=enterprise-only]
 ifdef::is-android[]
-include::{root-partials}block-caveats.adoc[tags=android-constraints]
+include::ROOT:partial$block-caveats.adoc[tags=android-constraints]
 endif::[]
 ifdef::is-ios[]
-include::{root-partials}block-caveats.adoc[tags=ios-constraints]
+include::ROOT:partial$block-caveats.adoc[tags=ios-constraints]
 endif::[]
 
-include::{root-partials}block-caveats.adoc[tag=code-disclaimer]
+include::ROOT:partial$block-caveats.adoc[tag=code-disclaimer]
 
 // DO NOT EDIT
 == Introduction
-This content provides code and configuration examples covering the implementation of {glos-term-peer-to-peer-sync} over WebSockets.
-Specifically, it covers the implementation of a {glos-term-passive-peer}.
+This content provides code and configuration examples covering the implementation of {_glos-pfx}peer-to-peer-sync[Peer-to-Peer Sync] over WebSockets.
+Specifically, it covers the implementation of a {_glos-pfx}passive-peer[Passive Peer].
 
-Couchbase's Passive Peer (also referred to as the server, or Listener) will accept a connection from an {glos-term-active-peer} (also referred to as the client or replicator) and replicate database changes to synchronize both databases.
+Couchbase's Passive Peer (also referred to as the server, or Listener) will accept a connection from an {_glos-pfx}active-peer[Active Peer] (also referred to as the client or replicator) and replicate database changes to synchronize both databases.
 
 Subsequent sections provide additional details and examples for the main configuration options.
 
-include::{root-partials}block-caveats.adoc[tags=securestorage]
+include::ROOT:partial$block-caveats.adoc[tags=securestorage]
 
 
 == Configuration Summary
@@ -37,7 +37,7 @@ ifdef::is-android[]
 TIP: You must include the initializer `CouchbaseLite.init(context)` such that it is executed (once only) before initializing the replicator; for example, in your app's `onCreate()` method.
 endif::is-android[]
 
-ifeval::["{param-platform}"=="{platform-jvm}"]
+ifeval::["{param-platform}"=="jvm"]
 TIP: You must include the initializer `CouchbaseLite.init(context)` such that it is executed (once only) before initializing the replicator; for example, in your app's `onCreate()` method.
 
 endif::[]
@@ -46,7 +46,7 @@ endif::[]
 .Listener configuration and initialization
 [#simple-listener-initialization]
 :param-tags: listener-initialize
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 <.> Identify the local database to be used -- see: <<initialize-the-listener-configuration>>
@@ -108,7 +108,7 @@ Couchbase sets no hard limit on the number of Listeners you can initialize.
 .Specify Local Database
 [#ex-locdb]
 :param-tags: listener-config-db
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Set the local database using the {url-api-class-urlendpointconfiguration}'s constructor {url-api-references-urlendpointconfiguration-initdb}. +
 The database must be opened before the Listener is started. +
@@ -125,12 +125,12 @@ The Listener will automatically select an available port if you do not specify o
 .Specify a port
 [#ex-port]
 :param-tags: listener-config-port
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> To use a canonical port -- one known to other applications -- specify it explicitly using the {url-api-references-urlendpointconfiguration-port} method shown here. +
 Ensure that firewall rules do not block any port you do specify. +
 ifdef::is-android[]
-You can query the port using {url-api-references-urlendpointconfiguration-port-get}.
+You can query the port using {url-api-references-urlendpointconfiguration-property}getPort-int-[getPort].
 endif::[]
 
 
@@ -142,16 +142,16 @@ The Listener will listen on all network interfaces by default.
 [#specify-a-network-interface-to-use]
 .Specify a Network Interface to Use
 :param-tags: listener-config-netw-iface
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> To specify an interface -- one known to other applications -- identify it explicitly, using the {url-api-references-urlendpointconfiguration-netwk-iface} method shown here.
 This must be either an IP Address or network interface name such as `en0`.
 
 :param-include!:
-ifeval::["{param-name}"=="{lang-name-swift}"]
+ifeval::["{param-name}"=="swift"]
 :param-include: true
 endif::[]
-ifeval::["{param-name}"=="{lang-name-csharp}"]
+ifeval::["{param-name}"=="csharp"]
 :param-include: true
 endif::[]
 
@@ -161,7 +161,7 @@ TIP: Where necessary, you can identify the available interfaces at runtime, usin
 [#get-network-interfaces]
 .Identify available network interfaces
 :param-tags: listener-get-network-interfaces
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 endif::param-include[]
@@ -177,7 +177,7 @@ Both are valuable benefits, especially when network bandwidth is constrained.
 // Example 5
 .Enable delta sync
 :param-tags: listener-config-delta-sync
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Delta sync replication is not enabled by default.
 Use {url-api-class-urlendpointconfiguration}'s {url-api-references-urlendpointconfiguration-delta-sync} method to activate or deactivate it.
@@ -198,19 +198,19 @@ When TLS is enabled, Couchbase Lite provides several options on how the Listener
 ifdef::is-android[]
 [NOTE]
 --
-include::{root-partials}block-caveats.adoc[tags=android-manifest-cleartext]
+include::ROOT:partial$block-caveats.adoc[tags=android-manifest-cleartext]
 --
 endif::[]
 
-include::{root-partials}p2p-api.adoc[tag=config-disable-tls]
+include::ROOT:partial$p2p-api.adoc[tag=config-disable-tls]
 
 
 === Configure TLS Identity for Listener
 
 Define the credentials the server will present to the client for authentication.
-Note that the server must always authenticate itself with the client -- see: {p2psync-websocket-using-active--authenticate-listener} for how the client deals with this.
+Note that the server must always authenticate itself with the client -- see: {cbl--xref} p2psync-websocket-using-active.adoc#authenticate-listener[Authenticate Listener on Active Peer] for how the client deals with this.
 
-include::{root-partials}p2p-api.adoc[tag=config-tls-id]
+include::ROOT:partial$p2p-api.adoc[tag=config-tls-id]
 
 NOTE: Typically, you will configure the Listener's TLS Identity once during the initial launch and re-use it (from {securestorage} on any subsequent starts.
 
@@ -225,7 +225,7 @@ ifndef::is-android[]
 [#ex-import-tls-id]
 :param-leader: Import an identity from a secure key and certificate data source.
 :param-tags: listener-config-tls-enable;listener-config-tls-id-full;!listener-config-tls-id-SelfSigned;!listener-config-tls-id-anon
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 <.> Ensure TLS is used
@@ -239,7 +239,7 @@ endif::is-android[]
 :param-tags: listener-config-tls-enable;listener-config-tls-id-full;!listener-config-tls-id-caCert;!listener-config-tls-id-anon
 :param-leader: pass:q,a[Create a TLSIdentity for the server using convenience API. +
 The system generates a self-signed certificate.]
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 
 :param-tags!:
 :param-leader!:
@@ -255,7 +255,7 @@ Add to {securestorage} as 'couchbase-docs-cert'.
 :param-tags: listener-config-tls-enable;listener-config-tls-id-anon
 :param-leader: pass:q,a[This example uses an _anonymous_ self signed certificate. +
 Generated certificates are held in {securestorage}.]
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 
 :param-tags!:
 <.> Ensure TLS is used. +
@@ -285,7 +285,7 @@ You should initialize the authenticator using one of the following constructors:
 ** A list of one or more root certificates -- the client supplied certificate must end at a certificate in this list if it is to be authenticated
 ** A block of code that assumes total responsibility for authentication -- it must return a boolean response (true for an authenticated client, or false for a failed authentication).
 
-// include::{root-partials}p2p-api.adoc[tag=config-auth]
+// include::ROOT:partial$p2p-api.adoc[tag=config-auth]
 
 === Use Basic Authentication
 // === Authenticate Using the Client Username and Password
@@ -293,15 +293,15 @@ You should initialize the authenticator using one of the following constructors:
 Define how to authenticate client-supplied username and password credentials.
 To use client-supplied certificates instead -- see: <<using-client-certificate-authentication>>
 
-include::{root-partials}p2p-api.adoc[tag=ListenerPasswordAuthenticator]
+include::ROOT:partial$p2p-api.adoc[tag=ListenerPasswordAuthenticator]
 
-// include::{root-partials}p2p-api.adoc[tag=ListenerPasswordAuthenticatorDelegate]
+// include::ROOT:partial$p2p-api.adoc[tag=ListenerPasswordAuthenticatorDelegate]
 
 
 // Example 7
 .Password authentication
 :param-tags: listener-config-client-auth-pwd
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 <.> Where 'username'/'password' are the client-supplied values (from the http-authentication header) and `validUser`/`validPassword` are the values acceptable to the server.
@@ -326,7 +326,7 @@ The logic should take the form of function or block (such as, a closure expressi
 [#ex-set-cert-auth]
 :param-tags: listener-config-client-auth-root, indent=0]
 :param-leader: pass:q,a[Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the the {url-api-class-ListenerCertificateAuthenticator}.]
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 <.>  Get the identity data to authenticate against.
@@ -340,7 +340,7 @@ A valid client will provide one or more certificates that match a certificate in
 [#ex-use-app-logic]
 :param-tags: listener-config-client-auth-lambda
 :param-leader: pass:q,a[Configure the server (listener) to authenticate the client using user-supplied logic.]
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 <.>  Get the identity data to authenticate against.
@@ -364,7 +364,7 @@ endif::[]
 // Example 9
 .Deleting TLS Identities
 :param-tags: p2p-tlsid-delete-id-from-keychain
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 
@@ -374,7 +374,7 @@ The table in this section shows the expected system behavior (in regards to secu
 
 :tlsIdNil: nil
 
-ifeval::["{param-platform}"=="{platform-net}"]
+ifeval::["{param-platform}"=="net"]
 :tlsIdNil: null
 endif::[]
 
@@ -428,7 +428,7 @@ Once you have completed the Listener's configuration settings you can initialize
 [#initialize-and-start-listener]
 .Initialize and start listener
 :param-tags: listener-start
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 include::{module-partials}block_callouts.adoc[tags=listener-start, indent=0]
@@ -445,7 +445,7 @@ You should note that these counts can be extremely volatile. So, the actual numb
 .Get connection counts
 [#get-connection-counts]
 :param-tags: listener-status-check
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 // include::{exampleblock_callouts.adoc[tags=listener-status-check, indent=0]
@@ -458,12 +458,12 @@ It is best practice to check the status of the Listener's connections and stop o
 // Example 12
 .Stop listener using `stop` method
 :param-tags: listener-stop
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 NOTE: Closing the database will also close the Listener.
 
 
 // DO NOT EDIT -- Footer Related Content Block
-include::{root-partials}block-related-content-p2psync.adoc[]
+include::ROOT:partial$block-related-content-p2psync.adoc[]
 // DO NOT EDIT

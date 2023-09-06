@@ -1,13 +1,13 @@
 // BEGIN -- inclusion -- sgw-replication-custom-executor.adoc[]
 //    Purpose:  Includes replication ordering content for custom executors in Android
-//    Used-by:  {root-commons}sgw-replication.adoc (Android Only)
+//    Used-by:  ROOT:partial$commons/common-sgw-replication.adoc (Android Only)
 //    Params:   None
 //    include using:  {module-partials}sgw-replication-custom-executor.adoc[]
 //
-:fn-2x6: footnote:fn2x6[Prior to version 2.6]
-:fnref-2x6: footnote:fn2x6[]
+// :fn-2x6: footnote:fn2x6[Prior to version 2.6]
+// :fnref-2x6: footnote:fn2x6[]
 
-Couchbase Lite {fn-2x6} spins up multiple executors.
+Couchbase Lite footnote:fn2x6[Prior to version 2.6] spins up multiple executors.
 Unless mitigated, for example by using a custom executor, this policy can result in too many threads being spun up.
 
 NOTE: If no listeners are registered to listen to a replicator at the time of the most recent `start(. . .)`, then no subsequently registered listeners will receive notifications.
@@ -34,7 +34,7 @@ Couchbase Lite API calls processed by an executor include:
 * Database.addChangeListener
 --
 
-Couchbase Lite {fnref-2x6} sometimes uses its own internal executor to run asynchronous client code.
+Couchbase Lite footnote:fn2x6[] sometimes uses its own internal executor to run asynchronous client code.
 While this is fine for small tasks, larger tasks -- those that take significant compute time, or that perform I/O -- can block Couchbase processing.
 If this happens your application will fail with a `RejectedExecutionException` and it may be necessary to create a separate executor on which to run the large tasks.
 

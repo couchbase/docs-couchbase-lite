@@ -1,15 +1,15 @@
 // BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
 //  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
 //          making all attributes available for use on the page.
-//  UsedBy: {root-partials}_std_cbl_hdr.adoc
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
 
 :module-partials: {param-module}:partial$
 :example-callouts: {module-partials}block_callouts.adoc
-:module: {lang-mod-c}
+:module: c
 :packageNm: couchbase-lite-c
-:snippet: {snippets-content--c}
-:source-language: {lang-name-c}
-:url-issues: {url-issues-c}
+:snippet: c:example$code_snippets/main.c
+:source-language: c
+:url-issues: https://github.com/couchbase/couchbase-lite--c/issues
 //
 // CBL-C Maintenance release number
 //
@@ -24,7 +24,7 @@
 :api-pfx:
 
 //
-:url-api-references: {url-api-references-c}
+:url-api-references: {url-api-references-pfx}{major}.{minor}.{maintenance-c}/couchbase-lite-c/C/html
 //
 
 :url-api-references-classes: {url-api-references}/group__
@@ -32,8 +32,8 @@
 :url-api-references-structs: {url-api-references}/struct_c_b_l_
 :url-api-references-enums: {url-api-references}/Enums/
 :url-api-references-method-sep: {sep}
-:url-api-callback-encryptor: {url-api-references-classes}replication.html#gab116a23be8bd24b86349379f370ef60c[CBLPropertyEncryptor]
-:url-api-callback-decryptor: {url-api-references-classes}replication.html#ga24a60a3d6f9816e1d32464cc31a15c0c[CBLPropertyDecryptor]
+// :url-api-callback-encryptor: {url-api-references-classes}replication.html#gab116a23be8bd24b86349379f370ef60c[CBLPropertyEncryptor]
+// :url-api-callback-decryptor: {url-api-references-classes}replication.html#ga24a60a3d6f9816e1d32464cc31a15c0c[CBLPropertyDecryptor]
 
 
 
@@ -71,20 +71,20 @@
 
 
 // DOCUMENTS
-:url-api-references-documents: {url-api-references-classes}{api-pfx}documents.html
-:url-api-class-documents: {url-api-references-documents}[CBLDocuments]
+// :url-api-references-documents: {url-api-references-classes}{api-pfx}documents.html
+:url-api-class-documents: {url-api-references-classes}{api-pfx}documents.html[CBLDocuments]
 
-:url-api-method-document-init: {url-api-references-documents}#ga226f555fffb7543558048af20b18b737[CBLDocument_Create()]
-:url-api-method-mutabledocument-init: {url-api-references-documents}#ga226f555fffb7543558048af20b18b737[CBLDocument_Create()]
-:url-api-method-mutabledocument-initid: {url-api-references-documents}#gaec41cf2eab4e3ac490f11007f665a35e[CBLDocument_CreateWithID()]
-:url-api-method-mutabledocument-copy: {url-api-references-documents}#ga0356b98d2f1798adc8f549510d3eef67[CBLDocument_MutableCopy()]
-:url-api-method-document-tomutable: {url-api-method-mutabledocument-copy}
+:url-api-method-document-init: {url-api-references-classes}{api-pfx}documents.html#ga226f555fffb7543558048af20b18b737[CBLDocument_Create()]
+:url-api-method-mutabledocument-init: {url-api-references-classes}{api-pfx}documents.html#ga226f555fffb7543558048af20b18b737[CBLDocument_Create()]
+:url-api-method-mutabledocument-initid: {url-api-references-classes}{api-pfx}documents.html#gaec41cf2eab4e3ac490f11007f665a35e[CBLDocument_CreateWithID()]
+// :url-api-method-mutabledocument-copy: {url-api-references-classes}{api-pfx}documents.html#ga0356b98d2f1798adc8f549510d3eef67[CBLDocument_MutableCopy()]
+:url-api-method-document-tomutable: {url-api-references-classes}{api-pfx}documents.html#ga0356b98d2f1798adc8f549510d3eef67[CBLDocument_MutableCopy()]
 
-:url-api-method-database-getdocument: {url-api-references-documents}#ga214b7d6c7d58bde09de10f1ed418a16b[CBLDatabase_GetDocument()]
+:url-api-method-database-getdocument: {url-api-references-classes}{api-pfx}documents.html#ga214b7d6c7d58bde09de10f1ed418a16b[CBLDatabase_GetDocument()]
 
-:url-api-method-database-save-doc: {url-api-references-documents}{sep}[CBLDatabase_SaveDocument()]
-:url-api-method-database-save-concctrl: {url-api-references-documents}{sep}gae37e21b95f62419762e521f70850b9c7[CBLDatabase_SaveDocumentWithConcurrencyControl()]
-:url-api-method-database-save-conflict: {url-api-references-documents}{sep}ga9c45bcf02e6e2977c702c493a7fe0b54[CBLDatabase_SaveDocumentWithConflictHandler()]
+:url-api-method-database-save-doc: {url-api-references-classes}{api-pfx}documents.html{sep}[CBLDatabase_SaveDocument()]
+:url-api-method-database-save-concctrl: {url-api-references-classes}{api-pfx}documents.html{sep}gae37e21b95f62419762e521f70850b9c7[CBLDatabase_SaveDocumentWithConcurrencyControl()]
+:url-api-method-database-save-conflict: {url-api-references-classes}{api-pfx}documents.html{sep}ga9c45bcf02e6e2977c702c493a7fe0b54[CBLDatabase_SaveDocumentWithConflictHandler()]
 :url-api-method-database-deletedoc-doc: {url-api-method-database}gad9d878c8636a75898d3993537af7e88c[CBLDatabase_DeleteDocument()]
 :url-api-method-database-deletedoc-concctrl: {url-api-method-database}ga01b4cf9725de18c41e8bb002255adb9a[CBLDatabase_DeleteDocumentWithConcurrencyControl()]
 
@@ -271,8 +271,8 @@
 :url-api-prop-replicator-config-autopurge: {url-api-references-replicator-config-prop}a3795c0097264ccd1ed612d9a0746d58d[disableAutoPurge]
 
 :url-api-prop-replicator-config-setPinnedServerCertificate: {url-api-references-replicator-config-prop}a4a96fb9fba93dc93f8373b76c3816af6[pinnedServerCertificate()]
-:url-api-prop-replicator-config-propertyDecryptor: {url-api-references-replicator-config-prop}ab6a0d9e0830755d284039018a09c27d6[propertyDecryptor()]
-:url-api-prop-replicator-config-propertyEncryptor: {url-api-references-replicator-config-prop}ab731bf9f140158d6967c1af645d8744a[propertyEncryptor()]
+// :url-api-prop-replicator-config-propertyDecryptor: {url-api-references-replicator-config-prop}ab6a0d9e0830755d284039018a09c27d6[propertyDecryptor()]
+// :url-api-prop-replicator-config-propertyEncryptor: {url-api-references-replicator-config-prop}ab731bf9f140158d6967c1af645d8744a[propertyEncryptor()]
 
 // Begin Replicator Retry Config
 :url-api-prop-replicator-config-setheartbeat: {url-api-references-replicator-config-prop}a524408f9430d13c783762dce32f1126e[heartbeat]
