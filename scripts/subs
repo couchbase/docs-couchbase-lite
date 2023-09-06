@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -exuo pipefail
+
+TOKEN=$1
+
+git grep -Il ":$TOKEN:"
+FILE=$(git grep -Il ":$TOKEN:" | grep '[.]adoc' | tr \\n ' ')
+sd -s ":$TOKEN:" "// :$TOKEN:" $FILE
+
+VALUE=$(git grep -I ":$TOKEN:" | head -n1 | cut -d: -f4-)
+
+FILES=$(git grep -Il "{$TOKEN}" | grep '[.]adoc' | tr \\n ' ')
+sd -s "{$TOKEN}" "${VALUE# }" $FILES
+
