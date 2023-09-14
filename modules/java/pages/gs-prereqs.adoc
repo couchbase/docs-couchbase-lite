@@ -12,17 +12,17 @@ include::partial$_set_page_context_for_java.adoc[]
 
 :param-abstract: This content identities the pre-requisites and preparatory steps to be considered before installing Couchbase Lite for {param-name}
 // DO NOT EDIT
-include::{root-partials}_show_page_header_block.adoc[]
-// include::{root-partials}block-related-get-started.adoc[]
+include::ROOT:partial$_show_page_header_block.adoc[]
+// include::ROOT:partial$block-related-get-started.adoc[]
 // DO NOT EDIT
 
 
 == Introduction
 
-{cblJP} enables development and deployment of {cbl} applications to a JVM environment.
-You can deploy to a desktop or web server (for example, {gpWebServerEnv}), including embedded {gpWebServerEnv} deployments.
+{cbl} on {JP} enables development and deployment of {cbl} applications to a JVM environment.
+You can deploy to a desktop or web server (for example, Tomcat), including embedded Tomcat deployments.
 
-NOTE: We use _{gpIDE}_, _{gpBuildTool}_, _Maven_ and _{gpWebServerEnv}_ as tools to build and run the examples presented in this content.
+NOTE: We use _Intellij IDEA_, _gradle_, _Maven_ and _Tomcat_ as tools to build and run the examples presented in this content.
 You are free to use the tools of your choice.
 
 
@@ -30,12 +30,12 @@ You are free to use the tools of your choice.
 
 == Install Companion Software
 
-If you want to use {cbljp} with {svr} and-or {sg} you will need to have installed operational instances of these before completing the installation and test build steps.
+If you want to use {cbljp} with pass:q,a[_Couchbase{nbsp}Server_] and-or pass:q,a[{sgw-te}] you will need to have installed operational instances of these before completing the installation and test build steps.
 
-So, If you have not already done so, see {sgw-prepare--xref}
+So, If you have not already done so, see {sgw--xref}get-started-prepare.adoc[Prepare Sync Gateway]
 
-* Within {svr}, create a bucket named {nmSampleAppDb}
-* Create a RBAC user for {sg} with username = `sync-gateway` and password = `password`
+* Within pass:q,a[_Couchbase{nbsp}Server_], create a bucket named getting-started.cblite2
+* Create a RBAC user for pass:q,a[{sgw-te}] with username = `sync-gateway` and password = `password`
 
 == Downloaded Binaries
 
@@ -43,15 +43,15 @@ So, If you have not already done so, see {sgw-prepare--xref}
 
 The download package contains a license file, jar libraries for the appropriate edition of the {cbl} and a set of Linux _shared libraries_.
 
-Get the download package from here -- {downloads-mobile--xref}.
+Get the download package from here -- {url-downloads-mobile}[Extend with Mobile].
 
-* Community Edition -- {packageNmCE}
-* Enterprise Edition -- {packageNmEE}
+* Community Edition -- {packageNm}-{version-maintenance}
+* Enterprise Edition -- {packageNm}-ee-{version-maintenance}
 
 When unpacked the package contains the following:
 
 * A `lib` folder containing all necessary JAR files:
-** {packageNmCE} or for EE {packageNmEE}
+** {packageNm}-{version-maintenance} or for EE {packageNm}-ee-{version-maintenance}
 ** okhttp-3.14.7.jar
 ** okio-1.17.2.jar
 
@@ -67,10 +67,10 @@ NOTE: This means you do not need to download and-or build compatible versions of
 
 === Steps
 
-. Download the _zip_ file from here -- {downloads-mobile--xref}.
+. Download the _zip_ file from here -- {url-downloads-mobile}[Extend with Mobile].
 . Unpack the downloaded file to a location accessible to -- and usable by -- your chosen *build* environment.
 +
-We'll refer to that location -- `<your dir>/{packageNmCE}` -- as the `<pathToCbl>`.
+We'll refer to that location -- `<your dir>/{packageNm}-{version-maintenance}` -- as the `<pathToCbl>`.
 
 . Include the following dependency in your `build.gradle` file, you can remove any {cbl} Maven references:
 +
@@ -93,4 +93,4 @@ include::partial$gs-additional-steps-for-linux.adoc[]
 
 
 
-include::{root-partials}block-related-content-start.adoc[]
+include::ROOT:partial$block-related-content-start.adoc[]

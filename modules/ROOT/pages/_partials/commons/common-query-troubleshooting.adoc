@@ -1,4 +1,4 @@
-// BEGIN -- inclusion -- page/partial -- {root-commons}query-troubleshooting.adoc
+// BEGIN -- inclusion -- page/partial -- ROOT:partial$commons/common-query-troubleshooting.adoc
 // USED-IN: <source-language>-troubleshooting.adoc
 // Applies-to: All platforms, except Javascript
 
@@ -6,23 +6,23 @@
 ifdef::param-fullpage[]
 // Only include this abstract if the inclusion is used as a full page, rather than as a component
 // Allow for over-riding of default abstract parameter values
-:tslinks: {troubleshooting-logs--xref}
+:tslinks: {cbl--xref} troubleshooting-logs.adoc[Using Logs]
 ifdef::is-ios[]
-:tslinks: {tslinks} | {troubleshooting-crashes--xref}
+:tslinks: {tslinks} | {cbl--xref} troubleshooting-crashes.adoc[Decoding Crash Logs]
 endif::[]
 ifndef::param-abstract[]
 :param-abstract: This content describes how to use the Couchbase Lite on {param-title} Query API's explain() method to examine a query
 endif::[]
 ifndef::param-related[]
-:param-related:  {tslinks} | {querybuilder--xref--predictive-query} | {query-live--xref} | {indexing--xref}
+:param-related:  {tslinks} | {cbl--xref} querybuilder.adoc#lbl-predquery[Predictive Queries] | {cbl--xref} query-live.adoc[Live Queries] | {cbl--xref} indexing.adoc[Indexing]
 endif::[]
 ifndef::topic-group[]
 :topic-group: Troubleshooting
 endif::[]
-include::{root-partials}_show_page_header_block.adoc[]
+include::ROOT:partial$_show_page_header_block.adoc[]
 endif::param-fullpage[]
 // DO NOT EDIT
-:url-sql-query-plan: https://www.sqlite.org/eqp.html
+// :url-sql-query-plan: https://www.sqlite.org/eqp.html
 
 
 == Query Explain
@@ -35,7 +35,7 @@ To examine how your query is working, either embed the call inside your app (see
 [#use-qe-app]
 .Using Query Explain in App
 :param-tags: query-explain-all
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 <.> Construct your query as normal
 <.> Call the query's `explain` method; All output is sent to the application's log file.
 :param-tags!:
@@ -93,7 +93,7 @@ You can use this to identify potential issues and so optimize problematic querie
 === Format
 The query plan section of the output displays a tabular form of the translated query's execution plan.
 It primarily shows how the data will be retrieved and, where appropriate, how it will be sorted for navigation and-or presentation purposes.
-For more on SQLite's Explain Query Plan -- see: {url-sql-query-plan}
+For more on SQLite's Explain Query Plan -- see: https://www.sqlite.org/eqp.html
 
 [#qry-plan]
 .A Query Plan
@@ -152,7 +152,7 @@ Ask "is the grouping and-or ordering absolutely necessary?": if it isn't, drop i
 
 == Queries and Indexes
 
-include::{root-commons}indexing.adoc[tag=overview]
+include::ROOT:partial$commons/common-indexing.adoc[tag=overview]
 
 The Query optimizer converts your query into a parse tree that groups zero or more _and-connected_ clauses together (as dictated by your `where` conditionals) for effective query engine processing.
 
@@ -192,12 +192,12 @@ To illustrate this we can use a modified query from the Mobile Travel Sample app
 In <<like-wild-pfx-qry>> we use a wildcard prefix and suffix.
 You can see that the query plan decides on a retrieval method of `Scan Table`.
 
-TIP: For more on indexes -- see: {indexing--xref}
+TIP: For more on indexes -- see: {cbl--xref} indexing.adoc[Indexing]
 
 [#like-wild-pfx-qry]
 .Like with Wildcard Prefix
 :param-tags: query-explain-like
-include::{root-partials}block_tabbed_code.adoc[]
+include::ROOT:partial$block_tabbed_code.adoc[]
 :param-tags!:
 <.> The indexed property, TYPE, cannot use its index because of the wildcard prefix.
 
@@ -214,7 +214,7 @@ Where practical, simple changes like this can make significant differences in qu
 .Like with No Wildcard-prefix
 [#like-no-wild-pfx-qry]
 :param-tags: query-explain-nopfx
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Simply removing the wildcard prefix enables the query optimizer to access the `typeIndex`, which results in a more efficient search.
 
@@ -233,7 +233,7 @@ For example, you can observe a similar situation to that shown in <<use-like-bas
 .Query
 [#use-like-based-queries]
 :param-tags: query-explain-function
-include::{root-partials}block_tabbed_code.adoc[]
+include::ROOT:partial$block_tabbed_code.adoc[]
 :param-tags!:
 <.> Here we use the `{url-api-method-function-lower}` function in the _Where_ expression
 
@@ -249,7 +249,7 @@ But removing the `{url-api-method-function-lower}` function, changes things:
 
 .Query
 :param-tags: query-explain-nofunction
-include::{root-partials}block_tabbed_code.adoc[]
+include::ROOT:partial$block_tabbed_code.adoc[]
 :param-tags!:
 <.> Here we have removed `{url-api-method-function-lower}` from the _Where_ expression
 
@@ -278,11 +278,11 @@ Optimize document size in design.
 Smaller docs load more quickly.
 Break your data into logical linked units.
 
-Consider Using Full Text Search instead of complex like or regex patterns -- see {fts--xref}. +
+Consider Using Full Text Search instead of complex like or regex patterns -- see {cbl--xref} fts.adoc[Full Text Search]. +
 {empty}
 
 ifdef::param-fullpage[]
-include::{root-partials}block-related-content-query.adoc[]
+include::ROOT:partial$block-related-content-query.adoc[]
 endif::[]
 
 // void used attributes and locals

@@ -2,9 +2,9 @@
 
 // DO NOT EDIT
 :param-abstract!:
-:param-related: {querybuilder--xref--predictive-query} | {indexing--xref} | {querybuilder--xref}
+:param-related: {cbl--xref} querybuilder.adoc#lbl-predquery[Predictive Queries] | {cbl--xref} indexing.adoc[Indexing] | {cbl--xref} querybuilder.adoc[QueryBuilder]
 :topic-group: Queries
-include::{root-partials}_show_page_header_block.adoc[]
+include::ROOT:partial$_show_page_header_block.adoc[]
 // DO NOT EDIT
 
 
@@ -14,7 +14,7 @@ Unlike regular queries, the index is not optional.
 
 ifndef::is-c[You can choose to use {sqlpp} or QueryBuilder syntaxes to create and use FTS indexes.]
 
-The following examples use the data model introduced in {indexing--xref}.
+The following examples use the data model introduced in {cbl--xref} indexing.adoc[Indexing].
 They create and use an FTS index built from the hotel's `Overview` text.
 
 ifdef::is-c[== Create Index]
@@ -29,7 +29,7 @@ endif::is-c[]
 .Using {sqlpp}'s FullTextIndexConfiguration
 [#ex-indexbuilder]
 :param-tags: fts-index
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 ifndef::is-c[=== Use Index]
@@ -47,7 +47,7 @@ The following example finds all hotels mentioning _Michigan_ in their _Overview_
 .Using {sqlpp} Full Text Search
 [#ex-indexbuilder]
 :param-tags: fts-query
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 ifndef::is-c[]
@@ -59,7 +59,7 @@ The following example creates an FTS index on the `overview` property.
 .Using the IndexBuilder method
 [#ex-indexbuilder-queyrbuilder]
 :param-tags: fts-index_Querybuilder
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 
@@ -71,7 +71,7 @@ The following example finds all hotels mentioning _Michigan_ in their _Overview_
 .Using QueryBuilder Full Text Search
 [#ex-indexbuilder]
 :param-tags: fts-query_Querybuilder
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 // .Indexing multiple properties
@@ -93,7 +93,7 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 // .Using the build index
 // [#ex-use-build-index]
 // :param-tags: fts-query_Querybuilder
-// include::{root-partials}block_tabbed_code_example.adoc[]
+// include::ROOT:partial$block_tabbed_code_example.adoc[]
 // :param-tags!:
 
 endif::is-c[]
@@ -205,4 +205,4 @@ This can be a very difficult heuristic to define, but Couchbase Lite comes with 
 In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the property or expression being searched, to represent the ranking of the result.
 
 
-include::{root-partials}block-related-content-query.adoc[]
+include::ROOT:partial$block-related-content-query.adoc[]

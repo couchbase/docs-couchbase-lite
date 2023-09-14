@@ -1,7 +1,7 @@
 // BEGIN -- inclusion -- common-prebuilt-database.adoc - Used in {commons-}database.adoc file
 
 // over-ride important-caption to create a MUST DO block instead
-:save-important-caption: {important-caption}
+// :save-important-caption: {important-caption}
 // :important-caption: Must Do
 :listing-caption: Code Example
 
@@ -40,9 +40,9 @@ These steps should form part of your build and release process:
 +
 [IMPORTANT]
 --
-*Always start with a fresh database for each app version*; this ensures there are no {glos-term-checkpoint} issues
+*Always start with a fresh database for each app version*; this ensures there are no {_glos-pfx}checkpoint[checkpoint] issues
 
-*Otherwise:*  You will invalidate the cached {glos-term-checkpoint} in the packaged database, and instead reuse the same database in your build process (for subsequent app versions).
+*Otherwise:*  You will invalidate the cached {_glos-pfx}checkpoint[checkpoint] in the packaged database, and instead reuse the same database in your build process (for subsequent app versions).
 --
 . Pull the data from Sync Gateway into the new Couchbase Lite database
 +
@@ -50,16 +50,16 @@ These steps should form part of your build and release process:
 --
 Ensure the replication used to populate Couchbase Lite database *uses the exact same remote URL and replication config parameters (channels and filters)* as those your app will use when it is running.
 
-*Otherwise:* {ellipsis} there will be a {glos-term-checkpoint} mismatch and the app will attempt to pull the data down again
+*Otherwise:* ... there will be a {_glos-pfx}checkpoint[checkpoint] mismatch and the app will attempt to pull the data down again
 
 Don't, for instance, create a pre-built database against a staging Sync Gateway server and use it within a production app that syncs against a production Sync Gateway.
 --
 +
-You can use the cblite tool (`cblite cp`) for this -- see: {url-github-cblite-docs-cp}  |  {url-github-repo-mobile-tools-cblite}
+You can use the cblite tool (`cblite cp`) for this -- see: https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/Documentation.md#cp-aka-export-import-push-pull[cblite cp (export, import, push, pull)]  |  https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md[cblite on GitHub]
 +
-.*Alternatively* {ellipsis}
+.*Alternatively* ...
 
-* You can write a simple CBL app to just initiate the required pull sync -- see: {replication--xref}
+* You can write a simple CBL app to just initiate the required pull sync -- see: {cbl--xref} replication.adoc[Remote Sync Gateway]
 * A third party community Java app is available.
 It provides a UI to create a local Couchbase Lite database and pull data from a Sync Gateway database -- see:
 https://github.com/Infosys/CouchbaseLiteTester[CouchbaseLite Tester]
@@ -79,11 +79,11 @@ Put it in an appropriate place (for example, an assets or resource folder).
 
 Where the platform permits you can zip the database.
 
-*Alternatively* {ellipsis} rather than bundling the database within the app, the app could pull the database down from a CDN server on launch.
+*Alternatively* ... rather than bundling the database within the app, the app could pull the database down from a CDN server on launch.
 
 
 == Database Encryption
-include::{root-partials}block-caveats.adoc[tag=ee-only-feature]
+include::ROOT:partial$block-caveats.adoc[tag=ee-only-feature]
 
 
 If you are using an encrypted database, 
@@ -113,19 +113,19 @@ Use the API's {url-api-method-database-copy} method -- see: <<lbl-code>>; this e
 //  -- see: <<copy-db>>
 +
 IMPORTANT: *Do not copy the database using any other method* +
-*Otherwise:* Each copy of the app will invalidate the other apps' {glos-term-checkpoints} because a new UUID was not generated.
+*Otherwise:* Each copy of the app will invalidate the other apps' {_glos-pfx}checkpoint[checkpoints] because a new UUID was not generated.
 
 . Open the database; you can now start querying the data and using it
 
 . Start a pull replication, to sync any changes
 +
-The replicator uses the pre-built database's {glos-term-checkpoint} as the timestamp to sync from; only documents changed since then are synced
+The replicator uses the pre-built database's {_glos-pfx}checkpoint[checkpoint] as the timestamp to sync from; only documents changed since then are synced
 +
 [IMPORTANT]
 --
 If you used cblite to pull the data *without including a port number with the URL* and are replicating in a Java or iOS (swift/ObjC) app -- *you must include the port number in the URL provided to the replication* (port 443 for `wss://` or 80 for `ws://`).
 
-*Otherwise:* You will get a {glos-term-checkpoint} mismatch. +
+*Otherwise:* You will get a {_glos-pfx}checkpoint[checkpoint] mismatch. +
 This is caused by a URL discrepancy, which arises because `cblite` automatically adds the default port number when none is specified, *but* the Java and iOS (swift/ObjC) replicators DO NOT.
 
 --
@@ -138,11 +138,11 @@ They can begin interacting with your app whilst any out-of-data data is being up
 .Copy database using API
 [#lbl-code]
 :param-tags: prebuilt-database
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 
 
 // Reset important-caption
-:important-caption: {save-important-caption}
+:important-caption: {important-caption}
 // END -- inclusion -- common-prebuilt-database.adoc - Used in {commons-}database.adoc file

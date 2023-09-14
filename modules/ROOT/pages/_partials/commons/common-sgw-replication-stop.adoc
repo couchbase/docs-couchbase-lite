@@ -3,8 +3,8 @@
 //  Params:
 //    :is-p2p:  set when including from P2P topic such as common-p2psync-websocket-using-active
 //  Included-by:
-//    {root-commons}p2psync-websocket-using-active.adoc
-//    {root-commons}sgw-replication.adoc
+//    ROOT:partial$commons/common-p2psync-websocket-using-active.adoc
+//    ROOT:partial$commons/common-sgw-replication.adoc
 //  ####
 
 Stopping a replication is straightforward.
@@ -12,12 +12,12 @@ It is done using {url-api-method-replicator-stop}.
 This initiates an asynchronous operation and so is not necessarily immediate.
 Your app should account for this potential delay before attempting any subsequent operations.
 
-You can find further information on database operations in {database--xref}.
+You can find further information on database operations in {cbl--xref} database.adoc[Databases].
 
 // Example 9
 .Stop replicator
 :param-tags: p2p-act-rep-stop
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Here we initiate the stopping of the replication using the {url-api-method-replicator-stop} method.
 It will stop any active <<lbl-repl-chng, change listener>> once the replication is stopped.

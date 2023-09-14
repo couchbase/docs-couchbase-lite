@@ -11,21 +11,21 @@ include::partial$_set_page_context_for_java.adoc[]
 
 // DO NOT EDIT
 :param-abstract: This content provides instructions that enable you to deploy Couchbase Lite on {param-name}
-:param-related: {gs-install--xref} | {gs-prereqs--xref} | {gs-build--xref}
+:param-related: {cbl--xref} gs-install.adoc[Install] | {cbl--xref} gs-prereqs.adoc[Prerequisites] | {cbl--xref} gs-build.adoc[Build and Run]
 :topic-group:
-include::{root-partials}_show_page_header_block.adoc[]
-// include::{root-partials}block-related-get-started.adoc[]
+include::ROOT:partial$_show_page_header_block.adoc[]
+// include::ROOT:partial$block-related-get-started.adoc[]
 // DO NOT EDIT
 
-:url-download-ee: https://packages.couchbase.com/releases/couchbase-lite-java/{version-full}/couchbase-lite-java-ee-{version-full}.zip[Enterprise Edition]
-:url-download-ce: https://packages.couchbase.com/releases/couchbase-lite-java/{version-full}/couchbase-lite-java-{version-full}.zip[Community Edition]
+// :url-download-ee: https://packages.couchbase.com/releases/couchbase-lite-java/{version-full}/couchbase-lite-java-ee-{version-full}.zip[Enterprise Edition]
+// :url-download-ce: https://packages.couchbase.com/releases/couchbase-lite-java/{version-full}/couchbase-lite-java-{version-full}.zip[Community Edition]
 
 
 == Introduction
 
 
 {cbl-te} on Java {version-full}_ enables development and deployment of {cbl} applications to a JVM environment.
-You can deploy Standalone (Java Desktop/Console) apps or Web Apps (using, for example, {gpWebServerEnv}; including embedded {gpWebServerEnv} deployments).
+You can deploy Standalone (Java Desktop/Console) apps or Web Apps (using, for example, Tomcat; including embedded Tomcat deployments).
 
 
 .Quick Steps
@@ -67,20 +67,20 @@ Now, try the xref:gs-build.adoc[Getting Started] application, which demonstrates
 == Preparing Your Build Environment
 
 
-This section shows how to set up and use {cblJP} to build desktop and web applications using {gpBuildTool}, Maven, {gpWebServerEnv} and {gpIDE} Community Edition.
+This section shows how to set up and use {cbl} on {JP} to build desktop and web applications using gradle, Maven, Tomcat and Intellij IDEA Community Edition.
 It assumes a familiarity with these products, however you are free to use your own choice of development tools.
 
 === Binaries
 
-{cblJP} binaries are available for both Community (CE) and Enterprise (EE) editions from the _Maven_ repositories.
-Alternatively, you can download compressed binaries -- see the _Downloaded Binaries_ section in {gs-prereqs--xref}
+{cbl} on {JP} binaries are available for both Community (CE) and Enterprise (EE) editions from the _Maven_ repositories.
+Alternatively, you can download compressed binaries -- see the _Downloaded Binaries_ section in {cbl--xref} gs-prereqs.adoc[Prerequisites]
 
 === Prerequisites
 
-* Planning to sync with a {svr}?
+* Planning to sync with a pass:q,a[_Couchbase{nbsp}Server_]?
 +
-You will need to have runnable instances of {svr} and {sg} installed.
-If you have not already done so see {sgw-prepare--xref}
+You will need to have runnable instances of pass:q,a[_Couchbase{nbsp}Server_] and pass:q,a[{sgw-te}] installed.
+If you have not already done so see {sgw--xref}get-started-prepare.adoc[Prepare Sync Gateway]
 * Running on Microsoft Windows?
 +
 Windows requires {Cpp} runtime installed.
@@ -89,7 +89,7 @@ https://www.microsoft.com/en-us/download/details.aspx?id=52685
 
 * Deploying to Linux? +
 You need to deploy the {cbl} `support` library, which is available _only_ on the zip download distributable.
-See the _Additional Steps for Linux_ section in {gs-prereqs--xref}.
+See the _Additional Steps for Linux_ section in {cbl--xref} gs-prereqs.adoc[Prerequisites].
 
 
 == Standalone Apps
@@ -100,7 +100,7 @@ See the _Additional Steps for Linux_ section in {gs-prereqs--xref}.
 . Create a project folder
 . Initialize it for a Gradle Java application
 . Include the content shown in <<ex-bgf1>> in your app-level `build.gradle` file
-. Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
+. Open the project folder in Intellij IDEA and import the gradle settings.
 +
 --
 TIP: If you don't have auto-import set for Gradle projects, then accept the *Import Gradle Project* prompt that is displayed bottom-right of the screen +
@@ -110,7 +110,7 @@ image::GradleMenuWebApp.png[,300]
 --
 
 That's it.
-You're all set to start building your own {cblJP} applications -- see {gs-build--xref} for an example of how to do that.
+You're all set to start building your own {cbl} on {JP} applications -- see {cbl--xref} gs-build.adoc[Build and Run] for an example of how to do that.
 
 .build.gradle file content
 [#ex-bgf1]
@@ -202,7 +202,7 @@ repositories {
 
 . That's it -- just add your own code
 
-You're all set to start building your own {cblJP} applications -- see {gs-build--xref} for an example of how to do that.
+You're all set to start building your own {cbl} on {JP} applications -- see {cbl--xref} gs-build.adoc[Build and Run] for an example of how to do that.
 
 .pom.xml file content
 [#ex-bmf1]
@@ -295,7 +295,7 @@ Enterprise Edition::
 == Web App Development
 
 
-This section explains how to set-up a build project to create {cblJP} web apps using {gpBuildTool} and {gpIDE}.
+This section explains how to set-up a build project to create {cbl} on {JP} web apps using gradle and Intellij IDEA.
 
 .Using Maven
 [TIP]
@@ -310,10 +310,10 @@ For examples of how to do this using Maven POM files, see --
 
 === Tomcat
 
-In our examples here we build and deploy web apps using a {gpBuildTool} plugin based on the `com.bmuschko.tomcat` plugin.
-It provides a simple {gpWebServerEnv} harness that can be used from within {gpIDE} or the command-line -- see <<lbl-tomcat>>
+In our examples here we build and deploy web apps using a gradle plugin based on the `com.bmuschko.tomcat` plugin.
+It provides a simple Tomcat harness that can be used from within Intellij IDEA or the command-line -- see <<lbl-tomcat>>
 
-[#bmkMultCblJapps, Running multiple {cblJP} web apps]
+[#bmkMultCblJapps, Running multiple {cbl} on {JP} web apps]
 === Multiple Web Apps
 
 Each web application has its own *class loader (WebappX).
@@ -327,10 +327,10 @@ For information about building a WAR file see <<lbl-war>>
 
 === Prerequisites
 
-* Ensure your build environment matches the runtime {gpWebServerEnv} environment.
-Specifically, that the Java and {gpWebServerEnv} versions are the same.
-* If your {gpWebServerEnv} server runs Linux, declare the _shared libraries_ (`<pathToCbl>/support`) in the `$CATALINA_HOME/bin/setenv.sh` script file -- see: _Additional Steps for Linux_ section in {gs-prereqs--xref}.
-* Ensure the {cbl} jars (`<pathToCbl>/lib`) are on the executable path within {gpWebServerEnv} -- see: <<bmkMultCblJapps>>
+* Ensure your build environment matches the runtime Tomcat environment.
+Specifically, that the Java and Tomcat versions are the same.
+* If your Tomcat server runs Linux, declare the _shared libraries_ (`<pathToCbl>/support`) in the `$CATALINA_HOME/bin/setenv.sh` script file -- see: _Additional Steps for Linux_ section in {cbl--xref} gs-prereqs.adoc[Prerequisites].
+* Ensure the {cbl} jars (`<pathToCbl>/lib`) are on the executable path within Tomcat -- see: <<bmkMultCblJapps>>
 +
 
 TIP: This also means you should declare the dependencies as `providedCompile` to avoid them being bundled into the `WEB-INF/libs` folder
@@ -346,7 +346,7 @@ gradle init
 
 . Create your `build.gradle` file, including the <<ex-bgf2>> in your app-level build.gradle:
 
-. Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
+. Open the project folder in Intellij IDEA and import the gradle settings.
 
 TIP: If you don't have auto-import set for Gradle projects, then accept the   *Import Gradle Project* prompt that is displayed bottom-right of the screen. +
 Note the Gradle menu at the extreme right of the screen: +
@@ -355,7 +355,7 @@ image::GradleMenuWebApp.png[,300]
 If you want to deploy your app to a local tomcat container then see <<Deploying a WAR file to tomcat>>
 
 That's it.
-You're all set to start building your own {cblJP} applications -- see xref:gs-build.adoc[Building a Getting Started App] for an example of how to do that.
+You're all set to start building your own {cbl} on {JP} applications -- see xref:gs-build.adoc[Building a Getting Started App] for an example of how to do that.
 
 .build.gradle file content
 [#ex-bgf2]
@@ -405,7 +405,7 @@ dependencies {
 [#lbl-tomcat]
 == Embedded Tomcat
 
-The simplest way to build and deploy your {cblJP} web app is to use a {gpBuildTool} plugin that provides a simple {gpWebServerEnv} harness.
+The simplest way to build and deploy your {cbl} on {JP} web app is to use a gradle plugin that provides a simple Tomcat harness.
 
 Our examples are based on the `com.bmuschko.tomcat` plugin -- see https://github.com/bmuschko/gradle-tomcat-plugin[com.bmuschko.tomcat on Github].
 
@@ -453,7 +453,7 @@ TIP: You can also use Tomcat’s Manager App to deploy the war file -- see https
 
 . To use common class loader approach to load {cbl} libraries, copy all of the {cbl} jar files in $CATALINA_BASE/lib.
 +
-NOTE: For linux platform see also -- _Using Native Libraries for Linux_ in {gs-prereqs--xref}
+NOTE: For linux platform see also -- _Using Native Libraries for Linux_ in {cbl--xref} gs-prereqs.adoc[Prerequisites]
 
 
-include::{root-partials}block-related-content-start.adoc[]
+include::ROOT:partial$block-related-content-start.adoc[]

@@ -1,5 +1,5 @@
 
-include::{root-partials}block-caveats.adoc[tag="cbl-3-0-0-reindexing"]
+include::ROOT:partial$block-caveats.adoc[tag="cbl-3-0-0-reindexing"]
 
 
 == {version-full} Upgrade
@@ -30,8 +30,8 @@ Thus, to upgrade an encrypted 1.x database, you should do the following:
 
 // set the correct language name for 1.4 pages
 ifndef::param-language:[:param-language: {param-name}]
-ifeval::["{param-language}"=="{lang-name-android}"]
-:param-language: {lang-name-java}
+ifeval::["{param-language}"=="kotlin"]
+:param-language: java
 endif::[]
 .Upgrading Encrypted Databases
 ****
@@ -48,7 +48,7 @@ If you are using Sync Gateway to synchronize the database content, it may be pre
 
 If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
 
-This functionality is related to the way conflicts are now being handled in Couchbase Lite -- see {conflict--xref}.
+This functionality is related to the way conflicts are now being handled in Couchbase Lite -- see {cbl--xref} conflict.adoc[Handling Data Conflicts].
 
 Optionally, existing conflicts in the 1.x database can be resolved with the https://docs-archive.couchbase.com/couchbase-lite/1.4/{source-language}.html#resolving-conflicts[1.x API] prior to the database being upgraded.
 
@@ -68,7 +68,7 @@ See <<ex-get-att>> for how to retrieve an attachment that was created in a 1.x d
 .Retrieve 1.x Attachment
 [#ex-get-att]
 :param-tags: 1x-attachment
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 
 === Replication Compatibility
@@ -89,7 +89,7 @@ To update an Xcode project built with Couchbase Lite 1.x:
 
 * Remove the existing *CouchbaseLite.framework* dependency from the Xcode project.
 * Remove all the Couchbase Lite 1.x dependencies (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/{source-language}.html#getting-started[1.x installation guide]).
-* Install the Couchbase Lite 2.0 framework in your project  -- see {gs-install--xref}.
+* Install the Couchbase Lite 2.0 framework in your project  -- see {cbl--xref} gs-install.adoc[Install].
 At this point, there will be many compiler warnings.
 Refer to the examples on this page to learn about the new API.
 * Build & run your application.
@@ -103,7 +103,7 @@ To update an Xcode project built with Couchbase Lite 1.x:
 
 * Remove the existing Couchbase Lite nuget package from the Visual Studio project.
 * Remove all the Couchbase Lite 1.x dependencies -- see the  https://docs-archive.couchbase.com/couchbase-lite/1.4/csharp.html#getting-started[1.x installation guide].
-* Install the Couchbase Lite 2.0 framework in your project  -- see {gs-install--xref}.
+* Install the Couchbase Lite 2.0 framework in your project  -- see {cbl--xref} gs-install.adoc[Install].
 At this point, there will be many compiler warnings.
 Refer to the examples on this page to learn about the new API.
 * Build & run your application.
@@ -127,6 +127,6 @@ endif::is-android[]
 
 // DO NOT DELETE
 // Include standard footer
-include::{root-partials}block-related-content-std.adoc[]
-// include::{root-partials}_unset-platform.adoc[]
+include::ROOT:partial$block-related-content-std.adoc[]
+// include::ROOT:partial$_unset-platform.adoc[]
 // DO NOT DELETE

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# only in text files, match .adoc attributes declared at start of line and write to patterns file
+git grep -Io '^:[a-zA-Z][a-zA-Z0-9_-]*:' \
+    | grep '[.]adoc:' \
+    | cut -d: -f 2-4 \
+    | sort \
+    | uniq \
+    | sd ':$' '(?=[:!])' \
+    > patterns.txt
+    
+wc -l patterns.txt
+
+# note that we add a lookahead for [:!] so match both the set AND the unset version.
+# this means that our count below will only list unique (-u) if it's sure there's 
+# no hanky panky going on
+# (There will be false negatives, e.g. `// :foo:` won't be ignored.)
+
+git grep -IPo -f patterns.txt \
+    | grep '[.]adoc:' \
+    | cut -d: -f3 \
+    | sort \
+    | uniq -u \
+    > unique.txt
+wc -l unique.txt
+
+for PAT in $(<unique.txt);
+do
+    scripts/subs $PAT
+done
