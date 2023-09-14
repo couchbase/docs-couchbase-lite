@@ -19,8 +19,8 @@ include::partial$_set_page_context_for_java.adoc[]
 :param-abstract: This content provides sample code and instructions that enable you to test your Couchbase Lite for {param-name} installation.
 :param-related: {gs-install--xref} | {gs-prereqs--xref} | {gs-build--xref} |
 :topic-group:
-include::{root-partials}_show_page_header_block.adoc[]
-// include::{root-partials}block-related-get-started.adoc[]
+include::ROOT:partial$_show_page_header_block.adoc[]
+// include::ROOT:partial$block-related-get-started.adoc[]
 // DO NOT EDIT
 
 
@@ -28,9 +28,9 @@ include::{root-partials}_show_page_header_block.adoc[]
 
 This section explains how to validate your configured build environment by building a starter app that uses many of {cblJP}'s more common features.
 
-// TIP: The {nmMobStarterApp} app can be downloaded from GitHub link:{url-cb-mobStarterApp}[{nmMobStarterApp}].
+// TIP: The GettingStarted app can be downloaded from GitHub link:https://github.com/ibsoln/cblGettingStarted.git[GettingStarted].
 
-The {nmMobStarterApp} app demonstrates how to use {cblJP}. Console and Web App versions are available.
+The GettingStarted app demonstrates how to use {cblJP}. Console and Web App versions are available.
 
 .Development-type Scenarios
 [{tabs}]
@@ -40,7 +40,7 @@ Desktop App::
 +
 --
 
-TIP: Ensure you added the {cbl} dependency to your `build.gradle` file
+TIP: Ensure you added the Couchbase{nbsp}Lite dependency to your `build.gradle` file
 
 Create, build and run a new project using the following `GettingStarted.java` code:
 
@@ -71,7 +71,7 @@ Web App::
 +
 --
 
-This section explains how to set-up a build project to create {cblJP} web apps using {gpBuildTool} and {gpIDE}.
+This section explains how to set-up a build project to create {cblJP} web apps using gradle and Intellij IDEA.
 
 *Steps*
 
@@ -82,7 +82,7 @@ This section explains how to set-up a build project to create {cblJP} web apps u
 include::example$GetStartedWS/build.gradle.sample
 ----
 
-. Within {gpIDE}, open the new project folder
+. Within Intellij IDEA, open the new project folder
 +
 If you don't have auto-import enabled, then accept the *Import from Gradle* prompt that appears at the bottom right of the screen.
 . Create a Java class _DBManager_ using this code:
@@ -135,23 +135,23 @@ About the Starter App::
 --
 
 anchor:bmkAboutGettingStarted[]
-The {nmMobStarterApp} app will:
+The GettingStarted app will:
 
 * Create a database
 +
-The app creates its database in the `{nmSampleAppDbPath}` directory relative to its root location when run (See: {loc--finding-db-file--xref}).
+The app creates its database in the `/resources/getting-started.cblite2` directory relative to its root location when run (See: {loc--finding-db-file--xref}).
 
 TIP: Explicitly state your required database location when creating your database (see: {loc--finding-db-file--xref} for how to do this)
 
 * Add content to the DB
 * Run a simple query counting the DB rows
-* Start a one-shot, bi-directional replication using {sg} and {svr}
+* Start a one-shot, bi-directional replication using pass:q,a[_Sync{nbsp}Gateway_] and pass:q,a[_Couchbase{nbsp}Server_]
 * Produce a simple report on the db Contents
 +
 // !!!GBM: THIS IMAGE PROBABLY NEEDS UPDATING
 image::java:cblOutput.png[,400]
 
-NOTE: Before starting your app ensure you have started both your {svr} and {sg} instances.
+NOTE: Before starting your app ensure you have started both your pass:q,a[_Couchbase{nbsp}Server_] and pass:q,a[_Sync{nbsp}Gateway_] instances.
 
 --
 

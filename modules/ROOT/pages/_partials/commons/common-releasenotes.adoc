@@ -7,7 +7,7 @@
 // BEGIN RELEASE SELECTION BLOCK: Decide which releases are relevant for a given platform
 //
 // Android Maintenance Releases
-ifeval::["{param-module}"=="{platform-android}"]
+ifeval::["{param-module}"=="android"]
 :param-3-0-0:
 :param-3-0-2:
 endif::[]
@@ -133,7 +133,7 @@ ifndef::is-c[<<lbl-api-changes>> {ql-sep}]
 <<lbl-removed-this-release>> {ql-sep}
 <<lbl-support-notices>> {ql-sep}
 
-include::{root-partials}block-caveats.adoc[tag="cbl-3-0-0-reindexing"]
+include::ROOT:partial$block-caveats.adoc[tag="cbl-3-0-0-reindexing"]
 
 [#new-features-3-0-0]
 === New Features
@@ -142,7 +142,7 @@ include::{root-partials}block-caveats.adoc[tag="cbl-3-0-0-reindexing"]
 
 ifdef::is-c[]
 :param-link: xref:c:index.adoc[Couchbase Lite for C]
-include::{root-partials}pn-change-log-content.adoc[tags=all-new-cbl-for-c-3-0, leveloffset=+1]
+include::ROOT:partial$pn-change-log-content.adoc[tags=all-new-cbl-for-c-3-0, leveloffset=+1]
 :param-link!:
 // end::cbl-for-c[]
 endif::is-c[]
@@ -150,7 +150,7 @@ endif::is-c[]
 ifdef::is-android[]
 // tag::cbl-for-kotlin[]
 :param-link: xref:android:kotlin.adoc[Couchbase Lite for Kotlin]
-include::{root-partials}pn-change-log-content.adoc[tags=all-new-cbl-for-kotlin-3-0, leveloffset=+1]
+include::ROOT:partial$pn-change-log-content.adoc[tags=all-new-cbl-for-kotlin-3-0, leveloffset=+1]
 :param-link!:
 // end::cbl-for-kotlin[]
 endif::is-android[]
@@ -159,7 +159,7 @@ endif::is-android[]
 
 // :param-link: xref:swift:query-n1ql-mobile.adoc[Swift]  |  xref:objc:query-n1ql-mobile.adoc[Objective-C]  |  xref:java:query-n1ql-mobile.adoc[Java]  |  xref:android:query-n1ql-mobile.adoc[Android]  |  xref:csharp:query-n1ql-mobile.adoc[.Net] |  xref:c:query-n1ql-mobile.adoc[C]
 :param-link: xref:{param-module}:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
-include::{root-partials}pn-change-log-content.adoc[tags=all-new-n1ql-string-3-0, leveloffset=+1]
+include::ROOT:partial$pn-change-log-content.adoc[tags=all-new-n1ql-string-3-0, leveloffset=+1]
 :param-link!:
 
 // end::n1ql-for-mobile[]
@@ -175,7 +175,7 @@ ifndef::is-c[]
 // === Auto-purge on Channel Access Revocation
 // tag::docs-autopurge[]
 :param-link: {replication--xref--auto-purge}
-include::{root-partials}pn-change-log-content.adoc[tags=all-changed-features-access-revocation-3-0, leveloffset=+1]
+include::ROOT:partial$pn-change-log-content.adoc[tags=all-changed-features-access-revocation-3-0, leveloffset=+1]
 :param-link!:
 // end::docs-autopurge[]
 
@@ -183,7 +183,7 @@ include::{root-partials}pn-change-log-content.adoc[tags=all-changed-features-acc
 // tag::docs-json-api[]
 
 :param-link: {document--xref} | {blob--xref}
-include::{root-partials}pn-change-log-content.adoc[tags=all-changed-features-access-json-api-3-0, leveloffset=+1]
+include::ROOT:partial$pn-change-log-content.adoc[tags=all-changed-features-access-json-api-3-0, leveloffset=+1]
 :param-link!:
 // end::docs-json-api[]
 
@@ -231,31 +231,31 @@ Items (features and-or functionality) are marked as deprecated when a more curre
 Whilst the deprecated item will remain usable, it is no longer supported, and will be removed in a future release -- see also: <<lbl-removed-this-release>>
 You should plan to move to an alternative, supported, solution as soon as practical.
 
-// include::{root-partials}block-deprecations.adoc[tag={param-platform}-new]
+// include::ROOT:partial$block-deprecations.adoc[tag={param-platform}-new]
 include::{module-partials}pn-issues-list.adoc[tag=Deprecated{param-release-tag}]
 
 ifndef::is-c[]
 * {empty}
 +
-include::{root-partials}block-deprecations.adoc[tag=any-platform-new]
+include::ROOT:partial$block-deprecations.adoc[tag=any-platform-new]
 
 ==== Previously Deprecated
-include::{root-partials}block-deprecations.adoc[tag=any-platform-ongoing]
-include::{root-partials}block-deprecations.adoc[tag={param-platform}-ongoing]
+include::ROOT:partial$block-deprecations.adoc[tag=any-platform-ongoing]
+include::ROOT:partial$block-deprecations.adoc[tag={param-platform}-ongoing]
 
 endif::is-c[]
 
 [#lbl-removed-this-release]
 === Removed in this Release
-// include::{root-partials}block-deprecations.adoc[tag={param-platform}-new]
+// include::ROOT:partial$block-deprecations.adoc[tag={param-platform}-new]
 include::{module-partials}pn-issues-list.adoc[tag=Removed{param-release-tag}]
 
 // === End of Life
-// include::{root-partials}block-deprecations.adoc[tag=any-platform-eol]
-// include::{root-partials}block-deprecations.adoc[tag={param-platform}-eol]
+// include::ROOT:partial$block-deprecations.adoc[tag=any-platform-eol]
+// include::ROOT:partial$block-deprecations.adoc[tag={param-platform}-eol]
 
 // === End of Support
-// {ns-this}
+// None specified in this release
 
 
 [#lbl-support-notices]
@@ -264,22 +264,22 @@ This section documents any support-related notes, constraints and changes.
 
 ==== New
 
-include::{root-partials}block-supportnotices.adoc[tag=any-platform-new]
+include::ROOT:partial$block-supportnotices.adoc[tag=any-platform-new]
 
-include::{root-partials}block-supportnotices.adoc[tag={param-platform}-new]
+include::ROOT:partial$block-supportnotices.adoc[tag={param-platform}-new]
 
 ==== Ongoing
 
-include::{root-partials}block-supportnotices.adoc[tag=any-platform-ongoing]
+include::ROOT:partial$block-supportnotices.adoc[tag=any-platform-ongoing]
 
-include::{root-partials}block-supportnotices.adoc[tag={param-platform}-ongoing]
+include::ROOT:partial$block-supportnotices.adoc[tag={param-platform}-ongoing]
 
 // END RELEASE BLOCK -- -- Major Release 3-0 March 2022
 
 
 
 // DO NOT EDIT -- Footer Related Content Block
-include::{root-partials}block-related-content-prod.adoc[]
+include::ROOT:partial$block-related-content-prod.adoc[]
 // DO NOT EDIT
 
 // BEGIN: Destroy local param attributes

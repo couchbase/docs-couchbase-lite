@@ -2,8 +2,8 @@
 
 // DO NOT EDIT
 :topic-group: Using Peer-to-Peer Synchronization (web sockets)
-include::{root-partials}block-related-howto-p2psync-ws.adoc[]
-include::{root-partials}_show_page_header_block.adoc[]
+include::ROOT:partial$block-related-howto-p2psync-ws.adoc[]
+include::ROOT:partial$_show_page_header_block.adoc[]
 // DO NOT EDIT
 
 :zero-config: {empty}
@@ -18,7 +18,7 @@ endif::[]
 == Introduction
 // tag::introduction-full[]
 // tag::introduction[]
-Couchbase Lite’s Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronisation between edge devices without needing a centralized cloud-based control point. 
+Couchbase Lite’s Peer-to-Peer synchronization solution offers {securestorage} and bidirectional data synchronisation between edge devices without needing a centralized cloud-based control point. 
 
 // end::introduction[]
 
@@ -134,7 +134,7 @@ You can configure a Peer-to-Peer synchronization with just a short amount of cod
 [#ex-simple-listener]
 :param-tags: listener-simple
 :param-leader: pass:q,a[This simple listener configuration will give you a listener ready to participate in an encrypted synchronization with a replicator providing a valid user name and password.]
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 <.> Initialize the Listener configuration
@@ -147,7 +147,7 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 [#ex-simple-replicator]
 :param-tags: replicator-simple
 :param-leader: pass:q,a[This simple replicator configuration will give you an encrypted, bi-directional Peer-to-Peer synchronization with automatic conflict resolution.]
-include::{root-partials}block_tabbed_code_example.adoc[]
+include::ROOT:partial$block_tabbed_code_example.adoc[]
 :param-tags!:
 :param-leader!:
 <.> Get the Listener's endpoint.
@@ -209,12 +209,12 @@ Here we use a known URL, but it could be a URL established dynamically in a disc
 
 == API Highlights
 
-include::{root-partials}p2p-api.adoc[leveloffset=+1]
+include::ROOT:partial$p2p-api.adoc[leveloffset=+1]
 
 == Security
 
 === Authentication
-// include::{root-partials}p2p-security.adoc[leveloffset=+1]
+// include::ROOT:partial$p2p-security.adoc[leveloffset=+1]
 
 Peer-to-Peer sync supports <<using-basic-authentication, Basic Authentication>> and <<using-tls,TLS Authentication>>.
 For anything other than test deployments, we strongly encourage the use of TLS. In fact, Peer-to-Peer sync using URLEndpointListener is encrypted using TLS by default.
@@ -238,12 +238,12 @@ Active clients replicating with a URLEndpointListener have the option to skip va
 This option is ignored when dealing with CA certificates.
 
 [#using-secure-storage]
-=== Using Secure Storage
-TLS and its associated keys and certificates might require using secure storage to minimize the chances of a security breach.
+=== Using {securestorage}
+TLS and its associated keys and certificates might require using {securestorage} to minimize the chances of a security breach.
 The implementation of this storage differs from platform to platform.
-<<secure-storage-details>> summarizes the secure storage used to store keys and certificates for {param-title}.
+<<secure-storage-details>> summarizes the {securestorage} used to store keys and certificates for {param-title}.
 
-.Secure storage details
+.{securestorage} details
 [#secure-storage-details,cols="1,4"]
 |===
 
@@ -357,7 +357,7 @@ a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/s
 |===
 
 // == Sizing
-// include::{root-partials}p2p-sizing.adoc[leveloffset=+1]
+// include::ROOT:partial$p2p-sizing.adoc[leveloffset=+1]
 
 // DO NOT EDIT OR REMOVE
-include::{root-partials}block-related-content-p2psync.adoc[]
+include::ROOT:partial$block-related-content-p2psync.adoc[]
