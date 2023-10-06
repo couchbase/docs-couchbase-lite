@@ -1,0 +1,93 @@
+[#maint-3-0-15]
+== 3.0.15 -- October 2023
+:page-release-version: 3.0.15
+
+////
+// README
+/////////
+// If you want to add a new release for this mobile SDK:
+//
+//   * Copy this file
+//     * rename the copy with the release number
+//     * edit the details above
+//   * add an include to this file in pages/releasenotes.adoc
+//   * add the .csv files to modules/ROOT/attachments/release-notes as described below.
+//   * That's it. (e.g. you shouldn't need to edit the code below
+//
+// Creating the CSV Files
+/////////////////////////
+// The files will look something like:
+//
+// modules/
+//   ROOT/
+//     attachments/
+//       release-notes/
+//         3.0.15-enhancements.csv
+//         3.0.15-fixed.csv
+//         3.0.15-known-issues.csv
+//         3.0.15-deprecated.csv
+//
+// To create these, go to the Confluence page supplied by Mobile team, for example
+//   https://hub.internal.couchbase.com/confluence/pages/viewpage.action?spaceKey=cbeng&title=CBL3.0.15ReleaseNotes
+// For each report, choose the fields Key, Component/s, and Summary
+// Export as `CSV (Current Fields)` and move the file to the location above.
+// 
+// For reference, the filters (for 3.0.15) were as follows:
+// * CBL3.0.15Enhancements
+//     `project = CBL AND fixVersion = 3.0.15 AND resolution = Fixed AND level = "Public" AND type in ("New Feature", Improvement, Epic) AND level = "Public" ORDER BY component ASC`
+// * CBL3.0.15Fixed
+//     `project = CBL AND fixVersion = 3.0.15 AND resolution = Fixed AND level = "Public" AND type = Bug ORDER BY component ASC`
+// * CBLKnownIssues
+//     `project = CBL AND Labels in (releasenote, known_issue) AND status not in (CLOSED, RESOLVED) ORDER BY priority ASC, updated DESC`
+// * ReleaseNote-CBL-Deprecated
+//    `project = CBL AND labels in (deprecated) AND status in (Open, Reopened) ORDER BY component ASC, id DESC`
+////
+
+Version {page-release-version} for {param-title} delivers the following features and enhancements:
+
+=== Enhancements
+
+[template,ROOT:attachment$release-notes/{page-release-version}-enhancements.csv]
+--
+{{#each (filter-by-component this "Kotlin-Android" "Java-Android" "LiteCore")}}
+* https://issues.couchbase.com/browse/{{this.[Issue key]}}[{{this.[Issue key]}} - {{this.Summary}}]
+{{else}}
+None for this release.
+{{/each}}
+--
+
+
+=== Issues and Resolutions
+
+[template,ROOT:attachment$release-notes/{page-release-version}-fixed.csv]
+--
+{{#each (filter-by-component this "Kotlin-Android" "Java-Android" "LiteCore")}}
+* https://issues.couchbase.com/browse/{{this.[Issue key]}}[{{this.[Issue key]}} - {{this.Summary}}]
+{{else}}
+None for this release.
+{{/each}}
+--
+
+=== Known Issues
+
+[template,ROOT:attachment$release-notes/{page-release-version}-known-issues.csv]
+--
+{{#each (filter-by-component this "Kotlin-Android" "Java-Android" "LiteCore")}}
+* https://issues.couchbase.com/browse/{{this.[Issue key]}}[{{this.[Issue key]}} - {{this.Summary}}]
+this.[Issue key] - this.Summary
+{{else}}
+None for this release.
+{{/each}}
+--
+
+=== Deprecations
+
+[template,ROOT:attachment$release-notes/{page-release-version}-deprecated.csv]
+--
+{{#each (filter-by-component this "Kotlin-Android" "Java-Android" "LiteCore")}}
+* https://issues.couchbase.com/browse/{{this.[Issue key]}}[+++{{this.[Issue key]}} - {{this.Summary}}+++]
+{{else}}
+None for this release.
+{{/each}}
+--
+
