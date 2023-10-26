@@ -644,20 +644,22 @@ public class QueryExamples {
         }
     }
 
-    public List<Result> docsOnlyQuerySyntaxN1QL(Database thisDb) throws CouchbaseLiteException {
+    public List<Map<String, Object>> docsOnlyQuerySyntaxN1QL(Database thisDb) throws CouchbaseLiteException {
         // For Documentation -- N1QL Query using parameters
         // tag::query-syntax-n1ql[]
         //  Declared elsewhere: Database thisDb
         Query thisQuery =
             thisDb.createQuery(
                 "SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""); // <.>
+        List<Map<String, Object>> results = new ArrayList<>();
         try (ResultSet rs = thisQuery.execute()) {
-            return rs.allResults();
+            for (Result result: rs) { results.add(result.toMap()); }
         }
+        return results;
         // end::query-syntax-n1ql[]
     }
 
-    public List<Result> docsonlyQuerySyntaxN1QLParams(Database thisDb) throws CouchbaseLiteException {
+    public List<Map<String, Object>> docsonlyQuerySyntaxN1QLParams(Database thisDb) throws CouchbaseLiteException {
         // For Documentation -- N1QL Query using parameters
         // tag::query-syntax-n1ql-params[]
         //  Declared elsewhere: Database thisDb
@@ -669,9 +671,11 @@ public class QueryExamples {
         thisQuery.setParameters(
             new Parameters().setString("type", "hotel")); // <.>
 
+        List<Map<String, Object>> results = new ArrayList<>();
         try (ResultSet rs = thisQuery.execute()) {
-            return rs.allResults();
+            for (Result result: rs) { results.add(result.toMap()); }
         }
+        return results;
         // end::query-syntax-n1ql-params[]
     }
 }
