@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -78,7 +79,7 @@ public class GettingStartedServlet extends HttpServlet {
                 logToResponse("Learning :: " + doc.getString("language"));
             }
             mgr.updateDoc(coll, id);
-            List<Result> results = mgr.queryDocs(coll);
+            List<Map<String, Object>> results = mgr.queryDocs(coll);
             numRows = results.size();
             logToResponse("Number of rows :: " + numRows);
 

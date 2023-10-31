@@ -243,7 +243,6 @@ package com.couchbase.codesnippets;
 
 import java.io.File;
 
-import kotlin.jvm.internal.Intrinsics;
 import org.jetbrains.annotations.NotNull;
 
 import com.couchbase.lite.Array;
@@ -268,13 +267,10 @@ public class BasicExamples {
         public void datatypeUsage() throws CouchbaseLiteException {
             // tag::datatype_usage[]
             // tag::datatype_usage_createdb[]
-            // Initialize the Couchbase Lite system
-            CouchbaseLite.init();
-
             // Get the database (and create it if it doesn’t exist).
             DatabaseConfiguration config = new DatabaseConfiguration();
             config.setDirectory(this.rootDir.getAbsolutePath());
-            Database database = new Database("getting-started", config)
+            Database database = new Database("getting-started", config);
             try (Collection collection = database.getCollection("myCollection")) {
                 if (collection == null) { throw new IllegalStateException("collection not found"); }
 
@@ -334,6 +330,14 @@ public class BasicExamples {
             // end::datatype_usage_closedb[]
 
             // end::datatype_usage[]
+        }
+
+        public void useExplicitType(Collection collection, Document someDoc) throws CouchbaseLiteException {
+            // tag::fleece-data-encoding[]
+            Document doc = collection.getDocument(someDoc.getId());
+            // force longVal to be type Long, even if it could be represented as an int.
+            long longVal = doc.getLong("test");
+            // end::fleece-data-encoding[]
         }
 
         public void datatypeDictionary(@NotNull Collection collection) throws CouchbaseLiteException {
@@ -2428,20 +2432,22 @@ public class QueryExamples {
         }
     }
 
-    public List<Result> docsOnlyQuerySyntaxN1QL(Database thisDb) throws CouchbaseLiteException {
+    public List<Map<String, Object>> docsOnlyQuerySyntaxN1QL(Database thisDb) throws CouchbaseLiteException {
         // For Documentation -- N1QL Query using parameters
         // tag::query-syntax-n1ql[]
         //  Declared elsewhere: Database thisDb
         Query thisQuery =
             thisDb.createQuery(
                 "SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""); // <.>
+        List<Map<String, Object>> results = new ArrayList<>();
         try (ResultSet rs = thisQuery.execute()) {
-            return rs.allResults();
+            for (Result result: rs) { results.add(result.toMap()); }
         }
+        return results;
         // end::query-syntax-n1ql[]
     }
 
-    public List<Result> docsonlyQuerySyntaxN1QLParams(Database thisDb) throws CouchbaseLiteException {
+    public List<Map<String, Object>> docsonlyQuerySyntaxN1QLParams(Database thisDb) throws CouchbaseLiteException {
         // For Documentation -- N1QL Query using parameters
         // tag::query-syntax-n1ql-params[]
         //  Declared elsewhere: Database thisDb
@@ -2453,9 +2459,11 @@ public class QueryExamples {
         thisQuery.setParameters(
             new Parameters().setString("type", "hotel")); // <.>
 
+        List<Map<String, Object>> results = new ArrayList<>();
         try (ResultSet rs = thisQuery.execute()) {
-            return rs.allResults();
+            for (Result result: rs) { results.add(result.toMap()); }
         }
+        return results;
         // end::query-syntax-n1ql-params[]
     }
 }

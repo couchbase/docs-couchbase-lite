@@ -2,6 +2,8 @@ package com.couchbase.gettingstarted;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -101,11 +103,15 @@ public class DBManager {
 
     // <.>
     // Create a query to fetch documents with language == Kotlin.
-    public List<Result> queryDocs(Collection collection) throws CouchbaseLiteException {
+    public List<Map<String, Object>> queryDocs(Collection collection) throws CouchbaseLiteException {
         Query query = QueryBuilder.select(SelectResult.all())
             .from(DataSource.collection(collection))
             .where(Expression.property("language").equalTo(Expression.string("Kotlin")));
-        try (ResultSet rs = query.execute()) { return rs.allResults(); }
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (ResultSet rs = query.execute()) {
+            for (Result result: rs) { results.add(result.toMap()); }
+        }
+        return results;
     }
 
     // <.>
