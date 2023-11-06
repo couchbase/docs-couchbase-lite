@@ -5,6 +5,8 @@ ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite on Java -- a framework for developing offline-first Java applications for mobile and edge
 :keywords: mobile edge nosql api Java JVM web-app device-app
+:version-maintenance-java: {major}.{minor}.{maintenance-java}
+:ld-library-path: LD_LIBRARY_PATH=<lib-directory>/support/lib{cpp}:<lib-directory>/support/libicu:$LD_LIBRARY_PATH
 
 include::partial$_set_page_context_for_java.adoc[]
 
@@ -28,7 +30,7 @@ You are free to use the tools of your choice.
 
 [#bmkSetupSyncAndServer, Setting up Sync Gateway]
 
-== Install Companion Software
+== Install Server Software
 
 If you want to use {cbljp} with {svr} and-or {sg} you will need to have installed operational instances of these before completing the installation and test build steps.
 
@@ -37,60 +39,63 @@ So, If you have not already done so, see {sgw-prepare--xref}
 * Within {svr}, create a bucket named {nmSampleAppDb}
 * Create a RBAC user for {sg} with username = `sync-gateway` and password = `password`
 
-== Downloaded Binaries
 
-===  Package Contents
+== MacOS and Windows
 
-The download package contains a license file, jar libraries for the appropriate edition of the {cbl} and a set of Linux _shared libraries_.
+You may now proceed directly to xref:gs-install.adoc[].
 
-Get the download package from here -- {downloads-mobile--xref}.
+[#additional-steps-for-linux]
+== Additional Steps For Linux
 
-* Community Edition -- {packageNmCE}
-* Enterprise Edition -- {packageNmEE}
-
-When unpacked the package contains the following:
-
-* A `lib` folder containing all necessary JAR files:
-** {packageNmCE} or for EE {packageNmEE}
-** okhttp-3.14.7.jar
-** okio-1.17.2.jar
-
-* A `support` folder containing the Linux native libraries:
-+
-NOTE: This means you do not need to download and-or build compatible versions of system libraries for the Linux platform of choice.
-
-** `libz` (requires zlib v.1.2.11+)
-** `lib{cpp}` requires libc++ v.3.6.0+)
-** `libicu` (requires ICU4C v.5.4.1+)
-
-// Go back to <<GET STARTED>>
+Before proceeding to xref:gs-install.adoc[], you will need to setup your build environment, and make the supplied support libraries available.
 
 === Steps
 
-. Download the _zip_ file from here -- {downloads-mobile--xref}.
-. Unpack the downloaded file to a location accessible to -- and usable by -- your chosen *build* environment.
-+
-We'll refer to that location -- `<your dir>/{packageNmCE}` -- as the `<pathToCbl>`.
+. Download the _zip_ file from here -- https://packages.couchbase.com/releases/couchbase-lite-java/{version-maintenance-java}/couchbase-lite-java-linux-supportlibs-{version-maintenance-java}.zip
+.
+. Unpack the downloaded file to a location accessible to -- and usable by -- your chosen *build* environment, for example `your_dir/couchbase-lite-java-{version-maintenance-java}`.
 
-. Include the following dependency in your `build.gradle` file, you can remove any {cbl} Maven references:
+. Include the following dependency in your `build.gradle` file:
 +
+[source,gradle,subs="attributes"]
 ----
 Dependencies {
-  implementation fileTree(include: ['*.jar'], dir: <pathToCbl>/lib>
+  implementation fileTree(include: ['*.jar'], dir: your_dir/couchbase-lite-java-{version-maintenance-java})
 }
 ----
 
-Where <pathToCbl> is the location of the downloaded {cbl} library.
+[#bmkLinuxSharedLibs]
+. Set up the Native Libraries for Linux.
+You will need to add the paths of the directories `<lib-directory>/support/libc++` and `<lib-directory>/support/libicu` to  `LD_LIBRARY_PATH`.
 
-.Sample build gradle
+[{tabs}]
+====
+Web Service/Tomcat::
++
+--
+Add the variables to your `$CATALINA_BASE/bin/setenv.sh`.
+(If the setenv.sh file doesn't exist, you will need to create a new file.)
+
+[source, bashrc, subs="attributes"]
 ----
-include::{snippet}[tags=GsWebAppBuildGradle,indent=0]
+{ld-library-path}
 ----
+--
 
-== Using Native Libraries for Linux
+Desktop::
++
+--
+Export the variable in your .bashrc file:
 
-include::partial$gs-additional-steps-for-linux.adoc[]
+[source, bashrc, subs="attributes"]
+----
+export {ld-library-path}
+----
+--
+====
 
+
+Please refer to the Linux Platform Support section for the minimum version requirements of those libraries.
 
 
 include::{root-partials}block-related-content-start.adoc[]
