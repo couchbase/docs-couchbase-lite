@@ -56,6 +56,9 @@ Check you have `mavenCentral()` in `repositories` (or in `settings.gradle`). +
 Maven automatically checks its own repo for dependencies.
 --
 =====
+
+NOTE: for Linux, make sure you have followed the xref:gs-prereqs.adoc#additional-steps-for-linux[additional steps required].
+
 ****
 That's it!
 You're all set to begin developing powerful {cbl} applications.
@@ -89,7 +92,7 @@ https://www.microsoft.com/en-us/download/details.aspx?id=52685
 
 * Deploying to Linux? +
 You need to deploy the {cbl} `support` library, which is available _only_ on the zip download distributable.
-See the _Additional Steps for Linux_ section in {gs-prereqs--xref}.
+See the _Additional Steps for Linux_ section in xref:gs-prereqs.adoc#additional-steps-for-linux[].
 
 
 == Standalone Apps
@@ -117,36 +120,6 @@ You're all set to start building your own {cblJP} applications -- see {gs-build-
 ====
 [{tabs}]
 =====
-Community edition::
-+
---
-.Compile options
-[source,groovy, subs="attributes+"]
-----
-// Required only if your project has some Kotlin source code
-kotlinOptions { jvmTarget = '1.8' }
-
-// Set minimum JVM level to ensure availability of, for example, lambda expressions
-compileOptions {
-    targetCompatibility 1.8
-    sourceCompatibility 1.8
-
-//   ... other section content as required by user
-}
-
-----
-
-.Dependencies
-[source,groovy, subs="attributes+"]
-----
-dependencies {
-    implementation "com.couchbase.lite:couchbase-lite-java:{version-full}"
-
-//   ... other section content as required by user
-}
-
-----
---
 
 Enterprise Edition::
 +
@@ -189,7 +162,37 @@ repositories {
     }
 
 ----
+--
 
+Community edition::
++
+--
+.Compile options
+[source,groovy, subs="attributes+"]
+----
+// Required only if your project has some Kotlin source code
+kotlinOptions { jvmTarget = '1.8' }
+
+// Set minimum JVM level to ensure availability of, for example, lambda expressions
+compileOptions {
+    targetCompatibility 1.8
+    sourceCompatibility 1.8
+
+//   ... other section content as required by user
+}
+
+----
+
+.Dependencies
+[source,groovy, subs="attributes+"]
+----
+dependencies {
+    implementation "com.couchbase.lite:couchbase-lite-java:{version-full}"
+
+//   ... other section content as required by user
+}
+
+----
 --
 
 =====
@@ -209,38 +212,6 @@ You're all set to start building your own {cblJP} applications -- see {gs-build-
 ====
 [{tabs}]
 =====
-
-Community edition::
-+
---
-.Compile properties
-[source, XML, subs="attributes+"]
-----
-<properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-</properties>
-
-----
-
-.Dependencies
-[source, xml, subs="attributes+"]
-----
-
-<dependencies>
-  <dependency>
-      <groupId>com.couchbase.lite</groupId>
-      <artifactId>couchbase-lite-java</artifactId>
-      <version>{version-full}</version>
-  </dependency>
-
-  //   ... any other section content as required by user
-</dependencies>
-
-----
---
-
 Enterprise Edition::
 +
 --
@@ -285,7 +256,37 @@ Enterprise Edition::
 </repositories>
 
 ----
+--
 
+Community edition::
++
+--
+.Compile properties
+[source, XML, subs="attributes+"]
+----
+<properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
+</properties>
+
+----
+
+.Dependencies
+[source, xml, subs="attributes+"]
+----
+
+<dependencies>
+  <dependency>
+      <groupId>com.couchbase.lite</groupId>
+      <artifactId>couchbase-lite-java</artifactId>
+      <version>{version-full}</version>
+  </dependency>
+
+  //   ... any other section content as required by user
+</dependencies>
+
+----
 --
 
 =====
