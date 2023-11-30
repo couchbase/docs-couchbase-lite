@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Get a list of attributes :foo: that are defined only once (-u)
+#   This is to avoid breaking cases where an attribute is overridden in
+# some cases.
+
+git grep -I '^:[a-zA-Z]' \
+    | cut -d: -f3 \
+    | tr -d '!' \
+    | sort \
+    | uniq -u \
+    > unique.txt    
+
+# Turn this into greppable patterns
+
+while read attribute; do
+    value=${attribute#*: }
+    lhs=${attribute%%: *}
+    name=${lhs#*::}
+    echo $name=$value
+done < <(perl -pe 's/(.*)/^:$1:/' unique.txt | git grep -f -)
+
+
+
+# Get unique filenames in definitions
+# git grep -f defs.txt \
+#     | cut -d: -f1 \
+#     | uniq
+
+
