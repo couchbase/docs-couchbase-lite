@@ -61,6 +61,17 @@ NOTE: Scope and collection names are case sensitive.
 include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
+In the example above, you can see that `db.createCollection()` can take two parameters. 
+The first is the scope assigned to the created collection, if this parameter is omitted then a collection of the given name will be assigned to the `_default` scope. In this case, creating a collection called `Verlaine`.
+
+The second parameter is the name of the collection you want to create, in this case `Verlaine`.
+In the second section of the example you can see `db.createCollection("Television", "Verlaine")`. 
+This creates the collection `Verlaine` and then checks to see if the scope `Television` exists.
+If the scope `Television` exists, the collection `Verlaine` is assigned to the scope `Television`. If not, a new scope, `Television` is created and then the collection `Verlaine` is assigned to it.
+
+NOTE: You cannot create an empty user-defined scope. 
+A scope is implicitly created in the `db.createCollection()` method.
+
 
 == Index a Collection
 
@@ -77,6 +88,8 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
+NOTE: There is no need to drop a user-defined scope.
+User-defined scopes are dropped when the collections associated with them contain no documents.
 
 == List Scopes and Collections
 
