@@ -8,21 +8,273 @@ ifdef::prerelease[:page-status: {prerelease}]
 
 == Vector Index API
 
+You can use the Vector Index API's core functionality to efficiently perform similarity search at scale on Vector Indexes.
+You can make use of new qurry functions such as `vector_match()` to query indexed vectors.
+
 === Vector Encoding
+
+Vector encoding is the process of representing data points such as images, words, or documents as vectors in high-dimensional space where each dimension represents a different attribute of the data. 
+Encoding is a crucial step in preparing data for similarity or nearest neighbour search operations.
+
+Couchbase Lite support three encoding types:
+
+* No encoding - 4 bytes per dimension, large size with no data loss
+
+* Scalar Quantizer - The default setting.
+This compresses the number of bits per dimension.
+
+* Product Quantizer - This reduces the number dimensions and the bits per dimension.
+
+NOTE: The default encoding is the eight bit Scalar Quantizer - `SQ8`. 
+
+[source, c]
+----
+
+/* Scalar Quantizer Encoding Type*/
+public enum ScalarQuantizerType {
+  case SQ4 /* 4 bits per dimension */
+  case SQ6 /* 6 bits per dimension */
+  case SQ8 /* 8 bits per dimension */
+}
+
+/* Types of encoding to use in vector indexes. */
+public enum VectorEncoding { 
+  /* No encoding; 4 bytes per dimension, no data loss */
+  case none
+  
+  /* Scalar Quantizer encoding */            
+  case scalarQuantizer(type: ScalarQuantizerType) 
+
+  /* Product Quantizer encoding. */
+  case productQuantizer(subquantizers: UInt, bits: UInt)
+}
+
+----
 
 === Distance Metric
 
+[source, c]
+----
+
+/* Distance metric to be used in the vector indexes. */
+public enum DistanceMetric { 
+  case euclidean    /* Squared euclidean distance */
+  case cosine       /* Cosine distance */
+}
+
+----
+
+NOTE: The default distance metric is the squared euclidean distance.
+
 === Vector Index Configuration
+
+[source, c]
+----
+
+/* Configuration for creating vector indexes. */
+public class VectorIndexConfiguration : IndexConfiguration {
+   /* The SQL++ expression returning a vector which is an array of numbers */
+   public let expression: String
+
+   /* The number of vector dimensions. */ 
+   public let dimensions: UInt
+
+   /* The number of centroids which is the number buckets to partition the 
+      vectors in the index. */ 
+   public let centroids: UInt
+
+   /* Vector encoding type. The default value is 8-bits Scalar Quantizer. */
+   public var encoding: VectorEncoding = VectorEncoding.scalarQuantizer(.SQ8)
+
+   /* Distance Metric type. The default value is euclidean. */
+   public var metric: DistanceMetric = DistanceMetric.euclidean
+
+
+   /* The minium number of vectors for training the index. The default value is 
+      25 times number of centroids.The number must be more than zero and not 
+      greater than maxTrainingSize. 
+	
+      Note: 
+      The training process will be performed only once on the first 
+      query executed against the index when the number of vectors is at least 
+      minTrainingSize. Hence if the training process is trigged, the query 
+      might take longer than usual to return the result. 
+
+      If a query is executed against the index before the index is trained, the 
+      full scan on the vectors will be peformed for the query. */
+   public var minTrainingSize: UInt = 25 * centroids
+
+   /* The max number of vectors used for training the index. The default 
+      value is 256 times number of centroids. The number must be more than zero 
+      and not less than minTrainingSize. */
+   public var maxTrainingSize: Unit = 256 * centroids
+
+   /* VectorIndexConfiguration Constructor.
+      @param expression The SQL++ expression returning a vector which is an 
+                        array of numbers.
+      @param dimensions The number of dimensions of the vectors to be indexed.  
+                        The vectors that do not have the same dimensions 
+                        specified in the config will not be indexed. The
+                        dimensions must be between 2 and 2048 inclusively.
+      @param centroids  The number of centroids which is the number buckets 
+                        to partition the vectors in the index. The number of       
+                        centroids will be based on the expected number of 
+                        vectors to be indexed; one suggested rule is to use 
+                        the square root of the number of vectors. The
+                        centroids must be between 1 and 64000 inclusively. */
+   public init(expression: String, dimensions: UInt, centroids: UInt) { }
+}
+
+----
+
+IMPORTANT: The beta release currently only supports the format of vectors as an array of numbers.
 
 === Default Value Constants
 
+[source, c]
+----
+
+public class VectorIndexConfiguration {
+  /* Scalar Quantizer */
+  public static let defaultEncoding = VectorEncoding.scalarQuantizer()
+
+  /* Squared Euclidean Distance */
+  public static let defaultMetric = VectorMetric.euclidean   
+}
+
+----
+
 === Extension Path Configuration
+
+NOTE: The extension configuration is only necessary for the CBL-iOS MacOS and CBL-C platforms as dynamic extension libraries may be at arbitrary locations.
+
+[source, c]
+----
+
+public class CouchbaseLite {
+  /* Registers a directory path to load extension libraries from. Must 
+     be called before using CouchbaseLite but only when using extensions */
+  public static func setExtensionPath(extensionPath: String)
+}
+
+----
 
 == Vector SQL++ Functions
 
+Couchbase Lite currently supports two SQL++ functions, `vector_match()` and `vector_distance()`.
+
 === Vector Match
 
+==== `vector_match(vectorIndexIdentifier, targetVectorExpr, [limit = 3])`
+
+[cols = "3*"]
+|===
+|Parameter |Is Required |Description
+
+|vectorIndexIdentifier
+|Required
+|The name of the vector index to perform the vector search on.
+|targetVectorExpr
+|Required
+|The target vector expression that returns a vector in the form of an array of numbers.
+|limit
+|Optional
+|The limit number of the returned matched results.
+The maximum number allowed is 10000. An error will be returned when creating a query with a limit greater than 10000.
+
+|===
+
+This function performs vector search against a specific vector index identifier for the specified vector expression.
+If the specified index does not exist, an error will occur on creation of the query.
+The matched vectors will be returned up to the specified limit number, if the limit is not specified then the default value will be used. 
+The returned vectors are sorted by their distance values in ascending order by default.
+
+NOTE: The default value for the `limit` parameter is 3.
+
+[source, sqlpp]
+----
+SELECT name 
+FROM photos 
+WHERE vector_match(photos-index, [0.1, 0.5, 1.2])
+
+----
+
+[source, sqlpp]
+----
+
+SELECT name 
+FROM photos
+WHERE vector_match(photos-index, [0.1, 0.5, 1.2]) AND city = "San Francisco"
+
+----
+
 === Vector Distance
+
+==== `vector_distance(vectorIndexIdentifier)`
+
+[cols = "3*"]
+|===
+|Parameter |Is Required |Description
+
+|vectorIndexIdentifier
+|Required
+|The name of the vector index.
+
+|===
+
+This function returns the distance between the target vector specified in the `vector_match()` function and the matched vector in the specified vector index based on the distance metric set in the index configuration .
+
+[source, sqlpp]
+----
+
+SELECT name, vector_distance(photos-index) 
+FROM photos
+WHERE vector_match(photos-index, [0.1, 0.5, 1.2])
+
+----
+
+[source, sqlpp]
+----
+
+SELECT name WHERE vector_match(photos-index, [0.1, 0.5, 1.2]) 
+FROM photos
+ORDER BY vector_distance(photos-index) DSC
+
+----
+
+IMPORTANT: Similar to the Full Text Search `match()` function, `vector_match()` can only be called alone or at the top level `AND` expression.
+
+=== Generate Vectors with Prediction
+
+You can use two methods to generate vectors in Couchbase Lite:
+
+. You can call a Machine Learning(ML) model, and embed the generated vectors inside the documents.
+
+. You can use the `prediction()` function to generate vectors to be indexed for each document at the indexing time.
+
+Below is an example configuration.
+
+[source, c]
+----
+
+let config = VectorIndexConfiguration(expression: "prediction(photo-model, photo).vector", dimensions: 256, centroids: 30)
+try collection.createIndex(withName: "photo-index", config: config)
+
+----
+
+You can use less storage by using the `prediction()` function as the encoded vectors will only be stored in the index. 
+However, the index time will be longer as indexing is occurring at run time.
+
+[IMPORTANT]
+--
+
+In the beta release. Updating the index for the documents whose returned vectors from the `prediction()` were missing on calling the ML model is not possible unless you perform the following actions:
+
+* Update the documents
+
+* Regenerate the index
+
+--
 
 == See Also
 
