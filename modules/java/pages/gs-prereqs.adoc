@@ -47,28 +47,19 @@ You may now proceed directly to xref:gs-install.adoc[].
 [#additional-steps-for-linux]
 == Additional Steps For Linux
 
-Before proceeding to xref:gs-install.adoc[], you will need to setup your build and runtime environments, and make the supplied support libraries available.
+Before proceeding to xref:gs-install.adoc[], you will need to make the supplied support libraries available to your running application.
 
 === Steps
 
 . Download the _zip_ file from here -- https://packages.couchbase.com/releases/couchbase-lite-java/{version-maintenance-java}/couchbase-lite-java-linux-supportlibs-{version-maintenance-java}.zip
 .
-. Unpack the downloaded file to a location accessible to -- and usable by -- your build and runtime environments, for example `your_dir/couchbase-lite-java-{version-maintenance-java}`.
+. Unpack the downloaded file to a location accessible to your build and runtime environments, for example `your_dir/couchbase-lite-java-{version-maintenance-java}`.
 
-. Include the following dependency in your `build.gradle` file:
-+
-[source,gradle,subs="attributes"]
-----
-Dependencies {
-  implementation fileTree(include: ['*.jar'], dir: your_dir/couchbase-lite-java-{version-maintenance-java})
-}
-----
-+
 [#bmkLinuxSharedLibs]
 . Set up the Native Libraries for Linux.
-You will need to add the paths of the directories `<lib-directory>/support/libc++` and `<lib-directory>/support/libicu` to  the Java system property `java.library.path`.
+You will need to add the path of the directory `<lib-directory>` to the value of the Java system property `java.library.path`.
 
-The simplest way to set this is normally through the shell variable `LD_LIBRARY_PATH`.
+Normally, the simplest way to set this is through the shell variable `LD_LIBRARY_PATH`.
 
 [{tabs}]
 ====
