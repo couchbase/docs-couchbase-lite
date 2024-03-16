@@ -1638,45 +1638,144 @@ Returns `NULL` if either or both expressions are `NULL`.+
 === Date and Time Functions
 
 .Date and Time Functions
-[tbl-func-agg,cols="1m,10", options="header"]
+[cols="5*", options="header"]
 |===
 
-|Function
-|Description
+|Function |Description |Arguments |Return Value |Further Information
 
-|STR_TO_MILLIS(expr)
-|Returns the number of milliseconds since the unix epoch of the given ISO 8601 date input string.
+|`STR_TO_MILLIS(date1)`
+|Coverts a date string to Epoch/UNIX milliseconds.
+a|
 
-|STR_TO_UTC(expr)
-|Returns the ISO 8601 UTC date string of the given ISO 8601 date input string.
+* `date1` - A valid date string.
+|Returns an integer containing the converted date string into Epoch/UNIX milliseconds.
+|
+|`STR_TO_UTC(date1)`
+|Converts a date string into the equivalent date in UTC.
+a|
 
-|STR_TO_TZ(expr)
-|Returns the current system timezone date in string format of the given ISO 8601 date input string.
+* `date1` - A valid date string
+|Returns a date string representing the date string converted to UTC.
+|The output date format follows the date format of the input date. 
+If `date1` is not a valid date format, `null` is returned.
+|`STR_TO_TZ(date1, tz)`
+|Converts a date string to it's equivalent in the specified timezone.
+a|
 
-|MILLIS_TO_STR(expr)
-|Returns a ISO 8601 date string in device local timezone of the given number of milliseconds since the unix epoch expression.
+* `date1` - A valid date string. 
+This is converted to UTC.
 
-|MILLIS_TO_UTC(expr)
-|Returns the UTC ISO 8601 date string of the given number of milliseconds since the unix epoch expression.
+* `tz` - An integer that represents minutes offset from UTC.
+For example, `UTC-5` would be represented as `-300`.
+|Returns a date string representing the date string converted to the specified timezone.
+|If `date1` is not a valid date format, `null` is returned.
+|`MILLIS_TO_STR(date1)`
+|Converts an Epoch/UNIX timestamp into the specified date string format.
+a|
 
-|MILLIS_TO_TZ(expr)
-|Returns the current system timezone date in string format of the given number of milliseconds since the unix epoch expression.
+* `date1` - An integer representing an Epoch/UNIX timestamp in millseconds.
+|Returns a date string representing the local date.
+|If `date1` is not an integer, `null` is returned.
+|`MILLIS_TO_UTC(date1)`
+|Converts an Epoch/UNIX timestamp into a local time date string.
+a|
 
-|DATE_DIFF_STR(expr)
-|Returns the elapsed time between two ISO 8601 date input strings as a date string.
+* `date1` - An integer representing an Epoch/UNIX timestamp in millseconds.
+|Returns a date string representing the date in UTC.
+|If `date1` is not an integer, `null` is returned.
+|`MILLIS_TO_TZ(date1,tz, [fmt])`
+|Converts an Epoch/UNIX timestamp into the specified time zone in the specified date string format.
+a|
 
-|DATE_DIFF_MILLIS(expr)
-|Returns the elapsed time between two unix timestamps in string format.
+* `date1` - An integer representing an Epoch/UNIX timestamp in milliseconds.
 
-|DATE_ADD_STR(expr)
-| Returns the sum of an ISO 8601 date string and a given integer value.
+* `tz` - An integer that represents minutes offset from UTC.
+For example, `UTC-5` would be represented as `-300`.
 
-|DATE_ADD_MILLIS(expr)
-|Returns the sum of a unix timestamp and a given integer value.
+* `fmt` - An optional string parameter representing a date format to output the result as.
+|Returns a date string representing the date in the specified timezone in the specified format.
+|If `fmt` is not specified, the output default to the combined full date and time.
+|`DATE_DIFF_STR(date1, date2, part)`
+|Finds the elapsed time between two date strings.
+This is measured from `date2` to `date1`.
+a|
+
+* `date1` - A valid date string. 
+This is converted to UTC.
+
+* `date2` - A valid date string. 
+This is converted to UTC.
+
+* `part` - A string representing the component of the date to increment.
+|Returns an integer representing the elapsed time (based on the specified `part`) between both dates.
+a|
+
+* If `date1` is greater than `date2` then the value returned will be positive, otherwise the returned value is negative.
+
+* If `date1` or `date2` are not valid string formats, `null` is returned.
+
+* If an invalid `part` is passed to the function, `null` is returned.
+|`DATE_DIFF_MILLIS(date1, date2, part)`
+|Finds the elapsed time between two Epoch/UNIX timestamps. This elapsed time is measured from `date2` to  `date1`. 
+a|
+
+* `date1` - An integer representing an Epoch/UNIX timestamp in milliseconds.
+
+
+* `date2` - An integer representing an Epoch/UNIX timestamp in milliseconds.
+
+* `part` - A string representing the component of the date to increment.
+|Returns an integer representing the elapsed time (based on the specified `part`) between both dates.
+a|
+
+* If `date1` is greater than `date2` then the value returned will be positive, otherwise the returned value is negative.
+
+* If `date1` or `date2` are not integers, `null` is returned.
+
+* If an invalid `part` is passed to the function, `null` is returned.
+|`DATE_ADD_STR(date1, n, part)`
+|Performs date arithmetic on a date string. This calculation is specified by the arguments `n` and `part`. For example a value of `3` for `n` and a value of `day` for `part` would add 3 days to the date specified by `date1`.
+a|
+
+* `date1` - A valid date string. 
+This is converted to UTC.
+
+
+* `n` - An integer or expression that evaluates to an integer.
+A positive value will increment the date component whereas a negative value will decrement the date component.
+
+* `part` - A string representing the component of the date to increment.
+|Returns an integer representing the calculation result as an Epoch/UNIX timestamp in milliseconds.
+a|
+
+* If `date1` is not a valid string format, `null is returned`.
+
+* If a non-integer is passed to the argument `n`, `null` is returned.
+
+* If an invalid `part` is passed to the function, `null` is returned.
+
+|`DATE_ADD_MILLIS(date1, n, part)`
+|Performs date arithmetic on a particular component of an Epoch/UNIX timestamp value. This calculation is specified by the arguments `n` and `part`. 
+For example a value of `3` for `n` and a value of `day` for `part` would add 3 days to the date specified by `date1`.
+a|
+
+* `date1` - An integer representing an Epoch/UNIX timestamp in milliseconds.
+
+
+* `n` - An integer or expression that evaluates to an integer.
+A positive value will increment the date component whereas a negative value will decrement the date component.
+
+* `part` - A string representing the component of the date to increment.
+|Returns an integer representing the calculation result as an Epoch/UNIX timestamp in milliseconds.
+a|
+
+* If `date1` is not an integer, `null` is returned.
+
+* If a non-integer is passed to the argument `n`, `null` is returned.
+
+* If an invalid `part` is passed to the function, `null` is returned.
 
 |===
-
-
 
 [#lbl-func-fts]
 === Full Text Search Functions
