@@ -1,5 +1,6 @@
 = Working with Vector Search
 :page-status: Beta
+:page-edition: Enterprise
 :page-aliases: 
 ifdef::show_edition[:page-edition: {release}]
 ifdef::prerelease[:page-status: {prerelease}]
@@ -7,19 +8,70 @@ ifdef::prerelease[:page-status: {prerelease}]
 :description: Use Vector Search with Full Text Search and Query.
 :keywords: edge AI api swift ios macos apple vector search generative
 
+== Create a Vector Index from an Embedding
 
+[source, kotlin]
 
+----
 
+fun createIndex() {
+   val config = VectorIndexConfiguration("vector", 300, 20)
+   config.metric = VectorIndexConfiguration.DistanceMetric.COSINE
+   config.minTrainingSize = 50
+   config.maxTrainingSize = 250
+   collection.createIndex("words_index", config)
+}
 
+fun search(word: String) : ResultSet? {
+   // Using a ML model, get vector, which is List<Float> for the word:
+   val wordVector = MLModel.getInstance().getVector(word)
+   if (wordVector == null) {
+     return null
+   }
 
+   val sql = "SELECT word FROM words WHERE vector_match(words_index, \$vector , 10)"
+   val query = db.createQuery(sql)
 
+   val params = Parameters()
+   params.setArray("vector", MutableArray(wordVector))
+   query.parameters = params
+   
+   return query.execute()
+}
 
+----
 
+== Create a Vector Index from a Predictive Model
 
+[source, kotlin]
 
+----
 
+class WordModel : PredictiveModel {
+  override fun predict(input: Dictionary): Dictionary? {
+    val word = input.getString("word_input")
+    if (word == null) { return null }
 
+    // Using a ML model, get vector, which is List<Float> for the word:
+    val vector = MLModel.getInstance().getVector(word)
+    if (vector == null) { return null }
 
+    val result = MutableDictionary()
+    result.setArray("vector_output", MutableArray(vector))
+    return result
+  }
+}
+
+fun registerWordModel() {
+  Database.prediction.registerModel("word_model", WordModel())
+}
+
+fun createIndex() {
+  val config = VectorIndexConfiguration("prediction('word_model', {'word_input': word}).vector_output", 300, 20)
+  collection.createIndex("words_index", config)
+}
+
+----
 
 == See Also
 
