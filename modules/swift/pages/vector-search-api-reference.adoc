@@ -8,6 +8,9 @@ ifdef::prerelease[:page-status: {prerelease}]
 :description: API reference for Vector Search in Couchbase Lite.
 :keywords: edge AI api swift ios macos apple vector search generative
 
+[abstract]
+{description}
+
 == Vector Index API
 
 You can use the Vector Index API's core functionality to efficiently perform similarity search at scale on Vector Indexes.
@@ -246,7 +249,7 @@ ORDER BY vector_distance(photos-index) DSC
 
 IMPORTANT: Similar to the Full Text Search `match()` function, `vector_match()` can only be called alone or at the top level `AND` expression.
 
-=== Generate Vectors with Prediction
+=== Generate Vectors Embeddings with Prediction Function
 
 You can use two methods to generate vectors in Couchbase Lite:
 
@@ -265,7 +268,7 @@ try collection.createIndex(withName: "photo-index", config: config)
 ----
 
 You can use less storage by using the `prediction()` function as the encoded vectors will only be stored in the index. 
-However, the index time will be longer as indexing is occurring at run time.
+However, the index time will be longer as vector embedding generation is occurring at run time.
 
 [IMPORTANT]
 --
