@@ -1,5 +1,6 @@
 = Working with Vector Search
 :page-status: Beta
+:page-edition: Enterprise
 :page-aliases: 
 ifdef::show_edition[:page-edition: {release}]
 ifdef::prerelease[:page-status: {prerelease}]
@@ -7,7 +8,79 @@ ifdef::prerelease[:page-status: {prerelease}]
 :description: Use Vector Search with Full Text Search and Query.
 :keywords: edge AI api swift ios macos apple vector search generative
 
+== Create a Vector Index from an Embedding
 
+[source, swift]
+
+----
+
+import CouchbaseLiteSwift
+
+func createIndex() throws {
+   var config = VectorIndexConfiguration(expression: "vector", dimensions: 300, controids: 20)
+   config.metric = .cosine
+   config.minTrainingSize = 50
+   config.maxTrainingSize = 200
+
+   try collection.createIndex(withName: "words_index", config: config)
+}
+
+
+func search(for word: String, limit: UInt) throws -> ResultSet {
+   guard let wordVector = model.vector(for: word) else { throws Errors.notFound }
+
+   let sql = "SELECT word FROM words WHERE vector_match(words_index, $vector, 10)"
+   
+   let query = try db.createQuery(sql)
+
+   let params = Parameters()
+   params.setValue(wordVector, forName: "vector")
+   query.parameters = params
+
+   return try query.execute()
+}
+
+
+----
+
+== Create a Vector Index from a Predictive Model
+
+[source, swift]
+
+----
+
+import CouchbaseLiteSwift
+
+class WordModel: PredictiveModel {
+   let model = NLEmbedding.wordEmbedding(for: .english)!
+
+   func predict(input: DictionaryObject) -> DictionaryObject? {
+     guard let word = input.string(forKey: "word") else { return nil }
+
+     guard let vector = model.vector(for: word) else { return nil }
+     
+     let result = MutableDictionaryObject()
+     result.setValue(vector, forKey: "vector")
+     return result
+}
+
+func registerWordModel() {
+    Database.prediction.registerModel(WordModel(), withName: "word_model")
+}
+
+
+func createIndex() throws {
+   var config = VectorIndexConfiguration(expression: "prediction(word_model, {\"word\": word}).vector", 
+                                         dimensions: 300, controids: 20)
+   config.metric = .cosine
+   config.minTrainingSize = 50
+   config.minTrainingSize = 200
+
+   try collection.createIndex(withName: “words_index”, config: config)
+}
+
+
+----
 
 
 
