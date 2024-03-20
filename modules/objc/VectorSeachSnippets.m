@@ -12,6 +12,12 @@ CBLDatabase* database;
 CBLCollection* collection;
 NLEmbedding* model;
 
+@interface VectorSearchSnippets : NSObject
+
+@end
+
+@implementation VectorSearchSnippets
+
 // MARK: Configuring a project to use Vector Search.
 
 /*/
@@ -20,12 +26,6 @@ NLEmbedding* model;
  
  Add both libraries to the *Frameworks, Libraries and Embedded Content* of your desired target
  */
-
-@interface VectorSearch : NSObject 
-
-@end
-
-@implementation VectorSearch
 
 - (void) createDefaultIndex {
     NSError* error;
@@ -49,9 +49,10 @@ NLEmbedding* model;
     config.maxTrainingSize = 300;
 }
 
-// MARK: Create Vector Index with Embedding
 - (CBLQueryResultSet*) vectorIndexEmbedding {
     NSError* error;
+    
+    // MARK: Create Vector Index with Embedding
     CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 20];
     [collection createIndexWithName: @"vector_index" config: config error: &error];
     
@@ -68,10 +69,10 @@ NLEmbedding* model;
     return [query execute: &error];
 }
 
-// MARK: Create Vector Index with Predictive Model
 - (void) vectorIndexPredictiveModel {
     NSError* error;
 
+    // MARK: Create Vector Index with Predictive Model
     model = [NLEmbedding wordEmbeddingForLanguage:@"english"];
     [[CBLDatabase prediction] registerModel: model withName:@"WordEmbedding"];
     
@@ -81,10 +82,10 @@ NLEmbedding* model;
     [collection createIndexWithName: @"vector_pred_index" config: config error: &error];
 }
 
-// MARK: Use vector_match
 - (CBLQueryResultSet*) useVectorMatch {
     NSError* error;
     
+    // MARK: Use vector_match
     CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
     
     [collection createIndexWithName: @"vector_index" config: config error: &error];
@@ -99,10 +100,10 @@ NLEmbedding* model;
     return [query execute: &error];
 }
 
-// MARK: Use vector_distance
 - (CBLQueryResultSet*) useVectorDistance {
     NSError* error;
     
+    // MARK: Use vector_distance
     CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
     
     [collection createIndexWithName: @"vector_index" config: config error: &error];
