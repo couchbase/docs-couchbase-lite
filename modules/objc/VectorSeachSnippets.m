@@ -18,7 +18,7 @@ NLEmbedding* model;
  Download Couchbase Lite iOS Obj-C and Couchbase Lite Vector Search libraries
  Extract the xcframeworks and copy them into the App Project Directory
  
- Add both libraries to the *Frameworks, Libraries and Embedded Content* to your desired target
+ Add both libraries to the *Frameworks, Libraries and Embedded Content* of your desired target
  */
 
 @interface VectorSearch : NSObject 
