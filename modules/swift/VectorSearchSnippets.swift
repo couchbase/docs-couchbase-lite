@@ -31,10 +31,10 @@ class VectorSearchSnippets {
         var config = VectorIndexConfiguration(expression: "string", dimensions: 300, centroids: 20)
         
         // Default values already set:
-        print(config.encoding) // .scalarQuantizer(type: .SQ8)
-        print(config.metric) // .euclidean
-        print(config.minTrainingSize) // 25 * 20
-        print(config.maxTrainingSize) // 256 * 20
+        print(config.encoding) // scalarQuantizer(type: .SQ8)
+        print(config.metric) // euclidean
+        print(config.minTrainingSize) // 25 * centroids(20)
+        print(config.maxTrainingSize) // 256 * centroids(20)
         
         // MARK: Set custom optional settings
         config.encoding = .none
