@@ -1,17 +1,32 @@
-name: ObjC
+name: iOS Snippets Build
 on:
-  workflow_dispatch: 
+  push:
+    paths:
+      - 'modules/objc/**'
+      - 'modules/swift/**'
 
 jobs:
-  build:
+  build_objc:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
       - name: "Build - ObjC"
         env:
-          SCHEME: ${{ "code-snippets" }}
+          SCHEME: ${{ 'code-snippets' }}
           platform: ${{ 'iOS Simulator' }}
         run: |
           device=`xcrun xctrace list devices 2>&1 | grep -oE 'iPhone.*?[^\(]+' | head -1 | awk '{$1=$1;print}'`
           xcodebuild build-for-testing -scheme "${SCHEME}" -project modules/objc/examples/code_snippets.xcodeproj  -destination "platform=$platform,name=$device"
+
+  build_swift:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: "Build - Swift"
+        env:
+          SCHEME: ${{ 'code-snippet' }}
+          platform: ${{ 'iOS Simulator' }}
+        run: |
+          device=`xcrun xctrace list devices 2>&1 | grep -oE 'iPhone.*?[^\(]+' | head -1 | awk '{$1=$1;print}'`
+          xcodebuild build-for-testing -scheme "${SCHEME}" -project modules/swift/examples/code_snippets.xcodeproj  -destination "platform=$platform,name=$device"
 
