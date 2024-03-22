@@ -2,7 +2,10 @@ apply plugin: 'java'
 apply plugin: 'war'
 apply plugin: 'org.gretty'
 
-ext { CBL_VERSION = '3.1.6-SNAPSHOT' }
+ext {
+    CBL_VERSION = '3.2.0-SNAPSHOT'
+    EXT_VERSION = '1.0.0-7'
+}
 
 def USE_LOCAL_MAVEN = project.hasProperty("useLocalMaven")
 
@@ -23,12 +26,12 @@ java {
 }
 
 repositories {
-    if (USE_LOCAL_MAVEN) { mavenLocal() }
+    if (USE_LOCAL_MAVEN) {
+        mavenLocal() 
+        maven { url "https://proget.sc.couchbase.com/maven2/internalmaven/" }
+    }
     else {
-        maven {
-            url "https://proget.sc.couchbase.com/maven2/internalmaven/"
-            allowInsecureProtocol = true
-        }
+        maven { url "https://mobile.maven.couchbase.com/maven2/dev/" }
     }
 
     mavenCentral()
@@ -41,6 +44,8 @@ dependencies {
     compileOnly "javax.servlet:javax.servlet-api:4.0.1"
 
     implementation "com.couchbase.lite:couchbase-lite-java-ee-macos:${CBL_VERSION}"
+    // Add this line if using Vector Search
+    implementation "com.couchbase.lite:couchbase-lite-java-vector-search:${EXT_VERSION}"
 }
 
 gretty {
