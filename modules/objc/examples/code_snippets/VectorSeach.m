@@ -1,8 +1,10 @@
 //
-//  VectorSeachSnippets.m
+//  VectorSeach.m
+//  CouchbaseLite
 //
-//  Created by Vlad Velicu on 20/03/2024.
+//  Copyright © 2024 couchbase. All rights reserved.
 //
+
 
 #import <Foundation/Foundation.h>
 #import <CouchbaseLite/CouchbaseLite.h>
@@ -118,7 +120,11 @@ NSArray* vectorArray;
     model = [NLEmbedding wordEmbeddingForLanguage: @"english"];
    
     NSString* word = [input stringForKey: @"word"];
-   
+    if (!word) {
+        NSLog(@"No word found !!!");
+        return nil;
+    }
+    
     NSArray* vector = [model vectorForString: @"word"];
     CBLMutableDictionary* output = [[CBLMutableDictionary alloc] init];
     [output setValue: vector forKey: @"vector"];

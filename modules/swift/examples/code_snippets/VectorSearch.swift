@@ -1,7 +1,8 @@
 //
-//  VectorSearchSnippets.swift
+//  VectorSearch.swift
+//  CouchbaseLite
 //
-//  Created by Vlad Velicu on 20/03/2024.
+//  Copyright © 2024 couchbase. All rights reserved.
 //
 
 import Foundation
@@ -102,9 +103,11 @@ class VectorSearchSnippets {
         func predict(input: DictionaryObject) -> DictionaryObject? {
             model = NLEmbedding.wordEmbedding(for: .english)!
             
-            let word = input.string(forKey: "word")
+            guard let word = input.string(forKey: "word") else {
+                fatalError("No word found !!!")
+            }
             
-            let vector = model.vector(for: "word")
+            let vector = model.vector(for: word)
             let output = MutableDictionaryObject()
             output.setValue(vector, forKey: "vector")
             
@@ -125,6 +128,7 @@ class VectorSearchSnippets {
     }
 
 }
+
 
 
 

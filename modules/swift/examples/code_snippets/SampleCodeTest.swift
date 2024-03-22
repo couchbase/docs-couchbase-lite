@@ -138,7 +138,7 @@ class SampleCodeTest {
     // MARK: Document
 
     func dontTestInitializer() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::initializer[]
@@ -151,7 +151,7 @@ class SampleCodeTest {
     }
 
     func dontTestMutability() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         
@@ -189,7 +189,7 @@ class SampleCodeTest {
     }
 
     func dontTestBatchOperations() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         
@@ -212,7 +212,7 @@ class SampleCodeTest {
     }
 
     func dontTestChangeListener() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         
@@ -228,7 +228,7 @@ class SampleCodeTest {
     }
 
     func dontTestDocumentExpiration() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         
@@ -294,7 +294,7 @@ class SampleCodeTest {
     }
 
     func dontTestIndexing() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // N1QL and Querybuilder versions
@@ -311,7 +311,7 @@ class SampleCodeTest {
     }
 
     func dontTestSelectMeta() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-select-meta[]
@@ -332,7 +332,7 @@ class SampleCodeTest {
 
 
     func dontTestSelectProps() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-select-props[]
@@ -357,7 +357,7 @@ class SampleCodeTest {
     }
 
     func dontTestSelectAll() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         var query: Query
@@ -392,7 +392,7 @@ class SampleCodeTest {
     }
 
     func dontTestWhere() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-where[]
@@ -415,7 +415,7 @@ class SampleCodeTest {
     }
 
     func dontTestQueryDeletedDocuments() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-deleted-documents[]
@@ -429,7 +429,7 @@ class SampleCodeTest {
     }
 
     func dontTestCollectionOperatorContains() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-collection-operator-contains[]
@@ -454,7 +454,7 @@ class SampleCodeTest {
     }
 
     func dontTestCollectionOperatorIn() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-collection-operator-in[]
@@ -474,7 +474,7 @@ class SampleCodeTest {
 
 
     func dontTestLikeOperator() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-like-operator[]
@@ -500,7 +500,7 @@ class SampleCodeTest {
     }
 
     func dontTestWildCardMatch() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-like-operator-wildcard-match[]
@@ -526,7 +526,7 @@ class SampleCodeTest {
     }
 
     func dontTestWildCardCharacterMatch() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-like-operator-wildcard-character-match[]
@@ -551,7 +551,7 @@ class SampleCodeTest {
     }
 
     func dontTestRegexMatch() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-regex-operator[]
@@ -613,7 +613,7 @@ class SampleCodeTest {
     }
 
     func dontTestGroupBy() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-groupby[]
@@ -644,7 +644,7 @@ class SampleCodeTest {
     }
 
     func dontTestOrderBy() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-orderby[]
@@ -662,7 +662,7 @@ class SampleCodeTest {
     }
 
     func dontTestExplainAll() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-explain-all[]
@@ -678,7 +678,7 @@ class SampleCodeTest {
     }
 
     func dontTestExplainLike() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-explain-like[]
@@ -694,7 +694,7 @@ class SampleCodeTest {
     }
 
     func dontTestExplainNoOp() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-explain-nopfx[]
@@ -710,7 +710,7 @@ class SampleCodeTest {
     }
 
     func dontTestExplainFunction() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-explain-function[]
@@ -725,7 +725,7 @@ class SampleCodeTest {
     }
 
     func dontTestExplainNoFunction() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-explain-nofunction[]
@@ -742,7 +742,7 @@ class SampleCodeTest {
 
 
     func dontTestCreateFullTextIndex() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::fts-build-content[]
@@ -768,7 +768,7 @@ class SampleCodeTest {
     }
 
     func dontTestCreateFullTextIndex_Querybuilder() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::fts-index_Querybuilder[]
@@ -797,7 +797,7 @@ class SampleCodeTest {
 
 
     func dontTestFullTextSearch_Querybuilder() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::fts-query_Querybuilder[]
@@ -816,7 +816,7 @@ class SampleCodeTest {
     // MARK: toJSON
 
     func dontTestToJsonArrayObject() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // demonstrate use of JSON string
@@ -833,7 +833,7 @@ class SampleCodeTest {
     }
 
     func dontTestToJsonDictionary() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // demonstrate use of JSON string
@@ -850,7 +850,7 @@ class SampleCodeTest {
     }
 
     func dontTestToJsonDocument() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // demonstrate use of JSON string
@@ -863,7 +863,7 @@ class SampleCodeTest {
     }
 
     func dontTestQueryResultToJSON() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         let query = QueryBuilder.select(SelectResult.all()).from(DataSource.collection(collection))
@@ -879,7 +879,7 @@ class SampleCodeTest {
     }
 
     func dontTestBlobToJSON() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::tojson-blob[]
@@ -924,7 +924,7 @@ class SampleCodeTest {
     }
 
     func dontTestReplicationNetworkInterface() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::sgw-act-rep-network-interface[]
@@ -941,7 +941,7 @@ class SampleCodeTest {
     }
 
     func dontTestReplicationBasicAuthentication() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::basic-authentication[]
@@ -957,7 +957,7 @@ class SampleCodeTest {
     }
 
     func dontTestReplicationSessionAuthentication() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::session-authentication[]
@@ -984,7 +984,7 @@ class SampleCodeTest {
 
     //  BEGIN PendingDocuments IB -- 11/Feb/21 --
     func dontTestReplicationPendingDocs() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::replication-pendingdocuments[]
@@ -1052,7 +1052,7 @@ class SampleCodeTest {
     }
 
     func dontTestReplicationCustomHeader() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         let url = URL(string: "ws://localhost:4984/mydatabase")!
@@ -1066,7 +1066,7 @@ class SampleCodeTest {
     }
 
     func dontTestReplicationChannels() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         let url = URL(string: "ws://localhost:4984/mydatabase")!
@@ -1105,7 +1105,7 @@ class SampleCodeTest {
     }
 
     func dontTestReplicationPushFilter() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::replication-push-filter[]
@@ -1128,7 +1128,7 @@ class SampleCodeTest {
     }
 
     func dontTestReplicationPullFilter() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::replication-pull-filter[]
@@ -1153,7 +1153,7 @@ class SampleCodeTest {
     //  Added 2/Feb/21 - Ian Bridge
     //  Changed for 3.0.0 - Ian Bridge 3/Mar/21
     func testCustomRetryConfig() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::replication-retry-config[]
@@ -1181,7 +1181,7 @@ class SampleCodeTest {
 
 #if COUCHBASE_ENTERPRISE
     func dontTestDatabaseReplica() throws {
-        let database2 = try self.openDB(name: "db2")
+        let database2 = try? self.openDB(name: "db2")
 
         /* EE feature: code below might throw a compilation error
          if it's compiled against CBL Swift Community. */
@@ -1202,7 +1202,7 @@ class SampleCodeTest {
 #endif
 
     func dontTestCertificatePinning() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::certificate-pinning[]
@@ -1298,7 +1298,7 @@ class SampleCodeTest {
     }
 
     func dontTestPredictiveModel() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::register-model[]
@@ -1320,7 +1320,7 @@ class SampleCodeTest {
     }
 
     func dontTestPredictiveIndex() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::predictive-query-predictive-index[]
@@ -1332,7 +1332,7 @@ class SampleCodeTest {
     }
 
     func dontTestPredictiveQuery() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::predictive-query[]
@@ -1374,7 +1374,7 @@ class SampleCodeTest {
     }
 
     func dontTestReplicatorConflictResolver() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::replication-conflict-resolver[]
@@ -1392,7 +1392,7 @@ class SampleCodeTest {
     }
 
     func dontTestSaveWithConflictHandler() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::update-document-with-conflict-handler[]
@@ -1412,7 +1412,7 @@ class SampleCodeTest {
     }
 
     func dontTestInitListener() throws {
-        guard let otherCollection = try self.database.defaultCollection() else {
+        guard let otherCollection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::init-urllistener[]
@@ -1499,7 +1499,7 @@ class SampleCodeTest {
     }
 
     func dontTestQueryAccessAll() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         let query = QueryBuilder.select(SelectResult.all()).from(DataSource.collection(collection))
@@ -1530,7 +1530,7 @@ class SampleCodeTest {
 
 
     func dontTestQueryAccessJSON() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         let query = QueryBuilder.select(SelectResult.all()).from(DataSource.collection(collection))
@@ -1595,7 +1595,7 @@ class SampleCodeTest {
     }
 
     func dontTestQueryAccessProps () throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         let query = QueryBuilder.select(SelectResult.all()).from(DataSource.collection(collection))
@@ -1667,7 +1667,7 @@ class SampleCodeTest {
     }
 
     func query_pagination () throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         //tag::query-syntax-pagination[]
@@ -1714,7 +1714,7 @@ class SampleCodeTest {
     }
 
     func dontTestProcessResults(results: ResultSet) throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::query-access-n1ql[]
@@ -1748,7 +1748,7 @@ class SampleCodeTest {
     // MARK: -- Listener
 
     func dontTestListenerSimple() throws {
-        guard let otherCollection = try self.otherDB.defaultCollection() else {
+        guard let otherCollection = try? self.otherDB.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::listener-simple[]
@@ -1765,7 +1765,7 @@ class SampleCodeTest {
     }
 
     func dontTestListenerInitialize() throws {
-        guard let otherCollection = try self.otherDB.defaultCollection() else {
+        guard let otherCollection = try? self.otherDB.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::listener-initialize[]
@@ -1825,7 +1825,7 @@ class SampleCodeTest {
     }
 
     func dontTestReplicatorSimple() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::replicator-simple[]
@@ -1852,7 +1852,7 @@ class SampleCodeTest {
     // MARK: Append
 
     func dontTestGetURLList() throws {
-        guard let otherCollection = try self.otherDB.defaultCollection() else {
+        guard let otherCollection = try? self.otherDB.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::listener-get-url-list[]
@@ -1869,7 +1869,7 @@ class SampleCodeTest {
 
 
     func dontTestListenerConfigDisableTLSUpdate() throws {
-        guard let otherCollection = try self.otherDB.defaultCollection() else {
+        guard let otherCollection = try? self.otherDB.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         var config = URLEndpointListenerConfiguration(collections: [otherCollection])
@@ -1884,7 +1884,7 @@ class SampleCodeTest {
     }
 
     func dontTestListenerConfigTLSIdentity() throws {
-        guard let otherCollection = try self.otherDB.defaultCollection() else {
+        guard let otherCollection = try? self.otherDB.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         var config = URLEndpointListenerConfiguration(collections: [otherCollection])
@@ -1924,7 +1924,7 @@ class SampleCodeTest {
     }
 
     func dontTestListenerConfigClientRootCA() throws {
-        guard let otherCollection = try self.otherDB.defaultCollection() else {
+        guard let otherCollection = try? self.otherDB.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         var config = URLEndpointListenerConfiguration(collections: [otherCollection])
@@ -1945,7 +1945,7 @@ class SampleCodeTest {
     }
 
     func dontTestClientAuthLambda() throws {
-        guard let otherCollection = try self.otherDB.defaultCollection() else {
+        guard let otherCollection = try? self.otherDB.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         var config = URLEndpointListenerConfiguration(collections: [otherCollection])
@@ -1964,7 +1964,7 @@ class SampleCodeTest {
     }
 
     func dontTestListenerConfigUpdate() throws {
-        guard let otherCollection = try self.otherDB.defaultCollection() else {
+        guard let otherCollection = try? self.otherDB.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         var config = URLEndpointListenerConfiguration(collections: [otherCollection])
@@ -2003,7 +2003,7 @@ class SampleCodeTest {
     }
 
     func dontTestURLEndpointListenerConstructor() throws {
-        guard let otherCollection = try self.otherDB.defaultCollection() else {
+        guard let otherCollection = try? self.otherDB.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         let enableTLS = Bool.random()
@@ -2046,7 +2046,7 @@ class SampleCodeTest {
     // MARK: --
 
     func fMyActPeer() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         // tag::p2p-act-rep-func[]
@@ -2139,7 +2139,7 @@ class SampleCodeTest {
     }
 
     func dontTestAdditionalListenerConfigs() throws {
-        guard let collection = try self.database.defaultCollection() else {
+        guard let collection = try? self.database.defaultCollection() else {
             fatalError("For sample code snippet, collection should be present!")
         }
         let target = DatabaseEndpoint(database: otherDB)
@@ -2189,7 +2189,7 @@ class SampleCodeTest {
         var osStatus: OSStatus
         let target = DatabaseEndpoint(database: self.otherDB)
         var config = ReplicatorConfiguration(target: target)
-        let defaultCollection = try self.database.defaultCollection()!
+        let defaultCollection = try self.database.defaultCollection()
         config.addCollection(defaultCollection)
 
         //var thisData : CFData?
@@ -2329,7 +2329,7 @@ class SampleCodeTest {
         let targetURL = URL(string: "wss://10.1.1.12:8092/otherDB")!
         let targetEndpoint = URLEndpoint(url: targetURL)
         var config = ReplicatorConfiguration(target: targetEndpoint)
-        let defaultCollection = try self.database.defaultCollection()!
+        let defaultCollection = try self.database.defaultCollection()
         config.addCollection(defaultCollection)
         // tag::p2p-act-rep-config-cacert-pinned[]
 
@@ -2473,7 +2473,7 @@ class SampleCodeTest {
     }
     
     func initialize() throws {
-        guard let collection = try self.database.defaultCollection() else { return }
+        guard let collection = try? self.database.defaultCollection() else { return }
         
         // tag::sgw-act-rep-initialize[]
         let targetURL = URL(string: "wss://10.1.1.12:8092/travel-sample")!
@@ -2897,7 +2897,7 @@ public class Supporting_Datatypes
     func datatype_dictionary() throws {
 
         let database = try Database(name: "mydb")
-        guard let collection = try database.defaultCollection() else {
+        guard let collection = try? database.defaultCollection() else {
             return
         }
 
@@ -2926,7 +2926,7 @@ public class Supporting_Datatypes
     func datatype_mutable_dictionary() throws {
 
         let database = try!Database(name: "mydb")
-        guard let collection = try database.defaultCollection() else {
+        guard let collection = try? database.defaultCollection() else {
             return
         }
 
@@ -2947,7 +2947,7 @@ public class Supporting_Datatypes
 
     func datatype_array() throws {
         let database = try Database(name: "mydb")
-        guard let collection = try database.defaultCollection() else {
+        guard let collection = try? database.defaultCollection() else {
             return
         }
         var phone = "--"
@@ -2978,7 +2978,7 @@ public class Supporting_Datatypes
 
     func datatype_mutable_array() throws {
         let database = try!Database(name: "mydb")
-        guard let collection = try database.defaultCollection() else {
+        guard let collection = try? database.defaultCollection() else {
             return
         }
 
