@@ -3,7 +3,10 @@ plugins {
     id 'application'
 }
 
-ext { CBL_VERSION='3.1.6-SNAPSHOT' }
+ext {
+    CBL_VERSION='3.2.0-SNAPSHOT'
+    EXT_VERSION='1.0.0-7'
+}
 
 def USE_LOCAL_MAVEN = project.hasProperty("useLocalMaven")
 
@@ -18,21 +21,24 @@ java {
 }
 
 repositories {
-    if (USE_LOCAL_MAVEN) { mavenLocal() }
-    else {
-        maven {
-            url "https://proget.sc.couchbase.com/maven2/internalmaven/"
-            allowInsecureProtocol = true
-        }
+    if (USE_LOCAL_MAVEN) {
+        mavenLocal() 
+        maven { url "https://proget.sc.couchbase.com/maven2/internalmaven/" }
     }
-  google()
-  mavenCentral()
+    else {
+        maven { url "https://mobile.maven.couchbase.com/maven2/dev/" }
+    }
+
+    google()
+    mavenCentral()
 }
  
 dependencies {
     compileOnly 'androidx.annotation:annotation:1.5.0'
 
     implementation "com.couchbase.lite:couchbase-lite-java-ee-macos:${CBL_VERSION}"
+    // If using Vector Search
+    implementation "com.couchbase.lite:couchbase-lite-java-vector-search:${EXT_VERSION}"
 
     testImplementation 'junit:junit:4.13.2'
 }

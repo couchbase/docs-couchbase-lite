@@ -20,5 +20,7 @@ import java.io.InputStream;
 
 public final class Utils {
     public static InputStream getAsset(String assetName) { return null; }
+
+    public static boolean isEmpty(String txt) { return (txt == null) || txt.isEmpty(); }
 }
 
