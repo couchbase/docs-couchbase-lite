@@ -186,7 +186,7 @@ func vectorIndexEmbedding() throws -> ResultSet? {
 ----
 
 This method generates vectors to be indexed for each document at the index time by using the `prediction()` function.
-The key difference to note is that the `config` object uses the output of the `prediction()` function to generate the word embedding, so when you create an index the 
+The key difference to note is that the `config` object uses the output of the `prediction()` function to generate the word embedding.
 
 
 NOTE: You can use less storage by using the `prediction()` function as the encoded vectors will only be stored in the index. 
@@ -195,6 +195,27 @@ However, the index time will be longer as vector embedding generation is occurri
 == Vector SQL++ Functions
 
 Couchbase Lite currently supports two SQL++ functions, `vector_match()` and `vector_distance()`.
+
+=== `vector_match(vectorIndexIdentifier, targetVectorExpr, [limit = 3])`
+
+[cols = "3*"]
+|===
+|Parameter |Is Required |Description
+
+|vectorIndexIdentifier
+|Required
+|The name of the vector index to perform the vector search on.
+|targetVectorExpr
+|Required
+|The target vector expression that returns a vector in the form of an array of numbers.
+|limit
+|Optional
+|The limit number of the returned matched results.
+The maximum number allowed is 10000. An error will be returned when creating a query with a limit greater than 10000.
+
+|===
+
+NOTE: The default value for the `limit` parameter is 3.
 
 === Use `vector_match()`
 
@@ -218,6 +239,25 @@ Couchbase Lite currently supports two SQL++ functions, `vector_match()` and `vec
     }
 ----
 
+This function performs vector search against a specific vector index identifier for the specified vector expression.
+If the specified index does not exist, an error will occur on creation of the query.
+The matched vectors will be returned up to the specified limit number, if the limit is not specified then the default value will be used. 
+The returned vectors are sorted by their distance values in ascending order by default.
+
+IMPORTANT: Similar to the xref:swift:fts.adoc[Full Text Search] `match()` function, `vector_match()` can only be called alone or at the top level `AND` expression.
+
+=== `vector_distance(vectorIndexIdentifier)`
+
+[cols = "3*"]
+|===
+|Parameter |Is Required |Description
+
+|vectorIndexIdentifier
+|Required
+|The name of the vector index.
+
+|===
+
 === Use `vector_distance()`
 
 [source, swift]
@@ -239,8 +279,9 @@ Couchbase Lite currently supports two SQL++ functions, `vector_match()` and `vec
         return try query.execute()
     }
 
-}
 ----
+
+This function returns the distance between the target vector specified in the `vector_match()` function and the matched vector in the specified vector index based on the distance metric set in the index configuration .
 
 == See Also
 
