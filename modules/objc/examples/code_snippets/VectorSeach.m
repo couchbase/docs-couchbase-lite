@@ -32,7 +32,6 @@ NSArray* vectorArray;
  */
 
 - (void) createDefaultIndex {
-    
     // MARK: Create a default Vector Index Configuration
     CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
     
@@ -44,7 +43,6 @@ NSArray* vectorArray;
 }
 
 - (CBLQueryResultSet*) vectorIndexEmbedding {
-    
     // MARK: Create Vector Index with Embedding
     CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
     
@@ -64,7 +62,6 @@ NSArray* vectorArray;
 }
 
 - (CBLQueryResultSet*) useVectorMatch {
-    
     // MARK: Use vector_match
     CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
     
@@ -82,7 +79,6 @@ NSArray* vectorArray;
 }
 
 - (CBLQueryResultSet*) useVectorDistance {
-    
     // MARK: Use vector_distance
     CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
     

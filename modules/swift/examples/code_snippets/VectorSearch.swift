@@ -34,7 +34,6 @@ class VectorSearchSnippets {
         config.metric = .cosine
         config.minTrainingSize = 50
         config.maxTrainingSize = 300
-        
     }
 
     func vectorIndexEmbedding() throws -> ResultSet? {
@@ -93,7 +92,6 @@ class VectorSearchSnippets {
     // MARK: Create Vector Index with Predictive Model
 
     class WordModel: PredictiveModel {
-        
         func predict(input: DictionaryObject) -> DictionaryObject? {
             model = NLEmbedding.wordEmbedding(for: .english)!
             
@@ -122,9 +120,3 @@ class VectorSearchSnippets {
     }
 
 }
-
-
-
-
-
-
