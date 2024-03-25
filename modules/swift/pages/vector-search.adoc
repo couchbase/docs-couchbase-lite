@@ -46,55 +46,59 @@ You can use Vector Indexes to efficiently retrieve vectors, similar to a target 
 Before use, a Vector Index needs to be trained to compute the centroids and parameters for encoding the vectors. 
 Training is configured to commence automatically on the first Vector Search query when there are enough vectors to be trained based on the `minimum-training-size` configuration.
 
-=== Vector Index Configuration
+== About Vector Embeddings
 
-.Vector Index Configuration Options
-[cols ="4*"]
-|===
-|Configuration Name |Is Required |Default Configuration |Further Information
+Vector embeddings represent a Machine Learning (ML) model as an array of numbers to capture semantic or contextual relationships between data points.
+This representation encodes how a ML model understands the input or inputs provided to it, based on how the model was initially trained and the internal structure of the model.
+When a model considers the features of a given input as similar, the distance between the vector embeddings will be short.
+Vector embeddings are stored within embedded vector indexes.
 
-|Expression
-|Required
-|No default
-| A SQL++ expression indicating where to get the vectors. 
-A document property for embedded vectors
-`prediction()` to call a registered Predictive model.
-|Number of Dimensions
-|Required
-|No default
-|2-2048
-|Number of Centroids
-|Required
-|No default
-|1-64000. The general guideline is an approximate square root of the number of documents
-|Distance Metric
-|Optional
-|Euclidean Distance
-|You can also configure Cosine Distance as your Distance Metric
-|Encoding
-|Optional
-| Scalar Quantizer(SQ) or SQ-8 bits
-a|There are three possible configurations:
+== About Vector Encoding
 
-* None
-No compression, No data loss
-* Scalar Quantizer (SQ) or SQ-8 bits (Default)
-Reduces the number of bits per dimension 
-* Product Quantizer (PQ)
-Reduces the number of dimensions and bits per dimension
+Vector encoding reduces the size of Vectors index by algorithmic compression.
+This compression reduces disk space required and I/O time during indexing and queries, but greater compression can result in inaccurate results in distance calculations.
 
-|Training Size
-|Optional
-a|There are defaults for both the minimum and maximum training size
+Vector Search for Couchbase Lite supports the following encoding algorithms:
 
-* The minimum training size is set to 25x the number of Centroids
+* None - This will return the highest quality results but at high performance and disk space costs
 
-* The maximum training size is set to 256x the number of Centroids
-|
+* Scalar Quantizer - This reduces the number of bits used for each number in a vector. 
+The number of bits per component can be set to 4, 6, or 8 bits.
+The default setting in Couchbase Lite is 8 bits Scalar Quantizer or SQ-8.
 
-|===
+* Product Quantizer - This reduces the number of dimensions and bits per dimension. 
+It splits the vectors into multiple subspaces and performing scalar quantization on each space independently before compression.
+This can produce higher quality results than Scalar Quantization at the cost of greater complexity.
 
-CAUTION: Altering the default training sizes could be detrimental to the accuracy of returned results produced by the model and total computation time.
+NOTE: Quantizers are algorithmic processes that map input values from a larger set to output values in a smaller set, common quantization processes can include operations such as rounding and truncation.
+
+== About Centroids
+
+Centroids are vectors that function as the center point of a vector cluster within the training data set.
+Each vector is then associated to the vector it is closest to by https://en.wikipedia.org/wiki/K-means_clustering[k-means clustering.]
+Each Centroid is contained within a bucket along with its associated vectors.
+
+== About Dimensions
+
+Vector dimensions describes the amount of numbers in a given vector embedding, commonly known as its' width.
+The greater the amount of dimensions, the greater accuracy of results, this also results in greater compute and memory costs and a increase in the latency of the search. 
+
+== About Distance Metrics
+
+Distance metrics are a form of index used for Vector Search to define how close an input query vector is to other vectors within a vector index.
+
+Couchbase Lite supports two forms of distance metrics:
+
+* Squared Euclidean Distance - This measures the straight-line distance between two points in Euclidean space which is defined by n dimensions, such as x,y,z.
+This metric focuses on the spatial separation or distance between two vectors.
+Both the magnitude and direction of the vectors matter.
+The smaller the distance value, the more similar the vectors are.
+This is the default distance metric.
+
+* Cosine Distance - This measures the cosine of the angle between two vectors in vector space.
+This metric focuses on the alignment of two vectors, the similarity of direction.
+Only the direction of the vectors matter.
+The smaller the distance value, the more similar the vectors are.
 
 == See Also
 

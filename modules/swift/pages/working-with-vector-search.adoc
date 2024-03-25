@@ -8,34 +8,15 @@ ifdef::prerelease[:page-status: {prerelease}]
 :description: Use Vector Search with Full Text Search and Query.
 :keywords: edge AI api swift ios macos apple vector search generative
 
-This page is TODO!
+== Use Vector Search
 
-//
-//  VectorSearchSnippets.swift
-//
-//  Created by Vlad Velicu on 20/03/2024.
-//
+To configure a project to use vector search, follow the xref:swift:gs-install.adoc[installation instructions] to add the Vector Search extension.
 
-import Foundation
-import CouchbaseLiteSwift
-import NaturalLanguage
-
-class VectorSearchSnippets {
-    var database: Database!
-    var collection: Collection!
-    var model: NLEmbedding!
-
-    // MARK: Configuring a project to use Vector Search.
-
-    /*/
-     Download Couchbase Lite iOS Swift and Couchbase Lite Vector Search libraries
-     Extract the xcframeworks and copy them into the App Project Directory
-     
-     Add both libraries to the *Frameworks, Libraries and Embedded Content* of your desired target
-     */
-
+NOTE: You must install Couchbase Lite to use the Vector Search extension.
 
 == Create a Vector Index
+
+This method shows how you can create a vector index using the Couchbase Lite Vector Search extension.
 
 [source, swift]
 ----
@@ -44,8 +25,7 @@ func vectorIndex() throws {
     database = try Database(name: "vectorDB")
     collection = try database.defaultCollection()
         
-     // MARK: Create a default Vector Index Configuration
-        
+    // Create a default Vector Index Configuration    
     var config = VectorIndexConfiguration(expression: "string", dimensions: 300, centroids: 20)
         
      // Default values already set:
@@ -54,7 +34,7 @@ func vectorIndex() throws {
      print(config.minTrainingSize) // 25 * centroids(20)
      print(config.maxTrainingSize) // 256 * centroids(20)
         
-        // MARK: Set custom optional settings
+     // Set custom optional settings
      config.encoding = .none
      config.metric = .cosine
      config.minTrainingSize = 50
@@ -63,13 +43,103 @@ func vectorIndex() throws {
 }
 ----
 
-== Create a Vector Index with Embeddings
+First, initialise the `config` variable with the `VectorIndexConfiguration()` method with the following parameters:
+
+* The data stored within this index will be of type `string`.
+
+* The width or `dimensions` of the vector index is set to `300`.
+
+* The amount of `centroids` is set to `20`.
+This means that there will be 20 buckets with a single centroid each that gathers together similar vectors.
+
+There are also some default values that we did not set with the `VectorIndexConfiguration()` method, these are:
+
+* The encoding type - 8 bit Scalar Quantization.
+
+* The distance metric - Squared Euclidean.
+
+* The minimum and maximum number of vectors for training the index.
+
+NOTE: The number of vectors, the width or dimensions of the vectors and the training size can incur high CPU and memory costs as the size of each variable increases.
+This is because the training vectors have to be resident on the machine.
+
+You can also alter some optional config settings such as `encoding`.
+
+
+=== Vector Index Configuration
+
+The table below displays the different configurations you can modify within your `VectorIndexConfiguration()` function.
+For more information on specific configurations, see xref:swift:vector-search.adoc[Vector Search.]
+
+IMPORTANT: The beta release currently only supports the format of vectors as an array of numbers.
+
+.Vector Index Configuration Options
+[cols ="4*"]
+|===
+|Configuration Name |Is Required |Default Configuration |Further Information
+
+|Expression
+|Required
+|No default
+| A SQL++ expression indicating where to get the vectors. 
+A document property for embedded vectors
+`prediction()` to call a registered Predictive model.
+|Number of Dimensions
+|Required
+|No default
+|2-2048
+|Number of Centroids
+|Required
+|No default
+|1-64000. The general guideline is an approximate square root of the number of documents
+|Distance Metric
+|Optional
+|Euclidean Distance
+|You can also configure Cosine Distance as your Distance Metric
+|Encoding
+|Optional
+| Scalar Quantizer(SQ) or SQ-8 bits
+a|There are three possible configurations:
+
+* None
+No compression, No data loss
+* Scalar Quantizer (SQ) or SQ-8 bits (Default)
+Reduces the number of bits per dimension 
+* Product Quantizer (PQ)
+Reduces the number of dimensions and bits per dimension
+
+|Training Size
+|Optional
+a|There are defaults for both the minimum and maximum training size for training the vectors
+
+* The minimum training size is set to 25x the number of Centroids
+
+* The maximum training size is set to 256x the number of Centroids
+|
+
+|===
+
+CAUTION: Altering the default training sizes could be detrimental to the accuracy of returned results produced by the model and total computation time.
+
+== Generating Vectors
+
+You can use two methods to generate vectors in Couchbase Lite:
+
+. You can call a Machine Learning(ML) model, and embed the generated vectors inside the documents.
+
+. You can use the `prediction()` function to generate vectors to be indexed for each document at the indexing time.
+
+Below are example configurations of the previously mentioned methods.
+
+=== Create a Vector Index with Embeddings
+
+This method shows you how to create a Vector Index with embeddings.
 
 [source, swift]
 ----
 
 func vectorIndexEmbedding() throws -> ResultSet? {
-    // MARK: Create Vector Index with Embedding
+    // Create Vector Index with Embedding
     let config = VectorIndexConfiguration(expression: "word", dimensions: 300, centroids: 20)
     try collection.createIndex(withName: "vector_index", config: config)
         
@@ -90,13 +160,23 @@ func vectorIndexEmbedding() throws -> ResultSet? {
 }
 ----
 
-== Create a Vector Index from a Predictive Model
+. First, create the standard configuration and set it up for a `word` embedding.
+
+. Next, create a vector index, `vector_index`, on a collection and pass it our configuration
+
+. From there, initialise an English word embedding for the `model` variable and generate a `wordVector` object from our embedding.
+
+. Next, you create a SQL query for the term `vector` returning a limit of 20 results.
+
+. Finally, you set the parameters of the query to the `params` object, which contains the previously generated `wordVector` and the given name `vector`, then the query is executed.
+
+=== Create Vector Index Embeddings from a Predictive Model
 
 [source, swift]
 ----
         
     func vectorIndexPredictiveModel() throws {
-        // MARK: Create Vector Index with Predictive Model
+        // Create Vector Index with Predictive Model
         let model = NLEmbedding.wordEmbedding(for: .english)!
         Database.prediction.registerModel(model as! PredictiveModel, withName: "WordEmbedding")
         let expression = "prediction(WordEmbedding,{\"word\": word}).vector"
@@ -105,13 +185,24 @@ func vectorIndexEmbedding() throws -> ResultSet? {
     }
 ----
 
-== Use `vector_match()`
+This method generates vectors to be indexed for each document at the index time by using the `prediction()` function.
+The key difference to note is that the `config` object uses the output of the `prediction()` function to generate the word embedding, so when you create an index the 
+
+
+NOTE: You can use less storage by using the `prediction()` function as the encoded vectors will only be stored in the index. 
+However, the index time will be longer as vector embedding generation is occurring at run time.
+
+== Vector SQL++ Functions
+
+Couchbase Lite currently supports two SQL++ functions, `vector_match()` and `vector_distance()`.
+
+=== Use `vector_match()`
 
 [source, swift]
 ----
         
     func useVectorMatch() throws -> ResultSet? {
-        // MARK: Use vector_match
+        // Use vector_match
         let config = VectorIndexConfiguration(expression: "vector", dimensions: 300, centroids: 8)
         
         try collection.createIndex(withName: "vector_index", config: config)
@@ -127,13 +218,13 @@ func vectorIndexEmbedding() throws -> ResultSet? {
     }
 ----
 
-== Use `vector_distance()`
+=== Use `vector_distance()`
 
 [source, swift]
 ----
 
     func useVectorDistance() throws -> ResultSet? {
-        // MARK: Use vector_distance
+        // Use vector_distance
         var config = VectorIndexConfiguration(expression: "vector", dimensions: 300, centroids: 8)
         config.metric = .cosine
         try collection.createIndex(withName: "vector_index", config: config)
@@ -151,84 +242,9 @@ func vectorIndexEmbedding() throws -> ResultSet? {
 }
 ----
 
-The examples below were taken from the presentation for reference 
-
-== Create a Vector Index from an Embedding
-
-[source, swift]
-
-----
-
-import CouchbaseLiteSwift
-
-func createIndex() throws {
-   var config = VectorIndexConfiguration(expression: "vector", dimensions: 300, controids: 20)
-   config.metric = .cosine
-   config.minTrainingSize = 50
-   config.maxTrainingSize = 200
-
-   try collection.createIndex(withName: "words_index", config: config)
-}
-
-
-func search(for word: String, limit: UInt) throws -> ResultSet {
-   guard let wordVector = model.vector(for: word) else { throws Errors.notFound }
-
-   let sql = "SELECT word FROM words WHERE vector_match(words_index, $vector, 10)"
-   
-   let query = try db.createQuery(sql)
-
-   let params = Parameters()
-   params.setValue(wordVector, forName: "vector")
-   query.parameters = params
-
-   return try query.execute()
-}
-
-
-----
-
-== Create a Vector Index from a Predictive Model
-
-[source, swift]
-
-----
-
-import CouchbaseLiteSwift
-
-class WordModel: PredictiveModel {
-   let model = NLEmbedding.wordEmbedding(for: .english)!
-
-   func predict(input: DictionaryObject) -> DictionaryObject? {
-     guard let word = input.string(forKey: "word") else { return nil }
-
-     guard let vector = model.vector(for: word) else { return nil }
-     
-     let result = MutableDictionaryObject()
-     result.setValue(vector, forKey: "vector")
-     return result
-}
-
-func registerWordModel() {
-    Database.prediction.registerModel(WordModel(), withName: "word_model")
-}
-
-
-func createIndex() throws {
-   var config = VectorIndexConfiguration(expression: "prediction(word_model, {\"word\": word}).vector", 
-                                         dimensions: 300, controids: 20)
-   config.metric = .cosine
-   config.minTrainingSize = 50
-   config.minTrainingSize = 200
-
-   try collection.createIndex(withName: “words_index”, config: config)
-}
-
-
-----
-
-
 == See Also
+
+* xref:swift:gs-install.adoc[Installation Instructions]
 
 * xref:swift:vector-search.adoc[Vector Search]
 
