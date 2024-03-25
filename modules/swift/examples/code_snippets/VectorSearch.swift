@@ -29,12 +29,6 @@ class VectorSearchSnippets {
         // MARK: Create a default Vector Index Configuration
         var config = VectorIndexConfiguration(expression: "string", dimensions: 300, centroids: 8)
         
-        // Default values already set:
-        print(config.encoding) // scalarQuantizer(type: .SQ8)
-        print(config.metric) // euclidean
-        print(config.minTrainingSize) // 25 * centroids(8)
-        print(config.maxTrainingSize) // 256 * centroids(8)
-        
         // MARK: Set custom optional settings
         config.encoding = .none
         config.metric = .cosine

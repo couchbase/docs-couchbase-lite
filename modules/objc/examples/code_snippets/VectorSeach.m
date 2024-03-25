@@ -36,12 +36,6 @@ NSArray* vectorArray;
     // MARK: Create a default Vector Index Configuration
     CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
     
-    // Default values already set:
-    NSLog(@"%@", config.encoding); // CBLScalarQuantizer: SQ8
-    NSLog(@"%u", config.metric); // 0 = euclidean
-    NSLog(@"%u", config.minTrainingSize); // 25 * centroids(8)
-    NSLog(@"%u", config.maxTrainingSize); // 256 * centroids(8)
-    
     // MARK: Set custom settings
     config.encoding = [CBLVectorEncoding none];
     config.metric = kCBLDistanceMetricCosine;
