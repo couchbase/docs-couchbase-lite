@@ -16,13 +16,16 @@ android {
         minSdk 24
         targetSdk 33
         versionCode 3
-        versionName "3.1"
+        versionName "3.2"
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            // if using Vector Search add this line
+            packagingOptions.jniLibs.useLegacyPackaging = true
         }
     }
 
@@ -35,13 +38,14 @@ android {
 }
 
 repositories {
-    if (USE_LOCAL_MAVEN) { mavenLocal() }
-    else {
-        maven {
-            url "https://proget.sc.couchbase.com/maven2/internalmaven/"
-            allowInsecureProtocol = true
-        }
+    if (USE_LOCAL_MAVEN) {
+        mavenLocal()
+        maven { url "https://proget.sc.couchbase.com/maven2/internalmaven/" }
     }
+    else {
+        maven { url "https://mobile.maven.couchbase.com/maven2/dev/" }
+    }
+
     google()
     mavenCentral()
 }
@@ -55,11 +59,13 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.9.0'
 
     // Simple view
-    implementation 'androidx.appcompat:appcompat:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.android.material:material:1.8.0'
 
     // Couchbase
     implementation "com.couchbase.lite:couchbase-lite-android-ee-ktx:${CBL_VERSION}"
+    // Couchbase Vector Search extension library
+    implementation "com.couchbase.lite:couchbase-lite-android-vector-search-arm64:${EXT_VERSION}"
 }
 
