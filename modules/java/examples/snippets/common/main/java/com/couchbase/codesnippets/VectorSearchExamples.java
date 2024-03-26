@@ -40,7 +40,7 @@ class VectorSearchExamples {
         // create the configuration for a vector index named "vector"
         // with 300 dimensions and 20 centroids
         VectorIndexConfiguration config = new VectorIndexConfiguration("vector", 300L, 20L);
-        // end:::vs-create-default-config[]
+        // end::vs-create-default-config[]
     }
 
     public void createCustomVSConfig() {
@@ -53,7 +53,7 @@ class VectorSearchExamples {
             .setMetric(VectorIndexConfiguration.DistanceMetric.COSINE)
             .setMinTrainingSize(100L)
             .setMaxTrainingSize(200L);
-        // end:::vs-create-custom-config[]
+        // end::vs-create-custom-config[]
     }
 
     public void createVectorIndex(Database db) throws CouchbaseLiteException {
@@ -61,7 +61,7 @@ class VectorSearchExamples {
         // create a vector index named "words_index"
         // in the collection "_default.words"
         db.getCollection("words").createIndex("word_index", new VectorIndexConfiguration("vector", 300L, 20L));
-        // end:::vs-create-index[]
+        // end::vs-create-index[]
     }
 
     public void createPredictiveIndex(Database db) throws CouchbaseLiteException {
@@ -102,7 +102,7 @@ class VectorSearchExamples {
         collection.createIndex(
             "words_pred_index",
             new VectorIndexConfiguration("prediction(WordEmbedding, {'word': word}).vector", 300L, 8L));
-        // end:::vs-create-predictive- index[]
+        // end::vs-create-predictive-index[]
     }
 
     public void useVectorMatch(Database db, List<Object> hugeListOfFloats) throws CouchbaseLiteException {
@@ -121,7 +121,7 @@ class VectorSearchExamples {
         try (ResultSet rs = query.execute()) {
             // process results
         }
-        // end:::vs-use-vector-match[]
+        // end::vs-use-vector-match[]
     }
 
 
@@ -141,6 +141,6 @@ class VectorSearchExamples {
         try (ResultSet rs = query.execute()) {
             // process results
         }
-        // end:::vs-use-vector-distance[]
+        // end::vs-use-vector-distance[]
     }
 }

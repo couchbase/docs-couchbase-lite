@@ -27,27 +27,11 @@ Java::
 [source, java]
 ----
 
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-default-config,vs-create-custom-config]
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-default-config]
 
 ----
---
-
-
-Kotlin::
-+
---
-[source, kotlin]
-----
-
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-default-config;vs-create-custom-config]
-
-----
---
-=====
 
 First, initialise the `config` variable with the `VectorIndexConfiguration()` method with the following parameters:
-
-* The data stored within this index will be of type `string`.
 
 * The width or `dimensions` of the vector index is set to `300`.
 
@@ -62,10 +46,55 @@ There are also some default values that we did not set with the `VectorIndexConf
 
 * The minimum and maximum number of vectors for training the index.
 
-NOTE: The number of vectors, the width or dimensions of the vectors and the training size can incur high CPU and memory costs as the size of each variable increases.
-This is because the training vectors have to be resident on the machine.
+You can also alter some optional config settings such as `encoding`.
+
+[source, java]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-custom-config]
+
+----
+--
+
+
+Kotlin::
++
+--
+[source, kotlin]
+----
+
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-default-config]
+
+----
+
+First, initialise the `config` variable with the `VectorIndexConfiguration()` method with the following parameters:
+
+* The width or `dimensions` of the vector index is set to `300`.
+
+* The amount of `centroids` is set to `20`.
+This means that there will be 20 buckets with a single centroid each that gathers together similar vectors.
+
+There are also some default values that we did not set with the `VectorIndexConfiguration()` method, these are:
+
+* The encoding type - 8 bit Scalar Quantization.
+
+* The distance metric - Squared Euclidean.
+
+* The minimum and maximum number of vectors for training the index.
 
 You can also alter some optional config settings such as `encoding`.
+
+[source, kotlin]
+----
+
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-custom-config]
+
+----
+--
+=====
+
+NOTE: The number of vectors, the width or dimensions of the vectors and the training size can incur high CPU and memory costs as the size of each variable increases.
+This is because the training vectors have to be resident on the machine.
 
 === Vector Index Configuration
 
@@ -136,48 +165,65 @@ Below are example configurations of the previously mentioned methods.
 
 This method shows you how to create a Vector Index with embeddings.
 
-[{tabs}]
+[tabs]
 =====
 
 Java::
 +
 --
+[source, java]
+----
 
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-index]
+
+----
+
+The snippet demonstrates the creation of the vector index, `word_index`, in the collection `_default.words`, demonstrating how you can create a vector index with a `word` embedding for use in queries related to written language.
 --
+
 
 Kotlin::
++
 --
+[source, kotlin]
+----
 
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-index]
+
+----
+
+The snippet demonstrates the creation of the vector index, `word_index`, in the collection `_default.words`, demonstrating how you can create a vector index with a `word` embedding for use in queries related to written language.
 --
 =====
-
-. First, create the standard configuration and set it up for a `word` embedding.
-
-. Next, create a vector index, `vector_index`, on a collection and pass it our configuration.
-
-. From there, initialise an English word embedding for the `model` variable and generate a `wordVector` object from our embedding.
-
-. Next, you create a SQL query for the term `vector` returning a limit of 20 results.
-
-. Finally, you set the parameters of the query to the `params` object, which contains the previously generated `wordVector` and the given name `vector`, then the query is executed.
 
 === Create Vector Index Embeddings from a Predictive Model
 
 This method generates vectors to be indexed for each document at the index time by using the `prediction()` function.
-The key difference to note is that the `config` object uses the output of the `prediction()` function to generate the word embedding.
 
-[{tabs}]
+[tabs]
 =====
 
 Java::
 +
 --
+[source, java]
+----
 
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-predictive-index]
+
+----
 --
+
 
 Kotlin::
++
 --
+[source, kotlin]
+----
 
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-predictive-index]
+
+----
 --
 =====
 
@@ -211,18 +257,30 @@ NOTE: The default value for the `limit` parameter is 3.
 
 === Use `vector_match()`
 
-[{tabs}]
+[tabs]
 =====
 
 Java::
 +
 --
+[source, java]
+----
 
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-use-vector-match]
+
+----
 --
+
 
 Kotlin::
++
 --
+[source, kotlin]
+----
 
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-use-vector-match]
+
+----
 --
 =====
 
@@ -247,18 +305,30 @@ IMPORTANT: Similar to the xref:android:fts.adoc[Full Text Search] `match()` func
 
 === Use `vector_distance()`
 
-[{tabs}]
+[tabs]
 =====
 
 Java::
 +
 --
+[source, java]
+----
 
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-use-vector-distance]
+
+----
 --
+
 
 Kotlin::
++
 --
+[source, kotlin]
+----
 
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-use-vector-distance]
+
+----
 --
 =====
 
