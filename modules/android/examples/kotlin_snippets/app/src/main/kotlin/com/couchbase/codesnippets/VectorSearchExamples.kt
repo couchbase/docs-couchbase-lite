@@ -30,15 +30,15 @@ import com.couchbase.lite.VectorIndexConfiguration
 class VectorSearchExamples {
     fun createDefaultVSConfig() {
         // tag::vs-create-default-config[]
-        // create the configuration for a vector indes named "vector"
+        // create the configuration for a vector index named "vector"
         // with 300 dimensions and 20 centroids
         val config = VectorIndexConfiguration("vector", 300L, 20L)
-        // end:::vs-create-default-config[]
+        // end::vs-create-default-config[]
     }
 
     fun createCustomVSConfig() {
         // tag::vs-create-custom-config[]
-        // create the configuration for a vector indes named "vector"
+        // create the configuration for a vector index named "vector"
         // with 300 dimensions, 20 centroids, max training size 200, min training size 100
         // no vector encoding and using COSINE distance measurement
         val config = VectorIndexConfiguration("vector", 300L, 20L)
@@ -46,7 +46,7 @@ class VectorSearchExamples {
             .setMetric(VectorIndexConfiguration.DistanceMetric.COSINE)
             .setMinTrainingSize(100L)
             .setMaxTrainingSize(200L)
-        // end:::vs-create-custom-config[]
+        // end::vs-create-custom-config[]
     }
 
     @Throws(CouchbaseLiteException::class)
@@ -55,7 +55,7 @@ class VectorSearchExamples {
         // create a vector index named "words_index"
         // in the collection "_default.words"
         db.getCollection("words")!!.createIndex("word_index", VectorIndexConfiguration("vector", 300L, 20L))
-        // end:::vs-create-index[]
+        // end::vs-create-index[]
     }
 
     @Throws(CouchbaseLiteException::class)
@@ -98,7 +98,7 @@ class VectorSearchExamples {
             "words_pred_index",
             VectorIndexConfiguration("prediction(WordEmbedding, {'word': word}).vector", 300L, 8L)
         )
-        // end:::vs-create-predictive- index[]
+        // end::vs-create-predictive- index[]
     }
 
     @Throws(CouchbaseLiteException::class)
@@ -117,7 +117,7 @@ class VectorSearchExamples {
         query.execute().use { rs ->
             // process results
         }
-        // end:::vs-use-vector-match[]
+        // end::vs-use-vector-match[]
     }
 
 
@@ -137,7 +137,7 @@ class VectorSearchExamples {
         query.execute().use { rs ->
             // process results
         }
-        // end:::vs-use-vector-distance[]
+        // end::vs-use-vector-distance[]
     }
 
 }

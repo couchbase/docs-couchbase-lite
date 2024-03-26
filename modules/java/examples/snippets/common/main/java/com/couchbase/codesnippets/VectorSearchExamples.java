@@ -37,7 +37,7 @@ import com.couchbase.lite.VectorIndexConfiguration;
 class VectorSearchExamples {
     public void createDefaultVSConfig() {
         // tag::vs-create-default-config[]
-        // create the configuration for a vector indes named "vector"
+        // create the configuration for a vector index named "vector"
         // with 300 dimensions and 20 centroids
         VectorIndexConfiguration config = new VectorIndexConfiguration("vector", 300L, 20L);
         // end:::vs-create-default-config[]
@@ -45,7 +45,7 @@ class VectorSearchExamples {
 
     public void createCustomVSConfig() {
         // tag::vs-create-custom-config[]
-        // create the configuration for a vector indes named "vector"
+        // create the configuration for a vector index named "vector"
         // with 300 dimensions, 20 centroids, max training size 200, min training size 100
         // no vector encoding and using COSINE distance measurement
         VectorIndexConfiguration config = new VectorIndexConfiguration("vector", 300L, 20L)
