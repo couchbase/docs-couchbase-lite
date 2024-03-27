@@ -34,6 +34,9 @@ Couchbase Lite is distributed as an xcframework, to support this:
 
 [#lbl-install-tabs]
 === Install Couchbase Lite
+
+IMPORTANT: There is no Carthage support for the 3.2.0 Beta-1 of Couchbase Lite.
+
 [{tabs}]
 ====
 Direct Download::
@@ -54,33 +57,6 @@ Direct Download::
 ...
 ----
 --
-
-Carthage::
-+
---
-NOTE:  The minimum required version of Carthage is *0.38*
-
-
-. https://github.com/Carthage/Carthage#installing-carthage[Install Carthage]
-. In your *Cartfile*, add the following.
-+
-.Couchbase Lite Community Edition
-[source,ruby,subs=attributes+]
-----
-binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Community.json" ~> {version-full}
-----
-+
-.Couchbase Lite Enterprise Edition
-[source,ruby,subs=attributes+]
-----
-binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Enterprise.json" ~> {version-full}
-----
-
-. Run `carthage update --platform ios`.
-. Drag *CouchbaseLite.xcframework* from *Carthage/Build/* to the Xcode navigator.
-. Click on Project > General > Embedded Binary and add *CouchbaseLite.xcframework* to this section.
---
-
 CocoaPods::
 +
 --
@@ -94,7 +70,7 @@ NOTE: The minimum required version of Cocoapods is *1.15*
 ----
 target '<your target name>' do
   use_frameworks!
-  pod 'CouchbaseLite', '{version-full}'
+  pod 'CouchbaseLite', '{version-full}-beta.1'
 end
 ----
 +
@@ -103,7 +79,7 @@ end
 ----
 target '<your target name>' do
   use_frameworks!
-  pod 'CouchbaseLite-Enterprise', '{version-full}'
+  pod 'CouchbaseLite-Enterprise', '{version-full}-beta.1'
 end
 ----
 
@@ -120,7 +96,7 @@ pod install
 
 [IMPORTANT]
 --
-
+Vector Search is only available for 64-bit architectures.
 You must have Couchbase Lite installed to use the Vector Search extension.
 Vector Search is an Enterprise only feature.
 There is no Carthage support for the beta release of Vector Search.
