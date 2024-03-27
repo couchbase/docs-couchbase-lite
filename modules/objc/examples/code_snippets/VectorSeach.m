@@ -10,17 +10,52 @@
 #import <CouchbaseLite/CouchbaseLite.h>
 #import <NaturalLanguage/NLEmbedding.h>
 
-CBLDatabase* database;
-CBLCollection* collection;
-NLEmbedding* model;
-// placeholder
-NSArray* vectorArray;
+// Placeholder for the vector not found error
+#define VECTOR_NOT_FOUND_ERROR [NSError errorWithDomain: @"VectorSearch" code: 100 userInfo: nil]
+
+@interface WordModel : NSObject <CBLPredictiveModel>
+
+@end
+
+@implementation WordModel {
+    NLEmbedding* mlmodel;
+}
+
+- (instancetype) init {
+    self = [super init];
+    if (self) {
+        mlmodel = [NLEmbedding wordEmbeddingForLanguage: @"english"];
+    }
+    return self;
+}
+
+- (CBLDictionary*) predict: (CBLDictionary*)input {
+    // Get word input from the input dictionary
+    NSString* word = [input stringForKey: @"word"];
+    NSAssert(word, @"Word not found");
+    
+    // Use ML model to get a vector (an array of numbers) for the input word.
+    NSArray* vector = [mlmodel vectorForString: @"word"];
+    
+    // Create an output dictionary by setting the vector result to
+    // the dictionary key named "vector".
+    CBLMutableDictionary* output = [[CBLMutableDictionary alloc] init];
+    [output setValue: vector forKey: @"vector"];
+    
+    return output;
+}
+
+@end
 
 @interface VectorSearchSnippets : NSObject
 
 @end
 
-@implementation VectorSearchSnippets
+@implementation VectorSearchSnippets {
+    CBLDatabase* database;
+    CBLCollection* collection;
+    NLEmbedding* mlmodel;
+}
 
 // MARK: Configuring a project to use Vector Search.
 
@@ -31,108 +66,84 @@ NSArray* vectorArray;
  Add both libraries to the *Frameworks, Libraries and Embedded Content* of your desired target
  */
 
-- (void) createDefaultIndex {
-    // MARK: Create a default Vector Index Configuration
+- (void) createVectorIndex {
+    // Create a default Vector Index Configuration
     CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
     
-    // MARK: Set custom settings
-    config.encoding = [CBLVectorEncoding none];
+    // Set custom settings
+    config.encoding = [CBLVectorEncoding scalarQuantizerWithType: kCBLSQ4];
     config.metric = kCBLDistanceMetricCosine;
     config.minTrainingSize = 50;
     config.maxTrainingSize = 300;
 }
 
-- (CBLQueryResultSet*) vectorIndexEmbedding {
-    // MARK: Create Vector Index with Embedding
-    CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
-    
+- (void) createVectorIndexWithEmbedding {
+    // Create a vector index configuration from a document property named "vector" which
+    // contains the vector embedding.
     NSError* error;
+    CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
     [collection createIndexWithName: @"vector_index" config: config error: &error];
-    
-    NSArray<NSNumber*>* vectorArray = [model vectorForString: @"word"];
-    
-    NSString* sql = @"select meta().id, word from _default.words where vector_match(vector_index, $vector, 20)";
-    CBLQuery* query = [database createQuery: sql error: &error];
-    
-    CBLQueryParameters* parameters = [[CBLQueryParameters alloc] init];
-    [parameters setValue: vectorArray forName: @"vector"];
-    [query setParameters: parameters];
-    
-    return [query execute: &error];
 }
 
-- (CBLQueryResultSet*) useVectorMatch {
-    // MARK: Use vector_match
-    CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
+- (void) createVectorIndexWithPredictiveModel {
+    // Register the predictive model named "WordEmbedding".
+    [[CBLDatabase prediction] registerModel: [[WordModel alloc] init] withName: @"WordEmbedding"];
     
+    // Create a vector index configuration with an expression using the prediction function
+    // to get the vectors from the registered predictive model.
+    NSString* expression = @"prediction(WordEmbedding, {\"word\": word}).vector";
+    CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: expression dimensions: 300 centroids: 8];
+    
+    // Create vector index from the configuration
     NSError* error;
-    [collection createIndexWithName: @"vector_index" config: config error: &error];
-    
-    NSString* sql = @"select meta().id, word from _default.words where vector_match(vector_index, $vector, 20)";
-    CBLQuery* query = [database createQuery: sql error: &error];
-    
-    CBLQueryParameters* parameters = [[CBLQueryParameters alloc] init];
-    [parameters setValue: vectorArray forName: @"vector"];
-    [query setParameters: parameters];
-    
-    return [query execute: &error];
+    [collection createIndexWithName: @"vector_pred_index" config: config error: &error];
 }
 
-- (CBLQueryResultSet*) useVectorDistance {
-    // MARK: Use vector_distance
-    CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
+- (CBLQueryResultSet*) queryUsingVectorMatchForWord: (NSString*)word error: (NSError**)error {
+    // Create a query to search similar words by using the vector_match()
+    // function to search word vectors in the vector index named "vector_index".
+    NSString* sql = @"SELECT meta().id, word "
+                     "FROM _default.words "
+                     "WHERE vector_match(vector_index, $vector, 20)";
+    CBLQuery* query = [database createQuery: sql error: error];
     
-    NSError* error;
-    [collection createIndexWithName: @"vector_index" config: config error: &error];
-    
-    NSString* sql = @"select meta().id, word, vector_distance(vector_index) from _default.words where vector_match(vector_index, $vector, 20)";
-    CBLQuery* q = [database createQuery: sql error: &error];
-    
-    CBLQueryParameters* parameters = [[CBLQueryParameters alloc] init];
-    [parameters setValue: vectorArray forName: @"vector"];
-    [q setParameters: parameters];
-    
-    return [q execute: &error];
-}
-
-@end
-
-
-// MARK: Create Vector Index with Predictive Model
-
-@interface WordModel : NSObject <CBLPredictiveModel>
-@end
-
-@implementation WordModel
-
-
-- (CBLDictionary*) predict: (CBLDictionary*)input {
-    model = [NLEmbedding wordEmbeddingForLanguage: @"english"];
-   
-    NSString* word = [input stringForKey: @"word"];
-    if (!word) {
-        NSLog(@"No word found !!!");
+    // Use ML model to get a vector (an array of numbers) for the input word.
+    NSArray<NSNumber*>* vector = [mlmodel vectorForString: word];
+    if (!vector) {
+        if (error) *error = VECTOR_NOT_FOUND_ERROR;
         return nil;
     }
     
-    NSArray* vector = [model vectorForString: @"word"];
-    CBLMutableDictionary* output = [[CBLMutableDictionary alloc] init];
-    [output setValue: vector forKey: @"vector"];
+    // Set the vector array to the parameter "$vector".
+    CBLQueryParameters* parameters = [[CBLQueryParameters alloc] init];
+    [parameters setValue: vector forName: @"vector"];
+    [query setParameters: parameters];
     
-    return output;
+    // Execute the query.
+    return [query execute: error];
 }
 
-- (void) createVectorIndex {
-    WordModel* model = [[WordModel alloc] init];
-    [[CBLDatabase prediction] registerModel: model withName: @"WordEmbedding"];
+- (CBLQueryResultSet*) queryUsingVectorDistanceForWord: (NSString*)word error: (NSError**)error {
+    // Create a query to get vector distances by using the vector_distance() function.
+    NSString* sql = @"SELECT meta().id, word, vector_distance(vector_index) "
+                     "FROM _default.words "
+                     "WHERE vector_match(vector_index, $vector, 20)";
+    CBLQuery* query = [database createQuery: sql error: error];
     
-    NSString* expression = @"prediction(WordEmbedding,{\"word\": word}).vector";
-    CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: expression dimensions: 300 centroids: 8];
+    // Use ML model to get a vector (an array of numbers) for the input word.
+    NSArray<NSNumber*>* vector = [mlmodel vectorForString: word];
+    if (!vector) {
+        if (error) *error = VECTOR_NOT_FOUND_ERROR;
+        return nil;
+    }
     
-    NSError* error;
-    [collection createIndexWithName: @"vector_pred_index" config: config error: &error];
+    // Set the vector array to the parameter "$vector".
+    CBLQueryParameters* parameters = [[CBLQueryParameters alloc] init];
+    [parameters setValue: vector forName: @"vector"];
+    [query setParameters: parameters];
     
-    [[CBLDatabase prediction] unregisterModelWithName: @"WordEmbedding"];
+    // Execute the query.
+    return [query execute: error];
 }
 
 @end
