@@ -1,0 +1,319 @@
+= Working with Vector Search
+:page-status: Beta
+:page-edition: Enterprise
+:page-aliases: 
+ifdef::show_edition[:page-edition: {release}]
+ifdef::prerelease[:page-status: {prerelease}]
+:page-role:
+:description: Use Vector Search with Full Text Search and Query.
+:keywords: edge AI api swift ios macos apple vector search generative
+
+[abstract]
+{description}
+
+== Use Vector Search
+
+To configure a project to use vector search, follow the xref:objc:gs-install.adoc[installation instructions] to add the Vector Search extension.
+
+NOTE: You must install Couchbase Lite to use the Vector Search extension.
+
+== Create a Vector Index
+
+This method shows how you can create a vector index using the Couchbase Lite Vector Search extension.
+
+[source, objective-c]
+----
+
+- (void) createDefaultIndex {
+    
+    // Create a default Vector Index Configuration
+    CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
+
+    //Set custom settings
+    config.encoding = [CBLVectorEncoding none];
+    config.metric = kCBLDistanceMetricCosine;
+    config.minTrainingSize = 50;
+    config.maxTrainingSize = 300;
+}
+----
+
+First, initialise the `config` variable with the `VectorIndexConfiguration()` method with the following parameters:
+
+* The data stored within this index will be of type `string`.
+
+* The width or `dimensions` of the vector index is set to `300`.
+
+* The amount of `centroids` is set to `20`.
+This means that there will be 20 buckets with a single centroid each that gathers together similar vectors.
+
+There are also some default values that we did not set with the `VectorIndexConfiguration()` method, these are:
+
+* The encoding type - 8 bit Scalar Quantization.
+
+* The distance metric - Squared Euclidean.
+
+* The minimum and maximum number of vectors for training the index.
+
+NOTE: The number of vectors, the width or dimensions of the vectors and the training size can incur high CPU and memory costs as the size of each variable increases.
+This is because the training vectors have to be resident on the machine.
+
+You can also alter some optional config settings such as `encoding`.
+
+=== Vector Index Configuration
+
+The table below displays the different configurations you can modify within your `VectorIndexConfiguration()` function.
+For more information on specific configurations, see xref:objc:vector-search.adoc[Vector Search.]
+
+IMPORTANT: The beta release currently only supports the format of vectors as an array of numbers.
+
+.Vector Index Configuration Options
+[cols ="4*"]
+|===
+|Configuration Name |Is Required |Default Configuration |Further Information
+
+|Expression
+|Required
+|No default
+| A SQL++ expression indicating where to get the vectors. 
+A document property for embedded vectors
+`prediction()` to call a registered Predictive model.
+|Number of Dimensions
+|Required
+|No default
+|2-2048
+|Number of Centroids
+|Required
+|No default
+|1-64000. The general guideline is an approximate square root of the number of documents
+|Distance Metric
+|Optional
+|Euclidean Distance
+|You can also configure Cosine Distance as your Distance Metric
+|Encoding
+|Optional
+| Scalar Quantizer(SQ) or SQ-8 bits
+a|There are three possible configurations:
+
+* None
+No compression, No data loss
+* Scalar Quantizer (SQ) or SQ-8 bits (Default)
+Reduces the number of bits per dimension 
+* Product Quantizer (PQ)
+Reduces the number of dimensions and bits per dimension
+
+|Training Size
+|Optional
+a|There are defaults for both the minimum and maximum training size for training the vectors
+
+* The minimum training size is set to 25x the number of Centroids
+
+* The maximum training size is set to 256x the number of Centroids
+|
+
+|===
+
+CAUTION: Altering the default training sizes could be detrimental to the accuracy of returned results produced by the model and total computation time.
+
+== Generating Vectors
+
+You can use two methods to generate vectors in Couchbase Lite:
+
+. You can call a Machine Learning(ML) model, and embed the generated vectors inside the documents.
+
+. You can use the `prediction()` function to generate vectors to be indexed for each document at the indexing time.
+
+Below are example configurations of the previously mentioned methods.
+
+=== Create a Vector Index with Embeddings
+
+This method shows you how to create a Vector Index with embeddings.
+
+[source, objective-c]
+----
+
+- (CBLQueryResultSet*) vectorIndexEmbedding {
+    
+    // Create Vector Index with Embedding
+    CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
+
+    NSError* error;
+    [collection createIndexWithName: @"vector_index" config: config error: &error];
+
+    NSArray<NSNumber*>* vectorArray = [model vectorForString: @"word"];
+
+    NSString* sql = @"select meta().id, word from _default.words where vector_match(vector_index, $vector, 20)";
+    CBLQuery* query = [database createQuery: sql error: &error];
+
+    CBLQueryParameters* parameters = [[CBLQueryParameters alloc] init];
+    [parameters setValue: vectorArray forName: @"vector"];
+    [query setParameters: parameters];
+
+    return [query execute: &error];
+}
+
+----
+
+. First, create the standard configuration.
+
+. Next, create a vector index, `vector_index`, on a collection and pass it our configuration.
+
+. From there, initialise an English word embedding for the `model` variable and generate a `wordVector` object from our embedding.
+
+. Next, you create a SQL query for the term `vector` returning a limit of 20 results.
+
+. Finally, you set the parameters of the query to the `parameters` object, which contains the previously generated `vectorArray` and the given name `vector`, then the query is executed.
+
+=== Create Vector Index Embeddings from a Predictive Model
+
+This method generates vectors to be indexed for each document at the index time by using the `prediction()` function.
+The key difference to note is that the `config` object uses the output of the `prediction()` function to generate the word embedding.
+
+[source, objective-c]
+----
+// Create Vector Index with Predictive Model
+
+@interface WordModel : NSObject <CBLPredictiveModel>
+@end
+
+@implementation WordModel
+
+
+- (CBLDictionary*) predict: (CBLDictionary*)input {
+    model = [NLEmbedding wordEmbeddingForLanguage: @"english"];
+
+    NSString* word = [input stringForKey: @"word"];
+    if (!word) {
+        NSLog(@"No word found !!!");
+        return nil;
+    }
+
+    NSArray* vector = [model vectorForString: @"word"];
+    CBLMutableDictionary* output = [[CBLMutableDictionary alloc] init];
+    [output setValue: vector forKey: @"vector"];
+
+    return output;
+}
+
+- (void) createVectorIndex {
+    WordModel* model = [[WordModel alloc] init];
+    [[CBLDatabase prediction] registerModel: model withName: @"WordEmbedding"];
+
+    NSString* expression = @"prediction(WordEmbedding,{\"word\": word}).vector";
+    CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: expression dimensions: 300 centroids: 8];
+
+    NSError* error;
+    [collection createIndexWithName: @"vector_pred_index" config: config error: &error];
+
+    [[CBLDatabase prediction] unregisterModelWithName: @"WordEmbedding"];
+}
+
+@end
+
+----
+
+NOTE: You can use less storage by using the `prediction()` function as the encoded vectors will only be stored in the index. 
+However, the index time will be longer as vector embedding generation is occurring at run time.
+
+== Vector SQL++ Functions
+
+Couchbase Lite currently supports two SQL++ functions, `vector_match()` and `vector_distance()`.
+
+=== `vector_match(vectorIndexIdentifier, targetVectorExpr, [limit = 3])`
+
+[cols = "3*"]
+|===
+|Parameter |Is Required |Description
+
+|vectorIndexIdentifier
+|Required
+|The name of the vector index to perform the vector search on.
+|targetVectorExpr
+|Required
+|The target vector expression that returns a vector in the form of an array of numbers.
+|limit
+|Optional
+|The limit number of the returned matched results.
+The maximum number allowed is 10000. An error will be returned when creating a query with a limit greater than 10000.
+
+|===
+
+NOTE: The default value for the `limit` parameter is 3.
+
+=== Use `vector_match()`
+
+[source, objective-c]
+----
+
+- (CBLQueryResultSet*) useVectorMatch {
+    
+    // Use vector_match
+    CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
+
+    NSError* error;
+    [collection createIndexWithName: @"vector_index" config: config error: &error];
+
+    NSString* sql = @"select meta().id, word from _default.words where vector_match(vector_index, $vector, 20)";
+    CBLQuery* query = [database createQuery: sql error: &error];
+
+    CBLQueryParameters* parameters = [[CBLQueryParameters alloc] init];
+    [parameters setValue: vectorArray forName: @"vector"];
+    [query setParameters: parameters];
+
+    return [query execute: &error];
+}
+
+----
+
+This function performs vector search against a specific vector index identifier for the specified vector expression.
+If the specified index does not exist, an error will occur on creation of the query.
+The matched vectors will be returned up to the specified limit number, if the limit is not specified then the default value will be used. 
+The returned vectors are sorted by their distance values in ascending order by default.
+
+IMPORTANT: Similar to the xref:objc:fts.adoc[Full Text Search] `match()` function, `vector_match()` can only be called alone or at the top level `AND` expression.
+
+=== `vector_distance(vectorIndexIdentifier)`
+
+[cols = "3*"]
+|===
+|Parameter |Is Required |Description
+
+|vectorIndexIdentifier
+|Required
+|The name of the vector index.
+
+|===
+
+=== Use `vector_distance()`
+
+[source, objective-c]
+----
+
+- (CBLQueryResultSet*) useVectorDistance {
+    
+    // Use vector_distance
+     CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
+
+    NSError* error;
+    [collection createIndexWithName: @"vector_index" config: config error: &error];
+
+    NSString* sql = @"select meta().id, word, vector_distance(vector_index) from _default.words where vector_match(vector_index, $vector, 20)";
+    CBLQuery* q = [database createQuery: sql error: &error];
+
+    CBLQueryParameters* parameters = [[CBLQueryParameters alloc] init];
+    [parameters setValue: vectorArray forName: @"vector"];
+    [q setParameters: parameters];
+
+    return [q execute: &error];
+}
+
+----
+
+This function returns the distance between the target vector specified in the `vector_match()` function and the matched vector in the specified vector index based on the distance metric set in the index configuration.
+
+== See Also
+
+* xref:objc:gs-install.adoc[Installation Instructions]
+
+* xref:swift:vector-search.adoc[Vector Search]
+
+* xref:swift:fts.adoc[Full Text Search]
