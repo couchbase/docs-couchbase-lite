@@ -11,9 +11,11 @@ import NaturalLanguage
 
 var database: Database!
 var collection: Collection!
-var model: NLEmbedding!
-// placeholder
-var vectorArray: Array?  = []
+var mlmodel: NLEmbedding!
+
+enum VectorSearchError: Error {
+    case vectorNotFound
+}
 
 class VectorSearchSnippets {
     // MARK: Configuring a project to use Vector Search.
@@ -25,98 +27,105 @@ class VectorSearchSnippets {
      Add both libraries to the *Frameworks, Libraries and Embedded Content* of your desired target
      */
 
-    func vectorIndex() throws {
-        // MARK: Create a default Vector Index Configuration
-        var config = VectorIndexConfiguration(expression: "string", dimensions: 300, centroids: 8)
+    func createVectorIndex() throws {
+        // Create a default vector index configuration
+        var config = VectorIndexConfiguration(expression: "vector", dimensions: 300, centroids: 8)
         
-        // MARK: Set custom optional settings
-        config.encoding = .none
+        // Set custom optional settings
+        config.encoding = .scalarQuantizer(type: .SQ4)
         config.metric = .cosine
         config.minTrainingSize = 50
         config.maxTrainingSize = 300
+        
+        // Create a vector index from the configuration
+        try collection.createIndex(withName: "vector_index", config: config)
     }
 
-    func vectorIndexEmbedding() throws -> ResultSet? {
-        // MARK: Create Vector Index with Embedding
-        let config = VectorIndexConfiguration(expression: "word", dimensions: 300, centroids: 8)
+    func createVectorIndexWithEmbedding() throws {
+        // Create a vector index configuration from a document property named "vector" which
+        // contains the vector embedding.
+        let config = VectorIndexConfiguration(expression: "vector", dimensions: 300, centroids: 8)
         try collection.createIndex(withName: "vector_index", config: config)
+    }
         
-        guard let wordVector = model.vector(for: "<word>") else {
-            NSLog("Cannot generate vector for <word>")
-            return nil
+    func queryUsingVectorMatch(word: String) throws -> ResultSet? {
+        // Create a query to search similar words by using the vector_match()
+        // function to search word vectors in the vector index named "vector_index".
+        let sql = "SELECT meta().id, word " +
+                  "FROM _default.words " +
+                  "WHERE vector_match(vector_index, $vector, 20)"
+        
+        let query = try database.createQuery(sql)
+        
+        // Use ML model to get a vector (an array of numbers) for the input word.
+        guard let vector = mlmodel.vector(for: word) else {
+            throw VectorSearchError.vectorNotFound
         }
         
-        let sql = "SELECT word FROM words WHERE vector_match(vector_index, $vector, 20)"
-        let query = try database.createQuery(sql)
+        // Set the vector array to the parameter "$vector"
+        let parameters = Parameters()
+        parameters.setValue(vector, forName: "vector")
+        query.parameters = parameters
         
-        let params = Parameters()
-        params.setValue(wordVector, forName: "vector")
-        query.parameters = params
-        
+        // Execute the query
         return try query.execute()
     }
         
-    func useVectorMatch() throws -> ResultSet? {
-        // MARK: Use vector_match
-        let config = VectorIndexConfiguration(expression: "vector", dimensions: 300, centroids: 8)
+    func queryUsingVectorDistance(word: String) throws -> ResultSet? {
+        // Create a query to get vector distances by using the vector_distance() function.
+        let sql = "SELECT meta().id, word, vector_distance(vector_index) " +
+                  "FROM _default.words " +
+                  "WHERE vector_match(vector_index, $vector, 20)"
         
-        try collection.createIndex(withName: "vector_index", config: config)
-        
-        let sql = "select meta().id, word from _default.words where vector_match(vector_index, $vector, 20)"
         let query = try database.createQuery(sql)
         
+        // Use ML model to get a vector (an array of numbers) for the input word.
+        guard let vector = mlmodel.vector(for: word) else {
+            throw VectorSearchError.vectorNotFound
+        }
+        
+        // Set the vector array to the parameter "$vector"
         let parameters = Parameters()
-        parameters.setValue(vectorArray, forName: "vector")
+        parameters.setValue(vector, forName: "vector")
         query.parameters = parameters
         
-        return try query.execute()
-    }
-        
-
-    func useVectorDistance() throws -> ResultSet? {
-        // MARK: Use vector_distance
-        var config = VectorIndexConfiguration(expression: "vector", dimensions: 300, centroids: 8)
-        config.metric = .cosine
-        try collection.createIndex(withName: "vector_index", config: config)
-        
-        let sql = "select meta().id, word, vector_distance(vector_index) from _default.words where vector_match(vector_index, $vector, 20)"
-        let query = try database.createQuery(sql)
-        
-        let parameters = Parameters()
-        parameters.setValue(vectorArray, forName: "vector")
-        query.parameters = parameters
-        
+        // Execute the query
         return try query.execute()
     }
     
     // MARK: Create Vector Index with Predictive Model
 
     class WordModel: PredictiveModel {
+        let mlmodel = NLEmbedding.wordEmbedding(for: .english)!
+        
         func predict(input: DictionaryObject) -> DictionaryObject? {
-            model = NLEmbedding.wordEmbedding(for: .english)!
-            
+            // Get word input from the input dictionary
             guard let word = input.string(forKey: "word") else {
-                fatalError("No word found !!!")
+                fatalError("No word found")
             }
             
-            let vector = model.vector(for: word)
+            // Use ML model to get a vector (an array of numbers) for the input word.
+            let vector = mlmodel.vector(for: word)
+            
+            // Create an output dictionary by setting the vector result to
+            // the dictionary key named "vector".
             let output = MutableDictionaryObject()
             output.setValue(vector, forKey: "vector")
-            
             return output
         }
     }
     
-    func createVectorIndex() throws {
-        let model = WordModel()
-        Database.prediction.registerModel(model, withName: "WordEmbedding")
+    func createVectorIndexFromPredictiveIndex() throws {
+        // Register the predictive model named "WordEmbedding".
+        Database.prediction.registerModel(WordModel(), withName: "WordEmbedding")
         
-        let expression = "prediction(WordEmbedding,{\"word\": word}).vector"
+        // Create a vector index configuration with an expression using the prediction
+        // function to get the vectors from the registered predictive model.
+        let expression = "prediction(WordEmbedding, {\"word\": word}).vector"
         let config = VectorIndexConfiguration(expression: expression, dimensions: 300, centroids: 8)
         
+        // Create vector index from the configuration
         try collection.createIndex(withName: "words_pred_index", config: config)
-        
-        Database.prediction.unregisterModel(withName: "WordEmbedding")
     }
 
 }
