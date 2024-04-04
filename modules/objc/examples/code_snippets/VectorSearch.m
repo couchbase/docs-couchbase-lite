@@ -67,25 +67,32 @@
  */
 
 - (void) createVectorIndex {
+    // tag::vs-create-default-config[]
     // Create a default Vector Index Configuration
     CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
-    
+    // end::vs-create-default-config[]
+
+    // tag::vs-create-custom-config[]
     // Set custom settings
     config.encoding = [CBLVectorEncoding scalarQuantizerWithType: kCBLSQ4];
     config.metric = kCBLDistanceMetricCosine;
     config.minTrainingSize = 50;
     config.maxTrainingSize = 300;
+    // end::vs-create-custom-config[]
 }
 
 - (void) createVectorIndexWithEmbedding {
+    // tag::vs-create-index[]
     // Create a vector index configuration from a document property named "vector" which
     // contains the vector embedding.
     NSError* error;
     CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
     [collection createIndexWithName: @"vector_index" config: config error: &error];
+    // end::vs-create-index[]
 }
 
 - (void) createVectorIndexWithPredictiveModel {
+    // tag::vs-create-predictive-index[]
     // Register the predictive model named "WordEmbedding".
     [[CBLDatabase prediction] registerModel: [[WordModel alloc] init] withName: @"WordEmbedding"];
     
@@ -97,9 +104,11 @@
     // Create vector index from the configuration
     NSError* error;
     [collection createIndexWithName: @"vector_pred_index" config: config error: &error];
+    // end::vs-create-predictive-index[]
 }
 
 - (CBLQueryResultSet*) queryUsingVectorMatchForWord: (NSString*)word error: (NSError**)error {
+    // tag::vs-use-vector-match[]
     // Create a query to search similar words by using the vector_match()
     // function to search word vectors in the vector index named "vector_index".
     NSString* sql = @"SELECT meta().id, word "
@@ -121,9 +130,11 @@
     
     // Execute the query.
     return [query execute: error];
+    // end::vs-use-vector-match[]
 }
 
 - (CBLQueryResultSet*) queryUsingVectorDistanceForWord: (NSString*)word error: (NSError**)error {
+    // tag::vs-use-vector-distance[]
     // Create a query to get vector distances by using the vector_distance() function.
     NSString* sql = @"SELECT meta().id, word, vector_distance(vector_index) "
                      "FROM _default.words "
@@ -144,6 +155,7 @@
     
     // Execute the query.
     return [query execute: error];
+    // end::vs-use-vector-distance[]
 }
 
 @end

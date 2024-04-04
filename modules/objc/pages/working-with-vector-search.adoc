@@ -24,17 +24,8 @@ This method shows how you can create a vector index using the Couchbase Lite Vec
 [source, objective-c]
 ----
 
-- (void) createDefaultIndex {
-    
-    // Create a default Vector Index Configuration
-    CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
+include::objc:example$code_snippets/VectorSearch.m[tags=vs-create-default-config;vs-create-custom-config]
 
-    //Set custom settings
-    config.encoding = [CBLVectorEncoding none];
-    config.metric = kCBLDistanceMetricCosine;
-    config.minTrainingSize = 50;
-    config.maxTrainingSize = 300;
-}
 ----
 
 First, initialise the `config` variable with the `VectorIndexConfiguration()` method with the following parameters:
@@ -131,25 +122,7 @@ This method shows you how to create a Vector Index with embeddings.
 [source, objective-c]
 ----
 
-- (CBLQueryResultSet*) vectorIndexEmbedding {
-    
-    // Create Vector Index with Embedding
-    CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
-
-    NSError* error;
-    [collection createIndexWithName: @"vector_index" config: config error: &error];
-
-    NSArray<NSNumber*>* vectorArray = [model vectorForString: @"word"];
-
-    NSString* sql = @"select meta().id, word from _default.words where vector_match(vector_index, $vector, 20)";
-    CBLQuery* query = [database createQuery: sql error: &error];
-
-    CBLQueryParameters* parameters = [[CBLQueryParameters alloc] init];
-    [parameters setValue: vectorArray forName: @"vector"];
-    [query setParameters: parameters];
-
-    return [query execute: &error];
-}
+include::objc:example$code_snippets/VectorSearch.m[tags=vs-create-index]
 
 ----
 
@@ -170,44 +143,8 @@ The key difference to note is that the `config` object uses the output of the `p
 
 [source, objective-c]
 ----
-// Create Vector Index with Predictive Model
 
-@interface WordModel : NSObject <CBLPredictiveModel>
-@end
-
-@implementation WordModel
-
-
-- (CBLDictionary*) predict: (CBLDictionary*)input {
-    model = [NLEmbedding wordEmbeddingForLanguage: @"english"];
-
-    NSString* word = [input stringForKey: @"word"];
-    if (!word) {
-        NSLog(@"No word found !!!");
-        return nil;
-    }
-
-    NSArray* vector = [model vectorForString: @"word"];
-    CBLMutableDictionary* output = [[CBLMutableDictionary alloc] init];
-    [output setValue: vector forKey: @"vector"];
-
-    return output;
-}
-
-- (void) createVectorIndex {
-    WordModel* model = [[WordModel alloc] init];
-    [[CBLDatabase prediction] registerModel: model withName: @"WordEmbedding"];
-
-    NSString* expression = @"prediction(WordEmbedding,{\"word\": word}).vector";
-    CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: expression dimensions: 300 centroids: 8];
-
-    NSError* error;
-    [collection createIndexWithName: @"vector_pred_index" config: config error: &error];
-
-    [[CBLDatabase prediction] unregisterModelWithName: @"WordEmbedding"];
-}
-
-@end
+include::objc:example$code_snippets/VectorSearch.m[tags=vs-create-predictive-index]
 
 ----
 
@@ -244,23 +181,7 @@ NOTE: The default value for the `limit` parameter is 3.
 [source, objective-c]
 ----
 
-- (CBLQueryResultSet*) useVectorMatch {
-    
-    // Use vector_match
-    CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
-
-    NSError* error;
-    [collection createIndexWithName: @"vector_index" config: config error: &error];
-
-    NSString* sql = @"select meta().id, word from _default.words where vector_match(vector_index, $vector, 20)";
-    CBLQuery* query = [database createQuery: sql error: &error];
-
-    CBLQueryParameters* parameters = [[CBLQueryParameters alloc] init];
-    [parameters setValue: vectorArray forName: @"vector"];
-    [query setParameters: parameters];
-
-    return [query execute: &error];
-}
+include::objc:example$code_snippets/VectorSearch.m[tags=vs-use-vector-match]
 
 ----
 
@@ -288,23 +209,7 @@ IMPORTANT: Similar to the xref:objc:fts.adoc[Full Text Search] `match()` functio
 [source, objective-c]
 ----
 
-- (CBLQueryResultSet*) useVectorDistance {
-    
-    // Use vector_distance
-     CBLVectorIndexConfiguration* config = [[CBLVectorIndexConfiguration alloc] initWithExpression: @"vector" dimensions: 300 centroids: 8];
-
-    NSError* error;
-    [collection createIndexWithName: @"vector_index" config: config error: &error];
-
-    NSString* sql = @"select meta().id, word, vector_distance(vector_index) from _default.words where vector_match(vector_index, $vector, 20)";
-    CBLQuery* q = [database createQuery: sql error: &error];
-
-    CBLQueryParameters* parameters = [[CBLQueryParameters alloc] init];
-    [parameters setValue: vectorArray forName: @"vector"];
-    [q setParameters: parameters];
-
-    return [q execute: &error];
-}
+include::objc:example$code_snippets/VectorSearch.m[tags=vs-use-vector-distance]
 
 ----
 

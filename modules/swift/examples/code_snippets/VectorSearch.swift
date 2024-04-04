@@ -28,27 +28,37 @@ class VectorSearchSnippets {
      */
 
     func createVectorIndex() throws {
+
+        // tag::vs-create-default-config[]
         // Create a default vector index configuration
         var config = VectorIndexConfiguration(expression: "vector", dimensions: 300, centroids: 8)
+        // end::vs-create-default-config[]
         
+        // tag::vs-create-custom-config[]
         // Set custom optional settings
         config.encoding = .scalarQuantizer(type: .SQ4)
         config.metric = .cosine
         config.minTrainingSize = 50
         config.maxTrainingSize = 300
+       
         
         // Create a vector index from the configuration
         try collection.createIndex(withName: "vector_index", config: config)
+         // end::vs-create-custom-config[]
     }
 
     func createVectorIndexWithEmbedding() throws {
+
+        // tag::vs-create-index[]
         // Create a vector index configuration from a document property named "vector" which
         // contains the vector embedding.
         let config = VectorIndexConfiguration(expression: "vector", dimensions: 300, centroids: 8)
         try collection.createIndex(withName: "vector_index", config: config)
+        // end::vs-create-index[]
     }
         
     func queryUsingVectorMatch(word: String) throws -> ResultSet? {
+        // tag::vs-use-vector-match[]
         // Create a query to search similar words by using the vector_match()
         // function to search word vectors in the vector index named "vector_index".
         let sql = "SELECT meta().id, word " +
@@ -69,9 +79,12 @@ class VectorSearchSnippets {
         
         // Execute the query
         return try query.execute()
+        // end::vs-use-vector-match[]
     }
         
     func queryUsingVectorDistance(word: String) throws -> ResultSet? {
+
+        // tag::vs-use-vector-distance[]
         // Create a query to get vector distances by using the vector_distance() function.
         let sql = "SELECT meta().id, word, vector_distance(vector_index) " +
                   "FROM _default.words " +
@@ -91,10 +104,11 @@ class VectorSearchSnippets {
         
         // Execute the query
         return try query.execute()
+        // end::vs-use-vector-distance[]
     }
     
     // MARK: Create Vector Index with Predictive Model
-
+    // tag::vs-create-predictive-index[]
     class WordModel: PredictiveModel {
         let mlmodel = NLEmbedding.wordEmbedding(for: .english)!
         
@@ -127,5 +141,5 @@ class VectorSearchSnippets {
         // Create vector index from the configuration
         try collection.createIndex(withName: "words_pred_index", config: config)
     }
-
+    // end::vs-create-predictive-index[]
 }
