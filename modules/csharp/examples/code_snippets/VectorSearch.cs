@@ -33,130 +33,96 @@ namespace api_walkthrough
         public string Name { get; set; }
     }
 
-    public sealed class ColorModel : IPredictiveModel
-    {
-        public DictionaryObject Predict(DictionaryObject input)
-        {
-            // Get the input color code 
-            var inputColor = input.GetString("colorInput");
-            if (inputColor == null)
-            {
-                return null;
-            }
-
-            // Get a vector, an array of float numbers, for the input color code.
-            // Normally, you will get the vector from your ML model.
-            float[] vector;
-            try
-            {
-                vector = Color.GetVector(inputColor);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-
-            // Create an output dictionary by setting the vector result to
-            // the dictionary key named "vector".
-            var retVal = new MutableDictionaryObject();
-            retVal.SetValue("vector", vector);
-            return retVal;
-        }
-
-        public static void Register()
-        {
-            Database.Prediction.RegisterModel("ColorModel", new ColorModel());
-        }
-
-        public static void Unregister()
-        {
-            Database.Prediction.UnregisterModel("ColorModel");
-        }
-    }
-
     public class VectorSearch
     {
-        private readonly Database _database = null;
-        private readonly Collection _collection = null;
-
-        public VectorSearch() {
-            _database = new Database("my-database");
-            _collection = _database.CreateCollection("colors");
-        }
+        public VectorSearch() { }
 
         private static void EnableVectorSearchExtension()
         {
+            // tag::vs - setup - packaging[]
             Extension.Load(new VectorSearchExtension());
+            // end::vs - setup - packaging[]
+        }
+
+        private void CreateDefaultVectorIndexConfig()
+        {
+            // tag::vs - create - default - config[]
+            // Create a vector index configuration for indexing 3 dimensional vectors embedded
+            // in the documents' key named "vector" using 2 centroids.
+            var config = new VectorIndexConfiguration("vector", 3, 2);
+            // end::vs - create - default - config[]
+        }
+
+        private void CreateCustomVectorIndexConfig()
+        {
+            // tag::vs - create - default - config[]
+            // Create a vector index configuration for indexing 3 dimensional vectors embedded
+            // in the documents' key named "vector" using 2 centroids. The config is customized
+            // to use Cosise distance metric, no vector encoding, min training size 100 and
+            // max training size 200.
+            var config = new VectorIndexConfiguration("vector", 3, 2)
+            {
+                DistanceMetric = DistanceMetric.Cosine,
+                Encoding = VectorEncoding.None(),
+                MinTrainingSize = 100,
+                MaxTrainingSize = 200
+            };
+            // end::vs - create - default - config[]
         }
 
         private void CreateVectorIndex()
         {
-            // Create and customize a vector index configuration
-            var config = new VectorIndexConfiguration("vector", 3, 2)
-            {
-                DistanceMetric = DistanceMetric.Euclidean,
-                Encoding = VectorEncoding.None(),
-                MinTrainingSize = 50,
-                MaxTrainingSize = 200
-            };
+            var database = new Database("my-database");
 
-            // Create a vector index from the configuration
-            _collection.CreateIndex("colors_index", config);
-        }
-
-        private void CreateVectorIndexWithEmbedding()
-        {
-            // Create a vector index configuration from a document property named "vector" which
-            // contains the vector embedding.
+            // tag::vs-create-index[]
+            // Create a vector index configuration for indexing 3 dimensional vectors embedded
+            // in the documents' key named "vector" using 2 centroids.
             var config = new VectorIndexConfiguration("vector", 3, 2);
-            _collection.CreateIndex("colors_index", config);
+
+            // Create a vector index named "color_index" using the configuration
+            var collection = database.GetCollection("colors");
+            collection.CreateIndex("colors_index", config);
+            // end::vs-create-index[]
         }
 
-        private IResultSet QueryUsingVectorMatch(string color)
+        // tag::vs-predictive-model[]
+        public sealed class ColorModel : IPredictiveModel
         {
-            // Create a query to search similar colors by using the vector_match()
-            // function to search color vectors in the vector index named "colors_index".
-            var sql = "SELECT id, color " +
-                      "FROM _default.colors " +
-                      "WHERE vector_match(colors_index, $vector, 8)";
-            var query = _database.CreateQuery(sql);
+            public DictionaryObject Predict(DictionaryObject input)
+            {
+                // Get the input color code 
+                var inputColor = input.GetString("colorInput");
+                if (inputColor == null)
+                {
+                    return null;
+                }
 
-            // Get a vector, an array of float numbers, for the input color code.
-            // Normally, you will get the vector from your ML model.
-            var vector = Color.GetVector(color);
+                // Get a vector, an array of float numbers, for the input color code.
+                // Normally, you will get the vector from your ML model.
+                float[] vector;
+                try
+                {
+                    vector = Color.GetVector(inputColor);
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
 
-            // Set the vector array to the parameter "$vector"
-            var queryParams = new Parameters();
-            queryParams.SetValue("vector", vector);
-            query.Parameters = queryParams;
-
-            // Execute the query
-            return query.Execute();
+                // Create an output dictionary by setting the vector result to
+                // the dictionary key named "vector".
+                var retVal = new MutableDictionaryObject();
+                retVal.SetValue("vector", vector);
+                return retVal;
+            }
         }
+        // tag::end-predictive-model[]
 
-        private IResultSet QueryVectorDistance(string color)
+        private void CreatePredictiveIndex()
         {
-            // Create a query to get vector distances by using the vector_distance() function.
-            var sql = "SELECT id, color, vector_distance(colors_index) " +
-                      "FROM _default.colors " +
-                      "WHERE vector_match(colors_index, $vector, 8)";
-            var query = _database.CreateQuery(sql);
+            var database = new Database("my-database");
 
-            // Get a vector, an array of float numbers, for the input color code.
-            // Normally, you will get the vector from your ML model.
-            var vector = Color.GetVector(color);
-
-            // Set the vector array to the parameter "$vector"
-            var queryParams = new Parameters();
-            queryParams.SetValue("vector", vector);
-            query.Parameters = queryParams;
-
-            // Execute the query
-            return query.Execute();
-        }
-
-        private void CreateVectorIndexFromPredictiveIndex()
-        {
+            // tag::vs-create-predictive-index[]
             // Register the predictive model named "ColorModel".
             Database.Prediction.RegisterModel("ColorModel", new ColorModel());
 
@@ -166,8 +132,72 @@ namespace api_walkthrough
             var config = new VectorIndexConfiguration(expression, 3, 2);
 
             // Create a vector index from the configuration
-            _collection.CreateIndex("colors_index", config);
+            var collection = database.GetCollection("colors");
+            collection.CreateIndex("colors_index", config);
+            // end::vs-create-predictive-index[]
+        }
+
+        private void QueryUsingVectorMatch()
+        {
+            var database = new Database("my-database");
+
+            string inputColor = "FF00AA";
+
+            // tag::vs-use-vector-match[]
+            // Create a query to search similar colors by using the vector_match()
+            // function in the vector index named "colors_index".
+            var sql = "SELECT id, color " +
+                      "FROM _default.colors " +
+                      "WHERE vector_match(colors_index, $vector, 8)";
+            var query = database.CreateQuery(sql);
+
+            // Get a vector, an array of float numbers, for the input color code.
+            // Normally, you will get the vector from your ML model.
+            var vector = Color.GetVector(inputColor);
+
+            // Set the vector array to the parameter "$vector"
+            var queryParams = new Parameters();
+            queryParams.SetValue("vector", vector);
+            query.Parameters = queryParams;
+
+            // Execute the query
+            var results = query.Execute();
+            foreach (var r in results)
+            {
+                // process results
+            }
+            // end::vs-use-vector-match[]
+        }
+
+        private void QueryUsingVectorDistance()
+        {
+            var database = new Database("my-database");
+
+            string inputColor = "FF00AA";
+
+            // tag::vs-use-vector-distance[]
+            // Create a query to get vector distances using the vector_distance() function.
+            var sql = "SELECT id, color, vector_distance(colors_index) " +
+                      "FROM _default.colors " +
+                      "WHERE vector_match(colors_index, $vector, 8)";
+            var query = database.CreateQuery(sql);
+
+            // Get a vector, an array of float numbers, for the input color code
+            // e.g. FF000AA. Mostly, the vector will be generated from a ML Model.
+            var vector = Color.GetVector(inputColor);
+
+            // Set the vector array to the parameter "$vector"
+            var queryParams = new Parameters();
+            queryParams.SetValue("vector", vector);
+            query.Parameters = queryParams;
+
+            // Execute the query
+            var results = query.Execute();
+            foreach (var r in results)
+            {
+                // process results
+            }
+            // end::vs-use-vector-distance[]
         }
     }
 }
-
