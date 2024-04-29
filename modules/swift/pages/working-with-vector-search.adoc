@@ -28,14 +28,14 @@ include::swift:example$code_snippets/VectorSearch.swift[tags=vs-create-default-c
 
 ----
 
-First, initialise the `config` variable with the `VectorIndexConfiguration()` method with the following parameters:
+First, initialise the `config` object with the `VectorIndexConfiguration()` method with the following parameters:
 
-* The data stored within this index will be of type `string`.
+* The expression of the data as a vector.
 
 * The width or `dimensions` of the vector index is set to `300`.
 
-* The amount of `centroids` is set to `20`.
-This means that there will be 20 buckets with a single centroid each that gathers together similar vectors.
+* The amount of `centroids` is set to `8`.
+This means that there will be eight buckets with a single centroid each that gathers together similar vectors.
 
 There are also some default values that we did not set with the `VectorIndexConfiguration()` method, these are:
 
@@ -49,6 +49,7 @@ NOTE: The number of vectors, the width or dimensions of the vectors and the trai
 This is because the training vectors have to be resident on the machine.
 
 You can also alter some optional config settings such as `encoding`.
+From there, you create an index within a given collection, in our case `vector_index`, using our previously generated `config` object.
 
 === Vector Index Configuration
 
@@ -126,20 +127,14 @@ include::swift:example$code_snippets/VectorSearch.swift[tags=vs-create-index]
 
 ----
 
-. First, create the standard configuration and set it up for a `word` embedding.
+. First, create the standard configuration, setting up an expressions, number of dimensions and number of centroids for the vector embedding.
 
 . Next, create a vector index, `vector_index`, on a collection and pass it our configuration.
-
-. From there, initialise an English word embedding for the `model` variable and generate a `wordVector` object from our embedding.
-
-. Next, you create a SQL query for the term `vector` returning a limit of 20 results.
-
-. Finally, you set the parameters of the query to the `params` object, which contains the previously generated `wordVector` and the given name `vector`, then the query is executed.
 
 === Create Vector Index Embeddings from a Predictive Model
 
 This method generates vectors to be indexed for each document at the index time by using the `prediction()` function.
-The key difference to note is that the `config` object uses the output of the `prediction()` function to generate the word embedding.
+The key difference to note is that the `config` object uses the output of the `prediction()` function as the `expression` parameter to generate the word embedding.
 
 [source, swift]
 ----
