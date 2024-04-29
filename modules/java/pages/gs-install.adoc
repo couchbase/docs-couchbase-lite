@@ -164,6 +164,54 @@ repositories {
 ----
 --
 
+Vector Search Beta Extension::
++
+--
+.Compile options
+[source,groovy, subs="attributes+"]
+----
+// Required only if your project has some Kotlin source code
+kotlinOptions { jvmTarget = '1.8' }
+
+// Set minimum JVM level to ensure availability of, for example, lambda expressions
+compileOptions {
+    targetCompatibility 1.8
+    sourceCompatibility 1.8
+
+//   ... other section content as required by user
+} 
+
+----
+
+.Dependencies
+
+[source,groovy, subs="attributes+"]
+----
+dependencies {
+    implementation "com.couchbase.lite:couchbase-lite-java:{version-full}"
+
+  // All standard 64-bit ARM architectures
+  implementation 'com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-version-maintenance}'
+
+//   ... other section content as required by user
+}
+
+----
+
+.Repositories
+[source,groovy, subs="attributes+"]
+----
+repositories {
+    maven {url 'https://mobile.maven.couchbase.com/maven2/dev/'}
+    google()
+    mavenCentral()
+
+//   ... other section content as required by user
+    }
+
+----
+--
+
 Community edition::
 +
 --
@@ -305,7 +353,7 @@ For examples of how to do this using Maven POM files, see --
 
 * https://github.com/couchbaselabs/mobile-travel-sample/tree/master/java/TravelSample[Couchbase Mobile Workshop]
 
-* https://github.com/couchbaselabs/mobile-training-todo/tree/release/lithium/java-ws/server/Todo[Mobile Taining To Do App]
+* https://github.com/couchbaselabs/mobile-training-todo/tree/release/lithium/java-ws/server/Todo[Mobile Training To Do App]
 --
 
 
