@@ -92,8 +92,6 @@ NOTE: The Kotlin download also includes the Java version of Couchbase Lite for A
 
 Create or open an existing Android Studio project and include the following entries in the app-level `build.gradle` file (typically in the *app* folder).
 
-IMPORTANT: The Vector Search extension is an *Enterprise only* feature.
-
 [{tabs}]
 =====
 
@@ -137,76 +135,6 @@ repositories {
 dependencies {
 
   implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{version-maintenance-android}'
-
-//   ... other section content as required by user
-}
-----
---
-
-Vector Search Beta-1 Extension::
-+
-[IMPORTANT]
---
-Vector Search is only available for 64-bit architectures.
-You must have Couchbase Lite installed before you can use the Vector Search Extension.
---
-+
---
-. Include the following in the `android {}` section:
-+
-[source,groovy, subs="attributes+"]
-----
-
-android {
-// Required only if your project has some Kotlin source code
-  kotlinOptions { jvmTarget = 1.8}
-
-  compileOptions {
-      targetCompatibility 1.8
-      sourceCompatibility 1.8
-  } 
-
-//   ... other section content as required by user
-}
-
-----
-
-. Include the following in the `repositories {}` section:
-+
-[source,groovy]
-----
-repositories {
-  maven { url 'https://mobile.maven.couchbase.com/maven2/dev/' }
-  google()
-  mavenCentral()
-//   ... other section content as required by user
-}
-----
-
-. Include the following in the `dependencies{}` section:
-+
-[source,kotlin, subs="attributes+"]
-----
-dependencies {
-
-  implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{version-maintenance-android}'
-
-  // All standard 64-bit ARM architectures
-  implementation 'com.couchbase.lite:couchbase-lite-android-vector-search-arm64-{vs-version-maintenance}'
-
-//   ... other section content as required by user
-}
-----
-
-.. For running on x86_64 architectures, include the following in the `dependencies{}` section instead:
-+
-[source,kotlin, subs="attributes+"]
-----
-dependencies {
-
-  implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{version-maintenance-android}'
-
-  implementation 'com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-version-maintenance}'
 
 //   ... other section content as required by user
 }
@@ -262,7 +190,81 @@ dependencies {
 
 =====
 
+== Kotlin - Vector Search Extension Install Instructions
 
+More detailed instructions on getting up and running with the Couchbase Lite Vector Search Extension for Android (Kotlin).
+
+NOTE: The Kotlin download also includes the Java version of Couchbase Lite for Android, along with the other dependencies.
+
+Create or open an existing Android Studio project and include the following entries in the app-level `build.gradle` file (typically in the *app* folder).
+
+[IMPORTANT] 
+--
+You must have Couchbase Lite installed before you can use the Vector Search Extension.
+Vector Search is only available for 64-bit architectures.
+The Vector Search extension is an *Enterprise only* feature.
+--
+
+=== Installing the Vector Search Beta Extension
+
+. Include the following in the `android {}` section:
++
+[source,groovy, subs="attributes+"]
+----
+
+android {
+// Required only if your project has some Kotlin source code
+  kotlinOptions { jvmTarget = 1.8}
+
+  compileOptions {
+      targetCompatibility 1.8
+      sourceCompatibility 1.8
+  } 
+
+//   ... other section content as required by user
+}
+
+----
+
+. Include the following in the `repositories {}` section:
++
+[source,groovy]
+----
+repositories {
+  maven { url 'https://mobile.maven.couchbase.com/maven2/dev/' }
+  google()
+  mavenCentral()
+//   ... other section content as required by user
+}
+----
+
+. Include the following in the `dependencies{}` section:
++
+[source,kotlin, subs="attributes+"]
+----
+dependencies {
+
+  implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{version-maintenance-android}'
+
+  // All standard 64-bit ARM architectures
+  implementation 'com.couchbase.lite:couchbase-lite-android-vector-search-arm64-{vs-version-maintenance}'
+
+//   ... other section content as required by user
+}
+----
+
+.. For running on x86_64 architectures, include the following in the `dependencies{}` section instead:
+[source,kotlin, subs="attributes+"]
+----
+dependencies {
+
+  implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{version-maintenance-android}'
+
+  implementation 'com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-version-maintenance}'
+
+//   ... other section content as required by user
+}
+----
 
 == Java - Step-by-step Install
 
@@ -271,9 +273,6 @@ More detailed instructions on getting up and running with Couchbase Lite for And
 Create or open an existing _Android Studio_ project and install Couchbase Lite using the following method.
 
 Include the following entries to the app-level `build.gradle` file (typically in the *app* folder).
-
-IMPORTANT: The Vector Search extension is an *Enterprise only* feature.
-
 
 [{tabs}]
 =====
@@ -323,15 +322,73 @@ dependencies {
 ----
 --
 
-Vector Search Beta-1 Extension::
+Community::
 +
+--
+. Include the following in the `android {}` section:
++
+[source,groovy, subs="attributes+"]
+----
+
+android {
+// Required only if your project has some Kotlin source code
+  kotlinOptions { jvmTarget = 1.8 }
+
+  compileOptions {
+      targetCompatibility 1.8
+      sourceCompatibility 1.8
+  } 
+
+//   ... other section content as required by user
+}
+----
+
+
+. Ensure your `repositories` section includes `mavencentral()`
++
+[source,groovy, subs="attributes+"]
+----
+
+repositories {
+
+  mavenCentral()
+
+  //   ... other section content as required by user
+}
+----
+
+
+. Include the following in the `dependencies{}` section:
++
+[source,groovy, subs="attributes+"]
+----
+dependencies {
+  implementation 'com.couchbase.lite:couchbase-lite-android:{version-maintenance-android}'
+//   ... other section content as required by user
+}
+----
+
+--
+
+=====
+
+== Java - Vector Search Extension Install Instructions
+
+More detailed instructions on getting up and running with the Couchbase Lite Vector Search Extension for Android (Java).
+
+Create or open an existing _Android Studio_ project and install Couchbase Lite using the following method.
+
+Include the following entries to the app-level `build.gradle` file (typically in the *app* folder).
+
+=== Installing the Vector Search Beta Extension
+
 [IMPORTANT]
 --
-Vector Search is only available for 64-bit architectures.
 You must have Couchbase Lite installed before you can use the Vector Search Extension.
+Vector Search is only available for 64-bit architectures.
+The Vector Search extension is an *Enterprise only* feature.
 --
-+
---
+
 . Include the following in the `android {}` section:
 +
 [source,groovy, subs="attributes+"]
@@ -391,57 +448,5 @@ dependencies {
 //   ... other section content as required by user
 }
 ----
---
-
-Community::
-+
---
-. Include the following in the `android {}` section:
-+
-[source,groovy, subs="attributes+"]
-----
-
-android {
-// Required only if your project has some Kotlin source code
-  kotlinOptions { jvmTarget = 1.8 }
-
-  compileOptions {
-      targetCompatibility 1.8
-      sourceCompatibility 1.8
-  } 
-
-//   ... other section content as required by user
-}
-----
-
-
-. Ensure your `repositories` section includes `mavencentral()`
-+
-[source,groovy, subs="attributes+"]
-----
-
-repositories {
-
-  mavenCentral()
-
-  //   ... other section content as required by user
-}
-----
-
-
-. Include the following in the `dependencies{}` section:
-+
-[source,groovy, subs="attributes+"]
-----
-dependencies {
-  implementation 'com.couchbase.lite:couchbase-lite-android:{version-maintenance-android}'
-//   ... other section content as required by user
-}
-----
-
---
-
-=====
-
 
 include::{root-partials}block-related-content-start.adoc[]
