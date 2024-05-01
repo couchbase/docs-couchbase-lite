@@ -13,7 +13,7 @@ ifdef::prerelease[:page-status: {prerelease}]
 
 == Use Vector Search
 
-To configure a project to use vector search, follow the xref:objc:gs-install.adoc[installation instructions] to add the Vector Search extension.
+To configure a project to use vector search, follow the xref:java:gs-install.adoc[installation instructions] to add the Vector Search extension.
 
 NOTE: You must install Couchbase Lite to use the Vector Search extension.
 
@@ -21,23 +21,19 @@ NOTE: You must install Couchbase Lite to use the Vector Search extension.
 
 This method shows how you can create a vector index using the Couchbase Lite Vector Search extension.
 
-[source, objective-c]
+[source, java]
 ----
 
-include::objc:example$code_snippets/VectorSearch.m[tags=vs-create-default-config;vs-create-custom-config]
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-default-config]
 
 ----
 
 First, initialise the `config` variable with the `VectorIndexConfiguration()` method with the following parameters:
 
-* The expression of the data as a vector.
-
-* The data stored within this index will be of type `string`.
-
 * The width or `dimensions` of the vector index is set to `300`.
 
-* The amount of `centroids` is set to `8`.
-This means that there will be eight buckets with a single centroid each that gathers together similar vectors.
+* The amount of `centroids` is set to `20`.
+This means that there will be 20 buckets with a single centroid each that gathers together similar vectors.
 
 There are also some default values that we did not set with the `VectorIndexConfiguration()` method, these are:
 
@@ -47,15 +43,22 @@ There are also some default values that we did not set with the `VectorIndexConf
 
 * The minimum and maximum number of vectors for training the index.
 
+You can also alter some optional config settings such as `encoding`.
+
+[source, java]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-custom-config]
+
+----
+
 NOTE: The number of vectors, the width or dimensions of the vectors and the training size can incur high CPU and memory costs as the size of each variable increases.
 This is because the training vectors have to be resident on the machine.
-
-You can also alter some optional config settings such as `encoding`.
 
 === Vector Index Configuration
 
 The table below displays the different configurations you can modify within your `VectorIndexConfiguration()` function.
-For more information on specific configurations, see xref:objc:vector-search.adoc[Vector Search.]
+For more information on specific configurations, see xref:java:vector-search.adoc[Vector Search.]
 
 IMPORTANT: The beta release currently only supports the format of vectors as an array of numbers.
 
@@ -121,26 +124,23 @@ Below are example configurations of the previously mentioned methods.
 
 This method shows you how to create a Vector Index with embeddings.
 
-[source, objective-c]
+[source, java]
 ----
 
-include::objc:example$code_snippets/VectorSearch.m[tags=vs-create-index]
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-index]
 
 ----
 
-. First, create the standard configuration, setting up an expressions, number of dimensions and number of centroids for the vector embedding.
-
-. Next, create a vector index, `vector_index`, on a collection and pass it our configuration.
+The snippet demonstrates the creation of the vector index, `word_index`, in the collection `_default.words`, demonstrating how you can create a vector index with a `word` embedding for use in queries related to written language.
 
 === Create Vector Index Embeddings from a Predictive Model
 
 This method generates vectors to be indexed for each document at the index time by using the `prediction()` function.
-The key difference to note is that the `config` object uses the output of the `prediction()` function as the `expression` parameter to generate the word embedding.
 
-[source, objective-c]
+[source, java]
 ----
 
-include::objc:example$code_snippets/VectorSearch.m[tags=vs-create-predictive-index]
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-predictive-index]
 
 ----
 
@@ -174,10 +174,10 @@ NOTE: The default value for the `limit` parameter is 3.
 
 === Use `vector_match()`
 
-[source, objective-c]
+[source, java]
 ----
 
-include::objc:example$code_snippets/VectorSearch.m[tags=vs-use-vector-match]
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-use-vector-match]
 
 ----
 
@@ -186,7 +186,7 @@ If the specified index does not exist, an error will occur on creation of the qu
 The matched vectors will be returned up to the specified limit number, if the limit is not specified then the default value will be used. 
 The returned vectors are sorted by their distance values in ascending order by default.
 
-IMPORTANT: Similar to the xref:objc:fts.adoc[Full Text Search] `match()` function, `vector_match()` can only be called alone or at the top level `AND` expression.
+IMPORTANT: Similar to the xref:java:fts.adoc[Full Text Search] `match()` function, `vector_match()` can only be called alone or at the top level `AND` expression.
 
 === `vector_distance(vectorIndexIdentifier)`
 
@@ -202,10 +202,10 @@ IMPORTANT: Similar to the xref:objc:fts.adoc[Full Text Search] `match()` functio
 
 === Use `vector_distance()`
 
-[source, objective-c]
+[source, java]
 ----
 
-include::objc:example$code_snippets/VectorSearch.m[tags=vs-use-vector-distance]
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-use-vector-distance]
 
 ----
 
@@ -213,8 +213,8 @@ This function returns the distance between the target vector specified in the `v
 
 == See Also
 
-* xref:objc:gs-install.adoc[Installation Instructions]
+* xref:java:gs-install.adoc[Installation Instructions]
 
-* xref:swift:vector-search.adoc[Vector Search]
+* xref:java:vector-search.adoc[Vector Search]
 
-* xref:swift:fts.adoc[Full Text Search]
+* xref:java:fts.adoc[Full Text Search]

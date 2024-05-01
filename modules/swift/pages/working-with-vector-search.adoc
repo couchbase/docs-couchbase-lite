@@ -24,31 +24,18 @@ This method shows how you can create a vector index using the Couchbase Lite Vec
 [source, swift]
 ----
 
-func vectorIndex() throws {
-    
-    database = try Database(name: "vectorDB")
-    collection = try database.defaultCollection()
-        
-    // Create a default Vector Index Configuration    
-    var config = VectorIndexConfiguration(expression: "string", dimensions: 300, centroids: 20)
-        
-     // Set custom optional settings
-     config.encoding = .none
-     config.metric = .cosine
-     config.minTrainingSize = 50
-     config.maxTrainingSize = 300
-        
-}
+include::swift:example$code_snippets/VectorSearch.swift[tags=vs-create-default-config;vs-create-custom-config]
+
 ----
 
-First, initialise the `config` variable with the `VectorIndexConfiguration()` method with the following parameters:
+First, initialise the `config` object with the `VectorIndexConfiguration()` method with the following parameters:
 
-* The data stored within this index will be of type `string`.
+* The expression of the data as a vector.
 
 * The width or `dimensions` of the vector index is set to `300`.
 
-* The amount of `centroids` is set to `20`.
-This means that there will be 20 buckets with a single centroid each that gathers together similar vectors.
+* The amount of `centroids` is set to `8`.
+This means that there will be eight buckets with a single centroid each that gathers together similar vectors.
 
 There are also some default values that we did not set with the `VectorIndexConfiguration()` method, these are:
 
@@ -62,6 +49,7 @@ NOTE: The number of vectors, the width or dimensions of the vectors and the trai
 This is because the training vectors have to be resident on the machine.
 
 You can also alter some optional config settings such as `encoding`.
+From there, you create an index within a given collection, in our case `vector_index`, using our previously generated `config` object.
 
 === Vector Index Configuration
 
@@ -135,76 +123,24 @@ This method shows you how to create a Vector Index with embeddings.
 [source, swift]
 ----
 
-func vectorIndexEmbedding() throws -> ResultSet? {
+include::swift:example$code_snippets/VectorSearch.swift[tags=vs-create-index]
 
-    // Create Vector Index with Embedding
-    let config = VectorIndexConfiguration(expression: "word", dimensions: 300, centroids: 8)
-    try collection.createIndex(withName: "vector_index", config: config)
-
-    guard let wordVector = model.vector(for: "<word>") else {
-        NSLog("Cannot generate vector for <word>")
-        return nil
-    }
-
-    let sql = "SELECT word FROM words WHERE vector_match(vector_index, $vector, 20)"
-    let query = try database.createQuery(sql)
-
-    let params = Parameters()
-    params.setValue(wordVector, forName: "vector")
-    query.parameters = params
-
-    return try query.execute()
-}
 ----
 
-. First, create the standard configuration and set it up for a `word` embedding.
+. First, create the standard configuration, setting up an expressions, number of dimensions and number of centroids for the vector embedding.
 
 . Next, create a vector index, `vector_index`, on a collection and pass it our configuration.
-
-. From there, initialise an English word embedding for the `model` variable and generate a `wordVector` object from our embedding.
-
-. Next, you create a SQL query for the term `vector` returning a limit of 20 results.
-
-. Finally, you set the parameters of the query to the `params` object, which contains the previously generated `wordVector` and the given name `vector`, then the query is executed.
 
 === Create Vector Index Embeddings from a Predictive Model
 
 This method generates vectors to be indexed for each document at the index time by using the `prediction()` function.
-The key difference to note is that the `config` object uses the output of the `prediction()` function to generate the word embedding.
+The key difference to note is that the `config` object uses the output of the `prediction()` function as the `expression` parameter to generate the word embedding.
 
 [source, swift]
 ----
         
-    // Create Vector Index with Predictive Model
+include::swift:example$code_snippets/VectorSearch.swift[tags=vs-create-predictive-index]
 
-    class WordModel: PredictiveModel {
-
-        func predict(input: DictionaryObject) -> DictionaryObject? {
-            model = NLEmbedding.wordEmbedding(for: .english)!
-
-            guard let word = input.string(forKey: "word") else {
-                fatalError("No word found !!!")
-            }
-
-            let vector = model.vector(for: word)
-            let output = MutableDictionaryObject()
-            output.setValue(vector, forKey: "vector")
-
-            return output
-        }
-    }
-
-    func createVectorIndex() throws {
-        let model = WordModel()
-        Database.prediction.registerModel(model, withName: "WordEmbedding")
-
-        let expression = "prediction(WordEmbedding,{\"word\": word}).vector"
-        let config = VectorIndexConfiguration(expression: expression, dimensions: 300, centroids: 8)
-
-        try collection.createIndex(withName: "words_pred_index", config: config)
-
-        Database.prediction.unregisterModel(withName: "WordEmbedding")
-    }
 ----
 
 NOTE: You can use less storage by using the `prediction()` function as the encoded vectors will only be stored in the index. 
@@ -240,21 +176,8 @@ NOTE: The default value for the `limit` parameter is 3.
 [source, swift]
 ----
         
-    func useVectorMatch() throws -> ResultSet? {
-        // Use vector_match
-        let config = VectorIndexConfiguration(expression: "vector", dimensions: 300, centroids: 8)
+include::swift:example$code_snippets/VectorSearch.swift[tags=vs-use-vector-match]
 
-        try collection.createIndex(withName: "vector_index", config: config)
-
-        let sql = "select meta().id, word from _default.words where vector_match(vector_index, $vector, 20)"
-        let query = try database.createQuery(sql)
-
-        let parameters = Parameters()
-        parameters.setValue(vectorArray, forName: "vector")
-        query.parameters = parameters
-
-        return try query.execute()
-    }
 ----
 
 This function performs vector search against a specific vector index identifier for the specified vector expression.
@@ -281,21 +204,7 @@ IMPORTANT: Similar to the xref:swift:fts.adoc[Full Text Search] `match()` functi
 [source, swift]
 ----
 
-    func useVectorDistance() throws -> ResultSet? {
-        // Use vector_distance
-      var config = VectorIndexConfiguration(expression: "vector", dimensions: 300, centroids: 8)
-        config.metric = .cosine
-        try collection.createIndex(withName: "vector_index", config: config)
-
-        let sql = "select meta().id, word, vector_distance(vector_index) from _default.words where vector_match(vector_index, $vector, 20)"
-        let query = try database.createQuery(sql)
-
-        let parameters = Parameters()
-        parameters.setValue(vectorArray, forName: "vector")
-        query.parameters = parameters
-
-        return try query.execute()
-    }
+include::swift:example$code_snippets/VectorSearch.swift[tags=vs-use-vector-distance]
 
 ----
 
