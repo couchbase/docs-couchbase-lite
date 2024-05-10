@@ -46,16 +46,15 @@ namespace api_walkthrough
 
         private void CreateDefaultVectorIndexConfig()
         {
-            // tag::vs - create - default - config[]
+            // tag::vs-create-default-config[]
             // Create a vector index configuration for indexing 3 dimensional vectors embedded
             // in the documents' key named "vector" using 2 centroids.
             var config = new VectorIndexConfiguration("vector", 3, 2);
-            // end::vs - create - default - config[]
-        }
+            // end::vs-create-default-config[]
 
         private void CreateCustomVectorIndexConfig()
         {
-            // tag::vs - create - default - config[]
+            // tag::vs-create-custom-config[]
             // Create a vector index configuration for indexing 3 dimensional vectors embedded
             // in the documents' key named "vector" using 2 centroids. The config is customized
             // to use Cosise distance metric, no vector encoding, min training size 100 and
@@ -67,14 +66,14 @@ namespace api_walkthrough
                 MinTrainingSize = 100,
                 MaxTrainingSize = 200
             };
-            // end::vs - create - default - config[]
+            // end::vs-create-custom-config[]
         }
 
         private void CreateVectorIndex()
         {
-            var database = new Database("my-database");
-
             // tag::vs-create-index[]
+            var database = new Database("my-database");
+  
             // Create a vector index configuration for indexing 3 dimensional vectors embedded
             // in the documents' key named "vector" using 2 centroids.
             var config = new VectorIndexConfiguration("vector", 3, 2);
@@ -171,11 +170,12 @@ namespace api_walkthrough
 
         private void QueryUsingVectorDistance()
         {
+            // tag::vs-use-vector-distance[]
             var database = new Database("my-database");
 
             string inputColor = "FF00AA";
 
-            // tag::vs-use-vector-distance[]
+            
             // Create a query to get vector distances using the vector_distance() function.
             var sql = "SELECT id, color, vector_distance(colors_index) " +
                       "FROM _default.colors " +
