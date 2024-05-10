@@ -19,27 +19,23 @@ NOTE: You must install Couchbase Lite to use the Vector Search extension.
 
 == Create a Vector Index
 
-This method shows how you can create a vector index using the Couchbase Lite Vector Search extension.
+This method shows how you can create the default vector index configuration using the Couchbase Lite Vector Search extension.
 
-[tabs]
-=====
-
-Java::
-+
---
-[source, java]
+[source, csharp]
 ----
 
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-default-config]
+include::csharp:example$code_snippets/VectorSearch.cs[tags=vs-create-default-config]
 
 ----
 
-First, initialise the `config` variable with the `VectorIndexConfiguration()` method with the following parameters:
+First, we initialize the `config` object with a new `VectorIndexConfiguration` object intialized with the following parameters:
 
-* The width or `dimensions` of the vector index is set to `300`.
+* The expression of the data as a vector.
 
-* The amount of `centroids` is set to `20`.
-This means that there will be 20 buckets with a single centroid each that gathers together similar vectors.
+* The width or `dimensions` of the vector index is set to `3`.
+
+* The amount of `centroids` is set to `2`.
+This means that there will be two buckets with a single centroid each that gathers together similar vectors.
 
 There are also some default values that we did not set with the `VectorIndexConfiguration()` method, these are:
 
@@ -49,52 +45,14 @@ There are also some default values that we did not set with the `VectorIndexConf
 
 * The minimum and maximum number of vectors for training the index.
 
-You can also alter some optional config settings such as `encoding`.
+The method below shows the generation of a custom vector index configuration.
 
-[source, java]
+[source, csharp]
 ----
 
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-custom-config]
+include::csharp:example$code_snippets/VectorSearch.cs[tags=vs-create-custom-config]
 
 ----
---
-
-
-Kotlin::
-+
---
-[source, kotlin]
-----
-
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-default-config]
-
-----
-
-First, initialise the `config` variable with the `VectorIndexConfiguration()` method with the following parameters:
-
-* The width or `dimensions` of the vector index is set to `300`.
-
-* The amount of `centroids` is set to `20`.
-This means that there will be 20 buckets with a single centroid each that gathers together similar vectors.
-
-There are also some default values that we did not set with the `VectorIndexConfiguration()` method, these are:
-
-* The encoding type - 8 bit Scalar Quantization.
-
-* The distance metric - Squared Euclidean.
-
-* The minimum and maximum number of vectors for training the index.
-
-You can also alter some optional config settings such as `encoding`.
-
-[source, kotlin]
-----
-
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-custom-config]
-
-----
---
-=====
 
 NOTE: The number of vectors, the width or dimensions of the vectors and the training size can incur high CPU and memory costs as the size of each variable increases.
 This is because the training vectors have to be resident on the machine.
@@ -168,67 +126,30 @@ Below are example configurations of the previously mentioned methods.
 
 This method shows you how to create a Vector Index with embeddings.
 
-[tabs]
-=====
-
-Java::
-+
---
-[source, java]
+[source, csharp]
 ----
 
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-index]
+include::csharp:example$code_snippets/VectorSearch.cs[tags=vs-create-index]
 
 ----
 
-The snippet demonstrates the creation of the vector index, `word_index`, in the collection `_default.words`, demonstrating how you can create a vector index with a `word` embedding for use in queries related to written language.
---
+. First, create the standard configuration, setting up an expressions, number of dimensions and number of centroids for the vector embedding.
 
+. Next, create a collection variable passing it the contents of a given collection from our `database` object, in our case, the `colors` collection.
 
-Kotlin::
-+
---
-[source, kotlin]
-----
-
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-index]
-
-----
-
-The snippet demonstrates the creation of the vector index, `word_index`, in the collection `_default.words`, demonstrating how you can create a vector index with a `word` embedding for use in queries related to written language.
---
-=====
+. Finally, create a vector index, `colors_index`, on a collection and pass it our configuration.
 
 === Create Vector Index Embeddings from a Predictive Model
 
 This method generates vectors to be indexed for each document at the index time by using the `prediction()` function.
+The key difference to note is that the `config` object uses the output of the `prediction()` function as the `expression` parameter to generate the color embedding.
 
-[tabs]
-=====
-
-Java::
-+
---
-[source, java]
+[source, csharp]
 ----
-
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-predictive-index]
+        
+include::csharp:example$code_snippets/VectorSearch.cs[tags=vs-create-predictive-index]
 
 ----
---
-
-
-Kotlin::
-+
---
-[source, kotlin]
-----
-
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-predictive-index]
-
-----
---
-=====
 
 NOTE: You can use less storage by using the `prediction()` function as the encoded vectors will only be stored in the index. 
 However, the index time will be longer as vector embedding generation is occurring at run time.
@@ -260,32 +181,12 @@ NOTE: The default value for the `limit` parameter is 3.
 
 === Use `vector_match()`
 
-[tabs]
-=====
-
-Java::
-+
---
-[source, java]
+[source, csharp]
 ----
-
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-use-vector-match]
+        
+include::csharp:example$code_snippets/VectorSearch.cs[tags=vs-use-vector-match]
 
 ----
---
-
-
-Kotlin::
-+
---
-[source, kotlin]
-----
-
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-use-vector-match]
-
-----
---
-=====
 
 This function performs vector search against a specific vector index identifier for the specified vector expression.
 If the specified index does not exist, an error will occur on creation of the query.
@@ -308,32 +209,12 @@ IMPORTANT: Similar to the xref:csharp:fts.adoc[Full Text Search] `match()` funct
 
 === Use `vector_distance()`
 
-[tabs]
-=====
-
-Java::
-+
---
-[source, java]
+[source, csharp]
 ----
 
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-use-vector-distance]
+include::csharp:example$code_snippets/VectorSearch.cs[tags=vs-use-vector-distance]
 
 ----
---
-
-
-Kotlin::
-+
---
-[source, kotlin]
-----
-
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-use-vector-distance]
-
-----
---
-=====
 
 This function returns the distance between the target vector specified in the `vector_match()` function and the matched vector in the specified vector index based on the distance metric set in the index configuration.
 
