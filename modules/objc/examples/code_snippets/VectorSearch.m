@@ -1,10 +1,9 @@
 //
-//  VectorSeach.m
+//  VectorSearch.m
 //  CouchbaseLite
 //
 //  Copyright © 2024 couchbase. All rights reserved.
 //
-
 
 #import <Foundation/Foundation.h>
 #import <CouchbaseLite/CouchbaseLite.h>

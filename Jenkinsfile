@@ -21,7 +21,7 @@ pipeline {
                 stage("Validate iOS") {
                     agent { label 's61113u16 (litecore)' }
                     steps {
-                        sh 'jenkins/ios.sh 3.2.0'
+                        sh 'jenkins/ios.sh 3.2.0 1.0.0'
                     }
                 }
             }
