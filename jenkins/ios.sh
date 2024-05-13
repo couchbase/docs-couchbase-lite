@@ -30,8 +30,6 @@ VS_SOURCE_URL=$(curl -s -L -o /dev/null -w '%{url_effective}' "${VS_URL}" | sed 
 VS_BUILD_NUMBER=$(basename "${VS_SOURCE_URL}")
 VS_BUILD="${VS_VERSION}-${VS_BUILD_NUMBER}"
 
-PLATFORMS=("swift", "objc")
-
 for PLATFORM in "swift" "objc"
 do
     echo $PLATFORM
@@ -47,11 +45,11 @@ do
     # Get CBL
     CBL_PACKAGE_NAME="couchbase-lite-${PLATFORM}_xc_enterprise_${CBL_BUILD}.zip"
     wget "$CBL_SOURCE_URL$CBL_PACKAGE_NAME"
-    unzip $CBL_PACKAGE_NAME -d "../Frameworks/"
+    unzip -o $CBL_PACKAGE_NAME -d "../Frameworks/"
     # Get VS extension
     VS_PACKAGE_NAME="couchbase-lite-vector-search-${VS_BUILD}-apple.zip"
     wget "$VS_SOURCE_URL/$VS_PACKAGE_NAME"
-    unzip $VS_PACKAGE_NAME -d "../Frameworks/"
+    unzip -o $VS_PACKAGE_NAME -d "../Frameworks/"
     # Check if download was successful
     if [ $? -eq 0 ]; then
         echo "Package downloaded successfully."
@@ -60,8 +58,10 @@ do
     fi
 
     popd
+
     # Build snippets app
     TEST_SIMULATOR=$(xcrun xctrace list devices 2>&1 | grep -oE 'iPhone.*?[^\(]+' | head -1 | sed 's/Simulator//g' | awk '{$1=$1;print}')
     xcodebuild build -project code_snippets.xcodeproj -scheme "code-snippets" -destination "platform=iOS Simulator,name=${TEST_SIMULATOR}"
     popd
+
 done
