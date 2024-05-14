@@ -9,7 +9,7 @@ THIS_DIR=$( dirname -- $(realpath "$0"); )
 CBL_VERSION="$1"
 VS_VERSION="$2"
 
-# Get latest good CBL iOS EE build
+# Get latest good CBL iOS EE build for given version
 CBL_URL="http://proget.build.couchbase.com:8080/api/open_latestbuilds?product=couchbase-lite-ios&version=${CBL_VERSION}"
 
 # Grab the redirect url
@@ -21,13 +21,16 @@ CBL_BUILD_NUMBER=$(basename "${CBL_SOURCE_URL}")
 # Construct version with build number
 CBL_BUILD="${CBL_VERSION}-${CBL_BUILD_NUMBER}"
 
-# Get latest good VS extension build
+# Get latest good VS extension build for given version
 VS_URL="http://proget.build.couchbase.com:8080/api/open_latestbuilds?product=couchbase-lite-ios-vector-search&version=${VS_VERSION}"
 
 # Grab the redirect url - workaround until url is fixed
-VS_SOURCE_URL=$(curl -s -L -o /dev/null -w '%{url_effective}' "${VS_URL}" | sed 's/couchbase-lite-ios-vector-search/couchbase-lite-vector-search/')
+VS_SOURCE_URL=$(curl -s -L -o /dev/null -w '%{url_effective}' "${VS_URL}")
 
+# Extract version and build number
 VS_BUILD_NUMBER=$(basename "${VS_SOURCE_URL}")
+
+# Construct version with build number
 VS_BUILD="${VS_VERSION}-${VS_BUILD_NUMBER}"
 
 for PLATFORM in "swift" "objc"
