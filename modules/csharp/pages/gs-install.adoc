@@ -55,14 +55,12 @@ Couchbase recommends installing Nuget packages via _PackageReference_.
 This is the recommended method of dependency management because it supports the strict version requirement between the core _Couchbase Lite for .Net_ package and its dependent Support library, which comprises:
 
 .`Couchbase.Lite.Enterprise`
-* `Couchbase.Lite.Enterprise.Support.UWP`
 * `Couchbase.Lite.Enterprise.Support.ios`
 * `Couchbase.Lite.Enterprise.Support.android`
 * `Couchbase.Lite.Enterprise.Support.NetDesktop`
 * `Couchbase.Lite.Enterprise.Support.WinUI`
 
 .`Couchbase.Lite`
-* `Couchbase.Lite.Support.UWP`
 * `Couchbase.Lite.Support.ios`
 * `Couchbase.Lite.Support.android`
 * `Couchbase.Lite.Support.NetDesktop`
@@ -80,22 +78,13 @@ Intel processors that support the Advanced Vector Extensions 2 (AVX2) instructio
 To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.] 
 --
 
-==== Package Reference
-This is the recommended method of dependency management because it supports the strict version requirement between the core _Couchbase Lite for .Net_ package and its dependent Support library, which comprises:
+==== Vector Search Package Reference
+This is the recommended method of dependency management for the Vector Search extension because it supports the strict version requirement between the core _Couchbase Lite for .Net_ package and its dependent Support library.
+You can manage your dependencies by following the steps below:
 
-.`Couchbase.Lite.Enterprise`
-* `Couchbase.Lite.Enterprise.Support.UWP`
-* `Couchbase.Lite.Enterprise.Support.ios`
-* `Couchbase.Lite.Enterprise.Support.android`
-* `Couchbase.Lite.Enterprise.Support.NetDesktop`
-* `Couchbase.Lite.Enterprise.Support.WinUI`
+. Add the `Couchbase.Lite.Enterprise` packages.
 
-.`Couchbase.Lite.VectorSearch`
-* `Couchbase.Lite.VectorSearch.Support.UWP`
-* `Couchbase.Lite.VectorSearch.Support.ios`
-* `Couchbase.Lite.VectorSearch.Support.android`
-* `Couchbase.Lite.VectorSearch.Support.NetDesktop`
-* `Couchbase.Lite.VectorSearch.Support.WinUI`
+. Add the `Couchbase.Lite.VectorSearch` package.
 
 == Activating (on Android platform only)
 
@@ -104,7 +93,10 @@ Within your Android app, include a call to the relevant `Activate()` function in
 There is only one public class in each support assembly, and the support assembly itself is a nuget dependency.
 
 For example, UWP looks like: +
-`Couchbase.Lite.Support.UWP.Activate()`
+`Couchbase.Lite.Support.WinUI.Activate()`
+
+NOTE: The `Activate()` function is required for applications using .NET on the Android platform in general.
+This includes Couchbase Lite and the Vector Search extension.
 
 Currently the support assemblies provide dependency injected mechanisms for default directory logic, and platform specific logging (So, C# will log to logcat with correct log levels and tags. No more "mono-stdout" always at info level.)
 
