@@ -51,7 +51,7 @@ namespace api_walkthrough
             // in the documents' key named "vector" using 2 centroids.
             var config = new VectorIndexConfiguration("vector", 3, 2);
             // end::vs-create-default-config[]
-
+        }
         private void CreateCustomVectorIndexConfig()
         {
             // tag::vs-create-custom-config[]
