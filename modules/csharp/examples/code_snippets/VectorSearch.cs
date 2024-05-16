@@ -71,9 +71,10 @@ namespace api_walkthrough
 
         private void CreateVectorIndex()
         {
-            // tag::vs-create-index[]
+            
             var database = new Database("my-database");
   
+            // tag::vs-create-index[]
             // Create a vector index configuration for indexing 3 dimensional vectors embedded
             // in the documents' key named "vector" using 2 centroids.
             var config = new VectorIndexConfiguration("vector", 3, 2);
@@ -170,12 +171,10 @@ namespace api_walkthrough
 
         private void QueryUsingVectorDistance()
         {
-            // tag::vs-use-vector-distance[]
+           
             var database = new Database("my-database");
 
-            string inputColor = "FF00AA";
-
-            
+            // tag::vs-use-vector-distance[]
             // Create a query to get vector distances using the vector_distance() function.
             var sql = "SELECT id, color, vector_distance(colors_index) " +
                       "FROM _default.colors " +
@@ -184,7 +183,7 @@ namespace api_walkthrough
 
             // Get a vector, an array of float numbers, for the input color code
             // e.g. FF000AA. Mostly, the vector will be generated from a ML Model.
-            var vector = Color.GetVector(inputColor);
+            var vector = Color.GetVector("FFOOAA");
 
             // Set the vector array to the parameter "$vector"
             var queryParams = new Parameters();
@@ -201,3 +200,4 @@ namespace api_walkthrough
         }
     }
 }
+
