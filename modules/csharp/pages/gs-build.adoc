@@ -30,6 +30,30 @@ The document was successfully persisted to the database.
 
 See also -- {sgw-install--xref}
 
+=== Building With Vector Search
+
+To build your Couchbase Lite application with Vector Search, you must add the following to your existing Couchbase Lite application:
+
+. Add the Vector Search import statement
++
+[source, csharp]
+----
+
+using Couchbase.Lite.Extensions;
+
+----
++
+. Load the extension.
++
+[source, csharp]
+----
+// For Android applications
+Extension.Load(new VectorSearchExtension(Context));
+
+// For non-Android applications 
+Extension.Load(new VectorSearchExtension());
+
+----
 
 // DO NOT EDIT -- Footer Related Content Block
 
