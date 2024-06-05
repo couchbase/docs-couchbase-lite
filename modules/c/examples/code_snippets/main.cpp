@@ -13,6 +13,8 @@ void usleep(unsigned int us) {
 #include <unistd.h>
 #endif
 
+#include "VectorSearch.h"
+
 static CBLDatabase* kDatabase;
 
 // Helper for stop replicator in the code snippet
@@ -1787,7 +1789,7 @@ static void date_getter(){
     FLSliceResult_Release(timeString);
 
     // Get doc from collection
-    CBLDocument* doc = CBLCollection_GetDocument(collection, id, &err);
+    const CBLDocument* doc = CBLCollection_GetDocument(collection, id, &err);
     if(!doc) {
         // Failed to retrieve, do error handling as above.  NOTE: error code 0 simply means
         // the document does not exist.
