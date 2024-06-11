@@ -14,7 +14,7 @@ if(DEFINED CBL_MACOS_ARCH)
 endif()
 
 if(NOT DEFINED CBL_VERSION)
-    set(CBL_VERSION 3.1.0)
+    set(CBL_VERSION 3.2.0)
 endif()
 
 project(code-snippets)
@@ -29,7 +29,8 @@ find_package(CouchbaseLite ${CBL_VERSION} REQUIRED)
 
 add_executable(
     code-snippets
-    main.c
+        main.cpp
+        VectorSearch.h
 )
 
 if(CMAKE_COMPILER_IS_GNUCC AND CBL_STATIC_CXX)
