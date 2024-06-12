@@ -28,12 +28,14 @@ include::c:example$code_snippets/VectorSearch.h[tags=vs-create-default-config]
 
 ----
 
-First, initialize the `config` variable with the `VectorIndexConfiguration()` method with the following parameters:
+First, we initialize the `config` object with a new `VectorIndexConfiguration` object initialized with the following parameters:
 
-* The width or `dimensions` of the vector index is set to `300`.
+* The expression of the data as a vector.
 
-* The amount of `centroids` is set to `20`.
-This means that there will be 20 buckets with a single centroid each that gathers together similar vectors.
+* The width or `dimensions` of the vector index is set to `3`.
+
+* The amount of `centroids` is set to `2`.
+This means that there will be two buckets with a single centroid each that gathers together similar vectors.
 
 There are also some default values that we did not set with the `VectorIndexConfiguration()` method, these are:
 
@@ -43,7 +45,7 @@ There are also some default values that we did not set with the `VectorIndexConf
 
 * The minimum and maximum number of vectors for training the index.
 
-You can also alter some optional config settings such as `encoding`.
+The method below shows the generation of a custom vector index configuration.
 
 [source, c]
 ----
@@ -70,9 +72,13 @@ IMPORTANT: The beta release currently only supports the format of vectors as an 
 |Expression
 |Required
 |No default
-| A SQL++ expression indicating where to get the vectors. 
+|A SQL++ expression indicating where to get the vectors. 
 A document property for embedded vectors
 `prediction()` to call a registered Predictive model.
+|Expression Language
+|Required
+|No default
+|Specifies the query language used. This can be SQL++ or N1Q1 query.
 |Number of Dimensions
 |Required
 |No default
@@ -131,7 +137,11 @@ include::c:example$code_snippets/VectorSearch.h[tags=vs-create-index]
 
 ----
 
-The snippet demonstrates the creation of the vector index, `word_index`, in the collection `_default.words`, demonstrating how you can create a vector index with a `word` embedding for use in queries related to written language.
+. First, create the standard configuration, setting up an expressions, number of dimensions and number of centroids for the vector embedding.
+
+. Next, create a collection variable passing it the contents of a given collection from our `database` object, in our case, the `colors` collection.
+
+. Finally, create a vector index, `colors_index`, on a collection and pass it our configuration.
 
 === Create Vector Index Embeddings from a Predictive Model
 
