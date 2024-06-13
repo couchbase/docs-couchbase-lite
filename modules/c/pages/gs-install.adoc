@@ -246,9 +246,19 @@ sudo apt install ./{release-dir-dev-ee}
 
 === Install Vector Search for Linux
 
-Before you can use Vector Search, you must link:https://www.couchbase.com/downloads/?family=couchbase-lite#LiteExtensions[Install the Vector Search extension].
+Before you can use Vector Search, you must link:https://www.couchbase.com/downloads/?family=couchbase-lite#LiteExtensions[download and install the Vector Search library] to the location in your project where the library can be accessed and loaded at run time.
 The Vector Search extension for the C platform ships with supported prebuilt libraries containing the required dependencies.
+
 You need to set the `LD_LIBRARIES_PATH` to the extension location instead of installing the libraries yourself.
+
+In the code, before opening the database and using the vector search extension, you must call the CBL_SetExtensionPath function shown below to set the path to the installed location of the vector search library.
+
+[source, c, indent=0]
+----
+
+include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
+
+----
 
 [#lbl-windows]
 == Install for Windows
@@ -278,6 +288,8 @@ To use the Vector Search extension:
 
 . Download and extract the link:https://www.couchbase.com/downloads/?family=couchbase-lite#LiteExtensions[Vector Search extension].
 . Put the library in your development environment.
+
+NOTE: Couchbase Lite Vector Search does not have any preferred installation path for the `.dll`. It is up to you to determine where best to place it so it is available during execution.
 
 [#lbl-macos]
 == Install for macOS
@@ -312,42 +324,12 @@ Then, within the dialog:
 
 === Install Vector Search for macOS
 
-. Download and extract the link:https://www.couchbase.com/downloads/?family=couchbase-lite#LiteExtensions[Vector Search extension] into your XCode project location.
-. Select your target settings in XCode and drag *CouchbaseLiteVectorSearch.xcframework* from your Finder to the *Frameworks, Libraries, and Embedded Content* section.
-. Import the xcframework and start using it in your project.
-. Find the extension path using the appropriate snippet:
+IMPORTANT: Couchbase does not support homebrew for installation of the Vector Search extension. 
 
-[{tabs}]
-=====
+Before you can use Vector Search, you must link:https://www.couchbase.com/downloads/?family=couchbase-lite#LiteExtensions[download and install the Vector Search library] to the location in your project where the library can be accessed and loaded at run time.
+The Vector Search extension for the C platform ships with supported prebuilt libraries containing the required dependencies.
 
-Objective-C::
-+
---
-
-[source, objective-c]
-----
-
-[NSBundle bundleWithIdentifier: "com.couchbase.vectorSearchExtension"].bundlePath
-
-----
-
---
-Swift::
-+
---
-
-[source, swift]
-----
-
-Bundle(identifier: "com.couchbase.vectorSearchExtension").bundlePath
-
-----
-
---
-
-=====
-
-You can then set the extension path with the snippet below.
+In the code, before opening the database and using the vector search extension, you must call the CBL_SetExtensionPath function shown below to set the path to the installed location of the vector search library.
 
 [source, c, indent=0]
 ----
@@ -356,11 +338,10 @@ include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
 
 ----
 
+NOTE: Couchbase Lite Vector Search does not have any preferred installation path for the `.dll`. It is up to you to determine where best to place it so it is available during execution.
+
 [#lbl-ios]
 == Install for iOS
-
-// CAUTION: Direct access from Swift to Couchbase Lite for C is not possible in this release footnote:[3.0], but will be available in the next release.
-
 
 To install the Couchbase for C libraries for iOS from a downloaded release package:
 
@@ -447,21 +428,16 @@ Once the install is finished, you can build and run this skeleton app.
 
 === Install Vector Search for Android
 
-Download and extract the link:https://www.couchbase.com/downloads/?family=couchbase-lite#LiteExtensions[Vector Search extension] into your project location.
-
 To use Vector Search in your Android applications, follow the steps below:
 
-// If Android version of vector search deviates this will need a custom change.
-. Create a Java Android app project in Android Studio
-. Add Couchbase Lite as a dependency in your app-level `build.gradle` +
-`implementation 'com.couchbase.lite:couchbase-lite-android-ee:{version-maintenance-android}'`
-. Add the following _maven_ repo to your repositories (in `build.gradle` or `settings.gradle` as required +
-`https://mobile.maven.couchbase.com/maven2/dev/`
-. If you want to use Vector Search, add the Couchbase Lite Vector Search dependency for architectures other than `x86_64`: `com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-version-maintenance}`
-.. For `x86_64` architectures: `com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-version-maintenance}`
-. Build the project and it will pull Couchbase Lite down.
+. Download and extract the link:https://www.couchbase.com/downloads/?family=couchbase-lite#LiteExtensions[Vector Search extension] into your project location.
+. The package must be installed to the location in your project where the library can be accessed and loaded while the executable is running.
+.. The Vector Search download for CBL-C only contains the Vector Search libraries needed to include in your app.
+.. Steps to include the prebuilt native library can be found link:https://developer.android.com/studio/projects/gradle-external-native-builds[here].
+. Create a Android app project in Android Studio
+. The location of the native library can be found using the following snippet:
+// FOR 3.2.0 GA >> . For `x86_64` architectures: `com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-version-maintenance}`
 
-The location of the native library can be found using the following snippet:
 
 [{tabs}]
 =====
