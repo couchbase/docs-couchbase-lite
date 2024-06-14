@@ -289,6 +289,15 @@ To use the Vector Search extension:
 . Download and extract the link:https://www.couchbase.com/downloads/?family=couchbase-lite#LiteExtensions[Vector Search extension].
 . Put the library in your development environment.
 
+In the code, before opening the database and using the vector search extension, you must call the CBL_SetExtensionPath function shown below to set the path to the installed location of the vector search library.
+
+[source, c, indent=0]
+----
+
+include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
+
+----
+
 NOTE: Couchbase Lite Vector Search does not have any preferred installation path for the `.dll`. It is up to you to determine where best to place it so it is available during execution.
 
 [#lbl-macos]
@@ -337,8 +346,6 @@ In the code, before opening the database and using the vector search extension, 
 include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
 
 ----
-
-NOTE: Couchbase Lite Vector Search does not have any preferred installation path for the `.dll`. It is up to you to determine where best to place it so it is available during execution.
 
 [#lbl-ios]
 == Install for iOS
@@ -477,6 +484,16 @@ static String getExtensionPath() {
 
 --
 =====
+
+In the code, before opening the database and using the vector search extension, you must call the CBL_SetExtensionPath function shown below to set the path to the installed location of the vector search library.
+
+[source, c, indent=0]
+----
+
+include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
+
+----
+
 {install-closure}
 
 
