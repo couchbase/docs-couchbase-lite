@@ -73,12 +73,13 @@ IMPORTANT: The beta release currently only supports the format of vectors as an 
 |Required
 |No default
 |A SQL++ expression indicating where to get the vectors. 
-A document property for embedded vectors
+A document property for embedded vectors or
 `prediction()` to call a registered Predictive model.
 |Expression Language
 |Required
 |No default
-|Specifies the query language used. This can be SQL++ or N1Q1 query.
+|Specifies the query language used. This can be N1Q1 or JSON query.
+For JSON query syntax, see link:https://github.com/couchbase/couchbase-lite-core/wiki/JSON-Query-Schema[Couchbase JSON query wiki].
 |Number of Dimensions
 |Required
 |No default
@@ -139,9 +140,9 @@ include::c:example$code_snippets/VectorSearch.h[tags=vs-create-index]
 
 . First, create the standard configuration, setting up an expressions, number of dimensions and number of centroids for the vector embedding.
 
-. Next, create a collection variable passing it the contents of a given collection from our `database` object, in our case, the `colors` collection.
+. Next, get the colors collection from the database.
 
-. Finally, create a vector index, `colors_index`, on a collection and pass it our configuration.
+. Finally, create a vector index, colors_index, on the collection with the configuration.
 
 === Create Vector Index Embeddings from a Predictive Model
 
