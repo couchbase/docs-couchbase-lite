@@ -16,9 +16,9 @@ public:
 
     void enableVectorSearchExtension()
     {
-        // tag::vs-setup-packaging[]
+        // tag::vs - setup - packaging[]
         CBL_SetExtensionPath(FLStr("/path/to/extension_dir"));
-        // end::vs-setup-packaging[]
+        // end::vs - setup - packaging[]
     }
 
     void createDefaultVectorIndexConfig() {
