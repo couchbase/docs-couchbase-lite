@@ -11,9 +11,6 @@ pushd "$THIS_DIR/../modules/c/examples/code_snippets"
 build_num=$(curl -s http://dbapi.build.couchbase.com:8000/v1/products/couchbase-lite-c/releases/$version/versions/$version/builds?filter=last_complete | jq .build_num | bc)
 mkdir -p downloaded
 
-# Using build number to 43 (CBL-C 3.2.0-Beta.3) as there is a small change to the CBLPredictiveModel API in the newer build for GA:
-build_num="43"
-
 pushd downloaded
 DOWNLOAD_DIR=$(pwd)
 wget http://latestbuilds.service.couchbase.com/builds/latestbuilds/couchbase-lite-c/$version/$build_num/couchbase-lite-c-enterprise-$version-$build_num-linux-x86_64.tar.gz
