@@ -18,8 +18,21 @@ ifndef::param-version[]
 endif::[]
 ifndef::our-version-hyphenated[:our-version-hyphenated: x]
 
+ifdef::vs-param-version[]
+:our-vs-version: {vs-param-version}
+endif::[]
+ifdef::vs-param-version-hyphenated[]
+:our-vs-version-hyphenated: {vs-param-version-hyphenated}
+endif::[]
+ifndef::vs-param-version[]
+:our-vs-version: {vs-version-maintenance}
+:our-vs-version-hyphenated: {vs-version-maintenance-hyphenated}
+endif::[]
+ifndef::our-vs-version-hyphenated[:our-vs-version-hyphenated: x]
+
 :download-path: {url-downloads-mobile}
 :source_url: https://packages.couchbase.com/releases/couchbase-lite-c/{our-version}/
+:vs_source_url: https://packages.couchbase.com/releases/couchbase-lite-vector-search/{our-vs-version}/
 
 :release-dir-ee: pass:q,a[libcblite-{our-version}]
 :release-dir: pass:q,a[libcblite-community-{our-version}]
@@ -52,7 +65,7 @@ Ensure you select the correct package for your application's compiler and archit
 endif::is-fullpage[]
 
 [#release-{our-version-hyphenated}]
-== Release {our-version}
+== Couchbase Lite Release {our-version}
 
 .Available platforms are:
 ****
@@ -62,10 +75,10 @@ endif::is-fullpage[]
 <<ubuntu-{our-version-hyphenated}>>  |
 ****
 
-[#tbl-downloads-{our-version}]
-
 [#macos-{our-version-hyphenated}]
 === MacOS
+
+[#tbl-downloads-{our-version}]
 .Download link table
 [{tabs}]
 =====
@@ -516,3 +529,145 @@ Community Edition::
 
 Please use the <<debian-{our-version-hyphenated},Debian `.deb` download>> choosing the appropriate version (`debian9` or `debian10`) and architecture.
 
+[id=vs-release-{our-vs-version-hyphenated}]
+== Vector Search Release {our-vs-version}
+
+.Available platforms are:
+****
+<<android-{our-vs-version-hyphenated}>> |
+<<macos-{our-vs-version-hyphenated}>>  |
+<<ios-{our-vs-version-hyphenated}>> |
+<<windows-{our-vs-version-hyphenated}>> |
+<<linux-{our-vs-version-hyphenated}>>   |
+****
+
+[IMPORTANT] 
+--
+You must have Couchbase Lite installed before you can use the Vector Search Extension.
+Vector Search is available only for 64-bit architectures.
+The Vector Search extension is an *Enterprise-only* feature.
+--
+
+[id=android-{our-vs-version-hyphenated}]
+=== Android
+
+[#tbl-downloads-{our-vs-version}]
+.Download link table
+[{tabs}]
+=====
+
+Enterprise::
++
+--
+[#tbl-downloads-ee,cols="1,4,4", options="header"]
+|===
+| Platform | Download | SHA 
+
+.4+| Android
+
+| {vs_source_url}couchbase-lite-vector-search-{our-vs-version}-android-arm64-v8a.zip[couchbase-lite-vector-search-{our-vs-version}-android-arm64-v8a.zip]
+| {vs_source_url}couchbase-lite-vector-search-{our-vs-version}-android-arm64-v8a.zip.sha256[couchbase-lite-vector-search-{our-vs-version}-android-arm64-v8a.zip.sha256]
+| {vs_source_url}couchbase-lite-vector-search-{our-vs-version}-android-x86_64.zip[couchbase-lite-vector-search-{our-vs-version}-android-x86_64.zip]
+| {vs_source_url}couchbase-lite-vector-search-{our-vs-version}-android-x86_64.zip.sha256[couchbase-lite-vector-search-{our-vs-version}-android-x86_64.zip.sha256]
+
+|===
+--
+=====
+
+[id=macos-{our-vs-version-hyphenated}]
+=== MacOS
+
+[#tbl-downloads-{our-vs-version}]
+.Download link table
+[{tabs}]
+=====
+
+Enterprise Edition::
++
+--
+[#tbl-downloads-ee,cols="1,4,4", options="header"]
+|===
+| Platform | Download | SHA 
+
+.1+| MacOS
+| {vs_source_url}couchbase-lite-vector-search-{our-vs-version}-macos.zip[couchbase-lite-vector-search-{our-vs-version}-macos.zip]
+| {vs_source_url}couchbase-lite-vector-search-{our-vs-version}-macos.zip.sha256[couchbase-lite-vector-search-{our-vs-version}-macos.zip.sha256]
+
+|===
+--
+=====
+
+[id=ios-{our-vs-version-hyphenated}]
+=== iOS
+[#tbl-downloads-{our-vs-version}]
+.Download link table
+[{tabs}]
+=====
+
+Enterprise Edition::
++
+--
+[#tbl-downloads-ee,cols="1,4,4", options="header"]
+|===
+| Platform | Download | SHA 
+
+.3+| iOS
+| {vs_source_url}couchbase-lite-vector-search_xcframework_{our-vs-version}.zip[couchbase-lite-vector-search_xcframework_{our-vs-version}.zip]
+| {vs_source_url}couchbase-lite-vector-search_xcframework_{our-vs-version}.zip.sha256[couchbase-lite-vector-search_xcframework_{our-vs-version}.zip.sha256]
+
+|===
+--
+=====
+
+[id=windows-{our-vs-version-hyphenated}]
+=== Windows
+
+[#tbl-downloads-{our-vs-version}]
+.Download link table
+[{tabs}]
+=====
+
+Enterprise Edition::
++
+--
+[#tbl-downloads-ee,cols="1,4,4", options="header"]
+|===
+| Platform | Download | SHA
+
+.3+| Windows
+| {vs_source_url}couchbase-lite-vector-search-{our-vs-version}-windows-arm64.zip[couchbase-lite-vector-search-{our-vs-version}-windows-arm64.zip]
+| {vs_source_url}couchbase-lite-vector-search-{our-vs-version}-windows-arm64.zip[couchbase-lite-vector-search-{our-vs-version}-windows-arm64.zip.sha256]
+| {vs_source_url}couchbase-lite-vector-search-{our-vs-version}-windows-x86_64.zip[couchbase-lite-vector-search-{our-vs-version}-windows-x86_64.zip]
+| {vs_source_url}couchbase-lite-vector-search-{our-vs-version}-windows-x86_64.zip[couchbase-lite-vector-search-{our-vs-version}-windows-x86_64.zip.sha256]
+
+|===
+--
+=====
+
+[id=linux-{our-vs-version-hyphenated}]
+=== Linux
+
+[#tbl-downloads-{our-vs-version}]
+.Download link table
+[{tabs}]
+=====
+
+Enterprise::
++
+--
+[#tbl-downloads-ee,cols="1,4,4,4", options="header"]
+|===
+| Platform | Download | SHA | Debug Symbols
+
+.4+| Linux
+
+| {vs_source_url}couchbase-lite-vector-search-{our-vs-version}-linux-aarch64.zip[couchbase-lite-vector-search-{our-vs-version}-linux-aarch64.zip]
+| {vs_source_url}couchbase-lite-vector-search-{our-vs-version}-linux-aarch64.zip.sha256[couchbase-lite-vector-search-{our-vs-version}-linux-aarch64.zip.sha256]
+| {vs_source_url}couchbase-lite-vector-search-{our-vs-version}-linux-aarch64-symbols.zip[couchbase-lite-vector-search-{our-vs-version}-linux-aarch64-symbols.zip]
+| {vs_source_url}couchbase-lite-vector-search-{our-vs-version}-linux-x86_64.zip[couchbase-lite-vector-search-{our-vs-version}-linux-x86_64.zip]
+| {vs_source_url}couchbase-lite-vector-search-{our-vs-version}-linux-x86_64.zip.sha256[couchbase-lite-vector-search-{our-vs-version}-linux-x86_64.zip.sha256]
+| {vs_source_url}couchbase-lite-vector-search-{our-vs-version}-linux-x86_64-symbols.zip[couchbase-lite-vector-search-{our-vs-version}-linux-x86_64-symbols.zip]
+
+|===
+--
+=====

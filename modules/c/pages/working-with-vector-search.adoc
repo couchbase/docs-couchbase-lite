@@ -13,7 +13,7 @@ ifdef::prerelease[:page-status: {prerelease}]
 
 == Use Vector Search
 
-To configure a project to use vector search, follow the xref:objc:gs-install.adoc[installation instructions] to add the Vector Search extension.
+To configure a project to use vector search, follow the xref:c:gs-install.adoc[installation instructions] to add the Vector Search extension.
 
 NOTE: You must install Couchbase Lite to use the Vector Search extension.
 
@@ -21,23 +21,21 @@ NOTE: You must install Couchbase Lite to use the Vector Search extension.
 
 This method shows how you can create a vector index using the Couchbase Lite Vector Search extension.
 
-[source, objective-c]
+[source, c]
 ----
 
-include::objc:example$code_snippets/VectorSearch.m[tags=vs-create-default-config;vs-create-custom-config]
+include::c:example$code_snippets/VectorSearch.h[tags=vs-create-default-config]
 
 ----
 
-First, initialize the `config` variable with the `VectorIndexConfiguration()` method with the following parameters:
+First, we initialize the `config` object with a new `VectorIndexConfiguration` object initialized with the following parameters:
 
 * The expression of the data as a vector.
 
-* The data stored within this index will be of type `string`.
+* The width or `dimensions` of the vector index is set to `3`.
 
-* The width or `dimensions` of the vector index is set to `300`.
-
-* The amount of `centroids` is set to `8`.
-This means that there will be eight buckets with a single centroid each that gathers together similar vectors.
+* The amount of `centroids` is set to `2`.
+This means that there will be two buckets with a single centroid each that gathers together similar vectors.
 
 There are also some default values that we did not set with the `VectorIndexConfiguration()` method, these are:
 
@@ -47,15 +45,22 @@ There are also some default values that we did not set with the `VectorIndexConf
 
 * The minimum and maximum number of vectors for training the index.
 
+The method below shows the generation of a custom vector index configuration.
+
+[source, c]
+----
+
+include::c:example$code_snippets/VectorSearch.h[tags=vs-create-custom-config]
+
+----
+
 NOTE: The number of vectors, the width or dimensions of the vectors and the training size can incur high CPU and memory costs as the size of each variable increases.
 This is because the training vectors have to be resident on the machine.
-
-You can also alter some optional config settings such as `encoding`.
 
 === Vector Index Configuration
 
 The table below displays the different configurations you can modify within your `VectorIndexConfiguration()` function.
-For more information on specific configurations, see xref:objc:vector-search.adoc[Vector Search.]
+For more information on specific configurations, see xref:c:vector-search.adoc[Vector Search.]
 
 IMPORTANT: The beta release currently only supports the format of vectors as an array of numbers.
 
@@ -67,9 +72,14 @@ IMPORTANT: The beta release currently only supports the format of vectors as an 
 |Expression
 |Required
 |No default
-| A SQL++ expression indicating where to get the vectors. 
+|A SQL++ expression indicating where to get the vectors. 
 A document property for embedded vectors or
 `prediction()` to call a registered Predictive model.
+|Expression Language
+|Required
+|No default
+|Specifies the query language used. This can be N1Q1 or JSON query.
+For JSON query syntax, see link:https://github.com/couchbase/couchbase-lite-core/wiki/JSON-Query-Schema[Couchbase JSON query wiki].
 |Number of Dimensions
 |Required
 |No default
@@ -121,26 +131,27 @@ Below are example configurations of the previously mentioned methods.
 
 This method shows you how to create a Vector Index with embeddings.
 
-[source, objective-c]
+[source, c]
 ----
 
-include::objc:example$code_snippets/VectorSearch.m[tags=vs-create-index]
+include::c:example$code_snippets/VectorSearch.h[tags=vs-create-index]
 
 ----
 
 . First, create the standard configuration, setting up an expressions, number of dimensions and number of centroids for the vector embedding.
 
-. Next, create a vector index, `vector_index`, on a collection and pass it our configuration.
+. Next, get the colors collection from the database.
+
+. Finally, create a vector index, colors_index, on the collection with the configuration.
 
 === Create Vector Index Embeddings from a Predictive Model
 
 This method generates vectors to be indexed for each document at the index time by using the `prediction()` function.
-The key difference to note is that the `config` object uses the output of the `prediction()` function as the `expression` parameter to generate the word embedding.
 
-[source, objective-c]
+[source, c]
 ----
 
-include::objc:example$code_snippets/VectorSearch.m[tags=vs-create-predictive-index]
+include::c:example$code_snippets/VectorSearch.h[tags=vs-create-predictive-index]
 
 ----
 
@@ -174,10 +185,10 @@ NOTE: The default value for the `limit` parameter is 3.
 
 === Use `vector_match()`
 
-[source, objective-c]
+[source, c]
 ----
 
-include::objc:example$code_snippets/VectorSearch.m[tags=vs-use-vector-match]
+include::c:example$code_snippets/VectorSearch.h[tags=vs-use-vector-match]
 
 ----
 
@@ -186,7 +197,7 @@ If the specified index does not exist, an error will occur on creation of the qu
 The matched vectors will be returned up to the specified limit number, if the limit is not specified then the default value will be used. 
 The returned vectors are sorted by their distance values in ascending order by default.
 
-IMPORTANT: Similar to the xref:objc:fts.adoc[Full Text Search] `match()` function, `vector_match()` can only be called alone or at the top level `AND` expression.
+IMPORTANT: Similar to the xref:c:fts.adoc[Full Text Search] `match()` function, `vector_match()` can only be called alone or at the top level `AND` expression.
 
 === `vector_distance(vectorIndexIdentifier)`
 
@@ -202,10 +213,10 @@ IMPORTANT: Similar to the xref:objc:fts.adoc[Full Text Search] `match()` functio
 
 === Use `vector_distance()`
 
-[source, objective-c]
+[source, c]
 ----
 
-include::objc:example$code_snippets/VectorSearch.m[tags=vs-use-vector-distance]
+include::c:example$code_snippets/VectorSearch.h[tags=vs-use-vector-distance]
 
 ----
 
@@ -213,8 +224,8 @@ This function returns the distance between the target vector specified in the `v
 
 == See Also
 
-* xref:objc:gs-install.adoc[Installation Instructions]
+* xref:c:gs-install.adoc[Installation Instructions]
 
-* xref:swift:vector-search.adoc[Vector Search]
+* xref:c:vector-search.adoc[Vector Search]
 
-* xref:swift:fts.adoc[Full Text Search]
+* xref:c:fts.adoc[Full Text Search]
