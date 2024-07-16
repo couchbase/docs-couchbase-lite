@@ -37,10 +37,15 @@ namespace api_walkthrough
     {
         public VectorSearch() { }
 
+        private static Task<float[]> GenerateEmbedding(string input)
+        {
+            return Task.FromResult(Enumerable.Empty<float>().ToArray());
+        }
+
         private static void EnableVectorSearchExtension()
         {
             // tag::vs - setup - packaging[]
-            Extension.Load(new VectorSearchExtension());
+            Extension.Enable(new VectorSearchExtension());
             // end::vs - setup - packaging[]
         }
 
@@ -67,6 +72,71 @@ namespace api_walkthrough
                 MaxTrainingSize = 200
             };
             // end::vs-create-custom-config[]
+        }
+
+        private void CreateLazyIndex()
+        {
+            // tag::vs-lazy-index-config[]
+            // Creating a lazy vector index is the same as creating a normal one, except
+            // with the IsLazy property set to true
+            var config = new VectorIndexConfiguration("vector", 3, 2)
+            {
+                IsLazy = true
+            };
+            // end::vs-lazy-index-config[]
+        }
+
+        private async Task UpdateLazyIndex()
+        {
+            var database = new Database("my-database");
+            var collection = database.GetDefaultCollection();
+
+            // tag::vs-create-lazy-index-embedding[]
+            // Retrieve the index you wish to update
+            var index = collection.GetIndex("index-name");
+
+            // Start an update on it (in this case, limit to 50 entries at a time)
+            var updater = index.BeginUpdate(50);
+
+            // If updater is null, that means there are no more entries to process
+            while (updater != null) {
+                using (updater) {
+                    // Otherwise, the updater will contain a list of data that needs embeddings generated
+                    int i = 0;
+                    foreach (var entry in updater) {
+                        // The type of entry will depend on what you have set as your index.
+                        // In this example, we will assume it was set to a string property.
+                        // Let's also assume that if an embedding is not applicable, this
+                        // pseudo function returns null
+                        try {
+                            var embedding = await GenerateEmbedding((string)entry);
+                            if (embedding == null) {
+                                // No embedding applicable.  Calling SetVector will null will
+                                // cause the underlying document to NOT be indexed
+                                updater.SetVector(i, null);
+                            } else {
+                                // Yes this if/else is unneeded, and only to demonstrate the
+                                // effect of setting null in SetVector
+                                updater.SetVector(i, embedding);
+                            }
+                        } catch (Exception) {
+                            // Bad connection?  Corrupted over the wire?  Something bad happened
+                            // and the embedding cannot be generated at the moment.  So skip
+                            // this entry.  The next time BeginUpdate is called, it will be considered again
+                            updater.SkipVector(i);
+                        }
+                    }
+
+                    // This writes the vectors to the index.  Disposing it without calling this
+                    // will throw out the results without saving.  You MUST have either set or
+                    // skipped all the entries inside of the updater or this call will throw an exception.
+                    updater.Finish();
+                }
+
+                // Ready for the next batch!
+                updater = index.BeginUpdate(50);
+            }
+            // end::vs-create-lazy-index-embedding[]
         }
 
         private void CreateVectorIndex()
