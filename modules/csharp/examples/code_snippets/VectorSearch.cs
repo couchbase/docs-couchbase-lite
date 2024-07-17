@@ -62,14 +62,15 @@ namespace api_walkthrough
             // tag::vs-create-custom-config[]
             // Create a vector index configuration for indexing 3 dimensional vectors embedded
             // in the documents' key named "vector" using 2 centroids. The config is customized
-            // to use Cosise distance metric, no vector encoding, min training size 100 and
-            // max training size 200.
+            // to use Cosine distance metric, no vector encoding, min training size 100,
+            // max training size 200, and number of probes 8.
             var config = new VectorIndexConfiguration("vector", 3, 2)
             {
                 DistanceMetric = DistanceMetric.Cosine,
                 Encoding = VectorEncoding.None(),
                 MinTrainingSize = 100,
-                MaxTrainingSize = 200
+                MaxTrainingSize = 200,
+                NumProbes = 8
             };
             // end::vs-create-custom-config[]
         }
