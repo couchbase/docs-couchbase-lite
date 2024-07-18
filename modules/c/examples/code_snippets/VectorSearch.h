@@ -17,7 +17,7 @@ public:
     void enableVectorSearchExtension()
     {
         // tag::vs-setup-packaging[]
-        CBL_SetExtensionPath(FLStr("/path/to/extension_dir"));
+        CBL_EnableVectorSearch(FLStr("/path/to/extension_dir"));
         // end::vs-setup-packaging[]
     }
 
@@ -35,19 +35,20 @@ public:
 
     void createCustomVectorIndexConfig() {
         // tag::vs-create-custom-config[]
-        // Create a vector index configuration for indexing 3-dimensional vectors embedded
-        // in the documents' key named "vector" using 2 centroids. The config is customized
-        // to use Cosise distance metric, no vector encoding, min training size 100 and
-        // max training size 200.
+        // Create a vector index configuration for indexing 3-dimensional vectors embedded in
+        // the documents' key named "vector" using 100 centroids. The configuration customizes
+        // the encoding, the distance metric, the number of probes, and the training size.
+        // Note: Free the created encoding using CBLVectorEncoding_Free after creating the index.
         CBLVectorIndexConfiguration config{};
         config.expressionLanguage = kCBLN1QLLanguage;
         config.expression = FLStr("vector");
         config.dimensions = 3;
-        config.centroids = 2;
-        // Note: Calls CBLVectorEncoding_Free(config.encoding) after creating the index.
+        config.centroids = 100;
+        config.metric = kCBLDistanceMetricCosine;
+        config.numProbes = 8;
         config.encoding = CBLVectorEncoding_CreateNone();
-        config.minTrainingSize = 100;
-        config.maxTrainingSize = 200;
+        config.minTrainingSize = 2500;
+        config.maxTrainingSize = 5000;
         // end::vs-create-custom-config[]
     }
 
@@ -60,7 +61,6 @@ public:
         config.expression = FLStr("vector");
         config.dimensions = 3;
         config.centroids = 2;
-        config.encoding = CBLVectorEncoding_CreateNone();
 
         CBLError err {};
         CBLCollection* collection = CBLDatabase_Collection(database, FLStr("colors"), FLStr("_default"), &err);
@@ -69,7 +69,6 @@ public:
         bool result = CBLCollection_CreateVectorIndex(collection, FLStr("colors_index"), config, &err);
         if (!result) { throw std::domain_error("Create Index Error"); }
 
-        CBLVectorEncoding_Free(config.encoding);
         CBLCollection_Release(collection);
         // end::vs-create-index[]
     }
@@ -78,7 +77,7 @@ public:
         CBLDatabase* database = getDatabase();
 
         // tag::vs-predictive-model[]
-        auto callback = [](void* context, FLDict input) -> FLSliceResult {
+        auto callback = [](void* context, FLDict input) -> FLMutableDict {
             // Set color input string
             FLString color = FLValue_AsString(FLDict_Get(input, FLStr("colorInput")));
 
@@ -86,19 +85,17 @@ public:
             auto colorString = std::string(static_cast<const char *>(color.buf), color.size);
             std::vector<float> colorVector = Color::getVector(colorString);
 
-            // Construct output as Fleece Dictionary Encoded:
+            // Construct a fleece array for the color vector:
             FLMutableArray vectorArray = FLMutableArray_New();
             for (float val : colorVector) {
                 FLMutableArray_AppendFloat(vectorArray, val);
             }
 
-            FLEncoder enc = FLEncoder_New();
-            FLEncoder_BeginDict(enc, 1);
-            FLEncoder_WriteKey(enc, FLStr("vector_output"));
-            FLEncoder_WriteValue(enc, (FLValue)vectorArray);
-            FLEncoder_EndDict(enc);
+            // Construct a fleece dictionary output
+            FLMutableDict output = FLMutableDict_New();
+            FLMutableDict_SetArray(output, FLStr("vector"), vectorArray);
             FLMutableArray_Release(vectorArray);
-            return FLEncoder_Finish(enc, nullptr);
+            return output;
         };
 
         CBLPredictiveModel model {};
@@ -113,7 +110,7 @@ public:
         // function to get the vectors from the registered predictive model.
         CBLVectorIndexConfiguration config {};
         config.expressionLanguage = kCBLN1QLLanguage;
-        config.expression = FLStr("predict(ColorModel, {\"colorInput\": color})");
+        config.expression = FLStr("prediction(ColorModel, {\"colorInput\": color}).vector");
         config.dimensions = 3;
         config.centroids = 2;
         config.encoding = CBLVectorEncoding_CreateNone();
@@ -130,14 +127,14 @@ public:
         // end::vs-create-predictive-index[]
     }
 
-    void queryUsingVectorMatch() {
+    void queryVectorSearch() {
         CBLDatabase* database = getDatabase();
 
         // tag::vs-use-vector-match[]
-        // Create a query to search similar colors by using the vector_match()
-        // function in the vector index named "colors_index".
+        // Create a query to search similar colors by using the approx_vector_distance() function
+        // in the ORDER BY clause.
         CBLError err{};
-        const char* sql = "SELECT id, color FROM _default.colors WHERE vector_match(colors_index, $vector, 8)";
+        const char* sql = "SELECT id, color FROM _default.colors ORDER BY approx_vector_distance(vector, $vector) LIMIT 8";
         CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
                                                   FLStr(sql),
                                                   nullptr, &err);
@@ -171,13 +168,13 @@ public:
         // end::vs-use-vector-match[]
     }
 
-    void queryUsingVectorDistance() {
+    void queryVectorDistance() {
         CBLDatabase* database = getDatabase();
 
         // tag::vs-use-vector-distance[]
-        // Create a query to get vector distances using the vector_distance() function.
+        // Create a query to get vector distances using the approx_vector_distance() function.
         CBLError err{};
-        const char* sql = "SELECT id, color, vector_distance(colors_index) FROM _default.colors WHERE vector_match(colors_index, $vector, 8)";
+        const char* sql = "SELECT id, color, approx_vector_distance(vector, $vector) FROM _default.colors LIMIT 8";
         CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
                                                   FLStr(sql),
                                                   nullptr, &err);
