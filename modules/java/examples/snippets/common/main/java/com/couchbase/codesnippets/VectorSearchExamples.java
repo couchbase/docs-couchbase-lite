@@ -26,6 +26,7 @@ import com.couchbase.lite.Database;
 import com.couchbase.lite.MutableArray;
 import com.couchbase.lite.MutableDictionary;
 import com.couchbase.lite.Parameters;
+import com.couchbase.lite.PredictiveModel;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
@@ -89,7 +90,7 @@ class VectorSearchExamples {
                         MutableDictionary dict = new MutableDictionary();
                         dict.setValue("vector", result.toList());
                         return dict;
-                   }
+                    }
 
                     Logger.log("Unexpected result: " + result);
                 }
@@ -105,15 +106,17 @@ class VectorSearchExamples {
         // end::vs-create-predictive-index[]
     }
 
-    public void useVectorMatch(Database db, List<Object> hugeListOfFloats) throws CouchbaseLiteException {
+    public void useAVD(Database db, List<Object> hugeListOfFloats) throws CouchbaseLiteException {
         // tag::vs-use-vector-match[]
-        // use the vector_match function in a query
+        // tag::vs-apvd-order-by[]
+        // use APPROX_VECTOR_DISTANCE in a query
         db.getCollection("words").createIndex("word_index", new VectorIndexConfiguration("vector", 300L, 8L));
 
         Query query = db.createQuery(
             "SELECT meta().id, word"
                 + " FROM _default.words"
-                + " WHERE vector_match(words_index, $vectorParam, 20)");
+                + " ORDER BY APPROX_VECTOR_DISTANCE(vector, $vectorParam)"
+                + " LIMIT 300");
         Parameters params = new Parameters();
         params.setArray("vectorParam", new MutableArray(hugeListOfFloats));
         query.setParameters(params);
@@ -121,19 +124,21 @@ class VectorSearchExamples {
         try (ResultSet rs = query.execute()) {
             // process results
         }
+        // end::vs-apvd-order-by[]
         // end::vs-use-vector-match[]
     }
 
-
-    public void useVectorDistance(Database db, List<Object> hugeListOfFloats) throws CouchbaseLiteException {
-        // tag::vs-use-vector-distance[]
-        // use the vector_distance function in a query
+    public void useAVDWithWhere(Database db, List<Object> hugeListOfFloats) throws CouchbaseLiteException {
+        // tag::vs-apvd-where[]
+        // use APPROX_VECTOR_DISTANCE with a WHERE clause, in a query
         db.getCollection("words").createIndex("word_index", new VectorIndexConfiguration("vector", 300L, 8L));
 
         Query query = db.createQuery(
-            "SELECT meta().id, word,vector_distance(words_index)"
+            "SELECT meta().id, word"
                 + " FROM _default.words"
-                + " WHERE vector_match(words_index, $dinner, 20)");
+                + " WHERE catid = 'cat1'"
+                + " ORDER BY APPROX_VECTOR_DISTANCE(vector, $vectorParam)"
+                + " LIMIT 300");
         Parameters params = new Parameters();
         params.setArray("vectorParam", new MutableArray(hugeListOfFloats));
         query.setParameters(params);
@@ -141,6 +146,39 @@ class VectorSearchExamples {
         try (ResultSet rs = query.execute()) {
             // process results
         }
-        // end::vs-use-vector-distance[]
+        // end::vs-apvd-where[]
+    }
+
+    public void useAVDWithPrediction(Database db, PredictiveModel model, List<Object> hugeListOfFloats)
+        throws CouchbaseLiteException {
+        // tag::vs-apvd-prediction[]
+        // use APPROX_VECTOR_DISTANCE with a predictive model
+        Database.prediction.registerModel("WordEmbedding", model);
+
+        db.getCollection("words").createIndex(
+            "words_pred_index",
+            new VectorIndexConfiguration("prediction(WordEmbedding, {'word': word}).vector", 300L, 8L));
+
+        Query query = db.createQuery(
+            "SELECT meta().id, word"
+                + " FROM _default.words"
+                + " ORDER BY APPROX_VECTOR_DISTANCE(prediction(WordEmbedding, {'word': word}).vector, vectorParam)"
+                + " LIMIT 300");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(hugeListOfFloats));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+        // end::vs-apvd-prediction[]
+    }
+
+    public void useNumProbes(Collection col) throws CouchbaseLiteException {
+        // tag::vs-numprobes-config[]
+        // explicitly set numProbes
+        VectorIndexConfiguration idxConfig = new VectorIndexConfiguration("vector", 300L, 8L).setNumProbes(5);
+        col.createIndex("words_index", idxConfig);
+        // end::vs-numprobes-config[]
     }
 }

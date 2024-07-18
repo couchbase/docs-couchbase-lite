@@ -24,6 +24,7 @@ import com.couchbase.lite.Database
 import com.couchbase.lite.MutableArray
 import com.couchbase.lite.MutableDictionary
 import com.couchbase.lite.Parameters
+import com.couchbase.lite.PredictiveModel
 import com.couchbase.lite.VectorEncoding
 import com.couchbase.lite.VectorIndexConfiguration
 
@@ -102,42 +103,95 @@ class VectorSearchExamples {
     }
 
     @Throws(CouchbaseLiteException::class)
-    fun useVectorMatch(db: Database, hugeListOfFloats: List<Any?>?) {
+    fun useAVD(db: Database, hugeListOfFloats: List<Any?>?) {
         // tag::vs-use-vector-match[]
-        // use the vector_match function in a query
+        // tag::vs-apvd-order-by[]
+        // use APPROX_VECTOR_DISTANCE in a query
         db.getCollection("words")!!.createIndex("word_index", VectorIndexConfiguration("vector", 300L, 8L))
+
         val query = db.createQuery(
             "SELECT meta().id, word"
                     + " FROM _default.words"
-                    + " WHERE vector_match(words_index, \$vectorParam, 20)"
+                    + " ORDER BY APPROX_VECTOR_DISTANCE(vector, \$vectorParam)"
+                    + " LIMIT 300"
         )
         val params = Parameters()
         params.setArray("vectorParam", MutableArray((hugeListOfFloats)!!))
         query.parameters = params
+
         query.execute().use { rs ->
             // process results
         }
+        // end::vs-apvd-order-by[]
         // end::vs-use-vector-match[]
     }
 
-
     @Throws(CouchbaseLiteException::class)
-    fun useVectorDistance(db: Database, hugeListOfFloats: List<Any?>?) {
-        // tag::vs-use-vector-distance[]
-        // use the vector_distance function in a query
+    fun useAVDWithWhere(db: Database, hugeListOfFloats: List<Any?>?) {
+        // tag::vs-apvd-where[]
+        // use APPROX_VECTOR_DISTANCE with a WHERE clause, in a query
         db.getCollection("words")!!.createIndex("word_index", VectorIndexConfiguration("vector", 300L, 8L))
+
         val query = db.createQuery(
-            ("SELECT meta().id, word,vector_distance(words_index)"
+            "SELECT meta().id, word"
                     + " FROM _default.words"
-                    + " WHERE vector_match(words_index, \$dinner, 20)")
+                    + " WHERE catid = 'cat1'"
+                    + " ORDER BY APPROX_VECTOR_DISTANCE(vector, \$vectorParam)"
+                    + " LIMIT 300"
         )
         val params = Parameters()
         params.setArray("vectorParam", MutableArray((hugeListOfFloats)!!))
         query.parameters = params
+
         query.execute().use { rs ->
             // process results
         }
-        // end::vs-use-vector-distance[]
+        // end::vs-apvd-where[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun useAVDWithPrediction(db: Database, model: PredictiveModel?, hugeListOfFloats: List<Any?>?) {
+        // tag::vs-apvd-prediction[]
+        // use APPROX_VECTOR_DISTANCE with a predictive model
+        Database.prediction.registerModel("WordEmbedding", (model)!!)
+
+        db.getCollection("words")!!.createIndex(
+            "words_pred_index",
+            VectorIndexConfiguration("prediction(WordEmbedding, {'word': word}).vector", 300L, 8L)
+        )
+
+        val query = db.createQuery(
+            "SELECT meta().id, word"
+                    + " FROM _default.words"
+                    + " ORDER BY APPROX_VECTOR_DISTANCE(prediction(WordEmbedding, {'word': word}).vector, \$dinner)"
+                    + " LIMIT 300"
+        )
+        val params = Parameters()
+        params.setArray("vectorParam", MutableArray((hugeListOfFloats)!!))
+        query.parameters = params
+
+        query.execute().use { rs ->
+            // process results
+        }
+        // end::vs-apvd-prediction[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun useNumProbes(db: Database) {
+        // tag::vs-numprobes-config[]
+        // explicitly set numProbes
+        val col = db.getCollection("words")!!
+
+        // Like this:
+        var idxConfig = VectorIndexConfiguration("vector", 300L, 8L)
+        idxConfig.numProbes = 5
+
+        // Or like this:
+        idxConfig = VectorIndexConfiguration("vector", 300L, 8L).setNumProbes(5)
+
+        col.createIndex("words_index", idxConfig)
+
+        // end::vs-numprobes-config[]
     }
 
 }
