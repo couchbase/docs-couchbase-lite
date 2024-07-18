@@ -7,14 +7,18 @@
 
 import Foundation
 import CouchbaseLiteSwift
-import NaturalLanguage
 
 var database: Database!
 var collection: Collection!
-var mlmodel: NLEmbedding!
 
-enum VectorSearchError: Error {
+enum AppError: Error {
     case vectorNotFound
+}
+
+class Color {
+    static func getVector(color: String) throws -> [Float]? {
+        return []
+    }
 }
 
 class VectorSearchSnippets {
@@ -26,50 +30,61 @@ class VectorSearchSnippets {
      
      Add both libraries to the *Frameworks, Libraries and Embedded Content* of your desired target
      */
-
-    func createVectorIndex() throws {
-
-        // tag::vs-create-default-config[]
-        // Create a default vector index configuration
-        var config = VectorIndexConfiguration(expression: "vector", dimensions: 300, centroids: 8)
-        // end::vs-create-default-config[]
-        
-        // tag::vs-create-custom-config[]
-        // Set custom optional settings
-        config.encoding = .scalarQuantizer(type: .SQ4)
-        config.metric = .cosine
-        config.minTrainingSize = 50
-        config.maxTrainingSize = 300
-       
-        
-        // Create a vector index from the configuration
-        try collection.createIndex(withName: "vector_index", config: config)
-         // end::vs-create-custom-config[]
+    
+    func enableVectorSearchExtension() throws {
+        // tag::vs-setup-packaging[]
+        try Extension.enableVectorSearch()
+        // end::vs-setup-packaging[]
     }
 
-    func createVectorIndexWithEmbedding() throws {
+    func createDefaultVectorIndexConfig() throws {
+        // tag::vs-create-default-config[]
+        // Create a vector index configuration for indexing 3-dimensional vectors embedded
+        // in the documents' key named "vector" using 2 centroids.
+        var config = VectorIndexConfiguration(expression: "vector", dimensions: 3, centroids: 2)
+        // end::vs-create-default-config[]
+        try collection.createIndex(withName: "colors_index", config: config)
+    }
+    
+    func createCustomVectorIndexConfig() throws {
+        // tag::vs-create-custom-config[]
+        // Create a vector index configuration for indexing 3-dimensional vectors embedded in
+        // the documents' key named "vector" using 100 centroids. The configuration customizes
+        // the encoding, the distance metric, the number of probes, and the training size.
+        var config = VectorIndexConfiguration(expression: "vector", dimensions: 3, centroids: 100)
+        config.encoding = .none
+        config.metric = .cosine
+        config.numProbes = 8
+        config.minTrainingSize = 2500
+        config.maxTrainingSize = 5000
+        // end::vs-create-custom-config[]
+        try collection.createIndex(withName: "colors_index", config: config)
+    }
 
+    func createVectorIndex() throws {
         // tag::vs-create-index[]
         // Create a vector index configuration from a document property named "vector" which
         // contains the vector embedding.
-        let config = VectorIndexConfiguration(expression: "vector", dimensions: 300, centroids: 8)
-        try collection.createIndex(withName: "vector_index", config: config)
+        let config = VectorIndexConfiguration(expression: "vector", dimensions: 3, centroids: 2)
+        try collection.createIndex(withName: "colors_index", config: config)
         // end::vs-create-index[]
     }
         
-    func queryUsingVectorMatch(word: String) throws -> ResultSet? {
+    func queryVectorSearch(color: String) throws -> ResultSet? {
         // tag::vs-use-vector-match[]
-        // Create a query to search similar words by using the vector_match()
-        // function to search word vectors in the vector index named "vector_index".
-        let sql = "SELECT meta().id, word " +
-                  "FROM _default.words " +
-                  "WHERE vector_match(vector_index, $vector, 20)"
+        // Create a query to search similar colors by using the approx_vector_distance() function
+        // in the ORDER BY clause.
+        let sql = "SELECT id, color " +
+                  "FROM _default.colors " +
+                  "ORDER BY approx_vector_distance(vector, $vector) " +
+                  "LIMIT 8"
         
         let query = try database.createQuery(sql)
         
-        // Use ML model to get a vector (an array of numbers) for the input word.
-        guard let vector = mlmodel.vector(for: word) else {
-            throw VectorSearchError.vectorNotFound
+        // Get a vector, an array of float numbers, for the input color code (e.g. FF000AA).
+        // Normally, you will get the vector from your ML model.
+        guard let vector = try Color.getVector(color: "FF00AA") else {
+            throw AppError.vectorNotFound
         }
         
         // Set the vector array to the parameter "$vector"
@@ -82,19 +97,19 @@ class VectorSearchSnippets {
         // end::vs-use-vector-match[]
     }
         
-    func queryUsingVectorDistance(word: String) throws -> ResultSet? {
-
+    func queryVectorDistance(word: String) throws -> ResultSet? {
         // tag::vs-use-vector-distance[]
-        // Create a query to get vector distances by using the vector_distance() function.
-        let sql = "SELECT meta().id, word, vector_distance(vector_index) " +
-                  "FROM _default.words " +
-                  "WHERE vector_match(vector_index, $vector, 20)"
+        // Create a query to get vector distances using the approx_vector_distance() function.
+        let sql = "SELECT id, color, approx_vector_distance(vector, $vector) " +
+                  "FROM _default.colors " +
+                  "LIMIT 8"
         
         let query = try database.createQuery(sql)
         
-        // Use ML model to get a vector (an array of numbers) for the input word.
-        guard let vector = mlmodel.vector(for: word) else {
-            throw VectorSearchError.vectorNotFound
+        // Get a vector, an array of float numbers, for the input color code (e.g. FF000AA).
+        // Normally, you will get the vector from your ML model.
+        guard let vector = try Color.getVector(color: "FF00AA") else {
+            throw AppError.vectorNotFound
         }
         
         // Set the vector array to the parameter "$vector"
@@ -109,17 +124,17 @@ class VectorSearchSnippets {
     
     // MARK: Create Vector Index with Predictive Model
     // tag::vs-create-predictive-index[]
-    class WordModel: PredictiveModel {
-        let mlmodel = NLEmbedding.wordEmbedding(for: .english)!
-        
+    class ColorModel: PredictiveModel {
         func predict(input: DictionaryObject) -> DictionaryObject? {
             // Get word input from the input dictionary
-            guard let word = input.string(forKey: "word") else {
-                fatalError("No word found")
+            guard let color = input.string(forKey: "colorInput") else {
+                fatalError("No input color found")
             }
             
             // Use ML model to get a vector (an array of numbers) for the input word.
-            let vector = mlmodel.vector(for: word)
+            guard let vector = try! Color.getVector(color: color) else {
+                return nil
+            }
             
             // Create an output dictionary by setting the vector result to
             // the dictionary key named "vector".
@@ -130,16 +145,16 @@ class VectorSearchSnippets {
     }
     
     func createVectorIndexFromPredictiveIndex() throws {
-        // Register the predictive model named "WordEmbedding".
-        Database.prediction.registerModel(WordModel(), withName: "WordEmbedding")
+        // Register the predictive model named "ColorModel".
+        Database.prediction.registerModel(ColorModel(), withName: "ColorModel")
         
         // Create a vector index configuration with an expression using the prediction
         // function to get the vectors from the registered predictive model.
-        let expression = "prediction(WordEmbedding, {\"word\": word}).vector"
+        let expression = "prediction(WordEmbedding, {\"colorInput\": color}).vector"
         let config = VectorIndexConfiguration(expression: expression, dimensions: 300, centroids: 8)
         
         // Create vector index from the configuration
-        try collection.createIndex(withName: "words_pred_index", config: config)
+        try collection.createIndex(withName: "colors_index", config: config)
     }
     // end::vs-create-predictive-index[]
 }
