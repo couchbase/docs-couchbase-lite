@@ -44,9 +44,9 @@ namespace api_walkthrough
 
         private static void EnableVectorSearchExtension()
         {
-            // tag::vs - setup - packaging[]
+            // tag::vs-setup-packaging[]
             Extension.Enable(new VectorSearchExtension());
-            // end::vs - setup - packaging[]
+            // end::vs-setup-packaging[]
         }
 
         private void CreateDefaultVectorIndexConfig()
@@ -54,7 +54,7 @@ namespace api_walkthrough
             // tag::vs-create-default-config[]
             // Create a vector index configuration for indexing 3 dimensional vectors embedded
             // in the documents' key named "vector" using 2 centroids.
-            var config = new VectorIndexConfiguration("vector", 3, 2);
+            var config = new VectorIndexConfiguration("color", 3, 100);
             // end::vs-create-default-config[]
         }
         private void CreateCustomVectorIndexConfig()
@@ -64,12 +64,12 @@ namespace api_walkthrough
             // in the documents' key named "vector" using 2 centroids. The config is customized
             // to use Cosise distance metric, no vector encoding, min training size 100 and
             // max training size 200.
-            var config = new VectorIndexConfiguration("vector", 3, 2)
+            var config = new VectorIndexConfiguration("color", 3, 100)
             {
                 DistanceMetric = DistanceMetric.Cosine,
                 Encoding = VectorEncoding.None(),
-                MinTrainingSize = 100,
-                MaxTrainingSize = 200
+                MinTrainingSize = 2500,
+                MaxTrainingSize = 5000
             };
             // end::vs-create-custom-config[]
         }
@@ -147,7 +147,7 @@ namespace api_walkthrough
             // tag::vs-create-index[]
             // Create a vector index configuration for indexing 3 dimensional vectors embedded
             // in the documents' key named "vector" using 2 centroids.
-            var config = new VectorIndexConfiguration("vector", 3, 2);
+            var config = new VectorIndexConfiguration("color", 3, 100);
 
             // Create a vector index named "color_index" using the configuration
             var collection = database.GetCollection("colors");
@@ -198,8 +198,8 @@ namespace api_walkthrough
 
             // Create a vector index configuration with an expression using the prediction
             // function to get the vectors from the registered predictive model.
-            var expression = "predict(ColorModel, {\"colorInput\": color})";
-            var config = new VectorIndexConfiguration(expression, 3, 2);
+            var expression = "prediction(ColorModel, {\"colorInput\": color}).vector";
+            var config = new VectorIndexConfiguration(expression, 3, 100);
 
             // Create a vector index from the configuration
             var collection = database.GetCollection("colors");
@@ -218,7 +218,8 @@ namespace api_walkthrough
             // function in the vector index named "colors_index".
             var sql = "SELECT id, color " +
                       "FROM _default.colors " +
-                      "WHERE vector_match(colors_index, $vector, 8)";
+                      "ORDER BY approx_vector_distance(vector, $vector) " +
+                      "LIMIT 8";
             var query = database.CreateQuery(sql);
 
             // Get a vector, an array of float numbers, for the input color code.
@@ -246,9 +247,9 @@ namespace api_walkthrough
 
             // tag::vs-use-vector-distance[]
             // Create a query to get vector distances using the vector_distance() function.
-            var sql = "SELECT id, color, vector_distance(colors_index) " +
+            var sql = "SELECT id, color, approx_vector_distance(vector, $vector) " +
                       "FROM _default.colors " +
-                      "WHERE vector_match(colors_index, $vector, 8)";
+                      "LIMIT 8";
             var query = database.CreateQuery(sql);
 
             // Get a vector, an array of float numbers, for the input color code
