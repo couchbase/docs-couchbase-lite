@@ -17,127 +17,304 @@
 
 package com.couchbase.codesnippets
 
-import android.text.TextUtils
-import com.couchbase.codesnippets.utils.Logger
+import com.couchbase.lite.Blob
+import com.couchbase.lite.Collection
 import com.couchbase.lite.CouchbaseLiteException
 import com.couchbase.lite.Database
 import com.couchbase.lite.MutableArray
-import com.couchbase.lite.MutableDictionary
 import com.couchbase.lite.Parameters
+import com.couchbase.lite.PredictiveModel
 import com.couchbase.lite.VectorEncoding
 import com.couchbase.lite.VectorIndexConfiguration
+import com.couchbase.lite.VectorIndexConfigurationFactory
+import com.couchbase.lite.newConfig
+
+
+fun interface ColorModel {
+    fun getEmbedding(color: Blob?): List<Float?>?
+}
 
 class VectorSearchExamples {
     fun createDefaultVSConfig() {
         // tag::vs-create-default-config[]
         // create the configuration for a vector index named "vector"
-        // with 300 dimensions and 20 centroids
-        val config = VectorIndexConfiguration("vector", 300L, 20L)
+        // with 3 dimensions and 100 centroids
+        val config = VectorIndexConfigurationFactory.newConfig("vector", 3L, 100L)
         // end::vs-create-default-config[]
     }
 
     fun createCustomVSConfig() {
         // tag::vs-create-custom-config[]
         // create the configuration for a vector index named "vector"
-        // with 300 dimensions, 20 centroids, max training size 200, min training size 100
+        // with 3 dimensions, 100 centroids, no encoding, using cosine distance
+        // with a max training size 5000 and amin training size 2500
         // no vector encoding and using COSINE distance measurement
-        val config = VectorIndexConfiguration("vector", 300L, 20L)
-            .setEncoding(VectorEncoding.none())
-            .setMetric(VectorIndexConfiguration.DistanceMetric.COSINE)
-            .setMinTrainingSize(100L)
-            .setMaxTrainingSize(200L)
+        val config = VectorIndexConfigurationFactory.newConfig(
+            "vector",
+            3L,
+            100L,
+            encoding = VectorEncoding.none(),
+            metric = VectorIndexConfiguration.DistanceMetric.COSINE,
+            numProbes = 8L,
+            minTrainingSize = 2500L,
+            maxTrainingSize = 5000L
+        )
         // end::vs-create-custom-config[]
     }
 
     @Throws(CouchbaseLiteException::class)
     fun createVectorIndex(db: Database) {
         // tag::vs-create-index[]
-        // create a vector index named "words_index"
-        // in the collection "_default.words"
-        db.getCollection("words")!!.createIndex("word_index", VectorIndexConfiguration("vector", 300L, 20L))
+        // create a vector index named "colors_index"
+        // in the collection "_default.colors"
+        db.getCollection("colors")?.createIndex(
+            "colors_index",
+            VectorIndexConfigurationFactory.newConfig("vector", 3L, 100L)
+        ) ?: throw IllegalStateException("No such collection: colors")
         // end::vs-create-index[]
     }
 
     @Throws(CouchbaseLiteException::class)
-    fun createPredictiveIndex(db: Database) {
-        // tag::vs-create-predictive-index[]
-        // create a vector index with a simple predictive model
-        val collection = db.getCollection("words")!!
-        Database.prediction.registerModel("WordEmbedding") {
-            val word: String? = it.getString("word")
-            if (TextUtils.isEmpty(word)) {
-                Logger.log("Input word is empty")
-                return@registerModel null
-            }
-            try {
-                db.createQuery(
-                    "SELECT vector"
-                            + " FROM ${collection}"
-                            + " WHERE word = '${word}'"
-                ).execute().use { rs ->
-                    val results = rs.allResults()
-                    if (results.isEmpty()) {
-                        return@registerModel null
-                    }
-
-                    results[0].getArray(0)?.let { result ->
-                        val dict = MutableDictionary()
-                        dict.setValue("vector", result.toList())
-                        return@registerModel dict
-                    }
-
-                    Logger.log("Prediction result is not an array")
-                }
-            } catch (e: CouchbaseLiteException) {
-                Logger.log("Prediction query failed", e)
-            }
-            return@registerModel null
-        }
-
-        collection.createIndex(
-            "words_pred_index",
-            VectorIndexConfiguration("prediction(WordEmbedding, {'word': word}).vector", 300L, 8L)
+    fun setNumProbes(col: Collection) {
+        // tag::vs-numprobes-config[]
+        // explicitly set numProbes
+        col.createIndex(
+            "colors_index",
+            VectorIndexConfigurationFactory.newConfig("vector", 3L, 100L, numProbes = 5L)
         )
-        // end::vs-create-predictive- index[]
+        // end::vs-numprobes-config[]
     }
 
     @Throws(CouchbaseLiteException::class)
-    fun useVectorMatch(db: Database, hugeListOfFloats: List<Any?>?) {
-        // tag::vs-use-vector-match[]
-        // use the vector_match function in a query
-        db.getCollection("words")!!.createIndex("word_index", VectorIndexConfiguration("vector", 300L, 8L))
+    fun createPredictiveIndex(db: Database, colorModel: PredictiveModel) {
+        // tag::vs-create-predictive-index[]
+        // create a vector index with a simple predictive model
+        Database.prediction.registerModel("ColorModel", colorModel)
+
+        db.getCollection("colors")?.createIndex(
+            "colors_pred_index",
+            VectorIndexConfigurationFactory.newConfig(
+                "prediction(ColorModel, {'colorInput': color}).vector",
+                3L, 100L
+            )
+        ) ?: throw IllegalStateException("No such collection: colors")
+        // end::vs-create-predictive-index[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun useVectorIndex(db: Database, colorVector: List<Any>) {
+        // tag::vs-use-vector-index[]
+        db.getCollection("colors")?.createIndex(
+            "colors_index",
+            VectorIndexConfigurationFactory.newConfig("vector", 3L, 100L)
+        ) ?: throw IllegalStateException("No such collection: colors")
+
+        // get the APPROX_VECTOR_DISTANCE to the parameter vector for each color in the collection
         val query = db.createQuery(
-            "SELECT meta().id, word"
-                    + " FROM _default.words"
-                    + " WHERE vector_match(words_index, \$vectorParam, 20)"
+            "SELECT meta().id, color, APPROX_VECTOR_DISTANCE(vector, \$vectorParam)"
+                    + " FROM _default.colors"
         )
         val params = Parameters()
-        params.setArray("vectorParam", MutableArray((hugeListOfFloats)!!))
+        params.setArray("vectorParam", MutableArray((colorVector)))
         query.parameters = params
+
         query.execute().use { rs ->
             // process results
         }
+        // end:vs-use-vector-index[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun useAVD(db: Database, colorVector: List<Any>) {
+        // tag::vs-use-vector-match[]
+        // tag::vs-apvd-order-by[]
+        // use APPROX_VECTOR_DISTANCE in a query ORDER BY clause
+        val query = db.createQuery(
+            ("SELECT meta().id, color"
+                    + " FROM _default.colors"
+                    + " ORDER BY APPROX_VECTOR_DISTANCE(vector, \$vectorParam)"
+                    + " LIMIT 8")
+        )
+        val params = Parameters()
+        params.setArray("vectorParam", MutableArray((colorVector)))
+        query.parameters = params
+
+        query.execute().use { rs ->
+            // process results
+        }
+        // end::vs-apvd-order-by[]
         // end::vs-use-vector-match[]
     }
 
-
     @Throws(CouchbaseLiteException::class)
-    fun useVectorDistance(db: Database, hugeListOfFloats: List<Any?>?) {
-        // tag::vs-use-vector-distance[]
-        // use the vector_distance function in a query
-        db.getCollection("words")!!.createIndex("word_index", VectorIndexConfiguration("vector", 300L, 8L))
+    fun useAVDWithWhere(db: Database, colorVector: List<Any>) {
+        // tag::vs-apvd-where[]
+        // use APPROX_VECTOR_DISTANCE in a query WHERE clause
         val query = db.createQuery(
-            ("SELECT meta().id, word,vector_distance(words_index)"
-                    + " FROM _default.words"
-                    + " WHERE vector_match(words_index, \$dinner, 20)")
+            ("SELECT meta().id, color"
+                    + " FROM _default.colors"
+                    + " WHERE APPROX_VECTOR_DISTANCE(vector, \$vectorParam) < 0.5")
         )
         val params = Parameters()
-        params.setArray("vectorParam", MutableArray((hugeListOfFloats)!!))
+        params.setArray("vectorParam", MutableArray((colorVector)))
         query.parameters = params
+
         query.execute().use { rs ->
             // process results
         }
-        // end::vs-use-vector-distance[]
+        // end::vs-apvd-where[]
     }
 
+    @Throws(CouchbaseLiteException::class)
+    fun useAVDWithPrediction(db: Database, colorModel: PredictiveModel, colorVector: List<Any>) {
+        // tag::vs-apvd-prediction[]
+        // use APPROX_VECTOR_DISTANCE with a predictive model
+        Database.prediction.registerModel("ColorModel", (colorModel))
+
+        db.getCollection("colors")?.createIndex(
+            "colors_pred_index",
+            VectorIndexConfigurationFactory.newConfig(
+                "prediction(ColorModel, {'colorInput': color}).vector",
+                3L, 100L
+            )
+        ) ?: throw IllegalStateException("No such collection: colors")
+
+        val query = db.createQuery(
+            ("SELECT meta().id, color"
+                    + " FROM _default.colors"
+                    + " ORDER BY APPROX_VECTOR_DISTANCE("
+                    + "    prediction(ColorModel, {'colorInput': color}).vector,"
+                    + "    \$vectorParam)"
+                    + " LIMIT 300")
+        )
+        val params = Parameters()
+        params.setArray("vectorParam", MutableArray((colorVector)))
+        query.parameters = params
+
+        query.execute().use { rs ->
+            // process results
+        }
+        // end::vs-apvd-prediction[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun hybridOrderBy(db: Database, colorVector: List<Any>) {
+        // tag::vs-hybrid-order-by[]
+        val query = db.createQuery(
+            ("SELECT meta().id, color"
+                    + " FROM _default.colors"
+                    + " WHERE saturation > 0.5"
+                    + " ORDER BY APPROX_VECTOR_DISTANCE(vector, \$vector)"
+                    + " LIMIT 8")
+        )
+        val params = Parameters()
+        params.setArray("vectorParam", MutableArray((colorVector)))
+        query.parameters = params
+
+        query.execute().use { rs ->
+            // process results
+        }
+        // end::vs-hybrid-order-by[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun hybridWhere(db: Database, colorVector: List<Any>) {
+        // tag::vs-hybrid-where[]
+        val query = db.createQuery(
+            ("SELECT meta().id, color"
+                    + " FROM _default.colors"
+                    + " WHERE saturation > 0.5"
+                    + "     AND APPROX_VECTOR_DISTANCE(vector, \$vector) < .05")
+        )
+        val params = Parameters()
+        params.setArray("vectorParam", MutableArray((colorVector)))
+        query.parameters = params
+
+        query.execute().use { rs ->
+            // process results
+        }
+        // end::vs-hybrid-where[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun hybridPrediction(db: Database, colorVector: List<Any>) {
+        // tag::vs-hybrid-prediction[]
+        val query = db.createQuery(
+            ("SELECT meta().id, color"
+                    + " FROM _default.colors"
+                    + " WHERE saturation > 0.5"
+                    + " ORDER BY APPROX_VECTOR_DISTANCE("
+                    + "    prediction(ColorModel, {'colorInput': color}).vector,"
+                    + "    \$vectorParam)"
+                    + " LIMIT 8")
+        )
+        val params = Parameters()
+        params.setArray("vectorParam", MutableArray((colorVector)))
+        query.parameters = params
+
+        query.execute().use { rs ->
+            // process results
+        }
+        // end::vs-hybrid-prediction[]
+    }
+
+    // ??? vs-hybrid-vmatch[]
+
+    @Throws(CouchbaseLiteException::class)
+    fun hybridFullText(db: Database, colorVector: List<Any>) {
+        // tag::vs-hybrid-ftmatch[]
+        // Create a hybrid vector search query with full-text's match() that
+        // uses the the full-text index named "color_desc_index".
+        val query = db.createQuery(
+            ("SELECT meta().id, color"
+                    + " FROM _default.colors"
+                    + " WHERE MATCH(color_desc_index, \$text)"
+                    + " ORDER BY APPROX_VECTOR_DISTANCE(vector, \$vector)"
+                    + " LIMIT 8")
+        )
+        val params = Parameters()
+        params.setArray("vectorParam", MutableArray((colorVector)))
+        query.parameters = params
+
+        query.execute().use { rs ->
+            // process results
+        }
+        // end::vs-hybrid-ftmatch[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun lazyIndexConfig(db: Database) {
+        // tag::vs-lazy-index-config[]
+        db.getCollection("colors")?.createIndex(
+            "colors_index",
+            VectorIndexConfigurationFactory.newConfig("color", 3L, 100L, lazy = true)
+        ) ?: throw IllegalStateException("No such collection: colors")
+        // end::vs-lazy-index-config[]
+    }
+
+    @Throws(Exception::class)
+    fun lazyIndexEmbed(col: Collection, colorModel: ColorModel) {
+        // tag::vs-create-lazy-index-embedding[]
+        while (true) {
+            col.getIndex("colors_index")?.beginUpdate(10)?.use { updater ->
+                for (i in 0 until updater.count()) {
+                    val embedding: List<Float?>? = colorModel.getEmbedding(updater.getBlob(i))
+                    if (embedding != null) {
+                        updater.setVector(embedding, i)
+                    } else {
+                        // Bad connection? Corrupted over the wire? Something bad happened
+                        // and the vector cannot be generated at the moment: skip it.
+                        // The next time beginUpdate() is called, we'll try it again.
+                        updater.skipVector(i)
+                    }
+                }
+                // This writes the vectors to the index. You MUST either have set or skipped each
+                // of the the vectors in the updater or this call will throw an exception.
+                updater.finish()
+            }
+            // loop until there are no more vectors to update
+                ?: break
+        }
+        // tag::vs-create-lazy-index-embedding[]
+    }
 }

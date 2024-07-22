@@ -16,18 +16,17 @@
 package com.couchbase.codesnippets;
 
 import java.util.List;
+import java.util.function.Function;
 
-import com.couchbase.codesnippets.utils.Logger;
-import com.couchbase.codesnippets.utils.Utils;
-import com.couchbase.lite.Array;
+import com.couchbase.lite.Blob;
 import com.couchbase.lite.Collection;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
+import com.couchbase.lite.IndexUpdater;
 import com.couchbase.lite.MutableArray;
-import com.couchbase.lite.MutableDictionary;
 import com.couchbase.lite.Parameters;
+import com.couchbase.lite.PredictiveModel;
 import com.couchbase.lite.Query;
-import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.VectorEncoding;
 import com.couchbase.lite.VectorIndexConfiguration;
@@ -35,112 +34,258 @@ import com.couchbase.lite.VectorIndexConfiguration;
 
 @SuppressWarnings("unused")
 class VectorSearchExamples {
+    @FunctionalInterface
+    public interface ColorModel { List<Float> getEmbedding(Blob color);}
+
     public void createDefaultVSConfig() {
         // tag::vs-create-default-config[]
         // create the configuration for a vector index named "vector"
-        // with 300 dimensions and 20 centroids
-        VectorIndexConfiguration config = new VectorIndexConfiguration("vector", 300L, 20L);
+        // with 3 dimensions and 100 centroids
+        VectorIndexConfiguration config = new VectorIndexConfiguration("vector", 3L, 100L);
         // end::vs-create-default-config[]
     }
 
     public void createCustomVSConfig() {
         // tag::vs-create-custom-config[]
         // create the configuration for a vector index named "vector"
-        // with 300 dimensions, 20 centroids, max training size 200, min training size 100
+        // with 3 dimensions, 100 centroids, no encoding, using cosine distance
+        // with a max training size 5000 and amin training size 2500
         // no vector encoding and using COSINE distance measurement
-        VectorIndexConfiguration config = new VectorIndexConfiguration("vector", 300L, 20L)
+        VectorIndexConfiguration config = new VectorIndexConfiguration("vector", 3L, 100L)
             .setEncoding(VectorEncoding.none())
             .setMetric(VectorIndexConfiguration.DistanceMetric.COSINE)
-            .setMinTrainingSize(100L)
-            .setMaxTrainingSize(200L);
+            .setNumProbes(8L)
+            .setMinTrainingSize(2500L)
+            .setMaxTrainingSize(5000L);
         // end::vs-create-custom-config[]
     }
 
     public void createVectorIndex(Database db) throws CouchbaseLiteException {
         // tag::vs-create-index[]
-        // create a vector index named "words_index"
-        // in the collection "_default.words"
-        db.getCollection("words").createIndex("word_index", new VectorIndexConfiguration("vector", 300L, 20L));
+        // create a vector index named "colors_index"
+        // in the collection "_default.colors"
+        db.getCollection("colors").createIndex(
+            "colors_index",
+            new VectorIndexConfiguration("vector", 3L, 100L));
         // end::vs-create-index[]
     }
 
-    public void createPredictiveIndex(Database db) throws CouchbaseLiteException {
+    public void setNumProbes(Collection col) throws CouchbaseLiteException {
+        // tag::vs-numprobes-config[]
+        // explicitly set numProbes
+        col.createIndex(
+            "colors_index",
+            new VectorIndexConfiguration("vector", 3L, 100L)
+                .setNumProbes(5));
+        // end::vs-numprobes-config[]
+    }
+
+    public void createPredictiveIndex(Database db, PredictiveModel colorModel) throws CouchbaseLiteException {
         // tag::vs-create-predictive-index[]
         // create a vector index with a simple predictive model
-        final Collection collection = db.getCollection("words");
-        Database.prediction.registerModel(
-            "WordEmbedding",
-            input -> {
-                String word = input.getString("word");
-                if (Utils.isEmpty(word)) {
-                    Logger.log("Input word is empty");
-                    return null;
-                }
-                try (ResultSet rs = db.createQuery(
-                        "SELECT vector"
-                            + " FROM " + collection.getFullName()
-                            + " WHERE word = '" + word + " '")
-                    .execute()) {
-                    List<Result> results = rs.allResults();
-                    if (results.isEmpty()) { return null; }
+        Database.prediction.registerModel("ColorModel", colorModel);
 
-                    Array result = results.get(0).getArray(0);
-                    if (result != null) {
-                        MutableDictionary dict = new MutableDictionary();
-                        dict.setValue("vector", result.toList());
-                        return dict;
-                   }
-
-                    Logger.log("Unexpected result: " + result);
-                }
-                catch (CouchbaseLiteException e) {
-                    Logger.log("Prediction query failed", e);
-                }
-                return null;
-            });
-
-        collection.createIndex(
-            "words_pred_index",
-            new VectorIndexConfiguration("prediction(WordEmbedding, {'word': word}).vector", 300L, 8L));
+        db.getCollection("colors").createIndex(
+            "colors_pred_index",
+            new VectorIndexConfiguration(
+                "prediction(ColorModel, {'colorInput': color}).vector",
+                3L, 100L));
         // end::vs-create-predictive-index[]
     }
 
-    public void useVectorMatch(Database db, List<Object> hugeListOfFloats) throws CouchbaseLiteException {
-        // tag::vs-use-vector-match[]
-        // use the vector_match function in a query
-        db.getCollection("words").createIndex("word_index", new VectorIndexConfiguration("vector", 300L, 8L));
+    public void useVectorIndex(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // tag::vs-use-vector-index[]
+        db.getCollection("colors").createIndex(
+            "colors_index",
+            new VectorIndexConfiguration("vector", 3L, 100L));
 
+        // get the APPROX_VECTOR_DISTANCE to the parameter vector for each color in the collection
         Query query = db.createQuery(
-            "SELECT meta().id, word"
-                + " FROM _default.words"
-                + " WHERE vector_match(words_index, $vectorParam, 20)");
+            "SELECT meta().id, color, APPROX_VECTOR_DISTANCE(vector, $vectorParam)"
+                + " FROM _default.colors");
         Parameters params = new Parameters();
-        params.setArray("vectorParam", new MutableArray(hugeListOfFloats));
+        params.setArray("vectorParam", new MutableArray(colorVector));
         query.setParameters(params);
 
         try (ResultSet rs = query.execute()) {
             // process results
         }
+        // end:vs-use-vector-index[]
+    }
+
+    public void useAVD(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // tag::vs-use-vector-match[]
+        // tag::vs-apvd-order-by[]
+        // use APPROX_VECTOR_DISTANCE in a query ORDER BY clause
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " ORDER BY APPROX_VECTOR_DISTANCE(vector, $vectorParam)"
+                + " LIMIT 8");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+        // end::vs-apvd-order-by[]
         // end::vs-use-vector-match[]
     }
 
-
-    public void useVectorDistance(Database db, List<Object> hugeListOfFloats) throws CouchbaseLiteException {
-        // tag::vs-use-vector-distance[]
-        // use the vector_distance function in a query
-        db.getCollection("words").createIndex("word_index", new VectorIndexConfiguration("vector", 300L, 8L));
-
+    public void useAVDWithWhere(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // tag::vs-apvd-where[]
+        // use APPROX_VECTOR_DISTANCE in a query WHERE clause
         Query query = db.createQuery(
-            "SELECT meta().id, word,vector_distance(words_index)"
-                + " FROM _default.words"
-                + " WHERE vector_match(words_index, $dinner, 20)");
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " WHERE APPROX_VECTOR_DISTANCE(vector, $vectorParam) < 0.5");
         Parameters params = new Parameters();
-        params.setArray("vectorParam", new MutableArray(hugeListOfFloats));
+        params.setArray("vectorParam", new MutableArray(colorVector));
         query.setParameters(params);
 
         try (ResultSet rs = query.execute()) {
             // process results
         }
-        // end::vs-use-vector-distance[]
+        // end::vs-apvd-where[]
+    }
+
+    public void useAVDWithPrediction(Database db, PredictiveModel colorModel, List<Object> colorVector)
+        throws CouchbaseLiteException {
+        // tag::vs-apvd-prediction[]
+        // use APPROX_VECTOR_DISTANCE with a predictive model
+        Database.prediction.registerModel("ColorModel", colorModel);
+
+        db.getCollection("colors").createIndex(
+            "colors_pred_index",
+            new VectorIndexConfiguration(
+                "prediction(ColorModel, {'colorInput': color}).vector",
+                3L, 100L));
+
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " ORDER BY APPROX_VECTOR_DISTANCE("
+                + "    prediction(ColorModel, {'colorInput': color}).vector,"
+                + "    $vectorParam)"
+                + " LIMIT 300");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+        // end::vs-apvd-prediction[]
+    }
+
+    public void hybridOrderBy(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // tag::vs-hybrid-order-by[]
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " WHERE saturation > 0.5"
+                + " ORDER BY APPROX_VECTOR_DISTANCE(vector, $vector)"
+                + " LIMIT 8");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+        // end::vs-hybrid-order-by[]
+    }
+
+    public void hybridWhere(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // tag::vs-hybrid-where[]
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " WHERE saturation > 0.5"
+                + "     AND APPROX_VECTOR_DISTANCE(vector, $vector) < .05");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+        // end::vs-hybrid-where[]
+    }
+
+    public void hybridPrediction(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // tag::vs-hybrid-prediction[]
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " WHERE saturation > 0.5"
+                + " ORDER BY APPROX_VECTOR_DISTANCE("
+                + "    prediction(ColorModel, {'colorInput': color}).vector,"
+                + "    $vectorParam)"
+                + " LIMIT 8");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+        // end::vs-hybrid-prediction[]
+    }
+
+//    ??? vs-hybrid-vmatch[]
+
+    public void hybridFullText(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // tag::vs-hybrid-ftmatch[]
+        // Create a hybrid vector search query with full-text's match() that
+        // uses the the full-text index named "color_desc_index".
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " WHERE MATCH(color_desc_index, $text)"
+                + " ORDER BY APPROX_VECTOR_DISTANCE(vector, $vector)"
+                + " LIMIT 8");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+        // end::vs-hybrid-ftmatch[]
+    }
+
+    public void lazyIndexConfig(Database db) throws CouchbaseLiteException {
+        // tag::vs-lazy-index-config[]
+        db.getCollection("colors").createIndex(
+            "colors_index",
+            new VectorIndexConfiguration("color", 3L, 100L)
+                .setLazy(true));
+        // end::vs-lazy-index-config[]
+    }
+
+    public void lazyIndexEmbed(Collection col, ColorModel colorModel) throws CouchbaseLiteException {
+        // tag::vs-create-lazy-index-embedding[]
+        while (true) {
+            try (IndexUpdater updater = col.getIndex("colors_index").beginUpdate(10)) {
+                if (updater == null) { break; }
+                for (int i = 0; i < updater.count(); i++) {
+                    // get the color swatch from the updater and send it to the remote model
+                    List<Float> embedding = colorModel.getEmbedding(updater.getBlob(i));
+                    if (embedding != null) { updater.setVector(embedding, i); }
+                    else {
+                        // Bad connection? Corrupted over the wire? Something bad happened
+                        // and the vector cannot be generated at the moment: skip it.
+                        // The next time beginUpdate() is called, we'll try it again.
+                        updater.skipVector(i);
+                    }
+                }
+                // This writes the vectors to the index. You MUST either have set or skipped each
+                // of the the vectors in the updater or this call will throw an exception.
+                updater.finish();
+            }
+        }
+        // tag::vs-create-lazy-index-embedding[]
     }
 }
