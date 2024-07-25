@@ -1360,18 +1360,15 @@ namespace api_walkthrough
 
             //  other config as required . . .
 
-#warning replication-set-heartbeat unused?
             // tag::replication-set-heartbeat[]
             config.Heartbeat = TimeSpan.FromSeconds(120); //  <.>
                                                           // end::replication-set-heartbeat[]
 
             // tag::replication-set-maxattempts[]
-#warning replication-set-maxattempts unused?
             config.MaxAttempts = 20; //  <.>
                                      // end::replication-set-maxattempts[]
 
             // tag::replication-set-maxattemptwaittime[]
-#warning replication-set-maxattemptwaittime unused?
             config.MaxAttemptsWaitTime = TimeSpan.FromSeconds(600); //  <.>
             // end::replication-set-maxattemptwaittime[]
 
@@ -2455,80 +2452,105 @@ namespace api_walkthrough
     // end::merge-conflict-resolver[]
  }
 
-#warning p2p-act-rep-func used, but contains nothing
 // tag::p2p-act-rep-func[]
+// . . . preceding code. for example . . .
+    private static ListenerToken _thisListenerToken;
+    var Database thisDB;
+    // . . . other code . . .
 
-#warning p2p-act-rep-config-type used, but contains nothing
 // tag::p2p-act-rep-config-type[]
+// Set replicator type
+thisConfig.ReplicatorType = ReplicatorType.PushAndPull;
 
 // end::p2p-act-rep-config-type[]
 
-#warning autopurge-override used, but contains nothing
 // tag::autopurge-override[]
 // Set autopurge option
 // here we override its default
+thisConfig.EnableAutoPurge = false; // <.>
 
 // end::autopurge-override[]
 
-#warning p2p-act-rep-config-cont used, but contains nothing
 // tag::p2p-act-rep-config-cont[]
 // Configure Sync Mode
+thisConfig.Continuous = true; // default value
 
 // end::p2p-act-rep-config-cont[]
 
-#warning p2p-act-rep-config-self-cert used, but contains nothing
 // tag::p2p-act-rep-config-self-cert[]
 // Configure Server Security -- only accept self-signed certs
+thisConfig.AcceptOnlySelfSignedServerCertificate = true; // <.>
 
 // end::p2p-act-rep-config-self-cert[]
-
 // Configure Client Security // <.>
 
-#warning p2p-act-rep-auth used, but contains nothing
 // tag::p2p-act-rep-auth[]
 // Configure basic auth using user credentials
+    thisConfig.Authenticator = new BasicAuthenticator("Our Username", "Our Password");
 
 // end::p2p-act-rep-auth[]
 
-#warning p2p-act-rep-start-full used, but contains nothing
 // tag::p2p-act-rep-start-full[]
 // Initialize and start a replicator
 // Initialize replicator with configuration data
+var thisReplicator = new Replicator(thisConfig); // <.>
 
-#warning p2p-act-rep-add-change-listener used, but contains nothing
 // tag::p2p-act-rep-add-change-listener[]
-#warning p2p-act-rep-add-change-listener-label used, but contains nothing
 // tag::p2p-act-rep-add-change-listener-label[]
 //Optionally add a change listener // <.>
 // end::p2p-act-rep-add-change-listener-label[]
+_thisListenerToken =
+      thisReplicator.AddChangeListener((sender, args) =>
+        {
+          if (args.Status.Activity == ReplicatorActivityLevel.Stopped) {
+              Console.WriteLine("Replication stopped");
+          }
+        });
 
 // end::p2p-act-rep-add-change-listener[]
 
-#warning p2p-act-rep-start used, but contains nothing
 // tag::p2p-act-rep-start[]
 // Start replicator
+ thisReplicator.Start(); // <.>
 
 // end::p2p-act-rep-start[]
 // end::p2p-act-rep-start-full[]
 // end::p2p-act-rep-func[] 
 
-#warning p2p-act-rep-config-cacert used, but contains nothing
 // tag::p2p-act-rep-config-cacert[]
 // Configure Server Security -- only accept CA certs
+thisConfig.AcceptOnlySelfSignedServerCertificate = false; // <.>
+
 // end::p2p-act-rep-config-cacert[]
 
-#warning p2p-act-rep-config-cacert-pinned used, but contains nothing
 // tag::p2p-act-rep-config-cacert-pinned[]
 // Only CA Certs accepted
+thisConfig.AcceptOnlySelfSignedServerCertificate =
+    false; // <.>
+
+    var thisCert =
+      new X509Certificate2(caData); // <.>
+
+    thisConfig.PinnedServerCertificate =
+      thisCert; // <.>
+
 // end::p2p-act-rep-config-cacert-pinned[]
 
-#warning p2p-act-rep-status used, but contains nothing
 // tag::p2p-act-rep-status[]
+_thisReplicator.Stop();
+    while (_thisReplicator.Status.Activity != ReplicatorActivityLevel.Stopped) {
+        // Database cannot close until replicators are stopped
+        Console.WriteLine($"Waiting for replicator to stop (currently {_thisReplicator.Status.Activity})...");
+        Thread.Sleep(200);
+    }
+_thisDatabase.Close();
+
 // end::p2p-act-rep-status[]
 
-#warning p2p-act-rep-stop used, but contains nothing
 // tag::p2p-act-rep-stop[]
 // Stop replication.
+thisReplicator.Stop(); // <.>
+
 // end::p2p-act-rep-stop[]
 
 #warning p2p-tlsid-store-in-keychain used, but contains nothing
@@ -2537,6 +2559,8 @@ namespace api_walkthrough
 
 #warning p2p-tlsid-delete-id-from-keychain used, but contains nothing
 // tag::p2p-tlsid-delete-id-from-keychain[]
+TLSIdentity.DeleteIdentity(_store, "alias-to-delete", null);
+
 // end::p2p-tlsid-delete-id-from-keychain[]
 
 public class MyClass
