@@ -2455,7 +2455,7 @@ namespace api_walkthrough
 // tag::p2p-act-rep-func[]
 // . . . preceding code. for example . . .
     private static ListenerToken _thisListenerToken;
-    var Database thisDB;
+    var thisDB = new Database("dbname");
     // . . . other code . . .
 
 // tag::p2p-act-rep-config-type[]
@@ -2511,7 +2511,7 @@ _thisListenerToken =
 
 // tag::p2p-act-rep-start[]
 // Start replicator
- thisReplicator.Start(); // <.>
+thisReplicator.Start(); // <.>
 
 // end::p2p-act-rep-start[]
 // end::p2p-act-rep-start-full[]
