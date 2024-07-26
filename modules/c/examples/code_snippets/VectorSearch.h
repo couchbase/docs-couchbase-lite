@@ -19,14 +19,17 @@ public:
     void enableVectorSearchExtension()
     {
         // tag::vs-setup-packaging[]
-        CBL_EnableVectorSearch(FLStr("/path/to/extension_dir"));
+        CBLError error {};
+        if (!CBL_EnableVectorSearch(FLStr("/path/to/extension_dir"), &error)) {
+            throw std::domain_error("Invalid / Not Found Extension Library");
+        }
         // end::vs-setup-packaging[]
     }
 
     void createDefaultVectorIndexConfig() {
         // tag::vs-create-default-config[]
-        // Create a vector index configuration for indexing 3-dimensional vectors embedded
-        // in the documents' key named "vector" using 2 centroids.
+        // Create a vector index configuration with a document property named "vector", 3 dimensions,
+        // and 100 centroids.
         CBLVectorIndexConfiguration config{};
         config.expressionLanguage = kCBLN1QLLanguage;
         config.expression = FLStr("vector");
@@ -37,9 +40,9 @@ public:
 
     void createCustomVectorIndexConfig() {
         // tag::vs-create-custom-config[]
-        // Create a vector index configuration for indexing 3-dimensional vectors embedded in
-        // the documents' key named "vector" using 100 centroids. The configuration customizes
-        // the encoding, the distance metric, the number of probes, and the training size.
+        // Create a vector index configuration with a document property named "vector",
+        // 3 dimensions, and 100 centroids. Customize the encoding, the distance metric,
+        // the number of probes, and the training size.
         // Note: Free the created encoding using CBLVectorEncoding_Free after creating the index.
         CBLVectorIndexConfiguration config{};
         config.expressionLanguage = kCBLN1QLLanguage;
@@ -54,20 +57,37 @@ public:
         // end::vs-create-custom-config[]
     }
 
+    void numProbesConfig() {
+        // tag::vs-numprobes-config[]
+        // Create a vector index configuration with a document property named "vector",
+        // 3 dimensions, and 100 centroids. Customize the number of probes.
+        CBLVectorIndexConfiguration config{};
+        config.expressionLanguage = kCBLN1QLLanguage;
+        config.expression = FLStr("vector");
+        config.dimensions = 3;
+        config.centroids = 100;
+        config.numProbes = 8;
+        // end::vs-numprobes-config[]
+    }
+
     void createVectorIndex() {
         CBLDatabase* database = getDatabase();
-
         // tag::vs-create-index[]
+        CBLError err {};
+        // Get the collection object named "colors" in the default scope.
+        CBLCollection* collection =
+            CBLDatabase_Collection(database, FLStr("colors"), FLStr("_default"), &err);
+        if (collection == nullptr) { throw std::domain_error("No Collection Found"); }
+
+        // Create a vector index configuration with a document property named "vector",
+        // 3 dimensions, and 100 centroids.
         CBLVectorIndexConfiguration config {};
         config.expressionLanguage = kCBLN1QLLanguage;
         config.expression = FLStr("vector");
         config.dimensions = 3;
         config.centroids = 100;
 
-        CBLError err {};
-        CBLCollection* collection = CBLDatabase_Collection(database, FLStr("colors"), FLStr("_default"), &err);
-        if (collection == nullptr) { throw std::domain_error("No Collection Found"); }
-
+        // Create a vector index from the configuration with the name "colors_index".
         bool result = CBLCollection_CreateVectorIndex(collection, FLStr("colors_index"), config, &err);
         if (!result) { throw std::domain_error("Create Index Error"); }
 
@@ -77,7 +97,6 @@ public:
 
     void createVectorIndexWithPredictiveModel() {
         CBLDatabase* database = getDatabase();
-
         // tag::vs-predictive-model[]
         auto callback = [](void* context, FLDict input) -> FLMutableDict {
             // Set color input string
@@ -108,25 +127,336 @@ public:
         // Register the predictive model named "ColorModel".
         CBL_RegisterPredictiveModel(FLStr("ColorModel"), model);
 
+        CBLError err {};
+        // Get the collection object named "colors" in the default scope.
+        CBLCollection* collection =
+            CBLDatabase_Collection(database, FLStr("colors"), FLStr("_default"), &err);
+        if (collection == nullptr) { throw std::domain_error("No Collection Found"); }
+
         // Create a vector index configuration with an expression using the prediction
         // function to get the vectors from the registered predictive model.
         CBLVectorIndexConfiguration config {};
         config.expressionLanguage = kCBLN1QLLanguage;
         config.expression = FLStr("prediction(ColorModel, {\"colorInput\": color}).vector");
         config.dimensions = 3;
-        config.centroids = 2;
-        config.encoding = CBLVectorEncoding_CreateNone();
+        config.centroids = 100;
 
-        CBLError err {};
-        CBLCollection* collection = CBLDatabase_Collection(database, FLStr("colors"), FLStr("_default"), &err);
-        if (collection == nullptr) { throw std::domain_error("No Collection Found"); }
-
+        // Create a vector index from the configuration with the name "colors_index".
         bool result = CBLCollection_CreateVectorIndex(collection, FLStr("colors_index"), config, &err);
         if (!result) { throw std::domain_error("Create Index Error"); }
 
-        CBLVectorEncoding_Free(config.encoding);
         CBLCollection_Release(collection);
         // end::vs-create-predictive-index[]
+    }
+
+    void queryAPVDOrderBy() {
+        CBLDatabase* database = getDatabase();
+        // tag::vs-use-vector-match[]
+        // tag::vs-apvd-order-by[]
+        // Create a query by using the approx_vector_distance() in the ORDER BY clause.
+        CBLError err{};
+        const char* sql = "SELECT id, color "
+                          "FROM _default.colors "
+                          "ORDER BY approx_vector_distance(vector, $vector) "
+                          "LIMIT 8";
+        
+        CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+                                                  FLStr(sql),
+                                                  nullptr, &err);
+
+        // Use ML model to get a vector (an array of floats) for the input color.
+        std::vector colorVector = Color::getVector("FF00AA");
+
+        // Set the vector array to the parameter "$vector"
+        auto colorArray = FLMutableArray_New();
+        for (auto val : colorVector) {
+            FLMutableArray_AppendFloat(colorArray, val);
+        }
+
+        // Set the vector array to the parameter "$vector".
+        auto params = FLMutableDict_New();
+        FLMutableDict_SetArray(params, FLSTR("vector"), colorArray);
+        CBLQuery_SetParameters(query, params);
+
+        FLMutableArray_Release(colorArray);
+        FLMutableDict_Release(params);
+
+        // Execute the query:
+        auto results = CBLQuery_Execute(query, &err);
+        if (!results) {
+            throw std::domain_error("Invalid Query");
+        }
+
+        while(CBLResultSet_Next(results)) {
+            // Process result
+        }
+        // end::vs-apvd-order-by[]
+        // end::vs-use-vector-match[]
+    }
+
+    void queryAPVDWhere() {
+        CBLDatabase* database = getDatabase();
+        // tag::vs-apvd-where[]
+        // Create a query by using the approx_vector_distance() in the WHERE clause.
+        CBLError err{};
+        const char* sql = "SELECT id, color "
+                          "FROM _default.colors "
+                          "WHERE approx_vector_distance(vector, $vector) < 0.5 "
+                          "LIMIT 8";
+        
+        CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+                                                  FLStr(sql),
+                                                  nullptr, &err);
+
+        // Use ML model to get a vector (an array of floats) for the input color.
+        std::vector colorVector = Color::getVector("FF00AA");
+
+        // Set the vector array to the parameter "$vector"
+        auto colorArray = FLMutableArray_New();
+        for (auto val : colorVector) {
+            FLMutableArray_AppendFloat(colorArray, val);
+        }
+
+        // Set the vector array to the parameter "$vector".
+        auto params = FLMutableDict_New();
+        FLMutableDict_SetArray(params, FLSTR("vector"), colorArray);
+        CBLQuery_SetParameters(query, params);
+
+        FLMutableArray_Release(colorArray);
+        FLMutableDict_Release(params);
+
+        // Execute the query:
+        auto results = CBLQuery_Execute(query, &err);
+        if (!results) {
+            throw std::domain_error("Invalid Query");
+        }
+
+        while(CBLResultSet_Next(results)) {
+            // Process result
+        }
+        // end::vs-apvd-where[]
+    }
+
+    void queryVectorDistance() {
+        CBLDatabase* database = getDatabase();
+
+        // tag::vs-use-vector-distance[]
+        // Create a query by using the approx_vector_distance() to get vector distances.
+        CBLError err{};
+        const char* sql = "SELECT id, color, approx_vector_distance(vector, $vector) "
+                          "FROM _default.colors "
+                          "LIMIT 8";
+
+        CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+                                                  FLStr(sql),
+                                                  nullptr, &err);
+
+        // Use ML model to get a vector (an array of floats) for the input color.
+        std::vector colorVector = Color::getVector("FF00AA");
+
+        // Set the vector array to the parameter "$vector"
+        auto colorArray = FLMutableArray_New();
+        for (auto val : colorVector) {
+            FLMutableArray_AppendFloat(colorArray, val);
+        }
+
+        // Set the vector array to the parameter "$vector".
+        auto params = FLMutableDict_New();
+        FLMutableDict_SetArray(params, FLSTR("vector"), colorArray);
+        CBLQuery_SetParameters(query, params);
+
+        FLMutableArray_Release(colorArray);
+        FLMutableDict_Release(params);
+
+        // Execute the query:
+        auto results = CBLQuery_Execute(query, &err);
+        if (!results) {
+            throw std::domain_error("Invalid Query");
+        }
+
+        while(CBLResultSet_Next(results)) {
+            // Process result
+        }
+        // end::vs-use-vector-distance[]
+    }
+
+    void queryHybridOrderBy() {
+        CBLDatabase* database = getDatabase();
+        // tag::vs-hybrid-order-by[]
+        // Create a hybrid vector search query by using ORDER BY and WHERE clause.
+        CBLError err{};
+        const char* sql = "SELECT meta().id, color "
+                          "FROM _default.colors "
+                          "WHERE saturation > 0.5 "
+                          "ORDER BY approx_vector_distance(vector, $vector) "
+                          "LIMIT 8";
+
+        CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+                                                  FLStr(sql),
+                                                  nullptr, &err);
+
+        // Use ML model to get a vector (an array of floats) for the input color.
+        std::vector colorVector = Color::getVector("FF00AA");
+
+        // Set the vector array to the parameter "$vector"
+        auto colorArray = FLMutableArray_New();
+        for (auto val : colorVector) {
+            FLMutableArray_AppendFloat(colorArray, val);
+        }
+
+        // Set the vector array to the parameter "$vector".
+        auto params = FLMutableDict_New();
+        FLMutableDict_SetArray(params, FLSTR("vector"), colorArray);
+        CBLQuery_SetParameters(query, params);
+
+        FLMutableArray_Release(colorArray);
+        FLMutableDict_Release(params);
+
+        // Execute the query:
+        auto results = CBLQuery_Execute(query, &err);
+        if (!results) {
+            throw std::domain_error("Invalid Query");
+        }
+
+        while(CBLResultSet_Next(results)) {
+            // Process result
+        }
+        // end::vs-hybrid-order-by[]
+    }
+
+    void queryHybridWhere() {
+        CBLDatabase* database = getDatabase();
+        // tag::vs-hybrid-where[]
+        // Create a hybrid vector search query by using ORDER BY and WHERE clause.
+        CBLError err{};
+        const char* sql = "SELECT meta().id, color "
+                          "FROM _default.colors "
+                          "WHERE saturation > 0.5 AND approx_vector_distance(vector, $vector) < 0.5 "
+                          "LIMIT 8";
+
+        CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+                                                  FLStr(sql),
+                                                  nullptr, &err);
+
+        // Use ML model to get a vector (an array of floats) for the input color.
+        std::vector colorVector = Color::getVector("FF00AA");
+
+        // Set the vector array to the parameter "$vector"
+        auto colorArray = FLMutableArray_New();
+        for (auto val : colorVector) {
+            FLMutableArray_AppendFloat(colorArray, val);
+        }
+
+        // Set the vector array to the parameter "$vector".
+        auto params = FLMutableDict_New();
+        FLMutableDict_SetArray(params, FLSTR("vector"), colorArray);
+        CBLQuery_SetParameters(query, params);
+
+        FLMutableArray_Release(colorArray);
+        FLMutableDict_Release(params);
+
+        // Execute the query:
+        auto results = CBLQuery_Execute(query, &err);
+        if (!results) {
+            throw std::domain_error("Invalid Query");
+        }
+
+        while(CBLResultSet_Next(results)) {
+            // Process result
+        }
+        // end::vs-hybrid-where[]
+    }
+
+    void queryHybridPrediction() {
+        CBLDatabase* database = getDatabase();
+        // tag::vs-hybrid-prediction[]
+        // Create a hybrid vector search query by using ORDER BY and WHERE clause.
+        CBLError err{};
+        const char* sql =
+        "SELECT meta().id, color "
+        "FROM _default.colors "
+        "WHERE saturation > 0.5 "
+        "ORDER BY approx_vector_distance(prediction(ColorModel, {\"colorInput\": color}).vector, $vector) "
+        "LIMIT 8";
+
+        CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+                                                  FLStr(sql),
+                                                  nullptr, &err);
+
+        // Use ML model to get a vector (an array of floats) for the input color.
+        std::vector colorVector = Color::getVector("FF00AA");
+
+        // Set the vector array to the parameter "$vector"
+        auto colorArray = FLMutableArray_New();
+        for (auto val : colorVector) {
+            FLMutableArray_AppendFloat(colorArray, val);
+        }
+
+        // Set the vector array to the parameter "$vector".
+        auto params = FLMutableDict_New();
+        FLMutableDict_SetArray(params, FLSTR("vector"), colorArray);
+        CBLQuery_SetParameters(query, params);
+
+        FLMutableArray_Release(colorArray);
+        FLMutableDict_Release(params);
+
+        // Execute the query:
+        auto results = CBLQuery_Execute(query, &err);
+        if (!results) {
+            throw std::domain_error("Invalid Query");
+        }
+
+        while(CBLResultSet_Next(results)) {
+            // Process result
+        }
+        // end::vs-hybrid-prediction[]
+    }
+
+    void queryHybridFTMatch() {
+        CBLDatabase* database = getDatabase();
+        // tag::vs-hybrid-ftmatch[]
+        // Create a hybrid vector search query by using ORDER BY and WHERE clause.
+        CBLError err{};
+        const char* sql = "SELECT meta().id, color "
+                          "FROM _default.colors "
+                          "WHERE MATCH(color_desc_index, $text) "
+                          "ORDER BY approx_vector_distance(vector, $vector) "
+                          "LIMIT 8";
+
+        CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+                                                  FLStr(sql),
+                                                  nullptr, &err);
+
+        // Use ML model to get a vector (an array of floats) for the input color.
+        std::vector colorVector = Color::getVector("FF00AA");
+
+        // Set the vector array to the parameter "$vector"
+        auto colorArray = FLMutableArray_New();
+        for (auto val : colorVector) {
+            FLMutableArray_AppendFloat(colorArray, val);
+        }
+
+        // Set the vector array to the parameter "$vector".
+        auto params = FLMutableDict_New();
+        // Set the vector array to the parameter "$vector".
+        FLMutableDict_SetArray(params, FLStr("vector"), colorArray);
+        // Set the vector array to the parameter "$text".
+        FLMutableDict_SetString(params, FLStr("$text"), FLStr("vibrant"));
+        CBLQuery_SetParameters(query, params);
+
+        FLMutableArray_Release(colorArray);
+        FLMutableDict_Release(params);
+
+        // Execute the query:
+        auto results = CBLQuery_Execute(query, &err);
+        if (!results) {
+            throw std::domain_error("Invalid Query");
+        }
+
+        while(CBLResultSet_Next(results)) {
+            // Process result
+        }
+        // end::vs-hybrid-ftmatch[]
     }
 
     void createLazyIndex() {
@@ -144,10 +474,14 @@ public:
 
     void updateLazyIndex() {
         CBLDatabase* database = getDatabase();
-        CBLCollection* collection = CBLDatabase_Collection(database, FLStr("colors"), FLStr("_default"), nullptr);
-
         // tag::vs-create-lazy-index-embedding[]
+        // Get the collection object
         CBLError err {};
+        CBLCollection* collection =
+            CBLDatabase_Collection(database, FLStr("colors"), FLStr("_default"), &err);
+        if (collection == nullptr) { throw std::domain_error("No Collection Found"); }
+
+        // Get the index object
         CBLQueryIndex* index = CBLCollection_GetIndex(collection, FLStr("colors_index"), &err);
         if (!index) { throw std::domain_error("Index Not Found"); }
 
@@ -209,89 +543,7 @@ public:
         }
 
         CBLQueryIndex_Release(index);
-
         // end::vs-create-lazy-index-embedding[]
-    }
-
-    void queryVectorSearch() {
-        CBLDatabase* database = getDatabase();
-
-        // tag::vs-use-vector-match[]
-        // Create a query to search similar colors by using the approx_vector_distance() function
-        // in the ORDER BY clause.
-        CBLError err{};
-        const char* sql = "SELECT id, color FROM _default.colors ORDER BY approx_vector_distance(vector, $vector) LIMIT 8";
-        CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
-                                                  FLStr(sql),
-                                                  nullptr, &err);
-
-        // Get a vector, an array of float numbers, for the input color code (e.g. FF000AA).
-        // Normally, you will get the vector from your ML model.
-        std::vector colorVector = Color::getVector("FF00AA");
-
-        // Set the vector array to the parameter "$vector"
-        auto colorArray = FLMutableArray_New();
-        for (auto val : colorVector) {
-            FLMutableArray_AppendFloat(colorArray, val);
-        }
-
-        auto params = FLMutableDict_New();
-        FLMutableDict_SetArray(params, FLSTR("vector"), colorArray);
-        CBLQuery_SetParameters(query, params);
-
-        FLMutableArray_Release(colorArray);
-        FLMutableDict_Release(params);
-
-        // Execute the query:
-        auto results = CBLQuery_Execute(query, &err);
-        if (!results) {
-            throw std::domain_error("Invalid Query");
-        }
-
-        while(CBLResultSet_Next(results)) {
-            // Process results
-        }
-        // end::vs-use-vector-match[]
-    }
-
-    void queryVectorDistance() {
-        CBLDatabase* database = getDatabase();
-
-        // tag::vs-use-vector-distance[]
-        // Create a query to get vector distances using the approx_vector_distance() function.
-        CBLError err{};
-        const char* sql = "SELECT id, color, approx_vector_distance(vector, $vector) FROM _default.colors LIMIT 8";
-        CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
-                                                  FLStr(sql),
-                                                  nullptr, &err);
-
-        // Get a vector, an array of float numbers, for the input color code (e.g. FF000AA).
-        // Normally, you will get the vector from your ML model.
-        std::vector colorVector = Color::getVector("FF00AA");
-
-        // Set the vector array to the parameter "$vector"
-        auto colorArray = FLMutableArray_New();
-        for (auto val : colorVector) {
-            FLMutableArray_AppendFloat(colorArray, val);
-        }
-
-        auto params = FLMutableDict_New();
-        FLMutableDict_SetArray(params, FLSTR("vector"), colorArray);
-        CBLQuery_SetParameters(query, params);
-
-        FLMutableArray_Release(colorArray);
-        FLMutableDict_Release(params);
-
-        // Execute the query:
-        auto results = CBLQuery_Execute(query, &err);
-        if (!results) {
-            throw std::domain_error("Invalid Query");
-        }
-
-        while(CBLResultSet_Next(results)) {
-            // Process results
-        }
-        // end::vs-use-vector-distance[]
     }
 
 private:
