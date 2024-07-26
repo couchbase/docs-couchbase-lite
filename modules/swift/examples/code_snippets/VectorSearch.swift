@@ -12,7 +12,7 @@ var database: Database!
 var collection: Collection!
 
 enum AppError: Error {
-    case indexdNotFound
+    case indexNotFound
     case vectorNotFound
 }
 
@@ -385,7 +385,7 @@ class VectorSearchSnippets {
     func updateLazyIndex() async throws {
         // tag::vs-create-lazy-index-embedding[]
         guard let index = try collection.index(withName: "colors_index") else {
-            throw AppError.indexdNotFound
+            throw AppError.indexNotFound
         }
         
         while (true) {
