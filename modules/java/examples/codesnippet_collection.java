@@ -617,6 +617,13 @@ public class Examples {
         database.delete();
     }
 
+     public void DatabaseFullSyncExample() throws CouchbaseLiteException {
+        // tag::database-fullsync[]
+        DatabaseConfiguration config = new DatabaseConfiguration();
+        config.setFullSync(true);
+        // end::database-fullsync[]
+    }
+
     public void databaseEncryptionExample() throws CouchbaseLiteException {
         // tag::database-encryption[]
         DatabaseConfiguration config = new DatabaseConfiguration();

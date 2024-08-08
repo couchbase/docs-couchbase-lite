@@ -120,6 +120,22 @@ class BasicExamples(private val context: Context) {
         database.delete()
     }
 
+    // ### Database FullSync
+    fun DatabaseFullSyncExample() {
+        // tag::database-fullsync[]
+        val database = Database(
+            "my-db",
+            DatabaseConfigurationFactory.newConfig(
+                fullSync = true
+            )
+        ) 
+        // end::database-fullsync[]
+        
+        config.setFullSync()
+        
+    }
+
+
     // ### Database Encryption
     fun databaseEncryptionExample() {
         // tag::database-encryption[]
