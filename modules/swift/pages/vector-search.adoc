@@ -58,6 +58,12 @@ This representation encodes how a ML model understands the input or inputs provi
 When a model considers the features of a given input as similar, the distance between the vector embeddings will be short.
 Vector embeddings are stored within embedded vector indexes.
 
+The current supported formats for Vector embeddings are:
+
+* An array of 32-bit floats.
+
+* A Base64 string that encodes the binary representation of an array of 32-bit float numbers in https://en.wikipedia.org/wiki/Endianness[Little-endian] format.
+
 === About Vector Indexes
 
 Vector Indexes are used to store and manage vector representations of content in the form of vector embeddings.
@@ -103,7 +109,7 @@ Vector dimensions describes the amount of numbers in a given vector embedding, c
 The greater the amount of dimensions, the greater accuracy of results, this also results in greater compute and memory costs and a increase in the latency of the search.
 Vector dimensions are dependent on the LLM used to generate the Vector Embeddings. 
 
-NOTE: Couchbase Lite supports dimension sizes in the range of `2 - 2048`.
+NOTE: Couchbase Lite supports dimension sizes in the range of `2 - 4096`.
 
 === About Distance Metrics
 

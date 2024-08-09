@@ -72,15 +72,22 @@ A document property for embedded vectors or
 |Number of Dimensions
 |Required
 |No default
-|2-2048
+|2-4096
 |Number of Centroids
 |Required
 |No default
 |1-64000. The general guideline is an approximate square root of the number of documents
 |Distance Metric
 |Optional
-|Euclidean Distance
-|You can also configure Cosine Distance as your Distance Metric
+|Euclidean Distance (euclideanSquared)
+a|You can set the following alternates as your Distance Metric:
+
+* cosine (1 - Cosine similarity)
+
+* Euclidean
+
+* dot (negated dot product)
+
 |Encoding
 |Optional
 | Scalar Quantizer(SQ) or SQ-8 bits
@@ -97,10 +104,18 @@ Reduces the number of dimensions and bits per dimension
 |Optional
 a|There are defaults for both the minimum and maximum training size for training the vectors
 
-* The minimum training size is set to 25x the number of Centroids
+* The minimum training size is set to 25x the number of Centroids or 2 ^PQ's^ ^bits^ when PQ is used
 
-* The maximum training size is set to 256x the number of Centroids
+* The maximum training size is set to 256x the number of Centroids or 2 ^PQ's^ ^bits^ when PQ is used
 |
+|NumProbes
+|Optional
+|The default value is 0. The number of Probes is calculated based on the number of Centroids
+|A guideline for setting a custom number of probes is at least 8 or 0.5% the number of Centroids
+|isLazy
+|Optional
+|False
+|Setting the value to true will enable lazy mode for the vector index
 
 |===
 
