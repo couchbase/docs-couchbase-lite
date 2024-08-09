@@ -213,10 +213,6 @@
     // tag::database-encryption[]
     CBLDatabaseConfiguration *config = [[CBLDatabaseConfiguration alloc] init];
     config.encryptionKey = [[CBLEncryptionKey alloc] initWithPassword:@"secretpassword"];
-    // tag::database-fullsync[]
-    config.fullSync = true;
-    // end::database-fullsync[]
-
     NSError *error;
     self.database = [[CBLDatabase alloc] initWithName:@"my-database" config:config error:&error];
     if (!self.database) {
