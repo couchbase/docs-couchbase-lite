@@ -618,8 +618,8 @@ public class Examples {
     }
 
      public void DatabaseFullSyncExample() throws CouchbaseLiteException {
-        // tag::database-fullsync[]
         DatabaseConfiguration config = new DatabaseConfiguration();
+        // tag::database-fullsync[]
         config.setFullSync(true);
         // end::database-fullsync[]
     }

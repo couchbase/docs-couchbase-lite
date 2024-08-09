@@ -464,8 +464,8 @@ static void close_database() {
 }
 
 static void database_fullsync() {
-   // tag::database-fullsync[] 
    CBLDatabaseConfiguration config = CBLDatabaseConfiguration_Default();
+   // tag::database-fullsync[] 
    // this enables full sync
    config.fullSync = true; 
    // end::database-fullsync[]

@@ -451,6 +451,7 @@ namespace api_walkthrough
 
         private static void DatabaseFullsync()
         {
+           var config = new DatabaseConfiguration(); 
            // tag::database-fullsync[] 
            // this enables fullsync
            config.FullSync = true;

@@ -61,8 +61,8 @@ class SampleCodeTest {
     }
 
     func dontTestDatabaseFullSync() throws {
-        // tag::database-fullsync[]
         var config = DatabaseConfiguration()
+        // tag::database-fullsync[]
         // This enables full sync
         config.fullSync = true
         // end::database-fullsync[]

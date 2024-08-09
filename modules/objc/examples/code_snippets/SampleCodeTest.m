@@ -188,8 +188,8 @@
 }
 
 - (void) dontTestDatabaseFullSync {
-  // tag::database-fullsync[]
   CBLDatabaseConfiguration* config = [[CBLDatabaseConfiguration alloc] init];
+  // tag::database-fullsync[]
   config.fullSync = true;
   // end::database-fullsync[]
 }
