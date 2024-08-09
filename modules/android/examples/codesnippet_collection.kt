@@ -131,8 +131,6 @@ class BasicExamples(private val context: Context) {
         ) 
         // end::database-fullsync[]
         
-        config.setFullSync()
-        
     }
 
 
