@@ -120,16 +120,16 @@ class BasicExamples(private val context: Context) {
         database.delete()
     }
 
-    // ### Database FullSync
+    // ### Database FullSync tag needs reinserting
     fun DatabaseFullSyncExample() {
-        // tag::database-fullsync[]
+       
         val database = Database(
             "my-db",
             DatabaseConfigurationFactory.newConfig(
                 fullSync = true
             )
         ) 
-        // end::database-fullsync[]
+        
         
     }
 
