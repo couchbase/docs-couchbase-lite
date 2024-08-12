@@ -463,6 +463,14 @@ static void close_database() {
     // end::close-database[]
 }
 
+static void database_fullsync() {
+   CBLDatabaseConfiguration config = CBLDatabaseConfiguration_Default();
+   // tag::database-fullsync[] 
+   // this enables full sync
+   config.fullSync = true; 
+   // end::database-fullsync[]
+}
+
 static void create_collection() {
     CBLDatabase *db = kDatabase;
     // tag::scopes-manage-create-collection[]

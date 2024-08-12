@@ -449,6 +449,15 @@ namespace api_walkthrough
             // end::close-database[]
         }
 
+        private static void DatabaseFullsync()
+        {
+           var config = new DatabaseConfiguration(); 
+           // tag::database-fullsync[] 
+           // this enables fullsync
+           config.FullSync = true;
+           // end::database-fullsync[]
+        }
+
         private static void CreateCollection() 
         {
             // tag::scopes-manage-create-collection[]
