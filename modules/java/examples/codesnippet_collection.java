@@ -247,10 +247,8 @@ import org.jetbrains.annotations.NotNull;
 
 import com.couchbase.lite.Array;
 import com.couchbase.lite.Collection;
-import com.couchbase.lite.CouchbaseLite;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
-import com.couchbase.lite.DatabaseConfiguration;
 import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.MutableArray;
@@ -258,6 +256,7 @@ import com.couchbase.lite.MutableDictionary;
 import com.couchbase.lite.MutableDocument;
 
 
+@SuppressWarnings("unused")
 public class BasicExamples {
     public class SupportingDatatypes {
         private final File rootDir;
@@ -268,9 +267,7 @@ public class BasicExamples {
             // tag::datatype_usage[]
             // tag::datatype_usage_createdb[]
             // Get the database (and create it if it doesn’t exist).
-            DatabaseConfiguration config = new DatabaseConfiguration();
-            config.setDirectory(this.rootDir.getAbsolutePath());
-            Database database = new Database("getting-started", config);
+            Database database = new Database("getting-started");
             try (Collection collection = database.getCollection("myCollection")) {
                 if (collection == null) { throw new IllegalStateException("collection not found"); }
 
@@ -281,7 +278,6 @@ public class BasicExamples {
 
                 // end::datatype_usage_createdoc[]
                 // tag::datatype_usage_mutdict[]
-                // Create and populate mutable dictionary
                 // Create a new mutable dictionary and populate some keys/values
                 MutableDictionary address = new MutableDictionary();
                 address.setString("street", "1 Main st.");
@@ -311,10 +307,10 @@ public class BasicExamples {
                 mutableDoc.setFloat("room_rate", 121.75F);
 
                 // Add dictionary to document's properties <.>
-                mutableDoc.setDictionary("address", (Dictionary) address);
+                mutableDoc.setDictionary("address", address);
 
                 // Add array to document's properties <.>
-                mutableDoc.setArray("phones", (Array) phones);
+                mutableDoc.setArray("phones", phones);
 
                 // end::datatype_usage_populate[]
                 // tag::datatype_usage_persist[]
@@ -377,7 +373,7 @@ public class BasicExamples {
 
             // Add the dictionary to a document's properties and save the document
             MutableDocument mutableDoc = new MutableDocument("doc1");
-            mutableDoc.setDictionary("address", (Dictionary) mutableDict);
+            mutableDoc.setDictionary("address", mutableDict);
             collection.save(mutableDoc);
 
             // end::datatype_mutable_dictionary[]
@@ -423,7 +419,7 @@ public class BasicExamples {
 
             // Set the array to document's properties and save the document
             MutableDocument mutableDoc = new MutableDocument("doc1");
-            mutableDoc.setArray("phones", (Array) mutableArray);
+            mutableDoc.setArray("phones", mutableArray);
             collection.save(mutableDoc);
             // end::datatype_mutable_array[]
         }
@@ -605,9 +601,7 @@ public class Examples {
     public void newDatabaseExample() throws CouchbaseLiteException {
         final String customDir = "/foo/bar";
         // tag::new-database[]
-        DatabaseConfiguration config = new DatabaseConfiguration();
-        config.setDirectory(customDir);
-        Database database = new Database(DB_NAME, config);
+        Database database = new Database(DB_NAME);
         // end::new-database[]
 
         // tag::close-database[]
@@ -615,13 +609,6 @@ public class Examples {
         // end::close-database[]
 
         database.delete();
-    }
-
-     public void DatabaseFullSyncExample() throws CouchbaseLiteException {
-        DatabaseConfiguration config = new DatabaseConfiguration();
-        // tag::database-fullsync[]
-        config.setFullSync(true);
-        // end::database-fullsync[]
     }
 
     public void databaseEncryptionExample() throws CouchbaseLiteException {
@@ -636,7 +623,7 @@ public class Examples {
         // tag::logging[]
 
         // Set the overall logging level
-        Database.log.getConsole().setLevel(LogLevel.VERBOSE);
+        Database.log.getConsole().setLevel(LogLevel.DEBUG);
 
         // Enable or disable specific domains
         Database.log.getConsole().setDomains(LogDomain.REPLICATOR, LogDomain.QUERY);
@@ -651,12 +638,11 @@ public class Examples {
 
     public void consoleLoggingExample() {
         // tag::console-logging[]
-        Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS); // <.>
-        Database.log.getConsole().setLevel(LogLevel.VERBOSE); // <.>
+        Database.log.getConsole().setLevel(LogLevel.DEBUG); // <.>
         // end::console-logging[]
 
         // tag::console-logging-db[]
-        Database.log.getConsole().setDomains(LogDomain.DATABASE);
+        Database.log.getConsole().setLevel(LogLevel.DEBUG); // <.>
         // end::console-logging-db[]
     }
 
@@ -677,12 +663,11 @@ public class Examples {
 
         // tag::prebuilt-database[]
         // Note: Getting the path to a database is platform-specific.
-        DatabaseConfiguration configuration = new DatabaseConfiguration();
         if (!Database.exists("travel-sample", appDbDir)) {
             File tmpDir = new File(System.getProperty("java.io.tmpdir"));
             ZipUtils.unzip(Utils.getAsset("travel-sample.cblite2.zip"), tmpDir);
             File path = new File(tmpDir, "travel-sample");
-            Database.copy(path, "travel-sample", configuration);
+            Database.copy(path, "travel-sample", new DatabaseConfiguration());
         }
         // end::prebuilt-database[]
     }
@@ -722,10 +707,7 @@ public class Examples {
                 doc.setValue("type", "user");
                 doc.setValue("name", "user " + i);
                 doc.setBoolean("admin", false);
-
                 collection.save(doc);
-
-                Logger.log("saved user document " + doc.getString("name"));
             }
         });
         // end::batch[]
@@ -922,6 +904,8 @@ class ZipUtils {
 // end::ziputils-unzip[]
 
 @SuppressWarnings("unused")
+
+// tag::custom-logging[]
 class LogTestLogger implements com.couchbase.lite.Logger {
     @NonNull
     private final LogLevel level;
@@ -937,6 +921,8 @@ class LogTestLogger implements com.couchbase.lite.Logger {
 
     }
 }
+// end::custom-logging[]
+
 
 @SuppressWarnings("unused")
 class TensorFlowModel {
@@ -1141,7 +1127,8 @@ class PassivePeerConnection implements MessageEndpointConnection {
         replicatorConnection.receive(message);
         // end::passive-peer-receive[]
     }
-}//
+}
+//
 // Copyright (c) 2023 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
