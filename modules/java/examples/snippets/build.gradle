@@ -1,6 +1,6 @@
 apply plugin: 'java'
 
-ext { CBL_VERSION='3.1.6-SNAPSHOT' }
+ext { CBL_VERSION='3.1.9' }
 
 def USE_LOCAL_MAVEN = project.hasProperty("useLocalMaven")
 
@@ -25,8 +25,8 @@ repositories {
     if (USE_LOCAL_MAVEN) { mavenLocal() }
     else {
         maven {
-            url "https://proget.sc.couchbase.com/maven2/internalmaven/"
-            allowInsecureProtocol = true
+            url "https://mobile.maven.couchbase.com/maven2/dev/"
+            content { includeGroupByRegex "com\\.couchbase\\.lite.*" }
         }
     }
 
@@ -37,7 +37,7 @@ repositories {
 dependencies {
     compileOnly 'androidx.annotation:annotation:1.5.0'
 
-    implementation "com.couchbase.lite:couchbase-lite-java-ee-macos:${CBL_VERSION}"
+    implementation "com.couchbase.lite:couchbase-lite-java-ee:${CBL_VERSION}"
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
 }

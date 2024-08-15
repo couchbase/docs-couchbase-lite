@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'war'
 apply plugin: 'org.gretty'
 
-ext { CBL_VERSION = '3.1.6-SNAPSHOT' }
+ext { CBL_VERSION = '3.1.9' }
 
 def USE_LOCAL_MAVEN = project.hasProperty("useLocalMaven")
 
@@ -26,8 +26,8 @@ repositories {
     if (USE_LOCAL_MAVEN) { mavenLocal() }
     else {
         maven {
-            url "https://proget.sc.couchbase.com/maven2/internalmaven/"
-            allowInsecureProtocol = true
+            url "https://mobile.maven.couchbase.com/maven2/dev/"
+            content { includeGroupByRegex "com\\.couchbase\\.lite.*" }
         }
     }
 
@@ -40,7 +40,7 @@ dependencies {
 
     compileOnly "javax.servlet:javax.servlet-api:4.0.1"
 
-    implementation "com.couchbase.lite:couchbase-lite-java-ee-macos:${CBL_VERSION}"
+    implementation "com.couchbase.lite:couchbase-lite-java-ee:${CBL_VERSION}"
 }
 
 gretty {
@@ -49,3 +49,4 @@ gretty {
     fileLogEnabled = true
 }
 
+task prepareKotlinBuildScriptModel { }
