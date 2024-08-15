@@ -632,12 +632,19 @@ public class Examples {
         config.setDirectory(customDir);
         Database database = new Database(DB_NAME, config);
         // end::new-database[]
-
+        
         // tag::close-database[]
         database.close();
         // end::close-database[]
 
         database.delete();
+    }
+
+     public void databaseFullSyncExample() throws CouchbaseLiteException {
+        DatabaseConfiguration config = new DatabaseConfiguration();
+        // tag::database-fullsync[]
+        config.setFullSync(true);
+        // end::database-fullsync[]
     }
 
     public void databaseEncryptionExample() throws CouchbaseLiteException {
