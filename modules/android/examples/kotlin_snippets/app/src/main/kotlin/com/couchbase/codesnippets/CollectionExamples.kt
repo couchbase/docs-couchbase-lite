@@ -79,9 +79,9 @@ class CollectionExamples {
         // tag::scopes-manage-list[]
         // List all of the collections in each of the scopes in the database
         db.scopes.forEach { scope ->
-            Logger.log("Scope :: " + scope.name)
+            Logger.log("Scope :: ${scope.name}")
             scope.collections.forEach {
-                Logger.log("    Collection :: " + it.name)
+                Logger.log("    Collection :: ${it.name}")
             }
         }
         // end::scopes-manage-list[]

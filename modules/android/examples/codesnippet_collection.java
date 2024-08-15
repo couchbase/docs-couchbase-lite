@@ -227,7 +227,6 @@ import android.app.Application;
 
 import com.couchbase.lite.CouchbaseLite;
 import com.couchbase.lite.Database;
-import com.couchbase.lite.LogDomain;
 import com.couchbase.lite.LogLevel;
 
 
@@ -246,7 +245,6 @@ public class SnippetApplication extends Application {
         // tag::replication-logging[]
         CouchbaseLite.init(this, true);
 
-        Database.log.getConsole().setDomains(LogDomain.REPLICATOR);
         Database.log.getConsole().setLevel(LogLevel.DEBUG);
         // end::replication-logging[]
     }
@@ -270,15 +268,12 @@ package com.couchbase.codesnippets;
 
 import java.io.File;
 
-import kotlin.jvm.internal.Intrinsics;
 import org.jetbrains.annotations.NotNull;
 
 import com.couchbase.lite.Array;
 import com.couchbase.lite.Collection;
-import com.couchbase.lite.CouchbaseLite;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
-import com.couchbase.lite.DatabaseConfiguration;
 import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.MutableArray;
@@ -286,6 +281,7 @@ import com.couchbase.lite.MutableDictionary;
 import com.couchbase.lite.MutableDocument;
 
 
+@SuppressWarnings("unused")
 public class BasicExamples {
     public class SupportingDatatypes {
         private final File rootDir;
@@ -295,13 +291,8 @@ public class BasicExamples {
         public void datatypeUsage() throws CouchbaseLiteException {
             // tag::datatype_usage[]
             // tag::datatype_usage_createdb[]
-            // Initialize the Couchbase Lite system
-            CouchbaseLite.init();
-
             // Get the database (and create it if it doesn’t exist).
-            DatabaseConfiguration config = new DatabaseConfiguration();
-            config.setDirectory(this.rootDir.getAbsolutePath());
-            Database database = new Database("getting-started", config)
+            Database database = new Database("getting-started");
             try (Collection collection = database.getCollection("myCollection")) {
                 if (collection == null) { throw new IllegalStateException("collection not found"); }
 
@@ -312,7 +303,6 @@ public class BasicExamples {
 
                 // end::datatype_usage_createdoc[]
                 // tag::datatype_usage_mutdict[]
-                // Create and populate mutable dictionary
                 // Create a new mutable dictionary and populate some keys/values
                 MutableDictionary address = new MutableDictionary();
                 address.setString("street", "1 Main st.");
@@ -342,10 +332,10 @@ public class BasicExamples {
                 mutableDoc.setFloat("room_rate", 121.75F);
 
                 // Add dictionary to document's properties <.>
-                mutableDoc.setDictionary("address", (Dictionary) address);
+                mutableDoc.setDictionary("address", address);
 
                 // Add array to document's properties <.>
-                mutableDoc.setArray("phones", (Array) phones);
+                mutableDoc.setArray("phones", phones);
 
                 // end::datatype_usage_populate[]
                 // tag::datatype_usage_persist[]
@@ -361,6 +351,14 @@ public class BasicExamples {
             // end::datatype_usage_closedb[]
 
             // end::datatype_usage[]
+        }
+
+        public void useExplicitType(Collection collection, Document someDoc) throws CouchbaseLiteException {
+            // tag::fleece-data-encoding[]
+            Document doc = collection.getDocument(someDoc.getId());
+            // force longVal to be type Long, even if it could be represented as an int.
+            long longVal = doc.getLong("test");
+            // end::fleece-data-encoding[]
         }
 
         public void datatypeDictionary(@NotNull Collection collection) throws CouchbaseLiteException {
@@ -400,7 +398,7 @@ public class BasicExamples {
 
             // Add the dictionary to a document's properties and save the document
             MutableDocument mutableDoc = new MutableDocument("doc1");
-            mutableDoc.setDictionary("address", (Dictionary) mutableDict);
+            mutableDoc.setDictionary("address", mutableDict);
             collection.save(mutableDoc);
 
             // end::datatype_mutable_dictionary[]
@@ -446,7 +444,7 @@ public class BasicExamples {
 
             // Set the array to document's properties and save the document
             MutableDocument mutableDoc = new MutableDocument("doc1");
-            mutableDoc.setArray("phones", (Array) mutableArray);
+            mutableDoc.setArray("phones", mutableArray);
             collection.save(mutableDoc);
             // end::datatype_mutable_array[]
         }
@@ -628,11 +626,9 @@ public class Examples {
     public void newDatabaseExample() throws CouchbaseLiteException {
         final String customDir = "/foo/bar";
         // tag::new-database[]
-        DatabaseConfiguration config = new DatabaseConfiguration();
-        config.setDirectory(customDir);
-        Database database = new Database(DB_NAME, config);
+        Database database = new Database(DB_NAME);
         // end::new-database[]
-        
+
         // tag::close-database[]
         database.close();
         // end::close-database[]
@@ -640,7 +636,7 @@ public class Examples {
         database.delete();
     }
 
-     public void databaseFullSyncExample() throws CouchbaseLiteException {
+     public void DatabaseFullSyncExample() throws CouchbaseLiteException {
         DatabaseConfiguration config = new DatabaseConfiguration();
         // tag::database-fullsync[]
         config.setFullSync(true);
@@ -659,7 +655,7 @@ public class Examples {
         // tag::logging[]
 
         // Set the overall logging level
-        Database.log.getConsole().setLevel(LogLevel.VERBOSE);
+        Database.log.getConsole().setLevel(LogLevel.DEBUG);
 
         // Enable or disable specific domains
         Database.log.getConsole().setDomains(LogDomain.REPLICATOR, LogDomain.QUERY);
@@ -674,12 +670,11 @@ public class Examples {
 
     public void consoleLoggingExample() {
         // tag::console-logging[]
-        Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS); // <.>
-        Database.log.getConsole().setLevel(LogLevel.VERBOSE); // <.>
+        Database.log.getConsole().setLevel(LogLevel.DEBUG); // <.>
         // end::console-logging[]
 
         // tag::console-logging-db[]
-        Database.log.getConsole().setDomains(LogDomain.DATABASE);
+        Database.log.getConsole().setLevel(LogLevel.DEBUG); // <.>
         // end::console-logging-db[]
     }
 
@@ -700,12 +695,11 @@ public class Examples {
 
         // tag::prebuilt-database[]
         // Note: Getting the path to a database is platform-specific.
-        DatabaseConfiguration configuration = new DatabaseConfiguration();
         if (!Database.exists("travel-sample", appDbDir)) {
             File tmpDir = new File(System.getProperty("java.io.tmpdir"));
             ZipUtils.unzip(Utils.getAsset("travel-sample.cblite2.zip"), tmpDir);
             File path = new File(tmpDir, "travel-sample");
-            Database.copy(path, "travel-sample", configuration);
+            Database.copy(path, "travel-sample", new DatabaseConfiguration());
         }
         // end::prebuilt-database[]
     }
@@ -745,10 +739,7 @@ public class Examples {
                 doc.setValue("type", "user");
                 doc.setValue("name", "user " + i);
                 doc.setBoolean("admin", false);
-
                 collection.save(doc);
-
-                Logger.log("saved user document " + doc.getString("name"));
             }
         });
         // end::batch[]
@@ -945,6 +936,8 @@ class ZipUtils {
 // end::ziputils-unzip[]
 
 @SuppressWarnings("unused")
+
+// tag::custom-logging[]
 class LogTestLogger implements com.couchbase.lite.Logger {
     @NonNull
     private final LogLevel level;
@@ -960,6 +953,8 @@ class LogTestLogger implements com.couchbase.lite.Logger {
 
     }
 }
+// end::custom-logging[]
+
 
 @SuppressWarnings("unused")
 class TensorFlowModel {
@@ -1164,7 +1159,8 @@ class PassivePeerConnection implements MessageEndpointConnection {
         replicatorConnection.receive(message);
         // end::passive-peer-receive[]
     }
-}//
+}
+//
 // Copyright (c) 2023 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -2462,20 +2458,22 @@ public class QueryExamples {
         }
     }
 
-    public List<Result> docsOnlyQuerySyntaxN1QL(Database thisDb) throws CouchbaseLiteException {
+    public List<Map<String, Object>> docsOnlyQuerySyntaxN1QL(Database thisDb) throws CouchbaseLiteException {
         // For Documentation -- N1QL Query using parameters
         // tag::query-syntax-n1ql[]
         //  Declared elsewhere: Database thisDb
         Query thisQuery =
             thisDb.createQuery(
                 "SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""); // <.>
+        List<Map<String, Object>> results = new ArrayList<>();
         try (ResultSet rs = thisQuery.execute()) {
-            return rs.allResults();
+            for (Result result: rs) { results.add(result.toMap()); }
         }
+        return results;
         // end::query-syntax-n1ql[]
     }
 
-    public List<Result> docsonlyQuerySyntaxN1QLParams(Database thisDb) throws CouchbaseLiteException {
+    public List<Map<String, Object>> docsonlyQuerySyntaxN1QLParams(Database thisDb) throws CouchbaseLiteException {
         // For Documentation -- N1QL Query using parameters
         // tag::query-syntax-n1ql-params[]
         //  Declared elsewhere: Database thisDb
@@ -2487,9 +2485,11 @@ public class QueryExamples {
         thisQuery.setParameters(
             new Parameters().setString("type", "hotel")); // <.>
 
+        List<Map<String, Object>> results = new ArrayList<>();
         try (ResultSet rs = thisQuery.execute()) {
-            return rs.allResults();
+            for (Result result: rs) { results.add(result.toMap()); }
         }
+        return results;
         // end::query-syntax-n1ql-params[]
     }
 }
@@ -2934,3 +2934,294 @@ public class ReplicationExamples {
 }
 
 
+//
+// Copyright (c) 2024 Couchbase, Inc All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+package com.couchbase.codesnippets;
+
+import java.util.List;
+import java.util.function.Function;
+
+import com.couchbase.lite.Blob;
+import com.couchbase.lite.Collection;
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.IndexUpdater;
+import com.couchbase.lite.MutableArray;
+import com.couchbase.lite.Parameters;
+import com.couchbase.lite.PredictiveModel;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.ResultSet;
+import com.couchbase.lite.VectorEncoding;
+import com.couchbase.lite.VectorIndexConfiguration;
+
+
+@SuppressWarnings("unused")
+class VectorSearchExamples {
+    @FunctionalInterface
+    public interface ColorModel { List<Float> getEmbedding(Blob color);}
+
+    public void createDefaultVSConfig() {
+        // tag::vs-create-default-config[]
+        // create the configuration for a vector index named "vector"
+        // with 3 dimensions and 100 centroids
+        VectorIndexConfiguration config = new VectorIndexConfiguration("vector", 3L, 100L);
+        // end::vs-create-default-config[]
+    }
+
+    public void createCustomVSConfig() {
+        // tag::vs-create-custom-config[]
+        // create the configuration for a vector index named "vector"
+        // with 3 dimensions, 100 centroids, no encoding, using cosine distance
+        // with a max training size 5000 and amin training size 2500
+        // no vector encoding and using COSINE distance measurement
+        VectorIndexConfiguration config = new VectorIndexConfiguration("vector", 3L, 100L)
+            .setEncoding(VectorEncoding.none())
+            .setMetric(VectorIndexConfiguration.DistanceMetric.COSINE)
+            .setNumProbes(8L)
+            .setMinTrainingSize(2500L)
+            .setMaxTrainingSize(5000L);
+        // end::vs-create-custom-config[]
+    }
+
+    public void createVectorIndex(Database db) throws CouchbaseLiteException {
+        // tag::vs-create-index[]
+        // create a vector index named "colors_index"
+        // in the collection "_default.colors"
+        db.getCollection("colors").createIndex(
+            "colors_index",
+            new VectorIndexConfiguration("vector", 3L, 100L));
+        // end::vs-create-index[]
+    }
+
+    public void setNumProbes(Collection col) throws CouchbaseLiteException {
+        // tag::vs-numprobes-config[]
+        // explicitly set numProbes
+        col.createIndex(
+            "colors_index",
+            new VectorIndexConfiguration("vector", 3L, 100L)
+                .setNumProbes(5));
+        // end::vs-numprobes-config[]
+    }
+
+    public void createPredictiveIndex(Database db, PredictiveModel colorModel) throws CouchbaseLiteException {
+        // tag::vs-create-predictive-index[]
+        // create a vector index with a simple predictive model
+        Database.prediction.registerModel("ColorModel", colorModel);
+
+        db.getCollection("colors").createIndex(
+            "colors_pred_index",
+            new VectorIndexConfiguration(
+                "prediction(ColorModel, {'colorInput': color}).vector",
+                3L, 100L));
+        // end::vs-create-predictive-index[]
+    }
+
+    public void useVectorIndex(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // tag::vs-use-vector-index[]
+        db.getCollection("colors").createIndex(
+            "colors_index",
+            new VectorIndexConfiguration("vector", 3L, 100L));
+
+        // get the APPROX_VECTOR_DISTANCE to the parameter vector for each color in the collection
+        Query query = db.createQuery(
+            "SELECT meta().id, color, APPROX_VECTOR_DISTANCE(vector, $vectorParam)"
+                + " FROM _default.colors");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+        // end:vs-use-vector-index[]
+    }
+
+    public void useAVD(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // tag::vs-use-vector-match[]
+        // tag::vs-apvd-order-by[]
+        // use APPROX_VECTOR_DISTANCE in a query ORDER BY clause
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " ORDER BY APPROX_VECTOR_DISTANCE(vector, $vectorParam)"
+                + " LIMIT 8");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+        // end::vs-apvd-order-by[]
+        // end::vs-use-vector-match[]
+    }
+
+    public void useAVDWithWhere(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // tag::vs-apvd-where[]
+        // use APPROX_VECTOR_DISTANCE in a query WHERE clause
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " WHERE APPROX_VECTOR_DISTANCE(vector, $vectorParam) < 0.5");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+        // end::vs-apvd-where[]
+    }
+
+    public void useAVDWithPrediction(Database db, PredictiveModel colorModel, List<Object> colorVector)
+        throws CouchbaseLiteException {
+        // tag::vs-apvd-prediction[]
+        // use APPROX_VECTOR_DISTANCE with a predictive model
+        Database.prediction.registerModel("ColorModel", colorModel);
+
+        db.getCollection("colors").createIndex(
+            "colors_pred_index",
+            new VectorIndexConfiguration(
+                "prediction(ColorModel, {'colorInput': color}).vector",
+                3L, 100L));
+
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " ORDER BY APPROX_VECTOR_DISTANCE("
+                + "    prediction(ColorModel, {'colorInput': color}).vector,"
+                + "    $vectorParam)"
+                + " LIMIT 300");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+        // end::vs-apvd-prediction[]
+    }
+
+    public void hybridOrderBy(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // tag::vs-hybrid-order-by[]
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " WHERE saturation > 0.5"
+                + " ORDER BY APPROX_VECTOR_DISTANCE(vector, $vector)"
+                + " LIMIT 8");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+        // end::vs-hybrid-order-by[]
+    }
+
+    public void hybridWhere(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // tag::vs-hybrid-where[]
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " WHERE saturation > 0.5"
+                + "     AND APPROX_VECTOR_DISTANCE(vector, $vector) < .05");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+        // end::vs-hybrid-where[]
+    }
+
+    public void hybridPrediction(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // tag::vs-hybrid-prediction[]
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " WHERE saturation > 0.5"
+                + " ORDER BY APPROX_VECTOR_DISTANCE("
+                + "    prediction(ColorModel, {'colorInput': color}).vector,"
+                + "    $vectorParam)"
+                + " LIMIT 8");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+        // end::vs-hybrid-prediction[]
+    }
+
+//    ??? vs-hybrid-vmatch[]
+
+    public void hybridFullText(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // tag::vs-hybrid-ftmatch[]
+        // Create a hybrid vector search query with full-text's match() that
+        // uses the the full-text index named "color_desc_index".
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " WHERE MATCH(color_desc_index, $text)"
+                + " ORDER BY APPROX_VECTOR_DISTANCE(vector, $vector)"
+                + " LIMIT 8");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+        // end::vs-hybrid-ftmatch[]
+    }
+
+    public void lazyIndexConfig(Database db) throws CouchbaseLiteException {
+        // tag::vs-lazy-index-config[]
+        db.getCollection("colors").createIndex(
+            "colors_index",
+            new VectorIndexConfiguration("color", 3L, 100L)
+                .setLazy(true));
+        // end::vs-lazy-index-config[]
+    }
+
+    public void lazyIndexEmbed(Collection col, ColorModel colorModel) throws CouchbaseLiteException {
+        // tag::vs-create-lazy-index-embedding[]
+        while (true) {
+            try (IndexUpdater updater = col.getIndex("colors_index").beginUpdate(10)) {
+                if (updater == null) { break; }
+                for (int i = 0; i < updater.count(); i++) {
+                    // get the color swatch from the updater and send it to the remote model
+                    List<Float> embedding = colorModel.getEmbedding(updater.getBlob(i));
+                    if (embedding != null) { updater.setVector(embedding, i); }
+                    else {
+                        // Bad connection? Corrupted over the wire? Something bad happened
+                        // and the vector cannot be generated at the moment: skip it.
+                        // The next time beginUpdate() is called, we'll try it again.
+                        updater.skipVector(i);
+                    }
+                }
+                // This writes the vectors to the index. You MUST either have set or skipped each
+                // of the the vectors in the updater or this call will throw an exception.
+                updater.finish();
+            }
+        }
+        // tag::vs-create-lazy-index-embedding[]
+    }
+}

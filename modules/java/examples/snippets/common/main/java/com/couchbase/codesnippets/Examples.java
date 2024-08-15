@@ -84,9 +84,7 @@ public class Examples {
     public void newDatabaseExample() throws CouchbaseLiteException {
         final String customDir = "/foo/bar";
         // tag::new-database[]
-        DatabaseConfiguration config = new DatabaseConfiguration();
-        config.setDirectory(customDir);
-        Database database = new Database(DB_NAME, config);
+        Database database = new Database(DB_NAME);
         // end::new-database[]
 
         // tag::close-database[]
@@ -115,7 +113,7 @@ public class Examples {
         // tag::logging[]
 
         // Set the overall logging level
-        Database.log.getConsole().setLevel(LogLevel.VERBOSE);
+        Database.log.getConsole().setLevel(LogLevel.DEBUG);
 
         // Enable or disable specific domains
         Database.log.getConsole().setDomains(LogDomain.REPLICATOR, LogDomain.QUERY);
@@ -130,12 +128,11 @@ public class Examples {
 
     public void consoleLoggingExample() {
         // tag::console-logging[]
-        Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS); // <.>
-        Database.log.getConsole().setLevel(LogLevel.VERBOSE); // <.>
+        Database.log.getConsole().setLevel(LogLevel.DEBUG); // <.>
         // end::console-logging[]
 
         // tag::console-logging-db[]
-        Database.log.getConsole().setDomains(LogDomain.DATABASE);
+        Database.log.getConsole().setLevel(LogLevel.DEBUG); // <.>
         // end::console-logging-db[]
     }
 
@@ -156,12 +153,11 @@ public class Examples {
 
         // tag::prebuilt-database[]
         // Note: Getting the path to a database is platform-specific.
-        DatabaseConfiguration configuration = new DatabaseConfiguration();
         if (!Database.exists("travel-sample", appDbDir)) {
             File tmpDir = new File(System.getProperty("java.io.tmpdir"));
             ZipUtils.unzip(Utils.getAsset("travel-sample.cblite2.zip"), tmpDir);
             File path = new File(tmpDir, "travel-sample");
-            Database.copy(path, "travel-sample", configuration);
+            Database.copy(path, "travel-sample", new DatabaseConfiguration());
         }
         // end::prebuilt-database[]
     }
@@ -201,10 +197,7 @@ public class Examples {
                 doc.setValue("type", "user");
                 doc.setValue("name", "user " + i);
                 doc.setBoolean("admin", false);
-
                 collection.save(doc);
-
-                Logger.log("saved user document " + doc.getString("name"));
             }
         });
         // end::batch[]
@@ -401,6 +394,8 @@ class ZipUtils {
 // end::ziputils-unzip[]
 
 @SuppressWarnings("unused")
+
+// tag::custom-logging[]
 class LogTestLogger implements com.couchbase.lite.Logger {
     @NonNull
     private final LogLevel level;
@@ -416,6 +411,8 @@ class LogTestLogger implements com.couchbase.lite.Logger {
 
     }
 }
+// end::custom-logging[]
+
 
 @SuppressWarnings("unused")
 class TensorFlowModel {

@@ -19,7 +19,6 @@ import android.app.Application;
 
 import com.couchbase.lite.CouchbaseLite;
 import com.couchbase.lite.Database;
-import com.couchbase.lite.LogDomain;
 import com.couchbase.lite.LogLevel;
 
 
@@ -38,7 +37,6 @@ public class SnippetApplication extends Application {
         // tag::replication-logging[]
         CouchbaseLite.init(this, true);
 
-        Database.log.getConsole().setDomains(LogDomain.REPLICATOR);
         Database.log.getConsole().setLevel(LogLevel.DEBUG);
         // end::replication-logging[]
     }
