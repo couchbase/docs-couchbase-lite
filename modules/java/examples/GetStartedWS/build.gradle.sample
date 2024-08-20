@@ -11,12 +11,9 @@ group 'com.couchbase.gettingstarted'
 version 3.1.0
 
 repositories {
-    if (USE_LOCAL_MAVEN) { mavenLocal() }
-    else {
-        maven {
-            url "https://proget.sc.couchbase.com/maven2/internalmaven/"
-            allowInsecureProtocol = true
-        }
+    maven {
+        url "https://mobile.maven.couchbase.com/maven2/dev/"
+        content { includeGroupByRegex "com\\.couchbase\\.lite.*" }
     }
 
     mavenCentral()

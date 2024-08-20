@@ -77,10 +77,7 @@ class BasicExamples(private val context: Context) {
 
         // Get the database (and create it if it doesn’t exist).
         // tag::database-config-factory[]
-        database = Database(
-            "getting-started",
-            DatabaseConfigurationFactory.newConfig()
-        )
+        database = Database("getting-started")
         // end::database-config-factory[]
     }
 
@@ -107,10 +104,7 @@ class BasicExamples(private val context: Context) {
     // ### New Database
     fun newDatabaseExample() {
         // tag::new-database[]
-        val database = Database(
-            "my-db",
-            DatabaseConfigurationFactory.newConfig()
-        ) // <.>
+        val database = Database("my-db") // <.>
         // end::new-database[]
         // tag::close-database[]
         database.close()
@@ -118,6 +112,17 @@ class BasicExamples(private val context: Context) {
         // end::close-database[]
 
         database.delete()
+    }
+
+    fun databaseFullSyncExample() {
+        // tag::database-fullsync[]
+        val db = Database(
+            "my-db",
+            DatabaseConfigurationFactory.newConfig(
+                fullSync = true
+            )
+        )
+        // end::database-fullsync[]
     }
 
     // ### Database Encryption
@@ -151,11 +156,11 @@ class BasicExamples(private val context: Context) {
     fun consoleLoggingExample() {
         // tag::console-logging[]
         Database.log.console.domains = LogDomain.ALL_DOMAINS // <.>
-        Database.log.console.level = LogLevel.VERBOSE // <.>
+        Database.log.console.level = LogLevel.DEBUG // <.>
         // end::console-logging[]
 
         // tag::console-logging-db[]
-        Database.log.console.domains = EnumSet.of(LogDomain.DATABASE) // <.>
+        Database.log.console.level = LogLevel.DEBUG // <.>
         // end::console-logging-db[]
     }
 
@@ -177,15 +182,6 @@ class BasicExamples(private val context: Context) {
         // end::file-logging-config-factory[]
     }
 
-    fun writeConsoleLog() {
-        // tag::write-console-logmsg[]
-        Database.log.console.log(
-            LogLevel.WARNING,
-            LogDomain.REPLICATOR, "Any old log message"
-        )
-        // end::write-console-logmsg[]
-    }
-
     fun writeCustomLog() {
         // tag::write-custom-logmsg[]
         Database.log.custom?.log(
@@ -193,15 +189,6 @@ class BasicExamples(private val context: Context) {
             LogDomain.REPLICATOR, "Any old log message"
         )
         // end::write-custom-logmsg[]
-    }
-
-    fun writeFileLog() {
-        // tag::write-file-logmsg[]
-        Database.log.file.log(
-            LogLevel.WARNING,
-            LogDomain.REPLICATOR, "Any old log message"
-        )
-        // end::write-file-logmsg[]
     }
 
     // ### Loading a pre-built database
@@ -349,9 +336,7 @@ class SupportingDatatypes(private val context: Context) {
         CouchbaseLite.init(context)
 
         // Get the database (and create it if it doesn’t exist).
-        val config = DatabaseConfiguration()
-        config.directory = context.filesDir.absolutePath
-        val database = Database("getting-started", config)
+        val database = Database("getting-started")
         val collection = database.getCollection("myCollection")
             ?: throw IllegalStateException("collection not found")
 
@@ -362,7 +347,6 @@ class SupportingDatatypes(private val context: Context) {
 
         // end::datatype_usage_createdoc[]
         // tag::datatype_usage_mutdict[]
-        // Create and populate mutable dictionary
         // Create a new mutable dictionary and populate some keys/values
         val address = MutableDictionary()
         address.setString("street", "1 Main st.")
@@ -426,12 +410,10 @@ class SupportingDatatypes(private val context: Context) {
         val street = dict?.getString("street")
 
         // Iterate dictionary
-        for (key in dict!!.keys) {
-            println("Key ${key} = ${dict.getValue(key)}")
-        }
+        dict?.forEach { println("${it} -> ${dict.getValue(it)}") }
 
         // Create a mutable copy
-        val mutableDict = dict.toMutable()
+        val mutableDict = dict?.toMutable()
 
         // end::datatype_dictionary[]
     }
