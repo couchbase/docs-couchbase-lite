@@ -60,6 +60,16 @@ class SampleCodeTest {
         // end::close-database[]
     }
 
+    func dontTestDatabaseFullSync() throws {
+        var config = DatabaseConfiguration()
+        // tag::database-fullsync[]
+        // This enables full sync
+        config.fullSync = true
+        // end::database-fullsync[]
+    }
+
+    
+
     // helper
     func isValidCredentials(_ u: String, password: String) -> Bool { return true }
     func isValidCertificates(_ certs: [SecCertificate]) -> Bool { return true }
