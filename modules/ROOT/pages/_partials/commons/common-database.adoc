@@ -92,7 +92,6 @@ Things to watch for include:
 * The database is created in a default location unless you  specify a directory for it -- see: {url-api-class-databasecfg} and {url-api-method-databasecfg-setdir}
 +
 --
-TIP: Best Practice is to always specify the path to the database explicitly.
 
 Typically, the default location for {param-title} is
 ifndef::is-csharp[the application sandbox]
@@ -136,6 +135,21 @@ endif::is-c[]
 include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
+== Database Full Sync
+
+Database Full Sync will prevent the loss of transactional data due to an unexpected system crash or loss of power.
+This feature is not enabled by default and must be manually set in your database configuration.
+
+
+CAUTION: Database Full Sync is a safe method to preserve data loss but will incur a significant degredation of performance.
+
+.Enable Database Full Sync
+[#ex-dbfullsync]
+:param-tags: database-fullsync
+include::{root-partials}block_tabbed_code_example.adoc[]
+:param-tags!:
+
+NOTE: It is not possible to change the configuration of a Database after instantiating the Database with the configuration by updating its `DatabaseConfiguration` property.
 
 == Database Encryption
 

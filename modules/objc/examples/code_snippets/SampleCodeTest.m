@@ -187,6 +187,14 @@
     // end::close-database[]
 }
 
+- (void) dontTestDatabaseFullSync {
+  CBLDatabaseConfiguration* config = [[CBLDatabaseConfiguration alloc] init];
+  // tag::database-fullsync[]
+  config.fullSync = true;
+  // end::database-fullsync[]
+}
+
+
 - (void) dontTestLogging {
     // tag::logging[]
 
@@ -205,7 +213,6 @@
     // tag::database-encryption[]
     CBLDatabaseConfiguration *config = [[CBLDatabaseConfiguration alloc] init];
     config.encryptionKey = [[CBLEncryptionKey alloc] initWithPassword:@"secretpassword"];
-
     NSError *error;
     self.database = [[CBLDatabase alloc] initWithName:@"my-database" config:config error:&error];
     if (!self.database) {

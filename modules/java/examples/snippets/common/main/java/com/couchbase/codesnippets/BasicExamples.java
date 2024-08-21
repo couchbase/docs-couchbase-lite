@@ -21,10 +21,8 @@ import org.jetbrains.annotations.NotNull;
 
 import com.couchbase.lite.Array;
 import com.couchbase.lite.Collection;
-import com.couchbase.lite.CouchbaseLite;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
-import com.couchbase.lite.DatabaseConfiguration;
 import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.MutableArray;
@@ -32,6 +30,7 @@ import com.couchbase.lite.MutableDictionary;
 import com.couchbase.lite.MutableDocument;
 
 
+@SuppressWarnings("unused")
 public class BasicExamples {
     public class SupportingDatatypes {
         private final File rootDir;
@@ -42,9 +41,7 @@ public class BasicExamples {
             // tag::datatype_usage[]
             // tag::datatype_usage_createdb[]
             // Get the database (and create it if it doesn’t exist).
-            DatabaseConfiguration config = new DatabaseConfiguration();
-            config.setDirectory(this.rootDir.getAbsolutePath());
-            Database database = new Database("getting-started", config);
+            Database database = new Database("getting-started");
             try (Collection collection = database.getCollection("myCollection")) {
                 if (collection == null) { throw new IllegalStateException("collection not found"); }
 
@@ -55,7 +52,6 @@ public class BasicExamples {
 
                 // end::datatype_usage_createdoc[]
                 // tag::datatype_usage_mutdict[]
-                // Create and populate mutable dictionary
                 // Create a new mutable dictionary and populate some keys/values
                 MutableDictionary address = new MutableDictionary();
                 address.setString("street", "1 Main st.");
@@ -85,10 +81,10 @@ public class BasicExamples {
                 mutableDoc.setFloat("room_rate", 121.75F);
 
                 // Add dictionary to document's properties <.>
-                mutableDoc.setDictionary("address", (Dictionary) address);
+                mutableDoc.setDictionary("address", address);
 
                 // Add array to document's properties <.>
-                mutableDoc.setArray("phones", (Array) phones);
+                mutableDoc.setArray("phones", phones);
 
                 // end::datatype_usage_populate[]
                 // tag::datatype_usage_persist[]
@@ -151,7 +147,7 @@ public class BasicExamples {
 
             // Add the dictionary to a document's properties and save the document
             MutableDocument mutableDoc = new MutableDocument("doc1");
-            mutableDoc.setDictionary("address", (Dictionary) mutableDict);
+            mutableDoc.setDictionary("address", mutableDict);
             collection.save(mutableDoc);
 
             // end::datatype_mutable_dictionary[]
@@ -197,7 +193,7 @@ public class BasicExamples {
 
             // Set the array to document's properties and save the document
             MutableDocument mutableDoc = new MutableDocument("doc1");
-            mutableDoc.setArray("phones", (Array) mutableArray);
+            mutableDoc.setArray("phones", mutableArray);
             collection.save(mutableDoc);
             // end::datatype_mutable_array[]
         }
