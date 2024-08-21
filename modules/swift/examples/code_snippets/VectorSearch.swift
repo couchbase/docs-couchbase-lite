@@ -66,8 +66,9 @@ class VectorSearchSnippets {
         config.numProbes = 8
         config.minTrainingSize = 2500
         config.maxTrainingSize = 5000
-        // end::vs-create-custom-config[]
+       
         try collection.createIndex(withName: "colors_index", config: config)
+         // end::vs-create-custom-config[]
     }
     
     func numProbesConfig() throws {
