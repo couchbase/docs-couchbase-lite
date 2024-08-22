@@ -7,7 +7,7 @@ Version 3.2.0 for {param-title} delivers the following features and enhancements
 
 === Enhancements
 
-// Lite Core
+// Lite Core begin
 
 * https://issues.couchbase.com/browse/CBL-5287[CBL-5287 - Enable Prediction Function in SQL++]
 
@@ -37,9 +37,35 @@ Version 3.2.0 for {param-title} delivers the following features and enhancements
 
 * https://issues.couchbase.com/browse/CBL-60[CBL-60 - DATE_DIFF_STR(date1, date2, part)]
 
+// Lite Core end
+
+* https://issues.couchbase.com/browse/CBL-5213[CBL-5213 - Implement Proxy Authenticator API for Android / Java]
+
+* https://issues.couchbase.com/browse/CBL-5207[CBL-5207 - Implement Collection's database property]
+
+* https://issues.couchbase.com/browse/CBL-5201[CBL-5201 - Implementation Collection's full-name property]
+
+* https://issues.couchbase.com/browse/CBL-5683[CBL-5683 - Database.getDefaultCollection should not be nullable]
+
+* https://issues.couchbase.com/browse/CBL-5535[CBL-5535 - Update OkHTTP to 4.12]
+
+* https://issues.couchbase.com/browse/CBL-4435[CBL-4435 - Replicator.close() stops state updates]
+
+* https://issues.couchbase.com/browse/CBL-4725[CBL-4725 - Remove deprecated C4QueryOptions]
+
+* https://issues.couchbase.com/browse/CBL-4897[CBL-4897 - Revise zipfile production]
+
+* https://issues.couchbase.com/browse/CBL-5361[CBL-5361 - Control the JNI library's publication of symbols]
+
+* https://issues.couchbase.com/browse/CBL-5487[CBL-5847 - Dates in Parameters can now be encoded]
+
+* https://issues.couchbase.com/browse/CBL-4383[CBL-4383 - Support X509ExtendedTrustManager on API >=24]
+
+* https://issues.couchbase.com/browse/CBL-4378[CBL-4378 - Add consumer-rules.pro to Android maven and zip distributions]
+
 === Issues and Resolutions
 
-// Lite Core
+// Lite Core begin
 
 * https://issues.couchbase.com/browse/CBL-3846[CBL-3846 - Fixed corrupt Revision Data error when saving documents]
 
@@ -111,54 +137,64 @@ Version 3.2.0 for {param-title} delivers the following features and enhancements
 
 * https://issues.couchbase.com/browse/CBL-5724[CBL-5724 - Fixed Replicator syncs from beginning when using prebuilt dbs synced from SG]
 
+// Lite Core end
+
+* https://issues.couchbase.com/browse/CBL-5225[CBL-5225 - Fixed ReplicatedDocument getters do not comply with the spec]
+
+* https://issues.couchbase.com/browse/CBL-5310[CBL-5310 - Fixed concurrent modification during iteration]
+
+* https://issues.couchbase.com/browse/CBL-5584[CBL-5584 - Fixed NativeC4QueryObserver.free should disable the listener before freeing it]
+
+* https://issues.couchbase.com/browse/CBL-5513[CBL-5513 - Query.setParameters should throw]
+
+* https://issues.couchbase.com/browse/CBL-5512[CBL-5512 - toJSON should throw]
+
+* https://issues.couchbase.com/browse/CBL-4782[CBL-4782 - Stop treating all connection failures as Server Errors]
+
+* https://issues.couchbase.com/browse/CBL-4298[CBL-4298 - Fixed Work Manager Replication thows on Replication complete]
+
+* https://issues.couchbase.com/browse/CBL-4294[CBL-4294- ReplicatorConfiguration.setAuthenticator should allow a null argument]
+
+* https://issues.couchbase.com/browse/CBL-4992[CBL-4992 - Fixed Null is a legal revId in createC4DocumentChange]
+
+* https://issues.couchbase.com/browse/CBL-4990[CBL-4990 - Fixed CollectionChangeNotifier.getChanges() prematurely signals end of changes]
+
+* https://issues.couchbase.com/browse/CBL-4988[CBL-4988 - Map LiteCore log domain "Changes" to LogDomain.DATABASE]
+
+* https://issues.couchbase.com/browse/CBL-5037[CBL-5037 - Allow empty Domain list for Console Logger]
+
+* https://issues.couchbase.com/browse/CBL-4797[CBL-4797 - Database.exists should support the default directory]
+
+* https://issues.couchbase.com/browse/CBL-5486[CBL-5486 - Fixed native crash in objects derived from ResultSet]
+
+* https://issues.couchbase.com/browse/CBL-4841[CBL-4841 - Fixed logic bug in Conflict Resolver]
+
+* https://issues.couchbase.com/browse/CBL-4837[CBL-4837 - Lower the max size on the ClientTask thread pool to 8]
+
+* https://issues.couchbase.com/browse/CBL-5853[CBL-5853 - Dictionary and Array should allow adding self]
+
+* https://issues.couchbase.com/browse/CBL-5455[CBL-5455 - Fixed Result.toJSON is annotated @NonNull, but can return null]
+
+* https://issues.couchbase.com/browse/CBL-4874[CBL-4874 - Strip LiteCore binaries]
+
+* https://issues.couchbase.com/browse/CBL-4667[CBL-4667 - Enhance Proguard rules]
+
+* https://issues.couchbase.com/browse/CBL-4663[CBL-4663 - Fixed failure in OkHttp authenticator]
+
+* https://issues.couchbase.com/browse/CBL-4572[CBL-4572 - Fixed hand copy of DB produces corrupt database]
+
+* https://issues.couchbase.com/browse/CBL-4579[CBL-4579 - Client code should not require Spotbugs annotations]
+
+* https://issues.couchbase.com/browse/CBL-3882[CBL-3882 - Fixed logging fails locating JNI implementations on some devices]
+
+* https://issues.couchbase.com/browse/CBL-4292[CBL-4292 - Fixed Collection.collectionChangeFlow requires an argument]
+
 === Known Issues
 
 None for this release
 
 === Deprecations 
 
-* https://issues.couchbase.com/browse/CBL-5491[CBL-5491 - Default's `MAX_ATTEMPT_WAIT_TIME` and `USE_PLAIN_TEXT` are deprecated]
-
-* https://issues.couchbase.com/browse/CBL-4316[CBL-4316 - Replicator's `getPendingDocumentIds()` and `isDocumentPending(String id)` are deprecated]
-
-* https://issues.couchbase.com/browse/CBL-4315[CBL-4315 - ReplicatorConfiguration's filters and conflict resolver properties are deprecated]
-
-* https://issues.couchbase.com/browse/CBL-4314[CBL-4314 - 	ReplicatorConfiguration APIs with Database object are deprecated ]
-
-* https://issues.couchbase.com/browse/CBL-4313[CBL-4313 - MessageEndpointListenerConfiguration APIs using Database object are deprecated]
-
-* https://issues.couchbase.com/browse/CBL-4312[CBL-4312 - URLEndpointListenerConfiguration APIs using Database object are deprecated]
-
-* https://issues.couchbase.com/browse/CBL-4311[CBL-4311 - QueryBuilder : `isNullOrMissing()` and `notNullOrMissing()` are deprecated]
-
-* https://issues.couchbase.com/browse/CBL-4310[CBL-4310 - QueryBuilder : FullTextFunction's `rank(String index)` and `match(String index, String query)` are deprecated]
-
-* https://issues.couchbase.com/browse/CBL-4309[CBL-4309 - QueryBuilder : DataSource's `database()` is deprecated]
-
-* https://issues.couchbase.com/browse/CBL-4307[CBL-4307 - DocumentChange's database property is deprecated]
-
-* https://issues.couchbase.com/browse/CBL-4306[CBL-4306 - DatabaseChange and DatabaseChangeListener are deprecated]
-
-* https://issues.couchbase.com/browse/CBL-4305[CBL-4305 - Database's removeChangeListener() is deprecated]
-
-* https://issues.couchbase.com/browse/CBL-4304[CBL-4304 - Database's Document APIs are deprecated]
-
-* https://issues.couchbase.com/browse/CBL-4264[CBL-4264 - Increased security: store BasicAuthenticator password as a char[] and zero before release]
-
-* https://issues.couchbase.com/browse/CBL-4262[CBL-4262 - ReplicatorConfiguration.setPinnedServerCertificate should take a Certificate]
-
-* https://issues.couchbase.com/browse/CBL-3963[CBL-3963 - Remove Deprecated ReplicatorConfiguration.ReplicatorType]
-
-* https://issues.couchbase.com/browse/CBL-1727[CBL-1727 - Improved naming for AbstractReplicatorConfiguration.ReplicatorType]
-
-* https://issues.couchbase.com/browse/CBL-4263[CBL-4263 - The public type ReplicatorConfiguration.ReplicatorType is not visible from Kotlin]
-
-* https://issues.couchbase.com/browse/CBL-4267[CBL-4267 - Support Scopes and Collections in Kotlin Extensions]
-
-* https://issues.couchbase.com/browse/CBL-4266[CBL-4266 - Kotlin Configuration Factories to support IndexExpression]
-
-* https://issues.couchbase.com/browse/CBL-4265[CBL-4265 - Standard naming for Kotlin ConfigurationFactories]
-
-* https://issues.couchbase.com/browse/CBL-4324[CBL-4324 - Replace database oriented Factory methods with collection oriented equvalents]
+No new deprecations for GA release
 
 NOTE: For an overview of the latest features offered in Couchbase Lite 3.2.0, see xref:ROOT:cbl-whatsnew.adoc[New in 3.2]
