@@ -187,7 +187,7 @@ namespace api_walkthrough
                 return retVal;
             }
         }
-        // tag::end-predictive-model[]
+        // end::vs-predictive-model[]
 
         private void CreatePredictiveIndex()
         {
@@ -269,6 +269,90 @@ namespace api_walkthrough
                 // process results
             }
             // end::vs-use-vector-distance[]
+        }
+
+        private void HybridQueryExample()
+        {
+            var database = new Database("my-database");
+
+            // tag::vs-hybrid-valid[]
+
+            // Combining vector search logic with other logic makes a hybrid query
+            var sql = """
+                      SELECT color 
+                      FROM colors 
+                      WHERE APPROX_VECTOR_DISTANCE(vector, $vector) < 0.5 AND group = 'group1'
+                      LIMIT 10
+                      """;
+
+            var query = database.CreateQuery(sql);
+
+            // Setting the vector ommitted for brevity (see other examples)
+            // end::vs-hybrid-valid[]
+        }
+
+        private void InvalidHybridQueryExample()
+        {
+            var database = new Database("my-database");
+
+            // tag::vs-hybrid-valid[]
+
+            // The following query will not work, since hybrid query using "OR" is not supported
+            var sql = """
+                      SELECT color 
+                      FROM colors 
+                      WHERE APPROX_VECTOR_DISTANCE(vector, $vector) < 0.5 OR group = 'group1'
+                      LIMIT 10
+                      """;
+
+            var query = database.CreateQuery(sql);
+            // end::vs-hybrid-valid[]
+        }
+
+        private void FTSHybridQuery()
+        {
+            var database = new Database("my-database");
+
+            // tag::vs-hybrid-ftmatch[]
+
+            // The following shows using Full Text Search and Vector Search
+            // in the same query.  Note that this example doesn't show
+            // setting up the full text index 'desc-index'.
+            var sql = """
+                      SELECT color 
+                      FROM colors 
+                      WHERE MATCH(desc-index, $text) AND group = 'group1'
+                      ORDER BY APPROX_VECTOR_DISTANCE(vector, $vector)
+                      """;
+
+            var query = database.CreateQuery(sql);
+            // end::vs-hybrid-ftmatch[]
+        }
+
+        private void MustIncludeLimit()
+        {
+            var database = new Database("my-database");
+
+            // tag::vs-hybrid-limitation[]
+
+            // To avoid an accidental resource intensive exhaustive search of the
+            // database, a LIMIT clause it required for non-hybrid vector search
+            // queries
+
+            // This will work
+            var sql = "SELECT id, color, approx_vector_distance(vector, $vector) " +
+                      "FROM _default.colors " +
+                      "LIMIT 8";
+
+            var query = database.CreateQuery(sql);
+
+            // This will not
+            sql = "SELECT id, color, approx_vector_distance(vector, $vector) " +
+                      "FROM _default.colors ";
+
+            query = database.CreateQuery(sql);
+
+            // end::vs-hybrid-limitation[]
         }
     }
 }
