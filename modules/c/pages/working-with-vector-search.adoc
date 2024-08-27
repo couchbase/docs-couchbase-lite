@@ -237,6 +237,8 @@ include::c:example$code_snippets/VectorSearch.h[tags=vs-hybrid-prediction]
 
 == `APPROX_VECTOR_DISTANCE(vector-expr, target-vector, [metric], [nprobes], [accurate])`
 
+WARNING: If you use a different distance metric in the `APPROX_VECTOR_DISTANCE()` function from the one configured in the index, you will receive an error when compiling the query.
+
 [cols = "3*"]
 |===
 |Parameter |Is Required |Description
@@ -244,7 +246,7 @@ include::c:example$code_snippets/VectorSearch.h[tags=vs-hybrid-prediction]
 |vector-expr
 |image:ROOT:yes.png[]
 |The expression returning a vector (NOT Index Name).
-Must match the expression specified in the vector index.
+Must match the expression specified in the vector index exactly.
 |target-vector
 |image:ROOT:yes.png[]
 |The target vector.
@@ -252,7 +254,8 @@ Must match the expression specified in the vector index.
 |image:ROOT:no.png[]
 |Values : "EUCLIDEAN_SQUARED", “L2_SQUARED”, “EUCLIDEAN”, “L2”,  ”COSINE”, “DOT”.
 If not specified, the metric set in the vector index is used.
-If specified, the metric must match with the metric set in the vector index. 
+If specified, the metric must match with the metric set in the vector index.
+This optional parameter allows multiple indexes to be attached to the same field in a document. 
 |nprobes
 |image:ROOT:no.png[]
 |Number of buckets to search for the nearby vectors.
