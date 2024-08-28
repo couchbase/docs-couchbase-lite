@@ -149,6 +149,49 @@ public:
         // end::vs-create-predictive-index[]
     }
 
+    void queryAPVDPrediction() {
+        CBLDatabase* database = getDatabase();
+        // tag::vs-apvd-prediction[]
+        // Create a vector search query that uses prediction() for computing vectors.
+        CBLError err{};
+        const char* sql = "SELECT id, color "
+                          "FROM _default.colors "
+                          "ORDER BY approx_vector_distance(prediction(ColorModel, {\"colorInput\": color}).vector, $vector) "
+                          "LIMIT 8";
+
+        CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+                                                  FLStr(sql),
+                                                  nullptr, &err);
+
+        // Use ML model to get a vector (an array of floats) for the input color.
+        std::vector colorVector = Color::getVector("FF00AA");
+
+        // Set the vector array to the parameter "$vector"
+        auto colorArray = FLMutableArray_New();
+        for (auto val : colorVector) {
+            FLMutableArray_AppendFloat(colorArray, val);
+        }
+
+        // Set the vector array to the parameter "$vector".
+        auto params = FLMutableDict_New();
+        FLMutableDict_SetArray(params, FLSTR("vector"), colorArray);
+        CBLQuery_SetParameters(query, params);
+
+        FLMutableArray_Release(colorArray);
+        FLMutableDict_Release(params);
+
+        // Execute the query:
+        auto results = CBLQuery_Execute(query, &err);
+        if (!results) {
+            throw std::domain_error("Invalid Query");
+        }
+
+        while(CBLResultSet_Next(results)) {
+            // Process result
+        }
+        // end::vs-apvd-prediction[]
+    }
+
     void queryAPVDOrderBy() {
         CBLDatabase* database = getDatabase();
         // tag::vs-use-vector-match[]
