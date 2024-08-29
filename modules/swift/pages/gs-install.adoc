@@ -29,8 +29,6 @@ Couchbase Lite is distributed as an XCFramework, to support this:
 
 [#lbl-install-tabs]
 === Install Couchbase Lite
-
-IMPORTANT: There is no Carthage support for the 3.2.0 Beta version of Couchbase Lite
 .
 [{tabs}]
 =====
@@ -40,6 +38,11 @@ Direct Download::
 
 include::partial$gs-install-tab-frameworks.adoc[]
 
+--
+Carthage::
++
+--
+include::partial$gs-install-tab-carthage.adoc[]
 --
 CocoaPods::
 +
@@ -84,6 +87,31 @@ Direct Download::
 . Select your target settings in XCode and drag *CouchbaseLiteVectorSearch.xcframework* from your Finder to the *Frameworks, Libraries, and Embedded Content* section.
 
 . Start using Couchbase Lite Vector Search on Swift in your project.
+
+--
+Carthage:: 
++
+--
+NOTE: The minimum required Carthage version is *0.38+*
+
+. Install Carthage using the instructions here: +
+https://github.com/Carthage/Carthage#installing-carthage
+
+. In your *Cartfile*, add the appropriate 'binary' URL:
++
+.Couchbase Lite Enterprise Edition
+[source,ruby,subs="attributes+"]
+----
+binary "http://packages.couchbase.com/releases/couchbase-lite-vector-search/carthage/CouchbaseLiteVectorSearch.json" ~> {vs-version-maintenance} // <.>
+----
++
+<.> Specify the required version number, here we use the latest version
+
+. Run `carthage update --platform ios`.
+
+. Drag *CouchbaseLiteSwift.xcframework* from *Carthage/Build/* to the Xcode navigator.
+
+. Select menu:Project[General > Embedded Binary], add *CouchbaseLiteSwift.xcframework* to this section.
 
 --
 
