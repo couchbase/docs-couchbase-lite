@@ -15,8 +15,8 @@
 //
 package com.couchbase.codesnippets;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.function.Function;
 
 import com.couchbase.lite.Blob;
 import com.couchbase.lite.Collection;
@@ -35,7 +35,9 @@ import com.couchbase.lite.VectorIndexConfiguration;
 @SuppressWarnings("unused")
 class VectorSearchExamples {
     @FunctionalInterface
-    public interface ColorModel { List<Float> getEmbedding(Blob color);}
+    public interface ColorModel {
+        List<Float> getEmbedding(Blob color) throws IOException;
+    }
 
     public void createDefaultVSConfig() {
         // tag::vs-create-default-config[]
@@ -271,10 +273,12 @@ class VectorSearchExamples {
             try (IndexUpdater updater = col.getIndex("colors_index").beginUpdate(10)) {
                 if (updater == null) { break; }
                 for (int i = 0; i < updater.count(); i++) {
-                    // get the color swatch from the updater and send it to the remote model
-                    List<Float> embedding = colorModel.getEmbedding(updater.getBlob(i));
-                    if (embedding != null) { updater.setVector(embedding, i); }
-                    else {
+                    try {
+                        // get the color swatch from the updater and send it to the remote model
+                        List<Float> embedding = colorModel.getEmbedding(updater.getBlob(i));
+                        updater.setVector(embedding, i);
+                    }
+                    catch (IOException e) {
                         // Bad connection? Corrupted over the wire? Something bad happened
                         // and the vector cannot be generated at the moment: skip it.
                         // The next time beginUpdate() is called, we'll try it again.
