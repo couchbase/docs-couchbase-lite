@@ -62,36 +62,41 @@ The current supported formats for Vector embeddings are:
 
 * An array of 32-bit floats.
 
-* A Base64 string that encodes the binary representation of an array of 32-bit float numbers in https://en.wikipedia.org/wiki/Endianness[Little-endian] format.
+* A Base64 string that encodes a https://en.wikipedia.org/wiki/Endianness[Little-endian] array of 32-bit floats.
 
 === About Vector Indexes
 
 Vector Indexes are used to store and manage vector representations of content in the form of vector embeddings.
 You can use Vector Indexes to efficiently retrieve vectors, similar to a target vector.
-Before use, a Vector Index needs to be trained to compute the centroids and parameters for encoding the vectors. 
-Training is configured to commence automatically on the first Vector Search query when there are enough vectors to be trained based on the `minimum-training-size` configuration.
-If training is triggered during a query, the query may take longer to return results.
-If a query is executed against the index before it is trained, a full scan of the vectors will be performed. 
+Before use, a Vector Index needs to be trained to compute the centroids and parameters for encoding the vectors.
 
 NOTE: If there are insufficient vectors in the database for training, a warning message will be logged, indicating the required number of vectors.
+
+Training is configured to commence automatically on the first Vector Search query when there are enough vectors to be trained based on the `minimum-training-size` configuration.
+Be aware that vector index training can affect query performance.
+If a query is executed against the index before it is trained, a full scan of the vectors will be performed. 
+
+
 
 === About Lazy Vector Indexes
 
 IMPORTANT: Lazy index is not an automatic process, you will need to manually schedule the index updates. 
 
-Lazy Vector Indexes(lazy index) is Couchbase Lite specific functionality that updates indexes asynchronously, satisfying the following use cases:
+Lazy vector indexes (lazy index) is Couchbase Lite specific functionality that updates indexes asynchronously, satisfying the following use cases:
 
-* Documents have been added to the application by the end-user with no available Machine Learning(ML) model to generate the vectors. - You can use lazy indexing to schedule updating the index of said documents when a ML model is available. 
+* Documents have been added to the application by the end-user with no available Machine Learning (ML) model to generate the vectors.
+You can use lazy indexing to schedule updates to the index of said documents when a ML model is available. 
 
-* The remote ML model used stops working or has intermittent availability, causing a failed update - With lazy index, you can skip documents that fail to update and schedule the index process to be retried at a later date.
+* The remote ML model used stops working or has intermittent availability, causing a failed update.
+With lazy index, you can skip documents that fail to update and schedule the index process to be retried at a later date.
 
-Lazy indexing is an asynchronous process that provides developers full control during the following:
+Lazy indexing is an asynchronous process that provides developers full control of:
 
 * When to update the index.
 
 * The number of vectors to update to the index.
 
-* Cancelling or skipping select indexes when the model is unavailable or has failed.
+* Whether to cancel or skip certain indexes when the model is unavailable or has failed.
 
 NOTE: Updating in lazy index is an independent process from saving document operations.
 
