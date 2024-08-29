@@ -28,9 +28,11 @@ import com.couchbase.lite.VectorEncoding
 import com.couchbase.lite.VectorIndexConfiguration
 import com.couchbase.lite.VectorIndexConfigurationFactory
 import com.couchbase.lite.newConfig
+import java.io.IOException
 
 
 fun interface ColorModel {
+    @Throws(IOException::class)
     fun getEmbedding(color: Blob?): List<Float?>?
 }
 
@@ -298,10 +300,10 @@ class VectorSearchExamples {
         while (true) {
             col.getIndex("colors_index")?.beginUpdate(10)?.use { updater ->
                 for (i in 0 until updater.count()) {
-                    val embedding: List<Float?>? = colorModel.getEmbedding(updater.getBlob(i))
-                    if (embedding != null) {
+                    try {
+                        val embedding: List<Float?>? = colorModel.getEmbedding(updater.getBlob(i))
                         updater.setVector(embedding, i)
-                    } else {
+                    } catch (e: IOException) {
                         // Bad connection? Corrupted over the wire? Something bad happened
                         // and the vector cannot be generated at the moment: skip it.
                         // The next time beginUpdate() is called, we'll try it again.
