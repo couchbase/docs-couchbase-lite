@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.couchbase.lite.Blob;
 import com.couchbase.lite.Collection;
+import com.couchbase.lite.CouchbaseLite;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.IndexUpdater;
@@ -37,6 +38,15 @@ class VectorSearchExamples {
     @FunctionalInterface
     public interface ColorModel {
         List<Float> getEmbedding(Blob color) throws IOException;
+    }
+
+    public void enableVS() {
+        // tag::vs-setup-packaging[]
+        try { CouchbaseLite.enableVectorSearch(); }
+        catch (CouchbaseLiteException e) {
+            throw new IllegalStateException("Could not enable vector search", e);
+        }
+        // end::vs-setup-packaging[]
     }
 
     public void createDefaultVSConfig() {
