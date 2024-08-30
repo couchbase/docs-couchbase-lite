@@ -45,7 +45,7 @@ Include the following in your Gradle `build.gradle` or Maven `pom.xml` file, as 
 * The {cbl} Enterprise Edition dependency: +
 `couchbase-lite-java-ee:{version-full}`
 
-. If you want to use Vector Search, add the Couchbase Lite Vector Search dependency: `couchbase-lite-java-vector-search`
+. If you want to use Vector Search, add the Couchbase Lite Vector Search dependency: `com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-version-maintenance}`
 --
 
 Community Edition::
@@ -78,6 +78,7 @@ It assumes a familiarity with these products, however you are free to use your o
 === Binaries
 
 {cblJP} binaries are available for both Community (CE) and Enterprise (EE) editions from the _Maven_ repositories.
+Alternatively, you can download compressed binaries -- see the _Downloaded Binaries_ section in {gs-prereqs--xref}
 
 === Prerequisites
 
@@ -136,12 +137,12 @@ Enterprise Edition::
 [source,groovy, subs="attributes+"]
 ----
 // Required only if your project has some Kotlin source code
-kotlinOptions { jvmTarget = '11' }
+kotlinOptions { jvmTarget = '1.8' }
 
 // Set minimum JVM level to ensure availability of, for example, lambda expressions
 compileOptions {
-    targetCompatibility JavaVersion.VERSION_11
-    sourceCompatibility JavaVersion.VERSION_11
+    targetCompatibility 1.8
+    sourceCompatibility 1.8
 
 //   ... other section content as required by user
 } 
@@ -172,7 +173,7 @@ repositories {
 ----
 --
 
-Vector Search Extension::
+Vector Search Beta Extension::
 +
 NOTE: Vector Search is an *Enterprise-only* feature.
 +
@@ -181,12 +182,12 @@ NOTE: Vector Search is an *Enterprise-only* feature.
 [source,groovy, subs="attributes+"]
 ----
 // Required only if your project has some Kotlin source code
-kotlinOptions { jvmTarget = '11' }
+kotlinOptions { jvmTarget = '1.8' }
 
 // Set minimum JVM level to ensure availability of, for example, lambda expressions
 compileOptions {
-    targetCompatibility JavaVersion.VERSION_11
-    sourceCompatibility JavaVersion.VERSION_11
+    targetCompatibility 1.8
+    sourceCompatibility 1.8
 
 //   ... other section content as required by user
 } 
@@ -229,12 +230,12 @@ Community edition::
 [source,groovy, subs="attributes+"]
 ----
 // Required only if your project has some Kotlin source code
-kotlinOptions { jvmTarget = '11' }
+kotlinOptions { jvmTarget = '1.8' }
 
 // Set minimum JVM level to ensure availability of, for example, lambda expressions
 compileOptions {
-    targetCompatibility JavaVersion.VERSION_11
-    sourceCompatibility JavaVersion.VERSION_11
+    targetCompatibility 1.8
+    sourceCompatibility 1.8
 
 //   ... other section content as required by user
 }

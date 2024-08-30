@@ -295,7 +295,7 @@ namespace api_walkthrough
         {
             var database = new Database("my-database");
 
-            // tag::vs-hybrid-invalid[]
+            // tag::vs-hybrid-valid[]
 
             // The following query will not work, since hybrid query using "OR" is not supported
             var sql = """
@@ -306,7 +306,7 @@ namespace api_walkthrough
                       """;
 
             var query = database.CreateQuery(sql);
-            // end::vs-hybrid-invalid[]
+            // end::vs-hybrid-valid[]
         }
 
         private void FTSHybridQuery()

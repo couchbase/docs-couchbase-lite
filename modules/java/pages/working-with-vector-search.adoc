@@ -1,5 +1,5 @@
 = Working with Vector Search
-:page-status:
+:page-status: Beta
 :page-edition: Enterprise
 :page-aliases: 
 ifdef::show_edition[:page-edition: {release}]
@@ -24,21 +24,33 @@ This method shows how you can create a vector index using the Couchbase Lite Vec
 [source, java]
 ----
 
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-custom-config]
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-default-config]
 
 ----
 
-First, initialize the `config` object with the `VectorIndexConfiguration()` method with the following parameters:
-
-* The expression of the data as a vector.
+First, initialize the `config` variable with the `VectorIndexConfiguration()` method with the following parameters:
 
 * The width or `dimensions` of the vector index is set to `3`.
 
 * The amount of `centroids` is set to `100`.
-This means that there will be one hundred buckets with a single centroid each that gathers together similar vectors.
+This means that there will be 100 buckets with a single centroid each that gathers together similar vectors.
+
+There are also some default values that we did not set with the `VectorIndexConfiguration()` method, these are:
+
+* The encoding type - 8 bit Scalar Quantization.
+
+* The distance metric - Squared Euclidean.
+
+* The minimum and maximum number of vectors for training the index.
 
 You can also alter some optional config settings such as `encoding`.
-From there, you create an index within a given collection, in this case `colors_index`, using the previously generated `config` object.
+
+[source, java]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-custom-config]
+
+----
 
 NOTE: The number of vectors, the width or dimensions of the vectors and the training size can incur high CPU and memory costs as the size of each variable increases.
 This is because the training vectors have to be resident on the machine.
@@ -48,38 +60,33 @@ This is because the training vectors have to be resident on the machine.
 The table below displays the different configurations you can modify within your `VectorIndexConfiguration()` function.
 For more information on specific configurations, see xref:java:vector-search.adoc[Vector Search.]
 
+IMPORTANT: The beta release currently only supports the format of vectors as an array of numbers.
+
 .Vector Index Configuration Options
 [cols ="4*"]
 |===
 |Configuration Name |Is Required |Default Configuration |Further Information
 
 |Expression
-|image:ROOT:yes.png[]
+|Required
 |No default
 | A SQL++ expression indicating where to get the vectors. 
 A document property for embedded vectors or
 `prediction()` to call a registered Predictive model.
 |Number of Dimensions
-|image:ROOT:yes.png[]
+|Required
 |No default
-|2-4096
+|2-2048
 |Number of Centroids
-|image:ROOT:yes.png[]
+|Required
 |No default
 |1-64000. The general guideline is an approximate square root of the number of documents
 |Distance Metric
-|image:ROOT:no.png[]
-|Squared Euclidean Distance (euclideanSquared)
-a|You can set the following alternates as your Distance Metric:
-
-* cosine (1 - Cosine similarity)
-
-* Euclidean
-
-* dot (negated dot product)
-
+|Optional
+|Euclidean Distance
+|You can also configure Cosine Distance as your Distance Metric
 |Encoding
-|image:ROOT:no.png[]
+|Optional
 | Scalar Quantizer(SQ) or SQ-8 bits
 a|There are three possible configurations:
 
@@ -91,21 +98,13 @@ Reduces the number of bits per dimension
 Reduces the number of dimensions and bits per dimension
 
 |Training Size
-|image:ROOT:no.png[]
+|Optional
 a|There are defaults for both the minimum and maximum training size for training the vectors
 
-* The minimum training size is set to 25x the number of Centroids or 2 ^PQ's^ ^bits^ when PQ is used
+* The minimum training size is set to 25x the number of Centroids
 
-* The maximum training size is set to 256x the number of Centroids or 2 ^PQ's^ ^bits^ when PQ is used
+* The maximum training size is set to 256x the number of Centroids
 |
-|NumProbes
-|image:ROOT:no.png[]
-|The default value is 0. The number of Probes is calculated based on the number of Centroids
-|A guideline for setting a custom number of probes is at least 8 or 0.5% the number of Centroids
-|isLazy
-|image:ROOT:no.png[]
-|False
-|Setting the value to true will enable lazy mode for the vector index
 
 |===
 
@@ -118,8 +117,6 @@ You can use two methods to generate vectors in Couchbase Lite:
 . You can call a Machine Learning(ML) model, and embed the generated vectors inside the documents.
 
 . You can use the `prediction()` function to generate vectors to be indexed for each document at the indexing time.
-
-. You can use Lazy Vector Index (lazy index) to generate vectors asynchronously from remote ML models that may not always be reachable or functioning, skipping or scheduling retries for those specific cases.
 
 Below are example configurations of the previously mentioned methods.
 
@@ -134,18 +131,15 @@ include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Vecto
 
 ----
 
-. First, create the standard configuration, setting up an expression, number of dimensions and number of centroids for the vector embedding.
-
-. Next, create a vector index, `colors_index`, on a collection and pass it our configuration.
+The snippet demonstrates the creation of the vector index, `word_index`, in the collection `_default.words`, demonstrating how you can create a vector index with a `word` embedding for use in queries related to written language.
 
 === Create Vector Index Embeddings from a Predictive Model
 
 This method generates vectors to be indexed for each document at the index time by using the `prediction()` function.
-The key difference to note is that the `config` object uses the output of the `prediction()` function as the `expression` parameter to generate the vector index.
 
 [source, java]
 ----
-        
+
 include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-predictive-index]
 
 ----
@@ -153,142 +147,69 @@ include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Vecto
 NOTE: You can use less storage by using the `prediction()` function as the encoded vectors will only be stored in the index. 
 However, the index time will be longer as vector embedding generation is occurring at run time.
 
-== Create a Lazy Vector Index
+== Vector SQL++ Functions
 
-Lazy indexing is an alternate approach to using the standard predictive model with regular vector indexes which handle the indexing process automatically.
-You can use lazy indexing to use a ML model that is not available locally on the device and to create vector indexes without having vector embeddings in the documents.
+Couchbase Lite currently supports two SQL++ functions, `vector_match()` and `vector_distance()`.
 
-[source, java]
-----
-
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-lazy-index-config]
-
-----
-
-You can enable lazy vector indexing by setting the `isLazy` property to `true` in your vector index configuration.
-
-NOTE: Lazy Vector Indexing is opt-in functionality, the `isLazy` property is set to `false` by default.
-
-=== Updating the Lazy Index
-
-Below is an example of how you can update your lazy index.
-
-[source, java]
-----
-
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-lazy-index-embedding]
-
-----
-
-You procedurally update the vectors in the index by looping through the vectors in batches until you reach the value of the `limit` parameter.
-
-The update process follows the following sequence:
-
-. Get a value for the updater.
-
-.. If the there is no value for the vector, handle it. 
-In this case, the vector will be skipped and considered the next time `beginUpdate()` is called.
-+
-NOTE: A key benefit of lazy indexing is that the indexing process continues if a vector fails to generate.
-For standard vector indexing, this will cause the affected documents to be dropped from the indexing process.
-+
-. Set the vector from the computed vector derived from the updater value and your ML model.
-
-.. If there is no value for the vector, this will result in the underlying document to not be indexed.
-
-. Once all vectors have completed the update loop, finish updating.
-
-NOTE: `updater.finish()` will throw an error if any values inside the updater have not been set or skipped.
-
-== Vector Search SQL++ Support
-
-Couchbase Lite currently supports Hybrid Vector Search and the `APPROX_VECTOR_DISTANCE()` function.
-
-IMPORTANT: Similar to the xref:java:fts.adoc[Full Text Search] `match()` function, the `APPROX_VECTOR_DISTANCE()` function and Hybrid Vector Search cannot use the `OR` expression with the other expressions in the related `WHERE` clause.
-
-== Use Hybrid Vector Search
-
-You can use Hybrid Vector Search (Hybrid Search) to perform vector search in conjunction with regular SQL++ queries.
-With Hybrid Search, you perform vector search on documents that have already been filtered based on criteria specified in the `WHERE` clause.
-
-NOTE: A `LIMIT` clause is required for non-hybrid Vector Search, this avoids a slow, exhaustive unlimited search of all possible vectors. 
-
-=== Hybrid Vector Search with Full Text Match
-
-Below is an example of using Hybrid Search with the Full Text `match()` function.
-
-[source, java]
-----
-        
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-hybrid-ftmatch]
-
-----
-
-=== Prediction with Hybrid Vector Search
-
-Below is an example of using Hybrid Search with an array of vectors generated by the `Prediction()` function at index time.
-
-[source, java]
-----
-        
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-hybrid-prediction]
-
-----
-
-== `APPROX_VECTOR_DISTANCE(vector-expr, target-vector, [metric], [nprobes], [accurate])`
-
-WARNING: If you use a different distance metric in the `APPROX_VECTOR_DISTANCE()` function from the one configured in the index, you will receive an error when compiling the query.
+=== `vector_match(vectorIndexIdentifier, targetVectorExpr, [limit = 3])`
 
 [cols = "3*"]
 |===
 |Parameter |Is Required |Description
 
-|vector-expr
-|image:ROOT:yes.png[]
-|The expression returning a vector (NOT Index Name).
-Must match the expression specified in the vector index exactly.
-|target-vector
-|image:ROOT:yes.png[]
-|The target vector.
-|metric
-|image:ROOT:no.png[]
-|Values : "EUCLIDEAN_SQUARED", “L2_SQUARED”, “EUCLIDEAN”, “L2”,  ”COSINE”, “DOT”.
-If not specified, the metric set in the vector index is used.
-If specified, the metric must match with the metric set in the vector index.
-This optional parameter allows multiple indexes to be attached to the same field in a document. 
-|nprobes
-|image:ROOT:no.png[]
-|Number of buckets to search for the nearby vectors.
-If not specified, the nprobes set in the vector index is used. 
-|accurate
-|image:ROOT:no.png[]
-|If not present, false will be used, which means that the quantized/encoded vectors in the index will be used for calculating the distance. 
-
-IMPORTANT: Only accurate = false is supported 
+|vectorIndexIdentifier
+|Required
+|The name of the vector index to perform the vector search on.
+|targetVectorExpr
+|Required
+|The target vector expression that returns a vector in the form of an array of numbers.
+|limit
+|Optional
+|The limit number of the returned matched results.
+The maximum number allowed is 10000. An error will be returned when creating a query with a limit greater than 10000.
 
 |===
 
-=== Use `APPROX_VECTOR_DISTANCE()`
+NOTE: The default value for the `limit` parameter is 3.
+
+=== Use `vector_match()`
 
 [source, java]
 ----
-        
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-apvd-where]
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-use-vector-match]
 
 ----
 
-This function returns the approximate distance between a given vector, typically generated from your ML model, and an array of vectors with size equal to the `LIMIT` parameter, collected by a SQL++ query using `APPROX_VECTOR_DISTANCE()`.
+This function performs vector search against a specific vector index identifier for the specified vector expression.
+If the specified index does not exist, an error will occur on creation of the query.
+The matched vectors will be returned up to the specified limit number, if the limit is not specified then the default value will be used. 
+The returned vectors are sorted by their distance values in ascending order by default.
 
-=== Prediction with `APPROX_VECTOR_DISTANCE()`
+IMPORTANT: Similar to the xref:java:fts.adoc[Full Text Search] `match()` function, `vector_match()` can only be called alone or at the top level `AND` expression.
 
-Below is an example of using `APPROX_VECTOR_DISTANCE()` with an array of vectors generated by the `Prediction()` function at index time.
+=== `vector_distance(vectorIndexIdentifier)`
+
+[cols = "3*"]
+|===
+|Parameter |Is Required |Description
+
+|vectorIndexIdentifier
+|Required
+|The name of the vector index.
+
+|===
+
+=== Use `vector_distance()`
 
 [source, java]
 ----
-        
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-apvd-prediction]
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-use-vector-distance]
 
 ----
+
+This function returns the distance between the target vector specified in the `vector_match()` function and the matched vector in the specified vector index based on the distance metric set in the index configuration.
 
 == See Also
 

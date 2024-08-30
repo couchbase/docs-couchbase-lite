@@ -43,10 +43,18 @@ Couchbase Lite for C is available on the platforms shown in the tables below.
 --
 Support for the following will be deprecated in this release and will be removed in a future release:
 
-* macOS 11 - Big Sur
-* Apple OS X v10.14 (Mojave), v10.15 (Catalina)
+* macOS
+** 11 - Big Sur
+* Apple OS X
+** v10.14 - Mojave
+** v10.15 - Catalina
+* iOS - 10,11,12
+* CentOS - All versions
+* RedHat - 7/8
+* Ubuntu - 16, 18.04
+* Microsoft Server - 2016,2019
+* Debian - 9
 * Raspbian - 9
-* Debian 9
 
 Please plan to migrate your apps to use an appropriate alternative version.
 --
@@ -58,7 +66,7 @@ Please plan to migrate your apps to use an appropriate alternative version.
 |===
 .>| API | x86 | x64 .>| ARM 32 .>| ARM 64
 
-| 31+ | image:ROOT:yes.png[] | image:ROOT:yes.png[] | image:ROOT:yes.png[] | image:ROOT:yes.png[]
+| 23+ | image:ROOT:yes.png[] | image:ROOT:yes.png[] | image:ROOT:yes.png[] | image:ROOT:yes.png[]
 
 |===
 
@@ -69,7 +77,7 @@ Please plan to migrate your apps to use an appropriate alternative version.
 |===
 .>| Version | x86 | x64 | ARM 32 | ARM 64
 
-| 12+
+| 10+
 | image:ROOT:yes.png[]
 | image:ROOT:yes.png[]
 | image:ROOT:yes.png[]
@@ -138,7 +146,7 @@ Support for the following will be deprecated in this release and will be removed
 
 * Xamarin Android - All Versions
 * Xamarin iOS - All Versions
-* .NET Desktop - 6
+* .Net6 - iOS, Android, Mac Catalyst, WinUI
 
 Please plan to migrate your apps to use an appropriate alternative version.
 --
@@ -149,31 +157,39 @@ Please plan to migrate your apps to use an appropriate alternative version.
 |===
 .>|.NET Runtime .>|Minimum Runtime Version .>|Minimum OS version
 
+|.NET Win
+|  6.0
+a| Windows 10 +
+ (any Microsoft supported)
+
 | .NET Framework
 | 4.6.2
 a| Windows 10 +
  (any Microsoft supported)
 
-| .NET Desktop
-| 6.0
-a| Windows 10 +
-  (any Microsoft supported)
-
 | .NET Mac Catalyst
-| 8.0
-a| MacOS 12
+| 6.0
+a| Mac OS 10.15
 
 |WinUI
-|8.0
+|6.0.1
 |10.0.19041.0
 
+|Xamarin iOS
+|10+
+|10+
+
+|Xamarin Android
+|10
+|5.1/API 22
+
 |.NET iOS
-|8.0
-|12+ (14+ for MAUI support)
+|6.0
+|14.2
 
 |.NET Android
-|8.0 
-|API 22+
+|6.0 
+|5.1/API 22
 
 |===
 
@@ -185,9 +201,10 @@ The following run-times are compatible but are not QE tested, and so are not off
 [cols="1,^2,^2", options="header"]
 |===
 .>|.NET Runtime .>|Minimum Runtime Version .>|Minimum OS version
+
 |.NET Mac
 | 6.0
-|12
+|10.15
 
 |.NET Linux
 | 6.0
@@ -213,10 +230,10 @@ The following table identifies the <<supported-os-versions,supported platforms>>
 |Platform |Minimum OS version
 
 |iOS
-|12.0 - deprecated at 3.2.0
+|10.0 - deprecated at 3.1.0
 
 |macOS
-| 12 (Monterey)
+| 10.14 (Mojave) - deprecated at 3.1.0
 |===
 
 NOTE: Couchbase Lite for {param-title} provides native support for both Mac Catalyst and M1.
@@ -228,9 +245,21 @@ NOTE: Couchbase Lite for {param-title} provides native support for both Mac Cata
 |===
 h|Operating System|Version|Deprecation Release
 
+|macOS
+| 10.12.6 (High Sierra)
+| 3.0.0
+
+|macOS
+| 10.14 (Mojave), 10.15 (Catalina), 11 (Big Sur)
+| 3.1.0
+
+|iOS
+| iOS 10, iOS 11
+| 3.1.0
+
 |iOS
 | iOS 12
-| 3.2.0
+| 3.2.0 Beta
 
 |===
 
@@ -245,19 +274,9 @@ h|Operating System|Version|Deprecation Release
 ^.>|Deprecation Release
 
 | macOS
-| macOS 11
-| 3.2.0
-| 3.1.0
-
-| macOS
-| OSX 10.15
-| 3.2.0
-| 3.1.0
-
-| macOS
-| OSX 10.14
-| 3.2.0
-| 3.1.0
+| OSX 10.11
+| 3.0.0
+| 2.8
 
 |===
 // end::objc[]
@@ -274,9 +293,17 @@ The targeted OS versions are given in  <<supported-os-versions>>
 --
 Support for the following will be deprecated in this release and will be removed in a future release:
 
-* macOS 11 - Big Sur
-* RedHat - 8
-* Microsoft Server - 2019
+* macOS
+** 11 - Big Sur
+* Apple OS X
+** v10.14 - Mojave
+** v10.15 - Catalina
+* iOS - 10,11,12
+* CentOS - All versions
+* RedHat - 7/8
+* Ubuntu - 16, 18.04
+* Microsoft Server - 2016,2019
+* Debian - 9
 
 Please plan to migrate your apps to use an appropriate alternative version.
 --
@@ -287,48 +314,55 @@ Please plan to migrate your apps to use an appropriate alternative version.
 |===
 | OS|Version|Type
 
-|RedHat
-|9
-|ALL
+.2+|RHEL
+|8
+|Desktop & Web Service/Servlet (Tomcat)
+|7
+|Desktop & Web Service/Servlet (Tomcat)
 
-|RockyLinux
-|9
-|ALL
+.2+|centOS
+|8
+|Desktop & Web Service/Servlet (Tomcat)
+|7
+|Desktop & Web Service/Servlet (Tomcat)
 
-
-.2+|Ubuntu
-
-| 22.04 LTS
-| ALL
+.3+|Ubuntu
 
 | 20.04 LTS
 | Desktop & Web Service/Servlet (Tomcat)
 
+| 18.04 LTS
+| Desktop & Web Service/Servlet (Tomcat)
+
+| 16.04 LTS
+| Deprecated
+
 |Debian
-|GNU/Linux 10 +
+|GNU/Linux 9 +
+
 |Desktop & Web Service/Servlet (Tomcat)
 
-|Microsoft Server
-|Windows Server 2022 (64-bit)
+.3+|Microsoft Server
+|Windows Server 2019 (64-bit)
 |Web Service/Servlet (Tomcat)
+|Windows Server 2016 (64-bit)
+|Web Service/Servlet (Tomcat)
+|Windows Server 2012 (64-bit)
+| Deprecated
 
-.2+|Microsoft
-
-|Windows 11
-|Desktop
-
+|Microsoft
 |Windows 10
 |Desktop
 
 .3+|Apple
-|MacOS 14 (Sonoma)
+|OSX 11 (Big Sur)
+|Desktop
+|OSX v10.15 (Catalina)
 |Desktop
 
-|MacOS 13 (Ventura)
+|OSX v10.14 (Mojave)
 |Desktop
-
-|MacOS 12 (Monterey)
-|Desktop
+|Desktop & Web Service/Servlet (Tomcat)
 
 // |OSX v10.1.12.6 (High Sierra) -- Deprecated
 // |Desktop & Web Service/Servlet (Tomcat)
