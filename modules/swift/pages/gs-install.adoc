@@ -192,11 +192,9 @@ targets: [
 [#case-2]
 .Use Case 2. Include in Your App Project
 ======
-Here we will add `CouchbaseLiteVectorSearch` directly into your app
+Here we will add `CouchbaseLiteVectorSearch` directly into your app.
 
 . Open the project to which you are going to add CouchbaseLiteVectorSearch
-+
-image::spm-1.png[]
 . Open the Project Editor to add a dependency
 .. In _Project Navigator_: +
 *Select* your XCode project file (for example, `HostApp` in the example) +
@@ -205,30 +203,27 @@ XCode opens the _Project Editor_ pane
 .. In the _Project Editor_ pane: +
 *Select* menu:Project[Swift Packages] and btn:[+] to add the dependency +
 XCode opens the _Choose Package Repository_ dialog
-+
-image::spm-2.png[]
 
 . In the _Choose Package Repository_ dialog: +
 *Enter* the appropriate Couchbase Lite URL, btn:[Next] to continue +
 For Vector Search: https://github.com/couchbase/couchbase-lite-vector-search-spm.git
-+
-image::spm-3.png[]
 
 . *Enter* the required *_Version_* ({vs-version-maintenance}) and btn:[Next] to continue
-+
-image::spm-4.png[]
 
 . btn:[Finish] to close the _Choose Package Repository_ dialog
-+
-image::spm-5.png[]
-+
-XCode displays the name, version and URL of the added CouchbaseLiteVectorSearch Package
-+
-image::spm-6.png[]
 
-. You can now import CouchbaseLiteVectorSearch, and use it in your app
-+
-image::spm-7.png[]
+XCode displays the name, version and URL of the added CouchbaseLiteVectorSearch Package
+
+. Finally, you can enable the vector search extension using the following snippet:
+
+[source, swift]
+----
+
+include::swift:example$code_snippets/VectorSearch.swift[tags=vs-setup-packaging]
+
+----
+
+IMPORTANT: You must enable the extension before you open your database.
 
 ======
 
