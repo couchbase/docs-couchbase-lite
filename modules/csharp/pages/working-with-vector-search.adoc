@@ -150,7 +150,13 @@ include::csharp:example$code_snippets/VectorSearch.cs[tags=vs-create-predictive-
 
 ----
 
-The section `{\"colorInput\": color}).vector` assigns `colorInput` as the input to the color model from the document, and `.vector` writes the output as a `vector`.
+The section `{\"colorInput\": color}).vector` is broken down into the following components:
+
+. `colorInput` is derived from a document property to be used in the prediction function.
+
+. `vector` serves as a key to the result dictionary.
+
+. Therefore `{\"colorInput\": color}).vector` shows that `colorInput` is an input to the color model provided by the documents with `.vector` being the key used in the dictionary outputted by the `prediction()` function.
 
 NOTE: You can use less storage by using the `prediction()` function as the encoded vectors will only be stored in the index. 
 However, the index time will be longer as vector embedding generation is occurring at run time.
