@@ -49,13 +49,6 @@ namespace api_walkthrough
             // end::vs-setup-packaging[]
         }
 
-        private static void EnableVectorSearchExtensionAndroid()
-        {
-            // tag::vs-setup-packaging-android[]
-            Extension.Enable(new VectorSearchExtension(androidContext));
-            // end::vs-setup-packaging-android[]
-        }
-
         private void CreateDefaultVectorIndexConfig()
         {
             // tag::vs-create-default-config[]
