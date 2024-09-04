@@ -41,8 +41,9 @@ Kotlin - Enterprise::
 `implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{version-maintenance-android}'`
 . Add the following _maven_ repo to your repositories (in `build.gradle` or `settings.gradle` as required +
 `https://mobile.maven.couchbase.com/maven2/dev/`
-. If you want to use Vector Search, add the Couchbase Lite Vector Search dependency for architectures other than `x86_64`: `com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-version-maintenance}`
-.. For `x86_64` architectures: `com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-version-maintenance}`
+.. If you want to use Vector Search, add the Couchbase Lite Vector Search dependency for architectures other than `x86_64`: `com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-version-maintenance}`
+... For `x86_64` architectures: `com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-version-maintenance}`
+.. You must then use `CouchbaseLite.enableVectorSearch();` to enable the vector search extension.
 . Build the project and it will pull Couchbase Lite down.
 --
 
@@ -64,8 +65,8 @@ Java - Enterprise::
 `implementation 'com.couchbase.lite:couchbase-lite-android-ee:{version-maintenance-android}'`
 . Add the following _maven_ repo to your repositories (in `build.gradle` or `settings.gradle` as required +
 `https://mobile.maven.couchbase.com/maven2/dev/`
-. If you want to use Vector Search, add the Couchbase Lite Vector Search dependency for architectures other than `x86_64`: `com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-version-maintenance}`
-.. For `x86_64` architectures: `com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-version-maintenance}`
+.. If you want to use Vector Search, add the Couchbase Lite Vector Search dependency for architectures other than `x86_64`: `com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-version-maintenance}`
+... For `x86_64` architectures: `com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-version-maintenance}`
 .. You must then use `CouchbaseLite.enableVectorSearch();` to enable the vector search extension.
 . Build the project and it will pull Couchbase Lite down.
 --
@@ -257,8 +258,9 @@ dependencies {
 //   ... other section content as required by user
 }
 ----
-
++
 .. For x86_64 architectures:
++
 [source,kotlin, subs="attributes+"]
 ----
 dependencies {
@@ -269,6 +271,12 @@ dependencies {
 
 //   ... other section content as required by user
 }
+----
+
+. To activate the extension, the snippet below is required: 
+[source,java, subs="attributes+"]
+----
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-setup-packaging]
 ----
 
 == Java - Step-by-step Install
@@ -455,6 +463,13 @@ dependencies {
 
 //   ... other section content as required by user
 }
+----
++
+. To activate the extension, the snippet below is required: 
++
+[source,java, subs="attributes+"]
+----
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-setup-packaging]
 ----
 
 include::{root-partials}block-related-content-start.adoc[]
