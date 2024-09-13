@@ -1,27 +1,14 @@
 ifdef::is_diag[_show_page_header_block.adoc]
-// BEGIN -- inclusion/macro -- {root-partials}_show_page_header_block.adoc
-// Purpose -- To output a standard pre-formatted abstract block at head of page.
-// Used-by -- many and various pages, also, optionally, used from {root-commons} content, but not from {root-partials} content
-// Passed-parameters -- voided on completion
-// -  param-abstract: message to output
-// -  param-related: related links content
-// -  topic-group: optional topic group, currently suppressed
-// Other -- uses the page description if defined
-//
-
 ifeval::["{param-abstract}"=="{empty}"]
 :param-abstract!:
 endif::[]
-
 :this-abstract!:
 ifdef::param-abstract[]
 :this-abstract: Abstract -- {param-abstract}
 endif::param-abstract[]
-
 ifdef::description[]
 [abstract]
 --
-
 Description -- _{description}_ +
 ifdef::this-abstract[]
 _{this-abstract}_ +
@@ -29,12 +16,9 @@ endif::this-abstract[]
 ifdef::param-related[]
 Related Content -- {param-related}
 endif::param-related[]
-
 --
 endif::description[]
-// void passed parameters and local attributes
 :!param-related:
 :!param-abstract:
 :!topic-group:
 :!this-abstract:
-// END -- inclusion/macro -- {root-partials}_show_page_header_block.adoc
