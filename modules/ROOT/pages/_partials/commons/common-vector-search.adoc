@@ -58,9 +58,10 @@ Vector Indexes are used to store and manage vector representations of content in
 You can use Vector Indexes to efficiently retrieve vectors, similar to a target vector.
 Before use, a Vector Index needs to be trained to compute the centroids and parameters for encoding the vectors.
 
-You can configure both the minimum and maximum training sizes for your vector index by setting the relevant parameters in your vector index configuration, for an example of how you can do so, see xref:{param-module}:working-with-vector-search.adoc#create-a-vector-index[create a vector index].
+You can configure both the minimum and maximum training sizes for your vector index by setting the relevant parameters in your vector index configuration.
+For an example of how you can do so, see xref:{param-module}:working-with-vector-search.adoc#create-a-vector-index[create a vector index].
 
-Training is configured to commence automatically on the first Vector Search query when there are enough vectors to be trained based on the `minimum-training-size` configuration.
+Couchbase Lite Vector Search initiates training on the first Vector Search query automatically when the amount of vectors to be trained satisfies the `minimum-training-size` configuration.
 If the database does not contain the required number of vectors, an error message will be logged indicating the required number of vectors.
 
 See xref:{param-module}:working-with-vector-search.adoc#vector-index-configuration[Vector Index Configuration] for more information about configurations you can modify for your vector index.
@@ -131,7 +132,7 @@ This vector encoding compression reduces disk space required and I/O time during
 
 Vector Search for Couchbase Lite supports the following encoding algorithms:
 
-* None - This will return the highest quality results but at high performance and disk space costs
+* None - This will return the highest quality results but at high performance and disk space costs.
 
 * Scalar Quantizer - This reduces the number of bits used for each number in a vector. 
 The number of bits per component can be set to 4, 6, or 8 bits.
@@ -147,23 +148,25 @@ NOTE: Quantizers are algorithmic processes that map input values from a larger s
 
 Centroids are vectors that function as the center point of a vector cluster within the data set.
 Each vector is then associated to the vector it is closest to by https://en.wikipedia.org/wiki/K-means_clustering[k-means clustering.]
-Each Centroid is contained within a bucket along with its associated vectors, the greater amount of Centroids, the greater the potential accuracy of the model.
-This will also incur a longer indexing time.
+Each Centroid is contained within a bucket along with its associated vectors.
+The greater the number of Centroids, the greater the potential accuracy of the model.
+However, a greater number of Centroids will incur a longer indexing time.
 
 Choosing Centroids in Vector Search involves trade-offs that can impact clustering effectiveness and search efficiency. The initial selection of Centroids, the number chosen, and their sensitivity to high dimensionality and outliers affect the quality of vector clustering.
 
-The general guideline for the amount of Centroids is approximately the square root of the number of documents.
+The general guideline for the optimum number of Centroids is approximately the square root of the number of documents.
 
 === About Probes
 
-The number of Probes refers to the maximum number of Centroid buckets that the search algorithm will to check to look for similar vectors to a given query vector.
+The number of Probes refers to the maximum number of Centroid buckets that the search algorithm will check to look for similar vectors to a given query vector.
 You can change the number of Probes by altering the value of the `NumProbes` variable xref:{param-module}:working-with-vector-search.adoc#create-a-vector-index[shown in the following example].
 Couchbase recommends that when setting a custom number of probes, the number should be at least 8 or 0.5% the number of Centroids used.
 
 === About Dimensions
 
-Vector dimensions describes the amount of numbers in a given vector embedding, commonly known as its' width.
-The greater the amount of dimensions, the greater accuracy of results, this also results in greater compute and memory costs and a increase in the latency of the search.
+Vector dimensions describes the amount of numbers in a given vector embedding, commonly known as its width.
+The greater the number of dimensions, the greater accuracy of results.
+However, a greater number of dimensions also results in greater compute and memory costs and an increase in the latency of the search.
 Vector dimensions are dependent on the LLM used to generate the Vector Embeddings. 
 
 NOTE: Couchbase Lite supports dimension sizes in the range of `2 - 4096`.
