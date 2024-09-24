@@ -160,7 +160,60 @@ include::ROOT:cbl-whatsnew.adoc[tag=scopes-and-collections]
 
 === Known Issues
 
-None for this release
+The following Third Party limitations apply for this version.
+
+==== Using `TLSIdentity` with .NET 6 iOS and Mac Catalyst
+
+In order to be able to use the `TLSIdentity` class, you must:
+
+* sign the app (even for iOS simulator)
+
+* include an Entitlements.plist file containing the following:
++
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+<key>keychain-access-groups</key>
+<array>
+<string>$(AppIdentifierPrefix)$(CFBundleIdentifier)</string>
+</array>
+</dict>
+</plist>
+----
+
+* Include the following in your `csproj`:
++
+[source,xml]
+----
+<CodesignProvision>Automatic</CodesignProvision>
+<EnableCodeSigning>true</EnableCodeSigning>
+----
+
+* You may also require the following for iOS simulator targets to disable signature verification at build time:
++
+[source,xml]
+----
+<_RequireCodeSigning>false</_RequireCodeSigning>
+----
+
+==== TLS connections with Android
+
+Due to .NET runtime limitations 
+(issues https://github.com/dotnet/runtime/issues/45741[45741] and https://github.com/dotnet/runtime/issues/84202[84202])
+any TLS connection that is not trusted by the underlying Android OS will be rejected for connection.
+This means that self signed and pinned certificates will not work.
+
+You can work around this in part by using https://developer.android.com/training/articles/security-config[network security config] to add a trust rule for the situation.
+
+However:
+
+* An intermediate pinned certificate will not function on this platform.
+Use an exact pinned certificate instead.
+* You cannot use dynamically created certs (such as those created using `TLSIdentity.CreateIdentity`) as there is no way to add them to the network security configuration at runtime.
+
 
 === Deprecations 
 
