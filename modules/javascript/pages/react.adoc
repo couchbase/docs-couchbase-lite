@@ -1,56 +1,74 @@
 = React Native
 :page-partials:
+:page-edition: Public Preview
 :page-toclevels: 2@
-:description: Using Couchbase Lite with Javascript applications
+:description: The React Native plugin for Couchbase Lite is now in public preview. This is an open-source, community-supported project developed by Couchbase.
 
 include::partial$_set_page_context_for_javascript.adoc[]
 
-:param-abstract: If you are building mobile or desktop applications using web technologies such as JavaScript/HTML/CSS, there are options for using Couchbase Lite as an embedded database within your app.
-:param-related: xref:ionic.adoc[] | xref:cordova.adoc[]
-include::{root-partials}_show_page_header_block.adoc[]
+== High-Level Overview
+Couchbase Lite Enterprise Edition for React Native is a Native Module implementation using TypeScript, with feature parity to Couchbase Lite implementations on other platforms.
 
+More information on React Native Native Modules can be found https://cbl-reactnative.dev/[here].
 
-:tutorial: https://github.com/couchbaselabs/userprofile-couchbase-mobile-reactnative/blob/main/README.md
+== Important Notes
 
-:docs: https://reactnative.dev/docs/native-modules-intro
+* Platform Support - This plugin currently only supports iOS and Android platforms. Web, Windows, and macOS are not currently supported.
 
-:ref_implementation: https://github.com/couchbaselabs/couchbase-lite-react-native-module/
+* Enterprise License Required - The Native Module is based on supporting Couchbase Lite Enterprise for iOS and Android. It is not compatible with Couchbase Lite Community Edition, and a license is required to use the Enterprise edition.
 
-NOTE: Couchbase Lite for React Native is a community-driven project without official support from Couchbase.
+* Community-Supported -  Couchbase Lite for React Native is a community-supported solution that is actively developed and maintained by the community. It is not an official Couchbase product.
 
-// == Introduction
+== Key Features
 
+* Offline First - Couchbase Lite is built to support offline-first architectures, allowing your app to function without a network connection.
 
-// tag::summary[]
-To use Couchbase Lite as an embedded database within your React Native app, you need a way to access Couchbase Lite's iOS and Android native APIs from within it.
+* Documents - Couchbase Lite uses a schemaless, document-based model that stores data in an efficient binary format.
 
-React Native's _NativeModule_ system provides an answer, exposing instances of native classes to JavaScript (JS) as JS objects.
+* Blobs - Store and sync binary data such as images (JPGs) or documents (PDFs) as blobs.
 
-// end::summary[]
+* Queries - SQL++ Query Language: An extension of SQL, adapted for working with JSON-like documents.
 
+* Full-Text Search - Perform fast and efficient text searches across your data.
 
-// == Functionality
+* Indexing - Support for various types of indexes for optimized query performance.
 
+* Data Sync - Sync your mobile data to the cloud using Couchbase Capella App Services.
+Sync to remote or on-premise deployments via Sync Gateway.
 
-{docs}[React Native Modules]
-allow mobile apps written in React Native to access native platform APIs.
-So in order to use Couchbase Lite within your React Native apps, you should implement a React Native plugin that exports the Couchbase Lite Android and iOS APIs to Javascript.
-It is typical to start with exporting the minimal subset of APIs that your app needs.
+* Change Notifications - Trigger notifications when there are changes to Documents, Collections,Queries, and Replication.
 
-.Resources
-****
+* Encryption -Full database encryption to ensure data is secure both at rest and in motion.
 
-Docs::
-*{docs}[Docs:]* ({docs})
+== Limitations
 
-Tutorial::
-This tutorial is based on our series of _Getting Started_ User Profile app tutorials. +
-*{tutorial}[Get Started:]* ({tutorial})
+The following features are not currently supported in this React Native plugin:
 
-Reference Implementation::
-{ref_implementation}[Reference Implementation] ({ref_implementation})
+* Vector Search - This feature is still in beta for native platforms and is not yet available in the React Native plugin.
+
+* Peer-to-Peer Sync - There is no platform-specific code included in the plugin for peer discovery or direct peer-to-peer sync functionality.
+
+* Change Notifications - The current beta release does not support event listeners for change notifications. This feature will be added in future releases.
+
+== Getting Started
+You can use the links below to help you get started with the React Native plugin for Couchbase Lite:
+
+* https://cbl-reactnative.dev[Official Documentation].
+
+* https://github.com/couchbase-examples/expo-cbl-travel[Example Project] -  A hands-on demonstration using Expo to showcase Couchbase Lite in a React Native app.
+
+* https://github.com/Couchbase-Ecosystem/cbl-reactnative[Project Repository].
+
+=== Why Use Expo?
+
+Couchbase recommends using Expo. 
+Expo makes working with React Native simpler and more efficient.
+You can find information on the prerequisites and setup, including Expo configuration https://cbl-reactnative.dev/StartHere/prerequisites[here].
+
+== Next Steps
+
+As this is a community-supported project, we encourage you to explore, test, and provide feedback to help us improve the React Native plugin for Couchbase Lite. Feel free to file issues through the GitHub issue tracker, our Community Discord or Couchbase Forums.
 
 // DO NOT EDIT -- Footer Related Content Block
 // include::{root-partials}block-related-content-std.adoc[]
 // DO NOT EDIT
-
