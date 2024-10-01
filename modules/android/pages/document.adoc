@@ -70,7 +70,7 @@ or converting that document to JSON and back.
 
 Always use explicit creation of the expected type, whenever the type of result is not itself explicit. For example:
 
-[{tabs}]
+[tabs]
 =====
 [#android:document:::tabs-1-java]
 Java::
@@ -198,7 +198,7 @@ All the CRUD examples in this document operate on a `collection` object (here, t
 
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-2-kotlin]
@@ -274,7 +274,7 @@ Use the mutable form, so that you can add data to the document.
 
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-3-kotlin]
@@ -343,7 +343,7 @@ Each element of the dictionary value will be directly accessible via its own key
 
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-4-kotlin]
@@ -420,7 +420,7 @@ Since the hotel may have multiple contact numbers, provide a field (`phones`) as
 
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-5-kotlin]
@@ -492,7 +492,7 @@ Each data item is stored as a key-value pair.
 
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-6-kotlin]
@@ -590,7 +590,7 @@ This will auto-generate the document id.
 
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-7-kotlin]
@@ -654,7 +654,7 @@ With your document saved, you can now close our Couchbase Lite database.
 
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-8-kotlin]
@@ -748,7 +748,7 @@ Dates are a common data type, but JSON doesn't natively support them, so the con
 
 pass:q,a[This example sets the date on the `createdAt` property and reads it back using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Document.html#getDate-java.lang.String-[Document.getDate()] accessor method.]
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-9-kotlin]
@@ -826,7 +826,7 @@ Date date = newTask.getDate("createdAt");
 ====
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-10-kotlin]
@@ -924,7 +924,7 @@ MutableDictionary mutableDict = dict.toMutable();
 ====
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-11-kotlin]
@@ -1019,7 +1019,7 @@ collection.save(mutableDoc);
 ====
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-12-kotlin]
@@ -1122,7 +1122,7 @@ MutableArray mutableArray = array.toMutable();
 ====
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-13-kotlin]
@@ -1229,7 +1229,7 @@ You can use this behavior to check if a document with a given ID already exists 
 
 pass:q,a[The following code example creates a document and persists it to the database.]
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-14-kotlin]
@@ -1313,7 +1313,7 @@ Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{
 
 pass:q,a[Changes to the document are persisted to the database when the `save` method is called.]
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-15-kotlin]
@@ -1393,7 +1393,7 @@ The following example persists a few documents in batch.
 ====
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-16-kotlin]
@@ -1486,7 +1486,7 @@ The following example registers for changes to the document with ID `user.john` 
 ====
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-17-kotlin]
@@ -1551,7 +1551,7 @@ Kotlin users can also take advantage of Flows and LiveData to monitor for change
 
 The following methods show how to watch for document changes in a given database or for changes to a specific document.
 
-[{tabs}]
+[tabs]
 =====
 [#android:document:::tabs-18-database-changes]
 Database Changes::
@@ -1616,7 +1616,7 @@ The purge is not replicated to Sync Gateway.
 
 This example sets the TTL for a document to 1 day from the current time.
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-19-kotlin]
@@ -1770,7 +1770,7 @@ This is done using the `init(json)` constructor -- see: <<android:document:::ex-
 ====
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-20-kotlin]
@@ -1867,7 +1867,7 @@ Note that the blob object must first be saved to the database (generating the re
 ====
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-21-kotlin]
@@ -1956,7 +1956,7 @@ This is done using the `init(json)` constructor-- see: <<android:document:::ex-d
 ====
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-22-kotlin]
@@ -2045,7 +2045,7 @@ This is done using the `init(json)` or `init(id: json:)` constructor -- see: <<a
 ====
 
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-23-kotlin]
@@ -2151,7 +2151,7 @@ Convert a `Query Result` to JSON using its {to-JSON} accessor method.
 
 pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Result.html#toJSON--[Result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<android:document:::ex-json>> for a working example.]
 // inject tab header
-[{tabs}]
+[tabs]
 =====
 
 [#android:document:::tabs-24-kotlin]
