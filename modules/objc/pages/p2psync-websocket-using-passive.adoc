@@ -1,11 +1,1370 @@
-= Passive Peer
+:docname: p2psync-websocket-using-passive
+:page-module: objc
+:page-relative-src-path: p2psync-websocket-using-passive.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#objc:p2psync-websocket-using-passive:::]
+==== Passive Peer
 :page-aliases: advance/objc-p2psync-websocket-using-passive.adoc
 ifdef::show_edition[:page-edition: {release}] {enterprise}
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite's Peer-to-Peer Synchronization enables edge devices to synchronize securely without consuming centralized cloud-server resources
 
-include::partial$_set_page_context_for_objc.adoc[]
 
-include::{root-commons}p2psync-websocket-using-passive.adoc[subs="macros,attributes"]
+
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+// BEGIN::module page attributes
+
+//
+// CBL-Obj-C Maintenance release number
+//
+:maintenance: 1
+//
+
+// VECTOR SEARCH attributes
+//
+
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+
+// API Reference Links
+//
+//
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DATABASE CLASSES
+
+
+// Docuument Class
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+//Database.SAVE
+
+
+
+//Database.DELETE
+
+
+//Database.COMPACT
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)compact:[CBLDatabase.compact()]
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+
+
+
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/[Query Class index]
+
+
+// ArrayFunction class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLWhere.html
+// NOT SET[Where]
+
+// orderby class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLOrderBy.html
+
+// GroupBy class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLGroupBy.html
+// NOT SET[GroupBy]
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module objc
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+
+// Note there is a replicator.status property AND
+// a ReplicationStatus class/struct --- oh yes, easy to confuse.
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/s:18CouchbaseLiteobjc10ReplicatorC13ActivityLevelO
+
+
+
+
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+
+// Meta API
+
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objcLogging.html[CBLLogging classes]
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--objc}
+// END::Local page attributes
+
+//= Using Peer-to-Peer Synchronization (websockets)
+// DO NOT EDIT
+
+
+
+//  | {xref-cbl-pg-p2p-manage-tls-id}
+[abstract]
+--
+Description -- _{description}_ +
+_Abstract -- How to set up a Listener to accept a Replicator connection and sync using peer-to-peer_ +
+Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc[API Reference]  |  xref:objc:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:objc:p2psync-websocket-using-active.adoc[Active Peer]
+--
+
+
+
+
+.iOS Restrictions
+[CAUTION]
+--
+iOS 14 Applications::
+When your application attempts to access the user's local network, iOS will prompt them to allow (or deny) access.
+You can customize the message presented to the user by editing the description for the `NSLocalNetworkUsageDescription` key in the `Info.plist`.
+--
+
+
+
+.Code Snippets
+[NOTE]
+All code examples are indicative only.
+They demonstrate the basic concepts and approaches to using a feature.
+Use them as inspiration and adapt these examples to best practice when developing applications for your platform.
+
+
+// DO NOT EDIT
+[discrete#objc:p2psync-websocket-using-passive:::introduction]
+===== Introduction
+This content provides code and configuration examples covering the implementation of xref:refer-glossary.adoc#peer-to-peer-sync[Peer-to-Peer Sync] over WebSockets.
+Specifically, it covers the implementation of a xref:refer-glossary.adoc#passive-peer[Passive Peer].
+
+Couchbase's Passive Peer (also referred to as the server, or Listener) will accept a connection from an xref:refer-glossary.adoc#active-peer[Active Peer] (also referred to as the client or replicator) and replicate database changes to synchronize both databases.
+
+Subsequent sections provide additional details and examples for the main configuration options.
+
+.Secure Storage
+[NOTE]
+The use of TLS, its associated keys and certificates requires using secure storage to minimize the chances of a security breach.
+The implementation of this storage differs from platform to platform -- see xref:objc:p2psync-websocket.adoc#using-secure-storage[Using secure storage].
+
+
+
+[discrete#objc:p2psync-websocket-using-passive:::configuration-summary]
+===== Configuration Summary
+
+You should configure and initialize a Listener for each Couchbase Lite database instance you want to sync.
+There is no limit on the number of Listeners you may configure -- <<objc:p2psync-websocket-using-passive:::simple-listener-initialization>> shows a simple initialization and configuration process.
+
+
+
+
+// Example 1
+.Listener configuration and initialization
+[#simple-listener-initialization]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:p2psync-websocket-using-passive:::simple-listener-initialization]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="listener-initialize", indent=0]
+// Initialize the listener config <.>
+CBLURLEndpointListenerConfiguration *endpointConfig = [[CBLURLEndpointListenerConfiguration alloc]
+                                               initWithCollections:[NSArray arrayWithObject:collection]];
+
+endpointConfig.port =  55990; // <.>
+
+endpointConfig.networkInterface = @"10.1.1.10"; // <.>
+
+endpointConfig.enableDeltaSync = true; // <.>
+
+// Configure server security
+endpointConfig.disableTLS  = false; // <.>
+
+
+// Use an anonymous self-signed cert
+endpointConfig.tlsIdentity = nil; // <.>
+
+// Configure Client Security using an Authenticator
+// For example, Basic Authentication <.>
+endpointConfig.authenticator = [[CBLListenerPasswordAuthenticator alloc]
+                        initWithBlock:^BOOL(NSString *username, NSString *password) {
+    return [self isValidCredentials:username password:password];
+}];
+
+// Initialize the listener <.>
+self.listener = [[CBLURLEndpointListener alloc] initWithConfig:endpointConfig];
+
+// start the listener <.>
+BOOL success = [self.listener startWithError:&error];
+if (!success) {
+    NSLog(@"Cannot start the listener:%@", error);
+}
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+<.> Identify the local database to be used -- see: <<objc:p2psync-websocket-using-passive:::initialize-the-listener-configuration>>
+
+<.> Optionally, choose a port to use.
+By default the system will automatically assign a port -- to over-ride this, see: <<objc:p2psync-websocket-using-passive:::lbl-set-network-and-port>>
+
+<.> Optionally, choose a network interface to use.
+By default the system will listen on all network interfaces -- to over-ride this see: <<objc:p2psync-websocket-using-passive:::lbl-set-network-and-port>>
+
+<.> Optionally, choose to sync only changes.
+The default is not to enable delta-sync -- see: <<objc:p2psync-websocket-using-passive:::delta-sync>>.
+
+<.> Set server security.
+TLS is always enabled instantly, so you can usually omit this line.
+But you _can_, optionally, disable TLS (*not* advisable in production) -- see: <<objc:p2psync-websocket-using-passive:::lbl-tls-security>>
+
+<.> Set the credentials this server will present to the client for authentication.
+Here we show the default TLS authentication, which is an anonymous self-signed certificate.
+The server must always authenticate itself to the client.
+
+<.> Set client security -- define the credentials the server expects the client to present for authentication.
+Here we show how basic authentication is configured to authenticate the client-supplied credentials from the http authentication header against valid credentials -- see <<objc:p2psync-websocket-using-passive:::lbl-authenticating-the-client>> for more options. +
+Note that client authentication is optional.
+
+<.> Initialize the listener using the configuration settings.
+
+<.> <<objc:p2psync-websocket-using-passive:::lbl-start-listener>>
+
+
+
+[discrete#objc:p2psync-websocket-using-passive:::api-references]
+===== API References
+You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc[Objective-C API References] here.
+
+[discrete#objc:p2psync-websocket-using-passive:::device-discovery]
+===== Device Discovery
+*This phase is optional:* If the Listener is initialized on a well-known URL endpoint (for example, a static IP Address or well-known DNS address) then you can configure Active Peers to connect to those.
+
+Before initiating the Listener, you may execute a peer discovery phase.
+For the Passive Peer, this involves advertising the service using, for example,
+_Bonjour_ (see: https://developer.apple.com/bonjour/)
+ and waiting for an invite from the Active Peer.
+The connection is established once the Passive Peer has authenticated and accepted an Active Peer's invitation.
+
+
+[discrete#objc:p2psync-websocket-using-passive:::initialize-the-listener-configuration]
+===== Initialize the Listener Configuration
+Initialize the Listener configuration with the local database -- see <<objc:p2psync-websocket-using-passive:::ex-locdb>>
+All other configuration values take their default setting.
+
+Each Listener instance serves one Couchbase Lite database.
+Couchbase sets no hard limit on the number of Listeners you can initialize.
+
+// Example 2
+.Specify Local Database
+[#ex-locdb]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:p2psync-websocket-using-passive:::ex-locdb]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="listener-config-db", indent=0]
+// Initialize the listener config <.>
+CBLURLEndpointListenerConfiguration *endpointConfig = [[CBLURLEndpointListenerConfiguration alloc]
+                                               initWithCollections:[NSArray arrayWithObject:collection]];
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Set the local database using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s constructor https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListenerConfiguration.html#/c:objc(cs)CBLURLEndpointListenerConfiguration(im)initWithDatabase:[-initWithDatabase:]. +
+The database must be opened before the Listener is started. +
+`thisDB` has previously been declared as an object of type `Database`.
+
+[discrete#objc:p2psync-websocket-using-passive:::lbl-set-network-and-port]
+===== Set Port and Network Interface
+
+
+[discrete#objc:p2psync-websocket-using-passive:::port-number]
+====== Port number
+The Listener will automatically select an available port if you do not specify one -- see <<objc:p2psync-websocket-using-passive:::ex-port>> for how to specify a port.
+
+// Example 3
+.Specify a port
+[#ex-port]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:p2psync-websocket-using-passive:::ex-port]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="listener-config-port", indent=0]
+endpointConfig.port =  55990; // <.>
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> To use a canonical port -- one known to other applications -- specify it explicitly using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListenerConfiguration.html#/c:objc(cs)CBLURLEndpointListenerConfiguration(py)port[port] method shown here. +
+Ensure that firewall rules do not block any port you do specify. +
+
+
+[discrete#objc:p2psync-websocket-using-passive:::network-interface]
+====== Network Interface
+The Listener will listen on all network interfaces by default.
+
+// Example 4
+
+[#specify-a-network-interface-to-use]
+.Specify a Network Interface to Use
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:p2psync-websocket-using-passive:::specify-a-network-interface-to-use]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="listener-config-netw-iface", indent=0]
+endpointConfig.networkInterface = @"10.1.1.10"; // <.>
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> To specify an interface -- one known to other applications -- identify it explicitly, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListenerConfiguration.html#/c:objc(cs)CBLURLEndpointListenerConfiguration(py)networkInterface[networkInterface] method shown here.
+This must be either an IP Address or network interface name such as `en0`.
+
+
+
+
+[discrete#objc:p2psync-websocket-using-passive:::delta-sync]
+===== Delta Sync
+
+Delta Sync allows clients to sync only those parts of a document that have changed.
+This can result in significant bandwidth consumption savings and throughput improvements.
+Both are valuable benefits, especially when network bandwidth is constrained.
+
+// Example 5
+.Enable delta sync
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="listener-config-delta-sync", indent=0]
+endpointConfig.enableDeltaSync = true; // <.>
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Delta sync replication is not enabled by default.
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListenerConfiguration.html#/c:objc(cs)CBLURLEndpointListenerConfiguration(py)enableDeltaSync[enableDeltaSync] method to activate or deactivate it.
+
+[discrete#objc:p2psync-websocket-using-passive:::lbl-tls-security]
+===== TLS Security
+
+
+[discrete#objc:p2psync-websocket-using-passive:::enable-or-disable-tls]
+====== Enable or Disable TLS
+
+Define whether the connection is to use TLS or clear text.
+
+TLS-based encryption is enabled by default, and this setting ought to be used in any production environment.
+However, it _can_ be disabled. For example, for development or test environments.
+
+When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity -- see <<objc:p2psync-websocket-using-passive:::configure-tls-identity-for-listener>>.
+
+
+You can use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListenerConfiguration.html#/c:objc(cs)CBLURLEndpointListenerConfiguration(py)disableTLS[disableTLS] method to disable TLS communication if necessary
+
+The `disableTLS` setting must be 'false' when _Client Cert Authentication_ is required.
+
+Basic Authentication can be used with, or without, TLS.
+
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListenerConfiguration.html#/c:objc(cs)CBLURLEndpointListenerConfiguration(py)disableTLS[disableTLS] works in conjunction with `TLSIdentity`, to enable developers to define the key and certificate to be used.
+
+* If `disableTLS` is true -- TLS communication is disabled and TLS identity is ignored.
+Active peers will use the `ws://` URL scheme used to connect to the listener.
+* If `disableTLS` is false or not specified -- TLS communication is enabled.
++
+Active peers will use the `wss://` URL scheme to connect to the listener.
+
+
+
+[discrete#objc:p2psync-websocket-using-passive:::configure-tls-identity-for-listener]
+====== Configure TLS Identity for Listener
+
+Define the credentials the server will present to the client for authentication.
+Note that the server must always authenticate itself with the client -- see: xref:objc:p2psync-websocket-using-active.adoc#authenticate-listener[Authenticate Listener on Active Peer] for how the client deals with this.
+
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListenerConfiguration.html#/c:objc(cs)CBLURLEndpointListenerConfiguration(py)tlsIdentity[tlsIdentity] method to configure the TLS Identity used in TLS communication.
+
+If `TLSIdentity` is not set, then the listener uses an auto-generated anonymous self-signed identity (unless `disableTLS = true`).
+Whilst the client cannot use this to authenticate the server, it will use it to encrypt communication, giving a more secure option than non-TLS communication.
+
+The auto-generated anonymous self-signed identity is saved in secure storage for future use to obviate the need to re-generate it.
+
+
+NOTE: Typically, you will configure the Listener's TLS Identity once during the initial launch and re-use it (from secure storage on any subsequent starts.
+
+Here are some example code snippets showing:
+
+* Importing a TLS identity -- see: <<objc:p2psync-websocket-using-passive:::ex-import-tls-id>>
+* Setting TLS identity to expect self-signed certificate --  -- see: <<objc:p2psync-websocket-using-passive:::ex-create-tls-id>>
+* Setting TLS identity to expect anonymous certificate -- see: <<objc:p2psync-websocket-using-passive:::ex-anon-tls-id>>
+
+.Import Listener's TLS identity
+[#ex-import-tls-id]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:p2psync-websocket-using-passive:::ex-import-tls-id]
+====
+
+Import an identity from a secure key and certificate data source.
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="listener-config-tls-enable;listener-config-tls-id-full;!listener-config-tls-id-SelfSigned;!listener-config-tls-id-anon", indent=0]
+endpointConfig.disableTLS  = false; // <.>
+
+// Use CA Cert
+// Create a TLSIdentity from a key-pair and
+// certificate in secure storage
+NSURL *certURL = [[NSBundle mainBundle] URLForResource:@"cert" withExtension:@"p12"]; // <.>
+
+NSData *data = [[NSData alloc] initWithContentsOfURL:certURL];
+CBLTLSIdentity *tlsIdentity = [CBLTLSIdentity importIdentityWithData:data
+                                                            password:@"123"
+                                                               label:@"couchbase-docs-cert"
+                                                               error:&error]; // <.>
+
+endpointConfig.tlsIdentity = tlsIdentity; // <.>
+
+// set the TLS Identity
+endpointConfig.tlsIdentity = tlsIdentity; // <.>
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Ensure TLS is used
+<.> Get key and certificate data
+<.> Use the retrieved data to create and store the TLS identity
+<.> Set this identity as the one presented in response to the client's prompt
+
+.Create Self-Signed Cert
+[#ex-create-tls-id]
+The system generates a self-signed certificate.]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:p2psync-websocket-using-passive:::ex-create-tls-id]
+====
+
+pass:q,a[Create a TLSIdentity for the server using convenience API. +
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="listener-config-tls-enable;listener-config-tls-id-full;!listener-config-tls-id-caCert;!listener-config-tls-id-anon", indent=0]
+endpointConfig.disableTLS  = false; // <.>
+
+// Use a self-signed certificate
+NSDictionary *attrs = @{ kCBLCertAttrCommonName:@"Couchbase Inc" }; // <.>
+
+tlsIdentity = [CBLTLSIdentity createIdentityForServer:YES /* isServer */
+                                           attributes:attrs
+                                           expiration:[NSDate dateWithTimeIntervalSinceNow:86400]
+                                                label:@"couchbase-docs-cert"
+                                                error:&error]; // <.>
+
+// set the TLS Identity
+endpointConfig.tlsIdentity = tlsIdentity; // <.>
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+<.> Ensure TLS is used.
+<.> Map the required certificate attributes, in this case the common name.
+<.> Create the required TLS identity using the attributes.
+Add to secure storage as 'couchbase-docs-cert'.
+<.> Configure the server to present the defined identity credentials when prompted.
+
+
+.Use Anonymous Self-Signed Certificate
+[#ex-anon-tls-id]
+Generated certificates are held in secure storage.]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:p2psync-websocket-using-passive:::ex-anon-tls-id]
+====
+
+pass:q,a[This example uses an _anonymous_ self signed certificate. +
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="listener-config-tls-enable;listener-config-tls-id-anon", indent=0]
+endpointConfig.disableTLS  = false; // <.>
+
+// Use an anonymous self-signed cert
+endpointConfig.tlsIdentity = nil; // <.>
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+<.> Ensure TLS is used. +
+This is the default setting.
+<.> Authenticate using an anonymous self-signed certificate. +
+This is the default setting.
+
+// Are we missing a section that shows how to use TLSIdentity.getIdentity.  It would be used to create an identity with a certificate signed by a Root CA, in important case.  It could also be used to get an existing self-signed cert (perhaps one created by CreateIdentity above)
+
+// [#authenticating-the-client]
+[discrete#objc:p2psync-websocket-using-passive:::lbl-authenticating-the-client]
+===== Authenticating the Client
+In this section: <<objc:p2psync-websocket-using-passive:::use-basic-authentication>>  |  <<objc:p2psync-websocket-using-passive:::using-client-certificate-authentication>>  |  <<objc:p2psync-websocket-using-passive:::delete-tls-identity>>  |  <<objc:p2psync-websocket-using-passive:::the-impact-of-tls-settings>>
+
+Define how the server (Listener) will authenticate the client as one it is prepared to interact with.
+
+Whilst client authentication is optional, Couchbase lite provides the necessary tools to implement it.
+Use the
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration] class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListenerConfiguration.html#/c:objc(cs)CBLURLEndpointListenerConfiguration(py)authenticator[authenticator] method to specify how the client-supplied credentials are to be authenticated.
+
+Valid options are:
+
+* No authentication -- If you do not define an Authenticator then all clients are accepted.
+* Basic Authentication -- uses the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLListenerPasswordAuthenticator.html[ListenerPasswordAuthenticator] to authenticate the client using the client-supplied username and password (from the http authentication header).
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator] -- which authenticates the client using a client supplied chain of one or more certificates.
+You should initialize the authenticator using one of the following constructors:
+** A list of one or more root certificates -- the client supplied certificate must end at a certificate in this list if it is to be authenticated
+** A block of code that assumes total responsibility for authentication -- it must return a boolean response (true for an authenticated client, or false for a failed authentication).
+
+// include::ROOT:partial$p2p-api.adoc[tag=config-auth]
+
+[discrete#objc:p2psync-websocket-using-passive:::use-basic-authentication]
+====== Use Basic Authentication
+// === Authenticate Using the Client Username and Password
+
+Define how to authenticate client-supplied username and password credentials.
+To use client-supplied certificates instead -- see: <<objc:p2psync-websocket-using-passive:::using-client-certificate-authentication>>
+
+
+// include::ROOT:partial$p2p-api.adoc[tag=ListenerPasswordAuthenticatorDelegate]
+
+
+// Example 7
+.Password authentication
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="listener-config-client-auth-pwd", indent=0]
+// Configure Client Security using an Authenticator
+// For example, Basic Authentication <.>
+endpointConfig.authenticator = [[CBLListenerPasswordAuthenticator alloc]
+                        initWithBlock:^BOOL(NSString *username, NSString *password) {
+    return [self isValidCredentials:username password:password];
+}];
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+<.> Where 'username'/'password' are the client-supplied values (from the http-authentication header) and `validUser`/`validPassword` are the values acceptable to the server.
+
+
+[discrete#objc:p2psync-websocket-using-passive:::using-client-certificate-authentication]
+====== Using Client Certificate Authentication
+Define how the server will authenticate client-supplied certificates.
+
+There are two ways to authenticate a client:
+
+* A chain of one or more certificates that ends at a certificate in the list of certificates supplied to the constructor for  https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator] -- see: <<objc:p2psync-websocket-using-passive:::ex-set-cert-auth>>
+
+* Application logic: This method assumes complete responsibility for verifying and authenticating the client -- see: <<objc:p2psync-websocket-using-passive:::ex-use-app-logic>>
++
+If the parameter supplied to the constructor for `ListenerCertificateAuthenticator` is of type  `ListenerCertificateAuthenticatorDelegate`, all other forms of authentication are bypassed.
++
+The client response to the certificate request is passed to the method supplied as the constructor parameter.
+The logic should take the form of function or block (such as, a closure expression) where the platform allows.
+
+// Example 8
+.Set Certificate Authorization
+[#ex-set-cert-auth]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:p2psync-websocket-using-passive:::ex-set-cert-auth]
+====
+
+pass:q,a[Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator].]
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="listener-config-client-auth-root, indent=0]", indent=0]
+
+NSURL *certURL = [[NSBundle mainBundle] URLForResource:@"cert" withExtension:@"cer"];
+NSData *data = [[NSData alloc] initWithContentsOfURL:certURL];
+SecCertificateRef rootCertRef = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
+
+config.authenticator = [[CBLListenerCertificateAuthenticator alloc]
+                        initWithRootCerts:@[(id)CFBridgingRelease(rootCertRef)]];
+// Configure the client authenticator
+NSURL *certURL = [[NSBundle mainBundle] URLForResource:@"cert" withExtension:@"p12"]; // <.>
+NSData *data = [[NSData alloc] initWithContentsOfURL:certURL];
+SecCertificateRef rootCertRef = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
+
+config.authenticator = [[CBLListenerCertificateAuthenticator alloc]
+                        initWithRootCerts:@[(id)CFBridgingRelease(rootCertRef)]];  // <.> <.>
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.>  Get the identity data to authenticate against.
+This can be, for example, from a resource file provided with the app, or an identity previously saved in secure storage.
+<.> Configure the authenticator to authenticate the client supplied certificate(s) using these root certs.
+A valid client will provide one or more certificates that match a certificate in this list.
+<.> Add the authenticator to the Listener configuration.
+
+
+.Application Logic
+[#ex-use-app-logic]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:p2psync-websocket-using-passive:::ex-use-app-logic]
+====
+
+pass:q,a[Configure the server (listener) to authenticate the client using user-supplied logic.]
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="listener-config-client-auth-lambda", indent=0]
+
+CBLListenerCertificateAuthenticator *listenerAuth =
+[[CBLListenerCertificateAuthenticator alloc] initWithBlock:^BOOL(NSArray *certs) {
+    return [self isValidCertificates:certs];
+}];
+
+config.authenticator = listenerAuth;
+// Authenticate self-signed cert
+// using application logic
+CBLListenerCertificateAuthenticator *authenticator = [[CBLListenerCertificateAuthenticator alloc]
+                                                      initWithBlock:^BOOL(NSArray *certs) {
+    return [self isValidCertificates:certs];
+}];  // <.>
+
+endpointConfig.authenticator = authenticator; // <.>
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.>  Get the identity data to authenticate against.
+This can be, for example, from a resource file provided with the app, or an identity previously saved in secure storage.
+<.>  Configure the Authenticator to pass the root certificates to a user supplied code block.
+This code assumes complete responsibility for authenticating the client supplied certificate(s).
+It must return a boolean value; with `true` denoting the client supplied certificate authentic.
+<.> Add the authenticator to the Listener configuration.
+
+
+[discrete#objc:p2psync-websocket-using-passive:::delete-tls-identity]
+====== Delete Entry
+
+You can remove unwanted TLS identities from secure storage using the convenience API.
+
+// Example 9
+.Deleting TLS Identities
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="p2p-tlsid-delete-id-from-keychain", indent=0]
+
+[CBLTLSIdentity deleteIdentityWithLabel:@"doco-sync-server-1" error:&error];
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#objc:p2psync-websocket-using-passive:::the-impact-of-tls-settings]
+====== The Impact of TLS Settings
+
+The table in this section shows the expected system behavior (in regards to security) depending on the TLS configuration settings deployed.
+
+
+
+.Expected system behavior
+[cols="12,44,44"]
+|===
+|disableTLS |tlsIdentity (corresponding to server) |Expected system behavior
+
+|true
+|Ignored
+a|TLS is disabled; all communication is plain text.
+
+|false
+a| set to nil
+a|* The system will auto generate an _anonymous_ self signed cert.
+* Active Peers (clients) should be configured to accept self-signed certificates.
+* Communication is encrypted
+
+|false
+a|Set to server identity generated from a self- or CA-signed certificate
+
+// On first use::
+* On first use -- Bring your own certificate and private key; for example, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLTLSIdentity.html[TLSIdentity] class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLTLSIdentity.html#/c:objc(cs)CBLTLSIdentity(cm)createIdentityForServer:attributes:expiration:label:error:[createIdentity()] method to add it to the secure storage.
+* Each time -- Use the server identity from the certificate stored in the secure storage; for example, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLTLSIdentity.html[TLSIdentity] class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLTLSIdentity.html#/c:objc(cs)CBLTLSIdentity(cm)identityWithLabel:error:[identityWithLabel:error] method with the alias you want to retrieve..
+
+// See: {xref-cbl-pg-p2p-manage-tls-id} for more on how to store and use identities.
+
+a|* System will use the configured identity.
+* Active Peers will validate the server certificate corresponding to the TLSIdentity (as long as they are configured to not skip validation -- see <<objc:p2psync-websocket-using-passive:::lbl-tls-security>>).
+
+// |false
+// a|
+// // Use the convenience `createIdentity` API to generate the certificate and identity
+// * On first use -- Bring your own CA certificate and private key (use `importIdentity`).
+// * Each time -- Use the server identity from the CA certificate stored in the keychain; for example, use `TSLIdentity.identity(withIdentity:)`.
+
+// See: {xref-cbl-pg-p2p-manage-tls-id} for more on how to store and use identities.
+// a|. The system will use the provided CA cert.
+// . Active peers will validate the CA cert.
+// . Communication is encrypted.
+
+|===
+
+
+[discrete#objc:p2psync-websocket-using-passive:::lbl-start-listener]
+===== Start Listener
+
+Once you have completed the Listener's configuration settings you can initialize the Listener instance and start it running -- see: <<objc:p2psync-websocket-using-passive:::initialize-and-start-listener>>
+
+// Example 10
+[#initialize-and-start-listener]
+.Initialize and start listener
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:p2psync-websocket-using-passive:::initialize-and-start-listener]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="listener-start", indent=0]
+// Initialize the listener <.>
+self.listener = [[CBLURLEndpointListener alloc] initWithConfig:endpointConfig];
+
+// start the listener <.>
+BOOL success = [self.listener startWithError:&error];
+if (!success) {
+    NSLog(@"Cannot start the listener:%@", error);
+}
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+
+
+
+[discrete#objc:p2psync-websocket-using-passive:::monitor-listener]
+===== Monitor Listener
+
+Use the Listener's `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListener.html#/c:objc(cs)CBLURLEndpointListener(py)status[status]` property/method to get counts of total and active connections -- see: <<objc:p2psync-websocket-using-passive:::get-connection-counts>>.
+
+You should note that these counts can be extremely volatile. So, the actual number of active connections may have changed, by the time the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/Type%20Definitions/CBLConnectionStatus.html[ConnectionStatus]` class returns a result.
+
+// Example 11
+.Get connection counts
+[#get-connection-counts]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:p2psync-websocket-using-passive:::get-connection-counts]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="listener-status-check", indent=0]
+NSUInteger totalConnections = self.listener.status.connectionCount;
+NSUInteger activeConnections = self.listener.status.activeConnectionCount;
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+// include::{exampleblock_callouts.adoc[tags=listener-status-check, indent=0]
+
+[discrete#objc:p2psync-websocket-using-passive:::stop-listener]
+===== Stop Listener
+
+It is best practice to check the status of the Listener's connections and stop only when you have confirmed that there are no active connections -- see <<objc:p2psync-websocket-using-passive:::get-connection-counts>>.
+
+// Example 12
+.Stop listener using `stop` method
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="listener-stop", indent=0]
+[self.listener stop];
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+NOTE: Closing the database will also close the Listener.
+
+
+// DO NOT EDIT -- Footer Related Content Block
+// inclusion
+//:param-how: //:param-reference: reference-deploy
+
+
+
+
+[discrete#objc:p2psync-websocket-using-passive:::related-content]
+===== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+====== {empty}
+.How to
+* xref:objc:p2psync-websocket-using-passive.adoc[Passive Peer]
+* xref:objc:p2psync-websocket-using-active.adoc[Active Peer]
+
+
+.
+
+[discrete.colum#objc:p2psync-websocket-using-passive:::-2n]
+====== {empty}
+.Concepts
+* xref:objc:landing-p2psync.adoc[Peer-to-Peer Sync]
+
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc[API References]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#objc:p2psync-websocket-using-passive:::-3]
+====== {empty}
+.Community Resources ...
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Getting Started with Peer-to-Peer Synchronization]
+
+
+
+
+++++
+</div>
+++++
+// DO NOT EDIT
+
 

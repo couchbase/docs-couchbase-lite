@@ -1,15 +1,350 @@
-= Data Sync Locally on Device
+:docname: dbreplica
+:page-module: swift
+:page-relative-src-path: dbreplica.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#swift:dbreplica:::]
+=== Intra-device Sync
 :page-aliases: learn/swift-dbreplica.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite Database Sync - Synchronize changes between databases on the same device
 
-include::partial$_set_page_context_for_swift.adoc[]
-// :param-name: {lang-name-swift}
-// :param-title: {lang-title-swift}
-// :param-module: {lang-mod-swift}
 
-include::{root-commons}dbreplica.adoc[subs="macros,attributes"]
 
-include::{root-partials}block-related-content-std.adoc[]
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+// BEGIN::module page attributes
+//
+// CBL-Swift Maintenance release number
+//
+
+// VECTOR SEARCH attributes
+//
+
+
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+// API Reference Links
+//
+//
+
+
+
+
+// Supporting Data Type Classes
+
+
+// DATABASE CLASSES
+
+
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+
+
+
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC7compactyyKF[Database.compact()]
+
+
+
+
+
+
+
+
+// links for documents pages
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Query class and methods
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/[Query Class index]
+
+
+
+// ArrayFunction class and methods
+
+
+// API Results Class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+
+// orderby class and methods
+//
+
+// GroupBy class and methods
+//
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module swift
+
+
+
+
+// Replicator API
+
+
+
+
+[Replicator.pendingDocumentIds()]
+
+
+
+// Replicator Status
+
+
+
+// :url-api-enum-replicator-status: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html[Status struct]
+// :url-api-enum-replicator-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/ActivityLevel.html[ActivityLevel enum]
+// :url-api-enum-replicator-progress: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Progress.html[Progress struct]
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC33serverCertificateVerificationModeAA06ServerghI0Ovp[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Metadata API
+
+
+
+// BEGIN Logs and logging references
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--swift}
+
+// END::Local page attributes
+// :param-name: swift
+// :param-title: Swift
+// :param-module: swift
+
+// Inclusion for use in swift-conflict.adoc files
+
+// = Handling Conflicts
+// :page-partial:
+// :page-layout: article
+// :page-status:
+// :page-edition:
+// :page-role:
+// :description: Couchbase mobile database conflicts - concepts
+
+// include::partial$_set_page_context_for_swift.adoc[]
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:swift:replication.adoc[Remote Sync Gateway] | xref:swift:landing-p2psync.adoc[Peer-to-Peer Sync]
+--
+
+[discrete#swift:dbreplica:::overview]
+==== Overview
+
+
+
+
+
+Couchbase Lite supports replication between two local databases at the database, scope, or collection level.
+This allows a Couchbase Lite replicator to store data on secondary storage.
+It is useful in scenarios when a user's device is damaged and its data is moved to a different device.
+
+.Replication between Local Databases
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+====
+
+
+// Show Main Snippet
+[source, swift]
+----
+include ::swift:example$code_snippets/SampleCodeTest.swift[tags="database-replica", indent=0]
+let targetDatabase = DatabaseEndpoint(database: database2)
+var config = ReplicatorConfiguration(target: targetDatabase)
+
+guard let collection1 = try database.collection(name: "collection1", scope: "scope1") else { return }
+config.addCollection(collection1)
+config.replicatorType = .push
+
+self.replicator = Replicator(config: config)
+self.replicator.start()
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+[discrete#swift:dbreplica:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:swift:gs-prereqs.adoc[Prerequisites]
+* xref:swift:gs-install.adoc[Install]
+* xref:swift:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#swift:dbreplica:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:swift:database.adoc[Databases]
+* xref:swift:document.adoc[Documents]
+* xref:swift:blob.adoc[Blobs]
+* xref:swift:replication.adoc[Remote Sync Gateway]
+* xref:swift:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#swift:dbreplica:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+// [.pane__frames.cols-3]
+// == Related Content
+
+// .How-to ...
+
+// * xref:swift:p2psync-custom.adoc[Integrate Custom Listener]
+// * xref:swift:p2psync-websocket.adoc[Peer-to-Peer]
+
+// .Learn more ...
+
+// * include how-to links as relevant,
+// * include how-to links as relevant,
+
+// .Dive Deeper ...
+
+// * Reference content
+// ** https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift[API References]
+// // +
+// include::shared-mobile::partial$block-related-content-menulinks.adoc[tags=community]
+
+

@@ -1,11 +1,482 @@
-= Manage Scopes and Collections
-:page-aliases: 
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
+:docname: scopes-collections-manage
+:page-module: java
+:page-relative-src-path: scopes-collections-manage.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#java:scopes-collections-manage:::]
+== Scopes and Collections
+:page-aliases:
 :page-role:
 :description: Scopes and collections allow you to organize your documents within a database.
 
-include::partial$_set_page_context_for_java.adoc[]
 
 
-include::{root-commons}scopes-collections-manage.adoc[subs="macros,attributes"]
+
+// BEGIN -- _define_module_attributes.adoc -- Java
+//
+// Definition:
+//    Objective: This adoc defines values for attributes specific to pages within this module (Java)
+//    Invoked-by: ROOT:_partials/_std_cbl_hdr.adoc (from within module/_partials/_set_page_context_for_java.adoc)
+//    Parameters: none
+// End Definition:
+
+
+// BEGIN -- module page attributes
+// Begin workaround for 2.8.1 mis-release, to avoid unnecessary install of 2.8.0
+// SET full maintenance version number
+
+// VECTOR SEARCH attributes
+
+// End workaround
+// :snippet-p2psync-ws: {snippets-p2psync-ws--java}
+// END -- module page attributes
+
+
+// BEGIN -- Define API References for this module
+//  These attributes s
+//:url-api-references-structs: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Structs
+// :url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Classes
+
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DatabaseConfiguration
+
+
+//Database.SAVE
+
+
+
+//Database.DELETE()
+
+
+
+
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#compact--[Database.compact()]
+// was copy-java.io.File-java.lang.String-com.couchbase.lite.DatabaseConfiguration-[Database.copy()]
+
+
+
+
+
+// links for documents pages
+
+
+// :url-api-class-dictionary: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Dictionary.html[property accessors]
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+// Expression class and methods
+
+
+// ArrayFunction class and methods
+// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/ArrayFunction.html
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+
+// orderby class and methods
+//
+
+// GroupBy class and methods
+//
+
+// Endpoints
+
+
+
+
+
+
+
+
+// https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/URLEndpointListenerConfiguration.html#setPort-int-
+
+
+
+
+
+
+
+// diag: Env+Module java
+
+
+
+
+// Authenticators
+
+
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Replicator.html#s:18CouchbaseLiteandroid10ReplicatorC13ActivityLevelO
+
+
+// ReplicatorStatus
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+
+// replaced
+// replaced
+// replaces ^^
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+
+
+
+
+
+
+
+
+// Meta API
+
+
+// END -- Define API References for this module
+
+// diag: Env+Module java
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Logging.html[Logging classes]
+
+
+
+
+
+
+// END  Logs and logging references
+
+
+
+
+
+
+
+// END -- _define_module_attributes.adoc -- Java
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--java}
+
+// END::Local page attributes
+
+
+// = Manage Scopes and Collections
+// :page-aliases:
+// ifdef::show_edition[:page-edition: {release}]
+// ifdef::prerelease[:page-status: {prerelease}]
+// :page-role:
+// :description: Scopes and collections allow you to organize your documents within a database.
+
+[abstract]
+{description}
+
+
+[sidebar]
+.At a glance
+****
+
+**Use collections to organize your content in a database**
+
+For example, if your database contains travel information, airport documents can be assigned to an airports collection, hotel documents can be assigned to a hotels collection, and so on.
+
+* Document names must be unique within their collection.
+
+
+
+**Use scopes to group multiple collections**
+
+Collections can be assigned to different scopes according to content-type or deployment-phase (for example, test versus production).
+
+* Collection names must be unique within their scope.
+
+
+****
+
+[discrete#java:scopes-collections-manage:::default-scopes-and-collections]
+=== Default Scopes and Collections
+
+Every database you create contains a default scope and a default collection named _default.
+
+If you create a document in the database and don’t specify a specific scope or collection, it is saved in the default collection, in the default scope.
+
+If you upgrade from a version of Couchbase Lite prior to 3.1, all existing data is automatically placed in the default scope and default collection.
+
+The default scope  and collection cannot be dropped.
+
+
+
+[discrete#java:scopes-collections-manage:::create-a-scope-and-collection]
+=== Create a Scope and Collection
+
+In addition to the default scope and collection, you can create your own scope and collection when you create a document.
+
+Naming conventions for collections and scopes:
+
+* Must be between 1 and 251 characters in length.
+* Can only contain the characters `A-Z`, `a-z`, `0-9`, and the symbols `_`, `-`, and `%`.
+* Cannot start with `_` or `%`.
+* Scope names must be unique in databases.
+* Collection names must be unique within a scope.
+
+NOTE: Scope and collection names are case sensitive.
+
+.Create a scope and collection
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="scopes-manage-create-collection", indent=0]
+// create the collection "Verlaine" in the default scope ("_default")
+Collection collection1 = db.createCollection("Verlaine");
+// both of these retrieve collection1 created above
+collection1 = db.getCollection("Verlaine");
+collection1 = db.getDefaultScope().getCollection("Verlaine");
+
+// create the collection "Verlaine" in the scope "Television"
+Collection collection2 = db.createCollection("Television", "Verlaine");
+// both of these retrieve  collection2 created above
+collection2 = db.getCollection("Television", "Verlaine");
+collection2 = db.getScope("Television").getCollection("Verlaine");
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+In the example above, you can see that `db.createCollection()` can take two parameters.
+The first is the scope assigned to the created collection, if this parameter is omitted then a collection of the given name will be assigned to the `_default` scope. In this case, creating a collection called `Verlaine`.
+
+The second parameter is the name of the collection you want to create, in this case `Verlaine`.
+In the second section of the example you can see `db.createCollection("Television", "Verlaine")`.
+This creates the collection `Verlaine` and then checks to see if the scope `Television` exists.
+If the scope `Television` exists, the collection `Verlaine` is assigned to the scope `Television`. If not, a new scope, `Television` is created and then the collection `Verlaine` is assigned to it.
+
+NOTE: You cannot create an empty user-defined scope.
+A scope is implicitly created in the `db.createCollection()` method.
+
+
+[discrete#java:scopes-collections-manage:::index-a-collection]
+=== Index a Collection
+
+.Index a Collection
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="scopes-manage-index-collection", indent=0]
+// Create an index named "nameIndex1" on the property "lastName" in the collection using the IndexBuilder
+collection.createIndex("nameIndex1", IndexBuilder.valueIndex(ValueIndexItem.property("lastName")));
+
+// Create a similar index named "nameIndex2" using and IndexConfiguration
+collection.createIndex("nameIndex2", new ValueIndexConfiguration("lastName"));
+
+// get the names of all the indices in the collection
+final Set<String> indices = collection.getIndexes();
+
+// delete all the collection indices
+for (String index: indices) { collection.deleteIndex(index); }
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#java:scopes-collections-manage:::drop-a-collection]
+=== Drop a Collection
+
+.Drop a Collection
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="scopes-manage-drop-collection", indent=0]
+Collection collection = db.getCollection(collectionName, scopeName);
+if (collection != null) { db.deleteCollection(collection.getName(), collection.getScope().getName()); }
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+NOTE: There is no need to drop a user-defined scope.
+User-defined scopes are dropped when the collections associated with them contain no documents.
+
+[discrete#java:scopes-collections-manage:::list-scopes-and-collections]
+=== List Scopes and Collections
+
+.List Scopes and Collections
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="scopes-manage-list", indent=0]
+final Set<Scope> scopes = db.getScopes();
+for (Scope scope: scopes) {
+    Logger.log("Scope :: " + scope.getName());
+    final Set<Collection> collections = scope.getCollections();
+    for (Collection collection: collections) {
+        Logger.log("    Collection :: " + collection.getName());
+    }
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+

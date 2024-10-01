@@ -1,18 +1,638 @@
-= {sqlpp} for Mobile -- Differences from {sqlpp} for Server
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
+:docname: query-n1ql-mobile-server-diffs
+:page-module: java
+:page-relative-src-path: query-n1ql-mobile-server-diffs.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#java:query-n1ql-mobile-server-diffs:::]
+=== SQL++ Server Differences
 :page-role:
 :keywords: sql, n1ql
 :description: {sqlpp} differences between Couchbase Server and Couchbase Lite
 
-include::partial$_set_page_context_for_java.adoc[]
-
-:param-related: {querybuilder--xref--predictive-query} | {query-live--xref} | {indexing--xref}
-:topic-group: Topic Group -- Querying
-include::{root-partials}_show_page_header_block.adoc[]
 
 
-include::{root-commons}query-n1ql-mobile-server-diffs.adoc[subs="macros,attributes"]
+
+// BEGIN -- _define_module_attributes.adoc -- Java
+//
+// Definition:
+//    Objective: This adoc defines values for attributes specific to pages within this module (Java)
+//    Invoked-by: ROOT:_partials/_std_cbl_hdr.adoc (from within module/_partials/_set_page_context_for_java.adoc)
+//    Parameters: none
+// End Definition:
 
 
-include::{root-partials}block-related-content-data.adoc[]
+// BEGIN -- module page attributes
+// Begin workaround for 2.8.1 mis-release, to avoid unnecessary install of 2.8.0
+// SET full maintenance version number
+
+// VECTOR SEARCH attributes
+
+// End workaround
+// :snippet-p2psync-ws: {snippets-p2psync-ws--java}
+// END -- module page attributes
+
+
+// BEGIN -- Define API References for this module
+//  These attributes s
+//:url-api-references-structs: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Structs
+// :url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Classes
+
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DatabaseConfiguration
+
+
+//Database.SAVE
+
+
+
+//Database.DELETE()
+
+
+
+
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#compact--[Database.compact()]
+// was copy-java.io.File-java.lang.String-com.couchbase.lite.DatabaseConfiguration-[Database.copy()]
+
+
+
+
+
+// links for documents pages
+
+
+// :url-api-class-dictionary: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Dictionary.html[property accessors]
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+// Expression class and methods
+
+
+// ArrayFunction class and methods
+// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/ArrayFunction.html
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+
+// orderby class and methods
+//
+
+// GroupBy class and methods
+//
+
+// Endpoints
+
+
+
+
+
+
+
+
+// https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/URLEndpointListenerConfiguration.html#setPort-int-
+
+
+
+
+
+
+
+// diag: Env+Module java
+
+
+
+
+// Authenticators
+
+
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Replicator.html#s:18CouchbaseLiteandroid10ReplicatorC13ActivityLevelO
+
+
+// ReplicatorStatus
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+
+// replaced
+// replaced
+// replaces ^^
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+
+
+
+
+
+
+
+
+// Meta API
+
+
+// END -- Define API References for this module
+
+// diag: Env+Module java
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Logging.html[Logging classes]
+
+
+
+
+
+
+// END  Logs and logging references
+
+
+
+
+
+
+
+// END -- _define_module_attributes.adoc -- Java
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--java}
+
+// END::Local page attributes
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:java:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:java:query-live.adoc[Live Queries] | xref:java:indexing.adoc[Indexing]
+--
+
+
+// :description: A comparison between {sqlpp} for Mobil and {sqlpp} for Server.
+// :page-edition: Enterprise Edition
+//
+// // BEGIN::REQUIRED EXTERNALS
+// :this-module: {par-module}
+// :this-lang-title: {par-lang-title}
+// :this-packageNm: {par-packageNm}
+// :this-source-language: {par-source-language}
+// :snippet: {par-snippet}
+//:this-url-issues: {par-url-issues}
+// END::REQUIRED EXTERNALS
+
+
+[IMPORTANT]
+--
+N1QL is Couchbase's implementation of the developing *{sqlpp}* standard.
+As such the terms _N1QL_ and _{sqlpp}_ are used interchangeably in Couchbase documentation unless explicitly stated otherwise.
+--
+
+
+// == Introduction
+
+There are several minor but notable behavior differences between _{sqlpp} for Mobile_ queries and _{sqlpp} for Server_, as shown in  <<java:query-n1ql-mobile-server-diffs:::tbl-diffs>>.
+
+In some instances, if required, you can force {sqlpp} for Mobile to work in the same way as {sqlpp} for Server.
+This table compares Couchbase Server and Mobile instances:
+
+.{sqlpp} Query Comparison
+[#java:query-n1ql-mobile-server-diffs:::tbl-diffs, cols="^1,2a,2a, options="header"]
+|===
+
+|
+2+^h|{sqlpp} Comparison
+
+h| Feature
+h| {sqlpp} for Couchbase Server
+h| {sqlpp} for Mobile
+
+| Scopes and Collections
+| SELECT * +
+FROM \`travel-sample`.inventory.airport
+| SELECT * +
+FROM inventory.airport
+
+| Scopes and Collections
+| SELECT * +
+FROM \`travel-sample`.inventory.airport
+| SELECT * +
+FROM inventory.airport
+
+| USE KEYS
+| SELECT fname, email FROM tutorial USE KEYS ["dave", "ian"];
+| SELECT fname, email FROM tutorial WHERE meta().id IN ("dave", "ian");
+
+| ON KEYS
+| SELECT * +
+FROM \`user` u +
+JOIN orders o ON KEYS ARRAY s.order_id +
+FOR s IN u.order_history END;
+| SELECT * FROM user u, u.order_history s +
+JOIN orders o ON s.order_id = meta(o).id;
+
+| ON KEY
+| SELECT * +
+FROM \`user` u
+JOIN orders o ON KEY o.user_id FOR u;
+| SELECT * FROM user u +
+JOIN orders o ON meta(u).id = o.user_id;
+
+| NEST
+| SELECT * +
+FROM \`user` u
+NEST orders orders
+ON KEYS ARRAY s.order_id FOR s IN u.order_history END;
+| NEST/UNNEST not supported
+
+| LEFT OUTER NEST
+| SELECT * FROM user u +
+LEFT OUTER NEST orders orders +
+ON KEYS ARRAY s.order_id FOR s IN u.order_history END;
+| NEST/UNNEST not supported
+
+| ARRAY
+| ARRAY i FOR i IN [1, 2] END
+| (SELECT VALUE i FROM [1, 2] AS i)
+
+| ARRAY FIRST
+| ARRAY FIRST arr
+| arr[0]
+
+| LIMIT l OFFSET o
+| Allows OFFSET without LIMIT
+| Allows OFFSET without LIMIT
+
+| UNION, INTERSECT, and EXCEPT
+| All three are supported (with ALL and DISTINCT variants)
+| Not supported
+
+| OUTER JOIN
+| Both LEFT and RIGHT OUTER JOIN supported
+| Only LEFT OUTER JOIN supported (and necessary for query expressability)
+
+| <, \<=, =, etc. operators
+| Can compare either complex values or scalar values
+| Only scalar values may be compared
+
+| ORDER BY
+|Result sequencing is based on specific rules described in xref:server:n1ql:n1ql-language-reference/orderby.adoc[{sqlpp} (server) OrderBy clause]
+|Result sequencing is based on the SQLite ordering described in https://sqlite.org/lang_select.html[SQLite select overview]
+
+The ordering of _Dictionary_ and _Array_ objects is based on binary ordering.
+
+
+| SELECT DISTINCT
+| Supported
+| SELECT DISTINCT VALUE is supported when the returned values are scalars
+
+| CREATE INDEX
+| Supported
+| Not Supported
+
+| INSERT/UPSERT/DELETE
+| Supported
+| Not Supported
+|===
+
+[discrete#java:query-n1ql-mobile-server-diffs:::boolean-logic-rules]
+==== Boolean Logic Rules
+
+[,cols="1a,1a", options="header"]
+|===
+^| {sqlpp} for Couchbase Server ^| {sqlpp} for Mobile
+
+
+|Couchbase Server operates in the same way as Couchbase Lite, except:
+
+* MISSING, NULL and FALSE are FALSE
+* Numbers 0 is FALSE
+* Empty strings, arrays, and objects are FALSE
+* All other values are TRUE
+
+You can choose to use _Couchbase Server's {sqlpp} rules_ by using the `TOBOOLEAN(expr)` function to convert a value to its boolean value.
+
+|{sqlpp} for Mobile's boolean logic rules are based on SQLite’s, so:
+
+* TRUE is TRUE, and FALSE is FALSE
+* Numbers 0 or 0.0 are FALSE
+* Arrays and dictionaries are FALSE
+* String and Blob are TRUE if the values are casted as a non-zero or FALSE if the values are casted as 0 or 0.0 -- see: https://sqlite.org/lang_expr.html[SQLITE’s CAST and Boolean expressions]^ for more details)
+* NULL is FALSE
+* MISSING is MISSING
+
+|===
+
+
+[discrete#java:query-n1ql-mobile-server-diffs:::logical-operations]
+===== Logical Operations
+
+In {sqlpp} for Mobile logical operations will return one of three possible values; `TRUE`, `FALSE`, or `MISSING`.
+
+Logical operations with the `MISSING` value could result in `TRUE` or `FALSE` if the result can be determined regardless of the missing value, otherwise the result will be `MISSING`.
+
+In {sqlpp} for Mobile -- unlike {sqlpp} for Server -- `NULL` is implicitly converted to `FALSE` before evaluating logical operations.
+<<java:query-n1ql-mobile-server-diffs:::tbl-logops>> summarizes the result of logical operations with different operand values and also shows where the Couchbase Server behavior differs.
+
+.Logical Operations Comparison
+[#java:query-n1ql-mobile-server-diffs:::tbl-logops, cols="^1m,^1m,^1m,^1m,^1m,^1m,^1m", options-"header"]
+|===
+
+.2+.>h| Operand +
+a
+3+h| {sqlpp} for Mobile
+3+h| {sqlpp} for Server
+
+h| b
+h| a AND b
+h| a OR b
+h| b
+h| a AND b
+h| a OR b
+
+.4+| TRUE
+| TRUE
+| TRUE
+| TRUE
+// | TRUE
+// | TRUE
+// | TRUE
+|-|-|-
+
+| FALSE
+| FALSE
+| TRUE
+|-|-|-
+// | FALSE
+// | FALSE
+// | TRUE
+
+| NULL
+| FALSE
+| TRUE
+|-
+// | NULL
+| *NULL*
+|-
+// | TRUE
+
+| MISSING
+| MISSING
+| TRUE
+|-|-|-
+// | MISSING
+// | MISSING
+// | TRUE
+
+.4+| FALSE
+| TRUE
+| FALSE
+| TRUE
+|-|-|-
+// | TRUE
+// | FALSE
+// | TRUE
+
+| FALSE
+| FALSE
+| FALSE
+|-|-|-
+// | FALSE
+// | FALSE
+// | FALSE
+
+| NULL
+| FALSE
+| FALSE
+|-|-
+// | NULL
+// | FALSE
+| *NULL*
+
+| MISSING
+| FALSE
+| MISSING
+|-|-|-
+// | MISSING
+// | FALSE
+// | MISSING
+
+.4+| NULL
+| TRUE
+| FALSE
+| TRUE
+// | TRUE
+|-
+| *NULL*
+|-
+// | TRUE
+
+| FALSE
+| FALSE
+| FALSE
+| -
+| -
+// | FALSE
+// | FALSE
+| *NULL*
+
+| NULL
+| FALSE
+| FALSE
+// | NULL
+| -
+| *NULL*
+| *NULL*
+
+| MISSING
+| FALSE
+| MISSING
+| -
+// | MISSING
+| *MISSING*
+| *NULL*
+
+.4+|MISSING
+| TRUE
+| MISSING
+| TRUE
+|-|-|-
+// | TRUE
+// | MISSING
+// | TRUE
+
+| FALSE
+| FALSE
+| MISSING
+|-|-|-
+// | FALSE
+// | FALSE
+// | MISSING
+
+| NULL
+| FALSE
+| MISSING
+// | NULL
+|-
+| *MISSING*
+| *NULL*
+
+| MISSING
+| MISSING
+| MISSING
+|-|-|-
+// | MISSING
+// | MISSING
+// | MISSING
+
+
+|===
+
+[discrete#java:query-n1ql-mobile-server-diffs:::crud-operations]
+==== CRUD Operations
+{sqlpp} for Mobile only supports Read or Query operations.
+
+{sqlpp} for Server fully supports CRUD operation.
+
+[discrete#java:query-n1ql-mobile-server-diffs:::functions]
+==== Functions
+
+[discrete#java:query-n1ql-mobile-server-diffs:::division-operator]
+===== Division Operator
+
+[,colse="1a,1a", options="header"]
+|===
+^| {sqlpp} for Server ^| {sqlpp} for Mobile
+
+| {sqlpp} for Server always performs float division regardless of the types of the operands.
+
+You can force this behavior in {sqlpp} for Mobile by using the `DIV(x, y)` function.
+
+|The operand types determine the
+ division operation performed. +
+If both are integers, integer division is used. +
+If one is a floating number, then float division is used.
+
+|===
+
+[discrete#java:query-n1ql-mobile-server-diffs:::round-function]
+===== Round Function
+[,cols="1a,1a", options="header"]
+|===
+^| {sqlpp} for Server ^| {sqlpp} for Mobile
+
+| {sqlpp} for Server `ROUND()` uses the _Rounding to Nearest Even_ convention (for example, `ROUND(1.85)` returns 1.8).
+
+You can force this behavior in Couchbase Lite by using the `ROUND_EVEN()` function.
+
+| The `ROUND()` function returns a value to the given number of integer digits to the right of the decimal point (left if digits is negative).
+
+* Digits are 0 if not given.
+* Midpoint values are handled using the _Rounding Away From Zero_ convention, which rounds them to the next number away from zero (for example, `ROUND(1.85)` returns 1.9).
+
+|===
+
+
+
+// END --- inclusion -- common-query-{sqlpp}-mobile.adoc
+
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+[discrete#java:query-n1ql-mobile-server-diffs:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:java:gs-prereqs.adoc[Prerequisites]
+* xref:java:gs-install.adoc[Install]
+* xref:java:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#java:query-n1ql-mobile-server-diffs:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:java:database.adoc[Databases]
+* xref:java:document.adoc[Documents]
+* xref:java:blob.adoc[Blobs]
+* xref:java:replication.adoc[Remote Sync Gateway]
+* xref:java:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#java:query-n1ql-mobile-server-diffs:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+

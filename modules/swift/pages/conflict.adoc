@@ -1,11 +1,628 @@
-= Handling Data Conflicts
+:docname: conflict
+:page-module: swift
+:page-relative-src-path: conflict.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#swift:conflict:::]
+== Handling Data Conflicts
 :page-aliases: learn/swift-conflict.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite Database Sync -- Handling conflict between data changes
 
-include::partial$_set_page_context_for_swift.adoc[]
 
-include::{root-commons}conflict.adoc[subs="macros,attributes"]
+
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+// BEGIN::module page attributes
+//
+// CBL-Swift Maintenance release number
+//
+
+// VECTOR SEARCH attributes
+//
+
+
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+// API Reference Links
+//
+//
+
+
+
+
+// Supporting Data Type Classes
+
+
+// DATABASE CLASSES
+
+
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+
+
+
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC7compactyyKF[Database.compact()]
+
+
+
+
+
+
+
+
+// links for documents pages
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Query class and methods
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/[Query Class index]
+
+
+
+// ArrayFunction class and methods
+
+
+// API Results Class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+
+// orderby class and methods
+//
+
+// GroupBy class and methods
+//
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module swift
+
+
+
+
+// Replicator API
+
+
+
+
+[Replicator.pendingDocumentIds()]
+
+
+
+// Replicator Status
+
+
+
+// :url-api-enum-replicator-status: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html[Status struct]
+// :url-api-enum-replicator-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/ActivityLevel.html[ActivityLevel enum]
+// :url-api-enum-replicator-progress: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Progress.html[Progress struct]
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC33serverCertificateVerificationModeAA06ServerghI0Ovp[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Metadata API
+
+
+
+// BEGIN Logs and logging references
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--swift}
+
+// END::Local page attributes
+
+// BEGIN -- inclusion -- common-conflict.adoc
+//  Location: ROOT:partial$commons/common-
+//  Params:
+//    :no-footer: define to suppress output of the
+//                related content footer when not using tags
+//  Used-by:  swift-conflict.adoc files
+
+
+// // DO NOT EDIT
+[abstract]
+--
+Description -- _{description}_ +
+--
+// DO NOT EDIT
+
+[discrete#swift:conflict:::causes-of-conflicts]
+=== Causes of Conflicts
+
+Document conflicts can occur if multiple changes are made to the same version of a document by multiple peers in a distributed system. For Couchbase Mobile, this can be a Couchbase Lite or Sync Gateway database instance.
+
+Such conflicts can occur after either of the following events:
+
+* *A replication saves a document change* -- in which case the change with the _most-revisions wins_ (unless one change is a delete). See the example <<swift:conflict:::lbl-conflicts-when-replicating,Case 1: Conflicts when a replication is in progress>>
+* *An application saves a document change directly to a database instance* -- in which case, _last write wins_, unless one change is a delete -- see <<swift:conflict:::conflicts-when-saving,Case 2: Conflicts when saving a document>>
+
+NOTE: *_Deletes_ always win.* So, in either of the above cases, if one of the changes was a _Delete_ then that change wins.
+
+The following sections discuss each scenario in more detail.
+
+[TIP]
+.Dive deeper ...
+Read more about link:https://blog.couchbase.com//document-conflicts-couchbase-mobile[Document Conflicts and Automatic Conflict Resolution in Couchbase Mobile].
+
+[discrete#swift:conflict:::lbl-conflicts-when-replicating]
+=== Conflicts when Replicating
+
+There's no practical way to prevent a conflict when incompatible changes to a document are be made in multiple instances of an app.
+The conflict is realized only when replication propagates the incompatible changes to each other.
+anchor:bmkRepConScene[A typical replication conflict scenario]
+
+.A typical cause of replication conflicts:
+====
+. Molly uses her device to create _DocumentA_.
+. Replication syncs _DocumentA_ to Naomi's device.
+. Molly uses her device to apply _ChangeX_ to _DocumentA_.
+. Naomi uses her device to make a different change, _ChangeY_, to _DocumentA_.
+. Replication syncs _ChangeY_ to Molly's device.
++
+This device already has _ChangeX_ putting the local document in conflict.
+. Replication syncs _ChangeX_ to Naomi's device.
++
+This device already has _ChangeY_ and now Naomi's local document is in conflict.
+====
+
+[discrete#swift:conflict:::automatic-conflict-resolution]
+==== Automatic Conflict Resolution
+
+NOTE: The rules only apply to conflicts caused by replication.
+Conflict resolution takes place exclusively during pull replication, while push replication remains unaffected.
+
+Couchbase Lite uses the following rules to handle conflicts such as those described in <<swift:conflict:::bmkRepConScene>>:
+
+* If one of the changes is a deletion:
++
+A deleted document (that is, a _tombstone_) always wins over a document update.
+* If both changes are document changes:
++
+The change with the most revisions will win.
++
+Since each change creates a revision with an ID prefixed by an incremented version number, the winner is the change with the highest version number.
+
+The result is saved internally by the Couchbase Lite replicator.
+Those rules describe the internal behavior of the replicator.
+For additional control over the handling of conflicts, including when a replication is in progress, see <<swift:conflict:::custom-conflict-resolution>>.
+
+[discrete#swift:conflict:::custom-conflict-resolution]
+==== Custom Conflict Resolution
+
+Starting in Couchbase Lite 2.6, application developers who want more control over how document conflicts are handled can use custom logic to select the winner between conflicting revisions of a document.
+
+If a custom conflict resolver is not provided, the system will automatically resolve conflicts as discussed in <<swift:conflict:::automatic-conflict-resolution,Automatic Conflict Resolution>>, and as a consequence there will be no conflicting revisions in the database.
+
+CAUTION: While this is true of any user defined functions, app developers must be strongly cautioned against writing sub-optimal custom conflict handlers that are time consuming and could slow down the client's save operations.
+
+To implement custom conflict resolution during replication, you must implement the following steps.
+
+. <<swift:conflict:::conflict-resolver,Conflict Resolver>>
+. <<swift:conflict:::configure-the-replicator,Configure the Replicator>>
+
+[discrete#swift:conflict:::conflict-resolver]
+==== Conflict Resolver
+
+Apps have the following strategies for resolving conflicts:
+
+- *Local Wins:* The current revision in the database wins.
+- *Remote Wins:* The revision pulled from the remote endpoint through replication wins.
+- *Merge:* Merge the content bodies of the conflicting revisions.
+
+// tag::handling-conflicts-conflict-resolvers[]
+.Using conflict resolvers
+====
+// :is-android:
+
+[{tabs}]
+=====
+[#swift:conflict:::tabs-1-local-wins]
+Local Wins::
++
+--
+
+[source, swift]
+----
+
+class LocalWinConflictResolver: ConflictResolverProtocol {
+    func resolve(conflict: Conflict) -> Document? {
+        return conflict.localDocument
+    }
+}
+
+----
+--
+
+[#swift:conflict:::tabs-1-remote-wins]
+Remote Wins::
++
+--
+
+[source, swift]
+----
+
+class RemoteWinConflictResolver: ConflictResolverProtocol {
+    func resolve(conflict: Conflict) -> Document? {
+        return conflict.remoteDocument
+    }
+}
+
+----
+
+--
+
+[#swift:conflict:::tabs-1-merge]
+Merge::
++
+--
+
+[source, swift]
+----
+
+class MergeConflictResolver: ConflictResolverProtocol {
+    func resolve(conflict: Conflict) -> Document? {
+        let localDict = conflict.localDocument!.toDictionary()
+        let remoteDict = conflict.remoteDocument!.toDictionary()
+        let result = localDict.merging(remoteDict) { (current, new) -> Any in
+            return current // return current value in case of duplicate keys
+        }
+        return MutableDocument(id: conflict.documentID, data: result)
+    }
+}
+
+----
+
+--
+=====
+
+====
+// end::handling-conflicts-conflict-resolvers[]
+
+When a null document is returned by the resolver, the conflict will be resolved as a document deletion.
+
+
+[discrete#swift:conflict:::important-guidelines-and-best-practices]
+==== Important Guidelines and Best Practices
+
+.Points of Note:
+* If you have multiple replicators, it is recommended that instead of distinct resolvers, you should use a unified conflict resolver across all replicators.
+Failure to do so could potentially lead to data loss under exception cases or if the app is terminated (by the user or an app crash) while there are pending conflicts.
+* If the document ID of the document returned by the resolver does not correspond to the document that is in conflict then the replicator will log a warning message.
++
+IMPORTANT: Developers are encouraged to review the warnings and fix the resolver to return a valid document ID.
+
+* If a document from a different database is returned, the replicator will treat it as an error.
+A <<swift:conflict:::replication-events,document replication event>> will be posted with an error and an error message will be logged.
++
+IMPORTANT: Apps are encouraged to observe such errors and take appropriate measures to fix the resolver function.
+
+* When the replicator is stopped, the system will attempt to resolve outstanding and pending conflicts before stopping.
+Hence apps should expect to see some delay when attempting to stop the replicator depending on the number of outstanding documents in the replication queue and the complexity of the resolver function.
+* If there is an exception thrown in the `resolve()` method, the exception will be caught and handled:
+** The conflict to resolve will be skipped.
+// TODO: regarding the following point, does that mean the replicator is stopped when an exception is thrown?
+The pending conflicted documents will be resolved when the replicator is restarted.
+** The exception will be reported in the warning logs.
+** The exception will be reported in the <<swift:conflict:::replication-events,document replication event>>.
++
+IMPORTANT: While the system will handle exceptions in the manner specified above, it is strongly encouraged for the resolver function to catch exceptions and handle them in a way appropriate to their needs.
+
+[discrete#swift:conflict:::configure-the-replicator]
+==== Configure the Replicator
+
+The implemented custom conflict resolver can be registered on the replicator configuration object.
+The default value of the conflictResolver is `null`.
+When the value is `null`, the default conflict resolution will be applied.
+
+.A Conflict Resolver
+[#wx-conflict-resolver]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#swift:conflict:::wx-conflict-resolver]
+====
+
+
+// Show Main Snippet
+[source, swift]
+----
+include ::swift:example$code_snippets/SampleCodeTest.swift[tags="replication-conflict-resolver", indent=0]
+let url = URL(string: "wss://localhost:4984/mydatabase")!
+let target = URLEndpoint(url: url)
+
+var config = ReplicatorConfiguration(target: target)
+var colConfig = CollectionConfiguration()
+colConfig.conflictResolver = LocalWinConflictResolver()
+config.addCollection(collection, config: colConfig)
+
+self.replicator = Replicator(config: config)
+self.replicator.start()
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#swift:conflict:::conflicts-when-saving]
+=== Conflicts when Updating
+
+
+When updating a document, you need to consider the possibility of update conflicts.
+Update conflicts can occur when you try to update a document that’s been updated since you read it.
+
+
+.How Updating May Cause Conflicts
+====
+Here's a typical sequence of events that would create an update conflict:
+
+. Your code reads the document's current properties, and constructs a modified copy to save.
+. Another thread (perhaps the replicator) updates the document, creating a new revision with different properties.
+. Your code updates the document with its modified properties, for example using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC12saveDocumentyyAA07MutableF0CKF[Database.saveDocument(_:)].
+====
+
+[discrete#swift:conflict:::automatic-conflict-resolution-2]
+==== Automatic Conflict Resolution
+
+In Couchbase Lite, by default, the conflict is automatically resolved and only one document update is stored in the database.
+The Last-Write-Win (LWW) algorithm is used to pick the winning update.
+So in effect, the changes from step 2 would be overwritten and lost.
+
+If the probability of update conflicts is high in your app and you wish to avoid the possibility of overwritten data, the `save` and `delete` APIs provide additional method signatures with concurrency control:
+
+.Currency Control Signatures
+====
+Save operations::
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC12saveDocument_18concurrencyControlSbAA07MutableF0C_AA011ConcurrencyH0OtKF[Database.saveDocument(_:concurencyControl:)] -- attempts to save the document with a concurrency control.
++
+The concurrency control parameter has two possible values:
+
+* `lastWriteWins` (default): The last operation wins if there is a conflict.
+* `failOnConflict`: The operation will fail if there is a conflict.
++
+In this case, the app can detect the error that is being thrown, and handle it by re-reading the document, making the necessary conflict resolution, then trying again.
+
+Delete operations::
+As with save operations, delete operation also have two method signatures, which specify how to handle a possible conflict:
+
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8Databases:18CouchbaseLiteSwift8DatabaseC14deleteDocumentyyAA0F0CKF[Database.deleteDocument(_:)]: The last write will win if there is a conflict.
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8Databases:18CouchbaseLiteSwift8DatabaseC14deleteDocument_18concurrencyControlSbAA0F0C_AA011ConcurrencyH0OtKF[Database.deleteDocument(_:concurrencyControl:)]: attempts to delete the document with a concurrency control.
+
++
+The concurrency control parameter has two possible values:
+** `lastWriteWins` (default): The last operation wins if there is a conflict.
+** `failOnConflict`: The operation will fail if there is a conflict.
+In this case, the app can detect the error that is being thrown, and handle it by re-reading the document, making the necessary conflict resolution, then trying again.
+====
+
+[discrete#swift:conflict:::custom-conflict-handlers]
+==== Custom Conflict Handlers
+// :no-footer:
+Developers can hook a conflict handler when saving a document so they can easily handle the conflict in a single save method call.
+
+To implement custom conflict resolution when saving a document, apps must call the `save` method with a conflict handler block ( https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Database.html#/C12saveDocument_15conflictHandlerSbAA07MutableF0C_SbAG_AA0F0CSgtctKF[Database.saveDocument(_:conflictHandler:)]).
+
+// tag::handling-conflicts-custom-merge[]
+The following code snippet shows an example of merging properties from the existing document (`current`) into the one being saved (`new`).
+In the event of conflicting keys, it will pick the key value from `new`.
+
+.Merging document properties
+[#ex-merge-props]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#swift:conflict:::ex-merge-props]
+====
+
+
+// Show Main Snippet
+[source, swift]
+----
+include ::swift:example$code_snippets/SampleCodeTest.swift[tags="update-document-with-conflict-handler", indent=0]
+guard let document = try collection.document(id: "xyz") else { return }
+let mutableDocument = document.toMutable()
+mutableDocument.setString("apples", forKey: "name")
+let success = try collection.save(document:mutableDocument, conflictHandler: { (new, current) -> Bool in
+    let currentDict = current!.toDictionary()
+    let newDict = new.toDictionary()
+    let result = newDict.merging(currentDict, uniquingKeysWith: { (first, _) in first })
+    new.setData(result)
+    return true
+})
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+
+
+// end::handling-conflicts-custom-merge[]
+
+// DO NOT EDIT OR REMOVE
+// inclusion
+//:param-how: //:param-reference: reference-deploy
+
+
+
+
+[discrete#swift:conflict:::related-content]
+=== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+==== {empty}
+.How to
+* xref:swift:p2psync-websocket-using-passive.adoc[Passive Peer]
+* xref:swift:p2psync-websocket-using-active.adoc[Active Peer]
+
+
+.
+
+[discrete.colum#swift:conflict:::-2n]
+==== {empty}
+.Concepts
+* xref:swift:landing-p2psync.adoc[Peer-to-Peer Sync]
+
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift[API References]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#swift:conflict:::-3]
+==== {empty}
+.Community Resources ...
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Getting Started with Peer-to-Peer Synchronization]
+
+
+
+
+++++
+</div>
+++++
+// DO NOT EDIT OR REMOVE
+// END -- inclusion -- common-conflict.adoc
+
+
+== https://docs.couchbase.com/mobile/3.2.0/couchbase-lite-swift/index.html[API&#160;References]
 

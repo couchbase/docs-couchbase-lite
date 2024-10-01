@@ -1,11 +1,582 @@
-= Upgrade
+:docname: upgrade
+:page-module: java
+:page-relative-src-path: upgrade.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#java:upgrade:::]
+== Upgrade
 :page-aliases: advance/java-dep-upgrade.adoc, dep-upgrade.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description:
 
-include::partial$_set_page_context_for_java.adoc[]
 
 
-include::{root-commons}upgrade.adoc[]
+
+// BEGIN -- _define_module_attributes.adoc -- Java
+//
+// Definition:
+//    Objective: This adoc defines values for attributes specific to pages within this module (Java)
+//    Invoked-by: ROOT:_partials/_std_cbl_hdr.adoc (from within module/_partials/_set_page_context_for_java.adoc)
+//    Parameters: none
+// End Definition:
+
+
+// BEGIN -- module page attributes
+// Begin workaround for 2.8.1 mis-release, to avoid unnecessary install of 2.8.0
+// SET full maintenance version number
+
+// VECTOR SEARCH attributes
+
+// End workaround
+// :snippet-p2psync-ws: {snippets-p2psync-ws--java}
+// END -- module page attributes
+
+
+// BEGIN -- Define API References for this module
+//  These attributes s
+//:url-api-references-structs: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Structs
+// :url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Classes
+
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DatabaseConfiguration
+
+
+//Database.SAVE
+
+
+
+//Database.DELETE()
+
+
+
+
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#compact--[Database.compact()]
+// was copy-java.io.File-java.lang.String-com.couchbase.lite.DatabaseConfiguration-[Database.copy()]
+
+
+
+
+
+// links for documents pages
+
+
+// :url-api-class-dictionary: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Dictionary.html[property accessors]
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+// Expression class and methods
+
+
+// ArrayFunction class and methods
+// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/ArrayFunction.html
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+
+// orderby class and methods
+//
+
+// GroupBy class and methods
+//
+
+// Endpoints
+
+
+
+
+
+
+
+
+// https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/URLEndpointListenerConfiguration.html#setPort-int-
+
+
+
+
+
+
+
+// diag: Env+Module java
+
+
+
+
+// Authenticators
+
+
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Replicator.html#s:18CouchbaseLiteandroid10ReplicatorC13ActivityLevelO
+
+
+// ReplicatorStatus
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+
+// replaced
+// replaced
+// replaces ^^
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+
+
+
+
+
+
+
+
+// Meta API
+
+
+// END -- Define API References for this module
+
+// diag: Env+Module java
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Logging.html[Logging classes]
+
+
+
+
+
+
+// END  Logs and logging references
+
+
+
+
+
+
+
+// END -- _define_module_attributes.adoc -- Java
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--java}
+
+// END::Local page attributes
+
+
+
+[IMPORTANT]
+--
+On upgrading from a 2.x release, all Couchbase Lite databases will be automatically re-indexed on initial database open. +
+This can result in a delay before the database is usable.
+--
+
+
+[discrete#java:upgrade:::3-2-0-upgrade]
+=== {major}.{minor}.{base}{empty} Upgrade
+
+NOTE: This upgrade requires all 2.x databases be reindexed on initial open.
+
+The action will take place automatically and can lead to some delay in the database becoming available for use in your application.
+
+In addition, if you are syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
+This is a one-way conversion.
+
+[discrete#java:upgrade:::api-changes]
+==== API Changes
+
+
+
+This content introduces the changes made to the pass:q,a[pass:q,a[Couchbase{nbsp}Lite]] for Java API for release {major}.{minor}.{base}{empty}.
+
+[discrete#java:upgrade:::removed]
+===== Removed
+
+[discrete#java:upgrade:::resetcheckpoint]
+====== ResetCheckpoint
+
+The method https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.html#resetCheckpoint--[Replicator.resetCheckpoint()] method has been removed. +
+Instead, use https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.html#start-boolean-[Replicator.resetCheckpoint(boolean reset)].
+
+.Before
+[pass:q,a[source, Java,subs="attributes+, macros+"]]
+----
+replicator.resetCheckpoint()
+replicator.start()
+----
+
+.After
+[pass:q,a[source, Java,subs="attributes+, macros+"]]
+----
+replicator.start(true)
+----
+
+[discrete#java:upgrade:::database-setloglevel]
+====== Database.setLogLevel
+
+The method https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/Database.html#setLogLevel-com.couchbase.lite.LogDomain-com.couchbase.lite.LogLevel-[Database.setLogLevel()]
+has been removed. +
+Instead:
+
+. Set the logging levels for loggers, individually
+. Set the domains to be logged by the console logger, explicitly.
+
+.Before
+[pass:q,a[source, Java,subs="attributes+, macros+"]]
+----
+Database.setLogLevel(LogDomain.ALL, LogLevel.VERBOSE)
+
+----
+
+.After
+[pass:q,a[source, Java,subs="attributes+, macros+"]]
+----
+Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS)
+Database.log.getConsole().setLevel(LogLevel.VERBOSE)
+Database.log.getFile().setDomains(LogLevel.DEBUG)
+----
+
+[discrete#java:upgrade:::database-compact]
+====== Database.compact
+The https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/Database.html#compact--[Database.compact()] method has been removed. +
+It is replaced by the new https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance(MaintenanceType)] method, and the maintenance operations represented in the enum https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/MaintenanceType.html[MaintenanceType]
+
+.Before
+[pass:q,a[source, Java,subs="attributes+, macros+"]]
+----
+try testdb.compact()
+
+----
+
+.After
+[pass:q,a[source, Java,subs="attributes+, macros+"]]
+----
+testdb.performMaintenance(MaintenanceType.COMPACT)
+----
+
+
+[discrete#java:upgrade:::deprecated-in-the-api]
+===== Deprecated in the API
+
+[discrete#java:upgrade:::match]
+====== MATCH
+The class, https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/FullTextExpression.html[FullTextExpression]
+has been deprecated. +
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/FullTextFunction.html[FullTextFunction] instead.
+
+.Before
+[pass:q,a[source, Java,subs="attributes+, macros+"]]
+----
+FullTextExpression index = FullTextExpression.index("indexName")
+Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
+  .from(DataSource.database(testdb))
+  .where(index.match(queryString))
+
+----
+
+.After
+[pass:q,a[source, Java,subs="attributes+, macros+"]]
+----
+Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
+  .from(DataSource.database(testdb))
+  .where(FullTextFunction.match("indexName", queryString))
+
+----
+
+[discrete#java:upgrade:::isnullormissingnotnullormissing]
+====== isNullOrMissing/notNullOrMissing
+
+The functions https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/Expression.html#isNullOrMissing--[Expression.isNullOrMissing] and https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/Expression.html#notNullOrMissing--[Expression.notNullOrMissing] have been deprecated. +
+Use `isNotValued()` and-or `isValued()` instead.
+
+
+.Before
+[pass:q,a[source, Java,subs="attributes+, macros+"]]
+----
+Query q =
+  QueryBuilder
+    .select([SelectResult.expression(Meta.id)])
+    .from(DataSource.database(testdb))
+    .where(
+      Expression.property("missingProp").isNullOrMissing())
+
+Query q =
+  QueryBuilder
+    .select([SelectResult.expression(Meta.id)])
+    .from(DataSource.database(testdb))
+    .where(Expression.property("notMissingProp").notNullOrMissing())
+
+----
+.After
+[pass:q,a[source, Java,subs="attributes+, macros+"]]
+----
+Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
+  .from(DataSource.database(testdb))
+  .where(Expression.property("missingProp").isNotValued())
+
+Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
+  .from(DataSource.database(testdb))
+  .where(Expression.property("notMissingProp").isValued())
+
+----
+
+
+[discrete#java:upgrade:::abstractreplicatorconfiguration]
+====== AbstractReplicatorConfiguration
+
+The enum https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html#setReplicatorType-com.couchbase.lite.AbstractReplicatorConfiguration.ReplicatorType-[AbstractReplicatorConfiguration.ReplicatorType]
+and the methods
+https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html#setReplicatorType--[
+ReplicatorConfiguration.setReplicatorType]
+and
+https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html#getReplicatorType--[
+ReplicatorConfiguration.getReplicatorType]
+have all been deprecated. +
+Instead, use the methods `ReplicatorConfiguration.setType` and `ReplicatorConfiguration.getType`, and the top level enum `ReplicatorType`.
+
+.Before
+[pass:q,a[source, Java,subs="attributes+, macros+"]]
+----
+ReplicatorConfiguration config =
+  new ReplicatorConfiguration().setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+----
+.After
+[pass:q,a[source, Java,subs="attributes+, macros+"]]
+----
+ReplicatorConfiguration config =
+  new ReplicatorConfiguration().setType(ReplicatorType.PUSH_AND_PULL);
+----
+
+
+[discrete#java:upgrade:::moved-in-the-api]
+===== Moved in the API
+
+The enum https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.ActivityLevel.html[AbstractReplicator.ActivityLevel] and the classes https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.Progress.html[AbstractReplicator.Progress] and https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.Status.html[AbstractReplicator.Status] have all been moved to be top level definitions. +
+They are replaced by these definitions:
+
+* https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorActivityLevel.html[ReplicatorActivityLevel]
+* https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorProgress.html[ReplicatorProgress]
+* https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorStatus.html[ReplicatorStatus]
+
+
+
+.Before
+[pass:q,a[source, Java,subs="attributes+, macros+"]]
+----
+ListenerToken token =
+  replicator.addChangeListener(
+    testSerialExecutor,
+    change -> {
+      final AbstractReplicator.Status status = change.getStatus()
+      if (status.getActivityLevel() == AbstractReplicator.ActivityLevel.BUSY)
+      { AbstractReplicator.Progress progress =
+          status.getProgress(); Logger.log("Progress: " + progress.completed + "/" progress.total);
+      }
+    });
+
+----
+.After
+[pass:q,a[source, Java,subs="attributes+, macros+"]]
+----
+ListenerToken token =
+  replicator.addChangeListener(
+    testSerialExecutor,
+    change -> {
+      final ReplicatorStatus status = change.getStatus()
+      if (status.getActivityLevel() == ReplicatorActivityLevel.BUSY)
+      { ReplicatorProgress progress =
+          status.getProgress(); Logger.log("Progress: " + progress.completed + "/" progress.total);
+      }
+    });
+
+----
+
+
+
+[discrete#java:upgrade:::lbl-db-upgrades]
+=== 1.x Databases Upgrades to 2.x
+
+Databases created using Couchbase Lite 1.2 or later can still be used with Couchbase Lite 2.x; but will be automatically updated to the  current 2.x version.
+This feature is only available for the default storage type (i.e., not a ForestDB database).
+
+[discrete#java:upgrade:::encrypted-databases]
+==== Encrypted Databases
+The automatic migration feature does not support encrypted databases.
+So if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/Java.html#database-encryption[1.x Database Guide]).
+
+Thus, to upgrade an encrypted 1.x database, you should do the following:
+
+// set the correct language name for 1.4 pages
+.Upgrading Encrypted Databases
+****
+. Disable encryption using the Couchbase Lite 1.x framework (see https://docs-archive.couchbase.com/couchbase-lite/1.4/java.html#database-encryption[1.x encryption guide])
+. Open the database file with encryption enabled using the Couchbase Lite 2.x framework.
+****
+
+Since it is not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in the same application this upgrade path would require two successive upgrades.
+
+If you are using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.
+
+
+[discrete#java:upgrade:::handling-of-existing-conflicts]
+==== Handling of Existing Conflicts
+
+If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
+
+This functionality is related to the way conflicts are now being handled in Couchbase Lite -- see xref:java:conflict.adoc[Handling Data Conflicts].
+
+Optionally, existing conflicts in the 1.x database can be resolved with the https://docs-archive.couchbase.com/couchbase-lite/1.4/Java.html#resolving-conflicts[1.x API] prior to the database being upgraded.
+
+[discrete#java:upgrade:::handling-of-existing-attachments]
+==== Handling of Existing Attachments
+
+Attachments persisted in a 1.x database are copied to the new database.
+NOTE: The relevant Couchbase Lite API is now called the `Blob` API not the `Attachments` API.
+
+The functionally is identical but the internal schema for attachments has changed.
+
+Blobs are stored anywhere in the document, just like other value types.
+Whereas in 1.x they were stored under the `_attachments` field.
+
+The automatic upgrade functionality *does not* update the internal schema for attachments, so they remain accessible under the `_attachments` field.
+See <<java:upgrade:::ex-get-att>> for how to retrieve an attachment that was created in a 1.x database with a 2.x API.
+
+.Retrieve 1.x Attachment
+[#ex-get-att]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:upgrade:::ex-get-att]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="1x-attachment", indent=0]
+Dictionary attachments = document.getDictionary("_attachments");
+Blob blob = attachments != null ? attachments.getBlob("avatar") : null;
+byte[] content = blob != null ? blob.getContent() : null;
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+[discrete#java:upgrade:::replication-compatibility]
+==== Replication Compatibility
+
+The current replication protocol is not backwards compatible with the 1.x replication protocol.
+Therefore, to use replication with Couchbase Lite 2.x, the target Sync Gateway instance must also be upgraded to 2.x.
+
+Sync Gateway 2.x will continue to accept clients that connect through the 1.x protocol.
+It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through ws://localhost:4984/db.
+This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
+
+
+[discrete#java:upgrade:::visual-studio]
+=== Visual Studio
+
+The public facing API has completely changed in Couchbase Lite 2.0 and will require a re-write to upgrade an application that is using Couchbase Lite 1.x.
+To update an Xcode project built with Couchbase Lite 1.x:
+
+* Remove the existing Couchbase Lite nuget package from the Visual Studio project.
+* Remove all the Couchbase Lite 1.x dependencies -- see the  https://docs-archive.couchbase.com/couchbase-lite/1.4/csharp.html#getting-started[1.x installation guide].
+* Install the Couchbase Lite 2.0 framework in your project  -- see xref:java:gs-install.adoc[Install].
+At this point, there will be many compiler warnings.
+Refer to the examples on this page to learn about the new API.
+* Build & run your application.
+endif::csharp[]
+ifdef::is-android[]
+== Android Studio
+
+
+The API changed in Couchbase Lite 2.0 and you will need to port any application that is using Couchbase Lite 1.x API to the latest Couchbase Lite API.
+To update an Android project built with Couchbase Lite 1.x:
+
+* Remove the existing Couchbase Lite dependency from the Android Studio project.
+* Install the Couchbase Lite framework in your project -- see the https://docs-archive.couchbase.com/couchbase-lite/1.4/java.html#getting-started[Getting Started].
+At this point, there will be many compiler warnings.
+Refer to the examples on this page to learn about the new API.
+* Build & run your application.
+
+endif::is-android[]
+
+
+
+// DO NOT DELETE
+// Include standard footer
+include::ROOT:partial$block-related-content-std.adoc[]
+// include::ROOT:partial$_unset-platform.adoc[]
+// DO NOT DELETE
+
+
+== Troubleshooting
+

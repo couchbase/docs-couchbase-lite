@@ -1,15 +1,577 @@
-= Couchbase Lite Release Notes
+:docname: releasenotes
+:page-module: objc
+:page-relative-src-path: releasenotes.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#objc:releasenotes:::]
+=== Couchbase Lite Release Notes
 :page-aliases:  product/objc-releasenotes.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite on Objective-C
 :keywords: edge nosql api objc iOS apple macos objecive-c
 
-include::partial$_set_page_context_for_objc.adoc[]
+
+
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+// BEGIN::module page attributes
+
+//
+// CBL-Obj-C Maintenance release number
+//
+:maintenance: 1
+//
+
+// VECTOR SEARCH attributes
+//
+
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+
+// API Reference Links
+//
+//
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DATABASE CLASSES
+
+
+// Docuument Class
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+//Database.SAVE
+
+
+
+//Database.DELETE
+
+
+//Database.COMPACT
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)compact:[CBLDatabase.compact()]
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+
+
+
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/[Query Class index]
+
+
+// ArrayFunction class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLWhere.html
+// NOT SET[Where]
+
+// orderby class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLOrderBy.html
+
+// GroupBy class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLGroupBy.html
+// NOT SET[GroupBy]
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module objc
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+
+// Note there is a replicator.status property AND
+// a ReplicationStatus class/struct --- oh yes, easy to confuse.
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/s:18CouchbaseLiteobjc10ReplicatorC13ActivityLevelO
+
+
+
+
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+
+// Meta API
+
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objcLogging.html[CBLLogging classes]
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--objc}
+// END::Local page attributes
 
 [#maint-latest]
-include::partial$release-notes/couchbase-mobile-objc-release-note.3.2.0.adoc[]
+[discrete#objc:releasenotes:::maint-3-2-0]
+==== 3.2.0 -- August 2024
 
-include::partial$release-notes/couchbase-mobile-objc-release-note.3.2.0-beta.adoc[]
+Version 3.2.0 for Objective-C delivers the following features and enhancements:
+
+[discrete#objc:releasenotes:::couchbase-lite-release-notes]
+==== Couchbase Lite Release Notes
+
+[discrete#objc:releasenotes:::enhancements]
+===== Enhancements
+
+// Lite Core begin
+
+* https://issues.couchbase.com/browse/CBL-5287[CBL-5287 - Enable Prediction Function in SQL++]
+
+* https://issues.couchbase.com/browse/CBL-5634[CBL-5634 - NoRev enhancement with Replacement Rev in pull replication]
+
+* https://issues.couchbase.com/browse/CBL-5687[CBL-5687 - Update replication protocol doc per ReplacementRev changes]
+
+* https://issues.couchbase.com/browse/CBL-4412[CBL-4412 - Enhance checkpoint resolution algorithm when local and remote checkpoint are mismatched]
+
+* https://issues.couchbase.com/browse/CBL-5346[CBL-5346 - Logging Replicator reasons of state change]
+
+* https://issues.couchbase.com/browse/CBL-283[CBL-283 - Support Date Format other than ISO 8601 in SQL++]
+
+* https://issues.couchbase.com/browse/CBL-68[CBL-68 - DATE_DIFF_MILLIS(date1, date2, part)]
+
+* https://issues.couchbase.com/browse/CBL-67[CBL-67 - DATE_ADD_STR(date1, n, part)]
+
+* https://issues.couchbase.com/browse/CBL-66[CBL-66 - DATE_ADD_MILLIS(date1, n, part)]
+
+* https://issues.couchbase.com/browse/CBL-65[CBL-65 - MILLIS_TO_UTC(date1 [, fmt])]
+
+* https://issues.couchbase.com/browse/CBL-64[CBL-64 - MILLIS_TO_TZ(date1, tz [, fmt])]
+
+* https://issues.couchbase.com/browse/CBL-62[CBL-62 - STR_TO_TZ(date1, tz)]
+
+* https://issues.couchbase.com/browse/CBL-61[CBL-61 - MILLIS_TO_STR(date1 [, fmt ])]
+
+* https://issues.couchbase.com/browse/CBL-60[CBL-60 - DATE_DIFF_STR(date1, date2, part)]
+
+* https://issues.couchbase.com/browse/CBL-5241[CBL-5241 - Enhancement to Upsert performance when the number of docs increase]
+
+// Lite Core end
+
+
+* https://issues.couchbase.com/browse/CBL-5265[CBL-5265 - Include Privacy Manifest in the released library]
+
+* https://issues.couchbase.com/browse/CBL-5209[CBL-5209 - Implement Collection's database property]
+
+* https://issues.couchbase.com/browse/CBL-5203[CBL-5203 - Implementation Collection's full-name property]
+
+* https://issues.couchbase.com/browse/CBL-5508[CBL-5508 - Update Min macOS Support Version to 12.0]
+
+* https://issues.couchbase.com/browse/CBL-5487[CBL-5487 - CBL ObjC Framework Warning about Double-quoted include]
+
+* https://issues.couchbase.com/browse/CBL-5374[CBL-5374 - Change all Swift IndexConfiguration from class to struct]
+
+* https://issues.couchbase.com/browse/CBL-5378[CBL-5378 - Update iOS Target Version to 12]
+
+* https://issues.couchbase.com/browse/CBL-5415[CBL-5415 - Remove unneccesary symbols from exp file]
+
+* https://issues.couchbase.com/browse/CBL-60[CBL-60 - Added missing Objective-C symbols to the exp file]
+
+
+
+[discrete#objc:releasenotes:::issues-and-resolutions]
+===== Issues and Resolutions
+
+// Lite Core begin
+
+* https://issues.couchbase.com/browse/CBL-3846[CBL-3846 - Fixed corrupt Revision Data error when saving documents]
+
+* https://issues.couchbase.com/browse/CBL-4247[CBL-4247 - Fixed Replicator binary logs with collections cannot be decoded]
+
+* https://issues.couchbase.com/browse/CBL-4326[CBL-4326 - Fixed opening the upgraded database from 2.8 to 3.0.2 is slow]
+
+* https://issues.couchbase.com/browse/CBL-4334[CBL-4334 - Fixed Data getting corrupted during collection replication]
+
+* https://issues.couchbase.com/browse/CBL-4390[CBL-4390 - Fixed The URL Scheme the HTTP Message is incorrect when using proxy]
+
+* https://issues.couchbase.com/browse/CBL-4391[CBL-4391 - Fixed Stop replicator could cause 'database is locked' error when saving a document]
+
+* https://issues.couchbase.com/browse/CBL-4413[CBL-4413 - Fixed Compaction could cause "database is locked" error when the replicator attempts to save its checkpoint at the same time]
+
+* https://issues.couchbase.com/browse/CBL-4470[CBL-4470 - Fixed FLTimestamp_ToString() could return a slice with a wrong size]
+
+* https://issues.couchbase.com/browse/CBL-4493[CBL-4493 - Fixed Couchbase Lite C - Flutter plugin (dart language bindings) replication not resuming when internet reconnected]
+
+* https://issues.couchbase.com/browse/CBL-4499[CBL-4499 - Fixed Replicator may get stuck when there is an error of "Invalid delta"]
+
+* https://issues.couchbase.com/browse/CBL-4506[CBL-4506 - Fixed Replicator starts up slow for big database]
+
+* https://issues.couchbase.com/browse/CBL-4536[CBL-4536 - Fixed error when saving documents with LiteCore error 17: must be called during a transaction]
+
+* https://issues.couchbase.com/browse/CBL-4547[CBL-4547 - Allow DictKeys to cache shared keys from query results]
+
+* https://issues.couchbase.com/browse/CBL-4568[CBL-4568 - Fixed URLEndpointListener.getURLs returns an empty list on Android v>=11]
+
+* https://issues.couchbase.com/browse/CBL-4639[CBL-4639 - Use FTS match() in the WHERE clause of LEFT OUTER JOINS Not Returning Correct Result]
+
+* https://issues.couchbase.com/browse/CBL-4750[CBL-4750 - Fixed c4queryenum_next crashes with FTS]
+
+* https://issues.couchbase.com/browse/CBL-4801[CBL-4801 - Fixed opening an old db is slow in V3.1 the first time]
+
+* https://issues.couchbase.com/browse/CBL-4802[CBL-4802 - Fixed websocket implementation unable to handle continuation fragments]
+
+* https://issues.couchbase.com/browse/CBL-4838[CBL-4838 - Fixed Attachments/Blobs got deleted after compaction&re-sync]
+
+* https://issues.couchbase.com/browse/CBL-4913[CBL-4913 - Fixed regression in pull of blobs/legacy attachment handling]
+
+* https://issues.couchbase.com/browse/CBL-5082[CBL-5082 - Fixed crash in setting Housekeeper::_doExpiration()]
+
+* https://issues.couchbase.com/browse/CBL-5033[CBL-5033 - Fixed Puller revoked docs should queue with other revs]
+
+* https://issues.couchbase.com/browse/CBL-5044[CBL-5044 - Don't capture backtrace for OutOfRange error FLDictIterator_Next]
+
+* https://issues.couchbase.com/browse/CBL-5307[CBL-5307 - Correctly updating remote revision when pulling the existing revision]
+
+* https://issues.couchbase.com/browse/CBL-5332[CBL-5332 - Fixed crash during document expiration]
+
+* https://issues.couchbase.com/browse/CBL-5335[CBL-5335 - Fixed array_agg failures]
+
+* https://issues.couchbase.com/browse/CBL-5336[CBL-5336 - Over the bound of FLDicIterator should be banned]
+
+* https://issues.couchbase.com/browse/CBL-5377[CBL-5377 - Fixed MILLIS_TO_STRING is returning UTC instead of local time zone]
+
+* https://issues.couchbase.com/browse/CBL-5449[CBL-5449 - Fixed Attachments flag is dropped when applying delta to incoming rev]
+
+* https://issues.couchbase.com/browse/CBL-5515[CBL-5515 - Fixed Result alias can't be used elsewhere in query]
+
+* https://issues.couchbase.com/browse/CBL-5540[CBL-5540 - Fixed pthread_mutex_lock called on a destroyed mutex]
+
+* https://issues.couchbase.com/browse/CBL-5587[CBL-5587 - Fixed Remote rev KeepBody flag could be cleared accidentally]
+
+* https://issues.couchbase.com/browse/CBL-5589[CBL-5589 - Fixed N1QL Parser has exponential slowdown for redundant parentheses]
+
+* https://issues.couchbase.com/browse/CBL-5646[CBL-5646 - Fixed Null dereference crash in gotHTTPResponse]
+
+* https://issues.couchbase.com/browse/CBL-5724[CBL-5724 - Fixed Replicator syncs from beginning when using prebuilt dbs synced from SG]
+
+// Lite Core end
+
+* https://issues.couchbase.com/browse/CBL-5693[CBL-5693 - Fixed some Objective-C symbols are missing in the exp file]
+
+* https://issues.couchbase.com/browse/CBL-5524[CBL-5524 - Fixed required keys are missing in Privacy Manifest file]
+
+* https://issues.couchbase.com/browse/CBL-4442[CBL-4442 - Update Database API deprecation messages]
+
+* https://issues.couchbase.com/browse/CBL-4441[CBL-4441 - Fixed Collection.addDocumentChangeListener() can fatal crash]
+
+* https://issues.couchbase.com/browse/CBL-4440[CBL-4440 - Fixed CBLCollection could be leaked if document listener token is not removed]
+
+* https://issues.couchbase.com/browse/CBL-4429[CBL-4429 - Fixed crash when starting multiple live queries concurrently]
+
+* https://issues.couchbase.com/browse/CBL-4512[CBL-4512 - Fixed ListenerToken is not discardable in Collection's add change listener functions]
+
+* https://issues.couchbase.com/browse/CBL-4985[CBL-4985 - Remap Changes LiteCore Log Domain to Database Domain]
+
+* https://issues.couchbase.com/browse/CBL-5399[CBL-5399 - Fixed Close database might hang waiting for no active replicators or live queries]
+
+* https://issues.couchbase.com/browse/CBL-5418[CBL-5418 - Ensure the network streams are disconnected before CBLWebSocket is deallocated]
+
+* https://issues.couchbase.com/browse/CBL-4582[CBL-4582 - Fixed MutableDocument contains(key: String) returns wrong result]
+
+* https://issues.couchbase.com/browse/CBL-5075[CBL-5075 - Fixed Replicator background task doesn't take conflict resolution into account]
+
+* https://issues.couchbase.com/browse/CBL-5660[CBL-5660 - Fixed Invalidated context may be used in query observer callback]
+
+* https://issues.couchbase.com/browse/CBL-4336[CBL-4336 - Fixed Missing subscript function implementation in Collection class]
+
+* https://issues.couchbase.com/browse/CBL-6192[CBL-6192 - Fixed Client Side Proxy CONNECT request is broken]
+
+[discrete#objc:releasenotes:::known-issues]
+===== Known Issues
+
+None for this release
+
+[discrete#objc:releasenotes:::deprecations]
+===== Deprecations
+
+No new deprecations for GA release
+
+NOTE: For an overview of the latest features offered in Couchbase Lite 3.2.0, see xref:ROOT:cbl-whatsnew.adoc[New in 3.2]
+
+[discrete#objc:releasenotes:::maint-3-2-0]
+==== 3.2.0 Beta 1 -- March 2024
+
+Version 3.2.0 Beta 1 for Objective-C delivers the following features and enhancements:
+
+[discrete#objc:releasenotes:::couchbase-lite-beta-1-release-notes]
+==== Couchbase Lite Beta 1 Release Notes
+
+[discrete#objc:releasenotes:::enhancements-2]
+===== Enhancements
+
+* https://issues.couchbase.com/browse/CBL-5209[CBL-5209 - Implement Collection's database property]
+
+* https://issues.couchbase.com/browse/CBL-5203[CBL-5203 - Implementation of Collection's full-name property]
+
+* https://issues.couchbase.com/browse/CBL-5378[CBL-5378 - Update iOS Target Version to 12]
+
+* https://issues.couchbase.com/browse/CBL-5374[CBL-5374 - Change all Swift IndexConfiguration from class to struct]
+
+* https://issues.couchbase.com/browse/CBL-5487[CBL-5487 - CBL ObjC Framework Warning about Double-quoted include]
+
+* https://issues.couchbase.com/browse/CBL-5457[CBL-5457 - Some Objective-C symbols are missing in the exp file]
+
+* https://issues.couchbase.com/browse/CBL-5415[CBL-5415 - Symbol Not Found error when building with XCode 15.2]
+
+* https://issues.couchbase.com/browse/CBL-5265[CBL-5265 - Include Privacy Manifest in the released library]
+
+* https://issues.couchbase.com/browse/CBL-4648[CBL-4648 - Use Swift Private Module Map File for private ObjC Headers]
+
+// LiteCore
+
+* https://issues.couchbase.com/browse/CBL-5241[CBL-5241 - Upsert performance is degraded when the number of docs is increased]
+
+* https://issues.couchbase.com/browse/CBL-5379[CBL-5379 - Update iOS Target Version to 12]
+
+* https://issues.couchbase.com/browse/CBL-5287[CBL-5287 - Enable Prediction Function in SQL++ Parser]
+
+* https://issues.couchbase.com/browse/CBL-283[CBL-283 - Date Format other than ISO 8601]
+
+* https://issues.couchbase.com/browse/CBL-68[CBL-68 - DATE_DIFF_MILLIS(date1, date2, part)]
+
+* https://issues.couchbase.com/browse/CBL-67[CBL-67 - DATE_ADD_STR(date1, n, part)]
+
+* https://issues.couchbase.com/browse/CBL-66[CBL-66 - DATE_ADD_MILLIS(date1, n, part)]
+
+* https://issues.couchbase.com/browse/CBL-65[CBL-65 - MILLIS_TO_UTC(date1 [, fmt])]
+
+* https://issues.couchbase.com/browse/CBL-64[CBL-64 - MILLIS_TO_TZ(date1, tz [, fmt])]
+
+* https://issues.couchbase.com/browse/CBL-62[CBL-62 - STR_TO_TZ(date1, tz)]
+
+* https://issues.couchbase.com/browse/CBL-61[CBL-61 - MILLIS_TO_STR(date1 [, fmt ])]
+
+* https://issues.couchbase.com/browse/CBL-60[CBL-60 - DATE_DIFF_STR(date1, date2, part)]
+
+[discrete#objc:releasenotes:::issues-and-resolutions-2]
+===== Issues and Resolutions
+
+* https://issues.couchbase.com/browse/CBL-4985[CBL-4985 - Remap Changes LiteCore Log Domain to Database Domain]
+
+* https://issues.couchbase.com/browse/CBL-5399[CBL-5399 - Close database might hang waiting for no active replicators or live queries]
+
+* https://issues.couchbase.com/browse/CBL-5418[CBL-5418 - Ensure the network streams are disconnected before CBLWebSocket is dealloc]
+
+* https://issues.couchbase.com/browse/CBL-4512[CBL-4512 - ListenerToken is not discardable in Collection's add change listener functions]
+
+* https://issues.couchbase.com/browse/CBL-4582[CBL-4582 - MutableDocument contains(key: String) returns wrong result]
+
+* https://issues.couchbase.com/browse/CBL-4336[CBL-4336 - Missing subscript function implementation in Collection class (Port)]
+
+* https://issues.couchbase.com/browse/CBL-4442[CBL-4442 - Update Database API deprecation messages]
+
+* https://issues.couchbase.com/browse/CBL-4441[CBL-4441 - Fixed `Collection.addDocumentChangeListener()` can fatal crash]
+
+* https://issues.couchbase.com/browse/CBL-4440[CBL-4440 - Fixed `CBLCollection` could be leaked if document listener token is not removed]
+
+* https://issues.couchbase.com/browse/CBL-4429[CBL-4429 -  Fixed Crash when starting multiple live queries concurrently]
+
+// Litecore enhancements
+
+* https://issues.couchbase.com/browse/CBL-5336[CBL-5336 - Over the bound of FLDicIterator should be banned]
+
+* https://issues.couchbase.com/browse/CBL-5335[CBL-5335 - array_agg seem to fail under some circumstances]
+
+* https://issues.couchbase.com/browse/CBL-5332[CBL-5332 - Crash during document expiration]
+
+* https://issues.couchbase.com/browse/CBL-5307[CBL-5307 - Updating remote revision when pulling the existing revision]
+
+* https://issues.couchbase.com/browse/CBL-5044[CBL-5044 - Don't capture backtrace for OutOfRange error FLDictIterator_Next]
+
+* https://issues.couchbase.com/browse/CBL-5033[CBL-5033 - Puller revoked docs should queue with other revs]
+
+* https://issues.couchbase.com/browse/CBL-5449[CBL-5449 - Port - Attachments flag is dropped when applying delta to incoming rev]
+
+* https://issues.couchbase.com/browse/CBL-4536[CBL-4536 - Error when saving documents with LiteCore error 17: must be called during a transaction]
+
+* https://issues.couchbase.com/browse/CBL-4506[CBL-4506 - Investigate Replicator starts up slow for big database]
+
+* https://issues.couchbase.com/browse/CBL-4499[CBL-4499 - Replicator may get stuck when there is an error of "Invalid delta"]
+
+* https://issues.couchbase.com/browse/CBL-4493[CBL-4493 - Couchbase Lite C - Flutter plugin (dart language bindings) replication not resuming when internet reconnected]
+
+* https://issues.couchbase.com/browse/CBL-4802[CBL-4802 - Websocket implementation unable to handle continuation fragments]
+
+* https://issues.couchbase.com/browse/CBL-4801[CBL-4801 - Open an old db is slow in V3.1 first time]
+
+* https://issues.couchbase.com/browse/CBL-4390[CBL-4390 - The URL Scheme the HTTP Message is incorrect when using proxy]
+
+* https://issues.couchbase.com/browse/CBL-4247[CBL-4247 - Replicator binary logs with collections cannot be decoded]
+
+* https://issues.couchbase.com/browse/CBL-4245[CBL-4245 - Update sockcpp to cbl-3663]
+
+* https://issues.couchbase.com/browse/CBL-4600[CBL-4600 - Doc update c4repl_start]
+
+* https://issues.couchbase.com/browse/CBL-4568[CBL-4568 - URLEndpointListener.getURLs returns an empty list on Android v>=11]
+
+* https://issues.couchbase.com/browse/CBL-4334[CBL-4334 - Data getting corrupted during collection replication]
+
+* https://issues.couchbase.com/browse/CBL-4326[CBL-4326 - Opening the upgraded database from 2.8 to 3.0.2 is slow]
+
+* https://issues.couchbase.com/browse/CBL-4413[CBL-4413 - Compaction could cause "database is locked" error when the replicator attempts to save its checkpoint at the same time]
+
+* https://issues.couchbase.com/browse/CBL-4391[CBL-4391 - Stop replicator could cause 'database is locked' error when saving a document]
+
+* https://issues.couchbase.com/browse/CBL-4913[CBL-4913 - Regression in pull of blobs/legacy attachment handling]
+
+* https://issues.couchbase.com/browse/CBL-4547[CBL-4547 - Allow DictKeys to cache shared keys from query results]
+
+* https://issues.couchbase.com/browse/CBL-4750[CBL-4750 - c4queryenum_next crashes with FTS]
+
+* https://issues.couchbase.com/browse/CBL-4639[CBL-4639 - Use FTS match() in the WHERE clause of LEFT OUTER JOINS Not Returning Correct Result]
+
+* https://issues.couchbase.com/browse/CBL-4838[CBL-4838 - Attachments/Blobs got deleted after compaction&re-sync]
+
+* https://issues.couchbase.com/browse/CBL-4470[CBL-4470 - FLTimestamp_ToString() could return a slice with a wrong size]
+
+* https://issues.couchbase.com/browse/CBL-4424[Uninitialized struct]
+
+* https://issues.couchbase.com/browse/CBL-3836[CBL-3836 - Corrupt Revision Data error when saving documents]
+
+[discrete#objc:releasenotes:::known-issues-2]
+===== Known Issues
+
+None for this release
+
+[discrete#objc:releasenotes:::deprecations-2]
+===== Deprecations
+
+* https://issues.couchbase.com/browse/CBL-5491[CBL-5491 - Default's `MAX_ATTEMPT_WAIT_TIME` and `USE_PLAIN_TEXT` are deprecated]
+
+* https://issues.couchbase.com/browse/CBL-4316[CBL-4316 - Replicator's `getPendingDocumentIds()` and `isDocumentPending(String id)` are deprecated]
+
+* https://issues.couchbase.com/browse/CBL-4315[CBL-4315 - ReplicatorConfiguration's filters and conflict resolver properties are deprecated]
+
+* https://issues.couchbase.com/browse/CBL-4314[CBL-4314 - 	ReplicatorConfiguration APIs with Database object are deprecated ]
+
+* https://issues.couchbase.com/browse/CBL-4313[CBL-4313 - MessageEndpointListenerConfiguration APIs using Database object are deprecated]
+
+* https://issues.couchbase.com/browse/CBL-4312[CBL-4312 - URLEndpointListenerConfiguration APIs using Database object are deprecated]
+
+* https://issues.couchbase.com/browse/CBL-4311[CBL-4311 - QueryBuilder : `isNullOrMissing()` and `notNullOrMissing()` are deprecated]
+
+* https://issues.couchbase.com/browse/CBL-4310[CBL-4310 - QueryBuilder : FullTextFunction's `rank(String index)` and `match(String index, String query)` are deprecated]
+
+* https://issues.couchbase.com/browse/CBL-4309[CBL-4309 - QueryBuilder : DataSource's `database()` is deprecated]
+
+* https://issues.couchbase.com/browse/CBL-4307[CBL-4307 - DocumentChange's database property is deprecated]
+
+* https://issues.couchbase.com/browse/CBL-4306[CBL-4306 - DatabaseChange and DatabaseChangeListener are deprecated]
+
+* https://issues.couchbase.com/browse/CBL-4305[CBL-4305 - Database's removeChangeListener() is deprecated]
+
+* https://issues.couchbase.com/browse/CBL-4304[CBL-4304 - Database's Document APIs are deprecated]
+
+* https://issues.couchbase.com/browse/CBL-5331[CBL-5331 - Deprecate Replicator's `removeChangeListener`]
+
+* https://issues.couchbase.com/browse/CBL-5330[CBL-5330 - Deprecate Replicator's `removeChangeListener`]
+
+NOTE: For an overview of the latest features offered in Couchbase Lite 3.2.0 Beta 1, see xref:ROOT:cbl-whatsnew.adoc[New in 3.2]
+
 

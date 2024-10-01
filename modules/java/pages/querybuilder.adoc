@@ -1,16 +1,3201 @@
-= QueryBuilder
+:docname: querybuilder
+:page-module: java
+:page-relative-src-path: querybuilder.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#java:querybuilder:::]
+=== Querybuilder
 :page-aliases: learn/java-query.adoc, query.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :description: How to use QueryBuilder to build effective queries with Couchbase Lite on Java
 :keywords: sql, n1ql
 
-include::partial$_set_page_context_for_java.adoc[]
 
-:param-related: {querybuilder--xref--predictive-query} | {query-live--xref} | {indexing--xref}
-:topic-group: Topic Group -- Querying
-include::{root-partials}_show_page_header_block.adoc[]
 
-include::{root-commons}querybuilder.adoc[subs="macros,attributes"]
 
-include::{root-partials}block-related-content-data.adoc[]
+// BEGIN -- _define_module_attributes.adoc -- Java
+//
+// Definition:
+//    Objective: This adoc defines values for attributes specific to pages within this module (Java)
+//    Invoked-by: ROOT:_partials/_std_cbl_hdr.adoc (from within module/_partials/_set_page_context_for_java.adoc)
+//    Parameters: none
+// End Definition:
+
+
+// BEGIN -- module page attributes
+// Begin workaround for 2.8.1 mis-release, to avoid unnecessary install of 2.8.0
+// SET full maintenance version number
+
+// VECTOR SEARCH attributes
+
+// End workaround
+// :snippet-p2psync-ws: {snippets-p2psync-ws--java}
+// END -- module page attributes
+
+
+// BEGIN -- Define API References for this module
+//  These attributes s
+//:url-api-references-structs: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Structs
+// :url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Classes
+
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DatabaseConfiguration
+
+
+//Database.SAVE
+
+
+
+//Database.DELETE()
+
+
+
+
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#compact--[Database.compact()]
+// was copy-java.io.File-java.lang.String-com.couchbase.lite.DatabaseConfiguration-[Database.copy()]
+
+
+
+
+
+// links for documents pages
+
+
+// :url-api-class-dictionary: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Dictionary.html[property accessors]
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+// Expression class and methods
+
+
+// ArrayFunction class and methods
+// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/ArrayFunction.html
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+
+// orderby class and methods
+//
+
+// GroupBy class and methods
+//
+
+// Endpoints
+
+
+
+
+
+
+
+
+// https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/URLEndpointListenerConfiguration.html#setPort-int-
+
+
+
+
+
+
+
+// diag: Env+Module java
+
+
+
+
+// Authenticators
+
+
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Replicator.html#s:18CouchbaseLiteandroid10ReplicatorC13ActivityLevelO
+
+
+// ReplicatorStatus
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+
+// replaced
+// replaced
+// replaces ^^
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+
+
+
+
+
+
+
+
+// Meta API
+
+
+// END -- Define API References for this module
+
+// diag: Env+Module java
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Logging.html[Logging classes]
+
+
+
+
+
+
+// END  Logs and logging references
+
+
+
+
+
+
+
+// END -- _define_module_attributes.adoc -- Java
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--java}
+
+// END::Local page attributes
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:java:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:java:query-live.adoc[Live Queries] | xref:java:indexing.adoc[Indexing]
+--
+
+// BEGIN -- inclusion -- common-querybuilder.adoc
+//  Purpose -- describes the use of the query syntax
+//
+// // BEGIN::REQUIRED EXTERNALS
+// :this-module: {par-module}
+// :this-lang-title: {par-lang-title}
+// :this-packageNm: {par-packageNm}
+// :this-source-language: {par-source-language}
+// :snippet: {par-snippet}
+//:this-url-issues: {par-url-issues}
+// END::REQUIRED EXTERNALS
+
+// BEGIN::Local page attributes
+
+// END::Local page attributes
+
+NOTE: The examples used here are based on the _Travel Sample_ app and data introduced in the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial
+
+[discrete#java:querybuilder:::introduction]
+==== Introduction
+
+Couchbase Lite for Java provides two ways to build and run database queries; the QueryBuilder API described in this topic and xref:java:query-n1ql-mobile.adoc[{sqlpp} for Mobile].
+
+Database queries defined with the QueryBuilder API use the query statement format shown in <<java:querybuilder:::ex-query-form>>.
+The structure and semantics of the query format are based on Couchbase's xref:server:learn:data/n1ql-versus-sql.adoc[{sqlpp} query language].
+
+
+[#java:querybuilder:::ex-query-form]
+.Query Format
+====
+[source, SQL, subs="+attributes, +macros"]
+----
+SELECT ____
+FROM 'data-source'
+WHERE ____,
+JOIN ____
+GROUP BY ____
+ORDER BY ____
+----
+
+====
+Query Components::
+|====
+| Component | Description
+
+| <<java:querybuilder:::lbl-select>>
+a| The document properties that will be returned in the result set
+
+| FROM
+a| The data source to query the documents from - the collection of the database.
+
+ | <<java:querybuilder:::lbl-where>>
+a| The query criteria +
+The `SELECT`ed properties of documents matching this criteria will be returned in the result set
+
+| <<java:querybuilder:::lbl-join>>
+a| The criteria for joining multiple documents
+
+| <<java:querybuilder:::lbl-group>>
+a| The criteria used to group returned items in the result set
+
+| <<java:querybuilder:::lbl-order>>
+a| The criteria used to order the items in the result set
+|====
+
+
+TIP: We recommend working through the query section of the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial as a good way to build your skills in this area.
+
+
+
+[discrete#java:querybuilder:::lbl-select]
+==== SELECT statement
+
+--
+In this section::
+<<java:querybuilder:::lbl-return-properties>>{nbsp}{nbsp}|{nbsp}{nbsp} <<java:querybuilder:::lbl-return-all>>
+Related::
+<<java:querybuilder:::lbl-resultsets,Handling result sets>>
+--
+
+Use the `SELECT` statement to specify which properties you want to return from the queried documents.
+You can opt to retrieve entire documents, or just the specific properties you need.
+
+[discrete#java:querybuilder:::lbl-return-all]
+===== Return All Properties
+Use the `SelectResult.all()` method to return all the properties of selected documents -- see: <<java:querybuilder:::ex-select-all>>.
+
+.Using SELECT to Retrieve All Properties
+[#ex-select-all]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-select-all]
+====
+
+pass:q,a[This query shows how to retrieve all properties from all documents in your database.]
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-select-all", indent=0]
+Query query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.collection(collection))
+    .where(Expression.property("type").equalTo(Expression.string("hotel")));
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+The query.execute statement returns the results in a dictionary, where the key is the database name -- see <<java:querybuilder:::ex-return-all>>.
+
+
+[#java:querybuilder:::ex-return-all]
+.ResultSet Format from SelectResult.all()
+====
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+[
+  {
+    "travel-sample": { // <.>
+      "callsign": "MILE-AIR",
+      "country": "United States",
+      "iata": "Q5",
+      "icao": "MLA",
+      "id": 10,
+      "name": "40-Mile Air",
+      "type": "airline"
+    }
+  },
+  {
+    "travel-sample": { // <.>
+      "callsign": "ALASKAN-AIR",
+      "country": "United States",
+      "iata": "AA",
+      "icao": "AAA",
+      "id": 10,
+      "name": "Alaskan Airways",
+      "type": "airline"
+    }
+  }
+]
+
+----
+<.> The result for the first document matching the query criteria.
+<.> The result for the next document matching the query criteria.
+
+====
+
+See: <<java:querybuilder:::lbl-resultsets>> for more on processing query results.
+
+
+[discrete#java:querybuilder:::lbl-return-properties]
+===== Return Selected Properties
+To access only specific properties, specify a comma-separated list of `SelectResult` expressions, one for each property, in the select statement of your query  -- see: <<java:querybuilder:::ex-select-properties>>
+
+[#ex-select-properties]
+.Using SELECT to Retrieve Specific Properties
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-select-properties]
+====
+
+pass:q,a[In this query we retrieve and then print the `_id`, `type` and `name` properties of each document.]
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-select-props", indent=0]
+Query query = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("name"),
+        SelectResult.property("type"))
+    .from(DataSource.collection(collection))
+    .where(Expression.property("type").equalTo(Expression.string("hotel")))
+    .orderBy(Ordering.expression(Meta.id));
+
+try (ResultSet resultSet = query.execute()) {
+    for (Result result: resultSet) {
+        Logger.log("hotel id -> " + result.getString("id"));
+        Logger.log("hotel name -> " + result.getString("name"));
+    }
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+The `query.execute` statement returns one or more key-value pairs, one for each SelectResult expression, with the property-name as the key -- see <<java:querybuilder:::ex-return-properties>>
+
+[#java:querybuilder:::ex-return-properties]
+.Select Result Format
+====
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+
+[
+  { // <.>
+    "id": "hotel123",
+    "type": "hotel",
+    "name": "Hotel Ghia"
+  },
+  { // <.>
+    "id": "hotel456",
+    "type": "hotel",
+    "name": "Hotel Deluxe",
+  }
+]
+
+----
+<.> The result for the first document matching the query criteria.
+<.> The result for the next document matching the query criteria.
+
+====
+
+See: <<java:querybuilder:::lbl-resultsets>> for more on processing query results.
+
+
+[discrete#java:querybuilder:::lbl-where]
+==== WHERE statement
+
+In this section::
+<<java:querybuilder:::lbl-comp-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<java:querybuilder:::lbl-coll-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<java:querybuilder:::lbl-like-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<java:querybuilder:::lbl-regex-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<java:querybuilder:::lbl-deleted-ops>>
+
+Like SQL, you can use the `WHERE` statement to choose  which documents are returned by your query.
+The select statement takes in an `Expression`.
+You can chain any number of Expressions in order to implement sophisticated filtering capabilities.
+
+
+[discrete#java:querybuilder:::lbl-comp-ops]
+===== Comparison Operators
+The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Expression.html[Expression Comparators] can be used in the WHERE statement to specify on which property to match documents.
+In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
+
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+[
+  { // <.>
+    "id": "hotel123",
+    "type": "hotel",
+    "name": "Hotel Ghia"
+  },
+  { // <.>
+    "id": "hotel456",
+    "type": "hotel",
+    "name": "Hotel Deluxe",
+  }
+]
+----
+
+.Using Where
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-where", indent=0]
+Query query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.collection(collection))
+    .where(Expression.property("type").equalTo(Expression.string("hotel")))
+    .limit(Expression.intValue(10));
+
+try (ResultSet resultSet = query.execute()) {
+    for (Result result: resultSet) {
+        Dictionary all = result.getDictionary(collectionName);
+        Logger.log("name -> " + all.getString("name"));
+        Logger.log("type -> " + all.getString("type"));
+    }
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#java:querybuilder:::lbl-coll-ops]
+===== Collection Operators
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ArrayFunction.html[ArrayFunction Collection Operators] are useful to check if a given value is present in an array.
+
+
+[discrete#java:querybuilder:::contains-operator]
+====== CONTAINS Operator
+The following example uses the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ArrayFunction.html[ArrayFunction]` to find documents where the `public_likes` array property contains a value equal to "Armani Langworth".
+
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+{
+    "_id": "hotel123",
+    "name": "Apple Droid",
+    "public_likes": ["Armani Langworth", "Elfrieda Gutkowski", "Maureen Ruecker"]
+}
+----
+
+// BEGIN inclusion -- block -- block_tabbed_code.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// This version does not add an example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-collection-operator-contains", indent=0]
+Query query = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("name"),
+        SelectResult.property("public_likes"))
+    .from(DataSource.collection(collection))
+    .where(Expression.property("type").equalTo(Expression.string("hotel"))
+        .and(ArrayFunction
+            .contains(Expression.property("public_likes"), Expression.string("Armani Langworth"))));
+try (ResultSet results = query.execute()) {
+    for (Result result: results) {
+        Logger.log("public_likes -> " + result.getArray("public_likes").toList());
+    }
+}
+----
+
+
+
+
+
+// Tidy-up attributes created
+// END -- block_tabbed_code.adoc
+
+[discrete#java:querybuilder:::in-operator]
+====== IN Operator
+
+The `IN` operator is useful when you need to explicitly list out the values to test against.
+The following example looks for documents whose `first`, `last` or `username` property value equals "Armani".
+
+// BEGIN inclusion -- block -- block_tabbed_code.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// This version does not add an example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-collection-operator-in", indent=0]
+Expression[] values = new Expression[] {
+    Expression.property("first"),
+    Expression.property("last"),
+    Expression.property("username")
+};
+
+Query query = QueryBuilder.select(SelectResult.all())
+    .from(DataSource.collection(collection))
+    .where(Expression.string("Armani").in(values));
+----
+
+
+
+
+
+// Tidy-up attributes created
+// END -- block_tabbed_code.adoc
+
+
+[discrete#java:querybuilder:::lbl-like-ops]
+===== Like Operator
+In this section::
+<<java:querybuilder:::lbl-string-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<java:querybuilder:::lbl-wild-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<java:querybuilder:::lbl-wild-chars>>
+
+[discrete#java:querybuilder:::lbl-string-match]
+====== String Matching
+The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Expression.html#like-com.couchbase.lite.Expression-[Like()] operator can be used for string matching -- see <<java:querybuilder:::ex-like-case-insensitive>>
+
+NOTE: The `like` operator performs **case sensitive** matches. +
+To perform case insensitive matching, use `Function.lower` or `Function.upper` to ensure all comparators have the same case, thereby removing the case issue.
+
+This query returns `landmark` type documents where the `name` matches the string "Royal Engineers Museum", regardless of how it is capitalized (so, it selects "royal engineers museum", "ROYAL ENGINEERS MUSEUM" and so on).
+
+.Like with case-insensitive matching
+[#ex-like-case-insensitive]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-like-case-insensitive]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-like-operator", indent=0]
+Query query = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("country"),
+        SelectResult.property("name"))
+    .from(DataSource.collection(collection))
+    .where(Expression.property("type").equalTo(Expression.string("landmark"))
+        .and(Function.lower(Expression.property("name")).like(Expression.string("royal engineers museum"))));
+
+try (ResultSet resultSet = query.execute()) {
+    for (Result result: resultSet) {
+        Logger.log("name -> " + result.getString("name"));
+    }
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+*Note* the use of `Function.lower` to transform `name` values to the same case as the literal comparator.
+
+
+[discrete#java:querybuilder:::lbl-wild-match]
+====== Wildcard Match
+
+We can use `%` sign within a `like` expression to do a wildcard match against zero or more characters.
+Using wildcards allows you to have some fuzziness in your search string.
+
+In <<java:querybuilder:::ex-wldcd-match>> below, we are looking for documents of `type` "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
+Once again, we are using `Function.lower` to make the search case insensitive.
+
+So "landmark" documents with names such as "Engineers", "engine", "english egg" and "England Eagle".
+Notice that the matches may span word boundaries.
+
+.Wildcard Matches
+[#ex-wldcd-match]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-wldcd-match]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-like-operator-wildcard-match", indent=0]
+Query query = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("country"),
+        SelectResult.property("name"))
+    .from(DataSource.collection(collection))
+    .where(Expression.property("type").equalTo(Expression.string("landmark"))
+        .and(Function.lower(Expression.property("name")).like(Expression.string("eng%e%"))));
+
+try (ResultSet resultSet = query.execute()) {
+    for (Result result: resultSet) {
+        Logger.log("name ->  " + result.getString("name"));
+    }
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+[discrete#java:querybuilder:::lbl-wild-chars]
+====== Wildcard Character Match
+
+We can use an `_` sign within a like expression to do a wildcard match against a single character.
+
+In <<java:querybuilder:::ex-wldcd-char-match>> below, we are looking for documents of type "landmark" where the `name` property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
+The query returns "landmark" type documents with names such as "Engineer", "engineer" and so on.
+
+.Wildcard Character Matching
+[#ex-wldcd-char-match]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-wldcd-char-match]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-like-operator-wildcard-character-match", indent=0]
+Query query = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("country"),
+        SelectResult.property("name"))
+    .from(DataSource.collection(collection))
+    .where(Expression.property("type").equalTo(Expression.string("landmark"))
+        .and(Function.lower(Expression.property("name")).like(Expression.string("eng____r"))));
+
+try (ResultSet resultSet = query.execute()) {
+    for (Result result: resultSet) {
+        Logger.log("name -> " + result.getString("name"));
+    }
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#java:querybuilder:::lbl-regex-ops]
+===== Regex Operator
+
+Similar to the wildcards in `like` expressions, `regex` based pattern matching allow you to introduce an element of fuzziness in your search string -- see the code shown in <<java:querybuilder:::ex-regex>>.
+
+NOTE: The `regex` operator is case sensitive, use `upper` or `lower` functions to mitigate this if required.
+
+[#ex-regex]
+.Using Regular Expressions
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-regex]
+====
+
+This example returns documents with a `type` of "landmark" and a `name` property that matches any string that begins with "eng" and ends in the letter "e".
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-regex-operator,indent=0]", indent=0]
+Query query = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("country"),
+        SelectResult.property("name"))
+    .from(DataSource.collection(collection))
+    .where(Expression.property("type").equalTo(Expression.string("landmark"))
+        .and(Function.lower(Expression.property("name")).regex(Expression.string("\\beng.*r\\b"))));
+
+try (ResultSet resultSet = query.execute()) {
+    for (Result result: resultSet) {
+        Logger.log("name -> " + result.getString("name"));
+    }
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> The `\b` specifies that the match must occur on word boundaries.
+
+TIP: For more on the regex spec used by pass:q,a[Couchbase{nbsp}Lite] see http://www.cplusplus.com/reference/regex/ECMAScript/[cplusplus regex reference page^]
+
+// ISNULLORMISSING / NOTNULLORMISING
+// For the QueryBuilder API, isNullOrMissing and NotNullOrMissing operators will be deprecated and the isValued and isNotValued operators will be added.
+
+[discrete#java:querybuilder:::lbl-deleted-ops]
+===== Deleted Document
+You can query documents that have been deleted (tombstones) footnote:fn2x5[Starting in Couchbase Lite 2.5] as shown in <<java:querybuilder:::ex-del-qry>>.
+
+.Query to select Deleted Documents
+[#ex-del-qry]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-del-qry]
+====
+
+pass:q,a[This example shows how to query deleted documents in the database. It returns is an array of key-value pairs.]
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-deleted-documents", indent=0]
+// Query documents that have been deleted
+Query query = QueryBuilder
+    .select(SelectResult.expression(Meta.id))
+    .from(DataSource.collection(collection))
+    .where(Meta.deleted);
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#java:querybuilder:::lbl-join]
+==== JOIN statement
+The JOIN clause enables you to select data from multiple documents that have been linked by criteria specified in the JOIN statement.
+For example to combine airline details with route details, linked by the airline id -- see <<java:querybuilder:::ex-join>>.
+
+.Using JOIN to Combine Document Details
+[#ex-join]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-join]
+====
+
+pass:q,a[This example JOINS the document of type `route` with documents of type `airline` using the document ID (`_id`) on the _airline_ document and `airlineid` on the _route_ document.]
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-join", indent=0]
+Query query = QueryBuilder.select(
+        SelectResult.expression(Expression.property("name").from("airline")),
+        SelectResult.expression(Expression.property("callsign").from("airline")),
+        SelectResult.expression(Expression.property("destinationairport").from("route")),
+        SelectResult.expression(Expression.property("stops").from("route")),
+        SelectResult.expression(Expression.property("airline").from("route")))
+    .from(DataSource.collection(collection).as("airline"))
+    .join(Join.join(DataSource.collection(collection).as("route"))
+        .on(Meta.id.from("airline").equalTo(Expression.property("airlineid").from("route"))))
+    .where(Expression.property("type").from("route").equalTo(Expression.string("route"))
+        .and(Expression.property("type").from("airline").equalTo(Expression.string("airline")))
+        .and(Expression.property("sourceairport").from("route").equalTo(Expression.string("RIX"))));
+
+try (ResultSet resultSet = query.execute()) {
+    for (Result result: resultSet) {
+        Logger.log(result.toMap().toString());
+    }
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#java:querybuilder:::lbl-group]
+==== GROUP BY statement
+You can perform further processing on the data in your result set before the final projection is generated.
+
+The following example looks for the number of airports at an altitude of 300 ft or higher and groups the results by country and timezone.
+
+.Data Model for Example
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+{
+    "_id": "airport123",
+    "type": "airport",
+    "country": "United States",
+    "geo": { "alt": 456 },
+    "tz": "America/Anchorage"
+}
+----
+
+[#ex-grpby-qry]
+.Query using GroupBy
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-grpby-qry]
+====
+
+pass:q,a[This example shows a query that selects all airports with an altitude above 300ft. The output (a count, $1) is grouped by country, within timezone.]
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-groupby", indent=0]
+Query query = QueryBuilder.select(
+        SelectResult.expression(Function.count(Expression.string("*"))),
+        SelectResult.property("country"),
+        SelectResult.property("tz"))
+    .from(DataSource.collection(collection))
+    .where(Expression.property("type").equalTo(Expression.string("airport"))
+        .and(Expression.property("geo.alt").greaterThanOrEqualTo(Expression.intValue(300))))
+    .groupBy(
+        Expression.property("country"),
+        Expression.property("tz"))
+    .orderBy(Ordering.expression(Function.count(Expression.string("*"))).descending());
+
+try (ResultSet resultSet = query.execute()) {
+    for (Result result: resultSet) {
+        Logger.log(String.format(
+            "There are %d airports on the %s timezone located in %s and above 300ft",
+            result.getInt("$1"),
+            result.getString("tz"),
+            result.getString("country")));
+    }
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+The query shown in <<java:querybuilder:::ex-grpby-qry>> generates the following output:
+--
+There are 138 airports on the Europe/Paris timezone located in France and above 300 ft +
+There are 29 airports on the Europe/London timezone located in United Kingdom and above 300 ft +
+There are 50 airports on the America/Anchorage timezone located in United States and above 300 ft +
+There are 279 airports on the America/Chicago timezone located in United States and above 300 ft +
+There are 123 airports on the America/Denver timezone located in United States and above 300 ft
+--
+
+
+[discrete#java:querybuilder:::lbl-order]
+==== ORDER BY statement
+
+It is possible to sort the results of a query based on a given expression result -- see <<java:querybuilder:::ex-orderby-qry>>
+
+[#ex-orderby-qry]
+.Query using OrderBy
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-orderby-qry]
+====
+
+pass:q,a[This example shows a query that returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.]
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-orderby", indent=0]
+Query query = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("name"))
+    .from(DataSource.collection(collection))
+    .where(Expression.property("type").equalTo(Expression.string("hotel")))
+    .orderBy(Ordering.property("name").ascending())
+    .limit(Expression.intValue(10));
+
+try (ResultSet resultSet = query.execute()) {
+    for (Result result: resultSet) {
+        Logger.log(result.toMap().toString());
+    }
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+The query shown in <<java:querybuilder:::ex-orderby-qry>> generates the following output:
+[pass:q,a[source, text, subs="+attributes, +macros"]]
+----
+Aberdyfi
+Achiltibuie
+Altrincham
+Ambleside
+Annan
+Ardèche
+Armagh
+Avignon
+----
+
+
+[discrete#java:querybuilder:::lbl-date-time]
+==== Date/Time Functions
+
+
+Couchbase Lite documents support a <<java:querybuilder:::initializers,date type>> that internally stores dates in ISO 8601 with the GMT/UTC timezone.
+
+Couchbase Lite's Query Builder API
+footnote:fn2x5[]
+includes four functions for date comparisons.
+
+`Function.StringToMillis(Expression.Property("date_time"))`::
+The input to this will be a validly formatted ISO 8601 `date_time` string.
+The end result will be an expression (with a numeric content) that can be further input into the query builder.
+`Function.StringToUTC(Expression.Property("date_time"))`::
+The input to this will be a validly formatted ISO 8601 `date_time` string.
+The end result will be an expression (with string content) that can be further input into the query builder.
+`Function.MillisToString(Expression.Property("date_time"))`::
+The input for this is a numeric value representing milliseconds since the Unix epoch.
+The end result will be an expression (with string content representing the date and time as an ISO 8601 string in the device’s timezone) that can be further input into the query builder.
+`Function.MillisToUTC(Expression.Property("date_time"))`::
+The input for this is a numeric value representing milliseconds since the Unix epoch.
+The end result will be an expression (with string content representing the date and time as a UTC ISO 8601 string) that can be further input into the query builder.
+
+
+[discrete#java:querybuilder:::lbl-resultsets]
+==== Result Sets
+In this section::
+<<java:querybuilder:::lbl-process-resultset>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<java:querybuilder:::lbl-all-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<java:querybuilder:::lbl-specific-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<java:querybuilder:::lbl-id-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<java:querybuilder:::lbl-count-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<java:querybuilder:::lbl-pagination>>
+
+
+[discrete#java:querybuilder:::lbl-process-resultset]
+===== Processing
+
+This section shows how to handle the returned result sets for different types of `SELECT` statements.
+
+The result set format and its handling varies slightly depending on the type of SelectResult statements used.
+The result set formats you may encounter include those generated by :
+
+* SelectResult.all -- see: <<java:querybuilder:::lbl-all-sel,All Properties>>
+* SelectResult.expression(property("name")) -- see: <<java:querybuilder:::lbl-specific-sel,Specific Properties>>
+* SelectResult.expression(meta.id) --  Metadata (such as the `_id`) -- see: <<java:querybuilder:::lbl-id-sel,Document ID Only>>
+* SelectResult.expression(Function.count(Expression.all())).as("mycount") --  see: <<java:querybuilder:::lbl-count-sel>>
+
+To process the results of a query, you first need to execute it using `Query.execute`.
+
+The execution of a Couchbase Lite for Java's database query typically returns an array of results, a result set.
+
+* The result set of an aggregate, count-only, query is a key-value pair -- see <<java:querybuilder:::lbl-count-sel>> -- which you can access using the count name as its key.
+
+* The result set of a query returning document properties is an array. +
+Each array row represents the data from a document that matched your search criteria (the `WHERE` statements)
+The composition of each row is determined by the combination of `SelectResult` expressions provided in the `SELECT` statement.
+To unpack these result sets you need to iterate this array.
+
+
+[discrete#java:querybuilder:::lbl-all-sel]
+===== Select All Properties
+
+[discrete#java:querybuilder:::query]
+====== Query
+The `Select` statement for this type of query, returns all document properties for each document matching the query criteria -- see <<java:querybuilder:::ex-all-qry>>
+
+.Query selecting All Properties
+[#ex-all-qry]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-all-qry]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-syntax-all", indent=0]
+Query listQuery = QueryBuilder.select(SelectResult.all())
+    .from(DataSource.collection(collection));
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+[discrete#java:querybuilder:::result-set-format]
+====== Result Set Format
+The result set returned by queries using `SelectResult.all` is an array of dictionary objects -- one for each document matching the query criteria.
+
+For each result object, the key is the database name and the 'value' is a dictionary representing each document property as a key-value pair -- see: <<java:querybuilder:::ex-all-rtn>>.
+
+.Format of Result Set (All Properties)
+[#java:querybuilder:::ex-all-rtn]
+====
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+
+[
+  {
+    "travel-sample": { // <.>
+      "callsign": "MILE-AIR",
+      "country": "United States",
+      "iata": "Q5",
+      "icao": "MLA",
+      "id": 10,
+      "name": "40-Mile Air",
+      "type": "airline"
+    }
+  },
+  {
+    "travel-sample": { // <.>
+      "callsign": "ALASKAN-AIR",
+      "country": "United States",
+      "iata": "AA",
+      "icao": "AAA",
+      "id": 10,
+      "name": "Alaskan Airways",
+      "type": "airline"
+    }
+  }
+]
+
+
+----
+<.> The result for the first document matching the query criteria.
+<.> The result for the next document matching the query criteria.
+
+====
+
+[discrete#java:querybuilder:::result-set-access]
+====== Result Set Access
+
+In this case access the retrieved document properties by converting each row's value, in turn, to a dictionary -- as shown in <<java:querybuilder:::ex-all-acc>>.
+
+.Using Document Properties (All)
+[#ex-all-acc]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-all-acc]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-access-all", indent=0]
+Map<String, Hotel> hotels = new HashMap<>();
+try (ResultSet resultSet = listQuery.execute()) {
+    for (Result result: resultSet) {
+        // get the k-v pairs from the 'hotel' key's value into a dictionary
+        Dictionary docsProp = result.getDictionary(0); // <.>
+        String docsId = docsProp.getString("id");
+        String docsName = docsProp.getString("Name");
+        String docsType = docsProp.getString("Type");
+        String docsCity = docsProp.getString("City");
+
+        // Alternatively, access results value dictionary directly
+        final Hotel hotel = new Hotel();
+        hotel.setId(result.getDictionary(0).getString("id")); // <.>
+        hotel.setType(result.getDictionary(0).getString("Type"));
+        hotel.setName(result.getDictionary(0).getString("Name"));
+        hotel.setCity(result.getDictionary(0).getString("City"));
+        hotel.setCountry(result.getDictionary(0).getString("Country"));
+        hotel.setDescription(result.getDictionary(0).getString("Description"));
+        hotels.put(hotel.getId(), hotel);
+    }
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> The dictionary of document properties using the database name as the key.
+You can add this dictionary to an array of returned matches, for processing elsewhere in the app.
+<.> Alternatively you can access the document properties here, by using the property names as keys to the dictionary object.
+
+
+[discrete#java:querybuilder:::lbl-specific-sel]
+===== Select Specific Properties
+
+[discrete#java:querybuilder:::query-2]
+====== Query
+Here we use `SelectResult.expression(property("<property-name>")))` to specify the document properties we want our query to return -- see: <<java:querybuilder:::ex-specific-qry>>.
+
+.Query selecting Specific Properties
+[#ex-specific-qry]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-specific-qry]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-syntax-props", indent=0]
+
+Query listQuery =
+    QueryBuilder.select(
+            SelectResult.expression(Meta.id),
+            SelectResult.property("name"),
+            SelectResult.property("Name"),
+            SelectResult.property("Type"),
+            SelectResult.property("City"))
+        .from(DataSource.collection(collection));
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+[discrete#java:querybuilder:::result-set-format-2]
+====== Result Set Format
+The result set returned when selecting only specific document properties is an array of dictionary objects -- one for each document matching the query criteria.
+
+Each result object comprises a key-value pair for each selected document property -- see <<java:querybuilder:::ex-specific-rtn>>
+
+.Format of Result Set (Specific Properties)
+[#java:querybuilder:::ex-specific-rtn]
+====
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+
+[
+  { // <.>
+    "id": "hotel123",
+    "type": "hotel",
+    "name": "Hotel Ghia"
+  },
+  { // <.>
+    "id": "hotel456",
+    "type": "hotel",
+    "name": "Hotel Deluxe",
+  }
+]
+
+----
+<.> The result for the first document matching the query criteria.
+<.> The result for the next document matching the query criteria.
+====
+
+[discrete#java:querybuilder:::result-set-access-2]
+====== Result Set Access
+Access the retrieved properties by converting each row into a dictionary -- as shown in <<java:querybuilder:::ex-specific-acc>>.
+
+.Using Returned Document Properties (Specific Properties)
+[#ex-specific-acc]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-specific-acc]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-access-props", indent=0]
+HashMap<String, Hotel> hotels = new HashMap<>();
+try (ResultSet resultSet = listQuery.execute()) {
+    for (Result result: resultSet) {
+
+        // get data direct from result k-v pairs
+        final Hotel hotel = new Hotel();
+        hotel.setId(result.getString("id"));
+        hotel.setType(result.getString("Type"));
+        hotel.setName(result.getString("Name"));
+        hotel.setCity(result.getString("City"));
+
+        // Store created hotel object in a hashmap of hotels
+        hotels.put(hotel.getId(), hotel);
+
+        // Get result k-v pairs into a 'dictionary' object
+        Map<String, Object> thisDocsProps = result.toMap();
+        String docId =
+            thisDocsProps.getOrDefault("id", null).toString();
+        String docName =
+            thisDocsProps.getOrDefault("Name", null).toString();
+        String docType =
+            thisDocsProps.getOrDefault("Type", null).toString();
+        String docCity =
+            thisDocsProps.getOrDefault("City", null).toString();
+    }
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#java:querybuilder:::lbl-id-sel]
+===== Select Document Id Only
+
+[discrete#java:querybuilder:::query-3]
+====== Query
+You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time -- see: <<java:querybuilder:::ex-id-qry>>.
+
+.Query selecting only Doc Id
+[#ex-id-qry]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-id-qry]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-syntax-id", indent=0]
+Query listQuery =
+    QueryBuilder.select(SelectResult.expression(Meta.id).as("metaID"))
+        .from(DataSource.collection(collection));
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#java:querybuilder:::result-set-format-3]
+====== Result Set Format
+The result set returned by queries using a SelectResult expression of the form `SelectResult.expression(meta.id)` is an array of dictionary objects -- one for each document matching the query criteria.
+Each result object has `id` as the key and the ID value as its value -- -see <<java:querybuilder:::ex-id-rtn>>.
+
+.Format of Result Set (Doc Id only)
+[#java:querybuilder:::ex-id-rtn]
+====
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+
+[
+  {
+    "id": "hotel123"
+  },
+  {
+    "id": "hotel456"
+  },
+]
+
+----
+====
+
+[discrete#java:querybuilder:::result-set-access-3]
+====== Result Set Access
+
+In this case, access the required document's properties by unpacking the `id` and using it to get the document from the database -- see: <<java:querybuilder:::ex-id-acc>>.
+
+.Using Returned Document Properties (Document Id)
+[#ex-id-acc]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-id-acc]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-access-id", indent=0]
+try (ResultSet rs = listQuery.execute()) {
+    for (Result result: rs.allResults()) {
+
+        // get the ID form the result's k-v pair array
+        String thisDocsId = result.getString("metaID"); // <.>
+
+        // Get document from DB using retrieved ID
+        Document thisDoc = collection.getDocument(thisDocsId);
+
+        // Process document as required
+        String thisDocsName = thisDoc.getString("Name");
+    }
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Extract the Id value from the dictionary and use it to get the document from the database
+
+
+[discrete#java:querybuilder:::lbl-count-sel]
+===== Select Count-only
+
+
+[discrete#java:querybuilder:::query-4]
+====== Query
+
+.Query selecting a Count-only
+[#ex-count-qry]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-count-qry]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-syntax-count-only", indent=0]
+Query listQuery = QueryBuilder.select(
+        SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) // <.>
+    .from(DataSource.collection(collection));
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> The alias name, `mycount`, is used to access the count value.
+
+[discrete#java:querybuilder:::result-set-format-4]
+====== Result Set Format
+The result set returned by a count such as `Select.expression(Function.count(Expression.all)))` is a key-value pair.
+The key is the count name, as defined using `SelectResult.as` -- see: <<java:querybuilder:::ex-count-rtn>> for the format and <<java:querybuilder:::ex-count-qry>> for the query.
+
+.Format of Result Set (Count)
+[#java:querybuilder:::ex-count-rtn]
+====
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+
+{
+  "mycount": 6
+}
+
+
+----
+<.> The key-value pair returned by a count.
+====
+
+[discrete#java:querybuilder:::result-set-access-4]
+====== Result Set Access
+
+Access the count using its alias name (`mycount` in this example) -- see <<java:querybuilder:::ex-count-acc>>
+
+[#ex-count-acc]
+.Using Returned Document Properties (Count)
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-count-acc]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-access-count-only", indent=0]
+try (ResultSet resultSet = listQuery.execute()) {
+    for (Result result: resultSet) {
+
+        // Retrieve count using key 'mycount'
+        Integer altDocId = result.getInt("mycount");
+
+        // Alternatively, use the index
+        Integer orDocId = result.getInt(0);
+    }
+}
+
+// Or even leave out the for-loop altogether
+int resultCount;
+try (ResultSet resultSet = listQuery.execute()) {
+    resultCount = resultSet.next().getInt("mycount");
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Get the count using the `SelectResult.as` alias, which is used as its key.
+
+[discrete#java:querybuilder:::lbl-pagination]
+===== Handling Pagination
+One way to handle pagination in high-volume queries is to retrieve the results in batches.
+Use the `limit` and `offset` feature, to return a defined number of results starting from a given offset -- see: <<java:querybuilder:::ex-pagination>>.
+
+
+[#ex-pagination]
+.Query Pagination
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-pagination]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-syntax-pagination", indent=0]
+
+int thisOffset = 0;
+int thisLimit = 20;
+
+Query listQuery =
+    QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.collection(collection))
+        .limit(
+            Expression.intValue(thisLimit),
+            Expression.intValue(thisOffset)); // <.>
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Return a maximum of `limit` results starting from result number `offset`
+
+TIP: For more on using the QueryBuilder API, see our blog: https://blog.couchbase.com/sql-for-json-query-interface-couchbase-mobile/[Introducing the Query Interface in Couchbase Mobile]
+
+
+[discrete#java:querybuilder:::json-result-sets]
+==== JSON Result Sets
+
+Couchbase Lite for Java provides a convenience API to convert query results to JSON strings.
+
+// Inclusion block
+[#ex-json]
+.Using JSON Results
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::ex-json]
+====
+
+pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Result.html#toJSON--[Result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<java:querybuilder:::ex-json>> for a working example.]
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-access-json", indent=0]
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayList<Hotel> hotels = new ArrayList<>();
+        HashMap<String, Object> dictFromJSONstring;
+
+        try (ResultSet resultSet = listQuery.execute()) {
+            for (Result result: resultSet) {
+
+                // Get result as JSON string
+                String thisJsonString = result.toJSON(); // <.>
+
+                // Get Java  Hashmap from JSON string
+                dictFromJSONstring =
+                    mapper.readValue(thisJsonString, HashMap.class); // <.>
+
+
+                // Use created hashmap
+                String hotelId = dictFromJSONstring.get("id").toString();
+                String hotelType = dictFromJSONstring.get("type").toString();
+                String hotelname = dictFromJSONstring.get("name").toString();
+
+
+                // Get custom object from Native 'dictionary' object
+                Hotel thisHotel =
+                    mapper.readValue(thisJsonString, Hotel.class); // <.>
+                hotels.add(thisHotel);
+            }
+        }
+        // Uses Jackson JSON processor
+        ObjectMapper mapper = new ObjectMapper();
+        List<Hotel> hotels = new ArrayList<>();
+
+        try (ResultSet rs = listQuery.execute()) {
+            for (Result result: rs) {
+                String json = result.toJSON();
+                Map<String, String> dictFromJSONstring = mapper.readValue(json, HashMap.class);
+
+                String hotelId = dictFromJSONstring.get("id");
+                String hotelType = dictFromJSONstring.get("type");
+                String hotelname = dictFromJSONstring.get("name");
+
+                // Get custom object from JSON string
+                Hotel thisHotel = mapper.readValue(json, Hotel.class);
+                hotels.add(thisHotel);
+            }
+        }
+    }
+
+    public List<Map<String, Object>> docsOnlyQuerySyntaxN1QL(Database thisDb) throws CouchbaseLiteException {
+        // For Documentation -- N1QL Query using parameters
+        //  Declared elsewhere: Database thisDb
+        Query thisQuery =
+            thisDb.createQuery(
+                "SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""); // <.>
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (ResultSet rs = thisQuery.execute()) {
+            for (Result result: rs) { results.add(result.toMap()); }
+        }
+        return results;
+    }
+
+    public List<Map<String, Object>> docsonlyQuerySyntaxN1QLParams(Database thisDb) throws CouchbaseLiteException {
+        // For Documentation -- N1QL Query using parameters
+        //  Declared elsewhere: Database thisDb
+
+        Query thisQuery =
+            thisDb.createQuery(
+                "SELECT META().id AS thisId FROM _ WHERE type = $type"); // <.
+
+        thisQuery.setParameters(
+            new Parameters().setString("type", "hotel")); // <.>
+
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (ResultSet rs = thisQuery.execute()) {
+            for (Result result: rs) { results.add(result.toMap()); }
+        }
+        return results;
+    }
+}
+
+//
+// Copyright (c) 2023 Couchbase, Inc All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+package com.couchbase.codesnippets;
+
+import androidx.annotation.NonNull;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import com.couchbase.codesnippets.utils.Logger;
+import com.couchbase.lite.BasicAuthenticator;
+import com.couchbase.lite.Collection;
+import com.couchbase.lite.CollectionConfiguration;
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.DatabaseEndpoint;
+import com.couchbase.lite.DocumentFlag;
+import com.couchbase.lite.Endpoint;
+import com.couchbase.lite.ListenerToken;
+import com.couchbase.lite.ReplicatedDocument;
+import com.couchbase.lite.Replicator;
+import com.couchbase.lite.ReplicatorConfiguration;
+import com.couchbase.lite.ReplicatorProgress;
+import com.couchbase.lite.ReplicatorStatus;
+import com.couchbase.lite.ReplicatorType;
+import com.couchbase.lite.SessionAuthenticator;
+import com.couchbase.lite.URLEndpoint;
+
+
+@SuppressWarnings({"unused"})
+public class ReplicationExamples {
+    private Replicator thisReplicator;
+    private ListenerToken thisToken;
+
+    public void activeReplicatorExample(Set<Collection> collections)
+        throws URISyntaxException {
+        // Create replicator
+        // Consider holding a reference somewhere
+        // to prevent the Replicator from being GCed
+        Replicator repl = new Replicator( // <.>
+
+            // initialize the replicator configuration
+            new ReplicatorConfiguration(new URLEndpoint(new URI("wss://listener.com:8954"))) // <.>
+                .addCollections(collections, null)
+
+                // Set replicator type
+                .setType(ReplicatorType.PUSH_AND_PULL)
+
+                // Configure Sync Mode
+                .setContinuous(false) // default value
+
+
+                // set auto-purge behavior
+                // (here we override default)
+                .setAutoPurgeEnabled(false) // <.>
+
+
+                // Configure Server Authentication --
+                // only accept self-signed certs
+                .setAcceptOnlySelfSignedServerCertificate(true) // <.>
+
+                // Configure the credentials the
+                // client will provide if prompted
+                .setAuthenticator(new BasicAuthenticator("Our Username", "Our Password".toCharArray())) // <.>
+
+        );
+
+        // Optionally add a change listener <.>
+        ListenerToken token = repl.addChangeListener(change -> {
+            CouchbaseLiteException err = change.getStatus().getError();
+            if (err != null) { Logger.log("Error code :: " + err.getCode(), err); }
+        });
+
+        // Start replicator
+        repl.start(false); // <.>
+
+
+        thisReplicator = repl;
+        thisToken = token;
+
+    }
+
+    public void replicatorSimpleExample(Set<Collection> collections) throws URISyntaxException {
+        Endpoint theListenerEndpoint
+            = new URLEndpoint(new URI("wss://10.0.2.2:4984/db")); // <.>
+
+        ReplicatorConfiguration thisConfig =
+            new ReplicatorConfiguration(theListenerEndpoint) // <.>
+                .addCollections(collections, null) // default configuration
+
+                .setAcceptOnlySelfSignedServerCertificate(true) // <.>
+                .setAuthenticator(new BasicAuthenticator(
+                    "valid.user",
+                    "valid.password".toCharArray())); // <.>
+
+        Replicator repl = new Replicator(thisConfig); // <.>
+        // Start the replicator
+        repl.start(); // <.>
+        // (be sure to hold a reference somewhere that will prevent it from being GCed)
+        thisReplicator = repl;
+
+    }
+
+    public void replicationBasicAuthenticationExample(
+        Set<Collection> collections,
+        CollectionConfiguration collectionConfig)
+        throws URISyntaxException {
+
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        Replicator repl = new Replicator(
+            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+                .addCollections(collections, collectionConfig)
+                .setAuthenticator(new BasicAuthenticator("username", "password".toCharArray())));
+
+        repl.start();
+        thisReplicator = repl;
+    }
+
+
+    public void replicationSessionAuthenticationExample(
+        Set<Collection> collections,
+        CollectionConfiguration collectionConfig)
+        throws URISyntaxException {
+
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        Replicator repl = new Replicator(
+            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+                .addCollections(collections, collectionConfig)
+                .setAuthenticator(new SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447")));
+
+        repl.start();
+        thisReplicator = repl;
+    }
+
+    public void replicationCustomHeaderExample(
+        Set<Collection> collections,
+        CollectionConfiguration collectionConfig)
+        throws URISyntaxException {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("CustomHeaderName", "Value");
+
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        Replicator repl = new Replicator(
+            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+                .addCollections(collections, collectionConfig)
+                .setHeaders(headers));
+
+        repl.start();
+        thisReplicator = repl;
+    }
+
+    public void replicationPushFilterExample(Set<Collection> collections) throws URISyntaxException {
+        CollectionConfiguration collectionConfig = new CollectionConfiguration()
+            .setPushFilter((document, flags) -> flags.contains(DocumentFlag.DELETED)); // <1>
+
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        Replicator repl = new Replicator(
+            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+                .addCollections(collections, collectionConfig));
+
+        repl.start();
+        thisReplicator = repl;
+    }
+
+
+    public void replicationPullFilterExample(Set<Collection> collections) throws URISyntaxException {
+        CollectionConfiguration collectionConfig = new CollectionConfiguration()
+            .setPullFilter((document, flags) -> "draft".equals(document.getString("type"))); // <1>
+
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        Replicator repl = new Replicator(
+            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+                .addCollections(collections, collectionConfig));
+
+        repl.start();
+        thisReplicator = repl;
+    }
+
+    public void replicationResetCheckpointExample(Set<Collection> collections) throws URISyntaxException {
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        Replicator repl = new Replicator(
+            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+                .addCollections(collections, null));
+
+        repl.start(true);
+
+        // ... at some later time
+
+        repl.stop();
+    }
+
+    public void handlingNetworkErrorsExample(Set<Collection> collections) throws URISyntaxException {
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        Replicator repl = new Replicator(
+            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+                .addCollections(collections, null));
+
+        repl.addChangeListener(change -> {
+            CouchbaseLiteException error = change.getStatus().getError();
+            if (error != null) { Logger.log("Error code:: " + error); }
+        });
+        repl.start();
+        thisReplicator = repl;
+    }
+
+    public void certificatePinningExample(Set<Collection> collections, String keyStoreName, String certAlias)
+        throws URISyntaxException, KeyStoreException {
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        Replicator repl = new Replicator(
+            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+                .addCollections(collections, null)
+                .setPinnedServerX509Certificate(
+                    (X509Certificate) KeyStore.getInstance(keyStoreName).getCertificate(certAlias)));
+
+        repl.start();
+        thisReplicator = repl;
+    }
+
+    public void replicatorConfigExample(Set<Collection> collections) throws URISyntaxException {
+        // initialize the replicator configuration
+        ReplicatorConfiguration thisConfig = new ReplicatorConfiguration(
+            new URLEndpoint(new URI("wss://10.0.2.2:8954/travel-sample"))) // <.>
+            .addCollections(collections, null);
+    }
+
+
+    public void p2pReplicatorStatusExample(Replicator repl) {
+        ReplicatorStatus status = repl.getStatus();
+        ReplicatorProgress progress = status.getProgress();
+        Logger.log(
+            "The Replicator is " + status.getActivityLevel()
+                + "and has processed " + progress.getCompleted()
+                + " of " + progress.getTotal() + " changes");
+    }
+
+
+    public void p2pReplicatorStopExample(Replicator repl) {
+        // Stop replication.
+        repl.stop(); // <.>
+    }
+
+
+    public void customRetryConfigExample(Set<Collection> collections) throws URISyntaxException {
+        Replicator repl = new Replicator(
+            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+                .addCollections(collections, null)
+                //  other config as required . . .
+                .setHeartbeat(150) // <.>
+                .setMaxAttempts(20) // <.>
+                .setMaxAttemptWaitTime(600)); // <.>
+
+        repl.start();
+        thisReplicator = repl;
+    }
+
+    public void replicatorDocumentEventExample(Set<Collection> collections) throws URISyntaxException {
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+        Replicator repl = new Replicator(
+            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+                .addCollections(collections, null));
+
+
+        ListenerToken token = repl.addDocumentReplicationListener(replication -> {
+            Logger.log("Replication type: " + ((replication.isPush()) ? "push" : "pull"));
+            for (ReplicatedDocument document: replication.getDocuments()) {
+                Logger.log("Doc ID: " + document.getID());
+
+                CouchbaseLiteException err = document.getError();
+                if (err != null) {
+                    // There was an error
+                    Logger.log("Error replicating document: ", err);
+                    return;
+                }
+
+                if (document.getFlags().contains(DocumentFlag.DELETED)) {
+                    Logger.log("Successfully replicated a deleted document");
+                }
+            }
+        });
+
+
+        repl.start();
+        thisReplicator = repl;
+
+        token.remove();
+    }
+
+    public void replicationPendingDocumentsExample(Collection collection)
+        throws CouchbaseLiteException, URISyntaxException {
+        Replicator repl = new Replicator(
+            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+                .addCollection(collection, null)
+                .setType(ReplicatorType.PUSH));
+
+        Set<String> pendingDocs = repl.getPendingDocumentIds(collection);
+
+        if (!pendingDocs.isEmpty()) {
+            Logger.log("There are " + pendingDocs.size() + " documents pending");
+
+            final String firstDoc = pendingDocs.iterator().next();
+
+            repl.addChangeListener(change -> {
+                Logger.log("Replicator activity level is " + change.getStatus().getActivityLevel());
+                try {
+                    if (!repl.isDocumentPending(firstDoc, collection)) {
+                        Logger.log("Doc ID " + firstDoc + " has been pushed");
+                    }
+                }
+                catch (CouchbaseLiteException err) {
+                    Logger.log("Failed getting pending docs", err);
+                }
+            });
+
+            repl.start();
+            this.thisReplicator = repl;
+        }
+    }
+
+    public void databaseReplicatorExample(@NonNull Set<Collection> srcCollections, @NonNull Database targetDb) {
+        // This is an Enterprise feature:
+        // the code below will generate a compilation error
+        // if it's compiled against CBL Android Community Edition.
+        // Note: the target database must already contain the
+        //       source collections or the replication will fail.
+        final Replicator repl = new Replicator(
+            new ReplicatorConfiguration(new DatabaseEndpoint(targetDb))
+                .addCollections(srcCollections, null)
+                .setType(ReplicatorType.PUSH));
+
+        // Start the replicator
+        // (be sure to hold a reference somewhere that will prevent it from being GCed)
+        repl.start();
+        thisReplicator = repl;
+    }
+
+    public void replicationWithCustomConflictResolverExample(Set<Collection> srcCollections, URI targetUri) {
+        Replicator repl = new Replicator(
+            new ReplicatorConfiguration(new URLEndpoint(targetUri))
+                .addCollections(
+                    srcCollections,
+                    new CollectionConfiguration()
+                        .setConflictResolver(new LocalWinConflictResolver())));
+
+        // Start the replicator
+        // (be sure to hold a reference somewhere that will prevent it from being GCed)
+        repl.start();
+        thisReplicator = repl;
+    }
+}
+
+
+//
+// Copyright (c) 2024 Couchbase, Inc All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+package com.couchbase.codesnippets;
+
+import java.util.List;
+import java.util.function.Function;
+
+import com.couchbase.lite.Blob;
+import com.couchbase.lite.Collection;
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.IndexUpdater;
+import com.couchbase.lite.MutableArray;
+import com.couchbase.lite.Parameters;
+import com.couchbase.lite.PredictiveModel;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.ResultSet;
+import com.couchbase.lite.VectorEncoding;
+import com.couchbase.lite.VectorIndexConfiguration;
+
+
+@SuppressWarnings("unused")
+class VectorSearchExamples {
+    @FunctionalInterface
+    public interface ColorModel { List<Float> getEmbedding(Blob color);}
+
+    public void createDefaultVSConfig() {
+        // create the configuration for a vector index named "vector"
+        // with 3 dimensions and 100 centroids
+        VectorIndexConfiguration config = new VectorIndexConfiguration("vector", 3L, 100L);
+    }
+
+    public void createCustomVSConfig() {
+        // create the configuration for a vector index named "vector"
+        // with 3 dimensions, 100 centroids, no encoding, using cosine distance
+        // with a max training size 5000 and amin training size 2500
+        // no vector encoding and using COSINE distance measurement
+        VectorIndexConfiguration config = new VectorIndexConfiguration("vector", 3L, 100L)
+            .setEncoding(VectorEncoding.none())
+            .setMetric(VectorIndexConfiguration.DistanceMetric.COSINE)
+            .setNumProbes(8L)
+            .setMinTrainingSize(2500L)
+            .setMaxTrainingSize(5000L);
+    }
+
+    public void createVectorIndex(Database db) throws CouchbaseLiteException {
+        // create a vector index named "colors_index"
+        // in the collection "_default.colors"
+        db.getCollection("colors").createIndex(
+            "colors_index",
+            new VectorIndexConfiguration("vector", 3L, 100L));
+    }
+
+    public void setNumProbes(Collection col) throws CouchbaseLiteException {
+        // explicitly set numProbes
+        col.createIndex(
+            "colors_index",
+            new VectorIndexConfiguration("vector", 3L, 100L)
+                .setNumProbes(5));
+    }
+
+    public void createPredictiveIndex(Database db, PredictiveModel colorModel) throws CouchbaseLiteException {
+        // create a vector index with a simple predictive model
+        Database.prediction.registerModel("ColorModel", colorModel);
+
+        db.getCollection("colors").createIndex(
+            "colors_pred_index",
+            new VectorIndexConfiguration(
+                "prediction(ColorModel, {'colorInput': color}).vector",
+                3L, 100L));
+    }
+
+    public void useVectorIndex(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        db.getCollection("colors").createIndex(
+            "colors_index",
+            new VectorIndexConfiguration("vector", 3L, 100L));
+
+        // get the APPROX_VECTOR_DISTANCE to the parameter vector for each color in the collection
+        Query query = db.createQuery(
+            "SELECT meta().id, color, APPROX_VECTOR_DISTANCE(vector, $vectorParam)"
+                + " FROM _default.colors");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+        // end:vs-use-vector-index[]
+    }
+
+    public void useAVD(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // use APPROX_VECTOR_DISTANCE in a query ORDER BY clause
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " ORDER BY APPROX_VECTOR_DISTANCE(vector, $vectorParam)"
+                + " LIMIT 8");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+    }
+
+    public void useAVDWithWhere(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // use APPROX_VECTOR_DISTANCE in a query WHERE clause
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " WHERE APPROX_VECTOR_DISTANCE(vector, $vectorParam) < 0.5");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+    }
+
+    public void useAVDWithPrediction(Database db, PredictiveModel colorModel, List<Object> colorVector)
+        throws CouchbaseLiteException {
+        // use APPROX_VECTOR_DISTANCE with a predictive model
+        Database.prediction.registerModel("ColorModel", colorModel);
+
+        db.getCollection("colors").createIndex(
+            "colors_pred_index",
+            new VectorIndexConfiguration(
+                "prediction(ColorModel, {'colorInput': color}).vector",
+                3L, 100L));
+
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " ORDER BY APPROX_VECTOR_DISTANCE("
+                + "    prediction(ColorModel, {'colorInput': color}).vector,"
+                + "    $vectorParam)"
+                + " LIMIT 300");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+    }
+
+    public void hybridOrderBy(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " WHERE saturation > 0.5"
+                + " ORDER BY APPROX_VECTOR_DISTANCE(vector, $vector)"
+                + " LIMIT 8");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+    }
+
+    public void hybridWhere(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " WHERE saturation > 0.5"
+                + "     AND APPROX_VECTOR_DISTANCE(vector, $vector) < .05");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+    }
+
+    public void hybridPrediction(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " WHERE saturation > 0.5"
+                + " ORDER BY APPROX_VECTOR_DISTANCE("
+                + "    prediction(ColorModel, {'colorInput': color}).vector,"
+                + "    $vectorParam)"
+                + " LIMIT 8");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+    }
+
+//    ??? vs-hybrid-vmatch[]
+
+    public void hybridFullText(Database db, List<Object> colorVector) throws CouchbaseLiteException {
+        // Create a hybrid vector search query with full-text's match() that
+        // uses the the full-text index named "color_desc_index".
+        Query query = db.createQuery(
+            "SELECT meta().id, color"
+                + " FROM _default.colors"
+                + " WHERE MATCH(color_desc_index, $text)"
+                + " ORDER BY APPROX_VECTOR_DISTANCE(vector, $vector)"
+                + " LIMIT 8");
+        Parameters params = new Parameters();
+        params.setArray("vectorParam", new MutableArray(colorVector));
+        query.setParameters(params);
+
+        try (ResultSet rs = query.execute()) {
+            // process results
+        }
+    }
+
+    public void lazyIndexConfig(Database db) throws CouchbaseLiteException {
+        db.getCollection("colors").createIndex(
+            "colors_index",
+            new VectorIndexConfiguration("color", 3L, 100L)
+                .setLazy(true));
+    }
+
+    public void lazyIndexEmbed(Collection col, ColorModel colorModel) throws CouchbaseLiteException {
+        while (true) {
+            try (IndexUpdater updater = col.getIndex("colors_index").beginUpdate(10)) {
+                if (updater == null) { break; }
+                for (int i = 0; i < updater.count(); i++) {
+                    // get the color swatch from the updater and send it to the remote model
+                    List<Float> embedding = colorModel.getEmbedding(updater.getBlob(i));
+                    if (embedding != null) { updater.setVector(embedding, i); }
+                    else {
+                        // Bad connection? Corrupted over the wire? Something bad happened
+                        // and the vector cannot be generated at the moment: skip it.
+                        // The next time beginUpdate() is called, we'll try it again.
+                        updater.skipVector(i);
+                    }
+                }
+                // This writes the vectors to the index. You MUST either have set or skipped each
+                // of the the vectors in the updater or this call will throw an exception.
+                updater.finish();
+            }
+        }
+    }
+}
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+.JSON String Format
+[#java:querybuilder:::ex-json-format]
+If your query selects ALL then the JSON format will be:
+
+[source, JSON]
+----
+{
+  database-name: {
+    key1: "value1",
+    keyx: "valuex"
+  }
+}
+----
+
+If your query selects a sub-set of available properties then the JSON format will be:
+
+[source, JSON]
+----
+{
+  key1: "value1",
+  keyx: "valuex"
+}
+----
+
+
+[discrete#java:querybuilder:::lbl-predquery]
+==== Predictive Query
+
+.Enterprise Edition only
+IMPORTANT: Predictive Query is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+
+Predictive Query enables Couchbase Lite queries to use machine learning, by providing query functions that can process document data (properties or blobs) via trained ML models.
+
+Let's consider an image classifier model that takes a picture as input and outputs a label and probability.
+
+image::couchbase-lite/current/_images/predictive-diagram.png[]
+
+To run a predictive query with a model as the one shown above, you must implement the following steps.
+
+. <<java:querybuilder:::integrate-the-model,Integrate the Model>>
+. <<java:querybuilder:::register-the-model,Register the Model>>
+. <<java:querybuilder:::create-an-index,Create an Index (Optional)>>
+. <<java:querybuilder:::run-a-prediction-query,Run a Prediction Query>>
+. <<Deregister-the-model,Deregister the Model>>
+
+
+[discrete#java:querybuilder:::integrate-the-model]
+===== Integrate the Model
+
+To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `predict()` -- see: <<java:querybuilder:::int-pred-model>>.
+
+.Integrating a predictive model
+[#int-pred-model]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::int-pred-model]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="predictive-model", indent=0]
+class ImageClassifierModel implements PredictiveModel {
+    @Override
+    public Dictionary predict(@NonNull Dictionary input) {
+        Blob blob = input.getBlob("photo");
+        if (blob == null) { return null; }
+
+        // tensorFlowModel is a fake implementation
+        // this would be the implementation of the ml model you have chosen
+        return new MutableDictionary(TensorFlowModel.predictImage(blob.getContent())); // <1>
+    }
+}
+
+@SuppressWarnings({"unused", "ConstantConditions"})
+class ZipUtils {
+    public static void unzip(InputStream src, File dst) throws IOException {
+        byte[] buffer = new byte[1024];
+        try (InputStream in = src; ZipInputStream zis = new ZipInputStream(in)) {
+            ZipEntry ze = zis.getNextEntry();
+            while (ze != null) {
+                File newFile = new File(dst, ze.getName());
+                if (ze.isDirectory()) { newFile.mkdirs(); }
+                else {
+                    new File(newFile.getParent()).mkdirs();
+                    try (FileOutputStream fos = new FileOutputStream(newFile)) {
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) { fos.write(buffer, 0, len); }
+                    }
+                }
+                ze = zis.getNextEntry();
+            }
+            zis.closeEntry();
+        }
+    }
+}
+
+@SuppressWarnings("unused")
+
+class LogTestLogger implements com.couchbase.lite.Logger {
+    @NonNull
+    private final LogLevel level;
+
+    public LogTestLogger(@NonNull LogLevel level) { this.level = level; }
+
+    @NonNull
+    @Override
+    public LogLevel getLevel() { return level; }
+
+    @Override
+    public void log(@NonNull LogLevel level, @NonNull LogDomain domain, @NonNull String message) {
+
+    }
+}
+
+
+@SuppressWarnings("unused")
+class TensorFlowModel {
+    public static Map<String, Object> predictImage(byte[] data) {
+        return null;
+    }
+}
+    // tensorFlowModel is a fake implementation
+    // this would be the implementation of the ml model you have chosen
+    public static class TensorFlowModel {
+        public static Map<String, Object> predictImage(byte[] data) {
+            return null;
+        }
+    }
+
+    public static class ImageClassifierModel implements PredictiveModel {
+        @Override
+        public Dictionary predict(@NonNull Dictionary input) {
+            Blob blob = input.getBlob("photo");
+
+            // tensorFlowModel is a fake implementation
+            // this would be the implementation of the ml model you have chosen
+            return (blob == null)
+                ? null
+                : new MutableDictionary(TensorFlowModel.predictImage(blob.getContent())); // <1>
+        }
+    }
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<1> The `predict(input) ++->++ output` method provides the input and expects the result of using the machine learning model.
+The input and output of the predictive model is a `DictionaryObject`.
+Therefore, the supported data type will be constrained by the data type that the `DictionaryObject` supports.
+
+
+[discrete#java:querybuilder:::register-the-model]
+===== Register the Model
+
+To register the model you must create a new instance and pass it to the `Database.prediction.registerModel` static method.
+
+.Registering a predictive model
+[#reg-pred-model]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::reg-pred-model]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="register-model", indent=0]
+Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#java:querybuilder:::create-an-index]
+===== Create an Index
+
+Creating an index for a predictive query is highly recommended.
+By computing the predictions during writes and building a prediction index, you can significantly improve the speed of prediction queries (which would otherwise have to be computed during reads).
+
+There are two types of indexes for predictive queries:
+
+* <<java:querybuilder:::value-index,Value Index>>
+* <<java:querybuilder:::predictive-index,Predictive Index>>
+
+[discrete#java:querybuilder:::value-index]
+====== Value Index
+
+The code below creates a value index from the "label" value of the prediction result.
+When documents are added or updated, the index will call the prediction function to update the label value in the index.
+
+.Creating a value index
+[#crt-val-index]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::crt-val-index]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="predictive-query-value-index", indent=0]
+collection.createIndex(
+    "value-index-image-classifier",
+    IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label"))));
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#java:querybuilder:::predictive-index]
+====== Predictive Index
+
+Predictive Index is a new index type used for predictive query.
+It differs from the value index in that it caches the predictive results and creates a value index from that cache when the predictive results values are specified.
+
+.Creating a predictive index
+[#crt-val-index]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::crt-val-index]
+====
+
+pass:q,a[Here we create a predictive index from the `label` value of the prediction result.]
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="predictive-query-predictive-index", indent=0]
+Map<String, Object> inputMap = new HashMap<>();
+inputMap.put("numbers", Expression.property("photo"));
+Expression input = Expression.map(inputMap);
+
+PredictiveIndex index = IndexBuilder.predictiveIndex("ImageClassifier", input, null);
+collection.createIndex("predictive-index-image-classifier", index);
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#java:querybuilder:::run-a-prediction-query]
+===== Run a Prediction Query
+
+The code below creates a query that calls the prediction function to return the "label" value for the first 10 results in the database.
+
+.Creating a value index
+[#crt-val-index]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::crt-val-index]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="predictive-query", indent=0]
+Map<String, Object> inputProperties = new HashMap<>();
+inputProperties.put("photo", Expression.property("photo"));
+Expression input = Expression.map(inputProperties);
+PredictionFunction prediction = Function.prediction("ImageClassifier", input); // <1>
+
+Query query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.collection(collection))
+    .where(Expression.property("label").equalTo(Expression.string("car"))
+        .and(prediction.propertyPath("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))));
+
+// Run the query.
+try (ResultSet result = query.execute()) {
+    Logger.log("Number of rows: " + result.allResults().size());
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<1> The `PredictiveModel.predict()` method returns a constructed Prediction Function object which can be used further to specify a property value extracted from the output dictionary of the `PredictiveModel.predict()` function.
++
+NOTE: The null value returned by the prediction method will be interpreted as MISSING value in queries.
+
+
+[discrete#java:querybuilder:::deregister-the-model]
+===== Deregister the Model
+
+To deregister the model you must call the `Database.prediction.unregisterModel` static method.
+
+.Deregister a value index
+[#dereg-val-index]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:querybuilder:::dereg-val-index]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="unregister-model", indent=0]
+Database.prediction.unregisterModel("ImageClassifier");
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+
+
+// END --- inclusion -- querybuilder.adoc
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+[discrete#java:querybuilder:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:java:gs-prereqs.adoc[Prerequisites]
+* xref:java:gs-install.adoc[Install]
+* xref:java:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#java:querybuilder:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:java:database.adoc[Databases]
+* xref:java:document.adoc[Documents]
+* xref:java:blob.adoc[Blobs]
+* xref:java:replication.adoc[Remote Sync Gateway]
+* xref:java:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#java:querybuilder:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+

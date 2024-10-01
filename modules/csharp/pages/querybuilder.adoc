@@ -1,17 +1,2422 @@
-= QueryBuilder
+:docname: querybuilder
+:page-module: csharp
+:page-relative-src-path: querybuilder.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#csharp:querybuilder:::]
+=== Querybuilder
 :page-aliases: learn/csharp-query.adoc, query.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: How to use QueryBuilder to build effective queries with Couchbase Lite on C#
 :keywords: sql, n1ql
 
-include::partial$_set_page_context_for_csharp.adoc[]
 
-:param-related: {querybuilder--xref--predictive-query} | {query-live--xref} | {indexing--xref}
-:topic-group: Topic Group -- Querying
-include::{root-partials}_show_page_header_block.adoc[]
 
-include::{root-commons}querybuilder.adoc[subs="macros,attributes"]
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
 
-include::{root-partials}block-related-content-data.adoc[]
+// BEGIN::module page attributes
+// :source-language: Java
+
+// :snippet-p2psync-ws: {snippets-p2psync-ws--csharp}
+// SET full maintenance version number
+
+// VECTOR SEARCH attributes
+
+// END::module page attributes
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+
+// Supporting Data Type Classes
+
+// COLLECTION CLASSES
+
+
+// DATABASE CLASSES
+
+
+
+//Database.SAVE
+
+
+
+//Database.DELETE
+
+
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Compact[Database.Compact()]
+
+
+
+
+
+// links for documents pages
+
+// :url-api-class-dictionary: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.DictionaryObject.html[property accessors]
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+
+
+// Query class and methods
+
+// Expression class and methods
+// :url-api-method-expression-like: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_Like_Couchbase_Lite_Query_IExpression_
+
+// ArrayFunction class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+
+// orderby class and methods
+//
+
+// GroupBy class and methods
+//
+
+
+
+
+
+// PEER-TO-PEER CLASSES
+
+// URLENDPOINT CLASSES
+
+
+
+
+// :url-api-references-tlsidentity-property: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.P2P.TLSIdentity.html#Couchbase_Lite_P2P_TLSIdentity_
+
+
+
+
+
+
+
+// https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-csharp/com/couchbase/lite/URLEndpointListenerConfiguration.html#setPort-int-
+
+
+
+
+// :url-api-references-urlendpointconfiguration-initcfg: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html#Couchbase_Lite_P2P_URLEndpointListenerConfiguration_initWithConfig::[-initWithConfig:]
+// :url-api-references-urlendpointconfiguration-init: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html#Couchbase_Lite_P2P_URLEndpointListenerConfiguration_init:[-init:]
+
+
+
+
+// diag: Env+Module csharp
+
+
+// AUTHENTICATORS
+
+
+
+
+// REPLICATOR API CLASSES
+
+
+
+// :url-api-references-replicator-abs: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.AbstractReplicator.html
+// :url-api-class-replicator-abs: {url-api-references-replicator-abs}[AbstractReplicator]
+// :url-api-properties-replicator-abs: {url-api-references-replicator-abs}#
+
+
+
+
+
+
+
+
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#s:18CouchbaseLitecsharp10ReplicatorC13ActivityLevelO
+
+
+// REPLICATORSTATUS
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+// :url-api-prop-replicator-config-auth-get: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_getAuthenticator--[getAuthenticator]
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+
+
+// replaced
+// replaced
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+// // replaces ^^
+// :url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_setAcceptOnlySelfSignedServerCertificate-boolean-[setAcceptOnlySelfSignedServerCertificate]
+
+
+
+
+
+// Meta API
+
+
+
+
+// BEGIN Logs and logging references
+
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+// End -- API References attributes
+
+// END - Set attributes pointing to API references for this module
+
+// END -- inclusion -- csharp:partial$_define_module_attributes.adoc
+
+// BEGIN::module page attributes
+//:source-language: csharp
+// :snippet-p2psync-ws: {snippets-p2psync-ws--csharp}
+
+// END::Local page attributes
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:csharp:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:csharp:query-live.adoc[Live Queries] | xref:csharp:indexing.adoc[Indexing]
+--
+
+// BEGIN -- inclusion -- common-querybuilder.adoc
+//  Purpose -- describes the use of the query syntax
+//
+// // BEGIN::REQUIRED EXTERNALS
+// :this-module: {par-module}
+// :this-lang-title: {par-lang-title}
+// :this-packageNm: {par-packageNm}
+// :this-source-language: {par-source-language}
+// :snippet: {par-snippet}
+//:this-url-issues: {par-url-issues}
+// END::REQUIRED EXTERNALS
+
+// BEGIN::Local page attributes
+
+// END::Local page attributes
+
+NOTE: The examples used here are based on the _Travel Sample_ app and data introduced in the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial
+
+[discrete#csharp:querybuilder:::introduction]
+==== Introduction
+
+Couchbase Lite for C#.Net provides two ways to build and run database queries; the QueryBuilder API described in this topic and xref:csharp:query-n1ql-mobile.adoc[{sqlpp} for Mobile].
+
+Database queries defined with the QueryBuilder API use the query statement format shown in <<csharp:querybuilder:::ex-query-form>>.
+The structure and semantics of the query format are based on Couchbase's xref:server:learn:data/n1ql-versus-sql.adoc[{sqlpp} query language].
+
+
+[#csharp:querybuilder:::ex-query-form]
+.Query Format
+====
+[source, SQL, subs="+attributes, +macros"]
+----
+SELECT ____
+FROM 'data-source'
+WHERE ____,
+JOIN ____
+GROUP BY ____
+ORDER BY ____
+----
+
+====
+Query Components::
+|====
+| Component | Description
+
+| <<csharp:querybuilder:::lbl-select>>
+a| The document properties that will be returned in the result set
+
+| FROM
+a| The data source to query the documents from - the collection of the database.
+
+ | <<csharp:querybuilder:::lbl-where>>
+a| The query criteria +
+The `SELECT`ed properties of documents matching this criteria will be returned in the result set
+
+| <<csharp:querybuilder:::lbl-join>>
+a| The criteria for joining multiple documents
+
+| <<csharp:querybuilder:::lbl-group>>
+a| The criteria used to group returned items in the result set
+
+| <<csharp:querybuilder:::lbl-order>>
+a| The criteria used to order the items in the result set
+|====
+
+
+TIP: We recommend working through the query section of the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial as a good way to build your skills in this area.
+
+
+
+[discrete#csharp:querybuilder:::lbl-select]
+==== SELECT statement
+
+--
+In this section::
+<<csharp:querybuilder:::lbl-return-properties>>{nbsp}{nbsp}|{nbsp}{nbsp} <<csharp:querybuilder:::lbl-return-all>>
+Related::
+<<csharp:querybuilder:::lbl-resultsets,Handling result sets>>
+--
+
+Use the `SELECT` statement to specify which properties you want to return from the queried documents.
+You can opt to retrieve entire documents, or just the specific properties you need.
+
+[discrete#csharp:querybuilder:::lbl-return-all]
+===== Return All Properties
+Use the `SelectResult.all()` method to return all the properties of selected documents -- see: <<csharp:querybuilder:::ex-select-all>>.
+
+.Using SELECT to Retrieve All Properties
+[#ex-select-all]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-select-all]
+====
+
+pass:q,a[This query shows how to retrieve all properties from all documents in your database.]
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-select-all", indent=0]
+using var query = QueryBuilder.Select(SelectResult.All())
+    .From(DataSource.Collection(collection));
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+The query.execute statement returns the results in a dictionary, where the key is the database name -- see <<csharp:querybuilder:::ex-return-all>>.
+
+
+[#csharp:querybuilder:::ex-return-all]
+.ResultSet Format from SelectResult.all()
+====
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+[
+  {
+    "travel-sample": { // <.>
+      "callsign": "MILE-AIR",
+      "country": "United States",
+      "iata": "Q5",
+      "icao": "MLA",
+      "id": 10,
+      "name": "40-Mile Air",
+      "type": "airline"
+    }
+  },
+  {
+    "travel-sample": { // <.>
+      "callsign": "ALASKAN-AIR",
+      "country": "United States",
+      "iata": "AA",
+      "icao": "AAA",
+      "id": 10,
+      "name": "Alaskan Airways",
+      "type": "airline"
+    }
+  }
+]
+
+----
+<.> The result for the first document matching the query criteria.
+<.> The result for the next document matching the query criteria.
+
+====
+
+See: <<csharp:querybuilder:::lbl-resultsets>> for more on processing query results.
+
+
+[discrete#csharp:querybuilder:::lbl-return-properties]
+===== Return Selected Properties
+To access only specific properties, specify a comma-separated list of `SelectResult` expressions, one for each property, in the select statement of your query  -- see: <<csharp:querybuilder:::ex-select-properties>>
+
+[#ex-select-properties]
+.Using SELECT to Retrieve Specific Properties
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-select-properties]
+====
+
+pass:q,a[In this query we retrieve and then print the `_id`, `type` and `name` properties of each document.]
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-select-props", indent=0]
+using var query = QueryBuilder.Select(
+    SelectResult.Expression(Meta.ID),
+    SelectResult.Property("type"),
+    SelectResult.Property("name"))
+.From(DataSource.Collection(collection));
+
+foreach (var result in query.Execute()) {
+    Console.WriteLine($"Document ID :: {result.GetString("id")}");
+    Console.WriteLine($"Document Name :: {result.GetString("name")}");
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+The `query.execute` statement returns one or more key-value pairs, one for each SelectResult expression, with the property-name as the key -- see <<csharp:querybuilder:::ex-return-properties>>
+
+[#csharp:querybuilder:::ex-return-properties]
+.Select Result Format
+====
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+
+[
+  { // <.>
+    "id": "hotel123",
+    "type": "hotel",
+    "name": "Hotel Ghia"
+  },
+  { // <.>
+    "id": "hotel456",
+    "type": "hotel",
+    "name": "Hotel Deluxe",
+  }
+]
+
+----
+<.> The result for the first document matching the query criteria.
+<.> The result for the next document matching the query criteria.
+
+====
+
+See: <<csharp:querybuilder:::lbl-resultsets>> for more on processing query results.
+
+
+[discrete#csharp:querybuilder:::lbl-where]
+==== WHERE statement
+
+In this section::
+<<csharp:querybuilder:::lbl-comp-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<csharp:querybuilder:::lbl-coll-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<csharp:querybuilder:::lbl-like-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<csharp:querybuilder:::lbl-regex-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<csharp:querybuilder:::lbl-deleted-ops>>
+
+Like SQL, you can use the `WHERE` statement to choose  which documents are returned by your query.
+The select statement takes in an `Expression`.
+You can chain any number of Expressions in order to implement sophisticated filtering capabilities.
+
+
+[discrete#csharp:querybuilder:::lbl-comp-ops]
+===== Comparison Operators
+The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_[Expression Comparators] can be used in the WHERE statement to specify on which property to match documents.
+In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
+
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+[
+  { // <.>
+    "id": "hotel123",
+    "type": "hotel",
+    "name": "Hotel Ghia"
+  },
+  { // <.>
+    "id": "hotel456",
+    "type": "hotel",
+    "name": "Hotel Deluxe",
+  }
+]
+----
+
+.Using Where
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-where", indent=0]
+using var query = QueryBuilder.Select(SelectResult.All())
+    .From(DataSource.Collection(collection))
+    .Where(Expression.Property("type").EqualTo(Expression.String("hotel")))
+    .Limit(Expression.Int(10));
+
+foreach (var result in query.Execute()) {
+    var dict = result.GetDictionary(collection.Name);
+    Console.WriteLine($"Document Name :: {dict?.GetString("name")}");
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#csharp:querybuilder:::lbl-coll-ops]
+===== Collection Operators
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.ArrayFunction.html[ArrayFunction Collection Operators] are useful to check if a given value is present in an array.
+
+
+[discrete#csharp:querybuilder:::contains-operator]
+====== CONTAINS Operator
+The following example uses the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.ArrayFunction.html[ArrayFunction]` to find documents where the `public_likes` array property contains a value equal to "Armani Langworth".
+
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+{
+    "_id": "hotel123",
+    "name": "Apple Droid",
+    "public_likes": ["Armani Langworth", "Elfrieda Gutkowski", "Maureen Ruecker"]
+}
+----
+
+// BEGIN inclusion -- block -- block_tabbed_code.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// This version does not add an example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-collection-operator-contains", indent=0]
+using var query = QueryBuilder.Select(
+        SelectResult.Expression(Meta.ID),
+        SelectResult.Property("name"),
+        SelectResult.Property("public_likes"))
+    .From(DataSource.Collection(collection))
+    .Where(Expression.Property("type").EqualTo(Expression.String("hotel"))
+        .And(ArrayFunction.Contains(Expression.Property("public_likes"),
+            Expression.String("Armani Langworth"))));
+
+foreach (var result in query.Execute()) {
+    var publicLikes = result.GetArray("public_likes");
+    var jsonString = JsonConvert.SerializeObject(publicLikes);
+    Console.WriteLine($"Public Likes :: {jsonString}");
+}
+----
+
+
+
+
+
+// Tidy-up attributes created
+// END -- block_tabbed_code.adoc
+
+[discrete#csharp:querybuilder:::in-operator]
+====== IN Operator
+
+The `IN` operator is useful when you need to explicitly list out the values to test against.
+The following example looks for documents whose `first`, `last` or `username` property value equals "Armani".
+
+// BEGIN inclusion -- block -- block_tabbed_code.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// This version does not add an example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-collection-operator-in", indent=0]
+var values = new IExpression[]
+    { Expression.Property("first"), Expression.Property("last"), Expression.Property("username") };
+
+using var query = QueryBuilder.Select(
+        SelectResult.All())
+    .From(DataSource.Collection(collection))
+    .Where(Expression.String("Armani").In(values));
+
+foreach (var result in query.Execute()) {
+    var body = result.GetDictionary(0);
+    var jsonString = JsonConvert.SerializeObject(body);
+    Console.WriteLine($"In results :: {jsonString}");
+}
+
+----
+
+
+
+
+
+// Tidy-up attributes created
+// END -- block_tabbed_code.adoc
+
+
+[discrete#csharp:querybuilder:::lbl-like-ops]
+===== Like Operator
+In this section::
+<<csharp:querybuilder:::lbl-string-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<csharp:querybuilder:::lbl-wild-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<csharp:querybuilder:::lbl-wild-chars>>
+
+[discrete#csharp:querybuilder:::lbl-string-match]
+====== String Matching
+The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_Like_Couchbase_Lite_Query_IExpression_[Like()] operator can be used for string matching -- see <<csharp:querybuilder:::ex-like-case-insensitive>>
+
+NOTE: The `like` operator performs **case sensitive** matches. +
+To perform case insensitive matching, use `Function.lower` or `Function.upper` to ensure all comparators have the same case, thereby removing the case issue.
+
+This query returns `landmark` type documents where the `name` matches the string "Royal Engineers Museum", regardless of how it is capitalized (so, it selects "royal engineers museum", "ROYAL ENGINEERS MUSEUM" and so on).
+
+.Like with case-insensitive matching
+[#ex-like-case-insensitive]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-like-case-insensitive]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-like-operator", indent=0]
+using var query = QueryBuilder.Select(
+        SelectResult.Expression(Meta.ID),
+        SelectResult.Property("name"))
+    .From(DataSource.Collection(collection))
+    .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
+        .And(Function.Lower(Expression.Property("name")).Like(Expression.String("Royal Engineers Museum"))))
+    .Limit(Expression.Int(10));
+
+foreach (var result in query.Execute()) {
+    Console.WriteLine($"Name Property :: {result.GetString("name")}");
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+*Note* the use of `Function.lower` to transform `name` values to the same case as the literal comparator.
+
+
+[discrete#csharp:querybuilder:::lbl-wild-match]
+====== Wildcard Match
+
+We can use `%` sign within a `like` expression to do a wildcard match against zero or more characters.
+Using wildcards allows you to have some fuzziness in your search string.
+
+In <<csharp:querybuilder:::ex-wldcd-match>> below, we are looking for documents of `type` "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
+Once again, we are using `Function.lower` to make the search case insensitive.
+
+So "landmark" documents with names such as "Engineers", "engine", "english egg" and "England Eagle".
+Notice that the matches may span word boundaries.
+
+.Wildcard Matches
+[#ex-wldcd-match]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-wldcd-match]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-like-operator-wildcard-match", indent=0]
+using var query = QueryBuilder.Select(
+        SelectResult.Expression(Meta.ID),
+        SelectResult.Property("name"))
+    .From(DataSource.Collection(collection))
+    .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
+        .And(Function.Lower(Expression.Property("name")).Like(Expression.String("Eng%e%"))))
+    .Limit(Expression.Int(10));
+
+foreach (var result in query.Execute()) {
+    Console.WriteLine($"Name Property :: {result.GetString("name")}");
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+[discrete#csharp:querybuilder:::lbl-wild-chars]
+====== Wildcard Character Match
+
+We can use an `_` sign within a like expression to do a wildcard match against a single character.
+
+In <<csharp:querybuilder:::ex-wldcd-char-match>> below, we are looking for documents of type "landmark" where the `name` property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
+The query returns "landmark" type documents with names such as "Engineer", "engineer" and so on.
+
+.Wildcard Character Matching
+[#ex-wldcd-char-match]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-wldcd-char-match]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-like-operator-wildcard-character-match", indent=0]
+using var query = QueryBuilder.Select(
+        SelectResult.Expression(Meta.ID),
+        SelectResult.Property("name"))
+    .From(DataSource.Collection(collection))
+    .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
+        .And(Expression.Property("name").Like(Expression.String("Royal Eng____rs Museum"))))
+    .Limit(Expression.Int(10));
+
+foreach (var result in query.Execute()) {
+    Console.WriteLine($"Name Property :: {result.GetString("name")}");
+}
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#csharp:querybuilder:::lbl-regex-ops]
+===== Regex Operator
+
+Similar to the wildcards in `like` expressions, `regex` based pattern matching allow you to introduce an element of fuzziness in your search string -- see the code shown in <<csharp:querybuilder:::ex-regex>>.
+
+NOTE: The `regex` operator is case sensitive, use `upper` or `lower` functions to mitigate this if required.
+
+[#ex-regex]
+.Using Regular Expressions
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-regex]
+====
+
+This example returns documents with a `type` of "landmark" and a `name` property that matches any string that begins with "eng" and ends in the letter "e".
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-regex-operator,indent=0]", indent=0]
+using var query = QueryBuilder.Select(
+        SelectResult.Expression(Meta.ID),
+        SelectResult.Property("name"))
+    .From(DataSource.Collection(collection))
+    .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
+        .And(Expression.Property("name").Regex(Expression.String("\\bEng.*e\\b"))))
+    .Limit(Expression.Int(10));
+
+foreach (var result in query.Execute()) {
+    Console.WriteLine($"Name Property :: {result.GetString("name")}");
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> The `\b` specifies that the match must occur on word boundaries.
+
+TIP: For more on the regex spec used by pass:q,a[Couchbase{nbsp}Lite] see http://www.cplusplus.com/reference/regex/ECMAScript/[cplusplus regex reference page^]
+
+// ISNULLORMISSING / NOTNULLORMISING
+// For the QueryBuilder API, isNullOrMissing and NotNullOrMissing operators will be deprecated and the isValued and isNotValued operators will be added.
+
+[discrete#csharp:querybuilder:::lbl-deleted-ops]
+===== Deleted Document
+You can query documents that have been deleted (tombstones) footnote:fn2x5[Starting in Couchbase Lite 2.5] as shown in <<csharp:querybuilder:::ex-del-qry>>.
+
+.Query to select Deleted Documents
+[#ex-del-qry]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-del-qry]
+====
+
+pass:q,a[This example shows how to query deleted documents in the database. It returns is an array of key-value pairs.]
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-deleted-documents", indent=0]
+// Query documents that have been deleted
+var query = QueryBuilder
+    .Select(SelectResult.Expression(Meta.ID))
+    .From(DataSource.Collection(collection))
+    .Where(Meta.IsDeleted);
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#csharp:querybuilder:::lbl-join]
+==== JOIN statement
+The JOIN clause enables you to select data from multiple documents that have been linked by criteria specified in the JOIN statement.
+For example to combine airline details with route details, linked by the airline id -- see <<csharp:querybuilder:::ex-join>>.
+
+.Using JOIN to Combine Document Details
+[#ex-join]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-join]
+====
+
+pass:q,a[This example JOINS the document of type `route` with documents of type `airline` using the document ID (`_id`) on the _airline_ document and `airlineid` on the _route_ document.]
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-join", indent=0]
+using var query = QueryBuilder.Select(
+        SelectResult.Expression(Expression.Property("name").From("airline")),
+        SelectResult.Expression(Expression.Property("callsign").From("airline")),
+        SelectResult.Expression(Expression.Property("destinationairport").From("route")),
+        SelectResult.Expression(Expression.Property("stops").From("route")),
+        SelectResult.Expression(Expression.Property("airline").From("route")))
+    .From(DataSource.Collection(collection).As("airline"))
+    .Join(Join.InnerJoin(DataSource.Collection(collection2).As("route"))
+        .On(Meta.ID.From("airline").EqualTo(Expression.Property("airlineid").From("route"))))
+    .Where(Expression.Property("type").From("route").EqualTo(Expression.String("route"))
+        .And(Expression.Property("type").From("airline").EqualTo(Expression.String("airline")))
+        .And(Expression.Property("sourceairport").From("route").EqualTo(Expression.String("RIX"))));
+
+foreach (var result in query.Execute()) {
+    Console.WriteLine($"Name Property :: {result.GetString("name")}");
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#csharp:querybuilder:::lbl-group]
+==== GROUP BY statement
+You can perform further processing on the data in your result set before the final projection is generated.
+
+The following example looks for the number of airports at an altitude of 300 ft or higher and groups the results by country and timezone.
+
+.Data Model for Example
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+{
+    "_id": "airport123",
+    "type": "airport",
+    "country": "United States",
+    "geo": { "alt": 456 },
+    "tz": "America/Anchorage"
+}
+----
+
+[#ex-grpby-qry]
+.Query using GroupBy
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-grpby-qry]
+====
+
+pass:q,a[This example shows a query that selects all airports with an altitude above 300ft. The output (a count, $1) is grouped by country, within timezone.]
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-groupby", indent=0]
+using var query = QueryBuilder.Select(
+        SelectResult.Expression(Function.Count(Expression.All())),
+        SelectResult.Property("country"),
+        SelectResult.Property("tz"))
+    .From(DataSource.Collection(collection))
+    .Where(Expression.Property("type").EqualTo(Expression.String("airport"))
+        .And(Expression.Property("geo.alt").GreaterThanOrEqualTo(Expression.Int(300))))
+    .GroupBy(Expression.Property("country"), Expression.Property("tz"));
+
+foreach (var result in query.Execute()) {
+    Console.WriteLine(
+        $"There are {result.GetInt("$1")} airports in the {result.GetString("tz")} timezone located in {result.GetString("country")} and above 300 ft");
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+The query shown in <<csharp:querybuilder:::ex-grpby-qry>> generates the following output:
+--
+There are 138 airports on the Europe/Paris timezone located in France and above 300 ft +
+There are 29 airports on the Europe/London timezone located in United Kingdom and above 300 ft +
+There are 50 airports on the America/Anchorage timezone located in United States and above 300 ft +
+There are 279 airports on the America/Chicago timezone located in United States and above 300 ft +
+There are 123 airports on the America/Denver timezone located in United States and above 300 ft
+--
+
+
+[discrete#csharp:querybuilder:::lbl-order]
+==== ORDER BY statement
+
+It is possible to sort the results of a query based on a given expression result -- see <<csharp:querybuilder:::ex-orderby-qry>>
+
+[#ex-orderby-qry]
+.Query using OrderBy
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-orderby-qry]
+====
+
+pass:q,a[This example shows a query that returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.]
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-orderby", indent=0]
+using var query = QueryBuilder.Select(
+        SelectResult.Expression(Meta.ID),
+        SelectResult.Property("title"))
+    .From(DataSource.Collection(collection))
+    .Where(Expression.Property("type").EqualTo(Expression.String("hotel")))
+    .OrderBy(Ordering.Property("title").Ascending())
+    .Limit(Expression.Int(10));
+
+foreach (var result in query.Execute()) {
+    Console.WriteLine($"Title :: {result.GetString("title")}");
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+The query shown in <<csharp:querybuilder:::ex-orderby-qry>> generates the following output:
+[pass:q,a[source, text, subs="+attributes, +macros"]]
+----
+Aberdyfi
+Achiltibuie
+Altrincham
+Ambleside
+Annan
+Ardèche
+Armagh
+Avignon
+----
+
+
+[discrete#csharp:querybuilder:::lbl-date-time]
+==== Date/Time Functions
+
+
+Couchbase Lite documents support a <<csharp:querybuilder:::initializers,date type>> that internally stores dates in ISO 8601 with the GMT/UTC timezone.
+
+Couchbase Lite's Query Builder API
+footnote:fn2x5[]
+includes four functions for date comparisons.
+
+`Function.StringToMillis(Expression.Property("date_time"))`::
+The input to this will be a validly formatted ISO 8601 `date_time` string.
+The end result will be an expression (with a numeric content) that can be further input into the query builder.
+`Function.StringToUTC(Expression.Property("date_time"))`::
+The input to this will be a validly formatted ISO 8601 `date_time` string.
+The end result will be an expression (with string content) that can be further input into the query builder.
+`Function.MillisToString(Expression.Property("date_time"))`::
+The input for this is a numeric value representing milliseconds since the Unix epoch.
+The end result will be an expression (with string content representing the date and time as an ISO 8601 string in the device’s timezone) that can be further input into the query builder.
+`Function.MillisToUTC(Expression.Property("date_time"))`::
+The input for this is a numeric value representing milliseconds since the Unix epoch.
+The end result will be an expression (with string content representing the date and time as a UTC ISO 8601 string) that can be further input into the query builder.
+
+
+[discrete#csharp:querybuilder:::lbl-resultsets]
+==== Result Sets
+In this section::
+<<csharp:querybuilder:::lbl-process-resultset>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<csharp:querybuilder:::lbl-all-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<csharp:querybuilder:::lbl-specific-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<csharp:querybuilder:::lbl-id-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<csharp:querybuilder:::lbl-count-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<csharp:querybuilder:::lbl-pagination>>
+
+
+[discrete#csharp:querybuilder:::lbl-process-resultset]
+===== Processing
+
+This section shows how to handle the returned result sets for different types of `SELECT` statements.
+
+The result set format and its handling varies slightly depending on the type of SelectResult statements used.
+The result set formats you may encounter include those generated by :
+
+* SelectResult.all -- see: <<csharp:querybuilder:::lbl-all-sel,All Properties>>
+* SelectResult.expression(property("name")) -- see: <<csharp:querybuilder:::lbl-specific-sel,Specific Properties>>
+* SelectResult.expression(meta.id) --  Metadata (such as the `_id`) -- see: <<csharp:querybuilder:::lbl-id-sel,Document ID Only>>
+* SelectResult.expression(Function.count(Expression.all())).as("mycount") --  see: <<csharp:querybuilder:::lbl-count-sel>>
+
+To process the results of a query, you first need to execute it using `Query.execute`.
+
+The execution of a Couchbase Lite for C#.Net's database query typically returns an array of results, a result set.
+
+* The result set of an aggregate, count-only, query is a key-value pair -- see <<csharp:querybuilder:::lbl-count-sel>> -- which you can access using the count name as its key.
+
+* The result set of a query returning document properties is an array. +
+Each array row represents the data from a document that matched your search criteria (the `WHERE` statements)
+The composition of each row is determined by the combination of `SelectResult` expressions provided in the `SELECT` statement.
+To unpack these result sets you need to iterate this array.
+
+
+[discrete#csharp:querybuilder:::lbl-all-sel]
+===== Select All Properties
+
+[discrete#csharp:querybuilder:::query]
+====== Query
+The `Select` statement for this type of query, returns all document properties for each document matching the query criteria -- see <<csharp:querybuilder:::ex-all-qry>>
+
+.Query selecting All Properties
+[#ex-all-qry]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-all-qry]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-syntax-all", indent=0]
+var database = new Database("hotels");
+
+var query = QueryBuilder
+      .Select(SelectResult.All())
+      .From(DataSource.Collection(database.GetDefaultCollection()));
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+[discrete#csharp:querybuilder:::result-set-format]
+====== Result Set Format
+The result set returned by queries using `SelectResult.all` is an array of dictionary objects -- one for each document matching the query criteria.
+
+For each result object, the key is the database name and the 'value' is a dictionary representing each document property as a key-value pair -- see: <<csharp:querybuilder:::ex-all-rtn>>.
+
+.Format of Result Set (All Properties)
+[#csharp:querybuilder:::ex-all-rtn]
+====
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+
+[
+  {
+    "travel-sample": { // <.>
+      "callsign": "MILE-AIR",
+      "country": "United States",
+      "iata": "Q5",
+      "icao": "MLA",
+      "id": 10,
+      "name": "40-Mile Air",
+      "type": "airline"
+    }
+  },
+  {
+    "travel-sample": { // <.>
+      "callsign": "ALASKAN-AIR",
+      "country": "United States",
+      "iata": "AA",
+      "icao": "AAA",
+      "id": 10,
+      "name": "Alaskan Airways",
+      "type": "airline"
+    }
+  }
+]
+
+
+----
+<.> The result for the first document matching the query criteria.
+<.> The result for the next document matching the query criteria.
+
+====
+
+[discrete#csharp:querybuilder:::result-set-access]
+====== Result Set Access
+
+In this case access the retrieved document properties by converting each row's value, in turn, to a dictionary -- as shown in <<csharp:querybuilder:::ex-all-acc>>.
+
+.Using Document Properties (All)
+[#ex-all-acc]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-all-acc]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-access-all", indent=0]
+var results = query.Execute().AllResults();
+var hotels = new List<Dictionary<string, object>>();
+
+if (results?.Count > 0) {
+    foreach (var result in results) {
+        // get the result into our dictionary object
+        var thisDocsProps = result.GetDictionary("hotels"); // <.>
+
+        if (thisDocsProps != null) {
+            var docID = thisDocsProps.GetString("id"); // <.>
+            var docName = thisDocsProps.GetString("name");
+            var docCity = thisDocsProps.GetString("city");
+            var docType = thisDocsProps.GetString("type");
+            var hotel = thisDocsProps.ToDictionary();
+            hotels.Add(hotel);
+        }
+
+    }
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> The dictionary of document properties using the database name as the key.
+You can add this dictionary to an array of returned matches, for processing elsewhere in the app.
+<.> Alternatively you can access the document properties here, by using the property names as keys to the dictionary object.
+
+
+[discrete#csharp:querybuilder:::lbl-specific-sel]
+===== Select Specific Properties
+
+[discrete#csharp:querybuilder:::query-2]
+====== Query
+Here we use `SelectResult.expression(property("<property-name>")))` to specify the document properties we want our query to return -- see: <<csharp:querybuilder:::ex-specific-qry>>.
+
+.Query selecting Specific Properties
+[#ex-specific-qry]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-specific-qry]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-syntax-props", indent=0]
+var database = new Database("hotels");
+
+List<Dictionary<string, object>> hotels = new List<Dictionary<string, object>>();
+
+var query = QueryBuilder.Select(
+        SelectResult.Property("type"),
+        SelectResult.Property("name"),
+        SelectResult.Property("city")).From(DataSource.Collection(database.GetDefaultCollection()));
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+[discrete#csharp:querybuilder:::result-set-format-2]
+====== Result Set Format
+The result set returned when selecting only specific document properties is an array of dictionary objects -- one for each document matching the query criteria.
+
+Each result object comprises a key-value pair for each selected document property -- see <<csharp:querybuilder:::ex-specific-rtn>>
+
+.Format of Result Set (Specific Properties)
+[#csharp:querybuilder:::ex-specific-rtn]
+====
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+
+[
+  { // <.>
+    "id": "hotel123",
+    "type": "hotel",
+    "name": "Hotel Ghia"
+  },
+  { // <.>
+    "id": "hotel456",
+    "type": "hotel",
+    "name": "Hotel Deluxe",
+  }
+]
+
+----
+<.> The result for the first document matching the query criteria.
+<.> The result for the next document matching the query criteria.
+====
+
+[discrete#csharp:querybuilder:::result-set-access-2]
+====== Result Set Access
+Access the retrieved properties by converting each row into a dictionary -- as shown in <<csharp:querybuilder:::ex-specific-acc>>.
+
+.Using Returned Document Properties (Specific Properties)
+[#ex-specific-acc]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-specific-acc]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-access-props", indent=0]
+var results = query.Execute().AllResults();
+foreach (var result in results) {
+
+    // get the returned array of k-v pairs into a dictionary
+    var hotel = result.ToDictionary();
+
+    // add hotel dictionary to list of hotel dictionaries
+    hotels.Add(hotel);
+
+    // use the properties of the returned array of k-v pairs directly
+    var docType = result.GetString("type");
+    var docName = result.GetString("name");
+    var docCity = result.GetString("city");
+
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#csharp:querybuilder:::lbl-id-sel]
+===== Select Document Id Only
+
+[discrete#csharp:querybuilder:::query-3]
+====== Query
+You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time -- see: <<csharp:querybuilder:::ex-id-qry>>.
+
+.Query selecting only Doc Id
+[#ex-id-qry]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-id-qry]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-syntax-id", indent=0]
+var database = new Database("hotels");
+
+var query = QueryBuilder
+        .Select(SelectResult.Expression(Meta.ID).As("this_ID"))
+        .From(DataSource.Collection(database.GetDefaultCollection()));
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#csharp:querybuilder:::result-set-format-3]
+====== Result Set Format
+The result set returned by queries using a SelectResult expression of the form `SelectResult.expression(meta.id)` is an array of dictionary objects -- one for each document matching the query criteria.
+Each result object has `id` as the key and the ID value as its value -- -see <<csharp:querybuilder:::ex-id-rtn>>.
+
+.Format of Result Set (Doc Id only)
+[#csharp:querybuilder:::ex-id-rtn]
+====
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+
+[
+  {
+    "id": "hotel123"
+  },
+  {
+    "id": "hotel456"
+  },
+]
+
+----
+====
+
+[discrete#csharp:querybuilder:::result-set-access-3]
+====== Result Set Access
+
+In this case, access the required document's properties by unpacking the `id` and using it to get the document from the database -- see: <<csharp:querybuilder:::ex-id-acc>>.
+
+.Using Returned Document Properties (Document Id)
+[#ex-id-acc]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-id-acc]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-access-id", indent=0]
+var results = query.Execute().AllResults();
+foreach (var result in results) {
+
+    var docID = result.GetString("this_ID"); // <.>
+    var doc = database.GetDefaultCollection().GetDocument(docID);
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Extract the Id value from the dictionary and use it to get the document from the database
+
+
+[discrete#csharp:querybuilder:::lbl-count-sel]
+===== Select Count-only
+
+
+[discrete#csharp:querybuilder:::query-4]
+====== Query
+
+.Query selecting a Count-only
+[#ex-count-qry]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-count-qry]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-syntax-count-only", indent=0]
+var database = new Database("hotels");
+
+var query =
+  QueryBuilder
+    .Select(SelectResult.Expression(Function.Count(Expression.All())).As("mycount")) // <.>
+    .From(DataSource.Collection(database.GetDefaultCollection()));
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> The alias name, `mycount`, is used to access the count value.
+
+[discrete#csharp:querybuilder:::result-set-format-4]
+====== Result Set Format
+The result set returned by a count such as `Select.expression(Function.count(Expression.all)))` is a key-value pair.
+The key is the count name, as defined using `SelectResult.as` -- see: <<csharp:querybuilder:::ex-count-rtn>> for the format and <<csharp:querybuilder:::ex-count-qry>> for the query.
+
+.Format of Result Set (Count)
+[#csharp:querybuilder:::ex-count-rtn]
+====
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+
+{
+  "mycount": 6
+}
+
+
+----
+<.> The key-value pair returned by a count.
+====
+
+[discrete#csharp:querybuilder:::result-set-access-4]
+====== Result Set Access
+
+Access the count using its alias name (`mycount` in this example) -- see <<csharp:querybuilder:::ex-count-acc>>
+
+[#ex-count-acc]
+.Using Returned Document Properties (Count)
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-count-acc]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-access-count-only", indent=0]
+var results = query.Execute().AllResults();
+foreach (var result in results) {
+    var numberOfDocs = result.GetInt("mycount"); // <.>
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Get the count using the `SelectResult.as` alias, which is used as its key.
+
+[discrete#csharp:querybuilder:::lbl-pagination]
+===== Handling Pagination
+One way to handle pagination in high-volume queries is to retrieve the results in batches.
+Use the `limit` and `offset` feature, to return a defined number of results starting from a given offset -- see: <<csharp:querybuilder:::ex-pagination>>.
+
+
+[#ex-pagination]
+.Query Pagination
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-pagination]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-syntax-pagination", indent=0]
+var database = new Database("hotels");
+var limit = 20;
+var offset = 0;
+
+// get a count of the number of docs matching the query
+var countQuery =
+    QueryBuilder
+        .Select(SelectResult.Expression(Function.Count(Expression.All())).As("mycount"))
+        .From(DataSource.Collection(database.GetDefaultCollection()));
+var numberOfDocs =
+    countQuery.Execute().First().GetInt("mycount");
+
+if (numberOfDocs < limit) {
+    limit = numberOfDocs;
+}
+
+while (offset < numberOfDocs) {
+    var listQuery =
+        QueryBuilder
+            .Select(SelectResult.All())
+            .From(DataSource.Collection(database.GetDefaultCollection()))
+            .Limit(Expression.Int(limit), Expression.Int(offset)); // <.>
+
+    foreach (var result in listQuery.Execute()) {
+        // Display and or process query results batch
+    }
+
+    offset = offset + limit;
+}
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Return a maximum of `limit` results starting from result number `offset`
+
+TIP: For more on using the QueryBuilder API, see our blog: https://blog.couchbase.com/sql-for-json-query-interface-couchbase-mobile/[Introducing the Query Interface in Couchbase Mobile]
+
+
+[discrete#csharp:querybuilder:::json-result-sets]
+==== JSON Result Sets
+
+Couchbase Lite for C#.Net provides a convenience API to convert query results to JSON strings.
+
+// Inclusion block
+[#ex-json]
+.Using JSON Results
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::ex-json]
+====
+
+pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Result.html#Couchbase_Lite_Query_Result_ToJson[Result.ToJson()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<csharp:querybuilder:::ex-json>> for a working example.]
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="query-access-json", indent=0]
+foreach (var result in query.Execute()) {
+
+    // get the result into a JSON String
+    var docJSONString = result.ToJSON();
+
+    // Get a native dictionary object using the JSON string
+    var dictFromJSONstring =
+          JsonConvert.
+            DeserializeObject<Dictionary<string, object>>
+              (docJSONString);
+
+    // use the created dictionary
+    if (dictFromJSONstring != null) {
+        var docID = dictFromJSONstring["id"].ToString();
+        var docName = dictFromJSONstring["name"].ToString();
+        var docCity = dictFromJSONstring["city"].ToString();
+        var docType = dictFromJSONstring["type"].ToString();
+    }
+
+    //Get a custom object using the JSON string
+    Hotel hotel =
+        JsonConvert.DeserializeObject<Hotel>(docJSONString);
+
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+.JSON String Format
+[#csharp:querybuilder:::ex-json-format]
+If your query selects ALL then the JSON format will be:
+
+[source, JSON]
+----
+{
+  database-name: {
+    key1: "value1",
+    keyx: "valuex"
+  }
+}
+----
+
+If your query selects a sub-set of available properties then the JSON format will be:
+
+[source, JSON]
+----
+{
+  key1: "value1",
+  keyx: "valuex"
+}
+----
+
+
+[discrete#csharp:querybuilder:::lbl-predquery]
+==== Predictive Query
+
+.Enterprise Edition only
+IMPORTANT: Predictive Query is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+
+Predictive Query enables Couchbase Lite queries to use machine learning, by providing query functions that can process document data (properties or blobs) via trained ML models.
+
+Let's consider an image classifier model that takes a picture as input and outputs a label and probability.
+
+image::couchbase-lite/current/_images/predictive-diagram.png[]
+
+To run a predictive query with a model as the one shown above, you must implement the following steps.
+
+. <<csharp:querybuilder:::integrate-the-model,Integrate the Model>>
+. <<csharp:querybuilder:::register-the-model,Register the Model>>
+. <<csharp:querybuilder:::create-an-index,Create an Index (Optional)>>
+. <<csharp:querybuilder:::run-a-prediction-query,Run a Prediction Query>>
+. <<Deregister-the-model,Deregister the Model>>
+
+
+[discrete#csharp:querybuilder:::integrate-the-model]
+===== Integrate the Model
+
+To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `predict()` -- see: <<csharp:querybuilder:::int-pred-model>>.
+
+.Integrating a predictive model
+[#int-pred-model]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::int-pred-model]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="predictive-model", indent=0]
+// tensorFlowModel is a fake implementation
+// this would be the implementation of the ml model you have chosen
+class TensorFlowModel
+{
+    public static IDictionary<string, object> PredictImage(byte[] data)
+    {
+        // Do calculations, etc
+        return null;
+    }
+}
+
+class ImageClassifierModel : IPredictiveModel
+{
+    public DictionaryObject Predict(DictionaryObject input)
+    {
+        var blob = input.GetBlob("photo");
+        if (blob == null) {
+            return null;
+        }
+
+        var imageData = blob.Content;
+        // tensorFlowModel is a fake implementation
+        // this would be the implementation of the ml model you have chosen
+        var modelOutput = TensorFlowModel.PredictImage(imageData);
+        return new MutableDictionaryObject(modelOutput); // <1>
+    }
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<1> The `predict(input) ++->++ output` method provides the input and expects the result of using the machine learning model.
+The input and output of the predictive model is a `DictionaryObject`.
+Therefore, the supported data type will be constrained by the data type that the `DictionaryObject` supports.
+
+
+[discrete#csharp:querybuilder:::register-the-model]
+===== Register the Model
+
+To register the model you must create a new instance and pass it to the `Database.prediction.registerModel` static method.
+
+.Registering a predictive model
+[#reg-pred-model]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::reg-pred-model]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="register-model", indent=0]
+var model = new ImageClassifierModel();
+Database.Prediction.RegisterModel("ImageClassifier", model);
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#csharp:querybuilder:::create-an-index]
+===== Create an Index
+
+Creating an index for a predictive query is highly recommended.
+By computing the predictions during writes and building a prediction index, you can significantly improve the speed of prediction queries (which would otherwise have to be computed during reads).
+
+There are two types of indexes for predictive queries:
+
+* <<csharp:querybuilder:::value-index,Value Index>>
+* <<csharp:querybuilder:::predictive-index,Predictive Index>>
+
+[discrete#csharp:querybuilder:::value-index]
+====== Value Index
+
+The code below creates a value index from the "label" value of the prediction result.
+When documents are added or updated, the index will call the prediction function to update the label value in the index.
+
+.Creating a value index
+[#crt-val-index]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::crt-val-index]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="predictive-query-value-index", indent=0]
+var index = IndexBuilder.ValueIndex(ValueIndexItem.Property("label"));
+collection.CreateIndex("value-index-image-classifier", index);
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#csharp:querybuilder:::predictive-index]
+====== Predictive Index
+
+Predictive Index is a new index type used for predictive query.
+It differs from the value index in that it caches the predictive results and creates a value index from that cache when the predictive results values are specified.
+
+.Creating a predictive index
+[#crt-val-index]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::crt-val-index]
+====
+
+pass:q,a[Here we create a predictive index from the `label` value of the prediction result.]
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="predictive-query-predictive-index", indent=0]
+var input = Expression.Dictionary(new Dictionary<string, object>
+{
+    ["photo"] = Expression.Property("photo")
+});
+
+var index = IndexBuilder.PredictiveIndex("ImageClassifier", input);
+collection.CreateIndex("predictive-index-image-classifier", index);
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#csharp:querybuilder:::run-a-prediction-query]
+===== Run a Prediction Query
+
+The code below creates a query that calls the prediction function to return the "label" value for the first 10 results in the database.
+
+.Creating a value index
+[#crt-val-index]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::crt-val-index]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="predictive-query", indent=0]
+var input = Expression.Dictionary(new Dictionary<string, object>
+{
+    ["photo"] = Expression.Property("photo")
+});
+var prediction = Function.Prediction("ImageClassifier", input); // <1>
+
+using var query = QueryBuilder.Select(SelectResult.All())
+    .From(DataSource.Collection(collection))
+    .Where(prediction.Property("label").EqualTo(Expression.String("car"))
+        .And(prediction.Property("probability").GreaterThanOrEqualTo(Expression.Double(0.8))));
+
+var result = query.Execute();
+Console.WriteLine($"Number of rows: {result.Count()}");
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<1> The `PredictiveModel.predict()` method returns a constructed Prediction Function object which can be used further to specify a property value extracted from the output dictionary of the `PredictiveModel.predict()` function.
++
+NOTE: The null value returned by the prediction method will be interpreted as MISSING value in queries.
+
+
+[discrete#csharp:querybuilder:::deregister-the-model]
+===== Deregister the Model
+
+To deregister the model you must call the `Database.prediction.unregisterModel` static method.
+
+.Deregister a value index
+[#dereg-val-index]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:querybuilder:::dereg-val-index]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="unregister-model", indent=0]
+Database.Prediction.UnregisterModel("ImageClassifier");
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+
+
+// END --- inclusion -- querybuilder.adoc
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+[discrete#csharp:querybuilder:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:csharp:gs-prereqs.adoc[Prerequisites]
+* xref:csharp:gs-install.adoc[Install]
+* xref:csharp:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#csharp:querybuilder:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:csharp:database.adoc[Databases]
+* xref:csharp:document.adoc[Documents]
+* xref:csharp:blob.adoc[Blobs]
+* xref:csharp:replication.adoc[Remote Sync Gateway]
+* xref:csharp:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#csharp:querybuilder:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+

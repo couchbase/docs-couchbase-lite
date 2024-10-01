@@ -1,12 +1,188 @@
-= Data Sync Locally on Device
+:docname: dbreplica
+:page-module: android
+:page-relative-src-path: dbreplica.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#android:dbreplica:::]
+=== Intra-device Sync
 :page-aliases: learn/java-android-dbreplica.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite Database Sync - Synchronize changes between databases on the same device
 
-include::partial$_set_page_context_for_android.adoc[]
 
-include::{root-commons}dbreplica.adoc[subs="macros,attributes"]
+// Inclusion for use in android-conflict.adoc files
 
-include::{root-partials}block-related-content-rep.adoc[]
+// = Handling Conflicts
+// :page-partial:
+// :page-layout: article
+// :page-status:
+// :page-edition:
+// :page-role:
+// :description: Couchbase mobile database conflicts - concepts
+
+// include::partial$_set_page_context_for_android.adoc[]
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:android:replication.adoc[Remote Sync Gateway] | xref:android:landing-p2psync.adoc[Peer-to-Peer Sync]
+--
+
+[discrete#android:dbreplica:::overview]
+==== Overview
+
+
+
+
+
+Couchbase Lite supports replication between two local databases at the database, scope, or collection level.
+This allows a Couchbase Lite replicator to store data on secondary storage.
+It is useful in scenarios when a user's device is damaged and its data is moved to a different device.
+
+.Replication between Local Databases
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+====
+
+// inject tab header
+[{tabs}]
+=====
+
+[#android:dbreplica:::tabs-1-kotlin]
+Kotlin::
++
+--
+
+// Show Main Snippet
+[source, Kotlin]
+----
+include ::android:example$codesnippet_collection.kt[tags="database-replica", indent=0]
+// This is an Enterprise feature:
+// the code below will generate a compilation error
+// if it's compiled against CBL Android Community Edition.
+// Note: the target database must already contain the
+//       source collections or the replication will fail.
+val repl = Replicator(
+    ReplicatorConfigurationFactory.newConfig(
+        target = DatabaseEndpoint(targetDb),
+        collections = mapOf(srcCollections to null),
+        type = ReplicatorType.PUSH
+    )
+)
+
+// Start the replicator
+// (be sure to hold a reference somewhere that will prevent it from being GCed)
+repl.start()
+thisReplicator = repl
+----
+
+--
+// Show Optional Alternate Snippet
+[#android:dbreplica:::tabs-1-java]
+Java::
++
+--
+[source, Java]
+----
+include ::android:example$codesnippet_collection.java[tags="database-replica", indent=0]
+// This is an Enterprise feature:
+// the code below will generate a compilation error
+// if it's compiled against CBL Android Community Edition.
+// Note: the target database must already contain the
+//       source collections or the replication will fail.
+final Replicator repl = new Replicator(
+    new ReplicatorConfiguration(new DatabaseEndpoint(targetDb))
+        .addCollections(srcCollections, null)
+        .setType(ReplicatorType.PUSH));
+
+// Start the replicator
+// (be sure to hold a reference somewhere that will prevent it from being GCed)
+repl.start();
+thisReplicator = repl;
+----
+// Add tab closure
+--
+
+=====
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+[discrete#android:dbreplica:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:android:gs-prereqs.adoc[Prerequisites]
+* xref:android:gs-install.adoc[Install]
+* xref:android:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#android:dbreplica:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:android:database.adoc[Databases]
+* xref:android:document.adoc[Documents]
+* xref:android:blob.adoc[Blobs]
+* xref:android:replication.adoc[Remote Sync Gateway]
+* xref:android:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#android:dbreplica:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+

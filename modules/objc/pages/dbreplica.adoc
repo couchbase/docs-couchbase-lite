@@ -1,16 +1,365 @@
-= Data Sync Locally on Device
+:docname: dbreplica
+:page-module: objc
+:page-relative-src-path: dbreplica.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#objc:dbreplica:::]
+=== Intra-device Sync
 :page-aliases: learn/objc-dbreplica.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite Database Sync - Synchronize changes between databases on the same device
 
-include::partial$_set_page_context_for_objc.adoc[]
-// :param-name: {lang-name-objc}
-// :param-title: {lang-title-objc}
-// :param-module: {lang-mod-objc}
-include::{root-partials}_show_page_header_block.adoc[]
 
-include::{root-commons}dbreplica.adoc[subs="macros,attributes"]
 
-include::{root-partials}block-related-content-std.adoc[]
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+// BEGIN::module page attributes
+
+//
+// CBL-Obj-C Maintenance release number
+//
+:maintenance: 1
+//
+
+// VECTOR SEARCH attributes
+//
+
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+
+// API Reference Links
+//
+//
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DATABASE CLASSES
+
+
+// Docuument Class
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+//Database.SAVE
+
+
+
+//Database.DELETE
+
+
+//Database.COMPACT
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)compact:[CBLDatabase.compact()]
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+
+
+
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/[Query Class index]
+
+
+// ArrayFunction class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLWhere.html
+// NOT SET[Where]
+
+// orderby class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLOrderBy.html
+
+// GroupBy class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLGroupBy.html
+// NOT SET[GroupBy]
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module objc
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+
+// Note there is a replicator.status property AND
+// a ReplicationStatus class/struct --- oh yes, easy to confuse.
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/s:18CouchbaseLiteobjc10ReplicatorC13ActivityLevelO
+
+
+
+
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+
+// Meta API
+
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objcLogging.html[CBLLogging classes]
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--objc}
+// END::Local page attributes
+// :param-name: objc
+// :param-title: Objective C
+// :param-module: objc
+[abstract]
+--
+Description -- _{description}_ +
+--
+
+// Inclusion for use in objc-conflict.adoc files
+
+// = Handling Conflicts
+// :page-partial:
+// :page-layout: article
+// :page-status:
+// :page-edition:
+// :page-role:
+// :description: Couchbase mobile database conflicts - concepts
+
+// include::partial$_set_page_context_for_objc.adoc[]
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:objc:replication.adoc[Remote Sync Gateway] | xref:objc:landing-p2psync.adoc[Peer-to-Peer Sync]
+--
+
+[discrete#objc:dbreplica:::overview]
+==== Overview
+
+
+
+
+
+Couchbase Lite supports replication between two local databases at the database, scope, or collection level.
+This allows a Couchbase Lite replicator to store data on secondary storage.
+It is useful in scenarios when a user's device is damaged and its data is moved to a different device.
+
+.Replication between Local Databases
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="database-replica", indent=0]
+CBLDatabaseEndpoint *targetDatabase = [[CBLDatabaseEndpoint alloc] initWithDatabase:self.otherDB];
+CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithTarget:targetDatabase];
+replConfig.replicatorType = kCBLReplicatorTypePush;
+
+NSError* error = nil;
+CBLCollection *collection = [database collectionWithName:@"collection1" scope:@"scope1" error:&error];
+[replConfig addCollection:collection config:nil];
+
+self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
+[self.replicator start];
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+[discrete#objc:dbreplica:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:objc:gs-prereqs.adoc[Prerequisites]
+* xref:objc:gs-install.adoc[Install]
+* xref:objc:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#objc:dbreplica:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:objc:database.adoc[Databases]
+* xref:objc:document.adoc[Documents]
+* xref:objc:blob.adoc[Blobs]
+* xref:objc:replication.adoc[Remote Sync Gateway]
+* xref:objc:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#objc:dbreplica:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+// [.pane__frames.cols-3]
+// == Related Content
+
+// .How-to ...
+
+// * xref:objc:p2psync-custom.adoc[Integrate Custom Listener]
+// * xref:objc:p2psync-websocket.adoc[Peer-to-Peer]
+
+// .Learn more ...
+
+// * include how-to links as relevant,
+// * include how-to links as relevant,
+
+// .Dive Deeper ...
+
+// * Reference content
+// ** https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc[API References]
+// // +
+// include::shared-mobile::partial$block-related-content-menulinks.adoc[tags=community]
+
+

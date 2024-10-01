@@ -1,10 +1,792 @@
-= Databases
+:docname: database
+:page-module: objc
+:page-relative-src-path: database.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#objc:database:::]
+== Databases
 :page-aliases: learn/objc-database.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Working with Couchbase Lite Databases
 
-include::partial$_set_page_context_for_objc.adoc[]
 
-include::{root-commons}database.adoc[]
+
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+// BEGIN::module page attributes
+
+//
+// CBL-Obj-C Maintenance release number
+//
+:maintenance: 1
+//
+
+// VECTOR SEARCH attributes
+//
+
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+
+// API Reference Links
+//
+//
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DATABASE CLASSES
+
+
+// Docuument Class
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+//Database.SAVE
+
+
+
+//Database.DELETE
+
+
+//Database.COMPACT
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)compact:[CBLDatabase.compact()]
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+
+
+
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/[Query Class index]
+
+
+// ArrayFunction class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLWhere.html
+// NOT SET[Where]
+
+// orderby class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLOrderBy.html
+
+// GroupBy class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLGroupBy.html
+// NOT SET[GroupBy]
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module objc
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+
+// Note there is a replicator.status property AND
+// a ReplicationStatus class/struct --- oh yes, easy to confuse.
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/s:18CouchbaseLiteobjc10ReplicatorC13ActivityLevelO
+
+
+
+
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+
+// Meta API
+
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objcLogging.html[CBLLogging classes]
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--objc}
+// END::Local page attributes
+
+// BEGIN -- page-inclusion -- common-database.adoc
+// Applies to all platforms with some platform-specific differences
+
+
+// include::ROOT:partial$_set-platform.adoc[]
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:objc:blob.adoc[Blobs] | xref:objc:document.adoc[Documents] | xref:objc:indexing.adoc[Indexing]
+--
+
+
+[discrete#objc:database:::database-concepts]
+=== Database Concepts
+
+Databases created on Couchbase Lite can share the same hierarchical structure as Capella databases.
+This makes it easier to sync data between mobile applications and applications built using Capella.
+
+.Couchbase Lite Database Hierarchy
+[plantuml]
+----
+@startuml
+
+
+database "Database" as db
+
+rectangle "Scope" as scope
+
+folder "Collection" as collection
+
+
+
+file "Document" as document1
+file "Document" as document2
+file "Document" as document3
+
+db --> scope
+scope --> collection
+collection --> document1
+collection --> document2
+collection --> document3
+
+
+
+
+note right of collection
+
+  Maximum of 1000 per scope
+
+end note
+
+note right of db
+
+  One database per application
+
+end note
+
+@enduml
+----
+
+Although the terminology is different, the structure can be mapped to relational database terms:
+
+
+.Relational Database -> Couchbase
+[width=70%,grid=none]
+|===
+|Relational database |Couchbase
+
+|Database
+|Database
+
+|Schema
+|Scope
+
+|Table
+|Collection
+|===
+
+This structure gives you plenty of choices when it comes to partitioning your data.
+The most basic structure is to use the single default scope with a single default collection; or you could opt for a structure that allow you to split your collections into logical scopes.
+
+[#cbl-database-structure]
+.Couchbase Lite Examples
+
+[plantum#objc:database:::cbl-database-structurel]
+----
+@startuml
+
+
+database "Couchbase Lite database" as db1 {
+
+      node "_default scope" as dfs1 {
+
+        folder "_default collection" as dfc1 {
+
+        }
+      }
+
+}
+
+database "Couchbase Lite database" as db2 {
+
+
+    node "_default scope" as dfs2 {
+
+      folder "_default collection" as dfc2 {
+
+      }
+
+        folder "Collection A" as collectionA {
+
+        }
+    }
+
+    node "Scope A" as scopeA {
+
+      folder "Collection A" as collectionA2 {
+
+      }
+
+        folder "Collection B" as collectionB {
+
+        }
+    }
+
+}
+
+collectionA2 -D[hidden]-> collectionB
+collectionA -D[hidden]-> dfc2
+@enduml
+----
+
+
+.Storing local configuration
+****
+You may not need to sync all the data related for a particular application. You can set up a scope that syncs data, and a second scope that doesn't.
+
+One reason for doing this is to store local configuration data (such as the preferred screen orientation or keyboard layout). Since this information only relates to a particular device, there is no need to sync it:
+
+[horizontal]
+local data scope:: Contains information pertaining to the device.
+
+syncing data scope:: Contains information pertaining to the user, which can be synced back to the cloud for use on the web or another device.
+
+****
+
+// BEGIN: Conditional Block -- applies to Android and JVM Java
+// END: Conditional Block -- applies to Android and JVM Java
+
+[discrete#objc:database:::open-db]
+=== Create or Open Database
+
+
+You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html[CBLDatabase] class.
+Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html[CBLDatabaseConfiguration] -- see <<objc:database:::ex-dbopen>>.
+
+Things to watch for include:
+
+* If the named database does not exist in the specified, or default, location then a new one is created
+* The database is created in a default location unless you  specify a directory for it -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html[CBLDatabaseConfiguration] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html#/c:objc(cs)CBLDatabaseConfiguration(py)directory[CBLDatabaseConfiguration.directory()]
++
+--
+
+Typically, the default location for Objective-C is
+the application sandbox
+.
+
+See also <<objc:database:::lbl-find-db-loc>>.
+--
+
+[#ex-dbopen]
+.Open or create a database
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:database:::ex-dbopen]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="new-database", indent=0]
+NSError *error;
+CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"my-database" error:&error];
+if (!database) {
+    NSLog(@"Cannot open the database:%@", error);
+}
+self.database = database;
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+// <.> Here we are specifying the database directory path.
+
+[discrete#objc:database:::close-database]
+=== Close Database
+
+You are advised to incorporate the closing of all open databases into your application workflow.
+
+To close a database, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)close:[CBLDatabase.Close()] -- see: <<objc:database:::ex-dbclose>>.
+This also closes
+footnote:fn28[Commencing with Release 2.8]
+active replications, listeners and-or live queries connected to the database.
+
+NOTE: Closing a database soon after starting a replication involving it can cause an exception as the asynchronous `replicator (start)` may not yet be `connected`.
+
+.Safely Closing a Database pre 2.8
+TIP: Before closing, check that any attached listeners (query/replication/change) indicate they are at least at `connected` status before closing -- see for example: xref:objc:replication.adoc#lbl-repl-mon[Monitor Status].
+
+.Close a Database
+[#ex-dbclose]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:database:::ex-dbclose]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="close-database", indent=0]
+if (![self.database close:&error])
+    NSLog(@"Error closing db:%@", error);
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+[discrete#objc:database:::database-full-sync]
+=== Database Full Sync
+
+Database Full Sync will prevent the loss of transactional data due to an unexpected system crash or loss of power.
+This feature is not enabled by default and must be manually set in your database configuration.
+
+
+CAUTION: Database Full Sync is a safe method to prevent data loss but will incur a significant degredation of performance.
+
+.Enable Database Full Sync
+[#ex-dbfullsync]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:database:::ex-dbfullsync]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="database-fullsync", indent=0]
+config.fullSync = true;
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+NOTE: It is not possible to change the configuration of a Database after instantiating the Database with the configuration by updating its `DatabaseConfiguration` property.
+
+[discrete#objc:database:::database-encryption]
+=== Database Encryption
+
+
+
+IMPORTANT: This is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+
+
+_Couchbase Lite on Objective-C_ includes the ability to encrypt Couchbase Lite databases.
+This allows mobile applications to secure the data at rest, when it is being stored on the device.
+The algorithm used to encrypt the database is 256-bit AES.
+
+[discrete#objc:database:::enabling]
+==== Enabling
+To enable encryption, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html#/c:objc(cs)CBLDatabaseConfiguration(py)encryptionKey[CBLDatabaseConfiguration.encryptionKey()] to set the encryption key of your choice.
+Provide this encryption key every time the database is opened -- see <<objc:database:::ex-sdb-encrypt>>.
+
+.Configure Database Encryption
+[#ex-sdb-encrypt]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:database:::ex-sdb-encrypt]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="database-encryption", indent=0]
+CBLDatabaseConfiguration *config = [[CBLDatabaseConfiguration alloc] init];
+config.encryptionKey = [[CBLEncryptionKey alloc] initWithPassword:@"secretpassword"];
+NSError *error;
+self.database = [[CBLDatabase alloc] initWithName:@"my-database" config:config error:&error];
+if (!self.database) {
+    NSLog(@"Cannot open the database:%@", error);
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+[discrete#objc:database:::persisting]
+==== Persisting
+Couchbase Lite does not persist the key.
+It is the application's responsibility to manage the key and store it in a platform-specific secure store such Android's
+https://developer.android.com/training/articles/keystore[Keystore].
+
+[discrete#objc:database:::opening]
+==== Opening
+An encrypted database can only be opened with the same platform that was used to encrypt it in the first place.
+So a database encrypted using the Objective-C SDK, and then exported, is readable only by the Objective-C SDK.
+
+[discrete#objc:database:::changing]
+==== Changing
+To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)changeEncryptionKey:error:[CBLDatabase.changeEncryptionKey()]
+to set the required new encryption-key value.
+
+
+[discrete#objc:database:::removing]
+==== Removing
+To remove encryption, open the database using its existing encryption-key and use
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)changeEncryptionKey:error:[CBLDatabase.changeEncryptionKey()]
+with a null value as the encryption key.
+
+[discrete#objc:database:::upgrading]
+==== Upgrading
+To upgrade an encrypted database see: xref:objc:dep-upgrade.adoc#lbl-db-upgrades[Upgrade 1.x databases]
+
+
+[discrete#objc:database:::lbl-find-db-loc]
+=== Finding a Database File
+
+
+
+When the application is running on the iOS simulator, you can locate the application's sandbox directory using the https://simpholders.com/3/[SimPholders] utility.
+
+
+[discrete#objc:database:::lbl-db-util]
+=== Database Maintenance
+
+From time to time it may be necessary to perform certain maintenance activities on your database, for example to
+compact the database file, removing unused documents and blobs no longer referenced by any documents.
+
+Couchbase Lite's API provides the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)performMaintenance:error:[CBLDatabase.performMaintenance()] method.
+The available maintenance operations, including `compact` are as shown in the enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Enums/CBLMaintenanceType.html[CBLMaintenanceType] to accomplish this.
+
+This is a resource intensive operation and is not performed automatically.
+It should be run on-demand using the API.
+If in doubt, consult Couchbase support.
+
+
+[discrete#objc:database:::cli-tool]
+=== Command Line Tool
+
+// tag::cli-tool[]
+`cblite` is a command-line tool for inspecting and querying Couchbase Lite databases.
+
+You can download and build it from the couchbaselabs https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md[GitHub repository].
+Note that the `cblite` tool is not supported by the https://www.couchbase.com/support-policy[Couchbase Support Policy].
+
+// end::cli-tool[]
+
+[discrete#objc:database:::troubleshooting]
+=== Troubleshooting
+You should use console logs as your first source of diagnostic information.
+If the information in the default logging level is insufficient you can focus it on database errors and generate more verbose messages -- see: <<objc:database:::ex-logdb>>.
+
+For more on using Couchbase logs -- see: xref:objc:troubleshooting-logs.adoc[Using Logs].
+
+[#ex-logdb]
+.Increase Level of Database Log Messages
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:database:::ex-logdb]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="console-logging-db", indent=0]
+CBLDatabase.log.console.domains = kCBLLogDomainAll;
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+// DO NOT DELETE
+// Include standard
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+[discrete#objc:database:::related-content]
+=== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+==== {empty}
+.How to . . .
+* xref:objc:gs-prereqs.adoc[Prerequisites]
+* xref:objc:gs-install.adoc[Install]
+* xref:objc:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#objc:database:::-2n]
+==== {empty}
+.Learn more . . .
+* xref:objc:database.adoc[Databases]
+* xref:objc:document.adoc[Documents]
+* xref:objc:blob.adoc[Blobs]
+* xref:objc:replication.adoc[Remote Sync Gateway]
+* xref:objc:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#objc:database:::-3]
+==== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+// [.pane__frames.cols-3]
+// == Related Content
+
+// .How-to ...
+
+// * xref:objc:p2psync-custom.adoc[Integrate Custom Listener]
+// * xref:objc:p2psync-websocket.adoc[Peer-to-Peer]
+
+// .Learn more ...
+
+// * include how-to links as relevant,
+// * include how-to links as relevant,
+
+// .Dive Deeper ...
+
+// * Reference content
+// ** https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc[API References]
+// // +
+// include::shared-mobile::partial$block-related-content-menulinks.adoc[tags=community]
+
+// DO NOT DELETE
+
+// DO NOT DELETE
+// include::ROOT:partial$_unset-platform.adoc[]
+// DO NOT DELETE
+// END: inclusion-page - common-database.adoc[]
+
+

@@ -1,65 +1,269 @@
-= Install Couchbase Lite for C
+:docname: gs-install
+:page-module: c
+:page-relative-src-path: gs-install.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#c:gs-install:::]
+=== Install
 :page-aliases: clang:gs-install.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Installing Couchbase Lite for C
 :keywords: edge nosql api
 
 // BEGIN -- DO NOT EDIT
-include::partial$_set_page_context_for_c.adoc[]
 
-:param-abstract!:
-include::{root-partials}_show_page_header_block.adoc[]
+
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+//
+// CBL-C Maintenance release number
+//
+//
+
+// VECTOR SEARCH attributes
+//
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+//
+//
+
+
+
+
+
+
+// DATABASE module and functions
+// Database(im)
+
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#gaa4b06dcb7427cafeabde8486f5f03f10[CBLDatabase_PerformMaintenance()]
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+
+// DOCUMENTS
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+
+
+
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__[Query Class index]
+
+
+// ArrayFunction class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__Where.html
+// NOT SET[Where]
+
+// orderby class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__OrderBy.html
+
+// GroupBy class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__GroupBy.html
+// NOT SET[GroupBy]
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module c
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+// Note there is a replicator.status property AND
+// a ReplicationStatus class/struct --- oh yes, easy to confuse.
+
+
+
+
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+// Repl Cfg Props
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+// CBLPropertyEncryptor gab116a23be8bd24b86349379f370ef60c
+// CBLPropertyDecryptor ga24a60a3d6f9816e1d32464cc31a15c0c
+// CBLEncryptable gaaf20d661f9684632a005f0a4e52656b3
+
+// Meta API
+
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/htmlLogging.html[CBLLogging classes]
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--c}
+// END::Local page attributes
+
+[abstract]
+--
+Description -- _{description}_ +
+--
 // END -- DO NOT EDIT
 
 // tag::installation[]
-:param-page: {page-relative-src-path}
-include::{root-partials}_show_get_started_topic_group.adoc[]
+// BEGIN -- inclusion -- _gs-topic-group.adoc
+//  Purpose: Show the topic group, allowing easy cycle-through
+//            Do not show current page as a click-through though
+//  Parameter: The current page name
+//  Container: /modules/ROOT/pages/_partials/_gs-topic-group.adoc
 
-ifndef::bash-header[:bash-header: pass:q,a[source, bash, subs="attributes+", "macros+"]]
+// Begin -Local Attributes
 
+// ifeval::["{page-relative-src-path}"=="introduction.adoc"]
+// :is-intro: Introduction
+// endif::[]
 
-ifndef::is-beta[]
-ifeval::["{prerelease}"=="BETA"]
-:is-beta:
-endif::[]
-endif::is-beta[]
-
-:install-closure: pass:q,a[At this point, you are ready to start building the xref:gs-build.adoc[Getting Started] app, or doing your own thing with _Couchbase Lite for C_]
-
-:download-path: {url-downloads-mobile}
-:beta-url: https://packages.couchbase.com/releases/couchbase-lite-c/{version-full}/
-
-// :release-dir-ee: pass:q,a[libcblite-{version-full}]
-:release-dir-ce: pass:q,a[libcblite-community]
-:release-dir-ee: pass:q,a[libcblite]
-:release-dir-dev-ce: pass:q,a[libcblite-dev-community]
-:release-dir-dev-ee: pass:q,a[libcblite-dev]
-
-:release-dir-ee-include: pass:q,a[{release-dir-ee}/include/]
-:release-dir-ee-lib: pass:q,a[{release-dir-ee}/lib/]
-:release-dir-ce-include: pass:q,a[{release-dir-ce}/include/]
-:release-dir-ce-lib:  pass:q,a[{release-dir-ce}/lib/]
-:release-dirs-include: pass:q,a[`{release-dir-ce-include}` or `{release-dir-ee-include}`]
-// :release-dirs-ce-lib: pass:q,a[`{release-dir-ce-lib}` or `{release-dir-ee-lib}`]
-// :release-dirs-ce-lib: pass:q,a[`{release-dir-ce-lib}`]
-// :release-dirs: pass:q,a[`{release-dir-ce}` or `{release-dir-ee}`]
-// :release-dirs: pass:q,a[`{release-dir-ce}`]
+// ifeval::["{page-relative-src-path}"=="gs-prereqs.adoc"]
+// :is-prereqs: Prepare
+// endif::[]
 
 
-[#lbl-get-binaries]
-== Download
+// End -Local Attributes
+
+// Begin -- Output Block
+Steps in Getting Started::
+// ifdef::is-intro[*{is-intro}*]
+// ifndef::is-intro[xref:c:introduction.adoc[Introduction]]
+//  |
+// ifdef::is-prereqs[*{is-prereqs}*]
+// ifndef::is-prereqs[xref:c:gs-prereqs.adoc[Prerequisites]]
+//  |
+*Install*
+ |
+xref:c:gs-build.adoc[Build and Run]
+// End -- Output Block
 
 
-Couchbase Lite for C {version-maintenance} is available for all supported platforms -- see: <<lbl-platforms>>.
+// Begin -- Tidy-up
+// End -- Tidy-up
+
+// END -- inclusion -- _gs-topic-group.adoc
+
+
+
+
+
+
+// :release-dir-ee: pass:q,a[libcblite-{major}.{minor}.{base}{empty}]
+
+// :release-dirs-ce-lib: pass:q,a[`pass:q,a[pass:q,a[libcblite-community]/lib/]` or `pass:q,a[pass:q,a[libcblite]/lib/]`]
+// :release-dirs-ce-lib: pass:q,a[`pass:q,a[pass:q,a[libcblite-community]/lib/]`]
+// :release-dirs: pass:q,a[`pass:q,a[libcblite-community]` or `pass:q,a[libcblite]`]
+// :release-dirs: pass:q,a[`pass:q,a[libcblite-community]`]
+
+
+[discrete#c:gs-install:::lbl-get-binaries]
+==== Download
+
+
+Couchbase Lite for C {major}.{minor}.{maintenance-c}{empty} is available for all supported platforms -- see: <<c:gs-install:::lbl-platforms>>.
 
 You can obtain the downloads here:
 
 * _Android_, _iOS_ and _Windows_ -- link:https://www.couchbase.com/downloads/#extend-with-mobile?family=couchbase-lite[Mobile & Edge]
-* _Linux_ and _macOS_ -- <<lbl-downloads, downloads table>>
+* _Linux_ and _macOS_ -- <<c:gs-install:::lbl-downloads,downloads table>>
 
-The binary release download comprises a root directory ({release-dir-ce}), which contains:
+The binary release download comprises a root directory (pass:q,a[libcblite-community]), which contains:
 
 * For Linux, Windows, Android, and Mac OS:
 
@@ -71,73 +275,73 @@ The binary release download comprises a root directory ({release-dir-ce}), which
 
 * For iOS, an xcframework.
 
-:barsep: pass:q,a[ {nbsp}|{nbsp} ]
 
 [TIP]
 .Debug Symbols
 --
-Debug symbol versions are available for all desktop variants of C (Windows, macOS, Debian, Ubuntu and Raspbian) - see: <<lbl-downloads, downloads table>>.
+Debug symbol versions are available for all desktop variants of C (Windows, macOS, Debian, Ubuntu and Raspbian) - see: <<c:gs-install:::lbl-downloads,downloads table>>.
 
 For Android and iOS the symbols are incorporated in the standard release package.
 --
 
-=== Downloading Vector Search
+[discrete#c:gs-install:::downloading-vector-search]
+===== Downloading Vector Search
 
 You can obtain the download for the Vector Search extension here:
 
-* _Vector Search Extension_ -- xref:gs-downloads.adoc#vs-release-{vs-version-maintenance-hyphenated}[Download Vector Search]
+* _Vector Search Extension_ -- <<c:gs-downloads:::vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},Download Vector Search>>
 
 [IMPORTANT]
 --
 To use Vector Search, you must have Couchbase Lite installed and add the Vector Search extension to your Couchbase Lite application.
 Vector Search is available only for 64-bit architectures and
 Intel processors that support the Advanced Vector Extensions 2 (AVX2) instruction set.
-To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.] 
+To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.]
 --
 
 .Installation:
 ****
-<<lbl-apt, Install for Linux (APT)>> {barsep}
-<<lbl-debt, Install for Linux (.deb)>> {barsep}
-<<lbl-windows, Install for Windows>> {barsep}
-<<lbl-macos, Install for macOS>> {barsep}
-<<lbl-ios, Install for iOS>> {barsep}
-<<lbl-android, Install for Android>>
+<<c:gs-install:::lbl-apt,Install for Linux (APT)>> pass:q,a[ {nbsp}|{nbsp} ]
+<<c:gs-install:::lbl-debt,Install for Linux (.deb)>> pass:q,a[ {nbsp}|{nbsp} ]
+<<c:gs-install:::lbl-windows,Install for Windows>> pass:q,a[ {nbsp}|{nbsp} ]
+<<c:gs-install:::lbl-macos,Install for macOS>> pass:q,a[ {nbsp}|{nbsp} ]
+<<c:gs-install:::lbl-ios,Install for iOS>> pass:q,a[ {nbsp}|{nbsp} ]
+<<c:gs-install:::lbl-android,Install for Android>>
 ****
 
-[#lbl-linux]
-== Install for Linux
+[discrete#c:gs-install:::lbl-linux]
+==== Install for Linux
 
 
-[#lbl-apt]
-=== Using APT
+[discrete#c:gs-install:::lbl-apt]
+===== Using APT
 
-:url-apt-pkg-file: couchbase-beta-1.0-noarch.deb
-:url-apt-pkg:  pass:q,a[https://packages.couchbase.com/releases/couchbase-release/{url-apt-pkg-file}]
 
-Using the Advanced Package Tool (apt) is the easiest way to install {cbl-t} on Ubuntu and Debian platforms.
-Just download the meta package that _apt_ requires to automatically get and install {cbl-t}, including any dependencies.
+Using the Advanced Package Tool (apt) is the easiest way to install pass:q,a[pass:q,a[Couchbase{nbsp}Lite]] on Ubuntu and Debian platforms.
+Just download the meta package that _apt_ requires to automatically get and install pass:q,a[pass:q,a[Couchbase{nbsp}Lite]], including any dependencies.
 
 . Download the meta package
 +
 [{tabs}]
 =====
 
+[#c:gs-install:::tabs-1-curl]
 curl::
 +
 --
-[{bash-header}]
+[pass:q,a[source, bash, subs="attributes+", "macros+"]]
 ----
-curl -O {url-apt-pkg}
+curl -O pass:q,a[https://packages.couchbase.com/releases/couchbase-release/couchbase-beta-1.0-noarch.deb]
 ----
 --
 
+[#c:gs-install:::tabs-1-wget]
 wget::
 +
 --
-[{bash-header}]
+[pass:q,a[source, bash, subs="attributes+", "macros+"]]
 ----
-wget {url-apt-pkg}
+wget pass:q,a[https://packages.couchbase.com/releases/couchbase-release/couchbase-beta-1.0-noarch.deb]
 ----
 --
 =====
@@ -147,28 +351,30 @@ wget {url-apt-pkg}
 [{tabs}]
 =====
 
+[#c:gs-install:::tabs-2-apt]
 apt::
 +
 --
-[{bash-header}]
+[pass:q,a[source, bash, subs="attributes+", "macros+"]]
 ----
-sudo apt install ./{url-apt-pkg-file}
+sudo apt install ./couchbase-beta-1.0-noarch.deb
 ----
 --
 
+[#c:gs-install:::tabs-2-dpkg]
 dpkg::
 +
 --
-[{bash-header}]
+[pass:q,a[source, bash, subs="attributes+", "macros+"]]
 ----
-sudo dpkg -i ./{url-apt-pkg-file}
+sudo dpkg -i ./couchbase-beta-1.0-noarch.deb
 ----
 --
 =====
 
 . Update the local package database
 +
-[{bash-header}]
+[pass:q,a[source, bash, subs="attributes+", "macros+"]]
 ----
 sudo apt update
 ----
@@ -177,76 +383,79 @@ sudo apt update
 +
 [{tabs}]
 =====
+[#c:gs-install:::tabs-3-enterprise]
 Enterprise::
 +
 --
 .Runtime Only
-[{bash-header}]
+[pass:q,a[source, bash, subs="attributes+", "macros+"]]
 ----
-sudo apt install {release-dir-ee}
+sudo apt install pass:q,a[libcblite]
 ----
 .Development
-[{bash-header}]
+[pass:q,a[source, bash, subs="attributes+", "macros+"]]
 ----
-sudo apt install {release-dir-dev-ee}
+sudo apt install pass:q,a[libcblite-dev]
 ----
 --
 
+[#c:gs-install:::tabs-3-community]
 Community::
 +
 --
 .Runtime Only
-[{bash-header}]
+[pass:q,a[source, bash, subs="attributes+", "macros+"]]
 ----
-sudo apt install {release-dir-ce}
+sudo apt install pass:q,a[libcblite-community]
 ----
 .Development
-[{bash-header}]
+[pass:q,a[source, bash, subs="attributes+", "macros+"]]
 ----
-sudo apt install {release-dir-dev-ce}
+sudo apt install pass:q,a[libcblite-dev-community]
 ----
 --
 =====
 
-{install-closure}
+pass:q,a[At this point, you are ready to start building the <<c:gs-build:::,Getting Started>> app, or doing your own thing with _Couchbase Lite for C_]
 
-[#lbl-deb]
-=== Using .deb Package
+[discrete#c:gs-install:::lbl-deb]
+===== Using .deb Package
 
 Use your package manager to install from a local `.deb` file.
 
-. Just `wget` the appropriate `.deb` package  -- see <<lbl-downloads, downloads table>>  for a package URL.
+. Just `wget` the appropriate `.deb` package  -- see <<c:gs-install:::lbl-downloads,downloads table>>  for a package URL.
 
 . Install the package and its dependency, using `apt install`
 
 ** For community version:
 +
-[{bash-header}]
+[pass:q,a[source, bash, subs="attributes+", "macros+"]]
 ----
 
-sudo apt install ./{release-dir-ce}
+sudo apt install ./pass:q,a[libcblite-community]
 
-sudo apt install ./{release-dir-dev-ce}
+sudo apt install ./pass:q,a[libcblite-dev-community]
 
 ----
 
 ** For enterprise version:
 +
-[{bash-header}]
+[pass:q,a[source, bash, subs="attributes+", "macros+"]]
 ----
-sudo apt install ./{release-dir-ee}
+sudo apt install ./pass:q,a[libcblite]
 
-sudo apt install ./{release-dir-dev-ee}
+sudo apt install ./pass:q,a[libcblite-dev]
 
 ----
 
 . From here, you need to pass the `-lcblite` command-line flag to the compiler when you build.
 
-{install-closure}
+pass:q,a[At this point, you are ready to start building the <<c:gs-build:::,Getting Started>> app, or doing your own thing with _Couchbase Lite for C_]
 
-=== Install Vector Search for Linux
+[discrete#c:gs-install:::install-vector-search-for-linux]
+===== Install Vector Search for Linux
 
-Before you can use Vector Search, you must xref:gs-downloads.adoc#vs-release-{vs-version-maintenance-hyphenated}[download and install the Vector Search library] to the location in your project where the library can be accessed and loaded at run time.
+Before you can use Vector Search, you must <<c:gs-downloads:::vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},download and install the Vector Search library>> to the location in your project where the library can be accessed and loaded at run time.
 The Vector Search extension for the C platform ships with supported prebuilt libraries containing the required dependencies.
 
 You need to set the `LD_LIBRARIES_PATH` to the extension location instead of installing the libraries yourself.
@@ -256,19 +465,22 @@ In the code, before opening the database and using the vector search extension, 
 [source, c, indent=0]
 ----
 
-include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
+        CBLError error {};
+        if (!CBL_EnableVectorSearch(FLStr("/path/to/extension_dir"), &error)) {
+            throw std::domain_error("Invalid / Not Found Extension Library");
+        }
 
 ----
 
-[#lbl-windows]
-== Install for Windows
+[discrete#c:gs-install:::lbl-windows]
+==== Install for Windows
 To install the Couchbase for C libraries on Windows from a downloaded release binary:
 
 
-[#lbl-windows-steps]
+[#c:gs-install:::lbl-windows-steps]
 . Download and extract the release package -- see: link:https://www.couchbase.com/downloads/#extend-with-mobile?family=couchbase-lite[Mobile & Edge]
 
-. From within the root directory, {release-dir-ce}, deploy the `lib`, `include` and `bin` libraries to a location accessible to your compiler.
+. From within the root directory, pass:q,a[libcblite-community], deploy the `lib`, `include` and `bin` libraries to a location accessible to your compiler.
 
 . Within  _Visual Studio_:
 .. *Create* a new C++ project
@@ -282,11 +494,12 @@ Be sure to select x64 for 64-bit builds
 Couchbase Lite for C does not have any preferred installation path for the `.dll`.
 It is up to you to determine where best to place it so it is available during execution, though copying to a location on the system path is not recommended on Windows
 
-=== Install Vector Search for Windows
+[discrete#c:gs-install:::install-vector-search-for-windows]
+===== Install Vector Search for Windows
 
 To use the Vector Search extension:
 
-. Download and extract the xref:gs-downloads.adoc#vs-release-{vs-version-maintenance-hyphenated}[Vector Search extension].
+. Download and extract the <<c:gs-downloads:::vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},Vector Search extension>>.
 . Put the library in your development environment.
 
 In the code, before opening the database and using the vector search extension, you must call the CBL_SetExtensionPath function shown below to set the path to the installed location of the vector search library.
@@ -294,14 +507,17 @@ In the code, before opening the database and using the vector search extension, 
 [source, c, indent=0]
 ----
 
-include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
+        CBLError error {};
+        if (!CBL_EnableVectorSearch(FLStr("/path/to/extension_dir"), &error)) {
+            throw std::domain_error("Invalid / Not Found Extension Library");
+        }
 
 ----
 
 NOTE: Couchbase Lite Vector Search does not have any preferred installation path for the `.dll`. It is up to you to determine where best to place it so it is available during execution.
 
-[#lbl-macos]
-== Install for macOS
+[discrete#c:gs-install:::lbl-macos]
+==== Install for macOS
 
 // CAUTION: Direct access from Swift to Couchbase Lite for C is not possible in this release footnote:[3.0], but will be available in the next release.
 
@@ -309,33 +525,34 @@ NOTE: Couchbase Lite Vector Search does not have any preferred installation path
 ****
 Simplified installation using Homebrew +
 
-* `brew install {release-dir-ee}` +
+* `brew install pass:q,a[libcblite]` +
 
-* `brew install {release-dir-ce}`
+* `brew install pass:q,a[libcblite-community]`
 
 ****
 
 To install the Couchbase for C libraries on macOS from a downloaded release package:
 
-[#lbl-mac-steps]
-. Download and extract the release package here -- <<lbl-downloads, downloads table>>.
-. Optionally ... From within the root directory, {release-dir-ce}, *Copy* the `include` and `lib` directories to `/usr/local/`
+[#c:gs-install:::lbl-mac-steps]
+. Download and extract the release package here -- <<c:gs-install:::lbl-downloads,downloads table>>.
+. Optionally ... From within the root directory, pass:q,a[libcblite-community], *Copy* the `include` and `lib` directories to `/usr/local/`
 . Within  _Xcode_:
 .. *Create* a new project
 .. *Add* `<path/to>/include` to the project's _Header Search Path_
 .. *Add* `<path/to>/lib` to the project's _Library Search Path_
-.. *Drag* `{release-dir-ce}.dylib` into your Xcode project.
+.. *Drag* `pass:q,a[libcblite-community].dylib` into your Xcode project.
 Then, within the dialog:
 ... *Select* _Create Directory References If Needed_
 ... *Check* the correct target is selected
 
-{install-closure}
+pass:q,a[At this point, you are ready to start building the <<c:gs-build:::,Getting Started>> app, or doing your own thing with _Couchbase Lite for C_]
 
-=== Install Vector Search for macOS
+[discrete#c:gs-install:::install-vector-search-for-macos]
+===== Install Vector Search for macOS
 
-IMPORTANT: Couchbase does not support homebrew for 3.2.0 beta-3 installation of Couchbase Lite or Vector Search. 
+IMPORTANT: Couchbase does not support homebrew for 3.2.0 beta-3 installation of Couchbase Lite or Vector Search.
 
-Before you can use Vector Search, you must xref:gs-downloads.adoc#vs-release-{vs-version-maintenance-hyphenated}[download and install the Vector Search library] to the location in your project where the library can be accessed and loaded at run time.
+Before you can use Vector Search, you must <<c:gs-downloads:::vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},download and install the Vector Search library>> to the location in your project where the library can be accessed and loaded at run time.
 The Vector Search extension for the C platform ships with supported prebuilt libraries containing the required dependencies.
 
 In the code, before opening the database and using the vector search extension, you must call the CBL_SetExtensionPath function shown below to set the path to the installed location of the vector search library.
@@ -343,36 +560,42 @@ In the code, before opening the database and using the vector search extension, 
 [source, c, indent=0]
 ----
 
-include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
+        CBLError error {};
+        if (!CBL_EnableVectorSearch(FLStr("/path/to/extension_dir"), &error)) {
+            throw std::domain_error("Invalid / Not Found Extension Library");
+        }
 
 ----
 
-[#lbl-ios]
-== Install for iOS
+[discrete#c:gs-install:::lbl-ios]
+==== Install for iOS
 
 To install the Couchbase for C libraries for iOS from a downloaded release package:
 
 [#lbl-mac-steps]
 
+[#c:gs-install:::lbl-mac-steps]
 . Download and extract the release package here -- link:https://www.couchbase.com/downloads/#extend-with-mobile?family=couchbase-lite[Mobile & Edge]
 . *Drag* `CouchbaseLite.xcframework` into your Xcode project, then within the dialog:
 ... *Select* _Create Directory References If Needed_
 ... *Check* the correct target is selected
 
-{install-closure}
+pass:q,a[At this point, you are ready to start building the <<c:gs-build:::,Getting Started>> app, or doing your own thing with _Couchbase Lite for C_]
 
 If you encounter a build error -- Include of non-modular header inside framework module -- You may need to change the build setting
 `allow non-modular includes in framework module` to `Yes`.
 
-=== Install Vector Search for iOS
+[discrete#c:gs-install:::install-vector-search-for-ios]
+===== Install Vector Search for iOS
 
-. Download and extract the xref:gs-downloads.adoc#vs-release-{vs-version-maintenance-hyphenated}[Vector Search extension] into your XCode project location.
+. Download and extract the <<c:gs-downloads:::vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},Vector Search extension>> into your XCode project location.
 . Select your target settings in XCode and drag *CouchbaseLiteVectorSearch.xcframework* from your Finder to the *Frameworks, Libraries, and Embedded Content* section.
 . Import the xcframework and start using it in your project.
 
 [{tabs}]
 =====
 
+[#c:gs-install:::tabs-4-objective-c]
 Objective-C::
 +
 --
@@ -385,6 +608,7 @@ Objective-C::
 ----
 
 --
+[#c:gs-install:::tabs-4-swift]
 Swift::
 +
 --
@@ -405,13 +629,16 @@ You can then set the extension path with the snippet below.
 [source, c, indent=0]
 ----
 
-include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
+        CBLError error {};
+        if (!CBL_EnableVectorSearch(FLStr("/path/to/extension_dir"), &error)) {
+            throw std::domain_error("Invalid / Not Found Extension Library");
+        }
 
 ----
 
 
-[#lbl-android]
-== Install for Android
+[discrete#c:gs-install:::lbl-android]
+==== Install for Android
 
 This install assumes use of the _Android Studio_ IDE.
 In addition to the Couchbase Lite for C download you also require the following tool chain dependencies, all installable from within _Android Studio_ if necessary:
@@ -424,7 +651,7 @@ In this instance the release comprises a _ready to adapt_ application project.
 
 . *Download* and *Unpack* the binary release here -- link:https://www.couchbase.com/downloads/#extend-with-mobile?family=couchbase-lite[Mobile & Edge]
 
-. Within _Android Studio_, select and open the project folder (within the {release-dir-ce} folder)
+. Within _Android Studio_, select and open the project folder (within the pass:q,a[libcblite-community] folder)
 
 . menu:Tools[SDK Manager > SDK Tools]
 
@@ -433,23 +660,25 @@ In this instance the release comprises a _ready to adapt_ application project.
 
 Once the install is finished, you can build and run this skeleton app.
 
-=== Install Vector Search for Android
+[discrete#c:gs-install:::install-vector-search-for-android]
+===== Install Vector Search for Android
 
 To use Vector Search in your Android applications, follow the steps below:
 
-. Download and extract the xref:gs-downloads.adoc#vs-release-{vs-version-maintenance-hyphenated}[Vector Search extension] into your project location.
+. Download and extract the <<c:gs-downloads:::vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},Vector Search extension>> into your project location.
 . The package must be installed to the location in your project where the library can be accessed and loaded while the executable is running.
 .. The Vector Search download for CBL-C only contains the Vector Search libraries needed to include in your app.
 .. Steps to include the prebuilt native library can be found link:https://developer.android.com/studio/projects/gradle-external-native-builds[here].
 . Create a Android app project in Android Studio
 . The location of the native library can be found using the following snippet:
-// FOR 3.2.0 GA >> . For `x86_64` architectures: `com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-version-maintenance}`
+// FOR 3.2.0 GA >> . For `x86_64` architectures: `com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}`
 
 
 [{tabs}]
 =====
 
-Default Packaging:: 
+[#c:gs-install:::tabs-5-default-packaging]
+Default Packaging::
 +
 --
 [source, java]
@@ -472,6 +701,7 @@ String getArch() {
 }
 ----
 --
+[#c:gs-install:::tabs-5-legacy-packaging]
 Legacy Packaging::
 +
 --
@@ -490,30 +720,846 @@ In the code, before opening the database and using the vector search extension, 
 [source, c, indent=0]
 ----
 
-include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
+        CBLError error {};
+        if (!CBL_EnableVectorSearch(FLStr("/path/to/extension_dir"), &error)) {
+            throw std::domain_error("Invalid / Not Found Extension Library");
+        }
 
 ----
 
-{install-closure}
+pass:q,a[At this point, you are ready to start building the <<c:gs-build:::,Getting Started>> app, or doing your own thing with _Couchbase Lite for C_]
 
 
-[#lbl-platforms]
-== Platform Availability
+[discrete#c:gs-install:::lbl-platforms]
+==== Platform Availability
 
 
-include::{root-partials}supported-versions.adoc[tag={param-module}]
+// inclusion == Supported Versions -- C
+[discrete#c:gs-install:::officially-supported-versions]
+==== Officially Supported Versions
+
+Couchbase Lite for C is available on the platforms shown in the tables below.
+
+[IMPORTANT]
+.Deprecation Notice
+--
+Support for the following will be deprecated in this release and will be removed in a future release:
+
+* macOS 11 - Big Sur
+* Apple OS X v10.14 (Mojave), v10.15 (Catalina)
+* Raspbian - 9
+* Debian 9, 10
+
+Please plan to migrate your apps to use an appropriate alternative version.
+--
+
+[discrete#c:gs-install:::android]
+===== Android
+
+[cols="^1,^1,^1,^1,^1",options="header"]
+//  frame=none]
+|===
+.>| API | x86 | x64 .>| ARM 32 .>| ARM 64
+
+| 22+ | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+
+|===
+
+[discrete#c:gs-install:::ios]
+===== iOS
+
+[cols="^1,^1,^1,^1,^1",options="header"]
+//  frame=none]
+|===
+.>| Version | x86 | x64 | ARM 32 | ARM 64
+
+| 12+
+| image:couchbase-lite/current/{underscore}images/yes.png[]
+| image:couchbase-lite/current/{underscore}images/yes.png[]
+| image:couchbase-lite/current/{underscore}images/yes.png[]
+| image:couchbase-lite/current/{underscore}images/yes.png[]
+
+|===
 
 
-[#lbl-downloads]
-== Download Links
+[discrete#c:gs-install:::mac-os]
+===== Mac OS
 
-include::partial$downloadslist.adoc[leveloffset=+1]
+[cols="^1,^1,^1",options="header"]
+//  frame=none]
+|===
+.>| Version | x64 | ARM 64
+
+| MacOS 14 (Sonoma) a|  image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+| MacOS 13 (Ventura) a|  image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+| MacOS 12 (Monterey) a|  image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+
+|===
+
+
+[discrete#c:gs-install:::linux]
+===== Linux
+
+[cols="^1,^1,^1,^1^,^1,^1",options="header"]
+//  frame=none]
+|===
+.>| Distro	| Version .>| x64 .>| ARM 32 .>| ARM 64
+
+.4+| Debian
+| 9 | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+| 10 (Buster) | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+| 11 (Bullseye) | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+| 12 (Bookworm) | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+
+| Raspberry Pi OS | 10	|  	| image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+| Raspbian | 9	|  | image:couchbase-lite/current/{underscore}images/yes.png[] |
+
+.2+| Ubuntu
+| 20.04 LTS	| image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+| 22.04 LTS	| image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+
+|===
+
+[discrete#c:gs-install:::embedded-linux]
+===== Embedded Linux
+
+[cols="^1,^1,^1,^1^,^1,^1",options="header"]
+//  frame=none]
+|===
+.>| Distro	| Version .>| x64 .>| ARM 32 .>| ARM 64
+
+.4+| Debian
+| 9 | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+| 10 (Buster) | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+| 11 (Bullseye) | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+| 12 (Bookworm) | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+
+| Raspberry Pi OS | 10	|  	| image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+| Raspbian | 9	|  | image:couchbase-lite/current/{underscore}images/yes.png[] |
+
+.2+| Ubuntu
+| 20.04 LTS	| image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+| 22.04 LTS	| image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[] | image:couchbase-lite/current/{underscore}images/yes.png[]
+
+|===
+
+[discrete#c:gs-install:::windows]
+===== Windows
+
+[cols="1,^1,^1",options="header"]
+//  frame=none]
+|===
+.>|| Version | x64
+
+| Desktop | 10+ | image:couchbase-lite/current/{underscore}images/yes.png[]
+
+|===
+
+
+
+[discrete#c:gs-install:::lbl-downloads]
+==== Download Links
+
+//  Inclusion --downloads
+//  Consumed by:
+//    gs-downloads.adoc
+//    gs-install.adoc
+//  Parameters
+//    param-version -- the required maintenance release version
+//
+
+
+
+
+
+
+
+[discrete#c:gs-install:::introduction]
+===== Introduction
+
+
+_Couchbase Lite for C_ is available for all xref:c:supported-os.adoc[Supported Platforms].
+You can obtain downloads for _Linux_ and _macOS_ from the links here in the downloads table.
+
+
+[discrete#c:gs-install:::release-x,id=release-x]
+===== Couchbase Lite Release {major}.{minor}.{maintenance-c}{empty}
+
+.Available platforms are:
+****
+<<c:gs-install:::macos-x>>  |
+<<c:gs-install:::windows-x>>  |
+<<c:gs-install:::debian-x>>  |
+<<c:gs-install:::ubuntu-x>>  |
+****
+
+[discrete#c:gs-install:::macos-x,id=macos-x]
+====== MacOS
+
+[#tbl-downloads-{major}.{minor}.{maintenance-c}{empty}]
+.Download link table
+[{tabs}]
+=====
+
+
+[#c:gs-install:::tbl-downloads-3-enterprise-edition]
+Enterprise Edition::
++
+--
+[#c:gs-install:::tbl-downloads-ee,cols="1,4,4,4", options="header"]
+|===
+| Platform | Download | SHA | Debug Symbols
+
+.1+| MacOS
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-macos.zip[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-macos.zip]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-macos.zip.sha256[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-macos.zip.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-macos-symbols.zip[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-macos-symbols.zip]
+
+|===
+--
+
+[#c:gs-install:::tbl-downloads-3-community-edition]
+Community Edition::
++
+--
+[#c:gs-install:::tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
+|===
+| Platform | Download | SHA | Debug Symbols
+
+| MacOS
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-macos.zip[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-macos.zip]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-macos.zip.sha256[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-macos.zip.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-macos-symbols.zip[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-macos-symbols.zip]
+
+|===
+
+--
+
+=====
+
+[discrete#c:gs-install:::windows-x,id=windows-x]
+====== Windows
+
+[#tbl-downloads-{major}.{minor}.{maintenance-c}{empty}]
+.Download link table
+[{tabs}]
+=====
+
+
+[#c:gs-install:::tbl-downloads-3-enterprise-edition-2]
+Enterprise Edition::
++
+--
+[#c:gs-install:::tbl-downloads-ee,cols="1,4,4,4", options="header"]
+|===
+| Platform | Download | SHA | Debug Symbols
+
+.1+| Windows
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-windows-x86_64.zip[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-windows-x86_64.zip]
+| {empty}
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-windows-x86_64-symbols.zip[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-windows-x86_64-symbols.zip]
+
+|===
+--
+
+[#c:gs-install:::tbl-downloads-3-community-edition-2]
+Community Edition::
++
+--
+[#c:gs-install:::tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
+|===
+| Platform | Download | SHA | Debug Symbols
+
+.1+| Windows
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-windows-x86_64.zip[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-windows-x86_64.zip]
+| {empty}
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-windows-x86_64-symbols.zip[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-windows-x86_64-symbols.zip]
+
+|===
+
+--
+
+=====
+
+[discrete#c:gs-install:::debian-x,id=debian-x]
+====== Debian
+
+[#tbl-downloads-{major}.{minor}.{maintenance-c}{empty}]
+.Download link table
+[{tabs}]
+=====
+
+
+[#c:gs-install:::tbl-downloads-3-enterprise-edition-3]
+Enterprise Edition::
++
+--
+[#c:gs-install:::tbl-downloads-ee,cols="1,4,4,4", options="header"]
+|===
+| Platform | Download | SHA | Debug Symbols
+
+.99+|  Debian
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-arm64.tar.gz[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-arm64.tar.gz]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-arm64.tar.gz.sha256[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-arm64.tar.gz.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-arm64-symbols.tar.gz[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-arm64-symbols.tar.gz]
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-armhf.tar.gz[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-armhf.tar.gz]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-armhf.tar.gz.sha256[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-armhf.tar.gz.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-armhf-symbols.tar.gz[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-armhf-symbols.tar.gz]
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64.tar.gz[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64.tar.gz]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64.tar.gz.sha256[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64.tar.gz.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64-symbols.tar.gz[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64-symbols.tar.gz]
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_amd64.deb[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_amd64.deb.sha256[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_amd64.deb[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_amd64.deb.sha256[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_arm64.deb[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_arm64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_arm64.deb.sha256[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_arm64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_arm64.deb[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_arm64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_arm64.deb.sha256[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_arm64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_armhf.deb[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_armhf.deb.sha256[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_armhf.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_armhf.deb[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_armhf.deb.sha256[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian11_armhf.deb.sha256]
+|
+
+
+// Debian 10
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_amd64.deb[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_amd64.deb.sha256[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_amd64.deb[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_amd64.deb.sha256[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_arm64.deb[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_arm64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_arm64.deb.sha256[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_arm64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_arm64.deb[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_arm64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_arm64.deb.sha25[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_arm64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_armhf.deb[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_armhf.deb.sha256[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_armhf.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_armhf.deb[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_armhf.deb.sha256[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian10_armhf.deb.sha256]
+|
+
+
+// Debian 9
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian9_amd64.deb[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian9_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian9_amd64.deb.sha256[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian9_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian9_amd64.deb[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian9_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian9_amd64.deb.sha256[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian9_amd64.deb.sha256]
+|
+
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian9_armhf.deb[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian9_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian9_armhf.deb.sha256[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian9_armhf.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian9_armhf.deb[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian9_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian9_armhf.deb.sha256[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-debian9_armhf.deb.sha256]
+|
+
+|===
+--
+
+[#c:gs-install:::tbl-downloads-3-community-edition-3]
+Community Edition::
++
+--
+[#c:gs-install:::tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
+|===
+| Platform | Download | SHA | Debug Symbols
+
+.99+| Debian
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-arm64.tar.gz[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-arm64.tar.gz]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-arm64.tar.gz.sha256[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-arm64.tar.gz.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-arm64-symbols.tar.gz[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-arm64-symbols.tar.gz]
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-armhf.tar.gz[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-armhf.tar.gz]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-armhf.tar.gz.sha256[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-armhf.tar.gz.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-armhf-symbols.tar.gz[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-armhf-symbols.tar.gz]
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64.tar.gz[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64.tar.gz]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64.tar.gz.sha256[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64.tar.gz.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64-symbols.tar.gz[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64-symbols.tar.gz]
+
+// Debian 11
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian11_amd64.deb[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian11_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian11_amd64.deb.sha256[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian11_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian11_amd64.deb[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian11_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian11_amd64.deb.sha256[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian11_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian11_arm64.deb[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian11_arm64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian11_arm64.deb.sha256[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian11_arm64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian11_arm64.deb[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian11_arm64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian11_arm64.deb.sha256[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian11_arm64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian11_armhf.deb[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian11_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian11_armhf.deb.sha256[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian11_armhf.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian11_armhf.deb[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian11_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian11_armhf.deb.sha256[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian11_armhf.deb.sha256]
+|
+
+
+// Debian 10
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian10_amd64.deb[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian10_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian10_amd64.deb.sha256[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian10_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian10_amd64.deb[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian10_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian10_amd64.deb.sha256[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian10_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian10_arm64.deb[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian10_arm64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian10_arm64.deb.sha256[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian10_arm64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian10_arm64.deb[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian10_arm64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian10_arm64.deb.sha256[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian10_arm64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian10_armhf.deb[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian10_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian10_armhf.deb.sha256[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian10_armhf.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian10_armhf.deb[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian10_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian10_armhf.deb.sha256[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian10_armhf.deb.sha256]
+|
+
+
+// Debian 9
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian9_amd64.deb[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian9_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian9_amd64.deb.sha256[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian9_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian9_amd64.deb[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian9_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian9_amd64.deb.sha256[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian9_amd64.deb.sha256]
+|
+
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian9_armhf.deb[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian9_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian9_armhf.deb.sha256[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-debian9_armhf.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian9_armhf.deb[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian9_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian9_armhf.deb.sha256[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-debian9_armhf.deb.sha256]
+|
+
+|===
+
+--
+
+=====
+
+
+[discrete#c:gs-install:::ubuntu-x,id=ubuntu-x]
+====== Ubuntu
+
+[#tbl-downloads-{major}.{minor}.{maintenance-c}{empty}]
+.Download link table
+[{tabs}]
+=====
+
+
+[#c:gs-install:::tbl-downloads-3-enterprise-edition-4]
+Enterprise Edition::
++
+--
+[#c:gs-install:::tbl-downloads-ee,cols="1,4,4,4", options="header"]
+|===
+| Platform | Download | SHA | Debug Symbols
+
+.99+| Ubuntu
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-arm64.tar.gz[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-arm64.tar.gz]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-arm64.tar.gz.sha256[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-arm64.tar.gz.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-arm64-symbols.tar.gz[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-arm64-symbols.tar.gz]
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-armhf.tar.gz[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-armhf.tar.gz]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-armhf.tar.gz.sha256[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-armhf.tar.gz.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-armhf-symbols.tar.gz[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-armhf-symbols.tar.gz]
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64.tar.gz[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64.tar.gz]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64.tar.gz.sha256[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64.tar.gz.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64-symbols.tar.gz[couchbase-lite-c-enterprise-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64-symbols.tar.gz]
+
+
+// Ubuntu 22.04
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_amd64.deb[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_amd64.deb.sha256[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_amd64.deb[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_amd64.deb.sha256[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_arm64.deb[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_arm64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_arm64.deb.sha256[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_arm64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_arm64.deb[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_arm64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_arm64.deb.sha256[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_arm64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_armhf.deb[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_armhf.deb.sha256[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_armhf.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_armhf.deb[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_armhf.deb.sha256[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_armhf.deb.sha256]
+|
+
+
+// Ubuntu 20.04
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_amd64.deb[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_amd64.deb.sha256[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_amd64.deb[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_amd64.deb.sha256[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_arm64.deb[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_arm64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_arm64.deb.sha256[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_arm64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_arm64.deb[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_arm64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_arm64.deb.sha256[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_arm64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_armhf.deb[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_armhf.deb.sha256[libcblite-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_armhf.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_armhf.deb[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_armhf.deb.sha256[libcblite-dev-enterprise_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_armhf.deb.sha256]
+|
+
+
+|===
+--
+
+[#c:gs-install:::tbl-downloads-3-community-edition-4]
+Community Edition::
++
+--
+[#c:gs-install:::tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
+|===
+| Platform | Download | SHA | Debug Symbols
+
+.99+| Ubuntu
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-arm64.tar.gz[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-arm64.tar.gz]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-arm64.tar.gz.sha256[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-arm64.tar.gz.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-arm64-symbols.tar.gz[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-arm64-symbols.tar.gz]
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-armhf.tar.gz[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-armhf.tar.gz]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-armhf.tar.gz.sha256[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-armhf.tar.gz.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-armhf-symbols.tar.gz[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-armhf-symbols.tar.gz]
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64.tar.gz[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64.tar.gz]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64.tar.gz.sha256[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64.tar.gz.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64-symbols.tar.gz[couchbase-lite-c-community-{major}.{minor}.{maintenance-c}{empty}-linux-x86_64-symbols.tar.gz]
+
+
+// Ubuntu 22.04
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_amd64.deb[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_amd64.deb.sha256[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_amd64.deb[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_amd64.deb.sha256[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_arm64.deb[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_arm64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_arm64.deb.sha256[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_arm64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_arm64.deb[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_arm64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_arm64.deb.sha256[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_arm64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_armhf.deb[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_armhf.deb.sha256[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_armhf.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_armhf.deb[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_armhf.deb.sha256[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu22.04_armhf.deb.sha256]
+|
+
+
+// Ubuntu 20.04
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_amd64.deb[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_amd64.deb.sha256[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_amd64.deb[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_amd64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_amd64.deb.sha256[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_amd64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_arm64.deb[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_arm64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_arm64.deb.sha256[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_arm64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_arm64.deb[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_arm64.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_arm64.deb.sha256[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_arm64.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_armhf.deb[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_armhf.deb.sha256[libcblite-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_armhf.deb.sha256]
+|
+
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_armhf.deb[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_armhf.deb]
+| https://packages.couchbase.com/releases/couchbase-lite-c/{major}.{minor}.{maintenance-c}{empty}/libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_armhf.deb.sha256[libcblite-dev-community_{major}.{minor}.{maintenance-c}{empty}-ubuntu20.04_armhf.deb.sha256]
+|
+
+|===
+
+--
+
+=====
+
+[discrete#c:gs-install:::raspbian-x,id=raspbian-x]
+====== Raspbian
+
+Please use the <<c:gs-install:::debian-x,Debian `.deb` download>> choosing the appropriate version (`debian9` or `debian10`) and architecture.
+
+[discrete#c:gs-install:::vs-release-x,id=vs-release-x]
+===== Vector Search Release {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+
+.Available platforms are:
+****
+<<c:gs-install:::android-x>> |
+<<c:gs-install:::macos-x>>  |
+<<c:gs-install:::ios-x>> |
+<<c:gs-install:::windows-x>> |
+<<c:gs-install:::linux-x>>   |
+****
+
+[IMPORTANT]
+--
+You must have Couchbase Lite installed before you can use the Vector Search Extension.
+Vector Search is available only for 64-bit architectures.
+The Vector Search extension is an *Enterprise-only* feature.
+--
+
+[discrete#c:gs-install:::android-x,id=android-x]
+====== Android
+
+[#tbl-downloads-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}]
+.Download link table
+[{tabs}]
+=====
+
+[#c:gs-install:::tbl-downloads-1-enterprise]
+Enterprise::
++
+--
+[#c:gs-install:::tbl-downloads-ee,cols="1,4,4", options="header"]
+|===
+| Platform | Download | SHA
+
+.4+| Android
+
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-android-arm64-v8a.zip[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-android-arm64-v8a.zip]
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-android-arm64-v8a.zip.sha256[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-android-arm64-v8a.zip.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-android-x86_64.zip[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-android-x86_64.zip]
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-android-x86_64.zip.sha256[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-android-x86_64.zip.sha256]
+
+|===
+--
+=====
+
+[discrete#c:gs-install:::macos-x,id=macos-x]
+====== MacOS
+
+[#tbl-downloads-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}]
+.Download link table
+[{tabs}]
+=====
+
+[#c:gs-install:::tbl-downloads-1-enterprise-edition]
+Enterprise Edition::
++
+--
+[#c:gs-install:::tbl-downloads-ee,cols="1,4,4", options="header"]
+|===
+| Platform | Download | SHA | Debug Symbols
+
+.1+| MacOS
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-macos.zip[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-macos.zip]
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-macos.zip.sha256[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-macos.zip.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-macos-symbols.zip[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-macos-symbols.zip]
+
+|===
+--
+=====
+
+[discrete#c:gs-install:::ios-x,id=ios-x]
+====== iOS
+[#tbl-downloads-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}]
+.Download link table
+[{tabs}]
+=====
+
+[#c:gs-install:::tbl-downloads-1-enterprise-edition-2]
+Enterprise Edition::
++
+--
+[#c:gs-install:::tbl-downloads-ee,cols="1,4,4", options="header"]
+|===
+| Platform | Download | SHA
+
+.3+| iOS
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search_xcframework_{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}.zip[couchbase-lite-vector-search_xcframework_{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}.zip]
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search_xcframework_{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}.zip.sha256[couchbase-lite-vector-search_xcframework_{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}.zip.sha256]
+
+|===
+--
+=====
+
+[discrete#c:gs-install:::windows-x,id=windows-x]
+====== Windows
+
+[#tbl-downloads-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}]
+.Download link table
+[{tabs}]
+=====
+
+[#c:gs-install:::tbl-downloads-1-enterprise-edition-3]
+Enterprise Edition::
++
+--
+[#c:gs-install:::tbl-downloads-ee,cols="1,4,4", options="header"]
+|===
+| Platform | Download | SHA
+
+.3+| Windows
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-windows-arm64.zip[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-windows-arm64.zip]
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-windows-arm64.zip[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-windows-arm64.zip.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-windows-x86_64.zip[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-windows-x86_64.zip]
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-windows-x86_64.zip[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-windows-x86_64.zip.sha256]
+
+|===
+--
+=====
+
+[discrete#c:gs-install:::linux-x,id=linux-x]
+====== Linux
+
+[#tbl-downloads-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}]
+.Download link table
+[{tabs}]
+=====
+
+[#c:gs-install:::tbl-downloads-1-enterprise-2]
+Enterprise::
++
+--
+[#c:gs-install:::tbl-downloads-ee,cols="1,4,4,4", options="header"]
+|===
+| Platform | Download | SHA | Debug Symbols
+
+.4+| Linux
+
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-linux-aarch64.zip[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-linux-aarch64.zip]
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-linux-aarch64.zip.sha256[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-linux-aarch64.zip.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-linux-aarch64-symbols.zip[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-linux-aarch64-symbols.zip]
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-linux-x86_64.zip[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-linux-x86_64.zip]
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-linux-x86_64.zip.sha256[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-linux-x86_64.zip.sha256]
+| https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}/couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-linux-x86_64-symbols.zip[couchbase-lite-vector-search-{vs-major}.{vs-minor}.{vs-maintenance-c}{empty}-linux-x86_64-symbols.zip]
+
+|===
+--
+=====
 
 ////
-:param-version: 3.1.0
 include::partial$downloadslist.adoc[leveloffset=+1]
-:param-version!:
 ////
 
 
-include::{root-partials}block-related-content-start.adoc[]
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+
+[discrete#c:gs-install:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:c:gs-prereqs.adoc[Prerequisites]
+* xref:c:gs-install.adoc[Install]
+* xref:c:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#c:gs-install:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:c:database.adoc[Databases]
+* xref:c:document.adoc[Documents]
+* xref:c:blob.adoc[Blobs]
+* xref:c:replication.adoc[Remote Sync Gateway]
+* xref:c:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#c:gs-install:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+

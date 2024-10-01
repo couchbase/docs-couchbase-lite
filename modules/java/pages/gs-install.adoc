@@ -1,39 +1,243 @@
-= Couchbase Lite on Java -- Installing
+:docname: gs-install
+:page-module: java
+:page-relative-src-path: gs-install.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#java:gs-install:::]
+=== Install
 :page-aliases: start/java-gs-install.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :page-toclevels: 2@
 :description: Couchbase Lite on Java -- a framework for developing offline-first Java applications for mobile and edge
 :keywords: mobile edge nosql api Java JVM web-app device-app
 
-include::partial$_set_page_context_for_java.adoc[]
+
+
+
+// BEGIN -- _define_module_attributes.adoc -- Java
+//
+// Definition:
+//    Objective: This adoc defines values for attributes specific to pages within this module (Java)
+//    Invoked-by: ROOT:_partials/_std_cbl_hdr.adoc (from within module/_partials/_set_page_context_for_java.adoc)
+//    Parameters: none
+// End Definition:
+
+
+// BEGIN -- module page attributes
+// Begin workaround for 2.8.1 mis-release, to avoid unnecessary install of 2.8.0
+// SET full maintenance version number
+
+// VECTOR SEARCH attributes
+
+// End workaround
+// :snippet-p2psync-ws: {snippets-p2psync-ws--java}
+// END -- module page attributes
+
+
+// BEGIN -- Define API References for this module
+//  These attributes s
+//:url-api-references-structs: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Structs
+// :url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Classes
+
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DatabaseConfiguration
+
+
+//Database.SAVE
+
+
+
+//Database.DELETE()
+
+
+
+
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#compact--[Database.compact()]
+// was copy-java.io.File-java.lang.String-com.couchbase.lite.DatabaseConfiguration-[Database.copy()]
+
+
+
+
+
+// links for documents pages
+
+
+// :url-api-class-dictionary: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Dictionary.html[property accessors]
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+// Expression class and methods
+
+
+// ArrayFunction class and methods
+// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/ArrayFunction.html
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+
+// orderby class and methods
+//
+
+// GroupBy class and methods
+//
+
+// Endpoints
+
+
+
+
+
+
+
+
+// https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/URLEndpointListenerConfiguration.html#setPort-int-
+
+
+
+
+
+
+
+// diag: Env+Module java
+
+
+
+
+// Authenticators
+
+
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Replicator.html#s:18CouchbaseLiteandroid10ReplicatorC13ActivityLevelO
+
+
+// ReplicatorStatus
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+
+// replaced
+// replaced
+// replaces ^^
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+
+
+
+
+
+
+
+
+// Meta API
+
+
+// END -- Define API References for this module
+
+// diag: Env+Module java
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Logging.html[Logging classes]
+
+
+
+
+
+
+// END  Logs and logging references
+
+
+
+
+
+
+
+// END -- _define_module_attributes.adoc -- Java
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--java}
+
+// END::Local page attributes
 
 // DO NOT EDIT
-:param-abstract: This content provides instructions that enable you to deploy Couchbase Lite on {param-name}
-:param-related: {gs-install--xref} | {gs-prereqs--xref} | {gs-build--xref}
-:topic-group:
-include::{root-partials}_show_page_header_block.adoc[]
-// include::{root-partials}block-related-get-started.adoc[]
+[abstract]
+--
+Description -- _{description}_ +
+_Abstract -- This content provides instructions that enable you to deploy Couchbase Lite on java_ +
+Related Content -- xref:java:gs-install.adoc[Install] | xref:java:gs-prereqs.adoc[Prerequisites] | xref:java:gs-build.adoc[Build and Run]
+--
+// include::ROOT:partial$block-related-get-started.adoc[]
 // DO NOT EDIT
 
-:url-download-ee: https://packages.couchbase.com/releases/couchbase-lite-java/{version-full}/couchbase-lite-java-ee-{version-full}.zip[Enterprise Edition]
-:url-download-ce: https://packages.couchbase.com/releases/couchbase-lite-java/{version-full}/couchbase-lite-java-{version-full}.zip[Community Edition]
 
 
-== Introduction
+[discrete#java:gs-install:::introduction]
+==== Introduction
 
 
-{cbl-te} on Java {version-full} enables development and deployment of {cbl} applications to a JVM environment.
-You can deploy Standalone (Java Desktop/Console) apps or Web Apps (using, for example, {gpWebServerEnv}; including embedded {gpWebServerEnv} deployments).
+pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] on Java {major}.{minor}.{base}{empty} enables development and deployment of pass:q,a[Couchbase{nbsp}Lite] applications to a JVM environment.
+You can deploy Standalone (Java Desktop/Console) apps or Web Apps (using, for example, Tomcat; including embedded Tomcat deployments).
 
 
 .Quick Steps
 ****
-For experienced developers, this is all you need to add _{cbl} for {param-title} {version-full}_ to your application projects.
+For experienced developers, this is all you need to add _pass:q,a[Couchbase{nbsp}Lite] for Java {major}.{minor}.{base}{empty}_ to your application projects.
 
 [{tabs}]
 =====
+[#java:gs-install:::tabs-1-enterprise-edition]
 Enterprise Edition::
 +
 --
@@ -42,50 +246,54 @@ Include the following in your Gradle `build.gradle` or Maven `pom.xml` file, as 
 * The Couchbase Enterprise Edition repository +
 `https://mobile.maven.couchbase.com/maven2/dev/`
 
-* The {cbl} Enterprise Edition dependency: +
-`couchbase-lite-java-ee:{version-full}`
+* The pass:q,a[Couchbase{nbsp}Lite] Enterprise Edition dependency: +
+`couchbase-lite-java-ee:{major}.{minor}.{base}{empty}`
 
 . If you want to use Vector Search, add the Couchbase Lite Vector Search dependency: `couchbase-lite-java-vector-search`
 . You must then use `CouchbaseLite.enableVectorSearch();` to enable the vector search extension.
 --
 
+[#java:gs-install:::tabs-1-community-edition]
 Community Edition::
 +
 --
-. Include the {cbl} for Java dependency in your Gradle `build.gradle` or Maven `pom.xml` file, as appropriate: +
-`couchbase-lite-java:{version-full}`
+. Include the pass:q,a[Couchbase{nbsp}Lite] for Java dependency in your Gradle `build.gradle` or Maven `pom.xml` file, as appropriate: +
+`couchbase-lite-java:{major}.{minor}.{base}{empty}`
 . For Gradle: +
 Check you have `mavenCentral()` in `repositories` (or in `settings.gradle`). +
 Maven automatically checks its own repo for dependencies.
 --
 =====
 
-NOTE: for Linux, make sure you have followed the xref:gs-prereqs.adoc#additional-steps-for-linux[additional steps required].
+NOTE: for Linux, make sure you have followed the <<java:gs-prereqs:::additional-steps-for-linux,additional steps required>>.
 
 ****
 That's it!
-You're all set to begin developing powerful {cbl} applications.
+You're all set to begin developing powerful pass:q,a[Couchbase{nbsp}Lite] applications.
 
-Now, try the xref:gs-build.adoc[Getting Started] application, which demonstrates use of key CRUD functionality.
-
-
-
-== Preparing Your Build Environment
+Now, try the <<java:gs-build:::,Getting Started>> application, which demonstrates use of key CRUD functionality.
 
 
-This section shows how to set up and use {cblJP} to build desktop and web applications using {gpBuildTool}, Maven, {gpWebServerEnv} and {gpIDE} Community Edition.
+
+[discrete#java:gs-install:::preparing-your-build-environment]
+==== Preparing Your Build Environment
+
+
+This section shows how to set up and use pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java to build desktop and web applications using gradle, Maven, Tomcat and Intellij IDEA Community Edition.
 It assumes a familiarity with these products, however you are free to use your own choice of development tools.
 
-=== Binaries
+[discrete#java:gs-install:::binaries]
+===== Binaries
 
-{cblJP} binaries are available for both Community (CE) and Enterprise (EE) editions from the _Maven_ repositories.
+pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java binaries are available for both Community (CE) and Enterprise (EE) editions from the _Maven_ repositories.
 
-=== Prerequisites
+[discrete#java:gs-install:::prerequisites]
+===== Prerequisites
 
-* Planning to sync with a {svr}?
+* Planning to sync with a pass:q,a[_Couchbase{nbsp}Server_]?
 +
-You will need to have runnable instances of {svr} and {sg} installed.
-If you have not already done so see {sgw-prepare--xref}
+You will need to have runnable instances of pass:q,a[_Couchbase{nbsp}Server_] and pass:q,a[pass:q,a[_pass:q,a[Sync{nbsp}Gateway]_]] installed.
+If you have not already done so see xref:sync-gateway::get-started-prepare.adoc[Prepare Sync Gateway]
 * Running on Microsoft Windows?
 +
 Windows requires {Cpp} runtime installed.
@@ -93,43 +301,46 @@ Please install the Visual {Cpp} Redistribution package from this link:
 https://www.microsoft.com/en-us/download/details.aspx?id=52685
 
 * Deploying to Linux? +
-You need to deploy the {cbl} `support` library, which is available _only_ on the zip download distributable.
-See the _Additional Steps for Linux_ section in xref:gs-prereqs.adoc#additional-steps-for-linux[].
+You need to deploy the pass:q,a[Couchbase{nbsp}Lite] `support` library, which is available _only_ on the zip download distributable.
+See the _Additional Steps for Linux_ section in <<java:gs-prereqs:::additional-steps-for-linux>>.
 
 
-== Standalone Apps
+[discrete#java:gs-install:::standalone-apps]
+==== Standalone Apps
 
 [IMPORTANT]
 --
 To use Vector Search, you must have Couchbase Lite installed and add the Vector Search extension to your Couchbase Lite application.
 Vector Search is available only for 64-bit architectures and
 Intel processors that support the Advanced Vector Extensions 2 (AVX2) instruction set.
-To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.] 
+To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.]
 --
 
-=== Using Gradle
+[discrete#java:gs-install:::using-gradle]
+===== Using Gradle
 
 . Create a project folder
 . Initialize it for a Gradle Java application
-. Include the content shown in <<ex-bgf1>> in your app-level `build.gradle` file
-. Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
+. Include the content shown in <<java:gs-install:::ex-bgf1>> in your app-level `build.gradle` file
+. Open the project folder in Intellij IDEA and import the gradle settings.
 +
 --
 TIP: If you don't have auto-import set for Gradle projects, then accept the *Import Gradle Project* prompt that is displayed bottom-right of the screen +
 Note the Gradle menu at the extreme right of the screen:
 
-image::GradleMenuWebApp.png[,300]
+image::couchbase-lite/current/java/_images/GradleMenuWebApp.png[,300]
 --
 
 That's it.
-You're all set to start building your own {cblJP} applications -- see {gs-build--xref} for an example of how to do that.
+You're all set to start building your own pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java applications -- see xref:java:gs-build.adoc[Build and Run] for an example of how to do that.
 
 .build.gradle file content
-[#ex-bgf1]
+[#java:gs-install:::ex-bgf1]
 ====
 [{tabs}]
 =====
 
+[#java:gs-install:::tabs-2-enterprise-edition]
 Enterprise Edition::
 +
 --
@@ -145,7 +356,7 @@ compileOptions {
     sourceCompatibility JavaVersion.VERSION_11
 
 //   ... other section content as required by user
-} 
+}
 
 ----
 
@@ -154,7 +365,7 @@ compileOptions {
 [source,groovy, subs="attributes+"]
 ----
 dependencies {
-    implementation "com.couchbase.lite:couchbase-lite-java:{version-full}"
+    implementation "com.couchbase.lite:couchbase-lite-java:{major}.{minor}.{base}{empty}"
 
 //   ... other section content as required by user
 }
@@ -173,6 +384,7 @@ repositories {
 ----
 --
 
+[#java:gs-install:::tabs-2-vector-search-extension]
 Vector Search Extension::
 +
 NOTE: Vector Search is an *Enterprise-only* feature.
@@ -190,7 +402,7 @@ compileOptions {
     sourceCompatibility JavaVersion.VERSION_11
 
 //   ... other section content as required by user
-} 
+}
 
 ----
 
@@ -199,10 +411,10 @@ compileOptions {
 [source,groovy, subs="attributes+"]
 ----
 dependencies {
-    implementation "com.couchbase.lite:couchbase-lite-java:{version-full}"
+    implementation "com.couchbase.lite:couchbase-lite-java:{major}.{minor}.{base}{empty}"
 
   // All standard 64-bit ARM architectures
-  implementation 'com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-version-maintenance}'
+  implementation 'com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-major}.{vs-minor}.{vs-maintenance-java}{empty}'
 
 //   ... other section content as required by user
 }
@@ -225,10 +437,14 @@ repositories {
 .Activating the Extension
 [source,java, subs="attributes+"]
 ----
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-setup-packaging]
+        try { CouchbaseLite.enableVectorSearch(); }
+        catch (CouchbaseLiteException e) {
+            throw new IllegalStateException("Could not enable vector search", e);
+        }
 ----
 --
 
+[#java:gs-install:::tabs-2-community-edition]
 Community edition::
 +
 --
@@ -252,7 +468,7 @@ compileOptions {
 [source,groovy, subs="attributes+"]
 ----
 dependencies {
-    implementation "com.couchbase.lite:couchbase-lite-java:{version-full}"
+    implementation "com.couchbase.lite:couchbase-lite-java:{major}.{minor}.{base}{empty}"
 
 //   ... other section content as required by user
 }
@@ -263,20 +479,21 @@ dependencies {
 =====
 ====
 
-[.include-in-toc]
-=== Using Maven
+[discrete.include-in-to#java:gs-install:::using-mavenc]
+===== Using Maven
 
-. Include the content shown in <<ex-bmf1>> in your `pom.xml` file in the root of your project folder
+. Include the content shown in <<java:gs-install:::ex-bmf1>> in your `pom.xml` file in the root of your project folder
 
 . That's it -- just add your own code
 
-You're all set to start building your own {cblJP} applications -- see {gs-build--xref} for an example of how to do that.
+You're all set to start building your own pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java applications -- see xref:java:gs-build.adoc[Build and Run] for an example of how to do that.
 
 .pom.xml file content
-[#ex-bmf1]
+[#java:gs-install:::ex-bmf1]
 ====
 [{tabs}]
 =====
+[#java:gs-install:::tabs-3-enterprise-edition]
 Enterprise Edition::
 +
 --
@@ -300,7 +517,7 @@ Enterprise Edition::
     <dependency>
       <groupId>com.couchbase.lite</groupId>
       <artifactId>couchbase-lite-java-ee</artifactId>
-      <version>{version-full}</version>
+      <version>{major}.{minor}.{base}{empty}</version>
     </dependency>
 
     <!-- ... any other section content as required by user-home  -->
@@ -323,6 +540,7 @@ Enterprise Edition::
 ----
 --
 
+[#java:gs-install:::tabs-3-community-edition]
 Community edition::
 +
 --
@@ -345,7 +563,7 @@ Community edition::
   <dependency>
       <groupId>com.couchbase.lite</groupId>
       <artifactId>couchbase-lite-java</artifactId>
-      <version>{version-full}</version>
+      <version>{major}.{minor}.{base}{empty}</version>
   </dependency>
 
   //   ... any other section content as required by user
@@ -358,10 +576,11 @@ Community edition::
 ====
 
 
-== Web App Development
+[discrete#java:gs-install:::web-app-development]
+==== Web App Development
 
 
-This section explains how to set-up a build project to create {cblJP} web apps using {gpBuildTool} and {gpIDE}.
+This section explains how to set-up a build project to create pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java web apps using gradle and Intellij IDEA.
 
 .Using Maven
 [TIP]
@@ -374,34 +593,37 @@ For examples of how to do this using Maven POM files, see --
 --
 
 
-=== Tomcat
+[discrete#java:gs-install:::tomcat]
+===== Tomcat
 
-In our examples here we build and deploy web apps using a {gpBuildTool} plugin based on the `com.bmuschko.tomcat` plugin.
-It provides a simple {gpWebServerEnv} harness that can be used from within {gpIDE} or the command-line -- see <<lbl-tomcat>>
+In our examples here we build and deploy web apps using a gradle plugin based on the `com.bmuschko.tomcat` plugin.
+It provides a simple Tomcat harness that can be used from within Intellij IDEA or the command-line -- see <<java:gs-install:::lbl-tomcat>>
 
-[#bmkMultCblJapps, Running multiple {cblJP} web apps]
-=== Multiple Web Apps
+[discrete#java:gs-install:::bmkMultCblJapps, Running multiple pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java web apps]
+===== Multiple Web Apps
 
 Each web application has its own *class loader (WebappX).
 This loads the classes, jars, and resources found in the application's `WEB-INF/classes` and `WEB-INF/lib` folders, together with any shared jar files from `$CATALINA_BASE/lib` -- see https://tomcat.apache.org/tomcat-9.0-doc/class-loader-howto.html[tomcat documentation] for more.
 
-So, if you are running multiple {cbl} web applications, deploy your {cbljp} library `<pathToCbl>/libs` to `$CATALINA_BASE/lib`. This means you do not need to deploy it in each web app and *minimizes the size of each app*.
+So, if you are running multiple pass:q,a[Couchbase{nbsp}Lite] web applications, deploy your {cbljp} library `<pathToCbl>/libs` to `$CATALINA_BASE/lib`. This means you do not need to deploy it in each web app and *minimizes the size of each app*.
 
-NOTE:  Configuring {cbl} logging functionality will affect the logging of all web applications as the _common class loader_ shares _{cbl} Console, File_ and _Custom logging functionalities_  across all  web apps.
+NOTE:  Configuring pass:q,a[Couchbase{nbsp}Lite] logging functionality will affect the logging of all web applications as the _common class loader_ shares _pass:q,a[Couchbase{nbsp}Lite] Console, File_ and _Custom logging functionalities_  across all  web apps.
 
-For information about building a WAR file see <<lbl-war>>
+For information about building a WAR file see <<java:gs-install:::lbl-war>>
 
-=== Prerequisites
+[discrete#java:gs-install:::prerequisites-2]
+===== Prerequisites
 
-* Ensure your build environment matches the runtime {gpWebServerEnv} environment.
-Specifically, that the Java and {gpWebServerEnv} versions are the same.
-* If your {gpWebServerEnv} server runs Linux, declare the _shared libraries_ (`<pathToCbl>/support`) in the `$CATALINA_HOME/bin/setenv.sh` script file -- see: _Additional Steps for Linux_ section in {gs-prereqs--xref}.
-* Ensure the {cbl} jars (`<pathToCbl>/lib`) are on the executable path within {gpWebServerEnv} -- see: <<bmkMultCblJapps>>
+* Ensure your build environment matches the runtime Tomcat environment.
+Specifically, that the Java and Tomcat versions are the same.
+* If your Tomcat server runs Linux, declare the _shared libraries_ (`<pathToCbl>/support`) in the `$CATALINA_HOME/bin/setenv.sh` script file -- see: _Additional Steps for Linux_ section in xref:java:gs-prereqs.adoc[Prerequisites].
+* Ensure the pass:q,a[Couchbase{nbsp}Lite] jars (`<pathToCbl>/lib`) are on the executable path within Tomcat -- see: <<java:gs-install:::bmkMultCblJapps>>
 +
 
 TIP: This also means you should declare the dependencies as `providedCompile` to avoid them being bundled into the `WEB-INF/libs` folder
 
-=== Steps
+[discrete#java:gs-install:::steps]
+===== Steps
 
 . Create a project folder and initialize it for a Gradle Java application
 +
@@ -410,9 +632,9 @@ TIP: This also means you should declare the dependencies as `providedCompile` to
 gradle init
 ----
 
-. Create your `build.gradle` file, including the <<ex-bgf2>> in your app-level build.gradle:
+. Create your `build.gradle` file, including the <<java:gs-install:::ex-bgf2>> in your app-level build.gradle:
 
-. Open the project folder in {gpIDE} and import the {gpBuildTool} settings.
+. Open the project folder in Intellij IDEA and import the gradle settings.
 
 TIP: If you don't have auto-import set for Gradle projects, then accept the   *Import Gradle Project* prompt that is displayed bottom-right of the screen. +
 Note the Gradle menu at the extreme right of the screen: +
@@ -421,14 +643,15 @@ image::GradleMenuWebApp.png[,300]
 If you want to deploy your app to a local tomcat container then see <<Deploying a WAR file to tomcat>>
 
 That's it.
-You're all set to start building your own {cblJP} applications -- see xref:gs-build.adoc[Building a Getting Started App] for an example of how to do that.
+You're all set to start building your own pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java applications -- see <<java:gs-build:::,Building a Getting Started App>> for an example of how to do that.
 
 .build.gradle file content
-[#ex-bgf2]
+[#java:gs-install:::ex-bgf2]
 ====
 [{tabs}]
 =====
 
+[#java:gs-install:::tabs-4-community]
 Community::
 +
 --
@@ -436,7 +659,7 @@ Community::
 [source,groovy,subs=attributes+]
 ----
 dependencies {
-    implementation "com.couchbase.lite:couchbase-lite-java:{version-full}"
+    implementation "com.couchbase.lite:couchbase-lite-java:{major}.{minor}.{base}{empty}"
 
 //   ... other section content as required by user
 }
@@ -445,6 +668,7 @@ dependencies {
 
 --
 
+[#java:gs-install:::tabs-4-enterprise]
 Enterprise::
 +
 --
@@ -458,7 +682,7 @@ repositories {
     }
 
 dependencies {
-    implementation "com.couchbase.lite:couchbase-lite-java-ee:{version-full}"
+    implementation "com.couchbase.lite:couchbase-lite-java-ee:{major}.{minor}.{base}{empty}"
 
 //   ... other section content as required by user
     }
@@ -468,10 +692,10 @@ dependencies {
 ====
 
 
-[#lbl-tomcat]
-== Embedded Tomcat
+[discrete#java:gs-install:::lbl-tomcat]
+==== Embedded Tomcat
 
-The simplest way to build and deploy your {cblJP} web app is to use a {gpBuildTool} plugin that provides a simple {gpWebServerEnv} harness.
+The simplest way to build and deploy your pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java web app is to use a gradle plugin that provides a simple Tomcat harness.
 
 Our examples are based on the `com.bmuschko.tomcat` plugin -- see https://github.com/bmuschko/gradle-tomcat-plugin[com.bmuschko.tomcat on Github].
 
@@ -496,12 +720,12 @@ So, to run the app use:
 ./gradlew tomcatRun
 ----
 
-[#lbl-war]
-== Deploying a WAR File
+[discrete#java:gs-install:::lbl-war]
+==== Deploying a WAR File
 
 To deploy your web app to a local Tomcat instance you need to generate a WAR file.
-However, you should note that when creating a war file, if you use the `implementation` dependency type then your _{cbl}_ jar files will be bundled into WEB-INF/lib of the web application.
-To exclude {cbl} jar files from getting bundled and to use {cbl} in multiple web applications, change the dependency type from *`implementation`* to *`providedCompile`*
+However, you should note that when creating a war file, if you use the `implementation` dependency type then your _pass:q,a[Couchbase{nbsp}Lite]_ jar files will be bundled into WEB-INF/lib of the web application.
+To exclude pass:q,a[Couchbase{nbsp}Lite] jar files from getting bundled and to use pass:q,a[Couchbase{nbsp}Lite] in multiple web applications, change the dependency type from *`implementation`* to *`providedCompile`*
 
 . You can do this using the Gradle command below from within your project folder:
 [source, bashrc]
@@ -517,9 +741,63 @@ NOTE:  The generated war file will be at <PROJECT ROOT>/build/libs.
 +
 TIP: You can also use Tomcat’s Manager App to deploy the war file -- see https://tomcat.apache.org/tomcat-9.0-doc/manager-howto.html[Tomcat's Manager App] documentation for more detail.
 
-. To use common class loader approach to load {cbl} libraries, copy all of the {cbl} jar files in $CATALINA_BASE/lib.
+. To use common class loader approach to load pass:q,a[Couchbase{nbsp}Lite] libraries, copy all of the pass:q,a[Couchbase{nbsp}Lite] jar files in $CATALINA_BASE/lib.
 +
-NOTE: For linux platform see also -- _Using Native Libraries for Linux_ in {gs-prereqs--xref}
+NOTE: For linux platform see also -- _Using Native Libraries for Linux_ in xref:java:gs-prereqs.adoc[Prerequisites]
 
 
-include::{root-partials}block-related-content-start.adoc[]
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+
+[discrete#java:gs-install:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:java:gs-prereqs.adoc[Prerequisites]
+* xref:java:gs-install.adoc[Install]
+* xref:java:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#java:gs-install:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:java:database.adoc[Databases]
+* xref:java:document.adoc[Documents]
+* xref:java:blob.adoc[Blobs]
+* xref:java:replication.adoc[Remote Sync Gateway]
+* xref:java:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#java:gs-install:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+:page-toclevels: 2
+

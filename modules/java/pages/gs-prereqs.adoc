@@ -1,21 +1,223 @@
-= Couchbase Lite on Java -- Prerequisites
+:docname: gs-prereqs
+:page-module: java
+:page-relative-src-path: gs-prereqs.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#java:gs-prereqs:::]
+=== Prerequisites
 :page-aliases: start/java-gs-prereqs.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite on Java -- a framework for developing offline-first Java applications for mobile and edge
 :keywords: mobile edge nosql api Java JVM web-app device-app
-:version-maintenance-java: {major}.{minor}.{maintenance-java}
-:ld-library-path: LD_LIBRARY_PATH="$LD_LIBRARY_PATH:<lib-directory>"
 
-include::partial$_set_page_context_for_java.adoc[]
 
-:tabs:
 
-:param-abstract: This content identities the pre-requisites and preparatory steps to be considered before installing Couchbase Lite for {param-name}
+
+// BEGIN -- _define_module_attributes.adoc -- Java
+//
+// Definition:
+//    Objective: This adoc defines values for attributes specific to pages within this module (Java)
+//    Invoked-by: ROOT:_partials/_std_cbl_hdr.adoc (from within module/_partials/_set_page_context_for_java.adoc)
+//    Parameters: none
+// End Definition:
+
+
+// BEGIN -- module page attributes
+// Begin workaround for 2.8.1 mis-release, to avoid unnecessary install of 2.8.0
+// SET full maintenance version number
+
+// VECTOR SEARCH attributes
+
+// End workaround
+// :snippet-p2psync-ws: {snippets-p2psync-ws--java}
+// END -- module page attributes
+
+
+// BEGIN -- Define API References for this module
+//  These attributes s
+//:url-api-references-structs: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Structs
+// :url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Classes
+
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DatabaseConfiguration
+
+
+//Database.SAVE
+
+
+
+//Database.DELETE()
+
+
+
+
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#compact--[Database.compact()]
+// was copy-java.io.File-java.lang.String-com.couchbase.lite.DatabaseConfiguration-[Database.copy()]
+
+
+
+
+
+// links for documents pages
+
+
+// :url-api-class-dictionary: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Dictionary.html[property accessors]
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+// Expression class and methods
+
+
+// ArrayFunction class and methods
+// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/ArrayFunction.html
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+
+// orderby class and methods
+//
+
+// GroupBy class and methods
+//
+
+// Endpoints
+
+
+
+
+
+
+
+
+// https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/URLEndpointListenerConfiguration.html#setPort-int-
+
+
+
+
+
+
+
+// diag: Env+Module java
+
+
+
+
+// Authenticators
+
+
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Replicator.html#s:18CouchbaseLiteandroid10ReplicatorC13ActivityLevelO
+
+
+// ReplicatorStatus
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+
+// replaced
+// replaced
+// replaces ^^
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+
+
+
+
+
+
+
+
+// Meta API
+
+
+// END -- Define API References for this module
+
+// diag: Env+Module java
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Logging.html[Logging classes]
+
+
+
+
+
+
+// END  Logs and logging references
+
+
+
+
+
+
+
+// END -- _define_module_attributes.adoc -- Java
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--java}
+
+// END::Local page attributes
+
+
 // DO NOT EDIT
-include::{root-partials}_show_page_header_block.adoc[]
-// include::{root-partials}block-related-get-started.adoc[]
+[abstract]
+--
+Description -- _{description}_ +
+_Abstract -- This content identities the pre-requisites and preparatory steps to be considered before installing Couchbase Lite for java_ +
+--
+// include::ROOT:partial$block-related-get-started.adoc[]
 // DO NOT EDIT
 
 .Vector Search Prerequisites
@@ -24,46 +226,50 @@ include::{root-partials}_show_page_header_block.adoc[]
 To use Vector Search, you must have Couchbase Lite installed and add the Vector Search extension to your Couchbase Lite application.
 Vector Search is available only for 64-bit architectures and
 Intel processors that support the Advanced Vector Extensions 2 (AVX2) instruction set.
-To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.] 
+To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.]
 --
 
-== Introduction
+[discrete#java:gs-prereqs:::introduction]
+==== Introduction
 
-{cblJP} enables development and deployment of {cbl} applications to a JVM environment.
-You can deploy to a desktop or web server (for example, {gpWebServerEnv}), including embedded {gpWebServerEnv} deployments.
+pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java enables development and deployment of pass:q,a[Couchbase{nbsp}Lite] applications to a JVM environment.
+You can deploy to a desktop or web server (for example, Tomcat), including embedded Tomcat deployments.
 
-NOTE: We use _{gpIDE}_, _{gpBuildTool}_, _Maven_ and _{gpWebServerEnv}_ as tools to build and run the examples presented in this content.
+NOTE: We use _Intellij IDEA_, _gradle_, _Maven_ and _Tomcat_ as tools to build and run the examples presented in this content.
 You are free to use the tools of your choice.
 
 
 [#bmkSetupSyncAndServer, Setting up Sync Gateway]
 
-== Install Server Software
+[discrete#java:gs-prereqs:::bmkSetupSyncAndServer]
+==== Install Server Software
 
-If you want to use {cbljp} with {svr} and-or {sg} you will need to have installed operational instances of these before completing the installation and test build steps.
+If you want to use {cbljp} with pass:q,a[_Couchbase{nbsp}Server_] and-or pass:q,a[pass:q,a[_pass:q,a[Sync{nbsp}Gateway]_]] you will need to have installed operational instances of these before completing the installation and test build steps.
 
-So, If you have not already done so, see {sgw-prepare--xref}
+So, If you have not already done so, see xref:sync-gateway::get-started-prepare.adoc[Prepare Sync Gateway]
 
-* Within {svr}, create a bucket named {nmSampleAppDb}
-* Create a RBAC user for {sg} with username = `sync-gateway` and password = `password`
+* Within pass:q,a[_Couchbase{nbsp}Server_], create a bucket named getting-started.cblite2
+* Create a RBAC user for pass:q,a[pass:q,a[_pass:q,a[Sync{nbsp}Gateway]_]] with username = `sync-gateway` and password = `password`
 
 
-== MacOS and Windows
+[discrete#java:gs-prereqs:::macos-and-windows]
+==== MacOS and Windows
 
-You may now proceed directly to xref:gs-install.adoc[].
+You may now proceed directly to <<java:gs-install:::>>.
 
-[#additional-steps-for-linux]
-== Additional Steps For Linux
+[discrete#java:gs-prereqs:::additional-steps-for-linux]
+==== Additional Steps For Linux
 
-Before proceeding to xref:gs-install.adoc[], you will need to make the supplied support libraries available to your running application.
+Before proceeding to <<java:gs-install:::>>, you will need to make the supplied support libraries available to your running application.
 
-=== Steps
+[discrete#java:gs-prereqs:::steps]
+===== Steps
 
-. Download the _zip_ file from here -- https://packages.couchbase.com/releases/couchbase-lite-java/{version-maintenance-java}/couchbase-lite-java-linux-supportlibs-{version-maintenance-java}.zip
+. Download the _zip_ file from here -- https://packages.couchbase.com/releases/couchbase-lite-java/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java-linux-supportlibs-{major}.{minor}.{maintenance-java}{empty}.zip
 .
-. Unpack the downloaded file to a location accessible to your build and runtime environments, for example `your_dir/couchbase-lite-java-{version-maintenance-java}`.
+. Unpack the downloaded file to a location accessible to your build and runtime environments, for example `your_dir/couchbase-lite-java-{major}.{minor}.{maintenance-java}{empty}`.
 
-[#bmkLinuxSharedLibs]
+[#java:gs-prereqs:::bmkLinuxSharedLibs]
 . Set up the Native Libraries for Linux.
 You will need to add the path of the directory `<lib-directory>` to the value of the Java system property `java.library.path`.
 
@@ -71,6 +277,7 @@ Normally, the simplest way to set this is through the shell variable `LD_LIBRARY
 
 [{tabs}]
 ====
+[#java:gs-prereqs:::tabs-1-web-servicetomcat]
 Web Service/Tomcat::
 +
 --
@@ -79,10 +286,11 @@ Add the variables to your `$CATALINA_BASE/bin/setenv.sh`.
 
 [source, bashrc, subs="attributes"]
 ----
-{ld-library-path}
+LD_LIBRARY_PATH="$LD_LIBRARY_PATH:<lib-directory>"
 ----
 --
 
+[#java:gs-prereqs:::tabs-1-desktop]
 Desktop::
 +
 --
@@ -90,7 +298,7 @@ Export the variable in your .bashrc file:
 
 [source, bashrc, subs="attributes"]
 ----
-export {ld-library-path}
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:<lib-directory>"
 ----
 --
 ====
@@ -99,4 +307,57 @@ export {ld-library-path}
 Please refer to the Linux Platform Support section for the minimum version requirements of those libraries.
 
 
-include::{root-partials}block-related-content-start.adoc[]
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+
+[discrete#java:gs-prereqs:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:java:gs-prereqs.adoc[Prerequisites]
+* xref:java:gs-install.adoc[Install]
+* xref:java:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#java:gs-prereqs:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:java:database.adoc[Databases]
+* xref:java:document.adoc[Documents]
+* xref:java:blob.adoc[Blobs]
+* xref:java:replication.adoc[Remote Sync Gateway]
+* xref:java:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#java:gs-prereqs:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+

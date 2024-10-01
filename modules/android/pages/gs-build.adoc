@@ -1,36 +1,44 @@
-= Build and Run
+:docname: gs-build
+:page-module: android
+:page-relative-src-path: gs-build.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#android:gs-build:::]
+=== Build and Run
 :page-aliases: start/java-android-gs-build.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Build and run a starter app to validate your install of Couchbase Lite on Android
 :keywords: edge nosql api android java
 
-:url-getting-started-ktx: https://github.com/couchbase/docs-couchbase-lite/tree/release/3.1/modules/android/examples/GetStartedKotlin[Kotlin]
-:url-getting-started-java: https://github.com/couchbase/docs-couchbase-lite/tree/release/3.1/modules/android/examples/GetStartedJava[Java]
 
 
 // DO NOT EDIT
-include::partial$_set_page_context_for_android.adoc[]
 
-:param-abstract: This content provides sample code and instructions that enable you to test your Couchbase Lite for {param-name} installation.
-include::{root-partials}_show_page_header_block.adoc[]
-// include::{root-partials}block-related-get-started.adoc[]
+[abstract]
+--
+Description -- _{description}_ +
+_Abstract -- This content provides sample code and instructions that enable you to test your Couchbase Lite for android installation._ +
+--
+// include::ROOT:partial$block-related-get-started.adoc[]
 // DO NOT EDIT
 
 
 // :ziputils: ROOT:example$/java-android/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
-== Introduction
+[discrete#android:gs-build:::introduction]
+==== Introduction
 
 
 The Getting Started app is a very basic Android app that uses a database manager singleton.
 
 You can access the `GettingStarted` project on github here: +
-{url-getting-started-ktx} |  {url-getting-started-java}
+https://github.com/couchbase/docs-couchbase-lite/tree/release/3.1/modules/android/examples/GetStartedKotlin[Kotlin] |  https://github.com/couchbase/docs-couchbase-lite/tree/release/3.1/modules/android/examples/GetStartedJava[Java]
 
 .Quick Steps
 ****
-. Get the project and open it in Android Studio: {url-getting-started-ktx} |  {url-getting-started-java}
+. Get the project and open it in Android Studio: https://github.com/couchbase/docs-couchbase-lite/tree/release/3.1/modules/android/examples/GetStartedKotlin[Kotlin] |  https://github.com/couchbase/docs-couchbase-lite/tree/release/3.1/modules/android/examples/GetStartedJava[Java]
 . Build it
 . Run it
 . Push the "Run it!" Button
@@ -40,12 +48,13 @@ You can access the `GettingStarted` project on github here: +
 If you had problems, or just want more information on the app, there's more below.
 
 // !!!GBM: THIS IMAGE NEEDS TO BE REPLACED
-[#img-output]
+[#android:gs-build:::img-output]
 .Logcat Output from Android Studio
-image::ROOT:getstarted-output-ktx.png[,600]
+image::couchbase-lite/current/_images/getstarted-output-ktx.png[,600]
 
 
-== Getting Started App
+[discrete#android:gs-build:::getting-started-app]
+==== Getting Started App
 The Getting Started app shows examples of the essential Couchbase for Android CRUD operations, including:
 
 * Initialize the library
@@ -60,7 +69,8 @@ The Getting Started app shows examples of the essential Couchbase for Android CR
 Whilst no exemplar of a real application, it will give you a good idea how to get started using Couchbase Lite.
 
 
-== Add the App to Your Own Project
+[discrete#android:gs-build:::add-the-app-to-your-own-project]
+==== Add the App to Your Own Project
 
 
 . Create a new 'empty activity' project
@@ -72,27 +82,223 @@ Whilst no exemplar of a real application, it will give you a good idea how to ge
 You should be able to create a document and persist it to the database.
 
 
-=== Sample Code in Detail
-[#ex-test-code]
+[discrete#android:gs-build:::sample-code-in-detail]
+===== Sample Code in Detail
+[#android:gs-build:::ex-test-code]
 ====
 [{tabs}]
 =====
 
+[#android:gs-build:::tabs-1-kotlin]
 Kotlin::
 +
 --
 [source, Kotlin]
 ----
-include::example$GetStartedKotlin/app/src/main/java/com/couchbase/android/getstarted/kotlin/DBManager.kt[tag="getting-started"]
+
+    // <.>
+    // One-off initialization
+    private fun init(context: Context) {
+        CouchbaseLite.init(context)
+        Log.i(TAG, "CBL Initialized")
+
+    }
+
+    // <.>
+    // Create a database
+    fun createDb(dbName: String) {
+        database = Database(dbName)
+        Log.i(TAG, "Database created: $dbName")
+    }
+
+    // <.>
+    // Create a new named collection (like a SQL table)
+    // in the database's default scope.
+    fun createCollection(collName: String) {
+        collection = database!!.createCollection(collName)
+        Log.i(TAG, "Collection created: $collection")
+    }
+
+    // <.>
+    // Create a new document (i.e. a record)
+    // and save it in a collection in the database.
+    fun createDoc(): String {
+        val mutableDocument = MutableDocument()
+            .setFloat("version", 2.0f)
+            .setString("language", "Java")
+        collection?.save(mutableDocument)
+        return mutableDocument.id
+    }
+
+    // <.>
+    // Retrieve immutable document and log the database generated
+    // document ID and some document properties
+    fun retrieveDoc(docId: String) {
+        collection?.getDocument(docId)
+            ?.let {
+                Log.i(TAG, "Document ID :: ${docId}")
+                Log.i(TAG, "Learning :: ${it.getString("language")}")
+            }
+            ?: Log.i(TAG, "No such document :: $docId")
+    }
+
+    // <.>
+    // Retrieve immutable document and update `language` property
+    // document ID and some document properties
+    fun updateDoc(docId: String) {
+        collection?.getDocument(docId)?.let {
+            collection?.save(
+                it.toMutable().setString("language", "Kotlin")
+            )
+        }
+    }
+
+    // <.>
+    // Create a query to fetch documents with language == Kotlin.
+    fun queryDocs() {
+        val coll = collection ?: return
+        val query: Query = QueryBuilder.select(SelectResult.all())
+            .from(DataSource.collection(coll))
+            .where(Expression.property("language").equalTo(Expression.string("Kotlin")))
+        query.execute().use { rs ->
+            Log.i(TAG, "Number of rows :: ${rs.allResults().size}")
+        }
+    }
+
+    // <.>
+    // OPTIONAL -- if you have Sync Gateway Installed you can try replication too.
+    // Create a replicator to push and pull changes to and from the cloud.
+    // Be sure to hold a reference to the Replicator to prevent it from being GCed
+    fun replicate(): Flow<ReplicatorChange>? {
+        val coll = collection ?: return null
+
+        val collConfig = CollectionConfiguration()
+            .setPullFilter { doc, _ -> "Java" == doc.getString("language") }
+
+        val repl = Replicator(
+            ReplicatorConfigurationFactory.newConfig(
+                target = URLEndpoint(URI("ws://localhost:4984/getting-started-db")),
+                collections = mapOf(setOf(coll) to collConfig),
+                type = ReplicatorType.PUSH_AND_PULL,
+                authenticator = BasicAuthenticator("sync-gateway", "password".toCharArray())
+            )
+        )
+
+        // Listen to replicator change events.
+        val changes = repl.replicatorChangesFlow()
+
+        // Start replication.
+        repl.start()
+        replicator = repl
+
+        return changes
+    }
 ----
 --
 
+[#android:gs-build:::tabs-1-java]
 Java::
 +
 --
 [source, Java]
 ----
-include::example$GetStartedJava/app/src/main/java/com/couchbase/android/getstarted/java/DBManager.java[tag="getting-started"]
+
+    // <.>
+    // One-off initialization
+    private void init() {
+        CouchbaseLite.init(GettingStartedApplication.getAppContext());
+        Log.i(TAG, "CBL Initialized");
+    }
+
+    // <.>
+    // Create a database
+    public void createDb(String dbName) throws CouchbaseLiteException {
+        database = new Database(dbName);
+        Log.i(TAG, "Database created: " + dbName);
+    }
+
+    // <.>
+    // Create a new named collection (like a SQL table)
+    // in the database's default scope.
+    public void createCollection(String collName) throws CouchbaseLiteException {
+        collection = database.createCollection(collName);
+        Log.i(TAG, "Collection created: " + collection);
+    }
+
+    // <.>
+    // Create a new document (i.e. a record)
+    // and save it in a collection in the database.
+    public String createDoc() throws CouchbaseLiteException {
+        MutableDocument mutableDocument = new MutableDocument()
+            .setFloat("version", 2.0f)
+            .setString("language", "Java");
+        collection.save(mutableDocument);
+        return mutableDocument.getId();
+    }
+
+    // <.>
+    // Retrieve immutable document and log the database generated
+    // document ID and some document properties
+    public void retrieveDoc(String docId) throws CouchbaseLiteException {
+        Document document = collection.getDocument(docId);
+        if (document == null) {
+            Log.i(TAG, "No such document :: " + docId);
+        }
+        else {
+            Log.i(TAG, "Document ID :: " + document.getId());
+            Log.i(TAG, "Learning :: " + document.getString("language"));
+        }
+    }
+
+    // <.>
+    // Retrieve and update a document.
+    public void updateDoc(String docId) throws CouchbaseLiteException {
+        Document document = collection.getDocument(docId);
+        if (document != null) {
+            collection.save(
+                document.toMutable().setString("language", "Kotlin"));
+        }
+    }
+
+    // <.>
+    // Create a query to fetch documents with language == Kotlin.
+    public void queryDocs() throws CouchbaseLiteException {
+        Query query = QueryBuilder.select(SelectResult.all())
+            .from(DataSource.collection(collection))
+            .where(Expression.property("language").equalTo(Expression.string("Kotlin")));
+
+        try (ResultSet rs = query.execute()) {
+            Log.i(TAG, "Number of rows :: " + rs.allResults().size());
+        }
+    }
+
+    // <.>
+    // OPTIONAL -- if you have Sync Gateway Installed you can try replication too.
+    // Create a replicator to push and pull changes to and from the cloud.
+    // Be sure to hold a reference somewhere to prevent the Replicator from being GCed
+    public ListenerToken replicate(ReplicatorChangeListener listener) throws URISyntaxException {
+        CollectionConfiguration collConfig = new CollectionConfiguration()
+            .setPullFilter((doc, flags) -> "Java".equals(doc.getString("language")));
+
+        ReplicatorConfiguration replConfig =
+            new ReplicatorConfiguration(
+                new URLEndpoint(new URI("ws://localhost:4984/getting-started-db")))
+                .addCollection(collection, collConfig)
+                .setType(ReplicatorType.PUSH_AND_PULL)
+                .setAuthenticator(new BasicAuthenticator("sync-gateway", "password".toCharArray()));
+
+        replicator = new Replicator(replConfig);
+
+        // Listen to replicator change events.
+        // Use `token.remove()` to stop the listener
+
+        ListenerToken token = replicator.addChangeListener(listener);
+
+        // Start replication.
+        replicator.start();
+
+        return token;
+    }
 ----
 --
 
@@ -109,30 +315,32 @@ include::example$GetStartedJava/app/src/main/java/com/couchbase/android/getstart
 ====
 
 // :param-tags: getting-started
-// include::{root-partials}block_tabbed_code_example.adoc[]
+// include::ROOT:partial$block_tabbed_code_example.adoc[]
 // :param-tags!:
 
 
 
-== Snags and Pitfalls
+[discrete#android:gs-build:::snags-and-pitfalls]
+==== Snags and Pitfalls
 
 
 Mostly around Gradle and versions.
 You may find you need to change IDE Build Tools settings to use Java 11 for Gradle, for instance.
 
 Using this app with Sync Gateway and Couchbase Server obviously requires you have, or install, working versions of both.
-See also -- {sgw-install--xref}
+See also -- xref:sync-gateway::get-started-install.adoc[Install Sync Gateway]
 
 
-== Minification
+[discrete#android:gs-build:::minification]
+==== Minification
 
 
-An application that enables minification must ensure that certain pieces of {cbl} library code are not changed -- see <<ruleset>> for a near-minimal rule set that retains the needed code:
+An application that enables minification must ensure that certain pieces of pass:q,a[Couchbase{nbsp}Lite] library code are not changed -- see <<android:gs-build:::ruleset>> for a near-minimal rule set that retains the needed code:
 
-[#ruleset]
+[#android:gs-build:::ruleset]
 .Ruleset
 ====
-[source, {source-language}]
+[source, Kotlin]
 ----
 -keep class com.couchbase.lite.ConnectionStatus { <init>(...); }
 -keep class com.couchbase.lite.LiteCoreException { static <methods>; }
@@ -153,4 +361,57 @@ An application that enables minification must ensure that certain pieces of {cbl
 ====
 
 
-include::{root-partials}block-related-content-start.adoc[]
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+
+[discrete#android:gs-build:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:android:gs-prereqs.adoc[Prerequisites]
+* xref:android:gs-install.adoc[Install]
+* xref:android:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#android:gs-build:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:android:database.adoc[Databases]
+* xref:android:document.adoc[Documents]
+* xref:android:blob.adoc[Blobs]
+* xref:android:replication.adoc[Remote Sync Gateway]
+* xref:android:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#android:gs-build:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+

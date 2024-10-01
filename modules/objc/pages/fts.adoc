@@ -1,21 +1,683 @@
-= Using Full-Text Search
+:docname: fts
+:page-module: objc
+:page-relative-src-path: fts.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#objc:fts:::]
+=== Full Text Search
 :page-aliases: learn/objc-fts.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Working with Couchbase Lite's data model  -- Querying the database using full text search
 
-include::partial$_set_page_context_for_objc.adoc[]
+
+
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+// BEGIN::module page attributes
+
+//
+// CBL-Obj-C Maintenance release number
+//
+:maintenance: 1
+//
+
+// VECTOR SEARCH attributes
+//
+
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+
+// API Reference Links
+//
+//
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DATABASE CLASSES
+
+
+// Docuument Class
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+//Database.SAVE
+
+
+
+//Database.DELETE
+
+
+//Database.COMPACT
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)compact:[CBLDatabase.compact()]
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+
+
+
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/[Query Class index]
+
+
+// ArrayFunction class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLWhere.html
+// NOT SET[Where]
+
+// orderby class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLOrderBy.html
+
+// GroupBy class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLGroupBy.html
+// NOT SET[GroupBy]
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module objc
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+
+// Note there is a replicator.status property AND
+// a ReplicationStatus class/struct --- oh yes, easy to confuse.
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/s:18CouchbaseLiteobjc10ReplicatorC13ActivityLevelO
+
+
+
+
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+
+// Meta API
+
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objcLogging.html[CBLLogging classes]
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--objc}
+// END::Local page attributes
 
 // define abstract -- no include in root-commons content
 // :param-abstract!:
-// :param-related: {querybuilder--xref--predictive-query} | {indexing--xref} | {querybuilder--xref}
+// :param-related: xref:objc:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:objc:indexing.adoc[Indexing] | xref:objc:querybuilder.adoc[QueryBuilder]
 // :topic-group: Queries
-// include::{root-partials}_show_page_header_block.adoc[]
+// include::ROOT:partial$_show_page_header_block.adoc[]
 
 // Present common content
-include::{root-commons}fts.adoc[subs="macros,attributes"]
+// Using Full-Text Search -- Working with Queries
+
+// DO NOT EDIT
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:objc:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:objc:indexing.adoc[Indexing] | xref:objc:querybuilder.adoc[QueryBuilder]
+--
+// DO NOT EDIT
+
+
+[discrete#objc:fts:::overview]
+==== Overview
+To run a full-text search (FTS) query, you must create a full-text index on the expression being matched.
+Unlike regular queries, the index is not optional.
+
+You can choose to use {sqlpp} or QueryBuilder syntaxes to create and use FTS indexes.
+
+The following examples use the data model introduced in xref:objc:indexing.adoc[Indexing].
+They create and use an FTS index built from the hotel's `Overview` text.
+
+[discrete#objc:fts:::sql]
+==== {sqlpp}
+
+[discrete#objc:fts:::create-index]
+===== Create Index
+
+{sqlpp} provides a configuration object to define Full Text Search indexes -- `FullTextIndexConfiguration`.
+
+.Using {sqlpp}'s FullTextIndexConfiguration
+[#ex-indexbuilder]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:fts:::ex-indexbuilder]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="fts-index", indent=0]
+// Insert documents
+NSArray *overviews = @[@"buy groceries", @"play chess", @"book travels", @"buy museum tickets"];
+for (NSString *overview in overviews) {
+    CBLMutableDocument *doc = [[CBLMutableDocument alloc] init];
+    [doc setString:@"task" forKey:@"type"];
+    [doc setString:overview forKey:@"overview"];
+    [collection saveDocument:doc error:&error];
+}
+
+// Create index
+CBLFullTextIndexConfiguration* config = [[CBLFullTextIndexConfiguration alloc]
+                                         initWithExpression: @[@"overview"]
+                                         ignoreAccents: NO
+                                         language: nil];
+
+[collection createIndexWithName: @"overviewFTSIndex" config:config error: &error];
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+[discrete#objc:fts:::use-index]
+===== Use Index
+
+FullTextSearch is enabled using the {sqlpp} match() function.
+
+With the index created, you can construct and run a Full-text search (FTS) query using the indexed properties.
+
+The index will omit a set of common words, to avoid words like "I", "the", "an" from overly influencing your queries.
+See https://github.com/couchbasedeps/sqlite3-unicodesn/blob/HEAD/stopwords_en.h[full list of these **stopwords**].
+
+The following example finds all hotels mentioning _Michigan_ in their _Overview_ text.
+
+.Using {sqlpp} Full Text Search
+[#ex-indexbuilder]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:fts:::ex-indexbuilder]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="fts-query", indent=0]
+NSString *ftsQueryString =
+@"SELECT META().id FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan') ORDER BY RANK(overviewFTSIndex)";
+CBLQuery *ftsQuery = [self.database createQuery:ftsQueryString error:&error];
+
+CBLQueryResultSet *resultSet = [ftsQuery execute:&error];
+NSArray* results  = [resultSet allResults];
+for (CBLQueryResult *result in results) {
+    NSLog(@"document id %@", [result stringAtIndex:0]);
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+[discrete#objc:fts:::querybuilder]
+==== QueryBuilder
+
+[discrete#objc:fts:::create-index-2]
+===== Create Index
+The following example creates an FTS index on the `overview` property.
+
+.Using the IndexBuilder method
+[#ex-indexbuilder-queyrbuilder]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:fts:::ex-indexbuilder-queyrbuilder]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="fts-index_Querybuilder", indent=0]
+// Insert documents
+NSArray *tasks = @[@"buy groceries", @"play chess", @"book travels", @"buy museum tickets"];
+for (NSString *task in tasks) {
+    CBLMutableDocument *doc = [[CBLMutableDocument alloc] init];
+    [doc setString:@"task" forKey:@"type"];
+    [doc setString:task forKey:@"name"];
+    [collection saveDocument:doc error:&error];
+}
+
+// Create index
+CBLFullTextIndex *index = [CBLIndexBuilder fullTextIndexWithItems:@[[CBLFullTextIndexItem property:@"name"]]];
+index.ignoreAccents = NO;
+[collection createIndex:index name:@"nameFTSIndex" error:&error];
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#objc:fts:::use-index-2]
+===== Use Index
+With the index created, you can construct and run a Full-text search (FTS) query using the indexed properties.
+
+The following example finds all hotels mentioning _Michigan_ in their _Overview_ text.
+
+.Using QueryBuilder Full Text Search
+[#ex-indexbuilder]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:fts:::ex-indexbuilder]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="fts-query_Querybuilder", indent=0]
+id exp = [CBLQueryExpression fullTextIndex:@"nameFTSIndex"];
+CBLQueryExpression *where = [CBLQueryFullTextFunction matchWithIndex:exp query:@"'buy'"];
+
+CBLQuery *query =
+  [CBLQueryBuilder
+    select:@[[CBLQuerySelectResult expression:[CBLQueryMeta id]]]
+    from:[CBLQueryDataSource collection:collection]
+    where:where];
+
+NSEnumerator *rs = [query execute:&error];
+for (CBLQueryResult *result in rs) {
+    NSLog(@"document id %@", [result stringAtIndex:0]);
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+// .Indexing multiple properties
+// ====
+// Multiple properties to index can be specified using the following method:
+
+// [source, objc]
+// ----
+// IndexBuilder.FullTextIndex(params FullTextIndexItem[] items)
+// ----
+// ====
+
+// == Constructing a Query
+
+// FullTextSearch is enabled using the {sqlpp} match() function.
+// With the index created, you can construct and run a Full-text search (FTS) query on the indexed properties.
+
+
+// .Using the build index
+// [#ex-use-build-index]
+// :param-tags: fts-query_Querybuilder
+// include::ROOT:partial$block_tabbed_code_example.adoc[]
+// :param-tags!:
+
+
+[discrete#objc:fts:::operation]
+==== Operation
+
+In the examples above, the pattern to match is a word, the full-text search query matches all documents that contain the word "michigan" in the value of the `doc.overview` property.
+
+Search is supported for all languages that use whitespace to separate words.
+
+Stemming, which is the process of fuzzy matching parts of speech, like "fast" and "faster", is supported in the following languages: Danish, Dutch, English, Finnish, French, German, Hungarian, Italian, Norwegian, Portuguese, Romanian, Russian, Spanish, Swedish and Turkish.
+
+
+[discrete#objc:fts:::pattern-matching-formats]
+==== Pattern Matching Formats
+
+
+As well as providing specific words or strings to match against, you can provide the pattern to match in these formats.
+
+[discrete#objc:fts:::prefix-queries]
+===== Prefix Queries
+
+The query expression used to search for a term prefix is the prefix itself with a "*" character appended to it.
+
+.Prefix query
+====
+Query for all documents containing a term with the prefix "lin".
+....
+"lin*"
+....
+
+This will match
+
+* All documents that contain "linux"
+* And ... those that contain terms "linear","linker", "linguistic" and so on.
+====
+
+[discrete#objc:fts:::overriding-the-property-name]
+===== Overriding the Property Name
+
+Normally, a token or token prefix query is matched against the document property specified as the left-hand side of the `match` operator.
+This may be overridden by specifying a property name followed by a ":" character before a basic term query.
+There may be space between the ":" and the term to query for, but not between the property name and the ":" character.
+
+.Override indexed property name
+====
+Query the database for documents for which the term "linux" appears in the document title, and the term "problems" appears in either the title or body of the document.
+....
+'title:linux problems'
+....
+====
+
+
+[discrete#objc:fts:::phrase-queries]
+===== Phrase Queries
+
+A _phrase query_ is one that retrieves all documents containing a nominated set of terms or term prefixes in a specified order with no intervening tokens.
+
+Phrase queries are specified by enclosing a space separated sequence of terms or term prefixes in double quotes (").
+
+.Phrase query
+====
+Query for all documents that contain the phrase "linux applications".
+....
+"linux applications"
+....
+====
+
+[discrete#objc:fts:::near-queries]
+===== NEAR Queries
+A NEAR query is a query that returns documents that contain a two or more nominated terms or phrases within a specified proximity of each other (by default with 10 or less intervening terms).
+A NEAR query is specified by putting the keyword "NEAR" between two phrase, token or token prefix queries.
+To specify a proximity other than the default, an operator of the form "NEAR/" may be used, where is the maximum number of intervening terms allowed.
+
+.Near query
+====
+Search for a document that contains the phrase "replication" and the term "database" with not more than 2 terms separating the two.
+....
+"database NEAR/2 replication"
+....
+====
+
+[discrete#objc:fts:::and-or-not-query-operators]
+===== AND, OR & NOT Query Operators::
+The enhanced query syntax supports the AND, OR and NOT binary set operators.
+Each of the two operands to an operator may be a basic FTS query, or the result of another AND, OR or NOT set operation.
+Operators must be entered using capital letters.
+Otherwise, they are interpreted as basic term queries instead of set operators.
+
+.Using And, Or and Not
+====
+Return the set of documents that contain the term "couchbase", and the term "database".
+....
+"couchbase AND database"
+....
+
+====
+
+[discrete#objc:fts:::operator-precedence]
+===== Operator Precedence
+When using the enhanced query syntax, parenthesis may be used to specify the precedence of the various operators.
+
+.Operator precedence
+====
+Query for the set of documents that contains the term "linux", and at least one of the phrases "couchbase database" and "sqlite library".
+....
+'("couchbase database" OR "sqlite library") AND "linux"'
+....
+====
+
+[discrete#objc:fts:::ordering-results]
+==== Ordering Results
+
+It's very common to sort full-text results in descending order of relevance.
+This can be a very difficult heuristic to define, but Couchbase Lite comes with a ranking function you can use.
+
+In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the property or expression being searched, to represent the ranking of the result.
+
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+[discrete#objc:fts:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:objc:querybuilder.adoc[QueryBuilder]
+* xref:objc:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
+* xref:objc:query-live.adoc[Live Queries]
+* xref:objc:fts.adoc[Full Text Search]
+
+
+.
+
+[discrete.colum#objc:fts:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:objc:query-n1ql-mobile-querybuilder-diffs.adoc[{sqlpp} Mobile - Querybuilder  Differences]
+* xref:objc:query-n1ql-mobile-server-diffs.adoc[{sqlpp} Mobile - {sqlpp} Server Differences]
+* xref:objc:query-resultsets.adoc[Query Resultsets]
+* xref:objc:query-troubleshooting.adoc[Query Troubleshooting]
+* xref:objc:query-live.adoc[Live Queries]
+
+* xref:objc:database.adoc[Databases]
+* xref:objc:document.adoc[Documents]
+* xref:objc:blob.adoc[Blobs]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#objc:fts:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
 
 // Include common footer block -- this is now part of
 // Common Content component for this page
-// include::{root-partials}block-related-content-query.adoc[]
+// include::ROOT:partial$block-related-content-query.adoc[]
+
+

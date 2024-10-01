@@ -1,18 +1,333 @@
-= {sqlpp} for Mobile -- Differences from Querybuilder
-ifdef::prerelease[:page-status: {prerelease}]
+:docname: query-n1ql-mobile-querybuilder-diffs
+:page-module: objc
+:page-relative-src-path: query-n1ql-mobile-querybuilder-diffs.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#objc:query-n1ql-mobile-querybuilder-diffs:::]
+=== SQL++ Querybuilder Differences
 :page-role:
 :keywords: sql, n1ql
 :page-layout: article
 :description: Differences between Couchbase Lite's Querybuilder and {sqlpp} for Mobile
 
-include::partial$_set_page_context_for_objc.adoc[]
-
-:param-related: {querybuilder--xref--predictive-query} | {query-live--xref} | {indexing--xref}
-:topic-group: Topic Group -- Querying
-include::{root-partials}_show_page_header_block.adoc[]
 
 
-include::{root-commons}query-n1ql-mobile-querybuilder-diffs.adoc[subs="macros,attributes"]
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+// BEGIN::module page attributes
+
+//
+// CBL-Obj-C Maintenance release number
+//
+:maintenance: 1
+//
+
+// VECTOR SEARCH attributes
+//
 
 
-include::{root-partials}block-related-content-data.adoc[]
+
+// BEGIN - Set attributes pointing to API references for this module
+
+
+// API Reference Links
+//
+//
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DATABASE CLASSES
+
+
+// Docuument Class
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+//Database.SAVE
+
+
+
+//Database.DELETE
+
+
+//Database.COMPACT
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)compact:[CBLDatabase.compact()]
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+
+
+
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/[Query Class index]
+
+
+// ArrayFunction class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLWhere.html
+// NOT SET[Where]
+
+// orderby class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLOrderBy.html
+
+// GroupBy class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLGroupBy.html
+// NOT SET[GroupBy]
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module objc
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+
+// Note there is a replicator.status property AND
+// a ReplicationStatus class/struct --- oh yes, easy to confuse.
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/s:18CouchbaseLiteobjc10ReplicatorC13ActivityLevelO
+
+
+
+
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+
+// Meta API
+
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objcLogging.html[CBLLogging classes]
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--objc}
+// END::Local page attributes
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:objc:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:objc:query-live.adoc[Live Queries] | xref:objc:indexing.adoc[Indexing]
+--
+
+
+
+
+// tag::content[]
+Couchbase Lite's {sqlpp} for Mobile supports all QueryBuilder features, except _Predictive Query_ and _Index_. +
+See <<objc:query-n1ql-mobile-querybuilder-diffs:::tbl-qbldr-diffs>> for the features supported by {sqlpp} but not by QueryBuilder.
+
+
+.QueryBuilder Differences
+[#objc:query-n1ql-mobile-querybuilder-diffs:::tbl-qbldr-diffs,cols="4,6m", options="header"]
+|===
+
+|Category
+|Components
+
+|Conditional Operator
+|CASE(WHEN ... THEN ... ELSE ..)
+
+|Array Functions
+|ARRAY_AGG
+ARRAY_AVG
+ARRAY_COUNT
+ARRAY_IFNULL
+ARRAY_MAX
+ARRAY_MIN
+ARRAY_SUM
+
+|Conditional Functions
+|IFMISSING
+IFMISSINGORNULL
+IFNULL
+MISSINGIF
+NULLIF
+Match Functions
+DIV
+IDIV
+ROUND_EVEN
+
+|Pattern Matching Functions
+|REGEXP_CONTAINS
+REGEXP_LIKE
+REGEXP_POSITION
+REGEXP_REPLACE
+
+|Type Checking Functions
+|ISARRAY
+ISATOM
+ISBOOLEAN
+ISNUMBER
+ISOBJECT
+ISSTRING
+TYPE
+
+|Type Conversion Functions
+|TOARRAY
+TOATOM
+TOBOOLEAN
+TONUMBER
+TOOBJECT
+TOSTRING
+|===
+
+// end::content[]
+
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+[discrete#objc:query-n1ql-mobile-querybuilder-diffs:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:objc:gs-prereqs.adoc[Prerequisites]
+* xref:objc:gs-install.adoc[Install]
+* xref:objc:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#objc:query-n1ql-mobile-querybuilder-diffs:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:objc:database.adoc[Databases]
+* xref:objc:document.adoc[Documents]
+* xref:objc:blob.adoc[Blobs]
+* xref:objc:replication.adoc[Remote Sync Gateway]
+* xref:objc:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#objc:query-n1ql-mobile-querybuilder-diffs:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+

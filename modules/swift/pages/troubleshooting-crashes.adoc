@@ -1,17 +1,363 @@
-= Crash Logs
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
+:docname: troubleshooting-crashes
+:page-module: swift
+:page-relative-src-path: troubleshooting-crashes.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#swift:troubleshooting-crashes:::]
+=== Troubleshooting Crashes
 :page-role:
 :description: Couchbase Lite on Swift -- Using symbolicate to decode crash logs
 
-include::partial$_set_page_context_for_swift.adoc[]
 
-:param-abstract!:
-:param-related: {troubleshooting-logs--xref} | {troubleshooting-queries--xref}
-:param-fullpage:
-:topic-group: Troubleshooting
-include::{root-partials}_show_page_header_block.adoc[]
 
-include::{root-partials}symbolicate-{param-platform}.adoc[]
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
 
-include::{root-partials}block-related-content-std.adoc[]
+// BEGIN::module page attributes
+//
+// CBL-Swift Maintenance release number
+//
+
+// VECTOR SEARCH attributes
+//
+
+
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+// API Reference Links
+//
+//
+
+
+
+
+// Supporting Data Type Classes
+
+
+// DATABASE CLASSES
+
+
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+
+
+
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC7compactyyKF[Database.compact()]
+
+
+
+
+
+
+
+
+// links for documents pages
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Query class and methods
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/[Query Class index]
+
+
+
+// ArrayFunction class and methods
+
+
+// API Results Class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+
+// orderby class and methods
+//
+
+// GroupBy class and methods
+//
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module swift
+
+
+
+
+// Replicator API
+
+
+
+
+[Replicator.pendingDocumentIds()]
+
+
+
+// Replicator Status
+
+
+
+// :url-api-enum-replicator-status: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html[Status struct]
+// :url-api-enum-replicator-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/ActivityLevel.html[ActivityLevel enum]
+// :url-api-enum-replicator-progress: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Progress.html[Progress struct]
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC33serverCertificateVerificationModeAA06ServerghI0Ovp[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Metadata API
+
+
+
+// BEGIN Logs and logging references
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--swift}
+
+// END::Local page attributes
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:swift:troubleshooting-logs.adoc[Using Logs] | xref:swift:troubleshooting-queries.adoc[Troubleshooting Queries]
+--
+
+[discrete#swift:troubleshooting-crashes:::symbolication]
+==== Symbolication
+
+In order to make sense of a crash report you will need to symbolicate
+ its content.
+Symbolication being the process of replacing memory addresses in a crash report with human-readable function names and line numbers.
+
+[discrete#swift:troubleshooting-crashes:::finding-local-dsym]
+==== Finding local dSYM
+
+To locate the local dSYM files:
+
+* For scheme based builds, they are located in the derived data path
+* For the target based builds, they are located in the configuration build directory path, as specified in the _target_ setting
+* For archives, they are located in `.xcarchive`.
+
+TIP: If you still cannot locate the file, then use `mdfind` as described in the
+_Symbolication Troubleshooting_ section of the _Apple Technical Note TN2151 --
+Understanding and Analyzing Application Crash Reports_: https://developer.apple.com/library/archive/technotes/tn2151/_index.html
+
+[discrete#swift:troubleshooting-crashes:::the-couchbaselite-dsym]
+==== The CouchbaseLite dSYM
+
+Couchbase Lite's `dSYM` folder is located in the same directory as the Couchbase Lite binary framework (this also applies for _Cocoapod_ and _Carthage_).
+It has the same filename as framework but has a `.dSYM` extension.
+
+.dSYM in CouchbaseLiteSwift
+====
+----
+couchbase-lite-swift_enterprise_2.7.0/iOS/CouchbaseLiteSwift.framework.dSYM
+----
+====
+
+[discrete#swift:troubleshooting-crashes:::how-to-obtain-the-dsym-file-for-your-app]
+==== How to obtain the `.DSYM` file for your app
+
+To symbolicate crash reports generated by these apps you must download the generated dSYM files. Do this using _Xcode's Organizer_ or direcly from _App Store Connect_.
+
+[discrete#swift:troubleshooting-crashes:::downloading-dsym-using-xcode-organizer]
+===== Downloading dSYM using Xcode Organizer
+
+. Within _Xcode's_  _Archives Organiser_, select the required archive
+. Within the _Archive Information_ dialog panel, select *Download Debug Symbols* button
++
+The dSYM files are downloaded to the archive bundle in a folder named `dSYMs`
++
+See _Download debug symbols_: https://help.apple.com/xcode/mac/current/#/devef5928039
+
+[discrete#swift:troubleshooting-crashes:::downloading-dsym-directly-from-app-store-connect]
+===== Downloading dSYM directly from App Store Connect
+
+. Inside _My Apps_ choose the *Activity* section
+. Locate the required build (the one you want to download dSYM files for)
+. In the _Includes Symbols_ column, select the download `dSYM` link .
+
+[discrete#swift:troubleshooting-crashes:::using-third-party-crash-report-tools]
+==== Using third-party crash report tools
+
+You can upload your dSYM files to third-party crash reporting tools for analysis, either automatically via script or a manual _zip_ file upload. Links for some of the more popular crash reporting tools are included below.
+
+.Third party crash reporting tools
+====
+* Firebase Crashlytics: https://firebase.google.com/docs/crashlytics/get-deobfuscated-reports
+* Instabug: https://docs.instabug.com/docs/ios-symbolication
+* Bugsee: https://docs.bugsee.com/sdk/ios/symbolication/
+* Microsoft Visual Studio App Center: https://docs.microsoft.com/en-us/appcenter/diagnostics/ios-symbolication
+* Apteligent: https://www.apteligent.com/technical-resource/symbolicating-an-ios-crash-report/
+====
+
+[discrete#swift:troubleshooting-crashes:::obfuscated-symbols-_hidden]
+==== Obfuscated symbols (`_hidden`)
+
+Xcode includes obfuscated symbols in dSYM files if apps are uploaded to Apple without symbols.
+
+In such cases you need to to de-obfuscate dSYM files before symbolicating.
+De-obfuscation is done automatically if downloading through Xcode. But if you use _App Store Connect_, you may need to, use the `xcrun` command on each .dSYM file inside the downloaded dSYM folder.
+
+.De-obfuscation using xcrun
+====
+----
+xcrun dsymutil -symbol-map <pathToApplicationArchieve>.xcarchive/BCSymbolMaps <pathToDownloadedDSYMs>/3B15C133-88AA-35B0-B8BA-84AF76826CE0.dSYM
+----
+====
+
+TIP: See Translating 'hidden' symbol names back to their original names: https://developer.apple.com/library/archive/technotes/tn2151/_index.html
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+[discrete#swift:troubleshooting-crashes:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:swift:gs-prereqs.adoc[Prerequisites]
+* xref:swift:gs-install.adoc[Install]
+* xref:swift:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#swift:troubleshooting-crashes:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:swift:database.adoc[Databases]
+* xref:swift:document.adoc[Documents]
+* xref:swift:blob.adoc[Blobs]
+* xref:swift:replication.adoc[Remote Sync Gateway]
+* xref:swift:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#swift:troubleshooting-crashes:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+// [.pane__frames.cols-3]
+// == Related Content
+
+// .How-to ...
+
+// * xref:swift:p2psync-custom.adoc[Integrate Custom Listener]
+// * xref:swift:p2psync-websocket.adoc[Peer-to-Peer]
+
+// .Learn more ...
+
+// * include how-to links as relevant,
+// * include how-to links as relevant,
+
+// .Dive Deeper ...
+
+// * Reference content
+// ** https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift[API References]
+// // +
+// include::shared-mobile::partial$block-related-content-menulinks.adoc[tags=community]
+
+
+== Product Notes
+

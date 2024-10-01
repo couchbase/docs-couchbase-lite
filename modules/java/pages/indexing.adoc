@@ -1,17 +1,466 @@
-= Indexing your Data
+:docname: indexing
+:page-module: java
+:page-relative-src-path: indexing.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#java:indexing:::]
+== Indexing
 :page-aliases: learn/java-indexing.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Working with Couchbase Lite's data model  --  Using indexes
 
-include::partial$_set_page_context_for_java.adoc[]
 
-:param-abstract!:
-:param-related: {database--xref} | {document--xref} | {indexing--xref} |
-:topic-group: Data Model
-include::{root-partials}_show_page_header_block.adoc[]
 
-include::{root-commons}indexing.adoc[subs="macros,attributes"]
 
-include::{root-partials}block-related-content-data.adoc[]
+// BEGIN -- _define_module_attributes.adoc -- Java
+//
+// Definition:
+//    Objective: This adoc defines values for attributes specific to pages within this module (Java)
+//    Invoked-by: ROOT:_partials/_std_cbl_hdr.adoc (from within module/_partials/_set_page_context_for_java.adoc)
+//    Parameters: none
+// End Definition:
+
+
+// BEGIN -- module page attributes
+// Begin workaround for 2.8.1 mis-release, to avoid unnecessary install of 2.8.0
+// SET full maintenance version number
+
+// VECTOR SEARCH attributes
+
+// End workaround
+// :snippet-p2psync-ws: {snippets-p2psync-ws--java}
+// END -- module page attributes
+
+
+// BEGIN -- Define API References for this module
+//  These attributes s
+//:url-api-references-structs: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Structs
+// :url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Classes
+
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DatabaseConfiguration
+
+
+//Database.SAVE
+
+
+
+//Database.DELETE()
+
+
+
+
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#compact--[Database.compact()]
+// was copy-java.io.File-java.lang.String-com.couchbase.lite.DatabaseConfiguration-[Database.copy()]
+
+
+
+
+
+// links for documents pages
+
+
+// :url-api-class-dictionary: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Dictionary.html[property accessors]
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+// Expression class and methods
+
+
+// ArrayFunction class and methods
+// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/ArrayFunction.html
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+
+// orderby class and methods
+//
+
+// GroupBy class and methods
+//
+
+// Endpoints
+
+
+
+
+
+
+
+
+// https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/URLEndpointListenerConfiguration.html#setPort-int-
+
+
+
+
+
+
+
+// diag: Env+Module java
+
+
+
+
+// Authenticators
+
+
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Replicator.html#s:18CouchbaseLiteandroid10ReplicatorC13ActivityLevelO
+
+
+// ReplicatorStatus
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+
+// replaced
+// replaced
+// replaces ^^
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+
+
+
+
+
+
+
+
+// Meta API
+
+
+// END -- Define API References for this module
+
+// diag: Env+Module java
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/Logging.html[Logging classes]
+
+
+
+
+
+
+// END  Logs and logging references
+
+
+
+
+
+
+
+// END -- _define_module_attributes.adoc -- Java
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--java}
+
+// END::Local page attributes
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:java:database.adoc[Databases] | xref:java:document.adoc[Documents] | xref:java:indexing.adoc[Indexing] |
+--
+
+// = Indexing
+// :page-layout: article
+// :page-status:
+// :page-edition:
+// :page-role:
+//
+// removed commented out docs-mobile _attributes-shared link
+// include::ROOT:partial$_define_page_index.adoc[]
+// include::ROOT:partial$_show_glossary_links.adoc[]
+// include::ROOT:partial$_define_component_attributes.adoc[]
+// include::swift:partial$_define_module_attributes.adoc[]
+//
+// // BEGIN::Local page attributes
+// :blank-field: ____
+// :ziputils: {snippets-pfx--swift}/code_snippets/ZipUtils.java
+// // END::Local page attributes
+
+
+// // BEGIN::REQUIRED EXTERNALS
+// :this-module: {par-module}
+// :this-lang-title: {par-lang-title}
+// :this-packageNm: {par-packageNm}
+// :this-source-language: {par-source-language}
+// :this-snippet: {par-snippet}
+//:this-url-issues: {par-url-issues}
+// END::REQUIRED EXTERNALS
+
+[discrete#java:indexing:::introduction]
+=== Introduction
+// tag::overview[]
+Querying documents using a pre-existing database index is much faster because an index narrows down the set of documents to examine -- see: the xref:java:query-troubleshooting.adoc[Query Troubleshooting] topic.
+
+When planning the indexes you need for your database, remember that while indexes make queries faster, they may also:
+
+* Make writes slightly slower, because each index must be updated whenever a document is updated
+* Make your Couchbase Lite database slightly larger.
+
+Too many indexes may hurt performance.
+Optimal performance depends on designing and creating the _right_ indexes to go along with your queries.
+
+.Constraints
+[NOTE]
+Couchbase Lite for jvm does not currently support partial value indexes; indexes with non-property expressions.
+You should only index with properties that you plan to use in the query.
+
+
+//end::overview[]
+
+
+[discrete#java:indexing:::creating-a-new-index]
+=== Creating a new index
+
+You can use {sqlpp} or QueryBuilder syntaxes to create an index
+
+// === N1QL
+// {sqlpp} provides a configuration object to define indexes --
+// `ValueIndexConfiguration`.
+
+// The following example inserts documents and creates an FTS index on the `name and type` properties.
+
+// .Using N1QL's ValueIndexConfiguration
+// [#ex-indexbuilder]
+// :param-tags: fts-index
+// include::ROOT:partial$block_tabbed_code_example.adoc[]
+// :param-tags!:
+
+// .Using the IndexBuilder method
+// [#ex-indexbuilder]
+// :param-tags: fts-index
+// include::ROOT:partial$block_tabbed_code_example.adoc[]
+// :param-tags!:
+
+
+<<java:indexing:::ex-create-index>> creates a new index for the `type` and `name` properties, shown in this data model:
+
+[#java:indexing:::ex-datamodel]
+.Data Model
+====
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "The Michigander",
+    "overview": "Ideally situated for exploration of the Motor City and the wider state of Michigan. Tripadvisor rated the hotel ...",
+    "state": "Michigan"
+}
+----
+====
+
+[discrete#java:indexing:::sql]
+==== {sqlpp}
+
+The code to create the index will look something like this:
+
+.Create index
+[#ex-create-index]
+
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:indexing:::ex-create-index]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-index", indent=0]
+collection.createIndex("TypeNameIndex", new ValueIndexConfiguration("type", "name"));
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+[discrete#java:indexing:::querybuilder]
+==== QueryBuilder
+
+TIP: See the xref:java:querybuilder.adoc[QueryBuilder] topic to learn more about QueryBuilder.
+
+The code to create the index will look something like this:
+
+.Create index with QueryBuilder
+[#ex-create-index]
+
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#java:indexing:::ex-create-index]
+====
+
+
+// Show Main Snippet
+[source, Java]
+----
+include ::java:example$codesnippet_collection.java[tags="query-index_Querybuilder", indent=0]
+collection.createIndex(
+    "TypeNameIndex",
+    IndexBuilder.valueIndex(
+        ValueIndexItem.property("type"),
+        ValueIndexItem.property("name")));
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+
+
+
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+[discrete#java:indexing:::related-content]
+=== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+==== {empty}
+.How to . . .
+* xref:java:gs-prereqs.adoc[Prerequisites]
+* xref:java:gs-install.adoc[Install]
+* xref:java:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#java:indexing:::-2n]
+==== {empty}
+.Learn more . . .
+* xref:java:database.adoc[Databases]
+* xref:java:document.adoc[Documents]
+* xref:java:blob.adoc[Blobs]
+* xref:java:replication.adoc[Remote Sync Gateway]
+* xref:java:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#java:indexing:::-3]
+==== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+
+== Data Sync
+

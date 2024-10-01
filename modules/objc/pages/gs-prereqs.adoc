@@ -1,30 +1,233 @@
-= Prerequisites -- Couchbase Lite for Objective-C
+:docname: gs-prereqs
+:page-module: objc
+:page-relative-src-path: gs-prereqs.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#objc:gs-prereqs:::]
+=== Prerequisites
 :page-aliases: start/objc-gs-prereqs.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Prerequisites for the installation of Couchbase Lite
 :keywords: edge nosql api
 
-include::partial$_set_page_context_for_objc.adoc[]
+
+
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+// BEGIN::module page attributes
+
+//
+// CBL-Obj-C Maintenance release number
+//
+:maintenance: 1
+//
+
+// VECTOR SEARCH attributes
+//
+
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+
+// API Reference Links
+//
+//
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DATABASE CLASSES
+
+
+// Docuument Class
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+//Database.SAVE
+
+
+
+//Database.DELETE
+
+
+//Database.COMPACT
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)compact:[CBLDatabase.compact()]
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+
+
+
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/[Query Class index]
+
+
+// ArrayFunction class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLWhere.html
+// NOT SET[Where]
+
+// orderby class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLOrderBy.html
+
+// GroupBy class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLGroupBy.html
+// NOT SET[GroupBy]
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module objc
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+
+// Note there is a replicator.status property AND
+// a ReplicationStatus class/struct --- oh yes, easy to confuse.
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/s:18CouchbaseLiteobjc10ReplicatorC13ActivityLevelO
+
+
+
+
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+
+// Meta API
+
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objcLogging.html[CBLLogging classes]
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--objc}
+// END::Local page attributes
 // removed commented out docs-mobile _attributes-shared link
 // include::ROOT:partial$_define_page_index.adoc[]
 // include::ROOT:partial$_show_glossary_links.adoc[]
 // include::ROOT:partial$_define_component_attributes.adoc[]
-// include::{lang-mod-objc}:partial$_define_module_attributes.adoc[]
+// include::objc:partial$_define_module_attributes.adoc[]
 
 // // BEGIN::Local page attributes
 // :blank-field: ____
-// :lang-title: {lang-title-objc}
-// :module: {lang-mod-objc}
-// :packageNm: couchbase-lite-{module}
-// :source-language: {lang-name-objc}
-// snippet: {snippets-content--objc}
-// :url-issues: {url-github-cbl}{module}/issues
+// :lang-title: Objective C
+// :module: objc
+// :packageNm: couchbase-lite-objc
+// :source-language: objc
+// snippet: objc:example$code_snippets/SampleCodeTest.m
+// :url-issues: https://github.com/couchbase/couchbase-lite-objc/issues
 
 // END::Local page attributes
 
-include::{root-partials}_show_page_header_block.adoc[]
+[abstract]
+--
+Description -- _{description}_ +
+--
 
 .Vector Search Prerequisites
 [IMPORTANT]
@@ -32,11 +235,76 @@ include::{root-partials}_show_page_header_block.adoc[]
 To use Vector Search, you must have Couchbase Lite installed and add the Vector Search extension to your Couchbase Lite application.
 Vector Search is available only for 64-bit architectures and
 Intel processors that support the Advanced Vector Extensions 2 (AVX2) instruction set.
-To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.] 
+To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.]
 --
 
-== Couchbase Lite Framework Size
+[discrete#objc:gs-prereqs:::couchbase-lite-framework-size]
+==== Couchbase Lite Framework Size
 
-include::{root-partials}ios-framework-size.adoc[]
+Couchbase Lite for Objective-C is provided as an `xcframework`.
 
-include::{root-partials}block-related-content-start.adoc[]
+The xcframework download size is between 100 and 140 MB.
+This include includes a "fat" binary that contains slices for both device (`armv7`, `arm64`) and simulator (`i386` and `x86_64`) CPU architectures.
+The fat binary allows you to link your app to the same xcframework and run your app on the simulator or a real device.
+
+In addition, the bitcode that is included contributes to the majority of the download size.
+https://help.apple.com/xcode/mac/current/#/devbbdc5ce4f[Bitcode] is an intermediate code representation that allows Apple to recompile the app after App submission and to deliver a thin version of the app specific to the device architecture.
+
+Although you can disable bitcode within your app and strip away bitcode from the Couchbase Lite framework, it is not necessary to do so. In fact, it is probably best to leave it enabled to be future proof. This is because the bitcode is never downloaded by the user even though it is uploaded during App submission.
+
+More information on App size is available on this https://developer.apple.com/library/archive/qa/qa1795/_index.html[Apple Q&A] page.
+
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+
+[discrete#objc:gs-prereqs:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:objc:gs-prereqs.adoc[Prerequisites]
+* xref:objc:gs-install.adoc[Install]
+* xref:objc:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#objc:gs-prereqs:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:objc:database.adoc[Databases]
+* xref:objc:document.adoc[Documents]
+* xref:objc:blob.adoc[Blobs]
+* xref:objc:replication.adoc[Remote Sync Gateway]
+* xref:objc:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#objc:gs-prereqs:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+

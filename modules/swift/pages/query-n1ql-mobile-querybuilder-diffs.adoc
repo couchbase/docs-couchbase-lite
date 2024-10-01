@@ -1,18 +1,323 @@
-= {sqlpp} for Mobile -- Differences from Querybuilder
-ifdef::prerelease[:page-status: {prerelease}]
+:docname: query-n1ql-mobile-querybuilder-diffs
+:page-module: swift
+:page-relative-src-path: query-n1ql-mobile-querybuilder-diffs.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#swift:query-n1ql-mobile-querybuilder-diffs:::]
+=== SQL++ Querybuilder Differences
 :page-role:
 :keywords: sql, n1ql
 :page-layout: article
 :description: Differences between Couchbase Lite's Querybuilder and {sqlpp} for Mobile
 
-include::partial$_set_page_context_for_swift.adoc[]
-
-:param-related: {querybuilder--xref--predictive-query} | {query-live--xref} | {indexing--xref}
-:topic-group: Topic Group -- Querying
-include::{root-partials}_show_page_header_block.adoc[]
 
 
-include::{root-commons}query-n1ql-mobile-querybuilder-diffs.adoc[subs="macros,attributes"]
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+// BEGIN::module page attributes
+//
+// CBL-Swift Maintenance release number
+//
+
+// VECTOR SEARCH attributes
+//
 
 
-include::{root-partials}block-related-content-data.adoc[]
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+// API Reference Links
+//
+//
+
+
+
+
+// Supporting Data Type Classes
+
+
+// DATABASE CLASSES
+
+
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+
+
+
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC7compactyyKF[Database.compact()]
+
+
+
+
+
+
+
+
+// links for documents pages
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Query class and methods
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/[Query Class index]
+
+
+
+// ArrayFunction class and methods
+
+
+// API Results Class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+
+// orderby class and methods
+//
+
+// GroupBy class and methods
+//
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module swift
+
+
+
+
+// Replicator API
+
+
+
+
+[Replicator.pendingDocumentIds()]
+
+
+
+// Replicator Status
+
+
+
+// :url-api-enum-replicator-status: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html[Status struct]
+// :url-api-enum-replicator-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/ActivityLevel.html[ActivityLevel enum]
+// :url-api-enum-replicator-progress: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Progress.html[Progress struct]
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC33serverCertificateVerificationModeAA06ServerghI0Ovp[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Metadata API
+
+
+
+// BEGIN Logs and logging references
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--swift}
+
+// END::Local page attributes
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:swift:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:swift:query-live.adoc[Live Queries] | xref:swift:indexing.adoc[Indexing]
+--
+
+
+
+
+// tag::content[]
+Couchbase Lite's {sqlpp} for Mobile supports all QueryBuilder features, except _Predictive Query_ and _Index_. +
+See <<swift:query-n1ql-mobile-querybuilder-diffs:::tbl-qbldr-diffs>> for the features supported by {sqlpp} but not by QueryBuilder.
+
+
+.QueryBuilder Differences
+[#swift:query-n1ql-mobile-querybuilder-diffs:::tbl-qbldr-diffs,cols="4,6m", options="header"]
+|===
+
+|Category
+|Components
+
+|Conditional Operator
+|CASE(WHEN ... THEN ... ELSE ..)
+
+|Array Functions
+|ARRAY_AGG
+ARRAY_AVG
+ARRAY_COUNT
+ARRAY_IFNULL
+ARRAY_MAX
+ARRAY_MIN
+ARRAY_SUM
+
+|Conditional Functions
+|IFMISSING
+IFMISSINGORNULL
+IFNULL
+MISSINGIF
+NULLIF
+Match Functions
+DIV
+IDIV
+ROUND_EVEN
+
+|Pattern Matching Functions
+|REGEXP_CONTAINS
+REGEXP_LIKE
+REGEXP_POSITION
+REGEXP_REPLACE
+
+|Type Checking Functions
+|ISARRAY
+ISATOM
+ISBOOLEAN
+ISNUMBER
+ISOBJECT
+ISSTRING
+TYPE
+
+|Type Conversion Functions
+|TOARRAY
+TOATOM
+TOBOOLEAN
+TONUMBER
+TOOBJECT
+TOSTRING
+|===
+
+// end::content[]
+
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+[discrete#swift:query-n1ql-mobile-querybuilder-diffs:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:swift:gs-prereqs.adoc[Prerequisites]
+* xref:swift:gs-install.adoc[Install]
+* xref:swift:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#swift:query-n1ql-mobile-querybuilder-diffs:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:swift:database.adoc[Databases]
+* xref:swift:document.adoc[Documents]
+* xref:swift:blob.adoc[Blobs]
+* xref:swift:replication.adoc[Remote Sync Gateway]
+* xref:swift:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#swift:query-n1ql-mobile-querybuilder-diffs:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+

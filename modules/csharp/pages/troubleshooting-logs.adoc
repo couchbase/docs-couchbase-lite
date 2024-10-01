@@ -1,11 +1,672 @@
-= Using Logs for Troubleshooting
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
+:docname: troubleshooting-logs
+:page-module: csharp
+:page-relative-src-path: troubleshooting-logs.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#csharp:troubleshooting-logs:::]
+=== Using Logs
 :page-role:
 :description: Couchbase Lite on C# -- Using Logs for Troubleshooting
 
-include::partial$_set_page_context_for_csharp.adoc[]
 
-:param-fullpage:
-include::{root-commons}logging.adoc[]
+
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+// BEGIN::module page attributes
+// :source-language: Java
+
+// :snippet-p2psync-ws: {snippets-p2psync-ws--csharp}
+// SET full maintenance version number
+
+// VECTOR SEARCH attributes
+
+// END::module page attributes
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+
+// Supporting Data Type Classes
+
+// COLLECTION CLASSES
+
+
+// DATABASE CLASSES
+
+
+
+//Database.SAVE
+
+
+
+//Database.DELETE
+
+
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Compact[Database.Compact()]
+
+
+
+
+
+// links for documents pages
+
+// :url-api-class-dictionary: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.DictionaryObject.html[property accessors]
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+
+
+// Query class and methods
+
+// Expression class and methods
+// :url-api-method-expression-like: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_Like_Couchbase_Lite_Query_IExpression_
+
+// ArrayFunction class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+
+// orderby class and methods
+//
+
+// GroupBy class and methods
+//
+
+
+
+
+
+// PEER-TO-PEER CLASSES
+
+// URLENDPOINT CLASSES
+
+
+
+
+// :url-api-references-tlsidentity-property: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.P2P.TLSIdentity.html#Couchbase_Lite_P2P_TLSIdentity_
+
+
+
+
+
+
+
+// https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-csharp/com/couchbase/lite/URLEndpointListenerConfiguration.html#setPort-int-
+
+
+
+
+// :url-api-references-urlendpointconfiguration-initcfg: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html#Couchbase_Lite_P2P_URLEndpointListenerConfiguration_initWithConfig::[-initWithConfig:]
+// :url-api-references-urlendpointconfiguration-init: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html#Couchbase_Lite_P2P_URLEndpointListenerConfiguration_init:[-init:]
+
+
+
+
+// diag: Env+Module csharp
+
+
+// AUTHENTICATORS
+
+
+
+
+// REPLICATOR API CLASSES
+
+
+
+// :url-api-references-replicator-abs: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.AbstractReplicator.html
+// :url-api-class-replicator-abs: {url-api-references-replicator-abs}[AbstractReplicator]
+// :url-api-properties-replicator-abs: {url-api-references-replicator-abs}#
+
+
+
+
+
+
+
+
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#s:18CouchbaseLitecsharp10ReplicatorC13ActivityLevelO
+
+
+// REPLICATORSTATUS
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+// :url-api-prop-replicator-config-auth-get: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_getAuthenticator--[getAuthenticator]
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+
+
+// replaced
+// replaced
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+// // replaces ^^
+// :url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_setAcceptOnlySelfSignedServerCertificate-boolean-[setAcceptOnlySelfSignedServerCertificate]
+
+
+
+
+
+// Meta API
+
+
+
+
+// BEGIN Logs and logging references
+
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+// End -- API References attributes
+
+// END - Set attributes pointing to API references for this module
+
+// END -- inclusion -- csharp:partial$_define_module_attributes.adoc
+
+// BEGIN::module page attributes
+//:source-language: csharp
+// :snippet-p2psync-ws: {snippets-p2psync-ws--csharp}
+
+// END::Local page attributes
+
+// BEGIN -- inclusion/partial -- logging.adoc
+// Used-by:
+//    - ROOT:commons/common--database.adoc
+//    - ROOT:partial$:<module>-troubleshooting-logs.adoc
+// Uses: {snippets} -- various
+
+
+// Begin required attributes
+// :cbl-log-version: the required cbl-log version number (eg 2.7.0)
+// snippet: the path to the language specific example code_snippets
+// :fn-2x5: footnote content
+//  End required attributes
+
+// Begin -- Output an abstract unless this inclusion is being used as part of an encompassing page
+// Allow for external over-ride of default content
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:csharp:troubleshooting-queries.adoc[Troubleshooting Queries]
+--
+// End -- Output an abstract unless this inclusion is being used as part of an encompassing page
+
+
+.Constraints
+[NOTE]
+--
+
+* The retrieval of logs from the device is out of scope of this feature.
+* This content applies to the post 2.5 versions.
+If you are using a Couchbase Lite release prior to 2.5 see <<csharp:troubleshooting-logs:::pre-2x5-logging,Deprecated functionality>>
+
+--
+
+
+// Begin text block
+[discrete#csharp:troubleshooting-logs:::introduction]
+==== Introduction
+Couchbase Lite provides a robust Logging API footnote:fn-2x5[From version 2.5] -- see: API References for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.html[Logging classes] -- which make debugging and troubleshooting easier during development and in production.
+It delivers flexibility in terms of how logs are generated and retained, whilst also maintaining the level of logging required by Couchbase Support for investigation of issues.
+
+Log output is split into the following streams:
+
+* <<csharp:troubleshooting-logs:::lbl-file-logs>>
++
+Here logs are written to <<csharp:troubleshooting-logs:::log-file-outputs,separate log files>> filtered by log level, with each log level supporting individual retention policies.
+
+* <<csharp:troubleshooting-logs:::lbl-console-logs>>
++
+--
+You can independently configure and control console logs, which provides a convenient method of accessing diagnostic information during debugging scenarios.
+With console logging, you can fine-tune diagnostic output to suit specific debug scenarios, without interfering with any logging required by Couchbase Support for the investigation of issues.
+--
+
+* <<csharp:troubleshooting-logs:::lbl-custom-logs>>
++
+--
+For greater flexibility you can implement a custom logging class using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.ILogger.html[ILogger] interface.
+
+--
+
+In all instances, you control what is logged and at what level using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html[Log] class.
+
+[discrete#csharp:troubleshooting-logs:::lbl-console-logs]
+==== Console based logging
+Console based logging is often used to facilitate troubleshooting during development.
+
+Console logs are your go-to resource for diagnostic information.
+You can easily fine-tune their diagnostic content to meet the needs of a particular debugging scenario, perhaps by increasing the verbosity and-or choosing to focus on messages from a specific domain; to better focus on the problem area.
+
+Changes to console logging are independent of file logging, so you can make change without compromising any files logging streams.
+It is enabled by default.
+To change default settings use database's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html[Log] method to set the required values -- see <<csharp:troubleshooting-logs:::eg-cons-log>>
+
+You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Console[log.getConsole()] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.IConsoleLogger.html[IConsoleLogger] to control console logging.
+
+
+[#eg-cons-log]
+.Change Console Logging Settings
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:troubleshooting-logs:::eg-cons-log]
+====
+
+This example enables and defines console-based logging settings.
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="console-logging", indent=0]
+Database.Log.Console.Domains = LogDomain.All; // <.>
+Database.Log.Console.Level = LogLevel.Verbose; // <.>
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Define the required domain ; here we turn on logging for all available domains -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.ConsoleLogger.html#Couchbase_Lite_Logging_IConsoleLogger_Domains[log.getConsole().setDomain()] and enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.LogDomain.html[LogDomain]
+<.> Here we turn on the most verbose log level -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.ConsoleLogger.html#Couchbase_Lite_Logging_IConsoleLogger_Domains[log.getConsole().setLevel()] and enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.LogLevel.html[LogLevel]. +
+To disable logging for the specified https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.LogDomain.html[LogDomain] set the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.LogLevel.html[LogLevel] to `None`.
+
+Related::
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html[Log] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Console[log.getConsole()] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.IConsoleLogger.html[IConsoleLogger]
+
+[discrete#csharp:troubleshooting-logs:::lbl-file-logs]
+==== File based logging
+File based logging is disabled by default --  see: <<csharp:troubleshooting-logs:::eg-file-log>> for how to enable it.
+
+You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_File[log.getFile()] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.FileLogger.html[FileLogger] to control file-based logging.
+
+[discrete#csharp:troubleshooting-logs:::formats]
+===== Formats
+Available file based logging formats:
+
+* Binary -- most efficient for storage and performance. It is the default for file based logging.
++
+Use this format and a decoder, such as *cbl-log*, to view them -- see: <<csharp:troubleshooting-logs:::decoding-binary-logs>>.
+* Plaintext
+
+[discrete#csharp:troubleshooting-logs:::configuration]
+===== Configuration
+As with console logging you can set the log level -- see:  the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.FileLogger.html[FileLogger] class.
+
+With file based logging you can also use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.LogFileConfiguration.html[LogFileConfiguration] class's properties to specify the:
+
+* log file path to the directory to store the log file
+Once this limit is exceeded a new log file is started.
+* log file format +
+The default is _binary_.
+You can over ride that where necessary and output a plain text log.
+* maximum number of rotated log files to keep
+* maximum size of the log file (bytes).
+
+[#eg-file-log]
+.Enabling file logging
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:troubleshooting-logs:::eg-file-log]
+====
+
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="file-logging", indent=0]
+var tempFolder = Path.Combine(Service.GetInstance<IDefaultDirectoryResolver>().DefaultDirectory(), "cbllog");
+var config = new LogFileConfiguration(tempFolder) // <.>
+{
+    MaxRotateCount = 5, // <.>
+    MaxSize = 10240, // <.>
+    UsePlaintext = false  // <.>
+};
+Database.Log.File.Config = config; // Apply configuration
+Database.Log.File.Level = LogLevel.Info; // <.>
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Set the log file directory
+<.> Here we change the max rotation count from the default (1) to 5. +
+*Note* this means six files may exist at any one time; the five rotated log files, plus the active log file
+<.> Here we set the maximum size (bytes) for our log file
+<.> Here we select the binary log format (included for reference only as this is the default)
+<.> Here we increase the log output level from the default (_warnings_) to _info_ -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.FileLogger.html#Couchbase_Lite_Logging_FileLogger_Level[log.getFile().setLevel()]
++
+*Note* that the use of https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Couchbase_Lite_Database_SetLogLevel_Couchbase_Lite_Logging_LogDomain_Couchbase_Lite_Logging_LogLevel_[Database.SetLogLevel()] is now deprecated.
+Further, you can no longer set a log level for a specific domain.
+
+Related::
+ https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html[Log] |
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_File[log.getFile()] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.FileLogger.html[FileLogger]
+
+[discrete#csharp:troubleshooting-logs:::lbl-custom-logs]
+==== Custom logging
+
+Couchbase Lite allows for the registration of a callback function to receive Couchbase Lite log messages, which may be logged using any external logging framework.
+
+To do this, apps must implement the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.ILogger.html[ILogger] interface -- see <<csharp:troubleshooting-logs:::eg-impl-log>> -- and enable custom logging using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Custom[log.setCustom()] -- see <<csharp:troubleshooting-logs:::eg-cust-log>>.
+
+
+[#eg-impl-log]
+.Implementing logger interface
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:troubleshooting-logs:::eg-impl-log]
+====
+
+pass:q,a[Here we introduce the code that implements the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.ILogger.html[ILogger] interface.]
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="custom-logging", indent=0]
+class LogTestLogger : ILogger
+{
+    public LogLevel Level { get; set; }
+
+    public void Reset()
+    {
+    }
+
+    public void Log(LogLevel level, LogDomain domain, string message)
+    {
+        // handle the message, for example piping it to
+        // a third party framework
+    }
+}
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[#eg-cust-log]
+.Enabling custom logging
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#csharp:troubleshooting-logs:::eg-cust-log]
+====
+
+pass:q,a[This example show how to enable the custom logger from <<csharp:troubleshooting-logs:::eg-impl-log>>.]
+
+// Show Main Snippet
+[source, C#]
+----
+include ::csharp:example$code_snippets/Program.cs[tags="set-custom-logging", indent=0]
+ Database.Log.Custom = new LogTestLogger(); // <.>
+
+ // You can also specify the level of logging the logger receives
+ Database.Log.Custom = new LogTestLogger { Level = LogLevel.Warning };
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Here we set the custom logger with a level of 'warning'.
+The custom logger is called with every log and may choose to filter it, using its configured level.
+
+
+Related::
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html[Log] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Custom[log.getCustom()] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.ILogger.html[ILogger]
+
+[discrete#csharp:troubleshooting-logs:::decoding-binary-logs]
+==== Decoding binary logs
+
+You can use the *cbl-log* tool to decode binary log files -- see <<csharp:troubleshooting-logs:::eg-cbl-log>>.
+
+[#csharp:troubleshooting-logs:::eg-cbl-log]
+.Using the cbl-log tool
+=====
+[{tabs}]
+====
+[#csharp:troubleshooting-logs:::tabs-1-macos]
+macOS::
++
+--
+Download the *cbl-log* tool using `wget`.
+
+[source,console,subs="attributes"]
+----
+wget https://packages.couchbase.com/releases/couchbase-lite-log/{major}.{minor}.{base}{empty}/couchbase-lite-log-{major}.{minor}.{base}{empty}-macos.zip
+----
+
+Navigate to the *bin* directory and run the `cbl-log` executable.
+
+[source,console]
+----
+$ ./cbl-log logcat LOGFILE <OUTPUT_PATH>
+----
+--
+
+[#csharp:troubleshooting-logs:::tabs-1-centos]
+CentOS::
++
+--
+Download the *cbl-log* tool using `wget`.
+
+[source,console, subs="attributes"]
+----
+wget https://packages.couchbase.com/releases/couchbase-lite-log/{major}.{minor}.{base}{empty}/couchbase-lite-log-{major}.{minor}.{base}{empty}-centos.zip
+----
+
+Navigate to the *bin* directory and run the `cbl-log` executable.
+
+[source,console]
+----
+cbl-log logcat LOGFILE <OUTPUT_PATH>
+----
+--
+
+[#csharp:troubleshooting-logs:::tabs-1-windows]
+Windows::
++
+--
+Download the *cbl-log* tool using PowerShell.
+
+[source,powershell, subs="attributes"]
+----
+Invoke-WebRequest https://packages.couchbase.com/releases/couchbase-lite-log/{major}.{minor}.{base}{empty}/couchbase-lite-log-{major}.{minor}.{base}{empty}-windows.zip -OutFile couchbase-lite-log-{major}.{minor}.{base}{empty}-windows.zip
+----
+
+Run the `cbl-log` executable.
+
+[source,powershell]
+----
+$ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
+----
+--
+====
+=====
+
+// Begin - Output related content unless this inclusion is used as part of an encompassing page
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+[discrete#csharp:troubleshooting-logs:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:csharp:querybuilder.adoc[QueryBuilder]
+* xref:csharp:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
+* xref:csharp:query-live.adoc[Live Queries]
+* xref:csharp:fts.adoc[Full Text Search]
+
+
+.
+
+[discrete.colum#csharp:troubleshooting-logs:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:csharp:query-n1ql-mobile-querybuilder-diffs.adoc[{sqlpp} Mobile - Querybuilder  Differences]
+* xref:csharp:query-n1ql-mobile-server-diffs.adoc[{sqlpp} Mobile - {sqlpp} Server Differences]
+* xref:csharp:query-resultsets.adoc[Query Resultsets]
+* xref:csharp:query-troubleshooting.adoc[Query Troubleshooting]
+* xref:csharp:query-live.adoc[Live Queries]
+
+* xref:csharp:database.adoc[Databases]
+* xref:csharp:document.adoc[Documents]
+* xref:csharp:blob.adoc[Blobs]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#csharp:troubleshooting-logs:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+// End - Output related content unless this inclusion is used as part of an encompassing page
+
+// Begin -- Void any temporary parameters
+// End -- Void any temporary parameters
+
+// END -- inclusion/partial -- logging.adoc
+
 

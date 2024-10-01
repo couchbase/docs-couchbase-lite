@@ -1,34 +1,435 @@
-= Build and Run
+:docname: gs-build
+:page-module: c
+:page-relative-src-path: gs-build.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#c:gs-build:::]
+=== Build and Run
 :page-aliases: clang:gs-build.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Build and run a starter app to validate your install of Couchbase Lite on C
 :keywords: mobile edge nosql api iOS C web-app device-app
 
-include::partial$_set_page_context_for_c.adoc[]
-include::{root-partials}_show_page_header_block.adoc[]
-
-:param-page: {page-relative-src-path}
-include::{root-partials}_show_get_started_topic_group.adoc[]
 
 
-== Verify Install
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+//
+// CBL-C Maintenance release number
+//
+//
+
+// VECTOR SEARCH attributes
+//
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+//
+//
+
+
+
+
+
+
+// DATABASE module and functions
+// Database(im)
+
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#gaa4b06dcb7427cafeabde8486f5f03f10[CBLDatabase_PerformMaintenance()]
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+
+// DOCUMENTS
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+
+
+
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__[Query Class index]
+
+
+// ArrayFunction class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__Where.html
+// NOT SET[Where]
+
+// orderby class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__OrderBy.html
+
+// GroupBy class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__GroupBy.html
+// NOT SET[GroupBy]
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module c
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+// Note there is a replicator.status property AND
+// a ReplicationStatus class/struct --- oh yes, easy to confuse.
+
+
+
+
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+// Repl Cfg Props
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+// CBLPropertyEncryptor gab116a23be8bd24b86349379f370ef60c
+// CBLPropertyDecryptor ga24a60a3d6f9816e1d32464cc31a15c0c
+// CBLEncryptable gaaf20d661f9684632a005f0a4e52656b3
+
+// Meta API
+
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/htmlLogging.html[CBLLogging classes]
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--c}
+// END::Local page attributes
+[abstract]
+--
+Description -- _{description}_ +
+--
+
+// BEGIN -- inclusion -- _gs-topic-group.adoc
+//  Purpose: Show the topic group, allowing easy cycle-through
+//            Do not show current page as a click-through though
+//  Parameter: The current page name
+//  Container: /modules/ROOT/pages/_partials/_gs-topic-group.adoc
+
+// Begin -Local Attributes
+
+// ifeval::["{page-relative-src-path}"=="introduction.adoc"]
+// :is-intro: Introduction
+// endif::[]
+
+// ifeval::["{page-relative-src-path}"=="gs-prereqs.adoc"]
+// :is-prereqs: Prepare
+// endif::[]
+
+
+// End -Local Attributes
+
+// Begin -- Output Block
+Steps in Getting Started::
+// ifdef::is-intro[*{is-intro}*]
+// ifndef::is-intro[xref:c:introduction.adoc[Introduction]]
+//  |
+// ifdef::is-prereqs[*{is-prereqs}*]
+// ifndef::is-prereqs[xref:c:gs-prereqs.adoc[Prerequisites]]
+//  |
+xref:c:gs-install.adoc[Install]
+ |
+*Build*
+// End -- Output Block
+
+
+// Begin -- Tidy-up
+// End -- Tidy-up
+
+// END -- inclusion -- _gs-topic-group.adoc
+
+
+[discrete#c:gs-build:::verify-install]
+==== Verify Install
 
 Now you have _Couchbase Lite for C_ installed, you can verify that your apps build correctly.
 
-Enter the C code from <<ex-c-starter>> into your editor of choice and build it.
+Enter the C code from <<c:gs-build:::ex-c-starter>> into your editor of choice and build it.
 
 Running it will create a database, add a document, retrieve the document, update the document and then delete the document.
 
 .Sample code
-[#ex-c-starter]
+[#c:gs-build:::ex-c-starter]
 ====
-[source, {source-language}]
+[source, c]
 ----
-include::{snippet}[tag=getting-started,indent=0]
+//  Purpose-- provide an overview of available crud  and sync functionality
+//
+// Get the database (and create it if it doesn't exist)
+CBLError err;
+CBLDatabase* database = CBLDatabase_Open(FLSTR("mydb"), NULL, &err);
+if(!database) {
+    // Error handling.  For brevity, this is truncated in the rest of the snippet
+    // and omitted in other doc code snippets
+    fprintf(stderr, "Error opening database (%d / %d)\n", err.domain, err.code);
+    FLSliceResult msg = CBLError_Message(&err);
+    fprintf(stderr, "%.*s\n", (int)msg.size, (const char *)msg.buf);
+    FLSliceResult_Release(msg);
+    return;
+}
+
+// All CRUD operations must be carried out via a collection (for backwards compatibility
+// the old CBLDatabase_ API will automatically use the default collection).  This is a quick
+// API to explicitly get the default collection.
+CBLCollection* collection = CBLDatabase_DefaultCollection(database, &err);
+
+// The lack of 'const' indicates this document is mutable
+// Create a new document (i.e. a record) in the database
+CBLDocument* mutableDoc = CBLDocument_Create();
+FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
+FLMutableDict_SetFloat(properties, FLSTR("version"), 3.0f);
+
+// Save it to the database
+if(!CBLCollection_SaveDocument(collection, mutableDoc, &err)) {
+    // Failed to save, do error handling as above
+    return;
+}
+
+// Since we will release the document, make a copy of the ID since it
+// is an internal pointer.  Whenever we create or get an FLSliceResult
+// or FLStringResult we will need to free it later too!
+FLString id = CBLDocument_ID(mutableDoc);
+CBLDocument_Release(mutableDoc);
+
+// Update a document
+mutableDoc = CBLCollection_GetMutableDocument(collection, id, &err);
+if(!mutableDoc) {
+    // Failed to retrieve, do error handling as above.  NOTE: error code 0 simply means
+    // the document does not exist.
+    return;
+}
+
+properties = CBLDocument_MutableProperties(mutableDoc);
+FLMutableDict_SetString(properties, FLSTR("language"), FLSTR("C"));
+if(!CBLCollection_SaveDocument(collection, mutableDoc, &err)) {
+    // Failed to save, do error handling as above
+    return;
+}
+
+// Note const here, means readonly
+const CBLDocument* docAgain = CBLCollection_GetDocument(collection, id, &err);
+if(!docAgain) {
+    // Failed to retrieve, do error handling as above.  NOTE: error code 0 simply means
+    // the document does not exist.
+    return;
+}
+
+// No copy this time, so no release later (notice it is not FLStringResult this time)
+FLString retrievedID = CBLDocument_ID(docAgain);
+FLDict retrievedProperties = CBLDocument_Properties(docAgain);
+FLString retrievedLanguage = FLValue_AsString(FLDict_Get(retrievedProperties, FLSTR("language")));
+printf("Document ID :: %.*s\n", (int)retrievedID.size, (const char *)retrievedID.buf);
+printf("Learning %.*s\n", (int)retrievedLanguage.size, (const char *)retrievedLanguage.buf);
+
+CBLDocument_Release(mutableDoc);
+CBLDocument_Release(docAgain);
+
+// Create a query to fetch documents of type SDK
+int errorPos;
+CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage, FLSTR("SELECT * FROM _ WHERE type = \"SDK\""), &errorPos, &err);
+if(!query) {
+    // Failed to create query, do error handling as above
+    // Note that errorPos will contain the position in the N1QL string
+    // that the parse failed, if applicable
+    return;
+}
+
+CBLResultSet* result = CBLQuery_Execute(query, &err);
+if(!result) {
+    // Failed to run query, do error handling as above
+    return;
+}
+
+CBLResultSet_Release(result);
+CBLQuery_Release(query);
+
+// Create replicator to push and pull changes to and from the cloud
+CBLEndpoint* targetEndpoint = CBLEndpoint_CreateWithURL(FLSTR("ws://localhost:4984/getting-started-db"), &err);
+if(!targetEndpoint) {
+    // Failed to create endpoint, do error handling as above
+    return;
+}
+
+CBLReplicatorConfiguration replConfig;
+CBLAuthenticator* basicAuth = CBLAuth_CreatePassword(FLSTR("john"), FLSTR("pass"));
+memset(&replConfig, 0, sizeof(replConfig));
+replConfig.database = database;
+replConfig.endpoint = targetEndpoint;
+replConfig.authenticator = basicAuth;
+
+CBLReplicator* replicator = CBLReplicator_Create(&replConfig, &err);
+CBLAuth_Free(basicAuth);
+CBLEndpoint_Free(targetEndpoint);
+if(!replicator) {
+    // Failed to create replicator, do error handling as above
+    return;
+}
+
+// Assume a function like the simple following
+//
+// static void getting_started_change_listener(void* context, CBLReplicator* repl, const CBLReplicatorStatus* status) {
+//     if(status->error.code != 0) {
+//         printf("Error %d / %d\n", status->error.domain, status->error.code);
+//     }
+// }
+
+CBLListenerToken* token = CBLReplicator_AddChangeListener(replicator, getting_started_change_listener, NULL);
+
+CBLReplicator_Start(replicator, false);
+
+// Later, stop and release the replicator
 ----
 ====
 
 
-include::{root-partials}block-related-content-start.adoc[]
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+
+[discrete#c:gs-build:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:c:gs-prereqs.adoc[Prerequisites]
+* xref:c:gs-install.adoc[Install]
+* xref:c:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#c:gs-build:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:c:database.adoc[Databases]
+* xref:c:document.adoc[Documents]
+* xref:c:blob.adoc[Blobs]
+* xref:c:replication.adoc[Remote Sync Gateway]
+* xref:c:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#c:gs-build:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+

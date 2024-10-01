@@ -1,10 +1,657 @@
-= Handling Data Conflicts
+:docname: conflict
+:page-module: objc
+:page-relative-src-path: conflict.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#objc:conflict:::]
+== Handling Data Conflicts
 :page-aliases: learn/objc-conflict.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite Database Sync -- Handling conflict between data changes
 
-include::partial$_set_page_context_for_objc.adoc[]
 
-include::{root-commons}conflict.adoc[subs="macros,attributes"]
+
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+// BEGIN::module page attributes
+
+//
+// CBL-Obj-C Maintenance release number
+//
+:maintenance: 1
+//
+
+// VECTOR SEARCH attributes
+//
+
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+
+// API Reference Links
+//
+//
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DATABASE CLASSES
+
+
+// Docuument Class
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+//Database.SAVE
+
+
+
+//Database.DELETE
+
+
+//Database.COMPACT
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)compact:[CBLDatabase.compact()]
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+
+
+
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/[Query Class index]
+
+
+// ArrayFunction class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLWhere.html
+// NOT SET[Where]
+
+// orderby class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLOrderBy.html
+
+// GroupBy class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLGroupBy.html
+// NOT SET[GroupBy]
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module objc
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+
+// Note there is a replicator.status property AND
+// a ReplicationStatus class/struct --- oh yes, easy to confuse.
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/s:18CouchbaseLiteobjc10ReplicatorC13ActivityLevelO
+
+
+
+
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+
+// Meta API
+
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objcLogging.html[CBLLogging classes]
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--objc}
+// END::Local page attributes
+
+// BEGIN -- inclusion -- common-conflict.adoc
+//  Location: ROOT:partial$commons/common-
+//  Params:
+//    :no-footer: define to suppress output of the
+//                related content footer when not using tags
+//  Used-by:  objc-conflict.adoc files
+
+
+// // DO NOT EDIT
+[abstract]
+--
+Description -- _{description}_ +
+--
+// DO NOT EDIT
+
+[discrete#objc:conflict:::causes-of-conflicts]
+=== Causes of Conflicts
+
+Document conflicts can occur if multiple changes are made to the same version of a document by multiple peers in a distributed system. For Couchbase Mobile, this can be a Couchbase Lite or Sync Gateway database instance.
+
+Such conflicts can occur after either of the following events:
+
+* *A replication saves a document change* -- in which case the change with the _most-revisions wins_ (unless one change is a delete). See the example <<objc:conflict:::lbl-conflicts-when-replicating,Case 1: Conflicts when a replication is in progress>>
+* *An application saves a document change directly to a database instance* -- in which case, _last write wins_, unless one change is a delete -- see <<objc:conflict:::conflicts-when-saving,Case 2: Conflicts when saving a document>>
+
+NOTE: *_Deletes_ always win.* So, in either of the above cases, if one of the changes was a _Delete_ then that change wins.
+
+The following sections discuss each scenario in more detail.
+
+[TIP]
+.Dive deeper ...
+Read more about link:https://blog.couchbase.com//document-conflicts-couchbase-mobile[Document Conflicts and Automatic Conflict Resolution in Couchbase Mobile].
+
+[discrete#objc:conflict:::lbl-conflicts-when-replicating]
+=== Conflicts when Replicating
+
+There's no practical way to prevent a conflict when incompatible changes to a document are be made in multiple instances of an app.
+The conflict is realized only when replication propagates the incompatible changes to each other.
+anchor:bmkRepConScene[A typical replication conflict scenario]
+
+.A typical cause of replication conflicts:
+====
+. Molly uses her device to create _DocumentA_.
+. Replication syncs _DocumentA_ to Naomi's device.
+. Molly uses her device to apply _ChangeX_ to _DocumentA_.
+. Naomi uses her device to make a different change, _ChangeY_, to _DocumentA_.
+. Replication syncs _ChangeY_ to Molly's device.
++
+This device already has _ChangeX_ putting the local document in conflict.
+. Replication syncs _ChangeX_ to Naomi's device.
++
+This device already has _ChangeY_ and now Naomi's local document is in conflict.
+====
+
+[discrete#objc:conflict:::automatic-conflict-resolution]
+==== Automatic Conflict Resolution
+
+NOTE: The rules only apply to conflicts caused by replication.
+Conflict resolution takes place exclusively during pull replication, while push replication remains unaffected.
+
+Couchbase Lite uses the following rules to handle conflicts such as those described in <<objc:conflict:::bmkRepConScene>>:
+
+* If one of the changes is a deletion:
++
+A deleted document (that is, a _tombstone_) always wins over a document update.
+* If both changes are document changes:
++
+The change with the most revisions will win.
++
+Since each change creates a revision with an ID prefixed by an incremented version number, the winner is the change with the highest version number.
+
+The result is saved internally by the Couchbase Lite replicator.
+Those rules describe the internal behavior of the replicator.
+For additional control over the handling of conflicts, including when a replication is in progress, see <<objc:conflict:::custom-conflict-resolution>>.
+
+[discrete#objc:conflict:::custom-conflict-resolution]
+==== Custom Conflict Resolution
+
+Starting in Couchbase Lite 2.6, application developers who want more control over how document conflicts are handled can use custom logic to select the winner between conflicting revisions of a document.
+
+If a custom conflict resolver is not provided, the system will automatically resolve conflicts as discussed in <<objc:conflict:::automatic-conflict-resolution,Automatic Conflict Resolution>>, and as a consequence there will be no conflicting revisions in the database.
+
+CAUTION: While this is true of any user defined functions, app developers must be strongly cautioned against writing sub-optimal custom conflict handlers that are time consuming and could slow down the client's save operations.
+
+To implement custom conflict resolution during replication, you must implement the following steps.
+
+. <<objc:conflict:::conflict-resolver,Conflict Resolver>>
+. <<objc:conflict:::configure-the-replicator,Configure the Replicator>>
+
+[discrete#objc:conflict:::conflict-resolver]
+==== Conflict Resolver
+
+Apps have the following strategies for resolving conflicts:
+
+- *Local Wins:* The current revision in the database wins.
+- *Remote Wins:* The revision pulled from the remote endpoint through replication wins.
+- *Merge:* Merge the content bodies of the conflicting revisions.
+
+// tag::handling-conflicts-conflict-resolvers[]
+.Using conflict resolvers
+====
+// :is-android:
+
+[{tabs}]
+=====
+[#objc:conflict:::tabs-1-local-wins]
+Local Wins::
++
+--
+
+[source, objc]
+----
+
+@interface LocalWinConflictResolver :NSObject<CBLConflictResolver>
+@end
+
+@implementation LocalWinConflictResolver
+- (CBLDocument*) resolve:(CBLConflict*)conflict {
+    return conflict.localDocument;
+}
+
+@end
+
+----
+--
+
+[#objc:conflict:::tabs-1-remote-wins]
+Remote Wins::
++
+--
+
+[source, objc]
+----
+
+@interface RemoteWinConflictResolver:NSObject<CBLConflictResolver>
+@end
+
+@implementation RemoteWinConflictResolver
+- (CBLDocument*) resolve:(CBLConflict*)conflict {
+    return conflict.remoteDocument;
+}
+
+@end
+
+----
+
+--
+
+[#objc:conflict:::tabs-1-merge]
+Merge::
++
+--
+
+[source, objc]
+----
+
+@interface MergeConflictResolver:NSObject<CBLConflictResolver>
+@end
+
+@implementation MergeConflictResolver
+- (CBLDocument*) resolve:(CBLConflict*)conflict {
+    NSDictionary *localDict = conflict.localDocument.toDictionary;
+    NSDictionary *remoteDict = conflict.remoteDocument.toDictionary;
+
+    NSMutableDictionary *result = [NSMutableDictionary dictionaryWithDictionary:localDict];
+    [result addEntriesFromDictionary:remoteDict];
+
+    return [[CBLMutableDocument alloc] initWithID:conflict.documentID
+                                             data:result];
+}
+
+@end
+
+----
+
+--
+=====
+
+====
+// end::handling-conflicts-conflict-resolvers[]
+
+When a null document is returned by the resolver, the conflict will be resolved as a document deletion.
+
+
+[discrete#objc:conflict:::important-guidelines-and-best-practices]
+==== Important Guidelines and Best Practices
+
+.Points of Note:
+* If you have multiple replicators, it is recommended that instead of distinct resolvers, you should use a unified conflict resolver across all replicators.
+Failure to do so could potentially lead to data loss under exception cases or if the app is terminated (by the user or an app crash) while there are pending conflicts.
+* If the document ID of the document returned by the resolver does not correspond to the document that is in conflict then the replicator will log a warning message.
++
+IMPORTANT: Developers are encouraged to review the warnings and fix the resolver to return a valid document ID.
+
+* If a document from a different database is returned, the replicator will treat it as an error.
+A <<objc:conflict:::replication-events,document replication event>> will be posted with an error and an error message will be logged.
++
+IMPORTANT: Apps are encouraged to observe such errors and take appropriate measures to fix the resolver function.
+
+* When the replicator is stopped, the system will attempt to resolve outstanding and pending conflicts before stopping.
+Hence apps should expect to see some delay when attempting to stop the replicator depending on the number of outstanding documents in the replication queue and the complexity of the resolver function.
+* If there is an exception thrown in the `resolve()` method, the exception will be caught and handled:
+** The conflict to resolve will be skipped.
+// TODO: regarding the following point, does that mean the replicator is stopped when an exception is thrown?
+The pending conflicted documents will be resolved when the replicator is restarted.
+** The exception will be reported in the warning logs.
+** The exception will be reported in the <<objc:conflict:::replication-events,document replication event>>.
++
+IMPORTANT: While the system will handle exceptions in the manner specified above, it is strongly encouraged for the resolver function to catch exceptions and handle them in a way appropriate to their needs.
+
+[discrete#objc:conflict:::configure-the-replicator]
+==== Configure the Replicator
+
+The implemented custom conflict resolver can be registered on the replicator configuration object.
+The default value of the conflictResolver is `null`.
+When the value is `null`, the default conflict resolution will be applied.
+
+.A Conflict Resolver
+[#wx-conflict-resolver]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:conflict:::wx-conflict-resolver]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="replication-conflict-resolver", indent=0]
+NSURL *url = [[NSURL alloc] initWithString:@"ws://localhost:4984/getting-started-db"];
+CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
+CBLCollectionConfiguration *collectionConfig = [[CBLCollectionConfiguration alloc] init];
+collectionConfig.conflictResolver = [[LocalWinConflictResolver alloc] init];
+
+CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithTarget:target];
+[replConfig addCollection:collection config:collectionConfig];
+
+self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
+[self.replicator start];
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+[discrete#objc:conflict:::conflicts-when-saving]
+=== Conflicts when Updating
+
+
+When updating a document, you need to consider the possibility of update conflicts.
+Update conflicts can occur when you try to update a document that’s been updated since you read it.
+
+
+.How Updating May Cause Conflicts
+====
+Here's a typical sequence of events that would create an update conflict:
+
+. Your code reads the document's current properties, and constructs a modified copy to save.
+. Another thread (perhaps the replicator) updates the document, creating a new revision with different properties.
+. Your code updates the document with its modified properties, for example using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)saveDocument:error:[CBLDatabase saveDocument:error:].
+====
+
+[discrete#objc:conflict:::automatic-conflict-resolution-2]
+==== Automatic Conflict Resolution
+
+In Couchbase Lite, by default, the conflict is automatically resolved and only one document update is stored in the database.
+The Last-Write-Win (LWW) algorithm is used to pick the winning update.
+So in effect, the changes from step 2 would be overwritten and lost.
+
+If the probability of update conflicts is high in your app and you wish to avoid the possibility of overwritten data, the `save` and `delete` APIs provide additional method signatures with concurrency control:
+
+.Currency Control Signatures
+====
+Save operations::
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)saveDocument:concurrencyControl:error:[CBLDatabase saveDocument:concurrencyControl:error:] -- attempts to save the document with a concurrency control.
++
+The concurrency control parameter has two possible values:
+
+* `lastWriteWins` (default): The last operation wins if there is a conflict.
+* `failOnConflict`: The operation will fail if there is a conflict.
++
+In this case, the app can detect the error that is being thrown, and handle it by re-reading the document, making the necessary conflict resolution, then trying again.
+
+Delete operations::
+As with save operations, delete operation also have two method signatures, which specify how to handle a possible conflict:
+
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)deleteDocument:error:[CBLDatabase deleteDocument:error:]: The last write will win if there is a conflict.
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)deleteDocument:concurrencyControl:error:[CBLDatabase -deleteDocument:concurrencyControl:error:]: attempts to delete the document with a concurrency control.
+
++
+The concurrency control parameter has two possible values:
+** `lastWriteWins` (default): The last operation wins if there is a conflict.
+** `failOnConflict`: The operation will fail if there is a conflict.
+In this case, the app can detect the error that is being thrown, and handle it by re-reading the document, making the necessary conflict resolution, then trying again.
+====
+
+[discrete#objc:conflict:::custom-conflict-handlers]
+==== Custom Conflict Handlers
+// :no-footer:
+Developers can hook a conflict handler when saving a document so they can easily handle the conflict in a single save method call.
+
+To implement custom conflict resolution when saving a document, apps must call the `save` method with a conflict handler block ( https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)saveDocument:conflictHandler:error:[CBLDatabase saveDocument:conflictHandler:error:]).
+
+// tag::handling-conflicts-custom-merge[]
+The following code snippet shows an example of merging properties from the existing document (`current`) into the one being saved (`new`).
+In the event of conflicting keys, it will pick the key value from `new`.
+
+.Merging document properties
+[#ex-merge-props]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:conflict:::ex-merge-props]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="update-document-with-conflict-handler", indent=0]
+CBLDocument *doc = [collection documentWithID:@"xyz" error:&error];
+CBLMutableDocument *mutableDocument = [doc toMutable];
+[mutableDocument setString:@"apples" forKey:@"name"];
+
+[collection saveDocument:mutableDocument
+       conflictHandler:^BOOL(CBLMutableDocument *new, CBLDocument *current) {
+           NSDictionary *currentDict = current.toDictionary;
+           NSDictionary *newDict = new.toDictionary;
+
+           NSMutableDictionary *result = [NSMutableDictionary dictionaryWithDictionary:currentDict];
+           [result addEntriesFromDictionary:newDict];
+           [new setData:result];
+           return YES;
+       }
+                 error:&error];
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+
+
+// end::handling-conflicts-custom-merge[]
+
+// DO NOT EDIT OR REMOVE
+// inclusion
+//:param-how: //:param-reference: reference-deploy
+
+
+
+
+[discrete#objc:conflict:::related-content]
+=== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+==== {empty}
+.How to
+* xref:objc:p2psync-websocket-using-passive.adoc[Passive Peer]
+* xref:objc:p2psync-websocket-using-active.adoc[Active Peer]
+
+
+.
+
+[discrete.colum#objc:conflict:::-2n]
+==== {empty}
+.Concepts
+* xref:objc:landing-p2psync.adoc[Peer-to-Peer Sync]
+
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc[API References]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#objc:conflict:::-3]
+==== {empty}
+.Community Resources ...
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Getting Started with Peer-to-Peer Synchronization]
+
+
+
+
+++++
+</div>
+++++
+// DO NOT EDIT OR REMOVE
+// END -- inclusion -- common-conflict.adoc
+
+
+== https://docs.couchbase.com/mobile/3.2.0/couchbase-lite-objc/index.html[API&#160;References]
+

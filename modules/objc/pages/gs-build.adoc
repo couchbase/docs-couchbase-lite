@@ -1,54 +1,339 @@
-= Build and Run
+:docname: gs-build
+:page-module: objc
+:page-relative-src-path: gs-build.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#objc:gs-build:::]
+=== Build and Run
 :page-aliases: start/objc-gs-build.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Build and run a starter app to validate your install of Couchbase Lite on Objective-C
 :keywords: mobile edge nosql api iOS objective-c web-app device-app
 
-include::partial$_set_page_context_for_objc.adoc[]
+
+
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+// BEGIN::module page attributes
+
+//
+// CBL-Obj-C Maintenance release number
+//
+:maintenance: 1
+//
+
+// VECTOR SEARCH attributes
+//
+
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+
+// API Reference Links
+//
+//
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DATABASE CLASSES
+
+
+// Docuument Class
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+//Database.SAVE
+
+
+
+//Database.DELETE
+
+
+//Database.COMPACT
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)compact:[CBLDatabase.compact()]
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+
+
+
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/[Query Class index]
+
+
+// ArrayFunction class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLWhere.html
+// NOT SET[Where]
+
+// orderby class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLOrderBy.html
+
+// GroupBy class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLGroupBy.html
+// NOT SET[GroupBy]
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module objc
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+
+// Note there is a replicator.status property AND
+// a ReplicationStatus class/struct --- oh yes, easy to confuse.
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/s:18CouchbaseLiteobjc10ReplicatorC13ActivityLevelO
+
+
+
+
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+
+// Meta API
+
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objcLogging.html[CBLLogging classes]
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--objc}
+// END::Local page attributes
 
 // removed commented out docs-mobile _attributes-shared link
 // include::ROOT:partial$_define_page_index.adoc[]
 // include::ROOT:partial$_show_glossary_links.adoc[]
 // include::ROOT:partial$_define_component_attributes.adoc[]
-// include::{lang-mod-objc}:partial$_define_module_attributes.adoc[]
+// include::objc:partial$_define_module_attributes.adoc[]
 
 // // BEGIN::Local page attributes
 // :blank-field: ____
-// :lang-title: {lang-title-objc}
-// :module: {lang-mod-objc}
-// :packageNm: couchbase-lite-{module}
-// :source-language: {lang-name-objc}
-// snippet: {snippets-content--objc}
-// :url-issues: {url-github-cbl}{module}/issues
+// :lang-title: Objective C
+// :module: objc
+// :packageNm: couchbase-lite-objc
+// :source-language: objc
+// snippet: objc:example$code_snippets/SampleCodeTest.m
+// :url-issues: https://github.com/couchbase/couchbase-lite-objc/issues
 
 // END::Local page attributes
-include::{root-partials}_show_page_header_block.adoc[]
+[abstract]
+--
+Description -- _{description}_ +
+--
 
 
-== Quick Steps
+[discrete#objc:gs-build:::quick-steps]
+==== Quick Steps
 
 . Within XCode, create a new Objective-C app project
-. Within the *ViewController.m* file, replace the boilerplate codein with that shown in <<ex-starter-code>>.
+. Within the *ViewController.m* file, replace the boilerplate codein with that shown in <<objc:gs-build:::ex-starter-code>>.
 Note you can also get this from github.
 . Build and Run the code. +
-You should see the document ID and property printed to the console, indicating that the document was successfully persisted to the database as shown in <<img-starter-code>>
+You should see the document ID and property printed to the console, indicating that the document was successfully persisted to the database as shown in <<objc:gs-build:::img-starter-code>>
 
-[#img-starter-code]
+[#objc:gs-build:::img-starter-code]
 .Console log output
-image::getting-started-ios.png[]
+image::couchbase-lite/current/objc/_images/getting-started-ios.png[]
 
 
 .Get Started code example
-[#ex-starter-code]
+[#objc:gs-build:::ex-starter-code]
 ====
 This snippet demonstrates how to run basic CRUD operations, a simple Query and running bi-directional replications with Sync Gateway.
 
-[source, {source-language}, subs="attributes+, macros+"]
+[source, objc, subs="attributes+, macros+"]
 ----
 
-include::example$code_snippets/GettingStarted.m[]
+//
+//  GettingStarted.m
+//  threeBeta01prod
+//
+//  Created by Ian Bridge on 04/10/2021.
+//
+
+#import "GettingStarted.h"
+#import <CouchbaseLite/CouchbaseLite.h>
+
+@implementation GettingStarted
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+    // Get the database (and create it if it doesn’t exist).
+
+    bool *testReplication;
+    testReplication = false;
+
+    NSError *error;
+    CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
+
+    // Create a new document (i.e. a record) in the database.
+    CBLMutableDocument *mutableDoc = [[CBLMutableDocument alloc] init];
+    [mutableDoc setFloat:2.0 forKey:@"version"];
+    [mutableDoc setString:@"SDK" forKey:@"type"];
+
+    // Save it to the database.
+    [database saveDocument:mutableDoc error:&error];
+
+    // Update a document.
+    CBLMutableDocument *mutableDoc2 = [[database documentWithID:mutableDoc.id] toMutable];
+    [mutableDoc2 setString:@"Objective-C" forKey:@"language"];
+    [database saveDocument:mutableDoc2 error:&error];
+
+    CBLDocument *document = [database documentWithID:mutableDoc2.id];
+    // Log the document ID (generated by the database)
+    // and properties
+    NSLog(@"Document ID :: %@", document.id);
+    NSLog(@"Learning %@", [document stringForKey:@"language"]);
+
+    // Create a query to fetch documents of type SDK.
+    CBLQueryExpression *type = [[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"SDK"]];
+    CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
+                                          from:[CBLQueryDataSource database:database]
+                                         where:type];
+
+    // Run the query
+    CBLQueryResultSet *result = [query execute:&error];
+    NSLog(@"Number of rows :: %lu", (unsigned long)[[result allResults] count]);
+
+    if (testReplication) {
+
+        // Create replicators to push and pull changes to and from the cloud.
+        NSURL *url = [[NSURL alloc] initWithString:@"ws://localhost:4984/getting-started-db"];
+        CBLURLEndpoint *targetEndpoint = [[CBLURLEndpoint alloc] initWithURL:url];
+        CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:targetEndpoint];
+        replConfig.replicatorType = kCBLReplicatorTypePushAndPull;
+
+        // Add authentication.
+        replConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"john" password:@"pass"];
+
+        // Create replicator (make sure to add an instance or static variable named _replicator)
+        CBLReplicator *_replicator = [CBLReplicator alloc];
+        _replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
+
+        // Listen to replicator change events.
+        [_replicator addChangeListener:^(CBLReplicatorChange *change) {
+            if (change.status.error) {
+                NSLog(@"Error code: %ld", change.status.error.code);
+            }
+        }];
+
+        // Start replication
+        [_replicator start];
+
+    }
+}
+
+
+@end
 
 ----
 
@@ -57,7 +342,7 @@ include::example$code_snippets/GettingStarted.m[]
 Before synchronizing documents to Sync Gateway you will need to disable App Transport Security.
 In the Xcode navigator, right-click on *Info.plist* and open it as a source file.
 
-image::info-plist.png[]
+image::couchbase-lite/current/objc/_images/info-plist.png[]
 
 Append the following inside of the `<dict>` XML tags to disable Application Transport Security (ATS). The ATS must be disabled because the sample code snippet uses the WebSocket protocol (WS://) over the unencrypted HTTP protocol — and would conflict with ATS's security requirements.
 
@@ -69,6 +354,59 @@ Append the following inside of the `<dict>` XML tags to disable Application Tran
 </dict>
 ----
 
-See: {sgw-install--xref}
+See: xref:sync-gateway::get-started-install.adoc[Install Sync Gateway]
 
-include::{root-partials}block-related-content-start.adoc[]
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+
+[discrete#objc:gs-build:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:objc:gs-prereqs.adoc[Prerequisites]
+* xref:objc:gs-install.adoc[Install]
+* xref:objc:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#objc:gs-build:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:objc:database.adoc[Databases]
+* xref:objc:document.adoc[Documents]
+* xref:objc:blob.adoc[Blobs]
+* xref:objc:replication.adoc[Remote Sync Gateway]
+* xref:objc:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#objc:gs-build:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+

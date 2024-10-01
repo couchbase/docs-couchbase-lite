@@ -1,3 +1,13 @@
+:docname: query-troubleshooting
+:page-module: swift
+:page-relative-src-path: query-troubleshooting.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#swift:query-troubleshooting:::]
+=== Query Troubleshooting
 // BEGIN -- page -- <module>-query-trouble-shooting.adoc
 // Uses:
 // -- attribute -- partial$ -- modules/<module>/pages/_partials
@@ -7,20 +17,742 @@
 // -- standard header file -- partial$_set_page_context_for_<module>.adoc[]
 // -- common module -- {root-commons}query-troubleshooting.adoc
 //
-= Query Troubleshooting
 :page-aliases: learn/swift-query-troubleshooting.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite Queries -- troubleshooting
 
-include::partial$_set_page_context_for_swift.adoc[]
 
-:param-related: {querybuilder--xref--predictive-query} | {query-live--xref} | {indexing--xref}
-:topic-group: Topic Group -- Querying
-:param-fullpage:
+
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+// BEGIN::module page attributes
+//
+// CBL-Swift Maintenance release number
+//
+
+// VECTOR SEARCH attributes
+//
+
+
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+// API Reference Links
+//
+//
+
+
+
+
+// Supporting Data Type Classes
+
+
+// DATABASE CLASSES
+
+
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+
+
+
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC7compactyyKF[Database.compact()]
+
+
+
+
+
+
+
+
+// links for documents pages
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Query class and methods
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/[Query Class index]
+
+
+
+// ArrayFunction class and methods
+
+
+// API Results Class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+
+// orderby class and methods
+//
+
+// GroupBy class and methods
+//
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module swift
+
+
+
+
+// Replicator API
+
+
+
+
+[Replicator.pendingDocumentIds()]
+
+
+
+// Replicator Status
+
+
+
+// :url-api-enum-replicator-status: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html[Status struct]
+// :url-api-enum-replicator-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/ActivityLevel.html[ActivityLevel enum]
+// :url-api-enum-replicator-progress: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Progress.html[Progress struct]
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC33serverCertificateVerificationModeAA06ServerghI0Ovp[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Metadata API
+
+
+
+// BEGIN Logs and logging references
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--swift}
+
+// END::Local page attributes
+
 // _show_page_header_block.adoc invoked in common module
-include::{root-commons}query-troubleshooting.adoc[]
+// BEGIN -- inclusion -- page/partial -- ROOT:partial$commons/common-query-troubleshooting.adoc
+// USED-IN: <source-language>-troubleshooting.adoc
+// Applies-to: All platforms, except Javascript
+
+// DO NOT EDIT
+// Only include this abstract if the inclusion is used as a full page, rather than as a component
+// Allow for over-riding of default abstract parameter values
+[abstract]
+--
+Description -- _{description}_ +
+_Abstract -- This content describes how to use the Couchbase Lite on Swift Query API's explain() method to examine a query_ +
+Related Content -- xref:swift:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:swift:query-live.adoc[Live Queries] | xref:swift:indexing.adoc[Indexing]
+--
+// DO NOT EDIT
+
+
+[discrete#swift:query-troubleshooting:::query-explain]
+==== Query Explain
+
+
+[discrete#swift:query-troubleshooting:::using]
+===== Using
+Query's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Query.html#/s:18CouchbaseLiteSwift5QueryC7explainSSyKF[explain()] method can provide useful insight when you are trying to diagnose query performance issues and-or optimize queries.
+To examine how your query is working, either embed the call inside your app (see: <<swift:query-troubleshooting:::use-qe-app>>), or use it interactively within a `cblite` shell (see: <<swift:query-troubleshooting:::use-qe-cblite>>).
+
+[#use-qe-app]
+.Using Query Explain in App
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#swift:query-troubleshooting:::use-qe-app]
+====
+
+
+// Show Main Snippet
+[source, swift]
+----
+include ::swift:example$code_snippets/SampleCodeTest.swift[tags="query-explain-all", indent=0]
+let query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.collection(collection))
+    .where(Expression.property("type").equalTo(Expression.string("university")))
+    .groupBy(Expression.property("country"))
+    .orderBy(Ordering.property("name").ascending())  // <.>
+
+print(try query.explain()) // <.>
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Construct your query as normal
+<.> Call the query's `explain` method; All output is sent to the application's log file.
+
+[#swift:query-troubleshooting:::use-qe-cblite]
+.Using Query Explain in cblite
+====
+[source, console]
+----
+cblite <your-database-name>.cblite2 // <.>
+
+(cblite) select --explain domains group by country order by country, name // <.>
+
+(cblite) query --explain {"GROUP_BY":[[".country"]],"ORDER_BY":[[".country"],[".name"]],"WHAT":[[".domains"]]} // <.>
+
+----
+<.> Within a terminal session open your database with `cblite` and enter your query
+<.> Here the query is entered as a N1QL-query using `select` +
+<.> Here the query is entered as a JSON-string using `query`
+====
+
+
+[discrete#swift:query-troubleshooting:::output]
+===== Output
+The output from `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Query.html#/s:18CouchbaseLiteSwift5QueryC7explainSSyKF[explain()]` remains the same whether invoked by an app, or `cblite` -- see <<swift:query-troubleshooting:::qe-output>> for an example of how it looks.
+
+[#swift:query-troubleshooting:::qe-output]
+.Query.explain() Output
+====
+
+[source, console]
+----
+SELECT fl_result(fl_value(_doc.body, 'domains')) FROM kv_default AS _doc WHERE (_doc.flags & 1 = 0) GROUP BY fl_value(_doc.body, 'country') ORDER BY fl_value(_doc.body, 'country'), fl_value(_doc.body, 'name') // <.>
+
+7|0|0| SCAN TABLE kv_default AS _doc // <.>
+12|0|0| USE TEMP B-TREE FOR GROUP BY
+52|0|0| USE TEMP B-TREE FOR ORDER BY
+
+{"GROUP_BY":[[".country"]],"ORDER_BY":[[".country"],[".name"]],"WHAT":[[".domains"]]} // <.>
+
+----
+
+====
+
+This output (<<swift:query-troubleshooting:::qe-output>>) comprises three main elements:
+
+<.> The translated SQL-query, which is not necessarily useful, being aimed more at Couchbase support and-or engineering teams.
+<.> The _SQLite_ query plan, which gives a high-level view of how the SQL query will be implemented.
+You can use this to identify potential issues and so optimize problematic queries.
+<.> The query in JSON-string format, which you can copy-and-paste directly into the _cblite_ tool.
+
+
+[discrete#swift:query-troubleshooting:::the-query-plan]
+==== The Query Plan
+
+
+[discrete#swift:query-troubleshooting:::format]
+===== Format
+The query plan section of the output displays a tabular form of the translated query's execution plan.
+It primarily shows how the data will be retrieved and, where appropriate, how it will be sorted for navigation and-or presentation purposes.
+For more on SQLite's Explain Query Plan -- see: https://www.sqlite.org/eqp.html
+
+[#swift:query-troubleshooting:::qry-plan]
+.A Query Plan
+====
+[source, console]
+----
+7|0|0| SCAN TABLE kv_default AS _doc // <.>
+12|0|0| USE TEMP B-TREE FOR GROUP BY // <.>
+52|0|0| USE TEMP B-TREE FOR ORDER BY // <.>
+----
+
+<.> *Retrieval method* -- This line shows the retrieval method being used for the query; here a sequential read of the database.
+Something you may well be looking to optimize -- see <<swift:query-troubleshooting:::ret-method>> for more.
+<.> *Grouping method* --- This line shows that the *Group By* clause used in the query requires the data to be sorted and that a b-tree will be used for temporary storage -- see <<swift:query-troubleshooting:::order-group>>.
+<.> *Ordering method* -- This line shows that the *Order By* clause used in the query requires the data to be sorted and that a b-tree will be used for temporary storage -- see <<swift:query-troubleshooting:::order-group>>.
+====
+
+
+[discrete#swift:query-troubleshooting:::ret-method]
+===== Retrieval Method
+The query optimizer will attempt to retrieve the requested data items as efficiently as possible, which generally will be by using one or more of the available indexes.
+The _retrieval method_ shows the approach decided upon by the optimizer -- see <<swift:query-troubleshooting:::ret-meths>>.
+
+[#ret-meths]
+.Retrieval methods
+[#swift:query-troubleshooting:::ret-meths#,cols="2,8"]
+|===
+|Retrieval Method | Description
+
+|Search
+|Here the query is able to access the required data directly using keys into the index.
+Queries using the Search mode are the fastest.
+
+|Scan Index
+|Here the query is able to retrieve the data by scanning all or part-of the index (for example when seeking to match values within a range).
+This type of query is slower than search, but at least benefits from the compact and ordered form of the index.
+
+|Scan Table
+|Here the query must scan the database table(s) to retrieve the required data.
+It is the slowest of these methods and will benefit most from some form of optimization.
+|===
+
+When looking to optimize a query's retrieval method, consider whether:
+
+* Providing an additional index makes sense
+* You could use an existing index -- perhaps by restructuring the query to minimize wildcard use, or the reliance on functions that modify the query's interpretation of index keys (for example, 'lower')
+* You could reduce the data set being requested to minimize the query's footprint on the database
+
+[discrete#swift:query-troubleshooting:::order-group]
+===== Order and Group
+The `Use temp b-tree for` lines in the example indicate that the query requires sorting to cater for grouping and then sorting again to present the output results.
+Minimizing, if not eliminating, this ordering and re-ordering will obviously reduce the amount of time taken to process your query.
+
+Ask "is the grouping and-or ordering absolutely necessary?": if it isn't, drop it or modify it to minimize its impact.
+
+
+[discrete#swift:query-troubleshooting:::queries-and-indexes]
+==== Queries and Indexes
+
+Querying documents using a pre-existing database index is much faster because an index narrows down the set of documents to examine -- see: the xref:swift:query-troubleshooting.adoc[Query Troubleshooting] topic.
+
+When planning the indexes you need for your database, remember that while indexes make queries faster, they may also:
+
+* Make writes slightly slower, because each index must be updated whenever a document is updated
+* Make your Couchbase Lite database slightly larger.
+
+Too many indexes may hurt performance.
+Optimal performance depends on designing and creating the _right_ indexes to go along with your queries.
+
+.Constraints
+[NOTE]
+Couchbase Lite for ios does not currently support partial value indexes; indexes with non-property expressions.
+You should only index with properties that you plan to use in the query.
+
+
+
+The Query optimizer converts your query into a parse tree that groups zero or more _and-connected_ clauses together (as dictated by your `where` conditionals) for effective query engine processing.
+
+Ideally a query will be be able to satisfy its requirements entirely by either directly accessing the index or searching sequential index rows.
+Less good is if the query must scan the whole index; although the compact nature of most indexes means this is still much faster than the alternative of scanning the entire database with no help from the indexes at all.
+
+Searches that begin with or rely upon an inequality with the primary key are inherently less effective than those using a primary key equality.
+
+
+[discrete#swift:query-troubleshooting:::working-with-the-query-optimizer]
+==== Working with the Query Optimizer
+You may have noticed that sometimes a query runs faster on a second run, or after re-opening the database, or after deleting and recreating an index.
+This typically happens when SQL Query Optimizer has gathered sufficient stats to recognize a means of optimizing a sub-optimal query.
+
+If only those stats were available from the start.
+In fact they are gathered after certain events, such as:
+
+* Following index creation
+* On a database close
+* When running a database compact.
+
+So, if your analysis of the <<swift:query-troubleshooting:::qe-output,Query Explain output>> indicates a sub-optimal query and your rewrites fail to sufficiently optimize it, consider compacting the database.
+Then re-generate the Query Explain and note any improvements in optimization.
+They may not, in themselves, resolve the issue entirely; but they can provide a uesful guide toward further optimizing changes you could make.
+
+
+[discrete#swift:query-troubleshooting:::use-like-based-queries]
+==== Wildcard and Like-based Queries
+
+Like-based searches can use the index(es) only if:
+
+* The search-string doesn't start with a wildcard
+* The primary search expression uses a property that is indexed key
+* The search-string is a constant known at run time) (that is, not a value derived during processing of the query)
+
+To illustrate this we can use a modified query from the Mobile Travel Sample application; replacing a simple equality test with a 'LIKE'
+
+In <<swift:query-troubleshooting:::like-wild-pfx-qry>> we use a wildcard prefix and suffix.
+You can see that the query plan decides on a retrieval method of `Scan Table`.
+
+TIP: For more on indexes -- see: xref:swift:indexing.adoc[Indexing]
+
+[#like-wild-pfx-qry]
+.Like with Wildcard Prefix
+// BEGIN inclusion -- block -- block_tabbed_code.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// This version does not add an example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+
+// Show Main Snippet
+[sourc#swift:query-troubleshooting:::like-wild-pfx-qrye, swift]
+----
+include ::swift:example$code_snippets/SampleCodeTest.swift[tags="query-explain-like", indent=0]
+let query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.collection(collection))
+    .where(Expression.property("type").like(Expression.string("%hotel%")) // <.>
+            .and(Expression.property("name").like(Expression.string("%royal%"))));
+
+print(try query.explain())
+
+----
+
+
+
+
+
+// Tidy-up attributes created
+// END -- block_tabbed_code.adoc
+<.> The indexed property, TYPE, cannot use its index because of the wildcard prefix.
+
+
+.Resulting Query Plan
+[source, console]
+----
+2|0|0| SCAN TABLE kv_default AS _doc
+----
+
+By contrast, by removing the wildcard prefix `%` (in <<swift:query-troubleshooting:::like-no-wild-pfx-qry>>), we see that the query plan's retrieval method changes to become an index search.
+Where practical, simple changes like this can make significant differences in query performance.
+
+.Like with No Wildcard-prefix
+[#like-no-wild-pfx-qry]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#swift:query-troubleshooting:::like-no-wild-pfx-qry]
+====
+
+
+// Show Main Snippet
+[source, swift]
+----
+include ::swift:example$code_snippets/SampleCodeTest.swift[tags="query-explain-nopfx", indent=0]
+let query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.collection(collection))
+    .where(Expression.property("type").like(Expression.string("hotel%")) // <.>
+            .and(Expression.property("name").like(Expression.string("%royal%"))));
+
+print(try query.explain());
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Simply removing the wildcard prefix enables the query optimizer to access the `typeIndex`, which results in a more efficient search.
+
+.Resulting Query Plan
+[source, bash]
+----
+3|0|0| SEARCH TABLE kv_default AS _doc USING INDEX typeIndex (<expr>>? AND <expr><?)
+----
+
+[discrete#swift:query-troubleshooting:::use-functions-wisely]
+==== Use Functions Wisely
+
+Functions are a very useful tool in building queries, but be aware that they can impact whether the query-optimizer is able to use your index(es).
+
+For example, you can observe a similar situation to that shown in <<swift:query-troubleshooting:::use-like-based-queries>> when using the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Function.html#/s:18CouchbaseLiteSwift8FunctionC5loweryAA18ExpressionProtocol_pAaE_pFZ[lower()]` function on an indexed property.
+
+.Query
+[#use-like-based-queries]
+// BEGIN inclusion -- block -- block_tabbed_code.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// This version does not add an example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+
+// Show Main Snippet
+[sourc#swift:query-troubleshooting:::use-like-based-queriese, swift]
+----
+include ::swift:example$code_snippets/SampleCodeTest.swift[tags="query-explain-function", indent=0]
+let query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.collection(collection))
+    .where(Function.lower(Expression.property("type").equalTo(Expression.string("hotel")))) // <.>
+
+print(try query.explain());
+
+----
+
+
+
+
+
+// Tidy-up attributes created
+// END -- block_tabbed_code.adoc
+<.> Here we use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Function.html#/s:18CouchbaseLiteSwift8FunctionC5loweryAA18ExpressionProtocol_pAaE_pFZ[lower()]` function in the _Where_ expression
+
+.Query Plan:
+[source, bash]
+----
+2|0|0| SCAN TABLE kv_default AS _doc
+----
+
+// END: common-query-troubleshooting.adoc
+
+But removing the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Function.html#/s:18CouchbaseLiteSwift8FunctionC5loweryAA18ExpressionProtocol_pAaE_pFZ[lower()]` function, changes things:
+
+.Query
+// BEGIN inclusion -- block -- block_tabbed_code.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// This version does not add an example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+
+// Show Main Snippet
+[source, swift]
+----
+include ::swift:example$code_snippets/SampleCodeTest.swift[tags="query-explain-nofunction", indent=0]
+let query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.collection(collection))
+    .where(
+        Expression.property("type").equalTo(Expression.string("hotel"))); // <.>
+
+print(try query.explain());
+
+----
+
+
+
+
+
+// Tidy-up attributes created
+// END -- block_tabbed_code.adoc
+<.> Here we have removed `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Function.html#/s:18CouchbaseLiteSwift8FunctionC5loweryAA18ExpressionProtocol_pAaE_pFZ[lower()]` from the _Where_ expression
+
+.Query plan
+----
+3|0|0| SEARCH TABLE kv_default AS _doc USING INDEX typeIndex (<expr>=?)
+----
+
+Knowing this, you can consider how you create the index; for example, using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Function.html#/s:18CouchbaseLiteSwift8FunctionC5loweryAA18ExpressionProtocol_pAaE_pFZ[lower()] when you create the index and then always using lowercase comparisons.
+
+[discrete#swift:query-troubleshooting:::optimization-considerations]
+==== Optimization Considerations
+
+Try to minimize the amount of data retrieved.
+Reduce it down to the few properties you really *do* need to achieve the required result.
+
+Consider fetching details _lazily_.
+You could break complex queries into components.
+Returning just the doc-ids, then process the array of doc-ids using either the Document API or a query thats uses the array of doc-ids to return information.
+
+Consider using paging to minimize the data returned when the number of results returned is expected to be high.
+Getting the whole lot at once will be slow and resource intensive: Plus does anyone want to access them all in one go?
+Instead retrieve batches of information at a time, perhaps using `Where` method's `limit( offset)` feature to set a starting point for each batch subsequent batch.
+Although, note that using query offsets becomes increasingly less effective as the overhead of skipping a growing number of rows each time increases. You can work around this, by instead using ranges of search-key values. If the last search-key value of batch one was 'x' then that could become the starting point for your next batch and-so-on.
+
+Optimize document size in design.
+Smaller docs load more quickly.
+Break your data into logical linked units.
+
+Consider Using Full Text Search instead of complex like or regex patterns -- see xref:swift:fts.adoc[Full Text Search]. +
+{empty}
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+[discrete#swift:query-troubleshooting:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:swift:querybuilder.adoc[QueryBuilder]
+* xref:swift:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
+* xref:swift:query-live.adoc[Live Queries]
+* xref:swift:fts.adoc[Full Text Search]
+
+
+.
+
+[discrete.colum#swift:query-troubleshooting:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:swift:query-n1ql-mobile-querybuilder-diffs.adoc[{sqlpp} Mobile - Querybuilder  Differences]
+* xref:swift:query-n1ql-mobile-server-diffs.adoc[{sqlpp} Mobile - {sqlpp} Server Differences]
+* xref:swift:query-resultsets.adoc[Query Resultsets]
+* xref:swift:query-troubleshooting.adoc[Query Troubleshooting]
+* xref:swift:query-live.adoc[Live Queries]
+
+* xref:swift:database.adoc[Databases]
+* xref:swift:document.adoc[Documents]
+* xref:swift:blob.adoc[Blobs]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#swift:query-troubleshooting:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+// void used attributes and locals
+// End; inclusion
 // block-related-content-query.adoc invoked in common module
 
 // END -- page -- <module>-query-trouble-shooting.adoc
+
+
+== Search
+

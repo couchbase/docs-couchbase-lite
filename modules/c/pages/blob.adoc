@@ -1,17 +1,381 @@
-= Blobs
+:docname: blob
+:page-module: c
+:page-relative-src-path: blob.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#c:blob:::]
+== Blobs
 :page-aliases: clang:blob.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite database data model concepts - blobs
 
-include::partial$_set_page_context_for_c.adoc[]
-
-// :param-name: {lang-name-c}
-// :param-title: {lang-title-c}
-// :param-module: {lang-mod-c}
-
-include::{root-commons}blob.adoc[]
 
 
-include::{root-partials}block-related-content-data.adoc[]
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+
+//
+// CBL-C Maintenance release number
+//
+//
+
+// VECTOR SEARCH attributes
+//
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+//
+//
+
+
+
+
+
+
+// DATABASE module and functions
+// Database(im)
+
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#gaa4b06dcb7427cafeabde8486f5f03f10[CBLDatabase_PerformMaintenance()]
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+
+// DOCUMENTS
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+
+
+
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__[Query Class index]
+
+
+// ArrayFunction class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__Where.html
+// NOT SET[Where]
+
+// orderby class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__OrderBy.html
+
+// GroupBy class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__GroupBy.html
+// NOT SET[GroupBy]
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module c
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+// Note there is a replicator.status property AND
+// a ReplicationStatus class/struct --- oh yes, easy to confuse.
+
+
+
+
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+// Repl Cfg Props
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+// CBLPropertyEncryptor gab116a23be8bd24b86349379f370ef60c
+// CBLPropertyDecryptor ga24a60a3d6f9816e1d32464cc31a15c0c
+// CBLEncryptable gaaf20d661f9684632a005f0a4e52656b3
+
+// Meta API
+
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/htmlLogging.html[CBLLogging classes]
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--c}
+// END::Local page attributes
+
+// :param-name: c
+// :param-title: C
+// :param-module: c
+
+// Inclusion for use in {src-lang}-ref-api.adoc files
+// Blobs
+// = Blobs
+// :page-partial:
+// :page-layout: article
+// :page-status:
+// :page-edition:
+// :page-role:
+// :description: Couchbase mobile database blobs - concepts
+
+// include::partial$_set_page_context_for_c.adoc[]
+
+[discrete#c:blob:::introduction]
+=== Introduction
+
+pass:q,a[Couchbase{nbsp}Lite] for C uses _blobs_ to store the contents of images, other media files and similar format files as binary objects.
+
+The blob itself is not stored in the document.
+It is held in a separate content-addressable store indexed from the document and retrieved only on-demand.
+
+When a document is synchronized, the pass:q,a[Couchbase{nbsp}Lite] replicator adds an `_attachments` dictionary to the document's properties if it contains a blob -- see <<c:blob:::img-blob>>.
+
+
+[discrete#c:blob:::blob-objects]
+=== Blob Objects
+
+The blob as an object appears in a document as dictionary property -- see, for example _avatar_ in <<c:blob:::img-blob>>.
+
+Other properties include `length` (the length in bytes), and optionally `content_type` (typically, its MIME type).
+
+The blob's data (an image, audio or video content) is not stored in the document, but in a separate content-addressable store, indexed by the `digest` property -- see <<c:blob:::lbl-using>>.
+
+
+[discrete#c:blob:::constraints]
+==== Constraints
+
+* pass:q,a[Couchbase{nbsp}Lite] +
+Blobs can be arbitrarily large.
+They are only read on demand, not when you load a the _document_.
+
+* pass:q,a[sync{nbsp}gateway] +
+The maximum content size is 20 MB per blob.
+If a document's blob is over 20 MB, the document will be replicated but not the blob.
+
+
+[discrete#c:blob:::lbl-using]
+=== Using Blobs
+
+The `Blob` API lets you access the blob's data content as in-memory data (a `Data` object) or as an `InputStream`.
+
+The code in <<c:blob:::ex-blob>> shows how you might add a blob to a document and save it to the database. Here we use `avatar` as the property key and a jpeg file as the blob data.
+
+.Working with blobs
+[#ex-blob]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#c:blob:::ex-blob]
+====
+
+
+// Show Main Snippet
+[source, c]
+----
+include ::c:example$code_snippets/main.cpp[tags="blob", indent=0]
+// Note: Reading the data is implementation dependent, as with prebuilt databases
+// NOTE: No error handling, for brevity (see getting started)
+
+uint8_t buffer[128000];
+FILE* avatar_file = fopen("avatar.jpg", "rb");
+size_t read = fread(buffer, 1, 128000, avatar_file); // <.>
+
+FLSliceResult avatar = FLSliceResult_CreateWith(buffer, read);
+CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("image/jpeg"), FLSliceResult_AsSlice(avatar)); // <.>
+FLSliceResult_Release(avatar);
+
+CBLError err;
+FLMutableDict properties = CBLDocument_MutableProperties(newTask);
+FLSlot_SetBlob(FLMutableDict_Set(properties, FLSTR("avatar")), blob);
+CBLCollection_SaveDocument(collection, newTask, &err); // <.>
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Here we prepare a document to use for the example
+<.> Create the blob using the retrieved image. +
+ Here we set `image/jpg` as the blob MIME type.
+<.> Add the blob to a document, using `avatar` as the property key +
+Saving the document generates a random access key for each blob stored in `digest` a SHA-1 encrypted property -- see: <<c:blob:::img-blob>>. +
+We can use the `avatar` key to retrieve the blob object later.
+Note, this is the identity of the blob assigned by us; the replication auto-generates a blob for attachments and assigns its own name to it (for example, `blob_1`) -- see <<c:blob:::img-blob>>.
+The `digest` key will be the same as generated when we saved the blob document.
+
+
+[discrete#c:blob:::syncing]
+=== Syncing
+When a document containing a blob object is synchronized, the pass:q,a[Couchbase{nbsp}Lite] replicator generates an `_attachments` dictionary with an auto-generated name for each blob attachment.
+This is different to the `avatar` key and is used internally to access the blob content.
+
+If you view a sync'd blob document in {cbs} Admin Console, you will see something similar to <<c:blob:::img-blob>>, which shows the document with its generated `_attachments` dictionary, including the `digest`.
+
+.Sample Blob Document
+[#c:blob:::img-blob]
+image::couchbase-lite/current/_images/attach-replicated.png[]
+
+
+
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+[discrete#c:blob:::related-content]
+=== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+==== {empty}
+.How to . . .
+* xref:c:gs-prereqs.adoc[Prerequisites]
+* xref:c:gs-install.adoc[Install]
+* xref:c:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#c:blob:::-2n]
+==== {empty}
+.Learn more . . .
+* xref:c:database.adoc[Databases]
+* xref:c:document.adoc[Documents]
+* xref:c:blob.adoc[Blobs]
+* xref:c:replication.adoc[Remote Sync Gateway]
+* xref:c:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#c:blob:::-3]
+==== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+

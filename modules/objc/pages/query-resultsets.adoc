@@ -1,24 +1,755 @@
-= Result Sets
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
+:docname: query-resultsets
+:page-module: objc
+:page-relative-src-path: query-resultsets.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#objc:query-resultsets:::]
+=== Query Resultsets
 :page-role:
 :description: How to use Couchbase Lite Query's Result Sets
 :keywords: query, sql, n1ql, fuzzy-matching
 
-include::partial$_set_page_context_for_objc.adoc[]
-
-:topic-group: query
-:param-related: {querybuilder--xref} |  {query-n1ql-mobile--xref} |  {querybuilder--xref--predictive-query} | {query-live--xref} | {indexing--xref}
-include::{root-partials}_show_page_header_block.adoc[]
-
-:is_fullpage:
-include::{root-commons}query-resultsets.adoc[]
-
-== JSON Result Sets
-
-include::{root-commons}querybuilder-jsonresult.adoc[subs="macros,attributes"]
 
 
-include::{root-partials}block-related-content-data.adoc[]
+// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
+//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
+//          making all attributes available for use on the page.
+//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
 
-:is_fullpage!:
+// BEGIN::module page attributes
+
+//
+// CBL-Obj-C Maintenance release number
+//
+:maintenance: 1
+//
+
+// VECTOR SEARCH attributes
+//
+
+
+
+// BEGIN - Set attributes pointing to API references for this module
+
+
+// API Reference Links
+//
+//
+
+
+
+// Supporting Data Type Classes
+
+
+
+// DATABASE CLASSES
+
+
+// Docuument Class
+
+
+
+
+// Begin -- DatabaseConfiguration
+// End -- DatabaseConfiguration
+
+//Database.SAVE
+
+
+
+//Database.DELETE
+
+
+//Database.COMPACT
+// deprecated 2.8
+//
+// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)compact:[CBLDatabase.compact()]
+
+
+
+
+
+
+// QUERY RELATED CLASSES and METHODS
+
+// Result Classes and Methods
+
+
+
+
+// Query class and methods
+
+
+
+
+
+// Expression class and methods
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/[Query Class index]
+
+
+// ArrayFunction class and methods
+
+
+// Function class and methods
+//
+
+// Where class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLWhere.html
+// NOT SET[Where]
+
+// orderby class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLOrderBy.html
+
+// GroupBy class and methods
+//
+// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLGroupBy.html
+// NOT SET[GroupBy]
+
+// URLEndpointConfiguration
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// diag: Env+Module objc
+
+
+// Replicator API
+
+
+
+
+
+
+
+
+
+
+
+// Note there is a replicator.status property AND
+// a ReplicationStatus class/struct --- oh yes, easy to confuse.
+
+//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/s:18CouchbaseLiteobjc10ReplicatorC13ActivityLevelO
+
+
+
+
+
+
+
+// ReplicatorConfiguration API
+
+
+
+
+
+
+
+
+
+
+
+// Begin Replicator Retry Config
+// End Replicator Retry Config
+
+
+// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
+
+// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
+
+
+
+
+
+
+
+
+// Meta API
+
+
+
+
+// BEGIN Logs and logging references
+// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objcLogging.html[CBLLogging classes]
+
+
+
+
+
+
+
+// END  Logs and logging references
+
+// End define module specific attributes
+
+// BEGIN::module page attributes
+// :snippet-p2psync-ws: {snippets-p2psync-ws--objc}
+// END::Local page attributes
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:objc:querybuilder.adoc[QueryBuilder] |  xref:objc:query-n1ql-mobile.adoc[{sqlpp} for Mobile] |  xref:objc:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:objc:query-live.adoc[Live Queries] | xref:objc:indexing.adoc[Indexing]
+--
+
+// BEGIN -- inclusion -- common-query-resultsets.adoc
+//  Purpose -- describes the use of the query's resultset
+//
+// // BEGIN::REQUIRED EXTERNALS
+// :this-module: {par-module}
+// :this-lang-title: {par-lang-title}
+// :this-packageNm: {par-packageNm}
+// :this-source-language: {par-source-language}
+// snippet: {par-snippet}
+//:this-url-issues: {par-url-issues}
+// END::REQUIRED EXTERNALS
+
+// BEGIN::Local page attributes
+
+// END::Local page attributes
+
+
+[discrete#objc:query-resultsets:::query-execution]
+==== Query Execution
+The execution of a Couchbase Lite for Objective-C's database query returns an array of results, a result set.
+
+Each row of the result set represents the data returned from a document that met the conditions defined by the `WHERE` statement of your query.
+The composition of each row is determined by the `SelectResult` expressions provided in the `SELECT` statement.
+
+[discrete#objc:query-resultsets:::lbl-rtnd-res]
+==== Returned Results
+<<objc:query-resultsets:::lbl-rtn-all>>
+| <<objc:query-resultsets:::lbl-rtn-id>>
+| <<objc:query-resultsets:::lbl-rtn-specific>>
+
+The types of SelectResult formats you may encounter include those generated by :
+
+* `QueryBuilder.select(SelectResult.all())` -- <<objc:query-resultsets:::lbl-rtn-all,Using All>>
+* `QueryBuilder.select(SelectResult.expression(Meta.id))` -- <<objc:query-resultsets:::lbl-rtn-id,Using Doc Id>> Metadata such as the `_id`
+* `QueryBuilder.select(SelectResult.property("myProp"))` -- <<objc:query-resultsets:::lbl-rtn-specific,Using Specific Properties>>
+
+
+[discrete#objc:query-resultsets:::lbl-rtn-all]
+===== Return All Document Properties
+The SelectResult returned by `SelectResult.all()` is a dictionary object, with the database name as the key and the document properties as an array of key-value pairs
+
+--
+.Returning All Properties
+[#objc:query-resultsets:::ex-result-id]
+====
+[pass:q,a[source, json, subs="+attributes, +macros"], role="no-callouts"]
+----
+
+[
+  {
+    "travel-sample": { // <.>
+      "callsign": "MILE-AIR",
+      "country": "United States",
+      "iata": "Q5",
+      "icao": "MLA",
+      "id": 10,
+      "name": "40-Mile Air",
+      "type": "airline"
+    }
+  },
+  {
+    "travel-sample": { // <.>
+      "callsign": "ALASKAN-AIR",
+      "country": "United States",
+      "iata": "AA",
+      "icao": "AAA",
+      "id": 10,
+      "name": "Alaskan Airways",
+      "type": "airline"
+    }
+  }
+]
+
+
+----
+====
+--
+
+
+[discrete#objc:query-resultsets:::lbl-rtn-id]
+===== Return Document Id Only
+The SelectResult returned by queries using a SelectResult expression of the form `SelectResult.expression(Meta.id)` comprises a dictionary object with `ID` as the key and the ID value as the value.
+
+--
+.Returning Meta Properties -- Document ID
+[#objc:query-resultsets:::ex-result-id]
+====
+[pass:q,a[source, json, subs="+attributes, +macros"]]
+----
+
+[
+  {
+    "id": "hotel123"
+  },
+  {
+    "id": "hotel456"
+  },
+]
+
+----
+====
+--
+
+
+[discrete#objc:query-resultsets:::lbl-rtn-specific]
+===== Return Specific Properties Only
+The SelectResult returned by queries using one or more SelectResult expressions of the form `SelectResult.expression(property("name")) )` comprises a key-value pair for each SelectResult expression in the query.
+The key being the property name.
+
+--
+.Returning Specific Properties
+[#objc:query-resultsets:::ex-result-props]
+====
+[pass:q,a[source, json, subs="+attributes, +macros"], role="no-callouts"]
+----
+
+[
+  { // <.>
+    "id": "hotel123",
+    "type": "hotel",
+    "name": "Hotel Ghia"
+  },
+  { // <.>
+    "id": "hotel456",
+    "type": "hotel",
+    "name": "Hotel Deluxe",
+  }
+]
+
+----
+====
+--
+
+[discrete#objc:query-resultsets:::lbl-process-resultset]
+==== Processing Results
+<<objc:query-resultsets:::lbl-acc-all>>
+| <<objc:query-resultsets:::lbl-acc-id>>
+| <<objc:query-resultsets:::lbl-acc-specific>>
+
+To retrieve the results of your query,  you need to execute it using `Query.execute`.
+
+The output from the execution is an array, with each array element representing the data from a document that matched your search criteria.
+
+To unpack the results you need to iterate through this array.
+Alternatively, you can convert the result to a JSON string -- see:
+
+
+[discrete#objc:query-resultsets:::lbl-acc-all]
+===== Access Document Properties - All Properties
+Here we look at how to access document properties when you have used SelectResult.all.
+
+In this case each array element is a dictionary structure with the database name as its key.
+The properties are presented in the value as an array of key-value pairs (property name/property value).
+
+You access the retrieved document properties by converting each row's value, in turn, to a dictionary -- as shown in <<objc:query-resultsets:::ex-acc-all>>.
+
+[#ex-acc-all]
+.Access All Properties
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:query-resultsets:::ex-acc-all]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="query-access-all", indent=0]
+CBLQueryResultSet *results = [query execute:&error];
+
+for (CBLQueryResult *result in results) {
+
+    NSDictionary *data = [result valueAtIndex:0];
+
+    // Use dictionary values
+    NSLog(@"id = %@", [data valueForKey:@"id"]);
+    NSLog(@"name = %@", [data valueForKey:@"name"]);
+    NSLog(@"type = %@", [data valueForKey:@"type"]);
+    NSLog(@"city = %@", [data valueForKey:@"city"]);
+
+} // end for
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Here we get the dictionary of document properties using the database name as the key.
+You can add this dictionary to an array of returned matches, for processing elsewhere in the app.
+<.> Alternatively, you can access the document properties here, by using the property names as keys to the dictionary object.
+
+// ====
+// [source, objc, subs="+attributes, +macros"]
+// ----
+// let yourQuery = QueryBuilder.select(SelectResult.all)
+//             .from(DataSource.database(yourDb))
+
+// for dataRow in try yourQuery.execute() {
+//   if let yourDoc = dict[dataRow.toDictionary()] as? [String:Any] {
+//       let docid = yourDoc["id"]
+//       let name = yourDoc["name"]
+//       let type = yourDoc["type"]
+//       let city = yourDoc["city"]
+//   }
+// }
+
+// ----
+// ====
+
+
+[discrete#objc:query-resultsets:::lbl-acc-id]
+===== Access Document Properties - ID
+Here we look at how to access document properties when you have returned only the document IDs for documents that matched your selection criteria.
+
+This is something you may do when retrieval of the properties directly by the query may consume excessive amounts of memory and-or processing time.
+
+In this case each array element is a dictionary structure where `ID` is the key and the required document ID is the value.
+
+Access the required document properties by retrieving the document from the database using its document ID -- as shown in <<objc:query-resultsets:::ex-acc-id>>.
+
+[#ex-acc-id]
+.Access by ID
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:query-resultsets:::ex-acc-id]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="query-access-id", indent=0]
+
+CBLQueryResultSet *results = [query execute:&error];
+CBLDocument *doc = nil;
+NSString *docId = nil;
+for (CBLQueryResult *result in results) {
+    docId = [result stringForKey:@"id"]; // <.>
+
+    // Now you can get the document using its ID
+    // for example using
+    doc = [collection documentWithID:docId error:&error];
+
+}
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+<.> Extract the Id value from the dictionary and use it to get the document from the database
+
+// .Access Properties using Doc ID
+// ====
+// [source, objc, subs="+attributes, +macros"]
+// ----
+// let yourQuery = QueryBuilder.select(SelectResult.expression(Meta.id))
+//             .from(DataSource.database(yourDb))
+
+// for dataRow in try yourQuery.execute() {
+//   if let yourDocID = dict[dataRow["id"] {
+//       let yourDoc = try yourDb.document(withID: yourDocId)
+//       let name = yourDoc.name
+//       let type = yourDoc.type
+//       let city = yourDoc.city
+//   }
+// }
+
+// ----
+// ====
+
+
+[discrete#objc:query-resultsets:::lbl-acc-specific]
+===== Access Document Properties - Selected Properties
+Here we look at how to access properties when you have used SelectResult to get a specific subset of properties.
+
+In this case each array element is an array of key value pairs (property name/property value).
+
+Access the retrieved properties by converting each row into a dictionary -- as shown in <<objc:query-resultsets:::ex-acc-specific>>.
+
+[#ex-acc-specific]
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:query-resultsets:::ex-acc-specific]
+====
+
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="query-access-props", indent=0]
+
+CBLQueryResultSet *results = [query execute:&error];
+
+for (CBLQueryResult *result in results) { // all results
+    NSLog(@"id = %@", [result stringForKey:@"id"]);
+    NSLog(@"name = %@", [result stringForKey:@"name"]);
+    NSLog(@"type = %@", [result stringForKey:@"type"]);
+    NSLog(@"city = %@", [result stringForKey:@"city"]);
+
+}
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+
+// [#ex-acc-all]
+// .Access All Properties
+// ====
+// [source, objc, subs="+attributes, +macros"]
+// ----
+// let yoursearchQuery = QueryBuilder
+//             .select(SelectResult.expression(Meta.id),
+//                     SelectResult.expression(Expression.property("name")),
+//                     SelectResult.expression(Expression.property("city")),
+//                     SelectResult.expression(Expression.property("type")))
+//             .from(DataSource.database(yourDb))
+
+// for dataRow in try yourQuery.execute() {
+//   if let yourDoc = dict[dataRow.toDictionary()] as? [String:Any] {
+//       let docid = yourDoc["id"]
+//       let name = yourDoc["name"]
+//       let type = yourDoc["type"]
+//   }
+// }
+
+// ----
+// ====
+// END -- inclusion -- common-query-resultsets.adoc
+
+[discrete#objc:query-resultsets:::json-result-sets]
+==== JSON Result Sets
+
+// Inclusion block
+[#ex-json]
+.Using JSON Results
+// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
+//
+//  Allows for abstraction of the showing of snippet examples
+//  which makes displaying tabbed snippets for platforms with
+//  more than one native language to show -- Android (Kotlin and Java)
+//
+// Surrounds code in Example block
+//
+//  PARAMETERS:
+//    param-tags comma-separated list of tags to include/exclude
+//    param-leader text for opening para of an example block
+//
+//  USE:
+//    :param_tags: query-access-json
+//    include::partial$block_show_snippet.adoc[]
+//    :param_tags!:
+//
+
+[#objc:query-resultsets:::ex-json]
+====
+
+pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryResult.html#/c:objc(cs)CBLQueryResult(im)toJSON[CBLResult.toJSON] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<objc:query-resultsets:::ex-json>> for a working example.]
+
+// Show Main Snippet
+[source, objc]
+----
+include ::objc:example$code_snippets/SampleCodeTest.m[tags="query-access-json", indent=0]
+CBLQueryResultSet *rs = [query execute:&error];
+for (CBLQueryResult *result in rs) {
+
+    // Get result as a JSON string
+    NSString *json = [result toJSON];
+
+    // Get an native Obj-C object from the Json String
+    NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:[json dataUsingEncoding:NSUTF8StringEncoding]
+                                                                     options:NSJSONReadingAllowFragments
+                                                                       error:&error];
+
+    // Log generated Json and Native objects
+    // For demo/example purposes
+    NSLog(@"Json String %@", json);
+    NSLog(@"Native Object %@", dict);
+
+}; // end for
+
+----
+
+
+
+
+// close example block
+
+====
+
+// Tidy-up atttibutes created
+// END -- block_show_snippet.doc
+
+.JSON String Format
+[#objc:query-resultsets:::ex-json-format]
+If your query selects ALL then the JSON format will be:
+
+[source, JSON]
+----
+{
+  database-name: {
+    key1: "value1",
+    keyx: "valuex"
+  }
+}
+----
+
+If your query selects a sub-set of available properties then the JSON format will be:
+
+[source, JSON]
+----
+{
+  key1: "value1",
+  keyx: "valuex"
+}
+----
+
+
+// :param-add3-title: {empty}
+// :param-reference: reference-p2psync
+
+
+[discrete#objc:query-resultsets:::related-content]
+==== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+===== {empty}
+.How to . . .
+* xref:objc:gs-prereqs.adoc[Prerequisites]
+* xref:objc:gs-install.adoc[Install]
+* xref:objc:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#objc:query-resultsets:::-2n]
+===== {empty}
+.Learn more . . .
+* xref:objc:database.adoc[Databases]
+* xref:objc:document.adoc[Documents]
+* xref:objc:blob.adoc[Blobs]
+* xref:objc:replication.adoc[Remote Sync Gateway]
+* xref:objc:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+// [.content]
+[discrete#objc:query-resultsets:::-3]
+===== {empty}
+.Dive Deeper . . .
+//* Community
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+
+.
+
+
+
+++++
+</div>
+++++
+
+
+
