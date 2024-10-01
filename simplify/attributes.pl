@@ -26,6 +26,7 @@ my %keep = map { $_ => 1 } (qw/
     minor
     maintenance
     maintenance-android
+    tabs
 /);
 
 
@@ -53,8 +54,9 @@ while (<>) {
         } 
     }
 
-    # de-mangle the {tabs} markers
-    s/^\[\{tabs#.*\}\].*$/[{tabs}]/;
+    # de-mangle the {tabs} and plantuml markers
+    s/^\[\{tabs#.*\}\]\s*$/[tabs]/;
+    s/^\[plantum#.*\]\s*$/[plantuml]/;
 
     # print lines that we didn't swallow as attribute definitions
     print;
