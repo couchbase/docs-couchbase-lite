@@ -1,9 +1,7 @@
 #!/bin/bash
-set -euf -o pipefail
-set -x
+set -exu -o pipefail
 
 SCRIPT_DIR=$(realpath $(dirname $0))
-echo $SCRIPT_DIR
 
 cd $SCRIPT_DIR/../../docs-site
 
@@ -12,12 +10,33 @@ ln -f $SCRIPT_DIR/mobile.yml .
 ln -f $SCRIPT_DIR/attributes.pl .
 ln -f $SCRIPT_DIR/rename.sh .
 
-# npx antora mobile.yml
+## UNCOMMENT THIS to run Antora with the assembler feature 
+npx antora mobile.yml
 
-split -p :docname: build/assembler/couchbase-lite/current/android.adoc android.
+process() {
+    WHAT=$1
+    FROM=${2:-$WHAT}
+    split -p :docname: \
+        build/assembler/couchbase-lite/current/${FROM}.adoc \
+        ${WHAT}.
 
-./rename.sh android.*
+    ./rename.sh ${WHAT}.*
 
-perl -i.bak attributes.pl android-database.adoc
+    for ADOC in ${WHAT}-*.adoc; do
+        perl -i attributes.pl $ADOC
+        NEW=${ADOC#${WHAT}-}
+        if [ "$NEW" != ".adoc" ]
+        then
+            cp $ADOC $SCRIPT_DIR/../modules/${WHAT}/pages/$NEW
+        fi
 
-cp android-database.adoc $SCRIPT_DIR/../modules/android/pages/database.adoc
+    done
+}
+
+process android
+process c
+process csharp -net
+process java
+process javascript
+process objc objective-c
+process swift

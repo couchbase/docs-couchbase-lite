@@ -18,6 +18,14 @@ my %keep = map { $_ => 1 } (qw/
     docname
     description
     keywords
+    release
+    prerelease
+    vs-major
+    vs-minor
+    major
+    minor
+    maintenance
+    maintenance-android
 /);
 
 
@@ -43,7 +51,10 @@ while (<>) {
             $attributes{$k} = $v;
             next;
         } 
-    } 
+    }
+
+    # de-mangle the {tabs} markers
+    s/^\[\{tabs#.*\}\].*$/[{tabs}]/;
 
     # print lines that we didn't swallow as attribute definitions
     print;
