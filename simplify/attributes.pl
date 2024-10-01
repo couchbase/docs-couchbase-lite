@@ -55,8 +55,8 @@ while (<>) {
     }
 
     # de-mangle the {tabs} and plantuml markers
-    s/^\[\{tabs#.*\}\]\s*$/[tabs]/;
-    s/^\[plantum#.*\]\s*$/[plantuml]/;
+    s/^\[\{tabs#.*\}\]/[tabs]/;
+    s/^\[plantum#.*\]/[plantuml]/;
 
     # print lines that we didn't swallow as attribute definitions
     print;
