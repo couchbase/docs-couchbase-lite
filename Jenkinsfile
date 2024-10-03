@@ -9,7 +9,7 @@ pipeline {
                 stage("Validate C#") {
                     agent { label 's61113u16 (litecore)' }
                     steps {
-                        sh 'jenkins/dotnet_build.sh 3.2.0 1.0.0'
+                        sh 'jenkins/dotnet_build.sh 3.2.1 1.0.0'
                     }
                 }
                 stage("Validate C") {
@@ -21,7 +21,7 @@ pipeline {
                 stage("Validate iOS") {
                     agent { label 'mobile-builder-ios-pull-request' }
                     steps {
-                        sh 'jenkins/ios.sh 3.2.0 1.0.0'
+                        sh 'jenkins/ios.sh 3.2.1 1.0.0'
                     }
                 }
             }
