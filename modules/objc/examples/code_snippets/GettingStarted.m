@@ -24,8 +24,8 @@
     // Do any additional setup after loading the view.
     
     [self getStartedWithReplication: false];
-    
 }
+
 - (void) getStartedWithReplication: (Boolean) replication {
     NSError *error;
     
@@ -90,9 +90,8 @@
         [_replicator start];
 
     } else {
-        NSLog(@"Not testing replication");
+        NSLog(@"Not running replication");
     }
 }
-
 
 @end

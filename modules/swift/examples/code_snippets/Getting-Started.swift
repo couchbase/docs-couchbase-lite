@@ -89,7 +89,7 @@ class ViewController: UIViewController {
             // Start replication.
             replicator.start()
         } else {
-            print("Not testing replication")
+            print("Not running replication")
         }
     }
 }
