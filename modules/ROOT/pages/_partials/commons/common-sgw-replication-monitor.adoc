@@ -1,13 +1,3 @@
-// BEGIN -- inclusion -- common-sgw-replication-monitor.adoc
-//  Usage:
-//  Params:
-//    :is-p2p:  set when including from P2P topic such as common-p2psync-websocket-using-active
-//  Included-by:
-//    {root-commons}p2psync-websocket-using-active.adoc
-//    {root-commons}sgw-replication.adoc
-//  ####
-// :is-p2p:
-
 In this section::
 <<lbl-repl-chng>>  |
 <<lbl-repl-status>>  |
@@ -60,8 +50,6 @@ endif::[]
 to check the replicator status.
 That is, whether it is actively transferring data or if it has stopped -- see: <<ex-repl-mon>>.
 
-// // ifeval::["{source-language"=="objc"]
-// Alternatively, use the {url-api-class-replicator-status} class to get status information.
 The returned _ReplicationStatus_ structure comprises:
 
 * {url-api-enum-replicator-activity} -- stopped, offline, connecting, idle or busy -- see states described in: <<tbl-states>>
@@ -70,7 +58,6 @@ The returned _ReplicationStatus_ structure comprises:
 ** total -- the total number of changes to be processed
 * {url-api-enum-replicator-error} -- the current error, if any
 
-// :is-android:
 // Example 8
 [[ex-repl-mon]]
 .Monitor replication
@@ -171,7 +158,6 @@ Since the replication occurs in batches the total count can vary through the cou
 
 include::{root-commons}sgw-replication-rep-status.adoc[tags={param-platform}]
 
-// begin inclusion of document changes text
 [#lbl-repl-evnts]
 ifndef::is-p2p[]
 == Monitor Document Changes
@@ -202,7 +188,6 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
 
 endif::is-p2p[]
-// end inclusion of document changes text
 
 [#lbl-repl-pend]
 == Documents Pending Push
@@ -227,4 +212,3 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 This is a snapshot and may have changed by the time the response is received and processed.
 <.> {url-api-method-replicator-isDocumentPending} returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
-// END -- inclusion -- common-sgw-replication-monitor.adoc

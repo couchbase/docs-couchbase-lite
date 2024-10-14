@@ -1,21 +1,5 @@
-// BEGIN inclusion -- block -- block_tabbed_code_example.adoc
-//
-//  Allows for abstraction of the showing of snippet examples
-//  which makes displaying tabbed snippets for platforms with
-//  more than one native language to show -- Android (Kotlin and Java)
-//
-// Surrounds code in Example block
-//
-//  PARAMETERS:
-//    param-tags comma-separated list of tags to include/exclude
-//    param-leader text for opening para of an example block
-//
-//  USE:
-//    :param_tags: query-access-json
-//    include::partial$block_show_snippet.adoc[]
-//    :param_tags!:
-//
 :self-tags: **
+
 ifdef::is-android[:is-tabbed:]
 ifdef::param-tags[:self-tags: {param-tags}]
 
@@ -23,7 +7,6 @@ ifdef::param-tags[:self-tags: {param-tags}]
 
 ifdef::param-leader[{param-leader}]
 ifdef::is-tabbed[]
-// inject tab header
 [{tabs}]
 =====
 
@@ -33,24 +16,23 @@ ifdef::is-tabbed[]
 endif::is-tabbed[]
 
 // Show Main Snippet
+// include::{snippet}[tags="{self-tags}", indent=0]
 [source, {source-language}]
 ----
-include ::{snippet}[tags="{self-tags}", indent=0]
 include::{snippet}[tags="{self-tags}", indent=0]
 ----
 
 ifdef::is-tabbed[]
 --
 // Show Optional Alternate Snippet
+// include::{snippet-alt}[tags="{self-tags}", indent=0]
 {source-language-alt}::
 +
 --
 [source, {source-language-alt}]
 ----
-include ::{snippet-alt}[tags="{self-tags}", indent=0]
 include::{snippet-alt}[tags="{self-tags}", indent=0]
 ----
-// Add tab closure
 --
 
 =====
@@ -59,13 +41,9 @@ endif::is-tabbed[]
 
 ifdef::param-callouts[{param-callouts}]
 
-// close example block
-
 ====
 
-// Tidy-up atttibutes created
 :self_tags!:
 :is-tabbed!:
 :param-tags!:
 :param-leader!:
-// END -- block_show_snippet.doc

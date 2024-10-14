@@ -1,9 +1,3 @@
-// BEGIN inclusion -- block-links-cbl -- Renders line of links to CBL pointing to required anchor )pre-2.8
-// Require: param-page == page name
-// Optional: param-path == library(ies) containing page
-// Optional: param-bookmark == section within page
-// Optional: param-untitled == don't include block title
-
 :this-path: {empty}
 :this-bookmark: {empty}
 :this-version: 2.8
@@ -11,11 +5,9 @@
 ifdef::version[:this-version: {version}]
 
 :pre-2x8: false
-//
 
 ifdef::param-page[]
 
-// Then do the following
 ifdef::param-path[:this-path: {param-path}/]
 ifdef::param-bookmark[:this-bookmark: #{param-bookmark}]
 ifdef::{param-version}[:this-version: {param-version}]
@@ -30,13 +22,11 @@ Related Couchbase Lite content::
 endif::[]
 ifeval::[{this-version}>=2.8 ]
 {xref--pfx}android{xref--sfx}[Android] |
-// {xref--pfx}c{xref--sfx}[C] |
 {xref--pfx}csharp{xref--sfx}[C#] |
 {xref--pfx}java{xref--sfx}[Java] |
 {xref--pfx}objc{xref--sfx}[Objective-C] |
 {xref--pfx}swift{xref--sfx}[Swift]
 
-// endif for ifdef::this-version >=2.8
 endif::[]
 
 ifeval::[{this-version}<2.8 ]
@@ -45,20 +35,14 @@ xref:{this-version}@couchbase-lite:ROOT:java-android.adoc#{param-bookmark}[Java 
 xref:{this-version}@couchbase-lite:ROOT:csharp.adoc#{param-bookmark}[C#] |
 xref:{this-version}@couchbase-lite:ROOT:objc.adoc#{param-bookmark}[Objective-C] |
 xref:{this-version}@couchbase-lite:ROOT:swift.adoc#{param-bookmark}[Swift]
-// endif for ifdef::this-version <2.8
 endif::[]
 
 ifndef::param-untitled[]
 --
 endif::[]
 
-// endif for ifdef::param-page
 endif::[]
 :param-path!:
 :param-page!:
 :param-bookmark!:
 :param-untitled!:
-
-// END inclusion -- block-links-cbl -- Renders line of links to CBL pointing to required anchor )pre-2.8
-
-

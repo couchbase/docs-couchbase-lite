@@ -1,19 +1,4 @@
-// BEGIN -- inclusion -- common-query-resultsets.adoc
-//  Purpose -- describes the use of the query's resultset
-//
-// // BEGIN::REQUIRED EXTERNALS
-// :this-module: {par-module}
-// :this-lang-title: {par-lang-title}
-// :this-packageNm: {par-packageNm}
-// :this-source-language: {par-source-language}
-// snippet: {par-snippet}
-//:this-url-issues: {par-url-issues}
-// END::REQUIRED EXTERNALS
-
-// BEGIN::Local page attributes
 :blank-field: ____
-
-// END::Local page attributes
 
 
 == Query Execution
@@ -124,25 +109,6 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 You can add this dictionary to an array of returned matches, for processing elsewhere in the app.
 <.> Alternatively, you can access the document properties here, by using the property names as keys to the dictionary object.
 
-// ====
-// [{code-snippet}]
-// ----
-// let yourQuery = QueryBuilder.select(SelectResult.all)
-//             .from(DataSource.database(yourDb))
-
-// for dataRow in try yourQuery.execute() {
-//   if let yourDoc = dict[dataRow.toDictionary()] as? [String:Any] {
-//       let docid = yourDoc["id"]
-//       let name = yourDoc["name"]
-//       let type = yourDoc["type"]
-//       let city = yourDoc["city"]
-//   }
-// }
-
-// ----
-// ====
-
-
 [#lbl-acc-id]
 === Access Document Properties - ID
 Here we look at how to access document properties when you have returned only the document IDs for documents that matched your selection criteria.
@@ -160,25 +126,6 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 <.> Extract the Id value from the dictionary and use it to get the document from the database
 
-// .Access Properties using Doc ID
-// ====
-// [{code-snippet}]
-// ----
-// let yourQuery = QueryBuilder.select(SelectResult.expression(Meta.id))
-//             .from(DataSource.database(yourDb))
-
-// for dataRow in try yourQuery.execute() {
-//   if let yourDocID = dict[dataRow["id"] {
-//       let yourDoc = try yourDb.document(withID: yourDocId)
-//       let name = yourDoc.name
-//       let type = yourDoc.type
-//       let city = yourDoc.city
-//   }
-// }
-
-// ----
-// ====
-
 
 [#lbl-acc-specific]
 === Access Document Properties - Selected Properties
@@ -193,27 +140,3 @@ Access the retrieved properties by converting each row into a dictionary -- as s
 include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
-
-// [#ex-acc-all]
-// .Access All Properties
-// ====
-// [{code-snippet}]
-// ----
-// let yoursearchQuery = QueryBuilder
-//             .select(SelectResult.expression(Meta.id),
-//                     SelectResult.expression(Expression.property("name")),
-//                     SelectResult.expression(Expression.property("city")),
-//                     SelectResult.expression(Expression.property("type")))
-//             .from(DataSource.database(yourDb))
-
-// for dataRow in try yourQuery.execute() {
-//   if let yourDoc = dict[dataRow.toDictionary()] as? [String:Any] {
-//       let docid = yourDoc["id"]
-//       let name = yourDoc["name"]
-//       let type = yourDoc["type"]
-//   }
-// }
-
-// ----
-// ====
-// END -- inclusion -- common-query-resultsets.adoc

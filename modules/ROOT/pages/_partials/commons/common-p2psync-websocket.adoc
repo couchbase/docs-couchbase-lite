@@ -1,10 +1,6 @@
-// = P2P Sync Using URLEndpointListener
-
-// DO NOT EDIT
 :topic-group: Using Peer-to-Peer Synchronization (web sockets)
 include::{root-partials}block-related-howto-p2psync-ws.adoc[]
 include::{root-partials}_show_page_header_block.adoc[]
-// DO NOT EDIT
 
 :zero-config: {empty}
 
@@ -124,7 +120,6 @@ ifdef::is-ios[]
 
 endif::is-ios[]
 
-// :is-android:
 
 [#simple-configuration]
 == Basic Setup
@@ -159,54 +154,6 @@ Here we use a known URL, but it could be a URL established dynamically in a disc
 <.> Start the replicator
 
 
-// [tabs]
-// ====
-
-// Simple Listener::
-// +
-// --
-
-// This simple configuration will give you a listener ready to participate in an encrypted synchronization with a replicator providing a valid user name and password.
-
-// [source, {source-language}]
-// ----
-
-// include::{snippet}[tags=listener-simple, indent=0]
-
-// ----
-
-// <.> Initialize the listener configuration
-// <.> Configure the client authenticator to require basic authentication
-// <.> Initialize the listener
-// <.> Start the listener
-
-// --
-
-// Simple Replicator::
-// +
-// --
-// This simple replicator configuration will give you an encrypted, bi-directional Peer-to-Peer synchronization with automatic conflict resolution.
-
-// [source, {source-language}]
-// ----
-
-// include::{snippet}[tags=replicator-simple, indent=0]
-
-// ----
-
-// <.> Get the listener's endpoint. Here we use a known URL, but it could be established dynamically in a discovery phase.
-// <.> Initialize the replicator configuration with the database to be synchronized and the listener it is to synchronize with
-// <.> Configure the replicator to expect a self-signed certificate from the listener
-// <.> Configure the replicator to present basic authentication credentials if the listener prompts for them (client authentication is optional)
-// <.> Initialize the replicator
-// <.> Start the replicator
-
-// --
-
-// ====
-
-// =====
-
 == API Highlights
 
 include::{root-partials}p2p-api.adoc[leveloffset=+1]
@@ -214,7 +161,6 @@ include::{root-partials}p2p-api.adoc[leveloffset=+1]
 == Security
 
 === Authentication
-// include::{root-partials}p2p-security.adoc[leveloffset=+1]
 
 Peer-to-Peer sync supports <<using-basic-authentication, Basic Authentication>> and <<using-tls,TLS Authentication>>.
 For anything other than test deployments, we strongly encourage the use of TLS. In fact, Peer-to-Peer sync using URLEndpointListener is encrypted using TLS by default.
@@ -356,8 +302,4 @@ a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/s
 
 |===
 
-// == Sizing
-// include::{root-partials}p2p-sizing.adoc[leveloffset=+1]
-
-// DO NOT EDIT OR REMOVE
 include::{root-partials}block-related-content-p2psync.adoc[]

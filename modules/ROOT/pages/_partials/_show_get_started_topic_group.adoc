@@ -1,52 +1,19 @@
-// BEGIN -- inclusion -- _gs-topic-group.adoc
-//  Purpose: Show the topic group, allowing easy cycle-through
-//            Do not show current page as a click-through though
-//  Parameter: The current page name
-//  Container: /modules/ROOT/pages/_partials/_gs-topic-group.adoc
-
-// Begin -Local Attributes
 :this-page: {param-page}
-
-// ifeval::["{this-page}"=="{introduction--page}"]
-// :is-intro: Introduction
-// endif::[]
-
-// ifeval::["{this-page}"=="{gs-prereqs--page}"]
-// :is-prereqs: Prepare
-// endif::[]
-
 ifeval::["{this-page}"=="{gs-install--page}"]
 :is-install: Install
 endif::[]
-
 ifeval::["{this-page}"=="{gs-build--page}"]
 :is-build: Build
 endif::[]
-// End -Local Attributes
-
-// Begin -- Output Block
 Steps in Getting Started::
-// ifdef::is-intro[*{is-intro}*]
-// ifndef::is-intro[{introduction--xref}]
-//  |
-// ifdef::is-prereqs[*{is-prereqs}*]
-// ifndef::is-prereqs[{gs-prereqs--xref}]
-//  |
 ifdef::is-install[*{is-install}*]
 ifndef::is-install[{gs-install--xref}]
  |
 ifdef::is-build[*{is-build}*]
 ifndef::is-build[{gs-build--xref}]
-// End -- Output Block
-
-
-// Begin -- Tidy-up
 :is-intro!:
 :is-prereqs!:
 :is-install!:
 :is-build!:
 :this-page!:
 :param-page!:
-// End -- Tidy-up
-
-// END -- inclusion -- _gs-topic-group.adoc

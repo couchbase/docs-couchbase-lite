@@ -1,5 +1,3 @@
-//= Using Peer-to-Peer Synchronization (websockets)
-// DO NOT EDIT
 :param-abstract: How to set up a Listener to accept a Replicator connection and sync using peer-to-peer
 
 include::{root-partials}block-related-howto-p2psync-ws.adoc[]
@@ -15,7 +13,6 @@ endif::[]
 
 include::{root-partials}block-caveats.adoc[tag=code-disclaimer]
 
-// DO NOT EDIT
 == Introduction
 This content provides code and configuration examples covering the implementation of {glos-term-peer-to-peer-sync} over WebSockets.
 Specifically, it covers the implementation of a {glos-term-passive-peer}.
@@ -263,9 +260,7 @@ This is the default setting.
 <.> Authenticate using an anonymous self-signed certificate. +
 This is the default setting.
 
-// Are we missing a section that shows how to use TLSIdentity.getIdentity.  It would be used to create an identity with a certificate signed by a Root CA, in important case.  It could also be used to get an existing self-signed cert (perhaps one created by CreateIdentity above)
 
-// [#authenticating-the-client]
 [#lbl-authenticating-the-client]
 == Authenticating the Client
 In this section: <<use-basic-authentication>>  |  <<using-client-certificate-authentication>>  |  <<delete-tls-identity>>  |  <<the-impact-of-tls-settings>>
@@ -285,17 +280,14 @@ You should initialize the authenticator using one of the following constructors:
 ** A list of one or more root certificates -- the client supplied certificate must end at a certificate in this list if it is to be authenticated
 ** A block of code that assumes total responsibility for authentication -- it must return a boolean response (true for an authenticated client, or false for a failed authentication).
 
-// include::{root-partials}p2p-api.adoc[tag=config-auth]
 
 === Use Basic Authentication
-// === Authenticate Using the Client Username and Password
 
 Define how to authenticate client-supplied username and password credentials.
 To use client-supplied certificates instead -- see: <<using-client-certificate-authentication>>
 
 include::{root-partials}p2p-api.adoc[tag=ListenerPasswordAuthenticator]
 
-// include::{root-partials}p2p-api.adoc[tag=ListenerPasswordAuthenticatorDelegate]
 
 
 // Example 7
@@ -396,25 +388,12 @@ a|* The system will auto generate an _anonymous_ self signed cert.
 |false
 a|Set to server identity generated from a self- or CA-signed certificate
 
-// On first use::
 * On first use -- Bring your own certificate and private key; for example, using the {url-api-class-tlsidentity} class's {url-api-method-tls-identity-create} method to add it to the {securestorage}.
 * Each time -- Use the server identity from the certificate stored in the {securestorage}; for example, using the {url-api-class-tlsidentity} class's {url-api-method-tls-identity-get} method with the alias you want to retrieve..
 
-// See: {xref-cbl-pg-p2p-manage-tls-id} for more on how to store and use identities.
 
 a|* System will use the configured identity.
 * Active Peers will validate the server certificate corresponding to the TLSIdentity (as long as they are configured to not skip validation -- see <<lbl-tls-security>>).
-
-// |false
-// a|
-// // Use the convenience `createIdentity` API to generate the certificate and identity
-// * On first use -- Bring your own CA certificate and private key (use `importIdentity`).
-// * Each time -- Use the server identity from the CA certificate stored in the keychain; for example, use `TSLIdentity.identity(withIdentity:)`.
-
-// See: {xref-cbl-pg-p2p-manage-tls-id} for more on how to store and use identities.
-// a|. The system will use the provided CA cert.
-// . Active peers will validate the CA cert.
-// . Communication is encrypted.
 
 |===
 
@@ -448,7 +427,6 @@ You should note that these counts can be extremely volatile. So, the actual numb
 include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
-// include::{exampleblock_callouts.adoc[tags=listener-status-check, indent=0]
 include::{module-partials}block_callouts.adoc[tags=listener-status-check, indent=0]
 
 == Stop Listener
@@ -464,6 +442,4 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 NOTE: Closing the database will also close the Listener.
 
 
-// DO NOT EDIT -- Footer Related Content Block
 include::{root-partials}block-related-content-p2psync.adoc[]
-// DO NOT EDIT

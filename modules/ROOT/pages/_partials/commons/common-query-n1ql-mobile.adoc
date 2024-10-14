@@ -1,24 +1,8 @@
-// BEGIN -- inclusion -- common-query-n1ql-mobile.adoc
-//  Purpose -- describes the use of the query syntax
-//
-// // BEGIN::REQUIRED EXTERNALS
-// :this-module: {par-module}
-// :this-lang-title: {par-lang-title}
-// :this-packageNm: {par-packageNm}
-// :this-source-language: {par-source-language}
-// :snippet: {par-snippet}
-//:this-url-issues: {par-url-issues}
-// END::REQUIRED EXTERNALS
-
-// BEGIN::Local page attributes
 :blank-field: ____
 :menuitem-delimiter: {nbsp}{nbsp}|{nbsp}{nbsp}
 
 :count-result-text: The result set representing a count is a key-value pair. The key being the count name, as defined using `SelectResult.as`
 
-//include::{root-partials}block-caveats.adoc[tag="N1QL-SQL"]
-
-// END::Local page attributes
 
 NOTE: The examples used in this topic are based on the _Travel Sample_ app and data introduced in the {couchbase-tutorials--mobile-workshop--xref} tutorial
 
@@ -258,7 +242,6 @@ The JOIN clause enables you to select data from multiple data sources linked by 
 
 Currently only self-joins are supported.
 For example to combine airline details with route details, linked by the airline id -- see <<ex-join>>.
-// You cannot perform queries from multiple databases.
 
 === Syntax
 
@@ -937,22 +920,15 @@ In this section::
 <<lbl-ops-cond>>
 
 
-// <<lbl-regex-ops>>{menuitem-delimiter}
-// <<lbl-deleted-ops>>
-
-//3321
 [#lbl-ops-binary]
 === Binary Operators
 <<lbl-ops-maths>>{menuitem-delimiter}
 <<lbl-comp-ops>>{menuitem-delimiter}
 <<lbl-ops-logical>>{menuitem-delimiter}
 <<lbl-ops-string>>
-// <<lbl-ops-like>>{menuitem-delimiter}
-
-// ==== Supported
 
 
-// ==== Syntax
+
 
 [#lbl-ops-maths]
 ==== Maths
@@ -1319,7 +1295,6 @@ They operate by modifying an expression, making it numerically positive or negat
 [source]
 ----
 
-// UNARY_OP _ expr
 ----
 
 .Unary Operators
@@ -1434,7 +1409,6 @@ SELECT name FROM db ORDER BY name COLLATE (UNICODE DIACRITIC)
 
 ----
 
-// {url-api-classes-query-arrayfunction-collection-ops} are useful to check if a given value is present in an array.
 
 
 
@@ -2113,7 +2087,6 @@ a|Returns one of the following strings, based on the value of expression:
 
 
 ifndef::is-c[]
-// Section not valid for C
 == QueryBuilder Differences
 
 Couchbase Lite {sqlpp} Query supports all QueryBuilder features, except _Predictive Query_ and _Index_. See <<tbl-qbldr-diffs>> for the features supported by {sqlpp} but not by QueryBuilder.
@@ -2189,5 +2162,3 @@ include::partial$block_tabbed_code_example.adoc[]
 
 <.> Define a parameter placeholder `$type`
 <.> Set the value of the `$type` parameter
-
-// END --- inclusion -- common-query-n1ql-mobile.adoc
