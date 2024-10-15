@@ -1,16 +1,9 @@
-:docname: working-with-vector-search
-:page-module: csharp
-:page-relative-src-path: working-with-vector-search.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
-[#csharp:working-with-vector-search:::]
-==== Working with Vector Search
-:page-status:
+= Working with Vector Search
+:page-status: 
 :page-edition: Enterprise
-:page-aliases:
+:page-aliases: 
+ifdef::show_edition[:page-edition: {release}]
+ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Use Vector Search with Full Text Search and Query.
 :keywords: edge AI api swift ios macos apple vector search generative
@@ -18,33 +11,20 @@
 [abstract]
 {description}
 
-[discrete#csharp:working-with-vector-search:::use-vector-search]
-===== Use Vector Search
+== Use Vector Search
 
-To configure a project to use vector search, follow the <<csharp:gs-install:::,installation instructions>> to add the Vector Search extension.
+To configure a project to use vector search, follow the xref:csharp:gs-install.adoc[installation instructions] to add the Vector Search extension.
 
 NOTE: You must install Couchbase Lite to use the Vector Search extension.
 
-[discrete#csharp:working-with-vector-search:::create-a-vector-index]
-===== Create a Vector Index
+== Create a Vector Index
 
 This method shows how you can create a vector index using the Couchbase Lite Vector Search extension.
 
 [source, csharp]
 ----
 
-            // Create a vector index configuration for indexing 3 dimensional vectors embedded
-            // in the documents' key named "vector" using 2 centroids. The config is customized
-            // to use Cosine distance metric, no vector encoding, min training size 100,
-            // max training size 200, and number of probes 8.
-            var config = new VectorIndexConfiguration("vector", 3, 2)
-            {
-                DistanceMetric = DistanceMetric.Cosine,
-                Encoding = VectorEncoding.None(),
-                MinTrainingSize = 100,
-                MaxTrainingSize = 200,
-                NumProbes = 8
-            };
+include::csharp:example$code_snippets/VectorSearch.cs[tags=vs-create-custom-config]
 
 ----
 
@@ -63,11 +43,10 @@ From there, you create an index within a given collection, in this case `colors_
 NOTE: The number of vectors, the width or dimensions of the vectors and the training size can incur high CPU and memory costs as the size of each variable increases.
 This is because the training vectors have to be resident on the machine.
 
-[discrete#csharp:working-with-vector-search:::vector-index-configuration]
-====== Vector Index Configuration
+=== Vector Index Configuration
 
 The table below displays the different configurations you can modify within your `VectorIndexConfiguration()` function.
-For more information on specific configurations, see <<csharp:vector-search:::,Vector Search.>>
+For more information on specific configurations, see xref:csharp:vector-search.adoc[Vector Search.]
 
 .Vector Index Configuration Options
 [cols ="4*"]
@@ -75,21 +54,21 @@ For more information on specific configurations, see <<csharp:vector-search:::,V
 |Configuration Name |Is Required |Default Configuration |Further Information
 
 |Expression
-|image:couchbase-lite/current/{underscore}images/yes.png[]
+|image:ROOT:yes.png[]
 |No default
-| A SQL++ expression indicating where to get the vectors.
+| A SQL++ expression indicating where to get the vectors. 
 A document property for embedded vectors or
 `prediction()` to call a registered Predictive model.
 |Number of Dimensions
-|image:couchbase-lite/current/{underscore}images/yes.png[]
+|image:ROOT:yes.png[]
 |No default
 |2-4096
 |Number of Centroids
-|image:couchbase-lite/current/{underscore}images/yes.png[]
+|image:ROOT:yes.png[]
 |No default
 |1-64000. The general guideline is an approximate square root of the number of documents
 |Distance Metric
-|image:couchbase-lite/current/{underscore}images/no.png[]
+|image:ROOT:no.png[]
 |Squared Euclidean Distance (euclideanSquared)
 a|You can set the following alternates as your Distance Metric:
 
@@ -100,19 +79,19 @@ a|You can set the following alternates as your Distance Metric:
 * dot (negated dot product)
 
 |Encoding
-|image:couchbase-lite/current/{underscore}images/no.png[]
+|image:ROOT:no.png[]
 | Scalar Quantizer(SQ) or SQ-8 bits
 a|There are three possible configurations:
 
 * None
 No compression, No data loss
 * Scalar Quantizer (SQ) or SQ-8 bits (Default)
-Reduces the number of bits per dimension
+Reduces the number of bits per dimension 
 * Product Quantizer (PQ)
 Reduces the number of dimensions and bits per dimension
 
 |Training Size
-|image:couchbase-lite/current/{underscore}images/no.png[]
+|image:ROOT:no.png[]
 |The default values for both the minimum and maximum training size is zero.
 The training size is calculated based on the number of Centroids and the encoding type.
 
@@ -124,11 +103,11 @@ a| The guidelines for the minimum and maximum training size are as follows:
 * The maximum training size is set to 256x the number of Centroids or 2 ^PQ's^ ^bits^ when PQ is used
 
 |NumProbes
-|image:couchbase-lite/current/{underscore}images/no.png[]
+|image:ROOT:no.png[]
 |The default value is 0. The number of Probes is calculated based on the number of Centroids
 |A guideline for setting a custom number of probes is at least 8 or 0.5% the number of Centroids
 |isLazy
-|image:couchbase-lite/current/{underscore}images/no.png[]
+|image:ROOT:no.png[]
 |False
 |Setting the value to true will enable lazy mode for the vector index
 
@@ -136,8 +115,7 @@ a| The guidelines for the minimum and maximum training size are as follows:
 
 CAUTION: Altering the default training sizes could be detrimental to the accuracy of returned results produced by the model and total computation time.
 
-[discrete#csharp:working-with-vector-search:::generating-vectors]
-===== Generating Vectors
+== Generating Vectors
 
 You can use the following methods to generate vectors in Couchbase Lite:
 
@@ -149,48 +127,30 @@ You can use the following methods to generate vectors in Couchbase Lite:
 
 Below are example configurations of the previously mentioned methods.
 
-[discrete#csharp:working-with-vector-search:::create-a-vector-index-with-embeddings]
-====== Create a Vector Index with Embeddings
+=== Create a Vector Index with Embeddings
 
 This method shows you how to create a Vector Index with embeddings.
 
 [source, csharp]
 ----
 
-            // Create a vector index configuration for indexing 3 dimensional vectors embedded
-            // in the documents' key named "vector" using 2 centroids.
-            var config = new VectorIndexConfiguration("color", 3, 100);
-
-            // Create a vector index named "color_index" using the configuration
-            var collection = database.GetCollection("colors");
-            collection.CreateIndex("colors_index", config);
+include::csharp:example$code_snippets/VectorSearch.cs[tags=vs-create-index]
 
 ----
 
 . First, create the standard configuration, setting up an expression, number of dimensions and number of centroids for the vector embedding.
 
-. Next, create a vector index, `colors_index`, on a collection and pass it our configuration.
+. Next, create a vector index, `colors_index`, on a collection and pass it the configuration.
 
-[discrete#csharp:working-with-vector-search:::create-vector-index-embeddings-from-a-predictive-model]
-====== Create Vector Index Embeddings from a Predictive Model
+=== Create Vector Index Embeddings from a Predictive Model
 
 This method generates vectors to be indexed for each document at the index time by using the `prediction()` function.
 The key difference to note is that the `config` object uses the output of the `prediction()` function as the `expression` parameter to generate the vector index.
 
 [source, csharp]
 ----
-
-            // Register the predictive model named "ColorModel".
-            Database.Prediction.RegisterModel("ColorModel", new ColorModel());
-
-            // Create a vector index configuration with an expression using the prediction
-            // function to get the vectors from the registered predictive model.
-            var expression = "prediction(ColorModel, {\"colorInput\": color}).vector";
-            var config = new VectorIndexConfiguration(expression, 3, 100);
-
-            // Create a vector index from the configuration
-            var collection = database.GetCollection("colors");
-            collection.CreateIndex("colors_index", config);
+        
+include::csharp:example$code_snippets/VectorSearch.cs[tags=vs-create-predictive-index]
 
 ----
 
@@ -202,11 +162,10 @@ The section `{\"colorInput\": color}).vector` is broken down into the following 
 
 . Therefore `{\"colorInput\": color}).vector` shows that `colorInput` is an input to the color model provided by the documents with `.vector` being the key used in the dictionary outputted by the `prediction()` function.
 
-NOTE: You can use less storage by using the `prediction()` function as the encoded vectors will only be stored in the index.
+NOTE: You can use less storage by using the `prediction()` function as the encoded vectors will only be stored in the index. 
 However, the index time will be longer as vector embedding generation is occurring at run time.
 
-[discrete#csharp:working-with-vector-search:::create-a-lazy-vector-index]
-===== Create a Lazy Vector Index
+== Create a Lazy Vector Index
 
 Lazy indexing is an alternate approach to using the standard predictive model with regular vector indexes which handle the indexing process automatically.
 You can use lazy indexing to use a ML model that is not available locally on the device and to create vector indexes without having vector embeddings in the documents.
@@ -214,12 +173,7 @@ You can use lazy indexing to use a ML model that is not available locally on the
 [source, csharp]
 ----
 
-            // Creating a lazy vector index is the same as creating a normal one, except
-            // with the IsLazy property set to true
-            var config = new VectorIndexConfiguration("vector", 3, 2)
-            {
-                IsLazy = true
-            };
+include::csharp:example$code_snippets/VectorSearch.cs[tags=vs-lazy-index-config]
 
 ----
 
@@ -227,58 +181,14 @@ You can enable lazy vector indexing by setting the `isLazy` property to `true` i
 
 NOTE: Lazy Vector Indexing is opt-in functionality, the `isLazy` property is set to `false` by default.
 
-[discrete#csharp:working-with-vector-search:::updating-the-lazy-index]
-====== Updating the Lazy Index
+=== Updating the Lazy Index
 
 Below is an example of how you can update your lazy index.
 
 [source, csharp]
 ----
 
-            // Retrieve the index you wish to update
-            var index = collection.GetIndex("index-name");
-
-            // Start an update on it (in this case, limit to 50 entries at a time)
-            var updater = index.BeginUpdate(50);
-
-            // If updater is null, that means there are no more entries to process
-            while (updater != null) {
-                using (updater) {
-                    // Otherwise, the updater will contain a list of data that needs embeddings generated
-                    int i = 0;
-                    foreach (var entry in updater) {
-                        // The type of entry will depend on what you have set as your index.
-                        // In this example, we will assume it was set to a string property.
-                        // Let's also assume that if an embedding is not applicable, this
-                        // pseudo function returns null
-                        try {
-                            var embedding = await GenerateEmbedding((string)entry);
-                            if (embedding == null) {
-                                // No embedding applicable.  Calling SetVector will null will
-                                // cause the underlying document to NOT be indexed
-                                updater.SetVector(i, null);
-                            } else {
-                                // Yes this if/else is unneeded, and only to demonstrate the
-                                // effect of setting null in SetVector
-                                updater.SetVector(i, embedding);
-                            }
-                        } catch (Exception) {
-                            // Bad connection?  Corrupted over the wire?  Something bad happened
-                            // and the embedding cannot be generated at the moment.  So skip
-                            // this entry.  The next time BeginUpdate is called, it will be considered again
-                            updater.SkipVector(i);
-                        }
-                    }
-
-                    // This writes the vectors to the index.  Disposing it without calling this
-                    // will throw out the results without saving.  You MUST have either set or
-                    // skipped all the entries inside of the updater or this call will throw an exception.
-                    updater.Finish();
-                }
-
-                // Ready for the next batch!
-                updater = index.BeginUpdate(50);
-            }
+include::csharp:example$code_snippets/VectorSearch.cs[tags=vs-create-lazy-index-embedding]
 
 ----
 
@@ -288,7 +198,7 @@ The update process follows the following sequence:
 
 . Get a value for the updater.
 
-.. If the there is no value for the vector, handle it.
+.. If the there is no value for the vector, handle it. 
 In this case, the vector will be skipped and considered the next time `beginUpdate()` is called.
 +
 NOTE: A key benefit of lazy indexing is that the indexing process continues if a vector fails to generate.
@@ -302,23 +212,20 @@ For standard vector indexing, this will cause the affected documents to be dropp
 
 NOTE: `updater.finish()` will throw an error if any values inside the updater have not been set or skipped.
 
-[discrete#csharp:working-with-vector-search:::vector-search-sql-support]
-===== Vector Search SQL++ Support
+== Vector Search SQL++ Support
 
 Couchbase Lite currently supports Hybrid Vector Search and the `APPROX_VECTOR_DISTANCE()` function.
 
-IMPORTANT: Similar to the <<csharp:fts:::,Full Text Search>> `match()` function, the `APPROX_VECTOR_DISTANCE()` function and Hybrid Vector Search cannot use the `OR` expression with the other expressions in the related `WHERE` clause.
+IMPORTANT: Similar to the xref:csharp:fts.adoc[Full Text Search] `match()` function, the `APPROX_VECTOR_DISTANCE()` function and Hybrid Vector Search cannot use the `OR` expression with the other expressions in the related `WHERE` clause.
 
-[discrete#csharp:working-with-vector-search:::use-hybrid-vector-search]
-===== Use Hybrid Vector Search
+== Use Hybrid Vector Search
 
 You can use Hybrid Vector Search (Hybrid Search) to perform vector search in conjunction with regular SQL++ queries.
 With Hybrid Search, you perform vector search on documents that have already been filtered based on criteria specified in the `WHERE` clause.
 
-NOTE: A `LIMIT` clause is required for non-hybrid Vector Search, this avoids a slow, exhaustive unlimited search of all possible vectors.
+NOTE: A `LIMIT` clause is required for non-hybrid Vector Search, this avoids a slow, exhaustive unlimited search of all possible vectors. 
 
-[discrete#csharp:working-with-vector-search:::approx_vector_distancevector-expr-target-vector-metric-nprobes-accurate]
-====== `APPROX_VECTOR_DISTANCE(vector-expr, target-vector, [metric], [nprobes], [accurate])`
+=== `APPROX_VECTOR_DISTANCE(vector-expr, target-vector, [metric], [nprobes], [accurate])`
 
 WARNING: If you use a different distance metric in the `APPROX_VECTOR_DISTANCE()` function from the one configured in the index, you will receive an error when compiling the query.
 
@@ -327,27 +234,27 @@ WARNING: If you use a different distance metric in the `APPROX_VECTOR_DISTANCE()
 |Parameter |Is Required |Description
 
 |vector-expr
-|image:couchbase-lite/current/{underscore}images/yes.png[]
+|image:ROOT:yes.png[]
 |The expression returning a vector (NOT Index Name).
 Must match the expression specified in the vector index exactly.
 |target-vector
-|image:couchbase-lite/current/{underscore}images/yes.png[]
+|image:ROOT:yes.png[]
 |The target vector.
 |metric
-|image:couchbase-lite/current/{underscore}images/no.png[]
+|image:ROOT:no.png[]
 |Values : "EUCLIDEAN_SQUARED", “L2_SQUARED”, “EUCLIDEAN”, “L2”,  ”COSINE”, “DOT”.
 If not specified, the metric set in the vector index is used.
 If specified, the metric must match with the metric set in the vector index.
-This optional parameter allows multiple indexes to be attached to the same field in a document.
+This optional parameter allows multiple indexes to be attached to the same field in a document. 
 |nprobes
-|image:couchbase-lite/current/{underscore}images/no.png[]
+|image:ROOT:no.png[]
 |Number of buckets to search for the nearby vectors.
-If not specified, the nprobes set in the vector index is used.
+If not specified, the nprobes set in the vector index is used. 
 |accurate
-|image:couchbase-lite/current/{underscore}images/no.png[]
-|If not present, false will be used, which means that the quantized/encoded vectors in the index will be used for calculating the distance.
+|image:ROOT:no.png[]
+|If not present, false will be used, which means that the quantized/encoded vectors in the index will be used for calculating the distance. 
 
-IMPORTANT: Only accurate = false is supported
+IMPORTANT: Only accurate = false is supported 
 
 |===
 
@@ -357,83 +264,40 @@ Below are examples of valid and invalid use of Hybrid Search.
 
 [source, csharp]
 ----
-
-
-            // Combining vector search logic with other logic makes a hybrid query
-            var sql = """
-                      SELECT color
-                      FROM colors
-                      WHERE APPROX_VECTOR_DISTANCE(vector, $vector) < 0.5 AND group = 'group1'
-                      LIMIT 10
-                      """;
-
-            var query = database.CreateQuery(sql);
-
-            // Setting the vector ommitted for brevity (see other examples)
+        
+include::csharp:example$code_snippets/VectorSearch.cs[tags=vs-hybrid-valid, vs-hybrid-invalid;]
 
 ----
 
-You can see a combination of SQL++ and the `APPROX_VECTOR_DISTANCE()` function to form a hybrid query.
+You can see a combination of SQL++ and the `APPROX_VECTOR_DISTANCE()` function to form a hybrid query. 
 The key difference between an invalid and valid hybrid query is that you cannot use `OR` with the `WHERE` clause as it is not supported.
 
-The example below showcases the necessity of the `LIMIT` clause.
+The example below showcases the necessity of the `LIMIT` clause. 
 
 [source, csharp]
 ----
-
-
-            // To avoid an accidental resource intensive exhaustive search of the
-            // database, a LIMIT clause it required for non-hybrid vector search
-            // queries
-
-            // This will work
-            var sql = "SELECT id, color, approx_vector_distance(vector, $vector) " +
-                      "FROM _default.colors " +
-                      "LIMIT 8";
-
-            var query = database.CreateQuery(sql);
-
-            // This will not
-            sql = "SELECT id, color, approx_vector_distance(vector, $vector) " +
-                      "FROM _default.colors ";
-
-            query = database.CreateQuery(sql);
-
+        
+include::csharp:example$code_snippets/VectorSearch.cs[tags=vs-hybrid-limitation]
 
 ----
 
 The `LIMIT` clause is required for all non-hybrid Vector Search queries to prevent accidental, exhaustive, slow, and resource intensive searches of the database.
 
-[discrete#csharp:working-with-vector-search:::hybrid-vector-search-with-full-text-match]
-====== Hybrid Vector Search with Full Text Match
+=== Hybrid Vector Search with Full Text Match
 
 Below is an example of using Hybrid Search with the Full Text `match()` function.
 
 [source, csharp]
 ----
-
-
-            // The following shows using Full Text Search and Vector Search
-            // in the same query.  Note that this example doesn't show
-            // setting up the full text index 'desc-index'.
-            var sql = """
-                      SELECT color
-                      FROM colors
-                      WHERE MATCH(desc-index, $text) AND group = 'group1'
-                      ORDER BY APPROX_VECTOR_DISTANCE(vector, $vector)
-                      """;
-
-            var query = database.CreateQuery(sql);
+        
+include::csharp:example$code_snippets/VectorSearch.cs[tags=vs-hybrid-ftmatch]
 
 ----
 
-[discrete#csharp:working-with-vector-search:::see-also]
-===== See Also
+== See Also
 
-* <<csharp:gs-install:::,Installation Instructions>>
+* xref:csharp:gs-install.adoc[Installation Instructions]
 
-* <<csharp:vector-search:::>>
+* xref:csharp:vector-search.adoc[Vector Search]
 
-* <<csharp:fts:::,Full Text Search>>
-
-
+* xref:csharp:fts.adoc[Full Text Search]

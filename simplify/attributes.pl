@@ -59,6 +59,10 @@ while (<>) {
     s/^\[#.*:::tabs-.*].*$//;
     s/^\[plantum#.*\]/[plantuml]/;
 
+    # de-mangle headings (== to =)
+    s/^=(= \S)/$1/;
+    s/^=(==+ \S)/$1/;
+
     # print lines that we didn't swallow as attribute definitions
     print;
 }

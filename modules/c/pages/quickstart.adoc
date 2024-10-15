@@ -1,203 +1,21 @@
-:docname: quickstart
-:page-module: c
-:page-relative-src-path: quickstart.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
+= Couchbase Lite on C
 :page-aliases: c.adoc
 :page-layout: landing-page-core-concept
+ifdef::show_edition[:page-edition: {release}]
+ifdef::prerelease[:page-status: {prerelease}]
 :page-role: tiles, -toc
 :description: Start your Couchbase for Mobile and Edge adventure, get up and running with Couchbase Lite
+:!sectids:
 
-
-
-// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
-//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
-//          making all attributes available for use on the page.
-//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
-
-//
-// CBL-C Maintenance release number
-//
-//
-
-// VECTOR SEARCH attributes
-//
-
-
-// BEGIN - Set attributes pointing to API references for this module
-
-//
-//
-
-
-
-
-
-
-// DATABASE module and functions
-// Database(im)
-
-// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#gaa4b06dcb7427cafeabde8486f5f03f10[CBLDatabase_PerformMaintenance()]
-
-
-
-
-// Begin -- DatabaseConfiguration
-// End -- DatabaseConfiguration
-
-
-// DOCUMENTS
-
-
-
-
-
-
-// QUERY RELATED CLASSES and METHODS
-
-// Result Classes and Methods
-
-
-
-
-// Query class and methods
-
-
-
-
-
-// Expression class and methods
-// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__[Query Class index]
-
-
-// ArrayFunction class and methods
-
-
-// Function class and methods
-//
-
-// Where class and methods
-//
-// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__Where.html
-// NOT SET[Where]
-
-// orderby class and methods
-//
-// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__OrderBy.html
-
-// GroupBy class and methods
-//
-// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__GroupBy.html
-// NOT SET[GroupBy]
-
-// URLEndpointConfiguration
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// diag: Env+Module c
-
-
-// Replicator API
-
-
-
-
-
-
-
-
-
-
-// Note there is a replicator.status property AND
-// a ReplicationStatus class/struct --- oh yes, easy to confuse.
-
-
-
-
-
-
-
-// ReplicatorConfiguration API
-
-
-
-
-// Repl Cfg Props
-
-
-
-
-
-
-
-// Begin Replicator Retry Config
-// End Replicator Retry Config
-
-
-// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
-
-// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
-
-
-
-
-
-
-
-// CBLPropertyEncryptor gab116a23be8bd24b86349379f370ef60c
-// CBLPropertyDecryptor ga24a60a3d6f9816e1d32464cc31a15c0c
-// CBLEncryptable gaaf20d661f9684632a005f0a4e52656b3
-
-// Meta API
-
-
-
-
-// BEGIN Logs and logging references
-// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/htmlLogging.html[CBLLogging classes]
-
-
-
-
-
-
-
-// END  Logs and logging references
-
-// End define module specific attributes
-
-// BEGIN::module page attributes
-// :snippet-p2psync-ws: {snippets-p2psync-ws--c}
-// END::Local page attributes
+include::partial$_set_page_context_for_c.adoc[]
 
 = Couchbase Lite on C
 // ++++
 // <div class="card-row">
 // ++++
 // // DO NOT EDIT
-// // include::ROOT:partial$block-related-howto-p2psync-ws.adoc[]
-// // include::ROOT:partial$_show_page_header_block.adoc[]
+// // include::{root-partials}block-related-howto-p2psync-ws.adoc[]
+// // include::{root-partials}_show_page_header_block.adoc[]
 // // DO NOT EDIT
 
 // [.column]
@@ -219,93 +37,8 @@
 // <div class="card-row three-column-row">
 // ++++
 
-// BEGIN -- inclusion -- quickstart-skeleton.adoc -- landing page for Couchbase Lite on 'xxxx'
-// Including page MUST be of type landing-page-core-concept
-++++
-<div class="card-row">
-++++
-
-[.column]
-== {empty}
-[.content]
-Couchbase Lite is an embedded, NoSQL JSON Document Style database for your mobile apps.
-
-You can use Couchbase Lite as a standalone embedded database within your mobile apps, or with Sync Gateway and Couchbase Server to provide a complete cloud to edge synchronized solution
-[.column]
-== {empty}
-[.media-left]
-image::couchbase-lite/current/_images/manage-and-store-data-locally.svg[,250]
-++++
-</div>
-++++
-== C Resources
-++++
-<div class="card-row three-column-row">
-++++
-
-[.column]
-=== {empty}
-[.content]
-.Get Started
-// * https://packages.couchbase.com/releases/couchbase-lite-c/2.8.0-beta/couchbase-lite-objc_community_2.8.0.zip[Couchbase Lite C]
-* xref:c:gs-downloads.adoc[Download]
-* xref:c:gs-install.adoc[Install]
-* xref:c:gs-build.adoc[Build]
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html[Browse API References ...]
-
-[.column]
-=== {empty}
-[.content]
-.Do More
-* xref:c:replication.adoc[Data Sync]
-* xref:c:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
-* xref:c:query-live.adoc[Live Query]
-
-
-[.column]
-=== {empty}
-[.content]
-.Learn More
-// * Data Model
-* xref:c:database.adoc[Database]
-* xref:c:document.adoc[Document]
-* xref:c:blob.adoc[Blob]
-
-[.column]
-=== {empty}
-[.content]
-.Key Concepts
-* xref:c:conflict.adoc[Conflicts]
-* xref:c:indexing.adoc[Indexing]
-
-[.column]
-=== {empty}
-[.content]
-.Product Notes
-* xref:ROOT:cbl-whatsnew.adoc[New in {release}]
-* xref:c:releasenotes.adoc[Couchbase Lite Release Notes]
-* xref:c:vs-releasenotes.adoc[Vector Search Release Notes]
-* xref:c:supported-os.adoc[Supported Platforms]
-
-[.column]
-=== {empty}
-[.content]
-
-// .Tutorials
-// * ...
-// * ...
-// * ...
-
-++++
-</div>
-++++
-
-// END -- inclusion -- quickstart-skeleton.adoc -- landing page for Couchbase Lite on 'xxxx'
+include::{root-commons}quickstart-skeleton.adoc[subs="macros,attributes"]
 
 // DO NOT EDIT OR REMOVE
-// include::ROOT:partial$block-related-content-p2psync.adoc[]
+// include::{root-partials}block-related-content-p2psync.adoc[]
 // DO NOT EDIT OR REMOVE
-
-
-== Start Here!
-

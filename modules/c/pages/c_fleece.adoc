@@ -1,208 +1,23 @@
-:docname: c_fleece
-:page-module: c
-:page-relative-src-path: c_fleece.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
-[#c:c_fleece:::]
-== Fleece API
+= Fleece C API
+ifdef::show_edition[:page-edition: {release}]
 :page-status: pass:q,a[{prerelease}]
 :page-role:
 :description: Introducing the key concepts of the Fleece C API
 
+include::partial$_set_page_context_for_c.adoc[]
 
+:url_fleece_on_github: https://github.com/couchbaselabs/fleece[Fleece on GitHub]
+:url_using_fleece: https://github.com/couchbaselabs/fleece/wiki/Using-Fleece[Using Fleece]
+:url_fleece_hdr: https://github.com/couchbaselabs/fleece/blob/master/API/fleece/Fleece.h[Fleece Header File]
 
-// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
-//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
-//          making all attributes available for use on the page.
-//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+:url_flslice_hdr: https://github.com/couchbaselabs/fleece/blob/master/API/fleece/FLSlice.h[FLSlice.h]
 
-//
-// CBL-C Maintenance release number
-//
-//
+:param-related!:
+include::{root-partials}_show_page_header_block.adoc[]
 
-// VECTOR SEARCH attributes
-//
+== Introduction
 
-
-// BEGIN - Set attributes pointing to API references for this module
-
-//
-//
-
-
-
-
-
-
-// DATABASE module and functions
-// Database(im)
-
-// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#gaa4b06dcb7427cafeabde8486f5f03f10[CBLDatabase_PerformMaintenance()]
-
-
-
-
-// Begin -- DatabaseConfiguration
-// End -- DatabaseConfiguration
-
-
-// DOCUMENTS
-
-
-
-
-
-
-// QUERY RELATED CLASSES and METHODS
-
-// Result Classes and Methods
-
-
-
-
-// Query class and methods
-
-
-
-
-
-// Expression class and methods
-// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__[Query Class index]
-
-
-// ArrayFunction class and methods
-
-
-// Function class and methods
-//
-
-// Where class and methods
-//
-// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__Where.html
-// NOT SET[Where]
-
-// orderby class and methods
-//
-// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__OrderBy.html
-
-// GroupBy class and methods
-//
-// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__GroupBy.html
-// NOT SET[GroupBy]
-
-// URLEndpointConfiguration
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// diag: Env+Module c
-
-
-// Replicator API
-
-
-
-
-
-
-
-
-
-
-// Note there is a replicator.status property AND
-// a ReplicationStatus class/struct --- oh yes, easy to confuse.
-
-
-
-
-
-
-
-// ReplicatorConfiguration API
-
-
-
-
-// Repl Cfg Props
-
-
-
-
-
-
-
-// Begin Replicator Retry Config
-// End Replicator Retry Config
-
-
-// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
-
-// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
-
-
-
-
-
-
-
-// CBLPropertyEncryptor gab116a23be8bd24b86349379f370ef60c
-// CBLPropertyDecryptor ga24a60a3d6f9816e1d32464cc31a15c0c
-// CBLEncryptable gaaf20d661f9684632a005f0a4e52656b3
-
-// Meta API
-
-
-
-
-// BEGIN Logs and logging references
-// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/htmlLogging.html[CBLLogging classes]
-
-
-
-
-
-
-
-// END  Logs and logging references
-
-// End define module specific attributes
-
-// BEGIN::module page attributes
-// :snippet-p2psync-ws: {snippets-p2psync-ws--c}
-// END::Local page attributes
-
-
-
-[abstract]
---
-Description -- _{description}_ +
---
-
-[discrete#c:c_fleece:::introduction]
-=== Introduction
-
-pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] for C makes extensive use of the Fleece C API for accessing document data.
+{cbl-te} for C makes extensive use of the Fleece C API for accessing document data.
 This content introduces some basic Fleece API concepts and examples.
 
 Fleece is a binary encoding for semi-structured data.
@@ -230,13 +45,12 @@ The mutation is in effect a delta, so it's usually much smaller than the origina
 And the original document is unchanged, which is great for concurrency as well as (simple) version control.
 
 For more information, see::
-https://github.com/couchbaselabs/fleece[Fleece on GitHub] |
-https://github.com/couchbaselabs/fleece/wiki/Using-Fleece[Using Fleece] |
-https://github.com/couchbaselabs/fleece/blob/master/API/fleece/Fleece.h[Fleece Header File]
+{url_fleece_on_github} |
+{url_using_fleece} |
+{url_fleece_hdr}
 
 
-[discrete#c:c_fleece:::values]
-=== Values
+== Values
 
 Fleece’s data types are almost identical to those of JSON, with the notable addition of binary data types.
 
@@ -245,11 +59,11 @@ Arrays can contain any data type and dictionaries have strings as keys, with val
 
 The basic Fleece data type is *FLValue*, an opaque pointer reference to a value of any type.
 
-Use the _FLValue_GetType_ API to check the value's actual type and _FLValue_As<Type Name>_ to get the actual value as shown in <<c:c_fleece:::ex-flvalue>>
+Use the _FLValue_GetType_ API to check the value's actual type and _FLValue_As<Type Name>_ to get the actual value as shown in <<ex-flvalue>>
 
 .Use FLValue
 [#ex-flvalue]
-[sourc#c:c_fleece:::ex-flvaluee,c, subs="attributes+, macros+"}]
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
 FLDict props = CBLDocument_Properties(doc);
 FLValue value = FLDict_Get(props, FLSTR("name”));
@@ -263,27 +77,24 @@ if (type == kFLString) {
 <.> Find the values data type
 <.> Cast to appropriate type
 
-See: https://github.com/couchbaselabs/fleece/blob/master/API/fleece/Fleece.h[Fleece Header File] for more details.
+See: {url_fleece_hdr} for more details.
 
 
-[discrete#c:c_fleece:::slices-and-strings]
-=== Slices and Strings
+== Slices and Strings
 
-[discrete#c:c_fleece:::flslice]
-==== FLSlice
+=== FLSlice
 Another basic Fleece data type, _FLSlice_ a simple struct consisting of a pointer and a length.
 It points to a block of memory, without implying ownership of that memory.
 FLSlice is used to represent both binary data and strings.
 
-[discrete#c:c_fleece:::flstring]
-==== FLString
+=== FLString
 _FLString_ is a typedef of FLSlice, which explicitly represents a string value.
-Use the _FLSTR(“Some String”)_ macro to create an FLString from a string literal -- see: <<c:c_fleece:::ex-flstr>>
+Use the _FLSTR(“Some String”)_ macro to create an FLString from a string literal -- see: <<ex-flstr>>
 
 
 .Create an FLString
 [#ex-flstr]
-[sourc#c:c_fleece:::ex-flstre,c, subs="attributes+, macros+"}]
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
 
 CBLDatabase* db = CBLDatabase_Open( (FLSTR("my-database"), NULL, &err); // <.>
@@ -292,19 +103,18 @@ CBLDatabase* db = CBLDatabase_Open( (FLSTR("my-database"), NULL, &err); // <.>
 <.> FLSTR("My-database") creates the FLString from the given string literal.
 
 
-[discrete#c:c_fleece:::flsliceresultflstringresult]
-==== FLSliceResult/FLStringResult
+=== FLSliceResult/FLStringResult
 
 FLSlice doesn’t imply an ownership of memory.
 However, _FLSliceResult_/_FLStringResult_ is an FLSlice type which _does_ own memory and is reference-counted. +
 
 In general, whenever an FLSliceResult/FLStringResult is returned from an API call, you are responsible for calling FLSliceResult_Release when you are done using it.
 
-For an example of `FLSliceResult` in use, see: <<c:c_fleece:::ex-flsliceresult>>.
+For an example of `FLSliceResult` in use, see: <<ex-flsliceresult>>.
 
 [#ex-flsliceresult]
 .Using FLStringResult
-[sourc#c:c_fleece:::ex-flsliceresulte,c, subs="attributes+, macros+"}]
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
 
 FLStringResult path = CBLDatabase_Path(db);
@@ -324,14 +134,13 @@ FLSlice and FLSliceResult have utility functions such as:
 * `FLSliceResults_Release`
 
 
-[discrete#c:c_fleece:::null-slices]
-==== Null Slices
+=== Null Slices
 The null slice {NULL, 0} is represented by the constant `kFLSliceNull`. +
-You test a slice for null by comparing its pointer (buf) with NULL -- see: <<c:c_fleece:::ex-flnullslice>>
+You test a slice for null by comparing its pointer (buf) with NULL -- see: <<ex-flnullslice>>
 
 [#ex-flnullslice]
 .Test for null slice
-[sourc#c:c_fleece:::ex-flnullslicee,c, subs="attributes+, macros+"}]
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
 FLValue value = FLDict_Get(props, FLSTR("name”));
 FLString name = FLValue_AsString(value);
@@ -341,20 +150,18 @@ if (name.buf != NULL) {
 ----
 
 
-See: https://github.com/couchbaselabs/fleece/blob/master/API/fleece/FLSlice.h[FLSlice.h] for more details on data slices.
+See: {url_flslice_hdr} for more details on data slices.
 
 
-[discrete#c:c_fleece:::dictionaries]
-=== Dictionaries
+== Dictionaries
 
-[discrete#c:c_fleece:::immutable]
-==== Immutable
+=== Immutable
 _FLDict_ represents an immutable dictionary type in Fleece. +
-To access a value with a string key from a dictionary, use FLDict_Get -- as shown in: <<c:c_fleece:::ex-flget>>.
+To access a value with a string key from a dictionary, use FLDict_Get -- as shown in: <<ex-flget>>.
 
 [#ex-flget]
 .Get dictionary value
-[sourc#c:c_fleece:::ex-flgete,c, subs="attributes+, macros+"}]
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
 
 FLDict props = CBLDocument_Properties(doc);
@@ -364,11 +171,11 @@ doSomethingWith(value);
 ----
 
 
-To iterate through each key-value pair in the dictionary, use _FLDictIterator_, as shown in: <<c:c_fleece:::ex-fliterator>>
+To iterate through each key-value pair in the dictionary, use _FLDictIterator_, as shown in: <<ex-fliterator>>
 
 [#ex-fliterator]
 .Iterate key-value pairs in dictionary
-[sourc#c:c_fleece:::ex-fliteratore,c, subs="attributes+, macros+"}]
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
 
 FLDictIterator iter;
@@ -382,16 +189,15 @@ while (NULL != (value = FLDictIterator_GetValue(&iter))) {
 ----
 
 
-[discrete#c:c_fleece:::mutable]
-==== Mutable
+=== Mutable
 
 *FLMutableDictionary* is a mutable dictionary type that allows editing.
 
-To create a new mutable dictionary, use FLMutableDict_New() -- see: <<c:c_fleece:::ex-flmutabledict-new>>.
+To create a new mutable dictionary, use FLMutableDict_New() -- see: <<ex-flmutabledict-new>>.
 
 [#ex-flmutabledict-new]
 .Set dictionary value
-[sourc#c:c_fleece:::ex-flmutabledict-newe,c, subs="attributes+, macros+"}]
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
 FLMutableDict myDict = FLMutableDict_New()
 FLMutableDict_SetString(myDict, FLSTR(“name”), FLSTR(“John Doe”));
@@ -401,17 +207,16 @@ FLMutableDict_Release(myDict); // <.>
 <.> don't forget to release resources once you have finished with them
 
 
-[discrete#c:c_fleece:::lbl-fleece-arrays]
-=== Arrays
+[#lbl-fleece-arrays]
+== Arrays
 
-[discrete#c:c_fleece:::immutable-2]
-==== Immutable
+=== Immutable
 _FLArray_ represents an immutable array type in Fleece. +
-use _FLArray_Count_ and _FLArray_Get_ respectively, to get the numbers of values in an array and to get a value using with an index -- as shown in <<c:c_fleece:::ex-flarray-get>>.
+use _FLArray_Count_ and _FLArray_Get_ respectively, to get the numbers of values in an array and to get a value using with an index -- as shown in <<ex-flarray-get>>.
 
 [#ex-flarray-get]
 .Use arrays
-[sourc#c:c_fleece:::ex-flarray-gete,c, subs="attributes+, macros+"}]
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
 int count = FLArray_Count(myArray);
 if (count > 0) {
@@ -422,12 +227,12 @@ if (count > 0) {
 ----
 
 
-Use _FLArrayIterator_ to iterate through arrays, as shown in : <<c:c_fleece:::ex-array-iteration>>.
+Use _FLArrayIterator_ to iterate through arrays, as shown in : <<ex-array-iteration>>.
 
 [#ex-array-iteration]
 .Array iteration
 // Iterate through the array
-[sourc#c:c_fleece:::ex-array-iteratione,c, subs="attributes+, macros+"}]
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
 FLArrayIterator iter;
 FLArrayIterator_Begin(myArray, &iter);
@@ -439,8 +244,7 @@ while (NULL != (value = FLArrayIterator_GetValue(&iter))) {
 
 ----
 
-[discrete#c:c_fleece:::mutable-2]
-==== Mutable
+=== Mutable
 
 _FLMutableArray_ is a mutable array type that allows editing. +
 
@@ -450,7 +254,7 @@ To append a value into the array, use _FLMutableArray_Append<Type Name>_.
 
 [#ex-flmutable-array-append]
 .Append values to array
-[sourc#c:c_fleece:::ex-flmutable-array-appende,c, subs="attributes+, macros+"}]
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
 FLMutableArray myArray = FLMutableArray_New();
 FLMutableArray_AppendString(myArray, FLSTR(“String 1”));
@@ -461,18 +265,16 @@ FLMutableArray_Release(myArray)
 <.> To set a value at a specific array index, use FLMutableArraySet<Type Name>.
 
 
-[discrete#c:c_fleece:::json-support]
-=== JSON Support
+== JSON Support
 
 Fleece provides a JSON utility that allows you to parse JSON string into Fleece or generate JSON from Fleece.
 
-[discrete#c:c_fleece:::parsing-json]
-==== Parsing JSON
+=== Parsing JSON
 Use *FLDoc_FromJSON* to convert JSON Dictionary or Array into Fleece Dictionary or Array.
 
 [#ex-json-parse]
 .Parse JSON data to Fleece
-[sourc#c:c_fleece:::ex-json-parsee,c, subs="attributes+, macros+"}]
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
 FLError error;
 FLDoc doc = FLDoc_FromJSON(jsonString, &error);
@@ -484,13 +286,12 @@ if (doc) {
 FLDoc_Release(doc);
 ----
 
-[discrete#c:c_fleece:::generating-json]
-==== Generating JSON
+=== Generating JSON
 Use FLValue_ToJSON to convert FLValue into JSON string
 
 [#ex-json-from-fleese]
 .Convert to JSON
-[sourc#c:c_fleece:::ex-json-from-fleesee,c, subs="attributes+, macros+"}]
+[source,{source-language}, subs="attributes+, macros+"}]
 ----
 FLDict props = CBLDocument_Properties(doc);
 FLStringResult jsonString = FLValue_ToJSON((FLValue) props);
@@ -500,8 +301,7 @@ FLSliceResult_Release(jsonString);
 
 
 
-[discrete#c:c_fleece:::memory-management]
-=== Memory Management
+== Memory Management
 In general, Mutable objects are _reference counted_: with MutableArray and Mutable Dictionary each having  _retain_ and _release_ functions. +
 The lifespan of Immutable objects is the same as that of the memory block from which they are parsed.
 They cannot be individually released or retained.
@@ -512,55 +312,4 @@ https://github.com/couchbaselabs/fleece/wiki/Advanced-Fleece#for-memory-manageme
 
 
 
-// :param-add3-title: {empty}
-// :param-reference: reference-p2psync
-
-
-[discrete#c:c_fleece:::related-content]
-=== Related Content
-++++
-<div class="card-row three-column-row">
-++++
-
-[.column]
-==== {empty}
-.How to . . .
-* xref:c:gs-prereqs.adoc[Prerequisites]
-* xref:c:gs-install.adoc[Install]
-* xref:c:gs-build.adoc[Build and Run]
-
-
-.
-
-[discrete.colum#c:c_fleece:::-2n]
-==== {empty}
-.Learn more . . .
-* xref:c:database.adoc[Databases]
-* xref:c:document.adoc[Documents]
-* xref:c:blob.adoc[Blobs]
-* xref:c:replication.adoc[Remote Sync Gateway]
-* xref:c:conflict.adoc[Handling Data Conflicts]
-
-.
-
-
-[.column]
-// [.content]
-[discrete#c:c_fleece:::-3]
-==== {empty}
-.Dive Deeper . . .
-//* Community
-https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
-https://blog.couchbase.com/[Blog] |
-https://docs.couchbase.com/tutorials/[Tutorials]
-
-
-.
-
-
-
-++++
-</div>
-++++
-
-
+include::{root-partials}block-related-content-data.adoc[]

@@ -11,10 +11,8 @@ include::partial$_set_page_context_for_swift.adoc[]
 == Removed APIs
 
 === ResetCheckpoint
-// |https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC15resetCheckpointyyF
 
 .Alternative
-// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC5start5resetySb_tF
   `replicator.start(reset:)`
 
 .Before
@@ -29,7 +27,6 @@ replicator.start(true)
 ----
 
 === Database.setLogLevel
-// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC11setLogLevel_6domainyAA0fG0O_AA0F6DomainOtFZ[]
 
 .Alternative
 `Database.log.console`
@@ -46,7 +43,6 @@ Database.log.console.level = .verbose
 ----
 
 === Database.compact
-// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC7compactyyKF[
 .Alternative
 
 https://docs.couchbase.com/mobile/3.0.0-beta02/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC18performMaintenance4typeyAA0F4TypeO_tKF[Database.performMaintenance(type:)]
@@ -66,7 +62,6 @@ try testdb.performMaintenance(type: .compact)
 == Deprecated API
 
 === Match
-// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/FullTextExpression.html#/s:18CouchbaseLiteSwift18FullTextExpressionC5indexyAA0deF8Protocol_pSSFZ[MATCH]
 .Alternative
 `FullTextFunction.match(indexName:)`
 
@@ -88,8 +83,6 @@ let q = QueryBuilder.select([SelectResult.expression(Meta.id)])
 
 
 === isNullOrMissing and notNullOrMissing
-// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Protocols/ExpressionProtocol.html#/s:18CouchbaseLiteSwift18ExpressionProtocolP15isNullOrMissingAaB_pyF[
-// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Protocols/ExpressionProtocol.html#/s:18CouchbaseLiteSwift18ExpressionProtocolP16notNullOrMissingAaB_pyF[notNullOrMissing/notNullOrMissing]
 
 .Alternatives
 `isNotValued()` +
@@ -128,7 +121,6 @@ The following classes are changed to Swift struct.
 
 .Before
 ----
-// use of let won't stop from editing instance later)
 
 let config = DatabaseConfiguration()
 config.encryptionKey = EncryptionKey.password(password!)
@@ -168,13 +160,4 @@ let q = QueryBuilder.select([SelectResult.expression(Function.atan2(y: Expressio
 ----
 // end::content[]
 
-// DO NOT DELETE
-// Include standard
-
 include::{root-partials}block-related-content-std.adoc[]
-// DO NOT DELETE
-
-// DO NOT DELETE
-// include::{root-partials}_unset-platform.adoc[]
-// DO NOT DELETE
-// END: inclusion-page - common-database.adoc[]

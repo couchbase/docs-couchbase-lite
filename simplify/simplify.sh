@@ -2,6 +2,13 @@
 set -exu -o pipefail
 
 SCRIPT_DIR=$(realpath $(dirname $0))
+cd $SCRIPT_DIR/..
+git checkout release/3.2 -- modules/android/pages/*.adoc
+git checkout release/3.2 -- modules/c/pages/*.adoc
+git checkout release/3.2 -- modules/csharp/pages/*.adoc
+git checkout release/3.2 -- modules/java/pages/*.adoc
+git checkout release/3.2 -- modules/objc/pages/*.adoc
+git checkout release/3.2 -- modules/swift/pages/*.adoc
 
 cd $SCRIPT_DIR/../../docs-site
 

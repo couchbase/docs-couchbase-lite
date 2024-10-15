@@ -1,14 +1,7 @@
-:docname: gs-install
-:page-module: objc
-:page-relative-src-path: gs-install.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
-[#objc:gs-install:::]
-=== Install
+= Installation - Couchbase Lite on Objective-C
 :page-aliases: start/objc-gs-install.adoc
+ifdef::show_edition[:page-edition: {release}]
+ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Installing Couchbase Lite on Objective-C
 :keywords: edge nosql api
@@ -18,214 +11,17 @@
 
 
 
+include::partial$_set_page_context_for_objc.adoc[]
+include::{root-partials}_show_page_header_block.adoc[]
 
 
-// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
-//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
-//          making all attributes available for use on the page.
-//  UsedBy: ROOT:partial$_std_cbl_hdr.adoc
+== Get Started
 
-// BEGIN::module page attributes
-
-//
-// CBL-Obj-C Maintenance release number
-//
-:maintenance: 1
-//
-
-// VECTOR SEARCH attributes
-//
-
-
-
-// BEGIN - Set attributes pointing to API references for this module
-
-
-// API Reference Links
-//
-//
-
-
-
-// Supporting Data Type Classes
-
-
-
-// DATABASE CLASSES
-
-
-// Docuument Class
-
-
-
-
-// Begin -- DatabaseConfiguration
-// End -- DatabaseConfiguration
-
-//Database.SAVE
-
-
-
-//Database.DELETE
-
-
-//Database.COMPACT
-// deprecated 2.8
-//
-// :url-api-method-database-compact: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)compact:[CBLDatabase.compact()]
-
-
-
-
-
-
-// QUERY RELATED CLASSES and METHODS
-
-// Result Classes and Methods
-
-
-
-
-// Query class and methods
-
-
-
-
-
-// Expression class and methods
-// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/[Query Class index]
-
-
-// ArrayFunction class and methods
-
-
-// Function class and methods
-//
-
-// Where class and methods
-//
-// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLWhere.html
-// NOT SET[Where]
-
-// orderby class and methods
-//
-// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLOrderBy.html
-
-// GroupBy class and methods
-//
-// https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLGroupBy.html
-// NOT SET[GroupBy]
-
-// URLEndpointConfiguration
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// diag: Env+Module objc
-
-
-// Replicator API
-
-
-
-
-
-
-
-
-
-
-
-// Note there is a replicator.status property AND
-// a ReplicationStatus class/struct --- oh yes, easy to confuse.
-
-//:url-api-property-replicator-status-activity: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/s:18CouchbaseLiteobjc10ReplicatorC13ActivityLevelO
-
-
-
-
-
-
-
-// ReplicatorConfiguration API
-
-
-
-
-
-
-
-
-
-
-
-// Begin Replicator Retry Config
-// End Replicator Retry Config
-
-
-// :url-api-prop-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
-
-// :url-api-enum-replicator-config-ServerCertificateVerificationMode: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
-
-
-
-
-
-
-
-
-// Meta API
-
-
-
-
-// BEGIN Logs and logging references
-// :url-api-class-logging: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objcLogging.html[CBLLogging classes]
-
-
-
-
-
-
-
-// END  Logs and logging references
-
-// End define module specific attributes
-
-// BEGIN::module page attributes
-// :snippet-p2psync-ws: {snippets-p2psync-ws--objc}
-// END::Local page attributes
-[abstract]
---
-Description -- _{description}_ +
---
-
-
-[discrete#objc:gs-install:::get-started]
-==== Get Started
-
-Create or open an existing _Xcode_ project and install _Couchbase Lite {major}.{minor}.{base}{empty} using one of the <<objc:gs-install:::lbl-install-tabs>> methods shown.
+Create or open an existing _Xcode_ project and install _Couchbase Lite {version-full} using one of the <<lbl-install-tabs>> methods shown.
 
 Enterprise users can also download the Couchbase Lite Vector Search extension library.
 
-// include::ROOT:partial$block-caveats.adoc[tag=xcode-12x3-fix]
+// include::{root-partials}block-caveats.adoc[tag=xcode-12x3-fix]
 
 [NOTE]
 --
@@ -236,20 +32,19 @@ Couchbase Lite is distributed as an xcframework, to support this:
 --
 
 
-[discrete#objc:gs-install:::lbl-install-tabs]
-===== Install Couchbase Lite
+[#lbl-install-tabs]
+=== Install Couchbase Lite
 
 IMPORTANT: There is no Carthage support for the 3.2.0 Beta version of Couchbase Lite.
 
-[tabs]
+[{tabs}]
 ====
-
 Direct Download::
 +
 --
 // * https://www.couchbase.com/downloads[Download] Couchbase Lite.
 
-. Download the binaries from here -- https://www.couchbase.com/downloads#extend-with-mobile[Extend with Mobile].
+. Download the binaries from here -- {downloads-mobile--xref}.
 
 . Unpack the download zip file into your XCode project location.
 
@@ -262,7 +57,6 @@ Direct Download::
 ...
 ----
 --
-
 Carthage::
 +
 --
@@ -275,20 +69,19 @@ NOTE:  The minimum required version of Carthage is *38.0*
 .Couchbase Lite Community Edition
 [source,ruby,subs=attributes+]
 ----
-binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Community.json" ~> {major}.{minor}.{base}{empty}
+binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Community.json" ~> {version-full}
 ----
 +
 .Couchbase Lite Enterprise Edition
 [source,ruby,subs=attributes+]
 ----
-binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Enterprise.json" ~> {major}.{minor}.{base}{empty}
+binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Enterprise.json" ~> {version-full}
 ----
 
 . Run `carthage update --platform ios`.
 . Drag *CouchbaseLite.xcframework* from *Carthage/Build/* to the Xcode navigator.
 . Click on Project > General > Embedded Binary and add *CouchbaseLite.xcframework* to this section.
 --
-
 
 CocoaPods::
 +
@@ -303,7 +96,7 @@ NOTE: The minimum required version of Cocoapods is *1.15*
 ----
 target '<your target name>' do
   use_frameworks!
-  pod 'CouchbaseLite', '{major}.{minor}.{base}{empty}'
+  pod 'CouchbaseLite', '{version-full}'
 end
 ----
 +
@@ -312,7 +105,7 @@ end
 ----
 target '<your target name>' do
   use_frameworks!
-  pod 'CouchbaseLite-Enterprise', '{major}.{minor}.{base}{empty}'
+  pod 'CouchbaseLite-Enterprise', '{version-full}'
 end
 ----
 
@@ -325,8 +118,7 @@ pod install
 --
 ====
 
-[discrete#objc:gs-install:::install-vector-search-extension]
-==== Install Vector Search Extension
+== Install Vector Search Extension
 
 NOTE: Vector Search is an *Enterprise-only* feature.
 
@@ -338,17 +130,16 @@ To use Vector Search, you must have Couchbase Lite installed and add the Vector 
 There is no Carthage support for the beta release of Vector Search.
 Vector Search is available only for 64-bit architectures and
 Intel processors that support the Advanced Vector Extensions 2 (AVX2) instruction set.
-To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.]
+To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.] 
 --
 
-[tabs]
+[{tabs}]
 =====
-
 Direct Download::
 +
 --
 
-. Download the binaries from here -- https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}/couchbase-lite-vector-search_xcframework_{vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}.zip[binary download link.]
+. Download the binaries from here -- https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-version-maintenance}/couchbase-lite-vector-search_xcframework_{vs-version-maintenance}.zip[binary download link.]
 
 . Unpack the download zip file into your XCode project location.
 
@@ -357,7 +148,6 @@ Direct Download::
 . Start using Couchbase Lite Vector Search on Swift in your project.
 
 --
-
 Carthage::
 +
 --
@@ -370,14 +160,13 @@ NOTE:  The minimum required version of Carthage is *38.0*
 .Couchbase Lite Enterprise Edition
 [source,ruby,subs=attributes+]
 ----
-binary "http://packages.couchbase.com/releases/couchbase-lite-vector-search/carthage/CouchbaseLiteVectorSearch.json" ~> {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+binary "http://packages.couchbase.com/releases/couchbase-lite-vector-search/carthage/CouchbaseLiteVectorSearch.json" ~> {vs-version-maintenance}
 ----
 
 . Run `carthage update --platform ios`.
 . Drag *CouchbaseLite.xcframework* from *Carthage/Build/* to the Xcode navigator.
 . Click on Project > General > Embedded Binary and add *CouchbaseLite.xcframework* to this section.
 --
-
 
 CocoaPods::
 +
@@ -395,7 +184,7 @@ NOTE: The minimum required Cocoapods  version is *1.15*
 ----
 target 'Example' do
   use_frameworks!
-  pod 'CouchbaseLiteVectorSearch', '{vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}' // <.>
+  pod 'CouchbaseLiteVectorSearch', '{vs-version-maintenance}' // <.>
 end
 ----
 
@@ -411,57 +200,4 @@ pod install
 --
 =====
 
-
-// :param-add3-title: {empty}
-// :param-reference: reference-p2psync
-
-
-
-[discrete#objc:gs-install:::related-content]
-==== Related Content
-++++
-<div class="card-row three-column-row">
-++++
-
-[.column]
-===== {empty}
-.How to . . .
-* xref:objc:gs-prereqs.adoc[Prerequisites]
-* xref:objc:gs-install.adoc[Install]
-* xref:objc:gs-build.adoc[Build and Run]
-
-
-.
-
-[discrete.colum#objc:gs-install:::-2n]
-===== {empty}
-.Learn more . . .
-* xref:objc:database.adoc[Databases]
-* xref:objc:document.adoc[Documents]
-* xref:objc:blob.adoc[Blobs]
-* xref:objc:replication.adoc[Remote Sync Gateway]
-* xref:objc:conflict.adoc[Handling Data Conflicts]
-
-.
-
-
-[.column]
-// [.content]
-[discrete#objc:gs-install:::-3]
-===== {empty}
-.Dive Deeper . . .
-//* Community
-https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
-https://blog.couchbase.com/[Blog] |
-https://docs.couchbase.com/tutorials/[Tutorials]
-
-
-.
-
-
-
-++++
-</div>
-++++
-
-
+include::{root-partials}block-related-content-start.adoc[]

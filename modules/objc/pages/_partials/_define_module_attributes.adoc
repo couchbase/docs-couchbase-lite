@@ -1,9 +1,3 @@
-// BEGIN -- inclusion -- {module-partials}_define_module_attributes.adoc
-//  Usage:  Here we define module specific attributes. It is invoked during the compilation of a page,
-//          making all attributes available for use on the page.
-//  UsedBy: {root-partials}_std_cbl_hdr.adoc
-
-// BEGIN::module page attributes
 :module-partials: {param-module}:partial$
 :example-callouts: {module-partials}block_callouts.adoc
 :module: {lang-mod-objc}
@@ -12,30 +6,17 @@
 :source-language: {lang-name-objc}
 :url-issues: {url-issues-objc}
 
-//
-// CBL-Obj-C Maintenance release number
-//
 :maintenance: 1
 :version-maintenance: {version}.{maintenance-ios}{tag}
 :version-maintenance-hyphenated: {major}-{minor}-{maintenance-ios}{tag}
-//
 
-// VECTOR SEARCH attributes
 :vs-version-maintenance: {vs-version}.{vs-maintenance-ios}{tag}
 :vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-ios}{tag}
-//
-
-
-
-// BEGIN - Set attributes pointing to API references for this module
 :sep: #/
 :api-pfx: CBL
 
 
-// API Reference Links
-//
 :url-api-references: {url-api-references-objc}
-//
 
 :url-api-references-structs: {url-api-references}/Structs/
 :url-api-references-classes: {url-api-references}/Classes/
@@ -43,9 +24,6 @@
 :url-api-references-enums: {url-api-references}/Enums/
 :url-api-references-method-sep: {sep}c:objc(cs)
 :url-api-references-dictionary: Dictionary.html
-
-
-// Supporting Data Type Classes
 :url-api-class-array: {url-api-references-classes}{api-pfx}Array.html[{api-pfx}Array]
 :url-api-class-mutablearray: {url-api-references-classes}{api-pfx}MutableArray.html[{api-pfx}MutableArray]
 :url-api-class-dictionary: {url-api-references-classes}{api-pfx}Dictionary.html[{api-pfx}Dictionary]
@@ -55,16 +33,11 @@
 :url-api-protocols-dictionary-dateForKey: {url-api-references-protocols}{api-pfx}Dictionary.html#/c:objc(pl)CBLDictionary(im)dateForKey:[dateForKey:]
 
 :url-api-method-document-getdate: {url-api-protocols-dictionary-dateForKey}
-
-// DATABASE CLASSES
 :url-api-references-database: {url-api-references-classes}{api-pfx}Database.html
 :url-api-class-database: {url-api-references-database}[{api-pfx}Database]
 :url-api-method-database: {url-api-references-database}{url-api-references-method-sep}{api-pfx}Database(im)
 :url-api-method-database-close: {url-api-method-database}close:[{api-pfx}Database.Close()]
 :url-api-method-database-delete: {url-api-method-database}delete:[{api-pfx}Database.Delete()]
-
-
-// Docuument Class
 :url-api-references-document: {url-api-references-classes}{api-pfx}Document.html
 :url-api-references-mutabledocument: {url-api-references-classes}{api-pfx}MutableDocument.html
 :url-api-class-document: {url-api-references-classes}{api-pfx}Document.html[{api-pfx}Document]
@@ -76,33 +49,20 @@
 :url-api-method-document-tomutable: {url-api-references-document}c:objc(cs)CBLDocument(im)toMutable[(nonnull CBLMutableDocument *)toMutable;]
 
 :url-api-method-mutabledocument-getWithID: {url-api-references-mutabledocument}{sep}c:objc(cs)CBLMutableDocument(cm)documentWithID:[(nonnull instancetype)documentWithID:(nullable NSString *)documentID;]
-
-
-// Begin -- DatabaseConfiguration
 :url-api-references-databasecfg: {url-api-references-classes}{api-pfx}DatabaseConfiguration.html
 :url-api-class-databasecfg: {url-api-references-databasecfg}[{api-pfx}DatabaseConfiguration]
 :url-api-method-databasecfg: {url-api-references-databasecfg}{sep}c:objc(cs){api-pfx}DatabaseConfiguration(py)
 :url-api-method-databasecfg-setdir: {url-api-method-databasecfg}directory[{api-pfx}DatabaseConfiguration.directory()]
 :url-api-method-databasecfg-encryption: {url-api-method-databasecfg}encryptionKey[{api-pfx}DatabaseConfiguration.encryptionKey()]
-// End -- DatabaseConfiguration
-
-//Database.SAVE
 :url-api-method-database-save-doc: {url-api-method-database}saveDocument:error:[{api-pfx}Database saveDocument:error:]
 
 :url-api-method-database-save-concctrl: {url-api-method-database}saveDocument:concurrencyControl:error:[{api-pfx}Database saveDocument:concurrencyControl:error:]
 
 :url-api-method-database-save-conflict: {url-api-method-database}saveDocument:conflictHandler:error:[{api-pfx}Database saveDocument:conflictHandler:error:]
-
-//Database.DELETE
 :url-api-method-database-deletedoc-doc: {url-api-method-database}deleteDocument:error:[{api-pfx}Database deleteDocument:error:]
 
 :url-api-method-database-deletedoc-concctrl: {url-api-method-database}deleteDocument:concurrencyControl:error:[{api-pfx}Database -deleteDocument:concurrencyControl:error:]
-
-//Database.COMPACT
-// deprecated 2.8
 :url-api-method-database-compact: [Database.compact()]
-//
-// :url-api-method-database-compact: {url-api-method-database}compact:[{api-pfx}Database.compact()]
 :url-api-method-database-change-encryption-key: {url-api-method-database}changeEncryptionKey:error:[{api-pfx}Database.changeEncryptionKey()]
 
 :url-api-method-database-copy: {url-api-references-database}{url-api-references-method-sep}CBLDatabase(cm)copyFromPath:toDatabase:withConfig:error:[copyFromPath()]
@@ -112,30 +72,15 @@
 :url-api-enum-database-maintenance-type: {url-api-references-enums}{api-pfx}MaintenanceType.html[{api-pfx}MaintenanceType]
 
 :url-api-method-database-setloglevel: {url-api-references-database}{sep}c:objc(cs)CBLDatabase(cm)setLogLevel:domain:[{api-pfx}Database.setLogLevel()]
-
-
-// QUERY RELATED CLASSES and METHODS
-
-// Result Classes and Methods
-
 :url-api-classes-result-pfx: {url-api-references-classes}{api-pfx}QueryResult.html
 
 :url-api-class-result: {url-api-classes-result-pfx}[{api-pfx}Result]
 
 :url-api-method-result-toJSON: {url-api-classes-result-pfx}{url-api-references-method-sep}{api-pfx}QueryResult(im)toJSON[{api-pfx}Result.toJSON]
-
-// Query class and methods
 :url-api-classes-query-pfx: {url-api-references-classes}{api-pfx}Query.html
 :url-api-class-query: {url-api-classes-query-pfx}[{api-pfx}Query]
 :url-api-method-query-explain: {url-api-classes-query-pfx}{url-api-references-method-sep}CBLQuery(im)explain:[explain()]
 :url-api-method-query-execute: {url-api-classes-query-pfx}{sep}execute--[execute()]
-
-
-
-
-
-// Expression class and methods
-// :url-api-references-query-classes: {url-api-references-classes}[Query Class index]
 :url-api-classes-expression-pfx: {url-api-references-classes}{api-pfx}QueryExpression.html
 :url-api-class-expression: {url-api-classes-expression-pfx}[{api-pfx}QueryExpression]
 
@@ -145,8 +90,6 @@
 :url-api-method-expression-pfx: {url-api-classes-query-expression-pfx}{sep}
 :url-api-method-expression-like: {url-api-method-expression-pfx}c:objc(cs)CBLQueryExpression(im)like:[Like()]
 :url-api-method-expression-collate: {url-api-method-expression-pfx}c:objc(cs)CBLQueryExpression(im)collate:[Collate()]
-
-// ArrayFunction class and methods
 :url-api-classes-query-arrayfunction-pfx: {url-api-references-classes}{api-pfx}QueryArrayFunction.html
 :url-api-classes-query-arrayfunction: {url-api-classes-query-arrayfunction-pfx}[{api-pfx}QueryArrayFunction]
 :url-api-classes-query-arrayfunction-collection-ops: {url-api-references-classes}{api-pfx}QueryArrayFunction.html[ArrayFunction Collection Operators]
@@ -155,36 +98,16 @@
 :url-api-classes-query-select-pfx: {url-api-classes-query-pfx}Select.html
 :url-api-classes-query-select: {url-api-classes-query-select-pfx}[Select]
 :url-api-method-select-pfx: {url-api-classes-query-select-pfx}{sep}
-
-// Function class and methods
-//
 :url-api-classes-function-pfx: {url-api-references-classes}{api-pfx}QueryFunction.html
 :url-api-class-function: {url-api-classes-function-pfx}[{api-pfx}QueryFunction]
 :url-api-method-function-lower: {url-api-classes-function-pfx}{url-api-references-method-sep}CBLQueryFunction(cm)lower:[lower()]
 :url-api-method-function-count: {url-api-classes-function-pfx}{url-api-references-method-sep}CBLQueryFunction(cm)count:[count()]
-
-// Where class and methods
-//
 :url-api-classes-where-pfx: NOT SET
-// {url-api-references-classes}{api-pfx}Where.html
 :url-api-class-where: NOT SET
-// {url-api-classes-where-pfx}[Where]
-
-// orderby class and methods
-//
 :url-api-classes-orderby-pfx: NOT SET
-// {url-api-references-classes}{api-pfx}OrderBy.html
 :url-api-class-orderby: {url-api-classes-orderby-pfx}[OrderBy]
-
-// GroupBy class and methods
-//
 :url-api-classes-groupby-pfx:  NOT SET
-// {url-api-references-classes}{api-pfx}GroupBy.html
 :url-api-class-groupby:  NOT SET
-// {url-api-classes-groupby-pfx}[GroupBy]
-
-// URLEndpointConfiguration
-
 :url-api-references-urlendpointconfiguration: {url-api-references-classes}{api-pfx}URLEndpointListenerConfiguration.html
 
 
@@ -230,12 +153,8 @@
 :url-api-references-urlendpointconfiguration-delta-sync: {url-api-references-urlendpointconfiguration-property}(py)enableDeltaSync[enableDeltaSync]
 
 :url-api-references-urlendpointconfiguration-auth: {url-api-references-urlendpointconfiguration-property}(py)authenticator[authenticator]
-// diag: Env+Module {param-module}
-
 :url-api-class-ListenerPasswordAuthenticator: {url-api-references-classes}{api-pfx}ListenerPasswordAuthenticator.html[ListenerPasswordAuthenticator]
 :url-api-class-ListenerCertificateAuthenticator: {url-api-references-classes}{api-pfx}ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator]
-
-// Replicator API
 :url-api-references-replicator: {url-api-references-classes}{api-pfx}Replicator.html
 :url-api-class-replicator: {url-api-references-replicator}[Replicator]
 
@@ -258,12 +177,6 @@
 :url-api-method-replicator-stop: {url-api-properties-replicator}(im)stop[stop()]
 
 :url-api-property-replicator-status: {url-api-properties-replicator}(py)status[status]
-
-// Note there is a replicator.status property AND
-// a ReplicationStatus class/struct --- oh yes, easy to confuse.
-
-//:url-api-property-replicator-status-activity: {url-api-references-replicator}{sep}s:18CouchbaseLiteobjc10ReplicatorC13ActivityLevelO
-
 :url-api-references-replicator-status: {url-api-references-classes}{api-pfx}ReplicatorStatus.html
 
 :url-api-class-replicator-status: {url-api-references-replicator-status}[{api-pfx}ReplicatorStatus]
@@ -275,8 +188,6 @@
 :url-api-enum-replicator-progress: {url-api-properties-replicator-status}(py)progress)[progress enum]
 
 :url-api-enum-replicator-error: {url-api-properties-replicator-status}(py)error[error enum]
-
-// ReplicatorConfiguration API
 :url-api-references-replicator-config: {url-api-references-classes}{api-pfx}ReplicatorConfiguration.html
 
 :url-api-class-replicator-config: {url-api-references-replicator-config}[ReplicatorConfiguration]
@@ -298,21 +209,13 @@
 :url-api-prop-replicator-config-autopurge: {url-api-references-replicator-config-prop}(py)enableAutoPurge[enableAutoPurge]
 
 :url-api-prop-replicator-config-setPinnedServerCertificate: {url-api-references-replicator-config-prop}(py)pinnedServerCertificate[setPinnedServerCertificate()]
-
-// Begin Replicator Retry Config
 :url-api-prop-replicator-config-setheartbeat: {url-api-references-replicator-config-prop}(py)heartbeat[heartbeat()]
 :url-api-prop-replicator-config-getheartbeat: {url-api-references-replicator-config-prop}(py)heartbeat[heartbeat()]
 :url-api-prop-replicator-config-setMaxAttempts: {url-api-references-replicator-config-prop}(py)maxAttempts[maxAttempts()]
 :url-api-prop-replicator-config-getMaxAttempts: {url-api-references-replicator-config-prop}(py)maxAttempts[maxAttempts()]
 :url-api-prop-replicator-config-setmaxAttemptWaitTime: {url-api-references-replicator-config-prop}(py)maxAttemptWaitTime[maxAttemptWaitTime()]
 :url-api-prop-replicator-config-getmaxAttemptWaitTime: {url-api-references-replicator-config-prop}(py)maxAttemptWaitTime[maxAttemptWaitTime()]
-// End Replicator Retry Config
-
 :url-api-prop-replicator-config-acceptOnlySelfSignedServerCertificate: {url-api-references-replicator-config-prop}(py)acceptOnlySelfSignedServerCertificate[acceptOnlySelfSignedServerCertificate]
-
-// :url-api-prop-replicator-config-ServerCertificateVerificationMode: {url-api-references-replicator-config-prop}(py)serverCertificateVerificationMode[serverCertificateVerificationMode]
-
-// :url-api-enum-replicator-config-ServerCertificateVerificationMode: {url-api-references-replicator-config}{Enums/ServerCertificateVerificationMode.html[serverCertificateVerificationMode enum]
 
 :url-api-prop-replicator-config-database: {url-api-references-replicator-config-prop}(py)database[database]
 
@@ -324,18 +227,9 @@
 :url-api-class-replicator-config-basic-auth: {url-api-references-classes}{api-pfx}BasicAuthenticator.html[BasicAuthenticator]
 
 :url-api-class-replicator-config-cert-auth: {url-api-references-classes}{api-pfx}ClientCertificateAuthenticator.html[ClientCertificateAuthenticator]
-
-
-// Meta API
 :url-api-references-meta: {url-api-references-classes}{api-pfx}QueryMeta.html
 
 :url-api-property-meta-revisionid: {url-api-references-meta}{url-api-references-method-sep}CBLQueryMeta(cm)revisionID[{api-pfx}QueryMeta.revisionID]
-
-
-
-// BEGIN Logs and logging references
-// :url-api-class-logging: {url-api-references}Logging.html[{api-pfx}Logging classes]
-
 :url-api-references-class-log: {url-api-references-classes}{api-pfx}Log.html
 :url-api-class-log: {url-api-references-class-log}[{api-pfx}Log]
 :url-api-class-log-prop-console: {url-api-references-class-log}{sep}3LogC7consoleAA13ConsoleLoggerCvp[{api-pfx}Log.console]
@@ -374,7 +268,3 @@
 :url-api-class-log-config-prop-maxsz: {url-api-class-log-config-props}CBLLogFileConfiguration(py)maxSize[{api-pfx}LogFileConfiguration.maxSize()]
 :url-api-class-log-config-prop-maxcnt: {url-api-class-log-config-props}CBLLogFileConfiguration(py)maRotateCount[{api-pfx}LogFileConfiguration.maxRotateCount()]
 :url-api-class-log-config-prop-plain: {url-api-class-log-config-props}CBLLogFileConfiguration(py)usePlainText[{api-pfx}LogFileConfiguration.usePlainText()]
-
-// END  Logs and logging references
-
-// End define module specific attributes
