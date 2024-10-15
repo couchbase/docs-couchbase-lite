@@ -12,72 +12,42 @@
 :description: Couchbase Lite on C# -- Using Logs for Troubleshooting
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-net}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-net}{empty}
+:vs-version-maintenance: {vs-version}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-net}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 [abstract]
@@ -100,7 +70,7 @@ If you are using a Couchbase Lite release prior to 2.5 see <<csharp:troubleshoot
 
 [discrete#csharp:troubleshooting-logs:::introduction]
 === Introduction
-Couchbase Lite provides a robust Logging API footnote:fn-2x5[From version 2.5] -- see: API References for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.html[Logging classes] -- which make debugging and troubleshooting easier during development and in production.
+Couchbase Lite provides a robust Logging API footnote:fn-2x5[From version 2.5] -- see: API References for https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.html[Logging classes] -- which make debugging and troubleshooting easier during development and in production.
 It delivers flexibility in terms of how logs are generated and retained, whilst also maintaining the level of logging required by Couchbase Support for investigation of issues.
 
 Log output is split into the following streams:
@@ -119,11 +89,11 @@ With console logging, you can fine-tune diagnostic output to suit specific debug
 * <<csharp:troubleshooting-logs:::lbl-custom-logs>>
 +
 --
-For greater flexibility you can implement a custom logging class using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.ILogger.html[ILogger] interface.
+For greater flexibility you can implement a custom logging class using the https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.ILogger.html[ILogger] interface.
 
 --
 
-In all instances, you control what is logged and at what level using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html[Log] class.
+In all instances, you control what is logged and at what level using the https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html[Log] class.
 
 [discrete#csharp:troubleshooting-logs:::lbl-console-logs]
 === Console based logging
@@ -134,9 +104,9 @@ You can easily fine-tune their diagnostic content to meet the needs of a particu
 
 Changes to console logging are independent of file logging, so you can make change without compromising any files logging streams.
 It is enabled by default.
-To change default settings use database's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html[Log] method to set the required values -- see <<csharp:troubleshooting-logs:::eg-cons-log>>
+To change default settings use database's https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html[Log] method to set the required values -- see <<csharp:troubleshooting-logs:::eg-cons-log>>
 
-You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Console[log.getConsole()] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.IConsoleLogger.html[IConsoleLogger] to control console logging.
+You will primarily use https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Console[log.getConsole()] and https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.IConsoleLogger.html[IConsoleLogger] to control console logging.
 
 
 [#eg-cons-log]
@@ -157,22 +127,20 @@ Database.Log.Console.Level = LogLevel.Verbose; // <.>
 ----
 
 
-
-
 ====
 
-<.> Define the required domain ; here we turn on logging for all available domains -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.ConsoleLogger.html#Couchbase_Lite_Logging_IConsoleLogger_Domains[log.getConsole().setDomain()] and enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.LogDomain.html[LogDomain]
-<.> Here we turn on the most verbose log level -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.ConsoleLogger.html#Couchbase_Lite_Logging_IConsoleLogger_Domains[log.getConsole().setLevel()] and enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.LogLevel.html[LogLevel]. +
-To disable logging for the specified https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.LogDomain.html[LogDomain] set the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.LogLevel.html[LogLevel] to `None`.
+<.> Define the required domain ; here we turn on logging for all available domains -- see: https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.ConsoleLogger.html#Couchbase_Lite_Logging_IConsoleLogger_Domains[log.getConsole().setDomain()] and enum https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.LogDomain.html[LogDomain]
+<.> Here we turn on the most verbose log level -- see: https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.ConsoleLogger.html#Couchbase_Lite_Logging_IConsoleLogger_Domains[log.getConsole().setLevel()] and enum https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.LogLevel.html[LogLevel]. +
+To disable logging for the specified https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.LogDomain.html[LogDomain] set the https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.LogLevel.html[LogLevel] to `None`.
 
 Related::
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html[Log] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Console[log.getConsole()] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.IConsoleLogger.html[IConsoleLogger]
+https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html[Log] | https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Console[log.getConsole()] | https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.IConsoleLogger.html[IConsoleLogger]
 
 [discrete#csharp:troubleshooting-logs:::lbl-file-logs]
 === File based logging
 File based logging is disabled by default --  see: <<csharp:troubleshooting-logs:::eg-file-log>> for how to enable it.
 
-You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_File[log.getFile()] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.FileLogger.html[FileLogger] to control file-based logging.
+You will primarily use https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_File[log.getFile()] and https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.FileLogger.html[FileLogger] to control file-based logging.
 
 [discrete#csharp:troubleshooting-logs:::formats]
 ==== Formats
@@ -185,9 +153,9 @@ Use this format and a decoder, such as *cbl-log*, to view them -- see: <<csharp:
 
 [discrete#csharp:troubleshooting-logs:::configuration]
 ==== Configuration
-As with console logging you can set the log level -- see:  the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.FileLogger.html[FileLogger] class.
+As with console logging you can set the log level -- see:  the https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.FileLogger.html[FileLogger] class.
 
-With file based logging you can also use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.LogFileConfiguration.html[LogFileConfiguration] class's properties to specify the:
+With file based logging you can also use the https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.LogFileConfiguration.html[LogFileConfiguration] class's properties to specify the:
 
 * log file path to the directory to store the log file
 Once this limit is exceeded a new log file is started.
@@ -221,8 +189,6 @@ Database.Log.File.Level = LogLevel.Info; // <.>
 ----
 
 
-
-
 ====
 
 <.> Set the log file directory
@@ -230,21 +196,21 @@ Database.Log.File.Level = LogLevel.Info; // <.>
 *Note* this means six files may exist at any one time; the five rotated log files, plus the active log file
 <.> Here we set the maximum size (bytes) for our log file
 <.> Here we select the binary log format (included for reference only as this is the default)
-<.> Here we increase the log output level from the default (_warnings_) to _info_ -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.FileLogger.html#Couchbase_Lite_Logging_FileLogger_Level[log.getFile().setLevel()]
+<.> Here we increase the log output level from the default (_warnings_) to _info_ -- see: https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.FileLogger.html#Couchbase_Lite_Logging_FileLogger_Level[log.getFile().setLevel()]
 +
-*Note* that the use of https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Couchbase_Lite_Database_SetLogLevel_Couchbase_Lite_Logging_LogDomain_Couchbase_Lite_Logging_LogLevel_[Database.SetLogLevel()] is now deprecated.
+*Note* that the use of https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Couchbase_Lite_Database_SetLogLevel_Couchbase_Lite_Logging_LogDomain_Couchbase_Lite_Logging_LogLevel_[Database.SetLogLevel()] is now deprecated.
 Further, you can no longer set a log level for a specific domain.
 
 Related::
- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html[Log] |
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_File[log.getFile()] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.FileLogger.html[FileLogger]
+ https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html[Log] |
+https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_File[log.getFile()] | https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.FileLogger.html[FileLogger]
 
 [discrete#csharp:troubleshooting-logs:::lbl-custom-logs]
 === Custom logging
 
 Couchbase Lite allows for the registration of a callback function to receive Couchbase Lite log messages, which may be logged using any external logging framework.
 
-To do this, apps must implement the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.ILogger.html[ILogger] interface -- see <<csharp:troubleshooting-logs:::eg-impl-log>> -- and enable custom logging using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Custom[log.setCustom()] -- see <<csharp:troubleshooting-logs:::eg-cust-log>>.
+To do this, apps must implement the https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.ILogger.html[ILogger] interface -- see <<csharp:troubleshooting-logs:::eg-impl-log>> -- and enable custom logging using https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Custom[log.setCustom()] -- see <<csharp:troubleshooting-logs:::eg-cust-log>>.
 
 
 [#eg-impl-log]
@@ -254,7 +220,7 @@ To do this, apps must implement the https://docs.couchbase.com/mobile/{major}.{m
 [#csharp:troubleshooting-logs:::eg-impl-log]
 ====
 
-pass:q,a[Here we introduce the code that implements the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.ILogger.html[ILogger] interface.]
+pass:q,a[Here we introduce the code that implements the https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.ILogger.html[ILogger] interface.]
 
 // Show Main Snippet
 // include::csharp:example$code_snippets/Program.cs[tags="custom-logging", indent=0]
@@ -277,10 +243,7 @@ class LogTestLogger : ILogger
 ----
 
 
-
-
 ====
-
 
 
 [#eg-cust-log]
@@ -303,8 +266,6 @@ pass:q,a[This example show how to enable the custom logger from <<csharp:trouble
 ----
 
 
-
-
 ====
 
 <.> Here we set the custom logger with a level of 'warning'.
@@ -312,7 +273,7 @@ The custom logger is called with every log and may choose to filter it, using it
 
 
 Related::
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html[Log] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Custom[log.getCustom()] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.ILogger.html[ILogger]
+https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html[Log] | https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Custom[log.getCustom()] | https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.ILogger.html[ILogger]
 
 [discrete#csharp:troubleshooting-logs:::decoding-binary-logs]
 === Decoding binary logs
@@ -332,7 +293,7 @@ Download the *cbl-log* tool using `wget`.
 
 [source,console,subs="attributes"]
 ----
-wget https://packages.couchbase.com/releases/couchbase-lite-log/{major}.{minor}.{base}{empty}/couchbase-lite-log-{major}.{minor}.{base}{empty}-macos.zip
+wget https://packages.couchbase.com/releases/couchbase-lite-log/{version-full}/couchbase-lite-log-{version-full}-macos.zip
 ----
 
 Navigate to the *bin* directory and run the `cbl-log` executable.
@@ -351,7 +312,7 @@ Download the *cbl-log* tool using `wget`.
 
 [source,console, subs="attributes"]
 ----
-wget https://packages.couchbase.com/releases/couchbase-lite-log/{major}.{minor}.{base}{empty}/couchbase-lite-log-{major}.{minor}.{base}{empty}-centos.zip
+wget https://packages.couchbase.com/releases/couchbase-lite-log/{version-full}/couchbase-lite-log-{version-full}-centos.zip
 ----
 
 Navigate to the *bin* directory and run the `cbl-log` executable.
@@ -370,7 +331,7 @@ Download the *cbl-log* tool using PowerShell.
 
 [source,powershell, subs="attributes"]
 ----
-Invoke-WebRequest https://packages.couchbase.com/releases/couchbase-lite-log/{major}.{minor}.{base}{empty}/couchbase-lite-log-{major}.{minor}.{base}{empty}-windows.zip -OutFile couchbase-lite-log-{major}.{minor}.{base}{empty}-windows.zip
+Invoke-WebRequest https://packages.couchbase.com/releases/couchbase-lite-log/{version-full}/couchbase-lite-log-{version-full}-windows.zip -OutFile couchbase-lite-log-{version-full}-windows.zip
 ----
 
 Run the `cbl-log` executable.
@@ -382,7 +343,6 @@ $ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
 --
 ====
 =====
-
 
 
 [discrete#csharp:troubleshooting-logs:::related-content]
@@ -428,10 +388,8 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 .
 
 
-
 ++++
 </div>
 ++++
-
 
 

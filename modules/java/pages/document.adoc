@@ -14,81 +14,42 @@
 :description: Couchbase Lite concepts -- Data model -- Documents
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-java}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-java}{empty}
+:vs-version-maintenance: {vs-version}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-java}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 [abstract]
@@ -96,8 +57,6 @@
 Description -- _{description}_ +
 Related Content -- xref:java:database.adoc[Databases] | xref:java:blob.adoc[Blobs] | xref:java:indexing.adoc[Indexing] |
 --
-
-
 
 
 [discrete#java:document:::overview]
@@ -135,10 +94,6 @@ This internal form can be easily converted into a manageable native dictionary f
 Fleece data is stored in the smallest format that will hold the value whilst maintaining the integrity of the value.
 
 
-
-
-
-
 [discrete#java:document:::data-types]
 === Data Types
 
@@ -161,7 +116,6 @@ MutableDictionary:: represents a writeable key-value pair collection
 Array:: represents a readonly ordered collection of objects
 MutableArray:: represents a writeable collection of objects
 Blob:: represents an arbitrary piece of binary data
-
 
 
 [discrete#java:document:::json]
@@ -217,7 +171,6 @@ Couchbase documents are assigned to a <<java:database:::database-concepts,Collec
 All the CRUD examples in this document operate on a `collection` object (here, the Default Collection).
 
 
-
 // Show Main Snippet
 // include::java:example$codesnippet_collection.java[tags="datatype_usage_createdb", indent=0]
 [source, Java]
@@ -230,8 +183,6 @@ try (Collection collection = database.getCollection("myCollection")) {
 ----
 
 
-
-
 See xref:java:database.adoc[Databases] for more information
 
 [discrete#java:document:::create-a-document]
@@ -240,7 +191,6 @@ See xref:java:database.adoc[Databases] for more information
 Now create a new document to hold your application's data.
 
 Use the mutable form, so that you can add data to the document.
-
 
 
 // Show Main Snippet
@@ -253,8 +203,6 @@ MutableDocument mutableDoc = new MutableDocument();
 ----
 
 
-
-
 For more on using *Documents*, see <<java:document:::document-initializers>> and <<java:document:::mutability>>.
 
 [discrete#java:document:::create-a-dictionary]
@@ -263,7 +211,6 @@ For more on using *Documents*, see <<java:document:::document-initializers>> and
 Now create a mutable dictionary (`address`).
 
 Each element of the dictionary value will be directly accessible via its own key.
-
 
 
 // Show Main Snippet
@@ -281,15 +228,12 @@ address.setString("code", "90210");
 ----
 
 
-
-
 Learn more about <<java:document:::using-dictionaries>>.
 
 [discrete#java:document:::create-an-array]
 === Create an Array
 
 Since the hotel may have multiple contact numbers, provide a field (`phones`) as a mutable array.
-
 
 
 // Show Main Snippet
@@ -304,8 +248,6 @@ phones.addString("650-000-0001");
 ----
 
 
-
-
 Learn more about <<java:document:::using-arrays>>
 
 [discrete#java:document:::populate-a-document]
@@ -313,7 +255,6 @@ Learn more about <<java:document:::using-arrays>>
 
 Now add your data to the mutable document created earlier.
 Each data item is stored as a key-value pair.
-
 
 
 // Show Main Snippet
@@ -340,9 +281,6 @@ mutableDoc.setArray("phones", phones);
 ----
 
 
-
-
-
 NOTE: Couchbase recommend using a `type` attribute to define each logical document type.
 
 
@@ -351,7 +289,6 @@ NOTE: Couchbase recommend using a `type` attribute to define each logical docume
 
 Now persist the populated document to your Couchbase Lite database.
 This will auto-generate the document id.
-
 
 
 // Show Main Snippet
@@ -363,13 +300,10 @@ collection.save(mutableDoc);
 ----
 
 
-
-
 [discrete#java:document:::close-the-database]
 === Close the Database
 
 With your document saved, you can now close our Couchbase Lite database.
-
 
 
 // Show Main Snippet
@@ -382,10 +316,6 @@ database.close();
 ----
 
 
-
-
-
-
 [discrete#java:document:::working-with-data]
 == Working with Data
 
@@ -393,9 +323,9 @@ database.close();
 [discrete#java:document:::checking-a-documents-properties]
 === Checking a Document's Properties
 
-To check whether a given property exists in the document, use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Document.html#contains-java.lang.String-[`Document.Contains(String key)] method.
+To check whether a given property exists in the document, use the https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/Document.html#contains-java.lang.String-[`Document.Contains(String key)] method.
 
-If you try to access a property which doesn't exist in the document, the call will return the default value for that getter method (0 for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Document.html#getInt-java.lang.String-[Document.getInt()] 0.0 for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Document.html#getFloat-java.lang.String-[Document.getFloat()] etc.).
+If you try to access a property which doesn't exist in the document, the call will return the default value for that getter method (0 for https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/Document.html#getInt-java.lang.String-[Document.getInt()] 0.0 for https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/Document.html#getFloat-java.lang.String-[Document.getFloat()] etc.).
 
 
 [discrete#java:document:::date-accessors]
@@ -411,7 +341,7 @@ Dates are a common data type, but JSON doesn't natively support them, so the con
 [#java:document:::ex-date-getter]
 ====
 
-pass:q,a[This example sets the date on the `createdAt` property and reads it back using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Document.html#getDate-java.lang.String-[Document.getDate()] accessor method.]
+pass:q,a[This example sets the date on the `createdAt` property and reads it back using the https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/Document.html#getDate-java.lang.String-[Document.getDate()] accessor method.]
 
 // Show Main Snippet
 // include::java:example$codesnippet_collection.java[tags="date-getter", indent=0]
@@ -422,10 +352,7 @@ Date date = newTask.getDate("createdAt");
 ----
 
 
-
-
 ====
-
 
 
 [discrete#java:document:::using-dictionaries]
@@ -433,9 +360,9 @@ Date date = newTask.getDate("createdAt");
 
 .API References
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Dictionary.html[Dictionary]
+* https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/Dictionary.html[Dictionary]
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/MutableDictionary.html[MutableDictionary]
+* https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/MutableDictionary.html[MutableDictionary]
 
 
 .Read Only
@@ -472,10 +399,7 @@ MutableDictionary mutableDict = dict.toMutable();
 ----
 
 
-
-
 ====
-
 
 
 .Mutable
@@ -505,8 +429,6 @@ collection.save(mutableDoc);
 ----
 
 
-
-
 ====
 
 
@@ -514,9 +436,9 @@ collection.save(mutableDoc);
 === Using Arrays
 
 .API References
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Array.html[Array]
+* https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/Array.html[Array]
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/MutableArray.html[MutableArray]
+* https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/MutableArray.html[MutableArray]
 
 .Read Only
 [#ex-array]
@@ -555,8 +477,6 @@ MutableArray mutableArray = array.toMutable();
 ----
 
 
-
-
 ====
 
 
@@ -586,10 +506,7 @@ collection.save(mutableDoc);
 ----
 
 
-
-
 ====
-
 
 
 [discrete#java:document:::using-blobs]
@@ -604,9 +521,9 @@ For more on working with blobs, see xref:java:blob.adoc[Blobs]
 
 You can use the following methods/initializers:
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/MutableDocument.html#s:18CouchbaseLiteSwift15MutableDocumentCACycfc[MutableDocument()] initializer to create a new document where the document ID is randomly generated by the database.
+* Use the https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/MutableDocument.html#s:18CouchbaseLiteSwift15MutableDocumentCACycfc[MutableDocument()] initializer to create a new document where the document ID is randomly generated by the database.
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/MutableDocument.html#s:18CouchbaseLiteSwift15MutableDocumentC2idACSSSg_tcfc[MutableDocument(String id)] initializer to create a new document with a specific ID.
+* Use the https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/MutableDocument.html#s:18CouchbaseLiteSwift15MutableDocumentC2idACSSSg_tcfc[MutableDocument(String id)] initializer to create a new document with a specific ID.
 
 * Use the {url-api-method-collection-getdocument} method to get a document.
 If the document doesn't exist in the collection, the method will return `null`.
@@ -634,10 +551,7 @@ collection.save(newTask);
 ----
 
 
-
-
 ====
-
 
 
 [discrete#java:document:::mutability]
@@ -645,7 +559,7 @@ collection.save(newTask);
 
 
 By default, a document is immutable when it is read from the database.
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Document.html#toMutable--[`Document.toMutable()] to create an updatable instance of the document.
+Use the https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/Document.html#toMutable--[`Document.toMutable()] to create an updatable instance of the document.
 
 
 .Make a mutable document
@@ -667,14 +581,10 @@ collection.save(mutableDocument);
 ----
 
 
-
-
 ====
 
 
 NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<java:document:::lbl-doc-constraints>>.
-
-
 
 
 [discrete#java:document:::batch-operations]
@@ -705,8 +615,6 @@ database.inBatch(() -> {
     }
 });
 ----
-
-
 
 
 ====
@@ -752,11 +660,7 @@ collection.addDocumentChangeListener(
 ----
 
 
-
-
 ====
-
-
 
 
 [discrete#java:document:::document-expiration]
@@ -793,8 +697,6 @@ Query query = QueryBuilder
     .from(DataSource.collection(collection))
     .where(Meta.expiration.lessThan(Expression.doubleValue(fiveMinutesFromNow.toEpochMilli())));
 ----
-
-
 
 
 ====
@@ -888,8 +790,6 @@ Logger.log(features.toJSON()); // <.>
 ----
 
 
-
-
 ====
 
 
@@ -920,8 +820,6 @@ if (!Blob.isBlob(thisBlob)) { return; }
 final String blobType = thisBlob.get("content_type").toString();
 final Number blobLength = (Number) thisBlob.get("length");
 ----
-
-
 
 
 ====
@@ -962,8 +860,6 @@ for (String key: mDict.getKeys()) {
     Logger.log(key + " => " + mDict.getValue(key));
 }
 ----
-
-
 
 
 ====
@@ -1017,8 +913,6 @@ try (ResultSet results = listQuery.execute()) {
 ----
 
 
-
-
 ====
 
 
@@ -1034,7 +928,7 @@ Convert a `Query Result` to JSON using its {to-JSON} accessor method.
 [#java:document:::ex-json]
 ====
 
-pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Result.html#toJSON--[Result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<java:document:::ex-json>> for a working example.]
+pass:q,a[Use https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/Result.html#toJSON--[Result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<java:document:::ex-json>> for a working example.]
 
 // Show Main Snippet
 // include::java:example$codesnippet_collection.java[tags="query-access-json", indent=0]
@@ -1753,8 +1647,6 @@ class VectorSearchExamples {
 ----
 
 
-
-
 ====
 
 
@@ -1781,9 +1673,6 @@ If your query selects a sub-set of available properties then the JSON format wil
   keyx: "valuex"
 }
 ----
-
-
-
 
 
 [discrete#java:document:::related-content]
@@ -1822,7 +1711,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

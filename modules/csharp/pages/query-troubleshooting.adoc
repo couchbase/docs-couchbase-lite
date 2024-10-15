@@ -22,71 +22,42 @@
 :description: Couchbase Lite Queries -- troubleshooting
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-net}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-net}{empty}
+:vs-version-maintenance: {vs-version}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-net}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 // _show_page_header_block.adoc invoked in common module
@@ -104,7 +75,7 @@ Related Content -- xref:csharp:querybuilder.adoc#lbl-predquery[Predictive Querie
 
 [discrete#csharp:query-troubleshooting:::using]
 ==== Using
-Query's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.#Couchbase_Lite__Query_IQuery_Explain[Explain()] method can provide useful insight when you are trying to diagnose query performance issues and-or optimize queries.
+Query's https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Query.#Couchbase_Lite__Query_IQuery_Explain[Explain()] method can provide useful insight when you are trying to diagnose query performance issues and-or optimize queries.
 To examine how your query is working, either embed the call inside your app (see: <<csharp:query-troubleshooting:::use-qe-app>>), or use it interactively within a `cblite` shell (see: <<csharp:query-troubleshooting:::use-qe-cblite>>).
 
 [#use-qe-app]
@@ -129,8 +100,6 @@ using var query =
 
 Console.WriteLine(query.Explain()); // <.>
 ----
-
-
 
 
 ====
@@ -158,7 +127,7 @@ cblite <your-database-name>.cblite2 // <.>
 
 [discrete#csharp:query-troubleshooting:::output]
 ==== Output
-The output from `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.#Couchbase_Lite__Query_IQuery_Explain[Explain()]` remains the same whether invoked by an app, or `cblite` -- see <<csharp:query-troubleshooting:::qe-output>> for an example of how it looks.
+The output from `https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Query.#Couchbase_Lite__Query_IQuery_Explain[Explain()]` remains the same whether invoked by an app, or `cblite` -- see <<csharp:query-troubleshooting:::qe-output>> for an example of how it looks.
 
 [#csharp:query-troubleshooting:::qe-output]
 .Query.explain() Output
@@ -270,7 +239,6 @@ Couchbase Lite for net does not currently support partial value indexes; indexes
 You should only index with properties that you plan to use in the query.
 
 
-
 The Query optimizer converts your query into a parse tree that groups zero or more _and-connected_ clauses together (as dictated by your `where` conditionals) for effective query engine processing.
 
 Ideally a query will be be able to satisfy its requirements entirely by either directly accessing the index or searching sequential index rows.
@@ -330,7 +298,6 @@ Console.WriteLine(query.Explain());
 ----
 
 
-
 <.> The indexed property, TYPE, cannot use its index because of the wildcard prefix.
 
 
@@ -366,8 +333,6 @@ Console.WriteLine(query.Explain());
 ----
 
 
-
-
 ====
 
 <.> Simply removing the wildcard prefix enables the query optimizer to access the `typeIndex`, which results in a more efficient search.
@@ -383,7 +348,7 @@ Console.WriteLine(query.Explain());
 
 Functions are a very useful tool in building queries, but be aware that they can impact whether the query-optimizer is able to use your index(es).
 
-For example, you can observe a similar situation to that shown in <<csharp:query-troubleshooting:::use-like-based-queries>> when using the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Lower_Couchbase_Lite_Query_IExpression_[Lower()]` function on an indexed property.
+For example, you can observe a similar situation to that shown in <<csharp:query-troubleshooting:::use-like-based-queries>> when using the `https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Lower_Couchbase_Lite_Query_IExpression_[Lower()]` function on an indexed property.
 
 .Query
 [#use-like-based-queries]
@@ -403,8 +368,7 @@ Console.WriteLine(query.Explain());
 ----
 
 
-
-<.> Here we use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Lower_Couchbase_Lite_Query_IExpression_[Lower()]` function in the _Where_ expression
+<.> Here we use the `https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Lower_Couchbase_Lite_Query_IExpression_[Lower()]` function in the _Where_ expression
 
 .Query Plan:
 [source, bash]
@@ -413,7 +377,7 @@ Console.WriteLine(query.Explain());
 ----
 
 
-But removing the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Lower_Couchbase_Lite_Query_IExpression_[Lower()]` function, changes things:
+But removing the `https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Lower_Couchbase_Lite_Query_IExpression_[Lower()]` function, changes things:
 
 .Query
 
@@ -432,15 +396,14 @@ Console.WriteLine(query.Explain());
 ----
 
 
-
-<.> Here we have removed `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Lower_Couchbase_Lite_Query_IExpression_[Lower()]` from the _Where_ expression
+<.> Here we have removed `https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Lower_Couchbase_Lite_Query_IExpression_[Lower()]` from the _Where_ expression
 
 .Query plan
 ----
 3|0|0| SEARCH TABLE kv_default AS _doc USING INDEX typeIndex (<expr>=?)
 ----
 
-Knowing this, you can consider how you create the index; for example, using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Lower_Couchbase_Lite_Query_IExpression_[Lower()] when you create the index and then always using lowercase comparisons.
+Knowing this, you can consider how you create the index; for example, using https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Lower_Couchbase_Lite_Query_IExpression_[Lower()] when you create the index and then always using lowercase comparisons.
 
 [discrete#csharp:query-troubleshooting:::optimization-considerations]
 === Optimization Considerations
@@ -463,7 +426,6 @@ Break your data into logical linked units.
 
 Consider Using Full Text Search instead of complex like or regex patterns -- see xref:csharp:fts.adoc[Full Text Search]. +
 {empty}
-
 
 
 [discrete#csharp:query-troubleshooting:::related-content]
@@ -507,7 +469,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

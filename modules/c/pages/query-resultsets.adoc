@@ -13,77 +13,42 @@
 :keywords: query, sql, n1ql, fuzzy-matching
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-c}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-c}{empty}
+:vs-version-maintenance: {vs-version}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-c}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 [abstract]
@@ -91,7 +56,6 @@
 Description -- _{description}_ +
 Related Content -- xref:c:querybuilder.adoc[QueryBuilder] |  xref:c:query-n1ql-mobile.adoc[{sqlpp} for Mobile] |  xref:c:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:c:query-live.adoc[Live Queries] | xref:c:indexing.adoc[Indexing]
 --
-
 
 
 [discrete#c:query-resultsets:::query-execution]
@@ -157,8 +121,6 @@ CBLResultSet_Release(results);
 ----
 
 
-
-
 ====
 
 <.> Here we get the dictionary of document properties using the database name as the key.
@@ -195,8 +157,6 @@ while(CBLResultSet_Next(results)) {
     printf("Document ID :: %.*s\n", (int)id.size, (const char *)id.buf);
 }
 ----
-
-
 
 
 ====
@@ -242,10 +202,7 @@ while(CBLResultSet_Next(results)) {
 ----
 
 
-
-
 ====
-
 
 
 [discrete#c:query-resultsets:::json-result-sets]
@@ -258,7 +215,7 @@ while(CBLResultSet_Next(results)) {
 [#c:query-resultsets:::ex-json]
 ====
 
-pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__json.html#ga3450acc0690101545d75986b91e4080[FLValue_ToJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<c:query-resultsets:::ex-json>> for a working example.]
+pass:q,a[Use https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__json.html#ga3450acc0690101545d75986b91e4080[FLValue_ToJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<c:query-resultsets:::ex-json>> for a working example.]
 
 // Show Main Snippet
 // include::c:example$code_snippets/main.cpp[tags="query-access-json", indent=0]
@@ -274,8 +231,6 @@ while(CBLResultSet_Next(results)) {
 CBLResultSet_Release(results);
 
 ----
-
-
 
 
 ====
@@ -304,7 +259,6 @@ If your query selects a sub-set of available properties then the JSON format wil
   keyx: "valuex"
 }
 ----
-
 
 
 [discrete#c:query-resultsets:::related-content]
@@ -345,10 +299,8 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 .
 
 
-
 ++++
 </div>
 ++++
-
 
 

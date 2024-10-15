@@ -14,82 +14,49 @@
 :description: Couchbase Lite concepts -- Data model -- Documents
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-android}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-android}{empty}
+
+:vs-version-maintenance: {vs-version}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-android}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 [abstract]
 --
 Description -- _{description}_ +
 Related Content -- xref:android:database.adoc[Databases] | xref:android:blob.adoc[Blobs] | xref:android:indexing.adoc[Indexing] |
 --
-
-
 
 
 [discrete#android:document:::overview]
@@ -125,7 +92,6 @@ https://github.com/couchbaselabs/fleece#readme[Fleece].
 This internal form can be easily converted into a manageable native dictionary format for manipulation in applications.
 
 Fleece data is stored in the smallest format that will hold the value whilst maintaining the integrity of the value.
-
 
 
 [discret#android:document:::fleece-data-encodinge]
@@ -168,8 +134,6 @@ Kotlin::
 Similarly, interpreting data not stored as `boolean` as a boolean value can give inconsistent results.
 
 
-
-
 [discrete#android:document:::data-types]
 === Data Types
 
@@ -192,7 +156,6 @@ MutableDictionary:: represents a writeable key-value pair collection
 Array:: represents a readonly ordered collection of objects
 MutableArray:: represents a writeable collection of objects
 Blob:: represents an arbitrary piece of binary data
-
 
 
 [discrete#android:document:::json]
@@ -248,7 +211,6 @@ Couchbase documents are assigned to a <<android:database:::database-concepts,Col
 All the CRUD examples in this document operate on a `collection` object (here, the Default Collection).
 
 
-
 [tabs]
 =====
 
@@ -291,7 +253,6 @@ try (Collection collection = database.getCollection("myCollection")) {
 =====
 
 
-
 See xref:android:database.adoc[Databases] for more information
 
 [discrete#android:document:::create-a-document]
@@ -300,7 +261,6 @@ See xref:android:database.adoc[Databases] for more information
 Now create a new document to hold your application's data.
 
 Use the mutable form, so that you can add data to the document.
-
 
 
 [tabs]
@@ -338,7 +298,6 @@ MutableDocument mutableDoc = new MutableDocument();
 =====
 
 
-
 For more on using *Documents*, see <<android:document:::document-initializers>> and <<android:document:::mutability>>.
 
 [discrete#android:document:::create-a-dictionary]
@@ -347,7 +306,6 @@ For more on using *Documents*, see <<android:document:::document-initializers>> 
 Now create a mutable dictionary (`address`).
 
 Each element of the dictionary value will be directly accessible via its own key.
-
 
 
 [tabs]
@@ -395,14 +353,12 @@ address.setString("code", "90210");
 =====
 
 
-
 Learn more about <<android:document:::using-dictionaries>>.
 
 [discrete#android:document:::create-an-array]
 === Create an Array
 
 Since the hotel may have multiple contact numbers, provide a field (`phones`) as a mutable array.
-
 
 
 [tabs]
@@ -444,7 +400,6 @@ phones.addString("650-000-0001");
 =====
 
 
-
 Learn more about <<android:document:::using-arrays>>
 
 [discrete#android:document:::populate-a-document]
@@ -452,7 +407,6 @@ Learn more about <<android:document:::using-arrays>>
 
 Now add your data to the mutable document created earlier.
 Each data item is stored as a key-value pair.
-
 
 
 [tabs]
@@ -518,8 +472,6 @@ mutableDoc.setArray("phones", phones);
 =====
 
 
-
-
 NOTE: Couchbase recommend using a `type` attribute to define each logical document type.
 
 
@@ -528,7 +480,6 @@ NOTE: Couchbase recommend using a `type` attribute to define each logical docume
 
 Now persist the populated document to your Couchbase Lite database.
 This will auto-generate the document id.
-
 
 
 [tabs]
@@ -565,12 +516,10 @@ collection.save(mutableDoc);
 =====
 
 
-
 [discrete#android:document:::close-the-database]
 === Close the Database
 
 With your document saved, you can now close our Couchbase Lite database.
-
 
 
 [tabs]
@@ -608,9 +557,6 @@ database.close();
 =====
 
 
-
-
-
 [discrete#android:document:::working-with-data]
 == Working with Data
 
@@ -618,9 +564,9 @@ database.close();
 [discrete#android:document:::checking-a-documents-properties]
 === Checking a Document's Properties
 
-To check whether a given property exists in the document, use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Document.html#contains-java.lang.String-[`Document.Contains(String key)] method.
+To check whether a given property exists in the document, use the https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Document.html#contains-java.lang.String-[`Document.Contains(String key)] method.
 
-If you try to access a property which doesn't exist in the document, the call will return the default value for that getter method (0 for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Document.html#getInt-java.lang.String-[Document.getInt()] 0.0 for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Document.html#getFloat-java.lang.String-[Document.getFloat()] etc.).
+If you try to access a property which doesn't exist in the document, the call will return the default value for that getter method (0 for https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Document.html#getInt-java.lang.String-[Document.getInt()] 0.0 for https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Document.html#getFloat-java.lang.String-[Document.getFloat()] etc.).
 
 .Fleece data encoding
 [NOTE]
@@ -644,7 +590,7 @@ Dates are a common data type, but JSON doesn't natively support them, so the con
 [#android:document:::ex-date-getter]
 ====
 
-pass:q,a[This example sets the date on the `createdAt` property and reads it back using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Document.html#getDate-java.lang.String-[Document.getDate()] accessor method.]
+pass:q,a[This example sets the date on the `createdAt` property and reads it back using the https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Document.html#getDate-java.lang.String-[Document.getDate()] accessor method.]
 [tabs]
 =====
 
@@ -678,9 +624,7 @@ Date date = newTask.getDate("createdAt");
 =====
 
 
-
 ====
-
 
 
 [discrete#android:document:::using-dictionaries]
@@ -688,9 +632,9 @@ Date date = newTask.getDate("createdAt");
 
 .API References
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Dictionary.html[Dictionary]
+* https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Dictionary.html[Dictionary]
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/MutableDictionary.html[MutableDictionary]
+* https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/MutableDictionary.html[MutableDictionary]
 
 
 .Read Only
@@ -763,9 +707,7 @@ MutableDictionary mutableDict = dict.toMutable();
 =====
 
 
-
 ====
-
 
 
 .Mutable
@@ -828,7 +770,6 @@ collection.save(mutableDoc);
 =====
 
 
-
 ====
 
 
@@ -836,9 +777,9 @@ collection.save(mutableDoc);
 === Using Arrays
 
 .API References
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Array.html[Array]
+* https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Array.html[Array]
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/MutableArray.html[MutableArray]
+* https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/MutableArray.html[MutableArray]
 
 .Read Only
 [#ex-array]
@@ -916,7 +857,6 @@ MutableArray mutableArray = array.toMutable();
 =====
 
 
-
 ====
 
 
@@ -978,9 +918,7 @@ collection.save(mutableDoc);
 =====
 
 
-
 ====
-
 
 
 [discrete#android:document:::using-blobs]
@@ -995,9 +933,9 @@ For more on working with blobs, see xref:android:blob.adoc[Blobs]
 
 You can use the following methods/initializers:
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/MutableDocument.html#s:18CouchbaseLiteSwift15MutableDocumentMutableDocument--[MutableDocument()] initializer to create a new document where the document ID is randomly generated by the database.
+* Use the https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/MutableDocument.html#s:18CouchbaseLiteSwift15MutableDocumentMutableDocument--[MutableDocument()] initializer to create a new document where the document ID is randomly generated by the database.
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/MutableDocument.html#s:18CouchbaseLiteSwift15MutableDocument}MutableDocument-java.lang.String-[MutableDocument(String id)] initializer to create a new document with a specific ID.
+* Use the https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/MutableDocument.html#s:18CouchbaseLiteSwift15MutableDocument}MutableDocument-java.lang.String-[MutableDocument(String id)] initializer to create a new document with a specific ID.
 
 * Use the {url-api-method-collection-getdocument} method to get a document.
 If the document doesn't exist in the collection, the method will return `null`.
@@ -1053,9 +991,7 @@ collection.save(newTask);
 =====
 
 
-
 ====
-
 
 
 [discrete#android:document:::mutability]
@@ -1063,7 +999,7 @@ collection.save(newTask);
 
 
 By default, a document is immutable when it is read from the database.
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Document.html#toMutable--[`Document.toMutable()] to create an updatable instance of the document.
+Use the https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Document.html#toMutable--[`Document.toMutable()] to create an updatable instance of the document.
 
 
 .Make a mutable document
@@ -1110,13 +1046,10 @@ collection.save(mutableDocument);
 =====
 
 
-
 ====
 
 
 NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<android:document:::lbl-doc-constraints>>.
-
-
 
 
 [discrete#android:document:::batch-operations]
@@ -1179,7 +1112,6 @@ database.inBatch(() -> {
 --
 
 =====
-
 
 
 ====
@@ -1251,9 +1183,7 @@ collection.addDocumentChangeListener(
 =====
 
 
-
 ====
-
 
 
 [discrete#android:document:::using-kotlin-flows-and-livedata]
@@ -1293,7 +1223,6 @@ Document Changes::
 ----
 --
 =====
-
 
 
 [discrete#android:document:::document-expiration]
@@ -1369,7 +1298,6 @@ Query query = QueryBuilder
 --
 
 =====
-
 
 
 ====
@@ -1499,7 +1427,6 @@ Logger.log(features.toJSON()); // <.>
 =====
 
 
-
 ====
 
 
@@ -1558,7 +1485,6 @@ final Number blobLength = (Number) thisBlob.get("length");
 --
 
 =====
-
 
 
 ====
@@ -1627,7 +1553,6 @@ for (String key: mDict.getKeys()) {
 --
 
 =====
-
 
 
 ====
@@ -1718,7 +1643,6 @@ try (ResultSet results = listQuery.execute()) {
 =====
 
 
-
 ====
 
 
@@ -1734,7 +1658,7 @@ Convert a `Query Result` to JSON using its {to-JSON} accessor method.
 [#android:document:::ex-json]
 ====
 
-pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Result.html#toJSON--[Result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<android:document:::ex-json>> for a working example.]
+pass:q,a[Use https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Result.html#toJSON--[Result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<android:document:::ex-json>> for a working example.]
 [tabs]
 =====
 
@@ -2497,7 +2421,6 @@ class VectorSearchExamples {
 =====
 
 
-
 ====
 
 
@@ -2524,9 +2447,6 @@ If your query selects a sub-set of available properties then the JSON format wil
   keyx: "valuex"
 }
 ----
-
-
-
 
 
 [discrete#android:document:::related-content]
@@ -2565,7 +2485,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

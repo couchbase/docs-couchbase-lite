@@ -14,77 +14,42 @@
 :description: Couchbase Lite concepts -- Data model -- Documents
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-c}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-c}{empty}
+:vs-version-maintenance: {vs-version}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-c}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 [abstract]
@@ -92,8 +57,6 @@
 Description -- _{description}_ +
 Related Content -- xref:c:database.adoc[Databases] | xref:c:blob.adoc[Blobs] | xref:c:indexing.adoc[Indexing] |
 --
-
-
 
 
 [discrete#c:document:::overview]
@@ -131,10 +94,6 @@ This internal form can be easily converted into a manageable native dictionary f
 Fleece data is stored in the smallest format that will hold the value whilst maintaining the integrity of the value.
 
 
-
-
-
-
 [discrete#c:document:::data-types]
 === Data Types
 
@@ -157,7 +116,6 @@ MutableDictionary:: represents a writeable key-value pair collection
 Array:: represents a readonly ordered collection of objects
 MutableArray:: represents a writeable collection of objects
 Blob:: represents an arbitrary piece of binary data
-
 
 
 [discrete#c:document:::json]
@@ -213,7 +171,6 @@ Couchbase documents are assigned to a <<c:database:::database-concepts,Collectio
 All the CRUD examples in this document operate on a `collection` object (here, the Default Collection).
 
 
-
 // Show Main Snippet
 // include::c:example$code_snippets/main.cpp[tags="datatype_usage_createdb", indent=0]
 [source, c]
@@ -232,8 +189,6 @@ CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 ----
 
 
-
-
 See xref:c:database.adoc[Databases] for more information
 
 [discrete#c:document:::create-a-document]
@@ -242,7 +197,6 @@ See xref:c:database.adoc[Databases] for more information
 Now create a new document to hold your application's data.
 
 Use the mutable form, so that you can add data to the document.
-
 
 
 // Show Main Snippet
@@ -257,8 +211,6 @@ FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
 ----
 
 
-
-
 For more on using *Documents*, see <<c:document:::document-initializers>> and <<c:document:::mutability>>.
 
 [discrete#c:document:::create-a-dictionary]
@@ -267,7 +219,6 @@ For more on using *Documents*, see <<c:document:::document-initializers>> and <<
 Now create a mutable dictionary (`address`).
 
 Each element of the dictionary value will be directly accessible via its own key.
-
 
 
 // Show Main Snippet
@@ -285,15 +236,12 @@ FLMutableDict_SetString(address, FLSTR("code"), FLSTR("90210"));
 ----
 
 
-
-
 Learn more about <<c:document:::using-dictionaries>>.
 
 [discrete#c:document:::create-an-array]
 === Create an Array
 
 Since the hotel may have multiple contact numbers, provide a field (`phones`) as a mutable array.
-
 
 
 // Show Main Snippet
@@ -308,8 +256,6 @@ FLMutableArray_AppendString(phones, FLSTR("650-000-0001"));
 ----
 
 
-
-
 Learn more about <<c:document:::using-arrays>>
 
 [discrete#c:document:::populate-a-document]
@@ -317,7 +263,6 @@ Learn more about <<c:document:::using-arrays>>
 
 Now add your data to the mutable document created earlier.
 Each data item is stored as a key-value pair.
-
 
 
 // Show Main Snippet
@@ -342,9 +287,6 @@ FLMutableDict_SetArray(properties, FLSTR("phones"), phones);
 ----
 
 
-
-
-
 NOTE: Couchbase recommend using a `type` attribute to define each logical document type.
 
 
@@ -353,7 +295,6 @@ NOTE: Couchbase recommend using a `type` attribute to define each logical docume
 
 Now persist the populated document to your Couchbase Lite database.
 This will auto-generate the document id.
-
 
 
 // Show Main Snippet
@@ -365,13 +306,10 @@ CBLCollection_SaveDocument(collection, mutableDoc, &err);
 ----
 
 
-
-
 [discrete#c:document:::close-the-database]
 === Close the Database
 
 With your document saved, you can now close our Couchbase Lite database.
-
 
 
 // Show Main Snippet
@@ -383,13 +321,10 @@ CBLDatabase_Close(database, &err);
 ----
 
 
-
-
 [discrete#c:document:::release-resources]
 === Release resources
 
 Finally, release the resources.
-
 
 
 // Show Main Snippet
@@ -403,15 +338,8 @@ FLMutableArray_Release(phones);
 ----
 
 
-
-
-
 [discrete#c:document:::working-with-data]
 == Working with Data
-
-
-
-
 
 
 [discrete#c:document:::using-dictionaries]
@@ -419,8 +347,7 @@ FLMutableArray_Release(phones);
 
 .API References
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__f_l_dict.html[Fleece Dictionaries]
-
+* https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__f_l_dict.html[Fleece Dictionaries]
 
 
 .Read Only
@@ -470,10 +397,7 @@ FLMutableDict_Release(mutableDict);
 ----
 
 
-
-
 ====
-
 
 
 .Mutable
@@ -506,8 +430,6 @@ FLMutableDict_Release(dict);
 ----
 
 
-
-
 ====
 
 
@@ -515,7 +437,7 @@ FLMutableDict_Release(dict);
 === Using Arrays
 
 .API References
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__f_l_array.html[Fleece Arrays]
+* https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__f_l_array.html[Fleece Arrays]
 
 * 
 
@@ -563,8 +485,6 @@ while (NULL != (val = FLArrayIterator_GetValue(&iter)))
 ----
 
 
-
-
 ====
 
 
@@ -598,10 +518,7 @@ FLMutableArray_Release(phones);
 ----
 
 
-
-
 ====
-
 
 
 [discrete#c:document:::using-blobs]
@@ -616,9 +533,9 @@ For more on working with blobs, see xref:c:blob.adoc[Blobs]
 
 You can use the following methods/initializers:
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__documents.html#ga226f555fffb7543558048af20b18b737[CBLDocument_Create()] initializer to create a new document where the document ID is randomly generated by the database.
+* Use the https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__documents.html#ga226f555fffb7543558048af20b18b737[CBLDocument_Create()] initializer to create a new document where the document ID is randomly generated by the database.
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__documents.html#gaec41cf2eab4e3ac490f11007f665a35e[CBLDocument_CreateWithID()] initializer to create a new document with a specific ID.
+* Use the https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__documents.html#gaec41cf2eab4e3ac490f11007f665a35e[CBLDocument_CreateWithID()] initializer to create a new document with a specific ID.
 
 * Use the {url-api-method-collection-getdocument} method to get a document.
 If the document doesn't exist in the collection, the method will return `null`.
@@ -653,10 +570,7 @@ CBLDocument_Release(doc);
 ----
 
 
-
-
 ====
-
 
 
 [discrete#c:document:::mutability]
@@ -666,7 +580,7 @@ CBLDocument_Release(doc);
 Couchbase Lite for C's `CBLDocument*` objects can be either mutable or immutable.
 Reference an immutable document using a `const` pointer and a mutable document using a non-const pointer to prevent developers from accidentally calling a mutable-document function on an immutable document.
 
-To make an immutable document mutable, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__documents.html#ga0356b98d2f1798adc8f549510d3eef67[CBLDocument_MutableCopy()].
+To make an immutable document mutable, use https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__documents.html#ga0356b98d2f1798adc8f549510d3eef67[CBLDocument_MutableCopy()].
 
 [source,c, subs="attributes+, macros+"]
 ----
@@ -698,14 +612,10 @@ CBLDocument_Release(mutableDoc);
 ----
 
 
-
-
 ====
 
 
 NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<c:document:::lbl-doc-constraints>>.
-
-
 
 
 [discrete#c:document:::batch-operations]
@@ -746,8 +656,6 @@ CBLDatabase_EndTransaction(database, true, &err);
 ----
 
 
-
-
 ====
 
 
@@ -779,11 +687,7 @@ CBLListenerToken* token = CBLCollection_AddDocumentChangeListener(collection, FL
 ----
 
 
-
-
 ====
-
-
 
 
 [discrete#c:document:::document-expiration]
@@ -830,8 +734,6 @@ CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
 CBLQuery_SetParameters(query, parameters);
 FLMutableDict_Release(parameters);
 ----
-
-
 
 
 ====
@@ -936,10 +838,7 @@ FLSliceResult_Release(jsonData2);
 ----
 
 
-
-
 ====
-
 
 
 [discrete#c:document:::lbl-dictionary]
@@ -992,8 +891,6 @@ printf("Hotel in JSON :: %.*s\n", (int)jsonData2.size, (const char *)jsonData2.b
 FLSliceResult_Release(jsonData1);
 FLSliceResult_Release(jsonData2);
 ----
-
-
 
 
 ====
@@ -1051,8 +948,6 @@ CBLDocument_Release(doc);
 ----
 
 
-
-
 ====
 
 
@@ -1068,7 +963,7 @@ Convert a `Query Result` to JSON using its {to-JSON} accessor method.
 [#c:document:::ex-json]
 ====
 
-pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__json.html#ga3450acc0690101545d75986b91e4080[FLValue_ToJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<c:document:::ex-json>> for a working example.]
+pass:q,a[Use https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__json.html#ga3450acc0690101545d75986b91e4080[FLValue_ToJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<c:document:::ex-json>> for a working example.]
 
 // Show Main Snippet
 // include::c:example$code_snippets/main.cpp[tags="query-access-json", indent=0]
@@ -1084,8 +979,6 @@ while(CBLResultSet_Next(results)) {
 CBLResultSet_Release(results);
 
 ----
-
-
 
 
 ====
@@ -1114,9 +1007,6 @@ If your query selects a sub-set of available properties then the JSON format wil
   keyx: "valuex"
 }
 ----
-
-
-
 
 
 [discrete#c:document:::related-content]
@@ -1157,11 +1047,9 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 .
 
 
-
 ++++
 </div>
 ++++
-
 
 
 [discrete#c:document:::related-content-2]
@@ -1200,7 +1088,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

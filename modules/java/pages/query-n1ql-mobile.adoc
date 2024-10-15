@@ -13,81 +13,42 @@
 :keywords: sql, n1ql
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-java}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-java}{empty}
+:vs-version-maintenance: {vs-version}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-java}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 [abstract]
@@ -95,8 +56,6 @@
 Description -- _{description}_ +
 Related Content -- xref:java:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:java:query-live.adoc[Live Queries] | xref:java:indexing.adoc[Indexing]
 --
-
-
 
 
 NOTE: The examples used in this topic are based on the _Travel Sample_ app and data introduced in the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial
@@ -139,8 +98,6 @@ try (ResultSet rs = thisQuery.execute()) {
 }
 return results;
 ----
-
-
 
 
 ====
@@ -659,7 +616,6 @@ Categories of expression comprise the elements covered in this section (see abov
 <<java:query-n1ql-mobile:::lbl-lit-dict>>{nbsp}{nbsp}|{nbsp}{nbsp}
 
 
-
 [discrete#java:query-n1ql-mobile:::lbl-lit-bool]
 ===== Boolean
 
@@ -838,7 +794,6 @@ SELECT { ‘name’: ‘James’, ‘phones’: [‘650-100-1000’, ‘650-100-
 ----
 
 
-
 [discrete#java:query-n1ql-mobile:::lbl-exp-ident]
 ==== Identifiers
 
@@ -884,9 +839,6 @@ SELECT `key-1` FROM db
 <.> Use of backticks allows a hyphen as part of the identifier name.
 
 ====
-
-
-
 
 
 [discrete#java:query-n1ql-mobile:::lbl-exp-prop]
@@ -1116,8 +1068,6 @@ In this section::
 <<java:query-n1ql-mobile:::lbl-comp-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<java:query-n1ql-mobile:::lbl-ops-logical>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<java:query-n1ql-mobile:::lbl-ops-string>>
-
-
 
 
 [discrete#java:query-n1ql-mobile:::lbl-ops-maths]
@@ -1610,11 +1560,6 @@ SELECT name FROM db ORDER BY name COLLATE (UNICODE DIACRITIC)
 ----
 
 
-
-
-
-
-
 [discrete#java:query-n1ql-mobile:::lbl-ops-cond]
 ==== CONDITIONAL Operator
 
@@ -1992,7 +1937,6 @@ Returns null if any of the parameters are invalid.
 |===
 
 
-
 [discrete#java:query-n1ql-mobile:::lbl-func-maths]
 ==== Maths Functions
 
@@ -2089,7 +2033,6 @@ The function uses _Rounding to Nearest Even_ (Banker’s Rounding) convention wh
 ^*^ The behavior of the ROUND() function is different from Server {sqlpp} ROUND(), which rounds the midpoint values using _Rounding to Nearest Even_ convention.
 
 
-
 [discrete#java:query-n1ql-mobile:::lbl-func-meta]
 ==== Metadata Functions
 
@@ -2122,7 +2065,6 @@ SELECT p.name, r.rating FROM product as p INNER JOIN reviews AS r ON META(r).id 
 
 
 |===
-
 
 
 [discrete#java:query-n1ql-mobile:::lbl-func-pattern]
@@ -2222,7 +2164,6 @@ a|Returns one of the following strings, based on the value of expression:
 * “binary”
 
 |===
-
 
 
 [discrete#java:query-n1ql-mobile:::lbl-func-typeconv]
@@ -2387,14 +2328,11 @@ return results;
 ----
 
 
-
-
 ====
 
 
 <.> Define a parameter placeholder `$type`
 <.> Set the value of the `$type` parameter
-
 
 
 [discrete#java:query-n1ql-mobile:::related-content]
@@ -2433,7 +2371,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

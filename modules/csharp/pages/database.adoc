@@ -13,71 +13,42 @@
 :description: Working with Couchbase Lite Databases
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-net}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-net}{empty}
+:vs-version-maintenance: {vs-version}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-net}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 [abstract]
@@ -106,7 +77,6 @@ rectangle "Scope" as scope
 folder "Collection" as collection
 
 
-
 file "Document" as document1
 file "Document" as document2
 file "Document" as document3
@@ -116,8 +86,6 @@ scope --> collection
 collection --> document1
 collection --> document2
 collection --> document3
-
-
 
 
 note right of collection
@@ -226,13 +194,13 @@ syncing data scope:: Contains information pertaining to the user, which can be s
 == Create or Open Database
 
 
-You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Database.html[Database] class.
-Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.DatabaseConfiguration.html[DatabaseConfiguration] -- see <<csharp:database:::ex-dbopen>>.
+You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Database.html[Database] class.
+Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.DatabaseConfiguration.html[DatabaseConfiguration] -- see <<csharp:database:::ex-dbopen>>.
 
 Things to watch for include:
 
 * If the named database does not exist in the specified, or default, location then a new one is created
-* The database is created in a default location unless you  specify a directory for it -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.DatabaseConfiguration.html[DatabaseConfiguration] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.DatabaseConfiguration.html#Couchbase_Lite_DatabaseConfiguration_directory[DatabaseConfiguration.Directory()]
+* The database is created in a default location unless you  specify a directory for it -- see: https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.DatabaseConfiguration.html[DatabaseConfiguration] and https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.DatabaseConfiguration.html#Couchbase_Lite_DatabaseConfiguration_directory[DatabaseConfiguration.Directory()]
 +
 --
 
@@ -267,8 +235,6 @@ var database = new Database("my-database");
 ----
 
 
-
-
 ====
 
 
@@ -277,7 +243,7 @@ var database = new Database("my-database");
 
 You are advised to incorporate the closing of all open databases into your application workflow.
 
-To close a database, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Close[Database.Close()] -- see: <<csharp:database:::ex-dbclose>>.
+To close a database, use https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Close[Database.Close()] -- see: <<csharp:database:::ex-dbclose>>.
 This also closes
 footnote:fn28[Commencing with Release 2.8]
 active replications, listeners and-or live queries connected to the database.
@@ -301,8 +267,6 @@ TIP: Before closing, check that any attached listeners (query/replication/change
 ----
 database.Close();
 ----
-
-
 
 
 ====
@@ -334,8 +298,6 @@ config.FullSync = true;
 ----
 
 
-
-
 ====
 
 
@@ -343,7 +305,6 @@ NOTE: It is not possible to change the configuration of a Database after instant
 
 [discrete#csharp:database:::database-encryption]
 == Database Encryption
-
 
 
 IMPORTANT: This is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
@@ -355,7 +316,7 @@ The algorithm used to encrypt the database is 256-bit AES.
 
 [discrete#csharp:database:::enabling]
 === Enabling
-To enable encryption, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.DatabaseConfiguration.html#Couchbase_Lite_DatabaseConfiguration_EncryptionKey[DatabaseConfiguration.EncryptionKey()] to set the encryption key of your choice.
+To enable encryption, use https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.DatabaseConfiguration.html#Couchbase_Lite_DatabaseConfiguration_EncryptionKey[DatabaseConfiguration.EncryptionKey()] to set the encryption key of your choice.
 Provide this encryption key every time the database is opened -- see <<csharp:database:::ex-sdb-encrypt>>.
 
 .Configure Database Encryption
@@ -387,8 +348,6 @@ database.ChangeEncryptionKey(null);
 ----
 
 
-
-
 ====
 
 
@@ -405,14 +364,14 @@ So a database encrypted using the C#.Net SDK, and then exported, is readable onl
 
 [discrete#csharp:database:::changing]
 === Changing
-To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_ChangeEncryptionKey_Couchbase_Lite_EncryptionKey_[Database.ChangeEncryptionKey()]
+To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_ChangeEncryptionKey_Couchbase_Lite_EncryptionKey_[Database.ChangeEncryptionKey()]
 to set the required new encryption-key value.
 
 
 [discrete#csharp:database:::removing]
 === Removing
 To remove encryption, open the database using its existing encryption-key and use
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_ChangeEncryptionKey_Couchbase_Lite_EncryptionKey_[Database.ChangeEncryptionKey()]
+https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_ChangeEncryptionKey_Couchbase_Lite_EncryptionKey_[Database.ChangeEncryptionKey()]
 with a null value as the encryption key.
 
 [discrete#csharp:database:::upgrading]
@@ -422,7 +381,6 @@ To upgrade an encrypted database see: xref:csharp:dep-upgrade.adoc#lbl-db-upgrad
 
 [discrete#csharp:database:::lbl-find-db-loc]
 == Finding a Database File
-
 
 
 Where a database goes by default depends on the platform it is running on.
@@ -445,8 +403,8 @@ Note that this sandbox gets deleted sometimes when debugging from inside Visual 
 From time to time it may be necessary to perform certain maintenance activities on your database, for example to
 compact the database file, removing unused documents and blobs no longer referenced by any documents.
 
-Couchbase Lite's API provides the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_PerformMaintenance-com.couchbase.lite.MaintenanceType-[Database.PerformMaintenance()] method.
-The available maintenance operations, including `compact` are as shown in the enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.MaintenanceType.html[MaintenanceType] to accomplish this.
+Couchbase Lite's API provides the https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_PerformMaintenance-com.couchbase.lite.MaintenanceType-[Database.PerformMaintenance()] method.
+The available maintenance operations, including `compact` are as shown in the enum https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.MaintenanceType.html[MaintenanceType] to accomplish this.
 
 This is a resource intensive operation and is not performed automatically.
 It should be run on-demand using the API.
@@ -487,11 +445,7 @@ Database.Log.Console.Domains = LogDomain.Database;
 ----
 
 
-
-
 ====
-
-
 
 
 [discrete#csharp:database:::related-content]
@@ -530,7 +484,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

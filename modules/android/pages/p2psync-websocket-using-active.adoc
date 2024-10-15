@@ -16,73 +16,43 @@ ifdef::show_edition[:page-edition: {release}] {enterprise}
 // Define our environment
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-android}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-android}{empty}
+
+:vs-version-maintenance: {vs-version}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-android}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 // Define page abstract
 // done in commons
@@ -92,13 +62,8 @@ ifdef::show_edition[:page-edition: {release}] {enterprise}
 --
 Description -- _{description}_ +
 _Abstract -- How to set up a Replicator to connect with a Listener and replicate changes using peer-to-peer sync_ +
-Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/[API Reference]  |  xref:android:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:android:p2psync-websocket-using-active.adoc[Active Peer]
+Related Content -- https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/[API Reference]  |  xref:android:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:android:p2psync-websocket-using-active.adoc[Active Peer]
 --
-
-
-
-
-
 
 
 .Code Snippets
@@ -167,7 +132,6 @@ Kotlin::
         continuous = false, // default value
 
 
-
         // Configure Server Authentication --
         // only accept self-signed certs
         acceptOnlySelfSignedServerCertificate = true, // <.>
@@ -217,7 +181,6 @@ Java::
         .setContinuous(false) // default value
 
 
-
         // Configure Server Authentication --
         // only accept self-signed certs
         .setAcceptOnlySelfSignedServerCertificate(true) // <.>
@@ -247,7 +210,6 @@ thisToken = token;
 =====
 
 
-
 ====
 
 <.> Configure how the client will authenticate the server.
@@ -268,7 +230,7 @@ Here we say to provide _Basic Authentication_ credentials. Other options are ava
 [discrete#android:p2psync-websocket-using-active:::api-references]
 ==== API References
 
-You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/[Android API References] here.
+You can find https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/[Android API References] here.
 
 [discrete#android:p2psync-websocket-using-active:::device-discovery]
 ==== Device Discovery
@@ -292,7 +254,7 @@ In this section::
 ===== Configure Target
 
 Use the
-Initialize and define the replication configuration with local and remote database locations using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html[ReplicatorConfiguration] object.
+Initialize and define the replication configuration with local and remote database locations using the https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html[ReplicatorConfiguration] object.
 
 The constructor provides:
 
@@ -351,7 +313,6 @@ ReplicatorConfiguration thisConfig = new ReplicatorConfiguration(
 =====
 
 
-
 ====
 
 <.> Note use of the scheme prefix (`wss://`
@@ -364,8 +325,8 @@ to ensure TLS encryption -- strongly recommended in production -- or `ws://`)
 
 Here we define the direction and type of replication we want to initiate.
 
-We use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html[ReplicatorConfiguration]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setReplicatorType-com.couchbase.lite.AbstractReplicatorConfiguration.ReplicatorType-[replicatorType] and
-`https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setContinuous-boolean-[continuous]` parameters, to tell the replicator:
+We use `https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html[ReplicatorConfiguration]` class's https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setReplicatorType-com.couchbase.lite.AbstractReplicatorConfiguration.ReplicatorType-[replicatorType] and
+`https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setContinuous-boolean-[continuous]` parameters, to tell the replicator:
 
 * The type (or direction) of the replication:
 `*PUSH_AND_PULL*`; `PULL`; `PUSH`
@@ -425,7 +386,6 @@ Java::
 =====
 
 
-
 ====
 
 
@@ -459,14 +419,14 @@ h|Property
 h|Use cases
 h|Description
 
-|https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#setHeartbeat-long-[setHeartbeat()]
+|https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#setHeartbeat-long-[setHeartbeat()]
 a|* Reduce to detect connection errors sooner
 * Align to load-balancer or proxy `keep-alive` interval -- see Sync Gateway's topic xref:sync-gateway::load-balancer.adoc#websocket-connection[Load Balancer - Keep Alive]
 a|The interval (in seconds) between the heartbeat pulses.
 
 Default: The replicator pings the listener every 300 seconds.
 
-|https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxAttempts-int-[setMaxAttempts()]
+|https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxAttempts-int-[setMaxAttempts()]
 |Change this to limit or extend the number of retry attempts.
 a| The maximum number of retry attempts
 
@@ -478,7 +438,7 @@ a| The maximum number of retry attempts
 ** Continuous replication = maximum integer value
 * Negative values generate a Couchbase exception `InvalidArgumentException`
 
-|https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxAttemptWaitTime-long-[setMaxAttemptWaitTime()]
+|https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxAttemptWaitTime-long-[setMaxAttemptWaitTime()]
 |Change this to adjust the interval between retries.
 a|The maximum interval between retry attempts
 
@@ -552,12 +512,11 @@ thisReplicator = repl;
 =====
 
 
-
 ====
 
-<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#setHeartbeat-long-[setHeartbeat()] to set the required interval (in seconds) between the heartbeat pulses
-<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxAttempts-int-[setMaxAttempts()] to set the required number of retry attempts
-<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxAttemptWaitTime-long-[setMaxAttemptWaitTime()] to set the required interval between retry attempts.
+<.> Here we use https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#setHeartbeat-long-[setHeartbeat()] to set the required interval (in seconds) between the heartbeat pulses
+<.> Here we use https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxAttempts-int-[setMaxAttempts()] to set the required number of retry attempts
+<.> Here we use https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxAttemptWaitTime-long-[setMaxAttemptWaitTime()] to set the required interval between retry attempts.
 
 
 [discrete#android:p2psync-websocket-using-active:::authenticate-listener]
@@ -569,11 +528,11 @@ Note that the client cannot authenticate the server if TLS is turned off.
 When TLS is enabled (Sync Gateway's default) the client _must_ authenticate the server.
 If the server cannot provide acceptable credentials then the connection will fail.
 
-Use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html[ReplicatorConfiguration]` properties https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-[setAcceptOnlySelfSignedServerCertificate] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setPinnedServerCertificate-byte:A-[setPinnedServerCertificate], to tell the replicator how to verify server-supplied TLS server certificates.
+Use `https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html[ReplicatorConfiguration]` properties https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-[setAcceptOnlySelfSignedServerCertificate] and https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setPinnedServerCertificate-byte:A-[setPinnedServerCertificate], to tell the replicator how to verify server-supplied TLS server certificates.
 
 * If there is a pinned certificate, nothing else matters, the server cert must *exactly* match the pinned certificate.
-* If there are no pinned certs and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-[setAcceptOnlySelfSignedServerCertificate] is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
-* If there are no pinned certificates and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-[setAcceptOnlySelfSignedServerCertificate] is `false` (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
+* If there are no pinned certs and https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-[setAcceptOnlySelfSignedServerCertificate] is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
+* If there are no pinned certificates and https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-[setAcceptOnlySelfSignedServerCertificate] is `false` (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
 
 // Example 4
 .Set Server TLS security
@@ -709,12 +668,12 @@ config.setPinnedServerX509Certificate((X509Certificate) identity.getCerts().get(
 
 Here we define the credentials that the client can present to the server if prompted to do so in order that the server can authenticate it.
 
-We use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html[ReplicatorConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setAuthenticator-com.couchbase.lite.Authenticator-[setAuthenticator] method to define the authentication method to the replicator.
+We use https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html[ReplicatorConfiguration]'s https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setAuthenticator-com.couchbase.lite.Authenticator-[setAuthenticator] method to define the authentication method to the replicator.
 
 
 [discrete#android:p2psync-websocket-using-active:::basic-authentication]
 ===== Basic Authentication
-Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/BasicAuthenticator.html[BasicAuthenticator]` to supply basic authentication credentials (username and word).
+Use the `https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/BasicAuthenticator.html[BasicAuthenticator]` to supply basic authentication credentials (username and word).
 
 // Example 5
 [[android:p2psync-websocket-using-active:::basic-authentication]]
@@ -762,17 +721,15 @@ Java::
 =====
 
 
-
 ====
-
 
 
 [discrete#android:p2psync-websocket-using-active:::certificate-authentication]
 ===== Certificate Authentication
-Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ClientCertificateAuthenticator.html[ClientCertificateAuthenticator]` to configure the client TLS certificates to be presented to the server, on connection.
-This applies only to the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/URLEndpointListener.html[URLEndpointListener].
+Use the `https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ClientCertificateAuthenticator.html[ClientCertificateAuthenticator]` to configure the client TLS certificates to be presented to the server, on connection.
+This applies only to the https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/URLEndpointListener.html[URLEndpointListener].
 
-NOTE: The *server* (listener) must have `disableTLS` set `false` and have a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ClientCertificateAuthenticator.html[ClientCertificateAuthenticator] configured, or it will never ask for this client's certificate.
+NOTE: The *server* (listener) must have `disableTLS` set `false` and have a https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ClientCertificateAuthenticator.html[ClientCertificateAuthenticator] configured, or it will never ask for this client's certificate.
 
 The certificate to be presented to the server will need to be signed by the root certificates or be valid based on the authentication callback set to the listener via ListenerCertificateAuthenticator.
 
@@ -838,20 +795,18 @@ thisReplicator = repl;
 =====
 
 
-
 ====
 
 <.> Get an identity from secure storage and create a TLS Identity object
-<.> Set the authenticator to https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ClientCertificateAuthenticator.html[ClientCertificateAuthenticator] and configure it to use the retrieved identity
-
+<.> Set the authenticator to https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ClientCertificateAuthenticator.html[ClientCertificateAuthenticator] and configure it to use the retrieved identity
 
 
 [discrete#android:p2psync-websocket-using-active:::initialize-replicator]
 ==== Initialize Replicator
 
 
-Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Replicator.html[Replicator]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Replicator.html#Replicator-com.couchbase.lite.ReplicatorConfiguration-[ReplicatorConfiguration(config)] constructor, to initialize the replicator with the configuration you have defined.
-You can, optionally, add a change listener (see <<android:p2psync-websocket-using-active:::lbl-repl-mon>>) before starting the replicator running using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#start-boolean-[start()].
+Use the `https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Replicator.html[Replicator]` class's https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Replicator.html#Replicator-com.couchbase.lite.ReplicatorConfiguration-[ReplicatorConfiguration(config)] constructor, to initialize the replicator with the configuration you have defined.
+You can, optionally, add a change listener (see <<android:p2psync-websocket-using-active:::lbl-repl-mon>>) before starting the replicator running using https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#start-boolean-[start()].
 
 // Example 7
 .Initialize and run replicator
@@ -968,7 +923,6 @@ thisToken = token;
 =====
 
 
-
 ====
 
 <.> Initialize the replicator with the configuration
@@ -984,7 +938,7 @@ In this section::
 <<android:p2psync-websocket-using-active:::lbl-repl-evnts>> |
 <<android:p2psync-websocket-using-active:::lbl-repl-pend>>
 
-You can monitor a replication’s status by using a combination of <<android:p2psync-websocket-using-active:::lbl-repl-chng>> and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getActivityLevel()[getActivityLevel()].
+You can monitor a replication’s status by using a combination of <<android:p2psync-websocket-using-active:::lbl-repl-chng>> and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getActivityLevel()[getActivityLevel()].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
 You can also choose to monitor document changes -- see: <<android:p2psync-websocket-using-active:::lbl-repl-evnts>>.
@@ -997,10 +951,10 @@ You can add and a replicator change listener at any point; it will report change
 .Best Practice
 TIP: Don't forget to save the token so you can remove the listener later
 
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Replicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#addChangeListener-java.util.concurrent.Executor-com.couchbase.lite.ReplicatorChangeListener-[addChangeListener()]) -- see: <<android:p2psync-websocket-using-active:::ex-repl-mon>>.
+Use the https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Replicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#addChangeListener-java.util.concurrent.Executor-com.couchbase.lite.ReplicatorChangeListener-[addChangeListener()]) -- see: <<android:p2psync-websocket-using-active:::ex-repl-mon>>.
 You will then be asynchronously notified of state changes.
 
-You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#removeChangeListener-com.couchbase.lite.ListenerToken-[removeChangeListener(ListenerToken token)].
+You can remove a change listener with https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#removeChangeListener-com.couchbase.lite.ListenerToken-[removeChangeListener(ListenerToken token)].
 
 
 [discrete#android:p2psync-websocket-using-active:::using-kotlin-flows-and-livedata]
@@ -1016,17 +970,17 @@ Android Kotlin developers can take advantage of Flows and LiveData to monitor re
 ===== Replicator Status
 
 You can use the
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html[ReplicatorStatus()] class
+https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html[ReplicatorStatus()] class
 to check the replicator status.
 That is, whether it is actively transferring data or if it has stopped -- see: <<android:p2psync-websocket-using-active:::ex-repl-mon>>.
 
 The returned _ReplicationStatus_ structure comprises:
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getActivityLevel()[getActivityLevel()] -- stopped, offline, connecting, idle or busy -- see states described in: <<android:p2psync-websocket-using-active:::tbl-states>>
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getProgress()[getProgress()]
+* https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getActivityLevel()[getActivityLevel()] -- stopped, offline, connecting, idle or busy -- see states described in: <<android:p2psync-websocket-using-active:::tbl-states>>
+* https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getProgress()[getProgress()]
 ** completed -- the total number of changes completed
 ** total -- the total number of changes to be processed
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getError[getError()] -- the current error, if any
+* https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getError[getError()] -- the current error, if any
 
 // Example 8
 [#android:p2psync-websocket-using-active:::ex-repl-mon]
@@ -1081,8 +1035,6 @@ repl.status.let {
 ----
 --
 ======
-
-
 
 
 Java::
@@ -1168,16 +1120,16 @@ You should explicitly stop replication processes when they are no longer useful 
 [discrete#android:p2psync-websocket-using-active:::lbl-repl-pend]
 ===== Documents Pending Push
 
-TIP: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-[Replicator.isDocumentPending()] is quicker and more efficient.
+TIP: https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-[Replicator.isDocumentPending()] is quicker and more efficient.
 Use it in preference to returning a list of pending document IDs, where possible.
 
 You can check whether documents are waiting to be pushed in any forthcoming sync by using either of the following API methods:
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#getPendingDocumentIds--[Replicator.getPendingDocumentIds()] method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.
+* Use the https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#getPendingDocumentIds--[Replicator.getPendingDocumentIds()] method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.
 +
 This can be very useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it is safe to exit.
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-[Replicator.isDocumentPending()] method to quickly check whether an individual document is pending a push.
+* Use the https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-[Replicator.isDocumentPending()] method to quickly check whether an individual document is pending a push.
 
 [#ex-pending]
 .Use Pending Document ID API
@@ -1272,20 +1224,18 @@ if (!pendingDocs.isEmpty()) {
 =====
 
 
-
 ====
 
-<.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#getPendingDocumentIds--[Replicator.getPendingDocumentIds()] returns a list of the document IDs for all documents waiting to be pushed.
+<.> https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#getPendingDocumentIds--[Replicator.getPendingDocumentIds()] returns a list of the document IDs for all documents waiting to be pushed.
 This is a snapshot and may have changed by the time the response is received and processed.
-<.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-[Replicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
-
+<.> https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-[Replicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
 
 [discrete#android:p2psync-websocket-using-active:::lbl-repl-stop]
 ==== Stop Sync
 
 Stopping a replication is straightforward.
-It is done using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#stop--[stop()].
+It is done using https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#stop--[stop()].
 This initiates an asynchronous operation and so is not necessarily immediate.
 Your app should account for this potential delay before attempting any subsequent operations.
 
@@ -1330,10 +1280,9 @@ repl.stop(); // <.>
 =====
 
 
-
 ====
 
-<.> Here we initiate the stopping of the replication using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#stop--[stop()] method.
+<.> Here we initiate the stopping of the replication using the https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#stop--[stop()] method.
 It will stop any active <<android:p2psync-websocket-using-active:::lbl-repl-chng,change listener>> once the replication is stopped.
 
 
@@ -1342,7 +1291,7 @@ It will stop any active <<android:p2psync-websocket-using-active:::lbl-repl-chng
 
 Unless you specify otherwise, Couchbase Lite's default conflict resolution policy is applied -- see xref:android:conflict.adoc[Handling Data Conflicts].
 
-To use a different policy, specify a _conflict resolver_ using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setConflictResolver-com.couchbase.lite.ConflictResolver-[conflictResolver] as shown in <<android:p2psync-websocket-using-active:::using-conflict-resolvers>>.
+To use a different policy, specify a _conflict resolver_ using https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setConflictResolver-com.couchbase.lite.ConflictResolver-[conflictResolver] as shown in <<android:p2psync-websocket-using-active:::using-conflict-resolvers>>.
 
 For more complex solutions you can provide a custom conflict resolver - see: xref:android:conflict.adoc[Handling Data Conflicts].
 
@@ -1550,7 +1499,6 @@ collection.save(
 =====
 
 
-
 ====
 
 
@@ -1567,17 +1515,12 @@ collection.save(
 //        <.> If there is an exception thrown in the handle() method, the exception will be caught and re-thrown in the save() method
 
 
-
-
 For more on replicator conflict resolution see: xref:android:conflict.adoc[Handling Data Conflicts].
 
 
 [discrete#android:p2psync-websocket-using-active:::delta-sync]
 ==== Delta Sync
 If delta sync is enabled on the listener, then replication will use delta sync.
-
-
-
 
 
 [discrete#android:p2psync-websocket-using-active:::related-content]
@@ -1600,7 +1543,7 @@ If delta sync is enabled on the listener, then replication will use delta sync.
 .Concepts
 * xref:android:landing-p2psync.adoc[Peer-to-Peer Sync]
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/[API References]
+* https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/[API References]
 
 .
 
@@ -1614,7 +1557,6 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
 xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Getting Started with Peer-to-Peer Synchronization]
-
 
 
 ++++

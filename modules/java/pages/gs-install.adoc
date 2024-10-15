@@ -15,81 +15,42 @@
 :keywords: mobile edge nosql api Java JVM web-app device-app
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-java}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-java}{empty}
+:vs-version-maintenance: {vs-version}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-java}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 // DO NOT EDIT
@@ -103,18 +64,17 @@ Related Content -- xref:java:gs-install.adoc[Install] | xref:java:gs-prereqs.ado
 // DO NOT EDIT
 
 
-
 [discrete#java:gs-install:::introduction]
 === Introduction
 
 
-pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] on Java {major}.{minor}.{base}{empty} enables development and deployment of pass:q,a[Couchbase{nbsp}Lite] applications to a JVM environment.
+pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] on Java {version-full} enables development and deployment of pass:q,a[Couchbase{nbsp}Lite] applications to a JVM environment.
 You can deploy Standalone (Java Desktop/Console) apps or Web Apps (using, for example, Tomcat; including embedded Tomcat deployments).
 
 
 .Quick Steps
 ****
-For experienced developers, this is all you need to add _pass:q,a[Couchbase{nbsp}Lite] for Java {major}.{minor}.{base}{empty}_ to your application projects.
+For experienced developers, this is all you need to add _pass:q,a[Couchbase{nbsp}Lite] for Java {version-full}_ to your application projects.
 
 [tabs]
 =====
@@ -128,7 +88,7 @@ Include the following in your Gradle `build.gradle` or Maven `pom.xml` file, as 
 `https://mobile.maven.couchbase.com/maven2/dev/`
 
 * The pass:q,a[Couchbase{nbsp}Lite] Enterprise Edition dependency: +
-`couchbase-lite-java-ee:{major}.{minor}.{base}{empty}`
+`couchbase-lite-java-ee:{version-full}`
 
 . If you want to use Vector Search, add the Couchbase Lite Vector Search dependency: `couchbase-lite-java-vector-search`
 . You must then use `CouchbaseLite.enableVectorSearch();` to enable the vector search extension.
@@ -139,7 +99,7 @@ Community Edition::
 +
 --
 . Include the pass:q,a[Couchbase{nbsp}Lite] for Java dependency in your Gradle `build.gradle` or Maven `pom.xml` file, as appropriate: +
-`couchbase-lite-java:{major}.{minor}.{base}{empty}`
+`couchbase-lite-java:{version-full}`
 . For Gradle: +
 Check you have `mavenCentral()` in `repositories` (or in `settings.gradle`). +
 Maven automatically checks its own repo for dependencies.
@@ -153,7 +113,6 @@ That's it!
 You're all set to begin developing powerful pass:q,a[Couchbase{nbsp}Lite] applications.
 
 Now, try the <<java:gs-build:::,Getting Started>> application, which demonstrates use of key CRUD functionality.
-
 
 
 [discrete#java:gs-install:::preparing-your-build-environment]
@@ -246,7 +205,7 @@ compileOptions {
 [source,groovy, subs="attributes+"]
 ----
 dependencies {
-    implementation "com.couchbase.lite:couchbase-lite-java:{major}.{minor}.{base}{empty}"
+    implementation "com.couchbase.lite:couchbase-lite-java:{version-full}"
 
 //   ... other section content as required by user
 }
@@ -292,10 +251,10 @@ compileOptions {
 [source,groovy, subs="attributes+"]
 ----
 dependencies {
-    implementation "com.couchbase.lite:couchbase-lite-java:{major}.{minor}.{base}{empty}"
+    implementation "com.couchbase.lite:couchbase-lite-java:{version-full}"
 
   // All standard 64-bit ARM architectures
-  implementation 'com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-major}.{vs-minor}.{vs-maintenance-java}{empty}'
+  implementation 'com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-version-maintenance}'
 
 //   ... other section content as required by user
 }
@@ -349,7 +308,7 @@ compileOptions {
 [source,groovy, subs="attributes+"]
 ----
 dependencies {
-    implementation "com.couchbase.lite:couchbase-lite-java:{major}.{minor}.{base}{empty}"
+    implementation "com.couchbase.lite:couchbase-lite-java:{version-full}"
 
 //   ... other section content as required by user
 }
@@ -398,7 +357,7 @@ Enterprise Edition::
     <dependency>
       <groupId>com.couchbase.lite</groupId>
       <artifactId>couchbase-lite-java-ee</artifactId>
-      <version>{major}.{minor}.{base}{empty}</version>
+      <version>{version-full}</version>
     </dependency>
 
     <!-- ... any other section content as required by user-home  -->
@@ -444,7 +403,7 @@ Community edition::
   <dependency>
       <groupId>com.couchbase.lite</groupId>
       <artifactId>couchbase-lite-java</artifactId>
-      <version>{major}.{minor}.{base}{empty}</version>
+      <version>{version-full}</version>
   </dependency>
 
   //   ... any other section content as required by user
@@ -540,7 +499,7 @@ Community::
 [source,groovy,subs=attributes+]
 ----
 dependencies {
-    implementation "com.couchbase.lite:couchbase-lite-java:{major}.{minor}.{base}{empty}"
+    implementation "com.couchbase.lite:couchbase-lite-java:{version-full}"
 
 //   ... other section content as required by user
 }
@@ -563,7 +522,7 @@ repositories {
     }
 
 dependencies {
-    implementation "com.couchbase.lite:couchbase-lite-java-ee:{major}.{minor}.{base}{empty}"
+    implementation "com.couchbase.lite:couchbase-lite-java-ee:{version-full}"
 
 //   ... other section content as required by user
     }
@@ -627,9 +586,6 @@ TIP: You can also use Tomcat’s Manager App to deploy the war file -- see https
 NOTE: For linux platform see also -- _Using Native Libraries for Linux_ in xref:java:gs-prereqs.adoc[Prerequisites]
 
 
-
-
-
 [discrete#java:gs-install:::related-content]
 === Related Content
 ++++
@@ -666,7 +622,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

@@ -14,85 +14,45 @@
 :description: Couchbase Lite concepts -- Data model -- Documents
 
 
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 :maintenance: 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version-maintenance: {version}.{maintenance-ios}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-ios}{empty}
+
+:vs-version-maintenance: {vs-version}.{vs-maintenance-ios}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-ios}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 [abstract]
@@ -100,8 +60,6 @@
 Description -- _{description}_ +
 Related Content -- xref:objc:database.adoc[Databases] | xref:objc:blob.adoc[Blobs] | xref:objc:indexing.adoc[Indexing] |
 --
-
-
 
 
 [discrete#objc:document:::overview]
@@ -139,10 +97,6 @@ This internal form can be easily converted into a manageable native dictionary f
 Fleece data is stored in the smallest format that will hold the value whilst maintaining the integrity of the value.
 
 
-
-
-
-
 [discrete#objc:document:::data-types]
 === Data Types
 
@@ -165,7 +119,6 @@ MutableDictionary:: represents a writeable key-value pair collection
 Array:: represents a readonly ordered collection of objects
 MutableArray:: represents a writeable collection of objects
 Blob:: represents an arbitrary piece of binary data
-
 
 
 [discrete#objc:document:::json]
@@ -221,7 +174,6 @@ Couchbase documents are assigned to a <<objc:database:::database-concepts,Collec
 All the CRUD examples in this document operate on a `collection` object (here, the Default Collection).
 
 
-
 // Show Main Snippet
 // include::objc:example$code_snippets/SampleCodeTest.m[tags="datatype_usage_createdb", indent=0]
 [source, objc]
@@ -235,8 +187,6 @@ CBLCollection *collection = [database defaultCollection:&error];
 ----
 
 
-
-
 See xref:objc:database.adoc[Databases] for more information
 
 [discrete#objc:document:::create-a-document]
@@ -245,7 +195,6 @@ See xref:objc:database.adoc[Databases] for more information
 Now create a new document to hold your application's data.
 
 Use the mutable form, so that you can add data to the document.
-
 
 
 // Show Main Snippet
@@ -260,8 +209,6 @@ CBLMutableDocument *mutableDoc = [[CBLMutableDocument alloc] init];
 ----
 
 
-
-
 For more on using *Documents*, see <<objc:document:::document-initializers>> and <<objc:document:::mutability>>.
 
 [discrete#objc:document:::create-a-dictionary]
@@ -270,7 +217,6 @@ For more on using *Documents*, see <<objc:document:::document-initializers>> and
 Now create a mutable dictionary (`address`).
 
 Each element of the dictionary value will be directly accessible via its own key.
-
 
 
 // Show Main Snippet
@@ -289,15 +235,12 @@ CBLMutableDictionary *address = [[CBLMutableDictionary alloc] init];
 ----
 
 
-
-
 Learn more about <<objc:document:::using-dictionaries>>.
 
 [discrete#objc:document:::create-an-array]
 === Create an Array
 
 Since the hotel may have multiple contact numbers, provide a field (`phones`) as a mutable array.
-
 
 
 // Show Main Snippet
@@ -312,8 +255,6 @@ CBLMutableArray *phones = [[CBLMutableArray alloc] init];
 ----
 
 
-
-
 Learn more about <<objc:document:::using-arrays>>
 
 [discrete#objc:document:::populate-a-document]
@@ -321,7 +262,6 @@ Learn more about <<objc:document:::using-arrays>>
 
 Now add your data to the mutable document created earlier.
 Each data item is stored as a key-value pair.
-
 
 
 // Show Main Snippet
@@ -346,9 +286,6 @@ Each data item is stored as a key-value pair.
 ----
 
 
-
-
-
 NOTE: Couchbase recommend using a `type` attribute to define each logical document type.
 
 
@@ -357,7 +294,6 @@ NOTE: Couchbase recommend using a `type` attribute to define each logical docume
 
 Now persist the populated document to your Couchbase Lite database.
 This will auto-generate the document id.
-
 
 
 // Show Main Snippet
@@ -369,13 +305,10 @@ This will auto-generate the document id.
 ----
 
 
-
-
 [discrete#objc:document:::close-the-database]
 === Close the Database
 
 With your document saved, you can now close our Couchbase Lite database.
-
 
 
 // Show Main Snippet
@@ -388,14 +321,8 @@ if (![self.database close:&error])
 ----
 
 
-
-
-
-
 [discrete#objc:document:::working-with-data]
 == Working with Data
-
-
 
 
 [discrete#objc:document:::date-accessors]
@@ -411,7 +338,7 @@ Dates are a common data type, but JSON doesn't natively support them, so the con
 [#objc:document:::ex-date-getter]
 ====
 
-pass:q,a[This example sets the date on the `createdAt` property and reads it back using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Protocols/CBLDictionary.html#/c:objc(pl)CBLDictionary(im)dateForKey:[dateForKey:] accessor method.]
+pass:q,a[This example sets the date on the `createdAt` property and reads it back using the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Protocols/CBLDictionary.html#/c:objc(pl)CBLDictionary(im)dateForKey:[dateForKey:] accessor method.]
 
 // Show Main Snippet
 // include::objc:example$code_snippets/SampleCodeTest.m[tags="date-getter", indent=0]
@@ -422,10 +349,7 @@ NSDate *date = [doc dateForKey:@"createdAt"];
 ----
 
 
-
-
 ====
-
 
 
 [discrete#objc:document:::using-dictionaries]
@@ -433,9 +357,9 @@ NSDate *date = [doc dateForKey:@"createdAt"];
 
 .API References
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDictionary.html[CBLDictionary]
+* https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLDictionary.html[CBLDictionary]
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLMutableDictionary.html[CBLMutableDictionary]
+* https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLMutableDictionary.html[CBLMutableDictionary]
 
 
 .Read Only
@@ -471,10 +395,7 @@ CBLMutableDictionary *mutableDict = [dict toMutable];
 ----
 
 
-
-
 ====
-
 
 
 .Mutable
@@ -503,8 +424,6 @@ NSError *error;
 ----
 
 
-
-
 ====
 
 
@@ -512,9 +431,9 @@ NSError *error;
 === Using Arrays
 
 .API References
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLArray.html[CBLArray]
+* https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLArray.html[CBLArray]
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLMutableArray.html[CBLMutableArray]
+* https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLMutableArray.html[CBLMutableArray]
 
 .Read Only
 [#ex-array]
@@ -555,8 +474,6 @@ CBLMutableArray *mutableArray = [array toMutable];
 ----
 
 
-
-
 ====
 
 
@@ -585,10 +502,7 @@ NSError *error;
 ----
 
 
-
-
 ====
-
 
 
 [discrete#objc:document:::using-blobs]
@@ -603,9 +517,9 @@ For more on working with blobs, see xref:objc:blob.adoc[Blobs]
 
 You can use the following methods/initializers:
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLMutableDocument.html#/c:objc(cs)CBLMutableDocument(im)init[(nonnull instancetype)init;] initializer to create a new document where the document ID is randomly generated by the database.
+* Use the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLMutableDocument.html#/c:objc(cs)CBLMutableDocument(im)init[(nonnull instancetype)init;] initializer to create a new document where the document ID is randomly generated by the database.
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLMutableDocument.html#/c:objc(cs)CBLMutableDocument(im)initWithID:[(nonnull instancetype)initWithID:(nullable NSString *)documentID;] initializer to create a new document with a specific ID.
+* Use the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLMutableDocument.html#/c:objc(cs)CBLMutableDocument(im)initWithID:[(nonnull instancetype)initWithID:(nullable NSString *)documentID;] initializer to create a new document with a specific ID.
 
 * Use the {url-api-method-collection-getdocument} method to get a document.
 If the document doesn't exist in the collection, the method will return `null`.
@@ -633,10 +547,7 @@ CBLMutableDocument *doc = [[CBLMutableDocument alloc] init];
 ----
 
 
-
-
 ====
-
 
 
 [discrete#objc:document:::mutability]
@@ -644,7 +555,7 @@ CBLMutableDocument *doc = [[CBLMutableDocument alloc] init];
 
 
 By default, a document is immutable when it is read from the database.
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDocument.htmlc:objc(cs)CBLDocument(im)toMutable[(nonnull CBLMutableDocument *)toMutable;] to create an updatable instance of the document.
+Use the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLDocument.htmlc:objc(cs)CBLDocument(im)toMutable[(nonnull CBLMutableDocument *)toMutable;] to create an updatable instance of the document.
 
 
 .Make a mutable document
@@ -667,14 +578,10 @@ CBLMutableDocument *mutableDocument = [doc toMutable];
 ----
 
 
-
-
 ====
 
 
 NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<objc:document:::lbl-doc-constraints>>.
-
-
 
 
 [discrete#objc:document:::batch-operations]
@@ -707,8 +614,6 @@ The following example persists a few documents in batch.
     }
 }];
 ----
-
-
 
 
 ====
@@ -745,11 +650,7 @@ The following example registers for changes to the document with ID `user.john` 
 ----
 
 
-
-
 ====
-
-
 
 
 [discrete#objc:document:::document-expiration]
@@ -789,8 +690,6 @@ CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult expression:[CB
                                     where:[[CBLQueryMeta expiration]
                                             lessThan:[CBLQueryExpression double:fiveMinutesFromNow]]];
 ----
-
-
 
 
 ====
@@ -880,8 +779,6 @@ for (NSString *item in array) {
 ----
 
 
-
-
 ====
 
 
@@ -912,8 +809,6 @@ NSString *json = [blob toJSON];
 NSLog(@"json string is %@", json);
 
 ----
-
-
 
 
 ====
@@ -961,8 +856,6 @@ for (NSString *key in dict) {
 ----
 
 
-
-
 ====
 
 
@@ -1005,8 +898,6 @@ NSLog(@"json %@", json);
 ----
 
 
-
-
 ====
 
 
@@ -1022,7 +913,7 @@ Convert a `Query Result` to JSON using its {to-JSON} accessor method.
 [#objc:document:::ex-json]
 ====
 
-pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryResult.html#/c:objc(cs)CBLQueryResult(im)toJSON[CBLResult.toJSON] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<objc:document:::ex-json>> for a working example.]
+pass:q,a[Use https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLQueryResult.html#/c:objc(cs)CBLQueryResult(im)toJSON[CBLResult.toJSON] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<objc:document:::ex-json>> for a working example.]
 
 // Show Main Snippet
 // include::objc:example$code_snippets/SampleCodeTest.m[tags="query-access-json", indent=0]
@@ -1047,8 +938,6 @@ for (CBLQueryResult *result in rs) {
 }; // end for
 
 ----
-
-
 
 
 ====
@@ -1077,9 +966,6 @@ If your query selects a sub-set of available properties then the JSON format wil
   keyx: "valuex"
 }
 ----
-
-
-
 
 
 [discrete#objc:document:::related-content]
@@ -1118,7 +1004,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

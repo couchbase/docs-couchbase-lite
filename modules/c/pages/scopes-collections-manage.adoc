@@ -13,78 +13,42 @@
 :description: Scopes and collections allow you to organize your documents within a database.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-c}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-c}{empty}
+:vs-version-maintenance: {vs-version}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-c}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 [abstract]
@@ -100,7 +64,6 @@
 For example, if your database contains travel information, airport documents can be assigned to an airports collection, hotel documents can be assigned to a hotels collection, and so on.
 
 * Document names must be unique within their collection.
-
 
 
 **Use scopes to group multiple collections**
@@ -122,7 +85,6 @@ If you create a document in the database and don’t specify a specific scope or
 If you upgrade from a version of Couchbase Lite prior to 3.1, all existing data is automatically placed in the default scope and default collection.
 
 The default scope  and collection cannot be dropped.
-
 
 
 [discrete#c:scopes-collections-manage:::create-a-scope-and-collection]
@@ -154,8 +116,6 @@ NOTE: Scope and collection names are case sensitive.
 CBLError err;
 CBLDatabase_CreateCollection(db, FLSTR("collA"), FLSTR("scopeA"), &err);
 ----
-
-
 
 
 ====
@@ -196,10 +156,7 @@ CBLCollection_CreateValueIndex(collection, FLSTR("TypeNameIndex"), config, &err)
 ----
 
 
-
-
 ====
-
 
 
 [discrete#c:scopes-collections-manage:::drop-a-collection]
@@ -219,8 +176,6 @@ CBLCollection_CreateValueIndex(collection, FLSTR("TypeNameIndex"), config, &err)
 CBLError err;
 CBLDatabase_DeleteCollection(db, FLSTR("collA"), FLSTR("scopeA"), &err);
 ----
-
-
 
 
 ====
@@ -260,9 +215,6 @@ CBLCollection *collA = CBLDatabase_Collection(db, FLSTR("collA"), FLSTR("scopeA"
 ----
 
 
-
-
 ====
-
 
 

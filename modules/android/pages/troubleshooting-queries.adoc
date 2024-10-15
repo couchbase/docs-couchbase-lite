@@ -12,74 +12,43 @@
 :description: Couchbase Lite on Android -- Using query.explain()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-android}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-android}{empty}
+
+:vs-version-maintenance: {vs-version}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-android}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 [abstract]
 --
@@ -95,7 +64,7 @@ Related Content -- xref:android:troubleshooting-logs.adoc[Using Logs] | xref:and
 
 [discrete#android:troubleshooting-queries:::using]
 ==== Using
-Query's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Query.html#explain--[explain()] method can provide useful insight when you are trying to diagnose query performance issues and-or optimize queries.
+Query's https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Query.html#explain--[explain()] method can provide useful insight when you are trying to diagnose query performance issues and-or optimize queries.
 To examine how your query is working, either embed the call inside your app (see: <<android:troubleshooting-queries:::use-qe-app>>), or use it interactively within a `cblite` shell (see: <<android:troubleshooting-queries:::use-qe-cblite>>).
 
 [#use-qe-app]
@@ -149,7 +118,6 @@ Logger.log(query.explain()); // <.>
 =====
 
 
-
 ====
 
 <.> Construct your query as normal
@@ -175,7 +143,7 @@ cblite <your-database-name>.cblite2 // <.>
 
 [discrete#android:troubleshooting-queries:::output]
 ==== Output
-The output from `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Query.html#explain--[explain()]` remains the same whether invoked by an app, or `cblite` -- see <<android:troubleshooting-queries:::qe-output>> for an example of how it looks.
+The output from `https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Query.html#explain--[explain()]` remains the same whether invoked by an app, or `cblite` -- see <<android:troubleshooting-queries:::qe-output>> for an example of how it looks.
 
 [#android:troubleshooting-queries:::qe-output]
 .Query.explain() Output
@@ -285,7 +253,6 @@ Optimal performance depends on designing and creating the _right_ indexes to go 
 [NOTE]
 Couchbase Lite for android does not currently support partial value indexes; indexes with non-property expressions.
 You should only index with properties that you plan to use in the query.
-
 
 
 The Query optimizer converts your query into a parse tree that groups zero or more _and-connected_ clauses together (as dictated by your `where` conditionals) for effective query engine processing.
@@ -438,7 +405,6 @@ Logger.log(query.explain());
 =====
 
 
-
 ====
 
 <.> Simply removing the wildcard prefix enables the query optimizer to access the `typeIndex`, which results in a more efficient search.
@@ -454,7 +420,7 @@ Logger.log(query.explain());
 
 Functions are a very useful tool in building queries, but be aware that they can impact whether the query-optimizer is able to use your index(es).
 
-For example, you can observe a similar situation to that shown in <<android:troubleshooting-queries:::use-like-based-queries>> when using the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Function.html#lower-com.couchbase.lite.Expression-[lower()]` function on an indexed property.
+For example, you can observe a similar situation to that shown in <<android:troubleshooting-queries:::use-like-based-queries>> when using the `https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Function.html#lower-com.couchbase.lite.Expression-[lower()]` function on an indexed property.
 
 .Query
 [#use-like-based-queries]
@@ -499,7 +465,7 @@ Logger.log(query.explain());
 =====
 
 
-<.> Here we use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Function.html#lower-com.couchbase.lite.Expression-[lower()]` function in the _Where_ expression
+<.> Here we use the `https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Function.html#lower-com.couchbase.lite.Expression-[lower()]` function in the _Where_ expression
 
 .Query Plan:
 [source, bash]
@@ -508,7 +474,7 @@ Logger.log(query.explain());
 ----
 
 
-But removing the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Function.html#lower-com.couchbase.lite.Expression-[lower()]` function, changes things:
+But removing the `https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Function.html#lower-com.couchbase.lite.Expression-[lower()]` function, changes things:
 
 .Query
 
@@ -552,14 +518,14 @@ Logger.log(query.explain());
 =====
 
 
-<.> Here we have removed `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Function.html#lower-com.couchbase.lite.Expression-[lower()]` from the _Where_ expression
+<.> Here we have removed `https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Function.html#lower-com.couchbase.lite.Expression-[lower()]` from the _Where_ expression
 
 .Query plan
 ----
 3|0|0| SEARCH TABLE kv_default AS _doc USING INDEX typeIndex (<expr>=?)
 ----
 
-Knowing this, you can consider how you create the index; for example, using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Function.html#lower-com.couchbase.lite.Expression-[lower()] when you create the index and then always using lowercase comparisons.
+Knowing this, you can consider how you create the index; for example, using https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Function.html#lower-com.couchbase.lite.Expression-[lower()] when you create the index and then always using lowercase comparisons.
 
 [discrete#android:troubleshooting-queries:::optimization-considerations]
 === Optimization Considerations
@@ -582,7 +548,6 @@ Break your data into logical linked units.
 
 Consider Using Full Text Search instead of complex like or regex patterns -- see xref:android:fts.adoc[Full Text Search]. +
 {empty}
-
 
 
 [discrete#android:troubleshooting-queries:::related-content]
@@ -628,11 +593,9 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 .
 
 
-
 ++++
 </div>
 ++++
-
 
 
 = Product Notes

@@ -14,77 +14,49 @@
 :tabs:
 
 
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-ios}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-ios}{empty}
+
+:vs-version-maintenance: {vs-version}.{vs-maintenance-ios}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-ios}{empty}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/[Query Class index]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/[Query Class index]
 
 
 [Replicator.pendingDocumentIds()]
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 [abstract]
 --
@@ -96,7 +68,7 @@ Description -- _{description}_ +
 === Get Started
 
 
-To get started coding Couchbase Lite for Swift apps, just create or open an existing _XCode_ project and install the required _Couchbase Lite_ version, for example {major}.{minor}.{maintenance-ios}{empty}, using one of the <<swift:gs-install:::lbl-install-tabs>> methods shown.
+To get started coding Couchbase Lite for Swift apps, just create or open an existing _XCode_ project and install the required _Couchbase Lite_ version, for example {version-maintenance}, using one of the <<swift:gs-install:::lbl-install-tabs>> methods shown.
 
 Enterprise users can also download the Couchbase Lite Vector Search extension library.
 
@@ -146,7 +118,7 @@ https://github.com/Carthage/Carthage#installing-carthage
 .Couchbase Lite Community Edition
 [source,ruby,subs="attributes+"]
 ----
-binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Community.json" ~> {major}.{minor}.{maintenance-ios}{empty}
+binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Community.json" ~> {version-maintenance}
 ----
 +
 <.> Specify the required version number, here we use the latest version
@@ -156,7 +128,7 @@ binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/Couc
 .Couchbase Lite Enterprise Edition
 [source,ruby,subs="attributes+"]
 ----
-binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Enterprise.json" ~> {major}.{minor}.{maintenance-ios}{empty} // <.>
+binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Enterprise.json" ~> {version-maintenance} // <.>
 ----
 +
 <.> Specify the required version number, here we use the latest version
@@ -183,7 +155,7 @@ NOTE: The minimum required Cocoapods  version is *1.15*
 ----
 target 'Example' do
   use_frameworks!
-  pod 'CouchbaseLite-Swift', '{major}.{minor}.{maintenance-ios}{empty}' // <.>
+  pod 'CouchbaseLite-Swift', '{version-maintenance}' // <.>
 end
 ----
 +
@@ -195,7 +167,7 @@ end
 ----
 target 'Example' do
   use_frameworks!
-  pod 'CouchbaseLite-Swift-Enterprise', '{major}.{minor}.{maintenance-ios}{empty}' // <.>
+  pod 'CouchbaseLite-Swift-Enterprise', '{version-maintenance}' // <.>
 end
 ----
 
@@ -231,7 +203,7 @@ Here we will add the `CouchbaseLiteSwift` dependency to your Parent Swift packag
 dependencies: [
   .package(name: "CouchbaseLiteSwift",
     url: "insert Couchbase Lite URL", // <.>
-    from: "{major}.{minor}.{maintenance-ios}{empty}"), // <.>
+    from: "{version-maintenance}"), // <.>
   ],
 ----
 
@@ -243,7 +215,7 @@ For Enterprise Edition use: https://github.com/couchbase/couchbase-lite-swift-ee
 
 +
 [#swift:gs-install:::couchbaselite-url]
-<.> Include the required version number here, for example the latest version is {major}.{minor}.{maintenance-ios}{empty}
+<.> Include the required version number here, for example the latest version is {version-maintenance}
 
 . Add the dependent package product name, to the target:
 +
@@ -284,7 +256,7 @@ products: [
   ],
 dependencies: [
   .package(name: "CouchbaseLiteSwift",
-    url: "https://github.com/couchbase/couchbase-lite-swift-ee.git", from: "{major}.{minor}.{maintenance-ios}{empty}"),
+    url: "https://github.com/couchbase/couchbase-lite-swift-ee.git", from: "{version-maintenance}"),
   ],
 targets: [
   .target(
@@ -325,7 +297,7 @@ For example: https://github.com/couchbase/couchbase-lite-swift-ee.git
 +
 image::couchbase-lite/current/swift/_images/spm-3.png[]
 
-. *Enter* the required *_Version_* (the latest is {major}.{minor}.{maintenance-ios}{empty}) and btn:[Next] to continue
+. *Enter* the required *_Version_* (the latest is {version-maintenance}) and btn:[Next] to continue
 +
 image::couchbase-lite/current/swift/_images/spm-4.png[]
 
@@ -370,7 +342,7 @@ Direct Download::
 +
 --
 
-. Download the binaries from here -- https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}/couchbase-lite-vector-search_xcframework_{vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}.zip[binary download link.]
+. Download the binaries from here -- https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-version-maintenance}/couchbase-lite-vector-search_xcframework_{vs-version-maintenance}.zip[binary download link.]
 
 . Unpack the download zip file into your XCode project location.
 
@@ -392,7 +364,7 @@ https://github.com/Carthage/Carthage#installing-carthage
 +
 [source,ruby,subs="attributes+"]
 ----
-binary "http://packages.couchbase.com/releases/couchbase-lite-vector-search/carthage/CouchbaseLiteVectorSearch.json" ~> {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty} // <.>
+binary "http://packages.couchbase.com/releases/couchbase-lite-vector-search/carthage/CouchbaseLiteVectorSearch.json" ~> {vs-version-maintenance} // <.>
 ----
 +
 <.> Specify the required version number, here we use the latest version
@@ -422,7 +394,7 @@ NOTE: The minimum required Cocoapods  version is *1.15*
 ----
 target 'Example' do
   use_frameworks!
-  pod 'CouchbaseLiteVectorSearch', '{vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}' // <.>
+  pod 'CouchbaseLiteVectorSearch', '{vs-version-maintenance}' // <.>
 end
 ----
 
@@ -442,7 +414,7 @@ Swift Package Manager::
 --
 NOTE: Using Swift Package Manager to install CouchbaseLiteVectorSearch requires XCode 12+
 
-// :this-release: {major}.{minor}.{maintenance-ios}{empty}
+// :this-release: {version-maintenance}
 This tab explains how to include the CouchbaseLiteVectorSearch package within your app +
 See: <<swift:gs-install:::case-1>> | <<swift:gs-install:::case-2>>
 
@@ -459,7 +431,7 @@ Here we will add the `CouchbaseLiteVectorSearch` package as a dependency to your
 dependencies: [
   .package(name: "CouchbaseLiteVectorSearch",
     url: "https://github.com/couchbase/couchbase-lite-vector-search-spm.git",
-    from: "{vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}"),
+    from: "{vs-version-maintenance}"),
   ],
 ----
 
@@ -497,7 +469,7 @@ XCode opens the _Choose Package Repository_ dialog
 *Enter* the appropriate Couchbase Lite URL, btn:[Next] to continue +
 For Vector Search: https://github.com/couchbase/couchbase-lite-vector-search-spm.git
 
-. *Enter* the required *_Version_* ({vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}) and btn:[Next] to continue
+. *Enter* the required *_Version_* ({vs-version-maintenance}) and btn:[Next] to continue
 
 . btn:[Finish] to close the _Choose Package Repository_ dialog
 
@@ -517,11 +489,8 @@ IMPORTANT: You must enable the extension before you open your database.
 ======
 
 
-
 --
 =====
-
-
 
 
 [discrete#swift:gs-install:::related-content]
@@ -560,7 +529,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

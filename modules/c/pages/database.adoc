@@ -13,77 +13,42 @@
 :description: Working with Couchbase Lite Databases
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-c}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-c}{empty}
+:vs-version-maintenance: {vs-version}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-c}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 [abstract]
@@ -112,7 +77,6 @@ rectangle "Scope" as scope
 folder "Collection" as collection
 
 
-
 file "Document" as document1
 file "Document" as document2
 file "Document" as document3
@@ -122,8 +86,6 @@ scope --> collection
 collection --> document1
 collection --> document2
 collection --> document3
-
-
 
 
 note right of collection
@@ -232,13 +194,13 @@ syncing data scope:: Contains information pertaining to the user, which can be s
 == Create or Open Database
 
 
-You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html[CBLDatabase] class.
-Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_database_configuration.html[DatabaseConfiguration] -- see <<c:database:::ex-dbopen>>.
+You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__database.html[CBLDatabase] class.
+Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/struct_c_b_l_database_configuration.html[DatabaseConfiguration] -- see <<c:database:::ex-dbopen>>.
 
 Things to watch for include:
 
 * If the named database does not exist in the specified, or default, location then a new one is created
-* The database is created in a default location unless you  specify a directory for it -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_database_configuration.html[DatabaseConfiguration] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_database_configuration.html#a844a5e7d02dd4ceb072dff39c7e88591[CBLDatabaseConfiguration.directory()]
+* The database is created in a default location unless you  specify a directory for it -- see: https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/struct_c_b_l_database_configuration.html[DatabaseConfiguration] and https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/struct_c_b_l_database_configuration.html#a844a5e7d02dd4ceb072dff39c7e88591[CBLDatabaseConfiguration.directory()]
 +
 --
 
@@ -269,8 +231,6 @@ CBLDatabase* db = CBLDatabase_Open(FLSTR("my-database"), NULL, &err);
 ----
 
 
-
-
 ====
 
 
@@ -279,7 +239,7 @@ CBLDatabase* db = CBLDatabase_Open(FLSTR("my-database"), NULL, &err);
 
 You are advised to incorporate the closing of all open databases into your application workflow.
 
-To close a database, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#ga4d448b2d6809d6f9633d810d3ac6dcfa[CBLDatabase_Close()] -- see: <<c:database:::ex-dbclose>>.
+To close a database, use https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__database.html#ga4d448b2d6809d6f9633d810d3ac6dcfa[CBLDatabase_Close()] -- see: <<c:database:::ex-dbclose>>.
 This also closes
 active replications, listeners and-or live queries connected to the database.
 
@@ -303,8 +263,6 @@ NOTE: Closing a database soon after starting a replication involving it can caus
 CBLError err;
 CBLDatabase_Close(db, &err);
 ----
-
-
 
 
 ====
@@ -336,8 +294,6 @@ config.fullSync = true;
 ----
 
 
-
-
 ====
 
 
@@ -345,7 +301,6 @@ NOTE: It is not possible to change the configuration of a Database after instant
 
 [discrete#c:database:::database-encryption]
 == Database Encryption
-
 
 
 IMPORTANT: This is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
@@ -357,7 +312,7 @@ The algorithm used to encrypt the database is 256-bit AES.
 
 [discrete#c:database:::enabling]
 === Enabling
-To enable encryption, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_database_configuration.html#aaab04fb9d092ff02693eea611efefc55[CBLDatabaseConfiguration.encryptionKey()] to set the encryption key of your choice.
+To enable encryption, use https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/struct_c_b_l_database_configuration.html#aaab04fb9d092ff02693eea611efefc55[CBLDatabaseConfiguration.encryptionKey()] to set the encryption key of your choice.
 Provide this encryption key every time the database is opened -- see <<c:database:::ex-sdb-encrypt>>.
 
 .Configure Database Encryption
@@ -392,8 +347,6 @@ CBLDatabase_ChangeEncryptionKey(db, NULL, &err);
 ----
 
 
-
-
 ====
 
 
@@ -410,14 +363,14 @@ So a database encrypted using the C SDK, and then exported, is readable only by 
 
 [discrete#c:database:::changing]
 === Changing
-To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#ga76a603bc678ceae18c9610b8a8274a09[CBLDatabase_ChangeEncryptionKey()]
+To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__database.html#ga76a603bc678ceae18c9610b8a8274a09[CBLDatabase_ChangeEncryptionKey()]
 to set the required new encryption-key value.
 
 
 [discrete#c:database:::removing]
 === Removing
 To remove encryption, open the database using its existing encryption-key and use
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#ga76a603bc678ceae18c9610b8a8274a09[CBLDatabase_ChangeEncryptionKey()]
+https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__database.html#ga76a603bc678ceae18c9610b8a8274a09[CBLDatabase_ChangeEncryptionKey()]
 with a null value as the encryption key.
 
 [discrete#c:database:::upgrading]
@@ -429,7 +382,6 @@ To upgrade an encrypted database see: xref:c:dep-upgrade.adoc#lbl-db-upgrades[Up
 == Finding a Database File
 
 
-
 When the application is running on the iOS simulator, you can locate the application's sandbox directory using the https://simpholders.com/3/[SimPholders] utility.
 
 
@@ -439,8 +391,8 @@ When the application is running on the iOS simulator, you can locate the applica
 From time to time it may be necessary to perform certain maintenance activities on your database, for example to
 compact the database file, removing unused documents and blobs no longer referenced by any documents.
 
-Couchbase Lite's API provides the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#gaa4b06dcb7427cafeabde8486f5f03f10[CBLDatabase_PerformMaintenance()] method.
-The available maintenance operations, including `compact` are as shown in the enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#gaace029f966f053946a52f837c285f156[CBLMaintenanceType] to accomplish this.
+Couchbase Lite's API provides the https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__database.html#gaa4b06dcb7427cafeabde8486f5f03f10[CBLDatabase_PerformMaintenance()] method.
+The available maintenance operations, including `compact` are as shown in the enum https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__database.html#gaace029f966f053946a52f837c285f156[CBLMaintenanceType] to accomplish this.
 
 This is a resource intensive operation and is not performed automatically.
 It should be run on-demand using the API.
@@ -457,8 +409,6 @@ You can download and build it from the couchbaselabs https://github.com/couchbas
 Note that the `cblite` tool is not supported by the https://www.couchbase.com/support-policy[Couchbase Support Policy].
 
 // end::cli-tool[]
-
-
 
 
 [discrete#c:database:::related-content]
@@ -497,7 +447,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

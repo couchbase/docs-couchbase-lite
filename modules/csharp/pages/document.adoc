@@ -14,71 +14,42 @@
 :description: Couchbase Lite concepts -- Data model -- Documents
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-net}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-net}{empty}
+:vs-version-maintenance: {vs-version}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-net}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 [abstract]
@@ -86,8 +57,6 @@
 Description -- _{description}_ +
 Related Content -- xref:csharp:database.adoc[Databases] | xref:csharp:blob.adoc[Blobs] | xref:csharp:indexing.adoc[Indexing] |
 --
-
-
 
 
 [discrete#csharp:document:::overview]
@@ -125,10 +94,6 @@ This internal form can be easily converted into a manageable native dictionary f
 Fleece data is stored in the smallest format that will hold the value whilst maintaining the integrity of the value.
 
 
-
-
-
-
 [discrete#csharp:document:::data-types]
 === Data Types
 
@@ -151,7 +116,6 @@ MutableDictionary:: represents a writeable key-value pair collection
 Array:: represents a readonly ordered collection of objects
 MutableArray:: represents a writeable collection of objects
 Blob:: represents an arbitrary piece of binary data
-
 
 
 [discrete#csharp:document:::json]
@@ -207,7 +171,6 @@ Couchbase documents are assigned to a <<csharp:database:::database-concepts,Coll
 All the CRUD examples in this document operate on a `collection` object (here, the Default Collection).
 
 
-
 // Show Main Snippet
 // include::csharp:example$code_snippets/Program.cs[tags="datatype_usage_createdb", indent=0]
 [source, C#]
@@ -216,8 +179,6 @@ All the CRUD examples in this document operate on a `collection` object (here, t
 using var database = new Database("hoteldb");
 var collection = database.GetDefaultCollection();
 ----
-
-
 
 
 See xref:csharp:database.adoc[Databases] for more information
@@ -230,7 +191,6 @@ Now create a new document to hold your application's data.
 Use the mutable form, so that you can add data to the document.
 
 
-
 // Show Main Snippet
 // include::csharp:example$code_snippets/Program.cs[tags="datatype_usage_createdoc", indent=0]
 [source, C#]
@@ -238,8 +198,6 @@ Use the mutable form, so that you can add data to the document.
 // Create your new document
 using var mutableDoc = new MutableDocument("hoteldoc");
 ----
-
-
 
 
 For more on using *Documents*, see <<csharp:document:::document-initializers>> and <<csharp:document:::mutability>>.
@@ -250,7 +208,6 @@ For more on using *Documents*, see <<csharp:document:::document-initializers>> a
 Now create a mutable dictionary (`address`).
 
 Each element of the dictionary value will be directly accessible via its own key.
-
 
 
 // Show Main Snippet
@@ -267,15 +224,12 @@ address.SetString("code", "90210");
 ----
 
 
-
-
 Learn more about <<csharp:document:::using-dictionaries>>.
 
 [discrete#csharp:document:::create-an-array]
 === Create an Array
 
 Since the hotel may have multiple contact numbers, provide a field (`phones`) as a mutable array.
-
 
 
 // Show Main Snippet
@@ -289,8 +243,6 @@ phones.AddString("650-000-0001");
 ----
 
 
-
-
 Learn more about <<csharp:document:::using-arrays>>
 
 [discrete#csharp:document:::populate-a-document]
@@ -298,7 +250,6 @@ Learn more about <<csharp:document:::using-arrays>>
 
 Now add your data to the mutable document created earlier.
 Each data item is stored as a key-value pair.
-
 
 
 // Show Main Snippet
@@ -322,9 +273,6 @@ mutableDoc.SetArray("phones", phones);
 ----
 
 
-
-
-
 NOTE: Couchbase recommend using a `type` attribute to define each logical document type.
 
 
@@ -335,7 +283,6 @@ Now persist the populated document to your Couchbase Lite database.
 This will auto-generate the document id.
 
 
-
 // Show Main Snippet
 // include::csharp:example$code_snippets/Program.cs[tags="datatype_usage_persist", indent=0]
 [source, C#]
@@ -344,13 +291,10 @@ collection.Save(mutableDoc);
 ----
 
 
-
-
 [discrete#csharp:document:::close-the-database]
 === Close the Database
 
 With your document saved, you can now close our Couchbase Lite database.
-
 
 
 // Show Main Snippet
@@ -361,10 +305,6 @@ database.Close();
 ----
 
 
-
-
-
-
 [discrete#csharp:document:::working-with-data]
 == Working with Data
 
@@ -372,9 +312,9 @@ database.Close();
 [discrete#csharp:document:::checking-a-documents-properties]
 === Checking a Document's Properties
 
-To check whether a given property exists in the document, use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Document.html#Couchbase_Lite_Document_Contains_System_String_[Document.Contains(String key)] method.
+To check whether a given property exists in the document, use the https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Document.html#Couchbase_Lite_Document_Contains_System_String_[Document.Contains(String key)] method.
 
-If you try to access a property which doesn't exist in the document, the call will return the default value for that getter method (0 for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Document.html#Couchbase_Lite_Document_GetInt_System_String_[Document.GetInt()] 0.0 for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Document.html#Couchbase_Lite_Document_GetFloat_System_String_[Document.GetFloat()] etc.).
+If you try to access a property which doesn't exist in the document, the call will return the default value for that getter method (0 for https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Document.html#Couchbase_Lite_Document_GetInt_System_String_[Document.GetInt()] 0.0 for https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Document.html#Couchbase_Lite_Document_GetFloat_System_String_[Document.GetFloat()] etc.).
 
 
 [discrete#csharp:document:::date-accessors]
@@ -390,7 +330,7 @@ Dates are a common data type, but JSON doesn't natively support them, so the con
 [#csharp:document:::ex-date-getter]
 ====
 
-pass:q,a[This example sets the date on the `createdAt` property and reads it back using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Document.html#Couchbase_Lite_Document_GetDate_System_String_[Document.GetDate()] accessor method.]
+pass:q,a[This example sets the date on the `createdAt` property and reads it back using the https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Document.html#Couchbase_Lite_Document_GetDate_System_String_[Document.GetDate()] accessor method.]
 
 // Show Main Snippet
 // include::csharp:example$code_snippets/Program.cs[tags="date-getter", indent=0]
@@ -401,10 +341,7 @@ var date = mutableDoc.GetDate("createdAt");
 ----
 
 
-
-
 ====
-
 
 
 [discrete#csharp:document:::using-dictionaries]
@@ -412,9 +349,9 @@ var date = mutableDoc.GetDate("createdAt");
 
 .API References
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.DictionaryObject.html[DictionaryObject]
+* https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.DictionaryObject.html[DictionaryObject]
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.MutableDictionaryObject.html[MutableDictionaryObject]
+* https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.MutableDictionaryObject.html[MutableDictionaryObject]
 
 
 .Read Only
@@ -447,10 +384,7 @@ var mutableDict = dict.ToMutable();
 ----
 
 
-
-
 ====
-
 
 
 .Mutable
@@ -477,8 +411,6 @@ collection.Save(mutableDoc);
 ----
 
 
-
-
 ====
 
 
@@ -486,9 +418,9 @@ collection.Save(mutableDoc);
 === Using Arrays
 
 .API References
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.ArrayObject.html[ArrayObject]
+* https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.ArrayObject.html[ArrayObject]
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.MutableArrayObject.html[MutableArrayObject]
+* https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.MutableArrayObject.html[MutableArrayObject]
 
 .Read Only
 [#ex-array]
@@ -523,8 +455,6 @@ var mutableArray = array.ToMutable();
 ----
 
 
-
-
 ====
 
 
@@ -552,10 +482,7 @@ collection.Save(mutableDoc);
 ----
 
 
-
-
 ====
-
 
 
 [discrete#csharp:document:::using-blobs]
@@ -570,11 +497,11 @@ For more on working with blobs, see xref:csharp:blob.adoc[Blobs]
 
 You can use the following methods/initializers:
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.MutableDocument.html#Couchbase_Lite_MutableDocument__ctor[MutableDocument()] initializer to create a new document where the document ID is randomly generated by the database.
+* Use the https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.MutableDocument.html#Couchbase_Lite_MutableDocument__ctor[MutableDocument()] initializer to create a new document where the document ID is randomly generated by the database.
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.MutableDocument.html#Couchbase_Lite_MutableDocument_Item_System_String_[MutableDocument(String id)] initializer to create a new document with a specific ID.
+* Use the https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.MutableDocument.html#Couchbase_Lite_MutableDocument_Item_System_String_[MutableDocument(String id)] initializer to create a new document with a specific ID.
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Collection.html#Couchbase_Lite_Collection_GetDocument_System_String_[Collection.GetDocument()] method to get a document.
+* Use the https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Collection.html#Couchbase_Lite_Collection_GetDocument_System_String_[Collection.GetDocument()] method to get a document.
 If the document doesn't exist in the collection, the method will return `null`.
 You can use this behavior to check if a document with a given ID already exists in the collection.
 
@@ -601,10 +528,7 @@ collection.Save(mutableDoc);
 ----
 
 
-
-
 ====
-
 
 
 [discrete#csharp:document:::mutability]
@@ -612,7 +536,7 @@ collection.Save(mutableDoc);
 
 
 By default, a document is immutable when it is read from the database.
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Document.html#Couchbase_Lite_Document_ToMutable[Document.ToMutable()] to create an updatable instance of the document.
+Use the https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Document.html#Couchbase_Lite_Document_ToMutable[Document.ToMutable()] to create an updatable instance of the document.
 
 
 .Make a mutable document
@@ -635,14 +559,10 @@ collection.Save(mutableDoc);
 ----
 
 
-
-
 ====
 
 
 NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<csharp:document:::lbl-doc-constraints>>.
-
-
 
 
 [discrete#csharp:document:::batch-operations]
@@ -675,8 +595,6 @@ database.InBatch(() =>
     }
 });
 ----
-
-
 
 
 ====
@@ -713,11 +631,7 @@ collection.AddDocumentChangeListener("user.john", (sender, args) =>
 ----
 
 
-
-
 ====
-
-
 
 
 [discrete#csharp:document:::document-expiration]
@@ -755,8 +669,6 @@ using var query = QueryBuilder
     .Where(Meta.Expiration.LessThan(Expression.Double(fiveMinutesFromNow)));
 
 ----
-
-
 
 
 ====
@@ -867,8 +779,6 @@ var featuresJSON = extendedDoc.GetArray("features").ToJSON();
 ----
 
 
-
-
 ====
 
 
@@ -935,8 +845,6 @@ if (Blob.IsBlob(
 ----
 
 
-
-
 ====
 
 
@@ -979,8 +887,6 @@ foreach (string key in mutableDict.Keys) {
 
 }
 ----
-
-
 
 
 ====
@@ -1048,8 +954,6 @@ Console.Write(retrievedDoc);
 ----
 
 
-
-
 ====
 
 
@@ -1065,7 +969,7 @@ Convert a `Query Result` to JSON using its {to-JSON} accessor method.
 [#csharp:document:::ex-json]
 ====
 
-pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Result.html#Couchbase_Lite_Query_Result_ToJson[Result.ToJson()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<csharp:document:::ex-json>> for a working example.]
+pass:q,a[Use https://docs.couchbase.com/mobile/{version-maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Query.Result.html#Couchbase_Lite_Query_Result_ToJson[Result.ToJson()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<csharp:document:::ex-json>> for a working example.]
 
 // Show Main Snippet
 // include::csharp:example$code_snippets/Program.cs[tags="query-access-json", indent=0]
@@ -1098,8 +1002,6 @@ foreach (var result in query.Execute()) {
 ----
 
 
-
-
 ====
 
 
@@ -1126,9 +1028,6 @@ If your query selects a sub-set of available properties then the JSON format wil
   keyx: "valuex"
 }
 ----
-
-
-
 
 
 [discrete#csharp:document:::related-content]
@@ -1167,7 +1066,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

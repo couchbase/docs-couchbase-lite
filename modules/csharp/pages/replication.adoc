@@ -27,7 +27,6 @@ They demonstrate the basic concepts and approaches to using a feature.
 Use them as inspiration and adapt these examples to best practice when developing applications for your platform.
 
 
-
 [discrete#csharp:replication:::csharp:replication:::introduction]
 = Introduction
 
@@ -60,9 +59,6 @@ Database:: The `_default` collection is synced.
 Collection:: A specific collection or a set of collections is synced.
 
 As part of the syncing setup, the Gateway has to map the Couchbase Lite database to the database being synced on Capella.
-
-
-
 
 
 [discrete#csharp:replication:::csharp:replication:::replication-protocol]
@@ -295,8 +291,6 @@ var replConfig = new ReplicatorConfiguration(url);
 ----
 
 
-
-
 // close example block
 
 ====
@@ -419,7 +413,6 @@ When necessary you can adjust any or all of those configurable values -- see: <<
 ====
 
 
-
 // Show Main Snippet
 // include ::csharp:example$code_snippets/Program.cs[tags="replication-retry-config", indent=0]
 
@@ -441,8 +434,6 @@ When necessary you can adjust any or all of those configurable values -- see: <<
             var replicator = new Replicator(config);
 
 ----
-
-
 
 
 // close example block
@@ -490,7 +481,6 @@ xref:sync-gateway:ROOT:refer/rest-api-admin.adoc#/user/post\__db___user_[`+POST 
 endpoint on the Admin REST API.
 
 
-
 [discrete#csharp:replication:::csharp:replication:::lbl-svr-auth]
 == Server Authentication
 
@@ -530,7 +520,6 @@ Self signed certificates are not allowed.
 --
 
 
-
 Self Signed Cert::
 +
 --
@@ -544,7 +533,6 @@ thisConfig.AcceptOnlySelfSignedServerCertificate = true; <1>
 <.> Set this to `true` to accept any self signed cert.
 Any certificates that are not self-signed are rejected.
 --
-
 
 
 Pinned Certificate::
@@ -572,7 +560,6 @@ thisConfig.PinnedServerCertificate =
 ====
 
 This all assumes that you have configured the Sync Gateway to provide the appropriate SSL certificates, and have included the appropriate certificate in your app bundle -- for more on this see: <<csharp:replication:::csharp:replication:::lbl-cert-pinning>>.
-
 
 
 [discrete#csharp:replication:::csharp:replication:::lbl-client-auth]
@@ -958,7 +945,6 @@ App notified of “accessRemoved” if _Documentlistener_ registered
 a|Doc remains in local database
 
 
-
 |===
 
 
@@ -1092,7 +1078,6 @@ You will then be asynchronously notified of state changes.
 You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_RemoveChangeListener_Couchbase_Lite_ListenerToken_[RemoveChangeListener(ListenerToken)].
 
 
-
 [discrete#csharp:replication:::csharp:replication:::lbl-repl-status]
 == Replicator Status
 
@@ -1153,7 +1138,6 @@ _thisDatabase.Close();
 ----
 --
 ======
-
 
 
 ====
@@ -1412,7 +1396,6 @@ The following error codes are considered temporary by the Couchbase Lite replica
 * `1001`: DNS resolution error
 
 
-
 [discrete#csharp:replication:::csharp:replication:::load-balancers]
 = Load Balancers
 
@@ -1564,7 +1547,6 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 * <<csharp:gs-build:::>>
 
 
-
 [discrete.colum#csharp:replication:::-2n]
 === {empty}
 .Learn more . . .
@@ -1573,7 +1555,6 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 * <<csharp:blob:::>>
 * <<csharp:replication:::,Remote Sync Gateway>>
 * <<csharp:conflict:::>>
-
 
 
 [discrete.colum#csharp:replication:::-3n]

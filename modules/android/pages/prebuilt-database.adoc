@@ -13,82 +13,49 @@
 :description: How to handle pre-built databases in your Couchbase Lite on Android app
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-android}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-android}{empty}
+
+:vs-version-maintenance: {vs-version}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-android}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 [abstract]
 --
 Description -- _{description}_ +
 _Abstract -- This content explains how to include a snapshot of a pre-built database in your package to shorten initial sync time and reduce bandwidth use_ +
 --
-
-
 
 
 [discrete#android:prebuilt-database:::overview]
@@ -173,17 +140,16 @@ Where the platform permits you can zip the database.
 IMPORTANT: This is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
 
 
-
 If you are using an encrypted database,
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#copy(java.io.File,java.lang.String,com.couchbase.lite.DatabaseConfiguration)[Database.copy()]
+https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Database.html#copy(java.io.File,java.lang.String,com.couchbase.lite.DatabaseConfiguration)[Database.copy()]
 does not change the encryption key.
 The encryption key specified in the config when opening the database is the encryption key used for both the original database and copied database.
 
 If you copied an un-encrypted database and want to apply encryption to the copy, or if you want to change (or remove) the encryption key applied to the copy:
 
-. Provide the original encryption-key (if any) in the database copy's configuration using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/DatabaseConfiguration.html#setEncryptionKey-com.couchbase.lite.EncryptionKey-[DatabaseConfiguration.setEncryptionKey()]
+. Provide the original encryption-key (if any) in the database copy's configuration using https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/DatabaseConfiguration.html#setEncryptionKey-com.couchbase.lite.EncryptionKey-[DatabaseConfiguration.setEncryptionKey()]
 . Open the database copy
-. Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#changeEncryptionKey(com.couchbase.lite.EncryptionKey)[Database.changeEncryptionKey()] on the database copy to set the required encryption key. +
+. Use https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Database.html#changeEncryptionKey(com.couchbase.lite.EncryptionKey)[Database.changeEncryptionKey()] on the database copy to set the required encryption key. +
 NOTE: To remove encryption on the copy, provide a null encryption-key
 
 
@@ -197,7 +163,7 @@ During the application start-up logic, check if database exists in the required 
 
 . Copy the pre-packaged database to the required location
 +
-Use the API's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#copy(java.io.File,java.lang.String,com.couchbase.lite.DatabaseConfiguration)[Database.copy()] method -- see: <<android:prebuilt-database:::lbl-code>>; this ensures that a UUID is generated for each copy
+Use the API's https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Database.html#copy(java.io.File,java.lang.String,com.couchbase.lite.DatabaseConfiguration)[Database.copy()] method -- see: <<android:prebuilt-database:::lbl-code>>; this ensures that a UUID is generated for each copy
 +
 IMPORTANT: *Do not copy the database using any other method* +
 *Otherwise:* Each copy of the app will invalidate the other apps' xref:refer-glossary.adoc#checkpoint[checkpoints] because a new UUID was not generated.
@@ -277,12 +243,7 @@ if (!Database.exists("travel-sample", appDbDir)) {
 =====
 
 
-
 ====
-
-
-
-
 
 
 [discrete#android:prebuilt-database:::related-content]
@@ -321,7 +282,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

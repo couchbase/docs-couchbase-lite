@@ -15,74 +15,43 @@
 :keywords: sql, n1ql
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-android}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-android}{empty}
+
+:vs-version-maintenance: {vs-version}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-android}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 [abstract]
 --
@@ -142,7 +111,6 @@ a| The criteria used to order the items in the result set
 
 
 TIP: We recommend working through the query section of the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial as a good way to build your skills in this area.
-
 
 
 [discrete#android:querybuilder:::lbl-select]
@@ -205,7 +173,6 @@ Query query = QueryBuilder
 --
 
 =====
-
 
 
 ====
@@ -325,7 +292,6 @@ try (ResultSet resultSet = query.execute()) {
 =====
 
 
-
 ====
 
 
@@ -376,7 +342,7 @@ You can chain any number of Expressions in order to implement sophisticated filt
 
 [discrete#android:querybuilder:::lbl-comp-ops]
 ==== Comparison Operators
-The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Expression.html[Expression Comparators] can be used in the WHERE statement to specify on which property to match documents.
+The https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Expression.html[Expression Comparators] can be used in the WHERE statement to specify on which property to match documents.
 In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
 
 [pass:q,a[source, json, subs="+attributes, +macros"]]
@@ -456,19 +422,17 @@ try (ResultSet resultSet = query.execute()) {
 =====
 
 
-
 ====
-
 
 
 [discrete#android:querybuilder:::lbl-coll-ops]
 ==== Collection Operators
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Query.htmlArrayFunction.html[ArrayFunction Collection Operators] are useful to check if a given value is present in an array.
+https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Query.htmlArrayFunction.html[ArrayFunction Collection Operators] are useful to check if a given value is present in an array.
 
 
 [discrete#android:querybuilder:::contains-operator]
 ===== CONTAINS Operator
-The following example uses the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Query.htmlArrayFunction.html[ArrayFunction]` to find documents where the `public_likes` array property contains a value equal to "Armani Langworth".
+The following example uses the `https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Query.htmlArrayFunction.html[ArrayFunction]` to find documents where the `public_likes` array property contains a value equal to "Armani Langworth".
 
 [pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
@@ -478,7 +442,6 @@ The following example uses the `https://docs.couchbase.com/mobile/{major}.{minor
     "public_likes": ["Armani Langworth", "Elfrieda Gutkowski", "Maureen Ruecker"]
 }
 ----
-
 
 
 [tabs]
@@ -545,13 +508,11 @@ try (ResultSet results = query.execute()) {
 =====
 
 
-
 [discrete#android:querybuilder:::in-operator]
 ===== IN Operator
 
 The `IN` operator is useful when you need to explicitly list out the values to test against.
 The following example looks for documents whose `first`, `last` or `username` property value equals "Armani".
-
 
 
 [tabs]
@@ -607,8 +568,6 @@ Query query = QueryBuilder.select(SelectResult.all())
 =====
 
 
-
-
 [discrete#android:querybuilder:::lbl-like-ops]
 ==== Like Operator
 In this section::
@@ -618,7 +577,7 @@ In this section::
 
 [discrete#android:querybuilder:::lbl-string-match]
 ===== String Matching
-The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Expression.html#like-com.couchbase.lite.Expression-[Like()] operator can be used for string matching -- see <<android:querybuilder:::ex-like-case-insensitive>>
+The https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Expression.html#like-com.couchbase.lite.Expression-[Like()] operator can be used for string matching -- see <<android:querybuilder:::ex-like-case-insensitive>>
 
 NOTE: The `like` operator performs **case sensitive** matches. +
 To perform case insensitive matching, use `Function.lower` or `Function.upper` to ensure all comparators have the same case, thereby removing the case issue.
@@ -692,7 +651,6 @@ try (ResultSet resultSet = query.execute()) {
 --
 
 =====
-
 
 
 ====
@@ -782,7 +740,6 @@ try (ResultSet resultSet = query.execute()) {
 =====
 
 
-
 ====
 
 
@@ -863,9 +820,7 @@ try (ResultSet resultSet = query.execute()) {
 =====
 
 
-
 ====
-
 
 
 [discrete#android:querybuilder:::lbl-regex-ops]
@@ -945,7 +900,6 @@ try (ResultSet resultSet = query.execute()) {
 =====
 
 
-
 ====
 
 <.> The `\b` specifies that the match must occur on word boundaries.
@@ -1004,9 +958,7 @@ Query query = QueryBuilder
 =====
 
 
-
 ====
-
 
 
 [discrete#android:querybuilder:::lbl-join]
@@ -1101,9 +1053,7 @@ try (ResultSet resultSet = query.execute()) {
 =====
 
 
-
 ====
-
 
 
 [discrete#android:querybuilder:::lbl-group]
@@ -1208,9 +1158,7 @@ try (ResultSet resultSet = query.execute()) {
 =====
 
 
-
 ====
-
 
 
 The query shown in <<android:querybuilder:::ex-grpby-qry>> generates the following output:
@@ -1292,7 +1240,6 @@ try (ResultSet resultSet = query.execute()) {
 --
 
 =====
-
 
 
 ====
@@ -1417,7 +1364,6 @@ Query listQuery = QueryBuilder.select(SelectResult.all())
 --
 
 =====
-
 
 
 ====
@@ -1551,7 +1497,6 @@ try (ResultSet resultSet = listQuery.execute()) {
 =====
 
 
-
 ====
 
 <.> The dictionary of document properties using the database name as the key.
@@ -1619,7 +1564,6 @@ Query listQuery =
 --
 
 =====
-
 
 
 ====
@@ -1726,9 +1670,7 @@ try (ResultSet resultSet = listQuery.execute()) {
 =====
 
 
-
 ====
-
 
 
 [discrete#android:querybuilder:::lbl-id-sel]
@@ -1783,9 +1725,7 @@ Query listQuery =
 =====
 
 
-
 ====
-
 
 
 [discrete#android:querybuilder:::result-set-format-3]
@@ -1870,7 +1810,6 @@ try (ResultSet rs = listQuery.execute()) {
 =====
 
 
-
 ====
 
 <.> Extract the Id value from the dictionary and use it to get the document from the database
@@ -1927,7 +1866,6 @@ Query listQuery = QueryBuilder.select(
 --
 
 =====
-
 
 
 ====
@@ -2016,7 +1954,6 @@ try (ResultSet resultSet = listQuery.execute()) {
 =====
 
 
-
 ====
 
 <.> Get the count using the `SelectResult.as` alias, which is used as its key.
@@ -2085,7 +2022,6 @@ Query listQuery =
 =====
 
 
-
 ====
 
 <.> Return a maximum of `limit` results starting from result number `offset`
@@ -2105,7 +2041,7 @@ Couchbase Lite for Android provides a convenience API to convert query results t
 [#android:querybuilder:::ex-json]
 ====
 
-pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Result.html#toJSON--[Result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<android:querybuilder:::ex-json>> for a working example.]
+pass:q,a[Use https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Result.html#toJSON--[Result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<android:querybuilder:::ex-json>> for a working example.]
 [tabs]
 =====
 
@@ -2868,7 +2804,6 @@ class VectorSearchExamples {
 =====
 
 
-
 ====
 
 
@@ -3052,7 +2987,6 @@ class TensorFlowModel {
 =====
 
 
-
 ====
 
 <1> The `predict(input) ++->++ output` method provides the input and expects the result of using the machine learning model.
@@ -3103,9 +3037,7 @@ Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel())
 =====
 
 
-
 ====
-
 
 
 [discrete#android:querybuilder:::create-an-index]
@@ -3168,9 +3100,7 @@ collection.createIndex(
 =====
 
 
-
 ====
-
 
 
 [discrete#android:querybuilder:::predictive-index]
@@ -3227,9 +3157,7 @@ collection.createIndex("predictive-index-image-classifier", index);
 =====
 
 
-
 ====
-
 
 
 [discrete#android:querybuilder:::run-a-prediction-query]
@@ -3308,7 +3236,6 @@ try (ResultSet result = query.execute()) {
 =====
 
 
-
 ====
 
 <1> The `PredictiveModel.predict()` method returns a constructed Prediction Function object which can be used further to specify a property value extracted from the output dictionary of the `PredictiveModel.predict()` function.
@@ -3359,13 +3286,7 @@ Database.prediction.unregisterModel("ImageClassifier");
 =====
 
 
-
 ====
-
-
-
-
-
 
 
 [discrete#android:querybuilder:::related-content]
@@ -3404,7 +3325,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

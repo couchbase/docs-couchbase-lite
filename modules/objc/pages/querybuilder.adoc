@@ -14,85 +14,45 @@
 :keywords: sql, n1ql
 
 
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 :maintenance: 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version-maintenance: {version}.{maintenance-ios}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-ios}{empty}
+
+:vs-version-maintenance: {vs-version}.{vs-maintenance-ios}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-ios}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 [abstract]
@@ -155,7 +115,6 @@ a| The criteria used to order the items in the result set
 TIP: We recommend working through the query section of the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial as a good way to build your skills in this area.
 
 
-
 [discrete#objc:querybuilder:::lbl-select]
 === SELECT statement
 
@@ -189,8 +148,6 @@ pass:q,a[This query shows how to retrieve all properties from all documents in y
 CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
                                      from:[CBLQueryDataSource collection:collection]];
 ----
-
-
 
 
 ====
@@ -269,8 +226,6 @@ for (CBLQueryResult *result in rs) {
 ----
 
 
-
-
 ====
 
 
@@ -321,7 +276,7 @@ You can chain any number of Expressions in order to implement sophisticated filt
 
 [discrete#objc:querybuilder:::lbl-comp-ops]
 ==== Comparison Operators
-The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryExpression.html#/Comparison%20operators:[Expression Comparators] can be used in the WHERE statement to specify on which property to match documents.
+The https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLQueryExpression.html#/Comparison%20operators:[Expression Comparators] can be used in the WHERE statement to specify on which property to match documents.
 In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
 
 [pass:q,a[source, json, subs="+attributes, +macros"]]
@@ -364,20 +319,17 @@ for (CBLQueryResult *result in rs) {
 ----
 
 
-
-
 ====
-
 
 
 [discrete#objc:querybuilder:::lbl-coll-ops]
 ==== Collection Operators
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryArrayFunction.html[ArrayFunction Collection Operators] are useful to check if a given value is present in an array.
+https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLQueryArrayFunction.html[ArrayFunction Collection Operators] are useful to check if a given value is present in an array.
 
 
 [discrete#objc:querybuilder:::contains-operator]
 ===== CONTAINS Operator
-The following example uses the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryArrayFunction.html[CBLQueryArrayFunction]` to find documents where the `public_likes` array property contains a value equal to "Armani Langworth".
+The following example uses the `https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLQueryArrayFunction.html[CBLQueryArrayFunction]` to find documents where the `public_likes` array property contains a value equal to "Armani Langworth".
 
 [pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
@@ -387,7 +339,6 @@ The following example uses the `https://docs.couchbase.com/mobile/{major}.{minor
     "public_likes": ["Armani Langworth", "Elfrieda Gutkowski", "Maureen Ruecker"]
 }
 ----
-
 
 
 // Show Main Snippet
@@ -413,14 +364,11 @@ for (CBLQueryResult *result in rs) {
 ----
 
 
-
-
 [discrete#objc:querybuilder:::in-operator]
 ===== IN Operator
 
 The `IN` operator is useful when you need to explicitly list out the values to test against.
 The following example looks for documents whose `first`, `last` or `username` property value equals "Armani".
-
 
 
 // Show Main Snippet
@@ -437,9 +385,6 @@ NSArray *values = @[[CBLQueryExpression property:@"first"],
 ----
 
 
-
-
-
 [discrete#objc:querybuilder:::lbl-like-ops]
 ==== Like Operator
 In this section::
@@ -449,7 +394,7 @@ In this section::
 
 [discrete#objc:querybuilder:::lbl-string-match]
 ===== String Matching
-The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryExpression.html#/c:objc(cs)CBLQueryExpression(im)like:[Like()] operator can be used for string matching -- see <<objc:querybuilder:::ex-like-case-insensitive>>
+The https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLQueryExpression.html#/c:objc(cs)CBLQueryExpression(im)like:[Like()] operator can be used for string matching -- see <<objc:querybuilder:::ex-like-case-insensitive>>
 
 NOTE: The `like` operator performs **case sensitive** matches. +
 To perform case insensitive matching, use `Function.lower` or `Function.upper` to ensure all comparators have the same case, thereby removing the case issue.
@@ -484,8 +429,6 @@ for (CBLQueryResult *result in rs) {
     NSLog(@"name property ::%@", [result stringForKey:@"name"]);
 }
 ----
-
-
 
 
 ====
@@ -535,8 +478,6 @@ CBLQuery *query = [CBLQueryBuilder select:@[id, country, name]
 ----
 
 
-
-
 ====
 
 
@@ -577,10 +518,7 @@ CBLQuery *query = [CBLQueryBuilder select:@[id, country, name]
 ----
 
 
-
-
 ====
-
 
 
 [discrete#objc:querybuilder:::lbl-regex-ops]
@@ -619,8 +557,6 @@ CBLQuery *query = [CBLQueryBuilder select:@[id, name]
 ----
 
 
-
-
 ====
 
 <.> The `\b` specifies that the match must occur on word boundaries.
@@ -652,10 +588,7 @@ CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult expression:CBL
 ----
 
 
-
-
 ====
-
 
 
 [discrete#objc:querybuilder:::lbl-join]
@@ -707,10 +640,7 @@ CBLQuery *query = [CBLQueryBuilder select:@[name, callsign, dest, stops, airline
 ----
 
 
-
-
 ====
-
 
 
 [discrete#objc:querybuilder:::lbl-group]
@@ -759,10 +689,7 @@ CBLQuery *query = [CBLQueryBuilder select:@[count, country, tz]
 ----
 
 
-
-
 ====
-
 
 
 The query shown in <<objc:querybuilder:::ex-grpby-qry>> generates the following output:
@@ -801,8 +728,6 @@ CBLQuery *query = [CBLQueryBuilder select:@[id, title]
                                     where:[[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"hotel"]]
                                   orderBy:@[[[CBLQueryOrdering property:@"title"] descending]]];
 ----
-
-
 
 
 ====
@@ -910,8 +835,6 @@ CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
 ----
 
 
-
-
 ====
 
 
@@ -993,8 +916,6 @@ for (CBLQueryResult *result in results) {
 ----
 
 
-
-
 ====
 
 <.> The dictionary of document properties using the database name as the key.
@@ -1036,8 +957,6 @@ CBLQuerySelectResult *city = [CBLQuerySelectResult property:@"city"];
 CBLQuery *query = [CBLQueryBuilder select:@[id, type, name, city]
                                      from:[CBLQueryDataSource collection:collection]]; // <.>
 ----
-
-
 
 
 ====
@@ -1103,10 +1022,7 @@ for (CBLQueryResult *result in results) { // all results
 ----
 
 
-
-
 ====
-
 
 
 [discrete#objc:querybuilder:::lbl-id-sel]
@@ -1139,10 +1055,7 @@ CBLQuery *query = [CBLQueryBuilder select:@[selectResult]
 ----
 
 
-
-
 ====
-
 
 
 [discrete#objc:querybuilder:::result-set-format-3]
@@ -1201,8 +1114,6 @@ for (CBLQueryResult *result in results) {
 ----
 
 
-
-
 ====
 
 <.> Extract the Id value from the dictionary and use it to get the document from the database
@@ -1246,8 +1157,6 @@ for (CBLQueryResult *result in results) {
 
 
 ----
-
-
 
 
 ====
@@ -1301,8 +1210,6 @@ for (CBLQueryResult *result in results) {
 ----
 
 
-
-
 ====
 
 <.> Get the count using the `SelectResult.as` alias, which is used as its key.
@@ -1340,8 +1247,6 @@ CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
 ----
 
 
-
-
 ====
 
 <.> Return a maximum of `limit` results starting from result number `offset`
@@ -1361,7 +1266,7 @@ Couchbase Lite for Objective-C provides a convenience API to convert query resul
 [#objc:querybuilder:::ex-json]
 ====
 
-pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryResult.html#/c:objc(cs)CBLQueryResult(im)toJSON[CBLResult.toJSON] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<objc:querybuilder:::ex-json>> for a working example.]
+pass:q,a[Use https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLQueryResult.html#/c:objc(cs)CBLQueryResult(im)toJSON[CBLResult.toJSON] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<objc:querybuilder:::ex-json>> for a working example.]
 
 // Show Main Snippet
 // include::objc:example$code_snippets/SampleCodeTest.m[tags="query-access-json", indent=0]
@@ -1386,8 +1291,6 @@ for (CBLQueryResult *result in rs) {
 }; // end for
 
 ----
-
-
 
 
 ====
@@ -1488,8 +1391,6 @@ To integrate a model with Couchbase Lite, you must implement the `PredictiveMode
 ----
 
 
-
-
 ====
 
 <1> The `predict(input) ++->++ output` method provides the input and expects the result of using the machine learning model.
@@ -1519,10 +1420,7 @@ ImageClassifierModel *model = [[ImageClassifierModel alloc] init];
 ----
 
 
-
-
 ====
-
 
 
 [discrete#objc:querybuilder:::create-an-index]
@@ -1562,10 +1460,7 @@ CBLValueIndex *index = [CBLIndexBuilder valueIndexWithItems:@[[CBLValueIndexItem
 ----
 
 
-
-
 ====
-
 
 
 [discrete#objc:querybuilder:::predictive-index]
@@ -1594,10 +1489,7 @@ CBLPredictiveIndex *index = [CBLIndexBuilder predictiveIndexWithModel:@"ImageCla
 ----
 
 
-
-
 ====
-
 
 
 [discrete#objc:querybuilder:::run-a-prediction-query]
@@ -1632,8 +1524,6 @@ NSLog(@"Number of rows ::%lu", (unsigned long)[[results allResults] count]);
 ----
 
 
-
-
 ====
 
 <1> The `PredictiveModel.predict()` method returns a constructed Prediction Function object which can be used further to specify a property value extracted from the output dictionary of the `PredictiveModel.predict()` function.
@@ -1662,11 +1552,7 @@ To deregister the model you must call the `Database.prediction.unregisterModel` 
 ----
 
 
-
-
 ====
-
-
 
 
 [discrete#objc:querybuilder:::integrate-a-model-with-coremlpredictivemodel]
@@ -1692,9 +1578,6 @@ CBLCoreMLPredictiveModel *predictiveModel = [[CBLCoreMLPredictiveModel alloc] in
 [[CBLDatabase prediction] registerModel:predictiveModel withName:@"ImageClassifier"];
 
 ----
-
-
-
 
 
 [discrete#objc:querybuilder:::related-content]
@@ -1733,7 +1616,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

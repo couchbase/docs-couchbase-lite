@@ -13,85 +13,45 @@
 :description: Working with Couchbase Lite Databases
 
 
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 :maintenance: 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version-maintenance: {version}.{maintenance-ios}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-ios}{empty}
+
+:vs-version-maintenance: {vs-version}.{vs-maintenance-ios}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-ios}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 [abstract]
@@ -120,7 +80,6 @@ rectangle "Scope" as scope
 folder "Collection" as collection
 
 
-
 file "Document" as document1
 file "Document" as document2
 file "Document" as document3
@@ -130,8 +89,6 @@ scope --> collection
 collection --> document1
 collection --> document2
 collection --> document3
-
-
 
 
 note right of collection
@@ -240,13 +197,13 @@ syncing data scope:: Contains information pertaining to the user, which can be s
 == Create or Open Database
 
 
-You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html[CBLDatabase] class.
-Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html[CBLDatabaseConfiguration] -- see <<objc:database:::ex-dbopen>>.
+You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLDatabase.html[CBLDatabase] class.
+Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html[CBLDatabaseConfiguration] -- see <<objc:database:::ex-dbopen>>.
 
 Things to watch for include:
 
 * If the named database does not exist in the specified, or default, location then a new one is created
-* The database is created in a default location unless you  specify a directory for it -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html[CBLDatabaseConfiguration] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html#/c:objc(cs)CBLDatabaseConfiguration(py)directory[CBLDatabaseConfiguration.directory()]
+* The database is created in a default location unless you  specify a directory for it -- see: https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html[CBLDatabaseConfiguration] and https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html#/c:objc(cs)CBLDatabaseConfiguration(py)directory[CBLDatabaseConfiguration.directory()]
 +
 --
 
@@ -278,8 +235,6 @@ self.database = database;
 ----
 
 
-
-
 ====
 
 
@@ -288,7 +243,7 @@ self.database = database;
 
 You are advised to incorporate the closing of all open databases into your application workflow.
 
-To close a database, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)close:[CBLDatabase.Close()] -- see: <<objc:database:::ex-dbclose>>.
+To close a database, use https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)close:[CBLDatabase.Close()] -- see: <<objc:database:::ex-dbclose>>.
 This also closes
 footnote:fn28[Commencing with Release 2.8]
 active replications, listeners and-or live queries connected to the database.
@@ -314,8 +269,6 @@ if (![self.database close:&error])
     NSLog(@"Error closing db:%@", error);
 
 ----
-
-
 
 
 ====
@@ -346,8 +299,6 @@ config.fullSync = true;
 ----
 
 
-
-
 ====
 
 
@@ -355,7 +306,6 @@ NOTE: It is not possible to change the configuration of a Database after instant
 
 [discrete#objc:database:::database-encryption]
 == Database Encryption
-
 
 
 IMPORTANT: This is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
@@ -367,7 +317,7 @@ The algorithm used to encrypt the database is 256-bit AES.
 
 [discrete#objc:database:::enabling]
 === Enabling
-To enable encryption, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html#/c:objc(cs)CBLDatabaseConfiguration(py)encryptionKey[CBLDatabaseConfiguration.encryptionKey()] to set the encryption key of your choice.
+To enable encryption, use https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html#/c:objc(cs)CBLDatabaseConfiguration(py)encryptionKey[CBLDatabaseConfiguration.encryptionKey()] to set the encryption key of your choice.
 Provide this encryption key every time the database is opened -- see <<objc:database:::ex-sdb-encrypt>>.
 
 .Configure Database Encryption
@@ -392,8 +342,6 @@ if (!self.database) {
 ----
 
 
-
-
 ====
 
 
@@ -410,14 +358,14 @@ So a database encrypted using the Objective-C SDK, and then exported, is readabl
 
 [discrete#objc:database:::changing]
 === Changing
-To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)changeEncryptionKey:error:[CBLDatabase.changeEncryptionKey()]
+To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)changeEncryptionKey:error:[CBLDatabase.changeEncryptionKey()]
 to set the required new encryption-key value.
 
 
 [discrete#objc:database:::removing]
 === Removing
 To remove encryption, open the database using its existing encryption-key and use
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)changeEncryptionKey:error:[CBLDatabase.changeEncryptionKey()]
+https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)changeEncryptionKey:error:[CBLDatabase.changeEncryptionKey()]
 with a null value as the encryption key.
 
 [discrete#objc:database:::upgrading]
@@ -429,7 +377,6 @@ To upgrade an encrypted database see: xref:objc:dep-upgrade.adoc#lbl-db-upgrades
 == Finding a Database File
 
 
-
 When the application is running on the iOS simulator, you can locate the application's sandbox directory using the https://simpholders.com/3/[SimPholders] utility.
 
 
@@ -439,8 +386,8 @@ When the application is running on the iOS simulator, you can locate the applica
 From time to time it may be necessary to perform certain maintenance activities on your database, for example to
 compact the database file, removing unused documents and blobs no longer referenced by any documents.
 
-Couchbase Lite's API provides the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)performMaintenance:error:[CBLDatabase.performMaintenance()] method.
-The available maintenance operations, including `compact` are as shown in the enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Enums/CBLMaintenanceType.html[CBLMaintenanceType] to accomplish this.
+Couchbase Lite's API provides the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)performMaintenance:error:[CBLDatabase.performMaintenance()] method.
+The available maintenance operations, including `compact` are as shown in the enum https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Enums/CBLMaintenanceType.html[CBLMaintenanceType] to accomplish this.
 
 This is a resource intensive operation and is not performed automatically.
 It should be run on-demand using the API.
@@ -482,11 +429,7 @@ CBLDatabase.log.console.domains = kCBLLogDomainAll;
 ----
 
 
-
-
 ====
-
-
 
 
 [discrete#objc:database:::related-content]
@@ -525,7 +468,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

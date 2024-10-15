@@ -13,76 +13,49 @@
 :keywords: sql, n1ql= Querying your Data
 
 
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-ios}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-ios}{empty}
+
+:vs-version-maintenance: {vs-version}.{vs-maintenance-ios}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-ios}{empty}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/[Query Class index]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/[Query Class index]
 
 
 [Replicator.pendingDocumentIds()]
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 [abstract]
@@ -90,8 +63,6 @@
 Description -- _{description}_ +
 Related Content -- xref:swift:querybuilder.adoc[QueryBuilder]  |  xref:swift:query-live.adoc[Live Queries]  |  xref:swift:indexing.adoc[Indexing]
 --
-
-
 
 
 NOTE: The examples used in this topic are based on the _Travel Sample_ app and data introduced in the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial
@@ -131,8 +102,6 @@ let query = try database.createQuery("SELECT META().id AS thisId FROM _ WHERE ty
 let results: ResultSet = try query.execute()
 
 ----
-
-
 
 
 ====
@@ -651,7 +620,6 @@ Categories of expression comprise the elements covered in this section (see abov
 <<swift:query-n1ql-mobile:::lbl-lit-dict>>{nbsp}{nbsp}|{nbsp}{nbsp}
 
 
-
 [discrete#swift:query-n1ql-mobile:::lbl-lit-bool]
 ===== Boolean
 
@@ -830,7 +798,6 @@ SELECT { ‘name’: ‘James’, ‘phones’: [‘650-100-1000’, ‘650-100-
 ----
 
 
-
 [discrete#swift:query-n1ql-mobile:::lbl-exp-ident]
 ==== Identifiers
 
@@ -876,9 +843,6 @@ SELECT `key-1` FROM db
 <.> Use of backticks allows a hyphen as part of the identifier name.
 
 ====
-
-
-
 
 
 [discrete#swift:query-n1ql-mobile:::lbl-exp-prop]
@@ -1108,8 +1072,6 @@ In this section::
 <<swift:query-n1ql-mobile:::lbl-comp-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<swift:query-n1ql-mobile:::lbl-ops-logical>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<swift:query-n1ql-mobile:::lbl-ops-string>>
-
-
 
 
 [discrete#swift:query-n1ql-mobile:::lbl-ops-maths]
@@ -1602,11 +1564,6 @@ SELECT name FROM db ORDER BY name COLLATE (UNICODE DIACRITIC)
 ----
 
 
-
-
-
-
-
 [discrete#swift:query-n1ql-mobile:::lbl-ops-cond]
 ==== CONDITIONAL Operator
 
@@ -1984,7 +1941,6 @@ Returns null if any of the parameters are invalid.
 |===
 
 
-
 [discrete#swift:query-n1ql-mobile:::lbl-func-maths]
 ==== Maths Functions
 
@@ -2081,7 +2037,6 @@ The function uses _Rounding to Nearest Even_ (Banker’s Rounding) convention wh
 ^*^ The behavior of the ROUND() function is different from Server {sqlpp} ROUND(), which rounds the midpoint values using _Rounding to Nearest Even_ convention.
 
 
-
 [discrete#swift:query-n1ql-mobile:::lbl-func-meta]
 ==== Metadata Functions
 
@@ -2114,7 +2069,6 @@ SELECT p.name, r.rating FROM product as p INNER JOIN reviews AS r ON META(r).id 
 
 
 |===
-
 
 
 [discrete#swift:query-n1ql-mobile:::lbl-func-pattern]
@@ -2214,7 +2168,6 @@ a|Returns one of the following strings, based on the value of expression:
 * “binary”
 
 |===
-
 
 
 [discrete#swift:query-n1ql-mobile:::lbl-func-typeconv]
@@ -2373,14 +2326,11 @@ let results: ResultSet = try query.execute()
 ----
 
 
-
-
 ====
 
 
 <.> Define a parameter placeholder `$type`
 <.> Set the value of the `$type` parameter
-
 
 
 [discrete#swift:query-n1ql-mobile:::related-content]
@@ -2419,7 +2369,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

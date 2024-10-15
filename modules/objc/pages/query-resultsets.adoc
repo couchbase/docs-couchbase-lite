@@ -13,85 +13,45 @@
 :keywords: query, sql, n1ql, fuzzy-matching
 
 
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 :maintenance: 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version-maintenance: {version}.{maintenance-ios}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-ios}{empty}
+
+:vs-version-maintenance: {vs-version}.{vs-maintenance-ios}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-ios}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 [abstract]
@@ -99,7 +59,6 @@
 Description -- _{description}_ +
 Related Content -- xref:objc:querybuilder.adoc[QueryBuilder] |  xref:objc:query-n1ql-mobile.adoc[{sqlpp} for Mobile] |  xref:objc:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:objc:query-live.adoc[Live Queries] | xref:objc:indexing.adoc[Indexing]
 --
-
 
 
 [discrete#objc:query-resultsets:::query-execution]
@@ -270,8 +229,6 @@ for (CBLQueryResult *result in results) {
 ----
 
 
-
-
 ====
 
 <.> Here we get the dictionary of document properties using the database name as the key.
@@ -316,8 +273,6 @@ for (CBLQueryResult *result in results) {
 ----
 
 
-
-
 ====
 
 <.> Extract the Id value from the dictionary and use it to get the document from the database
@@ -356,10 +311,7 @@ for (CBLQueryResult *result in results) { // all results
 ----
 
 
-
-
 ====
-
 
 
 [discrete#objc:query-resultsets:::json-result-sets]
@@ -372,7 +324,7 @@ for (CBLQueryResult *result in results) { // all results
 [#objc:query-resultsets:::ex-json]
 ====
 
-pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryResult.html#/c:objc(cs)CBLQueryResult(im)toJSON[CBLResult.toJSON] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<objc:query-resultsets:::ex-json>> for a working example.]
+pass:q,a[Use https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLQueryResult.html#/c:objc(cs)CBLQueryResult(im)toJSON[CBLResult.toJSON] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<objc:query-resultsets:::ex-json>> for a working example.]
 
 // Show Main Snippet
 // include::objc:example$code_snippets/SampleCodeTest.m[tags="query-access-json", indent=0]
@@ -397,8 +349,6 @@ for (CBLQueryResult *result in rs) {
 }; // end for
 
 ----
-
-
 
 
 ====
@@ -427,8 +377,6 @@ If your query selects a sub-set of available properties then the JSON format wil
   keyx: "valuex"
 }
 ----
-
-
 
 
 [discrete#objc:query-resultsets:::related-content]
@@ -469,10 +417,8 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 .
 
 
-
 ++++
 </div>
 ++++
-
 
 

@@ -13,85 +13,45 @@
 :description: Couchbase Lite for Objective-C -- Synchronizing data changes between local and remote databases using Sync Gateway
 
 
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 :maintenance: 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version-maintenance: {version}.{maintenance-ios}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-ios}{empty}
+
+:vs-version-maintenance: {vs-version}.{vs-maintenance-ios}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-ios}{empty}
+
+
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 // END::Local page attributes
@@ -108,7 +68,6 @@ Related Content -- xref:objc:conflict.adoc[Handling Data Conflicts] | xref:objc:
 All code examples are indicative only.
 They demonstrate the basic concepts and approaches to using a feature.
 Use them as inspiration and adapt these examples to best practice when developing applications for your platform.
-
 
 
 [discrete#objc:replication:::introduction]
@@ -143,9 +102,6 @@ Database:: The `_default` collection is synced.
 Collection:: A specific collection or a set of collections is synced.
 
 As part of the syncing setup, the Gateway has to map the Couchbase Lite database to the database being synced on Capella.
-
-
-
 
 
 [discrete#objc:replication:::replication-protocol]
@@ -292,16 +248,13 @@ id<CBLListenerToken> listenerToken = [self.replicator addChangeListener:^(CBLRep
 ----
 
 
-
-
 ====
-
 
 
 *Notes on Example*
 
 <.> get endpoint for target DB
-<.> Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html[ReplicatorConfiguration] class's constructor -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(im)initWithDatabase:target:[-initWithDatabase:target:] -- to initialize the replicator configuration with the local database -- see also: <<objc:replication:::lbl-cfg-tgt>>
+<.> Use the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html[ReplicatorConfiguration] class's constructor -- https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(im)initWithDatabase:target:[-initWithDatabase:target:] -- to initialize the replicator configuration with the local database -- see also: <<objc:replication:::lbl-cfg-tgt>>
 <.> The default is to auto-purge documents that this user no longer has access to -- see: <<objc:replication:::anchor-auto-purge-on-revoke>>.
 Here we over-ride this behavior by setting its flag false.
 
@@ -349,7 +302,7 @@ In this section::
 ==== Configure Target
 
 Use the
-Initialize and define the replication configuration with local and remote database locations using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html[ReplicatorConfiguration] object.
+Initialize and define the replication configuration with local and remote database locations using the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html[ReplicatorConfiguration] object.
 
 The constructor provides:
 
@@ -384,8 +337,6 @@ CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc]
 ----
 
 
-
-
 ====
 
 <.> Note use of the scheme prefix (`wss://`
@@ -395,7 +346,7 @@ to ensure TLS encryption -- strongly recommended in production -- or `ws://`)
 [discrete#objc:replication:::lbl-network-interface]
 ==== Network Interface
 
-Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)networkInterface[networkInterface] to specify the network interface to use for connecting to the remote target (for example, en0 or pdp_ip0).
+Use https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)networkInterface[networkInterface] to specify the network interface to use for connecting to the remote target (for example, en0 or pdp_ip0).
 
 .Choose Network Interface
 
@@ -420,11 +371,7 @@ Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/c
 ----
 
 
-
-
 ====
-
-
 
 
 [discrete#objc:replication:::lbl-cfg-sync]
@@ -433,8 +380,8 @@ Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/c
 
 Here we define the direction and type of replication we want to initiate.
 
-We use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html[ReplicatorConfiguration]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)replicatorType[replicatorType] and
-`https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)continuous[continuous]` parameters, to tell the replicator:
+We use `https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html[ReplicatorConfiguration]` class's https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)replicatorType[replicatorType] and
+`https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)continuous[continuous]` parameters, to tell the replicator:
 
 * The type (or direction) of the replication:
 `*pushAndPull*`; `pull`; `push`
@@ -463,8 +410,6 @@ replConfig.replicatorType = kCBLReplicatorTypePush;
 replConfig.continuous = YES;
 
 ----
-
-
 
 
 ====
@@ -506,7 +451,7 @@ a|The interval (in seconds) between the heartbeat pulses.
 
 Default: The replicator pings the Sync Gateway every 300 seconds.
 
-|https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)maxAttempts[maxAttempts()]
+|https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)maxAttempts[maxAttempts()]
 |Change this to limit or extend the number of retry attempts.
 a| The maximum number of retry attempts
 
@@ -541,7 +486,6 @@ When necessary you can adjust any or all of those configurable values -- see: <<
 ====
 
 
-
 // Show Main Snippet
 // include::objc:example$code_snippets/SampleCodeTest.m[tags="replication-retry-config", indent=0]
 [source, objc]
@@ -566,12 +510,10 @@ self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
 ----
 
 
-
-
 ====
 
 <.> Here we use {url-api-prop-replicator-config-setHeartbeat} to set the required interval (in seconds) between the heartbeat pulses
-<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)maxAttempts[maxAttempts()] to set the required number of retry attempts
+<.> Here we use https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)maxAttempts[maxAttempts()] to set the required number of retry attempts
 <.> Here we use {url-api-prop-replicator-config-setMaxAttemptWaitTime} to set the required interval between retry attempts.
 
 [discrete#objc:replication:::lbl-user-auth]
@@ -606,7 +548,6 @@ xref:sync-gateway:ROOT:refer/rest-api-admin.adoc#/user/post\__db___user_[`+POST 
 endpoint on the Admin REST API.
 
 
-
 [discrete#objc:replication:::lbl-svr-auth]
 ==== Server Authentication
 
@@ -616,7 +557,7 @@ Note that the client cannot authenticate the server if TLS is turned off.
 When TLS is enabled (Sync Gateway's default) the client _must_ authenticate the server.
 If the server cannot provide acceptable credentials then the connection will fail.
 
-Use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html[ReplicatorConfiguration]` properties {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)pinnedServerCertificate[setPinnedServerCertificate()], to tell the replicator how to verify server-supplied TLS server certificates.
+Use `https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html[ReplicatorConfiguration]` properties {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} and https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)pinnedServerCertificate[setPinnedServerCertificate()], to tell the replicator how to verify server-supplied TLS server certificates.
 
 * If there is a pinned certificate, nothing else matters, the server cert must *exactly* match the pinned certificate.
 * If there are no pinned certs and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
@@ -705,7 +646,6 @@ replConfig.acceptOnlySelfSignedServerCertificate=false;
 This all assumes that you have configured the Sync Gateway to provide the appropriate SSL certificates, and have included the appropriate certificate in your app bundle -- for more on this see: <<objc:replication:::lbl-cert-pinning>>.
 
 
-
 [discrete#objc:replication:::lbl-client-auth]
 ==== Client Authentication
 
@@ -740,8 +680,6 @@ replConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"joh
 self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
 [self.replicator start];
 ----
-
-
 
 
 ====
@@ -783,10 +721,7 @@ self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
 ----
 
 
-
-
 ====
-
 
 
 [discrete#objc:replication:::lbl-repl-hdrs]
@@ -816,8 +751,6 @@ CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] ini
 [replConfig addCollection:collection config:nil];
 replConfig.headers = @{@"CustomHeaderName" :@"Value"};
 ----
-
-
 
 
 ====
@@ -860,8 +793,6 @@ self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
 ----
 
 
-
-
 <1> The callback should follow the semantics of a https://en.wikipedia.org/wiki/Pure_function[pure function^].
 Otherwise, long running functions would slow down the replicator considerably.
 Furthermore, your callback should not make assumptions about what thread it is being called on.
@@ -876,7 +807,6 @@ NOTE: Pull replication filters are not a substitute for channels.
 Sync Gateway
 xref:sync-gateway::data-routing.adoc[channels]
 are designed to be scalable (documents are filtered on the server) whereas a pull replication filter is applied to a document once it has been downloaded.
-
 
 
 // Show Main Snippet
@@ -900,8 +830,6 @@ CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] ini
 self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
 [self.replicator start];
 ----
-
-
 
 
 <1> The callback should follow the semantics of a
@@ -1049,7 +977,7 @@ Document changes subsequent to the channel reassignment will be pushed up as usu
 [discrete#objc:replication:::config]
 ===== Config
 
-Auto-purge behavior is controlled primarily by the ReplicationConfiguration option https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)enableAutoPurge[enableAutoPurge].
+Auto-purge behavior is controlled primarily by the ReplicationConfiguration option https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)enableAutoPurge[enableAutoPurge].
 Changing the state of this will impact *only* future replications; the replicator will not attempt to sync revisions that were auto purged on channel access removal.
 Clients wishing to sync previously removed documents must use the resetCheckpoint API to resync from the start.
 
@@ -1072,8 +1000,6 @@ replConfig.enableAutoPurge = NO; // <.>
 ----
 
 
-
-
 ====
 
 <.> Here we have opted to turn off the auto purge behavior. By default auto purge is enabled.
@@ -1081,7 +1007,7 @@ replConfig.enableAutoPurge = NO; // <.>
 [discrete#objc:replication:::overrides]
 ===== Overrides
 Where necessary, clients can override the default auto-purge behavior.
-This can be done either by setting https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)enableAutoPurge[enableAutoPurge] to false, or for finer control by applying pull-filters -- see: <<objc:replication:::tbl-pull-filters>> and <<objc:replication:::lbl-repl-fltrs>>
+This can be done either by setting https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)enableAutoPurge[enableAutoPurge] to false, or for finer control by applying pull-filters -- see: <<objc:replication:::tbl-pull-filters>> and <<objc:replication:::lbl-repl-fltrs>>
 This ensures backwards compatible with 2.8 clients that use pull filters to prevent auto purge of removed docs.
 
 .Impact of Pull-Filters
@@ -1105,7 +1031,6 @@ a|Doc is auto purged
 
 App notified of “accessRemoved” if _Documentlistener_ registered
 a|Doc remains in local database
-
 
 
 |===
@@ -1144,8 +1069,8 @@ In this section::
 [discrete#objc:replication:::lbl-repl-start]
 ==== Start Replicator
 
-Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html[Replicator]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)initWithConfig:[initWith(config:)] constructor, to initialize the replicator with the configuration you have defined.
-You can, optionally, add a change listener (see <<objc:replication:::lbl-repl-mon>>) before starting the replicator running using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)start[start()].
+Use the `https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicator.html[Replicator]` class's https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)initWithConfig:[initWith(config:)] constructor, to initialize the replicator with the configuration you have defined.
+You can, optionally, add a change listener (see <<objc:replication:::lbl-repl-mon>>) before starting the replicator running using https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)start[start()].
 
 // Example 7
 .Initialize and run replicator
@@ -1166,8 +1091,6 @@ self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig]; // <.>
 [self.replicator start]; // <.>
 
 ----
-
-
 
 
 ====
@@ -1205,8 +1128,6 @@ if (restCheckpoint)
 ----
 
 
-
-
 ====
 
 <.> Set start's reset option to `true`. +
@@ -1223,7 +1144,7 @@ In this section::
 <<objc:replication:::lbl-repl-evnts>> |
 <<objc:replication:::lbl-repl-pend>>
 
-You can monitor a replication’s status by using a combination of <<objc:replication:::lbl-repl-chng>> and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorStatus.html#/c:objc(cs)CBLReplicatorStatus(py)activity[activity enum].
+You can monitor a replication’s status by using a combination of <<objc:replication:::lbl-repl-chng>> and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorStatus.html#/c:objc(cs)CBLReplicatorStatus(py)activity[activity enum].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
 You can also choose to monitor document changes -- see: <<objc:replication:::lbl-repl-evnts>>.
@@ -1236,28 +1157,27 @@ You can add and a replicator change listener at any point; it will report change
 .Best Practice
 TIP: Don't forget to save the token so you can remove the listener later
 
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)addChangeListener:[addChangeListener(_:)]) -- see: <<objc:replication:::ex-repl-mon>>.
+Use the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)addChangeListener:[addChangeListener(_:)]) -- see: <<objc:replication:::ex-repl-mon>>.
 You will then be asynchronously notified of state changes.
 
-You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)removeChangeListenerWithToken[removeChangeListenerWithToken(CBLListenerToken:)].
-
+You can remove a change listener with https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)removeChangeListenerWithToken[removeChangeListenerWithToken(CBLListenerToken:)].
 
 
 [discrete#objc:replication:::lbl-repl-status]
 ==== Replicator Status
 
 You can use the
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorStatus.html[CBLReplicatorStatus] class
+https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorStatus.html[CBLReplicatorStatus] class
 to check the replicator status.
 That is, whether it is actively transferring data or if it has stopped -- see: <<objc:replication:::ex-repl-mon>>.
 
 The returned _ReplicationStatus_ structure comprises:
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorStatus.html#/c:objc(cs)CBLReplicatorStatus(py)activity[activity enum] -- stopped, offline, connecting, idle or busy -- see states described in: <<objc:replication:::tbl-states>>
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorStatus.html#/c:objc(cs)CBLReplicatorStatus(py)progress)[progress enum]
+* https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorStatus.html#/c:objc(cs)CBLReplicatorStatus(py)activity[activity enum] -- stopped, offline, connecting, idle or busy -- see states described in: <<objc:replication:::tbl-states>>
+* https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorStatus.html#/c:objc(cs)CBLReplicatorStatus(py)progress)[progress enum]
 ** completed -- the total number of changes completed
 ** total -- the total number of changes to be processed
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorStatus.html#/c:objc(cs)CBLReplicatorStatus(py)error[error enum] -- the current error, if any
+* https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicatorStatus.html#/c:objc(cs)CBLReplicatorStatus(py)error[error enum] -- the current error, if any
 
 // Example 8
 [#objc:replication:::ex-repl-mon]
@@ -1303,7 +1223,6 @@ if (change.status.activity == kCBLReplicatorStopped) {
 ----
 --
 ======
-
 
 
 ====
@@ -1394,10 +1313,7 @@ id token = [self.replicator addDocumentReplicationListener:^(CBLDocumentReplicat
 ----
 
 
-
-
 ====
-
 
 
 [#ex-stop-doc-listener]
@@ -1417,8 +1333,6 @@ This code snippet shows how to stop the document listener using the token from t
 ----
 
 
-
-
 ====
 
 
@@ -1431,16 +1345,16 @@ When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:s
 [discrete#objc:replication:::lbl-repl-pend]
 ==== Documents Pending Push
 
-TIP: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)isDocumentPending:error:[CBLReplicator.isDocumentPending()] is quicker and more efficient.
+TIP: https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)isDocumentPending:error:[CBLReplicator.isDocumentPending()] is quicker and more efficient.
 Use it in preference to returning a list of pending document IDs, where possible.
 
 You can check whether documents are waiting to be pushed in any forthcoming sync by using either of the following API methods:
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)pendingDocumentIDs:[CBLReplicator.pendingDocumentIDs()] method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.
+* Use the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)pendingDocumentIDs:[CBLReplicator.pendingDocumentIDs()] method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.
 +
 This can be very useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it is safe to exit.
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)isDocumentPending:error:[CBLReplicator.isDocumentPending()] method to quickly check whether an individual document is pending a push.
+* Use the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)isDocumentPending:error:[CBLReplicator.isDocumentPending()] method to quickly check whether an individual document is pending a push.
 
 [#ex-pending]
 .Use Pending Document ID API
@@ -1492,14 +1406,11 @@ if ([pendingDocIds count] > 0) {
 ----
 
 
-
-
 ====
 
-<.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)pendingDocumentIDs:[CBLReplicator.pendingDocumentIDs()] returns a list of the document IDs for all documents waiting to be pushed.
+<.> https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)pendingDocumentIDs:[CBLReplicator.pendingDocumentIDs()] returns a list of the document IDs for all documents waiting to be pushed.
 This is a snapshot and may have changed by the time the response is received and processed.
-<.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)isDocumentPending:error:[CBLReplicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
-
+<.> https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)isDocumentPending:error:[CBLReplicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
 
 [discrete#objc:replication:::lbl-repl-stop]
@@ -1507,7 +1418,7 @@ This is a snapshot and may have changed by the time the response is received and
 
 
 Stopping a replication is straightforward.
-It is done using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)stop[stop()].
+It is done using https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)stop[stop()].
 This initiates an asynchronous operation and so is not necessarily immediate.
 Your app should account for this potential delay before attempting any subsequent operations.
 
@@ -1532,11 +1443,9 @@ You can find further information on database operations in xref:objc:database.ad
 ----
 
 
-
-
 ====
 
-<.> Here we initiate the stopping of the replication using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)stop[stop()] method.
+<.> Here we initiate the stopping of the replication using the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)stop[stop()] method.
 It will stop any active <<objc:replication:::lbl-repl-chng,change listener>> once the replication is stopped.
 
 
@@ -1566,8 +1475,6 @@ The following code snippet adds a `Change Listener`, which monitors a replicatio
 ----
 
 
-
-
 ====
 
 
@@ -1595,7 +1502,6 @@ The following error codes are considered temporary by the Couchbase Lite replica
 * `504`: Gateway Timeout
 
 * `1001`: DNS resolution error
-
 
 
 [discrete#objc:replication:::load-balancers]
@@ -1669,8 +1575,6 @@ replConfig.pinnedServerCertificate = (SecCertificateRef)CFAutorelease(certificat
 ----
 
 
-
-
 ====
 
 
@@ -1709,8 +1613,6 @@ CBLDatabase.log.console.domains = kCBLLogDomainReplicator;
 CBLDatabase.log.console.level = kCBLLogLevelVerbose;
 CBLDatabase.log.console.domains = kCBLLogDomainNetwork;
 ----
-
-
 
 
 ====
@@ -1784,7 +1686,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++

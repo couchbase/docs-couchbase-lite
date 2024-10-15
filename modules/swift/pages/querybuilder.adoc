@@ -14,76 +14,49 @@
 :keywords: sql, n1ql= Querying your Data
 
 
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
+:version-maintenance: {version}.{maintenance-ios}{empty}
+:version-maintenance-hyphenated: {major}-{minor}-{maintenance-ios}{empty}
+
+:vs-version-maintenance: {vs-version}.{vs-maintenance-ios}{empty}
+:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-ios}{empty}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/[Query Class index]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/[Query Class index]
 
 
 [Replicator.pendingDocumentIds()]
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+:version: {major}.{minor}
+:vs-version: {vs-major}.{vs-minor}
+:version-full: {major}.{minor}.{base}{empty}
+:version-full-hyphenated: {major}-{minor}-{base}{empty}
+:version-full-untagged: {major}.{minor}.{base}
+:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
+:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
+:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
+:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
+:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
+:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
+:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
+:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
+:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
+:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 [abstract]
@@ -91,8 +64,6 @@
 Description -- _{description}_ +
 Related Content -- xref:swift:query-live.adoc[Live Queries] | xref:swift:indexing.adoc[Indexing]
 --
-
-
 
 
 NOTE: The examples used here are based on the _Travel Sample_ app and data introduced in the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial
@@ -148,7 +119,6 @@ a| The criteria used to order the items in the result set
 TIP: We recommend working through the query section of the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial as a good way to build your skills in this area.
 
 
-
 [discrete#swift:querybuilder:::lbl-select]
 === SELECT statement
 
@@ -183,8 +153,6 @@ query = QueryBuilder
     .select(SelectResult.all())
     .from(DataSource.collection(collection))
 ----
-
-
 
 
 ====
@@ -269,8 +237,6 @@ do {
 ----
 
 
-
-
 ====
 
 
@@ -321,7 +287,7 @@ You can chain any number of Expressions in order to implement sophisticated filt
 
 [discrete#swift:querybuilder:::lbl-comp-ops]
 ==== Comparison Operators
-The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Expression.html[Expression Comparators] can be used in the WHERE statement to specify on which property to match documents.
+The https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Expression.html[Expression Comparators] can be used in the WHERE statement to specify on which property to match documents.
 In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
 
 [pass:q,a[source, json, subs="+attributes, +macros"]]
@@ -368,20 +334,17 @@ do {
 ----
 
 
-
-
 ====
-
 
 
 [discrete#swift:querybuilder:::lbl-coll-ops]
 ==== Collection Operators
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/ArrayExpression.html[Array Collection Operators] are useful to check if a given value is present in an array.
+https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/ArrayExpression.html[Array Collection Operators] are useful to check if a given value is present in an array.
 
 
 [discrete#swift:querybuilder:::contains-operator]
 ===== CONTAINS Operator
-The following example uses the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/ArrayFunction.html[ArrayFunction]` to find documents where the `public_likes` array property contains a value equal to "Armani Langworth".
+The following example uses the `https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/ArrayFunction.html[ArrayFunction]` to find documents where the `public_likes` array property contains a value equal to "Armani Langworth".
 
 [pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
@@ -391,7 +354,6 @@ The following example uses the `https://docs.couchbase.com/mobile/{major}.{minor
     "public_likes": ["Armani Langworth", "Elfrieda Gutkowski", "Maureen Ruecker"]
 }
 ----
-
 
 
 // Show Main Snippet
@@ -418,14 +380,11 @@ do {
 ----
 
 
-
-
 [discrete#swift:querybuilder:::in-operator]
 ===== IN Operator
 
 The `IN` operator is useful when you need to explicitly list out the values to test against.
 The following example looks for documents whose `first`, `last` or `username` property value equals "Armani".
-
 
 
 // Show Main Snippet
@@ -444,9 +403,6 @@ let query = QueryBuilder.select(SelectResult.all())
 ----
 
 
-
-
-
 [discrete#swift:querybuilder:::lbl-like-ops]
 ==== Like Operator
 In this section::
@@ -456,7 +412,7 @@ In this section::
 
 [discrete#swift:querybuilder:::lbl-string-match]
 ===== String Matching
-The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Protocols/ExpressionProtocol.html#/#/s:18CouchbaseLiteSwift18ExpressionProtocolP4likeyAaB_pAaB_pF[like(_:)] operator can be used for string matching -- see <<swift:querybuilder:::ex-like-case-insensitive>>
+The https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Protocols/ExpressionProtocol.html#/#/s:18CouchbaseLiteSwift18ExpressionProtocolP4likeyAaB_pAaB_pF[like(_:)] operator can be used for string matching -- see <<swift:querybuilder:::ex-like-case-insensitive>>
 
 NOTE: The `like` operator performs **case sensitive** matches. +
 To perform case insensitive matching, use `Function.lower` or `Function.upper` to ensure all comparators have the same case, thereby removing the case issue.
@@ -494,8 +450,6 @@ do {
     }
 }
 ----
-
-
 
 
 ====
@@ -543,8 +497,6 @@ let query = QueryBuilder
 ----
 
 
-
-
 ====
 
 
@@ -582,10 +534,7 @@ let query = QueryBuilder
 ----
 
 
-
-
 ====
-
 
 
 [discrete#swift:querybuilder:::lbl-regex-ops]
@@ -621,8 +570,6 @@ let query = QueryBuilder
 ----
 
 
-
-
 ====
 
 <.> The `\b` specifies that the match must occur on word boundaries.
@@ -655,10 +602,7 @@ let query = QueryBuilder
 ----
 
 
-
-
 ====
-
 
 
 [discrete#swift:querybuilder:::lbl-join]
@@ -709,10 +653,7 @@ let query = QueryBuilder
 ----
 
 
-
-
 ====
-
 
 
 [discrete#swift:querybuilder:::lbl-group]
@@ -772,10 +713,7 @@ do {
 ----
 
 
-
-
 ====
-
 
 
 The query shown in <<swift:querybuilder:::ex-grpby-qry>> generates the following output:
@@ -815,8 +753,6 @@ let query = QueryBuilder
     .orderBy(Ordering.property("title").ascending())
     .limit(Expression.int(10))
 ----
-
-
 
 
 ====
@@ -921,8 +857,6 @@ let query = QueryBuilder.select(SelectResult.all()).from(DataSource.collection(c
 ----
 
 
-
-
 ====
 
 
@@ -1008,8 +942,6 @@ for row in results {
 ----
 
 
-
-
 ====
 
 <.> The dictionary of document properties using the database name as the key.
@@ -1047,8 +979,6 @@ let query = QueryBuilder
     .from(DataSource.collection(collection))
 
 ----
-
-
 
 
 ====
@@ -1115,10 +1045,7 @@ for result in try! query.execute() {
 ----
 
 
-
-
 ====
-
 
 
 [discrete#swift:querybuilder:::lbl-id-sel]
@@ -1147,10 +1074,7 @@ let query = QueryBuilder.select(SelectResult.expression(Meta.id).as("metaId"))
 ----
 
 
-
-
 ====
-
 
 
 [discrete#swift:querybuilder:::result-set-format-3]
@@ -1215,8 +1139,6 @@ for result in results {
 ----
 
 
-
-
 ====
 
 <.> Extract the Id value from the dictionary and use it to get the document from the database
@@ -1247,8 +1169,6 @@ let query = QueryBuilder
     .from (DataSource.collection(collection)).groupBy(Expression.property("type"))
 
 ----
-
-
 
 
 ====
@@ -1299,8 +1219,6 @@ for result in try query.execute() {
 ----
 
 
-
-
 ====
 
 <.> Get the count using the `SelectResult.as` alias, which is used as its key.
@@ -1334,8 +1252,6 @@ let query = QueryBuilder
 ----
 
 
-
-
 ====
 
 <.> Return a maximum of `limit` results starting from result number `offset`
@@ -1355,7 +1271,7 @@ Couchbase Lite for Swift provides a convenience API to convert query results to 
 [#swift:querybuilder:::ex-json]
 ====
 
-pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Result.html#/s:18CouchbaseLiteSwift6ResultC6toJSONSSyF[result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<swift:querybuilder:::ex-json>> for a working example.]
+pass:q,a[Use https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Result.html#/s:18CouchbaseLiteSwift6ResultC6toJSONSSyF[result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<swift:querybuilder:::ex-json>> for a working example.]
 
 // Show Main Snippet
 // include::swift:example$code_snippets/SampleCodeTest.swift[tags="query-access-json", indent=0]
@@ -1401,8 +1317,6 @@ for row in  results {
 } // end for
 
 ----
-
-
 
 
 ====
@@ -1495,8 +1409,6 @@ class ImageClassifierModel: PredictiveModel {
 ----
 
 
-
-
 ====
 
 <1> The `predict(input) ++->++ output` method provides the input and expects the result of using the machine learning model.
@@ -1526,10 +1438,7 @@ Database.prediction.registerModel(model, withName: "ImageClassifier")
 ----
 
 
-
-
 ====
-
 
 
 [discrete#swift:querybuilder:::create-an-index]
@@ -1569,10 +1478,7 @@ try collection.createIndex(index, name: "value-index-image-classifier")
 ----
 
 
-
-
 ====
-
 
 
 [discrete#swift:querybuilder:::predictive-index]
@@ -1601,10 +1507,7 @@ try collection.createIndex(index, name: "predictive-index-image-classifier")
 ----
 
 
-
-
 ====
-
 
 
 [discrete#swift:querybuilder:::run-a-prediction-query]
@@ -1648,8 +1551,6 @@ do {
 ----
 
 
-
-
 ====
 
 <1> The `PredictiveModel.predict()` method returns a constructed Prediction Function object which can be used further to specify a property value extracted from the output dictionary of the `PredictiveModel.predict()` function.
@@ -1678,11 +1579,7 @@ Database.prediction.unregisterModel(withName: "ImageClassifier")
 ----
 
 
-
-
 ====
-
-
 
 
 [discrete#swift:querybuilder:::integrate-a-model-with-coremlpredictivemodel]
@@ -1708,9 +1605,6 @@ let predictiveModel = CoreMLPredictiveModel(mlModel: model)
 Database.prediction.registerModel(predictiveModel, withName: "ImageClassifier")
 
 ----
-
-
-
 
 
 [discrete#swift:querybuilder:::related-content]
@@ -1749,7 +1643,6 @@ https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
-
 
 
 ++++
