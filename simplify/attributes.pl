@@ -19,24 +19,24 @@ my %keep = map { $_ => 1 } (qw/
     description
     keywords
     release
+    maintenance
     prerelease
-    vs-major
-    vs-minor
     major
     minor
-    maintenance
-    maintenance-android
     tabs
 /);
 
 
 sub keep {
     my ($attribute) = @_;
-    return 1 if $attribute =~ /^page-/;
+    return 1 if $attribute =~ /^page(-|$)/;
+    return 1 if $attribute =~ /^version(-|$)/;
+    return 1 if $attribute =~ /^vs(-|$)/;
     return 1 if $keep{$attribute};
     return;
 }
 
+my $blanks = 0;
 while (<>) {
     # expand attributes
     s/\{(\S+?)\}/expand($1)/eg;
@@ -62,6 +62,13 @@ while (<>) {
     # de-mangle headings (== to =)
     s/^=(= \S)/$1/;
     s/^=(==+ \S)/$1/;
+
+    # don't print more than 2 blank lines in a row
+    if (length == 1) {
+        next if $blanks++ >= 2;
+    } else {
+        $blanks = 0;
+    }
 
     # print lines that we didn't swallow as attribute definitions
     print;
