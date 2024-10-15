@@ -12,44 +12,6 @@
 :page-role:
 
 
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-:version-maintenance: {version}.{maintenance-net}{empty}
-:version-maintenance-hyphenated: {major}-{minor}-{maintenance-net}{empty}
-:vs-version-maintenance: {vs-version}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-net}{empty}
-
-
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-
-
 [IMPORTANT]
 --
 On upgrading from a 2.x release, all Couchbase Lite databases will be automatically re-indexed on initial database open. +
@@ -58,20 +20,20 @@ This can result in a delay before the database is usable.
 
 
 [discrete#csharp:upgrade:::3-2-0-upgrade]
-== {version-full} Upgrade
+== {major}.{minor}.{base}{empty} Upgrade
 
 NOTE: This upgrade requires all 2.x databases be reindexed on initial open.
 
 The action will take place automatically and can lead to some delay in the database becoming available for use in your application.
 
-In addition, if you are syncing with a {version-full} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
+In addition, if you are syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
 This is a one-way conversion.
 
 [discrete#csharp:upgrade:::api-changes]
 === API Changes
 
 
-This content introduces the changes made to the pass:q,a[pass:q,a[Couchbase{nbsp}Lite]] for C#.Net API for release {version-full}.
+This content introduces the changes made to the pass:q,a[pass:q,a[Couchbase{nbsp}Lite]] for C#.Net API for release {major}.{minor}.{base}{empty}.
 
 Starting from this release pass:q,a[pass:q,a[Couchbase{nbsp}Lite]] for C#.Net requires _Visual Studio 2019+_ and uses .Net Core 3.1 (updating from .Net Core 2.0).
 
@@ -80,7 +42,7 @@ Starting from this release pass:q,a[pass:q,a[Couchbase{nbsp}Lite]] for C#.Net re
 
 The function https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Atan2_Couchbase_Lite_Query_IExpression_Couchbase_Lite_Query_IExpression_[ATAN2(x, y)],
 which returns the principal value of the arc tangent of y/x, now becomes
-https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Atan2_Couchbase_Lite_Query_IExpression_Couchbase_Lite_Query_IExpression_[ATAN2(y, x)];
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Atan2_Couchbase_Lite_Query_IExpression_Couchbase_Lite_Query_IExpression_[ATAN2(y, x)];
 that is, the arguments are reversed in line with common notation.
 
 
@@ -128,7 +90,7 @@ replicator.Start(true) // <.>
 We have removed the method
 https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_SetLogLevel_Couchbase_Lite_Logging_LogDomain_Couchbase_Lite_Logging_LogLevel_[Database.setLogLevel()] +
 Use
-https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Console[
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Console[
 Database.log.console]
 instead:
 
@@ -155,8 +117,8 @@ Database.Log.Console.LogLevel = LogLevel.Verbose;
 We have removed the method
 https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Compact[Database.compact()]. +
 Use the method
-https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_PerformMaintenance_Couchbase_Lite_MaintenanceType_[Database.PerformMaintenance()] and the enum
-https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-net/api/Couchbase.Lite.MaintenanceType.html[MaintenanceType]
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_PerformMaintenance_Couchbase_Lite_MaintenanceType_[Database.PerformMaintenance()] and the enum
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.MaintenanceType.html[MaintenanceType]
 instead
 
 [discrete#csharp:upgrade:::before-3]
@@ -188,7 +150,7 @@ We will remove
 https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.IFullTextExpression.html#Couchbase_Lite_Query_IFullTextExpression_Match_System_String_[Match]
 at the next major release. +
 You should plan to switch to using the alternative
-https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-net/api/Couchbase.Lite.Query.FullTextFunction.html#Couchbase_Lite_Query_FullTextFunction_Match_System_String_System_String_[FullTextFunction.match(indexName:)]
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.FullTextFunction.html#Couchbase_Lite_Query_FullTextFunction_Match_System_String_System_String_[FullTextFunction.match(indexName:)]
 at the earliest opportunity.
 
 [discrete#csharp:upgrade:::before-4]
@@ -221,7 +183,7 @@ using (var query =
       }
   }
 ----
-<.> Here we use https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-net/api/Couchbase.Lite.Query.FullTextFunction.htmlFullTextFunction.match(indexName:)[FullTextFunction.match(indexName:)]
+<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.FullTextFunction.htmlFullTextFunction.match(indexName:)[FullTextFunction.match(indexName:)]
 to build the query
 
 [discrete#csharp:upgrade:::isnullormissing]
@@ -229,7 +191,7 @@ to build the query
 We will remove
 https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsNullOrMissing[isNullOrMissing] +
 You should plan to switch to using the alternative
-https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsNotValued[IsNotValued()]
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsNotValued[IsNotValued()]
 
 at the earliest opportunity.
 
@@ -257,7 +219,7 @@ var query = QueryBuilder.Select(SelectResult.All())
 We will remove
 https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_NotNullOrMissing[notNullOrMissing]. +
 You should plan to switch to using the alternative
-https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsValued[isValued()]
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsValued[isValued()]
 at the earliest opportunity.
 
 

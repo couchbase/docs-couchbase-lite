@@ -12,45 +12,7 @@
 :description: Couchbase Lite on Objective-C -- Using query.explain()
 
 
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-
 :maintenance: 1
-:version-maintenance: {version}.{maintenance-ios}{empty}
-:version-maintenance-hyphenated: {major}-{minor}-{maintenance-ios}{empty}
-
-:vs-version-maintenance: {vs-version}.{vs-maintenance-ios}{empty}
-:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-ios}{empty}
-
-
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 
 [abstract]
@@ -67,7 +29,7 @@ Related Content -- xref:objc:troubleshooting-logs.adoc[Using Logs] | xref:objc:t
 
 [discrete#objc:troubleshooting-queries:::using]
 ==== Using
-Query's https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLQuery.html#/c:objc(cs)CBLQuery(im)explain:[explain()] method can provide useful insight when you are trying to diagnose query performance issues and-or optimize queries.
+Query's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQuery.html#/c:objc(cs)CBLQuery(im)explain:[explain()] method can provide useful insight when you are trying to diagnose query performance issues and-or optimize queries.
 To examine how your query is working, either embed the call inside your app (see: <<objc:troubleshooting-queries:::use-qe-app>>), or use it interactively within a `cblite` shell (see: <<objc:troubleshooting-queries:::use-qe-cblite>>).
 
 [#use-qe-app]
@@ -122,7 +84,7 @@ cblite <your-database-name>.cblite2 // <.>
 
 [discrete#objc:troubleshooting-queries:::output]
 ==== Output
-The output from `https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLQuery.html#/c:objc(cs)CBLQuery(im)explain:[explain()]` remains the same whether invoked by an app, or `cblite` -- see <<objc:troubleshooting-queries:::qe-output>> for an example of how it looks.
+The output from `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQuery.html#/c:objc(cs)CBLQuery(im)explain:[explain()]` remains the same whether invoked by an app, or `cblite` -- see <<objc:troubleshooting-queries:::qe-output>> for an example of how it looks.
 
 [#objc:troubleshooting-queries:::qe-output]
 .Query.explain() Output
@@ -359,7 +321,7 @@ NSLog(@"%@", [query explain:&error]);
 
 Functions are a very useful tool in building queries, but be aware that they can impact whether the query-optimizer is able to use your index(es).
 
-For example, you can observe a similar situation to that shown in <<objc:troubleshooting-queries:::use-like-based-queries>> when using the `https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLQueryFunction.html#/c:objc(cs)CBLQueryFunction(cm)lower:[lower()]` function on an indexed property.
+For example, you can observe a similar situation to that shown in <<objc:troubleshooting-queries:::use-like-based-queries>> when using the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryFunction.html#/c:objc(cs)CBLQueryFunction(cm)lower:[lower()]` function on an indexed property.
 
 .Query
 [#use-like-based-queries]
@@ -387,7 +349,7 @@ NSLog(@"%@", [query explain:&error]);
 ----
 
 
-<.> Here we use the `https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLQueryFunction.html#/c:objc(cs)CBLQueryFunction(cm)lower:[lower()]` function in the _Where_ expression
+<.> Here we use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryFunction.html#/c:objc(cs)CBLQueryFunction(cm)lower:[lower()]` function in the _Where_ expression
 
 .Query Plan:
 [source, bash]
@@ -396,7 +358,7 @@ NSLog(@"%@", [query explain:&error]);
 ----
 
 
-But removing the `https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLQueryFunction.html#/c:objc(cs)CBLQueryFunction(cm)lower:[lower()]` function, changes things:
+But removing the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryFunction.html#/c:objc(cs)CBLQueryFunction(cm)lower:[lower()]` function, changes things:
 
 .Query
 
@@ -424,14 +386,14 @@ NSLog(@"%@", [query explain:&error]);
 ----
 
 
-<.> Here we have removed `https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLQueryFunction.html#/c:objc(cs)CBLQueryFunction(cm)lower:[lower()]` from the _Where_ expression
+<.> Here we have removed `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryFunction.html#/c:objc(cs)CBLQueryFunction(cm)lower:[lower()]` from the _Where_ expression
 
 .Query plan
 ----
 3|0|0| SEARCH TABLE kv_default AS _doc USING INDEX typeIndex (<expr>=?)
 ----
 
-Knowing this, you can consider how you create the index; for example, using https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-objc/Classes/CBLQueryFunction.html#/c:objc(cs)CBLQueryFunction(cm)lower:[lower()] when you create the index and then always using lowercase comparisons.
+Knowing this, you can consider how you create the index; for example, using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryFunction.html#/c:objc(cs)CBLQueryFunction(cm)lower:[lower()] when you create the index and then always using lowercase comparisons.
 
 [discrete#objc:troubleshooting-queries:::optimization-considerations]
 === Optimization Considerations

@@ -13,44 +13,6 @@
 :description: Client-side Field Level Encryption on Couchbase Lite C Clients
 
 
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-:version-maintenance: {version}.{maintenance-c}{empty}
-:version-maintenance-hyphenated: {major}-{minor}-{maintenance-c}{empty}
-:vs-version-maintenance: {vs-version}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-c}{empty}
-
-
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-
-
 // :param-name: c
 // :param-title: C
 // :param-module: c
@@ -194,7 +156,7 @@ Its directory structure differs CBL's encryptable dictionary when serializing th
 [discrete#c:field-level-encryption:::lbl-encryption-callback]
 === Encryption
 
-Provide an encryption callback function https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__replication.html#gab116a23be8bd24b86349379f370ef60c[CBLPropertyEncryptor] to encrypt encryptable properties during replication.
+Provide an encryption callback function https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#gab116a23be8bd24b86349379f370ef60c[CBLPropertyEncryptor] to encrypt encryptable properties during replication.
 
 After encryption the FLSliceResult is released and the returned value zeroed.
 See <<c:field-level-encryption:::ex-get-att>> for an example encryptor callback function.
@@ -204,7 +166,7 @@ If you return a null slice the replicator will fail and log a crypto error messa
 [discrete#c:field-level-encryption:::lbl-decryption-callback]
 === Decryption
 
-Provide a decryption callback function https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__replication.html#ga24a60a3d6f9816e1d32464cc31a15c0c[CBLPropertyDecryptor] to decrypt any encryptable properties.
+Provide a decryption callback function https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga24a60a3d6f9816e1d32464cc31a15c0c[CBLPropertyDecryptor] to decrypt any encryptable properties.
 After decryption the FLSliceResult is released and the returned value zeroed.
 See <<c:field-level-encryption:::ex-get-att>> for an example decryptor callback function.
 
@@ -248,7 +210,7 @@ static FLSliceResult property_decryptor(void* context, FLString documentID, FLDi
 [discrete#c:field-level-encryption:::callback-configuration]
 == Callback Configuration
 
-You register the callback function for use by declaring them in the replicator configuration using https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#ab731bf9f140158d6967c1af645d8744a[propertyEncryptor()] and-or https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#ab6a0d9e0830755d284039018a09c27d6[propertyDecryptor()] -- see: <<c:field-level-encryption:::ex-callback-config>>
+You register the callback function for use by declaring them in the replicator configuration using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#ab731bf9f140158d6967c1af645d8744a[propertyEncryptor()] and-or https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#ab6a0d9e0830755d284039018a09c27d6[propertyDecryptor()] -- see: <<c:field-level-encryption:::ex-callback-config>>
 
 If you do not provide an encryption callback:
 

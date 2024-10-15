@@ -16,44 +16,6 @@
 // DO NOT EDIT
 
 
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-:version-maintenance: {version}.{maintenance-android}{empty}
-:version-maintenance-hyphenated: {major}-{minor}-{maintenance-android}{empty}
-
-:vs-version-maintenance: {vs-version}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-android}{empty}
-
-
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-
 [abstract]
 --
 Description -- _{description}_ +
@@ -77,7 +39,7 @@ Installation instructions are included in the step-by-step install guides for bo
 
 .Couchbase Lite Quick Steps
 ****
-For experienced developers, this is all you need to add _Couchbase Lite for Android {version-maintenance-android} to your application projects.
+For experienced developers, this is all you need to add _Couchbase Lite for Android {major}.{minor}.{maintenance-android}{empty} to your application projects.
 
 [{tabs}]
 =====
@@ -87,11 +49,11 @@ Kotlin - Enterprise::
 --
 . Create a Kotlin Android app project in Android Studio
 . Add Couchbase Lite as a dependency in your app-level `build.gradle` +
-`implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{version-maintenance-android}'`
+`implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{major}.{minor}.{maintenance-android}{empty}'`
 . Add the following _maven_ repo to your repositories (in `build.gradle` or `settings.gradle` as required +
 `https://mobile.maven.couchbase.com/maven2/dev/`
-.. If you want to use Vector Search, add the Couchbase Lite Vector Search dependency for architectures other than `x86_64`: `com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-version-maintenance}`
-... For `x86_64` architectures: `com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-version-maintenance}`
+.. If you want to use Vector Search, add the Couchbase Lite Vector Search dependency for architectures other than `x86_64`: `com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-major}.{vs-minor}.{vs-maintenance-android}{empty}`
+... For `x86_64` architectures: `com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-major}.{vs-minor}.{vs-maintenance-android}{empty}`
 .. You must then use `CouchbaseLite.enableVectorSearch();` to enable the vector search extension.
 . Build the project and it will pull Couchbase Lite down.
 --
@@ -101,7 +63,7 @@ Kotlin - Community::
 --
 . Create a Kotlin Android app project in Android Studio
 . Add Couchbase Lite as a dependency in your app-level `build.gradle` +
-`implementation 'com.couchbase.lite:couchbase-lite-android-ktx:{version-maintenance-android}'`
+`implementation 'com.couchbase.lite:couchbase-lite-android-ktx:{major}.{minor}.{maintenance-android}{empty}'`
 . Check you have `mavenCentral()` in `repositories` (or in `settings.gradle`)
 . Build the project and it will pull Couchbase Lite down.
 --
@@ -111,11 +73,11 @@ Java - Enterprise::
 --
 . Create a Java Android app project in Android Studio
 . Add Couchbase Lite as a dependency in your app-level `build.gradle` +
-`implementation 'com.couchbase.lite:couchbase-lite-android-ee:{version-maintenance-android}'`
+`implementation 'com.couchbase.lite:couchbase-lite-android-ee:{major}.{minor}.{maintenance-android}{empty}'`
 . Add the following _maven_ repo to your repositories (in `build.gradle` or `settings.gradle` as required +
 `https://mobile.maven.couchbase.com/maven2/dev/`
-.. If you want to use Vector Search, add the Couchbase Lite Vector Search dependency for architectures other than `x86_64`: `com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-version-maintenance}`
-... For `x86_64` architectures: `com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-version-maintenance}`
+.. If you want to use Vector Search, add the Couchbase Lite Vector Search dependency for architectures other than `x86_64`: `com.couchbase.lite:couchbase-lite-java-vector-search-arm64-{vs-major}.{vs-minor}.{vs-maintenance-android}{empty}`
+... For `x86_64` architectures: `com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-major}.{vs-minor}.{vs-maintenance-android}{empty}`
 .. You must then use `CouchbaseLite.enableVectorSearch();` to enable the vector search extension.
 . Build the project and it will pull Couchbase Lite down.
 --
@@ -125,7 +87,7 @@ Java - Community::
 --
 . Create a Java Android app project in Android Studio
 . Add Couchbase Lite as a dependency in your app-level `build.gradle` +
-`implementation 'com.couchbase.lite:couchbase-lite-android:{version-maintenance-android}'`
+`implementation 'com.couchbase.lite:couchbase-lite-android:{major}.{minor}.{maintenance-android}{empty}'`
 . Check you have `mavenCentral()` in `repositories` (or in `settings.gradle`)
 . Build the project and it will pull Couchbase Lite down.
 --
@@ -191,7 +153,7 @@ repositories {
 ----
 dependencies {
 
-  implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{version-maintenance-android}'
+  implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{major}.{minor}.{maintenance-android}{empty}'
 
 //   ... other section content as required by user
 }
@@ -236,7 +198,7 @@ repositories {
 ----
 dependencies {
 
-  implementation "com.couchbase.lite:couchbase-lite-android-ktx:{version-maintenance-android}"
+  implementation "com.couchbase.lite:couchbase-lite-android-ktx:{major}.{minor}.{maintenance-android}{empty}"
 
 //   ... other section content as required by user
 }
@@ -304,10 +266,10 @@ repositories {
 ----
 dependencies {
 
-  implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{version-maintenance-android}'
+  implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{major}.{minor}.{maintenance-android}{empty}'
 
   // All standard 64-bit ARM architectures
-  implementation 'com.couchbase.lite:couchbase-lite-android-vector-search-arm64-{vs-version-maintenance}'
+  implementation 'com.couchbase.lite:couchbase-lite-android-vector-search-arm64-{vs-major}.{vs-minor}.{vs-maintenance-android}{empty}'
 
 //   ... other section content as required by user
 }
@@ -319,9 +281,9 @@ dependencies {
 ----
 dependencies {
 
-  implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{version-maintenance-android}'
+  implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{major}.{minor}.{maintenance-android}{empty}'
 
-  implementation 'com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-version-maintenance}'
+  implementation 'com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-{vs-major}.{vs-minor}.{vs-maintenance-android}{empty}'
 
 //   ... other section content as required by user
 }
@@ -387,7 +349,7 @@ repositories {
 ----
 dependencies {
 
-  implementation 'com.couchbase.lite:couchbase-lite-android-ee:{version-maintenance-android}'
+  implementation 'com.couchbase.lite:couchbase-lite-android-ee:{major}.{minor}.{maintenance-android}{empty}'
 
 //   ... other section content as required by user
 }
@@ -436,7 +398,7 @@ repositories {
 [source,groovy, subs="attributes+"]
 ----
 dependencies {
-  implementation 'com.couchbase.lite:couchbase-lite-android:{version-maintenance-android}'
+  implementation 'com.couchbase.lite:couchbase-lite-android:{major}.{minor}.{maintenance-android}{empty}'
 //   ... other section content as required by user
 }
 ----
@@ -504,10 +466,10 @@ repositories {
 ----
 dependencies {
 
-  implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{version-maintenance-android}'
+  implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{major}.{minor}.{maintenance-android}{empty}'
 
   // All standard 64-bit ARM architectures
-  implementation 'com.couchbase.lite:couchbase-lite-android-vector-search-arm64-{vs-version-maintenance}'
+  implementation 'com.couchbase.lite:couchbase-lite-android-vector-search-arm64-{vs-major}.{vs-minor}.{vs-maintenance-android}{empty}'
 
 //   ... other section content as required by user
 }
@@ -519,9 +481,9 @@ dependencies {
 ----
 dependencies {
 
-  implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{version-maintenance-android}'
+  implementation 'com.couchbase.lite:couchbase-lite-android-ee-ktx:{major}.{minor}.{maintenance-android}{empty}'
 
-  implementation 'com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-1.0.0-{vs-version-maintenance}'
+  implementation 'com.couchbase.lite:couchbase-lite-android-vector-search-x86_64-1.0.0-{vs-major}.{vs-minor}.{vs-maintenance-android}{empty}'
 
 //   ... other section content as required by user
 }

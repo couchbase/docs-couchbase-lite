@@ -13,44 +13,6 @@
 :description:
 
 
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-:version-maintenance: {version}.{maintenance-java}{empty}
-:version-maintenance-hyphenated: {major}-{minor}-{maintenance-java}{empty}
-:vs-version-maintenance: {vs-version}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-java}{empty}
-
-
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-
-
 [IMPORTANT]
 --
 On upgrading from a 2.x release, all Couchbase Lite databases will be automatically re-indexed on initial database open. +
@@ -59,20 +21,20 @@ This can result in a delay before the database is usable.
 
 
 [discrete#java:upgrade:::3-2-0-upgrade]
-== {version-full} Upgrade
+== {major}.{minor}.{base}{empty} Upgrade
 
 NOTE: This upgrade requires all 2.x databases be reindexed on initial open.
 
 The action will take place automatically and can lead to some delay in the database becoming available for use in your application.
 
-In addition, if you are syncing with a {version-full} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
+In addition, if you are syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
 This is a one-way conversion.
 
 [discrete#java:upgrade:::api-changes]
 === API Changes
 
 
-This content introduces the changes made to the pass:q,a[pass:q,a[Couchbase{nbsp}Lite]] for Java API for release {version-full}.
+This content introduces the changes made to the pass:q,a[pass:q,a[Couchbase{nbsp}Lite]] for Java API for release {major}.{minor}.{base}{empty}.
 
 [discrete#java:upgrade:::removed]
 ==== Removed
@@ -81,7 +43,7 @@ This content introduces the changes made to the pass:q,a[pass:q,a[Couchbase{nbsp
 ===== ResetCheckpoint
 
 The method https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.html#resetCheckpoint--[Replicator.resetCheckpoint()] method has been removed. +
-Instead, use https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.html#start-boolean-[Replicator.resetCheckpoint(boolean reset)].
+Instead, use https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.html#start-boolean-[Replicator.resetCheckpoint(boolean reset)].
 
 .Before
 [pass:q,a[source, Java,subs="attributes+, macros+"]]
@@ -124,7 +86,7 @@ Database.log.getFile().setDomains(LogLevel.DEBUG)
 [discrete#java:upgrade:::database-compact]
 ===== Database.compact
 The https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/Database.html#compact--[Database.compact()] method has been removed. +
-It is replaced by the new https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-java/com/couchbase/lite/Database.html#performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance(MaintenanceType)] method, and the maintenance operations represented in the enum https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-java/com/couchbase/lite/MaintenanceType.html[MaintenanceType]
+It is replaced by the new https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance(MaintenanceType)] method, and the maintenance operations represented in the enum https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/MaintenanceType.html[MaintenanceType]
 
 .Before
 [pass:q,a[source, Java,subs="attributes+, macros+"]]
@@ -147,7 +109,7 @@ testdb.performMaintenance(MaintenanceType.COMPACT)
 ===== MATCH
 The class, https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/FullTextExpression.html[FullTextExpression]
 has been deprecated. +
-Use https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-java/com/couchbase/lite/FullTextFunction.html[FullTextFunction] instead.
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/FullTextFunction.html[FullTextFunction] instead.
 
 .Before
 [pass:q,a[source, Java,subs="attributes+, macros+"]]
@@ -239,9 +201,9 @@ ReplicatorConfiguration config =
 The enum https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.ActivityLevel.html[AbstractReplicator.ActivityLevel] and the classes https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.Progress.html[AbstractReplicator.Progress] and https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.Status.html[AbstractReplicator.Status] have all been moved to be top level definitions. +
 They are replaced by these definitions:
 
-* https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-java/com/couchbase/lite/ReplicatorActivityLevel.html[ReplicatorActivityLevel]
-* https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-java/com/couchbase/lite/ReplicatorProgress.html[ReplicatorProgress]
-* https://docs.couchbase.com/mobile/{version-full}/couchbase-lite-java/com/couchbase/lite/ReplicatorStatus.html[ReplicatorStatus]
+* https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorActivityLevel.html[ReplicatorActivityLevel]
+* https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorProgress.html[ReplicatorProgress]
+* https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorStatus.html[ReplicatorStatus]
 
 
 .Before

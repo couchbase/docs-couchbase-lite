@@ -15,44 +15,6 @@
 // Define our environment
 
 
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-:version-maintenance: {version}.{maintenance-android}{empty}
-:version-maintenance-hyphenated: {major}-{minor}-{maintenance-android}{empty}
-
-:vs-version-maintenance: {vs-version}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-android}{empty}
-
-
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-
 // Present common content including abstract and related content footer blocks
 
 [abstract]
@@ -392,7 +354,7 @@ Here's a typical sequence of events that would create an update conflict:
 
 . Your code reads the document's current properties, and constructs a modified copy to save.
 . Another thread (perhaps the replicator) updates the document, creating a new revision with different properties.
-. Your code updates the document with its modified properties, for example using https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Database.html#save-com.couchbase.lite.MutableDocument-[database.save(MutableDocument document)].
+. Your code updates the document with its modified properties, for example using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#save-com.couchbase.lite.MutableDocument-[database.save(MutableDocument document)].
 ====
 
 [discrete#android:conflict:::automatic-conflict-resolution-2]
@@ -407,7 +369,7 @@ If the probability of update conflicts is high in your app and you wish to avoid
 .Currency Control Signatures
 ====
 Save operations::
-https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Database.html#save-com.couchbase.lite.MutableDocument-com.couchbase.lite.ConcurrencyControl-[database.save(MutableDocument document, ConcurrencyControl concurrencyControl)] -- attempts to save the document with a concurrency control.
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#save-com.couchbase.lite.MutableDocument-com.couchbase.lite.ConcurrencyControl-[database.save(MutableDocument document, ConcurrencyControl concurrencyControl)] -- attempts to save the document with a concurrency control.
 +
 The concurrency control parameter has two possible values:
 
@@ -419,8 +381,8 @@ In this case, the app can detect the error that is being thrown, and handle it b
 Delete operations::
 As with save operations, delete operation also have two method signatures, which specify how to handle a possible conflict:
 
-* https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Database.html#delete-com.couchbase.lite.Document-[database.delete(Document document)]: The last write will win if there is a conflict.
-* https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Database.html#delete-com.couchbase.lite.Document-com.couchbase.lite.ConcurrencyControl-[database.delete(Document document, ConcurrencyControl concurrencyControl)]: attempts to delete the document with a concurrency control.
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#delete-com.couchbase.lite.Document-[database.delete(Document document)]: The last write will win if there is a conflict.
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#delete-com.couchbase.lite.Document-com.couchbase.lite.ConcurrencyControl-[database.delete(Document document, ConcurrencyControl concurrencyControl)]: attempts to delete the document with a concurrency control.
 
 +
 The concurrency control parameter has two possible values:
@@ -433,7 +395,7 @@ In this case, the app can detect the error that is being thrown, and handle it b
 === Custom Conflict Handlers
 Developers can hook a conflict handler when saving a document so they can easily handle the conflict in a single save method call.
 
-To implement custom conflict resolution when saving a document, apps must call the `save` method with a conflict handler block ( https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/com/couchbase/lite/Database.html#save-com.couchbase.lite.MutableDocument-com.couchbase.lite.ConflictHandler-[database.save(MutableDocument, ConflictHandler)]).
+To implement custom conflict resolution when saving a document, apps must call the `save` method with a conflict handler block ( https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#save-com.couchbase.lite.MutableDocument-com.couchbase.lite.ConflictHandler-[database.save(MutableDocument, ConflictHandler)]).
 
 // tag::handling-conflicts-custom-merge[]
 The following code snippet shows an example of merging properties from the existing document (`current`) into the one being saved (`new`).
@@ -539,7 +501,7 @@ collection.save(
 .Concepts
 * xref:android:landing-p2psync.adoc[Peer-to-Peer Sync]
 
-* https://docs.couchbase.com/mobile/{version-maintenance-android}/couchbase-lite-android/[API References]
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/[API References]
 
 .
 

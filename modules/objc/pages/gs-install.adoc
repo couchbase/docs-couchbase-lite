@@ -17,45 +17,8 @@
 // :this-release: {version-full}
 
 
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-
 :maintenance: 1
-:version-maintenance: {version}.{maintenance-ios}{empty}
-:version-maintenance-hyphenated: {major}-{minor}-{maintenance-ios}{empty}
 
-:vs-version-maintenance: {vs-version}.{vs-maintenance-ios}{empty}
-:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-ios}{empty}
-
-
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 
 [abstract]
 --
@@ -66,7 +29,7 @@ Description -- _{description}_ +
 [discrete#objc:gs-install:::get-started]
 === Get Started
 
-Create or open an existing _Xcode_ project and install _Couchbase Lite {version-full} using one of the <<objc:gs-install:::lbl-install-tabs>> methods shown.
+Create or open an existing _Xcode_ project and install _Couchbase Lite {major}.{minor}.{base}{empty} using one of the <<objc:gs-install:::lbl-install-tabs>> methods shown.
 
 Enterprise users can also download the Couchbase Lite Vector Search extension library.
 
@@ -120,13 +83,13 @@ NOTE:  The minimum required version of Carthage is *38.0*
 .Couchbase Lite Community Edition
 [source,ruby,subs=attributes+]
 ----
-binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Community.json" ~> {version-full}
+binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Community.json" ~> {major}.{minor}.{base}{empty}
 ----
 +
 .Couchbase Lite Enterprise Edition
 [source,ruby,subs=attributes+]
 ----
-binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Enterprise.json" ~> {version-full}
+binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Enterprise.json" ~> {major}.{minor}.{base}{empty}
 ----
 
 . Run `carthage update --platform ios`.
@@ -148,7 +111,7 @@ NOTE: The minimum required version of Cocoapods is *1.15*
 ----
 target '<your target name>' do
   use_frameworks!
-  pod 'CouchbaseLite', '{version-full}'
+  pod 'CouchbaseLite', '{major}.{minor}.{base}{empty}'
 end
 ----
 +
@@ -157,7 +120,7 @@ end
 ----
 target '<your target name>' do
   use_frameworks!
-  pod 'CouchbaseLite-Enterprise', '{version-full}'
+  pod 'CouchbaseLite-Enterprise', '{major}.{minor}.{base}{empty}'
 end
 ----
 
@@ -193,7 +156,7 @@ Direct Download::
 +
 --
 
-. Download the binaries from here -- https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-version-maintenance}/couchbase-lite-vector-search_xcframework_{vs-version-maintenance}.zip[binary download link.]
+. Download the binaries from here -- https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}/couchbase-lite-vector-search_xcframework_{vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}.zip[binary download link.]
 
 . Unpack the download zip file into your XCode project location.
 
@@ -215,7 +178,7 @@ NOTE:  The minimum required version of Carthage is *38.0*
 .Couchbase Lite Enterprise Edition
 [source,ruby,subs=attributes+]
 ----
-binary "http://packages.couchbase.com/releases/couchbase-lite-vector-search/carthage/CouchbaseLiteVectorSearch.json" ~> {vs-version-maintenance}
+binary "http://packages.couchbase.com/releases/couchbase-lite-vector-search/carthage/CouchbaseLiteVectorSearch.json" ~> {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
 ----
 
 . Run `carthage update --platform ios`.
@@ -240,7 +203,7 @@ NOTE: The minimum required Cocoapods  version is *1.15*
 ----
 target 'Example' do
   use_frameworks!
-  pod 'CouchbaseLiteVectorSearch', '{vs-version-maintenance}' // <.>
+  pod 'CouchbaseLiteVectorSearch', '{vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}' // <.>
 end
 ----
 

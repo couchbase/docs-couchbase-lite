@@ -14,56 +14,11 @@ ifdef::show_edition[:page-edition: {release}] {enterprise}
 :description: Couchbase Lite's Peer-to-Peer Synchronization enables edge devices to synchronize securely without consuming centralized cloud-server resources
 
 
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-:version-maintenance: {version}.{maintenance-ios}{empty}
-:version-maintenance-hyphenated: {major}-{minor}-{maintenance-ios}{empty}
-
-:vs-version-maintenance: {vs-version}.{vs-maintenance-ios}{empty}
-:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-ios}{empty}
-
-
-// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/[Query Class index]
-
-
-[Replicator.pendingDocumentIds()]
-
-
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-
-
 [abstract]
 --
 Description -- _{description}_ +
 _Abstract -- How to set up a Listener to accept a Replicator connection and sync using peer-to-peer_ +
-Related Content -- https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift[API Reference]  |  xref:swift:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:swift:p2psync-websocket-using-active.adoc[Active Peer]
+Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift[API Reference]  |  xref:swift:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:swift:p2psync-websocket-using-active.adoc[Active Peer]
 --
 
 
@@ -188,7 +143,7 @@ Note that client authentication is optional.
 
 [discrete#swift:p2psync-websocket-using-passive:::api-references]
 ==== API References
-You can find https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift[Swift API References] here.
+You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift[Swift API References] here.
 
 [discrete#swift:p2psync-websocket-using-passive:::device-discovery]
 ==== Device Discovery
@@ -229,7 +184,7 @@ var config = URLEndpointListenerConfiguration(collections: [otherCollection]) //
 
 ====
 
-<.> Set the local database using the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s constructor https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC8databaseAcA8DatabaseC_tcfc[init(database:)]. +
+<.> Set the local database using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s constructor https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC8databaseAcA8DatabaseC_tcfc[init(database:)]. +
 The database must be opened before the Listener is started. +
 `thisDB` has previously been declared as an object of type `Database`.
 
@@ -263,7 +218,7 @@ config.port =  wssPort // <.>
 
 ====
 
-<.> To use a canonical port -- one known to other applications -- specify it explicitly using the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC4ports6UInt16VSgvp[port] method shown here. +
+<.> To use a canonical port -- one known to other applications -- specify it explicitly using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC4ports6UInt16VSgvp[port] method shown here. +
 Ensure that firewall rules do not block any port you do specify. +
 
 
@@ -292,7 +247,7 @@ config.networkInterface = "10.1.1.10"  // <.>
 
 ====
 
-<.> To specify an interface -- one known to other applications -- identify it explicitly, using the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC16networkInterfaceSSSgvp[networkInterface] method shown here.
+<.> To specify an interface -- one known to other applications -- identify it explicitly, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC16networkInterfaceSSSgvp[networkInterface] method shown here.
 This must be either an IP Address or network interface name such as `en0`.
 
 
@@ -355,7 +310,7 @@ config.enableDeltaSync = true // <.>
 ====
 
 <.> Delta sync replication is not enabled by default.
-Use https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC15enableDeltaSyncSbvp[enableDeltaSync] method to activate or deactivate it.
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC15enableDeltaSyncSbvp[enableDeltaSync] method to activate or deactivate it.
 
 [discrete#swift:p2psync-websocket-using-passive:::lbl-tls-security]
 ==== TLS Security
@@ -372,13 +327,13 @@ However, it _can_ be disabled. For example, for development or test environments
 When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity -- see <<swift:p2psync-websocket-using-passive:::configure-tls-identity-for-listener>>.
 
 
-You can use https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC10disableTLSSbvp[disableTLS] method to disable TLS communication if necessary
+You can use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC10disableTLSSbvp[disableTLS] method to disable TLS communication if necessary
 
 The `disableTLS` setting must be 'false' when _Client Cert Authentication_ is required.
 
 Basic Authentication can be used with, or without, TLS.
 
-https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC10disableTLSSbvp[disableTLS] works in conjunction with `TLSIdentity`, to enable developers to define the key and certificate to be used.
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC10disableTLSSbvp[disableTLS] works in conjunction with `TLSIdentity`, to enable developers to define the key and certificate to be used.
 
 * If `disableTLS` is true -- TLS communication is disabled and TLS identity is ignored.
 Active peers will use the `ws://` URL scheme used to connect to the listener.
@@ -393,8 +348,8 @@ Active peers will use the `wss://` URL scheme to connect to the listener.
 Define the credentials the server will present to the client for authentication.
 Note that the server must always authenticate itself with the client -- see: xref:swift:p2psync-websocket-using-active.adoc#authenticate-listener[Authenticate Listener on Active Peer] for how the client deals with this.
 
-Use https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s
-https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC11tlsIdentityAA11TLSIdentityCSgvp[tlsIdentity] method to configure the TLS Identity used in TLS communication.
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC11tlsIdentityAA11TLSIdentityCSgvp[tlsIdentity] method to configure the TLS Identity used in TLS communication.
 
 If `TLSIdentity` is not set, then the listener uses an auto-generated anonymous self-signed identity (unless `disableTLS = true`).
 Whilst the client cannot use this to authenticate the server, it will use it to encrypt communication, giving a more secure option than non-TLS communication.
@@ -529,13 +484,13 @@ Define how the server (Listener) will authenticate the client as one it is prepa
 
 Whilst client authentication is optional, Couchbase lite provides the necessary tools to implement it.
 Use the
-https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration] class's https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC13authenticatorAA0E13Authenticator_pSgvp[authenticator] method to specify how the client-supplied credentials are to be authenticated.
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration] class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC13authenticatorAA0E13Authenticator_pSgvp[authenticator] method to specify how the client-supplied credentials are to be authenticated.
 
 Valid options are:
 
 * No authentication -- If you do not define an Authenticator then all clients are accepted.
-* Basic Authentication -- uses the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes//ListenerPasswordAuthenticator.html[ListenerPasswordAuthenticator] to authenticate the client using the client-supplied username and password (from the http authentication header).
-* https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes//ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator] -- which authenticates the client using a client supplied chain of one or more certificates.
+* Basic Authentication -- uses the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes//ListenerPasswordAuthenticator.html[ListenerPasswordAuthenticator] to authenticate the client using the client-supplied username and password (from the http authentication header).
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes//ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator] -- which authenticates the client using a client supplied chain of one or more certificates.
 You should initialize the authenticator using one of the following constructors:
 ** A list of one or more root certificates -- the client supplied certificate must end at a certificate in this list if it is to be authenticated
 ** A block of code that assumes total responsibility for authentication -- it must return a boolean response (true for an authenticated client, or false for a failed authentication).
@@ -580,7 +535,7 @@ Define how the server will authenticate client-supplied certificates.
 
 There are two ways to authenticate a client:
 
-* A chain of one or more certificates that ends at a certificate in the list of certificates supplied to the constructor for  https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes//ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator] -- see: <<swift:p2psync-websocket-using-passive:::ex-set-cert-auth>>
+* A chain of one or more certificates that ends at a certificate in the list of certificates supplied to the constructor for  https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes//ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator] -- see: <<swift:p2psync-websocket-using-passive:::ex-set-cert-auth>>
 
 * Application logic: This method assumes complete responsibility for verifying and authenticating the client -- see: <<swift:p2psync-websocket-using-passive:::ex-use-app-logic>>
 +
@@ -597,7 +552,7 @@ The logic should take the form of function or block (such as, a closure expressi
 [#swift:p2psync-websocket-using-passive:::ex-set-cert-auth]
 ====
 
-pass:q,a[Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes//ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator].]
+pass:q,a[Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes//ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator].]
 
 // Show Main Snippet
 // include::swift:example$code_snippets/SampleCodeTest.swift[tags="listener-config-client-auth-root, indent=0]", indent=0]
@@ -705,8 +660,8 @@ a|* The system will auto generate an _anonymous_ self signed cert.
 |false
 a|Set to server identity generated from a self- or CA-signed certificate
 
-* On first use -- Bring your own certificate and private key; for example, using the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/TLSIdentity.html[TLSIdentity] class's https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/TLSIdentity.html#/s:18CouchbaseLiteSwift11TLSIdentityC14createIdentity9forServer10attributes10expiration5labelACSb_SDyS2SG10Foundation4DateVSgSStKFZ[CreateIdentity()] method to add it to the secure storage.
-* Each time -- Use the server identity from the certificate stored in the secure storage; for example, using the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/TLSIdentity.html[TLSIdentity] class's https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/TLSIdentity.html#//s:18CouchbaseLiteSwift11TLSIdentityC8identity9withLabelACSgSS_tKFZ[identity(withLabel:)] method with the alias you want to retrieve..
+* On first use -- Bring your own certificate and private key; for example, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/TLSIdentity.html[TLSIdentity] class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/TLSIdentity.html#/s:18CouchbaseLiteSwift11TLSIdentityC14createIdentity9forServer10attributes10expiration5labelACSb_SDyS2SG10Foundation4DateVSgSStKFZ[CreateIdentity()] method to add it to the secure storage.
+* Each time -- Use the server identity from the certificate stored in the secure storage; for example, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/TLSIdentity.html[TLSIdentity] class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/TLSIdentity.html#//s:18CouchbaseLiteSwift11TLSIdentityC8identity9withLabelACSgSS_tKFZ[identity(withLabel:)] method with the alias you want to retrieve..
 
 
 a|* System will use the configured identity.
@@ -752,9 +707,9 @@ try self.listener.start() // <.>
 [discrete#swift:p2psync-websocket-using-passive:::monitor-listener]
 ==== Monitor Listener
 
-Use the Listener's `https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/URLEndpointListener.html#/s:18CouchbaseLiteSwift19URLEndpointListenerC6statusAC16ConnectionStatusVvp[status]` property/method to get counts of total and active connections -- see: <<swift:p2psync-websocket-using-passive:::get-connection-counts>>.
+Use the Listener's `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/URLEndpointListener.html#/s:18CouchbaseLiteSwift19URLEndpointListenerC6statusAC16ConnectionStatusVvp[status]` property/method to get counts of total and active connections -- see: <<swift:p2psync-websocket-using-passive:::get-connection-counts>>.
 
-You should note that these counts can be extremely volatile. So, the actual number of active connections may have changed, by the time the `https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/URLEndpointListener/ConnectionStatus.html[ConnectionStatus]` class returns a result.
+You should note that these counts can be extremely volatile. So, the actual number of active connections may have changed, by the time the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/URLEndpointListener/ConnectionStatus.html[ConnectionStatus]` class returns a result.
 
 // Example 11
 .Get connection counts
@@ -825,7 +780,7 @@ NOTE: Closing the database will also close the Listener.
 .Concepts
 * xref:swift:landing-p2psync.adoc[Peer-to-Peer Sync]
 
-* https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift[API References]
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift[API References]
 
 .
 

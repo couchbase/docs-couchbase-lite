@@ -12,51 +12,6 @@
 :description: Couchbase Lite on Swift -- Using Logs for Troubleshooting
 
 
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-:version-maintenance: {version}.{maintenance-ios}{empty}
-:version-maintenance-hyphenated: {major}-{minor}-{maintenance-ios}{empty}
-
-:vs-version-maintenance: {vs-version}.{vs-maintenance-ios}{empty}
-:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-ios}{empty}
-
-
-// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/[Query Class index]
-
-
-[Replicator.pendingDocumentIds()]
-
-
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-
-
 [abstract]
 --
 Description -- _{description}_ +
@@ -77,7 +32,7 @@ If you are using a Couchbase Lite release prior to 2.5 see <<swift:troubleshooti
 
 [discrete#swift:troubleshooting-logs:::introduction]
 === Introduction
-Couchbase Lite provides a robust Logging API footnote:fn-2x5[From version 2.5] -- see: API References for https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Log.html[Log], https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/FileLogger.html[FileLogger] and https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/LogFileConfiguration.html[LogFileConfiguration] -- which make debugging and troubleshooting easier during development and in production.
+Couchbase Lite provides a robust Logging API footnote:fn-2x5[From version 2.5] -- see: API References for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html[Log], https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/FileLogger.html[FileLogger] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/LogFileConfiguration.html[LogFileConfiguration] -- which make debugging and troubleshooting easier during development and in production.
 It delivers flexibility in terms of how logs are generated and retained, whilst also maintaining the level of logging required by Couchbase Support for investigation of issues.
 
 Log output is split into the following streams:
@@ -96,11 +51,11 @@ With console logging, you can fine-tune diagnostic output to suit specific debug
 * <<swift:troubleshooting-logs:::lbl-custom-logs>>
 +
 --
-For greater flexibility you can implement a custom logging class using the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Logger.html[Logger] interface.
+For greater flexibility you can implement a custom logging class using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Logger.html[Logger] interface.
 
 --
 
-In all instances, you control what is logged and at what level using the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Log.html[Log] class.
+In all instances, you control what is logged and at what level using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html[Log] class.
 
 [discrete#swift:troubleshooting-logs:::lbl-console-logs]
 === Console based logging
@@ -111,9 +66,9 @@ You can easily fine-tune their diagnostic content to meet the needs of a particu
 
 Changes to console logging are independent of file logging, so you can make change without compromising any files logging streams.
 It is enabled by default.
-To change default settings use database's https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Log.html[Log] method to set the required values -- see <<swift:troubleshooting-logs:::eg-cons-log>>
+To change default settings use database's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html[Log] method to set the required values -- see <<swift:troubleshooting-logs:::eg-cons-log>>
 
-You will primarily use https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Log.html#/s:18CouchbaseLiteSwift3LogC7consoleAA13ConsoleLoggerCvp[log.console] and https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/ConsoleLogger.html[ConsoleLogger] to control console logging.
+You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html#/s:18CouchbaseLiteSwift3LogC7consoleAA13ConsoleLoggerCvp[log.console] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/ConsoleLogger.html[ConsoleLogger] to control console logging.
 
 
 [#eg-cons-log]
@@ -137,18 +92,18 @@ Database.log.console.level = .verbose // <.>
 
 ====
 
-<.> Define the required domain ; here we turn on logging for all available domains -- see: https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/ConsoleLogger.html#/s:18CouchbaseLiteSwift13ConsoleLoggerC7domainsAA10LogDomainsVvp[log.console.domains] and enum https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Enums/LogDomain.html[LogDomain]
-<.> Here we turn on the most verbose log level -- see: https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/ConsoleLogger.html#/s:18CouchbaseLiteSwift13ConsoleLoggerC5levelAA8LogLevelOvp[log.console.level] and enum https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Enums/LogLevel.html[LogLevel]. +
-To disable logging for the specified https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Enums/LogDomain.html[LogDomain] set the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Enums/LogLevel.html[LogLevel] to `None`.
+<.> Define the required domain ; here we turn on logging for all available domains -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/ConsoleLogger.html#/s:18CouchbaseLiteSwift13ConsoleLoggerC7domainsAA10LogDomainsVvp[log.console.domains] and enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Enums/LogDomain.html[LogDomain]
+<.> Here we turn on the most verbose log level -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/ConsoleLogger.html#/s:18CouchbaseLiteSwift13ConsoleLoggerC5levelAA8LogLevelOvp[log.console.level] and enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Enums/LogLevel.html[LogLevel]. +
+To disable logging for the specified https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Enums/LogDomain.html[LogDomain] set the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Enums/LogLevel.html[LogLevel] to `None`.
 
 Related::
-https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Log.html[Log] | https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Log.html#/s:18CouchbaseLiteSwift3LogC7consoleAA13ConsoleLoggerCvp[log.console] | https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/ConsoleLogger.html[ConsoleLogger]
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html[Log] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html#/s:18CouchbaseLiteSwift3LogC7consoleAA13ConsoleLoggerCvp[log.console] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/ConsoleLogger.html[ConsoleLogger]
 
 [discrete#swift:troubleshooting-logs:::lbl-file-logs]
 === File based logging
 File based logging is disabled by default --  see: <<swift:troubleshooting-logs:::eg-file-log>> for how to enable it.
 
-You will primarily use https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Log.html#/s:18CouchbaseLiteSwift3LogC4fileAA10FileLoggerCvp[log.file] and https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/FileLogger.html[FileLogger] to control file-based logging.
+You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html#/s:18CouchbaseLiteSwift3LogC4fileAA10FileLoggerCvp[log.file] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/FileLogger.html[FileLogger] to control file-based logging.
 
 [discrete#swift:troubleshooting-logs:::formats]
 ==== Formats
@@ -161,9 +116,9 @@ Use this format and a decoder, such as *cbl-log*, to view them -- see: <<swift:t
 
 [discrete#swift:troubleshooting-logs:::configuration]
 ==== Configuration
-As with console logging you can set the log level -- see:  the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/FileLogger.html[FileLogger] class.
+As with console logging you can set the log level -- see:  the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/FileLogger.html[FileLogger] class.
 
-With file based logging you can also use the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/LogFileConfiguration.html[LogFileConfiguration] class's properties to specify the:
+With file based logging you can also use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/LogFileConfiguration.html[LogFileConfiguration] class's properties to specify the:
 
 * log file path to the directory to store the log file
 Once this limit is exceeded a new log file is started.
@@ -201,21 +156,21 @@ Database.log.file.level = .info // <.>
 *Note* this means six files may exist at any one time; the five rotated log files, plus the active log file
 <.> Here we set the maximum size (bytes) for our log file
 <.> Here we select the binary log format (included for reference only as this is the default)
-<.> Here we increase the log output level from the default (_warnings_) to _info_ -- see: https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/FileLogger.html#/s:18CouchbaseLiteSwift10FileLoggerC5levelAA8LogLevelOvp[log.file.level: LogLevel]
+<.> Here we increase the log output level from the default (_warnings_) to _info_ -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/FileLogger.html#/s:18CouchbaseLiteSwift10FileLoggerC5levelAA8LogLevelOvp[log.file.level: LogLevel]
 +
-*Note* that the use of https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC11setLogLevel_6domainyAA0fG0O_AA0F6DomainOtFZ[Database.setLogLevel()] is now deprecated.
+*Note* that the use of https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC11setLogLevel_6domainyAA0fG0O_AA0F6DomainOtFZ[Database.setLogLevel()] is now deprecated.
 Further, you can no longer set a log level for a specific domain.
 
 Related::
- https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Log.html[Log] |
-https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Log.html#/s:18CouchbaseLiteSwift3LogC4fileAA10FileLoggerCvp[log.file] | https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/FileLogger.html[FileLogger]
+ https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html[Log] |
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html#/s:18CouchbaseLiteSwift3LogC4fileAA10FileLoggerCvp[log.file] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/FileLogger.html[FileLogger]
 
 [discrete#swift:troubleshooting-logs:::lbl-custom-logs]
 === Custom logging
 
 Couchbase Lite allows for the registration of a callback function to receive Couchbase Lite log messages, which may be logged using any external logging framework.
 
-To do this, apps must implement the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Logger.html[Logger] interface -- see <<swift:troubleshooting-logs:::eg-impl-log>> -- and enable custom logging using https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Log.html#/s:18CouchbaseLiteSwift3LogC6customAA6Logger_pSgvp[log.custom] -- see <<swift:troubleshooting-logs:::eg-cust-log>>.
+To do this, apps must implement the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Logger.html[Logger] interface -- see <<swift:troubleshooting-logs:::eg-impl-log>> -- and enable custom logging using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html#/s:18CouchbaseLiteSwift3LogC6customAA6Logger_pSgvp[log.custom] -- see <<swift:troubleshooting-logs:::eg-cust-log>>.
 
 
 [#eg-impl-log]
@@ -225,7 +180,7 @@ To do this, apps must implement the https://docs.couchbase.com/mobile/{version-m
 [#swift:troubleshooting-logs:::eg-impl-log]
 ====
 
-pass:q,a[Here we introduce the code that implements the https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Logger.html[Logger] interface.]
+pass:q,a[Here we introduce the code that implements the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Logger.html[Logger] interface.]
 
 // Show Main Snippet
 // include::swift:example$code_snippets/SampleCodeTest.swift[tags="custom-logging", indent=0]
@@ -277,7 +232,7 @@ The custom logger is called with every log and may choose to filter it, using it
 
 
 Related::
-https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Log.html[Log] | https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Log.html#/s:18CouchbaseLiteSwift3LogC6customAA6Logger_pSgvp[log.custom] | https://docs.couchbase.com/mobile/{version-maintenance-ios}/couchbase-lite-swift/Classes/Logger.html[Logger]
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html[Log] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html#/s:18CouchbaseLiteSwift3LogC6customAA6Logger_pSgvp[log.custom] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Logger.html[Logger]
 
 [discrete#swift:troubleshooting-logs:::decoding-binary-logs]
 === Decoding binary logs
@@ -297,7 +252,7 @@ Download the *cbl-log* tool using `wget`.
 
 [source,console,subs="attributes"]
 ----
-wget https://packages.couchbase.com/releases/couchbase-lite-log/{version-full}/couchbase-lite-log-{version-full}-macos.zip
+wget https://packages.couchbase.com/releases/couchbase-lite-log/{major}.{minor}.{base}{empty}/couchbase-lite-log-{major}.{minor}.{base}{empty}-macos.zip
 ----
 
 Navigate to the *bin* directory and run the `cbl-log` executable.
@@ -316,7 +271,7 @@ Download the *cbl-log* tool using `wget`.
 
 [source,console, subs="attributes"]
 ----
-wget https://packages.couchbase.com/releases/couchbase-lite-log/{version-full}/couchbase-lite-log-{version-full}-centos.zip
+wget https://packages.couchbase.com/releases/couchbase-lite-log/{major}.{minor}.{base}{empty}/couchbase-lite-log-{major}.{minor}.{base}{empty}-centos.zip
 ----
 
 Navigate to the *bin* directory and run the `cbl-log` executable.
@@ -335,7 +290,7 @@ Download the *cbl-log* tool using PowerShell.
 
 [source,powershell, subs="attributes"]
 ----
-Invoke-WebRequest https://packages.couchbase.com/releases/couchbase-lite-log/{version-full}/couchbase-lite-log-{version-full}-windows.zip -OutFile couchbase-lite-log-{version-full}-windows.zip
+Invoke-WebRequest https://packages.couchbase.com/releases/couchbase-lite-log/{major}.{minor}.{base}{empty}/couchbase-lite-log-{major}.{minor}.{base}{empty}-windows.zip -OutFile couchbase-lite-log-{major}.{minor}.{base}{empty}-windows.zip
 ----
 
 Run the `cbl-log` executable.

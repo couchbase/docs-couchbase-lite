@@ -13,44 +13,6 @@
 :description: Working with Couchbase Lite on Java databases
 
 
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-:version-maintenance: {version}.{maintenance-java}{empty}
-:version-maintenance-hyphenated: {major}-{minor}-{maintenance-java}{empty}
-:vs-version-maintenance: {vs-version}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-java}{empty}
-
-
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-
-
 [abstract]
 --
 Description -- _{description}_ +
@@ -221,13 +183,13 @@ CouchbaseLite.init();
 == Create or Open Database
 
 
-You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/Database.html[Database] class.
-Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/DatabaseConfiguration.html[DatabaseConfiguration] -- see <<java:database:::ex-dbopen>>.
+You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html[Database] class.
+Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/DatabaseConfiguration.html[DatabaseConfiguration] -- see <<java:database:::ex-dbopen>>.
 
 Things to watch for include:
 
 * If the named database does not exist in the specified, or default, location then a new one is created
-* The database is created in a default location unless you  specify a directory for it -- see: https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/DatabaseConfiguration.html[DatabaseConfiguration] and https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/DatabaseConfiguration.html#setDirectory-java.lang.String-[DatabaseConfiguration.setDirectory()]
+* The database is created in a default location unless you  specify a directory for it -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/DatabaseConfiguration.html[DatabaseConfiguration] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/DatabaseConfiguration.html#setDirectory-java.lang.String-[DatabaseConfiguration.setDirectory()]
 +
 --
 
@@ -262,7 +224,7 @@ Database database = new Database(DB_NAME);
 
 You are advised to incorporate the closing of all open databases into your application workflow.
 
-To close a database, use https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/Database.html#close--[Database.close()] -- see: <<java:database:::ex-dbclose>>.
+To close a database, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#close--[Database.close()] -- see: <<java:database:::ex-dbclose>>.
 This also closes
 footnote:fn28[Commencing with Release 2.8]
 active replications, listeners and-or live queries connected to the database.
@@ -334,7 +296,7 @@ The algorithm used to encrypt the database is 256-bit AES.
 
 [discrete#java:database:::enabling]
 === Enabling
-To enable encryption, use https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/DatabaseConfiguration.html#setEncryptionKey(com.couchbase.lite.EncryptionKey)[DatabaseConfiguration.setEncryptionKey()] to set the encryption key of your choice.
+To enable encryption, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/DatabaseConfiguration.html#setEncryptionKey(com.couchbase.lite.EncryptionKey)[DatabaseConfiguration.setEncryptionKey()] to set the encryption key of your choice.
 Provide this encryption key every time the database is opened -- see <<java:database:::ex-sdb-encrypt>>.
 
 .Configure Database Encryption
@@ -371,14 +333,14 @@ So a database encrypted using the Java SDK, and then exported, is readable only 
 
 [discrete#java:database:::changing]
 === Changing
-To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/Database.html#changeEncryptionKey(com.couchbase.lite.EncryptionKey)[Database.changeEncryptionKey()]
+To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#changeEncryptionKey(com.couchbase.lite.EncryptionKey)[Database.changeEncryptionKey()]
 to set the required new encryption-key value.
 
 
 [discrete#java:database:::removing]
 === Removing
 To remove encryption, open the database using its existing encryption-key and use
-https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/Database.html#changeEncryptionKey(com.couchbase.lite.EncryptionKey)[Database.changeEncryptionKey()]
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#changeEncryptionKey(com.couchbase.lite.EncryptionKey)[Database.changeEncryptionKey()]
 with a null value as the encryption key.
 
 [discrete#java:database:::upgrading]
@@ -392,7 +354,7 @@ To upgrade an encrypted database see: xref:java:dep-upgrade.adoc#lbl-db-upgrades
 
 By default a pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java database is created in a directory at the current location called  `<databaseName>.cblite2`.
 
-This location is set by the link:https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java//com/couchbase/lite/DatabaseConfiguration.html[DatabaseConfiguration] method.
+This location is set by the link:https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java//com/couchbase/lite/DatabaseConfiguration.html[DatabaseConfiguration] method.
 See the following example  for how to do this:
 
 [source, source-language]
@@ -408,8 +370,8 @@ Database thisDB = new Database("db", thisConfig);
 From time to time it may be necessary to perform certain maintenance activities on your database, for example to
 compact the database file, removing unused documents and blobs no longer referenced by any documents.
 
-Couchbase Lite's API provides the https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/Database.html#performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance()] method.
-The available maintenance operations, including `compact` are as shown in the enum https://docs.couchbase.com/mobile/{version-maintenance-java}/couchbase-lite-java/com/couchbase/lite/MaintenanceType.html[MaintenanceType] to accomplish this.
+Couchbase Lite's API provides the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance()] method.
+The available maintenance operations, including `compact` are as shown in the enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/MaintenanceType.html[MaintenanceType] to accomplish this.
 
 This is a resource intensive operation and is not performed automatically.
 It should be run on-demand using the API.

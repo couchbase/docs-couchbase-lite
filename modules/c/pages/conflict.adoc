@@ -13,44 +13,6 @@
 :description: Couchbase Lite Database Sync -- Handling conflict between data changes
 
 
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-:version-maintenance: {version}.{maintenance-c}{empty}
-:version-maintenance-hyphenated: {major}-{minor}-{maintenance-c}{empty}
-:vs-version-maintenance: {vs-version}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-hyphenated: {vs-major}-{vs-minor}-{vs-maintenance-c}{empty}
-
-
-:version: {major}.{minor}
-:vs-version: {vs-major}.{vs-minor}
-:version-full: {major}.{minor}.{base}{empty}
-:version-full-hyphenated: {major}-{minor}-{base}{empty}
-:version-full-untagged: {major}.{minor}.{base}
-:version-maintenance-android: {major}.{minor}.{maintenance-android}{empty}
-:version-maintenance-c: {major}.{minor}.{maintenance-c}{empty}
-:version-maintenance-net: {major}.{minor}.{maintenance-net}{empty}
-:version-maintenance-java: {major}.{minor}.{maintenance-java}{empty}
-:version-maintenance-ios: {major}.{minor}.{maintenance-ios}{empty}
-:vs-version-maintenance-android: {vs-major}.{vs-minor}.{vs-maintenance-android}{empty}
-:vs-version-maintenance-c: {vs-major}.{vs-minor}.{vs-maintenance-c}{empty}
-:vs-version-maintenance-net: {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
-:vs-version-maintenance-java: {vs-major}.{vs-minor}.{vs-maintenance-java}{empty}
-:vs-version-maintenance-ios: {vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}
-
-
 [abstract]
 --
 Description -- _{description}_ +
@@ -316,7 +278,7 @@ Here's a typical sequence of events that would create an update conflict:
 
 . Your code reads the document's current properties, and constructs a modified copy to save.
 . Another thread (perhaps the replicator) updates the document, creating a new revision with different properties.
-. Your code updates the document with its modified properties, for example using https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__documents.html#[CBLDatabase_SaveDocument()].
+. Your code updates the document with its modified properties, for example using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__documents.html#[CBLDatabase_SaveDocument()].
 ====
 
 [discrete#c:conflict:::automatic-conflict-resolution-2]
@@ -331,7 +293,7 @@ If the probability of update conflicts is high in your app and you wish to avoid
 .Currency Control Signatures
 ====
 Save operations::
-https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__documents.html#gae37e21b95f62419762e521f70850b9c7[CBLDatabase_SaveDocumentWithConcurrencyControl()] -- attempts to save the document with a concurrency control.
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__documents.html#gae37e21b95f62419762e521f70850b9c7[CBLDatabase_SaveDocumentWithConcurrencyControl()] -- attempts to save the document with a concurrency control.
 +
 The concurrency control parameter has two possible values:
 
@@ -343,8 +305,8 @@ In this case, the app can detect the error that is being thrown, and handle it b
 Delete operations::
 As with save operations, delete operation also have two method signatures, which specify how to handle a possible conflict:
 
-* https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__database.html#gad9d878c8636a75898d3993537af7e88c[CBLDatabase_DeleteDocument()]: The last write will win if there is a conflict.
-* https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__database.html#ga01b4cf9725de18c41e8bb002255adb9a[CBLDatabase_DeleteDocumentWithConcurrencyControl()]: attempts to delete the document with a concurrency control.
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#gad9d878c8636a75898d3993537af7e88c[CBLDatabase_DeleteDocument()]: The last write will win if there is a conflict.
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#ga01b4cf9725de18c41e8bb002255adb9a[CBLDatabase_DeleteDocumentWithConcurrencyControl()]: attempts to delete the document with a concurrency control.
 
 +
 The concurrency control parameter has two possible values:
@@ -357,7 +319,7 @@ In this case, the app can detect the error that is being thrown, and handle it b
 === Custom Conflict Handlers
 Developers can hook a conflict handler when saving a document so they can easily handle the conflict in a single save method call.
 
-To implement custom conflict resolution when saving a document, apps must call the `save` method with a conflict handler block ( https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html/group__documents.html#ga9c45bcf02e6e2977c702c493a7fe0b54[CBLDatabase_SaveDocumentWithConflictHandler()]).
+To implement custom conflict resolution when saving a document, apps must call the `save` method with a conflict handler block ( https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__documents.html#ga9c45bcf02e6e2977c702c493a7fe0b54[CBLDatabase_SaveDocumentWithConflictHandler()]).
 
 // tag::handling-conflicts-custom-merge[]
 The following code snippet shows an example of merging properties from the existing document (`current`) into the one being saved (`new`).
@@ -436,7 +398,7 @@ CBLCollection_SaveDocumentWithConflictHandler(collection, mutableDoc, custom_con
 .Concepts
 * xref:c:landing-p2psync.adoc[Peer-to-Peer Sync]
 
-* https://docs.couchbase.com/mobile/{version-maintenance-c}/couchbase-lite-c/C/html[API References]
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html[API References]
 
 .
 
