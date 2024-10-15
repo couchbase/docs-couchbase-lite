@@ -25,6 +25,8 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 
+private val SG_URI: String? = null // "ws://localhost:4984/example";
+
 class MainViewModel(private val context: WeakReference<Context>) : ViewModel() {
     private val replicationState: MutableLiveData<String> by lazy { MutableLiveData<String>("Not Started") }
 
@@ -38,9 +40,11 @@ class MainViewModel(private val context: WeakReference<Context>) : ViewModel() {
                 mgr.retrieveDoc(id)
                 mgr.updateDoc(id)
                 mgr.queryDocs()
-                mgr.replicate()
-                    ?.onEach { change -> replicationState.postValue(change.status.activityLevel.toString()) }
-                    ?.collect()
+                SG_URI?.let {
+                    mgr.replicate(it)
+                        ?.onEach { change -> replicationState.postValue(change.status.activityLevel.toString()) }
+                        ?.collect()
+                }
             }
         }
         return replicationState
