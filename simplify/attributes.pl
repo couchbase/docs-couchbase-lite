@@ -29,9 +29,9 @@ my %keep = map { $_ => 1 } (qw/
 
 sub keep {
     my ($attribute) = @_;
-    return 1 if $attribute =~ /^page(-|$)/;
-    return 1 if $attribute =~ /^version(-|$)/;
-    return 1 if $attribute =~ /^vs(-|$)/;
+    return 1 if $attribute =~ /^page-/;
+    # return 1 if $attribute =~ /^version(-|$)/;
+    # return 1 if $attribute =~ /^vs(-|$)/;
     return 1 if $keep{$attribute};
     return;
 }
