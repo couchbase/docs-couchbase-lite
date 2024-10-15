@@ -63,6 +63,10 @@ while (<>) {
     s/^=(= \S)/$1/;
     s/^=(==+ \S)/$1/;
 
+    # [discrete# mangling
+    s/^\[discrete#/[#/;
+    s/^\[discret#(.*)e\]/[discrete#$1/;
+
     # don't print more than 2 blank lines in a row
     if (length == 1) {
         next if $blanks++ >= 2;
