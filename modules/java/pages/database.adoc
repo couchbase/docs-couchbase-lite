@@ -20,7 +20,7 @@ Related Content -- xref:java:blob.adoc[Blobs] | xref:java:document.adoc[Document
 --
 
 
-[discrete#java:database:::database-concepts]
+[#java:database:::database-concepts]
 == Database Concepts
 
 Databases created on Couchbase Lite can share the same hierarchical structure as Capella databases.
@@ -152,7 +152,7 @@ syncing data scope:: Contains information pertaining to the user, which can be s
 ****
 
 
-[discrete#java:database:::initializer]
+[#java:database:::initializer]
 == Initializer
 
 
@@ -179,7 +179,7 @@ CouchbaseLite.init();
 ====
 
 
-[discrete#java:database:::open-db]
+[#java:database:::open-db]
 == Create or Open Database
 
 
@@ -219,7 +219,7 @@ Database database = new Database(DB_NAME);
 ====
 
 
-[discrete#java:database:::close-database]
+[#java:database:::close-database]
 == Close Database
 
 You are advised to incorporate the closing of all open databases into your application workflow.
@@ -253,7 +253,7 @@ database.close();
 ====
 
 
-[discrete#java:database:::database-full-sync]
+[#java:database:::database-full-sync]
 == Database Full Sync
 
 Database Full Sync will prevent the loss of transactional data due to an unexpected system crash or loss of power.
@@ -283,7 +283,7 @@ config.setFullSync(true);
 
 NOTE: It is not possible to change the configuration of a Database after instantiating the Database with the configuration by updating its `DatabaseConfiguration` property.
 
-[discrete#java:database:::database-encryption]
+[#java:database:::database-encryption]
 == Database Encryption
 
 
@@ -294,7 +294,7 @@ _Couchbase Lite on Java_ includes the ability to encrypt Couchbase Lite database
 This allows mobile applications to secure the data at rest, when it is being stored on the device.
 The algorithm used to encrypt the database is 256-bit AES.
 
-[discrete#java:database:::enabling]
+[#java:database:::enabling]
 === Enabling
 To enable encryption, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/DatabaseConfiguration.html#setEncryptionKey(com.couchbase.lite.EncryptionKey)[DatabaseConfiguration.setEncryptionKey()] to set the encryption key of your choice.
 Provide this encryption key every time the database is opened -- see <<java:database:::ex-sdb-encrypt>>.
@@ -320,35 +320,35 @@ Database database = new Database(DB_NAME, config);
 ====
 
 
-[discrete#java:database:::persisting]
+[#java:database:::persisting]
 === Persisting
 Couchbase Lite does not persist the key.
 It is the application's responsibility to manage the key and store it in a platform-specific secure store such Android's
 https://developer.android.com/training/articles/keystore[Keystore].
 
-[discrete#java:database:::opening]
+[#java:database:::opening]
 === Opening
 An encrypted database can only be opened with the same platform that was used to encrypt it in the first place.
 So a database encrypted using the Java SDK, and then exported, is readable only by the Java SDK.
 
-[discrete#java:database:::changing]
+[#java:database:::changing]
 === Changing
 To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#changeEncryptionKey(com.couchbase.lite.EncryptionKey)[Database.changeEncryptionKey()]
 to set the required new encryption-key value.
 
 
-[discrete#java:database:::removing]
+[#java:database:::removing]
 === Removing
 To remove encryption, open the database using its existing encryption-key and use
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#changeEncryptionKey(com.couchbase.lite.EncryptionKey)[Database.changeEncryptionKey()]
 with a null value as the encryption key.
 
-[discrete#java:database:::upgrading]
+[#java:database:::upgrading]
 === Upgrading
 To upgrade an encrypted database see: xref:java:dep-upgrade.adoc#lbl-db-upgrades[Upgrade 1.x databases]
 
 
-[discrete#java:database:::lbl-find-db-loc]
+[#java:database:::lbl-find-db-loc]
 == Finding a Database File
 
 
@@ -364,7 +364,7 @@ Database thisDB = new Database("db", thisConfig);
 ----
 
 
-[discrete#java:database:::lbl-db-util]
+[#java:database:::lbl-db-util]
 == Database Maintenance
 
 From time to time it may be necessary to perform certain maintenance activities on your database, for example to
@@ -378,7 +378,7 @@ It should be run on-demand using the API.
 If in doubt, consult Couchbase support.
 
 
-[discrete#java:database:::cli-tool]
+[#java:database:::cli-tool]
 == Command Line Tool
 
 // tag::cli-tool[]
@@ -389,7 +389,7 @@ Note that the `cblite` tool is not supported by the https://www.couchbase.com/su
 
 // end::cli-tool[]
 
-[discrete#java:database:::troubleshooting]
+[#java:database:::troubleshooting]
 == Troubleshooting
 You should use console logs as your first source of diagnostic information.
 If the information in the default logging level is insufficient you can focus it on database errors and generate more verbose messages -- see: <<java:database:::ex-logdb>>.
@@ -415,7 +415,7 @@ Database.log.getConsole().setLevel(LogLevel.DEBUG); // <.>
 ====
 
 
-[discrete#java:database:::related-content]
+[#java:database:::related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">

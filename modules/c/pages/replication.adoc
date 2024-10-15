@@ -29,7 +29,7 @@ They demonstrate the basic concepts and approaches to using a feature.
 Use them as inspiration and adapt these examples to best practice when developing applications for your platform.
 
 
-[discrete#c:replication:::introduction]
+[#c:replication:::introduction]
 == Introduction
 
 
@@ -45,7 +45,7 @@ Your application runs a replicator (also referred to here as a client), which  w
 
 Subsequent sections provide additional details and examples for the main configuration options.
 
-[discrete#c:replication:::replication-concepts]
+[#c:replication:::replication-concepts]
 == Replication Concepts
 
 Couchbase Lite allows for one database for each application running on the mobile device.
@@ -63,10 +63,10 @@ Collection:: A specific collection or a set of collections is synced.
 As part of the syncing setup, the Gateway has to map the Couchbase Lite database to the database being synced on Capella.
 
 
-[discrete#c:replication:::replication-protocol]
+[#c:replication:::replication-protocol]
 == Replication Protocol
 
-[discrete#c:replication:::scheme]
+[#c:replication:::scheme]
 === Scheme
 
 Couchbase Mobile uses a replication protocol based on WebSockets for replication.
@@ -84,14 +84,14 @@ Sync Gateway 2.x+ will automatically use:
 
 You can find further information in our blog: https://blog.couchbase.com/data-replication-couchbase-mobile/[Introducing the Data Replication Protocol].
 
-[discrete#c:replication:::lbl-repl-ord]
+[#c:replication:::lbl-repl-ord]
 === Ordering
 
 To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
 So we don't recommend to rely on that when using the replication or database change listeners for example.
 
 
-[discrete#c:replication:::scopes-and-collections]
+[#c:replication:::scopes-and-collections]
 == Scopes and Collections
 
 Scopes and Collections allow you to organize your documents in Couchbase Lite.
@@ -106,7 +106,7 @@ During replication:
 
 . If Sync Gateway config is updated to add a collection to a scope that is being synchronized, the replication will ignore the collection. The added collection will not automatically sync until the Couchbase Lite replicator's configuration is updated.
 
-[discrete#c:replication:::default-collection]
+[#c:replication:::default-collection]
 === Default Collection
 
 When upgrading Couchbase Lite to 3.1, the existing documents in the database will be automatically migrated to the default collection.
@@ -121,7 +121,7 @@ image:couchbase-lite/current/{underscore}images/cbl-replication-scopes-collectio
 image:couchbase-lite/current/{underscore}images/cbl-replication-scopes-collections-2.png[Sync Couchbase Lite default collection with default collection on Sync Gateway,500,,align="left"]
 
 
-[discrete#c:replication:::user-defined-collections]
+[#c:replication:::user-defined-collections]
 === User-Defined Collections
 
 The user-defined collections specified in the Couchbase Lite replicator setup must exist (and be identical) on the Sync Gateway side to sync.
@@ -134,7 +134,7 @@ image:couchbase-lite/current/{underscore}images/cbl-replication-scopes-collectio
 
 
 // tag::replicator-config-sample[]
-[discrete#c:replication:::configuration-summary]
+[#c:replication:::configuration-summary]
 == Configuration Summary
 
 
@@ -255,7 +255,7 @@ Other options are available -- see: <<c:replication:::lbl-client-auth>>.
 <.> Start the replicator  -- see: <<c:replication:::lbl-repl-start>>.
 
 
-[discrete#c:replication:::lbl-cfg-repl]
+[#c:replication:::lbl-cfg-repl]
 == Configure
 
 
@@ -276,7 +276,7 @@ In this section::
 |  <<c:replication:::lbl-repl-delta>>
 --
 
-[discrete#c:replication:::lbl-cfg-tgt]
+[#c:replication:::lbl-cfg-tgt]
 === Configure Target
 
 Use the
@@ -332,7 +332,7 @@ to ensure TLS encryption -- strongly recommended in production -- or `ws://`)
 [#lbl-network-interface]
 
 
-[discrete#c:replication:::lbl-cfg-sync]
+[#c:replication:::lbl-cfg-sync]
 === Sync Mode
 
 
@@ -384,7 +384,7 @@ Unless there is a solid use-case not to, always initiate a single `PUSH_AND_PULL
 This prevents the replications generating the same checkpoint `docID` resulting in multiple conflicts.
 --
 
-[discrete#c:replication:::lbl-cfg-keep-alive]
+[#c:replication:::lbl-cfg-keep-alive]
 === Retry Configuration
 
 
@@ -468,7 +468,7 @@ replConfig.maxAttemptWaitTime = 600; //  <.>
 <.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#a5b6435c711d93f71566d8814506e0dff[maxAttempts] to set the required number of retry attempts
 <.> Here we use {url-api-prop-replicator-config-setMaxAttemptWaitTime} to set the required interval between retry attempts.
 
-[discrete#c:replication:::lbl-user-auth]
+[#c:replication:::lbl-user-auth]
 === User Authorization
 
 
@@ -500,12 +500,12 @@ xref:sync-gateway:ROOT:refer/rest-api-admin.adoc#/user/post\__db___user_[`+POST 
 endpoint on the Admin REST API.
 
 
-[discrete#c:replication:::lbl-client-auth]
+[#c:replication:::lbl-client-auth]
 === Client Authentication
 
 There are two ways to authenticate from a Couchbase Lite client: <<c:replication:::basic-authentication>> or <<c:replication:::session-authentication>>.
 
-[discrete#c:replication:::basic-authentication]
+[#c:replication:::basic-authentication]
 ==== Basic Authentication
 
 You can provide a user name and password to the basic authenticator class method.
@@ -539,7 +539,7 @@ if(docs_example_ShowBasicAuth) {
 ====
 
 
-[discrete#c:replication:::session-authentication]
+[#c:replication:::session-authentication]
 ==== Session Authentication
 
 Session authentication is another way to authenticate with Sync Gateway.
@@ -577,7 +577,7 @@ if(docs_example_ShowSessionAuth) {
 ====
 
 
-[discrete#c:replication:::lbl-repl-hdrs]
+[#c:replication:::lbl-repl-hdrs]
 === Custom{nbsp}Headers
 
 Custom headers can be set on the configuration object.
@@ -616,11 +616,11 @@ replConfig.pinnedServerCertificate = (FLSlice){cert_buf, read};
 ====
 
 
-[discrete#c:replication:::lbl-repl-fltrs]
+[#c:replication:::lbl-repl-fltrs]
 === Replication Filters
 Replication Filters allow you to have quick control over the documents stored as the result of a push and/or pull replication.
 
-[discrete#c:replication:::push-filter]
+[#c:replication:::push-filter]
 ==== Push Filter
 
 The push filter allows an app to push a subset of a database to the server.
@@ -655,7 +655,7 @@ static bool simpleReplicationFilter(void* context,
 
 <1> Do not provide long running functions, which could slow down the replicator. Nor make assumptions about the thread the function is being called on.
 
-[discrete#c:replication:::pull-filter]
+[#c:replication:::pull-filter]
 ==== Pull Filter
 
 The pull filter gives an app the ability to validate documents being pulled, and skip ones that fail.
@@ -705,7 +705,7 @@ Further updates to the document stored on Couchbase Server would not be received
 For more information, see <<c:replication:::auto-purge-on-revoke,Auto Purge on Revoke>>.
 ****
 
-[discrete#c:replication:::lbl-repl-chan]
+[#c:replication:::lbl-repl-chan]
 === Channels
 
 // include::ROOT:partial$replication-channels.adoc[]
@@ -720,20 +720,19 @@ to specify which data to pull for each user.
 Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's replicator configuration object.
 In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
 
-[discrete#c:replication:::anchor-auto-purge-on-revoke]
+[#c:replication:::anchor-auto-purge-on-revoke]
 === Auto-purge on Channel Access Revocation
 
-// include::ROOT:partial$commons/common-sgw-replication-cfg-autopurge.adoc[]
 [CAUTION]
 --
 This is a Breaking Change at 3.0
 --
-[discrete#c:replication:::new-outcome]
+[#c:replication:::new-outcome]
 ==== New outcome
 
 By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user’s other channels) are auto-purged from the local database (in devices belonging to the user).
 
-[discrete#c:replication:::prior-outcome]
+[#c:replication:::prior-outcome]
 ==== Prior outcome
 
 _Previously these documents remained in the local database_
@@ -742,7 +741,7 @@ Prior to this release, CBL auto-purged only in the case when the user loses acce
 Now, in addition to 2.x auto purge, Couchbase Lite will also auto-purges the docs when the user loses access to the doc via channel access revocation.
 This feature is enabled by default, but an opt-out is available.
 
-[discrete#c:replication:::behavior]
+[#c:replication:::behavior]
 ==== Behavior
 
 Users may lose access to channels in a number of ways:
@@ -829,7 +828,7 @@ Document changes subsequent to the channel reassignment will be pushed up as usu
 |===
 
 
-[discrete#c:replication:::config]
+[#c:replication:::config]
 ==== Config
 
 Auto-purge behavior is controlled primarily by the ReplicationConfiguration option https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#a3795c0097264ccd1ed612d9a0746d58d[disableAutoPurge].
@@ -858,7 +857,7 @@ replConfig.disableAutoPurge = true; // <.>
 
 <.> Here we have opted to turn off the auto purge behavior. By default auto purge is enabled.
 
-[discrete#c:replication:::overrides]
+[#c:replication:::overrides]
 ==== Overrides
 Where necessary, clients can override the default auto-purge behavior.
 This can be done either by setting https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#a3795c0097264ccd1ed612d9a0746d58d[disableAutoPurge] to false, or for finer control by applying pull-filters -- see: <<c:replication:::tbl-pull-filters>> and <<c:replication:::lbl-repl-fltrs>>
@@ -890,7 +889,7 @@ a|Doc remains in local database
 |===
 
 
-[discrete#c:replication:::lbl-repl-delta]
+[#c:replication:::lbl-repl-delta]
 === Delta Sync
 
 // tag::rep-delta-sync-concept[]
@@ -913,14 +912,14 @@ replications automatically *enable* delta sync.
 // end::rep-delta-sync-concept[]
 
 
-[discrete#c:replication:::lbl-init-repl]
+[#c:replication:::lbl-init-repl]
 == Initialize
 
 
 In this section::
 <<c:replication:::lbl-repl-start>>  | <<c:replication:::lbl-repl-ckpt>>
 
-[discrete#c:replication:::lbl-repl-start]
+[#c:replication:::lbl-repl-start]
 === Start Replicator
 
 Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html[Replication]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#(im)initWithConfig:[initWith(config:)] constructor, to initialize the replicator with the configuration you have defined.
@@ -951,7 +950,7 @@ CBLReplicator_Create(&argConfig, &err); // <.>
 <.> Start the replicator
 
 
-[discrete#c:replication:::lbl-repl-ckpt]
+[#c:replication:::lbl-repl-ckpt]
 === Checkpoint Starts
 // include::ROOT:partial$replication-checkpoint.adoc[]
 
@@ -984,7 +983,7 @@ CBLReplicator_Start(replicator, true); // <.>
 <.> Set start's reset option to `true`. +
 
 
-[discrete#c:replication:::lbl-repl-mon]
+[#c:replication:::lbl-repl-mon]
 == Monitor
 
 
@@ -999,7 +998,7 @@ This enables you to know, for example, when the replication is actively transfer
 
 You can also choose to monitor document changes -- see: <<c:replication:::lbl-repl-evnts>>.
 
-[discrete#c:replication:::lbl-repl-chng]
+[#c:replication:::lbl-repl-chng]
 === Change Listeners
 Use this to monitor changes and to inform on sync progress; this is an optional step.
 You can add and a replicator change listener at any point; it will report changes from the point it is registered.
@@ -1013,7 +1012,7 @@ You will then be asynchronously notified of state changes.
 You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#(im)removeChangeListenerWithToken[removeChangeListenerWithToken(ListenerToken:)].
 
 
-[discrete#c:replication:::lbl-repl-status]
+[#c:replication:::lbl-repl-status]
 === Replicator Status
 
 You can use the
@@ -1094,7 +1093,7 @@ if(thisState.activity==kCBLReplicatorStopped) {
 ====
 
 
-[discrete#c:replication:::lbl-repl-states]
+[#c:replication:::lbl-repl-states]
 ==== Replication States
 <<c:replication:::tbl-states>> shows the different states, or activity levels, reported in the API; and the meaning of each.
 
@@ -1125,7 +1124,7 @@ NOTE: The replication change object also has properties to track the progress (`
 Since the replication occurs in batches the total count can vary through the course of a replication.
 
 
-[discrete#c:replication:::lbl-repl-evnts]
+[#c:replication:::lbl-repl-evnts]
 === Monitor Document Changes
 
 You can choose to register for document updates during a replication.
@@ -1182,13 +1181,13 @@ CBLListener_Remove(token_ReplChangeListener);
 ====
 
 
-[discrete#c:replication:::document-access-removal-behavior]
+[#c:replication:::document-access-removal-behavior]
 ==== Document Access Removal Behavior
 
 When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
 
 
-[discrete#c:replication:::lbl-repl-pend]
+[#c:replication:::lbl-repl-pend]
 === Documents Pending Push
 
 TIP: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] is quicker and more efficient.
@@ -1258,7 +1257,7 @@ This is a snapshot and may have changed by the time the response is received and
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
 
-[discrete#c:replication:::lbl-repl-stop]
+[#c:replication:::lbl-repl-stop]
 == Stop
 
 
@@ -1294,7 +1293,7 @@ if(CBLReplicator_Status(argRepl).activity!=kCBLReplicatorStopped) {
 It will stop any active <<c:replication:::lbl-repl-chng,change listener>> once the replication is stopped.
 
 
-[discrete#c:replication:::lbl-nwk-errs]
+[#c:replication:::lbl-nwk-errs]
 == Error Handling
 
 
@@ -1355,7 +1354,7 @@ The following error codes are considered temporary by the Couchbase Lite replica
 * `1001`: DNS resolution error
 
 
-[discrete#c:replication:::load-balancers]
+[#c:replication:::load-balancers]
 == Load Balancers
 
 
@@ -1367,7 +1366,7 @@ By default, the WebSocket protocol uses compression to optimize for speed and ba
 The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway:ROOT:refer/config-properties.adoc#replicator_compression[`replicator_compression`]).
 
 
-[discrete#c:replication:::lbl-cert-pinning]
+[#c:replication:::lbl-cert-pinning]
 == Certificate Pinning
 
 Couchbase Lite for C supports certificate pinning.
@@ -1427,7 +1426,7 @@ The replication should now run successfully over https/wss with certificate pinn
 For more on pinning certificates see the blog entry: https://blog.couchbase.com/certificate-pinning-android-with-couchbase-mobile/[Certificate Pinning with Couchbase Mobile]
 
 
-[discrete#c:replication:::authentication-errors]
+[#c:replication:::authentication-errors]
 === Authentication Errors
 If Sync Gateway is configured with a self signed certificate but your app points to a `ws` scheme instead of `wss` you will encounter an error with status code `11006` -- see: <<c:replication:::ex-11006>>
 
@@ -1457,7 +1456,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 // Include standard footer
 
 
-[discrete#c:replication:::related-content]
+[#c:replication:::related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">

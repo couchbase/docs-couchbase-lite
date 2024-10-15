@@ -20,11 +20,11 @@ Related Content -- xref:swift:troubleshooting-logs.adoc[Using Logs] | xref:swift
 --
 
 
-[discrete#swift:troubleshooting-queries:::query-explain]
+[#swift:troubleshooting-queries:::query-explain]
 === Query Explain
 
 
-[discrete#swift:troubleshooting-queries:::using]
+[#swift:troubleshooting-queries:::using]
 ==== Using
 Query's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Query.html#/s:18CouchbaseLiteSwift5QueryC7explainSSyKF[explain()] method can provide useful insight when you are trying to diagnose query performance issues and-or optimize queries.
 To examine how your query is working, either embed the call inside your app (see: <<swift:troubleshooting-queries:::use-qe-app>>), or use it interactively within a `cblite` shell (see: <<swift:troubleshooting-queries:::use-qe-cblite>>).
@@ -75,7 +75,7 @@ cblite <your-database-name>.cblite2 // <.>
 ====
 
 
-[discrete#swift:troubleshooting-queries:::output]
+[#swift:troubleshooting-queries:::output]
 ==== Output
 The output from `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Query.html#/s:18CouchbaseLiteSwift5QueryC7explainSSyKF[explain()]` remains the same whether invoked by an app, or `cblite` -- see <<swift:troubleshooting-queries:::qe-output>> for an example of how it looks.
 
@@ -105,11 +105,11 @@ You can use this to identify potential issues and so optimize problematic querie
 <.> The query in JSON-string format, which you can copy-and-paste directly into the _cblite_ tool.
 
 
-[discrete#swift:troubleshooting-queries:::the-query-plan]
+[#swift:troubleshooting-queries:::the-query-plan]
 === The Query Plan
 
 
-[discrete#swift:troubleshooting-queries:::format]
+[#swift:troubleshooting-queries:::format]
 ==== Format
 The query plan section of the output displays a tabular form of the translated query's execution plan.
 It primarily shows how the data will be retrieved and, where appropriate, how it will be sorted for navigation and-or presentation purposes.
@@ -132,7 +132,7 @@ Something you may well be looking to optimize -- see <<swift:troubleshooting-que
 ====
 
 
-[discrete#swift:troubleshooting-queries:::ret-method]
+[#swift:troubleshooting-queries:::ret-method]
 ==== Retrieval Method
 The query optimizer will attempt to retrieve the requested data items as efficiently as possible, which generally will be by using one or more of the available indexes.
 The _retrieval method_ shows the approach decided upon by the optimizer -- see <<swift:troubleshooting-queries:::ret-meths>>.
@@ -162,7 +162,7 @@ When looking to optimize a query's retrieval method, consider whether:
 * You could use an existing index -- perhaps by restructuring the query to minimize wildcard use, or the reliance on functions that modify the query's interpretation of index keys (for example, 'lower')
 * You could reduce the data set being requested to minimize the query's footprint on the database
 
-[discrete#swift:troubleshooting-queries:::order-group]
+[#swift:troubleshooting-queries:::order-group]
 ==== Order and Group
 The `Use temp b-tree for` lines in the example indicate that the query requires sorting to cater for grouping and then sorting again to present the output results.
 Minimizing, if not eliminating, this ordering and re-ordering will obviously reduce the amount of time taken to process your query.
@@ -170,7 +170,7 @@ Minimizing, if not eliminating, this ordering and re-ordering will obviously red
 Ask "is the grouping and-or ordering absolutely necessary?": if it isn't, drop it or modify it to minimize its impact.
 
 
-[discrete#swift:troubleshooting-queries:::queries-and-indexes]
+[#swift:troubleshooting-queries:::queries-and-indexes]
 === Queries and Indexes
 
 Querying documents using a pre-existing database index is much faster because an index narrows down the set of documents to examine -- see: the xref:swift:query-troubleshooting.adoc[Query Troubleshooting] topic.
@@ -197,7 +197,7 @@ Less good is if the query must scan the whole index; although the compact nature
 Searches that begin with or rely upon an inequality with the primary key are inherently less effective than those using a primary key equality.
 
 
-[discrete#swift:troubleshooting-queries:::working-with-the-query-optimizer]
+[#swift:troubleshooting-queries:::working-with-the-query-optimizer]
 === Working with the Query Optimizer
 You may have noticed that sometimes a query runs faster on a second run, or after re-opening the database, or after deleting and recreating an index.
 This typically happens when SQL Query Optimizer has gathered sufficient stats to recognize a means of optimizing a sub-optimal query.
@@ -214,7 +214,7 @@ Then re-generate the Query Explain and note any improvements in optimization.
 They may not, in themselves, resolve the issue entirely; but they can provide a uesful guide toward further optimizing changes you could make.
 
 
-[discrete#swift:troubleshooting-queries:::use-like-based-queries]
+[#swift:troubleshooting-queries:::use-like-based-queries]
 === Wildcard and Like-based Queries
 
 Like-based searches can use the index(es) only if:
@@ -294,7 +294,7 @@ print(try query.explain());
 3|0|0| SEARCH TABLE kv_default AS _doc USING INDEX typeIndex (<expr>>? AND <expr><?)
 ----
 
-[discrete#swift:troubleshooting-queries:::use-functions-wisely]
+[#swift:troubleshooting-queries:::use-functions-wisely]
 === Use Functions Wisely
 
 Functions are a very useful tool in building queries, but be aware that they can impact whether the query-optimizer is able to use your index(es).
@@ -357,7 +357,7 @@ print(try query.explain());
 
 Knowing this, you can consider how you create the index; for example, using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Function.html#/s:18CouchbaseLiteSwift8FunctionC5loweryAA18ExpressionProtocol_pAaE_pFZ[lower()] when you create the index and then always using lowercase comparisons.
 
-[discrete#swift:troubleshooting-queries:::optimization-considerations]
+[#swift:troubleshooting-queries:::optimization-considerations]
 === Optimization Considerations
 
 Try to minimize the amount of data retrieved.
@@ -380,7 +380,7 @@ Consider Using Full Text Search instead of complex like or regex patterns -- see
 {empty}
 
 
-[discrete#swift:troubleshooting-queries:::related-content]
+[#swift:troubleshooting-queries:::related-content]
 === Related Content
 ++++
 <div class="card-row three-column-row">

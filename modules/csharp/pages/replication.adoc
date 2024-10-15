@@ -27,7 +27,7 @@ They demonstrate the basic concepts and approaches to using a feature.
 Use them as inspiration and adapt these examples to best practice when developing applications for your platform.
 
 
-[discrete#csharp:replication:::csharp:replication:::introduction]
+[#csharp:replication:::csharp:replication:::introduction]
 = Introduction
 
 
@@ -43,7 +43,7 @@ Your application runs a replicator (also referred to here as a client), which  w
 
 Subsequent sections provide additional details and examples for the main configuration options.
 
-[discrete#csharp:replication:::csharp:replication:::replication-concepts]
+[#csharp:replication:::csharp:replication:::replication-concepts]
 = Replication Concepts
 
 Couchbase Lite allows for one database for each application running on the mobile device.
@@ -61,10 +61,10 @@ Collection:: A specific collection or a set of collections is synced.
 As part of the syncing setup, the Gateway has to map the Couchbase Lite database to the database being synced on Capella.
 
 
-[discrete#csharp:replication:::csharp:replication:::replication-protocol]
+[#csharp:replication:::csharp:replication:::replication-protocol]
 = Replication Protocol
 
-[discrete#csharp:replication:::csharp:replication:::scheme]
+[#csharp:replication:::csharp:replication:::scheme]
 == Scheme
 
 Couchbase Mobile uses a replication protocol based on WebSockets for replication.
@@ -82,14 +82,14 @@ Sync Gateway 2.x+ will automatically use:
 
 You can find further information in our blog: https://blog.couchbase.com/data-replication-couchbase-mobile/[Introducing the Data Replication Protocol].
 
-[discrete#csharp:replication:::csharp:replication:::lbl-repl-ord]
+[#csharp:replication:::csharp:replication:::lbl-repl-ord]
 == Ordering
 
 To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
 So we don't recommend to rely on that when using the replication or database change listeners for example.
 
 
-[discrete#csharp:replication:::csharp:replication:::scopes-and-collections]
+[#csharp:replication:::csharp:replication:::scopes-and-collections]
 = Scopes and Collections
 
 Scopes and Collections allow you to organize your documents in Couchbase Lite.
@@ -104,7 +104,7 @@ During replication:
 
 . If Sync Gateway config is updated to add a collection to a scope that is being synchronized, the replication will ignore the collection. The added collection will not automatically sync until the Couchbase Lite replicator's configuration is updated.
 
-[discrete#csharp:replication:::csharp:replication:::default-collection]
+[#csharp:replication:::csharp:replication:::default-collection]
 == Default Collection
 
 When upgrading Couchbase Lite to 3.1, the existing documents in the database will be automatically migrated to the default collection.
@@ -119,7 +119,7 @@ image:couchbase-lite/current/_images/cbl-replication-scopes-collections-1.png[Sy
 image:couchbase-lite/current/_images/cbl-replication-scopes-collections-2.png[Sync Couchbase Lite default collection with default collection on Sync Gateway,500,,align="left"]
 
 
-[discrete#csharp:replication:::csharp:replication:::user-defined-collections]
+[#csharp:replication:::csharp:replication:::user-defined-collections]
 == User-Defined Collections
 
 The user-defined collections specified in the Couchbase Lite replicator setup must exist (and be identical) on the Sync Gateway side to sync.
@@ -132,7 +132,7 @@ image:couchbase-lite/current/_images/cbl-replication-scopes-collections-4.png["S
 
 
 // tag::replicator-config-sample[]
-[discrete#csharp:replication:::csharp:replication:::configuration-summary]
+[#csharp:replication:::csharp:replication:::configuration-summary]
 = Configuration Summary
 
 
@@ -235,7 +235,7 @@ Other options are available -- see: <<csharp:replication:::csharp:replication:::
 <.> Start the replicator  -- see: <<csharp:replication:::csharp:replication:::lbl-repl-start>>.
 
 
-[discrete#csharp:replication:::csharp:replication:::lbl-cfg-repl]
+[#csharp:replication:::csharp:replication:::lbl-cfg-repl]
 = Configure
 
 
@@ -257,7 +257,7 @@ In this section::
 |  <<csharp:replication:::csharp:replication:::lbl-repl-delta>>
 --
 
-[discrete#csharp:replication:::csharp:replication:::lbl-cfg-tgt]
+[#csharp:replication:::csharp:replication:::lbl-cfg-tgt]
 == Configure Target
 
 Use the
@@ -305,7 +305,7 @@ to ensure TLS encryption -- strongly recommended in production -- or `ws://`)
 [#lbl-network-interface]
 
 
-[discrete#csharp:replication:::csharp:replication:::lbl-cfg-sync]
+[#csharp:replication:::csharp:replication:::lbl-cfg-sync]
 == Sync Mode
 
 
@@ -350,7 +350,7 @@ Unless there is a solid use-case not to, always initiate a single `PUSH_AND_PULL
 This prevents the replications generating the same checkpoint `docID` resulting in multiple conflicts.
 --
 
-[discrete#csharp:replication:::csharp:replication:::lbl-cfg-keep-alive]
+[#csharp:replication:::csharp:replication:::lbl-cfg-keep-alive]
 == Retry Configuration
 
 
@@ -448,7 +448,7 @@ When necessary you can adjust any or all of those configurable values -- see: <<
 
 // END -- inclusion -- common-sgw-replication-cfg-retryadoc
 
-[discrete#csharp:replication:::csharp:replication:::lbl-user-auth]
+[#csharp:replication:::csharp:replication:::lbl-user-auth]
 == User Authorization
 
 // include::ROOT:partial$authorization.adoc[]
@@ -481,7 +481,7 @@ xref:sync-gateway:ROOT:refer/rest-api-admin.adoc#/user/post\__db___user_[`+POST 
 endpoint on the Admin REST API.
 
 
-[discrete#csharp:replication:::csharp:replication:::lbl-svr-auth]
+[#csharp:replication:::csharp:replication:::lbl-svr-auth]
 == Server Authentication
 
 Define the credentials your app (the client) is expecting to receive from the Sync Gateway (the server) in order to ensure it is prepared to continue with the sync.
@@ -562,12 +562,12 @@ thisConfig.PinnedServerCertificate =
 This all assumes that you have configured the Sync Gateway to provide the appropriate SSL certificates, and have included the appropriate certificate in your app bundle -- for more on this see: <<csharp:replication:::csharp:replication:::lbl-cert-pinning>>.
 
 
-[discrete#csharp:replication:::csharp:replication:::lbl-client-auth]
+[#csharp:replication:::csharp:replication:::lbl-client-auth]
 == Client Authentication
 
 There are two ways to authenticate from a Couchbase Lite client: <<csharp:replication:::csharp:replication:::basic-authentication>> or <<csharp:replication:::csharp:replication:::session-authentication>>.
 
-[discrete#csharp:replication:::csharp:replication:::basic-authentication]
+[#csharp:replication:::csharp:replication:::basic-authentication]
 === Basic Authentication
 
 You can provide a user name and password to the basic authenticator class method.
@@ -597,7 +597,7 @@ replicator.Start();
 ----
 ====
 
-[discrete#csharp:replication:::csharp:replication:::session-authentication]
+[#csharp:replication:::csharp:replication:::session-authentication]
 === Session Authentication
 
 Session authentication is another way to authenticate with Sync Gateway.
@@ -633,7 +633,7 @@ replicator.Start();
 ----
 ====
 
-[discrete#csharp:replication:::csharp:replication:::lbl-repl-hdrs]
+[#csharp:replication:::csharp:replication:::lbl-repl-hdrs]
 == Custom Headers
 
 Custom headers can be set on the configuration object.
@@ -665,12 +665,12 @@ var config = new ReplicatorConfiguration(target)
 
 ====
 
-[discrete#csharp:replication:::csharp:replication:::lbl-repl-fltrs]
+[#csharp:replication:::csharp:replication:::lbl-repl-fltrs]
 == Replication Filters
 
 Replication Filters allow you to have quick control over the documents stored as the result of a push and/or pull replication.
 
-[discrete#csharp:replication:::csharp:replication:::push-filter]
+[#csharp:replication:::csharp:replication:::push-filter]
 === Push Filter
 
 The push filter allows an app to push a subset of a database to the server.
@@ -710,7 +710,7 @@ replicator.Start();
 Otherwise, long running functions would slow down the replicator considerably.
 Furthermore, your callback should not make assumptions about what thread it is being called on.
 
-[discrete#csharp:replication:::csharp:replication:::pull-filter]
+[#csharp:replication:::csharp:replication:::pull-filter]
 === Pull Filter
 
 The pull filter gives an app the ability to validate documents being pulled, and skip ones that fail.
@@ -765,7 +765,7 @@ Further updates to the document stored on Couchbase Server would not be received
 For more information, see <<csharp:replication:::csharp:replication:::auto-purge-on-revoke,Auto Purge on Revoke>>.
 ****
 
-[discrete#csharp:replication:::csharp:replication:::lbl-repl-chan]
+[#csharp:replication:::csharp:replication:::lbl-repl-chan]
 == Channels
 
 By default, Couchbase Lite gets all the channels to which the configured user account has access.
@@ -779,19 +779,19 @@ to specify which data to pull for each user.
 Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's replicator configuration object.
 In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
 
-[discrete#csharp:replication:::csharp:replication:::anchor-auto-purge-on-revoke]
+[#csharp:replication:::csharp:replication:::anchor-auto-purge-on-revoke]
 == Auto-purge on Channel Access Revocation
 
 [CAUTION]
 --
 This is a Breaking Change at 3.0
 --
-[discrete#csharp:replication:::csharp:replication:::new-outcome]
+[#csharp:replication:::csharp:replication:::new-outcome]
 === New outcome
 
 By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user’s other channels) are auto-purged from the local database (in devices belonging to the user).
 
-[discrete#csharp:replication:::csharp:replication:::prior-outcome]
+[#csharp:replication:::csharp:replication:::prior-outcome]
 === Prior outcome
 
 _Previously these documents remained in the local database_
@@ -800,7 +800,7 @@ Prior to this release, CBL auto-purged only in the case when the user loses acce
 Now, in addition to 2.x auto purge, Couchbase Lite will also auto-purges the docs when the user loses access to the doc via channel access revocation.
 This feature is enabled by default, but an opt-out is available.
 
-[discrete#csharp:replication:::csharp:replication:::behavior]
+[#csharp:replication:::csharp:replication:::behavior]
 === Behavior
 
 Users may lose access to channels in a number of ways:
@@ -887,7 +887,7 @@ Document changes subsequent to the channel reassignment will be pushed up as usu
 |===
 
 
-[discrete#csharp:replication:::csharp:replication:::config]
+[#csharp:replication:::csharp:replication:::config]
 === Config
 
 Auto-purge behavior is controlled primarily by the ReplicationConfiguration option https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_EnableAutoPurge[EnableAutoPurge].
@@ -916,7 +916,7 @@ thisConfig.EnableAutoPurge = false;  <1>
 
 <.> Here we have opted to turn off the auto purge behavior. By default auto purge is enabled.
 
-[discrete#csharp:replication:::csharp:replication:::overrides]
+[#csharp:replication:::csharp:replication:::overrides]
 === Overrides
 Where necessary, clients can override the default auto-purge behavior.
 This can be done either by setting https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_EnableAutoPurge[EnableAutoPurge] to false, or for finer control by applying pull-filters -- see: <<csharp:replication:::csharp:replication:::tbl-pull-filters>> and <<csharp:replication:::csharp:replication:::lbl-repl-fltrs>>
@@ -948,7 +948,7 @@ a|Doc remains in local database
 |===
 
 
-[discrete#csharp:replication:::csharp:replication:::lbl-repl-delta]
+[#csharp:replication:::csharp:replication:::lbl-repl-delta]
 == Delta Sync
 
 // tag::rep-delta-sync-concept[]
@@ -971,14 +971,14 @@ replications automatically *enable* delta sync.
 // end::rep-delta-sync-concept[]
 
 
-[discrete#csharp:replication:::csharp:replication:::lbl-init-repl]
+[#csharp:replication:::csharp:replication:::lbl-init-repl]
 = Initialize
 
 
 In this section::
 <<csharp:replication:::csharp:replication:::lbl-repl-start>>  | <<csharp:replication:::csharp:replication:::lbl-repl-ckpt>>
 
-[discrete#csharp:replication:::csharp:replication:::lbl-repl-start]
+[#csharp:replication:::csharp:replication:::lbl-repl-start]
 == Start Replicator
 
 
@@ -1011,7 +1011,7 @@ thisReplicator.Start(); <2>
 <.> Start the replicator
 
 
-[discrete#csharp:replication:::csharp:replication:::lbl-repl-ckpt]
+[#csharp:replication:::csharp:replication:::lbl-repl-ckpt]
 == Checkpoint Starts
 
 Replicators use https://docs.couchbase.com/couchbase-lite/current/csharp/refer-glossary.html#checkpoint[checkpoints] to keep track of documents sent to the target database.
@@ -1049,7 +1049,7 @@ if (resetCheckpointRequired_Example) {
 The default `false` is shown here for completeness only; it is unlikely you would explicitly use it in practice.
 
 
-[discrete#csharp:replication:::csharp:replication:::lbl-repl-mon]
+[#csharp:replication:::csharp:replication:::lbl-repl-mon]
 = Monitor
 
 
@@ -1064,7 +1064,7 @@ This enables you to know, for example, when the replication is actively transfer
 
 You can also choose to monitor document changes -- see: <<csharp:replication:::csharp:replication:::lbl-repl-evnts>>.
 
-[discrete#csharp:replication:::csharp:replication:::lbl-repl-chng]
+[#csharp:replication:::csharp:replication:::lbl-repl-chng]
 == Change Listeners
 Use this to monitor changes and to inform on sync progress; this is an optional step.
 You can add and a replicator change listener at any point; it will report changes from the point it is registered.
@@ -1078,7 +1078,7 @@ You will then be asynchronously notified of state changes.
 You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_RemoveChangeListener_Couchbase_Lite_ListenerToken_[RemoveChangeListener(ListenerToken)].
 
 
-[discrete#csharp:replication:::csharp:replication:::lbl-repl-status]
+[#csharp:replication:::csharp:replication:::lbl-repl-status]
 == Replicator Status
 
 You can use the
@@ -1143,7 +1143,7 @@ _thisDatabase.Close();
 ====
 
 
-[discrete#csharp:replication:::csharp:replication:::lbl-repl-states]
+[#csharp:replication:::csharp:replication:::lbl-repl-states]
 === Replication States
 <<csharp:replication:::csharp:replication:::tbl-states>> shows the different states, or activity levels, reported in the API; and the meaning of each.
 
@@ -1173,7 +1173,7 @@ The `IDLE` state is only used in continuous replications.
 NOTE: The replication change object also has properties to track the progress (`change.status.completed` and `change.status.total`).
 Since the replication occurs in batches the total count can vary through the course of a replication.
 
-[discrete#csharp:replication:::csharp:replication:::replication-status-and-app-life-cycle]
+[#csharp:replication:::csharp:replication:::replication-status-and-app-life-cycle]
 === Replication Status and App Life Cycle
 
 Couchbase Lite doesn't react to OS backgrounding or foregrounding events and replication(s) will continue running as long as the remote system does not terminate the connection and the app does not terminate.
@@ -1181,7 +1181,7 @@ It is generally recommended to stop replications before going into the backgroun
 
 
 // begin inclusion of document changes text
-[discrete#csharp:replication:::csharp:replication:::lbl-repl-evnts]
+[#csharp:replication:::csharp:replication:::lbl-repl-evnts]
 == Monitor Document Changes
 
 You can choose to register for document updates during a replication.
@@ -1239,14 +1239,14 @@ replicator.RemoveChangeListener(token);
 
 ====
 
-[discrete#csharp:replication:::csharp:replication:::document-access-removal-behavior]
+[#csharp:replication:::csharp:replication:::document-access-removal-behavior]
 === Document Access Removal Behavior
 
 When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
 
 // end inclusion of document changes text
 
-[discrete#csharp:replication:::csharp:replication:::lbl-repl-pend]
+[#csharp:replication:::csharp:replication:::lbl-repl-pend]
 == Documents Pending Push
 
 TIP: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_IsDocumentPending_System_String_[Replicator.IsDocumentPending()] is quicker and more efficient.
@@ -1309,7 +1309,7 @@ This is a snapshot and may have changed by the time the response is received and
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_IsDocumentPending_System_String_[Replicator.IsDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
 
-[discrete#csharp:replication:::csharp:replication:::lbl-repl-stop]
+[#csharp:replication:::csharp:replication:::lbl-repl-stop]
 = Stop
 
 
@@ -1342,7 +1342,7 @@ thisReplicator.Stop();  <1>
 It will stop any active <<csharp:replication:::csharp:replication:::lbl-repl-chng,change listener>> once the replication is stopped.
 
 
-[discrete#csharp:replication:::csharp:replication:::lbl-nwk-errs]
+[#csharp:replication:::csharp:replication:::lbl-nwk-errs]
 = Error Handling
 
 
@@ -1396,7 +1396,7 @@ The following error codes are considered temporary by the Couchbase Lite replica
 * `1001`: DNS resolution error
 
 
-[discrete#csharp:replication:::csharp:replication:::load-balancers]
+[#csharp:replication:::csharp:replication:::load-balancers]
 = Load Balancers
 
 
@@ -1408,7 +1408,7 @@ By default, the WebSocket protocol uses compression to optimize for speed and ba
 The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway:ROOT:refer/config-properties.adoc#replicator_compression[`replicator_compression`]).
 
 
-[discrete#csharp:replication:::csharp:replication:::lbl-cert-pinning]
+[#csharp:replication:::csharp:replication:::lbl-cert-pinning]
 = Certificate Pinning
 
 Couchbase Lite for C#.Net supports certificate pinning.
@@ -1473,11 +1473,11 @@ The replication should now run successfully over https/wss with certificate pinn
 For more on pinning certificates see the blog entry: https://blog.couchbase.com/certificate-pinning-android-with-couchbase-mobile/[Certificate Pinning with Couchbase Mobile]
 
 
-[discrete#csharp:replication:::csharp:replication:::lbl-trouble]
+[#csharp:replication:::csharp:replication:::lbl-trouble]
 = Troubleshooting
 
 
-[discrete#csharp:replication:::csharp:replication:::logs]
+[#csharp:replication:::csharp:replication:::logs]
 == Logs
 As always, when there is a problem with replication, logging is your friend.
 You can increase the log output for activity related to replication with Sync Gateway -- see <<csharp:replication:::csharp:replication:::ex-logs>>.
@@ -1506,7 +1506,7 @@ Database.SetLogLevel(LogDomain.Network, LogLevel.Verbose);
 
 For more on troubleshooting with logs, see: <<csharp:troubleshooting-logs:::,Using Logs>>.
 
-[discrete#csharp:replication:::csharp:replication:::authentication-errors]
+[#csharp:replication:::csharp:replication:::authentication-errors]
 == Authentication Errors
 If Sync Gateway is configured with a self signed certificate but your app points to a `ws` scheme instead of `wss` you will encounter an error with status code `11006` -- see: <<csharp:replication:::csharp:replication:::ex-11006>>
 
@@ -1533,7 +1533,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 ====
 
 
-[discrete#csharp:replication:::csharp:replication:::related-content]
+[#csharp:replication:::csharp:replication:::related-content]
 = Related Content
 ++++
 <div class="card-row three-column-row">

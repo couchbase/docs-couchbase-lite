@@ -22,7 +22,7 @@ Related Content -- xref:java:querybuilder.adoc#lbl-predquery[Predictive Queries]
 
 NOTE: The examples used here are based on the _Travel Sample_ app and data introduced in the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial
 
-[discrete#java:querybuilder:::introduction]
+[#java:querybuilder:::introduction]
 === Introduction
 
 Couchbase Lite for Java provides two ways to build and run database queries; the QueryBuilder API described in this topic and xref:java:query-n1ql-mobile.adoc[{sqlpp} for Mobile].
@@ -73,7 +73,7 @@ a| The criteria used to order the items in the result set
 TIP: We recommend working through the query section of the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial as a good way to build your skills in this area.
 
 
-[discrete#java:querybuilder:::lbl-select]
+[#java:querybuilder:::lbl-select]
 === SELECT statement
 
 --
@@ -86,7 +86,7 @@ Related::
 Use the `SELECT` statement to specify which properties you want to return from the queried documents.
 You can opt to retrieve entire documents, or just the specific properties you need.
 
-[discrete#java:querybuilder:::lbl-return-all]
+[#java:querybuilder:::lbl-return-all]
 ==== Return All Properties
 Use the `SelectResult.all()` method to return all the properties of selected documents -- see: <<java:querybuilder:::ex-select-all>>.
 
@@ -155,7 +155,7 @@ The query.execute statement returns the results in a dictionary, where the key i
 See: <<java:querybuilder:::lbl-resultsets>> for more on processing query results.
 
 
-[discrete#java:querybuilder:::lbl-return-properties]
+[#java:querybuilder:::lbl-return-properties]
 ==== Return Selected Properties
 To access only specific properties, specify a comma-separated list of `SelectResult` expressions, one for each property, in the select statement of your query  -- see: <<java:querybuilder:::ex-select-properties>>
 
@@ -223,7 +223,7 @@ The `query.execute` statement returns one or more key-value pairs, one for each 
 See: <<java:querybuilder:::lbl-resultsets>> for more on processing query results.
 
 
-[discrete#java:querybuilder:::lbl-where]
+[#java:querybuilder:::lbl-where]
 === WHERE statement
 
 In this section::
@@ -238,7 +238,7 @@ The select statement takes in an `Expression`.
 You can chain any number of Expressions in order to implement sophisticated filtering capabilities.
 
 
-[discrete#java:querybuilder:::lbl-comp-ops]
+[#java:querybuilder:::lbl-comp-ops]
 ==== Comparison Operators
 The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Expression.html[Expression Comparators] can be used in the WHERE statement to specify on which property to match documents.
 In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
@@ -288,12 +288,12 @@ try (ResultSet resultSet = query.execute()) {
 ====
 
 
-[discrete#java:querybuilder:::lbl-coll-ops]
+[#java:querybuilder:::lbl-coll-ops]
 ==== Collection Operators
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ArrayFunction.html[ArrayFunction Collection Operators] are useful to check if a given value is present in an array.
 
 
-[discrete#java:querybuilder:::contains-operator]
+[#java:querybuilder:::contains-operator]
 ===== CONTAINS Operator
 The following example uses the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ArrayFunction.html[ArrayFunction]` to find documents where the `public_likes` array property contains a value equal to "Armani Langworth".
 
@@ -328,7 +328,7 @@ try (ResultSet results = query.execute()) {
 ----
 
 
-[discrete#java:querybuilder:::in-operator]
+[#java:querybuilder:::in-operator]
 ===== IN Operator
 
 The `IN` operator is useful when you need to explicitly list out the values to test against.
@@ -351,14 +351,14 @@ Query query = QueryBuilder.select(SelectResult.all())
 ----
 
 
-[discrete#java:querybuilder:::lbl-like-ops]
+[#java:querybuilder:::lbl-like-ops]
 ==== Like Operator
 In this section::
 <<java:querybuilder:::lbl-string-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<java:querybuilder:::lbl-wild-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<java:querybuilder:::lbl-wild-chars>>
 
-[discrete#java:querybuilder:::lbl-string-match]
+[#java:querybuilder:::lbl-string-match]
 ===== String Matching
 The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Expression.html#like-com.couchbase.lite.Expression-[Like()] operator can be used for string matching -- see <<java:querybuilder:::ex-like-case-insensitive>>
 
@@ -402,7 +402,7 @@ try (ResultSet resultSet = query.execute()) {
 *Note* the use of `Function.lower` to transform `name` values to the same case as the literal comparator.
 
 
-[discrete#java:querybuilder:::lbl-wild-match]
+[#java:querybuilder:::lbl-wild-match]
 ===== Wildcard Match
 
 We can use `%` sign within a `like` expression to do a wildcard match against zero or more characters.
@@ -446,7 +446,7 @@ try (ResultSet resultSet = query.execute()) {
 ====
 
 
-[discrete#java:querybuilder:::lbl-wild-chars]
+[#java:querybuilder:::lbl-wild-chars]
 ===== Wildcard Character Match
 
 We can use an `_` sign within a like expression to do a wildcard match against a single character.
@@ -486,7 +486,7 @@ try (ResultSet resultSet = query.execute()) {
 ====
 
 
-[discrete#java:querybuilder:::lbl-regex-ops]
+[#java:querybuilder:::lbl-regex-ops]
 ==== Regex Operator
 
 Similar to the wildcards in `like` expressions, `regex` based pattern matching allow you to introduce an element of fuzziness in your search string -- see the code shown in <<java:querybuilder:::ex-regex>>.
@@ -530,7 +530,7 @@ try (ResultSet resultSet = query.execute()) {
 TIP: For more on the regex spec used by pass:q,a[Couchbase{nbsp}Lite] see http://www.cplusplus.com/reference/regex/ECMAScript/[cplusplus regex reference page^]
 
 
-[discrete#java:querybuilder:::lbl-deleted-ops]
+[#java:querybuilder:::lbl-deleted-ops]
 ==== Deleted Document
 You can query documents that have been deleted (tombstones) footnote:fn2x5[Starting in Couchbase Lite 2.5] as shown in <<java:querybuilder:::ex-del-qry>>.
 
@@ -558,7 +558,7 @@ Query query = QueryBuilder
 ====
 
 
-[discrete#java:querybuilder:::lbl-join]
+[#java:querybuilder:::lbl-join]
 === JOIN statement
 The JOIN clause enables you to select data from multiple documents that have been linked by criteria specified in the JOIN statement.
 For example to combine airline details with route details, linked by the airline id -- see <<java:querybuilder:::ex-join>>.
@@ -600,7 +600,7 @@ try (ResultSet resultSet = query.execute()) {
 ====
 
 
-[discrete#java:querybuilder:::lbl-group]
+[#java:querybuilder:::lbl-group]
 === GROUP BY statement
 You can perform further processing on the data in your result set before the final projection is generated.
 
@@ -668,7 +668,7 @@ There are 123 airports on the America/Denver timezone located in United States a
 --
 
 
-[discrete#java:querybuilder:::lbl-order]
+[#java:querybuilder:::lbl-order]
 === ORDER BY statement
 
 It is possible to sort the results of a query based on a given expression result -- see <<java:querybuilder:::ex-orderby-qry>>
@@ -720,7 +720,7 @@ Avignon
 ----
 
 
-[discrete#java:querybuilder:::lbl-date-time]
+[#java:querybuilder:::lbl-date-time]
 === Date/Time Functions
 
 
@@ -744,7 +744,7 @@ The input for this is a numeric value representing milliseconds since the Unix e
 The end result will be an expression (with string content representing the date and time as a UTC ISO 8601 string) that can be further input into the query builder.
 
 
-[discrete#java:querybuilder:::lbl-resultsets]
+[#java:querybuilder:::lbl-resultsets]
 === Result Sets
 In this section::
 <<java:querybuilder:::lbl-process-resultset>>{nbsp}{nbsp}|{nbsp}{nbsp}
@@ -755,7 +755,7 @@ In this section::
 <<java:querybuilder:::lbl-pagination>>
 
 
-[discrete#java:querybuilder:::lbl-process-resultset]
+[#java:querybuilder:::lbl-process-resultset]
 ==== Processing
 
 This section shows how to handle the returned result sets for different types of `SELECT` statements.
@@ -780,10 +780,10 @@ The composition of each row is determined by the combination of `SelectResult` e
 To unpack these result sets you need to iterate this array.
 
 
-[discrete#java:querybuilder:::lbl-all-sel]
+[#java:querybuilder:::lbl-all-sel]
 ==== Select All Properties
 
-[discrete#java:querybuilder:::query]
+[#java:querybuilder:::query]
 ===== Query
 The `Select` statement for this type of query, returns all document properties for each document matching the query criteria -- see <<java:querybuilder:::ex-all-qry>>
 
@@ -807,7 +807,7 @@ Query listQuery = QueryBuilder.select(SelectResult.all())
 ====
 
 
-[discrete#java:querybuilder:::result-set-format]
+[#java:querybuilder:::result-set-format]
 ===== Result Set Format
 The result set returned by queries using `SelectResult.all` is an array of dictionary objects -- one for each document matching the query criteria.
 
@@ -851,7 +851,7 @@ For each result object, the key is the database name and the 'value' is a dictio
 
 ====
 
-[discrete#java:querybuilder:::result-set-access]
+[#java:querybuilder:::result-set-access]
 ===== Result Set Access
 
 In this case access the retrieved document properties by converting each row's value, in turn, to a dictionary -- as shown in <<java:querybuilder:::ex-all-acc>>.
@@ -899,10 +899,10 @@ You can add this dictionary to an array of returned matches, for processing else
 <.> Alternatively you can access the document properties here, by using the property names as keys to the dictionary object.
 
 
-[discrete#java:querybuilder:::lbl-specific-sel]
+[#java:querybuilder:::lbl-specific-sel]
 ==== Select Specific Properties
 
-[discrete#java:querybuilder:::query-2]
+[#java:querybuilder:::query-2]
 ===== Query
 Here we use `SelectResult.expression(property("<property-name>")))` to specify the document properties we want our query to return -- see: <<java:querybuilder:::ex-specific-qry>>.
 
@@ -934,7 +934,7 @@ Query listQuery =
 ====
 
 
-[discrete#java:querybuilder:::result-set-format-2]
+[#java:querybuilder:::result-set-format-2]
 ===== Result Set Format
 The result set returned when selecting only specific document properties is an array of dictionary objects -- one for each document matching the query criteria.
 
@@ -964,7 +964,7 @@ Each result object comprises a key-value pair for each selected document propert
 <.> The result for the next document matching the query criteria.
 ====
 
-[discrete#java:querybuilder:::result-set-access-2]
+[#java:querybuilder:::result-set-access-2]
 ===== Result Set Access
 Access the retrieved properties by converting each row into a dictionary -- as shown in <<java:querybuilder:::ex-specific-acc>>.
 
@@ -1012,10 +1012,10 @@ try (ResultSet resultSet = listQuery.execute()) {
 ====
 
 
-[discrete#java:querybuilder:::lbl-id-sel]
+[#java:querybuilder:::lbl-id-sel]
 ==== Select Document Id Only
 
-[discrete#java:querybuilder:::query-3]
+[#java:querybuilder:::query-3]
 ===== Query
 You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time -- see: <<java:querybuilder:::ex-id-qry>>.
 
@@ -1040,7 +1040,7 @@ Query listQuery =
 ====
 
 
-[discrete#java:querybuilder:::result-set-format-3]
+[#java:querybuilder:::result-set-format-3]
 ===== Result Set Format
 The result set returned by queries using a SelectResult expression of the form `SelectResult.expression(meta.id)` is an array of dictionary objects -- one for each document matching the query criteria.
 Each result object has `id` as the key and the ID value as its value -- -see <<java:querybuilder:::ex-id-rtn>>.
@@ -1063,7 +1063,7 @@ Each result object has `id` as the key and the ID value as its value -- -see <<j
 ----
 ====
 
-[discrete#java:querybuilder:::result-set-access-3]
+[#java:querybuilder:::result-set-access-3]
 ===== Result Set Access
 
 In this case, access the required document's properties by unpacking the `id` and using it to get the document from the database -- see: <<java:querybuilder:::ex-id-acc>>.
@@ -1101,11 +1101,11 @@ try (ResultSet rs = listQuery.execute()) {
 <.> Extract the Id value from the dictionary and use it to get the document from the database
 
 
-[discrete#java:querybuilder:::lbl-count-sel]
+[#java:querybuilder:::lbl-count-sel]
 ==== Select Count-only
 
 
-[discrete#java:querybuilder:::query-4]
+[#java:querybuilder:::query-4]
 ===== Query
 
 .Query selecting a Count-only
@@ -1130,7 +1130,7 @@ Query listQuery = QueryBuilder.select(
 
 <.> The alias name, `mycount`, is used to access the count value.
 
-[discrete#java:querybuilder:::result-set-format-4]
+[#java:querybuilder:::result-set-format-4]
 ===== Result Set Format
 The result set returned by a count such as `Select.expression(Function.count(Expression.all)))` is a key-value pair.
 The key is the count name, as defined using `SelectResult.as` -- see: <<java:querybuilder:::ex-count-rtn>> for the format and <<java:querybuilder:::ex-count-qry>> for the query.
@@ -1150,7 +1150,7 @@ The key is the count name, as defined using `SelectResult.as` -- see: <<java:que
 <.> The key-value pair returned by a count.
 ====
 
-[discrete#java:querybuilder:::result-set-access-4]
+[#java:querybuilder:::result-set-access-4]
 ===== Result Set Access
 
 Access the count using its alias name (`mycount` in this example) -- see <<java:querybuilder:::ex-count-acc>>
@@ -1190,7 +1190,7 @@ try (ResultSet resultSet = listQuery.execute()) {
 
 <.> Get the count using the `SelectResult.as` alias, which is used as its key.
 
-[discrete#java:querybuilder:::lbl-pagination]
+[#java:querybuilder:::lbl-pagination]
 ==== Handling Pagination
 One way to handle pagination in high-volume queries is to retrieve the results in batches.
 Use the `limit` and `offset` feature, to return a defined number of results starting from a given offset -- see: <<java:querybuilder:::ex-pagination>>.
@@ -1230,7 +1230,7 @@ Query listQuery =
 TIP: For more on using the QueryBuilder API, see our blog: https://blog.couchbase.com/sql-for-json-query-interface-couchbase-mobile/[Introducing the Query Interface in Couchbase Mobile]
 
 
-[discrete#java:querybuilder:::json-result-sets]
+[#java:querybuilder:::json-result-sets]
 === JSON Result Sets
 
 Couchbase Lite for Java provides a convenience API to convert query results to JSON strings.
@@ -1989,7 +1989,7 @@ If your query selects a sub-set of available properties then the JSON format wil
 ----
 
 
-[discrete#java:querybuilder:::lbl-predquery]
+[#java:querybuilder:::lbl-predquery]
 === Predictive Query
 
 .Enterprise Edition only
@@ -2010,7 +2010,7 @@ To run a predictive query with a model as the one shown above, you must implemen
 . <<Deregister-the-model,Deregister the Model>>
 
 
-[discrete#java:querybuilder:::integrate-the-model]
+[#java:querybuilder:::integrate-the-model]
 ==== Integrate the Model
 
 To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `predict()` -- see: <<java:querybuilder:::int-pred-model>>.
@@ -2117,7 +2117,7 @@ The input and output of the predictive model is a `DictionaryObject`.
 Therefore, the supported data type will be constrained by the data type that the `DictionaryObject` supports.
 
 
-[discrete#java:querybuilder:::register-the-model]
+[#java:querybuilder:::register-the-model]
 ==== Register the Model
 
 To register the model you must create a new instance and pass it to the `Database.prediction.registerModel` static method.
@@ -2141,7 +2141,7 @@ Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel())
 ====
 
 
-[discrete#java:querybuilder:::create-an-index]
+[#java:querybuilder:::create-an-index]
 ==== Create an Index
 
 Creating an index for a predictive query is highly recommended.
@@ -2152,7 +2152,7 @@ There are two types of indexes for predictive queries:
 * <<java:querybuilder:::value-index,Value Index>>
 * <<java:querybuilder:::predictive-index,Predictive Index>>
 
-[discrete#java:querybuilder:::value-index]
+[#java:querybuilder:::value-index]
 ===== Value Index
 
 The code below creates a value index from the "label" value of the prediction result.
@@ -2179,7 +2179,7 @@ collection.createIndex(
 ====
 
 
-[discrete#java:querybuilder:::predictive-index]
+[#java:querybuilder:::predictive-index]
 ===== Predictive Index
 
 Predictive Index is a new index type used for predictive query.
@@ -2210,7 +2210,7 @@ collection.createIndex("predictive-index-image-classifier", index);
 ====
 
 
-[discrete#java:querybuilder:::run-a-prediction-query]
+[#java:querybuilder:::run-a-prediction-query]
 ==== Run a Prediction Query
 
 The code below creates a query that calls the prediction function to return the "label" value for the first 10 results in the database.
@@ -2252,7 +2252,7 @@ try (ResultSet result = query.execute()) {
 NOTE: The null value returned by the prediction method will be interpreted as MISSING value in queries.
 
 
-[discrete#java:querybuilder:::deregister-the-model]
+[#java:querybuilder:::deregister-the-model]
 ==== Deregister the Model
 
 To deregister the model you must call the `Database.prediction.unregisterModel` static method.
@@ -2276,7 +2276,7 @@ Database.prediction.unregisterModel("ImageClassifier");
 ====
 
 
-[discrete#java:querybuilder:::related-content]
+[#java:querybuilder:::related-content]
 === Related Content
 ++++
 <div class="card-row three-column-row">

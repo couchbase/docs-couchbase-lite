@@ -31,7 +31,7 @@ This *may* include Server SDK encrypted fields
 --
 
 
-[discrete#c:field-level-encryption:::overview]
+[#c:field-level-encryption:::overview]
 == Overview
 
 
@@ -46,7 +46,7 @@ The client-side encryption is compatible with the Couchbase server SDK field-lev
 https://docs.couchbase.com/python-sdk/current/concept-docs/encryption.html#format
 
 
-[discrete#c:field-level-encryption:::encryptable-type]
+[#c:field-level-encryption:::encryptable-type]
 == Encryptable Type
 
 
@@ -78,7 +78,7 @@ The key for the value can be either of the following:
 ====
 
 
-[discrete#c:field-level-encryption:::replicator-decryption]
+[#c:field-level-encryption:::replicator-decryption]
 == Replicator Decryption
 
 
@@ -87,7 +87,7 @@ Pull replication detects `encryptable` values before saving them to the local da
 On successful decryption the replicator saves the property in encryptable dictionary format (removing the `encrypted$` prefix) -- see: <<c:field-level-encryption:::ex-encryptable-type>>.
 
 
-[discrete#c:field-level-encryption:::replicator-encryption]
+[#c:field-level-encryption:::replicator-encryption]
 == Replicator Encryption
 
 
@@ -96,7 +96,7 @@ Push replication detects `encryptable` values before pushing them to the remote 
 On successful encryption the replicator transforms the property into a format compatible with Couchbase Server SDK -- see: <<c:field-level-encryption:::ex-server-encryptable>>.
 
 
-[discrete#c:field-level-encryption:::server-sdk-compatibility]
+[#c:field-level-encryption:::server-sdk-compatibility]
 == Server SDK compatibility
 
 
@@ -149,11 +149,11 @@ Its directory structure differs CBL's encryptable dictionary when serializing th
 
 ====
 
-[discrete#c:field-level-encryption:::callback-definition]
+[#c:field-level-encryption:::callback-definition]
 == Callback Definition
 
 
-[discrete#c:field-level-encryption:::lbl-encryption-callback]
+[#c:field-level-encryption:::lbl-encryption-callback]
 === Encryption
 
 Provide an encryption callback function https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#gab116a23be8bd24b86349379f370ef60c[CBLPropertyEncryptor] to encrypt encryptable properties during replication.
@@ -163,7 +163,7 @@ See <<c:field-level-encryption:::ex-get-att>> for an example encryptor callback 
 
 If you return a null slice the replicator will fail and log a crypto error message.
 
-[discrete#c:field-level-encryption:::lbl-decryption-callback]
+[#c:field-level-encryption:::lbl-decryption-callback]
 === Decryption
 
 Provide a decryption callback function https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga24a60a3d6f9816e1d32464cc31a15c0c[CBLPropertyDecryptor] to decrypt any encryptable properties.
@@ -207,7 +207,7 @@ static FLSliceResult property_decryptor(void* context, FLString documentID, FLDi
 ----
 ====
 
-[discrete#c:field-level-encryption:::callback-configuration]
+[#c:field-level-encryption:::callback-configuration]
 == Callback Configuration
 
 You register the callback function for use by declaring them in the replicator configuration using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#ab731bf9f140158d6967c1af645d8744a[propertyEncryptor()] and-or https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#ab6a0d9e0830755d284039018a09c27d6[propertyDecryptor()] -- see: <<c:field-level-encryption:::ex-callback-config>>
@@ -275,7 +275,7 @@ static FLSliceResult property_decryptor(void* context, FLString documentID, FLDi
 // :param-tags!:
 
 
-[discrete#c:field-level-encryption:::querying-encryptables]
+[#c:field-level-encryption:::querying-encryptables]
 == Querying Encryptables
 
 
@@ -300,32 +300,32 @@ FROM db WHERE ssn.value = "123-45-6789"
 ====
 
 
-[discrete#c:field-level-encryption:::constraints]
+[#c:field-level-encryption:::constraints]
 == Constraints
 
 
-[discrete#c:field-level-encryption:::nesting]
+[#c:field-level-encryption:::nesting]
 === Nesting
 In the case of nested `encryptable` types, the replicator only encrypts the outer `encryptable`.
 
-[discrete#c:field-level-encryption:::arrays]
+[#c:field-level-encryption:::arrays]
 === Arrays
 For compatibility with Server SDKS, encryptables are not supported within arrays.
 
 The push replicator should detect and report an error if an encrypted property is found in an array.
 
-[discrete#c:field-level-encryption:::blobs]
+[#c:field-level-encryption:::blobs]
 === Blobs
 Encrypting blob’s content is not supported.
 
 Where a Blob as a Fleece dictionary is specified in the encrypted property value, only the dictionary is encrypted; *not* the blob’s content.
 
-[discrete#c:field-level-encryption:::delta-sync]
+[#c:field-level-encryption:::delta-sync]
 === Delta Sync
 Delta Sync will be disabled and a warning message logged when `propertyEncryption` is configured.
 
 
-[discrete#c:field-level-encryption:::brute-force-susceptibility]
+[#c:field-level-encryption:::brute-force-susceptibility]
 === Brute-Force Susceptibility
 
 Any document with simple encrypted fields (for example, fields containing a subset of values) may be brute-force computed with all possible values using the document revId.
@@ -379,7 +379,7 @@ CBLEncryptable_Release(nonce);
 ====
 
 
-[discrete#c:field-level-encryption:::related-content]
+[#c:field-level-encryption:::related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">

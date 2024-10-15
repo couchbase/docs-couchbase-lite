@@ -19,7 +19,7 @@ This can result in a delay before the database is usable.
 --
 
 
-[discrete#android:upgrade:::3-2-0-upgrade]
+[#android:upgrade:::3-2-0-upgrade]
 == {major}.{minor}.{base}{empty} Upgrade
 
 NOTE: This upgrade requires all 2.x databases be reindexed on initial open.
@@ -29,18 +29,18 @@ The action will take place automatically and can lead to some delay in the datab
 In addition, if you are syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
 This is a one-way conversion.
 
-[discrete#android:upgrade:::api-changes]
+[#android:upgrade:::api-changes]
 === API Changes
 
 
 This content introduces the changes made to the pass:q,a[pass:q,a[Couchbase{nbsp}Lite]] for Android API for release {major}.{minor}.{base}{empty}.
 
 
-[discrete#android:upgrade:::removed]
+[#android:upgrade:::removed]
 ==== Removed
 
 
-[discrete#android:upgrade:::resetcheckpoint]
+[#android:upgrade:::resetcheckpoint]
 ===== ResetCheckpoint
 
 The method https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#resetCheckpoint--[Replicator.resetCheckpoint()] has been removed. +
@@ -59,7 +59,7 @@ replicator.start()
 replicator.start(true)
 ----
 
-[discrete#android:upgrade:::database-setloglevel]
+[#android:upgrade:::database-setloglevel]
 ===== Database.setLogLevel
 
 The method https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/Database.html#setLogLevel-com.couchbase.lite.LogDomain-com.couchbase.lite.LogLevel-[Database.setLogLevel()]
@@ -84,7 +84,7 @@ Database.log.getConsole().setLevel(LogLevel.VERBOSE)
 Database.log.getFile().setDomains(LogLevel.DEBUG)
 ----
 
-[discrete#android:upgrade:::database-compact]
+[#android:upgrade:::database-compact]
 ===== Database.compact
 The https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/Database.html#compact--[Database.compact()] method has been removed. +
 It is replaced by the new https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance(MaintenanceType)] method, and the maintenance operations represented in the enum https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android/com/couchbase/lite/MaintenanceType.html[MaintenanceType]
@@ -103,11 +103,11 @@ testdb.performMaintenance(MaintenanceType.COMPACT)
 ----
 
 
-[discrete#android:upgrade:::deprecated-in-the-api]
+[#android:upgrade:::deprecated-in-the-api]
 ==== Deprecated in the API
 
 
-[discrete#android:upgrade:::match]
+[#android:upgrade:::match]
 ===== MATCH
 The class, https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/FullTextExpression.html[FullTextExpression]
 has been deprecated. +
@@ -132,7 +132,7 @@ Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
 
 ----
 
-[discrete#android:upgrade:::isnullormissingnotnullormissing]
+[#android:upgrade:::isnullormissingnotnullormissing]
 ===== isNullOrMissing/notNullOrMissing
 
 The functions https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/Expression.html#isNullOrMissing--[Expression.isNullOrMissing] and https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/Expression.html#notNullOrMissing--[Expression.notNullOrMissing] have been deprecated. +
@@ -168,7 +168,7 @@ Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
 
 ----
 
-[discrete#android:upgrade:::abstractreplicatorconfiguration]
+[#android:upgrade:::abstractreplicatorconfiguration]
 ===== AbstractReplicatorConfiguration
 
 The enum https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setReplicatorType-com.couchbase.lite.AbstractReplicatorConfiguration.ReplicatorType-[AbstractReplicatorConfiguration.ReplicatorType]
@@ -195,7 +195,7 @@ ReplicatorConfiguration config =
 ----
 
 
-[discrete#android:upgrade:::moved-in-the-api]
+[#android:upgrade:::moved-in-the-api]
 ==== Moved in the API
 
 
@@ -239,13 +239,13 @@ ListenerToken token =
 ----
 
 
-[discrete#android:upgrade:::lbl-db-upgrades]
+[#android:upgrade:::lbl-db-upgrades]
 == 1.x Databases Upgrades to 2.x
 
 Databases created using Couchbase Lite 1.2 or later can still be used with Couchbase Lite 2.x; but will be automatically updated to the  current 2.x version.
 This feature is only available for the default storage type (i.e., not a ForestDB database).
 
-[discrete#android:upgrade:::encrypted-databases]
+[#android:upgrade:::encrypted-databases]
 === Encrypted Databases
 The automatic migration feature does not support encrypted databases.
 So if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/Kotlin.html#database-encryption[1.x Database Guide]).
@@ -263,7 +263,7 @@ Since it is not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in
 If you are using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.
 
 
-[discrete#android:upgrade:::handling-of-existing-conflicts]
+[#android:upgrade:::handling-of-existing-conflicts]
 === Handling of Existing Conflicts
 
 If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
@@ -272,7 +272,7 @@ This functionality is related to the way conflicts are now being handled in Couc
 
 Optionally, existing conflicts in the 1.x database can be resolved with the https://docs-archive.couchbase.com/couchbase-lite/1.4/Kotlin.html#resolving-conflicts[1.x API] prior to the database being upgraded.
 
-[discrete#android:upgrade:::handling-of-existing-attachments]
+[#android:upgrade:::handling-of-existing-attachments]
 === Handling of Existing Attachments
 
 Attachments persisted in a 1.x database are copied to the new database.
@@ -329,7 +329,7 @@ byte[] content = blob != null ? blob.getContent() : null;
 ====
 
 
-[discrete#android:upgrade:::replication-compatibility]
+[#android:upgrade:::replication-compatibility]
 === Replication Compatibility
 
 The current replication protocol is not backwards compatible with the 1.x replication protocol.
@@ -340,7 +340,7 @@ It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x
 This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
 
 
-[discrete#android:upgrade:::visual-studio]
+[#android:upgrade:::visual-studio]
 == Visual Studio
 
 The public facing API has completely changed in Couchbase Lite 2.0 and will require a re-write to upgrade an application that is using Couchbase Lite 1.x.

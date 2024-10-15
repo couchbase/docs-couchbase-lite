@@ -18,7 +18,7 @@
 Description -- _{description}_ +
 --
 
-[discrete#c:conflict:::causes-of-conflicts]
+[#c:conflict:::causes-of-conflicts]
 == Causes of Conflicts
 
 Document conflicts can occur if multiple changes are made to the same version of a document by multiple peers in a distributed system. For Couchbase Mobile, this can be a Couchbase Lite or Sync Gateway database instance.
@@ -36,7 +36,7 @@ The following sections discuss each scenario in more detail.
 .Dive deeper ...
 Read more about link:https://blog.couchbase.com//document-conflicts-couchbase-mobile[Document Conflicts and Automatic Conflict Resolution in Couchbase Mobile].
 
-[discrete#c:conflict:::lbl-conflicts-when-replicating]
+[#c:conflict:::lbl-conflicts-when-replicating]
 == Conflicts when Replicating
 
 There's no practical way to prevent a conflict when incompatible changes to a document are be made in multiple instances of an app.
@@ -57,7 +57,7 @@ This device already has _ChangeX_ putting the local document in conflict.
 This device already has _ChangeY_ and now Naomi's local document is in conflict.
 ====
 
-[discrete#c:conflict:::automatic-conflict-resolution]
+[#c:conflict:::automatic-conflict-resolution]
 === Automatic Conflict Resolution
 
 NOTE: The rules only apply to conflicts caused by replication.
@@ -78,7 +78,7 @@ The result is saved internally by the Couchbase Lite replicator.
 Those rules describe the internal behavior of the replicator.
 For additional control over the handling of conflicts, including when a replication is in progress, see <<c:conflict:::custom-conflict-resolution>>.
 
-[discrete#c:conflict:::custom-conflict-resolution]
+[#c:conflict:::custom-conflict-resolution]
 === Custom Conflict Resolution
 
 Starting in Couchbase Lite 2.6, application developers who want more control over how document conflicts are handled can use custom logic to select the winner between conflicting revisions of a document.
@@ -92,7 +92,7 @@ To implement custom conflict resolution during replication, you must implement t
 . <<c:conflict:::conflict-resolver,Conflict Resolver>>
 . <<c:conflict:::configure-the-replicator,Configure the Replicator>>
 
-[discrete#c:conflict:::conflict-resolver]
+[#c:conflict:::conflict-resolver]
 === Conflict Resolver
 
 Apps have the following strategies for resolving conflicts:
@@ -194,7 +194,7 @@ static const CBLDocument* merge_conflict_resolver(void* context,
 When a null document is returned by the resolver, the conflict will be resolved as a document deletion.
 
 
-[discrete#c:conflict:::important-guidelines-and-best-practices]
+[#c:conflict:::important-guidelines-and-best-practices]
 === Important Guidelines and Best Practices
 
 .Points of Note:
@@ -219,7 +219,7 @@ The pending conflicted documents will be resolved when the replicator is restart
 +
 IMPORTANT: While the system will handle exceptions in the manner specified above, it is strongly encouraged for the resolver function to catch exceptions and handle them in a way appropriate to their needs.
 
-[discrete#c:conflict:::configure-the-replicator]
+[#c:conflict:::configure-the-replicator]
 === Configure the Replicator
 
 The implemented custom conflict resolver can be registered on the replicator configuration object.
@@ -264,7 +264,7 @@ CBLReplicator_Start(replicator, false);
 ====
 
 
-[discrete#c:conflict:::conflicts-when-saving]
+[#c:conflict:::conflicts-when-saving]
 == Conflicts when Updating
 
 
@@ -281,7 +281,7 @@ Here's a typical sequence of events that would create an update conflict:
 . Your code updates the document with its modified properties, for example using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__documents.html#[CBLDatabase_SaveDocument()].
 ====
 
-[discrete#c:conflict:::automatic-conflict-resolution-2]
+[#c:conflict:::automatic-conflict-resolution-2]
 === Automatic Conflict Resolution
 
 In Couchbase Lite, by default, the conflict is automatically resolved and only one document update is stored in the database.
@@ -315,7 +315,7 @@ The concurrency control parameter has two possible values:
 In this case, the app can detect the error that is being thrown, and handle it by re-reading the document, making the necessary conflict resolution, then trying again.
 ====
 
-[discrete#c:conflict:::custom-conflict-handlers]
+[#c:conflict:::custom-conflict-handlers]
 === Custom Conflict Handlers
 Developers can hook a conflict handler when saving a document so they can easily handle the conflict in a single save method call.
 
@@ -378,7 +378,7 @@ CBLCollection_SaveDocumentWithConflictHandler(collection, mutableDoc, custom_con
 // end::handling-conflicts-custom-merge[]
 
 
-[discrete#c:conflict:::related-content]
+[#c:conflict:::related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">

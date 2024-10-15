@@ -19,7 +19,7 @@ This can result in a delay before the database is usable.
 --
 
 
-[discrete#csharp:upgrade:::3-2-0-upgrade]
+[#csharp:upgrade:::3-2-0-upgrade]
 == {major}.{minor}.{base}{empty} Upgrade
 
 NOTE: This upgrade requires all 2.x databases be reindexed on initial open.
@@ -29,7 +29,7 @@ The action will take place automatically and can lead to some delay in the datab
 In addition, if you are syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
 This is a one-way conversion.
 
-[discrete#csharp:upgrade:::api-changes]
+[#csharp:upgrade:::api-changes]
 === API Changes
 
 
@@ -37,7 +37,7 @@ This content introduces the changes made to the pass:q,a[pass:q,a[Couchbase{nbsp
 
 Starting from this release pass:q,a[pass:q,a[Couchbase{nbsp}Lite]] for C#.Net requires _Visual Studio 2019+_ and uses .Net Core 3.1 (updating from .Net Core 2.0).
 
-[discrete#csharp:upgrade:::breaking-change]
+[#csharp:upgrade:::breaking-change]
 ==== Breaking Change
 
 The function https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Atan2_Couchbase_Lite_Query_IExpression_Couchbase_Lite_Query_IExpression_[ATAN2(x, y)],
@@ -46,21 +46,21 @@ https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-n
 that is, the arguments are reversed in line with common notation.
 
 
-[discrete#csharp:upgrade:::removed]
+[#csharp:upgrade:::removed]
 ==== Removed
 
-[discrete#csharp:upgrade:::activate]
+[#csharp:upgrade:::activate]
 ===== Activate
 
 We have removed the method `Activate()` from *all* platform support libraries *except* `Support.Android` (Xamarin Android)
 
 
-[discrete#csharp:upgrade:::enabletextlogging]
+[#csharp:upgrade:::enabletextlogging]
 ===== EnableTextLogging()
 We have removed the obsolete method `EnableTextLogging()` from all the platform support libraries.
 
 
-[discrete#csharp:upgrade:::resetcheckpoint]
+[#csharp:upgrade:::resetcheckpoint]
 ===== ResetCheckpoint
 
 The method
@@ -68,7 +68,7 @@ https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Sy
 has been removed.
 Use the `reset:` argument when starting the replicator instead.
 
-[discrete#csharp:upgrade:::before]
+[#csharp:upgrade:::before]
 ===== Before
 [pass:q,a[source, java,subs="attributes+, macros+"]]
 ----
@@ -76,7 +76,7 @@ replicator.ResetCheckpoint();
 replicator.Start();
 ----
 
-[discrete#csharp:upgrade:::after]
+[#csharp:upgrade:::after]
 ===== After
 [pass:q,a[source, java,subs="attributes+, macros+"]]
 ----
@@ -85,7 +85,7 @@ replicator.Start(true) // <.>
 ----
 <.> Set the `reset:` argument `true` to initiate a replicator checkpoint reset
 
-[discrete#csharp:upgrade:::setloglevel]
+[#csharp:upgrade:::setloglevel]
 ===== SetLogLevel()
 We have removed the method
 https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_SetLogLevel_Couchbase_Lite_Logging_LogDomain_Couchbase_Lite_Logging_LogLevel_[Database.setLogLevel()] +
@@ -94,7 +94,7 @@ https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-n
 Database.log.console]
 instead:
 
-[discrete#csharp:upgrade:::before-2]
+[#csharp:upgrade:::before-2]
 ===== Before
 [pass:q,a[source, java,subs="attributes+, macros+"]]
 ----
@@ -102,7 +102,7 @@ Database.SetLogLevel(LogDomain.Replicator, LogLevel.Verbose);
 Database.SetLogLevel(LogDomain.Query, LogLevel.Verbose);
 ----
 
-[discrete#csharp:upgrade:::after-2]
+[#csharp:upgrade:::after-2]
 ===== After
 [pass:q,a[source, java,subs="attributes+, macros+"]]
 ----
@@ -112,7 +112,7 @@ Database.Log.Console.LogLevel = LogLevel.Verbose;
 ----
 
 
-[discrete#csharp:upgrade:::database-compact]
+[#csharp:upgrade:::database-compact]
 ==== Database.Compact
 We have removed the method
 https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Compact[Database.compact()]. +
@@ -121,7 +121,7 @@ https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-n
 https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.MaintenanceType.html[MaintenanceType]
 instead
 
-[discrete#csharp:upgrade:::before-3]
+[#csharp:upgrade:::before-3]
 ===== Before
 [pass:q,a[source, java,subs="attributes+, macros+"]]
 ----
@@ -129,7 +129,7 @@ var db = new Database("thisdb");
 db.Compact()
 ----
 
-[discrete#csharp:upgrade:::after-3]
+[#csharp:upgrade:::after-3]
 ===== After
 [pass:q,a[source, java,subs="attributes+, macros+"]]
 ----
@@ -140,11 +140,11 @@ db.PerformMaintenance(MaintenanceType.Compact)
 ----
 
 
-[discrete#csharp:upgrade:::deprecated-api]
+[#csharp:upgrade:::deprecated-api]
 ==== Deprecated API
 
 
-[discrete#csharp:upgrade:::match]
+[#csharp:upgrade:::match]
 ===== Match
 We will remove
 https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.IFullTextExpression.html#Couchbase_Lite_Query_IFullTextExpression_Match_System_String_[Match]
@@ -153,7 +153,7 @@ You should plan to switch to using the alternative
 https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.FullTextFunction.html#Couchbase_Lite_Query_FullTextFunction_Match_System_String_System_String_[FullTextFunction.match(indexName:)]
 at the earliest opportunity.
 
-[discrete#csharp:upgrade:::before-4]
+[#csharp:upgrade:::before-4]
 ===== Before
 [pass:q,a[source, java,subs="attributes+, macros+"]]
 ----
@@ -168,7 +168,7 @@ using (var query = QueryBuilder.Select(SelectResult.Expression(Meta.ID))
 }
 ----
 
-[discrete#csharp:upgrade:::after-4]
+[#csharp:upgrade:::after-4]
 ===== After
 [pass:q,a[source, java,subs="attributes+, macros+"]]
 ----
@@ -186,7 +186,7 @@ using (var query =
 <.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.FullTextFunction.htmlFullTextFunction.match(indexName:)[FullTextFunction.match(indexName:)]
 to build the query
 
-[discrete#csharp:upgrade:::isnullormissing]
+[#csharp:upgrade:::isnullormissing]
 ===== IsNullOrMissing
 We will remove
 https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsNullOrMissing[isNullOrMissing] +
@@ -195,7 +195,7 @@ https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-n
 
 at the earliest opportunity.
 
-[discrete#csharp:upgrade:::before-5]
+[#csharp:upgrade:::before-5]
 ===== Before
 [pass:q,a[source, java,subs="attributes+, macros+"]]
 ----
@@ -204,7 +204,7 @@ var query = QueryBuilder.Select(SelectResult.All())
     .Where(Expression.Property("missingprop").IsNullOrMissing())
 ----
 
-[discrete#csharp:upgrade:::after-5]
+[#csharp:upgrade:::after-5]
 ===== After
 [pass:q,a[source, java,subs="attributes+, macros+"]]
 ----
@@ -214,7 +214,7 @@ var query = QueryBuilder.Select(SelectResult.All())
 ----
 
 
-[discrete#csharp:upgrade:::notnullormissing]
+[#csharp:upgrade:::notnullormissing]
 ===== NotNullOrMissing
 We will remove
 https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_NotNullOrMissing[notNullOrMissing]. +
@@ -226,7 +226,7 @@ at the earliest opportunity.
 | isNotValued()
 
 
-[discrete#csharp:upgrade:::before-6]
+[#csharp:upgrade:::before-6]
 ===== Before
 [pass:q,a[source, java,subs="attributes+, macros+"]]
 ----
@@ -235,7 +235,7 @@ var query = QueryBuilder.Select(SelectResult.All())
     .Where(Expression.Property("notmissingprop").NotNullOrMissing())
 ----
 
-[discrete#csharp:upgrade:::after-6]
+[#csharp:upgrade:::after-6]
 ===== After
 [pass:q,a[source, java,subs="attributes+, macros+"]]
 ----
@@ -246,13 +246,13 @@ var query = QueryBuilder.Select(SelectResult.All())
 ----
 
 
-[discrete#csharp:upgrade:::lbl-db-upgrades]
+[#csharp:upgrade:::lbl-db-upgrades]
 == 1.x Databases Upgrades to 2.x
 
 Databases created using Couchbase Lite 1.2 or later can still be used with Couchbase Lite 2.x; but will be automatically updated to the  current 2.x version.
 This feature is only available for the default storage type (i.e., not a ForestDB database).
 
-[discrete#csharp:upgrade:::encrypted-databases]
+[#csharp:upgrade:::encrypted-databases]
 === Encrypted Databases
 The automatic migration feature does not support encrypted databases.
 So if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/C#.html#database-encryption[1.x Database Guide]).
@@ -270,7 +270,7 @@ Since it is not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in
 If you are using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.
 
 
-[discrete#csharp:upgrade:::handling-of-existing-conflicts]
+[#csharp:upgrade:::handling-of-existing-conflicts]
 === Handling of Existing Conflicts
 
 If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
@@ -279,7 +279,7 @@ This functionality is related to the way conflicts are now being handled in Couc
 
 Optionally, existing conflicts in the 1.x database can be resolved with the https://docs-archive.couchbase.com/couchbase-lite/1.4/C#.html#resolving-conflicts[1.x API] prior to the database being upgraded.
 
-[discrete#csharp:upgrade:::handling-of-existing-attachments]
+[#csharp:upgrade:::handling-of-existing-attachments]
 === Handling of Existing Attachments
 
 Attachments persisted in a 1.x database are copied to the new database.
@@ -314,7 +314,7 @@ var content = avatar?.Content;
 ====
 
 
-[discrete#csharp:upgrade:::replication-compatibility]
+[#csharp:upgrade:::replication-compatibility]
 === Replication Compatibility
 
 The current replication protocol is not backwards compatible with the 1.x replication protocol.
@@ -325,7 +325,7 @@ It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x
 This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
 
 
-[discrete#csharp:upgrade:::visual-studio]
+[#csharp:upgrade:::visual-studio]
 == Visual Studio
 
 The public facing API has completely changed in Couchbase Lite 2.0 and will require a re-write to upgrade an application that is using Couchbase Lite 1.x.
@@ -339,7 +339,7 @@ Refer to the examples on this page to learn about the new API.
 * Build & run your application.
 
 
-[discrete#csharp:upgrade:::related-content]
+[#csharp:upgrade:::related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">

@@ -21,11 +21,11 @@ Related Content -- xref:swift:database.adoc[Databases] | xref:swift:blob.adoc[Bl
 --
 
 
-[discrete#swift:document:::overview]
+[#swift:document:::overview]
 == Overview
 
 
-[discrete#swift:document:::document-structure]
+[#swift:document:::document-structure]
 === Document Structure
 
 In pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] the term 'document' refers to an entry in the database.
@@ -46,7 +46,7 @@ This value is stored as a dictionary of key-value (k-v) pairs.
 The values can be made of up several different <<swift:document:::data-types>> such as numbers, strings, arrays, and nested objects.
 
 
-[discrete#swift:document:::data-encoding]
+[#swift:document:::data-encoding]
 === Data Encoding
 
 The document body is stored in an internal, efficient, binary form called
@@ -56,7 +56,7 @@ This internal form can be easily converted into a manageable native dictionary f
 Fleece data is stored in the smallest format that will hold the value whilst maintaining the integrity of the value.
 
 
-[discrete#swift:document:::data-types]
+[#swift:document:::data-types]
 === Data Types
 
 The `Document` class offers a set of property accessors for various scalar types, such as:
@@ -80,13 +80,13 @@ MutableArray:: represents a writeable collection of objects
 Blob:: represents an arbitrary piece of binary data
 
 
-[discrete#swift:document:::json]
+[#swift:document:::json]
 === JSON
 
 Couchbase Lite also provides for the direct handling of JSON data implemented in most cases by the provision of a pass:a,q[`toJSON()`] method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array) -- see <<swift:document:::lbl-json-data>>.
 
 
-[discrete#swift:document:::constructing-a-document]
+[#swift:document:::constructing-a-document]
 == Constructing a Document
 
 
@@ -123,7 +123,7 @@ hotel: {
 
 ----
 
-[discrete#swift:document:::ex-usage]
+[#swift:document:::ex-usage]
 === Open a Database
 
 First open your database.
@@ -146,7 +146,7 @@ let collection = try database.createCollection(name: "hotel")
 
 See xref:swift:database.adoc[Databases] for more information
 
-[discrete#swift:document:::create-a-document]
+[#swift:document:::create-a-document]
 === Create a Document
 
 Now create a new document to hold your application's data.
@@ -167,7 +167,7 @@ var mutableDoc = MutableDocument(id: "doc1")
 
 For more on using *Documents*, see <<swift:document:::document-initializers>> and <<swift:document:::mutability>>.
 
-[discrete#swift:document:::create-a-dictionary]
+[#swift:document:::create-a-dictionary]
 === Create a Dictionary
 
 Now create a mutable dictionary (`address`).
@@ -193,7 +193,7 @@ address.setString("90210", forKey: "code")
 
 Learn more about <<swift:document:::using-dictionaries>>.
 
-[discrete#swift:document:::create-an-array]
+[#swift:document:::create-an-array]
 === Create an Array
 
 Since the hotel may have multiple contact numbers, provide a field (`phones`) as a mutable array.
@@ -213,7 +213,7 @@ phones.addString("650-000-0001")
 
 Learn more about <<swift:document:::using-arrays>>
 
-[discrete#swift:document:::populate-a-document]
+[#swift:document:::populate-a-document]
 === Populate a Document
 
 Now add your data to the mutable document created earlier.
@@ -245,7 +245,7 @@ mutableDoc.setArray(phones, forKey:"phones")
 NOTE: Couchbase recommend using a `type` attribute to define each logical document type.
 
 
-[discrete#swift:document:::save-a-document]
+[#swift:document:::save-a-document]
 === Save a Document
 
 Now persist the populated document to your Couchbase Lite database.
@@ -261,7 +261,7 @@ try! collection.save(document:mutableDoc)
 ----
 
 
-[discrete#swift:document:::close-the-database]
+[#swift:document:::close-the-database]
 === Close the Database
 
 With your document saved, you can now close our Couchbase Lite database.
@@ -280,11 +280,11 @@ do {
 ----
 
 
-[discrete#swift:document:::working-with-data]
+[#swift:document:::working-with-data]
 == Working with Data
 
 
-[discrete#swift:document:::checking-a-documents-properties]
+[#swift:document:::checking-a-documents-properties]
 === Checking a Document's Properties
 
 To check whether a given property exists in the document, use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Document.html#/s:18CouchbaseLiteSwift8DocumentC8contains3keySbSS_tF[Document.Contains(key:)] method.
@@ -292,7 +292,7 @@ To check whether a given property exists in the document, use the https://docs.c
 If you try to access a property which doesn't exist in the document, the call will return the default value for that getter method (0 for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Document.html#/s:18CouchbaseLiteSwift8DocumentC3int6forKeySiSS_tF[Document.int()] 0.0 for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Document.html#/s:18CouchbaseLiteSwift8DocumentC5float6forKeySfSS_tF[Document.float()] etc.).
 
 
-[discrete#swift:document:::date-accessors]
+[#swift:document:::date-accessors]
 === Date accessors
 
 Couchbase Lite offers _Date_ accessors as a convenience.
@@ -322,7 +322,7 @@ let date = doc.date(forKey: "createdAt")
 ====
 
 
-[discrete#swift:document:::using-dictionaries]
+[#swift:document:::using-dictionaries]
 === Using Dictionaries
 
 .API References
@@ -394,7 +394,7 @@ try! collection.save(document:mutableDoc)
 ====
 
 
-[discrete#swift:document:::using-arrays]
+[#swift:document:::using-arrays]
 === Using Arrays
 
 .API References
@@ -464,13 +464,13 @@ try collection.save(document:mutableDoc)
 ====
 
 
-[discrete#swift:document:::using-blobs]
+[#swift:document:::using-blobs]
 === Using Blobs
 
 For more on working with blobs, see xref:swift:blob.adoc[Blobs]
 
 
-[discrete#swift:document:::document-initializers]
+[#swift:document:::document-initializers]
 == Document Initializers
 
 
@@ -509,7 +509,7 @@ try collection.save(document: doc)
 ====
 
 
-[discrete#swift:document:::mutability]
+[#swift:document:::mutability]
 == Mutability
 
 
@@ -543,7 +543,7 @@ try collection.save(document: mutableDocument)
 NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<swift:document:::lbl-doc-constraints>>.
 
 
-[discrete#swift:document:::document-conversion]
+[#swift:document:::document-conversion]
 == Document Conversion
 
 
@@ -572,7 +572,7 @@ print(doc.toJSON())
 ====
 
 
-[discrete#swift:document:::batch-operations]
+[#swift:document:::batch-operations]
 == Batch operations
 
 If you're making multiple changes to a database at once, it's faster to group them together.
@@ -614,7 +614,7 @@ At the *local* level this operation is still transactional: no other `Database` 
 But Couchbase Mobile is a distributed system, and due to the way replication works, there's no guarantee that Sync Gateway or other devices will receive your changes all at once.
 
 
-[discrete#swift:document:::document-change-events]
+[#swift:document:::document-change-events]
 == Document change events
 
 You can register for document changes.
@@ -645,7 +645,7 @@ let token = collection.addDocumentChangeListener(id: "user.john") { (change) in
 ====
 
 
-[discrete#swift:document:::document-expiration]
+[#swift:document:::document-expiration]
 == Document Expiration
 
 Document expiration allows users to set the expiration date for a document.
@@ -690,7 +690,7 @@ let query = QueryBuilder
 
 You can set expiration for a whole Collection
 
-[discrete#swift:document:::lbl-doc-constraints]
+[#swift:document:::lbl-doc-constraints]
 == Document Constraints
 
 Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
@@ -722,7 +722,7 @@ For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway
 ====
 
 
-[discrete#swift:document:::lbl-json-data]
+[#swift:document:::lbl-json-data]
 == Working with JSON Data
 
 In this section::
@@ -735,7 +735,7 @@ In this section::
 
 The pass:a,q[`toJSON()`] typed-accessor means you can easily work with JSON data, native and Couchbase Lite objects.
 
-[discrete#swift:document:::lbl-array]
+[#swift:document:::lbl-array]
 === Arrays
 
 Convert an `ArrayObject` to and from JSON using the pass:a,q[`toJSON()`] and `toArray` methods -- see <<swift:document:::ex-array>>.
@@ -775,7 +775,7 @@ if let doc = try collection.document(id: "1000") {
 ====
 
 
-[discrete#swift:document:::lbl-blob]
+[#swift:document:::lbl-blob]
 === Blobs
 Convert a `Blob` to JSON using the `toJSON` method -- see <<swift:document:::ex-blob>>.
 
@@ -812,7 +812,7 @@ if let doc = try collection.document(id: "1000") {
 
 See also: xref:swift:blob.adoc[Blobs]
 
-[discrete#swift:document:::lbl-dictionary]
+[#swift:document:::lbl-dictionary]
 === Dictionaries
 
 Convert a `DictionaryObject` to and from JSON using the `toJSON` and `toDictionary` methods -- see <<swift:document:::ex-dictionary>>.
@@ -850,7 +850,7 @@ if let doc = try collection.document(id: "1000") {
 ====
 
 
-[discrete#swift:document:::lbl-document]
+[#swift:document:::lbl-document]
 === Documents
 
 Convert a `Document` to and from JSON strings using the pass:a,q[`toJSON()`] and pass:a,q[`setJSON()`] methods -- see <<swift:document:::ex-document>>.
@@ -889,7 +889,7 @@ if let doc = try collection.document(id: "doc-id") {
 ====
 
 
-[discrete#swift:document:::lbl-result]
+[#swift:document:::lbl-result]
 === Query Results as JSON
 
 Convert a `Query Result` to JSON using its {to-JSON} accessor method.
@@ -977,7 +977,7 @@ If your query selects a sub-set of available properties then the JSON format wil
 ----
 
 
-[discrete#swift:document:::related-content]
+[#swift:document:::related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">

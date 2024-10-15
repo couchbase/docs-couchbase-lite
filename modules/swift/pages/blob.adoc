@@ -20,7 +20,7 @@ Description -- _{description}_ +
 Related Content -- xref:swift:database.adoc[Databases] | xref:swift:document.adoc[Documents] | xref:swift:indexing.adoc[Indexing] |
 --
 
-[discrete#swift:blob:::introduction]
+[#swift:blob:::introduction]
 == Introduction
 
 pass:q,a[Couchbase{nbsp}Lite] for Swift uses _blobs_ to store the contents of images, other media files and similar format files as binary objects.
@@ -31,7 +31,7 @@ It is held in a separate content-addressable store indexed from the document and
 When a document is synchronized, the pass:q,a[Couchbase{nbsp}Lite] replicator adds an `_attachments` dictionary to the document's properties if it contains a blob -- see <<swift:blob:::img-blob>>.
 
 
-[discrete#swift:blob:::blob-objects]
+[#swift:blob:::blob-objects]
 == Blob Objects
 
 The blob as an object appears in a document as dictionary property -- see, for example _avatar_ in <<swift:blob:::img-blob>>.
@@ -41,7 +41,7 @@ Other properties include `length` (the length in bytes), and optionally `content
 The blob's data (an image, audio or video content) is not stored in the document, but in a separate content-addressable store, indexed by the `digest` property -- see <<swift:blob:::lbl-using>>.
 
 
-[discrete#swift:blob:::constraints]
+[#swift:blob:::constraints]
 === Constraints
 
 * pass:q,a[Couchbase{nbsp}Lite] +
@@ -53,7 +53,7 @@ The maximum content size is 20 MB per blob.
 If a document's blob is over 20 MB, the document will be replicated but not the blob.
 
 
-[discrete#swift:blob:::lbl-using]
+[#swift:blob:::lbl-using]
 == Using Blobs
 
 The `Blob` API lets you access the blob's data content as in-memory data (a `Data` object) or as an `InputStream`.
@@ -97,7 +97,7 @@ Note, this is the identity of the blob assigned by us; the replication auto-gene
 The `digest` key will be the same as generated when we saved the blob document.
 
 
-[discrete#swift:blob:::syncing]
+[#swift:blob:::syncing]
 == Syncing
 When a document containing a blob object is synchronized, the pass:q,a[Couchbase{nbsp}Lite] replicator generates an `_attachments` dictionary with an auto-generated name for each blob attachment.
 This is different to the `avatar` key and is used internally to access the blob content.
@@ -109,7 +109,7 @@ If you view a sync'd blob document in {cbs} Admin Console, you will see somethin
 image::couchbase-lite/current/_images/attach-replicated.png[]
 
 
-[discrete#swift:blob:::related-content]
+[#swift:blob:::related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">

@@ -34,11 +34,11 @@ Related Content -- xref:objc:querybuilder.adoc#lbl-predquery[Predictive Queries]
 --
 
 
-[discrete#objc:query-troubleshooting:::query-explain]
+[#objc:query-troubleshooting:::query-explain]
 === Query Explain
 
 
-[discrete#objc:query-troubleshooting:::using]
+[#objc:query-troubleshooting:::using]
 ==== Using
 Query's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQuery.html#/c:objc(cs)CBLQuery(im)explain:[explain()] method can provide useful insight when you are trying to diagnose query performance issues and-or optimize queries.
 To examine how your query is working, either embed the call inside your app (see: <<objc:query-troubleshooting:::use-qe-app>>), or use it interactively within a `cblite` shell (see: <<objc:query-troubleshooting:::use-qe-cblite>>).
@@ -93,7 +93,7 @@ cblite <your-database-name>.cblite2 // <.>
 ====
 
 
-[discrete#objc:query-troubleshooting:::output]
+[#objc:query-troubleshooting:::output]
 ==== Output
 The output from `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQuery.html#/c:objc(cs)CBLQuery(im)explain:[explain()]` remains the same whether invoked by an app, or `cblite` -- see <<objc:query-troubleshooting:::qe-output>> for an example of how it looks.
 
@@ -123,11 +123,11 @@ You can use this to identify potential issues and so optimize problematic querie
 <.> The query in JSON-string format, which you can copy-and-paste directly into the _cblite_ tool.
 
 
-[discrete#objc:query-troubleshooting:::the-query-plan]
+[#objc:query-troubleshooting:::the-query-plan]
 === The Query Plan
 
 
-[discrete#objc:query-troubleshooting:::format]
+[#objc:query-troubleshooting:::format]
 ==== Format
 The query plan section of the output displays a tabular form of the translated query's execution plan.
 It primarily shows how the data will be retrieved and, where appropriate, how it will be sorted for navigation and-or presentation purposes.
@@ -150,7 +150,7 @@ Something you may well be looking to optimize -- see <<objc:query-troubleshootin
 ====
 
 
-[discrete#objc:query-troubleshooting:::ret-method]
+[#objc:query-troubleshooting:::ret-method]
 ==== Retrieval Method
 The query optimizer will attempt to retrieve the requested data items as efficiently as possible, which generally will be by using one or more of the available indexes.
 The _retrieval method_ shows the approach decided upon by the optimizer -- see <<objc:query-troubleshooting:::ret-meths>>.
@@ -180,7 +180,7 @@ When looking to optimize a query's retrieval method, consider whether:
 * You could use an existing index -- perhaps by restructuring the query to minimize wildcard use, or the reliance on functions that modify the query's interpretation of index keys (for example, 'lower')
 * You could reduce the data set being requested to minimize the query's footprint on the database
 
-[discrete#objc:query-troubleshooting:::order-group]
+[#objc:query-troubleshooting:::order-group]
 ==== Order and Group
 The `Use temp b-tree for` lines in the example indicate that the query requires sorting to cater for grouping and then sorting again to present the output results.
 Minimizing, if not eliminating, this ordering and re-ordering will obviously reduce the amount of time taken to process your query.
@@ -188,7 +188,7 @@ Minimizing, if not eliminating, this ordering and re-ordering will obviously red
 Ask "is the grouping and-or ordering absolutely necessary?": if it isn't, drop it or modify it to minimize its impact.
 
 
-[discrete#objc:query-troubleshooting:::queries-and-indexes]
+[#objc:query-troubleshooting:::queries-and-indexes]
 === Queries and Indexes
 
 Querying documents using a pre-existing database index is much faster because an index narrows down the set of documents to examine -- see: the xref:objc:query-troubleshooting.adoc[Query Troubleshooting] topic.
@@ -215,7 +215,7 @@ Less good is if the query must scan the whole index; although the compact nature
 Searches that begin with or rely upon an inequality with the primary key are inherently less effective than those using a primary key equality.
 
 
-[discrete#objc:query-troubleshooting:::working-with-the-query-optimizer]
+[#objc:query-troubleshooting:::working-with-the-query-optimizer]
 === Working with the Query Optimizer
 You may have noticed that sometimes a query runs faster on a second run, or after re-opening the database, or after deleting and recreating an index.
 This typically happens when SQL Query Optimizer has gathered sufficient stats to recognize a means of optimizing a sub-optimal query.
@@ -232,7 +232,7 @@ Then re-generate the Query Explain and note any improvements in optimization.
 They may not, in themselves, resolve the issue entirely; but they can provide a uesful guide toward further optimizing changes you could make.
 
 
-[discrete#objc:query-troubleshooting:::use-like-based-queries]
+[#objc:query-troubleshooting:::use-like-based-queries]
 === Wildcard and Like-based Queries
 
 Like-based searches can use the index(es) only if:
@@ -327,7 +327,7 @@ NSLog(@"%@", [query explain:&error]);
 3|0|0| SEARCH TABLE kv_default AS _doc USING INDEX typeIndex (<expr>>? AND <expr><?)
 ----
 
-[discrete#objc:query-troubleshooting:::use-functions-wisely]
+[#objc:query-troubleshooting:::use-functions-wisely]
 === Use Functions Wisely
 
 Functions are a very useful tool in building queries, but be aware that they can impact whether the query-optimizer is able to use your index(es).
@@ -406,7 +406,7 @@ NSLog(@"%@", [query explain:&error]);
 
 Knowing this, you can consider how you create the index; for example, using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryFunction.html#/c:objc(cs)CBLQueryFunction(cm)lower:[lower()] when you create the index and then always using lowercase comparisons.
 
-[discrete#objc:query-troubleshooting:::optimization-considerations]
+[#objc:query-troubleshooting:::optimization-considerations]
 === Optimization Considerations
 
 Try to minimize the amount of data retrieved.
@@ -429,7 +429,7 @@ Consider Using Full Text Search instead of complex like or regex patterns -- see
 {empty}
 
 
-[discrete#objc:query-troubleshooting:::related-content]
+[#objc:query-troubleshooting:::related-content]
 === Related Content
 ++++
 <div class="card-row three-column-row">

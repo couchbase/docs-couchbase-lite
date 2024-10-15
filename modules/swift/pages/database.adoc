@@ -20,7 +20,7 @@ Related Content -- xref:swift:blob.adoc[Blobs] | xref:swift:document.adoc[Docume
 --
 
 
-[discrete#swift:database:::database-concepts]
+[#swift:database:::database-concepts]
 == Database Concepts
 
 Databases created on Couchbase Lite can share the same hierarchical structure as Capella databases.
@@ -152,7 +152,7 @@ syncing data scope:: Contains information pertaining to the user, which can be s
 ****
 
 
-[discrete#swift:database:::open-db]
+[#swift:database:::open-db]
 == Create or Open Database
 
 
@@ -196,7 +196,7 @@ do {
 ====
 
 
-[discrete#swift:database:::close-database]
+[#swift:database:::close-database]
 == Close Database
 
 You are advised to incorporate the closing of all open databases into your application workflow.
@@ -232,7 +232,7 @@ do {
 ====
 
 
-[discrete#swift:database:::database-full-sync]
+[#swift:database:::database-full-sync]
 == Database Full Sync
 
 Database Full Sync will prevent the loss of transactional data due to an unexpected system crash or loss of power.
@@ -263,7 +263,7 @@ config.fullSync = true
 
 NOTE: It is not possible to change the configuration of a Database after instantiating the Database with the configuration by updating its `DatabaseConfiguration` property.
 
-[discrete#swift:database:::database-encryption]
+[#swift:database:::database-encryption]
 == Database Encryption
 
 
@@ -274,7 +274,7 @@ _Couchbase Lite on Swift_ includes the ability to encrypt Couchbase Lite databas
 This allows mobile applications to secure the data at rest, when it is being stored on the device.
 The algorithm used to encrypt the database is 256-bit AES.
 
-[discrete#swift:database:::enabling]
+[#swift:database:::enabling]
 === Enabling
 To enable encryption, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/DatabaseConfiguration.html#/s:18CouchbaseLiteSwift21DatabaseConfigurationV13encryptionKeyAA010EncryptionG0OSgvp[DatabaseConfiguration.encryptionKey()] to set the encryption key of your choice.
 Provide this encryption key every time the database is opened -- see <<swift:database:::ex-sdb-encrypt>>.
@@ -301,42 +301,42 @@ self.database = try Database(name: "my-database", config: config)
 ====
 
 
-[discrete#swift:database:::persisting]
+[#swift:database:::persisting]
 === Persisting
 Couchbase Lite does not persist the key.
 It is the application's responsibility to manage the key and store it in a platform-specific secure store such Android's
 https://developer.android.com/training/articles/keystore[Keystore].
 
-[discrete#swift:database:::opening]
+[#swift:database:::opening]
 === Opening
 An encrypted database can only be opened with the same platform that was used to encrypt it in the first place.
 So a database encrypted using the Swift SDK, and then exported, is readable only by the Swift SDK.
 
-[discrete#swift:database:::changing]
+[#swift:database:::changing]
 === Changing
 To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC19changeEncryptionKeyyyAA0fG0OSgKF[Database.changeEncryptionKey()]
 to set the required new encryption-key value.
 
 
-[discrete#swift:database:::removing]
+[#swift:database:::removing]
 === Removing
 To remove encryption, open the database using its existing encryption-key and use
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC19changeEncryptionKeyyyAA0fG0OSgKF[Database.changeEncryptionKey()]
 with a null value as the encryption key.
 
-[discrete#swift:database:::upgrading]
+[#swift:database:::upgrading]
 === Upgrading
 To upgrade an encrypted database see: xref:swift:dep-upgrade.adoc#lbl-db-upgrades[Upgrade 1.x databases]
 
 
-[discrete#swift:database:::lbl-find-db-loc]
+[#swift:database:::lbl-find-db-loc]
 == Finding a Database File
 
 
 When the application is running on the iOS simulator, you can locate the application's sandbox directory using the https://simpholders.com/3/[SimPholders] utility.
 
 
-[discrete#swift:database:::lbl-db-util]
+[#swift:database:::lbl-db-util]
 == Database Maintenance
 
 From time to time it may be necessary to perform certain maintenance activities on your database, for example to
@@ -350,7 +350,7 @@ It should be run on-demand using the API.
 If in doubt, consult Couchbase support.
 
 
-[discrete#swift:database:::cli-tool]
+[#swift:database:::cli-tool]
 == Command Line Tool
 
 // tag::cli-tool[]
@@ -361,7 +361,7 @@ Note that the `cblite` tool is not supported by the https://www.couchbase.com/su
 
 // end::cli-tool[]
 
-[discrete#swift:database:::troubleshooting]
+[#swift:database:::troubleshooting]
 == Troubleshooting
 You should use console logs as your first source of diagnostic information.
 If the information in the default logging level is insufficient you can focus it on database errors and generate more verbose messages -- see: <<swift:database:::ex-logdb>>.
@@ -389,7 +389,7 @@ Database.log.console.domains = .database
 ====
 
 
-[discrete#swift:database:::related-content]
+[#swift:database:::related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">

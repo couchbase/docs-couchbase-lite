@@ -31,11 +31,11 @@ Related Content -- xref:java:querybuilder.adoc#lbl-predquery[Predictive Queries]
 --
 
 
-[discrete#java:query-troubleshooting:::query-explain]
+[#java:query-troubleshooting:::query-explain]
 === Query Explain
 
 
-[discrete#java:query-troubleshooting:::using]
+[#java:query-troubleshooting:::using]
 ==== Using
 Query's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Query.html#explain--[explain()] method can provide useful insight when you are trying to diagnose query performance issues and-or optimize queries.
 To examine how your query is working, either embed the call inside your app (see: <<java:query-troubleshooting:::use-qe-app>>), or use it interactively within a `cblite` shell (see: <<java:query-troubleshooting:::use-qe-cblite>>).
@@ -85,7 +85,7 @@ cblite <your-database-name>.cblite2 // <.>
 ====
 
 
-[discrete#java:query-troubleshooting:::output]
+[#java:query-troubleshooting:::output]
 ==== Output
 The output from `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Query.html#explain--[explain()]` remains the same whether invoked by an app, or `cblite` -- see <<java:query-troubleshooting:::qe-output>> for an example of how it looks.
 
@@ -115,11 +115,11 @@ You can use this to identify potential issues and so optimize problematic querie
 <.> The query in JSON-string format, which you can copy-and-paste directly into the _cblite_ tool.
 
 
-[discrete#java:query-troubleshooting:::the-query-plan]
+[#java:query-troubleshooting:::the-query-plan]
 === The Query Plan
 
 
-[discrete#java:query-troubleshooting:::format]
+[#java:query-troubleshooting:::format]
 ==== Format
 The query plan section of the output displays a tabular form of the translated query's execution plan.
 It primarily shows how the data will be retrieved and, where appropriate, how it will be sorted for navigation and-or presentation purposes.
@@ -142,7 +142,7 @@ Something you may well be looking to optimize -- see <<java:query-troubleshootin
 ====
 
 
-[discrete#java:query-troubleshooting:::ret-method]
+[#java:query-troubleshooting:::ret-method]
 ==== Retrieval Method
 The query optimizer will attempt to retrieve the requested data items as efficiently as possible, which generally will be by using one or more of the available indexes.
 The _retrieval method_ shows the approach decided upon by the optimizer -- see <<java:query-troubleshooting:::ret-meths>>.
@@ -172,7 +172,7 @@ When looking to optimize a query's retrieval method, consider whether:
 * You could use an existing index -- perhaps by restructuring the query to minimize wildcard use, or the reliance on functions that modify the query's interpretation of index keys (for example, 'lower')
 * You could reduce the data set being requested to minimize the query's footprint on the database
 
-[discrete#java:query-troubleshooting:::order-group]
+[#java:query-troubleshooting:::order-group]
 ==== Order and Group
 The `Use temp b-tree for` lines in the example indicate that the query requires sorting to cater for grouping and then sorting again to present the output results.
 Minimizing, if not eliminating, this ordering and re-ordering will obviously reduce the amount of time taken to process your query.
@@ -180,7 +180,7 @@ Minimizing, if not eliminating, this ordering and re-ordering will obviously red
 Ask "is the grouping and-or ordering absolutely necessary?": if it isn't, drop it or modify it to minimize its impact.
 
 
-[discrete#java:query-troubleshooting:::queries-and-indexes]
+[#java:query-troubleshooting:::queries-and-indexes]
 === Queries and Indexes
 
 Querying documents using a pre-existing database index is much faster because an index narrows down the set of documents to examine -- see: the xref:java:query-troubleshooting.adoc[Query Troubleshooting] topic.
@@ -207,7 +207,7 @@ Less good is if the query must scan the whole index; although the compact nature
 Searches that begin with or rely upon an inequality with the primary key are inherently less effective than those using a primary key equality.
 
 
-[discrete#java:query-troubleshooting:::working-with-the-query-optimizer]
+[#java:query-troubleshooting:::working-with-the-query-optimizer]
 === Working with the Query Optimizer
 You may have noticed that sometimes a query runs faster on a second run, or after re-opening the database, or after deleting and recreating an index.
 This typically happens when SQL Query Optimizer has gathered sufficient stats to recognize a means of optimizing a sub-optimal query.
@@ -224,7 +224,7 @@ Then re-generate the Query Explain and note any improvements in optimization.
 They may not, in themselves, resolve the issue entirely; but they can provide a uesful guide toward further optimizing changes you could make.
 
 
-[discrete#java:query-troubleshooting:::use-like-based-queries]
+[#java:query-troubleshooting:::use-like-based-queries]
 === Wildcard and Like-based Queries
 
 Like-based searches can use the index(es) only if:
@@ -301,7 +301,7 @@ Logger.log(query.explain());
 3|0|0| SEARCH TABLE kv_default AS _doc USING INDEX typeIndex (<expr>>? AND <expr><?)
 ----
 
-[discrete#java:query-troubleshooting:::use-functions-wisely]
+[#java:query-troubleshooting:::use-functions-wisely]
 === Use Functions Wisely
 
 Functions are a very useful tool in building queries, but be aware that they can impact whether the query-optimizer is able to use your index(es).
@@ -359,7 +359,7 @@ Logger.log(query.explain());
 
 Knowing this, you can consider how you create the index; for example, using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Function.html#lower-com.couchbase.lite.Expression-[lower()] when you create the index and then always using lowercase comparisons.
 
-[discrete#java:query-troubleshooting:::optimization-considerations]
+[#java:query-troubleshooting:::optimization-considerations]
 === Optimization Considerations
 
 Try to minimize the amount of data retrieved.
@@ -382,7 +382,7 @@ Consider Using Full Text Search instead of complex like or regex patterns -- see
 {empty}
 
 
-[discrete#java:query-troubleshooting:::related-content]
+[#java:query-troubleshooting:::related-content]
 === Related Content
 ++++
 <div class="card-row three-column-row">

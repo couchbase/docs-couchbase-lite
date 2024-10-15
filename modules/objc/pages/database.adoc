@@ -23,7 +23,7 @@ Related Content -- xref:objc:blob.adoc[Blobs] | xref:objc:document.adoc[Document
 --
 
 
-[discrete#objc:database:::database-concepts]
+[#objc:database:::database-concepts]
 == Database Concepts
 
 Databases created on Couchbase Lite can share the same hierarchical structure as Capella databases.
@@ -155,7 +155,7 @@ syncing data scope:: Contains information pertaining to the user, which can be s
 ****
 
 
-[discrete#objc:database:::open-db]
+[#objc:database:::open-db]
 == Create or Open Database
 
 
@@ -200,7 +200,7 @@ self.database = database;
 ====
 
 
-[discrete#objc:database:::close-database]
+[#objc:database:::close-database]
 == Close Database
 
 You are advised to incorporate the closing of all open databases into your application workflow.
@@ -236,7 +236,7 @@ if (![self.database close:&error])
 ====
 
 
-[discrete#objc:database:::database-full-sync]
+[#objc:database:::database-full-sync]
 == Database Full Sync
 
 Database Full Sync will prevent the loss of transactional data due to an unexpected system crash or loss of power.
@@ -266,7 +266,7 @@ config.fullSync = true;
 
 NOTE: It is not possible to change the configuration of a Database after instantiating the Database with the configuration by updating its `DatabaseConfiguration` property.
 
-[discrete#objc:database:::database-encryption]
+[#objc:database:::database-encryption]
 == Database Encryption
 
 
@@ -277,7 +277,7 @@ _Couchbase Lite on Objective-C_ includes the ability to encrypt Couchbase Lite d
 This allows mobile applications to secure the data at rest, when it is being stored on the device.
 The algorithm used to encrypt the database is 256-bit AES.
 
-[discrete#objc:database:::enabling]
+[#objc:database:::enabling]
 === Enabling
 To enable encryption, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html#/c:objc(cs)CBLDatabaseConfiguration(py)encryptionKey[CBLDatabaseConfiguration.encryptionKey()] to set the encryption key of your choice.
 Provide this encryption key every time the database is opened -- see <<objc:database:::ex-sdb-encrypt>>.
@@ -307,42 +307,42 @@ if (!self.database) {
 ====
 
 
-[discrete#objc:database:::persisting]
+[#objc:database:::persisting]
 === Persisting
 Couchbase Lite does not persist the key.
 It is the application's responsibility to manage the key and store it in a platform-specific secure store such Android's
 https://developer.android.com/training/articles/keystore[Keystore].
 
-[discrete#objc:database:::opening]
+[#objc:database:::opening]
 === Opening
 An encrypted database can only be opened with the same platform that was used to encrypt it in the first place.
 So a database encrypted using the Objective-C SDK, and then exported, is readable only by the Objective-C SDK.
 
-[discrete#objc:database:::changing]
+[#objc:database:::changing]
 === Changing
 To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)changeEncryptionKey:error:[CBLDatabase.changeEncryptionKey()]
 to set the required new encryption-key value.
 
 
-[discrete#objc:database:::removing]
+[#objc:database:::removing]
 === Removing
 To remove encryption, open the database using its existing encryption-key and use
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)changeEncryptionKey:error:[CBLDatabase.changeEncryptionKey()]
 with a null value as the encryption key.
 
-[discrete#objc:database:::upgrading]
+[#objc:database:::upgrading]
 === Upgrading
 To upgrade an encrypted database see: xref:objc:dep-upgrade.adoc#lbl-db-upgrades[Upgrade 1.x databases]
 
 
-[discrete#objc:database:::lbl-find-db-loc]
+[#objc:database:::lbl-find-db-loc]
 == Finding a Database File
 
 
 When the application is running on the iOS simulator, you can locate the application's sandbox directory using the https://simpholders.com/3/[SimPholders] utility.
 
 
-[discrete#objc:database:::lbl-db-util]
+[#objc:database:::lbl-db-util]
 == Database Maintenance
 
 From time to time it may be necessary to perform certain maintenance activities on your database, for example to
@@ -356,7 +356,7 @@ It should be run on-demand using the API.
 If in doubt, consult Couchbase support.
 
 
-[discrete#objc:database:::cli-tool]
+[#objc:database:::cli-tool]
 == Command Line Tool
 
 // tag::cli-tool[]
@@ -367,7 +367,7 @@ Note that the `cblite` tool is not supported by the https://www.couchbase.com/su
 
 // end::cli-tool[]
 
-[discrete#objc:database:::troubleshooting]
+[#objc:database:::troubleshooting]
 == Troubleshooting
 You should use console logs as your first source of diagnostic information.
 If the information in the default logging level is insufficient you can focus it on database errors and generate more verbose messages -- see: <<objc:database:::ex-logdb>>.
@@ -394,7 +394,7 @@ CBLDatabase.log.console.domains = kCBLLogDomainAll;
 ====
 
 
-[discrete#objc:database:::related-content]
+[#objc:database:::related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">

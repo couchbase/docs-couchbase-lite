@@ -35,7 +35,7 @@ They demonstrate the basic concepts and approaches to using a feature.
 Use them as inspiration and adapt these examples to best practice when developing applications for your platform.
 
 
-[discrete#java:p2psync-websocket-using-active:::introduction]
+[#java:p2psync-websocket-using-active:::introduction]
 ==== Introduction
 This content provides sample code and configuration examples covering the implementation of xref:refer-glossary.adoc#peer-to-peer-sync[Peer-to-Peer Sync] over WebSockets.
 Specifically it covers the implementation of an xref:refer-glossary.adoc#active-peer[Active Peer].
@@ -50,7 +50,7 @@ The use of TLS, its associated keys and certificates requires using secure stora
 The implementation of this storage differs from platform to platform -- see xref:java:p2psync-websocket.adoc#using-secure-storage[Using secure storage].
 
 
-[discrete#java:p2psync-websocket-using-active:::configuration-summary]
+[#java:p2psync-websocket-using-active:::configuration-summary]
 ==== Configuration Summary
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
 <<java:p2psync-websocket-using-active:::simple-replication-to-listener>> shows the initialization and configuration process.
@@ -122,19 +122,19 @@ Here we say to provide _Basic Authentication_ credentials. Other options are ava
 
 <.> Start the replicator.
 
-[discrete#java:p2psync-websocket-using-active:::api-references]
+[#java:p2psync-websocket-using-active:::api-references]
 ==== API References
 
 You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/[Java API References] here.
 
-[discrete#java:p2psync-websocket-using-active:::device-discovery]
+[#java:p2psync-websocket-using-active:::device-discovery]
 ==== Device Discovery
 *This phase is optional:* If the listener is initialized on a well known URL endpoint (for example, a static IP Address or well known DNS address) then you can configure Active Peers to connect to those.
 
 Prior to connecting with a listener you may execute a Peer discovery phase to dynamically discover Peers.
 
 
-[discrete#java:p2psync-websocket-using-active:::configure-replicator]
+[#java:p2psync-websocket-using-active:::configure-replicator]
 ==== Configure Replicator
 In this section::
 <<java:p2psync-websocket-using-active:::lbl-cfg-tgt>>
@@ -144,7 +144,7 @@ In this section::
 |  <<java:p2psync-websocket-using-active:::lbl-authclnt>>
 
 
-[discrete#java:p2psync-websocket-using-active:::lbl-cfg-tgt]
+[#java:p2psync-websocket-using-active:::lbl-cfg-tgt]
 ===== Configure Target
 
 Use the
@@ -185,7 +185,7 @@ ReplicatorConfiguration thisConfig = new ReplicatorConfiguration(
 to ensure TLS encryption -- strongly recommended in production -- or `ws://`)
 
 
-[discrete#java:p2psync-websocket-using-active:::lbl-cfg-sync]
+[#java:p2psync-websocket-using-active:::lbl-cfg-sync]
 ===== Sync Mode
 
 
@@ -236,7 +236,7 @@ This prevents the replications generating the same checkpoint `docID` resulting 
 --
 
 
-[discrete#java:p2psync-websocket-using-active:::lbl-cfg-retry]
+[#java:p2psync-websocket-using-active:::lbl-cfg-retry]
 ===== Retry Configuration
 
 
@@ -324,7 +324,7 @@ thisReplicator = repl;
 <.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxAttemptWaitTime-long-[setMaxAttemptWaitTime()] to set the required interval between retry attempts.
 
 
-[discrete#java:p2psync-websocket-using-active:::authenticate-listener]
+[#java:p2psync-websocket-using-active:::authenticate-listener]
 ===== Authenticating the Listener
 
 Define the credentials the your app (the client) is expecting to receive from the server (listener) in order to ensure that the server is one it is prepared to interact with.
@@ -403,7 +403,7 @@ config.setPinnedServerX509Certificate((X509Certificate) identity.getCerts().get(
 ====
 
 
-[discrete#java:p2psync-websocket-using-active:::lbl-authclnt]
+[#java:p2psync-websocket-using-active:::lbl-authclnt]
 ===== Client Authentication
 
 Here we define the credentials that the client can present to the server if prompted to do so in order that the server can authenticate it.
@@ -411,7 +411,7 @@ Here we define the credentials that the client can present to the server if prom
 We use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html[ReplicatorConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html#setAuthenticator-com.couchbase.lite.Authenticator-[setAuthenticator] method to define the authentication method to the replicator.
 
 
-[discrete#java:p2psync-websocket-using-active:::basic-authentication]
+[#java:p2psync-websocket-using-active:::basic-authentication]
 ===== Basic Authentication
 Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/BasicAuthenticator.html[BasicAuthenticator]` to supply basic authentication credentials (username and word).
 
@@ -439,7 +439,7 @@ This example shows basic authentication using user name and password:
 ====
 
 
-[discrete#java:p2psync-websocket-using-active:::certificate-authentication]
+[#java:p2psync-websocket-using-active:::certificate-authentication]
 ===== Certificate Authentication
 Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ClientCertificateAuthenticator.html[ClientCertificateAuthenticator]` to configure the client TLS certificates to be presented to the server, on connection.
 This applies only to the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/URLEndpointListener.html[URLEndpointListener].
@@ -482,7 +482,7 @@ thisReplicator = repl;
 <.> Set the authenticator to https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ClientCertificateAuthenticator.html[ClientCertificateAuthenticator] and configure it to use the retrieved identity
 
 
-[discrete#java:p2psync-websocket-using-active:::initialize-replicator]
+[#java:p2psync-websocket-using-active:::initialize-replicator]
 ==== Initialize Replicator
 
 
@@ -546,7 +546,7 @@ thisToken = token;
 <.> Initialize the replicator with the configuration
 <.> Start the replicator
 
-[discrete#java:p2psync-websocket-using-active:::lbl-repl-mon]
+[#java:p2psync-websocket-using-active:::lbl-repl-mon]
 ==== Monitor Sync
 
 
@@ -561,7 +561,7 @@ This enables you to know, for example, when the replication is actively transfer
 
 You can also choose to monitor document changes -- see: <<java:p2psync-websocket-using-active:::lbl-repl-evnts>>.
 
-[discrete#java:p2psync-websocket-using-active:::lbl-repl-chng]
+[#java:p2psync-websocket-using-active:::lbl-repl-chng]
 ===== Change Listeners
 Use this to monitor changes and to inform on sync progress; this is an optional step.
 You can add and a replicator change listener at any point; it will report changes from the point it is registered.
@@ -575,7 +575,7 @@ You will then be asynchronously notified of state changes.
 You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.html#removeChangeListener-com.couchbase.lite.ListenerToken-[removeChangeListener(ListenerToken token)].
 
 
-[discrete#java:p2psync-websocket-using-active:::lbl-repl-status]
+[#java:p2psync-websocket-using-active:::lbl-repl-status]
 ===== Replicator Status
 
 You can use the
@@ -639,7 +639,7 @@ Using replicator.status::
 ====
 
 
-[discrete#java:p2psync-websocket-using-active:::lbl-repl-states]
+[#java:p2psync-websocket-using-active:::lbl-repl-states]
 ===== Replication States
 <<java:p2psync-websocket-using-active:::tbl-states>> shows the different states, or activity levels, reported in the API; and the meaning of each.
 
@@ -672,7 +672,7 @@ Since the replication occurs in batches the total count can vary through the cou
 
 [#lbl-repl-evnts]
 
-[discrete#java:p2psync-websocket-using-active:::lbl-repl-pend]
+[#java:p2psync-websocket-using-active:::lbl-repl-pend]
 ===== Documents Pending Push
 
 TIP: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-[Replicator.isDocumentPending] is quicker and more efficient.
@@ -735,7 +735,7 @@ This is a snapshot and may have changed by the time the response is received and
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-[Replicator.isDocumentPending] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
 
-[discrete#java:p2psync-websocket-using-active:::lbl-repl-stop]
+[#java:p2psync-websocket-using-active:::lbl-repl-stop]
 ==== Stop Sync
 
 Stopping a replication is straightforward.
@@ -767,7 +767,7 @@ repl.stop(); // <.>
 It will stop any active <<java:p2psync-websocket-using-active:::lbl-repl-chng,change listener>> once the replication is stopped.
 
 
-[discrete#java:p2psync-websocket-using-active:::conflict-resolution]
+[#java:p2psync-websocket-using-active:::conflict-resolution]
 ==== Conflict Resolution
 
 Unless you specify otherwise, Couchbase Lite's default conflict resolution policy is applied -- see xref:java:conflict.adoc[Handling Data Conflicts].
@@ -882,12 +882,12 @@ collection.save(
 For more on replicator conflict resolution see: xref:java:conflict.adoc[Handling Data Conflicts].
 
 
-[discrete#java:p2psync-websocket-using-active:::delta-sync]
+[#java:p2psync-websocket-using-active:::delta-sync]
 ==== Delta Sync
 If delta sync is enabled on the listener, then replication will use delta sync.
 
 
-[discrete#java:p2psync-websocket-using-active:::related-content]
+[#java:p2psync-websocket-using-active:::related-content]
 ==== Related Content
 ++++
 <div class="card-row three-column-row">

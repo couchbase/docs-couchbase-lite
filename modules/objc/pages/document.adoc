@@ -24,11 +24,11 @@ Related Content -- xref:objc:database.adoc[Databases] | xref:objc:blob.adoc[Blob
 --
 
 
-[discrete#objc:document:::overview]
+[#objc:document:::overview]
 == Overview
 
 
-[discrete#objc:document:::document-structure]
+[#objc:document:::document-structure]
 === Document Structure
 
 In pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] the term 'document' refers to an entry in the database.
@@ -49,7 +49,7 @@ This value is stored as a dictionary of key-value (k-v) pairs.
 The values can be made of up several different <<objc:document:::data-types>> such as numbers, strings, arrays, and nested objects.
 
 
-[discrete#objc:document:::data-encoding]
+[#objc:document:::data-encoding]
 === Data Encoding
 
 The document body is stored in an internal, efficient, binary form called
@@ -59,7 +59,7 @@ This internal form can be easily converted into a manageable native dictionary f
 Fleece data is stored in the smallest format that will hold the value whilst maintaining the integrity of the value.
 
 
-[discrete#objc:document:::data-types]
+[#objc:document:::data-types]
 === Data Types
 
 The `Document` class offers a set of property accessors for various scalar types, such as:
@@ -83,13 +83,13 @@ MutableArray:: represents a writeable collection of objects
 Blob:: represents an arbitrary piece of binary data
 
 
-[discrete#objc:document:::json]
+[#objc:document:::json]
 === JSON
 
 Couchbase Lite also provides for the direct handling of JSON data implemented in most cases by the provision of a pass:a,q[`toJSON()`] method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array) -- see <<objc:document:::lbl-json-data>>.
 
 
-[discrete#objc:document:::constructing-a-document]
+[#objc:document:::constructing-a-document]
 == Constructing a Document
 
 
@@ -126,7 +126,7 @@ hotel: {
 
 ----
 
-[discrete#objc:document:::ex-usage]
+[#objc:document:::ex-usage]
 === Open a Database
 
 First open your database.
@@ -151,7 +151,7 @@ CBLCollection *collection = [database defaultCollection:&error];
 
 See xref:objc:database.adoc[Databases] for more information
 
-[discrete#objc:document:::create-a-document]
+[#objc:document:::create-a-document]
 === Create a Document
 
 Now create a new document to hold your application's data.
@@ -173,7 +173,7 @@ CBLMutableDocument *mutableDoc = [[CBLMutableDocument alloc] init];
 
 For more on using *Documents*, see <<objc:document:::document-initializers>> and <<objc:document:::mutability>>.
 
-[discrete#objc:document:::create-a-dictionary]
+[#objc:document:::create-a-dictionary]
 === Create a Dictionary
 
 Now create a mutable dictionary (`address`).
@@ -199,7 +199,7 @@ CBLMutableDictionary *address = [[CBLMutableDictionary alloc] init];
 
 Learn more about <<objc:document:::using-dictionaries>>.
 
-[discrete#objc:document:::create-an-array]
+[#objc:document:::create-an-array]
 === Create an Array
 
 Since the hotel may have multiple contact numbers, provide a field (`phones`) as a mutable array.
@@ -219,7 +219,7 @@ CBLMutableArray *phones = [[CBLMutableArray alloc] init];
 
 Learn more about <<objc:document:::using-arrays>>
 
-[discrete#objc:document:::populate-a-document]
+[#objc:document:::populate-a-document]
 === Populate a Document
 
 Now add your data to the mutable document created earlier.
@@ -251,7 +251,7 @@ Each data item is stored as a key-value pair.
 NOTE: Couchbase recommend using a `type` attribute to define each logical document type.
 
 
-[discrete#objc:document:::save-a-document]
+[#objc:document:::save-a-document]
 === Save a Document
 
 Now persist the populated document to your Couchbase Lite database.
@@ -267,7 +267,7 @@ This will auto-generate the document id.
 ----
 
 
-[discrete#objc:document:::close-the-database]
+[#objc:document:::close-the-database]
 === Close the Database
 
 With your document saved, you can now close our Couchbase Lite database.
@@ -283,11 +283,11 @@ if (![self.database close:&error])
 ----
 
 
-[discrete#objc:document:::working-with-data]
+[#objc:document:::working-with-data]
 == Working with Data
 
 
-[discrete#objc:document:::date-accessors]
+[#objc:document:::date-accessors]
 === Date accessors
 
 Couchbase Lite offers _Date_ accessors as a convenience.
@@ -314,7 +314,7 @@ NSDate *date = [doc dateForKey:@"createdAt"];
 ====
 
 
-[discrete#objc:document:::using-dictionaries]
+[#objc:document:::using-dictionaries]
 === Using Dictionaries
 
 .API References
@@ -389,7 +389,7 @@ NSError *error;
 ====
 
 
-[discrete#objc:document:::using-arrays]
+[#objc:document:::using-arrays]
 === Using Arrays
 
 .API References
@@ -467,13 +467,13 @@ NSError *error;
 ====
 
 
-[discrete#objc:document:::using-blobs]
+[#objc:document:::using-blobs]
 === Using Blobs
 
 For more on working with blobs, see xref:objc:blob.adoc[Blobs]
 
 
-[discrete#objc:document:::document-initializers]
+[#objc:document:::document-initializers]
 == Document Initializers
 
 
@@ -512,7 +512,7 @@ CBLMutableDocument *doc = [[CBLMutableDocument alloc] init];
 ====
 
 
-[discrete#objc:document:::mutability]
+[#objc:document:::mutability]
 == Mutability
 
 
@@ -546,7 +546,7 @@ CBLMutableDocument *mutableDocument = [doc toMutable];
 NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<objc:document:::lbl-doc-constraints>>.
 
 
-[discrete#objc:document:::batch-operations]
+[#objc:document:::batch-operations]
 == Batch operations
 
 If you're making multiple changes to a database at once, it's faster to group them together.
@@ -585,7 +585,7 @@ At the *local* level this operation is still transactional: no other `Database` 
 But Couchbase Mobile is a distributed system, and due to the way replication works, there's no guarantee that Sync Gateway or other devices will receive your changes all at once.
 
 
-[discrete#objc:document:::document-change-events]
+[#objc:document:::document-change-events]
 == Document change events
 
 You can register for document changes.
@@ -615,7 +615,7 @@ The following example registers for changes to the document with ID `user.john` 
 ====
 
 
-[discrete#objc:document:::document-expiration]
+[#objc:document:::document-expiration]
 == Document Expiration
 
 Document expiration allows users to set the expiration date for a document.
@@ -659,7 +659,7 @@ CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult expression:[CB
 
 You can set expiration for a whole Collection
 
-[discrete#objc:document:::lbl-doc-constraints]
+[#objc:document:::lbl-doc-constraints]
 == Document Constraints
 
 Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
@@ -691,7 +691,7 @@ For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway
 ====
 
 
-[discrete#objc:document:::lbl-json-data]
+[#objc:document:::lbl-json-data]
 == Working with JSON Data
 
 In this section::
@@ -704,7 +704,7 @@ In this section::
 
 The pass:a,q[`toJSON()`] typed-accessor means you can easily work with JSON data, native and Couchbase Lite objects.
 
-[discrete#objc:document:::lbl-array]
+[#objc:document:::lbl-array]
 === Arrays
 
 Convert an `ArrayObject` to and from JSON using the pass:a,q[`toJSON()`] and `toArray` methods -- see <<objc:document:::ex-array>>.
@@ -744,7 +744,7 @@ for (NSString *item in array) {
 ====
 
 
-[discrete#objc:document:::lbl-blob]
+[#objc:document:::lbl-blob]
 === Blobs
 Convert a `Blob` to JSON using the `toJSON` method -- see <<objc:document:::ex-blob>>.
 
@@ -778,7 +778,7 @@ NSLog(@"json string is %@", json);
 
 See also: xref:objc:blob.adoc[Blobs]
 
-[discrete#objc:document:::lbl-dictionary]
+[#objc:document:::lbl-dictionary]
 === Dictionaries
 
 Convert a `DictionaryObject` to and from JSON using the `toJSON` and `toDictionary` methods -- see <<objc:document:::ex-dictionary>>.
@@ -821,7 +821,7 @@ for (NSString *key in dict) {
 ====
 
 
-[discrete#objc:document:::lbl-document]
+[#objc:document:::lbl-document]
 === Documents
 
 Convert a `Document` to and from JSON strings using the pass:a,q[`toJSON()`] and pass:a,q[`setJSON()`] methods -- see <<objc:document:::ex-document>>.
@@ -863,7 +863,7 @@ NSLog(@"json %@", json);
 ====
 
 
-[discrete#objc:document:::lbl-result]
+[#objc:document:::lbl-result]
 === Query Results as JSON
 
 Convert a `Query Result` to JSON using its {to-JSON} accessor method.
@@ -930,7 +930,7 @@ If your query selects a sub-set of available properties then the JSON format wil
 ----
 
 
-[discrete#objc:document:::related-content]
+[#objc:document:::related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">

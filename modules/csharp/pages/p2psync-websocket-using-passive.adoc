@@ -29,7 +29,7 @@ They demonstrate the basic concepts and approaches to using a feature.
 Use them as inspiration and adapt these examples to best practice when developing applications for your platform.
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::introduction]
+[#csharp:p2psync-websocket-using-passive:::introduction]
 ==== Introduction
 This content provides code and configuration examples covering the implementation of xref:refer-glossary.adoc#peer-to-peer-sync[Peer-to-Peer Sync] over WebSockets.
 Specifically, it covers the implementation of a xref:refer-glossary.adoc#passive-peer[Passive Peer].
@@ -44,7 +44,7 @@ The use of TLS, its associated keys and certificates requires using secure stora
 The implementation of this storage differs from platform to platform -- see xref:csharp:p2psync-websocket.adoc#using-secure-storage[Using secure storage].
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::configuration-summary]
+[#csharp:p2psync-websocket-using-passive:::configuration-summary]
 ==== Configuration Summary
 
 You should configure and initialize a Listener for each Couchbase Lite database instance you want to sync.
@@ -131,11 +131,11 @@ Note that client authentication is optional.
 <.> <<csharp:p2psync-websocket-using-passive:::lbl-start-listener>>
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::api-references]
+[#csharp:p2psync-websocket-using-passive:::api-references]
 ==== API References
 You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net[C#.Net API References] here.
 
-[discrete#csharp:p2psync-websocket-using-passive:::device-discovery]
+[#csharp:p2psync-websocket-using-passive:::device-discovery]
 ==== Device Discovery
 *This phase is optional:* If the Listener is initialized on a well-known URL endpoint (for example, a static IP Address or well-known DNS address) then you can configure Active Peers to connect to those.
 
@@ -145,7 +145,7 @@ For the Passive Peer, this involves advertising the service using, for example,
 The connection is established once the Passive Peer has authenticated and accepted an Active Peer's invitation.
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::initialize-the-listener-configuration]
+[#csharp:p2psync-websocket-using-passive:::initialize-the-listener-configuration]
 ==== Initialize the Listener Configuration
 Initialize the Listener configuration with the local database -- see <<csharp:p2psync-websocket-using-passive:::ex-locdb>>
 All other configuration values take their default setting.
@@ -177,11 +177,11 @@ var endpointConfig = new URLEndpointListenerConfiguration(new[] { collection });
 The database must be opened before the Listener is started. +
 `thisDB` has previously been declared as an object of type `Database`.
 
-[discrete#csharp:p2psync-websocket-using-passive:::lbl-set-network-and-port]
+[#csharp:p2psync-websocket-using-passive:::lbl-set-network-and-port]
 ==== Set Port and Network Interface
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::port-number]
+[#csharp:p2psync-websocket-using-passive:::port-number]
 ===== Port number
 The Listener will automatically select an available port if you do not specify one -- see <<csharp:p2psync-websocket-using-passive:::ex-port>> for how to specify a port.
 
@@ -208,7 +208,7 @@ endpointConfig.Port = 55990; //<.>
 Ensure that firewall rules do not block any port you do specify. +
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::network-interface]
+[#csharp:p2psync-websocket-using-passive:::network-interface]
 ===== Network Interface
 The Listener will listen on all network interfaces by default.
 
@@ -262,7 +262,7 @@ foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces()) {
 ====
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::delta-sync]
+[#csharp:p2psync-websocket-using-passive:::delta-sync]
 ==== Delta Sync
 
 Delta Sync allows clients to sync only those parts of a document that have changed.
@@ -289,11 +289,11 @@ endpointConfig.EnableDeltaSync = true; // <.>
 <.> Delta sync replication is not enabled by default.
 Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html#Couchbase_Lite_P2P_URLEndpointListenerConfiguration_EnableDeltaSync[EnableDeltaSync] method to activate or deactivate it.
 
-[discrete#csharp:p2psync-websocket-using-passive:::lbl-tls-security]
+[#csharp:p2psync-websocket-using-passive:::lbl-tls-security]
 ==== TLS Security
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::enable-or-disable-tls]
+[#csharp:p2psync-websocket-using-passive:::enable-or-disable-tls]
 ===== Enable or Disable TLS
 
 Define whether the connection is to use TLS or clear text.
@@ -319,7 +319,7 @@ Active peers will use the `ws://` URL scheme used to connect to the listener.
 Active peers will use the `wss://` URL scheme to connect to the listener.
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::configure-tls-identity-for-listener]
+[#csharp:p2psync-websocket-using-passive:::configure-tls-identity-for-listener]
 ===== Configure TLS Identity for Listener
 
 Define the credentials the server will present to the client for authentication.
@@ -456,7 +456,7 @@ This is the default setting.
 This is the default setting.
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::lbl-authenticating-the-client]
+[#csharp:p2psync-websocket-using-passive:::lbl-authenticating-the-client]
 ==== Authenticating the Client
 In this section: <<csharp:p2psync-websocket-using-passive:::use-basic-authentication>>  |  <<csharp:p2psync-websocket-using-passive:::using-client-certificate-authentication>>  |  <<csharp:p2psync-websocket-using-passive:::delete-tls-identity>>  |  <<csharp:p2psync-websocket-using-passive:::the-impact-of-tls-settings>>
 
@@ -476,7 +476,7 @@ You should initialize the authenticator using one of the following constructors:
 ** A block of code that assumes total responsibility for authentication -- it must return a boolean response (true for an authenticated client, or false for a failed authentication).
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::use-basic-authentication]
+[#csharp:p2psync-websocket-using-passive:::use-basic-authentication]
 ===== Use Basic Authentication
 
 Define how to authenticate client-supplied username and password credentials.
@@ -515,7 +515,7 @@ endpointConfig.Authenticator = new ListenerPasswordAuthenticator(
 <.> Where 'username'/'password' are the client-supplied values (from the http-authentication header) and `validUser`/`validPassword` are the values acceptable to the server.
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::using-client-certificate-authentication]
+[#csharp:p2psync-websocket-using-passive:::using-client-certificate-authentication]
 ===== Using Client Certificate Authentication
 Define how the server will authenticate client-supplied certificates.
 
@@ -622,7 +622,7 @@ It must return a boolean value; with `true` denoting the client supplied certifi
 <.> Add the authenticator to the Listener configuration.
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::delete-tls-identity]
+[#csharp:p2psync-websocket-using-passive:::delete-tls-identity]
 ===== Delete Entry
 
 You can remove unwanted TLS identities from secure storage using the convenience API.
@@ -644,7 +644,7 @@ You can remove unwanted TLS identities from secure storage using the convenience
 ====
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::the-impact-of-tls-settings]
+[#csharp:p2psync-websocket-using-passive:::the-impact-of-tls-settings]
 ===== The Impact of TLS Settings
 
 The table in this section shows the expected system behavior (in regards to security) depending on the TLS configuration settings deployed.
@@ -678,7 +678,7 @@ a|* System will use the configured identity.
 |===
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::lbl-start-listener]
+[#csharp:p2psync-websocket-using-passive:::lbl-start-listener]
 ==== Start Listener
 
 Once you have completed the Listener's configuration settings you can initialize the Listener instance and start it running -- see: <<csharp:p2psync-websocket-using-passive:::initialize-and-start-listener>>
@@ -707,7 +707,7 @@ listener.Start(); // <.>
 ====
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::monitor-listener]
+[#csharp:p2psync-websocket-using-passive:::monitor-listener]
 ==== Monitor Listener
 
 Use the Listener's `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListener.html#Couchbase_Lite_P2P_URLEndpointListener_Status[Status]` property/method to get counts of total and active connections -- see: <<csharp:p2psync-websocket-using-passive:::get-connection-counts>>.
@@ -735,7 +735,7 @@ ulong activeConnectionCount = listener.Status.ActiveConnectionCount;  // <.>
 ====
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::stop-listener]
+[#csharp:p2psync-websocket-using-passive:::stop-listener]
 ==== Stop Listener
 
 It is best practice to check the status of the Listener's connections and stop only when you have confirmed that there are no active connections -- see <<csharp:p2psync-websocket-using-passive:::get-connection-counts>>.
@@ -761,7 +761,7 @@ listener.Stop();
 NOTE: Closing the database will also close the Listener.
 
 
-[discrete#csharp:p2psync-websocket-using-passive:::related-content]
+[#csharp:p2psync-websocket-using-passive:::related-content]
 ==== Related Content
 ++++
 <div class="card-row three-column-row">

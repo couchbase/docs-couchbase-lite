@@ -23,7 +23,7 @@ Related Content -- xref:swift:query-live.adoc[Live Queries] | xref:swift:indexin
 
 NOTE: The examples used here are based on the _Travel Sample_ app and data introduced in the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial
 
-[discrete#swift:querybuilder:::introduction]
+[#swift:querybuilder:::introduction]
 === Introduction
 
 Couchbase Lite for Swift provides two ways to build and run database queries; the QueryBuilder API described in this topic and xref:swift:query-n1ql-mobile.adoc[{sqlpp} for Mobile].
@@ -74,7 +74,7 @@ a| The criteria used to order the items in the result set
 TIP: We recommend working through the query section of the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial as a good way to build your skills in this area.
 
 
-[discrete#swift:querybuilder:::lbl-select]
+[#swift:querybuilder:::lbl-select]
 === SELECT statement
 
 --
@@ -87,7 +87,7 @@ Related::
 Use the `SELECT` statement to specify which properties you want to return from the queried documents.
 You can opt to retrieve entire documents, or just the specific properties you need.
 
-[discrete#swift:querybuilder:::lbl-return-all]
+[#swift:querybuilder:::lbl-return-all]
 ==== Return All Properties
 Use the `SelectResult.all()` method to return all the properties of selected documents -- see: <<swift:querybuilder:::ex-select-all>>.
 
@@ -155,7 +155,7 @@ The query.execute statement returns the results in a dictionary, where the key i
 See: <<swift:querybuilder:::lbl-resultsets>> for more on processing query results.
 
 
-[discrete#swift:querybuilder:::lbl-return-properties]
+[#swift:querybuilder:::lbl-return-properties]
 ==== Return Selected Properties
 To access only specific properties, specify a comma-separated list of `SelectResult` expressions, one for each property, in the select statement of your query  -- see: <<swift:querybuilder:::ex-select-properties>>
 
@@ -225,7 +225,7 @@ The `query.execute` statement returns one or more key-value pairs, one for each 
 See: <<swift:querybuilder:::lbl-resultsets>> for more on processing query results.
 
 
-[discrete#swift:querybuilder:::lbl-where]
+[#swift:querybuilder:::lbl-where]
 === WHERE statement
 
 In this section::
@@ -240,7 +240,7 @@ The select statement takes in an `Expression`.
 You can chain any number of Expressions in order to implement sophisticated filtering capabilities.
 
 
-[discrete#swift:querybuilder:::lbl-comp-ops]
+[#swift:querybuilder:::lbl-comp-ops]
 ==== Comparison Operators
 The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Expression.html[Expression Comparators] can be used in the WHERE statement to specify on which property to match documents.
 In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
@@ -292,12 +292,12 @@ do {
 ====
 
 
-[discrete#swift:querybuilder:::lbl-coll-ops]
+[#swift:querybuilder:::lbl-coll-ops]
 ==== Collection Operators
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/ArrayExpression.html[Array Collection Operators] are useful to check if a given value is present in an array.
 
 
-[discrete#swift:querybuilder:::contains-operator]
+[#swift:querybuilder:::contains-operator]
 ===== CONTAINS Operator
 The following example uses the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/ArrayFunction.html[ArrayFunction]` to find documents where the `public_likes` array property contains a value equal to "Armani Langworth".
 
@@ -335,7 +335,7 @@ do {
 ----
 
 
-[discrete#swift:querybuilder:::in-operator]
+[#swift:querybuilder:::in-operator]
 ===== IN Operator
 
 The `IN` operator is useful when you need to explicitly list out the values to test against.
@@ -358,14 +358,14 @@ let query = QueryBuilder.select(SelectResult.all())
 ----
 
 
-[discrete#swift:querybuilder:::lbl-like-ops]
+[#swift:querybuilder:::lbl-like-ops]
 ==== Like Operator
 In this section::
 <<swift:querybuilder:::lbl-string-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<swift:querybuilder:::lbl-wild-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<swift:querybuilder:::lbl-wild-chars>>
 
-[discrete#swift:querybuilder:::lbl-string-match]
+[#swift:querybuilder:::lbl-string-match]
 ===== String Matching
 The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Protocols/ExpressionProtocol.html#/#/s:18CouchbaseLiteSwift18ExpressionProtocolP4likeyAaB_pAaB_pF[like(_:)] operator can be used for string matching -- see <<swift:querybuilder:::ex-like-case-insensitive>>
 
@@ -413,7 +413,7 @@ do {
 *Note* the use of `Function.lower` to transform `name` values to the same case as the literal comparator.
 
 
-[discrete#swift:querybuilder:::lbl-wild-match]
+[#swift:querybuilder:::lbl-wild-match]
 ===== Wildcard Match
 
 We can use `%` sign within a `like` expression to do a wildcard match against zero or more characters.
@@ -455,7 +455,7 @@ let query = QueryBuilder
 ====
 
 
-[discrete#swift:querybuilder:::lbl-wild-chars]
+[#swift:querybuilder:::lbl-wild-chars]
 ===== Wildcard Character Match
 
 We can use an `_` sign within a like expression to do a wildcard match against a single character.
@@ -492,7 +492,7 @@ let query = QueryBuilder
 ====
 
 
-[discrete#swift:querybuilder:::lbl-regex-ops]
+[#swift:querybuilder:::lbl-regex-ops]
 ==== Regex Operator
 
 Similar to the wildcards in `like` expressions, `regex` based pattern matching allow you to introduce an element of fuzziness in your search string -- see the code shown in <<swift:querybuilder:::ex-regex>>.
@@ -532,7 +532,7 @@ let query = QueryBuilder
 TIP: For more on the regex spec used by pass:q,a[Couchbase{nbsp}Lite] see http://www.cplusplus.com/reference/regex/ECMAScript/[cplusplus regex reference page^]
 
 
-[discrete#swift:querybuilder:::lbl-deleted-ops]
+[#swift:querybuilder:::lbl-deleted-ops]
 ==== Deleted Document
 You can query documents that have been deleted (tombstones) footnote:fn2x5[Starting in Couchbase Lite 2.5] as shown in <<swift:querybuilder:::ex-del-qry>>.
 
@@ -560,7 +560,7 @@ let query = QueryBuilder
 ====
 
 
-[discrete#swift:querybuilder:::lbl-join]
+[#swift:querybuilder:::lbl-join]
 === JOIN statement
 The JOIN clause enables you to select data from multiple documents that have been linked by criteria specified in the JOIN statement.
 For example to combine airline details with route details, linked by the airline id -- see <<swift:querybuilder:::ex-join>>.
@@ -611,7 +611,7 @@ let query = QueryBuilder
 ====
 
 
-[discrete#swift:querybuilder:::lbl-group]
+[#swift:querybuilder:::lbl-group]
 === GROUP BY statement
 You can perform further processing on the data in your result set before the final projection is generated.
 
@@ -681,7 +681,7 @@ There are 123 airports on the America/Denver timezone located in United States a
 --
 
 
-[discrete#swift:querybuilder:::lbl-order]
+[#swift:querybuilder:::lbl-order]
 === ORDER BY statement
 
 It is possible to sort the results of a query based on a given expression result -- see <<swift:querybuilder:::ex-orderby-qry>>
@@ -727,7 +727,7 @@ Avignon
 ----
 
 
-[discrete#swift:querybuilder:::lbl-date-time]
+[#swift:querybuilder:::lbl-date-time]
 === Date/Time Functions
 
 
@@ -751,7 +751,7 @@ The input for this is a numeric value representing milliseconds since the Unix e
 The end result will be an expression (with string content representing the date and time as a UTC ISO 8601 string) that can be further input into the query builder.
 
 
-[discrete#swift:querybuilder:::lbl-resultsets]
+[#swift:querybuilder:::lbl-resultsets]
 === Result Sets
 In this section::
 <<swift:querybuilder:::lbl-process-resultset>>{nbsp}{nbsp}|{nbsp}{nbsp}
@@ -762,7 +762,7 @@ In this section::
 <<swift:querybuilder:::lbl-pagination>>
 
 
-[discrete#swift:querybuilder:::lbl-process-resultset]
+[#swift:querybuilder:::lbl-process-resultset]
 ==== Processing
 
 This section shows how to handle the returned result sets for different types of `SELECT` statements.
@@ -787,10 +787,10 @@ The composition of each row is determined by the combination of `SelectResult` e
 To unpack these result sets you need to iterate this array.
 
 
-[discrete#swift:querybuilder:::lbl-all-sel]
+[#swift:querybuilder:::lbl-all-sel]
 ==== Select All Properties
 
-[discrete#swift:querybuilder:::query]
+[#swift:querybuilder:::query]
 ===== Query
 The `Select` statement for this type of query, returns all document properties for each document matching the query criteria -- see <<swift:querybuilder:::ex-all-qry>>
 
@@ -815,7 +815,7 @@ let query = QueryBuilder.select(SelectResult.all()).from(DataSource.collection(c
 ====
 
 
-[discrete#swift:querybuilder:::result-set-format]
+[#swift:querybuilder:::result-set-format]
 ===== Result Set Format
 The result set returned by queries using `SelectResult.all` is an array of dictionary objects -- one for each document matching the query criteria.
 
@@ -859,7 +859,7 @@ For each result object, the key is the database name and the 'value' is a dictio
 
 ====
 
-[discrete#swift:querybuilder:::result-set-access]
+[#swift:querybuilder:::result-set-access]
 ===== Result Set Access
 
 In this case access the retrieved document properties by converting each row's value, in turn, to a dictionary -- as shown in <<swift:querybuilder:::ex-all-acc>>.
@@ -904,10 +904,10 @@ You can add this dictionary to an array of returned matches, for processing else
 <.> Alternatively you can access the document properties here, by using the property names as keys to the dictionary object.
 
 
-[discrete#swift:querybuilder:::lbl-specific-sel]
+[#swift:querybuilder:::lbl-specific-sel]
 ==== Select Specific Properties
 
-[discrete#swift:querybuilder:::query-2]
+[#swift:querybuilder:::query-2]
 ===== Query
 Here we use `SelectResult.expression(property("<property-name>")))` to specify the document properties we want our query to return -- see: <<swift:querybuilder:::ex-specific-qry>>.
 
@@ -939,7 +939,7 @@ let query = QueryBuilder
 ====
 
 
-[discrete#swift:querybuilder:::result-set-format-2]
+[#swift:querybuilder:::result-set-format-2]
 ===== Result Set Format
 The result set returned when selecting only specific document properties is an array of dictionary objects -- one for each document matching the query criteria.
 
@@ -969,7 +969,7 @@ Each result object comprises a key-value pair for each selected document propert
 <.> The result for the next document matching the query criteria.
 ====
 
-[discrete#swift:querybuilder:::result-set-access-2]
+[#swift:querybuilder:::result-set-access-2]
 ===== Result Set Access
 Access the retrieved properties by converting each row into a dictionary -- as shown in <<swift:querybuilder:::ex-specific-acc>>.
 
@@ -1003,10 +1003,10 @@ for result in try! query.execute() {
 ====
 
 
-[discrete#swift:querybuilder:::lbl-id-sel]
+[#swift:querybuilder:::lbl-id-sel]
 ==== Select Document Id Only
 
-[discrete#swift:querybuilder:::query-3]
+[#swift:querybuilder:::query-3]
 ===== Query
 You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time -- see: <<swift:querybuilder:::ex-id-qry>>.
 
@@ -1032,7 +1032,7 @@ let query = QueryBuilder.select(SelectResult.expression(Meta.id).as("metaId"))
 ====
 
 
-[discrete#swift:querybuilder:::result-set-format-3]
+[#swift:querybuilder:::result-set-format-3]
 ===== Result Set Format
 The result set returned by queries using a SelectResult expression of the form `SelectResult.expression(meta.id)` is an array of dictionary objects -- one for each document matching the query criteria.
 Each result object has `id` as the key and the ID value as its value -- -see <<swift:querybuilder:::ex-id-rtn>>.
@@ -1055,7 +1055,7 @@ Each result object has `id` as the key and the ID value as its value -- -see <<s
 ----
 ====
 
-[discrete#swift:querybuilder:::result-set-access-3]
+[#swift:querybuilder:::result-set-access-3]
 ===== Result Set Access
 
 In this case, access the required document's properties by unpacking the `id` and using it to get the document from the database -- see: <<swift:querybuilder:::ex-id-acc>>.
@@ -1099,11 +1099,11 @@ for result in results {
 <.> Extract the Id value from the dictionary and use it to get the document from the database
 
 
-[discrete#swift:querybuilder:::lbl-count-sel]
+[#swift:querybuilder:::lbl-count-sel]
 ==== Select Count-only
 
 
-[discrete#swift:querybuilder:::query-4]
+[#swift:querybuilder:::query-4]
 ===== Query
 
 .Query selecting a Count-only
@@ -1130,7 +1130,7 @@ let query = QueryBuilder
 
 <.> The alias name, `mycount`, is used to access the count value.
 
-[discrete#swift:querybuilder:::result-set-format-4]
+[#swift:querybuilder:::result-set-format-4]
 ===== Result Set Format
 The result set returned by a count such as `Select.expression(Function.count(Expression.all)))` is a key-value pair.
 The key is the count name, as defined using `SelectResult.as` -- see: <<swift:querybuilder:::ex-count-rtn>> for the format and <<swift:querybuilder:::ex-count-qry>> for the query.
@@ -1150,7 +1150,7 @@ The key is the count name, as defined using `SelectResult.as` -- see: <<swift:qu
 <.> The key-value pair returned by a count.
 ====
 
-[discrete#swift:querybuilder:::result-set-access-4]
+[#swift:querybuilder:::result-set-access-4]
 ===== Result Set Access
 
 Access the count using its alias name (`mycount` in this example) -- see <<swift:querybuilder:::ex-count-acc>>
@@ -1178,7 +1178,7 @@ for result in try query.execute() {
 
 <.> Get the count using the `SelectResult.as` alias, which is used as its key.
 
-[discrete#swift:querybuilder:::lbl-pagination]
+[#swift:querybuilder:::lbl-pagination]
 ==== Handling Pagination
 One way to handle pagination in high-volume queries is to retrieve the results in batches.
 Use the `limit` and `offset` feature, to return a defined number of results starting from a given offset -- see: <<swift:querybuilder:::ex-pagination>>.
@@ -1214,7 +1214,7 @@ let query = QueryBuilder
 TIP: For more on using the QueryBuilder API, see our blog: https://blog.couchbase.com/sql-for-json-query-interface-couchbase-mobile/[Introducing the Query Interface in Couchbase Mobile]
 
 
-[discrete#swift:querybuilder:::json-result-sets]
+[#swift:querybuilder:::json-result-sets]
 === JSON Result Sets
 
 Couchbase Lite for Swift provides a convenience API to convert query results to JSON strings.
@@ -1302,7 +1302,7 @@ If your query selects a sub-set of available properties then the JSON format wil
 ----
 
 
-[discrete#swift:querybuilder:::lbl-predquery]
+[#swift:querybuilder:::lbl-predquery]
 === Predictive Query
 
 .Enterprise Edition only
@@ -1323,7 +1323,7 @@ To run a predictive query with a model as the one shown above, you must implemen
 . <<Deregister-the-model,Deregister the Model>>
 
 
-[discrete#swift:querybuilder:::integrate-the-model]
+[#swift:querybuilder:::integrate-the-model]
 ==== Integrate the Model
 
 To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `predict()` -- see: <<swift:querybuilder:::int-pred-model>>.
@@ -1371,7 +1371,7 @@ The input and output of the predictive model is a `DictionaryObject`.
 Therefore, the supported data type will be constrained by the data type that the `DictionaryObject` supports.
 
 
-[discrete#swift:querybuilder:::register-the-model]
+[#swift:querybuilder:::register-the-model]
 ==== Register the Model
 
 To register the model you must create a new instance and pass it to the `Database.prediction.registerModel` static method.
@@ -1396,7 +1396,7 @@ Database.prediction.registerModel(model, withName: "ImageClassifier")
 ====
 
 
-[discrete#swift:querybuilder:::create-an-index]
+[#swift:querybuilder:::create-an-index]
 ==== Create an Index
 
 Creating an index for a predictive query is highly recommended.
@@ -1407,7 +1407,7 @@ There are two types of indexes for predictive queries:
 * <<swift:querybuilder:::value-index,Value Index>>
 * <<swift:querybuilder:::predictive-index,Predictive Index>>
 
-[discrete#swift:querybuilder:::value-index]
+[#swift:querybuilder:::value-index]
 ===== Value Index
 
 The code below creates a value index from the "label" value of the prediction result.
@@ -1436,7 +1436,7 @@ try collection.createIndex(index, name: "value-index-image-classifier")
 ====
 
 
-[discrete#swift:querybuilder:::predictive-index]
+[#swift:querybuilder:::predictive-index]
 ===== Predictive Index
 
 Predictive Index is a new index type used for predictive query.
@@ -1465,7 +1465,7 @@ try collection.createIndex(index, name: "predictive-index-image-classifier")
 ====
 
 
-[discrete#swift:querybuilder:::run-a-prediction-query]
+[#swift:querybuilder:::run-a-prediction-query]
 ==== Run a Prediction Query
 
 The code below creates a query that calls the prediction function to return the "label" value for the first 10 results in the database.
@@ -1513,7 +1513,7 @@ do {
 NOTE: The null value returned by the prediction method will be interpreted as MISSING value in queries.
 
 
-[discrete#swift:querybuilder:::deregister-the-model]
+[#swift:querybuilder:::deregister-the-model]
 ==== Deregister the Model
 
 To deregister the model you must call the `Database.prediction.unregisterModel` static method.
@@ -1537,7 +1537,7 @@ Database.prediction.unregisterModel(withName: "ImageClassifier")
 ====
 
 
-[discrete#swift:querybuilder:::integrate-a-model-with-coremlpredictivemodel]
+[#swift:querybuilder:::integrate-a-model-with-coremlpredictivemodel]
 ==== Integrate a Model with CoreMLPredictiveModel
 
 NOTE: iOS Only
@@ -1562,7 +1562,7 @@ Database.prediction.registerModel(predictiveModel, withName: "ImageClassifier")
 ----
 
 
-[discrete#swift:querybuilder:::related-content]
+[#swift:querybuilder:::related-content]
 === Related Content
 ++++
 <div class="card-row three-column-row">

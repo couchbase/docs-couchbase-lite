@@ -21,11 +21,11 @@ Related Content -- xref:csharp:database.adoc[Databases] | xref:csharp:blob.adoc[
 --
 
 
-[discrete#csharp:document:::overview]
+[#csharp:document:::overview]
 == Overview
 
 
-[discrete#csharp:document:::document-structure]
+[#csharp:document:::document-structure]
 === Document Structure
 
 In pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] the term 'document' refers to an entry in the database.
@@ -46,7 +46,7 @@ This value is stored as a dictionary of key-value (k-v) pairs.
 The values can be made of up several different <<csharp:document:::data-types>> such as numbers, strings, arrays, and nested objects.
 
 
-[discrete#csharp:document:::data-encoding]
+[#csharp:document:::data-encoding]
 === Data Encoding
 
 The document body is stored in an internal, efficient, binary form called
@@ -56,7 +56,7 @@ This internal form can be easily converted into a manageable native dictionary f
 Fleece data is stored in the smallest format that will hold the value whilst maintaining the integrity of the value.
 
 
-[discrete#csharp:document:::data-types]
+[#csharp:document:::data-types]
 === Data Types
 
 The `Document` class offers a set of property accessors for various scalar types, such as:
@@ -80,13 +80,13 @@ MutableArray:: represents a writeable collection of objects
 Blob:: represents an arbitrary piece of binary data
 
 
-[discrete#csharp:document:::json]
+[#csharp:document:::json]
 === JSON
 
 Couchbase Lite also provides for the direct handling of JSON data implemented in most cases by the provision of a pass:a,q[`ToJSON()`] method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array) -- see <<csharp:document:::lbl-json-data>>.
 
 
-[discrete#csharp:document:::constructing-a-document]
+[#csharp:document:::constructing-a-document]
 == Constructing a Document
 
 
@@ -123,7 +123,7 @@ hotel: {
 
 ----
 
-[discrete#csharp:document:::ex-usage]
+[#csharp:document:::ex-usage]
 === Open a Database
 
 First open your database.
@@ -145,7 +145,7 @@ var collection = database.GetDefaultCollection();
 
 See xref:csharp:database.adoc[Databases] for more information
 
-[discrete#csharp:document:::create-a-document]
+[#csharp:document:::create-a-document]
 === Create a Document
 
 Now create a new document to hold your application's data.
@@ -164,7 +164,7 @@ using var mutableDoc = new MutableDocument("hoteldoc");
 
 For more on using *Documents*, see <<csharp:document:::document-initializers>> and <<csharp:document:::mutability>>.
 
-[discrete#csharp:document:::create-a-dictionary]
+[#csharp:document:::create-a-dictionary]
 === Create a Dictionary
 
 Now create a mutable dictionary (`address`).
@@ -188,7 +188,7 @@ address.SetString("code", "90210");
 
 Learn more about <<csharp:document:::using-dictionaries>>.
 
-[discrete#csharp:document:::create-an-array]
+[#csharp:document:::create-an-array]
 === Create an Array
 
 Since the hotel may have multiple contact numbers, provide a field (`phones`) as a mutable array.
@@ -207,7 +207,7 @@ phones.AddString("650-000-0001");
 
 Learn more about <<csharp:document:::using-arrays>>
 
-[discrete#csharp:document:::populate-a-document]
+[#csharp:document:::populate-a-document]
 === Populate a Document
 
 Now add your data to the mutable document created earlier.
@@ -238,7 +238,7 @@ mutableDoc.SetArray("phones", phones);
 NOTE: Couchbase recommend using a `type` attribute to define each logical document type.
 
 
-[discrete#csharp:document:::save-a-document]
+[#csharp:document:::save-a-document]
 === Save a Document
 
 Now persist the populated document to your Couchbase Lite database.
@@ -253,7 +253,7 @@ collection.Save(mutableDoc);
 ----
 
 
-[discrete#csharp:document:::close-the-database]
+[#csharp:document:::close-the-database]
 === Close the Database
 
 With your document saved, you can now close our Couchbase Lite database.
@@ -267,11 +267,11 @@ database.Close();
 ----
 
 
-[discrete#csharp:document:::working-with-data]
+[#csharp:document:::working-with-data]
 == Working with Data
 
 
-[discrete#csharp:document:::checking-a-documents-properties]
+[#csharp:document:::checking-a-documents-properties]
 === Checking a Document's Properties
 
 To check whether a given property exists in the document, use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Document.html#Couchbase_Lite_Document_Contains_System_String_[Document.Contains(String key)] method.
@@ -279,7 +279,7 @@ To check whether a given property exists in the document, use the https://docs.c
 If you try to access a property which doesn't exist in the document, the call will return the default value for that getter method (0 for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Document.html#Couchbase_Lite_Document_GetInt_System_String_[Document.GetInt()] 0.0 for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Document.html#Couchbase_Lite_Document_GetFloat_System_String_[Document.GetFloat()] etc.).
 
 
-[discrete#csharp:document:::date-accessors]
+[#csharp:document:::date-accessors]
 === Date accessors
 
 Couchbase Lite offers _Date_ accessors as a convenience.
@@ -306,7 +306,7 @@ var date = mutableDoc.GetDate("createdAt");
 ====
 
 
-[discrete#csharp:document:::using-dictionaries]
+[#csharp:document:::using-dictionaries]
 === Using Dictionaries
 
 .API References
@@ -376,7 +376,7 @@ collection.Save(mutableDoc);
 ====
 
 
-[discrete#csharp:document:::using-arrays]
+[#csharp:document:::using-arrays]
 === Using Arrays
 
 .API References
@@ -447,13 +447,13 @@ collection.Save(mutableDoc);
 ====
 
 
-[discrete#csharp:document:::using-blobs]
+[#csharp:document:::using-blobs]
 === Using Blobs
 
 For more on working with blobs, see xref:csharp:blob.adoc[Blobs]
 
 
-[discrete#csharp:document:::document-initializers]
+[#csharp:document:::document-initializers]
 == Document Initializers
 
 
@@ -493,7 +493,7 @@ collection.Save(mutableDoc);
 ====
 
 
-[discrete#csharp:document:::mutability]
+[#csharp:document:::mutability]
 == Mutability
 
 
@@ -527,7 +527,7 @@ collection.Save(mutableDoc);
 NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<csharp:document:::lbl-doc-constraints>>.
 
 
-[discrete#csharp:document:::batch-operations]
+[#csharp:document:::batch-operations]
 == Batch operations
 
 If you're making multiple changes to a database at once, it's faster to group them together.
@@ -566,7 +566,7 @@ At the *local* level this operation is still transactional: no other `Database` 
 But Couchbase Mobile is a distributed system, and due to the way replication works, there's no guarantee that Sync Gateway or other devices will receive your changes all at once.
 
 
-[discrete#csharp:document:::document-change-events]
+[#csharp:document:::document-change-events]
 == Document change events
 
 You can register for document changes.
@@ -596,7 +596,7 @@ collection.AddDocumentChangeListener("user.john", (sender, args) =>
 ====
 
 
-[discrete#csharp:document:::document-expiration]
+[#csharp:document:::document-expiration]
 == Document Expiration
 
 Document expiration allows users to set the expiration date for a document.
@@ -638,7 +638,7 @@ using var query = QueryBuilder
 
 You can set expiration for a whole Collection
 
-[discrete#csharp:document:::lbl-doc-constraints]
+[#csharp:document:::lbl-doc-constraints]
 == Document Constraints
 
 Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
@@ -670,7 +670,7 @@ For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway
 ====
 
 
-[discrete#csharp:document:::lbl-json-data]
+[#csharp:document:::lbl-json-data]
 == Working with JSON Data
 
 In this section::
@@ -683,7 +683,7 @@ In this section::
 
 The pass:a,q[`ToJSON()`] typed-accessor means you can easily work with JSON data, native and Couchbase Lite objects.
 
-[discrete#csharp:document:::lbl-array]
+[#csharp:document:::lbl-array]
 === Arrays
 
 Convert an `ArrayObject` to and from JSON using the pass:a,q[`ToJSON()`] and `toArray` methods -- see <<csharp:document:::ex-array>>.
@@ -744,7 +744,7 @@ var featuresJSON = extendedDoc.GetArray("features").ToJSON();
 ====
 
 
-[discrete#csharp:document:::lbl-blob]
+[#csharp:document:::lbl-blob]
 === Blobs
 Convert a `Blob` to JSON using the `toJSON` method -- see <<csharp:document:::ex-blob>>.
 
@@ -812,7 +812,7 @@ if (Blob.IsBlob(
 
 See also: xref:csharp:blob.adoc[Blobs]
 
-[discrete#csharp:document:::lbl-dictionary]
+[#csharp:document:::lbl-dictionary]
 === Dictionaries
 
 Convert a `DictionaryObject` to and from JSON using the `toJSON` and `toDictionary` methods -- see <<csharp:document:::ex-dictionary>>.
@@ -854,7 +854,7 @@ foreach (string key in mutableDict.Keys) {
 ====
 
 
-[discrete#csharp:document:::lbl-document]
+[#csharp:document:::lbl-document]
 === Documents
 
 Convert a `Document` to and from JSON strings using the pass:a,q[`ToJSON()`] and pass:a,q[`SetJSON()`] methods -- see <<csharp:document:::ex-document>>.
@@ -919,7 +919,7 @@ Console.Write(retrievedDoc);
 ====
 
 
-[discrete#csharp:document:::lbl-result]
+[#csharp:document:::lbl-result]
 === Query Results as JSON
 
 Convert a `Query Result` to JSON using its {to-JSON} accessor method.
@@ -992,7 +992,7 @@ If your query selects a sub-set of available properties then the JSON format wil
 ----
 
 
-[discrete#csharp:document:::related-content]
+[#csharp:document:::related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">

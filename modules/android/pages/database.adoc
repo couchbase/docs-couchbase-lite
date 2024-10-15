@@ -20,7 +20,7 @@ Related Content -- xref:android:blob.adoc[Blobs] | xref:android:document.adoc[Do
 --
 
 
-[discrete#android:database:::database-concepts]
+[#android:database:::database-concepts]
 == Database Concepts
 
 Databases created on Couchbase Lite can share the same hierarchical structure as Capella databases.
@@ -152,7 +152,7 @@ syncing data scope:: Contains information pertaining to the user, which can be s
 ****
 
 
-[discrete#android:database:::initializer]
+[#android:database:::initializer]
 == Initializer
 
 
@@ -210,7 +210,7 @@ public void onCreate() {
 ====
 
 
-[discrete#android:database:::open-db]
+[#android:database:::open-db]
 == Create or Open Database
 
 
@@ -272,7 +272,7 @@ Database database = new Database(DB_NAME);
 ====
 
 
-[discrete#android:database:::close-database]
+[#android:database:::close-database]
 == Close Database
 
 You are advised to incorporate the closing of all open databases into your application workflow.
@@ -329,7 +329,7 @@ database.close();
 ====
 
 
-[discrete#android:database:::database-full-sync]
+[#android:database:::database-full-sync]
 == Database Full Sync
 
 Database Full Sync will prevent the loss of transactional data due to an unexpected system crash or loss of power.
@@ -386,7 +386,7 @@ config.setFullSync(true);
 
 NOTE: It is not possible to change the configuration of a Database after instantiating the Database with the configuration by updating its `DatabaseConfiguration` property.
 
-[discrete#android:database:::database-encryption]
+[#android:database:::database-encryption]
 == Database Encryption
 
 
@@ -397,7 +397,7 @@ _Couchbase Lite on Android_ includes the ability to encrypt Couchbase Lite datab
 This allows mobile applications to secure the data at rest, when it is being stored on the device.
 The algorithm used to encrypt the database is 256-bit AES.
 
-[discrete#android:database:::enabling]
+[#android:database:::enabling]
 === Enabling
 To enable encryption, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/DatabaseConfiguration.html#setEncryptionKey-com.couchbase.lite.EncryptionKey-[DatabaseConfiguration.setEncryptionKey()] to set the encryption key of your choice.
 Provide this encryption key every time the database is opened -- see <<android:database:::ex-sdb-encrypt>>.
@@ -451,35 +451,35 @@ Database database = new Database(DB_NAME, config);
 ====
 
 
-[discrete#android:database:::persisting]
+[#android:database:::persisting]
 === Persisting
 Couchbase Lite does not persist the key.
 It is the application's responsibility to manage the key and store it in a platform-specific secure store such Android's
 https://developer.android.com/training/articles/keystore[Keystore].
 
-[discrete#android:database:::opening]
+[#android:database:::opening]
 === Opening
 An encrypted database can only be opened with the same platform that was used to encrypt it in the first place.
 So a database encrypted using the Android SDK, and then exported, is readable only by the Android SDK.
 
-[discrete#android:database:::changing]
+[#android:database:::changing]
 === Changing
 To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#changeEncryptionKey(com.couchbase.lite.EncryptionKey)[Database.changeEncryptionKey()]
 to set the required new encryption-key value.
 
 
-[discrete#android:database:::removing]
+[#android:database:::removing]
 === Removing
 To remove encryption, open the database using its existing encryption-key and use
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#changeEncryptionKey(com.couchbase.lite.EncryptionKey)[Database.changeEncryptionKey()]
 with a null value as the encryption key.
 
-[discrete#android:database:::upgrading]
+[#android:database:::upgrading]
 === Upgrading
 To upgrade an encrypted database see: xref:android:dep-upgrade.adoc#lbl-db-upgrades[Upgrade 1.x databases]
 
 
-[discrete#android:database:::lbl-find-db-loc]
+[#android:database:::lbl-find-db-loc]
 == Finding a Database File
 
 
@@ -507,7 +507,7 @@ $ adb pull /data/data/{APPLICATION_ID}/files/{DATABASE_NAME}.cblite2 .
 ====
 
 
-[discrete#android:database:::lbl-db-util]
+[#android:database:::lbl-db-util]
 == Database Maintenance
 
 From time to time it may be necessary to perform certain maintenance activities on your database, for example to
@@ -521,7 +521,7 @@ It should be run on-demand using the API.
 If in doubt, consult Couchbase support.
 
 
-[discrete#android:database:::cli-tool]
+[#android:database:::cli-tool]
 == Command Line Tool
 
 // tag::cli-tool[]
@@ -532,7 +532,7 @@ Note that the `cblite` tool is not supported by the https://www.couchbase.com/su
 
 // end::cli-tool[]
 
-[discrete#android:database:::troubleshooting]
+[#android:database:::troubleshooting]
 == Troubleshooting
 You should use console logs as your first source of diagnostic information.
 If the information in the default logging level is insufficient you can focus it on database errors and generate more verbose messages -- see: <<android:database:::ex-logdb>>.
@@ -580,7 +580,7 @@ Database.log.getConsole().setLevel(LogLevel.DEBUG); // <.>
 ====
 
 
-[discrete#android:database:::related-content]
+[#android:database:::related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">

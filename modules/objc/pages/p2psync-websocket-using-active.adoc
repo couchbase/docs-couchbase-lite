@@ -38,7 +38,7 @@ They demonstrate the basic concepts and approaches to using a feature.
 Use them as inspiration and adapt these examples to best practice when developing applications for your platform.
 
 
-[discrete#objc:p2psync-websocket-using-active:::introduction]
+[#objc:p2psync-websocket-using-active:::introduction]
 ==== Introduction
 This content provides sample code and configuration examples covering the implementation of xref:refer-glossary.adoc#peer-to-peer-sync[Peer-to-Peer Sync] over WebSockets.
 Specifically it covers the implementation of an xref:refer-glossary.adoc#active-peer[Active Peer].
@@ -53,7 +53,7 @@ The use of TLS, its associated keys and certificates requires using secure stora
 The implementation of this storage differs from platform to platform -- see xref:objc:p2psync-websocket.adoc#using-secure-storage[Using secure storage].
 
 
-[discrete#objc:p2psync-websocket-using-active:::configuration-summary]
+[#objc:p2psync-websocket-using-active:::configuration-summary]
 ==== Configuration Summary
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
 <<objc:p2psync-websocket-using-active:::simple-replication-to-listener>> shows the initialization and configuration process.
@@ -132,12 +132,12 @@ Here we say to provide _Basic Authentication_ credentials. Other options are ava
 
 <.> Start the replicator.
 
-[discrete#objc:p2psync-websocket-using-active:::api-references]
+[#objc:p2psync-websocket-using-active:::api-references]
 ==== API References
 
 You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc[Objective-C API References] here.
 
-[discrete#objc:p2psync-websocket-using-active:::device-discovery]
+[#objc:p2psync-websocket-using-active:::device-discovery]
 ==== Device Discovery
 *This phase is optional:* If the listener is initialized on a well known URL endpoint (for example, a static IP Address or well known DNS address) then you can configure Active Peers to connect to those.
 
@@ -145,7 +145,7 @@ Prior to connecting with a listener you may execute a Peer discovery phase to dy
 
 For the Active Peer this involves browsing-for and selecting the appropriate service using a zero-config protocol such as _Bonjour_-- see: https://developer.apple.com/bonjour/.
 
-[discrete#objc:p2psync-websocket-using-active:::configure-replicator]
+[#objc:p2psync-websocket-using-active:::configure-replicator]
 ==== Configure Replicator
 In this section::
 <<objc:p2psync-websocket-using-active:::lbl-cfg-tgt>>
@@ -155,7 +155,7 @@ In this section::
 |  <<objc:p2psync-websocket-using-active:::lbl-authclnt>>
 
 
-[discrete#objc:p2psync-websocket-using-active:::lbl-cfg-tgt]
+[#objc:p2psync-websocket-using-active:::lbl-cfg-tgt]
 ===== Configure Target
 
 Use the
@@ -200,7 +200,7 @@ CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc]
 to ensure TLS encryption -- strongly recommended in production -- or `ws://`)
 
 
-[discrete#objc:p2psync-websocket-using-active:::lbl-cfg-sync]
+[#objc:p2psync-websocket-using-active:::lbl-cfg-sync]
 ===== Sync Mode
 
 
@@ -249,7 +249,7 @@ This prevents the replications generating the same checkpoint `docID` resulting 
 --
 
 
-[discrete#objc:p2psync-websocket-using-active:::lbl-cfg-retry]
+[#objc:p2psync-websocket-using-active:::lbl-cfg-retry]
 ===== Retry Configuration
 
 
@@ -344,7 +344,7 @@ self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
 <.> Here we use {url-api-prop-replicator-config-setMaxAttemptWaitTime} to set the required interval between retry attempts.
 
 
-[discrete#objc:p2psync-websocket-using-active:::authenticate-listener]
+[#objc:p2psync-websocket-using-active:::authenticate-listener]
 ===== Authenticating the Listener
 
 Define the credentials the your app (the client) is expecting to receive from the server (listener) in order to ensure that the server is one it is prepared to interact with.
@@ -440,7 +440,7 @@ replConfig.acceptOnlySelfSignedServerCertificate=false;
 ====
 
 
-[discrete#objc:p2psync-websocket-using-active:::lbl-authclnt]
+[#objc:p2psync-websocket-using-active:::lbl-authclnt]
 ===== Client Authentication
 
 Here we define the credentials that the client can present to the server if prompted to do so in order that the server can authenticate it.
@@ -448,7 +448,7 @@ Here we define the credentials that the client can present to the server if prom
 We use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html[ReplicatorConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)authenticator[authenticator] method to define the authentication method to the replicator.
 
 
-[discrete#objc:p2psync-websocket-using-active:::basic-authentication]
+[#objc:p2psync-websocket-using-active:::basic-authentication]
 ===== Basic Authentication
 Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLBasicAuthenticator.html[BasicAuthenticator]` to supply basic authentication credentials (username and word).
 
@@ -477,7 +477,7 @@ replConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our
 ====
 
 
-[discrete#objc:p2psync-websocket-using-active:::certificate-authentication]
+[#objc:p2psync-websocket-using-active:::certificate-authentication]
 ===== Certificate Authentication
 Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLClientCertificateAuthenticator.html[ClientCertificateAuthenticator]` to configure the client TLS certificates to be presented to the server, on connection.
 This applies only to the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListener.html[URLEndpointListener].
@@ -515,7 +515,7 @@ config.authenticator = [[CBLClientCertificateAuthenticator alloc] initWithIdenti
 <.> Set the authenticator to https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLClientCertificateAuthenticator.html[ClientCertificateAuthenticator] and configure it to use the retrieved identity
 
 
-[discrete#objc:p2psync-websocket-using-active:::initialize-replicator]
+[#objc:p2psync-websocket-using-active:::initialize-replicator]
 ==== Initialize Replicator
 
 
@@ -548,7 +548,7 @@ self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig]; // <.>
 <.> Initialize the replicator with the configuration
 <.> Start the replicator
 
-[discrete#objc:p2psync-websocket-using-active:::lbl-repl-mon]
+[#objc:p2psync-websocket-using-active:::lbl-repl-mon]
 ==== Monitor Sync
 
 
@@ -563,7 +563,7 @@ This enables you to know, for example, when the replication is actively transfer
 
 You can also choose to monitor document changes -- see: <<objc:p2psync-websocket-using-active:::lbl-repl-evnts>>.
 
-[discrete#objc:p2psync-websocket-using-active:::lbl-repl-chng]
+[#objc:p2psync-websocket-using-active:::lbl-repl-chng]
 ===== Change Listeners
 Use this to monitor changes and to inform on sync progress; this is an optional step.
 You can add and a replicator change listener at any point; it will report changes from the point it is registered.
@@ -577,7 +577,7 @@ You will then be asynchronously notified of state changes.
 You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)removeChangeListenerWithToken[removeChangeListenerWithToken(CBLListenerToken:)].
 
 
-[discrete#objc:p2psync-websocket-using-active:::lbl-repl-status]
+[#objc:p2psync-websocket-using-active:::lbl-repl-status]
 ===== Replicator Status
 
 You can use the
@@ -642,7 +642,7 @@ if (change.status.activity == kCBLReplicatorStopped) {
 ====
 
 
-[discrete#objc:p2psync-websocket-using-active:::lbl-repl-states]
+[#objc:p2psync-websocket-using-active:::lbl-repl-states]
 ===== Replication States
 <<objc:p2psync-websocket-using-active:::tbl-states>> shows the different states, or activity levels, reported in the API; and the meaning of each.
 
@@ -672,7 +672,7 @@ The `IDLE` state is only used in continuous replications.
 NOTE: The replication change object also has properties to track the progress (`change.status.completed` and `change.status.total`).
 Since the replication occurs in batches the total count can vary through the course of a replication.
 
-[discrete#objc:p2psync-websocket-using-active:::replication-status-and-app-life-cycle]
+[#objc:p2psync-websocket-using-active:::replication-status-and-app-life-cycle]
 ===== Replication Status and App Life Cycle
 
 The following diagram describes the status changes when the application starts a replication, and when the application is being backgrounded or foregrounded by the OS.
@@ -690,7 +690,7 @@ It is generally recommended to stop replications before going into the backgroun
 
 [#lbl-repl-evnts]
 
-[discrete#objc:p2psync-websocket-using-active:::lbl-repl-pend]
+[#objc:p2psync-websocket-using-active:::lbl-repl-pend]
 ===== Documents Pending Push
 
 TIP: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)isDocumentPending:error:[CBLReplicator.isDocumentPending()] is quicker and more efficient.
@@ -761,7 +761,7 @@ This is a snapshot and may have changed by the time the response is received and
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)isDocumentPending:error:[CBLReplicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
 
-[discrete#objc:p2psync-websocket-using-active:::lbl-repl-stop]
+[#objc:p2psync-websocket-using-active:::lbl-repl-stop]
 ==== Stop Sync
 
 Stopping a replication is straightforward.
@@ -796,7 +796,7 @@ You can find further information on database operations in xref:objc:database.ad
 It will stop any active <<objc:p2psync-websocket-using-active:::lbl-repl-chng,change listener>> once the replication is stopped.
 
 
-[discrete#objc:p2psync-websocket-using-active:::conflict-resolution]
+[#objc:p2psync-websocket-using-active:::conflict-resolution]
 ==== Conflict Resolution
 
 Unless you specify otherwise, Couchbase Lite's default conflict resolution policy is applied -- see xref:objc:conflict.adoc[Handling Data Conflicts].
@@ -929,12 +929,12 @@ CBLMutableDocument *mutableDocument = [doc toMutable];
 For more on replicator conflict resolution see: xref:objc:conflict.adoc[Handling Data Conflicts].
 
 
-[discrete#objc:p2psync-websocket-using-active:::delta-sync]
+[#objc:p2psync-websocket-using-active:::delta-sync]
 ==== Delta Sync
 If delta sync is enabled on the listener, then replication will use delta sync.
 
 
-[discrete#objc:p2psync-websocket-using-active:::related-content]
+[#objc:p2psync-websocket-using-active:::related-content]
 ==== Related Content
 ++++
 <div class="card-row three-column-row">

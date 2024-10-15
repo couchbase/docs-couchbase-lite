@@ -24,7 +24,7 @@ Related Content -- xref:android:querybuilder.adoc#lbl-predquery[Predictive Queri
 
 NOTE: The examples used here are based on the _Travel Sample_ app and data introduced in the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial
 
-[discrete#android:querybuilder:::introduction]
+[#android:querybuilder:::introduction]
 === Introduction
 
 Couchbase Lite for Android provides two ways to build and run database queries; the QueryBuilder API described in this topic and xref:android:query-n1ql-mobile.adoc[{sqlpp} for Mobile].
@@ -75,7 +75,7 @@ a| The criteria used to order the items in the result set
 TIP: We recommend working through the query section of the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial as a good way to build your skills in this area.
 
 
-[discrete#android:querybuilder:::lbl-select]
+[#android:querybuilder:::lbl-select]
 === SELECT statement
 
 --
@@ -88,7 +88,7 @@ Related::
 Use the `SELECT` statement to specify which properties you want to return from the queried documents.
 You can opt to retrieve entire documents, or just the specific properties you need.
 
-[discrete#android:querybuilder:::lbl-return-all]
+[#android:querybuilder:::lbl-return-all]
 ==== Return All Properties
 Use the `SelectResult.all()` method to return all the properties of selected documents -- see: <<android:querybuilder:::ex-select-all>>.
 
@@ -182,7 +182,7 @@ The query.execute statement returns the results in a dictionary, where the key i
 See: <<android:querybuilder:::lbl-resultsets>> for more on processing query results.
 
 
-[discrete#android:querybuilder:::lbl-return-properties]
+[#android:querybuilder:::lbl-return-properties]
 ==== Return Selected Properties
 To access only specific properties, specify a comma-separated list of `SelectResult` expressions, one for each property, in the select statement of your query  -- see: <<android:querybuilder:::ex-select-properties>>
 
@@ -287,7 +287,7 @@ The `query.execute` statement returns one or more key-value pairs, one for each 
 See: <<android:querybuilder:::lbl-resultsets>> for more on processing query results.
 
 
-[discrete#android:querybuilder:::lbl-where]
+[#android:querybuilder:::lbl-where]
 === WHERE statement
 
 In this section::
@@ -302,7 +302,7 @@ The select statement takes in an `Expression`.
 You can chain any number of Expressions in order to implement sophisticated filtering capabilities.
 
 
-[discrete#android:querybuilder:::lbl-comp-ops]
+[#android:querybuilder:::lbl-comp-ops]
 ==== Comparison Operators
 The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Expression.html[Expression Comparators] can be used in the WHERE statement to specify on which property to match documents.
 In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
@@ -387,12 +387,12 @@ try (ResultSet resultSet = query.execute()) {
 ====
 
 
-[discrete#android:querybuilder:::lbl-coll-ops]
+[#android:querybuilder:::lbl-coll-ops]
 ==== Collection Operators
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Query.htmlArrayFunction.html[ArrayFunction Collection Operators] are useful to check if a given value is present in an array.
 
 
-[discrete#android:querybuilder:::contains-operator]
+[#android:querybuilder:::contains-operator]
 ===== CONTAINS Operator
 The following example uses the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Query.htmlArrayFunction.html[ArrayFunction]` to find documents where the `public_likes` array property contains a value equal to "Armani Langworth".
 
@@ -470,7 +470,7 @@ try (ResultSet results = query.execute()) {
 =====
 
 
-[discrete#android:querybuilder:::in-operator]
+[#android:querybuilder:::in-operator]
 ===== IN Operator
 
 The `IN` operator is useful when you need to explicitly list out the values to test against.
@@ -530,14 +530,14 @@ Query query = QueryBuilder.select(SelectResult.all())
 =====
 
 
-[discrete#android:querybuilder:::lbl-like-ops]
+[#android:querybuilder:::lbl-like-ops]
 ==== Like Operator
 In this section::
 <<android:querybuilder:::lbl-string-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<android:querybuilder:::lbl-wild-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<android:querybuilder:::lbl-wild-chars>>
 
-[discrete#android:querybuilder:::lbl-string-match]
+[#android:querybuilder:::lbl-string-match]
 ===== String Matching
 The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Expression.html#like-com.couchbase.lite.Expression-[Like()] operator can be used for string matching -- see <<android:querybuilder:::ex-like-case-insensitive>>
 
@@ -621,7 +621,7 @@ try (ResultSet resultSet = query.execute()) {
 *Note* the use of `Function.lower` to transform `name` values to the same case as the literal comparator.
 
 
-[discrete#android:querybuilder:::lbl-wild-match]
+[#android:querybuilder:::lbl-wild-match]
 ===== Wildcard Match
 
 We can use `%` sign within a `like` expression to do a wildcard match against zero or more characters.
@@ -705,7 +705,7 @@ try (ResultSet resultSet = query.execute()) {
 ====
 
 
-[discrete#android:querybuilder:::lbl-wild-chars]
+[#android:querybuilder:::lbl-wild-chars]
 ===== Wildcard Character Match
 
 We can use an `_` sign within a like expression to do a wildcard match against a single character.
@@ -785,7 +785,7 @@ try (ResultSet resultSet = query.execute()) {
 ====
 
 
-[discrete#android:querybuilder:::lbl-regex-ops]
+[#android:querybuilder:::lbl-regex-ops]
 ==== Regex Operator
 
 Similar to the wildcards in `like` expressions, `regex` based pattern matching allow you to introduce an element of fuzziness in your search string -- see the code shown in <<android:querybuilder:::ex-regex>>.
@@ -869,7 +869,7 @@ try (ResultSet resultSet = query.execute()) {
 TIP: For more on the regex spec used by pass:q,a[Couchbase{nbsp}Lite] see http://www.cplusplus.com/reference/regex/ECMAScript/[cplusplus regex reference page^]
 
 
-[discrete#android:querybuilder:::lbl-deleted-ops]
+[#android:querybuilder:::lbl-deleted-ops]
 ==== Deleted Document
 You can query documents that have been deleted (tombstones) footnote:fn2x5[Starting in Couchbase Lite 2.5] as shown in <<android:querybuilder:::ex-del-qry>>.
 
@@ -923,7 +923,7 @@ Query query = QueryBuilder
 ====
 
 
-[discrete#android:querybuilder:::lbl-join]
+[#android:querybuilder:::lbl-join]
 === JOIN statement
 The JOIN clause enables you to select data from multiple documents that have been linked by criteria specified in the JOIN statement.
 For example to combine airline details with route details, linked by the airline id -- see <<android:querybuilder:::ex-join>>.
@@ -1018,7 +1018,7 @@ try (ResultSet resultSet = query.execute()) {
 ====
 
 
-[discrete#android:querybuilder:::lbl-group]
+[#android:querybuilder:::lbl-group]
 === GROUP BY statement
 You can perform further processing on the data in your result set before the final projection is generated.
 
@@ -1133,7 +1133,7 @@ There are 123 airports on the America/Denver timezone located in United States a
 --
 
 
-[discrete#android:querybuilder:::lbl-order]
+[#android:querybuilder:::lbl-order]
 === ORDER BY statement
 
 It is possible to sort the results of a query based on a given expression result -- see <<android:querybuilder:::ex-orderby-qry>>
@@ -1221,7 +1221,7 @@ Avignon
 ----
 
 
-[discrete#android:querybuilder:::lbl-date-time]
+[#android:querybuilder:::lbl-date-time]
 === Date/Time Functions
 
 
@@ -1245,7 +1245,7 @@ The input for this is a numeric value representing milliseconds since the Unix e
 The end result will be an expression (with string content representing the date and time as a UTC ISO 8601 string) that can be further input into the query builder.
 
 
-[discrete#android:querybuilder:::lbl-resultsets]
+[#android:querybuilder:::lbl-resultsets]
 === Result Sets
 In this section::
 <<android:querybuilder:::lbl-process-resultset>>{nbsp}{nbsp}|{nbsp}{nbsp}
@@ -1256,7 +1256,7 @@ In this section::
 <<android:querybuilder:::lbl-pagination>>
 
 
-[discrete#android:querybuilder:::lbl-process-resultset]
+[#android:querybuilder:::lbl-process-resultset]
 ==== Processing
 
 This section shows how to handle the returned result sets for different types of `SELECT` statements.
@@ -1281,10 +1281,10 @@ The composition of each row is determined by the combination of `SelectResult` e
 To unpack these result sets you need to iterate this array.
 
 
-[discrete#android:querybuilder:::lbl-all-sel]
+[#android:querybuilder:::lbl-all-sel]
 ==== Select All Properties
 
-[discrete#android:querybuilder:::query]
+[#android:querybuilder:::query]
 ===== Query
 The `Select` statement for this type of query, returns all document properties for each document matching the query criteria -- see <<android:querybuilder:::ex-all-qry>>
 
@@ -1331,7 +1331,7 @@ Query listQuery = QueryBuilder.select(SelectResult.all())
 ====
 
 
-[discrete#android:querybuilder:::result-set-format]
+[#android:querybuilder:::result-set-format]
 ===== Result Set Format
 The result set returned by queries using `SelectResult.all` is an array of dictionary objects -- one for each document matching the query criteria.
 
@@ -1375,7 +1375,7 @@ For each result object, the key is the database name and the 'value' is a dictio
 
 ====
 
-[discrete#android:querybuilder:::result-set-access]
+[#android:querybuilder:::result-set-access]
 ===== Result Set Access
 
 In this case access the retrieved document properties by converting each row's value, in turn, to a dictionary -- as shown in <<android:querybuilder:::ex-all-acc>>.
@@ -1466,10 +1466,10 @@ You can add this dictionary to an array of returned matches, for processing else
 <.> Alternatively you can access the document properties here, by using the property names as keys to the dictionary object.
 
 
-[discrete#android:querybuilder:::lbl-specific-sel]
+[#android:querybuilder:::lbl-specific-sel]
 ==== Select Specific Properties
 
-[discrete#android:querybuilder:::query-2]
+[#android:querybuilder:::query-2]
 ===== Query
 Here we use `SelectResult.expression(property("<property-name>")))` to specify the document properties we want our query to return -- see: <<android:querybuilder:::ex-specific-qry>>.
 
@@ -1531,7 +1531,7 @@ Query listQuery =
 ====
 
 
-[discrete#android:querybuilder:::result-set-format-2]
+[#android:querybuilder:::result-set-format-2]
 ===== Result Set Format
 The result set returned when selecting only specific document properties is an array of dictionary objects -- one for each document matching the query criteria.
 
@@ -1561,7 +1561,7 @@ Each result object comprises a key-value pair for each selected document propert
 <.> The result for the next document matching the query criteria.
 ====
 
-[discrete#android:querybuilder:::result-set-access-2]
+[#android:querybuilder:::result-set-access-2]
 ===== Result Set Access
 Access the retrieved properties by converting each row into a dictionary -- as shown in <<android:querybuilder:::ex-specific-acc>>.
 
@@ -1635,10 +1635,10 @@ try (ResultSet resultSet = listQuery.execute()) {
 ====
 
 
-[discrete#android:querybuilder:::lbl-id-sel]
+[#android:querybuilder:::lbl-id-sel]
 ==== Select Document Id Only
 
-[discrete#android:querybuilder:::query-3]
+[#android:querybuilder:::query-3]
 ===== Query
 You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time -- see: <<android:querybuilder:::ex-id-qry>>.
 
@@ -1690,7 +1690,7 @@ Query listQuery =
 ====
 
 
-[discrete#android:querybuilder:::result-set-format-3]
+[#android:querybuilder:::result-set-format-3]
 ===== Result Set Format
 The result set returned by queries using a SelectResult expression of the form `SelectResult.expression(meta.id)` is an array of dictionary objects -- one for each document matching the query criteria.
 Each result object has `id` as the key and the ID value as its value -- -see <<android:querybuilder:::ex-id-rtn>>.
@@ -1713,7 +1713,7 @@ Each result object has `id` as the key and the ID value as its value -- -see <<a
 ----
 ====
 
-[discrete#android:querybuilder:::result-set-access-3]
+[#android:querybuilder:::result-set-access-3]
 ===== Result Set Access
 
 In this case, access the required document's properties by unpacking the `id` and using it to get the document from the database -- see: <<android:querybuilder:::ex-id-acc>>.
@@ -1777,11 +1777,11 @@ try (ResultSet rs = listQuery.execute()) {
 <.> Extract the Id value from the dictionary and use it to get the document from the database
 
 
-[discrete#android:querybuilder:::lbl-count-sel]
+[#android:querybuilder:::lbl-count-sel]
 ==== Select Count-only
 
 
-[discrete#android:querybuilder:::query-4]
+[#android:querybuilder:::query-4]
 ===== Query
 
 .Query selecting a Count-only
@@ -1834,7 +1834,7 @@ Query listQuery = QueryBuilder.select(
 
 <.> The alias name, `mycount`, is used to access the count value.
 
-[discrete#android:querybuilder:::result-set-format-4]
+[#android:querybuilder:::result-set-format-4]
 ===== Result Set Format
 The result set returned by a count such as `Select.expression(Function.count(Expression.all)))` is a key-value pair.
 The key is the count name, as defined using `SelectResult.as` -- see: <<android:querybuilder:::ex-count-rtn>> for the format and <<android:querybuilder:::ex-count-qry>> for the query.
@@ -1854,7 +1854,7 @@ The key is the count name, as defined using `SelectResult.as` -- see: <<android:
 <.> The key-value pair returned by a count.
 ====
 
-[discrete#android:querybuilder:::result-set-access-4]
+[#android:querybuilder:::result-set-access-4]
 ===== Result Set Access
 
 Access the count using its alias name (`mycount` in this example) -- see <<android:querybuilder:::ex-count-acc>>
@@ -1920,7 +1920,7 @@ try (ResultSet resultSet = listQuery.execute()) {
 
 <.> Get the count using the `SelectResult.as` alias, which is used as its key.
 
-[discrete#android:querybuilder:::lbl-pagination]
+[#android:querybuilder:::lbl-pagination]
 ==== Handling Pagination
 One way to handle pagination in high-volume queries is to retrieve the results in batches.
 Use the `limit` and `offset` feature, to return a defined number of results starting from a given offset -- see: <<android:querybuilder:::ex-pagination>>.
@@ -1991,7 +1991,7 @@ Query listQuery =
 TIP: For more on using the QueryBuilder API, see our blog: https://blog.couchbase.com/sql-for-json-query-interface-couchbase-mobile/[Introducing the Query Interface in Couchbase Mobile]
 
 
-[discrete#android:querybuilder:::json-result-sets]
+[#android:querybuilder:::json-result-sets]
 === JSON Result Sets
 
 Couchbase Lite for Android provides a convenience API to convert query results to JSON strings.
@@ -2794,7 +2794,7 @@ If your query selects a sub-set of available properties then the JSON format wil
 ----
 
 
-[discrete#android:querybuilder:::lbl-predquery]
+[#android:querybuilder:::lbl-predquery]
 === Predictive Query
 
 .Enterprise Edition only
@@ -2815,7 +2815,7 @@ To run a predictive query with a model as the one shown above, you must implemen
 . <<Deregister-the-model,Deregister the Model>>
 
 
-[discrete#android:querybuilder:::integrate-the-model]
+[#android:querybuilder:::integrate-the-model]
 ==== Integrate the Model
 
 To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `predict()` -- see: <<android:querybuilder:::int-pred-model>>.
@@ -2956,7 +2956,7 @@ The input and output of the predictive model is a `DictionaryObject`.
 Therefore, the supported data type will be constrained by the data type that the `DictionaryObject` supports.
 
 
-[discrete#android:querybuilder:::register-the-model]
+[#android:querybuilder:::register-the-model]
 ==== Register the Model
 
 To register the model you must create a new instance and pass it to the `Database.prediction.registerModel` static method.
@@ -3002,7 +3002,7 @@ Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel())
 ====
 
 
-[discrete#android:querybuilder:::create-an-index]
+[#android:querybuilder:::create-an-index]
 ==== Create an Index
 
 Creating an index for a predictive query is highly recommended.
@@ -3013,7 +3013,7 @@ There are two types of indexes for predictive queries:
 * <<android:querybuilder:::value-index,Value Index>>
 * <<android:querybuilder:::predictive-index,Predictive Index>>
 
-[discrete#android:querybuilder:::value-index]
+[#android:querybuilder:::value-index]
 ===== Value Index
 
 The code below creates a value index from the "label" value of the prediction result.
@@ -3065,7 +3065,7 @@ collection.createIndex(
 ====
 
 
-[discrete#android:querybuilder:::predictive-index]
+[#android:querybuilder:::predictive-index]
 ===== Predictive Index
 
 Predictive Index is a new index type used for predictive query.
@@ -3122,7 +3122,7 @@ collection.createIndex("predictive-index-image-classifier", index);
 ====
 
 
-[discrete#android:querybuilder:::run-a-prediction-query]
+[#android:querybuilder:::run-a-prediction-query]
 ==== Run a Prediction Query
 
 The code below creates a query that calls the prediction function to return the "label" value for the first 10 results in the database.
@@ -3205,7 +3205,7 @@ try (ResultSet result = query.execute()) {
 NOTE: The null value returned by the prediction method will be interpreted as MISSING value in queries.
 
 
-[discrete#android:querybuilder:::deregister-the-model]
+[#android:querybuilder:::deregister-the-model]
 ==== Deregister the Model
 
 To deregister the model you must call the `Database.prediction.unregisterModel` static method.
@@ -3251,7 +3251,7 @@ Database.prediction.unregisterModel("ImageClassifier");
 ====
 
 
-[discrete#android:querybuilder:::related-content]
+[#android:querybuilder:::related-content]
 === Related Content
 ++++
 <div class="card-row three-column-row">

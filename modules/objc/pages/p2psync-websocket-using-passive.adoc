@@ -41,7 +41,7 @@ They demonstrate the basic concepts and approaches to using a feature.
 Use them as inspiration and adapt these examples to best practice when developing applications for your platform.
 
 
-[discrete#objc:p2psync-websocket-using-passive:::introduction]
+[#objc:p2psync-websocket-using-passive:::introduction]
 ==== Introduction
 This content provides code and configuration examples covering the implementation of xref:refer-glossary.adoc#peer-to-peer-sync[Peer-to-Peer Sync] over WebSockets.
 Specifically, it covers the implementation of a xref:refer-glossary.adoc#passive-peer[Passive Peer].
@@ -56,7 +56,7 @@ The use of TLS, its associated keys and certificates requires using secure stora
 The implementation of this storage differs from platform to platform -- see xref:objc:p2psync-websocket.adoc#using-secure-storage[Using secure storage].
 
 
-[discrete#objc:p2psync-websocket-using-passive:::configuration-summary]
+[#objc:p2psync-websocket-using-passive:::configuration-summary]
 ==== Configuration Summary
 
 You should configure and initialize a Listener for each Couchbase Lite database instance you want to sync.
@@ -143,11 +143,11 @@ Note that client authentication is optional.
 <.> <<objc:p2psync-websocket-using-passive:::lbl-start-listener>>
 
 
-[discrete#objc:p2psync-websocket-using-passive:::api-references]
+[#objc:p2psync-websocket-using-passive:::api-references]
 ==== API References
 You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc[Objective-C API References] here.
 
-[discrete#objc:p2psync-websocket-using-passive:::device-discovery]
+[#objc:p2psync-websocket-using-passive:::device-discovery]
 ==== Device Discovery
 *This phase is optional:* If the Listener is initialized on a well-known URL endpoint (for example, a static IP Address or well-known DNS address) then you can configure Active Peers to connect to those.
 
@@ -158,7 +158,7 @@ _Bonjour_ (see: https://developer.apple.com/bonjour/)
 The connection is established once the Passive Peer has authenticated and accepted an Active Peer's invitation.
 
 
-[discrete#objc:p2psync-websocket-using-passive:::initialize-the-listener-configuration]
+[#objc:p2psync-websocket-using-passive:::initialize-the-listener-configuration]
 ==== Initialize the Listener Configuration
 Initialize the Listener configuration with the local database -- see <<objc:p2psync-websocket-using-passive:::ex-locdb>>
 All other configuration values take their default setting.
@@ -192,11 +192,11 @@ CBLURLEndpointListenerConfiguration *endpointConfig = [[CBLURLEndpointListenerCo
 The database must be opened before the Listener is started. +
 `thisDB` has previously been declared as an object of type `Database`.
 
-[discrete#objc:p2psync-websocket-using-passive:::lbl-set-network-and-port]
+[#objc:p2psync-websocket-using-passive:::lbl-set-network-and-port]
 ==== Set Port and Network Interface
 
 
-[discrete#objc:p2psync-websocket-using-passive:::port-number]
+[#objc:p2psync-websocket-using-passive:::port-number]
 ===== Port number
 The Listener will automatically select an available port if you do not specify one -- see <<objc:p2psync-websocket-using-passive:::ex-port>> for how to specify a port.
 
@@ -224,7 +224,7 @@ endpointConfig.port =  55990; // <.>
 Ensure that firewall rules do not block any port you do specify. +
 
 
-[discrete#objc:p2psync-websocket-using-passive:::network-interface]
+[#objc:p2psync-websocket-using-passive:::network-interface]
 ===== Network Interface
 The Listener will listen on all network interfaces by default.
 
@@ -253,7 +253,7 @@ endpointConfig.networkInterface = @"10.1.1.10"; // <.>
 This must be either an IP Address or network interface name such as `en0`.
 
 
-[discrete#objc:p2psync-websocket-using-passive:::delta-sync]
+[#objc:p2psync-websocket-using-passive:::delta-sync]
 ==== Delta Sync
 
 Delta Sync allows clients to sync only those parts of a document that have changed.
@@ -281,11 +281,11 @@ endpointConfig.enableDeltaSync = true; // <.>
 <.> Delta sync replication is not enabled by default.
 Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListenerConfiguration.html#/c:objc(cs)CBLURLEndpointListenerConfiguration(py)enableDeltaSync[enableDeltaSync] method to activate or deactivate it.
 
-[discrete#objc:p2psync-websocket-using-passive:::lbl-tls-security]
+[#objc:p2psync-websocket-using-passive:::lbl-tls-security]
 ==== TLS Security
 
 
-[discrete#objc:p2psync-websocket-using-passive:::enable-or-disable-tls]
+[#objc:p2psync-websocket-using-passive:::enable-or-disable-tls]
 ===== Enable or Disable TLS
 
 Define whether the connection is to use TLS or clear text.
@@ -311,7 +311,7 @@ Active peers will use the `ws://` URL scheme used to connect to the listener.
 Active peers will use the `wss://` URL scheme to connect to the listener.
 
 
-[discrete#objc:p2psync-websocket-using-passive:::configure-tls-identity-for-listener]
+[#objc:p2psync-websocket-using-passive:::configure-tls-identity-for-listener]
 ===== Configure TLS Identity for Listener
 
 Define the credentials the server will present to the client for authentication.
@@ -447,7 +447,7 @@ This is the default setting.
 This is the default setting.
 
 
-[discrete#objc:p2psync-websocket-using-passive:::lbl-authenticating-the-client]
+[#objc:p2psync-websocket-using-passive:::lbl-authenticating-the-client]
 ==== Authenticating the Client
 In this section: <<objc:p2psync-websocket-using-passive:::use-basic-authentication>>  |  <<objc:p2psync-websocket-using-passive:::using-client-certificate-authentication>>  |  <<objc:p2psync-websocket-using-passive:::delete-tls-identity>>  |  <<objc:p2psync-websocket-using-passive:::the-impact-of-tls-settings>>
 
@@ -467,7 +467,7 @@ You should initialize the authenticator using one of the following constructors:
 ** A block of code that assumes total responsibility for authentication -- it must return a boolean response (true for an authenticated client, or false for a failed authentication).
 
 
-[discrete#objc:p2psync-websocket-using-passive:::use-basic-authentication]
+[#objc:p2psync-websocket-using-passive:::use-basic-authentication]
 ===== Use Basic Authentication
 
 Define how to authenticate client-supplied username and password credentials.
@@ -501,7 +501,7 @@ endpointConfig.authenticator = [[CBLListenerPasswordAuthenticator alloc]
 <.> Where 'username'/'password' are the client-supplied values (from the http-authentication header) and `validUser`/`validPassword` are the values acceptable to the server.
 
 
-[discrete#objc:p2psync-websocket-using-passive:::using-client-certificate-authentication]
+[#objc:p2psync-websocket-using-passive:::using-client-certificate-authentication]
 ===== Using Client Certificate Authentication
 Define how the server will authenticate client-supplied certificates.
 
@@ -599,7 +599,7 @@ It must return a boolean value; with `true` denoting the client supplied certifi
 <.> Add the authenticator to the Listener configuration.
 
 
-[discrete#objc:p2psync-websocket-using-passive:::delete-tls-identity]
+[#objc:p2psync-websocket-using-passive:::delete-tls-identity]
 ===== Delete Entry
 
 You can remove unwanted TLS identities from secure storage using the convenience API.
@@ -624,7 +624,7 @@ You can remove unwanted TLS identities from secure storage using the convenience
 ====
 
 
-[discrete#objc:p2psync-websocket-using-passive:::the-impact-of-tls-settings]
+[#objc:p2psync-websocket-using-passive:::the-impact-of-tls-settings]
 ===== The Impact of TLS Settings
 
 The table in this section shows the expected system behavior (in regards to security) depending on the TLS configuration settings deployed.
@@ -658,7 +658,7 @@ a|* System will use the configured identity.
 |===
 
 
-[discrete#objc:p2psync-websocket-using-passive:::lbl-start-listener]
+[#objc:p2psync-websocket-using-passive:::lbl-start-listener]
 ==== Start Listener
 
 Once you have completed the Listener's configuration settings you can initialize the Listener instance and start it running -- see: <<objc:p2psync-websocket-using-passive:::initialize-and-start-listener>>
@@ -691,7 +691,7 @@ if (!success) {
 ====
 
 
-[discrete#objc:p2psync-websocket-using-passive:::monitor-listener]
+[#objc:p2psync-websocket-using-passive:::monitor-listener]
 ==== Monitor Listener
 
 Use the Listener's `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLURLEndpointListener.html#/c:objc(cs)CBLURLEndpointListener(py)status[status]` property/method to get counts of total and active connections -- see: <<objc:p2psync-websocket-using-passive:::get-connection-counts>>.
@@ -720,7 +720,7 @@ NSUInteger activeConnections = self.listener.status.activeConnectionCount;
 ====
 
 
-[discrete#objc:p2psync-websocket-using-passive:::stop-listener]
+[#objc:p2psync-websocket-using-passive:::stop-listener]
 ==== Stop Listener
 
 It is best practice to check the status of the Listener's connections and stop only when you have confirmed that there are no active connections -- see <<objc:p2psync-websocket-using-passive:::get-connection-counts>>.
@@ -747,7 +747,7 @@ It is best practice to check the status of the Listener's connections and stop o
 NOTE: Closing the database will also close the Listener.
 
 
-[discrete#objc:p2psync-websocket-using-passive:::related-content]
+[#objc:p2psync-websocket-using-passive:::related-content]
 ==== Related Content
 ++++
 <div class="card-row three-column-row">

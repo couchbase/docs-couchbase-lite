@@ -23,7 +23,7 @@ Related Content -- xref:c:querybuilder.adoc#lbl-predquery[Predictive Queries] | 
 NOTE: The examples used in this topic are based on the _Travel Sample_ app and data introduced in the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial
 
 
-[discrete#c:query-n1ql-mobile:::introduction]
+[#c:query-n1ql-mobile:::introduction]
 === Introduction
 
 Developers using Couchbase Lite for C can provide {sqlpp} query strings using the {sqlpp} Query API.
@@ -32,7 +32,7 @@ This API uses query statements of the form shown in <<c:query-n1ql-mobile:::ex-q
 The structure and semantics of the query format are based on that of Couchbase Server's {sqlpp} query language -- see xref:server:n1ql:n1ql-language-reference/index.adoc[{sqlpp} Reference Guide] and xref:server:learn:data/n1ql-versus-sql.adoc[{sqlpp} Data Model].
 
 
-[discrete#c:query-n1ql-mobile:::running]
+[#c:query-n1ql-mobile:::running]
 === Running
 
 The database can create a query object with the SQL++ string.
@@ -73,7 +73,7 @@ if(!result) {
 We are accessing the current database using the shorthand notation *`_`* -- see the <<c:query-n1ql-mobile:::lbl-from>> clause for more on data source selection and <<c:query-n1ql-mobile:::lbl-query-params>> for more on parameterized queries.
 
 
-[discrete#c:query-n1ql-mobile:::query-format]
+[#c:query-n1ql-mobile:::query-format]
 === Query Format
 
 The API uses query statements of the form shown in <<c:query-n1ql-mobile:::ex-query-form>>.
@@ -130,14 +130,14 @@ a| The number of results to be skipped before starting to return results
 TIP: We recommend working through the https://query-tutorial.couchbase.com/tutorial/#1[{sqlpp} Tutorials] to build your {sqlpp} skills.
 
 
-[discrete#c:query-n1ql-mobile:::lbl-select]
+[#c:query-n1ql-mobile:::lbl-select]
 === SELECT statement
 
-[discrete#c:query-n1ql-mobile:::purpose]
+[#c:query-n1ql-mobile:::purpose]
 ==== Purpose
 Projects the result returned by the query, identifying the columns it will contain.
 
-[discrete#c:query-n1ql-mobile:::syntax]
+[#c:query-n1ql-mobile:::syntax]
 ==== Syntax
 
 .{sqlpp} Select Syntax
@@ -154,7 +154,7 @@ columnAlias = IDENTIFIER
 ----
 ====
 
-[discrete#c:query-n1ql-mobile:::arguments]
+[#c:query-n1ql-mobile:::arguments]
 ==== Arguments
 
 <.> The select clause begins with the SELECT keyword.
@@ -170,7 +170,7 @@ You can use the wildcard *** to select all columns -- see <<c:query-n1ql-mobile:
 
 <.> Use the optional `AS` argument to provides an alias name for a property. Each property can be aliased by putting the `AS <alias name>` after the column name.
 
-[discrete#c:query-n1ql-mobile:::select-wildcard]
+[#c:query-n1ql-mobile:::select-wildcard]
 ===== Select Wildcard
 When using the `SELECT *` option the column name (key) of the {sqlpp} string is one of:
 
@@ -203,7 +203,7 @@ This behavior is inline with that of Couchbase Server {sqlpp} -- see example in 
 |===
 
 
-[discrete#c:query-n1ql-mobile:::example]
+[#c:query-n1ql-mobile:::example]
 ==== Example
 
 .SELECT properties
@@ -233,15 +233,15 @@ SELECT DISTINCT address.city <.>
 
 See: xref:c:query-resultsets.adoc[Query Resultsets] for more on processing query results.
 
-[discrete#c:query-n1ql-mobile:::lbl-from]
+[#c:query-n1ql-mobile:::lbl-from]
 === FROM
 
-[discrete#c:query-n1ql-mobile:::purpose-2]
+[#c:query-n1ql-mobile:::purpose-2]
 ==== Purpose
 Specifies the data source, or sources, and optionally applies an alias ( `AS`).
 It is mandatory.
 
-[discrete#c:query-n1ql-mobile:::syntax-2]
+[#c:query-n1ql-mobile:::syntax-2]
 ==== Syntax
 
 [source, sql]
@@ -251,7 +251,7 @@ FROM dataSource  <.>
 
 ----
 
-[discrete#c:query-n1ql-mobile:::datasource]
+[#c:query-n1ql-mobile:::datasource]
 ==== Datasource
 
 A datasource can be:
@@ -262,7 +262,7 @@ A datasource can be:
 * < collection-name > : a collection in the default scope
 
 
-[discrete#c:query-n1ql-mobile:::arguments-2]
+[#c:query-n1ql-mobile:::arguments-2]
 ==== Arguments
 
 <.> Here `dataSource` is the database name against which the query is to run or the <scope>.<collection>.
@@ -271,7 +271,7 @@ To use the current datasource without specifying a name, use `_` as the datasour
 
 <.> `JOIN joinclause` -- use this optional argument to link datasources -- see <<c:query-n1ql-mobile:::lbl-join>>
 
-[discrete#c:query-n1ql-mobile:::example-2]
+[#c:query-n1ql-mobile:::example-2]
 ==== Example
 
 .FROM clause
@@ -290,17 +290,17 @@ SELECT store.name FROM _ store
 ====
 
 
-[discrete#c:query-n1ql-mobile:::lbl-join]
+[#c:query-n1ql-mobile:::lbl-join]
 === JOIN statement
 
-[discrete#c:query-n1ql-mobile:::purpose-3]
+[#c:query-n1ql-mobile:::purpose-3]
 ==== Purpose
 The JOIN clause enables you to select data from multiple data sources linked by criteria specified in the JOIN statement.
 
 Currently only self-joins are supported.
 For example to combine airline details with route details, linked by the airline id -- see <<c:query-n1ql-mobile:::ex-join>>.
 
-[discrete#c:query-n1ql-mobile:::syntax-3]
+[#c:query-n1ql-mobile:::syntax-3]
 ==== Syntax
 
 [source, sql]
@@ -316,7 +316,7 @@ dataSource = databaseName ( ( AS | _ )? databaseAlias )?
 constraint ( ON expression )? <.>
 ----
 
-[discrete#c:query-n1ql-mobile:::arguments-3]
+[#c:query-n1ql-mobile:::arguments-3]
 ==== Arguments
 
 <.> The join clause starts with a JOIN operator followed by the data source. +
@@ -327,7 +327,7 @@ Note: JOIN and INNER JOIN are the same, LEFT JOIN and LEFT OUTER JOIN are the sa
 
 <.> The join constraint starts with the ON keyword followed by the expression that defines the joining constraints.
 
-[discrete#c:query-n1ql-mobile:::example-3]
+[#c:query-n1ql-mobile:::example-3]
 ==== Example
 
 [source,sql]
@@ -352,16 +352,16 @@ SELECT * FROM travel-sample r JOIN travel-sample a ON r.airlineid = a.meta.id WH
 ----
 ====
 
-[discrete#c:query-n1ql-mobile:::lbl-where]
+[#c:query-n1ql-mobile:::lbl-where]
 === WHERE statement
 
-[discrete#c:query-n1ql-mobile:::purpose-4]
+[#c:query-n1ql-mobile:::purpose-4]
 ==== Purpose
 Specifies the selecion criteria used to filter results.
 
 As with SQL, use the `WHERE` statement to choose which documents are returned by your query.
 
-[discrete#c:query-n1ql-mobile:::syntax-4]
+[#c:query-n1ql-mobile:::syntax-4]
 ==== Syntax
 
 [source, sql]
@@ -370,7 +370,7 @@ where = WHERE expression <.>
 
 ----
 
-[discrete#c:query-n1ql-mobile:::arguments-4]
+[#c:query-n1ql-mobile:::arguments-4]
 ==== Arguments
 
 <.> WHERE evalates `expression` to a BOOLEAN value.
@@ -378,7 +378,7 @@ You can chain any number of Expressions in order to implement sophisticated filt
 
 See also -- <<c:query-n1ql-mobile:::lbl-operators>> for more on building expressions and <<c:query-n1ql-mobile:::lbl-query-params>> for more on parameterized queries.
 
-[discrete#c:query-n1ql-mobile:::examples]
+[#c:query-n1ql-mobile:::examples]
 ==== Examples
 
 [source, sql]
@@ -389,14 +389,14 @@ SELECT name FROM db WHERE department = ‘engineer’ AND group = ‘mobile
 ----
 
 
-[discrete#c:query-n1ql-mobile:::lbl-group]
+[#c:query-n1ql-mobile:::lbl-group]
 === GROUP BY statement
 
-[discrete#c:query-n1ql-mobile:::purpose-5]
+[#c:query-n1ql-mobile:::purpose-5]
 ==== Purpose
 Use `group by` to arrange values in groups of one or more properties.
 
-[discrete#c:query-n1ql-mobile:::syntax-5]
+[#c:query-n1ql-mobile:::syntax-5]
 ==== Syntax
 
 [source, sql]
@@ -409,7 +409,7 @@ having = HAVING expression <.>
 
 ----
 
-[discrete#c:query-n1ql-mobile:::arguments-5]
+[#c:query-n1ql-mobile:::arguments-5]
 ==== Arguments
 <.> The group by clause starts with the GROUP BY keyword followed by one or more expressions.
 
@@ -420,7 +420,7 @@ The group by clause is normally used together with the aggregate functions (e.g.
 <.> Having -- allows you to filter the result based on aggregate functions -- for example, `HAVING count(empnum)>100`
 
 
-[discrete#c:query-n1ql-mobile:::examples-2]
+[#c:query-n1ql-mobile:::examples-2]
 ==== Examples
 
 [source,sql]
@@ -434,14 +434,14 @@ SELECT COUNT(empno), city FROM db GROUP BY city HAVING COUNT(empno) > 100 WHERE 
 ----
 
 
-[discrete#c:query-n1ql-mobile:::lbl-order]
+[#c:query-n1ql-mobile:::lbl-order]
 === ORDER BY statement
 
-[discrete#c:query-n1ql-mobile:::purpose-6]
+[#c:query-n1ql-mobile:::purpose-6]
 ==== Purpose
 Sort query results based on a given expression result.
 
-[discrete#c:query-n1ql-mobile:::syntax-6]
+[#c:query-n1ql-mobile:::syntax-6]
 ==== Syntax
 
 [source, sql]
@@ -454,7 +454,7 @@ order = ( ASC / DESC ) <.>
 
 ----
 
-[discrete#c:query-n1ql-mobile:::arguments-6]
+[#c:query-n1ql-mobile:::arguments-6]
 ==== Arguments
 
 <.> orderBy -- The order by clause starts with the ORDER BY keyword followed by the ordering clause.
@@ -464,7 +464,7 @@ order = ( ASC / DESC ) <.>
 <.> Order -- In each ordering clause, the sorting direction is specified using the optional ASC (ascending) or DESC (descending) directives. Default is ASC.
 
 
-[discrete#c:query-n1ql-mobile:::examples-3]
+[#c:query-n1ql-mobile:::examples-3]
 ==== Examples
 
 .Simple usage
@@ -481,14 +481,14 @@ SELECT name, score FROM db  ORDER BY name ASC, score DESC
 ====
 
 
-[discrete#c:query-n1ql-mobile:::lbl-limit]
+[#c:query-n1ql-mobile:::lbl-limit]
 === LIMIT statement
 
-[discrete#c:query-n1ql-mobile:::purpose-7]
+[#c:query-n1ql-mobile:::purpose-7]
 ==== Purpose
 Specifies the maximum number of results to be returned by the query.
 
-[discrete#c:query-n1ql-mobile:::syntax-7]
+[#c:query-n1ql-mobile:::syntax-7]
 ==== Syntax
 
 [source, sql]
@@ -497,13 +497,13 @@ limit = LIMIT expression <.>
 
 ----
 
-[discrete#c:query-n1ql-mobile:::arguments-7]
+[#c:query-n1ql-mobile:::arguments-7]
 ==== Arguments
 
 <.> The LIMIT clause starts with the LIMIT keyword followed by an expression that will be evaluated as a number.
 
 
-[discrete#c:query-n1ql-mobile:::examples-4]
+[#c:query-n1ql-mobile:::examples-4]
 ==== Examples
 
 .Simple usage
@@ -517,14 +517,14 @@ SELECT name FROM db LIMIT 10 <.>
 <.> Return only 10 results
 ====
 
-[discrete#c:query-n1ql-mobile:::lbl-offset]
+[#c:query-n1ql-mobile:::lbl-offset]
 === OFFSET statement
 
-[discrete#c:query-n1ql-mobile:::purpose-8]
+[#c:query-n1ql-mobile:::purpose-8]
 ==== Purpose
 Specifies the number of results to be skipped by the query.
 
-[discrete#c:query-n1ql-mobile:::syntax-8]
+[#c:query-n1ql-mobile:::syntax-8]
 ==== Syntax
 
 [source, sql]
@@ -533,12 +533,12 @@ offset = OFFSET expression <.>
 
 ----
 
-[discrete#c:query-n1ql-mobile:::arguments-8]
+[#c:query-n1ql-mobile:::arguments-8]
 ==== Arguments
 
 <.> The offset clause starts with the OFFSET keyword followed by an expression that will be evaluated as a number that represents the number of results ignored before the query begins returning results.
 
-[discrete#c:query-n1ql-mobile:::examples-5]
+[#c:query-n1ql-mobile:::examples-5]
 ==== Examples
 
 .Simple usage
@@ -559,7 +559,7 @@ SELECT name FROM db  LIMIT 10 OFFSET 10 <.>
 ====
 
 
-[discrete#c:query-n1ql-mobile:::lbl-literals]
+[#c:query-n1ql-mobile:::lbl-literals]
 === Expressions
 In this section::
   <<c:query-n1ql-mobile:::lbl-exp-literals>>{nbsp}{nbsp}|{nbsp}{nbsp}
@@ -573,7 +573,7 @@ Expressions are references to identifiers that resolve to values.
 Categories of expression comprise the elements covered in this section (see above), together with <<c:query-n1ql-mobile:::lbl-operators>> and <<c:query-n1ql-mobile:::lbl-functions>>, which are covered in their own sections
 
 
-[discrete#c:query-n1ql-mobile:::lbl-exp-literals]
+[#c:query-n1ql-mobile:::lbl-exp-literals]
 ==== Literals
 <<c:query-n1ql-mobile:::lbl-lit-bool>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<c:query-n1ql-mobile:::lbl-lit-numbers>>{nbsp}{nbsp}|{nbsp}{nbsp}
@@ -584,19 +584,19 @@ Categories of expression comprise the elements covered in this section (see abov
 <<c:query-n1ql-mobile:::lbl-lit-dict>>{nbsp}{nbsp}|{nbsp}{nbsp}
 
 
-[discrete#c:query-n1ql-mobile:::lbl-lit-bool]
+[#c:query-n1ql-mobile:::lbl-lit-bool]
 ===== Boolean
 
-[discrete#c:query-n1ql-mobile:::purpose-9]
+[#c:query-n1ql-mobile:::purpose-9]
 ===== Purpose
 Represents a true or false value.
 
-[discrete#c:query-n1ql-mobile:::syntax-9]
+[#c:query-n1ql-mobile:::syntax-9]
 ===== Syntax
 
 `TRUE | FALSE`
 
-[discrete#c:query-n1ql-mobile:::example-4]
+[#c:query-n1ql-mobile:::example-4]
 ===== Example
 
 [source,sql]
@@ -605,16 +605,16 @@ SELECT value FROM db  WHERE value = true
 SELECT value FROM db  WHERE value = false
 ----
 
-[discrete#c:query-n1ql-mobile:::lbl-lit-numbers]
+[#c:query-n1ql-mobile:::lbl-lit-numbers]
 ===== Numeric
 
-[discrete#c:query-n1ql-mobile:::purpose-10]
+[#c:query-n1ql-mobile:::purpose-10]
 ===== Purpose
 Represents a numeric value.
 Numbers may be signed or unsigned digits.
 They have optional fractional and exponent components.
 
-[discrete#c:query-n1ql-mobile:::syntax-10]
+[#c:query-n1ql-mobile:::syntax-10]
 ===== Syntax
 
 [source,sql]
@@ -624,7 +624,7 @@ They have optional fractional and exponent components.
 DIGIT = [0-9]
 ----
 
-[discrete#c:query-n1ql-mobile:::example-5]
+[#c:query-n1ql-mobile:::example-5]
 ===== Example
 
 [source,sql]
@@ -639,15 +639,15 @@ SELECT value FROM db WHERE value = 10.25E+2
 SELECT value FROM db WHERE value = 10.25E-2
 ----
 
-[discrete#c:query-n1ql-mobile:::lbl-lit-string]
+[#c:query-n1ql-mobile:::lbl-lit-string]
 ===== String
 
-[discrete#c:query-n1ql-mobile:::purpose-11]
+[#c:query-n1ql-mobile:::purpose-11]
 ===== Purpose
 The string literal represents a string or sequence of characters.
 
 
-[discrete#c:query-n1ql-mobile:::syntax-11]
+[#c:query-n1ql-mobile:::syntax-11]
 ===== Syntax
 
 [source,sql]
@@ -657,7 +657,7 @@ The string literal represents a string or sequence of characters.
 
 <.> The string literal can be double-quoted as well as single-quoted.
 
-[discrete#c:query-n1ql-mobile:::example-6]
+[#c:query-n1ql-mobile:::example-6]
 ===== Example
 [source,sql]
 ----
@@ -665,14 +665,14 @@ SELECT firstName, lastName FROM db WHERE middleName = “middle”
 SELECT firstName, lastName FROM db WHERE middleName = ‘middle’
 ----
 
-[discrete#c:query-n1ql-mobile:::lbl-lit-null]
+[#c:query-n1ql-mobile:::lbl-lit-null]
 ===== NULL
 
-[discrete#c:query-n1ql-mobile:::purpose-12]
+[#c:query-n1ql-mobile:::purpose-12]
 ===== Purpose
 The literal NULL represents an empty value.
 
-[discrete#c:query-n1ql-mobile:::syntax-12]
+[#c:query-n1ql-mobile:::syntax-12]
 ===== Syntax
 
 [source,sql]
@@ -680,7 +680,7 @@ The literal NULL represents an empty value.
 NULL
 ----
 
-[discrete#c:query-n1ql-mobile:::example-7]
+[#c:query-n1ql-mobile:::example-7]
 ===== Example
 [source,sql]
 ----
@@ -688,14 +688,14 @@ SELECT firstName, lastName FROM db WHERE middleName IS NULL
 
 ----
 
-[discrete#c:query-n1ql-mobile:::lbl-lit-missing]
+[#c:query-n1ql-mobile:::lbl-lit-missing]
 ===== MISSING
 
-[discrete#c:query-n1ql-mobile:::purpose-13]
+[#c:query-n1ql-mobile:::purpose-13]
 ===== Purpose
 The MISSING literal represents a missing name-value pair in a document.
 
-[discrete#c:query-n1ql-mobile:::syntax-13]
+[#c:query-n1ql-mobile:::syntax-13]
 ===== Syntax
 
 [source,sql]
@@ -703,21 +703,21 @@ The MISSING literal represents a missing name-value pair in a document.
 MISSING
 ----
 
-[discrete#c:query-n1ql-mobile:::example-8]
+[#c:query-n1ql-mobile:::example-8]
 ===== Example
 [source,sql]
 ----
 SELECT firstName, lastName FROM db WHERE middleName IS MISSING
 ----
 
-[discrete#c:query-n1ql-mobile:::lbl-lit-array]
+[#c:query-n1ql-mobile:::lbl-lit-array]
 ===== Array
 
-[discrete#c:query-n1ql-mobile:::purpose-14]
+[#c:query-n1ql-mobile:::purpose-14]
 ===== Purpose
 Represents an Array
 
-[discrete#c:query-n1ql-mobile:::syntax-14]
+[#c:query-n1ql-mobile:::syntax-14]
 ===== Syntax
 
 [source,sql]
@@ -725,7 +725,7 @@ Represents an Array
 arrayLiteral = '[' _ (expression ( _ ',' _ e2:expression )* )? ']'
 ----
 
-[discrete#c:query-n1ql-mobile:::example-9]
+[#c:query-n1ql-mobile:::example-9]
 ===== Example
 [source,sql]
 ----
@@ -734,14 +734,14 @@ SELECT [ property1, property2, property3] FROM _
 
 ----
 
-[discrete#c:query-n1ql-mobile:::lbl-lit-dict]
+[#c:query-n1ql-mobile:::lbl-lit-dict]
 ===== Dictionary
 
-[discrete#c:query-n1ql-mobile:::purpose-15]
+[#c:query-n1ql-mobile:::purpose-15]
 ===== Purpose
 Represents a dictionary literal
 
-[discrete#c:query-n1ql-mobile:::syntax-15]
+[#c:query-n1ql-mobile:::syntax-15]
 ===== Syntax
 
 [source,sql]
@@ -752,7 +752,7 @@ dictionaryLiteral = '{' _ ( STRING_LITERAL ':' e:expression
 
 ----
 
-[discrete#c:query-n1ql-mobile:::example-10]
+[#c:query-n1ql-mobile:::example-10]
 ===== Example
 [source,sql]
 ----
@@ -762,16 +762,16 @@ SELECT { ‘name’: ‘James’, ‘phones’: [‘650-100-1000’, ‘650-100-
 ----
 
 
-[discrete#c:query-n1ql-mobile:::lbl-exp-ident]
+[#c:query-n1ql-mobile:::lbl-exp-ident]
 ==== Identifiers
 
-[discrete#c:query-n1ql-mobile:::purpose-16]
+[#c:query-n1ql-mobile:::purpose-16]
 ===== Purpose
 
 Identifiers provide symbolic references.
 Use them for example to identify: column alias names, database names, database alias names, property names, parameter names, function names, and FTS index names.
 
-[discrete#c:query-n1ql-mobile:::syntax-16]
+[#c:query-n1ql-mobile:::syntax-16]
 ===== Syntax
 
 [source, sql]
@@ -784,7 +784,7 @@ The identifier is case sensitive.
 
 TIP: To use other characters in the identifier, surround the identifier with the backticks ` character.
 
-[discrete#c:query-n1ql-mobile:::example-11]
+[#c:query-n1ql-mobile:::example-11]
 ===== Example
 
 
@@ -809,14 +809,14 @@ SELECT `key-1` FROM db
 ====
 
 
-[discrete#c:query-n1ql-mobile:::lbl-exp-prop]
+[#c:query-n1ql-mobile:::lbl-exp-prop]
 ==== Property Expressions
 
-[discrete#c:query-n1ql-mobile:::purpose-17]
+[#c:query-n1ql-mobile:::purpose-17]
 ===== Purpose
 The property expression is used to reference a property in a document
 
-[discrete#c:query-n1ql-mobile:::syntax-17]
+[#c:query-n1ql-mobile:::syntax-17]
 ===== Syntax
 
 [source,sql]
@@ -836,7 +836,7 @@ propertyName = IDENTIFIER
 <.> Use bracket ([index]) syntax to refer to an item in an array. +
 <.> Use the asterisk (*) character to represents _all properties_. This can only be used in the result list of the SELECT clause.
 
-[discrete#c:query-n1ql-mobile:::example-12]
+[#c:query-n1ql-mobile:::example-12]
 ===== Example
 
 .Property Expressions
@@ -867,15 +867,15 @@ SELECT contact.address.city, contact.phones[0]
 
 ====
 
-[discrete#c:query-n1ql-mobile:::lbl-exp-any]
+[#c:query-n1ql-mobile:::lbl-exp-any]
 ==== Any and Every Expressions
 
-[discrete#c:query-n1ql-mobile:::purpose-18]
+[#c:query-n1ql-mobile:::purpose-18]
 ===== Purpose
 Evaluates expressions over items in an array object.
 
 
-[discrete#c:query-n1ql-mobile:::syntax-18]
+[#c:query-n1ql-mobile:::syntax-18]
 ===== Syntax
 
 [source,sql]
@@ -907,7 +907,7 @@ NOTE: `ANY` and `SOME` are interchangeable
 <.> The SATISFIES keyword is used for evaluating each item in the array.
 <.> END terminates the array expression.
 
-[discrete#c:query-n1ql-mobile:::example-13]
+[#c:query-n1ql-mobile:::example-13]
 ===== Example
 
 .ALL and Every Expressions
@@ -923,17 +923,17 @@ SELECT name
 ----
 ====
 
-[discrete#c:query-n1ql-mobile:::lbl-exp-param]
+[#c:query-n1ql-mobile:::lbl-exp-param]
 ==== Parameter Expressions
 
-[discrete#c:query-n1ql-mobile:::purpose-19]
+[#c:query-n1ql-mobile:::purpose-19]
 ===== Purpose
 
 Parameter expressions specify a value to be assigned from the parameter map presented when executing the query.
 
 NOTE: If parameters are specified in the query string, but the parameter and value mapping is not specified in the query object, an error will be  thrown when executing the query.
 
-[discrete#c:query-n1ql-mobile:::syntax-19]
+[#c:query-n1ql-mobile:::syntax-19]
 ===== Syntax
 
 [source,sql]
@@ -944,7 +944,7 @@ $IDENTIFIER
 ----
 
 
-[discrete#c:query-n1ql-mobile:::examples-6]
+[#c:query-n1ql-mobile:::examples-6]
 ===== Examples
 
 .Parameter Expression
@@ -985,15 +985,15 @@ let result = q.execute();
 ====
 
 
-[discrete#c:query-n1ql-mobile:::lbl-exp-paren]
+[#c:query-n1ql-mobile:::lbl-exp-paren]
 ==== Parenthesis Expressions
 
-[discrete#c:query-n1ql-mobile:::purpose-20]
+[#c:query-n1ql-mobile:::purpose-20]
 ===== Purpose
 
 Use parentheses to group expressions together to make them more readable or to establish operator precedences.
 
-[discrete#c:query-n1ql-mobile:::example-14]
+[#c:query-n1ql-mobile:::example-14]
 ===== Example
 
 .Parenthesis Expression
@@ -1021,7 +1021,7 @@ SELECT *
 ====
 
 
-[discrete#c:query-n1ql-mobile:::lbl-operators]
+[#c:query-n1ql-mobile:::lbl-operators]
 === Operators
 In this section::
 <<c:query-n1ql-mobile:::lbl-ops-binary>>{nbsp}{nbsp}|{nbsp}{nbsp}
@@ -1030,7 +1030,7 @@ In this section::
 <<c:query-n1ql-mobile:::lbl-ops-cond>>
 
 
-[discrete#c:query-n1ql-mobile:::lbl-ops-binary]
+[#c:query-n1ql-mobile:::lbl-ops-binary]
 ==== Binary Operators
 <<c:query-n1ql-mobile:::lbl-ops-maths>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<c:query-n1ql-mobile:::lbl-comp-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
@@ -1038,7 +1038,7 @@ In this section::
 <<c:query-n1ql-mobile:::lbl-ops-string>>
 
 
-[discrete#c:query-n1ql-mobile:::lbl-ops-maths]
+[#c:query-n1ql-mobile:::lbl-ops-maths]
 ===== Maths
 
 .Maths Operators
@@ -1075,10 +1075,10 @@ In this section::
 ^1^ If both operands are integers, integer division is  used, but if one is a floating number, then float division is used.
 This differs from Server {sqlpp}, which performs float division regardless. Use `DIV(x, y)` to force float division in CBL {sqlpp}
 
-[discrete#c:query-n1ql-mobile:::lbl-comp-ops]
+[#c:query-n1ql-mobile:::lbl-comp-ops]
 ===== Comparison Operators
 
-[discrete#c:query-n1ql-mobile:::purpose-21]
+[#c:query-n1ql-mobile:::purpose-21]
 ===== Purpose
 The _comparison operators_ are used in the WHERE statement to specify the condition on which to match documents.
 
@@ -1223,10 +1223,10 @@ This is different from QueryBuilder, in which they operate as equivalents of `==
 |===
 
 
-[discrete#c:query-n1ql-mobile:::lbl-ops-logical]
+[#c:query-n1ql-mobile:::lbl-ops-logical]
 ===== Logical Operators
 
-[discrete#c:query-n1ql-mobile:::purpose-22]
+[#c:query-n1ql-mobile:::purpose-22]
 ===== Purpose
 Logical operators combine expressions using the following Boolean Logic Rules:
 
@@ -1370,10 +1370,10 @@ This differs from Server {sqlpp} in the following instances: +
  ^5-3^ Server will return: NULL instead of MISSING +
 
 
-[discrete#c:query-n1ql-mobile:::lbl-ops-string]
+[#c:query-n1ql-mobile:::lbl-ops-string]
 ===== String Operator
 
-[discrete#c:query-n1ql-mobile:::purpose-23]
+[#c:query-n1ql-mobile:::purpose-23]
 ===== Purpose
 A single string operator is provided.
 It enables string concatenation.
@@ -1394,15 +1394,15 @@ a|`\|\|`
 |===
 
 
-[discrete#c:query-n1ql-mobile:::lbl-ops-unary]
+[#c:query-n1ql-mobile:::lbl-ops-unary]
 ==== Unary Operators
 
-[discrete#c:query-n1ql-mobile:::purpose-24]
+[#c:query-n1ql-mobile:::purpose-24]
 ===== Purpose
 Three unary operators are provided.
 They operate by modifying an expression, making it numerically positive or negative, or by logically negating its value (TRUE becomes FALSE).
 
-[discrete#c:query-n1ql-mobile:::syntax-20]
+[#c:query-n1ql-mobile:::syntax-20]
 ===== Syntax
 
 [source]
@@ -1458,14 +1458,14 @@ NOT operation on MISSING value returns MISSING.
 |===
 
 
-[discrete#c:query-n1ql-mobile:::lbl-ops-coll]
+[#c:query-n1ql-mobile:::lbl-ops-coll]
 ==== COLLATE Operators
 
-[discrete#c:query-n1ql-mobile:::purpose-25]
+[#c:query-n1ql-mobile:::purpose-25]
 ===== Purpose
 Collate operators specify how the string comparison is conducted.
 
-[discrete#c:query-n1ql-mobile:::usage]
+[#c:query-n1ql-mobile:::usage]
 ===== Usage
 The collate operator is used in conjunction with string comparison expressions and ORDER BY clauses.
 It allows for one or more collations.
@@ -1474,7 +1474,7 @@ If multiple collations are used, the collations need to be specified in a parent
 
 NOTE: Collate is not supported by Server {sqlpp}
 
-[discrete#c:query-n1ql-mobile:::syntax-21]
+[#c:query-n1ql-mobile:::syntax-21]
 ===== Syntax
 
 [source, sql]
@@ -1484,7 +1484,7 @@ collate = COLLATE collation | '(' collation (_ collation )* ')'
 collation = NO? (UNICODE | CASE | DIACRITICS) WB <.>
 ----
 
-[discrete#c:query-n1ql-mobile:::arguments-9]
+[#c:query-n1ql-mobile:::arguments-9]
 ===== Arguments
 
 <.> The available collation options are:
@@ -1497,7 +1497,7 @@ collation = NO? (UNICODE | CASE | DIACRITICS) WB <.>
 
 --
 
-[discrete#c:query-n1ql-mobile:::example-15]
+[#c:query-n1ql-mobile:::example-15]
 ===== Example
 
 [source, sql]
@@ -1528,15 +1528,15 @@ SELECT name FROM db ORDER BY name COLLATE (UNICODE DIACRITIC)
 ----
 
 
-[discrete#c:query-n1ql-mobile:::lbl-ops-cond]
+[#c:query-n1ql-mobile:::lbl-ops-cond]
 ==== CONDITIONAL Operator
 
-[discrete#c:query-n1ql-mobile:::purpose-26]
+[#c:query-n1ql-mobile:::purpose-26]
 ===== Purpose
 
 The Conditional (or `CASE`) operator evaluates conditional logic in a similar way to the IF/ELSE operator.
 
-[discrete#c:query-n1ql-mobile:::syntax-22]
+[#c:query-n1ql-mobile:::syntax-22]
 ===== Syntax
 
 [source,sql]
@@ -1566,7 +1566,7 @@ The syntactic difference being that the _Simple Case_ expression has an expressi
 If no WHEN clause evaluate to TRUE, then the result of the expression is the ELSE expression, or NULL if no ELSE expression was provided.
 --
 
-[discrete#c:query-n1ql-mobile:::example-16]
+[#c:query-n1ql-mobile:::example-16]
 ===== Example
 
 .Simple Case
@@ -1591,7 +1591,7 @@ SELECT CASE WHEN shippedOn IS NOT NULL THEN ‘SHIPPED’ ELSE "NOT-SHIPPED" END
 ====
 
 
-[discrete#c:query-n1ql-mobile:::lbl-functions]
+[#c:query-n1ql-mobile:::lbl-functions]
 === Functions
 In this section::
 <<c:query-n1ql-mobile:::lbl-func-agg>>{nbsp}{nbsp}|{nbsp}{nbsp}
@@ -1606,12 +1606,12 @@ In this section::
 <<c:query-n1ql-mobile:::lbl-func-typecheck>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<c:query-n1ql-mobile:::lbl-func-typeconv>>
 
-[discrete#c:query-n1ql-mobile:::purpose-27]
+[#c:query-n1ql-mobile:::purpose-27]
 ==== Purpose
 
 Functions are also expressions.
 
-[discrete#c:query-n1ql-mobile:::syntax-23]
+[#c:query-n1ql-mobile:::syntax-23]
 ==== Syntax
 The function syntax is the same as Java’s method syntax.
 It starts with the function name, followed by optional arguments inside parentheses.
@@ -1627,7 +1627,7 @@ parenExprs = '(' ( expression (_ ',' _ expression )* )? ')'
 ----
 
 
-[discrete#c:query-n1ql-mobile:::lbl-func-agg]
+[#c:query-n1ql-mobile:::lbl-func-agg]
 ==== Aggregation Functions
 
 .Aggregation Functions
@@ -1654,7 +1654,7 @@ parenExprs = '(' ( expression (_ ',' _ expression )* )? ')'
 
 |===
 
-[discrete#c:query-n1ql-mobile:::lbl-func-array]
+[#c:query-n1ql-mobile:::lbl-func-array]
 ==== Array Functions
 
 .Array Functions
@@ -1694,7 +1694,7 @@ parenExprs = '(' ( expression (_ ',' _ expression )* )? ')'
 
 |===
 
-[discrete#c:query-n1ql-mobile:::lbl-func-cond]
+[#c:query-n1ql-mobile:::lbl-func-cond]
 ==== Conditional Functions
 
 .Conditional Functions
@@ -1726,7 +1726,7 @@ Returns `NULL` if either or both expressions are `NULL`.+
 |===
 
 
-[discrete#c:query-n1ql-mobile:::lbl-func-date]
+[#c:query-n1ql-mobile:::lbl-func-date]
 ==== Date and Time Functions
 
 .Date and Time Functions
@@ -1882,7 +1882,7 @@ Returns null if any of the parameters are invalid.
 |===
 
 
-[discrete#c:query-n1ql-mobile:::lbl-func-fts]
+[#c:query-n1ql-mobile:::lbl-func-fts]
 ==== Full Text Search Functions
 
 .FTS Functions
@@ -1905,7 +1905,7 @@ Returns null if any of the parameters are invalid.
 |===
 
 
-[discrete#c:query-n1ql-mobile:::lbl-func-maths]
+[#c:query-n1ql-mobile:::lbl-func-maths]
 ==== Maths Functions
 
 .Maths Functions
@@ -2001,7 +2001,7 @@ The function uses _Rounding to Nearest Even_ (Banker’s Rounding) convention wh
 ^*^ The behavior of the ROUND() function is different from Server {sqlpp} ROUND(), which rounds the midpoint values using _Rounding to Nearest Even_ convention.
 
 
-[discrete#c:query-n1ql-mobile:::lbl-func-meta]
+[#c:query-n1ql-mobile:::lbl-func-meta]
 ==== Metadata Functions
 
 .Metadata Functions
@@ -2035,7 +2035,7 @@ SELECT p.name, r.rating FROM product as p INNER JOIN reviews AS r ON META(r).id 
 |===
 
 
-[discrete#c:query-n1ql-mobile:::lbl-func-pattern]
+[#c:query-n1ql-mobile:::lbl-func-pattern]
 ==== Pattern Searching Functions
 
 .Pattern Searching Functions
@@ -2059,7 +2059,7 @@ SELECT p.name, r.rating FROM product as p INNER JOIN reviews AS r ON META(r).id 
 
 |===
 
-[discrete#c:query-n1ql-mobile:::lbl-func-string]
+[#c:query-n1ql-mobile:::lbl-func-string]
 ==== String Functions
 
 .String Functions
@@ -2091,7 +2091,7 @@ SELECT p.name, r.rating FROM product as p INNER JOIN reviews AS r ON META(r).id 
 |===
 
 
-[discrete#c:query-n1ql-mobile:::lbl-func-typecheck]
+[#c:query-n1ql-mobile:::lbl-func-typecheck]
 ==== Type Checking Functions
 
 .Type Checking Functions
@@ -2134,7 +2134,7 @@ a|Returns one of the following strings, based on the value of expression:
 |===
 
 
-[discrete#c:query-n1ql-mobile:::lbl-func-typeconv]
+[#c:query-n1ql-mobile:::lbl-func-typeconv]
 ==== Type Conversion Functions
 
 .Type Conversion Functions
@@ -2200,7 +2200,7 @@ a|Returns one of the following strings, based on the value of expression:
 |===
 
 
-[discrete#c:query-n1ql-mobile:::lbl-query-params]
+[#c:query-n1ql-mobile:::lbl-query-params]
 === Query Parameters
 
 You can provide runtime parameters to your {sqlpp} query to make it more flexible.
@@ -2271,7 +2271,7 @@ CBLResultSet_Release(result);
 <.> Set the value of the `$type` parameter
 
 
-[discrete#c:query-n1ql-mobile:::related-content]
+[#c:query-n1ql-mobile:::related-content]
 === Related Content
 ++++
 <div class="card-row three-column-row">

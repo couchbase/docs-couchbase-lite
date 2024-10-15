@@ -21,7 +21,7 @@ Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenanc
 --
 
 
-[discrete#java:p2psync-websocket:::introduction]
+[#java:p2psync-websocket:::introduction]
 === Introduction
 // tag::introduction-full[]
 // tag::introduction[]
@@ -45,7 +45,7 @@ Couchbase Lite’s Peer-to-Peer data synchronization provides:
 
 // end::introduction-full[]
 
-[discrete#java:p2psync-websocket:::overview]
+[#java:p2psync-websocket:::overview]
 === Overview
 Peer-to-Peer synchronization requires one Peer to act as the Listener to the other Peer’s replicator.
 
@@ -71,7 +71,7 @@ Here you can see configuration involves a xref:java:p2psync-websocket-using-pass
 
 You can also learn how to implement Peer-to-Peer synchronization by referring to our tutorial -- see: xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Getting Started with Peer-to-Peer Synchronization].
 
-[discrete#java:p2psync-websocket:::features]
+[#java:p2psync-websocket:::features]
 === Features
 
 Couchbase Lite for Java's Peer-to-Peer synchronization solution provides support for cross-platform synchronization, for example, between Android and iOS devices.
@@ -85,7 +85,7 @@ These replications can be for the same or a different database.
 The Listener will automatically select a port to use or a user-specified port.
 It will also listen on all available networks, unless you specify a specific network.
 
-[discrete#java:p2psync-websocket:::security]
+[#java:p2psync-websocket:::security]
 ==== Security
 
 Couchbases Lite's Peer-to-Peer synchronization supports encryption and authentication over TLS with multiple modes, including:
@@ -104,22 +104,22 @@ Whilst this can be used in clear text mode, developers are strongly advised to u
 
 For testing and development purposes, support is provided for the client (active, replicator) to skip verification of self-signed certificates; this mode should not be used in production.
 
-[discrete#java:p2psync-websocket:::error-handling]
+[#java:p2psync-websocket:::error-handling]
 ==== Error Handling
 
 When a Listener is stopped, then all connected replicators are notified by a WebSocket error. Your application should distinguish between transient and permanent connectivity errors.
 
-[discrete#java:p2psync-websocket:::passive-peers]
+[#java:p2psync-websocket:::passive-peers]
 ===== Passive peers
 A Passive Peer losing connectivity with an Active Peer will clean up any associated endpoint connections to that Peer. The Active Peer may attempt to reconnect to the Passive Peer.
 
-[discrete#java:p2psync-websocket:::active-peers]
+[#java:p2psync-websocket:::active-peers]
 ===== Active peers
 An Active Peer permanently losing connectivity with a Passive Peer will cease replicating.
 
 An Active Peer temporarily losing connectivity with a passive Peer will use exponential backoff functionality to attempt reconnection.
 
-[discrete#java:p2psync-websocket:::delta-sync]
+[#java:p2psync-websocket:::delta-sync]
 ==== Delta Sync
 
 Optional delta-sync support is provided but is inactive by default.
@@ -127,13 +127,13 @@ Optional delta-sync support is provided but is inactive by default.
 Delta-sync can be enabled on a per-replication basis provided that the databases involved are also configured to permit it.
 Statistics on delta-sync usage are available, including the total number of revisions sent as deltas.
 
-[discrete#java:p2psync-websocket:::conflict-resolution]
+[#java:p2psync-websocket:::conflict-resolution]
 ==== Conflict Resolution
 
 Conflict resolution for Peer-to-Peer synchronization works in the same way as it does for Sync Gateway replication, with both custom and automatic resolution available.
 
 
-[discrete#java:p2psync-websocket:::simple-configuration]
+[#java:p2psync-websocket:::simple-configuration]
 === Basic Setup
 You can configure a Peer-to-Peer synchronization with just a short amount of code as shown here in <<java:p2psync-websocket:::ex-simple-listener>> and <<java:p2psync-websocket:::ex-simple-replicator>>.
 
@@ -221,10 +221,10 @@ Here we use a known URL, but it could be a URL established dynamically in a disc
 <.> Start the replicator
 
 
-[discrete#java:p2psync-websocket:::api-highlights]
+[#java:p2psync-websocket:::api-highlights]
 === API Highlights
 
-[discrete#java:p2psync-websocket:::urlendpointlistener]
+[#java:p2psync-websocket:::urlendpointlistener]
 ==== URLEndpointListener
 
 The `URLEndpointListener` is the listener for peer-to-peer synchronization.
@@ -240,7 +240,7 @@ Core functionalities of the listener are:
 
 API Reference: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/URLEndpointListener.html[URLEndpointListener]
 
-[discrete#java:p2psync-websocket:::urlendpointlistenerconfiguration]
+[#java:p2psync-websocket:::urlendpointlistenerconfiguration]
 ==== URLEndpointListenerConfiguration
 Use this to create a configuration object you can then use to initialize the listener.
 
@@ -340,10 +340,10 @@ The default value is false.
 API Reference: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]
 --
 
-[discrete#java:p2psync-websocket:::security-2]
+[#java:p2psync-websocket:::security-2]
 === Security
 
-[discrete#java:p2psync-websocket:::authentication]
+[#java:p2psync-websocket:::authentication]
 ==== Authentication
 
 Peer-to-Peer sync supports <<java:p2psync-websocket:::using-basic-authentication,Basic Authentication>> and <<java:p2psync-websocket:::using-tls,TLS Authentication>>.
@@ -367,7 +367,7 @@ Active clients replicating with a URLEndpointListener have the option to skip va
 +
 This option is ignored when dealing with CA certificates.
 
-[discrete#java:p2psync-websocket:::using-secure-storage]
+[#java:p2psync-websocket:::using-secure-storage]
 ==== Using Secure Storage
 TLS and its associated keys and certificates might require using secure storage to minimize the chances of a security breach.
 The implementation of this storage differs from platform to platform.
@@ -487,7 +487,7 @@ a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/s
 |===
 
 
-[discrete#java:p2psync-websocket:::related-content]
+[#java:p2psync-websocket:::related-content]
 === Related Content
 ++++
 <div class="card-row three-column-row">

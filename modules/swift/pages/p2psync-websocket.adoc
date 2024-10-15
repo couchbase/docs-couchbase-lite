@@ -21,7 +21,7 @@ Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenanc
 --
 
 
-[discrete#swift:p2psync-websocket:::introduction]
+[#swift:p2psync-websocket:::introduction]
 === Introduction
 // tag::introduction-full[]
 // tag::introduction[]
@@ -45,7 +45,7 @@ Couchbase Lite’s Peer-to-Peer data synchronization provides:
 
 // end::introduction-full[]
 
-[discrete#swift:p2psync-websocket:::overview]
+[#swift:p2psync-websocket:::overview]
 === Overview
 Peer-to-Peer synchronization requires one Peer to act as the Listener to the other Peer’s replicator.
 
@@ -71,7 +71,7 @@ Here you can see configuration involves a xref:swift:p2psync-websocket-using-pas
 
 You can also learn how to implement Peer-to-Peer synchronization by referring to our tutorial -- see: xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Getting Started with Peer-to-Peer Synchronization].
 
-[discrete#swift:p2psync-websocket:::features]
+[#swift:p2psync-websocket:::features]
 === Features
 
 Couchbase Lite for Swift's Peer-to-Peer synchronization solution provides support for cross-platform synchronization, for example, between Android and iOS devices.
@@ -85,7 +85,7 @@ These replications can be for the same or a different database.
 The Listener will automatically select a port to use or a user-specified port.
 It will also listen on all available networks, unless you specify a specific network.
 
-[discrete#swift:p2psync-websocket:::security]
+[#swift:p2psync-websocket:::security]
 ==== Security
 
 Couchbases Lite's Peer-to-Peer synchronization supports encryption and authentication over TLS with multiple modes, including:
@@ -104,22 +104,22 @@ Whilst this can be used in clear text mode, developers are strongly advised to u
 
 For testing and development purposes, support is provided for the client (active, replicator) to skip verification of self-signed certificates; this mode should not be used in production.
 
-[discrete#swift:p2psync-websocket:::error-handling]
+[#swift:p2psync-websocket:::error-handling]
 ==== Error Handling
 
 When a Listener is stopped, then all connected replicators are notified by a WebSocket error. Your application should distinguish between transient and permanent connectivity errors.
 
-[discrete#swift:p2psync-websocket:::passive-peers]
+[#swift:p2psync-websocket:::passive-peers]
 ===== Passive peers
 A Passive Peer losing connectivity with an Active Peer will clean up any associated endpoint connections to that Peer. The Active Peer may attempt to reconnect to the Passive Peer.
 
-[discrete#swift:p2psync-websocket:::active-peers]
+[#swift:p2psync-websocket:::active-peers]
 ===== Active peers
 An Active Peer permanently losing connectivity with a Passive Peer will cease replicating.
 
 An Active Peer temporarily losing connectivity with a passive Peer will use exponential backoff functionality to attempt reconnection.
 
-[discrete#swift:p2psync-websocket:::delta-sync]
+[#swift:p2psync-websocket:::delta-sync]
 ==== Delta Sync
 
 Optional delta-sync support is provided but is inactive by default.
@@ -127,18 +127,18 @@ Optional delta-sync support is provided but is inactive by default.
 Delta-sync can be enabled on a per-replication basis provided that the databases involved are also configured to permit it.
 Statistics on delta-sync usage are available, including the total number of revisions sent as deltas.
 
-[discrete#swift:p2psync-websocket:::conflict-resolution]
+[#swift:p2psync-websocket:::conflict-resolution]
 ==== Conflict Resolution
 
 Conflict resolution for Peer-to-Peer synchronization works in the same way as it does for Sync Gateway replication, with both custom and automatic resolution available.
 
 
-[discrete#swift:p2psync-websocket:::constraints]
+[#swift:p2psync-websocket:::constraints]
 === Constraints
 * Requires at least iOS 10 (dependency on keychains)
 
 
-[discrete#swift:p2psync-websocket:::simple-configuration]
+[#swift:p2psync-websocket:::simple-configuration]
 === Basic Setup
 You can configure a Peer-to-Peer synchronization with just a short amount of code as shown here in <<swift:p2psync-websocket:::ex-simple-listener>> and <<swift:p2psync-websocket:::ex-simple-replicator>>.
 
@@ -218,10 +218,10 @@ Here we use a known URL, but it could be a URL established dynamically in a disc
 <.> Start the replicator
 
 
-[discrete#swift:p2psync-websocket:::api-highlights]
+[#swift:p2psync-websocket:::api-highlights]
 === API Highlights
 
-[discrete#swift:p2psync-websocket:::urlendpointlistener]
+[#swift:p2psync-websocket:::urlendpointlistener]
 ==== URLEndpointListener
 
 The `URLEndpointListener` is the listener for peer-to-peer synchronization.
@@ -237,7 +237,7 @@ Core functionalities of the listener are:
 
 API Reference: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/URLEndpointListener.html[URLEndpointListener]
 
-[discrete#swift:p2psync-websocket:::urlendpointlistenerconfiguration]
+[#swift:p2psync-websocket:::urlendpointlistenerconfiguration]
 ==== URLEndpointListenerConfiguration
 Use this to create a configuration object you can then use to initialize the listener.
 
@@ -337,10 +337,10 @@ The default value is false.
 API Reference: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]
 --
 
-[discrete#swift:p2psync-websocket:::security-2]
+[#swift:p2psync-websocket:::security-2]
 === Security
 
-[discrete#swift:p2psync-websocket:::authentication]
+[#swift:p2psync-websocket:::authentication]
 ==== Authentication
 
 Peer-to-Peer sync supports <<swift:p2psync-websocket:::using-basic-authentication,Basic Authentication>> and <<swift:p2psync-websocket:::using-tls,TLS Authentication>>.
@@ -364,7 +364,7 @@ Active clients replicating with a URLEndpointListener have the option to skip va
 +
 This option is ignored when dealing with CA certificates.
 
-[discrete#swift:p2psync-websocket:::using-secure-storage]
+[#swift:p2psync-websocket:::using-secure-storage]
 ==== Using Secure Storage
 TLS and its associated keys and certificates might require using secure storage to minimize the chances of a security breach.
 The implementation of this storage differs from platform to platform.
@@ -484,7 +484,7 @@ a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/s
 |===
 
 
-[discrete#swift:p2psync-websocket:::related-content]
+[#swift:p2psync-websocket:::related-content]
 === Related Content
 ++++
 <div class="card-row three-column-row">

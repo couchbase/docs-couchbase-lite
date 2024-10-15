@@ -23,7 +23,7 @@ Related Content -- xref:csharp:querybuilder.adoc#lbl-predquery[Predictive Querie
 NOTE: The examples used in this topic are based on the _Travel Sample_ app and data introduced in the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial
 
 
-[discrete#csharp:query-n1ql-mobile:::introduction]
+[#csharp:query-n1ql-mobile:::introduction]
 === Introduction
 
 Developers using Couchbase Lite for C#.Net can provide {sqlpp} query strings using the {sqlpp} Query API.
@@ -32,7 +32,7 @@ This API uses query statements of the form shown in <<csharp:query-n1ql-mobile::
 The structure and semantics of the query format are based on that of Couchbase Server's {sqlpp} query language -- see xref:server:n1ql:n1ql-language-reference/index.adoc[{sqlpp} Reference Guide] and xref:server:learn:data/n1ql-versus-sql.adoc[{sqlpp} Data Model].
 
 
-[discrete#csharp:query-n1ql-mobile:::running]
+[#csharp:query-n1ql-mobile:::running]
 === Running
 
 The database can create a query object with the SQL++ string.
@@ -62,7 +62,7 @@ return query.Execute().AllResults();
 We are accessing the current database using the shorthand notation *`_`* -- see the <<csharp:query-n1ql-mobile:::lbl-from>> clause for more on data source selection and <<csharp:query-n1ql-mobile:::lbl-query-params>> for more on parameterized queries.
 
 
-[discrete#csharp:query-n1ql-mobile:::query-format]
+[#csharp:query-n1ql-mobile:::query-format]
 === Query Format
 
 The API uses query statements of the form shown in <<csharp:query-n1ql-mobile:::ex-query-form>>.
@@ -119,14 +119,14 @@ a| The number of results to be skipped before starting to return results
 TIP: We recommend working through the https://query-tutorial.couchbase.com/tutorial/#1[{sqlpp} Tutorials] to build your {sqlpp} skills.
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-select]
+[#csharp:query-n1ql-mobile:::lbl-select]
 === SELECT statement
 
-[discrete#csharp:query-n1ql-mobile:::purpose]
+[#csharp:query-n1ql-mobile:::purpose]
 ==== Purpose
 Projects the result returned by the query, identifying the columns it will contain.
 
-[discrete#csharp:query-n1ql-mobile:::syntax]
+[#csharp:query-n1ql-mobile:::syntax]
 ==== Syntax
 
 .{sqlpp} Select Syntax
@@ -143,7 +143,7 @@ columnAlias = IDENTIFIER
 ----
 ====
 
-[discrete#csharp:query-n1ql-mobile:::arguments]
+[#csharp:query-n1ql-mobile:::arguments]
 ==== Arguments
 
 <.> The select clause begins with the SELECT keyword.
@@ -159,7 +159,7 @@ You can use the wildcard *** to select all columns -- see <<csharp:query-n1ql-mo
 
 <.> Use the optional `AS` argument to provides an alias name for a property. Each property can be aliased by putting the `AS <alias name>` after the column name.
 
-[discrete#csharp:query-n1ql-mobile:::select-wildcard]
+[#csharp:query-n1ql-mobile:::select-wildcard]
 ===== Select Wildcard
 When using the `SELECT *` option the column name (key) of the {sqlpp} string is one of:
 
@@ -192,7 +192,7 @@ This behavior is inline with that of Couchbase Server {sqlpp} -- see example in 
 |===
 
 
-[discrete#csharp:query-n1ql-mobile:::example]
+[#csharp:query-n1ql-mobile:::example]
 ==== Example
 
 .SELECT properties
@@ -222,15 +222,15 @@ SELECT DISTINCT address.city <.>
 
 See: xref:csharp:query-resultsets.adoc[Query Resultsets] for more on processing query results.
 
-[discrete#csharp:query-n1ql-mobile:::lbl-from]
+[#csharp:query-n1ql-mobile:::lbl-from]
 === FROM
 
-[discrete#csharp:query-n1ql-mobile:::purpose-2]
+[#csharp:query-n1ql-mobile:::purpose-2]
 ==== Purpose
 Specifies the data source, or sources, and optionally applies an alias ( `AS`).
 It is mandatory.
 
-[discrete#csharp:query-n1ql-mobile:::syntax-2]
+[#csharp:query-n1ql-mobile:::syntax-2]
 ==== Syntax
 
 [source, sql]
@@ -240,7 +240,7 @@ FROM dataSource  <.>
 
 ----
 
-[discrete#csharp:query-n1ql-mobile:::datasource]
+[#csharp:query-n1ql-mobile:::datasource]
 ==== Datasource
 
 A datasource can be:
@@ -251,7 +251,7 @@ A datasource can be:
 * < collection-name > : a collection in the default scope
 
 
-[discrete#csharp:query-n1ql-mobile:::arguments-2]
+[#csharp:query-n1ql-mobile:::arguments-2]
 ==== Arguments
 
 <.> Here `dataSource` is the database name against which the query is to run or the <scope>.<collection>.
@@ -260,7 +260,7 @@ To use the current datasource without specifying a name, use `_` as the datasour
 
 <.> `JOIN joinclause` -- use this optional argument to link datasources -- see <<csharp:query-n1ql-mobile:::lbl-join>>
 
-[discrete#csharp:query-n1ql-mobile:::example-2]
+[#csharp:query-n1ql-mobile:::example-2]
 ==== Example
 
 .FROM clause
@@ -279,17 +279,17 @@ SELECT store.name FROM _ store
 ====
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-join]
+[#csharp:query-n1ql-mobile:::lbl-join]
 === JOIN statement
 
-[discrete#csharp:query-n1ql-mobile:::purpose-3]
+[#csharp:query-n1ql-mobile:::purpose-3]
 ==== Purpose
 The JOIN clause enables you to select data from multiple data sources linked by criteria specified in the JOIN statement.
 
 Currently only self-joins are supported.
 For example to combine airline details with route details, linked by the airline id -- see <<csharp:query-n1ql-mobile:::ex-join>>.
 
-[discrete#csharp:query-n1ql-mobile:::syntax-3]
+[#csharp:query-n1ql-mobile:::syntax-3]
 ==== Syntax
 
 [source, sql]
@@ -305,7 +305,7 @@ dataSource = databaseName ( ( AS | _ )? databaseAlias )?
 constraint ( ON expression )? <.>
 ----
 
-[discrete#csharp:query-n1ql-mobile:::arguments-3]
+[#csharp:query-n1ql-mobile:::arguments-3]
 ==== Arguments
 
 <.> The join clause starts with a JOIN operator followed by the data source. +
@@ -316,7 +316,7 @@ Note: JOIN and INNER JOIN are the same, LEFT JOIN and LEFT OUTER JOIN are the sa
 
 <.> The join constraint starts with the ON keyword followed by the expression that defines the joining constraints.
 
-[discrete#csharp:query-n1ql-mobile:::example-3]
+[#csharp:query-n1ql-mobile:::example-3]
 ==== Example
 
 [source,sql]
@@ -341,16 +341,16 @@ SELECT * FROM travel-sample r JOIN travel-sample a ON r.airlineid = a.meta.id WH
 ----
 ====
 
-[discrete#csharp:query-n1ql-mobile:::lbl-where]
+[#csharp:query-n1ql-mobile:::lbl-where]
 === WHERE statement
 
-[discrete#csharp:query-n1ql-mobile:::purpose-4]
+[#csharp:query-n1ql-mobile:::purpose-4]
 ==== Purpose
 Specifies the selecion criteria used to filter results.
 
 As with SQL, use the `WHERE` statement to choose which documents are returned by your query.
 
-[discrete#csharp:query-n1ql-mobile:::syntax-4]
+[#csharp:query-n1ql-mobile:::syntax-4]
 ==== Syntax
 
 [source, sql]
@@ -359,7 +359,7 @@ where = WHERE expression <.>
 
 ----
 
-[discrete#csharp:query-n1ql-mobile:::arguments-4]
+[#csharp:query-n1ql-mobile:::arguments-4]
 ==== Arguments
 
 <.> WHERE evalates `expression` to a BOOLEAN value.
@@ -367,7 +367,7 @@ You can chain any number of Expressions in order to implement sophisticated filt
 
 See also -- <<csharp:query-n1ql-mobile:::lbl-operators>> for more on building expressions and <<csharp:query-n1ql-mobile:::lbl-query-params>> for more on parameterized queries.
 
-[discrete#csharp:query-n1ql-mobile:::examples]
+[#csharp:query-n1ql-mobile:::examples]
 ==== Examples
 
 [source, sql]
@@ -378,14 +378,14 @@ SELECT name FROM db WHERE department = ‘engineer’ AND group = ‘mobile
 ----
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-group]
+[#csharp:query-n1ql-mobile:::lbl-group]
 === GROUP BY statement
 
-[discrete#csharp:query-n1ql-mobile:::purpose-5]
+[#csharp:query-n1ql-mobile:::purpose-5]
 ==== Purpose
 Use `group by` to arrange values in groups of one or more properties.
 
-[discrete#csharp:query-n1ql-mobile:::syntax-5]
+[#csharp:query-n1ql-mobile:::syntax-5]
 ==== Syntax
 
 [source, sql]
@@ -398,7 +398,7 @@ having = HAVING expression <.>
 
 ----
 
-[discrete#csharp:query-n1ql-mobile:::arguments-5]
+[#csharp:query-n1ql-mobile:::arguments-5]
 ==== Arguments
 <.> The group by clause starts with the GROUP BY keyword followed by one or more expressions.
 
@@ -409,7 +409,7 @@ The group by clause is normally used together with the aggregate functions (e.g.
 <.> Having -- allows you to filter the result based on aggregate functions -- for example, `HAVING count(empnum)>100`
 
 
-[discrete#csharp:query-n1ql-mobile:::examples-2]
+[#csharp:query-n1ql-mobile:::examples-2]
 ==== Examples
 
 [source,sql]
@@ -423,14 +423,14 @@ SELECT COUNT(empno), city FROM db GROUP BY city HAVING COUNT(empno) > 100 WHERE 
 ----
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-order]
+[#csharp:query-n1ql-mobile:::lbl-order]
 === ORDER BY statement
 
-[discrete#csharp:query-n1ql-mobile:::purpose-6]
+[#csharp:query-n1ql-mobile:::purpose-6]
 ==== Purpose
 Sort query results based on a given expression result.
 
-[discrete#csharp:query-n1ql-mobile:::syntax-6]
+[#csharp:query-n1ql-mobile:::syntax-6]
 ==== Syntax
 
 [source, sql]
@@ -443,7 +443,7 @@ order = ( ASC / DESC ) <.>
 
 ----
 
-[discrete#csharp:query-n1ql-mobile:::arguments-6]
+[#csharp:query-n1ql-mobile:::arguments-6]
 ==== Arguments
 
 <.> orderBy -- The order by clause starts with the ORDER BY keyword followed by the ordering clause.
@@ -453,7 +453,7 @@ order = ( ASC / DESC ) <.>
 <.> Order -- In each ordering clause, the sorting direction is specified using the optional ASC (ascending) or DESC (descending) directives. Default is ASC.
 
 
-[discrete#csharp:query-n1ql-mobile:::examples-3]
+[#csharp:query-n1ql-mobile:::examples-3]
 ==== Examples
 
 .Simple usage
@@ -470,14 +470,14 @@ SELECT name, score FROM db  ORDER BY name ASC, score DESC
 ====
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-limit]
+[#csharp:query-n1ql-mobile:::lbl-limit]
 === LIMIT statement
 
-[discrete#csharp:query-n1ql-mobile:::purpose-7]
+[#csharp:query-n1ql-mobile:::purpose-7]
 ==== Purpose
 Specifies the maximum number of results to be returned by the query.
 
-[discrete#csharp:query-n1ql-mobile:::syntax-7]
+[#csharp:query-n1ql-mobile:::syntax-7]
 ==== Syntax
 
 [source, sql]
@@ -486,13 +486,13 @@ limit = LIMIT expression <.>
 
 ----
 
-[discrete#csharp:query-n1ql-mobile:::arguments-7]
+[#csharp:query-n1ql-mobile:::arguments-7]
 ==== Arguments
 
 <.> The LIMIT clause starts with the LIMIT keyword followed by an expression that will be evaluated as a number.
 
 
-[discrete#csharp:query-n1ql-mobile:::examples-4]
+[#csharp:query-n1ql-mobile:::examples-4]
 ==== Examples
 
 .Simple usage
@@ -506,14 +506,14 @@ SELECT name FROM db LIMIT 10 <.>
 <.> Return only 10 results
 ====
 
-[discrete#csharp:query-n1ql-mobile:::lbl-offset]
+[#csharp:query-n1ql-mobile:::lbl-offset]
 === OFFSET statement
 
-[discrete#csharp:query-n1ql-mobile:::purpose-8]
+[#csharp:query-n1ql-mobile:::purpose-8]
 ==== Purpose
 Specifies the number of results to be skipped by the query.
 
-[discrete#csharp:query-n1ql-mobile:::syntax-8]
+[#csharp:query-n1ql-mobile:::syntax-8]
 ==== Syntax
 
 [source, sql]
@@ -522,12 +522,12 @@ offset = OFFSET expression <.>
 
 ----
 
-[discrete#csharp:query-n1ql-mobile:::arguments-8]
+[#csharp:query-n1ql-mobile:::arguments-8]
 ==== Arguments
 
 <.> The offset clause starts with the OFFSET keyword followed by an expression that will be evaluated as a number that represents the number of results ignored before the query begins returning results.
 
-[discrete#csharp:query-n1ql-mobile:::examples-5]
+[#csharp:query-n1ql-mobile:::examples-5]
 ==== Examples
 
 .Simple usage
@@ -548,7 +548,7 @@ SELECT name FROM db  LIMIT 10 OFFSET 10 <.>
 ====
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-literals]
+[#csharp:query-n1ql-mobile:::lbl-literals]
 === Expressions
 In this section::
   <<csharp:query-n1ql-mobile:::lbl-exp-literals>>{nbsp}{nbsp}|{nbsp}{nbsp}
@@ -562,7 +562,7 @@ Expressions are references to identifiers that resolve to values.
 Categories of expression comprise the elements covered in this section (see above), together with <<csharp:query-n1ql-mobile:::lbl-operators>> and <<csharp:query-n1ql-mobile:::lbl-functions>>, which are covered in their own sections
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-exp-literals]
+[#csharp:query-n1ql-mobile:::lbl-exp-literals]
 ==== Literals
 <<csharp:query-n1ql-mobile:::lbl-lit-bool>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<csharp:query-n1ql-mobile:::lbl-lit-numbers>>{nbsp}{nbsp}|{nbsp}{nbsp}
@@ -573,19 +573,19 @@ Categories of expression comprise the elements covered in this section (see abov
 <<csharp:query-n1ql-mobile:::lbl-lit-dict>>{nbsp}{nbsp}|{nbsp}{nbsp}
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-lit-bool]
+[#csharp:query-n1ql-mobile:::lbl-lit-bool]
 ===== Boolean
 
-[discrete#csharp:query-n1ql-mobile:::purpose-9]
+[#csharp:query-n1ql-mobile:::purpose-9]
 ===== Purpose
 Represents a true or false value.
 
-[discrete#csharp:query-n1ql-mobile:::syntax-9]
+[#csharp:query-n1ql-mobile:::syntax-9]
 ===== Syntax
 
 `TRUE | FALSE`
 
-[discrete#csharp:query-n1ql-mobile:::example-4]
+[#csharp:query-n1ql-mobile:::example-4]
 ===== Example
 
 [source,sql]
@@ -594,16 +594,16 @@ SELECT value FROM db  WHERE value = true
 SELECT value FROM db  WHERE value = false
 ----
 
-[discrete#csharp:query-n1ql-mobile:::lbl-lit-numbers]
+[#csharp:query-n1ql-mobile:::lbl-lit-numbers]
 ===== Numeric
 
-[discrete#csharp:query-n1ql-mobile:::purpose-10]
+[#csharp:query-n1ql-mobile:::purpose-10]
 ===== Purpose
 Represents a numeric value.
 Numbers may be signed or unsigned digits.
 They have optional fractional and exponent components.
 
-[discrete#csharp:query-n1ql-mobile:::syntax-10]
+[#csharp:query-n1ql-mobile:::syntax-10]
 ===== Syntax
 
 [source,sql]
@@ -613,7 +613,7 @@ They have optional fractional and exponent components.
 DIGIT = [0-9]
 ----
 
-[discrete#csharp:query-n1ql-mobile:::example-5]
+[#csharp:query-n1ql-mobile:::example-5]
 ===== Example
 
 [source,sql]
@@ -628,15 +628,15 @@ SELECT value FROM db WHERE value = 10.25E+2
 SELECT value FROM db WHERE value = 10.25E-2
 ----
 
-[discrete#csharp:query-n1ql-mobile:::lbl-lit-string]
+[#csharp:query-n1ql-mobile:::lbl-lit-string]
 ===== String
 
-[discrete#csharp:query-n1ql-mobile:::purpose-11]
+[#csharp:query-n1ql-mobile:::purpose-11]
 ===== Purpose
 The string literal represents a string or sequence of characters.
 
 
-[discrete#csharp:query-n1ql-mobile:::syntax-11]
+[#csharp:query-n1ql-mobile:::syntax-11]
 ===== Syntax
 
 [source,sql]
@@ -646,7 +646,7 @@ The string literal represents a string or sequence of characters.
 
 <.> The string literal can be double-quoted as well as single-quoted.
 
-[discrete#csharp:query-n1ql-mobile:::example-6]
+[#csharp:query-n1ql-mobile:::example-6]
 ===== Example
 [source,sql]
 ----
@@ -654,14 +654,14 @@ SELECT firstName, lastName FROM db WHERE middleName = “middle”
 SELECT firstName, lastName FROM db WHERE middleName = ‘middle’
 ----
 
-[discrete#csharp:query-n1ql-mobile:::lbl-lit-null]
+[#csharp:query-n1ql-mobile:::lbl-lit-null]
 ===== NULL
 
-[discrete#csharp:query-n1ql-mobile:::purpose-12]
+[#csharp:query-n1ql-mobile:::purpose-12]
 ===== Purpose
 The literal NULL represents an empty value.
 
-[discrete#csharp:query-n1ql-mobile:::syntax-12]
+[#csharp:query-n1ql-mobile:::syntax-12]
 ===== Syntax
 
 [source,sql]
@@ -669,7 +669,7 @@ The literal NULL represents an empty value.
 NULL
 ----
 
-[discrete#csharp:query-n1ql-mobile:::example-7]
+[#csharp:query-n1ql-mobile:::example-7]
 ===== Example
 [source,sql]
 ----
@@ -677,14 +677,14 @@ SELECT firstName, lastName FROM db WHERE middleName IS NULL
 
 ----
 
-[discrete#csharp:query-n1ql-mobile:::lbl-lit-missing]
+[#csharp:query-n1ql-mobile:::lbl-lit-missing]
 ===== MISSING
 
-[discrete#csharp:query-n1ql-mobile:::purpose-13]
+[#csharp:query-n1ql-mobile:::purpose-13]
 ===== Purpose
 The MISSING literal represents a missing name-value pair in a document.
 
-[discrete#csharp:query-n1ql-mobile:::syntax-13]
+[#csharp:query-n1ql-mobile:::syntax-13]
 ===== Syntax
 
 [source,sql]
@@ -692,21 +692,21 @@ The MISSING literal represents a missing name-value pair in a document.
 MISSING
 ----
 
-[discrete#csharp:query-n1ql-mobile:::example-8]
+[#csharp:query-n1ql-mobile:::example-8]
 ===== Example
 [source,sql]
 ----
 SELECT firstName, lastName FROM db WHERE middleName IS MISSING
 ----
 
-[discrete#csharp:query-n1ql-mobile:::lbl-lit-array]
+[#csharp:query-n1ql-mobile:::lbl-lit-array]
 ===== Array
 
-[discrete#csharp:query-n1ql-mobile:::purpose-14]
+[#csharp:query-n1ql-mobile:::purpose-14]
 ===== Purpose
 Represents an Array
 
-[discrete#csharp:query-n1ql-mobile:::syntax-14]
+[#csharp:query-n1ql-mobile:::syntax-14]
 ===== Syntax
 
 [source,sql]
@@ -714,7 +714,7 @@ Represents an Array
 arrayLiteral = '[' _ (expression ( _ ',' _ e2:expression )* )? ']'
 ----
 
-[discrete#csharp:query-n1ql-mobile:::example-9]
+[#csharp:query-n1ql-mobile:::example-9]
 ===== Example
 [source,sql]
 ----
@@ -723,14 +723,14 @@ SELECT [ property1, property2, property3] FROM _
 
 ----
 
-[discrete#csharp:query-n1ql-mobile:::lbl-lit-dict]
+[#csharp:query-n1ql-mobile:::lbl-lit-dict]
 ===== Dictionary
 
-[discrete#csharp:query-n1ql-mobile:::purpose-15]
+[#csharp:query-n1ql-mobile:::purpose-15]
 ===== Purpose
 Represents a dictionary literal
 
-[discrete#csharp:query-n1ql-mobile:::syntax-15]
+[#csharp:query-n1ql-mobile:::syntax-15]
 ===== Syntax
 
 [source,sql]
@@ -741,7 +741,7 @@ dictionaryLiteral = '{' _ ( STRING_LITERAL ':' e:expression
 
 ----
 
-[discrete#csharp:query-n1ql-mobile:::example-10]
+[#csharp:query-n1ql-mobile:::example-10]
 ===== Example
 [source,sql]
 ----
@@ -751,16 +751,16 @@ SELECT { ‘name’: ‘James’, ‘phones’: [‘650-100-1000’, ‘650-100-
 ----
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-exp-ident]
+[#csharp:query-n1ql-mobile:::lbl-exp-ident]
 ==== Identifiers
 
-[discrete#csharp:query-n1ql-mobile:::purpose-16]
+[#csharp:query-n1ql-mobile:::purpose-16]
 ===== Purpose
 
 Identifiers provide symbolic references.
 Use them for example to identify: column alias names, database names, database alias names, property names, parameter names, function names, and FTS index names.
 
-[discrete#csharp:query-n1ql-mobile:::syntax-16]
+[#csharp:query-n1ql-mobile:::syntax-16]
 ===== Syntax
 
 [source, sql]
@@ -773,7 +773,7 @@ The identifier is case sensitive.
 
 TIP: To use other characters in the identifier, surround the identifier with the backticks ` character.
 
-[discrete#csharp:query-n1ql-mobile:::example-11]
+[#csharp:query-n1ql-mobile:::example-11]
 ===== Example
 
 
@@ -798,14 +798,14 @@ SELECT `key-1` FROM db
 ====
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-exp-prop]
+[#csharp:query-n1ql-mobile:::lbl-exp-prop]
 ==== Property Expressions
 
-[discrete#csharp:query-n1ql-mobile:::purpose-17]
+[#csharp:query-n1ql-mobile:::purpose-17]
 ===== Purpose
 The property expression is used to reference a property in a document
 
-[discrete#csharp:query-n1ql-mobile:::syntax-17]
+[#csharp:query-n1ql-mobile:::syntax-17]
 ===== Syntax
 
 [source,sql]
@@ -825,7 +825,7 @@ propertyName = IDENTIFIER
 <.> Use bracket ([index]) syntax to refer to an item in an array. +
 <.> Use the asterisk (*) character to represents _all properties_. This can only be used in the result list of the SELECT clause.
 
-[discrete#csharp:query-n1ql-mobile:::example-12]
+[#csharp:query-n1ql-mobile:::example-12]
 ===== Example
 
 .Property Expressions
@@ -856,15 +856,15 @@ SELECT contact.address.city, contact.phones[0]
 
 ====
 
-[discrete#csharp:query-n1ql-mobile:::lbl-exp-any]
+[#csharp:query-n1ql-mobile:::lbl-exp-any]
 ==== Any and Every Expressions
 
-[discrete#csharp:query-n1ql-mobile:::purpose-18]
+[#csharp:query-n1ql-mobile:::purpose-18]
 ===== Purpose
 Evaluates expressions over items in an array object.
 
 
-[discrete#csharp:query-n1ql-mobile:::syntax-18]
+[#csharp:query-n1ql-mobile:::syntax-18]
 ===== Syntax
 
 [source,sql]
@@ -896,7 +896,7 @@ NOTE: `ANY` and `SOME` are interchangeable
 <.> The SATISFIES keyword is used for evaluating each item in the array.
 <.> END terminates the array expression.
 
-[discrete#csharp:query-n1ql-mobile:::example-13]
+[#csharp:query-n1ql-mobile:::example-13]
 ===== Example
 
 .ALL and Every Expressions
@@ -912,17 +912,17 @@ SELECT name
 ----
 ====
 
-[discrete#csharp:query-n1ql-mobile:::lbl-exp-param]
+[#csharp:query-n1ql-mobile:::lbl-exp-param]
 ==== Parameter Expressions
 
-[discrete#csharp:query-n1ql-mobile:::purpose-19]
+[#csharp:query-n1ql-mobile:::purpose-19]
 ===== Purpose
 
 Parameter expressions specify a value to be assigned from the parameter map presented when executing the query.
 
 NOTE: If parameters are specified in the query string, but the parameter and value mapping is not specified in the query object, an error will be  thrown when executing the query.
 
-[discrete#csharp:query-n1ql-mobile:::syntax-19]
+[#csharp:query-n1ql-mobile:::syntax-19]
 ===== Syntax
 
 [source,sql]
@@ -933,7 +933,7 @@ $IDENTIFIER
 ----
 
 
-[discrete#csharp:query-n1ql-mobile:::examples-6]
+[#csharp:query-n1ql-mobile:::examples-6]
 ===== Examples
 
 .Parameter Expression
@@ -974,15 +974,15 @@ let result = q.execute();
 ====
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-exp-paren]
+[#csharp:query-n1ql-mobile:::lbl-exp-paren]
 ==== Parenthesis Expressions
 
-[discrete#csharp:query-n1ql-mobile:::purpose-20]
+[#csharp:query-n1ql-mobile:::purpose-20]
 ===== Purpose
 
 Use parentheses to group expressions together to make them more readable or to establish operator precedences.
 
-[discrete#csharp:query-n1ql-mobile:::example-14]
+[#csharp:query-n1ql-mobile:::example-14]
 ===== Example
 
 .Parenthesis Expression
@@ -1010,7 +1010,7 @@ SELECT *
 ====
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-operators]
+[#csharp:query-n1ql-mobile:::lbl-operators]
 === Operators
 In this section::
 <<csharp:query-n1ql-mobile:::lbl-ops-binary>>{nbsp}{nbsp}|{nbsp}{nbsp}
@@ -1019,7 +1019,7 @@ In this section::
 <<csharp:query-n1ql-mobile:::lbl-ops-cond>>
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-ops-binary]
+[#csharp:query-n1ql-mobile:::lbl-ops-binary]
 ==== Binary Operators
 <<csharp:query-n1ql-mobile:::lbl-ops-maths>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<csharp:query-n1ql-mobile:::lbl-comp-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
@@ -1027,7 +1027,7 @@ In this section::
 <<csharp:query-n1ql-mobile:::lbl-ops-string>>
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-ops-maths]
+[#csharp:query-n1ql-mobile:::lbl-ops-maths]
 ===== Maths
 
 .Maths Operators
@@ -1064,10 +1064,10 @@ In this section::
 ^1^ If both operands are integers, integer division is  used, but if one is a floating number, then float division is used.
 This differs from Server {sqlpp}, which performs float division regardless. Use `DIV(x, y)` to force float division in CBL {sqlpp}
 
-[discrete#csharp:query-n1ql-mobile:::lbl-comp-ops]
+[#csharp:query-n1ql-mobile:::lbl-comp-ops]
 ===== Comparison Operators
 
-[discrete#csharp:query-n1ql-mobile:::purpose-21]
+[#csharp:query-n1ql-mobile:::purpose-21]
 ===== Purpose
 The _comparison operators_ are used in the WHERE statement to specify the condition on which to match documents.
 
@@ -1212,10 +1212,10 @@ This is different from QueryBuilder, in which they operate as equivalents of `==
 |===
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-ops-logical]
+[#csharp:query-n1ql-mobile:::lbl-ops-logical]
 ===== Logical Operators
 
-[discrete#csharp:query-n1ql-mobile:::purpose-22]
+[#csharp:query-n1ql-mobile:::purpose-22]
 ===== Purpose
 Logical operators combine expressions using the following Boolean Logic Rules:
 
@@ -1359,10 +1359,10 @@ This differs from Server {sqlpp} in the following instances: +
  ^5-3^ Server will return: NULL instead of MISSING +
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-ops-string]
+[#csharp:query-n1ql-mobile:::lbl-ops-string]
 ===== String Operator
 
-[discrete#csharp:query-n1ql-mobile:::purpose-23]
+[#csharp:query-n1ql-mobile:::purpose-23]
 ===== Purpose
 A single string operator is provided.
 It enables string concatenation.
@@ -1383,15 +1383,15 @@ a|`\|\|`
 |===
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-ops-unary]
+[#csharp:query-n1ql-mobile:::lbl-ops-unary]
 ==== Unary Operators
 
-[discrete#csharp:query-n1ql-mobile:::purpose-24]
+[#csharp:query-n1ql-mobile:::purpose-24]
 ===== Purpose
 Three unary operators are provided.
 They operate by modifying an expression, making it numerically positive or negative, or by logically negating its value (TRUE becomes FALSE).
 
-[discrete#csharp:query-n1ql-mobile:::syntax-20]
+[#csharp:query-n1ql-mobile:::syntax-20]
 ===== Syntax
 
 [source]
@@ -1447,14 +1447,14 @@ NOT operation on MISSING value returns MISSING.
 |===
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-ops-coll]
+[#csharp:query-n1ql-mobile:::lbl-ops-coll]
 ==== COLLATE Operators
 
-[discrete#csharp:query-n1ql-mobile:::purpose-25]
+[#csharp:query-n1ql-mobile:::purpose-25]
 ===== Purpose
 Collate operators specify how the string comparison is conducted.
 
-[discrete#csharp:query-n1ql-mobile:::usage]
+[#csharp:query-n1ql-mobile:::usage]
 ===== Usage
 The collate operator is used in conjunction with string comparison expressions and ORDER BY clauses.
 It allows for one or more collations.
@@ -1463,7 +1463,7 @@ If multiple collations are used, the collations need to be specified in a parent
 
 NOTE: Collate is not supported by Server {sqlpp}
 
-[discrete#csharp:query-n1ql-mobile:::syntax-21]
+[#csharp:query-n1ql-mobile:::syntax-21]
 ===== Syntax
 
 [source, sql]
@@ -1473,7 +1473,7 @@ collate = COLLATE collation | '(' collation (_ collation )* ')'
 collation = NO? (UNICODE | CASE | DIACRITICS) WB <.>
 ----
 
-[discrete#csharp:query-n1ql-mobile:::arguments-9]
+[#csharp:query-n1ql-mobile:::arguments-9]
 ===== Arguments
 
 <.> The available collation options are:
@@ -1486,7 +1486,7 @@ collation = NO? (UNICODE | CASE | DIACRITICS) WB <.>
 
 --
 
-[discrete#csharp:query-n1ql-mobile:::example-15]
+[#csharp:query-n1ql-mobile:::example-15]
 ===== Example
 
 [source, sql]
@@ -1517,15 +1517,15 @@ SELECT name FROM db ORDER BY name COLLATE (UNICODE DIACRITIC)
 ----
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-ops-cond]
+[#csharp:query-n1ql-mobile:::lbl-ops-cond]
 ==== CONDITIONAL Operator
 
-[discrete#csharp:query-n1ql-mobile:::purpose-26]
+[#csharp:query-n1ql-mobile:::purpose-26]
 ===== Purpose
 
 The Conditional (or `CASE`) operator evaluates conditional logic in a similar way to the IF/ELSE operator.
 
-[discrete#csharp:query-n1ql-mobile:::syntax-22]
+[#csharp:query-n1ql-mobile:::syntax-22]
 ===== Syntax
 
 [source,sql]
@@ -1555,7 +1555,7 @@ The syntactic difference being that the _Simple Case_ expression has an expressi
 If no WHEN clause evaluate to TRUE, then the result of the expression is the ELSE expression, or NULL if no ELSE expression was provided.
 --
 
-[discrete#csharp:query-n1ql-mobile:::example-16]
+[#csharp:query-n1ql-mobile:::example-16]
 ===== Example
 
 .Simple Case
@@ -1580,7 +1580,7 @@ SELECT CASE WHEN shippedOn IS NOT NULL THEN ‘SHIPPED’ ELSE "NOT-SHIPPED" END
 ====
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-functions]
+[#csharp:query-n1ql-mobile:::lbl-functions]
 === Functions
 In this section::
 <<csharp:query-n1ql-mobile:::lbl-func-agg>>{nbsp}{nbsp}|{nbsp}{nbsp}
@@ -1595,12 +1595,12 @@ In this section::
 <<csharp:query-n1ql-mobile:::lbl-func-typecheck>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<csharp:query-n1ql-mobile:::lbl-func-typeconv>>
 
-[discrete#csharp:query-n1ql-mobile:::purpose-27]
+[#csharp:query-n1ql-mobile:::purpose-27]
 ==== Purpose
 
 Functions are also expressions.
 
-[discrete#csharp:query-n1ql-mobile:::syntax-23]
+[#csharp:query-n1ql-mobile:::syntax-23]
 ==== Syntax
 The function syntax is the same as Java’s method syntax.
 It starts with the function name, followed by optional arguments inside parentheses.
@@ -1616,7 +1616,7 @@ parenExprs = '(' ( expression (_ ',' _ expression )* )? ')'
 ----
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-func-agg]
+[#csharp:query-n1ql-mobile:::lbl-func-agg]
 ==== Aggregation Functions
 
 .Aggregation Functions
@@ -1643,7 +1643,7 @@ parenExprs = '(' ( expression (_ ',' _ expression )* )? ')'
 
 |===
 
-[discrete#csharp:query-n1ql-mobile:::lbl-func-array]
+[#csharp:query-n1ql-mobile:::lbl-func-array]
 ==== Array Functions
 
 .Array Functions
@@ -1683,7 +1683,7 @@ parenExprs = '(' ( expression (_ ',' _ expression )* )? ')'
 
 |===
 
-[discrete#csharp:query-n1ql-mobile:::lbl-func-cond]
+[#csharp:query-n1ql-mobile:::lbl-func-cond]
 ==== Conditional Functions
 
 .Conditional Functions
@@ -1715,7 +1715,7 @@ Returns `NULL` if either or both expressions are `NULL`.+
 |===
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-func-date]
+[#csharp:query-n1ql-mobile:::lbl-func-date]
 ==== Date and Time Functions
 
 .Date and Time Functions
@@ -1871,7 +1871,7 @@ Returns null if any of the parameters are invalid.
 |===
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-func-fts]
+[#csharp:query-n1ql-mobile:::lbl-func-fts]
 ==== Full Text Search Functions
 
 .FTS Functions
@@ -1894,7 +1894,7 @@ Returns null if any of the parameters are invalid.
 |===
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-func-maths]
+[#csharp:query-n1ql-mobile:::lbl-func-maths]
 ==== Maths Functions
 
 .Maths Functions
@@ -1990,7 +1990,7 @@ The function uses _Rounding to Nearest Even_ (Banker’s Rounding) convention wh
 ^*^ The behavior of the ROUND() function is different from Server {sqlpp} ROUND(), which rounds the midpoint values using _Rounding to Nearest Even_ convention.
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-func-meta]
+[#csharp:query-n1ql-mobile:::lbl-func-meta]
 ==== Metadata Functions
 
 .Metadata Functions
@@ -2024,7 +2024,7 @@ SELECT p.name, r.rating FROM product as p INNER JOIN reviews AS r ON META(r).id 
 |===
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-func-pattern]
+[#csharp:query-n1ql-mobile:::lbl-func-pattern]
 ==== Pattern Searching Functions
 
 .Pattern Searching Functions
@@ -2048,7 +2048,7 @@ SELECT p.name, r.rating FROM product as p INNER JOIN reviews AS r ON META(r).id 
 
 |===
 
-[discrete#csharp:query-n1ql-mobile:::lbl-func-string]
+[#csharp:query-n1ql-mobile:::lbl-func-string]
 ==== String Functions
 
 .String Functions
@@ -2080,7 +2080,7 @@ SELECT p.name, r.rating FROM product as p INNER JOIN reviews AS r ON META(r).id 
 |===
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-func-typecheck]
+[#csharp:query-n1ql-mobile:::lbl-func-typecheck]
 ==== Type Checking Functions
 
 .Type Checking Functions
@@ -2123,7 +2123,7 @@ a|Returns one of the following strings, based on the value of expression:
 |===
 
 
-[discrete#csharp:query-n1ql-mobile:::lbl-func-typeconv]
+[#csharp:query-n1ql-mobile:::lbl-func-typeconv]
 ==== Type Conversion Functions
 
 .Type Conversion Functions
@@ -2189,7 +2189,7 @@ a|Returns one of the following strings, based on the value of expression:
 |===
 
 
-[discrete#csharp:query-n1ql-mobile:::querybuilder-differences]
+[#csharp:query-n1ql-mobile:::querybuilder-differences]
 === QueryBuilder Differences
 
 Couchbase Lite {sqlpp} Query supports all QueryBuilder features, except _Predictive Query_ and _Index_. See <<csharp:query-n1ql-mobile:::tbl-qbldr-diffs>> for the features supported by {sqlpp} but not by QueryBuilder.
@@ -2249,7 +2249,7 @@ TOOBJECT
 TOSTRING
 |===
 
-[discrete#csharp:query-n1ql-mobile:::lbl-query-params]
+[#csharp:query-n1ql-mobile:::lbl-query-params]
 === Query Parameters
 
 You can provide runtime parameters to your {sqlpp} query to make it more flexible.
@@ -2286,7 +2286,7 @@ var results = query.Execute().AllResults();
 <.> Set the value of the `$type` parameter
 
 
-[discrete#csharp:query-n1ql-mobile:::related-content]
+[#csharp:query-n1ql-mobile:::related-content]
 === Related Content
 ++++
 <div class="card-row three-column-row">

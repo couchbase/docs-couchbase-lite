@@ -18,7 +18,7 @@
 Description -- _{description}_ +
 --
 
-[discrete#c:c_fleece:::introduction]
+[#c:c_fleece:::introduction]
 == Introduction
 
 pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] for C makes extensive use of the Fleece C API for accessing document data.
@@ -54,7 +54,7 @@ https://github.com/couchbaselabs/fleece/wiki/Using-Fleece[Using Fleece] |
 https://github.com/couchbaselabs/fleece/blob/master/API/fleece/Fleece.h[Fleece Header File]
 
 
-[discrete#c:c_fleece:::values]
+[#c:c_fleece:::values]
 == Values
 
 Fleece’s data types are almost identical to those of JSON, with the notable addition of binary data types.
@@ -85,16 +85,16 @@ if (type == kFLString) {
 See: https://github.com/couchbaselabs/fleece/blob/master/API/fleece/Fleece.h[Fleece Header File] for more details.
 
 
-[discrete#c:c_fleece:::slices-and-strings]
+[#c:c_fleece:::slices-and-strings]
 == Slices and Strings
 
-[discrete#c:c_fleece:::flslice]
+[#c:c_fleece:::flslice]
 === FLSlice
 Another basic Fleece data type, _FLSlice_ a simple struct consisting of a pointer and a length.
 It points to a block of memory, without implying ownership of that memory.
 FLSlice is used to represent both binary data and strings.
 
-[discrete#c:c_fleece:::flstring]
+[#c:c_fleece:::flstring]
 === FLString
 _FLString_ is a typedef of FLSlice, which explicitly represents a string value.
 Use the _FLSTR(“Some String”)_ macro to create an FLString from a string literal -- see: <<c:c_fleece:::ex-flstr>>
@@ -111,7 +111,7 @@ CBLDatabase* db = CBLDatabase_Open( (FLSTR("my-database"), NULL, &err); // <.>
 <.> FLSTR("My-database") creates the FLString from the given string literal.
 
 
-[discrete#c:c_fleece:::flsliceresultflstringresult]
+[#c:c_fleece:::flsliceresultflstringresult]
 === FLSliceResult/FLStringResult
 
 FLSlice doesn’t imply an ownership of memory.
@@ -143,7 +143,7 @@ FLSlice and FLSliceResult have utility functions such as:
 * `FLSliceResults_Release`
 
 
-[discrete#c:c_fleece:::null-slices]
+[#c:c_fleece:::null-slices]
 === Null Slices
 The null slice {NULL, 0} is represented by the constant `kFLSliceNull`. +
 You test a slice for null by comparing its pointer (buf) with NULL -- see: <<c:c_fleece:::ex-flnullslice>>
@@ -163,10 +163,10 @@ if (name.buf != NULL) {
 See: https://github.com/couchbaselabs/fleece/blob/master/API/fleece/FLSlice.h[FLSlice.h] for more details on data slices.
 
 
-[discrete#c:c_fleece:::dictionaries]
+[#c:c_fleece:::dictionaries]
 == Dictionaries
 
-[discrete#c:c_fleece:::immutable]
+[#c:c_fleece:::immutable]
 === Immutable
 _FLDict_ represents an immutable dictionary type in Fleece. +
 To access a value with a string key from a dictionary, use FLDict_Get -- as shown in: <<c:c_fleece:::ex-flget>>.
@@ -201,7 +201,7 @@ while (NULL != (value = FLDictIterator_GetValue(&iter))) {
 ----
 
 
-[discrete#c:c_fleece:::mutable]
+[#c:c_fleece:::mutable]
 === Mutable
 
 *FLMutableDictionary* is a mutable dictionary type that allows editing.
@@ -220,10 +220,10 @@ FLMutableDict_Release(myDict); // <.>
 <.> don't forget to release resources once you have finished with them
 
 
-[discrete#c:c_fleece:::lbl-fleece-arrays]
+[#c:c_fleece:::lbl-fleece-arrays]
 == Arrays
 
-[discrete#c:c_fleece:::immutable-2]
+[#c:c_fleece:::immutable-2]
 === Immutable
 _FLArray_ represents an immutable array type in Fleece. +
 use _FLArray_Count_ and _FLArray_Get_ respectively, to get the numbers of values in an array and to get a value using with an index -- as shown in <<c:c_fleece:::ex-flarray-get>>.
@@ -258,7 +258,7 @@ while (NULL != (value = FLArrayIterator_GetValue(&iter))) {
 
 ----
 
-[discrete#c:c_fleece:::mutable-2]
+[#c:c_fleece:::mutable-2]
 === Mutable
 
 _FLMutableArray_ is a mutable array type that allows editing. +
@@ -280,12 +280,12 @@ FLMutableArray_Release(myArray)
 <.> To set a value at a specific array index, use FLMutableArraySet<Type Name>.
 
 
-[discrete#c:c_fleece:::json-support]
+[#c:c_fleece:::json-support]
 == JSON Support
 
 Fleece provides a JSON utility that allows you to parse JSON string into Fleece or generate JSON from Fleece.
 
-[discrete#c:c_fleece:::parsing-json]
+[#c:c_fleece:::parsing-json]
 === Parsing JSON
 Use *FLDoc_FromJSON* to convert JSON Dictionary or Array into Fleece Dictionary or Array.
 
@@ -303,7 +303,7 @@ if (doc) {
 FLDoc_Release(doc);
 ----
 
-[discrete#c:c_fleece:::generating-json]
+[#c:c_fleece:::generating-json]
 === Generating JSON
 Use FLValue_ToJSON to convert FLValue into JSON string
 
@@ -318,7 +318,7 @@ FLSliceResult_Release(jsonString);
 ----
 
 
-[discrete#c:c_fleece:::memory-management]
+[#c:c_fleece:::memory-management]
 == Memory Management
 In general, Mutable objects are _reference counted_: with MutableArray and Mutable Dictionary each having  _retain_ and _release_ functions. +
 The lifespan of Immutable objects is the same as that of the memory block from which they are parsed.
@@ -329,7 +329,7 @@ https://github.com/couchbaselabs/fleece/wiki/Using-Fleece#5-memory-management[Fl
 https://github.com/couchbaselabs/fleece/wiki/Advanced-Fleece#for-memory-management[Advanced Fleece Mememory Management]
 
 
-[discrete#c:c_fleece:::related-content]
+[#c:c_fleece:::related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">

@@ -21,11 +21,11 @@ Related Content -- xref:java:database.adoc[Databases] | xref:java:blob.adoc[Blob
 --
 
 
-[discrete#java:document:::overview]
+[#java:document:::overview]
 == Overview
 
 
-[discrete#java:document:::document-structure]
+[#java:document:::document-structure]
 === Document Structure
 
 In pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] the term 'document' refers to an entry in the database.
@@ -46,7 +46,7 @@ This value is stored as a dictionary of key-value (k-v) pairs.
 The values can be made of up several different <<java:document:::data-types>> such as numbers, strings, arrays, and nested objects.
 
 
-[discrete#java:document:::data-encoding]
+[#java:document:::data-encoding]
 === Data Encoding
 
 The document body is stored in an internal, efficient, binary form called
@@ -56,7 +56,7 @@ This internal form can be easily converted into a manageable native dictionary f
 Fleece data is stored in the smallest format that will hold the value whilst maintaining the integrity of the value.
 
 
-[discrete#java:document:::data-types]
+[#java:document:::data-types]
 === Data Types
 
 The `Document` class offers a set of property accessors for various scalar types, such as:
@@ -80,13 +80,13 @@ MutableArray:: represents a writeable collection of objects
 Blob:: represents an arbitrary piece of binary data
 
 
-[discrete#java:document:::json]
+[#java:document:::json]
 === JSON
 
 Couchbase Lite also provides for the direct handling of JSON data implemented in most cases by the provision of a pass:a,q[`toJSON()`] method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array) -- see <<java:document:::lbl-json-data>>.
 
 
-[discrete#java:document:::constructing-a-document]
+[#java:document:::constructing-a-document]
 == Constructing a Document
 
 
@@ -123,7 +123,7 @@ hotel: {
 
 ----
 
-[discrete#java:document:::ex-usage]
+[#java:document:::ex-usage]
 === Open a Database
 
 First open your database.
@@ -147,7 +147,7 @@ try (Collection collection = database.getCollection("myCollection")) {
 
 See xref:java:database.adoc[Databases] for more information
 
-[discrete#java:document:::create-a-document]
+[#java:document:::create-a-document]
 === Create a Document
 
 Now create a new document to hold your application's data.
@@ -167,7 +167,7 @@ MutableDocument mutableDoc = new MutableDocument();
 
 For more on using *Documents*, see <<java:document:::document-initializers>> and <<java:document:::mutability>>.
 
-[discrete#java:document:::create-a-dictionary]
+[#java:document:::create-a-dictionary]
 === Create a Dictionary
 
 Now create a mutable dictionary (`address`).
@@ -192,7 +192,7 @@ address.setString("code", "90210");
 
 Learn more about <<java:document:::using-dictionaries>>.
 
-[discrete#java:document:::create-an-array]
+[#java:document:::create-an-array]
 === Create an Array
 
 Since the hotel may have multiple contact numbers, provide a field (`phones`) as a mutable array.
@@ -212,7 +212,7 @@ phones.addString("650-000-0001");
 
 Learn more about <<java:document:::using-arrays>>
 
-[discrete#java:document:::populate-a-document]
+[#java:document:::populate-a-document]
 === Populate a Document
 
 Now add your data to the mutable document created earlier.
@@ -246,7 +246,7 @@ mutableDoc.setArray("phones", phones);
 NOTE: Couchbase recommend using a `type` attribute to define each logical document type.
 
 
-[discrete#java:document:::save-a-document]
+[#java:document:::save-a-document]
 === Save a Document
 
 Now persist the populated document to your Couchbase Lite database.
@@ -262,7 +262,7 @@ collection.save(mutableDoc);
 ----
 
 
-[discrete#java:document:::close-the-database]
+[#java:document:::close-the-database]
 === Close the Database
 
 With your document saved, you can now close our Couchbase Lite database.
@@ -278,11 +278,11 @@ database.close();
 ----
 
 
-[discrete#java:document:::working-with-data]
+[#java:document:::working-with-data]
 == Working with Data
 
 
-[discrete#java:document:::checking-a-documents-properties]
+[#java:document:::checking-a-documents-properties]
 === Checking a Document's Properties
 
 To check whether a given property exists in the document, use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Document.html#contains-java.lang.String-[`Document.Contains(String key)] method.
@@ -290,7 +290,7 @@ To check whether a given property exists in the document, use the https://docs.c
 If you try to access a property which doesn't exist in the document, the call will return the default value for that getter method (0 for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Document.html#getInt-java.lang.String-[Document.getInt()] 0.0 for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Document.html#getFloat-java.lang.String-[Document.getFloat()] etc.).
 
 
-[discrete#java:document:::date-accessors]
+[#java:document:::date-accessors]
 === Date accessors
 
 Couchbase Lite offers _Date_ accessors as a convenience.
@@ -317,7 +317,7 @@ Date date = newTask.getDate("createdAt");
 ====
 
 
-[discrete#java:document:::using-dictionaries]
+[#java:document:::using-dictionaries]
 === Using Dictionaries
 
 .API References
@@ -394,7 +394,7 @@ collection.save(mutableDoc);
 ====
 
 
-[discrete#java:document:::using-arrays]
+[#java:document:::using-arrays]
 === Using Arrays
 
 .API References
@@ -471,13 +471,13 @@ collection.save(mutableDoc);
 ====
 
 
-[discrete#java:document:::using-blobs]
+[#java:document:::using-blobs]
 === Using Blobs
 
 For more on working with blobs, see xref:java:blob.adoc[Blobs]
 
 
-[discrete#java:document:::document-initializers]
+[#java:document:::document-initializers]
 == Document Initializers
 
 
@@ -516,7 +516,7 @@ collection.save(newTask);
 ====
 
 
-[discrete#java:document:::mutability]
+[#java:document:::mutability]
 == Mutability
 
 
@@ -549,7 +549,7 @@ collection.save(mutableDocument);
 NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<java:document:::lbl-doc-constraints>>.
 
 
-[discrete#java:document:::batch-operations]
+[#java:document:::batch-operations]
 == Batch operations
 
 If you're making multiple changes to a database at once, it's faster to group them together.
@@ -586,7 +586,7 @@ At the *local* level this operation is still transactional: no other `Database` 
 But Couchbase Mobile is a distributed system, and due to the way replication works, there's no guarantee that Sync Gateway or other devices will receive your changes all at once.
 
 
-[discrete#java:document:::document-change-events]
+[#java:document:::document-change-events]
 == Document change events
 
 You can register for document changes.
@@ -625,7 +625,7 @@ collection.addDocumentChangeListener(
 ====
 
 
-[discrete#java:document:::document-expiration]
+[#java:document:::document-expiration]
 == Document Expiration
 
 Document expiration allows users to set the expiration date for a document.
@@ -666,7 +666,7 @@ Query query = QueryBuilder
 
 You can set expiration for a whole Collection
 
-[discrete#java:document:::lbl-doc-constraints]
+[#java:document:::lbl-doc-constraints]
 == Document Constraints
 
 Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
@@ -698,7 +698,7 @@ For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway
 ====
 
 
-[discrete#java:document:::lbl-json-data]
+[#java:document:::lbl-json-data]
 == Working with JSON Data
 
 In this section::
@@ -711,7 +711,7 @@ In this section::
 
 The pass:a,q[`toJSON()`] typed-accessor means you can easily work with JSON data, native and Couchbase Lite objects.
 
-[discrete#java:document:::lbl-array]
+[#java:document:::lbl-array]
 === Arrays
 
 Convert an `ArrayObject` to and from JSON using the pass:a,q[`toJSON()`] and `toArray` methods -- see <<java:document:::ex-array>>.
@@ -755,7 +755,7 @@ Logger.log(features.toJSON()); // <.>
 ====
 
 
-[discrete#java:document:::lbl-blob]
+[#java:document:::lbl-blob]
 === Blobs
 Convert a `Blob` to JSON using the `toJSON` method -- see <<java:document:::ex-blob>>.
 
@@ -789,7 +789,7 @@ final Number blobLength = (Number) thisBlob.get("length");
 
 See also: xref:java:blob.adoc[Blobs]
 
-[discrete#java:document:::lbl-dictionary]
+[#java:document:::lbl-dictionary]
 === Dictionaries
 
 Convert a `DictionaryObject` to and from JSON using the `toJSON` and `toDictionary` methods -- see <<java:document:::ex-dictionary>>.
@@ -827,7 +827,7 @@ for (String key: mDict.getKeys()) {
 ====
 
 
-[discrete#java:document:::lbl-document]
+[#java:document:::lbl-document]
 === Documents
 
 Convert a `Document` to and from JSON strings using the pass:a,q[`toJSON()`] and pass:a,q[`setJSON()`] methods -- see <<java:document:::ex-document>>.
@@ -878,7 +878,7 @@ try (ResultSet results = listQuery.execute()) {
 ====
 
 
-[discrete#java:document:::lbl-result]
+[#java:document:::lbl-result]
 === Query Results as JSON
 
 Convert a `Query Result` to JSON using its {to-JSON} accessor method.
@@ -1637,7 +1637,7 @@ If your query selects a sub-set of available properties then the JSON format wil
 ----
 
 
-[discrete#java:document:::related-content]
+[#java:document:::related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">

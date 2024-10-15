@@ -23,7 +23,7 @@ This can result in a delay before the database is usable.
 --
 
 
-[discrete#objc:upgrade:::3-2-0-upgrade]
+[#objc:upgrade:::3-2-0-upgrade]
 == {major}.{minor}.{base}{empty} Upgrade
 
 NOTE: This upgrade requires all 2.x databases be reindexed on initial open.
@@ -33,13 +33,13 @@ The action will take place automatically and can lead to some delay in the datab
 In addition, if you are syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
 This is a one-way conversion.
 
-[discrete#objc:upgrade:::api-changes]
+[#objc:upgrade:::api-changes]
 === API Changes
 
-[discrete#objc:upgrade:::removed-apis]
+[#objc:upgrade:::removed-apis]
 ==== Removed APIs
 
-[discrete#objc:upgrade:::resetcheckpoint]
+[#objc:upgrade:::resetcheckpoint]
 ===== ResetCheckpoint
 
 .Alternative
@@ -56,7 +56,7 @@ This is a one-way conversion.
 [replicator startWithReset: YES];
 ----
 
-[discrete#objc:upgrade:::database-setloglevel]
+[#objc:upgrade:::database-setloglevel]
 ===== Database.setLogLevel
 
 .Alternative
@@ -73,7 +73,7 @@ CBLDatabase.log.console.level = kCBLLogLevelVerbose;
 CBLDatabase.log.console.domains = kCBLLogDomainAll;
 ----
 
-[discrete#objc:upgrade:::database-compact]
+[#objc:upgrade:::database-compact]
 ===== Database.compact
 .Alternative
 `[db performMaintenance:error:]`
@@ -89,10 +89,10 @@ CBLDatabase.log.console.domains = kCBLLogDomainAll;
 ----
 
 
-[discrete#objc:upgrade:::deprecated-api]
+[#objc:upgrade:::deprecated-api]
 ==== Deprecated API
 
-[discrete#objc:upgrade:::match]
+[#objc:upgrade:::match]
 ===== Match
 .Alternative
 `[CBLQueryFullTextFunction matchWithIndexName: query:]`
@@ -114,7 +114,7 @@ q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta i
 ----
 
 
-[discrete#objc:upgrade:::isnullormissing-and-notnullormissing]
+[#objc:upgrade:::isnullormissing-and-notnullormissing]
 ===== isNullOrMissing and notNullOrMissing
 
 .Alternatives
@@ -145,11 +145,11 @@ q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta i
                            where: [[CBLQueryExpression property: @"notMissingProp"] isValued]];
 ----
 
-[discrete#objc:upgrade:::updated-api]
+[#objc:upgrade:::updated-api]
 ==== Updated API
 
 
-[discrete#objc:upgrade:::atan2]
+[#objc:upgrade:::atan2]
 ===== ATAN2
 
 CAUTION: Breaking change
@@ -171,13 +171,13 @@ q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryFuncti
 ----
 
 
-[discrete#objc:upgrade:::lbl-db-upgrades]
+[#objc:upgrade:::lbl-db-upgrades]
 == 1.x Databases Upgrades to 2.x
 
 Databases created using Couchbase Lite 1.2 or later can still be used with Couchbase Lite 2.x; but will be automatically updated to the  current 2.x version.
 This feature is only available for the default storage type (i.e., not a ForestDB database).
 
-[discrete#objc:upgrade:::encrypted-databases]
+[#objc:upgrade:::encrypted-databases]
 === Encrypted Databases
 The automatic migration feature does not support encrypted databases.
 So if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/objc.html#database-encryption[1.x Database Guide]).
@@ -195,7 +195,7 @@ Since it is not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in
 If you are using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.
 
 
-[discrete#objc:upgrade:::handling-of-existing-conflicts]
+[#objc:upgrade:::handling-of-existing-conflicts]
 === Handling of Existing Conflicts
 
 If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
@@ -204,7 +204,7 @@ This functionality is related to the way conflicts are now being handled in Couc
 
 Optionally, existing conflicts in the 1.x database can be resolved with the https://docs-archive.couchbase.com/couchbase-lite/1.4/objc.html#resolving-conflicts[1.x API] prior to the database being upgraded.
 
-[discrete#objc:upgrade:::handling-of-existing-attachments]
+[#objc:upgrade:::handling-of-existing-attachments]
 === Handling of Existing Attachments
 
 Attachments persisted in a 1.x database are copied to the new database.
@@ -239,7 +239,7 @@ NSData *content = [avatar content];
 ====
 
 
-[discrete#objc:upgrade:::replication-compatibility]
+[#objc:upgrade:::replication-compatibility]
 === Replication Compatibility
 
 The current replication protocol is not backwards compatible with the 1.x replication protocol.
@@ -250,7 +250,7 @@ It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x
 This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
 
 
-[discrete#objc:upgrade:::xcode]
+[#objc:upgrade:::xcode]
 == Xcode
 
 The API has changed in Couchbase Lite 2.0 and will require porting an application that is using Couchbase Lite 1.x API to the Couchbase Lite 2.0 API.
@@ -263,7 +263,7 @@ At this point, there will be many compiler warnings.
 Refer to the examples on this page to learn about the new API.
 * Build & run your application.
 
-[discrete#objc:upgrade:::visual-studio]
+[#objc:upgrade:::visual-studio]
 == Visual Studio
 
 The public facing API has completely changed in Couchbase Lite 2.0 and will require a re-write to upgrade an application that is using Couchbase Lite 1.x.

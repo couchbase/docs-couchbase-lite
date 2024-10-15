@@ -20,7 +20,7 @@ This can result in a delay before the database is usable.
 --
 
 
-[discrete#java:upgrade:::3-2-0-upgrade]
+[#java:upgrade:::3-2-0-upgrade]
 == {major}.{minor}.{base}{empty} Upgrade
 
 NOTE: This upgrade requires all 2.x databases be reindexed on initial open.
@@ -30,16 +30,16 @@ The action will take place automatically and can lead to some delay in the datab
 In addition, if you are syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
 This is a one-way conversion.
 
-[discrete#java:upgrade:::api-changes]
+[#java:upgrade:::api-changes]
 === API Changes
 
 
 This content introduces the changes made to the pass:q,a[pass:q,a[Couchbase{nbsp}Lite]] for Java API for release {major}.{minor}.{base}{empty}.
 
-[discrete#java:upgrade:::removed]
+[#java:upgrade:::removed]
 ==== Removed
 
-[discrete#java:upgrade:::resetcheckpoint]
+[#java:upgrade:::resetcheckpoint]
 ===== ResetCheckpoint
 
 The method https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.html#resetCheckpoint--[Replicator.resetCheckpoint()] method has been removed. +
@@ -58,7 +58,7 @@ replicator.start()
 replicator.start(true)
 ----
 
-[discrete#java:upgrade:::database-setloglevel]
+[#java:upgrade:::database-setloglevel]
 ===== Database.setLogLevel
 
 The method https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/Database.html#setLogLevel-com.couchbase.lite.LogDomain-com.couchbase.lite.LogLevel-[Database.setLogLevel()]
@@ -83,7 +83,7 @@ Database.log.getConsole().setLevel(LogLevel.VERBOSE)
 Database.log.getFile().setDomains(LogLevel.DEBUG)
 ----
 
-[discrete#java:upgrade:::database-compact]
+[#java:upgrade:::database-compact]
 ===== Database.compact
 The https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/Database.html#compact--[Database.compact()] method has been removed. +
 It is replaced by the new https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance(MaintenanceType)] method, and the maintenance operations represented in the enum https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/MaintenanceType.html[MaintenanceType]
@@ -102,10 +102,10 @@ testdb.performMaintenance(MaintenanceType.COMPACT)
 ----
 
 
-[discrete#java:upgrade:::deprecated-in-the-api]
+[#java:upgrade:::deprecated-in-the-api]
 ==== Deprecated in the API
 
-[discrete#java:upgrade:::match]
+[#java:upgrade:::match]
 ===== MATCH
 The class, https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/FullTextExpression.html[FullTextExpression]
 has been deprecated. +
@@ -130,7 +130,7 @@ Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
 
 ----
 
-[discrete#java:upgrade:::isnullormissingnotnullormissing]
+[#java:upgrade:::isnullormissingnotnullormissing]
 ===== isNullOrMissing/notNullOrMissing
 
 The functions https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/Expression.html#isNullOrMissing--[Expression.isNullOrMissing] and https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/Expression.html#notNullOrMissing--[Expression.notNullOrMissing] have been deprecated. +
@@ -168,7 +168,7 @@ Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
 ----
 
 
-[discrete#java:upgrade:::abstractreplicatorconfiguration]
+[#java:upgrade:::abstractreplicatorconfiguration]
 ===== AbstractReplicatorConfiguration
 
 The enum https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html#setReplicatorType-com.couchbase.lite.AbstractReplicatorConfiguration.ReplicatorType-[AbstractReplicatorConfiguration.ReplicatorType]
@@ -195,7 +195,7 @@ ReplicatorConfiguration config =
 ----
 
 
-[discrete#java:upgrade:::moved-in-the-api]
+[#java:upgrade:::moved-in-the-api]
 ==== Moved in the API
 
 The enum https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.ActivityLevel.html[AbstractReplicator.ActivityLevel] and the classes https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.Progress.html[AbstractReplicator.Progress] and https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.Status.html[AbstractReplicator.Status] have all been moved to be top level definitions. +
@@ -238,13 +238,13 @@ ListenerToken token =
 ----
 
 
-[discrete#java:upgrade:::lbl-db-upgrades]
+[#java:upgrade:::lbl-db-upgrades]
 == 1.x Databases Upgrades to 2.x
 
 Databases created using Couchbase Lite 1.2 or later can still be used with Couchbase Lite 2.x; but will be automatically updated to the  current 2.x version.
 This feature is only available for the default storage type (i.e., not a ForestDB database).
 
-[discrete#java:upgrade:::encrypted-databases]
+[#java:upgrade:::encrypted-databases]
 === Encrypted Databases
 The automatic migration feature does not support encrypted databases.
 So if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/Java.html#database-encryption[1.x Database Guide]).
@@ -262,7 +262,7 @@ Since it is not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in
 If you are using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.
 
 
-[discrete#java:upgrade:::handling-of-existing-conflicts]
+[#java:upgrade:::handling-of-existing-conflicts]
 === Handling of Existing Conflicts
 
 If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
@@ -271,7 +271,7 @@ This functionality is related to the way conflicts are now being handled in Couc
 
 Optionally, existing conflicts in the 1.x database can be resolved with the https://docs-archive.couchbase.com/couchbase-lite/1.4/Java.html#resolving-conflicts[1.x API] prior to the database being upgraded.
 
-[discrete#java:upgrade:::handling-of-existing-attachments]
+[#java:upgrade:::handling-of-existing-attachments]
 === Handling of Existing Attachments
 
 Attachments persisted in a 1.x database are copied to the new database.
@@ -306,7 +306,7 @@ byte[] content = blob != null ? blob.getContent() : null;
 ====
 
 
-[discrete#java:upgrade:::replication-compatibility]
+[#java:upgrade:::replication-compatibility]
 === Replication Compatibility
 
 The current replication protocol is not backwards compatible with the 1.x replication protocol.
@@ -317,7 +317,7 @@ It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x
 This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
 
 
-[discrete#java:upgrade:::visual-studio]
+[#java:upgrade:::visual-studio]
 == Visual Studio
 
 The public facing API has completely changed in Couchbase Lite 2.0 and will require a re-write to upgrade an application that is using Couchbase Lite 1.x.
