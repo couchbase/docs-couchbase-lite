@@ -1,35 +1,110 @@
-= Installing Couchbase Lite on .Net
+:docname: gs-install
+:page-module: csharp
+:page-relative-src-path: gs-install.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#csharp:gs-install:::]
+== Install
 :page-aliases: start/csharp-gs-install.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: How to install Couchbase Lite on .Net
 :keywords: edge nosql api .Net C# xamarin
 
-:beta-url: https://packages.couchbase.com/releases/couchbase-lite-c/{version-full}/
 
-include::partial$_set_page_context_for_csharp.adoc[]
 
-:param-abstract: Using Nuget to install Couchbase Lite on {param-name}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // DO NOT EDIT
-include::{root-partials}_show_page_header_block.adoc[]
-// include::{root-partials}block-related-get-started.adoc[]
+[abstract]
+--
+Description -- _{description}_ +
+_Abstract -- Using Nuget to install Couchbase Lite on csharp_ +
+--
+// include::ROOT:partial$block-related-get-started.adoc[]
 // DO NOT EDIT
 
 
 .Quick Steps
 ****
-For experienced developers, this is all you need to add _Couchbase Lite for {param-title} {version-full}_ to your application projects.
+For experienced developers, this is all you need to add _Couchbase Lite for C#.Net {major}.{minor}.{base}{empty}_ to your application projects.
 
 . Create or open an existing Visual Studio project
 
 . Install either of the following packages from Nuget.
 +
-* Community Edition -- `Couchbase.Lite` package for {version-full}
+* Community Edition -- `Couchbase.Lite` package for {major}.{minor}.{base}{empty}
 
-* Enterprise Edition -- `Couchbase.Lite.Enterprise` package for {version-full}
+* Enterprise Edition -- `Couchbase.Lite.Enterprise` package for {major}.{minor}.{base}{empty}
 
-** Vector Search Extension -- `Couchbase.Lite.VectorSearch` package for {vs-version-maintenance-net}
+** Vector Search Extension -- `Couchbase.Lite.VectorSearch` package for {vs-major}.{vs-minor}.{vs-maintenance-net}{empty}
 
 . Within your app, include a call to the relevant `Activate()` function inside of the class that is included in the support assembly.
 
@@ -38,7 +113,7 @@ For experienced developers, this is all you need to add _Couchbase Lite for {par
 To use Vector Search, you must have Couchbase Lite installed and add the Vector Search extension to your Couchbase Lite application.
 Vector Search is available only for 64-bit architectures and
 Intel processors that support the Advanced Vector Extensions 2 (AVX2) instruction set.
-To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.] 
+To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.]
 --
 ****
 
@@ -47,11 +122,13 @@ You should be ready to build you app using this version.
 The rest of this content contains more detail, for those who want to know more about the install or who encountered issues
 
 
-== Install Methods
+[discrete#csharp:gs-install:::install-methods]
+=== Install Methods
 
 Couchbase recommends installing Nuget packages via _PackageReference_.
 
-=== Package Reference
+[discrete#csharp:gs-install:::package-reference]
+==== Package Reference
 This is the recommended method of dependency management because it supports the strict version requirement between the core _Couchbase Lite for .Net_ package and its dependent Support library, which comprises:
 
 .`Couchbase.Lite.Enterprise`
@@ -66,7 +143,8 @@ This is the recommended method of dependency management because it supports the 
 * `Couchbase.Lite.Support.NetDesktop`
 * `Couchbase.Lite.Support.WinUI`
 
-=== Installing Vector Search 
+[discrete#csharp:gs-install:::installing-vector-search]
+==== Installing Vector Search
 
 Couchbase recommends installing Nuget packages via _PackageReference_.
 
@@ -75,10 +153,11 @@ Couchbase recommends installing Nuget packages via _PackageReference_.
 To use Vector Search, you must have Couchbase Lite installed and add the Vector Search extension to your Couchbase Lite application.
 Vector Search is available only for 64-bit architectures and
 Intel processors that support the Advanced Vector Extensions 2 (AVX2) instruction set.
-To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.] 
+To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.]
 --
 
-==== Vector Search Package Reference
+[discrete#csharp:gs-install:::vector-search-package-reference]
+===== Vector Search Package Reference
 This is the recommended method of dependency management for the Vector Search extension because it supports the strict version requirement between the core _Couchbase Lite for .Net_ package and its dependent Support library.
 You can manage your dependencies by following the steps below:
 
@@ -86,7 +165,8 @@ You can manage your dependencies by following the steps below:
 
 . Add the `Couchbase.Lite.VectorSearch` package.
 
-== Activating (on Android platform only)
+[discrete#csharp:gs-install:::activating-on-android-platform-only]
+=== Activating (on Android platform only)
 
 Within your Android app, include a call to the relevant `Activate()` function inside of the class that is included in the support assembly.
 
@@ -100,7 +180,8 @@ This includes Couchbase Lite and the Vector Search extension.
 
 Currently the support assemblies provide dependency injected mechanisms for default directory logic, and platform specific logging (So, C# will log to logcat with correct log levels and tags. No more "mono-stdout" always at info level.)
 
-=== Activating Vector Search
+[discrete#csharp:gs-install:::activating-vector-search]
+==== Activating Vector Search
 
 If you have the `Couchbase.Lite.VectorSearch` package installed, you can activate it by calling the following:
 
@@ -113,10 +194,54 @@ If you have the `Couchbase.Lite.VectorSearch` package installed, you can activat
 [source, csharp]
 ----
 
-include::csharp:example$code_snippets/VectorSearch.cs[tags=vs-setup-packaging]
+            Extension.Enable(new VectorSearchExtension());
 
 ----
 
 // DO NOT EDIT -- Footer Related Content Block
-include::{root-partials}block-related-content-p2psync.adoc[]
+
+
+
+[discrete#csharp:gs-install:::related-content]
+=== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+==== {empty}
+.How to
+* xref:csharp:p2psync-websocket-using-passive.adoc[Passive Peer]
+* xref:csharp:p2psync-websocket-using-active.adoc[Active Peer]
+
+
+.
+
+[discrete.colum#csharp:gs-install:::-2n]
+==== {empty}
+.Concepts
+* xref:csharp:landing-p2psync.adoc[Peer-to-Peer Sync]
+
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net[API References]
+
+.
+
+
+[discrete.colum#csharp:gs-install:::-3n]
+==== {empty}
+.Community Resources ...
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Getting Started with Peer-to-Peer Synchronization]
+
+
+
+++++
+</div>
+++++
 // DO NOT EDIT
+
+

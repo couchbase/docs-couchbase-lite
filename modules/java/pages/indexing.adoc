@@ -1,17 +1,257 @@
-= Indexing your Data
+:docname: indexing
+:page-module: java
+:page-relative-src-path: indexing.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#java:indexing:::]
+= Indexing
 :page-aliases: learn/java-indexing.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Working with Couchbase Lite's data model  --  Using indexes
 
-include::partial$_set_page_context_for_java.adoc[]
 
-:param-abstract!:
-:param-related: {database--xref} | {document--xref} | {indexing--xref} |
-:topic-group: Data Model
-include::{root-partials}_show_page_header_block.adoc[]
 
-include::{root-commons}indexing.adoc[subs="macros,attributes"]
 
-include::{root-partials}block-related-content-data.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:java:database.adoc[Databases] | xref:java:document.adoc[Documents] | xref:java:indexing.adoc[Indexing] |
+--
+
+
+[discrete#java:indexing:::introduction]
+== Introduction
+// tag::overview[]
+Querying documents using a pre-existing database index is much faster because an index narrows down the set of documents to examine -- see: the xref:java:query-troubleshooting.adoc[Query Troubleshooting] topic.
+
+When planning the indexes you need for your database, remember that while indexes make queries faster, they may also:
+
+* Make writes slightly slower, because each index must be updated whenever a document is updated
+* Make your Couchbase Lite database slightly larger.
+
+Too many indexes may hurt performance.
+Optimal performance depends on designing and creating the _right_ indexes to go along with your queries.
+
+.Constraints
+[NOTE]
+Couchbase Lite for jvm does not currently support partial value indexes; indexes with non-property expressions.
+You should only index with properties that you plan to use in the query.
+
+
+//end::overview[]
+
+
+[discrete#java:indexing:::creating-a-new-index]
+== Creating a new index
+
+You can use {sqlpp} or QueryBuilder syntaxes to create an index
+
+
+<<java:indexing:::ex-create-index>> creates a new index for the `type` and `name` properties, shown in this data model:
+
+[#java:indexing:::ex-datamodel]
+.Data Model
+====
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "The Michigander",
+    "overview": "Ideally situated for exploration of the Motor City and the wider state of Michigan. Tripadvisor rated the hotel ...",
+    "state": "Michigan"
+}
+----
+====
+
+[discrete#java:indexing:::sql]
+=== {sqlpp}
+
+The code to create the index will look something like this:
+
+.Create index
+[#ex-create-index]
+
+
+
+[#java:indexing:::ex-create-index]
+====
+
+
+// Show Main Snippet
+// include::java:example$codesnippet_collection.java[tags="query-index", indent=0]
+[source, Java]
+----
+collection.createIndex("TypeNameIndex", new ValueIndexConfiguration("type", "name"));
+----
+
+
+
+
+====
+
+
+[discrete#java:indexing:::querybuilder]
+=== QueryBuilder
+
+TIP: See the xref:java:querybuilder.adoc[QueryBuilder] topic to learn more about QueryBuilder.
+
+The code to create the index will look something like this:
+
+.Create index with QueryBuilder
+[#ex-create-index]
+
+
+
+[#java:indexing:::ex-create-index]
+====
+
+
+// Show Main Snippet
+// include::java:example$codesnippet_collection.java[tags="query-index_Querybuilder", indent=0]
+[source, Java]
+----
+collection.createIndex(
+    "TypeNameIndex",
+    IndexBuilder.valueIndex(
+        ValueIndexItem.property("type"),
+        ValueIndexItem.property("name")));
+----
+
+
+
+
+====
+
+
+
+
+
+
+
+
+
+[discrete#java:indexing:::related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:java:gs-prereqs.adoc[Prerequisites]
+* xref:java:gs-install.adoc[Install]
+* xref:java:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#java:indexing:::-2n]
+=== {empty}
+.Learn more . . .
+* xref:java:database.adoc[Databases]
+* xref:java:document.adoc[Documents]
+* xref:java:blob.adoc[Blobs]
+* xref:java:replication.adoc[Remote Sync Gateway]
+* xref:java:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[discrete.colum#java:indexing:::-3n]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
+
+
+= Data Sync
+

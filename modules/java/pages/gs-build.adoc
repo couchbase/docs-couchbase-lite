@@ -1,36 +1,121 @@
-= Build and Run
+:docname: gs-build
+:page-module: java
+:page-relative-src-path: gs-build.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#java:gs-build:::]
+== Build and Run
 :page-aliases: start/java-gs-build.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Build and run a starter app to validate your install of Couchbase Lite on Java
 :keywords: mobile edge nosql api Java JVM web-app device-app
 
 
-:loc--finding-db-file--xref: xref:database.adoc#lbl-find-db-loc[Finding a Database File]
 
-include::partial$_set_page_context_for_java.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // :JP: Java
 :tabs:
 
 
 // DO NOT EDIT
-:param-abstract: This content provides sample code and instructions that enable you to test your Couchbase Lite for {param-name} installation.
-:param-related: {gs-install--xref} | {gs-prereqs--xref} | {gs-build--xref} |
-:topic-group:
-include::{root-partials}_show_page_header_block.adoc[]
-// include::{root-partials}block-related-get-started.adoc[]
+[abstract]
+--
+Description -- _{description}_ +
+_Abstract -- This content provides sample code and instructions that enable you to test your Couchbase Lite for java installation._ +
+Related Content -- xref:java:gs-install.adoc[Install] | xref:java:gs-prereqs.adoc[Prerequisites] | xref:java:gs-build.adoc[Build and Run] |
+--
+// include::ROOT:partial$block-related-get-started.adoc[]
 // DO NOT EDIT
 
 
-== Build a Getting Started App
+[discrete#java:gs-build:::build-a-getting-started-app]
+=== Build a Getting Started App
 
-This section explains how to validate your configured build environment by building a starter app that uses many of {cblJP}'s more common features.
+This section explains how to validate your configured build environment by building a starter app that uses many of pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java's more common features.
 
-// TIP: The {nmMobStarterApp} app can be downloaded from GitHub link:{url-cb-mobStarterApp}[{nmMobStarterApp}].
+// TIP: The GettingStarted app can be downloaded from GitHub link:https://github.com/ibsoln/cblGettingStarted.git[GettingStarted].
 
-The {nmMobStarterApp} app demonstrates how to use {cblJP}. Console and Web App versions are available.
+The GettingStarted app demonstrates how to use pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java. Console and Web App versions are available.
 
 .Development-type Scenarios
 [{tabs}]
@@ -40,14 +125,92 @@ Desktop App::
 +
 --
 
-TIP: Ensure you added the {cbl} dependency to your `build.gradle` file
+TIP: Ensure you added the pass:q,a[Couchbase{nbsp}Lite] dependency to your `build.gradle` file
 
 Create, build and run a new project using the following `GettingStarted.java` code:
 
 
 [source,java]
 ----
-include::example$GetStartedDesktop/src/main/java/com/couchbase/gettingstarted/Main.java[tags=getting-started,indent=0]
+
+    // <.>
+    // One-off initialization
+    CouchbaseLite.init();
+    System.out.println("CBL Initialized");
+
+    // <.>
+    // Create a database
+    Database database = new Database("mydb");
+    System.out.println("Database created: mydb");
+
+    // <.>
+    // Create a new collection (like a SQL table) in the database.
+    Collection collection = database.createCollection("myCollection", "myScope");
+    System.out.println("Collection created: " + collection);
+
+    // <.>
+    // Create a new document (i.e. a record)
+    // and save it in a collection in the database.
+    MutableDocument mutableDoc = new MutableDocument()
+        .setString("version", "2.0")
+        .setString("language", "Java");
+    collection.save(mutableDoc);
+
+    // <.>
+    // Retrieve immutable document and log the database generated
+    // document ID and some document properties
+    Document document = collection.getDocument(mutableDoc.getId());
+    if (document == null) {
+        System.out.println("No such document :: " + mutableDoc.getId());
+    }
+    else {
+        System.out.println("Document ID :: " + document.getId());
+        System.out.println("Learning :: " + document.getString("language"));
+    }
+
+    // <.>
+    // Retrieve and update a document.
+    document = collection.getDocument(mutableDoc.getId());
+    if (document != null) {
+        collection.save(document.toMutable().setString("language", "Kotlin"));
+    }
+
+    // <.>
+    // Create a query to fetch documents with language == "Kotlin"
+    Query query = QueryBuilder.select(SelectResult.all())
+        .from(DataSource.collection(collection))
+        .where(Expression.property("language")
+            .equalTo(Expression.string("Kotlin")));
+
+    try (ResultSet rs = query.execute()) {
+        System.out.println("Number of rows :: " + rs.allResults().size());
+    }
+
+    //  <.>
+    // OPTIONAL -- if you have Sync Gateway Installed you can try replication too
+    // Create a replicator to push and pull changes to and from the cloud.
+    // Be sure to hold a reference somewhere to prevent the Replicator from being GCed
+    // BasicAuthenticator basAuth = new BasicAuthenticator("sync-gateway", "password".toCharArray());
+    CollectionConfiguration collConfig = new CollectionConfiguration()
+        .setPullFilter((doc, flags) -> "Java".equals(doc.getString("language")));
+
+    ReplicatorConfiguration replConfig = new ReplicatorConfiguration(
+        new URLEndpoint(new URI("ws://localhost:4984/getting-started-db")))
+        .addCollection(collection, collConfig)
+        .setType(ReplicatorType.PUSH_AND_PULL)
+        .setAuthenticator(new BasicAuthenticator("sync-gateway", "password".toCharArray()));
+
+    Replicator replicator = new Replicator(replConfig);
+
+    // Listen to replicator change events.
+    // Use `token.remove()` to stop the listener
+    ListenerToken token = replicator.addChangeListener(change -> {
+        System.out.println("Replicator state :: " + change.getStatus().getActivityLevel());
+    });
+
+    // Start replication.
+    replicator.start();
+}
 ----
 
 <.> Initialize the library
@@ -71,7 +234,7 @@ Web App::
 +
 --
 
-This section explains how to set-up a build project to create {cblJP} web apps using {gpBuildTool} and {gpIDE}.
+This section explains how to set-up a build project to create pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java web apps using gradle and Intellij IDEA.
 
 *Steps*
 
@@ -82,7 +245,7 @@ This section explains how to set-up a build project to create {cblJP} web apps u
 include::example$GetStartedWS/build.gradle.sample
 ----
 
-. Within {gpIDE}, open the new project folder
+. Within Intellij IDEA, open the new project folder
 +
 If you don't have auto-import enabled, then accept the *Import from Gradle* prompt that appears at the bottom right of the screen.
 . Create a Java class _DBManager_ using this code:
@@ -90,7 +253,103 @@ If you don't have auto-import enabled, then accept the *Import from Gradle* prom
 [source, java]
 
 ----
-include::example$GetStartedWS/src/main/java/com/couchbase/gettingstarted/DBManager.java[tags=getting-started,indent=0]
+
+    // <.>
+    // One-off initialization
+    private void init() {
+        CouchbaseLite.init();
+    }
+
+    // <.>
+    // Create a database
+    public Database createDb(String dbName) throws CouchbaseLiteException {
+        return new Database(dbName);
+    }
+
+    // <.>
+    // Create a new named collection (like a SQL table)
+    // in the database's default scope.
+    public Collection createCollection(Database database, String collName) throws CouchbaseLiteException {
+        return database.createCollection(collName);
+    }
+
+    // <.>
+    // Create a new document (i.e. a record)
+    // and save it in a collection in the database.
+    public String createDoc(Collection collection) throws CouchbaseLiteException {
+        MutableDocument mutableDocument = new MutableDocument()
+            .setFloat("version", 2.0f)
+            .setString("language", "Java");
+        collection.save(mutableDocument);
+        return mutableDocument.getId();
+    }
+
+    // <.>
+    // Retrieve immutable document and log the database generated
+    // document ID and some document properties
+    public Document retrieveDoc(Collection collection, String docId) throws CouchbaseLiteException {
+        return collection.getDocument(docId);
+    }
+
+    // <.>
+    // Retrieve and update a document.
+    public void updateDoc(Collection collection, String docId) throws CouchbaseLiteException {
+        Document document = collection.getDocument(docId);
+        if (document != null) {
+            collection.save(
+                document.toMutable().setString("language", "Kotlin"));
+        }
+    }
+
+    // <.>
+    // Create a query to fetch documents with language == Kotlin.
+    public List<Map<String, Object>> queryDocs(Collection collection) throws CouchbaseLiteException {
+        Query query = QueryBuilder.select(SelectResult.all())
+            .from(DataSource.collection(collection))
+            .where(Expression.property("language").equalTo(Expression.string("Kotlin")));
+        List<Map<String, Object>> results = new ArrayList<>();
+        try (ResultSet rs = query.execute()) {
+            for (Result result: rs) { results.add(result.toMap()); }
+        }
+        return results;
+    }
+
+    // <.>
+    // OPTIONAL -- if you have Sync Gateway Installed you can try replication too.
+    // Create a replicator to push and pull changes to and from the cloud.
+    // Be sure to hold a reference somewhere to prevent the Replicator from being GCed
+    public Replication startReplicator(Collection collection, ReplicatorChangeListener listener)
+        throws URISyntaxException {
+        CollectionConfiguration collConfig = new CollectionConfiguration()
+            .setPullFilter((doc, flags) -> "Java".equals(doc.getString("language")));
+
+        ReplicatorConfiguration replConfig =
+            new ReplicatorConfiguration(
+                new URLEndpoint(new URI("ws://localhost:4984/getting-started-db")))
+                .addCollection(collection, collConfig)
+                .setType(ReplicatorType.PUSH_AND_PULL)
+                .setAuthenticator(new BasicAuthenticator("sync-gateway", "password".toCharArray()));
+
+        Replicator replicator = new Replicator(replConfig);
+
+        // Listen to replicator change events.
+        // Use `token.remove()` to stop the listener
+        ListenerToken token = replicator.addChangeListener(listener);
+
+        // Start replication.
+        replicator.start();
+
+        return new Replication(replicator, token);
+    }
+
+
+    public void stopReplicator(Replication replication) {
+        if (replication == null) { return; }
+        replication.token.remove();
+        replication.replicator.stop();
+    }
+}
+
 ----
 
 . Create a Servlet similar to the one found in the example GettingStartedServlet
@@ -114,7 +373,7 @@ include::example$GetStartedWS/src/main/webapp/showDbItems.jsp
 . Build, deploy and run the app using `jettyRun`
 +
 // !!!GBM: THIS IMAGE PROBABLY NEEDS UPDATING
-image::GradleMenuWebApp.png[,300]
+image::couchbase-lite/current/java/_images/GradleMenuWebApp.png[,300]
 
 .. Point your browser to: `localhost:8080/'
 +
@@ -135,24 +394,26 @@ About the Starter App::
 --
 
 anchor:bmkAboutGettingStarted[]
-The {nmMobStarterApp} app will:
+The GettingStarted app will:
 
 * Create a database
 +
-The app creates its database in the `{nmSampleAppDbPath}` directory relative to its root location when run (See: {loc--finding-db-file--xref}).
+The app creates its database in the `/getting-started.cblite2` directory relative to its root location when run (See: <<java:database:::lbl-find-db-loc,Finding a Database File>>).
 
-TIP: Explicitly state your required database location when creating your database (see: {loc--finding-db-file--xref} for how to do this)
+TIP: Explicitly state your required database location when creating your database (see: <<java:database:::lbl-find-db-loc,Finding a Database File>> for how to do this)
 
 * Add content to the DB
 * Run a simple query counting the DB rows
-* Start a one-shot, bi-directional replication using {sg} and {svr}
+* Start a one-shot, bi-directional replication using pass:q,a[pass:q,a[_pass:q,a[Sync{nbsp}Gateway]_]] and pass:q,a[_Couchbase{nbsp}Server_]
 * Produce a simple report on the db Contents
 +
 // !!!GBM: THIS IMAGE PROBABLY NEEDS UPDATING
-image::java:cblOutput.png[,400]
+image::couchbase-lite/current/java/_images/cblOutput.png[,400]
 
-NOTE: Before starting your app ensure you have started both your {svr} and {sg} instances.
+NOTE: Before starting your app ensure you have started both your pass:q,a[_Couchbase{nbsp}Server_] and pass:q,a[pass:q,a[_pass:q,a[Sync{nbsp}Gateway]_]] instances.
 
 --
 
 ====
+
+

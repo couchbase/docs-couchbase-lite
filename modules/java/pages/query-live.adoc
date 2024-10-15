@@ -1,17 +1,226 @@
-= Live Query
+:docname: query-live
+:page-module: java
+:page-relative-src-path: query-live.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#java:query-live:::]
+== Live Queries
 :page-aliases: learn/java-query-live.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Working with Couchbase Lite's data model  -- Querying database data using live queries
 
-include::partial$_set_page_context_for_java.adoc[]
 
-:param-abstract!:
-:param-related: {querybuilder--xref--predictive-query} | {indexing--xref} | {querybuilder--xref}
-:topic-group: Queries
-include::{root-partials}_show_page_header_block.adoc[]
 
-include::{root-commons}query-live-query.adoc[]
 
-include::{root-partials}block-related-content-query.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:java:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:java:indexing.adoc[Indexing] | xref:java:querybuilder.adoc[QueryBuilder]
+--
+
+
+
+[discrete#java:query-live:::activating-a-live-query]
+=== Activating a Live Query
+
+
+A live query is a query that, once activated, remains active and monitors the database for changes; refreshing the result set whenever a change occurs.
+As such, it is a great way to build reactive user interfaces -- especially table/list views -- that keep themselves up to date.
+
+*So, a simple use case may be:* A replicator running and pulling new data from a server, whilst a live-query-driven UI automatically updates to show the data without the user having to manually refresh.
+This helps your app feel quick and responsive.
+
+To activate a LiveQuery just add a change listener to the query statement.
+It will be immediately active.
+When a change is detected the query automatically runs, and posts the new query result to any observers (change listeners).
+
+
+.Starting a Live Query
+[#ex-qry-start]
+
+
+[#java:query-live:::ex-qry-start]
+====
+
+
+// Show Main Snippet
+// include::java:example$codesnippet_collection.java[tags="live-query", indent=0]
+[source, Java]
+----
+Query query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.collection(collection)); // <.>
+
+// Adds a query change listener.
+// Changes will be posted on the main queue.
+ListenerToken token = query.addChangeListener(change -> { // <.>
+    for (Result result: change.getResults()) {
+        Logger.log("results: " + result.getKeys());
+        /* Update UI */
+    }
+});
+
+----
+
+
+
+
+====
+
+<.> Build the query statements
+<.> Activate the _live_ query by attaching a listener.
+Save the token in order to detach the listener and stop the query later -- se <<java:query-live:::ex-qry-stop>>
+
+
+.Stop a LIve Query
+[#ex-qry-stop]
+
+
+[#java:query-live:::ex-qry-stop]
+====
+
+
+// Show Main Snippet
+// include::java:example$codesnippet_collection.java[tags="stop-live-query", indent=0]
+[source, Java]
+----
+token.remove(); // <.>
+----
+
+
+
+
+====
+
+<.> Here we use the change lister token from <<java:query-live:::ex-qry-start>> to remove the listener.
+Doing so stops the live query.
+
+
+
+[discrete#java:query-live:::related-content]
+=== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+==== {empty}
+.How to . . .
+* xref:java:querybuilder.adoc[QueryBuilder]
+* xref:java:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
+* xref:java:query-live.adoc[Live Queries]
+* xref:java:fts.adoc[Full Text Search]
+
+
+.
+
+[discrete.colum#java:query-live:::-2n]
+==== {empty}
+.Learn more . . .
+* xref:java:query-n1ql-mobile-querybuilder-diffs.adoc[{sqlpp} Mobile - Querybuilder  Differences]
+* xref:java:query-n1ql-mobile-server-diffs.adoc[{sqlpp} Mobile - {sqlpp} Server Differences]
+* xref:java:query-resultsets.adoc[Query Resultsets]
+* xref:java:query-troubleshooting.adoc[Query Troubleshooting]
+* xref:java:query-live.adoc[Live Queries]
+
+* xref:java:database.adoc[Databases]
+* xref:java:document.adoc[Documents]
+* xref:java:blob.adoc[Blobs]
+
+.
+
+
+[discrete.colum#java:query-live:::-3n]
+==== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
+
+

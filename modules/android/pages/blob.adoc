@@ -1,19 +1,258 @@
+:docname: blob
+:page-module: android
+:page-relative-src-path: blob.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#android:blob:::]
 = Blobs
 :page-aliases: learn/java-android-blob.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite database data model concepts - blobs
 
-include::partial$_set_page_context_for_android.adoc[]
-// :param-name: {lang-name-android}
-// :param-title: {lang-title-android}
-// :param-module: {lang-mod-android}
 
-:param-related: {database--xref} | {document--xref} | {indexing--xref} |
-:topic-group: Topic Group -- Data Model
-include::{root-partials}_show_page_header_block.adoc[]
 
-include::{root-commons}blob.adoc[subs="macros,attributes"]
 
-include::{root-partials}block-related-content-data.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// :param-name: kotlin
+// :param-title: Android
+// :param-module: android
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:android:database.adoc[Databases] | xref:android:document.adoc[Documents] | xref:android:indexing.adoc[Indexing] |
+--
+
+[discrete#android:blob:::introduction]
+== Introduction
+
+pass:q,a[Couchbase{nbsp}Lite] for Android uses _blobs_ to store the contents of images, other media files and similar format files as binary objects.
+
+The blob itself is not stored in the document.
+It is held in a separate content-addressable store indexed from the document and retrieved only on-demand.
+
+When a document is synchronized, the pass:q,a[Couchbase{nbsp}Lite] replicator adds an `_attachments` dictionary to the document's properties if it contains a blob -- see <<android:blob:::img-blob>>.
+
+
+[discrete#android:blob:::blob-objects]
+== Blob Objects
+
+The blob as an object appears in a document as dictionary property -- see, for example _avatar_ in <<android:blob:::img-blob>>.
+
+Other properties include `length` (the length in bytes), and optionally `content_type` (typically, its MIME type).
+
+The blob's data (an image, audio or video content) is not stored in the document, but in a separate content-addressable store, indexed by the `digest` property -- see <<android:blob:::lbl-using>>.
+
+
+[discrete#android:blob:::constraints]
+=== Constraints
+
+* pass:q,a[Couchbase{nbsp}Lite] +
+Blobs can be arbitrarily large.
+They are only read on demand, not when you load a the _document_.
+
+* pass:q,a[sync{nbsp}gateway] +
+The maximum content size is 20 MB per blob.
+If a document's blob is over 20 MB, the document will be replicated but not the blob.
+
+
+[discrete#android:blob:::lbl-using]
+== Using Blobs
+
+The `Blob` API lets you access the blob's data content as in-memory data (a `Data` object) or as an `InputStream`.
+
+The code in <<android:blob:::ex-blob>> shows how you might add a blob to a document and save it to the database. Here we use `avatar` as the property key and a jpeg file as the blob data.
+
+.Working with blobs
+[#ex-blob]
+
+
+[#android:blob:::ex-blob]
+====
+
+[tabs]
+=====
+
+
+Kotlin::
++
+--
+
+// Show Main Snippet
+// include::android:example$codesnippet_collection.kt[tags="blob", indent=0]
+[source, Kotlin]
+----
+getAsset("avatar.jpg")?.use { // <.>
+    mDoc.setBlob("avatar", Blob("image/jpeg", it)) // <.> <.>
+    collection.save(mDoc)
+}
+
+val doc = collection.getDocument(mDoc.id)
+val bytes = doc?.getBlob("avatar")?.content
+----
+
+--
+// Show Optional Alternate Snippet
+// include::android:example$codesnippet_collection.java[tags="blob", indent=0]
+
+Java::
++
+--
+[source, Java]
+----
+try (InputStream is = Utils.getAsset("avatar.jpg")) { // <.>
+    Blob blob = new Blob("image/jpeg", is);  // <.>
+    newTask.setBlob("avatar", blob); // <.>
+    collection.save(newTask);
+
+    Blob taskBlob = newTask.getBlob("avatar");
+    byte[] bytes = taskBlob.getContent();
+}
+----
+--
+
+=====
+
+
+
+====
+
+<.> Here we prepare a document to use for the example
+<.> Create the blob using the retrieved image. +
+ Here we set `image/jpg` as the blob MIME type.
+<.> Add the blob to a document, using `avatar` as the property key +
+Saving the document generates a random access key for each blob stored in `digest` a SHA-1 encrypted property -- see: <<android:blob:::img-blob>>. +
+We can use the `avatar` key to retrieve the blob object later.
+Note, this is the identity of the blob assigned by us; the replication auto-generates a blob for attachments and assigns its own name to it (for example, `blob_1`) -- see <<android:blob:::img-blob>>.
+The `digest` key will be the same as generated when we saved the blob document.
+
+
+[discrete#android:blob:::syncing]
+== Syncing
+When a document containing a blob object is synchronized, the pass:q,a[Couchbase{nbsp}Lite] replicator generates an `_attachments` dictionary with an auto-generated name for each blob attachment.
+This is different to the `avatar` key and is used internally to access the blob content.
+
+If you view a sync'd blob document in {cbs} Admin Console, you will see something similar to <<android:blob:::img-blob>>, which shows the document with its generated `_attachments` dictionary, including the `digest`.
+
+.Sample Blob Document
+[#android:blob:::img-blob]
+image::couchbase-lite/current/_images/attach-replicated.png[]
+
+
+
+
+
+[discrete#android:blob:::related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:android:gs-prereqs.adoc[Prerequisites]
+* xref:android:gs-install.adoc[Install]
+* xref:android:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#android:blob:::-2n]
+=== {empty}
+.Learn more . . .
+* xref:android:database.adoc[Databases]
+* xref:android:document.adoc[Documents]
+* xref:android:blob.adoc[Blobs]
+* xref:android:replication.adoc[Remote Sync Gateway]
+* xref:android:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[discrete.colum#android:blob:::-3n]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
+
+
+= Queries
+

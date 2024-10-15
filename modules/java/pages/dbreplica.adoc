@@ -1,15 +1,192 @@
-= Data Sync Locally on Device
+:docname: dbreplica
+:page-module: java
+:page-relative-src-path: dbreplica.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#java:dbreplica:::]
+== Intra-device Sync
 :page-aliases: learn/java-dbreplica.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite Database Sync - Synchronize changes between databases on the same device
 
-include::partial$_set_page_context_for_java.adoc[]
-// :param-name: {lang-name-java}
-// :param-title: {lang-title-java}
-// :param-module: {lang-mod-java}
 
-include::{root-commons}dbreplica.adoc[subs="macros,attributes"]
 
-include::{root-partials}block-related-content-rep.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// :param-name: java
+// :param-title: Java
+// :param-module: java
+
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:java:replication.adoc[Remote Sync Gateway] | xref:java:landing-p2psync.adoc[Peer-to-Peer Sync]
+--
+
+[discrete#java:dbreplica:::overview]
+=== Overview
+
+
+
+
+
+Couchbase Lite supports replication between two local databases at the database, scope, or collection level.
+This allows a Couchbase Lite replicator to store data on secondary storage.
+It is useful in scenarios when a user's device is damaged and its data is moved to a different device.
+
+.Replication between Local Databases
+
+
+====
+
+
+// Show Main Snippet
+// include::java:example$codesnippet_collection.java[tags="database-replica", indent=0]
+[source, Java]
+----
+// This is an Enterprise feature:
+// the code below will generate a compilation error
+// if it's compiled against CBL Android Community Edition.
+// Note: the target database must already contain the
+//       source collections or the replication will fail.
+final Replicator repl = new Replicator(
+    new ReplicatorConfiguration(new DatabaseEndpoint(targetDb))
+        .addCollections(srcCollections, null)
+        .setType(ReplicatorType.PUSH));
+
+// Start the replicator
+// (be sure to hold a reference somewhere that will prevent it from being GCed)
+repl.start();
+thisReplicator = repl;
+----
+
+
+
+
+====
+
+
+
+
+
+[discrete#java:dbreplica:::related-content]
+=== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+==== {empty}
+.How to . . .
+* xref:java:gs-prereqs.adoc[Prerequisites]
+* xref:java:gs-install.adoc[Install]
+* xref:java:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#java:dbreplica:::-2n]
+==== {empty}
+.Learn more . . .
+* xref:java:database.adoc[Databases]
+* xref:java:document.adoc[Documents]
+* xref:java:blob.adoc[Blobs]
+* xref:java:replication.adoc[Remote Sync Gateway]
+* xref:java:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[discrete.colum#java:dbreplica:::-3n]
+==== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
+
+

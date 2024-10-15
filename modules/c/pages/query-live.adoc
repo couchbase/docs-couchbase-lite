@@ -1,25 +1,190 @@
-= Live Queries
+:docname: query-live
+:page-module: c
+:page-relative-src-path: query-live.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#c:query-live:::]
+== Live Queries
 :page-aliases: clang:query-live.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase mobile database live query concepts
 
-include::partial$_set_page_context_for_c.adoc[]
 
-include::{root-partials}_show_page_header_block.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[abstract]
+--
+Description -- _{description}_ +
+--
 
 // BEGIN::Local page attributes
 // :blank-field: ____
-// :lang-title: {lang-title-c}
-// :module: {lang-mod-c}
-// :packageNm: couchbase-lite-{module}
-// :source-language: {lang-name-c}
-// snippet: {snippets-content--c}
-// :url-issues: {url-github-cbl}{module}/issues
+// :lang-title: C
+// :module: c
+// :packageNm: couchbase-lite-c
+// :source-language: c
+// snippet: c:example$code_snippets/main.cpp
+// :url-issues: https://github.com/couchbase/couchbase-lite-c/issues
 
 // END::Local page attributes
 
-== Overview
+[discrete#c:query-live:::overview]
+=== Overview
 
-include::{root-commons}query-live-query.adoc[]
+
+
+[discrete#c:query-live:::activating-a-live-query]
+=== Activating a Live Query
+
+
+A live query is a query that, once activated, remains active and monitors the database for changes; refreshing the result set whenever a change occurs.
+As such, it is a great way to build reactive user interfaces -- especially table/list views -- that keep themselves up to date.
+
+*So, a simple use case may be:* A replicator running and pulling new data from a server, whilst a live-query-driven UI automatically updates to show the data without the user having to manually refresh.
+This helps your app feel quick and responsive.
+
+To activate a LiveQuery just add a change listener to the query statement.
+It will be immediately active.
+When a change is detected the query automatically runs, and posts the new query result to any observers (change listeners).
+
+
+.Starting a Live Query
+[#ex-qry-start]
+
+
+[#c:query-live:::ex-qry-start]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="live-query", indent=0]
+[source, c]
+----
+/*
+static void query_change_listener(void* context, CBLQuery* query, CBLListenerToken* token) {
+    CBLError err;
+    CBLResultSet* results = CBLQuery_CopyCurrentResults(query, token, &err);
+    while(CBLResultSet_Next(results)) {
+        // Update UI
+    }
+}
+*/
+
+// NOTE: No error handling, for brevity (see getting started)
+
+CBLError err;
+CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+    FLSTR("SELECT * FROM _"), NULL, &err); // <.>
+
+CBLListenerToken* token = CBLQuery_AddChangeListener(query, query_change_listener, NULL); // <.>
+----
+
+
+
+
+====
+
+<.> Build the query statements
+<.> Activate the _live_ query by attaching a listener.
+Save the token in order to detach the listener and stop the query later -- se <<c:query-live:::ex-qry-stop>>
+
+
+.Stop a LIve Query
+[#ex-qry-stop]
+
+
+[#c:query-live:::ex-qry-stop]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="stop-live-query", indent=0]
+[source, c]
+----
+CBLListener_Remove(token); // The token received from AddChangeListener
+CBLQuery_Release(query);
+----
+
+
+
+
+====
+
+<.> Here we use the change lister token from <<c:query-live:::ex-qry-start>> to remove the listener.
+Doing so stops the live query.
+
+

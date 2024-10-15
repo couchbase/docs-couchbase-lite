@@ -1,18 +1,253 @@
+:docname: indexing
+:page-module: swift
+:page-relative-src-path: indexing.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#swift:indexing:::]
 = Indexing
 :page-aliases: learn/swift-indexing.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase mobile database indexes and indexing concepts
 
-include::partial$_set_page_context_for_swift.adoc[]
 
-:param-related: {database--xref} | {document--xref} | {indexing--xref} |
-:topic-group: Topic Group -- Data Model
-include::{root-partials}_show_page_header_block.adoc[]
 
-include::{root-commons}indexing.adoc[subs="macros,attributes"]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/[Query Class index]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Replicator.pendingDocumentIds()]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:swift:database.adoc[Databases] | xref:swift:document.adoc[Documents] | xref:swift:indexing.adoc[Indexing] |
+--
+
+
+[discrete#swift:indexing:::introduction]
+== Introduction
+// tag::overview[]
+Querying documents using a pre-existing database index is much faster because an index narrows down the set of documents to examine -- see: the xref:swift:query-troubleshooting.adoc[Query Troubleshooting] topic.
+
+When planning the indexes you need for your database, remember that while indexes make queries faster, they may also:
+
+* Make writes slightly slower, because each index must be updated whenever a document is updated
+* Make your Couchbase Lite database slightly larger.
+
+Too many indexes may hurt performance.
+Optimal performance depends on designing and creating the _right_ indexes to go along with your queries.
+
+.Constraints
+[NOTE]
+Couchbase Lite for ios does not currently support partial value indexes; indexes with non-property expressions.
+You should only index with properties that you plan to use in the query.
+
+
+//end::overview[]
+
+
+[discrete#swift:indexing:::creating-a-new-index]
+== Creating a new index
+
+You can use {sqlpp} or QueryBuilder syntaxes to create an index
+
+
+<<swift:indexing:::ex-create-index>> creates a new index for the `type` and `name` properties, shown in this data model:
+
+[#swift:indexing:::ex-datamodel]
+.Data Model
+====
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "The Michigander",
+    "overview": "Ideally situated for exploration of the Motor City and the wider state of Michigan. Tripadvisor rated the hotel ...",
+    "state": "Michigan"
+}
+----
+====
+
+[discrete#swift:indexing:::sql]
+=== {sqlpp}
+
+The code to create the index will look something like this:
+
+.Create index
+[#ex-create-index]
+
+
+
+[#swift:indexing:::ex-create-index]
+====
+
+
+// Show Main Snippet
+// include::swift:example$code_snippets/SampleCodeTest.swift[tags="query-index", indent=0]
+[source, swift]
+----
+let config = ValueIndexConfiguration(["type", "name"])
+try collection.createIndex(withName: "TypeNameIndex", config: config)
+----
+
+
+
+
+====
+
+
+[discrete#swift:indexing:::querybuilder]
+=== QueryBuilder
+
+TIP: See the xref:swift:querybuilder.adoc[QueryBuilder] topic to learn more about QueryBuilder.
+
+The code to create the index will look something like this:
+
+.Create index with QueryBuilder
+[#ex-create-index]
+
+
+
+[#swift:indexing:::ex-create-index]
+====
+
+
+// Show Main Snippet
+// include::swift:example$code_snippets/SampleCodeTest.swift[tags="query-index_Querybuilder", indent=0]
+[source, swift]
+----
+let index = IndexBuilder.valueIndex(items: ValueIndexItem.expression(Expression.property("type")),
+                                    ValueIndexItem.expression(Expression.property("name")))
+try collection.createIndex(index, name: "TypeNameIndex")
+----
+
+
+
+
+====
+
+
+
+
+
+
 
 // DO NOT EDIT -- Footer Related Content Block
-include::{root-partials}block-related-content-data.adoc[]
+
+
+[discrete#swift:indexing:::related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:swift:gs-prereqs.adoc[Prerequisites]
+* xref:swift:gs-install.adoc[Install]
+* xref:swift:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#swift:indexing:::-2n]
+=== {empty}
+.Learn more . . .
+* xref:swift:database.adoc[Databases]
+* xref:swift:document.adoc[Documents]
+* xref:swift:blob.adoc[Blobs]
+* xref:swift:replication.adoc[Remote Sync Gateway]
+* xref:swift:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[discrete.colum#swift:indexing:::-3n]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
 // DO NOT EDIT
+
+
+= Data Sync
+

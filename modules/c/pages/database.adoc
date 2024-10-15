@@ -1,10 +1,507 @@
+:docname: database
+:page-module: c
+:page-relative-src-path: database.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#c:database:::]
 = Databases
 :page-aliases: clang:database.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Working with Couchbase Lite Databases
 
-include::partial$_set_page_context_for_c.adoc[]
 
-include::{root-commons}database.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:c:blob.adoc[Blobs] | xref:c:document.adoc[Documents] | xref:c:indexing.adoc[Indexing]
+--
+
+
+[discrete#c:database:::database-concepts]
+== Database Concepts
+
+Databases created on Couchbase Lite can share the same hierarchical structure as Capella databases.
+This makes it easier to sync data between mobile applications and applications built using Capella.
+
+.Couchbase Lite Database Hierarchy
+[plantuml]
+----
+@startuml
+
+
+database "Database" as db
+
+rectangle "Scope" as scope
+
+folder "Collection" as collection
+
+
+
+file "Document" as document1
+file "Document" as document2
+file "Document" as document3
+
+db --> scope
+scope --> collection
+collection --> document1
+collection --> document2
+collection --> document3
+
+
+
+
+note right of collection
+
+  Maximum of 1000 per scope
+
+end note
+
+note right of db
+
+  One database per application
+
+end note
+
+@enduml
+----
+
+Although the terminology is different, the structure can be mapped to relational database terms:
+
+
+.Relational Database -> Couchbase
+[width=70%,grid=none]
+|===
+|Relational database |Couchbase
+
+|Database
+|Database
+
+|Schema
+|Scope
+
+|Table
+|Collection
+|===
+
+This structure gives you plenty of choices when it comes to partitioning your data.
+The most basic structure is to use the single default scope with a single default collection; or you could opt for a structure that allow you to split your collections into logical scopes.
+
+[#cbl-database-structure]
+.Couchbase Lite Examples
+
+[plantuml]
+----
+@startuml
+
+
+database "Couchbase Lite database" as db1 {
+
+      node "_default scope" as dfs1 {
+
+        folder "_default collection" as dfc1 {
+
+        }
+      }
+
+}
+
+database "Couchbase Lite database" as db2 {
+
+
+    node "_default scope" as dfs2 {
+
+      folder "_default collection" as dfc2 {
+
+      }
+
+        folder "Collection A" as collectionA {
+
+        }
+    }
+
+    node "Scope A" as scopeA {
+
+      folder "Collection A" as collectionA2 {
+
+      }
+
+        folder "Collection B" as collectionB {
+
+        }
+    }
+
+}
+
+collectionA2 -D[hidden]-> collectionB
+collectionA -D[hidden]-> dfc2
+@enduml
+----
+
+
+.Storing local configuration
+****
+You may not need to sync all the data related for a particular application. You can set up a scope that syncs data, and a second scope that doesn't.
+
+One reason for doing this is to store local configuration data (such as the preferred screen orientation or keyboard layout). Since this information only relates to a particular device, there is no need to sync it:
+
+[horizontal]
+local data scope:: Contains information pertaining to the device.
+
+syncing data scope:: Contains information pertaining to the user, which can be synced back to the cloud for use on the web or another device.
+
+****
+
+
+[discrete#c:database:::open-db]
+== Create or Open Database
+
+
+You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html[CBLDatabase] class.
+Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_database_configuration.html[DatabaseConfiguration] -- see <<c:database:::ex-dbopen>>.
+
+Things to watch for include:
+
+* If the named database does not exist in the specified, or default, location then a new one is created
+* The database is created in a default location unless you  specify a directory for it -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_database_configuration.html[DatabaseConfiguration] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_database_configuration.html#a844a5e7d02dd4ceb072dff39c7e88591[CBLDatabaseConfiguration.directory()]
++
+--
+
+Typically, the default location for C is
+the application sandbox
+or current working directory
+.
+
+See also <<c:database:::lbl-find-db-loc>>.
+--
+
+[#ex-dbopen]
+.Open or create a database
+
+
+[#c:database:::ex-dbopen]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="new-database", indent=0]
+[source, c]
+----
+// NOTE: No error handling, for brevity (see getting started)
+
+CBLError err;
+CBLDatabase* db = CBLDatabase_Open(FLSTR("my-database"), NULL, &err);
+----
+
+
+
+
+====
+
+
+[discrete#c:database:::close-database]
+== Close Database
+
+You are advised to incorporate the closing of all open databases into your application workflow.
+
+To close a database, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#ga4d448b2d6809d6f9633d810d3ac6dcfa[CBLDatabase_Close()] -- see: <<c:database:::ex-dbclose>>.
+This also closes
+active replications, listeners and-or live queries connected to the database.
+
+NOTE: Closing a database soon after starting a replication involving it can cause an exception as the asynchronous `replicator (start)` may not yet be `connected`.
+
+
+.Close a Database
+[#ex-dbclose]
+
+
+[#c:database:::ex-dbclose]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="close-database", indent=0]
+[source, c]
+----
+// NOTE: No error handling, for brevity (see getting started)
+
+CBLError err;
+CBLDatabase_Close(db, &err);
+----
+
+
+
+
+====
+
+
+[discrete#c:database:::database-full-sync]
+== Database Full Sync
+
+Database Full Sync will prevent the loss of transactional data due to an unexpected system crash or loss of power.
+This feature is not enabled by default and must be manually set in your database configuration.
+
+
+CAUTION: Database Full Sync is a safe method to prevent data loss but will incur a significant degredation of performance.
+
+.Enable Database Full Sync
+[#ex-dbfullsync]
+
+
+[#c:database:::ex-dbfullsync]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="database-fullsync", indent=0]
+[source, c]
+----
+// this enables full sync
+config.fullSync = true;
+----
+
+
+
+
+====
+
+
+NOTE: It is not possible to change the configuration of a Database after instantiating the Database with the configuration by updating its `DatabaseConfiguration` property.
+
+[discrete#c:database:::database-encryption]
+== Database Encryption
+
+
+
+IMPORTANT: This is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+
+
+_Couchbase Lite on C_ includes the ability to encrypt Couchbase Lite databases.
+This allows mobile applications to secure the data at rest, when it is being stored on the device.
+The algorithm used to encrypt the database is 256-bit AES.
+
+[discrete#c:database:::enabling]
+=== Enabling
+To enable encryption, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_database_configuration.html#aaab04fb9d092ff02693eea611efefc55[CBLDatabaseConfiguration.encryptionKey()] to set the encryption key of your choice.
+Provide this encryption key every time the database is opened -- see <<c:database:::ex-sdb-encrypt>>.
+
+.Configure Database Encryption
+[#ex-sdb-encrypt]
+
+
+[#c:database:::ex-sdb-encrypt]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="database-encryption", indent=0]
+[source, c]
+----
+// NOTE: No error handling, for brevity (see getting started)
+
+CBLDatabaseConfiguration config = CBLDatabaseConfiguration_Default();
+
+// This returns a boolean, so check it in production code
+CBLEncryptionKey_FromPassword(&config.encryptionKey, FLSTR("password"));
+
+CBLError err;
+CBLDatabase* db = CBLDatabase_Open(FLSTR("seekrit"), &config, &err);
+
+// Change the encryption key (or add encryption if the DB is unencrypted)
+CBLEncryptionKey betterKey;
+CBLEncryptionKey_FromPassword(&betterKey, FLSTR("betterpassw0rd"));
+CBLDatabase_ChangeEncryptionKey(db, &betterKey, &err);
+
+// Remove encryption
+CBLDatabase_ChangeEncryptionKey(db, NULL, &err);
+----
+
+
+
+
+====
+
+
+[discrete#c:database:::persisting]
+=== Persisting
+Couchbase Lite does not persist the key.
+It is the application's responsibility to manage the key and store it in a platform-specific secure store such Android's
+https://developer.android.com/training/articles/keystore[Keystore].
+
+[discrete#c:database:::opening]
+=== Opening
+An encrypted database can only be opened with the same platform that was used to encrypt it in the first place.
+So a database encrypted using the C SDK, and then exported, is readable only by the C SDK.
+
+[discrete#c:database:::changing]
+=== Changing
+To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#ga76a603bc678ceae18c9610b8a8274a09[CBLDatabase_ChangeEncryptionKey()]
+to set the required new encryption-key value.
+
+
+[discrete#c:database:::removing]
+=== Removing
+To remove encryption, open the database using its existing encryption-key and use
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#ga76a603bc678ceae18c9610b8a8274a09[CBLDatabase_ChangeEncryptionKey()]
+with a null value as the encryption key.
+
+[discrete#c:database:::upgrading]
+=== Upgrading
+To upgrade an encrypted database see: xref:c:dep-upgrade.adoc#lbl-db-upgrades[Upgrade 1.x databases]
+
+
+[discrete#c:database:::lbl-find-db-loc]
+== Finding a Database File
+
+
+
+When the application is running on the iOS simulator, you can locate the application's sandbox directory using the https://simpholders.com/3/[SimPholders] utility.
+
+
+[discrete#c:database:::lbl-db-util]
+== Database Maintenance
+
+From time to time it may be necessary to perform certain maintenance activities on your database, for example to
+compact the database file, removing unused documents and blobs no longer referenced by any documents.
+
+Couchbase Lite's API provides the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#gaa4b06dcb7427cafeabde8486f5f03f10[CBLDatabase_PerformMaintenance()] method.
+The available maintenance operations, including `compact` are as shown in the enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#gaace029f966f053946a52f837c285f156[CBLMaintenanceType] to accomplish this.
+
+This is a resource intensive operation and is not performed automatically.
+It should be run on-demand using the API.
+If in doubt, consult Couchbase support.
+
+
+[discrete#c:database:::cli-tool]
+== Command Line Tool
+
+// tag::cli-tool[]
+`cblite` is a command-line tool for inspecting and querying Couchbase Lite databases.
+
+You can download and build it from the couchbaselabs https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md[GitHub repository].
+Note that the `cblite` tool is not supported by the https://www.couchbase.com/support-policy[Couchbase Support Policy].
+
+// end::cli-tool[]
+
+
+
+
+[discrete#c:database:::related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:c:gs-prereqs.adoc[Prerequisites]
+* xref:c:gs-install.adoc[Install]
+* xref:c:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#c:database:::-2n]
+=== {empty}
+.Learn more . . .
+* xref:c:database.adoc[Databases]
+* xref:c:document.adoc[Documents]
+* xref:c:blob.adoc[Blobs]
+* xref:c:replication.adoc[Remote Sync Gateway]
+* xref:c:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[discrete.colum#c:database:::-3n]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
+
+

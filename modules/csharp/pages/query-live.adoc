@@ -1,24 +1,84 @@
-= Live Queries
+:docname: query-live
+:page-module: csharp
+:page-relative-src-path: query-live.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#csharp:query-live:::]
+== Live Queries
 :page-aliases: learn/csharp-query-live.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase mobile database live query concepts
 
 // removed docs-mobile _attributes-shared link
-include::ROOT:partial$_define_page_index.adoc[]
-include::ROOT:partial$_show_glossary_links.adoc[]
-include::ROOT:partial$_define_component_attributes.adoc[]
-include::{lang-mod-csharp}:partial$_define_module_attributes.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // BEGIN::Local page attributes
-:blank-field: ____
-:lang-title: {lang-title-csharp}
-:module: {lang-mod-csharp}
-:packageNm: couchbase-lite-{module}
-:source-language: {lang-name-csharp}
-// snippet: {snippets-content--csharp}
-:url-issues: {url-github-cbl}{module}/issues
+// snippet: csharp:example$code_snippets/Program.cs
 
 // END::Local page attributes
 
@@ -26,4 +86,84 @@ include::{lang-mod-csharp}:partial$_define_module_attributes.adoc[]
 {description}
 
 
-include::{root-commons}query-live-query.adoc[]
+
+
+[discrete#csharp:query-live:::activating-a-live-query]
+=== Activating a Live Query
+
+
+A live query is a query that, once activated, remains active and monitors the database for changes; refreshing the result set whenever a change occurs.
+As such, it is a great way to build reactive user interfaces -- especially table/list views -- that keep themselves up to date.
+
+*So, a simple use case may be:* A replicator running and pulling new data from a server, whilst a live-query-driven UI automatically updates to show the data without the user having to manually refresh.
+This helps your app feel quick and responsive.
+
+To activate a LiveQuery just add a change listener to the query statement.
+It will be immediately active.
+When a change is detected the query automatically runs, and posts the new query result to any observers (change listeners).
+
+
+.Starting a Live Query
+[#ex-qry-start]
+
+
+[#csharp:query-live:::ex-qry-start]
+====
+
+
+// Show Main Snippet
+// include::csharp:example$code_snippets/Program.cs[tags="live-query", indent=0]
+[source, csharp]
+----
+var query = QueryBuilder
+    .Select(SelectResult.All())
+    .From(DataSource.Collection(collection)); // <.>
+
+
+// Adds a query change listener.
+// Changes will be posted on the main queue.
+var token = query.AddChangeListener((sender, args) => // <.>
+{
+    var allResult = args.Results.AllResults();
+    foreach (var result in allResult) {
+        Console.WriteLine(result.Keys);
+        /* Update UI */
+    }
+});
+----
+
+
+
+
+====
+
+<.> Build the query statements
+<.> Activate the _live_ query by attaching a listener.
+Save the token in order to detach the listener and stop the query later -- se <<csharp:query-live:::ex-qry-stop>>
+
+
+.Stop a LIve Query
+[#ex-qry-stop]
+
+
+[#csharp:query-live:::ex-qry-stop]
+====
+
+
+// Show Main Snippet
+// include::csharp:example$code_snippets/Program.cs[tags="stop-live-query", indent=0]
+[source, csharp]
+----
+query.RemoveChangeListener(token);
+query.Dispose();
+----
+
+
+
+
+====
+
+<.> Here we use the change lister token from <<csharp:query-live:::ex-qry-start>> to remove the listener.
+Doing so stops the live query.
+
+

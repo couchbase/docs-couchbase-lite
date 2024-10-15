@@ -1,19 +1,245 @@
+:docname: blob
+:page-module: objc
+:page-relative-src-path: blob.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#objc:blob:::]
 = Blobs
 :page-aliases: learn/objc-blob.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite database data model concepts - blobs
 
-include::partial$_set_page_context_for_objc.adoc[]
-// :param-name: {lang-name-objc}
-// :param-title: {lang-title-objc}
-// :param-module: {lang-mod-objc}
 
-:param-related: {database--xref} | {document--xref} | {indexing--xref} |
-:topic-group: Topic Group -- Data Model
-include::{root-partials}_show_page_header_block.adoc[]
 
-include::{root-commons}blob.adoc[subs="macros,attributes"]
 
-include::{root-partials}block-related-content-data.adoc[]
+:maintenance: 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// :param-name: objc
+// :param-title: Objective C
+// :param-module: objc
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:objc:database.adoc[Databases] | xref:objc:document.adoc[Documents] | xref:objc:indexing.adoc[Indexing] |
+--
+
+[discrete#objc:blob:::introduction]
+== Introduction
+
+pass:q,a[Couchbase{nbsp}Lite] for Objective-C uses _blobs_ to store the contents of images, other media files and similar format files as binary objects.
+
+The blob itself is not stored in the document.
+It is held in a separate content-addressable store indexed from the document and retrieved only on-demand.
+
+When a document is synchronized, the pass:q,a[Couchbase{nbsp}Lite] replicator adds an `_attachments` dictionary to the document's properties if it contains a blob -- see <<objc:blob:::img-blob>>.
+
+
+[discrete#objc:blob:::blob-objects]
+== Blob Objects
+
+The blob as an object appears in a document as dictionary property -- see, for example _avatar_ in <<objc:blob:::img-blob>>.
+
+Other properties include `length` (the length in bytes), and optionally `content_type` (typically, its MIME type).
+
+The blob's data (an image, audio or video content) is not stored in the document, but in a separate content-addressable store, indexed by the `digest` property -- see <<objc:blob:::lbl-using>>.
+
+
+[discrete#objc:blob:::constraints]
+=== Constraints
+
+* pass:q,a[Couchbase{nbsp}Lite] +
+Blobs can be arbitrarily large.
+They are only read on demand, not when you load a the _document_.
+
+* pass:q,a[sync{nbsp}gateway] +
+The maximum content size is 20 MB per blob.
+If a document's blob is over 20 MB, the document will be replicated but not the blob.
+
+
+[discrete#objc:blob:::lbl-using]
+== Using Blobs
+
+The `Blob` API lets you access the blob's data content as in-memory data (a `Data` object) or as an `InputStream`.
+
+The code in <<objc:blob:::ex-blob>> shows how you might add a blob to a document and save it to the database. Here we use `avatar` as the property key and a jpeg file as the blob data.
+
+.Working with blobs
+[#ex-blob]
+
+
+[#objc:blob:::ex-blob]
+====
+
+
+// Show Main Snippet
+// include::objc:example$code_snippets/SampleCodeTest.m[tags="blob", indent=0]
+[source, objc]
+----
+UIImage *appleImage = [UIImage imageNamed:@"avatar.jpg"];
+NSData *imageData = UIImageJPEGRepresentation(appleImage, 1.0);  // <.>
+
+CBLBlob *blob = [[CBLBlob alloc] initWithContentType:@"image/jpeg" data:imageData];  // <.>
+[newTask setBlob:blob forKey:@"avatar"]; // <.>
+[collection saveDocument:newTask error:&error];
+
+CBLDocument *savedTask = [collection documentWithID:@"task1" error:&error];
+CBLBlob *taskBlob = [savedTask blobForKey:@"avatar"];
+UIImage *taskImage = [UIImage imageWithData:taskBlob.content];
+----
+
+
+
+
+====
+
+<.> Here we prepare a document to use for the example
+<.> Create the blob using the retrieved image. +
+ Here we set `image/jpg` as the blob MIME type.
+<.> Add the blob to a document, using `avatar` as the property key +
+Saving the document generates a random access key for each blob stored in `digest` a SHA-1 encrypted property -- see: <<objc:blob:::img-blob>>. +
+We can use the `avatar` key to retrieve the blob object later.
+Note, this is the identity of the blob assigned by us; the replication auto-generates a blob for attachments and assigns its own name to it (for example, `blob_1`) -- see <<objc:blob:::img-blob>>.
+The `digest` key will be the same as generated when we saved the blob document.
+
+
+[discrete#objc:blob:::syncing]
+== Syncing
+When a document containing a blob object is synchronized, the pass:q,a[Couchbase{nbsp}Lite] replicator generates an `_attachments` dictionary with an auto-generated name for each blob attachment.
+This is different to the `avatar` key and is used internally to access the blob content.
+
+If you view a sync'd blob document in {cbs} Admin Console, you will see something similar to <<objc:blob:::img-blob>>, which shows the document with its generated `_attachments` dictionary, including the `digest`.
+
+.Sample Blob Document
+[#objc:blob:::img-blob]
+image::couchbase-lite/current/_images/attach-replicated.png[]
+
+
+
+
+
+[discrete#objc:blob:::related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:objc:gs-prereqs.adoc[Prerequisites]
+* xref:objc:gs-install.adoc[Install]
+* xref:objc:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#objc:blob:::-2n]
+=== {empty}
+.Learn more . . .
+* xref:objc:database.adoc[Databases]
+* xref:objc:document.adoc[Documents]
+* xref:objc:blob.adoc[Blobs]
+* xref:objc:replication.adoc[Remote Sync Gateway]
+* xref:objc:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[discrete.colum#objc:blob:::-3n]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
+
+
+= Queries
+

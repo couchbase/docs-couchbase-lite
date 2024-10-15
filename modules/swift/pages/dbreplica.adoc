@@ -1,15 +1,182 @@
-= Data Sync Locally on Device
+:docname: dbreplica
+:page-module: swift
+:page-relative-src-path: dbreplica.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#swift:dbreplica:::]
+== Intra-device Sync
 :page-aliases: learn/swift-dbreplica.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite Database Sync - Synchronize changes between databases on the same device
 
-include::partial$_set_page_context_for_swift.adoc[]
-// :param-name: {lang-name-swift}
-// :param-title: {lang-title-swift}
-// :param-module: {lang-mod-swift}
 
-include::{root-commons}dbreplica.adoc[subs="macros,attributes"]
 
-include::{root-partials}block-related-content-std.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/[Query Class index]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Replicator.pendingDocumentIds()]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// :param-name: swift
+// :param-title: Swift
+// :param-module: swift
+
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:swift:replication.adoc[Remote Sync Gateway] | xref:swift:landing-p2psync.adoc[Peer-to-Peer Sync]
+--
+
+[discrete#swift:dbreplica:::overview]
+=== Overview
+
+
+
+
+
+Couchbase Lite supports replication between two local databases at the database, scope, or collection level.
+This allows a Couchbase Lite replicator to store data on secondary storage.
+It is useful in scenarios when a user's device is damaged and its data is moved to a different device.
+
+.Replication between Local Databases
+
+
+====
+
+
+// Show Main Snippet
+// include::swift:example$code_snippets/SampleCodeTest.swift[tags="database-replica", indent=0]
+[source, swift]
+----
+let targetDatabase = DatabaseEndpoint(database: database2)
+var config = ReplicatorConfiguration(target: targetDatabase)
+
+guard let collection1 = try database.collection(name: "collection1", scope: "scope1") else { return }
+config.addCollection(collection1)
+config.replicatorType = .push
+
+self.replicator = Replicator(config: config)
+self.replicator.start()
+----
+
+
+
+
+====
+
+
+
+
+
+[discrete#swift:dbreplica:::related-content]
+=== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+==== {empty}
+.How to . . .
+* xref:swift:gs-prereqs.adoc[Prerequisites]
+* xref:swift:gs-install.adoc[Install]
+* xref:swift:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#swift:dbreplica:::-2n]
+==== {empty}
+.Learn more . . .
+* xref:swift:database.adoc[Databases]
+* xref:swift:document.adoc[Documents]
+* xref:swift:blob.adoc[Blobs]
+* xref:swift:replication.adoc[Remote Sync Gateway]
+* xref:swift:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[discrete.colum#swift:dbreplica:::-3n]
+==== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
+
+

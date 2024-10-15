@@ -1,17 +1,314 @@
+:docname: prebuilt-database
+:page-module: objc
+:page-relative-src-path: prebuilt-database.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#objc:prebuilt-database:::]
 = Pre-built Database
 :page-aliases: objc-prebuilt-database.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: How to handle pre-built databases in your Couchbase Lite on Objective-C app
 
-include::partial$_set_page_context_for_objc.adoc[]
 
-:param-related!:
-:topic-group!:
-:param-abstract: This content explains how to include a snapshot of a pre-built database in your package to shorten initial sync time and reduce bandwidth use
-include::{root-partials}_show_page_header_block.adoc[]
 
-include::{root-commons}prebuilt-database.adoc[subs="macros,attributes"]
 
-include::{root-partials}block-related-content-data.adoc[]
+:maintenance: 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[abstract]
+--
+Description -- _{description}_ +
+_Abstract -- This content explains how to include a snapshot of a pre-built database in your package to shorten initial sync time and reduce bandwidth use_ +
+--
+
+
+
+
+[discrete#objc:prebuilt-database:::overview]
+== Overview
+
+
+pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] supports  pre-built databases. You can pre-load your app with data instead of syncing it from pass:q,a[_pass:q,a[Sync{nbsp}Gateway]_] during startup to minimize consumer wait time (arising from data setup) on initial install and launch of the application.
+
+Avoiding an initial bulk sync reduces startup time and network transfer costs.
+
+It is typically more efficient to download bulk data using the http/ftp stream employed during the application installation than to install a smaller application bundle and then use a replicator to pull in the bulk data.
+
+Pre-loaded data is typically public/shared, non-user-specific data that is static. Even if the data is not static, you can still benefit from preloading it and only syncing the changed documents on startup.
+
+The initial sync of any pre-built database pulls in any content changes on the server that occurred after its incorporation into the app, updating the database.
+
+.To use a prebuilt database:
+****
+. Create a new Couchbase Lite database with the required dataset -- see <<objc:prebuilt-database:::crt-db>>
+. Incorporate the pre-built database with your app bundle as an asset/resource -- see <<objc:prebuilt-database:::bundle-db>>
+. Adjust the start-up logic of your app to check for the presence of the required database. +
+If the database doesn't already exist, create one using the bundled pre-built database.
+Initiate a sync to update the data -- see <<objc:prebuilt-database:::deploy-db>>
+****
+
+
+[discrete#objc:prebuilt-database:::crt-db]
+== Creating Pre-built database
+
+
+These steps should form part of your build and release process:
+
+. Create a fresh Couchbase Lite database (every time)
++
+[IMPORTANT]
+--
+*Always start with a fresh database for each app version*; this ensures there are no xref:refer-glossary.adoc#checkpoint[checkpoint] issues
+
+*Otherwise:*  You will invalidate the cached xref:refer-glossary.adoc#checkpoint[checkpoint] in the packaged database, and instead reuse the same database in your build process (for subsequent app versions).
+--
+. Pull the data from Sync Gateway into the new Couchbase Lite database
++
+[IMPORTANT]
+--
+Ensure the replication used to populate Couchbase Lite database *uses the exact same remote URL and replication config parameters (channels and filters)* as those your app will use when it is running.
+
+*Otherwise:* ... there will be a xref:refer-glossary.adoc#checkpoint[checkpoint] mismatch and the app will attempt to pull the data down again
+
+Don't, for instance, create a pre-built database against a staging Sync Gateway server and use it within a production app that syncs against a production Sync Gateway.
+--
++
+You can use the cblite tool (`cblite cp`) for this -- see: https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/Documentation.md#cp-aka-export-import-push-pull[cblite cp (export, import, push, pull)]  |  https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md[cblite on GitHub]
++
+.*Alternatively* ...
+
+* You can write a simple CBL app to just initiate the required pull sync -- see: xref:objc:replication.adoc[Remote Sync Gateway]
+* A third party community Java app is available.
+It provides a UI to create a local Couchbase Lite database and pull data from a Sync Gateway database -- see:
+https://github.com/Infosys/CouchbaseLiteTester[CouchbaseLite Tester]
++
+NOTE: Couchbase accepts no responsibility for the ongoing availability, maintenance, or support of this third party community contribution, nor for the provision of support for issues arising from its use.
+
+. Create the *same* indexes the app will use (wait for the replication to finish before doing this).
+
+
+[discrete#objc:prebuilt-database:::bundle-db]
+== Bundle a Database with an Application
+
+
+Copy the database into your app package.
+
+Put it in an appropriate place (for example, an assets or resource folder).
+
+Where the platform permits you can zip the database.
+
+*Alternatively* ... rather than bundling the database within the app, the app could pull the database down from a CDN server on launch.
+
+
+[discrete#objc:prebuilt-database:::database-encryption]
+== Database Encryption
+
+IMPORTANT: This is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+
+
+
+If you are using an encrypted database,
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(cm)copyFromPath:toDatabase:withConfig:error:[copyFromPath()]
+does not change the encryption key.
+The encryption key specified in the config when opening the database is the encryption key used for both the original database and copied database.
+
+If you copied an un-encrypted database and want to apply encryption to the copy, or if you want to change (or remove) the encryption key applied to the copy:
+
+. Provide the original encryption-key (if any) in the database copy's configuration using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html#/c:objc(cs)CBLDatabaseConfiguration(py)encryptionKey[CBLDatabaseConfiguration.encryptionKey()]
+. Open the database copy
+. Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)changeEncryptionKey:error:[CBLDatabase.changeEncryptionKey()] on the database copy to set the required encryption key. +
+NOTE: To remove encryption on the copy, provide a null encryption-key
+
+
+[discrete#objc:prebuilt-database:::deploy-db]
+== Using Pre-built Database on App Launch
+
+
+During the application start-up logic, check if database exists in the required location, and *if not*:
+
+. Locate the pre-packaged database (for example, in the assets or other resource folder)
+
+. Copy the pre-packaged database to the required location
++
+Use the API's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(cm)copyFromPath:toDatabase:withConfig:error:[copyFromPath()] method -- see: <<objc:prebuilt-database:::lbl-code>>; this ensures that a UUID is generated for each copy
++
+IMPORTANT: *Do not copy the database using any other method* +
+*Otherwise:* Each copy of the app will invalidate the other apps' xref:refer-glossary.adoc#checkpoint[checkpoints] because a new UUID was not generated.
+
+. Open the database; you can now start querying the data and using it
+
+. Start a pull replication, to sync any changes
++
+The replicator uses the pre-built database's xref:refer-glossary.adoc#checkpoint[checkpoint] as the timestamp to sync from; only documents changed since then are synced
++
+[IMPORTANT]
+--
+If you used cblite to pull the data *without including a port number with the URL* and are replicating in a Java or iOS (swift/ObjC) app -- *you must include the port number in the URL provided to the replication* (port 443 for `wss://` or 80 for `ws://`).
+
+*Otherwise:* You will get a xref:refer-glossary.adoc#checkpoint[checkpoint] mismatch. +
+This is caused by a URL discrepancy, which arises because `cblite` automatically adds the default port number when none is specified, *but* the Java and iOS (swift/ObjC) replicators DO NOT.
+
+--
+
++
+NOTE: Start your normal application logic immediately, unless it is essential to have the absolute up-to-date data set to begin.
+That way the user is not kept hanging around watching a progress indicator.
+They can begin interacting with your app whilst any out-of-data data is being updated.
+
+.Copy database using API
+[#lbl-code]
+
+
+[#objc:prebuilt-database:::lbl-code]
+====
+
+
+// Show Main Snippet
+// include::objc:example$code_snippets/SampleCodeTest.m[tags="prebuilt-database", indent=0]
+[source, objc]
+----
+// Note:Getting the path to a database is platform-specific.
+// For iOS you need to get the path from the main bundle.
+if (![CBLDatabase databaseExists:@"travel-sample" inDirectory:nil]) {
+    NSError *error;
+    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"travel-sample" ofType:@"cblite2"];
+    if (![CBLDatabase copyFromPath:path toDatabase:@"travel-sample" withConfig:nil error:&error]) {
+        [NSException raise:NSInternalInconsistencyException
+                    format:@"Could not load pre-built database:%@", error];
+    }
+}
+----
+
+
+
+
+====
+
+
+
+
+
+
+[discrete#objc:prebuilt-database:::related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:objc:gs-prereqs.adoc[Prerequisites]
+* xref:objc:gs-install.adoc[Install]
+* xref:objc:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#objc:prebuilt-database:::-2n]
+=== {empty}
+.Learn more . . .
+* xref:objc:database.adoc[Databases]
+* xref:objc:document.adoc[Documents]
+* xref:objc:blob.adoc[Blobs]
+* xref:objc:replication.adoc[Remote Sync Gateway]
+* xref:objc:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[discrete.colum#objc:prebuilt-database:::-3n]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
+
+

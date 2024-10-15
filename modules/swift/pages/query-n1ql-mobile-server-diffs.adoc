@@ -1,19 +1,457 @@
-= {sqlpp} for Mobile -- Differences from {sqlpp} for Server
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
+:docname: query-n1ql-mobile-server-diffs
+:page-module: swift
+:page-relative-src-path: query-n1ql-mobile-server-diffs.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#swift:query-n1ql-mobile-server-diffs:::]
+== SQL++ Server Differences
 :page-role:
 :keywords: sql, n1ql
 :page-layout: article
 :description: Differences between Couchbase Server {sqlpp} and Couchbase Lite N1QL
 
-include::partial$_set_page_context_for_swift.adoc[]
-
-:param-related: {querybuilder--xref--predictive-query} | {query-live--xref} | {indexing--xref}
-:topic-group: Topic Group -- Querying
-include::{root-partials}_show_page_header_block.adoc[]
 
 
-include::{root-commons}query-n1ql-mobile-server-diffs.adoc[subs="macros,attributes"]
 
 
-include::{root-partials}block-related-content-data.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/[Query Class index]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Replicator.pendingDocumentIds()]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:swift:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:swift:query-live.adoc[Live Queries] | xref:swift:indexing.adoc[Indexing]
+--
+
+
+
+
+[IMPORTANT]
+--
+N1QL is Couchbase's implementation of the developing *{sqlpp}* standard.
+As such the terms _N1QL_ and _{sqlpp}_ are used interchangeably in Couchbase documentation unless explicitly stated otherwise.
+--
+
+
+There are several minor but notable behavior differences between _{sqlpp} for Mobile_ queries and _{sqlpp} for Server_, as shown in  <<swift:query-n1ql-mobile-server-diffs:::tbl-diffs>>.
+
+In some instances, if required, you can force {sqlpp} for Mobile to work in the same way as {sqlpp} for Server.
+This table compares Couchbase Server and Mobile instances:
+
+.{sqlpp} Query Comparison
+[#swift:query-n1ql-mobile-server-diffs:::tbl-diffs, cols="^1,2a,2a, options="header"]
+|===
+
+|
+2+^h|{sqlpp} Comparison
+
+h| Feature
+h| {sqlpp} for Couchbase Server
+h| {sqlpp} for Mobile
+
+| Scopes and Collections
+| SELECT * +
+FROM \`travel-sample`.inventory.airport
+| SELECT * +
+FROM inventory.airport
+
+| Scopes and Collections
+| SELECT * +
+FROM \`travel-sample`.inventory.airport
+| SELECT * +
+FROM inventory.airport
+
+| USE KEYS
+| SELECT fname, email FROM tutorial USE KEYS ["dave", "ian"];
+| SELECT fname, email FROM tutorial WHERE meta().id IN ("dave", "ian");
+
+| ON KEYS
+| SELECT * +
+FROM \`user` u +
+JOIN orders o ON KEYS ARRAY s.order_id +
+FOR s IN u.order_history END;
+| SELECT * FROM user u, u.order_history s +
+JOIN orders o ON s.order_id = meta(o).id;
+
+| ON KEY
+| SELECT * +
+FROM \`user` u
+JOIN orders o ON KEY o.user_id FOR u;
+| SELECT * FROM user u +
+JOIN orders o ON meta(u).id = o.user_id;
+
+| NEST
+| SELECT * +
+FROM \`user` u
+NEST orders orders
+ON KEYS ARRAY s.order_id FOR s IN u.order_history END;
+| NEST/UNNEST not supported
+
+| LEFT OUTER NEST
+| SELECT * FROM user u +
+LEFT OUTER NEST orders orders +
+ON KEYS ARRAY s.order_id FOR s IN u.order_history END;
+| NEST/UNNEST not supported
+
+| ARRAY
+| ARRAY i FOR i IN [1, 2] END
+| (SELECT VALUE i FROM [1, 2] AS i)
+
+| ARRAY FIRST
+| ARRAY FIRST arr
+| arr[0]
+
+| LIMIT l OFFSET o
+| Allows OFFSET without LIMIT
+| Allows OFFSET without LIMIT
+
+| UNION, INTERSECT, and EXCEPT
+| All three are supported (with ALL and DISTINCT variants)
+| Not supported
+
+| OUTER JOIN
+| Both LEFT and RIGHT OUTER JOIN supported
+| Only LEFT OUTER JOIN supported (and necessary for query expressability)
+
+| <, \<=, =, etc. operators
+| Can compare either complex values or scalar values
+| Only scalar values may be compared
+
+| ORDER BY
+|Result sequencing is based on specific rules described in xref:server:n1ql:n1ql-language-reference/orderby.adoc[{sqlpp} (server) OrderBy clause]
+|Result sequencing is based on the SQLite ordering described in https://sqlite.org/lang_select.html[SQLite select overview]
+
+The ordering of _Dictionary_ and _Array_ objects is based on binary ordering.
+
+
+| SELECT DISTINCT
+| Supported
+| SELECT DISTINCT VALUE is supported when the returned values are scalars
+
+| CREATE INDEX
+| Supported
+| Not Supported
+
+| INSERT/UPSERT/DELETE
+| Supported
+| Not Supported
+|===
+
+[discrete#swift:query-n1ql-mobile-server-diffs:::boolean-logic-rules]
+=== Boolean Logic Rules
+
+[,cols="1a,1a", options="header"]
+|===
+^| {sqlpp} for Couchbase Server ^| {sqlpp} for Mobile
+
+
+|Couchbase Server operates in the same way as Couchbase Lite, except:
+
+* MISSING, NULL and FALSE are FALSE
+* Numbers 0 is FALSE
+* Empty strings, arrays, and objects are FALSE
+* All other values are TRUE
+
+You can choose to use _Couchbase Server's {sqlpp} rules_ by using the `TOBOOLEAN(expr)` function to convert a value to its boolean value.
+
+|{sqlpp} for Mobile's boolean logic rules are based on SQLite’s, so:
+
+* TRUE is TRUE, and FALSE is FALSE
+* Numbers 0 or 0.0 are FALSE
+* Arrays and dictionaries are FALSE
+* String and Blob are TRUE if the values are casted as a non-zero or FALSE if the values are casted as 0 or 0.0 -- see: https://sqlite.org/lang_expr.html[SQLITE’s CAST and Boolean expressions]^ for more details)
+* NULL is FALSE
+* MISSING is MISSING
+
+|===
+
+
+[discrete#swift:query-n1ql-mobile-server-diffs:::logical-operations]
+==== Logical Operations
+
+In {sqlpp} for Mobile logical operations will return one of three possible values; `TRUE`, `FALSE`, or `MISSING`.
+
+Logical operations with the `MISSING` value could result in `TRUE` or `FALSE` if the result can be determined regardless of the missing value, otherwise the result will be `MISSING`.
+
+In {sqlpp} for Mobile -- unlike {sqlpp} for Server -- `NULL` is implicitly converted to `FALSE` before evaluating logical operations.
+<<swift:query-n1ql-mobile-server-diffs:::tbl-logops>> summarizes the result of logical operations with different operand values and also shows where the Couchbase Server behavior differs.
+
+.Logical Operations Comparison
+[#swift:query-n1ql-mobile-server-diffs:::tbl-logops, cols="^1m,^1m,^1m,^1m,^1m,^1m,^1m", options-"header"]
+|===
+
+.2+.>h| Operand +
+a
+3+h| {sqlpp} for Mobile
+3+h| {sqlpp} for Server
+
+h| b
+h| a AND b
+h| a OR b
+h| b
+h| a AND b
+h| a OR b
+
+.4+| TRUE
+| TRUE
+| TRUE
+| TRUE
+|-|-|-
+
+| FALSE
+| FALSE
+| TRUE
+|-|-|-
+
+| NULL
+| FALSE
+| TRUE
+|-
+| *NULL*
+|-
+
+| MISSING
+| MISSING
+| TRUE
+|-|-|-
+
+.4+| FALSE
+| TRUE
+| FALSE
+| TRUE
+|-|-|-
+
+| FALSE
+| FALSE
+| FALSE
+|-|-|-
+
+| NULL
+| FALSE
+| FALSE
+|-|-
+| *NULL*
+
+| MISSING
+| FALSE
+| MISSING
+|-|-|-
+
+.4+| NULL
+| TRUE
+| FALSE
+| TRUE
+|-
+| *NULL*
+|-
+
+| FALSE
+| FALSE
+| FALSE
+| -
+| -
+| *NULL*
+
+| NULL
+| FALSE
+| FALSE
+| -
+| *NULL*
+| *NULL*
+
+| MISSING
+| FALSE
+| MISSING
+| -
+| *MISSING*
+| *NULL*
+
+.4+|MISSING
+| TRUE
+| MISSING
+| TRUE
+|-|-|-
+
+| FALSE
+| FALSE
+| MISSING
+|-|-|-
+
+| NULL
+| FALSE
+| MISSING
+|-
+| *MISSING*
+| *NULL*
+
+| MISSING
+| MISSING
+| MISSING
+|-|-|-
+
+
+|===
+
+[discrete#swift:query-n1ql-mobile-server-diffs:::crud-operations]
+=== CRUD Operations
+{sqlpp} for Mobile only supports Read or Query operations.
+
+{sqlpp} for Server fully supports CRUD operation.
+
+[discrete#swift:query-n1ql-mobile-server-diffs:::functions]
+=== Functions
+
+[discrete#swift:query-n1ql-mobile-server-diffs:::division-operator]
+==== Division Operator
+
+[,colse="1a,1a", options="header"]
+|===
+^| {sqlpp} for Server ^| {sqlpp} for Mobile
+
+| {sqlpp} for Server always performs float division regardless of the types of the operands.
+
+You can force this behavior in {sqlpp} for Mobile by using the `DIV(x, y)` function.
+
+|The operand types determine the
+ division operation performed. +
+If both are integers, integer division is used. +
+If one is a floating number, then float division is used.
+
+|===
+
+[discrete#swift:query-n1ql-mobile-server-diffs:::round-function]
+==== Round Function
+[,cols="1a,1a", options="header"]
+|===
+^| {sqlpp} for Server ^| {sqlpp} for Mobile
+
+| {sqlpp} for Server `ROUND()` uses the _Rounding to Nearest Even_ convention (for example, `ROUND(1.85)` returns 1.8).
+
+You can force this behavior in Couchbase Lite by using the `ROUND_EVEN()` function.
+
+| The `ROUND()` function returns a value to the given number of integer digits to the right of the decimal point (left if digits is negative).
+
+* Digits are 0 if not given.
+* Midpoint values are handled using the _Rounding Away From Zero_ convention, which rounds them to the next number away from zero (for example, `ROUND(1.85)` returns 1.9).
+
+|===
+
+
+
+
+
+
+
+[discrete#swift:query-n1ql-mobile-server-diffs:::related-content]
+=== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+==== {empty}
+.How to . . .
+* xref:swift:gs-prereqs.adoc[Prerequisites]
+* xref:swift:gs-install.adoc[Install]
+* xref:swift:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#swift:query-n1ql-mobile-server-diffs:::-2n]
+==== {empty}
+.Learn more . . .
+* xref:swift:database.adoc[Databases]
+* xref:swift:document.adoc[Documents]
+* xref:swift:blob.adoc[Blobs]
+* xref:swift:replication.adoc[Remote Sync Gateway]
+* xref:swift:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[discrete.colum#swift:query-n1ql-mobile-server-diffs:::-3n]
+==== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
+
+

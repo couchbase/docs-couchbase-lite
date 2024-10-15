@@ -1,10 +1,559 @@
+:docname: database
+:page-module: java
+:page-relative-src-path: database.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#java:database:::]
 = Databases
 :page-aliases: learn/java-database.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Working with Couchbase Lite on Java databases
 
-include::partial$_set_page_context_for_java.adoc[]
 
-include::{root-commons}database.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:java:blob.adoc[Blobs] | xref:java:document.adoc[Documents] | xref:java:indexing.adoc[Indexing]
+--
+
+
+[discrete#java:database:::database-concepts]
+== Database Concepts
+
+Databases created on Couchbase Lite can share the same hierarchical structure as Capella databases.
+This makes it easier to sync data between mobile applications and applications built using Capella.
+
+.Couchbase Lite Database Hierarchy
+[plantuml]
+----
+@startuml
+
+
+database "Database" as db
+
+rectangle "Scope" as scope
+
+folder "Collection" as collection
+
+
+
+file "Document" as document1
+file "Document" as document2
+file "Document" as document3
+
+db --> scope
+scope --> collection
+collection --> document1
+collection --> document2
+collection --> document3
+
+
+
+
+note right of collection
+
+  Maximum of 1000 per scope
+
+end note
+
+note right of db
+
+  One database per application
+
+end note
+
+@enduml
+----
+
+Although the terminology is different, the structure can be mapped to relational database terms:
+
+
+.Relational Database -> Couchbase
+[width=70%,grid=none]
+|===
+|Relational database |Couchbase
+
+|Database
+|Database
+
+|Schema
+|Scope
+
+|Table
+|Collection
+|===
+
+This structure gives you plenty of choices when it comes to partitioning your data.
+The most basic structure is to use the single default scope with a single default collection; or you could opt for a structure that allow you to split your collections into logical scopes.
+
+[#cbl-database-structure]
+.Couchbase Lite Examples
+
+[plantuml]
+----
+@startuml
+
+
+database "Couchbase Lite database" as db1 {
+
+      node "_default scope" as dfs1 {
+
+        folder "_default collection" as dfc1 {
+
+        }
+      }
+
+}
+
+database "Couchbase Lite database" as db2 {
+
+
+    node "_default scope" as dfs2 {
+
+      folder "_default collection" as dfc2 {
+
+      }
+
+        folder "Collection A" as collectionA {
+
+        }
+    }
+
+    node "Scope A" as scopeA {
+
+      folder "Collection A" as collectionA2 {
+
+      }
+
+        folder "Collection B" as collectionB {
+
+        }
+    }
+
+}
+
+collectionA2 -D[hidden]-> collectionB
+collectionA -D[hidden]-> dfc2
+@enduml
+----
+
+
+.Storing local configuration
+****
+You may not need to sync all the data related for a particular application. You can set up a scope that syncs data, and a second scope that doesn't.
+
+One reason for doing this is to store local configuration data (such as the preferred screen orientation or keyboard layout). Since this information only relates to a particular device, there is no need to sync it:
+
+[horizontal]
+local data scope:: Contains information pertaining to the device.
+
+syncing data scope:: Contains information pertaining to the user, which can be synced back to the cloud for use on the web or another device.
+
+****
+
+
+[discrete#java:database:::initializer]
+== Initializer
+
+
+Your first step in using the API must be to call its initializer.
+An exception is raised if any other API method is invoked before the initializer.
+
+.Initializer code
+[#ex-init-cdl]
+
+
+[#java:database:::ex-init-cdl]
+====
+
+
+// Show Main Snippet
+// include::java:example$codesnippet_collection.java[tags="sdk-initializer", indent=0]
+[source, Java]
+----
+// Initialize the Couchbase Lite system
+CouchbaseLite.init();
+----
+
+
+
+
+====
+
+
+
+
+[discrete#java:database:::open-db]
+== Create or Open Database
+
+
+You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html[Database] class.
+Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/DatabaseConfiguration.html[DatabaseConfiguration] -- see <<java:database:::ex-dbopen>>.
+
+Things to watch for include:
+
+* If the named database does not exist in the specified, or default, location then a new one is created
+* The database is created in a default location unless you  specify a directory for it -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/DatabaseConfiguration.html[DatabaseConfiguration] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/DatabaseConfiguration.html#setDirectory-java.lang.String-[DatabaseConfiguration.setDirectory()]
++
+--
+
+Typically, the default location for Java is
+the current working directory
+.
+
+See also <<java:database:::lbl-find-db-loc>>.
+--
+
+[#ex-dbopen]
+.Open or create a database
+
+
+[#java:database:::ex-dbopen]
+====
+
+
+// Show Main Snippet
+// include::java:example$codesnippet_collection.java[tags="new-database", indent=0]
+[source, Java]
+----
+Database database = new Database(DB_NAME);
+----
+
+
+
+
+====
+
+
+[discrete#java:database:::close-database]
+== Close Database
+
+You are advised to incorporate the closing of all open databases into your application workflow.
+
+To close a database, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#close--[Database.close()] -- see: <<java:database:::ex-dbclose>>.
+This also closes
+footnote:fn28[Commencing with Release 2.8]
+active replications, listeners and-or live queries connected to the database.
+
+NOTE: Closing a database soon after starting a replication involving it can cause an exception as the asynchronous `replicator (start)` may not yet be `connected`.
+
+.Safely Closing a Database pre 2.8
+TIP: Before closing, check that any attached listeners (query/replication/change) indicate they are at least at `connected` status before closing -- see for example: xref:java:replication.adoc#lbl-repl-mon[Monitor Status].
+
+.Close a Database
+[#ex-dbclose]
+
+
+[#java:database:::ex-dbclose]
+====
+
+
+// Show Main Snippet
+// include::java:example$codesnippet_collection.java[tags="close-database", indent=0]
+[source, Java]
+----
+database.close();
+----
+
+
+
+
+====
+
+
+[discrete#java:database:::database-full-sync]
+== Database Full Sync
+
+Database Full Sync will prevent the loss of transactional data due to an unexpected system crash or loss of power.
+This feature is not enabled by default and must be manually set in your database configuration.
+
+
+CAUTION: Database Full Sync is a safe method to prevent data loss but will incur a significant degredation of performance.
+
+.Enable Database Full Sync
+[#ex-dbfullsync]
+
+
+[#java:database:::ex-dbfullsync]
+====
+
+
+// Show Main Snippet
+// include::java:example$codesnippet_collection.java[tags="database-fullsync", indent=0]
+[source, Java]
+----
+config.setFullSync(true);
+----
+
+
+
+
+====
+
+
+NOTE: It is not possible to change the configuration of a Database after instantiating the Database with the configuration by updating its `DatabaseConfiguration` property.
+
+[discrete#java:database:::database-encryption]
+== Database Encryption
+
+
+
+IMPORTANT: This is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
+
+
+_Couchbase Lite on Java_ includes the ability to encrypt Couchbase Lite databases.
+This allows mobile applications to secure the data at rest, when it is being stored on the device.
+The algorithm used to encrypt the database is 256-bit AES.
+
+[discrete#java:database:::enabling]
+=== Enabling
+To enable encryption, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/DatabaseConfiguration.html#setEncryptionKey(com.couchbase.lite.EncryptionKey)[DatabaseConfiguration.setEncryptionKey()] to set the encryption key of your choice.
+Provide this encryption key every time the database is opened -- see <<java:database:::ex-sdb-encrypt>>.
+
+.Configure Database Encryption
+[#ex-sdb-encrypt]
+
+
+[#java:database:::ex-sdb-encrypt]
+====
+
+
+// Show Main Snippet
+// include::java:example$codesnippet_collection.java[tags="database-encryption", indent=0]
+[source, Java]
+----
+DatabaseConfiguration config = new DatabaseConfiguration();
+config.setEncryptionKey(new EncryptionKey("PASSWORD"));
+Database database = new Database(DB_NAME, config);
+----
+
+
+
+
+====
+
+
+[discrete#java:database:::persisting]
+=== Persisting
+Couchbase Lite does not persist the key.
+It is the application's responsibility to manage the key and store it in a platform-specific secure store such Android's
+https://developer.android.com/training/articles/keystore[Keystore].
+
+[discrete#java:database:::opening]
+=== Opening
+An encrypted database can only be opened with the same platform that was used to encrypt it in the first place.
+So a database encrypted using the Java SDK, and then exported, is readable only by the Java SDK.
+
+[discrete#java:database:::changing]
+=== Changing
+To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#changeEncryptionKey(com.couchbase.lite.EncryptionKey)[Database.changeEncryptionKey()]
+to set the required new encryption-key value.
+
+
+[discrete#java:database:::removing]
+=== Removing
+To remove encryption, open the database using its existing encryption-key and use
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#changeEncryptionKey(com.couchbase.lite.EncryptionKey)[Database.changeEncryptionKey()]
+with a null value as the encryption key.
+
+[discrete#java:database:::upgrading]
+=== Upgrading
+To upgrade an encrypted database see: xref:java:dep-upgrade.adoc#lbl-db-upgrades[Upgrade 1.x databases]
+
+
+[discrete#java:database:::lbl-find-db-loc]
+== Finding a Database File
+
+
+
+By default a pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java database is created in a directory at the current location called  `<databaseName>.cblite2`.
+
+This location is set by the link:https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java//com/couchbase/lite/DatabaseConfiguration.html[DatabaseConfiguration] method.
+See the following example  for how to do this:
+
+[source, source-language]
+----
+DatabaseConfiguration thisConfig = new DatabaseConfiguration(); thisConfig.setDirectory("yourDBpath");
+Database thisDB = new Database("db", thisConfig);
+----
+
+
+[discrete#java:database:::lbl-db-util]
+== Database Maintenance
+
+From time to time it may be necessary to perform certain maintenance activities on your database, for example to
+compact the database file, removing unused documents and blobs no longer referenced by any documents.
+
+Couchbase Lite's API provides the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance()] method.
+The available maintenance operations, including `compact` are as shown in the enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/MaintenanceType.html[MaintenanceType] to accomplish this.
+
+This is a resource intensive operation and is not performed automatically.
+It should be run on-demand using the API.
+If in doubt, consult Couchbase support.
+
+
+[discrete#java:database:::cli-tool]
+== Command Line Tool
+
+// tag::cli-tool[]
+`cblite` is a command-line tool for inspecting and querying Couchbase Lite databases.
+
+You can download and build it from the couchbaselabs https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md[GitHub repository].
+Note that the `cblite` tool is not supported by the https://www.couchbase.com/support-policy[Couchbase Support Policy].
+
+// end::cli-tool[]
+
+[discrete#java:database:::troubleshooting]
+== Troubleshooting
+You should use console logs as your first source of diagnostic information.
+If the information in the default logging level is insufficient you can focus it on database errors and generate more verbose messages -- see: <<java:database:::ex-logdb>>.
+
+For more on using Couchbase logs -- see: xref:java:troubleshooting-logs.adoc[Using Logs].
+
+[#ex-logdb]
+.Increase Level of Database Log Messages
+
+
+[#java:database:::ex-logdb]
+====
+
+
+// Show Main Snippet
+// include::java:example$codesnippet_collection.java[tags="console-logging-db", indent=0]
+[source, Java]
+----
+Database.log.getConsole().setLevel(LogLevel.DEBUG); // <.>
+----
+
+
+
+
+====
+
+
+
+
+[discrete#java:database:::related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:java:gs-prereqs.adoc[Prerequisites]
+* xref:java:gs-install.adoc[Install]
+* xref:java:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#java:database:::-2n]
+=== {empty}
+.Learn more . . .
+* xref:java:database.adoc[Databases]
+* xref:java:document.adoc[Documents]
+* xref:java:blob.adoc[Blobs]
+* xref:java:replication.adoc[Remote Sync Gateway]
+* xref:java:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[discrete.colum#java:database:::-3n]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
+
+

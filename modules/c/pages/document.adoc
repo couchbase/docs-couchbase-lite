@@ -1,13 +1,1211 @@
+:docname: document
+:page-module: c
+:page-relative-src-path: document.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#c:document:::]
 = Documents
 :page-aliases: clang:document.adoc
 :page-toclevels: 2@
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite concepts -- Data model -- Documents
 
-include::partial$_set_page_context_for_c.adoc[]
 
-include::{root-commons}document.adoc[]
 
-include::{root-partials}block-related-content-data.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:c:database.adoc[Databases] | xref:c:blob.adoc[Blobs] | xref:c:indexing.adoc[Indexing] |
+--
+
+
+
+
+[discrete#c:document:::overview]
+== Overview
+
+
+[discrete#c:document:::document-structure]
+=== Document Structure
+
+In pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] the term 'document' refers to an entry in the database.
+You can compare it to a record, or a row in a table.
+
+Each document has an ID or unique identifier.
+This ID is similar to a primary key in other databases.
+
+You can specify the ID programmatically.
+If you omit it, it will be automatically generated as a UUID.
+
+NOTE: Couchbase documents are assigned to a <<c:database:::database-concepts,Collection>>.
+The ID of a document must be unique within the Collection it is written to.
+You cannot change it after you have written the document.
+
+The document also has a value which contains the actual application data.
+This value is stored as a dictionary of key-value (k-v) pairs.
+The values can be made of up several different <<c:document:::data-types>> such as numbers, strings, arrays, and nested objects.
+
+
+[discrete#c:document:::data-encoding]
+=== Data Encoding
+
+The document body is stored in an internal, efficient, binary form called
+https://github.com/couchbaselabs/fleece#readme[Fleece].
+This internal form can be easily converted into a manageable native dictionary format for manipulation in applications.
+
+Fleece data is stored in the smallest format that will hold the value whilst maintaining the integrity of the value.
+
+
+
+
+
+
+[discrete#c:document:::data-types]
+=== Data Types
+
+The `Document` class offers a set of property accessors for various scalar types, such as:
+
+* Boolean
+* Date
+* Double
+* Float
+* Int
+* Long
+* String
+
+These accessors take care of converting to/from JSON encoding, and make sure you get the type you expect.
+
+In addition to these basic data types Couchbase Lite provides for the following:
+
+Dictionary:: represents a read-only key-value pair collection
+MutableDictionary:: represents a writeable key-value pair collection
+Array:: represents a readonly ordered collection of objects
+MutableArray:: represents a writeable collection of objects
+Blob:: represents an arbitrary piece of binary data
+
+
+
+[discrete#c:document:::json]
+=== JSON
+
+Couchbase Lite also provides for the direct handling of JSON data implemented in most cases by the provision of a pass:a,q[`toJSON()`] method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array) -- see <<c:document:::lbl-json-data>>.
+
+
+[discrete#c:document:::constructing-a-document]
+== Constructing a Document
+
+
+An individual document often represents a single instance of an object in application code.
+
+You can consider a document as the equivalent of a 'row' in a relational table,
+with each of the document's attributes being equivalent to a 'column'.
+
+Documents can contain nested structures.
+This allows developers to express many-to-many relationships without requiring a reference or join table,
+and is naturally expressive of hierarchical data.
+
+Most apps will work with one or more documents, persisting them to a local database and optionally syncing them, either centrally or to the cloud.
+
+In this section we provide an example of how you might create a `hotel` document, which provides basic contact details and price data.
+
+.Data Model
+[source]
+----
+
+hotel: {
+  type: string (value = `hotel`)
+  name: string
+  address: dictionary {
+    street: string
+    city: string
+    state: string
+    country: string
+    code: string
+  }
+  phones: array
+  rate: float
+}
+
+----
+
+[discrete#c:document:::ex-usage]
+=== Open a Database
+
+First open your database.
+If the database does not already exist, Couchbase Lite will create it for you.
+
+Couchbase documents are assigned to a <<c:database:::database-concepts,Collection>>.
+All the CRUD examples in this document operate on a `collection` object (here, the Default Collection).
+
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="datatype_usage_createdb", indent=0]
+[source, c]
+----
+// Open or create DB if it doesn't exist
+CBLError err;
+CBLDatabase* database = CBLDatabase_Open(FLSTR("mydb"), NULL, &err);
+
+if(!database) {
+    return;
+}
+
+// Get default collections
+CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
+
+----
+
+
+
+
+See xref:c:database.adoc[Databases] for more information
+
+[discrete#c:document:::create-a-document]
+=== Create a Document
+
+Now create a new document to hold your application's data.
+
+Use the mutable form, so that you can add data to the document.
+
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="datatype_usage_createdoc", indent=0]
+[source, c]
+----
+// Create your new document
+// The lack of 'const' indicates this document is mutable
+CBLDocument* mutableDoc = CBLDocument_Create();
+FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
+
+----
+
+
+
+
+For more on using *Documents*, see <<c:document:::document-initializers>> and <<c:document:::mutability>>.
+
+[discrete#c:document:::create-a-dictionary]
+=== Create a Dictionary
+
+Now create a mutable dictionary (`address`).
+
+Each element of the dictionary value will be directly accessible via its own key.
+
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="datatype_usage_mutdict", indent=0]
+[source, c]
+----
+// Create and populate mutable dictionary
+FLMutableDict address = FLMutableDict_New();
+FLMutableDict_SetString(address, FLSTR("street"), FLSTR("1 Main st."));
+FLMutableDict_SetString(address, FLSTR("city"), FLSTR("San Francisco"));
+FLMutableDict_SetString(address, FLSTR("state"), FLSTR("CA"));
+FLMutableDict_SetString(address, FLSTR("country"), FLSTR("USA"));
+FLMutableDict_SetString(address, FLSTR("code"), FLSTR("90210"));
+
+----
+
+
+
+
+Learn more about <<c:document:::using-dictionaries>>.
+
+[discrete#c:document:::create-an-array]
+=== Create an Array
+
+Since the hotel may have multiple contact numbers, provide a field (`phones`) as a mutable array.
+
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="datatype_usage_mutarray", indent=0]
+[source, c]
+----
+// Create and populate mutable array
+FLMutableArray phones = FLMutableArray_New();
+FLMutableArray_AppendString(phones, FLSTR("650-000-0000"));
+FLMutableArray_AppendString(phones, FLSTR("650-000-0001"));
+
+----
+
+
+
+
+Learn more about <<c:document:::using-arrays>>
+
+[discrete#c:document:::populate-a-document]
+=== Populate a Document
+
+Now add your data to the mutable document created earlier.
+Each data item is stored as a key-value pair.
+
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="datatype_usage_populate", indent=0]
+[source, c]
+----
+// Initialize and populate the document
+
+    // Add document type and hotel name as string
+FLMutableDict_SetString(properties, FLSTR("type"), FLSTR("hotel"));
+FLMutableDict_SetString(properties, FLSTR("hotel"), FLSTR(""));
+
+// Add average room rate (float)
+FLMutableDict_SetFloat(properties, FLSTR("room_rate"), 121.75f);
+
+// Add address (dictionary)
+FLMutableDict_SetDict(properties, FLSTR("address"), address);
+
+    // Add phone numbers(array)
+FLMutableDict_SetArray(properties, FLSTR("phones"), phones);
+
+----
+
+
+
+
+
+NOTE: Couchbase recommend using a `type` attribute to define each logical document type.
+
+
+[discrete#c:document:::save-a-document]
+=== Save a Document
+
+Now persist the populated document to your Couchbase Lite database.
+This will auto-generate the document id.
+
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="datatype_usage_persist", indent=0]
+[source, c]
+----
+CBLError err;
+CBLCollection_SaveDocument(collection, mutableDoc, &err);
+----
+
+
+
+
+[discrete#c:document:::close-the-database]
+=== Close the Database
+
+With your document saved, you can now close our Couchbase Lite database.
+
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="datatype_usage_closedb", indent=0]
+[source, c]
+----
+CBLError err;
+CBLDatabase_Close(database, &err);
+----
+
+
+
+
+[discrete#c:document:::release-resources]
+=== Release resources
+
+Finally, release the resources.
+
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="datatype_usage_release", indent=0]
+[source, c]
+----
+CBLDatabase_Release(database);
+CBLDocument_Release(mutableDoc);
+FLMutableDict_Release(address);
+FLMutableArray_Release(phones);
+----
+
+
+
+
+
+[discrete#c:document:::working-with-data]
+== Working with Data
+
+
+
+
+
+
+[discrete#c:document:::using-dictionaries]
+=== Using Dictionaries
+
+.API References
+
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__f_l_dict.html[Fleece Dictionaries]
+
+
+
+.Read Only
+[#ex-dict]
+
+
+[#c:document:::ex-dict]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="datatype_dictionary", indent=0]
+[source, c]
+----
+CBLError err;
+const CBLDocument *doc = CBLCollection_GetDocument(collection, FLSTR("doc1"), &err);
+FLDict properties = CBLDocument_Properties(doc);
+
+// Getting a dictionary from the document's properties
+FLValue dictValue = FLDict_Get(properties, FLSTR("address"));
+FLDict dict = FLValue_AsDict(dictValue);
+
+// Access a value with a key from the dictionary
+FLValue streetVal = FLDict_Get(dict, FLSTR("street"));
+FLString street = FLValue_AsString(streetVal);
+
+// Iterate dictionary
+FLDictIterator iter;
+FLDictIterator_Begin(dict, &iter);
+FLValue value;
+while (NULL != (value = FLDictIterator_GetValue(&iter))) {
+    FLString key = FLDictIterator_GetKeyString(&iter);
+    FLString strValue = FLValue_AsString(value);
+    printf("Key :: %.*s\n", (int)key.size, (const char *)key.buf);
+    printf("Value :: %.*s\n", (int)strValue.size, (const char *)strValue.buf);
+    // ...
+    FLDictIterator_Next(&iter);
+}
+
+// Create a mutable copy.
+// kFLDefaultCopy is shallow which means the nested dictionaries and arrays will be
+// referenced but not copied. Use kFLDeepCopyImmutables for the deep copy.
+FLMutableDict mutableDict = FLDict_MutableCopy(dict, kFLDefaultCopy);
+
+// Release when finish using it
+FLMutableDict_Release(mutableDict);
+----
+
+
+
+
+====
+
+
+
+.Mutable
+[#ex-mutdict]
+
+
+[#c:document:::ex-mutdict]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="datatype_mutable_dictionary", indent=0]
+[source, c]
+----
+// Create a new mutable dictionary and populate some keys/values
+FLMutableDict dict = FLMutableDict_New();
+FLMutableDict_SetString(dict, FLSTR("street"), FLSTR("1 Main st."));
+FLMutableDict_SetString(dict, FLSTR("city"), FLSTR("San Francisco"));
+
+// Set the dictionary to document's properties and save the document
+CBLDocument *doc = CBLDocument_Create();
+FLMutableDict properties = CBLDocument_MutableProperties(doc);
+FLMutableDict_SetDict(properties, FLSTR("address"), dict);
+CBLError err;
+CBLCollection_SaveDocument(collection, doc, &err);
+CBLDocument_Release(doc);
+
+// Release when finish using it
+FLMutableDict_Release(dict);
+----
+
+
+
+
+====
+
+
+[discrete#c:document:::using-arrays]
+=== Using Arrays
+
+.API References
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__f_l_array.html[Fleece Arrays]
+
+* 
+
+.Read Only
+[#ex-array]
+
+
+[#c:document:::ex-array]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="datatype_array", indent=0]
+[source, c]
+----
+CBLError err;
+const CBLDocument *doc = CBLCollection_GetDocument(collection, FLSTR("doc1"), &err);
+FLDict properties = CBLDocument_Properties(doc);
+
+// Getting a phones array from the document's properties
+FLValue arrayValue = FLDict_Get(properties, FLSTR("phones"));
+FLArray array = FLValue_AsArray(arrayValue);
+
+// Get element count
+int count = FLArray_Count(array);
+printf("Count :: %d\n", count);
+
+// Access an array element by index
+if (!FLArray_IsEmpty(array)) {
+    FLValue phoneVal = FLArray_Get(array, 0);
+    FLString phone = FLValue_AsString(phoneVal);
+    printf("Value :: %.*s\n", (int)phone.size, (const char *)phone.buf);
+}
+
+// Iterate array
+FLArrayIterator iter;
+FLArrayIterator_Begin(array, &iter);
+FLValue val;
+while (NULL != (val = FLArrayIterator_GetValue(&iter)))
+{
+    FLString str = FLValue_AsString(val);
+    printf("Value :: %.*s\n", (int)str.size, (const char *)str.buf);
+    FLArrayIterator_Next(&iter);
+}
+----
+
+
+
+
+====
+
+
+.Mutable
+[#ex-mutarray]
+
+
+[#c:document:::ex-mutarray]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="datatype_mutable_array", indent=0]
+[source, c]
+----
+// Create a new mutable array and populate data into the array
+FLMutableArray phones = FLMutableArray_New();
+FLMutableArray_AppendString(phones, FLSTR("650-000-0000"));
+FLMutableArray_AppendString(phones, FLSTR("650-000-0001"));
+
+// Set the array to document's properties and save the document
+CBLDocument *doc = CBLDocument_Create();
+FLMutableDict properties = CBLDocument_MutableProperties(doc);
+FLMutableDict_SetArray(properties, FLSTR("phones"), phones);
+CBLError err;
+CBLCollection_SaveDocument(collection, doc, &err);
+CBLDocument_Release(doc);
+
+// Release the created dictionary
+FLMutableArray_Release(phones);
+----
+
+
+
+
+====
+
+
+
+[discrete#c:document:::using-blobs]
+=== Using Blobs
+
+For more on working with blobs, see xref:c:blob.adoc[Blobs]
+
+
+[discrete#c:document:::document-initializers]
+== Document Initializers
+
+
+You can use the following methods/initializers:
+
+* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__documents.html#ga226f555fffb7543558048af20b18b737[CBLDocument_Create()] initializer to create a new document where the document ID is randomly generated by the database.
+
+* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__documents.html#gaec41cf2eab4e3ac490f11007f665a35e[CBLDocument_CreateWithID()] initializer to create a new document with a specific ID.
+
+* Use the {url-api-method-collection-getdocument} method to get a document.
+If the document doesn't exist in the collection, the method will return `null`.
+You can use this behavior to check if a document with a given ID already exists in the collection.
+
+
+.Persist a document
+[#ex-persists-doc]
+
+
+[#c:document:::ex-persists-doc]
+====
+
+pass:q,a[The following code example creates a document and persists it to the database.]
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="initializer", indent=0]
+[source, c]
+----
+
+CBLDocument* doc = CBLDocument_CreateWithID(FLSTR("xyz"));
+FLMutableDict properties = CBLDocument_MutableProperties(doc);
+FLMutableDict_SetString(properties, FLSTR("type"), FLSTR("task"));
+FLMutableDict_SetString(properties, FLSTR("owner"), FLSTR("todo"));
+
+// Storing time in millisecond, bluntly
+FLMutableDict_SetUInt(properties, FLSTR("createdAt"), time(NULL) * 1000);
+
+CBLError err;
+CBLCollection_SaveDocument(collection, doc, &err);
+CBLDocument_Release(doc);
+----
+
+
+
+
+====
+
+
+
+[discrete#c:document:::mutability]
+== Mutability
+
+
+Couchbase Lite for C's `CBLDocument*` objects can be either mutable or immutable.
+Reference an immutable document using a `const` pointer and a mutable document using a non-const pointer to prevent developers from accidentally calling a mutable-document function on an immutable document.
+
+To make an immutable document mutable, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__documents.html#ga0356b98d2f1798adc8f549510d3eef67[CBLDocument_MutableCopy()].
+
+[source,c, subs="attributes+, macros+"]
+----
+CBLDocument* CBLDocument_MutableCopy(const CBLDocument* doc _cbl_nonnull)
+_cbl_warn_unused _cbl_returns_nonnull;
+----
+
+
+.Make a mutable document
+[#ex-update-doc]
+
+
+[#c:document:::ex-update-doc]
+====
+
+pass:q,a[Changes to the document are persisted to the database when the `save` method is called.]
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="update-document", indent=0]
+[source, c]
+----
+
+CBLError err;
+CBLDocument* mutableDoc = CBLCollection_GetMutableDocument(collection, FLSTR("xyz"), &err);
+FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
+FLMutableDict_SetString(properties, FLSTR("name"), FLSTR("apples"));
+CBLCollection_SaveDocument(collection, mutableDoc, &err);
+CBLDocument_Release(mutableDoc);
+----
+
+
+
+
+====
+
+
+NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<c:document:::lbl-doc-constraints>>.
+
+
+
+
+[discrete#c:document:::batch-operations]
+== Batch operations
+
+If you're making multiple changes to a database at once, it's faster to group them together.
+The following example persists a few documents in batch.
+
+.Batch operations
+[#ex-batch-ops]
+
+
+[#c:document:::ex-batch-ops]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="batch", indent=0]
+[source, c]
+----
+
+CBLError err;
+CBLDatabase_BeginTransaction(database, &err);
+char buffer[7];
+for(int i = 0; i < 10; i++) {
+    CBLDocument* doc = CBLDocument_Create();
+    FLMutableDict properties = CBLDocument_MutableProperties(doc);
+    FLMutableDict_SetString(properties, FLSTR("type"), FLSTR("user"));
+    sprintf(buffer, "user %d", i);
+    FLMutableDict_SetString(properties, FLSTR("name"), FLStr(buffer));
+    FLMutableDict_SetBool(properties, FLSTR("admin"), false);
+    CBLCollection_SaveDocument(collection, doc, &err);
+    CBLDocument_Release(doc);
+    printf("Saved user document %s\n", buffer);
+}
+
+CBLDatabase_EndTransaction(database, true, &err);
+----
+
+
+
+
+====
+
+
+At the *local* level this operation is still transactional: no other `Database` instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
+But Couchbase Mobile is a distributed system, and due to the way replication works, there's no guarantee that Sync Gateway or other devices will receive your changes all at once.
+
+
+[discrete#c:document:::document-change-events]
+== Document change events
+
+You can register for document changes.
+The following example registers for changes to the document with ID `user.john` and prints the `verified_account` property when a change is detected.
+
+
+.Document change events
+[#ex-doc-events]
+
+
+[#c:document:::ex-doc-events]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="document-listener", indent=0]
+[source, c]
+----
+CBLListenerToken* token = CBLCollection_AddDocumentChangeListener(collection, FLSTR("user.john"),
+    document_listener, NULL);
+----
+
+
+
+
+====
+
+
+
+
+[discrete#c:document:::document-expiration]
+== Document Expiration
+
+Document expiration allows users to set the expiration date for a document.
+When the document expires, it is purged from the database.
+The purge is not replicated to Sync Gateway.
+
+.Set document expiration
+[#ex-set-doc-exp]
+
+
+[#c:document:::ex-set-doc-exp]
+====
+
+This example sets the TTL for a document to 1 day from the current time.
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="document-expiration", indent=0]
+[source, c]
+----
+// Purge the document one day from now
+
+// Overly simplistic for example purposes
+// NOTE: API takes milliseconds
+time_t ttl = time(NULL) + 24 * 60 * 60;
+ttl *= 1000;
+
+CBLError err;
+CBLCollection_SetDocumentExpiration(collection, FLSTR("doc123"), ttl, &err);
+
+// Reset expiration
+CBLCollection_SetDocumentExpiration(collection, FLSTR("doc1"), 0, &err);
+
+// Query documents that will be expired in less than five minutes
+time_t fiveMinutesFromNow = time(NULL) + 5 * 60;
+fiveMinutesFromNow *= 1000;
+FLMutableDict parameters = FLMutableDict_New();
+FLMutableDict_SetInt(parameters, FLSTR("five_minutes"), fiveMinutesFromNow);
+
+CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+    FLSTR("SELECT meta().id FROM _ WHERE meta().expiration < $five_minutes"), NULL, &err);
+CBLQuery_SetParameters(query, parameters);
+FLMutableDict_Release(parameters);
+----
+
+
+
+
+====
+
+
+You can set expiration for a whole Collection
+
+[discrete#c:document:::lbl-doc-constraints]
+== Document Constraints
+
+Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
+This is to facilitate the creation of documents for use either in _local only_ mode where documents are not synced, or when used exclusively in peer-to-peer sync.
+
+NOTE: "_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes -- see <<c:document:::res-keys>>.
+
+Users are cautioned that any attempt to sync such documents to Sync Gateway will result in an error.
+To be future proof, you are advised to avoid creating such documents.
+Use of these attributes for user-level data may result in undefined system behavior.
+
+For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway - data modeling guidelines]
+
+[#c:document:::res-keys]
+.Reserved Keys List
+====
+
+* _attachments
+
+* _deleted footnote:fn1[Any change to this reserved key will be detected when it is saved and will result in a Couchbase exception (Error Code 5 -- `CorruptRevisionData`)]
+
+* _id footnote:fn1[]
+
+* _removed
+
+* _rev footnote:fn1[]
+
+* _sequence
+====
+
+
+[discrete#c:document:::lbl-json-data]
+== Working with JSON Data
+
+In this section::
+<<c:document:::lbl-array>>
+| <<c:document:::lbl-dictionary>>
+| <<c:document:::lbl-document>>
+| <<c:document:::lbl-result>>
+
+
+The pass:a,q[`toJSON()`] typed-accessor means you can easily work with JSON data, native and Couchbase Lite objects.
+
+[discrete#c:document:::lbl-array]
+=== Arrays
+
+Convert an `ArrayObject` to and from JSON using the pass:a,q[`toJSON()`] and `toArray` methods -- see <<c:document:::ex-array>>.
+
+Additionally you can:
+
+* Initialize a 'MutableArrayObject' using data supplied as a JSON string.
+This is done using the `init(json)` constructor -- see: <<c:document:::ex-array>>
+
+* Convert an `ArrayFragment` object to a JSON String
+
+* Set data with a JSON string using `setJSON()`
+
+.Arrays as JSON strings
+[#ex-array]
+
+
+[#c:document:::ex-array]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="tojson-array", indent=0]
+[source, c]
+----
+FLString json = FLSTR("[\"Hotel Ned\", \"Hotel Ted\"]");
+
+// Create an array from the JSON string
+FLError err;
+FLSliceResult jsonData1 = FLData_ConvertJSON(json, &err);
+FLArray hotels = FLValue_AsArray(FLValue_FromData(FLSliceResult_AsSlice(jsonData1), kFLTrusted));
+
+// Iterate through the array
+FLArrayIterator iter;
+FLArrayIterator_Begin(hotels, &iter);
+FLValue value;
+while (NULL != (value = FLArrayIterator_GetValue(&iter))) {
+    FLString hotel = FLValue_AsString(value);
+    printf("Hotel :: %.*s\n", (int)hotel.size, (const char *)hotel.buf);
+    FLArrayIterator_Next(&iter);
+}
+
+// Convert the array to JSON
+FLSliceResult jsonData2 = FLValue_ToJSON((FLValue)hotels);
+printf("Hotels in JSON :: %.*s\n", (int)jsonData2.size, (const char *)jsonData2.buf);
+
+// Release JSON data after finish using it
+FLSliceResult_Release(jsonData1);
+FLSliceResult_Release(jsonData2);
+----
+
+
+
+
+====
+
+
+
+[discrete#c:document:::lbl-dictionary]
+=== Dictionaries
+
+Convert a `DictionaryObject` to and from JSON using the `toJSON` and `toDictionary` methods -- see <<c:document:::ex-dictionary>>.
+
+Additionally you can:
+
+* Initialize a 'MutableDictionaryObject' using data supplied as a JSON string.
+This is done using the `init(json)` constructor-- see: <<c:document:::ex-dictionary>>
+
+* Set data with a JSON string using `setJSON()`
+
+[#ex-dictionary]
+.Dictionaries as JSON strings
+
+
+[#c:document:::ex-dictionary]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="tojson-dictionary", indent=0]
+[source, c]
+----
+FLString json = FLSTR("{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",\"country\":\"Australia\"}");
+
+// Create a dictionary from the JSON string
+FLError err;
+FLSliceResult jsonData1 = FLData_ConvertJSON(json, &err);
+FLDict hotel = FLValue_AsDict(FLValue_FromData(FLSliceResult_AsSlice(jsonData1), kFLTrusted));
+
+// Iterate through the dictionary
+FLDictIterator iter;
+FLDictIterator_Begin(hotel, &iter);
+FLValue value;
+while (NULL != (value = FLDictIterator_GetValue(&iter))) {
+    FLString key = FLDictIterator_GetKeyString(&iter);
+    FLString strValue = FLValue_AsString(value);
+    printf("%.*s :: %.*s\n", (int)key.size, (const char*)key.buf, (int)strValue.size, (const char*)strValue.buf);
+    FLDictIterator_Next(&iter);
+}
+
+// Convert the dictionary to JSON
+FLSliceResult jsonData2 = FLValue_ToJSON((FLValue)hotel);
+printf("Hotel in JSON :: %.*s\n", (int)jsonData2.size, (const char *)jsonData2.buf);
+
+// Release JSON data after finish using it
+FLSliceResult_Release(jsonData1);
+FLSliceResult_Release(jsonData2);
+----
+
+
+
+
+====
+
+
+[discrete#c:document:::lbl-document]
+=== Documents
+
+Convert a `Document` to and from JSON strings using the pass:a,q[`toJSON()`] and pass:a,q[`setJSON()`] methods -- see <<c:document:::ex-document>>.
+
+Additionally you can:
+
+* Initialize a 'MutableDocument' using data supplied as a JSON string.
+This is done using the `init(json)` or `init(id: json:)` constructor -- see: <<c:document:::ex-document>>
+
+* Set data with a JSON string using `setJSON()`
+
+.Documents as JSON strings
+[#ex-document]
+
+
+[#c:document:::ex-document]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="query-get-all;tojson-document", indent=0]
+[source, c]
+----
+FLString json = FLSTR("{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",\"country\":\"Australia\"}");
+
+// Create a document and set the JSON data to the document
+CBLError err;
+CBLDocument* newDoc = CBLDocument_CreateWithID(FLSTR("hotel_1002"));
+CBLDocument_SetJSON(newDoc, json, &err);
+
+// Save the document to the database
+CBLCollection_SaveDocument(collection, newDoc, &err);
+
+// Release created doc after using it
+CBLDocument_Release(newDoc);
+
+// Get the document from the database
+const CBLDocument* doc = CBLCollection_GetDocument(collection, FLSTR("hotel_1002"), &err);
+
+// Get document body as JSON
+FLSliceResult docJson = CBLDocument_CreateJSON(doc);
+printf("Document in JSON :: %.*s\n", (int)docJson.size, (const char *)docJson.buf);
+
+// Release JSON data after using it
+FLSliceResult_Release(docJson);
+
+// Release doc read from the database after using it
+CBLDocument_Release(doc);
+----
+
+
+
+
+====
+
+
+[discrete#c:document:::lbl-result]
+=== Query Results as JSON
+
+Convert a `Query Result` to JSON using its {to-JSON} accessor method.
+
+[#ex-json]
+.Using JSON Results
+
+
+[#c:document:::ex-json]
+====
+
+pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__json.html#ga3450acc0690101545d75986b91e4080[FLValue_ToJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<c:document:::ex-json>> for a working example.]
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="query-access-json", indent=0]
+[source, c]
+----
+CBLResultSet* results = CBLQuery_Execute(query, &err);
+while(CBLResultSet_Next(results)) {
+    FLDict result = CBLResultSet_ResultDict(results);
+    FLStringResult json = FLValue_ToJSON((FLValue)result);
+    printf("JSON Result :: %.*s\n", (int)json.size, (const char *)json.buf);
+    FLSliceResult_Release(json);
+}
+CBLResultSet_Release(results);
+
+----
+
+
+
+
+====
+
+
+.JSON String Format
+[#c:document:::ex-json-format]
+If your query selects ALL then the JSON format will be:
+
+[source, JSON]
+----
+{
+  database-name: {
+    key1: "value1",
+    keyx: "valuex"
+  }
+}
+----
+
+If your query selects a sub-set of available properties then the JSON format will be:
+
+[source, JSON]
+----
+{
+  key1: "value1",
+  keyx: "valuex"
+}
+----
+
+
+
+
+
+[discrete#c:document:::related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:c:gs-prereqs.adoc[Prerequisites]
+* xref:c:gs-install.adoc[Install]
+* xref:c:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#c:document:::-2n]
+=== {empty}
+.Learn more . . .
+* xref:c:database.adoc[Databases]
+* xref:c:document.adoc[Documents]
+* xref:c:blob.adoc[Blobs]
+* xref:c:replication.adoc[Remote Sync Gateway]
+* xref:c:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[discrete.colum#c:document:::-3n]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
+
+
+
+[discrete#c:document:::related-content-2]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[discrete.colum#c:document:::-4n]
+=== {empty}
+.How to . . .
+* xref:c:gs-prereqs.adoc[Prerequisites]
+* xref:c:gs-install.adoc[Install]
+* xref:c:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#c:document:::-5n]
+=== {empty}
+.Learn more . . .
+* xref:c:database.adoc[Databases]
+* xref:c:document.adoc[Documents]
+* xref:c:blob.adoc[Blobs]
+* xref:c:replication.adoc[Remote Sync Gateway]
+* xref:c:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[discrete.colum#c:document:::-6n]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
+
+:page-toclevels: 2
+

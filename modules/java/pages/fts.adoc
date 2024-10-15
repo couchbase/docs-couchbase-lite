@@ -1,21 +1,433 @@
-= Using Full-Text Search
+:docname: fts
+:page-module: java
+:page-relative-src-path: fts.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#java:fts:::]
+== Full Text Search
 :page-aliases: learn/java-fts.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Working with Couchbase Lite's data model  -- Querying the database using full text search
 
-include::partial$_set_page_context_for_java.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // define abstract -- no include in root-commons content
 // :param-abstract!:
-// :param-related: {querybuilder--xref--predictive-query} | {indexing--xref} | {querybuilder--xref}
+// :param-related: xref:java:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:java:indexing.adoc[Indexing] | xref:java:querybuilder.adoc[QueryBuilder]
 // :topic-group: Queries
-// include::{root-partials}_show_page_header_block.adoc[]
+// include::ROOT:partial$_show_page_header_block.adoc[]
 
 // Present common content
-include::{root-commons}fts.adoc[subs="macros,attributes"]
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:java:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:java:indexing.adoc[Indexing] | xref:java:querybuilder.adoc[QueryBuilder]
+--
+
+[discrete#java:fts:::overview]
+=== Overview
+To run a full-text search (FTS) query, you must create a full-text index on the expression being matched.
+Unlike regular queries, the index is not optional.
+
+You can choose to use {sqlpp} or QueryBuilder syntaxes to create and use FTS indexes.
+
+The following examples use the data model introduced in xref:java:indexing.adoc[Indexing].
+They create and use an FTS index built from the hotel's `Overview` text.
+
+[discrete#java:fts:::sql]
+=== {sqlpp}
+
+[discrete#java:fts:::create-index]
+==== Create Index
+
+{sqlpp} provides a configuration object to define Full Text Search indexes -- `FullTextIndexConfiguration`.
+
+.Using {sqlpp}'s FullTextIndexConfiguration
+[#ex-indexbuilder]
+
+
+[#java:fts:::ex-indexbuilder]
+====
+
+
+// Show Main Snippet
+// include::java:example$codesnippet_collection.java[tags="fts-index", indent=0]
+[source, Java]
+----
+FullTextIndexConfiguration config = new FullTextIndexConfiguration("Overview").ignoreAccents(false);
+collection.createIndex("overviewFTSIndex", config);
+----
+
+
+
+
+====
+
+
+[discrete#java:fts:::use-index]
+==== Use Index
+
+FullTextSearch is enabled using the {sqlpp} match() function.
+
+With the index created, you can construct and run a Full-text search (FTS) query using the indexed properties.
+
+The index will omit a set of common words, to avoid words like "I", "the", "an" from overly influencing your queries.
+See https://github.com/couchbasedeps/sqlite3-unicodesn/blob/HEAD/stopwords_en.h[full list of these **stopwords**].
+
+The following example finds all hotels mentioning _Michigan_ in their _Overview_ text.
+
+.Using {sqlpp} Full Text Search
+[#ex-indexbuilder]
+
+
+[#java:fts:::ex-indexbuilder]
+====
+
+
+// Show Main Snippet
+// include::java:example$codesnippet_collection.java[tags="fts-query", indent=0]
+[source, Java]
+----
+Query ftsQuery =
+    database.createQuery(
+        "SELECT _id, overview FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK"
+            + "(overviewFTSIndex)");
+
+
+try (ResultSet resultSet = ftsQuery.execute()) {
+    for (Result result: resultSet) {
+        Logger.log(result.getString("id") + ": " + result.getString("overview"));
+    }
+}
+----
+
+
+
+
+====
+
+
+[discrete#java:fts:::querybuilder]
+=== QueryBuilder
+
+[discrete#java:fts:::create-index-2]
+==== Create Index
+The following example creates an FTS index on the `overview` property.
+
+.Using the IndexBuilder method
+[#ex-indexbuilder-queyrbuilder]
+
+
+[#java:fts:::ex-indexbuilder-queyrbuilder]
+====
+
+
+// Show Main Snippet
+// include::java:example$codesnippet_collection.java[tags="fts-index_Querybuilder", indent=0]
+[source, Java]
+----
+collection.createIndex(
+    "overviewFTSIndex",
+    IndexBuilder.fullTextIndex(FullTextIndexItem.property("overviewFTSIndex")).ignoreAccents(false));
+----
+
+
+
+
+====
+
+
+
+[discrete#java:fts:::use-index-2]
+==== Use Index
+With the index created, you can construct and run a Full-text search (FTS) query using the indexed properties.
+
+The following example finds all hotels mentioning _Michigan_ in their _Overview_ text.
+
+.Using QueryBuilder Full Text Search
+[#ex-indexbuilder]
+
+
+[#java:fts:::ex-indexbuilder]
+====
+
+
+// Show Main Snippet
+// include::java:example$codesnippet_collection.java[tags="fts-query_Querybuilder", indent=0]
+[source, Java]
+----
+Expression whereClause = FullTextFunction.match(
+    Expression.fullTextIndex("overviewFTSIndex"),
+    "'michigan'");
+Query ftsQuery =
+    QueryBuilder.select(
+            SelectResult.expression(Meta.id),
+            SelectResult.property("overview"))
+        .from(DataSource.collection(collection))
+        .where(whereClause);
+
+
+try (ResultSet resultSet = ftsQuery.execute()) {
+    for (Result result: resultSet) {
+        Logger.log(result.getString("id") + ": " + result.getString("overview"));
+    }
+}
+----
+
+
+
+
+====
+
+
+
+[discrete#java:fts:::operation]
+=== Operation
+
+In the examples above, the pattern to match is a word, the full-text search query matches all documents that contain the word "michigan" in the value of the `doc.overview` property.
+
+Search is supported for all languages that use whitespace to separate words.
+
+Stemming, which is the process of fuzzy matching parts of speech, like "fast" and "faster", is supported in the following languages: Danish, Dutch, English, Finnish, French, German, Hungarian, Italian, Norwegian, Portuguese, Romanian, Russian, Spanish, Swedish and Turkish.
+
+
+[discrete#java:fts:::pattern-matching-formats]
+=== Pattern Matching Formats
+
+
+As well as providing specific words or strings to match against, you can provide the pattern to match in these formats.
+
+[discrete#java:fts:::prefix-queries]
+==== Prefix Queries
+
+The query expression used to search for a term prefix is the prefix itself with a "*" character appended to it.
+
+.Prefix query
+====
+Query for all documents containing a term with the prefix "lin".
+....
+"lin*"
+....
+
+This will match
+
+* All documents that contain "linux"
+* And ... those that contain terms "linear","linker", "linguistic" and so on.
+====
+
+[discrete#java:fts:::overriding-the-property-name]
+==== Overriding the Property Name
+
+Normally, a token or token prefix query is matched against the document property specified as the left-hand side of the `match` operator.
+This may be overridden by specifying a property name followed by a ":" character before a basic term query.
+There may be space between the ":" and the term to query for, but not between the property name and the ":" character.
+
+.Override indexed property name
+====
+Query the database for documents for which the term "linux" appears in the document title, and the term "problems" appears in either the title or body of the document.
+....
+'title:linux problems'
+....
+====
+
+
+[discrete#java:fts:::phrase-queries]
+==== Phrase Queries
+
+A _phrase query_ is one that retrieves all documents containing a nominated set of terms or term prefixes in a specified order with no intervening tokens.
+
+Phrase queries are specified by enclosing a space separated sequence of terms or term prefixes in double quotes (").
+
+.Phrase query
+====
+Query for all documents that contain the phrase "linux applications".
+....
+"linux applications"
+....
+====
+
+[discrete#java:fts:::near-queries]
+==== NEAR Queries
+A NEAR query is a query that returns documents that contain a two or more nominated terms or phrases within a specified proximity of each other (by default with 10 or less intervening terms).
+A NEAR query is specified by putting the keyword "NEAR" between two phrase, token or token prefix queries.
+To specify a proximity other than the default, an operator of the form "NEAR/" may be used, where is the maximum number of intervening terms allowed.
+
+.Near query
+====
+Search for a document that contains the phrase "replication" and the term "database" with not more than 2 terms separating the two.
+....
+"database NEAR/2 replication"
+....
+====
+
+[discrete#java:fts:::and-or-not-query-operators]
+==== AND, OR & NOT Query Operators::
+The enhanced query syntax supports the AND, OR and NOT binary set operators.
+Each of the two operands to an operator may be a basic FTS query, or the result of another AND, OR or NOT set operation.
+Operators must be entered using capital letters.
+Otherwise, they are interpreted as basic term queries instead of set operators.
+
+.Using And, Or and Not
+====
+Return the set of documents that contain the term "couchbase", and the term "database".
+....
+"couchbase AND database"
+....
+
+====
+
+[discrete#java:fts:::operator-precedence]
+==== Operator Precedence
+When using the enhanced query syntax, parenthesis may be used to specify the precedence of the various operators.
+
+.Operator precedence
+====
+Query for the set of documents that contains the term "linux", and at least one of the phrases "couchbase database" and "sqlite library".
+....
+'("couchbase database" OR "sqlite library") AND "linux"'
+....
+====
+
+[discrete#java:fts:::ordering-results]
+=== Ordering Results
+
+It's very common to sort full-text results in descending order of relevance.
+This can be a very difficult heuristic to define, but Couchbase Lite comes with a ranking function you can use.
+
+In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the property or expression being searched, to represent the ranking of the result.
+
+
+
+
+[discrete#java:fts:::related-content]
+=== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+==== {empty}
+.How to . . .
+* xref:java:querybuilder.adoc[QueryBuilder]
+* xref:java:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
+* xref:java:query-live.adoc[Live Queries]
+* xref:java:fts.adoc[Full Text Search]
+
+
+.
+
+[discrete.colum#java:fts:::-2n]
+==== {empty}
+.Learn more . . .
+* xref:java:query-n1ql-mobile-querybuilder-diffs.adoc[{sqlpp} Mobile - Querybuilder  Differences]
+* xref:java:query-n1ql-mobile-server-diffs.adoc[{sqlpp} Mobile - {sqlpp} Server Differences]
+* xref:java:query-resultsets.adoc[Query Resultsets]
+* xref:java:query-troubleshooting.adoc[Query Troubleshooting]
+* xref:java:query-live.adoc[Live Queries]
+
+* xref:java:database.adoc[Databases]
+* xref:java:document.adoc[Documents]
+* xref:java:blob.adoc[Blobs]
+
+.
+
+
+[discrete.colum#java:fts:::-3n]
+==== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
 
 // Include common footer block -- this is now part of
 // Common Content component for this page
-// include::{root-partials}block-related-content-query.adoc[]
+// include::ROOT:partial$block-related-content-query.adoc[]
+
+

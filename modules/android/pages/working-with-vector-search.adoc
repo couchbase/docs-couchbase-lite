@@ -1,9 +1,16 @@
-= Working with Vector Search
+:docname: working-with-vector-search
+:page-module: android
+:page-relative-src-path: working-with-vector-search.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#android:working-with-vector-search:::]
+=== Working with Vector Search
 :page-status:
 :page-edition: Enterprise
-:page-aliases: 
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
+:page-aliases:
 :page-role:
 :description: Use Vector Search with Full Text Search and Query.
 :keywords: edge AI api swift ios macos apple vector search generative
@@ -11,18 +18,21 @@ ifdef::prerelease[:page-status: {prerelease}]
 [abstract]
 {description}
 
-== Use Vector Search
+[discrete#android:working-with-vector-search:::use-vector-search]
+==== Use Vector Search
 
-To configure a project to use vector search, follow the xref:android:gs-install.adoc[installation instructions] to add the Vector Search extension.
+To configure a project to use vector search, follow the <<android:gs-install:::,installation instructions>> to add the Vector Search extension.
 
 NOTE: You must install Couchbase Lite to use the Vector Search extension.
 
-== Create a Vector Index
+[discrete#android:working-with-vector-search:::create-a-vector-index]
+==== Create a Vector Index
 
 This method shows how you can create a vector index using the Couchbase Lite Vector Search extension.
 
-[tabs]
+[tab#android:working-with-vector-search:::tabs-1s]
 =====
+
 
 Java::
 +
@@ -30,7 +40,16 @@ Java::
 [source, java]
 ----
 
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-custom-config, indent=2]
+  // create the configuration for a vector index named "vector"
+  // with 3 dimensions, 100 centroids, no encoding, using cosine distance
+  // with a max training size 5000 and amin training size 2500
+  // no vector encoding and using COSINE distance measurement
+  VectorIndexConfiguration config = new VectorIndexConfiguration("vector", 3L, 100L)
+      .setEncoding(VectorEncoding.none())
+      .setMetric(VectorIndexConfiguration.DistanceMetric.COSINE)
+      .setNumProbes(8L)
+      .setMinTrainingSize(2500L)
+      .setMaxTrainingSize(5000L);
 
 ----
 
@@ -48,13 +67,27 @@ From there, you create an index within a given collection using the previously g
 
 --
 
+
 Kotlin::
 +
 --
 [source, kotlin]
 ----
 
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-custom-config, indent=2]
+  // create the configuration for a vector index named "vector"
+  // with 3 dimensions, 100 centroids, no encoding, using cosine distance
+  // with a max training size 5000 and amin training size 2500
+  // no vector encoding and using COSINE distance measurement
+  val config = VectorIndexConfigurationFactory.newConfig(
+      "vector",
+      3L,
+      100L,
+      encoding = VectorEncoding.none(),
+      metric = VectorIndexConfiguration.DistanceMetric.COSINE,
+      numProbes = 8L,
+      minTrainingSize = 2500L,
+      maxTrainingSize = 5000L
+  )
 
 ----
 
@@ -76,10 +109,11 @@ From there, you create an index within a given collection using the previously g
 NOTE: The number of vectors, the width or dimensions of the vectors and the training size can incur high CPU and memory costs as the size of each variable increases.
 This is because the training vectors have to be resident on the machine.
 
-=== Vector Index Configuration
+[discrete#android:working-with-vector-search:::vector-index-configuration]
+===== Vector Index Configuration
 
 The table below displays the different configurations you can modify within your `VectorIndexConfiguration()` function.
-For more information on specific configurations, see xref:android:vector-search.adoc[Vector Search.]
+For more information on specific configurations, see <<android:vector-search:::,Vector Search.>>
 
 .Vector Index Configuration Options
 [cols ="4*"]
@@ -87,21 +121,21 @@ For more information on specific configurations, see xref:android:vector-search.
 |Configuration Name |Is Required |Default Configuration |Further Information
 
 |Expression
-|image:ROOT:yes.png[]
+|image:couchbase-lite/current/{underscore}images/yes.png[]
 |No default
-| A SQL++ expression indicating where to get the vectors. 
+| A SQL++ expression indicating where to get the vectors.
 A document property for embedded vectors or
 `prediction()` to call a registered Predictive model.
 |Number of Dimensions
-|image:ROOT:yes.png[]
+|image:couchbase-lite/current/{underscore}images/yes.png[]
 |No default
 |2-4096
 |Number of Centroids
-|image:ROOT:yes.png[]
+|image:couchbase-lite/current/{underscore}images/yes.png[]
 |No default
 |1-64000. The general guideline is an approximate square root of the number of documents
 |Distance Metric
-|image:ROOT:no.png[]
+|image:couchbase-lite/current/{underscore}images/no.png[]
 |Squared Euclidean Distance (euclideanSquared)
 a|You can set the following alternates as your Distance Metric:
 
@@ -112,19 +146,19 @@ a|You can set the following alternates as your Distance Metric:
 * dot (negated dot product)
 
 |Encoding
-|image:ROOT:no.png[]
+|image:couchbase-lite/current/{underscore}images/no.png[]
 | Scalar Quantizer(SQ) or SQ-8 bits
 a|There are three possible configurations:
 
 * None
 No compression, No data loss
 * Scalar Quantizer (SQ) or SQ-8 bits (Default)
-Reduces the number of bits per dimension 
+Reduces the number of bits per dimension
 * Product Quantizer (PQ)
 Reduces the number of dimensions and bits per dimension
 
 |Training Size
-|image:ROOT:no.png[]
+|image:couchbase-lite/current/{underscore}images/no.png[]
 |The default values for both the minimum and maximum training size is zero.
 The training size is calculated based on the number of Centroids and the encoding type.
 
@@ -136,11 +170,11 @@ a| The guidelines for the minimum and maximum training size are as follows:
 * The maximum training size is set to 256x the number of Centroids or 2 ^PQ's^ ^bits^ when PQ is used
 
 |NumProbes
-|image:ROOT:no.png[]
+|image:couchbase-lite/current/{underscore}images/no.png[]
 |The default value is 0. The number of Probes is calculated based on the number of Centroids
 |A guideline for setting a custom number of probes is at least 8 or 0.5% the number of Centroids
 |isLazy
-|image:ROOT:no.png[]
+|image:couchbase-lite/current/{underscore}images/no.png[]
 |False
 |Setting the value to true will enable lazy mode for the vector index
 
@@ -148,7 +182,8 @@ a| The guidelines for the minimum and maximum training size are as follows:
 
 CAUTION: Altering the default training sizes could be detrimental to the accuracy of returned results produced by the model and total computation time.
 
-== Generating Vectors
+[discrete#android:working-with-vector-search:::generating-vectors]
+==== Generating Vectors
 
 You can use the following methods to generate vectors in Couchbase Lite:
 
@@ -160,12 +195,14 @@ You can use the following methods to generate vectors in Couchbase Lite:
 
 Below are example configurations of the previously mentioned methods.
 
-=== Create a Vector Index with Embeddings
+[discrete#android:working-with-vector-search:::create-a-vector-index-with-embeddings]
+===== Create a Vector Index with Embeddings
 
 This method shows you how to create a Vector Index with embeddings.
 
-[tabs]
+[tab#android:working-with-vector-search:::tabs-2s]
 =====
+
 
 Java::
 +
@@ -173,7 +210,11 @@ Java::
 [source, java]
 ----
 
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-index, indent=2]
+  // create a vector index named "colors_index"
+  // in the collection "_default.colors"
+  db.getCollection("colors").createIndex(
+      "colors_index",
+      new VectorIndexConfiguration("vector", 3L, 100L));
 
 ----
 
@@ -182,6 +223,7 @@ include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Vecto
 . Next, create a vector index, `colors_index`, on a collection and pass it the configuration.
 
 --
+
 
 
 Kotlin::
@@ -190,7 +232,12 @@ Kotlin::
 [source, kotlin]
 ----
 
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-index, indent=2]
+  // create a vector index named "colors_index"
+  // in the collection "_default.colors"
+  db.getCollection("colors")?.createIndex(
+      "colors_index",
+      VectorIndexConfigurationFactory.newConfig("vector", 3L, 100L)
+  ) ?: throw IllegalStateException("No such collection: colors")
 
 ----
 
@@ -201,13 +248,15 @@ include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/
 --
 =====
 
-=== Create Vector Index Embeddings from a Predictive Model
+[discrete#android:working-with-vector-search:::create-vector-index-embeddings-from-a-predictive-model]
+===== Create Vector Index Embeddings from a Predictive Model
 
 This method generates vectors to be indexed for each document at the index time by using the `prediction()` function.
 The key difference to note is that the `config` object uses the output of the `prediction()` function as the `expression` parameter to generate the vector index.
 
-[tabs]
+[tab#android:working-with-vector-search:::tabs-3s]
 =====
+
 
 Java::
 +
@@ -215,10 +264,18 @@ Java::
 [source, java]
 ----
 
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-predictive-index, indent=2]
+  // create a vector index with a simple predictive model
+  Database.prediction.registerModel("ColorModel", colorModel);
+
+  db.getCollection("colors").createIndex(
+      "colors_pred_index",
+      new VectorIndexConfiguration(
+          "prediction(ColorModel, {'colorInput': color}).vector",
+          3L, 100L));
 
 ----
 --
+
 
 
 Kotlin::
@@ -227,22 +284,33 @@ Kotlin::
 [source, kotlin]
 ----
 
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-predictive-index,indent=2]
+  // create a vector index with a simple predictive model
+  Database.prediction.registerModel("ColorModel", colorModel)
+
+  db.getCollection("colors")?.createIndex(
+      "colors_pred_index",
+      VectorIndexConfigurationFactory.newConfig(
+          "prediction(ColorModel, {'colorInput': color}).vector",
+          3L, 100L
+      )
+  ) ?: throw IllegalStateException("No such collection: colors")
 
 ----
 --
 =====
 
-NOTE: You can use less storage by using the `prediction()` function as the encoded vectors will only be stored in the index. 
+NOTE: You can use less storage by using the `prediction()` function as the encoded vectors will only be stored in the index.
 However, the index time will be longer as vector embedding generation is occurring at run time.
 
-== Create a Lazy Vector Index
+[discrete#android:working-with-vector-search:::create-a-lazy-vector-index]
+==== Create a Lazy Vector Index
 
 Lazy indexing is an alternate approach to using the standard predictive model with regular vector indexes which handle the indexing process automatically.
 You can use lazy indexing to use a ML model that is not available locally on the device and to create vector indexes without having vector embeddings in the documents.
 
-[tabs]
+[tab#android:working-with-vector-search:::tabs-4s]
 =====
+
 
 Java::
 +
@@ -250,7 +318,10 @@ Java::
 [source, java]
 ----
 
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-lazy-index-config, indent=2]
+  db.getCollection("colors").createIndex(
+      "colors_index",
+      new VectorIndexConfiguration("color", 3L, 100L)
+          .setLazy(true));
 
 ----
 
@@ -259,13 +330,17 @@ You can enable lazy vector indexing by setting the `isLazy` property to `true` i
 --
 
 
+
 Kotlin::
 +
 --
 [source, kotlin]
 ----
 
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-lazy-index-config,indent=2]
+  db.getCollection("colors")?.createIndex(
+      "colors_index",
+      VectorIndexConfigurationFactory.newConfig("color", 3L, 100L, lazy = true)
+  ) ?: throw IllegalStateException("No such collection: colors")
 
 ----
 
@@ -276,12 +351,14 @@ You can enable lazy vector indexing by setting the `isLazy` property to `true` i
 
 NOTE: Lazy Vector Indexing is opt-in functionality, the `isLazy` property is set to `false` by default.
 
-=== Updating the Lazy Index
+[discrete#android:working-with-vector-search:::updating-the-lazy-index]
+===== Updating the Lazy Index
 
 Below is an example of how you can update your lazy index.
 
-[tabs]
+[tab#android:working-with-vector-search:::tabs-5s]
 =====
+
 
 Java::
 +
@@ -289,7 +366,30 @@ Java::
 [source, java]
 ----
 
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-lazy-index-embedding, indent=2]
+          while (true) {
+              try (IndexUpdater updater = col.getIndex("colors_index").beginUpdate(10)) {
+                  if (updater == null) { break; }
+                  for (int i = 0; i < updater.count(); i++) {
+                      try {
+                          // get the color swatch from the updater and send it to the remote model
+                          List<Float> embedding = colorModel.getEmbedding(updater.getBlob(i));
+                          updater.setVector(embedding, i);
+                      }
+                      catch (IOException e) {
+                          // Bad connection? Corrupted over the wire? Something bad happened
+                          // and the vector cannot be generated at the moment: skip it.
+                          // The next time beginUpdate() is called, we'll try it again.
+                          updater.skipVector(i);
+                      }
+                  }
+                  // This writes the vectors to the index. You MUST either have set or skipped each
+                  // of the the vectors in the updater or this call will throw an exception.
+                  updater.finish();
+              }
+          }
+      }
+  }
+
 
 ----
 
@@ -299,7 +399,7 @@ The update process follows the following sequence:
 
 . Get a value for the updater.
 
-.. If the there is no value for the vector, handle it. 
+.. If the there is no value for the vector, handle it.
 In this case, the vector will be skipped and considered the next time `beginUpdate()` is called.
 +
 NOTE: A key benefit of lazy indexing is that the indexing process continues if a vector fails to generate.
@@ -314,13 +414,36 @@ For standard vector indexing, this will cause the affected documents to be dropp
 --
 
 
+
 Kotlin::
 +
 --
 [source, kotlin]
 ----
 
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-lazy-index-embedding,indent=2]
+          while (true) {
+              col.getIndex("colors_index")?.beginUpdate(10)?.use { updater ->
+                  for (i in 0 until updater.count()) {
+                      try {
+                          val embedding: List<Float?>? = colorModel.getEmbedding(updater.getBlob(i))
+                          updater.setVector(embedding, i)
+                      } catch (e: IOException) {
+                          // Bad connection? Corrupted over the wire? Something bad happened
+                          // and the vector cannot be generated at the moment: skip it.
+                          // The next time beginUpdate() is called, we'll try it again.
+                          updater.skipVector(i)
+                      }
+                  }
+                  // This writes the vectors to the index. You MUST either have set or skipped each
+                  // of the the vectors in the updater or this call will throw an exception.
+                  updater.finish()
+              }
+              // loop until there are no more vectors to update
+                  ?: break
+          }
+      }
+  }
+
 
 ----
 
@@ -330,7 +453,7 @@ The update process follows the following sequence:
 
 . Get a value for the updater.
 
-.. If the there is no value for the vector, handle it. 
+.. If the there is no value for the vector, handle it.
 In this case, the vector will be skipped and considered the next time `beginUpdate()` is called.
 +
 NOTE: A key benefit of lazy indexing is that the indexing process continues if a vector fails to generate.
@@ -347,25 +470,29 @@ For standard vector indexing, this will cause the affected documents to be dropp
 
 NOTE: `updater.finish()` will throw an error if any values inside the updater have not been set or skipped.
 
-== Vector Search SQL++ Support
+[discrete#android:working-with-vector-search:::vector-search-sql-support]
+==== Vector Search SQL++ Support
 
 Couchbase Lite currently supports Hybrid Vector Search and the `APPROX_VECTOR_DISTANCE()` function.
 
-IMPORTANT: Similar to the xref:android:fts.adoc[Full Text Search] `match()` function, the `APPROX_VECTOR_DISTANCE()` function and Hybrid Vector Search cannot use the `OR` expression with the other expressions in the related `WHERE` clause.
+IMPORTANT: Similar to the <<android:fts:::,Full Text Search>> `match()` function, the `APPROX_VECTOR_DISTANCE()` function and Hybrid Vector Search cannot use the `OR` expression with the other expressions in the related `WHERE` clause.
 
-== Use Hybrid Vector Search
+[discrete#android:working-with-vector-search:::use-hybrid-vector-search]
+==== Use Hybrid Vector Search
 
 You can use Hybrid Vector Search (Hybrid Search) to perform vector search in conjunction with regular SQL++ queries.
 With Hybrid Search, you perform vector search on documents that have already been filtered based on criteria specified in the `WHERE` clause.
 
-NOTE: A `LIMIT` clause is required for non-hybrid Vector Search, this avoids a slow, exhaustive unlimited search of all possible vectors. 
+NOTE: A `LIMIT` clause is required for non-hybrid Vector Search, this avoids a slow, exhaustive unlimited search of all possible vectors.
 
-=== Hybrid Vector Search with Full Text Match
+[discrete#android:working-with-vector-search:::hybrid-vector-search-with-full-text-match]
+===== Hybrid Vector Search with Full Text Match
 
 Below are examples of using Hybrid Search with the Full Text `match()` function.
 
-[tabs]
+[tab#android:working-with-vector-search:::tabs-6s]
 =====
+
 
 Java::
 +
@@ -373,10 +500,25 @@ Java::
 [source, java]
 ----
 
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-hybrid-ftmatch, indent=2]
+  // Create a hybrid vector search query with full-text's match() that
+  // uses the the full-text index named "color_desc_index".
+  Query query = db.createQuery(
+      "SELECT meta().id, color"
+          + " FROM _default.colors"
+          + " WHERE MATCH(color_desc_index, $text)"
+          + " ORDER BY APPROX_VECTOR_DISTANCE(vector, $vector)"
+          + " LIMIT 8");
+  Parameters params = new Parameters();
+  params.setArray("vectorParam", new MutableArray(colorVector));
+  query.setParameters(params);
+
+  try (ResultSet rs = query.execute()) {
+      // process results
+  }
 
 ----
 --
+
 
 
 Kotlin::
@@ -385,18 +527,35 @@ Kotlin::
 [source, kotlin]
 ----
 
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-hybrid-ftmatch,indent=2]
+  // Create a hybrid vector search query with full-text's match() that
+  // uses the the full-text index named "color_desc_index".
+  val query = db.createQuery(
+      ("SELECT meta().id, color"
+              + " FROM _default.colors"
+              + " WHERE MATCH(color_desc_index, \$text)"
+              + " ORDER BY APPROX_VECTOR_DISTANCE(vector, \$vector)"
+              + " LIMIT 8")
+  )
+  val params = Parameters()
+  params.setArray("vectorParam", MutableArray((colorVector)))
+  query.parameters = params
+
+  query.execute().use { rs ->
+      // process results
+  }
 
 ----
 --
 =====
 
-=== Prediction with Hybrid Vector Search
+[discrete#android:working-with-vector-search:::prediction-with-hybrid-vector-search]
+===== Prediction with Hybrid Vector Search
 
 Below are examples of using Hybrid Search with an array of vectors generated by the `Prediction()` function at index time.
 
-[tabs]
+[tab#android:working-with-vector-search:::tabs-7s]
 =====
+
 
 Java::
 +
@@ -404,10 +563,25 @@ Java::
 [source, java]
 ----
 
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-hybrid-prediction, indent=2]
+  Query query = db.createQuery(
+      "SELECT meta().id, color"
+          + " FROM _default.colors"
+          + " WHERE saturation > 0.5"
+          + " ORDER BY APPROX_VECTOR_DISTANCE("
+          + "    prediction(ColorModel, {'colorInput': color}).vector,"
+          + "    $vectorParam)"
+          + " LIMIT 8");
+  Parameters params = new Parameters();
+  params.setArray("vectorParam", new MutableArray(colorVector));
+  query.setParameters(params);
+
+  try (ResultSet rs = query.execute()) {
+      // process results
+  }
 
 ----
 --
+
 
 
 Kotlin::
@@ -416,13 +590,29 @@ Kotlin::
 [source, kotlin]
 ----
 
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-hybrid-prediction,indent=2]
+  val query = db.createQuery(
+      ("SELECT meta().id, color"
+              + " FROM _default.colors"
+              + " WHERE saturation > 0.5"
+              + " ORDER BY APPROX_VECTOR_DISTANCE("
+              + "    prediction(ColorModel, {'colorInput': color}).vector,"
+              + "    \$vectorParam)"
+              + " LIMIT 8")
+  )
+  val params = Parameters()
+  params.setArray("vectorParam", MutableArray((colorVector)))
+  query.parameters = params
+
+  query.execute().use { rs ->
+      // process results
+  }
 
 ----
 --
 =====
 
-== `APPROX_VECTOR_DISTANCE(vector-expr, target-vector, [metric], [nprobes], [accurate])`
+[discrete#android:working-with-vector-search:::approx_vector_distancevector-expr-target-vector-metric-nprobes-accurate]
+==== `APPROX_VECTOR_DISTANCE(vector-expr, target-vector, [metric], [nprobes], [accurate])`
 
 WARNING: If you use a different distance metric in the `APPROX_VECTOR_DISTANCE()` function from the one configured in the index, you will receive an error when compiling the query.
 
@@ -431,34 +621,36 @@ WARNING: If you use a different distance metric in the `APPROX_VECTOR_DISTANCE()
 |Parameter |Is Required |Description
 
 |vector-expr
-|image:ROOT:yes.png[]
+|image:couchbase-lite/current/{underscore}images/yes.png[]
 |The expression returning a vector (NOT Index Name).
 Must match the expression specified in the vector index exactly.
 |target-vector
-|image:ROOT:yes.png[]
+|image:couchbase-lite/current/{underscore}images/yes.png[]
 |The target vector.
 |metric
-|image:ROOT:no.png[]
+|image:couchbase-lite/current/{underscore}images/no.png[]
 |Values : "EUCLIDEAN_SQUARED", “L2_SQUARED”, “EUCLIDEAN”, “L2”,  ”COSINE”, “DOT”.
 If not specified, the metric set in the vector index is used.
 If specified, the metric must match with the metric set in the vector index.
-This optional parameter allows multiple indexes to be attached to the same field in a document. 
+This optional parameter allows multiple indexes to be attached to the same field in a document.
 |nprobes
-|image:ROOT:no.png[]
+|image:couchbase-lite/current/{underscore}images/no.png[]
 |Number of buckets to search for the nearby vectors.
-If not specified, the nprobes set in the vector index is used. 
+If not specified, the nprobes set in the vector index is used.
 |accurate
-|image:ROOT:no.png[]
-|If not present, false will be used, which means that the quantized/encoded vectors in the index will be used for calculating the distance. 
+|image:couchbase-lite/current/{underscore}images/no.png[]
+|If not present, false will be used, which means that the quantized/encoded vectors in the index will be used for calculating the distance.
 
-IMPORTANT: Only accurate = false is supported 
+IMPORTANT: Only accurate = false is supported
 
 |===
 
-=== Use `APPROX_VECTOR_DISTANCE()`
+[discrete#android:working-with-vector-search:::use-approx_vector_distance]
+===== Use `APPROX_VECTOR_DISTANCE()`
 
-[tabs]
+[tab#android:working-with-vector-search:::tabs-8s]
 =====
+
 
 Java::
 +
@@ -466,13 +658,25 @@ Java::
 [source, java]
 ----
 
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-apvd-where, indent=2]
+  // use APPROX_VECTOR_DISTANCE in a query WHERE clause
+  Query query = db.createQuery(
+      "SELECT meta().id, color"
+          + " FROM _default.colors"
+          + " WHERE APPROX_VECTOR_DISTANCE(vector, $vectorParam) < 0.5");
+  Parameters params = new Parameters();
+  params.setArray("vectorParam", new MutableArray(colorVector));
+  query.setParameters(params);
+
+  try (ResultSet rs = query.execute()) {
+      // process results
+  }
 
 ----
 
 This function returns the approximate distance between a given vector, typically generated from your ML model, and an array of vectors with size equal to the `LIMIT` parameter, collected by a SQL++ query using `APPROX_VECTOR_DISTANCE()`.
 
 --
+
 
 
 Kotlin::
@@ -481,7 +685,19 @@ Kotlin::
 [source, kotlin]
 ----
 
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-apvd-where,indent=2]
+  // use APPROX_VECTOR_DISTANCE in a query WHERE clause
+  val query = db.createQuery(
+      ("SELECT meta().id, color"
+              + " FROM _default.colors"
+              + " WHERE APPROX_VECTOR_DISTANCE(vector, \$vectorParam) < 0.5")
+  )
+  val params = Parameters()
+  params.setArray("vectorParam", MutableArray((colorVector)))
+  query.parameters = params
+
+  query.execute().use { rs ->
+      // process results
+  }
 
 ----
 
@@ -490,12 +706,14 @@ This function returns the approximate distance between a given vector, typically
 --
 =====
 
-=== Prediction with `APPROX_VECTOR_DISTANCE()`
+[discrete#android:working-with-vector-search:::prediction-with-approx_vector_distance]
+===== Prediction with `APPROX_VECTOR_DISTANCE()`
 
 Below are examples of using `APPROX_VECTOR_DISTANCE()` with an array of vectors generated by the `Prediction()` function at index time.
 
-[tabs]
+[tab#android:working-with-vector-search:::tabs-9s]
 =====
+
 
 Java::
 +
@@ -503,11 +721,34 @@ Java::
 [source, java]
 ----
 
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-apvd-prediction, indent=2]
+  // use APPROX_VECTOR_DISTANCE with a predictive model
+  Database.prediction.registerModel("ColorModel", colorModel);
+
+  db.getCollection("colors").createIndex(
+      "colors_pred_index",
+      new VectorIndexConfiguration(
+          "prediction(ColorModel, {'colorInput': color}).vector",
+          3L, 100L));
+
+  Query query = db.createQuery(
+      "SELECT meta().id, color"
+          + " FROM _default.colors"
+          + " ORDER BY APPROX_VECTOR_DISTANCE("
+          + "    prediction(ColorModel, {'colorInput': color}).vector,"
+          + "    $vectorParam)"
+          + " LIMIT 300");
+  Parameters params = new Parameters();
+  params.setArray("vectorParam", new MutableArray(colorVector));
+  query.setParameters(params);
+
+  try (ResultSet rs = query.execute()) {
+      // process results
+  }
 
 ----
 
 --
+
 
 
 Kotlin::
@@ -516,17 +757,45 @@ Kotlin::
 [source, kotlin]
 ----
 
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-apvd-prediction,indent=2]
+  // use APPROX_VECTOR_DISTANCE with a predictive model
+  Database.prediction.registerModel("ColorModel", (colorModel))
+
+  db.getCollection("colors")?.createIndex(
+      "colors_pred_index",
+      VectorIndexConfigurationFactory.newConfig(
+          "prediction(ColorModel, {'colorInput': color}).vector",
+          3L, 100L
+      )
+  ) ?: throw IllegalStateException("No such collection: colors")
+
+  val query = db.createQuery(
+      ("SELECT meta().id, color"
+              + " FROM _default.colors"
+              + " ORDER BY APPROX_VECTOR_DISTANCE("
+              + "    prediction(ColorModel, {'colorInput': color}).vector,"
+              + "    \$vectorParam)"
+              + " LIMIT 300")
+  )
+  val params = Parameters()
+  params.setArray("vectorParam", MutableArray((colorVector)))
+  query.parameters = params
+
+  query.execute().use { rs ->
+      // process results
+  }
 
 ----
 
 --
 =====
 
-== See Also
+[discrete#android:working-with-vector-search:::see-also]
+==== See Also
 
-* xref:android:gs-install.adoc[Installation Instructions]
+* <<android:gs-install:::,Installation Instructions>>
 
-* xref:android:vector-search.adoc[Vector Search]
+* <<android:vector-search:::>>
 
-* xref:android:fts.adoc[Full Text Search]
+* <<android:fts:::,Full Text Search>>
+
+

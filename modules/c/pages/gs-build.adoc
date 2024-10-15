@@ -1,34 +1,289 @@
-= Build and Run
+:docname: gs-build
+:page-module: c
+:page-relative-src-path: gs-build.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#c:gs-build:::]
+== Build and Run
 :page-aliases: clang:gs-build.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Build and run a starter app to validate your install of Couchbase Lite on C
 :keywords: mobile edge nosql api iOS C web-app device-app
 
-include::partial$_set_page_context_for_c.adoc[]
-include::{root-partials}_show_page_header_block.adoc[]
-
-:param-page: {page-relative-src-path}
-include::{root-partials}_show_get_started_topic_group.adoc[]
 
 
-== Verify Install
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[abstract]
+--
+Description -- _{description}_ +
+--
+
+Steps in Getting Started::
+xref:c:gs-install.adoc[Install]
+ |
+*Build*
+
+
+[discrete#c:gs-build:::verify-install]
+=== Verify Install
 
 Now you have _Couchbase Lite for C_ installed, you can verify that your apps build correctly.
 
-Enter the C code from <<ex-c-starter>> into your editor of choice and build it.
+Enter the C code from <<c:gs-build:::ex-c-starter>> into your editor of choice and build it.
 
 Running it will create a database, add a document, retrieve the document, update the document and then delete the document.
 
 .Sample code
-[#ex-c-starter]
+[#c:gs-build:::ex-c-starter]
 ====
-[source, {source-language}]
+[source, c]
 ----
-include::{snippet}[tag=getting-started,indent=0]
+//  Purpose-- provide an overview of available crud  and sync functionality
+//
+// Get the database (and create it if it doesn't exist)
+CBLError err;
+CBLDatabase* database = CBLDatabase_Open(FLSTR("mydb"), NULL, &err);
+if(!database) {
+    // Error handling.  For brevity, this is truncated in the rest of the snippet
+    // and omitted in other doc code snippets
+    fprintf(stderr, "Error opening database (%d / %d)\n", err.domain, err.code);
+    FLSliceResult msg = CBLError_Message(&err);
+    fprintf(stderr, "%.*s\n", (int)msg.size, (const char *)msg.buf);
+    FLSliceResult_Release(msg);
+    return;
+}
+
+// All CRUD operations must be carried out via a collection (for backwards compatibility
+// the old CBLDatabase_ API will automatically use the default collection).  This is a quick
+// API to explicitly get the default collection.
+CBLCollection* collection = CBLDatabase_DefaultCollection(database, &err);
+
+// The lack of 'const' indicates this document is mutable
+// Create a new document (i.e. a record) in the database
+CBLDocument* mutableDoc = CBLDocument_Create();
+FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
+FLMutableDict_SetFloat(properties, FLSTR("version"), 3.0f);
+
+// Save it to the database
+if(!CBLCollection_SaveDocument(collection, mutableDoc, &err)) {
+    // Failed to save, do error handling as above
+    return;
+}
+
+// Since we will release the document, make a copy of the ID since it
+// is an internal pointer.  Whenever we create or get an FLSliceResult
+// or FLStringResult we will need to free it later too!
+FLString id = CBLDocument_ID(mutableDoc);
+CBLDocument_Release(mutableDoc);
+
+// Update a document
+mutableDoc = CBLCollection_GetMutableDocument(collection, id, &err);
+if(!mutableDoc) {
+    // Failed to retrieve, do error handling as above.  NOTE: error code 0 simply means
+    // the document does not exist.
+    return;
+}
+
+properties = CBLDocument_MutableProperties(mutableDoc);
+FLMutableDict_SetString(properties, FLSTR("language"), FLSTR("C"));
+if(!CBLCollection_SaveDocument(collection, mutableDoc, &err)) {
+    // Failed to save, do error handling as above
+    return;
+}
+
+// Note const here, means readonly
+const CBLDocument* docAgain = CBLCollection_GetDocument(collection, id, &err);
+if(!docAgain) {
+    // Failed to retrieve, do error handling as above.  NOTE: error code 0 simply means
+    // the document does not exist.
+    return;
+}
+
+// No copy this time, so no release later (notice it is not FLStringResult this time)
+FLString retrievedID = CBLDocument_ID(docAgain);
+FLDict retrievedProperties = CBLDocument_Properties(docAgain);
+FLString retrievedLanguage = FLValue_AsString(FLDict_Get(retrievedProperties, FLSTR("language")));
+printf("Document ID :: %.*s\n", (int)retrievedID.size, (const char *)retrievedID.buf);
+printf("Learning %.*s\n", (int)retrievedLanguage.size, (const char *)retrievedLanguage.buf);
+
+CBLDocument_Release(mutableDoc);
+CBLDocument_Release(docAgain);
+
+// Create a query to fetch documents of type SDK
+int errorPos;
+CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage, FLSTR("SELECT * FROM _ WHERE type = \"SDK\""), &errorPos, &err);
+if(!query) {
+    // Failed to create query, do error handling as above
+    // Note that errorPos will contain the position in the N1QL string
+    // that the parse failed, if applicable
+    return;
+}
+
+CBLResultSet* result = CBLQuery_Execute(query, &err);
+if(!result) {
+    // Failed to run query, do error handling as above
+    return;
+}
+
+CBLResultSet_Release(result);
+CBLQuery_Release(query);
+
+// Create replicator to push and pull changes to and from the cloud
+CBLEndpoint* targetEndpoint = CBLEndpoint_CreateWithURL(FLSTR("ws://localhost:4984/getting-started-db"), &err);
+if(!targetEndpoint) {
+    // Failed to create endpoint, do error handling as above
+    return;
+}
+
+CBLReplicatorConfiguration replConfig;
+CBLAuthenticator* basicAuth = CBLAuth_CreatePassword(FLSTR("john"), FLSTR("pass"));
+memset(&replConfig, 0, sizeof(replConfig));
+replConfig.database = database;
+replConfig.endpoint = targetEndpoint;
+replConfig.authenticator = basicAuth;
+
+CBLReplicator* replicator = CBLReplicator_Create(&replConfig, &err);
+CBLAuth_Free(basicAuth);
+CBLEndpoint_Free(targetEndpoint);
+if(!replicator) {
+    // Failed to create replicator, do error handling as above
+    return;
+}
+
+// Assume a function like the simple following
+//
+// static void getting_started_change_listener(void* context, CBLReplicator* repl, const CBLReplicatorStatus* status) {
+//     if(status->error.code != 0) {
+//         printf("Error %d / %d\n", status->error.domain, status->error.code);
+//     }
+// }
+
+CBLListenerToken* token = CBLReplicator_AddChangeListener(replicator, getting_started_change_listener, NULL);
+
+CBLReplicator_Start(replicator, false);
+
+// Later, stop and release the replicator
 ----
 ====
 
 
-include::{root-partials}block-related-content-start.adoc[]
+
+
+
+[discrete#c:gs-build:::related-content]
+=== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+==== {empty}
+.How to . . .
+* xref:c:gs-prereqs.adoc[Prerequisites]
+* xref:c:gs-install.adoc[Install]
+* xref:c:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#c:gs-build:::-2n]
+==== {empty}
+.Learn more . . .
+* xref:c:database.adoc[Databases]
+* xref:c:document.adoc[Documents]
+* xref:c:blob.adoc[Blobs]
+* xref:c:replication.adoc[Remote Sync Gateway]
+* xref:c:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[discrete.colum#c:gs-build:::-3n]
+==== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
+
+

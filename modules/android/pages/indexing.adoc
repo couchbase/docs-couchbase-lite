@@ -1,19 +1,303 @@
-= Indexing your Data
+:docname: indexing
+:page-module: android
+:page-relative-src-path: indexing.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#android:indexing:::]
+= Indexing
 :page-aliases: learn/java-android-indexing.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite database data model concepts - indexes
 
-include::partial$_set_page_context_for_android.adoc[]
-// :param-name: {lang-name-csharp}
-// :param-title: {lang-title-csharp}
-// :param-module: {lang-mod-csharp}
 
-:param-related: {database--xref} | {document--xref} | {indexing--xref} |
-:topic-group: Topic Group -- Data Model
-include::{root-partials}_show_page_header_block.adoc[]
 
-include::{root-commons}indexing.adoc[subs="macros,attributes"]
 
-include::{root-partials}block-related-content-data.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// :param-name: csharp
+// :param-title: C#/.Net
+// :param-module: csharp
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:android:database.adoc[Databases] | xref:android:document.adoc[Documents] | xref:android:indexing.adoc[Indexing] |
+--
+
+
+[discrete#android:indexing:::introduction]
+== Introduction
+// tag::overview[]
+Querying documents using a pre-existing database index is much faster because an index narrows down the set of documents to examine -- see: the xref:android:query-troubleshooting.adoc[Query Troubleshooting] topic.
+
+When planning the indexes you need for your database, remember that while indexes make queries faster, they may also:
+
+* Make writes slightly slower, because each index must be updated whenever a document is updated
+* Make your Couchbase Lite database slightly larger.
+
+Too many indexes may hurt performance.
+Optimal performance depends on designing and creating the _right_ indexes to go along with your queries.
+
+.Constraints
+[NOTE]
+Couchbase Lite for android does not currently support partial value indexes; indexes with non-property expressions.
+You should only index with properties that you plan to use in the query.
+
+
+//end::overview[]
+
+
+[discrete#android:indexing:::creating-a-new-index]
+== Creating a new index
+
+You can use {sqlpp} or QueryBuilder syntaxes to create an index
+
+
+<<android:indexing:::ex-create-index>> creates a new index for the `type` and `name` properties, shown in this data model:
+
+[#android:indexing:::ex-datamodel]
+.Data Model
+====
+[source,json]
+----
+{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "The Michigander",
+    "overview": "Ideally situated for exploration of the Motor City and the wider state of Michigan. Tripadvisor rated the hotel ...",
+    "state": "Michigan"
+}
+----
+====
+
+[discrete#android:indexing:::sql]
+=== {sqlpp}
+
+The code to create the index will look something like this:
+
+.Create index
+[#ex-create-index]
+
+
+
+[#android:indexing:::ex-create-index]
+====
+
+[tabs]
+=====
+
+
+Kotlin::
++
+--
+
+// Show Main Snippet
+// include::android:example$codesnippet_collection.kt[tags="query-index", indent=0]
+[source, Kotlin]
+----
+collection.createIndex(
+    "TypeNameIndex",
+    ValueIndexConfigurationFactory.newConfig("type", "name")
+)
+----
+
+--
+// Show Optional Alternate Snippet
+// include::android:example$codesnippet_collection.java[tags="query-index", indent=0]
+
+Java::
++
+--
+[source, Java]
+----
+collection.createIndex("TypeNameIndex", new ValueIndexConfiguration("type", "name"));
+----
+--
+
+=====
+
+
+
+====
+
+
+[discrete#android:indexing:::querybuilder]
+=== QueryBuilder
+
+TIP: See the xref:android:querybuilder.adoc[QueryBuilder] topic to learn more about QueryBuilder.
+
+The code to create the index will look something like this:
+
+.Create index with QueryBuilder
+[#ex-create-index]
+
+
+
+[#android:indexing:::ex-create-index]
+====
+
+[tabs]
+=====
+
+
+Kotlin::
++
+--
+
+// Show Main Snippet
+// include::android:example$codesnippet_collection.kt[tags="query-index_Querybuilder", indent=0]
+[source, Kotlin]
+----
+collection.createIndex(
+    "TypeNameIndex",
+    IndexBuilder.valueIndex(
+        ValueIndexItem.property("type"),
+        ValueIndexItem.property("name")
+    )
+)
+----
+
+--
+// Show Optional Alternate Snippet
+// include::android:example$codesnippet_collection.java[tags="query-index_Querybuilder", indent=0]
+
+Java::
++
+--
+[source, Java]
+----
+collection.createIndex(
+    "TypeNameIndex",
+    IndexBuilder.valueIndex(
+        ValueIndexItem.property("type"),
+        ValueIndexItem.property("name")));
+----
+--
+
+=====
+
+
+
+====
+
+
+
+
+
+
+
+
+
+[discrete#android:indexing:::related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:android:gs-prereqs.adoc[Prerequisites]
+* xref:android:gs-install.adoc[Install]
+* xref:android:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#android:indexing:::-2n]
+=== {empty}
+.Learn more . . .
+* xref:android:database.adoc[Databases]
+* xref:android:document.adoc[Documents]
+* xref:android:blob.adoc[Blobs]
+* xref:android:replication.adoc[Remote Sync Gateway]
+* xref:android:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[discrete.colum#android:indexing:::-3n]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
+
+
+= Data Sync
+

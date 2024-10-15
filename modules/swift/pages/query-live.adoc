@@ -1,24 +1,90 @@
-= Live Queries
+:docname: query-live
+:page-module: swift
+:page-relative-src-path: query-live.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#swift:query-live:::]
+== Live Queries
 :page-aliases: learn/swift-query-live.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase mobile database live query concepts
 
 // removed docs-mobile _attributes-shared link
-include::ROOT:partial$_define_page_index.adoc[]
-include::ROOT:partial$_show_glossary_links.adoc[]
-include::ROOT:partial$_define_component_attributes.adoc[]
-include::{lang-mod-swift}:partial$_define_module_attributes.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/[Query Class index]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Replicator.pendingDocumentIds()]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // BEGIN::Local page attributes
-:blank-field: ____
-:lang-title: {lang-title-swift}
-:module: {lang-mod-swift}
-:packageNm: couchbase-lite-{module}
-:source-language: {lang-name-swift}
-// snippet: {snippets-content--swift}
-:url-issues: {url-github-cbl}{module}/issues
+// snippet: swift:example$code_snippets/SampleCodeTest.swift
 
 // END::Local page attributes
 
@@ -26,5 +92,82 @@ include::{lang-mod-swift}:partial$_define_module_attributes.adoc[]
 {description}
 
 
-include::{root-commons}query-live-query.adoc[]
+
+
+[discrete#swift:query-live:::activating-a-live-query]
+=== Activating a Live Query
+
+
+A live query is a query that, once activated, remains active and monitors the database for changes; refreshing the result set whenever a change occurs.
+As such, it is a great way to build reactive user interfaces -- especially table/list views -- that keep themselves up to date.
+
+*So, a simple use case may be:* A replicator running and pulling new data from a server, whilst a live-query-driven UI automatically updates to show the data without the user having to manually refresh.
+This helps your app feel quick and responsive.
+
+To activate a LiveQuery just add a change listener to the query statement.
+It will be immediately active.
+When a change is detected the query automatically runs, and posts the new query result to any observers (change listeners).
+
+
+.Starting a Live Query
+[#ex-qry-start]
+
+
+[#swift:query-live:::ex-qry-start]
+====
+
+
+// Show Main Snippet
+// include::swift:example$code_snippets/SampleCodeTest.swift[tags="live-query", indent=0]
+[source, swift]
+----
+query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.collection(collection)) // <.>
+
+// Adds a query change listener.
+// Changes will be posted on the main queue.
+let token = query.addChangeListener { (change) in // <.>
+    for result in change.results! {
+        print(result.keys)
+        /* Update UI */
+    }
+} // <.>
+
+----
+
+
+
+
+====
+
+<.> Build the query statements
+<.> Activate the _live_ query by attaching a listener.
+Save the token in order to detach the listener and stop the query later -- se <<swift:query-live:::ex-qry-stop>>
+
+
+.Stop a LIve Query
+[#ex-qry-stop]
+
+
+[#swift:query-live:::ex-qry-stop]
+====
+
+
+// Show Main Snippet
+// include::swift:example$code_snippets/SampleCodeTest.swift[tags="stop-live-query", indent=0]
+[source, swift]
+----
+query.removeChangeListener(withToken: token) // <.>
+
+----
+
+
+
+
+====
+
+<.> Here we use the change lister token from <<swift:query-live:::ex-qry-start>> to remove the listener.
+Doing so stops the live query.
+
 

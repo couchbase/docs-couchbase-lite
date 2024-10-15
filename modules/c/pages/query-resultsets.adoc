@@ -1,23 +1,354 @@
-= Result Sets
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
+:docname: query-resultsets
+:page-module: c
+:page-relative-src-path: query-resultsets.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#c:query-resultsets:::]
+== Query Resultsets
 :page-role:
 :description: How to use Couchbase Lite Query's Result Sets
 :keywords: query, sql, n1ql, fuzzy-matching
 
-include::partial$_set_page_context_for_c.adoc[]
 
-:topic-group: query
-:param-related: {querybuilder--xref} |  {query-n1ql-mobile--xref} |  {querybuilder--xref--predictive-query} | {query-live--xref} | {indexing--xref}
-include::{root-partials}_show_page_header_block.adoc[]
 
-:is_fullpage:
-include::{root-commons}query-resultsets.adoc[]
 
-== JSON Result Sets
 
-include::{root-commons}querybuilder-jsonresult.adoc[subs="macros,attributes"]
 
-include::{root-partials}block-related-content-data.adoc[]
 
-:is_fullpage!:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:c:querybuilder.adoc[QueryBuilder] |  xref:c:query-n1ql-mobile.adoc[{sqlpp} for Mobile] |  xref:c:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:c:query-live.adoc[Live Queries] | xref:c:indexing.adoc[Indexing]
+--
+
+
+
+[discrete#c:query-resultsets:::query-execution]
+=== Query Execution
+The execution of a Couchbase Lite for C's database query returns an array of results, a result set.
+
+Each row of the result set represents the data returned from a document that met the conditions defined by the `WHERE` statement of your query.
+The composition of each row is determined by the `SelectResult` expressions provided in the `SELECT` statement.
+
+
+[discrete#c:query-resultsets:::lbl-process-resultset]
+=== Processing Results
+<<c:query-resultsets:::lbl-acc-all>>
+| <<c:query-resultsets:::lbl-acc-id>>
+| <<c:query-resultsets:::lbl-acc-specific>>
+
+To retrieve the results of your query,  you need to execute it using `Query.execute`.
+
+The output from the execution is an array, with each array element representing the data from a document that matched your search criteria.
+
+To unpack the results you need to iterate through this array.
+Alternatively, you can convert the result to a JSON string -- see:
+
+
+[discrete#c:query-resultsets:::lbl-acc-all]
+==== Access Document Properties - All Properties
+Here we look at how to access document properties when you have used SelectResult.all.
+
+In this case each array element is a dictionary structure with the database name as its key.
+The properties are presented in the value as an array of key-value pairs (property name/property value).
+
+You access the retrieved document properties by converting each row's value, in turn, to a dictionary -- as shown in <<c:query-resultsets:::ex-acc-all>>.
+
+[#ex-acc-all]
+.Access All Properties
+
+
+[#c:query-resultsets:::ex-acc-all]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="query-access-all", indent=0]
+[source, c]
+----
+CBLResultSet* results = CBLQuery_Execute(query, &err);
+while(CBLResultSet_Next(results)) {
+    FLDict dict = FLValue_AsDict(CBLResultSet_ValueForKey(results, FLSTR("_")));
+
+    FLString id = FLValue_AsString(FLDict_Get(dict, FLSTR("id")));
+    FLString type = FLValue_AsString(FLDict_Get(dict, FLSTR("type")));
+    FLString name = FLValue_AsString(FLDict_Get(dict, FLSTR("name")));
+    FLString city = FLValue_AsString(FLDict_Get(dict, FLSTR("city")));
+
+    printf("ID :: %.*s\n", (int)id.size, (const char *)id.buf);
+    printf("Type :: %.*s\n", (int)type.size, (const char *)type.buf);
+    printf("Name :: %.*s\n", (int)name.size, (const char *)name.buf);
+    printf("City :: %.*s\n", (int)city.size, (const char *)city.buf);
+}
+
+// All results will be available from the above query
+CBLResultSet_Release(results);
+----
+
+
+
+
+====
+
+<.> Here we get the dictionary of document properties using the database name as the key.
+You can add this dictionary to an array of returned matches, for processing elsewhere in the app.
+<.> Alternatively, you can access the document properties here, by using the property names as keys to the dictionary object.
+
+[discrete#c:query-resultsets:::lbl-acc-id]
+==== Access Document Properties - ID
+Here we look at how to access document properties when you have returned only the document IDs for documents that matched your selection criteria.
+
+This is something you may do when retrieval of the properties directly by the query may consume excessive amounts of memory and-or processing time.
+
+In this case each array element is a dictionary structure where `ID` is the key and the required document ID is the value.
+
+Access the required document properties by retrieving the document from the database using its document ID -- as shown in <<c:query-resultsets:::ex-acc-id>>.
+
+[#ex-acc-id]
+.Access by ID
+
+
+[#c:query-resultsets:::ex-acc-id]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="query-access-id", indent=0]
+[source, c]
+----
+// NOTE: No error handling, for brevity (see getting started)
+
+CBLResultSet* results = CBLQuery_Execute(query, &err);
+while(CBLResultSet_Next(results)) {
+    FLString id = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("id")));
+    printf("Document ID :: %.*s\n", (int)id.size, (const char *)id.buf);
+}
+----
+
+
+
+
+====
+
+<.> Extract the Id value from the dictionary and use it to get the document from the database
+
+
+[discrete#c:query-resultsets:::lbl-acc-specific]
+==== Access Document Properties - Selected Properties
+Here we look at how to access properties when you have used SelectResult to get a specific subset of properties.
+
+In this case each array element is an array of key value pairs (property name/property value).
+
+Access the retrieved properties by converting each row into a dictionary -- as shown in <<c:query-resultsets:::ex-acc-specific>>.
+
+[#ex-acc-specific]
+
+
+[#c:query-resultsets:::ex-acc-specific]
+====
+
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="query-access-props", indent=0]
+[source, c]
+----
+// NOTE: No error handling, for brevity (see getting started)
+
+CBLError err;
+CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
+    FLSTR("SELECT type, name, city FROM _"), NULL, &err);
+
+CBLResultSet* results = CBLQuery_Execute(query, &err);
+while(CBLResultSet_Next(results)) {
+    FLString type = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("type")));
+    FLString name = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("name")));
+    FLString city = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("city")));
+
+    printf("Type :: %.*s\n", (int)type.size, (const char *)type.buf);
+    printf("Name :: %.*s\n", (int)name.size, (const char *)name.buf);
+    printf("City :: %.*s\n", (int)city.size, (const char *)city.buf);
+}
+----
+
+
+
+
+====
+
+
+
+[discrete#c:query-resultsets:::json-result-sets]
+=== JSON Result Sets
+
+[#ex-json]
+.Using JSON Results
+
+
+[#c:query-resultsets:::ex-json]
+====
+
+pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__json.html#ga3450acc0690101545d75986b91e4080[FLValue_ToJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<c:query-resultsets:::ex-json>> for a working example.]
+
+// Show Main Snippet
+// include::c:example$code_snippets/main.cpp[tags="query-access-json", indent=0]
+[source, c]
+----
+CBLResultSet* results = CBLQuery_Execute(query, &err);
+while(CBLResultSet_Next(results)) {
+    FLDict result = CBLResultSet_ResultDict(results);
+    FLStringResult json = FLValue_ToJSON((FLValue)result);
+    printf("JSON Result :: %.*s\n", (int)json.size, (const char *)json.buf);
+    FLSliceResult_Release(json);
+}
+CBLResultSet_Release(results);
+
+----
+
+
+
+
+====
+
+
+.JSON String Format
+[#c:query-resultsets:::ex-json-format]
+If your query selects ALL then the JSON format will be:
+
+[source, JSON]
+----
+{
+  database-name: {
+    key1: "value1",
+    keyx: "valuex"
+  }
+}
+----
+
+If your query selects a sub-set of available properties then the JSON format will be:
+
+[source, JSON]
+----
+{
+  key1: "value1",
+  keyx: "valuex"
+}
+----
+
+
+
+[discrete#c:query-resultsets:::related-content]
+=== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+==== {empty}
+.How to . . .
+* xref:c:gs-prereqs.adoc[Prerequisites]
+* xref:c:gs-install.adoc[Install]
+* xref:c:gs-build.adoc[Build and Run]
+
+
+.
+
+[discrete.colum#c:query-resultsets:::-2n]
+==== {empty}
+.Learn more . . .
+* xref:c:database.adoc[Databases]
+* xref:c:document.adoc[Documents]
+* xref:c:blob.adoc[Blobs]
+* xref:c:replication.adoc[Remote Sync Gateway]
+* xref:c:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[discrete.colum#c:query-resultsets:::-3n]
+==== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+
+++++
+</div>
+++++
+
+
+

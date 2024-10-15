@@ -1,12 +1,395 @@
+:docname: upgrade
+:page-module: swift
+:page-relative-src-path: upgrade.adoc
+:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
+:page-origin-start-path:
+:page-origin-refname: antora-assembler-simplification
+:page-origin-reftype: branch
+:page-origin-refhash: (worktree)
+[#swift:upgrade:::]
 = Upgrade
 :page-aliases: advance/swift-dep-upgrade.adoc, dep-upgrade.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description:
 
-include::partial$_set_page_context_for_swift.adoc[]
 
 
-include::{root-commons}upgrade.adoc[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// :url-api-references-query-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/[Query Class index]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Replicator.pendingDocumentIds()]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[IMPORTANT]
+--
+On upgrading from a 2.x release, all Couchbase Lite databases will be automatically re-indexed on initial database open. +
+This can result in a delay before the database is usable.
+--
+
+
+[discrete#swift:upgrade:::3-2-0-upgrade]
+== {major}.{minor}.{base}{empty} Upgrade
+
+NOTE: This upgrade requires all 2.x databases be reindexed on initial open.
+
+The action will take place automatically and can lead to some delay in the database becoming available for use in your application.
+
+In addition, if you are syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
+This is a one-way conversion.
+
+[discrete#swift:upgrade:::api-changes]
+=== API Changes
+
+[discrete#swift:upgrade:::removed-apis]
+==== Removed APIs
+
+[discrete#swift:upgrade:::resetcheckpoint]
+===== ResetCheckpoint
+
+.Alternative
+  `replicator.start(reset:)`
+
+.Before
+----
+replicator.resetCheckpoint()
+replicator.start()
+----
+
+.After
+----
+replicator.start(true)
+----
+
+[discrete#swift:upgrade:::database-setloglevel]
+===== Database.setLogLevel
+
+.Alternative
+`Database.log.console`
+
+.Before
+----
+Database.setLogLevel(.verbose, domain: .all)
+----
+
+.After
+----
+Database.log.console.domain = .all
+Database.log.console.level = .verbose
+----
+
+[discrete#swift:upgrade:::database-compact]
+===== Database.compact
+.Alternative
+
+https://docs.couchbase.com/mobile/3.0.0-beta02/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC18performMaintenance4typeyAA0F4TypeO_tKF[Database.performMaintenance(type:)]
+
+.Before
+----
+try testdb.compact()
+----
+
+.After
+----
+try testdb.performMaintenance(type: .compact)
+----
+
+
+
+[discrete#swift:upgrade:::deprecated-api]
+==== Deprecated API
+
+[discrete#swift:upgrade:::match]
+===== Match
+.Alternative
+`FullTextFunction.match(indexName:)`
+
+.Before
+----
+let index = FullTextExpression.index ("indexName")
+let q = QueryBuilder.select([SelectResult.
+expression(Meta.id)])
+            .from(DataSource.database(testdb)) +
+            .where(index.match("'queryString'"))
+----
+
+.After
+----
+let q = QueryBuilder.select([SelectResult.expression(Meta.id)])
+            .from(DataSource.database(testdb))
+            .where(FullTextFunction.match(indexName: "indexName", query: "'queryString'"))
+----
+
+
+[discrete#swift:upgrade:::isnullormissing-and-notnullormissing]
+===== isNullOrMissing and notNullOrMissing
+
+.Alternatives
+`isNotValued()` +
+`isValued()`
+
+.Before
+----
+|let q1 = QueryBuilder.select([SelectResult.expression(Meta.id)])
+            .from(DataSource.database(testdb))
+            .where(Expression.property("missingProp").isNullOrMissing())
+
+let q2 = QueryBuilder.select([SelectResult.expression(Meta.id)])
+            .from(DataSource.database(testdb))
+            .where(Expression.property("notMissingProp").notNullOrMissing())
+----
+
+.After
+----
+let q1 = QueryBuilder.select([SelectResult.expression(Meta.id)])
+            .from(DataSource.database(testdb))
+            .where(Expression.property("missingProp").isNotValued())
+
+let q2 = QueryBuilder.select([SelectResult.expression(Meta.id)])
+            .from(DataSource.database(testdb))
+            .where(Expression.property("notMissingProp").isValued())
+----
+
+[discrete#swift:upgrade:::updated-api]
+==== Updated API
+
+[discrete#swift:upgrade:::configuration]
+===== Configuration
+The following classes are changed to Swift struct.
+
+* DatabaseConfiguration
+* ReplicatorConfiguration
+* URLEndpointListenerConfiguration
+
+.Before
+----
+
+let config = DatabaseConfiguration()
+config.encryptionKey = EncryptionKey.password(password!)
+
+let config = ReplicatorConfiguration(database: db, target: target)
+config.continuous = true
+----
+
+.After
+----
+var config = DatabaseConfiguration()
+config.encryptionKey = EncryptionKey.password(password!)
+
+var config = ReplicatorConfiguration(database: db, target: target)
+config.continuous = true
+----
+
+[discrete#swift:upgrade:::atan2]
+===== ATAN2
+
+CAUTION: Breaking change
+
+`ATAN2(x, y)` now becomes `ATAN2(y, x)`
+
+.Before
+[source, swift]
+----
+let p = Expression.property("number")
+let q = QueryBuilder.select([SelectResult.expression(Function.atan2(x: Expression.int(90), y: p))])
+            .from(DataSource.database(testdb))
+----
+
+.After
+[source, swift]
+----
+let q = QueryBuilder.select([SelectResult.expression(Function.atan2(y: Expression.int(90), x: p))])
+            .from(DataSource.database(testdb))
+----
+
+
+[discrete#swift:upgrade:::lbl-db-upgrades]
+== 1.x Databases Upgrades to 2.x
+
+Databases created using Couchbase Lite 1.2 or later can still be used with Couchbase Lite 2.x; but will be automatically updated to the  current 2.x version.
+This feature is only available for the default storage type (i.e., not a ForestDB database).
+
+[discrete#swift:upgrade:::encrypted-databases]
+=== Encrypted Databases
+The automatic migration feature does not support encrypted databases.
+So if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/swift.html#database-encryption[1.x Database Guide]).
+
+Thus, to upgrade an encrypted 1.x database, you should do the following:
+
+.Upgrading Encrypted Databases
+****
+. Disable encryption using the Couchbase Lite 1.x framework (see https://docs-archive.couchbase.com/couchbase-lite/1.4/swift.html#database-encryption[1.x encryption guide])
+. Open the database file with encryption enabled using the Couchbase Lite 2.x framework.
+****
+
+Since it is not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in the same application this upgrade path would require two successive upgrades.
+
+If you are using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.
+
+
+[discrete#swift:upgrade:::handling-of-existing-conflicts]
+=== Handling of Existing Conflicts
+
+If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
+
+This functionality is related to the way conflicts are now being handled in Couchbase Lite -- see xref:swift:conflict.adoc[Handling Data Conflicts].
+
+Optionally, existing conflicts in the 1.x database can be resolved with the https://docs-archive.couchbase.com/couchbase-lite/1.4/swift.html#resolving-conflicts[1.x API] prior to the database being upgraded.
+
+[discrete#swift:upgrade:::handling-of-existing-attachments]
+=== Handling of Existing Attachments
+
+Attachments persisted in a 1.x database are copied to the new database.
+NOTE: The relevant Couchbase Lite API is now called the `Blob` API not the `Attachments` API.
+
+The functionally is identical but the internal schema for attachments has changed.
+
+Blobs are stored anywhere in the document, just like other value types.
+Whereas in 1.x they were stored under the `_attachments` field.
+
+The automatic upgrade functionality *does not* update the internal schema for attachments, so they remain accessible under the `_attachments` field.
+See <<swift:upgrade:::ex-get-att>> for how to retrieve an attachment that was created in a 1.x database with a 2.x API.
+
+.Retrieve 1.x Attachment
+[#ex-get-att]
+
+
+[#swift:upgrade:::ex-get-att]
+====
+
+
+// Show Main Snippet
+// include::swift:example$code_snippets/SampleCodeTest.swift[tags="1x-attachment", indent=0]
+[source, swift]
+----
+----
+
+
+
+
+====
+
+
+[discrete#swift:upgrade:::replication-compatibility]
+=== Replication Compatibility
+
+The current replication protocol is not backwards compatible with the 1.x replication protocol.
+Therefore, to use replication with Couchbase Lite 2.x, the target Sync Gateway instance must also be upgraded to 2.x.
+
+Sync Gateway 2.x will continue to accept clients that connect through the 1.x protocol.
+It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through ws://localhost:4984/db.
+This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
+
+
+[discrete#swift:upgrade:::xcode]
+== Xcode
+
+The API has changed in Couchbase Lite 2.0 and will require porting an application that is using Couchbase Lite 1.x API to the Couchbase Lite 2.0 API.
+To update an Xcode project built with Couchbase Lite 1.x:
+
+* Remove the existing *CouchbaseLite.framework* dependency from the Xcode project.
+* Remove all the Couchbase Lite 1.x dependencies (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/swift.html#getting-started[1.x installation guide]).
+* Install the Couchbase Lite 2.0 framework in your project  -- see xref:swift:gs-install.adoc[Install].
+At this point, there will be many compiler warnings.
+Refer to the examples on this page to learn about the new API.
+* Build & run your application.
+
+[discrete#swift:upgrade:::visual-studio]
+== Visual Studio
+
+The public facing API has completely changed in Couchbase Lite 2.0 and will require a re-write to upgrade an application that is using Couchbase Lite 1.x.
+To update an Xcode project built with Couchbase Lite 1.x:
+
+* Remove the existing Couchbase Lite nuget package from the Visual Studio project.
+* Remove all the Couchbase Lite 1.x dependencies -- see the  https://docs-archive.couchbase.com/couchbase-lite/1.4/csharp.html#getting-started[1.x installation guide].
+* Install the Couchbase Lite 2.0 framework in your project  -- see xref:swift:gs-install.adoc[Install].
+At this point, there will be many compiler warnings.
+Refer to the examples on this page to learn about the new API.
+* Build & run your application.
+endif::csharp[]
+ifdef::is-android[]
+= Android Studio
+
+
+The API changed in Couchbase Lite 2.0 and you will need to port any application that is using Couchbase Lite 1.x API to the latest Couchbase Lite API.
+To update an Android project built with Couchbase Lite 1.x:
+
+* Remove the existing Couchbase Lite dependency from the Android Studio project.
+* Install the Couchbase Lite framework in your project -- see the https://docs-archive.couchbase.com/couchbase-lite/1.4/java.html#getting-started[Getting Started].
+At this point, there will be many compiler warnings.
+Refer to the examples on this page to learn about the new API.
+* Build & run your application.
+
+endif::is-android[]
+
+include::ROOT:partial$block-related-content-std.adoc[]
+
+
+= Troubleshooting
 
