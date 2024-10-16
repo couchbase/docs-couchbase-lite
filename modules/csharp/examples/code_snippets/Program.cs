@@ -2201,6 +2201,81 @@ namespace api_walkthrough
             // end::datatype_mutable_array[]
         }
 
+        public void SetupReplication()
+        {
+            var db = _Database;
+
+            // tag::p2p-act-rep-func[]
+            // tag::p2p-act-rep-initialize[]
+            // initialize the replicator configuration
+            var endpoint = new URLEndpoint(new Uri("wss://listener.com:4984/otherDB")); // <.>
+            var config = new ReplicatorConfiguration(endpoint); // <.>
+
+            // Start adding collections to use
+            var collectionConfig = new CollectionConfiguration();
+
+            // tag::p2p-act-rep-config-conflict-full[]
+            // tag::p2p-act-rep-config-conflict-custom[]
+            // optionally use custom resolver
+            collectionConfig.ConflictResolver = new LocalWinConflictResolver();
+
+            // end::p2p-act-rep-config-conflict-custom[]
+            // end::p2p-act-rep-config-conflict-full[]
+            config.AddCollection(db.GetDefaultCollection(), collectionConfig);
+
+            // end::p2p-act-rep-initialize[]
+            // tag::p2p-act-rep-config-type[]
+            // Set replicator type
+            config.ReplicatorType = ReplicatorType.PushAndPull;
+
+            // end::p2p-act-rep-config-type[]
+            // tag::autopurge-override[]
+            // Set autopurge option
+            // here we override its default
+            config.EnableAutoPurge = false; // <.>
+
+            // end::autopurge-override[]
+            // tag::p2p-act-rep-config-cont[]
+            // Configure Sync Mode
+            config.Continuous = true;
+
+            // end::p2p-act-rep-config-cont[]
+            // tag::p2p-act-rep-config-self-cert[]
+            // Configure Server Security -- only accept self-signed certs
+            config.AcceptOnlySelfSignedServerCertificate = true; // <.>
+
+            // end::p2p-act-rep-config-self-cert[]
+            // Configure Client Security
+            // tag::p2p-act-rep-auth[]
+            // Configure basic auth using user credentials
+            config.Authenticator = new BasicAuthenticator("Our Username", "Our Password"); // <.>
+
+            // tag::p2p-act-rep-start-full[]
+            // Initialize and start a replicator
+            // Initialize replicator with configuration data
+            var replicator = new Replicator(config); // <.>
+
+            // tag::p2p-act-rep-add-change-listener[]
+            // tag::p2p-act-rep-add-change-listener-label[]
+            //Optionally add a change listener // <.>
+            // end::p2p-act-rep-add-change-listener-label[]
+            var listenerToken = replicator.AddChangeListener((sender, args) =>
+            {
+                if (args.Status.Activity == ReplicatorActivityLevel.Stopped) {
+                    Console.WriteLine("Replication stopped");
+                }
+            });
+
+            // end::p2p-act-rep-add-change-listener[]
+            // tag::p2p-act-rep-start[]
+            // Start replicator
+            replicator.Start(); // <.>
+
+            // end::p2p-act-rep-start[]
+            // end::p2p-act-rep-start-full[]
+            // end::p2p-act-rep-func[]
+        }
+
         static void Main(string[] args)
         {
             // NOTE: PLEASE PLEASE PLEASE do not break the compilation of this file.  It is
@@ -2463,63 +2538,6 @@ namespace api_walkthrough
     }
     // end::merge-conflict-resolver[]
  }
-
-#warning p2p-act-rep-func used, but contains nothing
-// tag::p2p-act-rep-func[]
-
-#warning p2p-act-rep-config-type used, but contains nothing
-// tag::p2p-act-rep-config-type[]
-
-// end::p2p-act-rep-config-type[]
-
-#warning autopurge-override used, but contains nothing
-// tag::autopurge-override[]
-// Set autopurge option
-// here we override its default
-
-// end::autopurge-override[]
-
-#warning p2p-act-rep-config-cont used, but contains nothing
-// tag::p2p-act-rep-config-cont[]
-// Configure Sync Mode
-
-// end::p2p-act-rep-config-cont[]
-
-#warning p2p-act-rep-config-self-cert used, but contains nothing
-// tag::p2p-act-rep-config-self-cert[]
-// Configure Server Security -- only accept self-signed certs
-
-// end::p2p-act-rep-config-self-cert[]
-
-// Configure Client Security // <.>
-
-#warning p2p-act-rep-auth used, but contains nothing
-// tag::p2p-act-rep-auth[]
-// Configure basic auth using user credentials
-
-// end::p2p-act-rep-auth[]
-
-#warning p2p-act-rep-start-full used, but contains nothing
-// tag::p2p-act-rep-start-full[]
-// Initialize and start a replicator
-// Initialize replicator with configuration data
-
-#warning p2p-act-rep-add-change-listener used, but contains nothing
-// tag::p2p-act-rep-add-change-listener[]
-#warning p2p-act-rep-add-change-listener-label used, but contains nothing
-// tag::p2p-act-rep-add-change-listener-label[]
-//Optionally add a change listener // <.>
-// end::p2p-act-rep-add-change-listener-label[]
-
-// end::p2p-act-rep-add-change-listener[]
-
-#warning p2p-act-rep-start used, but contains nothing
-// tag::p2p-act-rep-start[]
-// Start replicator
-
-// end::p2p-act-rep-start[]
-// end::p2p-act-rep-start-full[]
-// end::p2p-act-rep-func[] 
 
 #warning p2p-act-rep-config-cacert used, but contains nothing
 // tag::p2p-act-rep-config-cacert[]
