@@ -2,7 +2,6 @@ package com.couchbase.gettingstarted;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.Collection;
@@ -20,17 +19,25 @@ import com.couchbase.lite.QueryBuilder;
 import com.couchbase.lite.Replicator;
 import com.couchbase.lite.ReplicatorConfiguration;
 import com.couchbase.lite.ReplicatorType;
-import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 import com.couchbase.lite.URLEndpoint;
 
 
 public class Main {
+    private static final String SG_URI = null; // "ws://localhost:4984/getting-started-db"
+
     public static void main(String[] args) throws CouchbaseLiteException, URISyntaxException {
+        Main main = new Main();
+        main.getStarted();
+    }
 
-        // tag::getting-started[]
 
+    private Replicator replicator;
+
+    // tag::getting-started[]
+
+    private void getStarted() throws CouchbaseLiteException, URISyntaxException {
         // <.>
         // One-off initialization
         CouchbaseLite.init();
@@ -88,17 +95,20 @@ public class Main {
         // OPTIONAL -- if you have Sync Gateway Installed you can try replication too
         // Create a replicator to push and pull changes to and from the cloud.
         // Be sure to hold a reference somewhere to prevent the Replicator from being GCed
-        // BasicAuthenticator basAuth = new BasicAuthenticator("sync-gateway", "password".toCharArray());
+        if (SG_URI != null) { replicator = startRepl(SG_URI, collection); }
+    }
+
+    private Replicator startRepl(String uri, Collection collection) throws URISyntaxException {
         CollectionConfiguration collConfig = new CollectionConfiguration()
             .setPullFilter((doc, flags) -> "Java".equals(doc.getString("language")));
 
         ReplicatorConfiguration replConfig = new ReplicatorConfiguration(
-            new URLEndpoint(new URI("ws://localhost:4984/getting-started-db")))
+            new URLEndpoint(new URI(uri)))
             .addCollection(collection, collConfig)
             .setType(ReplicatorType.PUSH_AND_PULL)
             .setAuthenticator(new BasicAuthenticator("sync-gateway", "password".toCharArray()));
 
-        Replicator replicator = new Replicator(replConfig);
+        Replicator repl = new Replicator(replConfig);
 
         // Listen to replicator change events.
         // Use `token.remove()` to stop the listener
@@ -107,8 +117,11 @@ public class Main {
         });
 
         // Start replication.
-        replicator.start();
+        repl.start();
+
+        return repl;
     }
     // end::getting-started[]
 }
+
 
