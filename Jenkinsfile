@@ -18,6 +18,12 @@ pipeline {
                         sh 'jenkins/c_build.sh 3.1.9'
                     }
                 }
+                stage("Validate iOS") {
+                    agent { label 'mobile-builder-ios-pull-request' }
+                    steps {
+                        sh 'jenkins/ios.sh 3.1.9'
+                    }
+                }
             }
         }
     }
