@@ -7,10 +7,8 @@ dir=$( dirname -- $(realpath "$0"); )
 # Get latest good CBL iOS EE build for given version
 CBL_URL="http://proget.build.couchbase.com:8080/api/open_latestbuilds?product=couchbase-lite-ios&version=${cbl_version}"
 
-# Grab the redirect url
+# Grab the redirect url - latestbuilds builds/releases/...
 CBL_SOURCE_URL=$(curl -s -L -o /dev/null -w '%{url_effective}' "${CBL_URL}")
-
-cbl_build=$(curl -s "http://proget.build.couchbase.com:8080/api/get_version?product=couchbase-lite-ios&version=$cbl_version&ee=true" | jq .BuildNumber)
 
 for PLATFORM in "objc" "swift"
 do
@@ -25,7 +23,7 @@ do
 
     pushd downloaded
     # Get CBL
-    CBL_PACKAGE_NAME="couchbase-lite-${PLATFORM}_xc_enterprise_${cbl_version}-${cbl_build}.zip"
+    CBL_PACKAGE_NAME="couchbase-lite-${PLATFORM}_xc_enterprise_${cbl_version}.zip"
     wget "$CBL_SOURCE_URL$CBL_PACKAGE_NAME"
     unzip -o $CBL_PACKAGE_NAME -d "../Frameworks/"
     # Check if download was successful
