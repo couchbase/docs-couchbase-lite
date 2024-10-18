@@ -46,8 +46,9 @@ class ViewController: UIViewController {
         mutableDoc.setString("Swift", forKey: "language")
         try collection.save(document: mutableDoc)
         let document = try collection.document(id: mutableDoc.id)
-        assert(document!.string(forKey: "language") == "Swift",
-               "Updated document id \(document!.id), adding language \(document!.string(forKey: "language")!)")
+        // Log the document ID and properties
+        print("Document ID: \(document!.id)")
+        print("Learning: \(document!.string(forKey: "language")!)")
 
         // Create a query to fetch documents of type SDK.
         print("Querying Documents of type=SDK")
