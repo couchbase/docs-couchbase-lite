@@ -6,8 +6,6 @@ ifdef::prerelease[:page-status: {prerelease}]
 :description: How to install Couchbase Lite on .Net
 :keywords: edge nosql api .Net C# xamarin
 
-:beta-url: https://packages.couchbase.com/releases/couchbase-lite-c/{version-full}/
-
 include::partial$_set_page_context_for_csharp.adoc[]
 
 :param-abstract: Using Nuget to install Couchbase Lite on {param-name}
@@ -47,19 +45,21 @@ This is the recommended method of dependency management because it supports the 
 .`Couchbase.Lite.Enterprise`
 * `Couchbase.Lite.Enterprise.Support.UWP`
 * `Couchbase.Lite.Enterprise.Support.ios`
-* `Couchbase.Lite.Enterprise.Support.android`
+* `Couchbase.Lite.Enterprise.Support.Droid`
 * `Couchbase.Lite.Enterprise.Support.NetDesktop`
 * `Couchbase.Lite.Enterprise.Support.WinUI`
 
 .`Couchbase.Lite`
 * `Couchbase.Lite.Support.UWP`
 * `Couchbase.Lite.Support.ios`
-* `Couchbase.Lite.Support.android`
+* `Couchbase.Lite.Support.Droid`
 * `Couchbase.Lite.Support.NetDesktop`
 * `Couchbase.Lite.Support.WinUI`
 
 
 == Activating (on Android platform only)
+
+IMPORTANT: Couchbase Lite must be activated before any other calls can be made.
 
 Within your Android app, include a call the relevant `Activate()` function inside of the class that is included in the support assembly.
 
@@ -70,6 +70,23 @@ For example, UWP looks like: +
 
 Currently the support assemblies provide dependency injected mechanisms for default directory logic, and platform specific logging (So, C# will log to logcat with correct log levels and tags. No more "mono-stdout" always at info level.)
 
+=== Activating with MAUI
+
+To activate with .NET MAUI, you must override the `OnCreate()` method in the `MainActivity.cs` file to ensure activation at the beginning of the application lifecyle.
+
+Below is an example of how you can override the `OnCreate()` method.
+
+[source, csharp]
+--
+public class MainActivity : MauiAppCompatActivity
+{
+    protected override void OnCreate(Bundle savedInstanceState)
+    {
+        base.OnCreate(savedInstanceState);
+        Couchbase.Lite.Support.Droid.Activate(this);
+    }
+}       
+--
 
 // DO NOT EDIT -- Footer Related Content Block
 include::{root-partials}block-related-content-p2psync.adoc[]
