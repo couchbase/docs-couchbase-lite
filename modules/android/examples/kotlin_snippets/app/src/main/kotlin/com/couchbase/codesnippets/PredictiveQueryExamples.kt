@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-@file:Suppress("UNUSED_VARIABLE", "unused")
+@file:Suppress("unused")
 
 package com.couchbase.codesnippets
 
@@ -42,7 +42,7 @@ object TensorFlowModel {
 }
 
 object ImageClassifierModel : PredictiveModel {
-    const val name = "ImageClassifier"
+    const val NAME = "ImageClassifier"
 
     // this would be the implementation of the ml model you have chosen
     override fun predict(input: Dictionary) = input.getBlob("photo")?.let {
@@ -88,7 +88,7 @@ fun predictiveQueryExamples(collection: Collection) {
     // tag::predictive-query[]
     val inputMap: Map<String, Any?> = mutableMapOf("photo" to Expression.property("photo"))
     val prediction: PredictionFunction = Function.prediction(
-        ImageClassifierModel.name,
+        ImageClassifierModel.NAME,
         Expression.map(inputMap) // <1>
     )
 

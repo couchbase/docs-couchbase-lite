@@ -21,5 +21,3 @@ import java.security.cert.X509Certificate
 fun log(msg: String, err: Exception? = null): Unit = TODO()
 
 fun getAsset(assetName: String): InputStream? = TODO()
-
-fun getCertificate(certName: String): X509Certificate = TODO()

@@ -138,13 +138,6 @@ class BasicExamples(private val context: Context) {
         // end::database-encryption[]
     }
 
-    // ### Logging
-    // !!!GBM: OBSOLETE in 3.0
-    fun loggingExample() {
-        // tag::logging[]
-        // end::logging[]
-    }
-
     fun enableCustomLoggingExample() {
         // tag::set-custom-logging[]
         // this custom logger will not log an event with a log level < WARNING
@@ -180,15 +173,6 @@ class BasicExamples(private val context: Context) {
             // end::file-logging[]
         }
         // end::file-logging-config-factory[]
-    }
-
-    fun writeCustomLog() {
-        // tag::write-custom-logmsg[]
-        Database.log.custom?.log(
-            LogLevel.WARNING,
-            LogDomain.REPLICATOR, "Any old log message"
-        )
-        // end::write-custom-logmsg[]
     }
 
     // ### Loading a pre-built database
@@ -330,7 +314,6 @@ class BasicExamples(private val context: Context) {
 class SupportingDatatypes(private val context: Context) {
 
     fun datatypeUsage() {
-        // tag::datatype_usage[]
         // tag::datatype_usage_createdb[]
         // Initialize the Couchbase Lite system
         CouchbaseLite.init(context)
@@ -392,8 +375,6 @@ class SupportingDatatypes(private val context: Context) {
         database.close()
 
         // end::datatype_usage_closedb[]
-
-        // end::datatype_usage[]
     }
 
 
@@ -480,8 +461,6 @@ class SupportingDatatypes(private val context: Context) {
 
 } // end  class supporting_datatypes
 
-
-// tag::ziputils-unzip[]
 object ZipUtils {
     fun unzip(src: InputStream?, dst: File?) {
         val buffer = ByteArray(1024)
@@ -508,3 +487,4 @@ object ZipUtils {
         }
     }
 }
+
