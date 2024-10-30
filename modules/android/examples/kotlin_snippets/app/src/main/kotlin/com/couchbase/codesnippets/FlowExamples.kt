@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-@file:Suppress("UNUSED_VARIABLE", "unused")
+@file:Suppress("unused")
 
 package com.couchbase.codesnippets
 
@@ -22,27 +22,15 @@ import androidx.lifecycle.asLiveData
 import com.couchbase.lite.Collection
 import com.couchbase.lite.DocumentChange
 import com.couchbase.lite.Query
-import com.couchbase.lite.Replicator
-import com.couchbase.lite.ReplicatorActivityLevel
 import com.couchbase.lite.Result
 import com.couchbase.lite.collectionChangeFlow
 import com.couchbase.lite.documentChangeFlow
 import com.couchbase.lite.queryChangeFlow
-import com.couchbase.lite.replicatorChangesFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 
 
 class FlowExamples {
-
-    fun replChangeFlowExample(repl: Replicator): LiveData<ReplicatorActivityLevel> {
-        // tag::flow-as-replicator-change-listener[]
-        return repl.replicatorChangesFlow()
-            .map { it.status.activityLevel }
-            .asLiveData()
-        // end::flow-as-replicator-change-listener[]
-    }
-
     fun replChangeFlowExample(collection: Collection): LiveData<MutableList<String>> {
         // tag::flow-as-database-change-listener[]
         return collection.collectionChangeFlow(null)

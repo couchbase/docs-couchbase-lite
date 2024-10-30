@@ -13,11 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-@file:Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE", "UNUSED_VALUE", "UNUSED_VARIABLE", "unused")
+@file:Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE", "UNUSED_VALUE", "unused")
 
 package com.couchbase.codesnippets
 
-import com.couchbase.codesnippets.utils.Logger
+import com.couchbase.codesnippets.util.log
 import com.couchbase.lite.Collection
 import com.couchbase.lite.CouchbaseLiteException
 import com.couchbase.lite.Database
@@ -79,9 +79,9 @@ class CollectionExamples {
         // tag::scopes-manage-list[]
         // List all of the collections in each of the scopes in the database
         db.scopes.forEach { scope ->
-            Logger.log("Scope :: ${scope.name}")
+            log("Scope :: ${scope.name}")
             scope.collections.forEach {
-                Logger.log("    Collection :: ${it.name}")
+                log("    Collection :: ${it.name}")
             }
         }
         // end::scopes-manage-list[]

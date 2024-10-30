@@ -60,12 +60,10 @@ public class ReplicationExamples {
         Replicator repl = new Replicator( // <.>
 
             // tag::p2p-act-rep-func[]
-            // tag::p2p-act-rep-initialize[]
             // initialize the replicator configuration
             new ReplicatorConfiguration(new URLEndpoint(new URI("wss://listener.com:8954"))) // <.>
                 .addCollections(collections, null)
 
-                // end::p2p-act-rep-initialize[]
                 // tag::p2p-act-rep-config-type[]
                 // Set replicator type
                 .setType(ReplicatorType.PUSH_AND_PULL)
@@ -108,11 +106,8 @@ public class ReplicationExamples {
         });
 
         // end::p2p-act-rep-add-change-listener[]
-        // tag::p2p-act-rep-start[]
         // Start replicator
         repl.start(false); // <.>
-
-        // end::p2p-act-rep-start[]
 
         thisReplicator = repl;
         thisToken = token;
@@ -230,7 +225,6 @@ public class ReplicationExamples {
     }
 
     public void replicationResetCheckpointExample(Set<Collection> collections) throws URISyntaxException {
-        // tag::replication-startup[]
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
             new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
@@ -243,7 +237,6 @@ public class ReplicationExamples {
         // ... at some later time
 
         repl.stop();
-        // end::replication-startup[]
     }
 
     public void handlingNetworkErrorsExample(Set<Collection> collections) throws URISyntaxException {
@@ -313,15 +306,9 @@ public class ReplicationExamples {
             new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
                 .addCollections(collections, null)
                 //  other config as required . . .
-                // tag::replication-heartbeat-config[]
                 .setHeartbeat(150) // <.>
-                // end::replication-heartbeat-config[]
-                // tag::replication-maxattempts-config[]
                 .setMaxAttempts(20) // <.>
-                // end::replication-maxattempts-config[]
-                // tag::replication-maxattemptwaittime-config[]
                 .setMaxAttemptWaitTime(600)); // <.>
-        // end::replication-maxattemptwaittime-config[]
 
         repl.start();
         thisReplicator = repl;
@@ -372,9 +359,7 @@ public class ReplicationExamples {
                 .addCollection(collection, null)
                 .setType(ReplicatorType.PUSH));
 
-        // tag::replication-push-pendingdocumentids[]
         Set<String> pendingDocs = repl.getPendingDocumentIds(collection);
-        // end::replication-push-pendingdocumentids[]
 
         if (!pendingDocs.isEmpty()) {
             Logger.log("There are " + pendingDocs.size() + " documents pending");
@@ -383,7 +368,6 @@ public class ReplicationExamples {
 
             repl.addChangeListener(change -> {
                 Logger.log("Replicator activity level is " + change.getStatus().getActivityLevel());
-                // tag::replication-push-isdocumentpending[]
                 try {
                     if (!repl.isDocumentPending(firstDoc, collection)) {
                         Logger.log("Doc ID " + firstDoc + " has been pushed");
@@ -392,7 +376,6 @@ public class ReplicationExamples {
                 catch (CouchbaseLiteException err) {
                     Logger.log("Failed getting pending docs", err);
                 }
-                // end::replication-push-isdocumentpending[]
             });
 
             repl.start();
