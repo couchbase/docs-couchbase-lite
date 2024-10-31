@@ -112,40 +112,7 @@ endif::is-c[]
 == Array Indexing 
 
 Couchbase Lite 3.2.1 introduces functionality to optimize querying arrays.
-Array `UNNEST` to unpack arrays within a document to allow joins with the parent object, and array indexes for indexing nested array properties and allow more efficient queries with `UNNEST`. 
-
-=== Array UNNEST
-
-You can use `UNNEST` in queries to unpack arrays within a document into individual rows.
-This functionality makes it possible to join them with its parent object in the query.
-
-`UNNEST` is used within the `FROM` clause and can be chained to perform multi-level `UNNEST`.
-
-NOTE: Couchbase currently supports inner `UNNEST` only. 
-
-
-=== Array UNNEST Syntax
-
-The syntax for `UNNEST` is shown below:
-
-[cols ="3*"]
-|===
-|Name |Is Optional? |Description
-
-|`expr`
-|image:ROOT:no.png[]
-|Path to the nested array within the document.
-
-|Update when documents are deleted or purged
-|image:ROOT:yes.png[]
-|Assigns the alias name to the unnested array.
-When assigning the alias, `AS` may be ommitted.
-
-|===
-
-CAUTION: `"unnest"` will be defined as a new keyword in the SQL++ syntax.
-You cannot use the term as an identifier for a property name or data source unless you escape it using backticks.
-For example - `SELECT * FROM foo where ````unnest``` = true`
+xref:{param-module}:query-n1q1-mobile.adoc#lbl-unnest[Array `UNNEST`] to unpack arrays within a document to allow joins with the parent object, and array indexes for indexing unnested array's values to allow more efficient queries with `UNNEST`. 
 
 === The Array Index
 
@@ -191,17 +158,6 @@ For a single array or the last level array, the `"[]"` is optional.
 If the array specified by the path contains scalar values, this parameter can be null.
 
 |===
-
-[CAUTION]
---
-The `InvalidArgumentException` will be thrown in the following cases:
-
-* `expressions` is empty.
-
-* `expressions` contains a single empty string.
-
-* `expressions` contains null if your platform allows null values.
---
 
 === Using Array Indexes with UNNEST
 
@@ -277,7 +233,7 @@ The query above will then produce the following output:
 
 The output demonstrates retrieval of both primary and secondary contact numbers listed as type `"mobile"`.
 
-Below is an example of using array indexes with dictionary values:
+Here’s an example of creating an array index on a nested array containing dictionary values:
 
 [source, swift]
 --

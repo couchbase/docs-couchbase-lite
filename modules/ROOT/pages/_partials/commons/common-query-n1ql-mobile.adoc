@@ -76,12 +76,15 @@ a| The document properties that will be returned in the result set
 | <<lbl-from>> 
 a| The data source to be queried
 
- | <<lbl-where>> 
+| <<lbl-join>> 
+a| The criteria for joining multiple documents
+
+| <<lbl-where>> 
 a| The query criteria +
 The `SELECT`ed properties of documents matching this criteria will be returned in the result set
 
-| <<lbl-join>> 
-a| The criteria for joining multiple documents
+| <<lbl-unnest>>
+a| The criteria used to unpack arrays within a document into individual rows
 
 | <<lbl-group>> 
 a| The criteria used to group returned items in the result set
@@ -308,6 +311,35 @@ SELECT * FROM travel-sample r JOIN travel-sample a ON r.airlineid = a.meta.id WH
 
 ----
 ====
+
+[#lbl-unnest]
+== Array UNNEST
+
+=== Purpose
+
+You can use `UNNEST` in queries to unpack arrays within a document into individual rows.
+This functionality makes it possible to join them with its parent object in the query.
+
+`UNNEST` is used within the `FROM` clause and can be chained to perform multi-level `UNNEST`.
+
+NOTE: Couchbase currently supports inner `UNNEST` only. 
+
+=== Syntax
+
+The syntax for `UNNEST` is shown below:
+
+[source, sqlpp]
+----
+
+unnestClause = UNNEST expr ( ‘AS’? alias)?
+
+----
+
+CAUTION: `"unnest"` will be defined as a new keyword in the SQL++ syntax.
+You cannot use the term as an identifier for a property name or data source unless you escape it using backticks.
+For example - `SELECT * FROM foo where ````unnest``` = true`
+
+=== Examples
 
 [#lbl-where]
 == WHERE statement
