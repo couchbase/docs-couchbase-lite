@@ -423,4 +423,18 @@ class VectorSearchSnippets {
         }
         // end::vs-create-lazy-index-embedding[]
     }
+    
+    func createArrayIndexConfig() throws {
+        // tag::array-index-config[]
+        let config = ArrayIndexConfiguration(path: "contacts")
+        // end::array-index-config[]
+        
+        // tag::array-index-single[]
+        try collection.createIndex(withName: "singleIndex", config: ArrayIndexConfiguration(path: "likes", expressions: ["type"]))
+        // end::array-index-single[]
+        
+        // tag::array-index-nested[]
+        try collection.createIndex(withName: "nestedArray", config: ArrayIndexConfiguration(path: "contacts[].phones", expressions: ["type"]))
+        // end::array-index-nested[]
+    }
 }
