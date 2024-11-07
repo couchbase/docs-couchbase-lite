@@ -1804,6 +1804,26 @@ namespace api_walkthrough
             // end::tojson-blob[]
         }
 
+        private void CreateArrayIndex()
+        {
+            var database = new Database("my-database");
+            var collection = database.GetDefaultCollection();
+
+            {
+                // tag::array-index-single[]
+                var arrayIndexConfiguration = new ArrayIndexConfiguration("likes");
+                collection.CreateIndex("myindex", arrayIndexConfiguration);
+                // end::array-index-single[]
+            }
+
+            {
+                // tag::array-index-nested[]
+                var arrayIndexConfiguration = new ArrayIndexConfiguration("contacts[].phones", "type");
+                collection.CreateIndex("myindex", arrayIndexConfiguration);
+                // end::array-index-nested[]
+            }
+        }
+
         private bool ValidatePassword(SecureString password) => true;
 
         public void P2PListenerSimple()
