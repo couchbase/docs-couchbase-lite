@@ -1050,6 +1050,46 @@ static void create_index() {
     // end::query-index[]
 }
 
+static void create_array_index_config() {
+    // tag::array-index-config[]
+    CBLArrayIndexConfiguration config = {
+        kCBLN1QLLanguage,
+        FLSTR("contacts")
+    };
+    // end::array-index-config[]
+}
+
+static void create_array_index_single() {
+    CBLDatabase *database = kDatabase;
+    CBLCollection *collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
+
+    // tag::array-index-single[]
+    CBLArrayIndexConfiguration config = {
+        kCBLN1QLLanguage,
+        FLSTR("likes")
+    };
+
+    CBLError err{};
+    CBLCollection_CreateArrayIndex(collection, FLSTR("myindex"), config, &err);
+    // end::array-index-single[]
+}
+
+static void create_array_index_nested() {
+    CBLDatabase *database = kDatabase;
+    CBLCollection *collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
+
+    // tag::array-index-nested[]
+    CBLArrayIndexConfiguration config = {
+        kCBLN1QLLanguage,
+        FLSTR("contacts[].phones"),
+        FLSTR("type")
+    };
+
+    CBLError err{};
+    CBLCollection_CreateArrayIndex(collection, FLSTR("myindex"), config, &err);
+    // end::array-index-nested[]
+}
+
 static void select_meta() {
     CBLDatabase* database = kDatabase;
 
@@ -2438,6 +2478,9 @@ int main(int argc, char** argv) {
     array_json();
     load_prebuilt();
     create_index();
+    create_array_index_config();
+    create_array_index_single();
+    create_array_index_nested();
     select_all();
     select_and_access_all();
     select_props();
