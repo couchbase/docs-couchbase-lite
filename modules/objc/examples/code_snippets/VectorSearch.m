@@ -467,5 +467,27 @@
     // end::vs-create-lazy-index-embedding[]
 }
 
+- (void) createArrayIndexConfig {
+    // tag::array-index-config[]
+    CBLArrayIndexConfiguration* config = [[CBLArrayIndexConfiguration alloc] initWithPath: @"contacts" expressions: nil];
+    // end::array-index-config[]
+}
+
+- (void) createSingleArrayIndex {
+    NSError* error;
+    // tag::array-index-single[]
+    CBLArrayIndexConfiguration* config = [[CBLArrayIndexConfiguration alloc] initWithPath: @"likes" expressions: @[@"type"]];
+    [collection createIndexWithName:@"singleArray" config: config error: &error];
+    // end::array-index-single[]
+}
+
+- (void) createNestedArrayIndex {
+    NSError* error;
+    // tag::array-index-nested[]
+    CBLArrayIndexConfiguration* config = [[CBLArrayIndexConfiguration alloc] initWithPath: @"contacts[].phones" expressions: @[@"type"]];
+    [collection createIndexWithName:@"nestedArray" config: config error: &error];
+    // end::array-index-nested[]
+}
+
 
 @end
