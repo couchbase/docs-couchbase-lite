@@ -120,22 +120,75 @@ An array index is a new type of the index for indexing nested array’s properti
 
 Below is an example array index configuration:
 
-[source, Swift]
---
-//  Configuration for indexing property values within nested arrays 
-//  in documents, intended for use with the UNNEST query.
-public class ArrayIndexConfiguration : IndexConfiguration {
-   
-  // Path to the array, which can be nested.
-  let path: String   
+ifdef::is-android[]
 
-  // The expressions representing the values within the array to be indexed. 
-  let expressions: [String]?
-  
-   ArrayIndexConfiguration(path: String, expressions: [String]? = nil)
-}
-
+[tabs]
+=====
+Java::
++
 --
+[source, java]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-config]
+
+----
+--
+
+Kotlin::
++
+--
+[source, kotlin]
+----
+
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ArrayIndexExamples.kt[tags=array-index-config]
+
+----
+--
+=====
+
+endif::is-android[]
+ifdef::is-java[]
+
+[source, java]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-config]
+
+----
+
+endif::is-java[]
+ifdef::is-csharp[]
+
+[source, csharp]
+----
+include::csharp:example$code_snippets/Program.cs[tags=array-index-config]
+----
+endif::is-csharp[]
+ifdef::is-objc[]
+[source, objc]
+----
+
+include::objc:example$code_snippets/VectorSearch.m[tags=array-index-config]
+
+----
+endif::is-objc[]
+ifdef::is-swift[]
+[source, swift]
+----
+
+include::swift:example$code_snippets/VectorSearch.swift[tags=array-index-config]
+
+----
+endif::is-swift[]
+ifdef::is-c[]
+[source, c]
+----
+
+include::c:example$code_snippets/main.cpp[tags=array-index-config]
+
+----
+endif::is-c[]
 
 === Array Index Syntax
 
@@ -206,11 +259,76 @@ The query above will produce the following output from the document:
 
 You can also perform the same operation using array indexes like so:
 
+ifdef::is-android[]
+
+[tabs]
+=====
+Java::
++
+--
+[source, java]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-single]
+
+----
+--
+
+Kotlin::
++
+--
+[source, kotlin]
+----
+
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ArrayIndexExamples.kt[tags=array-index-single]
+
+----
+--
+=====
+
+endif::is-android[]
+ifdef::is-java[]
+
+[source, java]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-single]
+
+----
+
+endif::is-java[]
+ifdef::is-csharp[]
+
+[source, csharp]
+----
+include::csharp:example$code_snippets/Program.cs[tags=array-index-single]
+----
+
+endif::is-csharp[]
+ifdef::is-objc[]
+[source, objc]
+----
+
+include::objc:example$code_snippets/VectorSearch.m[tags=array-index-single]
+
+----
+endif::is-objc[]
+ifdef::is-swift[]
 [source, swift]
---
-let config = ArrayIndexConfiguration(path: "likes", expressions: nil)
-collection.createIndex(withName: "myindex", config: config)
---
+----
+
+include::swift:example$code_snippets/VectorSearch.swift[tags=array-index-single]
+
+----
+endif::is-swift[]
+ifdef::is-c[]
+[source, c]
+----
+
+include::c:example$code_snippets/main.cpp[tags=array-index-single]
+
+----
+endif::is-c[]
 
 You can perform similar operations on nested arrays:
 
@@ -235,11 +353,76 @@ The output demonstrates retrieval of both primary and secondary contact numbers 
 
 Here’s an example of creating an array index on a nested array containing dictionary values:
 
+ifdef::is-android[]
+
+[tabs]
+=====
+Java::
++
+--
+[source, java]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-nested]
+
+----
+--
+
+Kotlin::
++
+--
+[source, kotlin]
+----
+
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ArrayIndexExamples.kt[tags=array-index-nested]
+
+----
+--
+=====
+
+endif::is-android[]
+ifdef::is-java[]
+
+[source, java]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-nested]
+
+----
+
+endif::is-java[]
+ifdef::is-csharp[]
+
+[source, csharp]
+----
+include::csharp:example$code_snippets/Program.cs[tags=array-index-nested]
+----
+
+endif::is-csharp[]
+ifdef::is-objc[]
+[source, objc]
+----
+
+include::objc:example$code_snippets/VectorSearch.m[tags=array-index-nested]
+
+----
+endif::is-objc[]
+ifdef::is-swift[]
 [source, swift]
---
-let config = ArrayIndexConfiguration(path: "contacts[].phones", expressions: ["type"])
-collection.createIndex(withName: "myindex", config: config)
---
+----
+
+include::swift:example$code_snippets/VectorSearch.swift[tags=array-index-nested]
+
+----
+endif::is-swift[]
+ifdef::is-c[]
+[source, c]
+----
+
+include::c:example$code_snippets/main.cpp[tags=array-index-nested]
+
+----
+endif::is-c[]
 
 The above snippet will create an array index to allow you to iterate through `contacts[].type` in the document, namely `"primary"` and `"secondary"`.
 
