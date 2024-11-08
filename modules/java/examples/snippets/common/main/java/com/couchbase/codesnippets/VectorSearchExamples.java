@@ -300,6 +300,6 @@ class VectorSearchExamples {
                 updater.finish();
             }
         }
-        // tag::vs-create-lazy-index-embedding[]
+        // end::vs-create-lazy-index-embedding[]
     }
 }

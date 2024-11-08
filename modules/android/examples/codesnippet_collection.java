@@ -73,13 +73,10 @@ public class AndroidListenerExamples {
             );
         }
 
-        // tag::listener-config-tls-id-set[]
         // Set the TLS Identity
         URLEndpointListenerConfiguration config = new URLEndpointListenerConfiguration(collections);
         config.setTlsIdentity(TLSIdentity.getIdentity("test-alias")); // <.>
         // end::listener-config-tls-id-caCert[]
-
-        // end::listener-config-tls-id-set[]
         // end::listener-config-tls-id-full[]
     }
 
@@ -110,7 +107,6 @@ public class AndroidListenerExamples {
 
     public void listenerConfigClientAuthRootExample(URLEndpointListenerConfiguration thisConfig)
         throws CouchbaseLiteException {
-        // tag::listener-config-client-root-ca[]
         // tag::listener-config-client-auth-root[]
         // Configure the client authenticator
         // to validate using ROOT CA
@@ -131,7 +127,6 @@ public class AndroidListenerExamples {
             new URLEndpointListener(thisConfig);
 
         // end::listener-config-client-auth-root[]
-        // end::listener-config-client-root-ca[]
     }
 
     // tag::listener-config-tls-id-SelfSigned[]
@@ -157,19 +152,11 @@ public class AndroidListenerExamples {
         ); // <.>
 
         // end::listener-config-tls-id-SelfSigned[]
-
-        // tag::listener-config-tls-id-set[]
-        // Set the TLS Identity
-        thisConfig.setTlsIdentity(thisIdentity); // <.>
-
-        // end::listener-config-tls-id-set[]
     }
 
 
     public void replicatorConfigurationExample(Set<Collection> srcCollections, URI targetUrl, KeyStore keyStore)
         throws CouchbaseLiteException {
-        // tag::p2p-act-rep-config-tls-full[]
-
         ReplicatorConfiguration config =
             new ReplicatorConfiguration(new URLEndpoint(targetUrl))
                 .addCollections(srcCollections, null)
@@ -191,7 +178,6 @@ public class AndroidListenerExamples {
         // end::p2p-act-rep-config-cacert-pinned[]
 
 
-        // end::p2p-act-rep-config-tls-full[]
         // tag::p2p-tlsid-tlsidentity-with-label[]
         // Provide a client certificate to the server for authentication
         TLSIdentity clientId = TLSIdentity.getIdentity("client");
@@ -250,6 +236,51 @@ public class SnippetApplication extends Application {
     }
 }
 //
+// Copyright (c) 2024 Couchbase, Inc All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+package com.couchbase.codesnippets;
+
+import com.couchbase.lite.ArrayIndexConfiguration;
+import com.couchbase.lite.Collection;
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.IndexConfiguration;
+
+
+public class ArrayIndexExamples {
+    public void ArrayIndexConfig() {
+        // tag::array-index-config[]
+        IndexConfiguration config = new ArrayIndexConfiguration("contacts", "type");
+        // end::array-index-config[]
+    }
+
+    public void ArrayIndexSingle(Collection collection) throws CouchbaseLiteException {
+        // tag::array-index-single[]
+        collection.createIndex("myindex", new ArrayIndexConfiguration("likes"));
+        // end::array-index-single[]
+    }
+
+    public void ArrayIndexNested(Collection collection) throws CouchbaseLiteException {
+
+        // tag::array-index-nested[]
+        collection.createIndex(
+            "myindex",
+            new ArrayIndexConfiguration("contacts[].phones", "type"));
+        // end::array-index-nested[]
+    }
+}
+//
 // Copyright (c) 2023 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -283,13 +314,12 @@ import com.couchbase.lite.MutableDocument;
 
 @SuppressWarnings("unused")
 public class BasicExamples {
-    public class SupportingDatatypes {
+    public static class SupportingDatatypes {
         private final File rootDir;
 
         public SupportingDatatypes(@NotNull File rootDir) { this.rootDir = rootDir; }
 
         public void datatypeUsage() throws CouchbaseLiteException {
-            // tag::datatype_usage[]
             // tag::datatype_usage_createdb[]
             // Get the database (and create it if it doesn’t exist).
             Database database = new Database("getting-started");
@@ -349,8 +379,6 @@ public class BasicExamples {
             database.close();
 
             // end::datatype_usage_closedb[]
-
-            // end::datatype_usage[]
         }
 
         public void useExplicitType(Collection collection, Document someDoc) throws CouchbaseLiteException {
@@ -599,7 +627,6 @@ import com.couchbase.lite.ProtocolType;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
 import com.couchbase.lite.Replicator;
-import com.couchbase.lite.ReplicatorActivityLevel;
 import com.couchbase.lite.ReplicatorConfiguration;
 import com.couchbase.lite.ReplicatorConnection;
 import com.couchbase.lite.ReplicatorType;
@@ -636,7 +663,7 @@ public class Examples {
         database.delete();
     }
 
-     public void DatabaseFullSyncExample() throws CouchbaseLiteException {
+    public void DatabaseFullSyncExample() {
         DatabaseConfiguration config = new DatabaseConfiguration();
         // tag::database-fullsync[]
         config.setFullSync(true);
@@ -649,17 +676,6 @@ public class Examples {
         config.setEncryptionKey(new EncryptionKey("PASSWORD"));
         Database database = new Database(DB_NAME, config);
         // end::database-encryption[]
-    }
-
-    public void loggingExample() {
-        // tag::logging[]
-
-        // Set the overall logging level
-        Database.log.getConsole().setLevel(LogLevel.DEBUG);
-
-        // Enable or disable specific domains
-        Database.log.getConsole().setDomains(LogDomain.REPLICATOR, LogDomain.QUERY);
-        // end::logging[]
     }
 
     public void enableCustomLoggingExample() {
@@ -797,26 +813,6 @@ public class Examples {
         // end::blob[]
     }
 
-    public void replicationStatusExample(Collection collection) throws URISyntaxException {
-        URI uri = new URI("ws://localhost:4984/db");
-        Endpoint endpoint = new URLEndpoint(uri);
-        ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
-        config.addCollection(collection, null);
-        config.setType(ReplicatorType.PULL);
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        Replicator replicator = new Replicator(config);
-
-        // tag::replication-status[]
-        replicator.addChangeListener(change -> {
-            if (change.getStatus().getActivityLevel() == ReplicatorActivityLevel.STOPPED) {
-                Logger.log("Replication stopped");
-            }
-        });
-        // end::replication-status[]
-
-        replicator.close();
-    }
-
     public void replicationPendingDocsExample(Collection collection) throws URISyntaxException, CouchbaseLiteException {
         final Endpoint endpoint =
             new URLEndpoint(new URI("ws://localhost:4984/db"));
@@ -826,11 +822,9 @@ public class Examples {
                 .setType(ReplicatorType.PUSH);
         config.addCollection(collection, null);
 
-        // tag::replication-push-pendingdocumentids[]
         Replicator replicator = new Replicator(config);
         final Set<String> pendingDocs =
             replicator.getPendingDocumentIds(collection); // <.>
-        // end::replication-push-pendingdocumentids[]
 
         replicator.close();
     }
@@ -853,46 +847,6 @@ public class Examples {
             });
         // end::update-document-with-conflict-handler[]
     }
-
-    public void queryAccessJsonExample() throws CouchbaseLiteException, JsonProcessingException {
-        Database database = new Database("hotels");
-
-        Collection collection = database.getDefaultCollection();
-        Query listQuery = QueryBuilder.select(SelectResult.all())
-            .from(DataSource.collection(collection));
-
-        // tag::query-access-json[]
-        ObjectMapper mapper = new ObjectMapper();
-        ArrayList<Hotel> hotels = new ArrayList<>();
-        HashMap<String, Object> dictFromJSONstring;
-
-        try (ResultSet resultSet = listQuery.execute()) {
-            for (Result result: resultSet) {
-
-                // Get result as JSON string
-                String thisJsonString = result.toJSON(); // <.>
-
-                // Get Java  Hashmap from JSON string
-                dictFromJSONstring =
-                    mapper.readValue(thisJsonString, HashMap.class); // <.>
-
-
-                // Use created hashmap
-                String hotelId = dictFromJSONstring.get("id").toString();
-                String hotelType = dictFromJSONstring.get("type").toString();
-                String hotelname = dictFromJSONstring.get("name").toString();
-
-
-                // Get custom object from Native 'dictionary' object
-                Hotel thisHotel =
-                    mapper.readValue(thisJsonString, Hotel.class); // <.>
-                hotels.add(thisHotel);
-            }
-        }
-        // end::query-access-json[]
-
-        database.close();
-    }
 }
 
 
@@ -910,33 +864,7 @@ class ImageClassifierModel implements PredictiveModel {
     }
 }
 
-@SuppressWarnings({"unused", "ConstantConditions"})
-// tag::ziputils-unzip[]
-class ZipUtils {
-    public static void unzip(InputStream src, File dst) throws IOException {
-        byte[] buffer = new byte[1024];
-        try (InputStream in = src; ZipInputStream zis = new ZipInputStream(in)) {
-            ZipEntry ze = zis.getNextEntry();
-            while (ze != null) {
-                File newFile = new File(dst, ze.getName());
-                if (ze.isDirectory()) { newFile.mkdirs(); }
-                else {
-                    new File(newFile.getParent()).mkdirs();
-                    try (FileOutputStream fos = new FileOutputStream(newFile)) {
-                        int len;
-                        while ((len = zis.read(buffer)) > 0) { fos.write(buffer, 0, len); }
-                    }
-                }
-                ze = zis.getNextEntry();
-            }
-            zis.closeEntry();
-        }
-    }
-}
-// end::ziputils-unzip[]
-
 @SuppressWarnings("unused")
-
 // tag::custom-logging[]
 class LogTestLogger implements com.couchbase.lite.Logger {
     @NonNull
@@ -1160,151 +1088,27 @@ class PassivePeerConnection implements MessageEndpointConnection {
         // end::passive-peer-receive[]
     }
 }
-//
-// Copyright (c) 2023 Couchbase, Inc All rights reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-package com.couchbase.codesnippets;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-
-import com.couchbase.lite.Collection;
-import com.couchbase.lite.Database;
-import com.couchbase.lite.DatabaseEndpoint;
-import com.couchbase.lite.ListenerToken;
-import com.couchbase.lite.Replicator;
-import com.couchbase.lite.ReplicatorChange;
-import com.couchbase.lite.ReplicatorChangeListener;
-import com.couchbase.lite.ReplicatorConfiguration;
-import com.couchbase.lite.ReplicatorType;
-
-
-@SuppressWarnings("unused")
-public class ExecutionPolicyExamples {
-    private Replicator thisReplicator;
-    private ListenerToken thisToken;
-
-    // tag::execution-inorder[]
-    private static final ExecutorService IN_ORDER_EXEC = Executors.newSingleThreadExecutor();
-
-    /**
-     * This version guarantees in order delivery and is parsimonious with space
-     * The listener does not need to be thread safe (at least as far as this code is concerned).
-     * It will run on only thread (the Executor's thread) and must return from a given call
-     * before the next call commences.  Events may be delivered arbitrarily late, though,
-     * depending on how long it takes the listener to run.
-     */
-    public void runInOrder(Collection collection, Database target) {
-        Replicator repl = new Replicator(new ReplicatorConfiguration(new DatabaseEndpoint(target))
-            .setType(ReplicatorType.PUSH_AND_PULL)
-            .setContinuous(false));
-
-        thisToken = repl.addChangeListener(IN_ORDER_EXEC, this::onChange);
-
-        repl.start();
-        thisReplicator = repl;
-    }
-    // end::execution-inorder[]
-
-
-    // tag::execution-maxthroughput[]
-    private static final ExecutorService MAX_THROUGHPUT_EXEC = Executors.newCachedThreadPool();
-
-    /**
-     * This version maximizes throughput.  It will deliver change notifications as quickly
-     * as CPU availability allows. It may deliver change notifications out of order.
-     * Listeners must be thread safe because they may be called from multiple threads.
-     * In fact, they must be re-entrant because a given listener may be running on mutiple threads
-     * simultaneously.  In addition, when notifications swamp the processors, notifications awaiting
-     * a processor will be queued as Threads, (instead of as Runnables) with accompanying memory
-     * and GC impact.
-     */
-    public void runMaxThroughput(Collection collection, Database target) {
-        Replicator repl = new Replicator(new ReplicatorConfiguration(new DatabaseEndpoint(target))
-            .setType(ReplicatorType.PUSH_AND_PULL)
-            .setContinuous(false));
-
-        thisToken = repl.addChangeListener(MAX_THROUGHPUT_EXEC, this::onChange);
-
-        repl.start();
-        thisReplicator = repl;
-    }
-    // end::execution-maxthroughput[]
-
-
-    // tag::execution-policied[]
-    private static final int CPUS = Runtime.getRuntime().availableProcessors();
-
-    private static final AtomicReference<ThreadPoolExecutor> BACKUP_EXEC = new AtomicReference<>();
-
-    private static final RejectedExecutionHandler BACKUP_EXECUTION = (r, e) -> {
-        ExecutorService exec = BACKUP_EXEC.get();
-        if (exec != null) {
-            exec.execute(r);
-            return;
+class ZipUtils {
+    public static void unzip(InputStream src, File dst) throws IOException {
+        byte[] buffer = new byte[1024];
+        try (InputStream in = src; ZipInputStream zis = new ZipInputStream(in)) {
+            ZipEntry ze = zis.getNextEntry();
+            while (ze != null) {
+                File newFile = new File(dst, ze.getName());
+                if (ze.isDirectory()) { newFile.mkdirs(); }
+                else {
+                    new File(newFile.getParent()).mkdirs();
+                    try (FileOutputStream fos = new FileOutputStream(newFile)) {
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) { fos.write(buffer, 0, len); }
+                    }
+                }
+                ze = zis.getNextEntry();
+            }
+            zis.closeEntry();
         }
-
-        BACKUP_EXEC.compareAndSet(null, createBackupExecutor());
-        BACKUP_EXEC.get().execute(r);
-    };
-
-    private static ThreadPoolExecutor createBackupExecutor() {
-        ThreadPoolExecutor exec = new ThreadPoolExecutor(
-            CPUS + 1,
-            2 * CPUS + 1,
-            30, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>());
-        exec.allowCoreThreadTimeOut(true);
-        return exec;
     }
-
-    private static final ThreadPoolExecutor STANDARD_EXEC = new ThreadPoolExecutor(
-        CPUS + 1,
-        2 * CPUS + 1,
-        30, TimeUnit.SECONDS,
-        new SynchronousQueue<>());
-    static { STANDARD_EXEC.setRejectedExecutionHandler(BACKUP_EXECUTION); }
-    /**
-     * This version demonstrates the extreme configurability of the Couchbase Lite replicator callback system.
-     * It may deliver updates out of order and does require thread-safe and re-entrant listeners
-     * (though it does correctly synchronize tasks passed to it using a SynchronousQueue).
-     * The thread pool executor shown here is configured for the sweet spot for number of threads per CPU.
-     * In a real system, this single executor might be used by the entire application and be passed to
-     * this module, thus establishing a reasonable app-wide threading policy.
-     * In an emergency (Rejected Execution) it lazily creates a backup executor with an unbounded queue
-     * in front of it.  It, thus, may deliver notifications late, as well as out of order.
-     */
-    public void runExecutionPolicy(Collection collection, Database target, ReplicatorChangeListener listener) {
-        Replicator repl = new Replicator(new ReplicatorConfiguration(new DatabaseEndpoint(target))
-            .setType(ReplicatorType.PUSH_AND_PULL)
-            .setContinuous(false));
-
-        thisToken = repl.addChangeListener(STANDARD_EXEC, this::onChange);
-
-        repl.start();
-        thisReplicator = repl;
-    }
-    // end::execution-policied[]
-
-    private void onChange(ReplicatorChange change) { }
 }
 
 package com.couchbase.codesnippets;
@@ -1565,7 +1369,6 @@ import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.couchbase.codesnippets.utils.Logger;
 import com.couchbase.lite.Collection;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.ListenerPasswordAuthenticator;
@@ -1599,7 +1402,6 @@ class ListenerExamples {
         thisConfig.setEnableDeltaSync(false); // <.>
 
         // end::listener-config-delta-sync[]
-        // tag::listener-config-tls-full[]
         // Configure server security
         // tag::listener-config-tls-enable[]
         thisConfig.setDisableTls(false); // <.>
@@ -1652,26 +1454,11 @@ class ListenerExamples {
 
     public void deleteIdentityExample(String alias)
         throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
-        // tag::deleteTlsIdentity[]
         // tag::p2p-tlsid-delete-id-from-keychain[]
         KeyStore thisKeyStore = KeyStore.getInstance("AndroidKeyStore");
         thisKeyStore.load(null);
         thisKeyStore.deleteEntry(alias);
-
         // end::p2p-tlsid-delete-id-from-keychain[]
-        // end::deleteTlsIdentity[]
-    }
-
-    public void listenerGetNetworkInterfacesExample(Set<Collection> collections) throws CouchbaseLiteException {
-        // tag::listener-get-network-interfaces[]
-        final URLEndpointListener listener
-            = new URLEndpointListener(
-            new URLEndpointListenerConfiguration(collections));
-        listener.start();
-        thisListener = listener;
-        Logger.log("URLS are " + thisListener.getUrls());
-
-        // end::listener-get-network-interfaces[]
     }
 
     public void listenerSimpleExample(Set<Collection> collections, String validUser, char[] validPass)
@@ -1832,6 +1619,7 @@ package com.couchbase.codesnippets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -2063,6 +1851,7 @@ public class QueryExamples {
         try (ResultSet resultSet = query.execute()) {
             for (Result result: resultSet) {
                 Logger.log(String.format(
+                    Locale.getDefault(),
                     "There are %d airports on the %s timezone located in %s and above 300ft",
                     result.getInt("$1"),
                     result.getString("tz"),
@@ -2240,7 +2029,6 @@ public class QueryExamples {
         }
     }
 
-    // tag::query-syntax-pagination-all[]
     public void queryPaginationExample(Collection collection) {
         // tag::query-syntax-pagination[]
 
@@ -2258,8 +2046,6 @@ public class QueryExamples {
         // end::query-syntax-pagination[]
 
     }
-    // end::query-syntax-pagination-all[]
-
 
     public void selectAllExample(Collection collection) {
         // tag::query-select-all[]
@@ -2293,24 +2079,6 @@ public class QueryExamples {
         // end::stop-live-query[]
     }
 
-    public void metaFunctionExample(Collection collection) throws CouchbaseLiteException {
-        // tag::query-select-meta[]
-        Query query = QueryBuilder
-            .select(SelectResult.expression(Meta.id))
-            .from(DataSource.collection(collection))
-            .where(Expression.property("type").equalTo(Expression.string("airport")))
-            .orderBy(Ordering.expression(Meta.id));
-
-        try (ResultSet resultSet = query.execute()) {
-            for (Result result: resultSet) {
-                Logger.log("airport id -> " + result.getString("id"));
-                Logger.log("airport id -> " + result.getString(0));
-            }
-        }
-        // end::query-select-meta[]
-    }
-
-    // tag::query-explain[]
     public void explainAllExample(Collection collection) throws CouchbaseLiteException {
         // tag::query-explain-all[]
         Query query = QueryBuilder
@@ -2365,7 +2133,6 @@ public class QueryExamples {
         Logger.log(query.explain());
         // end::query-explain-nofunction[]
     }
-    // end::query-explain[]
 
     public void prepareIndexExample(Collection collection) throws CouchbaseLiteException {
         // tag::fts-index[]
@@ -2432,11 +2199,10 @@ public class QueryExamples {
 
     public void querySyntaxJsonExample(@NotNull Collection collection)
         throws CouchbaseLiteException, JsonProcessingException {
-        // tag::query-syntax-json[]
         // Example assumes Hotel class object defined elsewhere
         Query listQuery = QueryBuilder.select(SelectResult.all())
             .from(DataSource.collection(collection));
-        // end::query-syntax-json[]
+
         // tag::query-access-json[]
         // Uses Jackson JSON processor
         ObjectMapper mapper = new ObjectMapper();
@@ -2456,6 +2222,7 @@ public class QueryExamples {
                 hotels.add(thisHotel);
             }
         }
+        // end::query-access-json[]
     }
 
     public List<Map<String, Object>> docsOnlyQuerySyntaxN1QL(Database thisDb) throws CouchbaseLiteException {
@@ -2556,12 +2323,10 @@ public class ReplicationExamples {
         Replicator repl = new Replicator( // <.>
 
             // tag::p2p-act-rep-func[]
-            // tag::p2p-act-rep-initialize[]
             // initialize the replicator configuration
             new ReplicatorConfiguration(new URLEndpoint(new URI("wss://listener.com:8954"))) // <.>
                 .addCollections(collections, null)
 
-                // end::p2p-act-rep-initialize[]
                 // tag::p2p-act-rep-config-type[]
                 // Set replicator type
                 .setType(ReplicatorType.PUSH_AND_PULL)
@@ -2604,11 +2369,8 @@ public class ReplicationExamples {
         });
 
         // end::p2p-act-rep-add-change-listener[]
-        // tag::p2p-act-rep-start[]
         // Start replicator
         repl.start(false); // <.>
-
-        // end::p2p-act-rep-start[]
 
         thisReplicator = repl;
         thisToken = token;
@@ -2726,7 +2488,6 @@ public class ReplicationExamples {
     }
 
     public void replicationResetCheckpointExample(Set<Collection> collections) throws URISyntaxException {
-        // tag::replication-startup[]
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
             new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
@@ -2739,7 +2500,6 @@ public class ReplicationExamples {
         // ... at some later time
 
         repl.stop();
-        // end::replication-startup[]
     }
 
     public void handlingNetworkErrorsExample(Set<Collection> collections) throws URISyntaxException {
@@ -2809,15 +2569,9 @@ public class ReplicationExamples {
             new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
                 .addCollections(collections, null)
                 //  other config as required . . .
-                // tag::replication-heartbeat-config[]
                 .setHeartbeat(150) // <.>
-                // end::replication-heartbeat-config[]
-                // tag::replication-maxattempts-config[]
                 .setMaxAttempts(20) // <.>
-                // end::replication-maxattempts-config[]
-                // tag::replication-maxattemptwaittime-config[]
                 .setMaxAttemptWaitTime(600)); // <.>
-        // end::replication-maxattemptwaittime-config[]
 
         repl.start();
         thisReplicator = repl;
@@ -2868,9 +2622,7 @@ public class ReplicationExamples {
                 .addCollection(collection, null)
                 .setType(ReplicatorType.PUSH));
 
-        // tag::replication-push-pendingdocumentids[]
         Set<String> pendingDocs = repl.getPendingDocumentIds(collection);
-        // end::replication-push-pendingdocumentids[]
 
         if (!pendingDocs.isEmpty()) {
             Logger.log("There are " + pendingDocs.size() + " documents pending");
@@ -2879,7 +2631,6 @@ public class ReplicationExamples {
 
             repl.addChangeListener(change -> {
                 Logger.log("Replicator activity level is " + change.getStatus().getActivityLevel());
-                // tag::replication-push-isdocumentpending[]
                 try {
                     if (!repl.isDocumentPending(firstDoc, collection)) {
                         Logger.log("Doc ID " + firstDoc + " has been pushed");
@@ -2888,7 +2639,6 @@ public class ReplicationExamples {
                 catch (CouchbaseLiteException err) {
                     Logger.log("Failed getting pending docs", err);
                 }
-                // end::replication-push-isdocumentpending[]
             });
 
             repl.start();
@@ -2951,11 +2701,12 @@ public class ReplicationExamples {
 //
 package com.couchbase.codesnippets;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.function.Function;
 
 import com.couchbase.lite.Blob;
 import com.couchbase.lite.Collection;
+import com.couchbase.lite.CouchbaseLite;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.IndexUpdater;
@@ -2971,7 +2722,18 @@ import com.couchbase.lite.VectorIndexConfiguration;
 @SuppressWarnings("unused")
 class VectorSearchExamples {
     @FunctionalInterface
-    public interface ColorModel { List<Float> getEmbedding(Blob color);}
+    public interface ColorModel {
+        List<Float> getEmbedding(Blob color) throws IOException;
+    }
+
+    public void enableVS() {
+        // tag::vs-setup-packaging[]
+        try { CouchbaseLite.enableVectorSearch(); }
+        catch (CouchbaseLiteException e) {
+            throw new IllegalStateException("Could not enable vector search", e);
+        }
+        // end::vs-setup-packaging[]
+    }
 
     public void createDefaultVSConfig() {
         // tag::vs-create-default-config[]
@@ -3207,10 +2969,12 @@ class VectorSearchExamples {
             try (IndexUpdater updater = col.getIndex("colors_index").beginUpdate(10)) {
                 if (updater == null) { break; }
                 for (int i = 0; i < updater.count(); i++) {
-                    // get the color swatch from the updater and send it to the remote model
-                    List<Float> embedding = colorModel.getEmbedding(updater.getBlob(i));
-                    if (embedding != null) { updater.setVector(embedding, i); }
-                    else {
+                    try {
+                        // get the color swatch from the updater and send it to the remote model
+                        List<Float> embedding = colorModel.getEmbedding(updater.getBlob(i));
+                        updater.setVector(embedding, i);
+                    }
+                    catch (IOException e) {
                         // Bad connection? Corrupted over the wire? Something bad happened
                         // and the vector cannot be generated at the moment: skip it.
                         // The next time beginUpdate() is called, we'll try it again.
@@ -3222,6 +2986,6 @@ class VectorSearchExamples {
                 updater.finish();
             }
         }
-        // tag::vs-create-lazy-index-embedding[]
+        // end::vs-create-lazy-index-embedding[]
     }
 }

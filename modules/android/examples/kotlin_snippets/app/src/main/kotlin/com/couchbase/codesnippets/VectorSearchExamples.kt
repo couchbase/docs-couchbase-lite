@@ -317,6 +317,6 @@ class VectorSearchExamples {
             // loop until there are no more vectors to update
                 ?: break
         }
-        // tag::vs-create-lazy-index-embedding[]
+        // end::vs-create-lazy-index-embedding[]
     }
 }

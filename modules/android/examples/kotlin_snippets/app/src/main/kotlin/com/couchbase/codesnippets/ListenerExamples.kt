@@ -17,9 +17,7 @@
 
 package com.couchbase.codesnippets
 
-import com.couchbase.codesnippets.util.log
 import com.couchbase.lite.Collection
-import com.couchbase.lite.CouchbaseLiteException
 import com.couchbase.lite.Database
 import com.couchbase.lite.KeyStoreUtils
 import com.couchbase.lite.ListenerCertificateAuthenticator
@@ -30,72 +28,13 @@ import com.couchbase.lite.URLEndpointListenerConfiguration
 import com.couchbase.lite.URLEndpointListenerConfigurationFactory
 import com.couchbase.lite.newConfig
 import java.io.File
-import java.io.IOException
-import java.net.URI
 import java.security.KeyStore
-import java.security.KeyStoreException
-import java.security.NoSuchAlgorithmException
-import java.security.cert.Certificate
-import java.security.cert.CertificateException
 
 private const val TAG = "LISTEN"
 
 @Suppress("unused")
 class ListenerExamples {
     private var thisListener: URLEndpointListener? = null
-
-    // tag::listener-config-auth-cert-full[]
-    /**
-     * Snippet 2: create a ListenerCertificateAuthenticator and configure the listener with it
-     *
-     *
-     * Start a listener for db that accepts connections from a client identified by any of the passed certs
-     *
-     * @param collections the collections to which the listener is attached
-     * @param certs the name of the single valid user
-     * @return the url at which the listener can be reached.
-     * @throws CouchbaseLiteException on failure
-     */
-    @Throws(CouchbaseLiteException::class)
-    fun startServer(collections: Set<Collection>, serverId: TLSIdentity, certs: List<Certificate?>): URI? {
-        val listener = URLEndpointListener(
-            URLEndpointListenerConfigurationFactory.newConfig(
-                collections = collections,
-                port = 0, // this is the default
-                disableTls = false,
-                identity = serverId,
-                authenticator = ListenerCertificateAuthenticator(certs)
-            )
-        )
-        listener.start()
-        val urls: List<URI> = listener.urls
-        return if (urls.isEmpty()) {
-            null
-        } else {
-            urls[0]
-        }
-    }
-    // end::listener-config-auth-cert-full[]
-
-    // tag::listener-config-delete-cert-full[]
-    /**
-     * Delete an identity from the keystore
-     *
-     * @param alias the alias for the identity to be deleted
-     */
-    @Throws(
-        KeyStoreException::class,
-        CertificateException::class,
-        NoSuchAlgorithmException::class,
-        IOException::class
-    )
-    fun deleteIdentity(alias: String?) {
-        val keyStore: KeyStore = KeyStore.getInstance("AndroidKeyStore")
-        keyStore.load(null)
-        keyStore.deleteEntry(alias) // <.>
-    }
-    // end::listener-config-delete-cert-full[]
-
 
     fun listenerConfigClientAuthLambdaExample(thisConfig: URLEndpointListenerConfiguration) {
         // tag::listener-config-client-auth-lambda[]
@@ -119,7 +58,6 @@ class ListenerExamples {
     }
 
     fun listenerConfigClientAuthRootExample(collections: Set<Collection>) {
-        // tag::listener-config-client-root-ca[]
         // tag::listener-config-client-auth-root[]
         // Configure the client authenticator
         // to validate using ROOT CA
@@ -140,7 +78,6 @@ class ListenerExamples {
         ) // <.>
 
         // end::listener-config-client-auth-root[]
-        // end::listener-config-client-root-ca[]
     }
 
     fun listenerConfigTlsIdFullExample(keyFile: File, collections: Set<Collection>) {
@@ -164,72 +101,22 @@ class ListenerExamples {
             )
         }
 
-        // tag::listener-config-tls-id-set[]
         // Set the TLS Identity
         URLEndpointListenerConfigurationFactory.newConfig(
             collections,
             identity = TLSIdentity.getIdentity("test-alias")
         ) // <.>
         // end::listener-config-tls-id-caCert[]
-
-        // end::listener-config-tls-id-set[]
         // end::listener-config-tls-id-full[]
     }
 
     fun deleteIdentityExample(alias: String) {
-        // tag::deleteTlsIdentity[]
         // tag::p2p-tlsid-delete-id-from-keychain[]
         val thisKeyStore = KeyStore.getInstance("AndroidKeyStore")
         thisKeyStore.load(null)
         thisKeyStore.deleteEntry(alias)
-
         // end::p2p-tlsid-delete-id-from-keychain[]
-        // end::deleteTlsIdentity[]
     }
-
-    fun listenerGetNetworkInterfacesExample(collections: Set<Collection>) {
-        // tag::listener-get-network-interfaces[]
-        val listener = URLEndpointListener(URLEndpointListenerConfigurationFactory.newConfig(collections))
-        listener.start()
-        thisListener = listener
-        log("URLS are ${listener.urls}")
-        // end::listener-get-network-interfaces[]
-    }
-
-
-    // tag::listener-config-client-auth-pwd-full[]
-    /**
-     *
-     * Start a listener for db that accepts connections using exactly the passed username and password
-     *
-     *
-     * @param collections       the set of collections to which the listener is attached
-     * @param username the name of the single valid user
-     * @param password the password for the user
-     * @return the url at which the listener can be reached.
-     * @throws CouchbaseLiteException on failure
-     */
-    fun startServer(collections: Set<Collection>, username: String, password: CharArray): URI? {
-        val listener = URLEndpointListener(
-            URLEndpointListenerConfigurationFactory.newConfig(
-                collections = collections,
-                port = 0,// this is the default
-                disableTls = true,
-                authenticator = ListenerPasswordAuthenticator { usr, pwd ->
-                    (usr == username) && (pwd.contentEquals(password))
-                })
-        )
-
-        listener.start()
-        val urls: List<URI> = listener.urls
-        return if (urls.isEmpty()) {
-            null
-        } else {
-            urls[0]
-        }
-    }
-    // notend::listener-config-client-auth-pwd-full[]
-
 
     // tag::listener-config-tls-id-SelfSigned[]
     // Use a self-signed certificate
@@ -253,14 +140,7 @@ class ListenerExamples {
             null,
             "couchbase-docs-cert"
         ) // <.>
-
         // end::listener-config-tls-id-SelfSigned[]
-
-        // tag::listener-config-tls-id-set[]
-        // Set the TLS Identity
-        thisConfig.tlsIdentity = thisIdentity // <.>
-
-        // end::listener-config-tls-id-set[]
     }
 
     fun passiveListenerExample(collections: Set<Collection>, validUser: String, validPass: CharArray) {
@@ -284,7 +164,6 @@ class ListenerExamples {
                 enableDeltaSync = false, // <.>
 
                 // end::listener-config-delta-sync[]
-                // tag::listener-config-tls-full[]
                 // Configure server security
                 // tag::listener-config-tls-enable[]
                 disableTls = false, // <.>
@@ -301,6 +180,7 @@ class ListenerExamples {
                 authenticator = ListenerPasswordAuthenticator { usr, pwd ->
                     (usr === validUser) && (validPass.contentEquals(pwd))
                 }
+                // end::listener-config-client-auth-pwd[]
             ))
 
         // Start the listener

@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-@file:Suppress("UNUSED_VARIABLE", "unused", "UNUSED_PARAMETER")
+@file:Suppress("UNUSED_VARIABLE", "unused")
 
 package com.couchbase.codesnippets
 
@@ -52,14 +52,12 @@ class ReplicationExamples {
         val repl = Replicator( // <.>
 
             // tag::p2p-act-rep-func[]
-            // tag::p2p-act-rep-initialize[]
             // initialize the replicator configuration
             ReplicatorConfigurationFactory.newConfig(
                 target = URLEndpoint(URI("wss://listener.com:8954")), // <.>
 
                 collections = mapOf(collections to null),
 
-                // end::p2p-act-rep-initialize[]
                 // tag::p2p-act-rep-config-type[]
                 // Set replicator type
                 type = ReplicatorType.PUSH_AND_PULL,
@@ -106,11 +104,8 @@ class ReplicationExamples {
         }
 
         // end::p2p-act-rep-add-change-listener[]
-        // tag::p2p-act-rep-start[]
         // Start replicator
         repl.start(false) // <.>
-
-        // end::p2p-act-rep-start[]
 
         thisReplicator = repl
         thisToken = token
@@ -203,7 +198,6 @@ class ReplicationExamples {
 
     // ### Reset replicator checkpoint
     fun replicationResetCheckpointExample(collections: Set<Collection>) {
-        // tag::replication-startup[]
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
@@ -219,7 +213,6 @@ class ReplicationExamples {
         // ... at some later time
 
         repl.stop()
-        // end::replication-startup[]
     }
 
     fun handlingNetworkErrorExample(collections: Set<Collection>) {
@@ -296,15 +289,9 @@ class ReplicationExamples {
                 target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
                 collections = mapOf(collections to null),
                 //  other config params as required . .
-                // tag::replication-heartbeat-config[]
                 heartbeat = 150, // <1>
-                // end::replication-heartbeat-config[]
-                // tag::replication-maxattempts-config[]
                 maxAttempts = 20,
-                // end::replication-maxattempts-config[]
-                // tag::replication-maxattemptwaittime-config[]
                 maxAttemptWaitTime = 600
-                // end::replication-maxattemptwaittime-config[]
             )
         )
         repl.start()
@@ -360,9 +347,7 @@ class ReplicationExamples {
             )
         )
 
-        // tag::replication-push-pendingdocumentids[]
         val pendingDocs = repl.getPendingDocumentIds(collection)
-        // end::replication-push-pendingdocumentids[]
 
         // iterate and report on previously
         // retrieved pending docids 'list'
@@ -372,7 +357,6 @@ class ReplicationExamples {
             val firstDoc = pendingDocs.first()
             repl.addChangeListener { change ->
                 log("Replicator activity level is ${change.status.activityLevel}")
-                // tag::replication-push-isdocumentpending[]
                 try {
                     if (!repl.isDocumentPending(firstDoc, collection)) {
                         log("Doc ID ${firstDoc} has been pushed")
@@ -380,7 +364,6 @@ class ReplicationExamples {
                 } catch (err: CouchbaseLiteException) {
                     log("Failed getting pending docs", err)
                 }
-                // end::replication-push-isdocumentpending[]
             }
 
             repl.start()
@@ -412,7 +395,6 @@ class ReplicationExamples {
     }
 
     fun replicatorConfigurationExample(srcCollections: Set<Collection>, targetUrl: URI) {
-        // tag::p2p-act-rep-config-tls-full[]
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
                 target = URLEndpoint(targetUrl),
@@ -423,7 +405,6 @@ class ReplicationExamples {
                 // Configure Server Security
                 // -- only accept CA attested certs
                 acceptOnlySelfSignedServerCertificate = false, // <.>
-
                 // end::p2p-act-rep-config-cacert[]
 
                 // tag::p2p-act-rep-config-cacert-pinned[]
@@ -433,8 +414,6 @@ class ReplicationExamples {
                     ?: throw IllegalStateException("Cannot find corporate id"),
                 // end::p2p-act-rep-config-cacert-pinned[]
 
-
-                // end::p2p-act-rep-config-tls-full[]
                 // tag::p2p-tlsid-tlsidentity-with-label[]
                 // Provide a client certificate to the server for authentication
                 authenticator = ClientCertificateAuthenticator(
@@ -489,43 +468,9 @@ class ReplicationExamples {
 
 // Listener Callouts
 
-// tag::listener-callouts-full[]
-
-// tag::listener-start-callouts[]
-<.> Initialize the listener instance using the configuration settings.
-<.> Start the listener, ready to accept connections and incoming data from active peers.
-
-// end::listener-start-callouts[]
-
-// tag::listener-status-check-callouts[]
-
-<.> `connectionCount` -- the total number of connections served by the listener
-<.> `activeConnectionCount` -- the number of active (BUSY) connections currently being served by the listener
-//
-// end::listener-status-check-callouts[]
-
-// end::listener-callouts-full[]
-
-
 // tag::p2p-act-rep-config-cacert-pinned-callouts[]
 <.> Configure the pinned certificate using data from the byte array `cert`
 // end::p2p-act-rep-config-cacert-pinned-callouts[]
 
-// tag::p2p-tlsid-tlsidentity-with-label-callouts[]
-<.> Attempt to get the identity from secure storage
-<.> Set the authenticator to ClientCertificateAuthenticator and configure it to use the retrieved identity
-
-// end::p2p-tlsid-tlsidentity-with-label-callouts[]
-
-// tag::sgw-repl-pull-callouts[]
-<.> A replication is an asynchronous operation.
-To keep a reference to the `replicator` object, you can set it as an instance property.
-<.> The URL scheme for remote database URLs uses `ws:`, or `wss:` for SSL/TLS connections over wb sockets.
-In this example the hostname is `10.0.2.2` because the Android emulator runs in a VM that is generally accessible on `10.0.2.2` from the host machine (see https://developer.android.com/studio/run/emulator-networking[Android Emulator networking] documentation).
-+
-NOTE: As of Android Pie, version 9, API 28, cleartext support is disabled, by default.
-Although `wss:` protocol URLs are not affected, in order to use the `ws:` protocol, applications must target API 27 or lower, or must configure application network security as described https://developer.android.com/training/articles/security-config#CleartextTrafficPermitted[here].
-
-// end::sgw-repl-pull-callouts[]
 */
 

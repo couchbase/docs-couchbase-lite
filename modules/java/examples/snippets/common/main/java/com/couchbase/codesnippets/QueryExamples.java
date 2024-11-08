@@ -18,6 +18,7 @@ package com.couchbase.codesnippets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -249,6 +250,7 @@ public class QueryExamples {
         try (ResultSet resultSet = query.execute()) {
             for (Result result: resultSet) {
                 Logger.log(String.format(
+                    Locale.getDefault(),
                     "There are %d airports on the %s timezone located in %s and above 300ft",
                     result.getInt("$1"),
                     result.getString("tz"),
@@ -426,7 +428,6 @@ public class QueryExamples {
         }
     }
 
-    // tag::query-syntax-pagination-all[]
     public void queryPaginationExample(Collection collection) {
         // tag::query-syntax-pagination[]
 
@@ -444,8 +445,6 @@ public class QueryExamples {
         // end::query-syntax-pagination[]
 
     }
-    // end::query-syntax-pagination-all[]
-
 
     public void selectAllExample(Collection collection) {
         // tag::query-select-all[]
@@ -479,24 +478,6 @@ public class QueryExamples {
         // end::stop-live-query[]
     }
 
-    public void metaFunctionExample(Collection collection) throws CouchbaseLiteException {
-        // tag::query-select-meta[]
-        Query query = QueryBuilder
-            .select(SelectResult.expression(Meta.id))
-            .from(DataSource.collection(collection))
-            .where(Expression.property("type").equalTo(Expression.string("airport")))
-            .orderBy(Ordering.expression(Meta.id));
-
-        try (ResultSet resultSet = query.execute()) {
-            for (Result result: resultSet) {
-                Logger.log("airport id -> " + result.getString("id"));
-                Logger.log("airport id -> " + result.getString(0));
-            }
-        }
-        // end::query-select-meta[]
-    }
-
-    // tag::query-explain[]
     public void explainAllExample(Collection collection) throws CouchbaseLiteException {
         // tag::query-explain-all[]
         Query query = QueryBuilder
@@ -551,7 +532,6 @@ public class QueryExamples {
         Logger.log(query.explain());
         // end::query-explain-nofunction[]
     }
-    // end::query-explain[]
 
     public void prepareIndexExample(Collection collection) throws CouchbaseLiteException {
         // tag::fts-index[]
@@ -618,11 +598,10 @@ public class QueryExamples {
 
     public void querySyntaxJsonExample(@NotNull Collection collection)
         throws CouchbaseLiteException, JsonProcessingException {
-        // tag::query-syntax-json[]
         // Example assumes Hotel class object defined elsewhere
         Query listQuery = QueryBuilder.select(SelectResult.all())
             .from(DataSource.collection(collection));
-        // end::query-syntax-json[]
+
         // tag::query-access-json[]
         // Uses Jackson JSON processor
         ObjectMapper mapper = new ObjectMapper();
@@ -642,6 +621,7 @@ public class QueryExamples {
                 hotels.add(thisHotel);
             }
         }
+        // end::query-access-json[]
     }
 
     public List<Map<String, Object>> docsOnlyQuerySyntaxN1QL(Database thisDb) throws CouchbaseLiteException {
