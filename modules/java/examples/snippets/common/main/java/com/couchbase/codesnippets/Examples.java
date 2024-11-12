@@ -57,7 +57,6 @@ import com.couchbase.lite.ProtocolType;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
 import com.couchbase.lite.Replicator;
-import com.couchbase.lite.ReplicatorActivityLevel;
 import com.couchbase.lite.ReplicatorConfiguration;
 import com.couchbase.lite.ReplicatorConnection;
 import com.couchbase.lite.ReplicatorType;
@@ -94,7 +93,7 @@ public class Examples {
         database.delete();
     }
 
-     public void DatabaseFullSyncExample() throws CouchbaseLiteException {
+    public void DatabaseFullSyncExample() {
         DatabaseConfiguration config = new DatabaseConfiguration();
         // tag::database-fullsync[]
         config.setFullSync(true);
@@ -107,17 +106,6 @@ public class Examples {
         config.setEncryptionKey(new EncryptionKey("PASSWORD"));
         Database database = new Database(DB_NAME, config);
         // end::database-encryption[]
-    }
-
-    public void loggingExample() {
-        // tag::logging[]
-
-        // Set the overall logging level
-        Database.log.getConsole().setLevel(LogLevel.DEBUG);
-
-        // Enable or disable specific domains
-        Database.log.getConsole().setDomains(LogDomain.REPLICATOR, LogDomain.QUERY);
-        // end::logging[]
     }
 
     public void enableCustomLoggingExample() {
@@ -255,26 +243,6 @@ public class Examples {
         // end::blob[]
     }
 
-    public void replicationStatusExample(Collection collection) throws URISyntaxException {
-        URI uri = new URI("ws://localhost:4984/db");
-        Endpoint endpoint = new URLEndpoint(uri);
-        ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
-        config.addCollection(collection, null);
-        config.setType(ReplicatorType.PULL);
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        Replicator replicator = new Replicator(config);
-
-        // tag::replication-status[]
-        replicator.addChangeListener(change -> {
-            if (change.getStatus().getActivityLevel() == ReplicatorActivityLevel.STOPPED) {
-                Logger.log("Replication stopped");
-            }
-        });
-        // end::replication-status[]
-
-        replicator.close();
-    }
-
     public void replicationPendingDocsExample(Collection collection) throws URISyntaxException, CouchbaseLiteException {
         final Endpoint endpoint =
             new URLEndpoint(new URI("ws://localhost:4984/db"));
@@ -284,11 +252,9 @@ public class Examples {
                 .setType(ReplicatorType.PUSH);
         config.addCollection(collection, null);
 
-        // tag::replication-push-pendingdocumentids[]
         Replicator replicator = new Replicator(config);
         final Set<String> pendingDocs =
             replicator.getPendingDocumentIds(collection); // <.>
-        // end::replication-push-pendingdocumentids[]
 
         replicator.close();
     }
@@ -311,46 +277,6 @@ public class Examples {
             });
         // end::update-document-with-conflict-handler[]
     }
-
-    public void queryAccessJsonExample() throws CouchbaseLiteException, JsonProcessingException {
-        Database database = new Database("hotels");
-
-        Collection collection = database.getDefaultCollection();
-        Query listQuery = QueryBuilder.select(SelectResult.all())
-            .from(DataSource.collection(collection));
-
-        // tag::query-access-json[]
-        ObjectMapper mapper = new ObjectMapper();
-        ArrayList<Hotel> hotels = new ArrayList<>();
-        HashMap<String, Object> dictFromJSONstring;
-
-        try (ResultSet resultSet = listQuery.execute()) {
-            for (Result result: resultSet) {
-
-                // Get result as JSON string
-                String thisJsonString = result.toJSON(); // <.>
-
-                // Get Java  Hashmap from JSON string
-                dictFromJSONstring =
-                    mapper.readValue(thisJsonString, HashMap.class); // <.>
-
-
-                // Use created hashmap
-                String hotelId = dictFromJSONstring.get("id").toString();
-                String hotelType = dictFromJSONstring.get("type").toString();
-                String hotelname = dictFromJSONstring.get("name").toString();
-
-
-                // Get custom object from Native 'dictionary' object
-                Hotel thisHotel =
-                    mapper.readValue(thisJsonString, Hotel.class); // <.>
-                hotels.add(thisHotel);
-            }
-        }
-        // end::query-access-json[]
-
-        database.close();
-    }
 }
 
 
@@ -368,33 +294,7 @@ class ImageClassifierModel implements PredictiveModel {
     }
 }
 
-@SuppressWarnings({"unused", "ConstantConditions"})
-// tag::ziputils-unzip[]
-class ZipUtils {
-    public static void unzip(InputStream src, File dst) throws IOException {
-        byte[] buffer = new byte[1024];
-        try (InputStream in = src; ZipInputStream zis = new ZipInputStream(in)) {
-            ZipEntry ze = zis.getNextEntry();
-            while (ze != null) {
-                File newFile = new File(dst, ze.getName());
-                if (ze.isDirectory()) { newFile.mkdirs(); }
-                else {
-                    new File(newFile.getParent()).mkdirs();
-                    try (FileOutputStream fos = new FileOutputStream(newFile)) {
-                        int len;
-                        while ((len = zis.read(buffer)) > 0) { fos.write(buffer, 0, len); }
-                    }
-                }
-                ze = zis.getNextEntry();
-            }
-            zis.closeEntry();
-        }
-    }
-}
-// end::ziputils-unzip[]
-
 @SuppressWarnings("unused")
-
 // tag::custom-logging[]
 class LogTestLogger implements com.couchbase.lite.Logger {
     @NonNull
@@ -618,3 +518,26 @@ class PassivePeerConnection implements MessageEndpointConnection {
         // end::passive-peer-receive[]
     }
 }
+
+class ZipUtils {
+    public static void unzip(InputStream src, File dst) throws IOException {
+        byte[] buffer = new byte[1024];
+        try (InputStream in = src; ZipInputStream zis = new ZipInputStream(in)) {
+            ZipEntry ze = zis.getNextEntry();
+            while (ze != null) {
+                File newFile = new File(dst, ze.getName());
+                if (ze.isDirectory()) { newFile.mkdirs(); }
+                else {
+                    new File(newFile.getParent()).mkdirs();
+                    try (FileOutputStream fos = new FileOutputStream(newFile)) {
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) { fos.write(buffer, 0, len); }
+                    }
+                }
+                ze = zis.getNextEntry();
+            }
+            zis.closeEntry();
+        }
+    }
+}
+

@@ -23,7 +23,6 @@ import java.security.cert.CertificateException;
 import java.util.Arrays;
 import java.util.Set;
 
-import com.couchbase.codesnippets.utils.Logger;
 import com.couchbase.lite.Collection;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.ListenerPasswordAuthenticator;
@@ -57,7 +56,6 @@ class ListenerExamples {
         thisConfig.setEnableDeltaSync(false); // <.>
 
         // end::listener-config-delta-sync[]
-        // tag::listener-config-tls-full[]
         // Configure server security
         // tag::listener-config-tls-enable[]
         thisConfig.setDisableTls(false); // <.>
@@ -110,26 +108,11 @@ class ListenerExamples {
 
     public void deleteIdentityExample(String alias)
         throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
-        // tag::deleteTlsIdentity[]
         // tag::p2p-tlsid-delete-id-from-keychain[]
         KeyStore thisKeyStore = KeyStore.getInstance("AndroidKeyStore");
         thisKeyStore.load(null);
         thisKeyStore.deleteEntry(alias);
-
         // end::p2p-tlsid-delete-id-from-keychain[]
-        // end::deleteTlsIdentity[]
-    }
-
-    public void listenerGetNetworkInterfacesExample(Set<Collection> collections) throws CouchbaseLiteException {
-        // tag::listener-get-network-interfaces[]
-        final URLEndpointListener listener
-            = new URLEndpointListener(
-            new URLEndpointListenerConfiguration(collections));
-        listener.start();
-        thisListener = listener;
-        Logger.log("URLS are " + thisListener.getUrls());
-
-        // end::listener-get-network-interfaces[]
     }
 
     public void listenerSimpleExample(Set<Collection> collections, String validUser, char[] validPass)

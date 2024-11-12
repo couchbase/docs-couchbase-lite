@@ -14,7 +14,7 @@ if(DEFINED CBL_MACOS_ARCH)
 endif()
 
 if(NOT DEFINED CBL_VERSION)
-    set(CBL_VERSION 3.2.0)
+    set(CBL_VERSION 3.2.1)
 endif()
 
 project(code-snippets)

@@ -61,13 +61,10 @@ public class JavaListenerExamples {
             keyStore.load(keyStream, "skerit".toCharArray());
         }
 
-        // tag::listener-config-tls-id-set[]
         // Set the TLS Identity
         URLEndpointListenerConfiguration config = new URLEndpointListenerConfiguration(collections);
         config.setTlsIdentity(TLSIdentity.getIdentity(keyStore, "test-alias", "keyPass".toCharArray())); // <.>
         // end::listener-config-tls-id-caCert[]
-
-        // end::listener-config-tls-id-set[]
         // end::listener-config-tls-id-full[]
     }
 
@@ -97,7 +94,6 @@ public class JavaListenerExamples {
 
     public void listenerConfigClientAuthRootExample(KeyStore keyStore, URLEndpointListenerConfiguration thisConfig)
         throws CouchbaseLiteException {
-        // tag::listener-config-client-root-ca[]
         // tag::listener-config-client-auth-root[]
         // Configure the client authenticator
         // to validate using ROOT CA
@@ -118,7 +114,6 @@ public class JavaListenerExamples {
             new URLEndpointListener(thisConfig);
 
         // end::listener-config-client-auth-root[]
-        // end::listener-config-client-root-ca[]
     }
 
     // tag::listener-config-tls-id-SelfSigned[]
@@ -146,17 +141,10 @@ public class JavaListenerExamples {
         ); // <.>
 
         // end::listener-config-tls-id-SelfSigned[]
-
-        // tag::listener-config-tls-id-set[]
-        // Set the TLS Identity
-        thisConfig.setTlsIdentity(thisIdentity); // <.>
-
-        // end::listener-config-tls-id-set[]
     }
 
     public void replicatorConfigurationExample(Set<Collection> srcCollections, URI targetUrl, KeyStore keyStore)
         throws CouchbaseLiteException {
-        // tag::p2p-act-rep-config-tls-full[]
 
         ReplicatorConfiguration config =
             new ReplicatorConfiguration(new URLEndpoint(targetUrl))
@@ -179,7 +167,6 @@ public class JavaListenerExamples {
         // end::p2p-act-rep-config-cacert-pinned[]
 
 
-        // end::p2p-act-rep-config-tls-full[]
         // tag::p2p-tlsid-tlsidentity-with-label[]
         // Provide a client certificate to the server for authentication
         TLSIdentity clientId = TLSIdentity.getIdentity(keyStore, "client", "squirrel".toCharArray());

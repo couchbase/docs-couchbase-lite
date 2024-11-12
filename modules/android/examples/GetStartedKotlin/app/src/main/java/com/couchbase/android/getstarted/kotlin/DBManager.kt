@@ -119,7 +119,7 @@ class DBManager {
     // OPTIONAL -- if you have Sync Gateway Installed you can try replication too.
     // Create a replicator to push and pull changes to and from the cloud.
     // Be sure to hold a reference to the Replicator to prevent it from being GCed
-    fun replicate(): Flow<ReplicatorChange>? {
+    fun replicate(uri: String): Flow<ReplicatorChange>? {
         val coll = collection ?: return null
 
         val collConfig = CollectionConfiguration()
@@ -127,7 +127,7 @@ class DBManager {
 
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/getting-started-db")),
+                target = URLEndpoint(URI(uri)),
                 collections = mapOf(setOf(coll) to collConfig),
                 type = ReplicatorType.PUSH_AND_PULL,
                 authenticator = BasicAuthenticator("sync-gateway", "password".toCharArray())

@@ -142,7 +142,7 @@ public class DBManager {
         return new Replication(replicator, token);
     }
 
-    // tag::getting-started[]
+    // end::getting-started[]
 
     public void stopReplicator(Replication replication) {
         if (replication == null) { return; }

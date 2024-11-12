@@ -1,4 +1,49 @@
 //
+// Copyright (c) 2024 Couchbase, Inc All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+package com.couchbase.codesnippets
+
+import com.couchbase.lite.ArrayIndexConfiguration
+import com.couchbase.lite.Collection
+import com.couchbase.lite.CouchbaseLiteException
+import com.couchbase.lite.IndexConfiguration
+
+class ArrayIndexExamples {
+    fun ArrayIndexConfig() {
+        // tag::array-index-config[]
+        val config: IndexConfiguration = ArrayIndexConfiguration("contacts", "type")
+        // end::array-index-config[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun ArrayIndexSingle(collection: Collection) {
+        // tag::array-index-single[]
+        collection.createIndex("myindex", ArrayIndexConfiguration("likes"))
+        // end::array-index-single[]
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun ArrayIndexNested(collection: Collection) {
+        // tag::array-index-nested[]
+        collection.createIndex(
+            "myindex",
+            ArrayIndexConfiguration("contacts[].phones", "type")
+        )
+        // end::array-index-nested[]
+    }
+}//
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -138,13 +183,6 @@ class BasicExamples(private val context: Context) {
         // end::database-encryption[]
     }
 
-    // ### Logging
-    // !!!GBM: OBSOLETE in 3.0
-    fun loggingExample() {
-        // tag::logging[]
-        // end::logging[]
-    }
-
     fun enableCustomLoggingExample() {
         // tag::set-custom-logging[]
         // this custom logger will not log an event with a log level < WARNING
@@ -180,15 +218,6 @@ class BasicExamples(private val context: Context) {
             // end::file-logging[]
         }
         // end::file-logging-config-factory[]
-    }
-
-    fun writeCustomLog() {
-        // tag::write-custom-logmsg[]
-        Database.log.custom?.log(
-            LogLevel.WARNING,
-            LogDomain.REPLICATOR, "Any old log message"
-        )
-        // end::write-custom-logmsg[]
     }
 
     // ### Loading a pre-built database
@@ -330,7 +359,6 @@ class BasicExamples(private val context: Context) {
 class SupportingDatatypes(private val context: Context) {
 
     fun datatypeUsage() {
-        // tag::datatype_usage[]
         // tag::datatype_usage_createdb[]
         // Initialize the Couchbase Lite system
         CouchbaseLite.init(context)
@@ -392,8 +420,6 @@ class SupportingDatatypes(private val context: Context) {
         database.close()
 
         // end::datatype_usage_closedb[]
-
-        // end::datatype_usage[]
     }
 
 
@@ -480,8 +506,6 @@ class SupportingDatatypes(private val context: Context) {
 
 } // end  class supporting_datatypes
 
-
-// tag::ziputils-unzip[]
 object ZipUtils {
     fun unzip(src: InputStream?, dst: File?) {
         val buffer = ByteArray(1024)
@@ -508,6 +532,7 @@ object ZipUtils {
         }
     }
 }
+
 //
 // Copyright (c) 2023 Couchbase, Inc All rights reserved.
 //
@@ -523,11 +548,11 @@ object ZipUtils {
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-@file:Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE", "UNUSED_VALUE", "UNUSED_VARIABLE", "unused")
+@file:Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE", "UNUSED_VALUE", "unused")
 
 package com.couchbase.codesnippets
 
-import com.couchbase.codesnippets.utils.Logger
+import com.couchbase.codesnippets.util.log
 import com.couchbase.lite.Collection
 import com.couchbase.lite.CouchbaseLiteException
 import com.couchbase.lite.Database
@@ -589,177 +614,14 @@ class CollectionExamples {
         // tag::scopes-manage-list[]
         // List all of the collections in each of the scopes in the database
         db.scopes.forEach { scope ->
-            Logger.log("Scope :: ${scope.name}")
+            log("Scope :: ${scope.name}")
             scope.collections.forEach {
-                Logger.log("    Collection :: ${it.name}")
+                log("    Collection :: ${it.name}")
             }
         }
         // end::scopes-manage-list[]
     }
 }
-//
-// Copyright (c) 2023 Couchbase, Inc All rights reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-@file:Suppress("UNUSED_VARIABLE", "unused", "UNUSED_PARAMETER")
-
-package com.couchbase.codesnippets
-
-import com.couchbase.lite.Database
-import com.couchbase.lite.DatabaseEndpoint
-import com.couchbase.lite.ListenerToken
-import com.couchbase.lite.Replicator
-import com.couchbase.lite.ReplicatorChangeListener
-import com.couchbase.lite.ReplicatorConfiguration
-import com.couchbase.lite.ReplicatorType
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.RejectedExecutionHandler
-import java.util.concurrent.SynchronousQueue
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicReference
-
-
-
-class InOrderExecutionExample {
-    private var thisReplicator: Replicator? = null
-    private var thisToken: ListenerToken? = null
-
-    // tag::execution-inorder[]
-    companion object {
-        private val IN_ORDER_EXEC: ExecutorService = Executors.newSingleThreadExecutor()
-    }
-
-    /**
-     * This version guarantees in order delivery and is parsimonious with space
-     * The listener does not need to be thread safe (at least as far as this code is concerned).
-     * It will run on only thread (the Executor's thread) and must return from a given call
-     * before the next call commences.  Events may be delivered arbitrarily late, though,
-     * depending on how long it takes the listener to run.
-     */
-    fun runInOrder(collection: Collection<*>?, target: Database?) {
-        val repl = Replicator(
-            ReplicatorConfiguration(DatabaseEndpoint(target!!))
-                .setType(ReplicatorType.PUSH_AND_PULL)
-                .setContinuous(false)
-        )
-
-        thisToken = repl.addChangeListener(IN_ORDER_EXEC) { TODO() }
-
-        repl.start()
-        thisReplicator = repl
-    }
-    // end::execution-inorder[]
-}
-
-class MaxThroughputExecutionExample {
-    private var thisReplicator: Replicator? = null
-    private var thisToken: ListenerToken? = null
-
-    // tag::execution-maxthroughput[]
-    companion object {
-        private val MAX_THROUGHPUT_EXEC: ExecutorService = Executors.newCachedThreadPool()
-    }
-
-    /**
-     * This version maximizes throughput.  It will deliver change notifications as quickly
-     * as CPU availability allows. It may deliver change notifications out of order.
-     * Listeners must be thread safe because they may be called from multiple threads.
-     * In fact, they must be re-entrant because a given listener may be running on mutiple threads
-     * simultaneously.  In addition, when notifications swamp the processors, notifications awaiting
-     * a processor will be queued as Threads, (instead of as Runnables) with accompanying memory
-     * and GC impact.
-     */
-    fun runMaxThroughput(collection: Collection<*>?, target: Database?) {
-        val repl = Replicator(
-            ReplicatorConfiguration(DatabaseEndpoint(target!!))
-                .setType(ReplicatorType.PUSH_AND_PULL)
-                .setContinuous(false)
-        )
-        thisToken = repl.addChangeListener(MAX_THROUGHPUT_EXEC) { TODO() }
-
-        repl.start()
-        thisReplicator = repl
-    }
-    // end::execution-maxthroughput[]
-}
-
-class PoliciedExecutionExample {
-    private var thisReplicator: Replicator? = null
-    private var thisToken: ListenerToken? = null
-
-    // end::execution-maxthroughput[]
-    companion object {
-        private val CPUS = Runtime.getRuntime().availableProcessors()
-        private val BACKUP_EXEC: AtomicReference<ThreadPoolExecutor> = AtomicReference()
-        private val BACKUP_EXECUTION = RejectedExecutionHandler { r, _ ->
-            val exec = BACKUP_EXEC.get()
-            if (exec != null) {
-                exec.execute(r)
-            } else {
-                BACKUP_EXEC.compareAndSet(null, createBackupExecutor())
-                BACKUP_EXEC.get().execute(r)
-            }
-        }
-
-        private fun createBackupExecutor(): ThreadPoolExecutor {
-            val exec = ThreadPoolExecutor(
-                CPUS + 1,
-                2 * CPUS + 1,
-                30, TimeUnit.SECONDS,
-                LinkedBlockingQueue()
-            )
-            exec.allowCoreThreadTimeOut(true)
-            return exec
-        }
-
-        private val STANDARD_EXEC: ThreadPoolExecutor = ThreadPoolExecutor(
-            CPUS + 1,
-            2 * CPUS + 1,
-            30, TimeUnit.SECONDS,
-            SynchronousQueue()
-        )
-
-        init {
-            STANDARD_EXEC.rejectedExecutionHandler = BACKUP_EXECUTION
-        }
-    }
-
-    /**
-     * This version demonstrates the extreme configurability of the Couchbase Lite replicator callback system.
-     * It may deliver updates out of order and does require thread-safe and re-entrant listeners
-     * (though it does correctly synchronize tasks passed to it using a SynchronousQueue).
-     * The thread pool executor shown here is configured for the sweet spot for number of threads per CPU.
-     * In a real system, this single executor might be used by the entire application and be passed to
-     * this module, thus establishing a reasonable app-wide threading policy.
-     * In an emergency (Rejected Execution) it lazily creates a backup executor with an unbounded queue
-     * in front of it.  It, thus, may deliver notifications late, as well as out of order.
-     */
-    fun runExecutionPolicy(collection: Collection<*>?, target: Database?, listener: ReplicatorChangeListener?) {
-        val repl = Replicator(
-            ReplicatorConfiguration(DatabaseEndpoint(target!!))
-                .setType(ReplicatorType.PUSH_AND_PULL)
-                .setContinuous(false)
-        )
-        thisToken = repl.addChangeListener(STANDARD_EXEC) { TODO() }
-        repl.start()
-        thisReplicator = repl
-    }
-}
-
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -775,7 +637,7 @@ class PoliciedExecutionExample {
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-@file:Suppress("UNUSED_VARIABLE", "unused")
+@file:Suppress("unused")
 
 package com.couchbase.codesnippets
 
@@ -784,27 +646,15 @@ import androidx.lifecycle.asLiveData
 import com.couchbase.lite.Collection
 import com.couchbase.lite.DocumentChange
 import com.couchbase.lite.Query
-import com.couchbase.lite.Replicator
-import com.couchbase.lite.ReplicatorActivityLevel
 import com.couchbase.lite.Result
 import com.couchbase.lite.collectionChangeFlow
 import com.couchbase.lite.documentChangeFlow
 import com.couchbase.lite.queryChangeFlow
-import com.couchbase.lite.replicatorChangesFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 
 
 class FlowExamples {
-
-    fun replChangeFlowExample(repl: Replicator): LiveData<ReplicatorActivityLevel> {
-        // tag::flow-as-replicator-change-listener[]
-        return repl.replicatorChangesFlow()
-            .map { it.status.activityLevel }
-            .asLiveData()
-        // end::flow-as-replicator-change-listener[]
-    }
-
     fun replChangeFlowExample(collection: Collection): LiveData<MutableList<String>> {
         // tag::flow-as-database-change-listener[]
         return collection.collectionChangeFlow(null)
@@ -994,9 +844,7 @@ class KtJSONExamples {
 
 package com.couchbase.codesnippets
 
-import com.couchbase.codesnippets.util.log
 import com.couchbase.lite.Collection
-import com.couchbase.lite.CouchbaseLiteException
 import com.couchbase.lite.Database
 import com.couchbase.lite.KeyStoreUtils
 import com.couchbase.lite.ListenerCertificateAuthenticator
@@ -1007,72 +855,13 @@ import com.couchbase.lite.URLEndpointListenerConfiguration
 import com.couchbase.lite.URLEndpointListenerConfigurationFactory
 import com.couchbase.lite.newConfig
 import java.io.File
-import java.io.IOException
-import java.net.URI
 import java.security.KeyStore
-import java.security.KeyStoreException
-import java.security.NoSuchAlgorithmException
-import java.security.cert.Certificate
-import java.security.cert.CertificateException
 
 private const val TAG = "LISTEN"
 
 @Suppress("unused")
 class ListenerExamples {
     private var thisListener: URLEndpointListener? = null
-
-    // tag::listener-config-auth-cert-full[]
-    /**
-     * Snippet 2: create a ListenerCertificateAuthenticator and configure the listener with it
-     *
-     *
-     * Start a listener for db that accepts connections from a client identified by any of the passed certs
-     *
-     * @param collections the collections to which the listener is attached
-     * @param certs the name of the single valid user
-     * @return the url at which the listener can be reached.
-     * @throws CouchbaseLiteException on failure
-     */
-    @Throws(CouchbaseLiteException::class)
-    fun startServer(collections: Set<Collection>, serverId: TLSIdentity, certs: List<Certificate?>): URI? {
-        val listener = URLEndpointListener(
-            URLEndpointListenerConfigurationFactory.newConfig(
-                collections = collections,
-                port = 0, // this is the default
-                disableTls = false,
-                identity = serverId,
-                authenticator = ListenerCertificateAuthenticator(certs)
-            )
-        )
-        listener.start()
-        val urls: List<URI> = listener.urls
-        return if (urls.isEmpty()) {
-            null
-        } else {
-            urls[0]
-        }
-    }
-    // end::listener-config-auth-cert-full[]
-
-    // tag::listener-config-delete-cert-full[]
-    /**
-     * Delete an identity from the keystore
-     *
-     * @param alias the alias for the identity to be deleted
-     */
-    @Throws(
-        KeyStoreException::class,
-        CertificateException::class,
-        NoSuchAlgorithmException::class,
-        IOException::class
-    )
-    fun deleteIdentity(alias: String?) {
-        val keyStore: KeyStore = KeyStore.getInstance("AndroidKeyStore")
-        keyStore.load(null)
-        keyStore.deleteEntry(alias) // <.>
-    }
-    // end::listener-config-delete-cert-full[]
-
 
     fun listenerConfigClientAuthLambdaExample(thisConfig: URLEndpointListenerConfiguration) {
         // tag::listener-config-client-auth-lambda[]
@@ -1096,7 +885,6 @@ class ListenerExamples {
     }
 
     fun listenerConfigClientAuthRootExample(collections: Set<Collection>) {
-        // tag::listener-config-client-root-ca[]
         // tag::listener-config-client-auth-root[]
         // Configure the client authenticator
         // to validate using ROOT CA
@@ -1117,7 +905,6 @@ class ListenerExamples {
         ) // <.>
 
         // end::listener-config-client-auth-root[]
-        // end::listener-config-client-root-ca[]
     }
 
     fun listenerConfigTlsIdFullExample(keyFile: File, collections: Set<Collection>) {
@@ -1141,72 +928,22 @@ class ListenerExamples {
             )
         }
 
-        // tag::listener-config-tls-id-set[]
         // Set the TLS Identity
         URLEndpointListenerConfigurationFactory.newConfig(
             collections,
             identity = TLSIdentity.getIdentity("test-alias")
         ) // <.>
         // end::listener-config-tls-id-caCert[]
-
-        // end::listener-config-tls-id-set[]
         // end::listener-config-tls-id-full[]
     }
 
     fun deleteIdentityExample(alias: String) {
-        // tag::deleteTlsIdentity[]
         // tag::p2p-tlsid-delete-id-from-keychain[]
         val thisKeyStore = KeyStore.getInstance("AndroidKeyStore")
         thisKeyStore.load(null)
         thisKeyStore.deleteEntry(alias)
-
         // end::p2p-tlsid-delete-id-from-keychain[]
-        // end::deleteTlsIdentity[]
     }
-
-    fun listenerGetNetworkInterfacesExample(collections: Set<Collection>) {
-        // tag::listener-get-network-interfaces[]
-        val listener = URLEndpointListener(URLEndpointListenerConfigurationFactory.newConfig(collections))
-        listener.start()
-        thisListener = listener
-        log("URLS are ${listener.urls}")
-        // end::listener-get-network-interfaces[]
-    }
-
-
-    // tag::listener-config-client-auth-pwd-full[]
-    /**
-     *
-     * Start a listener for db that accepts connections using exactly the passed username and password
-     *
-     *
-     * @param collections       the set of collections to which the listener is attached
-     * @param username the name of the single valid user
-     * @param password the password for the user
-     * @return the url at which the listener can be reached.
-     * @throws CouchbaseLiteException on failure
-     */
-    fun startServer(collections: Set<Collection>, username: String, password: CharArray): URI? {
-        val listener = URLEndpointListener(
-            URLEndpointListenerConfigurationFactory.newConfig(
-                collections = collections,
-                port = 0,// this is the default
-                disableTls = true,
-                authenticator = ListenerPasswordAuthenticator { usr, pwd ->
-                    (usr == username) && (pwd.contentEquals(password))
-                })
-        )
-
-        listener.start()
-        val urls: List<URI> = listener.urls
-        return if (urls.isEmpty()) {
-            null
-        } else {
-            urls[0]
-        }
-    }
-    // notend::listener-config-client-auth-pwd-full[]
-
 
     // tag::listener-config-tls-id-SelfSigned[]
     // Use a self-signed certificate
@@ -1230,14 +967,7 @@ class ListenerExamples {
             null,
             "couchbase-docs-cert"
         ) // <.>
-
         // end::listener-config-tls-id-SelfSigned[]
-
-        // tag::listener-config-tls-id-set[]
-        // Set the TLS Identity
-        thisConfig.tlsIdentity = thisIdentity // <.>
-
-        // end::listener-config-tls-id-set[]
     }
 
     fun passiveListenerExample(collections: Set<Collection>, validUser: String, validPass: CharArray) {
@@ -1261,7 +991,6 @@ class ListenerExamples {
                 enableDeltaSync = false, // <.>
 
                 // end::listener-config-delta-sync[]
-                // tag::listener-config-tls-full[]
                 // Configure server security
                 // tag::listener-config-tls-enable[]
                 disableTls = false, // <.>
@@ -1278,6 +1007,7 @@ class ListenerExamples {
                 authenticator = ListenerPasswordAuthenticator { usr, pwd ->
                     (usr === validUser) && (validPass.contentEquals(pwd))
                 }
+                // end::listener-config-client-auth-pwd[]
             ))
 
         // Start the listener
@@ -1351,7 +1081,7 @@ class ListenerExamples {
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-@file:Suppress("UNUSED_VARIABLE", "unused")
+@file:Suppress("unused")
 
 package com.couchbase.codesnippets
 
@@ -1468,7 +1198,7 @@ object MergeConflictResolver : ConflictResolver {
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-@file:Suppress("UNUSED_VARIABLE", "unused")
+@file:Suppress("unused")
 
 package com.couchbase.codesnippets
 
@@ -1657,7 +1387,7 @@ class PassivePeerConnection : MessageEndpointConnection {
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-@file:Suppress("UNUSED_VARIABLE", "unused")
+@file:Suppress("unused")
 
 package com.couchbase.codesnippets
 
@@ -1686,7 +1416,7 @@ object TensorFlowModel {
 }
 
 object ImageClassifierModel : PredictiveModel {
-    const val name = "ImageClassifier"
+    const val NAME = "ImageClassifier"
 
     // this would be the implementation of the ml model you have chosen
     override fun predict(input: Dictionary) = input.getBlob("photo")?.let {
@@ -1732,7 +1462,7 @@ fun predictiveQueryExamples(collection: Collection) {
     // tag::predictive-query[]
     val inputMap: Map<String, Any?> = mutableMapOf("photo" to Expression.property("photo"))
     val prediction: PredictionFunction = Function.prediction(
-        ImageClassifierModel.name,
+        ImageClassifierModel.NAME,
         Expression.map(inputMap) // <1>
     )
 
@@ -1767,7 +1497,7 @@ fun predictiveQueryExamples(collection: Collection) {
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-@file:Suppress("UNUSED_VARIABLE", "unused", "UNUSED_PARAMETER")
+@file:Suppress("UNUSED_VARIABLE", "unused")
 
 package com.couchbase.codesnippets
 
@@ -2113,7 +1843,6 @@ fun querySyntaxAllExample(collection: Collection) {
 }
 
 fun querySyntaxIdExample(collection: Collection) {
-    // tag::query-select-meta
     // tag::query-syntax-id[]
     val query = QueryBuilder
         .select(
@@ -2130,7 +1859,6 @@ fun querySyntaxIdExample(collection: Collection) {
         }
     }
     // end::query-access-id[]
-    // end::query-select-meta
 }
 
 fun querySyntaxCountExample(collection: Collection) {
@@ -2153,9 +1881,22 @@ fun querySyntaxCountExample(collection: Collection) {
     // end::query-access-count-only[]
 }
 
+fun queryPaginationExample(collection: Collection) {
+    // tag::query-syntax-pagination[]
+    val thisOffset = 0
+    val thisLimit = 20
+    val listQuery = QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.collection(collection))
+        .limit(
+            Expression.intValue(thisLimit),
+            Expression.intValue(thisOffset)
+        ) // <.>
+    // end::query-syntax-pagination[]
+}
+
 fun querySyntaxPropsExample(collection: Collection) {
     // tag::query-syntax-props[]
-
     val query = QueryBuilder
         .select(
             SelectResult.expression(Meta.id),
@@ -2163,7 +1904,6 @@ fun querySyntaxPropsExample(collection: Collection) {
             SelectResult.property("name")
         )
         .from(DataSource.collection(collection))
-
     // end::query-syntax-props[]
 
     // tag::query-access-props[]
@@ -2195,24 +1935,6 @@ fun inOperatorExample(collection: Collection) {
     }
     // end::query-collection-operator-in[]
 }
-
-
-// tag::query-syntax-pagination-all[]
-fun queryPaginationExample(collection: Collection) {
-    // tag::query-syntax-pagination[]
-    val thisOffset = 0
-    val thisLimit = 20
-    val listQuery = QueryBuilder
-        .select(SelectResult.all())
-        .from(DataSource.collection(collection))
-        .limit(
-            Expression.intValue(thisLimit),
-            Expression.intValue(thisOffset)
-        ) // <.>
-
-    // end::query-syntax-pagination[]
-}
-// end::query-syntax-pagination-all[]
 
 // ### all(*)
 fun selectAllExample(collection: Collection) {
@@ -2249,26 +1971,7 @@ fun liveQueryExample(collection: Collection) {
     // end::stop-live-query[]
 }
 
-// META function
-fun metaFunctionExample(collection: Collection) {
-    // tag::query-select-meta[]
-    val query = QueryBuilder
-        .select(SelectResult.expression(Meta.id))
-        .from(DataSource.collection(collection))
-        .where(Expression.property("type").equalTo(Expression.string("airport")))
-        .orderBy(Ordering.expression(Meta.id))
-
-    query.execute().use { rs ->
-        rs.forEach {
-            log("airport id ->${it.getString("id")}")
-            log("airport id -> ${it.getString(0)}")
-        }
-    }
-    // end::query-select-meta[]
-}
-
 // ### EXPLAIN statement
-// tag::query-explain[]
 fun explainAllExample(collection: Collection) {
     // tag::query-explain-all[]
     val query = QueryBuilder
@@ -2327,7 +2030,6 @@ fun explainNoFnExample(collection: Collection) {
     log(query.explain())
     // end::query-explain-nofunction[]
 }
-// end::query-explain[]
 
 fun prepareIndex(collection: Collection) {
     // tag::fts-index[]
@@ -2390,12 +2092,11 @@ fun ftsQueryBuilderExample(collection: Collection) {
 }
 
 fun querySyntaxJsonExample(collection: Collection) {
-    // tag::query-syntax-json[]
     // Example assumes Hotel class object defined elsewhere
     // Build the query
     val listQuery = QueryBuilder.select(SelectResult.all())
         .from(DataSource.collection(collection))
-    // end::query-syntax-json[]
+
     // tag::query-access-json[]
     // Uses Jackson JSON processor
     val mapper = ObjectMapper()
@@ -2463,7 +2164,7 @@ fun docsOnlyQuerySyntaxN1QLParams(database: Database): List<Result> {
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-@file:Suppress("UNUSED_VARIABLE", "unused", "UNUSED_PARAMETER")
+@file:Suppress("UNUSED_VARIABLE", "unused")
 
 package com.couchbase.codesnippets
 
@@ -2502,14 +2203,12 @@ class ReplicationExamples {
         val repl = Replicator( // <.>
 
             // tag::p2p-act-rep-func[]
-            // tag::p2p-act-rep-initialize[]
             // initialize the replicator configuration
             ReplicatorConfigurationFactory.newConfig(
                 target = URLEndpoint(URI("wss://listener.com:8954")), // <.>
 
                 collections = mapOf(collections to null),
 
-                // end::p2p-act-rep-initialize[]
                 // tag::p2p-act-rep-config-type[]
                 // Set replicator type
                 type = ReplicatorType.PUSH_AND_PULL,
@@ -2556,11 +2255,8 @@ class ReplicationExamples {
         }
 
         // end::p2p-act-rep-add-change-listener[]
-        // tag::p2p-act-rep-start[]
         // Start replicator
         repl.start(false) // <.>
-
-        // end::p2p-act-rep-start[]
 
         thisReplicator = repl
         thisToken = token
@@ -2653,7 +2349,6 @@ class ReplicationExamples {
 
     // ### Reset replicator checkpoint
     fun replicationResetCheckpointExample(collections: Set<Collection>) {
-        // tag::replication-startup[]
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
@@ -2669,7 +2364,6 @@ class ReplicationExamples {
         // ... at some later time
 
         repl.stop()
-        // end::replication-startup[]
     }
 
     fun handlingNetworkErrorExample(collections: Set<Collection>) {
@@ -2746,15 +2440,9 @@ class ReplicationExamples {
                 target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
                 collections = mapOf(collections to null),
                 //  other config params as required . .
-                // tag::replication-heartbeat-config[]
                 heartbeat = 150, // <1>
-                // end::replication-heartbeat-config[]
-                // tag::replication-maxattempts-config[]
                 maxAttempts = 20,
-                // end::replication-maxattempts-config[]
-                // tag::replication-maxattemptwaittime-config[]
                 maxAttemptWaitTime = 600
-                // end::replication-maxattemptwaittime-config[]
             )
         )
         repl.start()
@@ -2810,9 +2498,7 @@ class ReplicationExamples {
             )
         )
 
-        // tag::replication-push-pendingdocumentids[]
         val pendingDocs = repl.getPendingDocumentIds(collection)
-        // end::replication-push-pendingdocumentids[]
 
         // iterate and report on previously
         // retrieved pending docids 'list'
@@ -2822,7 +2508,6 @@ class ReplicationExamples {
             val firstDoc = pendingDocs.first()
             repl.addChangeListener { change ->
                 log("Replicator activity level is ${change.status.activityLevel}")
-                // tag::replication-push-isdocumentpending[]
                 try {
                     if (!repl.isDocumentPending(firstDoc, collection)) {
                         log("Doc ID ${firstDoc} has been pushed")
@@ -2830,7 +2515,6 @@ class ReplicationExamples {
                 } catch (err: CouchbaseLiteException) {
                     log("Failed getting pending docs", err)
                 }
-                // end::replication-push-isdocumentpending[]
             }
 
             repl.start()
@@ -2862,7 +2546,6 @@ class ReplicationExamples {
     }
 
     fun replicatorConfigurationExample(srcCollections: Set<Collection>, targetUrl: URI) {
-        // tag::p2p-act-rep-config-tls-full[]
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
                 target = URLEndpoint(targetUrl),
@@ -2873,7 +2556,6 @@ class ReplicationExamples {
                 // Configure Server Security
                 // -- only accept CA attested certs
                 acceptOnlySelfSignedServerCertificate = false, // <.>
-
                 // end::p2p-act-rep-config-cacert[]
 
                 // tag::p2p-act-rep-config-cacert-pinned[]
@@ -2883,8 +2565,6 @@ class ReplicationExamples {
                     ?: throw IllegalStateException("Cannot find corporate id"),
                 // end::p2p-act-rep-config-cacert-pinned[]
 
-
-                // end::p2p-act-rep-config-tls-full[]
                 // tag::p2p-tlsid-tlsidentity-with-label[]
                 // Provide a client certificate to the server for authentication
                 authenticator = ClientCertificateAuthenticator(
@@ -2939,44 +2619,10 @@ class ReplicationExamples {
 
 // Listener Callouts
 
-// tag::listener-callouts-full[]
-
-// tag::listener-start-callouts[]
-<.> Initialize the listener instance using the configuration settings.
-<.> Start the listener, ready to accept connections and incoming data from active peers.
-
-// end::listener-start-callouts[]
-
-// tag::listener-status-check-callouts[]
-
-<.> `connectionCount` -- the total number of connections served by the listener
-<.> `activeConnectionCount` -- the number of active (BUSY) connections currently being served by the listener
-//
-// end::listener-status-check-callouts[]
-
-// end::listener-callouts-full[]
-
-
 // tag::p2p-act-rep-config-cacert-pinned-callouts[]
 <.> Configure the pinned certificate using data from the byte array `cert`
 // end::p2p-act-rep-config-cacert-pinned-callouts[]
 
-// tag::p2p-tlsid-tlsidentity-with-label-callouts[]
-<.> Attempt to get the identity from secure storage
-<.> Set the authenticator to ClientCertificateAuthenticator and configure it to use the retrieved identity
-
-// end::p2p-tlsid-tlsidentity-with-label-callouts[]
-
-// tag::sgw-repl-pull-callouts[]
-<.> A replication is an asynchronous operation.
-To keep a reference to the `replicator` object, you can set it as an instance property.
-<.> The URL scheme for remote database URLs uses `ws:`, or `wss:` for SSL/TLS connections over wb sockets.
-In this example the hostname is `10.0.2.2` because the Android emulator runs in a VM that is generally accessible on `10.0.2.2` from the host machine (see https://developer.android.com/studio/run/emulator-networking[Android Emulator networking] documentation).
-+
-NOTE: As of Android Pie, version 9, API 28, cleartext support is disabled, by default.
-Although `wss:` protocol URLs are not affected, in order to use the `ws:` protocol, applications must target API 27 or lower, or must configure application network security as described https://developer.android.com/training/articles/security-config#CleartextTrafficPermitted[here].
-
-// end::sgw-repl-pull-callouts[]
 */
 
 //
@@ -3051,9 +2697,11 @@ import com.couchbase.lite.VectorEncoding
 import com.couchbase.lite.VectorIndexConfiguration
 import com.couchbase.lite.VectorIndexConfigurationFactory
 import com.couchbase.lite.newConfig
+import java.io.IOException
 
 
 fun interface ColorModel {
+    @Throws(IOException::class)
     fun getEmbedding(color: Blob?): List<Float?>?
 }
 
@@ -3321,10 +2969,10 @@ class VectorSearchExamples {
         while (true) {
             col.getIndex("colors_index")?.beginUpdate(10)?.use { updater ->
                 for (i in 0 until updater.count()) {
-                    val embedding: List<Float?>? = colorModel.getEmbedding(updater.getBlob(i))
-                    if (embedding != null) {
+                    try {
+                        val embedding: List<Float?>? = colorModel.getEmbedding(updater.getBlob(i))
                         updater.setVector(embedding, i)
-                    } else {
+                    } catch (e: IOException) {
                         // Bad connection? Corrupted over the wire? Something bad happened
                         // and the vector cannot be generated at the moment: skip it.
                         // The next time beginUpdate() is called, we'll try it again.
@@ -3338,6 +2986,6 @@ class VectorSearchExamples {
             // loop until there are no more vectors to update
                 ?: break
         }
-        // tag::vs-create-lazy-index-embedding[]
+        // end::vs-create-lazy-index-embedding[]
     }
 }
