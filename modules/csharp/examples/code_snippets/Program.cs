@@ -1811,7 +1811,9 @@ namespace api_walkthrough
 
             {
                 // tag::array-index-single[]
+                // tag::array-index-config[]
                 var arrayIndexConfiguration = new ArrayIndexConfiguration("likes");
+                // end::array-index-config[]
                 collection.CreateIndex("myindex", arrayIndexConfiguration);
                 // end::array-index-single[]
             }

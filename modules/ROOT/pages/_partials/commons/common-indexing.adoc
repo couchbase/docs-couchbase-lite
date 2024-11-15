@@ -109,6 +109,322 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 
 endif::is-c[]
 
+== Array Indexing 
 
+Couchbase Lite 3.2.1 introduces functionality to optimize querying arrays.
+xref:{param-module}:query-n1ql-mobile.adoc#lbl-unnest[Array `UNNEST`] to unpack arrays within a document to allow joins with the parent object, and array indexes for indexing unnested array's values to allow more efficient queries with `UNNEST`. 
 
+=== The Array Index
 
+An array index is a new type of the index for indexing nested array’s properties to allow querying with the `UNNEST` more efficiently.
+
+Below is an example array index configuration:
+
+ifdef::is-android[]
+
+[tabs]
+=====
+Java::
++
+--
+[source, java]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-config]
+
+----
+--
+
+Kotlin::
++
+--
+[source, kotlin]
+----
+
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ArrayIndexExamples.kt[tags=array-index-config]
+
+----
+--
+=====
+
+endif::is-android[]
+ifdef::is-java[]
+
+[source, java]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-config]
+
+----
+
+endif::is-java[]
+ifdef::is-csharp[]
+
+[source, csharp]
+----
+include::csharp:example$code_snippets/Program.cs[tags=array-index-config]
+----
+endif::is-csharp[]
+ifdef::is-objc[]
+[source, objc]
+----
+
+include::objc:example$code_snippets/VectorSearch.m[tags=array-index-config]
+
+----
+endif::is-objc[]
+ifdef::is-swift[]
+[source, swift]
+----
+
+include::swift:example$code_snippets/VectorSearch.swift[tags=array-index-config]
+
+----
+endif::is-swift[]
+ifdef::is-c[]
+[source, c]
+----
+
+include::c:example$code_snippets/main.cpp[tags=array-index-config]
+
+----
+endif::is-c[]
+
+=== Array Index Syntax
+
+The syntax for array index configuration is shown below:
+
+[cols ="3*"]
+|===
+|Name |Is Optional? |Description
+
+|`path`
+|image:ROOT:no.png[]
+|Path to the array to be indexed.
+
+|`expressions`
+|image:ROOT:yes.png[]
+|An optional array of strings, where each string represents an expression defining the values within the array to be indexed.
+Use `"[]"` to represent a property that is an array of each nested array level.
+For instance `contacts[].phones` to specify an array of phones within each contact.
+For a single array or the last level array, the `"[]"` is optional. 
+If the array specified by the path contains scalar values, this parameter can be null.
+
+|===
+
+=== Using Array Indexes with UNNEST
+
+For the following examples, you can assume we are querying results from the following document, shown below:
+
+[source, JSON]
+--
+{
+   "Name":"Sam",
+   "contacts":[
+     {
+       "type":"primary",
+       "address":{"street":"1 St","city":"San Pedro","state":"CA"},
+       "phones":[
+         {"type":"home","number":"310-123-4567"},
+         {"type":"mobile","number":"310-123-6789"}
+       ]
+     },
+     {
+       "type":"secondary",
+       "address":{"street":"5 St","city":"Seattle","state":"WA"},
+       "phones":[
+         {"type":"home","number":"206-123-4567"},
+         {"type":"mobile","number":"206-123-6789"}
+       ]
+     }
+   ],
+   "likes":["soccer","travel"]
+ }
+
+--
+
+Using the document above we can perform queries on a single nested array like so:
+
+[source, sqlpp]
+--
+SELECT name, like FROM _ UNNEST likes as like WHERE like = "travel" 
+--
+
+The query above will produce the following output from the document:
+
+[source, JSON]
+--
+{"name": "Sam", "like": "travel"}
+--
+
+You can also perform the same operation using array indexes like so:
+
+ifdef::is-android[]
+
+[tabs]
+=====
+Java::
++
+--
+[source, java]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-single]
+
+----
+--
+
+Kotlin::
++
+--
+[source, kotlin]
+----
+
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ArrayIndexExamples.kt[tags=array-index-single]
+
+----
+--
+=====
+
+endif::is-android[]
+ifdef::is-java[]
+
+[source, java]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-single]
+
+----
+
+endif::is-java[]
+ifdef::is-csharp[]
+
+[source, csharp]
+----
+include::csharp:example$code_snippets/Program.cs[tags=array-index-single]
+----
+
+endif::is-csharp[]
+ifdef::is-objc[]
+[source, objc]
+----
+
+include::objc:example$code_snippets/VectorSearch.m[tags=array-index-single]
+
+----
+endif::is-objc[]
+ifdef::is-swift[]
+[source, swift]
+----
+
+include::swift:example$code_snippets/VectorSearch.swift[tags=array-index-single]
+
+----
+endif::is-swift[]
+ifdef::is-c[]
+[source, c]
+----
+
+include::c:example$code_snippets/main.cpp[tags=array-index-single]
+
+----
+endif::is-c[]
+
+You can perform similar operations on nested arrays:
+
+[source, sqlpp]
+--
+SELECT name, contact.type, phone.number 
+FROM profiles 
+UNNEST contacts as contact
+UNNEST contact.phones as phone
+WHERE phone.type = "mobile"
+--
+
+The query above will then produce the following output:
+
+[source, JSON]
+--
+{"name": "Sam", "type": "primary", "number": "310-123-6789"}
+{"name": "Sam", "type": "secondary", "number": "206-123-6789"}
+--
+
+The output demonstrates retrieval of both primary and secondary contact numbers listed as type `"mobile"`.
+
+Here’s an example of creating an array index on a nested array containing dictionary values:
+
+ifdef::is-android[]
+
+[tabs]
+=====
+Java::
++
+--
+[source, java]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-nested]
+
+----
+--
+
+Kotlin::
++
+--
+[source, kotlin]
+----
+
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ArrayIndexExamples.kt[tags=array-index-nested]
+
+----
+--
+=====
+
+endif::is-android[]
+ifdef::is-java[]
+
+[source, java]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-nested]
+
+----
+
+endif::is-java[]
+ifdef::is-csharp[]
+
+[source, csharp]
+----
+include::csharp:example$code_snippets/Program.cs[tags=array-index-nested]
+----
+
+endif::is-csharp[]
+ifdef::is-objc[]
+[source, objc]
+----
+
+include::objc:example$code_snippets/VectorSearch.m[tags=array-index-nested]
+
+----
+endif::is-objc[]
+ifdef::is-swift[]
+[source, swift]
+----
+
+include::swift:example$code_snippets/VectorSearch.swift[tags=array-index-nested]
+
+----
+endif::is-swift[]
+ifdef::is-c[]
+[source, c]
+----
+
+include::c:example$code_snippets/main.cpp[tags=array-index-nested]
+
+----
+endif::is-c[]
+
+The above snippet will create an array index to allow you to iterate through `contacts[].type` in the document, namely `"primary"` and `"secondary"`.
+
+IMPORTANT: Array literals are not supported in CBL 3.2.1.
+Attempting to create a query with array literals will return an error.
