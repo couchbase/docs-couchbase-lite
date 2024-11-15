@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
-cbl_version=$1
-vs_version=$2
+CBL_VERSION=$1
+VS_VERSION=$2
 
 dir=$( dirname -- $(realpath "$0"); )
 
@@ -11,15 +11,26 @@ CBL_URL="http://proget.build.couchbase.com:8080/api/open_latestbuilds?product=co
 # Grab the redirect url
 CBL_SOURCE_URL=$(curl -s -L -o /dev/null -w '%{url_effective}' "${CBL_URL}")
 
-# Get latest good VS extension build for given version
-VS_URL="http://proget.build.couchbase.com:8080/api/open_latestbuilds?product=couchbase-lite-ios-vector-search&version=${vs_version}"
+CBL="http://proget.build.couchbase.com:8080/api/get_version?product=couchbase-lite-ios&version=${CBL_VERSION}"
+RESPONSE=$(curl -s $CBL)
+CBL_IS_RELEASE=$(echo -n $RESPONSE | jq .IsRelease)
+CBL_BUILD_NO=$(echo -n $RESPONSE | jq .BuildNumber)
 
+if [ "${CBL_BUILD_NO}" == "" ]
+then
+    echo "No latest successful build found for CBL v${CBL_VERSION}"
+    exit 3
+fi
 
-# Grab the redirect url - workaround until url is fixed
-VS_SOURCE_URL=$(curl -s -L -o /dev/null -w '%{url_effective}' "${VS_URL}")
+VS="http://proget.build.couchbase.com:8080/api/get_version?product=couchbase-lite-ios-vector-search&version=${VS_VERSION}&ee=true"
+RESPONSE=$(curl -s $VS)
+VS_BUILD_NO=$(echo -n $RESPONSE | jq .BuildNumber)
 
-cbl_build=$(curl -s "http://proget.build.couchbase.com:8080/api/get_version?product=couchbase-lite-ios&version=$cbl_version&ee=true" | jq .BuildNumber)
-vs_build=$(curl -s "http://proget.build.couchbase.com:8080/api/get_version?product=couchbase-lite-ios-vector-search&version=$vs_version&ee=true" | jq .BuildNumber)
+if [ "${VS_BUILD_NO}" == "" ]
+then
+    echo "No latest successful build found for VS v${VS_VERSION}"
+    exit 3
+fi
 
 for PLATFORM in "objc" "swift"
 do
@@ -34,13 +45,24 @@ do
 
     pushd downloaded
     # Get CBL
-    CBL_PACKAGE_NAME="couchbase-lite-${PLATFORM}_xc_enterprise_${cbl_version}-${cbl_build}.zip"
+    CBL_SOURCE_URL=$(curl -s -L -o /dev/null -w '%{url_effective}' "http://proget.build.couchbase.com:8080/api/open_latestbuilds?product=couchbase-lite-ios&version=${CBL_VERSION}")
+
+    if [ $CBL_IS_RELEASE == true ]; then
+        CBL_PACKAGE_NAME="couchbase-lite-${PLATFORM}_xc_enterprise_${CBL_VERSION}.zip"
+    else
+        CBL_PACKAGE_NAME="couchbase-lite-${PLATFORM}_xc_enterprise_${CBL_VERSION}-${CBL_BUILD_NO}.zip"
+    fi
+
     wget "$CBL_SOURCE_URL$CBL_PACKAGE_NAME"
     unzip -o $CBL_PACKAGE_NAME -d "../Frameworks/"
+
     # Get VS extension
-    VS_PACKAGE_NAME="couchbase-lite-vector-search-${vs_version}-apple.zip"
+    VS_SOURCE_URL=$(curl -s -L -o /dev/null -w '%{url_effective}' "http://proget.build.couchbase.com:8080/api/open_latestbuilds?product=couchbase-lite-ios-vector-search&version=${VS_VERSION}")
+    echo $VS_SOURCE_URL
+    VS_PACKAGE_NAME="couchbase-lite-vector-search-${VS_VERSION}-apple.zip"
     wget "$VS_SOURCE_URL$VS_PACKAGE_NAME"
     unzip -o $VS_PACKAGE_NAME -d "../Frameworks/"
+
     # Check if download was successful
     if [ $? -eq 0 ]; then
         echo "Package downloaded successfully."
