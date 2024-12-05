@@ -243,14 +243,14 @@ For the following examples, you can assume we are querying results from the foll
 
 --
 
-Using the document above we can perform queries on a single nested array like so:
+Using the document above you can perform queries on a single nested array like so:
 
 [source, sqlpp]
 --
 SELECT name, like FROM _ UNNEST likes as like WHERE like = "travel" 
 --
 
-The query above will produce the following output from the document:
+The query above produces the following output from the document:
 
 [source, JSON]
 --
@@ -341,7 +341,7 @@ UNNEST contact.phones as phone
 WHERE phone.type = "mobile"
 --
 
-The query above will then produce the following output:
+The query produces the following output:
 
 [source, JSON]
 --
@@ -424,7 +424,7 @@ include::c:example$code_snippets/main.cpp[tags=array-index-nested]
 ----
 endif::is-c[]
 
-The above snippet will create an array index to allow you to iterate through `contacts[].type` in the document, namely `"primary"` and `"secondary"`.
+The above snippet creates an array index to allow you to iterate through `contacts[].phones[].type` in the document, namely `"home"` and `"mobile"`.
 
 IMPORTANT: Array literals are not supported in CBL 3.2.1.
 Attempting to create a query with array literals will return an error.
