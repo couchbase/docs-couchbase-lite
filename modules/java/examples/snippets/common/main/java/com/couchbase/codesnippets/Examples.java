@@ -10,18 +10,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.couchbase.codesnippets.utils.Logger;
 import com.couchbase.codesnippets.utils.Utils;
@@ -60,16 +55,21 @@ import com.couchbase.lite.Replicator;
 import com.couchbase.lite.ReplicatorConfiguration;
 import com.couchbase.lite.ReplicatorConnection;
 import com.couchbase.lite.ReplicatorType;
-import com.couchbase.lite.Result;
-import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 import com.couchbase.lite.URLEndpoint;
+import com.couchbase.lite.internal.utils.Fn;
+import com.couchbase.lite.logging.BaseLogSink;
+import com.couchbase.lite.logging.ConsoleLogSink;
+import com.couchbase.lite.logging.FileLogSink;
+import com.couchbase.lite.logging.LogSinks;
 
 
 @SuppressWarnings({"unused", "ConstantConditions"})
 public class Examples {
     private static final String DB_NAME = "getting-started";
     private static final String DB_NAME2 = "other";
+
+    private void sendToNetwork(String message) { }
 
     public void oneXAttachmentsExample(Database database) {
         Document document = new MutableDocument();
@@ -118,10 +118,6 @@ public class Examples {
         // tag::console-logging[]
         Database.log.getConsole().setLevel(LogLevel.DEBUG); // <.>
         // end::console-logging[]
-
-        // tag::console-logging-db[]
-        Database.log.getConsole().setLevel(LogLevel.DEBUG); // <.>
-        // end::console-logging-db[]
     }
 
     public void fileLoggingExample() {
@@ -134,6 +130,35 @@ public class Examples {
         Database.log.getFile().setConfig(LogCfg);
         Database.log.getFile().setLevel(LogLevel.INFO); // <.>
         // end::file-logging[]
+    }
+
+    public void newConsoleLoggingExample() {
+        // tag::new-console-logging[]
+        LogSinks.get().setConsole(new ConsoleLogSink(LogLevel.WARNING));
+        // end::new-console-logging[]
+    }
+
+    public void newCustomLoggingExample(Fn.Consumer<String> sendToNetwork) {
+        // tag::new-custom-logging[]
+        LogSinks.get().setCustom(new BaseLogSink(LogLevel.WARNING, LogDomain.NETWORK, LogDomain.REPLICATOR) {
+            @Override
+            public void writeLog(LogLevel level, LogDomain domain, String message) {
+                // this method will be called only with messages from the NETWORK and REPLICATOR
+                // domains with a log level of WARNING or higher.
+                sendToNetwork(String.format("%s/%s: %s", domain, level, message));
+            }
+        });
+        // end::new-custom-logging[]
+    }
+
+    public void newFileLoggingExample() {
+        // tag::new-file-logging[]
+        LogSinks.get().setFile(new FileLogSink.Builder()
+            .setDirectory("/tmp/logs")
+            .setMaxKeptFiles(12)
+            .setPlainText(false)
+            .build());
+        // end::new-file-logging[]
     }
 
     public void preBuiltDatabaseExample(Database database) throws IOException, CouchbaseLiteException {

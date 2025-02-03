@@ -46,6 +46,13 @@ import com.couchbase.lite.ReplicatorType
 import com.couchbase.lite.SelectResult
 import com.couchbase.lite.URLEndpoint
 import com.couchbase.lite.UnitOfWork
+import com.couchbase.lite.fileLogSinkFactory
+import com.couchbase.lite.install
+import com.couchbase.lite.internal.utils.Fn
+import com.couchbase.lite.logging.BaseLogSink
+import com.couchbase.lite.logging.ConsoleLogSink
+import com.couchbase.lite.logging.FileLogSink
+import com.couchbase.lite.logging.LogSinks
 import com.couchbase.lite.newConfig
 import java.io.File
 import java.io.FileOutputStream
@@ -66,6 +73,8 @@ class LogTestLogger(private val level: LogLevel) : Logger {
         // handle the message, for example piping it to a third party framework
     }
 }
+
+private fun sendToNetwork(format: String) { }
 
 // end::custom-logging[]
 class BasicExamples(private val context: Context) {
@@ -173,6 +182,34 @@ class BasicExamples(private val context: Context) {
             // end::file-logging[]
         }
         // end::file-logging-config-factory[]
+    }
+
+    fun newConsoleLoggingExample() {
+        // tag::new-console-logging[]
+        LogSinks.get().console = ConsoleLogSink(LogLevel.WARNING)
+        // end::new-console-logging[]
+    }
+
+    fun newCustomLoggingExample(sendToNetwork: Fn.Consumer<String?>?) {
+        // tag::new-custom-logging[]
+        LogSinks.get().custom =
+            object : BaseLogSink(LogLevel.WARNING, LogDomain.NETWORK, LogDomain.REPLICATOR) {
+                public override fun writeLog(level: LogLevel, domain: LogDomain, message: String) {
+                    // sendToNetwork will be called only with messages from the NETWORK and REPLICATOR
+                    // domains with a log level of WARNING or higher.
+                    sendToNetwork(String.format("%s/%s: %s", domain, level, message))
+                }
+            }
+        // end::new-custom-logging[]
+    }
+
+    fun newFileLoggingExample() {
+        // tag::new-file-logging[]
+        fileLogSinkFactory.install(
+            directory = "/tmp/logs",
+            maxRotateCount = 12,
+            isPlainText = true)
+        // end::new-file-logging[]
     }
 
     // ### Loading a pre-built database
