@@ -211,19 +211,6 @@
 
 #pragma mark - Logging
 
-- (void) dontTestLogging {
-    // tag::logging[]
-
-    // Replicator / Verbose
-    CBLDatabase.log.console.level = kCBLLogLevelVerbose;
-    CBLDatabase.log.console.domains = kCBLLogDomainReplicator;
-
-    // Query /  Verbose
-    CBLDatabase.log.console.level = kCBLLogLevelVerbose;
-    CBLDatabase.log.console.domains = kCBLLogDomainQuery;
-    // end::logging[]
-}
-
 #if COUCHBASE_ENTERPRISE
 - (void) dontTestDatabaseEncryption {
     // tag::database-encryption[]

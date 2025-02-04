@@ -85,29 +85,18 @@ class SampleCodeTest {
     }
 #endif
 
-    func dontTestLogging() throws {
-        // tag::logging[]
-        // verbose / replicator
-        Database.log.console.level = .verbose
-        Database.log.console.domains = .replicator
-
-        // verbose / query
-        Database.log.console.level = .verbose
-        Database.log.console.domains = .query
-        // end::logging[]
-    }
-
     func dontTestConsoleLogging() throws {
         // tag::console-logging[]
         Database.log.console.domains = .all // <.>
         Database.log.console.level = .verbose // <.>
-
         // end::console-logging[]
-        // tag::console-logging-db[]
-
-        Database.log.console.domains = .database
-
-        // end::console-logging-db[]
+    }
+    
+    func dontTestNewConsoleLogging() throws {
+        // tag::new-console-logging[]
+        let sink = ConsoleLogSink(level: .verbose, domains: .all)
+        LogSinks.console = sink
+        // end::new-console-logging[]
     }
 
     func dontTestFileLogging() throws {
@@ -120,12 +109,28 @@ class SampleCodeTest {
         Database.log.file.level = .info // <.>
         // end::file-logging[]
     }
+    
+    func dontTestNewFileLogging() throws {
+        // tag::new-file-logging[]
+        let tempFolder = NSTemporaryDirectory().appending("cbllog")
+        let sink = FileLogSink(level: .info, directory: tempFolder)
+        LogSinks.file = sink
+        // end::new-file-logging[]
+    }
 
     func dontTestEnableCustomLogging() throws {
-        // tag::set-custom-logging[]
+        // tag::custom-logging[]
         let logger = LogTestLogger(.warning)
         Database.log.custom =  logger // <.>
-        // end::set-custom-logging[]
+        // end::custom-logging[]
+    }
+    
+    func dontTestNewCustomLogging() throws {
+        // tag::new-custom-logging[]
+        let logger = TestLogger()
+        let sink = CustomLogSink(level: .warning, logSink: logger)
+        LogSinks.custom = sink
+        // end::new-custom-logging[]
     }
 
     func dontTestLoadingPrebuilt() throws {
@@ -2616,7 +2621,7 @@ class TestPredictiveModel: PredictiveModel {
     }
 }
 
-// MARK: -- Custom Logger
+// MARK: -- Logging
 
 // tag::custom-logging[]
 class LogTestLogger: Logger {
@@ -2635,6 +2640,16 @@ class LogTestLogger: Logger {
     }
 }
 // end::custom-logging[]
+
+// tag::new-custom-logging[]
+class TestLogger: LogSinkProtocol {
+    
+    func writeLog(level: LogLevel, domain: LogDomain, message: String) {
+        // handle the message, for example piping it to
+        // a third party framework
+    }
+}
+// end::new-custom-logging[]
 
 struct Hotel: Codable {
     var id: String
