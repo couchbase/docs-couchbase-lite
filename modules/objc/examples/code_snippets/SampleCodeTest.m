@@ -103,11 +103,11 @@
 // end::custom-logging[]
 
 // tag::new-custom-logging[]
-@interface TestLogger :NSObject<CBLLogSinkProtocol>
+@interface TestLogSink :NSObject<CBLLogSinkProtocol>
 
 @end
 
-@implementation TestLogger
+@implementation TestLogSink
 
 - (void) writeLogWithLevel:(CBLLogLevel)level domain:(CBLLogDomain)domain message:(NSString*)message {
     // handle the message, for example piping it to
@@ -234,14 +234,13 @@
 
 - (void) dontTestEnableNewConsoleLogging {
     // tag::new-console-logging[]
-    CBLConsoleLogSink* sink = [[CBLConsoleLogSink alloc] initWithLevel:kCBLLogLevelVerbose domains:kCBLLogDomainAll];
-    CBLLogSinks.console = sink;
+    CBLLogSinks.console = [[CBLConsoleLogSink alloc] initWithLevel:kCBLLogLevelVerbose domains:kCBLLogDomainAll];
     // end::new-console-logging[]
 }
 
 - (void) dontTestFileLogging {
     // tag::file-logging[]
-    NSString *tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent:@"cbllog"];
+    NSString *tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent: @"cbllog"];
     CBLLogFileConfiguration *config = [[CBLLogFileConfiguration alloc] initWithDirectory:tempFolder]; // <.>
     config.maxRotateCount = 2; // <.>
     config.maxSize = 1024; // <.>
@@ -253,9 +252,8 @@
 
 - (void) dontTestNewFileLogging {
     // tag::new-file-logging[]
-    NSString* tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent:@"cbllog"];
-    CBLFileLogSink* sink = [[CBLFileLogSink alloc] initWithLevel: kCBLLogLevelInfo directory: tempFolder];
-    CBLLogSinks.file = sink;
+    NSString* tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent:  @"cbllog"];
+    CBLLogSinks.file = [[CBLFileLogSink alloc] initWithLevel:kCBLLogLevelInfo directory:tempFolder];;
     // end::new-file-logging[]
 }
 
@@ -269,9 +267,8 @@
 
 - (void) dontTestEnableNewCustomLogging {
     // tag::new-custom-logging[]
-    TestLogger* logger = [[TestLogger alloc] init];
-    CBLCustomLogSink* sink = [[CBLCustomLogSink alloc] initWithLevel: kCBLLogLevelWarning logSink: logger];
-    CBLLogSinks.custom = sink;
+    TestLogSink* sink = [[TestLogSink alloc] init];
+    CBLLogSinks.custom = [[CBLCustomLogSink alloc] initWithLevel:kCBLLogLevelWarning logSink:sink];
     // end::new-custom-logging[]
 }
 

@@ -94,8 +94,7 @@ class SampleCodeTest {
     
     func dontTestNewConsoleLogging() throws {
         // tag::new-console-logging[]
-        let sink = ConsoleLogSink(level: .verbose, domains: .all)
-        LogSinks.console = sink
+        LogSinks.console = ConsoleLogSink(level: .verbose, domains: .all)
         // end::new-console-logging[]
     }
 
@@ -113,8 +112,7 @@ class SampleCodeTest {
     func dontTestNewFileLogging() throws {
         // tag::new-file-logging[]
         let tempFolder = NSTemporaryDirectory().appending("cbllog")
-        let sink = FileLogSink(level: .info, directory: tempFolder)
-        LogSinks.file = sink
+        LogSinks.file = FileLogSink(level: .info, directory: tempFolder)
         // end::new-file-logging[]
     }
 
@@ -127,9 +125,7 @@ class SampleCodeTest {
     
     func dontTestNewCustomLogging() throws {
         // tag::new-custom-logging[]
-        let logger = TestLogger()
-        let sink = CustomLogSink(level: .warning, logSink: logger)
-        LogSinks.custom = sink
+        LogSinks.custom = CustomLogSink(level: .warning, logSink: TestLogSink())
         // end::new-custom-logging[]
     }
 
@@ -2642,7 +2638,7 @@ class LogTestLogger: Logger {
 // end::custom-logging[]
 
 // tag::new-custom-logging[]
-class TestLogger: LogSinkProtocol {
+class TestLogSink: LogSinkProtocol {
     
     func writeLog(level: LogLevel, domain: LogDomain, message: String) {
         // handle the message, for example piping it to
