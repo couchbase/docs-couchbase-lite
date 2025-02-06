@@ -246,14 +246,18 @@
     config.maxSize = 1024; // <.>
     config.usePlainText = YES; // <.>
     [CBLDatabase.log.file setConfig:config];
-    [CBLDatabase.log.file setLevel:kCBLLogLevelInfo]; // <.>
+    [CBLDatabase.log.file setLevel:kCBLLogLevelVerbose]; // <.>
     // end::file-logging[]
 }
 
 - (void) dontTestNewFileLogging {
     // tag::new-file-logging[]
     NSString* tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent:  @"cbllog"];
-    CBLLogSinks.file = [[CBLFileLogSink alloc] initWithLevel:kCBLLogLevelInfo directory:tempFolder];;
+    CBLLogSinks.file = [[CBLFileLogSink alloc] initWithLevel:kCBLLogLevelVerbose
+                                                   directory:tempFolder
+                                                usePlaintext:false
+                                                maxKeptFiles:2
+                                                 maxFileSize:1024];
     // end::new-file-logging[]
 }
 

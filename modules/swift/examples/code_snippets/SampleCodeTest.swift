@@ -66,8 +66,6 @@ class SampleCodeTest {
         // end::database-fullsync[]
     }
 
-    
-
     // helper
     func isValidCredentials(_ u: String, password: String) -> Bool { return true }
     func isValidCertificates(_ certs: [SecCertificate]) -> Bool { return true }
@@ -103,16 +101,17 @@ class SampleCodeTest {
         let tempFolder = NSTemporaryDirectory().appending("cbllog")
         let config = LogFileConfiguration(directory: tempFolder) // <.>
         config.usePlainText = true // <.>
+        config.maxRotateCount = 2 // <.>
         config.maxSize = 1024 // <.>
         Database.log.file.config = config // <.>
-        Database.log.file.level = .info // <.>
+        Database.log.file.level = .verbose // <.>
         // end::file-logging[]
     }
     
     func dontTestNewFileLogging() throws {
         // tag::new-file-logging[]
         let tempFolder = NSTemporaryDirectory().appending("cbllog")
-        LogSinks.file = FileLogSink(level: .info, directory: tempFolder)
+        LogSinks.file = FileLogSink(level: .verbose, directory: tempFolder, usePlainText: false, maxKeptFiles: 2, maxFileSize: 1024)
         // end::new-file-logging[]
     }
 
