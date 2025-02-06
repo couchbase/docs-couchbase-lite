@@ -15,7 +15,7 @@ pipeline {
                 stage("Validate C") {
                     agent { label 's61113u16 (litecore)' }
                     steps {
-                        sh 'jenkins/c_build.sh 3.2.1'
+                        sh 'jenkins/c_build.sh 3.2.2'
                     }
                 }
                 stage("Validate iOS") {
