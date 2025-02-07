@@ -91,6 +91,13 @@ import com.couchbase.lite.ReplicatorType
 import com.couchbase.lite.SelectResult
 import com.couchbase.lite.URLEndpoint
 import com.couchbase.lite.UnitOfWork
+import com.couchbase.lite.FileLogSinkFactory
+import com.couchbase.lite.install
+import com.couchbase.lite.internal.utils.Fn
+import com.couchbase.lite.logging.BaseLogSink
+import com.couchbase.lite.logging.ConsoleLogSink
+import com.couchbase.lite.logging.FileLogSink
+import com.couchbase.lite.logging.LogSinks
 import com.couchbase.lite.newConfig
 import java.io.File
 import java.io.FileOutputStream
@@ -111,6 +118,8 @@ class LogTestLogger(private val level: LogLevel) : Logger {
         // handle the message, for example piping it to a third party framework
     }
 }
+
+private fun sendToNetwork(format: String) { }
 
 // end::custom-logging[]
 class BasicExamples(private val context: Context) {
@@ -218,6 +227,34 @@ class BasicExamples(private val context: Context) {
             // end::file-logging[]
         }
         // end::file-logging-config-factory[]
+    }
+
+    fun newConsoleLoggingExample() {
+        // tag::new-console-logging[]
+        LogSinks.get().console = ConsoleLogSink(LogLevel.WARNING)
+        // end::new-console-logging[]
+    }
+
+    fun newCustomLoggingExample(sendToNetwork: Fn.Consumer<String?>?) {
+        // tag::new-custom-logging[]
+        LogSinks.get().custom =
+            object : BaseLogSink(LogLevel.WARNING, LogDomain.NETWORK, LogDomain.REPLICATOR) {
+                public override fun writeLog(level: LogLevel, domain: LogDomain, message: String) {
+                    // sendToNetwork will be called only with messages from the NETWORK and REPLICATOR
+                    // domains with a log level of WARNING or higher.
+                    sendToNetwork(String.format("%s/%s: %s", domain, level, message))
+                }
+            }
+        // end::new-custom-logging[]
+    }
+
+    fun newFileLoggingExample() {
+        // tag::new-file-logging[]
+        FileLogSinkFactory.install(
+            directory = "/tmp/logs",
+            maxKeptFiles = 12,
+            isPlainText = true)
+        // end::new-file-logging[]
     }
 
     // ### Loading a pre-built database
@@ -2035,7 +2072,8 @@ fun prepareIndex(collection: Collection) {
     // tag::fts-index[]
     collection.createIndex(
         "overviewFTSIndex",
-        FullTextIndexConfigurationFactory.newConfig("overview"))
+        FullTextIndexConfigurationFactory.newConfig("overview")
+    )
     // end::fts-index[]
 }
 
@@ -2149,6 +2187,23 @@ fun docsOnlyQuerySyntaxN1QLParams(database: Database): List<Result> {
     // end::query-syntax-n1ql-params[]
 }
 
+fun partialIndexExample(collection: Collection) {
+    // tag::query-partial-index[]
+    val config = ValueIndexConfigurationFactory.newConfig("num")
+    config.where = "type = 'number'"
+    collection.createIndex("numIndex", config)
+    collection.database.createQuery("SELECT * FROM ${collection.fullName} WHERE type = 'foo' AND num > 1000")
+    // end::query-partial-index[]
+}
+
+fun partialFullIndexExample(collection: Collection) {
+    // tag::query-partial-full-index[]
+    val config = ValueIndexConfigurationFactory.newConfig("content")
+    config.where = "length(content) > 30"
+    collection.createIndex("contentIndex", config)
+    collection.database.createQuery("SELECT content FROM ${collection.fullName} WHERE match(contentIndex, 'database')")
+    // end::query-partial-full-index[]
+}
 //
 // Copyright (c) 2023 Couchbase, Inc All rights reserved.
 //
