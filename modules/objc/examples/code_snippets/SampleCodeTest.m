@@ -242,8 +242,8 @@
     // tag::file-logging[]
     NSString *tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent: @"cbllog"];
     CBLLogFileConfiguration *config = [[CBLLogFileConfiguration alloc] initWithDirectory:tempFolder]; // <.>
-    config.maxRotateCount = 2; // <.>
-    config.maxSize = 1024; // <.>
+    config.maxRotateCount = 12; // <.>
+    config.maxSize = 524288; // <.>
     config.usePlainText = YES; // <.>
     [CBLDatabase.log.file setConfig:config];
     [CBLDatabase.log.file setLevel:kCBLLogLevelVerbose]; // <.>
@@ -256,8 +256,8 @@
     CBLLogSinks.file = [[CBLFileLogSink alloc] initWithLevel:kCBLLogLevelVerbose
                                                    directory:tempFolder
                                                 usePlaintext:false
-                                                maxKeptFiles:2
-                                                 maxFileSize:1024];
+                                                maxKeptFiles:12
+                                                 maxFileSize:524288];
     // end::new-file-logging[]
 }
 

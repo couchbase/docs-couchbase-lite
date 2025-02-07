@@ -101,8 +101,8 @@ class SampleCodeTest {
         let tempFolder = NSTemporaryDirectory().appending("cbllog")
         let config = LogFileConfiguration(directory: tempFolder) // <.>
         config.usePlainText = true // <.>
-        config.maxRotateCount = 2 // <.>
-        config.maxSize = 1024 // <.>
+        config.maxRotateCount = 12 // <.>
+        config.maxSize = 524288 // <.>
         Database.log.file.config = config // <.>
         Database.log.file.level = .verbose // <.>
         // end::file-logging[]
@@ -111,7 +111,7 @@ class SampleCodeTest {
     func dontTestNewFileLogging() throws {
         // tag::new-file-logging[]
         let tempFolder = NSTemporaryDirectory().appending("cbllog")
-        LogSinks.file = FileLogSink(level: .verbose, directory: tempFolder, usePlainText: false, maxKeptFiles: 2, maxFileSize: 1024)
+        LogSinks.file = FileLogSink(level: .verbose, directory: tempFolder, usePlainText: false, maxKeptFiles: 12)
         // end::new-file-logging[]
     }
 
