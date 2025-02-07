@@ -89,6 +89,8 @@
 
 @end
 
+#pragma mark - Custom Logger class
+
 @implementation LogTestLogger
 
 @synthesize level=_level;
@@ -209,8 +211,6 @@
   // end::database-fullsync[]
 }
 
-#pragma mark - Logging
-
 #if COUCHBASE_ENTERPRISE
 - (void) dontTestDatabaseEncryption {
     // tag::database-encryption[]
@@ -225,20 +225,14 @@
 }
 #endif
 
-- (void) dontTestEnableConsoleLogging {
+#pragma mark - Logging
+
+- (void) dontTestOldLoggingApi {
     // tag::console-logging[]
     CBLDatabase.log.console.domains = kCBLLogDomainAll; // <.>
     CBLDatabase.log.console.level = kCBLLogLevelVerbose; // <.>
     // end::console-logging[]
-}
-
-- (void) dontTestEnableNewConsoleLogging {
-    // tag::new-console-logging[]
-    CBLLogSinks.console = [[CBLConsoleLogSink alloc] initWithLevel:kCBLLogLevelVerbose domains:kCBLLogDomainAll];
-    // end::new-console-logging[]
-}
-
-- (void) dontTestFileLogging {
+    
     // tag::file-logging[]
     NSString *tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent: @"cbllog"];
     CBLLogFileConfiguration *config = [[CBLLogFileConfiguration alloc] initWithDirectory:tempFolder]; // <.>
@@ -248,9 +242,19 @@
     [CBLDatabase.log.file setConfig:config];
     [CBLDatabase.log.file setLevel:kCBLLogLevelVerbose]; // <.>
     // end::file-logging[]
+    
+    // tag::custom-logging[]
+    LogTestLogger *logger = [[LogTestLogger alloc] init];
+    logger.level = kCBLLogLevelWarning;
+    [CBLDatabase.log setCustom:logger];
+    // end::custom-logging[]
 }
 
-- (void) dontTestNewFileLogging {
+- (void) dontTestNewLoggingApi {
+    // tag::new-console-logging[]
+    CBLLogSinks.console = [[CBLConsoleLogSink alloc] initWithLevel:kCBLLogLevelVerbose domains:kCBLLogDomainAll];
+    // end::new-console-logging[]
+    
     // tag::new-file-logging[]
     NSString* tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent:  @"cbllog"];
     CBLLogSinks.file = [[CBLFileLogSink alloc] initWithLevel:kCBLLogLevelVerbose
@@ -259,17 +263,7 @@
                                                 maxKeptFiles:12
                                                  maxFileSize:524288];
     // end::new-file-logging[]
-}
-
-- (void) dontTestEnableCustomLogging {
-    // tag::custom-logging[]
-    LogTestLogger *logger = [[LogTestLogger alloc] init];
-    logger.level = kCBLLogLevelWarning;
-    [CBLDatabase.log setCustom:logger];
-    // end::custom-logging[]
-}
-
-- (void) dontTestEnableNewCustomLogging {
+    
     // tag::new-custom-logging[]
     TestLogSink* sink = [[TestLogSink alloc] init];
     CBLLogSinks.custom = [[CBLCustomLogSink alloc] initWithLevel:kCBLLogLevelWarning logSink:sink];

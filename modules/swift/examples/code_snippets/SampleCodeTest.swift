@@ -83,20 +83,14 @@ class SampleCodeTest {
     }
 #endif
 
-    func dontTestConsoleLogging() throws {
+    // MARK: Logging
+    
+    func dontTestOldLoggingApi() throws {
         // tag::console-logging[]
         Database.log.console.domains = .all // <.>
         Database.log.console.level = .verbose // <.>
         // end::console-logging[]
-    }
-    
-    func dontTestNewConsoleLogging() throws {
-        // tag::new-console-logging[]
-        LogSinks.console = ConsoleLogSink(level: .verbose, domains: .all)
-        // end::new-console-logging[]
-    }
-
-    func dontTestFileLogging() throws {
+        
         // tag::file-logging[]
         let tempFolder = NSTemporaryDirectory().appending("cbllog")
         let config = LogFileConfiguration(directory: tempFolder) // <.>
@@ -106,28 +100,28 @@ class SampleCodeTest {
         Database.log.file.config = config // <.>
         Database.log.file.level = .verbose // <.>
         // end::file-logging[]
-    }
-    
-    func dontTestNewFileLogging() throws {
-        // tag::new-file-logging[]
-        let tempFolder = NSTemporaryDirectory().appending("cbllog")
-        LogSinks.file = FileLogSink(level: .verbose, directory: tempFolder, usePlainText: false, maxKeptFiles: 12)
-        // end::new-file-logging[]
-    }
-
-    func dontTestEnableCustomLogging() throws {
+        
         // tag::custom-logging[]
         let logger = LogTestLogger(.warning)
         Database.log.custom =  logger // <.>
         // end::custom-logging[]
     }
     
-    func dontTestNewCustomLogging() throws {
+    func dontTestNewLoggingApi() throws {
+        // tag::new-console-logging[]
+        LogSinks.console = ConsoleLogSink(level: .verbose, domains: .all)
+        // end::new-console-logging[]
+        
+        // tag::new-file-logging[]
+        let tempFolder = NSTemporaryDirectory().appending("cbllog")
+        LogSinks.file = FileLogSink(level: .verbose, directory: tempFolder, usePlainText: false, maxKeptFiles: 12)
+        // end::new-file-logging[]
+        
         // tag::new-custom-logging[]
         LogSinks.custom = CustomLogSink(level: .warning, logSink: TestLogSink())
         // end::new-custom-logging[]
     }
-
+    
     func dontTestLoadingPrebuilt() throws {
         // tag::prebuilt-database[]
         // Note: Getting the path to a database is platform-specific.
