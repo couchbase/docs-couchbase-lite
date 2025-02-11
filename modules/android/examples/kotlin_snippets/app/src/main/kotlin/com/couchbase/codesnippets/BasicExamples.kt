@@ -46,7 +46,7 @@ import com.couchbase.lite.ReplicatorType
 import com.couchbase.lite.SelectResult
 import com.couchbase.lite.URLEndpoint
 import com.couchbase.lite.UnitOfWork
-import com.couchbase.lite.fileLogSinkFactory
+import com.couchbase.lite.FileLogSinkFactory
 import com.couchbase.lite.install
 import com.couchbase.lite.internal.utils.Fn
 import com.couchbase.lite.logging.BaseLogSink
@@ -205,9 +205,9 @@ class BasicExamples(private val context: Context) {
 
     fun newFileLoggingExample() {
         // tag::new-file-logging[]
-        fileLogSinkFactory.install(
+        FileLogSinkFactory.install(
             directory = "/tmp/logs",
-            maxRotateCount = 12,
+            maxKeptFiles = 12,
             isPlainText = true)
         // end::new-file-logging[]
     }

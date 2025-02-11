@@ -658,5 +658,23 @@ public class QueryExamples {
         return results;
         // end::query-syntax-n1ql-params[]
     }
+
+    public void partialIndexExample(Collection collection) throws CouchbaseLiteException {
+        // tag::query-partial-index[]
+        collection.createIndex("numIndex", new ValueIndexConfiguration("num").setWhere("type = 'number'"));
+        collection.getDatabase()
+            .createQuery("SELECT * FROM " + collection.getFullName() + " WHERE type = 'foo' AND num > 1000");
+        // end::query-partial-index[]
+    }
+
+    public void partialFullIndexExample(Collection collection) throws CouchbaseLiteException {
+        // tag::query-partial-full-index[]
+        collection.createIndex(
+            "contentIndex",
+            new FullTextIndexConfiguration("content").setWhere("length(content) > 30"));
+        collection.getDatabase()
+            .createQuery("SELECT content FROM " + collection.getFullName() + " WHERE match(contentIndex, 'database')");
+        // end::query-partial-full-index[]
+    }
 }
 
