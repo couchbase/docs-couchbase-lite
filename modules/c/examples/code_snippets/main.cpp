@@ -1686,8 +1686,8 @@ static void file_logging() {
     CBLLogFileConfiguration config {}; // Don't bother zeroing, since we set all properties
     config.level = kCBLLogInfo;
     config.directory = FLSTR("/tmp/logs");;
-    config.maxRotateCount = 5;
-    config.maxSize = 10240;
+    config.maxRotateCount = 12;
+    config.maxSize = 1048576;
     config.usePlaintext = false;
 
     CBLError err{};
@@ -1722,6 +1722,7 @@ static void file_log_sink() {
     logSink.level = kCBLLogVerbose;
     logSink.directory = FLSTR("/tmp/logs");
     logSink.maxKeptFiles = 12;
+    logSink.maxSize = 1048576;
     logSink.usePlaintext = false;
     CBLLogSinks_SetFile(logSink);
     // end::new-file-logging[]
