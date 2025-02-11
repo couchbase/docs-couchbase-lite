@@ -1711,6 +1711,7 @@ static void console_log_sink() {
     // tag::new-console-logging[]
     CBLConsoleLogSink logSink {};
     logSink.level = kCBLLogVerbose;
+    logSink.domains = kCBLLogDomainMaskAll;
     CBLLogSinks_SetConsole(logSink);
     // end::new-console-logging[]
 }
