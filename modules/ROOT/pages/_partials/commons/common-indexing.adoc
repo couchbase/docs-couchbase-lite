@@ -109,6 +109,73 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 
 endif::is-c[]
 
+== Partial Index
+
+Couchbase Lite 3.2.2 introduces support for Partial Index - Partial Value and Partial Full-Text Indexes.
+The Partial Index can create a smaller index, potentially improving index and query performance. 
+You can use Partial Index to specify a `WHERE` clause in your index configuration.
+If a where clause is specified, the database will index a document only when the where clause condition is met. 
+
+Couchbase's query optimizer uses https://www.sqlite.org/partialindex.html[SQLite's Partial Index rules about queries using Partial Indexes] to determine whether to use partial index in the query or not.
+
+.Couchbase and SQLite's Partial Index Rules
+:!example-caption:
+====
+In general, Couchbase Lite follows the two rules, with a modification to the second rule. 
+
+Below is a summary of the two rules where:
+
+* `X` - The expression in the `WHERE` clause of a given Partial Index.
+
+* `W` - The expression in the `WHERE` clause of a given query.
+
+A query can use the Partial Index if the following two rules are satisfied:
+
+1. If `W` is AND-connected terms, and `X` is OR-connected terms and if any terms of `W` appears as a term of `X`, the partial index is allowed to be used.
+
+2. If a term in `X` is of the form `“z IS NOT MISSING”` and if a term in `W` is a comparison operator on `z` other than `“IS”`, the partial index is allowed to be used. 
+The operators include `=, ==, <, >, <=, >=< <>, IN, LIKE, and BETWEEN`.
+
+IMPORTANT: If `X` is in the form of `"z is NOT NULL"` or `"z is VALUED"`, the first rule must be satisfied.
+
+For example, let the index be:
+
+[source, sqlpp]
+----
+
+CREATE INDEX ex2 ON tab2(b,c) WHERE c IS NOT NULL;
+
+----
+
+Then any query that uses operators `=, <, >, <=, >=, <>, IN, LIKE, or GLOB` on column `c` would be usable with the partial index, because those comparison operators are only true if `c` is not NULL. 
+
+The following query could use the partial index:
+
+[source, sqlpp]
+----
+
+SELECT * FROM tab2 WHERE b=456 AND c<>0;  -- uses partial index
+
+---- 
+
+Whereas the next query can not use the partial index:
+
+[source, sqlpp]
+----
+
+SELECT * FROM tab2 WHERE b=456;  -- cannot use partial index
+
+----
+====
+
+=== Partial Value Index
+
+
+
+=== Partial Full-Text Index
+
+A key difference between a value index and a full-text index is that a full-text index is not selected by SQLite’s query optimizer. Instead, it is explicitly selected by the match(indexName, terms) function. This means that a partial full-text index will always be used when the match() function is invoked, regardless of other predicates in the WHERE clause.
+
 == Array Indexing 
 
 Couchbase Lite 3.2.1 introduces functionality to optimize querying arrays.
