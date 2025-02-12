@@ -311,6 +311,28 @@ class SampleCodeTest {
         try collection.createIndex(index, name: "TypeNameIndex")
         // end::query-index_Querybuilder[]
     }
+    
+    func dontTestPartialValueIndex() throws {
+        guard let collection = try? self.database.defaultCollection() else {
+            fatalError("For sample code snippet, collection should be present!")
+        }
+        
+        // tag::partial-value-index[]
+        let config = ValueIndexConfiguration(["city"], where: "type = 'hotel'")
+        try collection.createIndex(withName: "HotelCityIndex", config: config)
+        // end::partial-value-index[]
+    }
+    
+    func dontTestPartialFTSIndex() throws {
+        guard let collection = try? self.database.defaultCollection() else {
+            fatalError("For sample code snippet, collection should be present!")
+        }
+        
+        // tag::partial-full-text-index[]
+        let config = FullTextIndexConfiguration(["description"], where: "vacancy = true")
+        try collection.createIndex(withName: "VacantHotelIndex", config: config)
+        // end::partial-full-text-index[]
+    }
 
     func dontTestSelectMeta() throws {
         guard let collection = try? self.database.defaultCollection() else {

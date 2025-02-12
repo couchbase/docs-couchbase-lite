@@ -595,11 +595,42 @@
     // tag::query-index[]
 
     CBLValueIndexConfiguration* config = [[CBLValueIndexConfiguration alloc]
-                                          initWithExpression: @[@"type", @"name"]];
+                                          initWithExpression:@[@"type", @"name"]];
 
-    [collection createIndexWithName:@"TypeNameIndex" config:config error: &error];
+    [collection createIndexWithName:@"TypeNameIndex" config:config error:&error];
 
     // end::query-index[]
+}
+
+- (void) dontTestPartialValueIndex {
+    NSError* error;
+    CBLCollection* collection = [self.database defaultCollection:nil];
+
+    // tag::partial-value-index[]
+
+    CBLValueIndexConfiguration* config = [[CBLValueIndexConfiguration alloc]
+                                          initWithExpression:@[@"city"] where:@"type = \"hotel\""];
+
+    [collection createIndexWithName:@"HotelCityIndex" config:config error:&error];
+
+    // end::partial-value-index[]
+}
+
+- (void) dontTestPartialFullTextIndex {
+    NSError* error;
+    CBLCollection* collection = [self.database defaultCollection:nil];
+
+    // tag::partial-full-text-index[]
+
+    CBLFullTextIndexConfiguration* config = [[CBLFullTextIndexConfiguration alloc]
+                                             initWithExpression:@[@"description"]
+                                             where:@"vacancy = true"
+                                             ignoreAccents:NO
+                                             language:nil];
+
+    [collection createIndexWithName:@"VacantHotelIndex" config:config error:&error];
+
+    // end::partial-full-text-index[]
 }
 
 - (void) dontTestIndexing_Querybuilder {
