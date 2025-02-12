@@ -1027,10 +1027,9 @@ static void create_index() {
     // Syntax for second argument is the same as taking from a N1QL SELECT
     // i.e. SELECT (type, name) FROM _;
     // tag::scopes-manage-index-collection[]
-    CBLValueIndexConfiguration config = {
-        kCBLN1QLLanguage,
-        FLSTR("type, name")
-    };
+    CBLValueIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.expressions = FLSTR("type, name");
 
     CBLError err{};
     CBLCollection_CreateValueIndex(collection, FLSTR("TypeNameIndex"), config, &err);
@@ -1040,10 +1039,9 @@ static void create_index() {
 
 static void create_array_index_config() {
     // tag::array-index-config[]
-    CBLArrayIndexConfiguration config = {
-        kCBLN1QLLanguage,
-        FLSTR("contacts")
-    };
+    CBLArrayIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.path = FLSTR("contacts");
     // end::array-index-config[]
 }
 
@@ -1052,10 +1050,9 @@ static void create_array_index_single() {
     CBLCollection *collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::array-index-single[]
-    CBLArrayIndexConfiguration config = {
-        kCBLN1QLLanguage,
-        FLSTR("likes")
-    };
+    CBLArrayIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.path = FLSTR("likes");
 
     CBLError err{};
     CBLCollection_CreateArrayIndex(collection, FLSTR("myindex"), config, &err);
@@ -1067,15 +1064,44 @@ static void create_array_index_nested() {
     CBLCollection *collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::array-index-nested[]
-    CBLArrayIndexConfiguration config = {
-        kCBLN1QLLanguage,
-        FLSTR("contacts[].phones"),
-        FLSTR("type")
-    };
+    CBLArrayIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.path = FLSTR("contacts[].phones");
+    config.expressions = FLSTR("type");
 
     CBLError err{};
     CBLCollection_CreateArrayIndex(collection, FLSTR("myindex"), config, &err);
     // end::array-index-nested[]
+}
+
+static void create_partial_value_index() {
+    CBLDatabase* database = kDatabase;
+    CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
+
+    // tag::partial-value-index[]
+    CBLValueIndexConfiguration config {};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.expressions = FLSTR("city");
+    config.where = FLSTR("type = \"hotel\"");
+
+    CBLError err{};
+    CBLCollection_CreateValueIndex(collection, FLSTR("HotelCityIndex"), config, &err);
+    // end::partial-value-index[]
+}
+
+static void create_partial_full_text_index() {
+    CBLDatabase* database = kDatabase;
+    CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
+
+    // tag::partial-full-text-index[]
+    CBLFullTextIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.expressions = FLSTR("content");
+    config.where = FLSTR("year > 1999");
+
+    CBLError err{};
+    CBLCollection_CreateFullTextIndex(collection, FLSTR("ArticleIndex"), config, &err);
+    // end::partial-full-text-index[]
 }
 
 static void select_meta() {
@@ -1595,11 +1621,10 @@ static void create_full_text_index() {
 
     // tag::fts-index[]
     CBLError err{};
-    CBLFullTextIndexConfiguration config = {
-        kCBLN1QLLanguage,
-        FLSTR("name"),
-        false
-    };
+    CBLFullTextIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.expressions = FLSTR("name");
+    config.ignoreAccents = false;
 
     CBLCollection_CreateFullTextIndex(collection, FLSTR("nameFTSIndex"), config, &err);
     // end::fts-index[]
