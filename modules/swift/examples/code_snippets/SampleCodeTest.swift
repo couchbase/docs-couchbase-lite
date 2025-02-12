@@ -66,8 +66,6 @@ class SampleCodeTest {
         // end::database-fullsync[]
     }
 
-    
-
     // helper
     func isValidCredentials(_ u: String, password: String) -> Bool { return true }
     func isValidCertificates(_ certs: [SecCertificate]) -> Bool { return true }
@@ -85,49 +83,45 @@ class SampleCodeTest {
     }
 #endif
 
-    func dontTestLogging() throws {
-        // tag::logging[]
-        // verbose / replicator
-        Database.log.console.level = .verbose
-        Database.log.console.domains = .replicator
-
-        // verbose / query
-        Database.log.console.level = .verbose
-        Database.log.console.domains = .query
-        // end::logging[]
-    }
-
-    func dontTestConsoleLogging() throws {
+    // MARK: Logging
+    
+    func dontTestOldLoggingApi() throws {
         // tag::console-logging[]
         Database.log.console.domains = .all // <.>
         Database.log.console.level = .verbose // <.>
-
         // end::console-logging[]
-        // tag::console-logging-db[]
-
-        Database.log.console.domains = .database
-
-        // end::console-logging-db[]
-    }
-
-    func dontTestFileLogging() throws {
+        
         // tag::file-logging[]
         let tempFolder = NSTemporaryDirectory().appending("cbllog")
         let config = LogFileConfiguration(directory: tempFolder) // <.>
         config.usePlainText = true // <.>
-        config.maxSize = 1024 // <.>
+        config.maxRotateCount = 12 // <.>
+        config.maxSize = 524288 // <.>
         Database.log.file.config = config // <.>
-        Database.log.file.level = .info // <.>
+        Database.log.file.level = .verbose // <.>
         // end::file-logging[]
-    }
-
-    func dontTestEnableCustomLogging() throws {
-        // tag::set-custom-logging[]
+        
+        // tag::custom-logging[]
         let logger = LogTestLogger(.warning)
         Database.log.custom =  logger // <.>
-        // end::set-custom-logging[]
+        // end::custom-logging[]
     }
-
+    
+    func dontTestNewLoggingApi() throws {
+        // tag::new-console-logging[]
+        LogSinks.console = ConsoleLogSink(level: .verbose, domains: .all)
+        // end::new-console-logging[]
+        
+        // tag::new-file-logging[]
+        let tempFolder = NSTemporaryDirectory().appending("cbllog")
+        LogSinks.file = FileLogSink(level: .verbose, directory: tempFolder, usePlainText: false, maxKeptFiles: 12)
+        // end::new-file-logging[]
+        
+        // tag::new-custom-logging[]
+        LogSinks.custom = CustomLogSink(level: .warning, logSink: TestLogSink())
+        // end::new-custom-logging[]
+    }
+    
     func dontTestLoadingPrebuilt() throws {
         // tag::prebuilt-database[]
         // Note: Getting the path to a database is platform-specific.
@@ -316,6 +310,28 @@ class SampleCodeTest {
                                             ValueIndexItem.expression(Expression.property("name")))
         try collection.createIndex(index, name: "TypeNameIndex")
         // end::query-index_Querybuilder[]
+    }
+    
+    func dontTestPartialValueIndex() throws {
+        guard let collection = try? self.database.defaultCollection() else {
+            fatalError("For sample code snippet, collection should be present!")
+        }
+        
+        // tag::partial-value-index[]
+        let config = ValueIndexConfiguration(["city"], where: "type = 'hotel'")
+        try collection.createIndex(withName: "HotelCityIndex", config: config)
+        // end::partial-value-index[]
+    }
+    
+    func dontTestPartialFTSIndex() throws {
+        guard let collection = try? self.database.defaultCollection() else {
+            fatalError("For sample code snippet, collection should be present!")
+        }
+        
+        // tag::partial-full-text-index[]
+        let config = FullTextIndexConfiguration(["description"], where: "vacancy = true")
+        try collection.createIndex(withName: "VacantHotelIndex", config: config)
+        // end::partial-full-text-index[]
     }
 
     func dontTestSelectMeta() throws {
@@ -2616,7 +2632,7 @@ class TestPredictiveModel: PredictiveModel {
     }
 }
 
-// MARK: -- Custom Logger
+// MARK: -- Logging
 
 // tag::custom-logging[]
 class LogTestLogger: Logger {
@@ -2635,6 +2651,16 @@ class LogTestLogger: Logger {
     }
 }
 // end::custom-logging[]
+
+// tag::new-custom-logging[]
+class TestLogSink: LogSinkProtocol {
+    
+    func writeLog(level: LogLevel, domain: LogDomain, message: String) {
+        // handle the message, for example piping it to
+        // a third party framework
+    }
+}
+// end::new-custom-logging[]
 
 struct Hotel: Codable {
     var id: String

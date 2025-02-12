@@ -89,6 +89,8 @@
 
 @end
 
+#pragma mark - Custom Logger class
+
 @implementation LogTestLogger
 
 @synthesize level=_level;
@@ -101,6 +103,21 @@
 @end
 
 // end::custom-logging[]
+
+// tag::new-custom-logging[]
+@interface TestLogSink :NSObject<CBLLogSinkProtocol>
+
+@end
+
+@implementation TestLogSink
+
+- (void) writeLogWithLevel:(CBLLogLevel)level domain:(CBLLogDomain)domain message:(NSString*)message {
+    // handle the message, for example piping it to
+    // a third party framework
+}
+
+@end
+// end::new-custom-logging[]
 
 // tag::local-win-conflict-resolver[]
 @interface LocalWinConflictResolver :NSObject<CBLConflictResolver>
@@ -194,20 +211,6 @@
   // end::database-fullsync[]
 }
 
-
-- (void) dontTestLogging {
-    // tag::logging[]
-
-    // Replicator / Verbose
-    CBLDatabase.log.console.level = kCBLLogLevelVerbose;
-    CBLDatabase.log.console.domains = kCBLLogDomainReplicator;
-
-    // Query /  Verbose
-    CBLDatabase.log.console.level = kCBLLogLevelVerbose;
-    CBLDatabase.log.console.domains = kCBLLogDomainQuery;
-    // end::logging[]
-}
-
 #if COUCHBASE_ENTERPRISE
 - (void) dontTestDatabaseEncryption {
     // tag::database-encryption[]
@@ -222,38 +225,49 @@
 }
 #endif
 
-- (void) dontTestEnableConsoleLogging {
+#pragma mark - Logging
+
+- (void) dontTestOldLoggingApi {
     // tag::console-logging[]
     CBLDatabase.log.console.domains = kCBLLogDomainAll; // <.>
     CBLDatabase.log.console.level = kCBLLogLevelVerbose; // <.>
-
     // end::console-logging[]
-
-    // tag::console-logging-db[]
-    CBLDatabase.log.console.domains = kCBLLogDomainAll;
-
-    // end::console-logging-db[]
-}
-
-- (void) dontTestFileLogging {
+    
     // tag::file-logging[]
-    NSString *tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent:@"cbllog"];
+    NSString *tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent: @"cbllog"];
     CBLLogFileConfiguration *config = [[CBLLogFileConfiguration alloc] initWithDirectory:tempFolder]; // <.>
-    config.maxRotateCount = 2; // <.>
-    config.maxSize = 1024; // <.>
+    config.maxRotateCount = 12; // <.>
+    config.maxSize = 524288; // <.>
     config.usePlainText = YES; // <.>
     [CBLDatabase.log.file setConfig:config];
-    [CBLDatabase.log.file setLevel:kCBLLogLevelInfo]; // <.>
+    [CBLDatabase.log.file setLevel:kCBLLogLevelVerbose]; // <.>
     // end::file-logging[]
-}
-
-- (void) dontTestEnableCustomLogging {
-    // tag::set-custom-logging[]
+    
+    // tag::custom-logging[]
     LogTestLogger *logger = [[LogTestLogger alloc] init];
     logger.level = kCBLLogLevelWarning;
     [CBLDatabase.log setCustom:logger];
+    // end::custom-logging[]
+}
 
-    // end::set-custom-logging[]
+- (void) dontTestNewLoggingApi {
+    // tag::new-console-logging[]
+    CBLLogSinks.console = [[CBLConsoleLogSink alloc] initWithLevel:kCBLLogLevelVerbose domains:kCBLLogDomainAll];
+    // end::new-console-logging[]
+    
+    // tag::new-file-logging[]
+    NSString* tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent:  @"cbllog"];
+    CBLLogSinks.file = [[CBLFileLogSink alloc] initWithLevel:kCBLLogLevelVerbose
+                                                   directory:tempFolder
+                                                usePlaintext:false
+                                                maxKeptFiles:12
+                                                 maxFileSize:524288];
+    // end::new-file-logging[]
+    
+    // tag::new-custom-logging[]
+    TestLogSink* sink = [[TestLogSink alloc] init];
+    CBLLogSinks.custom = [[CBLCustomLogSink alloc] initWithLevel:kCBLLogLevelWarning logSink:sink];
+    // end::new-custom-logging[]
 }
 
 - (void) dontTestLoadingPrebuilt {
@@ -581,11 +595,42 @@
     // tag::query-index[]
 
     CBLValueIndexConfiguration* config = [[CBLValueIndexConfiguration alloc]
-                                          initWithExpression: @[@"type", @"name"]];
+                                          initWithExpression:@[@"type", @"name"]];
 
-    [collection createIndexWithName:@"TypeNameIndex" config:config error: &error];
+    [collection createIndexWithName:@"TypeNameIndex" config:config error:&error];
 
     // end::query-index[]
+}
+
+- (void) dontTestPartialValueIndex {
+    NSError* error;
+    CBLCollection* collection = [self.database defaultCollection:nil];
+
+    // tag::partial-value-index[]
+
+    CBLValueIndexConfiguration* config = [[CBLValueIndexConfiguration alloc]
+                                          initWithExpression:@[@"city"] where:@"type = \"hotel\""];
+
+    [collection createIndexWithName:@"HotelCityIndex" config:config error:&error];
+
+    // end::partial-value-index[]
+}
+
+- (void) dontTestPartialFullTextIndex {
+    NSError* error;
+    CBLCollection* collection = [self.database defaultCollection:nil];
+
+    // tag::partial-full-text-index[]
+
+    CBLFullTextIndexConfiguration* config = [[CBLFullTextIndexConfiguration alloc]
+                                             initWithExpression:@[@"description"]
+                                             where:@"vacancy = true"
+                                             ignoreAccents:NO
+                                             language:nil];
+
+    [collection createIndexWithName:@"VacantHotelIndex" config:config error:&error];
+
+    // end::partial-full-text-index[]
 }
 
 - (void) dontTestIndexing_Querybuilder {

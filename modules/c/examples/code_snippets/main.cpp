@@ -1027,10 +1027,9 @@ static void create_index() {
     // Syntax for second argument is the same as taking from a N1QL SELECT
     // i.e. SELECT (type, name) FROM _;
     // tag::scopes-manage-index-collection[]
-    CBLValueIndexConfiguration config = {
-        kCBLN1QLLanguage,
-        FLSTR("type, name")
-    };
+    CBLValueIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.expressions = FLSTR("type, name");
 
     CBLError err{};
     CBLCollection_CreateValueIndex(collection, FLSTR("TypeNameIndex"), config, &err);
@@ -1040,10 +1039,9 @@ static void create_index() {
 
 static void create_array_index_config() {
     // tag::array-index-config[]
-    CBLArrayIndexConfiguration config = {
-        kCBLN1QLLanguage,
-        FLSTR("contacts")
-    };
+    CBLArrayIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.path = FLSTR("contacts");
     // end::array-index-config[]
 }
 
@@ -1052,10 +1050,9 @@ static void create_array_index_single() {
     CBLCollection *collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::array-index-single[]
-    CBLArrayIndexConfiguration config = {
-        kCBLN1QLLanguage,
-        FLSTR("likes")
-    };
+    CBLArrayIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.path = FLSTR("likes");
 
     CBLError err{};
     CBLCollection_CreateArrayIndex(collection, FLSTR("myindex"), config, &err);
@@ -1067,15 +1064,44 @@ static void create_array_index_nested() {
     CBLCollection *collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::array-index-nested[]
-    CBLArrayIndexConfiguration config = {
-        kCBLN1QLLanguage,
-        FLSTR("contacts[].phones"),
-        FLSTR("type")
-    };
+    CBLArrayIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.path = FLSTR("contacts[].phones");
+    config.expressions = FLSTR("type");
 
     CBLError err{};
     CBLCollection_CreateArrayIndex(collection, FLSTR("myindex"), config, &err);
     // end::array-index-nested[]
+}
+
+static void create_partial_value_index() {
+    CBLDatabase* database = kDatabase;
+    CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
+
+    // tag::partial-value-index[]
+    CBLValueIndexConfiguration config {};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.expressions = FLSTR("city");
+    config.where = FLSTR("type = \"hotel\"");
+
+    CBLError err{};
+    CBLCollection_CreateValueIndex(collection, FLSTR("HotelCityIndex"), config, &err);
+    // end::partial-value-index[]
+}
+
+static void create_partial_full_text_index() {
+    CBLDatabase* database = kDatabase;
+    CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
+
+    // tag::partial-full-text-index[]
+    CBLFullTextIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.expressions = FLSTR("content");
+    config.where = FLSTR("year > 1999");
+
+    CBLError err{};
+    CBLCollection_CreateFullTextIndex(collection, FLSTR("ArticleIndex"), config, &err);
+    // end::partial-full-text-index[]
 }
 
 static void select_meta() {
@@ -1595,11 +1621,10 @@ static void create_full_text_index() {
 
     // tag::fts-index[]
     CBLError err{};
-    CBLFullTextIndexConfiguration config = {
-        kCBLN1QLLanguage,
-        FLSTR("name"),
-        false
-    };
+    CBLFullTextIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.expressions = FLSTR("name");
+    config.ignoreAccents = false;
 
     CBLCollection_CreateFullTextIndex(collection, FLSTR("nameFTSIndex"), config, &err);
     // end::fts-index[]
@@ -1672,21 +1697,22 @@ static void start_replication() {
     stop_replicator(replicator);
 }
 
-// Console logging domain methods are not applicable to C
+static void console_logging() {
+    // tag::console-logging[]
+    CBLLog_SetConsoleLevel(kCBLLogVerbose);
+    // end::console-logging[]
+}
 
 static void file_logging() {
     // tag::file-logging[]
     // NOTE: No error handling, for brevity (see getting started)
     // NOTE: You will need to use a platform appropriate method for finding
     // a temporary directory
-
-    FLString tempFolder = FLSTR("/tmp/cbllog");
-
-    CBLLogFileConfiguration config; // Don't bother zeroing, since we set all properties
+    CBLLogFileConfiguration config {}; // Don't bother zeroing, since we set all properties
     config.level = kCBLLogInfo;
-    config.directory = tempFolder;
-    config.maxRotateCount = 5;
-    config.maxSize = 10240;
+    config.directory = FLSTR("/tmp/logs");;
+    config.maxRotateCount = 12;
+    config.maxSize = 1048576;
     config.usePlaintext = false;
 
     CBLError err{};
@@ -1696,8 +1722,7 @@ static void file_logging() {
 
 // tag::custom-logging[]
 static void custom_log_callback(CBLLogDomain domain, CBLLogLevel level, FLString message) {
-    // handle the message, for example piping it to
-    // a third party framework
+    // handle the message, for example piping it to a third party framework
 }
 // end::custom-logging[]
 
@@ -1705,6 +1730,42 @@ static void enable_custom_logging() {
     // tag::set-custom-logging[]
     CBLLog_SetCallback(custom_log_callback);
     // end::set-custom-logging[]
+}
+
+static void console_log_sink() {
+    // tag::new-console-logging[]
+    CBLConsoleLogSink logSink {};
+    logSink.level = kCBLLogVerbose;
+    logSink.domains = kCBLLogDomainMaskAll;
+    CBLLogSinks_SetConsole(logSink);
+    // end::new-console-logging[]
+}
+
+static void file_log_sink() {
+    // tag::new-file-logging[]
+    CBLFileLogSink logSink {};
+    logSink.level = kCBLLogVerbose;
+    logSink.directory = FLSTR("/tmp/logs");
+    logSink.maxKeptFiles = 12;
+    logSink.maxSize = 1048576;
+    logSink.usePlaintext = false;
+    CBLLogSinks_SetFile(logSink);
+    // end::new-file-logging[]
+}
+
+// tag::new-custom-log-sink[]
+static void custom_log_sink_callback(CBLLogDomain domain, CBLLogLevel level, FLString message) {
+    // handle the message, for example piping it to a third party framework.
+}
+// end::new-custom-logging[]
+
+static void enable_custom_log_sink() {
+    // tag::set-new-custom-logging[]
+    CBLCustomLogSink logSink {};
+    logSink.level = kCBLLogVerbose;
+    logSink.callback = custom_log_sink_callback;
+    CBLLogSinks_SetCustom(logSink);
+    // end::set-new-custom-logging[]
 }
 
 static void enable_basic_auth() {
