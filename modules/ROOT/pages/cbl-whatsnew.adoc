@@ -17,6 +17,82 @@ NOTE: Couchbase Lite 3.0 introduces some breaking changes. +
 If you're upgrading from 2.x, refer to the appropriate upgrade page -- see: <<lbl-upgrade>>
 Users should be able to upgrade to 3.1.x from 3.0.x without manual intervention.
 
+== Release 3.2.2 (Feburary 2025)
+
+.Deprecation Notice
+[IMPORTANT]
+--
+From Couchbase Lite version 3.2.2, the current Logging API is deprecated and will be removed in a future release.
+
+Use of the current and new Logging API at the same time is not supported.
+
+See the following links for information about migrating to the new Logging API:
+
+* xref:android:new-logging-api.adoc[Android]
+
+* xref:c:new-logging-api.adoc[C]
+
+* xref:csharp:new-logging-api.adoc[.NET]
+
+* xref:java:new-logging-api.adoc[Java]
+
+* xref:objc:new-logging-api.adoc[Objective-C]
+
+* xref:swift:new-logging-api.adoc[Swift]
+--
+
+=== New Features
+
+==== New Logging API
+
+Couchbase Lite 3.2.2 introduces a new Logging API.
+The new Logging API has the following benefits:
+
+* Backwards compatible with earlier version of Couchbase Lite.
+
+* Removed polling overhead on custom loggers.
+
+* Simplified platform code and implementation.
+
+* You can enque Log callbacks from LiteCore for asynchronous delivery.
+
+* Log sinks are now thread safe, removing risk of inconsistent states during initialization.
+
+For more information about migrating to the new Logging API, see:
+
+* xref:android:new-logging-api.adoc[Android - New Logging API]
+
+* xref:c:new-logging-api.adoc[C - New Logging API]
+
+* xref:csharp:new-logging-api.adoc[.NET - New Logging API]
+
+* xref:java:new-logging-api.adoc[Java - New Logging API]
+
+* xref:objc:new-logging-api.adoc[Objective-C - New Logging API]
+
+* xref:swift:new-logging-api.adoc[Swift - New Logging API]
+
+==== Partial Index
+
+Couchbase Lite 3.2.2 introduces support for Partial Index - Partial Value and Partial Full-Text Indexes.
+The Partial Index can create a smaller index, potentially improving index and query performance. 
+You can use Partial Index to specify a `WHERE` clause in your index configuration.
+If a where clause is specified, the database will index a document only when the where clause condition is met. 
+
+For more information about Partial Index, see:
+
+* xref:android:indexing.adoc#partial-index[Android - Partial Index]
+
+* xref:c:indexing.adoc#partial-index[C - Partial Index]
+
+* xref:csharp:indexing.adoc#partial-index[.NET - Partial Index]
+
+* xref:java:indexing.adoc#partial-index[Java - Partial Index]
+
+* xref:objc:indexing.adoc#partial-index[Objective-C - Partial Index]
+
+* xref:swift:indexing.adoc#partial-index[Swift - Partial Index]
+
 == Release 3.2.1 (November 2024)
 
 === New Features
