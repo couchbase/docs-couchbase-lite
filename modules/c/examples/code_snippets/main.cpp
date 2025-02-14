@@ -1753,7 +1753,7 @@ static void file_log_sink() {
     // end::new-file-logging[]
 }
 
-// tag::new-custom-log-sink[]
+// tag::new-custom-logging[]
 static void custom_log_sink_callback(CBLLogDomain domain, CBLLogLevel level, FLString message) {
     // handle the message, for example piping it to a third party framework.
 }
