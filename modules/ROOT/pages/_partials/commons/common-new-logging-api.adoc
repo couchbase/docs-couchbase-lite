@@ -19,7 +19,8 @@ The first thing to note is that the three destinations for logs have been rename
 
 The `FileLogSink`, the `ConsoleLogSink` and the `CustomLogSink` are all installed in an instance of `LogSinks`. 
 
-All three log sinks are initialized by default. If you want to stop all logging to one of them, though, you can set the sink to null.
+All three log sinks are initialized by default. 
+If you want to stop all logging to one of them, though, you can set the sink to null.
 
 For example, you can stop logging to the FileLogSink like this:
 `LogSinks.get().setFile(null)`
@@ -29,10 +30,8 @@ Couchbase still logs its messages in a handful of named domains and at common lo
 To get the instance of `LogsSinks`, use the method `LogSinks.get()`.
 This is the analog of getting the instance of Log from `Database.log` in the old API.
 
-The biggest difference between the new and the old API is that
-`LogSinks` are immutable: you set the level and domain at which they log in their constructors. 
-For example, you can only change the level at which the
-`ConsoleLogSink` forwards messages to the console by installing a new one created for the new log level.
+The biggest difference between the new and the old API is that `LogSinks` are immutable: you set the level and domain at which they log in their constructors. 
+For example, you can only change the level at which the `ConsoleLogSink` forwards messages to the console by installing a new one created for the new log level.
 
 The new Logging API has the following benefits:
 
