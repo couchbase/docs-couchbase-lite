@@ -1,83 +1,567 @@
 // {param-module} grabs the correct platform name from the related _set_page_context_for_[platform] 
-== Upgrading to the new CBL Logging API
+== Upgrading to the New CBL Logging API
 
 ifndef::is-c[]
 
 You can find information about the new Couchbase Lite Logging API introduced in Couchbase Lite 3.2.2.
+
 For information about the now deprecated earlier version of the Logging API, see xref:3.1@couchbase-lite:{param-module}:troubleshooting-logs.adoc[]
 
 endif::is-c[]
 
 == LogSinks
 
-A lot of the new logging API will seem very familiar: many of the concepts are
-the same.  There are still three places that log messages can be sent: the log
-files, the console, and custom code and Couchbase still logs its messages in a
-handfull of named "domains" and at common log levels: `debug` the most verbose,
-ane `error` only for serious failures.
+Couchbase Lite 3.2.2 introduces a new Logging API.
 
-The first thing to note is that the three destinations for logs have been
-renamed as "LogSinks", in keeping with common source/sink terminology. The
-`FileLogSink`, the `ConsoleLogSink` and the `CustomLogSink` are all installed in
-an instance of `LogSinks`.  To get the instance of `LogsSinks`, use the method
-`LogSinks.get()`.  This is the analog of getting the instance of Log from
-`Database.log` in the old API.
+The first thing to note is that the three destinations for logs have been renamed as `LogSinks`, in keeping with common source/sink terminology. 
 
-Perhaps the biggest difference between the new and the old API is that
-`LogSinks` are immutable: you set the level and domain at which they log in
-their constructors. The only way to change, for instance, the level at which the
-`ConsoleLogSink` forwards messages to the console is to install a new one
-created for the new log level.
+The `FileLogSink`, the `ConsoleLogSink` and the `CustomLogSink` are all installed in an instance of `LogSinks`. 
 
-All three log sinks are initialized by default. If you want to stop all logging
-to one of them, though, just set the sink to null:
+All three log sinks are initialized by default. If you want to stop all logging to one of them, though, you can set the sink to null.
+
+For example, you can stop logging to the FileLogSink like this:
 `LogSinks.get().setFile(null)`
 
+Couchbase still logs its messages in a handful of named domains and at common log levels: `debug` the most verbose, and `error` only for serious failures.
+
+To get the instance of `LogsSinks`, use the method `LogSinks.get()`.
+This is the analog of getting the instance of Log from `Database.log` in the old API.
+
+The biggest difference between the new and the old API is that
+`LogSinks` are immutable: you set the level and domain at which they log in their constructors. 
+For example, you can only change the level at which the
+`ConsoleLogSink` forwards messages to the console by installing a new one created for the new log level.
+
+The new Logging API has the following benefits:
+
+* Backwards compatible with earlier version of Couchbase Lite.
+
+* Removed polling overhead on custom loggers.
+
+* Simplified platform code and implementation.
+
+* You can enque Log callbacks from LiteCore for asynchronous delivery.
+
+* Log sinks are now thread safe, removing risk of inconsistent states during initialization.
+
+The new logging API retains many of the core concepts of the previous API. 
+
+Log output is split into the following streams:
+
+* <<lbl-file-logsink>>
++
+Here logs are written to separate log files filtered by log level, with each log level supporting individual retention policies.
+
+* <<lbl-console-logsink>>
++
+--
+You can independently configure and control console logs, which provides a convenient method of accessing diagnostic information during debugging scenarios.
+
+With console logging, you can fine-tune diagnostic output to suit specific debug scenarios, without interfering with any logging required by Couchbase Support for the investigation of issues.
+--
+
+* <<lbl-custom-logsink>>
++
+--
+For greater flexibility you can implement a custom logging class.
+
+--
+
+[#lbl-console-logsink]
 === Logging to the Console
 
-The changes necessary convert the installation of a console logger from the old
-to the new API are minimal <1>.  Simply create an instance of `ConsoleLogSink`
-initialized with the desired log level and domains and install it using
-`LogSinks.setCustom`. (Snippet here)
+The changes necessary convert the installation of a console logger from the old to the new API are minimal.
+Create an instance of `ConsoleLogSink` initialized with the desired log level and domains and install it.
 
+ifdef::is-android[]
+
+[tabs]
+=====
+Java::
++
+--
+
+.Old API
+:!example-caption:
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=console-logging]
+
+----
+
+.New API
+:!example-caption:
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=new-console-logging]
+
+----
+--
+
+Kotlin::
++
+--
+
+.Old API
+:!example-caption:
+[source, kotlin, indent=0]
+----
+
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=console-logging]
+
+----
+
+.New API
+:!example-caption:
+[source, kotlin, indent=0]
+----
+
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=new-console-logging]
+
+----
+--
+=====
+
+endif::is-android[]
+ifdef::is-java[]
+
+.Old API
+:!example-caption:
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=console-logging]
+
+----
+
+.New API
+:!example-caption:
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=new-console-logging]
+
+----
+
+endif::is-java[]
+ifdef::is-csharp[]
+
+.Old API
+:!example-caption:
+[source, csharp, indent=0]
+----
+include::csharp:example$code_snippets/Program.cs[tags=console-logging]
+----
+
+.New API
+:!example-caption:
+[source, csharp, indent=0]
+----
+include::csharp:example$code_snippets/Program.cs[tags=new-console-logging]
+----
+
+endif::is-csharp[]
+ifdef::is-objc[]
+
+.Old API
+:!example-caption:
+[source, objc, indent=0]
+----
+
+include::objc:example$code_snippets/SampleCodeTest.m[tags=console-logging]
+
+----
+
+.New API
+:!example-caption:
+[source, objc, indent=0]
+----
+
+include::objc:example$code_snippets/SampleCodeTest.m[tags=new-console-logging]
+
+----
+endif::is-objc[]
+ifdef::is-swift[]
+
+.Old API
+:!example-caption:
+[source, swift]
+----
+
+include::swift:example$code_snippets/SampleCodeTest.swift[tags=console-logging]
+
+----
+
+
+.New API
+:!example-caption:
+[source, swift]
+----
+
+include::swift:example$code_snippets/SampleCodeTest.swift[tags=new-console-logging]
+
+----
+endif::is-swift[]
+ifdef::is-c[]
+
+.Old API
+:!example-caption:
+[source, c, indent=0]
+----
+
+include::c:example$code_snippets/main.cpp[tags=console-logging]
+
+----
+
+
+.New API
+:!example-caption:
+[source, c, indent=0]
+----
+
+include::c:example$code_snippets/main.cpp[tags=new-console-logging]
+
+----
+endif::is-c[]
+
+[#lbl-file-logsink]
 === Logging to the Couchbase File Log
 
-The changes necessary to convert the installation of a file logger are similarly easy. 
-Instead of configuring a `FileLogger` using a`LogFileConfiguration`, use
-the `FileLogSink.Builder` to create a new `FileLogSink` with the desired
-properties and install it <2>. (Set file snippet)  Note, though, that `setRotateCount` from the old
-API is slightly different from `setMaxKeptFiles`.  The latter is the maximum
-number of log files that will exist at any time and is the count of rotated
-files plus one.
+The changes necessary to convert the installation of a file logger are also similar. 
+Instead of configuring a `FileLogger` using a`LogFileConfiguration`, create a new `FileLogSink` with the desired properties and install it.
 
+NOTE: `setRotateCount` from the old API is slightly different from `setMaxKeptFiles`.
+`setRotateCount` is the maximum size in bytes of a log file.
+The latter is the maximum number of log files that will exist at any time and is the count of rotated files plus one.
+
+ifdef::is-android[]
+
+[tabs]
+=====
+Java::
++
+--
+
+.Old API
+:!example-caption:
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=file-logging]
+
+----
+
+.New API
+:!example-caption:
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=new-file-logging]
+
+----
+--
+
+Kotlin::
++
+--
+
+.Old API
+:!example-caption:
+[source, kotlin, indent=0]
+----
+
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=file-logging]
+
+----
+
+.New API
+:!example-caption:
+[source, kotlin, indent=0]
+----
+
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=new-file-logging]
+
+----
+--
+=====
+
+endif::is-android[]
+ifdef::is-java[]
+
+.Old API
+:!example-caption:
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=file-logging]
+
+----
+
+.New API
+:!example-caption:
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=new-file-logging]
+
+----
+
+endif::is-java[]
+ifdef::is-csharp[]
+
+.Old API
+:!example-caption:
+[source, csharp, indent=0]
+----
+include::csharp:example$code_snippets/Program.cs[tags=file-logging]
+----
+
+.New API
+:!example-caption:
+[source, csharp, indent=0]
+----
+include::csharp:example$code_snippets/Program.cs[tags=new-file-logging]
+----
+endif::is-csharp[]
+ifdef::is-objc[]
+
+.Old API
+:!example-caption:
+[source, objc, indent=0]
+----
+
+include::objc:example$code_snippets/SampleCodeTest.m[tags=file-logging]
+
+----
+
+.New API
+:!example-caption:
+[source, objc, indent=0]
+----
+
+include::objc:example$code_snippets/SampleCodeTest.m[tags=new-file-logging]
+
+----
+endif::is-objc[]
+ifdef::is-swift[]
+
+.Old API
+:!example-caption:
+[source, swift]
+----
+
+include::swift:example$code_snippets/SampleCodeTest.swift[tags=file-logging]
+
+----
+
+.New API
+:!example-caption:
+[source, swift]
+----
+
+include::swift:example$code_snippets/SampleCodeTest.swift[tags=new-file-logging]
+
+----
+endif::is-swift[]
+ifdef::is-c[]
+
+.Old API
+:!example-caption:
+[source, c, indent=0]
+----
+
+include::c:example$code_snippets/main.cpp[tags=file-logging]
+
+----
+
+.New API
+:!example-caption:
+[source, c, indent=0]
+----
+
+include::c:example$code_snippets/main.cpp[tags=new-file-logging]
+
+----
+endif::is-c[]
+
+[#lbl-custom-logsink]
 === Using a Custom Logger
 
 Installing a custom log sink with the new API is also streamlined: create an
-instance of your custom sink and use `LogSinks.get().setCustom` to install it
-<3>. (new custom snippet) As with the other log sinks, you will have to specify the level and domain
+instance of your custom sink and use `LogSinks.get().setCustom` to install it.
+
+As with the other log sinks, you will have to specify the level and domain
 at which Couchbase logs are forwarded to your custom sink at its creation.
 
 Your custom log sink code will have to change as well.  The most significant
 change is that instead of implementing the `Logger` interface, a custom log sink
-must extend the `BaseLogSink` class <4>.  The `BaseLogSink` class does not have
-a no-args constructor: you must specify at least the level at which Couchbase
-logs will be forwarded to the logger <6>.  Unless otherwise specified logs from
-all Couchbase domains will be forwarded to the custom log sink.
+must extend the `BaseLogSink` class.  
 
-A second important change is that your logger will receive only logs at the
-level and domain for which it is initialized.  There is no need to record or
-filter the logs forwarded to the protected `writeLog` method (which replaces the
-public `log` method from the old API) <5> <7>.
+The `BaseLogSink` class does not have a no-args constructor: you must specify at least the level at which Couchbase logs will be forwarded to the logger.  
+Unless otherwise specified logs from all Couchbase domains are forwarded to the custom log sink.
 
-Related to this last point, the Couchbase `Logger`s, now `LogSink`s are meant to
-support logging by the Couchbase Lite platform.  They were never meant as a
-general framework for logging.  With the new API, customer code can no longer
-log, directly, to any of the Couchbase log sinks.  The Console and File log
-sinks are (or will be in subsequent releases) final classes and do not publish
-methods that allow writing logs.  If you need to log e.g., to the console, you
-will have to create your own way of doing so.
+A second important change is that your logger will receive only logs at the level and domain for which it is initialized. 
+There is no need to record or filter the logs forwarded to the protected `writeLog` method which replaces the public `log` method from the old API.
 
-// You can change the number of Probes by altering the value  of the `NumProbes` variable xref:{param-module}:working-with-vector-search.adoc#create-a-vector-index[shown in the following example].
+Related to this last point, the Couchbase `Logger`s, now `LogSink`s are meant to support logging by the Couchbase Lite platform.
+They were never meant as a general framework for logging. 
+
+IMPORTANT: With the new API, customer code can no longer log, directly, to any of the Couchbase log sinks.  
+The Console and File logsinks are final classes and do not publish methods that allow writing logs.
+If you need to log to the console for example, you'll have to create your own way of doing so.
+
+ifdef::is-android[]
+
+[tabs]
+=====
+Java::
++
+--
+
+.Old API
+:!example-caption:
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=set-custom-logging]
+
+----
+
+.New API
+:!example-caption:
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=new-custom-logging]
+
+----
+--
+
+Kotlin::
++
+--
+
+.Old API
+:!example-caption:
+[source, kotlin, indent=0]
+----
+
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=set-custom-logging]
+
+----
+
+
+.New API
+:!example-caption:
+[source, kotlin, indent=0]
+----
+
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=new-custom-logging]
+
+----
+--
+=====
+
+endif::is-android[]
+ifdef::is-java[]
+
+.Old API
+:!example-caption:
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=set-custom-logging]
+
+----
+
+.New API
+:!example-caption:
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=new-custom-logging]
+
+----
+
+endif::is-java[]
+ifdef::is-csharp[]
+
+.Old API
+:!example-caption:
+[source, csharp, indent=0]
+----
+include::csharp:example$code_snippets/Program.cs[tags=custom-logging]
+----
+
+.New API
+:!example-caption:
+[source, csharp, indent=0]
+----
+include::csharp:example$code_snippets/Program.cs[tags=new-custom-logging]
+----
+endif::is-csharp[]
+ifdef::is-objc[]
+
+.Old API
+:!example-caption:
+[source, objc, indent=0]
+----
+
+include::objc:example$code_snippets/SampleCodeTest.m[tags=custom-logging]
+
+----
+
+.New API
+:!example-caption:
+[source, objc, indent=0]
+----
+
+include::objc:example$code_snippets/SampleCodeTest.m[tags=new-custom-logging]
+
+----
+endif::is-objc[]
+ifdef::is-swift[]
+
+.Old API
+:!example-caption:
+[source, swift]
+----
+
+include::swift:example$code_snippets/SampleCodeTest.swift[tags=custom-logging]
+
+----
+
+.New API
+:!example-caption:
+[source, swift]
+----
+
+include::swift:example$code_snippets/SampleCodeTest.swift[tags=new-custom-logging]
+
+----
+endif::is-swift[]
+ifdef::is-c[]
+
+.Old API
+:!example-caption:
+[source, c, indent=0]
+----
+
+include::c:example$code_snippets/main.cpp[tags=custom-logging;set-custom-logging]
+
+----
+
+.New API
+:!example-caption:
+[source, c, indent=0]
+----
+
+include::c:example$code_snippets/main.cpp[tags=new-custom-logging;set-new-custom-logging]
+
+----
+endif::is-c[]
 
 // == See Also
 
