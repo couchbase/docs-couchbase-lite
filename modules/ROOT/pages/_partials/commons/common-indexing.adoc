@@ -170,11 +170,153 @@ SELECT * FROM tab2 WHERE b=456;  -- cannot use partial index
 
 === Partial Value Index
 
+Partial Value Index is a form of Partial Index in which a value is used in the `WHERE` clause and the query is selected by the query optimizer.
 
+ifdef::is-android[]
+
+[tabs]
+=====
+Java::
++
+--
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/QueryExamples.java[tags=query-partial-index]
+
+----
+--
+
+Kotlin::
++
+--
+[source, kotlin, indent=0]
+----
+
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/QueryExamples.kt[tags=query-partial-index]
+
+----
+--
+=====
+
+endif::is-android[]
+ifdef::is-java[]
+
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/QueryExamples.java[tags=query-partial-index]
+
+----
+
+endif::is-java[]
+ifdef::is-csharp[]
+
+[source, csharp, indent=0]
+----
+include::csharp:example$code_snippets/Program.cs[tags=array-index-config]
+----
+endif::is-csharp[]
+ifdef::is-objc[]
+[source, objc, indent=0]
+----
+
+include::objc:example$code_snippets/SampleCodeTest.m[tags=partial-value-index]
+
+----
+endif::is-objc[]
+ifdef::is-swift[]
+[source, swift]
+----
+
+include::swift:example$code_snippets/SampleCodeTest.swift[tags=partial-value-index]
+
+----
+endif::is-swift[]
+ifdef::is-c[]
+[source, c, indent=0]
+----
+
+include::c:example$code_snippets/main.cpp[tags=partial-value-index]
+
+----
+endif::is-c[]
 
 === Partial Full-Text Index
 
-A key difference between a value index and a full-text index is that a full-text index is not selected by SQLite’s query optimizer. Instead, it is explicitly selected by the match(indexName, terms) function. This means that a partial full-text index will always be used when the match() function is invoked, regardless of other predicates in the WHERE clause.
+A key difference between a Partial Value Index and a Partial Full-Text Index is that a Partial Full-Text Index is not selected by SQLite’s query optimizer.
+Instead, it's explicitly selected by the Full-Text `match(indexName, terms)` function.
+This means that a partial full-text index will always be used when the match() function is invoked, regardless of other predicates in the WHERE clause.
+
+ifdef::is-android[]
+
+[tabs]
+=====
+Java::
++
+--
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/QueryExamples.java[tags=query-partial-full-index]
+
+----
+--
+
+Kotlin::
++
+--
+[source, kotlin, indent=0]
+----
+
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/QueryExamples.kt[tags=query-partial-full-index]
+
+----
+--
+=====
+
+endif::is-android[]
+ifdef::is-java[]
+
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/QueryExamples.java[tags=query-partial-full-index]
+
+----
+
+endif::is-java[]
+ifdef::is-csharp[]
+
+[source, csharp, indent=0]
+----
+include::csharp:example$code_snippets/Program.cs[tags=array-index-config]
+----
+endif::is-csharp[]
+ifdef::is-objc[]
+[source, objc, indent=0]
+----
+
+include::objc:example$code_snippets/SampleCodeTest.m[tags=partial-full-text-index]
+
+----
+endif::is-objc[]
+ifdef::is-swift[]
+[source, swift]
+----
+
+include::swift:example$code_snippets/SampleCodeTest.swift[tags=partial-full-text-index]
+
+----
+endif::is-swift[]
+ifdef::is-c[]
+[source, c, indent=0]
+----
+
+include::c:example$code_snippets/main.cpp[tags=partial-full-text-index]
+
+----
+endif::is-c[]
 
 == Array Indexing 
 
