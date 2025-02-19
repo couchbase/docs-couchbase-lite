@@ -661,19 +661,15 @@ public class QueryExamples {
 
     public void partialIndexExample(Collection collection) throws CouchbaseLiteException {
         // tag::query-partial-index[]
-        collection.createIndex("numIndex", new ValueIndexConfiguration("num").setWhere("type = 'number'"));
-        collection.getDatabase()
-            .createQuery("SELECT * FROM " + collection.getFullName() + " WHERE type = 'foo' AND num > 1000");
+        collection.createIndex("HotelCityIndex", new ValueIndexConfiguration("city").setWhere("type = \"hotel\""));
         // end::query-partial-index[]
     }
 
     public void partialFullIndexExample(Collection collection) throws CouchbaseLiteException {
         // tag::query-partial-full-index[]
         collection.createIndex(
-            "contentIndex",
-            new FullTextIndexConfiguration("content").setWhere("length(content) > 30"));
-        collection.getDatabase()
-            .createQuery("SELECT content FROM " + collection.getFullName() + " WHERE match(contentIndex, 'database')");
+            "HotelDescIndex",
+            new FullTextIndexConfiguration("description").setWhere("type = \"hotel\""));
         // end::query-partial-full-index[]
     }
 }
