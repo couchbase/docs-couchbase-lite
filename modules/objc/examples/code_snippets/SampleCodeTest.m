@@ -624,11 +624,11 @@
 
     CBLFullTextIndexConfiguration* config = [[CBLFullTextIndexConfiguration alloc]
                                              initWithExpression:@[@"description"]
-                                             where:@"vacancy = true"
+                                             where:@"type = \"hotel\""
                                              ignoreAccents:NO
                                              language:nil];
 
-    [collection createIndexWithName:@"VacantHotelIndex" config:config error:&error];
+    [collection createIndexWithName:@"HotelDescIndex" config:config error:&error];
 
     // end::partial-full-text-index[]
 }
