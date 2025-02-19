@@ -2686,9 +2686,9 @@ public class MyClass
     {
         var collection = Database.GetDefaultCollection();
 
-        // tag::partial-value-index[]
+        // tag::partial-full-text-index[]
         var config = new FullTextIndexConfiguration(["description"], "type = \"hotel\"");
-        collection.CreateIndex("HotelCityIndex", config);
-        // end::partial-value-index[]
+        collection.CreateIndex("HotelDescIndex", config);
+        // end::partial-full-text-index[]
     }
 }
