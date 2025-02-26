@@ -35,15 +35,13 @@ For example, you can only change the level at which the `ConsoleLogSink` forward
 
 The new Logging API has the following benefits:
 
-* Backwards compatible with earlier version of Couchbase Lite.
-
 * Removed polling overhead on custom loggers.
-
-* Simplified platform code and implementation.
 
 * You can enque Log callbacks from LiteCore for asynchronous delivery.
 
 * Log sinks are now thread safe, removing risk of inconsistent states during initialization.
+
+* Simplified API and reduce implementation complexity.
 
 The new logging API retains many of the core concepts of the previous API. 
 
@@ -51,7 +49,7 @@ Log output is split into the following streams:
 
 * <<lbl-file-logsink>>
 +
-Here logs are written to separate log files filtered by log level, with each log level supporting individual retention policies.
+Each log level writes to a separate file and there is a single retention policy for all files
 
 * <<lbl-console-logsink>>
 +
@@ -234,7 +232,7 @@ The changes necessary to convert the installation of a file logger are also simi
 Instead of configuring a `FileLogger` using a`LogFileConfiguration`, create a new `FileLogSink` with the desired properties and install it.
 
 NOTE: `setRotateCount` from the old API is slightly different from `setMaxKeptFiles`.
-`setRotateCount` is the maximum size in bytes of a log file.
+`setRotateCount` is the number of rotate files with a value of `maxKeptFiles - 1`.
 The latter is the maximum number of log files that will exist at any time and is the count of rotated files plus one.
 
 ifdef::is-android[]
@@ -397,8 +395,8 @@ As with the other log sinks, you will have to specify the level and domain
 at which Couchbase logs are forwarded to your custom sink at its creation.
 
 Your custom log sink code will have to change as well.  The most significant
-change is that instead of implementing the `Logger` interface, a custom log sink
-must extend the `BaseLogSink` class.  
+change is that instead of _implementing_ the `Logger` interface, a custom log sink
+must _extend_ the `BaseLogSink` class.  
 
 The `BaseLogSink` class does not have a no-args constructor: you must specify at least the level at which Couchbase logs will be forwarded to the logger.  
 Unless otherwise specified logs from all Couchbase domains are forwarded to the custom log sink.
@@ -406,7 +404,7 @@ Unless otherwise specified logs from all Couchbase domains are forwarded to the 
 A second important change is that your logger will receive only logs at the level and domain for which it is initialized. 
 There is no need to record or filter the logs forwarded to the protected `writeLog` method which replaces the public `log` method from the old API.
 
-Related to this last point, the Couchbase `Logger`s, now `LogSink`s are meant to support logging by the Couchbase Lite platform.
+Related to this last point, the Couchbase `Loggers`, now `LogSinks` are meant to support logging by the Couchbase Lite platform.
 They were never meant as a general framework for logging. 
 
 IMPORTANT: With the new API, customer code can no longer log, directly, to any of the Couchbase log sinks.  
@@ -421,7 +419,16 @@ Java::
 +
 --
 
-.Old API
+.Old API Implementing The Custom Logger Interface
+:!example-caption:
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=custom-logging]
+
+----
+
+.Old API Enable Custom Logger
 :!example-caption:
 [source, java, indent=0]
 ----
@@ -444,7 +451,16 @@ Kotlin::
 +
 --
 
-.Old API
+.Old API Implementing The Custom Logger Interface
+:!example-caption:
+[source, kotlin, indent=0]
+----
+
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=custom-logging]
+
+----
+
+.Old API Enable Custom Logger
 :!example-caption:
 [source, kotlin, indent=0]
 ----
@@ -468,7 +484,16 @@ include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codes
 endif::is-android[]
 ifdef::is-java[]
 
-.Old API
+.Old API Implementing The Custom Logger Interface
+:!example-caption:
+[source, java, indent=0]
+----
+
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=custom-logging]
+
+----
+
+.Old API Enable Custom Logger
 :!example-caption:
 [source, java, indent=0]
 ----
@@ -489,11 +514,18 @@ include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examp
 endif::is-java[]
 ifdef::is-csharp[]
 
-.Old API
+.Old API Implementing The Custom Logger Interface
 :!example-caption:
 [source, csharp, indent=0]
 ----
 include::csharp:example$code_snippets/Program.cs[tags=custom-logging]
+----
+
+.Old API Enable Custom Logger
+:!example-caption:
+[source, csharp, indent=0]
+----
+include::csharp:example$code_snippets/Program.cs[tags=set-custom-logging]
 ----
 
 .New API
@@ -505,7 +537,7 @@ include::csharp:example$code_snippets/Program.cs[tags=new-custom-logging]
 endif::is-csharp[]
 ifdef::is-objc[]
 
-.Old API
+.Old API Implementing The Custom Logger Interface
 :!example-caption:
 [source, objc, indent=0]
 ----
@@ -514,7 +546,16 @@ include::objc:example$code_snippets/SampleCodeTest.m[tags=custom-logging]
 
 ----
 
-.New API
+.Old API Set Custom Logger
+:!example-caption:
+[source, objc, indent=0]
+----
+
+include::objc:example$code_snippets/SampleCodeTest.m[tags=set-custom-logging]
+
+----
+
+.New API Custom Logger Class
 :!example-caption:
 [source, objc, indent=0]
 ----
@@ -522,10 +563,19 @@ include::objc:example$code_snippets/SampleCodeTest.m[tags=custom-logging]
 include::objc:example$code_snippets/SampleCodeTest.m[tags=new-custom-logging]
 
 ----
+
+.New API Enable Custom Logger
+:!example-caption:
+[source, objc, indent=0]
+----
+
+include::objc:example$code_snippets/SampleCodeTest.m[tags=set-new-custom-logging]
+
+----
 endif::is-objc[]
 ifdef::is-swift[]
 
-.Old API
+.Old API Implementing Custom Logger Interface
 :!example-caption:
 [source, swift]
 ----
@@ -534,12 +584,30 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags=custom-logging]
 
 ----
 
-.New API
+.Old API Enable Custom Logger
+:!example-caption:
+[source, swift]
+----
+
+include::swift:example$code_snippets/SampleCodeTest.swift[tags=set-custom-logging]
+
+----
+
+.New API Implementing Custom Logger Interface
 :!example-caption:
 [source, swift]
 ----
 
 include::swift:example$code_snippets/SampleCodeTest.swift[tags=new-custom-logging]
+
+----
+
+.New API Enable Custom Logger
+:!example-caption:
+[source, swift]
+----
+
+include::swift:example$code_snippets/SampleCodeTest.swift[tags=set-new-custom-logging]
 
 ----
 endif::is-swift[]
