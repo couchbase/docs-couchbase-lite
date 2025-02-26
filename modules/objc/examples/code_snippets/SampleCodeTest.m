@@ -243,11 +243,11 @@
     [CBLDatabase.log.file setLevel:kCBLLogLevelVerbose]; // <.>
     // end::file-logging[]
     
-    // tag::custom-logging[]
+    // tag::set-custom-logging[]
     LogTestLogger *logger = [[LogTestLogger alloc] init];
     logger.level = kCBLLogLevelWarning;
     [CBLDatabase.log setCustom:logger];
-    // end::custom-logging[]
+    // end::set-custom-logging[]
 }
 
 - (void) dontTestNewLoggingApi {
@@ -264,10 +264,10 @@
                                                  maxFileSize:524288];
     // end::new-file-logging[]
     
-    // tag::new-custom-logging[]
+    // tag::set-new-custom-logging[]
     TestLogSink* sink = [[TestLogSink alloc] init];
     CBLLogSinks.custom = [[CBLCustomLogSink alloc] initWithLevel:kCBLLogLevelWarning logSink:sink];
-    // end::new-custom-logging[]
+    // end::set-new-custom-logging[]
 }
 
 - (void) dontTestLoadingPrebuilt {
@@ -624,11 +624,11 @@
 
     CBLFullTextIndexConfiguration* config = [[CBLFullTextIndexConfiguration alloc]
                                              initWithExpression:@[@"description"]
-                                             where:@"vacancy = true"
+                                             where:@"type = \"hotel\""
                                              ignoreAccents:NO
                                              language:nil];
 
-    [collection createIndexWithName:@"VacantHotelIndex" config:config error:&error];
+    [collection createIndexWithName:@"HotelDescIndex" config:config error:&error];
 
     // end::partial-full-text-index[]
 }

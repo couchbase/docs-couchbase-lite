@@ -101,10 +101,10 @@ class SampleCodeTest {
         Database.log.file.level = .verbose // <.>
         // end::file-logging[]
         
-        // tag::custom-logging[]
+        // tag::set-custom-logging[]
         let logger = LogTestLogger(.warning)
         Database.log.custom =  logger // <.>
-        // end::custom-logging[]
+        // end::set-custom-logging[]
     }
     
     func dontTestNewLoggingApi() throws {
@@ -117,9 +117,9 @@ class SampleCodeTest {
         LogSinks.file = FileLogSink(level: .verbose, directory: tempFolder, usePlainText: false, maxKeptFiles: 12)
         // end::new-file-logging[]
         
-        // tag::new-custom-logging[]
+        // tag::set-new-custom-logging[]
         LogSinks.custom = CustomLogSink(level: .warning, logSink: TestLogSink())
-        // end::new-custom-logging[]
+        // end::set-new-custom-logging[]
     }
     
     func dontTestLoadingPrebuilt() throws {
@@ -318,7 +318,7 @@ class SampleCodeTest {
         }
         
         // tag::partial-value-index[]
-        let config = ValueIndexConfiguration(["city"], where: "type = 'hotel'")
+        let config = ValueIndexConfiguration(["city"], where: "type = \"hotel\"")
         try collection.createIndex(withName: "HotelCityIndex", config: config)
         // end::partial-value-index[]
     }
@@ -329,8 +329,8 @@ class SampleCodeTest {
         }
         
         // tag::partial-full-text-index[]
-        let config = FullTextIndexConfiguration(["description"], where: "vacancy = true")
-        try collection.createIndex(withName: "VacantHotelIndex", config: config)
+        let config = FullTextIndexConfiguration(["description"], where: "type = \"hotel\"")
+        try collection.createIndex(withName: "HotelDescIndex", config: config)
         // end::partial-full-text-index[]
     }
 

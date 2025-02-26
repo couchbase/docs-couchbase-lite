@@ -1096,11 +1096,11 @@ static void create_partial_full_text_index() {
     // tag::partial-full-text-index[]
     CBLFullTextIndexConfiguration config{};
     config.expressionLanguage = kCBLN1QLLanguage;
-    config.expressions = FLSTR("content");
-    config.where = FLSTR("year > 1999");
+    config.expressions = FLSTR("description");
+    config.where = FLSTR("type = \"hotel\"");
 
     CBLError err{};
-    CBLCollection_CreateFullTextIndex(collection, FLSTR("ArticleIndex"), config, &err);
+    CBLCollection_CreateFullTextIndex(collection, FLSTR("HotelDescIndex"), config, &err);
     // end::partial-full-text-index[]
 }
 

@@ -668,18 +668,16 @@ fun docsOnlyQuerySyntaxN1QLParams(database: Database): List<Result> {
 
 fun partialIndexExample(collection: Collection) {
     // tag::query-partial-index[]
-    val config = ValueIndexConfigurationFactory.newConfig("num")
-    config.where = "type = 'number'"
-    collection.createIndex("numIndex", config)
-    collection.database.createQuery("SELECT * FROM ${collection.fullName} WHERE type = 'foo' AND num > 1000")
+    val config = ValueIndexConfigurationFactory.newConfig("city")
+    config.where = "type = \"hotel\""
+    collection.createIndex("HotelCityIndex", config)
     // end::query-partial-index[]
 }
 
 fun partialFullIndexExample(collection: Collection) {
     // tag::query-partial-full-index[]
-    val config = ValueIndexConfigurationFactory.newConfig("content")
-    config.where = "length(content) > 30"
-    collection.createIndex("contentIndex", config)
-    collection.database.createQuery("SELECT content FROM ${collection.fullName} WHERE match(contentIndex, 'database')")
+    val config = ValueIndexConfigurationFactory.newConfig("description")
+    config.where = "type = \"hotel\""
+    collection.createIndex("HotelDescIndex", config)
     // end::query-partial-full-index[]
 }
