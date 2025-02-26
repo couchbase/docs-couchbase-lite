@@ -2670,4 +2670,25 @@ public class MyClass
         LogSinks.Custom = new MyCoolLogSink(LogLevel.Verbose);
         // end::new-custom-logging[]
     }
+
+
+    public void PartialValueIndex()
+    {
+        var collection = Database.GetDefaultCollection();
+
+        // tag::partial-value-index[]
+        var config = new ValueIndexConfiguration(["city"], "type = \"hotel\"");
+        collection.CreateIndex("HotelCityIndex", config);
+        // end::partial-value-index[]
+    }
+
+    public void PartialFTSIndex()
+    {
+        var collection = Database.GetDefaultCollection();
+
+        // tag::partial-full-text-index[]
+        var config = new FullTextIndexConfiguration(["description"], "type = \"hotel\"");
+        collection.CreateIndex("HotelDescIndex", config);
+        // end::partial-full-text-index[]
+    }
 }
