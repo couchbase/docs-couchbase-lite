@@ -318,7 +318,7 @@ class SampleCodeTest {
         }
         
         // tag::partial-value-index[]
-        let config = ValueIndexConfiguration(["city"], where: "type = 'hotel'")
+        let config = ValueIndexConfiguration(["city"], where: "type = \"hotel\"")
         try collection.createIndex(withName: "HotelCityIndex", config: config)
         // end::partial-value-index[]
     }
@@ -329,8 +329,8 @@ class SampleCodeTest {
         }
         
         // tag::partial-full-text-index[]
-        let config = FullTextIndexConfiguration(["description"], where: "vacancy = true")
-        try collection.createIndex(withName: "VacantHotelIndex", config: config)
+        let config = FullTextIndexConfiguration(["description"], where: "type = \"hotel\"")
+        try collection.createIndex(withName: "HotelDescIndex", config: config)
         // end::partial-full-text-index[]
     }
 
