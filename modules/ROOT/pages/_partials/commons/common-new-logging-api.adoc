@@ -23,9 +23,10 @@ All three log sinks are initialized by default.
 If you want to stop all logging to one of them, though, you can set the sink to null.
 
 For example, you can stop logging to the FileLogSink like this:
+
 `LogSinks.get().setFile(null)`
 
-Couchbase still logs its messages in a handful of named domains and at common log levels: `debug` the most verbose, and `error` only for serious failures.
+Couchbase still logs its messages in a handful of named domains and at common log levels: `LogLevel.DEBUG` the most verbose, and `LogLevel.ERROR` only for serious failures.
 
 To get the instance of `LogsSinks`, use the method `LogSinks.get()`.
 This is the analog of getting the instance of Log from `Database.log` in the old API.
@@ -34,10 +35,6 @@ The biggest difference between the new and the old API is that `LogSinks` are im
 For example, you can only change the level at which the `ConsoleLogSink` forwards messages to the console by installing a new one created for the new log level.
 
 The new Logging API has the following benefits:
-
-* Removed polling overhead on custom loggers.
-
-* You can enque Log callbacks from LiteCore for asynchronous delivery.
 
 * Log sinks are now thread safe, removing risk of inconsistent states during initialization.
 
@@ -232,8 +229,9 @@ The changes necessary to convert the installation of a file logger are also simi
 Instead of configuring a `FileLogger` using a`LogFileConfiguration`, create a new `FileLogSink` with the desired properties and install it.
 
 NOTE: `setRotateCount` from the old API is slightly different from `setMaxKeptFiles`.
-`setRotateCount` is the number of rotate files with a value of `maxKeptFiles - 1`.
-The latter is the maximum number of log files that will exist at any time and is the count of rotated files plus one.
+`setMaxKeptFiles` is the maximum number of log files that will exist at any time and is the count of rotated files (setRotateCount) plus one.
+
+
 
 ifdef::is-android[]
 
@@ -399,7 +397,6 @@ change is that instead of _implementing_ the `Logger` interface, a custom log si
 must _extend_ the `BaseLogSink` class.  
 
 The `BaseLogSink` class does not have a no-args constructor: you must specify at least the level at which Couchbase logs will be forwarded to the logger.  
-Unless otherwise specified logs from all Couchbase domains are forwarded to the custom log sink.
 
 A second important change is that your logger will receive only logs at the level and domain for which it is initialized. 
 There is no need to record or filter the logs forwarded to the protected `writeLog` method which replaces the public `log` method from the old API.

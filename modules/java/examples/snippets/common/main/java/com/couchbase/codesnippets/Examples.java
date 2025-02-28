@@ -116,7 +116,7 @@ public class Examples {
 
     public void consoleLoggingExample() {
         // tag::console-logging[]
-        Database.log.getConsole().setLevel(LogLevel.DEBUG); // <.>
+        Database.log.getConsole().setLevel(LogLevel.WARNING); // <.>
         // end::console-logging[]
     }
 
