@@ -4,11 +4,6 @@ endif::[]
 ifdef::param-version-hyphenated[]
 :our-version-hyphenated: {param-version-hyphenated}
 endif::[]
-ifndef::param-version[]
-:our-version: {version-maintenance}
-:our-version-hyphenated: {version-maintenance-hyphenated}
-endif::[]
-ifndef::our-version-hyphenated[:our-version-hyphenated: x]
 
 ifdef::vs-param-version[]
 :our-vs-version: {vs-param-version}
@@ -16,11 +11,7 @@ endif::[]
 ifdef::vs-param-version-hyphenated[]
 :our-vs-version-hyphenated: {vs-param-version-hyphenated}
 endif::[]
-ifndef::vs-param-version[]
-:our-vs-version: {vs-version-maintenance}
-:our-vs-version-hyphenated: {vs-version-maintenance-hyphenated}
-endif::[]
-ifndef::our-vs-version-hyphenated[:our-vs-version-hyphenated: x]
+
 
 :download-path: {url-downloads-mobile}
 :source_url: https://packages.couchbase.com/releases/couchbase-lite-c/{our-version}/
@@ -39,25 +30,19 @@ ifndef::our-vs-version-hyphenated[:our-vs-version-hyphenated: x]
 :release-dirs-lib: pass:q,a[`{release-dir-lib}` or `{release-dir-ee-lib}`]
 :release-dirs: pass:q,a[`{release-dir}` or `{release-dir-ee}`]
 
-
-ifdef::is-fullpage[== Introduction]
-
-
-_Couchbase Lite for C_ is available for all {supported-os--xref}.
-You can obtain downloads for _Linux_ and _macOS_ from the links here in the downloads table.
-
-ifdef::is-fullpage[]
-For _Android_, _iOS_ and _Windows_ downloads, see the Couchbase Downloads page here -- {downloads-mobile--xref}; for Windows debug symbols -- see links here in the downloads table.
-
-Alternatively, check the
-xref:gs-install.adoc[install]
-page, for how to get the software using a package manager.
-
-Ensure you select the correct package for your application's compiler and architecture.
-endif::is-fullpage[]
+// If both parameters are defined, render CBL downloads
+ifdef::param-version+param-version-hyphenated[]
 
 [id=release-{our-version-hyphenated}]
 == Couchbase Lite Release {our-version}
+
+_Couchbase Lite for C_ is available for all {supported-os--xref}.
+You can obtain downloads for _Linux_ and _macOS_ from the links here in the downloads table.
+Ensure you select the correct package for your application's compiler and architecture.
+
+Alternatively, check the
+xref:gs-install.adoc[install]
+page for instructions on how to get the software using a package manager.
 
 .Available platforms are:
 ****
@@ -521,8 +506,21 @@ Community Edition::
 
 Please use the <<debian-{our-version-hyphenated},Debian `.deb` download>> choosing the appropriate version (`debian9` or `debian10`) and architecture.
 
+endif::param-version+param-version-hyphenated[]
+
+// If both are defined render vector search downloads
+ifdef::vs-param-version+vs-param-version-hyphenated[]
+
 [id=vs-release-{our-vs-version-hyphenated}]
 == Vector Search Release {our-vs-version}
+
+_Couchbase Lite Vector Search - C_ is available for all {supported-os--xref}.
+You can obtain downloads for _Linux_ and _macOS_ from the links here in the downloads table.
+Ensure you select the correct package for your application's compiler and architecture.
+
+Alternatively, check the
+xref:gs-install.adoc[install]
+page for instructions on how to get the software using a package manager.
 
 .Available platforms are:
 ****
@@ -664,3 +662,5 @@ Enterprise::
 |===
 --
 =====
+
+endif::vs-param-version+vs-param-version-hyphenated[]

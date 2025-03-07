@@ -139,13 +139,13 @@ public class DBManager {
     // OPTIONAL -- if you have Sync Gateway Installed you can try replication too.
     // Create a replicator to push and pull changes to and from the cloud.
     // Be sure to hold a reference somewhere to prevent the Replicator from being GCed
-    public ListenerToken replicate(ReplicatorChangeListener listener) throws URISyntaxException {
+    public ListenerToken replicate(String uri, ReplicatorChangeListener listener) throws URISyntaxException {
         CollectionConfiguration collConfig = new CollectionConfiguration()
             .setPullFilter((doc, flags) -> "Java".equals(doc.getString("language")));
 
         ReplicatorConfiguration replConfig =
             new ReplicatorConfiguration(
-                new URLEndpoint(new URI("ws://localhost:4984/getting-started-db")))
+                new URLEndpoint(new URI(uri)))
                 .addCollection(collection, collConfig)
                 .setType(ReplicatorType.PUSH_AND_PULL)
                 .setAuthenticator(new BasicAuthenticator("sync-gateway", "password".toCharArray()));

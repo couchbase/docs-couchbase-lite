@@ -26,6 +26,7 @@ import com.couchbase.lite.ListenerToken;
 
 
 public class MainViewModel extends ViewModel {
+    private static final String SG_URI = null; // "ws://localhost:4984/example";
     private MutableLiveData<String> replicationState = new MutableLiveData<>("Not Started");
     private AtomicReference<ListenerToken> token = new AtomicReference<>();
 
@@ -40,8 +41,10 @@ public class MainViewModel extends ViewModel {
                 mgr.retrieveDoc(id);
                 mgr.updateDoc(id);
                 mgr.queryDocs();
-                token.set(mgr.replicate(change ->
-                    replicationState.postValue(change.getStatus().getActivityLevel().toString())));
+                if (SG_URI != null) {
+                    token.set(mgr.replicate(SG_URI, change ->
+                        replicationState.postValue(change.getStatus().getActivityLevel().toString())));
+                }
             }
             catch (CouchbaseLiteException | URISyntaxException e) {
                 replicationState.postValue("Failed");

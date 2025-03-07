@@ -28,6 +28,7 @@ public class GettingStartedServlet extends HttpServlet {
     private static final String DB_NAME = "example";
     private static final String COLL_NAME = "example";
     private static final String NEWLINE_TAG = "<br />";
+    private static final String SG_URI = null; // "ws://localhost:4984/getting-started-db"
 
     //private int numRows;
     private String log;
@@ -83,33 +84,45 @@ public class GettingStartedServlet extends HttpServlet {
             numRows = results.size();
             logToResponse("Number of rows :: " + numRows);
 
-            // CAUTION: One would NEVER do this in a real WebApp!!
-            CountDownLatch latch = new CountDownLatch(1);
-            replication = mgr.startReplicator(
-                coll,
-                change -> {
-                    ReplicatorActivityLevel status = change.getStatus().getActivityLevel();
-                    logToResponse("Replicator state changed :: " + status);
-                    // Check status of replication and wait till it is completed
-                    if ((status == ReplicatorActivityLevel.STOPPED) || (status == ReplicatorActivityLevel.IDLE)) {
-                        latch.countDown();
-                    }
-                });
-            logToResponse("Replication Started at :: " + Instant.now());
-
-            if (!latch.await(10L, TimeUnit.MINUTES)) {
-                throw new ServletException("Replicator did not finish");
-            }
+            //  <.>
+            // OPTIONAL -- if you have Sync Gateway Installed you can try replication too
+            // Create a replicator to push and pull changes to and from the cloud.
+            // Be sure to hold a reference somewhere to prevent the Replicator from being GCed
+            if (SG_URI != null) {replication = startReplicator(mgr, coll, SG_URI); }
         }
         catch (CouchbaseLiteException | URISyntaxException | InterruptedException e) {
             throw new ServletException("Couchbase error", e);
         }
         finally {
-            mgr.stopReplicator(replication);
+            if (replication != null) { mgr.stopReplicator(replication); }
             logToResponse("Replication Finished at :: " + Instant.now());
         }
 
         return numRows;
+    }
+
+    private DBManager.Replication startReplicator(DBManager mgr, Collection coll, String url)
+        throws URISyntaxException, ServletException, InterruptedException {
+        // CAUTION: Demonstration only!!!
+        // One would NEVER do this in a real WebApp!!
+        CountDownLatch latch = new CountDownLatch(1);
+        DBManager.Replication repl = mgr.startReplicator(
+            coll,
+            change -> {
+                ReplicatorActivityLevel status = change.getStatus().getActivityLevel();
+                logToResponse("Replicator state changed :: " + status);
+                // Check status of replication and wait till it is completed
+                if ((status == ReplicatorActivityLevel.STOPPED) || (status == ReplicatorActivityLevel.IDLE)) {
+                    latch.countDown();
+                }
+            });
+        logToResponse("Replication Started at :: " + Instant.now());
+
+        if (!latch.await(10L, TimeUnit.MINUTES)) {
+            throw new ServletException("Replicator did not finish");
+        }
+
+        return repl;
     }
     // end::getting-started[]
 

@@ -60,12 +60,15 @@ a| The document properties that will be returned in the result set
 | <<lbl-from>> 
 a| The data source to be queried
 
- | <<lbl-where>> 
+| <<lbl-join>> 
+a| The criteria for joining multiple documents
+
+| <<lbl-where>> 
 a| The query criteria +
 The `SELECT`ed properties of documents matching this criteria will be returned in the result set
 
-| <<lbl-join>> 
-a| The criteria for joining multiple documents
+| <<lbl-unnest>>
+a| The criteria used to unpack arrays within a document into individual rows
 
 | <<lbl-group>> 
 a| The criteria used to group returned items in the result set
@@ -292,11 +295,117 @@ SELECT * FROM travel-sample r JOIN travel-sample a ON r.airlineid = a.meta.id WH
 ----
 ====
 
+[#lbl-unnest]
+== Array UNNEST
+
+=== Purpose
+
+You can use `UNNEST` in queries to unpack arrays within a document into individual rows.
+This functionality makes it possible to join them with its parent object in the query.
+
+`UNNEST` is used within the `FROM` clause and can be chained to perform multi-level `UNNEST`.
+
+You can also use a new type of index, the xref:{param-module}:indexing.adoc#array-indexing[Array Index], to allow querying with `UNNEST` more efficiently.
+
+NOTE: Couchbase Lite currently supports inner `UNNEST` only. 
+
+=== Syntax
+
+The syntax for `UNNEST` is shown below:
+
+[source, sqlpp]
+----
+
+unnestClause = UNNEST expr ( ‘AS’? alias)?
+
+----
+
+
+
+[CAUTION] 
+--
+`"unnest"` will be defined as a new keyword in the SQL++ syntax.
+You cannot use the term as an identifier for a property name or data source unless you escape it using backticks.
+--
+
+=== Examples
+
+For examples of using Array Indexes in conjunction with `UNNEST`, see xref:{param-module}:indexing.adoc#array-indexing[Array Index].
+
+We are also accessing the current database using the shorthand notation *`_`* -- see the <<lbl-from>> clause for more on data source selection and <<lbl-query-params>> for more on parameterized queries.
+
+The following examples will use the example JSON document below to query results from:
+
+[source, JSON]
+--
+{
+   "Name":"Sam",
+   "contacts":[
+     {
+       "type":"primary",
+       "address":{"street":"1 St","city":"San Pedro","state":"CA"},
+       "phones":[
+         {"type":"home","number":"310-123-4567"},
+         {"type":"mobile","number":"310-123-6789"}
+       ]
+     },
+     {
+       "type":"secondary",
+       "address":{"street":"5 St","city":"Seattle","state":"WA"},
+       "phones":[
+         {"type":"home","number":"206-123-4567"},
+         {"type":"mobile","number":"206-123-6789"}
+       ]
+     }
+   ],
+   "likes":["soccer","travel"]
+ }
+
+--
+
+Using the document above we can perform queries on a single nested array like so:
+
+[source, sqlpp]
+--
+SELECT name, interest FROM _ UNNEST likes as interest WHERE interest = "travel" 
+--
+
+The query above will produce the following output from the document:
+
+[source, JSON]
+--
+{"name": "Sam", "like": "travel"}
+--
+
+You can perform similar operations on nested arrays:
+
+[source, sqlpp]
+--
+SELECT name, contact.type, phone.number 
+FROM profiles 
+UNNEST contacts as contact
+UNNEST contact.phones as phone
+WHERE phone.type = "mobile"
+--
+
+The query above will then produce the following output:
+
+[source, JSON]
+--
+{"name": "Sam", "type": "primary", "number": "310-123-6789"}
+{"name": "Sam", "type": "secondary", "number": "206-123-6789"}
+--
+
+The output demonstrates retrieval of both primary and secondary contact numbers listed as type `"mobile"`.
+
+IMPORTANT: Array literals are not supported in CBL 3.2.1.
+Attempting to create a query with array literals will return an error.
+
 [#lbl-where]
 == WHERE statement
 
 === Purpose
-Specifies the selecion criteria used to filter results.
+Specifies the selection criteria used to filter results.
 
 As with SQL, use the `WHERE` statement to choose which documents are returned by your query.
 

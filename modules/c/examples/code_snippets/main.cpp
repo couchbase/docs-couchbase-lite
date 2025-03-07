@@ -107,7 +107,7 @@ static void getting_started() {
     //  Purpose-- provide an overview of available crud  and sync functionality
     //
     // Get the database (and create it if it doesn't exist)
-    CBLError err;
+    CBLError err{};
     CBLDatabase* database = CBLDatabase_Open(FLSTR("mydb"), NULL, &err);
     if(!database) {
         // Error handling.  For brevity, this is truncated in the rest of the snippet
@@ -297,10 +297,9 @@ static void test_replicator_conflict_resolve() {
 
     // tag::replication-conflict-resolver[]
     // NOTE: No error handling, for brevity (see getting started)
-    CBLError err;
+    CBLError err{};
     CBLEndpoint* target = CBLEndpoint_CreateWithURL(FLSTR("ws://localhost:4984/mydatabase"), &err);
 
-    
     CBLReplicationCollection collectionConfig;
     memset(&collection, 0, sizeof(collectionConfig));
     collectionConfig.collection = collection;
@@ -349,7 +348,7 @@ static void test_save_with_conflict_handler() {
     // tag::update-document-with-conflict-handler[]
     CBLDatabase* database = kDatabase;
     CBLCollection* collection = CBLDatabase_DefaultCollection(database, NULL);
-    CBLError err;
+    CBLError err{};
     
     CBLDocument* mutableDoc = CBLCollection_GetMutableDocument(collection, FLSTR("xyz"), &err);
     FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
@@ -393,7 +392,7 @@ static void use_encryption() {
     // This returns a boolean, so check it in production code
     CBLEncryptionKey_FromPassword(&config.encryptionKey, FLSTR("password"));
 
-    CBLError err;
+    CBLError err{};
     CBLDatabase* db = CBLDatabase_Open(FLSTR("seekrit"), &config, &err);
 
     // Change the encryption key (or add encryption if the DB is unencrypted)
@@ -420,7 +419,6 @@ static void reset_replicator_checkpoint() {
     // tag::replication-reset-checkpoint-full[]
     // replicator is a CBLReplicator* instance
     CBLReplicator_Start(replicator, true); // <.>
-
     // end::replication-reset-checkpoint-full[]
 
     stop_replicator(replicator);
@@ -431,8 +429,7 @@ static void read_1x_attachment() {
 
     // tag::1x-attachment[]
     // NOTE: No error handling, for brevity (see getting started)
-
-    CBLError err;
+    CBLError err{};
     FLDict properties = CBLDocument_Properties(document);
     FLDict attachments = FLValue_AsDict(FLDict_Get(properties, FLSTR("_attachments")));
     const CBLBlob* avatar = FLDict_GetBlob(FLValue_AsDict(FLDict_Get(attachments, FLSTR("avatar"))));
@@ -447,8 +444,7 @@ static void read_1x_attachment() {
 static void create_new_database() {
     // tag::new-database[]
     // NOTE: No error handling, for brevity (see getting started)
-
-    CBLError err;
+    CBLError err{};
     CBLDatabase* db = CBLDatabase_Open(FLSTR("my-database"), NULL, &err);
     // end::new-database[]
 
@@ -459,8 +455,7 @@ static void close_database() {
     CBLDatabase* db = kDatabase;
     // tag::close-database[]
     // NOTE: No error handling, for brevity (see getting started)
-
-    CBLError err;
+    CBLError err{};
     CBLDatabase_Close(db, &err);
     // end::close-database[]
 }
@@ -476,8 +471,7 @@ static void database_fullsync() {
 static void create_collection() {
     CBLDatabase *db = kDatabase;
     // tag::scopes-manage-create-collection[]
-
-    CBLError err;
+    CBLError err{};
     CBLDatabase_CreateCollection(db, FLSTR("collA"), FLSTR("scopeA"), &err);
     //end::scopes-manage-create-collection[]
 }
@@ -486,8 +480,7 @@ static void create_collection() {
 static void delete_collection(){
     CBLDatabase *db = kDatabase;
     // tag::scopes-manage-drop-collection[]
-
-    CBLError err;
+    CBLError err{};
     CBLDatabase_DeleteCollection(db, FLSTR("collA"), FLSTR("scopeA"), &err);
     // end::scopes-manage-drop-collection[]
 }
@@ -495,8 +488,7 @@ static void delete_collection(){
 static void list_scopes_and_collections(){
     CBLDatabase *db = kDatabase;
     // tag::scopes-manage-list[]
-
-    CBLError err;
+    CBLError err{};
     
     // Get Scopes
     FLMutableArray scopes = CBLDatabase_ScopeNames(db, &err);
@@ -534,7 +526,7 @@ static void load_prebuilt() {
 
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     const char* path = "/path/to/travel-sample.cblite2";
     if(!CBL_DatabaseExists(FLSTR("travel-sample.cblite2"), kFLSliceNull)) {
         CBL_CopyDatabase(FLStr(path), FLSTR("travel-sample"), NULL, &err);
@@ -553,7 +545,7 @@ static void query_deleted_document() {
     // Query documents that have been deleted
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id FROM _ WHERE meta().deleted"), NULL, &err);
     // end::query-deleted-documents[]
@@ -565,7 +557,6 @@ static void create_document() {
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::initializer[]
-
     CBLDocument* doc = CBLDocument_CreateWithID(FLSTR("xyz"));
     FLMutableDict properties = CBLDocument_MutableProperties(doc);
     FLMutableDict_SetString(properties, FLSTR("type"), FLSTR("task"));
@@ -574,7 +565,7 @@ static void create_document() {
     // Storing time in millisecond, bluntly
     FLMutableDict_SetUInt(properties, FLSTR("createdAt"), time(NULL) * 1000);
 
-    CBLError err;
+    CBLError err{};
     CBLCollection_SaveDocument(collection, doc, &err);
     CBLDocument_Release(doc);
     // end::initializer[]
@@ -584,8 +575,7 @@ static void update_document() {
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::update-document[]
-
-    CBLError err;
+    CBLError err{};
     CBLDocument* mutableDoc = CBLCollection_GetMutableDocument(collection, FLSTR("xyz"), &err);
     FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
     FLMutableDict_SetString(properties, FLSTR("name"), FLSTR("apples"));
@@ -601,8 +591,7 @@ static void do_batch_operation() {
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::batch[]
-
-    CBLError err;
+    CBLError err{};
     CBLDatabase_BeginTransaction(database, &err);
     char buffer[7];
     for(int i = 0; i < 10; i++) {
@@ -622,7 +611,7 @@ static void do_batch_operation() {
 }
 
 static void document_listener(void* context, const CBLDocumentChange* change) {
-    CBLError err;
+    CBLError err{};
     const CBLDocument* doc = CBLCollection_GetDocument(change->collection, change->docID, &err);
     FLDict properties = CBLDocument_Properties(doc);
     FLString verified_account = FLValue_AsString(FLDict_Get(properties, FLSTR("verified_account")));
@@ -646,14 +635,13 @@ static void document_expiration() {
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::document-expiration[]
-    // Purge the document one day from now
-
-    // Overly simplistic for example purposes
+    // Purge the document one day from now.
+    // Overly simplistic for example purposes.
     // NOTE: API takes milliseconds
     time_t ttl = time(NULL) + 24 * 60 * 60;
     ttl *= 1000;
 
-    CBLError err;
+    CBLError err{};
     CBLCollection_SetDocumentExpiration(collection, FLSTR("doc123"), ttl, &err);
 
     // Reset expiration
@@ -689,7 +677,7 @@ static void use_blob() {
     CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("image/jpeg"), FLSliceResult_AsSlice(avatar)); // <.>
     FLSliceResult_Release(avatar);
 
-    CBLError err;
+    CBLError err{};
     FLMutableDict properties = CBLDocument_MutableProperties(newTask);
     FLSlot_SetBlob(FLMutableDict_Set(properties, FLSTR("avatar")), blob);
     CBLCollection_SaveDocument(collection, newTask, &err); // <.>
@@ -706,7 +694,7 @@ static void doc_json() {
     FLString json = FLSTR("{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",\"country\":\"Australia\"}");
 
     // Create a document and set the JSON data to the document
-    CBLError err;
+    CBLError err{};
     CBLDocument* newDoc = CBLDocument_CreateWithID(FLSTR("hotel_1002"));
     CBLDocument_SetJSON(newDoc, json, &err);
 
@@ -810,7 +798,7 @@ static void datatype_dictionary()
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::datatype_dictionary[]
-    CBLError err;
+    CBLError err{};
     const CBLDocument *doc = CBLCollection_GetDocument(collection, FLSTR("doc1"), &err);
     FLDict properties = CBLDocument_Properties(doc);
 
@@ -863,7 +851,7 @@ static void datatype_mutable_dictionary()
     FLMutableDict properties = CBLDocument_MutableProperties(doc);
     FLMutableDict_SetDict(properties, FLSTR("address"), dict);
     // end::datatype_mutable_dictionary-add-to-doc[]
-    CBLError err;
+    CBLError err{};
     CBLCollection_SaveDocument(collection, doc, &err);
     CBLDocument_Release(doc);
 
@@ -877,7 +865,7 @@ static void datatype_array()
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
 
     // tag::datatype_array[]
-    CBLError err;
+    CBLError err{};
     const CBLDocument *doc = CBLCollection_GetDocument(collection, FLSTR("doc1"), &err);
     FLDict properties = CBLDocument_Properties(doc);
 
@@ -935,7 +923,7 @@ static void datatype_mutable_array()
     FLMutableDict properties = CBLDocument_MutableProperties(doc);
     FLMutableDict_SetArray(properties, FLSTR("phones"), phones);
     // end::datatype_mutable_array-add-to-doc[]
-    CBLError err;
+    CBLError err{};
     CBLCollection_SaveDocument(collection, doc, &err);
     CBLDocument_Release(doc);
 
@@ -950,7 +938,7 @@ static void datatype_usage() {
     // tag::datatype_usage[]
     // tag::datatype_usage_createdb[]
     // Open or create DB if it doesn't exist
-    CBLError err;
+    CBLError err{};
     CBLDatabase* database = CBLDatabase_Open(FLSTR("mydb"), NULL, &err);
     
     if(!database) {
@@ -988,7 +976,7 @@ static void datatype_usage() {
     // tag::datatype_usage_populate[]
     // Initialize and populate the document
 
-        // Add document type and hotel name as string
+    // Add document type and hotel name as string
     FLMutableDict_SetString(properties, FLSTR("type"), FLSTR("hotel"));
     FLMutableDict_SetString(properties, FLSTR("hotel"), FLSTR(""));
 
@@ -998,20 +986,20 @@ static void datatype_usage() {
     // Add address (dictionary)
     FLMutableDict_SetDict(properties, FLSTR("address"), address);
 
-        // Add phone numbers(array)
+    // Add phone numbers(array)
     FLMutableDict_SetArray(properties, FLSTR("phones"), phones);
 
     // end::datatype_usage_populate[]
     {
     // tag::datatype_usage_persist[]
-    CBLError err;
+    CBLError err{};
     CBLCollection_SaveDocument(collection, mutableDoc, &err);
     // end::datatype_usage_persist[]
     }
 
     {
     // tag::datatype_usage_closedb[]
-    CBLError err;
+    CBLError err{};
     CBLDatabase_Close(database, &err);
     // end::datatype_usage_closedb[]
     }
@@ -1039,15 +1027,81 @@ static void create_index() {
     // Syntax for second argument is the same as taking from a N1QL SELECT
     // i.e. SELECT (type, name) FROM _;
     // tag::scopes-manage-index-collection[]
-    CBLValueIndexConfiguration config = {
-        kCBLN1QLLanguage,
-        FLSTR("type, name")
-    };
+    CBLValueIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.expressions = FLSTR("type, name");
 
-    CBLError err;
+    CBLError err{};
     CBLCollection_CreateValueIndex(collection, FLSTR("TypeNameIndex"), config, &err);
     // end::scopes-manage-index-collection[]
     // end::query-index[]
+}
+
+static void create_array_index_config() {
+    // tag::array-index-config[]
+    CBLArrayIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.path = FLSTR("contacts");
+    // end::array-index-config[]
+}
+
+static void create_array_index_single() {
+    CBLDatabase *database = kDatabase;
+    CBLCollection *collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
+
+    // tag::array-index-single[]
+    CBLArrayIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.path = FLSTR("likes");
+
+    CBLError err{};
+    CBLCollection_CreateArrayIndex(collection, FLSTR("myindex"), config, &err);
+    // end::array-index-single[]
+}
+
+static void create_array_index_nested() {
+    CBLDatabase *database = kDatabase;
+    CBLCollection *collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
+
+    // tag::array-index-nested[]
+    CBLArrayIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.path = FLSTR("contacts[].phones");
+    config.expressions = FLSTR("type");
+
+    CBLError err{};
+    CBLCollection_CreateArrayIndex(collection, FLSTR("myindex"), config, &err);
+    // end::array-index-nested[]
+}
+
+static void create_partial_value_index() {
+    CBLDatabase* database = kDatabase;
+    CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
+
+    // tag::partial-value-index[]
+    CBLValueIndexConfiguration config {};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.expressions = FLSTR("city");
+    config.where = FLSTR("type = \"hotel\"");
+
+    CBLError err{};
+    CBLCollection_CreateValueIndex(collection, FLSTR("HotelCityIndex"), config, &err);
+    // end::partial-value-index[]
+}
+
+static void create_partial_full_text_index() {
+    CBLDatabase* database = kDatabase;
+    CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
+
+    // tag::partial-full-text-index[]
+    CBLFullTextIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.expressions = FLSTR("description");
+    config.where = FLSTR("type = \"hotel\"");
+
+    CBLError err{};
+    CBLCollection_CreateFullTextIndex(collection, FLSTR("HotelDescIndex"), config, &err);
+    // end::partial-full-text-index[]
 }
 
 static void select_meta() {
@@ -1056,7 +1110,7 @@ static void select_meta() {
     // tag::query-select-meta[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id, type, name FROM _"), NULL, &err);
     CBLResultSet* results = CBLQuery_Execute(query, &err);
@@ -1075,7 +1129,7 @@ static void select_meta() {
 static void select_id() {
     CBLDatabase* database = kDatabase;
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id FROM _"), NULL, &err);
 
@@ -1094,7 +1148,7 @@ static void select_id() {
 }
 
 static void query_change_listener(void* context, CBLQuery* query, CBLListenerToken* token) {
-    CBLError err;
+    CBLError err{};
     CBLResultSet* results = CBLQuery_CopyCurrentResults(query, token, &err);
     while(CBLResultSet_Next(results)) {
         // Update UI
@@ -1108,7 +1162,7 @@ static void select_all() {
     // tag::query-select-all[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT * FROM _"), NULL, &err);
 
@@ -1121,7 +1175,7 @@ static void select_all() {
     // tag::live-query[]
     /*
     static void query_change_listener(void* context, CBLQuery* query, CBLListenerToken* token) {
-        CBLError err;
+        CBLError err{};
         CBLResultSet* results = CBLQuery_CopyCurrentResults(query, token, &err);
         while(CBLResultSet_Next(results)) {
             // Update UI
@@ -1131,7 +1185,7 @@ static void select_all() {
 
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT * FROM _"), NULL, &err); // <.>
 
@@ -1152,7 +1206,7 @@ static void select_all() {
 static void select_and_access_all() {
     CBLDatabase* database = kDatabase;
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT * FROM _"), NULL, &err);
 
@@ -1185,7 +1239,7 @@ static void select_props() {
     // tag::query-access-props[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT type, name, city FROM _"), NULL, &err);
 
@@ -1212,7 +1266,7 @@ static void select_where() {
     // tag::query-where[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT * FROM _ WHERE type = \"hotel\" LIMIT 10"), NULL, &err);
     CBLResultSet* results = CBLQuery_Execute(query, &err);
@@ -1233,7 +1287,7 @@ static void use_collection_contains() {
     // tag::query-collection-operator-contains[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id, name, public_likes FROM _ WHERE type = \"hotel\" "
               "AND ARRAY_CONTAINS(public_likes, \"Armani Langworth\")"), NULL, &err);
@@ -1257,7 +1311,7 @@ static void use_collection_in() {
     // tag::query-collection-operator-in[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT * FROM _ WHERE \"Armani\" IN (first, last, username)"),
         NULL, &err);
@@ -1281,7 +1335,7 @@ static void select_like() {
     // tag::query-like-operator[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id, name FROM _ WHERE type = \"landmark\" "
               "AND lower(name) LIKE \"Royal Engineers Museum\" LIMIT 10"),
@@ -1304,7 +1358,7 @@ static void select_wildcard_like() {
     // tag::query-like-operator-wildcard-match[]
     // NOTE: No error handling, for brevity (see getting started)
 
-     CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id, name FROM _ WHERE type = \"landmark\" "
               "AND lower(name) LIKE \"Eng%e%\" LIMIT 10"),
@@ -1327,7 +1381,7 @@ static void select_wildcard_character_like() {
     // tag::query-like-operator-wildcard-character-match[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id, name FROM _ WHERE type = \"landmark\" "
               "AND lower(name) LIKE \"Royal Eng____rs Museum\" LIMIT 10"),
@@ -1350,7 +1404,7 @@ static void select_regex() {
     // tag::query-regex-operator[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id, name FROM _ WHERE type = \"landmark\" "
               "AND regexp_like(name, \"\\bEng.*e\\b\") LIMIT 10"),
@@ -1373,7 +1427,7 @@ static void select_join() {
     // tag::query-join[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT airline.name, airline.callsign, route.destinationairport, route.stops, route.airline "
               "FROM _ AS airline INNER JOIN _ AS route ON meta(airline).id = route.airlineid "
@@ -1397,7 +1451,7 @@ static void group_by() {
     // tag::query-groupby[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT count(*), country, tz FROM _ WHERE type = \"airport\" AND geo.alt >= 300 "
               "GROUP BY country, tz"),
@@ -1423,7 +1477,7 @@ static void order_by() {
     // tag::query-orderby[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id, title FROM _ WHERE type = \"hotel\" ORDER BY title ASC LIMIT 10"),
         NULL, &err);
@@ -1446,7 +1500,7 @@ static void test_explain_statement() {
     // tag::query-explain-all[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT * FROM _ WHERE type = \"hotel\" GROUP BY country ORDER BY title ASC LIMIT 10"),
         NULL, &err);
@@ -1461,7 +1515,7 @@ static void test_explain_statement() {
     // tag::query-explain-like[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT * FROM _ WHERE type LIKE \"%hotel%\" AND name LIKE \"%royal%\""),
         NULL, &err);
@@ -1476,7 +1530,7 @@ static void test_explain_statement() {
     // tag::query-explain-nopfx[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT * FROM _ WHERE type LIKE \"hotel%\" AND name LIKE \"%royal%\""),
         NULL, &err);
@@ -1491,7 +1545,7 @@ static void test_explain_statement() {
     // tag::query-explain-function[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT * FROM _ WHERE lower(type) = \"hotel\""),
         NULL, &err);
@@ -1506,7 +1560,7 @@ static void test_explain_statement() {
     // tag::query-explain-nofunction[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT * FROM _ WHERE type = \"hotel\""),
         NULL, &err);
@@ -1523,7 +1577,7 @@ static void test_explain_statement() {
 static void query_result_json() {
     CBLDatabase* database = kDatabase;
 
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id as id, name, city, type FROM _ LIMIT 10"),
         NULL, &err);
@@ -1537,7 +1591,6 @@ static void query_result_json() {
         FLSliceResult_Release(json);
     }
     CBLResultSet_Release(results);
-
     // end::query-access-json[]
 
     CBLQuery_Release(query);
@@ -1567,13 +1620,11 @@ static void create_full_text_index() {
     }
 
     // tag::fts-index[]
-
-    CBLError err;
-    CBLFullTextIndexConfiguration config = {
-        kCBLN1QLLanguage,
-        FLSTR("name"),
-        false
-    };
+    CBLError err{};
+    CBLFullTextIndexConfiguration config{};
+    config.expressionLanguage = kCBLN1QLLanguage;
+    config.expressions = FLSTR("name");
+    config.ignoreAccents = false;
 
     CBLCollection_CreateFullTextIndex(collection, FLSTR("nameFTSIndex"), config, &err);
     // end::fts-index[]
@@ -1583,8 +1634,7 @@ static void full_text_search() {
     CBLDatabase* database = kDatabase;
 
     // tag::fts-query[]
-
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id FROM _ WHERE MATCH(nameFTSIndex, \"'buy'\")"),
         NULL, &err);
@@ -1624,7 +1674,7 @@ static void start_replication() {
     // NOTE: No error handling, for brevity (see getting started)
     // Note: Android emulator needs to use 10.0.2.2 for localhost (10.0.3.2 for GenyMotion)
 
-    CBLError err;
+    CBLError err{};
     FLString url = FLSTR("ws://localhost:4984/db");
     CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &err);
 
@@ -1647,32 +1697,32 @@ static void start_replication() {
     stop_replicator(replicator);
 }
 
-// Console logging domain methods are not applicable to C
+static void console_logging() {
+    // tag::console-logging[]
+    CBLLog_SetConsoleLevel(kCBLLogVerbose);
+    // end::console-logging[]
+}
 
 static void file_logging() {
     // tag::file-logging[]
     // NOTE: No error handling, for brevity (see getting started)
     // NOTE: You will need to use a platform appropriate method for finding
     // a temporary directory
-
-    FLString tempFolder = FLSTR("/tmp/cbllog");
-
-    CBLLogFileConfiguration config; // Don't bother zeroing, since we set all properties
+    CBLLogFileConfiguration config {}; // Don't bother zeroing, since we set all properties
     config.level = kCBLLogInfo;
-    config.directory = tempFolder;
-    config.maxRotateCount = 5;
-    config.maxSize = 10240;
+    config.directory = FLSTR("/tmp/logs");;
+    config.maxRotateCount = 12;
+    config.maxSize = 1048576;
     config.usePlaintext = false;
 
-    CBLError err;
+    CBLError err{};
     CBLLog_SetFileConfig(config, &err);
     // end::file-logging[]
 }
 
 // tag::custom-logging[]
 static void custom_log_callback(CBLLogDomain domain, CBLLogLevel level, FLString message) {
-    // handle the message, for example piping it to
-    // a third party framework
+    // handle the message, for example piping it to a third party framework
 }
 // end::custom-logging[]
 
@@ -1682,6 +1732,42 @@ static void enable_custom_logging() {
     // end::set-custom-logging[]
 }
 
+static void console_log_sink() {
+    // tag::new-console-logging[]
+    CBLConsoleLogSink logSink {};
+    logSink.level = kCBLLogVerbose;
+    logSink.domains = kCBLLogDomainMaskAll;
+    CBLLogSinks_SetConsole(logSink);
+    // end::new-console-logging[]
+}
+
+static void file_log_sink() {
+    // tag::new-file-logging[]
+    CBLFileLogSink logSink {};
+    logSink.level = kCBLLogVerbose;
+    logSink.directory = FLSTR("/tmp/logs");
+    logSink.maxKeptFiles = 12;
+    logSink.maxSize = 1048576;
+    logSink.usePlaintext = false;
+    CBLLogSinks_SetFile(logSink);
+    // end::new-file-logging[]
+}
+
+// tag::new-custom-log-sink[]
+static void custom_log_sink_callback(CBLLogDomain domain, CBLLogLevel level, FLString message) {
+    // handle the message, for example piping it to a third party framework.
+}
+// end::new-custom-logging[]
+
+static void enable_custom_log_sink() {
+    // tag::set-new-custom-logging[]
+    CBLCustomLogSink logSink {};
+    logSink.level = kCBLLogVerbose;
+    logSink.callback = custom_log_sink_callback;
+    CBLLogSinks_SetCustom(logSink);
+    // end::set-new-custom-logging[]
+}
+
 static void enable_basic_auth() {
     CBLDatabase* database = kDatabase;
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
@@ -1689,7 +1775,7 @@ static void enable_basic_auth() {
     // tag::basic-authentication-full[]
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     FLString url = FLSTR("ws://localhost:4984/mydatabase");
     CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &err);
     CBLAuthenticator* basicAuth = CBLAuth_CreatePassword(FLSTR("john"), FLSTR("pass"));
@@ -1721,20 +1807,16 @@ static void docsonly_N1QL_Params(CBLDatabase* argDb)
 
     // tag::query-syntax-n1ql-params[]
     int errorPos;
-
-    CBLError err;
-
+    CBLError err{};
     FLString n1qlstr = FLSTR("SELECT * FROM _ WHERE type = $type");
-
-    FLMutableDict n1qlparams = FLMutableDict_New();
-    FLMutableDict_SetString(n1qlparams, FLSTR("type"), FLSTR("hotel"));
-
     CBLQuery* query = CBLDatabase_CreateQuery(database,
                           kCBLN1QLLanguage,
                           n1qlstr,
                           &errorPos,
                           &err);
 
+    FLMutableDict n1qlparams = FLMutableDict_New();
+    FLMutableDict_SetString(n1qlparams, FLSTR("type"), FLSTR("hotel"));
     CBLQuery_SetParameters(query, n1qlparams);
 
     if(!query) {
@@ -1768,10 +1850,9 @@ static void docsonly_N1QL_Params(CBLDatabase* argDb)
 static void date_getter(){
     CBLDatabase* database = kDatabase;
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
-    CBLError err;
+    CBLError err{};
 
     // tag::date-getter[]
-
     // Create doc and get its properties
     CBLDocument* mutableDoc = CBLDocument_Create();
     FLMutableDict mutableProperties = CBLDocument_MutableProperties(mutableDoc);
@@ -1846,7 +1927,7 @@ static void docs_act_replication(CBLDatabase* argDb)
     // NOTE: No error handling, for brevity (see getting started)
     // Note: Android emulator needs to use 10.0.2.2 for localhost (10.0.3.2 for GenyMotion)
 
-    CBLError err;
+    CBLError err{};
     FLString url = FLSTR("ws://localhost:4984/db");
     CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &err); // <.>
 
@@ -1864,7 +1945,6 @@ static void docs_act_replication(CBLDatabase* argDb)
     // Set replication direction and mode
     replConfig.replicatorType = kCBLReplicatorTypePull; // <.>
     replConfig.continuous = true;
-
     // end::p2p-act-rep-config-cont[]
 
     // Optionally, set auto-purge behavior (here we override default)
@@ -1896,7 +1976,6 @@ static void docs_act_replication(CBLDatabase* argDb)
 
     // Start replication
     CBLReplicator_Start(replicator, false); // <.>
-
     // end::p2p-act-rep-func[]
 
     //    ... other processing as required
@@ -1944,7 +2023,7 @@ static void docs_act_replication_config_section_snippets()
 
     // tag::sgw-act-rep-initialize[]
     // Initialize the configuration object and set db target
-    CBLError err;
+    CBLError err{};
     FLString url = FLSTR("ws://localhost:4984/db");
     CBLEndpoint* target =
         CBLEndpoint_CreateWithURL(url, &err); // <.>
@@ -1958,32 +2037,31 @@ static void docs_act_replication_config_section_snippets()
     replConfig.collectionCount = 1;
     replConfig.collections = &collectionConfig;
     replConfig.endpoint = target; // <.>
-
     // end::sgw-act-rep-initialize[]
 
-    //    tag::p2p-act-rep-config-type[]
+    // tag::p2p-act-rep-config-type[]
     replConfig.replicatorType = kCBLReplicatorTypePull;
+    // end::p2p-act-rep-config-type[]
 
-    //    end::p2p-act-rep-config-type[]
-    //    tag::p2p-act-rep-config-cont[]
+    //tag::p2p-act-rep-config-cont[]
     replConfig.continuous = true;
+    // end::p2p-act-rep-config-cont[]
 
-    //    end::p2p-act-rep-config-cont[]
     // tag::replication-retry-config[]
     // Configure replication retries
     // tag::replication-set-heartbeat[]
     replConfig.heartbeat = 120; //  <.>
-
     // end::replication-set-heartbeat[]
+
     // tag::replication-set-maxattempts[]
     replConfig.maxAttempts = 20; //  <.>
-
     // end::replication-set-maxattempts[]
+
     // tag::replication-set-maxattemptwaittime[]
     replConfig.maxAttemptWaitTime = 600; //  <.>
-
     // end::replication-set-maxattemptwaittime[]
     // end::replication-retry-config[]
+
     // tag::basic-authentication[]
     // Configure Client Authentication to Basic Authentication
     // Providing username and password credentials
@@ -2002,7 +2080,6 @@ static void docs_act_replication_config_section_snippets()
                                   FLSTR("optionalCookieName"));
         replConfig.authenticator = sessionAuth; // <.>
     }
-
     // end::session-authentication[]
 
     // tag::replication-custom-header[]
@@ -2029,17 +2106,15 @@ static void docs_act_replication_config_section_snippets()
 
     // NOTE: Push and pull filters are set per collection
     collectionConfig.pushFilter = simpleReplicationFilter;
-
     collectionConfig.pullFilter = simpleReplicationFilter;
-
     // end::replication-pull-filter[]
     // end::replication-push-filter[]
 
     //  Auto-purge over-ride
     // tag::autopurge-override[]
     replConfig.disableAutoPurge = true; // <.>
-
     // end::autopurge-override[]
+
     // Initialize replicator with created config
     CBLReplicator* replicator =
         CBLReplicator_Create(&replConfig, &err); // <.>
@@ -2055,7 +2130,6 @@ static void docs_act_replication_config_section_snippets()
 }
 // END replication.html >> configure section
 
-
 // PAGE=Data Sync >> Initialize section
 // URL=https://docs.couchbase.com/couchbase-lite/current/c/replication.html#lbl-init-repl
 static CBLReplicator* docs_act_replication_Intialize(
@@ -2063,22 +2137,20 @@ static CBLReplicator* docs_act_replication_Intialize(
                         CBLReplicatorConfiguration argConfig,
                         bool argResetRequired)
 {
-    CBLError err;
+    CBLError err{};
     bool docs_example_resetRequired = argResetRequired;
     // tag::p2p-act-rep-start-full[]
     CBLReplicator* replicator =
     CBLReplicator_Create(&argConfig, &err); // <.>
-
     // end::p2p-act-rep-start-full[]
+
     if(!docs_example_resetRequired) {
     // tag::p2p-act-rep-start-full[]
       CBLReplicator_Start(replicator, false); // <.>
-
     // end::p2p-act-rep-start-full[]
     } else {
     // tag::replication-reset-checkpoint[]
       CBLReplicator_Start(replicator, true); // <.>
-
     // end::replication-reset-checkpoint[]
     }
     return replicator;
@@ -2090,7 +2162,7 @@ static CBLReplicator* docs_act_replication_Intialize(
 static void docs_act_replication_Monitor(
                                        void* context,
                                        CBLReplicator* argRepl) {
-    CBLError err;
+    CBLError err{};
     CBLReplicator* replicator = argRepl;
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
     // tag::p2p-act-rep-add-change-listener[]
@@ -2099,8 +2171,8 @@ static void docs_act_replication_Monitor(
             CBLReplicator_AddChangeListener(replicator,
                                             simpleChangeListener,
                                             NULL);
-
     // end::p2p-act-rep-add-change-listener[]
+
     // tag::add-document-replication-listener[]
     // Purpose -- illustrate addition of a Document Replicator  listener
     CBLListenerToken* token_ReplDocListener =
@@ -2110,11 +2182,11 @@ static void docs_act_replication_Monitor(
                                                         context);
 
     // end::add-document-replication-listener[]
+
     // tag::remove-document-replication-listener[]
     // Purpose -- illustrate removal of a listener
     CBLListener_Remove(token_ReplDocListener);
     CBLListener_Remove(token_ReplChangeListener);
-
     // end::remove-document-replication-listener[]
 
     // tag::p2p-act-rep-status[]
@@ -2129,9 +2201,9 @@ static void docs_act_replication_Monitor(
             CBLReplicator_Release(replicator);
         }
     }
-
     // end::p2p-act-rep-status[]
     // end::p2p-act-rep-func-full[]
+
     // tag::replication-pendingdocuments[]
     FLDict thisPendingIdList =
         CBLReplicator_PendingDocumentIDs2(replicator, collection, &err); // <.>
@@ -2166,7 +2238,6 @@ static void docs_act_replication_Monitor(
         printf("No Pending Id Docs to process");
     }
     FLDict_Release(thisPendingIdList);
-
     // end::replication-pendingdocuments[]
 }
 // END replication.html >> Monitor section
@@ -2182,14 +2253,13 @@ static void docs_act_replication_Stop(
     if(CBLReplicator_Status(argRepl).activity!=kCBLReplicatorStopped) {
         CBLReplicator_Stop(argRepl);
     }
-
     // end::p2p-act-rep-stop[]
 }
 // END replication.html >> Stop section
 
 static void replication_error_handling() {
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
-    CBLError err;
+    CBLError err{};
     FLString url = FLSTR("ws://localhost:4984/db");
     CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &err);
 
@@ -2205,8 +2275,6 @@ static void replication_error_handling() {
 
     CBLReplicator* replicator = CBLReplicator_Create(&replConfig, &err);
     CBLEndpoint_Free(target);
-
-
 
     stop_replicator(replicator);
 }
@@ -2307,7 +2375,7 @@ static void query_encryptable() {
 
     // tag::use_encryptable[]
     // NOTE: No error handling, for brevity (see getting started)
-    CBLError err;
+    CBLError err{};
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
         FLSTR("SELECT secret, secret.value as secretValue FROM _ WHERE type = \"profile\""), NULL, &err);
     CBLResultSet* results = CBLQuery_Execute(query, &err);
@@ -2374,7 +2442,7 @@ static void replicator_property_encryption() {
     // Purpose: Show how to declare en(de)cryptors in replicator config
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     FLString url = FLSTR("ws://localhost:4984/db");
     CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &err);
 
@@ -2404,7 +2472,7 @@ static void replicator_property_encryption() {
 static void database_replica(){
     #ifdef COUCHBASE_ENTERPRISE
 
-    CBLError err;
+    CBLError err{};
     CBLReplicatorConfiguration replConfig;
     CBLDatabase* database1 = kDatabase;
     CBLDatabase* database2 = CBLDatabase_Open(FLSTR("mydb"), NULL, &err);
@@ -2438,6 +2506,9 @@ int main(int argc, char** argv) {
     array_json();
     load_prebuilt();
     create_index();
+    create_array_index_config();
+    create_array_index_single();
+    create_array_index_nested();
     select_all();
     select_and_access_all();
     select_props();

@@ -32,13 +32,12 @@ import com.couchbase.lite.MutableDocument;
 
 @SuppressWarnings("unused")
 public class BasicExamples {
-    public class SupportingDatatypes {
+    public static class SupportingDatatypes {
         private final File rootDir;
 
         public SupportingDatatypes(@NotNull File rootDir) { this.rootDir = rootDir; }
 
         public void datatypeUsage() throws CouchbaseLiteException {
-            // tag::datatype_usage[]
             // tag::datatype_usage_createdb[]
             // Get the database (and create it if it doesn’t exist).
             Database database = new Database("getting-started");
@@ -98,8 +97,6 @@ public class BasicExamples {
             database.close();
 
             // end::datatype_usage_closedb[]
-
-            // end::datatype_usage[]
         }
 
         public void useExplicitType(Collection collection, Document someDoc) throws CouchbaseLiteException {

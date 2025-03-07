@@ -73,13 +73,10 @@ public class AndroidListenerExamples {
             );
         }
 
-        // tag::listener-config-tls-id-set[]
         // Set the TLS Identity
         URLEndpointListenerConfiguration config = new URLEndpointListenerConfiguration(collections);
         config.setTlsIdentity(TLSIdentity.getIdentity("test-alias")); // <.>
         // end::listener-config-tls-id-caCert[]
-
-        // end::listener-config-tls-id-set[]
         // end::listener-config-tls-id-full[]
     }
 
@@ -110,7 +107,6 @@ public class AndroidListenerExamples {
 
     public void listenerConfigClientAuthRootExample(URLEndpointListenerConfiguration thisConfig)
         throws CouchbaseLiteException {
-        // tag::listener-config-client-root-ca[]
         // tag::listener-config-client-auth-root[]
         // Configure the client authenticator
         // to validate using ROOT CA
@@ -131,7 +127,6 @@ public class AndroidListenerExamples {
             new URLEndpointListener(thisConfig);
 
         // end::listener-config-client-auth-root[]
-        // end::listener-config-client-root-ca[]
     }
 
     // tag::listener-config-tls-id-SelfSigned[]
@@ -157,19 +152,11 @@ public class AndroidListenerExamples {
         ); // <.>
 
         // end::listener-config-tls-id-SelfSigned[]
-
-        // tag::listener-config-tls-id-set[]
-        // Set the TLS Identity
-        thisConfig.setTlsIdentity(thisIdentity); // <.>
-
-        // end::listener-config-tls-id-set[]
     }
 
 
     public void replicatorConfigurationExample(Set<Collection> srcCollections, URI targetUrl, KeyStore keyStore)
         throws CouchbaseLiteException {
-        // tag::p2p-act-rep-config-tls-full[]
-
         ReplicatorConfiguration config =
             new ReplicatorConfiguration(new URLEndpoint(targetUrl))
                 .addCollections(srcCollections, null)
@@ -191,7 +178,6 @@ public class AndroidListenerExamples {
         // end::p2p-act-rep-config-cacert-pinned[]
 
 
-        // end::p2p-act-rep-config-tls-full[]
         // tag::p2p-tlsid-tlsidentity-with-label[]
         // Provide a client certificate to the server for authentication
         TLSIdentity clientId = TLSIdentity.getIdentity("client");

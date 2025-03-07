@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-@file:Suppress("UNUSED_VARIABLE", "unused", "UNUSED_PARAMETER")
+@file:Suppress("UNUSED_VARIABLE", "unused")
 
 package com.couchbase.codesnippets
 
@@ -359,7 +359,6 @@ fun querySyntaxAllExample(collection: Collection) {
 }
 
 fun querySyntaxIdExample(collection: Collection) {
-    // tag::query-select-meta
     // tag::query-syntax-id[]
     val query = QueryBuilder
         .select(
@@ -376,7 +375,6 @@ fun querySyntaxIdExample(collection: Collection) {
         }
     }
     // end::query-access-id[]
-    // end::query-select-meta
 }
 
 fun querySyntaxCountExample(collection: Collection) {
@@ -399,9 +397,22 @@ fun querySyntaxCountExample(collection: Collection) {
     // end::query-access-count-only[]
 }
 
+fun queryPaginationExample(collection: Collection) {
+    // tag::query-syntax-pagination[]
+    val thisOffset = 0
+    val thisLimit = 20
+    val listQuery = QueryBuilder
+        .select(SelectResult.all())
+        .from(DataSource.collection(collection))
+        .limit(
+            Expression.intValue(thisLimit),
+            Expression.intValue(thisOffset)
+        ) // <.>
+    // end::query-syntax-pagination[]
+}
+
 fun querySyntaxPropsExample(collection: Collection) {
     // tag::query-syntax-props[]
-
     val query = QueryBuilder
         .select(
             SelectResult.expression(Meta.id),
@@ -409,7 +420,6 @@ fun querySyntaxPropsExample(collection: Collection) {
             SelectResult.property("name")
         )
         .from(DataSource.collection(collection))
-
     // end::query-syntax-props[]
 
     // tag::query-access-props[]
@@ -441,24 +451,6 @@ fun inOperatorExample(collection: Collection) {
     }
     // end::query-collection-operator-in[]
 }
-
-
-// tag::query-syntax-pagination-all[]
-fun queryPaginationExample(collection: Collection) {
-    // tag::query-syntax-pagination[]
-    val thisOffset = 0
-    val thisLimit = 20
-    val listQuery = QueryBuilder
-        .select(SelectResult.all())
-        .from(DataSource.collection(collection))
-        .limit(
-            Expression.intValue(thisLimit),
-            Expression.intValue(thisOffset)
-        ) // <.>
-
-    // end::query-syntax-pagination[]
-}
-// end::query-syntax-pagination-all[]
 
 // ### all(*)
 fun selectAllExample(collection: Collection) {
@@ -495,26 +487,7 @@ fun liveQueryExample(collection: Collection) {
     // end::stop-live-query[]
 }
 
-// META function
-fun metaFunctionExample(collection: Collection) {
-    // tag::query-select-meta[]
-    val query = QueryBuilder
-        .select(SelectResult.expression(Meta.id))
-        .from(DataSource.collection(collection))
-        .where(Expression.property("type").equalTo(Expression.string("airport")))
-        .orderBy(Ordering.expression(Meta.id))
-
-    query.execute().use { rs ->
-        rs.forEach {
-            log("airport id ->${it.getString("id")}")
-            log("airport id -> ${it.getString(0)}")
-        }
-    }
-    // end::query-select-meta[]
-}
-
 // ### EXPLAIN statement
-// tag::query-explain[]
 fun explainAllExample(collection: Collection) {
     // tag::query-explain-all[]
     val query = QueryBuilder
@@ -573,13 +546,13 @@ fun explainNoFnExample(collection: Collection) {
     log(query.explain())
     // end::query-explain-nofunction[]
 }
-// end::query-explain[]
 
 fun prepareIndex(collection: Collection) {
     // tag::fts-index[]
     collection.createIndex(
         "overviewFTSIndex",
-        FullTextIndexConfigurationFactory.newConfig("overview"))
+        FullTextIndexConfigurationFactory.newConfig("overview")
+    )
     // end::fts-index[]
 }
 
@@ -636,12 +609,11 @@ fun ftsQueryBuilderExample(collection: Collection) {
 }
 
 fun querySyntaxJsonExample(collection: Collection) {
-    // tag::query-syntax-json[]
     // Example assumes Hotel class object defined elsewhere
     // Build the query
     val listQuery = QueryBuilder.select(SelectResult.all())
         .from(DataSource.collection(collection))
-    // end::query-syntax-json[]
+
     // tag::query-access-json[]
     // Uses Jackson JSON processor
     val mapper = ObjectMapper()
@@ -694,3 +666,18 @@ fun docsOnlyQuerySyntaxN1QLParams(database: Database): List<Result> {
     // end::query-syntax-n1ql-params[]
 }
 
+fun partialIndexExample(collection: Collection) {
+    // tag::query-partial-index[]
+    val config = ValueIndexConfigurationFactory.newConfig("city")
+    config.where = "type = \"hotel\""
+    collection.createIndex("HotelCityIndex", config)
+    // end::query-partial-index[]
+}
+
+fun partialFullIndexExample(collection: Collection) {
+    // tag::query-partial-full-index[]
+    val config = ValueIndexConfigurationFactory.newConfig("description")
+    config.where = "type = \"hotel\""
+    collection.createIndex("HotelDescIndex", config)
+    // end::query-partial-full-index[]
+}
