@@ -15,7 +15,6 @@ sub expand {
 }
 
 my %keep = map { $_ => 1 } (qw/
-    docname
     description
     keywords
     release
@@ -29,6 +28,12 @@ my %keep = map { $_ => 1 } (qw/
 
 sub keep {
     my ($attribute) = @_;
+
+    # we don't need these ones created by assembler
+    return if $attribute eq 'page-module';
+    return if $attribute eq 'page-relative-src-path';
+    return if $attribute =~/^page-origin/;
+
     return 1 if $attribute =~ /^page-/;
     # return 1 if $attribute =~ /^version(-|$)/;
     # return 1 if $attribute =~ /^vs(-|$)/;
@@ -37,6 +42,8 @@ sub keep {
 }
 
 my $blanks = 0;
+my $strip_headings;
+
 while (<>) {
     # expand attributes
     s/\{(\S+?)\}/expand($1)/eg;
@@ -59,13 +66,22 @@ while (<>) {
     s/^\[#.*:::tabs-.*].*$//;
     s/^\[plantum#.*\]/[plantuml]/;
 
-    # de-mangle headings (== to =)
-    s/^=(= \S)/$1/;
-    s/^=(==+ \S)/$1/;
+
+    # de-mangle headings
+    if (/^(=+) \S/) {
+        s/^===== {empty}/====== {empty}/ or do {
+            $strip_headings //= (length $1) - 1;
+            s/^={$strip_headings}(=* \S)/$1/;
+        }
+    }
 
     # [discrete# mangling
+    s/^\[discrete.column/[.column/;
     s/^\[discrete#/[#/;
     s/^\[discret#(.*)e\]/[discrete#$1/;
+
+    # get rid of '// Define our environment' comments in calling pages
+    s/^\/\/ Define.*//;
 
     # don't print more than 2 blank lines in a row
     if (length == 1) {

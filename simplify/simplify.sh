@@ -12,7 +12,7 @@ git checkout release/3.2 -- modules/java/pages/*.adoc
 git checkout release/3.2 -- modules/objc/pages/*.adoc
 git checkout release/3.2 -- modules/swift/pages/*.adoc
 
-cd $SCRIPT_DIR/../../docs-site
+pushd $SCRIPT_DIR/../../docs-site
 
 ln -f $SCRIPT_DIR/antora-assembler.yml .
 ln -f $SCRIPT_DIR/mobile.yml .
@@ -20,7 +20,7 @@ ln -f $SCRIPT_DIR/attributes.pl .
 ln -f $SCRIPT_DIR/rename.sh .
 
 ## UNCOMMENT THIS to run Antora with the assembler feature 
-npx antora mobile.yml
+# npx antora mobile.yml
 
 process() {
     WHAT=$1
@@ -48,3 +48,7 @@ process csharp -net
 process java
 process objc objective-c
 process swift
+
+popd
+
+git restore --staged modules
