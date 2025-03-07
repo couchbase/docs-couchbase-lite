@@ -75,6 +75,9 @@ while (<>) {
         }
     }
 
+    # remove spurious passthrough mangling
+    s/^pass:q,a\[(.*)\]/$1/;
+
     # [discrete# mangling
     s/^\[discrete.column/[.column/;
     s/^\[discrete#/[#/;
