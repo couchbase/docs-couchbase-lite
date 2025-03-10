@@ -3,14 +3,14 @@ set -exu -o pipefail
 
 SCRIPT_DIR=$(realpath $(dirname $0))
 cd $SCRIPT_DIR/..
-git checkout release/3.2 -- modules/android/pages/*.adoc
+git checkout 3.2-source-includes -- modules/android/pages/*.adoc
 git checkout 97e4a0e7ce45601e392bee3b1f5f602faa38d798 -- modules/android/pages/replication.adoc # already converted
-git checkout release/3.2 -- modules/c/pages/*.adoc
-git checkout release/3.2 -- 'modules/javascript'
-git checkout release/3.2 -- modules/csharp/pages/*.adoc
-git checkout release/3.2 -- modules/java/pages/*.adoc
-git checkout release/3.2 -- modules/objc/pages/*.adoc
-git checkout release/3.2 -- modules/swift/pages/*.adoc
+git checkout 3.2-source-includes -- modules/c/pages/*.adoc
+git checkout 3.2-source-includes -- 'modules/javascript'
+git checkout 3.2-source-includes -- modules/csharp/pages/*.adoc
+git checkout 3.2-source-includes -- modules/java/pages/*.adoc
+git checkout 3.2-source-includes -- modules/objc/pages/*.adoc
+git checkout 3.2-source-includes -- modules/swift/pages/*.adoc
 
 pushd $SCRIPT_DIR/../../docs-site
 
