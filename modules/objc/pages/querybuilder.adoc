@@ -1,13 +1,5 @@
-:docname: querybuilder
-:page-module: objc
-:page-relative-src-path: querybuilder.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#objc:querybuilder:::]
-== Querybuilder
+= Querybuilder
 :page-aliases: learn/objc-query.adoc, query.adoc
 :page-role:
 :description: How to use QueryBuilder to build effective queries with Couchbase Lite on Objective-C
@@ -27,7 +19,7 @@ Related Content -- xref:objc:querybuilder.adoc#lbl-predquery[Predictive Queries]
 NOTE: The examples used here are based on the _Travel Sample_ app and data introduced in the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial
 
 [#objc:querybuilder:::introduction]
-=== Introduction
+== Introduction
 
 Couchbase Lite for Objective-C provides two ways to build and run database queries; the QueryBuilder API described in this topic and xref:objc:query-n1ql-mobile.adoc[{sqlpp} for Mobile].
 
@@ -78,7 +70,7 @@ TIP: We recommend working through the query section of the https://docs.couchbas
 
 
 [#objc:querybuilder:::lbl-select]
-=== SELECT statement
+== SELECT statement
 
 --
 In this section::
@@ -91,7 +83,7 @@ Use the `SELECT` statement to specify which properties you want to return from t
 You can opt to retrieve entire documents, or just the specific properties you need.
 
 [#objc:querybuilder:::lbl-return-all]
-==== Return All Properties
+=== Return All Properties
 Use the `SelectResult.all()` method to return all the properties of selected documents -- see: <<objc:querybuilder:::ex-select-all>>.
 
 .Using SELECT to Retrieve All Properties
@@ -101,7 +93,7 @@ Use the `SelectResult.all()` method to return all the properties of selected doc
 [#objc:querybuilder:::ex-select-all]
 ====
 
-pass:q,a[This query shows how to retrieve all properties from all documents in your database.]
+This query shows how to retrieve all properties from all documents in your database.
 
 // Show Main Snippet
 // include::objc:example$code_snippets/SampleCodeTest.m[tags="query-select-all", indent=0]
@@ -158,7 +150,7 @@ See: <<objc:querybuilder:::lbl-resultsets>> for more on processing query results
 
 
 [#objc:querybuilder:::lbl-return-properties]
-==== Return Selected Properties
+=== Return Selected Properties
 To access only specific properties, specify a comma-separated list of `SelectResult` expressions, one for each property, in the select statement of your query  -- see: <<objc:querybuilder:::ex-select-properties>>
 
 [#ex-select-properties]
@@ -168,7 +160,7 @@ To access only specific properties, specify a comma-separated list of `SelectRes
 [#objc:querybuilder:::ex-select-properties]
 ====
 
-pass:q,a[In this query we retrieve and then print the `_id`, `type` and `name` properties of each document.]
+In this query we retrieve and then print the `_id`, `type` and `name` properties of each document.
 
 // Show Main Snippet
 // include::objc:example$code_snippets/SampleCodeTest.m[tags="query-select-props", indent=0]
@@ -222,7 +214,7 @@ See: <<objc:querybuilder:::lbl-resultsets>> for more on processing query results
 
 
 [#objc:querybuilder:::lbl-where]
-=== WHERE statement
+== WHERE statement
 
 In this section::
 <<objc:querybuilder:::lbl-comp-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
@@ -237,7 +229,7 @@ You can chain any number of Expressions in order to implement sophisticated filt
 
 
 [#objc:querybuilder:::lbl-comp-ops]
-==== Comparison Operators
+=== Comparison Operators
 The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryExpression.html#/Comparison%20operators:[Expression Comparators] can be used in the WHERE statement to specify on which property to match documents.
 In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
 
@@ -285,12 +277,12 @@ for (CBLQueryResult *result in rs) {
 
 
 [#objc:querybuilder:::lbl-coll-ops]
-==== Collection Operators
+=== Collection Operators
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryArrayFunction.html[ArrayFunction Collection Operators] are useful to check if a given value is present in an array.
 
 
 [#objc:querybuilder:::contains-operator]
-===== CONTAINS Operator
+==== CONTAINS Operator
 The following example uses the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryArrayFunction.html[CBLQueryArrayFunction]` to find documents where the `public_likes` array property contains a value equal to "Armani Langworth".
 
 [pass:q,a[source, json, subs="+attributes, +macros"]]
@@ -327,7 +319,7 @@ for (CBLQueryResult *result in rs) {
 
 
 [#objc:querybuilder:::in-operator]
-===== IN Operator
+==== IN Operator
 
 The `IN` operator is useful when you need to explicitly list out the values to test against.
 The following example looks for documents whose `first`, `last` or `username` property value equals "Armani".
@@ -348,14 +340,14 @@ NSArray *values = @[[CBLQueryExpression property:@"first"],
 
 
 [#objc:querybuilder:::lbl-like-ops]
-==== Like Operator
+=== Like Operator
 In this section::
 <<objc:querybuilder:::lbl-string-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<objc:querybuilder:::lbl-wild-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<objc:querybuilder:::lbl-wild-chars>>
 
 [#objc:querybuilder:::lbl-string-match]
-===== String Matching
+==== String Matching
 The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryExpression.html#/c:objc(cs)CBLQueryExpression(im)like:[Like()] operator can be used for string matching -- see <<objc:querybuilder:::ex-like-case-insensitive>>
 
 NOTE: The `like` operator performs **case sensitive** matches. +
@@ -400,7 +392,7 @@ for (CBLQueryResult *result in rs) {
 
 
 [#objc:querybuilder:::lbl-wild-match]
-===== Wildcard Match
+==== Wildcard Match
 
 We can use `%` sign within a `like` expression to do a wildcard match against zero or more characters.
 Using wildcards allows you to have some fuzziness in your search string.
@@ -444,7 +436,7 @@ CBLQuery *query = [CBLQueryBuilder select:@[id, country, name]
 
 
 [#objc:querybuilder:::lbl-wild-chars]
-===== Wildcard Character Match
+==== Wildcard Character Match
 
 We can use an `_` sign within a like expression to do a wildcard match against a single character.
 
@@ -484,7 +476,7 @@ CBLQuery *query = [CBLQueryBuilder select:@[id, country, name]
 
 
 [#objc:querybuilder:::lbl-regex-ops]
-==== Regex Operator
+=== Regex Operator
 
 Similar to the wildcards in `like` expressions, `regex` based pattern matching allow you to introduce an element of fuzziness in your search string -- see the code shown in <<objc:querybuilder:::ex-regex>>.
 
@@ -527,7 +519,7 @@ TIP: For more on the regex spec used by pass:q,a[Couchbase{nbsp}Lite] see http:/
 
 
 [#objc:querybuilder:::lbl-deleted-ops]
-==== Deleted Document
+=== Deleted Document
 You can query documents that have been deleted (tombstones) footnote:fn2x5[Starting in Couchbase Lite 2.5] as shown in <<objc:querybuilder:::ex-del-qry>>.
 
 .Query to select Deleted Documents
@@ -537,7 +529,7 @@ You can query documents that have been deleted (tombstones) footnote:fn2x5[Start
 [#objc:querybuilder:::ex-del-qry]
 ====
 
-pass:q,a[This example shows how to query deleted documents in the database. It returns is an array of key-value pairs.]
+This example shows how to query deleted documents in the database. It returns is an array of key-value pairs.
 
 // Show Main Snippet
 // include::objc:example$code_snippets/SampleCodeTest.m[tags="query-deleted-documents", indent=0]
@@ -554,7 +546,7 @@ CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult expression:CBL
 
 
 [#objc:querybuilder:::lbl-join]
-=== JOIN statement
+== JOIN statement
 The JOIN clause enables you to select data from multiple documents that have been linked by criteria specified in the JOIN statement.
 For example to combine airline details with route details, linked by the airline id -- see <<objc:querybuilder:::ex-join>>.
 
@@ -565,7 +557,7 @@ For example to combine airline details with route details, linked by the airline
 [#objc:querybuilder:::ex-join]
 ====
 
-pass:q,a[This example JOINS the document of type `route` with documents of type `airline` using the document ID (`_id`) on the _airline_ document and `airlineid` on the _route_ document.]
+This example JOINS the document of type `route` with documents of type `airline` using the document ID (`_id`) on the _airline_ document and `airlineid` on the _route_ document.
 
 // Show Main Snippet
 // include::objc:example$code_snippets/SampleCodeTest.m[tags="query-join", indent=0]
@@ -606,7 +598,7 @@ CBLQuery *query = [CBLQueryBuilder select:@[name, callsign, dest, stops, airline
 
 
 [#objc:querybuilder:::lbl-group]
-=== GROUP BY statement
+== GROUP BY statement
 You can perform further processing on the data in your result set before the final projection is generated.
 
 The following example looks for the number of airports at an altitude of 300 ft or higher and groups the results by country and timezone.
@@ -630,7 +622,7 @@ The following example looks for the number of airports at an altitude of 300 ft 
 [#objc:querybuilder:::ex-grpby-qry]
 ====
 
-pass:q,a[This example shows a query that selects all airports with an altitude above 300ft. The output (a count, $1) is grouped by country, within timezone.]
+This example shows a query that selects all airports with an altitude above 300ft. The output (a count, $1) is grouped by country, within timezone.
 
 // Show Main Snippet
 // include::objc:example$code_snippets/SampleCodeTest.m[tags="query-groupby", indent=0]
@@ -665,7 +657,7 @@ There are 123 airports on the America/Denver timezone located in United States a
 
 
 [#objc:querybuilder:::lbl-order]
-=== ORDER BY statement
+== ORDER BY statement
 
 It is possible to sort the results of a query based on a given expression result -- see <<objc:querybuilder:::ex-orderby-qry>>
 
@@ -676,7 +668,7 @@ It is possible to sort the results of a query based on a given expression result
 [#objc:querybuilder:::ex-orderby-qry]
 ====
 
-pass:q,a[This example shows a query that returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.]
+This example shows a query that returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.
 
 // Show Main Snippet
 // include::objc:example$code_snippets/SampleCodeTest.m[tags="query-orderby", indent=0]
@@ -710,7 +702,7 @@ Avignon
 
 
 [#objc:querybuilder:::lbl-date-time]
-=== Date/Time Functions
+== Date/Time Functions
 
 
 Couchbase Lite documents support a <<objc:querybuilder:::initializers,date type>> that internally stores dates in ISO 8601 with the GMT/UTC timezone.
@@ -734,7 +726,7 @@ The end result will be an expression (with string content representing the date 
 
 
 [#objc:querybuilder:::lbl-resultsets]
-=== Result Sets
+== Result Sets
 In this section::
 <<objc:querybuilder:::lbl-process-resultset>>{nbsp}{nbsp}|{nbsp}{nbsp}
 <<objc:querybuilder:::lbl-all-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
@@ -745,7 +737,7 @@ In this section::
 
 
 [#objc:querybuilder:::lbl-process-resultset]
-==== Processing
+=== Processing
 
 This section shows how to handle the returned result sets for different types of `SELECT` statements.
 
@@ -770,10 +762,10 @@ To unpack these result sets you need to iterate this array.
 
 
 [#objc:querybuilder:::lbl-all-sel]
-==== Select All Properties
+=== Select All Properties
 
 [#objc:querybuilder:::query]
-===== Query
+==== Query
 The `Select` statement for this type of query, returns all document properties for each document matching the query criteria -- see <<objc:querybuilder:::ex-all-qry>>
 
 .Query selecting All Properties
@@ -801,7 +793,7 @@ CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
 
 
 [#objc:querybuilder:::result-set-format]
-===== Result Set Format
+==== Result Set Format
 The result set returned by queries using `SelectResult.all` is an array of dictionary objects -- one for each document matching the query criteria.
 
 For each result object, the key is the database name and the 'value' is a dictionary representing each document property as a key-value pair -- see: <<objc:querybuilder:::ex-all-rtn>>.
@@ -845,7 +837,7 @@ For each result object, the key is the database name and the 'value' is a dictio
 ====
 
 [#objc:querybuilder:::result-set-access]
-===== Result Set Access
+==== Result Set Access
 
 In this case access the retrieved document properties by converting each row's value, in turn, to a dictionary -- as shown in <<objc:querybuilder:::ex-all-acc>>.
 
@@ -886,10 +878,10 @@ You can add this dictionary to an array of returned matches, for processing else
 
 
 [#objc:querybuilder:::lbl-specific-sel]
-==== Select Specific Properties
+=== Select Specific Properties
 
 [#objc:querybuilder:::query-2]
-===== Query
+==== Query
 Here we use `SelectResult.expression(property("<property-name>")))` to specify the document properties we want our query to return -- see: <<objc:querybuilder:::ex-specific-qry>>.
 
 .Query selecting Specific Properties
@@ -925,7 +917,7 @@ CBLQuery *query = [CBLQueryBuilder select:@[id, type, name, city]
 
 
 [#objc:querybuilder:::result-set-format-2]
-===== Result Set Format
+==== Result Set Format
 The result set returned when selecting only specific document properties is an array of dictionary objects -- one for each document matching the query criteria.
 
 Each result object comprises a key-value pair for each selected document property -- see <<objc:querybuilder:::ex-specific-rtn>>
@@ -955,7 +947,7 @@ Each result object comprises a key-value pair for each selected document propert
 ====
 
 [#objc:querybuilder:::result-set-access-2]
-===== Result Set Access
+==== Result Set Access
 Access the retrieved properties by converting each row into a dictionary -- as shown in <<objc:querybuilder:::ex-specific-acc>>.
 
 .Using Returned Document Properties (Specific Properties)
@@ -988,10 +980,10 @@ for (CBLQueryResult *result in results) { // all results
 
 
 [#objc:querybuilder:::lbl-id-sel]
-==== Select Document Id Only
+=== Select Document Id Only
 
 [#objc:querybuilder:::query-3]
-===== Query
+==== Query
 You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time -- see: <<objc:querybuilder:::ex-id-qry>>.
 
 .Query selecting only Doc Id
@@ -1021,7 +1013,7 @@ CBLQuery *query = [CBLQueryBuilder select:@[selectResult]
 
 
 [#objc:querybuilder:::result-set-format-3]
-===== Result Set Format
+==== Result Set Format
 The result set returned by queries using a SelectResult expression of the form `SelectResult.expression(meta.id)` is an array of dictionary objects -- one for each document matching the query criteria.
 Each result object has `id` as the key and the ID value as its value -- -see <<objc:querybuilder:::ex-id-rtn>>.
 
@@ -1044,7 +1036,7 @@ Each result object has `id` as the key and the ID value as its value -- -see <<o
 ====
 
 [#objc:querybuilder:::result-set-access-3]
-===== Result Set Access
+==== Result Set Access
 
 In this case, access the required document's properties by unpacking the `id` and using it to get the document from the database -- see: <<objc:querybuilder:::ex-id-acc>>.
 
@@ -1082,11 +1074,11 @@ for (CBLQueryResult *result in results) {
 
 
 [#objc:querybuilder:::lbl-count-sel]
-==== Select Count-only
+=== Select Count-only
 
 
 [#objc:querybuilder:::query-4]
-===== Query
+==== Query
 
 .Query selecting a Count-only
 [#ex-count-qry]
@@ -1126,7 +1118,7 @@ for (CBLQueryResult *result in results) {
 <.> The alias name, `mycount`, is used to access the count value.
 
 [#objc:querybuilder:::result-set-format-4]
-===== Result Set Format
+==== Result Set Format
 The result set returned by a count such as `Select.expression(Function.count(Expression.all)))` is a key-value pair.
 The key is the count name, as defined using `SelectResult.as` -- see: <<objc:querybuilder:::ex-count-rtn>> for the format and <<objc:querybuilder:::ex-count-qry>> for the query.
 
@@ -1146,7 +1138,7 @@ The key is the count name, as defined using `SelectResult.as` -- see: <<objc:que
 ====
 
 [#objc:querybuilder:::result-set-access-4]
-===== Result Set Access
+==== Result Set Access
 
 Access the count using its alias name (`mycount` in this example) -- see <<objc:querybuilder:::ex-count-acc>>
 
@@ -1177,7 +1169,7 @@ for (CBLQueryResult *result in results) {
 <.> Get the count using the `SelectResult.as` alias, which is used as its key.
 
 [#objc:querybuilder:::lbl-pagination]
-==== Handling Pagination
+=== Handling Pagination
 One way to handle pagination in high-volume queries is to retrieve the results in batches.
 Use the `limit` and `offset` feature, to return a defined number of results starting from a given offset -- see: <<objc:querybuilder:::ex-pagination>>.
 
@@ -1217,7 +1209,7 @@ TIP: For more on using the QueryBuilder API, see our blog: https://blog.couchbas
 
 
 [#objc:querybuilder:::json-result-sets]
-=== JSON Result Sets
+== JSON Result Sets
 
 Couchbase Lite for Objective-C provides a convenience API to convert query results to JSON strings.
 
@@ -1228,7 +1220,7 @@ Couchbase Lite for Objective-C provides a convenience API to convert query resul
 [#objc:querybuilder:::ex-json]
 ====
 
-pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryResult.html#/c:objc(cs)CBLQueryResult(im)toJSON[CBLResult.toJSON] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<objc:querybuilder:::ex-json>> for a working example.]
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryResult.html#/c:objc(cs)CBLQueryResult(im)toJSON[CBLResult.toJSON] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<objc:querybuilder:::ex-json>> for a working example.
 
 // Show Main Snippet
 // include::objc:example$code_snippets/SampleCodeTest.m[tags="query-access-json", indent=0]
@@ -1284,7 +1276,7 @@ If your query selects a sub-set of available properties then the JSON format wil
 
 
 [#objc:querybuilder:::lbl-predquery]
-=== Predictive Query
+== Predictive Query
 
 .Enterprise Edition only
 IMPORTANT: Predictive Query is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
@@ -1293,7 +1285,7 @@ Predictive Query enables Couchbase Lite queries to use machine learning, by prov
 
 Let's consider an image classifier model that takes a picture as input and outputs a label and probability.
 
-image::couchbase-lite/current/_images/predictive-diagram.png[]
+image::ROOT:predictive-diagram.png[]
 
 To run a predictive query with a model as the one shown above, you must implement the following steps.
 
@@ -1305,7 +1297,7 @@ To run a predictive query with a model as the one shown above, you must implemen
 
 
 [#objc:querybuilder:::integrate-the-model]
-==== Integrate the Model
+=== Integrate the Model
 
 To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `predict()` -- see: <<objc:querybuilder:::int-pred-model>>.
 
@@ -1361,7 +1353,7 @@ Therefore, the supported data type will be constrained by the data type that the
 
 
 [#objc:querybuilder:::register-the-model]
-==== Register the Model
+=== Register the Model
 
 To register the model you must create a new instance and pass it to the `Database.prediction.registerModel` static method.
 
@@ -1386,7 +1378,7 @@ ImageClassifierModel *model = [[ImageClassifierModel alloc] init];
 
 
 [#objc:querybuilder:::create-an-index]
-==== Create an Index
+=== Create an Index
 
 Creating an index for a predictive query is highly recommended.
 By computing the predictions during writes and building a prediction index, you can significantly improve the speed of prediction queries (which would otherwise have to be computed during reads).
@@ -1397,7 +1389,7 @@ There are two types of indexes for predictive queries:
 * <<objc:querybuilder:::predictive-index,Predictive Index>>
 
 [#objc:querybuilder:::value-index]
-===== Value Index
+==== Value Index
 
 The code below creates a value index from the "label" value of the prediction result.
 When documents are added or updated, the index will call the prediction function to update the label value in the index.
@@ -1426,7 +1418,7 @@ CBLValueIndex *index = [CBLIndexBuilder valueIndexWithItems:@[[CBLValueIndexItem
 
 
 [#objc:querybuilder:::predictive-index]
-===== Predictive Index
+==== Predictive Index
 
 Predictive Index is a new index type used for predictive query.
 It differs from the value index in that it caches the predictive results and creates a value index from that cache when the predictive results values are specified.
@@ -1438,7 +1430,7 @@ It differs from the value index in that it caches the predictive results and cre
 [#objc:querybuilder:::crt-val-index]
 ====
 
-pass:q,a[Here we create a predictive index from the `label` value of the prediction result.]
+Here we create a predictive index from the `label` value of the prediction result.
 
 // Show Main Snippet
 // include::objc:example$code_snippets/SampleCodeTest.m[tags="predictive-query-predictive-index", indent=0]
@@ -1455,7 +1447,7 @@ CBLPredictiveIndex *index = [CBLIndexBuilder predictiveIndexWithModel:@"ImageCla
 
 
 [#objc:querybuilder:::run-a-prediction-query]
-==== Run a Prediction Query
+=== Run a Prediction Query
 
 The code below creates a query that calls the prediction function to return the "label" value for the first 10 results in the database.
 
@@ -1494,7 +1486,7 @@ NOTE: The null value returned by the prediction method will be interpreted as MI
 
 
 [#objc:querybuilder:::deregister-the-model]
-==== Deregister the Model
+=== Deregister the Model
 
 To deregister the model you must call the `Database.prediction.unregisterModel` static method.
 
@@ -1518,7 +1510,7 @@ To deregister the model you must call the `Database.prediction.unregisterModel` 
 
 
 [#objc:querybuilder:::integrate-a-model-with-coremlpredictivemodel]
-==== Integrate a Model with CoreMLPredictiveModel
+=== Integrate a Model with CoreMLPredictiveModel
 
 NOTE: iOS Only
 
@@ -1527,6 +1519,7 @@ NOTE: iOS Only
 The following example describes how to load a Core ML model using `CoreMLPredictiveModel`.
 All other steps (register, indexing, query, unregister) are the same as with a model that is integrated using your own `PredictiveModel` implementation.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=coreml-predictive-model,indent=0]
 [source]
 ----
 
@@ -1543,13 +1536,13 @@ CBLCoreMLPredictiveModel *predictiveModel = [[CBLCoreMLPredictiveModel alloc] in
 
 
 [#objc:querybuilder:::related-content]
-=== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-==== {empty}
+====== {empty}
 .How to . . .
 * xref:objc:gs-prereqs.adoc[Prerequisites]
 * xref:objc:gs-install.adoc[Install]
@@ -1558,8 +1551,8 @@ CBLCoreMLPredictiveModel *predictiveModel = [[CBLCoreMLPredictiveModel alloc] in
 
 .
 
-[discrete.colum#objc:querybuilder:::-2n]
-==== {empty}
+[.column#objc:querybuilder:::-2]
+====== {empty}
 .Learn more . . .
 * xref:objc:database.adoc[Databases]
 * xref:objc:document.adoc[Documents]
@@ -1570,8 +1563,8 @@ CBLCoreMLPredictiveModel *predictiveModel = [[CBLCoreMLPredictiveModel alloc] in
 .
 
 
-[discrete.colum#objc:querybuilder:::-3n]
-==== {empty}
+[.column#objc:querybuilder:::-3]
+====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |

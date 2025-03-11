@@ -1,13 +1,5 @@
-:docname: gs-build
-:page-module: c
-:page-relative-src-path: gs-build.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#c:gs-build:::]
-== Build and Run
+= Build and Run
 :page-aliases: clang:gs-build.adoc
 :page-role:
 :description: Build and run a starter app to validate your install of Couchbase Lite on C
@@ -26,7 +18,7 @@ xref:c:gs-install.adoc[Install]
 
 
 [#c:gs-build:::verify-install]
-=== Verify Install
+== Verify Install
 
 Now you have _Couchbase Lite for C_ installed, you can verify that your apps build correctly.
 
@@ -37,12 +29,13 @@ Running it will create a database, add a document, retrieve the document, update
 .Sample code
 [#c:gs-build:::ex-c-starter]
 ====
+// include::c:example$code_snippets/main.cpp[tag=getting-started,indent=0]
 [source, c]
 ----
 //  Purpose-- provide an overview of available crud  and sync functionality
 //
 // Get the database (and create it if it doesn't exist)
-CBLError err;
+CBLError err{};
 CBLDatabase* database = CBLDatabase_Open(FLSTR("mydb"), NULL, &err);
 if(!database) {
     // Error handling.  For brevity, this is truncated in the rest of the snippet
@@ -169,13 +162,13 @@ CBLReplicator_Start(replicator, false);
 
 
 [#c:gs-build:::related-content]
-=== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-==== {empty}
+====== {empty}
 .How to . . .
 * xref:c:gs-prereqs.adoc[Prerequisites]
 * xref:c:gs-install.adoc[Install]
@@ -184,8 +177,8 @@ CBLReplicator_Start(replicator, false);
 
 .
 
-[discrete.colum#c:gs-build:::-2n]
-==== {empty}
+[.column#c:gs-build:::-2]
+====== {empty}
 .Learn more . . .
 * xref:c:database.adoc[Databases]
 * xref:c:document.adoc[Documents]
@@ -196,8 +189,8 @@ CBLReplicator_Start(replicator, false);
 .
 
 
-[discrete.colum#c:gs-build:::-3n]
-==== {empty}
+[.column#c:gs-build:::-3]
+====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |

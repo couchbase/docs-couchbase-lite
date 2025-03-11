@@ -1,11 +1,3 @@
-:docname: document
-:page-module: c
-:page-relative-src-path: document.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#c:document:::]
 = Documents
 :page-aliases: clang:document.adoc
@@ -138,7 +130,7 @@ All the CRUD examples in this document operate on a `collection` object (here, t
 [source, c]
 ----
 // Open or create DB if it doesn't exist
-CBLError err;
+CBLError err{};
 CBLDatabase* database = CBLDatabase_Open(FLSTR("mydb"), NULL, &err);
 
 if(!database) {
@@ -233,7 +225,7 @@ Each data item is stored as a key-value pair.
 ----
 // Initialize and populate the document
 
-    // Add document type and hotel name as string
+// Add document type and hotel name as string
 FLMutableDict_SetString(properties, FLSTR("type"), FLSTR("hotel"));
 FLMutableDict_SetString(properties, FLSTR("hotel"), FLSTR(""));
 
@@ -243,7 +235,7 @@ FLMutableDict_SetFloat(properties, FLSTR("room_rate"), 121.75f);
 // Add address (dictionary)
 FLMutableDict_SetDict(properties, FLSTR("address"), address);
 
-    // Add phone numbers(array)
+// Add phone numbers(array)
 FLMutableDict_SetArray(properties, FLSTR("phones"), phones);
 
 ----
@@ -263,7 +255,7 @@ This will auto-generate the document id.
 // include::c:example$code_snippets/main.cpp[tags="datatype_usage_persist", indent=0]
 [source, c]
 ----
-CBLError err;
+CBLError err{};
 CBLCollection_SaveDocument(collection, mutableDoc, &err);
 ----
 
@@ -278,7 +270,7 @@ With your document saved, you can now close our Couchbase Lite database.
 // include::c:example$code_snippets/main.cpp[tags="datatype_usage_closedb", indent=0]
 [source, c]
 ----
-CBLError err;
+CBLError err{};
 CBLDatabase_Close(database, &err);
 ----
 
@@ -324,7 +316,7 @@ FLMutableArray_Release(phones);
 // include::c:example$code_snippets/main.cpp[tags="datatype_dictionary", indent=0]
 [source, c]
 ----
-CBLError err;
+CBLError err{};
 const CBLDocument *doc = CBLCollection_GetDocument(collection, FLSTR("doc1"), &err);
 FLDict properties = CBLDocument_Properties(doc);
 
@@ -383,7 +375,7 @@ FLMutableDict_SetString(dict, FLSTR("city"), FLSTR("San Francisco"));
 CBLDocument *doc = CBLDocument_Create();
 FLMutableDict properties = CBLDocument_MutableProperties(doc);
 FLMutableDict_SetDict(properties, FLSTR("address"), dict);
-CBLError err;
+CBLError err{};
 CBLCollection_SaveDocument(collection, doc, &err);
 CBLDocument_Release(doc);
 
@@ -415,7 +407,7 @@ FLMutableDict_Release(dict);
 // include::c:example$code_snippets/main.cpp[tags="datatype_array", indent=0]
 [source, c]
 ----
-CBLError err;
+CBLError err{};
 const CBLDocument *doc = CBLCollection_GetDocument(collection, FLSTR("doc1"), &err);
 FLDict properties = CBLDocument_Properties(doc);
 
@@ -471,7 +463,7 @@ FLMutableArray_AppendString(phones, FLSTR("650-000-0001"));
 CBLDocument *doc = CBLDocument_Create();
 FLMutableDict properties = CBLDocument_MutableProperties(doc);
 FLMutableDict_SetArray(properties, FLSTR("phones"), phones);
-CBLError err;
+CBLError err{};
 CBLCollection_SaveDocument(collection, doc, &err);
 CBLDocument_Release(doc);
 
@@ -511,13 +503,12 @@ You can use this behavior to check if a document with a given ID already exists 
 [#c:document:::ex-persists-doc]
 ====
 
-pass:q,a[The following code example creates a document and persists it to the database.]
+The following code example creates a document and persists it to the database.
 
 // Show Main Snippet
 // include::c:example$code_snippets/main.cpp[tags="initializer", indent=0]
 [source, c]
 ----
-
 CBLDocument* doc = CBLDocument_CreateWithID(FLSTR("xyz"));
 FLMutableDict properties = CBLDocument_MutableProperties(doc);
 FLMutableDict_SetString(properties, FLSTR("type"), FLSTR("task"));
@@ -526,7 +517,7 @@ FLMutableDict_SetString(properties, FLSTR("owner"), FLSTR("todo"));
 // Storing time in millisecond, bluntly
 FLMutableDict_SetUInt(properties, FLSTR("createdAt"), time(NULL) * 1000);
 
-CBLError err;
+CBLError err{};
 CBLCollection_SaveDocument(collection, doc, &err);
 CBLDocument_Release(doc);
 ----
@@ -558,14 +549,13 @@ _cbl_warn_unused _cbl_returns_nonnull;
 [#c:document:::ex-update-doc]
 ====
 
-pass:q,a[Changes to the document are persisted to the database when the `save` method is called.]
+Changes to the document are persisted to the database when the `save` method is called.
 
 // Show Main Snippet
 // include::c:example$code_snippets/main.cpp[tags="update-document", indent=0]
 [source, c]
 ----
-
-CBLError err;
+CBLError err{};
 CBLDocument* mutableDoc = CBLCollection_GetMutableDocument(collection, FLSTR("xyz"), &err);
 FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
 FLMutableDict_SetString(properties, FLSTR("name"), FLSTR("apples"));
@@ -598,8 +588,7 @@ The following example persists a few documents in batch.
 // include::c:example$code_snippets/main.cpp[tags="batch", indent=0]
 [source, c]
 ----
-
-CBLError err;
+CBLError err{};
 CBLDatabase_BeginTransaction(database, &err);
 char buffer[7];
 for(int i = 0; i < 10; i++) {
@@ -672,14 +661,13 @@ This example sets the TTL for a document to 1 day from the current time.
 // include::c:example$code_snippets/main.cpp[tags="document-expiration", indent=0]
 [source, c]
 ----
-// Purge the document one day from now
-
-// Overly simplistic for example purposes
+// Purge the document one day from now.
+// Overly simplistic for example purposes.
 // NOTE: API takes milliseconds
 time_t ttl = time(NULL) + 24 * 60 * 60;
 ttl *= 1000;
 
-CBLError err;
+CBLError err{};
 CBLCollection_SetDocumentExpiration(collection, FLSTR("doc123"), ttl, &err);
 
 // Reset expiration
@@ -885,7 +873,7 @@ This is done using the `init(json)` or `init(id: json:)` constructor -- see: <<c
 FLString json = FLSTR("{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",\"country\":\"Australia\"}");
 
 // Create a document and set the JSON data to the document
-CBLError err;
+CBLError err{};
 CBLDocument* newDoc = CBLDocument_CreateWithID(FLSTR("hotel_1002"));
 CBLDocument_SetJSON(newDoc, json, &err);
 
@@ -925,7 +913,7 @@ Convert a `Query Result` to JSON using its {to-JSON} accessor method.
 [#c:document:::ex-json]
 ====
 
-pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__json.html#ga3450acc0690101545d75986b91e4080[FLValue_ToJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<c:document:::ex-json>> for a working example.]
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__json.html#ga3450acc0690101545d75986b91e4080[FLValue_ToJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<c:document:::ex-json>> for a working example.
 
 // Show Main Snippet
 // include::c:example$code_snippets/main.cpp[tags="query-access-json", indent=0]
@@ -939,7 +927,6 @@ while(CBLResultSet_Next(results)) {
     FLSliceResult_Release(json);
 }
 CBLResultSet_Release(results);
-
 ----
 
 
@@ -987,7 +974,7 @@ If your query selects a sub-set of available properties then the JSON format wil
 
 .
 
-[discrete.colum#c:document:::-2n]
+[.column#c:document:::-2]
 === {empty}
 .Learn more . . .
 * xref:c:database.adoc[Databases]
@@ -999,7 +986,7 @@ If your query selects a sub-set of available properties then the JSON format wil
 .
 
 
-[discrete.colum#c:document:::-3n]
+[.column#c:document:::-3]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
@@ -1020,7 +1007,7 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 <div class="card-row three-column-row">
 ++++
 
-[discrete.colum#c:document:::-4n]
+[.column#c:document:::-4]
 === {empty}
 .How to . . .
 * xref:c:gs-prereqs.adoc[Prerequisites]
@@ -1030,7 +1017,7 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
 
-[discrete.colum#c:document:::-5n]
+[.column#c:document:::-5]
 === {empty}
 .Learn more . . .
 * xref:c:database.adoc[Databases]
@@ -1042,7 +1029,7 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 .
 
 
-[discrete.colum#c:document:::-6n]
+[.column#c:document:::-6]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

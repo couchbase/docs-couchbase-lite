@@ -1,13 +1,5 @@
-:docname: gs-build
-:page-module: android
-:page-relative-src-path: gs-build.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#android:gs-build:::]
-== Build and Run
+= Build and Run
 :page-aliases: start/java-android-gs-build.adoc
 :page-role:
 :description: Build and run a starter app to validate your install of Couchbase Lite on Android
@@ -28,7 +20,7 @@ _Abstract -- This content provides sample code and instructions that enable you 
 
 // :ziputils: ROOT:example$/java-android/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
 [#android:gs-build:::introduction]
-=== Introduction
+== Introduction
 
 
 The Getting Started app is a very basic Android app that uses a database manager singleton.
@@ -50,11 +42,11 @@ If you had problems, or just want more information on the app, there's more belo
 // !!!GBM: THIS IMAGE NEEDS TO BE REPLACED
 [#android:gs-build:::img-output]
 .Logcat Output from Android Studio
-image::couchbase-lite/current/_images/getstarted-output-ktx.png[,600]
+image::ROOT:getstarted-output-ktx.png[,600]
 
 
 [#android:gs-build:::getting-started-app]
-=== Getting Started App
+== Getting Started App
 The Getting Started app shows examples of the essential Couchbase for Android CRUD operations, including:
 
 * Initialize the library
@@ -70,7 +62,7 @@ Whilst no exemplar of a real application, it will give you a good idea how to ge
 
 
 [#android:gs-build:::add-the-app-to-your-own-project]
-=== Add the App to Your Own Project
+== Add the App to Your Own Project
 
 
 . Create a new 'empty activity' project
@@ -83,7 +75,7 @@ You should be able to create a document and persist it to the database.
 
 
 [#android:gs-build:::sample-code-in-detail]
-==== Sample Code in Detail
+=== Sample Code in Detail
 [#android:gs-build:::ex-test-code]
 ====
 [tabs]
@@ -169,7 +161,7 @@ Kotlin::
     // OPTIONAL -- if you have Sync Gateway Installed you can try replication too.
     // Create a replicator to push and pull changes to and from the cloud.
     // Be sure to hold a reference to the Replicator to prevent it from being GCed
-    fun replicate(): Flow<ReplicatorChange>? {
+    fun replicate(uri: String): Flow<ReplicatorChange>? {
         val coll = collection ?: return null
 
         val collConfig = CollectionConfiguration()
@@ -177,7 +169,7 @@ Kotlin::
 
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/getting-started-db")),
+                target = URLEndpoint(URI(uri)),
                 collections = mapOf(setOf(coll) to collConfig),
                 type = ReplicatorType.PUSH_AND_PULL,
                 authenticator = BasicAuthenticator("sync-gateway", "password".toCharArray())
@@ -276,13 +268,13 @@ Java::
     // OPTIONAL -- if you have Sync Gateway Installed you can try replication too.
     // Create a replicator to push and pull changes to and from the cloud.
     // Be sure to hold a reference somewhere to prevent the Replicator from being GCed
-    public ListenerToken replicate(ReplicatorChangeListener listener) throws URISyntaxException {
+    public ListenerToken replicate(String uri, ReplicatorChangeListener listener) throws URISyntaxException {
         CollectionConfiguration collConfig = new CollectionConfiguration()
             .setPullFilter((doc, flags) -> "Java".equals(doc.getString("language")));
 
         ReplicatorConfiguration replConfig =
             new ReplicatorConfiguration(
-                new URLEndpoint(new URI("ws://localhost:4984/getting-started-db")))
+                new URLEndpoint(new URI(uri)))
                 .addCollection(collection, collConfig)
                 .setType(ReplicatorType.PUSH_AND_PULL)
                 .setAuthenticator(new BasicAuthenticator("sync-gateway", "password".toCharArray()));
@@ -320,7 +312,7 @@ Java::
 
 
 [#android:gs-build:::snags-and-pitfalls]
-=== Snags and Pitfalls
+== Snags and Pitfalls
 
 
 Mostly around Gradle and versions.
@@ -331,7 +323,7 @@ See also -- xref:sync-gateway::get-started-install.adoc[Install Sync Gateway]
 
 
 [#android:gs-build:::minification]
-=== Minification
+== Minification
 
 
 An application that enables minification must ensure that certain pieces of pass:q,a[Couchbase{nbsp}Lite] library code are not changed -- see <<android:gs-build:::ruleset>> for a near-minimal rule set that retains the needed code:
@@ -361,13 +353,13 @@ An application that enables minification must ensure that certain pieces of pass
 
 
 [#android:gs-build:::related-content]
-=== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-==== {empty}
+====== {empty}
 .How to . . .
 * xref:android:gs-prereqs.adoc[Prerequisites]
 * xref:android:gs-install.adoc[Install]
@@ -376,8 +368,8 @@ An application that enables minification must ensure that certain pieces of pass
 
 .
 
-[discrete.colum#android:gs-build:::-2n]
-==== {empty}
+[.column#android:gs-build:::-2]
+====== {empty}
 .Learn more . . .
 * xref:android:database.adoc[Databases]
 * xref:android:document.adoc[Documents]
@@ -388,8 +380,8 @@ An application that enables minification must ensure that certain pieces of pass
 .
 
 
-[discrete.colum#android:gs-build:::-3n]
-==== {empty}
+[.column#android:gs-build:::-3]
+====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |

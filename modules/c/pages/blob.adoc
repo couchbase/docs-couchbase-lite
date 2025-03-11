@@ -1,11 +1,3 @@
-:docname: blob
-:page-module: c
-:page-relative-src-path: blob.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#c:blob:::]
 = Blobs
 :page-aliases: clang:blob.adoc
@@ -20,7 +12,7 @@
 [#c:blob:::introduction]
 == Introduction
 
-pass:q,a[Couchbase{nbsp}Lite] for C uses _blobs_ to store the contents of images, other media files and similar format files as binary objects.
+Couchbase{nbsp}Lite for C uses _blobs_ to store the contents of images, other media files and similar format files as binary objects.
 
 The blob itself is not stored in the document.
 It is held in a separate content-addressable store indexed from the document and retrieved only on-demand.
@@ -80,7 +72,7 @@ FLSliceResult avatar = FLSliceResult_CreateWith(buffer, read);
 CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("image/jpeg"), FLSliceResult_AsSlice(avatar)); // <.>
 FLSliceResult_Release(avatar);
 
-CBLError err;
+CBLError err{};
 FLMutableDict properties = CBLDocument_MutableProperties(newTask);
 FLSlot_SetBlob(FLMutableDict_Set(properties, FLSTR("avatar")), blob);
 CBLCollection_SaveDocument(collection, newTask, &err); // <.>
@@ -109,7 +101,7 @@ If you view a sync'd blob document in {cbs} Admin Console, you will see somethin
 
 .Sample Blob Document
 [#c:blob:::img-blob]
-image::couchbase-lite/current/_images/attach-replicated.png[]
+image::ROOT:attach-replicated.png[]
 
 
 [#c:blob:::related-content]
@@ -128,7 +120,7 @@ image::couchbase-lite/current/_images/attach-replicated.png[]
 
 .
 
-[discrete.colum#c:blob:::-2n]
+[.column#c:blob:::-2]
 === {empty}
 .Learn more . . .
 * xref:c:database.adoc[Databases]
@@ -140,7 +132,7 @@ image::couchbase-lite/current/_images/attach-replicated.png[]
 .
 
 
-[discrete.colum#c:blob:::-3n]
+[.column#c:blob:::-3]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

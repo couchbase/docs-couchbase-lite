@@ -1,11 +1,3 @@
-:docname: replication
-:page-module: c
-:page-relative-src-path: replication.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#c:replication:::]
 = Sync
 :page-aliases: clang:replication.adoc
@@ -176,7 +168,7 @@ static void simpleChangeListener(void* context,
     // NOTE: No error handling, for brevity (see getting started)
     // Note: Android emulator needs to use 10.0.2.2 for localhost (10.0.3.2 for GenyMotion)
 
-    CBLError err;
+    CBLError err{};
     FLString url = FLSTR("ws://localhost:4984/db");
     CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &err); // <.>
 
@@ -193,7 +185,6 @@ static void simpleChangeListener(void* context,
     // Set replication direction and mode
     replConfig.replicatorType = kCBLReplicatorTypePull; // <.>
     replConfig.continuous = true;
-
 
     // Optionally, set auto-purge behavior (here we override default)
     replConfig.disableAutoPurge = true; // <.>
@@ -224,7 +215,6 @@ static void simpleChangeListener(void* context,
 
     // Start replication
     CBLReplicator_Start(replicator, false); // <.>
-
 ----
 
 
@@ -305,7 +295,7 @@ The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) pref
 [source, c]
 ----
 // Initialize the configuration object and set db target
-CBLError err;
+CBLError err{};
 FLString url = FLSTR("ws://localhost:4984/db");
 CBLEndpoint* target =
     CBLEndpoint_CreateWithURL(url, &err); // <.>
@@ -319,7 +309,6 @@ memset(&replConfig, 0, sizeof(CBLReplicatorConfiguration));
 replConfig.collectionCount = 1;
 replConfig.collections = &collectionConfig;
 replConfig.endpoint = target; // <.>
-
 ----
 
 
@@ -366,11 +355,8 @@ We use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}
 // Set replication direction and mode
 replConfig.replicatorType = kCBLReplicatorTypePull; // <.>
 replConfig.continuous = true;
-
 replConfig.replicatorType = kCBLReplicatorTypePull;
-
 replConfig.continuous = true;
-
 ----
 
 
@@ -458,7 +444,6 @@ replConfig.heartbeat = 120; //  <.>
 replConfig.maxAttempts = 20; //  <.>
 
 replConfig.maxAttemptWaitTime = 600; //  <.>
-
 ----
 
 
@@ -570,7 +555,6 @@ if(docs_example_ShowSessionAuth) {
                               FLSTR("optionalCookieName"));
     replConfig.authenticator = sessionAuth; // <.>
 }
-
 ----
 
 
@@ -647,9 +631,7 @@ static bool simpleReplicationFilter(void* context,
 
     // NOTE: Push and pull filters are set per collection
     collectionConfig.pushFilter = simpleReplicationFilter;
-
     collectionConfig.pullFilter = simpleReplicationFilter;
-
 ----
 
 
@@ -684,9 +666,7 @@ static bool simpleReplicationFilter(void* context,
 
     // NOTE: Push and pull filters are set per collection
     collectionConfig.pushFilter = simpleReplicationFilter;
-
     collectionConfig.pullFilter = simpleReplicationFilter;
-
 ----
 
 
@@ -756,7 +736,7 @@ By default, when a user loses access to a channel, the next Couchbase Lite Pull 
 
 Documents that exist in multiple channels belonging to the user (even if they are not actively replicating that channel) are not auto-purged unless the user loses access to all channels.
 
-Users will be receive an `AccessRemoved` notification from the DocumentListener if they lose document access due to channel access revocation; this is sent regardless of the current auto-purge setting.
+When the auto-purge setting is set to `true`, users will receive an `AccessRemoved` notification from the DocumentListener if they lose document access due to channel access revocation.
 
 .Behavior following access revocation
 [#c:replication:::tbl-revoke-behavior, cols="^1h,2a,2a", options="header"]
@@ -849,7 +829,6 @@ Clients wishing to sync previously removed documents must use the resetCheckpoin
 [source, c]
 ----
 replConfig.disableAutoPurge = true; // <.>
-
 ----
 
 
@@ -938,9 +917,7 @@ You can, optionally, add a change listener (see <<c:replication:::lbl-repl-mon>>
 ----
 CBLReplicator* replicator =
 CBLReplicator_Create(&argConfig, &err); // <.>
-
   CBLReplicator_Start(replicator, false); // <.>
-
 ----
 
 
@@ -974,7 +951,6 @@ However, if you do want to force the replication to start again from zero, use t
 [source, c]
 ----
 CBLReplicator_Start(replicator, true); // <.>
-
 ----
 
 
@@ -1041,6 +1017,7 @@ The returned _ReplicationStatus_ structure comprises:
 Adding a Change Listener::
 +
 --
+// include::c:example$code_snippets/main.cpp[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
 [source, c]
 ----
 
@@ -1061,7 +1038,6 @@ static void simpleChangeListener(void* context,
                                             simpleChangeListener,
                                             NULL);
 
-
 ----
 --
 +
@@ -1069,6 +1045,7 @@ static void simpleChangeListener(void* context,
 Using replicator.status::
 +
 --
+// include::c:example$code_snippets/main.cpp[tags=p2p-act-rep-status,indent=0]
 [source, c]
 ----
 
@@ -1083,7 +1060,6 @@ if(thisState.activity==kCBLReplicatorStopped) {
         CBLReplicator_Release(replicator);
     }
 }
-
 
 ----
 --
@@ -1174,7 +1150,6 @@ This code snippet shows how to stop the document listener using the token from t
 // Purpose -- illustrate removal of a listener
 CBLListener_Remove(token_ReplDocListener);
 CBLListener_Remove(token_ReplChangeListener);
-
 ----
 
 
@@ -1246,7 +1221,6 @@ if(!FLDict_IsEmpty(thisPendingIdList)) {
     printf("No Pending Id Docs to process");
 }
 FLDict_Release(thisPendingIdList);
-
 ----
 
 
@@ -1283,7 +1257,6 @@ You can find further information on database operations in xref:c:database.adoc[
 if(CBLReplicator_Status(argRepl).activity!=kCBLReplicatorStopped) {
     CBLReplicator_Stop(argRepl);
 }
-
 ----
 
 
@@ -1472,7 +1445,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 
 .
 
-[discrete.colum#c:replication:::-2n]
+[.column#c:replication:::-2]
 === {empty}
 .Learn more . . .
 * xref:c:database.adoc[Databases]
@@ -1484,7 +1457,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 .
 
 
-[discrete.colum#c:replication:::-3n]
+[.column#c:replication:::-3]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

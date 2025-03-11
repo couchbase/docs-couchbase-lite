@@ -1,13 +1,5 @@
-:docname: p2psync-websocket-using-passive
-:page-module: android
-:page-relative-src-path: p2psync-websocket-using-passive.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#android:p2psync-websocket-using-passive:::]
-=== Passive Peer
+= Passive Peer
 :page-aliases: advance/java-android-p2psync-websocket-using-passive.adoc
 ifdef::prerelease[:page-status: {prerelease}] {enterprise}
 :page-role:
@@ -22,6 +14,22 @@ Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenanc
 --
 
 
+.Android enablers
+[CAUTION]
+
+--
+Allow Unencrypted Network Traffic::
+To use cleartext, un-encrypted, network traffic (`http://` and-or `ws://`),  include `android:usesCleartextTraffic="true"` in the `application` element of the manifest as shown on https://developer.android.com/training/articles/security-config#CleartextTrafficPermitted[android.com^]. +
+*This not recommended in production*.
+
+Use Background Threads::
+As with any network or file I/O activity, CouchbaseLite activities should not be performed on the UI thread.
+*Always* use a *background* thread.
+
+
+--
+
+
 .Code Snippets
 [NOTE]
 All code examples are indicative only.
@@ -30,7 +38,7 @@ Use them as inspiration and adapt these examples to best practice when developin
 
 
 [#android:p2psync-websocket-using-passive:::introduction]
-==== Introduction
+== Introduction
 This content provides code and configuration examples covering the implementation of xref:refer-glossary.adoc#peer-to-peer-sync[Peer-to-Peer Sync] over WebSockets.
 Specifically, it covers the implementation of a xref:refer-glossary.adoc#passive-peer[Passive Peer].
 
@@ -45,7 +53,7 @@ The implementation of this storage differs from platform to platform -- see xref
 
 
 [#android:p2psync-websocket-using-passive:::configuration-summary]
-==== Configuration Summary
+== Configuration Summary
 
 You should configure and initialize a Listener for each Couchbase Lite database instance you want to sync.
 There is no limit on the number of Listeners you may configure -- <<android:p2psync-websocket-using-passive:::simple-listener-initialization>> shows a simple initialization and configuration process.
@@ -176,11 +184,11 @@ Note that client authentication is optional.
 
 
 [#android:p2psync-websocket-using-passive:::api-references]
-==== API References
+== API References
 You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/[Android API References] here.
 
 [#android:p2psync-websocket-using-passive:::device-discovery]
-==== Device Discovery
+== Device Discovery
 *This phase is optional:* If the Listener is initialized on a well-known URL endpoint (for example, a static IP Address or well-known DNS address) then you can configure Active Peers to connect to those.
 
 Before initiating the Listener, you may execute a peer discovery phase.
@@ -191,7 +199,7 @@ The connection is established once the Passive Peer has authenticated and accept
 
 
 [#android:p2psync-websocket-using-passive:::initialize-the-listener-configuration]
-==== Initialize the Listener Configuration
+== Initialize the Listener Configuration
 Initialize the Listener configuration with the local database -- see <<android:p2psync-websocket-using-passive:::ex-locdb>>
 All other configuration values take their default setting.
 
@@ -247,11 +255,11 @@ The database must be opened before the Listener is started. +
 `thisDB` has previously been declared as an object of type `Database`.
 
 [#android:p2psync-websocket-using-passive:::lbl-set-network-and-port]
-==== Set Port and Network Interface
+== Set Port and Network Interface
 
 
 [#android:p2psync-websocket-using-passive:::port-number]
-===== Port number
+=== Port number
 The Listener will automatically select an available port if you do not specify one -- see <<android:p2psync-websocket-using-passive:::ex-port>> for how to specify a port.
 
 // Example 3
@@ -302,7 +310,7 @@ You can query the port using https://docs.couchbase.com/mobile/{major}.{minor}.{
 
 
 [#android:p2psync-websocket-using-passive:::network-interface]
-===== Network Interface
+=== Network Interface
 The Listener will listen on all network interfaces by default.
 
 // Example 4
@@ -354,7 +362,7 @@ This must be either an IP Address or network interface name such as `en0`.
 
 
 [#android:p2psync-websocket-using-passive:::delta-sync]
-==== Delta Sync
+== Delta Sync
 
 Delta Sync allows clients to sync only those parts of a document that have changed.
 This can result in significant bandwidth consumption savings and throughput improvements.
@@ -405,11 +413,11 @@ thisConfig.setEnableDeltaSync(false); // <.>
 Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/URLEndpointListenerConfiguration.html#setEnableDeltaSync-boolean-[setEnableDeltaSync] method to activate or deactivate it.
 
 [#android:p2psync-websocket-using-passive:::lbl-tls-security]
-==== TLS Security
+== TLS Security
 
 
 [#android:p2psync-websocket-using-passive:::enable-or-disable-tls]
-===== Enable or Disable TLS
+=== Enable or Disable TLS
 
 Define whether the connection is to use TLS or clear text.
 
@@ -440,7 +448,7 @@ Active peers will use the `wss://` URL scheme to connect to the listener.
 
 
 [#android:p2psync-websocket-using-passive:::configure-tls-identity-for-listener]
-===== Configure TLS Identity for Listener
+=== Configure TLS Identity for Listener
 
 Define the credentials the server will present to the client for authentication.
 Note that the server must always authenticate itself with the client -- see: xref:android:p2psync-websocket-using-active.adoc#authenticate-listener[Authenticate Listener on Active Peer] for how the client deals with this.
@@ -464,13 +472,12 @@ Here are some example code snippets showing:
 
 .Create Self-Signed Cert
 [#ex-create-tls-id]
-The system generates a self-signed certificate.]
 
 
 [#android:p2psync-websocket-using-passive:::ex-create-tls-id]
 ====
 
-pass:q,a[Create a TLSIdentity for the server using convenience API. +
+Create a TLSIdentity for the server using convenience API.  The system generates a self-signed certificate.
 [tabs]
 =====
 
@@ -483,7 +490,6 @@ Kotlin::
 // include::android:example$codesnippet_collection.kt[tags="listener-config-tls-enable;listener-config-tls-id-full;!listener-config-tls-id-caCert;!listener-config-tls-id-anon", indent=0]
 [source, Kotlin]
 ----
-
 disableTls = false, // <.>
 
 ----
@@ -497,7 +503,6 @@ Java::
 --
 [source, Java]
 ----
-
 thisConfig.setDisableTls(false); // <.>
 
 ----
@@ -518,13 +523,12 @@ Add to secure storage as 'couchbase-docs-cert'.
 
 .Use Anonymous Self-Signed Certificate
 [#ex-anon-tls-id]
-Generated certificates are held in secure storage.]
 
 
 [#android:p2psync-websocket-using-passive:::ex-anon-tls-id]
 ====
 
-pass:q,a[This example uses an _anonymous_ self signed certificate. +
+This example uses an _anonymous_ self signed certificate.  Generated certificates are held in secure storage.
 [tabs]
 =====
 
@@ -573,7 +577,7 @@ This is the default setting.
 
 
 [#android:p2psync-websocket-using-passive:::lbl-authenticating-the-client]
-==== Authenticating the Client
+== Authenticating the Client
 In this section: <<android:p2psync-websocket-using-passive:::use-basic-authentication>>  |  <<android:p2psync-websocket-using-passive:::using-client-certificate-authentication>>  |  <<android:p2psync-websocket-using-passive:::delete-tls-identity>>  |  <<android:p2psync-websocket-using-passive:::the-impact-of-tls-settings>>
 
 Define how the server (Listener) will authenticate the client as one it is prepared to interact with.
@@ -593,7 +597,7 @@ You should initialize the authenticator using one of the following constructors:
 
 
 [#android:p2psync-websocket-using-passive:::use-basic-authentication]
-===== Use Basic Authentication
+=== Use Basic Authentication
 
 Define how to authenticate client-supplied username and password credentials.
 To use client-supplied certificates instead -- see: <<android:p2psync-websocket-using-passive:::using-client-certificate-authentication>>
@@ -617,1800 +621,11 @@ Kotlin::
 // include::android:example$codesnippet_collection.kt[tags="listener-config-client-auth-pwd", indent=0]
 [source, Kotlin]
 ----
-                // Configure Client Security using an Authenticator
-                // For example, Basic Authentication <.>
-                authenticator = ListenerPasswordAuthenticator { usr, pwd ->
-                    (usr === validUser) && (validPass.contentEquals(pwd))
-                }
-            ))
-
-        // Start the listener
-        listener.start() // <.>
-    }
-
-    fun simpleListenerExample(db: Database) {
-        val listener = URLEndpointListener(
-            URLEndpointListenerConfigurationFactory.newConfig(
-                collections = db.collections,
-                authenticator = ListenerPasswordAuthenticator { user, pwd ->
-                    (user == "daniel") && (String(pwd) == "123")  // <.>
-                })
-        )
-        listener.start() // <.>
-        thisListener = listener
-
-    }
-
-    fun overrideConfigExample() {
-        val listener8080 = URLEndpointListenerConfigurationFactory.newConfig(
-            networkInterface = "en0",
-            port = 8080
-        )
-        val listener8081 = listener8080.newConfig(port = 8081)
-    }
-
-    fun listenerStatusCheckExample(db: Database) {
-        val listener = URLEndpointListener(
-            URLEndpointListenerConfigurationFactory
-                .newConfig(collections = db.collections)
-        )
-        listener.start()
-        thisListener = listener
-        val connectionCount = listener.status?.connectionCount // <.>
-        val activeConnectionCount = listener.status?.activeConnectionCount // <.>
-    }
-
-    fun listenerStopExample() {
-        val listener = thisListener
-        thisListener = null
-        listener?.stop()
-
-    }
-
+// Configure Client Security using an Authenticator
+// For example, Basic Authentication <.>
+authenticator = ListenerPasswordAuthenticator { usr, pwd ->
+    (usr === validUser) && (validPass.contentEquals(pwd))
 }
-
-
-//
-// Copyright (c) 2021 Couchbase, Inc All rights reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-@file:Suppress("UNUSED_VARIABLE", "unused")
-
-package com.couchbase.codesnippets
-
-import com.couchbase.lite.Collection
-import com.couchbase.lite.Conflict
-import com.couchbase.lite.ConflictResolver
-import com.couchbase.lite.Document
-import com.couchbase.lite.MutableDocument
-import java.io.ByteArrayOutputStream
-import java.io.IOException
-import java.io.InputStream
-
-
-private const val TAG = "REPLICATION"
-
-@Throws(IOException::class)
-fun InputStream.toByteArray(): ByteArray {
-    val buffer = ByteArray(1024)
-    val output = ByteArrayOutputStream()
-
-    var n: Int
-    while (-1 < this.read(buffer).also { n = it }) {
-        output.write(buffer, 0, n)
-    }
-
-    return output.toByteArray()
-}
-
-//
-//        <.> The conflict handler code is provided as a lambda.
-//
-//        <.> If the handler cannot resolve a conflict, it can return false.
-//        In this case, the save method will cancel the save operation and return false the same way as using the save() method with the failOnConflict concurrency control.
-//
-//        <.> Within the conflict handler, you can modify the document parameter which is the same instance of Document that is passed to the save() method. So in effect, you will be directly modifying the document that is being saved.
-//
-//        <.> When handling is done, the method must return true (for  successful resolution) or false (if it was unable to resolve the conflict).
-//
-//        <.> If there is an exception thrown in the handle() method, the exception will be caught and re-thrown in the save() method
-
-// Using replConfig.setConflictResolver(new LocalWinConflictResolver());
-@Suppress("unused")
-object LocalWinsResolver : ConflictResolver {
-    override fun resolve(conflict: Conflict) = conflict.localDocument
-}
-
-// Using replConfig.setConflictResolver(new RemoteWinConflictResolver());
-@Suppress("unused")
-object RemoteWinsResolver : ConflictResolver {
-    override fun resolve(conflict: Conflict) = conflict.remoteDocument
-}
-
-// Using replConfig.setConflictResolver(new MergeConflictResolver());
-@Suppress("unused")
-object MergeConflictResolver : ConflictResolver {
-    override fun resolve(conflict: Conflict): Document {
-        val localDoc = conflict.localDocument?.toMap()
-        val remoteDoc = conflict.remoteDocument?.toMap()
-
-        val merge: MutableMap<String, Any>?
-        if (localDoc == null) {
-            merge = remoteDoc
-        } else {
-            merge = localDoc
-            if (remoteDoc != null) {
-                merge.putAll(remoteDoc)
-            }
-        }
-
-        return if (merge == null) {
-            MutableDocument(conflict.documentId)
-        } else {
-            MutableDocument(conflict.documentId, merge)
-        }
-    }
-
-    fun testSaveWithCustomConflictResolver(collection: Collection) {
-        val mutableDocument = collection.getDocument("xyz")?.toMutable() ?: return
-        mutableDocument.setString("name", "apples")
-        collection.save(mutableDocument) { newDoc, curDoc ->  // <.>
-            if (curDoc == null) {
-                return@save false
-            } // <.>
-            val dataMap: MutableMap<String, Any> = curDoc.toMap()
-            dataMap.putAll(newDoc.toMap()) // <.>
-            newDoc.setData(dataMap)
-            true // <.>
-        } // <.>
-    }
-}
-
-//
-// Copyright (c) 2021 Couchbase, Inc All rights reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-@file:Suppress("UNUSED_VARIABLE", "unused")
-
-package com.couchbase.codesnippets
-
-import com.couchbase.lite.Collection
-import com.couchbase.lite.CouchbaseLiteException
-import com.couchbase.lite.Message
-import com.couchbase.lite.MessageEndpoint
-import com.couchbase.lite.MessageEndpointConnection
-import com.couchbase.lite.MessageEndpointDelegate
-import com.couchbase.lite.MessageEndpointListener
-import com.couchbase.lite.MessageEndpointListenerConfigurationFactory
-import com.couchbase.lite.MessagingCloseCompletion
-import com.couchbase.lite.MessagingCompletion
-import com.couchbase.lite.ProtocolType
-import com.couchbase.lite.Replicator
-import com.couchbase.lite.ReplicatorConfigurationFactory
-import com.couchbase.lite.ReplicatorConnection
-import com.couchbase.lite.newConfig
-
-
-@Suppress("unused")
-class BrowserSessionManager : MessageEndpointDelegate {
-    private var replicator: Replicator? = null
-
-    fun initCouchbase(collections: Set<Collection>) {
-
-        // The delegate must implement the `MessageEndpointDelegate` protocol.
-        val messageEndpoint = MessageEndpoint("UID:123", "active", ProtocolType.MESSAGE_STREAM, this)
-
-        // Create the replicator object.
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.newConfig(
-                collections = mapOf(collections to null),
-                target = messageEndpoint
-            )
-        )
-
-        // Start the replication.
-        repl.start()
-        replicator = repl
-    }
-
-    /* implementation of MessageEndpointDelegate */
-    override fun createConnection(endpoint: MessageEndpoint) = ActivePeerConnection()
-}
-
-/* ----------------------------------------------------------- */
-/* ---------------------  ACTIVE SIDE  ----------------------- */
-/* ----------------------------------------------------------- */
-
-@Suppress("unused")
-class ActivePeerConnection : MessageEndpointConnection {
-    private var replicatorConnection: ReplicatorConnection? = null
-
-    fun disconnect() {
-        replicatorConnection?.close(null)
-        replicatorConnection = null
-    }
-
-    /* implementation of MessageEndpointConnection */
-    override fun open(connection: ReplicatorConnection, completion: MessagingCompletion) {
-        replicatorConnection = connection
-        completion.complete(true, null)
-    }
-
-    override fun close(error: Exception?, completion: MessagingCloseCompletion) {
-        /* disconnect with communications framework */
-        /* ... */
-        /* call completion handler */
-        completion.complete()
-    }
-
-    /* implementation of MessageEndpointConnection */
-    override fun send(message: Message, completion: MessagingCompletion) {
-        /* send the data to the other peer */
-        /* ... */
-        /* call the completion handler once the message is sent */
-        completion.complete(true, null)
-    }
-
-    fun receive(message: Message) {
-        replicatorConnection?.receive(message)
-    }
-}
-
-/* ----------------------------------------------------------- */
-/* ---------------------  PASSIVE SIDE  ---------------------- */
-/* ----------------------------------------------------------- */
-
-@Suppress("unused")
-class PassivePeerConnection : MessageEndpointConnection {
-    private var listener: MessageEndpointListener? = null
-    private var replicatorConnection: ReplicatorConnection? = null
-
-    @Throws(CouchbaseLiteException::class)
-    fun startListener(collections: Set<Collection>) {
-        listener = MessageEndpointListener(
-            MessageEndpointListenerConfigurationFactory.newConfig(collections, ProtocolType.MESSAGE_STREAM)
-        )
-    }
-
-    fun stopListener() {
-        listener?.closeAll()
-    }
-
-    fun accept() {
-        val connection = PassivePeerConnection() /* implements MessageEndpointConnection */
-        listener?.accept(connection)
-    }
-
-    fun disconnect() {
-        replicatorConnection?.close(null)
-    }
-
-    /* implementation of MessageEndpointConnection */
-    override fun open(connection: ReplicatorConnection, completion: MessagingCompletion) {
-        replicatorConnection = connection
-        completion.complete(true, null)
-    }
-
-    /* implementation of MessageEndpointConnection */
-    override fun close(error: Exception?, completion: MessagingCloseCompletion) {
-        /* disconnect with communications framework */
-        /* ... */
-        /* call completion handler */
-        completion.complete()
-    }
-
-    /* implementation of MessageEndpointConnection */
-    override fun send(message: Message, completion: MessagingCompletion) {
-        /* send the data to the other peer */
-        /* ... */
-        /* call the completion handler once the message is sent */
-        completion.complete(true, null)
-    }
-
-    fun receive(message: Message) {
-        replicatorConnection?.receive(message)
-    }
-
-}
-//
-// Copyright (c) 2021 Couchbase, Inc All rights reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-@file:Suppress("UNUSED_VARIABLE", "unused")
-
-package com.couchbase.codesnippets
-
-import com.couchbase.codesnippets.util.log
-import com.couchbase.lite.Collection
-import com.couchbase.lite.DataSource
-import com.couchbase.lite.Database
-import com.couchbase.lite.Dictionary
-import com.couchbase.lite.Expression
-import com.couchbase.lite.Function
-import com.couchbase.lite.IndexBuilder
-import com.couchbase.lite.MutableDictionary
-import com.couchbase.lite.PredictionFunction
-import com.couchbase.lite.PredictiveModel
-import com.couchbase.lite.QueryBuilder
-import com.couchbase.lite.SelectResult
-import com.couchbase.lite.ValueIndexItem
-
-
-private const val TAG = "PREDICT"
-
-// tensorFlowModel is a fake implementation
-object TensorFlowModel {
-    fun predictImage(data: ByteArray?): Map<String, Any?> = TODO()
-}
-
-object ImageClassifierModel : PredictiveModel {
-    const val name = "ImageClassifier"
-
-    // this would be the implementation of the ml model you have chosen
-    override fun predict(input: Dictionary) = input.getBlob("photo")?.let {
-        MutableDictionary(TensorFlowModel.predictImage(it.content)) // <1>
-    }
-}
-
-
-fun predictiveModelExamples(collection: Collection) {
-
-    Database.prediction.registerModel("ImageClassifier", ImageClassifierModel)
-
-    collection.createIndex(
-        "value-index-image-classifier",
-        IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")))
-    )
-
-    Database.prediction.unregisterModel("ImageClassifier")
-}
-
-
-fun predictiveIndexExamples(collection: Collection) {
-
-    val inputMap: Map<String, Any?> = mutableMapOf("numbers" to Expression.property("photo"))
-    collection.createIndex(
-        "predictive-index-image-classifier",
-        IndexBuilder.predictiveIndex("ImageClassifier", Expression.map(inputMap), null)
-    )
-}
-
-
-fun predictiveQueryExamples(collection: Collection) {
-
-    val inputMap: Map<String, Any?> = mutableMapOf("photo" to Expression.property("photo"))
-    val prediction: PredictionFunction = Function.prediction(
-        ImageClassifierModel.name,
-        Expression.map(inputMap) // <1>
-    )
-
-    val query = QueryBuilder
-        .select(SelectResult.all())
-        .from(DataSource.collection(collection))
-        .where(
-            prediction.propertyPath("label").equalTo(Expression.string("car"))
-                .and(
-                    prediction.propertyPath("probability")
-                        .greaterThanOrEqualTo(Expression.doubleValue(0.8))
-                )
-        )
-
-    query.execute().use {
-        log("Number of rows: ${it.allResults().size}")
-    }
-}
-//
-// Copyright (c) 2021 Couchbase, Inc All rights reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-@file:Suppress("UNUSED_VARIABLE", "unused", "UNUSED_PARAMETER")
-
-package com.couchbase.codesnippets
-
-import com.couchbase.codesnippets.util.log
-import com.couchbase.lite.ArrayFunction
-import com.couchbase.lite.Collection
-import com.couchbase.lite.DataSource
-import com.couchbase.lite.Database
-import com.couchbase.lite.Expression
-import com.couchbase.lite.FullTextFunction
-import com.couchbase.lite.FullTextIndexConfigurationFactory
-import com.couchbase.lite.FullTextIndexItem
-import com.couchbase.lite.Function
-import com.couchbase.lite.IndexBuilder
-import com.couchbase.lite.Join
-import com.couchbase.lite.Meta
-import com.couchbase.lite.Ordering
-import com.couchbase.lite.Parameters
-import com.couchbase.lite.QueryBuilder
-import com.couchbase.lite.Result
-import com.couchbase.lite.SelectResult
-import com.couchbase.lite.ValueIndexConfigurationFactory
-import com.couchbase.lite.ValueIndexItem
-import com.couchbase.lite.newConfig
-import com.fasterxml.jackson.databind.ObjectMapper
-
-
-private const val TAG = "QUERY"
-
-// ### Indexing
-fun indexingExample(collection: Collection) {
-
-    collection.createIndex(
-        "TypeNameIndex",
-        ValueIndexConfigurationFactory.newConfig("type", "name")
-    )
-}
-
-// ### SELECT statement
-fun selectStatementExample(collection: Collection) {
-
-    val query = QueryBuilder
-        .select(
-            SelectResult.expression(Meta.id),
-            SelectResult.property("name"),
-            SelectResult.property("type")
-        )
-        .from(DataSource.collection(collection))
-        .where(Expression.property("type").equalTo(Expression.string("hotel")))
-        .orderBy(Ordering.expression(Meta.id))
-
-    query.execute().use { rs ->
-        rs.forEach {
-            log("hotel id ->${it.getString("id")}")
-            log("hotel name -> ${it.getString("name")}")
-        }
-    }
-}
-
-fun whereStatementExample(collection: Collection) {
-
-    val query = QueryBuilder
-        .select(SelectResult.all())
-        .from(DataSource.collection(collection))
-        .where(Expression.property("type").equalTo(Expression.string("hotel")))
-        .limit(Expression.intValue(10))
-
-    query.execute().use { rs ->
-        rs.forEach { result ->
-            result.getDictionary("myDatabase")?.let {
-                log("name -> ${it.getString("name")}")
-                log("type -> ${it.getString("type")}")
-            }
-        }
-    }
-}
-
-// ####　Collection Operators
-fun collectionStatementExample(collection: Collection) {
-    val query = QueryBuilder
-        .select(
-            SelectResult.expression(Meta.id),
-            SelectResult.property("name"),
-            SelectResult.property("public_likes")
-        )
-        .from(DataSource.collection(collection))
-        .where(
-            Expression.property("type").equalTo(Expression.string("hotel"))
-                .and(
-                    ArrayFunction.contains(
-                        Expression.property("public_likes"),
-                        Expression.string("Armani Langworth")
-                    )
-                )
-        )
-    query.execute().use { rs ->
-        rs.forEach {
-            log("public_likes -> ${it.getArray("public_likes")?.toList()}")
-        }
-    }
-}
-
-// Pattern Matching
-fun patternMatchingExample(collection: Collection) {
-    val query = QueryBuilder
-        .select(
-            SelectResult.expression(Meta.id),
-            SelectResult.property("country"),
-            SelectResult.property("name")
-        )
-        .from(DataSource.collection(collection))
-        .where(
-            Expression.property("type").equalTo(Expression.string("landmark"))
-                .and(
-                    Function.lower(Expression.property("name"))
-                        .like(Expression.string("royal engineers museum"))
-                )
-        )
-    query.execute().use { rs ->
-        rs.forEach {
-            log("name -> ${it.getString("name")}")
-        }
-    }
-}
-
-// ### Wildcard Match
-fun wildcardMatchExample(collection: Collection) {
-    val query = QueryBuilder
-        .select(
-            SelectResult.expression(Meta.id),
-            SelectResult.property("country"),
-            SelectResult.property("name")
-        )
-        .from(DataSource.collection(collection))
-        .where(
-            Expression.property("type").equalTo(Expression.string("landmark"))
-                .and(
-                    Function.lower(Expression.property("name"))
-                        .like(Expression.string("eng%e%"))
-                )
-        )
-    query.execute().use { rs ->
-        rs.forEach {
-            log("name -> ${it.getString("name")}")
-        }
-    }
-}
-
-// Wildcard Character Match
-fun wildCharacterMatchExample(collection: Collection) {
-    val query = QueryBuilder
-        .select(
-            SelectResult.expression(Meta.id),
-            SelectResult.property("country"),
-            SelectResult.property("name")
-        )
-        .from(DataSource.collection(collection))
-        .where(
-            Expression.property("type").equalTo(Expression.string("landmark"))
-                .and(
-                    Function.lower(Expression.property("name"))
-                        .like(Expression.string("eng____r"))
-                )
-        )
-    query.execute().use { rs ->
-        rs.forEach {
-            log("name -> ${it.getString("name")}")
-        }
-    }
-}
-
-// ### Regex Match
-fun regexMatchExample(collection: Collection) {
-    val query = QueryBuilder
-        .select(
-            SelectResult.expression(Meta.id),
-            SelectResult.property("country"),
-            SelectResult.property("name")
-        )
-        .from(DataSource.collection(collection))
-        .where(
-            Expression.property("type").equalTo(Expression.string("landmark"))
-                .and(
-                    Function.lower(Expression.property("name"))
-                        .regex(Expression.string("\\beng.*r\\b"))
-                )
-        )
-    query.execute().use { rs ->
-        rs.forEach {
-            log("name -> ${it.getString("name")}")
-        }
-    }
-}
-
-// ###　WHERE statement
-fun queryDeletedDocumentsExample(collection: Collection) {
-    // Query documents that have been deleted
-    val query = QueryBuilder
-        .select(SelectResult.expression(Meta.id))
-        .from(DataSource.collection(collection))
-        .where(Meta.deleted)
-}
-
-// JOIN statement
-fun joinStatementExample(collection: Collection) {
-    val query = QueryBuilder
-        .select(
-            SelectResult.expression(Expression.property("name").from("airline")),
-            SelectResult.expression(Expression.property("callsign").from("airline")),
-            SelectResult.expression(Expression.property("destinationairport").from("route")),
-            SelectResult.expression(Expression.property("stops").from("route")),
-            SelectResult.expression(Expression.property("airline").from("route"))
-        )
-        .from(DataSource.collection(collection).`as`("airline"))
-        .join(
-            Join.join(DataSource.collection(collection).`as`("route"))
-                .on(
-                    Meta.id.from("airline")
-                        .equalTo(Expression.property("airlineid").from("route"))
-                )
-        )
-        .where(
-            Expression.property("type").from("route").equalTo(Expression.string("route"))
-                .and(
-                    Expression.property("type").from("airline")
-                        .equalTo(Expression.string("airline"))
-                )
-                .and(
-                    Expression.property("sourceairport").from("route")
-                        .equalTo(Expression.string("RIX"))
-                )
-        )
-    query.execute().use { rs ->
-        rs.forEach {
-            log("name -> ${it.toMap()}")
-        }
-    }
-}
-
-// ### GROUPBY statement
-fun groupByStatementExample(collection: Collection) {
-    val query = QueryBuilder
-        .select(
-            SelectResult.expression(Function.count(Expression.string("*"))),
-            SelectResult.property("country"),
-            SelectResult.property("tz")
-        )
-        .from(DataSource.collection(collection))
-        .where(
-            Expression.property("type").equalTo(Expression.string("airport"))
-                .and(Expression.property("geo.alt").greaterThanOrEqualTo(Expression.intValue(300)))
-        )
-        .groupBy(
-            Expression.property("country"), Expression.property("tz")
-        )
-        .orderBy(Ordering.expression(Function.count(Expression.string("*"))).descending())
-    query.execute().use { rs ->
-        rs.forEach {
-            log(
-                "There are ${it.getInt("$1")} airports on the ${
-                    it.getString("tz")
-                } timezone located in ${
-                    it.getString("country")
-                } and above 300ft"
-            )
-        }
-    }
-}
-
-// ### ORDER BY statement
-fun orderByStatementExample(collection: Collection) {
-    val query = QueryBuilder
-        .select(
-            SelectResult.expression(Meta.id),
-            SelectResult.property("name")
-        )
-        .from(DataSource.collection(collection))
-        .where(Expression.property("type").equalTo(Expression.string("hotel")))
-        .orderBy(Ordering.property("name").ascending())
-        .limit(Expression.intValue(10))
-
-    query.execute().use { rs ->
-        rs.forEach {
-            log("${it.toMap()}")
-        }
-    }
-}
-
-fun querySyntaxAllExample(collection: Collection) {
-    val listQuery = QueryBuilder.select(SelectResult.all())
-        .from(DataSource.collection(collection))
-
-    val hotels = mutableMapOf<String, Hotel>()
-    listQuery.execute().use { rs ->
-        rs.allResults().forEach {
-            // get the k-v pairs from the 'hotel' key's value into a dictionary
-            val thisDocsProps = it.getDictionary(0) // <.>
-            val thisDocsId = thisDocsProps!!.getString("id")
-            val thisDocsName = thisDocsProps.getString("name")
-            val thisDocsType = thisDocsProps.getString("type")
-            val thisDocsCity = thisDocsProps.getString("city")
-
-            // Alternatively, access results value dictionary directly
-            val id = it.getDictionary(0)?.getString("id").toString() // <.>
-            hotels[id] = Hotel(
-                id,
-                it.getDictionary(0)?.getString("type"),
-                it.getDictionary(0)?.getString("name"),
-                it.getDictionary(0)?.getString("city"),
-                it.getDictionary(0)?.getString("country"),
-                it.getDictionary(0)?.getString("description")
-            )
-        }
-    }
-}
-
-fun querySyntaxIdExample(collection: Collection) {
-    // tag::query-select-meta
-    val query = QueryBuilder
-        .select(
-            SelectResult.expression(Meta.id).`as`("hotelId")
-        )
-        .from(DataSource.collection(collection))
-
-
-    query.execute().use { rs ->
-        rs.allResults().forEach {
-            log("hotel id ->${it.getString("hotelId")}")
-        }
-    }
-    // end::query-select-meta
-}
-
-fun querySyntaxCountExample(collection: Collection) {
-
-    val query = QueryBuilder
-        .select(
-            SelectResult.expression(Function.count(Expression.string("*"))).`as`("mycount")
-        ) // <.>
-        .from(DataSource.collection(collection))
-
-
-    query.execute().use { rs ->
-        rs.allResults().forEach {
-            log("name -> ${it.getInt("mycount")}")
-        }
-    }
-}
-
-fun querySyntaxPropsExample(collection: Collection) {
-
-    val query = QueryBuilder
-        .select(
-            SelectResult.expression(Meta.id),
-            SelectResult.property("country"),
-            SelectResult.property("name")
-        )
-        .from(DataSource.collection(collection))
-
-
-    query.execute().use { rs ->
-        rs.allResults().forEach {
-            log("Hotel name -> ${it.getString("name")}, in ${it.getString("country")}")
-        }
-    }
-}
-
-// IN operator
-fun inOperatorExample(collection: Collection) {
-    val query = QueryBuilder.select(SelectResult.all())
-        .from(DataSource.collection(collection))
-        .where(
-            Expression.string("Armani").`in`(
-                Expression.property("first"),
-                Expression.property("last"),
-                Expression.property("username")
-            )
-        )
-
-    query.execute().use { rs ->
-        rs.forEach {
-            log("public_likes -> ${it.toMap()}")
-        }
-    }
-}
-
-
-fun queryPaginationExample(collection: Collection) {
-    val thisOffset = 0
-    val thisLimit = 20
-    val listQuery = QueryBuilder
-        .select(SelectResult.all())
-        .from(DataSource.collection(collection))
-        .limit(
-            Expression.intValue(thisLimit),
-            Expression.intValue(thisOffset)
-        ) // <.>
-
-}
-
-// ### all(*)
-fun selectAllExample(collection: Collection) {
-    val queryAll = QueryBuilder
-        .select(SelectResult.all())
-        .from(DataSource.collection(collection))
-        .where(Expression.property("type").equalTo(Expression.string("hotel")))
-
-}
-
-fun liveQueryExample(collection: Collection) {
-    val query = QueryBuilder
-        .select(SelectResult.all())
-        .from(DataSource.collection(collection)) // <.>
-
-    // Adds a query change listener.
-    // Changes will be posted on the main queue.
-    val token = query.addChangeListener { change ->
-        change.results?.let { rs ->
-            rs.forEach {
-                log("results: ${it.keys}")
-                /* Update UI */
-            }
-        } // <.>
-    }
-
-
-    token.remove()
-}
-
-// META function
-fun metaFunctionExample(collection: Collection) {
-    val query = QueryBuilder
-        .select(SelectResult.expression(Meta.id))
-        .from(DataSource.collection(collection))
-        .where(Expression.property("type").equalTo(Expression.string("airport")))
-        .orderBy(Ordering.expression(Meta.id))
-
-    query.execute().use { rs ->
-        rs.forEach {
-            log("airport id ->${it.getString("id")}")
-            log("airport id -> ${it.getString(0)}")
-        }
-    }
-}
-
-// ### EXPLAIN statement
-fun explainAllExample(collection: Collection) {
-    val query = QueryBuilder
-        .select(SelectResult.all())
-        .from(DataSource.collection(collection))
-        .where(Expression.property("type").equalTo(Expression.string("university")))
-        .groupBy(Expression.property("country"))
-        .orderBy(Ordering.property("name").descending()) // <.>
-
-    log(query.explain()) // <.>
-}
-
-fun explainLikeExample(collection: Collection) {
-    val query = QueryBuilder
-        .select(SelectResult.all())
-        .from(DataSource.collection(collection))
-        .where(Expression.property("type").like(Expression.string("%hotel%"))) // <.>
-        .groupBy(Expression.property("country"))
-        .orderBy(Ordering.property("name").descending()) // <.>
-    log(query.explain())
-}
-
-fun explainNoPFXExample(collection: Collection) {
-    val query = QueryBuilder
-        .select(SelectResult.all())
-        .from(DataSource.collection(collection))
-        .where(
-            Expression.property("type").like(Expression.string("hotel%")) // <.>
-                .and(Expression.property("name").like(Expression.string("%royal%")))
-        )
-    log(query.explain())
-}
-
-fun explainFnExample(collection: Collection) {
-    val query = QueryBuilder
-        .select(SelectResult.all())
-        .from(DataSource.collection(collection))
-        .where(Function.lower(Expression.property("type").equalTo(Expression.string("hotel")))) // <.>
-    log(query.explain())
-
-}
-
-fun explainNoFnExample(collection: Collection) {
-    val query = QueryBuilder
-        .select(SelectResult.all())
-        .from(DataSource.collection(collection))
-        .where(Expression.property("type").equalTo(Expression.string("hotel"))) // <.>
-    log(query.explain())
-}
-
-fun prepareIndex(collection: Collection) {
-    collection.createIndex(
-        "overviewFTSIndex",
-        FullTextIndexConfigurationFactory.newConfig("overview"))
-}
-
-fun prepareIndexBuilderExample(collection: Collection) {
-    collection.createIndex(
-        "overviewFTSIndex",
-        IndexBuilder.fullTextIndex(FullTextIndexItem.property("overview")).ignoreAccents(false)
-    )
-}
-
-fun indexingQueryBuilderExample(collection: Collection) {
-    collection.createIndex(
-        "TypeNameIndex",
-        IndexBuilder.valueIndex(
-            ValueIndexItem.property("type"),
-            ValueIndexItem.property("name")
-        )
-    )
-}
-
-fun ftsExample(database: Database) {
-    val ftsQuery = database.createQuery(
-        "SELECT _id, overview FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)"
-    )
-    ftsQuery.execute().use { rs ->
-        rs.allResults().forEach {
-            log("${it.getString("id")}: ${it.getString("overview")}")
-        }
-    }
-}
-
-fun ftsQueryBuilderExample(collection: Collection) {
-    val ftsQuery =
-        QueryBuilder.select(
-            SelectResult.expression(Meta.id),
-            SelectResult.property("overview")
-        )
-            .from(DataSource.collection(collection))
-            .where(FullTextFunction.match(Expression.fullTextIndex("overviewFTSIndex"), "michigan"))
-
-    ftsQuery.execute().use { rs ->
-        rs.allResults().forEach {
-            log("${it.getString("Meta.id")}: ${it.getString("overview")}")
-        }
-    }
-}
-
-fun querySyntaxJsonExample(collection: Collection) {
-    // Example assumes Hotel class object defined elsewhere
-    // Build the query
-    val listQuery = QueryBuilder.select(SelectResult.all())
-        .from(DataSource.collection(collection))
-    // Uses Jackson JSON processor
-    val mapper = ObjectMapper()
-    val hotels = mutableListOf<Hotel>()
-
-    listQuery.execute().use { rs ->
-        rs.forEach {
-
-            // Get result as JSON string
-            val json = it.toJSON() // <.>
-
-            // Get Hashmap from JSON string
-            val dictFromJSONstring = mapper.readValue(json, HashMap::class.java) // <.>
-
-            // Use created hashmap
-            val hotelId = dictFromJSONstring["id"].toString() //
-            val hotelType = dictFromJSONstring["type"].toString()
-            val hotelname = dictFromJSONstring["name"].toString()
-
-            // Get custom object from JSON string
-            val thisHotel = mapper.readValue(json, Hotel::class.java) // <.>
-            hotels.add(thisHotel)
-        }
-    }
-}
-
-fun docsOnlyQuerySyntaxN1QL(thisDb: Database): List<Result> {
-    // For Documentation -- N1QL Query using parameters
-    val thisQuery = thisDb.createQuery(
-        "SELECT META().id AS id FROM _ WHERE type = \"hotel\""
-    ) // <.>
-
-    return thisQuery.execute().use { rs -> rs.allResults() }
-}
-
-fun docsOnlyQuerySyntaxN1QLParams(database: Database): List<Result> {
-    // For Documentation -- N1QL Query using parameters
-    val thisQuery = database.createQuery(
-        "SELECT META().id AS id FROM _ WHERE type = \$type"
-    ) // <.>
-
-    thisQuery.parameters = Parameters().setString("type", "hotel") // <.>
-
-    return thisQuery.execute().allResults()
-
-}
-
-//
-// Copyright (c) 2023 Couchbase, Inc All rights reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-@file:Suppress("UNUSED_VARIABLE", "unused", "UNUSED_PARAMETER")
-
-package com.couchbase.codesnippets
-
-import com.couchbase.codesnippets.util.log
-import com.couchbase.lite.BasicAuthenticator
-import com.couchbase.lite.ClientCertificateAuthenticator
-import com.couchbase.lite.Collection
-import com.couchbase.lite.CollectionConfigurationFactory
-import com.couchbase.lite.CouchbaseLiteException
-import com.couchbase.lite.Database
-import com.couchbase.lite.DatabaseEndpoint
-import com.couchbase.lite.DocumentFlag
-import com.couchbase.lite.Endpoint
-import com.couchbase.lite.ListenerToken
-import com.couchbase.lite.Replicator
-import com.couchbase.lite.ReplicatorConfigurationFactory
-import com.couchbase.lite.ReplicatorType
-import com.couchbase.lite.SessionAuthenticator
-import com.couchbase.lite.TLSIdentity
-import com.couchbase.lite.URLEndpoint
-import com.couchbase.lite.newConfig
-import java.net.URI
-import java.security.KeyStore
-import java.security.cert.X509Certificate
-
-
-class ReplicationExamples {
-    private var thisReplicator: Replicator? = null
-    private var thisToken: ListenerToken? = null
-
-    fun activeReplicatorExample(collections: Set<Collection>) {
-        // Create replicator
-        // Consider holding a reference somewhere
-        // to prevent the Replicator from being GCed
-        val repl = Replicator( // <.>
-
-            // initialize the replicator configuration
-            ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("wss://listener.com:8954")), // <.>
-
-                collections = mapOf(collections to null),
-
-                // Set replicator type
-                type = ReplicatorType.PUSH_AND_PULL,
-
-                // Configure Sync Mode
-                continuous = false, // default value
-
-
-                // set auto-purge behavior
-                // (here we override default)
-                enableAutoPurge = false, // <.>
-
-
-                // Configure Server Authentication --
-                // only accept self-signed certs
-                acceptOnlySelfSignedServerCertificate = true, // <.>
-
-
-                // Configure the credentials the
-                // client will provide if prompted
-                authenticator = BasicAuthenticator("PRIVUSER", "let me in".toCharArray())  // <.>
-
-            )
-        )
-
-        // Optionally add a change listener <.>
-        val token = repl.addChangeListener { change ->
-            val err: CouchbaseLiteException? = change.status.error
-            if (err != null) {
-                log("Error code ::  ${err.code}", err)
-            }
-        }
-
-        // Start replicator
-        repl.start(false) // <.>
-
-
-        thisReplicator = repl
-        thisToken = token
-
-    }
-
-    fun replicationBasicAuthenticationExample(collections: Set<Collection>) {
-
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to null),
-                authenticator = BasicAuthenticator("username", "password".toCharArray())
-            )
-        )
-        repl.start()
-        thisReplicator = repl
-    }
-
-    fun replicationSessionAuthenticationExample(collections: Set<Collection>) {
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to null),
-                authenticator = SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447")
-            )
-        )
-        repl.start()
-        thisReplicator = repl
-    }
-
-    fun replicationCustomHeaderExample(collections: Set<Collection>) {
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to null),
-                headers = mapOf("CustomHeaderName" to "Value")
-            )
-        )
-        repl.start()
-        thisReplicator = repl
-    }
-
-    fun testReplicationPushFilter(collections: Set<Collection>) {
-        val collectionConfig = CollectionConfigurationFactory.newConfig(
-            pushFilter = { _, flags -> flags.contains(DocumentFlag.DELETED) } // <1>
-        )
-
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to collectionConfig)
-            )
-        )
-        repl.start()
-        thisReplicator = repl
-    }
-
-    fun replicationPullFilterExample(collections: Set<Collection>) {
-        val collectionConfig = CollectionConfigurationFactory.newConfig(
-            pullFilter = { document, _ -> "draft" == document.getString("type") } // <1>
-        )
-
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to collectionConfig)
-            )
-        )
-        repl.start()
-        thisReplicator = repl
-    }
-
-    // ### Reset replicator checkpoint
-    fun replicationResetCheckpointExample(collections: Set<Collection>) {
-        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to null)
-            )
-        )
-
-        repl.start(true)
-
-        // ... at some later time
-
-        repl.stop()
-    }
-
-    fun handlingNetworkErrorExample(collections: Set<Collection>) {
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to null)
-            )
-        )
-
-        repl.addChangeListener { change ->
-            change.status.error?.let {
-                log("Error code: ${it.code}")
-            }
-        }
-        repl.start()
-        thisReplicator = repl
-    }
-
-    // ### Certificate Pinning
-    fun certificatePinningExample(collections: Set<Collection>, keyStoreName: String, certAlias: String) {
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to null),
-                pinnedServerCertificate = KeyStore.getInstance(keyStoreName)
-                    .getCertificate(certAlias) as X509Certificate
-            )
-        )
-        repl.start()
-        thisReplicator = repl
-    }
-
-    fun replicatorConfigExample(collections: Set<Collection>) {
-        // initialize the replicator configuration
-        val thisConfig = ReplicatorConfigurationFactory.newConfig(
-            target = URLEndpoint(URI("wss://10.0.2.2:8954/travel-sample")), // <.>
-            collections = mapOf(collections to null)
-        )
-    }
-
-    fun p2pReplicatorStatusExample(repl: Replicator) {
-        repl.status.let {
-            val progress = it.progress
-            log(
-                "The Replicator is ${
-                    it.activityLevel
-                } and has processed ${
-                    progress.completed
-                } of ${progress.total} changes"
-            )
-        }
-    }
-
-    fun p2pReplicatorStopExample(repl: Replicator) {
-        // Stop replication.
-        repl.stop() // <.>
-    }
-
-    fun testCustomRetryConfig(collections: Set<Collection>) {
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to null),
-                //  other config params as required . .
-                heartbeat = 150, // <1>
-                maxAttempts = 20,
-                maxAttemptWaitTime = 600
-            )
-        )
-        repl.start()
-        thisReplicator = repl
-    }
-
-    fun replicatorDocumentEventExample(collections: Set<Collection>) {
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to null),
-            )
-        )
-
-        val token = repl.addDocumentReplicationListener { replication ->
-            log("Replication type: ${if (replication.isPush) "push" else "pull"}")
-
-            for (document in replication.documents) {
-                document.let { doc ->
-                    log("Doc ID: ${document.id}")
-
-                    doc.error?.let {
-                        // There was an error
-                        log("Error replicating document: ", it)
-                        return@addDocumentReplicationListener
-                    }
-
-                    if (doc.flags.contains(DocumentFlag.DELETED)) {
-                        log("Successfully replicated a deleted document")
-                    }
-                }
-            }
-        }
-
-        repl.start()
-        thisReplicator = repl
-
-        token.remove()
-    }
-
-    private fun replicationPendingDocumentsExample(collection: Collection) {
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(setOf(collection) to null),
-                type = ReplicatorType.PUSH
-            )
-        )
-
-        val pendingDocs = repl.getPendingDocumentIds(collection)
-
-        // iterate and report on previously
-        // retrieved pending docids 'list'
-        if (pendingDocs.isNotEmpty()) {
-            log("There are ${pendingDocs.size} documents pending")
-
-            val firstDoc = pendingDocs.first()
-            repl.addChangeListener { change ->
-                log("Replicator activity level is ${change.status.activityLevel}")
-                try {
-                    if (!repl.isDocumentPending(firstDoc, collection)) {
-                        log("Doc ID ${firstDoc} has been pushed")
-                    }
-                } catch (err: CouchbaseLiteException) {
-                    log("Failed getting pending docs", err)
-                }
-            }
-
-            repl.start()
-            thisReplicator = repl
-        }
-    }
-
-    fun collectionReplicationExample(srcCollections: Set<Collection>, targetDb: Database) {
-        // This is an Enterprise feature:
-        // the code below will generate a compilation error
-        // if it's compiled against CBL Android Community Edition.
-        // Note: the target database must already contain the
-        //       source collections or the replication will fail.
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.newConfig(
-                target = DatabaseEndpoint(targetDb),
-                collections = mapOf(srcCollections to null),
-                type = ReplicatorType.PUSH
-            )
-        )
-
-        // Start the replicator
-        // (be sure to hold a reference somewhere that will prevent it from being GCed)
-        repl.start()
-        thisReplicator = repl
-    }
-
-    fun replicatorConfigurationExample(srcCollections: Set<Collection>, targetUrl: URI) {
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(targetUrl),
-
-                collections = mapOf(srcCollections to null),
-
-                // Configure Server Security
-                // -- only accept CA attested certs
-                acceptOnlySelfSignedServerCertificate = false, // <.>
-
-
-                // Use the pinned certificate from the byte array (cert)
-                pinnedServerCertificate =
-                TLSIdentity.getIdentity("Our Corporate Id")?.certs?.get(0) as? X509Certificate // <.>
-                    ?: throw IllegalStateException("Cannot find corporate id"),
-
-
-                // Provide a client certificate to the server for authentication
-                authenticator = ClientCertificateAuthenticator(
-                    TLSIdentity.getIdentity("clientId")
-                        ?: throw IllegalStateException("Cannot find client id")
-                ) // <.>
-
-                // ... other replicator configuration
-            )
-        )
-
-        thisReplicator = repl
-    }
-
-    fun ibReplicatorSimple(collections: Set<Collection>) {
-        val theListenerEndpoint: Endpoint = URLEndpoint(URI("wss://10.0.2.2:4984/db")) // <.>
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.newConfig(
-                collections = mapOf(collections to null),
-                target = theListenerEndpoint,
-                authenticator = BasicAuthenticator("valid.user", "valid.password.string".toCharArray()), // <.>
-                acceptOnlySelfSignedServerCertificate = true
-            )
-        )
-        repl.start() // <.>
-        thisReplicator = repl
-    }
-
-    fun testReplicationWithCustomConflictResolver(srcCollections: Set<Collection>) {
-
-        val collectionConfig = CollectionConfigurationFactory.newConfig(conflictResolver = LocalWinsResolver)
-        val repl = Replicator(
-            ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(srcCollections to collectionConfig)
-            )
-        )
-
-        // Start the replicator
-        // (be sure to hold a reference somewhere that will prevent it from being GCed)
-        repl.start()
-        thisReplicator = repl
-    }
-}
-
-/* C A L L O U T S
-
-// Listener Callouts
-
-
-<.> Initialize the listener instance using the configuration settings.
-<.> Start the listener, ready to accept connections and incoming data from active peers.
-
-
-<.> `connectionCount` -- the total number of connections served by the listener
-<.> `activeConnectionCount` -- the number of active (BUSY) connections currently being served by the listener
-//
-
-
-<.> Configure the pinned certificate using data from the byte array `cert`
-
-<.> Attempt to get the identity from secure storage
-<.> Set the authenticator to ClientCertificateAuthenticator and configure it to use the retrieved identity
-
-
-<.> A replication is an asynchronous operation.
-To keep a reference to the `replicator` object, you can set it as an instance property.
-<.> The URL scheme for remote database URLs uses `ws:`, or `wss:` for SSL/TLS connections over wb sockets.
-In this example the hostname is `10.0.2.2` because the Android emulator runs in a VM that is generally accessible on `10.0.2.2` from the host machine (see https://developer.android.com/studio/run/emulator-networking[Android Emulator networking] documentation).
-+
-NOTE: As of Android Pie, version 9, API 28, cleartext support is disabled, by default.
-Although `wss:` protocol URLs are not affected, in order to use the `ws:` protocol, applications must target API 27 or lower, or must configure application network security as described https://developer.android.com/training/articles/security-config#CleartextTrafficPermitted[here].
-
-*/
-
-//
-// Copyright (c) 2023 Couchbase, Inc All rights reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-package com.couchbase.codesnippets
-
-import android.app.Application
-import com.couchbase.lite.CouchbaseLite
-import com.couchbase.lite.Database
-import com.couchbase.lite.LogDomain
-import com.couchbase.lite.LogLevel
-
-
-class SnippetApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        // Initialize the Couchbase Lite system
-        CouchbaseLite.init(this)
-    }
-
-    fun troubleshootingExample() {
-        CouchbaseLite.init(this, true)
-
-        Database.log.console.setDomains(LogDomain.REPLICATOR)
-        Database.log.console.level = LogLevel.DEBUG
-    }
-}
-//
-// Copyright (c) 2024 Couchbase, Inc All rights reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-@file:Suppress("unused", "UNUSED_VARIABLE")
-
-package com.couchbase.codesnippets
-
-import com.couchbase.lite.Blob
-import com.couchbase.lite.Collection
-import com.couchbase.lite.CouchbaseLiteException
-import com.couchbase.lite.Database
-import com.couchbase.lite.MutableArray
-import com.couchbase.lite.Parameters
-import com.couchbase.lite.PredictiveModel
-import com.couchbase.lite.VectorEncoding
-import com.couchbase.lite.VectorIndexConfiguration
-import com.couchbase.lite.VectorIndexConfigurationFactory
-import com.couchbase.lite.newConfig
-
-
-fun interface ColorModel {
-    fun getEmbedding(color: Blob?): List<Float?>?
-}
-
-class VectorSearchExamples {
-    fun createDefaultVSConfig() {
-        // create the configuration for a vector index named "vector"
-        // with 3 dimensions and 100 centroids
-        val config = VectorIndexConfigurationFactory.newConfig("vector", 3L, 100L)
-    }
-
-    fun createCustomVSConfig() {
-        // create the configuration for a vector index named "vector"
-        // with 3 dimensions, 100 centroids, no encoding, using cosine distance
-        // with a max training size 5000 and amin training size 2500
-        // no vector encoding and using COSINE distance measurement
-        val config = VectorIndexConfigurationFactory.newConfig(
-            "vector",
-            3L,
-            100L,
-            encoding = VectorEncoding.none(),
-            metric = VectorIndexConfiguration.DistanceMetric.COSINE,
-            numProbes = 8L,
-            minTrainingSize = 2500L,
-            maxTrainingSize = 5000L
-        )
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun createVectorIndex(db: Database) {
-        // create a vector index named "colors_index"
-        // in the collection "_default.colors"
-        db.getCollection("colors")?.createIndex(
-            "colors_index",
-            VectorIndexConfigurationFactory.newConfig("vector", 3L, 100L)
-        ) ?: throw IllegalStateException("No such collection: colors")
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun setNumProbes(col: Collection) {
-        // explicitly set numProbes
-        col.createIndex(
-            "colors_index",
-            VectorIndexConfigurationFactory.newConfig("vector", 3L, 100L, numProbes = 5L)
-        )
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun createPredictiveIndex(db: Database, colorModel: PredictiveModel) {
-        // create a vector index with a simple predictive model
-        Database.prediction.registerModel("ColorModel", colorModel)
-
-        db.getCollection("colors")?.createIndex(
-            "colors_pred_index",
-            VectorIndexConfigurationFactory.newConfig(
-                "prediction(ColorModel, {'colorInput': color}).vector",
-                3L, 100L
-            )
-        ) ?: throw IllegalStateException("No such collection: colors")
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun useVectorIndex(db: Database, colorVector: List<Any>) {
-        db.getCollection("colors")?.createIndex(
-            "colors_index",
-            VectorIndexConfigurationFactory.newConfig("vector", 3L, 100L)
-        ) ?: throw IllegalStateException("No such collection: colors")
-
-        // get the APPROX_VECTOR_DISTANCE to the parameter vector for each color in the collection
-        val query = db.createQuery(
-            "SELECT meta().id, color, APPROX_VECTOR_DISTANCE(vector, \$vectorParam)"
-                    + " FROM _default.colors"
-        )
-        val params = Parameters()
-        params.setArray("vectorParam", MutableArray((colorVector)))
-        query.parameters = params
-
-        query.execute().use { rs ->
-            // process results
-        }
-        // end:vs-use-vector-index[]
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun useAVD(db: Database, colorVector: List<Any>) {
-        // use APPROX_VECTOR_DISTANCE in a query ORDER BY clause
-        val query = db.createQuery(
-            ("SELECT meta().id, color"
-                    + " FROM _default.colors"
-                    + " ORDER BY APPROX_VECTOR_DISTANCE(vector, \$vectorParam)"
-                    + " LIMIT 8")
-        )
-        val params = Parameters()
-        params.setArray("vectorParam", MutableArray((colorVector)))
-        query.parameters = params
-
-        query.execute().use { rs ->
-            // process results
-        }
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun useAVDWithWhere(db: Database, colorVector: List<Any>) {
-        // use APPROX_VECTOR_DISTANCE in a query WHERE clause
-        val query = db.createQuery(
-            ("SELECT meta().id, color"
-                    + " FROM _default.colors"
-                    + " WHERE APPROX_VECTOR_DISTANCE(vector, \$vectorParam) < 0.5")
-        )
-        val params = Parameters()
-        params.setArray("vectorParam", MutableArray((colorVector)))
-        query.parameters = params
-
-        query.execute().use { rs ->
-            // process results
-        }
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun useAVDWithPrediction(db: Database, colorModel: PredictiveModel, colorVector: List<Any>) {
-        // use APPROX_VECTOR_DISTANCE with a predictive model
-        Database.prediction.registerModel("ColorModel", (colorModel))
-
-        db.getCollection("colors")?.createIndex(
-            "colors_pred_index",
-            VectorIndexConfigurationFactory.newConfig(
-                "prediction(ColorModel, {'colorInput': color}).vector",
-                3L, 100L
-            )
-        ) ?: throw IllegalStateException("No such collection: colors")
-
-        val query = db.createQuery(
-            ("SELECT meta().id, color"
-                    + " FROM _default.colors"
-                    + " ORDER BY APPROX_VECTOR_DISTANCE("
-                    + "    prediction(ColorModel, {'colorInput': color}).vector,"
-                    + "    \$vectorParam)"
-                    + " LIMIT 300")
-        )
-        val params = Parameters()
-        params.setArray("vectorParam", MutableArray((colorVector)))
-        query.parameters = params
-
-        query.execute().use { rs ->
-            // process results
-        }
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun hybridOrderBy(db: Database, colorVector: List<Any>) {
-        val query = db.createQuery(
-            ("SELECT meta().id, color"
-                    + " FROM _default.colors"
-                    + " WHERE saturation > 0.5"
-                    + " ORDER BY APPROX_VECTOR_DISTANCE(vector, \$vector)"
-                    + " LIMIT 8")
-        )
-        val params = Parameters()
-        params.setArray("vectorParam", MutableArray((colorVector)))
-        query.parameters = params
-
-        query.execute().use { rs ->
-            // process results
-        }
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun hybridWhere(db: Database, colorVector: List<Any>) {
-        val query = db.createQuery(
-            ("SELECT meta().id, color"
-                    + " FROM _default.colors"
-                    + " WHERE saturation > 0.5"
-                    + "     AND APPROX_VECTOR_DISTANCE(vector, \$vector) < .05")
-        )
-        val params = Parameters()
-        params.setArray("vectorParam", MutableArray((colorVector)))
-        query.parameters = params
-
-        query.execute().use { rs ->
-            // process results
-        }
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun hybridPrediction(db: Database, colorVector: List<Any>) {
-        val query = db.createQuery(
-            ("SELECT meta().id, color"
-                    + " FROM _default.colors"
-                    + " WHERE saturation > 0.5"
-                    + " ORDER BY APPROX_VECTOR_DISTANCE("
-                    + "    prediction(ColorModel, {'colorInput': color}).vector,"
-                    + "    \$vectorParam)"
-                    + " LIMIT 8")
-        )
-        val params = Parameters()
-        params.setArray("vectorParam", MutableArray((colorVector)))
-        query.parameters = params
-
-        query.execute().use { rs ->
-            // process results
-        }
-    }
-
-    // ??? vs-hybrid-vmatch[]
-
-    @Throws(CouchbaseLiteException::class)
-    fun hybridFullText(db: Database, colorVector: List<Any>) {
-        // Create a hybrid vector search query with full-text's match() that
-        // uses the the full-text index named "color_desc_index".
-        val query = db.createQuery(
-            ("SELECT meta().id, color"
-                    + " FROM _default.colors"
-                    + " WHERE MATCH(color_desc_index, \$text)"
-                    + " ORDER BY APPROX_VECTOR_DISTANCE(vector, \$vector)"
-                    + " LIMIT 8")
-        )
-        val params = Parameters()
-        params.setArray("vectorParam", MutableArray((colorVector)))
-        query.parameters = params
-
-        query.execute().use { rs ->
-            // process results
-        }
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun lazyIndexConfig(db: Database) {
-        db.getCollection("colors")?.createIndex(
-            "colors_index",
-            VectorIndexConfigurationFactory.newConfig("color", 3L, 100L, lazy = true)
-        ) ?: throw IllegalStateException("No such collection: colors")
-    }
-
-    @Throws(Exception::class)
-    fun lazyIndexEmbed(col: Collection, colorModel: ColorModel) {
-        while (true) {
-            col.getIndex("colors_index")?.beginUpdate(10)?.use { updater ->
-                for (i in 0 until updater.count()) {
-                    val embedding: List<Float?>? = colorModel.getEmbedding(updater.getBlob(i))
-                    if (embedding != null) {
-                        updater.setVector(embedding, i)
-                    } else {
-                        // Bad connection? Corrupted over the wire? Something bad happened
-                        // and the vector cannot be generated at the moment: skip it.
-                        // The next time beginUpdate() is called, we'll try it again.
-                        updater.skipVector(i)
-                    }
-                }
-                // This writes the vectors to the index. You MUST either have set or skipped each
-                // of the the vectors in the updater or this call will throw an exception.
-                updater.finish()
-            }
-            // loop until there are no more vectors to update
-                ?: break
-        }
-    }
-}
-
 ----
 
 --
@@ -2441,7 +656,7 @@ thisConfig.setAuthenticator(new ListenerPasswordAuthenticator(
 
 
 [#android:p2psync-websocket-using-passive:::using-client-certificate-authentication]
-===== Using Client Certificate Authentication
+=== Using Client Certificate Authentication
 Define how the server will authenticate client-supplied certificates.
 
 There are two ways to authenticate a client:
@@ -2463,7 +678,7 @@ The logic should take the form of function or block (such as, a closure expressi
 [#android:p2psync-websocket-using-passive:::ex-set-cert-auth]
 ====
 
-pass:q,a[Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator].]
+Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator].
 [tabs]
 =====
 
@@ -2545,7 +760,7 @@ A valid client will provide one or more certificates that match a certificate in
 [#android:p2psync-websocket-using-passive:::ex-use-app-logic]
 ====
 
-pass:q,a[Configure the server (listener) to authenticate the client using user-supplied logic.]
+Configure the server (listener) to authenticate the client using user-supplied logic.
 [tabs]
 =====
 
@@ -2621,7 +836,7 @@ It must return a boolean value; with `true` denoting the client supplied certifi
 
 
 [#android:p2psync-websocket-using-passive:::delete-tls-identity]
-===== Delete Entry
+=== Delete Entry
 
 You can remove unwanted entries from secure storage using the secure storage API (see -- https://developer.android.com/reference/java/security/KeyStore#deleteEntry(java.lang.String)).
 
@@ -2646,7 +861,6 @@ Kotlin::
 val thisKeyStore = KeyStore.getInstance("AndroidKeyStore")
 thisKeyStore.load(null)
 thisKeyStore.deleteEntry(alias)
-
 ----
 
 --
@@ -2661,7 +875,6 @@ Java::
 KeyStore thisKeyStore = KeyStore.getInstance("AndroidKeyStore");
 thisKeyStore.load(null);
 thisKeyStore.deleteEntry(alias);
-
 ----
 --
 
@@ -2672,7 +885,7 @@ thisKeyStore.deleteEntry(alias);
 
 
 [#android:p2psync-websocket-using-passive:::the-impact-of-tls-settings]
-===== The Impact of TLS Settings
+=== The Impact of TLS Settings
 
 The table in this section shows the expected system behavior (in regards to security) depending on the TLS configuration settings deployed.
 
@@ -2706,7 +919,7 @@ a|* System will use the configured identity.
 
 
 [#android:p2psync-websocket-using-passive:::lbl-start-listener]
-==== Start Listener
+== Start Listener
 
 Once you have completed the Listener's configuration settings you can initialize the Listener instance and start it running -- see: <<android:p2psync-websocket-using-passive:::initialize-and-start-listener>>
 
@@ -2782,7 +995,7 @@ thisListener.start(); // <.>
 
 
 [#android:p2psync-websocket-using-passive:::monitor-listener]
-==== Monitor Listener
+== Monitor Listener
 
 Use the Listener's `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/URLEndpointListener.html#getStatus--[getStatus]` property/method to get counts of total and active connections -- see: <<android:p2psync-websocket-using-passive:::get-connection-counts>>.
 
@@ -2837,7 +1050,7 @@ int activeConnectionCount =
 
 
 [#android:p2psync-websocket-using-passive:::stop-listener]
-==== Stop Listener
+== Stop Listener
 
 It is best practice to check the status of the Listener's connections and stop only when you have confirmed that there are no active connections -- see <<android:p2psync-websocket-using-passive:::get-connection-counts>>.
 
@@ -2889,13 +1102,13 @@ NOTE: Closing the database will also close the Listener.
 
 
 [#android:p2psync-websocket-using-passive:::related-content]
-==== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-===== {empty}
+=== {empty}
 .How to
 * xref:android:p2psync-websocket-using-passive.adoc[Passive Peer]
 * xref:android:p2psync-websocket-using-active.adoc[Active Peer]
@@ -2903,8 +1116,8 @@ NOTE: Closing the database will also close the Listener.
 
 .
 
-[discrete.colum#android:p2psync-websocket-using-passive:::-2n]
-===== {empty}
+[.column#android:p2psync-websocket-using-passive:::-2]
+=== {empty}
 .Concepts
 * xref:android:landing-p2psync.adoc[Peer-to-Peer Sync]
 
@@ -2913,8 +1126,8 @@ NOTE: Closing the database will also close the Listener.
 .
 
 
-[discrete.colum#android:p2psync-websocket-using-passive:::-3n]
-===== {empty}
+[.column#android:p2psync-websocket-using-passive:::-3]
+=== {empty}
 .Community Resources ...
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |

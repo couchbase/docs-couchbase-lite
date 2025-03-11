@@ -1,13 +1,5 @@
-:docname: query-troubleshooting
-:page-module: android
-:page-relative-src-path: query-troubleshooting.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#android:query-troubleshooting:::]
-== Query Troubleshooting
+= Query Troubleshooting
 // BEGIN -- page -- <module>-query-trouble-shooting.adoc
 // Uses:
 // -- attribute -- partial$ -- modules/<module>/pages/_partials
@@ -32,11 +24,11 @@ Related Content -- xref:android:querybuilder.adoc#lbl-predquery[Predictive Queri
 
 
 [#android:query-troubleshooting:::query-explain]
-=== Query Explain
+== Query Explain
 
 
 [#android:query-troubleshooting:::using]
-==== Using
+=== Using
 Query's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Query.html#explain--[explain()] method can provide useful insight when you are trying to diagnose query performance issues and-or optimize queries.
 To examine how your query is working, either embed the call inside your app (see: <<android:query-troubleshooting:::use-qe-app>>), or use it interactively within a `cblite` shell (see: <<android:query-troubleshooting:::use-qe-cblite>>).
 
@@ -115,7 +107,7 @@ cblite <your-database-name>.cblite2 // <.>
 
 
 [#android:query-troubleshooting:::output]
-==== Output
+=== Output
 The output from `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Query.html#explain--[explain()]` remains the same whether invoked by an app, or `cblite` -- see <<android:query-troubleshooting:::qe-output>> for an example of how it looks.
 
 [#android:query-troubleshooting:::qe-output]
@@ -145,11 +137,11 @@ You can use this to identify potential issues and so optimize problematic querie
 
 
 [#android:query-troubleshooting:::the-query-plan]
-=== The Query Plan
+== The Query Plan
 
 
 [#android:query-troubleshooting:::format]
-==== Format
+=== Format
 The query plan section of the output displays a tabular form of the translated query's execution plan.
 It primarily shows how the data will be retrieved and, where appropriate, how it will be sorted for navigation and-or presentation purposes.
 For more on SQLite's Explain Query Plan -- see: https://www.sqlite.org/eqp.html
@@ -172,13 +164,13 @@ Something you may well be looking to optimize -- see <<android:query-troubleshoo
 
 
 [#android:query-troubleshooting:::ret-method]
-==== Retrieval Method
+=== Retrieval Method
 The query optimizer will attempt to retrieve the requested data items as efficiently as possible, which generally will be by using one or more of the available indexes.
 The _retrieval method_ shows the approach decided upon by the optimizer -- see <<android:query-troubleshooting:::ret-meths>>.
 
 [#ret-meths]
 .Retrieval methods
-[#android:query-troubleshooting:::ret-meths#,cols="2,8"]
+[#,cols="2,8"]
 |===
 |Retrieval Method | Description
 
@@ -202,7 +194,7 @@ When looking to optimize a query's retrieval method, consider whether:
 * You could reduce the data set being requested to minimize the query's footprint on the database
 
 [#android:query-troubleshooting:::order-group]
-==== Order and Group
+=== Order and Group
 The `Use temp b-tree for` lines in the example indicate that the query requires sorting to cater for grouping and then sorting again to present the output results.
 Minimizing, if not eliminating, this ordering and re-ordering will obviously reduce the amount of time taken to process your query.
 
@@ -210,7 +202,7 @@ Ask "is the grouping and-or ordering absolutely necessary?": if it isn't, drop i
 
 
 [#android:query-troubleshooting:::queries-and-indexes]
-=== Queries and Indexes
+== Queries and Indexes
 
 Querying documents using a pre-existing database index is much faster because an index narrows down the set of documents to examine -- see: the xref:android:query-troubleshooting.adoc[Query Troubleshooting] topic.
 
@@ -237,7 +229,7 @@ Searches that begin with or rely upon an inequality with the primary key are inh
 
 
 [#android:query-troubleshooting:::working-with-the-query-optimizer]
-=== Working with the Query Optimizer
+== Working with the Query Optimizer
 You may have noticed that sometimes a query runs faster on a second run, or after re-opening the database, or after deleting and recreating an index.
 This typically happens when SQL Query Optimizer has gathered sufficient stats to recognize a means of optimizing a sub-optimal query.
 
@@ -254,7 +246,7 @@ They may not, in themselves, resolve the issue entirely; but they can provide a 
 
 
 [#android:query-troubleshooting:::use-like-based-queries]
-=== Wildcard and Like-based Queries
+== Wildcard and Like-based Queries
 
 Like-based searches can use the index(es) only if:
 
@@ -389,7 +381,7 @@ Logger.log(query.explain());
 ----
 
 [#android:query-troubleshooting:::use-functions-wisely]
-=== Use Functions Wisely
+== Use Functions Wisely
 
 Functions are a very useful tool in building queries, but be aware that they can impact whether the query-optimizer is able to use your index(es).
 
@@ -501,7 +493,7 @@ Logger.log(query.explain());
 Knowing this, you can consider how you create the index; for example, using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Function.html#lower-com.couchbase.lite.Expression-[lower()] when you create the index and then always using lowercase comparisons.
 
 [#android:query-troubleshooting:::optimization-considerations]
-=== Optimization Considerations
+== Optimization Considerations
 
 Try to minimize the amount of data retrieved.
 Reduce it down to the few properties you really *do* need to achieve the required result.
@@ -524,13 +516,13 @@ Consider Using Full Text Search instead of complex like or regex patterns -- see
 
 
 [#android:query-troubleshooting:::related-content]
-=== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-==== {empty}
+====== {empty}
 .How to . . .
 * xref:android:querybuilder.adoc[QueryBuilder]
 * xref:android:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
@@ -540,8 +532,8 @@ Consider Using Full Text Search instead of complex like or regex patterns -- see
 
 .
 
-[discrete.colum#android:query-troubleshooting:::-2n]
-==== {empty}
+[.column#android:query-troubleshooting:::-2]
+====== {empty}
 .Learn more . . .
 * xref:android:query-n1ql-mobile-querybuilder-diffs.adoc[{sqlpp} Mobile - Querybuilder  Differences]
 * xref:android:query-n1ql-mobile-server-diffs.adoc[{sqlpp} Mobile - {sqlpp} Server Differences]
@@ -556,8 +548,8 @@ Consider Using Full Text Search instead of complex like or regex patterns -- see
 .
 
 
-[discrete.colum#android:query-troubleshooting:::-3n]
-==== {empty}
+[.column#android:query-troubleshooting:::-3]
+====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |
@@ -575,5 +567,5 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 // END -- page -- <module>-query-trouble-shooting.adoc
 
 
-= Search
+ Search
 

@@ -1,13 +1,5 @@
-:docname: gs-install
-:page-module: java
-:page-relative-src-path: gs-install.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#java:gs-install:::]
-== Install
+= Install
 :page-aliases: start/java-gs-install.adoc
 :page-role:
 :page-toclevels: 2@
@@ -27,10 +19,10 @@ Related Content -- xref:java:gs-install.adoc[Install] | xref:java:gs-prereqs.ado
 
 
 [#java:gs-install:::introduction]
-=== Introduction
+== Introduction
 
 
-pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] on Java {major}.{minor}.{base}{empty} enables development and deployment of pass:q,a[Couchbase{nbsp}Lite] applications to a JVM environment.
+_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] on Java {major}.{minor}.{base}{empty} enables development and deployment of pass:q,a[Couchbase{nbsp}Lite applications to a JVM environment.
 You can deploy Standalone (Java Desktop/Console) apps or Web Apps (using, for example, Tomcat; including embedded Tomcat deployments).
 
 
@@ -78,19 +70,19 @@ Now, try the <<java:gs-build:::,Getting Started>> application, which demonstrate
 
 
 [#java:gs-install:::preparing-your-build-environment]
-=== Preparing Your Build Environment
+== Preparing Your Build Environment
 
 
 This section shows how to set up and use pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java to build desktop and web applications using gradle, Maven, Tomcat and Intellij IDEA Community Edition.
 It assumes a familiarity with these products, however you are free to use your own choice of development tools.
 
 [#java:gs-install:::binaries]
-==== Binaries
+=== Binaries
 
-pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java binaries are available for both Community (CE) and Enterprise (EE) editions from the _Maven_ repositories.
+pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] on Java binaries are available for both Community (CE) and Enterprise (EE) editions from the _Maven_ repositories.
 
 [#java:gs-install:::prerequisites]
-==== Prerequisites
+=== Prerequisites
 
 * Planning to sync with a pass:q,a[_Couchbase{nbsp}Server_]?
 +
@@ -108,7 +100,7 @@ See the _Additional Steps for Linux_ section in <<java:gs-prereqs:::additional-s
 
 
 [#java:gs-install:::standalone-apps]
-=== Standalone Apps
+== Standalone Apps
 
 [IMPORTANT]
 --
@@ -119,7 +111,7 @@ To verify whether your device supports the AVX2 instructions set, https://www.in
 --
 
 [#java:gs-install:::using-gradle]
-==== Using Gradle
+=== Using Gradle
 
 . Create a project folder
 . Initialize it for a Gradle Java application
@@ -130,7 +122,7 @@ To verify whether your device supports the AVX2 instructions set, https://www.in
 TIP: If you don't have auto-import set for Gradle projects, then accept the *Import Gradle Project* prompt that is displayed bottom-right of the screen +
 Note the Gradle menu at the extreme right of the screen:
 
-image::couchbase-lite/current/java/_images/GradleMenuWebApp.png[,300]
+image::java:GradleMenuWebApp.png[,300]
 --
 
 That's it.
@@ -237,6 +229,7 @@ repositories {
 ----
 
 .Activating the Extension
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-setup-packaging]
 [source,java, subs="attributes+"]
 ----
         try { CouchbaseLite.enableVectorSearch(); }
@@ -281,8 +274,8 @@ dependencies {
 =====
 ====
 
-[discrete.include-in-to#java:gs-install:::using-mavenc]
-==== Using Maven
+[discrete.include-in-toc#java:gs-install:::using-maven]
+=== Using Maven
 
 . Include the content shown in <<java:gs-install:::ex-bmf1>> in your `pom.xml` file in the root of your project folder
 
@@ -379,7 +372,7 @@ Community edition::
 
 
 [#java:gs-install:::web-app-development]
-=== Web App Development
+== Web App Development
 
 
 This section explains how to set-up a build project to create pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java web apps using gradle and Intellij IDEA.
@@ -396,13 +389,13 @@ For examples of how to do this using Maven POM files, see --
 
 
 [#java:gs-install:::tomcat]
-==== Tomcat
+=== Tomcat
 
 In our examples here we build and deploy web apps using a gradle plugin based on the `com.bmuschko.tomcat` plugin.
 It provides a simple Tomcat harness that can be used from within Intellij IDEA or the command-line -- see <<java:gs-install:::lbl-tomcat>>
 
 [#java:gs-install:::bmkMultCblJapps, Running multiple pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java web apps]
-==== Multiple Web Apps
+=== Multiple Web Apps
 
 Each web application has its own *class loader (WebappX).
 This loads the classes, jars, and resources found in the application's `WEB-INF/classes` and `WEB-INF/lib` folders, together with any shared jar files from `$CATALINA_BASE/lib` -- see https://tomcat.apache.org/tomcat-9.0-doc/class-loader-howto.html[tomcat documentation] for more.
@@ -414,7 +407,7 @@ NOTE:  Configuring pass:q,a[Couchbase{nbsp}Lite] logging functionality will affe
 For information about building a WAR file see <<java:gs-install:::lbl-war>>
 
 [#java:gs-install:::prerequisites-2]
-==== Prerequisites
+=== Prerequisites
 
 * Ensure your build environment matches the runtime Tomcat environment.
 Specifically, that the Java and Tomcat versions are the same.
@@ -425,7 +418,7 @@ Specifically, that the Java and Tomcat versions are the same.
 TIP: This also means you should declare the dependencies as `providedCompile` to avoid them being bundled into the `WEB-INF/libs` folder
 
 [#java:gs-install:::steps]
-==== Steps
+=== Steps
 
 . Create a project folder and initialize it for a Gradle Java application
 +
@@ -495,7 +488,7 @@ dependencies {
 
 
 [#java:gs-install:::lbl-tomcat]
-=== Embedded Tomcat
+== Embedded Tomcat
 
 The simplest way to build and deploy your pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java web app is to use a gradle plugin that provides a simple Tomcat harness.
 
@@ -523,7 +516,7 @@ So, to run the app use:
 ----
 
 [#java:gs-install:::lbl-war]
-=== Deploying a WAR File
+== Deploying a WAR File
 
 To deploy your web app to a local Tomcat instance you need to generate a WAR file.
 However, you should note that when creating a war file, if you use the `implementation` dependency type then your _pass:q,a[Couchbase{nbsp}Lite]_ jar files will be bundled into WEB-INF/lib of the web application.
@@ -549,13 +542,13 @@ NOTE: For linux platform see also -- _Using Native Libraries for Linux_ in xref:
 
 
 [#java:gs-install:::related-content]
-=== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-==== {empty}
+====== {empty}
 .How to . . .
 * xref:java:gs-prereqs.adoc[Prerequisites]
 * xref:java:gs-install.adoc[Install]
@@ -564,8 +557,8 @@ NOTE: For linux platform see also -- _Using Native Libraries for Linux_ in xref:
 
 .
 
-[discrete.colum#java:gs-install:::-2n]
-==== {empty}
+[.column#java:gs-install:::-2]
+====== {empty}
 .Learn more . . .
 * xref:java:database.adoc[Databases]
 * xref:java:document.adoc[Documents]
@@ -576,8 +569,8 @@ NOTE: For linux platform see also -- _Using Native Libraries for Linux_ in xref:
 .
 
 
-[discrete.colum#java:gs-install:::-3n]
-==== {empty}
+[.column#java:gs-install:::-3]
+====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |

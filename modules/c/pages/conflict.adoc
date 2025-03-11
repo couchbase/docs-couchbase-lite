@@ -1,11 +1,3 @@
-:docname: conflict
-:page-module: c
-:page-relative-src-path: conflict.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#c:conflict:::]
 = Handling Data Conflicts
 :page-aliases: clang:conflict.adoc
@@ -111,7 +103,7 @@ Apps have the following strategies for resolving conflicts:
 Local Wins::
 +
 --
-
+// include::c:example$code_snippets/main.cpp[tag=local-win-conflict-resolver,indent=0]
 [source, c]
 ----
 
@@ -130,7 +122,7 @@ static const CBLDocument* local_win_conflict_resolver(void* context,
 Remote Wins::
 +
 --
-
+// include::c:example$code_snippets/main.cpp[tag=remote-win-conflict-resolver,indent=0]
 [source, c]
 ----
 
@@ -151,6 +143,7 @@ Merge::
 +
 --
 
+// include::c:example$code_snippets/main.cpp[tag=merge-conflict-resolver,indent=0]
 [source, c]
 ----
 
@@ -239,9 +232,8 @@ When the value is `null`, the default conflict resolution will be applied.
 [source, c]
 ----
 // NOTE: No error handling, for brevity (see getting started)
-CBLError err;
+CBLError err{};
 CBLEndpoint* target = CBLEndpoint_CreateWithURL(FLSTR("ws://localhost:4984/mydatabase"), &err);
-
 
 CBLReplicationCollection collectionConfig;
 memset(&collection, 0, sizeof(collectionConfig));
@@ -339,7 +331,7 @@ In the event of conflicting keys, it will pick the key value from `new`.
 ----
 CBLDatabase* database = kDatabase;
 CBLCollection* collection = CBLDatabase_DefaultCollection(database, NULL);
-CBLError err;
+CBLError err{};
 
 CBLDocument* mutableDoc = CBLCollection_GetMutableDocument(collection, FLSTR("xyz"), &err);
 FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
@@ -393,7 +385,7 @@ CBLCollection_SaveDocumentWithConflictHandler(collection, mutableDoc, custom_con
 
 .
 
-[discrete.colum#c:conflict:::-2n]
+[.column#c:conflict:::-2]
 === {empty}
 .Concepts
 * xref:c:landing-p2psync.adoc[Peer-to-Peer Sync]
@@ -403,7 +395,7 @@ CBLCollection_SaveDocumentWithConflictHandler(collection, mutableDoc, custom_con
 .
 
 
-[discrete.colum#c:conflict:::-3n]
+[.column#c:conflict:::-3]
 === {empty}
 .Community Resources ...
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
@@ -418,8 +410,4 @@ xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Gettin
 </div>
 ++++
 
-
-= https://docs.couchbase.com/mobile/3.2.0/couchbase-lite-c/C/html/modules.html[API&#160;References]
-
-= Product Notes
 

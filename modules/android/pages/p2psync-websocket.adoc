@@ -1,22 +1,10 @@
-:docname: p2psync-websocket
-:page-module: android
-:page-relative-src-path: p2psync-websocket.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#android:p2psync-websocket:::]
-== Peer-to-Peer
+= Peer-to-Peer
 :page-aliases: learn/java-android-p2psync-websocket.adoc
 ifdef::show_edition[:page-edition: {release}] {enterprise}
 :page-role:
 :description: Couchbase Lite's Peer-to-Peer Synchronization enables edge devices to synchronize securely without consuming centralized cloud-server resources
 
-// Define our environment
-
-
-// Define page abstract
 
 // Present common content including abstract and related content footer blocks
 [abstract]
@@ -28,7 +16,7 @@ Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenanc
 
 
 [#android:p2psync-websocket:::introduction]
-=== Introduction
+== Introduction
 // tag::introduction-full[]
 // tag::introduction[]
 Couchbase Lite’s Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronisation between edge devices without needing a centralized cloud-based control point.
@@ -52,10 +40,10 @@ Couchbase Lite’s Peer-to-Peer data synchronization provides:
 // end::introduction-full[]
 
 [#android:p2psync-websocket:::overview]
-=== Overview
+== Overview
 Peer-to-Peer synchronization requires one Peer to act as the Listener to the other Peer’s replicator.
 
-image::couchbase-lite/current/_images/docs-listener-diagram.png[,600]
+image::ROOT:docs-listener-diagram.png[,600]
 
 Peer-to-Peer synchronization requires one Peer to act as the Listener to the other Peer’s replicator.
 Therefore, to use Peer-to-Peer synchronization in your application, you must configure one Peer to act as a Listener using the Couchbase Listener API, the most important of which include _URLEndpointListener_ and _URLEndpointListenerConfiguration_.
@@ -78,7 +66,7 @@ Here you can see configuration involves a xref:android:p2psync-websocket-using-p
 You can also learn how to implement Peer-to-Peer synchronization by referring to our tutorial -- see: xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Getting Started with Peer-to-Peer Synchronization].
 
 [#android:p2psync-websocket:::features]
-=== Features
+== Features
 
 Couchbase Lite for Android's Peer-to-Peer synchronization solution provides support for cross-platform synchronization, for example, between Android and iOS devices.
 
@@ -92,7 +80,7 @@ The Listener will automatically select a port to use or a user-specified port.
 It will also listen on all available networks, unless you specify a specific network.
 
 [#android:p2psync-websocket:::security]
-==== Security
+=== Security
 
 Couchbases Lite's Peer-to-Peer synchronization supports encryption and authentication over TLS with multiple modes, including:
 
@@ -111,22 +99,22 @@ Whilst this can be used in clear text mode, developers are strongly advised to u
 For testing and development purposes, support is provided for the client (active, replicator) to skip verification of self-signed certificates; this mode should not be used in production.
 
 [#android:p2psync-websocket:::error-handling]
-==== Error Handling
+=== Error Handling
 
 When a Listener is stopped, then all connected replicators are notified by a WebSocket error. Your application should distinguish between transient and permanent connectivity errors.
 
 [#android:p2psync-websocket:::passive-peers]
-===== Passive peers
+==== Passive peers
 A Passive Peer losing connectivity with an Active Peer will clean up any associated endpoint connections to that Peer. The Active Peer may attempt to reconnect to the Passive Peer.
 
 [#android:p2psync-websocket:::active-peers]
-===== Active peers
+==== Active peers
 An Active Peer permanently losing connectivity with a Passive Peer will cease replicating.
 
 An Active Peer temporarily losing connectivity with a passive Peer will use exponential backoff functionality to attempt reconnection.
 
 [#android:p2psync-websocket:::delta-sync]
-==== Delta Sync
+=== Delta Sync
 
 Optional delta-sync support is provided but is inactive by default.
 
@@ -134,13 +122,13 @@ Delta-sync can be enabled on a per-replication basis provided that the databases
 Statistics on delta-sync usage are available, including the total number of revisions sent as deltas.
 
 [#android:p2psync-websocket:::conflict-resolution]
-==== Conflict Resolution
+=== Conflict Resolution
 
 Conflict resolution for Peer-to-Peer synchronization works in the same way as it does for Sync Gateway replication, with both custom and automatic resolution available.
 
 
 [#android:p2psync-websocket:::simple-configuration]
-=== Basic Setup
+== Basic Setup
 You can configure a Peer-to-Peer synchronization with just a short amount of code as shown here in <<android:p2psync-websocket:::ex-simple-listener>> and <<android:p2psync-websocket:::ex-simple-replicator>>.
 
 .Simple Listener
@@ -150,7 +138,7 @@ You can configure a Peer-to-Peer synchronization with just a short amount of cod
 [#android:p2psync-websocket:::ex-simple-listener]
 ====
 
-pass:q,a[This simple listener configuration will give you a listener ready to participate in an encrypted synchronization with a replicator providing a valid user name and password.]
+This simple listener configuration will give you a listener ready to participate in an encrypted synchronization with a replicator providing a valid user name and password.
 [tabs]
 =====
 
@@ -220,7 +208,7 @@ thisListener.start(); // <.>
 [#android:p2psync-websocket:::ex-simple-replicator]
 ====
 
-pass:q,a[This simple replicator configuration will give you an encrypted, bi-directional Peer-to-Peer synchronization with automatic conflict resolution.]
+This simple replicator configuration will give you an encrypted, bi-directional Peer-to-Peer synchronization with automatic conflict resolution.
 [tabs]
 =====
 
@@ -291,10 +279,10 @@ Here we use a known URL, but it could be a URL established dynamically in a disc
 
 
 [#android:p2psync-websocket:::api-highlights]
-=== API Highlights
+== API Highlights
 
 [#android:p2psync-websocket:::urlendpointlistener]
-==== URLEndpointListener
+=== URLEndpointListener
 
 The `URLEndpointListener` is the listener for peer-to-peer synchronization.
 It acts like a passive replicator, in the same way that Sync Gateway does in a 'standard' replication.
@@ -310,7 +298,7 @@ Core functionalities of the listener are:
 API Reference: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/URLEndpointListener.html[URLEndpointListener]
 
 [#android:p2psync-websocket:::urlendpointlistenerconfiguration]
-==== URLEndpointListenerConfiguration
+=== URLEndpointListenerConfiguration
 Use this to create a configuration object you can then use to initialize the listener.
 
 Port::
@@ -410,10 +398,10 @@ API Reference: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-an
 --
 
 [#android:p2psync-websocket:::security-2]
-=== Security
+== Security
 
 [#android:p2psync-websocket:::authentication]
-==== Authentication
+=== Authentication
 
 Peer-to-Peer sync supports <<android:p2psync-websocket:::using-basic-authentication,Basic Authentication>> and <<android:p2psync-websocket:::using-tls,TLS Authentication>>.
 For anything other than test deployments, we strongly encourage the use of TLS. In fact, Peer-to-Peer sync using URLEndpointListener is encrypted using TLS by default.
@@ -437,7 +425,7 @@ Active clients replicating with a URLEndpointListener have the option to skip va
 This option is ignored when dealing with CA certificates.
 
 [#android:p2psync-websocket:::using-secure-storage]
-==== Using Secure Storage
+=== Using Secure Storage
 TLS and its associated keys and certificates might require using secure storage to minimize the chances of a security breach.
 The implementation of this storage differs from platform to platform.
 <<android:p2psync-websocket:::secure-storage-details>> summarizes the secure storage used to store keys and certificates for Android.
@@ -557,13 +545,13 @@ a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/s
 
 
 [#android:p2psync-websocket:::related-content]
-=== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-==== {empty}
+====== {empty}
 .How to
 * xref:android:p2psync-websocket-using-passive.adoc[Passive Peer]
 * xref:android:p2psync-websocket-using-active.adoc[Active Peer]
@@ -571,8 +559,8 @@ a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/s
 
 .
 
-[discrete.colum#android:p2psync-websocket:::-2n]
-==== {empty}
+[.column#android:p2psync-websocket:::-2]
+====== {empty}
 .Concepts
 * xref:android:landing-p2psync.adoc[Peer-to-Peer Sync]
 
@@ -581,8 +569,8 @@ a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/s
 .
 
 
-[discrete.colum#android:p2psync-websocket:::-3n]
-==== {empty}
+[.column#android:p2psync-websocket:::-3]
+====== {empty}
 .Community Resources ...
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |

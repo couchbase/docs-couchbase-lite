@@ -1,13 +1,5 @@
-:docname: working-with-vector-search
-:page-module: android
-:page-relative-src-path: working-with-vector-search.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#android:working-with-vector-search:::]
-=== Working with Vector Search
+= Working with Vector Search
 :page-status:
 :page-edition: Enterprise
 :page-aliases:
@@ -19,24 +11,25 @@
 {description}
 
 [#android:working-with-vector-search:::use-vector-search]
-==== Use Vector Search
+== Use Vector Search
 
 To configure a project to use vector search, follow the <<android:gs-install:::,installation instructions>> to add the Vector Search extension.
 
 NOTE: You must install Couchbase Lite to use the Vector Search extension.
 
 [#android:working-with-vector-search:::create-a-vector-index]
-==== Create a Vector Index
+== Create a Vector Index
 
 This method shows how you can create a vector index using the Couchbase Lite Vector Search extension.
 
-[tab#android:working-with-vector-search:::tabs-1s]
+[tabs]
 =====
 
 
 Java::
 +
 --
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-custom-config, indent=2]
 [source, java]
 ----
 
@@ -71,6 +64,7 @@ From there, you create an index within a given collection using the previously g
 Kotlin::
 +
 --
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-custom-config, indent=2]
 [source, kotlin]
 ----
 
@@ -110,7 +104,7 @@ NOTE: The number of vectors, the width or dimensions of the vectors and the trai
 This is because the training vectors have to be resident on the machine.
 
 [#android:working-with-vector-search:::vector-index-configuration]
-===== Vector Index Configuration
+=== Vector Index Configuration
 
 The table below displays the different configurations you can modify within your `VectorIndexConfiguration()` function.
 For more information on specific configurations, see <<android:vector-search:::,Vector Search.>>
@@ -183,7 +177,7 @@ a| The guidelines for the minimum and maximum training size are as follows:
 CAUTION: Altering the default training sizes could be detrimental to the accuracy of returned results produced by the model and total computation time.
 
 [#android:working-with-vector-search:::generating-vectors]
-==== Generating Vectors
+== Generating Vectors
 
 You can use the following methods to generate vectors in Couchbase Lite:
 
@@ -196,17 +190,18 @@ You can use the following methods to generate vectors in Couchbase Lite:
 Below are example configurations of the previously mentioned methods.
 
 [#android:working-with-vector-search:::create-a-vector-index-with-embeddings]
-===== Create a Vector Index with Embeddings
+=== Create a Vector Index with Embeddings
 
 This method shows you how to create a Vector Index with embeddings.
 
-[tab#android:working-with-vector-search:::tabs-2s]
+[tabs]
 =====
 
 
 Java::
 +
 --
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-index, indent=2]
 [source, java]
 ----
 
@@ -228,6 +223,7 @@ Java::
 Kotlin::
 +
 --
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-index, indent=2]
 [source, kotlin]
 ----
 
@@ -248,18 +244,19 @@ Kotlin::
 =====
 
 [#android:working-with-vector-search:::create-vector-index-embeddings-from-a-predictive-model]
-===== Create Vector Index Embeddings from a Predictive Model
+=== Create Vector Index Embeddings from a Predictive Model
 
 This method generates vectors to be indexed for each document at the index time by using the `prediction()` function.
 The key difference to note is that the `config` object uses the output of the `prediction()` function as the `expression` parameter to generate the vector index.
 
-[tab#android:working-with-vector-search:::tabs-3s]
+[tabs]
 =====
 
 
 Java::
 +
 --
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-predictive-index, indent=2]
 [source, java]
 ----
 
@@ -279,6 +276,7 @@ Java::
 Kotlin::
 +
 --
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-predictive-index,indent=2]
 [source, kotlin]
 ----
 
@@ -301,18 +299,19 @@ NOTE: You can use less storage by using the `prediction()` function as the encod
 However, the index time will be longer as vector embedding generation is occurring at run time.
 
 [#android:working-with-vector-search:::create-a-lazy-vector-index]
-==== Create a Lazy Vector Index
+== Create a Lazy Vector Index
 
 Lazy indexing is an alternate approach to using the standard predictive model with regular vector indexes which handle the indexing process automatically.
 You can use lazy indexing to use a ML model that is not available locally on the device and to create vector indexes without having vector embeddings in the documents.
 
-[tab#android:working-with-vector-search:::tabs-4s]
+[tabs]
 =====
 
 
 Java::
 +
 --
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-lazy-index-config, indent=2]
 [source, java]
 ----
 
@@ -331,6 +330,7 @@ You can enable lazy vector indexing by setting the `isLazy` property to `true` i
 Kotlin::
 +
 --
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-lazy-index-config,indent=2]
 [source, kotlin]
 ----
 
@@ -349,44 +349,42 @@ You can enable lazy vector indexing by setting the `isLazy` property to `true` i
 NOTE: Lazy Vector Indexing is opt-in functionality, the `isLazy` property is set to `false` by default.
 
 [#android:working-with-vector-search:::updating-the-lazy-index]
-===== Updating the Lazy Index
+=== Updating the Lazy Index
 
 Below is an example of how you can update your lazy index.
 
-[tab#android:working-with-vector-search:::tabs-5s]
+[tabs]
 =====
 
 
 Java::
 +
 --
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-lazy-index-embedding, indent=2]
 [source, java]
 ----
 
-          while (true) {
-              try (IndexUpdater updater = col.getIndex("colors_index").beginUpdate(10)) {
-                  if (updater == null) { break; }
-                  for (int i = 0; i < updater.count(); i++) {
-                      try {
-                          // get the color swatch from the updater and send it to the remote model
-                          List<Float> embedding = colorModel.getEmbedding(updater.getBlob(i));
-                          updater.setVector(embedding, i);
-                      }
-                      catch (IOException e) {
-                          // Bad connection? Corrupted over the wire? Something bad happened
-                          // and the vector cannot be generated at the moment: skip it.
-                          // The next time beginUpdate() is called, we'll try it again.
-                          updater.skipVector(i);
-                      }
-                  }
-                  // This writes the vectors to the index. You MUST either have set or skipped each
-                  // of the the vectors in the updater or this call will throw an exception.
-                  updater.finish();
+  while (true) {
+      try (IndexUpdater updater = col.getIndex("colors_index").beginUpdate(10)) {
+          if (updater == null) { break; }
+          for (int i = 0; i < updater.count(); i++) {
+              try {
+                  // get the color swatch from the updater and send it to the remote model
+                  List<Float> embedding = colorModel.getEmbedding(updater.getBlob(i));
+                  updater.setVector(embedding, i);
+              }
+              catch (IOException e) {
+                  // Bad connection? Corrupted over the wire? Something bad happened
+                  // and the vector cannot be generated at the moment: skip it.
+                  // The next time beginUpdate() is called, we'll try it again.
+                  updater.skipVector(i);
               }
           }
+          // This writes the vectors to the index. You MUST either have set or skipped each
+          // of the the vectors in the updater or this call will throw an exception.
+          updater.finish();
       }
   }
-
 
 ----
 
@@ -414,32 +412,30 @@ For standard vector indexing, this will cause the affected documents to be dropp
 Kotlin::
 +
 --
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-create-lazy-index-embedding,indent=2]
 [source, kotlin]
 ----
 
-          while (true) {
-              col.getIndex("colors_index")?.beginUpdate(10)?.use { updater ->
-                  for (i in 0 until updater.count()) {
-                      try {
-                          val embedding: List<Float?>? = colorModel.getEmbedding(updater.getBlob(i))
-                          updater.setVector(embedding, i)
-                      } catch (e: IOException) {
-                          // Bad connection? Corrupted over the wire? Something bad happened
-                          // and the vector cannot be generated at the moment: skip it.
-                          // The next time beginUpdate() is called, we'll try it again.
-                          updater.skipVector(i)
-                      }
-                  }
-                  // This writes the vectors to the index. You MUST either have set or skipped each
-                  // of the the vectors in the updater or this call will throw an exception.
-                  updater.finish()
+  while (true) {
+      col.getIndex("colors_index")?.beginUpdate(10)?.use { updater ->
+          for (i in 0 until updater.count()) {
+              try {
+                  val embedding: List<Float?>? = colorModel.getEmbedding(updater.getBlob(i))
+                  updater.setVector(embedding, i)
+              } catch (e: IOException) {
+                  // Bad connection? Corrupted over the wire? Something bad happened
+                  // and the vector cannot be generated at the moment: skip it.
+                  // The next time beginUpdate() is called, we'll try it again.
+                  updater.skipVector(i)
               }
-              // loop until there are no more vectors to update
-                  ?: break
           }
+          // This writes the vectors to the index. You MUST either have set or skipped each
+          // of the the vectors in the updater or this call will throw an exception.
+          updater.finish()
       }
+      // loop until there are no more vectors to update
+          ?: break
   }
-
 
 ----
 
@@ -467,14 +463,14 @@ For standard vector indexing, this will cause the affected documents to be dropp
 NOTE: `updater.finish()` will throw an error if any values inside the updater have not been set or skipped.
 
 [#android:working-with-vector-search:::vector-search-sql-support]
-==== Vector Search SQL++ Support
+== Vector Search SQL++ Support
 
 Couchbase Lite currently supports Hybrid Vector Search and the `APPROX_VECTOR_DISTANCE()` function.
 
 IMPORTANT: Similar to the <<android:fts:::,Full Text Search>> `match()` function, the `APPROX_VECTOR_DISTANCE()` function and Hybrid Vector Search cannot use the `OR` expression with the other expressions in the related `WHERE` clause.
 
 [#android:working-with-vector-search:::use-hybrid-vector-search]
-==== Use Hybrid Vector Search
+== Use Hybrid Vector Search
 
 You can use Hybrid Vector Search (Hybrid Search) to perform vector search in conjunction with regular SQL++ queries.
 With Hybrid Search, you perform vector search on documents that have already been filtered based on criteria specified in the `WHERE` clause.
@@ -482,17 +478,18 @@ With Hybrid Search, you perform vector search on documents that have already bee
 NOTE: A `LIMIT` clause is required for non-hybrid Vector Search, this avoids a slow, exhaustive unlimited search of all possible vectors.
 
 [#android:working-with-vector-search:::hybrid-vector-search-with-full-text-match]
-===== Hybrid Vector Search with Full Text Match
+=== Hybrid Vector Search with Full Text Match
 
 Below are examples of using Hybrid Search with the Full Text `match()` function.
 
-[tab#android:working-with-vector-search:::tabs-6s]
+[tabs]
 =====
 
 
 Java::
 +
 --
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-hybrid-ftmatch, indent=2]
 [source, java]
 ----
 
@@ -519,6 +516,7 @@ Java::
 Kotlin::
 +
 --
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-hybrid-ftmatch,indent=2]
 [source, kotlin]
 ----
 
@@ -544,17 +542,18 @@ Kotlin::
 =====
 
 [#android:working-with-vector-search:::prediction-with-hybrid-vector-search]
-===== Prediction with Hybrid Vector Search
+=== Prediction with Hybrid Vector Search
 
 Below are examples of using Hybrid Search with an array of vectors generated by the `Prediction()` function at index time.
 
-[tab#android:working-with-vector-search:::tabs-7s]
+[tabs]
 =====
 
 
 Java::
 +
 --
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-hybrid-prediction, indent=2]
 [source, java]
 ----
 
@@ -581,6 +580,7 @@ Java::
 Kotlin::
 +
 --
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-hybrid-prediction,indent=2]
 [source, kotlin]
 ----
 
@@ -606,7 +606,7 @@ Kotlin::
 =====
 
 [#android:working-with-vector-search:::approx_vector_distancevector-expr-target-vector-metric-nprobes-accurate]
-==== `APPROX_VECTOR_DISTANCE(vector-expr, target-vector, [metric], [nprobes], [accurate])`
+== `APPROX_VECTOR_DISTANCE(vector-expr, target-vector, [metric], [nprobes], [accurate])`
 
 WARNING: If you use a different distance metric in the `APPROX_VECTOR_DISTANCE()` function from the one configured in the index, you will receive an error when compiling the query.
 
@@ -640,15 +640,16 @@ IMPORTANT: Only accurate = false is supported
 |===
 
 [#android:working-with-vector-search:::use-approx_vector_distance]
-===== Use `APPROX_VECTOR_DISTANCE()`
+=== Use `APPROX_VECTOR_DISTANCE()`
 
-[tab#android:working-with-vector-search:::tabs-8s]
+[tabs]
 =====
 
 
 Java::
 +
 --
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-apvd-where, indent=2]
 [source, java]
 ----
 
@@ -675,6 +676,7 @@ This function returns the approximate distance between a given vector, typically
 Kotlin::
 +
 --
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-apvd-where,indent=2]
 [source, kotlin]
 ----
 
@@ -700,17 +702,18 @@ This function returns the approximate distance between a given vector, typically
 =====
 
 [#android:working-with-vector-search:::prediction-with-approx_vector_distance]
-===== Prediction with `APPROX_VECTOR_DISTANCE()`
+=== Prediction with `APPROX_VECTOR_DISTANCE()`
 
 Below are examples of using `APPROX_VECTOR_DISTANCE()` with an array of vectors generated by the `Prediction()` function at index time.
 
-[tab#android:working-with-vector-search:::tabs-9s]
+[tabs]
 =====
 
 
 Java::
 +
 --
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-apvd-prediction, indent=2]
 [source, java]
 ----
 
@@ -746,6 +749,7 @@ Java::
 Kotlin::
 +
 --
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/VectorSearchExamples.kt[tags=vs-apvd-prediction,indent=2]
 [source, kotlin]
 ----
 
@@ -782,7 +786,7 @@ Kotlin::
 =====
 
 [#android:working-with-vector-search:::see-also]
-==== See Also
+== See Also
 
 * <<android:gs-install:::,Installation Instructions>>
 

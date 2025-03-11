@@ -1,13 +1,5 @@
-:docname: query-live
-:page-module: c
-:page-relative-src-path: query-live.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#c:query-live:::]
-== Live Queries
+= Live Queries
 :page-aliases: clang:query-live.adoc
 :page-role:
 :description: Couchbase mobile database live query concepts
@@ -30,11 +22,11 @@ Description -- _{description}_ +
 // END::Local page attributes
 
 [#c:query-live:::overview]
-=== Overview
+== Overview
 
 
 [#c:query-live:::activating-a-live-query]
-=== Activating a Live Query
+== Activating a Live Query
 
 
 A live query is a query that, once activated, remains active and monitors the database for changes; refreshing the result set whenever a change occurs.
@@ -62,7 +54,7 @@ When a change is detected the query automatically runs, and posts the new query 
 ----
 /*
 static void query_change_listener(void* context, CBLQuery* query, CBLListenerToken* token) {
-    CBLError err;
+    CBLError err{};
     CBLResultSet* results = CBLQuery_CopyCurrentResults(query, token, &err);
     while(CBLResultSet_Next(results)) {
         // Update UI
@@ -72,7 +64,7 @@ static void query_change_listener(void* context, CBLQuery* query, CBLListenerTok
 
 // NOTE: No error handling, for brevity (see getting started)
 
-CBLError err;
+CBLError err{};
 CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
     FLSTR("SELECT * FROM _"), NULL, &err); // <.>
 

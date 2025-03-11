@@ -1,11 +1,3 @@
-:docname: field-level-encryption
-:page-module: c
-:page-relative-src-path: field-level-encryption.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#c:field-level-encryption:::]
 = Field Level Encryption
 :page-status: pass:q,a[Enterprise]
@@ -178,9 +170,7 @@ If you return a null slice with an error the replicator logs the error and does 
 .Simple Encryption-Decryption Callback
 [#c:field-level-encryption:::ex-get-att]
 ====
-// :param-tags: replicator_property_encryptor_decryptor_sample
-// include::ROOT:partial$block_tabbed_code_example.adoc[]
-// :param-tags!:
+// include::c:example$code_snippets/main.cpp[tag=replicator_property_encryptor_decryptor_sample]
 [source, C]
 ----
 // Purpose: Declare property-level encryptor callback functions
@@ -222,6 +212,8 @@ If you do not provide an encryption callback:
 .Simple Callback Replicator Configuration
 [#c:field-level-encryption:::ex-callback-config]
 ====
+// include::c:example$code_snippets/main.cpp[tag=replicator_property_encryption]
+
 [source, C, subs="attributes+, macros+"}]
 ----
 // Purpose: Declare property-level encryptor callback functions
@@ -248,7 +240,7 @@ static FLSliceResult property_decryptor(void* context, FLString documentID, FLDi
     // Purpose: Show how to declare en(de)cryptors in replicator config
     // NOTE: No error handling, for brevity (see getting started)
 
-    CBLError err;
+    CBLError err{};
     FLString url = FLSTR("ws://localhost:4984/db");
     CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &err);
 
@@ -395,7 +387,7 @@ CBLEncryptable_Release(nonce);
 
 .
 
-[discrete.colum#c:field-level-encryption:::-2n]
+[.column#c:field-level-encryption:::-2]
 === {empty}
 .Learn more . . .
 * xref:c:database.adoc[Databases]
@@ -407,7 +399,7 @@ CBLEncryptable_Release(nonce);
 .
 
 
-[discrete.colum#c:field-level-encryption:::-3n]
+[.column#c:field-level-encryption:::-3]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

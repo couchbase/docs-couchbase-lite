@@ -1,11 +1,3 @@
-:docname: kotlin
-:page-module: android
-:page-relative-src-path: kotlin.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#android:kotlin:::]
 = Kotlin
 :page-role:
@@ -23,7 +15,7 @@ Related Content -- xref:android:database.adoc[Databases] | xref:android:document
 == Introduction
 
 
-pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] _Android {major}.{minor}.{base}{empty}_ introduces full idiomatic support for Kotlin apps, out-of-the-box.
+_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_ _Android {major}.{minor}.{base}{empty}_ introduces full idiomatic support for Kotlin apps, out-of-the-box.
 
 Kotlin developers can now build apps using https://developer.android.com/kotlin/common-patterns[common Kotlin Patterns], that integrate seamlessly with Couchbase Lite for Android and have full feature parity with the Java API; including some convenient Kotlin Extensions to get you started.
 
@@ -54,10 +46,11 @@ See: https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-l
 [#android:kotlin:::lbl-factories]
 == Configuration Factories
 
-pass:q,a[pass:q,a[Couchbase{nbsp}Lite]] provides a set of https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/ConfigurationFactoriesKt.html[ConfigurationFactories] and https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonConfigurationFactoriesKt.html[CommonConfigurationFactories], these allow use of named parameters to specify property settings.
+pass:q,a[Couchbase{nbsp}Lite]] provides a set of https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/ConfigurationFactoriesKt.html[ConfigurationFactories] and https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonConfigurationFactoriesKt.html[CommonConfigurationFactories, these allow use of named parameters to specify property settings.
 
 This makes it simple to create variant configurations, by simply overriding named parameters:
 
+//include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ListenerExamples.kt[tag=override-config]
 .Example of overriding configuration
 [pass:q,a[source, kotlin, indent=0]]
 ----
@@ -81,6 +74,7 @@ to create a `DatabaseConfiguration` object, overriding the receiver's values wit
 In Use::
 +
 --
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=database-config-factory]
 [pass:q,a[source, kotlin, indent=0]]
 ----
 
@@ -118,6 +112,7 @@ to create a `ReplicatorConfiguration` object, overriding the receiver's values w
 In Use::
 +
 --
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=replicator-config-factory]
 [pass:q,a[source, kotlin, indent=0]]
 ----
         val replicator =
@@ -185,11 +180,13 @@ to create a `FullTextIndexConfiguration` object, overriding the receiver's value
 In Use::
 +
 --
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/QueryExamples.kt[tag=fts-index]
 [pass:q,a[source, kotlin, indent=0]]
 ----
     collection.createIndex(
         "overviewFTSIndex",
-        FullTextIndexConfigurationFactory.newConfig("overview"))
+        FullTextIndexConfigurationFactory.newConfig("overview")
+    )
 ----
 --
 
@@ -219,6 +216,7 @@ to create a `ValueIndexConfiguration` object, overriding the receiver's values w
 In Use::
 +
 --
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/QueryExamples.kt[tag=query-index]
 [pass:q,a[source, kotlin, indent=0]]
 ----
     collection.createIndex(
@@ -253,6 +251,7 @@ to create a `LogFileConfiguration` object, overriding the receiver's values with
 In Use::
 +
 --
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=file-logging-config-factory]
 [pass:q,a[source, kotlin, indent=0]]
 ----
 
@@ -469,7 +468,7 @@ to monitor document changes during replication.
 In Use::
 +
 --
-
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/FlowExamples.kt[tags=flow-as-query-change-listener]
 [pass:q,a[source, kotlin, indent=0]]
 ----
 
@@ -523,7 +522,7 @@ fun Query.queryChangeFlow(executor: Executor? = null)
 
 .
 
-[discrete.colum#android:kotlin:::-2n]
+[.column#android:kotlin:::-2]
 === {empty}
 .Learn more . . .
 * xref:android:database.adoc[Databases]
@@ -535,7 +534,7 @@ fun Query.queryChangeFlow(executor: Executor? = null)
 .
 
 
-[discrete.colum#android:kotlin:::-3n]
+[.column#android:kotlin:::-3]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

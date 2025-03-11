@@ -1,11 +1,3 @@
-:docname: indexing
-:page-module: objc
-:page-relative-src-path: indexing.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#objc:indexing:::]
 = Indexing
 :page-aliases: learn/objc-indexing.adoc
@@ -87,9 +79,9 @@ The code to create the index will look something like this:
 ----
 
 CBLValueIndexConfiguration* config = [[CBLValueIndexConfiguration alloc]
-                                      initWithExpression: @[@"type", @"name"]];
+                                      initWithExpression:@[@"type", @"name"]];
 
-[collection createIndexWithName:@"TypeNameIndex" config:config error: &error];
+[collection createIndexWithName:@"TypeNameIndex" config:config error:&error];
 
 ----
 
@@ -126,6 +118,146 @@ CBLIndex *index = [CBLIndexBuilder valueIndexWithItems:@[type, name]];
 ====
 
 
+[#objc:indexing:::array-indexing]
+== Array Indexing
+
+Couchbase Lite 3.2.1 introduces functionality to optimize querying arrays.
+xref:objc:query-n1ql-mobile.adoc#lbl-unnest[Array `UNNEST`] to unpack arrays within a document to allow joins with the parent object, and array indexes for indexing unnested array's values to allow more efficient queries with `UNNEST`.
+
+[#objc:indexing:::the-array-index]
+=== The Array Index
+
+An array index is a new type of the index for indexing nested array’s properties to allow querying with the `UNNEST` more efficiently.
+
+Below is an example array index configuration:
+
+// include::objc:example$code_snippets/VectorSearch.m[tags=array-index-config]
+[source, objc, indent=0]
+----
+
+    CBLArrayIndexConfiguration* config = [[CBLArrayIndexConfiguration alloc] initWithPath: @"contacts" expressions: nil];
+
+----
+
+[#objc:indexing:::array-index-syntax]
+=== Array Index Syntax
+
+The syntax for array index configuration is shown below:
+
+[cols ="3*"]
+|===
+|Name |Is Optional? |Description
+
+|`path`
+|image:couchbase-lite/current/{underscore}images/no.png[]
+|Path to the array to be indexed.
+Use `[]` to represent a property that is an array of each nested array level.
+For a single array or the last level array, the `[]` is optional.
+For instance `contacts[].phones` to specify an array of phones within each contact.
+
+|`expressions`
+|image:couchbase-lite/current/{underscore}images/yes.png[]
+|An optional array of strings where each string represents values within the array to be indexed.
+In N1QL/SQL++ syntax, these expressions are separated by commas.
+In JSON syntax, as supported by Couchbase Lite for C, the expressions are represented as a JSON array.
+If the array specified by the path contains scalar values, the expressions should be left unset or set to null.
+
+|===
+
+[#objc:indexing:::using-array-indexes-with-unnest]
+=== Using Array Indexes with UNNEST
+
+For the following examples, you can assume we are querying results from the following document, shown below:
+
+[source, JSON]
+--
+{
+   "Name":"Sam",
+   "contacts":[
+     {
+       "type":"primary",
+       "address":{"street":"1 St","city":"San Pedro","state":"CA"},
+       "phones":[
+         {"type":"home","number":"310-123-4567"},
+         {"type":"mobile","number":"310-123-6789"}
+       ]
+     },
+     {
+       "type":"secondary",
+       "address":{"street":"5 St","city":"Seattle","state":"WA"},
+       "phones":[
+         {"type":"home","number":"206-123-4567"},
+         {"type":"mobile","number":"206-123-6789"}
+       ]
+     }
+   ],
+   "likes":["soccer","travel"]
+ }
+
+--
+
+Using the document above you can perform queries on a single nested array like so:
+
+[source, sqlpp]
+--
+SELECT name, interest FROM _ UNNEST likes as interest WHERE interest = "travel"
+--
+
+The query above produces the following output from the document:
+
+[source, JSON]
+--
+{"name": "Sam", "like": "travel"}
+--
+
+You can also perform the same operation using array indexes like so:
+
+// include::objc:example$code_snippets/VectorSearch.m[tags=array-index-single]
+[source, objc, indent=0]
+----
+
+    CBLArrayIndexConfiguration* config = [[CBLArrayIndexConfiguration alloc] initWithPath: @"likes" expressions: @[@"type"]];
+    [collection createIndexWithName:@"singleArray" config: config error: &error];
+
+----
+
+You can perform similar operations on nested arrays:
+
+[source, sqlpp]
+--
+SELECT name, contact.type, phone.number
+FROM profiles
+UNNEST contacts as contact
+UNNEST contact.phones as phone
+WHERE phone.type = "mobile"
+--
+
+The query produces the following output:
+
+[source, JSON]
+--
+{"name": "Sam", "type": "primary", "number": "310-123-6789"}
+{"name": "Sam", "type": "secondary", "number": "206-123-6789"}
+--
+
+The output demonstrates retrieval of both primary and secondary contact numbers listed as type `"mobile"`.
+
+Here’s an example of creating an array index on a nested array containing dictionary values:
+
+// include::objc:example$code_snippets/VectorSearch.m[tags=array-index-nested]
+[source, objc, indent=0]
+----
+
+    CBLArrayIndexConfiguration* config = [[CBLArrayIndexConfiguration alloc] initWithPath: @"contacts[].phones" expressions: @[@"type"]];
+    [collection createIndexWithName:@"nestedArray" config: config error: &error];
+
+----
+
+The above snippet creates an array index to allow you to iterate through `contacts[].phones[].type` in the document, namely `"home"` and `"mobile"`.
+
+IMPORTANT: Array literals are not supported in CBL 3.2.1.
+Attempting to create a query with array literals will return an error.
+
 // DO NOT EDIT -- Footer Related Content Block
 
 
@@ -145,7 +277,7 @@ CBLIndex *index = [CBLIndexBuilder valueIndexWithItems:@[type, name]];
 
 .
 
-[discrete.colum#objc:indexing:::-2n]
+[.column#objc:indexing:::-2]
 === {empty}
 .Learn more . . .
 * xref:objc:database.adoc[Databases]
@@ -157,7 +289,7 @@ CBLIndex *index = [CBLIndexBuilder valueIndexWithItems:@[type, name]];
 .
 
 
-[discrete.colum#objc:indexing:::-3n]
+[.column#objc:indexing:::-3]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

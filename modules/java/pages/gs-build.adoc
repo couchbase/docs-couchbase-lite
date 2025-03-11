@@ -1,13 +1,5 @@
-:docname: gs-build
-:page-module: java
-:page-relative-src-path: gs-build.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#java:gs-build:::]
-== Build and Run
+= Build and Run
 :page-aliases: start/java-gs-build.adoc
 :page-role:
 :description: Build and run a starter app to validate your install of Couchbase Lite on Java
@@ -30,7 +22,7 @@ Related Content -- xref:java:gs-install.adoc[Install] | xref:java:gs-prereqs.ado
 
 
 [#java:gs-build:::build-a-getting-started-app]
-=== Build a Getting Started App
+== Build a Getting Started App
 
 This section explains how to validate your configured build environment by building a starter app that uses many of pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java's more common features.
 
@@ -39,7 +31,7 @@ This section explains how to validate your configured build environment by build
 The GettingStarted app demonstrates how to use pass:q,a[pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_]] on Java. Console and Web App versions are available.
 
 .Development-type Scenarios
-[{tabs}]
+[tabs]
 ====
 
 Desktop App::
@@ -54,6 +46,7 @@ Create, build and run a new project using the following `GettingStarted.java` co
 [source,java]
 ----
 
+private void getStarted() throws CouchbaseLiteException, URISyntaxException {
     // <.>
     // One-off initialization
     CouchbaseLite.init();
@@ -111,17 +104,20 @@ Create, build and run a new project using the following `GettingStarted.java` co
     // OPTIONAL -- if you have Sync Gateway Installed you can try replication too
     // Create a replicator to push and pull changes to and from the cloud.
     // Be sure to hold a reference somewhere to prevent the Replicator from being GCed
-    // BasicAuthenticator basAuth = new BasicAuthenticator("sync-gateway", "password".toCharArray());
+    if (SG_URI != null) { replicator = startRepl(SG_URI, collection); }
+}
+
+private Replicator startRepl(String uri, Collection collection) throws URISyntaxException {
     CollectionConfiguration collConfig = new CollectionConfiguration()
         .setPullFilter((doc, flags) -> "Java".equals(doc.getString("language")));
 
     ReplicatorConfiguration replConfig = new ReplicatorConfiguration(
-        new URLEndpoint(new URI("ws://localhost:4984/getting-started-db")))
+        new URLEndpoint(new URI(uri)))
         .addCollection(collection, collConfig)
         .setType(ReplicatorType.PUSH_AND_PULL)
         .setAuthenticator(new BasicAuthenticator("sync-gateway", "password".toCharArray()));
 
-    Replicator replicator = new Replicator(replConfig);
+    Replicator repl = new Replicator(replConfig);
 
     // Listen to replicator change events.
     // Use `token.remove()` to stop the listener
@@ -130,7 +126,9 @@ Create, build and run a new project using the following `GettingStarted.java` co
     });
 
     // Start replication.
-    replicator.start();
+    repl.start();
+
+    return repl;
 }
 ----
 
@@ -175,100 +173,92 @@ If you don't have auto-import enabled, then accept the *Import from Gradle* prom
 
 ----
 
-    // <.>
-    // One-off initialization
-    private void init() {
-        CouchbaseLite.init();
+// <.>
+// One-off initialization
+private void init() {
+    CouchbaseLite.init();
+}
+
+// <.>
+// Create a database
+public Database createDb(String dbName) throws CouchbaseLiteException {
+    return new Database(dbName);
+}
+
+// <.>
+// Create a new named collection (like a SQL table)
+// in the database's default scope.
+public Collection createCollection(Database database, String collName) throws CouchbaseLiteException {
+    return database.createCollection(collName);
+}
+
+// <.>
+// Create a new document (i.e. a record)
+// and save it in a collection in the database.
+public String createDoc(Collection collection) throws CouchbaseLiteException {
+    MutableDocument mutableDocument = new MutableDocument()
+        .setFloat("version", 2.0f)
+        .setString("language", "Java");
+    collection.save(mutableDocument);
+    return mutableDocument.getId();
+}
+
+// <.>
+// Retrieve immutable document and log the database generated
+// document ID and some document properties
+public Document retrieveDoc(Collection collection, String docId) throws CouchbaseLiteException {
+    return collection.getDocument(docId);
+}
+
+// <.>
+// Retrieve and update a document.
+public void updateDoc(Collection collection, String docId) throws CouchbaseLiteException {
+    Document document = collection.getDocument(docId);
+    if (document != null) {
+        collection.save(
+            document.toMutable().setString("language", "Kotlin"));
     }
+}
 
-    // <.>
-    // Create a database
-    public Database createDb(String dbName) throws CouchbaseLiteException {
-        return new Database(dbName);
+// <.>
+// Create a query to fetch documents with language == Kotlin.
+public List<Map<String, Object>> queryDocs(Collection collection) throws CouchbaseLiteException {
+    Query query = QueryBuilder.select(SelectResult.all())
+        .from(DataSource.collection(collection))
+        .where(Expression.property("language").equalTo(Expression.string("Kotlin")));
+    List<Map<String, Object>> results = new ArrayList<>();
+    try (ResultSet rs = query.execute()) {
+        for (Result result: rs) { results.add(result.toMap()); }
     }
+    return results;
+}
 
-    // <.>
-    // Create a new named collection (like a SQL table)
-    // in the database's default scope.
-    public Collection createCollection(Database database, String collName) throws CouchbaseLiteException {
-        return database.createCollection(collName);
-    }
+// <.>
+// OPTIONAL -- if you have Sync Gateway Installed you can try replication too.
+// Create a replicator to push and pull changes to and from the cloud.
+// Be sure to hold a reference somewhere to prevent the Replicator from being GCed
+public Replication startReplicator(Collection collection, ReplicatorChangeListener listener)
+    throws URISyntaxException {
+    CollectionConfiguration collConfig = new CollectionConfiguration()
+        .setPullFilter((doc, flags) -> "Java".equals(doc.getString("language")));
 
-    // <.>
-    // Create a new document (i.e. a record)
-    // and save it in a collection in the database.
-    public String createDoc(Collection collection) throws CouchbaseLiteException {
-        MutableDocument mutableDocument = new MutableDocument()
-            .setFloat("version", 2.0f)
-            .setString("language", "Java");
-        collection.save(mutableDocument);
-        return mutableDocument.getId();
-    }
+    ReplicatorConfiguration replConfig =
+        new ReplicatorConfiguration(
+            new URLEndpoint(new URI("ws://localhost:4984/getting-started-db")))
+            .addCollection(collection, collConfig)
+            .setType(ReplicatorType.PUSH_AND_PULL)
+            .setAuthenticator(new BasicAuthenticator("sync-gateway", "password".toCharArray()));
 
-    // <.>
-    // Retrieve immutable document and log the database generated
-    // document ID and some document properties
-    public Document retrieveDoc(Collection collection, String docId) throws CouchbaseLiteException {
-        return collection.getDocument(docId);
-    }
+    Replicator replicator = new Replicator(replConfig);
 
-    // <.>
-    // Retrieve and update a document.
-    public void updateDoc(Collection collection, String docId) throws CouchbaseLiteException {
-        Document document = collection.getDocument(docId);
-        if (document != null) {
-            collection.save(
-                document.toMutable().setString("language", "Kotlin"));
-        }
-    }
+    // Listen to replicator change events.
+    // Use `token.remove()` to stop the listener
+    ListenerToken token = replicator.addChangeListener(listener);
 
-    // <.>
-    // Create a query to fetch documents with language == Kotlin.
-    public List<Map<String, Object>> queryDocs(Collection collection) throws CouchbaseLiteException {
-        Query query = QueryBuilder.select(SelectResult.all())
-            .from(DataSource.collection(collection))
-            .where(Expression.property("language").equalTo(Expression.string("Kotlin")));
-        List<Map<String, Object>> results = new ArrayList<>();
-        try (ResultSet rs = query.execute()) {
-            for (Result result: rs) { results.add(result.toMap()); }
-        }
-        return results;
-    }
+    // Start replication.
+    replicator.start();
 
-    // <.>
-    // OPTIONAL -- if you have Sync Gateway Installed you can try replication too.
-    // Create a replicator to push and pull changes to and from the cloud.
-    // Be sure to hold a reference somewhere to prevent the Replicator from being GCed
-    public Replication startReplicator(Collection collection, ReplicatorChangeListener listener)
-        throws URISyntaxException {
-        CollectionConfiguration collConfig = new CollectionConfiguration()
-            .setPullFilter((doc, flags) -> "Java".equals(doc.getString("language")));
-
-        ReplicatorConfiguration replConfig =
-            new ReplicatorConfiguration(
-                new URLEndpoint(new URI("ws://localhost:4984/getting-started-db")))
-                .addCollection(collection, collConfig)
-                .setType(ReplicatorType.PUSH_AND_PULL)
-                .setAuthenticator(new BasicAuthenticator("sync-gateway", "password".toCharArray()));
-
-        Replicator replicator = new Replicator(replConfig);
-
-        // Listen to replicator change events.
-        // Use `token.remove()` to stop the listener
-        ListenerToken token = replicator.addChangeListener(listener);
-
-        // Start replication.
-        replicator.start();
-
-        return new Replication(replicator, token);
-    }
-
-
-    public void stopReplicator(Replication replication) {
-        if (replication == null) { return; }
-        replication.token.remove();
-        replication.replicator.stop();
-    }
+    return new Replication(replicator, token);
 }
 
 ----
@@ -294,7 +284,7 @@ include::example$GetStartedWS/src/main/webapp/showDbItems.jsp
 . Build, deploy and run the app using `jettyRun`
 +
 // !!!GBM: THIS IMAGE PROBABLY NEEDS UPDATING
-image::couchbase-lite/current/java/_images/GradleMenuWebApp.png[,300]
+image::java:GradleMenuWebApp.png[,300]
 
 .. Point your browser to: `localhost:8080/'
 +
@@ -329,7 +319,7 @@ TIP: Explicitly state your required database location when creating your databas
 * Produce a simple report on the db Contents
 +
 // !!!GBM: THIS IMAGE PROBABLY NEEDS UPDATING
-image::couchbase-lite/current/java/_images/cblOutput.png[,400]
+image::java:cblOutput.png[,400]
 
 NOTE: Before starting your app ensure you have started both your pass:q,a[_Couchbase{nbsp}Server_] and pass:q,a[pass:q,a[_pass:q,a[Sync{nbsp}Gateway]_]] instances.
 

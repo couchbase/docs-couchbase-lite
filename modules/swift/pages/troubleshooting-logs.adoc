@@ -1,13 +1,5 @@
-:docname: troubleshooting-logs
-:page-module: swift
-:page-relative-src-path: troubleshooting-logs.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#swift:troubleshooting-logs:::]
-== Using Logs
+= Using Logs
 :page-role:
 :description: Couchbase Lite on Swift -- Using Logs for Troubleshooting
 
@@ -31,7 +23,7 @@ If you are using a Couchbase Lite release prior to 2.5 see <<swift:troubleshooti
 
 
 [#swift:troubleshooting-logs:::introduction]
-=== Introduction
+== Introduction
 Couchbase Lite provides a robust Logging API footnote:fn-2x5[From version 2.5] -- see: API References for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html[Log], https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/FileLogger.html[FileLogger] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/LogFileConfiguration.html[LogFileConfiguration] -- which make debugging and troubleshooting easier during development and in production.
 It delivers flexibility in terms of how logs are generated and retained, whilst also maintaining the level of logging required by Couchbase Support for investigation of issues.
 
@@ -58,7 +50,7 @@ For greater flexibility you can implement a custom logging class using the https
 In all instances, you control what is logged and at what level using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html[Log] class.
 
 [#swift:troubleshooting-logs:::lbl-console-logs]
-=== Console based logging
+== Console based logging
 Console based logging is often used to facilitate troubleshooting during development.
 
 Console logs are your go-to resource for diagnostic information.
@@ -86,7 +78,6 @@ This example enables and defines console-based logging settings.
 ----
 Database.log.console.domains = .all // <.>
 Database.log.console.level = .verbose // <.>
-
 ----
 
 
@@ -100,13 +91,13 @@ Related::
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html[Log] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html#/s:18CouchbaseLiteSwift3LogC7consoleAA13ConsoleLoggerCvp[log.console] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/ConsoleLogger.html[ConsoleLogger]
 
 [#swift:troubleshooting-logs:::lbl-file-logs]
-=== File based logging
+== File based logging
 File based logging is disabled by default --  see: <<swift:troubleshooting-logs:::eg-file-log>> for how to enable it.
 
 You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html#/s:18CouchbaseLiteSwift3LogC4fileAA10FileLoggerCvp[log.file] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/FileLogger.html[FileLogger] to control file-based logging.
 
 [#swift:troubleshooting-logs:::formats]
-==== Formats
+=== Formats
 Available file based logging formats:
 
 * Binary -- most efficient for storage and performance. It is the default for file based logging.
@@ -115,7 +106,7 @@ Use this format and a decoder, such as *cbl-log*, to view them -- see: <<swift:t
 * Plaintext
 
 [#swift:troubleshooting-logs:::configuration]
-==== Configuration
+=== Configuration
 As with console logging you can set the log level -- see:  the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/FileLogger.html[FileLogger] class.
 
 With file based logging you can also use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/LogFileConfiguration.html[LogFileConfiguration] class's properties to specify the:
@@ -143,9 +134,10 @@ You can over ride that where necessary and output a plain text log.
 let tempFolder = NSTemporaryDirectory().appending("cbllog")
 let config = LogFileConfiguration(directory: tempFolder) // <.>
 config.usePlainText = true // <.>
-config.maxSize = 1024 // <.>
+config.maxRotateCount = 12 // <.>
+config.maxSize = 524288 // <.>
 Database.log.file.config = config // <.>
-Database.log.file.level = .info // <.>
+Database.log.file.level = .verbose // <.>
 ----
 
 
@@ -166,7 +158,7 @@ Related::
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html#/s:18CouchbaseLiteSwift3LogC4fileAA10FileLoggerCvp[log.file] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/FileLogger.html[FileLogger]
 
 [#swift:troubleshooting-logs:::lbl-custom-logs]
-=== Custom logging
+== Custom logging
 
 Couchbase Lite allows for the registration of a callback function to receive Couchbase Lite log messages, which may be logged using any external logging framework.
 
@@ -180,7 +172,7 @@ To do this, apps must implement the https://docs.couchbase.com/mobile/{major}.{m
 [#swift:troubleshooting-logs:::eg-impl-log]
 ====
 
-pass:q,a[Here we introduce the code that implements the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Logger.html[Logger] interface.]
+Here we introduce the code that implements the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Logger.html[Logger] interface.
 
 // Show Main Snippet
 // include::swift:example$code_snippets/SampleCodeTest.swift[tags="custom-logging", indent=0]
@@ -214,7 +206,7 @@ class LogTestLogger: Logger {
 [#swift:troubleshooting-logs:::eg-cust-log]
 ====
 
-pass:q,a[This example show how to enable the custom logger from <<swift:troubleshooting-logs:::eg-impl-log>>.]
+This example show how to enable the custom logger from <<swift:troubleshooting-logs:::eg-impl-log>>.
 
 // Show Main Snippet
 // include::swift:example$code_snippets/SampleCodeTest.swift[tags="set-custom-logging", indent=0]
@@ -235,7 +227,9 @@ Related::
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html[Log] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Log.html#/s:18CouchbaseLiteSwift3LogC6customAA6Logger_pSgvp[log.custom] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Logger.html[Logger]
 
 [#swift:troubleshooting-logs:::decoding-binary-logs]
-=== Decoding binary logs
+== Decoding binary logs
+
+NOTE: The latest version of the cbl-log tool is `3.0.0`.
 
 You can use the *cbl-log* tool to decode binary log files -- see <<swift:troubleshooting-logs:::eg-cbl-log>>.
 
@@ -252,7 +246,7 @@ Download the *cbl-log* tool using `wget`.
 
 [source,console,subs="attributes"]
 ----
-wget https://packages.couchbase.com/releases/couchbase-lite-log/{major}.{minor}.{base}{empty}/couchbase-lite-log-{major}.{minor}.{base}{empty}-macos.zip
+wget https://packages.couchbase.com/releases/couchbase-lite-log/3.0.0/couchbase-lite-log-3.0.0-macos.zip
 ----
 
 Navigate to the *bin* directory and run the `cbl-log` executable.
@@ -271,7 +265,7 @@ Download the *cbl-log* tool using `wget`.
 
 [source,console, subs="attributes"]
 ----
-wget https://packages.couchbase.com/releases/couchbase-lite-log/{major}.{minor}.{base}{empty}/couchbase-lite-log-{major}.{minor}.{base}{empty}-centos.zip
+wget https://packages.couchbase.com/releases/couchbase-lite-log/3.0.0/couchbase-lite-log-3.0.0-centos.zip
 ----
 
 Navigate to the *bin* directory and run the `cbl-log` executable.
@@ -290,7 +284,7 @@ Download the *cbl-log* tool using PowerShell.
 
 [source,powershell, subs="attributes"]
 ----
-Invoke-WebRequest https://packages.couchbase.com/releases/couchbase-lite-log/{major}.{minor}.{base}{empty}/couchbase-lite-log-{major}.{minor}.{base}{empty}-windows.zip -OutFile couchbase-lite-log-{major}.{minor}.{base}{empty}-windows.zip
+Invoke-WebRequest https://packages.couchbase.com/releases/couchbase-lite-log/3.0.0/couchbase-lite-log-3.0.0-windows.zip -OutFile couchbase-lite-log-3.0.0-windows.zip
 ----
 
 Run the `cbl-log` executable.
@@ -305,13 +299,13 @@ $ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
 
 
 [#swift:troubleshooting-logs:::related-content]
-=== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-==== {empty}
+====== {empty}
 .How to . . .
 * xref:swift:querybuilder.adoc[QueryBuilder]
 * xref:swift:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
@@ -321,8 +315,8 @@ $ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
 
 .
 
-[discrete.colum#swift:troubleshooting-logs:::-2n]
-==== {empty}
+[.column#swift:troubleshooting-logs:::-2]
+====== {empty}
 .Learn more . . .
 * xref:swift:query-n1ql-mobile-querybuilder-diffs.adoc[{sqlpp} Mobile - Querybuilder  Differences]
 * xref:swift:query-n1ql-mobile-server-diffs.adoc[{sqlpp} Mobile - {sqlpp} Server Differences]
@@ -337,8 +331,8 @@ $ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
 .
 
 
-[discrete.colum#swift:troubleshooting-logs:::-3n]
-==== {empty}
+[.column#swift:troubleshooting-logs:::-3]
+====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |

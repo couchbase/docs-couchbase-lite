@@ -1,13 +1,5 @@
-:docname: p2psync-websocket
-:page-module: java
-:page-relative-src-path: p2psync-websocket.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#java:p2psync-websocket:::]
-== Peer-to-Peer
+= Peer-to-Peer
 :page-aliases: learn/java-p2psync-websocket.adoc
 ifdef::show_edition[:page-edition: {release}] {enterprise}
 :page-role:
@@ -22,7 +14,7 @@ Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenanc
 
 
 [#java:p2psync-websocket:::introduction]
-=== Introduction
+== Introduction
 // tag::introduction-full[]
 // tag::introduction[]
 Couchbase Lite’s Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronisation between edge devices without needing a centralized cloud-based control point.
@@ -46,10 +38,10 @@ Couchbase Lite’s Peer-to-Peer data synchronization provides:
 // end::introduction-full[]
 
 [#java:p2psync-websocket:::overview]
-=== Overview
+== Overview
 Peer-to-Peer synchronization requires one Peer to act as the Listener to the other Peer’s replicator.
 
-image::couchbase-lite/current/_images/docs-listener-diagram.png[,600]
+image::ROOT:docs-listener-diagram.png[,600]
 
 Peer-to-Peer synchronization requires one Peer to act as the Listener to the other Peer’s replicator.
 Therefore, to use Peer-to-Peer synchronization in your application, you must configure one Peer to act as a Listener using the Couchbase Listener API, the most important of which include _URLEndpointListener_ and _URLEndpointListenerConfiguration_.
@@ -72,7 +64,7 @@ Here you can see configuration involves a xref:java:p2psync-websocket-using-pass
 You can also learn how to implement Peer-to-Peer synchronization by referring to our tutorial -- see: xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Getting Started with Peer-to-Peer Synchronization].
 
 [#java:p2psync-websocket:::features]
-=== Features
+== Features
 
 Couchbase Lite for Java's Peer-to-Peer synchronization solution provides support for cross-platform synchronization, for example, between Android and iOS devices.
 
@@ -86,7 +78,7 @@ The Listener will automatically select a port to use or a user-specified port.
 It will also listen on all available networks, unless you specify a specific network.
 
 [#java:p2psync-websocket:::security]
-==== Security
+=== Security
 
 Couchbases Lite's Peer-to-Peer synchronization supports encryption and authentication over TLS with multiple modes, including:
 
@@ -105,22 +97,22 @@ Whilst this can be used in clear text mode, developers are strongly advised to u
 For testing and development purposes, support is provided for the client (active, replicator) to skip verification of self-signed certificates; this mode should not be used in production.
 
 [#java:p2psync-websocket:::error-handling]
-==== Error Handling
+=== Error Handling
 
 When a Listener is stopped, then all connected replicators are notified by a WebSocket error. Your application should distinguish between transient and permanent connectivity errors.
 
 [#java:p2psync-websocket:::passive-peers]
-===== Passive peers
+==== Passive peers
 A Passive Peer losing connectivity with an Active Peer will clean up any associated endpoint connections to that Peer. The Active Peer may attempt to reconnect to the Passive Peer.
 
 [#java:p2psync-websocket:::active-peers]
-===== Active peers
+==== Active peers
 An Active Peer permanently losing connectivity with a Passive Peer will cease replicating.
 
 An Active Peer temporarily losing connectivity with a passive Peer will use exponential backoff functionality to attempt reconnection.
 
 [#java:p2psync-websocket:::delta-sync]
-==== Delta Sync
+=== Delta Sync
 
 Optional delta-sync support is provided but is inactive by default.
 
@@ -128,13 +120,13 @@ Delta-sync can be enabled on a per-replication basis provided that the databases
 Statistics on delta-sync usage are available, including the total number of revisions sent as deltas.
 
 [#java:p2psync-websocket:::conflict-resolution]
-==== Conflict Resolution
+=== Conflict Resolution
 
 Conflict resolution for Peer-to-Peer synchronization works in the same way as it does for Sync Gateway replication, with both custom and automatic resolution available.
 
 
 [#java:p2psync-websocket:::simple-configuration]
-=== Basic Setup
+== Basic Setup
 You can configure a Peer-to-Peer synchronization with just a short amount of code as shown here in <<java:p2psync-websocket:::ex-simple-listener>> and <<java:p2psync-websocket:::ex-simple-replicator>>.
 
 .Simple Listener
@@ -144,7 +136,7 @@ You can configure a Peer-to-Peer synchronization with just a short amount of cod
 [#java:p2psync-websocket:::ex-simple-listener]
 ====
 
-pass:q,a[This simple listener configuration will give you a listener ready to participate in an encrypted synchronization with a replicator providing a valid user name and password.]
+This simple listener configuration will give you a listener ready to participate in an encrypted synchronization with a replicator providing a valid user name and password.
 
 // Show Main Snippet
 // include::java:example$codesnippet_collection.java[tags="listener-simple", indent=0]
@@ -183,7 +175,7 @@ thisListener.start(); // <.>
 [#java:p2psync-websocket:::ex-simple-replicator]
 ====
 
-pass:q,a[This simple replicator configuration will give you an encrypted, bi-directional Peer-to-Peer synchronization with automatic conflict resolution.]
+This simple replicator configuration will give you an encrypted, bi-directional Peer-to-Peer synchronization with automatic conflict resolution.
 
 // Show Main Snippet
 // include::java:example$codesnippet_collection.java[tags="replicator-simple", indent=0]
@@ -222,10 +214,10 @@ Here we use a known URL, but it could be a URL established dynamically in a disc
 
 
 [#java:p2psync-websocket:::api-highlights]
-=== API Highlights
+== API Highlights
 
 [#java:p2psync-websocket:::urlendpointlistener]
-==== URLEndpointListener
+=== URLEndpointListener
 
 The `URLEndpointListener` is the listener for peer-to-peer synchronization.
 It acts like a passive replicator, in the same way that Sync Gateway does in a 'standard' replication.
@@ -241,7 +233,7 @@ Core functionalities of the listener are:
 API Reference: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/URLEndpointListener.html[URLEndpointListener]
 
 [#java:p2psync-websocket:::urlendpointlistenerconfiguration]
-==== URLEndpointListenerConfiguration
+=== URLEndpointListenerConfiguration
 Use this to create a configuration object you can then use to initialize the listener.
 
 Port::
@@ -341,10 +333,10 @@ API Reference: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ja
 --
 
 [#java:p2psync-websocket:::security-2]
-=== Security
+== Security
 
 [#java:p2psync-websocket:::authentication]
-==== Authentication
+=== Authentication
 
 Peer-to-Peer sync supports <<java:p2psync-websocket:::using-basic-authentication,Basic Authentication>> and <<java:p2psync-websocket:::using-tls,TLS Authentication>>.
 For anything other than test deployments, we strongly encourage the use of TLS. In fact, Peer-to-Peer sync using URLEndpointListener is encrypted using TLS by default.
@@ -368,7 +360,7 @@ Active clients replicating with a URLEndpointListener have the option to skip va
 This option is ignored when dealing with CA certificates.
 
 [#java:p2psync-websocket:::using-secure-storage]
-==== Using Secure Storage
+=== Using Secure Storage
 TLS and its associated keys and certificates might require using secure storage to minimize the chances of a security breach.
 The implementation of this storage differs from platform to platform.
 <<java:p2psync-websocket:::secure-storage-details>> summarizes the secure storage used to store keys and certificates for Java.
@@ -488,13 +480,13 @@ a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/s
 
 
 [#java:p2psync-websocket:::related-content]
-=== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-==== {empty}
+====== {empty}
 .How to
 * xref:java:p2psync-websocket-using-passive.adoc[Passive Peer]
 * xref:java:p2psync-websocket-using-active.adoc[Active Peer]
@@ -502,8 +494,8 @@ a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/s
 
 .
 
-[discrete.colum#java:p2psync-websocket:::-2n]
-==== {empty}
+[.column#java:p2psync-websocket:::-2]
+====== {empty}
 .Concepts
 * xref:java:landing-p2psync.adoc[Peer-to-Peer Sync]
 
@@ -512,8 +504,8 @@ a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/s
 .
 
 
-[discrete.colum#java:p2psync-websocket:::-3n]
-==== {empty}
+[.column#java:p2psync-websocket:::-3]
+====== {empty}
 .Community Resources ...
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |

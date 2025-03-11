@@ -1,13 +1,5 @@
-:docname: working-with-vector-search
-:page-module: java
-:page-relative-src-path: working-with-vector-search.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#java:working-with-vector-search:::]
-=== Working with Vector Search
+= Working with Vector Search
 :page-status:
 :page-edition: Enterprise
 :page-aliases:
@@ -19,17 +11,18 @@
 {description}
 
 [#java:working-with-vector-search:::use-vector-search]
-==== Use Vector Search
+== Use Vector Search
 
 To configure a project to use vector search, follow the <<java:gs-install:::,installation instructions>> to add the Vector Search extension.
 
 NOTE: You must install Couchbase Lite to use the Vector Search extension.
 
 [#java:working-with-vector-search:::create-a-vector-index]
-==== Create a Vector Index
+== Create a Vector Index
 
 This method shows how you can create a vector index using the Couchbase Lite Vector Search extension.
 
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-custom-config]
 [source, java]
 ----
 
@@ -62,7 +55,7 @@ NOTE: The number of vectors, the width or dimensions of the vectors and the trai
 This is because the training vectors have to be resident on the machine.
 
 [#java:working-with-vector-search:::vector-index-configuration]
-===== Vector Index Configuration
+=== Vector Index Configuration
 
 The table below displays the different configurations you can modify within your `VectorIndexConfiguration()` function.
 For more information on specific configurations, see <<java:vector-search:::,Vector Search.>>
@@ -135,7 +128,7 @@ a| The guidelines for the minimum and maximum training size are as follows:
 CAUTION: Altering the default training sizes could be detrimental to the accuracy of returned results produced by the model and total computation time.
 
 [#java:working-with-vector-search:::generating-vectors]
-==== Generating Vectors
+== Generating Vectors
 
 You can use two methods to generate vectors in Couchbase Lite:
 
@@ -148,10 +141,11 @@ You can use two methods to generate vectors in Couchbase Lite:
 Below are example configurations of the previously mentioned methods.
 
 [#java:working-with-vector-search:::create-a-vector-index-with-embeddings]
-===== Create a Vector Index with Embeddings
+=== Create a Vector Index with Embeddings
 
 This method shows you how to create a Vector Index with embeddings.
 
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-index]
 [source, java]
 ----
 
@@ -168,11 +162,12 @@ This method shows you how to create a Vector Index with embeddings.
 . Next, create a vector index, `colors_index`, on a collection and pass it the configuration.
 
 [#java:working-with-vector-search:::create-vector-index-embeddings-from-a-predictive-model]
-===== Create Vector Index Embeddings from a Predictive Model
+=== Create Vector Index Embeddings from a Predictive Model
 
 This method generates vectors to be indexed for each document at the index time by using the `prediction()` function.
 The key difference to note is that the `config` object uses the output of the `prediction()` function as the `expression` parameter to generate the vector index.
 
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-predictive-index]
 [source, java]
 ----
 
@@ -191,11 +186,12 @@ NOTE: You can use less storage by using the `prediction()` function as the encod
 However, the index time will be longer as vector embedding generation is occurring at run time.
 
 [#java:working-with-vector-search:::create-a-lazy-vector-index]
-==== Create a Lazy Vector Index
+== Create a Lazy Vector Index
 
 Lazy indexing is an alternate approach to using the standard predictive model with regular vector indexes which handle the indexing process automatically.
 You can use lazy indexing to use a ML model that is not available locally on the device and to create vector indexes without having vector embeddings in the documents.
 
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-lazy-index-config]
 [source, java]
 ----
 
@@ -211,10 +207,11 @@ You can enable lazy vector indexing by setting the `isLazy` property to `true` i
 NOTE: Lazy Vector Indexing is opt-in functionality, the `isLazy` property is set to `false` by default.
 
 [#java:working-with-vector-search:::updating-the-lazy-index]
-===== Updating the Lazy Index
+=== Updating the Lazy Index
 
 Below is an example of how you can update your lazy index.
 
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-create-lazy-index-embedding]
 [source, java]
 ----
 
@@ -239,9 +236,6 @@ Below is an example of how you can update your lazy index.
                 updater.finish();
             }
         }
-    }
-}
-
 
 ----
 
@@ -266,14 +260,14 @@ For standard vector indexing, this will cause the affected documents to be dropp
 NOTE: `updater.finish()` will throw an error if any values inside the updater have not been set or skipped.
 
 [#java:working-with-vector-search:::vector-search-sql-support]
-==== Vector Search SQL++ Support
+== Vector Search SQL++ Support
 
 Couchbase Lite currently supports Hybrid Vector Search and the `APPROX_VECTOR_DISTANCE()` function.
 
 IMPORTANT: Similar to the <<java:fts:::,Full Text Search>> `match()` function, the `APPROX_VECTOR_DISTANCE()` function and Hybrid Vector Search cannot use the `OR` expression with the other expressions in the related `WHERE` clause.
 
 [#java:working-with-vector-search:::use-hybrid-vector-search]
-==== Use Hybrid Vector Search
+== Use Hybrid Vector Search
 
 You can use Hybrid Vector Search (Hybrid Search) to perform vector search in conjunction with regular SQL++ queries.
 With Hybrid Search, you perform vector search on documents that have already been filtered based on criteria specified in the `WHERE` clause.
@@ -281,10 +275,11 @@ With Hybrid Search, you perform vector search on documents that have already bee
 NOTE: A `LIMIT` clause is required for non-hybrid Vector Search, this avoids a slow, exhaustive unlimited search of all possible vectors.
 
 [#java:working-with-vector-search:::hybrid-vector-search-with-full-text-match]
-===== Hybrid Vector Search with Full Text Match
+=== Hybrid Vector Search with Full Text Match
 
 Below is an example of using Hybrid Search with the Full Text `match()` function.
 
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-hybrid-ftmatch]
 [source, java]
 ----
 
@@ -307,10 +302,11 @@ Below is an example of using Hybrid Search with the Full Text `match()` function
 ----
 
 [#java:working-with-vector-search:::prediction-with-hybrid-vector-search]
-===== Prediction with Hybrid Vector Search
+=== Prediction with Hybrid Vector Search
 
 Below is an example of using Hybrid Search with an array of vectors generated by the `Prediction()` function at index time.
 
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-hybrid-prediction]
 [source, java]
 ----
 
@@ -333,7 +329,7 @@ Below is an example of using Hybrid Search with an array of vectors generated by
 ----
 
 [#java:working-with-vector-search:::approx_vector_distancevector-expr-target-vector-metric-nprobes-accurate]
-==== `APPROX_VECTOR_DISTANCE(vector-expr, target-vector, [metric], [nprobes], [accurate])`
+== `APPROX_VECTOR_DISTANCE(vector-expr, target-vector, [metric], [nprobes], [accurate])`
 
 WARNING: If you use a different distance metric in the `APPROX_VECTOR_DISTANCE()` function from the one configured in the index, you will receive an error when compiling the query.
 
@@ -367,8 +363,9 @@ IMPORTANT: Only accurate = false is supported
 |===
 
 [#java:working-with-vector-search:::use-approx_vector_distance]
-===== Use `APPROX_VECTOR_DISTANCE()`
+=== Use `APPROX_VECTOR_DISTANCE()`
 
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-apvd-where]
 [source, java]
 ----
 
@@ -390,10 +387,11 @@ IMPORTANT: Only accurate = false is supported
 This function returns the approximate distance between a given vector, typically generated from your ML model, and an array of vectors with size equal to the `LIMIT` parameter, collected by a SQL++ query using `APPROX_VECTOR_DISTANCE()`.
 
 [#java:working-with-vector-search:::prediction-with-approx_vector_distance]
-===== Prediction with `APPROX_VECTOR_DISTANCE()`
+=== Prediction with `APPROX_VECTOR_DISTANCE()`
 
 Below is an example of using `APPROX_VECTOR_DISTANCE()` with an array of vectors generated by the `Prediction()` function at index time.
 
+// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/VectorSearchExamples.java[tags=vs-apvd-prediction]
 [source, java]
 ----
 
@@ -424,7 +422,7 @@ Below is an example of using `APPROX_VECTOR_DISTANCE()` with an array of vectors
 ----
 
 [#java:working-with-vector-search:::see-also]
-==== See Also
+== See Also
 
 * <<java:gs-install:::,Installation Instructions>>
 

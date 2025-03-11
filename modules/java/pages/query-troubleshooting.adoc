@@ -1,13 +1,5 @@
-:docname: query-troubleshooting
-:page-module: java
-:page-relative-src-path: query-troubleshooting.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#java:query-troubleshooting:::]
-== Query Troubleshooting
+= Query Troubleshooting
 // BEGIN -- page -- <module>-query-trouble-shooting.adoc
 // Uses:
 // -- attribute -- partial$ -- modules/<module>/pages/_partials
@@ -32,11 +24,11 @@ Related Content -- xref:java:querybuilder.adoc#lbl-predquery[Predictive Queries]
 
 
 [#java:query-troubleshooting:::query-explain]
-=== Query Explain
+== Query Explain
 
 
 [#java:query-troubleshooting:::using]
-==== Using
+=== Using
 Query's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Query.html#explain--[explain()] method can provide useful insight when you are trying to diagnose query performance issues and-or optimize queries.
 To examine how your query is working, either embed the call inside your app (see: <<java:query-troubleshooting:::use-qe-app>>), or use it interactively within a `cblite` shell (see: <<java:query-troubleshooting:::use-qe-cblite>>).
 
@@ -86,7 +78,7 @@ cblite <your-database-name>.cblite2 // <.>
 
 
 [#java:query-troubleshooting:::output]
-==== Output
+=== Output
 The output from `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Query.html#explain--[explain()]` remains the same whether invoked by an app, or `cblite` -- see <<java:query-troubleshooting:::qe-output>> for an example of how it looks.
 
 [#java:query-troubleshooting:::qe-output]
@@ -116,11 +108,11 @@ You can use this to identify potential issues and so optimize problematic querie
 
 
 [#java:query-troubleshooting:::the-query-plan]
-=== The Query Plan
+== The Query Plan
 
 
 [#java:query-troubleshooting:::format]
-==== Format
+=== Format
 The query plan section of the output displays a tabular form of the translated query's execution plan.
 It primarily shows how the data will be retrieved and, where appropriate, how it will be sorted for navigation and-or presentation purposes.
 For more on SQLite's Explain Query Plan -- see: https://www.sqlite.org/eqp.html
@@ -143,13 +135,13 @@ Something you may well be looking to optimize -- see <<java:query-troubleshootin
 
 
 [#java:query-troubleshooting:::ret-method]
-==== Retrieval Method
+=== Retrieval Method
 The query optimizer will attempt to retrieve the requested data items as efficiently as possible, which generally will be by using one or more of the available indexes.
 The _retrieval method_ shows the approach decided upon by the optimizer -- see <<java:query-troubleshooting:::ret-meths>>.
 
 [#ret-meths]
 .Retrieval methods
-[#java:query-troubleshooting:::ret-meths#,cols="2,8"]
+[#,cols="2,8"]
 |===
 |Retrieval Method | Description
 
@@ -173,7 +165,7 @@ When looking to optimize a query's retrieval method, consider whether:
 * You could reduce the data set being requested to minimize the query's footprint on the database
 
 [#java:query-troubleshooting:::order-group]
-==== Order and Group
+=== Order and Group
 The `Use temp b-tree for` lines in the example indicate that the query requires sorting to cater for grouping and then sorting again to present the output results.
 Minimizing, if not eliminating, this ordering and re-ordering will obviously reduce the amount of time taken to process your query.
 
@@ -181,7 +173,7 @@ Ask "is the grouping and-or ordering absolutely necessary?": if it isn't, drop i
 
 
 [#java:query-troubleshooting:::queries-and-indexes]
-=== Queries and Indexes
+== Queries and Indexes
 
 Querying documents using a pre-existing database index is much faster because an index narrows down the set of documents to examine -- see: the xref:java:query-troubleshooting.adoc[Query Troubleshooting] topic.
 
@@ -208,7 +200,7 @@ Searches that begin with or rely upon an inequality with the primary key are inh
 
 
 [#java:query-troubleshooting:::working-with-the-query-optimizer]
-=== Working with the Query Optimizer
+== Working with the Query Optimizer
 You may have noticed that sometimes a query runs faster on a second run, or after re-opening the database, or after deleting and recreating an index.
 This typically happens when SQL Query Optimizer has gathered sufficient stats to recognize a means of optimizing a sub-optimal query.
 
@@ -225,7 +217,7 @@ They may not, in themselves, resolve the issue entirely; but they can provide a 
 
 
 [#java:query-troubleshooting:::use-like-based-queries]
-=== Wildcard and Like-based Queries
+== Wildcard and Like-based Queries
 
 Like-based searches can use the index(es) only if:
 
@@ -246,7 +238,7 @@ TIP: For more on indexes -- see: xref:java:indexing.adoc[Indexing]
 
 // Show Main Snippet
 // include::java:example$codesnippet_collection.java[tags="query-explain-like", indent=0]
-[sourc#java:query-troubleshooting:::like-wild-pfx-qrye, Java]
+[source#java:query-troubleshooting:::like-wild-pfx-qry, Java]
 ----
 Query query = QueryBuilder
     .select(SelectResult.all())
@@ -302,7 +294,7 @@ Logger.log(query.explain());
 ----
 
 [#java:query-troubleshooting:::use-functions-wisely]
-=== Use Functions Wisely
+== Use Functions Wisely
 
 Functions are a very useful tool in building queries, but be aware that they can impact whether the query-optimizer is able to use your index(es).
 
@@ -314,7 +306,7 @@ For example, you can observe a similar situation to that shown in <<java:query-t
 
 // Show Main Snippet
 // include::java:example$codesnippet_collection.java[tags="query-explain-function", indent=0]
-[sourc#java:query-troubleshooting:::use-like-based-queriese, Java]
+[source#java:query-troubleshooting:::use-like-based-queries, Java]
 ----
 Query query = QueryBuilder
     .select(SelectResult.all())
@@ -360,7 +352,7 @@ Logger.log(query.explain());
 Knowing this, you can consider how you create the index; for example, using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Function.html#lower-com.couchbase.lite.Expression-[lower()] when you create the index and then always using lowercase comparisons.
 
 [#java:query-troubleshooting:::optimization-considerations]
-=== Optimization Considerations
+== Optimization Considerations
 
 Try to minimize the amount of data retrieved.
 Reduce it down to the few properties you really *do* need to achieve the required result.
@@ -383,13 +375,13 @@ Consider Using Full Text Search instead of complex like or regex patterns -- see
 
 
 [#java:query-troubleshooting:::related-content]
-=== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-==== {empty}
+====== {empty}
 .How to . . .
 * xref:java:querybuilder.adoc[QueryBuilder]
 * xref:java:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
@@ -399,8 +391,8 @@ Consider Using Full Text Search instead of complex like or regex patterns -- see
 
 .
 
-[discrete.colum#java:query-troubleshooting:::-2n]
-==== {empty}
+[.column#java:query-troubleshooting:::-2]
+====== {empty}
 .Learn more . . .
 * xref:java:query-n1ql-mobile-querybuilder-diffs.adoc[{sqlpp} Mobile - Querybuilder  Differences]
 * xref:java:query-n1ql-mobile-server-diffs.adoc[{sqlpp} Mobile - {sqlpp} Server Differences]
@@ -415,8 +407,8 @@ Consider Using Full Text Search instead of complex like or regex patterns -- see
 .
 
 
-[discrete.colum#java:query-troubleshooting:::-3n]
-==== {empty}
+[.column#java:query-troubleshooting:::-3]
+====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |
@@ -434,5 +426,5 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 // END -- page -- <module>-query-trouble-shooting.adoc
 
 
-= Search
+ Search
 

@@ -1,22 +1,11 @@
-:docname: p2psync-websocket-using-active
-:page-module: csharp
-:page-relative-src-path: p2psync-websocket-using-active.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#csharp:p2psync-websocket-using-active:::]
-=== Active Peer
+= Active Peer
 :page-aliases: advance/csharp-p2psync-websocket-using-active.adoc
 ifdef::show_edition[:page-edition: {release}] {enterprise}
 :page-role:
 :description: Couchbase Lite's Peer-to-Peer Synchronization enables edge devices to synchronize securely without consuming centralized cloud-server resources
 
-// Define our environment
 
-
-// Define page abstract
 // done in commons
 
 // Present common content including abstract and related content footer blocks
@@ -36,7 +25,7 @@ Use them as inspiration and adapt these examples to best practice when developin
 
 
 [#csharp:p2psync-websocket-using-active:::introduction]
-==== Introduction
+== Introduction
 This content provides sample code and configuration examples covering the implementation of xref:refer-glossary.adoc#peer-to-peer-sync[Peer-to-Peer Sync] over WebSockets.
 Specifically it covers the implementation of an xref:refer-glossary.adoc#active-peer[Active Peer].
 
@@ -51,7 +40,7 @@ The implementation of this storage differs from platform to platform -- see xref
 
 
 [#csharp:p2psync-websocket-using-active:::configuration-summary]
-==== Configuration Summary
+== Configuration Summary
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
 <<csharp:p2psync-websocket-using-active:::simple-replication-to-listener>> shows the initialization and configuration process.
 
@@ -121,19 +110,19 @@ Here we say to provide _Basic Authentication_ credentials. Other options are ava
 <.> Start the replicator.
 
 [#csharp:p2psync-websocket-using-active:::api-references]
-==== API References
+== API References
 
 You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net[C#.Net API References] here.
 
 [#csharp:p2psync-websocket-using-active:::device-discovery]
-==== Device Discovery
+== Device Discovery
 *This phase is optional:* If the listener is initialized on a well known URL endpoint (for example, a static IP Address or well known DNS address) then you can configure Active Peers to connect to those.
 
 Prior to connecting with a listener you may execute a Peer discovery phase to dynamically discover Peers.
 
 
 [#csharp:p2psync-websocket-using-active:::configure-replicator]
-==== Configure Replicator
+== Configure Replicator
 In this section::
 <<csharp:p2psync-websocket-using-active:::lbl-cfg-tgt>>
 |  <<csharp:p2psync-websocket-using-active:::lbl-cfg-sync>>
@@ -143,7 +132,7 @@ In this section::
 
 
 [#csharp:p2psync-websocket-using-active:::lbl-cfg-tgt]
-===== Configure Target
+=== Configure Target
 
 Use the
 Initialize and define the replication configuration with local and remote database locations using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html[ReplicatorConfiguration] object.
@@ -186,7 +175,7 @@ to ensure TLS encryption -- strongly recommended in production -- or `ws://`)
 
 
 [#csharp:p2psync-websocket-using-active:::lbl-cfg-sync]
-===== Sync Mode
+=== Sync Mode
 
 
 Here we define the direction and type of replication we want to initiate.
@@ -234,7 +223,7 @@ This prevents the replications generating the same checkpoint `docID` resulting 
 
 
 [#csharp:p2psync-websocket-using-active:::lbl-cfg-retry]
-===== Retry Configuration
+=== Retry Configuration
 
 
 Couchbase Lite for C#.Net's replication retry logic assures a resilient connection.
@@ -332,7 +321,7 @@ When necessary you can adjust any or all of those configurable values -- see: <<
 
 
 [#csharp:p2psync-websocket-using-active:::authenticate-listener]
-===== Authenticating the Listener
+=== Authenticating the Listener
 
 Define the credentials the your app (the client) is expecting to receive from the server (listener) in order to ensure that the server is one it is prepared to interact with.
 
@@ -357,6 +346,7 @@ CA Cert::
 --
 Set the client to expect and accept only CA attested certificates.
 
+// include::csharp:example$code_snippets/Program.cs[tags=p2p-act-rep-config-cacert, indent=0]
 [source, C#]
 ----
 // Configure Server Security -- only accept CA certs
@@ -372,6 +362,7 @@ Self Signed Cert::
 --
 Set the client to expect and accept only self-signed certificates
 
+// include::csharp:example$code_snippets/Program.cs[tags=p2p-act-rep-config-self-cert, indent=0]
 [source, C#]
 ----
 // Configure Server Security -- only accept self-signed certs
@@ -387,6 +378,9 @@ Pinned Certificate::
 --
 Set the client to expect and accept only a pinned certificate.
 
+// include::csharp:example$code_snippets/Program.cs[tag=p2p-act-rep-config-cacert-pinned, indent=0]
+// include::csharp:example$code_snippets/Program.cs[tag=p2p-act-rep-config-cacert-pinned-callouts, indent=0]
+
 [source, C#]
 ----
 // Only CA Certs accepted
@@ -401,7 +395,7 @@ Set the client to expect and accept only a pinned certificate.
 
 
 [#csharp:p2psync-websocket-using-active:::lbl-authclnt]
-===== Client Authentication
+=== Client Authentication
 
 Here we define the credentials that the client can present to the server if prompted to do so in order that the server can authenticate it.
 
@@ -409,7 +403,7 @@ We use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty
 
 
 [#csharp:p2psync-websocket-using-active:::basic-authentication]
-===== Basic Authentication
+=== Basic Authentication
 Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.BasicAuthenticator.html[BasicAuthenticator]` to supply basic authentication credentials (username and word).
 
 // Example 5
@@ -435,7 +429,7 @@ This example shows basic authentication using user name and password:
 
 
 [#csharp:p2psync-websocket-using-active:::certificate-authentication]
-===== Certificate Authentication
+=== Certificate Authentication
 Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.P2P.ClientCertificateAuthenticator.html[ClientCertificateAuthenticator]` to configure the client TLS certificates to be presented to the server, on connection.
 This applies only to the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListener.html[URLEndpointListener].
 
@@ -479,7 +473,7 @@ replConfig.Authenticator =
 
 
 [#csharp:p2psync-websocket-using-active:::initialize-replicator]
-==== Initialize Replicator
+== Initialize Replicator
 
 
 Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html[Replicator]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator__ctor_Couchbase_Lite_Sync_ReplicatorConfiguration_[(ReplicatorConfiguration config)] constructor, to initialize the replicator with the configuration you have defined.
@@ -513,22 +507,20 @@ You can, optionally, add a change listener (see <<csharp:p2psync-websocket-using
 <.> Start the replicator
 
 [#csharp:p2psync-websocket-using-active:::lbl-repl-mon]
-==== Monitor Sync
+== Monitor Sync
 
 
 In this section::
 <<csharp:p2psync-websocket-using-active:::lbl-repl-chng>>  |
 <<csharp:p2psync-websocket-using-active:::lbl-repl-status>>  |
-<<csharp:p2psync-websocket-using-active:::lbl-repl-evnts>> |
 <<csharp:p2psync-websocket-using-active:::lbl-repl-pend>>
 
 You can monitor a replication’s status by using a combination of <<csharp:p2psync-websocket-using-active:::lbl-repl-chng>> and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html#Couchbase_Lite_Sync_ReplicatorStatus_Activity[Activity].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
-You can also choose to monitor document changes -- see: <<csharp:p2psync-websocket-using-active:::lbl-repl-evnts>>.
 
 [#csharp:p2psync-websocket-using-active:::lbl-repl-chng]
-===== Change Listeners
+=== Change Listeners
 Use this to monitor changes and to inform on sync progress; this is an optional step.
 You can add and a replicator change listener at any point; it will report changes from the point it is registered.
 
@@ -542,7 +534,7 @@ You can remove a change listener with https://docs.couchbase.com/mobile/{major}.
 
 
 [#csharp:p2psync-websocket-using-active:::lbl-repl-status]
-===== Replicator Status
+=== Replicator Status
 
 You can use the
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html[ReplicatorStatus] struct
@@ -570,6 +562,7 @@ The returned _ReplicationStatus_ structure comprises:
 Adding a Change Listener::
 +
 --
+// include::csharp:example$code_snippets/Program.cs[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
 [source, C#]
 ----
 
@@ -583,6 +576,7 @@ Adding a Change Listener::
 Using replicator.status::
 +
 --
+// include::csharp:example$code_snippets/Program.cs[tags=p2p-act-rep-status,indent=0]
 [source, C#]
 ----
 
@@ -596,7 +590,7 @@ Using replicator.status::
 
 
 [#csharp:p2psync-websocket-using-active:::lbl-repl-states]
-===== Replication States
+=== Replication States
 <<csharp:p2psync-websocket-using-active:::tbl-states>> shows the different states, or activity levels, reported in the API; and the meaning of each.
 
 .Replicator activity levels
@@ -626,7 +620,7 @@ NOTE: The replication change object also has properties to track the progress (`
 Since the replication occurs in batches the total count can vary through the course of a replication.
 
 [#csharp:p2psync-websocket-using-active:::replication-status-and-app-life-cycle]
-===== Replication Status and App Life Cycle
+=== Replication Status and App Life Cycle
 
 Couchbase Lite doesn't react to OS backgrounding or foregrounding events and replication(s) will continue running as long as the remote system does not terminate the connection and the app does not terminate.
 It is generally recommended to stop replications before going into the background otherwise socket connections may be closed by the OS and this may interfere with the replication process.
@@ -635,7 +629,7 @@ It is generally recommended to stop replications before going into the backgroun
 [#lbl-repl-evnts]
 
 [#csharp:p2psync-websocket-using-active:::lbl-repl-pend]
-===== Documents Pending Push
+=== Documents Pending Push
 
 TIP: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_IsDocumentPending_System_String_[Replicator.IsDocumentPending()] is quicker and more efficient.
 Use it in preference to returning a list of pending document IDs, where possible.
@@ -701,7 +695,7 @@ This is a snapshot and may have changed by the time the response is received and
 
 
 [#csharp:p2psync-websocket-using-active:::lbl-repl-stop]
-==== Stop Sync
+== Stop Sync
 
 Stopping a replication is straightforward.
 It is done using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_Stop[Stop()].
@@ -732,7 +726,7 @@ It will stop any active <<csharp:p2psync-websocket-using-active:::lbl-repl-chng,
 
 
 [#csharp:p2psync-websocket-using-active:::conflict-resolution]
-==== Conflict Resolution
+== Conflict Resolution
 
 Unless you specify otherwise, Couchbase Lite's default conflict resolution policy is applied -- see xref:csharp:conflict.adoc[Handling Data Conflicts].
 
@@ -751,7 +745,7 @@ For more complex solutions you can provide a custom conflict resolver - see: xre
 Local Wins::
 +
 --
-
+// include::csharp:example$code_snippets/Program.cs[tag=local-win-conflict-resolver,indent=0]
 [source, C#]
 ----
 
@@ -770,7 +764,7 @@ class LocalWinConflictResolver : IConflictResolver
 Remote Wins::
 +
 --
-
+// include::csharp:example$code_snippets/Program.cs[tag=remote-win-conflict-resolver,indent=0]
 [source, C#]
 ----
 
@@ -791,6 +785,7 @@ Merge::
 +
 --
 
+// include::csharp:example$code_snippets/Program.cs[tag=merge-conflict-resolver,indent=0]
 [source, C#]
 ----
 
@@ -855,18 +850,18 @@ For more on replicator conflict resolution see: xref:csharp:conflict.adoc[Handli
 
 
 [#csharp:p2psync-websocket-using-active:::delta-sync]
-==== Delta Sync
+== Delta Sync
 If delta sync is enabled on the listener, then replication will use delta sync.
 
 
 [#csharp:p2psync-websocket-using-active:::related-content]
-==== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-===== {empty}
+=== {empty}
 .How to
 * xref:csharp:p2psync-websocket-using-passive.adoc[Passive Peer]
 * xref:csharp:p2psync-websocket-using-active.adoc[Active Peer]
@@ -874,8 +869,8 @@ If delta sync is enabled on the listener, then replication will use delta sync.
 
 .
 
-[discrete.colum#csharp:p2psync-websocket-using-active:::-2n]
-===== {empty}
+[.column#csharp:p2psync-websocket-using-active:::-2]
+=== {empty}
 .Concepts
 * xref:csharp:landing-p2psync.adoc[Peer-to-Peer Sync]
 
@@ -884,8 +879,8 @@ If delta sync is enabled on the listener, then replication will use delta sync.
 .
 
 
-[discrete.colum#csharp:p2psync-websocket-using-active:::-3n]
-===== {empty}
+[.column#csharp:p2psync-websocket-using-active:::-3]
+=== {empty}
 .Community Resources ...
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |

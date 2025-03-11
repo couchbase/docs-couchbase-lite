@@ -1,13 +1,5 @@
-:docname: troubleshooting-logs
-:page-module: android
-:page-relative-src-path: troubleshooting-logs.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#android:troubleshooting-logs:::]
-== Using Logs
+= Using Logs
 :page-role:
 :description: Couchbase Lite on Android -- Using Logs for Troubleshooting
 
@@ -33,7 +25,7 @@ If you are using a Couchbase Lite release prior to 2.5 see <<android:troubleshoo
 
 
 [#android:troubleshooting-logs:::introduction]
-=== Introduction
+== Introduction
 Couchbase Lite provides a robust Logging API footnote:fn-2x5[From version 2.5] -- see: API References for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Log.html[Log], https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/FileLogger.html[FileLogger] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/LogFileConfiguration.html[LogFileConfiguration(String directory)] -- which make debugging and troubleshooting easier during development and in production.
 It delivers flexibility in terms of how logs are generated and retained, whilst also maintaining the level of logging required by Couchbase Support for investigation of issues.
 
@@ -60,7 +52,7 @@ For greater flexibility you can implement a custom logging class using the https
 In all instances, you control what is logged and at what level using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Log.html[Log] class.
 
 [#android:troubleshooting-logs:::lbl-console-logs]
-=== Console based logging
+== Console based logging
 Console based logging is often used to facilitate troubleshooting during development.
 
 Console logs are your go-to resource for diagnostic information.
@@ -125,13 +117,13 @@ Related::
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Log.html[Log] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ConsoleLogger.html[log.getConsole()] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ConsoleLogger.html[ConsoleLogger]
 
 [#android:troubleshooting-logs:::lbl-file-logs]
-=== File based logging
+== File based logging
 File based logging is disabled by default --  see: <<android:troubleshooting-logs:::eg-file-log>> for how to enable it.
 
 You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/FileLogger.html[log.getFile()] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/FileLogger.html[FileLogger] to control file-based logging.
 
 [#android:troubleshooting-logs:::formats]
-==== Formats
+=== Formats
 Available file based logging formats:
 
 * Binary -- most efficient for storage and performance. It is the default for file based logging.
@@ -140,7 +132,7 @@ Use this format and a decoder, such as *cbl-log*, to view them -- see: <<android
 * Plaintext
 
 [#android:troubleshooting-logs:::configuration]
-==== Configuration
+=== Configuration
 As with console logging you can set the log level -- see:  the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/FileLogger.html[FileLogger] class.
 
 With file based logging you can also use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/LogFileConfiguration.html[LogFileConfiguration(String directory)] class's properties to specify the:
@@ -222,7 +214,7 @@ Related::
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/FileLogger.html[log.getFile()] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/FileLogger.html[FileLogger]
 
 [#android:troubleshooting-logs:::lbl-custom-logs]
-=== Custom logging
+== Custom logging
 
 Couchbase Lite allows for the registration of a callback function to receive Couchbase Lite log messages, which may be logged using any external logging framework.
 
@@ -236,7 +228,7 @@ To do this, apps must implement the https://docs.couchbase.com/mobile/{major}.{m
 [#android:troubleshooting-logs:::eg-impl-log]
 ====
 
-pass:q,a[Here we introduce the code that implements the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[Logger] interface.]
+Here we introduce the code that implements the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[Logger] interface.
 [tabs]
 =====
 
@@ -257,6 +249,8 @@ class LogTestLogger(private val level: LogLevel) : Logger {
         // handle the message, for example piping it to a third party framework
     }
 }
+
+private fun sendToNetwork(format: String) { }
 
 ----
 
@@ -300,7 +294,7 @@ class LogTestLogger implements com.couchbase.lite.Logger {
 [#android:troubleshooting-logs:::eg-cust-log]
 ====
 
-pass:q,a[This example show how to enable the custom logger from <<android:troubleshooting-logs:::eg-impl-log>>.]
+This example show how to enable the custom logger from <<android:troubleshooting-logs:::eg-impl-log>>.
 [tabs]
 =====
 
@@ -343,7 +337,9 @@ Related::
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Log.html[Log] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[log.getCustom()] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[Logger]
 
 [#android:troubleshooting-logs:::decoding-binary-logs]
-=== Decoding binary logs
+== Decoding binary logs
+
+NOTE: The latest version of the cbl-log tool is `3.0.0`.
 
 You can use the *cbl-log* tool to decode binary log files -- see <<android:troubleshooting-logs:::eg-cbl-log>>.
 
@@ -360,7 +356,7 @@ Download the *cbl-log* tool using `wget`.
 
 [source,console,subs="attributes"]
 ----
-wget https://packages.couchbase.com/releases/couchbase-lite-log/{major}.{minor}.{base}{empty}/couchbase-lite-log-{major}.{minor}.{base}{empty}-macos.zip
+wget https://packages.couchbase.com/releases/couchbase-lite-log/3.0.0/couchbase-lite-log-3.0.0-macos.zip
 ----
 
 Navigate to the *bin* directory and run the `cbl-log` executable.
@@ -379,7 +375,7 @@ Download the *cbl-log* tool using `wget`.
 
 [source,console, subs="attributes"]
 ----
-wget https://packages.couchbase.com/releases/couchbase-lite-log/{major}.{minor}.{base}{empty}/couchbase-lite-log-{major}.{minor}.{base}{empty}-centos.zip
+wget https://packages.couchbase.com/releases/couchbase-lite-log/3.0.0/couchbase-lite-log-3.0.0-centos.zip
 ----
 
 Navigate to the *bin* directory and run the `cbl-log` executable.
@@ -398,7 +394,7 @@ Download the *cbl-log* tool using PowerShell.
 
 [source,powershell, subs="attributes"]
 ----
-Invoke-WebRequest https://packages.couchbase.com/releases/couchbase-lite-log/{major}.{minor}.{base}{empty}/couchbase-lite-log-{major}.{minor}.{base}{empty}-windows.zip -OutFile couchbase-lite-log-{major}.{minor}.{base}{empty}-windows.zip
+Invoke-WebRequest https://packages.couchbase.com/releases/couchbase-lite-log/3.0.0/couchbase-lite-log-3.0.0-windows.zip -OutFile couchbase-lite-log-3.0.0-windows.zip
 ----
 
 Run the `cbl-log` executable.
@@ -413,13 +409,13 @@ $ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
 
 
 [#android:troubleshooting-logs:::related-content]
-=== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-==== {empty}
+====== {empty}
 .How to . . .
 * xref:android:querybuilder.adoc[QueryBuilder]
 * xref:android:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
@@ -429,8 +425,8 @@ $ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
 
 .
 
-[discrete.colum#android:troubleshooting-logs:::-2n]
-==== {empty}
+[.column#android:troubleshooting-logs:::-2]
+====== {empty}
 .Learn more . . .
 * xref:android:query-n1ql-mobile-querybuilder-diffs.adoc[{sqlpp} Mobile - Querybuilder  Differences]
 * xref:android:query-n1ql-mobile-server-diffs.adoc[{sqlpp} Mobile - {sqlpp} Server Differences]
@@ -445,8 +441,8 @@ $ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
 .
 
 
-[discrete.colum#android:troubleshooting-logs:::-3n]
-==== {empty}
+[.column#android:troubleshooting-logs:::-3]
+====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |

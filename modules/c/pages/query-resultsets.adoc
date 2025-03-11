@@ -1,13 +1,5 @@
-:docname: query-resultsets
-:page-module: c
-:page-relative-src-path: query-resultsets.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#c:query-resultsets:::]
-== Query Resultsets
+= Query Resultsets
 :page-role:
 :description: How to use Couchbase Lite Query's Result Sets
 :keywords: query, sql, n1ql, fuzzy-matching
@@ -21,7 +13,7 @@ Related Content -- xref:c:querybuilder.adoc[QueryBuilder] |  xref:c:query-n1ql-m
 
 
 [#c:query-resultsets:::query-execution]
-=== Query Execution
+== Query Execution
 The execution of a Couchbase Lite for C's database query returns an array of results, a result set.
 
 Each row of the result set represents the data returned from a document that met the conditions defined by the `WHERE` statement of your query.
@@ -29,7 +21,7 @@ The composition of each row is determined by the `SelectResult` expressions prov
 
 
 [#c:query-resultsets:::lbl-process-resultset]
-=== Processing Results
+== Processing Results
 <<c:query-resultsets:::lbl-acc-all>>
 | <<c:query-resultsets:::lbl-acc-id>>
 | <<c:query-resultsets:::lbl-acc-specific>>
@@ -43,7 +35,7 @@ Alternatively, you can convert the result to a JSON string -- see:
 
 
 [#c:query-resultsets:::lbl-acc-all]
-==== Access Document Properties - All Properties
+=== Access Document Properties - All Properties
 Here we look at how to access document properties when you have used SelectResult.all.
 
 In this case each array element is a dictionary structure with the database name as its key.
@@ -90,7 +82,7 @@ You can add this dictionary to an array of returned matches, for processing else
 <.> Alternatively, you can access the document properties here, by using the property names as keys to the dictionary object.
 
 [#c:query-resultsets:::lbl-acc-id]
-==== Access Document Properties - ID
+=== Access Document Properties - ID
 Here we look at how to access document properties when you have returned only the document IDs for documents that matched your selection criteria.
 
 This is something you may do when retrieval of the properties directly by the query may consume excessive amounts of memory and-or processing time.
@@ -127,7 +119,7 @@ while(CBLResultSet_Next(results)) {
 
 
 [#c:query-resultsets:::lbl-acc-specific]
-==== Access Document Properties - Selected Properties
+=== Access Document Properties - Selected Properties
 Here we look at how to access properties when you have used SelectResult to get a specific subset of properties.
 
 In this case each array element is an array of key value pairs (property name/property value).
@@ -147,7 +139,7 @@ Access the retrieved properties by converting each row into a dictionary -- as s
 ----
 // NOTE: No error handling, for brevity (see getting started)
 
-CBLError err;
+CBLError err{};
 CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
     FLSTR("SELECT type, name, city FROM _"), NULL, &err);
 
@@ -168,7 +160,7 @@ while(CBLResultSet_Next(results)) {
 
 
 [#c:query-resultsets:::json-result-sets]
-=== JSON Result Sets
+== JSON Result Sets
 
 [#ex-json]
 .Using JSON Results
@@ -177,7 +169,7 @@ while(CBLResultSet_Next(results)) {
 [#c:query-resultsets:::ex-json]
 ====
 
-pass:q,a[Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__json.html#ga3450acc0690101545d75986b91e4080[FLValue_ToJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<c:query-resultsets:::ex-json>> for a working example.]
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__json.html#ga3450acc0690101545d75986b91e4080[FLValue_ToJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<c:query-resultsets:::ex-json>> for a working example.
 
 // Show Main Snippet
 // include::c:example$code_snippets/main.cpp[tags="query-access-json", indent=0]
@@ -191,7 +183,6 @@ while(CBLResultSet_Next(results)) {
     FLSliceResult_Release(json);
 }
 CBLResultSet_Release(results);
-
 ----
 
 
@@ -224,13 +215,13 @@ If your query selects a sub-set of available properties then the JSON format wil
 
 
 [#c:query-resultsets:::related-content]
-=== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-==== {empty}
+====== {empty}
 .How to . . .
 * xref:c:gs-prereqs.adoc[Prerequisites]
 * xref:c:gs-install.adoc[Install]
@@ -239,8 +230,8 @@ If your query selects a sub-set of available properties then the JSON format wil
 
 .
 
-[discrete.colum#c:query-resultsets:::-2n]
-==== {empty}
+[.column#c:query-resultsets:::-2]
+====== {empty}
 .Learn more . . .
 * xref:c:database.adoc[Databases]
 * xref:c:document.adoc[Documents]
@@ -251,8 +242,8 @@ If your query selects a sub-set of available properties then the JSON format wil
 .
 
 
-[discrete.colum#c:query-resultsets:::-3n]
-==== {empty}
+[.column#c:query-resultsets:::-3]
+====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |

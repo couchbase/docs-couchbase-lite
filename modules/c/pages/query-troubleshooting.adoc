@@ -1,13 +1,5 @@
-:docname: query-troubleshooting
-:page-module: c
-:page-relative-src-path: query-troubleshooting.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#c:query-troubleshooting:::]
-== Query Troubleshooting
+= Query Troubleshooting
 // BEGIN -- page -- <module>-query-trouble-shooting.adoc
 // Uses:
 // -- attribute -- partial$ -- modules/<module>/pages/_partials
@@ -32,11 +24,11 @@ Related Content -- xref:c:querybuilder.adoc#lbl-predquery[Predictive Queries] | 
 
 
 [#c:query-troubleshooting:::query-explain]
-=== Query Explain
+== Query Explain
 
 
 [#c:query-troubleshooting:::using]
-==== Using
+=== Using
 Query's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__queries.html#CBLQuery(im)explain:[explain()] method can provide useful insight when you are trying to diagnose query performance issues and-or optimize queries.
 To examine how your query is working, either embed the call inside your app (see: <<c:query-troubleshooting:::use-qe-app>>), or use it interactively within a `cblite` shell (see: <<c:query-troubleshooting:::use-qe-cblite>>).
 
@@ -54,7 +46,7 @@ To examine how your query is working, either embed the call inside your app (see
 ----
 // NOTE: No error handling, for brevity (see getting started)
 
-CBLError err;
+CBLError err{};
 CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
     FLSTR("SELECT * FROM _ WHERE type = \"hotel\" GROUP BY country ORDER BY title ASC LIMIT 10"),
     NULL, &err);
@@ -89,7 +81,7 @@ cblite <your-database-name>.cblite2 // <.>
 
 
 [#c:query-troubleshooting:::output]
-==== Output
+=== Output
 The output from `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__queries.html#CBLQuery(im)explain:[explain()]` remains the same whether invoked by an app, or `cblite` -- see <<c:query-troubleshooting:::qe-output>> for an example of how it looks.
 
 [#c:query-troubleshooting:::qe-output]
@@ -119,11 +111,11 @@ You can use this to identify potential issues and so optimize problematic querie
 
 
 [#c:query-troubleshooting:::the-query-plan]
-=== The Query Plan
+== The Query Plan
 
 
 [#c:query-troubleshooting:::format]
-==== Format
+=== Format
 The query plan section of the output displays a tabular form of the translated query's execution plan.
 It primarily shows how the data will be retrieved and, where appropriate, how it will be sorted for navigation and-or presentation purposes.
 For more on SQLite's Explain Query Plan -- see: https://www.sqlite.org/eqp.html
@@ -146,13 +138,13 @@ Something you may well be looking to optimize -- see <<c:query-troubleshooting::
 
 
 [#c:query-troubleshooting:::ret-method]
-==== Retrieval Method
+=== Retrieval Method
 The query optimizer will attempt to retrieve the requested data items as efficiently as possible, which generally will be by using one or more of the available indexes.
 The _retrieval method_ shows the approach decided upon by the optimizer -- see <<c:query-troubleshooting:::ret-meths>>.
 
 [#ret-meths]
 .Retrieval methods
-[#c:query-troubleshooting:::ret-meths#,cols="2,8"]
+[#,cols="2,8"]
 |===
 |Retrieval Method | Description
 
@@ -176,7 +168,7 @@ When looking to optimize a query's retrieval method, consider whether:
 * You could reduce the data set being requested to minimize the query's footprint on the database
 
 [#c:query-troubleshooting:::order-group]
-==== Order and Group
+=== Order and Group
 The `Use temp b-tree for` lines in the example indicate that the query requires sorting to cater for grouping and then sorting again to present the output results.
 Minimizing, if not eliminating, this ordering and re-ordering will obviously reduce the amount of time taken to process your query.
 
@@ -184,7 +176,7 @@ Ask "is the grouping and-or ordering absolutely necessary?": if it isn't, drop i
 
 
 [#c:query-troubleshooting:::queries-and-indexes]
-=== Queries and Indexes
+== Queries and Indexes
 
 Querying documents using a pre-existing database index is much faster because an index narrows down the set of documents to examine -- see: the xref:c:query-troubleshooting.adoc[Query Troubleshooting] topic.
 
@@ -211,7 +203,7 @@ Searches that begin with or rely upon an inequality with the primary key are inh
 
 
 [#c:query-troubleshooting:::working-with-the-query-optimizer]
-=== Working with the Query Optimizer
+== Working with the Query Optimizer
 You may have noticed that sometimes a query runs faster on a second run, or after re-opening the database, or after deleting and recreating an index.
 This typically happens when SQL Query Optimizer has gathered sufficient stats to recognize a means of optimizing a sub-optimal query.
 
@@ -228,7 +220,7 @@ They may not, in themselves, resolve the issue entirely; but they can provide a 
 
 
 [#c:query-troubleshooting:::use-like-based-queries]
-=== Wildcard and Like-based Queries
+== Wildcard and Like-based Queries
 
 Like-based searches can use the index(es) only if:
 
@@ -249,11 +241,11 @@ TIP: For more on indexes -- see: xref:c:indexing.adoc[Indexing]
 
 // Show Main Snippet
 // include::c:example$code_snippets/main.cpp[tags="query-explain-like", indent=0]
-[sourc#c:query-troubleshooting:::like-wild-pfx-qrye, c]
+[source#c:query-troubleshooting:::like-wild-pfx-qry, c]
 ----
 // NOTE: No error handling, for brevity (see getting started)
 
-CBLError err;
+CBLError err{};
 CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
     FLSTR("SELECT * FROM _ WHERE type LIKE \"%hotel%\" AND name LIKE \"%royal%\""),
     NULL, &err);
@@ -290,7 +282,7 @@ Where practical, simple changes like this can make significant differences in qu
 ----
 // NOTE: No error handling, for brevity (see getting started)
 
-CBLError err;
+CBLError err{};
 CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
     FLSTR("SELECT * FROM _ WHERE type LIKE \"hotel%\" AND name LIKE \"%royal%\""),
     NULL, &err);
@@ -312,7 +304,7 @@ FLSliceResult_Release(explanation);
 ----
 
 [#c:query-troubleshooting:::use-functions-wisely]
-=== Use Functions Wisely
+== Use Functions Wisely
 
 Functions are a very useful tool in building queries, but be aware that they can impact whether the query-optimizer is able to use your index(es).
 
@@ -324,11 +316,11 @@ For example, you can observe a similar situation to that shown in <<c:query-trou
 
 // Show Main Snippet
 // include::c:example$code_snippets/main.cpp[tags="query-explain-function", indent=0]
-[sourc#c:query-troubleshooting:::use-like-based-queriese, c]
+[source#c:query-troubleshooting:::use-like-based-queries, c]
 ----
 // NOTE: No error handling, for brevity (see getting started)
 
-CBLError err;
+CBLError err{};
 CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
     FLSTR("SELECT * FROM _ WHERE lower(type) = \"hotel\""),
     NULL, &err);
@@ -359,7 +351,7 @@ But removing the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance
 ----
 // NOTE: No error handling, for brevity (see getting started)
 
-CBLError err;
+CBLError err{};
 CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
     FLSTR("SELECT * FROM _ WHERE type = \"hotel\""),
     NULL, &err);
@@ -380,7 +372,7 @@ FLSliceResult_Release(explanation);
 Knowing this, you can consider how you create the index; for example, using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__QueryFunction.html#CBLQueryFunction(cm)lower:[lower()] when you create the index and then always using lowercase comparisons.
 
 [#c:query-troubleshooting:::optimization-considerations]
-=== Optimization Considerations
+== Optimization Considerations
 
 Try to minimize the amount of data retrieved.
 Reduce it down to the few properties you really *do* need to achieve the required result.
@@ -403,15 +395,14 @@ Consider Using Full Text Search instead of complex like or regex patterns -- see
 
 
 [#c:query-troubleshooting:::related-content]
-=== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-==== {empty}
+====== {empty}
 .How to . . .
-* xref:c:querybuilder.adoc[QueryBuilder]
 * xref:c:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
 * xref:c:query-live.adoc[Live Queries]
 * xref:c:fts.adoc[Full Text Search]
@@ -419,10 +410,9 @@ Consider Using Full Text Search instead of complex like or regex patterns -- see
 
 .
 
-[discrete.colum#c:query-troubleshooting:::-2n]
-==== {empty}
+[.column#c:query-troubleshooting:::-2]
+====== {empty}
 .Learn more . . .
-* xref:c:query-n1ql-mobile-querybuilder-diffs.adoc[{sqlpp} Mobile - Querybuilder  Differences]
 * xref:c:query-n1ql-mobile-server-diffs.adoc[{sqlpp} Mobile - {sqlpp} Server Differences]
 * xref:c:query-resultsets.adoc[Query Resultsets]
 * xref:c:query-troubleshooting.adoc[Query Troubleshooting]
@@ -435,8 +425,8 @@ Consider Using Full Text Search instead of complex like or regex patterns -- see
 .
 
 
-[discrete.colum#c:query-troubleshooting:::-3n]
-==== {empty}
+[.column#c:query-troubleshooting:::-3]
+====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |
@@ -454,5 +444,5 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 // END -- page -- <module>-query-trouble-shooting.adoc
 
 
-= Search
+ Search
 

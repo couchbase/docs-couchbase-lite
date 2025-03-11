@@ -1,13 +1,5 @@
-:docname: p2psync-websocket-using-passive
-:page-module: java
-:page-relative-src-path: p2psync-websocket-using-passive.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#java:p2psync-websocket-using-passive:::]
-=== Passive Peer
+= Passive Peer
 :page-aliases: advance/java-p2psync-websocket-using-passive.adoc
 ifdef::show_edition[:page-edition: {release}] {enterprise}
 :page-role:
@@ -30,7 +22,7 @@ Use them as inspiration and adapt these examples to best practice when developin
 
 
 [#java:p2psync-websocket-using-passive:::introduction]
-==== Introduction
+== Introduction
 This content provides code and configuration examples covering the implementation of xref:refer-glossary.adoc#peer-to-peer-sync[Peer-to-Peer Sync] over WebSockets.
 Specifically, it covers the implementation of a xref:refer-glossary.adoc#passive-peer[Passive Peer].
 
@@ -45,7 +37,7 @@ The implementation of this storage differs from platform to platform -- see xref
 
 
 [#java:p2psync-websocket-using-passive:::configuration-summary]
-==== Configuration Summary
+== Configuration Summary
 
 You should configure and initialize a Listener for each Couchbase Lite database instance you want to sync.
 There is no limit on the number of Listeners you may configure -- <<java:p2psync-websocket-using-passive:::simple-listener-initialization>> shows a simple initialization and configuration process.
@@ -132,11 +124,11 @@ Note that client authentication is optional.
 
 
 [#java:p2psync-websocket-using-passive:::api-references]
-==== API References
+== API References
 You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/[Java API References] here.
 
 [#java:p2psync-websocket-using-passive:::device-discovery]
-==== Device Discovery
+== Device Discovery
 *This phase is optional:* If the Listener is initialized on a well-known URL endpoint (for example, a static IP Address or well-known DNS address) then you can configure Active Peers to connect to those.
 
 Before initiating the Listener, you may execute a peer discovery phase.
@@ -146,7 +138,7 @@ The connection is established once the Passive Peer has authenticated and accept
 
 
 [#java:p2psync-websocket-using-passive:::initialize-the-listener-configuration]
-==== Initialize the Listener Configuration
+== Initialize the Listener Configuration
 Initialize the Listener configuration with the local database -- see <<java:p2psync-websocket-using-passive:::ex-locdb>>
 All other configuration values take their default setting.
 
@@ -180,11 +172,11 @@ The database must be opened before the Listener is started. +
 `thisDB` has previously been declared as an object of type `Database`.
 
 [#java:p2psync-websocket-using-passive:::lbl-set-network-and-port]
-==== Set Port and Network Interface
+== Set Port and Network Interface
 
 
 [#java:p2psync-websocket-using-passive:::port-number]
-===== Port number
+=== Port number
 The Listener will automatically select an available port if you do not specify one -- see <<java:p2psync-websocket-using-passive:::ex-port>> for how to specify a port.
 
 // Example 3
@@ -212,7 +204,7 @@ Ensure that firewall rules do not block any port you do specify. +
 
 
 [#java:p2psync-websocket-using-passive:::network-interface]
-===== Network Interface
+=== Network Interface
 The Listener will listen on all network interfaces by default.
 
 // Example 4
@@ -241,7 +233,7 @@ This must be either an IP Address or network interface name such as `en0`.
 
 
 [#java:p2psync-websocket-using-passive:::delta-sync]
-==== Delta Sync
+== Delta Sync
 
 Delta Sync allows clients to sync only those parts of a document that have changed.
 This can result in significant bandwidth consumption savings and throughput improvements.
@@ -269,11 +261,11 @@ thisConfig.setEnableDeltaSync(false); // <.>
 Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/URLEndpointListenerConfiguration.html#setEnableDeltaSync-boolean-[setEnableDeltaSync] method to activate or deactivate it.
 
 [#java:p2psync-websocket-using-passive:::lbl-tls-security]
-==== TLS Security
+== TLS Security
 
 
 [#java:p2psync-websocket-using-passive:::enable-or-disable-tls]
-===== Enable or Disable TLS
+=== Enable or Disable TLS
 
 Define whether the connection is to use TLS or clear text.
 
@@ -299,7 +291,7 @@ Active peers will use the `wss://` URL scheme to connect to the listener.
 
 
 [#java:p2psync-websocket-using-passive:::configure-tls-identity-for-listener]
-===== Configure TLS Identity for Listener
+=== Configure TLS Identity for Listener
 
 Define the credentials the server will present to the client for authentication.
 Note that the server must always authenticate itself with the client -- see: xref:java:p2psync-websocket-using-active.adoc#authenticate-listener[Authenticate Listener on Active Peer] for how the client deals with this.
@@ -347,7 +339,6 @@ try (InputStream keyStream = Files.newInputStream(keyFile.toPath())) { // <.>
 // Set the TLS Identity
 URLEndpointListenerConfiguration config = new URLEndpointListenerConfiguration(collections);
 config.setTlsIdentity(TLSIdentity.getIdentity(keyStore, "test-alias", "keyPass".toCharArray())); // <.>
-
 thisConfig.setDisableTls(false); // <.>
 
 ----
@@ -362,19 +353,17 @@ thisConfig.setDisableTls(false); // <.>
 
 .Create Self-Signed Cert
 [#ex-create-tls-id]
-The system generates a self-signed certificate.]
 
 
 [#java:p2psync-websocket-using-passive:::ex-create-tls-id]
 ====
 
-pass:q,a[Create a TLSIdentity for the server using convenience API. +
+Create a TLSIdentity for the server using convenience API.  The system generates a self-signed certificate.
 
 // Show Main Snippet
 // include::java:example$codesnippet_collection.java[tags="listener-config-tls-enable;listener-config-tls-id-full;!listener-config-tls-id-caCert;!listener-config-tls-id-anon", indent=0]
 [source, Java]
 ----
-
 thisConfig.setDisableTls(false); // <.>
 
 ----
@@ -392,13 +381,12 @@ Add to secure storage as 'couchbase-docs-cert'.
 
 .Use Anonymous Self-Signed Certificate
 [#ex-anon-tls-id]
-Generated certificates are held in secure storage.]
 
 
 [#java:p2psync-websocket-using-passive:::ex-anon-tls-id]
 ====
 
-pass:q,a[This example uses an _anonymous_ self signed certificate. +
+This example uses an _anonymous_ self signed certificate.  Generated certificates are held in secure storage.
 
 // Show Main Snippet
 // include::java:example$codesnippet_collection.java[tags="listener-config-tls-enable;listener-config-tls-id-anon", indent=0]
@@ -422,7 +410,7 @@ This is the default setting.
 
 
 [#java:p2psync-websocket-using-passive:::lbl-authenticating-the-client]
-==== Authenticating the Client
+== Authenticating the Client
 In this section: <<java:p2psync-websocket-using-passive:::use-basic-authentication>>  |  <<java:p2psync-websocket-using-passive:::using-client-certificate-authentication>>  |  <<java:p2psync-websocket-using-passive:::delete-tls-identity>>  |  <<java:p2psync-websocket-using-passive:::the-impact-of-tls-settings>>
 
 Define how the server (Listener) will authenticate the client as one it is prepared to interact with.
@@ -442,7 +430,7 @@ You should initialize the authenticator using one of the following constructors:
 
 
 [#java:p2psync-websocket-using-passive:::use-basic-authentication]
-===== Use Basic Authentication
+=== Use Basic Authentication
 
 Define how to authenticate client-supplied username and password credentials.
 To use client-supplied certificates instead -- see: <<java:p2psync-websocket-using-passive:::using-client-certificate-authentication>>
@@ -475,7 +463,7 @@ thisConfig.setAuthenticator(new ListenerPasswordAuthenticator(
 
 
 [#java:p2psync-websocket-using-passive:::using-client-certificate-authentication]
-===== Using Client Certificate Authentication
+=== Using Client Certificate Authentication
 Define how the server will authenticate client-supplied certificates.
 
 There are two ways to authenticate a client:
@@ -497,7 +485,7 @@ The logic should take the form of function or block (such as, a closure expressi
 [#java:p2psync-websocket-using-passive:::ex-set-cert-auth]
 ====
 
-pass:q,a[Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator].]
+Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator].
 
 // Show Main Snippet
 // include::java:example$codesnippet_collection.java[tags="listener-config-client-auth-root, indent=0]", indent=0]
@@ -540,7 +528,7 @@ A valid client will provide one or more certificates that match a certificate in
 [#java:p2psync-websocket-using-passive:::ex-use-app-logic]
 ====
 
-pass:q,a[Configure the server (listener) to authenticate the client using user-supplied logic.]
+Configure the server (listener) to authenticate the client using user-supplied logic.
 
 // Show Main Snippet
 // include::java:example$codesnippet_collection.java[tags="listener-config-client-auth-lambda", indent=0]
@@ -578,7 +566,7 @@ It must return a boolean value; with `true` denoting the client supplied certifi
 
 
 [#java:p2psync-websocket-using-passive:::delete-tls-identity]
-===== Delete Entry
+=== Delete Entry
 
 You can remove unwanted TLS identities from secure storage using the convenience API.
 
@@ -596,7 +584,6 @@ You can remove unwanted TLS identities from secure storage using the convenience
 KeyStore thisKeyStore = KeyStore.getInstance("AndroidKeyStore");
 thisKeyStore.load(null);
 thisKeyStore.deleteEntry(alias);
-
 ----
 
 
@@ -604,7 +591,7 @@ thisKeyStore.deleteEntry(alias);
 
 
 [#java:p2psync-websocket-using-passive:::the-impact-of-tls-settings]
-===== The Impact of TLS Settings
+=== The Impact of TLS Settings
 
 The table in this section shows the expected system behavior (in regards to security) depending on the TLS configuration settings deployed.
 
@@ -638,7 +625,7 @@ a|* System will use the configured identity.
 
 
 [#java:p2psync-websocket-using-passive:::lbl-start-listener]
-==== Start Listener
+== Start Listener
 
 Once you have completed the Listener's configuration settings you can initialize the Listener instance and start it running -- see: <<java:p2psync-websocket-using-passive:::initialize-and-start-listener>>
 
@@ -669,7 +656,7 @@ thisListener.start(); // <.>
 
 
 [#java:p2psync-websocket-using-passive:::monitor-listener]
-==== Monitor Listener
+== Monitor Listener
 
 Use the Listener's `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/URLEndpointListener.html#getStatus--[getStatus]` property/method to get counts of total and active connections -- see: <<java:p2psync-websocket-using-passive:::get-connection-counts>>.
 
@@ -701,7 +688,7 @@ int activeConnectionCount =
 
 
 [#java:p2psync-websocket-using-passive:::stop-listener]
-==== Stop Listener
+== Stop Listener
 
 It is best practice to check the status of the Listener's connections and stop only when you have confirmed that there are no active connections -- see <<java:p2psync-websocket-using-passive:::get-connection-counts>>.
 
@@ -728,13 +715,13 @@ NOTE: Closing the database will also close the Listener.
 
 
 [#java:p2psync-websocket-using-passive:::related-content]
-==== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-===== {empty}
+=== {empty}
 .How to
 * xref:java:p2psync-websocket-using-passive.adoc[Passive Peer]
 * xref:java:p2psync-websocket-using-active.adoc[Active Peer]
@@ -742,8 +729,8 @@ NOTE: Closing the database will also close the Listener.
 
 .
 
-[discrete.colum#java:p2psync-websocket-using-passive:::-2n]
-===== {empty}
+[.column#java:p2psync-websocket-using-passive:::-2]
+=== {empty}
 .Concepts
 * xref:java:landing-p2psync.adoc[Peer-to-Peer Sync]
 
@@ -752,8 +739,8 @@ NOTE: Closing the database will also close the Listener.
 .
 
 
-[discrete.colum#java:p2psync-websocket-using-passive:::-3n]
-===== {empty}
+[.column#java:p2psync-websocket-using-passive:::-3]
+=== {empty}
 .Community Resources ...
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |

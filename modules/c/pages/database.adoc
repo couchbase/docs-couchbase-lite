@@ -1,11 +1,3 @@
-:docname: database
-:page-module: c
-:page-relative-src-path: database.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#c:database:::]
 = Databases
 :page-aliases: clang:database.adoc
@@ -89,7 +81,7 @@ The most basic structure is to use the single default scope with a single defaul
 [#cbl-database-structure]
 .Couchbase Lite Examples
 
-[plantuml]
+[plantuml#c:database:::cbl-database-structure]
 ----
 @startuml
 
@@ -187,8 +179,7 @@ See also <<c:database:::lbl-find-db-loc>>.
 [source, c]
 ----
 // NOTE: No error handling, for brevity (see getting started)
-
-CBLError err;
+CBLError err{};
 CBLDatabase* db = CBLDatabase_Open(FLSTR("my-database"), NULL, &err);
 ----
 
@@ -221,8 +212,7 @@ NOTE: Closing a database soon after starting a replication involving it can caus
 [source, c]
 ----
 // NOTE: No error handling, for brevity (see getting started)
-
-CBLError err;
+CBLError err{};
 CBLDatabase_Close(db, &err);
 ----
 
@@ -296,7 +286,7 @@ CBLDatabaseConfiguration config = CBLDatabaseConfiguration_Default();
 // This returns a boolean, so check it in production code
 CBLEncryptionKey_FromPassword(&config.encryptionKey, FLSTR("password"));
 
-CBLError err;
+CBLError err{};
 CBLDatabase* db = CBLDatabase_Open(FLSTR("seekrit"), &config, &err);
 
 // Change the encryption key (or add encryption if the DB is unencrypted)
@@ -389,7 +379,7 @@ Note that the `cblite` tool is not supported by the https://www.couchbase.com/su
 
 .
 
-[discrete.colum#c:database:::-2n]
+[.column#c:database:::-2]
 === {empty}
 .Learn more . . .
 * xref:c:database.adoc[Databases]
@@ -401,7 +391,7 @@ Note that the `cblite` tool is not supported by the https://www.couchbase.com/su
 .
 
 
-[discrete.colum#c:database:::-3n]
+[.column#c:database:::-3]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

@@ -1,11 +1,3 @@
-:docname: prebuilt-database
-:page-module: c
-:page-relative-src-path: prebuilt-database.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#c:prebuilt-database:::]
 = Pre-built Database
 :page-aliases: clang:prebuilt-database.adoc
@@ -24,7 +16,7 @@ _Abstract -- This content explains how to include a snapshot of a pre-built data
 == Overview
 
 
-pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] supports  pre-built databases. You can pre-load your app with data instead of syncing it from pass:q,a[_pass:q,a[Sync{nbsp}Gateway]_] during startup to minimize consumer wait time (arising from data setup) on initial install and launch of the application.
+_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] supports  pre-built databases. You can pre-load your app with data instead of syncing it from pass:q,a[_pass:q,a[Sync{nbsp}Gateway]_ during startup to minimize consumer wait time (arising from data setup) on initial install and launch of the application.
 
 Avoiding an initial bulk sync reduces startup time and network transfer costs.
 
@@ -169,7 +161,7 @@ They can begin interacting with your app whilst any out-of-data data is being up
 
 // NOTE: No error handling, for brevity (see getting started)
 
-CBLError err;
+CBLError err{};
 const char* path = "/path/to/travel-sample.cblite2";
 if(!CBL_DatabaseExists(FLSTR("travel-sample.cblite2"), kFLSliceNull)) {
     CBL_CopyDatabase(FLStr(path), FLSTR("travel-sample"), NULL, &err);
@@ -196,7 +188,7 @@ if(!CBL_DatabaseExists(FLSTR("travel-sample.cblite2"), kFLSliceNull)) {
 
 .
 
-[discrete.colum#c:prebuilt-database:::-2n]
+[.column#c:prebuilt-database:::-2]
 === {empty}
 .Learn more . . .
 * xref:c:database.adoc[Databases]
@@ -208,7 +200,7 @@ if(!CBL_DatabaseExists(FLSTR("travel-sample.cblite2"), kFLSliceNull)) {
 .
 
 
-[discrete.colum#c:prebuilt-database:::-3n]
+[.column#c:prebuilt-database:::-3]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

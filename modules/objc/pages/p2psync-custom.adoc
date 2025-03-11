@@ -1,13 +1,5 @@
-:docname: p2psync-custom
-:page-module: objc
-:page-relative-src-path: p2psync-custom.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#objc:p2psync-custom:::]
-=== Integrate Custom Listener
+= Integrate Custom Listener
 :page-aliases: learn/objc-p2psync-custom.adoc
 ifdef::show_edition[:page-edition: {release}] {enterprise}
 :page-role:
@@ -29,7 +21,7 @@ Related Content -- xref:objc:p2psync-websocket.adoc[Peer-to-Peer]
 --
 
 [#objc:p2psync-custom:::overview]
-==== Overview
+== Overview
 
 .Enterprise Edition only
 IMPORTANT: Peer-to-Peer Synchronization is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
@@ -42,24 +34,25 @@ Where applicable, we discuss how to integrate Couchbase Lite into the workflow.
 The following sections describe a typical Peer-to-Peer workflow.
 
 [#objc:p2psync-custom:::peer-discovery]
-==== Peer Discovery
+== Peer Discovery
 
 Peer discovery is the first step.
 The communication framework will generally include a Peer discovery API for devices to advertise themselves on the network and to browse for other Peers.
 
-image::couchbase-lite/current/_images/discovery.png[]
+image::ROOT:discovery.png[]
 
 [#objc:p2psync-custom:::active-peer]
-===== Active Peer
+=== Active Peer
 
 The first step is to initialize the Couchbase Lite database.
 
 [#objc:p2psync-custom:::passive-peer]
-===== Passive Peer
+=== Passive Peer
 
 In addition to initializing the database, the Passive Peer must initialize the `MessageEndpointListener`.
 The `MessageEndpointListener` acts as a Listener for incoming connections.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=listener,indent=0]
 [source]
 ----
 CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"mydb" error:&error];
@@ -72,7 +65,7 @@ _messageEndpointListener = [[CBLMessageEndpointListener alloc] initWithConfig:co
 
 
 [#objc:p2psync-custom:::peer-selection-and-connection-setup]
-==== Peer Selection and Connection Setup
+== Peer Selection and Connection Setup
 
 
 Once a Peer device is found, the application code must decide whether it should establish a connection with that Peer.
@@ -80,22 +73,23 @@ This step includes inviting a Peer to a session and Peer authentication.
 
 This is handled by the Communication Framework.
 
-image::couchbase-lite/current/_images/selection.png[]
+image::ROOT:selection.png[]
 
 Once the remote Peer has been authenticated, the next step is to connect with that Peer and initialize the Message Endpoint API.
 
 
 [#objc:p2psync-custom:::replication-setup]
-==== Replication Setup
+== Replication Setup
 
 
-image::couchbase-lite/current/_images/connection.png[]
+image::ROOT:connection.png[]
 
 [#objc:p2psync-custom:::active-peer-2]
-===== Active Peer
+=== Active Peer
 
 When the connection is established, the active Peer must instantiate a `MessageEndpoint` object corresponding to the remote Peer.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=message-endpoint,indent=0]
 [source]
 ----
 CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"dbname" error:&error];
@@ -126,6 +120,7 @@ Typically, the Communication Framework will handle message assembly and disassem
 
 Then, a `Replicator` is instantiated with the initialized `MessageEndpoint` as the target.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=message-endpoint-replicator,indent=0]
 [source]
 ----
 CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc]
@@ -141,6 +136,8 @@ CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
 Next, Couchbase Lite will call back the application code through the `MessageEndpointDelegate.createConnection` interface method.
 When the application receives the callback, it must create an instance of `MessageEndpointConnection` and return it.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=create-connection,indent=0]
+
 [source]
 ----
 - (id<CBLMessageEndpointConnection>)createConnectionForEndpoint:(CBLMessageEndpoint *)endpoint {
@@ -150,6 +147,7 @@ When the application receives the callback, it must create an instance of `Messa
 
 Next, Couchbase Lite will call back the application code through the `MessageEndpointConnection.open` method.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=active-peer-open,indent=0]
 [source]
 ----
 /* implementation of CBLMessageEndpointConnection */
@@ -166,11 +164,12 @@ The `MessageError` argument in the completion block specifies whether the error 
 If it is a recoverable error, the replicator will begin a retry process, creating a new `MessageEndpointConnection` instance.
 
 [#objc:p2psync-custom:::passive-peer-2]
-===== Passive Peer
+=== Passive Peer
 
 After connection establishment on the Passive Peer, the first step is to initialize a new `MessageEndpointConnection` and pass it to the listener.
 This message tells the listener to accept incoming data from that Peer.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=advertizer-accept,indent=0]
 [source]
 ----
 PassivePeerConnection *connection = [[PassivePeerConnection alloc] init]; /* implements CBLMessageEndpointConnection */
@@ -181,6 +180,7 @@ PassivePeerConnection *connection = [[PassivePeerConnection alloc] init]; /* imp
 
 Couchbase Lite will call the application code back through the `MessageEndpointConnection.open` method.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=passive-peer-open,indent=0]
 [source]
 ----
 /* implementation of CBLMessageEndpointConnection */
@@ -197,7 +197,7 @@ At this point, the connection is established, and both Peers are ready to exchan
 
 
 [#objc:p2psync-custom:::pushpull-replication]
-==== Push/Pull Replication
+== Push/Pull Replication
 
 Typically, an application needs to send data and receive data.
 The directionality of the replication could be any of the following.
@@ -211,15 +211,16 @@ The directionality of the replication could be any of the following.
 Usually, the remote is a Sync Gateway database identified through a URL.
 In Peer-to-Peer syncing, the remote is another Couchbase Lite database.
 
-image::couchbase-lite/current/_images/replication.png[]
+image::ROOT:replication.png[]
 
 The replication lifecycle is handled through the `MessageEndpointConnection`.
 
 [#objc:p2psync-custom:::active-peer-3]
-===== Active Peer
+=== Active Peer
 
 When Couchbase Lite calls back the application code through the `MessageEndpointConnection.send` method, you should send that data to the other Peer using the communication framework.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=active-peer-send,indent=0]
 [source]
 ----
 /* implementation of CBLMessageEndpointConnection */
@@ -240,6 +241,7 @@ If it is a recoverable error, the replicator will begin a retry process, creatin
 
 When data is received from the passive Peer via the Communication Framework, you call the `ReplicatorConnection.receive` method.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=active-peer-receive,indent=0]
 [source]
 ----
 CBLMessage *message = [CBLMessage fromData:data];
@@ -249,10 +251,11 @@ CBLMessage *message = [CBLMessage fromData:data];
 The replication connection's `receive` method is called. Which then processes the data to persist to the local database.
 
 [#objc:p2psync-custom:::passive-peer-3]
-===== Passive Peer
+=== Passive Peer
 
 As in the case of the active Peer, the passive Peer must implement the `MessageEndpointConnection.send` method to send data to the other Peer.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=passive-peer-send,indent=0]
 [source]
 ----
 /* implementation of CBLMessageEndpointConnection */
@@ -272,6 +275,7 @@ If it is a recoverable error, the replicator will begin a retry process, creatin
 
 When data is received from the active Peer via the Communication Framework, you call the `ReplicatorConnection.receive` method.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=passive-peer-receive,indent=0]
 [source]
 ----
 CBLMessage *message = [CBLMessage fromData:data];
@@ -280,7 +284,7 @@ CBLMessage *message = [CBLMessage fromData:data];
 
 
 [#objc:p2psync-custom:::connection-teardown]
-==== Connection Teardown
+== Connection Teardown
 
 When a Peer disconnects from a Peer-to-Peer network, all connected Peers are notified.
 The disconnect notification is a good opportunity to close and remove a replication connection.
@@ -288,15 +292,16 @@ The steps to Teardown the connection are slightly different depending on whether
 We will cover each case below.
 
 [#objc:p2psync-custom:::initiated-by-active-peer]
-===== Initiated by Active Peer
+=== Initiated by Active Peer
 
-image::couchbase-lite/current/_images/dis-active.png[]
+image::ROOT:dis-active.png[]
 
 [#objc:p2psync-custom:::active-peer-4]
-===== Active Peer
+=== Active Peer
 
 When an active Peer disconnects, it must call the `ReplicatorConnection.close` method.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=active-replicator-close,indent=0]
 [source]
 ----
 [_replicatorConnection close:nil];
@@ -304,6 +309,7 @@ When an active Peer disconnects, it must call the `ReplicatorConnection.close` m
 
 Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to allow the application to disconnect with the Communication Framework.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=active-peer-close,indent=0]
 [source]
 ----
 /* implementation of CBLMessageEndpointConnection */
@@ -316,10 +322,11 @@ Then, Couchbase Lite will call back your code through the `MessageEndpointConnec
 ----
 
 [#objc:p2psync-custom:::passive-peer-4]
-===== Passive Peer
+=== Passive Peer
 
 When the passive Peer receives the corresponding disconnect notification from the Communication Framework, it must call the `ReplicatorConnection.close` method.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=passive-replicator-close,indent=0]
 [source]
 ----
 [_replicatorConnection close:nil];
@@ -327,6 +334,7 @@ When the passive Peer receives the corresponding disconnect notification from th
 
 Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to allow the application to disconnect with the Communication Framework.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=passive-peer-close,indent=0]
 [source]
 ----
 /* implementation of CBLMessageEndpointConnection */
@@ -339,15 +347,16 @@ Then, Couchbase Lite will call back your code through the `MessageEndpointConnec
 ----
 
 [#objc:p2psync-custom:::initiated-by-passive-peer]
-===== Initiated by Passive Peer
+=== Initiated by Passive Peer
 
-image::couchbase-lite/current/_images/dis-passive.png[]
+image::ROOT:dis-passive.png[]
 
 [#objc:p2psync-custom:::passive-peer-5]
-===== Passive Peer
+=== Passive Peer
 
 When the passive disconnects, it must class the `MessageEndpointListener.closeAll` method.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=passive-stop-listener,indent=0]
 [source]
 ----
 [_messageEndpointListener closeAll];
@@ -355,6 +364,7 @@ When the passive disconnects, it must class the `MessageEndpointListener.closeAl
 
 Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to allow the application to disconnect with the Communication Framework.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=passive-peer-close,indent=0]
 [source]
 ----
 /* implementation of CBLMessageEndpointConnection */
@@ -367,10 +377,11 @@ Then, Couchbase Lite will call back your code through the `MessageEndpointConnec
 ----
 
 [#objc:p2psync-custom:::active-peer-5]
-===== Active Peer
+=== Active Peer
 
 When the active Peer receives the corresponding disconnect notification from the Communication Framework, it must call the `ReplicatorConnection.close` method.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=active-replicator-close,indent=0]
 [source]
 ----
 [_replicatorConnection close:nil];
@@ -378,6 +389,7 @@ When the active Peer receives the corresponding disconnect notification from the
 
 Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to allow the application to disconnect with the Communication Framework.
 
+// include::objc:example$code_snippets/SampleCodeTest.m[tag=active-peer-close,indent=0]
 [source]
 ----
 /* implementation of CBLMessageEndpointConnection */
@@ -391,13 +403,13 @@ Then, Couchbase Lite will call back your code through the `MessageEndpointConnec
 
 
 [#objc:p2psync-custom:::related-content]
-==== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-===== {empty}
+=== {empty}
 .How to
 * xref:objc:p2psync-websocket-using-passive.adoc[Passive Peer]
 * xref:objc:p2psync-websocket-using-active.adoc[Active Peer]
@@ -405,8 +417,8 @@ Then, Couchbase Lite will call back your code through the `MessageEndpointConnec
 
 .
 
-[discrete.colum#objc:p2psync-custom:::-2n]
-===== {empty}
+[.column#objc:p2psync-custom:::-2]
+=== {empty}
 .Concepts
 * xref:objc:landing-p2psync.adoc[Peer-to-Peer Sync]
 
@@ -415,8 +427,8 @@ Then, Couchbase Lite will call back your code through the `MessageEndpointConnec
 .
 
 
-[discrete.colum#objc:p2psync-custom:::-3n]
-===== {empty}
+[.column#objc:p2psync-custom:::-3]
+=== {empty}
 .Community Resources ...
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |

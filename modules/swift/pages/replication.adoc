@@ -1,13 +1,5 @@
-:docname: replication
-:page-module: swift
-:page-relative-src-path: replication.adoc
-:page-origin-url: https://github.com/couchbase/docs-couchbase-lite.git
-:page-origin-start-path:
-:page-origin-refname: antora-assembler-simplification
-:page-origin-reftype: branch
-:page-origin-refhash: (worktree)
 [#swift:replication:::]
-== Remote Sync Gateway
+= Remote Sync Gateway
 :page-aliases: learn/swift-replication.adoc
 :page-role:
 :description: Couchbase Lite for Swift -- Synchronizing data changes between local and remote databases using Sync Gateway
@@ -30,7 +22,7 @@ Use them as inspiration and adapt these examples to best practice when developin
 
 
 [#swift:replication:::introduction]
-=== Introduction
+== Introduction
 
 
 Couchbase Lite for Swift provides API support for secure, bi-directional, synchronization of data changes between mobile applications and a central server database.
@@ -46,7 +38,7 @@ Your application runs a replicator (also referred to here as a client), which  w
 Subsequent sections provide additional details and examples for the main configuration options.
 
 [#swift:replication:::replication-concepts]
-=== Replication Concepts
+== Replication Concepts
 
 Couchbase Lite allows for one database for each application running on the mobile device.
 This database can contain one or more scopes.
@@ -64,10 +56,10 @@ As part of the syncing setup, the Gateway has to map the Couchbase Lite database
 
 
 [#swift:replication:::replication-protocol]
-=== Replication Protocol
+== Replication Protocol
 
 [#swift:replication:::scheme]
-==== Scheme
+=== Scheme
 
 Couchbase Mobile uses a replication protocol based on WebSockets for replication.
 To use this protocol the replication URL should specify WebSockets as the URL scheme (see the <<swift:replication:::lbl-cfg-tgt>> section below).
@@ -85,14 +77,14 @@ Sync Gateway 2.x+ will automatically use:
 You can find further information in our blog: https://blog.couchbase.com/data-replication-couchbase-mobile/[Introducing the Data Replication Protocol].
 
 [#swift:replication:::lbl-repl-ord]
-==== Ordering
+=== Ordering
 
 To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
 So we don't recommend to rely on that when using the replication or database change listeners for example.
 
 
 [#swift:replication:::scopes-and-collections]
-=== Scopes and Collections
+== Scopes and Collections
 
 Scopes and Collections allow you to organize your documents in Couchbase Lite.
 
@@ -107,7 +99,7 @@ During replication:
 . If Sync Gateway config is updated to add a collection to a scope that is being synchronized, the replication will ignore the collection. The added collection will not automatically sync until the Couchbase Lite replicator's configuration is updated.
 
 [#swift:replication:::default-collection]
-==== Default Collection
+=== Default Collection
 
 When upgrading Couchbase Lite to 3.1, the existing documents in the database will be automatically migrated to the default collection.
 
@@ -122,7 +114,7 @@ image:couchbase-lite/current/{underscore}images/cbl-replication-scopes-collectio
 
 
 [#swift:replication:::user-defined-collections]
-==== User-Defined Collections
+=== User-Defined Collections
 
 The user-defined collections specified in the Couchbase Lite replicator setup must exist (and be identical) on the Sync Gateway side to sync.
 
@@ -135,7 +127,7 @@ image:couchbase-lite/current/{underscore}images/cbl-replication-scopes-collectio
 
 // tag::replicator-config-sample[]
 [#swift:replication:::configuration-summary]
-=== Configuration Summary
+== Configuration Summary
 
 
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
@@ -236,7 +228,7 @@ Other options are available -- see: <<swift:replication:::lbl-client-auth>>.
 
 
 [#swift:replication:::lbl-cfg-repl]
-=== Configure
+== Configure
 
 
 In this section::
@@ -259,7 +251,7 @@ In this section::
 --
 
 [#swift:replication:::lbl-cfg-tgt]
-==== Configure Target
+=== Configure Target
 
 Use the
 Initialize and define the replication configuration with local and remote database locations using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html[ReplicatorConfiguration] object.
@@ -301,7 +293,7 @@ to ensure TLS encryption -- strongly recommended in production -- or `ws://`)
 
 
 [#swift:replication:::lbl-network-interface]
-==== Network Interface
+=== Network Interface
 
 Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationV16networkInterfaceSSSgvp[networkInterface] to specify the network interface to use for connecting to the remote target (for example, en0 or pdp_ip0).
 
@@ -328,7 +320,7 @@ config.networkInterface = "en0"
 
 
 [#swift:replication:::lbl-cfg-sync]
-==== Sync Mode
+=== Sync Mode
 
 
 Here we define the direction and type of replication we want to initiate.
@@ -377,7 +369,7 @@ This prevents the replications generating the same checkpoint `docID` resulting 
 --
 
 [#swift:replication:::lbl-cfg-keep-alive]
-==== Retry Configuration
+=== Retry Configuration
 
 
 Couchbase Lite for Swift's replication retry logic assures a resilient connection.
@@ -467,7 +459,7 @@ self.replicator = Replicator(config: config)
 <.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC16maxAttemptWaitTimeSdvp[maxAttemptWaitTime()] to set the required interval between retry attempts.
 
 [#swift:replication:::lbl-user-auth]
-==== User Authorization
+=== User Authorization
 
 
 By default, Sync Gateway does not enable user authorization.
@@ -499,7 +491,7 @@ endpoint on the Admin REST API.
 
 
 [#swift:replication:::lbl-svr-auth]
-==== Server Authentication
+=== Server Authentication
 
 Define the credentials your app (the client) is expecting to receive from the Sync Gateway (the server) in order to ensure it is prepared to continue with the sync.
 
@@ -524,6 +516,7 @@ CA Cert::
 --
 Set the client to expect and accept only CA attested certificates.
 
+// include::swift:example$code_snippets/SampleCodeTest.swift[tags=p2p-act-rep-config-cacert, indent=0]
 [source, swift]
 ----
 // Configure Server Security -- only accept CA Certs
@@ -541,6 +534,7 @@ Self Signed Cert::
 --
 Set the client to expect and accept only self-signed certificates
 
+// include::swift:example$code_snippets/SampleCodeTest.swift[tags=p2p-act-rep-config-self-cert, indent=0]
 [source, swift]
 ----
 // Configure Server Security -- only accept self-signed certs
@@ -559,6 +553,9 @@ Pinned Certificate::
 +
 --
 Set the client to expect and accept only a pinned certificate.
+
+// include::swift:example$code_snippets/SampleCodeTest.swift[tag=p2p-act-rep-config-cacert-pinned, indent=0]
+// include::swift:example$code_snippets/SampleCodeTest.swift[tag=p2p-act-rep-config-cacert-pinned-callouts, indent=0]
 
 [source, swift]
 ----
@@ -591,12 +588,12 @@ This all assumes that you have configured the Sync Gateway to provide the approp
 
 
 [#swift:replication:::lbl-client-auth]
-==== Client Authentication
+=== Client Authentication
 
 There are two ways to authenticate from a Couchbase Lite client: <<swift:replication:::basic-authentication>> or <<swift:replication:::session-authentication>>.
 
 [#swift:replication:::basic-authentication]
-===== Basic Authentication
+==== Basic Authentication
 
 You can provide a user name and password to the basic authenticator class method.
 Under the hood, the replicator will send the credentials in the first request to retrieve a `SyncGatewaySession` cookie and use it for all subsequent requests during the replication.
@@ -630,7 +627,7 @@ self.replicator.start()
 
 
 [#swift:replication:::session-authentication]
-===== Session Authentication
+==== Session Authentication
 
 Session authentication is another way to authenticate with Sync Gateway.
 
@@ -669,7 +666,7 @@ self.replicator.start()
 
 
 [#swift:replication:::lbl-repl-hdrs]
-==== Custom{nbsp}Headers
+=== Custom{nbsp}Headers
 
 Custom headers can be set on the configuration object.
 The replicator will then include those headers in every request.
@@ -698,11 +695,11 @@ config.headers = ["CustomHeaderName": "Value"]
 
 
 [#swift:replication:::lbl-repl-fltrs]
-==== Replication Filters
+=== Replication Filters
 Replication Filters allow you to have quick control over the documents stored as the result of a push and/or pull replication.
 
 [#swift:replication:::push-filter]
-===== Push Filter
+==== Push Filter
 
 The push filter allows an app to push a subset of a database to the server.
 This can be very useful.
@@ -738,7 +735,7 @@ Otherwise, long running functions would slow down the replicator considerably.
 Furthermore, your callback should not make assumptions about what thread it is being called on.
 
 [#swift:replication:::pull-filter]
-===== Pull Filter
+==== Pull Filter
 
 The pull filter gives an app the ability to validate documents being pulled, and skip ones that fail.
 This is an important security mechanism in a peer-to-peer topology with peers that are not fully trusted.
@@ -790,7 +787,7 @@ For more information, see <<swift:replication:::auto-purge-on-revoke,Auto Purge 
 ****
 
 [#swift:replication:::lbl-repl-chan]
-==== Channels
+=== Channels
 
 // include::ROOT:partial$replication-channels.adoc[]
 By default, Couchbase Lite gets all the channels to which the configured user account has access.
@@ -805,19 +802,19 @@ Optionally, it's also possible to specify a string array of channel names on Cou
 In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
 
 [#swift:replication:::anchor-auto-purge-on-revoke]
-==== Auto-purge on Channel Access Revocation
+=== Auto-purge on Channel Access Revocation
 
 [CAUTION]
 --
 This is a Breaking Change at 3.0
 --
 [#swift:replication:::new-outcome]
-===== New outcome
+==== New outcome
 
 By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user’s other channels) are auto-purged from the local database (in devices belonging to the user).
 
 [#swift:replication:::prior-outcome]
-===== Prior outcome
+==== Prior outcome
 
 _Previously these documents remained in the local database_
 
@@ -826,7 +823,7 @@ Now, in addition to 2.x auto purge, Couchbase Lite will also auto-purges the doc
 This feature is enabled by default, but an opt-out is available.
 
 [#swift:replication:::behavior]
-===== Behavior
+==== Behavior
 
 Users may lose access to channels in a number of ways:
 
@@ -840,7 +837,7 @@ By default, when a user loses access to a channel, the next Couchbase Lite Pull 
 
 Documents that exist in multiple channels belonging to the user (even if they are not actively replicating that channel) are not auto-purged unless the user loses access to all channels.
 
-Users will be receive an `AccessRemoved` notification from the DocumentListener if they lose document access due to channel access revocation; this is sent regardless of the current auto-purge setting.
+When the auto-purge setting is set to `true`, users will receive an `AccessRemoved` notification from the DocumentListener if they lose document access due to channel access revocation.
 
 .Behavior following access revocation
 [#swift:replication:::tbl-revoke-behavior, cols="^1h,2a,2a", options="header"]
@@ -913,7 +910,7 @@ Document changes subsequent to the channel reassignment will be pushed up as usu
 
 
 [#swift:replication:::config]
-===== Config
+==== Config
 
 Auto-purge behavior is controlled primarily by the ReplicationConfiguration option https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationV15enableAutoPurgeSbvp[enableAutoPurge].
 Changing the state of this will impact *only* future replications; the replicator will not attempt to sync revisions that were auto purged on channel access removal.
@@ -943,7 +940,7 @@ config.enableAutoPurge = false // <.>
 <.> Here we have opted to turn off the auto purge behavior. By default auto purge is enabled.
 
 [#swift:replication:::overrides]
-===== Overrides
+==== Overrides
 Where necessary, clients can override the default auto-purge behavior.
 This can be done either by setting https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationV15enableAutoPurgeSbvp[enableAutoPurge] to false, or for finer control by applying pull-filters -- see: <<swift:replication:::tbl-pull-filters>> and <<swift:replication:::lbl-repl-fltrs>>
 This ensures backwards compatible with 2.8 clients that use pull filters to prevent auto purge of removed docs.
@@ -975,7 +972,7 @@ a|Doc remains in local database
 
 
 [#swift:replication:::lbl-repl-delta]
-==== Delta Sync
+=== Delta Sync
 
 // tag::rep-delta-sync-concept[]
 
@@ -998,14 +995,14 @@ replications automatically *enable* delta sync.
 
 
 [#swift:replication:::lbl-init-repl]
-=== Initialize
+== Initialize
 
 
 In this section::
 <<swift:replication:::lbl-repl-start>>  | <<swift:replication:::lbl-repl-ckpt>>
 
 [#swift:replication:::lbl-repl-start]
-==== Start Replicator
+=== Start Replicator
 
 Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html[Replicator]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC6configAcA0D13ConfigurationC_tcfc[init(config:)] constructor, to initialize the replicator with the configuration you have defined.
 You can, optionally, add a change listener (see <<swift:replication:::lbl-repl-mon>>) before starting the replicator running using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC5startyyF[start()].
@@ -1038,7 +1035,7 @@ self.replicator.start()  // <.>
 
 
 [#swift:replication:::lbl-repl-ckpt]
-==== Checkpoint Starts
+=== Checkpoint Starts
 // include::ROOT:partial$replication-checkpoint.adoc[]
 
 Replicators use xref:refer-glossary.adoc#checkpoint[checkpoints] to keep track of documents sent to the target database.
@@ -1077,7 +1074,7 @@ The default `false` is shown here for completeness only; it is unlikely you woul
 
 
 [#swift:replication:::lbl-repl-mon]
-=== Monitor
+== Monitor
 
 
 In this section::
@@ -1092,7 +1089,7 @@ This enables you to know, for example, when the replication is actively transfer
 You can also choose to monitor document changes -- see: <<swift:replication:::lbl-repl-evnts>>.
 
 [#swift:replication:::lbl-repl-chng]
-==== Change Listeners
+=== Change Listeners
 Use this to monitor changes and to inform on sync progress; this is an optional step.
 You can add and a replicator change listener at any point; it will report changes from the point it is registered.
 
@@ -1106,7 +1103,7 @@ You can remove a change listener with https://docs.couchbase.com/mobile/{major}.
 
 
 [#swift:replication:::lbl-repl-status]
-==== Replicator Status
+=== Replicator Status
 
 You can use the
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html[Replicator] class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6Status[Status] property
@@ -1134,6 +1131,7 @@ The returned _ReplicationStatus_ structure comprises:
 Adding a Change Listener::
 +
 --
+// include::swift:example$code_snippets/SampleCodeTest.swift[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
 [source, swift]
 ----
 
@@ -1154,6 +1152,7 @@ let token = self.replicator.addChangeListener { change in // <.>
 Using replicator.status::
 +
 --
+// include::swift:example$code_snippets/SampleCodeTest.swift[tags=p2p-act-rep-status,indent=0]
 [source, swift]
 ----
 
@@ -1170,7 +1169,7 @@ Using replicator.status::
 
 
 [#swift:replication:::lbl-repl-states]
-===== Replication States
+==== Replication States
 <<swift:replication:::tbl-states>> shows the different states, or activity levels, reported in the API; and the meaning of each.
 
 .Replicator activity levels
@@ -1200,12 +1199,12 @@ NOTE: The replication change object also has properties to track the progress (`
 Since the replication occurs in batches the total count can vary through the course of a replication.
 
 [#swift:replication:::replication-status-and-app-life-cycle]
-===== Replication Status and App Life Cycle
+==== Replication Status and App Life Cycle
 
 The following diagram describes the status changes when the application starts a replication, and when the application is being backgrounded or foregrounded by the OS.
 It applies to iOS only.
 
-image::couchbase-lite/current/swift/_images/replicator-states.png[]
+image::swift:replicator-states.png[]
 
 Additionally, on iOS, an app already in the background may be terminated.
 In this case, the `Database` and `Replicator` instances will be `null` when the app returns to the foreground.
@@ -1216,7 +1215,7 @@ It is generally recommended to stop replications before going into the backgroun
 
 
 [#swift:replication:::lbl-repl-evnts]
-==== Monitor Document Changes
+=== Monitor Document Changes
 
 You can choose to register for document updates during a replication.
 
@@ -1278,13 +1277,13 @@ self.replicator.removeChangeListener(withToken: token)
 
 
 [#swift:replication:::document-access-removal-behavior]
-===== Document Access Removal Behavior
+==== Document Access Removal Behavior
 
 When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
 
 
 [#swift:replication:::lbl-repl-pend]
-==== Documents Pending Push
+=== Documents Pending Push
 
 TIP: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC17isDocumentPendingySbSSKF[Replicator.isDocumentPending()] is quicker and more efficient.
 Use it in preference to returning a list of pending document IDs, where possible.
@@ -1348,7 +1347,7 @@ This is a snapshot and may have changed by the time the response is received and
 
 
 [#swift:replication:::lbl-repl-stop]
-=== Stop
+== Stop
 
 
 Stopping a replication is straightforward.
@@ -1386,7 +1385,7 @@ It will stop any active <<swift:replication:::lbl-repl-chng,change listener>> on
 
 
 [#swift:replication:::lbl-nwk-errs]
-=== Error Handling
+== Error Handling
 
 
 When _replicator_ detects a network error it updates its status depending on the error type (permanent or temporary) and returns an appropriate HTTP error code.
@@ -1441,7 +1440,7 @@ The following error codes are considered temporary by the Couchbase Lite replica
 
 
 [#swift:replication:::load-balancers]
-=== Load Balancers
+== Load Balancers
 
 
 Couchbase Lite footnote:[From 2.0] uses WebSockets as the communication protocol to transmit data.
@@ -1453,7 +1452,7 @@ The level of compression is set on Sync Gateway and can be tuned in the configur
 
 
 [#swift:replication:::lbl-cert-pinning]
-=== Certificate Pinning
+== Certificate Pinning
 
 Couchbase Lite for Swift supports certificate pinning.
 
@@ -1519,11 +1518,11 @@ For more on pinning certificates see the blog entry: https://blog.couchbase.com/
 
 
 [#swift:replication:::lbl-trouble]
-=== Troubleshooting
+== Troubleshooting
 
 
 [#swift:replication:::logs]
-==== Logs
+=== Logs
 As always, when there is a problem with replication, logging is your friend.
 You can increase the log output for activity related to replication with Sync Gateway -- see <<swift:replication:::ex-logs>>.
 
@@ -1555,7 +1554,7 @@ Database.log.console.domains = .network
 For more on troubleshooting with logs, see: xref:swift:troubleshooting-logs.adoc[Using Logs].
 
 [#swift:replication:::authentication-errors]
-==== Authentication Errors
+=== Authentication Errors
 If Sync Gateway is configured with a self signed certificate but your app points to a `ws` scheme instead of `wss` you will encounter an error with status code `11006` -- see: <<swift:replication:::ex-11006>>
 
 [#swift:replication:::ex-11006]
@@ -1585,13 +1584,13 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 
 
 [#swift:replication:::related-content]
-=== Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
 
 [.column]
-==== {empty}
+====== {empty}
 .How to . . .
 * xref:swift:gs-prereqs.adoc[Prerequisites]
 * xref:swift:gs-install.adoc[Install]
@@ -1600,8 +1599,8 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 
 .
 
-[discrete.colum#swift:replication:::-2n]
-==== {empty}
+[.column#swift:replication:::-2]
+====== {empty}
 .Learn more . . .
 * xref:swift:database.adoc[Databases]
 * xref:swift:document.adoc[Documents]
@@ -1612,8 +1611,8 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 .
 
 
-[discrete.colum#swift:replication:::-3n]
-==== {empty}
+[.column#swift:replication:::-3]
+====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |
