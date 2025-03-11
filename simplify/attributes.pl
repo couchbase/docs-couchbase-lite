@@ -62,10 +62,13 @@ while (<>) {
     }
 
     # de-mangle the {tabs} and plantuml markers
-    s/^\[\{tabs#.*\}\]/[tabs]/;
+    s/^\[\{?tabs[#}].*\]/[tabs]/;
     s/^\[#.*:::tabs-.*].*$//;
     s/^\[plantum#.*\]/[plantuml]/;
 
+    # images
+    s{image::couchbase-lite/current/_images/}{image::ROOT:};
+    s{image::couchbase-lite/current/(\w+)/_images/}{image::$1:};
 
     # de-mangle headings
     if (/^(=+) \S/) {
