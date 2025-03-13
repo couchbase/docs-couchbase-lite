@@ -14,6 +14,13 @@ endif::is-c[]
 == LogSinks
 
 Couchbase Lite 3.2.2 introduces a new Logging API.
+The new Logging API has the following benefits:
+
+* Log sinks are now thread safe, removing risk of inconsistent states during initialization.
+
+* Simplified API and reduced implementation complexity.
+
+The new logging API retains many of the core concepts of the previous API.
 
 The first thing to note is that the three destinations for logs have been renamed as `LogSinks`, in keeping with common source/sink terminology.
 
@@ -31,14 +38,6 @@ In Swift, Objective-C, .NET, and C, `LogSinks` provides only static methods, wit
 
 The biggest difference between the new and the old API is that `LogSinks` are immutable: you set the level and domain at which they log in their constructors.
 For example, you can only change the level at which the `ConsoleLogSink` forwards messages to the console by installing a new one created for the new log level.
-
-The new Logging API has the following benefits:
-
-* Log sinks are now thread safe, removing risk of inconsistent states during initialization.
-
-* Simplified API and reduced implementation complexity.
-
-The new logging API retains many of the core concepts of the previous API.
 
 Log output is split into the following streams:
 

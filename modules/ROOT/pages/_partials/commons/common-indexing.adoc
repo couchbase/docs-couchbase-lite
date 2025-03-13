@@ -112,16 +112,16 @@ endif::is-c[]
 == Partial Index
 
 Couchbase Lite 3.2.2 introduces support for Partial Index - Partial Value and Partial Full-Text Indexes.
-The Partial Index can create a smaller index, potentially improving index and query performance. 
+The Partial Index can create a smaller index, potentially improving index and query performance.
 You can use Partial Index to specify a `WHERE` clause in your index configuration.
-If a where clause is specified, the database will index a document only when the where clause condition is met. 
+If a where clause is specified, the database will index a document only when the where clause condition is met.
 
 Couchbase's query optimizer uses https://www.sqlite.org/partialindex.html[SQLite's Partial Index rules about queries using Partial Indexes] to determine whether to use partial index in the query or not.
 
 .Couchbase and SQLite's Partial Index Rules
 :!example-caption:
 ====
-In general, Couchbase Lite follows the two rules, with a modification to the second rule. 
+In general, Couchbase Lite follows the two rules, with a modification to the second rule.
 
 Below is a summary of the two rules where:
 
@@ -133,14 +133,14 @@ A query can use the Partial Index if the following two rules are satisfied:
 
 1. If `W` is AND-connected terms, and `X` is OR-connected terms and if any terms of `W` appears as a term of `X`, the partial index is allowed to be used.
 
-2. If a term in `X` is of the form `"z IS NOT MISSING"` and if a term in `W` is a comparison operator on `z` other than `"IS"`, the partial index is allowed to be used. 
+2. If a term in `X` is of the form `"z IS NOT MISSING"` and if a term in `W` is a comparison operator on `z` other than `"IS"`, the partial index is allowed to be used.
 The operators include `=`, `==`, `<`, `>`, `\<=`, `>=`, `<>`, `IN`, `LIKE`, and `BETWEEN`.
 
 IMPORTANT: If `X` is in the form of `"z is NOT NULL"` or `"z is VALUED"`, the first rule must be satisfied.
 
 For example, let the partial index be `c IS NOT NULL` when creating a partial index on collection named `col1` in the default scope.
 
-Then any query that uses operators `=`, `<`, `>`, `\<=`, `>=`, `<>`, `IN`, `LIKE`, or `BETWEEN` on column `c` would be usable with the partial index, because those comparison operators are only true if `c` is not NULL. 
+Then any query that uses operators `=`, `<`, `>`, `\<=`, `>=`, `<>`, `IN`, `LIKE`, or `BETWEEN` on column `c` would be usable with the partial index, because those comparison operators are only true if `c` is not NULL.
 
 The following query could use the partial index:
 
@@ -228,9 +228,10 @@ endif::is-c[]
 
 === Partial Full-Text Index
 
-A key difference between a Partial Value Index and a Partial Full-Text Index is that a Partial Full-Text Index is not selected by SQLite’s query optimizer.
-Instead, it's explicitly selected by the Full-Text `match(indexName, terms)` function.
-This means that a partial full-text index will always be used when the match() function is invoked, regardless of other predicates in the WHERE clause.
+A key difference between a Partial Value Index and a Partial Full-Text Index is that a Partial Full-Text Index is not selected by SQLite's query optimizer.
+Instead, it's explicitly selected by the {sqlpp} `match(indexName, terms)` function, which runs a Full-Text Search query using the indexed properties.
+This means that a Partial Full-Text Index will always be used when the `match()` function is invoked, regardless of other predicates in the WHERE clause.
+For details, see xref:{param-module}:fts.adoc[].
 
 ifdef::is-android[]
 
@@ -296,10 +297,10 @@ include::c:example$code_snippets/main.cpp[tags=partial-full-text-index]
 ----
 endif::is-c[]
 
-== Array Indexing 
+== Array Indexing
 
 Couchbase Lite 3.2.1 introduces functionality to optimize querying arrays.
-xref:{param-module}:query-n1ql-mobile.adoc#lbl-unnest[Array `UNNEST`] to unpack arrays within a document to allow joins with the parent object, and array indexes for indexing unnested array's values to allow more efficient queries with `UNNEST`. 
+xref:{param-module}:query-n1ql-mobile.adoc#lbl-unnest[Array `UNNEST`] to unpack arrays within a document to allow joins with the parent object, and array indexes for indexing unnested array's values to allow more efficient queries with `UNNEST`.
 
 === The Array Index
 
@@ -385,13 +386,13 @@ The syntax for array index configuration is shown below:
 |Path to the array to be indexed.
 Use `[]` to represent a property that is an array of each nested array level.
 For a single array or the last level array, the `[]` is optional.
-For instance `contacts[].phones` to specify an array of phones within each contact. 
+For instance `contacts[].phones` to specify an array of phones within each contact.
 
 |`expressions`
 |image:ROOT:yes.png[]
 |An optional array of strings where each string represents values within the array to be indexed.
-In N1QL/SQL++ syntax, these expressions are separated by commas. 
-In JSON syntax, as supported by Couchbase Lite for C, the expressions are represented as a JSON array. 
+In N1QL/SQL++ syntax, these expressions are separated by commas.
+In JSON syntax, as supported by Couchbase Lite for C, the expressions are represented as a JSON array.
 If the array specified by the path contains scalar values, the expressions should be left unset or set to null.
 
 |===
@@ -431,7 +432,7 @@ Using the document above you can perform queries on a single nested array like s
 
 [source, sqlpp]
 --
-SELECT name, interest FROM _ UNNEST likes as interest WHERE interest = "travel" 
+SELECT name, interest FROM _ UNNEST likes as interest WHERE interest = "travel"
 --
 
 The query above produces the following output from the document:
@@ -512,8 +513,8 @@ You can perform similar operations on nested arrays:
 
 [source, sqlpp]
 --
-SELECT name, contact.type, phone.number 
-FROM profiles 
+SELECT name, contact.type, phone.number
+FROM profiles
 UNNEST contacts as contact
 UNNEST contact.phones as phone
 WHERE phone.type = "mobile"
