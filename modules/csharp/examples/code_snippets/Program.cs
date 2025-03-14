@@ -2647,9 +2647,9 @@ public class MyClass
         Database.Log.File.Level = LogLevel.Verbose;
         // end::file-logging[]
 
-        // tag::custom-logging[]
+        // tag::custom-logging-to-remove[]
         Database.Log.Custom = new MyCoolCustomLogger() { Level = LogLevel.Verbose };
-        // end::custom-logging[]
+        // end::custom-logging-to-remove[]
     }
 
     public void NewLoggingApi()

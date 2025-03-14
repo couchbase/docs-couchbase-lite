@@ -114,7 +114,7 @@ class SampleCodeTest {
         
         // tag::new-file-logging[]
         let tempFolder = NSTemporaryDirectory().appending("cbllog")
-        LogSinks.file = FileLogSink(level: .verbose, directory: tempFolder, usePlainText: false, maxKeptFiles: 12)
+        LogSinks.file = FileLogSink(level: .verbose, directory: tempFolder, usePlainText: false, maxKeptFiles: 12, maxFileSize: 524288)
         // end::new-file-logging[]
         
         // tag::set-new-custom-logging[]
