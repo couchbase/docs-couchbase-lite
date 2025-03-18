@@ -158,11 +158,11 @@ class BasicExamples(private val context: Context) {
     fun consoleLoggingExample() {
         // tag::console-logging[]
         Database.log.console.domains = LogDomain.ALL_DOMAINS // <.>
-        Database.log.console.level = LogLevel.DEBUG // <.>
+        Database.log.console.level = LogLevel.WARNING // <.>
         // end::console-logging[]
 
         // tag::console-logging-db[]
-        Database.log.console.level = LogLevel.DEBUG // <.>
+        Database.log.console.level = LogLevel.WARNING // <.>
         // end::console-logging-db[]
     }
 

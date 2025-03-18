@@ -109,14 +109,202 @@ include::{root-partials}block_tabbed_code_example.adoc[]
 
 endif::is-c[]
 
-== Array Indexing 
+== Partial Index
+
+Couchbase Lite 3.2.2 introduces support for Partial Index - Partial Value and Partial Full-Text Indexes.
+The Partial Index can create a smaller index, potentially improving index and query performance.
+You can use Partial Index to specify a `WHERE` clause in your index configuration.
+If a where clause is specified, the database will index a document only when the where clause condition is met.
+
+Couchbase's query optimizer uses https://www.sqlite.org/partialindex.html[SQLite's Partial Index rules about queries using Partial Indexes] to determine whether to use partial index in the query or not.
+
+.Couchbase and SQLite's Partial Index Rules
+:!example-caption:
+====
+In general, Couchbase Lite follows the two rules, with a modification to the second rule.
+
+Below is a summary of the two rules where:
+
+* `X` - The expression in the `WHERE` clause of a given Partial Index.
+
+* `W` - The expression in the `WHERE` clause of a given query.
+
+A query can use the Partial Index if the following two rules are satisfied:
+
+1. If `W` is AND-connected terms, and `X` is OR-connected terms and if any terms of `W` appears as a term of `X`, the partial index is allowed to be used.
+
+2. If a term in `X` is of the form `"z IS NOT MISSING"` and if a term in `W` is a comparison operator on `z` other than `"IS"`, the partial index is allowed to be used.
+The operators include `=`, `==`, `<`, `>`, `\<=`, `>=`, `<>`, `IN`, `LIKE`, and `BETWEEN`.
+
+IMPORTANT: If `X` is in the form of `"z is NOT NULL"` or `"z is VALUED"`, the first rule must be satisfied.
+
+For example, let the partial index be `c IS NOT NULL` when creating a partial index on collection named `col1` in the default scope.
+
+Then any query that uses operators `=`, `<`, `>`, `\<=`, `>=`, `<>`, `IN`, `LIKE`, or `BETWEEN` on column `c` would be usable with the partial index, because those comparison operators are only true if `c` is not NULL.
+
+The following query could use the partial index:
+
+[source, sqlpp]
+----
+SELECT * FROM col1 WHERE b=456 AND c<>0;  -- uses partial index
+----
+
+Whereas the next query can not use the partial index:
+
+[source, sqlpp]
+----
+SELECT * FROM col1 WHERE b=456;  -- cannot use partial index
+----
+====
+
+=== Partial Value Index
+
+Partial Value Index is a form of Partial Index in which a value is used in the `WHERE` clause and the query is selected by the query optimizer.
+
+ifdef::is-android[]
+
+[tabs]
+=====
+Java::
++
+--
+[source.no-callouts, java, indent=0]
+----
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/QueryExamples.java[tags=query-partial-index]
+----
+--
+
+Kotlin::
++
+--
+[source.no-callouts, kotlin, indent=0]
+----
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/QueryExamples.kt[tags=query-partial-index]
+----
+--
+=====
+
+endif::is-android[]
+ifdef::is-java[]
+
+[source.no-callouts, java, indent=0]
+----
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/QueryExamples.java[tags=query-partial-index]
+----
+
+endif::is-java[]
+ifdef::is-csharp[]
+
+[source.no-callouts, csharp, indent=0]
+----
+include::csharp:example$code_snippets/Program.cs[tags=partial-value-index]
+----
+
+endif::is-csharp[]
+ifdef::is-objc[]
+
+[source.no-callouts, objc, indent=0]
+----
+include::objc:example$code_snippets/SampleCodeTest.m[tags=partial-value-index]
+----
+
+endif::is-objc[]
+ifdef::is-swift[]
+
+[source.no-callouts, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags=partial-value-index]
+----
+
+endif::is-swift[]
+ifdef::is-c[]
+
+[source.no-callouts, c, indent=0]
+----
+include::c:example$code_snippets/main.cpp[tags=partial-value-index]
+----
+
+endif::is-c[]
+
+=== Partial Full-Text Index
+
+A key difference between a Partial Value Index and a Partial Full-Text Index is that a Partial Full-Text Index is not selected by SQLite's query optimizer.
+Instead, it's explicitly selected by the {sqlpp} `match(indexName, terms)` function, which runs a Full-Text Search query using the indexed properties.
+This means that a Partial Full-Text Index will always be used when the `match()` function is invoked, regardless of other predicates in the WHERE clause.
+For details, see xref:{param-module}:fts.adoc[].
+
+ifdef::is-android[]
+
+[tabs]
+=====
+Java::
++
+--
+[source.no-callouts, java, indent=0]
+----
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/QueryExamples.java[tags=query-partial-full-index]
+----
+--
+
+Kotlin::
++
+--
+[source.no-callouts, kotlin, indent=0]
+----
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/QueryExamples.kt[tags=query-partial-full-index]
+----
+--
+=====
+
+endif::is-android[]
+ifdef::is-java[]
+
+[source.no-callouts, java, indent=0]
+----
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/QueryExamples.java[tags=query-partial-full-index]
+----
+
+endif::is-java[]
+ifdef::is-csharp[]
+
+[source.no-callouts, csharp, indent=0]
+----
+include::csharp:example$code_snippets/Program.cs[tags=partial-full-text-index]
+----
+
+endif::is-csharp[]
+ifdef::is-objc[]
+
+[source.no-callouts, objc, indent=0]
+----
+include::objc:example$code_snippets/SampleCodeTest.m[tags=partial-full-text-index]
+----
+
+endif::is-objc[]
+ifdef::is-swift[]
+
+[source.no-callouts, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags=partial-full-text-index]
+----
+
+endif::is-swift[]
+ifdef::is-c[]
+
+[source.no-callouts, c, indent=0]
+----
+include::c:example$code_snippets/main.cpp[tags=partial-full-text-index]
+----
+endif::is-c[]
+
+== Array Indexing
 
 Couchbase Lite 3.2.1 introduces functionality to optimize querying arrays.
-xref:{param-module}:query-n1ql-mobile.adoc#lbl-unnest[Array `UNNEST`] to unpack arrays within a document to allow joins with the parent object, and array indexes for indexing unnested array's values to allow more efficient queries with `UNNEST`. 
+xref:{param-module}:query-n1ql-mobile.adoc#lbl-unnest[Array `UNNEST`] to unpack arrays within a document to allow joins with the parent object, and array indexes for indexing unnested array's values to allow more efficient queries with `UNNEST`.
 
 === The Array Index
 
-An array index is a new type of the index for indexing nested array’s properties to allow querying with the `UNNEST` more efficiently.
+An array index is a new type of the index for indexing nested array's properties to allow querying with the `UNNEST` more efficiently.
 
 Below is an example array index configuration:
 
@@ -127,22 +315,18 @@ ifdef::is-android[]
 Java::
 +
 --
-[source, java, indent=0]
+[source.no-callouts, java, indent=0]
 ----
-
 include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-config]
-
 ----
 --
 
 Kotlin::
 +
 --
-[source, kotlin, indent=0]
+[source.no-callouts, kotlin, indent=0]
 ----
-
 include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ArrayIndexExamples.kt[tags=array-index-config]
-
 ----
 --
 =====
@@ -150,44 +334,43 @@ include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codes
 endif::is-android[]
 ifdef::is-java[]
 
-[source, java, indent=0]
+[source.no-callouts, java, indent=0]
 ----
-
 include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-config]
-
 ----
 
 endif::is-java[]
 ifdef::is-csharp[]
 
-[source, csharp, indent=0]
+[source.no-callouts, csharp, indent=0]
 ----
 include::csharp:example$code_snippets/Program.cs[tags=array-index-config]
 ----
+
 endif::is-csharp[]
 ifdef::is-objc[]
-[source, objc, indent=0]
-----
 
+[source.no-callouts, objc, indent=0]
+----
 include::objc:example$code_snippets/VectorSearch.m[tags=array-index-config]
-
 ----
+
 endif::is-objc[]
 ifdef::is-swift[]
-[source, swift]
-----
 
+[source.no-callouts, swift]
+----
 include::swift:example$code_snippets/VectorSearch.swift[tags=array-index-config]
-
 ----
+
 endif::is-swift[]
 ifdef::is-c[]
-[source, c, indent=0]
-----
 
+[source.no-callouts, c, indent=0]
+----
 include::c:example$code_snippets/main.cpp[tags=array-index-config]
-
 ----
+
 endif::is-c[]
 
 === Array Index Syntax
@@ -203,13 +386,13 @@ The syntax for array index configuration is shown below:
 |Path to the array to be indexed.
 Use `[]` to represent a property that is an array of each nested array level.
 For a single array or the last level array, the `[]` is optional.
-For instance `contacts[].phones` to specify an array of phones within each contact. 
+For instance `contacts[].phones` to specify an array of phones within each contact.
 
 |`expressions`
 |image:ROOT:yes.png[]
 |An optional array of strings where each string represents values within the array to be indexed.
-In N1QL/SQL++ syntax, these expressions are separated by commas. 
-In JSON syntax, as supported by Couchbase Lite for C, the expressions are represented as a JSON array. 
+In N1QL/SQL++ syntax, these expressions are separated by commas.
+In JSON syntax, as supported by Couchbase Lite for C, the expressions are represented as a JSON array.
 If the array specified by the path contains scalar values, the expressions should be left unset or set to null.
 
 |===
@@ -249,7 +432,7 @@ Using the document above you can perform queries on a single nested array like s
 
 [source, sqlpp]
 --
-SELECT name, interest FROM _ UNNEST likes as interest WHERE interest = "travel" 
+SELECT name, interest FROM _ UNNEST likes as interest WHERE interest = "travel"
 --
 
 The query above produces the following output from the document:
@@ -268,22 +451,18 @@ ifdef::is-android[]
 Java::
 +
 --
-[source, java, indent=0]
+[source.no-callouts, java, indent=0]
 ----
-
 include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-single]
-
 ----
 --
 
 Kotlin::
 +
 --
-[source, kotlin, indent=0]
+[source.no-callouts, kotlin, indent=0]
 ----
-
 include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ArrayIndexExamples.kt[tags=array-index-single]
-
 ----
 --
 =====
@@ -291,53 +470,51 @@ include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codes
 endif::is-android[]
 ifdef::is-java[]
 
-[source, java, indent=0]
+[source.no-callouts, java, indent=0]
 ----
-
 include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-single]
-
 ----
 
 endif::is-java[]
 ifdef::is-csharp[]
 
-[source, csharp, indent=0]
+[source.no-callouts, csharp, indent=0]
 ----
 include::csharp:example$code_snippets/Program.cs[tags=array-index-single]
 ----
 
 endif::is-csharp[]
 ifdef::is-objc[]
-[source, objc, indent=0]
-----
 
+[source.no-callouts, objc, indent=0]
+----
 include::objc:example$code_snippets/VectorSearch.m[tags=array-index-single]
-
 ----
+
 endif::is-objc[]
 ifdef::is-swift[]
-[source, swift, indent=0]
-----
 
+[source.no-callouts, swift, indent=0]
+----
 include::swift:example$code_snippets/VectorSearch.swift[tags=array-index-single]
-
 ----
+
 endif::is-swift[]
 ifdef::is-c[]
-[source, c, indent=0]
-----
 
+[source.no-callouts, c, indent=0]
+----
 include::c:example$code_snippets/main.cpp[tags=array-index-single]
-
 ----
+
 endif::is-c[]
 
 You can perform similar operations on nested arrays:
 
 [source, sqlpp]
 --
-SELECT name, contact.type, phone.number 
-FROM profiles 
+SELECT name, contact.type, phone.number
+FROM profiles
 UNNEST contacts as contact
 UNNEST contact.phones as phone
 WHERE phone.type = "mobile"
@@ -353,7 +530,7 @@ The query produces the following output:
 
 The output demonstrates retrieval of both primary and secondary contact numbers listed as type `"mobile"`.
 
-Here’s an example of creating an array index on a nested array containing dictionary values:
+Here's an example of creating an array index on a nested array containing dictionary values:
 
 ifdef::is-android[]
 
@@ -362,22 +539,18 @@ ifdef::is-android[]
 Java::
 +
 --
-[source, java, indent=0]
+[source.no-callouts, java, indent=0]
 ----
-
 include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-nested]
-
 ----
 --
 
 Kotlin::
 +
 --
-[source, kotlin, indent=0]
+[source.no-callouts, kotlin, indent=0]
 ----
-
 include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ArrayIndexExamples.kt[tags=array-index-nested]
-
 ----
 --
 =====
@@ -385,45 +558,43 @@ include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codes
 endif::is-android[]
 ifdef::is-java[]
 
-[source, java, indent=0]
+[source.no-callouts, java, indent=0]
 ----
-
 include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-nested]
-
 ----
 
 endif::is-java[]
 ifdef::is-csharp[]
 
-[source, csharp, indent=0]
+[source.no-callouts, csharp, indent=0]
 ----
 include::csharp:example$code_snippets/Program.cs[tags=array-index-nested]
 ----
 
 endif::is-csharp[]
 ifdef::is-objc[]
-[source, objc, indent=0]
-----
 
+[source.no-callouts, objc, indent=0]
+----
 include::objc:example$code_snippets/VectorSearch.m[tags=array-index-nested]
-
 ----
+
 endif::is-objc[]
 ifdef::is-swift[]
-[source, swift, indent=0]
-----
 
+[source.no-callouts, swift, indent=0]
+----
 include::swift:example$code_snippets/VectorSearch.swift[tags=array-index-nested]
-
 ----
+
 endif::is-swift[]
 ifdef::is-c[]
-[source, c, indent=0]
-----
 
+[source.no-callouts, c, indent=0]
+----
 include::c:example$code_snippets/main.cpp[tags=array-index-nested]
-
 ----
+
 endif::is-c[]
 
 The above snippet creates an array index to allow you to iterate through `contacts[].phones[].type` in the document, namely `"home"` and `"mobile"`.
