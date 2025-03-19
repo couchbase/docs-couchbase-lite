@@ -68,17 +68,21 @@ OUTER: while (<>) {
         my $delimiter = <>;
         $_ = <>;
         if (/^\/\/ (include::.*)/) {
-            say $source;
-            say $delimiter;
-            say $1;
-            say $delimiter;
+            my $include = $1;
+            $include =~ s/\{(\S+?)\}/expand($1)/eg;
+
+            print $source;
+            print $delimiter;
+            say $include;
+            print $delimiter;
             while (<>) {
                 next OUTER if /^$delimiter/;
             }
         } else {
-            say $source;
-            say $delimiter;
-            say;
+            print $source;
+            print $delimiter;
+            s/\{(\S+?)\}/expand($1)/eg;
+            print;
             next OUTER;
         }
     }
