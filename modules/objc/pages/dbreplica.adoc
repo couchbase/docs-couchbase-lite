@@ -1,4 +1,4 @@
-[#objc:dbreplica:::]
+
 = Intra-device Sync
 :page-aliases: learn/objc-dbreplica.adoc
 :page-role:
@@ -23,7 +23,7 @@ Description -- _{description}_ +
 Related Content -- xref:objc:replication.adoc[Remote Sync Gateway] | xref:objc:landing-p2psync.adoc[Peer-to-Peer Sync]
 --
 
-[#objc:dbreplica:::overview]
+[#overview]
 == Overview
 
 
@@ -37,27 +37,14 @@ It is useful in scenarios when a user's device is damaged and its data is moved 
 ====
 
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="database-replica", indent=0]
 [source, objc]
 ----
-CBLDatabaseEndpoint *targetDatabase = [[CBLDatabaseEndpoint alloc] initWithDatabase:self.otherDB];
-CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithTarget:targetDatabase];
-replConfig.replicatorType = kCBLReplicatorTypePush;
-
-NSError* error = nil;
-CBLCollection *collection = [database collectionWithName:@"collection1" scope:@"scope1" error:&error];
-[replConfig addCollection:collection config:nil];
-
-self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
-[self.replicator start];
+include::objc:example$code_snippets/SampleCodeTest.m[tags="database-replica", indent=0]
 ----
-
-
 ====
 
 
-[#objc:dbreplica:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -73,7 +60,7 @@ self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
 
 .
 
-[.column#objc:dbreplica:::-2]
+[.column]
 ====== {empty}
 .Learn more . . .
 * xref:objc:database.adoc[Databases]
@@ -85,7 +72,7 @@ self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
 .
 
 
-[.column#objc:dbreplica:::-3]
+[.column]
 ====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

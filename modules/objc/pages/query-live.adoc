@@ -1,4 +1,4 @@
-[#objc:query-live:::]
+
 = Live Queries
 :page-aliases: learn/objc-query-live.adoc
 :page-role:
@@ -25,7 +25,7 @@ Description -- _{description}_ +
 // END::Local page attributes
 
 
-[#objc:query-live:::activating-a-live-query]
+[#activating-a-live-query]
 == Activating a Live Query
 
 
@@ -44,55 +44,36 @@ When a change is detected the query automatically runs, and posts the new query 
 [#ex-qry-start]
 
 
-[#objc:query-live:::ex-qry-start]
+[#ex-qry-start]
 ====
 
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="live-query", indent=0]
 [source, objc]
 ----
-CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
-                                     from:[CBLQueryDataSource collection:collection]]; // <.>
-
-// Adds a query change listener.
-// Changes will be posted on the main queue.
-id<CBLListenerToken> token = [query addChangeListener:^(CBLQueryChange  *change) { // <.>
-    for (CBLQueryResultSet *results in [change results]) {
-        NSLog(@"%@", results);
-        /* Update UI */
-    }
-}]; // <.>
-
+include::objc:example$code_snippets/SampleCodeTest.m[tags="live-query", indent=0]
 ----
-
-
 ====
 
 <.> Build the query statements
 <.> Activate the _live_ query by attaching a listener.
-Save the token in order to detach the listener and stop the query later -- se <<objc:query-live:::ex-qry-stop>>
+Save the token in order to detach the listener and stop the query later -- se <<ex-qry-stop>>
 
 
 .Stop a LIve Query
 [#ex-qry-stop]
 
 
-[#objc:query-live:::ex-qry-stop]
+[#ex-qry-stop]
 ====
 
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="stop-live-query", indent=0]
 [source, objc]
 ----
-[query removeChangeListenerWithToken:token]; // <.>
+include::objc:example$code_snippets/SampleCodeTest.m[tags="stop-live-query", indent=0]
 ----
-
-
 ====
 
-<.> Here we use the change lister token from <<objc:query-live:::ex-qry-start>> to remove the listener.
+<.> Here we use the change lister token from <<ex-qry-start>> to remove the listener.
 Doing so stops the live query.
 
 

@@ -1,4 +1,4 @@
-[#android:kotlin:::]
+
 = Kotlin
 :page-role:
 :description: Couchbase Lite for Android -- Kotlin support
@@ -11,7 +11,7 @@ Related Content -- xref:android:database.adoc[Databases] | xref:android:document
 --
 
 
-[#android:kotlin:::introduction]
+[#introduction]
 == Introduction
 
 
@@ -28,7 +28,7 @@ Key features include:
 Java support and functionality continues for Android.
 
 
-[#android:kotlin:::kotlin-extensions]
+[#kotlin-extensions]
 == Kotlin Extensions
 
 In addition to having full co-compatible access to the existing Java API, Kotlin developers can also access a number of Kotlin Extensions.
@@ -37,23 +37,23 @@ The
 https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx[Kotlin Extensions]
 package includes:
 
-* <<android:kotlin:::lbl-factories>> for the configuration of important Couchbase Lite objects such as _Databases_, _Replicators_ and _Listeners_.
+* <<lbl-factories>> for the configuration of important Couchbase Lite objects such as _Databases_, _Replicators_ and _Listeners_.
 * Change Flows that monitor key  Couchbase Lite objects fpr change using Kotlin features such as, Co-routines and https://developer.android.com/kotlin/flow[Flows].
 
 See: https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx[Kotlin Extensions] for extension API docs
 
 
-[#android:kotlin:::lbl-factories]
+[#lbl-factories]
 == Configuration Factories
 
 pass:q,a[Couchbase{nbsp}Lite]] provides a set of https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/ConfigurationFactoriesKt.html[ConfigurationFactories] and https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonConfigurationFactoriesKt.html[CommonConfigurationFactories, these allow use of named parameters to specify property settings.
 
 This makes it simple to create variant configurations, by simply overriding named parameters:
 
-//include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ListenerExamples.kt[tag=override-config]
 .Example of overriding configuration
 [pass:q,a[source, kotlin, indent=0]]
 ----
+//include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ListenerExamples.kt[tag=override-config]
         val listener8080 = URLEndpointListenerConfigurationFactory.newConfig(
             networkInterface = "en0",
             port = 8080
@@ -61,7 +61,7 @@ This makes it simple to create variant configurations, by simply overriding name
         val listener8081 = listener8080.newConfig(port = 8081)
 ----
 
-[#android:kotlin:::database]
+[#database]
 === Database
 Use
 https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/ConfigurationFactoriesKt.html#DatabaseConfigurationFactory[DatabaseConfigurationFactory]
@@ -74,12 +74,10 @@ to create a `DatabaseConfiguration` object, overriding the receiver's values wit
 In Use::
 +
 --
-// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=database-config-factory]
 [pass:q,a[source, kotlin, indent=0]]
 ----
-
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=database-config-factory]
         database = Database("getting-started")
-
 ----
 --
 
@@ -99,7 +97,7 @@ fun DatabaseConfiguration?.create(
 --
 =====
 
-[#android:kotlin:::replication]
+[#replication]
 === Replication
 Use
 https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/ConfigurationFactoriesKt.html#ReplicatorConfigurationFactory[ReplicatorConfigurationFactory]
@@ -112,9 +110,9 @@ to create a `ReplicatorConfiguration` object, overriding the receiver's values w
 In Use::
 +
 --
-// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=replicator-config-factory]
 [pass:q,a[source, kotlin, indent=0]]
 ----
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=replicator-config-factory]
         val replicator =
             Replicator(
                 ReplicatorConfigurationFactory.newConfig(
@@ -124,7 +122,6 @@ In Use::
                     authenticator = BasicAuthenticator("sync-gateway", "password".toCharArray())
                 )
             )
-
 ----
 --
 
@@ -167,7 +164,7 @@ fun MessageEndpointListenerConfiguration?.create(
 =====
 
 //
-[#android:kotlin:::full-text-search]
+[#full-text-search]
 === Full Text Search
 Use
 https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonConfigurationFactoriesKt.html#FullTextIndexConfigurationFactory[FullTextIndexConfigurationFactory]
@@ -180,9 +177,9 @@ to create a `FullTextIndexConfiguration` object, overriding the receiver's value
 In Use::
 +
 --
-// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/QueryExamples.kt[tag=fts-index]
 [pass:q,a[source, kotlin, indent=0]]
 ----
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/QueryExamples.kt[tag=fts-index]
     collection.createIndex(
         "overviewFTSIndex",
         FullTextIndexConfigurationFactory.newConfig("overview")
@@ -203,7 +200,7 @@ fun FullTextIndexConfiguration?.create(expression: String? = null)
 =====
 
 
-[#android:kotlin:::indexing]
+[#indexing]
 === Indexing
 Use
 https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonConfigurationFactoriesKt.html#ValueIndexConfigurationFactory[ValueIndexConfigurationFactory]
@@ -216,9 +213,9 @@ to create a `ValueIndexConfiguration` object, overriding the receiver's values w
 In Use::
 +
 --
-// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/QueryExamples.kt[tag=query-index]
 [pass:q,a[source, kotlin, indent=0]]
 ----
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/QueryExamples.kt[tag=query-index]
     collection.createIndex(
         "TypeNameIndex",
         ValueIndexConfigurationFactory.newConfig("type", "name")
@@ -238,7 +235,7 @@ fun ValueIndexConfiguration?.create(vararg expressions: String = emptyArray())
 --
 =====
 
-[#android:kotlin:::logs]
+[#logs]
 === Logs
 Use
 https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonConfigurationFactoriesKt.html#LogFileConfigurationFactory[LogFileConfigurationFactory]
@@ -251,10 +248,9 @@ to create a `LogFileConfiguration` object, overriding the receiver's values with
 In Use::
 +
 --
-// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=file-logging-config-factory]
 [pass:q,a[source, kotlin, indent=0]]
 ----
-
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=file-logging-config-factory]
         Database.log.file.let {
             it.config = LogFileConfigurationFactory.newConfig(
                 context.cacheDir.absolutePath, // <.>
@@ -265,7 +261,6 @@ In Use::
             it.level = LogLevel.INFO // <.>
 
         }
-
 ----
 --
 
@@ -289,12 +284,12 @@ fun LogFileConfiguration?.create(
 =====
 
 
-[#android:kotlin:::flows]
+[#flows]
 == Flows
 
 These wrappers use _Flowables_ to monitor for changes.
 
-[#android:kotlin:::database-change-flow]
+[#database-change-flow]
 === Database Change Flow
 
 Use the
@@ -311,11 +306,9 @@ In Use::
 
 [pass:q,a[source, kotlin, indent=0]]
 ----
-
 val updatedDocs = db.databaseChangeFlow()
     .map { it.documentIDs }
     .asLiveData()
-
 ----
 --
 
@@ -326,7 +319,6 @@ Definition::
 
 [pass:q,a[source, kotlin, indent=0]]
 ----
-
 @ExperimentalCoroutinesApi
 fun Database.databaseChangeFlow(executor: Executor? = null)
 ----
@@ -335,7 +327,7 @@ fun Database.databaseChangeFlow(executor: Executor? = null)
 =====
 
 
-[#android:kotlin:::document-change-flow]
+[#document-change-flow]
 === Document Change Flow
 Use
 https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonFlowsKt.html#documentChangeFlow(Database,String,Executor)[documentChangeFlow(Database,String,Executor)]
@@ -375,7 +367,7 @@ fun Database.documentChangeFlow(documentId: String, executor: Executor? = null)
 
 =====
 
-[#android:kotlin:::replicator-change-flow]
+[#replicator-change-flow]
 === Replicator Change Flow
 Use
 https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonFlowsKt.html#replicatorChangeFlow(Replicator,Executor)[replicatorChangeFlow(Replicator,Executor)]
@@ -413,7 +405,7 @@ fun Replicator.replicatorChangesFlow(executor: Executor? = null)
 =====
 
 
-[#android:kotlin:::document-replicator-change-flow]
+[#document-replicator-change-flow]
 === Document Replicator Change Flow
 Use
 https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonFlowsKt.html#documentReplicationFlow(Replicator,Executor)[documentReplicationFlow(Replicator,Executor)]
@@ -455,7 +447,7 @@ fun Replicator.documentReplicationFlow(executor: Executor? = null)
 =====
 
 
-[#android:kotlin:::query-change-flow]
+[#query-change-flow]
 === Query Change Flow
 Use
 https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonFlowsKt.html#queryChangeFlow(Query,Executor)[queryChangeFlow(Query,Executor)]
@@ -468,10 +460,9 @@ to monitor document changes during replication.
 In Use::
 +
 --
-// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/FlowExamples.kt[tags=flow-as-query-change-listener]
 [pass:q,a[source, kotlin, indent=0]]
 ----
-
+// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/FlowExamples.kt[tags=flow-as-query-change-listener]
     fun watchQuery(query: Query): LiveData<List<Result>> {
         return query.queryChangeFlow()
             .mapNotNull { change ->
@@ -483,7 +474,6 @@ In Use::
             }
             .asLiveData()
     }
-
 ----
 --
 
@@ -506,7 +496,7 @@ fun Query.queryChangeFlow(executor: Executor? = null)
 //
 
 
-[#android:kotlin:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -522,7 +512,7 @@ fun Query.queryChangeFlow(executor: Executor? = null)
 
 .
 
-[.column#android:kotlin:::-2]
+[.column]
 === {empty}
 .Learn more . . .
 * xref:android:database.adoc[Databases]
@@ -534,7 +524,7 @@ fun Query.queryChangeFlow(executor: Executor? = null)
 .
 
 
-[.column#android:kotlin:::-3]
+[.column]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

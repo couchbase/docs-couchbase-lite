@@ -1,4 +1,4 @@
-[#java:dbreplica:::]
+
 = Intra-device Sync
 :page-aliases: learn/java-dbreplica.adoc
 :page-role:
@@ -16,7 +16,7 @@ Description -- _{description}_ +
 Related Content -- xref:java:replication.adoc[Remote Sync Gateway] | xref:java:landing-p2psync.adoc[Peer-to-Peer Sync]
 --
 
-[#java:dbreplica:::overview]
+[#overview]
 == Overview
 
 
@@ -30,31 +30,14 @@ It is useful in scenarios when a user's device is damaged and its data is moved 
 ====
 
 
-// Show Main Snippet
-// include::java:example$codesnippet_collection.java[tags="database-replica", indent=0]
 [source, Java]
 ----
-// This is an Enterprise feature:
-// the code below will generate a compilation error
-// if it's compiled against CBL Android Community Edition.
-// Note: the target database must already contain the
-//       source collections or the replication will fail.
-final Replicator repl = new Replicator(
-    new ReplicatorConfiguration(new DatabaseEndpoint(targetDb))
-        .addCollections(srcCollections, null)
-        .setType(ReplicatorType.PUSH));
-
-// Start the replicator
-// (be sure to hold a reference somewhere that will prevent it from being GCed)
-repl.start();
-thisReplicator = repl;
+include::java:example$codesnippet_collection.java[tags="database-replica", indent=0]
 ----
-
-
 ====
 
 
-[#java:dbreplica:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -70,7 +53,7 @@ thisReplicator = repl;
 
 .
 
-[.column#java:dbreplica:::-2]
+[.column]
 ====== {empty}
 .Learn more . . .
 * xref:java:database.adoc[Databases]
@@ -82,7 +65,7 @@ thisReplicator = repl;
 .
 
 
-[.column#java:dbreplica:::-3]
+[.column]
 ====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

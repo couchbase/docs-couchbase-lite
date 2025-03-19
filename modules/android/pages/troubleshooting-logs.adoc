@@ -1,4 +1,4 @@
-[#android:troubleshooting-logs:::]
+
 = Using Logs
 :page-role:
 :description: Couchbase Lite on Android -- Using Logs for Troubleshooting
@@ -19,30 +19,30 @@ Do not use this API call.
 
 * The retrieval of logs from the device is out of scope of this feature.
 * This content applies to the post 2.5 versions.
-If you are using a Couchbase Lite release prior to 2.5 see <<android:troubleshooting-logs:::pre-2x5-logging,Deprecated functionality>>
+If you are using a Couchbase Lite release prior to 2.5 see <<pre-2x5-logging,Deprecated functionality>>
 
 --
 
 
-[#android:troubleshooting-logs:::introduction]
+[#introduction]
 == Introduction
 Couchbase Lite provides a robust Logging API footnote:fn-2x5[From version 2.5] -- see: API References for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Log.html[Log], https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/FileLogger.html[FileLogger] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/LogFileConfiguration.html[LogFileConfiguration(String directory)] -- which make debugging and troubleshooting easier during development and in production.
 It delivers flexibility in terms of how logs are generated and retained, whilst also maintaining the level of logging required by Couchbase Support for investigation of issues.
 
 Log output is split into the following streams:
 
-* <<android:troubleshooting-logs:::lbl-file-logs>>
+* <<lbl-file-logs>>
 +
-Here logs are written to <<android:troubleshooting-logs:::log-file-outputs,separate log files>> filtered by log level, with each log level supporting individual retention policies.
+Here logs are written to <<log-file-outputs,separate log files>> filtered by log level, with each log level supporting individual retention policies.
 
-* <<android:troubleshooting-logs:::lbl-console-logs>>
+* <<lbl-console-logs>>
 +
 --
 You can independently configure and control console logs, which provides a convenient method of accessing diagnostic information during debugging scenarios.
 With console logging, you can fine-tune diagnostic output to suit specific debug scenarios, without interfering with any logging required by Couchbase Support for the investigation of issues.
 --
 
-* <<android:troubleshooting-logs:::lbl-custom-logs>>
+* <<lbl-custom-logs>>
 +
 --
 For greater flexibility you can implement a custom logging class using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[Logger] interface.
@@ -51,7 +51,7 @@ For greater flexibility you can implement a custom logging class using the https
 
 In all instances, you control what is logged and at what level using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Log.html[Log] class.
 
-[#android:troubleshooting-logs:::lbl-console-logs]
+[#lbl-console-logs]
 == Console based logging
 Console based logging is often used to facilitate troubleshooting during development.
 
@@ -60,7 +60,7 @@ You can easily fine-tune their diagnostic content to meet the needs of a particu
 
 Changes to console logging are independent of file logging, so you can make change without compromising any files logging streams.
 It is enabled by default.
-To change default settings use database's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Log.html[Log] method to set the required values -- see <<android:troubleshooting-logs:::eg-cons-log>>
+To change default settings use database's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Log.html[Log] method to set the required values -- see <<eg-cons-log>>
 
 You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ConsoleLogger.html[log.getConsole()] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ConsoleLogger.html[ConsoleLogger] to control console logging.
 
@@ -71,7 +71,7 @@ Note, a warning is displayed when you set continuous (file) logging *off*.
 .Change Console Logging Settings
 
 
-[#android:troubleshooting-logs:::eg-cons-log]
+[#eg-cons-log]
 ====
 
 This example enables and defines console-based logging settings.
@@ -83,24 +83,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="console-logging", indent=0]
 [source, Kotlin]
 ----
-Database.log.console.domains = LogDomain.ALL_DOMAINS // <.>
-Database.log.console.level = LogLevel.DEBUG // <.>
+include::android:example$codesnippet_collection.kt[tags="console-logging", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="console-logging", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Database.log.getConsole().setLevel(LogLevel.DEBUG); // <.>
+include::android:example$codesnippet_collection.java[tags="console-logging", indent=0]
 ----
 --
 
@@ -116,22 +111,22 @@ To disable logging for the specified https://docs.couchbase.com/mobile/{major}.{
 Related::
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Log.html[Log] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ConsoleLogger.html[log.getConsole()] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ConsoleLogger.html[ConsoleLogger]
 
-[#android:troubleshooting-logs:::lbl-file-logs]
+[#lbl-file-logs]
 == File based logging
-File based logging is disabled by default --  see: <<android:troubleshooting-logs:::eg-file-log>> for how to enable it.
+File based logging is disabled by default --  see: <<eg-file-log>> for how to enable it.
 
 You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/FileLogger.html[log.getFile()] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/FileLogger.html[FileLogger] to control file-based logging.
 
-[#android:troubleshooting-logs:::formats]
+[#formats]
 === Formats
 Available file based logging formats:
 
 * Binary -- most efficient for storage and performance. It is the default for file based logging.
 +
-Use this format and a decoder, such as *cbl-log*, to view them -- see: <<android:troubleshooting-logs:::decoding-binary-logs>>.
+Use this format and a decoder, such as *cbl-log*, to view them -- see: <<decoding-binary-logs>>.
 * Plaintext
 
-[#android:troubleshooting-logs:::configuration]
+[#configuration]
 === Configuration
 As with console logging you can set the log level -- see:  the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/FileLogger.html[FileLogger] class.
 
@@ -149,7 +144,7 @@ You can over ride that where necessary and output a plain text log.
 .Enabling file logging
 
 
-[#android:troubleshooting-logs:::eg-file-log]
+[#eg-file-log]
 ====
 
 [tabs]
@@ -160,37 +155,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="file-logging", indent=0]
 [source, Kotlin]
 ----
-Database.log.file.let {
-    it.config = LogFileConfigurationFactory.newConfig(
-        context.cacheDir.absolutePath, // <.>
-        maxSize = 10240, // <.>
-        maxRotateCount = 5, // <.>
-        usePlainText = false
-    ) // <.>
-    it.level = LogLevel.INFO // <.>
-
+include::android:example$codesnippet_collection.kt[tags="file-logging", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="file-logging", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-LogFileConfiguration LogCfg = new LogFileConfiguration(
-    (System.getProperty("user.dir") + "/MyApp/logs")); // <.>
-LogCfg.setMaxSize(10240); // <.>
-LogCfg.setMaxRotateCount(5); // <.>
-LogCfg.setUsePlaintext(false); // <.>
-Database.log.getFile().setConfig(LogCfg);
-Database.log.getFile().setLevel(LogLevel.INFO); // <.>
+include::android:example$codesnippet_collection.java[tags="file-logging", indent=0]
 ----
 --
 
@@ -213,19 +190,19 @@ Related::
  https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Log.html[Log] |
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/FileLogger.html[log.getFile()] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/FileLogger.html[FileLogger]
 
-[#android:troubleshooting-logs:::lbl-custom-logs]
+[#lbl-custom-logs]
 == Custom logging
 
 Couchbase Lite allows for the registration of a callback function to receive Couchbase Lite log messages, which may be logged using any external logging framework.
 
-To do this, apps must implement the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[Logger] interface -- see <<android:troubleshooting-logs:::eg-impl-log>> -- and enable custom logging using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[log.setCustom()] -- see <<android:troubleshooting-logs:::eg-cust-log>>.
+To do this, apps must implement the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[Logger] interface -- see <<eg-impl-log>> -- and enable custom logging using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[log.setCustom()] -- see <<eg-cust-log>>.
 
 
 [#eg-impl-log]
 .Implementing logger interface
 
 
-[#android:troubleshooting-logs:::eg-impl-log]
+[#eg-impl-log]
 ====
 
 Here we introduce the code that implements the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[Logger] interface.
@@ -237,47 +214,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="custom-logging", indent=0]
 [source, Kotlin]
 ----
-class LogTestLogger(private val level: LogLevel) : Logger {
-    override fun getLevel() = level
-
-    override fun log(level: LogLevel, domain: LogDomain, message: String) {
-        // this method will never be called if param level < this.level
-        // handle the message, for example piping it to a third party framework
-    }
-}
-
-private fun sendToNetwork(format: String) { }
-
+include::android:example$codesnippet_collection.kt[tags="custom-logging", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="custom-logging", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-class LogTestLogger implements com.couchbase.lite.Logger {
-    @NonNull
-    private final LogLevel level;
-
-    public LogTestLogger(@NonNull LogLevel level) { this.level = level; }
-
-    @NonNull
-    @Override
-    public LogLevel getLevel() { return level; }
-
-    @Override
-    public void log(@NonNull LogLevel level, @NonNull LogDomain domain, @NonNull String message) {
-
-    }
-}
+include::android:example$codesnippet_collection.java[tags="custom-logging", indent=0]
 ----
 --
 
@@ -291,10 +240,10 @@ class LogTestLogger implements com.couchbase.lite.Logger {
 .Enabling custom logging
 
 
-[#android:troubleshooting-logs:::eg-cust-log]
+[#eg-cust-log]
 ====
 
-This example show how to enable the custom logger from <<android:troubleshooting-logs:::eg-impl-log>>.
+This example show how to enable the custom logger from <<eg-impl-log>>.
 [tabs]
 =====
 
@@ -303,24 +252,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="set-custom-logging", indent=0]
 [source, Kotlin]
 ----
-// this custom logger will not log an event with a log level < WARNING
-Database.log.custom = LogTestLogger(LogLevel.WARNING) // <.>
+include::android:example$codesnippet_collection.kt[tags="set-custom-logging", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="set-custom-logging", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Database.log.setCustom(new LogTestLogger(LogLevel.WARNING)); // <.>
+include::android:example$codesnippet_collection.java[tags="set-custom-logging", indent=0]
 ----
 --
 
@@ -336,14 +280,14 @@ The custom logger is called with every log and may choose to filter it, using it
 Related::
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Log.html[Log] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[log.getCustom()] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[Logger]
 
-[#android:troubleshooting-logs:::decoding-binary-logs]
+[#decoding-binary-logs]
 == Decoding binary logs
 
 NOTE: The latest version of the cbl-log tool is `3.0.0`.
 
-You can use the *cbl-log* tool to decode binary log files -- see <<android:troubleshooting-logs:::eg-cbl-log>>.
+You can use the *cbl-log* tool to decode binary log files -- see <<eg-cbl-log>>.
 
-[#android:troubleshooting-logs:::eg-cbl-log]
+[#eg-cbl-log]
 .Using the cbl-log tool
 =====
 [tabs]
@@ -408,7 +352,7 @@ $ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
 =====
 
 
-[#android:troubleshooting-logs:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -425,7 +369,7 @@ $ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
 
 .
 
-[.column#android:troubleshooting-logs:::-2]
+[.column]
 ====== {empty}
 .Learn more . . .
 * xref:android:query-n1ql-mobile-querybuilder-diffs.adoc[{sqlpp} Mobile - Querybuilder  Differences]
@@ -441,7 +385,7 @@ $ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
 .
 
 
-[.column#android:troubleshooting-logs:::-3]
+[.column]
 ====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

@@ -1,4 +1,4 @@
-[#swift:dbreplica:::]
+
 = Intra-device Sync
 :page-aliases: learn/swift-dbreplica.adoc
 :page-role:
@@ -16,7 +16,7 @@ Description -- _{description}_ +
 Related Content -- xref:swift:replication.adoc[Remote Sync Gateway] | xref:swift:landing-p2psync.adoc[Peer-to-Peer Sync]
 --
 
-[#swift:dbreplica:::overview]
+[#overview]
 == Overview
 
 
@@ -30,26 +30,14 @@ It is useful in scenarios when a user's device is damaged and its data is moved 
 ====
 
 
-// Show Main Snippet
-// include::swift:example$code_snippets/SampleCodeTest.swift[tags="database-replica", indent=0]
 [source, swift]
 ----
-let targetDatabase = DatabaseEndpoint(database: database2)
-var config = ReplicatorConfiguration(target: targetDatabase)
-
-guard let collection1 = try database.collection(name: "collection1", scope: "scope1") else { return }
-config.addCollection(collection1)
-config.replicatorType = .push
-
-self.replicator = Replicator(config: config)
-self.replicator.start()
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="database-replica", indent=0]
 ----
-
-
 ====
 
 
-[#swift:dbreplica:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -65,7 +53,7 @@ self.replicator.start()
 
 .
 
-[.column#swift:dbreplica:::-2]
+[.column]
 ====== {empty}
 .Learn more . . .
 * xref:swift:database.adoc[Databases]
@@ -77,7 +65,7 @@ self.replicator.start()
 .
 
 
-[.column#swift:dbreplica:::-3]
+[.column]
 ====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

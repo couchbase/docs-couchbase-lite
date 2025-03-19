@@ -1,4 +1,4 @@
-[#c:replication:::]
+
 = Remote Sync Gateway
 :page-aliases: clang:replication.adoc
 :page-role:
@@ -10,7 +10,7 @@
 [abstract]
 --
 Description -- _{description}_ +
-Related Content -- xref:c:conflict.adoc[Handling Data Conflicts] | xref:c:dbreplica.adoc[Intra-Device] | <<c:replication:::p2psync-websocket.adoc,Peer-to-Peer>>
+Related Content -- xref:c:conflict.adoc[Handling Data Conflicts] | xref:c:dbreplica.adoc[Intra-Device] | <<p2psync-websocket.adoc,Peer-to-Peer>>
 --
 
 
@@ -21,7 +21,7 @@ They demonstrate the basic concepts and approaches to using a feature.
 Use them as inspiration and adapt these examples to best practice when developing applications for your platform.
 
 
-[#c:replication:::introduction]
+[#introduction]
 == Introduction
 
 
@@ -37,7 +37,7 @@ Your application runs a replicator (also referred to here as a client), which  w
 
 Subsequent sections provide additional details and examples for the main configuration options.
 
-[#c:replication:::replication-concepts]
+[#replication-concepts]
 == Replication Concepts
 
 Couchbase Lite allows for one database for each application running on the mobile device.
@@ -55,14 +55,14 @@ Collection:: A specific collection or a set of collections is synced.
 As part of the syncing setup, the Gateway has to map the Couchbase Lite database to the database being synced on Capella.
 
 
-[#c:replication:::replication-protocol]
+[#replication-protocol]
 == Replication Protocol
 
-[#c:replication:::scheme]
+[#scheme]
 === Scheme
 
 Couchbase Mobile uses a replication protocol based on WebSockets for replication.
-To use this protocol the replication URL should specify WebSockets as the URL scheme (see the <<c:replication:::lbl-cfg-tgt>> section below).
+To use this protocol the replication URL should specify WebSockets as the URL scheme (see the <<lbl-cfg-tgt>> section below).
 
 Incompatibilities::
 Couchbase Lite's replication protocol is *incompatible* with CouchDB-based databases.
@@ -76,14 +76,14 @@ Sync Gateway 2.x+ will automatically use:
 
 You can find further information in our blog: https://blog.couchbase.com/data-replication-couchbase-mobile/[Introducing the Data Replication Protocol].
 
-[#c:replication:::lbl-repl-ord]
+[#lbl-repl-ord]
 === Ordering
 
 To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
 So we don't recommend to rely on that when using the replication or database change listeners for example.
 
 
-[#c:replication:::scopes-and-collections]
+[#scopes-and-collections]
 == Scopes and Collections
 
 Scopes and Collections allow you to organize your documents in Couchbase Lite.
@@ -98,7 +98,7 @@ During replication:
 
 . If Sync Gateway config is updated to add a collection to a scope that is being synchronized, the replication will ignore the collection. The added collection will not automatically sync until the Couchbase Lite replicator's configuration is updated.
 
-[#c:replication:::default-collection]
+[#default-collection]
 === Default Collection
 
 When upgrading Couchbase Lite to 3.1, the existing documents in the database will be automatically migrated to the default collection.
@@ -113,7 +113,7 @@ image:couchbase-lite/current/{underscore}images/cbl-replication-scopes-collectio
 image:couchbase-lite/current/{underscore}images/cbl-replication-scopes-collections-2.png[Sync Couchbase Lite default collection with default collection on Sync Gateway,500,,align="left"]
 
 
-[#c:replication:::user-defined-collections]
+[#user-defined-collections]
 === User-Defined Collections
 
 The user-defined collections specified in the Couchbase Lite replicator setup must exist (and be identical) on the Sync Gateway side to sync.
@@ -126,12 +126,12 @@ image:couchbase-lite/current/{underscore}images/cbl-replication-scopes-collectio
 
 
 // tag::replicator-config-sample[]
-[#c:replication:::configuration-summary]
+[#configuration-summary]
 == Configuration Summary
 
 
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
-<<c:replication:::ex-simple-repl>> shows the configuration and initialization process.
+<<ex-simple-repl>> shows the configuration and initialization process.
 
 NOTE: You need Couchbase Lite 3.1+ and Sync Gateway 3.1+ to use `custom` Scopes and Collections. +
 If you’re using Capella App Services or Sync Gateway releases that are older than version 3.1, you won’t be able to access `custom` Scopes and Collections.
@@ -144,80 +144,14 @@ Click the *GitHub* tab in the code examples for further details.
 .Replication configuration and initialization
 
 
-[#c:replication:::ex-simple-repl]
+[#ex-simple-repl]
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-func", indent=0]
 [source, c]
 ----
-// Purpose -- illustrate a simple change listener
-static void simpleChangeListener(void* context,
-                                 CBLReplicator* repl,
-                                 const CBLReplicatorStatus* status)
-{
-     if(status->error.code != 0) {
-         printf("Error %d / %d\n",
-                status->error.domain,
-                status->error.code);
-     }
-}
-    // Purpose -- Show configuration , initialization and running of a replicator
-
-    // NOTE: No error handling, for brevity (see getting started)
-    // Note: Android emulator needs to use 10.0.2.2 for localhost (10.0.3.2 for GenyMotion)
-
-    CBLError err{};
-    FLString url = FLSTR("ws://localhost:4984/db");
-    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &err); // <.>
-
-    CBLReplicationCollection collectionConfig;
-    memset(&collectionConfig, 0, sizeof(CBLReplicationCollection));
-    collectionConfig.collection = collection;
-
-    CBLReplicatorConfiguration replConfig;
-    memset(&replConfig, 0, sizeof(CBLReplicatorConfiguration));
-    replConfig.collectionCount = 1;
-    replConfig.collections = &collectionConfig;
-    replConfig.endpoint = target; // <.>
-
-    // Set replication direction and mode
-    replConfig.replicatorType = kCBLReplicatorTypePull; // <.>
-    replConfig.continuous = true;
-
-    // Optionally, set auto-purge behavior (here we override default)
-    replConfig.disableAutoPurge = true; // <.>
-
-    // Optionally, configure Client Authentication
-    // Here we are using to Basic Authentication,
-    // Providing username and password credentials
-    CBLAuthenticator* basicAuth =
-        CBLAuth_CreatePassword(FLSTR("username"),
-                               FLSTR("passwd")); // <.>
-    replConfig.authenticator = basicAuth;
-
-    // Optionally, configure how we handle conflicts (note that this is set
-    // per collection, and not on the overall replicator)
-    collectionConfig.conflictResolver = simpleConflictResolver_localWins; // <.>
-
-    // Initialize replicator with created config
-    CBLReplicator* replicator =
-        CBLReplicator_Create(&replConfig, &err); // <.>
-
-    CBLEndpoint_Free(target);
-
-    // Optionally, add change listener
-    CBLListenerToken* token =
-            CBLReplicator_AddChangeListener(replicator,
-                                            simpleChangeListener,
-                                            NULL); // <.>
-
-    // Start replication
-    CBLReplicator_Start(replicator, false); // <.>
+include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-func", indent=0]
 ----
-
-
 ====
 
 
@@ -225,48 +159,48 @@ static void simpleChangeListener(void* context,
 
 <.> get endpoint for target DB
 <.> Set local database and target endpoint
-<.> The default is to auto-purge documents that this user no longer has access to -- see: <<c:replication:::anchor-auto-purge-on-revoke>>.
+<.> The default is to auto-purge documents that this user no longer has access to -- see: <<anchor-auto-purge-on-revoke>>.
 Here we over-ride this behavior by setting its flag false.
 
 <.> Configure how the client will authenticate the server.
 Here we say connect only to servers presenting a self-signed certificate.
-By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<c:replication:::lbl-svr-auth>>.
+By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<lbl-svr-auth>>.
 <.> Configure the client-authentication credentials (if required).
 These are the credential the client will present to pass:q,a[sync{nbsp}gateway] if requested to do so. +
 Here we configure to provide _Basic Authentication_ credentials.
-Other options are available -- see: <<c:replication:::lbl-client-auth>>.
+Other options are available -- see: <<lbl-client-auth>>.
 
 <.> Configure how the replication should handle conflict resolution -- see: xref:c:conflict.adoc[Handling Data Conflicts] topic for mor on conflict resolution.
 
-<.> Initialize the replicator using your configuration -- see: <<c:replication:::lbl-init-repl>>.
+<.> Initialize the replicator using your configuration -- see: <<lbl-init-repl>>.
 
-<.> Optionally, register an observer, which will notify you of changes to the replication status -- see: <<c:replication:::lbl-repl-mon>>
+<.> Optionally, register an observer, which will notify you of changes to the replication status -- see: <<lbl-repl-mon>>
 
-<.> Start the replicator  -- see: <<c:replication:::lbl-repl-start>>.
+<.> Start the replicator  -- see: <<lbl-repl-start>>.
 
 
-[#c:replication:::lbl-cfg-repl]
+[#lbl-cfg-repl]
 == Configure
 
 
 In this section::
 +
 --
-<<c:replication:::lbl-cfg-tgt>>
-|  <<c:replication:::lbl-cfg-sync>>
-|  <<c:replication:::lbl-cfg-keep-alive>>
-|  <<c:replication:::lbl-user-auth>>
-|  <<c:replication:::lbl-client-auth>>
-|  <<c:replication:::lbl-repl-evnts>>
-|  <<c:replication:::lbl-repl-hdrs>>
-|  <<c:replication:::lbl-repl-ckpt>>
-|  <<c:replication:::lbl-repl-fltrs>>
-|  <<c:replication:::lbl-repl-chan>>
-|  <<c:replication:::anchor-auto-purge-on-revoke>>
-|  <<c:replication:::lbl-repl-delta>>
+<<lbl-cfg-tgt>>
+|  <<lbl-cfg-sync>>
+|  <<lbl-cfg-keep-alive>>
+|  <<lbl-user-auth>>
+|  <<lbl-client-auth>>
+|  <<lbl-repl-evnts>>
+|  <<lbl-repl-hdrs>>
+|  <<lbl-repl-ckpt>>
+|  <<lbl-repl-fltrs>>
+|  <<lbl-repl-chan>>
+|  <<anchor-auto-purge-on-revoke>>
+|  <<lbl-repl-delta>>
 --
 
-[#c:replication:::lbl-cfg-tgt]
+[#lbl-cfg-tgt]
 === Configure Target
 
 Use the
@@ -290,28 +224,10 @@ The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) pref
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="sgw-act-rep-initialize", indent=0]
 [source, c]
 ----
-// Initialize the configuration object and set db target
-CBLError err{};
-FLString url = FLSTR("ws://localhost:4984/db");
-CBLEndpoint* target =
-    CBLEndpoint_CreateWithURL(url, &err); // <.>
-
-CBLReplicationCollection collectionConfig;
-memset(&collectionConfig, 0, sizeof(CBLReplicationCollection));
-collectionConfig.collection = collection;
-
-CBLReplicatorConfiguration replConfig;
-memset(&replConfig, 0, sizeof(CBLReplicatorConfiguration));
-replConfig.collectionCount = 1;
-replConfig.collections = &collectionConfig;
-replConfig.endpoint = target; // <.>
+include::c:example$code_snippets/main.cpp[tags="sgw-act-rep-initialize", indent=0]
 ----
-
-
 ====
 
 <.> Note use of the scheme prefix (`wss://`
@@ -321,7 +237,7 @@ to ensure TLS encryption -- strongly recommended in production -- or `ws://`)
 [#lbl-network-interface]
 
 
-[#c:replication:::lbl-cfg-sync]
+[#lbl-cfg-sync]
 === Sync Mode
 
 
@@ -344,22 +260,14 @@ We use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}
 .Configure replicator type and mode
 
 
-[#c:replication:::ex-repl-sync]
+[#ex-repl-sync]
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-config-type;p2p-act-rep-config-cont", indent=0]
 [source, c]
 ----
-// Set replication direction and mode
-replConfig.replicatorType = kCBLReplicatorTypePull; // <.>
-replConfig.continuous = true;
-replConfig.replicatorType = kCBLReplicatorTypePull;
-replConfig.continuous = true;
+include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-config-type;p2p-act-rep-config-cont", indent=0]
 ----
-
-
 ====
 
 
@@ -370,7 +278,7 @@ Unless there is a solid use-case not to, always initiate a single `PUSH_AND_PULL
 This prevents the replications generating the same checkpoint `docID` resulting in multiple conflicts.
 --
 
-[#c:replication:::lbl-cfg-keep-alive]
+[#lbl-cfg-keep-alive]
 === Retry Configuration
 
 
@@ -382,10 +290,10 @@ In the event it detects a transient error, the replicator will attempt to reconn
 
 On each retry the interval between attempts is increased exponentially (exponential backoff) up to the maximum wait time limit (5 minutes).
 
-The REST API provides configurable control over this replication retry logic using a set of configiurable properties -- see: <<c:replication:::tbl-repl-retry>>.
+The REST API provides configurable control over this replication retry logic using a set of configiurable properties -- see: <<tbl-repl-retry>>.
 
 .Replication Retry Configuration Properties
-[#c:replication:::tbl-repl-retry,cols="2,3,5"]
+[#tbl-repl-retry,cols="2,3,5"]
 |===
 
 h|Property
@@ -424,46 +332,37 @@ While you can configure the *maximum permitted* wait time,  the replicator's exp
 
 |===
 
-When necessary you can adjust any or all of those configurable values -- see: <<c:replication:::ex-repl-retry>> for how to do this.
+When necessary you can adjust any or all of those configurable values -- see: <<ex-repl-retry>> for how to do this.
 
 .Configuring Replication Retries
 [#ex-repl-retry]
 
 
-[#c:replication:::ex-repl-retry]
+[#ex-repl-retry]
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="replication-retry-config", indent=0]
 [source, c]
 ----
-// Configure replication retries
-replConfig.heartbeat = 120; //  <.>
-
-replConfig.maxAttempts = 20; //  <.>
-
-replConfig.maxAttemptWaitTime = 600; //  <.>
+include::c:example$code_snippets/main.cpp[tags="replication-retry-config", indent=0]
 ----
-
-
 ====
 
 <.> Here we use {url-api-prop-replicator-config-setHeartbeat} to set the required interval (in seconds) between the heartbeat pulses
 <.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#a5b6435c711d93f71566d8814506e0dff[maxAttempts] to set the required number of retry attempts
 <.> Here we use {url-api-prop-replicator-config-setMaxAttemptWaitTime} to set the required interval between retry attempts.
 
-[#c:replication:::lbl-user-auth]
+[#lbl-user-auth]
 === User Authorization
 
 
 By default, Sync Gateway does not enable user authorization.
 This makes it easier to get up and running with synchronization.
 
-You can enable authorization in the pass:q,a[sync{nbsp}gateway] configuration file, as shown in <<c:replication:::example-enable-authorization>>.
+You can enable authorization in the pass:q,a[sync{nbsp}gateway] configuration file, as shown in <<example-enable-authorization>>.
 
 .Enable Authorization
-[#c:replication:::example-enable-authorization]
+[#example-enable-authorization]
 ====
 [source,json]
 ----
@@ -485,46 +384,35 @@ xref:sync-gateway:ROOT:refer/rest-api-admin.adoc#/user/post\__db___user_[`+POST 
 endpoint on the Admin REST API.
 
 
-[#c:replication:::lbl-client-auth]
+[#lbl-client-auth]
 === Client Authentication
 
-There are two ways to authenticate from a Couchbase Lite client: <<c:replication:::basic-authentication>> or <<c:replication:::session-authentication>>.
+There are two ways to authenticate from a Couchbase Lite client: <<basic-authentication>> or <<session-authentication>>.
 
-[#c:replication:::basic-authentication]
+[#basic-authentication]
 ==== Basic Authentication
 
 You can provide a user name and password to the basic authenticator class method.
 Under the hood, the replicator will send the credentials in the first request to retrieve a `SyncGatewaySession` cookie and use it for all subsequent requests during the replication.
 This is the recommended way of using basic authentication.
-<<c:replication:::ex-base-auth>> shows how to initiate a one-shot replication as the user *username* with the password *password*.
+<<ex-base-auth>> shows how to initiate a one-shot replication as the user *username* with the password *password*.
 
 .Basic Authentication
 [#ex-base-auth]
 
 
-[#c:replication:::ex-base-auth]
+[#ex-base-auth]
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="basic-authentication", indent=0]
 [source, c]
 ----
-// Configure Client Authentication to Basic Authentication
-// Providing username and password credentials
-if(docs_example_ShowBasicAuth) {
-    CBLAuthenticator* basicAuth =
-        CBLAuth_CreatePassword(FLSTR("username"),
-                               FLSTR("passwd"));
-    replConfig.authenticator = basicAuth; // <.>
-}
+include::c:example$code_snippets/main.cpp[tags="basic-authentication", indent=0]
 ----
-
-
 ====
 
 
-[#c:replication:::session-authentication]
+[#session-authentication]
 ==== Session Authentication
 
 Session authentication is another way to authenticate with Sync Gateway.
@@ -535,76 +423,51 @@ endpoint on the Public REST API.
 
 The HTTP response contains a session ID which can then be used to authenticate as the user it was created for.
 
-See <<c:replication:::ex-session-auth>>, which shows how to initiate a one-shot replication with the session ID returned from the `+POST /{tkn-db}/_session+` endpoint.
+See <<ex-session-auth>>, which shows how to initiate a one-shot replication with the session ID returned from the `+POST /{tkn-db}/_session+` endpoint.
 
 .Session Authentication
 [#ex-session-auth]
 
 
-[#c:replication:::ex-session-auth]
+[#ex-session-auth]
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="session-authentication", indent=0]
 [source, c]
 ----
-if(docs_example_ShowSessionAuth) {
-    CBLAuthenticator* sessionAuth =
-        CBLAuth_CreateSession(FLSTR("904ac010862f37c8dd99015a33ab5a3565fd8447"),
-                              FLSTR("optionalCookieName"));
-    replConfig.authenticator = sessionAuth; // <.>
-}
+include::c:example$code_snippets/main.cpp[tags="session-authentication", indent=0]
 ----
-
-
 ====
 
 
-[#c:replication:::lbl-repl-hdrs]
+[#lbl-repl-hdrs]
 === Custom{nbsp}Headers
 
 Custom headers can be set on the configuration object.
 The replicator will then include those headers in every request.
 
-This feature is useful in passing additional credentials, perhaps when an authentication or authorization step is being done by a proxy server (between Couchbase Lite and Sync Gateway) -- see <<c:replication:::ex-cust-hdr>>.
+This feature is useful in passing additional credentials, perhaps when an authentication or authorization step is being done by a proxy server (between Couchbase Lite and Sync Gateway) -- see <<ex-cust-hdr>>.
 
 .Setting custom headers
 [#ex-cust-hdr]
 
 
-[#c:replication:::ex-cust-hdr]
+[#ex-cust-hdr]
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="replication-custom-header", indent=0]
 [source, c]
 ----
-// Optionally, add custom headers
-FLMutableDict customHdrs = FLMutableDict_New();
-FLMutableDict_SetString(customHdrs,
-                        FLSTR("customHeaderName"),
-                        FLSTR("customHeaderValue"));
-
-replConfig.headers = customHdrs;
-
-char cert_buf[10000];
-FILE* cert_file = fopen("cert.pem", "r");
-size_t read = fread(cert_buf, 1, sizeof(cert_buf), cert_file);
-replConfig.pinnedServerCertificate = (FLSlice){cert_buf, read};
-
+include::c:example$code_snippets/main.cpp[tags="replication-custom-header", indent=0]
 ----
-
-
 ====
 
 
-[#c:replication:::lbl-repl-fltrs]
+[#lbl-repl-fltrs]
 === Replication Filters
 Replication Filters allow you to have quick control over the documents stored as the result of a push and/or pull replication.
 
-[#c:replication:::push-filter]
+[#push-filter]
 ==== Push Filter
 
 The push filter allows an app to push a subset of a database to the server.
@@ -614,30 +477,13 @@ For instance, high-priority documents could be pushed first, or documents in a "
 .Push Filter
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="replication-push-filter", indent=0]
 [source, c]
 ----
-// Purpose -- illustrate a simple replication filter function
-static bool simpleReplicationFilter(void* context,
-                                    CBLDocument* argDoc,
-                                    CBLDocumentFlags argFlags)
-{
-    bool result = (argFlags == kCBLDocumentFlagsDeleted);
-    return result;
-}
-
-    // Purpose - Illustrate use of push and-or pull filter functions
-
-    // NOTE: Push and pull filters are set per collection
-    collectionConfig.pushFilter = simpleReplicationFilter;
-    collectionConfig.pullFilter = simpleReplicationFilter;
+include::c:example$code_snippets/main.cpp[tags="replication-push-filter", indent=0]
 ----
-
-
 <1> Do not provide long running functions, which could slow down the replicator. Nor make assumptions about the thread the function is being called on.
 
-[#c:replication:::pull-filter]
+[#pull-filter]
 ==== Pull Filter
 
 The pull filter gives an app the ability to validate documents being pulled, and skip ones that fail.
@@ -649,27 +495,10 @@ xref:sync-gateway::data-routing.adoc[channels]
 are designed to be scalable (documents are filtered on the server) whereas a pull replication filter is applied to a document once it has been downloaded.
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="replication-pull-filter", indent=0]
 [source, c]
 ----
-// Purpose -- illustrate a simple replication filter function
-static bool simpleReplicationFilter(void* context,
-                                    CBLDocument* argDoc,
-                                    CBLDocumentFlags argFlags)
-{
-    bool result = (argFlags == kCBLDocumentFlagsDeleted);
-    return result;
-}
-
-    // Purpose - Illustrate use of push and-or pull filter functions
-
-    // NOTE: Push and pull filters are set per collection
-    collectionConfig.pushFilter = simpleReplicationFilter;
-    collectionConfig.pullFilter = simpleReplicationFilter;
+include::c:example$code_snippets/main.cpp[tags="replication-pull-filter", indent=0]
 ----
-
-
 <1> Do not provide long running functions, which could slow down the replicator. Nor make assumptions about the thread the function is being called on.
 
 .Losing access to a document via the Sync Function.
@@ -682,10 +511,10 @@ As a result, there would be a local copy of the document disjointed from the one
 
 Further updates to the document stored on Couchbase Server would not be received in pull replications and further local edits could be pushed but the updated versions will not be visible.
 
-For more information, see <<c:replication:::auto-purge-on-revoke,Auto Purge on Revoke>>.
+For more information, see <<auto-purge-on-revoke,Auto Purge on Revoke>>.
 ****
 
-[#c:replication:::lbl-repl-chan]
+[#lbl-repl-chan]
 === Channels
 
 // include::ROOT:partial$replication-channels.adoc[]
@@ -700,19 +529,19 @@ to specify which data to pull for each user.
 Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's replicator configuration object.
 In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
 
-[#c:replication:::anchor-auto-purge-on-revoke]
+[#anchor-auto-purge-on-revoke]
 === Auto-purge on Channel Access Revocation
 
 [CAUTION]
 --
 This is a Breaking Change at 3.0
 --
-[#c:replication:::new-outcome]
+[#new-outcome]
 ==== New outcome
 
 By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user’s other channels) are auto-purged from the local database (in devices belonging to the user).
 
-[#c:replication:::prior-outcome]
+[#prior-outcome]
 ==== Prior outcome
 
 _Previously these documents remained in the local database_
@@ -721,7 +550,7 @@ Prior to this release, CBL auto-purged only in the case when the user loses acce
 Now, in addition to 2.x auto purge, Couchbase Lite will also auto-purges the docs when the user loses access to the doc via channel access revocation.
 This feature is enabled by default, but an opt-out is available.
 
-[#c:replication:::behavior]
+[#behavior]
 ==== Behavior
 
 Users may lose access to channels in a number of ways:
@@ -732,14 +561,14 @@ Users may lose access to channels in a number of ways:
 
 * A channel is removed from a role the user is assigned to
 
-By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user’s other channels -- see: <<c:replication:::tbl-revoke-behavior>>.
+By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user’s other channels -- see: <<tbl-revoke-behavior>>.
 
 Documents that exist in multiple channels belonging to the user (even if they are not actively replicating that channel) are not auto-purged unless the user loses access to all channels.
 
 When the auto-purge setting is set to `true`, users will receive an `AccessRemoved` notification from the DocumentListener if they lose document access due to channel access revocation.
 
 .Behavior following access revocation
-[#c:replication:::tbl-revoke-behavior, cols="^1h,2a,2a", options="header"]
+[#tbl-revoke-behavior, cols="^1h,2a,2a", options="header"]
 |===
 
 2+|System State
@@ -770,10 +599,10 @@ Local changes continue to be  pushed to remote but are rejected by Sync Gateway
 
 |===
 
-If a user subsequently regains access to a lost channel, then any previously auto-purged documents still assigned to any of their channels are automatically pulled down by the active Sync Gateway when they are next updated -- see behavior summary in <<c:replication:::tbl-regain-behavior>>
+If a user subsequently regains access to a lost channel, then any previously auto-purged documents still assigned to any of their channels are automatically pulled down by the active Sync Gateway when they are next updated -- see behavior summary in <<tbl-regain-behavior>>
 
 .Behavior if access is regained
-[#c:replication:::tbl-regain-behavior, cols="^1h,2a,2a", options="header"]
+[#tbl-regain-behavior, cols="^1h,2a,2a", options="header"]
 |===
 
 2+|System State
@@ -808,7 +637,7 @@ Document changes subsequent to the channel reassignment will be pushed up as usu
 |===
 
 
-[#c:replication:::config]
+[#config]
 ==== Config
 
 Auto-purge behavior is controlled primarily by the ReplicationConfiguration option https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#a3795c0097264ccd1ed612d9a0746d58d[disableAutoPurge].
@@ -820,30 +649,26 @@ Clients wishing to sync previously removed documents must use the resetCheckpoin
 [#ex-set-auto-purge]
 
 
-[#c:replication:::ex-set-auto-purge]
+[#ex-set-auto-purge]
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="autopurge-override", indent=0]
 [source, c]
 ----
-replConfig.disableAutoPurge = true; // <.>
+include::c:example$code_snippets/main.cpp[tags="autopurge-override", indent=0]
 ----
-
-
 ====
 
 <.> Here we have opted to turn off the auto purge behavior. By default auto purge is enabled.
 
-[#c:replication:::overrides]
+[#overrides]
 ==== Overrides
 Where necessary, clients can override the default auto-purge behavior.
-This can be done either by setting https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#a3795c0097264ccd1ed612d9a0746d58d[disableAutoPurge] to false, or for finer control by applying pull-filters -- see: <<c:replication:::tbl-pull-filters>> and <<c:replication:::lbl-repl-fltrs>>
+This can be done either by setting https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#lbl-repl-fltrs>>
 This ensures backwards compatible with 2.8 clients that use pull filters to prevent auto purge of removed docs.
 
 .Impact of Pull-Filters
-[#c:replication:::tbl-pull-filters,cols="^1,2,2"]
+[#tbl-pull-filters,cols="^1,2,2"]
 |===
 
 .2+.^h|purge_on_removal setting
@@ -868,7 +693,7 @@ a|Doc remains in local database
 |===
 
 
-[#c:replication:::lbl-repl-delta]
+[#lbl-repl-delta]
 === Delta Sync
 
 // tag::rep-delta-sync-concept[]
@@ -885,24 +710,24 @@ xref:sync-gateway:ROOT:refer/config-properties.adoc#databases-foo_db-delta_sync[
 
 xref:c:dbreplica.adoc[Intra-Device]
 replications automatically *disable* delta sync, whilst
-<<c:replication:::p2psync-websocket.adoc,Peer-to-Peer>>
+<<p2psync-websocket.adoc,Peer-to-Peer>>
 replications automatically *enable* delta sync.
 
 // end::rep-delta-sync-concept[]
 
 
-[#c:replication:::lbl-init-repl]
+[#lbl-init-repl]
 == Initialize
 
 
 In this section::
-<<c:replication:::lbl-repl-start>>  | <<c:replication:::lbl-repl-ckpt>>
+<<lbl-repl-start>>  | <<lbl-repl-ckpt>>
 
-[#c:replication:::lbl-repl-start]
+[#lbl-repl-start]
 === Start Replicator
 
 Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html[Replication]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#(im)initWithConfig:[initWith(config:)] constructor, to initialize the replicator with the configuration you have defined.
-You can, optionally, add a change listener (see <<c:replication:::lbl-repl-mon>>) before starting the replicator running using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga224926daa794a424c470bf86dd57aaf9[CBLReplicator_Start()].
+You can, optionally, add a change listener (see <<lbl-repl-mon>>) before starting the replicator running using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga224926daa794a424c470bf86dd57aaf9[CBLReplicator_Start()].
 
 // Example 7
 .Initialize and run replicator
@@ -911,23 +736,17 @@ You can, optionally, add a change listener (see <<c:replication:::lbl-repl-mon>>
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-start-full;!p2p-act-rep-add-change-listener", indent=0]
 [source, c]
 ----
-CBLReplicator* replicator =
-CBLReplicator_Create(&argConfig, &err); // <.>
-  CBLReplicator_Start(replicator, false); // <.>
+include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-start-full;!p2p-act-rep-add-change-listener", indent=0]
 ----
-
-
 ====
 
 <.> Initialize the replicator with the configuration
 <.> Start the replicator
 
 
-[#c:replication:::lbl-repl-ckpt]
+[#lbl-repl-ckpt]
 === Checkpoint Starts
 // include::ROOT:partial$replication-checkpoint.adoc[]
 
@@ -936,45 +755,41 @@ Replicators use xref:refer-glossary.adoc#checkpoint[checkpoints] to keep track o
 Without xref:refer-glossary.adoc#checkpoint[checkpoints], Couchbase Lite would replicate the entire database content to the target database on each connection, even though previous replications may already have replicated some or all of that content.
 
 This functionality is generally not a concern to application developers.
-However, if you do want to force the replication to start again from zero, use the xref:refer-glossary.adoc#checkpoint[checkpoint] reset argument when starting the replicator -- as shown in <<c:replication:::ex-repl-ckpt>>.
+However, if you do want to force the replication to start again from zero, use the xref:refer-glossary.adoc#ex-repl-ckpt>>.
 
 .Resetting checkpoints
 [#ex-repl-ckpt]
 
 
-[#c:replication:::ex-repl-ckpt]
+[#ex-repl-ckpt]
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="replication-reset-checkpoint", indent=0]
 [source, c]
 ----
-CBLReplicator_Start(replicator, true); // <.>
+include::c:example$code_snippets/main.cpp[tags="replication-reset-checkpoint", indent=0]
 ----
-
-
 ====
 
 <.> Set start's reset option to `true`. +
 
 
-[#c:replication:::lbl-repl-mon]
+[#lbl-repl-mon]
 == Monitor
 
 
 In this section::
-<<c:replication:::lbl-repl-chng>>  |
-<<c:replication:::lbl-repl-status>>  |
-<<c:replication:::lbl-repl-evnts>> |
-<<c:replication:::lbl-repl-pend>>
+<<lbl-repl-chng>>  |
+<<lbl-repl-status>>  |
+<<lbl-repl-evnts>> |
+<<lbl-repl-pend>>
 
-You can monitor a replication’s status by using a combination of <<c:replication:::lbl-repl-chng>> and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga9421513c63f1d16bf4740c4d2515dd22[CBLReplicatorActivityLevel enum].
+You can monitor a replication’s status by using a combination of <<lbl-repl-chng>> and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga9421513c63f1d16bf4740c4d2515dd22[CBLReplicatorActivityLevel enum].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
-You can also choose to monitor document changes -- see: <<c:replication:::lbl-repl-evnts>>.
+You can also choose to monitor document changes -- see: <<lbl-repl-evnts>>.
 
-[#c:replication:::lbl-repl-chng]
+[#lbl-repl-chng]
 === Change Listeners
 Use this to monitor changes and to inform on sync progress; this is an optional step.
 You can add and a replicator change listener at any point; it will report changes from the point it is registered.
@@ -982,30 +797,30 @@ You can add and a replicator change listener at any point; it will report change
 .Best Practice
 TIP: Don't forget to save the token so you can remove the listener later
 
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html[Replication] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#(im)addChangeListener:[addChangeListener(_:)]) -- see: <<c:replication:::ex-repl-mon>>.
+Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html[Replication] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ex-repl-mon>>.
 You will then be asynchronously notified of state changes.
 
 You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#(im)removeChangeListenerWithToken[removeChangeListenerWithToken(ListenerToken:)].
 
 
-[#c:replication:::lbl-repl-status]
+[#lbl-repl-status]
 === Replicator Status
 
 You can use the
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_status.html[CBLReplicatorStatus] struct
 to check the replicator status.
-That is, whether it is actively transferring data or if it has stopped -- see: <<c:replication:::ex-repl-mon>>.
+That is, whether it is actively transferring data or if it has stopped -- see: <<ex-repl-mon>>.
 
 The returned _ReplicationStatus_ structure comprises:
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga9421513c63f1d16bf4740c4d2515dd22[CBLReplicatorActivityLevel enum] -- stopped, offline, connecting, idle or busy -- see states described in: <<c:replication:::tbl-states>>
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#tbl-states>>
 * https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_progress.html)[CBLReplicatorProgress struct]
 ** completed -- the total number of changes completed
 ** total -- the total number of changes to be processed
 * https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_error.html[CBLError struct] -- the current error, if any
 
 // Example 8
-[#c:replication:::ex-repl-mon]
+[#ex-repl-mon]
 [[c:replication:::ex-repl-mon]]
 .Monitor replication
 ====
@@ -1017,27 +832,9 @@ The returned _ReplicationStatus_ structure comprises:
 Adding a Change Listener::
 +
 --
-// include::c:example$code_snippets/main.cpp[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
 [source, c]
 ----
-
-// Purpose -- illustrate a simple change listener
-static void simpleChangeListener(void* context,
-                                 CBLReplicator* repl,
-                                 const CBLReplicatorStatus* status)
-{
-     if(status->error.code != 0) {
-         printf("Error %d / %d\n",
-                status->error.domain,
-                status->error.code);
-     }
-}
-    // Purpose -- illustrate addition of a Replicator change listener
-    CBLListenerToken* token_ReplChangeListener =
-            CBLReplicator_AddChangeListener(replicator,
-                                            simpleChangeListener,
-                                            NULL);
-
+include::c:example$code_snippets/main.cpp[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
 ----
 --
 +
@@ -1045,22 +842,9 @@ static void simpleChangeListener(void* context,
 Using replicator.status::
 +
 --
-// include::c:example$code_snippets/main.cpp[tags=p2p-act-rep-status,indent=0]
 [source, c]
 ----
-
-// Purpose -- illustrate use of CBLReplicator_Status()
-CBLReplicatorStatus thisState = CBLReplicator_Status(replicator);
-if(thisState.activity==kCBLReplicatorStopped) {
-    if(thisState.error.code==0) {
-        CBLReplicator_Start(replicator,false);
-    } else {
-        printf("Replicator stopped -- code %d", thisState.error.code);
-        // ... handle error ...
-        CBLReplicator_Release(replicator);
-    }
-}
-
+include::c:example$code_snippets/main.cpp[tags=p2p-act-rep-status,indent=0]
 ----
 --
 ======
@@ -1069,12 +853,12 @@ if(thisState.activity==kCBLReplicatorStopped) {
 ====
 
 
-[#c:replication:::lbl-repl-states]
+[#lbl-repl-states]
 ==== Replication States
-<<c:replication:::tbl-states>> shows the different states, or activity levels, reported in the API; and the meaning of each.
+<<tbl-states>> shows the different states, or activity levels, reported in the API; and the meaning of each.
 
 .Replicator activity levels
-[#c:replication:::tbl-states,cols="^1,4"]
+[#tbl-states,cols="^1,4"]
 |===
 h|State
 h|Meaning
@@ -1100,37 +884,27 @@ NOTE: The replication change object also has properties to track the progress (`
 Since the replication occurs in batches the total count can vary through the course of a replication.
 
 
-[#c:replication:::lbl-repl-evnts]
+[#lbl-repl-evnts]
 === Monitor Document Changes
 
 You can choose to register for document updates during a replication.
 
-For example, the code snippet in <<c:replication:::ex-reg-doc-listener>> registers a listener to monitor document replication performed by the replicator referenced by the variable `replicator`.
+For example, the code snippet in <<ex-reg-doc-listener>> registers a listener to monitor document replication performed by the replicator referenced by the variable `replicator`.
 It prints the document ID of each document received and sent.
-Stop the listener as shown in <<c:replication:::ex-stop-doc-listener>>.
+Stop the listener as shown in <<ex-stop-doc-listener>>.
 
 .Register a document listener
 [#ex-reg-doc-listener]
 
 
-[#c:replication:::ex-reg-doc-listener]
+[#ex-reg-doc-listener]
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="add-document-replication-listener,indent=0]", indent=0]
 [source, c]
 ----
-// Purpose -- illustrate addition of a Document Replicator  listener
-CBLListenerToken* token_ReplDocListener =
-        CBLReplicator_AddDocumentReplicationListener(
-                                                    replicator,
-                                                    SimpleReplicationDocumentListener,
-                                                    context);
-
+include::c:example$code_snippets/main.cpp[tags="add-document-replication-listener,indent=0]", indent=0]
 ----
-
-
 ====
 
 
@@ -1138,31 +912,26 @@ CBLListenerToken* token_ReplDocListener =
 .Stop document listener
 
 
-[#c:replication:::ex-stop-doc-listener]
+[#ex-stop-doc-listener]
 ====
 
 This code snippet shows how to stop the document listener using the token from the previous example.
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="remove-document-replication-listener", indent=0]
 [source, c]
 ----
-// Purpose -- illustrate removal of a listener
-CBLListener_Remove(token_ReplDocListener);
-CBLListener_Remove(token_ReplChangeListener);
+include::c:example$code_snippets/main.cpp[tags="remove-document-replication-listener", indent=0]
 ----
-
 
 ====
 
 
-[#c:replication:::document-access-removal-behavior]
+[#document-access-removal-behavior]
 ==== Document Access Removal Behavior
 
 When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
 
 
-[#c:replication:::lbl-repl-pend]
+[#lbl-repl-pend]
 === Documents Pending Push
 
 TIP: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] is quicker and more efficient.
@@ -1180,50 +949,14 @@ This can be very useful in tracking the progress of a push sync, enabling the ap
 .Use Pending Document ID API
 
 
-[#c:replication:::ex-pending]
+[#ex-pending]
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="replication-pendingdocuments", indent=0]
 [source, c]
 ----
-FLDict thisPendingIdList =
-    CBLReplicator_PendingDocumentIDs2(replicator, collection, &err); // <.>
-if(!FLDict_IsEmpty(thisPendingIdList)) {
-    FLDictIterator item;
-    FLDictIterator_Begin(thisPendingIdList, &item);
-    FLValue itemValue;
-    FLString pendingId;
-    while(NULL != (itemValue = FLDictIterator_GetValue(&item))) {
-        pendingId = FLValue_AsString(itemValue);
-        if(CBLReplicator_IsDocumentPending2(replicator,
-                                           pendingId,
-                                           collection,
-                                           &err)) {
-            // ... process the still pending docid as required <.>
-        } else {
-            // Doc Id no longer pending
-            if(err.code==0) {
-                // No fail so must have already been pushed
-                printf("Document already pushed");
-            } else {
-                // Error detected so handle it
-                printf("Error code %d checking for pendingId", err.code);
-                break;
-            }
-        }
-        FLDictIterator_Next(&item);
-    }
-    FLDictIterator_End(&item);
-    FLValue_Release(itemValue);
-} else {
-    printf("No Pending Id Docs to process");
-}
-FLDict_Release(thisPendingIdList);
+include::c:example$code_snippets/main.cpp[tags="replication-pendingdocuments", indent=0]
 ----
-
-
 ====
 
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()] returns a list of the document IDs for all documents waiting to be pushed.
@@ -1231,7 +964,7 @@ This is a snapshot and may have changed by the time the response is received and
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
 
-[#c:replication:::lbl-repl-stop]
+[#lbl-repl-stop]
 == Stop
 
 
@@ -1249,24 +982,17 @@ You can find further information on database operations in xref:c:database.adoc[
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-stop", indent=0]
 [source, c]
 ----
-// Purpose -- show how to stop a replication
-if(CBLReplicator_Status(argRepl).activity!=kCBLReplicatorStopped) {
-    CBLReplicator_Stop(argRepl);
-}
+include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-stop", indent=0]
 ----
-
-
 ====
 
 <.> Here we initiate the stopping of the replication using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()] method.
-It will stop any active <<c:replication:::lbl-repl-chng,change listener>> once the replication is stopped.
+It will stop any active <<lbl-repl-chng,change listener>> once the replication is stopped.
 
 
-[#c:replication:::lbl-nwk-errs]
+[#lbl-nwk-errs]
 == Error Handling
 
 
@@ -1280,24 +1006,10 @@ The following code snippet adds a `Change Listener`, which monitors a replicatio
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="replication-error-handling", indent=0]
 [source, c]
 ----
-// Purpose -- illustrate a simple change listener
-static void simpleChangeListener(void* context,
-                                 CBLReplicator* repl,
-                                 const CBLReplicatorStatus* status)
-{
-     if(status->error.code != 0) {
-         printf("Error %d / %d\n",
-                status->error.domain,
-                status->error.code);
-     }
-}
+include::c:example$code_snippets/main.cpp[tags="replication-error-handling", indent=0]
 ----
-
-
 ====
 
 
@@ -1327,7 +1039,7 @@ The following error codes are considered temporary by the Couchbase Lite replica
 * `1001`: DNS resolution error
 
 
-[#c:replication:::load-balancers]
+[#load-balancers]
 == Load Balancers
 
 
@@ -1339,7 +1051,7 @@ By default, the WebSocket protocol uses compression to optimize for speed and ba
 The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway:ROOT:refer/config-properties.adoc#replicator_compression[`replicator_compression`]).
 
 
-[#c:replication:::lbl-cert-pinning]
+[#lbl-cert-pinning]
 == Certificate Pinning
 
 Couchbase Lite for C supports certificate pinning.
@@ -1375,21 +1087,14 @@ This example loads the certificate from the application sandbox, then converts i
 [#ex-crt-pinning]
 
 
-[#c:replication:::ex-crt-pinning]
+[#ex-crt-pinning]
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="certificate-pinning", indent=0]
 [source, c]
 ----
-char cert_buf[10000];
-FILE* cert_file = fopen("cert.pem", "r");
-size_t read = fread(cert_buf, 1, sizeof(cert_buf), cert_file);
-replConfig.pinnedServerCertificate = (FLSlice){cert_buf, read};
+include::c:example$code_snippets/main.cpp[tags="certificate-pinning", indent=0]
 ----
-
-
 ====
 
 
@@ -1399,11 +1104,11 @@ The replication should now run successfully over https/wss with certificate pinn
 For more on pinning certificates see the blog entry: https://blog.couchbase.com/certificate-pinning-android-with-couchbase-mobile/[Certificate Pinning with Couchbase Mobile]
 
 
-[#c:replication:::authentication-errors]
+[#authentication-errors]
 === Authentication Errors
-If Sync Gateway is configured with a self signed certificate but your app points to a `ws` scheme instead of `wss` you will encounter an error with status code `11006` -- see: <<c:replication:::ex-11006>>
+If Sync Gateway is configured with a self signed certificate but your app points to a `ws` scheme instead of `wss` you will encounter an error with status code `11006` -- see: <<ex-11006>>
 
-[#c:replication:::ex-11006]
+[#ex-11006]
 .Protocol Mismatch
 ====
 [source,console]
@@ -1412,12 +1117,12 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: WebSocket error 100
 ----
 ====
 
-If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't using the certificate you will encounter an error with status code `5011` -- see: <<c:replication:::ex-5011>>
+If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't using the certificate you will encounter an error with status code `5011` -- see: <<ex-5011>>
 
 [#ex-5011]
 .Certificate Mismatch or Not Found
 
-[#c:replication:::ex-5011]
+[#ex-5011]
 ====
 [source,text]
 ----
@@ -1429,7 +1134,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 // Include standard footer
 
 
-[#c:replication:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -1445,7 +1150,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 
 .
 
-[.column#c:replication:::-2]
+[.column]
 ====== {empty}
 .Learn more . . .
 * xref:c:database.adoc[Databases]
@@ -1457,7 +1162,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 .
 
 
-[.column#c:replication:::-3]
+[.column]
 ====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

@@ -1,4 +1,4 @@
-[#android:querybuilder:::]
+
 = Querybuilder
 :page-aliases: learn/java-android-query.adoc, query.adoc
 :page-role:
@@ -16,16 +16,16 @@ Related Content -- xref:android:querybuilder.adoc#lbl-predquery[Predictive Queri
 
 NOTE: The examples used here are based on the _Travel Sample_ app and data introduced in the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial
 
-[#android:querybuilder:::introduction]
+[#introduction]
 == Introduction
 
 Couchbase Lite for Android provides two ways to build and run database queries; the QueryBuilder API described in this topic and xref:android:query-n1ql-mobile.adoc[{sqlpp} for Mobile].
 
-Database queries defined with the QueryBuilder API use the query statement format shown in <<android:querybuilder:::ex-query-form>>.
+Database queries defined with the QueryBuilder API use the query statement format shown in <<ex-query-form>>.
 The structure and semantics of the query format are based on Couchbase's xref:server:learn:data/n1ql-versus-sql.adoc[{sqlpp} query language].
 
 
-[#android:querybuilder:::ex-query-form]
+[#ex-query-form]
 .Query Format
 ====
 [source, SQL, subs="+attributes, +macros"]
@@ -43,23 +43,23 @@ Query Components::
 |====
 | Component | Description
 
-| <<android:querybuilder:::lbl-select>>
+| <<lbl-select>>
 a| The document properties that will be returned in the result set
 
 | FROM
 a| The data source to query the documents from - the collection of the database.
 
- | <<android:querybuilder:::lbl-where>>
+ | <<lbl-where>>
 a| The query criteria +
 The `SELECT`ed properties of documents matching this criteria will be returned in the result set
 
-| <<android:querybuilder:::lbl-join>>
+| <<lbl-join>>
 a| The criteria for joining multiple documents
 
-| <<android:querybuilder:::lbl-group>>
+| <<lbl-group>>
 a| The criteria used to group returned items in the result set
 
-| <<android:querybuilder:::lbl-order>>
+| <<lbl-order>>
 a| The criteria used to order the items in the result set
 |====
 
@@ -67,28 +67,28 @@ a| The criteria used to order the items in the result set
 TIP: We recommend working through the query section of the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial as a good way to build your skills in this area.
 
 
-[#android:querybuilder:::lbl-select]
+[#lbl-select]
 == SELECT statement
 
 --
 In this section::
-<<android:querybuilder:::lbl-return-properties>>{nbsp}{nbsp}|{nbsp}{nbsp} <<android:querybuilder:::lbl-return-all>>
+<<lbl-return-properties>>{nbsp}{nbsp}|{nbsp}{nbsp} <<lbl-return-all>>
 Related::
-<<android:querybuilder:::lbl-resultsets,Handling result sets>>
+<<lbl-resultsets,Handling result sets>>
 --
 
 Use the `SELECT` statement to specify which properties you want to return from the queried documents.
 You can opt to retrieve entire documents, or just the specific properties you need.
 
-[#android:querybuilder:::lbl-return-all]
+[#lbl-return-all]
 === Return All Properties
-Use the `SelectResult.all()` method to return all the properties of selected documents -- see: <<android:querybuilder:::ex-select-all>>.
+Use the `SelectResult.all()` method to return all the properties of selected documents -- see: <<ex-select-all>>.
 
 .Using SELECT to Retrieve All Properties
 [#ex-select-all]
 
 
-[#android:querybuilder:::ex-select-all]
+[#ex-select-all]
 ====
 
 This query shows how to retrieve all properties from all documents in your database.
@@ -100,29 +100,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-select-all", indent=0]
 [source, Kotlin]
 ----
-val queryAll = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("hotel")))
+include::android:example$codesnippet_collection.kt[tags="query-select-all", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-select-all", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("hotel")));
+include::android:example$codesnippet_collection.java[tags="query-select-all", indent=0]
 ----
 --
 
@@ -132,10 +122,10 @@ Query query = QueryBuilder
 ====
 
 
-The query.execute statement returns the results in a dictionary, where the key is the database name -- see <<android:querybuilder:::ex-return-all>>.
+The query.execute statement returns the results in a dictionary, where the key is the database name -- see <<ex-return-all>>.
 
 
-[#android:querybuilder:::ex-return-all]
+[#ex-return-all]
 .ResultSet Format from SelectResult.all()
 ====
 [pass:q,a[source, json, subs="+attributes, +macros"]]
@@ -171,18 +161,18 @@ The query.execute statement returns the results in a dictionary, where the key i
 
 ====
 
-See: <<android:querybuilder:::lbl-resultsets>> for more on processing query results.
+See: <<lbl-resultsets>> for more on processing query results.
 
 
-[#android:querybuilder:::lbl-return-properties]
+[#lbl-return-properties]
 === Return Selected Properties
-To access only specific properties, specify a comma-separated list of `SelectResult` expressions, one for each property, in the select statement of your query  -- see: <<android:querybuilder:::ex-select-properties>>
+To access only specific properties, specify a comma-separated list of `SelectResult` expressions, one for each property, in the select statement of your query  -- see: <<ex-select-properties>>
 
 [#ex-select-properties]
 .Using SELECT to Retrieve Specific Properties
 
 
-[#android:querybuilder:::ex-select-properties]
+[#ex-select-properties]
 ====
 
 In this query we retrieve and then print the `_id`, `type` and `name` properties of each document.
@@ -194,52 +184,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-select-props", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(
-        SelectResult.expression(Meta.id),
-        SelectResult.property("name"),
-        SelectResult.property("type")
-    )
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("hotel")))
-    .orderBy(Ordering.expression(Meta.id))
-
-query.execute().use { rs ->
-    rs.forEach {
-        log("hotel id ->${it.getString("id")}")
-        log("hotel name -> ${it.getString("name")}")
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-select-props", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-select-props", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query query = QueryBuilder
-    .select(
-        SelectResult.expression(Meta.id),
-        SelectResult.property("name"),
-        SelectResult.property("type"))
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("hotel")))
-    .orderBy(Ordering.expression(Meta.id));
-
-try (ResultSet resultSet = query.execute()) {
-    for (Result result: resultSet) {
-        Logger.log("hotel id -> " + result.getString("id"));
-        Logger.log("hotel name -> " + result.getString("name"));
-    }
-}
+include::android:example$codesnippet_collection.java[tags="query-select-props", indent=0]
 ----
 --
 
@@ -249,9 +206,9 @@ try (ResultSet resultSet = query.execute()) {
 ====
 
 
-The `query.execute` statement returns one or more key-value pairs, one for each SelectResult expression, with the property-name as the key -- see <<android:querybuilder:::ex-return-properties>>
+The `query.execute` statement returns one or more key-value pairs, one for each SelectResult expression, with the property-name as the key -- see <<ex-return-properties>>
 
-[#android:querybuilder:::ex-return-properties]
+[#ex-return-properties]
 .Select Result Format
 ====
 [pass:q,a[source, json, subs="+attributes, +macros"]]
@@ -276,25 +233,25 @@ The `query.execute` statement returns one or more key-value pairs, one for each 
 
 ====
 
-See: <<android:querybuilder:::lbl-resultsets>> for more on processing query results.
+See: <<lbl-resultsets>> for more on processing query results.
 
 
-[#android:querybuilder:::lbl-where]
+[#lbl-where]
 == WHERE statement
 
 In this section::
-<<android:querybuilder:::lbl-comp-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:querybuilder:::lbl-coll-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:querybuilder:::lbl-like-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:querybuilder:::lbl-regex-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:querybuilder:::lbl-deleted-ops>>
+<<lbl-comp-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-coll-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-like-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-regex-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-deleted-ops>>
 
 Like SQL, you can use the `WHERE` statement to choose  which documents are returned by your query.
 The select statement takes in an `Expression`.
 You can chain any number of Expressions in order to implement sophisticated filtering capabilities.
 
 
-[#android:querybuilder:::lbl-comp-ops]
+[#lbl-comp-ops]
 === Comparison Operators
 The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Expression.html[Expression Comparators] can be used in the WHERE statement to specify on which property to match documents.
 In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
@@ -328,48 +285,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-where", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("hotel")))
-    .limit(Expression.intValue(10))
-
-query.execute().use { rs ->
-    rs.forEach { result ->
-        result.getDictionary("myDatabase")?.let {
-            log("name -> ${it.getString("name")}")
-            log("type -> ${it.getString("type")}")
-        }
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-where", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-where", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("hotel")))
-    .limit(Expression.intValue(10));
-
-try (ResultSet resultSet = query.execute()) {
-    for (Result result: resultSet) {
-        Dictionary all = result.getDictionary(collectionName);
-        Logger.log("name -> " + all.getString("name"));
-        Logger.log("type -> " + all.getString("type"));
-    }
-}
+include::android:example$codesnippet_collection.java[tags="query-where", indent=0]
 ----
 --
 
@@ -379,12 +307,12 @@ try (ResultSet resultSet = query.execute()) {
 ====
 
 
-[#android:querybuilder:::lbl-coll-ops]
+[#lbl-coll-ops]
 === Collection Operators
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Query.htmlArrayFunction.html[ArrayFunction Collection Operators] are useful to check if a given value is present in an array.
 
 
-[#android:querybuilder:::contains-operator]
+[#contains-operator]
 ==== CONTAINS Operator
 The following example uses the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Query.htmlArrayFunction.html[ArrayFunction]` to find documents where the `public_likes` array property contains a value equal to "Armani Langworth".
 
@@ -406,63 +334,26 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-collection-operator-contains", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(
-        SelectResult.expression(Meta.id),
-        SelectResult.property("name"),
-        SelectResult.property("public_likes")
-    )
-    .from(DataSource.collection(collection))
-    .where(
-        Expression.property("type").equalTo(Expression.string("hotel"))
-            .and(
-                ArrayFunction.contains(
-                    Expression.property("public_likes"),
-                    Expression.string("Armani Langworth")
-                )
-            )
-    )
-query.execute().use { rs ->
-    rs.forEach {
-        log("public_likes -> ${it.getArray("public_likes")?.toList()}")
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-collection-operator-contains", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-collection-operator-contains", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query query = QueryBuilder
-    .select(
-        SelectResult.expression(Meta.id),
-        SelectResult.property("name"),
-        SelectResult.property("public_likes"))
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("hotel"))
-        .and(ArrayFunction
-            .contains(Expression.property("public_likes"), Expression.string("Armani Langworth"))));
-try (ResultSet results = query.execute()) {
-    for (Result result: results) {
-        Logger.log("public_likes -> " + result.getArray("public_likes").toList());
-    }
-}
+include::android:example$codesnippet_collection.java[tags="query-collection-operator-contains", indent=0]
 ----
 --
 
 =====
 
 
-[#android:querybuilder:::in-operator]
+[#in-operator]
 ==== IN Operator
 
 The `IN` operator is useful when you need to explicitly list out the values to test against.
@@ -477,61 +368,35 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-collection-operator-in", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder.select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(
-        Expression.string("Armani").`in`(
-            Expression.property("first"),
-            Expression.property("last"),
-            Expression.property("username")
-        )
-    )
-
-query.execute().use { rs ->
-    rs.forEach {
-        log("public_likes -> ${it.toMap()}")
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-collection-operator-in", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-collection-operator-in", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Expression[] values = new Expression[] {
-    Expression.property("first"),
-    Expression.property("last"),
-    Expression.property("username")
-};
-
-Query query = QueryBuilder.select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(Expression.string("Armani").in(values));
+include::android:example$codesnippet_collection.java[tags="query-collection-operator-in", indent=0]
 ----
 --
 
 =====
 
 
-[#android:querybuilder:::lbl-like-ops]
+[#lbl-like-ops]
 === Like Operator
 In this section::
-<<android:querybuilder:::lbl-string-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:querybuilder:::lbl-wild-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:querybuilder:::lbl-wild-chars>>
+<<lbl-string-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-wild-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-wild-chars>>
 
-[#android:querybuilder:::lbl-string-match]
+[#lbl-string-match]
 ==== String Matching
-The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Expression.html#like-com.couchbase.lite.Expression-[Like()] operator can be used for string matching -- see <<android:querybuilder:::ex-like-case-insensitive>>
+The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Expression.html#ex-like-case-insensitive>>
 
 NOTE: The `like` operator performs **case sensitive** matches. +
 To perform case insensitive matching, use `Function.lower` or `Function.upper` to ensure all comparators have the same case, thereby removing the case issue.
@@ -542,7 +407,7 @@ This query returns `landmark` type documents where the `name` matches the string
 [#ex-like-case-insensitive]
 
 
-[#android:querybuilder:::ex-like-case-insensitive]
+[#ex-like-case-insensitive]
 ====
 
 [tabs]
@@ -553,54 +418,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-like-operator", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(
-        SelectResult.expression(Meta.id),
-        SelectResult.property("country"),
-        SelectResult.property("name")
-    )
-    .from(DataSource.collection(collection))
-    .where(
-        Expression.property("type").equalTo(Expression.string("landmark"))
-            .and(
-                Function.lower(Expression.property("name"))
-                    .like(Expression.string("royal engineers museum"))
-            )
-    )
-query.execute().use { rs ->
-    rs.forEach {
-        log("name -> ${it.getString("name")}")
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-like-operator", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-like-operator", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query query = QueryBuilder
-    .select(
-        SelectResult.expression(Meta.id),
-        SelectResult.property("country"),
-        SelectResult.property("name"))
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("landmark"))
-        .and(Function.lower(Expression.property("name")).like(Expression.string("royal engineers museum"))));
-
-try (ResultSet resultSet = query.execute()) {
-    for (Result result: resultSet) {
-        Logger.log("name -> " + result.getString("name"));
-    }
-}
+include::android:example$codesnippet_collection.java[tags="query-like-operator", indent=0]
 ----
 --
 
@@ -613,13 +443,13 @@ try (ResultSet resultSet = query.execute()) {
 *Note* the use of `Function.lower` to transform `name` values to the same case as the literal comparator.
 
 
-[#android:querybuilder:::lbl-wild-match]
+[#lbl-wild-match]
 ==== Wildcard Match
 
 We can use `%` sign within a `like` expression to do a wildcard match against zero or more characters.
 Using wildcards allows you to have some fuzziness in your search string.
 
-In <<android:querybuilder:::ex-wldcd-match>> below, we are looking for documents of `type` "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
+In <<ex-wldcd-match>> below, we are looking for documents of `type` "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
 Once again, we are using `Function.lower` to make the search case insensitive.
 
 So "landmark" documents with names such as "Engineers", "engine", "english egg" and "England Eagle".
@@ -629,7 +459,7 @@ Notice that the matches may span word boundaries.
 [#ex-wldcd-match]
 
 
-[#android:querybuilder:::ex-wldcd-match]
+[#ex-wldcd-match]
 ====
 
 [tabs]
@@ -640,54 +470,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-like-operator-wildcard-match", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(
-        SelectResult.expression(Meta.id),
-        SelectResult.property("country"),
-        SelectResult.property("name")
-    )
-    .from(DataSource.collection(collection))
-    .where(
-        Expression.property("type").equalTo(Expression.string("landmark"))
-            .and(
-                Function.lower(Expression.property("name"))
-                    .like(Expression.string("eng%e%"))
-            )
-    )
-query.execute().use { rs ->
-    rs.forEach {
-        log("name -> ${it.getString("name")}")
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-like-operator-wildcard-match", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-like-operator-wildcard-match", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query query = QueryBuilder
-    .select(
-        SelectResult.expression(Meta.id),
-        SelectResult.property("country"),
-        SelectResult.property("name"))
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("landmark"))
-        .and(Function.lower(Expression.property("name")).like(Expression.string("eng%e%"))));
-
-try (ResultSet resultSet = query.execute()) {
-    for (Result result: resultSet) {
-        Logger.log("name ->  " + result.getString("name"));
-    }
-}
+include::android:example$codesnippet_collection.java[tags="query-like-operator-wildcard-match", indent=0]
 ----
 --
 
@@ -697,19 +492,19 @@ try (ResultSet resultSet = query.execute()) {
 ====
 
 
-[#android:querybuilder:::lbl-wild-chars]
+[#lbl-wild-chars]
 ==== Wildcard Character Match
 
 We can use an `_` sign within a like expression to do a wildcard match against a single character.
 
-In <<android:querybuilder:::ex-wldcd-char-match>> below, we are looking for documents of type "landmark" where the `name` property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
+In <<ex-wldcd-char-match>> below, we are looking for documents of type "landmark" where the `name` property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
 The query returns "landmark" type documents with names such as "Engineer", "engineer" and so on.
 
 .Wildcard Character Matching
 [#ex-wldcd-char-match]
 
 
-[#android:querybuilder:::ex-wldcd-char-match]
+[#ex-wldcd-char-match]
 ====
 
 [tabs]
@@ -720,54 +515,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-like-operator-wildcard-character-match", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(
-        SelectResult.expression(Meta.id),
-        SelectResult.property("country"),
-        SelectResult.property("name")
-    )
-    .from(DataSource.collection(collection))
-    .where(
-        Expression.property("type").equalTo(Expression.string("landmark"))
-            .and(
-                Function.lower(Expression.property("name"))
-                    .like(Expression.string("eng____r"))
-            )
-    )
-query.execute().use { rs ->
-    rs.forEach {
-        log("name -> ${it.getString("name")}")
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-like-operator-wildcard-character-match", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-like-operator-wildcard-character-match", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query query = QueryBuilder
-    .select(
-        SelectResult.expression(Meta.id),
-        SelectResult.property("country"),
-        SelectResult.property("name"))
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("landmark"))
-        .and(Function.lower(Expression.property("name")).like(Expression.string("eng____r"))));
-
-try (ResultSet resultSet = query.execute()) {
-    for (Result result: resultSet) {
-        Logger.log("name -> " + result.getString("name"));
-    }
-}
+include::android:example$codesnippet_collection.java[tags="query-like-operator-wildcard-character-match", indent=0]
 ----
 --
 
@@ -777,10 +537,10 @@ try (ResultSet resultSet = query.execute()) {
 ====
 
 
-[#android:querybuilder:::lbl-regex-ops]
+[#lbl-regex-ops]
 === Regex Operator
 
-Similar to the wildcards in `like` expressions, `regex` based pattern matching allow you to introduce an element of fuzziness in your search string -- see the code shown in <<android:querybuilder:::ex-regex>>.
+Similar to the wildcards in `like` expressions, `regex` based pattern matching allow you to introduce an element of fuzziness in your search string -- see the code shown in <<ex-regex>>.
 
 NOTE: The `regex` operator is case sensitive, use `upper` or `lower` functions to mitigate this if required.
 
@@ -788,7 +548,7 @@ NOTE: The `regex` operator is case sensitive, use `upper` or `lower` functions t
 .Using Regular Expressions
 
 
-[#android:querybuilder:::ex-regex]
+[#ex-regex]
 ====
 
 This example returns documents with a `type` of "landmark" and a `name` property that matches any string that begins with "eng" and ends in the letter "e".
@@ -800,54 +560,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-regex-operator,indent=0]", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(
-        SelectResult.expression(Meta.id),
-        SelectResult.property("country"),
-        SelectResult.property("name")
-    )
-    .from(DataSource.collection(collection))
-    .where(
-        Expression.property("type").equalTo(Expression.string("landmark"))
-            .and(
-                Function.lower(Expression.property("name"))
-                    .regex(Expression.string("\\beng.*r\\b"))
-            )
-    )
-query.execute().use { rs ->
-    rs.forEach {
-        log("name -> ${it.getString("name")}")
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-regex-operator,indent=0]", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-regex-operator,indent=0]", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query query = QueryBuilder
-    .select(
-        SelectResult.expression(Meta.id),
-        SelectResult.property("country"),
-        SelectResult.property("name"))
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("landmark"))
-        .and(Function.lower(Expression.property("name")).regex(Expression.string("\\beng.*r\\b"))));
-
-try (ResultSet resultSet = query.execute()) {
-    for (Result result: resultSet) {
-        Logger.log("name -> " + result.getString("name"));
-    }
-}
+include::android:example$codesnippet_collection.java[tags="query-regex-operator,indent=0]", indent=0]
 ----
 --
 
@@ -861,15 +586,15 @@ try (ResultSet resultSet = query.execute()) {
 TIP: For more on the regex spec used by pass:q,a[Couchbase{nbsp}Lite] see http://www.cplusplus.com/reference/regex/ECMAScript/[cplusplus regex reference page^]
 
 
-[#android:querybuilder:::lbl-deleted-ops]
+[#lbl-deleted-ops]
 === Deleted Document
-You can query documents that have been deleted (tombstones) footnote:fn2x5[Starting in Couchbase Lite 2.5] as shown in <<android:querybuilder:::ex-del-qry>>.
+You can query documents that have been deleted (tombstones) footnote:fn2x5[Starting in Couchbase Lite 2.5] as shown in <<ex-del-qry>>.
 
 .Query to select Deleted Documents
 [#ex-del-qry]
 
 
-[#android:querybuilder:::ex-del-qry]
+[#ex-del-qry]
 ====
 
 This example shows how to query deleted documents in the database. It returns is an array of key-value pairs.
@@ -881,31 +606,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-deleted-documents", indent=0]
 [source, Kotlin]
 ----
-// Query documents that have been deleted
-val query = QueryBuilder
-    .select(SelectResult.expression(Meta.id))
-    .from(DataSource.collection(collection))
-    .where(Meta.deleted)
+include::android:example$codesnippet_collection.kt[tags="query-deleted-documents", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-deleted-documents", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// Query documents that have been deleted
-Query query = QueryBuilder
-    .select(SelectResult.expression(Meta.id))
-    .from(DataSource.collection(collection))
-    .where(Meta.deleted);
+include::android:example$codesnippet_collection.java[tags="query-deleted-documents", indent=0]
 ----
 --
 
@@ -915,16 +628,16 @@ Query query = QueryBuilder
 ====
 
 
-[#android:querybuilder:::lbl-join]
+[#lbl-join]
 == JOIN statement
 The JOIN clause enables you to select data from multiple documents that have been linked by criteria specified in the JOIN statement.
-For example to combine airline details with route details, linked by the airline id -- see <<android:querybuilder:::ex-join>>.
+For example to combine airline details with route details, linked by the airline id -- see <<ex-join>>.
 
 .Using JOIN to Combine Document Details
 [#ex-join]
 
 
-[#android:querybuilder:::ex-join]
+[#ex-join]
 ====
 
 This example JOINS the document of type `route` with documents of type `airline` using the document ID (`_id`) on the _airline_ document and `airlineid` on the _route_ document.
@@ -936,71 +649,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-join", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(
-        SelectResult.expression(Expression.property("name").from("airline")),
-        SelectResult.expression(Expression.property("callsign").from("airline")),
-        SelectResult.expression(Expression.property("destinationairport").from("route")),
-        SelectResult.expression(Expression.property("stops").from("route")),
-        SelectResult.expression(Expression.property("airline").from("route"))
-    )
-    .from(DataSource.collection(collection).`as`("airline"))
-    .join(
-        Join.join(DataSource.collection(collection).`as`("route"))
-            .on(
-                Meta.id.from("airline")
-                    .equalTo(Expression.property("airlineid").from("route"))
-            )
-    )
-    .where(
-        Expression.property("type").from("route").equalTo(Expression.string("route"))
-            .and(
-                Expression.property("type").from("airline")
-                    .equalTo(Expression.string("airline"))
-            )
-            .and(
-                Expression.property("sourceairport").from("route")
-                    .equalTo(Expression.string("RIX"))
-            )
-    )
-query.execute().use { rs ->
-    rs.forEach {
-        log("name -> ${it.toMap()}")
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-join", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-join", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query query = QueryBuilder.select(
-        SelectResult.expression(Expression.property("name").from("airline")),
-        SelectResult.expression(Expression.property("callsign").from("airline")),
-        SelectResult.expression(Expression.property("destinationairport").from("route")),
-        SelectResult.expression(Expression.property("stops").from("route")),
-        SelectResult.expression(Expression.property("airline").from("route")))
-    .from(DataSource.collection(collection).as("airline"))
-    .join(Join.join(DataSource.collection(collection).as("route"))
-        .on(Meta.id.from("airline").equalTo(Expression.property("airlineid").from("route"))))
-    .where(Expression.property("type").from("route").equalTo(Expression.string("route"))
-        .and(Expression.property("type").from("airline").equalTo(Expression.string("airline")))
-        .and(Expression.property("sourceairport").from("route").equalTo(Expression.string("RIX"))));
-
-try (ResultSet resultSet = query.execute()) {
-    for (Result result: resultSet) {
-        Logger.log(result.toMap().toString());
-    }
-}
+include::android:example$codesnippet_collection.java[tags="query-join", indent=0]
 ----
 --
 
@@ -1010,7 +671,7 @@ try (ResultSet resultSet = query.execute()) {
 ====
 
 
-[#android:querybuilder:::lbl-group]
+[#lbl-group]
 == GROUP BY statement
 You can perform further processing on the data in your result set before the final projection is generated.
 
@@ -1032,7 +693,7 @@ The following example looks for the number of airports at an altitude of 300 ft 
 .Query using GroupBy
 
 
-[#android:querybuilder:::ex-grpby-qry]
+[#ex-grpby-qry]
 ====
 
 This example shows a query that selects all airports with an altitude above 300ft. The output (a count, $1) is grouped by country, within timezone.
@@ -1044,69 +705,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-groupby", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(
-        SelectResult.expression(Function.count(Expression.string("*"))),
-        SelectResult.property("country"),
-        SelectResult.property("tz")
-    )
-    .from(DataSource.collection(collection))
-    .where(
-        Expression.property("type").equalTo(Expression.string("airport"))
-            .and(Expression.property("geo.alt").greaterThanOrEqualTo(Expression.intValue(300)))
-    )
-    .groupBy(
-        Expression.property("country"), Expression.property("tz")
-    )
-    .orderBy(Ordering.expression(Function.count(Expression.string("*"))).descending())
-query.execute().use { rs ->
-    rs.forEach {
-        log(
-            "There are ${it.getInt("$1")} airports on the ${
-                it.getString("tz")
-            } timezone located in ${
-                it.getString("country")
-            } and above 300ft"
-        )
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-groupby", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-groupby", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query query = QueryBuilder.select(
-        SelectResult.expression(Function.count(Expression.string("*"))),
-        SelectResult.property("country"),
-        SelectResult.property("tz"))
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("airport"))
-        .and(Expression.property("geo.alt").greaterThanOrEqualTo(Expression.intValue(300))))
-    .groupBy(
-        Expression.property("country"),
-        Expression.property("tz"))
-    .orderBy(Ordering.expression(Function.count(Expression.string("*"))).descending());
-
-try (ResultSet resultSet = query.execute()) {
-    for (Result result: resultSet) {
-        Logger.log(String.format(
-            Locale.getDefault(),
-            "There are %d airports on the %s timezone located in %s and above 300ft",
-            result.getInt("$1"),
-            result.getString("tz"),
-            result.getString("country")));
-    }
-}
+include::android:example$codesnippet_collection.java[tags="query-groupby", indent=0]
 ----
 --
 
@@ -1116,7 +727,7 @@ try (ResultSet resultSet = query.execute()) {
 ====
 
 
-The query shown in <<android:querybuilder:::ex-grpby-qry>> generates the following output:
+The query shown in <<ex-grpby-qry>> generates the following output:
 --
 There are 138 airports on the Europe/Paris timezone located in France and above 300 ft +
 There are 29 airports on the Europe/London timezone located in United Kingdom and above 300 ft +
@@ -1126,16 +737,16 @@ There are 123 airports on the America/Denver timezone located in United States a
 --
 
 
-[#android:querybuilder:::lbl-order]
+[#lbl-order]
 == ORDER BY statement
 
-It is possible to sort the results of a query based on a given expression result -- see <<android:querybuilder:::ex-orderby-qry>>
+It is possible to sort the results of a query based on a given expression result -- see <<ex-orderby-qry>>
 
 [#ex-orderby-qry]
 .Query using OrderBy
 
 
-[#android:querybuilder:::ex-orderby-qry]
+[#ex-orderby-qry]
 ====
 
 This example shows a query that returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.
@@ -1147,50 +758,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-orderby", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(
-        SelectResult.expression(Meta.id),
-        SelectResult.property("name")
-    )
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("hotel")))
-    .orderBy(Ordering.property("name").ascending())
-    .limit(Expression.intValue(10))
-
-query.execute().use { rs ->
-    rs.forEach {
-        log("${it.toMap()}")
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-orderby", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-orderby", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query query = QueryBuilder
-    .select(
-        SelectResult.expression(Meta.id),
-        SelectResult.property("name"))
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("hotel")))
-    .orderBy(Ordering.property("name").ascending())
-    .limit(Expression.intValue(10));
-
-try (ResultSet resultSet = query.execute()) {
-    for (Result result: resultSet) {
-        Logger.log(result.toMap().toString());
-    }
-}
+include::android:example$codesnippet_collection.java[tags="query-orderby", indent=0]
 ----
 --
 
@@ -1200,7 +780,7 @@ try (ResultSet resultSet = query.execute()) {
 ====
 
 
-The query shown in <<android:querybuilder:::ex-orderby-qry>> generates the following output:
+The query shown in <<ex-orderby-qry>> generates the following output:
 [pass:q,a[source, text, subs="+attributes, +macros"]]
 ----
 Aberdyfi
@@ -1214,11 +794,11 @@ Avignon
 ----
 
 
-[#android:querybuilder:::lbl-date-time]
+[#lbl-date-time]
 == Date/Time Functions
 
 
-Couchbase Lite documents support a <<android:querybuilder:::initializers,date type>> that internally stores dates in ISO 8601 with the GMT/UTC timezone.
+Couchbase Lite documents support a <<initializers,date type>> that internally stores dates in ISO 8601 with the GMT/UTC timezone.
 
 Couchbase Lite's Query Builder API
 footnote:fn2x5[]
@@ -1238,18 +818,18 @@ The input for this is a numeric value representing milliseconds since the Unix e
 The end result will be an expression (with string content representing the date and time as a UTC ISO 8601 string) that can be further input into the query builder.
 
 
-[#android:querybuilder:::lbl-resultsets]
+[#lbl-resultsets]
 == Result Sets
 In this section::
-<<android:querybuilder:::lbl-process-resultset>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:querybuilder:::lbl-all-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:querybuilder:::lbl-specific-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:querybuilder:::lbl-id-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:querybuilder:::lbl-count-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:querybuilder:::lbl-pagination>>
+<<lbl-process-resultset>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-all-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-specific-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-id-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-count-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-pagination>>
 
 
-[#android:querybuilder:::lbl-process-resultset]
+[#lbl-process-resultset]
 === Processing
 
 This section shows how to handle the returned result sets for different types of `SELECT` statements.
@@ -1257,16 +837,16 @@ This section shows how to handle the returned result sets for different types of
 The result set format and its handling varies slightly depending on the type of SelectResult statements used.
 The result set formats you may encounter include those generated by :
 
-* SelectResult.all -- see: <<android:querybuilder:::lbl-all-sel,All Properties>>
-* SelectResult.expression(property("name")) -- see: <<android:querybuilder:::lbl-specific-sel,Specific Properties>>
-* SelectResult.expression(meta.id) --  Metadata (such as the `_id`) -- see: <<android:querybuilder:::lbl-id-sel,Document ID Only>>
-* SelectResult.expression(Function.count(Expression.all())).as("mycount") --  see: <<android:querybuilder:::lbl-count-sel>>
+* SelectResult.all -- see: <<lbl-all-sel,All Properties>>
+* SelectResult.expression(property("name")) -- see: <<lbl-specific-sel,Specific Properties>>
+* SelectResult.expression(meta.id) --  Metadata (such as the `_id`) -- see: <<lbl-id-sel,Document ID Only>>
+* SelectResult.expression(Function.count(Expression.all())).as("mycount") --  see: <<lbl-count-sel>>
 
 To process the results of a query, you first need to execute it using `Query.execute`.
 
 The execution of a Couchbase Lite for Android's database query typically returns an array of results, a result set.
 
-* The result set of an aggregate, count-only, query is a key-value pair -- see <<android:querybuilder:::lbl-count-sel>> -- which you can access using the count name as its key.
+* The result set of an aggregate, count-only, query is a key-value pair -- see <<lbl-count-sel>> -- which you can access using the count name as its key.
 
 * The result set of a query returning document properties is an array. +
 Each array row represents the data from a document that matched your search criteria (the `WHERE` statements)
@@ -1274,18 +854,18 @@ The composition of each row is determined by the combination of `SelectResult` e
 To unpack these result sets you need to iterate this array.
 
 
-[#android:querybuilder:::lbl-all-sel]
+[#lbl-all-sel]
 === Select All Properties
 
-[#android:querybuilder:::query]
+[#query]
 ==== Query
-The `Select` statement for this type of query, returns all document properties for each document matching the query criteria -- see <<android:querybuilder:::ex-all-qry>>
+The `Select` statement for this type of query, returns all document properties for each document matching the query criteria -- see <<ex-all-qry>>
 
 .Query selecting All Properties
 [#ex-all-qry]
 
 
-[#android:querybuilder:::ex-all-qry]
+[#ex-all-qry]
 ====
 
 [tabs]
@@ -1296,25 +876,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-syntax-all", indent=0]
 [source, Kotlin]
 ----
-val listQuery = QueryBuilder.select(SelectResult.all())
-    .from(DataSource.collection(collection))
+include::android:example$codesnippet_collection.kt[tags="query-syntax-all", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-syntax-all", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query listQuery = QueryBuilder.select(SelectResult.all())
-    .from(DataSource.collection(collection));
+include::android:example$codesnippet_collection.java[tags="query-syntax-all", indent=0]
 ----
 --
 
@@ -1324,14 +898,14 @@ Query listQuery = QueryBuilder.select(SelectResult.all())
 ====
 
 
-[#android:querybuilder:::result-set-format]
+[#result-set-format]
 ==== Result Set Format
 The result set returned by queries using `SelectResult.all` is an array of dictionary objects -- one for each document matching the query criteria.
 
-For each result object, the key is the database name and the 'value' is a dictionary representing each document property as a key-value pair -- see: <<android:querybuilder:::ex-all-rtn>>.
+For each result object, the key is the database name and the 'value' is a dictionary representing each document property as a key-value pair -- see: <<ex-all-rtn>>.
 
 .Format of Result Set (All Properties)
-[#android:querybuilder:::ex-all-rtn]
+[#ex-all-rtn]
 ====
 [pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
@@ -1368,16 +942,16 @@ For each result object, the key is the database name and the 'value' is a dictio
 
 ====
 
-[#android:querybuilder:::result-set-access]
+[#result-set-access]
 ==== Result Set Access
 
-In this case access the retrieved document properties by converting each row's value, in turn, to a dictionary -- as shown in <<android:querybuilder:::ex-all-acc>>.
+In this case access the retrieved document properties by converting each row's value, in turn, to a dictionary -- as shown in <<ex-all-acc>>.
 
 .Using Document Properties (All)
 [#ex-all-acc]
 
 
-[#android:querybuilder:::ex-all-acc]
+[#ex-all-acc]
 ====
 
 [tabs]
@@ -1388,64 +962,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-access-all", indent=0]
 [source, Kotlin]
 ----
-val hotels = mutableMapOf<String, Hotel>()
-listQuery.execute().use { rs ->
-    rs.allResults().forEach {
-        // get the k-v pairs from the 'hotel' key's value into a dictionary
-        val thisDocsProps = it.getDictionary(0) // <.>
-        val thisDocsId = thisDocsProps!!.getString("id")
-        val thisDocsName = thisDocsProps.getString("name")
-        val thisDocsType = thisDocsProps.getString("type")
-        val thisDocsCity = thisDocsProps.getString("city")
-
-        // Alternatively, access results value dictionary directly
-        val id = it.getDictionary(0)?.getString("id").toString() // <.>
-        hotels[id] = Hotel(
-            id,
-            it.getDictionary(0)?.getString("type"),
-            it.getDictionary(0)?.getString("name"),
-            it.getDictionary(0)?.getString("city"),
-            it.getDictionary(0)?.getString("country"),
-            it.getDictionary(0)?.getString("description")
-        )
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-access-all", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-access-all", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Map<String, Hotel> hotels = new HashMap<>();
-try (ResultSet resultSet = listQuery.execute()) {
-    for (Result result: resultSet) {
-        // get the k-v pairs from the 'hotel' key's value into a dictionary
-        Dictionary docsProp = result.getDictionary(0); // <.>
-        String docsId = docsProp.getString("id");
-        String docsName = docsProp.getString("Name");
-        String docsType = docsProp.getString("Type");
-        String docsCity = docsProp.getString("City");
-
-        // Alternatively, access results value dictionary directly
-        final Hotel hotel = new Hotel();
-        hotel.setId(result.getDictionary(0).getString("id")); // <.>
-        hotel.setType(result.getDictionary(0).getString("Type"));
-        hotel.setName(result.getDictionary(0).getString("Name"));
-        hotel.setCity(result.getDictionary(0).getString("City"));
-        hotel.setCountry(result.getDictionary(0).getString("Country"));
-        hotel.setDescription(result.getDictionary(0).getString("Description"));
-        hotels.put(hotel.getId(), hotel);
-    }
-}
+include::android:example$codesnippet_collection.java[tags="query-access-all", indent=0]
 ----
 --
 
@@ -1459,18 +988,18 @@ You can add this dictionary to an array of returned matches, for processing else
 <.> Alternatively you can access the document properties here, by using the property names as keys to the dictionary object.
 
 
-[#android:querybuilder:::lbl-specific-sel]
+[#lbl-specific-sel]
 === Select Specific Properties
 
-[#android:querybuilder:::query-2]
+[#query-2]
 ==== Query
-Here we use `SelectResult.expression(property("<property-name>")))` to specify the document properties we want our query to return -- see: <<android:querybuilder:::ex-specific-qry>>.
+Here we use `SelectResult.expression(property("<property-name>")))` to specify the document properties we want our query to return -- see: <<ex-specific-qry>>.
 
 .Query selecting Specific Properties
 [#ex-specific-qry]
 
 
-[#android:querybuilder:::ex-specific-qry]
+[#ex-specific-qry]
 ====
 
 [tabs]
@@ -1481,38 +1010,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-syntax-props", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(
-        SelectResult.expression(Meta.id),
-        SelectResult.property("country"),
-        SelectResult.property("name")
-    )
-    .from(DataSource.collection(collection))
+include::android:example$codesnippet_collection.kt[tags="query-syntax-props", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-syntax-props", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-
-Query listQuery =
-    QueryBuilder.select(
-            SelectResult.expression(Meta.id),
-            SelectResult.property("name"),
-            SelectResult.property("Name"),
-            SelectResult.property("Type"),
-            SelectResult.property("City"))
-        .from(DataSource.collection(collection));
-
+include::android:example$codesnippet_collection.java[tags="query-syntax-props", indent=0]
 ----
 --
 
@@ -1522,14 +1032,14 @@ Query listQuery =
 ====
 
 
-[#android:querybuilder:::result-set-format-2]
+[#result-set-format-2]
 ==== Result Set Format
 The result set returned when selecting only specific document properties is an array of dictionary objects -- one for each document matching the query criteria.
 
-Each result object comprises a key-value pair for each selected document property -- see <<android:querybuilder:::ex-specific-rtn>>
+Each result object comprises a key-value pair for each selected document property -- see <<ex-specific-rtn>>
 
 .Format of Result Set (Specific Properties)
-[#android:querybuilder:::ex-specific-rtn]
+[#ex-specific-rtn]
 ====
 [pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
@@ -1552,15 +1062,15 @@ Each result object comprises a key-value pair for each selected document propert
 <.> The result for the next document matching the query criteria.
 ====
 
-[#android:querybuilder:::result-set-access-2]
+[#result-set-access-2]
 ==== Result Set Access
-Access the retrieved properties by converting each row into a dictionary -- as shown in <<android:querybuilder:::ex-specific-acc>>.
+Access the retrieved properties by converting each row into a dictionary -- as shown in <<ex-specific-acc>>.
 
 .Using Returned Document Properties (Specific Properties)
 [#ex-specific-acc]
 
 
-[#android:querybuilder:::ex-specific-acc]
+[#ex-specific-acc]
 ====
 
 [tabs]
@@ -1571,52 +1081,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-access-props", indent=0]
 [source, Kotlin]
 ----
-query.execute().use { rs ->
-    rs.allResults().forEach {
-        log("Hotel name -> ${it.getString("name")}, in ${it.getString("country")}")
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-access-props", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-access-props", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-HashMap<String, Hotel> hotels = new HashMap<>();
-try (ResultSet resultSet = listQuery.execute()) {
-    for (Result result: resultSet) {
-
-        // get data direct from result k-v pairs
-        final Hotel hotel = new Hotel();
-        hotel.setId(result.getString("id"));
-        hotel.setType(result.getString("Type"));
-        hotel.setName(result.getString("Name"));
-        hotel.setCity(result.getString("City"));
-
-        // Store created hotel object in a hashmap of hotels
-        hotels.put(hotel.getId(), hotel);
-
-        // Get result k-v pairs into a 'dictionary' object
-        Map<String, Object> thisDocsProps = result.toMap();
-        String docId =
-            thisDocsProps.getOrDefault("id", null).toString();
-        String docName =
-            thisDocsProps.getOrDefault("Name", null).toString();
-        String docType =
-            thisDocsProps.getOrDefault("Type", null).toString();
-        String docCity =
-            thisDocsProps.getOrDefault("City", null).toString();
-    }
-}
+include::android:example$codesnippet_collection.java[tags="query-access-props", indent=0]
 ----
 --
 
@@ -1626,18 +1103,18 @@ try (ResultSet resultSet = listQuery.execute()) {
 ====
 
 
-[#android:querybuilder:::lbl-id-sel]
+[#lbl-id-sel]
 === Select Document Id Only
 
-[#android:querybuilder:::query-3]
+[#query-3]
 ==== Query
-You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time -- see: <<android:querybuilder:::ex-id-qry>>.
+You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time -- see: <<ex-id-qry>>.
 
 .Query selecting only Doc Id
 [#ex-id-qry]
 
 
-[#android:querybuilder:::ex-id-qry]
+[#ex-id-qry]
 ====
 
 [tabs]
@@ -1648,30 +1125,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-syntax-id", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(
-        SelectResult.expression(Meta.id).`as`("hotelId")
-    )
-    .from(DataSource.collection(collection))
-
+include::android:example$codesnippet_collection.kt[tags="query-syntax-id", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-syntax-id", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query listQuery =
-    QueryBuilder.select(SelectResult.expression(Meta.id).as("metaID"))
-        .from(DataSource.collection(collection));
+include::android:example$codesnippet_collection.java[tags="query-syntax-id", indent=0]
 ----
 --
 
@@ -1681,13 +1147,13 @@ Query listQuery =
 ====
 
 
-[#android:querybuilder:::result-set-format-3]
+[#result-set-format-3]
 ==== Result Set Format
 The result set returned by queries using a SelectResult expression of the form `SelectResult.expression(meta.id)` is an array of dictionary objects -- one for each document matching the query criteria.
-Each result object has `id` as the key and the ID value as its value -- -see <<android:querybuilder:::ex-id-rtn>>.
+Each result object has `id` as the key and the ID value as its value -- -see <<ex-id-rtn>>.
 
 .Format of Result Set (Doc Id only)
-[#android:querybuilder:::ex-id-rtn]
+[#ex-id-rtn]
 ====
 [pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
@@ -1704,16 +1170,16 @@ Each result object has `id` as the key and the ID value as its value -- -see <<a
 ----
 ====
 
-[#android:querybuilder:::result-set-access-3]
+[#result-set-access-3]
 ==== Result Set Access
 
-In this case, access the required document's properties by unpacking the `id` and using it to get the document from the database -- see: <<android:querybuilder:::ex-id-acc>>.
+In this case, access the required document's properties by unpacking the `id` and using it to get the document from the database -- see: <<ex-id-acc>>.
 
 .Using Returned Document Properties (Document Id)
 [#ex-id-acc]
 
 
-[#android:querybuilder:::ex-id-acc]
+[#ex-id-acc]
 ====
 
 [tabs]
@@ -1724,39 +1190,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-access-id", indent=0]
 [source, Kotlin]
 ----
-query.execute().use { rs ->
-    rs.allResults().forEach {
-        log("hotel id ->${it.getString("hotelId")}")
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-access-id", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-access-id", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-try (ResultSet rs = listQuery.execute()) {
-    for (Result result: rs.allResults()) {
-
-        // get the ID form the result's k-v pair array
-        String thisDocsId = result.getString("metaID"); // <.>
-
-        // Get document from DB using retrieved ID
-        Document thisDoc = collection.getDocument(thisDocsId);
-
-        // Process document as required
-        String thisDocsName = thisDoc.getString("Name");
-    }
-}
+include::android:example$codesnippet_collection.java[tags="query-access-id", indent=0]
 ----
 --
 
@@ -1768,18 +1214,18 @@ try (ResultSet rs = listQuery.execute()) {
 <.> Extract the Id value from the dictionary and use it to get the document from the database
 
 
-[#android:querybuilder:::lbl-count-sel]
+[#lbl-count-sel]
 === Select Count-only
 
 
-[#android:querybuilder:::query-4]
+[#query-4]
 ==== Query
 
 .Query selecting a Count-only
 [#ex-count-qry]
 
 
-[#android:querybuilder:::ex-count-qry]
+[#ex-count-qry]
 ====
 
 [tabs]
@@ -1790,31 +1236,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-syntax-count-only", indent=0]
 [source, Kotlin]
 ----
-
-val query = QueryBuilder
-    .select(
-        SelectResult.expression(Function.count(Expression.string("*"))).`as`("mycount")
-    ) // <.>
-    .from(DataSource.collection(collection))
-
+include::android:example$codesnippet_collection.kt[tags="query-syntax-count-only", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-syntax-count-only", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query listQuery = QueryBuilder.select(
-        SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) // <.>
-    .from(DataSource.collection(collection));
+include::android:example$codesnippet_collection.java[tags="query-syntax-count-only", indent=0]
 ----
 --
 
@@ -1825,13 +1259,13 @@ Query listQuery = QueryBuilder.select(
 
 <.> The alias name, `mycount`, is used to access the count value.
 
-[#android:querybuilder:::result-set-format-4]
+[#result-set-format-4]
 ==== Result Set Format
 The result set returned by a count such as `Select.expression(Function.count(Expression.all)))` is a key-value pair.
-The key is the count name, as defined using `SelectResult.as` -- see: <<android:querybuilder:::ex-count-rtn>> for the format and <<android:querybuilder:::ex-count-qry>> for the query.
+The key is the count name, as defined using `SelectResult.as` -- see: <<ex-count-rtn>> for the format and <<ex-count-qry>> for the query.
 
 .Format of Result Set (Count)
-[#android:querybuilder:::ex-count-rtn]
+[#ex-count-rtn]
 ====
 [pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
@@ -1845,16 +1279,16 @@ The key is the count name, as defined using `SelectResult.as` -- see: <<android:
 <.> The key-value pair returned by a count.
 ====
 
-[#android:querybuilder:::result-set-access-4]
+[#result-set-access-4]
 ==== Result Set Access
 
-Access the count using its alias name (`mycount` in this example) -- see <<android:querybuilder:::ex-count-acc>>
+Access the count using its alias name (`mycount` in this example) -- see <<ex-count-acc>>
 
 [#ex-count-acc]
 .Using Returned Document Properties (Count)
 
 
-[#android:querybuilder:::ex-count-acc]
+[#ex-count-acc]
 ====
 
 [tabs]
@@ -1865,42 +1299,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-access-count-only", indent=0]
 [source, Kotlin]
 ----
-query.execute().use { rs ->
-    rs.allResults().forEach {
-        log("name -> ${it.getInt("mycount")}")
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-access-count-only", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-access-count-only", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-try (ResultSet resultSet = listQuery.execute()) {
-    for (Result result: resultSet) {
-
-        // Retrieve count using key 'mycount'
-        Integer altDocId = result.getInt("mycount");
-
-        // Alternatively, use the index
-        Integer orDocId = result.getInt(0);
-    }
-}
-
-// Or even leave out the for-loop altogether
-int resultCount;
-try (ResultSet resultSet = listQuery.execute()) {
-    resultCount = resultSet.next().getInt("mycount");
-}
+include::android:example$codesnippet_collection.java[tags="query-access-count-only", indent=0]
 ----
 --
 
@@ -1911,17 +1322,17 @@ try (ResultSet resultSet = listQuery.execute()) {
 
 <.> Get the count using the `SelectResult.as` alias, which is used as its key.
 
-[#android:querybuilder:::lbl-pagination]
+[#lbl-pagination]
 === Handling Pagination
 One way to handle pagination in high-volume queries is to retrieve the results in batches.
-Use the `limit` and `offset` feature, to return a defined number of results starting from a given offset -- see: <<android:querybuilder:::ex-pagination>>.
+Use the `limit` and `offset` feature, to return a defined number of results starting from a given offset -- see: <<ex-pagination>>.
 
 
 [#ex-pagination]
 .Query Pagination
 
 
-[#android:querybuilder:::ex-pagination]
+[#ex-pagination]
 ====
 
 [tabs]
@@ -1932,42 +1343,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-syntax-pagination", indent=0]
 [source, Kotlin]
 ----
-val thisOffset = 0
-val thisLimit = 20
-val listQuery = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .limit(
-        Expression.intValue(thisLimit),
-        Expression.intValue(thisOffset)
-    ) // <.>
+include::android:example$codesnippet_collection.kt[tags="query-syntax-pagination", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-syntax-pagination", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-
-int thisOffset = 0;
-int thisLimit = 20;
-
-Query listQuery =
-    QueryBuilder
-        .select(SelectResult.all())
-        .from(DataSource.collection(collection))
-        .limit(
-            Expression.intValue(thisLimit),
-            Expression.intValue(thisOffset)); // <.>
-
+include::android:example$codesnippet_collection.java[tags="query-syntax-pagination", indent=0]
 ----
 --
 
@@ -1981,7 +1369,7 @@ Query listQuery =
 TIP: For more on using the QueryBuilder API, see our blog: https://blog.couchbase.com/sql-for-json-query-interface-couchbase-mobile/[Introducing the Query Interface in Couchbase Mobile]
 
 
-[#android:querybuilder:::json-result-sets]
+[#json-result-sets]
 == JSON Result Sets
 
 Couchbase Lite for Android provides a convenience API to convert query results to JSON strings.
@@ -1990,10 +1378,10 @@ Couchbase Lite for Android provides a convenience API to convert query results t
 .Using JSON Results
 
 
-[#android:querybuilder:::ex-json]
+[#ex-json]
 ====
 
-Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Result.html#toJSON--[Result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<android:querybuilder:::ex-json>> for a working example.
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Result.html#ex-json>> for a working example.
 [tabs]
 =====
 
@@ -2002,62 +1390,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-access-json", indent=0]
 [source, Kotlin]
 ----
-// Uses Jackson JSON processor
-val mapper = ObjectMapper()
-val hotels = mutableListOf<Hotel>()
-
-listQuery.execute().use { rs ->
-    rs.forEach {
-
-        // Get result as JSON string
-        val json = it.toJSON() // <.>
-
-        // Get Hashmap from JSON string
-        val dictFromJSONstring = mapper.readValue(json, HashMap::class.java) // <.>
-
-        // Use created hashmap
-        val hotelId = dictFromJSONstring["id"].toString() //
-        val hotelType = dictFromJSONstring["type"].toString()
-        val hotelname = dictFromJSONstring["name"].toString()
-
-        // Get custom object from JSON string
-        val thisHotel = mapper.readValue(json, Hotel::class.java) // <.>
-        hotels.add(thisHotel)
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-access-json", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-access-json", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// Uses Jackson JSON processor
-ObjectMapper mapper = new ObjectMapper();
-List<Hotel> hotels = new ArrayList<>();
-
-try (ResultSet rs = listQuery.execute()) {
-    for (Result result: rs) {
-        String json = result.toJSON();
-        Map<String, String> dictFromJSONstring = mapper.readValue(json, HashMap.class);
-
-        String hotelId = dictFromJSONstring.get("id");
-        String hotelType = dictFromJSONstring.get("type");
-        String hotelname = dictFromJSONstring.get("name");
-
-        // Get custom object from JSON string
-        Hotel thisHotel = mapper.readValue(json, Hotel.class);
-        hotels.add(thisHotel);
-    }
-}
+include::android:example$codesnippet_collection.java[tags="query-access-json", indent=0]
 ----
 --
 
@@ -2068,7 +1413,7 @@ try (ResultSet rs = listQuery.execute()) {
 
 
 .JSON String Format
-[#android:querybuilder:::ex-json-format]
+[#ex-json-format]
 If your query selects ALL then the JSON format will be:
 
 [source, JSON]
@@ -2092,7 +1437,7 @@ If your query selects a sub-set of available properties then the JSON format wil
 ----
 
 
-[#android:querybuilder:::lbl-predquery]
+[#lbl-predquery]
 == Predictive Query
 
 .Enterprise Edition only
@@ -2106,23 +1451,23 @@ image::ROOT:predictive-diagram.png[]
 
 To run a predictive query with a model as the one shown above, you must implement the following steps.
 
-. <<android:querybuilder:::integrate-the-model,Integrate the Model>>
-. <<android:querybuilder:::register-the-model,Register the Model>>
-. <<android:querybuilder:::create-an-index,Create an Index (Optional)>>
-. <<android:querybuilder:::run-a-prediction-query,Run a Prediction Query>>
+. <<integrate-the-model,Integrate the Model>>
+. <<register-the-model,Register the Model>>
+. <<create-an-index,Create an Index (Optional)>>
+. <<run-a-prediction-query,Run a Prediction Query>>
 . <<Deregister-the-model,Deregister the Model>>
 
 
-[#android:querybuilder:::integrate-the-model]
+[#integrate-the-model]
 === Integrate the Model
 
-To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `predict()` -- see: <<android:querybuilder:::int-pred-model>>.
+To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `predict()` -- see: <<int-pred-model>>.
 
 .Integrating a predictive model
 [#int-pred-model]
 
 
-[#android:querybuilder:::int-pred-model]
+[#int-pred-model]
 ====
 
 [tabs]
@@ -2133,90 +1478,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="predictive-model", indent=0]
 [source, Kotlin]
 ----
-// tensorFlowModel is a fake implementation
-object TensorFlowModel {
-    fun predictImage(data: ByteArray?): Map<String, Any?> = TODO()
-}
-
-object ImageClassifierModel : PredictiveModel {
-    const val NAME = "ImageClassifier"
-
-    // this would be the implementation of the ml model you have chosen
-    override fun predict(input: Dictionary) = input.getBlob("photo")?.let {
-        MutableDictionary(TensorFlowModel.predictImage(it.content)) // <1>
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="predictive-model", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="predictive-model", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-class ImageClassifierModel implements PredictiveModel {
-    @Override
-    public Dictionary predict(@NonNull Dictionary input) {
-        Blob blob = input.getBlob("photo");
-        if (blob == null) { return null; }
-
-        // tensorFlowModel is a fake implementation
-        // this would be the implementation of the ml model you have chosen
-        return new MutableDictionary(TensorFlowModel.predictImage(blob.getContent())); // <1>
-    }
-}
-
-@SuppressWarnings("unused")
-class LogTestLogger implements com.couchbase.lite.Logger {
-    @NonNull
-    private final LogLevel level;
-
-    public LogTestLogger(@NonNull LogLevel level) { this.level = level; }
-
-    @NonNull
-    @Override
-    public LogLevel getLevel() { return level; }
-
-    @Override
-    public void log(@NonNull LogLevel level, @NonNull LogDomain domain, @NonNull String message) {
-
-    }
-}
-
-
-@SuppressWarnings("unused")
-class TensorFlowModel {
-    public static Map<String, Object> predictImage(byte[] data) {
-        return null;
-    }
-}
-    // tensorFlowModel is a fake implementation
-    // this would be the implementation of the ml model you have chosen
-    public static class TensorFlowModel {
-        public static Map<String, Object> predictImage(byte[] data) {
-            return null;
-        }
-    }
-
-    public static class ImageClassifierModel implements PredictiveModel {
-        @Override
-        public Dictionary predict(@NonNull Dictionary input) {
-            Blob blob = input.getBlob("photo");
-
-            // tensorFlowModel is a fake implementation
-            // this would be the implementation of the ml model you have chosen
-            return (blob == null)
-                ? null
-                : new MutableDictionary(TensorFlowModel.predictImage(blob.getContent())); // <1>
-        }
-    }
+include::android:example$codesnippet_collection.java[tags="predictive-model", indent=0]
 ----
 --
 
@@ -2230,7 +1504,7 @@ The input and output of the predictive model is a `DictionaryObject`.
 Therefore, the supported data type will be constrained by the data type that the `DictionaryObject` supports.
 
 
-[#android:querybuilder:::register-the-model]
+[#register-the-model]
 === Register the Model
 
 To register the model you must create a new instance and pass it to the `Database.prediction.registerModel` static method.
@@ -2239,7 +1513,7 @@ To register the model you must create a new instance and pass it to the `Databas
 [#reg-pred-model]
 
 
-[#android:querybuilder:::reg-pred-model]
+[#reg-pred-model]
 ====
 
 [tabs]
@@ -2250,23 +1524,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="register-model", indent=0]
 [source, Kotlin]
 ----
-Database.prediction.registerModel("ImageClassifier", ImageClassifierModel)
+include::android:example$codesnippet_collection.kt[tags="register-model", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="register-model", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());
+include::android:example$codesnippet_collection.java[tags="register-model", indent=0]
 ----
 --
 
@@ -2276,7 +1546,7 @@ Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel())
 ====
 
 
-[#android:querybuilder:::create-an-index]
+[#create-an-index]
 === Create an Index
 
 Creating an index for a predictive query is highly recommended.
@@ -2284,10 +1554,10 @@ By computing the predictions during writes and building a prediction index, you 
 
 There are two types of indexes for predictive queries:
 
-* <<android:querybuilder:::value-index,Value Index>>
-* <<android:querybuilder:::predictive-index,Predictive Index>>
+* <<value-index,Value Index>>
+* <<predictive-index,Predictive Index>>
 
-[#android:querybuilder:::value-index]
+[#value-index]
 ==== Value Index
 
 The code below creates a value index from the "label" value of the prediction result.
@@ -2297,7 +1567,7 @@ When documents are added or updated, the index will call the prediction function
 [#crt-val-index]
 
 
-[#android:querybuilder:::crt-val-index]
+[#crt-val-index]
 ====
 
 [tabs]
@@ -2308,28 +1578,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="predictive-query-value-index", indent=0]
 [source, Kotlin]
 ----
-collection.createIndex(
-    "value-index-image-classifier",
-    IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")))
-)
+include::android:example$codesnippet_collection.kt[tags="predictive-query-value-index", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="predictive-query-value-index", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-collection.createIndex(
-    "value-index-image-classifier",
-    IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label"))));
+include::android:example$codesnippet_collection.java[tags="predictive-query-value-index", indent=0]
 ----
 --
 
@@ -2339,7 +1600,7 @@ collection.createIndex(
 ====
 
 
-[#android:querybuilder:::predictive-index]
+[#predictive-index]
 ==== Predictive Index
 
 Predictive Index is a new index type used for predictive query.
@@ -2349,7 +1610,7 @@ It differs from the value index in that it caches the predictive results and cre
 [#crt-val-index]
 
 
-[#android:querybuilder:::crt-val-index]
+[#crt-val-index]
 ====
 
 Here we create a predictive index from the `label` value of the prediction result.
@@ -2361,32 +1622,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="predictive-query-predictive-index", indent=0]
 [source, Kotlin]
 ----
-val inputMap: Map<String, Any?> = mutableMapOf("numbers" to Expression.property("photo"))
-collection.createIndex(
-    "predictive-index-image-classifier",
-    IndexBuilder.predictiveIndex("ImageClassifier", Expression.map(inputMap), null)
-)
+include::android:example$codesnippet_collection.kt[tags="predictive-query-predictive-index", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="predictive-query-predictive-index", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Map<String, Object> inputMap = new HashMap<>();
-inputMap.put("numbers", Expression.property("photo"));
-Expression input = Expression.map(inputMap);
-
-PredictiveIndex index = IndexBuilder.predictiveIndex("ImageClassifier", input, null);
-collection.createIndex("predictive-index-image-classifier", index);
+include::android:example$codesnippet_collection.java[tags="predictive-query-predictive-index", indent=0]
 ----
 --
 
@@ -2396,7 +1644,7 @@ collection.createIndex("predictive-index-image-classifier", index);
 ====
 
 
-[#android:querybuilder:::run-a-prediction-query]
+[#run-a-prediction-query]
 === Run a Prediction Query
 
 The code below creates a query that calls the prediction function to return the "label" value for the first 10 results in the database.
@@ -2405,7 +1653,7 @@ The code below creates a query that calls the prediction function to return the 
 [#crt-val-index]
 
 
-[#android:querybuilder:::crt-val-index]
+[#crt-val-index]
 ====
 
 [tabs]
@@ -2416,56 +1664,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="predictive-query", indent=0]
 [source, Kotlin]
 ----
-val inputMap: Map<String, Any?> = mutableMapOf("photo" to Expression.property("photo"))
-val prediction: PredictionFunction = Function.prediction(
-    ImageClassifierModel.NAME,
-    Expression.map(inputMap) // <1>
-)
-
-val query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(
-        prediction.propertyPath("label").equalTo(Expression.string("car"))
-            .and(
-                prediction.propertyPath("probability")
-                    .greaterThanOrEqualTo(Expression.doubleValue(0.8))
-            )
-    )
-
-query.execute().use {
-    log("Number of rows: ${it.allResults().size}")
-}
+include::android:example$codesnippet_collection.kt[tags="predictive-query", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="predictive-query", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Map<String, Object> inputProperties = new HashMap<>();
-inputProperties.put("photo", Expression.property("photo"));
-Expression input = Expression.map(inputProperties);
-PredictionFunction prediction = Function.prediction("ImageClassifier", input); // <1>
-
-Query query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(Expression.property("label").equalTo(Expression.string("car"))
-        .and(prediction.propertyPath("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))));
-
-// Run the query.
-try (ResultSet result = query.execute()) {
-    Logger.log("Number of rows: " + result.allResults().size());
-}
+include::android:example$codesnippet_collection.java[tags="predictive-query", indent=0]
 ----
 --
 
@@ -2479,7 +1690,7 @@ try (ResultSet result = query.execute()) {
 NOTE: The null value returned by the prediction method will be interpreted as MISSING value in queries.
 
 
-[#android:querybuilder:::deregister-the-model]
+[#deregister-the-model]
 === Deregister the Model
 
 To deregister the model you must call the `Database.prediction.unregisterModel` static method.
@@ -2488,7 +1699,7 @@ To deregister the model you must call the `Database.prediction.unregisterModel` 
 [#dereg-val-index]
 
 
-[#android:querybuilder:::dereg-val-index]
+[#dereg-val-index]
 ====
 
 [tabs]
@@ -2499,23 +1710,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="unregister-model", indent=0]
 [source, Kotlin]
 ----
-Database.prediction.unregisterModel("ImageClassifier")
+include::android:example$codesnippet_collection.kt[tags="unregister-model", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="unregister-model", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Database.prediction.unregisterModel("ImageClassifier");
+include::android:example$codesnippet_collection.java[tags="unregister-model", indent=0]
 ----
 --
 
@@ -2525,7 +1732,7 @@ Database.prediction.unregisterModel("ImageClassifier");
 ====
 
 
-[#android:querybuilder:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -2541,7 +1748,7 @@ Database.prediction.unregisterModel("ImageClassifier");
 
 .
 
-[.column#android:querybuilder:::-2]
+[.column]
 ====== {empty}
 .Learn more . . .
 * xref:android:database.adoc[Databases]
@@ -2553,7 +1760,7 @@ Database.prediction.unregisterModel("ImageClassifier");
 .
 
 
-[.column#android:querybuilder:::-3]
+[.column]
 ====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

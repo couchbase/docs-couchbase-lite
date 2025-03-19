@@ -1,4 +1,4 @@
-[#objc:troubleshooting-logs:::]
+
 = Using Logs
 :page-role:
 :description: Couchbase Lite on Objective-C -- Using Logs for Troubleshooting
@@ -20,30 +20,30 @@ Related Content -- xref:objc:troubleshooting-queries.adoc[Troubleshooting Querie
 
 * The retrieval of logs from the device is out of scope of this feature.
 * This content applies to the post 2.5 versions.
-If you are using a Couchbase Lite release prior to 2.5 see <<objc:troubleshooting-logs:::pre-2x5-logging,Deprecated functionality>>
+If you are using a Couchbase Lite release prior to 2.5 see <<pre-2x5-logging,Deprecated functionality>>
 
 --
 
 
-[#objc:troubleshooting-logs:::introduction]
+[#introduction]
 == Introduction
 Couchbase Lite provides a robust Logging API footnote:fn-2x5[From version 2.5] -- see: API References for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLLog.html[CBLLog], https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLFileLogger.html[CBLFileLogger] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLLogFileConfiguration.html[CBLLogFileConfiguration] -- which make debugging and troubleshooting easier during development and in production.
 It delivers flexibility in terms of how logs are generated and retained, whilst also maintaining the level of logging required by Couchbase Support for investigation of issues.
 
 Log output is split into the following streams:
 
-* <<objc:troubleshooting-logs:::lbl-file-logs>>
+* <<lbl-file-logs>>
 +
-Here logs are written to <<objc:troubleshooting-logs:::log-file-outputs,separate log files>> filtered by log level, with each log level supporting individual retention policies.
+Here logs are written to <<log-file-outputs,separate log files>> filtered by log level, with each log level supporting individual retention policies.
 
-* <<objc:troubleshooting-logs:::lbl-console-logs>>
+* <<lbl-console-logs>>
 +
 --
 You can independently configure and control console logs, which provides a convenient method of accessing diagnostic information during debugging scenarios.
 With console logging, you can fine-tune diagnostic output to suit specific debug scenarios, without interfering with any logging required by Couchbase Support for the investigation of issues.
 --
 
-* <<objc:troubleshooting-logs:::lbl-custom-logs>>
+* <<lbl-custom-logs>>
 +
 --
 For greater flexibility you can implement a custom logging class using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Protocols/CBLLogger.html[CBLLogger] interface.
@@ -52,7 +52,7 @@ For greater flexibility you can implement a custom logging class using the https
 
 In all instances, you control what is logged and at what level using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLLog.html[CBLLog] class.
 
-[#objc:troubleshooting-logs:::lbl-console-logs]
+[#lbl-console-logs]
 == Console based logging
 Console based logging is often used to facilitate troubleshooting during development.
 
@@ -61,7 +61,7 @@ You can easily fine-tune their diagnostic content to meet the needs of a particu
 
 Changes to console logging are independent of file logging, so you can make change without compromising any files logging streams.
 It is enabled by default.
-To change default settings use database's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLLog.html[CBLLog] method to set the required values -- see <<objc:troubleshooting-logs:::eg-cons-log>>
+To change default settings use database's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLLog.html[CBLLog] method to set the required values -- see <<eg-cons-log>>
 
 You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLLog.html#/c:objc(cs)CBLLog(py)console[CBLLog.console] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLConsoleLogger.html[CBLConsoleLogger] to control console logging.
 
@@ -70,19 +70,15 @@ You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{mainte
 .Change Console Logging Settings
 
 
-[#objc:troubleshooting-logs:::eg-cons-log]
+[#eg-cons-log]
 ====
 
 This example enables and defines console-based logging settings.
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="console-logging", indent=0]
 [source, objc]
 ----
-CBLDatabase.log.console.domains = kCBLLogDomainAll; // <.>
-CBLDatabase.log.console.level = kCBLLogLevelVerbose; // <.>
+include::objc:example$code_snippets/SampleCodeTest.m[tags="console-logging", indent=0]
 ----
-
 
 ====
 
@@ -93,22 +89,22 @@ To disable logging for the specified https://docs.couchbase.com/mobile/{major}.{
 Related::
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLLog.html[CBLLog] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLLog.html#/c:objc(cs)CBLLog(py)console[CBLLog.console] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLConsoleLogger.html[CBLConsoleLogger]
 
-[#objc:troubleshooting-logs:::lbl-file-logs]
+[#lbl-file-logs]
 == File based logging
-File based logging is disabled by default --  see: <<objc:troubleshooting-logs:::eg-file-log>> for how to enable it.
+File based logging is disabled by default --  see: <<eg-file-log>> for how to enable it.
 
 You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLLog.html#/c:objc(cs)CBLLog(py)file[CBLLog.file] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLFileLogger.html[CBLFileLogger] to control file-based logging.
 
-[#objc:troubleshooting-logs:::formats]
+[#formats]
 === Formats
 Available file based logging formats:
 
 * Binary -- most efficient for storage and performance. It is the default for file based logging.
 +
-Use this format and a decoder, such as *cbl-log*, to view them -- see: <<objc:troubleshooting-logs:::decoding-binary-logs>>.
+Use this format and a decoder, such as *cbl-log*, to view them -- see: <<decoding-binary-logs>>.
 * Plaintext
 
-[#objc:troubleshooting-logs:::configuration]
+[#configuration]
 === Configuration
 As with console logging you can set the log level -- see:  the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLFileLogger.html[CBLFileLogger] class.
 
@@ -126,24 +122,14 @@ You can over ride that where necessary and output a plain text log.
 .Enabling file logging
 
 
-[#objc:troubleshooting-logs:::eg-file-log]
+[#eg-file-log]
 ====
 
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="file-logging", indent=0]
 [source, objc]
 ----
-NSString *tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent: @"cbllog"];
-CBLLogFileConfiguration *config = [[CBLLogFileConfiguration alloc] initWithDirectory:tempFolder]; // <.>
-config.maxRotateCount = 12; // <.>
-config.maxSize = 524288; // <.>
-config.usePlainText = YES; // <.>
-[CBLDatabase.log.file setConfig:config];
-[CBLDatabase.log.file setLevel:kCBLLogLevelVerbose]; // <.>
+include::objc:example$code_snippets/SampleCodeTest.m[tags="file-logging", indent=0]
 ----
-
-
 ====
 
 <.> Set the log file directory
@@ -160,49 +146,27 @@ Related::
  https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLLog.html[CBLLog] |
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLLog.html#/c:objc(cs)CBLLog(py)file[CBLLog.file] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLFileLogger.html[CBLFileLogger]
 
-[#objc:troubleshooting-logs:::lbl-custom-logs]
+[#lbl-custom-logs]
 == Custom logging
 
 Couchbase Lite allows for the registration of a callback function to receive Couchbase Lite log messages, which may be logged using any external logging framework.
 
-To do this, apps must implement the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Protocols/CBLLogger.html[CBLLogger] interface -- see <<objc:troubleshooting-logs:::eg-impl-log>> -- and enable custom logging using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLLog.html#/c:objc(cs)CBLLog(py)custom[CBLLog.custom] -- see <<objc:troubleshooting-logs:::eg-cust-log>>.
+To do this, apps must implement the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Protocols/CBLLogger.html[CBLLogger] interface -- see <<eg-impl-log>> -- and enable custom logging using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLLog.html#eg-cust-log>>.
 
 
 [#eg-impl-log]
 .Implementing logger interface
 
 
-[#objc:troubleshooting-logs:::eg-impl-log]
+[#eg-impl-log]
 ====
 
 Here we introduce the code that implements the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Protocols/CBLLogger.html[CBLLogger] interface.
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="custom-logging", indent=0]
 [source, objc]
 ----
-@interface LogTestLogger :NSObject<CBLLogger>
-
-// set the log level
-@property (nonatomic) CBLLogLevel level;
-
-@end
-
-#pragma mark - Custom Logger class
-
-@implementation LogTestLogger
-
-@synthesize level=_level;
-
-- (void) logWithLevel:(CBLLogLevel)level domain:(CBLLogDomain)domain message:(NSString*)message {
-    // handle the message, for example piping it to
-    // a third party framework
-}
-
-@end
-
+include::objc:example$code_snippets/SampleCodeTest.m[tags="custom-logging", indent=0]
 ----
-
 
 ====
 
@@ -211,20 +175,15 @@ Here we introduce the code that implements the https://docs.couchbase.com/mobile
 .Enabling custom logging
 
 
-[#objc:troubleshooting-logs:::eg-cust-log]
+[#eg-cust-log]
 ====
 
-This example show how to enable the custom logger from <<objc:troubleshooting-logs:::eg-impl-log>>.
+This example show how to enable the custom logger from <<eg-impl-log>>.
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="set-custom-logging", indent=0]
 [source, objc]
 ----
-LogTestLogger *logger = [[LogTestLogger alloc] init];
-logger.level = kCBLLogLevelWarning;
-[CBLDatabase.log setCustom:logger];
+include::objc:example$code_snippets/SampleCodeTest.m[tags="set-custom-logging", indent=0]
 ----
-
 
 ====
 
@@ -235,14 +194,14 @@ The custom logger is called with every log and may choose to filter it, using it
 Related::
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLLog.html[CBLLog] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLLog.html#/c:objc(cs)CBLLog(py)custom[CBLLog.custom] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Protocols/CBLLogger.html[CBLLogger]
 
-[#objc:troubleshooting-logs:::decoding-binary-logs]
+[#decoding-binary-logs]
 == Decoding binary logs
 
 NOTE: The latest version of the cbl-log tool is `3.0.0`.
 
-You can use the *cbl-log* tool to decode binary log files -- see <<objc:troubleshooting-logs:::eg-cbl-log>>.
+You can use the *cbl-log* tool to decode binary log files -- see <<eg-cbl-log>>.
 
-[#objc:troubleshooting-logs:::eg-cbl-log]
+[#eg-cbl-log]
 .Using the cbl-log tool
 =====
 [tabs]
@@ -307,7 +266,7 @@ $ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
 =====
 
 
-[#objc:troubleshooting-logs:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -324,7 +283,7 @@ $ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
 
 .
 
-[.column#objc:troubleshooting-logs:::-2]
+[.column]
 ====== {empty}
 .Learn more . . .
 * xref:objc:query-n1ql-mobile-querybuilder-diffs.adoc[{sqlpp} Mobile - Querybuilder  Differences]
@@ -340,7 +299,7 @@ $ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
 .
 
 
-[.column#objc:troubleshooting-logs:::-3]
+[.column]
 ====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

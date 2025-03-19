@@ -1,4 +1,4 @@
-[#android:replication:::]
+
 = Remote Sync Gateway
 :page-aliases: learn/java-android-replication.adoc
 :page-role:
@@ -11,7 +11,7 @@
 [abstract]
 --
 Description -- _{description}_ +
-Related Content -- xref:android:conflict.adoc[Handling Data Conflicts] | xref:android:dbreplica.adoc[Intra-Device] | <<android:replication:::p2psync-websocket.adoc,Peer-to-Peer>>
+Related Content -- xref:android:conflict.adoc[Handling Data Conflicts] | xref:android:dbreplica.adoc[Intra-Device] | <<p2psync-websocket.adoc,Peer-to-Peer>>
 --
 
 .Android enablers
@@ -36,7 +36,7 @@ They demonstrate the basic concepts and approaches to using a feature.
 Use them as inspiration and adapt these examples to best practice when developing applications for your platform.
 
 
-[#android:replication:::introduction]
+[#introduction]
 == Introduction
 
 
@@ -52,7 +52,7 @@ Your application runs a replicator (also referred to here as a client), which  w
 
 Subsequent sections provide additional details and examples for the main configuration options.
 
-[#android:replication:::replication-concepts]
+[#replication-concepts]
 == Replication Concepts
 
 Couchbase Lite allows for one database for each application running on the mobile device.
@@ -70,14 +70,14 @@ Collection:: A specific collection or a set of collections is synced.
 As part of the syncing setup, the Gateway has to map the Couchbase Lite database to the database being synced on Capella.
 
 
-[#android:replication:::replication-protocol]
+[#replication-protocol]
 == Replication Protocol
 
-[#android:replication:::scheme]
+[#scheme]
 === Scheme
 
 Couchbase Mobile uses a replication protocol based on WebSockets for replication.
-To use this protocol the replication URL should specify WebSockets as the URL scheme (see the <<android:replication:::lbl-cfg-tgt>> section below).
+To use this protocol the replication URL should specify WebSockets as the URL scheme (see the <<lbl-cfg-tgt>> section below).
 
 Incompatibilities::
 Couchbase Lite's replication protocol is *incompatible* with CouchDB-based databases.
@@ -91,7 +91,7 @@ Sync Gateway 2.x+ will automatically use:
 
 You can find further information in our blog: https://blog.couchbase.com/data-replication-couchbase-mobile/[Introducing the Data Replication Protocol].
 
-[#android:replication:::lbl-repl-ord]
+[#lbl-repl-ord]
 === Ordering
 
 To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
@@ -252,7 +252,7 @@ public class PolicyExample {
 ----
 
 
-[#android:replication:::scopes-and-collections]
+[#scopes-and-collections]
 == Scopes and Collections
 
 Scopes and Collections allow you to organize your documents in Couchbase Lite.
@@ -267,7 +267,7 @@ During replication:
 
 . If Sync Gateway config is updated to add a collection to a scope that is being synchronized, the replication will ignore the collection. The added collection will not automatically sync until the Couchbase Lite replicator's configuration is updated.
 
-[#android:replication:::default-collection]
+[#default-collection]
 === Default Collection
 
 When upgrading Couchbase Lite to 3.1, the existing documents in the database will be automatically migrated to the default collection.
@@ -282,7 +282,7 @@ image:couchbase-lite/current/{underscore}images/cbl-replication-scopes-collectio
 image:couchbase-lite/current/{underscore}images/cbl-replication-scopes-collections-2.png[Sync Couchbase Lite default collection with default collection on Sync Gateway,500,,align="left"]
 
 
-[#android:replication:::user-defined-collections]
+[#user-defined-collections]
 === User-Defined Collections
 
 The user-defined collections specified in the Couchbase Lite replicator setup must exist (and be identical) on the Sync Gateway side to sync.
@@ -295,12 +295,12 @@ image:couchbase-lite/current/{underscore}images/cbl-replication-scopes-collectio
 
 
 // tag::replicator-config-sample[]
-[#android:replication:::configuration-summary]
+[#configuration-summary]
 == Configuration Summary
 
 
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
-<<android:replication:::ex-simple-repl>> shows the configuration and initialization process.
+<<ex-simple-repl>> shows the configuration and initialization process.
 
 NOTE: You need Couchbase Lite 3.1+ and Sync Gateway 3.1+ to use `custom` Scopes and Collections. +
 If you’re using Capella App Services or Sync Gateway releases that are older than version 3.1, you won’t be able to access `custom` Scopes and Collections.
@@ -313,7 +313,7 @@ Click the *GitHub* tab in the code examples for further details.
 .Replication configuration and initialization
 
 
-[#android:replication:::ex-simple-repl]
+[#ex-simple-repl]
 ====
 
 [tabs]
@@ -324,103 +324,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="p2p-act-rep-func", indent=0]
 [source, Kotlin]
 ----
-    // initialize the replicator configuration
-    ReplicatorConfigurationFactory.newConfig(
-        target = URLEndpoint(URI("wss://listener.com:8954")), // <.>
-
-        collections = mapOf(collections to null),
-
-        // Set replicator type
-        type = ReplicatorType.PUSH_AND_PULL,
-
-        // Configure Sync Mode
-        continuous = false, // default value
-
-
-        // set auto-purge behavior
-        // (here we override default)
-        enableAutoPurge = false, // <.>
-
-
-        // Configure Server Authentication --
-        // only accept self-signed certs
-        acceptOnlySelfSignedServerCertificate = true, // <.>
-
-
-        // Configure the credentials the
-        // client will provide if prompted
-        authenticator = BasicAuthenticator("PRIVUSER", "let me in".toCharArray())  // <.>
-
-    )
-)
-
-// Optionally add a change listener <.>
-val token = repl.addChangeListener { change ->
-    val err: CouchbaseLiteException? = change.status.error
-    if (err != null) {
-        log("Error code ::  ${err.code}", err)
-    }
-}
-
-// Start replicator
-repl.start(false) // <.>
-
-thisReplicator = repl
-thisToken = token
-
+include::android:example$codesnippet_collection.kt[tags="p2p-act-rep-func", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="p2p-act-rep-func", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-    // initialize the replicator configuration
-    new ReplicatorConfiguration(new URLEndpoint(new URI("wss://listener.com:8954"))) // <.>
-        .addCollections(collections, null)
-
-        // Set replicator type
-        .setType(ReplicatorType.PUSH_AND_PULL)
-
-        // Configure Sync Mode
-        .setContinuous(false) // default value
-
-
-        // set auto-purge behavior
-        // (here we override default)
-        .setAutoPurgeEnabled(false) // <.>
-
-
-        // Configure Server Authentication --
-        // only accept self-signed certs
-        .setAcceptOnlySelfSignedServerCertificate(true) // <.>
-
-        // Configure the credentials the
-        // client will provide if prompted
-        .setAuthenticator(new BasicAuthenticator("Our Username", "Our Password".toCharArray())) // <.>
-
-);
-
-// Optionally add a change listener <.>
-ListenerToken token = repl.addChangeListener(change -> {
-    CouchbaseLiteException err = change.getStatus().getError();
-    if (err != null) { Logger.log("Error code :: " + err.getCode(), err); }
-});
-
-// Start replicator
-repl.start(false); // <.>
-
-thisReplicator = repl;
-thisToken = token;
-
+include::android:example$codesnippet_collection.java[tags="p2p-act-rep-func", indent=0]
 ----
 --
 
@@ -440,50 +356,50 @@ As with any network or file I/O activity, CouchbaseLite activities should not be
 *Notes on Example*
 
 <.> get endpoint for target DB
-<.> Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html[ReplicatorConfiguration] class's constructor -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#ReplicatorConfiguration-com.couchbase.lite.Database-com.couchbase.lite.Endpoint-[ReplicatorConfiguration( database, endpoint)] -- to initialize the replicator configuration with the local database -- see also: <<android:replication:::lbl-cfg-tgt>>
-<.> The default is to auto-purge documents that this user no longer has access to -- see: <<android:replication:::anchor-auto-purge-on-revoke>>.
+<.> Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html[ReplicatorConfiguration] class's constructor -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#lbl-cfg-tgt>>
+<.> The default is to auto-purge documents that this user no longer has access to -- see: <<anchor-auto-purge-on-revoke>>.
 Here we over-ride this behavior by setting its flag false.
 
 <.> Configure how the client will authenticate the server.
 Here we say connect only to servers presenting a self-signed certificate.
-By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<android:replication:::lbl-svr-auth>>.
+By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<lbl-svr-auth>>.
 <.> Configure the client-authentication credentials (if required).
 These are the credential the client will present to pass:q,a[sync{nbsp}gateway] if requested to do so. +
 Here we configure to provide _Basic Authentication_ credentials.
-Other options are available -- see: <<android:replication:::lbl-client-auth>>.
+Other options are available -- see: <<lbl-client-auth>>.
 
 <.> Configure how the replication should handle conflict resolution -- see: xref:android:conflict.adoc[Handling Data Conflicts] topic for mor on conflict resolution.
 
-<.> Initialize the replicator using your configuration -- see: <<android:replication:::lbl-init-repl>>.
+<.> Initialize the replicator using your configuration -- see: <<lbl-init-repl>>.
 
-<.> Optionally, register an observer, which will notify you of changes to the replication status -- see: <<android:replication:::lbl-repl-mon>>
+<.> Optionally, register an observer, which will notify you of changes to the replication status -- see: <<lbl-repl-mon>>
 
-<.> Start the replicator  -- see: <<android:replication:::lbl-repl-start>>.
+<.> Start the replicator  -- see: <<lbl-repl-start>>.
 
 
-[#android:replication:::lbl-cfg-repl]
+[#lbl-cfg-repl]
 == Configure
 
 
 In this section::
 +
 --
-<<android:replication:::lbl-cfg-tgt>>
-|  <<android:replication:::lbl-cfg-sync>>
-|  <<android:replication:::lbl-cfg-keep-alive>>
-|  <<android:replication:::lbl-user-auth>>
-|  <<android:replication:::lbl-svr-auth>>
-|  <<android:replication:::lbl-client-auth>>
-|  <<android:replication:::lbl-repl-evnts>>
-|  <<android:replication:::lbl-repl-hdrs>>
-|  <<android:replication:::lbl-repl-ckpt>>
-|  <<android:replication:::lbl-repl-fltrs>>
-|  <<android:replication:::lbl-repl-chan>>
-|  <<android:replication:::anchor-auto-purge-on-revoke>>
-|  <<android:replication:::lbl-repl-delta>>
+<<lbl-cfg-tgt>>
+|  <<lbl-cfg-sync>>
+|  <<lbl-cfg-keep-alive>>
+|  <<lbl-user-auth>>
+|  <<lbl-svr-auth>>
+|  <<lbl-client-auth>>
+|  <<lbl-repl-evnts>>
+|  <<lbl-repl-hdrs>>
+|  <<lbl-repl-ckpt>>
+|  <<lbl-repl-fltrs>>
+|  <<lbl-repl-chan>>
+|  <<anchor-auto-purge-on-revoke>>
+|  <<lbl-repl-delta>>
 --
 
-[#android:replication:::lbl-cfg-tgt]
+[#lbl-cfg-tgt]
 === Configure Target
 
 Use the
@@ -516,30 +432,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="sgw-act-rep-initialize", indent=0]
 [source, Kotlin]
 ----
-// initialize the replicator configuration
-val thisConfig = ReplicatorConfigurationFactory.newConfig(
-    target = URLEndpoint(URI("wss://10.0.2.2:8954/travel-sample")), // <.>
-    collections = mapOf(collections to null)
-)
+include::android:example$codesnippet_collection.kt[tags="sgw-act-rep-initialize", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="sgw-act-rep-initialize", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// initialize the replicator configuration
-ReplicatorConfiguration thisConfig = new ReplicatorConfiguration(
-    new URLEndpoint(new URI("wss://10.0.2.2:8954/travel-sample"))) // <.>
-    .addCollections(collections, null);
+include::android:example$codesnippet_collection.java[tags="sgw-act-rep-initialize", indent=0]
 ----
 --
 
@@ -555,7 +460,7 @@ to ensure TLS encryption -- strongly recommended in production -- or `ws://`)
 [#lbl-network-interface]
 
 
-[#android:replication:::lbl-cfg-sync]
+[#lbl-cfg-sync]
 === Sync Mode
 
 
@@ -578,7 +483,7 @@ We use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{
 .Configure replicator type and mode
 
 
-[#android:replication:::ex-repl-sync]
+[#ex-repl-sync]
 ====
 
 [tabs]
@@ -589,33 +494,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="p2p-act-rep-config-type;p2p-act-rep-config-cont", indent=0]
 [source, Kotlin]
 ----
-// Set replicator type
-type = ReplicatorType.PUSH_AND_PULL,
-
-// Configure Sync Mode
-continuous = false, // default value
-
+include::android:example$codesnippet_collection.kt[tags="p2p-act-rep-config-type;p2p-act-rep-config-cont", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="p2p-act-rep-config-type;p2p-act-rep-config-cont", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// Set replicator type
-.setType(ReplicatorType.PUSH_AND_PULL)
-
-// Configure Sync Mode
-.setContinuous(false) // default value
-
+include::android:example$codesnippet_collection.java[tags="p2p-act-rep-config-type;p2p-act-rep-config-cont", indent=0]
 ----
 --
 
@@ -632,7 +523,7 @@ Unless there is a solid use-case not to, always initiate a single `PUSH_AND_PULL
 This prevents the replications generating the same checkpoint `docID` resulting in multiple conflicts.
 --
 
-[#android:replication:::lbl-cfg-keep-alive]
+[#lbl-cfg-keep-alive]
 === Retry Configuration
 
 
@@ -644,10 +535,10 @@ In the event it detects a transient error, the replicator will attempt to reconn
 
 On each retry the interval between attempts is increased exponentially (exponential backoff) up to the maximum wait time limit (5 minutes).
 
-The REST API provides configurable control over this replication retry logic using a set of configiurable properties -- see: <<android:replication:::tbl-repl-retry>>.
+The REST API provides configurable control over this replication retry logic using a set of configiurable properties -- see: <<tbl-repl-retry>>.
 
 .Replication Retry Configuration Properties
-[#android:replication:::tbl-repl-retry,cols="2,3,5"]
+[#tbl-repl-retry,cols="2,3,5"]
 |===
 
 h|Property
@@ -686,13 +577,13 @@ While you can configure the *maximum permitted* wait time,  the replicator's exp
 
 |===
 
-When necessary you can adjust any or all of those configurable values -- see: <<android:replication:::ex-repl-retry>> for how to do this.
+When necessary you can adjust any or all of those configurable values -- see: <<ex-repl-retry>> for how to do this.
 
 .Configuring Replication Retries
 [#ex-repl-retry]
 
 
-[#android:replication:::ex-repl-retry]
+[#ex-repl-retry]
 ====
 
 
@@ -704,43 +595,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="replication-retry-config", indent=0]
 [source, Kotlin]
 ----
-val repl = Replicator(
-    ReplicatorConfigurationFactory.newConfig(
-        target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-        collections = mapOf(collections to null),
-        //  other config params as required . .
-        heartbeat = 150, // <1>
-        maxAttempts = 20,
-        maxAttemptWaitTime = 600
-    )
-)
-repl.start()
-thisReplicator = repl
+include::android:example$codesnippet_collection.kt[tags="replication-retry-config", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="replication-retry-config", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Replicator repl = new Replicator(
-    new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-        .addCollections(collections, null)
-        //  other config as required . . .
-        .setHeartbeat(150) // <.>
-        .setMaxAttempts(20) // <.>
-        .setMaxAttemptWaitTime(600)); // <.>
-
-repl.start();
-thisReplicator = repl;
+include::android:example$codesnippet_collection.java[tags="replication-retry-config", indent=0]
 ----
 --
 
@@ -753,17 +620,17 @@ thisReplicator = repl;
 <.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxAttempts-int-[setMaxAttempts()] to set the required number of retry attempts
 <.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxAttemptWaitTime-long-[setMaxAttemptWaitTime()] to set the required interval between retry attempts.
 
-[#android:replication:::lbl-user-auth]
+[#lbl-user-auth]
 === User Authorization
 
 
 By default, Sync Gateway does not enable user authorization.
 This makes it easier to get up and running with synchronization.
 
-You can enable authorization in the pass:q,a[sync{nbsp}gateway] configuration file, as shown in <<android:replication:::example-enable-authorization>>.
+You can enable authorization in the pass:q,a[sync{nbsp}gateway] configuration file, as shown in <<example-enable-authorization>>.
 
 .Enable Authorization
-[#android:replication:::example-enable-authorization]
+[#example-enable-authorization]
 ====
 [source,json]
 ----
@@ -785,7 +652,7 @@ xref:sync-gateway:ROOT:refer/rest-api-admin.adoc#/user/post\__db___user_[`+POST 
 endpoint on the Admin REST API.
 
 
-[#android:replication:::lbl-svr-auth]
+[#lbl-svr-auth]
 === Server Authentication
 
 Define the credentials your app (the client) is expecting to receive from the Sync Gateway (the server) in order to ensure it is prepared to continue with the sync.
@@ -816,12 +683,9 @@ CA Cert::
 --
 Set the client to expect and accept only CA attested certificates.
 
-// include::android:example$codesnippet_collection.kt[tags=p2p-act-rep-config-cacert, indent=0]
 [source, Kotlin]
 ----
-// Configure Server Security
-// -- only accept CA attested certs
-acceptOnlySelfSignedServerCertificate = false, // <.>
+include::android:example$codesnippet_collection.kt[tags=p2p-act-rep-config-cacert, indent=0]
 ----
 <.> This is the default.
 Only certificate chains with roots signed by a trusted CA are allowed.
@@ -834,13 +698,9 @@ Self Signed Cert::
 --
 Set the client to expect and accept only self-signed certificates
 
-// include::android:example$codesnippet_collection.kt[tags=p2p-act-rep-config-self-cert, indent=0]
 [source, Kotlin]
 ----
-// Configure Server Authentication --
-// only accept self-signed certs
-acceptOnlySelfSignedServerCertificate = true, // <.>
-
+include::android:example$codesnippet_collection.kt[tags=p2p-act-rep-config-self-cert, indent=0]
 ----
 <.> Set this to `true` to accept any self signed cert.
 Any certificates that are not self-signed are rejected.
@@ -852,18 +712,12 @@ Pinned Certificate::
 --
 Set the client to expect and accept only a pinned certificate.
 
-// include::android:example$codesnippet_collection.kt[tag=p2p-act-rep-config-cacert-pinned, indent=0]
-// include::android:example$codesnippet_collection.kt[tag=p2p-act-rep-config-cacert-pinned-callouts, indent=0]
 
 [source, Kotlin]
 ----
-// Use the pinned certificate from the byte array (cert)
-pinnedServerCertificate =
-TLSIdentity.getIdentity("Our Corporate Id")?.certs?.get(0) as? X509Certificate // <.>
-    ?: throw IllegalStateException("Cannot find corporate id"),
+include::android:example$codesnippet_collection.kt[tag=p2p-act-rep-config-cacert-pinned, indent=0]
 ----
-
-<.> Configure the pinned certificate using data from the byte array `cert`
+// include::android:example$codesnippet_collection.kt[tag=p2p-act-rep-config-cacert-pinned-callouts, indent=0]
 --
 
 
@@ -880,13 +734,9 @@ CA Cert::
 --
 Set the client to expect and accept only CA attested certificates.
 
-// include::android:example$codesnippet_collection.java[tags=p2p-act-rep-config-cacert, indent=0]
 [source, Java]
 ----
-// Configure Server Security
-// -- only accept CA attested certs
-.setAcceptOnlySelfSignedServerCertificate(false); // <.>
-
+include::android:example$codesnippet_collection.java[tags=p2p-act-rep-config-cacert, indent=0]
 ----
 <.> This is the default.
 Only certificate chains with roots signed by a trusted CA are allowed.
@@ -899,13 +749,9 @@ Self Signed Cert::
 --
 Set the client to expect and accept only self-signed certificates
 
-// include::android:example$codesnippet_collection.java[tags=p2p-act-rep-config-self-cert, indent=0]
 [source, Java]
 ----
-// Configure Server Authentication --
-// only accept self-signed certs
-.setAcceptOnlySelfSignedServerCertificate(true) // <.>
-
+include::android:example$codesnippet_collection.java[tags=p2p-act-rep-config-self-cert, indent=0]
 ----
 <.> Set this to `true` to accept any self signed cert.
 Any certificates that are not self-signed are rejected.
@@ -916,18 +762,9 @@ Pinned Certificate::
 +
 --
 Set the client to expect and accept only a pinned certificate.
-// include::android:example$codesnippet_collection.java[tag=p2p-act-rep-config-cacert-pinned, indent=0]
-// include::android:example$codesnippet_collection.java[tag=p2p-act-rep-config-cacert-pinned-callouts, indent=0]
 [source, Java]
 ----
-
-// Use the pinned certificate from the byte array (cert)
-
-TLSIdentity identity = TLSIdentity.getIdentity("OurCorp");
-if (identity == null) { throw new IllegalStateException("Cannot find corporate id"); }
-config.setPinnedServerX509Certificate((X509Certificate) identity.getCerts().get(0)); // <.>
-
-
+include::android:example$codesnippet_collection.java[tag=p2p-act-rep-config-cacert-pinned, indent=0]
 ----
 
 --
@@ -936,27 +773,27 @@ config.setPinnedServerX509Certificate((X509Certificate) identity.getCerts().get(
 
 ====
 
-This all assumes that you have configured the Sync Gateway to provide the appropriate SSL certificates, and have included the appropriate certificate in your app bundle -- for more on this see: <<android:replication:::lbl-cert-pinning>>.
+This all assumes that you have configured the Sync Gateway to provide the appropriate SSL certificates, and have included the appropriate certificate in your app bundle -- for more on this see: <<lbl-cert-pinning>>.
 
 
-[#android:replication:::lbl-client-auth]
+[#lbl-client-auth]
 === Client Authentication
 
-There are two ways to authenticate from a Couchbase Lite client: <<android:replication:::basic-authentication>> or <<android:replication:::session-authentication>>.
+There are two ways to authenticate from a Couchbase Lite client: <<basic-authentication>> or <<session-authentication>>.
 
-[#android:replication:::basic-authentication]
+[#basic-authentication]
 ==== Basic Authentication
 
 You can provide a user name and password to the basic authenticator class method.
 Under the hood, the replicator will send the credentials in the first request to retrieve a `SyncGatewaySession` cookie and use it for all subsequent requests during the replication.
 This is the recommended way of using basic authentication.
-<<android:replication:::ex-base-auth>> shows how to initiate a one-shot replication as the user *username* with the password *password*.
+<<ex-base-auth>> shows how to initiate a one-shot replication as the user *username* with the password *password*.
 
 .Basic Authentication
 [#ex-base-auth]
 
 
-[#android:replication:::ex-base-auth]
+[#ex-base-auth]
 ====
 
 [tabs]
@@ -967,41 +804,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="basic-authentication", indent=0]
 [source, Kotlin]
 ----
-
-// Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-val repl = Replicator(
-    ReplicatorConfigurationFactory.newConfig(
-        target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-        collections = mapOf(collections to null),
-        authenticator = BasicAuthenticator("username", "password".toCharArray())
-    )
-)
-repl.start()
-thisReplicator = repl
+include::android:example$codesnippet_collection.kt[tags="basic-authentication", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="basic-authentication", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-
-// Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-Replicator repl = new Replicator(
-    new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-        .addCollections(collections, collectionConfig)
-        .setAuthenticator(new BasicAuthenticator("username", "password".toCharArray())));
-
-repl.start();
-thisReplicator = repl;
+include::android:example$codesnippet_collection.java[tags="basic-authentication", indent=0]
 ----
 --
 
@@ -1011,7 +826,7 @@ thisReplicator = repl;
 ====
 
 
-[#android:replication:::session-authentication]
+[#session-authentication]
 ==== Session Authentication
 
 Session authentication is another way to authenticate with Sync Gateway.
@@ -1022,13 +837,13 @@ endpoint on the Public REST API.
 
 The HTTP response contains a session ID which can then be used to authenticate as the user it was created for.
 
-See <<android:replication:::ex-session-auth>>, which shows how to initiate a one-shot replication with the session ID returned from the `+POST /{tkn-db}/_session+` endpoint.
+See <<ex-session-auth>>, which shows how to initiate a one-shot replication with the session ID returned from the `+POST /{tkn-db}/_session+` endpoint.
 
 .Session Authentication
 [#ex-session-auth]
 
 
-[#android:replication:::ex-session-auth]
+[#ex-session-auth]
 ====
 
 [tabs]
@@ -1039,40 +854,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="session-authentication", indent=0]
 [source, Kotlin]
 ----
-// Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-val repl = Replicator(
-    ReplicatorConfigurationFactory.newConfig(
-        target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-        collections = mapOf(collections to null),
-        authenticator = SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447")
-    )
-)
-repl.start()
-thisReplicator = repl
+include::android:example$codesnippet_collection.kt[tags="session-authentication", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="session-authentication", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-
-// Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-Replicator repl = new Replicator(
-    new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-        .addCollections(collections, collectionConfig)
-        .setAuthenticator(new SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447")));
-
-repl.start();
-thisReplicator = repl;
+include::android:example$codesnippet_collection.java[tags="session-authentication", indent=0]
 ----
 --
 
@@ -1082,19 +876,19 @@ thisReplicator = repl;
 ====
 
 
-[#android:replication:::lbl-repl-hdrs]
+[#lbl-repl-hdrs]
 === Custom{nbsp}Headers
 
 Custom headers can be set on the configuration object.
 The replicator will then include those headers in every request.
 
-This feature is useful in passing additional credentials, perhaps when an authentication or authorization step is being done by a proxy server (between Couchbase Lite and Sync Gateway) -- see <<android:replication:::ex-cust-hdr>>.
+This feature is useful in passing additional credentials, perhaps when an authentication or authorization step is being done by a proxy server (between Couchbase Lite and Sync Gateway) -- see <<ex-cust-hdr>>.
 
 .Setting custom headers
 [#ex-cust-hdr]
 
 
-[#android:replication:::ex-cust-hdr]
+[#ex-cust-hdr]
 ====
 
 [tabs]
@@ -1105,42 +899,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="replication-custom-header", indent=0]
 [source, Kotlin]
 ----
-// Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-val repl = Replicator(
-    ReplicatorConfigurationFactory.newConfig(
-        target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-        collections = mapOf(collections to null),
-        headers = mapOf("CustomHeaderName" to "Value")
-    )
-)
-repl.start()
-thisReplicator = repl
+include::android:example$codesnippet_collection.kt[tags="replication-custom-header", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="replication-custom-header", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Map<String, String> headers = new HashMap<>();
-headers.put("CustomHeaderName", "Value");
-
-// Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-Replicator repl = new Replicator(
-    new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-        .addCollections(collections, collectionConfig)
-        .setHeaders(headers));
-
-repl.start();
-thisReplicator = repl;
+include::android:example$codesnippet_collection.java[tags="replication-custom-header", indent=0]
 ----
 --
 
@@ -1150,11 +921,11 @@ thisReplicator = repl;
 ====
 
 
-[#android:replication:::lbl-repl-fltrs]
+[#lbl-repl-fltrs]
 === Replication Filters
 Replication Filters allow you to have quick control over the documents stored as the result of a push and/or pull replication.
 
-[#android:replication:::push-filter]
+[#push-filter]
 ==== Push Filter
 
 The push filter allows an app to push a subset of a database to the server.
@@ -1172,44 +943,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="replication-push-filter", indent=0]
 [source, Kotlin]
 ----
-val collectionConfig = CollectionConfigurationFactory.newConfig(
-    pushFilter = { _, flags -> flags.contains(DocumentFlag.DELETED) } // <1>
-)
-
-// Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-val repl = Replicator(
-    ReplicatorConfigurationFactory.newConfig(
-        target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-        collections = mapOf(collections to collectionConfig)
-    )
-)
-repl.start()
-thisReplicator = repl
+include::android:example$codesnippet_collection.kt[tags="replication-push-filter", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="replication-push-filter", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-CollectionConfiguration collectionConfig = new CollectionConfiguration()
-    .setPushFilter((document, flags) -> flags.contains(DocumentFlag.DELETED)); // <1>
-
-// Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-Replicator repl = new Replicator(
-    new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-        .addCollections(collections, collectionConfig));
-
-repl.start();
-thisReplicator = repl;
+include::android:example$codesnippet_collection.java[tags="replication-push-filter", indent=0]
 ----
 --
 
@@ -1220,7 +966,7 @@ thisReplicator = repl;
 Otherwise, long running functions would slow down the replicator considerably.
 Furthermore, your callback should not make assumptions about what thread it is being called on.
 
-[#android:replication:::pull-filter]
+[#pull-filter]
 ==== Pull Filter
 
 The pull filter gives an app the ability to validate documents being pulled, and skip ones that fail.
@@ -1240,44 +986,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="replication-pull-filter", indent=0]
 [source, Kotlin]
 ----
-val collectionConfig = CollectionConfigurationFactory.newConfig(
-    pullFilter = { document, _ -> "draft" == document.getString("type") } // <1>
-)
-
-// Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-val repl = Replicator(
-    ReplicatorConfigurationFactory.newConfig(
-        target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-        collections = mapOf(collections to collectionConfig)
-    )
-)
-repl.start()
-thisReplicator = repl
+include::android:example$codesnippet_collection.kt[tags="replication-pull-filter", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="replication-pull-filter", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-CollectionConfiguration collectionConfig = new CollectionConfiguration()
-    .setPullFilter((document, flags) -> "draft".equals(document.getString("type"))); // <1>
-
-// Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-Replicator repl = new Replicator(
-    new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-        .addCollections(collections, collectionConfig));
-
-repl.start();
-thisReplicator = repl;
+include::android:example$codesnippet_collection.java[tags="replication-pull-filter", indent=0]
 ----
 --
 
@@ -1299,10 +1020,10 @@ As a result, there would be a local copy of the document disjointed from the one
 
 Further updates to the document stored on Couchbase Server would not be received in pull replications and further local edits could be pushed but the updated versions will not be visible.
 
-For more information, see <<android:replication:::auto-purge-on-revoke,Auto Purge on Revoke>>.
+For more information, see <<auto-purge-on-revoke,Auto Purge on Revoke>>.
 ****
 
-[#android:replication:::lbl-repl-chan]
+[#lbl-repl-chan]
 === Channels
 
 // include::ROOT:partial$replication-channels.adoc[]
@@ -1317,19 +1038,19 @@ to specify which data to pull for each user.
 Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's replicator configuration object.
 In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
 
-[#android:replication:::anchor-auto-purge-on-revoke]
+[#anchor-auto-purge-on-revoke]
 === Auto-purge on Channel Access Revocation
 
 [CAUTION]
 --
 This is a Breaking Change at 3.0
 --
-[#android:replication:::new-outcome]
+[#new-outcome]
 ==== New outcome
 
 By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user’s other channels) are auto-purged from the local database (in devices belonging to the user).
 
-[#android:replication:::prior-outcome]
+[#prior-outcome]
 ==== Prior outcome
 
 _Previously these documents remained in the local database_
@@ -1338,7 +1059,7 @@ Prior to this release, CBL auto-purged only in the case when the user loses acce
 Now, in addition to 2.x auto purge, Couchbase Lite will also auto-purges the docs when the user loses access to the doc via channel access revocation.
 This feature is enabled by default, but an opt-out is available.
 
-[#android:replication:::behavior]
+[#behavior]
 ==== Behavior
 
 Users may lose access to channels in a number of ways:
@@ -1349,14 +1070,14 @@ Users may lose access to channels in a number of ways:
 
 * A channel is removed from a role the user is assigned to
 
-By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user’s other channels -- see: <<android:replication:::tbl-revoke-behavior>>.
+By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user’s other channels -- see: <<tbl-revoke-behavior>>.
 
 Documents that exist in multiple channels belonging to the user (even if they are not actively replicating that channel) are not auto-purged unless the user loses access to all channels.
 
 When the auto-purge setting is set to `true`, users will receive an `AccessRemoved` notification from the DocumentListener if they lose document access due to channel access revocation.
 
 .Behavior following access revocation
-[#android:replication:::tbl-revoke-behavior, cols="^1h,2a,2a", options="header"]
+[#tbl-revoke-behavior, cols="^1h,2a,2a", options="header"]
 |===
 
 2+|System State
@@ -1387,10 +1108,10 @@ Local changes continue to be  pushed to remote but are rejected by Sync Gateway
 
 |===
 
-If a user subsequently regains access to a lost channel, then any previously auto-purged documents still assigned to any of their channels are automatically pulled down by the active Sync Gateway when they are next updated -- see behavior summary in <<android:replication:::tbl-regain-behavior>>
+If a user subsequently regains access to a lost channel, then any previously auto-purged documents still assigned to any of their channels are automatically pulled down by the active Sync Gateway when they are next updated -- see behavior summary in <<tbl-regain-behavior>>
 
 .Behavior if access is regained
-[#android:replication:::tbl-regain-behavior, cols="^1h,2a,2a", options="header"]
+[#tbl-regain-behavior, cols="^1h,2a,2a", options="header"]
 |===
 
 2+|System State
@@ -1425,7 +1146,7 @@ Document changes subsequent to the channel reassignment will be pushed up as usu
 |===
 
 
-[#android:replication:::config]
+[#config]
 ==== Config
 
 Auto-purge behavior is controlled primarily by the ReplicationConfiguration option https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#setAutoPurgeEnabled-boolean-[setAutoPurgeEnabled()].
@@ -1437,7 +1158,7 @@ Clients wishing to sync previously removed documents must use the resetCheckpoin
 [#ex-set-auto-purge]
 
 
-[#android:replication:::ex-set-auto-purge]
+[#ex-set-auto-purge]
 ====
 
 [tabs]
@@ -1448,29 +1169,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="autopurge-override", indent=0]
 [source, Kotlin]
 ----
-// set auto-purge behavior
-// (here we override default)
-enableAutoPurge = false, // <.>
-
+include::android:example$codesnippet_collection.kt[tags="autopurge-override", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="autopurge-override", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// set auto-purge behavior
-// (here we override default)
-.setAutoPurgeEnabled(false) // <.>
-
+include::android:example$codesnippet_collection.java[tags="autopurge-override", indent=0]
 ----
 --
 
@@ -1481,14 +1192,14 @@ Java::
 
 <.> Here we have opted to turn off the auto purge behavior. By default auto purge is enabled.
 
-[#android:replication:::overrides]
+[#overrides]
 ==== Overrides
 Where necessary, clients can override the default auto-purge behavior.
-This can be done either by setting https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#setAutoPurgeEnabled-boolean-[setAutoPurgeEnabled()] to false, or for finer control by applying pull-filters -- see: <<android:replication:::tbl-pull-filters>> and <<android:replication:::lbl-repl-fltrs>>
+This can be done either by setting https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicatorConfiguration.html#lbl-repl-fltrs>>
 This ensures backwards compatible with 2.8 clients that use pull filters to prevent auto purge of removed docs.
 
 .Impact of Pull-Filters
-[#android:replication:::tbl-pull-filters,cols="^1,2,2"]
+[#tbl-pull-filters,cols="^1,2,2"]
 |===
 
 .2+.^h|purge_on_removal setting
@@ -1513,7 +1224,7 @@ a|Doc remains in local database
 |===
 
 
-[#android:replication:::lbl-repl-delta]
+[#lbl-repl-delta]
 === Delta Sync
 
 // tag::rep-delta-sync-concept[]
@@ -1530,24 +1241,24 @@ xref:sync-gateway:ROOT:refer/config-properties.adoc#databases-foo_db-delta_sync[
 
 xref:android:dbreplica.adoc[Intra-Device]
 replications automatically *disable* delta sync, whilst
-<<android:replication:::p2psync-websocket.adoc,Peer-to-Peer>>
+<<p2psync-websocket.adoc,Peer-to-Peer>>
 replications automatically *enable* delta sync.
 
 // end::rep-delta-sync-concept[]
 
 
-[#android:replication:::lbl-init-repl]
+[#lbl-init-repl]
 == Initialize
 
 
 In this section::
-<<android:replication:::lbl-repl-start>>  | <<android:replication:::lbl-repl-ckpt>>
+<<lbl-repl-start>>  | <<lbl-repl-ckpt>>
 
-[#android:replication:::lbl-repl-start]
+[#lbl-repl-start]
 === Start Replicator
 
 Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Replicator.html[Replicator]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Replicator.html#Replicator-com.couchbase.lite.ReplicatorConfiguration-[ReplicatorConfiguration(config)] constructor, to initialize the replicator with the configuration you have defined.
-You can, optionally, add a change listener (see <<android:replication:::lbl-repl-mon>>) before starting the replicator running using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#start-boolean-[start()].
+You can, optionally, add a change listener (see <<lbl-repl-mon>>) before starting the replicator running using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#start-boolean-[start()].
 
 // Example 7
 .Initialize and run replicator
@@ -1563,99 +1274,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="p2p-act-rep-start-full;!p2p-act-rep-add-change-listener", indent=0]
 [source, Kotlin]
 ----
-// Create replicator
-// Consider holding a reference somewhere
-// to prevent the Replicator from being GCed
-val repl = Replicator( // <.>
-
-    // initialize the replicator configuration
-    ReplicatorConfigurationFactory.newConfig(
-        target = URLEndpoint(URI("wss://listener.com:8954")), // <.>
-
-        collections = mapOf(collections to null),
-
-        // Set replicator type
-        type = ReplicatorType.PUSH_AND_PULL,
-
-        // Configure Sync Mode
-        continuous = false, // default value
-
-
-        // set auto-purge behavior
-        // (here we override default)
-        enableAutoPurge = false, // <.>
-
-
-        // Configure Server Authentication --
-        // only accept self-signed certs
-        acceptOnlySelfSignedServerCertificate = true, // <.>
-
-
-        // Configure the credentials the
-        // client will provide if prompted
-        authenticator = BasicAuthenticator("PRIVUSER", "let me in".toCharArray())  // <.>
-
-    )
-)
-
-// Start replicator
-repl.start(false) // <.>
-
-thisReplicator = repl
-thisToken = token
-
+include::android:example$codesnippet_collection.kt[tags="p2p-act-rep-start-full;!p2p-act-rep-add-change-listener", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="p2p-act-rep-start-full;!p2p-act-rep-add-change-listener", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// Create replicator
-// Consider holding a reference somewhere
-// to prevent the Replicator from being GCed
-Replicator repl = new Replicator( // <.>
-
-    // initialize the replicator configuration
-    new ReplicatorConfiguration(new URLEndpoint(new URI("wss://listener.com:8954"))) // <.>
-        .addCollections(collections, null)
-
-        // Set replicator type
-        .setType(ReplicatorType.PUSH_AND_PULL)
-
-        // Configure Sync Mode
-        .setContinuous(false) // default value
-
-
-        // set auto-purge behavior
-        // (here we override default)
-        .setAutoPurgeEnabled(false) // <.>
-
-
-        // Configure Server Authentication --
-        // only accept self-signed certs
-        .setAcceptOnlySelfSignedServerCertificate(true) // <.>
-
-        // Configure the credentials the
-        // client will provide if prompted
-        .setAuthenticator(new BasicAuthenticator("Our Username", "Our Password".toCharArray())) // <.>
-
-);
-
-// Start replicator
-repl.start(false); // <.>
-
-thisReplicator = repl;
-thisToken = token;
-
+include::android:example$codesnippet_collection.java[tags="p2p-act-rep-start-full;!p2p-act-rep-add-change-listener", indent=0]
 ----
 --
 
@@ -1668,7 +1299,7 @@ thisToken = token;
 <.> Start the replicator
 
 
-[#android:replication:::lbl-repl-ckpt]
+[#lbl-repl-ckpt]
 === Checkpoint Starts
 // include::ROOT:partial$replication-checkpoint.adoc[]
 
@@ -1677,13 +1308,13 @@ Replicators use xref:refer-glossary.adoc#checkpoint[checkpoints] to keep track o
 Without xref:refer-glossary.adoc#checkpoint[checkpoints], Couchbase Lite would replicate the entire database content to the target database on each connection, even though previous replications may already have replicated some or all of that content.
 
 This functionality is generally not a concern to application developers.
-However, if you do want to force the replication to start again from zero, use the xref:refer-glossary.adoc#checkpoint[checkpoint] reset argument when starting the replicator -- as shown in <<android:replication:::ex-repl-ckpt>>.
+However, if you do want to force the replication to start again from zero, use the xref:refer-glossary.adoc#ex-repl-ckpt>>.
 
 .Resetting checkpoints
 [#ex-repl-ckpt]
 
 
-[#android:replication:::ex-repl-ckpt]
+[#ex-repl-ckpt]
 ====
 
 [tabs]
@@ -1694,23 +1325,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="replication-reset-checkpoint", indent=0]
 [source, Kotlin]
 ----
-repl.start(true)
+include::android:example$codesnippet_collection.kt[tags="replication-reset-checkpoint", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="replication-reset-checkpoint", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-repl.start(true);
+include::android:example$codesnippet_collection.java[tags="replication-reset-checkpoint", indent=0]
 ----
 --
 
@@ -1723,22 +1350,22 @@ repl.start(true);
 The default `false` is shown here for completeness only; it is unlikely you would explicitly use it in practice.
 
 
-[#android:replication:::lbl-repl-mon]
+[#lbl-repl-mon]
 == Monitor
 
 
 In this section::
-<<android:replication:::lbl-repl-chng>>  |
-<<android:replication:::lbl-repl-status>>  |
-<<android:replication:::lbl-repl-evnts>> |
-<<android:replication:::lbl-repl-pend>>
+<<lbl-repl-chng>>  |
+<<lbl-repl-status>>  |
+<<lbl-repl-evnts>> |
+<<lbl-repl-pend>>
 
-You can monitor a replication’s status by using a combination of <<android:replication:::lbl-repl-chng>> and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getActivityLevel()[getActivityLevel()].
+You can monitor a replication’s status by using a combination of <<lbl-repl-chng>> and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getActivityLevel()[getActivityLevel()].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
-You can also choose to monitor document changes -- see: <<android:replication:::lbl-repl-evnts>>.
+You can also choose to monitor document changes -- see: <<lbl-repl-evnts>>.
 
-[#android:replication:::lbl-repl-chng]
+[#lbl-repl-chng]
 === Change Listeners
 Use this to monitor changes and to inform on sync progress; this is an optional step.
 You can add and a replicator change listener at any point; it will report changes from the point it is registered.
@@ -1746,40 +1373,39 @@ You can add and a replicator change listener at any point; it will report change
 .Best Practice
 TIP: Don't forget to save the token so you can remove the listener later
 
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Replicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#addChangeListener-java.util.concurrent.Executor-com.couchbase.lite.ReplicatorChangeListener-[addChangeListener()]) -- see: <<android:replication:::ex-repl-mon>>.
+Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Replicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#ex-repl-mon>>.
 You will then be asynchronously notified of state changes.
 
 You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#removeChangeListener-com.couchbase.lite.ListenerToken-[removeChangeListener(ListenerToken token)].
 
 
-[#android:replication:::using-kotlin-flows-and-livedata]
+[#using-kotlin-flows-and-livedata]
 ==== Using Kotlin Flows and LiveData
 Android Kotlin developers can take advantage of Flows and LiveData to monitor replicators.
 
-// include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt[tag="flow-as-replicator-change-listener"]
 [source, Kotlin, subs="attributes+"]
 ----
+include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt[tag="flow-as-replicator-change-listener"]
 ----
 
-
-[#android:replication:::lbl-repl-status]
+[#lbl-repl-status]
 === Replicator Status
 
 You can use the
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html[ReplicatorStatus()] class
 to check the replicator status.
-That is, whether it is actively transferring data or if it has stopped -- see: <<android:replication:::ex-repl-mon>>.
+That is, whether it is actively transferring data or if it has stopped -- see: <<ex-repl-mon>>.
 
 The returned _ReplicationStatus_ structure comprises:
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getActivityLevel()[getActivityLevel()] -- stopped, offline, connecting, idle or busy -- see states described in: <<android:replication:::tbl-states>>
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#tbl-states>>
 * https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getProgress()[getProgress()]
 ** completed -- the total number of changes completed
 ** total -- the total number of changes to be processed
 * https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getError[getError()] -- the current error, if any
 
 // Example 8
-[#android:replication:::ex-repl-mon]
+[#ex-repl-mon]
 [[android:replication:::ex-repl-mon]]
 .Monitor replication
 ====
@@ -1796,18 +1422,9 @@ Kotlin::
 Adding a Change Listener::
 +
 --
-// include::android:example$codesnippet_collection.kt[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
 [source, Kotlin]
 ----
-
-val token = repl.addChangeListener { change ->
-    val err: CouchbaseLiteException? = change.status.error
-    if (err != null) {
-        log("Error code ::  ${err.code}", err)
-    }
-}
-
-
+include::android:example$codesnippet_collection.kt[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
 ----
 --
 +
@@ -1815,21 +1432,9 @@ val token = repl.addChangeListener { change ->
 Using replicator.status::
 +
 --
-// include::android:example$codesnippet_collection.kt[tags=p2p-act-rep-status,indent=0]
 [source, Kotlin]
 ----
-
-repl.status.let {
-    val progress = it.progress
-    log(
-        "The Replicator is ${
-            it.activityLevel
-        } and has processed ${
-            progress.completed
-        } of ${progress.total} changes"
-    )
-}
-
+include::android:example$codesnippet_collection.kt[tags=p2p-act-rep-status,indent=0]
 ----
 --
 ======
@@ -1843,14 +1448,9 @@ Java::
 Adding a Change Listener::
 +
 --
-// include::android:example$codesnippet_collection.java[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
 [source, Java]
 ----
-ListenerToken token = repl.addChangeListener(change -> {
-    CouchbaseLiteException err = change.getStatus().getError();
-    if (err != null) { Logger.log("Error code :: " + err.getCode(), err); }
-});
-
+include::android:example$codesnippet_collection.java[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
 ----
 --
 +
@@ -1858,16 +1458,9 @@ ListenerToken token = repl.addChangeListener(change -> {
 Using replicator.status::
 +
 --
-// include::android:example$codesnippet_collection.java[tags=p2p-act-rep-status,indent=0]
 [source, Java]
 ----
-    ReplicatorStatus status = repl.getStatus();
-    ReplicatorProgress progress = status.getProgress();
-    Logger.log(
-        "The Replicator is " + status.getActivityLevel()
-            + "and has processed " + progress.getCompleted()
-            + " of " + progress.getTotal() + " changes");
-}
+include::android:example$codesnippet_collection.java[tags=p2p-act-rep-status,indent=0]
 ----
 --
 ======
@@ -1876,12 +1469,12 @@ Using replicator.status::
 ====
 
 
-[#android:replication:::lbl-repl-states]
+[#lbl-repl-states]
 ==== Replication States
-<<android:replication:::tbl-states>> shows the different states, or activity levels, reported in the API; and the meaning of each.
+<<tbl-states>> shows the different states, or activity levels, reported in the API; and the meaning of each.
 
 .Replicator activity levels
-[#android:replication:::tbl-states,cols="^1,4"]
+[#tbl-states,cols="^1,4"]
 |===
 h|State
 h|Meaning
@@ -1906,7 +1499,7 @@ The `IDLE` state is only used in continuous replications.
 NOTE: The replication change object also has properties to track the progress (`change.status.completed` and `change.status.total`).
 Since the replication occurs in batches the total count can vary through the course of a replication.
 
-[#android:replication:::replication-status-and-app-life-cycle]
+[#replication-status-and-app-life-cycle]
 ==== Replication Status and App Life Cycle
 
 Couchbase Lite replications will continue running until the app terminates, unless the remote system, or the application, terminates the connection.
@@ -1915,20 +1508,20 @@ NOTE: Recall that the Android OS may kill an application without warning.
 You should explicitly stop replication processes when they are no longer useful (for example, when they are `suspended` or `idle`) to avoid socket connections being closed by the OS, which may interfere with the replication process.
 
 
-[#android:replication:::lbl-repl-evnts]
+[#lbl-repl-evnts]
 === Monitor Document Changes
 
 You can choose to register for document updates during a replication.
 
-For example, the code snippet in <<android:replication:::ex-reg-doc-listener>> registers a listener to monitor document replication performed by the replicator referenced by the variable `replicator`.
+For example, the code snippet in <<ex-reg-doc-listener>> registers a listener to monitor document replication performed by the replicator referenced by the variable `replicator`.
 It prints the document ID of each document received and sent.
-Stop the listener as shown in <<android:replication:::ex-stop-doc-listener>>.
+Stop the listener as shown in <<ex-stop-doc-listener>>.
 
 .Register a document listener
 [#ex-reg-doc-listener]
 
 
-[#android:replication:::ex-reg-doc-listener]
+[#ex-reg-doc-listener]
 ====
 
 [tabs]
@@ -1939,64 +1532,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="add-document-replication-listener,indent=0]", indent=0]
 [source, Kotlin]
 ----
-val token = repl.addDocumentReplicationListener { replication ->
-    log("Replication type: ${if (replication.isPush) "push" else "pull"}")
-
-    for (document in replication.documents) {
-        document.let { doc ->
-            log("Doc ID: ${document.id}")
-
-            doc.error?.let {
-                // There was an error
-                log("Error replicating document: ", it)
-                return@addDocumentReplicationListener
-            }
-
-            if (doc.flags.contains(DocumentFlag.DELETED)) {
-                log("Successfully replicated a deleted document")
-            }
-        }
-    }
-}
-
-repl.start()
-thisReplicator = repl
+include::android:example$codesnippet_collection.kt[tags="add-document-replication-listener,indent=0]", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="add-document-replication-listener,indent=0]", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-ListenerToken token = repl.addDocumentReplicationListener(replication -> {
-    Logger.log("Replication type: " + ((replication.isPush()) ? "push" : "pull"));
-    for (ReplicatedDocument document: replication.getDocuments()) {
-        Logger.log("Doc ID: " + document.getID());
-
-        CouchbaseLiteException err = document.getError();
-        if (err != null) {
-            // There was an error
-            Logger.log("Error replicating document: ", err);
-            return;
-        }
-
-        if (document.getFlags().contains(DocumentFlag.DELETED)) {
-            Logger.log("Successfully replicated a deleted document");
-        }
-    }
-});
-
-
-repl.start();
-thisReplicator = repl;
+include::android:example$codesnippet_collection.java[tags="add-document-replication-listener,indent=0]", indent=0]
 ----
 --
 
@@ -2010,7 +1558,7 @@ thisReplicator = repl;
 .Stop document listener
 
 
-[#android:replication:::ex-stop-doc-listener]
+[#ex-stop-doc-listener]
 ====
 
 This code snippet shows how to stop the document listener using the token from the previous example.
@@ -2022,23 +1570,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="remove-document-replication-listener", indent=0]
 [source, Kotlin]
 ----
-token.remove()
+include::android:example$codesnippet_collection.kt[tags="remove-document-replication-listener", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="remove-document-replication-listener", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-token.remove();
+include::android:example$codesnippet_collection.java[tags="remove-document-replication-listener", indent=0]
 ----
 --
 
@@ -2048,13 +1592,13 @@ token.remove();
 ====
 
 
-[#android:replication:::document-access-removal-behavior]
+[#document-access-removal-behavior]
 ==== Document Access Removal Behavior
 
 When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
 
 
-[#android:replication:::lbl-repl-pend]
+[#lbl-repl-pend]
 === Documents Pending Push
 
 TIP: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-[Replicator.isDocumentPending()] is quicker and more efficient.
@@ -2072,7 +1616,7 @@ This can be very useful in tracking the progress of a push sync, enabling the ap
 .Use Pending Document ID API
 
 
-[#android:replication:::ex-pending]
+[#ex-pending]
 ====
 
 [tabs]
@@ -2083,78 +1627,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="replication-pendingdocuments", indent=0]
 [source, Kotlin]
 ----
-val repl = Replicator(
-    ReplicatorConfigurationFactory.newConfig(
-        target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-        collections = mapOf(setOf(collection) to null),
-        type = ReplicatorType.PUSH
-    )
-)
-
-val pendingDocs = repl.getPendingDocumentIds(collection)
-
-// iterate and report on previously
-// retrieved pending docids 'list'
-if (pendingDocs.isNotEmpty()) {
-    log("There are ${pendingDocs.size} documents pending")
-
-    val firstDoc = pendingDocs.first()
-    repl.addChangeListener { change ->
-        log("Replicator activity level is ${change.status.activityLevel}")
-        try {
-            if (!repl.isDocumentPending(firstDoc, collection)) {
-                log("Doc ID ${firstDoc} has been pushed")
-            }
-        } catch (err: CouchbaseLiteException) {
-            log("Failed getting pending docs", err)
-        }
-    }
-
-    repl.start()
-    thisReplicator = repl
-}
+include::android:example$codesnippet_collection.kt[tags="replication-pendingdocuments", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="replication-pendingdocuments", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Replicator repl = new Replicator(
-    new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-        .addCollection(collection, null)
-        .setType(ReplicatorType.PUSH));
-
-Set<String> pendingDocs = repl.getPendingDocumentIds(collection);
-
-if (!pendingDocs.isEmpty()) {
-    Logger.log("There are " + pendingDocs.size() + " documents pending");
-
-    final String firstDoc = pendingDocs.iterator().next();
-
-    repl.addChangeListener(change -> {
-        Logger.log("Replicator activity level is " + change.getStatus().getActivityLevel());
-        try {
-            if (!repl.isDocumentPending(firstDoc, collection)) {
-                Logger.log("Doc ID " + firstDoc + " has been pushed");
-            }
-        }
-        catch (CouchbaseLiteException err) {
-            Logger.log("Failed getting pending docs", err);
-        }
-    });
-
-    repl.start();
-    this.thisReplicator = repl;
-}
+include::android:example$codesnippet_collection.java[tags="replication-pendingdocuments", indent=0]
 ----
 --
 
@@ -2168,7 +1653,7 @@ This is a snapshot and may have changed by the time the response is received and
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-[Replicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
 
-[#android:replication:::lbl-repl-stop]
+[#lbl-repl-stop]
 == Stop
 
 
@@ -2193,25 +1678,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="p2p-act-rep-stop", indent=0]
 [source, Kotlin]
 ----
-// Stop replication.
-repl.stop() // <.>
+include::android:example$codesnippet_collection.kt[tags="p2p-act-rep-stop", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="p2p-act-rep-stop", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// Stop replication.
-repl.stop(); // <.>
+include::android:example$codesnippet_collection.java[tags="p2p-act-rep-stop", indent=0]
 ----
 --
 
@@ -2221,10 +1700,10 @@ repl.stop(); // <.>
 ====
 
 <.> Here we initiate the stopping of the replication using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#stop--[stop()] method.
-It will stop any active <<android:replication:::lbl-repl-chng,change listener>> once the replication is stopped.
+It will stop any active <<lbl-repl-chng,change listener>> once the replication is stopped.
 
 
-[#android:replication:::lbl-nwk-errs]
+[#lbl-nwk-errs]
 == Error Handling
 
 
@@ -2245,34 +1724,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="replication-error-handling", indent=0]
 [source, Kotlin]
 ----
-repl.addChangeListener { change ->
-    change.status.error?.let {
-        log("Error code: ${it.code}")
-    }
-}
-repl.start()
-thisReplicator = repl
+include::android:example$codesnippet_collection.kt[tags="replication-error-handling", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="replication-error-handling", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-repl.addChangeListener(change -> {
-    CouchbaseLiteException error = change.getStatus().getError();
-    if (error != null) { Logger.log("Error code:: " + error); }
-});
-repl.start();
-thisReplicator = repl;
+include::android:example$codesnippet_collection.java[tags="replication-error-handling", indent=0]
 ----
 --
 
@@ -2308,17 +1772,16 @@ The following error codes are considered temporary by the Couchbase Lite replica
 * `1001`: DNS resolution error
 
 
-[#android:replication:::using-kotlin-flows-and-livedata-2]
+[#using-kotlin-flows-and-livedata-2]
 === Using Kotlin Flows and LiveData
 Android Kotlin developers can also take advantage of Flows and LiveData to monitor replicators.
 
-// include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt[tag="flow-as-replicator-change-listener"]
 [source, Kotlin, subs="attributes+"]
 ----
+include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt[tag="flow-as-replicator-change-listener"]
 ----
 
-
-[#android:replication:::load-balancers]
+[#load-balancers]
 == Load Balancers
 
 
@@ -2330,7 +1793,7 @@ By default, the WebSocket protocol uses compression to optimize for speed and ba
 The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway:ROOT:refer/config-properties.adoc#replicator_compression[`replicator_compression`]).
 
 
-[#android:replication:::lbl-cert-pinning]
+[#lbl-cert-pinning]
 == Certificate Pinning
 
 Couchbase Lite for Android supports certificate pinning.
@@ -2366,7 +1829,7 @@ This example loads the certificate from the application sandbox, then converts i
 [#ex-crt-pinning]
 
 
-[#android:replication:::ex-crt-pinning]
+[#ex-crt-pinning]
 ====
 
 [tabs]
@@ -2377,40 +1840,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="certificate-pinning", indent=0]
 [source, Kotlin]
 ----
-val repl = Replicator(
-    ReplicatorConfigurationFactory.newConfig(
-        target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-        collections = mapOf(collections to null),
-        pinnedServerCertificate = KeyStore.getInstance(keyStoreName)
-            .getCertificate(certAlias) as X509Certificate
-    )
-)
-repl.start()
-thisReplicator = repl
+include::android:example$codesnippet_collection.kt[tags="certificate-pinning", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="certificate-pinning", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-Replicator repl = new Replicator(
-    new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-        .addCollections(collections, null)
-        .setPinnedServerX509Certificate(
-            (X509Certificate) KeyStore.getInstance(keyStoreName).getCertificate(certAlias)));
-
-repl.start();
-thisReplicator = repl;
+include::android:example$codesnippet_collection.java[tags="certificate-pinning", indent=0]
 ----
 --
 
@@ -2426,20 +1868,20 @@ The replication should now run successfully over https/wss with certificate pinn
 For more on pinning certificates see the blog entry: https://blog.couchbase.com/certificate-pinning-android-with-couchbase-mobile/[Certificate Pinning with Couchbase Mobile]
 
 
-[#android:replication:::lbl-trouble]
+[#lbl-trouble]
 == Troubleshooting
 
 
-[#android:replication:::logs]
+[#logs]
 === Logs
 As always, when there is a problem with replication, logging is your friend.
-You can increase the log output for activity related to replication with Sync Gateway -- see <<android:replication:::ex-logs>>.
+You can increase the log output for activity related to replication with Sync Gateway -- see <<ex-logs>>.
 
 [#ex-logs]
 .Set logging verbosity
 
 
-[#android:replication:::ex-logs]
+[#ex-logs]
 ====
 
 [tabs]
@@ -2450,28 +1892,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="replication-logging", indent=0]
 [source, Kotlin]
 ----
-CouchbaseLite.init(this, true)
-
-Database.log.console.setDomains(LogDomain.REPLICATOR)
-Database.log.console.level = LogLevel.DEBUG
+include::android:example$codesnippet_collection.kt[tags="replication-logging", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="replication-logging", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-CouchbaseLite.init(this, true);
-
-Database.log.getConsole().setLevel(LogLevel.DEBUG);
+include::android:example$codesnippet_collection.java[tags="replication-logging", indent=0]
 ----
 --
 
@@ -2483,11 +1916,11 @@ Database.log.getConsole().setLevel(LogLevel.DEBUG);
 
 For more on troubleshooting with logs, see: xref:android:troubleshooting-logs.adoc[Using Logs].
 
-[#android:replication:::authentication-errors]
+[#authentication-errors]
 === Authentication Errors
-If Sync Gateway is configured with a self signed certificate but your app points to a `ws` scheme instead of `wss` you will encounter an error with status code `11006` -- see: <<android:replication:::ex-11006>>
+If Sync Gateway is configured with a self signed certificate but your app points to a `ws` scheme instead of `wss` you will encounter an error with status code `11006` -- see: <<ex-11006>>
 
-[#android:replication:::ex-11006]
+[#ex-11006]
 .Protocol Mismatch
 ====
 [source,console]
@@ -2496,12 +1929,12 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: WebSocket error 100
 ----
 ====
 
-If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't using the certificate you will encounter an error with status code `5011` -- see: <<android:replication:::ex-5011>>
+If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't using the certificate you will encounter an error with status code `5011` -- see: <<ex-5011>>
 
 [#ex-5011]
 .Certificate Mismatch or Not Found
 
-[#android:replication:::ex-5011]
+[#ex-5011]
 ====
 [source,text]
 ----
@@ -2513,7 +1946,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 // Include standard footer
 
 
-[#android:replication:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -2529,7 +1962,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 
 .
 
-[.column#android:replication:::-2]
+[.column]
 ====== {empty}
 .Learn more . . .
 * xref:android:database.adoc[Databases]
@@ -2541,7 +1974,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 .
 
 
-[.column#android:replication:::-3]
+[.column]
 ====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

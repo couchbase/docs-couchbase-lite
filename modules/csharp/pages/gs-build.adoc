@@ -1,4 +1,4 @@
-[#csharp:gs-build:::]
+
 = Build and Run
 :page-aliases: start/csharp-gs-build.adoc
 :page-role:
@@ -15,78 +15,15 @@ _Abstract -- This content provides sample code and instructions that enable you 
 // include::ROOT:partial$block-related-get-started.adoc[]
 // DO NOT EDIT
 
-[#csharp:gs-build:::starter-code]
+[#starter-code]
 == Starter code
 
 Open *Main.cs* in Visual Studio and copy the following code in the `main` method.
 This snippet demonstrates how to run basic CRUD operations, a simple Query and running bi-directional replications with Sync Gateway.
 
-// include::csharp:example$code_snippets/Program.cs[tag=getting-started,indent=0]
 [source, C#]
 ----
-
-// using System;
-// using Couchbase.Lite;
-// using Couchbase.Lite.Query;
-// using Couchbase.Lite.Sync;
-
-// Get the database (and create it if it doesn't exist)
-var database = new Database("mydb");
-var collection = database.GetDefaultCollection();
-
-// Create a new document (i.e. a record) in the database
-var id = default(string);
-using var createdDoc = new MutableDocument();
-createdDoc.SetFloat("version", 2.0f)
-    .SetString("type", "SDK");
-
-// Save it to the database
-collection.Save(createdDoc);
-id = createdDoc.Id;
-
-// Update a document
-using var doc = collection.GetDocument(id);
-using var mutableDoc = doc.ToMutable();
-createdDoc.SetString("language", "C#");
-collection.Save(createdDoc);
-
-using var docAgain = collection.GetDocument(id);
-Console.WriteLine($"Document ID :: {docAgain.Id}");
-Console.WriteLine($"Learning {docAgain.GetString("language")}");
-
-
-// Create a query to fetch documents of type SDK
-// i.e. SELECT * FROM database WHERE type = "SDK"
-using var query = QueryBuilder.Select(SelectResult.All())
-    .From(DataSource.Collection(collection))
-    .Where(Expression.Property("type").EqualTo(Expression.String("SDK")));
-
-// Run the query
-var result = query.Execute();
-Console.WriteLine($"Number of rows :: {result.AllResults().Count}");
-
-// Create replicator to push and pull changes to and from the cloud
-var targetEndpoint = new URLEndpoint(new Uri("ws://localhost:4984/getting-started-db"));
-var replConfig = new ReplicatorConfiguration(targetEndpoint);
-replConfig.AddCollection(database.GetDefaultCollection());
-
-// Add authentication
-replConfig.Authenticator = new BasicAuthenticator("john", "pass");
-
-// Create replicator (make sure to add an instance or static variable
-// named _Replicator)
-var replicator = new Replicator(replConfig);
-replicator.AddChangeListener((sender, args) =>
-{
-    if (args.Status.Error != null) {
-        Console.WriteLine($"Error :: {args.Status.Error}");
-    }
-});
-
-replicator.Start();
-
-// Later, stop and dispose the replicator *before* closing/disposing the database
-
+include::csharp:example$code_snippets/Program.cs[tag=getting-started,indent=0]
 ----
 
 Build and run.
@@ -95,7 +32,7 @@ The document was successfully persisted to the database.
 
 See also -- xref:sync-gateway::get-started-install.adoc[Install Sync Gateway]
 
-[#csharp:gs-build:::building-with-vector-search]
+[#building-with-vector-search]
 === Building With Vector Search
 
 To build your Couchbase Lite application with Vector Search, you must add the following to your existing Couchbase Lite application:
@@ -124,7 +61,7 @@ Extension.Load(new VectorSearchExtension());
 // DO NOT EDIT -- Footer Related Content Block
 
 
-[#csharp:gs-build:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -139,7 +76,7 @@ Extension.Load(new VectorSearchExtension());
 
 .
 
-[.column#csharp:gs-build:::-2]
+[.column]
 ====== {empty}
 .Concepts
 * xref:csharp:landing-p2psync.adoc[Peer-to-Peer Sync]
@@ -149,7 +86,7 @@ Extension.Load(new VectorSearchExtension());
 .
 
 
-[.column#csharp:gs-build:::-3]
+[.column]
 ====== {empty}
 .Community Resources ...
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

@@ -1,4 +1,4 @@
-[#objc:scopes-collections-manage:::]
+
 = Scopes and Collections
 :page-aliases:
 :page-role:
@@ -32,7 +32,7 @@ Collections can be assigned to different scopes according to content-type or dep
 
 ****
 
-[#objc:scopes-collections-manage:::default-scopes-and-collections]
+[#default-scopes-and-collections]
 == Default Scopes and Collections
 
 Every database you create contains a default scope and a default collection named _default.
@@ -44,7 +44,7 @@ If you upgrade from a version of Couchbase Lite prior to 3.1, all existing data 
 The default scope  and collection cannot be dropped.
 
 
-[#objc:scopes-collections-manage:::create-a-scope-and-collection]
+[#create-a-scope-and-collection]
 == Create a Scope and Collection
 
 In addition to the default scope and collection, you can create your own scope and collection when you create a document.
@@ -65,17 +65,10 @@ NOTE: Scope and collection names are case sensitive.
 ====
 
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="scopes-manage-create-collection", indent=0]
 [source, objc]
 ----
-NSError* error = nil;
-CBLCollection* collection = [database createCollectionWithName:@"myCollectionName"
-                                                         scope:@"myScopeName"
-                                                         error:&error];
+include::objc:example$code_snippets/SampleCodeTest.m[tags="scopes-manage-create-collection", indent=0]
 ----
-
-
 ====
 
 
@@ -91,7 +84,7 @@ NOTE: You cannot create an empty user-defined scope.
 A scope is implicitly created in the `db.createCollection()` method.
 
 
-[#objc:scopes-collections-manage:::index-a-collection]
+[#index-a-collection]
 == Index a Collection
 
 .Index a Collection
@@ -100,23 +93,14 @@ A scope is implicitly created in the `db.createCollection()` method.
 ====
 
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="scopes-manage-index-collection", indent=0]
 [source, objc]
 ----
-CBLFullTextIndexConfiguration* config = [[CBLFullTextIndexConfiguration alloc]
-                                         initWithExpression: @[@"overview"]
-                                         ignoreAccents: NO
-                                         language: nil];
-
-[collection createIndexWithName: @"overviewFTSIndex" config:config error: &error];
+include::objc:example$code_snippets/SampleCodeTest.m[tags="scopes-manage-index-collection", indent=0]
 ----
-
-
 ====
 
 
-[#objc:scopes-collections-manage:::drop-a-collection]
+[#drop-a-collection]
 == Drop a Collection
 
 .Drop a Collection
@@ -125,26 +109,17 @@ CBLFullTextIndexConfiguration* config = [[CBLFullTextIndexConfiguration alloc]
 ====
 
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="scopes-manage-drop-collection", indent=0]
 [source, objc]
 ----
-BOOL success = [database deleteCollectionWithName:@"myCollectionName"
-                                            scope:@"myScopeName"
-                                            error:&error];
-if (!success) {
-    NSLog(@"Failed to delete the collection %@", error);
-}
+include::objc:example$code_snippets/SampleCodeTest.m[tags="scopes-manage-drop-collection", indent=0]
 ----
-
-
 ====
 
 
 NOTE: There is no need to drop a user-defined scope.
 User-defined scopes are dropped when the collections associated with them contain no documents.
 
-[#objc:scopes-collections-manage:::list-scopes-and-collections]
+[#list-scopes-and-collections]
 == List Scopes and Collections
 
 .List Scopes and Collections
@@ -153,16 +128,10 @@ User-defined scopes are dropped when the collections associated with them contai
 ====
 
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="scopes-manage-list", indent=0]
 [source, objc]
 ----
-NSArray* scopes = [database scopes: &error];
-NSArray* collections = [database collections:@"myScopeName" error:&error];
-NSLog(@"I have %d scopes and %d collections", (int)scopes.count, (int)collections.count);
+include::objc:example$code_snippets/SampleCodeTest.m[tags="scopes-manage-list", indent=0]
 ----
-
-
 ====
 
 

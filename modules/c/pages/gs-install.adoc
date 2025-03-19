@@ -1,4 +1,4 @@
-[#c:gs-install:::]
+
 = Install
 :page-aliases: clang:gs-install.adoc
 :page-role:
@@ -29,16 +29,16 @@ xref:c:gs-build.adoc[Build and Run]
 // :release-dirs: pass:q,a[`pass:q,a[libcblite-community]`]
 
 
-[#c:gs-install:::lbl-get-binaries]
+[#lbl-get-binaries]
 == Download
 
 
-Couchbase Lite for C {major}.{minor}.{maintenance-c}{empty} is available for all supported platforms -- see: <<c:gs-install:::lbl-platforms>>.
+Couchbase Lite for C {major}.{minor}.{maintenance-c}{empty} is available for all supported platforms -- see: <<lbl-platforms>>.
 
 You can obtain the downloads here:
 
 * _Android_, _iOS_ and _Windows_ -- link:https://www.couchbase.com/downloads/#extend-with-mobile?family=couchbase-lite[Mobile & Edge]
-* _Linux_ and _macOS_ -- <<c:gs-install:::lbl-downloads,downloads table>>
+* _Linux_ and _macOS_ -- <<lbl-downloads,downloads table>>
 
 The binary release download comprises a root directory (pass:q,a[libcblite-community]), which contains:
 
@@ -56,17 +56,17 @@ The binary release download comprises a root directory (pass:q,a[libcblite-commu
 [TIP]
 .Debug Symbols
 --
-Debug symbol versions are available for all desktop variants of C (Windows, macOS, Debian, Ubuntu and Raspbian) - see: <<c:gs-install:::lbl-downloads,downloads table>>.
+Debug symbol versions are available for all desktop variants of C (Windows, macOS, Debian, Ubuntu and Raspbian) - see: <<lbl-downloads,downloads table>>.
 
 For Android and iOS the symbols are incorporated in the standard release package.
 --
 
-[#c:gs-install:::downloading-vector-search]
+[#downloading-vector-search]
 === Downloading Vector Search
 
 You can obtain the download for the Vector Search extension here:
 
-* _Vector Search Extension_ -- <<c:gs-downloads:::vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},Download Vector Search>>
+* _Vector Search Extension_ -- <<vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},Download Vector Search>>
 
 [IMPORTANT]
 --
@@ -78,19 +78,19 @@ To verify whether your device supports the AVX2 instructions set, https://www.in
 
 .Installation:
 ****
-<<c:gs-install:::lbl-apt,Install for Linux (APT)>> pass:q,a[ {nbsp}|{nbsp} ]
-<<c:gs-install:::lbl-debt,Install for Linux (.deb)>> pass:q,a[ {nbsp}|{nbsp} ]
-<<c:gs-install:::lbl-windows,Install for Windows>> pass:q,a[ {nbsp}|{nbsp} ]
-<<c:gs-install:::lbl-macos,Install for macOS>> pass:q,a[ {nbsp}|{nbsp} ]
-<<c:gs-install:::lbl-ios,Install for iOS>> pass:q,a[ {nbsp}|{nbsp} ]
-<<c:gs-install:::lbl-android,Install for Android>>
+<<lbl-apt,Install for Linux (APT)>> pass:q,a[ {nbsp}|{nbsp} ]
+<<lbl-debt,Install for Linux (.deb)>> pass:q,a[ {nbsp}|{nbsp} ]
+<<lbl-windows,Install for Windows>> pass:q,a[ {nbsp}|{nbsp} ]
+<<lbl-macos,Install for macOS>> pass:q,a[ {nbsp}|{nbsp} ]
+<<lbl-ios,Install for iOS>> pass:q,a[ {nbsp}|{nbsp} ]
+<<lbl-android,Install for Android>>
 ****
 
-[#c:gs-install:::lbl-linux]
+[#lbl-linux]
 == Install for Linux
 
 
-[#c:gs-install:::lbl-apt]
+[#lbl-apt]
 === Using APT
 
 
@@ -193,14 +193,14 @@ sudo apt install pass:q,a[libcblite-dev-community]
 --
 =====
 
-At this point, you are ready to start building the <<c:gs-build:::,Getting Started>> app, or doing your own thing with _Couchbase Lite for C_
+At this point, you are ready to start building the <<,Getting Started>> app, or doing your own thing with _Couchbase Lite for C_
 
-[#c:gs-install:::lbl-deb]
+[#lbl-deb]
 === Using .deb Package
 
 Use your package manager to install from a local `.deb` file.
 
-. Just `wget` the appropriate `.deb` package  -- see <<c:gs-install:::lbl-downloads,downloads table>>  for a package URL.
+. Just `wget` the appropriate `.deb` package  -- see <<lbl-downloads,downloads table>>  for a package URL.
 
 . Install the package and its dependency, using `apt install`
 
@@ -227,36 +227,29 @@ sudo apt install ./pass:q,a[libcblite-dev]
 
 . From here, you need to pass the `-lcblite` command-line flag to the compiler when you build.
 
-At this point, you are ready to start building the <<c:gs-build:::,Getting Started>> app, or doing your own thing with _Couchbase Lite for C_
+At this point, you are ready to start building the <<,Getting Started>> app, or doing your own thing with _Couchbase Lite for C_
 
-[#c:gs-install:::install-vector-search-for-linux]
+[#install-vector-search-for-linux]
 === Install Vector Search for Linux
 
-Before you can use Vector Search, you must <<c:gs-downloads:::vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},download and install the Vector Search library>> to the location in your project where the library can be accessed and loaded at run time.
+Before you can use Vector Search, you must <<vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},download and install the Vector Search library>> to the location in your project where the library can be accessed and loaded at run time.
 The Vector Search extension for the C platform ships with supported prebuilt libraries containing the required dependencies.
 
 You need to set the `LD_LIBRARIES_PATH` to the extension location instead of installing the libraries yourself.
 
 In the code, before opening the database and using the vector search extension, you must call the CBL_SetExtensionPath function shown below to set the path to the installed location of the vector search library.
 
-// include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
 
 [source, c, indent=0]
 ----
-
-        CBLError error {};
-        if (!CBL_EnableVectorSearch(FLStr("/path/to/extension_dir"), &error)) {
-            throw std::domain_error("Invalid / Not Found Extension Library");
-        }
-
+include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
 ----
-
-[#c:gs-install:::lbl-windows]
+[#lbl-windows]
 == Install for Windows
 To install the Couchbase for C libraries on Windows from a downloaded release binary:
 
 
-[#c:gs-install:::lbl-windows-steps]
+[#lbl-windows-steps]
 . Download and extract the release package -- see: link:https://www.couchbase.com/downloads/#extend-with-mobile?family=couchbase-lite[Mobile & Edge]
 
 . From within the root directory, pass:q,a[libcblite-community], deploy the `lib`, `include` and `bin` libraries to a location accessible to your compiler.
@@ -273,30 +266,24 @@ Be sure to select x64 for 64-bit builds
 Couchbase Lite for C does not have any preferred installation path for the `.dll`.
 It is up to you to determine where best to place it so it is available during execution, though copying to a location on the system path is not recommended on Windows
 
-[#c:gs-install:::install-vector-search-for-windows]
+[#install-vector-search-for-windows]
 === Install Vector Search for Windows
 
 To use the Vector Search extension:
 
-. Download and extract the <<c:gs-downloads:::vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},Vector Search extension>>.
+. Download and extract the <<vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},Vector Search extension>>.
 . Put the library in your development environment.
 
 In the code, before opening the database and using the vector search extension, you must call the CBL_SetExtensionPath function shown below to set the path to the installed location of the vector search library.
 
-// include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
 [source, c, indent=0]
 ----
-
-        CBLError error {};
-        if (!CBL_EnableVectorSearch(FLStr("/path/to/extension_dir"), &error)) {
-            throw std::domain_error("Invalid / Not Found Extension Library");
-        }
-
+include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
 ----
 
 NOTE: Couchbase Lite Vector Search does not have any preferred installation path for the `.dll`. It is up to you to determine where best to place it so it is available during execution.
 
-[#c:gs-install:::lbl-macos]
+[#lbl-macos]
 == Install for macOS
 
 // CAUTION: Direct access from Swift to Couchbase Lite for C is not possible in this release footnote:[3.0], but will be available in the next release.
@@ -313,8 +300,8 @@ Simplified installation using Homebrew +
 
 To install the Couchbase for C libraries on macOS from a downloaded release package:
 
-[#c:gs-install:::lbl-mac-steps]
-. Download and extract the release package here -- <<c:gs-install:::lbl-downloads,downloads table>>.
+[#lbl-mac-steps]
+. Download and extract the release package here -- <<lbl-downloads,downloads table>>.
 . Optionally ... From within the root directory, pass:q,a[libcblite-community], *Copy* the `include` and `lib` directories to `/usr/local/`
 . Within  _Xcode_:
 .. *Create* a new project
@@ -325,49 +312,43 @@ Then, within the dialog:
 ... *Select* _Create Directory References If Needed_
 ... *Check* the correct target is selected
 
-At this point, you are ready to start building the <<c:gs-build:::,Getting Started>> app, or doing your own thing with _Couchbase Lite for C_
+At this point, you are ready to start building the <<,Getting Started>> app, or doing your own thing with _Couchbase Lite for C_
 
-[#c:gs-install:::install-vector-search-for-macos]
+[#install-vector-search-for-macos]
 === Install Vector Search for macOS
 
-Before you can use Vector Search, you must <<c:gs-downloads:::vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},download and install the Vector Search library>> to the location in your project where the library can be accessed and loaded at run time.
+Before you can use Vector Search, you must <<vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},download and install the Vector Search library>> to the location in your project where the library can be accessed and loaded at run time.
 The Vector Search extension for the C platform ships with supported prebuilt libraries containing the required dependencies.
 
 In the code, before opening the database and using the vector search extension, you must call the CBL_SetExtensionPath function shown below to set the path to the installed location of the vector search library.
 
-// include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
 [source, c, indent=0]
 ----
-
-        CBLError error {};
-        if (!CBL_EnableVectorSearch(FLStr("/path/to/extension_dir"), &error)) {
-            throw std::domain_error("Invalid / Not Found Extension Library");
-        }
-
+include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
 ----
 
-[#c:gs-install:::lbl-ios]
+[#lbl-ios]
 == Install for iOS
 
 To install the Couchbase for C libraries for iOS from a downloaded release package:
 
 [#lbl-mac-steps]
 
-[#c:gs-install:::lbl-mac-steps]
+[#lbl-mac-steps]
 . Download and extract the release package here -- link:https://www.couchbase.com/downloads/#extend-with-mobile?family=couchbase-lite[Mobile & Edge]
 . *Drag* `CouchbaseLite.xcframework` into your Xcode project, then within the dialog:
 ... *Select* _Create Directory References If Needed_
 ... *Check* the correct target is selected
 
-At this point, you are ready to start building the <<c:gs-build:::,Getting Started>> app, or doing your own thing with _Couchbase Lite for C_
+At this point, you are ready to start building the <<,Getting Started>> app, or doing your own thing with _Couchbase Lite for C_
 
 If you encounter a build error -- Include of non-modular header inside framework module -- You may need to change the build setting
 `allow non-modular includes in framework module` to `Yes`.
 
-[#c:gs-install:::install-vector-search-for-ios]
+[#install-vector-search-for-ios]
 === Install Vector Search for iOS
 
-. Download and extract the <<c:gs-downloads:::vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},Vector Search extension>> into your XCode project location.
+. Download and extract the <<vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},Vector Search extension>> into your XCode project location.
 . Select your target settings in XCode and drag *CouchbaseLiteVectorSearch.xcframework* from your Finder to the *Frameworks, Libraries, and Embedded Content* section.
 . Import the xcframework and start using it in your project.
 
@@ -405,19 +386,12 @@ Bundle(identifier: "com.couchbase.vectorSearchExtension").bundlePath
 
 You can then set the extension path with the snippet below.
 
-// include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
 [source, c, indent=0]
 ----
-
-        CBLError error {};
-        if (!CBL_EnableVectorSearch(FLStr("/path/to/extension_dir"), &error)) {
-            throw std::domain_error("Invalid / Not Found Extension Library");
-        }
-
+include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
 ----
 
-
-[#c:gs-install:::lbl-android]
+[#lbl-android]
 == Install for Android
 
 This install assumes use of the _Android Studio_ IDE.
@@ -440,12 +414,12 @@ In this instance the release comprises a _ready to adapt_ application project.
 
 Once the install is finished, you can build and run this skeleton app.
 
-[#c:gs-install:::install-vector-search-for-android]
+[#install-vector-search-for-android]
 === Install Vector Search for Android
 
 To use Vector Search in your Android applications, follow the steps below:
 
-. Download and extract the <<c:gs-downloads:::vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},Vector Search extension>> into your project location.
+. Download and extract the <<vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}{empty},Vector Search extension>> into your project location.
 . The package must be installed to the location in your project where the library can be accessed and loaded while the executable is running.
 .. The Vector Search download for CBL-C only contains the Vector Search libraries needed to include in your app.
 .. Steps to include the prebuilt native library can be found link:https://developer.android.com/studio/projects/gradle-external-native-builds[here].
@@ -497,21 +471,15 @@ static String getExtensionPath() {
 
 In the code, before opening the database and using the vector search extension, you must call the CBL_SetExtensionPath function shown below to set the path to the installed location of the vector search library.
 
-// include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
 [source, c, indent=0]
 ----
-
-        CBLError error {};
-        if (!CBL_EnableVectorSearch(FLStr("/path/to/extension_dir"), &error)) {
-            throw std::domain_error("Invalid / Not Found Extension Library");
-        }
-
+include::c:example$code_snippets/VectorSearch.h[tags=vs-setup-packaging]
 ----
 
-At this point, you are ready to start building the <<c:gs-build:::,Getting Started>> app, or doing your own thing with _Couchbase Lite for C_
+At this point, you are ready to start building the <<,Getting Started>> app, or doing your own thing with _Couchbase Lite for C_
 
 
-[#c:gs-install:::lbl-platforms]
+[#lbl-platforms]
 == Platform Availability
 
 
@@ -530,7 +498,7 @@ Support for the following will be deprecated in this release and will be removed
 Please plan to migrate your apps to use an appropriate alternative version.
 --
 
-[#c:gs-install:::android]
+[#android]
 === Android
 
 [cols="^1,^1,^1,^1,^1",options="header"]
@@ -541,7 +509,7 @@ Please plan to migrate your apps to use an appropriate alternative version.
 
 |===
 
-[#c:gs-install:::ios]
+[#ios]
 === iOS
 
 [cols="^1,^1,^1,^1,^1",options="header"]
@@ -557,7 +525,7 @@ Please plan to migrate your apps to use an appropriate alternative version.
 |===
 
 
-[#c:gs-install:::macos]
+[#macos]
 === macOS
 
 [cols="^1,^1,^1",options="header"]
@@ -571,7 +539,7 @@ Please plan to migrate your apps to use an appropriate alternative version.
 |===
 
 
-[#c:gs-install:::linux]
+[#linux]
 === Linux
 
 [cols="^1,^1,^1,^1^,^1,^1",options="header"]
@@ -593,7 +561,7 @@ Please plan to migrate your apps to use an appropriate alternative version.
 
 |===
 
-[#c:gs-install:::embedded-linux]
+[#embedded-linux]
 === Embedded Linux
 
 [cols="^1,^1,^1,^1^,^1,^1",options="header"]
@@ -615,7 +583,7 @@ Please plan to migrate your apps to use an appropriate alternative version.
 
 |===
 
-[#c:gs-install:::windows]
+[#windows]
 === Windows
 
 [cols="1,^1,^1",options="header"]
@@ -627,7 +595,7 @@ Please plan to migrate your apps to use an appropriate alternative version.
 |===
 
 
-[#c:gs-install:::lbl-downloads]
+[#lbl-downloads]
 == Download Links
 
 // Include the same parameters as in gs-downloads, but only for latest version
@@ -635,7 +603,7 @@ Please plan to migrate your apps to use an appropriate alternative version.
 
 // If both parameters are defined, render CBL downloads
 
-[#c:gs-install:::release-3-2-1,id=release-3-2-1]
+[#release-3-2-1,id=release-3-2-1]
 === Couchbase Lite Release 3.2.1
 
 _Couchbase Lite for C_ is available for all xref:c:supported-os.adoc[Supported Platforms].
@@ -643,18 +611,18 @@ You can obtain downloads for _Linux_ and _macOS_ from the links here in the down
 Ensure you select the correct package for your application's compiler and architecture.
 
 Alternatively, check the
-<<c:gs-install:::,install>>
+<<,install>>
 page for instructions on how to get the software using a package manager.
 
 .Available platforms are:
 ****
-<<c:gs-install:::macos-3-2-1>>  |
-<<c:gs-install:::windows-3-2-1>>  |
-<<c:gs-install:::debian-3-2-1>>  |
-<<c:gs-install:::ubuntu-3-2-1>>  |
+<<macos-3-2-1>>  |
+<<windows-3-2-1>>  |
+<<debian-3-2-1>>  |
+<<ubuntu-3-2-1>>  |
 ****
 
-[#c:gs-install:::macos-3-2-1,id=macos-3-2-1]
+[#macos-3-2-1,id=macos-3-2-1]
 ==== MacOS
 
 [#tbl-downloads-3.2.1]
@@ -663,11 +631,11 @@ page for instructions on how to get the software using a package manager.
 =====
 
 
-[#c:gs-install:::tbl-downloads-3-enterprise-edition]
+[#tbl-downloads-3-enterprise-edition]
 Enterprise Edition::
 +
 --
-[#c:gs-install:::tbl-downloads-ee,cols="1,4,4,4", options="header"]
+[#tbl-downloads-ee,cols="1,4,4,4", options="header"]
 |===
 | Platform | Download | SHA | Debug Symbols
 
@@ -679,11 +647,11 @@ Enterprise Edition::
 |===
 --
 
-[#c:gs-install:::tbl-downloads-3-community-edition]
+[#tbl-downloads-3-community-edition]
 Community Edition::
 +
 --
-[#c:gs-install:::tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
+[#tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
 |===
 | Platform | Download | SHA | Debug Symbols
 
@@ -698,7 +666,7 @@ Community Edition::
 
 =====
 
-[#c:gs-install:::windows-3-2-1,id=windows-3-2-1]
+[#windows-3-2-1,id=windows-3-2-1]
 ==== Windows
 
 [#tbl-downloads-3.2.1]
@@ -707,11 +675,11 @@ Community Edition::
 =====
 
 
-[#c:gs-install:::tbl-downloads-3-enterprise-edition-2]
+[#tbl-downloads-3-enterprise-edition-2]
 Enterprise Edition::
 +
 --
-[#c:gs-install:::tbl-downloads-ee,cols="1,4,4,4", options="header"]
+[#tbl-downloads-ee,cols="1,4,4,4", options="header"]
 |===
 | Platform | Download | SHA | Debug Symbols
 
@@ -723,11 +691,11 @@ Enterprise Edition::
 |===
 --
 
-[#c:gs-install:::tbl-downloads-3-community-edition-2]
+[#tbl-downloads-3-community-edition-2]
 Community Edition::
 +
 --
-[#c:gs-install:::tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
+[#tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
 |===
 | Platform | Download | SHA | Debug Symbols
 
@@ -742,7 +710,7 @@ Community Edition::
 
 =====
 
-[#c:gs-install:::debian-3-2-1,id=debian-3-2-1]
+[#debian-3-2-1,id=debian-3-2-1]
 ==== Debian
 
 [#tbl-downloads-3.2.1]
@@ -751,11 +719,11 @@ Community Edition::
 =====
 
 
-[#c:gs-install:::tbl-downloads-3-enterprise-edition-3]
+[#tbl-downloads-3-enterprise-edition-3]
 Enterprise Edition::
 +
 --
-[#c:gs-install:::tbl-downloads-ee,cols="1,4,4,4", options="header"]
+[#tbl-downloads-ee,cols="1,4,4,4", options="header"]
 |===
 | Platform | Download | SHA | Debug Symbols
 
@@ -845,11 +813,11 @@ Enterprise Edition::
 |===
 --
 
-[#c:gs-install:::tbl-downloads-3-community-edition-3]
+[#tbl-downloads-3-community-edition-3]
 Community Edition::
 +
 --
-[#c:gs-install:::tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
+[#tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
 |===
 | Platform | Download | SHA | Debug Symbols
 
@@ -944,7 +912,7 @@ Community Edition::
 =====
 
 
-[#c:gs-install:::ubuntu-3-2-1,id=ubuntu-3-2-1]
+[#ubuntu-3-2-1,id=ubuntu-3-2-1]
 ==== Ubuntu
 
 [#tbl-downloads-3.2.1]
@@ -953,11 +921,11 @@ Community Edition::
 =====
 
 
-[#c:gs-install:::tbl-downloads-3-enterprise-edition-4]
+[#tbl-downloads-3-enterprise-edition-4]
 Enterprise Edition::
 +
 --
-[#c:gs-install:::tbl-downloads-ee,cols="1,4,4,4", options="header"]
+[#tbl-downloads-ee,cols="1,4,4,4", options="header"]
 |===
 | Platform | Download | SHA | Debug Symbols
 
@@ -1031,11 +999,11 @@ Enterprise Edition::
 |===
 --
 
-[#c:gs-install:::tbl-downloads-3-community-edition-4]
+[#tbl-downloads-3-community-edition-4]
 Community Edition::
 +
 --
-[#c:gs-install:::tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
+[#tbl-downloads-ce,cols="1,4,4,4 ", options="header"]
 |===
 | Platform | Download | SHA | Debug Symbols
 
@@ -1111,15 +1079,15 @@ Community Edition::
 
 =====
 
-[#c:gs-install:::raspbian-3-2-1,id=raspbian-3-2-1]
+[#raspbian-3-2-1,id=raspbian-3-2-1]
 ==== Raspbian
 
-Please use the <<c:gs-install:::debian-3-2-1,Debian `.deb` download>> choosing the appropriate version (`debian9` or `debian10`) and architecture.
+Please use the <<debian-3-2-1,Debian `.deb` download>> choosing the appropriate version (`debian9` or `debian10`) and architecture.
 
 
 // If both are defined render vector search downloads
 
-[#c:gs-install:::vs-release-1-0-0,id=vs-release-1-0-0]
+[#vs-release-1-0-0,id=vs-release-1-0-0]
 === Vector Search Release 1.0.0
 
 _Couchbase Lite Vector Search - C_ is available for all xref:c:supported-os.adoc[Supported Platforms].
@@ -1127,16 +1095,16 @@ You can obtain downloads for _Linux_ and _macOS_ from the links here in the down
 Ensure you select the correct package for your application's compiler and architecture.
 
 Alternatively, check the
-<<c:gs-install:::,install>>
+<<,install>>
 page for instructions on how to get the software using a package manager.
 
 .Available platforms are:
 ****
-<<c:gs-install:::android-1-0-0>> |
-<<c:gs-install:::macos-1-0-0>>  |
-<<c:gs-install:::ios-1-0-0>> |
-<<c:gs-install:::windows-1-0-0>> |
-<<c:gs-install:::linux-1-0-0>>   |
+<<android-1-0-0>> |
+<<macos-1-0-0>>  |
+<<ios-1-0-0>> |
+<<windows-1-0-0>> |
+<<linux-1-0-0>>   |
 ****
 
 [IMPORTANT]
@@ -1146,7 +1114,7 @@ Vector Search is available only for 64-bit architectures.
 The Vector Search extension is an *Enterprise-only* feature.
 --
 
-[#c:gs-install:::android-1-0-0,id=android-1-0-0]
+[#android-1-0-0,id=android-1-0-0]
 ==== Android
 
 [#tbl-downloads-1.0.0]
@@ -1154,11 +1122,11 @@ The Vector Search extension is an *Enterprise-only* feature.
 [tabs]
 =====
 
-[#c:gs-install:::tbl-downloads-1-enterprise]
+[#tbl-downloads-1-enterprise]
 Enterprise::
 +
 --
-[#c:gs-install:::tbl-downloads-ee,cols="1,4,4", options="header"]
+[#tbl-downloads-ee,cols="1,4,4", options="header"]
 |===
 | Platform | Download | SHA
 
@@ -1173,7 +1141,7 @@ Enterprise::
 --
 =====
 
-[#c:gs-install:::macos-1-0-0,id=macos-1-0-0]
+[#macos-1-0-0,id=macos-1-0-0]
 ==== MacOS
 
 [#tbl-downloads-1.0.0]
@@ -1181,11 +1149,11 @@ Enterprise::
 [tabs]
 =====
 
-[#c:gs-install:::tbl-downloads-1-enterprise-edition]
+[#tbl-downloads-1-enterprise-edition]
 Enterprise Edition::
 +
 --
-[#c:gs-install:::tbl-downloads-ee,cols="1,4,4", options="header"]
+[#tbl-downloads-ee,cols="1,4,4", options="header"]
 |===
 | Platform | Download | SHA | Debug Symbols
 
@@ -1198,18 +1166,18 @@ Enterprise Edition::
 --
 =====
 
-[#c:gs-install:::ios-1-0-0,id=ios-1-0-0]
+[#ios-1-0-0,id=ios-1-0-0]
 ==== iOS
 [#tbl-downloads-1.0.0]
 .Download link table
 [tabs]
 =====
 
-[#c:gs-install:::tbl-downloads-1-enterprise-edition-2]
+[#tbl-downloads-1-enterprise-edition-2]
 Enterprise Edition::
 +
 --
-[#c:gs-install:::tbl-downloads-ee,cols="1,4,4", options="header"]
+[#tbl-downloads-ee,cols="1,4,4", options="header"]
 |===
 | Platform | Download | SHA
 
@@ -1221,7 +1189,7 @@ Enterprise Edition::
 --
 =====
 
-[#c:gs-install:::windows-1-0-0,id=windows-1-0-0]
+[#windows-1-0-0,id=windows-1-0-0]
 ==== Windows
 
 [#tbl-downloads-1.0.0]
@@ -1229,11 +1197,11 @@ Enterprise Edition::
 [tabs]
 =====
 
-[#c:gs-install:::tbl-downloads-1-enterprise-edition-3]
+[#tbl-downloads-1-enterprise-edition-3]
 Enterprise Edition::
 +
 --
-[#c:gs-install:::tbl-downloads-ee,cols="1,4,4", options="header"]
+[#tbl-downloads-ee,cols="1,4,4", options="header"]
 |===
 | Platform | Download | SHA
 
@@ -1247,7 +1215,7 @@ Enterprise Edition::
 --
 =====
 
-[#c:gs-install:::linux-1-0-0,id=linux-1-0-0]
+[#linux-1-0-0,id=linux-1-0-0]
 ==== Linux
 
 [#tbl-downloads-1.0.0]
@@ -1255,11 +1223,11 @@ Enterprise Edition::
 [tabs]
 =====
 
-[#c:gs-install:::tbl-downloads-1-enterprise-2]
+[#tbl-downloads-1-enterprise-2]
 Enterprise::
 +
 --
-[#c:gs-install:::tbl-downloads-ee,cols="1,4,4,4", options="header"]
+[#tbl-downloads-ee,cols="1,4,4,4", options="header"]
 |===
 | Platform | Download | SHA | Debug Symbols
 
@@ -1277,7 +1245,7 @@ Enterprise::
 =====
 
 
-[#c:gs-install:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -1293,7 +1261,7 @@ Enterprise::
 
 .
 
-[.column#c:gs-install:::-2]
+[.column]
 ====== {empty}
 .Learn more . . .
 * xref:c:database.adoc[Databases]
@@ -1305,7 +1273,7 @@ Enterprise::
 .
 
 
-[.column#c:gs-install:::-3]
+[.column]
 ====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

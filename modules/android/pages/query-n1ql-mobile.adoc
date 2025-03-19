@@ -1,4 +1,4 @@
-[#android:query-n1ql-mobile:::]
+
 = SQL++ for Mobile
 :page-role:
 :description: How to use {sqlpp} query strings to build effective queries with Couchbase Lite on Android
@@ -15,16 +15,16 @@ Related Content -- xref:android:querybuilder.adoc#lbl-predquery[Predictive Queri
 NOTE: The examples used in this topic are based on the _Travel Sample_ app and data introduced in the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial
 
 
-[#android:query-n1ql-mobile:::introduction]
+[#introduction]
 == Introduction
 
 Developers using Couchbase Lite for Android can provide {sqlpp} query strings using the {sqlpp} Query API.
-This API uses query statements of the form shown in <<android:query-n1ql-mobile:::ex-query-form>>.
+This API uses query statements of the form shown in <<ex-query-form>>.
 
 The structure and semantics of the query format are based on that of Couchbase Server's {sqlpp} query language -- see xref:server:n1ql:n1ql-language-reference/index.adoc[{sqlpp} Reference Guide] and xref:server:learn:data/n1ql-versus-sql.adoc[{sqlpp} Data Model].
 
 
-[#android:query-n1ql-mobile:::running]
+[#running]
 == Running
 
 The database can create a query object with the SQL++ string.
@@ -34,7 +34,7 @@ See xref:android:query-resultsets.adoc[Query Resultsets] for how to work with re
 [#ex-samplerun]
 
 
-[#android:query-n1ql-mobile:::ex-samplerun]
+[#ex-samplerun]
 ====
 
 [tabs]
@@ -45,35 +45,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-syntax-n1ql", indent=0]
 [source, Kotlin]
 ----
-val thisQuery = thisDb.createQuery(
-    "SELECT META().id AS id FROM _ WHERE type = \"hotel\""
-) // <.>
-
-return thisQuery.execute().use { rs -> rs.allResults() }
+include::android:example$codesnippet_collection.kt[tags="query-syntax-n1ql", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-syntax-n1ql", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-//  Declared elsewhere: Database thisDb
-Query thisQuery =
-    thisDb.createQuery(
-        "SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""); // <.>
-List<Map<String, Object>> results = new ArrayList<>();
-try (ResultSet rs = thisQuery.execute()) {
-    for (Result result: rs) { results.add(result.toMap()); }
-}
-return results;
+include::android:example$codesnippet_collection.java[tags="query-syntax-n1ql", indent=0]
 ----
 --
 
@@ -82,15 +66,15 @@ return results;
 
 ====
 
-We are accessing the current database using the shorthand notation *`_`* -- see the <<android:query-n1ql-mobile:::lbl-from>> clause for more on data source selection and <<android:query-n1ql-mobile:::lbl-query-params>> for more on parameterized queries.
+We are accessing the current database using the shorthand notation *`_`* -- see the <<lbl-from>> clause for more on data source selection and <<lbl-query-params>> for more on parameterized queries.
 
 
-[#android:query-n1ql-mobile:::query-format]
+[#query-format]
 == Query Format
 
-The API uses query statements of the form shown in <<android:query-n1ql-mobile:::ex-query-form>>.
+The API uses query statements of the form shown in <<ex-query-form>>.
 
-[#android:query-n1ql-mobile:::ex-query-form]
+[#ex-query-form]
 .Query Format
 ====
 [source, SQL, subs="+attributes, +macros"]
@@ -112,32 +96,32 @@ Query Components::
 |====
 | Component | Description
 
-| <<android:query-n1ql-mobile:::lbl-select>>
+| <<lbl-select>>
 a| The document properties that will be returned in the result set
 
-| <<android:query-n1ql-mobile:::lbl-from>>
+| <<lbl-from>>
 a| The data source to be queried
 
-| <<android:query-n1ql-mobile:::lbl-join>>
+| <<lbl-join>>
 a| The criteria for joining multiple documents
 
-| <<android:query-n1ql-mobile:::lbl-where>>
+| <<lbl-where>>
 a| The query criteria +
 The `SELECT`ed properties of documents matching this criteria will be returned in the result set
 
-| <<android:query-n1ql-mobile:::lbl-unnest>>
+| <<lbl-unnest>>
 a| The criteria used to unpack arrays within a document into individual rows
 
-| <<android:query-n1ql-mobile:::lbl-group>>
+| <<lbl-group>>
 a| The criteria used to group returned items in the result set
 
-| <<android:query-n1ql-mobile:::lbl-order>>
+| <<lbl-order>>
 a| The criteria used to order the items in the result set
 
-| <<android:query-n1ql-mobile:::lbl-limit>>
+| <<lbl-limit>>
 a| The maximum number of results to be returned
 
-| <<android:query-n1ql-mobile:::lbl-offset>>
+| <<lbl-offset>>
 a| The number of results to be skipped before starting to return results
 |====
 
@@ -145,14 +129,14 @@ a| The number of results to be skipped before starting to return results
 TIP: We recommend working through the https://query-tutorial.couchbase.com/tutorial/#1[{sqlpp} Tutorials] to build your {sqlpp} skills.
 
 
-[#android:query-n1ql-mobile:::lbl-select]
+[#lbl-select]
 == SELECT statement
 
-[#android:query-n1ql-mobile:::purpose]
+[#purpose]
 === Purpose
 Projects the result returned by the query, identifying the columns it will contain.
 
-[#android:query-n1ql-mobile:::syntax]
+[#syntax]
 === Syntax
 
 .{sqlpp} Select Syntax
@@ -169,7 +153,7 @@ columnAlias = IDENTIFIER
 ----
 ====
 
-[#android:query-n1ql-mobile:::arguments]
+[#arguments]
 === Arguments
 
 <.> The select clause begins with the SELECT keyword.
@@ -181,22 +165,22 @@ columnAlias = IDENTIFIER
 
 <.> selectResults is a list of columns projected in the query result.
 Each column is an expression which could be a property expression or any expressions or functions.
-You can use the wildcard *** to select all columns -- see <<android:query-n1ql-mobile:::select-wildcard>>
+You can use the wildcard *** to select all columns -- see <<select-wildcard>>
 
 <.> Use the optional `AS` argument to provides an alias name for a property. Each property can be aliased by putting the `AS <alias name>` after the column name.
 
-[#android:query-n1ql-mobile:::select-wildcard]
+[#select-wildcard]
 ==== Select Wildcard
 When using the `SELECT *` option the column name (key) of the {sqlpp} string is one of:
 
 * The alias name if one was specified
 * The data source name (or its alias if provided) as specified in the `FROM` clause.
 
-This behavior is inline with that of Couchbase Server {sqlpp} -- see example in <<android:query-n1ql-mobile:::tbl-selstar>>.
+This behavior is inline with that of Couchbase Server {sqlpp} -- see example in <<tbl-selstar>>.
 
 
 .Example Column Names for SELECT ***
-[#android:query-n1ql-mobile:::tbl-selstar,cols="3m,2m"]
+[#tbl-selstar,cols="3m,2m"]
 |===
 | Query| Column Name
 
@@ -218,7 +202,7 @@ This behavior is inline with that of Couchbase Server {sqlpp} -- see example in 
 |===
 
 
-[#android:query-n1ql-mobile:::example]
+[#example]
 === Example
 
 .SELECT properties
@@ -248,15 +232,15 @@ SELECT DISTINCT address.city <.>
 
 See: xref:android:query-resultsets.adoc[Query Resultsets] for more on processing query results.
 
-[#android:query-n1ql-mobile:::lbl-from]
+[#lbl-from]
 == FROM
 
-[#android:query-n1ql-mobile:::purpose-2]
+[#purpose-2]
 === Purpose
 Specifies the data source, or sources, and optionally applies an alias ( `AS`).
 It is mandatory.
 
-[#android:query-n1ql-mobile:::syntax-2]
+[#syntax-2]
 === Syntax
 
 [source, sql]
@@ -266,7 +250,7 @@ FROM dataSource  <.>
 
 ----
 
-[#android:query-n1ql-mobile:::datasource]
+[#datasource]
 === Datasource
 
 A datasource can be:
@@ -277,16 +261,16 @@ A datasource can be:
 * < collection-name > : a collection in the default scope
 
 
-[#android:query-n1ql-mobile:::arguments-2]
+[#arguments-2]
 === Arguments
 
 <.> Here `dataSource` is the database name against which the query is to run or the <scope>.<collection>.
 Use `AS` to give the database an alias you can use within the query. +
 To use the current datasource without specifying a name, use `_` as the datasource.
 
-<.> `JOIN joinclause` -- use this optional argument to link datasources -- see <<android:query-n1ql-mobile:::lbl-join>>
+<.> `JOIN joinclause` -- use this optional argument to link datasources -- see <<lbl-join>>
 
-[#android:query-n1ql-mobile:::example-2]
+[#example-2]
 === Example
 
 .FROM clause
@@ -305,17 +289,17 @@ SELECT store.name FROM _ store
 ====
 
 
-[#android:query-n1ql-mobile:::lbl-join]
+[#lbl-join]
 == JOIN statement
 
-[#android:query-n1ql-mobile:::purpose-3]
+[#purpose-3]
 === Purpose
 The JOIN clause enables you to select data from multiple data sources linked by criteria specified in the JOIN statement.
 
 Currently only self-joins are supported.
-For example to combine airline details with route details, linked by the airline id -- see <<android:query-n1ql-mobile:::ex-join>>.
+For example to combine airline details with route details, linked by the airline id -- see <<ex-join>>.
 
-[#android:query-n1ql-mobile:::syntax-3]
+[#syntax-3]
 === Syntax
 
 [source, sql]
@@ -331,7 +315,7 @@ dataSource = databaseName ( ( AS | _ )? databaseAlias )?
 constraint ( ON expression )? <.>
 ----
 
-[#android:query-n1ql-mobile:::arguments-3]
+[#arguments-3]
 === Arguments
 
 <.> The join clause starts with a JOIN operator followed by the data source. +
@@ -342,7 +326,7 @@ Note: JOIN and INNER JOIN are the same, LEFT JOIN and LEFT OUTER JOIN are the sa
 
 <.> The join constraint starts with the ON keyword followed by the expression that defines the joining constraints.
 
-[#android:query-n1ql-mobile:::example-3]
+[#example-3]
 === Example
 
 [source,sql]
@@ -355,7 +339,7 @@ SELECT * FROM route r JOIN airline a ON r.airlineid = meta(a).id WHERE a.country
 ----
 
 
-[#android:query-n1ql-mobile:::ex-join]
+[#ex-join]
 .Using JOIN to Combine Document Details
 ====
 This example JOINS the document of type `route` with documents of type `airline` using the document ID (`_id`) on the _airline_ document and `airlineid` on the _route_ document.
@@ -367,10 +351,10 @@ SELECT * FROM travel-sample r JOIN travel-sample a ON r.airlineid = a.meta.id WH
 ----
 ====
 
-[#android:query-n1ql-mobile:::lbl-unnest]
+[#lbl-unnest]
 == Array UNNEST
 
-[#android:query-n1ql-mobile:::purpose-4]
+[#purpose-4]
 === Purpose
 
 You can use `UNNEST` in queries to unpack arrays within a document into individual rows.
@@ -382,7 +366,7 @@ You can also use a new type of index, the xref:android:indexing.adoc#array-index
 
 NOTE: Couchbase Lite currently supports inner `UNNEST` only.
 
-[#android:query-n1ql-mobile:::syntax-4]
+[#syntax-4]
 === Syntax
 
 The syntax for `UNNEST` is shown below:
@@ -401,12 +385,12 @@ unnestClause = UNNEST expr ( ‘AS’? alias)?
 You cannot use the term as an identifier for a property name or data source unless you escape it using backticks.
 --
 
-[#android:query-n1ql-mobile:::examples]
+[#examples]
 === Examples
 
 For examples of using Array Indexes in conjunction with `UNNEST`, see xref:android:indexing.adoc#array-indexing[Array Index].
 
-We are also accessing the current database using the shorthand notation *`_`* -- see the <<android:query-n1ql-mobile:::lbl-from>> clause for more on data source selection and <<android:query-n1ql-mobile:::lbl-query-params>> for more on parameterized queries.
+We are also accessing the current database using the shorthand notation *`_`* -- see the <<lbl-from>> clause for more on data source selection and <<lbl-query-params>> for more on parameterized queries.
 
 The following examples will use the example JSON document below to query results from:
 
@@ -475,16 +459,16 @@ The output demonstrates retrieval of both primary and secondary contact numbers 
 IMPORTANT: Array literals are not supported in CBL 3.2.1.
 Attempting to create a query with array literals will return an error.
 
-[#android:query-n1ql-mobile:::lbl-where]
+[#lbl-where]
 == WHERE statement
 
-[#android:query-n1ql-mobile:::purpose-5]
+[#purpose-5]
 === Purpose
 Specifies the selection criteria used to filter results.
 
 As with SQL, use the `WHERE` statement to choose which documents are returned by your query.
 
-[#android:query-n1ql-mobile:::syntax-5]
+[#syntax-5]
 === Syntax
 
 [source, sql]
@@ -493,15 +477,15 @@ where = WHERE expression <.>
 
 ----
 
-[#android:query-n1ql-mobile:::arguments-4]
+[#arguments-4]
 === Arguments
 
 <.> WHERE evalates `expression` to a BOOLEAN value.
 You can chain any number of Expressions in order to implement sophisticated filtering capabilities.
 
-See also -- <<android:query-n1ql-mobile:::lbl-operators>> for more on building expressions and <<android:query-n1ql-mobile:::lbl-query-params>> for more on parameterized queries.
+See also -- <<lbl-operators>> for more on building expressions and <<lbl-query-params>> for more on parameterized queries.
 
-[#android:query-n1ql-mobile:::examples-2]
+[#examples-2]
 === Examples
 
 [source, sql]
@@ -512,14 +496,14 @@ SELECT name FROM db WHERE department = ‘engineer’ AND group = ‘mobile
 ----
 
 
-[#android:query-n1ql-mobile:::lbl-group]
+[#lbl-group]
 == GROUP BY statement
 
-[#android:query-n1ql-mobile:::purpose-6]
+[#purpose-6]
 === Purpose
 Use `group by` to arrange values in groups of one or more properties.
 
-[#android:query-n1ql-mobile:::syntax-6]
+[#syntax-6]
 === Syntax
 
 [source, sql]
@@ -532,7 +516,7 @@ having = HAVING expression <.>
 
 ----
 
-[#android:query-n1ql-mobile:::arguments-5]
+[#arguments-5]
 === Arguments
 <.> The group by clause starts with the GROUP BY keyword followed by one or more expressions.
 
@@ -543,7 +527,7 @@ The group by clause is normally used together with the aggregate functions (e.g.
 <.> Having -- allows you to filter the result based on aggregate functions -- for example, `HAVING count(empnum)>100`
 
 
-[#android:query-n1ql-mobile:::examples-3]
+[#examples-3]
 === Examples
 
 [source,sql]
@@ -557,14 +541,14 @@ SELECT COUNT(empno), city FROM db GROUP BY city HAVING COUNT(empno) > 100 WHERE 
 ----
 
 
-[#android:query-n1ql-mobile:::lbl-order]
+[#lbl-order]
 == ORDER BY statement
 
-[#android:query-n1ql-mobile:::purpose-7]
+[#purpose-7]
 === Purpose
 Sort query results based on a given expression result.
 
-[#android:query-n1ql-mobile:::syntax-7]
+[#syntax-7]
 === Syntax
 
 [source, sql]
@@ -577,7 +561,7 @@ order = ( ASC / DESC ) <.>
 
 ----
 
-[#android:query-n1ql-mobile:::arguments-6]
+[#arguments-6]
 === Arguments
 
 <.> orderBy -- The order by clause starts with the ORDER BY keyword followed by the ordering clause.
@@ -587,7 +571,7 @@ order = ( ASC / DESC ) <.>
 <.> Order -- In each ordering clause, the sorting direction is specified using the optional ASC (ascending) or DESC (descending) directives. Default is ASC.
 
 
-[#android:query-n1ql-mobile:::examples-4]
+[#examples-4]
 === Examples
 
 .Simple usage
@@ -604,14 +588,14 @@ SELECT name, score FROM db  ORDER BY name ASC, score DESC
 ====
 
 
-[#android:query-n1ql-mobile:::lbl-limit]
+[#lbl-limit]
 == LIMIT statement
 
-[#android:query-n1ql-mobile:::purpose-8]
+[#purpose-8]
 === Purpose
 Specifies the maximum number of results to be returned by the query.
 
-[#android:query-n1ql-mobile:::syntax-8]
+[#syntax-8]
 === Syntax
 
 [source, sql]
@@ -620,13 +604,13 @@ limit = LIMIT expression <.>
 
 ----
 
-[#android:query-n1ql-mobile:::arguments-7]
+[#arguments-7]
 === Arguments
 
 <.> The LIMIT clause starts with the LIMIT keyword followed by an expression that will be evaluated as a number.
 
 
-[#android:query-n1ql-mobile:::examples-5]
+[#examples-5]
 === Examples
 
 .Simple usage
@@ -640,14 +624,14 @@ SELECT name FROM db LIMIT 10 <.>
 <.> Return only 10 results
 ====
 
-[#android:query-n1ql-mobile:::lbl-offset]
+[#lbl-offset]
 == OFFSET statement
 
-[#android:query-n1ql-mobile:::purpose-9]
+[#purpose-9]
 === Purpose
 Specifies the number of results to be skipped by the query.
 
-[#android:query-n1ql-mobile:::syntax-9]
+[#syntax-9]
 === Syntax
 
 [source, sql]
@@ -656,12 +640,12 @@ offset = OFFSET expression <.>
 
 ----
 
-[#android:query-n1ql-mobile:::arguments-8]
+[#arguments-8]
 === Arguments
 
 <.> The offset clause starts with the OFFSET keyword followed by an expression that will be evaluated as a number that represents the number of results ignored before the query begins returning results.
 
-[#android:query-n1ql-mobile:::examples-6]
+[#examples-6]
 === Examples
 
 .Simple usage
@@ -682,44 +666,44 @@ SELECT name FROM db  LIMIT 10 OFFSET 10 <.>
 ====
 
 
-[#android:query-n1ql-mobile:::lbl-literals]
+[#lbl-literals]
 == Expressions
 In this section::
-  <<android:query-n1ql-mobile:::lbl-exp-literals>>{nbsp}{nbsp}|{nbsp}{nbsp}
-  <<android:query-n1ql-mobile:::lbl-exp-ident>>{nbsp}{nbsp}|{nbsp}{nbsp}
-  <<android:query-n1ql-mobile:::lbl-exp-prop>>{nbsp}{nbsp}|{nbsp}{nbsp}
-  <<android:query-n1ql-mobile:::lbl-exp-any>>{nbsp}{nbsp}|{nbsp}{nbsp}
-  <<android:query-n1ql-mobile:::lbl-exp-param>>{nbsp}{nbsp}|{nbsp}{nbsp}
-  <<android:query-n1ql-mobile:::lbl-exp-paren>>
+  <<lbl-exp-literals>>{nbsp}{nbsp}|{nbsp}{nbsp}
+  <<lbl-exp-ident>>{nbsp}{nbsp}|{nbsp}{nbsp}
+  <<lbl-exp-prop>>{nbsp}{nbsp}|{nbsp}{nbsp}
+  <<lbl-exp-any>>{nbsp}{nbsp}|{nbsp}{nbsp}
+  <<lbl-exp-param>>{nbsp}{nbsp}|{nbsp}{nbsp}
+  <<lbl-exp-paren>>
 
 Expressions are references to identifiers that resolve to values.
-Categories of expression comprise the elements covered in this section (see above), together with <<android:query-n1ql-mobile:::lbl-operators>> and <<android:query-n1ql-mobile:::lbl-functions>>, which are covered in their own sections
+Categories of expression comprise the elements covered in this section (see above), together with <<lbl-operators>> and <<lbl-functions>>, which are covered in their own sections
 
 
-[#android:query-n1ql-mobile:::lbl-exp-literals]
+[#lbl-exp-literals]
 === Literals
-<<android:query-n1ql-mobile:::lbl-lit-bool>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-lit-numbers>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-lit-string>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-lit-null>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-lit-missing>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-lit-array>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-lit-dict>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-lit-bool>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-lit-numbers>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-lit-string>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-lit-null>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-lit-missing>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-lit-array>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-lit-dict>>{nbsp}{nbsp}|{nbsp}{nbsp}
 
 
-[#android:query-n1ql-mobile:::lbl-lit-bool]
+[#lbl-lit-bool]
 ==== Boolean
 
-[#android:query-n1ql-mobile:::purpose-10]
+[#purpose-10]
 ==== Purpose
 Represents a true or false value.
 
-[#android:query-n1ql-mobile:::syntax-10]
+[#syntax-10]
 ==== Syntax
 
 `TRUE | FALSE`
 
-[#android:query-n1ql-mobile:::example-4]
+[#example-4]
 ==== Example
 
 [source,sql]
@@ -728,16 +712,16 @@ SELECT value FROM db  WHERE value = true
 SELECT value FROM db  WHERE value = false
 ----
 
-[#android:query-n1ql-mobile:::lbl-lit-numbers]
+[#lbl-lit-numbers]
 ==== Numeric
 
-[#android:query-n1ql-mobile:::purpose-11]
+[#purpose-11]
 ==== Purpose
 Represents a numeric value.
 Numbers may be signed or unsigned digits.
 They have optional fractional and exponent components.
 
-[#android:query-n1ql-mobile:::syntax-11]
+[#syntax-11]
 ==== Syntax
 
 [source,sql]
@@ -747,7 +731,7 @@ They have optional fractional and exponent components.
 DIGIT = [0-9]
 ----
 
-[#android:query-n1ql-mobile:::example-5]
+[#example-5]
 ==== Example
 
 [source,sql]
@@ -762,15 +746,15 @@ SELECT value FROM db WHERE value = 10.25E+2
 SELECT value FROM db WHERE value = 10.25E-2
 ----
 
-[#android:query-n1ql-mobile:::lbl-lit-string]
+[#lbl-lit-string]
 ==== String
 
-[#android:query-n1ql-mobile:::purpose-12]
+[#purpose-12]
 ==== Purpose
 The string literal represents a string or sequence of characters.
 
 
-[#android:query-n1ql-mobile:::syntax-12]
+[#syntax-12]
 ==== Syntax
 
 [source,sql]
@@ -780,7 +764,7 @@ The string literal represents a string or sequence of characters.
 
 <.> The string literal can be double-quoted as well as single-quoted.
 
-[#android:query-n1ql-mobile:::example-6]
+[#example-6]
 ==== Example
 [source,sql]
 ----
@@ -788,14 +772,14 @@ SELECT firstName, lastName FROM db WHERE middleName = “middle”
 SELECT firstName, lastName FROM db WHERE middleName = ‘middle’
 ----
 
-[#android:query-n1ql-mobile:::lbl-lit-null]
+[#lbl-lit-null]
 ==== NULL
 
-[#android:query-n1ql-mobile:::purpose-13]
+[#purpose-13]
 ==== Purpose
 The literal NULL represents an empty value.
 
-[#android:query-n1ql-mobile:::syntax-13]
+[#syntax-13]
 ==== Syntax
 
 [source,sql]
@@ -803,7 +787,7 @@ The literal NULL represents an empty value.
 NULL
 ----
 
-[#android:query-n1ql-mobile:::example-7]
+[#example-7]
 ==== Example
 [source,sql]
 ----
@@ -811,14 +795,14 @@ SELECT firstName, lastName FROM db WHERE middleName IS NULL
 
 ----
 
-[#android:query-n1ql-mobile:::lbl-lit-missing]
+[#lbl-lit-missing]
 ==== MISSING
 
-[#android:query-n1ql-mobile:::purpose-14]
+[#purpose-14]
 ==== Purpose
 The MISSING literal represents a missing name-value pair in a document.
 
-[#android:query-n1ql-mobile:::syntax-14]
+[#syntax-14]
 ==== Syntax
 
 [source,sql]
@@ -826,21 +810,21 @@ The MISSING literal represents a missing name-value pair in a document.
 MISSING
 ----
 
-[#android:query-n1ql-mobile:::example-8]
+[#example-8]
 ==== Example
 [source,sql]
 ----
 SELECT firstName, lastName FROM db WHERE middleName IS MISSING
 ----
 
-[#android:query-n1ql-mobile:::lbl-lit-array]
+[#lbl-lit-array]
 ==== Array
 
-[#android:query-n1ql-mobile:::purpose-15]
+[#purpose-15]
 ==== Purpose
 Represents an Array
 
-[#android:query-n1ql-mobile:::syntax-15]
+[#syntax-15]
 ==== Syntax
 
 [source,sql]
@@ -848,7 +832,7 @@ Represents an Array
 arrayLiteral = '[' _ (expression ( _ ',' _ e2:expression )* )? ']'
 ----
 
-[#android:query-n1ql-mobile:::example-9]
+[#example-9]
 ==== Example
 [source,sql]
 ----
@@ -857,14 +841,14 @@ SELECT [ property1, property2, property3] FROM _
 
 ----
 
-[#android:query-n1ql-mobile:::lbl-lit-dict]
+[#lbl-lit-dict]
 ==== Dictionary
 
-[#android:query-n1ql-mobile:::purpose-16]
+[#purpose-16]
 ==== Purpose
 Represents a dictionary literal
 
-[#android:query-n1ql-mobile:::syntax-16]
+[#syntax-16]
 ==== Syntax
 
 [source,sql]
@@ -875,7 +859,7 @@ dictionaryLiteral = '{' _ ( STRING_LITERAL ':' e:expression
 
 ----
 
-[#android:query-n1ql-mobile:::example-10]
+[#example-10]
 ==== Example
 [source,sql]
 ----
@@ -885,16 +869,16 @@ SELECT { ‘name’: ‘James’, ‘phones’: [‘650-100-1000’, ‘650-100-
 ----
 
 
-[#android:query-n1ql-mobile:::lbl-exp-ident]
+[#lbl-exp-ident]
 === Identifiers
 
-[#android:query-n1ql-mobile:::purpose-17]
+[#purpose-17]
 ==== Purpose
 
 Identifiers provide symbolic references.
 Use them for example to identify: column alias names, database names, database alias names, property names, parameter names, function names, and FTS index names.
 
-[#android:query-n1ql-mobile:::syntax-17]
+[#syntax-17]
 ==== Syntax
 
 [source, sql]
@@ -907,7 +891,7 @@ The identifier is case sensitive.
 
 TIP: To use other characters in the identifier, surround the identifier with the backticks ` character.
 
-[#android:query-n1ql-mobile:::example-11]
+[#example-11]
 ==== Example
 
 
@@ -932,14 +916,14 @@ SELECT `key-1` FROM db
 ====
 
 
-[#android:query-n1ql-mobile:::lbl-exp-prop]
+[#lbl-exp-prop]
 === Property Expressions
 
-[#android:query-n1ql-mobile:::purpose-18]
+[#purpose-18]
 ==== Purpose
 The property expression is used to reference a property in a document
 
-[#android:query-n1ql-mobile:::syntax-18]
+[#syntax-18]
 ==== Syntax
 
 [source,sql]
@@ -959,7 +943,7 @@ propertyName = IDENTIFIER
 <.> Use bracket ([index]) syntax to refer to an item in an array. +
 <.> Use the asterisk (*) character to represents _all properties_. This can only be used in the result list of the SELECT clause.
 
-[#android:query-n1ql-mobile:::example-12]
+[#example-12]
 ==== Example
 
 .Property Expressions
@@ -990,15 +974,15 @@ SELECT contact.address.city, contact.phones[0]
 
 ====
 
-[#android:query-n1ql-mobile:::lbl-exp-any]
+[#lbl-exp-any]
 === Any and Every Expressions
 
-[#android:query-n1ql-mobile:::purpose-19]
+[#purpose-19]
 ==== Purpose
 Evaluates expressions over items in an array object.
 
 
-[#android:query-n1ql-mobile:::syntax-19]
+[#syntax-19]
 ==== Syntax
 
 [source,sql]
@@ -1030,7 +1014,7 @@ NOTE: `ANY` and `SOME` are interchangeable
 <.> The SATISFIES keyword is used for evaluating each item in the array.
 <.> END terminates the array expression.
 
-[#android:query-n1ql-mobile:::example-13]
+[#example-13]
 ==== Example
 
 .ALL and Every Expressions
@@ -1046,17 +1030,17 @@ SELECT name
 ----
 ====
 
-[#android:query-n1ql-mobile:::lbl-exp-param]
+[#lbl-exp-param]
 === Parameter Expressions
 
-[#android:query-n1ql-mobile:::purpose-20]
+[#purpose-20]
 ==== Purpose
 
 Parameter expressions specify a value to be assigned from the parameter map presented when executing the query.
 
 NOTE: If parameters are specified in the query string, but the parameter and value mapping is not specified in the query object, an error will be  thrown when executing the query.
 
-[#android:query-n1ql-mobile:::syntax-20]
+[#syntax-20]
 ==== Syntax
 
 [source,sql]
@@ -1067,7 +1051,7 @@ $IDENTIFIER
 ----
 
 
-[#android:query-n1ql-mobile:::examples-7]
+[#examples-7]
 ==== Examples
 
 .Parameter Expression
@@ -1108,15 +1092,15 @@ let result = q.execute();
 ====
 
 
-[#android:query-n1ql-mobile:::lbl-exp-paren]
+[#lbl-exp-paren]
 === Parenthesis Expressions
 
-[#android:query-n1ql-mobile:::purpose-21]
+[#purpose-21]
 ==== Purpose
 
 Use parentheses to group expressions together to make them more readable or to establish operator precedences.
 
-[#android:query-n1ql-mobile:::example-14]
+[#example-14]
 ==== Example
 
 .Parenthesis Expression
@@ -1144,24 +1128,24 @@ SELECT *
 ====
 
 
-[#android:query-n1ql-mobile:::lbl-operators]
+[#lbl-operators]
 == Operators
 In this section::
-<<android:query-n1ql-mobile:::lbl-ops-binary>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-ops-unary>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-ops-coll>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-ops-cond>>
+<<lbl-ops-binary>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-ops-unary>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-ops-coll>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-ops-cond>>
 
 
-[#android:query-n1ql-mobile:::lbl-ops-binary]
+[#lbl-ops-binary]
 === Binary Operators
-<<android:query-n1ql-mobile:::lbl-ops-maths>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-comp-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-ops-logical>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-ops-string>>
+<<lbl-ops-maths>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-comp-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-ops-logical>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-ops-string>>
 
 
-[#android:query-n1ql-mobile:::lbl-ops-maths]
+[#lbl-ops-maths]
 ==== Maths
 
 .Maths Operators
@@ -1198,16 +1182,16 @@ In this section::
 ^1^ If both operands are integers, integer division is  used, but if one is a floating number, then float division is used.
 This differs from Server {sqlpp}, which performs float division regardless. Use `DIV(x, y)` to force float division in CBL {sqlpp}
 
-[#android:query-n1ql-mobile:::lbl-comp-ops]
+[#lbl-comp-ops]
 ==== Comparison Operators
 
-[#android:query-n1ql-mobile:::purpose-22]
+[#purpose-22]
 ==== Purpose
 The _comparison operators_ are used in the WHERE statement to specify the condition on which to match documents.
 
 .Comparison Operators
 [#tbl-ops-comp]
-[ops-comp#android:query-n1ql-mobile:::tbl-ops-comp, cols="^1m,2,2m", options="header"]
+[ops-comp#tbl-ops-comp, cols="^1m,2,2m", options="header"]
 |===
 
 |Op
@@ -1263,7 +1247,7 @@ WHERE name LIKE 'aldo'
 
 
 |MATCH
-|String matching using FTS see <<android:query-n1ql-mobile:::lbl-func-fts>>
+|String matching using FTS see <<lbl-func-fts>>
 |WHERE v1-index MATCH "value"
 
 |BETWEEN
@@ -1305,7 +1289,7 @@ This is different from QueryBuilder, in which they operate as equivalents of `==
 
 .Comparing NULL and MISSING values using IS.
 [#tbl-ops-isnot]
-[ops-comp#android:query-n1ql-mobile:::tbl-ops-isnot, cols="^1,^1,^1,^1", options="header"]
+[ops-comp#tbl-ops-isnot, cols="^1,^1,^1,^1", options="header"]
 |===
 
 |OP
@@ -1346,10 +1330,10 @@ This is different from QueryBuilder, in which they operate as equivalents of `==
 |===
 
 
-[#android:query-n1ql-mobile:::lbl-ops-logical]
+[#lbl-ops-logical]
 ==== Logical Operators
 
-[#android:query-n1ql-mobile:::purpose-23]
+[#purpose-23]
 ==== Purpose
 Logical operators combine expressions using the following Boolean Logic Rules:
 
@@ -1374,7 +1358,7 @@ TIP: Use TOBOOLEAN(expr) function to convert a value based on Server {sqlpp} boo
 
 .Logical Operators
 [#tbl-ops-logical]
-[ops-comp#android:query-n1ql-mobile:::tbl-ops-logical, cols="^1m,2,2m", options="header"]
+[ops-comp#tbl-ops-logical, cols="^1m,2,2m", options="header"]
 |===
 
 |Op
@@ -1493,17 +1477,17 @@ This differs from Server {sqlpp} in the following instances: +
  ^5-3^ Server will return: NULL instead of MISSING +
 
 
-[#android:query-n1ql-mobile:::lbl-ops-string]
+[#lbl-ops-string]
 ==== String Operator
 
-[#android:query-n1ql-mobile:::purpose-24]
+[#purpose-24]
 ==== Purpose
 A single string operator is provided.
 It enables string concatenation.
 
 .String Operators
 [#tbl-ops-logical]
-[ops-comp#android:query-n1ql-mobile:::tbl-ops-logical, cols="^1m,2,2m", options="header"]
+[ops-comp#tbl-ops-logical, cols="^1m,2,2m", options="header"]
 |===
 
 |Op
@@ -1517,15 +1501,15 @@ a|`\|\|`
 |===
 
 
-[#android:query-n1ql-mobile:::lbl-ops-unary]
+[#lbl-ops-unary]
 === Unary Operators
 
-[#android:query-n1ql-mobile:::purpose-25]
+[#purpose-25]
 ==== Purpose
 Three unary operators are provided.
 They operate by modifying an expression, making it numerically positive or negative, or by logically negating its value (TRUE becomes FALSE).
 
-[#android:query-n1ql-mobile:::syntax-21]
+[#syntax-21]
 ==== Syntax
 
 [source]
@@ -1535,7 +1519,7 @@ They operate by modifying an expression, making it numerically positive or negat
 
 .Unary Operators
 [#tbl-ops-logical]
-[ops-comp#android:query-n1ql-mobile:::tbl-ops-logical, cols="^1m,2,2m", options="header"]
+[ops-comp#tbl-ops-logical, cols="^1m,2,2m", options="header"]
 |===
 
 |Op
@@ -1581,14 +1565,14 @@ NOT operation on MISSING value returns MISSING.
 |===
 
 
-[#android:query-n1ql-mobile:::lbl-ops-coll]
+[#lbl-ops-coll]
 === COLLATE Operators
 
-[#android:query-n1ql-mobile:::purpose-26]
+[#purpose-26]
 ==== Purpose
 Collate operators specify how the string comparison is conducted.
 
-[#android:query-n1ql-mobile:::usage]
+[#usage]
 ==== Usage
 The collate operator is used in conjunction with string comparison expressions and ORDER BY clauses.
 It allows for one or more collations.
@@ -1597,7 +1581,7 @@ If multiple collations are used, the collations need to be specified in a parent
 
 NOTE: Collate is not supported by Server {sqlpp}
 
-[#android:query-n1ql-mobile:::syntax-22]
+[#syntax-22]
 ==== Syntax
 
 [source, sql]
@@ -1607,7 +1591,7 @@ collate = COLLATE collation | '(' collation (_ collation )* ')'
 collation = NO? (UNICODE | CASE | DIACRITICS) WB <.>
 ----
 
-[#android:query-n1ql-mobile:::arguments-9]
+[#arguments-9]
 ==== Arguments
 
 <.> The available collation options are:
@@ -1620,7 +1604,7 @@ collation = NO? (UNICODE | CASE | DIACRITICS) WB <.>
 
 --
 
-[#android:query-n1ql-mobile:::example-15]
+[#example-15]
 ==== Example
 
 [source, sql]
@@ -1640,26 +1624,24 @@ COLLATE (UNICODE)
 [source, sql]
 ----
 SELECT department FROM db WHERE (name = "fred") COLLATE (UNICODE CASE)
-
 ----
 
 
 [source, sql]
 ----
 SELECT name FROM db ORDER BY name COLLATE (UNICODE DIACRITIC)
-
 ----
 
 
-[#android:query-n1ql-mobile:::lbl-ops-cond]
+[#lbl-ops-cond]
 === CONDITIONAL Operator
 
-[#android:query-n1ql-mobile:::purpose-27]
+[#purpose-27]
 ==== Purpose
 
 The Conditional (or `CASE`) operator evaluates conditional logic in a similar way to the IF/ELSE operator.
 
-[#android:query-n1ql-mobile:::syntax-23]
+[#syntax-23]
 ==== Syntax
 
 [source,sql]
@@ -1689,7 +1671,7 @@ The syntactic difference being that the _Simple Case_ expression has an expressi
 If no WHEN clause evaluate to TRUE, then the result of the expression is the ELSE expression, or NULL if no ELSE expression was provided.
 --
 
-[#android:query-n1ql-mobile:::example-16]
+[#example-16]
 ==== Example
 
 .Simple Case
@@ -1714,27 +1696,27 @@ SELECT CASE WHEN shippedOn IS NOT NULL THEN ‘SHIPPED’ ELSE "NOT-SHIPPED" END
 ====
 
 
-[#android:query-n1ql-mobile:::lbl-functions]
+[#lbl-functions]
 == Functions
 In this section::
-<<android:query-n1ql-mobile:::lbl-func-agg>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-func-array>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-func-cond>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-func-date>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-func-fts>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-func-maths>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-func-meta>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-func-pattern>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-func-string>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-func-typecheck>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<android:query-n1ql-mobile:::lbl-func-typeconv>>
+<<lbl-func-agg>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-func-array>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-func-cond>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-func-date>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-func-fts>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-func-maths>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-func-meta>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-func-pattern>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-func-string>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-func-typecheck>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-func-typeconv>>
 
-[#android:query-n1ql-mobile:::purpose-28]
+[#purpose-28]
 === Purpose
 
 Functions are also expressions.
 
-[#android:query-n1ql-mobile:::syntax-24]
+[#syntax-24]
 === Syntax
 The function syntax is the same as Java’s method syntax.
 It starts with the function name, followed by optional arguments inside parentheses.
@@ -1750,7 +1732,7 @@ parenExprs = '(' ( expression (_ ',' _ expression )* )? ')'
 ----
 
 
-[#android:query-n1ql-mobile:::lbl-func-agg]
+[#lbl-func-agg]
 === Aggregation Functions
 
 .Aggregation Functions
@@ -1777,7 +1759,7 @@ parenExprs = '(' ( expression (_ ',' _ expression )* )? ')'
 
 |===
 
-[#android:query-n1ql-mobile:::lbl-func-array]
+[#lbl-func-array]
 === Array Functions
 
 .Array Functions
@@ -1817,7 +1799,7 @@ parenExprs = '(' ( expression (_ ',' _ expression )* )? ')'
 
 |===
 
-[#android:query-n1ql-mobile:::lbl-func-cond]
+[#lbl-func-cond]
 === Conditional Functions
 
 .Conditional Functions
@@ -1849,7 +1831,7 @@ Returns `NULL` if either or both expressions are `NULL`.+
 |===
 
 
-[#android:query-n1ql-mobile:::lbl-func-date]
+[#lbl-func-date]
 === Date and Time Functions
 
 .Date and Time Functions
@@ -2005,7 +1987,7 @@ Returns null if any of the parameters are invalid.
 |===
 
 
-[#android:query-n1ql-mobile:::lbl-func-fts]
+[#lbl-func-fts]
 === Full Text Search Functions
 
 .FTS Functions
@@ -2028,7 +2010,7 @@ Returns null if any of the parameters are invalid.
 |===
 
 
-[#android:query-n1ql-mobile:::lbl-func-maths]
+[#lbl-func-maths]
 === Maths Functions
 
 .Maths Functions
@@ -2124,7 +2106,7 @@ The function uses _Rounding to Nearest Even_ (Banker’s Rounding) convention wh
 ^*^ The behavior of the ROUND() function is different from Server {sqlpp} ROUND(), which rounds the midpoint values using _Rounding to Nearest Even_ convention.
 
 
-[#android:query-n1ql-mobile:::lbl-func-meta]
+[#lbl-func-meta]
 === Metadata Functions
 
 .Metadata Functions
@@ -2158,7 +2140,7 @@ SELECT p.name, r.rating FROM product as p INNER JOIN reviews AS r ON META(r).id 
 |===
 
 
-[#android:query-n1ql-mobile:::lbl-func-pattern]
+[#lbl-func-pattern]
 === Pattern Searching Functions
 
 .Pattern Searching Functions
@@ -2182,7 +2164,7 @@ SELECT p.name, r.rating FROM product as p INNER JOIN reviews AS r ON META(r).id 
 
 |===
 
-[#android:query-n1ql-mobile:::lbl-func-string]
+[#lbl-func-string]
 === String Functions
 
 .String Functions
@@ -2214,7 +2196,7 @@ SELECT p.name, r.rating FROM product as p INNER JOIN reviews AS r ON META(r).id 
 |===
 
 
-[#android:query-n1ql-mobile:::lbl-func-typecheck]
+[#lbl-func-typecheck]
 === Type Checking Functions
 
 .Type Checking Functions
@@ -2257,7 +2239,7 @@ a|Returns one of the following strings, based on the value of expression:
 |===
 
 
-[#android:query-n1ql-mobile:::lbl-func-typeconv]
+[#lbl-func-typeconv]
 === Type Conversion Functions
 
 .Type Conversion Functions
@@ -2323,14 +2305,14 @@ a|Returns one of the following strings, based on the value of expression:
 |===
 
 
-[#android:query-n1ql-mobile:::querybuilder-differences]
+[#querybuilder-differences]
 == QueryBuilder Differences
 
-Couchbase Lite {sqlpp} Query supports all QueryBuilder features, except _Predictive Query_ and _Index_. See <<android:query-n1ql-mobile:::tbl-qbldr-diffs>> for the features supported by {sqlpp} but not by QueryBuilder.
+Couchbase Lite {sqlpp} Query supports all QueryBuilder features, except _Predictive Query_ and _Index_. See <<tbl-qbldr-diffs>> for the features supported by {sqlpp} but not by QueryBuilder.
 
 
 .QueryBuilder Differences
-[#android:query-n1ql-mobile:::tbl-qbldr-diffs,cols="4,6m", options="header"]
+[#tbl-qbldr-diffs,cols="4,6m", options="header"]
 |===
 
 |Category
@@ -2383,18 +2365,18 @@ TOOBJECT
 TOSTRING
 |===
 
-[#android:query-n1ql-mobile:::lbl-query-params]
+[#lbl-query-params]
 == Query Parameters
 
 You can provide runtime parameters to your {sqlpp} query to make it more flexible.
 
-To specify substitutable parameters within your query string prefix the name with *`$`*, `$type` -- see: <<android:query-n1ql-mobile:::ex-sample-params>>.
+To specify substitutable parameters within your query string prefix the name with *`$`*, `$type` -- see: <<ex-sample-params>>.
 
 .Running a {sqlpp} Query
 [#ex-sample-params]
 
 
-[#android:query-n1ql-mobile:::ex-sample-params]
+[#ex-sample-params]
 ====
 
 [tabs]
@@ -2405,43 +2387,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-syntax-n1ql-params", indent=0]
 [source, Kotlin]
 ----
-val thisQuery = database.createQuery(
-    "SELECT META().id AS id FROM _ WHERE type = \$type"
-) // <.>
-
-thisQuery.parameters = Parameters().setString("type", "hotel") // <.>
-
-return thisQuery.execute().allResults()
-
+include::android:example$codesnippet_collection.kt[tags="query-syntax-n1ql-params", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-syntax-n1ql-params", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-//  Declared elsewhere: Database thisDb
-
-Query thisQuery =
-    thisDb.createQuery(
-        "SELECT META().id AS thisId FROM _ WHERE type = $type"); // <.
-
-thisQuery.setParameters(
-    new Parameters().setString("type", "hotel")); // <.>
-
-List<Map<String, Object>> results = new ArrayList<>();
-try (ResultSet rs = thisQuery.execute()) {
-    for (Result result: rs) { results.add(result.toMap()); }
-}
-return results;
+include::android:example$codesnippet_collection.java[tags="query-syntax-n1ql-params", indent=0]
 ----
 --
 
@@ -2455,7 +2413,7 @@ return results;
 <.> Set the value of the `$type` parameter
 
 
-[#android:query-n1ql-mobile:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -2471,7 +2429,7 @@ return results;
 
 .
 
-[.column#android:query-n1ql-mobile:::-2]
+[.column]
 ====== {empty}
 .Learn more . . .
 * xref:android:database.adoc[Databases]
@@ -2483,7 +2441,7 @@ return results;
 .
 
 
-[.column#android:query-n1ql-mobile:::-3]
+[.column]
 ====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

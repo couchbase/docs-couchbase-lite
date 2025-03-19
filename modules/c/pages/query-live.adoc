@@ -1,4 +1,4 @@
-[#c:query-live:::]
+
 = Live Queries
 :page-aliases: clang:query-live.adoc
 :page-role:
@@ -21,11 +21,11 @@ Description -- _{description}_ +
 
 // END::Local page attributes
 
-[#c:query-live:::overview]
+[#overview]
 == Overview
 
 
-[#c:query-live:::activating-a-live-query]
+[#activating-a-live-query]
 == Activating a Live Query
 
 
@@ -44,61 +44,36 @@ When a change is detected the query automatically runs, and posts the new query 
 [#ex-qry-start]
 
 
-[#c:query-live:::ex-qry-start]
+[#ex-qry-start]
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="live-query", indent=0]
 [source, c]
 ----
-/*
-static void query_change_listener(void* context, CBLQuery* query, CBLListenerToken* token) {
-    CBLError err{};
-    CBLResultSet* results = CBLQuery_CopyCurrentResults(query, token, &err);
-    while(CBLResultSet_Next(results)) {
-        // Update UI
-    }
-}
-*/
-
-// NOTE: No error handling, for brevity (see getting started)
-
-CBLError err{};
-CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage,
-    FLSTR("SELECT * FROM _"), NULL, &err); // <.>
-
-CBLListenerToken* token = CBLQuery_AddChangeListener(query, query_change_listener, NULL); // <.>
+include::c:example$code_snippets/main.cpp[tags="live-query", indent=0]
 ----
-
-
 ====
 
 <.> Build the query statements
 <.> Activate the _live_ query by attaching a listener.
-Save the token in order to detach the listener and stop the query later -- se <<c:query-live:::ex-qry-stop>>
+Save the token in order to detach the listener and stop the query later -- se <<ex-qry-stop>>
 
 
 .Stop a LIve Query
 [#ex-qry-stop]
 
 
-[#c:query-live:::ex-qry-stop]
+[#ex-qry-stop]
 ====
 
 
-// Show Main Snippet
-// include::c:example$code_snippets/main.cpp[tags="stop-live-query", indent=0]
 [source, c]
 ----
-CBLListener_Remove(token); // The token received from AddChangeListener
-CBLQuery_Release(query);
+include::c:example$code_snippets/main.cpp[tags="stop-live-query", indent=0]
 ----
-
-
 ====
 
-<.> Here we use the change lister token from <<c:query-live:::ex-qry-start>> to remove the listener.
+<.> Here we use the change lister token from <<ex-qry-start>> to remove the listener.
 Doing so stops the live query.
 
 

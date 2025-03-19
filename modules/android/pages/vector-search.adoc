@@ -1,4 +1,4 @@
-[#android:vector-search:::]
+
 = Vector Search
 :page-status:
 :page-edition: Enterprise
@@ -15,7 +15,7 @@
 
 // ROOT:partial$commons/common-
 // android grabs the correct platform name from the related _set_page_context_for_[platform]
-[#android:vector-search:::about-vector-search]
+[#about-vector-search]
 == About Vector Search
 
 Vector Search is a technique to retrieve semantically similar items based on vector embedding representations of the items in a multi-dimensional space.
@@ -27,7 +27,7 @@ Vectors are represented by arrays of numbers known as an embedding, which are ge
 
 Once you choose the LLM you wish to integrate in your application, you can create vector indexes that will store these embeddings for improved search performance and start querying against them.
 
-[#android:vector-search:::applications-of-vector-search]
+[#applications-of-vector-search]
 == Applications of Vector Search
 
 You can xref:android:gs-install.adoc[use Vector Search] to enhance your mobile and edge applications in a variety of use cases, these include:
@@ -53,12 +53,12 @@ Even in the case where the model is not embedded within the local device but is 
 * Cost Per Query Reduction - When you have hundreds of thousands of connected clients querying against a cloud-based LLM, the load on cloud model and operational costs of running the cloud based model can be considerably high.
 By running queries locally on the device, you can save on data transfer costs and cloud egress charges while also decentralizing the operational costs.
 
-[#android:vector-search:::key-concepts-of-vector-search-in-couchbase-lite]
+[#key-concepts-of-vector-search-in-couchbase-lite]
 == Key Concepts of Vector Search in Couchbase Lite
 
 When xref:android:working-with-vector-search.adoc[working with Vector Search], you should be aware of the core concepts below.
 
-[#android:vector-search:::about-vector-embeddings]
+[#about-vector-embeddings]
 === About Vector Embeddings
 
 Vector embeddings represent the output of a Machine Learning (ML) model as an array of numbers to capture semantic or contextual relationships between data points.
@@ -72,7 +72,7 @@ The current supported formats for Vector embeddings are:
 
 * A Base64 string that encodes a https://en.wikipedia.org/wiki/Endianness[Little-endian] array of 32-bit floats.
 
-[#android:vector-search:::about-vector-indexes]
+[#about-vector-indexes]
 === About Vector Indexes
 
 Vector Indexes are used to store and manage vector representations of content in the form of vector embeddings.
@@ -90,7 +90,7 @@ See xref:android:working-with-vector-search.adoc#vector-index-configuration[Vect
 Be aware that vector index training can affect query performance.
 If a query is executed against the index before it is trained, a full scan of the vectors will be performed.
 
-[#android:vector-search:::about-lazy-vector-indexes]
+[#about-lazy-vector-indexes]
 === About Lazy Vector Indexes
 
 IMPORTANT: Lazy index is not an automatic process, you will need to manually schedule the index updates.
@@ -145,7 +145,7 @@ The table below compares the two processes.
 
 |===
 
-[#android:vector-search:::about-vector-encoding]
+[#about-vector-encoding]
 === About Vector Encoding
 
 Vector encoding reduces the size of the vectors index by algorithmic compression.
@@ -167,7 +167,7 @@ This can produce higher quality results than Scalar Quantization at the cost of 
 
 NOTE: Quantizers are algorithmic processes that map input values from a larger set to output values in a smaller set, common quantization processes can include operations such as rounding and truncation.
 
-[#android:vector-search:::about-centroids]
+[#about-centroids]
 === About Centroids
 
 Centroids are vectors that function as the center point of a vector cluster within the data set.
@@ -180,14 +180,14 @@ Choosing Centroids in Vector Search involves trade-offs that can impact clusteri
 
 The general guideline for the optimum number of Centroids is approximately the square root of the number of documents.
 
-[#android:vector-search:::about-probes]
+[#about-probes]
 === About Probes
 
 The number of Probes refers to the maximum number of Centroid buckets that the search algorithm will check to look for similar vectors to a given query vector.
 You can change the number of Probes by altering the value of the `NumProbes` variable xref:android:working-with-vector-search.adoc#create-a-vector-index[shown in the following example].
 Couchbase recommends that when setting a custom number of probes, the number should be at least 8 or 0.5% the number of Centroids used.
 
-[#android:vector-search:::about-dimensions]
+[#about-dimensions]
 === About Dimensions
 
 Vector dimensions describes the amount of numbers in a given vector embedding, commonly known as its width.
@@ -197,7 +197,7 @@ Vector dimensions are dependent on the LLM used to generate the Vector Embedding
 
 NOTE: Couchbase Lite supports dimension sizes in the range of `2 - 4096`.
 
-[#android:vector-search:::about-distance-metrics]
+[#about-distance-metrics]
 === About Distance Metrics
 
 Distance metrics are functions used to define how close an input query vector is to other vectors within a vector index.
@@ -229,7 +229,7 @@ You can use this metric when comparing similarity of document content no matter 
 The result is larger when the when the vectors are aligned and have large magnitudes and smaller in the opposite case.
 You can use this metric in recommendation systems to provide users with related content with preference to items the most similar to frequently visited items.
 
-[#android:vector-search:::hybrid-vector-search]
+[#hybrid-vector-search]
 == Hybrid Vector Search
 
 Hybrid Vector Search (Hybrid Search) combines traditional keyword-based search such as xref:android:fts.adoc[full text search (FTS)], which matches exact text or metadata with advanced methods such as Vector Search which matches content based on semantic similarity.
@@ -241,7 +241,7 @@ No LIMIT clause is required for Hybrid Vector Search.
 
 See the https://www.couchbase.com/blog/hybrid-search/[Hybrid Search blog post] for more information about Hybrid Search.
 
-[#android:vector-search:::see-also]
+[#see-also]
 == See Also
 
 * xref:android:gs-install.adoc[Install Couchbase Lite and Vector Search]

@@ -1,4 +1,4 @@
-[#objc:prebuilt-database:::]
+
 = Pre-built Database
 :page-aliases: objc-prebuilt-database.adoc
 :page-role:
@@ -15,7 +15,7 @@ _Abstract -- This content explains how to include a snapshot of a pre-built data
 --
 
 
-[#objc:prebuilt-database:::overview]
+[#overview]
 == Overview
 
 
@@ -31,15 +31,15 @@ The initial sync of any pre-built database pulls in any content changes on the s
 
 .To use a prebuilt database:
 ****
-. Create a new Couchbase Lite database with the required dataset -- see <<objc:prebuilt-database:::crt-db>>
-. Incorporate the pre-built database with your app bundle as an asset/resource -- see <<objc:prebuilt-database:::bundle-db>>
+. Create a new Couchbase Lite database with the required dataset -- see <<crt-db>>
+. Incorporate the pre-built database with your app bundle as an asset/resource -- see <<bundle-db>>
 . Adjust the start-up logic of your app to check for the presence of the required database. +
 If the database doesn't already exist, create one using the bundled pre-built database.
-Initiate a sync to update the data -- see <<objc:prebuilt-database:::deploy-db>>
+Initiate a sync to update the data -- see <<deploy-db>>
 ****
 
 
-[#objc:prebuilt-database:::crt-db]
+[#crt-db]
 == Creating Pre-built database
 
 
@@ -78,7 +78,7 @@ NOTE: Couchbase accepts no responsibility for the ongoing availability, maintena
 . Create the *same* indexes the app will use (wait for the replication to finish before doing this).
 
 
-[#objc:prebuilt-database:::bundle-db]
+[#bundle-db]
 == Bundle a Database with an Application
 
 
@@ -91,7 +91,7 @@ Where the platform permits you can zip the database.
 *Alternatively* ... rather than bundling the database within the app, the app could pull the database down from a CDN server on launch.
 
 
-[#objc:prebuilt-database:::database-encryption]
+[#database-encryption]
 == Database Encryption
 
 IMPORTANT: This is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
@@ -110,7 +110,7 @@ If you copied an un-encrypted database and want to apply encryption to the copy,
 NOTE: To remove encryption on the copy, provide a null encryption-key
 
 
-[#objc:prebuilt-database:::deploy-db]
+[#deploy-db]
 == Using Pre-built Database on App Launch
 
 
@@ -120,7 +120,7 @@ During the application start-up logic, check if database exists in the required 
 
 . Copy the pre-packaged database to the required location
 +
-Use the API's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(cm)copyFromPath:toDatabase:withConfig:error:[copyFromPath()] method -- see: <<objc:prebuilt-database:::lbl-code>>; this ensures that a UUID is generated for each copy
+Use the API's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#lbl-code>>; this ensures that a UUID is generated for each copy
 +
 IMPORTANT: *Do not copy the database using any other method* +
 *Otherwise:* Each copy of the app will invalidate the other apps' xref:refer-glossary.adoc#checkpoint[checkpoints] because a new UUID was not generated.
@@ -149,31 +149,18 @@ They can begin interacting with your app whilst any out-of-data data is being up
 [#lbl-code]
 
 
-[#objc:prebuilt-database:::lbl-code]
+[#lbl-code]
 ====
 
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="prebuilt-database", indent=0]
 [source, objc]
 ----
-// Note:Getting the path to a database is platform-specific.
-// For iOS you need to get the path from the main bundle.
-if (![CBLDatabase databaseExists:@"travel-sample" inDirectory:nil]) {
-    NSError *error;
-    NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"travel-sample" ofType:@"cblite2"];
-    if (![CBLDatabase copyFromPath:path toDatabase:@"travel-sample" withConfig:nil error:&error]) {
-        [NSException raise:NSInternalInconsistencyException
-                    format:@"Could not load pre-built database:%@", error];
-    }
-}
+include::objc:example$code_snippets/SampleCodeTest.m[tags="prebuilt-database", indent=0]
 ----
-
-
 ====
 
 
-[#objc:prebuilt-database:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -189,7 +176,7 @@ if (![CBLDatabase databaseExists:@"travel-sample" inDirectory:nil]) {
 
 .
 
-[.column#objc:prebuilt-database:::-2]
+[.column]
 === {empty}
 .Learn more . . .
 * xref:objc:database.adoc[Databases]
@@ -201,7 +188,7 @@ if (![CBLDatabase databaseExists:@"travel-sample" inDirectory:nil]) {
 .
 
 
-[.column#objc:prebuilt-database:::-3]
+[.column]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

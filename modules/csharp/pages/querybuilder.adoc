@@ -1,4 +1,4 @@
-[#csharp:querybuilder:::]
+
 = Querybuilder
 :page-aliases: learn/csharp-query.adoc, query.adoc
 :page-role:
@@ -15,16 +15,16 @@ Related Content -- xref:csharp:querybuilder.adoc#lbl-predquery[Predictive Querie
 
 NOTE: The examples used here are based on the _Travel Sample_ app and data introduced in the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial
 
-[#csharp:querybuilder:::introduction]
+[#introduction]
 == Introduction
 
 Couchbase Lite for C#.Net provides two ways to build and run database queries; the QueryBuilder API described in this topic and xref:csharp:query-n1ql-mobile.adoc[{sqlpp} for Mobile].
 
-Database queries defined with the QueryBuilder API use the query statement format shown in <<csharp:querybuilder:::ex-query-form>>.
+Database queries defined with the QueryBuilder API use the query statement format shown in <<ex-query-form>>.
 The structure and semantics of the query format are based on Couchbase's xref:server:learn:data/n1ql-versus-sql.adoc[{sqlpp} query language].
 
 
-[#csharp:querybuilder:::ex-query-form]
+[#ex-query-form]
 .Query Format
 ====
 [source, SQL, subs="+attributes, +macros"]
@@ -42,23 +42,23 @@ Query Components::
 |====
 | Component | Description
 
-| <<csharp:querybuilder:::lbl-select>>
+| <<lbl-select>>
 a| The document properties that will be returned in the result set
 
 | FROM
 a| The data source to query the documents from - the collection of the database.
 
- | <<csharp:querybuilder:::lbl-where>>
+ | <<lbl-where>>
 a| The query criteria +
 The `SELECT`ed properties of documents matching this criteria will be returned in the result set
 
-| <<csharp:querybuilder:::lbl-join>>
+| <<lbl-join>>
 a| The criteria for joining multiple documents
 
-| <<csharp:querybuilder:::lbl-group>>
+| <<lbl-group>>
 a| The criteria used to group returned items in the result set
 
-| <<csharp:querybuilder:::lbl-order>>
+| <<lbl-order>>
 a| The criteria used to order the items in the result set
 |====
 
@@ -66,48 +66,44 @@ a| The criteria used to order the items in the result set
 TIP: We recommend working through the query section of the https://docs.couchbase.com/tutorials/mobile-travel-tutorial/introduction.html[Couchbase Mobile Workshop] tutorial as a good way to build your skills in this area.
 
 
-[#csharp:querybuilder:::lbl-select]
+[#lbl-select]
 == SELECT statement
 
 --
 In this section::
-<<csharp:querybuilder:::lbl-return-properties>>{nbsp}{nbsp}|{nbsp}{nbsp} <<csharp:querybuilder:::lbl-return-all>>
+<<lbl-return-properties>>{nbsp}{nbsp}|{nbsp}{nbsp} <<lbl-return-all>>
 Related::
-<<csharp:querybuilder:::lbl-resultsets,Handling result sets>>
+<<lbl-resultsets,Handling result sets>>
 --
 
 Use the `SELECT` statement to specify which properties you want to return from the queried documents.
 You can opt to retrieve entire documents, or just the specific properties you need.
 
-[#csharp:querybuilder:::lbl-return-all]
+[#lbl-return-all]
 === Return All Properties
-Use the `SelectResult.all()` method to return all the properties of selected documents -- see: <<csharp:querybuilder:::ex-select-all>>.
+Use the `SelectResult.all()` method to return all the properties of selected documents -- see: <<ex-select-all>>.
 
 .Using SELECT to Retrieve All Properties
 [#ex-select-all]
 
 
-[#csharp:querybuilder:::ex-select-all]
+[#ex-select-all]
 ====
 
 This query shows how to retrieve all properties from all documents in your database.
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-select-all", indent=0]
 [source, C#]
 ----
-using var query = QueryBuilder.Select(SelectResult.All())
-    .From(DataSource.Collection(collection));
+include::csharp:example$code_snippets/Program.cs[tags="query-select-all", indent=0]
 ----
-
 
 ====
 
 
-The query.execute statement returns the results in a dictionary, where the key is the database name -- see <<csharp:querybuilder:::ex-return-all>>.
+The query.execute statement returns the results in a dictionary, where the key is the database name -- see <<ex-return-all>>.
 
 
-[#csharp:querybuilder:::ex-return-all]
+[#ex-return-all]
 .ResultSet Format from SelectResult.all()
 ====
 [pass:q,a[source, json, subs="+attributes, +macros"]]
@@ -143,45 +139,33 @@ The query.execute statement returns the results in a dictionary, where the key i
 
 ====
 
-See: <<csharp:querybuilder:::lbl-resultsets>> for more on processing query results.
+See: <<lbl-resultsets>> for more on processing query results.
 
 
-[#csharp:querybuilder:::lbl-return-properties]
+[#lbl-return-properties]
 === Return Selected Properties
-To access only specific properties, specify a comma-separated list of `SelectResult` expressions, one for each property, in the select statement of your query  -- see: <<csharp:querybuilder:::ex-select-properties>>
+To access only specific properties, specify a comma-separated list of `SelectResult` expressions, one for each property, in the select statement of your query  -- see: <<ex-select-properties>>
 
 [#ex-select-properties]
 .Using SELECT to Retrieve Specific Properties
 
 
-[#csharp:querybuilder:::ex-select-properties]
+[#ex-select-properties]
 ====
 
 In this query we retrieve and then print the `_id`, `type` and `name` properties of each document.
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-select-props", indent=0]
 [source, C#]
 ----
-using var query = QueryBuilder.Select(
-    SelectResult.Expression(Meta.ID),
-    SelectResult.Property("type"),
-    SelectResult.Property("name"))
-.From(DataSource.Collection(collection));
-
-foreach (var result in query.Execute()) {
-    Console.WriteLine($"Document ID :: {result.GetString("id")}");
-    Console.WriteLine($"Document Name :: {result.GetString("name")}");
-}
+include::csharp:example$code_snippets/Program.cs[tags="query-select-props", indent=0]
 ----
-
 
 ====
 
 
-The `query.execute` statement returns one or more key-value pairs, one for each SelectResult expression, with the property-name as the key -- see <<csharp:querybuilder:::ex-return-properties>>
+The `query.execute` statement returns one or more key-value pairs, one for each SelectResult expression, with the property-name as the key -- see <<ex-return-properties>>
 
-[#csharp:querybuilder:::ex-return-properties]
+[#ex-return-properties]
 .Select Result Format
 ====
 [pass:q,a[source, json, subs="+attributes, +macros"]]
@@ -206,25 +190,25 @@ The `query.execute` statement returns one or more key-value pairs, one for each 
 
 ====
 
-See: <<csharp:querybuilder:::lbl-resultsets>> for more on processing query results.
+See: <<lbl-resultsets>> for more on processing query results.
 
 
-[#csharp:querybuilder:::lbl-where]
+[#lbl-where]
 == WHERE statement
 
 In this section::
-<<csharp:querybuilder:::lbl-comp-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<csharp:querybuilder:::lbl-coll-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<csharp:querybuilder:::lbl-like-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<csharp:querybuilder:::lbl-regex-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<csharp:querybuilder:::lbl-deleted-ops>>
+<<lbl-comp-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-coll-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-like-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-regex-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-deleted-ops>>
 
 Like SQL, you can use the `WHERE` statement to choose  which documents are returned by your query.
 The select statement takes in an `Expression`.
 You can chain any number of Expressions in order to implement sophisticated filtering capabilities.
 
 
-[#csharp:querybuilder:::lbl-comp-ops]
+[#lbl-comp-ops]
 === Comparison Operators
 The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_[Expression Comparators] can be used in the WHERE statement to specify on which property to match documents.
 In the example below, we use the `equalTo` operator to query documents where the `type` property equals "hotel".
@@ -251,31 +235,19 @@ In the example below, we use the `equalTo` operator to query documents where the
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-where", indent=0]
 [source, C#]
 ----
-using var query = QueryBuilder.Select(SelectResult.All())
-    .From(DataSource.Collection(collection))
-    .Where(Expression.Property("type").EqualTo(Expression.String("hotel")))
-    .Limit(Expression.Int(10));
-
-foreach (var result in query.Execute()) {
-    var dict = result.GetDictionary(collection.Name);
-    Console.WriteLine($"Document Name :: {dict?.GetString("name")}");
-}
+include::csharp:example$code_snippets/Program.cs[tags="query-where", indent=0]
 ----
-
-
 ====
 
 
-[#csharp:querybuilder:::lbl-coll-ops]
+[#lbl-coll-ops]
 === Collection Operators
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.ArrayFunction.html[ArrayFunction Collection Operators] are useful to check if a given value is present in an array.
 
 
-[#csharp:querybuilder:::contains-operator]
+[#contains-operator]
 ==== CONTAINS Operator
 The following example uses the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.ArrayFunction.html[ArrayFunction]` to find documents where the `public_likes` array property contains a value equal to "Armani Langworth".
 
@@ -289,65 +261,31 @@ The following example uses the `https://docs.couchbase.com/mobile/{major}.{minor
 ----
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-collection-operator-contains", indent=0]
 [source, C#]
 ----
-using var query = QueryBuilder.Select(
-        SelectResult.Expression(Meta.ID),
-        SelectResult.Property("name"),
-        SelectResult.Property("public_likes"))
-    .From(DataSource.Collection(collection))
-    .Where(Expression.Property("type").EqualTo(Expression.String("hotel"))
-        .And(ArrayFunction.Contains(Expression.Property("public_likes"),
-            Expression.String("Armani Langworth"))));
-
-foreach (var result in query.Execute()) {
-    var publicLikes = result.GetArray("public_likes");
-    var jsonString = JsonConvert.SerializeObject(publicLikes);
-    Console.WriteLine($"Public Likes :: {jsonString}");
-}
+include::csharp:example$code_snippets/Program.cs[tags="query-collection-operator-contains", indent=0]
 ----
-
-
-[#csharp:querybuilder:::in-operator]
+[#in-operator]
 ==== IN Operator
 
 The `IN` operator is useful when you need to explicitly list out the values to test against.
 The following example looks for documents whose `first`, `last` or `username` property value equals "Armani".
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-collection-operator-in", indent=0]
 [source, C#]
 ----
-var values = new IExpression[]
-    { Expression.Property("first"), Expression.Property("last"), Expression.Property("username") };
-
-using var query = QueryBuilder.Select(
-        SelectResult.All())
-    .From(DataSource.Collection(collection))
-    .Where(Expression.String("Armani").In(values));
-
-foreach (var result in query.Execute()) {
-    var body = result.GetDictionary(0);
-    var jsonString = JsonConvert.SerializeObject(body);
-    Console.WriteLine($"In results :: {jsonString}");
-}
-
+include::csharp:example$code_snippets/Program.cs[tags="query-collection-operator-in", indent=0]
 ----
-
-
-[#csharp:querybuilder:::lbl-like-ops]
+[#lbl-like-ops]
 === Like Operator
 In this section::
-<<csharp:querybuilder:::lbl-string-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<csharp:querybuilder:::lbl-wild-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<csharp:querybuilder:::lbl-wild-chars>>
+<<lbl-string-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-wild-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-wild-chars>>
 
-[#csharp:querybuilder:::lbl-string-match]
+[#lbl-string-match]
 ==== String Matching
-The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_Like_Couchbase_Lite_Query_IExpression_[Like()] operator can be used for string matching -- see <<csharp:querybuilder:::ex-like-case-insensitive>>
+The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#ex-like-case-insensitive>>
 
 NOTE: The `like` operator performs **case sensitive** matches. +
 To perform case insensitive matching, use `Function.lower` or `Function.upper` to ensure all comparators have the same case, thereby removing the case issue.
@@ -358,41 +296,27 @@ This query returns `landmark` type documents where the `name` matches the string
 [#ex-like-case-insensitive]
 
 
-[#csharp:querybuilder:::ex-like-case-insensitive]
+[#ex-like-case-insensitive]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-like-operator", indent=0]
 [source, C#]
 ----
-using var query = QueryBuilder.Select(
-        SelectResult.Expression(Meta.ID),
-        SelectResult.Property("name"))
-    .From(DataSource.Collection(collection))
-    .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
-        .And(Function.Lower(Expression.Property("name")).Like(Expression.String("Royal Engineers Museum"))))
-    .Limit(Expression.Int(10));
-
-foreach (var result in query.Execute()) {
-    Console.WriteLine($"Name Property :: {result.GetString("name")}");
-}
+include::csharp:example$code_snippets/Program.cs[tags="query-like-operator", indent=0]
 ----
-
-
 ====
 
 
 *Note* the use of `Function.lower` to transform `name` values to the same case as the literal comparator.
 
 
-[#csharp:querybuilder:::lbl-wild-match]
+[#lbl-wild-match]
 ==== Wildcard Match
 
 We can use `%` sign within a `like` expression to do a wildcard match against zero or more characters.
 Using wildcards allows you to have some fuzziness in your search string.
 
-In <<csharp:querybuilder:::ex-wldcd-match>> below, we are looking for documents of `type` "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
+In <<ex-wldcd-match>> below, we are looking for documents of `type` "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
 Once again, we are using `Function.lower` to make the search case insensitive.
 
 So "landmark" documents with names such as "Engineers", "engine", "english egg" and "England Eagle".
@@ -402,73 +326,44 @@ Notice that the matches may span word boundaries.
 [#ex-wldcd-match]
 
 
-[#csharp:querybuilder:::ex-wldcd-match]
+[#ex-wldcd-match]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-like-operator-wildcard-match", indent=0]
 [source, C#]
 ----
-using var query = QueryBuilder.Select(
-        SelectResult.Expression(Meta.ID),
-        SelectResult.Property("name"))
-    .From(DataSource.Collection(collection))
-    .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
-        .And(Function.Lower(Expression.Property("name")).Like(Expression.String("Eng%e%"))))
-    .Limit(Expression.Int(10));
-
-foreach (var result in query.Execute()) {
-    Console.WriteLine($"Name Property :: {result.GetString("name")}");
-}
+include::csharp:example$code_snippets/Program.cs[tags="query-like-operator-wildcard-match", indent=0]
 ----
-
-
 ====
 
 
-[#csharp:querybuilder:::lbl-wild-chars]
+[#lbl-wild-chars]
 ==== Wildcard Character Match
 
 We can use an `_` sign within a like expression to do a wildcard match against a single character.
 
-In <<csharp:querybuilder:::ex-wldcd-char-match>> below, we are looking for documents of type "landmark" where the `name` property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
+In <<ex-wldcd-char-match>> below, we are looking for documents of type "landmark" where the `name` property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
 The query returns "landmark" type documents with names such as "Engineer", "engineer" and so on.
 
 .Wildcard Character Matching
 [#ex-wldcd-char-match]
 
 
-[#csharp:querybuilder:::ex-wldcd-char-match]
+[#ex-wldcd-char-match]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-like-operator-wildcard-character-match", indent=0]
 [source, C#]
 ----
-using var query = QueryBuilder.Select(
-        SelectResult.Expression(Meta.ID),
-        SelectResult.Property("name"))
-    .From(DataSource.Collection(collection))
-    .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
-        .And(Expression.Property("name").Like(Expression.String("Royal Eng____rs Museum"))))
-    .Limit(Expression.Int(10));
-
-foreach (var result in query.Execute()) {
-    Console.WriteLine($"Name Property :: {result.GetString("name")}");
-}
-
+include::csharp:example$code_snippets/Program.cs[tags="query-like-operator-wildcard-character-match", indent=0]
 ----
-
-
 ====
 
 
-[#csharp:querybuilder:::lbl-regex-ops]
+[#lbl-regex-ops]
 === Regex Operator
 
-Similar to the wildcards in `like` expressions, `regex` based pattern matching allow you to introduce an element of fuzziness in your search string -- see the code shown in <<csharp:querybuilder:::ex-regex>>.
+Similar to the wildcards in `like` expressions, `regex` based pattern matching allow you to introduce an element of fuzziness in your search string -- see the code shown in <<ex-regex>>.
 
 NOTE: The `regex` operator is case sensitive, use `upper` or `lower` functions to mitigate this if required.
 
@@ -476,28 +371,15 @@ NOTE: The `regex` operator is case sensitive, use `upper` or `lower` functions t
 .Using Regular Expressions
 
 
-[#csharp:querybuilder:::ex-regex]
+[#ex-regex]
 ====
 
 This example returns documents with a `type` of "landmark" and a `name` property that matches any string that begins with "eng" and ends in the letter "e".
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-regex-operator,indent=0]", indent=0]
 [source, C#]
 ----
-using var query = QueryBuilder.Select(
-        SelectResult.Expression(Meta.ID),
-        SelectResult.Property("name"))
-    .From(DataSource.Collection(collection))
-    .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
-        .And(Expression.Property("name").Regex(Expression.String("\\bEng.*e\\b"))))
-    .Limit(Expression.Int(10));
-
-foreach (var result in query.Execute()) {
-    Console.WriteLine($"Name Property :: {result.GetString("name")}");
-}
+include::csharp:example$code_snippets/Program.cs[tags="query-regex-operator,indent=0]", indent=0]
 ----
-
 
 ====
 
@@ -506,75 +388,50 @@ foreach (var result in query.Execute()) {
 TIP: For more on the regex spec used by pass:q,a[Couchbase{nbsp}Lite] see http://www.cplusplus.com/reference/regex/ECMAScript/[cplusplus regex reference page^]
 
 
-[#csharp:querybuilder:::lbl-deleted-ops]
+[#lbl-deleted-ops]
 === Deleted Document
-You can query documents that have been deleted (tombstones) footnote:fn2x5[Starting in Couchbase Lite 2.5] as shown in <<csharp:querybuilder:::ex-del-qry>>.
+You can query documents that have been deleted (tombstones) footnote:fn2x5[Starting in Couchbase Lite 2.5] as shown in <<ex-del-qry>>.
 
 .Query to select Deleted Documents
 [#ex-del-qry]
 
 
-[#csharp:querybuilder:::ex-del-qry]
+[#ex-del-qry]
 ====
 
 This example shows how to query deleted documents in the database. It returns is an array of key-value pairs.
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-deleted-documents", indent=0]
 [source, C#]
 ----
-// Query documents that have been deleted
-var query = QueryBuilder
-    .Select(SelectResult.Expression(Meta.ID))
-    .From(DataSource.Collection(collection))
-    .Where(Meta.IsDeleted);
+include::csharp:example$code_snippets/Program.cs[tags="query-deleted-documents", indent=0]
 ----
-
 
 ====
 
 
-[#csharp:querybuilder:::lbl-join]
+[#lbl-join]
 == JOIN statement
 The JOIN clause enables you to select data from multiple documents that have been linked by criteria specified in the JOIN statement.
-For example to combine airline details with route details, linked by the airline id -- see <<csharp:querybuilder:::ex-join>>.
+For example to combine airline details with route details, linked by the airline id -- see <<ex-join>>.
 
 .Using JOIN to Combine Document Details
 [#ex-join]
 
 
-[#csharp:querybuilder:::ex-join]
+[#ex-join]
 ====
 
 This example JOINS the document of type `route` with documents of type `airline` using the document ID (`_id`) on the _airline_ document and `airlineid` on the _route_ document.
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-join", indent=0]
 [source, C#]
 ----
-using var query = QueryBuilder.Select(
-        SelectResult.Expression(Expression.Property("name").From("airline")),
-        SelectResult.Expression(Expression.Property("callsign").From("airline")),
-        SelectResult.Expression(Expression.Property("destinationairport").From("route")),
-        SelectResult.Expression(Expression.Property("stops").From("route")),
-        SelectResult.Expression(Expression.Property("airline").From("route")))
-    .From(DataSource.Collection(collection).As("airline"))
-    .Join(Join.InnerJoin(DataSource.Collection(collection2).As("route"))
-        .On(Meta.ID.From("airline").EqualTo(Expression.Property("airlineid").From("route"))))
-    .Where(Expression.Property("type").From("route").EqualTo(Expression.String("route"))
-        .And(Expression.Property("type").From("airline").EqualTo(Expression.String("airline")))
-        .And(Expression.Property("sourceairport").From("route").EqualTo(Expression.String("RIX"))));
-
-foreach (var result in query.Execute()) {
-    Console.WriteLine($"Name Property :: {result.GetString("name")}");
-}
+include::csharp:example$code_snippets/Program.cs[tags="query-join", indent=0]
 ----
-
 
 ====
 
 
-[#csharp:querybuilder:::lbl-group]
+[#lbl-group]
 == GROUP BY statement
 You can perform further processing on the data in your result set before the final projection is generated.
 
@@ -596,35 +453,20 @@ The following example looks for the number of airports at an altitude of 300 ft 
 .Query using GroupBy
 
 
-[#csharp:querybuilder:::ex-grpby-qry]
+[#ex-grpby-qry]
 ====
 
 This example shows a query that selects all airports with an altitude above 300ft. The output (a count, $1) is grouped by country, within timezone.
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-groupby", indent=0]
 [source, C#]
 ----
-using var query = QueryBuilder.Select(
-        SelectResult.Expression(Function.Count(Expression.All())),
-        SelectResult.Property("country"),
-        SelectResult.Property("tz"))
-    .From(DataSource.Collection(collection))
-    .Where(Expression.Property("type").EqualTo(Expression.String("airport"))
-        .And(Expression.Property("geo.alt").GreaterThanOrEqualTo(Expression.Int(300))))
-    .GroupBy(Expression.Property("country"), Expression.Property("tz"));
-
-foreach (var result in query.Execute()) {
-    Console.WriteLine(
-        $"There are {result.GetInt("$1")} airports in the {result.GetString("tz")} timezone located in {result.GetString("country")} and above 300 ft");
-}
+include::csharp:example$code_snippets/Program.cs[tags="query-groupby", indent=0]
 ----
-
 
 ====
 
 
-The query shown in <<csharp:querybuilder:::ex-grpby-qry>> generates the following output:
+The query shown in <<ex-grpby-qry>> generates the following output:
 --
 There are 138 airports on the Europe/Paris timezone located in France and above 300 ft +
 There are 29 airports on the Europe/London timezone located in United Kingdom and above 300 ft +
@@ -634,42 +476,29 @@ There are 123 airports on the America/Denver timezone located in United States a
 --
 
 
-[#csharp:querybuilder:::lbl-order]
+[#lbl-order]
 == ORDER BY statement
 
-It is possible to sort the results of a query based on a given expression result -- see <<csharp:querybuilder:::ex-orderby-qry>>
+It is possible to sort the results of a query based on a given expression result -- see <<ex-orderby-qry>>
 
 [#ex-orderby-qry]
 .Query using OrderBy
 
 
-[#csharp:querybuilder:::ex-orderby-qry]
+[#ex-orderby-qry]
 ====
 
 This example shows a query that returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-orderby", indent=0]
 [source, C#]
 ----
-using var query = QueryBuilder.Select(
-        SelectResult.Expression(Meta.ID),
-        SelectResult.Property("title"))
-    .From(DataSource.Collection(collection))
-    .Where(Expression.Property("type").EqualTo(Expression.String("hotel")))
-    .OrderBy(Ordering.Property("title").Ascending())
-    .Limit(Expression.Int(10));
-
-foreach (var result in query.Execute()) {
-    Console.WriteLine($"Title :: {result.GetString("title")}");
-}
+include::csharp:example$code_snippets/Program.cs[tags="query-orderby", indent=0]
 ----
-
 
 ====
 
 
-The query shown in <<csharp:querybuilder:::ex-orderby-qry>> generates the following output:
+The query shown in <<ex-orderby-qry>> generates the following output:
 [pass:q,a[source, text, subs="+attributes, +macros"]]
 ----
 Aberdyfi
@@ -683,11 +512,11 @@ Avignon
 ----
 
 
-[#csharp:querybuilder:::lbl-date-time]
+[#lbl-date-time]
 == Date/Time Functions
 
 
-Couchbase Lite documents support a <<csharp:querybuilder:::initializers,date type>> that internally stores dates in ISO 8601 with the GMT/UTC timezone.
+Couchbase Lite documents support a <<initializers,date type>> that internally stores dates in ISO 8601 with the GMT/UTC timezone.
 
 Couchbase Lite's Query Builder API
 footnote:fn2x5[]
@@ -707,18 +536,18 @@ The input for this is a numeric value representing milliseconds since the Unix e
 The end result will be an expression (with string content representing the date and time as a UTC ISO 8601 string) that can be further input into the query builder.
 
 
-[#csharp:querybuilder:::lbl-resultsets]
+[#lbl-resultsets]
 == Result Sets
 In this section::
-<<csharp:querybuilder:::lbl-process-resultset>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<csharp:querybuilder:::lbl-all-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<csharp:querybuilder:::lbl-specific-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<csharp:querybuilder:::lbl-id-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<csharp:querybuilder:::lbl-count-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<csharp:querybuilder:::lbl-pagination>>
+<<lbl-process-resultset>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-all-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-specific-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-id-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-count-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
+<<lbl-pagination>>
 
 
-[#csharp:querybuilder:::lbl-process-resultset]
+[#lbl-process-resultset]
 === Processing
 
 This section shows how to handle the returned result sets for different types of `SELECT` statements.
@@ -726,16 +555,16 @@ This section shows how to handle the returned result sets for different types of
 The result set format and its handling varies slightly depending on the type of SelectResult statements used.
 The result set formats you may encounter include those generated by :
 
-* SelectResult.all -- see: <<csharp:querybuilder:::lbl-all-sel,All Properties>>
-* SelectResult.expression(property("name")) -- see: <<csharp:querybuilder:::lbl-specific-sel,Specific Properties>>
-* SelectResult.expression(meta.id) --  Metadata (such as the `_id`) -- see: <<csharp:querybuilder:::lbl-id-sel,Document ID Only>>
-* SelectResult.expression(Function.count(Expression.all())).as("mycount") --  see: <<csharp:querybuilder:::lbl-count-sel>>
+* SelectResult.all -- see: <<lbl-all-sel,All Properties>>
+* SelectResult.expression(property("name")) -- see: <<lbl-specific-sel,Specific Properties>>
+* SelectResult.expression(meta.id) --  Metadata (such as the `_id`) -- see: <<lbl-id-sel,Document ID Only>>
+* SelectResult.expression(Function.count(Expression.all())).as("mycount") --  see: <<lbl-count-sel>>
 
 To process the results of a query, you first need to execute it using `Query.execute`.
 
 The execution of a Couchbase Lite for C#.Net's database query typically returns an array of results, a result set.
 
-* The result set of an aggregate, count-only, query is a key-value pair -- see <<csharp:querybuilder:::lbl-count-sel>> -- which you can access using the count name as its key.
+* The result set of an aggregate, count-only, query is a key-value pair -- see <<lbl-count-sel>> -- which you can access using the count name as its key.
 
 * The result set of a query returning document properties is an array. +
 Each array row represents the data from a document that matched your search criteria (the `WHERE` statements)
@@ -743,44 +572,36 @@ The composition of each row is determined by the combination of `SelectResult` e
 To unpack these result sets you need to iterate this array.
 
 
-[#csharp:querybuilder:::lbl-all-sel]
+[#lbl-all-sel]
 === Select All Properties
 
-[#csharp:querybuilder:::query]
+[#query]
 ==== Query
-The `Select` statement for this type of query, returns all document properties for each document matching the query criteria -- see <<csharp:querybuilder:::ex-all-qry>>
+The `Select` statement for this type of query, returns all document properties for each document matching the query criteria -- see <<ex-all-qry>>
 
 .Query selecting All Properties
 [#ex-all-qry]
 
 
-[#csharp:querybuilder:::ex-all-qry]
+[#ex-all-qry]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-syntax-all", indent=0]
 [source, C#]
 ----
-var database = new Database("hotels");
-
-var query = QueryBuilder
-      .Select(SelectResult.All())
-      .From(DataSource.Collection(database.GetDefaultCollection()));
+include::csharp:example$code_snippets/Program.cs[tags="query-syntax-all", indent=0]
 ----
-
-
 ====
 
 
-[#csharp:querybuilder:::result-set-format]
+[#result-set-format]
 ==== Result Set Format
 The result set returned by queries using `SelectResult.all` is an array of dictionary objects -- one for each document matching the query criteria.
 
-For each result object, the key is the database name and the 'value' is a dictionary representing each document property as a key-value pair -- see: <<csharp:querybuilder:::ex-all-rtn>>.
+For each result object, the key is the database name and the 'value' is a dictionary representing each document property as a key-value pair -- see: <<ex-all-rtn>>.
 
 .Format of Result Set (All Properties)
-[#csharp:querybuilder:::ex-all-rtn]
+[#ex-all-rtn]
 ====
 [pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
@@ -817,45 +638,23 @@ For each result object, the key is the database name and the 'value' is a dictio
 
 ====
 
-[#csharp:querybuilder:::result-set-access]
+[#result-set-access]
 ==== Result Set Access
 
-In this case access the retrieved document properties by converting each row's value, in turn, to a dictionary -- as shown in <<csharp:querybuilder:::ex-all-acc>>.
+In this case access the retrieved document properties by converting each row's value, in turn, to a dictionary -- as shown in <<ex-all-acc>>.
 
 .Using Document Properties (All)
 [#ex-all-acc]
 
 
-[#csharp:querybuilder:::ex-all-acc]
+[#ex-all-acc]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-access-all", indent=0]
 [source, C#]
 ----
-var results = query.Execute().AllResults();
-var hotels = new List<Dictionary<string, object>>();
-
-if (results?.Count > 0) {
-    foreach (var result in results) {
-        // get the result into our dictionary object
-        var thisDocsProps = result.GetDictionary("hotels"); // <.>
-
-        if (thisDocsProps != null) {
-            var docID = thisDocsProps.GetString("id"); // <.>
-            var docName = thisDocsProps.GetString("name");
-            var docCity = thisDocsProps.GetString("city");
-            var docType = thisDocsProps.GetString("type");
-            var hotel = thisDocsProps.ToDictionary();
-            hotels.Add(hotel);
-        }
-
-    }
-}
+include::csharp:example$code_snippets/Program.cs[tags="query-access-all", indent=0]
 ----
-
-
 ====
 
 <.> The dictionary of document properties using the database name as the key.
@@ -863,47 +662,36 @@ You can add this dictionary to an array of returned matches, for processing else
 <.> Alternatively you can access the document properties here, by using the property names as keys to the dictionary object.
 
 
-[#csharp:querybuilder:::lbl-specific-sel]
+[#lbl-specific-sel]
 === Select Specific Properties
 
-[#csharp:querybuilder:::query-2]
+[#query-2]
 ==== Query
-Here we use `SelectResult.expression(property("<property-name>")))` to specify the document properties we want our query to return -- see: <<csharp:querybuilder:::ex-specific-qry>>.
+Here we use `SelectResult.expression(property("<property-name>")))` to specify the document properties we want our query to return -- see: <<ex-specific-qry>>.
 
 .Query selecting Specific Properties
 [#ex-specific-qry]
 
 
-[#csharp:querybuilder:::ex-specific-qry]
+[#ex-specific-qry]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-syntax-props", indent=0]
 [source, C#]
 ----
-var database = new Database("hotels");
-
-List<Dictionary<string, object>> hotels = new List<Dictionary<string, object>>();
-
-var query = QueryBuilder.Select(
-        SelectResult.Property("type"),
-        SelectResult.Property("name"),
-        SelectResult.Property("city")).From(DataSource.Collection(database.GetDefaultCollection()));
+include::csharp:example$code_snippets/Program.cs[tags="query-syntax-props", indent=0]
 ----
-
-
 ====
 
 
-[#csharp:querybuilder:::result-set-format-2]
+[#result-set-format-2]
 ==== Result Set Format
 The result set returned when selecting only specific document properties is an array of dictionary objects -- one for each document matching the query criteria.
 
-Each result object comprises a key-value pair for each selected document property -- see <<csharp:querybuilder:::ex-specific-rtn>>
+Each result object comprises a key-value pair for each selected document property -- see <<ex-specific-rtn>>
 
 .Format of Result Set (Specific Properties)
-[#csharp:querybuilder:::ex-specific-rtn]
+[#ex-specific-rtn]
 ====
 [pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
@@ -926,80 +714,54 @@ Each result object comprises a key-value pair for each selected document propert
 <.> The result for the next document matching the query criteria.
 ====
 
-[#csharp:querybuilder:::result-set-access-2]
+[#result-set-access-2]
 ==== Result Set Access
-Access the retrieved properties by converting each row into a dictionary -- as shown in <<csharp:querybuilder:::ex-specific-acc>>.
+Access the retrieved properties by converting each row into a dictionary -- as shown in <<ex-specific-acc>>.
 
 .Using Returned Document Properties (Specific Properties)
 [#ex-specific-acc]
 
 
-[#csharp:querybuilder:::ex-specific-acc]
+[#ex-specific-acc]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-access-props", indent=0]
 [source, C#]
 ----
-var results = query.Execute().AllResults();
-foreach (var result in results) {
-
-    // get the returned array of k-v pairs into a dictionary
-    var hotel = result.ToDictionary();
-
-    // add hotel dictionary to list of hotel dictionaries
-    hotels.Add(hotel);
-
-    // use the properties of the returned array of k-v pairs directly
-    var docType = result.GetString("type");
-    var docName = result.GetString("name");
-    var docCity = result.GetString("city");
-
-}
+include::csharp:example$code_snippets/Program.cs[tags="query-access-props", indent=0]
 ----
-
-
 ====
 
 
-[#csharp:querybuilder:::lbl-id-sel]
+[#lbl-id-sel]
 === Select Document Id Only
 
-[#csharp:querybuilder:::query-3]
+[#query-3]
 ==== Query
-You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time -- see: <<csharp:querybuilder:::ex-id-qry>>.
+You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time -- see: <<ex-id-qry>>.
 
 .Query selecting only Doc Id
 [#ex-id-qry]
 
 
-[#csharp:querybuilder:::ex-id-qry]
+[#ex-id-qry]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-syntax-id", indent=0]
 [source, C#]
 ----
-var database = new Database("hotels");
-
-var query = QueryBuilder
-        .Select(SelectResult.Expression(Meta.ID).As("this_ID"))
-        .From(DataSource.Collection(database.GetDefaultCollection()));
+include::csharp:example$code_snippets/Program.cs[tags="query-syntax-id", indent=0]
 ----
-
-
 ====
 
 
-[#csharp:querybuilder:::result-set-format-3]
+[#result-set-format-3]
 ==== Result Set Format
 The result set returned by queries using a SelectResult expression of the form `SelectResult.expression(meta.id)` is an array of dictionary objects -- one for each document matching the query criteria.
-Each result object has `id` as the key and the ID value as its value -- -see <<csharp:querybuilder:::ex-id-rtn>>.
+Each result object has `id` as the key and the ID value as its value -- -see <<ex-id-rtn>>.
 
 .Format of Result Set (Doc Id only)
-[#csharp:querybuilder:::ex-id-rtn]
+[#ex-id-rtn]
 ====
 [pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
@@ -1016,76 +778,58 @@ Each result object has `id` as the key and the ID value as its value -- -see <<c
 ----
 ====
 
-[#csharp:querybuilder:::result-set-access-3]
+[#result-set-access-3]
 ==== Result Set Access
 
-In this case, access the required document's properties by unpacking the `id` and using it to get the document from the database -- see: <<csharp:querybuilder:::ex-id-acc>>.
+In this case, access the required document's properties by unpacking the `id` and using it to get the document from the database -- see: <<ex-id-acc>>.
 
 .Using Returned Document Properties (Document Id)
 [#ex-id-acc]
 
 
-[#csharp:querybuilder:::ex-id-acc]
+[#ex-id-acc]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-access-id", indent=0]
 [source, C#]
 ----
-var results = query.Execute().AllResults();
-foreach (var result in results) {
-
-    var docID = result.GetString("this_ID"); // <.>
-    var doc = database.GetDefaultCollection().GetDocument(docID);
-}
+include::csharp:example$code_snippets/Program.cs[tags="query-access-id", indent=0]
 ----
-
-
 ====
 
 <.> Extract the Id value from the dictionary and use it to get the document from the database
 
 
-[#csharp:querybuilder:::lbl-count-sel]
+[#lbl-count-sel]
 === Select Count-only
 
 
-[#csharp:querybuilder:::query-4]
+[#query-4]
 ==== Query
 
 .Query selecting a Count-only
 [#ex-count-qry]
 
 
-[#csharp:querybuilder:::ex-count-qry]
+[#ex-count-qry]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-syntax-count-only", indent=0]
 [source, C#]
 ----
-var database = new Database("hotels");
-
-var query =
-  QueryBuilder
-    .Select(SelectResult.Expression(Function.Count(Expression.All())).As("mycount")) // <.>
-    .From(DataSource.Collection(database.GetDefaultCollection()));
+include::csharp:example$code_snippets/Program.cs[tags="query-syntax-count-only", indent=0]
 ----
-
-
 ====
 
 <.> The alias name, `mycount`, is used to access the count value.
 
-[#csharp:querybuilder:::result-set-format-4]
+[#result-set-format-4]
 ==== Result Set Format
 The result set returned by a count such as `Select.expression(Function.count(Expression.all)))` is a key-value pair.
-The key is the count name, as defined using `SelectResult.as` -- see: <<csharp:querybuilder:::ex-count-rtn>> for the format and <<csharp:querybuilder:::ex-count-qry>> for the query.
+The key is the count name, as defined using `SelectResult.as` -- see: <<ex-count-rtn>> for the format and <<ex-count-qry>> for the query.
 
 .Format of Result Set (Count)
-[#csharp:querybuilder:::ex-count-rtn]
+[#ex-count-rtn]
 ====
 [pass:q,a[source, json, subs="+attributes, +macros"]]
 ----
@@ -1099,85 +843,45 @@ The key is the count name, as defined using `SelectResult.as` -- see: <<csharp:q
 <.> The key-value pair returned by a count.
 ====
 
-[#csharp:querybuilder:::result-set-access-4]
+[#result-set-access-4]
 ==== Result Set Access
 
-Access the count using its alias name (`mycount` in this example) -- see <<csharp:querybuilder:::ex-count-acc>>
+Access the count using its alias name (`mycount` in this example) -- see <<ex-count-acc>>
 
 [#ex-count-acc]
 .Using Returned Document Properties (Count)
 
 
-[#csharp:querybuilder:::ex-count-acc]
+[#ex-count-acc]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-access-count-only", indent=0]
 [source, C#]
 ----
-var results = query.Execute().AllResults();
-foreach (var result in results) {
-    var numberOfDocs = result.GetInt("mycount"); // <.>
-}
+include::csharp:example$code_snippets/Program.cs[tags="query-access-count-only", indent=0]
 ----
-
-
 ====
 
 <.> Get the count using the `SelectResult.as` alias, which is used as its key.
 
-[#csharp:querybuilder:::lbl-pagination]
+[#lbl-pagination]
 === Handling Pagination
 One way to handle pagination in high-volume queries is to retrieve the results in batches.
-Use the `limit` and `offset` feature, to return a defined number of results starting from a given offset -- see: <<csharp:querybuilder:::ex-pagination>>.
+Use the `limit` and `offset` feature, to return a defined number of results starting from a given offset -- see: <<ex-pagination>>.
 
 
 [#ex-pagination]
 .Query Pagination
 
 
-[#csharp:querybuilder:::ex-pagination]
+[#ex-pagination]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-syntax-pagination", indent=0]
 [source, C#]
 ----
-var database = new Database("hotels");
-var limit = 20;
-var offset = 0;
-
-// get a count of the number of docs matching the query
-var countQuery =
-    QueryBuilder
-        .Select(SelectResult.Expression(Function.Count(Expression.All())).As("mycount"))
-        .From(DataSource.Collection(database.GetDefaultCollection()));
-var numberOfDocs =
-    countQuery.Execute().First().GetInt("mycount");
-
-if (numberOfDocs < limit) {
-    limit = numberOfDocs;
-}
-
-while (offset < numberOfDocs) {
-    var listQuery =
-        QueryBuilder
-            .Select(SelectResult.All())
-            .From(DataSource.Collection(database.GetDefaultCollection()))
-            .Limit(Expression.Int(limit), Expression.Int(offset)); // <.>
-
-    foreach (var result in listQuery.Execute()) {
-        // Display and or process query results batch
-    }
-
-    offset = offset + limit;
-}
-
+include::csharp:example$code_snippets/Program.cs[tags="query-syntax-pagination", indent=0]
 ----
-
-
 ====
 
 <.> Return a maximum of `limit` results starting from result number `offset`
@@ -1185,7 +889,7 @@ while (offset < numberOfDocs) {
 TIP: For more on using the QueryBuilder API, see our blog: https://blog.couchbase.com/sql-for-json-query-interface-couchbase-mobile/[Introducing the Query Interface in Couchbase Mobile]
 
 
-[#csharp:querybuilder:::json-result-sets]
+[#json-result-sets]
 == JSON Result Sets
 
 Couchbase Lite for C#.Net provides a convenience API to convert query results to JSON strings.
@@ -1194,47 +898,21 @@ Couchbase Lite for C#.Net provides a convenience API to convert query results to
 .Using JSON Results
 
 
-[#csharp:querybuilder:::ex-json]
+[#ex-json]
 ====
 
-Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Result.html#Couchbase_Lite_Query_Result_ToJson[Result.ToJson()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<csharp:querybuilder:::ex-json>> for a working example.
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Result.html#ex-json>> for a working example.
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-access-json", indent=0]
 [source, C#]
 ----
-foreach (var result in query.Execute()) {
-
-    // get the result into a JSON String
-    var docJSONString = result.ToJSON();
-
-    // Get a native dictionary object using the JSON string
-    var dictFromJSONstring =
-          JsonConvert.
-            DeserializeObject<Dictionary<string, object>>
-              (docJSONString);
-
-    // use the created dictionary
-    if (dictFromJSONstring != null) {
-        var docID = dictFromJSONstring["id"].ToString();
-        var docName = dictFromJSONstring["name"].ToString();
-        var docCity = dictFromJSONstring["city"].ToString();
-        var docType = dictFromJSONstring["type"].ToString();
-    }
-
-    //Get a custom object using the JSON string
-    Hotel hotel =
-        JsonConvert.DeserializeObject<Hotel>(docJSONString);
-
-}
+include::csharp:example$code_snippets/Program.cs[tags="query-access-json", indent=0]
 ----
-
 
 ====
 
 
 .JSON String Format
-[#csharp:querybuilder:::ex-json-format]
+[#ex-json-format]
 If your query selects ALL then the JSON format will be:
 
 [source, JSON]
@@ -1258,7 +936,7 @@ If your query selects a sub-set of available properties then the JSON format wil
 ----
 
 
-[#csharp:querybuilder:::lbl-predquery]
+[#lbl-predquery]
 == Predictive Query
 
 .Enterprise Edition only
@@ -1272,60 +950,30 @@ image::ROOT:predictive-diagram.png[]
 
 To run a predictive query with a model as the one shown above, you must implement the following steps.
 
-. <<csharp:querybuilder:::integrate-the-model,Integrate the Model>>
-. <<csharp:querybuilder:::register-the-model,Register the Model>>
-. <<csharp:querybuilder:::create-an-index,Create an Index (Optional)>>
-. <<csharp:querybuilder:::run-a-prediction-query,Run a Prediction Query>>
+. <<integrate-the-model,Integrate the Model>>
+. <<register-the-model,Register the Model>>
+. <<create-an-index,Create an Index (Optional)>>
+. <<run-a-prediction-query,Run a Prediction Query>>
 . <<Deregister-the-model,Deregister the Model>>
 
 
-[#csharp:querybuilder:::integrate-the-model]
+[#integrate-the-model]
 === Integrate the Model
 
-To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `predict()` -- see: <<csharp:querybuilder:::int-pred-model>>.
+To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `predict()` -- see: <<int-pred-model>>.
 
 .Integrating a predictive model
 [#int-pred-model]
 
 
-[#csharp:querybuilder:::int-pred-model]
+[#int-pred-model]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="predictive-model", indent=0]
 [source, C#]
 ----
-// tensorFlowModel is a fake implementation
-// this would be the implementation of the ml model you have chosen
-class TensorFlowModel
-{
-    public static IDictionary<string, object> PredictImage(byte[] data)
-    {
-        // Do calculations, etc
-        return null;
-    }
-}
-
-class ImageClassifierModel : IPredictiveModel
-{
-    public DictionaryObject Predict(DictionaryObject input)
-    {
-        var blob = input.GetBlob("photo");
-        if (blob == null) {
-            return null;
-        }
-
-        var imageData = blob.Content;
-        // tensorFlowModel is a fake implementation
-        // this would be the implementation of the ml model you have chosen
-        var modelOutput = TensorFlowModel.PredictImage(imageData);
-        return new MutableDictionaryObject(modelOutput); // <1>
-    }
-}
+include::csharp:example$code_snippets/Program.cs[tags="predictive-model", indent=0]
 ----
-
-
 ====
 
 <1> The `predict(input) ++->++ output` method provides the input and expects the result of using the machine learning model.
@@ -1333,7 +981,7 @@ The input and output of the predictive model is a `DictionaryObject`.
 Therefore, the supported data type will be constrained by the data type that the `DictionaryObject` supports.
 
 
-[#csharp:querybuilder:::register-the-model]
+[#register-the-model]
 === Register the Model
 
 To register the model you must create a new instance and pass it to the `Database.prediction.registerModel` static method.
@@ -1342,23 +990,18 @@ To register the model you must create a new instance and pass it to the `Databas
 [#reg-pred-model]
 
 
-[#csharp:querybuilder:::reg-pred-model]
+[#reg-pred-model]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="register-model", indent=0]
 [source, C#]
 ----
-var model = new ImageClassifierModel();
-Database.Prediction.RegisterModel("ImageClassifier", model);
+include::csharp:example$code_snippets/Program.cs[tags="register-model", indent=0]
 ----
-
-
 ====
 
 
-[#csharp:querybuilder:::create-an-index]
+[#create-an-index]
 === Create an Index
 
 Creating an index for a predictive query is highly recommended.
@@ -1366,10 +1009,10 @@ By computing the predictions during writes and building a prediction index, you 
 
 There are two types of indexes for predictive queries:
 
-* <<csharp:querybuilder:::value-index,Value Index>>
-* <<csharp:querybuilder:::predictive-index,Predictive Index>>
+* <<value-index,Value Index>>
+* <<predictive-index,Predictive Index>>
 
-[#csharp:querybuilder:::value-index]
+[#value-index]
 ==== Value Index
 
 The code below creates a value index from the "label" value of the prediction result.
@@ -1379,23 +1022,18 @@ When documents are added or updated, the index will call the prediction function
 [#crt-val-index]
 
 
-[#csharp:querybuilder:::crt-val-index]
+[#crt-val-index]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="predictive-query-value-index", indent=0]
 [source, C#]
 ----
-var index = IndexBuilder.ValueIndex(ValueIndexItem.Property("label"));
-collection.CreateIndex("value-index-image-classifier", index);
+include::csharp:example$code_snippets/Program.cs[tags="predictive-query-value-index", indent=0]
 ----
-
-
 ====
 
 
-[#csharp:querybuilder:::predictive-index]
+[#predictive-index]
 ==== Predictive Index
 
 Predictive Index is a new index type used for predictive query.
@@ -1405,29 +1043,20 @@ It differs from the value index in that it caches the predictive results and cre
 [#crt-val-index]
 
 
-[#csharp:querybuilder:::crt-val-index]
+[#crt-val-index]
 ====
 
 Here we create a predictive index from the `label` value of the prediction result.
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="predictive-query-predictive-index", indent=0]
 [source, C#]
 ----
-var input = Expression.Dictionary(new Dictionary<string, object>
-{
-    ["photo"] = Expression.Property("photo")
-});
-
-var index = IndexBuilder.PredictiveIndex("ImageClassifier", input);
-collection.CreateIndex("predictive-index-image-classifier", index);
+include::csharp:example$code_snippets/Program.cs[tags="predictive-query-predictive-index", indent=0]
 ----
-
 
 ====
 
 
-[#csharp:querybuilder:::run-a-prediction-query]
+[#run-a-prediction-query]
 === Run a Prediction Query
 
 The code below creates a query that calls the prediction function to return the "label" value for the first 10 results in the database.
@@ -1436,30 +1065,14 @@ The code below creates a query that calls the prediction function to return the 
 [#crt-val-index]
 
 
-[#csharp:querybuilder:::crt-val-index]
+[#crt-val-index]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="predictive-query", indent=0]
 [source, C#]
 ----
-var input = Expression.Dictionary(new Dictionary<string, object>
-{
-    ["photo"] = Expression.Property("photo")
-});
-var prediction = Function.Prediction("ImageClassifier", input); // <1>
-
-using var query = QueryBuilder.Select(SelectResult.All())
-    .From(DataSource.Collection(collection))
-    .Where(prediction.Property("label").EqualTo(Expression.String("car"))
-        .And(prediction.Property("probability").GreaterThanOrEqualTo(Expression.Double(0.8))));
-
-var result = query.Execute();
-Console.WriteLine($"Number of rows: {result.Count()}");
+include::csharp:example$code_snippets/Program.cs[tags="predictive-query", indent=0]
 ----
-
-
 ====
 
 <1> The `PredictiveModel.predict()` method returns a constructed Prediction Function object which can be used further to specify a property value extracted from the output dictionary of the `PredictiveModel.predict()` function.
@@ -1467,7 +1080,7 @@ Console.WriteLine($"Number of rows: {result.Count()}");
 NOTE: The null value returned by the prediction method will be interpreted as MISSING value in queries.
 
 
-[#csharp:querybuilder:::deregister-the-model]
+[#deregister-the-model]
 === Deregister the Model
 
 To deregister the model you must call the `Database.prediction.unregisterModel` static method.
@@ -1476,22 +1089,18 @@ To deregister the model you must call the `Database.prediction.unregisterModel` 
 [#dereg-val-index]
 
 
-[#csharp:querybuilder:::dereg-val-index]
+[#dereg-val-index]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="unregister-model", indent=0]
 [source, C#]
 ----
-Database.Prediction.UnregisterModel("ImageClassifier");
+include::csharp:example$code_snippets/Program.cs[tags="unregister-model", indent=0]
 ----
-
-
 ====
 
 
-[#csharp:querybuilder:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -1507,7 +1116,7 @@ Database.Prediction.UnregisterModel("ImageClassifier");
 
 .
 
-[.column#csharp:querybuilder:::-2]
+[.column]
 ====== {empty}
 .Learn more . . .
 * xref:csharp:database.adoc[Databases]
@@ -1519,7 +1128,7 @@ Database.Prediction.UnregisterModel("ImageClassifier");
 .
 
 
-[.column#csharp:querybuilder:::-3]
+[.column]
 ====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

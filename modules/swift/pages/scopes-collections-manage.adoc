@@ -1,4 +1,4 @@
-[#swift:scopes-collections-manage:::]
+
 = Scopes and Collections
 :page-aliases:
 :page-role:
@@ -29,7 +29,7 @@ Collections can be assigned to different scopes according to content-type or dep
 
 ****
 
-[#swift:scopes-collections-manage:::default-scopes-and-collections]
+[#default-scopes-and-collections]
 == Default Scopes and Collections
 
 Every database you create contains a default scope and a default collection named _default.
@@ -41,7 +41,7 @@ If you upgrade from a version of Couchbase Lite prior to 3.1, all existing data 
 The default scope  and collection cannot be dropped.
 
 
-[#swift:scopes-collections-manage:::create-a-scope-and-collection]
+[#create-a-scope-and-collection]
 == Create a Scope and Collection
 
 In addition to the default scope and collection, you can create your own scope and collection when you create a document.
@@ -62,14 +62,10 @@ NOTE: Scope and collection names are case sensitive.
 ====
 
 
-// Show Main Snippet
-// include::swift:example$code_snippets/SampleCodeTest.swift[tags="scopes-manage-create-collection", indent=0]
 [source, swift]
 ----
-let collection = try database.createCollection(name: "myCollectionName", scope: "myScopeName")
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="scopes-manage-create-collection", indent=0]
 ----
-
-
 ====
 
 
@@ -85,7 +81,7 @@ NOTE: You cannot create an empty user-defined scope.
 A scope is implicitly created in the `db.createCollection()` method.
 
 
-[#swift:scopes-collections-manage:::index-a-collection]
+[#index-a-collection]
 == Index a Collection
 
 .Index a Collection
@@ -94,19 +90,14 @@ A scope is implicitly created in the `db.createCollection()` method.
 ====
 
 
-// Show Main Snippet
-// include::swift:example$code_snippets/SampleCodeTest.swift[tags="scopes-manage-index-collection", indent=0]
 [source, swift]
 ----
-let config = FullTextIndexConfiguration(["overview"])
-try collection.createIndex(withName: "overviewFTSIndex", config: config)
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="scopes-manage-index-collection", indent=0]
 ----
-
-
 ====
 
 
-[#swift:scopes-collections-manage:::drop-a-collection]
+[#drop-a-collection]
 == Drop a Collection
 
 .Drop a Collection
@@ -115,21 +106,17 @@ try collection.createIndex(withName: "overviewFTSIndex", config: config)
 ====
 
 
-// Show Main Snippet
-// include::swift:example$code_snippets/SampleCodeTest.swift[tags="scopes-manage-drop-collection", indent=0]
 [source, swift]
 ----
-try database.deleteCollection(name: "myCollectionName", scope: "myScopeName")
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="scopes-manage-drop-collection", indent=0]
 ----
-
-
 ====
 
 
 NOTE: There is no need to drop a user-defined scope.
 User-defined scopes are dropped when the collections associated with them contain no documents.
 
-[#swift:scopes-collections-manage:::list-scopes-and-collections]
+[#list-scopes-and-collections]
 == List Scopes and Collections
 
 .List Scopes and Collections
@@ -138,16 +125,10 @@ User-defined scopes are dropped when the collections associated with them contai
 ====
 
 
-// Show Main Snippet
-// include::swift:example$code_snippets/SampleCodeTest.swift[tags="scopes-manage-list", indent=0]
 [source, swift]
 ----
-let scopes = try database.scopes()
-let collections = try database.collections(scope: "myScopeName")
-print("I have \(scopes.count) scopes and \(collections.count) collections")
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="scopes-manage-list", indent=0]
 ----
-
-
 ====
 
 

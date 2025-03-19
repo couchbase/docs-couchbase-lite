@@ -1,4 +1,4 @@
-[#csharp:indexing:::]
+
 = Indexing
 :page-aliases: learn/csharp-indexing.adoc
 :page-role:
@@ -16,7 +16,7 @@ Related Content -- xref:csharp:database.adoc[Databases] | xref:csharp:document.a
 --
 
 
-[#csharp:indexing:::introduction]
+[#introduction]
 == Introduction
 // tag::overview[]
 Querying documents using a pre-existing database index is much faster because an index narrows down the set of documents to examine -- see: the xref:csharp:query-troubleshooting.adoc[Query Troubleshooting] topic.
@@ -38,15 +38,15 @@ You should only index with properties that you plan to use in the query.
 //end::overview[]
 
 
-[#csharp:indexing:::creating-a-new-index]
+[#creating-a-new-index]
 == Creating a new index
 
 You can use {sqlpp} or QueryBuilder syntaxes to create an index
 
 
-<<csharp:indexing:::ex-create-index>> creates a new index for the `type` and `name` properties, shown in this data model:
+<<ex-create-index>> creates a new index for the `type` and `name` properties, shown in this data model:
 
-[#csharp:indexing:::ex-datamodel]
+[#ex-datamodel]
 .Data Model
 ====
 [source,json]
@@ -61,7 +61,7 @@ You can use {sqlpp} or QueryBuilder syntaxes to create an index
 ----
 ====
 
-[#csharp:indexing:::sql]
+[#sql]
 === {sqlpp}
 
 The code to create the index will look something like this:
@@ -70,24 +70,18 @@ The code to create the index will look something like this:
 [#ex-create-index]
 
 
-[#csharp:indexing:::ex-create-index]
+[#ex-create-index]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-index", indent=0]
 [source, C#]
 ----
-string[] indexProperties = new string[] { "type", "name" };
-var config = new ValueIndexConfiguration(indexProperties);
-collection.CreateIndex("TypeNameIndex", config);
+include::csharp:example$code_snippets/Program.cs[tags="query-index", indent=0]
 ----
-
-
 ====
 
 
-[#csharp:indexing:::querybuilder]
+[#querybuilder]
 === QueryBuilder
 
 TIP: See the xref:csharp:querybuilder.adoc[QueryBuilder] topic to learn more about QueryBuilder.
@@ -98,32 +92,24 @@ The code to create the index will look something like this:
 [#ex-create-index]
 
 
-[#csharp:indexing:::ex-create-index]
+[#ex-create-index]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="query-index_Querybuilder", indent=0]
 [source, C#]
 ----
-// For value types, this is optional but provides performance enhancements
-var index = IndexBuilder.ValueIndex(
-    ValueIndexItem.Expression(Expression.Property("type")),
-    ValueIndexItem.Expression(Expression.Property("name"))); // <.>
-collection.CreateIndex("TypeNameIndex", index);
+include::csharp:example$code_snippets/Program.cs[tags="query-index_Querybuilder", indent=0]
 ----
-
-
 ====
 
 
-[#csharp:indexing:::array-indexing]
+[#array-indexing]
 == Array Indexing
 
 Couchbase Lite 3.2.1 introduces functionality to optimize querying arrays.
 xref:csharp:query-n1ql-mobile.adoc#lbl-unnest[Array `UNNEST`] to unpack arrays within a document to allow joins with the parent object, and array indexes for indexing unnested array's values to allow more efficient queries with `UNNEST`.
 
-[#csharp:indexing:::the-array-index]
+[#the-array-index]
 === The Array Index
 
 An array index is a new type of the index for indexing nested array’s properties to allow querying with the `UNNEST` more efficiently.
@@ -131,13 +117,11 @@ An array index is a new type of the index for indexing nested array’s properti
 Below is an example array index configuration:
 
 
-// include::csharp:example$code_snippets/Program.cs[tags=array-index-config]
 [source, csharp, indent=0]
 ----
-                var arrayIndexConfiguration = new ArrayIndexConfiguration("likes");
+include::csharp:example$code_snippets/Program.cs[tags=array-index-config]
 ----
-
-[#csharp:indexing:::array-index-syntax]
+[#array-index-syntax]
 === Array Index Syntax
 
 The syntax for array index configuration is shown below:
@@ -162,7 +146,7 @@ If the array specified by the path contains scalar values, the expressions shoul
 
 |===
 
-[#csharp:indexing:::using-array-indexes-with-unnest]
+[#using-array-indexes-with-unnest]
 === Using Array Indexes with UNNEST
 
 For the following examples, you can assume we are querying results from the following document, shown below:
@@ -211,14 +195,10 @@ The query above produces the following output from the document:
 You can also perform the same operation using array indexes like so:
 
 
-// include::csharp:example$code_snippets/Program.cs[tags=array-index-single]
 [source, csharp, indent=0]
 ----
-                var arrayIndexConfiguration = new ArrayIndexConfiguration("likes");
-                collection.CreateIndex("myindex", arrayIndexConfiguration);
+include::csharp:example$code_snippets/Program.cs[tags=array-index-single]
 ----
-
-
 You can perform similar operations on nested arrays:
 
 [source, sqlpp]
@@ -243,21 +223,17 @@ The output demonstrates retrieval of both primary and secondary contact numbers 
 Here’s an example of creating an array index on a nested array containing dictionary values:
 
 
-// include::csharp:example$code_snippets/Program.cs[tags=array-index-nested]
 [source, csharp, indent=0]
 ----
-                var arrayIndexConfiguration = new ArrayIndexConfiguration("contacts[].phones", "type");
-                collection.CreateIndex("myindex", arrayIndexConfiguration);
+include::csharp:example$code_snippets/Program.cs[tags=array-index-nested]
 ----
-
-
 The above snippet creates an array index to allow you to iterate through `contacts[].phones[].type` in the document, namely `"home"` and `"mobile"`.
 
 IMPORTANT: Array literals are not supported in CBL 3.2.1.
 Attempting to create a query with array literals will return an error.
 
 
-[#csharp:indexing:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -273,7 +249,7 @@ Attempting to create a query with array literals will return an error.
 
 .
 
-[.column#csharp:indexing:::-2]
+[.column]
 === {empty}
 .Learn more . . .
 * xref:csharp:database.adoc[Databases]
@@ -285,7 +261,7 @@ Attempting to create a query with array literals will return an error.
 .
 
 
-[.column#csharp:indexing:::-3]
+[.column]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

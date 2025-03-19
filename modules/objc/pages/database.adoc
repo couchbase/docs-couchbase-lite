@@ -1,4 +1,4 @@
-[#objc:database:::]
+
 = Databases
 :page-aliases: learn/objc-database.adoc
 :page-role:
@@ -15,7 +15,7 @@ Related Content -- xref:objc:blob.adoc[Blobs] | xref:objc:document.adoc[Document
 --
 
 
-[#objc:database:::database-concepts]
+[#database-concepts]
 == Database Concepts
 
 Databases created on Couchbase Lite can share the same hierarchical structure as Capella databases.
@@ -84,7 +84,7 @@ The most basic structure is to use the single default scope with a single defaul
 [#cbl-database-structure]
 .Couchbase Lite Examples
 
-[plantuml#objc:database:::cbl-database-structure]
+[plantuml#cbl-database-structure]
 ----
 @startuml
 
@@ -147,12 +147,12 @@ syncing data scope:: Contains information pertaining to the user, which can be s
 ****
 
 
-[#objc:database:::open-db]
+[#open-db]
 == Create or Open Database
 
 
 You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html[CBLDatabase] class.
-Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html[CBLDatabaseConfiguration] -- see <<objc:database:::ex-dbopen>>.
+Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html[CBLDatabaseConfiguration] -- see <<ex-dbopen>>.
 
 Things to watch for include:
 
@@ -165,39 +165,30 @@ Typically, the default location for Objective-C is
 the application sandbox
 .
 
-See also <<objc:database:::lbl-find-db-loc>>.
+See also <<lbl-find-db-loc>>.
 --
 
 [#ex-dbopen]
 .Open or create a database
 
 
-[#objc:database:::ex-dbopen]
+[#ex-dbopen]
 ====
 
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="new-database", indent=0]
 [source, objc]
 ----
-NSError *error;
-CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"my-database" error:&error];
-if (!database) {
-    NSLog(@"Cannot open the database:%@", error);
-}
-self.database = database;
+include::objc:example$code_snippets/SampleCodeTest.m[tags="new-database", indent=0]
 ----
-
-
 ====
 
 
-[#objc:database:::close-database]
+[#close-database]
 == Close Database
 
 You are advised to incorporate the closing of all open databases into your application workflow.
 
-To close a database, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)close:[CBLDatabase.Close()] -- see: <<objc:database:::ex-dbclose>>.
+To close a database, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#ex-dbclose>>.
 This also closes
 footnote:fn28[Commencing with Release 2.8]
 active replications, listeners and-or live queries connected to the database.
@@ -211,24 +202,18 @@ TIP: Before closing, check that any attached listeners (query/replication/change
 [#ex-dbclose]
 
 
-[#objc:database:::ex-dbclose]
+[#ex-dbclose]
 ====
 
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="close-database", indent=0]
 [source, objc]
 ----
-if (![self.database close:&error])
-    NSLog(@"Error closing db:%@", error);
-
+include::objc:example$code_snippets/SampleCodeTest.m[tags="close-database", indent=0]
 ----
-
-
 ====
 
 
-[#objc:database:::database-full-sync]
+[#database-full-sync]
 == Database Full Sync
 
 Database Full Sync will prevent the loss of transactional data due to an unexpected system crash or loss of power.
@@ -241,24 +226,20 @@ CAUTION: Database Full Sync is a safe method to prevent data loss but will incur
 [#ex-dbfullsync]
 
 
-[#objc:database:::ex-dbfullsync]
+[#ex-dbfullsync]
 ====
 
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="database-fullsync", indent=0]
 [source, objc]
 ----
-config.fullSync = true;
+include::objc:example$code_snippets/SampleCodeTest.m[tags="database-fullsync", indent=0]
 ----
-
-
 ====
 
 
 NOTE: It is not possible to change the configuration of a Database after instantiating the Database with the configuration by updating its `DatabaseConfiguration` property.
 
-[#objc:database:::database-encryption]
+[#database-encryption]
 == Database Encryption
 
 
@@ -269,72 +250,62 @@ _Couchbase Lite on Objective-C_ includes the ability to encrypt Couchbase Lite d
 This allows mobile applications to secure the data at rest, when it is being stored on the device.
 The algorithm used to encrypt the database is 256-bit AES.
 
-[#objc:database:::enabling]
+[#enabling]
 === Enabling
 To enable encryption, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabaseConfiguration.html#/c:objc(cs)CBLDatabaseConfiguration(py)encryptionKey[CBLDatabaseConfiguration.encryptionKey()] to set the encryption key of your choice.
-Provide this encryption key every time the database is opened -- see <<objc:database:::ex-sdb-encrypt>>.
+Provide this encryption key every time the database is opened -- see <<ex-sdb-encrypt>>.
 
 .Configure Database Encryption
 [#ex-sdb-encrypt]
 
 
-[#objc:database:::ex-sdb-encrypt]
+[#ex-sdb-encrypt]
 ====
 
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="database-encryption", indent=0]
 [source, objc]
 ----
-CBLDatabaseConfiguration *config = [[CBLDatabaseConfiguration alloc] init];
-config.encryptionKey = [[CBLEncryptionKey alloc] initWithPassword:@"secretpassword"];
-NSError *error;
-self.database = [[CBLDatabase alloc] initWithName:@"my-database" config:config error:&error];
-if (!self.database) {
-    NSLog(@"Cannot open the database:%@", error);
-}
+include::objc:example$code_snippets/SampleCodeTest.m[tags="database-encryption", indent=0]
 ----
-
-
 ====
 
 
-[#objc:database:::persisting]
+[#persisting]
 === Persisting
 Couchbase Lite does not persist the key.
 It is the application's responsibility to manage the key and store it in a platform-specific secure store such Android's
 https://developer.android.com/training/articles/keystore[Keystore].
 
-[#objc:database:::opening]
+[#opening]
 === Opening
 An encrypted database can only be opened with the same platform that was used to encrypt it in the first place.
 So a database encrypted using the Objective-C SDK, and then exported, is readable only by the Objective-C SDK.
 
-[#objc:database:::changing]
+[#changing]
 === Changing
 To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)changeEncryptionKey:error:[CBLDatabase.changeEncryptionKey()]
 to set the required new encryption-key value.
 
 
-[#objc:database:::removing]
+[#removing]
 === Removing
 To remove encryption, open the database using its existing encryption-key and use
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLDatabase.html#/c:objc(cs)CBLDatabase(im)changeEncryptionKey:error:[CBLDatabase.changeEncryptionKey()]
 with a null value as the encryption key.
 
-[#objc:database:::upgrading]
+[#upgrading]
 === Upgrading
 To upgrade an encrypted database see: xref:objc:dep-upgrade.adoc#lbl-db-upgrades[Upgrade 1.x databases]
 
 
-[#objc:database:::lbl-find-db-loc]
+[#lbl-find-db-loc]
 == Finding a Database File
 
 
 When the application is running on the iOS simulator, you can locate the application's sandbox directory using the https://simpholders.com/3/[SimPholders] utility.
 
 
-[#objc:database:::lbl-db-util]
+[#lbl-db-util]
 == Database Maintenance
 
 From time to time it may be necessary to perform certain maintenance activities on your database, for example to
@@ -348,7 +319,7 @@ It should be run on-demand using the API.
 If in doubt, consult Couchbase support.
 
 
-[#objc:database:::cli-tool]
+[#cli-tool]
 == Command Line Tool
 
 // tag::cli-tool[]
@@ -359,10 +330,10 @@ Note that the `cblite` tool is not supported by the https://www.couchbase.com/su
 
 // end::cli-tool[]
 
-[#objc:database:::troubleshooting]
+[#troubleshooting]
 == Troubleshooting
 You should use console logs as your first source of diagnostic information.
-If the information in the default logging level is insufficient you can focus it on database errors and generate more verbose messages -- see: <<objc:database:::ex-logdb>>.
+If the information in the default logging level is insufficient you can focus it on database errors and generate more verbose messages -- see: <<ex-logdb>>.
 
 For more on using Couchbase logs -- see: xref:objc:troubleshooting-logs.adoc[Using Logs].
 
@@ -370,21 +341,18 @@ For more on using Couchbase logs -- see: xref:objc:troubleshooting-logs.adoc[Usi
 .Increase Level of Database Log Messages
 
 
-[#objc:database:::ex-logdb]
+[#ex-logdb]
 ====
 
 
-// Show Main Snippet
-// include::objc:example$code_snippets/SampleCodeTest.m[tags="console-logging-db", indent=0]
 [source, objc]
 ----
+include::objc:example$code_snippets/SampleCodeTest.m[tags="console-logging-db", indent=0]
 ----
-
-
 ====
 
 
-[#objc:database:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -400,7 +368,7 @@ For more on using Couchbase logs -- see: xref:objc:troubleshooting-logs.adoc[Usi
 
 .
 
-[.column#objc:database:::-2]
+[.column]
 === {empty}
 .Learn more . . .
 * xref:objc:database.adoc[Databases]
@@ -412,7 +380,7 @@ For more on using Couchbase logs -- see: xref:objc:troubleshooting-logs.adoc[Usi
 .
 
 
-[.column#objc:database:::-3]
+[.column]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

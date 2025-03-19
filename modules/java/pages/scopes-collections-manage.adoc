@@ -1,4 +1,4 @@
-[#java:scopes-collections-manage:::]
+
 = Scopes and Collections
 :page-aliases:
 :page-role:
@@ -29,7 +29,7 @@ Collections can be assigned to different scopes according to content-type or dep
 
 ****
 
-[#java:scopes-collections-manage:::default-scopes-and-collections]
+[#default-scopes-and-collections]
 == Default Scopes and Collections
 
 Every database you create contains a default scope and a default collection named _default.
@@ -41,7 +41,7 @@ If you upgrade from a version of Couchbase Lite prior to 3.1, all existing data 
 The default scope  and collection cannot be dropped.
 
 
-[#java:scopes-collections-manage:::create-a-scope-and-collection]
+[#create-a-scope-and-collection]
 == Create a Scope and Collection
 
 In addition to the default scope and collection, you can create your own scope and collection when you create a document.
@@ -62,24 +62,10 @@ NOTE: Scope and collection names are case sensitive.
 ====
 
 
-// Show Main Snippet
-// include::java:example$codesnippet_collection.java[tags="scopes-manage-create-collection", indent=0]
 [source, Java]
 ----
-// create the collection "Verlaine" in the default scope ("_default")
-Collection collection1 = db.createCollection("Verlaine");
-// both of these retrieve collection1 created above
-collection1 = db.getCollection("Verlaine");
-collection1 = db.getDefaultScope().getCollection("Verlaine");
-
-// create the collection "Verlaine" in the scope "Television"
-Collection collection2 = db.createCollection("Television", "Verlaine");
-// both of these retrieve  collection2 created above
-collection2 = db.getCollection("Television", "Verlaine");
-collection2 = db.getScope("Television").getCollection("Verlaine");
+include::java:example$codesnippet_collection.java[tags="scopes-manage-create-collection", indent=0]
 ----
-
-
 ====
 
 
@@ -95,7 +81,7 @@ NOTE: You cannot create an empty user-defined scope.
 A scope is implicitly created in the `db.createCollection()` method.
 
 
-[#java:scopes-collections-manage:::index-a-collection]
+[#index-a-collection]
 == Index a Collection
 
 .Index a Collection
@@ -104,28 +90,14 @@ A scope is implicitly created in the `db.createCollection()` method.
 ====
 
 
-// Show Main Snippet
-// include::java:example$codesnippet_collection.java[tags="scopes-manage-index-collection", indent=0]
 [source, Java]
 ----
-// Create an index named "nameIndex1" on the property "lastName" in the collection using the IndexBuilder
-collection.createIndex("nameIndex1", IndexBuilder.valueIndex(ValueIndexItem.property("lastName")));
-
-// Create a similar index named "nameIndex2" using and IndexConfiguration
-collection.createIndex("nameIndex2", new ValueIndexConfiguration("lastName"));
-
-// get the names of all the indices in the collection
-final Set<String> indices = collection.getIndexes();
-
-// delete all the collection indices
-for (String index: indices) { collection.deleteIndex(index); }
+include::java:example$codesnippet_collection.java[tags="scopes-manage-index-collection", indent=0]
 ----
-
-
 ====
 
 
-[#java:scopes-collections-manage:::drop-a-collection]
+[#drop-a-collection]
 == Drop a Collection
 
 .Drop a Collection
@@ -134,22 +106,17 @@ for (String index: indices) { collection.deleteIndex(index); }
 ====
 
 
-// Show Main Snippet
-// include::java:example$codesnippet_collection.java[tags="scopes-manage-drop-collection", indent=0]
 [source, Java]
 ----
-Collection collection = db.getCollection(collectionName, scopeName);
-if (collection != null) { db.deleteCollection(collection.getName(), collection.getScope().getName()); }
+include::java:example$codesnippet_collection.java[tags="scopes-manage-drop-collection", indent=0]
 ----
-
-
 ====
 
 
 NOTE: There is no need to drop a user-defined scope.
 User-defined scopes are dropped when the collections associated with them contain no documents.
 
-[#java:scopes-collections-manage:::list-scopes-and-collections]
+[#list-scopes-and-collections]
 == List Scopes and Collections
 
 .List Scopes and Collections
@@ -158,21 +125,10 @@ User-defined scopes are dropped when the collections associated with them contai
 ====
 
 
-// Show Main Snippet
-// include::java:example$codesnippet_collection.java[tags="scopes-manage-list", indent=0]
 [source, Java]
 ----
-final Set<Scope> scopes = db.getScopes();
-for (Scope scope: scopes) {
-    Logger.log("Scope :: " + scope.getName());
-    final Set<Collection> collections = scope.getCollections();
-    for (Collection collection: collections) {
-        Logger.log("    Collection :: " + collection.getName());
-    }
-}
+include::java:example$codesnippet_collection.java[tags="scopes-manage-list", indent=0]
 ----
-
-
 ====
 
 

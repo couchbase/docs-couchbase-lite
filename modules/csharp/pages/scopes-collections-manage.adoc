@@ -1,4 +1,4 @@
-[#csharp:scopes-collections-manage:::]
+
 = Scopes and Collections
 :page-aliases:
 :page-role:
@@ -29,7 +29,7 @@ Collections can be assigned to different scopes according to content-type or dep
 
 ****
 
-[#csharp:scopes-collections-manage:::default-scopes-and-collections]
+[#default-scopes-and-collections]
 == Default Scopes and Collections
 
 Every database you create contains a default scope and a default collection named _default.
@@ -41,7 +41,7 @@ If you upgrade from a version of Couchbase Lite prior to 3.1, all existing data 
 The default scope  and collection cannot be dropped.
 
 
-[#csharp:scopes-collections-manage:::create-a-scope-and-collection]
+[#create-a-scope-and-collection]
 == Create a Scope and Collection
 
 In addition to the default scope and collection, you can create your own scope and collection when you create a document.
@@ -62,15 +62,10 @@ NOTE: Scope and collection names are case sensitive.
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="scopes-manage-create-collection", indent=0]
 [source, C#]
 ----
-var collectionWithDefaultScope = _Database.CreateCollection("colA");
-var collection = _Database.CreateCollection("colA", "scopeA"); // Scope with named scopeA will be created if it's not existed. There is no public API to create a Scope.
+include::csharp:example$code_snippets/Program.cs[tags="scopes-manage-create-collection", indent=0]
 ----
-
-
 ====
 
 
@@ -86,7 +81,7 @@ NOTE: You cannot create an empty user-defined scope.
 A scope is implicitly created in the `db.createCollection()` method.
 
 
-[#csharp:scopes-collections-manage:::index-a-collection]
+[#index-a-collection]
 == Index a Collection
 
 .Index a Collection
@@ -95,20 +90,14 @@ A scope is implicitly created in the `db.createCollection()` method.
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="scopes-manage-index-collection", indent=0]
 [source, C#]
 ----
-string[] indexProperties = new string[] { "type", "name" };
-var config = new ValueIndexConfiguration(indexProperties);
-collection.CreateIndex("TypeNameIndex", config);
+include::csharp:example$code_snippets/Program.cs[tags="scopes-manage-index-collection", indent=0]
 ----
-
-
 ====
 
 
-[#csharp:scopes-collections-manage:::drop-a-collection]
+[#drop-a-collection]
 == Drop a Collection
 
 .Drop a Collection
@@ -117,21 +106,17 @@ collection.CreateIndex("TypeNameIndex", config);
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="scopes-manage-drop-collection", indent=0]
 [source, C#]
 ----
-_Database.DeleteCollection("colA", "scopeA"); // Scope with named scopeA will be deleted if there is no collections in the scope after the last collection is deleted via this API. There is no public API to remove a Scope.
+include::csharp:example$code_snippets/Program.cs[tags="scopes-manage-drop-collection", indent=0]
 ----
-
-
 ====
 
 
 NOTE: There is no need to drop a user-defined scope.
 User-defined scopes are dropped when the collections associated with them contain no documents.
 
-[#csharp:scopes-collections-manage:::list-scopes-and-collections]
+[#list-scopes-and-collections]
 == List Scopes and Collections
 
 .List Scopes and Collections
@@ -140,18 +125,10 @@ User-defined scopes are dropped when the collections associated with them contai
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="scopes-manage-list", indent=0]
 [source, C#]
 ----
-// Get Scopes
-var scopes = _Database.GetScopes();
-// Get Collections of a Scope named scopeA
-var scopeA = _Database.GetScope("scopeA");
-var collectionsInScopeA = scopeA.GetCollections();
+include::csharp:example$code_snippets/Program.cs[tags="scopes-manage-list", indent=0]
 ----
-
-
 ====
 
 

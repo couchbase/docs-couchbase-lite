@@ -1,4 +1,4 @@
-[#android:prebuilt-database:::]
+
 = Pre-built Database
 :page-aliases: java-android-prebuilt-database.adoc
 :page-role:
@@ -12,7 +12,7 @@ _Abstract -- This content explains how to include a snapshot of a pre-built data
 --
 
 
-[#android:prebuilt-database:::overview]
+[#overview]
 == Overview
 
 
@@ -28,15 +28,15 @@ The initial sync of any pre-built database pulls in any content changes on the s
 
 .To use a prebuilt database:
 ****
-. Create a new Couchbase Lite database with the required dataset -- see <<android:prebuilt-database:::crt-db>>
-. Incorporate the pre-built database with your app bundle as an asset/resource -- see <<android:prebuilt-database:::bundle-db>>
+. Create a new Couchbase Lite database with the required dataset -- see <<crt-db>>
+. Incorporate the pre-built database with your app bundle as an asset/resource -- see <<bundle-db>>
 . Adjust the start-up logic of your app to check for the presence of the required database. +
 If the database doesn't already exist, create one using the bundled pre-built database.
-Initiate a sync to update the data -- see <<android:prebuilt-database:::deploy-db>>
+Initiate a sync to update the data -- see <<deploy-db>>
 ****
 
 
-[#android:prebuilt-database:::crt-db]
+[#crt-db]
 == Creating Pre-built database
 
 
@@ -75,7 +75,7 @@ NOTE: Couchbase accepts no responsibility for the ongoing availability, maintena
 . Create the *same* indexes the app will use (wait for the replication to finish before doing this).
 
 
-[#android:prebuilt-database:::bundle-db]
+[#bundle-db]
 == Bundle a Database with an Application
 
 
@@ -88,7 +88,7 @@ Where the platform permits you can zip the database.
 *Alternatively* ... rather than bundling the database within the app, the app could pull the database down from a CDN server on launch.
 
 
-[#android:prebuilt-database:::database-encryption]
+[#database-encryption]
 == Database Encryption
 
 IMPORTANT: This is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
@@ -107,7 +107,7 @@ If you copied an un-encrypted database and want to apply encryption to the copy,
 NOTE: To remove encryption on the copy, provide a null encryption-key
 
 
-[#android:prebuilt-database:::deploy-db]
+[#deploy-db]
 == Using Pre-built Database on App Launch
 
 
@@ -117,7 +117,7 @@ During the application start-up logic, check if database exists in the required 
 
 . Copy the pre-packaged database to the required location
 +
-Use the API's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#copy(java.io.File,java.lang.String,com.couchbase.lite.DatabaseConfiguration)[Database.copy()] method -- see: <<android:prebuilt-database:::lbl-code>>; this ensures that a UUID is generated for each copy
+Use the API's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#lbl-code>>; this ensures that a UUID is generated for each copy
 +
 IMPORTANT: *Do not copy the database using any other method* +
 *Otherwise:* Each copy of the app will invalidate the other apps' xref:refer-glossary.adoc#checkpoint[checkpoints] because a new UUID was not generated.
@@ -146,7 +146,7 @@ They can begin interacting with your app whilst any out-of-data data is being up
 [#lbl-code]
 
 
-[#android:prebuilt-database:::lbl-code]
+[#lbl-code]
 ====
 
 [tabs]
@@ -157,40 +157,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="prebuilt-database", indent=0]
 [source, Kotlin]
 ----
-// Note: Getting the path to a database is platform-specific.
-// For Android you need to extract the database from your assets
-// to a temporary directory and then copy it, using Database.copy()
-if (Database.exists("travel-sample", context.filesDir)) {
-    return
-}
-ZipUtils.unzip(getAsset("travel-sample.cblite2.zip"), context.filesDir)
-Database.copy(
-    File(context.filesDir, "travel-sample"),
-    "travel-sample",
-    DatabaseConfiguration()
-)
+include::android:example$codesnippet_collection.kt[tags="prebuilt-database", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="prebuilt-database", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// Note: Getting the path to a database is platform-specific.
-if (!Database.exists("travel-sample", appDbDir)) {
-    File tmpDir = new File(System.getProperty("java.io.tmpdir"));
-    ZipUtils.unzip(Utils.getAsset("travel-sample.cblite2.zip"), tmpDir);
-    File path = new File(tmpDir, "travel-sample");
-    Database.copy(path, "travel-sample", new DatabaseConfiguration());
-}
+include::android:example$codesnippet_collection.java[tags="prebuilt-database", indent=0]
 ----
 --
 
@@ -200,7 +179,7 @@ if (!Database.exists("travel-sample", appDbDir)) {
 ====
 
 
-[#android:prebuilt-database:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -216,7 +195,7 @@ if (!Database.exists("travel-sample", appDbDir)) {
 
 .
 
-[.column#android:prebuilt-database:::-2]
+[.column]
 === {empty}
 .Learn more . . .
 * xref:android:database.adoc[Databases]
@@ -228,7 +207,7 @@ if (!Database.exists("travel-sample", appDbDir)) {
 .
 
 
-[.column#android:prebuilt-database:::-3]
+[.column]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

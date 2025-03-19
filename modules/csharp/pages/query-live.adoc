@@ -1,4 +1,4 @@
-[#csharp:query-live:::]
+
 = Live Queries
 :page-aliases: learn/csharp-query-live.adoc
 :page-role:
@@ -16,7 +16,7 @@
 {description}
 
 
-[#csharp:query-live:::activating-a-live-query]
+[#activating-a-live-query]
 == Activating a Live Query
 
 
@@ -35,59 +35,36 @@ When a change is detected the query automatically runs, and posts the new query 
 [#ex-qry-start]
 
 
-[#csharp:query-live:::ex-qry-start]
+[#ex-qry-start]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="live-query", indent=0]
 [source, csharp]
 ----
-var query = QueryBuilder
-    .Select(SelectResult.All())
-    .From(DataSource.Collection(collection)); // <.>
-
-
-// Adds a query change listener.
-// Changes will be posted on the main queue.
-var token = query.AddChangeListener((sender, args) => // <.>
-{
-    var allResult = args.Results.AllResults();
-    foreach (var result in allResult) {
-        Console.WriteLine(result.Keys);
-        /* Update UI */
-    }
-});
+include::csharp:example$code_snippets/Program.cs[tags="live-query", indent=0]
 ----
-
-
 ====
 
 <.> Build the query statements
 <.> Activate the _live_ query by attaching a listener.
-Save the token in order to detach the listener and stop the query later -- se <<csharp:query-live:::ex-qry-stop>>
+Save the token in order to detach the listener and stop the query later -- se <<ex-qry-stop>>
 
 
 .Stop a LIve Query
 [#ex-qry-stop]
 
 
-[#csharp:query-live:::ex-qry-stop]
+[#ex-qry-stop]
 ====
 
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="stop-live-query", indent=0]
 [source, csharp]
 ----
-query.RemoveChangeListener(token);
-query.Dispose();
+include::csharp:example$code_snippets/Program.cs[tags="stop-live-query", indent=0]
 ----
-
-
 ====
 
-<.> Here we use the change lister token from <<csharp:query-live:::ex-qry-start>> to remove the listener.
+<.> Here we use the change lister token from <<ex-qry-start>> to remove the listener.
 Doing so stops the live query.
 
 

@@ -1,4 +1,4 @@
-[#swift:query-live:::]
+
 = Live Queries
 :page-aliases: learn/swift-query-live.adoc
 :page-role:
@@ -16,7 +16,7 @@
 {description}
 
 
-[#swift:query-live:::activating-a-live-query]
+[#activating-a-live-query]
 == Activating a Live Query
 
 
@@ -35,57 +35,36 @@ When a change is detected the query automatically runs, and posts the new query 
 [#ex-qry-start]
 
 
-[#swift:query-live:::ex-qry-start]
+[#ex-qry-start]
 ====
 
 
-// Show Main Snippet
-// include::swift:example$code_snippets/SampleCodeTest.swift[tags="live-query", indent=0]
 [source, swift]
 ----
-query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection)) // <.>
-
-// Adds a query change listener.
-// Changes will be posted on the main queue.
-let token = query.addChangeListener { (change) in // <.>
-    for result in change.results! {
-        print(result.keys)
-        /* Update UI */
-    }
-} // <.>
-
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="live-query", indent=0]
 ----
-
-
 ====
 
 <.> Build the query statements
 <.> Activate the _live_ query by attaching a listener.
-Save the token in order to detach the listener and stop the query later -- se <<swift:query-live:::ex-qry-stop>>
+Save the token in order to detach the listener and stop the query later -- se <<ex-qry-stop>>
 
 
 .Stop a LIve Query
 [#ex-qry-stop]
 
 
-[#swift:query-live:::ex-qry-stop]
+[#ex-qry-stop]
 ====
 
 
-// Show Main Snippet
-// include::swift:example$code_snippets/SampleCodeTest.swift[tags="stop-live-query", indent=0]
 [source, swift]
 ----
-query.removeChangeListener(withToken: token) // <.>
-
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="stop-live-query", indent=0]
 ----
-
-
 ====
 
-<.> Here we use the change lister token from <<swift:query-live:::ex-qry-start>> to remove the listener.
+<.> Here we use the change lister token from <<ex-qry-start>> to remove the listener.
 Doing so stops the live query.
 
 

@@ -1,4 +1,4 @@
-[#android:dbreplica:::]
+
 = Intra-device Sync
 :page-aliases: learn/java-android-dbreplica.adoc
 :page-role:
@@ -11,7 +11,7 @@ Description -- _{description}_ +
 Related Content -- xref:android:replication.adoc[Remote Sync Gateway] | xref:android:landing-p2psync.adoc[Peer-to-Peer Sync]
 --
 
-[#android:dbreplica:::overview]
+[#overview]
 == Overview
 
 
@@ -32,52 +32,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="database-replica", indent=0]
 [source, Kotlin]
 ----
-// This is an Enterprise feature:
-// the code below will generate a compilation error
-// if it's compiled against CBL Android Community Edition.
-// Note: the target database must already contain the
-//       source collections or the replication will fail.
-val repl = Replicator(
-    ReplicatorConfigurationFactory.newConfig(
-        target = DatabaseEndpoint(targetDb),
-        collections = mapOf(srcCollections to null),
-        type = ReplicatorType.PUSH
-    )
-)
-
-// Start the replicator
-// (be sure to hold a reference somewhere that will prevent it from being GCed)
-repl.start()
-thisReplicator = repl
+include::android:example$codesnippet_collection.kt[tags="database-replica", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="database-replica", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// This is an Enterprise feature:
-// the code below will generate a compilation error
-// if it's compiled against CBL Android Community Edition.
-// Note: the target database must already contain the
-//       source collections or the replication will fail.
-final Replicator repl = new Replicator(
-    new ReplicatorConfiguration(new DatabaseEndpoint(targetDb))
-        .addCollections(srcCollections, null)
-        .setType(ReplicatorType.PUSH));
-
-// Start the replicator
-// (be sure to hold a reference somewhere that will prevent it from being GCed)
-repl.start();
-thisReplicator = repl;
+include::android:example$codesnippet_collection.java[tags="database-replica", indent=0]
 ----
 --
 
@@ -87,7 +54,7 @@ thisReplicator = repl;
 ====
 
 
-[#android:dbreplica:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -103,7 +70,7 @@ thisReplicator = repl;
 
 .
 
-[.column#android:dbreplica:::-2]
+[.column]
 ====== {empty}
 .Learn more . . .
 * xref:android:database.adoc[Databases]
@@ -115,7 +82,7 @@ thisReplicator = repl;
 .
 
 
-[.column#android:dbreplica:::-3]
+[.column]
 ====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

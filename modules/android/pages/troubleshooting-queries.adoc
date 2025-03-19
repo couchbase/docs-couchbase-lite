@@ -1,4 +1,4 @@
-[#android:troubleshooting-queries:::]
+
 = Troubleshooting Queries
 :page-role:
 :description: Couchbase Lite on Android -- Using query.explain()
@@ -12,20 +12,20 @@ Related Content -- xref:android:troubleshooting-logs.adoc[Using Logs] | xref:and
 --
 
 
-[#android:troubleshooting-queries:::query-explain]
+[#query-explain]
 == Query Explain
 
 
-[#android:troubleshooting-queries:::using]
+[#using]
 === Using
 Query's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Query.html#explain--[explain()] method can provide useful insight when you are trying to diagnose query performance issues and-or optimize queries.
-To examine how your query is working, either embed the call inside your app (see: <<android:troubleshooting-queries:::use-qe-app>>), or use it interactively within a `cblite` shell (see: <<android:troubleshooting-queries:::use-qe-cblite>>).
+To examine how your query is working, either embed the call inside your app (see: <<use-qe-app>>), or use it interactively within a `cblite` shell (see: <<use-qe-cblite>>).
 
 [#use-qe-app]
 .Using Query Explain in App
 
 
-[#android:troubleshooting-queries:::use-qe-app]
+[#use-qe-app]
 ====
 
 [tabs]
@@ -36,36 +36,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-explain-all", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("university")))
-    .groupBy(Expression.property("country"))
-    .orderBy(Ordering.property("name").descending()) // <.>
-
-log(query.explain()) // <.>
+include::android:example$codesnippet_collection.kt[tags="query-explain-all", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-explain-all", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("university")))
-    .groupBy(Expression.property("country"))
-    .orderBy(Ordering.property("name").descending()); // <.>
-Logger.log(query.explain()); // <.>
+include::android:example$codesnippet_collection.java[tags="query-explain-all", indent=0]
 ----
 --
 
@@ -77,7 +60,7 @@ Logger.log(query.explain()); // <.>
 <.> Construct your query as normal
 <.> Call the query's `explain` method; All output is sent to the application's log file.
 
-[#android:troubleshooting-queries:::use-qe-cblite]
+[#use-qe-cblite]
 .Using Query Explain in cblite
 ====
 [source, console]
@@ -95,11 +78,11 @@ cblite <your-database-name>.cblite2 // <.>
 ====
 
 
-[#android:troubleshooting-queries:::output]
+[#output]
 === Output
-The output from `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Query.html#explain--[explain()]` remains the same whether invoked by an app, or `cblite` -- see <<android:troubleshooting-queries:::qe-output>> for an example of how it looks.
+The output from `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Query.html#qe-output>> for an example of how it looks.
 
-[#android:troubleshooting-queries:::qe-output]
+[#qe-output]
 .Query.explain() Output
 ====
 
@@ -117,7 +100,7 @@ SELECT fl_result(fl_value(_doc.body, 'domains')) FROM kv_default AS _doc WHERE (
 
 ====
 
-This output (<<android:troubleshooting-queries:::qe-output>>) comprises three main elements:
+This output (<<qe-output>>) comprises three main elements:
 
 <.> The translated SQL-query, which is not necessarily useful, being aimed more at Couchbase support and-or engineering teams.
 <.> The _SQLite_ query plan, which gives a high-level view of how the SQL query will be implemented.
@@ -125,17 +108,17 @@ You can use this to identify potential issues and so optimize problematic querie
 <.> The query in JSON-string format, which you can copy-and-paste directly into the _cblite_ tool.
 
 
-[#android:troubleshooting-queries:::the-query-plan]
+[#the-query-plan]
 == The Query Plan
 
 
-[#android:troubleshooting-queries:::format]
+[#format]
 === Format
 The query plan section of the output displays a tabular form of the translated query's execution plan.
 It primarily shows how the data will be retrieved and, where appropriate, how it will be sorted for navigation and-or presentation purposes.
 For more on SQLite's Explain Query Plan -- see: https://www.sqlite.org/eqp.html
 
-[#android:troubleshooting-queries:::qry-plan]
+[#qry-plan]
 .A Query Plan
 ====
 [source, console]
@@ -146,16 +129,16 @@ For more on SQLite's Explain Query Plan -- see: https://www.sqlite.org/eqp.html
 ----
 
 <.> *Retrieval method* -- This line shows the retrieval method being used for the query; here a sequential read of the database.
-Something you may well be looking to optimize -- see <<android:troubleshooting-queries:::ret-method>> for more.
-<.> *Grouping method* --- This line shows that the *Group By* clause used in the query requires the data to be sorted and that a b-tree will be used for temporary storage -- see <<android:troubleshooting-queries:::order-group>>.
-<.> *Ordering method* -- This line shows that the *Order By* clause used in the query requires the data to be sorted and that a b-tree will be used for temporary storage -- see <<android:troubleshooting-queries:::order-group>>.
+Something you may well be looking to optimize -- see <<ret-method>> for more.
+<.> *Grouping method* --- This line shows that the *Group By* clause used in the query requires the data to be sorted and that a b-tree will be used for temporary storage -- see <<order-group>>.
+<.> *Ordering method* -- This line shows that the *Order By* clause used in the query requires the data to be sorted and that a b-tree will be used for temporary storage -- see <<order-group>>.
 ====
 
 
-[#android:troubleshooting-queries:::ret-method]
+[#ret-method]
 === Retrieval Method
 The query optimizer will attempt to retrieve the requested data items as efficiently as possible, which generally will be by using one or more of the available indexes.
-The _retrieval method_ shows the approach decided upon by the optimizer -- see <<android:troubleshooting-queries:::ret-meths>>.
+The _retrieval method_ shows the approach decided upon by the optimizer -- see <<ret-meths>>.
 
 [#ret-meths]
 .Retrieval methods
@@ -182,7 +165,7 @@ When looking to optimize a query's retrieval method, consider whether:
 * You could use an existing index -- perhaps by restructuring the query to minimize wildcard use, or the reliance on functions that modify the query's interpretation of index keys (for example, 'lower')
 * You could reduce the data set being requested to minimize the query's footprint on the database
 
-[#android:troubleshooting-queries:::order-group]
+[#order-group]
 === Order and Group
 The `Use temp b-tree for` lines in the example indicate that the query requires sorting to cater for grouping and then sorting again to present the output results.
 Minimizing, if not eliminating, this ordering and re-ordering will obviously reduce the amount of time taken to process your query.
@@ -190,7 +173,7 @@ Minimizing, if not eliminating, this ordering and re-ordering will obviously red
 Ask "is the grouping and-or ordering absolutely necessary?": if it isn't, drop it or modify it to minimize its impact.
 
 
-[#android:troubleshooting-queries:::queries-and-indexes]
+[#queries-and-indexes]
 == Queries and Indexes
 
 Querying documents using a pre-existing database index is much faster because an index narrows down the set of documents to examine -- see: the xref:android:query-troubleshooting.adoc[Query Troubleshooting] topic.
@@ -217,7 +200,7 @@ Less good is if the query must scan the whole index; although the compact nature
 Searches that begin with or rely upon an inequality with the primary key are inherently less effective than those using a primary key equality.
 
 
-[#android:troubleshooting-queries:::working-with-the-query-optimizer]
+[#working-with-the-query-optimizer]
 == Working with the Query Optimizer
 You may have noticed that sometimes a query runs faster on a second run, or after re-opening the database, or after deleting and recreating an index.
 This typically happens when SQL Query Optimizer has gathered sufficient stats to recognize a means of optimizing a sub-optimal query.
@@ -229,12 +212,12 @@ In fact they are gathered after certain events, such as:
 * On a database close
 * When running a database compact.
 
-So, if your analysis of the <<android:troubleshooting-queries:::qe-output,Query Explain output>> indicates a sub-optimal query and your rewrites fail to sufficiently optimize it, consider compacting the database.
+So, if your analysis of the <<qe-output,Query Explain output>> indicates a sub-optimal query and your rewrites fail to sufficiently optimize it, consider compacting the database.
 Then re-generate the Query Explain and note any improvements in optimization.
 They may not, in themselves, resolve the issue entirely; but they can provide a uesful guide toward further optimizing changes you could make.
 
 
-[#android:troubleshooting-queries:::use-like-based-queries]
+[#use-like-based-queries]
 == Wildcard and Like-based Queries
 
 Like-based searches can use the index(es) only if:
@@ -245,7 +228,7 @@ Like-based searches can use the index(es) only if:
 
 To illustrate this we can use a modified query from the Mobile Travel Sample application; replacing a simple equality test with a 'LIKE'
 
-In <<android:troubleshooting-queries:::like-wild-pfx-qry>> we use a wildcard prefix and suffix.
+In <<like-wild-pfx-qry>> we use a wildcard prefix and suffix.
 You can see that the query plan decides on a retrieval method of `Scan Table`.
 
 TIP: For more on indexes -- see: xref:android:indexing.adoc[Indexing]
@@ -257,40 +240,24 @@ TIP: For more on indexes -- see: xref:android:indexing.adoc[Indexing]
 [tabs]
 =====
 
-[#android:troubleshooting-queries:::like-wild-pfx-qry-kotlin]
+[#like-wild-pfx-qry-kotlin]
 Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-explain-like", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").like(Expression.string("%hotel%"))) // <.>
-    .groupBy(Expression.property("country"))
-    .orderBy(Ordering.property("name").descending()) // <.>
-log(query.explain())
+include::android:example$codesnippet_collection.kt[tags="query-explain-like", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-explain-like", indent=0]
-[#android:troubleshooting-queries:::like-wild-pfx-qry-java]
+[#like-wild-pfx-qry-java]
 Java::
 +
 --
 [source, Java]
 ----
-Query query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").like(Expression.string("%hotel%"))) // <.>
-    .groupBy(Expression.property("country"))
-    .orderBy(Ordering.property("name").descending()); // <.>
-Logger.log(query.explain());
+include::android:example$codesnippet_collection.java[tags="query-explain-like", indent=0]
 ----
 --
 
@@ -306,14 +273,14 @@ Logger.log(query.explain());
 2|0|0| SCAN TABLE kv_default AS _doc
 ----
 
-By contrast, by removing the wildcard prefix `%` (in <<android:troubleshooting-queries:::like-no-wild-pfx-qry>>), we see that the query plan's retrieval method changes to become an index search.
+By contrast, by removing the wildcard prefix `%` (in <<like-no-wild-pfx-qry>>), we see that the query plan's retrieval method changes to become an index search.
 Where practical, simple changes like this can make significant differences in query performance.
 
 .Like with No Wildcard-prefix
 [#like-no-wild-pfx-qry]
 
 
-[#android:troubleshooting-queries:::like-no-wild-pfx-qry]
+[#like-no-wild-pfx-qry]
 ====
 
 [tabs]
@@ -324,35 +291,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-explain-nopfx", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(
-        Expression.property("type").like(Expression.string("hotel%")) // <.>
-            .and(Expression.property("name").like(Expression.string("%royal%")))
-    )
-log(query.explain())
+include::android:example$codesnippet_collection.kt[tags="query-explain-nopfx", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-explain-nopfx", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").like(Expression.string("hotel%")) // <.>
-        .and(Expression.property("name").like(Expression.string("%royal%"))));
-Logger.log(query.explain());
+include::android:example$codesnippet_collection.java[tags="query-explain-nopfx", indent=0]
 ----
 --
 
@@ -369,12 +320,12 @@ Logger.log(query.explain());
 3|0|0| SEARCH TABLE kv_default AS _doc USING INDEX typeIndex (<expr>>? AND <expr><?)
 ----
 
-[#android:troubleshooting-queries:::use-functions-wisely]
+[#use-functions-wisely]
 == Use Functions Wisely
 
 Functions are a very useful tool in building queries, but be aware that they can impact whether the query-optimizer is able to use your index(es).
 
-For example, you can observe a similar situation to that shown in <<android:troubleshooting-queries:::use-like-based-queries>> when using the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Function.html#lower-com.couchbase.lite.Expression-[lower()]` function on an indexed property.
+For example, you can observe a similar situation to that shown in <<use-like-based-queries>> when using the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Function.html#lower-com.couchbase.lite.Expression-[lower()]` function on an indexed property.
 
 .Query
 [#use-like-based-queries]
@@ -383,36 +334,24 @@ For example, you can observe a similar situation to that shown in <<android:trou
 [tabs]
 =====
 
-[#android:troubleshooting-queries:::use-like-based-queries-kotlin]
+[#use-like-based-queries-kotlin]
 Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-explain-function", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(Function.lower(Expression.property("type").equalTo(Expression.string("hotel")))) // <.>
-log(query.explain())
+include::android:example$codesnippet_collection.kt[tags="query-explain-function", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-explain-function", indent=0]
-[#android:troubleshooting-queries:::use-like-based-queries-java]
+[#use-like-based-queries-java]
 Java::
 +
 --
 [source, Java]
 ----
-Query query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(Function.lower(Expression.property("type").equalTo(Expression.string("hotel")))); // <.>
-Logger.log(query.explain());
+include::android:example$codesnippet_collection.java[tags="query-explain-function", indent=0]
 ----
 --
 
@@ -441,31 +380,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-explain-nofunction", indent=0]
 [source, Kotlin]
 ----
-val query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("hotel"))) // <.>
-log(query.explain())
+include::android:example$codesnippet_collection.kt[tags="query-explain-nofunction", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-explain-nofunction", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-Query query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.collection(collection))
-    .where(Expression.property("type").equalTo(Expression.string("hotel"))); // <.>
-Logger.log(query.explain());
+include::android:example$codesnippet_collection.java[tags="query-explain-nofunction", indent=0]
 ----
 --
 
@@ -481,7 +408,7 @@ Logger.log(query.explain());
 
 Knowing this, you can consider how you create the index; for example, using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Function.html#lower-com.couchbase.lite.Expression-[lower()] when you create the index and then always using lowercase comparisons.
 
-[#android:troubleshooting-queries:::optimization-considerations]
+[#optimization-considerations]
 == Optimization Considerations
 
 Try to minimize the amount of data retrieved.
@@ -504,7 +431,7 @@ Consider Using Full Text Search instead of complex like or regex patterns -- see
 {empty}
 
 
-[#android:troubleshooting-queries:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -521,7 +448,7 @@ Consider Using Full Text Search instead of complex like or regex patterns -- see
 
 .
 
-[.column#android:troubleshooting-queries:::-2]
+[.column]
 ====== {empty}
 .Learn more . . .
 * xref:android:query-n1ql-mobile-querybuilder-diffs.adoc[{sqlpp} Mobile - Querybuilder  Differences]
@@ -537,7 +464,7 @@ Consider Using Full Text Search instead of complex like or regex patterns -- see
 .
 
 
-[.column#android:troubleshooting-queries:::-3]
+[.column]
 ====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

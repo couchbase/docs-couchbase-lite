@@ -1,4 +1,4 @@
-[#swift:indexing:::]
+
 = Indexing
 :page-aliases: learn/swift-indexing.adoc
 :page-role:
@@ -12,7 +12,7 @@ Related Content -- xref:swift:database.adoc[Databases] | xref:swift:document.ado
 --
 
 
-[#swift:indexing:::introduction]
+[#introduction]
 == Introduction
 // tag::overview[]
 Querying documents using a pre-existing database index is much faster because an index narrows down the set of documents to examine -- see: the xref:swift:query-troubleshooting.adoc[Query Troubleshooting] topic.
@@ -34,15 +34,15 @@ You should only index with properties that you plan to use in the query.
 //end::overview[]
 
 
-[#swift:indexing:::creating-a-new-index]
+[#creating-a-new-index]
 == Creating a new index
 
 You can use {sqlpp} or QueryBuilder syntaxes to create an index
 
 
-<<swift:indexing:::ex-create-index>> creates a new index for the `type` and `name` properties, shown in this data model:
+<<ex-create-index>> creates a new index for the `type` and `name` properties, shown in this data model:
 
-[#swift:indexing:::ex-datamodel]
+[#ex-datamodel]
 .Data Model
 ====
 [source,json]
@@ -57,7 +57,7 @@ You can use {sqlpp} or QueryBuilder syntaxes to create an index
 ----
 ====
 
-[#swift:indexing:::sql]
+[#sql]
 === {sqlpp}
 
 The code to create the index will look something like this:
@@ -66,23 +66,18 @@ The code to create the index will look something like this:
 [#ex-create-index]
 
 
-[#swift:indexing:::ex-create-index]
+[#ex-create-index]
 ====
 
 
-// Show Main Snippet
-// include::swift:example$code_snippets/SampleCodeTest.swift[tags="query-index", indent=0]
 [source, swift]
 ----
-let config = ValueIndexConfiguration(["type", "name"])
-try collection.createIndex(withName: "TypeNameIndex", config: config)
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="query-index", indent=0]
 ----
-
-
 ====
 
 
-[#swift:indexing:::querybuilder]
+[#querybuilder]
 === QueryBuilder
 
 TIP: See the xref:swift:querybuilder.adoc[QueryBuilder] topic to learn more about QueryBuilder.
@@ -93,45 +88,36 @@ The code to create the index will look something like this:
 [#ex-create-index]
 
 
-[#swift:indexing:::ex-create-index]
+[#ex-create-index]
 ====
 
 
-// Show Main Snippet
-// include::swift:example$code_snippets/SampleCodeTest.swift[tags="query-index_Querybuilder", indent=0]
 [source, swift]
 ----
-let index = IndexBuilder.valueIndex(items: ValueIndexItem.expression(Expression.property("type")),
-                                    ValueIndexItem.expression(Expression.property("name")))
-try collection.createIndex(index, name: "TypeNameIndex")
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="query-index_Querybuilder", indent=0]
 ----
-
-
 ====
 
 
-[#swift:indexing:::array-indexing]
+[#array-indexing]
 == Array Indexing
 
 Couchbase Lite 3.2.1 introduces functionality to optimize querying arrays.
 xref:swift:query-n1ql-mobile.adoc#lbl-unnest[Array `UNNEST`] to unpack arrays within a document to allow joins with the parent object, and array indexes for indexing unnested array's values to allow more efficient queries with `UNNEST`.
 
-[#swift:indexing:::the-array-index]
+[#the-array-index]
 === The Array Index
 
 An array index is a new type of the index for indexing nested array’s properties to allow querying with the `UNNEST` more efficiently.
 
 Below is an example array index configuration:
 
-// include::swift:example$code_snippets/VectorSearch.swift
 [source, swift]
 ----
-
-        let config = ArrayIndexConfiguration(path: "contacts")
-
+include::swift:example$code_snippets/VectorSearch.swift
 ----
 
-[#swift:indexing:::array-index-syntax]
+[#array-index-syntax]
 === Array Index Syntax
 
 The syntax for array index configuration is shown below:
@@ -156,7 +142,7 @@ If the array specified by the path contains scalar values, the expressions shoul
 
 |===
 
-[#swift:indexing:::using-array-indexes-with-unnest]
+[#using-array-indexes-with-unnest]
 === Using Array Indexes with UNNEST
 
 For the following examples, you can assume we are querying results from the following document, shown below:
@@ -204,12 +190,9 @@ The query above produces the following output from the document:
 
 You can also perform the same operation using array indexes like so:
 
-// include::swift:example$code_snippets/VectorSearch.swift[tags=array-index-single]
 [source, swift, indent=0]
 ----
-
-        try collection.createIndex(withName: "singleIndex", config: ArrayIndexConfiguration(path: "likes", expressions: ["type"]))
-
+include::swift:example$code_snippets/VectorSearch.swift[tags=array-index-single]
 ----
 
 You can perform similar operations on nested arrays:
@@ -235,12 +218,9 @@ The output demonstrates retrieval of both primary and secondary contact numbers 
 
 Here’s an example of creating an array index on a nested array containing dictionary values:
 
-// include::swift:example$code_snippets/VectorSearch.swift[tags=array-index-nested]
 [source, swift, indent=0]
 ----
-
-        try collection.createIndex(withName: "nestedArray", config: ArrayIndexConfiguration(path: "contacts[].phones", expressions: ["type"]))
-
+include::swift:example$code_snippets/VectorSearch.swift[tags=array-index-nested]
 ----
 
 The above snippet creates an array index to allow you to iterate through `contacts[].phones[].type` in the document, namely `"home"` and `"mobile"`.
@@ -251,7 +231,7 @@ Attempting to create a query with array literals will return an error.
 // DO NOT EDIT -- Footer Related Content Block
 
 
-[#swift:indexing:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -267,7 +247,7 @@ Attempting to create a query with array literals will return an error.
 
 .
 
-[.column#swift:indexing:::-2]
+[.column]
 === {empty}
 .Learn more . . .
 * xref:swift:database.adoc[Databases]
@@ -279,7 +259,7 @@ Attempting to create a query with array literals will return an error.
 .
 
 
-[.column#swift:indexing:::-3]
+[.column]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

@@ -1,4 +1,4 @@
-[#android:document:::]
+
 = Documents
 :page-aliases: documents.adoc, learn/java-android-document.adoc
 :page-toclevels: 2@
@@ -13,11 +13,11 @@ Related Content -- xref:android:database.adoc[Databases] | xref:android:blob.ado
 --
 
 
-[#android:document:::overview]
+[#overview]
 == Overview
 
 
-[#android:document:::document-structure]
+[#document-structure]
 === Document Structure
 
 In pass:q,a[_pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_] the term 'document' refers to an entry in the database.
@@ -29,16 +29,16 @@ This ID is similar to a primary key in other databases.
 You can specify the ID programmatically.
 If you omit it, it will be automatically generated as a UUID.
 
-NOTE: Couchbase documents are assigned to a <<android:database:::database-concepts,Collection>>.
+NOTE: Couchbase documents are assigned to a <<database-concepts,Collection>>.
 The ID of a document must be unique within the Collection it is written to.
 You cannot change it after you have written the document.
 
 The document also has a value which contains the actual application data.
 This value is stored as a dictionary of key-value (k-v) pairs.
-The values can be made of up several different <<android:document:::data-types>> such as numbers, strings, arrays, and nested objects.
+The values can be made of up several different <<data-types>> such as numbers, strings, arrays, and nested objects.
 
 
-[#android:document:::data-encoding]
+[#data-encoding]
 === Data Encoding
 
 The document body is stored in an internal, efficient, binary form called
@@ -48,7 +48,7 @@ This internal form can be easily converted into a manageable native dictionary f
 Fleece data is stored in the smallest format that will hold the value whilst maintaining the integrity of the value.
 
 
-[#android:document:::fleece-data-encoding]
+[#fleece-data-encoding]
 == Fleece data encoding
 
 When working with Android-Java, the Fleece encoding cycle can result in the Java type information being lost.
@@ -64,12 +64,9 @@ Always use explicit creation of the expected type, whenever the type of result i
 Java::
 +
 --
-// BasicExamples.java[tag=fleece-data-encoding]
 [source, Java, indent=0]
 ----
-            Document doc = collection.getDocument(someDoc.getId());
-            // force longVal to be type Long, even if it could be represented as an int.
-            long longVal = doc.getLong("test");
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/BasicExamples.java[tag=fleece-data-encoding]
 ----
 --
 
@@ -77,12 +74,9 @@ Java::
 Kotlin::
 +
 --
-// include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tag=fleece-data-encoding]
 [source, Kotlin, indent=0]
 ----
-        val doc = collection.getDocument (someDoc.id)
-        // force longVal to be type Long, even if it could be represented as an Int.
-        val longVal = doc?.getLong(("test"))
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tag=fleece-data-encoding]
 ----
 --
 =====
@@ -90,7 +84,7 @@ Kotlin::
 Similarly, interpreting data not stored as `boolean` as a boolean value can give inconsistent results.
 
 
-[#android:document:::data-types]
+[#data-types]
 === Data Types
 
 The `Document` class offers a set of property accessors for various scalar types, such as:
@@ -114,13 +108,13 @@ MutableArray:: represents a writeable collection of objects
 Blob:: represents an arbitrary piece of binary data
 
 
-[#android:document:::json]
+[#json]
 === JSON
 
-Couchbase Lite also provides for the direct handling of JSON data implemented in most cases by the provision of a pass:a,q[`toJSON()`] method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array) -- see <<android:document:::lbl-json-data>>.
+Couchbase Lite also provides for the direct handling of JSON data implemented in most cases by the provision of a pass:a,q[`toJSON()`] method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array) -- see <<lbl-json-data>>.
 
 
-[#android:document:::constructing-a-document]
+[#constructing-a-document]
 == Constructing a Document
 
 
@@ -157,13 +151,13 @@ hotel: {
 
 ----
 
-[#android:document:::ex-usage]
+[#ex-usage]
 === Open a Database
 
 First open your database.
 If the database does not already exist, Couchbase Lite will create it for you.
 
-Couchbase documents are assigned to a <<android:database:::database-concepts,Collection>>.
+Couchbase documents are assigned to a <<database-concepts,Collection>>.
 All the CRUD examples in this document operate on a `collection` object (here, the Default Collection).
 
 
@@ -175,34 +169,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="datatype_usage_createdb", indent=0]
 [source, Kotlin]
 ----
-// Initialize the Couchbase Lite system
-CouchbaseLite.init(context)
-
-// Get the database (and create it if it doesn’t exist).
-val database = Database("getting-started")
-val collection = database.getCollection("myCollection")
-    ?: throw IllegalStateException("collection not found")
-
+include::android:example$codesnippet_collection.kt[tags="datatype_usage_createdb", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="datatype_usage_createdb", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// Get the database (and create it if it doesn’t exist).
-Database database = new Database("getting-started");
-try (Collection collection = database.getCollection("myCollection")) {
-    if (collection == null) { throw new IllegalStateException("collection not found"); }
-
+include::android:example$codesnippet_collection.java[tags="datatype_usage_createdb", indent=0]
 ----
 --
 
@@ -211,7 +190,7 @@ try (Collection collection = database.getCollection("myCollection")) {
 
 See xref:android:database.adoc[Databases] for more information
 
-[#android:document:::create-a-document]
+[#create-a-document]
 === Create a Document
 
 Now create a new document to hold your application's data.
@@ -227,36 +206,28 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="datatype_usage_createdoc", indent=0]
 [source, Kotlin]
 ----
-// Create your new document
-val mutableDoc = MutableDocument()
-
+include::android:example$codesnippet_collection.kt[tags="datatype_usage_createdoc", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="datatype_usage_createdoc", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// Create your new document
-MutableDocument mutableDoc = new MutableDocument();
-
+include::android:example$codesnippet_collection.java[tags="datatype_usage_createdoc", indent=0]
 ----
 --
 
 =====
 
 
-For more on using *Documents*, see <<android:document:::document-initializers>> and <<android:document:::mutability>>.
+For more on using *Documents*, see <<document-initializers>> and <<mutability>>.
 
-[#android:document:::create-a-dictionary]
+[#create-a-dictionary]
 === Create a Dictionary
 
 Now create a mutable dictionary (`address`).
@@ -272,46 +243,28 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="datatype_usage_mutdict", indent=0]
 [source, Kotlin]
 ----
-// Create a new mutable dictionary and populate some keys/values
-val address = MutableDictionary()
-address.setString("street", "1 Main st.")
-address.setString("city", "San Francisco")
-address.setString("state", "CA")
-address.setString("country", "USA")
-address.setString("code", "90210")
-
+include::android:example$codesnippet_collection.kt[tags="datatype_usage_mutdict", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="datatype_usage_mutdict", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// Create a new mutable dictionary and populate some keys/values
-MutableDictionary address = new MutableDictionary();
-address.setString("street", "1 Main st.");
-address.setString("city", "San Francisco");
-address.setString("state", "CA");
-address.setString("country", "USA");
-address.setString("code", "90210");
-
+include::android:example$codesnippet_collection.java[tags="datatype_usage_mutdict", indent=0]
 ----
 --
 
 =====
 
 
-Learn more about <<android:document:::using-dictionaries>>.
+Learn more about <<using-dictionaries>>.
 
-[#android:document:::create-an-array]
+[#create-an-array]
 === Create an Array
 
 Since the hotel may have multiple contact numbers, provide a field (`phones`) as a mutable array.
@@ -325,40 +278,28 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="datatype_usage_mutarray", indent=0]
 [source, Kotlin]
 ----
-// Create and populate mutable array
-val phones = MutableArray()
-phones.addString("650-000-0000")
-phones.addString("650-000-0001")
-
+include::android:example$codesnippet_collection.kt[tags="datatype_usage_mutarray", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="datatype_usage_mutarray", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// Create and populate mutable array
-MutableArray phones = new MutableArray();
-phones.addString("650-000-0000");
-phones.addString("650-000-0001");
-
+include::android:example$codesnippet_collection.java[tags="datatype_usage_mutarray", indent=0]
 ----
 --
 
 =====
 
 
-Learn more about <<android:document:::using-arrays>>
+Learn more about <<using-arrays>>
 
-[#android:document:::populate-a-document]
+[#populate-a-document]
 === Populate a Document
 
 Now add your data to the mutable document created earlier.
@@ -373,55 +314,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="datatype_usage_populate", indent=0]
 [source, Kotlin]
 ----
-// Initialize and populate the document
-
-// Add document type to document properties <.>
-mutableDoc.setString("type", "hotel")
-
-// Add hotel name string to document properties <.>
-mutableDoc.setString("name", "Hotel Java Mo")
-
-// Add float to document properties <.>
-mutableDoc.setFloat("room_rate", 121.75f)
-
-// Add dictionary to document's properties <.>
-mutableDoc.setDictionary("address", address)
-
-// Add array to document's properties <.>
-mutableDoc.setArray("phones", phones)
-
+include::android:example$codesnippet_collection.kt[tags="datatype_usage_populate", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="datatype_usage_populate", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// Initialize and populate the document
-
-// Add document type to document properties <.>
-mutableDoc.setString("type", "hotel");
-
-// Add hotel name string to document properties <.>
-mutableDoc.setString("name", "Hotel Java Mo");
-
-// Add float to document properties <.>
-mutableDoc.setFloat("room_rate", 121.75F);
-
-// Add dictionary to document's properties <.>
-mutableDoc.setDictionary("address", address);
-
-// Add array to document's properties <.>
-mutableDoc.setArray("phones", phones);
-
+include::android:example$codesnippet_collection.java[tags="datatype_usage_populate", indent=0]
 ----
 --
 
@@ -431,7 +336,7 @@ mutableDoc.setArray("phones", phones);
 NOTE: Couchbase recommend using a `type` attribute to define each logical document type.
 
 
-[#android:document:::save-a-document]
+[#save-a-document]
 === Save a Document
 
 Now persist the populated document to your Couchbase Lite database.
@@ -446,33 +351,26 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="datatype_usage_persist", indent=0]
 [source, Kotlin]
 ----
-// Save the document changes <.>
-collection.save(mutableDoc)
-
+include::android:example$codesnippet_collection.kt[tags="datatype_usage_persist", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="datatype_usage_persist", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// Save the document changes <.>
-collection.save(mutableDoc);
+include::android:example$codesnippet_collection.java[tags="datatype_usage_persist", indent=0]
 ----
 --
 
 =====
 
 
-[#android:document:::close-the-database]
+[#close-the-database]
 === Close the Database
 
 With your document saved, you can now close our Couchbase Lite database.
@@ -486,38 +384,30 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="datatype_usage_closedb", indent=0]
 [source, Kotlin]
 ----
-// Close the database <.>
-database.close()
-
+include::android:example$codesnippet_collection.kt[tags="datatype_usage_closedb", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="datatype_usage_closedb", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// Close the database <.>
-database.close();
-
+include::android:example$codesnippet_collection.java[tags="datatype_usage_closedb", indent=0]
 ----
 --
 
 =====
 
 
-[#android:document:::working-with-data]
+[#working-with-data]
 == Working with Data
 
 
-[#android:document:::checking-a-documents-properties]
+[#checking-a-documents-properties]
 === Checking a Document's Properties
 
 To check whether a given property exists in the document, use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Document.html#contains-java.lang.String-[`Document.Contains(String key)] method.
@@ -533,7 +423,7 @@ Interpreting data as boolean can also give inconsistent results.
 --
 
 
-[#android:document:::date-accessors]
+[#date-accessors]
 === Date accessors
 
 Couchbase Lite offers _Date_ accessors as a convenience.
@@ -543,7 +433,7 @@ Dates are a common data type, but JSON doesn't natively support them, so the con
 [#ex-date-getter]
 
 
-[#android:document:::ex-date-getter]
+[#ex-date-getter]
 ====
 
 This example sets the date on the `createdAt` property and reads it back using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Document.html#getDate-java.lang.String-[Document.getDate()] accessor method.
@@ -555,25 +445,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="date-getter", indent=0]
 [source, Kotlin]
 ----
-doc.setValue("createdAt", Date())
-val date = doc.getDate("createdAt")
+include::android:example$codesnippet_collection.kt[tags="date-getter", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="date-getter", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-newTask.setValue("createdAt", new Date());
-Date date = newTask.getDate("createdAt");
+include::android:example$codesnippet_collection.java[tags="date-getter", indent=0]
 ----
 --
 
@@ -583,7 +467,7 @@ Date date = newTask.getDate("createdAt");
 ====
 
 
-[#android:document:::using-dictionaries]
+[#using-dictionaries]
 === Using Dictionaries
 
 .API References
@@ -597,7 +481,7 @@ Date date = newTask.getDate("createdAt");
 [#ex-dict]
 
 
-[#android:document:::ex-dict]
+[#ex-dict]
 ====
 
 [tabs]
@@ -608,55 +492,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="datatype_dictionary", indent=0]
 [source, Kotlin]
 ----
-// NOTE: No error handling, for brevity (see getting started)
-val document = collection.getDocument("doc1")
-
-// Getting a dictionary from the document's properties
-val dict = document?.getDictionary("address")
-
-// Access a value with a key from the dictionary
-val street = dict?.getString("street")
-
-// Iterate dictionary
-dict?.forEach { println("${it} -> ${dict.getValue(it)}") }
-
-// Create a mutable copy
-val mutableDict = dict?.toMutable()
-
+include::android:example$codesnippet_collection.kt[tags="datatype_dictionary", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="datatype_dictionary", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// NOTE: No error handling, for brevity (see getting started)
-Document document = collection.getDocument("doc1");
-if (document == null) { return; }
-
-// Getting a dictionary from the document's properties
-Dictionary dict = document.getDictionary("address");
-if (dict == null) { return; }
-
-// Access a value with a key from the dictionary
-String street = dict.getString("street");
-
-// Iterate dictionary
-for (String key: dict.getKeys()) {
-    System.out.println("Key " + key + " = " + dict.getValue(key));
-}
-
-// Create a mutable copy
-MutableDictionary mutableDict = dict.toMutable();
-
+include::android:example$codesnippet_collection.java[tags="datatype_dictionary", indent=0]
 ----
 --
 
@@ -670,7 +518,7 @@ MutableDictionary mutableDict = dict.toMutable();
 [#ex-mutdict]
 
 
-[#android:document:::ex-mutdict]
+[#ex-mutdict]
 ====
 
 [tabs]
@@ -681,45 +529,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="datatype_mutable_dictionary", indent=0]
 [source, Kotlin]
 ----
-// NOTE: No error handling, for brevity (see getting started)
-
-// Create a new mutable dictionary and populate some keys/values
-val mutableDict = MutableDictionary()
-mutableDict.setString("street", "1 Main st.")
-mutableDict.setString("city", "San Francisco")
-
-// Add the dictionary to a document's properties and save the document
-val mutableDoc = MutableDocument("doc1")
-mutableDoc.setDictionary("address", mutableDict)
-collection.save(mutableDoc)
-
+include::android:example$codesnippet_collection.kt[tags="datatype_mutable_dictionary", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="datatype_mutable_dictionary", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// NOTE: No error handling, for brevity (see getting started)
-
-// Create a new mutable dictionary and populate some keys/values
-MutableDictionary mutableDict = new MutableDictionary();
-mutableDict.setString("street", "1 Main st.");
-mutableDict.setString("city", "San Francisco");
-
-// Add the dictionary to a document's properties and save the document
-MutableDocument mutableDoc = new MutableDocument("doc1");
-mutableDoc.setDictionary("address", mutableDict);
-collection.save(mutableDoc);
-
+include::android:example$codesnippet_collection.java[tags="datatype_mutable_dictionary", indent=0]
 ----
 --
 
@@ -729,7 +551,7 @@ collection.save(mutableDoc);
 ====
 
 
-[#android:document:::using-arrays]
+[#using-arrays]
 === Using Arrays
 
 .API References
@@ -741,7 +563,7 @@ collection.save(mutableDoc);
 [#ex-array]
 
 
-[#android:document:::ex-array]
+[#ex-array]
 ====
 
 [tabs]
@@ -752,61 +574,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="datatype_array", indent=0]
 [source, Kotlin]
 ----
-// NOTE: No error handling, for brevity (see getting started)
-
-val document = collection.getDocument("doc1")
-
-// Getting a phones array from the document's properties
-val array = document?.getArray("phones")
-
-// Get element count
-val count = array?.count()
-
-// Access an array element by index
-val phone = array?.getString(1)
-
-// Iterate array
-array?.forEachIndexed { index, item -> println("Row  ${index} = ${item}") }
-
-// Create a mutable copy
-val mutableArray = array?.toMutable()
+include::android:example$codesnippet_collection.kt[tags="datatype_array", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="datatype_array", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// NOTE: No error handling, for brevity (see getting started)
-
-Document document = collection.getDocument("doc1");
-if (document == null) { return; }
-
-// Getting a phones array from the document's properties
-Array array = document.getArray("phones");
-if (array == null) { return; }
-
-// Get element count
-int count = array.count();
-
-// Access an array element by index
-String phone = array.getString(1);
-
-// Iterate array
-for (int i = 0; i < count; i++) {
-    System.out.println("Row  " + i + " = " + array.getString(i));
-}
-
-// Create a mutable copy
-MutableArray mutableArray = array.toMutable();
+include::android:example$codesnippet_collection.java[tags="datatype_array", indent=0]
 ----
 --
 
@@ -820,7 +600,7 @@ MutableArray mutableArray = array.toMutable();
 [#ex-mutarray]
 
 
-[#android:document:::ex-mutarray]
+[#ex-mutarray]
 ====
 
 [tabs]
@@ -831,43 +611,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="datatype_mutable_array", indent=0]
 [source, Kotlin]
 ----
-// NOTE: No error handling, for brevity (see getting started)
-
-// Create a new mutable array and populate data into the array
-val mutableArray = MutableArray()
-mutableArray.addString("650-000-0000")
-mutableArray.addString("650-000-0001")
-
-// Set the array to document's properties and save the document
-val mutableDoc = MutableDocument("doc1")
-mutableDoc.setArray("phones", mutableArray)
-collection.save(mutableDoc)
+include::android:example$codesnippet_collection.kt[tags="datatype_mutable_array", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="datatype_mutable_array", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// NOTE: No error handling, for brevity (see getting started)
-
-// Create a new mutable array and populate data into the array
-MutableArray mutableArray = new MutableArray();
-mutableArray.addString("650-000-0000");
-mutableArray.addString("650-000-0001");
-
-// Set the array to document's properties and save the document
-MutableDocument mutableDoc = new MutableDocument("doc1");
-mutableDoc.setArray("phones", mutableArray);
-collection.save(mutableDoc);
+include::android:example$codesnippet_collection.java[tags="datatype_mutable_array", indent=0]
 ----
 --
 
@@ -877,13 +633,13 @@ collection.save(mutableDoc);
 ====
 
 
-[#android:document:::using-blobs]
+[#using-blobs]
 === Using Blobs
 
 For more on working with blobs, see xref:android:blob.adoc[Blobs]
 
 
-[#android:document:::document-initializers]
+[#document-initializers]
 == Document Initializers
 
 
@@ -902,7 +658,7 @@ You can use this behavior to check if a document with a given ID already exists 
 [#ex-persists-doc]
 
 
-[#android:document:::ex-persists-doc]
+[#ex-persists-doc]
 ====
 
 The following code example creates a document and persists it to the database.
@@ -914,33 +670,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="initializer", indent=0]
 [source, Kotlin]
 ----
-val doc = MutableDocument()
-doc.let {
-    it.setString("type", "task")
-    it.setString("owner", "todo")
-    it.setDate("createdAt", Date())
-}
-collection.save(doc)
+include::android:example$codesnippet_collection.kt[tags="initializer", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="initializer", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-MutableDocument newTask = new MutableDocument();
-newTask.setString("type", "task");
-newTask.setString("owner", "todo");
-newTask.setDate("createdAt", new Date());
-collection.save(newTask);
+include::android:example$codesnippet_collection.java[tags="initializer", indent=0]
 ----
 --
 
@@ -950,7 +692,7 @@ collection.save(newTask);
 ====
 
 
-[#android:document:::mutability]
+[#mutability]
 == Mutability
 
 
@@ -962,7 +704,7 @@ Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{
 [#ex-update-doc]
 
 
-[#android:document:::ex-update-doc]
+[#ex-update-doc]
 ====
 
 Changes to the document are persisted to the database when the `save` method is called.
@@ -974,28 +716,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="update-document", indent=0]
 [source, Kotlin]
 ----
-collection.getDocument("xyz")?.toMutable()?.let {
-    it.setString("name", "apples")
-    collection.save(it)
-}
+include::android:example$codesnippet_collection.kt[tags="update-document", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="update-document", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-MutableDocument mutableDocument = collection.getDocument("xyz").toMutable();
-mutableDocument.setString("name", "apples");
-collection.save(mutableDocument);
+include::android:example$codesnippet_collection.java[tags="update-document", indent=0]
 ----
 --
 
@@ -1005,10 +738,10 @@ collection.save(mutableDocument);
 ====
 
 
-NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<android:document:::lbl-doc-constraints>>.
+NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<lbl-doc-constraints>>.
 
 
-[#android:document:::batch-operations]
+[#batch-operations]
 == Batch operations
 
 If you're making multiple changes to a database at once, it's faster to group them together.
@@ -1018,7 +751,7 @@ The following example persists a few documents in batch.
 [#ex-batch-ops]
 
 
-[#android:document:::ex-batch-ops]
+[#ex-batch-ops]
 ====
 
 [tabs]
@@ -1029,41 +762,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="batch", indent=0]
 [source, Kotlin]
 ----
-database.inBatch(UnitOfWork {
-    for (i in 0..9) {
-        val doc = MutableDocument()
-        doc.let {
-            it.setValue("type", "user")
-            it.setValue("name", "user $i")
-            it.setBoolean("admin", false)
-        }
-        log("saved user document: ${doc.getString("name")}")
-    }
-})
+include::android:example$codesnippet_collection.kt[tags="batch", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="batch", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-database.inBatch(() -> {
-    for (int i = 0; i < 10; i++) {
-        MutableDocument doc = new MutableDocument();
-        doc.setValue("type", "user");
-        doc.setValue("name", "user " + i);
-        doc.setBoolean("admin", false);
-        collection.save(doc);
-    }
-});
+include::android:example$codesnippet_collection.java[tags="batch", indent=0]
 ----
 --
 
@@ -1077,7 +788,7 @@ At the *local* level this operation is still transactional: no other `Database` 
 But Couchbase Mobile is a distributed system, and due to the way replication works, there's no guarantee that Sync Gateway or other devices will receive your changes all at once.
 
 
-[#android:document:::document-change-events]
+[#document-change-events]
 == Document change events
 
 You can register for document changes.
@@ -1088,7 +799,7 @@ The following example registers for changes to the document with ID `user.john` 
 [#ex-doc-events]
 
 
-[#android:document:::ex-doc-events]
+[#ex-doc-events]
 ====
 
 [tabs]
@@ -1099,40 +810,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="document-listener", indent=0]
 [source, Kotlin]
 ----
-collection.addDocumentChangeListener("user.john") { change ->
-    collection.getDocument(change.documentID)?.let {
-        log("Status: ${it.getString("verified_account")}")
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="document-listener", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="document-listener", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-collection.addDocumentChangeListener(
-    "user.john",
-    change -> {
-        String docId = change.getDocumentID();
-        try {
-            Document doc = collection.getDocument(docId);
-            if (doc != null) {
-                Logger.log("Status: " + doc.getString("verified_account"));
-            }
-        }
-        catch (CouchbaseLiteException e) {
-            Logger.log("Failed getting doc : " + docId);
-        }
-    });
+include::android:example$codesnippet_collection.java[tags="document-listener", indent=0]
 ----
 --
 
@@ -1142,7 +832,7 @@ collection.addDocumentChangeListener(
 ====
 
 
-[#android:document:::using-kotlin-flows-and-livedata]
+[#using-kotlin-flows-and-livedata]
 === Using Kotlin Flows and LiveData
 
 Kotlin users can also take advantage of Flows and LiveData to monitor for changes.
@@ -1155,12 +845,9 @@ The following methods show how to watch for document changes in a given database
 Database Changes::
 +
 --
-// include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/FlowExamples.kt[tag="flow-as-database-change-listener"]
 [source, Kotlin, subs="attributes+"]
 ----
-        return collection.collectionChangeFlow(null)
-            .map { it.documentIDs }
-            .asLiveData()
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/FlowExamples.kt[tag="flow-as-database-change-listener"]
 ----
 --
 
@@ -1168,22 +855,15 @@ Database Changes::
 Document Changes::
 +
 --
-// include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/FlowExamples.kt[tag="flow-as-document-change-listener"]
 [source, Kotlin, subs="attributes+"]
 ----
-        return collection.documentChangeFlow("1001")
-            .mapNotNull { change ->
-                change.takeUnless {
-                    collection.getDocument(it.documentID)?.getString("owner").equals(owner)
-                }
-            }
-            .asLiveData()
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/FlowExamples.kt[tag="flow-as-document-change-listener"]
 ----
 --
 =====
 
 
-[#android:document:::document-expiration]
+[#document-expiration]
 == Document Expiration
 
 Document expiration allows users to set the expiration date for a document.
@@ -1194,7 +874,7 @@ The purge is not replicated to Sync Gateway.
 [#ex-set-doc-exp]
 
 
-[#android:document:::ex-set-doc-exp]
+[#ex-set-doc-exp]
 ====
 
 This example sets the TTL for a document to 1 day from the current time.
@@ -1206,52 +886,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="document-expiration", indent=0]
 [source, Kotlin]
 ----
-// Purge the document one day from now
-collection.setDocumentExpiration(
-    "doc123",
-    Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24))
-)
-
-// Reset expiration
-collection.setDocumentExpiration("doc1", null)
-
-// Query documents that will be expired in less than five minutes
-val query = QueryBuilder
-    .select(SelectResult.expression(Meta.id))
-    .from(DataSource.collection(collection))
-    .where(
-        Meta.expiration.lessThan(
-            Expression.longValue(System.currentTimeMillis() + (1000 * 60 * 5))
-        )
-    )
+include::android:example$codesnippet_collection.kt[tags="document-expiration", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="document-expiration", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// Purge the document one day from now
-Instant ttl = Instant.now().plus(1, ChronoUnit.DAYS);
-collection.setDocumentExpiration("doc123", new Date(ttl.toEpochMilli()));
-
-// Reset expiration
-collection.setDocumentExpiration("doc1", null);
-
-// Query documents that will be expired in less than five minutes
-Instant fiveMinutesFromNow = Instant.now().plus(5, ChronoUnit.MINUTES);
-Query query = QueryBuilder
-    .select(SelectResult.expression(Meta.id))
-    .from(DataSource.collection(collection))
-    .where(Meta.expiration.lessThan(Expression.doubleValue(fiveMinutesFromNow.toEpochMilli())));
+include::android:example$codesnippet_collection.java[tags="document-expiration", indent=0]
 ----
 --
 
@@ -1263,13 +910,13 @@ Query query = QueryBuilder
 
 You can set expiration for a whole Collection
 
-[#android:document:::lbl-doc-constraints]
+[#lbl-doc-constraints]
 == Document Constraints
 
 Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
 This is to facilitate the creation of documents for use either in _local only_ mode where documents are not synced, or when used exclusively in peer-to-peer sync.
 
-NOTE: "_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes -- see <<android:document:::res-keys>>.
+NOTE: "_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes -- see <<res-keys>>.
 
 Users are cautioned that any attempt to sync such documents to Sync Gateway will result in an error.
 To be future proof, you are advised to avoid creating such documents.
@@ -1277,7 +924,7 @@ Use of these attributes for user-level data may result in undefined system behav
 
 For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway - data modeling guidelines]
 
-[#android:document:::res-keys]
+[#res-keys]
 .Reserved Keys List
 ====
 
@@ -1295,28 +942,28 @@ For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway
 ====
 
 
-[#android:document:::lbl-json-data]
+[#lbl-json-data]
 == Working with JSON Data
 
 In this section::
-<<android:document:::lbl-array>>
-| <<android:document:::lbl-blob>>
-| <<android:document:::lbl-dictionary>>
-| <<android:document:::lbl-document>>
-| <<android:document:::lbl-result>>
+<<lbl-array>>
+| <<lbl-blob>>
+| <<lbl-dictionary>>
+| <<lbl-document>>
+| <<lbl-result>>
 
 
 The pass:a,q[`toJSON()`] typed-accessor means you can easily work with JSON data, native and Couchbase Lite objects.
 
-[#android:document:::lbl-array]
+[#lbl-array]
 === Arrays
 
-Convert an `ArrayObject` to and from JSON using the pass:a,q[`toJSON()`] and `toArray` methods -- see <<android:document:::ex-array>>.
+Convert an `ArrayObject` to and from JSON using the pass:a,q[`toJSON()`] and `toArray` methods -- see <<ex-array>>.
 
 Additionally you can:
 
 * Initialize a 'MutableArrayObject' using data supplied as a JSON string.
-This is done using the `init(json)` constructor -- see: <<android:document:::ex-array>>
+This is done using the `init(json)` constructor -- see: <<ex-array>>
 
 * Convert an `ArrayFragment` object to a JSON String
 
@@ -1326,7 +973,7 @@ This is done using the `init(json)` constructor -- see: <<android:document:::ex-
 [#ex-array]
 
 
-[#android:document:::ex-array]
+[#ex-array]
 ====
 
 [tabs]
@@ -1337,48 +984,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="tojson-array", indent=0]
 [source, Kotlin]
 ----
-// github tag=tojson-array
-val mArray = MutableArray(JSON) // <.>
-for (i in 0 until mArray.count()) {
-    mArray.getDictionary(i)?.apply {
-        log(getString("name") ?: "unknown")
-        collection.save(MutableDocument(getString("id"), toMap()))
-    } // <.>
-}
-
-collection.getDocument("1002")?.getArray("features")?.apply {
-    for (feature in toList()) {
-        log("$feature")
-    } // <.>
-    log(toJSON())
-} // <.>
+include::android:example$codesnippet_collection.kt[tags="tojson-array", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="tojson-array", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// github tag=tojson-array
-final MutableArray mArray = new MutableArray(JSON); // <.>
-
-for (int i = 0; i < mArray.count(); i++) { // <.>
-    final Dictionary dict = mArray.getDictionary(i);
-    Logger.log(dict.getString("name"));
-    collection.save(new MutableDocument(dict.getString("id"), dict.toMap()));
-}
-
-final Array features = collection.getDocument("1002").getArray("features");
-for (Object feature: features.toList()) { Logger.log(feature.toString()); }
-Logger.log(features.toJSON()); // <.>
+include::android:example$codesnippet_collection.java[tags="tojson-array", indent=0]
 ----
 --
 
@@ -1388,11 +1006,11 @@ Logger.log(features.toJSON()); // <.>
 ====
 
 
-[#android:document:::lbl-blob]
+[#lbl-blob]
 === Blobs
-Convert a `Blob` to JSON using the `toJSON` method -- see <<android:document:::ex-blob>>.
+Convert a `Blob` to JSON using the `toJSON` method -- see <<ex-blob>>.
 
-You can use `isBlob()` to check whether a given dictionary object is a blob or not -- see <<android:document:::ex-blob>>.
+You can use `isBlob()` to check whether a given dictionary object is a blob or not -- see <<ex-blob>>.
 
 Note that the blob object must first be saved to the database (generating the required metadata) before you can use the `toJSON` method.
 
@@ -1400,7 +1018,7 @@ Note that the blob object must first be saved to the database (generating the re
 .Blobs as JSON strings
 
 
-[#android:document:::ex-blob]
+[#ex-blob]
 ====
 
 [tabs]
@@ -1411,34 +1029,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="tojson-blob", indent=0]
 [source, Kotlin]
 ----
-// github tag=tojson-blob
-val thisBlob = collection.getDocument("thisdoc-id")!!.toMap()
-if (!Blob.isBlob(thisBlob)) {
-    return
-}
-val blobType = thisBlob["content_type"].toString()
-val blobLength = thisBlob["length"] as Number?
+include::android:example$codesnippet_collection.kt[tags="tojson-blob", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="tojson-blob", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// github tag=tojson-blob
-final Map<String, ?> thisBlob = collection.getDocument("thisdoc-id").toMap();
-if (!Blob.isBlob(thisBlob)) { return; }
-
-final String blobType = thisBlob.get("content_type").toString();
-final Number blobLength = (Number) thisBlob.get("length");
+include::android:example$codesnippet_collection.java[tags="tojson-blob", indent=0]
 ----
 --
 
@@ -1450,15 +1053,15 @@ final Number blobLength = (Number) thisBlob.get("length");
 
 See also: xref:android:blob.adoc[Blobs]
 
-[#android:document:::lbl-dictionary]
+[#lbl-dictionary]
 === Dictionaries
 
-Convert a `DictionaryObject` to and from JSON using the `toJSON` and `toDictionary` methods -- see <<android:document:::ex-dictionary>>.
+Convert a `DictionaryObject` to and from JSON using the `toJSON` and `toDictionary` methods -- see <<ex-dictionary>>.
 
 Additionally you can:
 
 * Initialize a 'MutableDictionaryObject' using data supplied as a JSON string.
-This is done using the `init(json)` constructor-- see: <<android:document:::ex-dictionary>>
+This is done using the `init(json)` constructor-- see: <<ex-dictionary>>
 
 * Set data with a JSON string using `setJSON()`
 
@@ -1466,7 +1069,7 @@ This is done using the `init(json)` constructor-- see: <<android:document:::ex-d
 .Dictionaries as JSON strings
 
 
-[#android:document:::ex-dictionary]
+[#ex-dictionary]
 ====
 
 [tabs]
@@ -1477,36 +1080,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="tojson-dictionary", indent=0]
 [source, Kotlin]
 ----
-// github tag=tojson-dictionary
-val mDict = MutableDictionary(JSON) // <.>
-log("$mDict")
-log("Details for: ${mDict.getString("name")}")
-mDict.keys.forEach { key ->
-    log(key + " => " + mDict.getValue(key))
-}
+include::android:example$codesnippet_collection.kt[tags="tojson-dictionary", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="tojson-dictionary", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// github tag=tojson-dictionary
-final MutableDictionary mDict = new MutableDictionary(JSON); // <.>
-Logger.log(mDict.toString());
-
-Logger.log("Details for: " + mDict.getString("name"));
-for (String key: mDict.getKeys()) {
-    Logger.log(key + " => " + mDict.getValue(key));
-}
+include::android:example$codesnippet_collection.java[tags="tojson-dictionary", indent=0]
 ----
 --
 
@@ -1516,15 +1102,15 @@ for (String key: mDict.getKeys()) {
 ====
 
 
-[#android:document:::lbl-document]
+[#lbl-document]
 === Documents
 
-Convert a `Document` to and from JSON strings using the pass:a,q[`toJSON()`] and pass:a,q[`setJSON()`] methods -- see <<android:document:::ex-document>>.
+Convert a `Document` to and from JSON strings using the pass:a,q[`toJSON()`] and pass:a,q[`setJSON()`] methods -- see <<ex-document>>.
 
 Additionally you can:
 
 * Initialize a 'MutableDocument' using data supplied as a JSON string.
-This is done using the `init(json)` or `init(id: json:)` constructor -- see: <<android:document:::ex-document>>
+This is done using the `init(json)` or `init(id: json:)` constructor -- see: <<ex-document>>
 
 * Set data with a JSON string using `setJSON()`
 
@@ -1532,7 +1118,7 @@ This is done using the `init(json)` or `init(id: json:)` constructor -- see: <<a
 [#ex-document]
 
 
-[#android:document:::ex-document]
+[#ex-document]
 ====
 
 [tabs]
@@ -1543,58 +1129,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-get-all;tojson-document", indent=0]
 [source, Kotlin]
 ----
-QueryBuilder
-    .select(SelectResult.expression(Meta.id).`as`("metaId"))
-    .from(DataSource.collection(srcColl))
-    .execute()
-    .forEach {
-        it.getString("metaId")?.let { thisId ->
-            srcColl.getDocument(thisId)?.toJSON()?.let { json -> // <.>
-                log("JSON String = $json")
-                val hotelFromJSON = MutableDocument(thisId, json) // <.>
-                dstColl.save(hotelFromJSON)
-                dstColl.getDocument(thisId)?.toMap()?.forEach { e ->
-                    log("$e.key => $e.value")
-                } // <.>
-            }
-        }
-    }
+include::android:example$codesnippet_collection.kt[tags="query-get-all;tojson-document", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-get-all;tojson-document", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// github tag=tojson-document
-final Query listQuery = QueryBuilder
-    .select(SelectResult.expression(Meta.id).as("metaId"))
-    .from(DataSource.collection(srcColl));
-
-try (ResultSet results = listQuery.execute()) {
-    for (Result row: results) {
-        final String thisId = row.getString("metaId");
-
-        final String json = srcColl.getDocument(thisId).toJSON(); // <.>
-        Logger.log("JSON String = " + json);
-
-        final MutableDocument hotelFromJSON = new MutableDocument(thisId, json); // <.>
-
-        dstColl.save(hotelFromJSON);
-
-        for (Map.Entry<String, Object> entry: dstColl.getDocument(thisId).toMap().entrySet()) {
-            Logger.log(entry.getKey() + " => " + entry.getValue()); // <.>
-        }
-    }
-}
+include::android:example$codesnippet_collection.java[tags="query-get-all;tojson-document", indent=0]
 ----
 --
 
@@ -1604,7 +1151,7 @@ try (ResultSet results = listQuery.execute()) {
 ====
 
 
-[#android:document:::lbl-result]
+[#lbl-result]
 === Query Results as JSON
 
 Convert a `Query Result` to JSON using its {to-JSON} accessor method.
@@ -1613,10 +1160,10 @@ Convert a `Query Result` to JSON using its {to-JSON} accessor method.
 .Using JSON Results
 
 
-[#android:document:::ex-json]
+[#ex-json]
 ====
 
-Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Result.html#toJSON--[Result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<android:document:::ex-json>> for a working example.
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Result.html#ex-json>> for a working example.
 [tabs]
 =====
 
@@ -1625,62 +1172,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-access-json", indent=0]
 [source, Kotlin]
 ----
-// Uses Jackson JSON processor
-val mapper = ObjectMapper()
-val hotels = mutableListOf<Hotel>()
-
-listQuery.execute().use { rs ->
-    rs.forEach {
-
-        // Get result as JSON string
-        val json = it.toJSON() // <.>
-
-        // Get Hashmap from JSON string
-        val dictFromJSONstring = mapper.readValue(json, HashMap::class.java) // <.>
-
-        // Use created hashmap
-        val hotelId = dictFromJSONstring["id"].toString() //
-        val hotelType = dictFromJSONstring["type"].toString()
-        val hotelname = dictFromJSONstring["name"].toString()
-
-        // Get custom object from JSON string
-        val thisHotel = mapper.readValue(json, Hotel::class.java) // <.>
-        hotels.add(thisHotel)
-    }
-}
+include::android:example$codesnippet_collection.kt[tags="query-access-json", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-access-json", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-// Uses Jackson JSON processor
-ObjectMapper mapper = new ObjectMapper();
-List<Hotel> hotels = new ArrayList<>();
-
-try (ResultSet rs = listQuery.execute()) {
-    for (Result result: rs) {
-        String json = result.toJSON();
-        Map<String, String> dictFromJSONstring = mapper.readValue(json, HashMap.class);
-
-        String hotelId = dictFromJSONstring.get("id");
-        String hotelType = dictFromJSONstring.get("type");
-        String hotelname = dictFromJSONstring.get("name");
-
-        // Get custom object from JSON string
-        Hotel thisHotel = mapper.readValue(json, Hotel.class);
-        hotels.add(thisHotel);
-    }
-}
+include::android:example$codesnippet_collection.java[tags="query-access-json", indent=0]
 ----
 --
 
@@ -1691,7 +1195,7 @@ try (ResultSet rs = listQuery.execute()) {
 
 
 .JSON String Format
-[#android:document:::ex-json-format]
+[#ex-json-format]
 If your query selects ALL then the JSON format will be:
 
 [source, JSON]
@@ -1715,7 +1219,7 @@ If your query selects a sub-set of available properties then the JSON format wil
 ----
 
 
-[#android:document:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -1731,7 +1235,7 @@ If your query selects a sub-set of available properties then the JSON format wil
 
 .
 
-[.column#android:document:::-2]
+[.column]
 === {empty}
 .Learn more . . .
 * xref:android:database.adoc[Databases]
@@ -1743,7 +1247,7 @@ If your query selects a sub-set of available properties then the JSON format wil
 .
 
 
-[.column#android:document:::-3]
+[.column]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

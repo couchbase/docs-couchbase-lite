@@ -1,4 +1,4 @@
-[#java:database:::]
+
 = Databases
 :page-aliases: learn/java-database.adoc
 :page-role:
@@ -12,7 +12,7 @@ Related Content -- xref:java:blob.adoc[Blobs] | xref:java:document.adoc[Document
 --
 
 
-[#java:database:::database-concepts]
+[#database-concepts]
 == Database Concepts
 
 Databases created on Couchbase Lite can share the same hierarchical structure as Capella databases.
@@ -81,7 +81,7 @@ The most basic structure is to use the single default scope with a single defaul
 [#cbl-database-structure]
 .Couchbase Lite Examples
 
-[plantuml#java:database:::cbl-database-structure]
+[plantuml#cbl-database-structure]
 ----
 @startuml
 
@@ -144,7 +144,7 @@ syncing data scope:: Contains information pertaining to the user, which can be s
 ****
 
 
-[#java:database:::initializer]
+[#initializer]
 == Initializer
 
 
@@ -155,28 +155,23 @@ An exception is raised if any other API method is invoked before the initializer
 [#ex-init-cdl]
 
 
-[#java:database:::ex-init-cdl]
+[#ex-init-cdl]
 ====
 
 
-// Show Main Snippet
-// include::java:example$codesnippet_collection.java[tags="sdk-initializer", indent=0]
 [source, Java]
 ----
-// Initialize the Couchbase Lite system
-CouchbaseLite.init();
+include::java:example$codesnippet_collection.java[tags="sdk-initializer", indent=0]
 ----
-
-
 ====
 
 
-[#java:database:::open-db]
+[#open-db]
 == Create or Open Database
 
 
 You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html[Database] class.
-Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/DatabaseConfiguration.html[DatabaseConfiguration] -- see <<java:database:::ex-dbopen>>.
+Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/DatabaseConfiguration.html[DatabaseConfiguration] -- see <<ex-dbopen>>.
 
 Things to watch for include:
 
@@ -189,34 +184,30 @@ Typically, the default location for Java is
 the current working directory
 .
 
-See also <<java:database:::lbl-find-db-loc>>.
+See also <<lbl-find-db-loc>>.
 --
 
 [#ex-dbopen]
 .Open or create a database
 
 
-[#java:database:::ex-dbopen]
+[#ex-dbopen]
 ====
 
 
-// Show Main Snippet
-// include::java:example$codesnippet_collection.java[tags="new-database", indent=0]
 [source, Java]
 ----
-Database database = new Database(DB_NAME);
+include::java:example$codesnippet_collection.java[tags="new-database", indent=0]
 ----
-
-
 ====
 
 
-[#java:database:::close-database]
+[#close-database]
 == Close Database
 
 You are advised to incorporate the closing of all open databases into your application workflow.
 
-To close a database, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#close--[Database.close()] -- see: <<java:database:::ex-dbclose>>.
+To close a database, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#ex-dbclose>>.
 This also closes
 footnote:fn28[Commencing with Release 2.8]
 active replications, listeners and-or live queries connected to the database.
@@ -230,22 +221,18 @@ TIP: Before closing, check that any attached listeners (query/replication/change
 [#ex-dbclose]
 
 
-[#java:database:::ex-dbclose]
+[#ex-dbclose]
 ====
 
 
-// Show Main Snippet
-// include::java:example$codesnippet_collection.java[tags="close-database", indent=0]
 [source, Java]
 ----
-database.close();
+include::java:example$codesnippet_collection.java[tags="close-database", indent=0]
 ----
-
-
 ====
 
 
-[#java:database:::database-full-sync]
+[#database-full-sync]
 == Database Full Sync
 
 Database Full Sync will prevent the loss of transactional data due to an unexpected system crash or loss of power.
@@ -258,24 +245,20 @@ CAUTION: Database Full Sync is a safe method to prevent data loss but will incur
 [#ex-dbfullsync]
 
 
-[#java:database:::ex-dbfullsync]
+[#ex-dbfullsync]
 ====
 
 
-// Show Main Snippet
-// include::java:example$codesnippet_collection.java[tags="database-fullsync", indent=0]
 [source, Java]
 ----
-config.setFullSync(true);
+include::java:example$codesnippet_collection.java[tags="database-fullsync", indent=0]
 ----
-
-
 ====
 
 
 NOTE: It is not possible to change the configuration of a Database after instantiating the Database with the configuration by updating its `DatabaseConfiguration` property.
 
-[#java:database:::database-encryption]
+[#database-encryption]
 == Database Encryption
 
 
@@ -286,61 +269,55 @@ _Couchbase Lite on Java_ includes the ability to encrypt Couchbase Lite database
 This allows mobile applications to secure the data at rest, when it is being stored on the device.
 The algorithm used to encrypt the database is 256-bit AES.
 
-[#java:database:::enabling]
+[#enabling]
 === Enabling
 To enable encryption, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/DatabaseConfiguration.html#setEncryptionKey(com.couchbase.lite.EncryptionKey)[DatabaseConfiguration.setEncryptionKey()] to set the encryption key of your choice.
-Provide this encryption key every time the database is opened -- see <<java:database:::ex-sdb-encrypt>>.
+Provide this encryption key every time the database is opened -- see <<ex-sdb-encrypt>>.
 
 .Configure Database Encryption
 [#ex-sdb-encrypt]
 
 
-[#java:database:::ex-sdb-encrypt]
+[#ex-sdb-encrypt]
 ====
 
 
-// Show Main Snippet
-// include::java:example$codesnippet_collection.java[tags="database-encryption", indent=0]
 [source, Java]
 ----
-DatabaseConfiguration config = new DatabaseConfiguration();
-config.setEncryptionKey(new EncryptionKey("PASSWORD"));
-Database database = new Database(DB_NAME, config);
+include::java:example$codesnippet_collection.java[tags="database-encryption", indent=0]
 ----
-
-
 ====
 
 
-[#java:database:::persisting]
+[#persisting]
 === Persisting
 Couchbase Lite does not persist the key.
 It is the application's responsibility to manage the key and store it in a platform-specific secure store such Android's
 https://developer.android.com/training/articles/keystore[Keystore].
 
-[#java:database:::opening]
+[#opening]
 === Opening
 An encrypted database can only be opened with the same platform that was used to encrypt it in the first place.
 So a database encrypted using the Java SDK, and then exported, is readable only by the Java SDK.
 
-[#java:database:::changing]
+[#changing]
 === Changing
 To change an existing encryption key, open the database using its existing encryption-key and use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#changeEncryptionKey(com.couchbase.lite.EncryptionKey)[Database.changeEncryptionKey()]
 to set the required new encryption-key value.
 
 
-[#java:database:::removing]
+[#removing]
 === Removing
 To remove encryption, open the database using its existing encryption-key and use
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#changeEncryptionKey(com.couchbase.lite.EncryptionKey)[Database.changeEncryptionKey()]
 with a null value as the encryption key.
 
-[#java:database:::upgrading]
+[#upgrading]
 === Upgrading
 To upgrade an encrypted database see: xref:java:dep-upgrade.adoc#lbl-db-upgrades[Upgrade 1.x databases]
 
 
-[#java:database:::lbl-find-db-loc]
+[#lbl-find-db-loc]
 == Finding a Database File
 
 
@@ -356,7 +333,7 @@ Database thisDB = new Database("db", thisConfig);
 ----
 
 
-[#java:database:::lbl-db-util]
+[#lbl-db-util]
 == Database Maintenance
 
 From time to time it may be necessary to perform certain maintenance activities on your database, for example to
@@ -370,7 +347,7 @@ It should be run on-demand using the API.
 If in doubt, consult Couchbase support.
 
 
-[#java:database:::cli-tool]
+[#cli-tool]
 == Command Line Tool
 
 // tag::cli-tool[]
@@ -381,10 +358,10 @@ Note that the `cblite` tool is not supported by the https://www.couchbase.com/su
 
 // end::cli-tool[]
 
-[#java:database:::troubleshooting]
+[#troubleshooting]
 == Troubleshooting
 You should use console logs as your first source of diagnostic information.
-If the information in the default logging level is insufficient you can focus it on database errors and generate more verbose messages -- see: <<java:database:::ex-logdb>>.
+If the information in the default logging level is insufficient you can focus it on database errors and generate more verbose messages -- see: <<ex-logdb>>.
 
 For more on using Couchbase logs -- see: xref:java:troubleshooting-logs.adoc[Using Logs].
 
@@ -392,21 +369,18 @@ For more on using Couchbase logs -- see: xref:java:troubleshooting-logs.adoc[Usi
 .Increase Level of Database Log Messages
 
 
-[#java:database:::ex-logdb]
+[#ex-logdb]
 ====
 
 
-// Show Main Snippet
-// include::java:example$codesnippet_collection.java[tags="console-logging-db", indent=0]
 [source, Java]
 ----
+include::java:example$codesnippet_collection.java[tags="console-logging-db", indent=0]
 ----
-
-
 ====
 
 
-[#java:database:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -422,7 +396,7 @@ For more on using Couchbase logs -- see: xref:java:troubleshooting-logs.adoc[Usi
 
 .
 
-[.column#java:database:::-2]
+[.column]
 === {empty}
 .Learn more . . .
 * xref:java:database.adoc[Databases]
@@ -434,7 +408,7 @@ For more on using Couchbase logs -- see: xref:java:troubleshooting-logs.adoc[Usi
 .
 
 
-[.column#java:database:::-3]
+[.column]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

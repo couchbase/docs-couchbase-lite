@@ -1,4 +1,4 @@
-[#android:indexing:::]
+
 = Indexing
 :page-aliases: learn/java-android-indexing.adoc
 :page-role:
@@ -16,7 +16,7 @@ Related Content -- xref:android:database.adoc[Databases] | xref:android:document
 --
 
 
-[#android:indexing:::introduction]
+[#introduction]
 == Introduction
 // tag::overview[]
 Querying documents using a pre-existing database index is much faster because an index narrows down the set of documents to examine -- see: the xref:android:query-troubleshooting.adoc[Query Troubleshooting] topic.
@@ -38,15 +38,15 @@ You should only index with properties that you plan to use in the query.
 //end::overview[]
 
 
-[#android:indexing:::creating-a-new-index]
+[#creating-a-new-index]
 == Creating a new index
 
 You can use {sqlpp} or QueryBuilder syntaxes to create an index
 
 
-<<android:indexing:::ex-create-index>> creates a new index for the `type` and `name` properties, shown in this data model:
+<<ex-create-index>> creates a new index for the `type` and `name` properties, shown in this data model:
 
-[#android:indexing:::ex-datamodel]
+[#ex-datamodel]
 .Data Model
 ====
 [source,json]
@@ -61,7 +61,7 @@ You can use {sqlpp} or QueryBuilder syntaxes to create an index
 ----
 ====
 
-[#android:indexing:::sql]
+[#sql]
 === {sqlpp}
 
 The code to create the index will look something like this:
@@ -70,7 +70,7 @@ The code to create the index will look something like this:
 [#ex-create-index]
 
 
-[#android:indexing:::ex-create-index]
+[#ex-create-index]
 ====
 
 [tabs]
@@ -81,26 +81,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-index", indent=0]
 [source, Kotlin]
 ----
-collection.createIndex(
-    "TypeNameIndex",
-    ValueIndexConfigurationFactory.newConfig("type", "name")
-)
+include::android:example$codesnippet_collection.kt[tags="query-index", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-index", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-collection.createIndex("TypeNameIndex", new ValueIndexConfiguration("type", "name"));
+include::android:example$codesnippet_collection.java[tags="query-index", indent=0]
 ----
 --
 
@@ -110,7 +103,7 @@ collection.createIndex("TypeNameIndex", new ValueIndexConfiguration("type", "nam
 ====
 
 
-[#android:indexing:::querybuilder]
+[#querybuilder]
 === QueryBuilder
 
 TIP: See the xref:android:querybuilder.adoc[QueryBuilder] topic to learn more about QueryBuilder.
@@ -121,7 +114,7 @@ The code to create the index will look something like this:
 [#ex-create-index]
 
 
-[#android:indexing:::ex-create-index]
+[#ex-create-index]
 ====
 
 [tabs]
@@ -132,33 +125,19 @@ Kotlin::
 +
 --
 
-// Show Main Snippet
-// include::android:example$codesnippet_collection.kt[tags="query-index_Querybuilder", indent=0]
 [source, Kotlin]
 ----
-collection.createIndex(
-    "TypeNameIndex",
-    IndexBuilder.valueIndex(
-        ValueIndexItem.property("type"),
-        ValueIndexItem.property("name")
-    )
-)
+include::android:example$codesnippet_collection.kt[tags="query-index_Querybuilder", indent=0]
 ----
 
 --
-// Show Optional Alternate Snippet
-// include::android:example$codesnippet_collection.java[tags="query-index_Querybuilder", indent=0]
 
 Java::
 +
 --
 [source, Java]
 ----
-collection.createIndex(
-    "TypeNameIndex",
-    IndexBuilder.valueIndex(
-        ValueIndexItem.property("type"),
-        ValueIndexItem.property("name")));
+include::android:example$codesnippet_collection.java[tags="query-index_Querybuilder", indent=0]
 ----
 --
 
@@ -168,13 +147,13 @@ collection.createIndex(
 ====
 
 
-[#android:indexing:::array-indexing]
+[#array-indexing]
 == Array Indexing
 
 Couchbase Lite 3.2.1 introduces functionality to optimize querying arrays.
 xref:android:query-n1ql-mobile.adoc#lbl-unnest[Array `UNNEST`] to unpack arrays within a document to allow joins with the parent object, and array indexes for indexing unnested array's values to allow more efficient queries with `UNNEST`.
 
-[#android:indexing:::the-array-index]
+[#the-array-index]
 === The Array Index
 
 An array index is a new type of the index for indexing nested array’s properties to allow querying with the `UNNEST` more efficiently.
@@ -188,12 +167,9 @@ Below is an example array index configuration:
 Java::
 +
 --
-// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-config]
 [source, java, indent=0]
 ----
-
-        IndexConfiguration config = new ArrayIndexConfiguration("contacts", "type");
-
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-config]
 ----
 --
 
@@ -201,18 +177,15 @@ Java::
 Kotlin::
 +
 --
-// include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ArrayIndexExamples.kt[tags=array-index-config]
 [source, kotlin, indent=0]
 ----
-
-        val config: IndexConfiguration = ArrayIndexConfiguration("contacts", "type")
-
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ArrayIndexExamples.kt[tags=array-index-config]
 ----
 --
 =====
 
 
-[#android:indexing:::array-index-syntax]
+[#array-index-syntax]
 === Array Index Syntax
 
 The syntax for array index configuration is shown below:
@@ -237,7 +210,7 @@ If the array specified by the path contains scalar values, the expressions shoul
 
 |===
 
-[#android:indexing:::using-array-indexes-with-unnest]
+[#using-array-indexes-with-unnest]
 === Using Array Indexes with UNNEST
 
 For the following examples, you can assume we are querying results from the following document, shown below:
@@ -292,12 +265,9 @@ You can also perform the same operation using array indexes like so:
 Java::
 +
 --
-// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-single]
 [source, java, indent=0]
 ----
-
-        collection.createIndex("myindex", new ArrayIndexConfiguration("likes"));
-
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-single]
 ----
 --
 
@@ -305,12 +275,9 @@ Java::
 Kotlin::
 +
 --
-// include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ArrayIndexExamples.kt[tags=array-index-single]
 [source, kotlin, indent=0]
 ----
-
-        collection.createIndex("myindex", ArrayIndexConfiguration("likes"))
-
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ArrayIndexExamples.kt[tags=array-index-single]
 ----
 --
 =====
@@ -346,14 +313,9 @@ Here’s an example of creating an array index on a nested array containing dict
 Java::
 +
 --
-// include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-nested]
 [source, java, indent=0]
 ----
-
-        collection.createIndex(
-            "myindex",
-            new ArrayIndexConfiguration("contacts[].phones", "type"));
-
+include::java:example$snippets/common/main/java/com/couchbase/codesnippets/ArrayIndexExamples.java[tags=array-index-nested]
 ----
 --
 
@@ -361,15 +323,9 @@ Java::
 Kotlin::
 +
 --
-// include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ArrayIndexExamples.kt[tags=array-index-nested]
 [source, kotlin, indent=0]
 ----
-
-        collection.createIndex(
-            "myindex",
-            ArrayIndexConfiguration("contacts[].phones", "type")
-        )
-
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ArrayIndexExamples.kt[tags=array-index-nested]
 ----
 --
 =====
@@ -381,7 +337,7 @@ IMPORTANT: Array literals are not supported in CBL 3.2.1.
 Attempting to create a query with array literals will return an error.
 
 
-[#android:indexing:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -397,7 +353,7 @@ Attempting to create a query with array literals will return an error.
 
 .
 
-[.column#android:indexing:::-2]
+[.column]
 === {empty}
 .Learn more . . .
 * xref:android:database.adoc[Databases]
@@ -409,7 +365,7 @@ Attempting to create a query with array literals will return an error.
 .
 
 
-[.column#android:indexing:::-3]
+[.column]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

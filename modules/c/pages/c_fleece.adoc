@@ -1,4 +1,4 @@
-[#c:c_fleece:::]
+
 = Fleece API
 :page-status: pass:q,a[{prerelease}]
 :page-role:
@@ -10,7 +10,7 @@
 Description -- _{description}_ +
 --
 
-[#c:c_fleece:::introduction]
+[#introduction]
 == Introduction
 
 _pass:q,a[pass:q,a[Couchbase{nbsp}Lite]]_ for C makes extensive use of the Fleece C API for accessing document data.
@@ -46,7 +46,7 @@ https://github.com/couchbaselabs/fleece/wiki/Using-Fleece[Using Fleece] |
 https://github.com/couchbaselabs/fleece/blob/master/API/fleece/Fleece.h[Fleece Header File]
 
 
-[#c:c_fleece:::values]
+[#values]
 == Values
 
 Fleece’s data types are almost identical to those of JSON, with the notable addition of binary data types.
@@ -56,7 +56,7 @@ Arrays can contain any data type and dictionaries have strings as keys, with val
 
 The basic Fleece data type is *FLValue*, an opaque pointer reference to a value of any type.
 
-Use the _FLValue_GetType_ API to check the value's actual type and _FLValue_As<Type Name>_ to get the actual value as shown in <<c:c_fleece:::ex-flvalue>>
+Use the _FLValue_GetType_ API to check the value's actual type and _FLValue_As<Type Name>_ to get the actual value as shown in <<ex-flvalue>>
 
 .Use FLValue
 [#ex-flvalue]
@@ -77,19 +77,19 @@ if (type == kFLString) {
 See: https://github.com/couchbaselabs/fleece/blob/master/API/fleece/Fleece.h[Fleece Header File] for more details.
 
 
-[#c:c_fleece:::slices-and-strings]
+[#slices-and-strings]
 == Slices and Strings
 
-[#c:c_fleece:::flslice]
+[#flslice]
 === FLSlice
 Another basic Fleece data type, _FLSlice_ a simple struct consisting of a pointer and a length.
 It points to a block of memory, without implying ownership of that memory.
 FLSlice is used to represent both binary data and strings.
 
-[#c:c_fleece:::flstring]
+[#flstring]
 === FLString
 _FLString_ is a typedef of FLSlice, which explicitly represents a string value.
-Use the _FLSTR(“Some String”)_ macro to create an FLString from a string literal -- see: <<c:c_fleece:::ex-flstr>>
+Use the _FLSTR(“Some String”)_ macro to create an FLString from a string literal -- see: <<ex-flstr>>
 
 
 .Create an FLString
@@ -103,7 +103,7 @@ CBLDatabase* db = CBLDatabase_Open( (FLSTR("my-database"), NULL, &err); // <.>
 <.> FLSTR("My-database") creates the FLString from the given string literal.
 
 
-[#c:c_fleece:::flsliceresultflstringresult]
+[#flsliceresultflstringresult]
 === FLSliceResult/FLStringResult
 
 FLSlice doesn’t imply an ownership of memory.
@@ -111,7 +111,7 @@ However, _FLSliceResult_/_FLStringResult_ is an FLSlice type which _does_ own me
 
 In general, whenever an FLSliceResult/FLStringResult is returned from an API call, you are responsible for calling FLSliceResult_Release when you are done using it.
 
-For an example of `FLSliceResult` in use, see: <<c:c_fleece:::ex-flsliceresult>>.
+For an example of `FLSliceResult` in use, see: <<ex-flsliceresult>>.
 
 [#ex-flsliceresult]
 .Using FLStringResult
@@ -135,10 +135,10 @@ FLSlice and FLSliceResult have utility functions such as:
 * `FLSliceResults_Release`
 
 
-[#c:c_fleece:::null-slices]
+[#null-slices]
 === Null Slices
 The null slice {NULL, 0} is represented by the constant `kFLSliceNull`. +
-You test a slice for null by comparing its pointer (buf) with NULL -- see: <<c:c_fleece:::ex-flnullslice>>
+You test a slice for null by comparing its pointer (buf) with NULL -- see: <<ex-flnullslice>>
 
 [#ex-flnullslice]
 .Test for null slice
@@ -155,13 +155,13 @@ if (name.buf != NULL) {
 See: https://github.com/couchbaselabs/fleece/blob/master/API/fleece/FLSlice.h[FLSlice.h] for more details on data slices.
 
 
-[#c:c_fleece:::dictionaries]
+[#dictionaries]
 == Dictionaries
 
-[#c:c_fleece:::immutable]
+[#immutable]
 === Immutable
 _FLDict_ represents an immutable dictionary type in Fleece. +
-To access a value with a string key from a dictionary, use FLDict_Get -- as shown in: <<c:c_fleece:::ex-flget>>.
+To access a value with a string key from a dictionary, use FLDict_Get -- as shown in: <<ex-flget>>.
 
 [#ex-flget]
 .Get dictionary value
@@ -175,7 +175,7 @@ doSomethingWith(value);
 ----
 
 
-To iterate through each key-value pair in the dictionary, use _FLDictIterator_, as shown in: <<c:c_fleece:::ex-fliterator>>
+To iterate through each key-value pair in the dictionary, use _FLDictIterator_, as shown in: <<ex-fliterator>>
 
 [#ex-fliterator]
 .Iterate key-value pairs in dictionary
@@ -193,12 +193,12 @@ while (NULL != (value = FLDictIterator_GetValue(&iter))) {
 ----
 
 
-[#c:c_fleece:::mutable]
+[#mutable]
 === Mutable
 
 *FLMutableDictionary* is a mutable dictionary type that allows editing.
 
-To create a new mutable dictionary, use FLMutableDict_New() -- see: <<c:c_fleece:::ex-flmutabledict-new>>.
+To create a new mutable dictionary, use FLMutableDict_New() -- see: <<ex-flmutabledict-new>>.
 
 [#ex-flmutabledict-new]
 .Set dictionary value
@@ -212,13 +212,13 @@ FLMutableDict_Release(myDict); // <.>
 <.> don't forget to release resources once you have finished with them
 
 
-[#c:c_fleece:::lbl-fleece-arrays]
+[#lbl-fleece-arrays]
 == Arrays
 
-[#c:c_fleece:::immutable-2]
+[#immutable-2]
 === Immutable
 _FLArray_ represents an immutable array type in Fleece. +
-use _FLArray_Count_ and _FLArray_Get_ respectively, to get the numbers of values in an array and to get a value using with an index -- as shown in <<c:c_fleece:::ex-flarray-get>>.
+use _FLArray_Count_ and _FLArray_Get_ respectively, to get the numbers of values in an array and to get a value using with an index -- as shown in <<ex-flarray-get>>.
 
 [#ex-flarray-get]
 .Use arrays
@@ -233,7 +233,7 @@ if (count > 0) {
 ----
 
 
-Use _FLArrayIterator_ to iterate through arrays, as shown in : <<c:c_fleece:::ex-array-iteration>>.
+Use _FLArrayIterator_ to iterate through arrays, as shown in : <<ex-array-iteration>>.
 
 [#ex-array-iteration]
 .Array iteration
@@ -250,7 +250,7 @@ while (NULL != (value = FLArrayIterator_GetValue(&iter))) {
 
 ----
 
-[#c:c_fleece:::mutable-2]
+[#mutable-2]
 === Mutable
 
 _FLMutableArray_ is a mutable array type that allows editing. +
@@ -272,12 +272,12 @@ FLMutableArray_Release(myArray)
 <.> To set a value at a specific array index, use FLMutableArraySet<Type Name>.
 
 
-[#c:c_fleece:::json-support]
+[#json-support]
 == JSON Support
 
 Fleece provides a JSON utility that allows you to parse JSON string into Fleece or generate JSON from Fleece.
 
-[#c:c_fleece:::parsing-json]
+[#parsing-json]
 === Parsing JSON
 Use *FLDoc_FromJSON* to convert JSON Dictionary or Array into Fleece Dictionary or Array.
 
@@ -295,7 +295,7 @@ if (doc) {
 FLDoc_Release(doc);
 ----
 
-[#c:c_fleece:::generating-json]
+[#generating-json]
 === Generating JSON
 Use FLValue_ToJSON to convert FLValue into JSON string
 
@@ -310,7 +310,7 @@ FLSliceResult_Release(jsonString);
 ----
 
 
-[#c:c_fleece:::memory-management]
+[#memory-management]
 == Memory Management
 In general, Mutable objects are _reference counted_: with MutableArray and Mutable Dictionary each having  _retain_ and _release_ functions. +
 The lifespan of Immutable objects is the same as that of the memory block from which they are parsed.
@@ -321,7 +321,7 @@ https://github.com/couchbaselabs/fleece/wiki/Using-Fleece#5-memory-management[Fl
 https://github.com/couchbaselabs/fleece/wiki/Advanced-Fleece#for-memory-management[Advanced Fleece Mememory Management]
 
 
-[#c:c_fleece:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -337,7 +337,7 @@ https://github.com/couchbaselabs/fleece/wiki/Advanced-Fleece#for-memory-manageme
 
 .
 
-[.column#c:c_fleece:::-2]
+[.column]
 === {empty}
 .Learn more . . .
 * xref:c:database.adoc[Databases]
@@ -349,7 +349,7 @@ https://github.com/couchbaselabs/fleece/wiki/Advanced-Fleece#for-memory-manageme
 .
 
 
-[.column#c:c_fleece:::-3]
+[.column]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

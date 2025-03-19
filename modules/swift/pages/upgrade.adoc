@@ -1,4 +1,4 @@
-[#swift:upgrade:::]
+
 = Upgrade
 :page-aliases: advance/swift-dep-upgrade.adoc, dep-upgrade.adoc
 :page-role:
@@ -13,7 +13,7 @@ On upgrading from a 2.x release, all Couchbase Lite databases will be automatica
 This can result in a delay before the database is usable.
 --
 
-[#swift:upgrade:::3-2-1-upgrade]
+[#3-2-1-upgrade]
 == {major}.{minor}.{base}{empty} Upgrade
 
 The action will take place automatically and can lead to some delay in the database becoming available for use in your application.
@@ -25,13 +25,13 @@ This is a one-way conversion.
 // All API and other listed changes included in the other platforms do not apply to CBL-C for the following reasons
 // The changes apply to pre 3.x versions (CBL-C started at 3.0)
 // Or they relate to Querybuilder functionality - CBL-C doesn't have Querybuilder.
-[#swift:upgrade:::api-changes]
+[#api-changes]
 === API Changes
 
-[#swift:upgrade:::removed-apis]
+[#removed-apis]
 ==== Removed APIs
 
-[#swift:upgrade:::resetcheckpoint]
+[#resetcheckpoint]
 ===== ResetCheckpoint
 
 .Alternative
@@ -48,7 +48,7 @@ replicator.start()
 replicator.start(true)
 ----
 
-[#swift:upgrade:::database-setloglevel]
+[#database-setloglevel]
 ===== Database.setLogLevel
 
 .Alternative
@@ -65,7 +65,7 @@ Database.log.console.domain = .all
 Database.log.console.level = .verbose
 ----
 
-[#swift:upgrade:::database-compact]
+[#database-compact]
 ===== Database.compact
 .Alternative
 
@@ -82,10 +82,10 @@ try testdb.performMaintenance(type: .compact)
 ----
 
 
-[#swift:upgrade:::deprecated-api]
+[#deprecated-api]
 ==== Deprecated API
 
-[#swift:upgrade:::match]
+[#match]
 ===== Match
 .Alternative
 `FullTextFunction.match(indexName:)`
@@ -107,7 +107,7 @@ let q = QueryBuilder.select([SelectResult.expression(Meta.id)])
 ----
 
 
-[#swift:upgrade:::isnullormissing-and-notnullormissing]
+[#isnullormissing-and-notnullormissing]
 ===== isNullOrMissing and notNullOrMissing
 
 .Alternatives
@@ -136,10 +136,10 @@ let q2 = QueryBuilder.select([SelectResult.expression(Meta.id)])
             .where(Expression.property("notMissingProp").isValued())
 ----
 
-[#swift:upgrade:::updated-api]
+[#updated-api]
 ==== Updated API
 
-[#swift:upgrade:::configuration]
+[#configuration]
 ===== Configuration
 The following classes are changed to Swift struct.
 
@@ -166,7 +166,7 @@ var config = ReplicatorConfiguration(database: db, target: target)
 config.continuous = true
 ----
 
-[#swift:upgrade:::atan2]
+[#atan2]
 ===== ATAN2
 
 CAUTION: Breaking change
@@ -189,13 +189,13 @@ let q = QueryBuilder.select([SelectResult.expression(Function.atan2(y: Expressio
 ----
 
 
-[#swift:upgrade:::lbl-db-upgrades]
+[#lbl-db-upgrades]
 == 1.x Databases Upgrades to 2.x
 
 Databases created using Couchbase Lite 1.2 or later can still be used with Couchbase Lite 2.x; but will be automatically updated to the  current 2.x version.
 This feature is only available for the default storage type (i.e., not a ForestDB database).
 
-[#swift:upgrade:::encrypted-databases]
+[#encrypted-databases]
 === Encrypted Databases
 The automatic migration feature does not support encrypted databases.
 So if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/swift.html#database-encryption[1.x Database Guide]).
@@ -213,7 +213,7 @@ Since it is not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in
 If you are using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.
 
 
-[#swift:upgrade:::handling-of-existing-conflicts]
+[#handling-of-existing-conflicts]
 === Handling of Existing Conflicts
 
 If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
@@ -222,7 +222,7 @@ This functionality is related to the way conflicts are now being handled in Couc
 
 Optionally, existing conflicts in the 1.x database can be resolved with the https://docs-archive.couchbase.com/couchbase-lite/1.4/swift.html#resolving-conflicts[1.x API] prior to the database being upgraded.
 
-[#swift:upgrade:::handling-of-existing-attachments]
+[#handling-of-existing-attachments]
 === Handling of Existing Attachments
 
 Attachments persisted in a 1.x database are copied to the new database.
@@ -234,27 +234,24 @@ Blobs are stored anywhere in the document, just like other value types.
 Whereas in 1.x they were stored under the `_attachments` field.
 
 The automatic upgrade functionality *does not* update the internal schema for attachments, so they remain accessible under the `_attachments` field.
-See <<swift:upgrade:::ex-get-att>> for how to retrieve an attachment that was created in a 1.x database with a 2.x API.
+See <<ex-get-att>> for how to retrieve an attachment that was created in a 1.x database with a 2.x API.
 
 .Retrieve 1.x Attachment
 [#ex-get-att]
 
 
-[#swift:upgrade:::ex-get-att]
+[#ex-get-att]
 ====
 
 
-// Show Main Snippet
-// include::swift:example$code_snippets/SampleCodeTest.swift[tags="1x-attachment", indent=0]
 [source, swift]
 ----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="1x-attachment", indent=0]
 ----
-
-
 ====
 
 
-[#swift:upgrade:::replication-compatibility]
+[#replication-compatibility]
 === Replication Compatibility
 
 The current replication protocol is not backwards compatible with the 1.x replication protocol.
@@ -267,7 +264,7 @@ It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x
 This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
 
 
-[#swift:upgrade:::xcode]
+[#xcode]
 == Xcode
 
 The API has changed in Couchbase Lite 2.0 and will require porting an application that is using Couchbase Lite 1.x API to the Couchbase Lite 2.0 API.
@@ -281,10 +278,10 @@ Refer to the examples on this page to learn about the new API.
 * Build & run your application.
 
 
-[#swift:upgrade:::downgrading-couchbase-lite]
+[#downgrading-couchbase-lite]
 == Downgrading Couchbase Lite
 
-[#swift:upgrade:::downgrading-between-major-releases]
+[#downgrading-between-major-releases]
 === Downgrading Between Major Releases
 
 *No Downgrade Support* - Downgrades between major versions of Couchbase Lite (CBL) are not supported.
@@ -292,7 +289,7 @@ Once you upgrade to a new major version, downgrading to a previous major version
 
 For example, Upgrading from CBL 2.x.x to CBL 3.x.x does not guarantee the ability to revert to CBL 2.x.x.
 
-[#swift:upgrade:::downgrading-between-minor-releases]
+[#downgrading-between-minor-releases]
 === Downgrading Between Minor Releases
 
 *Conditional Downgrade Support* - Downgrade support for minor releases is considered on a case-by-case basis.
@@ -300,7 +297,7 @@ The release notes for each minor version will clarify whether downgrades are sup
 
 For example, if a new minor version such as CBL 3.1.0 is released the release notes will specify whether downgrading to CBL 3.0.x is supported.
 
-[#swift:upgrade:::downgrading-between-patch-releases]
+[#downgrading-between-patch-releases]
 === Downgrading Between Patch Releases
 
 *Full Downgrade Support* - Downgrades between patch releases are supported.
@@ -312,7 +309,7 @@ For example, if you're running CBL 3.1.6 you can downgrade to CBL 3.1.4 or CBL 3
 // Include standard footer
 
 
-[#swift:upgrade:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -328,7 +325,7 @@ For example, if you're running CBL 3.1.6 you can downgrade to CBL 3.1.4 or CBL 3
 
 .
 
-[.column#swift:upgrade:::-2]
+[.column]
 === {empty}
 .Learn more . . .
 * xref:swift:database.adoc[Databases]
@@ -340,7 +337,7 @@ For example, if you're running CBL 3.1.6 you can downgrade to CBL 3.1.4 or CBL 3
 .
 
 
-[.column#swift:upgrade:::-3]
+[.column]
 === {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |

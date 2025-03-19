@@ -1,4 +1,4 @@
-[#java:fts:::]
+
 = Full Text Search
 :page-aliases: learn/java-fts.adoc
 :page-role:
@@ -18,7 +18,7 @@ Description -- _{description}_ +
 Related Content -- xref:java:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:java:indexing.adoc[Indexing] | xref:java:querybuilder.adoc[QueryBuilder]
 --
 
-[#java:fts:::overview]
+[#overview]
 == Overview
 To run a full-text search (FTS) query, you must create a full-text index on the expression being matched.
 Unlike regular queries, the index is not optional.
@@ -28,10 +28,10 @@ You can choose to use {sqlpp} or QueryBuilder syntaxes to create and use FTS ind
 The following examples use the data model introduced in xref:java:indexing.adoc[Indexing].
 They create and use an FTS index built from the hotel's `Overview` text.
 
-[#java:fts:::sql]
+[#sql]
 == {sqlpp}
 
-[#java:fts:::create-index]
+[#create-index]
 === Create Index
 
 {sqlpp} provides a configuration object to define Full Text Search indexes -- `FullTextIndexConfiguration`.
@@ -40,23 +40,18 @@ They create and use an FTS index built from the hotel's `Overview` text.
 [#ex-indexbuilder]
 
 
-[#java:fts:::ex-indexbuilder]
+[#ex-indexbuilder]
 ====
 
 
-// Show Main Snippet
-// include::java:example$codesnippet_collection.java[tags="fts-index", indent=0]
 [source, Java]
 ----
-FullTextIndexConfiguration config = new FullTextIndexConfiguration("Overview").ignoreAccents(false);
-collection.createIndex("overviewFTSIndex", config);
+include::java:example$codesnippet_collection.java[tags="fts-index", indent=0]
 ----
-
-
 ====
 
 
-[#java:fts:::use-index]
+[#use-index]
 === Use Index
 
 FullTextSearch is enabled using the {sqlpp} match() function.
@@ -72,35 +67,21 @@ The following example finds all hotels mentioning _Michigan_ in their _Overview_
 [#ex-indexbuilder]
 
 
-[#java:fts:::ex-indexbuilder]
+[#ex-indexbuilder]
 ====
 
 
-// Show Main Snippet
-// include::java:example$codesnippet_collection.java[tags="fts-query", indent=0]
 [source, Java]
 ----
-Query ftsQuery =
-    database.createQuery(
-        "SELECT _id, overview FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK"
-            + "(overviewFTSIndex)");
-
-
-try (ResultSet resultSet = ftsQuery.execute()) {
-    for (Result result: resultSet) {
-        Logger.log(result.getString("id") + ": " + result.getString("overview"));
-    }
-}
+include::java:example$codesnippet_collection.java[tags="fts-query", indent=0]
 ----
-
-
 ====
 
 
-[#java:fts:::querybuilder]
+[#querybuilder]
 == QueryBuilder
 
-[#java:fts:::create-index-2]
+[#create-index-2]
 === Create Index
 The following example creates an FTS index on the `overview` property.
 
@@ -108,24 +89,18 @@ The following example creates an FTS index on the `overview` property.
 [#ex-indexbuilder-queyrbuilder]
 
 
-[#java:fts:::ex-indexbuilder-queyrbuilder]
+[#ex-indexbuilder-queyrbuilder]
 ====
 
 
-// Show Main Snippet
-// include::java:example$codesnippet_collection.java[tags="fts-index_Querybuilder", indent=0]
 [source, Java]
 ----
-collection.createIndex(
-    "overviewFTSIndex",
-    IndexBuilder.fullTextIndex(FullTextIndexItem.property("overviewFTSIndex")).ignoreAccents(false));
+include::java:example$codesnippet_collection.java[tags="fts-index_Querybuilder", indent=0]
 ----
-
-
 ====
 
 
-[#java:fts:::use-index-2]
+[#use-index-2]
 === Use Index
 With the index created, you can construct and run a Full-text search (FTS) query using the indexed properties.
 
@@ -135,37 +110,18 @@ The following example finds all hotels mentioning _Michigan_ in their _Overview_
 [#ex-indexbuilder]
 
 
-[#java:fts:::ex-indexbuilder]
+[#ex-indexbuilder]
 ====
 
 
-// Show Main Snippet
-// include::java:example$codesnippet_collection.java[tags="fts-query_Querybuilder", indent=0]
 [source, Java]
 ----
-Expression whereClause = FullTextFunction.match(
-    Expression.fullTextIndex("overviewFTSIndex"),
-    "'michigan'");
-Query ftsQuery =
-    QueryBuilder.select(
-            SelectResult.expression(Meta.id),
-            SelectResult.property("overview"))
-        .from(DataSource.collection(collection))
-        .where(whereClause);
-
-
-try (ResultSet resultSet = ftsQuery.execute()) {
-    for (Result result: resultSet) {
-        Logger.log(result.getString("id") + ": " + result.getString("overview"));
-    }
-}
+include::java:example$codesnippet_collection.java[tags="fts-query_Querybuilder", indent=0]
 ----
-
-
 ====
 
 
-[#java:fts:::operation]
+[#operation]
 == Operation
 
 In the examples above, the pattern to match is a word, the full-text search query matches all documents that contain the word "michigan" in the value of the `doc.overview` property.
@@ -175,13 +131,13 @@ Search is supported for all languages that use whitespace to separate words.
 Stemming, which is the process of fuzzy matching parts of speech, like "fast" and "faster", is supported in the following languages: Danish, Dutch, English, Finnish, French, German, Hungarian, Italian, Norwegian, Portuguese, Romanian, Russian, Spanish, Swedish and Turkish.
 
 
-[#java:fts:::pattern-matching-formats]
+[#pattern-matching-formats]
 == Pattern Matching Formats
 
 
 As well as providing specific words or strings to match against, you can provide the pattern to match in these formats.
 
-[#java:fts:::prefix-queries]
+[#prefix-queries]
 === Prefix Queries
 
 The query expression used to search for a term prefix is the prefix itself with a "*" character appended to it.
@@ -199,7 +155,7 @@ This will match
 * And ... those that contain terms "linear","linker", "linguistic" and so on.
 ====
 
-[#java:fts:::overriding-the-property-name]
+[#overriding-the-property-name]
 === Overriding the Property Name
 
 Normally, a token or token prefix query is matched against the document property specified as the left-hand side of the `match` operator.
@@ -215,7 +171,7 @@ Query the database for documents for which the term "linux" appears in the docum
 ====
 
 
-[#java:fts:::phrase-queries]
+[#phrase-queries]
 === Phrase Queries
 
 A _phrase query_ is one that retrieves all documents containing a nominated set of terms or term prefixes in a specified order with no intervening tokens.
@@ -230,7 +186,7 @@ Query for all documents that contain the phrase "linux applications".
 ....
 ====
 
-[#java:fts:::near-queries]
+[#near-queries]
 === NEAR Queries
 A NEAR query is a query that returns documents that contain a two or more nominated terms or phrases within a specified proximity of each other (by default with 10 or less intervening terms).
 A NEAR query is specified by putting the keyword "NEAR" between two phrase, token or token prefix queries.
@@ -244,7 +200,7 @@ Search for a document that contains the phrase "replication" and the term "datab
 ....
 ====
 
-[#java:fts:::and-or-not-query-operators]
+[#and-or-not-query-operators]
 === AND, OR & NOT Query Operators::
 The enhanced query syntax supports the AND, OR and NOT binary set operators.
 Each of the two operands to an operator may be a basic FTS query, or the result of another AND, OR or NOT set operation.
@@ -260,7 +216,7 @@ Return the set of documents that contain the term "couchbase", and the term "dat
 
 ====
 
-[#java:fts:::operator-precedence]
+[#operator-precedence]
 === Operator Precedence
 When using the enhanced query syntax, parenthesis may be used to specify the precedence of the various operators.
 
@@ -272,7 +228,7 @@ Query for the set of documents that contains the term "linux", and at least one 
 ....
 ====
 
-[#java:fts:::ordering-results]
+[#ordering-results]
 == Ordering Results
 
 It's very common to sort full-text results in descending order of relevance.
@@ -281,7 +237,7 @@ This can be a very difficult heuristic to define, but Couchbase Lite comes with 
 In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the property or expression being searched, to represent the ranking of the result.
 
 
-[#java:fts:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -298,7 +254,7 @@ In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the pro
 
 .
 
-[.column#java:fts:::-2]
+[.column]
 ====== {empty}
 .Learn more . . .
 * xref:java:query-n1ql-mobile-querybuilder-diffs.adoc[{sqlpp} Mobile - Querybuilder  Differences]
@@ -314,7 +270,7 @@ In the `OrderBy` array, use a string of the form `Rank(X)`, where `X` is the pro
 .
 
 
-[.column#java:fts:::-3]
+[.column]
 ====== {empty}
 .Dive Deeper . . .
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
