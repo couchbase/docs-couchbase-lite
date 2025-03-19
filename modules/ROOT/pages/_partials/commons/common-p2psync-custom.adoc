@@ -28,9 +28,9 @@ The first step is to initialize the Couchbase Lite database.
 In addition to initializing the database, the Passive Peer must initialize the `MessageEndpointListener`.
 The `MessageEndpointListener` acts as a Listener for incoming connections.
 
-// include::{snippet}[tag=listener,indent=0]
 [source]
 ----
+// include::{snippet}[tag=listener,indent=0]
 include::{snippet}[tag=listener,indent=0]
 ----
 
@@ -57,9 +57,9 @@ image::ROOT:connection.png[]
 
 When the connection is established, the active Peer must instantiate a `MessageEndpoint` object corresponding to the remote Peer.
 
-// include::{snippet}[tag=message-endpoint,indent=0]
 [source]
 ----
+// include::{snippet}[tag=message-endpoint,indent=0]
 include::{snippet}[tag=message-endpoint,indent=0]
 ----
 
@@ -80,27 +80,27 @@ Typically, the Communication Framework will handle message assembly and disassem
 
 Then, a `Replicator` is instantiated with the initialized `MessageEndpoint` as the target.
 
-// include::{snippet}[tag=message-endpoint-replicator,indent=0]
 [source]
 ----
+// include::{snippet}[tag=message-endpoint-replicator,indent=0]
 include::{snippet}[tag=message-endpoint-replicator,indent=0]
 ----
 
 Next, Couchbase Lite will call back the application code through the `MessageEndpointDelegate.createConnection` interface method.
 When the application receives the callback, it must create an instance of `MessageEndpointConnection` and return it.
 
-// include::{snippet}[tag=create-connection,indent=0]
 
 [source]
 ----
+// include::{snippet}[tag=create-connection,indent=0]
 include::{snippet}[tag=create-connection,indent=0]
 ----
 
 Next, Couchbase Lite will call back the application code through the `MessageEndpointConnection.open` method.
 
-// include::{snippet}[tag=active-peer-open,indent=0]
 [source]
 ----
+// include::{snippet}[tag=active-peer-open,indent=0]
 include::{snippet}[tag=active-peer-open,indent=0]
 ----
 
@@ -115,9 +115,9 @@ If it is a recoverable error, the replicator will begin a retry process, creatin
 After connection establishment on the Passive Peer, the first step is to initialize a new `MessageEndpointConnection` and pass it to the listener.
 This message tells the listener to accept incoming data from that Peer.
 
-// include::{snippet}[tag=advertizer-accept,indent=0]
 [source]
 ----
+// include::{snippet}[tag=advertizer-accept,indent=0]
 include::{snippet}[tag=advertizer-accept,indent=0]
 ----
 
@@ -125,9 +125,9 @@ include::{snippet}[tag=advertizer-accept,indent=0]
 
 Couchbase Lite will call the application code back through the `MessageEndpointConnection.open` method.
 
-// include::{snippet}[tag=passive-peer-open,indent=0]
 [source]
 ----
+// include::{snippet}[tag=passive-peer-open,indent=0]
 include::{snippet}[tag=passive-peer-open,indent=0]
 ----
 
@@ -160,9 +160,9 @@ The replication lifecycle is handled through the `MessageEndpointConnection`.
 
 When Couchbase Lite calls back the application code through the `MessageEndpointConnection.send` method, you should send that data to the other Peer using the communication framework.
 
-// include::{snippet}[tag=active-peer-send,indent=0]
 [source]
 ----
+// include::{snippet}[tag=active-peer-send,indent=0]
 include::{snippet}[tag=active-peer-send,indent=0]
 ----
 
@@ -173,9 +173,9 @@ If it is a recoverable error, the replicator will begin a retry process, creatin
 
 When data is received from the passive Peer via the Communication Framework, you call the `ReplicatorConnection.receive` method.
 
-// include::{snippet}[tag=active-peer-receive,indent=0]
 [source]
 ----
+// include::{snippet}[tag=active-peer-receive,indent=0]
 include::{snippet}[tag=active-peer-receive,indent=0]
 ----
 
@@ -185,9 +185,9 @@ The replication connection's `receive` method is called. Which then processes th
 
 As in the case of the active Peer, the passive Peer must implement the `MessageEndpointConnection.send` method to send data to the other Peer.
 
-// include::{snippet}[tag=passive-peer-send,indent=0]
 [source]
 ----
+// include::{snippet}[tag=passive-peer-send,indent=0]
 include::{snippet}[tag=passive-peer-send,indent=0]
 ----
 
@@ -197,9 +197,9 @@ If it is a recoverable error, the replicator will begin a retry process, creatin
 
 When data is received from the active Peer via the Communication Framework, you call the `ReplicatorConnection.receive` method.
 
-// include::{snippet}[tag=passive-peer-receive,indent=0]
 [source]
 ----
+// include::{snippet}[tag=passive-peer-receive,indent=0]
 include::{snippet}[tag=passive-peer-receive,indent=0]
 ----
 
@@ -219,17 +219,17 @@ image::ROOT:dis-active.png[]
 
 When an active Peer disconnects, it must call the `ReplicatorConnection.close` method.
 
-// include::{snippet}[tag=active-replicator-close,indent=0]
 [source]
 ----
+// include::{snippet}[tag=active-replicator-close,indent=0]
 include::{snippet}[tag=active-replicator-close,indent=0]
 ----
 
 Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to allow the application to disconnect with the Communication Framework.
 
-// include::{snippet}[tag=active-peer-close,indent=0]
 [source]
 ----
+// include::{snippet}[tag=active-peer-close,indent=0]
 include::{snippet}[tag=active-peer-close,indent=0]
 ----
 
@@ -237,17 +237,17 @@ include::{snippet}[tag=active-peer-close,indent=0]
 
 When the passive Peer receives the corresponding disconnect notification from the Communication Framework, it must call the `ReplicatorConnection.close` method.
 
-// include::{snippet}[tag=passive-replicator-close,indent=0]
 [source]
 ----
+// include::{snippet}[tag=passive-replicator-close,indent=0]
 include::{snippet}[tag=passive-replicator-close,indent=0]
 ----
 
 Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to allow the application to disconnect with the Communication Framework.
 
-// include::{snippet}[tag=passive-peer-close,indent=0]
 [source]
 ----
+// include::{snippet}[tag=passive-peer-close,indent=0]
 include::{snippet}[tag=passive-peer-close,indent=0]
 ----
 
@@ -259,17 +259,17 @@ image::ROOT:dis-passive.png[]
 
 When the passive disconnects, it must class the `MessageEndpointListener.closeAll` method.
 
-// include::{snippet}[tag=passive-stop-listener,indent=0]
 [source]
 ----
+// include::{snippet}[tag=passive-stop-listener,indent=0]
 include::{snippet}[tag=passive-stop-listener,indent=0]
 ----
 
 Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to allow the application to disconnect with the Communication Framework.
 
-// include::{snippet}[tag=passive-peer-close,indent=0]
 [source]
 ----
+// include::{snippet}[tag=passive-peer-close,indent=0]
 include::{snippet}[tag=passive-peer-close,indent=0]
 ----
 
@@ -277,17 +277,17 @@ include::{snippet}[tag=passive-peer-close,indent=0]
 
 When the active Peer receives the corresponding disconnect notification from the Communication Framework, it must call the `ReplicatorConnection.close` method.
 
-// include::{snippet}[tag=active-replicator-close,indent=0]
 [source]
 ----
+// include::{snippet}[tag=active-replicator-close,indent=0]
 include::{snippet}[tag=active-replicator-close,indent=0]
 ----
 
 Then, Couchbase Lite will call back your code through the `MessageEndpointConnection.close` to allow the application to disconnect with the Communication Framework.
 
-// include::{snippet}[tag=active-peer-close,indent=0]
 [source]
 ----
+// include::{snippet}[tag=active-peer-close,indent=0]
 include::{snippet}[tag=active-peer-close,indent=0]
 ----
 
