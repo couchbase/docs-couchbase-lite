@@ -1,4 +1,4 @@
-[#csharp:p2psync-websocket:::]
+
 = Peer-to-Peer
 :page-aliases: learn/csharp-p2psync-websocket.adoc
 ifdef::show_edition[:page-edition: {release}] {enterprise}
@@ -19,7 +19,7 @@ Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenanc
 --
 
 
-[#csharp:p2psync-websocket:::introduction]
+[#introduction]
 == Introduction
 // tag::introduction-full[]
 // tag::introduction[]
@@ -43,7 +43,7 @@ Couchbase Lite's Peer-to-Peer data synchronization provides:
 
 // end::introduction-full[]
 
-[#csharp:p2psync-websocket:::overview]
+[#overview]
 == Overview
 Peer-to-Peer synchronization requires one Peer to act as the Listener to the other Peer's replicator.
 
@@ -65,11 +65,11 @@ Therefore, to use Peer-to-Peer synchronization in your application, you must con
 
 ====
 
-Here you can see configuration involves a xref:csharp:p2psync-websocket-using-passive.adoc[Passive Peer] and an xref:csharp:p2psync-websocket-using-active.adoc[Active Peer] and a user-friendly Listener configuration in <<csharp:p2psync-websocket:::simple-configuration>>.
+Here you can see configuration involves a xref:csharp:p2psync-websocket-using-passive.adoc[Passive Peer] and an xref:csharp:p2psync-websocket-using-active.adoc[Active Peer] and a user-friendly Listener configuration in <<simple-configuration>>.
 
 You can also learn how to implement Peer-to-Peer synchronization by referring to our tutorial -- see: xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Getting Started with Peer-to-Peer Synchronization].
 
-[#csharp:p2psync-websocket:::features]
+[#features]
 == Features
 
 Couchbase Lite for C#.Net's Peer-to-Peer synchronization solution provides support for cross-platform synchronization, for example, between Android and iOS devices.
@@ -83,7 +83,7 @@ These replications can be for the same or a different database.
 The Listener will automatically select a port to use or a user-specified port.
 It will also listen on all available networks, unless you specify a specific network.
 
-[#csharp:p2psync-websocket:::security]
+[#security]
 === Security
 
 Couchbase Lite's Peer-to-Peer synchronization supports encryption and authentication over TLS with multiple modes, including:
@@ -102,22 +102,22 @@ Whilst this can be used in clear text mode, developers are strongly advised to u
 
 For testing and development purposes, support is provided for the client (active, replicator) to skip verification of self-signed certificates; this mode should not be used in production.
 
-[#csharp:p2psync-websocket:::error-handling]
+[#error-handling]
 === Error Handling
 
 When a Listener is stopped, then all connected replicators are notified by a WebSocket error. Your application should distinguish between transient and permanent connectivity errors.
 
-[#csharp:p2psync-websocket:::passive-peers]
+[#passive-peers]
 ==== Passive peers
 A Passive Peer losing connectivity with an Active Peer will clean up any associated endpoint connections to that Peer. The Active Peer may attempt to reconnect to the Passive Peer.
 
-[#csharp:p2psync-websocket:::active-peers]
+[#active-peers]
 ==== Active peers
 An Active Peer permanently losing connectivity with a Passive Peer will cease replicating.
 
 An Active Peer temporarily losing connectivity with a passive Peer will use exponential backoff functionality to attempt reconnection.
 
-[#csharp:p2psync-websocket:::delta-sync]
+[#delta-sync]
 === Delta Sync
 
 Optional delta-sync support is provided but is inactive by default.
@@ -125,46 +125,29 @@ Optional delta-sync support is provided but is inactive by default.
 Delta-sync can be enabled on a per-replication basis provided that the databases involved are also configured to permit it.
 Statistics on delta-sync usage are available, including the total number of revisions sent as deltas.
 
-[#csharp:p2psync-websocket:::conflict-resolution]
+[#conflict-resolution]
 === Conflict Resolution
 
 Conflict resolution for Peer-to-Peer synchronization works in the same way as it does for Sync Gateway replication, with both custom and automatic resolution available.
 
 
-[#csharp:p2psync-websocket:::simple-configuration]
+[#simple-configuration]
 == Basic Setup
-You can configure a Peer-to-Peer synchronization with just a short amount of code as shown here in <<csharp:p2psync-websocket:::ex-simple-listener>> and <<csharp:p2psync-websocket:::ex-simple-replicator>>.
+You can configure a Peer-to-Peer synchronization with just a short amount of code as shown here in <<ex-simple-listener>> and <<ex-simple-replicator>>.
 
 .Simple Listener
 [#ex-simple-listener]
 
 
-[#csharp:p2psync-websocket:::ex-simple-listener]
+[#ex-simple-listener]
 ====
 
 This simple listener configuration will give you a listener ready to participate in an encrypted synchronization with a replicator providing a valid user name and password.
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="listener-simple", indent=0]
 [source, C#]
 ----
-var endpointConfig = new URLEndpointListenerConfiguration(new[] { collection }); // <.>
-
-endpointConfig.Authenticator =
-  new ListenerPasswordAuthenticator(
-    (sender, username, password) =>
-    {
-        // ValidatePassword can make use of the SecureString class
-        // to the desired level of security (or just convert it to string
-        // if no intense security is required)
-        return username == "valid.user" && ValidatePassword(password);
-    }
-  ); // <.>
-
-var listener = new URLEndpointListener(endpointConfig); // <.>
-listener.Start(); // <.>
+include::csharp:example$code_snippets/Program.cs[tags="listener-simple", indent=0]
 ----
-
 
 ====
 
@@ -178,27 +161,15 @@ listener.Start(); // <.>
 [#ex-simple-replicator]
 
 
-[#csharp:p2psync-websocket:::ex-simple-replicator]
+[#ex-simple-replicator]
 ====
 
 This simple replicator configuration will give you an encrypted, bi-directional Peer-to-Peer synchronization with automatic conflict resolution.
 
-// Show Main Snippet
-// include::csharp:example$code_snippets/Program.cs[tags="replicator-simple", indent=0]
 [source, C#]
 ----
-var endpointConfig = new URLEndpoint(new Uri("wss://listener.com:4984/otherDB")); // <.>
-
-var replConfig = new ReplicatorConfiguration(endpointConfig); // <.>
-replConfig.AddCollection(collection);
-replConfig.AcceptOnlySelfSignedServerCertificate = true; // <.>
-replConfig.Authenticator =
-  new BasicAuthenticator("valid.user", "valid.password.string"); // <.>
-
-var replicator = new Replicator(replConfig); // <.>
-replicator.Start(); // <.>
+include::csharp:example$code_snippets/Program.cs[tags="replicator-simple", indent=0]
 ----
-
 
 ====
 
@@ -211,10 +182,10 @@ Here we use a known URL, but it could be a URL established dynamically in a disc
 <.> Start the replicator
 
 
-[#csharp:p2psync-websocket:::api-highlights]
+[#api-highlights]
 == API Highlights
 
-[#csharp:p2psync-websocket:::urlendpointlistener]
+[#urlendpointlistener]
 === URLEndpointListener
 
 The `URLEndpointListener` is the listener for peer-to-peer synchronization.
@@ -230,7 +201,7 @@ Core functionalities of the listener are:
 
 API Reference: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListener.html[URLEndpointListener]
 
-[#csharp:p2psync-websocket:::urlendpointlistenerconfiguration]
+[#urlendpointlistenerconfiguration]
 === URLEndpointListenerConfiguration
 Use this to create a configuration object you can then use to initialize the listener.
 
@@ -330,13 +301,13 @@ The default value is false.
 API Reference: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]
 --
 
-[#csharp:p2psync-websocket:::security-2]
+[#security-2]
 == Security
 
-[#csharp:p2psync-websocket:::authentication]
+[#authentication]
 === Authentication
 
-Peer-to-Peer sync supports <<csharp:p2psync-websocket:::using-basic-authentication,Basic Authentication>> and <<csharp:p2psync-websocket:::using-tls,TLS Authentication>>.
+Peer-to-Peer sync supports <<using-basic-authentication,Basic Authentication>> and <<using-tls,TLS Authentication>>.
 For anything other than test deployments, we strongly encourage the use of TLS. In fact, Peer-to-Peer sync using URLEndpointListener is encrypted using TLS by default.
 
 The authentication mechanism is defined at the endpoint level, meaning that it is independent of the database being replicated.
@@ -357,7 +328,7 @@ Active clients replicating with a URLEndpointListener have the option to skip va
 +
 This option is ignored when dealing with CA certificates.
 
-[#csharp:p2psync-websocket:::using-secure-storage]
+[#using-secure-storage]
 === Using Secure Storage
 TLS and its associated keys and certificates might require using secure storage to minimize the chances of a security breach.
 The implementation of this storage differs from platform to platform.
@@ -365,7 +336,7 @@ This table summarizes the secure storage used to store keys and certificates.
 
 [tabs]
 ====
-[#csharp:p2psync-websocket:::secure-storage-details-android]
+[#secure-storage-details-android]
 Android::
 +
 --
@@ -393,7 +364,7 @@ Please check this document for more info: https://source.android.com/security/ke
 |===
 --
 
-[#csharp:p2psync-websocket:::secure-storage-details-macos-ios]
+[#secure-storage-details-macos-ios]
 MacOS / iOS::
 +
 --
@@ -419,7 +390,7 @@ a|Use kSecAttrLabel of the SecCertificate to store the TLSIdentity's label
 |===
 --
 
-[#csharp:p2psync-websocket:::secure-storage-details-java]
+[#secure-storage-details-java]
 Java::
 +
 --
@@ -446,7 +417,7 @@ a|* The KeyStore represents a storage facility for cryptographic keys and certif
 |===
 --
 
-[#csharp:p2psync-websocket:::secure-storage-details-net-excluding-xamarin]
+[#secure-storage-details-net-excluding-xamarin]
 .Net (excluding Xamarin)::
 +
 --
@@ -480,7 +451,7 @@ a|* Opaque Keys: https://docs.microsoft.com/en-us/dotnet/api/system.security.cry
 |===
 --
 
-[#csharp:p2psync-websocket:::secure-storage-details-xamarin]
+[#secure-storage-details-xamarin]
 Xamarin::
 +
 --
@@ -516,7 +487,7 @@ a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/s
 ====
 
 
-[#csharp:p2psync-websocket:::related-content]
+[#related-content]
 == Related Content
 ++++
 <div class="card-row three-column-row">
@@ -531,7 +502,7 @@ a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/s
 
 .
 
-[.column#csharp:p2psync-websocket:::-2]
+[.column]
 ====== {empty}
 .Concepts
 * xref:csharp:landing-p2psync.adoc[Peer-to-Peer Sync]
@@ -541,7 +512,7 @@ a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/s
 .
 
 
-[.column#csharp:p2psync-websocket:::-3]
+[.column]
 ====== {empty}
 .Community Resources ...
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
