@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use Data::Dumper;
+use feature 'say';
 
 my %attributes;
 
@@ -44,7 +45,7 @@ sub keep {
 my $blanks = 0;
 my $strip_headings;
 
-while (<>) {
+OUTER: while (<>) {
     # expand attributes
     s/\{(\S+?)\}/expand($1)/eg;
 
@@ -59,6 +60,27 @@ while (<>) {
             $attributes{$k} = $v;
             next;
         } 
+    }
+
+    # demangle source includes (with additional // include comment at beginning)
+    if (/^\[source/) {
+        my $source = $_;
+        my $delimiter = <>;
+        $_ = <>;
+        if (/^\/\/ (include::.*)/) {
+            say $source;
+            say $delimiter;
+            say $1;
+            say $delimiter;
+            while (<>) {
+                next OUTER if /^$delimiter/;
+            }
+        } else {
+            say $source;
+            say $delimiter;
+            say;
+            next OUTER;
+        }
     }
 
     # de-mangle the {tabs} and plantuml markers
@@ -89,6 +111,12 @@ while (<>) {
     # get rid of '// Define our environment' comments in calling pages
     s/^\/\/ Define.*//;
 
+    # de-mangle ::: links in block headers, #fragments, and <<links>>
+    s/\[.column.*\]/[.column]/;
+    s/#.*:::/#/;
+    s/<<.*?:::/<</g;
+    s/^\[#\].*$//;
+
     # don't print more than 2 blank lines in a row
     if (length == 1) {
         next if $blanks++ >= 2;
@@ -100,3 +128,4 @@ while (<>) {
     print;
 }
 
+warn "ATTRIBUTES: $attributes{snippet} / $attributes{'snippet-alt'}";
