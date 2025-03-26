@@ -24,7 +24,6 @@ my %keep = map { $_ => 1 } (qw/
     major
     minor
     tabs
-    source-language
 /);
 
 
@@ -45,6 +44,7 @@ sub keep {
 
 my $blanks = 0;
 my $strip_headings;
+my $TABS;
 
 OUTER: while (<>) {
     # expand attributes
@@ -56,6 +56,10 @@ OUTER: while (<>) {
         if ($k =~ /!/) {
             delete $attributes{$k};
             next;
+        }
+        elsif ($k eq 'source-language') {
+            # print this line BUT also let it be expanded in-place...
+            $attributes{$k} = $v;
         }
         elsif (! keep($k)) {
             $attributes{$k} = $v;
@@ -93,6 +97,17 @@ OUTER: while (<>) {
     s/^\[#.*:::tabs-.*].*$//;
     s/^\[plantum#.*\]/[plantuml]/;
 
+    if ($TABS eq "START") {
+        if (/^(=+)/) { $TABS = $1; }
+        else { die "Unexpected: $_" }
+    }
+    elsif ($TABS) {
+        s/^\[#[^,]*\]//; # delete broken anchors within tabset
+        if (/^$TABS$/) { $TABS = undef; }
+    }
+    elsif (/^\[tabs/) { $TABS = "START" }
+
+
     # images
     s{image::couchbase-lite/current/_images/}{image::ROOT:};
     s{image::couchbase-lite/current/(\w+)/_images/}{image::$1:};
@@ -118,9 +133,9 @@ OUTER: while (<>) {
 
     # de-mangle ::: links in block headers, #fragments, and <<links>>
     s/\[.column.*\]/[.column]/;
-    s/#.*:::/#/;
+    s/#\S*:::/#/;
     s/<<.*?:::/<</g;
-    s/^\[#\].*$//;
+    s/^\[#?\].*$//;
 
     # don't print more than 2 blank lines in a row
     if (length == 1) {
@@ -132,5 +147,3 @@ OUTER: while (<>) {
     # print lines that we didn't swallow as attribute definitions
     print;
 }
-
-warn "ATTRIBUTES: $attributes{snippet} / $attributes{'snippet-alt'}";
