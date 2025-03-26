@@ -24,6 +24,7 @@ my %keep = map { $_ => 1 } (qw/
     major
     minor
     tabs
+    source-language
 /);
 
 
