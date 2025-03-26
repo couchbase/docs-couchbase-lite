@@ -1,5 +1,5 @@
 
-= Remote Sync Gateway
+= Data Sync using Sync Gateway
 :page-aliases: learn/csharp-replication.adoc
 :page-role:
 :description: Couchbase Lite for C# -- Synchronizing data changes between local and remote databases using Sync Gateway
@@ -206,7 +206,7 @@ thisReplicator.Start(); <8>
 *Notes on Example*
 
 <.> get endpoint for target DB
-<.> Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html[ReplicatorConfiguration] class's constructor -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#lbl-cfg-tgt>>
+<.> Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html[ReplicatorConfiguration] class's constructor -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration__ctor_Couchbase_Lite_Database_Couchbase_Lite_Sync_IEndpoint[ReplicatorConfiguration(Database database, IEndpoint target)] -- to initialize the replicator configuration with the local database -- see also: <<csharp:replication:::lbl-cfg-tgt>>
 <.> The default is to auto-purge documents that this user no longer has access to -- see: <<csharp:replication:::anchor-auto-purge-on-revoke>>.
 Here we over-ride this behavior by setting its flag false.
 
@@ -911,7 +911,7 @@ thisConfig.EnableAutoPurge = false;  <1>
 [#overrides]
 == Overrides
 Where necessary, clients can override the default auto-purge behavior.
-This can be done either by setting https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#lbl-repl-fltrs>>
+This can be done either by setting https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_EnableAutoPurge[EnableAutoPurge] to false, or for finer control by applying pull-filters -- see: <<csharp:replication:::tbl-pull-filters>> and <<csharp:replication:::lbl-repl-fltrs>>
 This ensures backwards compatible with 2.8 clients that use pull filters to prevent auto purge of removed docs.
 
 .Impact of Pull-Filters
@@ -1011,7 +1011,7 @@ Replicators use https://docs.couchbase.com/couchbase-lite/current/csharp/refer-g
 Without https://docs.couchbase.com/couchbase-lite/current/csharp/refer-glossary.html#checkpoint[checkpoints], Couchbase Lite would replicate the entire database content to the target database on each connection, even though previous replications may already have replicated some or all of that content.
 
 This functionality is generally not a concern to application developers.
-However, if you do want to force the replication to start again from zero, use the https://docs.couchbase.com/couchbase-lite/current/csharp/refer-glossary.html#ex-repl-ckpt>>.
+However, if you do want to force the replication to start again from zero, use the https://docs.couchbase.com/couchbase-lite/current/csharp/refer-glossary.html#checkpoint[checkpoint] reset argument when starting the replicator -- as shown in <<csharp:replication:::ex-repl-ckpt>>.
 
 .Resetting checkpoints
 [#ex-repl-ckpt]
@@ -1064,7 +1064,7 @@ You can add and a replicator change listener at any point; it will report change
 .Best Practice
 TIP: Don't forget to save the token so you can remove the listener later
 
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#ex-repl-mon>>.
+Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_AddChangeListener_System_EventHandler_Couchbase_Lite_Sync_ReplicatorStatusChangedEventArgs__[addChangeListener()]) -- see: <<csharp:replication:::ex-repl-mon>>.
 You will then be asynchronously notified of state changes.
 
 You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_RemoveChangeListener_Couchbase_Lite_ListenerToken_[RemoveChangeListener(ListenerToken)].
@@ -1081,7 +1081,7 @@ That is, whether it is actively transferring data or if it has stopped -- see: <
 
 The returned _ReplicationStatus_ structure comprises:
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html#tbl-states>>
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html#Couchbase_Lite_Sync_ReplicatorStatus_Activity[Activity] -- stopped, offline, connecting, idle or busy -- see states described in: <<csharp:replication:::tbl-states>>
 * https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html#Couchbase_Lite_Sync_ReplicatorStatus_Progress[Progress]
 ** completed -- the total number of changes completed
 ** total -- the total number of changes to be processed

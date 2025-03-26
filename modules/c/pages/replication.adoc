@@ -1,8 +1,13 @@
 
-= Remote Sync Gateway
+= Data Sync using Sync Gateway
 :page-aliases: clang:replication.adoc
 :page-role:
 :description: Couchbase Lite for C -- Synchronizing data changes between local and remote databases using Sync Gateway
+
+
+:source-language: c
+
+:source-language: c
 
 
 // END::Local page attributes
@@ -664,7 +669,7 @@ include::c:example$code_snippets/main.cpp[tags="autopurge-override", indent=0]
 [#overrides]
 ==== Overrides
 Where necessary, clients can override the default auto-purge behavior.
-This can be done either by setting https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#lbl-repl-fltrs>>
+This can be done either by setting https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#a3795c0097264ccd1ed612d9a0746d58d[disableAutoPurge] to false, or for finer control by applying pull-filters -- see: <<tbl-pull-filters>> and <<lbl-repl-fltrs>>
 This ensures backwards compatible with 2.8 clients that use pull filters to prevent auto purge of removed docs.
 
 .Impact of Pull-Filters
@@ -755,7 +760,7 @@ Replicators use xref:refer-glossary.adoc#checkpoint[checkpoints] to keep track o
 Without xref:refer-glossary.adoc#checkpoint[checkpoints], Couchbase Lite would replicate the entire database content to the target database on each connection, even though previous replications may already have replicated some or all of that content.
 
 This functionality is generally not a concern to application developers.
-However, if you do want to force the replication to start again from zero, use the xref:refer-glossary.adoc#ex-repl-ckpt>>.
+However, if you do want to force the replication to start again from zero, use the xref:refer-glossary.adoc#checkpoint[checkpoint] reset argument when starting the replicator -- as shown in <<ex-repl-ckpt>>.
 
 .Resetting checkpoints
 [#ex-repl-ckpt]
@@ -797,7 +802,7 @@ You can add and a replicator change listener at any point; it will report change
 .Best Practice
 TIP: Don't forget to save the token so you can remove the listener later
 
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html[Replication] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ex-repl-mon>>.
+Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html[Replication] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#(im)addChangeListener:[addChangeListener(_:)]) -- see: <<ex-repl-mon>>.
 You will then be asynchronously notified of state changes.
 
 You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#(im)removeChangeListenerWithToken[removeChangeListenerWithToken(ListenerToken:)].
@@ -813,7 +818,7 @@ That is, whether it is actively transferring data or if it has stopped -- see: <
 
 The returned _ReplicationStatus_ structure comprises:
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#tbl-states>>
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga9421513c63f1d16bf4740c4d2515dd22[CBLReplicatorActivityLevel enum] -- stopped, offline, connecting, idle or busy -- see states described in: <<tbl-states>>
 * https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_progress.html)[CBLReplicatorProgress struct]
 ** completed -- the total number of changes completed
 ** total -- the total number of changes to be processed

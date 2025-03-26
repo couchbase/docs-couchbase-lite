@@ -1,8 +1,13 @@
 
-= Remote Sync Gateway
+= Data Sync using Sync Gateway
 :page-aliases: learn/swift-replication.adoc
 :page-role:
 :description: Couchbase Lite for Swift -- Synchronizing data changes between local and remote databases using Sync Gateway
+
+
+:source-language: swift
+
+:source-language: swift
 
 
 // END::Local page attributes
@@ -158,7 +163,7 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags="p2p-act-rep-func
 *Notes on Example*
 
 <.> get endpoint for target DB
-<.> Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html[ReplicatorConfiguration] class's constructor -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#lbl-cfg-tgt>>
+<.> Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html[ReplicatorConfiguration] class's constructor -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC8database6targetAcA8DatabaseC_AA8Endpoint_ptcfc[init(database:, target:)] -- to initialize the replicator configuration with the local database -- see also: <<lbl-cfg-tgt>>
 <.> The default is to auto-purge documents that this user no longer has access to -- see: <<anchor-auto-purge-on-revoke>>.
 Here we over-ride this behavior by setting its flag false.
 
@@ -757,7 +762,7 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags="autopurge-overri
 [#overrides]
 ==== Overrides
 Where necessary, clients can override the default auto-purge behavior.
-This can be done either by setting https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#lbl-repl-fltrs>>
+This can be done either by setting https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationV15enableAutoPurgeSbvp[enableAutoPurge] to false, or for finer control by applying pull-filters -- see: <<tbl-pull-filters>> and <<lbl-repl-fltrs>>
 This ensures backwards compatible with 2.8 clients that use pull filters to prevent auto purge of removed docs.
 
 .Impact of Pull-Filters
@@ -848,7 +853,7 @@ Replicators use xref:refer-glossary.adoc#checkpoint[checkpoints] to keep track o
 Without xref:refer-glossary.adoc#checkpoint[checkpoints], Couchbase Lite would replicate the entire database content to the target database on each connection, even though previous replications may already have replicated some or all of that content.
 
 This functionality is generally not a concern to application developers.
-However, if you do want to force the replication to start again from zero, use the xref:refer-glossary.adoc#ex-repl-ckpt>>.
+However, if you do want to force the replication to start again from zero, use the xref:refer-glossary.adoc#checkpoint[checkpoint] reset argument when starting the replicator -- as shown in <<ex-repl-ckpt>>.
 
 .Resetting checkpoints
 [#ex-repl-ckpt]
@@ -891,7 +896,7 @@ You can add and a replicator change listener at any point; it will report change
 .Best Practice
 TIP: Don't forget to save the token so you can remove the listener later
 
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#ex-repl-mon>>.
+Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC17addChangeListeneryAA0G5TokenCyAA0dF0VcF[addChangeListener(_:)]) -- see: <<ex-repl-mon>>.
 You will then be asynchronously notified of state changes.
 
 You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#//s:18CouchbaseLiteSwift10ReplicatorC20removeChangeListener9withTokenyAA0gI0C_tF[removeChangeListener(withToken:)].
@@ -907,7 +912,7 @@ That is, whether it is actively transferring data or if it has stopped -- see: <
 
 The returned _ReplicationStatus_ structure comprises:
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#tbl-states>>
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV8activityAC13ActivityLevelOvp[Activity] -- stopped, offline, connecting, idle or busy -- see states described in: <<tbl-states>>
 * https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV8progressAC8ProgressVvp[Progress]
 ** completed -- the total number of changes completed
 ** total -- the total number of changes to be processed

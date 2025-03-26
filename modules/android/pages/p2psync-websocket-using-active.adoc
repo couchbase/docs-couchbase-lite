@@ -6,6 +6,12 @@ ifdef::show_edition[:page-edition: {release}] {enterprise}
 :description: Couchbase Lite's Peer-to-Peer Synchronization enables edge devices to synchronize securely without consuming centralized cloud-server resources
 
 
+:source-language: Java
+
+
+:source-language: Kotlin
+
+
 // done in commons
 
 // Present common content including abstract and related content footer blocks
@@ -653,7 +659,7 @@ You can add and a replicator change listener at any point; it will report change
 .Best Practice
 TIP: Don't forget to save the token so you can remove the listener later
 
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Replicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#ex-repl-mon>>.
+Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Replicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#addChangeListener-java.util.concurrent.Executor-com.couchbase.lite.ReplicatorChangeListener-[addChangeListener()]) -- see: <<ex-repl-mon>>.
 You will then be asynchronously notified of state changes.
 
 You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#removeChangeListener-com.couchbase.lite.ListenerToken-[removeChangeListener(ListenerToken token)].
@@ -678,7 +684,7 @@ That is, whether it is actively transferring data or if it has stopped -- see: <
 
 The returned _ReplicationStatus_ structure comprises:
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#tbl-states>>
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getActivityLevel()[getActivityLevel()] -- stopped, offline, connecting, idle or busy -- see states described in: <<tbl-states>>
 * https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getProgress()[getProgress()]
 ** completed -- the total number of changes completed
 ** total -- the total number of changes to be processed
@@ -899,7 +905,7 @@ It will stop any active <<lbl-repl-chng,change listener>> once the replication i
 
 Unless you specify otherwise, Couchbase Lite's default conflict resolution policy is applied -- see xref:android:conflict.adoc[Handling Data Conflicts].
 
-To use a different policy, specify a _conflict resolver_ using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#using-conflict-resolvers>>.
+To use a different policy, specify a _conflict resolver_ using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setConflictResolver-com.couchbase.lite.ConflictResolver-[conflictResolver] as shown in <<using-conflict-resolvers>>.
 
 For more complex solutions you can provide a custom conflict resolver - see: xref:android:conflict.adoc[Handling Data Conflicts].
 

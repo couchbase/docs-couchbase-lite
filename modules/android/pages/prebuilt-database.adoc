@@ -5,6 +5,12 @@
 :description: How to handle pre-built databases in your Couchbase Lite on Android app
 
 
+:source-language: Java
+
+
+:source-language: Kotlin
+
+
 [abstract]
 --
 Description -- _{description}_ +
@@ -117,7 +123,7 @@ During the application start-up logic, check if database exists in the required 
 
 . Copy the pre-packaged database to the required location
 +
-Use the API's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#lbl-code>>; this ensures that a UUID is generated for each copy
+Use the API's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#copy(java.io.File,java.lang.String,com.couchbase.lite.DatabaseConfiguration)[Database.copy()] method -- see: <<lbl-code>>; this ensures that a UUID is generated for each copy
 +
 IMPORTANT: *Do not copy the database using any other method* +
 *Otherwise:* Each copy of the app will invalidate the other apps' xref:refer-glossary.adoc#checkpoint[checkpoints] because a new UUID was not generated.
