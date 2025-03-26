@@ -92,6 +92,11 @@ OUTER: while (<>) {
         }
     }
 
+    # get rid of anchor macro [[ex-repl-mon]]
+    # (From observation that: in the cases this is used in Mobile source, the anchor seems
+    # to be defined elsewhere or by antora-assembler anyway...)
+    s/^\[\[.*\]\]$//;
+
     # de-mangle the {tabs} and plantuml markers
     s/^\[\{?tabs[#}].*\]/[tabs]/;
     s/^\[#.*:::tabs-.*].*$//;
