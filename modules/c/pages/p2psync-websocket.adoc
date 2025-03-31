@@ -1,16 +1,16 @@
 
 = Data Sync Peer-to-Peer
-:page-aliases: clang:p2psync-websocket.adoc
+:page-aliases: clang:p2psync-websocket.adoc, c:landing-p2psync.adoc
 ifdef::show_edition[:page-edition: {release}] {enterprise}
-:page-status: Couchbase Lite 3.2.3 {prerelease}
+:page-status: Couchbase Lite 3.2.3
 :page-role:
 :description: Couchbase Lite's Peer-to-Peer Synchronization enables edge devices to synchronize securely without consuming centralized cloud-server resources
 
 
 :source-language: c
-
-:source-language: c
-
+:url-api-references: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html
+:url-api-references-urlendpointconfiguration: {url-api-references}/group__URLEndpointListenerConfiguration.html
+:url-api-references-urlendpointlistener: {url-api-references}/group__URLEndpointListener.html
 
 // done in commons
 
@@ -18,7 +18,7 @@ ifdef::show_edition[:page-edition: {release}] {enterprise}
 [abstract]
 --
 Description -- _{description}_ +
-Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html[API Reference]  |  xref:c:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:c:p2psync-websocket-using-active.adoc[Active Peer]
+Related Content -- {url-api-references}[API Reference]  |  xref:c:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:c:p2psync-websocket-using-active.adoc[Active Peer]
 --
 
 
@@ -202,7 +202,7 @@ Core functionalities of the listener are:
 * Once the listener is started, a total number of connections or active connections can be checked.
 --
 
-API Reference: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListener.html[URLEndpointListener]
+API Reference: {url-api-references-urlendpointlistener}[URLEndpointListener]
 
 [#urlendpointlistenerconfiguration]
 === URLEndpointListenerConfiguration
@@ -235,13 +235,13 @@ disableTLS::
 +
 --
 // tag::config-disable-tls[]
-You can use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration(py)disableTLS[disableTLS] method to disable TLS communication if necessary
+You can use {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)disableTLS[disableTLS] method to disable TLS communication if necessary.
 
 The `disableTLS` setting must be 'false' when _Client Cert Authentication_ is required.
 
 Basic Authentication can be used with, or without, TLS.
 
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration(py)disableTLS[disableTLS] works in conjunction with `TLSIdentity`, to enable developers to define the key and certificate to be used.
+{url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)disableTLS[disableTLS] works in conjunction with `TLSIdentity`, to enable developers to define the key and certificate to be used.
 
 * If `disableTLS` is true -- TLS communication is disabled and TLS identity is ignored.
 Active peers will use the `ws://` URL scheme used to connect to the listener.
@@ -250,15 +250,15 @@ Active peers will use the `ws://` URL scheme used to connect to the listener.
 Active peers will use the `wss://` URL scheme to connect to the listener.
 
 // end::config-disable-tls[]
-API Reference:  https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration(py)disableTLS[disableTLS]
+API Reference:  {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)disableTLS[disableTLS]
 --
 
 tlsIdentity::
 +
 --
 // tag::config-tls-id[]
-Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration(py)tlsIdentity[tlsIdentity] method to configure the TLS Identity used in TLS communication.
+Use {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s
+{url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)tlsIdentity[tlsIdentity] method to configure the TLS Identity used in TLS communication.
 
 If `TLSIdentity` is not set, then the listener uses an auto-generated anonymous self-signed identity (unless `disableTLS = true`).
 Whilst the client cannot use this to authenticate the server, it will use it to encrypt communication, giving a more secure option than non-TLS communication.
@@ -270,7 +270,7 @@ The auto-generated anonymous self-signed identity is saved in secure storage for
 When the listener is not started, the identity is null.
 When TLS is disabled, the identity is always null.
 
-API Reference:  https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration(py)tlsIdentity[tlsIdentity]
+API Reference:  {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)tlsIdentity[tlsIdentity]
 
 --
 
@@ -285,7 +285,7 @@ This should be set to one of the following:
 * Null -- there is no authentication.
 // tag::config-auth-default[]
 
-API Reference:  https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration(py)authenticator[authenticator]
+API Reference:  {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)authenticator[authenticator]
 --
 
 readOnly::
@@ -301,7 +301,7 @@ enableDeltaSync::
 The option to enable Delta Sync and replicate only changed data also depends on the delta sync settings at database level.
 The default value is false.
 
-API Reference: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]
+API Reference: {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]
 --
 
 [#security-2]
@@ -510,7 +510,7 @@ a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/s
 .Concepts
 * xref:c:landing-p2psync.adoc[Peer-to-Peer Sync]
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html[API References]
+* {url-api-references}[API References]
 
 .
 
