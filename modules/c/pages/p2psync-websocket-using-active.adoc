@@ -2,15 +2,15 @@
 = Active Peer
 :page-aliases: clang:p2psync-websocket-using-active.adoc
 ifdef::show_edition[:page-edition: {release}] {enterprise}
-:page-status: Couchbase Lite 3.2.3 {prerelease}
+:page-status: Couchbase Lite 3.2.3
 :page-role:
 :description: Couchbase Lite's Peer-to-Peer Synchronization enables edge devices to synchronize securely without consuming centralized cloud-server resources
 
 
 :source-language: c
-
-:source-language: c
-
+:url-api-references: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html
+:url-api-references-replicator: {url-api-references}/group__replication.html
+:url-api-references-replicator-config: {url-api-references}/struct_c_b_l_replicator_configuration.html
 
 // done in commons
 
@@ -19,7 +19,7 @@ ifdef::show_edition[:page-edition: {release}] {enterprise}
 --
 Description -- _{description}_ +
 _Abstract -- How to set up a Replicator to connect with a Listener and replicate changes using peer-to-peer sync_ +
-Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html[API Reference]  |  xref:c:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:c:p2psync-websocket-using-active.adoc[Active Peer]
+Related Content -- {url-api-references}[API Reference]  |  xref:c:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:c:p2psync-websocket-using-active.adoc[Active Peer]
 --
 
 
@@ -70,7 +70,7 @@ Here we say connect only to servers presenting a self-signed certificate.
 By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<authenticate-listener>>.
 
 <.> Configure the credentials the client will present to the server.
-Here we say to provide _Basic Authentication_ credentials. Other options are available -- see: <<configuring-client-authentication>>.
+Here we say to provide _Basic Authentication_ credentials. Other options are available -- see: <<lbl-authclnt>>.
 
 <.> Configure how the replication should perform <<conflict-resolution>>.
 
@@ -83,7 +83,7 @@ Here we say to provide _Basic Authentication_ credentials. Other options are ava
 [#api-references]
 == API References
 
-You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html[C API References] here.
+You can find {url-api-references}[C API References] here.
 
 [#device-discovery]
 == Device Discovery
@@ -105,8 +105,7 @@ In this section::
 [#lbl-cfg-tgt]
 === Configure Target
 
-Use the
-Initialize and define the replication configuration with local and remote database locations using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html[CBLReplicatorConfiguration] object.
+Initialize and define the replication configuration with local and remote database locations using the {url-api-references-replicator-config}[CBLReplicatorConfiguration] object.
 
 The constructor provides:
 
@@ -142,8 +141,8 @@ to ensure TLS encryption -- strongly recommended in production -- or `ws://`)
 
 Here we define the direction and type of replication we want to initiate.
 
-We use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html[CBLReplicatorConfiguration]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#a40f3195389ab0578aa17e63dd832a390[replicatorType] and
-`https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#a3d17159fc65a7491c2cde2f56a5016df[continuous]` parameters, to tell the replicator:
+We use `{url-api-references-replicator-config}[CBLReplicatorConfiguration]` class's {url-api-references-replicator-config}#a40f3195389ab0578aa17e63dd832a390[replicatorType] and
+`{url-api-references-replicator-config}#a3d17159fc65a7491c2cde2f56a5016df[continuous]` parameters, to tell the replicator:
 
 * The type (or direction) of the replication:
 `*pushAndPull*`; `pull`; `push`
@@ -190,24 +189,21 @@ In the event it detects a transient error, the replicator will attempt to reconn
 
 On each retry the interval between attempts is increased exponentially (exponential backoff) up to the maximum wait time limit (5 minutes).
 
-The REST API provides configurable control over this replication retry logic using a set of configiurable properties -- see: <<tbl-repl-retry>>.
+The REST API provides configurable control over this replication retry logic using a set of configurable properties -- see: <<tbl-repl-retry>>.
 
 .Replication Retry Configuration Properties
 [#tbl-repl-retry,cols="2,3,5"]
 |===
+|Property|Use cases|Description
 
-h|Property
-h|Use cases
-h|Description
-
-|{url-api-prop-replicator-config-setHeartbeat}
+|{url-api-references-replicator-config}#a524408f9430d13c783762dce32f1126e[heartbeat]
 a|* Reduce to detect connection errors sooner
 * Align to load-balancer or proxy `keep-alive` interval -- see Sync Gateway's topic xref:sync-gateway::load-balancer.adoc#websocket-connection[Load Balancer - Keep Alive]
 a|The interval (in seconds) between the heartbeat pulses.
 
 Default: The replicator pings the listener every 300 seconds.
 
-|https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#a5b6435c711d93f71566d8814506e0dff[maxAttempts]
+|{url-api-references-replicator-config}#a5b6435c711d93f71566d8814506e0dff[maxAttempts]
 |Change this to limit or extend the number of retry attempts.
 a| The maximum number of retry attempts
 
@@ -219,7 +215,7 @@ a| The maximum number of retry attempts
 ** Continuous replication = maximum integer value
 * Negative values generate a Couchbase exception `InvalidArgumentException`
 
-|{url-api-prop-replicator-config-setMaxAttemptWaitTime}
+|{url-api-references-replicator-config}#a21d4fffd270c721d1600d7a835f17fd1[maxAttemptWaitTime]
 |Change this to adjust the interval between retries.
 a|The maximum interval between retry attempts
 
@@ -248,9 +244,9 @@ include::c:example$code_snippets/main.cpp[tags="replication-retry-config", inden
 ----
 ====
 
-<.> Here we use {url-api-prop-replicator-config-setHeartbeat} to set the required interval (in seconds) between the heartbeat pulses
-<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#a5b6435c711d93f71566d8814506e0dff[maxAttempts] to set the required number of retry attempts
-<.> Here we use {url-api-prop-replicator-config-setMaxAttemptWaitTime} to set the required interval between retry attempts.
+<.> Here we use {url-api-references-replicator-config}#a524408f9430d13c783762dce32f1126e[heartbeat] to set the required interval (in seconds) between the heartbeat pulses.
+<.> Here we use {url-api-references-replicator-config}#a5b6435c711d93f71566d8814506e0dff[maxAttempts] to set the required number of retry attempts.
+<.> Here we use {url-api-references-replicator-config}#a21d4fffd270c721d1600d7a835f17fd1[maxAttemptWaitTime] to set the required interval between retry attempts.
 
 
 [#authenticate-listener]
@@ -262,11 +258,13 @@ Note that the client cannot authenticate the server if TLS is turned off.
 When TLS is enabled (Sync Gateway's default) the client _must_ authenticate the server.
 If the server cannot provide acceptable credentials then the connection will fail.
 
-Use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html[CBLReplicatorConfiguration]` properties {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#a4a96fb9fba93dc93f8373b76c3816af6[pinnedServerCertificate()], to tell the replicator how to verify server-supplied TLS server certificates.
+Use `{url-api-references-replicator-config}[CBLReplicatorConfiguration]` properties {url-api-references-replicator-config}#abba75db71f5e08718a924d76bc1a0e1e[acceptOnlySelfSignedServerCertificate] and {url-api-references-replicator-config}#a4a96fb9fba93dc93f8373b76c3816af6[pinnedServerCertificate()], to tell the replicator how to verify server-supplied TLS server certificates.
 
 * If there is a pinned certificate, nothing else matters, the server cert must *exactly* match the pinned certificate.
-* If there are no pinned certs and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
-* If there are no pinned certificates and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `false` (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
+* If there are no pinned certs and {url-api-references-replicator-config}#abba75db71f5e08718a924d76bc1a0e1e[acceptOnlySelfSignedServerCertificate] is `true` then any self-signed certificate is accepted.
+Certificates that are not self signed are rejected, no matter who signed them.
+* If there are no pinned certificates and {url-api-references-replicator-config}#abba75db71f5e08718a924d76bc1a0e1e[acceptOnlySelfSignedServerCertificate] is `false` (default), the client validates the server's certificates against the system CA certificates.
+The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
 
 // Example 4
 .Set Server TLS security
@@ -329,15 +327,15 @@ Couchbase Lite for C only supports the ability to replicate with a remote Sync G
 
 Here we define the credentials that the client can present to the server if prompted to do so in order that the server can authenticate it.
 
-We use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html[CBLReplicatorConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#(py)authenticator[authenticator] method to define the authentication method to the replicator.
+We use {url-api-references-replicator-config}[CBLReplicatorConfiguration]'s {url-api-references-replicator-config}#aa2cd20835cc4e6b516510d441d419d60[authenticator] method to define the authentication method to the replicator.
 
 
 [#initialize-replicator]
 == Initialize Replicator
 
 
-Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html[Replication]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#(im)initWithConfig:[initWith(config:)] constructor, to initialize the replicator with the configuration you have defined.
-You can, optionally, add a change listener (see <<lbl-repl-mon>>) before starting the replicator running using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga224926daa794a424c470bf86dd57aaf9[CBLReplicator_Start()].
+Use the `{url-api-references-replicator}[Replication]` class's {url-api-references-replicator}#ga5f5ffc039ce0ac834d1f1f4cd940d65d[CBLReplicator_Create()] constructor, to initialize the replicator with the configuration you have defined.
+You can, optionally, add a change listener (see <<lbl-repl-mon>>) before starting the replicator running using {url-api-references-replicator}#ga224926daa794a424c470bf86dd57aaf9[CBLReplicator_Start()].
 
 // Example 7
 .Initialize and run replicator
@@ -364,7 +362,7 @@ In this section::
 <<lbl-repl-status>>  |
 <<lbl-repl-pend>>
 
-You can monitor a replication’s status by using a combination of <<lbl-repl-chng>> and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga9421513c63f1d16bf4740c4d2515dd22[CBLReplicatorActivityLevel enum].
+You can monitor a replication's status by using a combination of <<lbl-repl-chng>> and the `replication.status.activity` property -- see; {url-api-references-replicator}#ga9421513c63f1d16bf4740c4d2515dd22[CBLReplicatorActivityLevel enum].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
 
@@ -376,27 +374,27 @@ You can add and a replicator change listener at any point; it will report change
 .Best Practice
 TIP: Don't forget to save the token so you can remove the listener later
 
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html[Replication] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#(im)addChangeListener:[addChangeListener(_:)]) -- see: <<ex-repl-mon>>.
+Use the {url-api-references-replicator}[Replication] class to add a change listener as a callback to the Replicator ({url-api-references-replicator}#gaa49518d403aaa95f9b342759e0e30769[CBLReplicator_AddChangeListener()]) -- see: <<ex-repl-mon>>.
 You will then be asynchronously notified of state changes.
 
-You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#(im)removeChangeListenerWithToken[removeChangeListenerWithToken(ListenerToken:)].
+You can remove a change listener with {url-api-references-replicator}#(im)removeChangeListenerWithToken[removeChangeListenerWithToken(ListenerToken:)].
 
 
 [#lbl-repl-status]
 === Replicator Status
 
 You can use the
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_status.html[CBLReplicatorStatus] struct
+{url-api-references}/struct_c_b_l_replicator_status.html[CBLReplicatorStatus] struct
 to check the replicator status.
 That is, whether it is actively transferring data or if it has stopped -- see: <<ex-repl-mon>>.
 
 The returned _ReplicationStatus_ structure comprises:
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga9421513c63f1d16bf4740c4d2515dd22[CBLReplicatorActivityLevel enum] -- stopped, offline, connecting, idle or busy -- see states described in: <<tbl-states>>
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_progress.html)[CBLReplicatorProgress struct]
+* {url-api-references-replicator}#ga9421513c63f1d16bf4740c4d2515dd22[CBLReplicatorActivityLevel enum] -- stopped, offline, connecting, idle or busy -- see states described in: <<tbl-states>>
+* {url-api-references}/struct_c_b_l_replicator_progress.html[CBLReplicatorProgress struct]
 ** completed -- the total number of changes completed
 ** total -- the total number of changes to be processed
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_error.html[CBLError struct] -- the current error, if any
+* {url-api-references}/struct_c_b_l_error.html[CBLError struct] -- the current error, if any
 
 // Example 8
 [#ex-repl-mon]
@@ -437,10 +435,9 @@ include::c:example$code_snippets/main.cpp[tags=p2p-act-rep-status,indent=0]
 <<tbl-states>> shows the different states, or activity levels, reported in the API; and the meaning of each.
 
 .Replicator activity levels
-[#tbl-states,cols="^1,4"]
+[#tbl-states,cols="1,4"]
 |===
-h|State
-h|Meaning
+|State|Meaning
 
 |`STOPPED`
 |The replication is finished or hit a fatal error.
@@ -468,16 +465,16 @@ Since the replication occurs in batches the total count can vary through the cou
 [#lbl-repl-pend]
 === Documents Pending Push
 
-TIP: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] is quicker and more efficient.
+TIP: {url-api-references-replicator}#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] is quicker and more efficient.
 Use it in preference to returning a list of pending document IDs, where possible.
 
 You can check whether documents are waiting to be pushed in any forthcoming sync by using either of the following API methods:
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()] method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.
+* Use the {url-api-references-replicator}#ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()] method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.
 +
 This can be very useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it is safe to exit.
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] method to quickly check whether an individual document is pending a push.
+* Use the {url-api-references-replicator}#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] method to quickly check whether an individual document is pending a push.
 
 [#ex-pending]
 .Use Pending Document ID API
@@ -493,16 +490,16 @@ include::c:example$code_snippets/main.cpp[tags="replication-pendingdocuments", i
 ----
 ====
 
-<.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()] returns a list of the document IDs for all documents waiting to be pushed.
+<.> {url-api-references-replicator}#ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()] returns a list of the document IDs for all documents waiting to be pushed.
 This is a snapshot and may have changed by the time the response is received and processed.
-<.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
+<.> {url-api-references-replicator}#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
 
 [#lbl-repl-stop]
 == Stop Sync
 
 Stopping a replication is straightforward.
-It is done using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()].
+It is done using {url-api-references-replicator}#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()].
 This initiates an asynchronous operation and so is not necessarily immediate.
 Your app should account for this potential delay before attempting any subsequent operations.
 
@@ -521,7 +518,7 @@ include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-stop", indent=0]
 ----
 ====
 
-<.> Here we initiate the stopping of the replication using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()] method.
+<.> Here we initiate the stopping of the replication using the {url-api-references-replicator}#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()] method.
 It will stop any active <<lbl-repl-chng,change listener>> once the replication is stopped.
 
 
@@ -530,7 +527,7 @@ It will stop any active <<lbl-repl-chng,change listener>> once the replication i
 
 Unless you specify otherwise, Couchbase Lite's default conflict resolution policy is applied -- see xref:c:conflict.adoc[Handling Data Conflicts].
 
-To use a different policy, specify a _conflict resolver_ using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#(py)conflictResolver[conflictResolver] as shown in <<using-conflict-resolvers>>.
+To use a different policy, specify a _conflict resolver_ using {url-api-references-replicator-config}#aa664454f386c8300dd458ece30a3a8c6[conflictResolver] as shown in <<using-conflict-resolvers>>.
 
 For more complex solutions you can provide a custom conflict resolver - see: xref:c:conflict.adoc[Handling Data Conflicts].
 
@@ -626,7 +623,7 @@ If delta sync is enabled on the listener, then replication will use delta sync.
 .Concepts
 * xref:c:landing-p2psync.adoc[Peer-to-Peer Sync]
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html[API References]
+* {url-api-references}[API References]
 
 .
 

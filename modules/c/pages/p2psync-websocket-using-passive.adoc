@@ -2,15 +2,19 @@
 = Passive Peer
 :page-aliases: clang:p2psync-websocket-using-passive.adoc
 ifdef::show_edition[:page-edition: {release}] {enterprise}
-:page-status: Couchbase Lite 3.2.3 {prerelease}
+:page-status: Couchbase Lite 3.2.3
 :page-role:
 :description: Couchbase Lite's Peer-to-Peer Synchronization enables edge devices to synchronize securely without consuming centralized cloud-server resources
 
 
 :source-language: c
-
-:source-language: c
-
+:url-api-references: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html
+:url-api-references-urlendpointconfiguration: {url-api-references}/group__URLEndpointListenerConfiguration.html
+:url-api-references-urlendpointlistener: {url-api-references}/group__URLEndpointListener.html
+:url-api-references-tlsidentity: {url-api-references}/group__TLSIdentity.html
+:url-api-class-ListenerPasswordAuthenticator: {url-api-references}/group__ListenerPasswordAuthenticator.html
+:url-api-class-ListenerCertificateAuthenticator: {url-api-references}/group__ListenerCertificateAuthenticator.html
+:url-api-class-connection-status: {url-api-references}/group__Type%20Definitions/ConnectionStatus.html
 
 // done in commons
 
@@ -20,7 +24,7 @@ ifdef::show_edition[:page-edition: {release}] {enterprise}
 --
 Description -- _{description}_ +
 _Abstract -- How to set up a Listener to accept a Replicator connection and sync using peer-to-peer_ +
-Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html[API Reference]  |  xref:c:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:c:p2psync-websocket-using-active.adoc[Active Peer]
+Related Content -- {url-api-references}[API Reference]  |  xref:c:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:c:p2psync-websocket-using-active.adoc[Active Peer]
 --
 
 
@@ -99,7 +103,7 @@ Note that client authentication is optional.
 
 [#api-references]
 == API References
-You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html[C API References] here.
+You can find {url-api-references}[C API References] here.
 
 [#device-discovery]
 == Device Discovery
@@ -113,7 +117,7 @@ The connection is established once the Passive Peer has authenticated and accept
 
 [#initialize-the-listener-configuration]
 == Initialize the Listener Configuration
-Initialize the Listener configuration with the local database -- see <<ex-locdb>>
+Initialize the Listener configuration with the local database -- see <<ex-locdb>>.
 All other configuration values take their default setting.
 
 Each Listener instance serves one Couchbase Lite database.
@@ -134,7 +138,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-db", indent=0]
 ----
 ====
 
-<.> Set the local database using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s constructor https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration(im)initWithDatabase:[-initWithDatabase:]. +
+<.> Set the local database using the {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s constructor {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(im)initWithDatabase:[-initWithDatabase:]. +
 The database must be opened before the Listener is started. +
 `thisDB` has previously been declared as an object of type `Database`.
 
@@ -161,7 +165,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-port", indent=0]
 ----
 ====
 
-<.> To use a canonical port -- one known to other applications -- specify it explicitly using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration(py)port[port] method shown here. +
+<.> To use a canonical port -- one known to other applications -- specify it explicitly using the {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)port[port] method shown here. +
 Ensure that firewall rules do not block any port you do specify. +
 
 
@@ -185,7 +189,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-netw-iface", ind
 ----
 ====
 
-<.> To specify an interface -- one known to other applications -- identify it explicitly, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration(py)networkInterface[networkInterface] method shown here.
+<.> To specify an interface -- one known to other applications -- identify it explicitly, using the {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)networkInterface[networkInterface] method shown here.
 This must be either an IP Address or network interface name such as `en0`.
 
 
@@ -210,7 +214,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-delta-sync", ind
 ====
 
 <.> Delta sync replication is not enabled by default.
-Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration(py)enableDeltaSync[enableDeltaSync] method to activate or deactivate it.
+Use {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)enableDeltaSync[enableDeltaSync] method to activate or deactivate it.
 
 [#lbl-tls-security]
 == TLS Security
@@ -227,13 +231,13 @@ However, it _can_ be disabled. For example, for development or test environments
 When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity -- see <<configure-tls-identity-for-listener>>.
 
 
-You can use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration(py)disableTLS[disableTLS] method to disable TLS communication if necessary
+You can use {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)disableTLS[disableTLS] method to disable TLS communication if necessary.
 
 The `disableTLS` setting must be 'false' when _Client Cert Authentication_ is required.
 
 Basic Authentication can be used with, or without, TLS.
 
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration(py)disableTLS[disableTLS] works in conjunction with `TLSIdentity`, to enable developers to define the key and certificate to be used.
+{url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)disableTLS[disableTLS] works in conjunction with `TLSIdentity`, to enable developers to define the key and certificate to be used.
 
 * If `disableTLS` is true -- TLS communication is disabled and TLS identity is ignored.
 Active peers will use the `ws://` URL scheme used to connect to the listener.
@@ -248,8 +252,8 @@ Active peers will use the `wss://` URL scheme to connect to the listener.
 Define the credentials the server will present to the client for authentication.
 Note that the server must always authenticate itself with the client -- see: xref:c:p2psync-websocket-using-active.adoc#authenticate-listener[Authenticate Listener on Active Peer] for how the client deals with this.
 
-Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration(py)tlsIdentity[tlsIdentity] method to configure the TLS Identity used in TLS communication.
+Use {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s
+{url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)tlsIdentity[tlsIdentity] method to configure the TLS Identity used in TLS communication.
 
 If `TLSIdentity` is not set, then the listener uses an auto-generated anonymous self-signed identity (unless `disableTLS = true`).
 Whilst the client cannot use this to authenticate the server, it will use it to encrypt communication, giving a more secure option than non-TLS communication.
@@ -341,13 +345,13 @@ Define how the server (Listener) will authenticate the client as one it is prepa
 
 Whilst client authentication is optional, Couchbase lite provides the necessary tools to implement it.
 Use the
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration] class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration(py)authenticator[authenticator] method to specify how the client-supplied credentials are to be authenticated.
+{url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration] class's {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)authenticator[authenticator] method to specify how the client-supplied credentials are to be authenticated.
 
 Valid options are:
 
 * No authentication -- If you do not define an Authenticator then all clients are accepted.
-* Basic Authentication -- uses the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__ListenerPasswordAuthenticator.html[ListenerPasswordAuthenticator] to authenticate the client using the client-supplied username and password (from the http authentication header).
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator] -- which authenticates the client using a client supplied chain of one or more certificates.
+* Basic Authentication -- uses the {url-api-class-ListenerPasswordAuthenticator}[ListenerPasswordAuthenticator] to authenticate the client using the client-supplied username and password (from the http authentication header).
+* {url-api-class-ListenerCertificateAuthenticator}[ListenerCertificateAuthenticator] -- which authenticates the client using a client supplied chain of one or more certificates.
 You should initialize the authenticator using one of the following constructors:
 ** A list of one or more root certificates -- the client supplied certificate must end at a certificate in this list if it is to be authenticated
 ** A block of code that assumes total responsibility for authentication -- it must return a boolean response (true for an authenticated client, or false for a failed authentication).
@@ -383,7 +387,7 @@ Define how the server will authenticate client-supplied certificates.
 
 There are two ways to authenticate a client:
 
-* A chain of one or more certificates that ends at a certificate in the list of certificates supplied to the constructor for  https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator] -- see: <<ex-set-cert-auth>>
+* A chain of one or more certificates that ends at a certificate in the list of certificates supplied to the constructor for  {url-api-class-ListenerCertificateAuthenticator}[ListenerCertificateAuthenticator] -- see: <<ex-set-cert-auth>>
 
 * Application logic: This method assumes complete responsibility for verifying and authenticating the client -- see: <<ex-use-app-logic>>
 +
@@ -400,7 +404,7 @@ The logic should take the form of function or block (such as, a closure expressi
 [#ex-set-cert-auth]
 ====
 
-Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator].
+Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the the {url-api-class-ListenerCertificateAuthenticator}[ListenerCertificateAuthenticator].
 
 [source, c]
 ----
@@ -483,8 +487,8 @@ a|* The system will auto generate an _anonymous_ self signed cert.
 |false
 a|Set to server identity generated from a self- or CA-signed certificate
 
-* On first use -- Bring your own certificate and private key; for example, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__TLSIdentity.html[TLSIdentity] class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__TLSIdentity.html#TLSIdentity(cm)createIdentityForServer:attributes:expiration:label:error:[createIdentity()] method to add it to the secure storage.
-* Each time -- Use the server identity from the certificate stored in the secure storage; for example, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__TLSIdentity.html[TLSIdentity] class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__TLSIdentity.html#TLSIdentity(cm)identityWithLabel:error:[identityWithLabel:error] method with the alias you want to retrieve..
+* On first use -- Bring your own certificate and private key; for example, using the {url-api-references-tlsidentity}[TLSIdentity] class's {url-api-references-tlsidentity}#TLSIdentity(cm)createIdentityForServer:attributes:expiration:label:error:[createIdentity()] method to add it to the secure storage.
+* Each time -- Use the server identity from the certificate stored in the secure storage; for example, using the {url-api-references-tlsidentity}[TLSIdentity] class's {url-api-references-tlsidentity}#TLSIdentity(cm)identityWithLabel:error:[identityWithLabel:error] method with the alias you want to retrieve.
 
 
 a|* System will use the configured identity.
@@ -517,9 +521,10 @@ include::c:example$code_snippets/main.cpp[tags="listener-start", indent=0]
 [#monitor-listener]
 == Monitor Listener
 
-Use the Listener's `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__URLEndpointListener.html#CBLURLEndpointListener(py)status[status]` property/method to get counts of total and active connections -- see: <<get-connection-counts>>.
+Use the Listener's `{url-api-references-urlendpointlistener}#CBLURLEndpointListener(py)status[status]` property/method to get counts of total and active connections -- see: <<get-connection-counts>>.
 
-You should note that these counts can be extremely volatile. So, the actual number of active connections may have changed, by the time the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__Type%20Definitions/ConnectionStatus.html[ConnectionStatus]` class returns a result.
+You should note that these counts can be extremely volatile.
+So, the actual number of active connections may have changed, by the time the `{url-api-class-connection-status}[ConnectionStatus]` class returns a result.
 
 // Example 11
 .Get connection counts
@@ -579,7 +584,7 @@ NOTE: Closing the database will also close the Listener.
 .Concepts
 * xref:c:landing-p2psync.adoc[Peer-to-Peer Sync]
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html[API References]
+* {url-api-references}[API References]
 
 .
 
