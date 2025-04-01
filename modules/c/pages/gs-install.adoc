@@ -55,6 +55,7 @@ The binary release download comprises a root directory (pass:q,a[libcblite-commu
 
 * For iOS, an xcframework.
 
+:barsep: pass:q,a[ {nbsp}|{nbsp} ]
 
 [TIP]
 .Debug Symbols
@@ -81,11 +82,11 @@ To verify whether your device supports the AVX2 instructions set, https://www.in
 
 .Installation:
 ****
-<<lbl-apt,Install for Linux (APT)>> pass:q,a[ {nbsp}|{nbsp} ]
-<<lbl-debt,Install for Linux (.deb)>> pass:q,a[ {nbsp}|{nbsp} ]
-<<lbl-windows,Install for Windows>> pass:q,a[ {nbsp}|{nbsp} ]
-<<lbl-macos,Install for macOS>> pass:q,a[ {nbsp}|{nbsp} ]
-<<lbl-ios,Install for iOS>> pass:q,a[ {nbsp}|{nbsp} ]
+<<lbl-apt,Install for Linux (APT)>> {barsep}
+<<lbl-debt,Install for Linux (.deb)>> {barsep}
+<<lbl-windows,Install for Windows>> {barsep}
+<<lbl-macos,Install for macOS>> {barsep}
+<<lbl-ios,Install for iOS>> {barsep}
 <<lbl-android,Install for Android>>
 ****
 
@@ -96,9 +97,11 @@ To verify whether your device supports the AVX2 instructions set, https://www.in
 [#lbl-apt]
 === Using APT
 
+:url-apt-pkg-file: couchbase-1.0-noarch.deb
+:url-apt-pkg:  pass:q,a[https://packages.couchbase.com/releases/couchbase-release/{url-apt-pkg-file}]
 
-Using the Advanced Package Tool (apt) is the easiest way to install pass:q,a[pass:q,a[Couchbase{nbsp}Lite]] on Ubuntu and Debian platforms.
-Just download the meta package that _apt_ requires to automatically get and install pass:q,a[pass:q,a[Couchbase{nbsp}Lite]], including any dependencies.
+Using the Advanced Package Tool (apt) is the easiest way to install pass:q,a[Couchbase{nbsp}Lite] on Ubuntu and Debian platforms.
+Just download the meta package that _apt_ requires to automatically get and install pass:q,a[Couchbase{nbsp}Lite], including any dependencies.
 
 . Download the meta package
 +
@@ -111,7 +114,7 @@ curl::
 --
 [pass:q,a[source, bash, subs="attributes+", "macros+"]]
 ----
-curl -O pass:q,a[https://packages.couchbase.com/releases/couchbase-release/couchbase-1.0-noarch.deb]
+curl -O {url-apt-pkg}
 ----
 --
 
@@ -121,7 +124,7 @@ wget::
 --
 [pass:q,a[source, bash, subs="attributes+", "macros+"]]
 ----
-wget pass:q,a[https://packages.couchbase.com/releases/couchbase-release/couchbase-1.0-noarch.deb]
+wget {url-apt-pkg}
 ----
 --
 =====
@@ -137,7 +140,7 @@ apt::
 --
 [pass:q,a[source, bash, subs="attributes+", "macros+"]]
 ----
-sudo apt install ./couchbase-1.0-noarch.deb
+sudo apt install ./{url-apt-pkg-file}
 ----
 --
 
@@ -147,7 +150,7 @@ dpkg::
 --
 [pass:q,a[source, bash, subs="attributes+", "macros+"]]
 ----
-sudo dpkg -i ./couchbase-1.0-noarch.deb
+sudo dpkg -i ./{url-apt-pkg-file}
 ----
 --
 =====
