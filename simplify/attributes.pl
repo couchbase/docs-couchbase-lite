@@ -136,6 +136,9 @@ OUTER: while (<>) {
     # get rid of '// Define our environment' comments in calling pages
     s/^\/\/ Define.*//;
 
+    # get rid of 'DO NOT EDIT' and friends.
+    s/^\/\/ \s*((BEGIN|END) -- )?DO NOT.*//;
+
     # de-mangle ::: links in block headers, #fragments, and <<links>>
     s/\[.column.*\]/[.column]/;
     s/#\S*:::/#/;
