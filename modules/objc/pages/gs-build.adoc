@@ -1,32 +1,41 @@
+
 = Build and Run
 :page-aliases: start/objc-gs-build.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Build and run a starter app to validate your install of Couchbase Lite on Objective-C
 :keywords: mobile edge nosql api iOS objective-c web-app device-app
 
-include::partial$_set_page_context_for_objc.adoc[]
+
+:source-language: objc
+
+:source-language: objc
+
+:maintenance: 1
+
 
 // removed commented out docs-mobile _attributes-shared link
 // include::ROOT:partial$_define_page_index.adoc[]
 // include::ROOT:partial$_show_glossary_links.adoc[]
 // include::ROOT:partial$_define_component_attributes.adoc[]
-// include::{lang-mod-objc}:partial$_define_module_attributes.adoc[]
+// include::objc:partial$_define_module_attributes.adoc[]
 
 // // BEGIN::Local page attributes
 // :blank-field: ____
-// :lang-title: {lang-title-objc}
-// :module: {lang-mod-objc}
-// :packageNm: couchbase-lite-{module}
-// :source-language: {lang-name-objc}
-// snippet: {snippets-content--objc}
-// :url-issues: {url-github-cbl}{module}/issues
+// :lang-title: Objective C
+// :module: objc
+// :packageNm: couchbase-lite-objc
+// :source-language: objc
+// snippet: objc:example$code_snippets/SampleCodeTest.m
+// :url-issues: https://github.com/couchbase/couchbase-lite-objc/issues
 
 // END::Local page attributes
-include::{root-partials}_show_page_header_block.adoc[]
+[abstract]
+--
+Description -- _{description}_ +
+--
 
 
+[#quick-steps]
 == Quick Steps
 
 . Within XCode, create a new Objective-C app project
@@ -37,7 +46,7 @@ You should see the document ID and property printed to the console, indicating t
 
 [#img-starter-code]
 .Console log output
-image::getting-started-ios.png[]
+image::objc:getting-started-ios.png[]
 
 
 .Get Started code example
@@ -45,11 +54,9 @@ image::getting-started-ios.png[]
 ====
 This snippet demonstrates how to run basic CRUD operations, a simple Query and running bi-directional replications with Sync Gateway.
 
-[source, {source-language}, subs="attributes+, macros+"]
+[source, objc, subs="attributes+, macros+"]
 ----
-
 include::example$code_snippets/GettingStarted.m[]
-
 ----
 
 ====
@@ -57,7 +64,7 @@ include::example$code_snippets/GettingStarted.m[]
 Before synchronizing documents to Sync Gateway you will need to disable App Transport Security.
 In the Xcode navigator, right-click on *Info.plist* and open it as a source file.
 
-image::info-plist.png[]
+image::objc:info-plist.png[]
 
 Append the following inside of the `<dict>` XML tags to disable Application Transport Security (ATS). The ATS must be disabled because the sample code snippet uses the WebSocket protocol (WS://) over the unencrypted HTTP protocol — and would conflict with ATS's security requirements.
 
@@ -69,6 +76,49 @@ Append the following inside of the `<dict>` XML tags to disable Application Tran
 </dict>
 ----
 
-See: {sgw-install--xref}
+See: xref:sync-gateway::get-started-install.adoc[Install Sync Gateway]
 
-include::{root-partials}block-related-content-start.adoc[]
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+====== {empty}
+.How to . . .
+* xref:objc:gs-prereqs.adoc[Prerequisites]
+* xref:objc:gs-install.adoc[Install]
+* xref:objc:gs-build.adoc[Build and Run]
+
+
+.
+
+[.column]
+====== {empty}
+.Learn more . . .
+* xref:objc:database.adoc[Databases]
+* xref:objc:document.adoc[Documents]
+* xref:objc:blob.adoc[Blobs]
+* xref:objc:replication.adoc[Remote Sync Gateway]
+* xref:objc:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+====== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+++++
+</div>
+++++
+
+
