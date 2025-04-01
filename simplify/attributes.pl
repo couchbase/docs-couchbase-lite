@@ -159,8 +159,16 @@ OUTER: while (<>) {
     # de-mangle ::: links in block headers, #fragments, and <<links>>
     s/\[.column.*\]/[.column]/;
     s/#\S*:::/#/;
-    s/<<.*?:::/<</g;
     s/^\[#?\].*$//;
+
+    # these ones are mangled from xref into << link :facepalm:
+    # <<android:releasenotes:::,Android>> -> xref:android:releasenotes.adoc[Android]
+    s/<<(.*?):::(,(.*?))?>>/xref:$1.adoc[$3]/g;
+    # now any remaining actual page links need to be converted
+    s/<<.*?:::/<</g;
+    # one more...
+    # <<csharp:replication:::p2psync-websocket.adoc,Peer-to-Peer>> 
+    s/<<(.*?):::(.*?\.adoc),(.*?)>>/xref:$1:$2\[$3]/g;
 
     # don't print more than 2 blank lines in a row
     if (length == 1) {
