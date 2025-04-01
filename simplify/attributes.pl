@@ -5,16 +5,6 @@ use feature 'say';
 
 my %attributes;
 
-sub expand {
-    my ($attribute) = @_;
-    if (exists $attributes{$attribute}) {
-        return $attributes{$attribute}
-    }
-    else {
-        return "{$attribute}"        
-    }
-}
-
 my %keep = map { $_ => 1 } (qw/
     description
     keywords
@@ -24,8 +14,31 @@ my %keep = map { $_ => 1 } (qw/
     major
     minor
     tabs
+    url-getting-started-ktx
+    url-getting-started-java
+    url-download-ee
+    url-download-ce
+    url-apt-pkg
+    url-apt-pkg-file
+    barsep
 /);
 
+my %override = (
+  'cbl' => 'Couchbase{nbsp}Lite',
+  'cblJP' => 'Couchbase{nbsp}Lite',
+  'cbljp' => 'Couchbase{nbsp}Lite',
+  'cbl-te' => '_Couchbase{nbsp}Lite_',
+  'sg' => '_Sync{nbsp}Gateway',
+  'svr' => '_Couchbase{nbsp}Server_',
+);
+
+sub expand {
+    my ($attribute) = @_;
+
+    return $override{$attribute} if (exists $override{$attribute});
+    return $attributes{$attribute} if (exists $attributes{$attribute});
+    return "{$attribute}"        
+}
 
 sub keep {
     my ($attribute) = @_;
@@ -92,6 +105,9 @@ OUTER: while (<>) {
         }
     }
 
+    # demangle ` -- `
+    s/&#8201;&#8212;&#8201;/ -- /g;
+
     # get rid of anchor macro [[ex-repl-mon]]
     # (From observation that: in the cases this is used in Mobile source, the anchor seems
     # to be defined elsewhere or by antora-assembler anyway...)
@@ -131,7 +147,8 @@ OUTER: while (<>) {
     # [discrete# mangling
     s/^\[discrete.column/[.column/;
     s/^\[discrete#/[#/;
-    s/^\[discret#(.*)e\]/[discrete#$1/;
+    s/^\[discrete\./[./;
+    s/^\[discret#(.*)e\]/[#$1/;
 
     # get rid of '// Define our environment' comments in calling pages
     s/^\/\/ Define.*//;
