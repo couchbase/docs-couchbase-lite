@@ -1,0 +1,397 @@
+= Reactive APIs
+:page-status: Couchbase Lite 3.2.3
+ifdef::show_edition[:page-edition: {release}]
+ifdef::prerelease[:page-status: Couchbase Lite 3.2.3 {prerelease}]
+:page-role:
+:description: The Reactive APIs provide integration with SwiftUI, enabling reactive programming styles for concurrent user interface updates.
+:keywords: reactive swiftui codable combine observation
+
+:url-api-references: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift
+
+// Sets the correct mobile sdk for xref links in the common page
+include::partial$_set_page_context_for_swift.adoc[]
+
+[abstract]
+{description}
+
+The Reactive APIs are provided for Swift in Couchbase Lite 3.2.3 and later.
+
+Like xref:swift:query-live.adoc[Live Queries], the Reactive APIs enables you to make Couchbase {sqlpp} queries observable and refresh the application automatically as the data changes.
+
+With Live Queries, user interface updates need to be triggered manually inside the listener.
+This can lead to complex and difficult-to-maintain state management.
+
+With the Reactive APIs, you can use SwiftUI's minimalistic and declarative approach to manage querying and updating the user interface.
+
+The Reactive APIs enable you map Couchbase Lite documents directly to Swift models, and then bind a model to a view representing the user interface.
+The user interface is automatically updated when the underlying data changes.
+
+== Map Between Couchbase Lite Data Representation and Swift Codable
+
+Prior to the Reactive APIs, Couchbase Lite developers working with Swift could interact with documents through APIs that require manual handling of data conversion.
+For example, reading and writing data would often involve using the Mutable Documents abstraction and working directly with dictionary representations.
+While this approach provides flexibility, it can involve additional steps for developers when integrating Swift models into their applications.
+For more info, see xref:swift:document.adoc[].
+
+The Reactive APIs simplify this process by introducing native adherence to Swift's Codable protocol.
+This eliminates intermediate conversion layers, reducing the need to convert from Fleece format to JSON, and then to app-specific object representation.
+
+This enhancement enables automatic encoding and decoding between Couchbase Lite documents and Swift codable model objects.
+You can save, delete, and purge model objects encoded as documents in the collection.
+You can also retrieve documents from the collection as decodable model objects or decode query results directly into model objects.
+
+=== Handle Documents as Codable Objects
+
+A document model is a Swift link:https://developer.apple.com/documentation/swift/codable[Codable] class used for encoding and decoding to and from a Couchbase Lite document.
+
+The Reactive APIs provide the `@documentID` property wrapper.
+This associates a model object with a document using the specified ID.
+If no document ID is provided, one is automatically generated and assigned to the model when it is encoded and saved to the database.
+
+To avoid multiple copies of the model from being associated with the same document, the document model is required to be a class rather than a struct.
+
+.Data model
+====
+[source,swift]
+----
+class Task: Codable {
+    @DocumentID var id: String?
+    var title: String
+    var completed: Bool
+}
+----
+====
+
+=== API Updates
+
+The document-level APIs have been enhanced to enable you to handle individual documents as Swift codable objects.
+
+==== Get a Document as a Decodable Object
+
+To get a document from a collection as a decodable model object:
+
+* Use the `document` function with the collection.
+* Specify the document ID and type.
+
+For details, see FIXME: {url-api-references}/Classes/Collection.html#/Document%20Management[Document Management].
+
+==== Save an Encodable Object as a Document
+
+To save a document represented by an encodable model object into a collection:
+
+* Use the `saveDocument` function with the collection.
+* Specify the object.
+* Optionally, specify a concurrency control or a conflict handler.
+By default, last-write-wins concurrency control will be used if a conflict occurs.
+
+For details, see FIXME: {url-api-references}/Classes/Collection.html#/Document%20Management[Document Management].
+
+==== Delete a Document
+
+To delete a document represented by an encodable model object from a collection:
+
+* Use the `deleteDocument` function with the collection.
+* Specify the object.
+* Optionally, specify a concurrency control.
+By default, last-write-wins concurrency control will be used if a conflict occurs.
+
+For details, see FIXME: {url-api-references}/Classes/Collection.html#/Document%20Management[Document Management].
+
+==== Purge a Document
+
+To purge a document represented by an encodable model object from a collection:
+
+* Use the `purgeDocument` function with the collection.
+* Specify the object.
+
+For details, see FIXME: {url-api-references}/Classes/Collection.html#/Document%20Management[Document Management].
+
+=== Decoding Query Results
+
+For query results, the model object only needs to conform to the Decodable protocol and does not require a document ID property annotated with the `@DocumentID` property wrapper.
+However, if you want to save the model to a collection later, it must include a document ID property with the `@DocumentID` property wrapper.
+Additionally, the query result must include a document ID, which can be retrieved using the `meta().id` expression, as shown in the example SQL++ statement.
+
+[source,sqlpp]
+SELECT meta().id AS id, name FROM _default.users
+
+=== Get Query Results as Decodable
+
+To get a query's result as a decodable model object, use the `data` function with the query result.
+
+For details, see FIXME: {url-api-references}/Classes/Result.html#/ReadOnlyArrayProtocol[ReadOnlyArrayProtocol].
+
+To get all a query's results as an array of a decodable model objects, use the `data` function with the query result set.
+
+For details, see FIXME: {url-api-references}/Classes/ResultSet.html[ResultSet].
+
+The decoded model object type can only be the decodable type if the object is not used for modifying and saving into a collection.
+To decode the result as a decodable model object for modifying and saving into the collection later, the query's result needs to contain the document ID field by including `meta().id` as the document ID field name in the query's SELECT statement, for example:
+
+[source,sqlpp]
+SELECT meta().id as id, name FROM users
+
+To specify the source key for decoding, you can provide an optional dataKey.
+Its primary use is to indicate the key name of the `*` dictionary in a query result.
+For example, in the following query:
+
+[source,sqlpp]
+SELECT meta().id AS id, * AS data FROM users
+
+The `*` produces a dictionary with the key "data".
+When using `data(as:, dataKey:)` to decode the query result, setting dataKey to "data" ensures the correct source is used.
+
+NOTE: When saving a document model decoded from the query's result, the document associated with the model will be retrieved during the save time.
+As a result, the document may not be the same document during the query time if the document has been changed.
+
+WARNING: Getting all the query's results as an array of a Decodable model objects may take a long time and consume a large amount of memory, depending on the data size and the number of results.
+
+== Change Notification
+
+The Reactive APIs provide access to two underlying SwiftUI frameworks.
+The framework that you use depends on your operating system version.
+The way that you use the Reactive APIs differs slightly, depending on the underlying framework.
+
+=== Publish Query Result Changes
+
+To get a publisher that emits `QueryChange` events whenever a query result changes:
+
+* Use the `changePublisher` function with the query.
+* Optionally, specify the dispatch queue on which the changes are to be delivered.
+By default, the main queue is used.
+
+For details, see FIXME: {url-api-references}/Classes/Query.html[Query].
+
+NOTE: The emitted `QueryChange` contains the entire new result set of the query, not just the delta.
+
+=== Publish Document Changes
+
+To get a publisher that emits `CollectionChange` events whenever documents in a collection change:
+
+* Use the `changePublisher` function with the collection.
+* Optionally, specify the dispatch queue on which the changes are to be delivered.
+By default, the main queue is used.
+
+For details, see FIXME: {url-api-references}/Classes/Collection.html#/Combine%20Publisher[Combine Publisher].
+
+To get a publisher that emits `DocumentChange` events whenever a specific document in a collection changes:
+
+* Use the `documentChangePublisher` function with the collection.
+* Specify the document ID.
+* Optionally, specify the dispatch queue on which the changes are to be delivered.
+By default, the main queue is used.
+
+For details, see FIXME: {url-api-references}/Classes/Collection.html#/Combine%20Publisher[Combine Publisher].
+
+=== Publish Replicator Changes
+
+To get a publisher that emits `ReplicatorChange` events when a replicator's status changes:
+
+* Use the `changePublisher` function with the replicator.
+* Optionally, specify the dispatch queue on which the changes are to be delivered.
+By default, the main queue is used.
+
+For details, see FIXME: {url-api-references}/Classes/Replicator.html#/Combine%20Publisher[Combine Publisher].
+
+To get a publisher that emits `DocumentReplication` events whenever documents are pushed or pulled during replication:
+
+* Use the `documentReplicationPublisher` function with the replicator.
+* Optionally, specify the dispatch queue on which the changes are to be delivered.
+By default, the main queue is used.
+
+For details, see FIXME: {url-api-references}/Classes/Replicator.html#/Combine%20Publisher[Combine Publisher].
+
+== Combine Framework
+
+To align with declarative programming paradigms, the Reactive APIs introduce support for the Combine framework.
+These APIs provide a declarative and efficient way to handle change notifications, enabling developers to seamlessly integrate Couchbase Lite with reactive Swift applications.
+
+The Reactive APIs allow for automatic updates to UI components, streamlined data pipelines, and improved code readability by reducing reliance on manual observation.
+
+=== Version Compatibility
+
+The Combine framework is available in iOS 13 and later, and macOS 10.15 to 14.
+
+=== Examples
+
+.ViewModel with Combine Framework
+====
+[source,swift]
+----
+@MainActor
+class TodoViewModel: ObservableObject {
+   @Published var todos: [Task] = []
+
+   private let db: Database
+   private let tasks: Collection
+   private var cancellables = Set<AnyCancellable>()
+
+   init() {
+       self.db = AppDataStore.shared.database
+       self.tasks = db.collection(name: "tasks")
+
+
+       let query = "SELECT meta().id, title, completed from tasks"
+       try? db.createQuery(query).publish()
+           .map { $0.results?.data(as: Task.self) ?? [] }
+           .sink { [weak self] tasks in self?.todos = tasks }
+           .store(in: &cancellables)
+   }
+
+   func addTask(title: String) throws {
+       try tasks.save(from: Task(title: title))
+   }
+  
+   func toggleCompletion(for task: Task) throws {
+       if let index = todos.firstIndex(where: { $0.id == task.id }) {
+           todos[index].completed.toggle() // Reflect UI right away
+           try tasks.save(from: todos[index])
+       }
+   }
+  
+   func deleteTask(_ task: Task) throws {
+       try tasks.delete(for: task)
+   }
+}
+----
+====
+
+.View with Combine Framework
+====
+[source,swift]
+----
+​​struct TodoListView: View {
+    @StateObject private var viewModel = TodoViewModel()
+
+    var body: some View {
+        List {
+            ForEach(viewModel.todos) { task in
+                HStack {
+                    Text(task.title)
+                    Spacer()
+                    Button(action: {
+                        try? viewModel.toggleCompletion(for: task)
+                    }) {
+                        Image(systemName: task.completed ? "checkmark" : "circle")
+                            .foregroundColor(task.completed ? .green : .gray)
+                    }
+                }
+            }
+            .onDelete { indexSet in
+                indexSet.forEach { index in
+                    let task = viewModel.todos[index]
+                    try? viewModel.deleteTask(task)
+                }
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: { try? viewModel.addTask(title: "New Task") }) {
+                    Image(systemName: "plus")
+                }
+            }
+        }
+    }
+}
+----
+====
+
+== Observation Framework
+
+The Reactive APIs also introduce support for the Observation Framework.
+This enables you to create responsive apps that react automatically to database changes while maintaining a clean and efficient codebase.
+
+=== Version Compatibility
+
+The Observation Framework is available in iOS 17 and later, and macOS 14 and later.
+
+=== Examples
+
+.ViewModel with Observation Framework
+====
+[source,swift]
+----
+@Observable class TodoViewModel {
+    var todos: [Task] = []    // Observable property automatically tracked by SwiftUI
+
+    private let db: Database
+    private let tasks: Collection
+
+    init() {
+        self.db = AppDataStore.shared.database
+        self.tasks = db.collection(name: "tasks")
+
+        let query = "SELECT meta().id, title, completed FROM tasks"
+        
+        // Subscribe to changes and update todos directly
+        try? db.createQuery(query).publish()
+            .map { $0.results?.data(as: Task.self) ?? [] }
+            .sink { [weak self] tasks in
+                self?.todos = tasks
+            }
+    }
+
+    func addTask(title: String) throws {
+        try tasks.save(from: Task(title: title, completed: false))
+    }
+  
+    func toggleCompletion(for task: Task) throws {
+        if let index = todos.firstIndex(where: { $0.id == task.id }) {
+            todos[index].completed.toggle()
+            try tasks.save(from: todos[index])
+        }
+    }
+  
+    func deleteTask(_ task: Task) throws {
+        try tasks.delete(for: task)
+    }
+}
+----
+====
+
+.View with Observation Framework
+====
+[source,swift]
+----
+​struct TodoView: View {
+    @State var viewModel = TodoViewModel()
+    @State private var newTaskTitle = ""
+
+    var body: some View {
+        VStack {
+            TextField("New Task", text: $newTaskTitle)
+                .textFieldStyle(.roundedBorder)
+                .padding()
+            
+            Button("Add") {
+                guard !newTaskTitle.isEmpty else { return }
+                try? viewModel.addTask(title: newTaskTitle)
+                newTaskTitle = ""
+            }
+
+            List(viewModel.todos, id: \.id) { task in
+                HStack {
+                    Button(action: { try? viewModel.toggleCompletion(for: task) }) {
+                        Image(systemName: task.completed ? "checkmark.circle.fill" : "circle")
+                    }
+
+                    Text(task.title)
+                        .strikethrough(task.completed)
+
+                    Spacer()
+
+                    Button(action: { try? viewModel.deleteTask(task) }) {
+                        Image(systemName: "trash")
+                    }
+                }
+            }
+        }
+        .padding()
+    }
+}
+----
+====
+
+// == See Also
+
+// * xref:{param-module}:gs-install.adoc[Install Couchbase Lite and Vector Search]
