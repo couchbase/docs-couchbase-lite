@@ -170,6 +170,9 @@ OUTER: while (<>) {
     # <<csharp:replication:::p2psync-websocket.adoc,Peer-to-Peer>> 
     s/<<(.*?):::(.*?\.adoc),(.*?)>>/xref:$1:$2\[$3]/g;
 
+    # delete the spurious *reset* of toclevels (only needed in Assembler based single page)
+    s/:page-toclevels: \d$//;
+
     # don't print more than 2 blank lines in a row
     if (length == 1) {
         next if $blanks++ >= 2;
