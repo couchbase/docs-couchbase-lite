@@ -18,7 +18,7 @@ ifdef::show_edition[:page-edition: {release}] {enterprise}
 --
 Description -- _{description}_ +
 _Abstract -- How to set up a Replicator to connect with a Listener and replicate changes using peer-to-peer sync_ +
-Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift[API Reference]  |  xref:swift:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:swift:p2psync-websocket-using-active.adoc[Active Peer]
+Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift[API Reference]  |  xref:swift:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:swift:p2psync-websocket-using-active.adoc[Active Peer]
 --
 
 
@@ -82,7 +82,7 @@ Here we say to provide _Basic Authentication_ credentials. Other options are ava
 [#api-references]
 == API References
 
-You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift[Swift API References] here.
+You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift[Swift API References] here.
 
 [#device-discovery]
 == Device Discovery
@@ -106,7 +106,7 @@ In this section::
 === Configure Target
 
 Use the
-Initialize and define the replication configuration with local and remote database locations using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html[ReplicatorConfiguration] object.
+Initialize and define the replication configuration with local and remote database locations using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html[ReplicatorConfiguration] object.
 
 The constructor provides:
 
@@ -142,8 +142,8 @@ to ensure TLS encryption -- strongly recommended in production -- or `ws://`)
 
 Here we define the direction and type of replication we want to initiate.
 
-We use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html[ReplicatorConfiguration]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC14replicatorTypeAA0dG0Ovp[replicatorType] and
-`https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC10continuousSbvp[continuous]` parameters, to tell the replicator:
+We use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html[ReplicatorConfiguration]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC14replicatorTypeAA0dG0Ovp[replicatorType] and
+`https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC10continuousSbvp[continuous]` parameters, to tell the replicator:
 
 * The type (or direction) of the replication:
 `*pushAndPull*`; `pull`; `push`
@@ -200,14 +200,14 @@ h|Property
 h|Use cases
 h|Description
 
-|https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC9heartbeatSdvp[heartbeat()]
+|https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC9heartbeatSdvp[heartbeat()]
 a|* Reduce to detect connection errors sooner
 * Align to load-balancer or proxy `keep-alive` interval -- see Sync Gateway's topic xref:sync-gateway::load-balancer.adoc#websocket-connection[Load Balancer - Keep Alive]
 a|The interval (in seconds) between the heartbeat pulses.
 
 Default: The replicator pings the listener every 300 seconds.
 
-|https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC10maxAttemptsSivp[maxAttempts()]
+|https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC10maxAttemptsSivp[maxAttempts()]
 |Change this to limit or extend the number of retry attempts.
 a| The maximum number of retry attempts
 
@@ -219,7 +219,7 @@ a| The maximum number of retry attempts
 ** Continuous replication = maximum integer value
 * Negative values generate a Couchbase exception `InvalidArgumentException`
 
-|https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC16maxAttemptWaitTimeSdvp[maxAttemptWaitTime()]
+|https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC16maxAttemptWaitTimeSdvp[maxAttemptWaitTime()]
 |Change this to adjust the interval between retries.
 a|The maximum interval between retry attempts
 
@@ -248,9 +248,9 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags="replication-retr
 ----
 ====
 
-<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC9heartbeatSdvp[heartbeat()] to set the required interval (in seconds) between the heartbeat pulses
-<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC10maxAttemptsSivp[maxAttempts()] to set the required number of retry attempts
-<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC16maxAttemptWaitTimeSdvp[maxAttemptWaitTime()] to set the required interval between retry attempts.
+<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC9heartbeatSdvp[heartbeat()] to set the required interval (in seconds) between the heartbeat pulses
+<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC10maxAttemptsSivp[maxAttempts()] to set the required number of retry attempts
+<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC16maxAttemptWaitTimeSdvp[maxAttemptWaitTime()] to set the required interval between retry attempts.
 
 
 [#authenticate-listener]
@@ -262,7 +262,7 @@ Note that the client cannot authenticate the server if TLS is turned off.
 When TLS is enabled (Sync Gateway's default) the client _must_ authenticate the server.
 If the server cannot provide acceptable credentials then the connection will fail.
 
-Use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html[ReplicatorConfiguration]` properties {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC23pinnedServerCertificateSo03SecH3RefaSgvp[setPinnedServerCertificate()], to tell the replicator how to verify server-supplied TLS server certificates.
+Use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html[ReplicatorConfiguration]` properties {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC23pinnedServerCertificateSo03SecH3RefaSgvp[setPinnedServerCertificate()], to tell the replicator how to verify server-supplied TLS server certificates.
 
 * If there is a pinned certificate, nothing else matters, the server cert must *exactly* match the pinned certificate.
 * If there are no pinned certs and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
@@ -327,12 +327,12 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tag=p2p-act-rep-config
 
 Here we define the credentials that the client can present to the server if prompted to do so in order that the server can authenticate it.
 
-We use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html[ReplicatorConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC13authenticatorAA13Authenticator_pSgvp[authenticator] method to define the authentication method to the replicator.
+We use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html[ReplicatorConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC13authenticatorAA13Authenticator_pSgvp[authenticator] method to define the authentication method to the replicator.
 
 
 [#basic-authentication]
 === Basic Authentication
-Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/BasicAuthenticator.html[BasicAuthenticator]` to supply basic authentication credentials (username and word).
+Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/BasicAuthenticator.html[BasicAuthenticator]` to supply basic authentication credentials (username and word).
 
 // Example 5
 
@@ -354,10 +354,10 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags="p2p-act-rep-auth
 
 [#certificate-authentication]
 === Certificate Authentication
-Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ClientCertificateAuthenticator.html[ClientCertificateAuthenticator]` to configure the client TLS certificates to be presented to the server, on connection.
-This applies only to the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/URLEndpointListener.html[URLEndpointListener].
+Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ClientCertificateAuthenticator.html[ClientCertificateAuthenticator]` to configure the client TLS certificates to be presented to the server, on connection.
+This applies only to the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/URLEndpointListener.html[URLEndpointListener].
 
-NOTE: The *server* (listener) must have `disableTLS` set `false` and have a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ClientCertificateAuthenticator.html[ClientCertificateAuthenticator] configured, or it will never ask for this client's certificate.
+NOTE: The *server* (listener) must have `disableTLS` set `false` and have a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ClientCertificateAuthenticator.html[ClientCertificateAuthenticator] configured, or it will never ask for this client's certificate.
 
 The certificate to be presented to the server will need to be signed by the root certificates or be valid based on the authentication callback set to the listener via ListenerCertificateAuthenticator.
 
@@ -380,15 +380,15 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags="p2p-tlsid-tlside
 ====
 
 <.> Get an identity from secure storage and create a TLS Identity object
-<.> Set the authenticator to https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ClientCertificateAuthenticator.html[ClientCertificateAuthenticator] and configure it to use the retrieved identity
+<.> Set the authenticator to https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ClientCertificateAuthenticator.html[ClientCertificateAuthenticator] and configure it to use the retrieved identity
 
 
 [#initialize-replicator]
 == Initialize Replicator
 
 
-Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html[Replicator]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC6configAcA0D13ConfigurationC_tcfc[init(config:)] constructor, to initialize the replicator with the configuration you have defined.
-You can, optionally, add a change listener (see <<lbl-repl-mon>>) before starting the replicator running using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC5startyyF[start()].
+Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator.html[Replicator]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC6configAcA0D13ConfigurationC_tcfc[init(config:)] constructor, to initialize the replicator with the configuration you have defined.
+You can, optionally, add a change listener (see <<lbl-repl-mon>>) before starting the replicator running using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC5startyyF[start()].
 
 // Example 7
 .Initialize and run replicator
@@ -415,7 +415,7 @@ In this section::
 <<lbl-repl-status>>  |
 <<lbl-repl-pend>>
 
-You can monitor a replication’s status by using a combination of <<lbl-repl-chng>> and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV8activityAC13ActivityLevelOvp[Activity].
+You can monitor a replication’s status by using a combination of <<lbl-repl-chng>> and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV8activityAC13ActivityLevelOvp[Activity].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
 
@@ -427,27 +427,27 @@ You can add and a replicator change listener at any point; it will report change
 .Best Practice
 TIP: Don't forget to save the token so you can remove the listener later
 
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC17addChangeListeneryAA0G5TokenCyAA0dF0VcF[addChangeListener(_:)]) -- see: <<ex-repl-mon>>.
+Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC17addChangeListeneryAA0G5TokenCyAA0dF0VcF[addChangeListener(_:)]) -- see: <<ex-repl-mon>>.
 You will then be asynchronously notified of state changes.
 
-You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#//s:18CouchbaseLiteSwift10ReplicatorC20removeChangeListener9withTokenyAA0gI0C_tF[removeChangeListener(withToken:)].
+You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator.html#//s:18CouchbaseLiteSwift10ReplicatorC20removeChangeListener9withTokenyAA0gI0C_tF[removeChangeListener(withToken:)].
 
 
 [#lbl-repl-status]
 === Replicator Status
 
 You can use the
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html[Replicator] class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6Status[Status] property
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator.html[Replicator] class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6Status[Status] property
 to check the replicator status.
 That is, whether it is actively transferring data or if it has stopped -- see: <<ex-repl-mon>>.
 
 The returned _ReplicationStatus_ structure comprises:
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV8activityAC13ActivityLevelOvp[Activity] -- stopped, offline, connecting, idle or busy -- see states described in: <<tbl-states>>
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV8progressAC8ProgressVvp[Progress]
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV8activityAC13ActivityLevelOvp[Activity] -- stopped, offline, connecting, idle or busy -- see states described in: <<tbl-states>>
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV8progressAC8ProgressVvp[Progress]
 ** completed -- the total number of changes completed
 ** total -- the total number of changes to be processed
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV5errors5Error_pSgvp[Error] -- the current error, if any
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV5errors5Error_pSgvp[Error] -- the current error, if any
 
 // Example 8
 [#ex-repl-mon]
@@ -534,16 +534,16 @@ It is generally recommended to stop replications before going into the backgroun
 [#lbl-repl-pend]
 === Documents Pending Push
 
-TIP: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC17isDocumentPendingySbSSKF[Replicator.isDocumentPending()] is quicker and more efficient.
+TIP: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC17isDocumentPendingySbSSKF[Replicator.isDocumentPending()] is quicker and more efficient.
 Use it in preference to returning a list of pending document IDs, where possible.
 
 You can check whether documents are waiting to be pushed in any forthcoming sync by using either of the following API methods:
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC18pendingDocumentIdsShySSGyKF[Replicator.pendingDocumentIds()] method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.
+* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC18pendingDocumentIdsShySSGyKF[Replicator.pendingDocumentIds()] method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.
 +
 This can be very useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it is safe to exit.
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC17isDocumentPendingySbSSKF[Replicator.isDocumentPending()] method to quickly check whether an individual document is pending a push.
+* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC17isDocumentPendingySbSSKF[Replicator.isDocumentPending()] method to quickly check whether an individual document is pending a push.
 
 [#ex-pending]
 .Use Pending Document ID API
@@ -559,16 +559,16 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags="replication-pend
 ----
 ====
 
-<.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC18pendingDocumentIdsShySSGyKF[Replicator.pendingDocumentIds()] returns a list of the document IDs for all documents waiting to be pushed.
+<.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC18pendingDocumentIdsShySSGyKF[Replicator.pendingDocumentIds()] returns a list of the document IDs for all documents waiting to be pushed.
 This is a snapshot and may have changed by the time the response is received and processed.
-<.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC17isDocumentPendingySbSSKF[Replicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
+<.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC17isDocumentPendingySbSSKF[Replicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
 
 [#lbl-repl-stop]
 == Stop Sync
 
 Stopping a replication is straightforward.
-It is done using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC4stopyyF[stop()].
+It is done using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC4stopyyF[stop()].
 This initiates an asynchronous operation and so is not necessarily immediate.
 Your app should account for this potential delay before attempting any subsequent operations.
 
@@ -587,7 +587,7 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags="p2p-act-rep-stop
 ----
 ====
 
-<.> Here we initiate the stopping of the replication using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC4stopyyF[stop()] method.
+<.> Here we initiate the stopping of the replication using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC4stopyyF[stop()] method.
 It will stop any active <<lbl-repl-chng,change listener>> once the replication is stopped.
 
 
@@ -596,7 +596,7 @@ It will stop any active <<lbl-repl-chng,change listener>> once the replication i
 
 Unless you specify otherwise, Couchbase Lite's default conflict resolution policy is applied -- see xref:swift:conflict.adoc[Handling Data Conflicts].
 
-To use a different policy, specify a _conflict resolver_ using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC16conflictResolverAA08ConflictG8Protocol_pSgvp[conflictResolver] as shown in <<using-conflict-resolvers>>.
+To use a different policy, specify a _conflict resolver_ using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC16conflictResolverAA08ConflictG8Protocol_pSgvp[conflictResolver] as shown in <<using-conflict-resolvers>>.
 
 For more complex solutions you can provide a custom conflict resolver - see: xref:swift:conflict.adoc[Handling Data Conflicts].
 
@@ -692,7 +692,7 @@ If delta sync is enabled on the listener, then replication will use delta sync.
 .Concepts
 * xref:swift:landing-p2psync.adoc[Peer-to-Peer Sync]
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift[API References]
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift[API References]
 
 .
 

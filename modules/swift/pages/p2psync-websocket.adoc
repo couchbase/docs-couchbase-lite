@@ -14,7 +14,7 @@ ifdef::show_edition[:page-edition: {release}] {enterprise}
 [abstract]
 --
 Description -- _{description}_ +
-Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift[API Reference]  |  xref:swift:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:swift:p2psync-websocket-using-active.adoc[Active Peer]
+Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift[API Reference]  |  xref:swift:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:swift:p2psync-websocket-using-active.adoc[Active Peer]
 --
 
 
@@ -203,7 +203,7 @@ Core functionalities of the listener are:
 * Once the listener is started, a total number of connections or active connections can be checked.
 --
 
-API Reference: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/URLEndpointListener.html[URLEndpointListener]
+API Reference: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Classes/URLEndpointListener.html[URLEndpointListener]
 
 [#urlendpointlistenerconfiguration]
 === URLEndpointListenerConfiguration
@@ -236,13 +236,13 @@ disableTLS::
 +
 --
 // tag::config-disable-tls[]
-You can use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC10disableTLSSbvp[disableTLS] method to disable TLS communication if necessary
+You can use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC10disableTLSSbvp[disableTLS] method to disable TLS communication if necessary
 
 The `disableTLS` setting must be 'false' when _Client Cert Authentication_ is required.
 
 Basic Authentication can be used with, or without, TLS.
 
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC10disableTLSSbvp[disableTLS] works in conjunction with `TLSIdentity`, to enable developers to define the key and certificate to be used.
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC10disableTLSSbvp[disableTLS] works in conjunction with `TLSIdentity`, to enable developers to define the key and certificate to be used.
 
 * If `disableTLS` is true -- TLS communication is disabled and TLS identity is ignored.
 Active peers will use the `ws://` URL scheme used to connect to the listener.
@@ -251,15 +251,15 @@ Active peers will use the `ws://` URL scheme used to connect to the listener.
 Active peers will use the `wss://` URL scheme to connect to the listener.
 
 // end::config-disable-tls[]
-API Reference:  https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC10disableTLSSbvp[disableTLS]
+API Reference:  https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC10disableTLSSbvp[disableTLS]
 --
 
 tlsIdentity::
 +
 --
 // tag::config-tls-id[]
-Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC11tlsIdentityAA11TLSIdentityCSgvp[tlsIdentity] method to configure the TLS Identity used in TLS communication.
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s
+https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC11tlsIdentityAA11TLSIdentityCSgvp[tlsIdentity] method to configure the TLS Identity used in TLS communication.
 
 If `TLSIdentity` is not set, then the listener uses an auto-generated anonymous self-signed identity (unless `disableTLS = true`).
 Whilst the client cannot use this to authenticate the server, it will use it to encrypt communication, giving a more secure option than non-TLS communication.
@@ -271,7 +271,7 @@ The auto-generated anonymous self-signed identity is saved in secure storage for
 When the listener is not started, the identity is null.
 When TLS is disabled, the identity is always null.
 
-API Reference:  https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC11tlsIdentityAA11TLSIdentityCSgvp[tlsIdentity]
+API Reference:  https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC11tlsIdentityAA11TLSIdentityCSgvp[tlsIdentity]
 
 --
 
@@ -286,7 +286,7 @@ This should be set to one of the following:
 * Null -- there is no authentication.
 // tag::config-auth-default[]
 
-API Reference:  https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC13authenticatorAA0E13Authenticator_pSgvp[authenticator]
+API Reference:  https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC13authenticatorAA0E13Authenticator_pSgvp[authenticator]
 --
 
 readOnly::
@@ -302,7 +302,7 @@ enableDeltaSync::
 The option to enable Delta Sync and replicate only changed data also depends on the delta sync settings at database level.
 The default value is false.
 
-API Reference: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]
+API Reference: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]
 --
 
 [#security-2]
@@ -511,7 +511,7 @@ a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/s
 .Concepts
 * xref:swift:landing-p2psync.adoc[Peer-to-Peer Sync]
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift[API References]
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift[API References]
 
 .
 
