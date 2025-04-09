@@ -30,6 +30,7 @@ process() {
         ${WHAT}.
 
     ./rename.sh ${WHAT}.*
+    if [ "$WHAT" = "swift" ]; then cp swift-gs-install.adoc swift-gs-install.adoc.orig; fi
 
     for ADOC in ${WHAT}-*.adoc; do
         perl -i attributes.pl $ADOC
@@ -42,11 +43,11 @@ process() {
     done
 }
 
-process android
-process c
-process csharp -net
-process java
-process objc objective-c
+# process android
+# process c
+# process csharp -net
+# process java
+# process objc objective-c
 process swift
 
 popd

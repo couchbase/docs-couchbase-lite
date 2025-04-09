@@ -1,6 +1,7 @@
-
 = Build and Run
 :page-aliases: start/java-android-gs-build.adoc
+ifdef::show_edition[:page-edition: {release}]
+ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Build and run a starter app to validate your install of Couchbase Lite on Android
 :keywords: edge nosql api android java
@@ -9,22 +10,16 @@
 :url-getting-started-java: https://github.com/couchbase/docs-couchbase-lite/tree/release/3.1/modules/android/examples/GetStartedJava[Java]
 
 
-:source-language: Java
+// DO NOT EDIT
+include::partial$_set_page_context_for_android.adoc[]
 
-
-:source-language: Kotlin
-
-
-[abstract]
---
-Description -- _{description}_ +
-_Abstract -- This content provides sample code and instructions that enable you to test your Couchbase Lite for android installation._ +
---
-// include::ROOT:partial$block-related-get-started.adoc[]
+:param-abstract: This content provides sample code and instructions that enable you to test your Couchbase Lite for {param-name} installation.
+include::{root-partials}_show_page_header_block.adoc[]
+// include::{root-partials}block-related-get-started.adoc[]
+// DO NOT EDIT
 
 
 // :ziputils: ROOT:example$/java-android/app/src/main/java/com/couchbase/code_snippets/ZipUtils.java
-[#introduction]
 == Introduction
 
 
@@ -50,7 +45,6 @@ If you had problems, or just want more information on the app, there's more belo
 image::ROOT:getstarted-output-ktx.png[,600]
 
 
-[#getting-started-app]
 == Getting Started App
 The Getting Started app shows examples of the essential Couchbase for Android CRUD operations, including:
 
@@ -66,7 +60,6 @@ The Getting Started app shows examples of the essential Couchbase for Android CR
 Whilst no exemplar of a real application, it will give you a good idea how to get started using Couchbase Lite.
 
 
-[#add-the-app-to-your-own-project]
 == Add the App to Your Own Project
 
 
@@ -79,29 +72,28 @@ Whilst no exemplar of a real application, it will give you a good idea how to ge
 You should be able to create a document and persist it to the database.
 
 
-[#sample-code-in-detail]
 === Sample Code in Detail
 [#ex-test-code]
 ====
-[tabs]
+[{tabs}]
 =====
-
 
 Kotlin::
 +
 --
 [source, Kotlin]
 ----
+// include::example$GetStartedKotlin/app/src/main/java/com/couchbase/android/getstarted/kotlin/DBManager.kt[tag="getting-started"]
 include::example$GetStartedKotlin/app/src/main/java/com/couchbase/android/getstarted/kotlin/DBManager.kt[tag="getting-started"]
 ----
 --
-
 
 Java::
 +
 --
 [source, Java]
 ----
+// include::example$GetStartedJava/app/src/main/java/com/couchbase/android/getstarted/java/DBManager.java[tag="getting-started"]
 include::example$GetStartedJava/app/src/main/java/com/couchbase/android/getstarted/java/DBManager.java[tag="getting-started"]
 ----
 --
@@ -118,7 +110,6 @@ include::example$GetStartedJava/app/src/main/java/com/couchbase/android/getstart
 <.> Optionally, initiate a replication
 ====
 
-[#snags-and-pitfalls]
 == Snags and Pitfalls
 
 
@@ -126,19 +117,18 @@ Mostly around Gradle and versions.
 You may find you need to change IDE Build Tools settings to use Java 11 for Gradle, for instance.
 
 Using this app with Sync Gateway and Couchbase Server obviously requires you have, or install, working versions of both.
-See also -- xref:sync-gateway::get-started-install.adoc[Install Sync Gateway]
+See also -- {sgw-install--xref}
 
 
-[#minification]
 == Minification
 
 
-An application that enables minification must ensure that certain pieces of Couchbase{nbsp}Lite library code are not changed -- see <<ruleset>> for a near-minimal rule set that retains the needed code:
+An application that enables minification must ensure that certain pieces of {cbl} library code are not changed -- see <<ruleset>> for a near-minimal rule set that retains the needed code:
 
 [#ruleset]
 .Ruleset
 ====
-[source, Kotlin]
+[source, {source-language}]
 ----
 -keep class com.couchbase.lite.ConnectionStatus { <init>(...); }
 -keep class com.couchbase.lite.LiteCoreException { static <methods>; }
@@ -159,46 +149,4 @@ An application that enables minification must ensure that certain pieces of Couc
 ====
 
 
-[#related-content]
-== Related Content
-++++
-<div class="card-row three-column-row">
-++++
-
-[.column]
-====== {empty}
-.How to . . .
-* xref:android:gs-prereqs.adoc[Prerequisites]
-* xref:android:gs-install.adoc[Install]
-* xref:android:gs-build.adoc[Build and Run]
-
-
-.
-
-[.column]
-====== {empty}
-.Learn more . . .
-* xref:android:database.adoc[Databases]
-* xref:android:document.adoc[Documents]
-* xref:android:blob.adoc[Blobs]
-* xref:android:replication.adoc[Remote Sync Gateway]
-* xref:android:conflict.adoc[Handling Data Conflicts]
-
-.
-
-
-[.column]
-====== {empty}
-.Dive Deeper . . .
-https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
-https://blog.couchbase.com/[Blog] |
-https://docs.couchbase.com/tutorials/[Tutorials]
-
-.
-
-
-++++
-</div>
-++++
-
-
+include::{root-partials}block-related-content-start.adoc[]

@@ -1,53 +1,56 @@
-
 = Build and Run
 :page-aliases: start/java-gs-build.adoc
+ifdef::show_edition[:page-edition: {release}]
+ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Build and run a starter app to validate your install of Couchbase Lite on Java
 :keywords: mobile edge nosql api Java JVM web-app device-app
 
 
-:source-language: Java
+:loc--finding-db-file--xref: xref:database.adoc#lbl-find-db-loc[Finding a Database File]
 
+include::partial$_set_page_context_for_java.adoc[]
 
 // :JP: Java
 :tabs:
 
 
-[abstract]
---
-Description -- _{description}_ +
-_Abstract -- This content provides sample code and instructions that enable you to test your Couchbase Lite for java installation._ +
-Related Content -- xref:java:gs-install.adoc[Install] | xref:java:gs-prereqs.adoc[Prerequisites] | xref:java:gs-build.adoc[Build and Run] |
---
-// include::ROOT:partial$block-related-get-started.adoc[]
+// DO NOT EDIT
+:param-abstract: This content provides sample code and instructions that enable you to test your Couchbase Lite for {param-name} installation.
+:param-related: {gs-install--xref} | {gs-prereqs--xref} | {gs-build--xref} |
+:topic-group:
+include::{root-partials}_show_page_header_block.adoc[]
+// include::{root-partials}block-related-get-started.adoc[]
+// DO NOT EDIT
 
 
-[#build-a-getting-started-app]
 == Build a Getting Started App
 
-This section explains how to validate your configured build environment by building a starter app that uses many of Couchbase{nbsp}Lite's more common features.
+This section explains how to validate your configured build environment by building a starter app that uses many of {cblJP}'s more common features.
 
-// TIP: The GettingStarted app can be downloaded from GitHub link:https://github.com/ibsoln/cblGettingStarted.git[GettingStarted].
+// TIP: The {nmMobStarterApp} app can be downloaded from GitHub link:{url-cb-mobStarterApp}[{nmMobStarterApp}].
 
-The GettingStarted app demonstrates how to use Couchbase{nbsp}Lite. Console and Web App versions are available.
+The {nmMobStarterApp} app demonstrates how to use {cblJP}. Console and Web App versions are available.
 
 .Development-type Scenarios
-[tabs]
+[{tabs}]
 ====
 
 Desktop App::
 +
 --
 
-TIP: Ensure you added the Couchbase{nbsp}Lite dependency to your `build.gradle` file
+TIP: Ensure you added the {cbl} dependency to your `build.gradle` file
 
 Create, build and run a new project using the following `GettingStarted.java` code:
 
 
 [source,java]
 ----
+// include::example$GetStartedDesktop/src/main/java/com/couchbase/gettingstarted/Main.java[tags=getting-started,indent=0]
 include::example$GetStartedDesktop/src/main/java/com/couchbase/gettingstarted/Main.java[tags=getting-started,indent=0]
 ----
+
 <.> Initialize the library
 <.> Create a database
 <.> Create a collection
@@ -69,7 +72,7 @@ Web App::
 +
 --
 
-This section explains how to set-up a build project to create Couchbase{nbsp}Lite web apps using gradle and Intellij IDEA.
+This section explains how to set-up a build project to create {cblJP} web apps using {gpBuildTool} and {gpIDE}.
 
 *Steps*
 
@@ -77,16 +80,18 @@ This section explains how to set-up a build project to create Couchbase{nbsp}Lit
 +
 [source,groovy,subs=attributes+]
 ----
+// include::example$GetStartedWS/build.gradle.sample
 include::example$GetStartedWS/build.gradle.sample
 ----
 
-. Within Intellij IDEA, open the new project folder
+. Within {gpIDE}, open the new project folder
 +
 If you don't have auto-import enabled, then accept the *Import from Gradle* prompt that appears at the bottom right of the screen.
 . Create a Java class _DBManager_ using this code:
 +
 [source, java]
 ----
+// include::example$GetStartedWS/src/main/java/com/couchbase/gettingstarted/DBManager.java[tags=getting-started,indent=0]
 include::example$GetStartedWS/src/main/java/com/couchbase/gettingstarted/DBManager.java[tags=getting-started,indent=0]
 ----
 
@@ -96,6 +101,7 @@ include::example$GetStartedWS/src/main/java/com/couchbase/gettingstarted/DBManag
 +
 [source, html]
 ----
+// include::example$GetStartedWS/src/main/webapp/index.html
 include::example$GetStartedWS/src/main/webapp/index.html
 ----
 
@@ -103,13 +109,14 @@ include::example$GetStartedWS/src/main/webapp/index.html
 +
 [source, html]
 ----
+// include::example$GetStartedWS/src/main/webapp/showDbItems.jsp
 include::example$GetStartedWS/src/main/webapp/showDbItems.jsp
 ----
 
 . Build, deploy and run the app using `jettyRun`
 +
 // !!!GBM: THIS IMAGE PROBABLY NEEDS UPDATING
-image::java:GradleMenuWebApp.png[,300]
+image::GradleMenuWebApp.png[,300]
 
 .. Point your browser to: `localhost:8080/'
 +
@@ -130,26 +137,24 @@ About the Starter App::
 --
 
 anchor:bmkAboutGettingStarted[]
-The GettingStarted app will:
+The {nmMobStarterApp} app will:
 
 * Create a database
 +
-The app creates its database in the `/getting-started.cblite2` directory relative to its root location when run (See: <<lbl-find-db-loc,Finding a Database File>>).
+The app creates its database in the `{nmSampleAppDbPath}` directory relative to its root location when run (See: {loc--finding-db-file--xref}).
 
-TIP: Explicitly state your required database location when creating your database (see: <<lbl-find-db-loc,Finding a Database File>> for how to do this)
+TIP: Explicitly state your required database location when creating your database (see: {loc--finding-db-file--xref} for how to do this)
 
 * Add content to the DB
 * Run a simple query counting the DB rows
-* Start a one-shot, bi-directional replication using _Sync{nbsp}Gateway and _Couchbase{nbsp}Server_
+* Start a one-shot, bi-directional replication using {sg} and {svr}
 * Produce a simple report on the db Contents
 +
 // !!!GBM: THIS IMAGE PROBABLY NEEDS UPDATING
 image::java:cblOutput.png[,400]
 
-NOTE: Before starting your app ensure you have started both your _Couchbase{nbsp}Server_ and _Sync{nbsp}Gateway instances.
+NOTE: Before starting your app ensure you have started both your {svr} and {sg} instances.
 
 --
 
 ====
-
-

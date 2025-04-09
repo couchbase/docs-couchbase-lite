@@ -21,6 +21,7 @@ my %keep = map { $_ => 1 } (qw/
     url-apt-pkg
     url-apt-pkg-file
     barsep
+    loc--finding-db-file--xref
 /);
 
 my %override = (
@@ -60,6 +61,9 @@ my $strip_headings;
 my $TABS;
 
 OUTER: while (<>) {
+
+    my $DEBUG = /\[#swift:gs-install:::case-1\]/;
+
     # expand attributes
     s/\{(\S+?)\}/expand($1)/eg;
 
@@ -123,11 +127,12 @@ OUTER: while (<>) {
         else { die "Unexpected: $_" }
     }
     elsif ($TABS) {
-        s/^\[#[^,]*\]//; # delete broken anchors within tabset
+        # s/^\[#[^,]*\]//; # delete broken anchors within tabset
         if (/^$TABS$/) { $TABS = undef; }
     }
     elsif (/^\[tabs/) { $TABS = "START" }
 
+    # die "GOT $_" if $DEBUG;
 
     # images
     s{image::couchbase-lite/current/_images/}{image::ROOT:};
@@ -156,6 +161,7 @@ OUTER: while (<>) {
     # get rid of 'DO NOT EDIT' and friends.
     s/^\/\/ \s*((BEGIN|END) -- )?DO NOT.*//;
 
+
     # de-mangle ::: links in block headers, #fragments, and <<links>>
     s/\[.column.*\]/[.column]/;
     s/#\S*:::/#/;
@@ -179,6 +185,7 @@ OUTER: while (<>) {
     } else {
         $blanks = 0;
     }
+
 
     # print lines that we didn't swallow as attribute definitions
     print;
