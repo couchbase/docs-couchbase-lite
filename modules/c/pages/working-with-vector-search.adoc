@@ -54,21 +54,21 @@ For more information on specific configurations, see xref:c:vector-search.adoc[V
 |Configuration Name |Is Required |Default Configuration |Further Information
 
 |Expression
-|image:couchbase-lite/current/_images/yes.png[]
+|image:ROOT:yes.png[]
 |No default
 | A SQL++ expression indicating where to get the vectors.
 A document property for embedded vectors or
 `prediction()` to call a registered Predictive model.
 |Number of Dimensions
-|image:couchbase-lite/current/_images/yes.png[]
+|image:ROOT:yes.png[]
 |No default
 |2-4096
 |Number of Centroids
-|image:couchbase-lite/current/_images/yes.png[]
+|image:ROOT:yes.png[]
 |No default
 |1-64000. The general guideline is an approximate square root of the number of documents
 |Distance Metric
-|image:couchbase-lite/current/_images/no.png[]
+|image:ROOT:no.png[]
 |Squared Euclidean Distance (euclideanSquared)
 a|You can set the following alternates as your Distance Metric:
 
@@ -79,7 +79,7 @@ a|You can set the following alternates as your Distance Metric:
 * dot (negated dot product)
 
 |Encoding
-|image:couchbase-lite/current/_images/no.png[]
+|image:ROOT:no.png[]
 | Scalar Quantizer(SQ) or SQ-8 bits
 a|There are three possible configurations:
 
@@ -91,7 +91,7 @@ Reduces the number of bits per dimension
 Reduces the number of dimensions and bits per dimension
 
 |Training Size
-|image:couchbase-lite/current/_images/no.png[]
+|image:ROOT:no.png[]
 |The default values for both the minimum and maximum training size is zero.
 The training size is calculated based on the number of Centroids and the encoding type.
 
@@ -103,11 +103,11 @@ a| The guidelines for the minimum and maximum training size are as follows:
 * The maximum training size is set to 256x the number of Centroids or 2 ^PQ's^ ^bits^ when PQ is used
 
 |NumProbes
-|image:couchbase-lite/current/_images/no.png[]
+|image:ROOT:no.png[]
 |The default value is 0. The number of Probes is calculated based on the number of Centroids
 |A guideline for setting a custom number of probes is at least 8 or 0.5% the number of Centroids
 |isLazy
-|image:couchbase-lite/current/_images/no.png[]
+|image:ROOT:no.png[]
 |False
 |Setting the value to true will enable lazy mode for the vector index
 
@@ -246,24 +246,24 @@ WARNING: If you use a different distance metric in the `APPROX_VECTOR_DISTANCE()
 |Parameter |Is Required |Description
 
 |vector-expr
-|image:couchbase-lite/current/_images/yes.png[]
+|image:ROOT:yes.png[]
 |The expression returning a vector (NOT Index Name).
 Must match the expression specified in the vector index exactly.
 |target-vector
-|image:couchbase-lite/current/_images/yes.png[]
+|image:ROOT:yes.png[]
 |The target vector.
 |metric
-|image:couchbase-lite/current/_images/no.png[]
+|image:ROOT:no.png[]
 |Values : "EUCLIDEAN_SQUARED", “L2_SQUARED”, “EUCLIDEAN”, “L2”,  ”COSINE”, “DOT”.
 If not specified, the metric set in the vector index is used.
 If specified, the metric must match with the metric set in the vector index.
 This optional parameter allows multiple indexes to be attached to the same field in a document.
 |nprobes
-|image:couchbase-lite/current/_images/no.png[]
+|image:ROOT:no.png[]
 |Number of buckets to search for the nearby vectors.
 If not specified, the nprobes set in the vector index is used.
 |accurate
-|image:couchbase-lite/current/_images/no.png[]
+|image:ROOT:no.png[]
 |If not present, false will be used, which means that the quantized/encoded vectors in the index will be used for calculating the distance.
 
 IMPORTANT: Only accurate = false is supported

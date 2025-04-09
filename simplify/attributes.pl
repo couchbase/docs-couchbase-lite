@@ -115,7 +115,9 @@ OUTER: while (<>) {
 
     # images
     s{image::couchbase-lite/current/_images/}{image::ROOT:};
+    s{image:couchbase-lite/current/_images/}{image:ROOT:};
     s{image::couchbase-lite/current/(\w+)/_images/}{image::$1:};
+    s{image:couchbase-lite/current/(\w+)/_images/}{image:$1:};
 
     # de-mangle headings
     if (/^(=+) \S/) {
