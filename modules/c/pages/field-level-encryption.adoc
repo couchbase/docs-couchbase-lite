@@ -47,9 +47,9 @@ https://docs.couchbase.com/python-sdk/current/concept-docs/encryption.html#forma
 == Encryptable Type
 
 
-The API includes a `CBLEncryptable` type, representing an encryptable value to be automatically encrypted/decrypted the replicator -- see <<ex-encryptable-type>>.
+The API includes a `CBLEncryptable` type, representing an encryptable value to be automatically encrypted/decrypted the replicator -- see xref:c:field-level-encryption.adoc#ex-encryptable-type[].
 
-You declare  properties requiring encryption by the replicator, as a dictionary with the structure shown in <<ex-encryptable-type>>.
+You declare  properties requiring encryption by the replicator, as a dictionary with the structure shown in xref:c:field-level-encryption.adoc#ex-encryptable-type[].
 
 [#ex-encryptable-type]
 .Encryptable-type Dictionary Structure
@@ -79,18 +79,18 @@ The key for the value can be either of the following:
 == Replicator Decryption
 
 
-Pull replication detects `encryptable` values before saving them to the local database and decrypts them using the property decryption callback function -- see: <<lbl-decryption-callback>> for more on the decryption callback function.
+Pull replication detects `encryptable` values before saving them to the local database and decrypts them using the property decryption callback function -- see: xref:c:field-level-encryption.adoc#lbl-decryption-callback[] for more on the decryption callback function.
 
-On successful decryption the replicator saves the property in encryptable dictionary format (removing the `encrypted$` prefix) -- see: <<ex-encryptable-type>>.
+On successful decryption the replicator saves the property in encryptable dictionary format (removing the `encrypted$` prefix) -- see: xref:c:field-level-encryption.adoc#ex-encryptable-type[].
 
 
 [#replicator-encryption]
 == Replicator Encryption
 
 
-Push replication detects `encryptable` values before pushing them to the remote database and encrypts them using the property encryption callback function -- see: <<lbl-encryption-callback>>.
+Push replication detects `encryptable` values before pushing them to the remote database and encrypts them using the property encryption callback function -- see: xref:c:field-level-encryption.adoc#lbl-encryption-callback[].
 
-On successful encryption the replicator transforms the property into a format compatible with Couchbase Server SDK -- see: <<ex-server-encryptable>>.
+On successful encryption the replicator transforms the property into a format compatible with Couchbase Server SDK -- see: xref:c:field-level-encryption.adoc#ex-server-encryptable[].
 
 
 [#server-sdk-compatibility]
@@ -98,7 +98,7 @@ On successful encryption the replicator transforms the property into a format co
 
 
 Couchbase Lite's replicator ensures compatibility with Server SDK’s field level.
-Both Push and Pull replication transform Couchbase Lite's encryptable dictionary to-and-from Server SDK Encrypted Field dictionary structure -- see: <<ex-server-encryptable>>.
+Both Push and Pull replication transform Couchbase Lite's encryptable dictionary to-and-from Server SDK Encrypted Field dictionary structure -- see: xref:c:field-level-encryption.adoc#ex-server-encryptable[].
 
 Push replicator::
 * Adds the prefix `encrypted$` to the key.
@@ -123,7 +123,7 @@ Pull replicator::
 * Transforms the dictionary by:
 ** Removing `alg`
 ** Replacing the `ciphertext` key with the `value`
-** Storing the decrypted key/value in <<ex-encryptable-type,CBLEncryptable>> format
+** Storing the decrypted key/value in xref:c:field-level-encryption.adoc#ex-encryptable-type[CBLEncryptable] format
 
 
 .Server SDK Encrypted Field Structure
@@ -156,7 +156,7 @@ Its directory structure differs CBL's encryptable dictionary when serializing th
 Provide an encryption callback function https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#gab116a23be8bd24b86349379f370ef60c[CBLPropertyEncryptor] to encrypt encryptable properties during replication.
 
 After encryption the FLSliceResult is released and the returned value zeroed.
-See <<ex-get-att>> for an example encryptor callback function.
+See xref:c:field-level-encryption.adoc#ex-get-att[] for an example encryptor callback function.
 
 If you return a null slice the replicator will fail and log a crypto error message.
 
@@ -165,7 +165,7 @@ If you return a null slice the replicator will fail and log a crypto error messa
 
 Provide a decryption callback function https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga24a60a3d6f9816e1d32464cc31a15c0c[CBLPropertyDecryptor] to decrypt any encryptable properties.
 After decryption the FLSliceResult is released and the returned value zeroed.
-See <<ex-get-att>> for an example decryptor callback function.
+See xref:c:field-level-encryption.adoc#ex-get-att[] for an example decryptor callback function.
 
 If you return a null slice without an error the replicator skips and saves the property as received.
 
@@ -184,7 +184,7 @@ include::c:example$code_snippets/main.cpp[tag=replicator_property_encryptor_decr
 [#callback-configuration]
 == Callback Configuration
 
-You register the callback function for use by declaring them in the replicator configuration using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#ab731bf9f140158d6967c1af645d8744a[propertyEncryptor()] and-or https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#ab6a0d9e0830755d284039018a09c27d6[propertyDecryptor()] -- see: <<ex-callback-config>>
+You register the callback function for use by declaring them in the replicator configuration using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#ab731bf9f140158d6967c1af645d8744a[propertyEncryptor()] and-or https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_configuration.html#ab6a0d9e0830755d284039018a09c27d6[propertyDecryptor()] -- see: xref:c:field-level-encryption.adoc#ex-callback-config[]
 
 If you do not provide an encryption callback:
 
@@ -211,7 +211,7 @@ include::c:example$code_snippets/main.cpp[tag=replicator_property_encryption]
 == Querying Encryptables
 
 
-Encrypted values can be queried -- see <<ex-query>>.
+Encrypted values can be queried -- see xref:c:field-level-encryption.adoc#ex-query[].
 The query result of an encryptable value is `CBLEncryptable`
 
 CBLEncryptable exposes a _value_ property for query purposes.
@@ -262,7 +262,7 @@ Delta Sync will be disabled and a warning message logged when `propertyEncryptio
 
 Any document with simple encrypted fields (for example, fields containing a subset of values) may be brute-force computed with all possible values using the document revId.
 This will be fixed in a future release.
-In the meantime, adding an encrypted field including a nonce or random value to the document can mitigate against such brute-force computation -- as shown in <<example-brute-force-mitigation>>.
+In the meantime, adding an encrypted field including a nonce or random value to the document can mitigate against such brute-force computation -- as shown in xref:c:field-level-encryption.adoc#example-brute-force-mitigation[].
 
 
 [#example-brute-force-mitigation]

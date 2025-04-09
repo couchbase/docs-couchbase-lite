@@ -21,7 +21,6 @@ my %keep = map { $_ => 1 } (qw/
     url-apt-pkg
     url-apt-pkg-file
     barsep
-    loc--finding-db-file--xref
     release-dir-ce
     release-dir-ee
     release-dir-dev-ce
@@ -67,7 +66,7 @@ my $TABS;
 
 OUTER: while (<>) {
 
-    my $DEBUG = /swift:gs-install:::sample/;
+    my $DEBUG = /lbl-find-db-loc/;
     warn "GOT $_" if $DEBUG;
 
     # expand attributes
@@ -143,7 +142,6 @@ OUTER: while (<>) {
     s/^\/\/ \s*((BEGIN|END) -- )?DO NOT.*//;
 
   
-    warn "GOT $_" if $DEBUG;
 
     # de-mangle ::: links in block headers, #fragments, and <<links>>
     s/\[.column.*\]/[.column]/;
@@ -153,8 +151,13 @@ OUTER: while (<>) {
     # these ones are mangled from xref into << link :facepalm:
     # <<android:releasenotes:::,Android>> -> xref:android:releasenotes.adoc[Android]
     s/<<(.*?):::(,(.*?))?>>/xref:$1.adoc[$3]/g;
+
+    # <<java:database:::lbl-find-db-loc,Finding a Database File>>
+    s/<<(.*?):::([a-zA-Z-]+)(,(.*?))?>>/xref:$1.adoc#$2\[$4]/g;
+
     # now any remaining actual page links need to be converted
     s/<<.*?:::/<</g;
+
     # one more...
     # <<csharp:replication:::p2psync-websocket.adoc,Peer-to-Peer>> 
     s/<<(.*?):::(.*?\.adoc),(.*?)>>/xref:$1:$2\[$3]/g;

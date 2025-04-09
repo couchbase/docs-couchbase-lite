@@ -22,7 +22,7 @@ NOTE: The examples used here are based on the _Travel Sample_ app and data intro
 
 Couchbase Lite for Java provides two ways to build and run database queries; the QueryBuilder API described in this topic and xref:java:query-n1ql-mobile.adoc[{sqlpp} for Mobile].
 
-Database queries defined with the QueryBuilder API use the query statement format shown in <<ex-query-form>>.
+Database queries defined with the QueryBuilder API use the query statement format shown in xref:java:querybuilder.adoc#ex-query-form[].
 The structure and semantics of the query format are based on Couchbase's xref:server:learn:data/n1ql-versus-sql.adoc[{sqlpp} query language].
 
 
@@ -44,23 +44,23 @@ Query Components::
 |====
 | Component | Description
 
-| <<lbl-select>>
+| xref:java:querybuilder.adoc#lbl-select[]
 a| The document properties that will be returned in the result set
 
 | FROM
 a| The data source to query the documents from - the collection of the database.
 
- | <<lbl-where>>
+ | xref:java:querybuilder.adoc#lbl-where[]
 a| The query criteria +
 The `SELECT`ed properties of documents matching this criteria will be returned in the result set
 
-| <<lbl-join>>
+| xref:java:querybuilder.adoc#lbl-join[]
 a| The criteria for joining multiple documents
 
-| <<lbl-group>>
+| xref:java:querybuilder.adoc#lbl-group[]
 a| The criteria used to group returned items in the result set
 
-| <<lbl-order>>
+| xref:java:querybuilder.adoc#lbl-order[]
 a| The criteria used to order the items in the result set
 |====
 
@@ -73,9 +73,9 @@ TIP: We recommend working through the query section of the https://docs.couchbas
 
 --
 In this section::
-<<lbl-return-properties>>{nbsp}{nbsp}|{nbsp}{nbsp} <<lbl-return-all>>
+xref:java:querybuilder.adoc#lbl-return-properties[]{nbsp}{nbsp}|{nbsp}{nbsp} xref:java:querybuilder.adoc#lbl-return-all[]
 Related::
-<<lbl-resultsets,Handling result sets>>
+xref:java:querybuilder.adoc#lbl-resultsets[Handling result sets]
 --
 
 Use the `SELECT` statement to specify which properties you want to return from the queried documents.
@@ -83,7 +83,7 @@ You can opt to retrieve entire documents, or just the specific properties you ne
 
 [#lbl-return-all]
 === Return All Properties
-Use the `SelectResult.all()` method to return all the properties of selected documents -- see: <<ex-select-all>>.
+Use the `SelectResult.all()` method to return all the properties of selected documents -- see: xref:java:querybuilder.adoc#ex-select-all[].
 
 .Using SELECT to Retrieve All Properties
 [#ex-select-all]
@@ -103,7 +103,7 @@ include::java:example$codesnippet_collection.java[tags="query-select-all", inden
 ====
 
 
-The query.execute statement returns the results in a dictionary, where the key is the database name -- see <<ex-return-all>>.
+The query.execute statement returns the results in a dictionary, where the key is the database name -- see xref:java:querybuilder.adoc#ex-return-all[].
 
 
 [#ex-return-all]
@@ -142,12 +142,12 @@ The query.execute statement returns the results in a dictionary, where the key i
 
 ====
 
-See: <<lbl-resultsets>> for more on processing query results.
+See: xref:java:querybuilder.adoc#lbl-resultsets[] for more on processing query results.
 
 
 [#lbl-return-properties]
 === Return Selected Properties
-To access only specific properties, specify a comma-separated list of `SelectResult` expressions, one for each property, in the select statement of your query  -- see: <<ex-select-properties>>
+To access only specific properties, specify a comma-separated list of `SelectResult` expressions, one for each property, in the select statement of your query  -- see: xref:java:querybuilder.adoc#ex-select-properties[]
 
 [#ex-select-properties]
 .Using SELECT to Retrieve Specific Properties
@@ -167,7 +167,7 @@ include::java:example$codesnippet_collection.java[tags="query-select-props", ind
 ====
 
 
-The `query.execute` statement returns one or more key-value pairs, one for each SelectResult expression, with the property-name as the key -- see <<ex-return-properties>>
+The `query.execute` statement returns one or more key-value pairs, one for each SelectResult expression, with the property-name as the key -- see xref:java:querybuilder.adoc#ex-return-properties[]
 
 [#ex-return-properties]
 .Select Result Format
@@ -194,18 +194,18 @@ The `query.execute` statement returns one or more key-value pairs, one for each 
 
 ====
 
-See: <<lbl-resultsets>> for more on processing query results.
+See: xref:java:querybuilder.adoc#lbl-resultsets[] for more on processing query results.
 
 
 [#lbl-where]
 == WHERE statement
 
 In this section::
-<<lbl-comp-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-coll-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-like-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-regex-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-deleted-ops>>
+xref:java:querybuilder.adoc#lbl-comp-ops[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:java:querybuilder.adoc#lbl-coll-ops[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:java:querybuilder.adoc#lbl-like-ops[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:java:querybuilder.adoc#lbl-regex-ops[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:java:querybuilder.adoc#lbl-deleted-ops[]
 
 Like SQL, you can use the `WHERE` statement to choose  which documents are returned by your query.
 The select statement takes in an `Expression`.
@@ -289,13 +289,13 @@ include::java:example$codesnippet_collection.java[tags="query-collection-operato
 [#lbl-like-ops]
 === Like Operator
 In this section::
-<<lbl-string-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-wild-match>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-wild-chars>>
+xref:java:querybuilder.adoc#lbl-string-match[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:java:querybuilder.adoc#lbl-wild-match[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:java:querybuilder.adoc#lbl-wild-chars[]
 
 [#lbl-string-match]
 ==== String Matching
-The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Expression.html#like-com.couchbase.lite.Expression-[Like()] operator can be used for string matching -- see <<ex-like-case-insensitive>>
+The https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Expression.html#like-com.couchbase.lite.Expression-[Like()] operator can be used for string matching -- see xref:java:querybuilder.adoc#ex-like-case-insensitive[]
 
 NOTE: The `like` operator performs **case sensitive** matches. +
 To perform case insensitive matching, use `Function.lower` or `Function.upper` to ensure all comparators have the same case, thereby removing the case issue.
@@ -328,7 +328,7 @@ include::java:example$codesnippet_collection.java[tags="query-like-operator", in
 We can use `%` sign within a `like` expression to do a wildcard match against zero or more characters.
 Using wildcards allows you to have some fuzziness in your search string.
 
-In <<ex-wldcd-match>> below, we are looking for documents of `type` "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
+In xref:java:querybuilder.adoc#ex-wldcd-match[] below, we are looking for documents of `type` "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
 Once again, we are using `Function.lower` to make the search case insensitive.
 
 So "landmark" documents with names such as "Engineers", "engine", "english egg" and "England Eagle".
@@ -356,7 +356,7 @@ include::java:example$codesnippet_collection.java[tags="query-like-operator-wild
 
 We can use an `_` sign within a like expression to do a wildcard match against a single character.
 
-In <<ex-wldcd-char-match>> below, we are looking for documents of type "landmark" where the `name` property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
+In xref:java:querybuilder.adoc#ex-wldcd-char-match[] below, we are looking for documents of type "landmark" where the `name` property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
 The query returns "landmark" type documents with names such as "Engineer", "engineer" and so on.
 
 .Wildcard Character Matching
@@ -379,7 +379,7 @@ include::java:example$codesnippet_collection.java[tags="query-like-operator-wild
 [#lbl-regex-ops]
 === Regex Operator
 
-Similar to the wildcards in `like` expressions, `regex` based pattern matching allow you to introduce an element of fuzziness in your search string -- see the code shown in <<ex-regex>>.
+Similar to the wildcards in `like` expressions, `regex` based pattern matching allow you to introduce an element of fuzziness in your search string -- see the code shown in xref:java:querybuilder.adoc#ex-regex[].
 
 NOTE: The `regex` operator is case sensitive, use `upper` or `lower` functions to mitigate this if required.
 
@@ -407,7 +407,7 @@ TIP: For more on the regex spec used by Couchbase{nbsp}Lite see http://www.cplus
 
 [#lbl-deleted-ops]
 === Deleted Document
-You can query documents that have been deleted (tombstones) footnote:fn2x5[Starting in Couchbase Lite 2.5] as shown in <<ex-del-qry>>.
+You can query documents that have been deleted (tombstones) footnote:fn2x5[Starting in Couchbase Lite 2.5] as shown in xref:java:querybuilder.adoc#ex-del-qry[].
 
 .Query to select Deleted Documents
 [#ex-del-qry]
@@ -430,7 +430,7 @@ include::java:example$codesnippet_collection.java[tags="query-deleted-documents"
 [#lbl-join]
 == JOIN statement
 The JOIN clause enables you to select data from multiple documents that have been linked by criteria specified in the JOIN statement.
-For example to combine airline details with route details, linked by the airline id -- see <<ex-join>>.
+For example to combine airline details with route details, linked by the airline id -- see xref:java:querybuilder.adoc#ex-join[].
 
 .Using JOIN to Combine Document Details
 [#ex-join]
@@ -486,7 +486,7 @@ include::java:example$codesnippet_collection.java[tags="query-groupby", indent=0
 ====
 
 
-The query shown in <<ex-grpby-qry>> generates the following output:
+The query shown in xref:java:querybuilder.adoc#ex-grpby-qry[] generates the following output:
 --
 There are 138 airports on the Europe/Paris timezone located in France and above 300 ft +
 There are 29 airports on the Europe/London timezone located in United Kingdom and above 300 ft +
@@ -499,7 +499,7 @@ There are 123 airports on the America/Denver timezone located in United States a
 [#lbl-order]
 == ORDER BY statement
 
-It is possible to sort the results of a query based on a given expression result -- see <<ex-orderby-qry>>
+It is possible to sort the results of a query based on a given expression result -- see xref:java:querybuilder.adoc#ex-orderby-qry[]
 
 [#ex-orderby-qry]
 .Query using OrderBy
@@ -519,7 +519,7 @@ include::java:example$codesnippet_collection.java[tags="query-orderby", indent=0
 ====
 
 
-The query shown in <<ex-orderby-qry>> generates the following output:
+The query shown in xref:java:querybuilder.adoc#ex-orderby-qry[] generates the following output:
 [pass:q,a[source, text, subs="+attributes, +macros"]]
 ----
 Aberdyfi
@@ -537,7 +537,7 @@ Avignon
 == Date/Time Functions
 
 
-Couchbase Lite documents support a <<initializers,date type>> that internally stores dates in ISO 8601 with the GMT/UTC timezone.
+Couchbase Lite documents support a xref:java:querybuilder.adoc#initializers[date type] that internally stores dates in ISO 8601 with the GMT/UTC timezone.
 
 Couchbase Lite's Query Builder API
 footnote:fn2x5[]
@@ -560,12 +560,12 @@ The end result will be an expression (with string content representing the date 
 [#lbl-resultsets]
 == Result Sets
 In this section::
-<<lbl-process-resultset>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-all-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-specific-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-id-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-count-sel>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-pagination>>
+xref:java:querybuilder.adoc#lbl-process-resultset[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:java:querybuilder.adoc#lbl-all-sel[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:java:querybuilder.adoc#lbl-specific-sel[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:java:querybuilder.adoc#lbl-id-sel[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:java:querybuilder.adoc#lbl-count-sel[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:java:querybuilder.adoc#lbl-pagination[]
 
 
 [#lbl-process-resultset]
@@ -576,16 +576,16 @@ This section shows how to handle the returned result sets for different types of
 The result set format and its handling varies slightly depending on the type of SelectResult statements used.
 The result set formats you may encounter include those generated by :
 
-* SelectResult.all -- see: <<lbl-all-sel,All Properties>>
-* SelectResult.expression(property("name")) -- see: <<lbl-specific-sel,Specific Properties>>
-* SelectResult.expression(meta.id) --  Metadata (such as the `_id`) -- see: <<lbl-id-sel,Document ID Only>>
-* SelectResult.expression(Function.count(Expression.all())).as("mycount") --  see: <<lbl-count-sel>>
+* SelectResult.all -- see: xref:java:querybuilder.adoc#lbl-all-sel[All Properties]
+* SelectResult.expression(property("name")) -- see: xref:java:querybuilder.adoc#lbl-specific-sel[Specific Properties]
+* SelectResult.expression(meta.id) --  Metadata (such as the `_id`) -- see: xref:java:querybuilder.adoc#lbl-id-sel[Document ID Only]
+* SelectResult.expression(Function.count(Expression.all())).as("mycount") --  see: xref:java:querybuilder.adoc#lbl-count-sel[]
 
 To process the results of a query, you first need to execute it using `Query.execute`.
 
 The execution of a Couchbase Lite for Java's database query typically returns an array of results, a result set.
 
-* The result set of an aggregate, count-only, query is a key-value pair -- see <<lbl-count-sel>> -- which you can access using the count name as its key.
+* The result set of an aggregate, count-only, query is a key-value pair -- see xref:java:querybuilder.adoc#lbl-count-sel[] -- which you can access using the count name as its key.
 
 * The result set of a query returning document properties is an array. +
 Each array row represents the data from a document that matched your search criteria (the `WHERE` statements)
@@ -598,7 +598,7 @@ To unpack these result sets you need to iterate this array.
 
 [#query]
 ==== Query
-The `Select` statement for this type of query, returns all document properties for each document matching the query criteria -- see <<ex-all-qry>>
+The `Select` statement for this type of query, returns all document properties for each document matching the query criteria -- see xref:java:querybuilder.adoc#ex-all-qry[]
 
 .Query selecting All Properties
 [#ex-all-qry]
@@ -621,7 +621,7 @@ include::java:example$codesnippet_collection.java[tags="query-syntax-all", inden
 ==== Result Set Format
 The result set returned by queries using `SelectResult.all` is an array of dictionary objects -- one for each document matching the query criteria.
 
-For each result object, the key is the database name and the 'value' is a dictionary representing each document property as a key-value pair -- see: <<ex-all-rtn>>.
+For each result object, the key is the database name and the 'value' is a dictionary representing each document property as a key-value pair -- see: xref:java:querybuilder.adoc#ex-all-rtn[].
 
 .Format of Result Set (All Properties)
 [#ex-all-rtn]
@@ -664,7 +664,7 @@ For each result object, the key is the database name and the 'value' is a dictio
 [#result-set-access]
 ==== Result Set Access
 
-In this case access the retrieved document properties by converting each row's value, in turn, to a dictionary -- as shown in <<ex-all-acc>>.
+In this case access the retrieved document properties by converting each row's value, in turn, to a dictionary -- as shown in xref:java:querybuilder.adoc#ex-all-acc[].
 
 .Using Document Properties (All)
 [#ex-all-acc]
@@ -692,7 +692,7 @@ You can add this dictionary to an array of returned matches, for processing else
 
 [#query-2]
 ==== Query
-Here we use `SelectResult.expression(property("<property-name>")))` to specify the document properties we want our query to return -- see: <<ex-specific-qry>>.
+Here we use `SelectResult.expression(property("<property-name>")))` to specify the document properties we want our query to return -- see: xref:java:querybuilder.adoc#ex-specific-qry[].
 
 .Query selecting Specific Properties
 [#ex-specific-qry]
@@ -715,7 +715,7 @@ include::java:example$codesnippet_collection.java[tags="query-syntax-props", ind
 ==== Result Set Format
 The result set returned when selecting only specific document properties is an array of dictionary objects -- one for each document matching the query criteria.
 
-Each result object comprises a key-value pair for each selected document property -- see <<ex-specific-rtn>>
+Each result object comprises a key-value pair for each selected document property -- see xref:java:querybuilder.adoc#ex-specific-rtn[]
 
 .Format of Result Set (Specific Properties)
 [#ex-specific-rtn]
@@ -743,7 +743,7 @@ Each result object comprises a key-value pair for each selected document propert
 
 [#result-set-access-2]
 ==== Result Set Access
-Access the retrieved properties by converting each row into a dictionary -- as shown in <<ex-specific-acc>>.
+Access the retrieved properties by converting each row into a dictionary -- as shown in xref:java:querybuilder.adoc#ex-specific-acc[].
 
 .Using Returned Document Properties (Specific Properties)
 [#ex-specific-acc]
@@ -767,7 +767,7 @@ include::java:example$codesnippet_collection.java[tags="query-access-props", ind
 
 [#query-3]
 ==== Query
-You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time -- see: <<ex-id-qry>>.
+You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time -- see: xref:java:querybuilder.adoc#ex-id-qry[].
 
 .Query selecting only Doc Id
 [#ex-id-qry]
@@ -789,7 +789,7 @@ include::java:example$codesnippet_collection.java[tags="query-syntax-id", indent
 [#result-set-format-3]
 ==== Result Set Format
 The result set returned by queries using a SelectResult expression of the form `SelectResult.expression(meta.id)` is an array of dictionary objects -- one for each document matching the query criteria.
-Each result object has `id` as the key and the ID value as its value -- -see <<ex-id-rtn>>.
+Each result object has `id` as the key and the ID value as its value -- -see xref:java:querybuilder.adoc#ex-id-rtn[].
 
 .Format of Result Set (Doc Id only)
 [#ex-id-rtn]
@@ -812,7 +812,7 @@ Each result object has `id` as the key and the ID value as its value -- -see <<e
 [#result-set-access-3]
 ==== Result Set Access
 
-In this case, access the required document's properties by unpacking the `id` and using it to get the document from the database -- see: <<ex-id-acc>>.
+In this case, access the required document's properties by unpacking the `id` and using it to get the document from the database -- see: xref:java:querybuilder.adoc#ex-id-acc[].
 
 .Using Returned Document Properties (Document Id)
 [#ex-id-acc]
@@ -861,7 +861,7 @@ include::java:example$codesnippet_collection.java[tags="query-syntax-count-only"
 [#result-set-format-4]
 ==== Result Set Format
 The result set returned by a count such as `Select.expression(Function.count(Expression.all)))` is a key-value pair.
-The key is the count name, as defined using `SelectResult.as` -- see: <<ex-count-rtn>> for the format and <<ex-count-qry>> for the query.
+The key is the count name, as defined using `SelectResult.as` -- see: xref:java:querybuilder.adoc#ex-count-rtn[] for the format and xref:java:querybuilder.adoc#ex-count-qry[] for the query.
 
 .Format of Result Set (Count)
 [#ex-count-rtn]
@@ -881,7 +881,7 @@ The key is the count name, as defined using `SelectResult.as` -- see: <<ex-count
 [#result-set-access-4]
 ==== Result Set Access
 
-Access the count using its alias name (`mycount` in this example) -- see <<ex-count-acc>>
+Access the count using its alias name (`mycount` in this example) -- see xref:java:querybuilder.adoc#ex-count-acc[]
 
 [#ex-count-acc]
 .Using Returned Document Properties (Count)
@@ -904,7 +904,7 @@ include::java:example$codesnippet_collection.java[tags="query-access-count-only"
 [#lbl-pagination]
 === Handling Pagination
 One way to handle pagination in high-volume queries is to retrieve the results in batches.
-Use the `limit` and `offset` feature, to return a defined number of results starting from a given offset -- see: <<ex-pagination>>.
+Use the `limit` and `offset` feature, to return a defined number of results starting from a given offset -- see: xref:java:querybuilder.adoc#ex-pagination[].
 
 
 [#ex-pagination]
@@ -940,7 +940,7 @@ Couchbase Lite for Java provides a convenience API to convert query results to J
 [#ex-json]
 ====
 
-Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Result.html#toJSON--[Result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<ex-json>> for a working example.
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Result.html#toJSON--[Result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See xref:java:querybuilder.adoc#ex-json[] for a working example.
 
 [source, Java]
 ----
@@ -990,17 +990,17 @@ image::ROOT:predictive-diagram.png[]
 
 To run a predictive query with a model as the one shown above, you must implement the following steps.
 
-. <<integrate-the-model,Integrate the Model>>
-. <<register-the-model,Register the Model>>
-. <<create-an-index,Create an Index (Optional)>>
-. <<run-a-prediction-query,Run a Prediction Query>>
+. xref:java:querybuilder.adoc#integrate-the-model[Integrate the Model]
+. xref:java:querybuilder.adoc#register-the-model[Register the Model]
+. xref:java:querybuilder.adoc#create-an-index[Create an Index (Optional)]
+. xref:java:querybuilder.adoc#run-a-prediction-query[Run a Prediction Query]
 . <<Deregister-the-model,Deregister the Model>>
 
 
 [#integrate-the-model]
 === Integrate the Model
 
-To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `predict()` -- see: <<int-pred-model>>.
+To integrate a model with Couchbase Lite, you must implement the `PredictiveModel` interface which has only one function called `predict()` -- see: xref:java:querybuilder.adoc#int-pred-model[].
 
 .Integrating a predictive model
 [#int-pred-model]
@@ -1053,8 +1053,8 @@ By computing the predictions during writes and building a prediction index, you 
 
 There are two types of indexes for predictive queries:
 
-* <<value-index,Value Index>>
-* <<predictive-index,Predictive Index>>
+* xref:java:querybuilder.adoc#value-index[Value Index]
+* xref:java:querybuilder.adoc#predictive-index[Predictive Index]
 
 [#value-index]
 ==== Value Index

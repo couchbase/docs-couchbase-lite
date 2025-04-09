@@ -37,18 +37,18 @@ It delivers flexibility in terms of how logs are generated and retained, whilst 
 
 Log output is split into the following streams:
 
-* <<lbl-file-logs>>
+* xref:android:troubleshooting-logs.adoc#lbl-file-logs[]
 +
-Here logs are written to <<log-file-outputs,separate log files>> filtered by log level, with each log level supporting individual retention policies.
+Here logs are written to xref:android:troubleshooting-logs.adoc#log-file-outputs[separate log files] filtered by log level, with each log level supporting individual retention policies.
 
-* <<lbl-console-logs>>
+* xref:android:troubleshooting-logs.adoc#lbl-console-logs[]
 +
 --
 You can independently configure and control console logs, which provides a convenient method of accessing diagnostic information during debugging scenarios.
 With console logging, you can fine-tune diagnostic output to suit specific debug scenarios, without interfering with any logging required by Couchbase Support for the investigation of issues.
 --
 
-* <<lbl-custom-logs>>
+* xref:android:troubleshooting-logs.adoc#lbl-custom-logs[]
 +
 --
 For greater flexibility you can implement a custom logging class using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[Logger] interface.
@@ -66,7 +66,7 @@ You can easily fine-tune their diagnostic content to meet the needs of a particu
 
 Changes to console logging are independent of file logging, so you can make change without compromising any files logging streams.
 It is enabled by default.
-To change default settings use database's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Log.html[Log] method to set the required values -- see <<eg-cons-log>>
+To change default settings use database's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Log.html[Log] method to set the required values -- see xref:android:troubleshooting-logs.adoc#eg-cons-log[]
 
 You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ConsoleLogger.html[log.getConsole()] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ConsoleLogger.html[ConsoleLogger] to control console logging.
 
@@ -119,7 +119,7 @@ https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/c
 
 [#lbl-file-logs]
 == File based logging
-File based logging is disabled by default --  see: <<eg-file-log>> for how to enable it.
+File based logging is disabled by default --  see: xref:android:troubleshooting-logs.adoc#eg-file-log[] for how to enable it.
 
 You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/FileLogger.html[log.getFile()] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/FileLogger.html[FileLogger] to control file-based logging.
 
@@ -129,7 +129,7 @@ Available file based logging formats:
 
 * Binary -- most efficient for storage and performance. It is the default for file based logging.
 +
-Use this format and a decoder, such as *cbl-log*, to view them -- see: <<decoding-binary-logs>>.
+Use this format and a decoder, such as *cbl-log*, to view them -- see: xref:android:troubleshooting-logs.adoc#decoding-binary-logs[].
 * Plaintext
 
 [#configuration]
@@ -201,7 +201,7 @@ https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/c
 
 Couchbase Lite allows for the registration of a callback function to receive Couchbase Lite log messages, which may be logged using any external logging framework.
 
-To do this, apps must implement the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[Logger] interface -- see <<eg-impl-log>> -- and enable custom logging using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[log.setCustom()] -- see <<eg-cust-log>>.
+To do this, apps must implement the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[Logger] interface -- see xref:android:troubleshooting-logs.adoc#eg-impl-log[] -- and enable custom logging using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Logger.html[log.setCustom()] -- see xref:android:troubleshooting-logs.adoc#eg-cust-log[].
 
 
 [#eg-impl-log]
@@ -249,7 +249,7 @@ include::android:example$codesnippet_collection.java[tags="custom-logging", inde
 [#eg-cust-log]
 ====
 
-This example show how to enable the custom logger from <<eg-impl-log>>.
+This example show how to enable the custom logger from xref:android:troubleshooting-logs.adoc#eg-impl-log[].
 [tabs]
 =====
 
@@ -291,7 +291,7 @@ https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/c
 
 NOTE: The latest version of the cbl-log tool is `3.0.0`.
 
-You can use the *cbl-log* tool to decode binary log files -- see <<eg-cbl-log>>.
+You can use the *cbl-log* tool to decode binary log files -- see xref:android:troubleshooting-logs.adoc#eg-cbl-log[].
 
 [#eg-cbl-log]
 .Using the cbl-log tool

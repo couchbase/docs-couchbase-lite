@@ -24,7 +24,7 @@ NOTE: The examples used in this topic are based on the _Travel Sample_ app and d
 == Introduction
 
 Developers using Couchbase Lite for Swift can provide {sqlpp} query strings using the {sqlpp} Query API.
-This API uses query statements of the form shown in <<ex-query-form>>.
+This API uses query statements of the form shown in xref:swift:query-n1ql-mobile.adoc#ex-query-form[].
 
 The structure and semantics of the query format are based on that of Couchbase Server's {sqlpp} query language -- see xref:server:n1ql:n1ql-language-reference/index.adoc[{sqlpp} Reference Guide] and xref:server:learn:data/n1ql-versus-sql.adoc[{sqlpp} Data Model].
 
@@ -51,13 +51,13 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags="query-syntax-n1q
 
 ====
 
-We are accessing the current database using the shorthand notation *`_`* -- see the <<lbl-from>> clause for more on data source selection and <<lbl-query-params>> for more on parameterized queries.
+We are accessing the current database using the shorthand notation *`_`* -- see the xref:swift:query-n1ql-mobile.adoc#lbl-from[] clause for more on data source selection and xref:swift:query-n1ql-mobile.adoc#lbl-query-params[] for more on parameterized queries.
 
 
 [#query-format]
 == Query Format
 
-The API uses query statements of the form shown in <<ex-query-form>>.
+The API uses query statements of the form shown in xref:swift:query-n1ql-mobile.adoc#ex-query-form[].
 
 [#ex-query-form]
 .Query Format
@@ -81,32 +81,32 @@ Query Components::
 |====
 | Component | Description
 
-| <<lbl-select>>
+| xref:swift:query-n1ql-mobile.adoc#lbl-select[]
 a| The document properties that will be returned in the result set
 
-| <<lbl-from>>
+| xref:swift:query-n1ql-mobile.adoc#lbl-from[]
 a| The data source to be queried
 
-| <<lbl-join>>
+| xref:swift:query-n1ql-mobile.adoc#lbl-join[]
 a| The criteria for joining multiple documents
 
-| <<lbl-where>>
+| xref:swift:query-n1ql-mobile.adoc#lbl-where[]
 a| The query criteria +
 The `SELECT`ed properties of documents matching this criteria will be returned in the result set
 
-| <<lbl-unnest>>
+| xref:swift:query-n1ql-mobile.adoc#lbl-unnest[]
 a| The criteria used to unpack arrays within a document into individual rows
 
-| <<lbl-group>>
+| xref:swift:query-n1ql-mobile.adoc#lbl-group[]
 a| The criteria used to group returned items in the result set
 
-| <<lbl-order>>
+| xref:swift:query-n1ql-mobile.adoc#lbl-order[]
 a| The criteria used to order the items in the result set
 
-| <<lbl-limit>>
+| xref:swift:query-n1ql-mobile.adoc#lbl-limit[]
 a| The maximum number of results to be returned
 
-| <<lbl-offset>>
+| xref:swift:query-n1ql-mobile.adoc#lbl-offset[]
 a| The number of results to be skipped before starting to return results
 |====
 
@@ -150,7 +150,7 @@ columnAlias = IDENTIFIER
 
 <.> selectResults is a list of columns projected in the query result.
 Each column is an expression which could be a property expression or any expressions or functions.
-You can use the wildcard *** to select all columns -- see <<select-wildcard>>
+You can use the wildcard *** to select all columns -- see xref:swift:query-n1ql-mobile.adoc#select-wildcard[]
 
 <.> Use the optional `AS` argument to provides an alias name for a property. Each property can be aliased by putting the `AS <alias name>` after the column name.
 
@@ -161,7 +161,7 @@ When using the `SELECT *` option the column name (key) of the {sqlpp} string is 
 * The alias name if one was specified
 * The data source name (or its alias if provided) as specified in the `FROM` clause.
 
-This behavior is inline with that of Couchbase Server {sqlpp} -- see example in <<tbl-selstar>>.
+This behavior is inline with that of Couchbase Server {sqlpp} -- see example in xref:swift:query-n1ql-mobile.adoc#tbl-selstar[].
 
 
 .Example Column Names for SELECT ***
@@ -253,7 +253,7 @@ A datasource can be:
 Use `AS` to give the database an alias you can use within the query. +
 To use the current datasource without specifying a name, use `_` as the datasource.
 
-<.> `JOIN joinclause` -- use this optional argument to link datasources -- see <<lbl-join>>
+<.> `JOIN joinclause` -- use this optional argument to link datasources -- see xref:swift:query-n1ql-mobile.adoc#lbl-join[]
 
 [#example-2]
 === Example
@@ -282,7 +282,7 @@ SELECT store.name FROM _ store
 The JOIN clause enables you to select data from multiple data sources linked by criteria specified in the JOIN statement.
 
 Currently only self-joins are supported.
-For example to combine airline details with route details, linked by the airline id -- see <<ex-join>>.
+For example to combine airline details with route details, linked by the airline id -- see xref:swift:query-n1ql-mobile.adoc#ex-join[].
 
 [#syntax-3]
 === Syntax
@@ -375,7 +375,7 @@ You cannot use the term as an identifier for a property name or data source unle
 
 For examples of using Array Indexes in conjunction with `UNNEST`, see xref:swift:indexing.adoc#array-indexing[Array Index].
 
-We are also accessing the current database using the shorthand notation *`_`* -- see the <<lbl-from>> clause for more on data source selection and <<lbl-query-params>> for more on parameterized queries.
+We are also accessing the current database using the shorthand notation *`_`* -- see the xref:swift:query-n1ql-mobile.adoc#lbl-from[] clause for more on data source selection and xref:swift:query-n1ql-mobile.adoc#lbl-query-params[] for more on parameterized queries.
 
 The following examples will use the example JSON document below to query results from:
 
@@ -468,7 +468,7 @@ where = WHERE expression <.>
 <.> WHERE evalates `expression` to a BOOLEAN value.
 You can chain any number of Expressions in order to implement sophisticated filtering capabilities.
 
-See also -- <<lbl-operators>> for more on building expressions and <<lbl-query-params>> for more on parameterized queries.
+See also -- xref:swift:query-n1ql-mobile.adoc#lbl-operators[] for more on building expressions and xref:swift:query-n1ql-mobile.adoc#lbl-query-params[] for more on parameterized queries.
 
 [#examples-2]
 === Examples
@@ -654,26 +654,26 @@ SELECT name FROM db  LIMIT 10 OFFSET 10 <.>
 [#lbl-literals]
 == Expressions
 In this section::
-  <<lbl-exp-literals>>{nbsp}{nbsp}|{nbsp}{nbsp}
-  <<lbl-exp-ident>>{nbsp}{nbsp}|{nbsp}{nbsp}
-  <<lbl-exp-prop>>{nbsp}{nbsp}|{nbsp}{nbsp}
-  <<lbl-exp-any>>{nbsp}{nbsp}|{nbsp}{nbsp}
-  <<lbl-exp-param>>{nbsp}{nbsp}|{nbsp}{nbsp}
-  <<lbl-exp-paren>>
+  xref:swift:query-n1ql-mobile.adoc#lbl-exp-literals[]{nbsp}{nbsp}|{nbsp}{nbsp}
+  xref:swift:query-n1ql-mobile.adoc#lbl-exp-ident[]{nbsp}{nbsp}|{nbsp}{nbsp}
+  xref:swift:query-n1ql-mobile.adoc#lbl-exp-prop[]{nbsp}{nbsp}|{nbsp}{nbsp}
+  xref:swift:query-n1ql-mobile.adoc#lbl-exp-any[]{nbsp}{nbsp}|{nbsp}{nbsp}
+  xref:swift:query-n1ql-mobile.adoc#lbl-exp-param[]{nbsp}{nbsp}|{nbsp}{nbsp}
+  xref:swift:query-n1ql-mobile.adoc#lbl-exp-paren[]
 
 Expressions are references to identifiers that resolve to values.
-Categories of expression comprise the elements covered in this section (see above), together with <<lbl-operators>> and <<lbl-functions>>, which are covered in their own sections
+Categories of expression comprise the elements covered in this section (see above), together with xref:swift:query-n1ql-mobile.adoc#lbl-operators[] and xref:swift:query-n1ql-mobile.adoc#lbl-functions[], which are covered in their own sections
 
 
 [#lbl-exp-literals]
 === Literals
-<<lbl-lit-bool>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-lit-numbers>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-lit-string>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-lit-null>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-lit-missing>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-lit-array>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-lit-dict>>{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-lit-bool[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-lit-numbers[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-lit-string[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-lit-null[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-lit-missing[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-lit-array[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-lit-dict[]{nbsp}{nbsp}|{nbsp}{nbsp}
 
 
 [#lbl-lit-bool]
@@ -1116,18 +1116,18 @@ SELECT *
 [#lbl-operators]
 == Operators
 In this section::
-<<lbl-ops-binary>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-ops-unary>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-ops-coll>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-ops-cond>>
+xref:swift:query-n1ql-mobile.adoc#lbl-ops-binary[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-ops-unary[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-ops-coll[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-ops-cond[]
 
 
 [#lbl-ops-binary]
 === Binary Operators
-<<lbl-ops-maths>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-comp-ops>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-ops-logical>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-ops-string>>
+xref:swift:query-n1ql-mobile.adoc#lbl-ops-maths[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-comp-ops[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-ops-logical[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-ops-string[]
 
 
 [#lbl-ops-maths]
@@ -1232,7 +1232,7 @@ WHERE name LIKE 'aldo'
 
 
 |MATCH
-|String matching using FTS see <<lbl-func-fts>>
+|String matching using FTS see xref:swift:query-n1ql-mobile.adoc#lbl-func-fts[]
 |WHERE v1-index MATCH "value"
 
 |BETWEEN
@@ -1686,17 +1686,17 @@ SELECT CASE WHEN shippedOn IS NOT NULL THEN ‘SHIPPED’ ELSE "NOT-SHIPPED" END
 [#lbl-functions]
 == Functions
 In this section::
-<<lbl-func-agg>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-func-array>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-func-cond>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-func-date>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-func-fts>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-func-maths>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-func-meta>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-func-pattern>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-func-string>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-func-typecheck>>{nbsp}{nbsp}|{nbsp}{nbsp}
-<<lbl-func-typeconv>>
+xref:swift:query-n1ql-mobile.adoc#lbl-func-agg[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-func-array[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-func-cond[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-func-date[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-func-fts[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-func-maths[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-func-meta[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-func-pattern[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-func-string[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-func-typecheck[]{nbsp}{nbsp}|{nbsp}{nbsp}
+xref:swift:query-n1ql-mobile.adoc#lbl-func-typeconv[]
 
 [#purpose-28]
 === Purpose
@@ -2295,7 +2295,7 @@ a|Returns one of the following strings, based on the value of expression:
 [#querybuilder-differences]
 == QueryBuilder Differences
 
-Couchbase Lite {sqlpp} Query supports all QueryBuilder features, except _Predictive Query_ and _Index_. See <<tbl-qbldr-diffs>> for the features supported by {sqlpp} but not by QueryBuilder.
+Couchbase Lite {sqlpp} Query supports all QueryBuilder features, except _Predictive Query_ and _Index_. See xref:swift:query-n1ql-mobile.adoc#tbl-qbldr-diffs[] for the features supported by {sqlpp} but not by QueryBuilder.
 
 
 .QueryBuilder Differences
@@ -2357,7 +2357,7 @@ TOSTRING
 
 You can provide runtime parameters to your {sqlpp} query to make it more flexible.
 
-To specify substitutable parameters within your query string prefix the name with *`$`*, `$type` -- see: <<ex-sample-params>>.
+To specify substitutable parameters within your query string prefix the name with *`$`*, `$type` -- see: xref:swift:query-n1ql-mobile.adoc#ex-sample-params[].
 
 .Running a {sqlpp} Query
 [#ex-sample-params]

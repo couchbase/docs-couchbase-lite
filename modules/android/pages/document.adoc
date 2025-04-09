@@ -35,13 +35,13 @@ This ID is similar to a primary key in other databases.
 You can specify the ID programmatically.
 If you omit it, it will be automatically generated as a UUID.
 
-NOTE: Couchbase documents are assigned to a <<database-concepts,Collection>>.
+NOTE: Couchbase documents are assigned to a xref:android:database.adoc#database-concepts[Collection].
 The ID of a document must be unique within the Collection it is written to.
 You cannot change it after you have written the document.
 
 The document also has a value which contains the actual application data.
 This value is stored as a dictionary of key-value (k-v) pairs.
-The values can be made of up several different <<data-types>> such as numbers, strings, arrays, and nested objects.
+The values can be made of up several different xref:android:document.adoc#data-types[] such as numbers, strings, arrays, and nested objects.
 
 
 [#data-encoding]
@@ -117,7 +117,7 @@ Blob:: represents an arbitrary piece of binary data
 [#json]
 === JSON
 
-Couchbase Lite also provides for the direct handling of JSON data implemented in most cases by the provision of a pass:a,q[`toJSON()`] method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array) -- see <<lbl-json-data>>.
+Couchbase Lite also provides for the direct handling of JSON data implemented in most cases by the provision of a pass:a,q[`toJSON()`] method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array) -- see xref:android:document.adoc#lbl-json-data[].
 
 
 [#constructing-a-document]
@@ -163,7 +163,7 @@ hotel: {
 First open your database.
 If the database does not already exist, Couchbase Lite will create it for you.
 
-Couchbase documents are assigned to a <<database-concepts,Collection>>.
+Couchbase documents are assigned to a xref:android:database.adoc#database-concepts[Collection].
 All the CRUD examples in this document operate on a `collection` object (here, the Default Collection).
 
 
@@ -231,7 +231,7 @@ include::android:example$codesnippet_collection.java[tags="datatype_usage_create
 =====
 
 
-For more on using *Documents*, see <<document-initializers>> and <<mutability>>.
+For more on using *Documents*, see xref:android:document.adoc#document-initializers[] and xref:android:document.adoc#mutability[].
 
 [#create-a-dictionary]
 === Create a Dictionary
@@ -268,7 +268,7 @@ include::android:example$codesnippet_collection.java[tags="datatype_usage_mutdic
 =====
 
 
-Learn more about <<using-dictionaries>>.
+Learn more about xref:android:document.adoc#using-dictionaries[].
 
 [#create-an-array]
 === Create an Array
@@ -303,7 +303,7 @@ include::android:example$codesnippet_collection.java[tags="datatype_usage_mutarr
 =====
 
 
-Learn more about <<using-arrays>>
+Learn more about xref:android:document.adoc#using-arrays[]
 
 [#populate-a-document]
 === Populate a Document
@@ -744,7 +744,7 @@ include::android:example$codesnippet_collection.java[tags="update-document", ind
 ====
 
 
-NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<lbl-doc-constraints>>.
+NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also xref:android:document.adoc#lbl-doc-constraints[].
 
 
 [#batch-operations]
@@ -922,7 +922,7 @@ You can set expiration for a whole Collection
 Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
 This is to facilitate the creation of documents for use either in _local only_ mode where documents are not synced, or when used exclusively in peer-to-peer sync.
 
-NOTE: "_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes -- see <<res-keys>>.
+NOTE: "_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes -- see xref:android:document.adoc#res-keys[].
 
 Users are cautioned that any attempt to sync such documents to Sync Gateway will result in an error.
 To be future proof, you are advised to avoid creating such documents.
@@ -952,11 +952,11 @@ For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway
 == Working with JSON Data
 
 In this section::
-<<lbl-array>>
-| <<lbl-blob>>
-| <<lbl-dictionary>>
-| <<lbl-document>>
-| <<lbl-result>>
+xref:android:document.adoc#lbl-array[]
+| xref:android:document.adoc#lbl-blob[]
+| xref:android:document.adoc#lbl-dictionary[]
+| xref:android:document.adoc#lbl-document[]
+| xref:android:document.adoc#lbl-result[]
 
 
 The pass:a,q[`toJSON()`] typed-accessor means you can easily work with JSON data, native and Couchbase Lite objects.
@@ -964,12 +964,12 @@ The pass:a,q[`toJSON()`] typed-accessor means you can easily work with JSON data
 [#lbl-array]
 === Arrays
 
-Convert an `ArrayObject` to and from JSON using the pass:a,q[`toJSON()`] and `toArray` methods -- see <<ex-array>>.
+Convert an `ArrayObject` to and from JSON using the pass:a,q[`toJSON()`] and `toArray` methods -- see xref:android:document.adoc#ex-array[].
 
 Additionally you can:
 
 * Initialize a 'MutableArrayObject' using data supplied as a JSON string.
-This is done using the `init(json)` constructor -- see: <<ex-array>>
+This is done using the `init(json)` constructor -- see: xref:android:document.adoc#ex-array[]
 
 * Convert an `ArrayFragment` object to a JSON String
 
@@ -1014,9 +1014,9 @@ include::android:example$codesnippet_collection.java[tags="tojson-array", indent
 
 [#lbl-blob]
 === Blobs
-Convert a `Blob` to JSON using the `toJSON` method -- see <<ex-blob>>.
+Convert a `Blob` to JSON using the `toJSON` method -- see xref:android:document.adoc#ex-blob[].
 
-You can use `isBlob()` to check whether a given dictionary object is a blob or not -- see <<ex-blob>>.
+You can use `isBlob()` to check whether a given dictionary object is a blob or not -- see xref:android:document.adoc#ex-blob[].
 
 Note that the blob object must first be saved to the database (generating the required metadata) before you can use the `toJSON` method.
 
@@ -1062,12 +1062,12 @@ See also: xref:android:blob.adoc[Blobs]
 [#lbl-dictionary]
 === Dictionaries
 
-Convert a `DictionaryObject` to and from JSON using the `toJSON` and `toDictionary` methods -- see <<ex-dictionary>>.
+Convert a `DictionaryObject` to and from JSON using the `toJSON` and `toDictionary` methods -- see xref:android:document.adoc#ex-dictionary[].
 
 Additionally you can:
 
 * Initialize a 'MutableDictionaryObject' using data supplied as a JSON string.
-This is done using the `init(json)` constructor-- see: <<ex-dictionary>>
+This is done using the `init(json)` constructor-- see: xref:android:document.adoc#ex-dictionary[]
 
 * Set data with a JSON string using `setJSON()`
 
@@ -1111,12 +1111,12 @@ include::android:example$codesnippet_collection.java[tags="tojson-dictionary", i
 [#lbl-document]
 === Documents
 
-Convert a `Document` to and from JSON strings using the pass:a,q[`toJSON()`] and pass:a,q[`setJSON()`] methods -- see <<ex-document>>.
+Convert a `Document` to and from JSON strings using the pass:a,q[`toJSON()`] and pass:a,q[`setJSON()`] methods -- see xref:android:document.adoc#ex-document[].
 
 Additionally you can:
 
 * Initialize a 'MutableDocument' using data supplied as a JSON string.
-This is done using the `init(json)` or `init(id: json:)` constructor -- see: <<ex-document>>
+This is done using the `init(json)` or `init(id: json:)` constructor -- see: xref:android:document.adoc#ex-document[]
 
 * Set data with a JSON string using `setJSON()`
 
@@ -1169,7 +1169,7 @@ Convert a `Query Result` to JSON using its {to-JSON} accessor method.
 [#ex-json]
 ====
 
-Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Result.html#toJSON--[Result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<ex-json>> for a working example.
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Result.html#toJSON--[Result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See xref:android:document.adoc#ex-json[] for a working example.
 [tabs]
 =====
 

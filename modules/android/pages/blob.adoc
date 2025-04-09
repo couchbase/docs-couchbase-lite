@@ -29,17 +29,17 @@ Couchbase{nbsp}Lite for Android uses _blobs_ to store the contents of images, ot
 The blob itself is not stored in the document.
 It is held in a separate content-addressable store indexed from the document and retrieved only on-demand.
 
-When a document is synchronized, the Couchbase{nbsp}Lite replicator adds an `_attachments` dictionary to the document's properties if it contains a blob -- see <<img-blob>>.
+When a document is synchronized, the Couchbase{nbsp}Lite replicator adds an `_attachments` dictionary to the document's properties if it contains a blob -- see xref:android:blob.adoc#img-blob[].
 
 
 [#blob-objects]
 == Blob Objects
 
-The blob as an object appears in a document as dictionary property -- see, for example _avatar_ in <<img-blob>>.
+The blob as an object appears in a document as dictionary property -- see, for example _avatar_ in xref:android:blob.adoc#img-blob[].
 
 Other properties include `length` (the length in bytes), and optionally `content_type` (typically, its MIME type).
 
-The blob's data (an image, audio or video content) is not stored in the document, but in a separate content-addressable store, indexed by the `digest` property -- see <<lbl-using>>.
+The blob's data (an image, audio or video content) is not stored in the document, but in a separate content-addressable store, indexed by the `digest` property -- see xref:android:blob.adoc#lbl-using[].
 
 
 [#constraints]
@@ -59,7 +59,7 @@ If a document's blob is over 20 MB, the document will be replicated but not the 
 
 The `Blob` API lets you access the blob's data content as in-memory data (a `Data` object) or as an `InputStream`.
 
-The code in <<ex-blob>> shows how you might add a blob to a document and save it to the database. Here we use `avatar` as the property key and a jpeg file as the blob data.
+The code in xref:android:blob.adoc#ex-blob[] shows how you might add a blob to a document and save it to the database. Here we use `avatar` as the property key and a jpeg file as the blob data.
 
 .Working with blobs
 [#ex-blob]
@@ -101,9 +101,9 @@ include::android:example$codesnippet_collection.java[tags="blob", indent=0]
 <.> Create the blob using the retrieved image. +
  Here we set `image/jpg` as the blob MIME type.
 <.> Add the blob to a document, using `avatar` as the property key +
-Saving the document generates a random access key for each blob stored in `digest` a SHA-1 encrypted property -- see: <<img-blob>>. +
+Saving the document generates a random access key for each blob stored in `digest` a SHA-1 encrypted property -- see: xref:android:blob.adoc#img-blob[]. +
 We can use the `avatar` key to retrieve the blob object later.
-Note, this is the identity of the blob assigned by us; the replication auto-generates a blob for attachments and assigns its own name to it (for example, `blob_1`) -- see <<img-blob>>.
+Note, this is the identity of the blob assigned by us; the replication auto-generates a blob for attachments and assigns its own name to it (for example, `blob_1`) -- see xref:android:blob.adoc#img-blob[].
 The `digest` key will be the same as generated when we saved the blob document.
 
 
@@ -112,7 +112,7 @@ The `digest` key will be the same as generated when we saved the blob document.
 When a document containing a blob object is synchronized, the Couchbase{nbsp}Lite replicator generates an `_attachments` dictionary with an auto-generated name for each blob attachment.
 This is different to the `avatar` key and is used internally to access the blob content.
 
-If you view a sync'd blob document in {cbs} Admin Console, you will see something similar to <<img-blob>>, which shows the document with its generated `_attachments` dictionary, including the `digest`.
+If you view a sync'd blob document in {cbs} Admin Console, you will see something similar to xref:android:blob.adoc#img-blob[], which shows the document with its generated `_attachments` dictionary, including the `digest`.
 
 .Sample Blob Document
 [#img-blob]

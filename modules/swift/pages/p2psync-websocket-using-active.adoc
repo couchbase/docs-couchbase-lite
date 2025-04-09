@@ -47,7 +47,7 @@ The implementation of this storage differs from platform to platform -- see xref
 [#configuration-summary]
 == Configuration Summary
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
-<<simple-replication-to-listener>> shows the initialization and configuration process.
+xref:swift:p2psync-websocket-using-active.adoc#simple-replication-to-listener[] shows the initialization and configuration process.
 
 
 [#simple-replication-to-listener]
@@ -68,12 +68,12 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags="p2p-act-rep-func
 
 <.> Configure how the client will authenticate the server.
 Here we say connect only to servers presenting a self-signed certificate.
-By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<authenticate-listener>>.
+By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: xref:swift:p2psync-websocket-using-active.adoc#authenticate-listener[].
 
 <.> Configure the credentials the client will present to the server.
-Here we say to provide _Basic Authentication_ credentials. Other options are available -- see: <<configuring-client-authentication>>.
+Here we say to provide _Basic Authentication_ credentials. Other options are available -- see: xref:swift:p2psync-websocket-using-active.adoc#configuring-client-authentication[].
 
-<.> Configure how the replication should perform <<conflict-resolution>>.
+<.> Configure how the replication should perform xref:swift:p2psync-websocket-using-active.adoc#conflict-resolution[].
 
 <.> Initialize the replicator using your configuration object.
 
@@ -97,11 +97,11 @@ For the Active Peer this involves browsing-for and selecting the appropriate ser
 [#configure-replicator]
 == Configure Replicator
 In this section::
-<<lbl-cfg-tgt>>
-|  <<lbl-cfg-sync>>
-|  <<lbl-cfg-retry>>
-|  <<authenticate-listener>>
-|  <<lbl-authclnt>>
+xref:swift:p2psync-websocket-using-active.adoc#lbl-cfg-tgt[]
+|  xref:swift:p2psync-websocket-using-active.adoc#lbl-cfg-sync[]
+|  xref:swift:p2psync-websocket-using-active.adoc#lbl-cfg-retry[]
+|  xref:swift:p2psync-websocket-using-active.adoc#authenticate-listener[]
+|  xref:swift:p2psync-websocket-using-active.adoc#lbl-authclnt[]
 
 
 [#lbl-cfg-tgt]
@@ -196,7 +196,7 @@ In the event it detects a transient error, the replicator will attempt to reconn
 
 On each retry the interval between attempts is increased exponentially (exponential backoff) up to the maximum wait time limit (5 minutes).
 
-The REST API provides configurable control over this replication retry logic using a set of configiurable properties -- see: <<tbl-repl-retry>>.
+The REST API provides configurable control over this replication retry logic using a set of configiurable properties -- see: xref:swift:p2psync-websocket-using-active.adoc#tbl-repl-retry[].
 
 .Replication Retry Configuration Properties
 [#tbl-repl-retry,cols="2,3,5"]
@@ -238,7 +238,7 @@ While you can configure the *maximum permitted* wait time,  the replicator's exp
 
 |===
 
-When necessary you can adjust any or all of those configurable values -- see: <<ex-repl-retry>> for how to do this.
+When necessary you can adjust any or all of those configurable values -- see: xref:swift:p2psync-websocket-using-active.adoc#ex-repl-retry[] for how to do this.
 
 .Configuring Replication Retries
 [#ex-repl-retry]
@@ -398,7 +398,7 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags="p2p-tlsid-tlside
 
 
 Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html[Replicator]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC6configAcA0D13ConfigurationC_tcfc[init(config:)] constructor, to initialize the replicator with the configuration you have defined.
-You can, optionally, add a change listener (see <<lbl-repl-mon>>) before starting the replicator running using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC5startyyF[start()].
+You can, optionally, add a change listener (see xref:swift:p2psync-websocket-using-active.adoc#lbl-repl-mon[]) before starting the replicator running using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC5startyyF[start()].
 
 // Example 7
 .Initialize and run replicator
@@ -423,11 +423,11 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags="p2p-act-rep-star
 
 
 In this section::
-<<lbl-repl-chng>>  |
-<<lbl-repl-status>>  |
-<<lbl-repl-pend>>
+xref:swift:p2psync-websocket-using-active.adoc#lbl-repl-chng[]  |
+xref:swift:p2psync-websocket-using-active.adoc#lbl-repl-status[]  |
+xref:swift:p2psync-websocket-using-active.adoc#lbl-repl-pend[]
 
-You can monitor a replication’s status by using a combination of <<lbl-repl-chng>> and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV8activityAC13ActivityLevelOvp[Activity].
+You can monitor a replication’s status by using a combination of xref:swift:p2psync-websocket-using-active.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV8activityAC13ActivityLevelOvp[Activity].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
 
@@ -439,7 +439,7 @@ You can add and a replicator change listener at any point; it will report change
 .Best Practice
 TIP: Don't forget to save the token so you can remove the listener later
 
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC17addChangeListeneryAA0G5TokenCyAA0dF0VcF[addChangeListener(_:)]) -- see: <<ex-repl-mon>>.
+Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC17addChangeListeneryAA0G5TokenCyAA0dF0VcF[addChangeListener(_:)]) -- see: xref:swift:p2psync-websocket-using-active.adoc#ex-repl-mon[].
 You will then be asynchronously notified of state changes.
 
 You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#//s:18CouchbaseLiteSwift10ReplicatorC20removeChangeListener9withTokenyAA0gI0C_tF[removeChangeListener(withToken:)].
@@ -451,11 +451,11 @@ You can remove a change listener with https://docs.couchbase.com/mobile/{major}.
 You can use the
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html[Replicator] class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6Status[Status] property
 to check the replicator status.
-That is, whether it is actively transferring data or if it has stopped -- see: <<ex-repl-mon>>.
+That is, whether it is actively transferring data or if it has stopped -- see: xref:swift:p2psync-websocket-using-active.adoc#ex-repl-mon[].
 
 The returned _ReplicationStatus_ structure comprises:
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV8activityAC13ActivityLevelOvp[Activity] -- stopped, offline, connecting, idle or busy -- see states described in: <<tbl-states>>
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV8activityAC13ActivityLevelOvp[Activity] -- stopped, offline, connecting, idle or busy -- see states described in: xref:swift:p2psync-websocket-using-active.adoc#tbl-states[]
 * https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV8progressAC8ProgressVvp[Progress]
 ** completed -- the total number of changes completed
 ** total -- the total number of changes to be processed
@@ -497,7 +497,7 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags=p2p-act-rep-statu
 
 [#lbl-repl-states]
 === Replication States
-<<tbl-states>> shows the different states, or activity levels, reported in the API; and the meaning of each.
+xref:swift:p2psync-websocket-using-active.adoc#tbl-states[] shows the different states, or activity levels, reported in the API; and the meaning of each.
 
 .Replicator activity levels
 [#tbl-states,cols="^1,4"]
@@ -604,7 +604,7 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags="p2p-act-rep-stop
 ====
 
 <.> Here we initiate the stopping of the replication using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC4stopyyF[stop()] method.
-It will stop any active <<lbl-repl-chng,change listener>> once the replication is stopped.
+It will stop any active xref:swift:p2psync-websocket-using-active.adoc#lbl-repl-chng[change listener] once the replication is stopped.
 
 
 [#conflict-resolution]
@@ -612,7 +612,7 @@ It will stop any active <<lbl-repl-chng,change listener>> once the replication i
 
 Unless you specify otherwise, Couchbase Lite's default conflict resolution policy is applied -- see xref:swift:conflict.adoc[Handling Data Conflicts].
 
-To use a different policy, specify a _conflict resolver_ using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC16conflictResolverAA08ConflictG8Protocol_pSgvp[conflictResolver] as shown in <<using-conflict-resolvers>>.
+To use a different policy, specify a _conflict resolver_ using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC16conflictResolverAA08ConflictG8Protocol_pSgvp[conflictResolver] as shown in xref:swift:p2psync-websocket-using-active.adoc#using-conflict-resolvers[].
 
 For more complex solutions you can provide a custom conflict resolver - see: xref:swift:conflict.adoc[Handling Data Conflicts].
 
@@ -660,7 +660,7 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tag=merge-conflict-res
 ====
 
 Just as a replicator may observe a conflict -- when updating a document that has changed both in the local database and in a remote database -- any attempt to save a document may also observe a conflict, if a replication has taken place since the local app retrieved the document from the database.
-To address that possibility, a version of the `Database.save()` method also takes a conflict resolver as shown in <<ex-merge-props>>.
+To address that possibility, a version of the `Database.save()` method also takes a conflict resolver as shown in xref:swift:p2psync-websocket-using-active.adoc#ex-merge-props[].
 
 The following code snippet shows an example of merging properties from the existing document (`current`) into the one being saved (`new`).
 In the event of conflicting keys, it will pick the key value from `new`.

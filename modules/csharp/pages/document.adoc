@@ -32,13 +32,13 @@ This ID is similar to a primary key in other databases.
 You can specify the ID programmatically.
 If you omit it, it will be automatically generated as a UUID.
 
-NOTE: Couchbase documents are assigned to a <<database-concepts,Collection>>.
+NOTE: Couchbase documents are assigned to a xref:csharp:database.adoc#database-concepts[Collection].
 The ID of a document must be unique within the Collection it is written to.
 You cannot change it after you have written the document.
 
 The document also has a value which contains the actual application data.
 This value is stored as a dictionary of key-value (k-v) pairs.
-The values can be made of up several different <<data-types>> such as numbers, strings, arrays, and nested objects.
+The values can be made of up several different xref:csharp:document.adoc#data-types[] such as numbers, strings, arrays, and nested objects.
 
 
 [#data-encoding]
@@ -78,7 +78,7 @@ Blob:: represents an arbitrary piece of binary data
 [#json]
 === JSON
 
-Couchbase Lite also provides for the direct handling of JSON data implemented in most cases by the provision of a pass:a,q[`ToJSON()`] method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array) -- see <<lbl-json-data>>.
+Couchbase Lite also provides for the direct handling of JSON data implemented in most cases by the provision of a pass:a,q[`ToJSON()`] method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array) -- see xref:csharp:document.adoc#lbl-json-data[].
 
 
 [#constructing-a-document]
@@ -124,7 +124,7 @@ hotel: {
 First open your database.
 If the database does not already exist, Couchbase Lite will create it for you.
 
-Couchbase documents are assigned to a <<database-concepts,Collection>>.
+Couchbase documents are assigned to a xref:csharp:database.adoc#database-concepts[Collection].
 All the CRUD examples in this document operate on a `collection` object (here, the Default Collection).
 
 
@@ -150,7 +150,7 @@ include::csharp:example$code_snippets/Program.cs[tags="datatype_usage_createdoc"
 ----
 
 
-For more on using *Documents*, see <<document-initializers>> and <<mutability>>.
+For more on using *Documents*, see xref:csharp:document.adoc#document-initializers[] and xref:csharp:document.adoc#mutability[].
 
 [#create-a-dictionary]
 === Create a Dictionary
@@ -166,7 +166,7 @@ include::csharp:example$code_snippets/Program.cs[tags="datatype_usage_mutdict", 
 ----
 
 
-Learn more about <<using-dictionaries>>.
+Learn more about xref:csharp:document.adoc#using-dictionaries[].
 
 [#create-an-array]
 === Create an Array
@@ -180,7 +180,7 @@ include::csharp:example$code_snippets/Program.cs[tags="datatype_usage_mutarray",
 ----
 
 
-Learn more about <<using-arrays>>
+Learn more about xref:csharp:document.adoc#using-arrays[]
 
 [#populate-a-document]
 === Populate a Document
@@ -410,7 +410,7 @@ include::csharp:example$code_snippets/Program.cs[tags="update-document", indent=
 ====
 
 
-NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also <<lbl-doc-constraints>>.
+NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also xref:csharp:document.adoc#lbl-doc-constraints[].
 
 
 [#batch-operations]
@@ -497,7 +497,7 @@ You can set expiration for a whole Collection
 Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
 This is to facilitate the creation of documents for use either in _local only_ mode where documents are not synced, or when used exclusively in peer-to-peer sync.
 
-NOTE: "_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes -- see <<res-keys>>.
+NOTE: "_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes -- see xref:csharp:document.adoc#res-keys[].
 
 Users are cautioned that any attempt to sync such documents to Sync Gateway will result in an error.
 To be future proof, you are advised to avoid creating such documents.
@@ -527,11 +527,11 @@ For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway
 == Working with JSON Data
 
 In this section::
-<<lbl-array>>
-| <<lbl-blob>>
-| <<lbl-dictionary>>
-| <<lbl-document>>
-| <<lbl-result>>
+xref:csharp:document.adoc#lbl-array[]
+| xref:csharp:document.adoc#lbl-blob[]
+| xref:csharp:document.adoc#lbl-dictionary[]
+| xref:csharp:document.adoc#lbl-document[]
+| xref:csharp:document.adoc#lbl-result[]
 
 
 The pass:a,q[`ToJSON()`] typed-accessor means you can easily work with JSON data, native and Couchbase Lite objects.
@@ -539,12 +539,12 @@ The pass:a,q[`ToJSON()`] typed-accessor means you can easily work with JSON data
 [#lbl-array]
 === Arrays
 
-Convert an `ArrayObject` to and from JSON using the pass:a,q[`ToJSON()`] and `toArray` methods -- see <<ex-array>>.
+Convert an `ArrayObject` to and from JSON using the pass:a,q[`ToJSON()`] and `toArray` methods -- see xref:csharp:document.adoc#ex-array[].
 
 Additionally you can:
 
 * Initialize a 'MutableArrayObject' using data supplied as a JSON string.
-This is done using the `init(json)` constructor -- see: <<ex-array>>
+This is done using the `init(json)` constructor -- see: xref:csharp:document.adoc#ex-array[]
 
 * Convert an `ArrayFragment` object to a JSON String
 
@@ -569,9 +569,9 @@ include::csharp:example$code_snippets/Program.cs[tags="tojson-array", indent=0]
 
 [#lbl-blob]
 === Blobs
-Convert a `Blob` to JSON using the `toJSON` method -- see <<ex-blob>>.
+Convert a `Blob` to JSON using the `toJSON` method -- see xref:csharp:document.adoc#ex-blob[].
 
-You can use `isBlob()` to check whether a given dictionary object is a blob or not -- see <<ex-blob>>.
+You can use `isBlob()` to check whether a given dictionary object is a blob or not -- see xref:csharp:document.adoc#ex-blob[].
 
 Note that the blob object must first be saved to the database (generating the required metadata) before you can use the `toJSON` method.
 
@@ -597,12 +597,12 @@ See also: xref:csharp:blob.adoc[Blobs]
 [#lbl-dictionary]
 === Dictionaries
 
-Convert a `DictionaryObject` to and from JSON using the `toJSON` and `toDictionary` methods -- see <<ex-dictionary>>.
+Convert a `DictionaryObject` to and from JSON using the `toJSON` and `toDictionary` methods -- see xref:csharp:document.adoc#ex-dictionary[].
 
 Additionally you can:
 
 * Initialize a 'MutableDictionaryObject' using data supplied as a JSON string.
-This is done using the `init(json)` constructor-- see: <<ex-dictionary>>
+This is done using the `init(json)` constructor-- see: xref:csharp:document.adoc#ex-dictionary[]
 
 * Set data with a JSON string using `setJSON()`
 
@@ -626,12 +626,12 @@ include::csharp:example$code_snippets/Program.cs[tags="tojson-dictionary", inden
 [#lbl-document]
 === Documents
 
-Convert a `Document` to and from JSON strings using the pass:a,q[`ToJSON()`] and pass:a,q[`SetJSON()`] methods -- see <<ex-document>>.
+Convert a `Document` to and from JSON strings using the pass:a,q[`ToJSON()`] and pass:a,q[`SetJSON()`] methods -- see xref:csharp:document.adoc#ex-document[].
 
 Additionally you can:
 
 * Initialize a 'MutableDocument' using data supplied as a JSON string.
-This is done using the `init(json)` or `init(id: json:)` constructor -- see: <<ex-document>>
+This is done using the `init(json)` or `init(id: json:)` constructor -- see: xref:csharp:document.adoc#ex-document[]
 
 * Set data with a JSON string using `setJSON()`
 
@@ -664,7 +664,7 @@ Convert a `Query Result` to JSON using its {to-JSON} accessor method.
 [#ex-json]
 ====
 
-Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Result.html#Couchbase_Lite_Query_Result_ToJson[Result.ToJson()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<ex-json>> for a working example.
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Result.html#Couchbase_Lite_Query_Result_ToJson[Result.ToJson()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See xref:csharp:document.adoc#ex-json[] for a working example.
 
 [source, C#]
 ----

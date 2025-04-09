@@ -61,7 +61,7 @@ Arrays can contain any data type and dictionaries have strings as keys, with val
 
 The basic Fleece data type is *FLValue*, an opaque pointer reference to a value of any type.
 
-Use the _FLValue_GetType_ API to check the value's actual type and _FLValue_As<Type Name>_ to get the actual value as shown in <<ex-flvalue>>
+Use the _FLValue_GetType_ API to check the value's actual type and _FLValue_As<Type Name>_ to get the actual value as shown in xref:c:c_fleece.adoc#ex-flvalue[]
 
 .Use FLValue
 [#ex-flvalue]
@@ -94,7 +94,7 @@ FLSlice is used to represent both binary data and strings.
 [#flstring]
 === FLString
 _FLString_ is a typedef of FLSlice, which explicitly represents a string value.
-Use the _FLSTR(“Some String”)_ macro to create an FLString from a string literal -- see: <<ex-flstr>>
+Use the _FLSTR(“Some String”)_ macro to create an FLString from a string literal -- see: xref:c:c_fleece.adoc#ex-flstr[]
 
 
 .Create an FLString
@@ -116,7 +116,7 @@ However, _FLSliceResult_/_FLStringResult_ is an FLSlice type which _does_ own me
 
 In general, whenever an FLSliceResult/FLStringResult is returned from an API call, you are responsible for calling FLSliceResult_Release when you are done using it.
 
-For an example of `FLSliceResult` in use, see: <<ex-flsliceresult>>.
+For an example of `FLSliceResult` in use, see: xref:c:c_fleece.adoc#ex-flsliceresult[].
 
 [#ex-flsliceresult]
 .Using FLStringResult
@@ -143,7 +143,7 @@ FLSlice and FLSliceResult have utility functions such as:
 [#null-slices]
 === Null Slices
 The null slice {NULL, 0} is represented by the constant `kFLSliceNull`. +
-You test a slice for null by comparing its pointer (buf) with NULL -- see: <<ex-flnullslice>>
+You test a slice for null by comparing its pointer (buf) with NULL -- see: xref:c:c_fleece.adoc#ex-flnullslice[]
 
 [#ex-flnullslice]
 .Test for null slice
@@ -166,7 +166,7 @@ See: https://github.com/couchbaselabs/fleece/blob/master/API/fleece/FLSlice.h[FL
 [#immutable]
 === Immutable
 _FLDict_ represents an immutable dictionary type in Fleece. +
-To access a value with a string key from a dictionary, use FLDict_Get -- as shown in: <<ex-flget>>.
+To access a value with a string key from a dictionary, use FLDict_Get -- as shown in: xref:c:c_fleece.adoc#ex-flget[].
 
 [#ex-flget]
 .Get dictionary value
@@ -180,7 +180,7 @@ doSomethingWith(value);
 ----
 
 
-To iterate through each key-value pair in the dictionary, use _FLDictIterator_, as shown in: <<ex-fliterator>>
+To iterate through each key-value pair in the dictionary, use _FLDictIterator_, as shown in: xref:c:c_fleece.adoc#ex-fliterator[]
 
 [#ex-fliterator]
 .Iterate key-value pairs in dictionary
@@ -203,7 +203,7 @@ while (NULL != (value = FLDictIterator_GetValue(&iter))) {
 
 *FLMutableDictionary* is a mutable dictionary type that allows editing.
 
-To create a new mutable dictionary, use FLMutableDict_New() -- see: <<ex-flmutabledict-new>>.
+To create a new mutable dictionary, use FLMutableDict_New() -- see: xref:c:c_fleece.adoc#ex-flmutabledict-new[].
 
 [#ex-flmutabledict-new]
 .Set dictionary value
@@ -223,7 +223,7 @@ FLMutableDict_Release(myDict); // <.>
 [#immutable-2]
 === Immutable
 _FLArray_ represents an immutable array type in Fleece. +
-use _FLArray_Count_ and _FLArray_Get_ respectively, to get the numbers of values in an array and to get a value using with an index -- as shown in <<ex-flarray-get>>.
+use _FLArray_Count_ and _FLArray_Get_ respectively, to get the numbers of values in an array and to get a value using with an index -- as shown in xref:c:c_fleece.adoc#ex-flarray-get[].
 
 [#ex-flarray-get]
 .Use arrays
@@ -238,7 +238,7 @@ if (count > 0) {
 ----
 
 
-Use _FLArrayIterator_ to iterate through arrays, as shown in : <<ex-array-iteration>>.
+Use _FLArrayIterator_ to iterate through arrays, as shown in : xref:c:c_fleece.adoc#ex-array-iteration[].
 
 [#ex-array-iteration]
 .Array iteration

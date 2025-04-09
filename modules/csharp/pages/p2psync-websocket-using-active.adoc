@@ -45,7 +45,7 @@ The implementation of this storage differs from platform to platform -- see xref
 [#configuration-summary]
 == Configuration Summary
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
-<<simple-replication-to-listener>> shows the initialization and configuration process.
+xref:csharp:p2psync-websocket-using-active.adoc#simple-replication-to-listener[] shows the initialization and configuration process.
 
 
 [#simple-replication-to-listener]
@@ -66,12 +66,12 @@ include::csharp:example$code_snippets/Program.cs[tags="p2p-act-rep-func;!autopur
 
 <.> Configure how the client will authenticate the server.
 Here we say connect only to servers presenting a self-signed certificate.
-By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<authenticate-listener>>.
+By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: xref:csharp:p2psync-websocket-using-active.adoc#authenticate-listener[].
 
 <.> Configure the credentials the client will present to the server.
-Here we say to provide _Basic Authentication_ credentials. Other options are available -- see: <<configuring-client-authentication>>.
+Here we say to provide _Basic Authentication_ credentials. Other options are available -- see: xref:csharp:p2psync-websocket-using-active.adoc#configuring-client-authentication[].
 
-<.> Configure how the replication should perform <<conflict-resolution>>.
+<.> Configure how the replication should perform xref:csharp:p2psync-websocket-using-active.adoc#conflict-resolution[].
 
 <.> Initialize the replicator using your configuration object.
 
@@ -94,11 +94,11 @@ Prior to connecting with a listener you may execute a Peer discovery phase to dy
 [#configure-replicator]
 == Configure Replicator
 In this section::
-<<lbl-cfg-tgt>>
-|  <<lbl-cfg-sync>>
-|  <<lbl-cfg-retry>>
-|  <<authenticate-listener>>
-|  <<lbl-authclnt>>
+xref:csharp:p2psync-websocket-using-active.adoc#lbl-cfg-tgt[]
+|  xref:csharp:p2psync-websocket-using-active.adoc#lbl-cfg-sync[]
+|  xref:csharp:p2psync-websocket-using-active.adoc#lbl-cfg-retry[]
+|  xref:csharp:p2psync-websocket-using-active.adoc#authenticate-listener[]
+|  xref:csharp:p2psync-websocket-using-active.adoc#lbl-authclnt[]
 
 
 [#lbl-cfg-tgt]
@@ -193,7 +193,7 @@ In the event it detects a transient error, the replicator will attempt to reconn
 
 On each retry the interval between attempts is increased exponentially (exponential backoff) up to the maximum wait time limit (5 minutes).
 
-The REST API provides configurable control over this replication retry logic using a set of configiurable properties -- see: <<tbl-repl-retry>>.
+The REST API provides configurable control over this replication retry logic using a set of configiurable properties -- see: xref:csharp:p2psync-websocket-using-active.adoc#tbl-repl-retry[].
 
 .Replication Retry Configuration Properties
 [#tbl-repl-retry,cols="2,3,5"]
@@ -235,7 +235,7 @@ While you can configure the *maximum permitted* wait time,  the replicator's exp
 
 |===
 
-When necessary you can adjust any or all of those configurable values -- see: <<ex-repl-retry>> for how to do this.
+When necessary you can adjust any or all of those configurable values -- see: xref:csharp:p2psync-websocket-using-active.adoc#ex-repl-retry[] for how to do this.
 
 .Configuring Replication Retries
 [#ex-repl-retry]
@@ -395,7 +395,7 @@ include::csharp:example$code_snippets/Program.cs[tags="p2p-tlsid-tlsidentity-wit
 
 
 Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html[Replicator]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator__ctor_Couchbase_Lite_Sync_ReplicatorConfiguration_[(ReplicatorConfiguration config)] constructor, to initialize the replicator with the configuration you have defined.
-You can, optionally, add a change listener (see <<lbl-repl-mon>>) before starting the replicator running using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_Start[Start()].
+You can, optionally, add a change listener (see xref:csharp:p2psync-websocket-using-active.adoc#lbl-repl-mon[]) before starting the replicator running using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_Start[Start()].
 
 // Example 7
 .Initialize and run replicator
@@ -420,11 +420,11 @@ include::csharp:example$code_snippets/Program.cs[tags="p2p-act-rep-start-full;!p
 
 
 In this section::
-<<lbl-repl-chng>>  |
-<<lbl-repl-status>>  |
-<<lbl-repl-pend>>
+xref:csharp:p2psync-websocket-using-active.adoc#lbl-repl-chng[]  |
+xref:csharp:p2psync-websocket-using-active.adoc#lbl-repl-status[]  |
+xref:csharp:p2psync-websocket-using-active.adoc#lbl-repl-pend[]
 
-You can monitor a replication’s status by using a combination of <<lbl-repl-chng>> and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html#Couchbase_Lite_Sync_ReplicatorStatus_Activity[Activity].
+You can monitor a replication’s status by using a combination of xref:csharp:p2psync-websocket-using-active.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html#Couchbase_Lite_Sync_ReplicatorStatus_Activity[Activity].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
 
@@ -436,7 +436,7 @@ You can add and a replicator change listener at any point; it will report change
 .Best Practice
 TIP: Don't forget to save the token so you can remove the listener later
 
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_AddChangeListener_System_EventHandler_Couchbase_Lite_Sync_ReplicatorStatusChangedEventArgs__[addChangeListener()]) -- see: <<ex-repl-mon>>.
+Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_AddChangeListener_System_EventHandler_Couchbase_Lite_Sync_ReplicatorStatusChangedEventArgs__[addChangeListener()]) -- see: xref:csharp:p2psync-websocket-using-active.adoc#ex-repl-mon[].
 You will then be asynchronously notified of state changes.
 
 You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_RemoveChangeListener_Couchbase_Lite_ListenerToken_[RemoveChangeListener(ListenerToken)].
@@ -448,11 +448,11 @@ You can remove a change listener with https://docs.couchbase.com/mobile/{major}.
 You can use the
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html[ReplicatorStatus] struct
 to check the replicator status.
-That is, whether it is actively transferring data or if it has stopped -- see: <<ex-repl-mon>>.
+That is, whether it is actively transferring data or if it has stopped -- see: xref:csharp:p2psync-websocket-using-active.adoc#ex-repl-mon[].
 
 The returned _ReplicationStatus_ structure comprises:
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html#Couchbase_Lite_Sync_ReplicatorStatus_Activity[Activity] -- stopped, offline, connecting, idle or busy -- see states described in: <<tbl-states>>
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html#Couchbase_Lite_Sync_ReplicatorStatus_Activity[Activity] -- stopped, offline, connecting, idle or busy -- see states described in: xref:csharp:p2psync-websocket-using-active.adoc#tbl-states[]
 * https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html#Couchbase_Lite_Sync_ReplicatorStatus_Progress[Progress]
 ** completed -- the total number of changes completed
 ** total -- the total number of changes to be processed
@@ -494,7 +494,7 @@ include::csharp:example$code_snippets/Program.cs[tags=p2p-act-rep-status,indent=
 
 [#lbl-repl-states]
 === Replication States
-<<tbl-states>> shows the different states, or activity levels, reported in the API; and the meaning of each.
+xref:csharp:p2psync-websocket-using-active.adoc#tbl-states[] shows the different states, or activity levels, reported in the API; and the meaning of each.
 
 .Replicator activity levels
 [#tbl-states,cols="^1,4"]
@@ -592,7 +592,7 @@ include::csharp:example$code_snippets/Program.cs[tags="p2p-act-rep-stop", indent
 ====
 
 <.> Here we initiate the stopping of the replication using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_Stop[Stop()] method.
-It will stop any active <<lbl-repl-chng,change listener>> once the replication is stopped.
+It will stop any active xref:csharp:p2psync-websocket-using-active.adoc#lbl-repl-chng[change listener] once the replication is stopped.
 
 
 [#conflict-resolution]
@@ -600,7 +600,7 @@ It will stop any active <<lbl-repl-chng,change listener>> once the replication i
 
 Unless you specify otherwise, Couchbase Lite's default conflict resolution policy is applied -- see xref:csharp:conflict.adoc[Handling Data Conflicts].
 
-To use a different policy, specify a _conflict resolver_ using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_ConflictResolver[ConflictResolver] as shown in <<using-conflict-resolvers>>.
+To use a different policy, specify a _conflict resolver_ using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_ConflictResolver[ConflictResolver] as shown in xref:csharp:p2psync-websocket-using-active.adoc#using-conflict-resolvers[].
 
 For more complex solutions you can provide a custom conflict resolver - see: xref:csharp:conflict.adoc[Handling Data Conflicts].
 
@@ -648,7 +648,7 @@ include::csharp:example$code_snippets/Program.cs[tag=merge-conflict-resolver,ind
 ====
 
 Just as a replicator may observe a conflict -- when updating a document that has changed both in the local database and in a remote database -- any attempt to save a document may also observe a conflict, if a replication has taken place since the local app retrieved the document from the database.
-To address that possibility, a version of the `Database.save()` method also takes a conflict resolver as shown in <<ex-merge-props>>.
+To address that possibility, a version of the `Database.save()` method also takes a conflict resolver as shown in xref:csharp:p2psync-websocket-using-active.adoc#ex-merge-props[].
 
 The following code snippet shows an example of merging properties from the existing document (`current`) into the one being saved (`new`).
 In the event of conflicting keys, it will pick the key value from `new`.
