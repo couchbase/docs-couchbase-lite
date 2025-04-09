@@ -43,11 +43,11 @@ process() {
     done
 }
 
-# process android
-# process c
-# process csharp -net
-# process java
-# process objc objective-c
+process android
+process c
+process csharp -net
+process java
+process objc objective-c
 process swift
 
 popd

@@ -62,7 +62,8 @@ my $TABS;
 
 OUTER: while (<>) {
 
-    my $DEBUG = /\[#swift:gs-install:::case-1\]/;
+    my $DEBUG = /swift:gs-install:::sample/;
+    warn "GOT $_" if $DEBUG;
 
     # expand attributes
     s/\{(\S+?)\}/expand($1)/eg;
@@ -82,31 +83,6 @@ OUTER: while (<>) {
             $attributes{$k} = $v;
             next;
         } 
-    }
-
-    # demangle source includes (with additional // include comment at beginning)
-    if (/^\[source/) {
-        my $source = $_;
-        my $delimiter = <>;
-        $_ = <>;
-        if (/^\/\/ (include::.*)/) {
-            my $include = $1;
-            $include =~ s/\{(\S+?)\}/expand($1)/eg;
-
-            print $source;
-            print $delimiter;
-            say $include;
-            print $delimiter;
-            while (<>) {
-                next OUTER if /^$delimiter/;
-            }
-        } else {
-            print $source;
-            print $delimiter;
-            s/\{(\S+?)\}/expand($1)/eg;
-            print;
-            next OUTER;
-        }
     }
 
     # demangle ` -- `
@@ -131,8 +107,6 @@ OUTER: while (<>) {
         if (/^$TABS$/) { $TABS = undef; }
     }
     elsif (/^\[tabs/) { $TABS = "START" }
-
-    # die "GOT $_" if $DEBUG;
 
     # images
     s{image::couchbase-lite/current/_images/}{image::ROOT:};
@@ -161,6 +135,8 @@ OUTER: while (<>) {
     # get rid of 'DO NOT EDIT' and friends.
     s/^\/\/ \s*((BEGIN|END) -- )?DO NOT.*//;
 
+  
+    warn "GOT $_" if $DEBUG;
 
     # de-mangle ::: links in block headers, #fragments, and <<links>>
     s/\[.column.*\]/[.column]/;
@@ -184,6 +160,31 @@ OUTER: while (<>) {
         next if $blanks++ >= 2;
     } else {
         $blanks = 0;
+    }
+
+    # demangle source includes (with additional // include comment at beginning)
+    if (/^\[source/) {
+        my $source = $_;
+        my $delimiter = <>;
+        $_ = <>;
+        if (/^\/\/ (include::.*)/) {
+            my $include = $1;
+            $include =~ s/\{(\S+?)\}/expand($1)/eg;
+
+            print $source;
+            print $delimiter;
+            say $include;
+            print $delimiter;
+            while (<>) {
+                next OUTER if /^$delimiter/;
+            }
+        } else {
+            print $source;
+            print $delimiter;
+            s/\{(\S+?)\}/expand($1)/eg;
+            print;
+            next OUTER;
+        }
     }
 
 

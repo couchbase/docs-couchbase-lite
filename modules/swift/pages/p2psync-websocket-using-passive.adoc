@@ -70,6 +70,8 @@ There is no limit on the number of Listeners you may configure -- <<simple-liste
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="listener-initialize", indent=0]
 ----
+
+
 ====
 
 
@@ -137,6 +139,8 @@ Couchbase sets no hard limit on the number of Listeners you can initialize.
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="listener-config-db", indent=0]
 ----
+
+
 ====
 
 <.> Set the local database using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s constructor https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC8databaseAcA8DatabaseC_tcfc[init(database:)]. +
@@ -164,6 +168,8 @@ The Listener will automatically select an available port if you do not specify o
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="listener-config-port", indent=0]
 ----
+
+
 ====
 
 <.> To use a canonical port -- one known to other applications -- specify it explicitly using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC4ports6UInt16VSgvp[port] method shown here. +
@@ -188,6 +194,8 @@ The Listener will listen on all network interfaces by default.
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="listener-config-netw-iface", indent=0]
 ----
+
+
 ====
 
 <.> To specify an interface -- one known to other applications -- identify it explicitly, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Structs/URLEndpointListenerConfiguration.html#/s:18CouchbaseLiteSwift32URLEndpointListenerConfigurationC16networkInterfaceSSSgvp[networkInterface] method shown here.
@@ -208,6 +216,8 @@ TIP: Where necessary, you can identify the available interfaces at runtime, usin
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="listener-get-network-interfaces", indent=0]
 ----
+
+
 ====
 
 
@@ -229,6 +239,8 @@ Both are valuable benefits, especially when network bandwidth is constrained.
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="listener-config-delta-sync", indent=0]
 ----
+
+
 ====
 
 <.> Delta sync replication is not enabled by default.
@@ -301,6 +313,7 @@ Import an identity from a secure key and certificate data source.
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="listener-config-tls-enable;listener-config-tls-id-full;!listener-config-tls-id-SelfSigned;!listener-config-tls-id-anon", indent=0]
 ----
 
+
 ====
 
 <.> Ensure TLS is used
@@ -321,6 +334,7 @@ Create a TLSIdentity for the server using convenience API.  The system generates
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="listener-config-tls-enable;listener-config-tls-id-full;!listener-config-tls-id-caCert;!listener-config-tls-id-anon", indent=0]
 ----
+
 
 ====
 
@@ -345,6 +359,7 @@ This example uses an _anonymous_ self signed certificate.  Generated certificate
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="listener-config-tls-enable;listener-config-tls-id-anon", indent=0]
 ----
+
 
 ====
 
@@ -393,6 +408,8 @@ To use client-supplied certificates instead -- see: <<using-client-certificate-a
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="listener-config-client-auth-pwd", indent=0]
 ----
+
+
 ====
 
 
@@ -429,6 +446,7 @@ Configure the server (listener) to authenticate the client against a list of one
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="listener-config-client-auth-root, indent=0]", indent=0]
 ----
 
+
 ====
 
 <.>  Get the identity data to authenticate against.
@@ -451,6 +469,7 @@ Configure the server (listener) to authenticate the client using user-supplied l
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="listener-config-client-auth-lambda", indent=0]
 ----
+
 
 ====
 
@@ -478,6 +497,8 @@ You can remove unwanted TLS identities from secure storage using the convenience
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="p2p-tlsid-delete-id-from-keychain", indent=0]
 ----
+
+
 ====
 
 
@@ -533,6 +554,8 @@ Once you have completed the Listener's configuration settings you can initialize
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="listener-start", indent=0]
 ----
+
+
 ====
 
 
@@ -556,6 +579,8 @@ You should note that these counts can be extremely volatile. So, the actual numb
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="listener-status-check", indent=0]
 ----
+
+
 ====
 
 
@@ -575,6 +600,8 @@ It is best practice to check the status of the Listener's connections and stop o
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="listener-stop", indent=0]
 ----
+
+
 ====
 
 

@@ -100,6 +100,7 @@ This query shows how to retrieve all properties from all documents in your datab
 include::csharp:example$code_snippets/Program.cs[tags="query-select-all", indent=0]
 ----
 
+
 ====
 
 
@@ -162,6 +163,7 @@ In this query we retrieve and then print the `_id`, `type` and `name` properties
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-select-props", indent=0]
 ----
+
 
 ====
 
@@ -242,6 +244,8 @@ In the example below, we use the `equalTo` operator to query documents where the
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-where", indent=0]
 ----
+
+
 ====
 
 
@@ -268,6 +272,8 @@ The following example uses the `https://docs.couchbase.com/mobile/{major}.{minor
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-collection-operator-contains", indent=0]
 ----
+
+
 [#in-operator]
 ==== IN Operator
 
@@ -279,6 +285,8 @@ The following example looks for documents whose `first`, `last` or `username` pr
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-collection-operator-in", indent=0]
 ----
+
+
 [#lbl-like-ops]
 === Like Operator
 In this section::
@@ -307,6 +315,8 @@ This query returns `landmark` type documents where the `name` matches the string
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-like-operator", indent=0]
 ----
+
+
 ====
 
 
@@ -337,6 +347,8 @@ Notice that the matches may span word boundaries.
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-like-operator-wildcard-match", indent=0]
 ----
+
+
 ====
 
 
@@ -360,6 +372,8 @@ The query returns "landmark" type documents with names such as "Engineer", "engi
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-like-operator-wildcard-character-match", indent=0]
 ----
+
+
 ====
 
 
@@ -383,6 +397,7 @@ This example returns documents with a `type` of "landmark" and a `name` property
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-regex-operator,indent=0]", indent=0]
 ----
+
 
 ====
 
@@ -409,6 +424,7 @@ This example shows how to query deleted documents in the database. It returns is
 include::csharp:example$code_snippets/Program.cs[tags="query-deleted-documents", indent=0]
 ----
 
+
 ====
 
 
@@ -430,6 +446,7 @@ This example JOINS the document of type `route` with documents of type `airline`
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-join", indent=0]
 ----
+
 
 ====
 
@@ -466,6 +483,7 @@ This example shows a query that selects all airports with an altitude above 300f
 include::csharp:example$code_snippets/Program.cs[tags="query-groupby", indent=0]
 ----
 
+
 ====
 
 
@@ -497,6 +515,7 @@ This example shows a query that returns documents of type equal to "hotel" sorte
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-orderby", indent=0]
 ----
+
 
 ====
 
@@ -594,6 +613,8 @@ The `Select` statement for this type of query, returns all document properties f
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-syntax-all", indent=0]
 ----
+
+
 ====
 
 
@@ -658,6 +679,8 @@ In this case access the retrieved document properties by converting each row's v
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-access-all", indent=0]
 ----
+
+
 ====
 
 <.> The dictionary of document properties using the database name as the key.
@@ -684,6 +707,8 @@ Here we use `SelectResult.expression(property("<property-name>")))` to specify t
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-syntax-props", indent=0]
 ----
+
+
 ====
 
 
@@ -733,6 +758,8 @@ Access the retrieved properties by converting each row into a dictionary -- as s
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-access-props", indent=0]
 ----
+
+
 ====
 
 
@@ -755,6 +782,8 @@ You would typically use this type of query if retrieval of document properties d
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-syntax-id", indent=0]
 ----
+
+
 ====
 
 
@@ -798,6 +827,8 @@ In this case, access the required document's properties by unpacking the `id` an
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-access-id", indent=0]
 ----
+
+
 ====
 
 <.> Extract the Id value from the dictionary and use it to get the document from the database
@@ -822,6 +853,8 @@ include::csharp:example$code_snippets/Program.cs[tags="query-access-id", indent=
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-syntax-count-only", indent=0]
 ----
+
+
 ====
 
 <.> The alias name, `mycount`, is used to access the count value.
@@ -863,6 +896,8 @@ Access the count using its alias name (`mycount` in this example) -- see <<ex-co
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-access-count-only", indent=0]
 ----
+
+
 ====
 
 <.> Get the count using the `SelectResult.as` alias, which is used as its key.
@@ -885,6 +920,8 @@ Use the `limit` and `offset` feature, to return a defined number of results star
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-syntax-pagination", indent=0]
 ----
+
+
 ====
 
 <.> Return a maximum of `limit` results starting from result number `offset`
@@ -910,6 +947,7 @@ Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/c
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-access-json", indent=0]
 ----
+
 
 ====
 
@@ -977,6 +1015,8 @@ To integrate a model with Couchbase Lite, you must implement the `PredictiveMode
 ----
 include::csharp:example$code_snippets/Program.cs[tags="predictive-model", indent=0]
 ----
+
+
 ====
 
 <1> The `predict(input) ++->++ output` method provides the input and expects the result of using the machine learning model.
@@ -1001,6 +1041,8 @@ To register the model you must create a new instance and pass it to the `Databas
 ----
 include::csharp:example$code_snippets/Program.cs[tags="register-model", indent=0]
 ----
+
+
 ====
 
 
@@ -1033,6 +1075,8 @@ When documents are added or updated, the index will call the prediction function
 ----
 include::csharp:example$code_snippets/Program.cs[tags="predictive-query-value-index", indent=0]
 ----
+
+
 ====
 
 
@@ -1056,6 +1100,7 @@ Here we create a predictive index from the `label` value of the prediction resul
 include::csharp:example$code_snippets/Program.cs[tags="predictive-query-predictive-index", indent=0]
 ----
 
+
 ====
 
 
@@ -1076,6 +1121,8 @@ The code below creates a query that calls the prediction function to return the 
 ----
 include::csharp:example$code_snippets/Program.cs[tags="predictive-query", indent=0]
 ----
+
+
 ====
 
 <1> The `PredictiveModel.predict()` method returns a constructed Prediction Function object which can be used further to specify a property value extracted from the output dictionary of the `PredictiveModel.predict()` function.
@@ -1100,6 +1147,8 @@ To deregister the model you must call the `Database.prediction.unregisterModel` 
 ----
 include::csharp:example$code_snippets/Program.cs[tags="unregister-model", indent=0]
 ----
+
+
 ====
 
 

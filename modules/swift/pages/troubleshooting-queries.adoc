@@ -38,6 +38,8 @@ To examine how your query is working, either embed the call inside your app (see
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="query-explain-all", indent=0]
 ----
+
+
 ====
 
 <.> Construct your query as normal
@@ -220,10 +222,12 @@ TIP: For more on indexes -- see: xref:swift:indexing.adoc[Indexing]
 .Like with Wildcard Prefix
 
 
-[source#swift:troubleshooting-queries:::like-wild-pfx-qry, swift]
+[source#like-wild-pfx-qry, swift]
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="query-explain-like", indent=0]
 ----
+
+
 <.> The indexed property, TYPE, cannot use its index because of the wildcard prefix.
 
 
@@ -248,6 +252,8 @@ Where practical, simple changes like this can make significant differences in qu
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="query-explain-nopfx", indent=0]
 ----
+
+
 ====
 
 <.> Simply removing the wildcard prefix enables the query optimizer to access the `typeIndex`, which results in a more efficient search.
@@ -269,10 +275,12 @@ For example, you can observe a similar situation to that shown in <<use-like-bas
 [#use-like-based-queries]
 
 
-[source#swift:troubleshooting-queries:::use-like-based-queries, swift]
+[source#use-like-based-queries, swift]
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="query-explain-function", indent=0]
 ----
+
+
 <.> Here we use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Function.html#/s:18CouchbaseLiteSwift8FunctionC5loweryAA18ExpressionProtocol_pAaE_pFZ[lower()]` function in the _Where_ expression
 
 .Query Plan:
@@ -291,6 +299,8 @@ But removing the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance
 ----
 include::swift:example$code_snippets/SampleCodeTest.swift[tags="query-explain-nofunction", indent=0]
 ----
+
+
 <.> Here we have removed `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Function.html#/s:18CouchbaseLiteSwift8FunctionC5loweryAA18ExpressionProtocol_pAaE_pFZ[lower()]` from the _Where_ expression
 
 .Query plan

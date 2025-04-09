@@ -65,7 +65,7 @@ Use the _FLValue_GetType_ API to check the value's actual type and _FLValue_As<T
 
 .Use FLValue
 [#ex-flvalue]
-[source#c:c_fleece:::ex-flvalue,c, subs="attributes+, macros+"}]
+[source#ex-flvalue,c, subs="attributes+, macros+"}]
 ----
 FLDict props = CBLDocument_Properties(doc);
 FLValue value = FLDict_Get(props, FLSTR("name”));
@@ -99,7 +99,7 @@ Use the _FLSTR(“Some String”)_ macro to create an FLString from a string lit
 
 .Create an FLString
 [#ex-flstr]
-[source#c:c_fleece:::ex-flstr,c, subs="attributes+, macros+"}]
+[source#ex-flstr,c, subs="attributes+, macros+"}]
 ----
 
 CBLDatabase* db = CBLDatabase_Open( (FLSTR("my-database"), NULL, &err); // <.>
@@ -120,7 +120,7 @@ For an example of `FLSliceResult` in use, see: <<ex-flsliceresult>>.
 
 [#ex-flsliceresult]
 .Using FLStringResult
-[source#c:c_fleece:::ex-flsliceresult,c, subs="attributes+, macros+"}]
+[source#ex-flsliceresult,c, subs="attributes+, macros+"}]
 ----
 
 FLStringResult path = CBLDatabase_Path(db);
@@ -147,7 +147,7 @@ You test a slice for null by comparing its pointer (buf) with NULL -- see: <<ex-
 
 [#ex-flnullslice]
 .Test for null slice
-[source#c:c_fleece:::ex-flnullslice,c, subs="attributes+, macros+"}]
+[source#ex-flnullslice,c, subs="attributes+, macros+"}]
 ----
 FLValue value = FLDict_Get(props, FLSTR("name”));
 FLString name = FLValue_AsString(value);
@@ -170,7 +170,7 @@ To access a value with a string key from a dictionary, use FLDict_Get -- as show
 
 [#ex-flget]
 .Get dictionary value
-[source#c:c_fleece:::ex-flget,c, subs="attributes+, macros+"}]
+[source#ex-flget,c, subs="attributes+, macros+"}]
 ----
 
 FLDict props = CBLDocument_Properties(doc);
@@ -184,7 +184,7 @@ To iterate through each key-value pair in the dictionary, use _FLDictIterator_, 
 
 [#ex-fliterator]
 .Iterate key-value pairs in dictionary
-[source#c:c_fleece:::ex-fliterator,c, subs="attributes+, macros+"}]
+[source#ex-fliterator,c, subs="attributes+, macros+"}]
 ----
 
 FLDictIterator iter;
@@ -207,7 +207,7 @@ To create a new mutable dictionary, use FLMutableDict_New() -- see: <<ex-flmutab
 
 [#ex-flmutabledict-new]
 .Set dictionary value
-[source#c:c_fleece:::ex-flmutabledict-new,c, subs="attributes+, macros+"}]
+[source#ex-flmutabledict-new,c, subs="attributes+, macros+"}]
 ----
 FLMutableDict myDict = FLMutableDict_New()
 FLMutableDict_SetString(myDict, FLSTR(“name”), FLSTR(“John Doe”));
@@ -227,7 +227,7 @@ use _FLArray_Count_ and _FLArray_Get_ respectively, to get the numbers of values
 
 [#ex-flarray-get]
 .Use arrays
-[source#c:c_fleece:::ex-flarray-get,c, subs="attributes+, macros+"}]
+[source#ex-flarray-get,c, subs="attributes+, macros+"}]
 ----
 int count = FLArray_Count(myArray);
 if (count > 0) {
@@ -243,7 +243,7 @@ Use _FLArrayIterator_ to iterate through arrays, as shown in : <<ex-array-iterat
 [#ex-array-iteration]
 .Array iteration
 // Iterate through the array
-[source#c:c_fleece:::ex-array-iteration,c, subs="attributes+, macros+"}]
+[source#ex-array-iteration,c, subs="attributes+, macros+"}]
 ----
 FLArrayIterator iter;
 FLArrayIterator_Begin(myArray, &iter);
@@ -266,7 +266,7 @@ To append a value into the array, use _FLMutableArray_Append<Type Name>_.
 
 [#ex-flmutable-array-append]
 .Append values to array
-[source#c:c_fleece:::ex-flmutable-array-append,c, subs="attributes+, macros+"}]
+[source#ex-flmutable-array-append,c, subs="attributes+, macros+"}]
 ----
 FLMutableArray myArray = FLMutableArray_New();
 FLMutableArray_AppendString(myArray, FLSTR(“String 1”));
@@ -288,7 +288,7 @@ Use *FLDoc_FromJSON* to convert JSON Dictionary or Array into Fleece Dictionary 
 
 [#ex-json-parse]
 .Parse JSON data to Fleece
-[source#c:c_fleece:::ex-json-parse,c, subs="attributes+, macros+"}]
+[source#ex-json-parse,c, subs="attributes+, macros+"}]
 ----
 FLError error;
 FLDoc doc = FLDoc_FromJSON(jsonString, &error);
@@ -306,7 +306,7 @@ Use FLValue_ToJSON to convert FLValue into JSON string
 
 [#ex-json-from-fleese]
 .Convert to JSON
-[source#c:c_fleece:::ex-json-from-fleese,c, subs="attributes+, macros+"}]
+[source#ex-json-from-fleese,c, subs="attributes+, macros+"}]
 ----
 FLDict props = CBLDocument_Properties(doc);
 FLStringResult jsonString = FLValue_ToJSON((FLValue) props);

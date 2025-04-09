@@ -155,6 +155,8 @@ Click the *GitHub* tab in the code examples for further details.
 ----
 include::java:example$codesnippet_collection.java[tags="p2p-act-rep-func", indent=0]
 ----
+
+
 ====
 
 
@@ -232,6 +234,8 @@ The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) pref
 ----
 include::java:example$codesnippet_collection.java[tags="sgw-act-rep-initialize", indent=0]
 ----
+
+
 ====
 
 <.> Note use of the scheme prefix (`wss://`
@@ -272,6 +276,8 @@ We use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{emp
 ----
 include::java:example$codesnippet_collection.java[tags="p2p-act-rep-config-type;p2p-act-rep-config-cont", indent=0]
 ----
+
+
 ====
 
 
@@ -350,6 +356,8 @@ When necessary you can adjust any or all of those configurable values -- see: <<
 ----
 include::java:example$codesnippet_collection.java[tags="replication-retry-config", indent=0]
 ----
+
+
 ====
 
 <.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/AbstractReplicatorConfiguration.html#setHeartbeat-long-[setHeartbeat()] to set the required interval (in seconds) between the heartbeat pulses
@@ -484,6 +492,8 @@ This is the recommended way of using basic authentication.
 ----
 include::java:example$codesnippet_collection.java[tags="basic-authentication", indent=0]
 ----
+
+
 ====
 
 
@@ -512,6 +522,8 @@ See <<ex-session-auth>>, which shows how to initiate a one-shot replication with
 ----
 include::java:example$codesnippet_collection.java[tags="session-authentication", indent=0]
 ----
+
+
 ====
 
 
@@ -535,6 +547,8 @@ This feature is useful in passing additional credentials, perhaps when an authen
 ----
 include::java:example$codesnippet_collection.java[tags="replication-custom-header", indent=0]
 ----
+
+
 ====
 
 
@@ -556,6 +570,8 @@ For instance, high-priority documents could be pushed first, or documents in a "
 ----
 include::java:example$codesnippet_collection.java[tags="replication-push-filter", indent=0]
 ----
+
+
 <1> The callback should follow the semantics of a https://en.wikipedia.org/wiki/Pure_function[pure function^].
 Otherwise, long running functions would slow down the replicator considerably.
 Furthermore, your callback should not make assumptions about what thread it is being called on.
@@ -576,6 +592,8 @@ are designed to be scalable (documents are filtered on the server) whereas a pul
 ----
 include::java:example$codesnippet_collection.java[tags="replication-pull-filter", indent=0]
 ----
+
+
 <1> The callback should follow the semantics of a
 https://en.wikipedia.org/wiki/Pure_function[pure function].
 Otherwise, long running functions would slow down the replicator considerably.
@@ -737,6 +755,8 @@ Clients wishing to sync previously removed documents must use the resetCheckpoin
 ----
 include::java:example$codesnippet_collection.java[tags="autopurge-override", indent=0]
 ----
+
+
 ====
 
 <.> Here we have opted to turn off the auto purge behavior. By default auto purge is enabled.
@@ -820,6 +840,8 @@ You can, optionally, add a change listener (see <<lbl-repl-mon>>) before startin
 ----
 include::java:example$codesnippet_collection.java[tags="p2p-act-rep-start-full;!p2p-act-rep-add-change-listener", indent=0]
 ----
+
+
 ====
 
 <.> Initialize the replicator with the configuration
@@ -849,6 +871,8 @@ However, if you do want to force the replication to start again from zero, use t
 ----
 include::java:example$codesnippet_collection.java[tags="replication-reset-checkpoint", indent=0]
 ----
+
+
 ====
 
 <.> Set start's reset option to `true`. +
@@ -986,6 +1010,8 @@ Stop the listener as shown in <<ex-stop-doc-listener>>.
 ----
 include::java:example$codesnippet_collection.java[tags="add-document-replication-listener,indent=0]", indent=0]
 ----
+
+
 ====
 
 
@@ -1002,6 +1028,7 @@ This code snippet shows how to stop the document listener using the token from t
 ----
 include::java:example$codesnippet_collection.java[tags="remove-document-replication-listener", indent=0]
 ----
+
 
 ====
 
@@ -1038,6 +1065,8 @@ This can be very useful in tracking the progress of a push sync, enabling the ap
 ----
 include::java:example$codesnippet_collection.java[tags="replication-pendingdocuments", indent=0]
 ----
+
+
 ====
 
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.html#getPendingDocumentIds--[Replicator.getPendingDocumentIds()] returns a list of the document IDs for all documents waiting to be pushed.
@@ -1067,6 +1096,8 @@ You can find further information on database operations in xref:java:database.ad
 ----
 include::java:example$codesnippet_collection.java[tags="p2p-act-rep-stop", indent=0]
 ----
+
+
 ====
 
 <.> Here we initiate the stopping of the replication using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.html#stop--[stop()] method.
@@ -1091,6 +1122,8 @@ The following code snippet adds a `Change Listener`, which monitors a replicatio
 ----
 include::java:example$codesnippet_collection.java[tags="replication-error-handling", indent=0]
 ----
+
+
 ====
 
 
@@ -1176,6 +1209,8 @@ This example loads the certificate from the application sandbox, then converts i
 ----
 include::java:example$codesnippet_collection.java[tags="certificate-pinning", indent=0]
 ----
+
+
 ====
 
 
@@ -1206,6 +1241,8 @@ You can increase the log output for activity related to replication with Sync Ga
 ----
 include::java:example$codesnippet_collection.java[tags="replication-logging", indent=0]
 ----
+
+
 ====
 
 

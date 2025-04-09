@@ -47,6 +47,8 @@ To examine how your query is working, either embed the call inside your app (see
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-explain-all", indent=0]
 ----
+
+
 ====
 
 <.> Construct your query as normal
@@ -229,10 +231,12 @@ TIP: For more on indexes -- see: xref:csharp:indexing.adoc[Indexing]
 .Like with Wildcard Prefix
 
 
-[source#csharp:query-troubleshooting:::like-wild-pfx-qry, C#]
+[source#like-wild-pfx-qry, C#]
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-explain-like", indent=0]
 ----
+
+
 <.> The indexed property, TYPE, cannot use its index because of the wildcard prefix.
 
 
@@ -257,6 +261,8 @@ Where practical, simple changes like this can make significant differences in qu
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-explain-nopfx", indent=0]
 ----
+
+
 ====
 
 <.> Simply removing the wildcard prefix enables the query optimizer to access the `typeIndex`, which results in a more efficient search.
@@ -278,10 +284,12 @@ For example, you can observe a similar situation to that shown in <<use-like-bas
 [#use-like-based-queries]
 
 
-[source#csharp:query-troubleshooting:::use-like-based-queries, C#]
+[source#use-like-based-queries, C#]
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-explain-function", indent=0]
 ----
+
+
 <.> Here we use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Lower_Couchbase_Lite_Query_IExpression_[Lower()]` function in the _Where_ expression
 
 .Query Plan:
@@ -300,6 +308,8 @@ But removing the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance
 ----
 include::csharp:example$code_snippets/Program.cs[tags="query-explain-nofunction", indent=0]
 ----
+
+
 <.> Here we have removed `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Lower_Couchbase_Lite_Query_IExpression_[Lower()]` from the _Where_ expression
 
 .Query plan

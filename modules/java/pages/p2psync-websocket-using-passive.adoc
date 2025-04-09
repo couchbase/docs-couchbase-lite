@@ -62,6 +62,8 @@ TIP: You must include the initializer `CouchbaseLite.init(context)` such that it
 ----
 include::java:example$codesnippet_collection.java[tags="listener-initialize", indent=0]
 ----
+
+
 ====
 
 
@@ -128,6 +130,8 @@ Couchbase sets no hard limit on the number of Listeners you can initialize.
 ----
 include::java:example$codesnippet_collection.java[tags="listener-config-db", indent=0]
 ----
+
+
 ====
 
 <.> Set the local database using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/URLEndpointListenerConfiguration.html[URLEndpointListenerConfiguration]'s constructor https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration-com.couchbase.lite.Database-[(Database database)]. +
@@ -155,6 +159,8 @@ The Listener will automatically select an available port if you do not specify o
 ----
 include::java:example$codesnippet_collection.java[tags="listener-config-port", indent=0]
 ----
+
+
 ====
 
 <.> To use a canonical port -- one known to other applications -- specify it explicitly using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/URLEndpointListenerConfiguration.html#setPort-int-[setPort] method shown here. +
@@ -179,6 +185,8 @@ The Listener will listen on all network interfaces by default.
 ----
 include::java:example$codesnippet_collection.java[tags="listener-config-netw-iface", indent=0]
 ----
+
+
 ====
 
 <.> To specify an interface -- one known to other applications -- identify it explicitly, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/URLEndpointListenerConfiguration.html#setNetworkInterface-java.lang.String-[setNetworkInterface] method shown here.
@@ -203,6 +211,8 @@ Both are valuable benefits, especially when network bandwidth is constrained.
 ----
 include::java:example$codesnippet_collection.java[tags="listener-config-delta-sync", indent=0]
 ----
+
+
 ====
 
 <.> Delta sync replication is not enabled by default.
@@ -275,6 +285,7 @@ Import an identity from a secure key and certificate data source.
 include::java:example$codesnippet_collection.java[tags="listener-config-tls-enable;listener-config-tls-id-full;!listener-config-tls-id-SelfSigned;!listener-config-tls-id-anon", indent=0]
 ----
 
+
 ====
 
 <.> Ensure TLS is used
@@ -295,6 +306,7 @@ Create a TLSIdentity for the server using convenience API.  The system generates
 ----
 include::java:example$codesnippet_collection.java[tags="listener-config-tls-enable;listener-config-tls-id-full;!listener-config-tls-id-caCert;!listener-config-tls-id-anon", indent=0]
 ----
+
 
 ====
 
@@ -319,6 +331,7 @@ This example uses an _anonymous_ self signed certificate.  Generated certificate
 ----
 include::java:example$codesnippet_collection.java[tags="listener-config-tls-enable;listener-config-tls-id-anon", indent=0]
 ----
+
 
 ====
 
@@ -367,6 +380,8 @@ To use client-supplied certificates instead -- see: <<using-client-certificate-a
 ----
 include::java:example$codesnippet_collection.java[tags="listener-config-client-auth-pwd", indent=0]
 ----
+
+
 ====
 
 
@@ -403,6 +418,7 @@ Configure the server (listener) to authenticate the client against a list of one
 include::java:example$codesnippet_collection.java[tags="listener-config-client-auth-root, indent=0]", indent=0]
 ----
 
+
 ====
 
 <.>  Get the identity data to authenticate against.
@@ -425,6 +441,7 @@ Configure the server (listener) to authenticate the client using user-supplied l
 ----
 include::java:example$codesnippet_collection.java[tags="listener-config-client-auth-lambda", indent=0]
 ----
+
 
 ====
 
@@ -452,6 +469,8 @@ You can remove unwanted TLS identities from secure storage using the convenience
 ----
 include::java:example$codesnippet_collection.java[tags="p2p-tlsid-delete-id-from-keychain", indent=0]
 ----
+
+
 ====
 
 
@@ -507,6 +526,8 @@ Once you have completed the Listener's configuration settings you can initialize
 ----
 include::java:example$codesnippet_collection.java[tags="listener-start", indent=0]
 ----
+
+
 ====
 
 
@@ -530,6 +551,8 @@ You should note that these counts can be extremely volatile. So, the actual numb
 ----
 include::java:example$codesnippet_collection.java[tags="listener-status-check", indent=0]
 ----
+
+
 ====
 
 
@@ -549,6 +572,8 @@ It is best practice to check the status of the Listener's connections and stop o
 ----
 include::java:example$codesnippet_collection.java[tags="listener-stop", indent=0]
 ----
+
+
 ====
 
 

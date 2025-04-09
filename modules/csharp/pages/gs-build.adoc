@@ -1,36 +1,40 @@
+
 = Build and Run
 :page-aliases: start/csharp-gs-build.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Build and run a starter app to validate your install of Couchbase Lite on C#
 :keywords: mobile edge nosql api C# .net web-app device-app
 
-include::partial$_set_page_context_for_csharp.adoc[]
 
-:param-abstract: This content provides sample code and instructions that enable you to test your Couchbase Lite for {param-name} installation.
-// DO NOT EDIT
-include::{root-partials}_show_page_header_block.adoc[]
-// include::{root-partials}block-related-get-started.adoc[]
-// DO NOT EDIT
+:source-language: C#
 
+
+[abstract]
+--
+Description -- _{description}_ +
+_Abstract -- This content provides sample code and instructions that enable you to test your Couchbase Lite for csharp installation._ +
+--
+// include::ROOT:partial$block-related-get-started.adoc[]
+
+
+[#starter-code]
 == Starter code
 
 Open *Main.cs* in Visual Studio and copy the following code in the `main` method.
 This snippet demonstrates how to run basic CRUD operations, a simple Query and running bi-directional replications with Sync Gateway.
 
-[source, {source-language}]
+[source, C#]
 ----
-// include::{snippet}[tag=getting-started,indent=0]
-include::{snippet}[tag=getting-started,indent=0]
+include::csharp:example$code_snippets/Program.cs[tag=getting-started,indent=0]
 ----
 
 Build and run.
 You should see the document ID and property printed to the console.
 The document was successfully persisted to the database.
 
-See also -- {sgw-install--xref}
+See also -- xref:sync-gateway::get-started-install.adoc[Install Sync Gateway]
 
+[#building-with-vector-search]
 === Building With Vector Search
 
 To build your Couchbase Lite application with Vector Search, you must add the following to your existing Couchbase Lite application:
@@ -51,13 +55,50 @@ using Couchbase.Lite.Extensions;
 // For Android applications
 Extension.Load(new VectorSearchExtension(Context));
 
-// For non-Android applications 
+// For non-Android applications
 Extension.Load(new VectorSearchExtension());
 
 ----
 
-// DO NOT EDIT -- Footer Related Content Block
 
-include::{root-partials}block-related-content-p2psync.adoc[]
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
 
-// DO NOT EDIT
+[.column]
+====== {empty}
+.How to
+* xref:csharp:p2psync-websocket-using-passive.adoc[Passive Peer]
+* xref:csharp:p2psync-websocket-using-active.adoc[Active Peer]
+
+
+.
+
+[.column]
+====== {empty}
+.Concepts
+* xref:csharp:landing-p2psync.adoc[Peer-to-Peer Sync]
+
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net[API References]
+
+.
+
+
+[.column]
+====== {empty}
+.Community Resources ...
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Getting Started with Peer-to-Peer Synchronization]
+
+
+++++
+</div>
+++++
+
+

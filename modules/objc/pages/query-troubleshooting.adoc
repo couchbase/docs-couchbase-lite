@@ -49,6 +49,8 @@ To examine how your query is working, either embed the call inside your app (see
 ----
 include::objc:example$code_snippets/SampleCodeTest.m[tags="query-explain-all", indent=0]
 ----
+
+
 ====
 
 <.> Construct your query as normal
@@ -231,10 +233,12 @@ TIP: For more on indexes -- see: xref:objc:indexing.adoc[Indexing]
 .Like with Wildcard Prefix
 
 
-[source#objc:query-troubleshooting:::like-wild-pfx-qry, objc]
+[source#like-wild-pfx-qry, objc]
 ----
 include::objc:example$code_snippets/SampleCodeTest.m[tags="query-explain-like", indent=0]
 ----
+
+
 <.> The indexed property, TYPE, cannot use its index because of the wildcard prefix.
 
 
@@ -259,6 +263,8 @@ Where practical, simple changes like this can make significant differences in qu
 ----
 include::objc:example$code_snippets/SampleCodeTest.m[tags="query-explain-nopfx", indent=0]
 ----
+
+
 ====
 
 <.> Simply removing the wildcard prefix enables the query optimizer to access the `typeIndex`, which results in a more efficient search.
@@ -280,10 +286,12 @@ For example, you can observe a similar situation to that shown in <<use-like-bas
 [#use-like-based-queries]
 
 
-[source#objc:query-troubleshooting:::use-like-based-queries, objc]
+[source#use-like-based-queries, objc]
 ----
 include::objc:example$code_snippets/SampleCodeTest.m[tags="query-explain-function", indent=0]
 ----
+
+
 <.> Here we use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryFunction.html#/c:objc(cs)CBLQueryFunction(cm)lower:[lower()]` function in the _Where_ expression
 
 .Query Plan:
@@ -302,6 +310,8 @@ But removing the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance
 ----
 include::objc:example$code_snippets/SampleCodeTest.m[tags="query-explain-nofunction", indent=0]
 ----
+
+
 <.> Here we have removed `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLQueryFunction.html#/c:objc(cs)CBLQueryFunction(cm)lower:[lower()]` from the _Where_ expression
 
 .Query plan

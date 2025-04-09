@@ -157,6 +157,8 @@ Click the *GitHub* tab in the code examples for further details.
 ----
 include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-func", indent=0]
 ----
+
+
 ====
 
 
@@ -233,6 +235,8 @@ The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) pref
 ----
 include::c:example$code_snippets/main.cpp[tags="sgw-act-rep-initialize", indent=0]
 ----
+
+
 ====
 
 <.> Note use of the scheme prefix (`wss://`
@@ -273,6 +277,8 @@ We use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}
 ----
 include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-config-type;p2p-act-rep-config-cont", indent=0]
 ----
+
+
 ====
 
 
@@ -351,6 +357,8 @@ When necessary you can adjust any or all of those configurable values -- see: <<
 ----
 include::c:example$code_snippets/main.cpp[tags="replication-retry-config", indent=0]
 ----
+
+
 ====
 
 <.> Here we use {url-api-prop-replicator-config-setHeartbeat} to set the required interval (in seconds) between the heartbeat pulses
@@ -414,6 +422,8 @@ This is the recommended way of using basic authentication.
 ----
 include::c:example$code_snippets/main.cpp[tags="basic-authentication", indent=0]
 ----
+
+
 ====
 
 
@@ -442,6 +452,8 @@ See <<ex-session-auth>>, which shows how to initiate a one-shot replication with
 ----
 include::c:example$code_snippets/main.cpp[tags="session-authentication", indent=0]
 ----
+
+
 ====
 
 
@@ -465,6 +477,8 @@ This feature is useful in passing additional credentials, perhaps when an authen
 ----
 include::c:example$code_snippets/main.cpp[tags="replication-custom-header", indent=0]
 ----
+
+
 ====
 
 
@@ -486,6 +500,8 @@ For instance, high-priority documents could be pushed first, or documents in a "
 ----
 include::c:example$code_snippets/main.cpp[tags="replication-push-filter", indent=0]
 ----
+
+
 <1> Do not provide long running functions, which could slow down the replicator. Nor make assumptions about the thread the function is being called on.
 
 [#pull-filter]
@@ -504,6 +520,8 @@ are designed to be scalable (documents are filtered on the server) whereas a pul
 ----
 include::c:example$code_snippets/main.cpp[tags="replication-pull-filter", indent=0]
 ----
+
+
 <1> Do not provide long running functions, which could slow down the replicator. Nor make assumptions about the thread the function is being called on.
 
 .Losing access to a document via the Sync Function.
@@ -662,6 +680,8 @@ Clients wishing to sync previously removed documents must use the resetCheckpoin
 ----
 include::c:example$code_snippets/main.cpp[tags="autopurge-override", indent=0]
 ----
+
+
 ====
 
 <.> Here we have opted to turn off the auto purge behavior. By default auto purge is enabled.
@@ -745,6 +765,8 @@ You can, optionally, add a change listener (see <<lbl-repl-mon>>) before startin
 ----
 include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-start-full;!p2p-act-rep-add-change-listener", indent=0]
 ----
+
+
 ====
 
 <.> Initialize the replicator with the configuration
@@ -774,6 +796,8 @@ However, if you do want to force the replication to start again from zero, use t
 ----
 include::c:example$code_snippets/main.cpp[tags="replication-reset-checkpoint", indent=0]
 ----
+
+
 ====
 
 <.> Set start's reset option to `true`. +
@@ -910,6 +934,8 @@ Stop the listener as shown in <<ex-stop-doc-listener>>.
 ----
 include::c:example$code_snippets/main.cpp[tags="add-document-replication-listener,indent=0]", indent=0]
 ----
+
+
 ====
 
 
@@ -926,6 +952,7 @@ This code snippet shows how to stop the document listener using the token from t
 ----
 include::c:example$code_snippets/main.cpp[tags="remove-document-replication-listener", indent=0]
 ----
+
 
 ====
 
@@ -962,6 +989,8 @@ This can be very useful in tracking the progress of a push sync, enabling the ap
 ----
 include::c:example$code_snippets/main.cpp[tags="replication-pendingdocuments", indent=0]
 ----
+
+
 ====
 
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()] returns a list of the document IDs for all documents waiting to be pushed.
@@ -991,6 +1020,8 @@ You can find further information on database operations in xref:c:database.adoc[
 ----
 include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-stop", indent=0]
 ----
+
+
 ====
 
 <.> Here we initiate the stopping of the replication using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()] method.
@@ -1015,6 +1046,8 @@ The following code snippet adds a `Change Listener`, which monitors a replicatio
 ----
 include::c:example$code_snippets/main.cpp[tags="replication-error-handling", indent=0]
 ----
+
+
 ====
 
 
@@ -1100,6 +1133,8 @@ This example loads the certificate from the application sandbox, then converts i
 ----
 include::c:example$code_snippets/main.cpp[tags="certificate-pinning", indent=0]
 ----
+
+
 ====
 
 
