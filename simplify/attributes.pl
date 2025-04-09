@@ -22,6 +22,10 @@ my %keep = map { $_ => 1 } (qw/
     url-apt-pkg-file
     barsep
     loc--finding-db-file--xref
+    release-dir-ce
+    release-dir-ee
+    release-dir-dev-ce
+    release-dir-dev-ee
 /);
 
 my %override = (
@@ -31,6 +35,7 @@ my %override = (
   'cbl-te' => '_Couchbase{nbsp}Lite_',
   'sg' => '_Sync{nbsp}Gateway',
   'svr' => '_Couchbase{nbsp}Server_',
+  'underscore' => '_',
 );
 
 sub expand {
