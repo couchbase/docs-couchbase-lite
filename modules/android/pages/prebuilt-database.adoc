@@ -34,11 +34,11 @@ The initial sync of any pre-built database pulls in any content changes on the s
 
 .To use a prebuilt database:
 ****
-. Create a new Couchbase Lite database with the required dataset -- see <<crt-db>>
-. Incorporate the pre-built database with your app bundle as an asset/resource -- see <<bundle-db>>
+. Create a new Couchbase Lite database with the required dataset -- see xref:android:prebuilt-database.adoc#crt-db[]
+. Incorporate the pre-built database with your app bundle as an asset/resource -- see xref:android:prebuilt-database.adoc#bundle-db[]
 . Adjust the start-up logic of your app to check for the presence of the required database. +
 If the database doesn't already exist, create one using the bundled pre-built database.
-Initiate a sync to update the data -- see <<deploy-db>>
+Initiate a sync to update the data -- see xref:android:prebuilt-database.adoc#deploy-db[]
 ****
 
 
@@ -123,7 +123,7 @@ During the application start-up logic, check if database exists in the required 
 
 . Copy the pre-packaged database to the required location
 +
-Use the API's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#copy(java.io.File,java.lang.String,com.couchbase.lite.DatabaseConfiguration)[Database.copy()] method -- see: <<lbl-code>>; this ensures that a UUID is generated for each copy
+Use the API's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#copy(java.io.File,java.lang.String,com.couchbase.lite.DatabaseConfiguration)[Database.copy()] method -- see: xref:android:prebuilt-database.adoc#lbl-code[]; this ensures that a UUID is generated for each copy
 +
 IMPORTANT: *Do not copy the database using any other method* +
 *Otherwise:* Each copy of the app will invalidate the other apps' xref:refer-glossary.adoc#checkpoint[checkpoints] because a new UUID was not generated.

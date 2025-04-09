@@ -152,7 +152,7 @@ syncing data scope:: Contains information pertaining to the user, which can be s
 
 
 You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Database.html[Database] class.
-Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.DatabaseConfiguration.html[DatabaseConfiguration] -- see <<ex-dbopen>>.
+Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.DatabaseConfiguration.html[DatabaseConfiguration] -- see xref:csharp:database.adoc#ex-dbopen[].
 
 Things to watch for include:
 
@@ -173,7 +173,7 @@ Note that this sandbox gets deleted sometimes when debugging from inside Visual 
 * Android: Using the `Context` passed in the `Activate()` method, `Context.FilesDir.AbsolutePath` (database can be retrieved using adb)
 
 
-See also <<lbl-find-db-loc>>.
+See also xref:csharp:database.adoc#lbl-find-db-loc[].
 --
 
 [#ex-dbopen]
@@ -188,6 +188,8 @@ See also <<lbl-find-db-loc>>.
 ----
 include::csharp:example$code_snippets/Program.cs[tags="new-database", indent=0]
 ----
+
+
 ====
 
 
@@ -196,7 +198,7 @@ include::csharp:example$code_snippets/Program.cs[tags="new-database", indent=0]
 
 You are advised to incorporate the closing of all open databases into your application workflow.
 
-To close a database, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Close[Database.Close()] -- see: <<ex-dbclose>>.
+To close a database, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Close[Database.Close()] -- see: xref:csharp:database.adoc#ex-dbclose[].
 This also closes
 footnote:fn28[Commencing with Release 2.8]
 active replications, listeners and-or live queries connected to the database.
@@ -218,6 +220,8 @@ TIP: Before closing, check that any attached listeners (query/replication/change
 ----
 include::csharp:example$code_snippets/Program.cs[tags="close-database", indent=0]
 ----
+
+
 ====
 
 
@@ -242,6 +246,8 @@ CAUTION: Database Full Sync is a safe method to prevent data loss but will incur
 ----
 include::csharp:example$code_snippets/Program.cs[tags="database-fullsync", indent=0]
 ----
+
+
 ====
 
 
@@ -261,7 +267,7 @@ The algorithm used to encrypt the database is 256-bit AES.
 [#enabling]
 === Enabling
 To enable encryption, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.DatabaseConfiguration.html#Couchbase_Lite_DatabaseConfiguration_EncryptionKey[DatabaseConfiguration.EncryptionKey()] to set the encryption key of your choice.
-Provide this encryption key every time the database is opened -- see <<ex-sdb-encrypt>>.
+Provide this encryption key every time the database is opened -- see xref:csharp:database.adoc#ex-sdb-encrypt[].
 
 .Configure Database Encryption
 [#ex-sdb-encrypt]
@@ -275,6 +281,8 @@ Provide this encryption key every time the database is opened -- see <<ex-sdb-en
 ----
 include::csharp:example$code_snippets/Program.cs[tags="database-encryption", indent=0]
 ----
+
+
 ====
 
 
@@ -352,7 +360,7 @@ Note that the `cblite` tool is not supported by the https://www.couchbase.com/su
 [#troubleshooting]
 == Troubleshooting
 You should use console logs as your first source of diagnostic information.
-If the information in the default logging level is insufficient you can focus it on database errors and generate more verbose messages -- see: <<ex-logdb>>.
+If the information in the default logging level is insufficient you can focus it on database errors and generate more verbose messages -- see: xref:csharp:database.adoc#ex-logdb[].
 
 For more on using Couchbase logs -- see: xref:csharp:troubleshooting-logs.adoc[Using Logs].
 
@@ -368,6 +376,8 @@ For more on using Couchbase logs -- see: xref:csharp:troubleshooting-logs.adoc[U
 ----
 include::csharp:example$code_snippets/Program.cs[tags="console-logging-db", indent=0]
 ----
+
+
 ====
 
 

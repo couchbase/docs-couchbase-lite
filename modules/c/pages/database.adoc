@@ -154,7 +154,7 @@ syncing data scope:: Contains information pertaining to the user, which can be s
 
 
 You can create a new database and-or open an existing database, using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html[CBLDatabase] class.
-Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_database_configuration.html[DatabaseConfiguration] -- see <<ex-dbopen>>.
+Just pass in a database name and optionally a https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_database_configuration.html[DatabaseConfiguration] -- see xref:c:database.adoc#ex-dbopen[].
 
 Things to watch for include:
 
@@ -168,7 +168,7 @@ the application sandbox
 or current working directory
 .
 
-See also <<lbl-find-db-loc>>.
+See also xref:c:database.adoc#lbl-find-db-loc[].
 --
 
 [#ex-dbopen]
@@ -183,6 +183,8 @@ See also <<lbl-find-db-loc>>.
 ----
 include::c:example$code_snippets/main.cpp[tags="new-database", indent=0]
 ----
+
+
 ====
 
 
@@ -191,7 +193,7 @@ include::c:example$code_snippets/main.cpp[tags="new-database", indent=0]
 
 You are advised to incorporate the closing of all open databases into your application workflow.
 
-To close a database, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#ga4d448b2d6809d6f9633d810d3ac6dcfa[CBLDatabase_Close()] -- see: <<ex-dbclose>>.
+To close a database, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#ga4d448b2d6809d6f9633d810d3ac6dcfa[CBLDatabase_Close()] -- see: xref:c:database.adoc#ex-dbclose[].
 This also closes
 active replications, listeners and-or live queries connected to the database.
 
@@ -210,6 +212,8 @@ NOTE: Closing a database soon after starting a replication involving it can caus
 ----
 include::c:example$code_snippets/main.cpp[tags="close-database", indent=0]
 ----
+
+
 ====
 
 
@@ -234,6 +238,8 @@ CAUTION: Database Full Sync is a safe method to prevent data loss but will incur
 ----
 include::c:example$code_snippets/main.cpp[tags="database-fullsync", indent=0]
 ----
+
+
 ====
 
 
@@ -253,7 +259,7 @@ The algorithm used to encrypt the database is 256-bit AES.
 [#enabling]
 === Enabling
 To enable encryption, use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_database_configuration.html#aaab04fb9d092ff02693eea611efefc55[CBLDatabaseConfiguration.encryptionKey()] to set the encryption key of your choice.
-Provide this encryption key every time the database is opened -- see <<ex-sdb-encrypt>>.
+Provide this encryption key every time the database is opened -- see xref:c:database.adoc#ex-sdb-encrypt[].
 
 .Configure Database Encryption
 [#ex-sdb-encrypt]
@@ -267,6 +273,8 @@ Provide this encryption key every time the database is opened -- see <<ex-sdb-en
 ----
 include::c:example$code_snippets/main.cpp[tags="database-encryption", indent=0]
 ----
+
+
 ====
 
 
