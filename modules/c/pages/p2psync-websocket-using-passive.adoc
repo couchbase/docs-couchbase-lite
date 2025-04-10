@@ -9,8 +9,8 @@ ifdef::show_edition[:page-edition: {release}] {enterprise}
 
 :source-language: c
 :url-api-references: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html
-:url-api-references-urlendpointconfiguration: {url-api-references}/group__URLEndpointListenerConfiguration.html
-:url-api-references-urlendpointlistener: {url-api-references}/group__URLEndpointListener.html
+:url-api-references-urlendpointconfiguration: {url-api-references}/struct_c_b_l_u_r_l_endpoint_listener_configuration.html
+:url-api-references-urlendpointlistener: {url-api-references}/_c_b_l_u_r_l_endpoint_listener_8h.html
 :url-api-references-tlsidentity: {url-api-references}/group__TLSIdentity.html
 :url-api-class-ListenerPasswordAuthenticator: {url-api-references}/group__ListenerPasswordAuthenticator.html
 :url-api-class-ListenerCertificateAuthenticator: {url-api-references}/group__ListenerCertificateAuthenticator.html
@@ -138,7 +138,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-db", indent=0]
 ----
 ====
 
-<.> Set the local database using the {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s constructor {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(im)initWithDatabase:[-initWithDatabase:]. +
+<.> Set the local database using the {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s {url-api-references-urlendpointconfiguration}#a79a013447ea7dfc423e43be1ddb6d2fa[database] field. +
 The database must be opened before the Listener is started. +
 `thisDB` has previously been declared as an object of type `Database`.
 
@@ -165,7 +165,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-port", indent=0]
 ----
 ====
 
-<.> To use a canonical port -- one known to other applications -- specify it explicitly using the {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)port[port] method shown here. +
+<.> To use a canonical port -- one known to other applications -- specify it explicitly using the {url-api-references-urlendpointconfiguration}#ae164b791eeeb816b9e3c3b25722a13a6[port] method shown here. +
 Ensure that firewall rules do not block any port you do specify. +
 
 
@@ -189,7 +189,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-netw-iface", ind
 ----
 ====
 
-<.> To specify an interface -- one known to other applications -- identify it explicitly, using the {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)networkInterface[networkInterface] method shown here.
+<.> To specify an interface -- one known to other applications -- identify it explicitly, using the {url-api-references-urlendpointconfiguration}#a5a10543158ed28e4489d1256cb50309f[networkInterface] method shown here.
 This must be either an IP Address or network interface name such as `en0`.
 
 
@@ -253,7 +253,7 @@ Define the credentials the server will present to the client for authentication.
 Note that the server must always authenticate itself with the client -- see: xref:c:p2psync-websocket-using-active.adoc#authenticate-listener[Authenticate Listener on Active Peer] for how the client deals with this.
 
 Use {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s
-{url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)tlsIdentity[tlsIdentity] method to configure the TLS Identity used in TLS communication.
+{url-api-references-urlendpointconfiguration}#a3820c7764a7f413f787275dff0d6c262[tlsIdentity] method to configure the TLS Identity used in TLS communication.
 
 If `TLSIdentity` is not set, then the listener uses an auto-generated anonymous self-signed identity (unless `disableTLS = true`).
 Whilst the client cannot use this to authenticate the server, it will use it to encrypt communication, giving a more secure option than non-TLS communication.
@@ -345,7 +345,7 @@ Define how the server (Listener) will authenticate the client as one it is prepa
 
 Whilst client authentication is optional, Couchbase lite provides the necessary tools to implement it.
 Use the
-{url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration] class's {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)authenticator[authenticator] method to specify how the client-supplied credentials are to be authenticated.
+{url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration] class's {url-api-references-urlendpointconfiguration}#aeaa4e119113ab9c9be273b63902cc0df[authenticator] method to specify how the client-supplied credentials are to be authenticated.
 
 Valid options are:
 
