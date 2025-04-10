@@ -196,30 +196,10 @@ This must be either an IP Address or network interface name such as `en0`.
 [#lbl-tls-security]
 == TLS Security
 
+TLS-based encryption is always enabled, and this setting ought to be used in any production environment.
 
-[#enable-or-disable-tls]
-=== Enable or Disable TLS
+Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity -- see <<configure-tls-identity-for-listener>>.
 
-Define whether the connection is to use TLS or clear text.
-
-TLS-based encryption is enabled by default, and this setting ought to be used in any production environment.
-However, it _can_ be disabled. For example, for development or test environments.
-
-When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity -- see <<configure-tls-identity-for-listener>>.
-
-
-You can use {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)disableTLS[disableTLS] method to disable TLS communication if necessary.
-
-The `disableTLS` setting must be 'false' when _Client Cert Authentication_ is required.
-
-Basic Authentication can be used with, or without, TLS.
-
-{url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)disableTLS[disableTLS] works in conjunction with `TLSIdentity`, to enable developers to define the key and certificate to be used.
-
-* If `disableTLS` is true -- TLS communication is disabled and TLS identity is ignored.
-Active peers will use the `ws://` URL scheme used to connect to the listener.
-* If `disableTLS` is false or not specified -- TLS communication is enabled.
-+
 Active peers will use the `wss://` URL scheme to connect to the listener.
 
 
@@ -232,7 +212,7 @@ Note that the server must always authenticate itself with the client -- see: xre
 Use {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s
 {url-api-references-urlendpointconfiguration}#a3820c7764a7f413f787275dff0d6c262[tlsIdentity] method to configure the TLS Identity used in TLS communication.
 
-If `TLSIdentity` is not set, then the listener uses an auto-generated anonymous self-signed identity (unless `disableTLS = true`).
+If `TLSIdentity` is not set, then the listener uses an auto-generated anonymous self-signed identity.
 Whilst the client cannot use this to authenticate the server, it will use it to encrypt communication, giving a more secure option than non-TLS communication.
 
 The auto-generated anonymous self-signed identity is saved in secure storage for future use to obviate the need to re-generate it.
@@ -447,21 +427,15 @@ The table in this section shows the expected system behavior (in regards to secu
 
 
 .Expected system behavior
-[cols="12,44,44"]
+[cols="44,44"]
 |===
-|disableTLS |tlsIdentity (corresponding to server) |Expected system behavior
+|tlsIdentity (corresponding to server) |Expected system behavior
 
-|true
-|Ignored
-a|TLS is disabled; all communication is plain text.
-
-|false
 a| set to nil
 a|* The system will auto generate an _anonymous_ self signed cert.
 * Active Peers (clients) should be configured to accept self-signed certificates.
 * Communication is encrypted
 
-|false
 a|Set to server identity generated from a self- or CA-signed certificate
 
 * On first use -- Bring your own certificate and private key; for example, using the {url-api-references-tlsidentity}[TLSIdentity] class's {url-api-references-tlsidentity}#TLSIdentity(cm)createIdentityForServer:attributes:expiration:label:error:[createIdentity()] method to add it to the secure storage.
