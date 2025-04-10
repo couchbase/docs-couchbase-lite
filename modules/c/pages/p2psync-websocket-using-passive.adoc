@@ -56,12 +56,29 @@ The implementation of this storage differs from platform to platform -- see xref
 You should configure and initialize a Listener for each Couchbase Lite database instance you want to sync.
 There is no limit on the number of Listeners you may configure -- <<simple-listener-initialization>> shows a simple initialization and configuration process.
 
+. Identify the local database to be used -- see: <<initialize-the-listener-configuration>>.
+
+. Optionally, choose a port to use.
+By default the system will automatically assign a port -- to over-ride this, see: <<lbl-set-network-and-port>>.
+
+. Optionally, choose a network interface to use.
+By default the system will listen on all network interfaces -- to over-ride this see: <<lbl-set-network-and-port>>.
+
+. Set the credentials this server will present to the client for authentication.
+Here we show the default TLS authentication, which is an anonymous self-signed certificate.
+The server must always authenticate itself to the client.
+
+. Set client security -- define the credentials the server expects the client to present for authentication.
+Here we show how basic authentication is configured to authenticate the client-supplied credentials from the http authentication header against valid credentials -- see <<lbl-authenticating-the-client>> for more options. +
+Note that client authentication is optional.
+
+. Initialize the listener using the configuration settings.
+
+. <<lbl-start-listener>>.
+
 
 // Example 1
 .Listener configuration and initialization
-[#simple-listener-initialization]
-
-
 [#simple-listener-initialization]
 ====
 
@@ -72,33 +89,11 @@ include::c:example$code_snippets/main.cpp[tags="listener-initialize", indent=0]
 ----
 ====
 
-
-<.> Identify the local database to be used -- see: <<initialize-the-listener-configuration>>
-
-<.> Optionally, choose a port to use.
-By default the system will automatically assign a port -- to over-ride this, see: <<lbl-set-network-and-port>>
-
-<.> Optionally, choose a network interface to use.
-By default the system will listen on all network interfaces -- to over-ride this see: <<lbl-set-network-and-port>>
-
-<.> Optionally, choose to sync only changes.
-The default is not to enable delta-sync -- see: <<delta-sync>>.
-
-<.> Set server security.
-TLS is always enabled instantly, so you can usually omit this line.
-But you _can_, optionally, disable TLS (*not* advisable in production) -- see: <<lbl-tls-security>>
-
-<.> Set the credentials this server will present to the client for authentication.
-Here we show the default TLS authentication, which is an anonymous self-signed certificate.
+<.> Here we show the default TLS authentication, which is an anonymous self-signed certificate.
 The server must always authenticate itself to the client.
 
-<.> Set client security -- define the credentials the server expects the client to present for authentication.
-Here we show how basic authentication is configured to authenticate the client-supplied credentials from the http authentication header against valid credentials -- see <<lbl-authenticating-the-client>> for more options. +
+<.> Here we show how basic authentication is configured to authenticate the client-supplied credentials from the http authentication header against valid credentials -- see <<lbl-authenticating-the-client>> for more options. +
 Note that client authentication is optional.
-
-<.> Initialize the listener using the configuration settings.
-
-<.> <<lbl-start-listener>>
 
 
 [#api-references]
