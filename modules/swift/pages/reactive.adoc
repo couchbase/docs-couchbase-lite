@@ -19,7 +19,7 @@ The user interface is automatically updated when the underlying data changes.
 
 The Reactive APIs are available for Swift in Couchbase Lite 3.2.3 and later.
 
-== Handle Documents as Codable Objects
+== Represent Documents as Codable Objects
 
 Prior to the Reactive APIs, Couchbase Lite developers working with Swift could interact with documents through APIs that require manual handling of data conversion.
 For example, reading and writing data would often involve using the Mutable Documents abstraction and working directly with dictionary representations.
@@ -29,11 +29,7 @@ For more information, see xref:swift:document.adoc[].
 The Reactive APIs simplify this process by introducing native adherence to Swift's https://developer.apple.com/documentation/swift/codable[Codable] protocol.
 This eliminates intermediate conversion layers, reducing the need to convert from Fleece format to JSON, and then to app-specific object representation.
 
-The document-level APIs have been enhanced to enable automatic encoding and decoding between Couchbase Lite documents and Swift codable model objects.
-You can retrieve documents from the collection as decodable model objects.
-You can also save, delete, and purge model objects encoded as documents in the collection.
-
-=== Map Between Couchbase Lite Data Representation and Swift Codable
+=== Map Couchbase Lite Data to Swift Codable Document Models
 
 A document model is a Swift Codable class used for encoding and decoding to and from a Couchbase Lite document.
 
@@ -55,6 +51,12 @@ class Task: Codable {
 ----
 ====
 
+== Manipulate Documents as Codable Objects
+
+The document-level APIs have been enhanced to enable automatic encoding and decoding between Couchbase Lite documents and Swift codable model objects.
+You can retrieve documents from the collection as decodable model objects.
+You can also save, delete, and purge model objects encoded as documents in the collection.
+
 === Get a Document as a Decodable Object
 
 To get a document from a collection as a decodable model object:
@@ -62,42 +64,66 @@ To get a document from a collection as a decodable model object:
 * Use the `document` function with the collection.
 * Specify the document ID and type.
 
+====
+[source,swift]
+----
+----
+====
+
 // FIXME: API link
-For details, see {url-api-references}/Classes/Collection.html#/Document%20Management[Document Management].
+For API details, see {url-api-references}/Classes/Collection.html#/Document%20Management[Document Management].
 
 === Save an Encodable Object as a Document
 
 To save a document represented by an encodable model object into a collection:
 
-* Use the `saveDocument` function with the collection.
+* Use the `save` function with the collection.
 * Specify the object.
 * Optionally, specify a concurrency control or a conflict handler.
 By default, last-write-wins concurrency control will be used if a conflict occurs.
 
+====
+[source,swift]
+----
+----
+====
+
 // FIXME: API link
-For details, see {url-api-references}/Classes/Collection.html#/Document%20Management[Document Management].
+For API details, see {url-api-references}/Classes/Collection.html#/Document%20Management[Document Management].
 
 === Delete a Document
 
 To delete a document represented by an encodable model object from a collection:
 
-* Use the `deleteDocument` function with the collection.
+* Use the `delete` function with the collection.
 * Specify the object.
 * Optionally, specify a concurrency control.
 By default, last-write-wins concurrency control will be used if a conflict occurs.
 
+====
+[source,swift]
+----
+----
+====
+
 // FIXME: API link
-For details, see {url-api-references}/Classes/Collection.html#/Document%20Management[Document Management].
+For API details, see {url-api-references}/Classes/Collection.html#/Document%20Management[Document Management].
 
 === Purge a Document
 
 To purge a document represented by an encodable model object from a collection:
 
-* Use the `purgeDocument` function with the collection.
+* Use the `purge` function with the collection.
 * Specify the object.
 
+====
+[source,swift]
+----
+----
+====
+
 // FIXME: API link
-For details, see {url-api-references}/Classes/Collection.html#/Document%20Management[Document Management].
+For API details, see {url-api-references}/Classes/Collection.html#/Document%20Management[Document Management].
 
 == Decode Query Results
 
@@ -129,8 +155,14 @@ To get a query's result as a decodable model object:
 * Specify the decodable model type.
 * Optionally, specify a <<datakey,data key>>.
 
+====
+[source,swift]
+----
+----
+====
+
 // FIXME: API link
-For details, see {url-api-references}/Classes/Result.html#/ReadOnlyArrayProtocol[ReadOnlyArrayProtocol].
+For API details, see {url-api-references}/Classes/Result.html#/ReadOnlyArrayProtocol[ReadOnlyArrayProtocol].
 
 NOTE: When saving a document model decoded from the query's result, the document associated with the model will be retrieved during the save time.
 As a result, the document may not be the same document during the query time if the document has been changed.
@@ -143,8 +175,14 @@ To get all a query's results as an array of a decodable model objects:
 * Specify the decodable model type.
 * Optionally, specify a <<datakey,data key>>.
 
+====
+[source,swift]
+----
+----
+====
+
 // FIXME: API link
-For details, see {url-api-references}/Classes/ResultSet.html[ResultSet].
+For API details, see {url-api-references}/Classes/ResultSet.html[ResultSet].
 
 WARNING: Getting all the query's results as an array of decodable model objects may take a long time and consume a large amount of memory, depending on the data size and the number of results.
 
@@ -168,7 +206,7 @@ When using `data(as:, dataKey:)` to decode the query result, setting the data ke
 To align with declarative programming paradigms, the Reactive APIs provide an efficient way to publish change notifications.
 This allows for automatic updates to UI components, streamlined data pipelines, and improved code readability.
 
-To publish change notifications, the Reactive APIs provide access to two underlying SwiftUI frameworks.
+To publish change notifications, the Reactive APIs provide interoperability with two underlying Swift frameworks.
 The way that you use the Reactive APIs differs slightly, depending on the underlying framework.
 The framework that you use depends on your operating system version.
 
@@ -183,8 +221,14 @@ To get a publisher that emits `QueryChange` events whenever a query result chang
 * Optionally, specify the dispatch queue on which the changes are to be delivered.
 By default, the main queue is used.
 
+====
+[source,swift]
+----
+----
+====
+
 // FIXME: API link
-For details, see {url-api-references}/Classes/Query.html[Query].
+For API details, see {url-api-references}/Classes/Query.html[Query].
 
 NOTE: The emitted `QueryChange` contains the entire new result set of the query, not just the delta.
 
@@ -196,8 +240,14 @@ To get a publisher that emits `CollectionChange` events whenever documents in a 
 * Optionally, specify the dispatch queue on which the changes are to be delivered.
 By default, the main queue is used.
 
+====
+[source,swift]
+----
+----
+====
+
 // FIXME: API link
-For details, see {url-api-references}/Classes/Collection.html#/Combine%20Publisher[Combine Publisher].
+For API details, see {url-api-references}/Classes/Collection.html#/Combine%20Publisher[Combine Publisher].
 
 To get a publisher that emits `DocumentChange` events whenever a specific document in a collection changes:
 
@@ -206,8 +256,14 @@ To get a publisher that emits `DocumentChange` events whenever a specific docume
 * Optionally, specify the dispatch queue on which the changes are to be delivered.
 By default, the main queue is used.
 
+====
+[source,swift]
+----
+----
+====
+
 // FIXME: API link
-For details, see {url-api-references}/Classes/Collection.html#/Combine%20Publisher[Combine Publisher].
+For API details, see {url-api-references}/Classes/Collection.html#/Combine%20Publisher[Combine Publisher].
 
 === Publish Replicator Changes
 
@@ -217,8 +273,14 @@ To get a publisher that emits `ReplicatorChange` events when a replicator's stat
 * Optionally, specify the dispatch queue on which the changes are to be delivered.
 By default, the main queue is used.
 
+====
+[source,swift]
+----
+----
+====
+
 // FIXME: API link
-For details, see {url-api-references}/Classes/Replicator.html#/Combine%20Publisher[Combine Publisher].
+For API details, see {url-api-references}/Classes/Replicator.html#/Combine%20Publisher[Combine Publisher].
 
 To get a publisher that emits `DocumentReplication` events whenever documents are pushed or pulled during replication:
 
@@ -226,8 +288,14 @@ To get a publisher that emits `DocumentReplication` events whenever documents ar
 * Optionally, specify the dispatch queue on which the changes are to be delivered.
 By default, the main queue is used.
 
+====
+[source,swift]
+----
+----
+====
+
 // FIXME: API link
-For details, see {url-api-references}/Classes/Replicator.html#/Combine%20Publisher[Combine Publisher].
+For API details, see {url-api-references}/Classes/Replicator.html#/Combine%20Publisher[Combine Publisher].
 
 == Examples
 
@@ -238,6 +306,8 @@ For details, see {url-api-references}/Classes/Replicator.html#/Combine%20Publish
 Combine Framework::
 +
 --
+For iOS 13 and later, or macOS 10.15 to 14:
+
 [source,swift]
 ----
 @MainActor
@@ -281,6 +351,8 @@ class TodoViewModel: ObservableObject {
 Observation Framework::
 +
 --
+For iOS 17 and later, or macOS 14 and later:
+
 [source,swift]
 ----
 @Observable class TodoViewModel {
@@ -329,6 +401,8 @@ Observation Framework::
 Combine Framework::
 +
 --
+For iOS 13 and later, or macOS 10.15 to 14:
+
 [source,swift]
 ----
 ​​struct TodoListView: View {
@@ -370,6 +444,8 @@ Combine Framework::
 Observation Framework::
 +
 --
+For iOS 17 and later, or macOS 14 and later:
+
 [source,swift]
 ----
 ​struct TodoView: View {
