@@ -3,10 +3,13 @@
 ifdef::show_edition[:page-edition: {release}]
 ifdef::prerelease[:page-status: Couchbase Lite 3.2.3 {prerelease}]
 :page-role:
-:description: The Reactive APIs provide integration with SwiftUI, enabling reactive programming styles for concurrent user interface updates.
+:description: The Reactive APIs are enhanced APIs for Swift that streamline data modeling and enable reactive programming patterns.
 :keywords: reactive swiftui codable combine observation
 
 :url-api-references: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift
+:url-codable: https://developer.apple.com/documentation/swift/codable
+:url-combine: https://developer.apple.com/documentation/combine
+:url-observation: https://developer.apple.com/documentation/observation
 
 // Sets the correct mobile sdk for xref links in the common page
 include::partial$_set_page_context_for_swift.adoc[]
@@ -14,30 +17,37 @@ include::partial$_set_page_context_for_swift.adoc[]
 [abstract]
 {description}
 
-The Reactive APIs enable you map Couchbase Lite documents directly to Swift models, and then bind a model to a view representing the user interface.
-The user interface is automatically updated when the underlying data changes.
+The Reactive APIs are designed for developers building apps with SwiftUI, Combine, or Swift's new Observation framework.
+They provide two tightly integrated capabilities:
+
+* *Codable protocol compatibility* -- enables automatic mapping between Couchbase Lite documents and Swift model objects using the {url-codable}[Codable] protocol, reducing boilerplate and improving type safety.
+
+* *Change publishers* -- provides {url-combine}[Combine] and {url-observation}[Observation] publishers for observing changes to queries, documents, and collections, enabling SwiftUI views and view models to react automatically to underlying data updates.
+
+Together, these APIs allow developers to define Swift classes that can be directly persisted as Couchbase Lite documents and observed for changes in a reactive UI context.
+They eliminate the need for manual dictionary manipulation, JSON conversion, or explicit change listeners.
 
 The Reactive APIs are available for Swift in Couchbase Lite 3.2.3 and later.
 
-== Represent Documents as Codable Objects
+== Represent Documents as Codable Model Objects
 
 Prior to the Reactive APIs, Couchbase Lite developers working with Swift could interact with documents through APIs that require manual handling of data conversion.
 For example, reading and writing data would often involve using the Mutable Documents abstraction and working directly with dictionary representations.
 While this approach provides flexibility, it can involve additional steps for developers when integrating Swift models into their applications.
 For more information, see xref:swift:document.adoc[].
 
-The Reactive APIs simplify this process by introducing native adherence to Swift's https://developer.apple.com/documentation/swift/codable[Codable] protocol.
+The Reactive APIs simplify this process by introducing native adherence to the {url-codable}[Codable] protocol.
 This eliminates intermediate conversion layers, reducing the need to convert from Fleece format to JSON, and then to app-specific object representation.
 
 === Map Couchbase Lite Data to Swift Codable Document Models
 
-A document model is a Swift Codable class used for encoding and decoding to and from a Couchbase Lite document.
+A *document model* is a Swift class that conforms to Codable and includes an optional property annotated with `@DocumentID`.
+This special property wrapper associates the model with a Couchbase Lite document via its unique document ID.
 
-The Reactive APIs provide the `@documentID` property wrapper.
-This associates a model object with a document using the specified ID.
-If no document ID is provided, one is automatically generated and assigned to the model when it is encoded and saved to the database.
+If no document ID is provided, Couchbase Lite generates a new one automatically and assigns to the model when it is encoded and saved.
 
-To avoid multiple copies of the model from being associated with the same document, the document model is required to be a class rather than a struct.
+NOTE: Document models must be declared as classes, not structs.
+This ensures reference semantics and avoids issues where multiple in-memory objects point to the same document.
 
 .Data model
 ====
@@ -51,15 +61,13 @@ class Task: Codable {
 ----
 ====
 
-== Manipulate Documents as Codable Objects
+== Manipulate Documents as Codable Model Objects
 
-The document-level APIs have been enhanced to enable automatic encoding and decoding between Couchbase Lite documents and Swift codable model objects.
-You can retrieve documents from the collection as decodable model objects.
-You can also save, delete, and purge model objects encoded as documents in the collection.
+Once defined, document models can be persisted, retrieved, and removed using type-safe APIs on the Collection object.
 
 === Get a Document as a Decodable Object
 
-To get a document from a collection as a decodable model object:
+To get a document from a collection and decode it into a Swift model:
 
 * Use the `document` function with the collection.
 * Specify the document ID and type.
@@ -75,7 +83,7 @@ For API details, see {url-api-references}/Classes/Collection.html#/Document%20Ma
 
 === Save an Encodable Object as a Document
 
-To save a document represented by an encodable model object into a collection:
+To save a document represented by a Swift model object into a collection:
 
 * Use the `save` function with the collection.
 * Specify the object.
@@ -93,7 +101,7 @@ For API details, see {url-api-references}/Classes/Collection.html#/Document%20Ma
 
 === Delete a Document
 
-To delete a document represented by an encodable model object from a collection:
+To remove a document represented by a Swift model object from a collection:
 
 * Use the `delete` function with the collection.
 * Specify the object.
@@ -111,7 +119,9 @@ For API details, see {url-api-references}/Classes/Collection.html#/Document%20Ma
 
 === Purge a Document
 
-To purge a document represented by an encodable model object from a collection:
+Purging a document is permanent deletion, not replicated.
+
+To purge a document represented by a Swift model object from a collection:
 
 * Use the `purge` function with the collection.
 * Specify the object.
@@ -210,8 +220,8 @@ To publish change notifications, the Reactive APIs provide interoperability with
 The way that you use the Reactive APIs differs slightly, depending on the underlying framework.
 The framework that you use depends on your operating system version.
 
-* The https://developer.apple.com/documentation/combine[Combine] framework is available in iOS 13 and later, and macOS 10.15 to 14.
-* The https://developer.apple.com/documentation/observation[Observation] framework is available in iOS 17 and later, and macOS 14 and later.
+* The {url-combine}[Combine] framework is available in iOS 13 and later, and macOS 10.15 to 14.
+* The {url-observation}[Observation] framework is available in iOS 17 and later, and macOS 14 and later.
 
 === Publish Query Result Changes
 
