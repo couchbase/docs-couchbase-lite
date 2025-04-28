@@ -2494,6 +2494,53 @@ static void database_replica(){
     #endif
 }
 
+// Peer-to-Peer
+
+static bool your_authenticate_function(FLString usr, FLString password) {
+    return true;
+}
+
+static void createListenerSimple() {
+    CBLDatabase* database = kDatabase;
+    CBLCollection *collection = CBLDatabase_DefaultCollection(database, nullptr);
+
+#ifdef COUCHBASE_ENTERPRISE
+    // tag::listener-initialize[]
+    CBLURLEndpointListenerConfiguration config;
+    memset(&config, 0, sizeof(CBLURLEndpointListenerConfiguration));
+
+    // Setup collections available for replication:
+    CBLCollection* collections[1];
+    collections[0] = collection;
+    config.collections = collections;
+    config.collectionCount = 1;
+
+    // Use default anonymous TLSIdentity by setting NULL to tlsIdentity property:
+    config.disableTLS = false; // <.>
+    config.tlsIdentity = NULL;
+
+    // Setup authenticator:
+    CBLListenerAuthenticator* auth = CBLListenerAuth_CreatePassword(
+        [](void* ctx, FLString user, FLString password) {
+        return your_authenticate_function(user, password);
+    }, nullptr);
+    config.authenticator = auth; // <.>
+
+    CBLError error{};
+    memset(&error, 0, sizeof(CBLError));
+
+    // Create the listener with the config:
+    CBLURLEndpointListener* listener = CBLURLEndpointListener_Create(&config, &error);
+
+    // You can safely free the authenticator here after creating the listener
+    CBLListenerAuth_Free(auth);
+
+    // Start the listener:
+    CBLURLEndpointListener_Start(listener, &error);
+    // end::listener-initialize[]
+#endif
+}
+
 int main(int argc, char** argv) {
     create_new_database();
     create_document();
