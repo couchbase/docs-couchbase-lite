@@ -7,11 +7,120 @@
 
 import Foundation
 import CouchbaseLiteSwift
+import Combine
+
+class Task: Codable {
+    @DocumentID var id: String?
+    var title: String
+    var completed: Bool
+    
+    init(id: String? = nil, title: String, completed: Bool) {
+        self.id = id
+        self.title = title
+        self.completed = completed
+    }
+}
 
 class CodableCombine {
     var database: Database!
     var collection: Collection!
     var replicator: Replicator!
+    var query: Query!
+    var task: Task!
+    var task2: Task!
+    var tasks: [Task] = []
+    var cancellables = Set<AnyCancellable>()
+    
+    func codable() throws {
+        // tag::get-codable-doc[]
+        let document = try collection.document(id: task.id!, as: Task.self)
+        // end::get-codable-doc[]
+        
+        // tag::save-codable-doc[]
+        try collection.save(from: task)
+        // end::save-codable-doc[]
+        
+        // tag::delete-codable-doc[]
+        try collection.delete(for: task)
+        // end::delete-codable-doc[]
+        
+        // tag::purge-codable-doc[]
+        try collection.purge(for: task)
+        // end::purge-codable-doc[]
+        
+        let query = try database.createQuery("SELECT meta().id AS id, title FROM _default.tasks")
+        // tag::get-codable-result[]
+        let results = try query.execute().allResults()
+        for result in results {
+            let task = try result.data(as: Task.self)
+        }
+        // end::get-codable-result[]
+        
+        // tag::get-codable-all-result[]
+        let tasks = try query.execute().data(as: Task.self)
+        // end::get-codable-all-result[]
+    }
+    
+    func saveConflictCodable() throws {
+        // tag::conflict-save-codable-doc[]
+        let resolved = try collection.save(from: task) { newTask, existingTask in
+            newTask.title = "New Task"
+            newTask.completed = false
+            return true
+        }
+        // end::conflict-save-codable-doc[]
+    }
+    
+    func saveConcurrencyCodable() throws {
+        // tag::concurrency-save-codable-doc[]
+        let resolved = try collection.save(from: task, concurrencyControl: .failOnConflict)
+        // end::concurrency-save-codable-doc[]
+    }
+    
+    func deleteConcurrencyCodable() throws {
+        // tag::concurrency-delete-codable-doc[]
+        let resolved = try collection.delete(for: task, concurrencyControl: .failOnConflict)
+        // end::concurrency-delete-codable-doc[]
+    }
+    
+    func combine() throws {
+        // tag::publish-collection-changes[]
+        collection.changePublisher()
+            .sink { change in print("Collection changed: \(change)") }
+            .store(in: &cancellables)
+        // end:publish-collection-changes[]
+        
+        // tag::publish-doc-changes[]
+        collection.documentChangePublisher(for: task.id!)
+            .sink { change in
+                print("Task \(change.documentID) in collection \(change.collection.name) changed.")
+            }
+            .store(in: &cancellables)
+        // end::publish-doc-changes[]
+        
+        // tag::publish-replicator-changes[]
+        replicator.changePublisher()
+            .sink { change in print("Replicator status changed: \(change)") }
+            .store(in: &cancellables)
+        // end::publish-replicator-changes[]
+        
+        // tag::publish-replicated-documents[]
+        replicator.documentReplicationPublisher()
+            .sink { change in
+                change.documents.forEach { task in
+                    print("Task \(task.id) replicated.")
+                }
+            }
+            .store(in: &cancellables)
+        // end::publish-replicated-documents[]
+        
+        // tag::publish-result-changes[]
+        query.changePublisher()
+            .map { try! $0.results?.data(as: Task.self) ?? [] }
+            .sink { [weak self] tasks in
+                self?.tasks = tasks
+            }
+            .store(in: &cancellables)
+        // end::publish-result-changes[]
+    }
 }
-
-
