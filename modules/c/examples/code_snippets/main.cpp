@@ -2561,8 +2561,11 @@ static void simpleReplicatorForListener() {
     replConfig.collectionCount = 1;
     replConfig.collections = &collectionConfig; // <.>
 
+    // tag::p2p-act-rep-config-self-cert[]
     // Accept self-signed certificates, for testing purposes only:
     replConfig.acceptOnlySelfSignedServerCertificate = true; // <.>
+
+    // end::p2p-act-rep-config-self-cert[]
 
     // Set up a basic authenticator with a username and password:
     // Note: You can safely free `auth` using CBLAuth_Free() after the replicator is created.
@@ -2575,6 +2578,34 @@ static void simpleReplicatorForListener() {
     // Start the replicator:
     CBLReplicator_Start(replicator, false); // <.>
     // end::replicator-simple[]
+}
+
+static bool read_pem_file(const char* path, char* outData, size_t* outSize) { }
+
+static void replicatorConfigCerts() {
+    CBLReplicatorConfiguration config;
+    memset(&config, 0, sizeof(CBLReplicatorConfiguration));
+
+    // tag::p2p-act-rep-config-cacert[]
+    // Configure Server Security -- only accept CA Certs
+    config.acceptOnlySelfSignedServerCertificate = false; // <.>
+
+    // end::p2p-act-rep-config-cacert[]
+
+    // Read certificate chain from PEM file
+    // Note: on input, certPEMSize is the size of the buffer, certPEMData. On return, it will be updated to the
+    // size of the PEM content. If it does not exceed the input value, the PEM content will be copied into certPEMData.
+    char certPEMData[10000];
+    size_t certPEMSize = 10000;
+    read_pem_file("/drive/cert.pem", certPEMData, &certPEMSize);
+
+    FLSlice certSlice = {certPEMData, certPEMSize};
+
+    // tag::p2p-act-rep-config-pinnedcert[]
+    // Return the remote pinned cert (the listener's cert)
+    config.pinnedServerCertificate = certSlice; // Get listener cert if pinned
+
+    // end::p2p-act-rep-config-pinnedcert[]
 }
 
 static void listenerConfig() {
@@ -2638,8 +2669,6 @@ static void listenerConfig() {
     // end::listener-stop[]
 }
 
-static bool read_pem_file(const char* path, char** outData, size_t* outSize) { }
-
 static void createTLSIdentityFromPEM() {
     CBLURLEndpointListenerConfiguration config {};
     // tag::listener-config-tls-id-caCert[]
@@ -2648,9 +2677,9 @@ static void createTLSIdentityFromPEM() {
 
     // Read the private key and certificate chain from PEM files <.>
     // Read the private key:
-    char* keyPEMData = NULL;
-    size_t keyPEMSize = 0;
-    read_pem_file("/drive/key.pem", &keyPEMData, &keyPEMSize);
+    char keyPEMData[10000];
+    size_t keyPEMSize = 10000;
+    read_pem_file("/drive/key.pem", keyPEMData, &keyPEMSize);
     FLSlice keySlice = {keyPEMData, keyPEMSize};
 
     // Create a key-pair object with the private key loaded from the PEM file.
@@ -2660,9 +2689,9 @@ static void createTLSIdentityFromPEM() {
     CBLKeyPair* key = CBLKeyPair_CreateWithPrivateKeyData(keySlice, FLSTR("password"), &error);
 
     // Read the certificate chain:
-    char* certPEMData = NULL;
-    size_t certPEMSize = 0;
-    read_pem_file("/drive/certs.pem", &certPEMData, &certPEMSize);
+    char certPEMData[10000];
+    size_t certPEMSize = 10000;
+    read_pem_file("/drive/certs.pem", certPEMData, &certPEMSize);
     FLSlice certSlice = {certPEMData, certPEMSize};
 
     // Create a cert object from certificates loaded from the PEM file:
@@ -2710,9 +2739,9 @@ static void createListenerClientCertAuthWithRootCerts() {
     // tag::listener-config-client-root-ca[]
     // tag::listener-config-client-auth-root[]
     // Read intermediate and root cert from a PEM file:
-    char* certPEMData = NULL;
-    size_t certPEMSize = 0;
-    read_pem_file("/drive/root_certs.pem", &certPEMData, &certPEMSize);
+    char certPEMData[10000];
+    size_t certPEMSize = 10000;
+    read_pem_file("/drive/root_certs.pem", certPEMData, &certPEMSize);
     FLSlice certSlice = {certPEMData, certPEMSize};
 
     CBLError error;
