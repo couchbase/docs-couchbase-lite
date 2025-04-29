@@ -2496,15 +2496,13 @@ static void database_replica(){
 
 // Peer-to-Peer
 
-static bool authenticate(FLString usr, FLString password) {
-    return true;
-}
+static bool authenticate(FLString usr, FLString password) { return true; }
 
 static void simpleListenerInitialize() {
     CBLDatabase* database = kDatabase;
     CBLCollection *collection = CBLDatabase_DefaultCollection(database, nullptr);
 
-#ifdef COUCHBASE_ENTERPRISE
+    // tag::listener-simple[]
     // tag::listener-initialize[]
     CBLURLEndpointListenerConfiguration config;
     memset(&config, 0, sizeof(CBLURLEndpointListenerConfiguration));
@@ -2521,6 +2519,7 @@ static void simpleListenerInitialize() {
     config.tlsIdentity = NULL;
 
     // Setup authenticator:
+    // Note: You can safely free `auth` after the listener is created:
     CBLListenerAuthenticator* auth = CBLListenerAuth_CreatePassword(
         [](void* ctx, FLString user, FLString password) {
         return authenticate(user, password);
@@ -2533,13 +2532,49 @@ static void simpleListenerInitialize() {
     // Create the listener with the config:
     CBLURLEndpointListener* listener = CBLURLEndpointListener_Create(&config, &error);
 
-    // You can safely free the authenticator here after creating the listener
-    CBLListenerAuth_Free(auth);
-
     // Start the listener:
     CBLURLEndpointListener_Start(listener, &error);
     // end::listener-initialize[]
-#endif
+    // end::listener-simple[]
+}
+
+static void simpleReplicatorForListener() {
+    CBLDatabase* database = kDatabase;
+    CBLCollection *collection = CBLDatabase_DefaultCollection(database, nullptr);
+
+    // tag::replicator-simple[]
+    // Initialize replicator config:
+    CBLReplicatorConfiguration replConfig;
+    memset(&replConfig, 0, sizeof(replConfig));
+
+    // Create a URL endpoint to the listener and set to the replicator config:
+    // Note: You can safely free `endpoint` using CBLEndpoint_Free() after the replicator is created.
+    CBLError error;
+    memset(&error, 0, sizeof(CBLError));
+    CBLEndpoint* endpoint = CBLEndpoint_CreateWithURL(FLSTR("wss://<listener-ip-address>:<listener-port>/<database-name>"), &error);
+    replConfig.endpoint = endpoint; // <.>
+
+    // Set up the collections for replication:
+    CBLReplicationCollection collectionConfig;
+    memset(&collection, 0, sizeof(collectionConfig));
+    collectionConfig.collection = collection;
+    replConfig.collectionCount = 1;
+    replConfig.collections = &collectionConfig; // <.>
+
+    // Accept self-signed certificates, for testing purposes only:
+    replConfig.acceptOnlySelfSignedServerCertificate = true; // <.>
+
+    // Set up a basic authenticator with a username and password:
+    // Note: You can safely free `auth` using CBLAuth_Free() after the replicator is created.
+    CBLAuthenticator* auth = CBLAuth_CreatePassword(FLSTR("username"), FLSTR("password"));
+    replConfig.authenticator = auth; // <.>
+
+    // Create a replicator:
+    CBLReplicator* replicator = CBLReplicator_Create(&replConfig, &error); // <.>
+
+    // Start the replicator:
+    CBLReplicator_Start(replicator, false); // <.>
+    // end::replicator-simple[]
 }
 
 static void listenerConfig() {
@@ -2581,7 +2616,7 @@ static void listenerConfig() {
 
     // tag::listener-config-client-auth-pwd[]
     // Configure Client Security using an Authenticator, for example, Basic Authentication.
-    // Note: Free the authenticator using CBLListenerAuth_Free() after the listener is created.
+    // Note: You can safely free `auth` using CBLListenerAuth_Free() after the listener is created.
     CBLListenerAuthenticator* auth = CBLListenerAuth_CreatePassword(
         [](void* ctx, FLString user, FLString password) {
             return authenticate(user, password);
@@ -2598,9 +2633,6 @@ static void listenerConfig() {
     CBLURLEndpointListener_Start(listener, &error);
     // end::listener-start[]
 
-    // Free authenticator after listener is created (config was copied).
-    CBLListenerAuth_Free(config.authenticator);
-
     // tag::listener-stop[]
     CBLURLEndpointListener_Stop(listener);
     // end::listener-stop[]
@@ -2612,34 +2644,33 @@ static void createTLSIdentityFromPEM() {
     CBLURLEndpointListenerConfiguration config {};
     // tag::listener-config-tls-id-caCert[]
     // This example shows how to create and use TLSIdentity using private key and certs loaded from PEM files:
-    // Enable TLS:
     config.disableTLS = false; // <.>
 
-    // Read a private key and certificate chain from PEM files <.>
-    // Read a private key:
+    // Read the private key and certificate chain from PEM files <.>
+    // Read the private key:
     char* keyPEMData = NULL;
     size_t keyPEMSize = 0;
     read_pem_file("/drive/key.pem", &keyPEMData, &keyPEMSize);
     FLSlice keySlice = {keyPEMData, keyPEMSize};
 
     // Create a key-pair object with the private key loaded from the PEM file.
-    // Note : PEM file is encrypted with a password, the PEM file MUST be in PKCS#1 format.
+    // Note: If the PEM file is encrypted with a password, it MUST be in PKCS#1 format.
     CBLError error;
     memset(&error, 0, sizeof(CBLError));
     CBLKeyPair* key = CBLKeyPair_CreateWithPrivateKeyData(keySlice, FLSTR("password"), &error);
 
-    // Read a certificate chain:
+    // Read the certificate chain:
     char* certPEMData = NULL;
     size_t certPEMSize = 0;
     read_pem_file("/drive/certs.pem", &certPEMData, &certPEMSize);
     FLSlice certSlice = {certPEMData, certPEMSize};
 
     // Create a cert object from certificates loaded from the PEM file:
-    // Note : The cert can be released with CBLCert_Release() after the listener is created.
+    // Note: You can safely release `cert` using CBLCert_Release() after the listener is created.
     CBLCert* cert = CBLCert_CreateWithData(certSlice, &error);
 
     // Create a TLS Identity with the key and cert:
-    // Note: The identity can be released with CBLTLSIdentity_Release() after the listener is created.
+    // Note: You can safely release `identity` using CBLTLSIdentity_Release() after the listener is created.
     CBLTLSIdentity* identity = CBLTLSIdentity_IdentityWithKeyPairAndCerts(key, cert, &error); // <.>
 
     // Set identity to the CBLURLEndpointListenerConfiguration:
@@ -2655,21 +2686,20 @@ static void createSelfSignedCert() {
     config.disableTLS = false; // <.>
 
     // Certificate Attributes:
-    // Note: The attrs can be released with FLMutableDict_Release() after the listener is created.
+    // Note: You can safely release `attrs` using FLMutableDict_Release() after the listener is created.
     FLMutableDict attrs = FLMutableDict_New();
     FLMutableDict_SetString(attrs, kCBLCertAttrKeyCommonName, FLSTR("Couchbase Inc")); // <.>
 
-    // Create a self-signed certificate identity:
-    // Note: The identity can be released with CBLTLSIdentity_Release() after the listener is created.
-    // Note: Only iOS and Windows supports presistent label feature.
-    FLString label = FLSTR("couchbaselite-server-cert-label");
-
     CBLError error;
     memset(&error, 0, sizeof(CBLError));
-    CBLTLSIdentity* identity = CBLTLSIdentity_CreateIdentity(
-        kCBLKeyUsagesServerAuth, attrs, 0, label, &error); // <.>
 
-    // Set identity to the CBLURLEndpointListenerConfiguration:
+    // Create the identity object:
+    // Note: Only iOS and Windows supports presistent label feature.
+    // Note: You can safely release `identity` using CBLTLSIdentity_Release() after the listener is created.
+    FLString label = FLSTR("couchbaselite-server-cert-label");
+    CBLTLSIdentity* identity = CBLTLSIdentity_CreateIdentity(kCBLKeyUsagesServerAuth, attrs, 0, label, &error); // <.>
+
+    // Set the identity to the config:
     config.tlsIdentity = identity; // <.>
     // end::listener-config-tls-id-SelfSigned[]
     // end::create-self-signed-cert[]
@@ -2685,14 +2715,15 @@ static void createListenerClientCertAuthWithRootCerts() {
     read_pem_file("/drive/root_certs.pem", &certPEMData, &certPEMSize);
     FLSlice certSlice = {certPEMData, certPEMSize};
 
-    // Create a cert object from certificates loaded from the PEM file:
-    // Note : The cert can be released with CBLCert_Release() after the listener is created.
     CBLError error;
     memset(&error, 0, sizeof(CBLError));
+
+    // Create a cert object from certificates loaded from the PEM file:
+    // Note: You can safely release `rootCerts` using CBLCert_Release() after the listener is created.
     CBLCert* rootCerts = CBLCert_CreateWithData(certSlice, &error); // <.>
 
     // Create a client certificate authenticator with the root certificate:
-    // Note : The auth can be freed with CBLListenerAuth_Free() after the listener is created.
+    // Note: You can safely free `auth` using CBLListenerAuth_Free() after the listener is created.
     CBLListenerAuthenticator* auth = CBLListenerAuth_CreateCertificateWithRootCerts(rootCerts); // <.>
 
     // Set the authenticator to the CBLURLEndpointListenerConfiguration:
@@ -2707,12 +2738,12 @@ static void createListenerClientCertAuthWithCallback() {
     CBLURLEndpointListenerConfiguration config {};
     // tag::listener-config-client-auth-lambda[]
     // Create a client certificate authenticator with callback:
-    // Note : The auth can be freed with CBLListenerAuth_Free() after the listener is created.
+    // Note: You can safely free `auth` using CBLListenerAuth_Free() after the listener is created.
     CBLListenerAuthenticator* auth = CBLListenerAuth_CreateCertificate([](void* ctx, CBLCert* cert) {
         return authenticateClientCert(cert);
     }, nullptr); // <.>
 
-    // Set the authenticator to the CBLURLEndpointListenerConfiguration:
+    // Set the authenticator to the config:
     config.authenticator = auth; // <.>
     // end::listener-config-client-auth-lambda[]
 }
