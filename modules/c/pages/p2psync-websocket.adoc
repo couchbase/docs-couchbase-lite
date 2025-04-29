@@ -230,6 +230,28 @@ If the network interface is not specified, all available network interfaces will
 The value is null if the listener is not started.
 --
 
+disableTLS::
++
+--
+// tag::config-disable-tls[]
+You can use {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)disableTLS[disableTLS] method to disable TLS communication if necessary.
+
+The `disableTLS` setting must be 'false' when _Client Cert Authentication_ is required.
+
+Basic Authentication can be used with, or without, TLS.
+
+{url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)disableTLS[disableTLS] works in conjunction with `TLSIdentity`, to enable developers to define the key and certificate to be used.
+
+* If `disableTLS` is true -- TLS communication is disabled and TLS identity is ignored.
+Active peers will use the `ws://` URL scheme used to connect to the listener.
+* If `disableTLS` is false or not specified -- TLS communication is enabled.
++
+Active peers will use the `wss://` URL scheme to connect to the listener.
+
+// end::config-disable-tls[]
+API Reference:  {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)disableTLS[disableTLS]
+--
+
 tlsIdentity::
 +
 --
@@ -237,7 +259,7 @@ tlsIdentity::
 Use {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s
 {url-api-references-urlendpointconfiguration}#a3820c7764a7f413f787275dff0d6c262[tlsIdentity] method to configure the TLS Identity used in TLS communication.
 
-If `TLSIdentity` is not set, then the listener uses an auto-generated anonymous self-signed identity.
+If `TLSIdentity` is not set, then the listener uses an auto-generated anonymous self-signed identity (unless `disableTLS = true`).
 Whilst the client cannot use this to authenticate the server, it will use it to encrypt communication, giving a more secure option than non-TLS communication.
 
 The auto-generated anonymous self-signed identity is saved in secure storage for future use to obviate the need to re-generate it.
@@ -245,6 +267,7 @@ The auto-generated anonymous self-signed identity is saved in secure storage for
 // end::config-tls-id[]
 
 When the listener is not started, the identity is null.
+When TLS is disabled, the identity is always null.
 
 API Reference:  {url-api-references-urlendpointconfiguration}#a3820c7764a7f413f787275dff0d6c262[tlsIdentity]
 
