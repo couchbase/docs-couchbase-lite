@@ -399,8 +399,8 @@ Use the
 Valid options are:
 
 * No authentication -- If you do not define an Authenticator then all clients are accepted.
-* Basic Authentication -- uses the {url-api-class-ListenerPasswordAuthenticator}[ListenerPasswordAuthenticator] to authenticate the client using the client-supplied username and password (from the http authentication header).
-* {url-api-class-ListenerCertificateAuthenticator}[ListenerCertificateAuthenticator] -- which authenticates the client using a client supplied chain of one or more certificates.
+* Basic Authentication -- uses the Listener {url-api-class-ListenerPasswordAuthenticator}[passwordAuthenticator] to authenticate the client using the client-supplied username and password (from the http authentication header).
+* Listener {url-api-class-ListenerCertificateAuthenticator}[certificate] authenticator -- which authenticates the client using a client supplied chain of one or more certificates.
 You should initialize the authenticator using one of the following constructors:
 ** A root certificate, or a list of intermediate certificates and a root certificate -- the client supplied certificate must end at a certificate in this list if it is to be authenticated.
 ** A block of code that assumes total responsibility for authentication -- it must return a boolean response (true for an authenticated client, or false for a failed authentication).
@@ -436,11 +436,11 @@ Define how the server will authenticate client-supplied certificates.
 
 There are two ways to authenticate a client:
 
-* A chain of one or more certificates that ends at a certificate in the list of certificates supplied to the constructor for  {url-api-class-ListenerCertificateAuthenticator}[ListenerCertificateAuthenticator] -- see: <<ex-set-cert-auth>>
+* A chain of one or more certificates that ends at a certificate in the list of certificates supplied to the constructor for the Listener {url-api-class-ListenerCertificateAuthenticator}[certificate] authenticator -- see: <<ex-set-cert-auth>>.
 
-* Application logic: This method assumes complete responsibility for verifying and authenticating the client -- see: <<ex-use-app-logic>>
+* Application logic: This method assumes complete responsibility for verifying and authenticating the client -- see: <<ex-use-app-logic>>.
 +
-If the parameter supplied to the constructor for `ListenerCertificateAuthenticator` is of type  `ListenerCertificateAuthenticatorDelegate`, all other forms of authentication are bypassed.
+If the parameter supplied to the constructor for the Listener `certificate` authenticator is of type `ListenerCertificateAuthenticatorDelegate`, all other forms of authentication are bypassed.
 +
 The client response to the certificate request is passed to the method supplied as the constructor parameter.
 The logic should take the form of function or block (such as, a closure expression) where the platform allows.
@@ -450,7 +450,7 @@ The logic should take the form of function or block (such as, a closure expressi
 [#ex-set-cert-auth]
 ====
 
-Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the {url-api-class-ListenerCertificateAuthenticator}[ListenerCertificateAuthenticator].
+Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the Listener {url-api-class-ListenerCertificateAuthenticator}[certificate] authenticator.
 
 [source, c]
 ----
