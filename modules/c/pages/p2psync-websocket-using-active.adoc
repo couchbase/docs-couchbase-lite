@@ -304,13 +304,13 @@ When TLS is enabled (Sync Gateway's default) the client _must_ authenticate the 
 If the server cannot provide acceptable credentials then the connection will fail.
 
 Use the `{url-api-references-replicator-config}[CBLReplicatorConfiguration]` properties
-{url-api-references-replicator-config}#abba75db71f5e08718a924d76bc1a0e1e[acceptOnlySelfSignedServerCertificate] and {url-api-references-replicator-config}#a4a96fb9fba93dc93f8373b76c3816af6[pinnedServerCertificate()],
+{url-api-references-replicator-config}#ad1a35fd126871670d2677cabff87f2c3[acceptOnlySelfSignedServerCertificate] and {url-api-references-replicator-config}#a4a96fb9fba93dc93f8373b76c3816af6[pinnedServerCertificate()],
 to tell the replicator how to verify server-supplied TLS server certificates.
 
 * If there is a pinned certificate, nothing else matters, the server cert must *exactly* match the pinned certificate.
-* If there are no pinned certs and {url-api-references-replicator-config}#abba75db71f5e08718a924d76bc1a0e1e[acceptOnlySelfSignedServerCertificate] is `true` then any self-signed certificate is accepted.
+* If there are no pinned certs and {url-api-references-replicator-config}#ad1a35fd126871670d2677cabff87f2c3[acceptOnlySelfSignedServerCertificate] is `true` then any self-signed certificate is accepted.
 Certificates that are not self signed are rejected, no matter who signed them.
-* If there are no pinned certificates and {url-api-references-replicator-config}#abba75db71f5e08718a924d76bc1a0e1e[acceptOnlySelfSignedServerCertificate] is `false` (default), the client validates the server's certificates against the system CA certificates.
+* If there are no pinned certificates and {url-api-references-replicator-config}#ad1a35fd126871670d2677cabff87f2c3[acceptOnlySelfSignedServerCertificate] is `false` (default), the client validates the server's certificates against the system CA certificates.
 The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
 
 // Example 4
@@ -504,7 +504,7 @@ Since the replication occurs in batches the total count can vary through the cou
 [#lbl-repl-pend]
 === Documents Pending Push
 
-TIP: {url-api-references-replicator}#ga493eeac915dd54a274b907a010664a2e[CBLReplicator_isDocumentPending()] is quicker and more efficient.
+TIP: {url-api-references-replicator}#ga493eeac915dd54a274b907a010664a2e[CBLReplicator_IsDocumentPending()] is quicker and more efficient.
 Use it in preference to returning a list of pending document IDs, where possible.
 
 You can check whether documents are waiting to be pushed in any forthcoming sync by using either of the following API methods:
@@ -513,7 +513,7 @@ You can check whether documents are waiting to be pushed in any forthcoming sync
 +
 This can be very useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it is safe to exit.
 
-* Use the {url-api-references-replicator}#ga493eeac915dd54a274b907a010664a2e[CBLReplicator_isDocumentPending()] method to quickly check whether an individual document is pending a push.
+* Use the {url-api-references-replicator}#ga493eeac915dd54a274b907a010664a2e[CBLReplicator_IsDocumentPending()] method to quickly check whether an individual document is pending a push.
 
 [#ex-pending]
 .Use Pending Document ID API
@@ -528,7 +528,7 @@ include::c:example$code_snippets/main.cpp[tags="replication-pendingdocuments", i
 
 <.> {url-api-references-replicator}#ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()] returns a list of the document IDs for all documents waiting to be pushed.
 This is a snapshot and may have changed by the time the response is received and processed.
-<.> {url-api-references-replicator}#ga493eeac915dd54a274b907a010664a2e[CBLReplicator_isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
+<.> {url-api-references-replicator}#ga493eeac915dd54a274b907a010664a2e[CBLReplicator_IsDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
 
 [#lbl-repl-stop]

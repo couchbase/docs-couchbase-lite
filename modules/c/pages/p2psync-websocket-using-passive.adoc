@@ -203,7 +203,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-delta-sync", ind
 ====
 
 <.> Delta sync replication is not enabled by default.
-Use {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)enableDeltaSync[enableDeltaSync] method to activate or deactivate it.
+Use {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s {url-api-references-urlendpointconfiguration}#a09df56683ec60fadd06b9e7b2c457b36[enableDeltaSync] method to activate or deactivate it.
 
 [#lbl-tls-security]
 == TLS Security
@@ -220,13 +220,13 @@ However, it _can_ be disabled. For example, for development or test environments
 When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity -- see <<configure-tls-identity-for-listener>>.
 
 
-You can use {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)disableTLS[disableTLS] method to disable TLS communication if necessary.
+You can use {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s {url-api-references-urlendpointconfiguration}#a6e12a73664e15fbd503be94e82ca8177[disableTLS] method to disable TLS communication if necessary.
 
 The `disableTLS` setting must be 'false' when _Client Cert Authentication_ is required.
 
 Basic Authentication can be used with, or without, TLS.
 
-{url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)disableTLS[disableTLS] works in conjunction with `TLSIdentity`, to enable developers to define the key and certificate to be used.
+{url-api-references-urlendpointconfiguration}#a6e12a73664e15fbd503be94e82ca8177[disableTLS] works in conjunction with `TLSIdentity`, to enable developers to define the key and certificate to be used.
 
 * If `disableTLS` is true -- TLS communication is disabled and TLS identity is ignored.
 Active peers will use the `ws://` URL scheme used to connect to the listener.
@@ -242,7 +242,7 @@ Define the credentials the server will present to the client for authentication.
 Note that the server must always authenticate itself with the client -- see: xref:c:p2psync-websocket-using-active.adoc#authenticate-listener[Authenticate Listener on Active Peer] for how the client deals with this.
 
 Use {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s
-{url-api-references-urlendpointconfiguration}#a3820c7764a7f413f787275dff0d6c262[tlsIdentity] method to configure the TLS Identity used in TLS communication.
+{url-api-references-urlendpointconfiguration}#a872c060c215290313ab95bb920ad33ae[tlsIdentity] method to configure the TLS Identity used in TLS communication.
 
 If `TLSIdentity` is not set, then the listener uses an auto-generated anonymous self-signed identity (unless `disableTLS = true`).
 Whilst the client cannot use this to authenticate the server, it will use it to encrypt communication, giving a more secure option than non-TLS communication.
@@ -442,7 +442,7 @@ Define how the server (Listener) will authenticate the client as one it is prepa
 
 Whilst client authentication is optional, Couchbase lite provides the necessary tools to implement it.
 Use the
-{url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration] class's {url-api-references-urlendpointconfiguration}#aeaa4e119113ab9c9be273b63902cc0df[authenticator] method to specify how the client-supplied credentials are to be authenticated.
+{url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration] class's {url-api-references-urlendpointconfiguration}#a68159e04ec97a47fcbe785709ca54b35[authenticator] method to specify how the client-supplied credentials are to be authenticated.
 
 Valid options are:
 
@@ -610,7 +610,7 @@ include::c:example$code_snippets/main.cpp[tags="listener-start", indent=0]
 [#monitor-listener]
 == Monitor Listener
 
-Use the Listener's `{url-api-references-urlendpointlistener}#gac53d80177edd2ef849279d8e47af77fe[GetStatus]` property/method to get counts of total and active connections -- see: <<get-connection-counts>>.
+Use the Listener's `{url-api-references-urlendpointlistener}#ac5cc57610ce3d6a2fb1e891a8f24a448[CBLURLEndpointListener_Status()]` property/method to get counts of total and active connections -- see: <<get-connection-counts>>.
 
 You should note that these counts can be extremely volatile.
 So, the actual number of active connections may have changed, by the time the `{url-api-class-connection-status}[ConnectionStatus]` class returns a result.
