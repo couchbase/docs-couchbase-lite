@@ -52,12 +52,12 @@ See: https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-l
 [#lbl-factories]
 == Configuration Factories
 
-Couchbase{nbsp}Lite] provides a set of https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/ConfigurationFactoriesKt.html[ConfigurationFactories] and https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonConfigurationFactoriesKt.html[CommonConfigurationFactories, these allow use of named parameters to specify property settings.
+Couchbase{nbsp}Lite provides a set of https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/ConfigurationFactoriesKt.html[ConfigurationFactories] and https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonConfigurationFactoriesKt.html[CommonConfigurationFactories], these allow use of named parameters to specify property settings.
 
 This makes it simple to create variant configurations, by simply overriding named parameters:
 
 .Example of overriding configuration
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
 //include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ListenerExamples.kt[tag=override-config]
         val listener8080 = URLEndpointListenerConfigurationFactory.newConfig(
@@ -80,10 +80,9 @@ to create a `DatabaseConfiguration` object, overriding the receiver's values wit
 In Use::
 +
 --
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
-// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=database-config-factory]
-        database = Database("getting-started")
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=database-config-factory]
 ----
 --
 
@@ -91,7 +90,7 @@ In Use::
 Definition::
 +
 --
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
 val DatabaseConfigurationFactory: DatabaseConfiguration? = null
 
@@ -116,18 +115,9 @@ to create a `ReplicatorConfiguration` object, overriding the receiver's values w
 In Use::
 +
 --
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
-// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=replicator-config-factory]
-        val replicator =
-            Replicator(
-                ReplicatorConfigurationFactory.newConfig(
-                    collections = mapOf(db.collections to null),
-                    target = URLEndpoint(URI("ws://localhost:4984/getting-started-db")),
-                    type = ReplicatorType.PUSH_AND_PULL,
-                    authenticator = BasicAuthenticator("sync-gateway", "password".toCharArray())
-                )
-            )
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=replicator-config-factory]
 ----
 --
 
@@ -135,7 +125,7 @@ In Use::
 Definition::
 +
 --
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
 val ReplicatorConfigurationFactory: ReplicatorConfiguration? = null
 
@@ -183,13 +173,9 @@ to create a `FullTextIndexConfiguration` object, overriding the receiver's value
 In Use::
 +
 --
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
-// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/QueryExamples.kt[tag=fts-index]
-    collection.createIndex(
-        "overviewFTSIndex",
-        FullTextIndexConfigurationFactory.newConfig("overview")
-    )
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/QueryExamples.kt[tag=fts-index]
 ----
 --
 
@@ -219,13 +205,9 @@ to create a `ValueIndexConfiguration` object, overriding the receiver's values w
 In Use::
 +
 --
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
-// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/QueryExamples.kt[tag=query-index]
-    collection.createIndex(
-        "TypeNameIndex",
-        ValueIndexConfigurationFactory.newConfig("type", "name")
-    )
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/QueryExamples.kt[tag=query-index]
 ----
 --
 
@@ -254,19 +236,9 @@ to create a `LogFileConfiguration` object, overriding the receiver's values with
 In Use::
 +
 --
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
-// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=file-logging-config-factory]
-        Database.log.file.let {
-            it.config = LogFileConfigurationFactory.newConfig(
-                context.cacheDir.absolutePath, // <.>
-                maxSize = 10240, // <.>
-                maxRotateCount = 5, // <.>
-                usePlainText = false
-            ) // <.>
-            it.level = LogLevel.INFO // <.>
-
-        }
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/BasicExamples.kt[tags=file-logging-config-factory]
 ----
 --
 
@@ -310,7 +282,7 @@ In Use::
 +
 --
 
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
 val updatedDocs = db.databaseChangeFlow()
     .map { it.documentIDs }
@@ -323,7 +295,7 @@ Definition::
 +
 --
 
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
 @ExperimentalCoroutinesApi
 fun Database.databaseChangeFlow(executor: Executor? = null)
@@ -347,7 +319,7 @@ In Use::
 +
 --
 
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
 
 val docModDate = db.documentChangeFlow("1001", null)
@@ -362,7 +334,7 @@ Definition::
 +
 --
 
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
 @ExperimentalCoroutinesApi
 
@@ -387,7 +359,7 @@ In Use::
 +
 --
 
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
 
 val replState = repl.replicatorChangesFlow()
@@ -402,7 +374,7 @@ Definition::
 +
 --
 
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
 @ExperimentalCoroutinesApi
 fun Replicator.replicatorChangesFlow(executor: Executor? = null)
@@ -425,7 +397,7 @@ In Use::
 +
 --
 
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
 
 val replicatedDocs = repl.documentReplicationFlow(testSerialExecutor)
@@ -441,7 +413,7 @@ Definition::
 +
 --
 
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
 
 @ExperimentalCoroutinesApi
@@ -466,20 +438,9 @@ to monitor document changes during replication.
 In Use::
 +
 --
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
-// include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/FlowExamples.kt[tags=flow-as-query-change-listener]
-    fun watchQuery(query: Query): LiveData<List<Result>> {
-        return query.queryChangeFlow()
-            .mapNotNull { change ->
-                val err = change.error
-                if (err != null) {
-                    throw err
-                }
-                change.results?.allResults()
-            }
-            .asLiveData()
-    }
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/FlowExamples.kt[tags=flow-as-query-change-listener]
 ----
 --
 
@@ -488,7 +449,7 @@ Definition::
 +
 --
 
-[pass:q,a[source, kotlin, indent=0]]
+[source, kotlin, indent=0]
 ----
 
 @ExperimentalCoroutinesApi

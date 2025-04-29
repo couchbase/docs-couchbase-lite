@@ -84,6 +84,7 @@ OUTER: while (<>) {
             $attributes{$k} = $v;
         }
         elsif (! keep($k)) {
+            $v =~ s/^pass:[aq],[qa]\[(.*)\]/$1/;
             $attributes{$k} = $v;
             next;
         } 

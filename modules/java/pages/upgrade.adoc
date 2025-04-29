@@ -32,7 +32,7 @@ This is a one-way conversion.
 === API Changes
 
 
-This content introduces the changes made to the pass:q,a[Couchbase{nbsp}Lite] for Java API for release {major}.{minor}.{base}{empty}.
+This content introduces the changes made to the Couchbase{nbsp}Lite for Java API for release {major}.{minor}.{base}{empty}.
 
 [#removed]
 ==== Removed
@@ -44,14 +44,14 @@ The method https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couch
 Instead, use https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.html#start-boolean-[Replicator.resetCheckpoint(boolean reset)].
 
 .Before
-[pass:q,a[source, Java,subs="attributes+, macros+"]]
+[source, Java,subs="attributes+, macros+"]
 ----
 replicator.resetCheckpoint()
 replicator.start()
 ----
 
 .After
-[pass:q,a[source, Java,subs="attributes+, macros+"]]
+[source, Java,subs="attributes+, macros+"]
 ----
 replicator.start(true)
 ----
@@ -67,14 +67,14 @@ Instead:
 . Set the domains to be logged by the console logger, explicitly.
 
 .Before
-[pass:q,a[source, Java,subs="attributes+, macros+"]]
+[source, Java,subs="attributes+, macros+"]
 ----
 Database.setLogLevel(LogDomain.ALL, LogLevel.VERBOSE)
 
 ----
 
 .After
-[pass:q,a[source, Java,subs="attributes+, macros+"]]
+[source, Java,subs="attributes+, macros+"]
 ----
 Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS)
 Database.log.getConsole().setLevel(LogLevel.VERBOSE)
@@ -87,14 +87,14 @@ The https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/li
 It is replaced by the new https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance(MaintenanceType)] method, and the maintenance operations represented in the enum https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/MaintenanceType.html[MaintenanceType]
 
 .Before
-[pass:q,a[source, Java,subs="attributes+, macros+"]]
+[source, Java,subs="attributes+, macros+"]
 ----
 try testdb.compact()
 
 ----
 
 .After
-[pass:q,a[source, Java,subs="attributes+, macros+"]]
+[source, Java,subs="attributes+, macros+"]
 ----
 testdb.performMaintenance(MaintenanceType.COMPACT)
 ----
@@ -110,7 +110,7 @@ has been deprecated. +
 Use https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/FullTextFunction.html[FullTextFunction] instead.
 
 .Before
-[pass:q,a[source, Java,subs="attributes+, macros+"]]
+[source, Java,subs="attributes+, macros+"]
 ----
 FullTextExpression index = FullTextExpression.index("indexName")
 Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
@@ -120,7 +120,7 @@ Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
 ----
 
 .After
-[pass:q,a[source, Java,subs="attributes+, macros+"]]
+[source, Java,subs="attributes+, macros+"]
 ----
 Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
   .from(DataSource.database(testdb))
@@ -136,7 +136,7 @@ Use `isNotValued()` and-or `isValued()` instead.
 
 
 .Before
-[pass:q,a[source, Java,subs="attributes+, macros+"]]
+[source, Java,subs="attributes+, macros+"]
 ----
 Query q =
   QueryBuilder
@@ -153,7 +153,7 @@ Query q =
 
 ----
 .After
-[pass:q,a[source, Java,subs="attributes+, macros+"]]
+[source, Java,subs="attributes+, macros+"]
 ----
 Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
   .from(DataSource.database(testdb))
@@ -180,13 +180,13 @@ have all been deprecated. +
 Instead, use the methods `ReplicatorConfiguration.setType` and `ReplicatorConfiguration.getType`, and the top level enum `ReplicatorType`.
 
 .Before
-[pass:q,a[source, Java,subs="attributes+, macros+"]]
+[source, Java,subs="attributes+, macros+"]
 ----
 ReplicatorConfiguration config =
   new ReplicatorConfiguration().setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
 ----
 .After
-[pass:q,a[source, Java,subs="attributes+, macros+"]]
+[source, Java,subs="attributes+, macros+"]
 ----
 ReplicatorConfiguration config =
   new ReplicatorConfiguration().setType(ReplicatorType.PUSH_AND_PULL);
@@ -205,7 +205,7 @@ They are replaced by these definitions:
 
 
 .Before
-[pass:q,a[source, Java,subs="attributes+, macros+"]]
+[source, Java,subs="attributes+, macros+"]
 ----
 ListenerToken token =
   replicator.addChangeListener(
@@ -220,7 +220,7 @@ ListenerToken token =
 
 ----
 .After
-[pass:q,a[source, Java,subs="attributes+, macros+"]]
+[source, Java,subs="attributes+, macros+"]
 ----
 ListenerToken token =
   replicator.addChangeListener(

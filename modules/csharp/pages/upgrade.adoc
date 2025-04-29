@@ -31,9 +31,9 @@ This is a one-way conversion.
 === API Changes
 
 
-This content introduces the changes made to the pass:q,a[Couchbase{nbsp}Lite] for C#.Net API for release {major}.{minor}.{base}{empty}.
+This content introduces the changes made to the Couchbase{nbsp}Lite for C#.Net API for release {major}.{minor}.{base}{empty}.
 
-Starting from this release pass:q,a[Couchbase{nbsp}Lite] for C#.Net requires _Visual Studio 2019+_ and uses .Net Core 3.1 (updating from .Net Core 2.0).
+Starting from this release Couchbase{nbsp}Lite for C#.Net requires _Visual Studio 2019+_ and uses .Net Core 3.1 (updating from .Net Core 2.0).
 
 [#breaking-change]
 ==== Breaking Change
@@ -68,7 +68,7 @@ Use the `reset:` argument when starting the replicator instead.
 
 [#before]
 ===== Before
-[pass:q,a[source, java,subs="attributes+, macros+"]]
+[source, java,subs="attributes+, macros+"]
 ----
 replicator.ResetCheckpoint();
 replicator.Start();
@@ -76,7 +76,7 @@ replicator.Start();
 
 [#after]
 ===== After
-[pass:q,a[source, java,subs="attributes+, macros+"]]
+[source, java,subs="attributes+, macros+"]
 ----
 replicator.Start(true) // <.>
 
@@ -94,7 +94,7 @@ instead:
 
 [#before-2]
 ===== Before
-[pass:q,a[source, java,subs="attributes+, macros+"]]
+[source, java,subs="attributes+, macros+"]
 ----
 Database.SetLogLevel(LogDomain.Replicator, LogLevel.Verbose);
 Database.SetLogLevel(LogDomain.Query, LogLevel.Verbose);
@@ -102,7 +102,7 @@ Database.SetLogLevel(LogDomain.Query, LogLevel.Verbose);
 
 [#after-2]
 ===== After
-[pass:q,a[source, java,subs="attributes+, macros+"]]
+[source, java,subs="attributes+, macros+"]
 ----
 Database.Log.Console.Domains = LogDomain.All;
 Database.Log.Console.LogLevel = LogLevel.Verbose;
@@ -121,7 +121,7 @@ instead
 
 [#before-3]
 ===== Before
-[pass:q,a[source, java,subs="attributes+, macros+"]]
+[source, java,subs="attributes+, macros+"]
 ----
 var db = new Database("thisdb");
 db.Compact()
@@ -129,7 +129,7 @@ db.Compact()
 
 [#after-3]
 ===== After
-[pass:q,a[source, java,subs="attributes+, macros+"]]
+[source, java,subs="attributes+, macros+"]
 ----
 var db = new Database("thisdb");
 
@@ -153,7 +153,7 @@ at the earliest opportunity.
 
 [#before-4]
 ===== Before
-[pass:q,a[source, java,subs="attributes+, macros+"]]
+[source, java,subs="attributes+, macros+"]
 ----
 var whereClause =
         FullTextExpression.Index("nameFTSIndex").Match("'querystring'");
@@ -168,7 +168,7 @@ using (var query = QueryBuilder.Select(SelectResult.Expression(Meta.ID))
 
 [#after-4]
 ===== After
-[pass:q,a[source, java,subs="attributes+, macros+"]]
+[source, java,subs="attributes+, macros+"]
 ----
 var whereClause =
       FullTextFunction.Match("nameFTSIndex"),"'querystring'"); // <.>
@@ -195,7 +195,7 @@ at the earliest opportunity.
 
 [#before-5]
 ===== Before
-[pass:q,a[source, java,subs="attributes+, macros+"]]
+[source, java,subs="attributes+, macros+"]
 ----
 var query = QueryBuilder.Select(SelectResult.All())
     .From(DataSource.Database(db))
@@ -204,7 +204,7 @@ var query = QueryBuilder.Select(SelectResult.All())
 
 [#after-5]
 ===== After
-[pass:q,a[source, java,subs="attributes+, macros+"]]
+[source, java,subs="attributes+, macros+"]
 ----
 var query = QueryBuilder.Select(SelectResult.All())
     .From(DataSource.Database(db))
@@ -226,7 +226,7 @@ at the earliest opportunity.
 
 [#before-6]
 ===== Before
-[pass:q,a[source, java,subs="attributes+, macros+"]]
+[source, java,subs="attributes+, macros+"]
 ----
 var query = QueryBuilder.Select(SelectResult.All())
     .From(DataSource.Database(db))
@@ -235,7 +235,7 @@ var query = QueryBuilder.Select(SelectResult.All())
 
 [#after-6]
 ===== After
-[pass:q,a[source, java,subs="attributes+, macros+"]]
+[source, java,subs="attributes+, macros+"]
 ----
 var query = QueryBuilder.Select(SelectResult.All())
     .From(DataSource.Database(db))
