@@ -184,6 +184,29 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-netw-iface", ind
 This must be either an IP Address or network interface name such as `en0`.
 
 
+[#delta-sync]
+== Delta Sync
+
+Delta Sync allows clients to sync only those parts of a document that have changed.
+This can result in significant bandwidth consumption savings and throughput improvements.
+Both are valuable benefits, especially when network bandwidth is constrained.
+
+// Example 5
+.Enable delta sync
+
+
+====
+
+
+[source, c]
+----
+include::c:example$code_snippets/main.cpp[tags="listener-config-delta-sync", indent=0]
+----
+====
+
+<.> Delta sync replication is not enabled by default.
+Use {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration]'s {url-api-references-urlendpointconfiguration}#URLEndpointListenerConfiguration(py)enableDeltaSync[enableDeltaSync] method to activate or deactivate it.
+
 [#lbl-tls-security]
 == TLS Security
 
