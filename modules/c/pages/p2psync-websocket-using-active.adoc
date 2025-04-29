@@ -58,7 +58,67 @@ You should configure and initialize a replicator for each Couchbase Lite databas
 
 [source, c]
 ----
-include::c:example$code_snippets/p2preplication.cpp[tags="p2p-act-rep-func;!autopurge-override", indent=0]
+// Purpose -- illustrate a simple change listener
+static void simpleChangeListener(void* context,
+                                 CBLReplicator* repl,
+                                 const CBLReplicatorStatus* status)
+{
+     if(status->error.code != 0) {
+         printf("Error %d / %d\n",
+                status->error.domain,
+                status->error.code);
+     }
+}
+    // Purpose -- Show configuration , initialization and running of a replicator
+
+    // NOTE: No error handling, for brevity (see getting started)
+    // Note: Android emulator needs to use 10.0.2.2 for localhost (10.0.3.2 for GenyMotion)
+
+    CBLError err{};
+    FLString url = FLSTR("wss://localhost:4984/db");
+    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &err); 
+
+    CBLReplicationCollection collectionConfig;
+    memset(&collectionConfig, 0, sizeof(CBLReplicationCollection));
+    collectionConfig.collection = collection;
+
+    CBLReplicatorConfiguration replConfig;
+    memset(&replConfig, 0, sizeof(CBLReplicatorConfiguration));
+    replConfig.collectionCount = 1;
+    replConfig.collections = &collectionConfig;
+    replConfig.endpoint = target;
+
+    // Set replication direction and mode
+    replConfig.replicatorType = kCBLReplicatorTypePull;
+    replConfig.continuous = true;
+
+
+    // Optionally, configure Client Authentication
+    // Here we are using to Basic Authentication,
+    // Providing username and password credentials
+    CBLAuthenticator* basicAuth =
+        CBLAuth_CreatePassword(FLSTR("username"),
+                               FLSTR("passwd")); 
+    replConfig.authenticator = basicAuth;
+
+    // Optionally, configure how we handle conflicts (note that this is set
+    // per collection, and not on the overall replicator)
+    collectionConfig.conflictResolver = simpleConflictResolver_localWins; 
+
+    // Initialize replicator with created config
+    CBLReplicator* replicator =
+        CBLReplicator_Create(&replConfig, &err); 
+
+    CBLEndpoint_Free(target);
+
+    // Optionally, add change listener
+    CBLListenerToken* token =
+            CBLReplicator_AddChangeListener(replicator,
+                                            simpleChangeListener,
+                                            NULL); 
+
+    // Start replication
+    CBLReplicator_Start(replicator, false); 
 ----
 ====
 
