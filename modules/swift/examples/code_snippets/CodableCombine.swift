@@ -27,7 +27,6 @@ class CodableCombine {
     var replicator: Replicator!
     var query: Query!
     var task: Task!
-    var task2: Task!
     var tasks: [Task] = []
     var cancellables = Set<AnyCancellable>()
     
@@ -35,6 +34,7 @@ class CodableCombine {
         // tag::get-codable-doc[]
         let document = try collection.document(id: task.id!, as: Task.self)
         // end::get-codable-doc[]
+        print(document!)
         
         // tag::save-codable-doc[]
         try collection.save(from: task)
@@ -52,13 +52,13 @@ class CodableCombine {
         // tag::get-codable-result[]
         let results = try query.execute().allResults()
         for result in results {
-            let task = try result.data(as: Task.self)
+            task = try result.data(as: Task.self)
         }
         // end::get-codable-result[]
         
-        // tag::get-codable-all-result[]
-        let tasks = try query.execute().data(as: Task.self)
-        // end::get-codable-all-result[]
+        // tag::get-codable-result-all[]
+        tasks = try query.execute().data(as: Task.self)
+        // end::get-codable-result-all[]
     }
     
     func saveConflictCodable() throws {
@@ -69,24 +69,36 @@ class CodableCombine {
             return true
         }
         // end::conflict-save-codable-doc[]
+        print(resolved)
     }
     
     func saveConcurrencyCodable() throws {
         // tag::concurrency-save-codable-doc[]
         let resolved = try collection.save(from: task, concurrencyControl: .failOnConflict)
         // end::concurrency-save-codable-doc[]
+        print(resolved)
     }
     
     func deleteConcurrencyCodable() throws {
         // tag::concurrency-delete-codable-doc[]
         let resolved = try collection.delete(for: task, concurrencyControl: .failOnConflict)
         // end::concurrency-delete-codable-doc[]
+        print(resolved)
     }
     
     func combine() throws {
+        // tag::publish-result-changes[]
+        query.changePublisher()
+            .map { try! $0.results?.data(as: Task.self) ?? [] }
+            .sink { [weak self] tasks in
+                self?.tasks = tasks
+            }
+            .store(in: &cancellables)
+        // end::publish-result-changes[]
+        
         // tag::publish-collection-changes[]
         collection.changePublisher()
-            .sink { change in print("Collection changed: \(change)") }
+            .sink { change in print("Collection \(change.collection.name) changed.") }
             .store(in: &cancellables)
         // end:publish-collection-changes[]
         
@@ -104,7 +116,7 @@ class CodableCombine {
             .store(in: &cancellables)
         // end::publish-replicator-changes[]
         
-        // tag::publish-replicated-documents[]
+        // tag::publish-replication-changes[]
         replicator.documentReplicationPublisher()
             .sink { change in
                 change.documents.forEach { task in
@@ -112,15 +124,6 @@ class CodableCombine {
                 }
             }
             .store(in: &cancellables)
-        // end::publish-replicated-documents[]
-        
-        // tag::publish-result-changes[]
-        query.changePublisher()
-            .map { try! $0.results?.data(as: Task.self) ?? [] }
-            .sink { [weak self] tasks in
-                self?.tasks = tasks
-            }
-            .store(in: &cancellables)
-        // end::publish-result-changes[]
+        // end::publish-replication-changes[]
     }
 }
