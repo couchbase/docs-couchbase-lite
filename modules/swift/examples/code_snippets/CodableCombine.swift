@@ -96,7 +96,7 @@ class CodableCombine {
         collection.changePublisher()
             .sink { change in print("Collection \(change.collection.name) changed.") }
             .store(in: &cancellables)
-        // end:publish-collection-changes[]
+        // end::publish-collection-changes[]
         
         // tag::publish-doc-changes[]
         collection.documentChangePublisher(for: task.id!)
