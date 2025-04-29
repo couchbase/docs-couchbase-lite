@@ -9,17 +9,13 @@ import Foundation
 import CouchbaseLiteSwift
 import Combine
 
+// tag::codable-data-model[]
 class Task: Codable {
     @DocumentID var id: String?
     var title: String
-    var completed: Bool
-    
-    init(id: String? = nil, title: String, completed: Bool) {
-        self.id = id
-        self.title = title
-        self.completed = completed
-    }
+    var completed: Bool?
 }
+// end::codable-data-model[]
 
 class CodableCombine {
     var database: Database!
