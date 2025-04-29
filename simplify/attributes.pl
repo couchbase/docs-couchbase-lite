@@ -198,6 +198,7 @@ OUTER: while (<>) {
         }
     }
 
+    s{^= https://docs.*}{}; # remove nav entries that are links to external sites
 
     # print lines that we didn't swallow as attribute definitions
     print;
