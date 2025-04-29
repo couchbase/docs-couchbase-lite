@@ -11,7 +11,7 @@ ifdef::show_edition[:page-edition: Enterprise Edition]
 :url-api-references: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html
 :url-api-references-urlendpointconfiguration: {url-api-references}/struct_c_b_l_u_r_l_endpoint_listener_configuration.html
 :url-api-references-urlendpointlistener: {url-api-references}/_c_b_l_u_r_l_endpoint_listener_8h.html
-:url-api-references-tlsidentity: {url-api-references}/group__TLSIdentity.html
+:url-api-references-tlsidentity: {url-api-references}/group___t_l_s_identity.html
 :url-api-class-ListenerPasswordAuthenticator: {url-api-references}/struct_c_b_l_listener_authenticator.html#ab289395196d0bbd4b7bd27bfbf1b9157
 :url-api-class-ListenerCertificateAuthenticator: {url-api-references}/struct_c_b_l_listener_authenticator.html#ab772751f6c964814f9c49c934eb9facf
 :url-api-class-connection-status: {url-api-references}/struct_c_b_l_connection_status.html
@@ -252,7 +252,7 @@ Typically, you will configure the Listener's TLS Identity once during the initia
 
 On Linux and Android, the auto-generated anonymous self-signed identity is kept in memory and will be regenerated each time the listener is started.
 
-Alternatively, you can use the CBLTLSIdentity_CreateIdentityWithKeyPair() API with a CBLKeyPair object created using CBLKeyPair_CreateWithExternalKey().
+Alternatively, you can use the {url-api-references-tlsidentity}#ga28cacc360238506e7ea36f058a4bcd23[CBLTLSIdentity_CreateIdentityWithKeyPair()] API with a {url-api-references-tlsidentity}#ga50d0a2acc3f0d3794164edeed66074c0[CBLKeyPair] object created using {url-api-references-tlsidentity}#ga78d47a8c2157dad4347709d1adec6b39[CBLKeyPair_CreateWithExternalKey()].
 This approach enables the use of a developer-provided private key stored in secure key storage of your choice, allowing cryptographic operations to be performed through CBLExternalKeyCallbacks functions without exposing the private key.
 
 Couchbase Lite for C does not provide a convenience function to import a TLS identity from a secure key and certificate data source.
@@ -324,7 +324,7 @@ CBLTLSIdentity_Release(identity);
 
 . The Common Name (CN) is the only required attribute for generating the certificate. @/kCBLCertAttrKeyCommonName/
 
-. Generate the self-signed TLS identity using the `CBLTLSIdentity_CreateIdentity()` function. @/CBLTLSIdentity_CreateIdentity/
+. Generate the self-signed TLS identity using the {url-api-references-tlsidentity}#ga7b9afa6f5f3167f7a2af08abc7778883[CBLTLSIdentity_CreateIdentity()] function. @/CBLTLSIdentity_CreateIdentity/
 
 . If a persistent label is specified, the identity (including an RSA key pair and certificate) is also stored in secure key storage. @/FLSTR/
 
@@ -359,7 +359,7 @@ CBLTLSIdentity_Release(identity);
 
 . The Common Name (CN) is the only required attribute for generating the certificate. @/kCBLCertAttrKeyCommonName/
 
-. Generate the self-signed TLS identity using the `CBLTLSIdentity_CreateIdentity()` function. @/CBLTLSIdentity_CreateIdentity/
+. Generate the self-signed TLS identity using the {url-api-references-tlsidentity}#ga7b9afa6f5f3167f7a2af08abc7778883[CBLTLSIdentity_CreateIdentity()] function. @/CBLTLSIdentity_CreateIdentity/
 
 . The persistent label must be NULL, as identity persistence with a label is not supported.
 The created identity is stored in memory only. @/kFLSliceNull/
@@ -382,9 +382,9 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-tls-enable;liste
 ====
 
 
-<.> Ensure TLS is used. +
+<.> Ensure TLS is used.
 This is the default setting.
-<.> Authenticate using an anonymous self-signed certificate. +
+<.> Authenticate using an anonymous self-signed certificate.
 This is the default setting.
 
 .Use External Key Callbacks
@@ -578,7 +578,7 @@ a|* The system will auto generate an _anonymous_ self signed cert.
 |false
 a|Set to server identity generated from a self- or CA-signed certificate
 
-* On first use -- Bring your own certificate and private key; for example, using the `CBLTLSIdentity_CreateIdentity()` method to add it to the secure storage.
+* On first use -- Bring your own certificate and private key; for example, using the {url-api-references-tlsidentity}#ga7b9afa6f5f3167f7a2af08abc7778883[CBLTLSIdentity_CreateIdentity()] method to add it to the secure storage.
 * Each time -- Use the server identity from the certificate stored in the secure storage, if supported.
 Alternatively, use external key callbacks to access private key stored in secure key storage of your choice.
 
@@ -610,10 +610,10 @@ include::c:example$code_snippets/main.cpp[tags="listener-start", indent=0]
 [#monitor-listener]
 == Monitor Listener
 
-Use the Listener's `{url-api-references-urlendpointlistener}#ac5cc57610ce3d6a2fb1e891a8f24a448[CBLURLEndpointListener_Status()]` property/method to get counts of total and active connections -- see: <<get-connection-counts>>.
+Use the Listener's {url-api-references-urlendpointlistener}#ac5cc57610ce3d6a2fb1e891a8f24a448[CBLURLEndpointListener_Status()] property/method to get counts of total and active connections -- see: <<get-connection-counts>>.
 
 You should note that these counts can be extremely volatile.
-So, the actual number of active connections may have changed, by the time the `{url-api-class-connection-status}[ConnectionStatus]` class returns a result.
+So, the actual number of active connections may have changed, by the time the {url-api-class-connection-status}[ConnectionStatus] class returns a result.
 
 // Example 11
 .Get connection counts
