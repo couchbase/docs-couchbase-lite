@@ -2580,7 +2580,7 @@ static void simpleReplicatorForListener() {
     // end::replicator-simple[]
 }
 
-static bool read_pem_file(const char* path, char* outData, size_t* outSize) { }
+static bool read_pem_file(const char* path, char* outData, size_t* outSize) { return true; }
 
 static void replicatorConfigCerts() {
     CBLReplicatorConfiguration config;
@@ -2777,6 +2777,8 @@ static void createListenerClientCertAuthWithCallback() {
     // end::listener-config-client-auth-lambda[]
 }
 
+#if !defined(__linux__) && !defined(__ANDROID__)
+
 static void deleteIdentityWithLabel() {
     // tag::p2psync-act-tlsid-delete[]
     CBLError error;
@@ -2784,6 +2786,8 @@ static void deleteIdentityWithLabel() {
     CBLTLSIdentity_DeleteIdentityWithLabel(FLSTR("couchbaselite-server-cert-label"), &error);
     // end::p2psync-act-tlsid-delete[]
 }
+
+#endif
 
 static void monitorListenerConnections() {
     CBLURLEndpointListenerConfiguration config{};
