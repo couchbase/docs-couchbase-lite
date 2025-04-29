@@ -53,9 +53,6 @@ You should configure and initialize a replicator for each Couchbase Lite databas
 
 [#simple-replication-to-listener]
 .Replication configuration and initialization
-
-
-[#simple-replication-to-listener]
 ====
 
 
@@ -65,13 +62,13 @@ include::c:example$code_snippets/p2preplication.cpp[tags="p2p-act-rep-func;!auto
 ----
 ====
 
-. Configure how the client will authenticate the server.
-Here we say connect only to servers presenting a self-signed certificate.
-By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<authenticate-listener>>. @/replConfig.endpoint/
+. Configure the URL endpoint of the server.
+Here we connect only to servers presenting a self-signed certificate.
+By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates -- see: <<authenticate-listener>>. @/CBLEndpoint_CreateWithURL/
 
 . Configure the credentials the client will present to the server.
 Here we say to provide _Basic Authentication_ credentials.
-Other options are available -- see: <<lbl-authclnt>>. @/replConfig.authenticator/
+Other options are available -- see: <<lbl-authclnt>>. @/passwd/
 
 . Configure how the replication should perform <<conflict-resolution>>. @/conflictResolver/
 
@@ -223,9 +220,6 @@ When necessary you can adjust any or all of those configurable values -- see: <<
 
 .Configuring Replication Retries
 [#ex-repl-retry]
-
-
-[#ex-repl-retry]
 ====
 
 
@@ -243,7 +237,7 @@ include::c:example$code_snippets/main.cpp[tags="replication-retry-config", inden
 [#authenticate-listener]
 === Authenticating the Listener
 
-Define the credentials the your app (the client) is expecting to receive from the server (listener) in order to ensure that the server is one it is prepared to interact with.
+Define the credentials that your app (the client) is expecting to receive from the server (listener) in order to ensure that the server is one it is prepared to interact with.
 
 Note that the client cannot authenticate the server if TLS is turned off.
 When TLS is enabled (Sync Gateway's default) the client _must_ authenticate the server.
@@ -313,13 +307,16 @@ include::c:example$code_snippets/main.cpp[tag=p2p-act-rep-config-cacert-pinned, 
 
 [#lbl-authclnt]
 === Client Authentication
-Couchbase Lite for C only supports the ability to replicate with a remote Sync Gateway *without TLS enabled* (`disableTLS=true`) at this release.
 
 
 Here we define the credentials that the client can present to the server if prompted to do so in order that the server can authenticate it.
 
 We use {url-api-references-replicator-config}[CBLReplicatorConfiguration]'s {url-api-references-replicator-config}#aa2cd20835cc4e6b516510d441d419d60[authenticator] method to define the authentication method to the replicator.
 
+For P2P using URLEndpointListener, the replicator supports two types of authentication:
+
+* Basic Authentication -- doesn't require TLS
+* Client Certificate Authentication -- requires TLS
 
 [#initialize-replicator]
 == Initialize Replicator
@@ -442,9 +439,6 @@ The `IDLE` state is only used in continuous replications.
 NOTE: The replication change object also has properties to track the progress (`change.status.completed` and `change.status.total`).
 Since the replication occurs in batches the total count can vary through the course of a replication.
 
-
-[#lbl-repl-evnts]
-
 [#lbl-repl-pend]
 === Documents Pending Push
 
@@ -461,9 +455,6 @@ This can be very useful in tracking the progress of a push sync, enabling the ap
 
 [#ex-pending]
 .Use Pending Document ID API
-
-
-[#ex-pending]
 ====
 
 
@@ -564,9 +555,6 @@ The following code snippet shows an example of merging properties from the exist
 In the event of conflicting keys, it will pick the key value from `new`.
 
 .Merging document properties
-[#ex-merge-props]
-
-
 [#ex-merge-props]
 ====
 

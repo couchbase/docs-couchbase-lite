@@ -67,7 +67,7 @@ You can also learn how to implement Peer-to-Peer synchronization by referring to
 
 Couchbase Lite for {param-title}'s Peer-to-Peer synchronization solution provides support for cross-platform synchronization, for example, between Android and iOS devices.
 
-Each listener instance serves one Couchbase Lite database. However, there is no hard limit on the number of Listener instances you can associate with a database.
+Each listener instance serves a single Couchbase Lite database, enabling synchronization for documents within specified collections of that database.
 
 Having a Listener on a database still allows you to open replications to the other clients.
 For example, a Listener can actively begin replicating to other Listeners while listening for connections.
@@ -111,7 +111,6 @@ An Active Peer temporarily losing connectivity with a passive Peer will use expo
 Optional delta-sync support is provided but is inactive by default.
 
 Delta-sync can be enabled on a per-replication basis provided that the databases involved are also configured to permit it.
-Statistics on delta-sync usage are available, including the total number of revisions sent as deltas.
 
 === Conflict Resolution
 
@@ -213,29 +212,30 @@ include::{root-partials}p2p-api.adoc[leveloffset=+1]
 
 == Security
 
-=== Authentication
 // include::{root-partials}p2p-security.adoc[leveloffset=+1]
 
-Peer-to-Peer sync supports <<using-basic-authentication, Basic Authentication>> and <<using-tls,TLS Authentication>>.
-For anything other than test deployments, we strongly encourage the use of TLS. In fact, Peer-to-Peer sync using URLEndpointListener is encrypted using TLS by default.
+Couchbase Lite's Peer-to-Peer synchronization ensures secure communication through TLS and supports multiple authentication mechanisms.
 
-The authentication mechanism is defined at the endpoint level, meaning that it is independent of the database being replicated.
-For example, you may use basic authentication on one instance and TLS authentication on another when replicating multiple database instances.
+[#tls-identity]
+=== TLS Identity
 
-NOTE: The Minimum supported version of TLS is TLS 1.2.
+The URLEndpointListener uses a TLS identity to establish secure connections.
+(A TLS identity is an RSA public/private key pair and certificate.)
+The identity can include either a certificate signed by a trusted Certificate Authority (CA), or a self-signed certificate.
+If no identity is specified, the listener automatically generates an anonymous, self-signed certificate, which is primarily used for encryption, but not for authentication.
 
-Peer-to-Peer synchronization using URLEndpointListener supports certificate based authentication of the server and-or Listener:
+When replicating with a listener that uses a self-signed certificate, the replicator (client) can be configured to skip certificate validation.
+This option is useful for development or testing, but not recommended for production.
 
-* Replicator certificates can be: self signed, from trusted CA or anonymous (system generated).
-* Listeners certificates may be: self signed or trusted CA signed.
-+
-Where a TLS certificate is not explicitly specified for the Listener, the Listener implementation will generate anonymous certificate to use for encryption
+NOTE: The minimum supported version of TLS is TLS 1.2.
 
-* The URLEndpointListener supports the ability to opt out of TLS encryption communication.
-+
-Active clients replicating with a URLEndpointListener have the option to skip validation of server certificates when the Listener is configured with self-signed certificates.
-+
-This option is ignored when dealing with CA certificates.
+[#authentication]
+=== Authentication Mechanisms
+
+The URLEndpointListener supports two authentication mechanisms:
+
+* Basic Authentication, using a username and password.
+* Certificate Authentication, which authenticates clients using client certificates, and is only available when TLS is enabled.
 
 [#using-secure-storage]
 === Using Secure Storage

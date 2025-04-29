@@ -29,7 +29,7 @@ include::{root-partials}block-caveats.adoc[tags=securestorage]
 
 == Configuration Summary
 
-You should configure and initialize a Listener for each Couchbase Lite database instance you want to sync.
+You should configure and initialize the Listener with a list of collections to sync.
 There is no limit on the number of Listeners you may configure -- <<simple-listener-initialization>> shows a simple initialization and configuration process.
 
 
@@ -49,7 +49,7 @@ endif::[]
 include::{root-partials}block_tabbed_code_example.adoc[]
 :param-tags!:
 
-<.> Identify the local database to be used -- see: <<initialize-the-listener-configuration>>
+<.> Identify the local database and the collections to be used -- see: <<initialize-the-listener-configuration>>
 
 <.> Optionally, choose a port to use.
 By default the system will automatically assign a port -- to over-ride this, see: <<lbl-set-network-and-port>>
@@ -98,14 +98,12 @@ The connection is established once the Passive Peer has authenticated and accept
 
 
 == Initialize the Listener Configuration
-Initialize the Listener configuration with the local database -- see <<ex-locdb>>
+Initialize the Listener configuration with a list of collections from the local database -- see <<ex-locdb>>.
 All other configuration values take their default setting.
 
-Each Listener instance serves one Couchbase Lite database.
-Couchbase sets no hard limit on the number of Listeners you can initialize.
 
 // Example 2
-.Specify Local Database
+.Specify Local Collections
 [#ex-locdb]
 :param-tags: listener-config-db
 include::{root-partials}block_tabbed_code_example.adoc[]
@@ -282,7 +280,7 @@ Valid options are:
 * Basic Authentication -- uses the {url-api-class-ListenerPasswordAuthenticator} to authenticate the client using the client-supplied username and password (from the http authentication header).
 * {url-api-class-ListenerCertificateAuthenticator} -- which authenticates the client using a client supplied chain of one or more certificates.
 You should initialize the authenticator using one of the following constructors:
-** A list of one or more root certificates -- the client supplied certificate must end at a certificate in this list if it is to be authenticated
+** A root certificate, or a list of intermediate certificates and a root certificate -- the client supplied certificate must end at a certificate in this list if it is to be authenticated.
 ** A block of code that assumes total responsibility for authentication -- it must return a boolean response (true for an authenticated client, or false for a failed authentication).
 
 // include::{root-partials}p2p-api.adoc[tag=config-auth]

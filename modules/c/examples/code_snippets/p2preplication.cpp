@@ -122,7 +122,7 @@ static void docs_act_replication(CBLDatabase* argDb)
     // Note: Android emulator needs to use 10.0.2.2 for localhost (10.0.3.2 for GenyMotion)
 
     CBLError err{};
-    FLString url = FLSTR("ws://localhost:4984/db");
+    FLString url = FLSTR("wss://localhost:4984/db");
     CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &err);
 
     CBLReplicationCollection collectionConfig;

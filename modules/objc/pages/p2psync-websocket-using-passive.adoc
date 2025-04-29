@@ -55,7 +55,7 @@ The implementation of this storage differs from platform to platform -- see xref
 [#configuration-summary]
 == Configuration Summary
 
-You should configure and initialize a Listener for each Couchbase Lite database instance you want to sync.
+You should configure and initialize the Listener with a list of collections to sync.
 There is no limit on the number of Listeners you may configure -- <<simple-listener-initialization>> shows a simple initialization and configuration process.
 
 
@@ -75,7 +75,7 @@ include::objc:example$code_snippets/SampleCodeTest.m[tags="listener-initialize",
 ====
 
 
-<.> Identify the local database to be used -- see: <<initialize-the-listener-configuration>>
+<.> Identify the local database and the collections to be used -- see: <<initialize-the-listener-configuration>>
 
 <.> Optionally, choose a port to use.
 By default the system will automatically assign a port -- to over-ride this, see: <<lbl-set-network-and-port>>
@@ -120,17 +120,12 @@ The connection is established once the Passive Peer has authenticated and accept
 
 [#initialize-the-listener-configuration]
 == Initialize the Listener Configuration
-Initialize the Listener configuration with the local database -- see <<ex-locdb>>
+Initialize the Listener configuration with a list of collections from the local database -- see <<ex-locdb>>.
 All other configuration values take their default setting.
 
-Each Listener instance serves one Couchbase Lite database.
-Couchbase sets no hard limit on the number of Listeners you can initialize.
 
 // Example 2
-.Specify Local Database
-[#ex-locdb]
-
-
+.Specify Local Collections
 [#ex-locdb]
 ====
 
@@ -264,7 +259,7 @@ Whilst the client cannot use this to authenticate the server, it will use it to 
 The auto-generated anonymous self-signed identity is saved in secure storage for future use to obviate the need to re-generate it.
 
 
-NOTE: Typically, you will configure the Listener's TLS Identity once during the initial launch and re-use it (from secure storage on any subsequent starts.
+NOTE: Typically, you will configure the Listener's TLS Identity once during the initial launch and re-use it (from secure storage) on any subsequent starts.
 
 Here are some example code snippets showing:
 
@@ -356,7 +351,7 @@ Valid options are:
 * Basic Authentication -- uses the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLListenerPasswordAuthenticator.html[ListenerPasswordAuthenticator] to authenticate the client using the client-supplied username and password (from the http authentication header).
 * https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator] -- which authenticates the client using a client supplied chain of one or more certificates.
 You should initialize the authenticator using one of the following constructors:
-** A list of one or more root certificates -- the client supplied certificate must end at a certificate in this list if it is to be authenticated
+** A root certificate, or a list of intermediate certificates and a root certificate -- the client supplied certificate must end at a certificate in this list if it is to be authenticated.
 ** A block of code that assumes total responsibility for authentication -- it must return a boolean response (true for an authenticated client, or false for a failed authentication).
 
 
