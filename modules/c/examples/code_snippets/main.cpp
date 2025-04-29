@@ -2496,11 +2496,11 @@ static void database_replica(){
 
 // Peer-to-Peer
 
-static bool your_authenticate_function(FLString usr, FLString password) {
+static bool authenticate(FLString usr, FLString password) {
     return true;
 }
 
-static void createListenerSimple() {
+static void simpleListenerInitialize() {
     CBLDatabase* database = kDatabase;
     CBLCollection *collection = CBLDatabase_DefaultCollection(database, nullptr);
 
@@ -2512,6 +2512,7 @@ static void createListenerSimple() {
     // Setup collections available for replication:
     CBLCollection* collections[1];
     collections[0] = collection;
+
     config.collections = collections;
     config.collectionCount = 1;
 
@@ -2522,11 +2523,11 @@ static void createListenerSimple() {
     // Setup authenticator:
     CBLListenerAuthenticator* auth = CBLListenerAuth_CreatePassword(
         [](void* ctx, FLString user, FLString password) {
-        return your_authenticate_function(user, password);
+        return authenticate(user, password);
     }, nullptr);
     config.authenticator = auth; // <.>
 
-    CBLError error{};
+    CBLError error;
     memset(&error, 0, sizeof(CBLError));
 
     // Create the listener with the config:
@@ -2539,6 +2540,199 @@ static void createListenerSimple() {
     CBLURLEndpointListener_Start(listener, &error);
     // end::listener-initialize[]
 #endif
+}
+
+static void listenerConfig() {
+    CBLDatabase* database = kDatabase;
+    CBLCollection *collection = CBLDatabase_DefaultCollection(database, nullptr);
+
+    // tag::listener-config-db[]
+    CBLURLEndpointListenerConfiguration config;
+    memset(&config, 0, sizeof(CBLURLEndpointListenerConfiguration));
+
+    // Setup collections available for replication:
+    CBLCollection* collections[1];
+    collections[0] = collection;
+
+    config.collections = collections; // <.>
+    config.collectionCount = 1;
+    // end::listener-config-db[]
+
+    // tag::listener-config-port[]
+    config.port = 55990; // <.>
+    // end::listener-config-port[]
+
+    // tag::listener-config-netw-iface[]
+    config.networkInterface = FLSTR("10.1.1.10"); // <.>
+    // end::listener-config-netw-iface[]
+
+    // tag::listener-config-delta-sync[]
+    config.enableDeltaSync = true; // <.>
+    // end::listener-config-delta-sync[]
+
+    // tag::listener-config-tls-enable[]
+    config.disableTLS  = false; // <.>
+    // end::listener-config-tls-enable[]
+
+    // tag::listener-config-tls-id-anon[]
+    // Use an anonymous self-signed cert
+    config.tlsIdentity = NULL; // <.>
+    // end::listener-config-tls-id-anon[]
+
+    // tag::listener-config-client-auth-pwd[]
+    // Configure Client Security using an Authenticator, for example, Basic Authentication.
+    // Note: Free the authenticator using CBLListenerAuth_Free() after the listener is created.
+    CBLListenerAuthenticator* auth = CBLListenerAuth_CreatePassword(
+        [](void* ctx, FLString user, FLString password) {
+            return authenticate(user, password);
+        }, nullptr);
+    config.authenticator = auth; // <.>
+    // end::listener-config-client-auth-pwd[]
+
+    // tag::listener-start[]
+    CBLError error;
+    memset(&error, 0, sizeof(CBLError));
+    CBLURLEndpointListener* listener = CBLURLEndpointListener_Create(&config, &error);
+
+    // Start the listener:
+    CBLURLEndpointListener_Start(listener, &error);
+    // end::listener-start[]
+
+    // Free authenticator after listener is created (config was copied).
+    CBLListenerAuth_Free(config.authenticator);
+
+    // tag::listener-stop[]
+    CBLURLEndpointListener_Stop(listener);
+    // end::listener-stop[]
+}
+
+static bool read_pem_file(const char* path, char** outData, size_t* outSize) { }
+
+static void createTLSIdentityFromPEM() {
+    CBLURLEndpointListenerConfiguration config {};
+    // tag::listener-config-tls-id-caCert[]
+    // This example shows how to create and use TLSIdentity using private key and certs loaded from PEM files:
+    // Enable TLS:
+    config.disableTLS = false; // <.>
+
+    // Read a private key and certificate chain from PEM files <.>
+    // Read a private key:
+    char* keyPEMData = NULL;
+    size_t keyPEMSize = 0;
+    read_pem_file("/drive/key.pem", &keyPEMData, &keyPEMSize);
+    FLSlice keySlice = {keyPEMData, keyPEMSize};
+
+    // Create a key-pair object with the private key loaded from the PEM file.
+    // Note : PEM file is encrypted with a password, the PEM file MUST be in PKCS#1 format.
+    CBLError error;
+    memset(&error, 0, sizeof(CBLError));
+    CBLKeyPair* key = CBLKeyPair_CreateWithPrivateKeyData(keySlice, FLSTR("password"), &error);
+
+    // Read a certificate chain:
+    char* certPEMData = NULL;
+    size_t certPEMSize = 0;
+    read_pem_file("/drive/certs.pem", &certPEMData, &certPEMSize);
+    FLSlice certSlice = {certPEMData, certPEMSize};
+
+    // Create a cert object from certificates loaded from the PEM file:
+    // Note : The cert can be released with CBLCert_Release() after the listener is created.
+    CBLCert* cert = CBLCert_CreateWithData(certSlice, &error);
+
+    // Create a TLS Identity with the key and cert:
+    // Note: The identity can be released with CBLTLSIdentity_Release() after the listener is created.
+    CBLTLSIdentity* identity = CBLTLSIdentity_IdentityWithKeyPairAndCerts(key, cert, &error); // <.>
+
+    // Set identity to the CBLURLEndpointListenerConfiguration:
+    config.tlsIdentity = identity; // <.>
+    // end::listener-config-tls-id-caCert[]
+}
+
+static void createSelfSignedCert() {
+    CBLURLEndpointListenerConfiguration config {};
+    // tag::create-self-signed-cert[]
+    // tag::listener-config-tls-id-SelfSigned[]
+    // Enable TLS:
+    config.disableTLS = false; // <.>
+
+    // Certificate Attributes:
+    // Note: The attrs can be released with FLMutableDict_Release() after the listener is created.
+    FLMutableDict attrs = FLMutableDict_New();
+    FLMutableDict_SetString(attrs, kCBLCertAttrKeyCommonName, FLSTR("Couchbase Inc")); // <.>
+
+    // Create a self-signed certificate identity:
+    // Note: The identity can be released with CBLTLSIdentity_Release() after the listener is created.
+    // Note: Only iOS and Windows supports presistent label feature.
+    FLString label = FLSTR("couchbaselite-server-cert-label");
+
+    CBLError error;
+    memset(&error, 0, sizeof(CBLError));
+    CBLTLSIdentity* identity = CBLTLSIdentity_CreateIdentity(
+        kCBLKeyUsagesServerAuth, attrs, 0, label, &error); // <.>
+
+    // Set identity to the CBLURLEndpointListenerConfiguration:
+    config.tlsIdentity = identity; // <.>
+    // end::listener-config-tls-id-SelfSigned[]
+    // end::create-self-signed-cert[]
+}
+
+static void createListenerClientCertAuthWithRootCerts() {
+    CBLURLEndpointListenerConfiguration config {};
+    // tag::listener-config-client-root-ca[]
+    // tag::listener-config-client-auth-root[]
+    // Read intermediate and root cert from a PEM file:
+    char* certPEMData = NULL;
+    size_t certPEMSize = 0;
+    read_pem_file("/drive/root_certs.pem", &certPEMData, &certPEMSize);
+    FLSlice certSlice = {certPEMData, certPEMSize};
+
+    // Create a cert object from certificates loaded from the PEM file:
+    // Note : The cert can be released with CBLCert_Release() after the listener is created.
+    CBLError error;
+    memset(&error, 0, sizeof(CBLError));
+    CBLCert* rootCerts = CBLCert_CreateWithData(certSlice, &error); // <.>
+
+    // Create a client certificate authenticator with the root certificate:
+    // Note : The auth can be freed with CBLListenerAuth_Free() after the listener is created.
+    CBLListenerAuthenticator* auth = CBLListenerAuth_CreateCertificateWithRootCerts(rootCerts); // <.>
+
+    // Set the authenticator to the CBLURLEndpointListenerConfiguration:
+    config.authenticator = auth; // <.>
+    // end::listener-config-client-root-ca[]
+    // end::listener-config-client-auth-root[]
+}
+
+static bool authenticateClientCert(CBLCert* cert) { return true; }
+
+static void createListenerClientCertAuthWithCallback() {
+    CBLURLEndpointListenerConfiguration config {};
+    // tag::listener-config-client-auth-lambda[]
+    // Create a client certificate authenticator with callback:
+    // Note : The auth can be freed with CBLListenerAuth_Free() after the listener is created.
+    CBLListenerAuthenticator* auth = CBLListenerAuth_CreateCertificate([](void* ctx, CBLCert* cert) {
+        return authenticateClientCert(cert);
+    }, nullptr); // <.>
+
+    // Set the authenticator to the CBLURLEndpointListenerConfiguration:
+    config.authenticator = auth; // <.>
+    // end::listener-config-client-auth-lambda[]
+}
+
+static void deleteIdentityWithLabel() {
+    // tag::p2psync-act-tlsid-delete[]
+    CBLError error;
+    memset(&error, 0, sizeof(CBLError));
+    CBLTLSIdentity_DeleteIdentityWithLabel(FLSTR("couchbaselite-server-cert-label"), &error);
+    // end::p2psync-act-tlsid-delete[]
+}
+
+static void monitorListenerConnections() {
+    CBLURLEndpointListenerConfiguration config{};
+    CBLURLEndpointListener* listener = CBLURLEndpointListener_Create(&config, nullptr);
+    // tag::listener-status-check[]
+    CBLConnectionStatus status = CBLURLEndpointListener_Status(listener);
+    uint64_t totalConnections = status.connectionCount;
+    uint64_t activeConnections = status.activeConnectionCount;
+    // end::listener-status-check[]
 }
 
 int main(int argc, char** argv) {
