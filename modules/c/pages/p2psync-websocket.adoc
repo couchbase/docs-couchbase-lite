@@ -139,9 +139,6 @@ You can configure a Peer-to-Peer synchronization with just a short amount of cod
 
 .Simple Listener
 [#ex-simple-listener]
-
-
-[#ex-simple-listener]
 ====
 
 This simple listener configuration will give you a listener ready to participate in an encrypted synchronization with a replicator providing a valid user name and password.
@@ -153,16 +150,13 @@ include::c:example$code_snippets/main.cpp[tags="listener-simple", indent=0]
 
 ====
 
-<.> Initialize the Listener configuration
-<.> Configure the client authenticator to require basic authentication
-<.> Initialize the Listener
-<.> Start the Listener
+. Initialize the Listener configuration @/CBLURLEndpointListenerConfiguration config/
+. Configure the client authenticator to require basic authentication @/config.authenticator/
+. Initialize the Listener @/CBLURLEndpointListener_Create/
+. Start the Listener @/CBLURLEndpointListener_Start/
 
 
 .Simple Replicator
-[#ex-simple-replicator]
-
-
 [#ex-simple-replicator]
 ====
 
@@ -175,13 +169,13 @@ include::c:example$code_snippets/main.cpp[tags="replicator-simple", indent=0]
 
 ====
 
-<.> Get the Listener's endpoint.
-Here we use a known URL, but it could be a URL established dynamically in a discovery phase.
-<.> Initialize the replicator configuration with the database to be synchronized and the Listener it is to synchronize with
-<.> Configure the replicator to expect a self-signed certificate from the Listener
-<.> Configure the replicator to present basic authentication credentials if the Listener prompts for them (client authentication is optional)
-<.> Initialize the replicator
-<.> Start the replicator
+. Get the Listener's endpoint.
+Here we use a known URL, but it could be a URL established dynamically in a discovery phase. @/replConfig.endpoint/
+. Initialize the replicator configuration with the database to be synchronized and the Listener it is to synchronize with. @/replConfig.collections/
+. Configure the replicator to expect a self-signed certificate from the Listener. @/replConfig.acceptOnlySelfSignedServerCertificate/
+. Configure the replicator to present basic authentication credentials if the Listener prompts for them -- client authentication is optional. @/replConfig.authenticator/
+. Initialize the replicator @/CBLReplicator_Create/
+. Start the replicator @/CBLReplicator_Start/
 
 
 [#api-highlights]
