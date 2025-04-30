@@ -14,8 +14,43 @@ include::partial$_show_page_header_block.adoc[]
 
 
 NOTE: Couchbase Lite 3.0 introduces some breaking changes. +
-If you're upgrading from 2.x, refer to the appropriate upgrade page -- see: <<lbl-upgrade>>
-Users should be able to upgrade to 3.1.x from 3.0.x without manual intervention.
+If you're upgrading from 2.x, refer to the appropriate upgrade page -- see: <<lbl-upgrade>>. +
+You should be able to upgrade from 3.0.x to 3.1.x without manual intervention.
+
+== Release 3.2.3 (April 2025)
+
+=== New Features
+
+==== Swift API Enhancements
+
+Couchbase Lite 3.2.3 introduces Reactive APIs in Swift.
+The Reactive APIs enable you map Couchbase Lite documents directly to Swift models, and then bind a model to a view representing the user interface.
+The user interface is automatically updated when the underlying data changes.
+The new Reactive APIs provide the following benefits:
+
+* Native adherence to Swift's Codable protocol, enabling automatic encoding and decoding between Couchbase Lite documents and Swift codable model objects.
+You can retrieve documents from the collection as decodable model objects.
+You can also save, delete, and purge model objects encoded as documents in the collection.
+
+* The ability to decode Couchbase {sqlpp} query results directly into model objects.
+This makes queries observable, so that you can refresh the application automatically as the results change.
+
+* Access to the Combine framework and the Observation framework, enabling you to publish change notifications whenever a query result changes, or documents in a collection change, or a replicator's status changes.
+
+For more information about Reactive APIs in Swift, see:
+
+* xref:swift:reactive.adoc[]
+
+==== Peer-to-Peer Synchronization in C
+
+Couchbase Lite 3.2.3 introduces peer-to-peer synchronization in C.
+Couchbase Lite C supports peer-to-peer synchronization over IP using the WebSocket protocol via URLEndpointListener, but does not support custom transports through MessageEndpointListener.
+
+For more information about peer-to-peer synchronization in C, see:
+
+* xref:c:p2psync-websocket.adoc[]
+* xref:c:p2psync-websocket-using-passive.adoc[]
+* xref:c:p2psync-websocket-using-active.adoc[]
 
 == Release 3.2.2 (March 2025)
 

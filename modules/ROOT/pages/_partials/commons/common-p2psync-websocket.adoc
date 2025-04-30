@@ -18,11 +18,11 @@ endif::[]
 == Introduction
 // tag::introduction-full[]
 // tag::introduction[]
-Couchbase Lite’s Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronisation between edge devices without needing a centralized cloud-based control point. 
+Couchbase Lite's Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronization between edge devices without needing a centralized cloud-based control point.
 
 // end::introduction[]
 
-Couchbase Lite’s Peer-to-Peer data synchronization provides: 
+Couchbase Lite's Peer-to-Peer data synchronization provides:
 
 * Instant WebSocket-based listener for use in Peer-to-Peer applications communicating over IP-based networks
 
@@ -39,11 +39,11 @@ Couchbase Lite’s Peer-to-Peer data synchronization provides:
 // end::introduction-full[]
 
 == Overview
-Peer-to-Peer synchronization requires one Peer to act as the Listener to the other Peer’s replicator.
+Peer-to-Peer synchronization requires one Peer to act as the Listener to the other Peer's replicator.
 
 image::ROOT:docs-listener-diagram.png[,600]
 
-Peer-to-Peer synchronization requires one Peer to act as the Listener to the other Peer’s replicator.
+Peer-to-Peer synchronization requires one Peer to act as the Listener to the other Peer's replicator.
 Therefore, to use Peer-to-Peer synchronization in your application, you must configure one Peer to act as a Listener using the Couchbase Listener API, the most important of which include _URLEndpointListener_ and _URLEndpointListenerConfiguration_.
 
 .Simple workflow
@@ -59,7 +59,7 @@ Therefore, to use Peer-to-Peer synchronization in your application, you must con
 
 ====
 
-Here you can see configuration involves a {p2psync-websocket-using-passive--xref} and an {p2psync-websocket-using-active--xref} and a user-friendly Listener configuration in <<simple-configuration>>
+Here you can see configuration involves a {p2psync-websocket-using-passive--xref} and an {p2psync-websocket-using-active--xref} and a user-friendly Listener configuration in <<simple-configuration>>.
 
 You can also learn how to implement Peer-to-Peer synchronization by referring to our tutorial -- see: {tutorial--xref--p2psync}.
 
@@ -67,10 +67,10 @@ You can also learn how to implement Peer-to-Peer synchronization by referring to
 
 Couchbase Lite for {param-title}'s Peer-to-Peer synchronization solution provides support for cross-platform synchronization, for example, between Android and iOS devices.
 
-Each listener instance serves one Couchbase Lite database. However, there is no hard limit on the number of Listener instances you can associate with a database.
+Each listener instance serves a single Couchbase Lite database, enabling synchronization for documents within specified collections of that database.
 
-Having a Listener on a database still allows you to open replications to the other clients. 
-For example, a Listener can actively begin replicating to other Listeners while listening for connections. 
+Having a Listener on a database still allows you to open replications to the other clients.
+For example, a Listener can actively begin replicating to other Listeners while listening for connections.
 These replications can be for the same or a different database.
 
 The Listener will automatically select a port to use or a user-specified port.
@@ -78,7 +78,7 @@ It will also listen on all available networks, unless you specify a specific net
 
 === Security
 
-Couchbases Lite's Peer-to-Peer synchronization supports encryption and authentication over TLS with multiple modes, including:
+Couchbase Lite's Peer-to-Peer synchronization supports encryption and authentication over TLS with multiple modes, including:
 
 * No encryption, for example, clear text.
 * CA Cert
@@ -111,7 +111,6 @@ An Active Peer temporarily losing connectivity with a passive Peer will use expo
 Optional delta-sync support is provided but is inactive by default.
 
 Delta-sync can be enabled on a per-replication basis provided that the databases involved are also configured to permit it.
-Statistics on delta-sync usage are available, including the total number of revisions sent as deltas.
 
 === Conflict Resolution
 
@@ -213,42 +212,45 @@ include::{root-partials}p2p-api.adoc[leveloffset=+1]
 
 == Security
 
-=== Authentication
 // include::{root-partials}p2p-security.adoc[leveloffset=+1]
 
-Peer-to-Peer sync supports <<using-basic-authentication, Basic Authentication>> and <<using-tls,TLS Authentication>>.
-For anything other than test deployments, we strongly encourage the use of TLS. In fact, Peer-to-Peer sync using URLEndpointListener is encrypted using TLS by default.
+Couchbase Lite's Peer-to-Peer synchronization ensures secure communication through TLS and supports multiple authentication mechanisms.
 
-The authentication mechanism is defined at the endpoint level, meaning that it is independent of the database being replicated.
-For example, you may use basic authentication on one instance and TLS authentication on another when replicating multiple database instances.
+[#tls-identity]
+=== TLS Identity
 
-NOTE: The Minimum supported version of TLS is TLS 1.2.
+The URLEndpointListener uses a TLS identity to establish secure connections.
+(A TLS identity is an RSA public/private key pair and certificate.)
+The identity can include either a certificate signed by a trusted Certificate Authority (CA), or a self-signed certificate.
+If no identity is specified, the listener automatically generates an anonymous, self-signed certificate, which is primarily used for encryption, but not for authentication.
 
-Peer-to-Peer synchronization using URLEndpointListener supports certificate based authentication of the server and-or Listener:
+When replicating with a listener that uses a self-signed certificate, the replicator (client) can be configured to skip certificate validation.
+This option is useful for development or testing, but not recommended for production.
 
-* Replicator certificates can be: self signed, from trusted CA or anonymous (system generated).
-* Listeners certificates may be: self signed or trusted CA signed.
-+
-Where a TLS certificate is not explicitly specified for the Listener, the Listener implementation will generate anonymous certificate to use for encryption
+NOTE: The minimum supported version of TLS is TLS 1.2.
 
-* The URLEndpointListener supports the ability to opt out of TLS encryption communication.
-+
-Active clients replicating with a URLEndpointListener have the option to skip validation of server certificates when the Listener is configured with self-signed certificates.
-+
-This option is ignored when dealing with CA certificates.
+[#authentication]
+=== Authentication Mechanisms
+
+The URLEndpointListener supports two authentication mechanisms:
+
+* Basic Authentication, using a username and password.
+* Certificate Authentication, which authenticates clients using client certificates, and is only available when TLS is enabled.
 
 [#using-secure-storage]
 === Using Secure Storage
 TLS and its associated keys and certificates might require using secure storage to minimize the chances of a security breach.
 The implementation of this storage differs from platform to platform.
-<<secure-storage-details>> summarizes the secure storage used to store keys and certificates for {param-title}.
+This table summarizes the secure storage used to store keys and certificates.
 
+[tabs#secure-storage-details]
+====
+Android::
++
+--
 .Secure storage details
-[#secure-storage-details,cols="1,4"]
+[cols="1s,4", caption=""]
 |===
-
-|Key |Value
-
 // tag::android[]
 |Platform
 |Android
@@ -261,12 +263,21 @@ The implementation of this storage differs from platform to platform.
 
 |Notes
 a|* Android KeyStore was introduced from Android API 18.
-* Android KeyStore security has evolved over time to provide more secure support. Please check this document for more info: https://source.android.com/security/keystore
+* Android KeyStore security has evolved over time to provide more secure support.
+Please check this document for more info: https://source.android.com/security/keystore[Hardware-backed Keystore].
 
 |Reference
-|https://developer.android.com/training/articles/keystore
+|https://developer.android.com/training/articles/keystore[Android Keystore system]
 // end::android[]
+|===
+--
 
+MacOS / iOS::
++
+--
+.Secure storage details
+[cols="1s,4", caption=""]
+|===
 // tag::ios[]
 |Platform
 |MacOS/iOS
@@ -278,12 +289,20 @@ a|* Android KeyStore was introduced from Android API 18.
 |KeyChain
 
 |Notes
-a|Use kSecAttrLabel of the SecCertificate to store the TLSIdentity’s label
+a|Use kSecAttrLabel of the SecCertificate to store the TLSIdentity's label
 
 |Reference
-|https://developer.apple.com/documentation/security/keychain_services
+|https://developer.apple.com/documentation/security/keychain_services[Keychain services]
 // end::ios[]
+|===
+--
 
+Java::
++
+--
+.Secure storage details
+[cols="1s,4", caption=""]
+|===
 // tag::jvm[]
 |Platform
 |Java
@@ -295,13 +314,21 @@ a|Use kSecAttrLabel of the SecCertificate to store the TLSIdentity’s label
 |User Specified KeyStore
 
 |Notes
-a|* The KeyStore represents a storage facility for cryptographic keys and certificates. It’s users’ choice to decide whether to persist the KeyStore or not.
+a|* The KeyStore represents a storage facility for cryptographic keys and certificates. It's users' choice to decide whether to persist the KeyStore or not.
 * The supported KeyStore types are PKCS12 (Default from Java 9) and JKS (Default on Java 8 and below).
 
 |Reference
-|https://docs.oracle.com/javase/7/docs/api/java/security/KeyStore.html
+|https://docs.oracle.com/javase/7/docs/api/java/security/KeyStore.html[Class KeyStore]
 // end::jvm[]
+|===
+--
 
+.Net (excluding Xamarin)::
++
+--
+.Secure storage details
+[cols="1s,4", caption=""]
+|===
 // tag::net[]
 // tag::Net-exXamarin[]
 |Platform
@@ -314,23 +341,28 @@ a|* The KeyStore represents a storage facility for cryptographic keys and certif
 |User specified X509Store
 
 |Notes
-a|* Use a map file to map the stored certificates and TLSIdentity’s labels.
+a|* Use a map file to map the stored certificates and TLSIdentity's labels.
 * The actual store of X509Store depends on platform implementation:
 ** Windows -- OS KeyStore
 ** macOS -- KeyChain
 ** Linux -- file on filesystem
 
 |Reference
-a|* Opaque Keys: https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x509certificate2collection.import?view=netstandard-2.0#System_Security_Cryptography_X509Certificates_X509Certificate2Collection_Import_System_Byte___System_String_System_Security_Cryptography_X509Certificates_X509KeyStorageFlags_
-* X509Store Reference: https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x509store?view=netcore-3.1
+a|* Opaque Keys: https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x509certificate2collection.import?view=netstandard-2.0#System_Security_Cryptography_X509Certificates_X509Certificate2Collection_Import_System_Byte___System_String_System_Security_Cryptography_X509Certificates_X509KeyStorageFlags_[X509Certificate2Collection.Import Method]
+* X509Store Reference: https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x509store?view=netcore-3.1[X509Store Class]
 
 // end::Net-exXamarin[]
-
+// end::net[]
 |===
+--
 
-[cols="1,1"]
+Xamarin::
++
+--
+.Secure storage details
+[cols="1s,4", caption=""]
 |===
-
+// tag::net[]
 // tag::Xamarin[]
 |Platform
 |Xamarin
@@ -342,19 +374,21 @@ a|* Opaque Keys: https://docs.microsoft.com/en-us/dotnet/api/system.security.cry
 |User specified X509Store
 
 |Notes
-a|* Use a map file to map the stored certificates and TLSIdentity’s labels.
+a|* Use a map file to map the stored certificates and TLSIdentity's labels.
 * The same label is used  to persist the key
-* The current Xamarin’s RSACryptoServiceProvider implementation stores keys in files.
+* The current Xamarin's RSACryptoServiceProvider implementation stores keys in files.
 * Users can use TLSIdentity.getIdentity(X509Certificate2Collection) to create a TLSIdentity object if they would like to manage the keys and certificates themselves.
 
 
 |Reference
-a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/security/how-to-store-asymmetric-keys-in-a-key-container
-* X509Store Reference -- https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x509store?view=netcore-3.1
+a|* RSACryptoServiceProvider: https://docs.microsoft.com/en-us/dotnet/standard/security/how-to-store-asymmetric-keys-in-a-key-container[Store asymmetric keys in a key container]
+* X509Store Reference -- https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.x509certificates.x509store?view=netcore-3.1[X509Store Class]
 // end::Xamarin[]
 // end::net[]
 
 |===
+--
+====
 
 // == Sizing
 // include::{root-partials}p2p-sizing.adoc[leveloffset=+1]
