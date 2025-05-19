@@ -83,6 +83,9 @@ OUTER: while (<>) {
             # print this line BUT also let it be expanded in-place...
             $attributes{$k} = $v;
         }
+        elsif ($k eq 'url-api-references-classes' and $attributes{'source-language'} eq 'c') {
+          # do nothing (e.g. KEEP, but just for C)
+        }
         elsif (! keep($k)) {
             $v =~ s/^pass:[aq],[qa]\[(.*)\]/$1/;
             $attributes{$k} = $v;

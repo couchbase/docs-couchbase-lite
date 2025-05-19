@@ -10,6 +10,7 @@ ifdef::show_edition[:page-edition: {release}] {enterprise}
 :source-language: c
 
 :source-language: c
+:url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__
 
 
 // done in commons
@@ -344,8 +345,8 @@ We use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/
 == Initialize Replicator
 
 
-Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html[Replication]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#(im)initWithConfig:[initWith(config:)] constructor, to initialize the replicator with the configuration you have defined.
-You can, optionally, add a change listener (see xref:c:p2psync-websocket-using-active.adoc#lbl-repl-mon[]) before starting the replicator running using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga224926daa794a424c470bf86dd57aaf9[CBLReplicator_Start()].
+Use the `{url-api-references-classes}replication.html[Replication]` class's {url-api-references-classes}replication.html#(im)initWithConfig:[initWith(config:)] constructor, to initialize the replicator with the configuration you have defined.
+You can, optionally, add a change listener (see xref:c:p2psync-websocket-using-active.adoc#lbl-repl-mon[]) before starting the replicator running using {url-api-references-classes}replication.html#ga224926daa794a424c470bf86dd57aaf9[CBLReplicator_Start()].
 
 // Example 7
 .Initialize and run replicator
@@ -374,7 +375,7 @@ xref:c:p2psync-websocket-using-active.adoc#lbl-repl-chng[]  |
 xref:c:p2psync-websocket-using-active.adoc#lbl-repl-status[]  |
 xref:c:p2psync-websocket-using-active.adoc#lbl-repl-pend[]
 
-You can monitor a replication’s status by using a combination of xref:c:p2psync-websocket-using-active.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga9421513c63f1d16bf4740c4d2515dd22[CBLReplicatorActivityLevel enum].
+You can monitor a replication’s status by using a combination of xref:c:p2psync-websocket-using-active.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; {url-api-references-classes}replication.html#ga9421513c63f1d16bf4740c4d2515dd22[CBLReplicatorActivityLevel enum].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
 
@@ -386,10 +387,10 @@ You can add and a replicator change listener at any point; it will report change
 .Best Practice
 TIP: Don't forget to save the token so you can remove the listener later
 
-Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html[Replication] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#(im)addChangeListener:[addChangeListener(_:)]) -- see: xref:c:p2psync-websocket-using-active.adoc#ex-repl-mon[].
+Use the {url-api-references-classes}replication.html[Replication] class to add a change listener as a callback to the Replicator ({url-api-references-classes}replication.html#(im)addChangeListener:[addChangeListener(_:)]) -- see: xref:c:p2psync-websocket-using-active.adoc#ex-repl-mon[].
 You will then be asynchronously notified of state changes.
 
-You can remove a change listener with https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#(im)removeChangeListenerWithToken[removeChangeListenerWithToken(ListenerToken:)].
+You can remove a change listener with {url-api-references-classes}replication.html#(im)removeChangeListenerWithToken[removeChangeListenerWithToken(ListenerToken:)].
 
 
 [#lbl-repl-status]
@@ -402,7 +403,7 @@ That is, whether it is actively transferring data or if it has stopped -- see: x
 
 The returned _ReplicationStatus_ structure comprises:
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga9421513c63f1d16bf4740c4d2515dd22[CBLReplicatorActivityLevel enum] -- stopped, offline, connecting, idle or busy -- see states described in: xref:c:p2psync-websocket-using-active.adoc#tbl-states[]
+* {url-api-references-classes}replication.html#ga9421513c63f1d16bf4740c4d2515dd22[CBLReplicatorActivityLevel enum] -- stopped, offline, connecting, idle or busy -- see states described in: xref:c:p2psync-websocket-using-active.adoc#tbl-states[]
 * https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_replicator_progress.html)[CBLReplicatorProgress struct]
 ** completed -- the total number of changes completed
 ** total -- the total number of changes to be processed
@@ -478,16 +479,16 @@ Since the replication occurs in batches the total count can vary through the cou
 [#lbl-repl-pend]
 === Documents Pending Push
 
-TIP: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] is quicker and more efficient.
+TIP: {url-api-references-classes}replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] is quicker and more efficient.
 Use it in preference to returning a list of pending document IDs, where possible.
 
 You can check whether documents are waiting to be pushed in any forthcoming sync by using either of the following API methods:
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()] method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.
+* Use the {url-api-references-classes}replication.html#ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()] method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.
 +
 This can be very useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it is safe to exit.
 
-* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] method to quickly check whether an individual document is pending a push.
+* Use the {url-api-references-classes}replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] method to quickly check whether an individual document is pending a push.
 
 [#ex-pending]
 .Use Pending Document ID API
@@ -505,16 +506,16 @@ include::c:example$code_snippets/main.cpp[tags="replication-pendingdocuments", i
 
 ====
 
-<.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()] returns a list of the document IDs for all documents waiting to be pushed.
+<.> {url-api-references-classes}replication.html#ga6e9902ae56d5fec0fc19b29c28f1828f[CBLReplicator_PendingDocumentIDs()] returns a list of the document IDs for all documents waiting to be pushed.
 This is a snapshot and may have changed by the time the response is received and processed.
-<.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
+<.> {url-api-references-classes}replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
 
 [#lbl-repl-stop]
 == Stop Sync
 
 Stopping a replication is straightforward.
-It is done using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()].
+It is done using {url-api-references-classes}replication.html#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()].
 This initiates an asynchronous operation and so is not necessarily immediate.
 Your app should account for this potential delay before attempting any subsequent operations.
 
@@ -535,7 +536,7 @@ include::c:example$code_snippets/main.cpp[tags="p2p-act-rep-stop", indent=0]
 
 ====
 
-<.> Here we initiate the stopping of the replication using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__replication.html#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()] method.
+<.> Here we initiate the stopping of the replication using the {url-api-references-classes}replication.html#ga548ce284032009546d4092745e89fa8e[CBLReplicator_Stop()] method.
 It will stop any active xref:c:p2psync-websocket-using-active.adoc#lbl-repl-chng[change listener] once the replication is stopped.
 
 
