@@ -8,6 +8,7 @@
 :source-language: c
 
 :source-language: c
+:url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__
 
 
 [abstract]
@@ -21,7 +22,7 @@ _Abstract -- This content explains how to include a snapshot of a pre-built data
 == Overview
 
 
-_Couchbase{nbsp}Lite_ supports  pre-built databases. You can pre-load your app with data instead of syncing it from pass:q,a[_pass:q,a[Sync{nbsp}Gateway]_] during startup to minimize consumer wait time (arising from data setup) on initial install and launch of the application.
+_Couchbase{nbsp}Lite_ supports  pre-built databases. You can pre-load your app with data instead of syncing it from _Sync{nbsp}Gateway_ during startup to minimize consumer wait time (arising from data setup) on initial install and launch of the application.
 
 Avoiding an initial bulk sync reduces startup time and network transfer costs.
 
@@ -100,7 +101,7 @@ IMPORTANT: This is an https://www.couchbase.com/products/editions[Enterprise Edi
 
 
 If you are using an encrypted database,
-https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#ga027d34b2de65b040ecf42a2a83bf6720[CBL_CopyDatabase()]
+{url-api-references-classes}database.html#ga027d34b2de65b040ecf42a2a83bf6720[CBL_CopyDatabase()]
 does not change the encryption key.
 The encryption key specified in the config when opening the database is the encryption key used for both the original database and copied database.
 
@@ -108,7 +109,7 @@ If you copied an un-encrypted database and want to apply encryption to the copy,
 
 . Provide the original encryption-key (if any) in the database copy's configuration using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/struct_c_b_l_database_configuration.html#aaab04fb9d092ff02693eea611efefc55[CBLDatabaseConfiguration.encryptionKey()]
 . Open the database copy
-. Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#ga76a603bc678ceae18c9610b8a8274a09[CBLDatabase_ChangeEncryptionKey()] on the database copy to set the required encryption key. +
+. Use {url-api-references-classes}database.html#ga76a603bc678ceae18c9610b8a8274a09[CBLDatabase_ChangeEncryptionKey()] on the database copy to set the required encryption key. +
 NOTE: To remove encryption on the copy, provide a null encryption-key
 
 
@@ -122,7 +123,7 @@ During the application start-up logic, check if database exists in the required 
 
 . Copy the pre-packaged database to the required location
 +
-Use the API's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__database.html#ga027d34b2de65b040ecf42a2a83bf6720[CBL_CopyDatabase()] method -- see: xref:c:prebuilt-database.adoc#lbl-code[]; this ensures that a UUID is generated for each copy
+Use the API's {url-api-references-classes}database.html#ga027d34b2de65b040ecf42a2a83bf6720[CBL_CopyDatabase()] method -- see: xref:c:prebuilt-database.adoc#lbl-code[]; this ensures that a UUID is generated for each copy
 +
 IMPORTANT: *Do not copy the database using any other method* +
 *Otherwise:* Each copy of the app will invalidate the other apps' xref:refer-glossary.adoc#checkpoint[checkpoints] because a new UUID was not generated.
