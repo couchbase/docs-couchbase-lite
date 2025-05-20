@@ -20,7 +20,7 @@ ln -f $SCRIPT_DIR/attributes.pl .
 ln -f $SCRIPT_DIR/rename.sh .
 
 ## UNCOMMENT THIS to run Antora with the assembler feature 
-# npx antora mobile.yml --log-level fatal
+npx antora mobile.yml --log-level fatal
 
 process() {
     WHAT=$1

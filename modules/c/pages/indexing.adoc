@@ -16,7 +16,6 @@ Description -- _{description}_ +
 Related Content -- xref:c:database.adoc[Databases] | xref:c:document.adoc[Documents] | xref:c:indexing.adoc[Indexing] |
 --
 
-
 [#introduction]
 == Introduction
 // tag::overview[]
@@ -43,7 +42,6 @@ You should only index with properties that you plan to use in the query.
 == Creating a new index
 
 You can use {sqlpp} or QueryBuilder syntaxes to create an index
-
 
 xref:c:indexing.adoc#ex-create-index[] creates a new index for the `type` and `name` properties, shown in this data model:
 
@@ -84,6 +82,80 @@ include::c:example$code_snippets/main.cpp[tags="query-index", indent=0]
 ====
 
 
+[#partial-index]
+== Partial Index
+
+Couchbase Lite 3.2.2 introduces support for Partial Index - Partial Value and Partial Full-Text Indexes.
+The Partial Index can create a smaller index, potentially improving index and query performance.
+You can use Partial Index to specify a `WHERE` clause in your index configuration.
+If a where clause is specified, the database will index a document only when the where clause condition is met.
+
+Couchbase's query optimizer uses https://www.sqlite.org/partialindex.html[SQLite's Partial Index rules about queries using Partial Indexes] to determine whether to use partial index in the query or not.
+
+.Couchbase and SQLite's Partial Index Rules
+====
+In general, Couchbase Lite follows the two rules, with a modification to the second rule.
+
+Below is a summary of the two rules where:
+
+* `X` - The expression in the `WHERE` clause of a given Partial Index.
+
+* `W` - The expression in the `WHERE` clause of a given query.
+
+A query can use the Partial Index if the following two rules are satisfied:
+
+1. If `W` is AND-connected terms, and `X` is OR-connected terms and if any terms of `W` appears as a term of `X`, the partial index is allowed to be used.
+
+2. If a term in `X` is of the form `"z IS NOT MISSING"` and if a term in `W` is a comparison operator on `z` other than `"IS"`, the partial index is allowed to be used.
+The operators include `=`, `==`, `<`, `>`, `\<=`, `>=`, `<>`, `IN`, `LIKE`, and `BETWEEN`.
+
+IMPORTANT: If `X` is in the form of `"z is NOT NULL"` or `"z is VALUED"`, the first rule must be satisfied.
+
+For example, let the partial index be `c IS NOT NULL` when creating a partial index on collection named `col1` in the default scope.
+
+Then any query that uses operators `=`, `<`, `>`, `\<=`, `>=`, `<>`, `IN`, `LIKE`, or `BETWEEN` on column `c` would be usable with the partial index, because those comparison operators are only true if `c` is not NULL.
+
+The following query could use the partial index:
+
+[source, sqlpp]
+----
+SELECT * FROM col1 WHERE b=456 AND c<>0;  -- uses partial index
+----
+
+Whereas the next query can not use the partial index:
+
+[source, sqlpp]
+----
+SELECT * FROM col1 WHERE b=456;  -- cannot use partial index
+----
+====
+
+[#partial-value-index]
+=== Partial Value Index
+
+Partial Value Index is a form of Partial Index in which a value is used in the `WHERE` clause and the query is selected by the query optimizer.
+
+
+[source.no-callouts, c, indent=0]
+----
+include::c:example$code_snippets/main.cpp[tags=partial-value-index]
+----
+
+
+[#partial-full-text-index]
+=== Partial Full-Text Index
+
+A key difference between a Partial Value Index and a Partial Full-Text Index is that a Partial Full-Text Index is not selected by SQLite's query optimizer.
+Instead, it's explicitly selected by the {sqlpp} `match(indexName, terms)` function, which runs a Full-Text Search query using the indexed properties.
+This means that a Partial Full-Text Index will always be used when the `match()` function is invoked, regardless of other predicates in the WHERE clause.
+For details, see xref:c:fts.adoc[].
+
+
+[source.no-callouts, c, indent=0]
+----
+include::c:example$code_snippets/main.cpp[tags=partial-full-text-index]
+----
+
 [#array-indexing]
 == Array Indexing
 
@@ -93,14 +165,16 @@ xref:c:query-n1ql-mobile.adoc#lbl-unnest[Array `UNNEST`] to unpack arrays within
 [#the-array-index]
 === The Array Index
 
-An array index is a new type of the index for indexing nested array’s properties to allow querying with the `UNNEST` more efficiently.
+An array index is a new type of the index for indexing nested array's properties to allow querying with the `UNNEST` more efficiently.
 
 Below is an example array index configuration:
 
-[source, c, indent=0]
+
+[source.no-callouts, c, indent=0]
 ----
 include::c:example$code_snippets/main.cpp[tags=array-index-config]
 ----
+
 
 [#array-index-syntax]
 === Array Index Syntax
@@ -175,10 +249,12 @@ The query above produces the following output from the document:
 
 You can also perform the same operation using array indexes like so:
 
-[source, c, indent=0]
+
+[source.no-callouts, c, indent=0]
 ----
 include::c:example$code_snippets/main.cpp[tags=array-index-single]
 ----
+
 
 You can perform similar operations on nested arrays:
 
@@ -201,12 +277,14 @@ The query produces the following output:
 
 The output demonstrates retrieval of both primary and secondary contact numbers listed as type `"mobile"`.
 
-Here’s an example of creating an array index on a nested array containing dictionary values:
+Here's an example of creating an array index on a nested array containing dictionary values:
 
-[source, c, indent=0]
+
+[source.no-callouts, c, indent=0]
 ----
 include::c:example$code_snippets/main.cpp[tags=array-index-nested]
 ----
+
 
 The above snippet creates an array index to allow you to iterate through `contacts[].phones[].type` in the document, namely `"home"` and `"mobile"`.
 
