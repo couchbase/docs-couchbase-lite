@@ -8,9 +8,6 @@
 import Foundation
 import CouchbaseLiteSwift
 
-var database: Database!
-var collection: Collection!
-
 enum AppError: Error {
     case indexNotFound
     case vectorNotFound
@@ -31,6 +28,8 @@ class Color {
 }
 
 class VectorSearchSnippets {
+    var database: Database!
+    var collection: Collection!
     // MARK: Configuring a project to use Vector Search.
 
     /*/

@@ -14,7 +14,7 @@ if(DEFINED CBL_MACOS_ARCH)
 endif()
 
 if(NOT DEFINED CBL_VERSION)
-    set(CBL_VERSION 3.2.2)
+    set(CBL_VERSION 3.2.3)
 endif()
 
 project(code-snippets)
@@ -25,6 +25,9 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/out)
 
+if(NOT CMAKE_PREFIX_PATH)
+    set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/libcblite-${CBL_VERSION}")
+endif()
 find_package(CouchbaseLite ${CBL_VERSION} REQUIRED)
 
 add_executable(
