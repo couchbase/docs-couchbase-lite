@@ -1,0 +1,87 @@
+= Multipeer Replicator
+ifdef::show_edition[:page-edition: Enterprise Edition]
+:description: MultipeerReplicator is a peer-to-peer replicator that can advertise its presence, discover other peers, establish connections, and replicate data with those peers.
+
+:source-language: Java
+
+:source-language: Kotlin
+
+[abstract]
+{description}
+
+
+TIP: Multipeer Replication is currently available for use over IP networks.
+If you are working with a bluetooth network, you will need to use Couchbase Lite's xref::p2psync-websocket.adoc[Active-Passive peer-to-peer].
+
+[#introduction]
+== Introduction
+// tag::introduction-full[]
+// tag::introduction[]
+Couchbase Lite's Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronization between edge devices without needing a centralized cloud-based control point.
+Multipeer Replicator 
+// end::introduction[]
+
+
+
+== Prerequisites
+
+=== Transport and Peer Discovery Protocol
+
+MultipeerReplicator supports Wi-Fi transport, using DNS-SD (also known as Bonjour) for peer discovery.
+ Peers must be connected to the same Wi-Fi network to discover and establish connections with one another.
+
+=== Supported Platforms
+
+For Android, the minimum API level is API 35, based on the availability of required DNS-SD features for peer discovery and mesh network construction—such as support for subtypes, and the ability to publish and subscribe to service information.
+
+
+== Overview
+
+The MultipeerReplicator automatically advertises its presence, discovers other peers,
+and establishes connections for data replication with peers that share the same group identifier defined by the application.
+
+To maintain optimal connectivity, efficient data transport, and balanced workloads, the MultipeerReplicator forms a dynamic mesh network among peers in the same group.
+It avoids redundant direct connections, evenly distributes connections across peers, and optimizes communication paths.
+The mesh network continuously adapts as peers join or leave.
+
+
+
+
+== Configuration
+
+.Configuration for creating a MultipeerReplicator
+[source,java]
+----
+public struct MultipeerReplicatorConfiguration {
+    /// Identifier for discovering and connecting peers.
+    public let peerGroupID: String
+    
+    /// Peer identity.
+    /// @Note The identity’s certificate must be both server and client certificate.
+    public let identity: TLSIdentity
+
+
+    /// Peer authenticator.
+    public let authenticator: MultipeerAuthenticator
+
+
+    /// Collections to replicate.
+    public let collections: [MultipeerCollectionConfiguration]
+
+
+    /// Initialize the configuration with a peer group identifier, identity, 
+    /// authenticator and collections.
+    public init(peerGroupID: String, 
+                identity: TLSIdentity,
+                authenticator: MultipeerCertificateAuthenticator,                  
+                collections: [MultipeerCollectionConfiguration])
+}
+----
+
+
+
+
+
+TIP: In version 3.3.0, the recommended maximum number of peers in a mesh network is approximately 15.
+
+
