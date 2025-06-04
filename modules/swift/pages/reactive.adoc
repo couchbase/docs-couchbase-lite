@@ -1,18 +1,17 @@
+
 = Reactive APIs
 :page-status: Couchbase Lite 3.2.3
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: Couchbase Lite 3.2.3 {prerelease}]
 :page-role:
 :description: The Reactive APIs are enhanced APIs for Swift that streamline data modeling and enable reactive programming patterns.
 :keywords: reactive swiftui codable combine observation
 
-:url-api-references: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift
-:url-codable: https://developer.apple.com/documentation/swift/codable
-:url-combine: https://developer.apple.com/documentation/combine
-:url-observation: https://developer.apple.com/documentation/observation
 
 // Sets the correct mobile sdk for xref links in the common page
-include::partial$_set_page_context_for_swift.adoc[]
+
+:source-language: swift
+
+:source-language: swift
+
 
 [abstract]
 {description}
@@ -20,15 +19,16 @@ include::partial$_set_page_context_for_swift.adoc[]
 The Reactive APIs are designed for developers building apps with SwiftUI, Combine, or Swift's new Observation framework.
 They provide two tightly integrated capabilities:
 
-* *Codable protocol compatibility* -- enables automatic mapping between Couchbase Lite documents and Swift model objects using the {url-codable}[Codable] protocol, reducing boilerplate and improving type safety.
+* *Codable protocol compatibility* -- enables automatic mapping between Couchbase Lite documents and Swift model objects using the https://developer.apple.com/documentation/swift/codable[Codable] protocol, reducing boilerplate and improving type safety.
 
-* *Change publishers* -- provides {url-combine}[Combine] and {url-observation}[Observation] publishers for observing changes to queries, documents, and collections, enabling SwiftUI views and view models to react automatically to underlying data updates.
+* *Change publishers* -- provides https://developer.apple.com/documentation/combine[Combine] and https://developer.apple.com/documentation/observation[Observation] publishers for observing changes to queries, documents, and collections, enabling SwiftUI views and view models to react automatically to underlying data updates.
 
 Together, these APIs allow developers to define Swift classes that can be directly persisted as Couchbase Lite documents and observed for changes in a reactive UI context.
 They eliminate the need for manual dictionary manipulation, JSON conversion, or explicit change listeners.
 
 The Reactive APIs are available for Swift in Couchbase Lite 3.2.3 and later.
 
+[#represent-documents-as-codable-model-objects]
 == Represent Documents as Codable Model Objects
 
 Prior to the Reactive APIs, Couchbase Lite developers working with Swift could interact with documents through APIs that require manual handling of data conversion.
@@ -36,9 +36,10 @@ For example, reading and writing data would often involve using the Mutable Docu
 While this approach provides flexibility, it can involve additional steps for developers when integrating Swift models into their applications.
 For more information, see xref:swift:document.adoc[].
 
-The Reactive APIs simplify this process by introducing native adherence to the {url-codable}[Codable] protocol.
+The Reactive APIs simplify this process by introducing native adherence to the https://developer.apple.com/documentation/swift/codable[Codable] protocol.
 This eliminates intermediate conversion layers, reducing the need to convert from Fleece format to JSON, and then to app-specific object representation.
 
+[#map-couchbase-lite-data-to-swift-codable-document-models]
 === Map Couchbase Lite Data to Swift Codable Document Models
 
 A *document model* is a Swift class that conforms to Codable and includes an optional property annotated with `@DocumentID`.
@@ -57,10 +58,12 @@ include::swift:example$code_snippets/CodableCombine.swift[tags="codable-data-mod
 ----
 ====
 
+[#manipulate-documents-as-codable-model-objects]
 == Manipulate Documents as Codable Model Objects
 
 Once defined, document models can be persisted, retrieved, and removed using type-safe APIs on the Collection object.
 
+[#get-a-document-as-a-decodable-object]
 === Get a Document as a Decodable Object
 
 To get a document from a collection and decode it into a Swift model:
@@ -75,8 +78,9 @@ include::swift:example$code_snippets/CodableCombine.swift[tags="get-codable-doc"
 ----
 ====
 
-For API details, see {url-api-references}/Classes/Collection.html#/Document%20Management[Document Management].
+For API details, see https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Collection.html#/Document%20Management[Document Management].
 
+[#save-an-encodable-object-as-a-document]
 === Save an Encodable Object as a Document
 
 To save a document represented by a Swift model object into a collection:
@@ -105,8 +109,9 @@ include::swift:example$code_snippets/CodableCombine.swift[tags="concurrency-save
 ----
 ====
 
-For API details, see {url-api-references}/Classes/Collection.html#/Document%20Management[Document Management].
+For API details, see https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Collection.html#/Document%20Management[Document Management].
 
+[#delete-a-document]
 === Delete a Document
 
 To remove a document represented by a Swift model object from a collection:
@@ -129,8 +134,9 @@ include::swift:example$code_snippets/CodableCombine.swift[tags="concurrency-dele
 ----
 ====
 
-For API details, see {url-api-references}/Classes/Collection.html#/Document%20Management[Document Management].
+For API details, see https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Collection.html#/Document%20Management[Document Management].
 
+[#purge-a-document]
 === Purge a Document
 
 Purging a document is permanent deletion, not replicated.
@@ -147,21 +153,22 @@ include::swift:example$code_snippets/CodableCombine.swift[tags="purge-codable-do
 ----
 ====
 
-For API details, see {url-api-references}/Classes/Collection.html#/Document%20Management[Document Management].
+For API details, see https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Collection.html#/Document%20Management[Document Management].
 
+[#decode-query-results]
 == Decode Query Results
 
 The Reactive APIs enable you to decode Couchbase {sqlpp} query results directly into model objects.
 This makes queries observable, so that you can refresh the application automatically as the results change.
 
-With prior solutions such as xref:swift:query-live.adoc[Live Queries], you need to trigger user interface updates manually inside the listener.
+With prior solutions such as xref:swift:query-live.adoc[], you need to trigger user interface updates manually inside the listener.
 This can lead to complex and difficult-to-maintain state management.
 With the Reactive APIs, you can use SwiftUI's minimalistic and declarative approach to manage querying and updating the user interface.
 
 To make query results observable, the model object only needs to conform to the decodable protocol, and does not require a document ID property annotated with the `@DocumentID` property wrapper.
 
 However, if you wish to save any result later, the decoding model must include a document ID property with the `@DocumentID` property wrapper.
-Additionally, the query result must include a document ID, which can be retrieved using the `meta().id` expression, as shown in <<ex-query-doc-id>>.
+Additionally, the query result must include a document ID, which can be retrieved using the `meta().id` expression, as shown in xref:swift:reactive.adoc#ex-query-doc-id[].
 
 [#ex-query-doc-id]
 .Query results with document ID
@@ -172,13 +179,14 @@ SELECT meta().id AS id, title FROM _default.tasks
 ----
 ====
 
+[#get-a-query-result-as-decodable]
 === Get a Query Result as Decodable
 
 To get a query's result as a decodable model object:
 
 * Use the `data` function with the query result.
 * Specify the decodable model type.
-* Optionally, specify a <<datakey,data key>>.
+* Optionally, specify a xref:swift:reactive.adoc#datakey[data key].
 
 ====
 [source,swift]
@@ -187,18 +195,19 @@ include::swift:example$code_snippets/CodableCombine.swift[tags="get-codable-resu
 ----
 ====
 
-For API details, see {url-api-references}/Classes/Result.html#/ReadOnlyArrayProtocol[ReadOnlyArrayProtocol].
+For API details, see https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Result.html#/ReadOnlyArrayProtocol[ReadOnlyArrayProtocol].
 
 NOTE: When saving a document model decoded from the query's result, the document associated with the model will be retrieved during the save time.
 As a result, the document may not be the same document during the query time if the document has been changed.
 
+[#get-all-query-results-as-decodable]
 === Get All Query Results as Decodable
 
 To get all a query's results as an array of a decodable model objects:
 
 * Use the `data` function with the query result set.
 * Specify the decodable model type.
-* Optionally, specify a <<datakey,data key>>.
+* Optionally, specify a xref:swift:reactive.adoc#datakey[data key].
 
 ====
 [source,swift]
@@ -207,7 +216,7 @@ include::swift:example$code_snippets/CodableCombine.swift[tags="get-codable-resu
 ----
 ====
 
-For API details, see {url-api-references}/Classes/ResultSet.html[ResultSet].
+For API details, see https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/ResultSet.html[ResultSet].
 
 WARNING: Getting all the query's results as an array of decodable model objects may take a long time and consume a large amount of memory, depending on the data size and the number of results.
 
@@ -215,7 +224,7 @@ WARNING: Getting all the query's results as an array of decodable model objects 
 === Specify a Data Key
 
 If the query includes a wildcard (`{asterisk}`), you can provide an optional data key to the `data` function to specify the alias of the `{asterisk}` dictionary.
-For instance, in <<ex-query-wildcard>>, the wildcard produces a dictionary with the alias `data`.
+For instance, in xref:swift:reactive.adoc#ex-query-wildcard[], the wildcard produces a dictionary with the alias `data`.
 
 [#ex-query-wildcard]
 .Query with a wildcard
@@ -226,6 +235,7 @@ SELECT meta().id AS id, * AS data FROM _default.tasks
 
 When using `data(as:, dataKey:)` to decode the query result, setting the data key to `data` ensures the correct source is used.
 
+[#publish-change-notifications]
 == Publish Change Notifications
 
 To align with declarative programming paradigms, the Reactive APIs provide an efficient way to publish change notifications.
@@ -235,9 +245,10 @@ To publish change notifications, the Reactive APIs provide interoperability with
 The way that you use the Reactive APIs differs slightly, depending on the underlying framework.
 The framework that you use depends on your operating system version.
 
-* The {url-combine}[Combine] framework is available in iOS 13 and later, and macOS 10.15 to 14.
-* The {url-observation}[Observation] framework is available in iOS 17 and later, and macOS 14 and later.
+* The https://developer.apple.com/documentation/combine[Combine] framework is available in iOS 13 and later, and macOS 10.15 to 14.
+* The https://developer.apple.com/documentation/observation[Observation] framework is available in iOS 17 and later, and macOS 14 and later.
 
+[#publish-query-result-changes]
 === Publish Query Result Changes
 
 To get a publisher that emits `QueryChange` events whenever a query result changes:
@@ -253,10 +264,11 @@ include::swift:example$code_snippets/CodableCombine.swift[tags="publish-result-c
 ----
 ====
 
-For API details, see {url-api-references}/Classes/Query.html[Query].
+For API details, see https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Query.html[Query].
 
 NOTE: The emitted `QueryChange` contains the entire new result set of the query, not just the delta.
 
+[#publish-document-changes]
 === Publish Document Changes
 
 To get a publisher that emits `CollectionChange` events whenever any documents are added, removed or changed in that collection:
@@ -272,7 +284,7 @@ include::swift:example$code_snippets/CodableCombine.swift[tags="publish-collecti
 ----
 ====
 
-For API details, see {url-api-references}/Classes/Collection.html#/Combine%20Publisher[Combine Publisher].
+For API details, see https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Collection.html#/Combine%20Publisher[Combine Publisher].
 
 To get a publisher that emits `DocumentChange` events whenever a specific document in a collection changes:
 
@@ -288,8 +300,9 @@ include::swift:example$code_snippets/CodableCombine.swift[tags="publish-doc-chan
 ----
 ====
 
-For API details, see {url-api-references}/Classes/Collection.html#/Combine%20Publisher[Combine Publisher].
+For API details, see https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Collection.html#/Combine%20Publisher[Combine Publisher].
 
+[#publish-replicator-changes]
 === Publish Replicator Changes
 
 To get a publisher that emits `ReplicatorChange` events when a replicator's status changes:
@@ -305,7 +318,7 @@ include::swift:example$code_snippets/CodableCombine.swift[tags="publish-replicat
 ----
 ====
 
-For API details, see {url-api-references}/Classes/Replicator.html#/Combine%20Publisher[Combine Publisher].
+For API details, see https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/Combine%20Publisher[Combine Publisher].
 
 To get a publisher that emits `DocumentReplication` events whenever documents are pushed or pulled during replication:
 
@@ -320,14 +333,17 @@ include::swift:example$code_snippets/CodableCombine.swift[tags="publish-replicat
 ----
 ====
 
-For API details, see {url-api-references}/Classes/Replicator.html#/Combine%20Publisher[Combine Publisher].
+For API details, see https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/Combine%20Publisher[Combine Publisher].
 
+[#examples]
 == Examples
 
+[#viewmodel]
 === ViewModel
 
 [tabs]
 ====
+
 Combine Framework::
 +
 --
@@ -358,20 +374,21 @@ class TodoViewModel: ObservableObject {
    func addTask(title: String) throws {
        try tasks.save(from: Task(title: title))
    }
-  
+
    func toggleCompletion(for task: Task) throws {
        if let index = todos.firstIndex(where: { $0.id == task.id }) {
            todos[index].completed.toggle() // Reflect UI right away
            try tasks.save(from: todos[index])
        }
    }
-  
+
    func deleteTask(_ task: Task) throws {
        try tasks.delete(for: task)
    }
 }
 ----
 --
+
 
 Observation Framework::
 +
@@ -391,7 +408,7 @@ For iOS 17 and later, or macOS 14 and later:
         self.tasks = db.collection(name: "tasks")
 
         let query = "SELECT meta().id, title, completed FROM tasks"
-        
+
         // Subscribe to changes and update todos directly
         try? db.createQuery(query).publish()
             .map { $0.results?.data(as: Task.self) ?? [] }
@@ -403,14 +420,14 @@ For iOS 17 and later, or macOS 14 and later:
     func addTask(title: String) throws {
         try tasks.save(from: Task(title: title, completed: false))
     }
-  
+
     func toggleCompletion(for task: Task) throws {
         if let index = todos.firstIndex(where: { $0.id == task.id }) {
             todos[index].completed.toggle()
             try tasks.save(from: todos[index])
         }
     }
-  
+
     func deleteTask(_ task: Task) throws {
         try tasks.delete(for: task)
     }
@@ -419,10 +436,12 @@ For iOS 17 and later, or macOS 14 and later:
 --
 ====
 
+[#view]
 === View
 
 [tabs]
 ====
+
 Combine Framework::
 +
 --
@@ -466,6 +485,7 @@ For iOS 13 and later, or macOS 10.15 to 14:
 ----
 --
 
+
 Observation Framework::
 +
 --
@@ -482,7 +502,7 @@ For iOS 17 and later, or macOS 14 and later:
             TextField("New Task", text: $newTaskTitle)
                 .textFieldStyle(.roundedBorder)
                 .padding()
-            
+
             Button("Add") {
                 guard !newTaskTitle.isEmpty else { return }
                 try? viewModel.addTask(title: newTaskTitle)
@@ -513,9 +533,12 @@ For iOS 17 and later, or macOS 14 and later:
 --
 ====
 
+[#see-also]
 == See Also
 
 * xref:swift:scopes-collections-manage.adoc[]
 * xref:swift:document.adoc[]
 * xref:swift:query-resultsets.adoc[]
 * xref:swift:conflict.adoc[]
+
+
