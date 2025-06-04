@@ -243,6 +243,13 @@ If you try to access a property which doesn't exist in the document, the call wi
 Couchbase Lite offers _Date_ accessors as a convenience.
 Dates are a common data type, but JSON doesn't natively support them, so the convention is to store them as strings in ISO-8601 format.
 
+[CAUTION]
+.Date precision
+====
+The `setDate()` function rounds to millisecond precision due to the underlying native Swift call.
+If you require greater precision, then use the `Double` type to store the date in microseconds.
+====
+
 .Date Getter
 [#ex-date-getter]
 
