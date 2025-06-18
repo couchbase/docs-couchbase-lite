@@ -18,8 +18,24 @@ If you are working with a bluetooth network, you will need to use Couchbase Lite
 // tag::introduction-full[]
 // tag::introduction[]
 Couchbase Lite's Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronization between edge devices without needing a centralized cloud-based control point.
-Multipeer Replicator 
+
+
+// *** advantages ***
+
+Multipeer Replicator for small mesh topologies offers autodiscovery for wifi-based networks.
+Multipeer Sync thus requires less management and less code than using active-passive peer-to-peer sync, and also manages peer discovery for you.
+
+// Bluetooth - not yet
+
+[TIP]
+.Bluetooth networking
+====
+If you are working over a bluetooth network, then take a look at Couchbase Lite's Active-Passive Peer-to-Peer synchronization.
+====
+
+
 // end::introduction[]
+// end::introduction-full[]
 
 
 
@@ -28,7 +44,7 @@ Multipeer Replicator
 === Transport and Peer Discovery Protocol
 
 MultipeerReplicator supports Wi-Fi transport, using DNS-SD (also known as Bonjour) for peer discovery.
- Peers must be connected to the same Wi-Fi network to discover and establish connections with one another.
+Peers must be connected to the same Wi-Fi network to discover and establish connections with one another.
 
 === Supported Platforms
 
@@ -44,7 +60,9 @@ To maintain optimal connectivity, efficient data transport, and balanced workloa
 It avoids redundant direct connections, evenly distributes connections across peers, and optimizes communication paths.
 The mesh network continuously adapts as peers join or leave.
 
-
+====
+*TODO* Mesh Diagram
+====
 
 
 == Configuration
@@ -84,4 +102,155 @@ public struct MultipeerReplicatorConfiguration {
 
 TIP: In version 3.3.0, the recommended maximum number of peers in a mesh network is approximately 15.
 
+=== Life Cycle
 
+Starting and stopping a peer-to-peer connection...
+
+
+=== Listening for Changes
+
+Event types...
+
+
+`PeerDocumentReplication`
+
+
+== Example Use
+
+Here we will show how to instansiate a `MultipeerReplicatorConfiguration` configuration with self-signed certificates, and connect it to an example collection.
+
+[source,kotlin]
+----
+// Code sample
+----
+
+
+
+=== MultipeerCollectionConfiguration
+
+`MultipeerCollectionConfiguration` specifies a collection and its associated settings.
+This includes a conflict resolver and replication filters.
+A list of these configurations is required to define which collections will be replicated within the peer group network.
+
+
+[source,kotlin]
+----
+/// Type Alias for Multipeer Replication Filter Function.
+public typealias MultipeerReplicationFilter = 
+    (PeerID, Document, DocumentFlags) -> Bool
+
+
+/// Multipeer Conflict Resolver Protocol.
+public protocol MultipeerConflictResolver {
+    func resolve(peerID: PeerID, conflict: Conflict) -> Document?
+}
+
+/// Defines collection for replication including optional filters and 
+/// custom conflict resolver.
+public struct MultipeerCollectionConfiguration {
+    /// The collection.
+    public let collection: Collection
+
+    /// Document IDs filter.
+    public var documentIDs: Array<String>?
+
+    /// Push filter.
+    public var pushFilter: MultipeerReplicationFilter?    
+
+    /// Pull filter.
+    public var pullFilter: MultipeerReplicationFilter?
+
+
+    /// Custom conflict resolver.
+    public var conflictResolver: MultipeerConflictResolver?
+
+
+    /// Initialize with a collection.
+    public init(collection: Collection)
+}
+----
+
+
+=== Authenticator
+
+`MultipeerCertificateAuthenticator` *TODO*
+
+
+=== Peer Info
+
+`PeerInfo` provides information about the peer, including a peer unique identifier, the peer certificate, online status, replicator status, and its current `neighborPeers`.
+
+
+[source,kotlin]
+----
+//
+----
+
+
+=== Self-signed Certs
+
+.Creating a self-signed certificate that can be used as both client and server cert
+[source,kotlin]
+----
+/// Extended Key Usage for which the certified public key may be used.
+public struct KeyUsages: OptionSet {
+    /// For Server Authentication	
+    public static let serverAuth = 0x40
+    
+    /// For Client Authentication
+    public static let clientAuth = 0x80
+}
+
+/// TLS Identity
+public class TLSIdentity {
+    /// Create a TLS identity from private key and certificate data.
+    /// 
+    /// The private key and certificate data must be either in PEM or DER format.
+    /// This method can be used to create an issuer identity for signing 
+    /// a certificate when generating a new TLS identity.
+    public static func createIdentity(privateKey: Data, 
+                                      certificate: Data) throws -> TLSIdentity
+
+
+    /// Generate a TLS identity, either self-signed or signed by an issuer identity.
+    ///
+    /// The `attributes` must include a common name (CN); otherwise an error 
+    /// will be thrown.
+    ///
+    /// If no the expiration date is specified, the default validity of one year 
+    /// will be applied. 
+    ///
+    /// The optional issuer identity may be specified to sign the certificate. 
+    /// The  issuer identity can be created using 
+    /// `createIdentity(privateKeyData:certificateData:)`. If no issuer is specified, 
+    /// the certificate will be self-signed.
+    /// 
+    /// If a `label` is provided, the identity will be stored in the 
+    /// platform’s secure key storage under that label.
+    public static func createIdentity(keyUsages: KeyUsages,
+                                      attributes: [String: String],
+                                      expiration: Date?,
+                                      issuer: TLSIdentity?,
+                                      label: String?) throws -> TLSIdentity
+
+
+
+    
+    @Deprecated, “Use createIdentity(keyUsages:attributes:expiration:issuer:label)”
+    public static func createIdentity(server: Bool,
+                                     attributes: [String: String],
+                                     expiration: Date?,
+                                     label: String) throws -> TLSIdentity
+}
+----
+
+
+
+=== Logging
+
+`LogDomain`
+
+
+== API Reference
+
+*URL*
