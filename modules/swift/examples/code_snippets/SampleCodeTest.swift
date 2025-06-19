@@ -94,7 +94,7 @@ class SampleCodeTest {
         // tag::file-logging[]
         let tempFolder = NSTemporaryDirectory().appending("cbllog")
         let config = LogFileConfiguration(directory: tempFolder) // <.>
-        config.usePlainText = true // <.>
+        config.usePlainText = false // <.>
         config.maxRotateCount = 12 // <.>
         config.maxSize = 524288 // <.>
         Database.log.file.config = config // <.>

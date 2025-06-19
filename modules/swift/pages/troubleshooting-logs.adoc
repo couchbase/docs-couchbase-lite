@@ -137,14 +137,17 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags="file-logging", i
 
 ====
 
-<.> Set the log file directory
-<.> Here we change the max rotation count from the default (1) to 5. +
-*Note* this means six files may exist at any one time; the five rotated log files, plus the active log file
-<.> Here we set the maximum size (bytes) for our log file
-<.> Here we select the binary log format (included for reference only as this is the default)
-<.> Here we increase the log output level from the default (_warnings_) to _info_ -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/FileLogger.html#/s:18CouchbaseLiteSwift10FileLoggerC5levelAA8LogLevelOvp[log.file.level: LogLevel]
+<.> Set the log file directory.
+<.> Set the logging format to binary by disabling text logging. 
+This is the default, and you only need to include this for reference.
+<.> Change the max rotation count from the default (1) to 12.
 +
-*Note* that the use of https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC11setLogLevel_6domainyAA0fG0O_AA0F6DomainOtFZ[Database.setLogLevel()] is now deprecated.
+NOTE: Thirteen files may exist at any one time; the twelve rotated log files, plus the active log file.
+<.> Set the maximum size (bytes) for your log file.
+<.> Set the global https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/LogFileConfiguration.html[LogFileConfiguration] to use the config you just created, which will cause file logging to be enabled.
+<.> Increase the log output level from the default (_warnings_) to _verbose_ -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/FileLogger.html#/s:18CouchbaseLiteSwift10FileLoggerC5levelAA8LogLevelOvp[log.file.level: LogLevel].
++
+NOTE: You can no longer use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC11setLogLevel_6domainyAA0fG0O_AA0F6DomainOtFZ[Database.setLogLevel()] as it is now deprecated.
 Further, you can no longer set a log level for a specific domain.
 
 Related::
