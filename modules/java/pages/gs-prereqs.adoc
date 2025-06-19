@@ -71,9 +71,18 @@ Before proceeding to xref:java:gs-install.adoc[], you will need to make the supp
 
 [#bmkLinuxSharedLibs]
 . Set up the Native Libraries for Linux.
-You will need to add the path of the directory `<lib-directory>` to the value of the Java system property `java.library.path`.
-
-Normally, the simplest way to set this is through the shell variable `LD_LIBRARY_PATH`.
+You will need to add the path of the directory containing the unpacked support libraries to the value of the Java system property `java.library.path`.
++
+The simplest way to set this is through the shell variable `LD_LIBRARY_PATH`:
++
+[source,bash,subs="attributes+"]
+----
+export LD_LIBRARY_PATH=<your_dir>/couchbase-lite-java-{major}.{minor}.{maintenance-java}/:$LD_LIBRARY_PATH
+----
++
+Where `<your_dir>` is the path where you unpacked the support libraries in step 2.
++
+NOTE: This environment variable must be set before running your Java application that uses Couchbase Lite.
 
 [tabs]
 ====
