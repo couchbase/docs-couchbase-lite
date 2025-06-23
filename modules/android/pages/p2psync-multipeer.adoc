@@ -1,6 +1,6 @@
-= Multipeer Replicator
+= Multipeer P2P Replicator
 ifdef::show_edition[:page-edition: Enterprise Edition]
-:description: MultipeerReplicator is a peer-to-peer replicator that can advertise its presence, discover other peers, establish connections, and replicate data with those peers.
+:description: The Multipeer P2P Replicator enables lightweight, self-organizing mesh networks for apps running on the same local Wi-Fi.
 
 :source-language: Java
 
@@ -8,30 +8,38 @@ ifdef::show_edition[:page-edition: Enterprise Edition]
 
 [abstract]
 {description}
+This approach requires minimal setup and automates peer discovery and connectivity management, making it simpler than xref:p2psync-websocket.adoc[active-passive P2P configurations].
 
-
-TIP: Multipeer Replication is currently available for use over IP networks.
-If you are working with a bluetooth network, you will need to use Couchbase Lite's xref::p2psync-websocket.adoc[Active-Passive peer-to-peer].
 
 [#introduction]
 == Introduction
 // tag::introduction-full[]
 // tag::introduction[]
-Couchbase Lite's Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronization between edge devices without needing a centralized cloud-based control point.
+Couchbase Lite's Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronization between mobile and IoT devices without needing a centralized cloud-based control point.
 
 
 // *** advantages ***
 
-Multipeer Replicator for small mesh topologies offers autodiscovery for wifi-based networks.
-Multipeer Sync thus requires less management and less code than using active-passive peer-to-peer sync, and also manages peer discovery for you.
+Multipeer P2P Replicator for small mesh topologies offers autodiscovery for wifi-based networks.
+Multipeer Sync thus requires less management and less code than using Active-Passive peer-to-peer sync, and also manages peer discovery for you, offering the following advantages:
+
+* Auto-discovery over local Wi-Fi (via `DNS-SD`)
+* Lightweight and low-maintenance configuration
+* Dynamic mesh topology for optimal peer connectivity
+* Secure communication via TLS and certificate-based authentication
+
+
 
 // Bluetooth - not yet
 
 [TIP]
 .Bluetooth networking
 ====
-If you are working over a bluetooth network, then take a look at Couchbase Lite's Active-Passive Peer-to-Peer synchronization.
+Multipeer Replication is currently available for use over IP networks.
+If you are working over a bluetooth network, then take a look at xref:p2psync-custom.adoc[integrating a Custom Listener]
+with Couchbase Lite's Active-Passive Peer-to-Peer synchronization.
 ====
+
 
 
 // end::introduction[]
@@ -43,7 +51,7 @@ If you are working over a bluetooth network, then take a look at Couchbase Lite'
 
 === Transport and Peer Discovery Protocol
 
-MultipeerReplicator supports Wi-Fi transport, using DNS-SD (also known as Bonjour) for peer discovery.
+Multipeer P2P Replicator supports Wi-Fi transport, using `DNS-SD` (also known as Bonjour) for peer discovery.
 Peers must be connected to the same Wi-Fi network to discover and establish connections with one another.
 
 === Supported Platforms
@@ -59,10 +67,10 @@ For Android, the minimum API level is API 35, based on the availability of requi
 
 == Overview
 
-The MultipeerReplicator automatically advertises its presence, discovers other peers,
+The Multipeer P2P Replicator automatically advertises its presence, discovers other peers,
 and establishes connections for data replication with peers that share the same group identifier defined by the application.
 
-To maintain optimal connectivity, efficient data transport, and balanced workloads, the MultipeerReplicator forms a dynamic mesh network among peers in the same group.
+To maintain optimal connectivity, efficient data transport, and balanced workloads, the Multipeer P2P Replicator forms a dynamic mesh network among peers in the same group.
 It avoids redundant direct connections, evenly distributes connections across peers, and optimizes communication paths.
 The mesh network continuously adapts as peers join or leave.
 
@@ -73,7 +81,7 @@ The mesh network continuously adapts as peers join or leave.
 
 == Configuration
 
-.Configuration for creating a MultipeerReplicator
+.Configuration for creating a Multipeer P2P Replicator
 [source,java]
 ----
 public struct MultipeerReplicatorConfiguration {
@@ -107,6 +115,7 @@ public struct MultipeerReplicatorConfiguration {
 
 
 TIP: In version 3.3.0, the recommended maximum number of peers in a mesh network is approximately 15.
+
 
 === Life Cycle
 
