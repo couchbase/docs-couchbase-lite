@@ -97,6 +97,24 @@ flowchart TB;
 
 == Configuration
 
+Set up of the Multipeer P2P Replicator configures:
+
+A Group ID::
+The `peerGroupID` identifies the peer-to-peer network used by the app.
+This differentiates it from Couchbase Lite networks sharing the same local wifi network, 
+and ensures that the application only replicates with instances of itself, not some other app.
+
+A TLS Certificate::
+This is used for mutual authentication on both the client and server side.
+
+Authentication Function::
+During TLS handshake, this checks the peer's certificate and decides whether or not to allow the connection.
+
+Collection::
+One or more collections from the database to be kept in sync.
+
+
+////
 .Configuration for creating a Multipeer P2P Replicator
 [source,swift]
 ----
@@ -125,8 +143,7 @@ public struct MultipeerReplicatorConfiguration {
                 collections: [MultipeerCollectionConfiguration])
 }
 ----
-
-
+////
 
 
 
