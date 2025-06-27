@@ -10,7 +10,7 @@ This approach requires minimal setup and automates peer discovery and connectivi
 
 
 [#introduction]
-== Introduction
+// == Introduction
 // tag::introduction-full[]
 // tag::introduction[]
 Couchbase Lite's Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronization between mobile and IoT devices without needing a centralized cloud-based control point.
@@ -35,19 +35,6 @@ with Couchbase Lite's Active-Passive Peer-to-Peer synchronization.
 
 // end::introduction[]
 // end::introduction-full[]
-
-
-
-== Prerequisites
-
-=== Transport and Peer Discovery Protocol
-
-Multipeer P2P Replicator supports Wi-Fi transport, using `DNS-SD` (also known as *Bonjour*) for peer discovery.
-Peers must be connected to the same Wi-Fi network to discover and establish connections with one another.
-
-=== Supported Platforms
-
-We recommend using a recent release of iOS -- you will need at least iOS 15 (or macOS 12).
 
 
 == Overview
@@ -93,6 +80,19 @@ flowchart TB;
 
 *TODO* Fix diagram! 
 
+_The conclusion of the docs team is that this can't be generated well with mark-up - will upload a drawn image asap._
+
+
+== Prerequisites
+
+=== Transport and Peer Discovery Protocol
+
+Multipeer P2P Replicator supports Wi-Fi transport, using `DNS-SD` (also known as *Bonjour*) for peer discovery.
+Peers must be connected to the same Wi-Fi network to discover and establish connections with one another.
+
+=== Supported Platforms
+
+We recommend using a recent release of iOS -- you will need at least iOS 15 (or macOS 12).
 
 
 == Configuration
@@ -118,7 +118,7 @@ See the example, <<use-example,below>> for how to set this up.
 
 
 TIP: In version 3.3.0, the recommended maximum number of peers in a mesh network is approximately 15.
-It should work wth more -- but you will need to carry out testing with your particular network,
+It should work with more -- but you will need to carry out testing with your particular network,
 to assess any performance effects of packet loss or latency across larger mesh networks.
 
 
@@ -150,6 +150,12 @@ Event types are:
 ** Replicated document information
 
 In general, the connection should just work, and most of these optional listen events give status you may only wish to use during development and testing.
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-event-discovery", indent=0]
+----
 
 
 == Example Use
@@ -184,8 +190,15 @@ multipeer-logdomain
 
 
 
-Here we will show how to instansiate a `MultipeerReplicatorConfiguration` configuration with self-signed certificates,
+Here we show how to instansiate a `MultipeerReplicatorConfiguration` configuration with self-signed certificates,
 and connect it to an example collection.
+
+
+.Configuration for creating a Multipeer P2P Replicator
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-config", indent=0]
+----
 
 
 
@@ -198,7 +211,7 @@ A list of these configurations is required to define which collections will be r
 .Configuration for creating a Multipeer P2P Replicator
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-config", indent=0]
+include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-collection-config", indent=0]
 ----
 
 
@@ -243,7 +256,7 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 * A peer unique identifier, generated as a digest of the peer’s identity certificate.
 * The peer certificate
 // * Online status -- a list of all known online peers
-* replicator status, and its current `neighborPeers`.
+* Replicator status, and its current `neighborPeers`.
 * Neighbor peers -- all peers known to the peer.
 
 [source,swift]
@@ -320,6 +333,16 @@ public class TLSIdentity {
 }
 ----
 ////
+
+
+
+=== Event Status
+
+.Replicator Status
+[source, swift]
+----
+include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-event-status", indent=0]
+----
 
 
 
