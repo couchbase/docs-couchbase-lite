@@ -105,7 +105,7 @@ This differentiates it from Couchbase Lite networks sharing the same local wifi 
 and ensures that the application only replicates with instances of itself, not some other app.
 
 A TLS Certificate::
-This is used for mutual authentication on both the client and server side.
+An X509 certificate used for mutual authentication on both the client and server side.
 
 Authentication Function::
 During TLS handshake, this checks the peer's certificate and decides whether or not to allow the connection.
@@ -113,69 +113,47 @@ During TLS handshake, this checks the peer's certificate and decides whether or 
 Collection::
 One or more collections from the database to be kept in sync.
 
-
-////
-.Configuration for creating a Multipeer P2P Replicator
-[source,swift]
-----
-public struct MultipeerReplicatorConfiguration {
-    /// Identifier for discovering and connecting peers.
-    public let peerGroupID: String
-    
-    /// Peer identity.
-    /// @Note The identity’s certificate must be both server and client certificate.
-    public let identity: TLSIdentity
-
-
-    /// Peer authenticator.
-    public let authenticator: MultipeerAuthenticator
-
-
-    /// Collections to replicate.
-    public let collections: [MultipeerCollectionConfiguration]
-
-
-    /// Initialize the configuration with a peer group identifier, identity, 
-    /// authenticator and collections.
-    public init(peerGroupID: String, 
-                identity: TLSIdentity,
-                authenticator: MultipeerCertificateAuthenticator,                  
-                collections: [MultipeerCollectionConfiguration])
-}
-----
-////
+See the example, <<use-example,below>> for how to set this up.
 
 
 
 TIP: In version 3.3.0, the recommended maximum number of peers in a mesh network is approximately 15.
-It should work wth more -- but you will need to carry out testing with your particular network, to assess any performance effects of packet loss or latency across larger mesh networks.
+It should work wth more -- but you will need to carry out testing with your particular network,
+to assess any performance effects of packet loss or latency across larger mesh networks.
 
 
 === Life Cycle
 
-Starting and stopping a peer-to-peer connection...
+Starting and stopping a peer-to-peer connection in Couchbase Lite 3.3 involves a simple `start()` and `stop()` function.
+Once stopped, a new `MultipeerReplicator` must be created.
 
 
 === Listening for Changes
 
-Event types...
+Event types are:
 
+* Multipeer Replicator Status
+** Active / Inactive
+** Includes any error if present
+* Peer Discovery Status
+** `peerID`
+** Online / Offline status
+* Peer’s Replicator Status
+** `peerID`
+** Replicator status:
+*** Activity level
+*** Outgoing (direction)
+*** Error if any
+* Peer’s Document Replication
+** `PeerID`
+** `isPush` (true if push; false if pull)
+** Replicated document information
 
-`PeerDocumentReplication`
+In general, the connection should just work, and most of these optional listen events give status you may only wish to use during development and testing.
 
 
 == Example Use
 
-*TODO* this is just an outline - needs to be done properly as a sample first, then worked back into a walkthrough.
-
-Here we will show how to instansiate a `MultipeerReplicatorConfiguration` configuration with self-signed certificates, and connect it to an example collection.
-
-[source,swift]
-----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-config", indent=0]
-----
-
-The group identifier -- 
 
 
 ////
@@ -199,88 +177,85 @@ multipeer-tlsidentity
 multipeer-logdomain
 ////
 
-=== MultipeerCollectionConfiguration
+
+
+
+
+
+
+
+Here we will show how to instansiate a `MultipeerReplicatorConfiguration` configuration with self-signed certificates,
+and connect it to an example collection.
+
+
+
+=== `MultipeerCollectionConfiguration`
 
 `MultipeerCollectionConfiguration` specifies a collection and its associated settings.
 This includes a conflict resolver and replication filters.
 A list of these configurations is required to define which collections will be replicated within the peer group network.
 
+.Configuration for creating a Multipeer P2P Replicator
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-config", indent=0]
+----
+
+
+
+
+=== `MultipeerConflictResolver`
+
+*TODO* Check multipeer-conflict-resolver code when it arrives...
+
+
+.Multipeer Conflict Resolver Protocol
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-conflict-resolver", indent=0]
+----
+
+For more control than a generic `MultipeerConflictResolver`,
+you can define a custom `conflictResolver` within each `MultipeerCollectionConfiguration`:
+
 
 [source,swift]
 ----
-
-[source,swift]
-----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="", indent=0]
-----
-
-
-/// Type Alias for Multipeer Replication Filter Function.
-public typealias MultipeerReplicationFilter = 
-    (PeerID, Document, DocumentFlags) -> Bool
-
-
-/// Multipeer Conflict Resolver Protocol.
-public protocol MultipeerConflictResolver {
-    func resolve(peerID: PeerID, conflict: Conflict) -> Document?
-}
-
-/// Defines collection for replication including optional filters and 
-/// custom conflict resolver.
-public struct MultipeerCollectionConfiguration {
-    /// The collection.
-    public let collection: Collection
-
-    /// Document IDs filter.
-    public var documentIDs: Array<String>?
-
-    /// Push filter.
-    public var pushFilter: MultipeerReplicationFilter?    
-
-    /// Pull filter.
-    public var pullFilter: MultipeerReplicationFilter?
-
-
-    /// Custom conflict resolver.
-    public var conflictResolver: MultipeerConflictResolver?
-
-
-    /// Initialize with a collection.
-    public init(collection: Collection)
-}
+include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-conflict-resolver", indent=0]
 ----
 
 
 === Authenticator
 
-`MultipeerCertificateAuthenticator` *TODO*
+Authentication succeeds if the peer’s certificate is signed by one of the specified root certificates.
+A custom mechanism to authenticate peers based on their certificates can be implemented using callbacks.
 
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="", indent=0]
+include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-authenticator", indent=0]
 ----
 
 
 === Peer Info
 
-`PeerInfo` provides information about the peer, including a peer unique identifier, the peer certificate, online status, replicator status, and its current `neighborPeers`.
+`PeerInfo` provides information about each peer:
 
+* A peer unique identifier, generated as a digest of the peer’s identity certificate.
+* The peer certificate
+// * Online status -- a list of all known online peers
+* replicator status, and its current `neighborPeers`.
+* Neighbor peers -- all peers known to the peer.
 
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="", indent=0]
-----
-
-[source,swift]
-----
-//
+include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-peer-info", indent=0]
 ----
 
 
 === Self-signed Certs
 
 Multipeer P2P Sync uses TLS by default.
-This code snippet shows the key set up, using the TLSIdentity` method.
+This code snippet shows the key set up, using the `TLSIdentity` method.
 
 
 .Creating a self-signed certificate that can be used as both client and server cert
@@ -293,7 +268,7 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 
 ////
 ----
-/// Extended Key Usage for which the certified public key may be used.
+Extended Key Usage for which the certified public key may be used.
 public struct KeyUsages: OptionSet {
     /// For Server Authentication	
     public static let serverAuth = 0x40
@@ -344,16 +319,21 @@ public class TLSIdentity {
                                      label: String) throws -> TLSIdentity
 }
 ----
+////
 
 
 
 === Logging
 
-`LogDomain`
+`LogDomain` sets up the logging of:
+
+. Peer discovery log messages
+. Multipeer replication and mesh network management log messages
+
 
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="", indent=0]
+include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-logdomain", indent=0]
 ----
 
 
