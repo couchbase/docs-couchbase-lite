@@ -1073,6 +1073,18 @@ include::objc:example$code_snippets/SampleCodeTest.m[tags="remove-document-repli
 
 When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
 
+[#blip-sync-protocol-version-differences]
+===== Blip Sync Protocol Version Differences
+
+The behavior for Document Access Removal Notifications differs between Blip Sync protocol versions:
+
+* Blip Sync 2.0 (Couchbase Lite 3.x with Sync Gateway 2.x): When a Couchbase Lite 3.x client uses Blip Sync 2.0 to connect to Sync Gateway version 2.x, the system sends an Access Removal Notification to an ongoing replication even when the document remains accessible through other channels.
+
+* Blip Sync 3.0 (Couchbase Lite 3.x with Sync Gateway 3.x): When a Couchbase Lite 3.x client uses Blip Sync 3.0 to connect to Sync Gateway version 3.x, an Access Removal Notification is not sent to an ongoing replication when the document is still accessible through different channel accesses.
+
+This change means that in Blip Sync 3.0, documents that lose access to some channels but retain access through other channels do not trigger removal notifications or purge from the local database. 
+This prevents unnecessary document removal when the document remains accessible to the user through alternative channels.
+
 
 [#lbl-repl-pend]
 === Documents Pending Push
