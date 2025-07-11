@@ -28,13 +28,13 @@ If you are using a Couchbase Lite release prior to 2.5 see <<pre-2x5-logging,Dep
 [#introduction]
 == Introduction
 Couchbase Lite provides a robust Logging API footnote:fn-2x5[From version 2.5] -- see: API References for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Log.html[Log], https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/FileLogger.html[FileLogger] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogFileConfiguration.html[LogFileConfiguration(String directory)] -- which make debugging and troubleshooting easier during development and in production.
-It delivers flexibility in terms of how logs are generated and retained, whilst also maintaining the level of logging required by Couchbase Support for investigation of issues.
+It delivers flexibility in how Couchbase Lite generates and retains logs, while also maintaining the logging level that Couchbase Support requires for investigating issues.
 
 Log output is split into the following streams:
 
 * xref:java:troubleshooting-logs.adoc#lbl-file-logs[]
 +
-Here logs are written to xref:java:troubleshooting-logs.adoc#log-file-outputs[separate log files] filtered by log level, with each log level supporting individual retention policies.
+Couchbase Lite writes logs to xref:java:troubleshooting-logs.adoc#log-file-outputs[separate log files] filtered by log level, with each log level supporting individual retention policies.
 
 * xref:java:troubleshooting-logs.adoc#lbl-console-logs[]
 +
@@ -50,7 +50,7 @@ For greater flexibility you can implement a custom logging class using the https
 
 --
 
-In all instances, you control what is logged and at what level using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Log.html[Log] class.
+In all instances, you control what the application logs and at what level using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Log.html[Log] class.
 
 [#lbl-console-logs]
 == Console based logging
@@ -60,10 +60,10 @@ Console logs are your go-to resource for diagnostic information.
 You can easily fine-tune their diagnostic content to meet the needs of a particular debugging scenario, perhaps by increasing the verbosity and-or choosing to focus on messages from a specific domain; to better focus on the problem area.
 
 Changes to console logging are independent of file logging, so you can make change without compromising any files logging streams.
-It is enabled by default.
+Console logging enables by default.
 To change default settings use database's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Log.html[Log] method to set the required values -- see xref:java:troubleshooting-logs.adoc#eg-cons-log[]
 
-You'll primarily use `Database.log.getConsole()` to get the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ConsoleLogger.html[ConsoleLogger] to control console logging.
+Use `Database.log.getConsole()` to get the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ConsoleLogger.html[ConsoleLogger] to control console logging.
 
 
 [#eg-cons-log]
@@ -83,24 +83,26 @@ include::java:example$codesnippet_collection.java[tags="console-logging", indent
 
 ====
 
-<.> Set the domains to be logged. The following example turns on logging for all available domains -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ConsoleLogger.html#setDomains-java.util.EnumSet-[log.getConsole().setDomain()] and enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogDomain.html[LogDomain]
-<.> Here we turn on the most verbose log level -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ConsoleLogger.html#setLevel-com.couchbase.lite.LogLevel-[log.getConsole().setLevel()] and enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogLevel.html[LogLevel]. +
-To disable logging for the specified https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogDomain.html[LogDomain] set the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogLevel.html[LogLevel] to `None`.
+<.> Set the domains for logging.
+The following example turns on logging for all available domains -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ConsoleLogger.html#setDomains-java.util.EnumSet-[log.getConsole().setDomain()] and enumeration https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogDomain.html[LogDomain]
+<2> Turn on the most verbose log level -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ConsoleLogger.html#setLevel-com.couchbase.lite.LogLevel-[log.getConsole().setLevel()] and enumeration https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogLevel.html[LogLevel]. +
+To turn off logging for the specified https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogDomain.html[LogDomain] set the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogLevel.html[LogLevel] to `None`.
 
 Related::
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Log.html[Log] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Log.html[log.getConsole()] | https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ConsoleLogger.html[ConsoleLogger]
 
 [#lbl-file-logs]
 == File based logging
-File based logging is disabled by default --  see: xref:java:troubleshooting-logs.adoc#eg-file-log[] for how to enable it.
+File based logging defaults to off --  see: xref:java:troubleshooting-logs.adoc#eg-file-log[] for how to enable it.
 
-You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Log.html[log.getFile()] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/FileLogger.html[FileLogger] to control file-based logging.
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Log.html[log.getFile()] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/FileLogger.html[FileLogger] to control file-based logging.
 
 [#formats]
 === Formats
 Available file based logging formats:
 
-* Binary -- most efficient for storage and performance. It is the default for file based logging.
+* Binary -- most efficient for storage and performance.
+Binary format defaults for file based logging.
 +
 Use this format and a decoder, such as *cbl-log*, to view them -- see: xref:java:troubleshooting-logs.adoc#decoding-binary-logs[].
 * Plaintext
@@ -112,7 +114,7 @@ As with console logging you can set the log level -- see:  the https://docs.couc
 With file based logging you can also use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogFileConfiguration.html[LogFileConfiguration] class's properties to specify the:
 
 * log file path to the directory to store the log file
-Once this limit is exceeded a new log file is started.
+When the file exceeds this limit, a new log file starts.
 * log file format +
 The default is _binary_.
 You can over ride that where necessary and output a plain text log.
@@ -136,11 +138,11 @@ include::java:example$codesnippet_collection.java[tags="file-logging", indent=0]
 ====
 
 <.> Set the log file directory
-<.> Here we change the max rotation count from the default (1) to 5. +
+<.> Change the max rotation count from the default (1) to 5. +
 *Note* this means six files may exist at any one time; the five rotated log files, plus the active log file
-<.> Here we set the maximum size (bytes) for our log file
-<.> Here we select the binary log format (included for reference only as this is the default)
-<.> Here we increase the log output level from the default (_warnings_) to _info_ -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/FileLogger.html#setLevel-com.couchbase.lite.LogLevel-[log.getFile().setLevel()]
+<.> Set the maximum size (bytes) for the log file
+<.> Select the binary log format (included for reference only as binary format defaults)
+<.> Increase the log output level from the default (_warnings_) to _info_ -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/FileLogger.html#setLevel-com.couchbase.lite.LogLevel-[log.getFile().setLevel()]
 +
 *Note* that the use of https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#setLogLevel-com.couchbase.lite.LogDomain-com.couchbase.lite.LogLevel-[Database.setLogLevel()] is now deprecated.
 Further, you can no longer set a log level for a specific domain.
@@ -152,7 +154,7 @@ https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couc
 [#lbl-custom-logs]
 == Custom logging
 
-Couchbase Lite allows for the registration of a callback function to receive Couchbase Lite log messages, which may be logged using any external logging framework.
+Couchbase Lite allows for the registration of a callback function to receive Couchbase Lite log messages, which you can log using any external logging framework.
 
 To do this, apps must implement the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Logger.html[Logger] interface -- see xref:java:troubleshooting-logs.adoc#eg-impl-log[] -- and enable custom logging using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Log.html[log.setCustom()] -- see xref:java:troubleshooting-logs.adoc#eg-cust-log[].
 
@@ -164,7 +166,7 @@ To do this, apps must implement the https://docs.couchbase.com/mobile/{major}.{m
 [#eg-impl-log]
 ====
 
-Here we introduce the code that implements the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Logger.html[Logger] interface.
+This example shows the code that implements the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Logger.html[Logger] interface.
 
 [source, Java]
 ----
@@ -192,8 +194,8 @@ include::java:example$codesnippet_collection.java[tags="set-custom-logging", ind
 
 ====
 
-<.> Here we set the custom logger with a level of 'warning'.
-The custom logger is called with every log and may choose to filter it, using its configured level.
+<.> Set the custom logger with a level of 'warning'.
+The custom logger receives every log and may choose to filter it, using its configured level.
 
 
 Related::
