@@ -183,19 +183,18 @@ Event types include the following. In general, the connection should just work, 
 === Peer Discovery Status
 ** `peerID`
 ** Online / Offline status
-* Peer’s Replicator Status
+* Peer's Replicator Status
 ** `peerID`
 ** Replicator status:
 *** Activity level
 *** Outgoing (direction)
 *** Error if any
-* Peer’s Document Replication
+* Peer's Document Replication
 ** `PeerID`
 ** `isPush` (true if push; false if pull)
 ** Replicated document information
 
 In general, the connection should just work, and most of these optional listen events give status you may only wish to use during development and testing.
-
 
 [source, swift]
 ----
@@ -204,95 +203,16 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 
 === Peer Document Replication
 
+=== Multipeer Replicator Status
 
-== Peer Info
-
-////
-https://github.com/couchbase/docs-couchbase-lite/tree/multipeer-sync-3.3/modules/swift/examples/code_snippets
-
-
+.Replicator Status
 [source, swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="", indent=0]
-----
-
-MultipeerP2pReplicator.swift
-
-multipeer-config around the config / set-up
-multipeer-collection-config for the collection set-up
-multipeer-conflict-resolver  if you think this is worth highlighting?
-multipeer-authenticator  for  MultipeerAuthenticator {}
-multipeer-peer-info  as I should think we'll want to pull this out and mention it?
-multipeer-event-discovery and multipeer-event-status (ReplicatorStatus) if you think these two could be useful?
-multipeer-tlsidentity
-multipeer-logdomain
-////
-
-
-
-
-
-
-
-
-Here we show how to instansiate a `MultipeerReplicatorConfiguration` configuration with self-signed certificates,
-and connect it to an example collection.
-
-
-.Configuration for creating a Multipeer P2P Replicator
-[source,swift]
-----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-config", indent=0]
+include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-event-status", indent=0]
 ----
 
 
-
-=== `MultipeerCollectionConfiguration`
-
-`MultipeerCollectionConfiguration` specifies a collection and its associated settings.
-This includes a conflict resolver and replication filters.
-A list of these configurations is required to define which collections will be replicated within the peer group network.
-
-.Configuration for creating a Multipeer P2P Replicator
-[source,swift]
-----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-collection-config", indent=0]
-----
-
-
-
-
-=== `MultipeerConflictResolver`
-
-*TODO* Check multipeer-conflict-resolver code when it arrives...
-
-
-.Multipeer Conflict Resolver Protocol
-[source,swift]
-----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-conflict-resolver", indent=0]
-----
-
-For more control than a generic `MultipeerConflictResolver`,
-you can define a custom `conflictResolver` within each `MultipeerCollectionConfiguration`:
-
-
-[source,swift]
-----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-conflict-resolver", indent=0]
-----
-
-
-=== Authenticator
-
-Authentication succeeds if the peer’s certificate is signed by one of the specified root certificates.
-A custom mechanism to authenticate peers based on their certificates can be implemented using callbacks.
-
-[source,swift]
-----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-authenticator", indent=0]
-----
-
+== Peer Info
 
 === Peer Identifier
 
@@ -306,7 +226,7 @@ All peers known to the peer and their replicator status, including the current `
 
 `PeerInfo` provides information about each peer:
 
-* A peer unique identifier, generated as a digest of the peer’s identity certificate.
+* A peer unique identifier, generated as a digest of the peer's identity certificate.
 * The peer certificate
 // * Online status -- a list of all known online peers
 * Replicator status, and its current `neighborPeers`.
@@ -318,78 +238,12 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 ----
 
 
-
-
-
-
-////
-----
-Extended Key Usage for which the certified public key may be used.
-public struct KeyUsages: OptionSet {
-    /// For Server Authentication
-    public static let serverAuth = 0x40
-
-    /// For Client Authentication
-    public static let clientAuth = 0x80
-}
-
-/// TLS Identity
-public class TLSIdentity {
-    /// Create a TLS identity from private key and certificate data.
-    ///
-    /// The private key and certificate data must be either in PEM or DER format.
-    /// This method can be used to create an issuer identity for signing
-    /// a certificate when generating a new TLS identity.
-    public static func createIdentity(privateKey: Data,
-                                      certificate: Data) throws -> TLSIdentity
-
-
-    /// Generate a TLS identity, either self-signed or signed by an issuer identity.
-    ///
-    /// The `attributes` must include a common name (CN); otherwise an error
-    /// will be thrown.
-    ///
-    /// If no the expiration date is specified, the default validity of one year
-    /// will be applied.
-    ///
-    /// The optional issuer identity may be specified to sign the certificate.
-    /// The  issuer identity can be created using
-    /// `createIdentity(privateKeyData:certificateData:)`. If no issuer is specified,
-    /// the certificate will be self-signed.
-    ///
-    /// If a `label` is provided, the identity will be stored in the
-    /// platform’s secure key storage under that label.
-    public static func createIdentity(keyUsages: KeyUsages,
-                                      attributes: [String: String],
-                                      expiration: Date?,
-                                      issuer: TLSIdentity?,
-                                      label: String?) throws -> TLSIdentity
-
-
-
-
-    @Deprecated, “Use createIdentity(keyUsages:attributes:expiration:issuer:label)”
-    public static func createIdentity(server: Bool,
-                                     attributes: [String: String],
-                                     expiration: Date?,
-                                     label: String) throws -> TLSIdentity
-}
-----
-////
-
-
-
-
-
-
-
 == Logging
 
 `LogDomain` sets up the logging of:
 
 . Peer discovery log messages
 . Multipeer replication and mesh network management log messages
-
 
 [source,swift]
 ----
