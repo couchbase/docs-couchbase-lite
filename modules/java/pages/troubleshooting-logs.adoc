@@ -63,7 +63,7 @@ Changes to console logging are independent of file logging, so you can make chan
 It is enabled by default.
 To change default settings use database's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Log.html[Log] method to set the required values -- see xref:java:troubleshooting-logs.adoc#eg-cons-log[]
 
-You will primarily use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/Log.html[log.getConsole()] and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ConsoleLogger.html[ConsoleLogger] to control console logging.
+You'll primarily use `Database.log.getConsole()` to get the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ConsoleLogger.html[ConsoleLogger] to control console logging.
 
 
 [#eg-cons-log]
@@ -83,7 +83,7 @@ include::java:example$codesnippet_collection.java[tags="console-logging", indent
 
 ====
 
-<.> Define the required domain ; here we turn on logging for all available domains -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ConsoleLogger.html#setDomains-java.util.EnumSet-[log.getConsole().setDomain()] and enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogDomain.html[LogDomain]
+<.> Set the domains to be logged. Here we turn on logging for all available domains -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ConsoleLogger.html#setDomains-java.util.EnumSet-[log.getConsole().setDomain()] and enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogDomain.html[LogDomain]
 <.> Here we turn on the most verbose log level -- see: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ConsoleLogger.html#setLevel-com.couchbase.lite.LogLevel-[log.getConsole().setLevel()] and enum https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogLevel.html[LogLevel]. +
 To disable logging for the specified https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogDomain.html[LogDomain] set the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogLevel.html[LogLevel] to `None`.
 
@@ -109,7 +109,7 @@ Use this format and a decoder, such as *cbl-log*, to view them -- see: xref:java
 === Configuration
 As with console logging you can set the log level -- see:  the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/FileLogger.html[FileLogger] class.
 
-With file based logging you can also use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogFileConfiguration.html[LogFileConfiguration(String directory)] class's properties to specify the:
+With file based logging you can also use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/LogFileConfiguration.html[LogFileConfiguration] class's properties to specify the:
 
 * log file path to the directory to store the log file
 Once this limit is exceeded a new log file is started.
@@ -222,6 +222,13 @@ Download the *cbl-log* tool using `wget`.
 wget https://packages.couchbase.com/releases/couchbase-lite-log/3.0.0/couchbase-lite-log-3.0.0-macos.zip
 ----
 
+Extract the downloaded zip file.
+
+[source,console]
+----
+unzip couchbase-lite-log-3.0.0-macos.zip
+----
+
 Navigate to the *bin* directory and run the `cbl-log` executable.
 
 [source,console]
@@ -241,6 +248,13 @@ Download the *cbl-log* tool using `wget`.
 wget https://packages.couchbase.com/releases/couchbase-lite-log/3.0.0/couchbase-lite-log-3.0.0-centos.zip
 ----
 
+Extract the downloaded zip file.
+
+[source,console]
+----
+unzip couchbase-lite-log-3.0.0-centos.zip
+----
+
 Navigate to the *bin* directory and run the `cbl-log` executable.
 
 [source,console]
@@ -258,6 +272,13 @@ Download the *cbl-log* tool using PowerShell.
 [source,powershell, subs="attributes"]
 ----
 Invoke-WebRequest https://packages.couchbase.com/releases/couchbase-lite-log/3.0.0/couchbase-lite-log-3.0.0-windows.zip -OutFile couchbase-lite-log-3.0.0-windows.zip
+----
+
+Extract the downloaded zip file.
+
+[source,powershell]
+----
+Expand-Archive -Path couchbase-lite-log-3.0.0-windows.zip -DestinationPath .
 ----
 
 Run the `cbl-log` executable.
