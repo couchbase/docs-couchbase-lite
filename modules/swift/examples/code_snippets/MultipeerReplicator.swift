@@ -55,20 +55,28 @@ class MultipeerReplicatorSnippets {
         let persistentLabel = "com.myapp.identity"
     
         // Retrieve the TLS identity from the keychain using the persistent label.
-        var identity =  try TLSIdentity.identity(withLabel: persistentLabel)
+        var identity = try TLSIdentity.identity(withLabel: persistentLabel)
         
+        // If the identity exists but is expired, delete it.
+        if let existing = identity, existing.expiration < Date() {
+            try TLSIdentity.deleteIdentity(withLabel: persistentLabel)
+            identity = nil
+        }
+
         // If the identity doesn't exist or expired, create a new one.
-        if (identity == nil || identity!.expiration < Date()) {
-            // Create an issuer identity from the private key and certificate data in DER format.
+        if identity == nil {
+            // Create an issuer identity from the private key and certificate data.
             let privateKey = try getIssuerPrivateKeyData()
             let cert = try getIssuerCertificateData()
             let issuer = try TLSIdentity.createIdentity(
                 withPrivateKey: privateKey,
                 certificate: cert)
             
-            // Create a new identity signed with the issuer.
+            // Define certificate attributes and expiration date.
             let attrs: [String: String] = [certAttrCommonName: "MyApp"]
             let expiration = Calendar.current.date(byAdding: .year, value: 2, to: Date())!
+            
+            // Create a new identity signed with the issuer and save it with the persistent label.
             identity = try TLSIdentity.createIdentity(
                 for: [.clientAuth, .serverAuth],
                 attributes: attrs,
@@ -245,5 +253,12 @@ class MultipeerReplicatorSnippets {
             }
         }
         // end::multipeer-peer-info
+    }
+    
+    func logging() throws {
+        // tag::multipeer-logdomain
+        // Enable verbose console logging for multipeer replicator-related domains only.
+        LogSinks.console = ConsoleLogSink(level: .verbose, domains: [.peerDiscovery, .multipeer])
+        // end::multipeer-logdomain
     }
 }

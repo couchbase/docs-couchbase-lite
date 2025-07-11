@@ -9,13 +9,13 @@ pipeline {
                 stage("Validate C#") {
                     agent { label 's61113u16 (litecore)' }
                     steps {
-                        sh 'jenkins/dotnet_build.sh 3.3.0 1.0.0'
+                        sh 'jenkins/dotnet_build.sh 3.2.4 1.0.0'
                     }
                 }
                 stage("Validate C") {
                     agent { label 's61113u16 (litecore)' }
                     steps {
-                        sh 'jenkins/c_build.sh 3.3.0'
+                        sh 'jenkins/c_build.sh 3.2.4'
                     }
                 }
                 stage("Validate iOS") {
