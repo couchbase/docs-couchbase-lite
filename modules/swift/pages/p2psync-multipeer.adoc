@@ -98,7 +98,7 @@ Set up of the Multipeer P2P Replicator configures:
 
 A Group ID::
 The `peerGroupID` identifies the peer-to-peer network used by the app.
-This differentiates it from Couchbase Lite networks sharing the same local wifi network, 
+This differentiates it from Couchbase Lite networks sharing the same local wifi network,
 and ensures that the application only replicates with instances of itself, not some other app.
 
 A TLS Certificate::
@@ -119,20 +119,28 @@ It should work with more -- but you will need to carry out testing with your par
 to assess any performance effects of packet loss or latency across larger mesh networks.
 
 
-=== Life Cycle
+== Life Cycle
 
-Starting and stopping a peer-to-peer connection in Couchbase Lite 3.3 involves a simple `start()` and `stop()` function.
+=== Start
+
+Starting a peer-to-peer connection in Couchbase Lite 3.3 involves a simple `start()` function.
+
+=== Stop
+
+Stopping a peer-to-peer connection involves a simple `stop()` function.
 Once stopped, a new `MultipeerReplicator` must be created.
 
 
-=== Listening for Changes
+== Listening for Changes
 
-Event types are:
+Event types include the following. In general, the connection should just work, and most of these optional listen events give status you may only wish to use during development and testing.
 
-* Multipeer Replicator Status
-** Active / Inactive
-** Includes any error if present
-* Peer Discovery Status
+=== Multipeer Replicator Status
+
+* Active / Inactive
+* Includes any error if present
+
+=== Peer Discovery Status
 ** `peerID`
 ** Online / Offline status
 * Peer’s Replicator Status
@@ -154,10 +162,16 @@ In general, the connection should just work, and most of these optional listen e
 include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-event-discovery", indent=0]
 ----
 
+=== Peer Discovery Status
 
-== Example Use
+
+=== Peer Replicator Status
 
 
+=== Peer Document Replication
+
+
+== Peer Info
 
 ////
 https://github.com/couchbase/docs-couchbase-lite/tree/multipeer-sync-3.3/modules/swift/examples/code_snippets
@@ -246,6 +260,14 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 ----
 
 
+=== Peer Identifier
+
+A peer unique identifier, generated as a digest of the peer's identity certificate.
+
+=== Neighbors Peers
+
+All peers known to the peer and their replicator status, including the current `neighborPeers`.
+
 === Peer Info
 
 `PeerInfo` provides information about each peer:
@@ -280,9 +302,9 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 ----
 Extended Key Usage for which the certified public key may be used.
 public struct KeyUsages: OptionSet {
-    /// For Server Authentication	
+    /// For Server Authentication
     public static let serverAuth = 0x40
-    
+
     /// For Client Authentication
     public static let clientAuth = 0x80
 }
@@ -290,28 +312,28 @@ public struct KeyUsages: OptionSet {
 /// TLS Identity
 public class TLSIdentity {
     /// Create a TLS identity from private key and certificate data.
-    /// 
+    ///
     /// The private key and certificate data must be either in PEM or DER format.
-    /// This method can be used to create an issuer identity for signing 
+    /// This method can be used to create an issuer identity for signing
     /// a certificate when generating a new TLS identity.
-    public static func createIdentity(privateKey: Data, 
+    public static func createIdentity(privateKey: Data,
                                       certificate: Data) throws -> TLSIdentity
 
 
     /// Generate a TLS identity, either self-signed or signed by an issuer identity.
     ///
-    /// The `attributes` must include a common name (CN); otherwise an error 
+    /// The `attributes` must include a common name (CN); otherwise an error
     /// will be thrown.
     ///
-    /// If no the expiration date is specified, the default validity of one year 
-    /// will be applied. 
+    /// If no the expiration date is specified, the default validity of one year
+    /// will be applied.
     ///
-    /// The optional issuer identity may be specified to sign the certificate. 
-    /// The  issuer identity can be created using 
-    /// `createIdentity(privateKeyData:certificateData:)`. If no issuer is specified, 
+    /// The optional issuer identity may be specified to sign the certificate.
+    /// The  issuer identity can be created using
+    /// `createIdentity(privateKeyData:certificateData:)`. If no issuer is specified,
     /// the certificate will be self-signed.
-    /// 
-    /// If a `label` is provided, the identity will be stored in the 
+    ///
+    /// If a `label` is provided, the identity will be stored in the
     /// platform’s secure key storage under that label.
     public static func createIdentity(keyUsages: KeyUsages,
                                       attributes: [String: String],
@@ -321,7 +343,7 @@ public class TLSIdentity {
 
 
 
-    
+
     @Deprecated, “Use createIdentity(keyUsages:attributes:expiration:issuer:label)”
     public static func createIdentity(server: Bool,
                                      attributes: [String: String],
@@ -343,7 +365,7 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 
 
 
-=== Logging
+== Logging
 
 `LogDomain` sets up the logging of:
 
