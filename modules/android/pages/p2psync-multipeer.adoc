@@ -47,30 +47,32 @@ The mesh network continuously adapts as peers join or leave.
 
 
 // Mesh Diagram
-[mermaid]
+[graphviz]
 ....
-flowchart TB;
-   id1[Android Device #1]
-   id2[Android Device #2]
-   id3[Android Device #3]
-   id4[Android Device #4]
-   id5[Android Device #5]
-   id6[Android Device #6]
-   id1<-->id2
-   id1<-->id3
-   id1<-->id4
-   id1<-->id5
-   id1<-->id6
-   id2<-->id3
-   id2<-->id4
-   id2<-->id5
-   id2<-->id6
-   id3<-->id4
-   id3<-->id5
-   id3<-->id6
-   id4<-->id5
-   id4<-->id6
-   id5<-->id6
+graph {
+    layout="circo";
+    id1[ label="Android Device #1" shape="square" ]
+    id2[ label="Android Device #2" shape="square" ]
+    id3[ label="Android Device #3" shape="square" ]
+    id4[ label="Android Device #4" shape="square" ]
+    id5[ label="Android Device #5" shape="square" ]
+    id6[ label="Android Device #6" shape="square" ]
+    id1 -- id2
+    id1 -- id3
+    id1 -- id4
+    id1 -- id5
+    id1 -- id6
+    id2 -- id3
+    id2 -- id4
+    id2 -- id5
+    id2 -- id6
+    id3 -- id4
+    id3 -- id5
+    id3 -- id6
+    id4 -- id5
+    id4 -- id6
+    id5 -- id6
+}
 ....
 
 
@@ -100,18 +102,18 @@ This section covers the key configurations you need to set up:
 
 You can specify one or more collections available for replication when creating a `MultipeerReplicatorConfiguration`.
 
-For each collection, you'll create `MultipeerCollectionConfiguration` with the collection object and optionally configure a custom conflict resolver or any replication filters you want to use for the collection
+For each collection, you'll create `MultipeerCollectionConfiguration` with the collection object and optionally configure a custom conflict resolver or any replication filters you want to use for the collection.
 
 
 .Specify collections without any configurations
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-collection-simple", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-collection-simple", indent=0]
 ----
 .Specify collections with some configuration
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-collection-config", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-collection-config", indent=0]
 ----
 
 
@@ -134,7 +136,7 @@ In the multipeer replication environment, each peer can act as either a client o
 .Get and Create an identity signed by an issuer
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-tlsidentity", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-tlsidentity", indent=0]
 ----
 
 
@@ -152,14 +154,14 @@ When you specify the root certificates, the `MultipeerReplicator` automatically 
 .Authenticator with authentication callback
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-authenticator-callback", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-authenticator-callback", indent=0]
 ----
 
 
 .Authenticator with root certificates
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-authenticator-rootcerts", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-authenticator-rootcerts", indent=0]
 ----
 
 
@@ -172,7 +174,7 @@ The `MultipeerReplicatorConfiguration` can be created with a `peerGroupID` which
 .Creating MultipeerReplicatorConfiguration
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-config", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-config", indent=0]
 ----
 
 
@@ -189,7 +191,7 @@ to assess any performance effects of packet loss or latency across larger mesh n
 .Creating MultipeerReplicator
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-replicator", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-replicator", indent=0]
 ----
 
 
@@ -203,7 +205,7 @@ You can get the necessary permissions using:
 .Getting necessary permissions
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-permissions", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-permissions", indent=0]
 ----
 
 
@@ -212,7 +214,7 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 .Starting MultipeerReplicator
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-replicator-start", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-replicator-start", indent=0]
 ----
 
 
@@ -222,7 +224,7 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 .Stopping MultipeerReplicator
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-replicator-stop", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-replicator-stop", indent=0]
 ----
 
 
@@ -249,7 +251,7 @@ In general, the connection should just work, and most of these optional listen e
 .Multipeer Replicator Status Listener
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-status-listener", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-status-listener", indent=0]
 ----
 
 
@@ -259,7 +261,7 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 .Peer Discovery Status Listener
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-peer-discovery-listener", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-peer-discovery-listener", indent=0]
 ----
 
 
@@ -269,7 +271,7 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 .Peer's Replicator Status Listener
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-replicator-status-listener", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-replicator-status-listener", indent=0]
 ----
 
 
@@ -281,7 +283,7 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 .Peer's Document Replication Listener
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-document-replication-listener", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-document-replication-listener", indent=0]
 ----
 
 
@@ -302,7 +304,7 @@ You can get the peer ID from the `peerID` property of the `MultipeerReplicator`.
 Getting peer ID
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-peer-id", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-peer-id", indent=0]
 ----
 
 
@@ -315,7 +317,7 @@ You can get a list of current online peers' Identifiers from the `MultipeerRepli
 .Getting neighbor peers
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-neighbor-peers", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-neighbor-peers", indent=0]
 ----
 
 
@@ -325,7 +327,7 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 Getting peer info
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-peer-info", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-peer-info", indent=0]
 ----
 
 
@@ -341,7 +343,7 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 
 [source,kotlin]
 ----
-include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-logdomain", indent=0]
+include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-logdomain", indent=0]
 ----
 
 
