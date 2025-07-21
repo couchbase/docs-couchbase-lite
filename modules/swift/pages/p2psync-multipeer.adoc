@@ -26,7 +26,7 @@ The dynamic mesh topology gives optimal peer connectivity and the lightweight an
 [TIP]
 .Bluetooth networking
 ====
-Multipeer Replication is currently available for use over IP networks.
+Multipeer Replication is available for use over IP networks.
 If you are working over a bluetooth network, then take a look at xref:p2psync-custom.adoc[integrating a Custom Listener]
 with Couchbase Lite's Active-Passive Peer-to-Peer synchronization.
 ====
@@ -89,14 +89,16 @@ Peers must be connected to the same Wi-Fi network to discover and establish conn
 
 === Supported Platforms
 
-We recommend using a recent release of iOS -- you will need at least iOS 15 (or macOS 12).
+We recommend using a recent release of iOS, you'll need at least iOS 15 (or macOS 12).
 
 
 == Configuration
 
 === Collection Configurations
 
-You can specify one or more collections available for replication when creating a MultipeerReplicatorConfiguration. For each collection, you will create MultipeerCollectionConfiguration with the collection object and optionally configure a custom conflict resolver or any replication filters you want to use for the collection.
+You can specify one or more collections available for replication when creating a MultipeerReplicatorConfiguration.
+
+For each collection, you will create `MultipeerCollectionConfiguration` with the collection object and optionally configure a custom conflict resolver or any replication filters you want to use for the collection.
 
 .Specify collections without any configurations
 [source,swift]
@@ -112,9 +114,13 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 
 === Peer Identity
 
-Each peer in the multipeer replication is uniquely identified and authenticated by using a peer's certificate. Multipeer Replicator which uses TLS communication by default will require to specify a TLSIdentity object for specifying the identity. Even though we allow the identity to be a self-signed certificate which is mostly suggested for non-production environments, the recommendation is to have the identity's certificate signed by an authority / issuer. The most simple setup is to bundle an issuer's identity with the application and use it for signing the peer identity's certificate. Later on, the issuer's certificate can be used for authenticating the connecting peer.
+Each peer in the multipeer replication is uniquely identified and authenticated by using a peer's certificate.
+Multipeer Replicator which uses TLS communication by default will require to specify a `TLSIdentity` object for specifying the identity.
+Even though we allow the identity to be a self-signed certificate which is mostly suggested for non-production environments, the recommendation is to have the identity's certificate signed by an authority / issuer.
+The most simple setup is to bundle an issuer's identity with the application and use it for signing the peer identity's certificate.
+Later on, the issuer's certificate can be used for authenticating the connecting peer.
 
-As each peer could be either a client or a server to the other peer in the multipeer replication environment, the identity's certificate must be created with the extension key usages for both client and server authentication to allow the certificate to be authenticated by either direction.
+In the multipeer replication environment, each peer can act as either a client or a server to the other peer, so you must create the identity's certificate with extension key usages for both client and server authentication to allow authentication in either direction
 
 .Get and Create an identity signed by an issuer
 [source,swift]
@@ -124,11 +130,12 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 
 === Peer Authenticator
 
-MultpeerReplicator only supports certificate based authentication. There are two ways to specify the authenticator : certificate authentication callback or root certificates.
+MultpeerReplicator only supports certificate based authentication.
+There are two ways to specify the authenticator : certificate authentication callback or root certificates.
 
-When specifying the certificate authentication callback, the callback will be called with the remote peer's identity certificate.
+When you specify the certificate authentication callback, the callback will receive the remote peer's identity certificate.
 
-When specifying the root certificates, the multipeer replicator will automatically authenticate the remote peer's identity certificate by verifying whether the certificate is signed by one of the specified root certificates.
+When you specify the root certificates, the multipeer replicator will automatically authenticate the remote peer's identity certificate by verifying whether one of the specified root certificates signed the certificate.
 
 .Authenticator with authentication callback
 [source,swift]
@@ -144,7 +151,7 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 
 === Create MultipeerReplicatorConfiguration
 
-The MutlipeerReplicatorConfiguration can be created with a peerGroupID which is an identity identifies the peer-to-peer network used by the app, collection configurations, peer identity, and authenticator.
+The MutlipeerReplicatorConfiguration can be created with a `peerGroupID` which is an identity identifies the peer-to-peer network used by the app, collection configurations, peer identity, and authenticator.
 
 .Creating MultipeerReplicatorConfiguration
 [source,swift]
@@ -185,7 +192,8 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 
 === Events
 
-Event types include the following. In general, the connection should just work, and most of these optional listen events give status you may only wish to use during development and testing.
+Event types include the following.
+In general, the connection should just work, and most of these optional listen events give status you may only want to use during development and testing.
 
 ==== Multipeer Replicator Status
 
@@ -224,7 +232,8 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 
 === Peer Identifier
 
-Each peer is assigned with a unique peer ID which is a digest of the peer's identity certificate. The peerID can be gotten from the peerID property of the MultipeerReplicator.
+You assign each peer a unique peer ID, which is a digest of the peer's identity certificate.
+You can get the peer ID from the `peerID` property of the `MultipeerReplicator`.
 
 .Getting peer ID
 [source,swift]
@@ -234,7 +243,7 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 
 === Neighbor Peers
 
-You can get a list of current online peers' Identifiers from the MultipeerReplicator from the neighborPeers property.
+You can get a list of current online peers' Identifiers from the `MultipeerReplicator` from the `neighborPeers` property.
 
 .Getting neighbor peers
 [source,swift]
