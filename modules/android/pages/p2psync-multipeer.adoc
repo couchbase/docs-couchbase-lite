@@ -90,8 +90,6 @@ Peers connect to the same Wi-Fi network to discover and establish connections wi
 For Android, we recommend using a recent release, preferably supporting minimum API level 24, or more recent but earlier versions should work with the multipeer sync feature.
 
 
-
-
 == Configuration
 
 
@@ -118,13 +116,11 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 ----
 
 
-
-
 === Peer Identity
 Each peer in the multipeer replication is uniquely identified and authenticated by using a peer's certificate.
 
 
-Multipeer Replicator which uses TLS communication by default will require to specify a `TLSIdentity` object for specifying the identity.
+`MultipeerReplicator` which uses TLS communication by default will require to specify a `TLSIdentity` object for specifying the identity.
 Even though we allow the identity to be a self-signed certificate which is suggested for non-production environments, the recommendation is to have the identity's certificate signed by an authority / issuer.
 
 
@@ -136,7 +132,6 @@ In the multipeer replication environment, each peer can act as either a client o
 
 
 
-
 .Get and Create an identity signed by an issuer
 [source,kotlin]
 ----
@@ -144,21 +139,15 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 ----
 
 
-
-
 === Peer Authenticator
 
 
-MultipeerReplicator only supports certificate based authentication.
+`MultipeerReplicator` only supports certificate based authentication.
 You can specify the authenticator in two ways: certificate authentication callback or root certificates.
 
+When you specify the certificate authentication callback, the callback receives the remote peer's identity certificate.
 
-When you specify the certificate authentication callback, the callback will receive the remote peer's identity certificate.
-
-
-When you specify the root certificates, the multipeer replicator will automatically authenticate the remote peer's identity certificate by verifying whether one of the specified root certificates signed the certificate.
-
-
+When you specify the root certificates, the `MultipeerReplicator` automatically authenticates the remote peer's identity certificate by verifying whether one of the specified root certificates signed the certificate.
 
 
 .Authenticator with authentication callback
@@ -182,7 +171,7 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 
 
 
-The MultipeerReplicatorConfiguration can be created with a `peerGroupID` which is an identifier that identifies the peer-to-peer network used by the app, collection configurations, peer identity, and authenticator.
+The `MultipeerReplicatorConfiguration` can be created with a `peerGroupID` which is an identifier that identifies the peer-to-peer network used by the app, collection configurations, peer identity, and authenticator.
 
 
 .Creating MultipeerReplicatorConfiguration
@@ -192,12 +181,9 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 ----
 
 
-
-
 TIP: In version 3.3.0, the recommended maximum number of peers in a mesh network is approximately 15.
 It should work with more but you'll need to carry out testing with your particular network,
 to assess any performance effects of packet loss or latency across larger mesh networks.
-
 
 
 
@@ -208,13 +194,11 @@ to assess any performance effects of packet loss or latency across larger mesh n
 
 
 
-
 .Creating MultipeerReplicator
 [source,kotlin]
 ----
 include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-replicator", indent=0]
 ----
-
 
 
 
@@ -363,8 +347,6 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 ----
 
 
-
-
 == Logging
 
 
@@ -379,8 +361,6 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 ----
 include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-logdomain", indent=0]
 ----
-
-
 
 
 == API Reference
