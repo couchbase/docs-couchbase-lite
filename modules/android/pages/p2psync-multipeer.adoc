@@ -92,16 +92,15 @@ For Android, we recommend using a recent release, preferably supporting minimum 
 
 == Configuration
 
+The `MultipeerReplicator` requires several configuration components to establish secure peer-to-peer replication between devices.
+This section covers the key configurations you need to set up:
 
 === Collection Configurations
 
 
 You can specify one or more collections available for replication when creating a `MultipeerReplicatorConfiguration`.
 
-
 For each collection, you'll create `MultipeerCollectionConfiguration` with the collection object and optionally configure a custom conflict resolver or any replication filters you want to use for the collection
-
-
 
 
 .Specify collections without any configurations
@@ -164,11 +163,7 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 ----
 
 
-
-
 === Create MultipeerReplicatorConfiguration
-
-
 
 
 The `MultipeerReplicatorConfiguration` can be created with a `peerGroupID` which is an identifier that identifies the peer-to-peer network used by the app, collection configurations, peer identity, and authenticator.
@@ -186,13 +181,10 @@ It should work with more but you'll need to carry out testing with your particul
 to assess any performance effects of packet loss or latency across larger mesh networks.
 
 
-
 == Life Cycle
 
 
 === Create MultipeerReplicator with Configuration
-
-
 
 .Creating MultipeerReplicator
 [source,kotlin]
@@ -203,7 +195,6 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 
 
 === Permissions
-
 
 Android requires specific permissions for DNS-SD operations.
 You can get the necessary permissions using:
@@ -216,10 +207,7 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 ----
 
 
-
-
 === Start
-
 
 .Starting MultipeerReplicator
 [source,kotlin]
@@ -240,9 +228,6 @@ include::kotlin:example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-
 
 === Background Behavior
 
-
-
-
 The `MultipeerReplicator` supports continuous mode, which allows it to operate in the background.
 
 
@@ -253,9 +238,6 @@ You should make sure that the application has the necessary permissions to run i
 
 
 === Events
-
-
-
 
 Event types include the following.
 In general, the connection should just work, and most of these optional listen events give status you may only want to use during development and testing.
