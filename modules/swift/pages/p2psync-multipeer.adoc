@@ -101,13 +101,13 @@ You can specify one or more collections available for replication when creating 
 .Specify collections without any configurations
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-collection-simple", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-collection-simple", indent=0]
 ----
 
 .Specify collections with some configuration
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-collection-config", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-collection-config", indent=0]
 ----
 
 === Peer Identity
@@ -119,7 +119,7 @@ As each peer could be either a client or a server to the other peer in the multi
 .Get and Create an identity signed by an issuer
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-tlsidentity", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-tlsidentity", indent=0]
 ----
 
 === Peer Authenticator
@@ -133,13 +133,13 @@ When specifying the root certificates, the multipeer replicator will automatical
 .Authenticator with authentication callback
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-authenticator-callback", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-authenticator-callback", indent=0]
 ----
 
 .Authenticator with root certificates
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-authenticator-rootcerts", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-authenticator-rootcerts", indent=0]
 ----
 
 === Create MultipeerReplicatorConfiguration
@@ -149,7 +149,7 @@ The MutlipeerReplicatorConfiguration can be created with a peerGroupID which is 
 .Creating MultipeerReplicatorConfiguration
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-config", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-config", indent=0]
 ----
 
 TIP: In version 3.3.0, the recommended maximum number of peers in a mesh network is approximately 15.
@@ -164,7 +164,7 @@ to assess any performance effects of packet loss or latency across larger mesh n
 .Creating MultipeerReplicator
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-replicator", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-replicator", indent=0]
 ----
 
 === Start
@@ -172,7 +172,7 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 .Starting MultipeerReplicator
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-replicator-start", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-replicator-start", indent=0]
 ----
 
 === Stop
@@ -180,7 +180,7 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 .Stopping MultipeerReplicator
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-replicator-stop", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-replicator-stop", indent=0]
 ----
 
 === Events
@@ -192,7 +192,7 @@ Event types include the following. In general, the connection should just work, 
 .Multipeer Replicator Status Listener
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-status-listener", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-status-listener", indent=0]
 ----
 
 ==== Peer Discovery Status
@@ -200,7 +200,7 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 .Peer Discovery Status Listener
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-peer-discovery-listener", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-peer-discovery-listener", indent=0]
 ----
 
 ==== Peer's Replicator Status
@@ -208,7 +208,7 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 .Peer's Replicator Status Listener
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-replicator-status-listener", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-replicator-status-listener", indent=0]
 ----
 
 ==== Peer's Document Replication
@@ -216,7 +216,7 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 .Peer's Document Replication Listener
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-document-replication-listener", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-document-replication-listener", indent=0]
 ----
 
 
@@ -229,7 +229,7 @@ Each peer is assigned with a unique peer ID which is a digest of the peer's iden
 .Getting peer ID
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-peer-id", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-peer-id", indent=0]
 ----
 
 === Neighbor Peers
@@ -239,7 +239,7 @@ You can get a list of current online peers' Identifiers from the MultipeerReplic
 .Getting neighbor peers
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-neighbor-peers", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-neighbor-peers", indent=0]
 ----
 
 === Peer Info
@@ -247,7 +247,7 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 .Getting peer info
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-peer-info", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-peer-info", indent=0]
 ----
 
 
@@ -260,7 +260,7 @@ include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipee
 
 [source,swift]
 ----
-include::swift:example$code_snippets/MultipeerP2pReplicator.swift[tags="multipeer-logdomain", indent=0]
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-logdomain", indent=0]
 ----
 
 
