@@ -21,7 +21,7 @@ pipeline {
                 stage("Validate iOS") {
                     agent { label 'mobile-builder-ios-pull-request' }
                     steps {
-                        sh 'jenkins/ios.sh 3.2.4 1.0.0'
+                        sh 'jenkins/ios.sh 3.3.0 1.0.0'
                     }
                 }
             }
