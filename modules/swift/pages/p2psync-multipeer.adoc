@@ -1,6 +1,6 @@
 = Multipeer P2P Replicator
 ifdef::show_edition[:page-edition: Enterprise Edition]
-:description: The Multipeer P2P Replicator enables lightweight, self-organizing mesh networks for apps running on the same local Wi-Fi.
+:description: The Multipeer Replicator enables lightweight, self-organizing mesh networks for apps running on the same local Wi-Fi.
 :source-language: swift
 
 
@@ -15,7 +15,7 @@ This approach requires minimal setup and automates peer discovery and connectivi
 // tag::introduction[]
 Couchbase Lite's Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronization between mobile and IoT devices without needing a centralized cloud-based control point.
 
-For small mesh topologies, Multipeer P2P Replicator offers autodiscovery for Wi-Fi-based networks and secure communication via TLS and certificate-based authentication.
+For small mesh topologies, Multipeer Replicator offers `autodiscovery` for Wi-Fi-based networks and secure communication via TLS and certificate-based authentication.
 The dynamic mesh topology gives optimal peer connectivity and the lightweight and low-maintenance configuration requires less management and less code than using active-passive peer-to-peer sync.
 
 
@@ -38,7 +38,7 @@ with Couchbase Lite's Active-Passive Peer-to-Peer synchronization.
 
 == Overview
 
-To maintain optimal connectivity, efficient data transport, and balanced workloads, the Multipeer P2P Replicator forms a dynamic mesh network among peers in the same group.
+To maintain optimal connectivity, efficient data transport, and balanced workloads, the Multipeer Replicator forms a dynamic mesh network among peers in the same group.
 The mesh network provides resilience through multiple communication pathways - if one connection fails, data can flow through alternative routes.
 It avoids redundant direct connections, evenly distributes connections across peers, and optimizes communication paths through intelligent routing.
 
@@ -46,60 +46,49 @@ The mesh network continuously adapts as peers join or leave, automatically heali
 
 This self-organizing approach ensures reliable data synchronization even in challenging network conditions, where individual peer connections may be intermittent or unreliable.
 
+Couchbase Lite supports different transport modes depending on the peer-to-peer synchronization approach:
+
+=== Multipeer Replicator
+- Current support (CBL 3.3): Wi-Fi (IP-based transport)
+
 
 // Mesh Diagram
 
-[graphviz]
-....
-graph {
-    layout="circo";
-    id1[ label="iOS Device #1" shape="square" ]
-    id2[ label="iOS Device #2" shape="square" ]
-    id3[ label="iOS Device #3" shape="square" ]
-    id4[ label="iOS Device #4" shape="square" ]
-    id5[ label="iOS Device #5" shape="square" ]
-    id6[ label="iOS Device #6" shape="square" ]
-    id1 -- id2
-    id1 -- id3
-    id1 -- id4
-    id1 -- id5
-    id1 -- id6
-    id2 -- id3
-    id2 -- id4
-    id2 -- id5
-    id2 -- id6
-    id3 -- id4
-    id3 -- id5
-    id3 -- id6
-    id4 -- id5
-    id4 -- id6
-    id5 -- id6
-}
-....
+// [mesh]
+// ....
+// graph {
+//     layout="circo";
+//     id1[ label="iOS Device #1" shape="square" ]
+//     id2[ label="iOS Device #2" shape="square" ]
+//     id3[ label="iOS Device #3" shape="square" ]
+//     id4[ label="iOS Device #4" shape="square" ]
+//     id5[ label="iOS Device #5" shape="square" ]
+//     id6[ label="iOS Device #6" shape="square" ]
+//     id1 -- id2
+//     id1 -- id3
+//     id1 -- id4
+//     id1 -- id5
+//     id1 -- id6
+//     id2 -- id3
+//     id2 -- id4
+//     id2 -- id5
+//     id2 -- id6
+//     id3 -- id4
+//     id3 -- id5
+//     id3 -- id6
+//     id4 -- id5
+//     id4 -- id6
+//     id5 -- id6
+// }
+// ....
 
-
-== Supported Transport Modes
-
-Couchbase Lite supports different transport modes depending on the peer-to-peer synchronization approach:
-
-=== Multipeer P2P Replicator
-- Current support (CBL 3.3): Wi-Fi (IP-based transport)
-- Future support (post-4.0): Bluetooth Low Energy
-
-=== Active-Passive Peer-to-Peer
-- Supports: Wi-Fi (IP-based transport modes only)
-
-=== Custom Listener Integration
-- Supports: Bring your own transport mode
-- The application implements the transport layer, allowing for custom protocols including Bluetooth Low Energy
-- Couchbase Lite provides the interface definition while the application handles the transport implementation
 
 
 == Prerequisites
 
 === Transport and Peer Discovery Protocol
 
-Multipeer P2P Replicator supports Wi-Fi transport, using `DNS-SD` (also known as *Bonjour*) for peer discovery.
+Multipeer Replicator supports Wi-Fi transport, using `DNS-SD` (also known as *Bonjour*) for peer discovery.
 You must connect Peers to the same Wi-Fi network to discover and establish connections with one another.
 
 === Supported Platforms
@@ -130,14 +119,15 @@ include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-c
 === Peer Identity
 
 
-Each peer in the multipeer replication is uniquely identified and authenticated by using a peer's certificate.
+Each peer in the Multipeer replication is uniquely identified and authenticated by using a peer's certificate.
+
 Multipeer Replicator which uses TLS communication by default requires to specify a `TLSIdentity` object for specifying the identity.
 
 Although you can use a self-signed certificate for the identity (recommended for non-production environments), you should have an authority or issuer sign the identity's certificate for production use.
 The most common setup is to bundle an issuer's identity with the application and use it for signing the peer identity's certificate.
 
 Later on, the issuer's certificate authenticates the connecting peer.
-As each peer could be either a client or a server to the other peer in the multipeer replication environment, you must create the identity's certificate with the extension key usages for both client and server authentication to allow either direction to authenticate the certificate.
+As each peer could be either a client or a server to the other peer in the Multipeer replication environment, you must create the identity's certificate with the extension key usages for both client and server authentication to allow either direction to authenticate the certificate.
 
 
 .Get and Create an identity signed by an issuer
@@ -149,14 +139,14 @@ include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-t
 === Peer Authenticator
 
 MultpeerReplicator only supports certificate based authentication.
-There are two ways to specify the authenticator:
+You can specify the authenticator in two ways:
 
 * certificate authentication callback
 * root certificates.
 
 When specifying the certificate authentication callback, the callback calls the remote peer's identity certificate.
 
-When specifying the root certificates, the multipeer replicator automatically authenticates the remote peer's identity certificate by verifying whether one of the specified root certificates signed the certificate.
+When specifying the root certificates, the Multipeer replicator automatically authenticates the remote peer's identity certificate by verifying whether one of the specified root certificates signed the certificate.
 
 
 .Authenticator with authentication callback
@@ -254,7 +244,7 @@ include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-d
 
 === Peer Identifier
 
-Each peer is assigned with a unique `peerID` which is a digest of the peer's identity certificate.
+A unique `peerID`, which is a digest of the peer's identity certificate, identifies each peer.
 You can get your `peerID` from the `peerID` property of the `MultipeerReplicator`.
 
 

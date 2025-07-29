@@ -1,7 +1,6 @@
 = Multipeer P2P Replicator
 ifdef::show_edition[:page-edition: Enterprise Edition]
-:description: The Multipeer P2P Replicator enables lightweight, self-organizing mesh networks for apps running on the same local Wi-Fi.
-:source-language: Java
+:description: The Multipeer Replicator enables lightweight, self-organizing mesh networks for apps running on the same local Wi-Fi.
 :source-language: Kotlin
 
 
@@ -15,19 +14,19 @@ This approach requires minimal setup and automates peer discovery and connectivi
 [#introduction]
 == Introduction
 
-
 Couchbase Lite's Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronization between mobile and IoT devices without needing a centralized cloud-based control point.
 
+For small mesh topologies, Multipeer Replicator offers `autodiscovery` for Wi-Fi-based networks and secure communication via TLS and certificate-based authentication.
 
-For small mesh topologies, Multipeer P2P Replicator offers `autodiscovery` for wifi-based networks and secure communication via TLS and certificate-based authentication.
-The dynamic mesh topology gives optimal peer connectivity and the lightweight and low-maintenance configuration requires less management and less code than using Active-Passive peer-to-peer sync.
+The dynamic mesh topology gives optimal peer connectivity and the lightweight and low-maintenance configuration requires less management and less code than using active-passive peer-to-peer sync.
 
 
 [TIP]
 .Bluetooth networking
 ====
-Multipeer Replication is available for use over IP networks.
-If you are working over a bluetooth network, then take a look at xref:p2psync-custom.adoc[integrating a Custom Listener]
+Multipeer Replication is available for use over IP networks including Wi-Fi.
+Post-4.0 releases include Bluetooth Low Energy support.
+If you're working over a Bluetooth network, then take a look at xref:p2psync-custom.adoc[integrating a Custom Listener]
 with Couchbase Lite's Active-Passive Peer-to-Peer synchronization.
 ====
 
@@ -35,45 +34,48 @@ with Couchbase Lite's Active-Passive Peer-to-Peer synchronization.
 == Overview
 
 
-The Multipeer P2P Replicator automatically advertises its presence, discovers other peers,
-and establishes connections for data replication with peers that share the same group identifier defined by the application.
+To maintain optimal connectivity, efficient data transport, and balanced workloads, the Multipeer Replicator forms a dynamic mesh network among peers in the same group.
+The mesh network provides resilience through multiple communication pathways - if one connection fails, data can flow through alternative routes.
 
+It avoids redundant direct connections, evenly distributes connections across peers, and optimizes communication paths through intelligent routing.
 
-To maintain optimal connectivity, efficient data transport, and balanced workloads, the Multipeer P2P Replicator forms a dynamic mesh network among peers in the same group.
+The mesh network continuously adapts as peers join or leave, automatically healing itself by establishing new connections and rerouting data flow to maintain network integrity.
 
+This self-organizing approach ensures reliable data synchronization even in challenging network conditions, where individual peer connections may be intermittent or unreliable.
 
-It avoids redundant direct connections, evenly distributes connections across peers, and optimizes communication paths.
-The mesh network continuously adapts as peers join or leave.
+Couchbase Lite supports different transport modes depending on the peer-to-peer synchronization approach:
 
+=== Multipeer Replicator
+- Current support (CBL 3.3): Wi-Fi (IP-based transport)
 
 // Mesh Diagram
-[graphviz]
-....
-graph {
-    layout="circo";
-    id1[ label="Android Device #1" shape="square" ]
-    id2[ label="Android Device #2" shape="square" ]
-    id3[ label="Android Device #3" shape="square" ]
-    id4[ label="Android Device #4" shape="square" ]
-    id5[ label="Android Device #5" shape="square" ]
-    id6[ label="Android Device #6" shape="square" ]
-    id1 -- id2
-    id1 -- id3
-    id1 -- id4
-    id1 -- id5
-    id1 -- id6
-    id2 -- id3
-    id2 -- id4
-    id2 -- id5
-    id2 -- id6
-    id3 -- id4
-    id3 -- id5
-    id3 -- id6
-    id4 -- id5
-    id4 -- id6
-    id5 -- id6
-}
-....
+// [graphviz]
+// ....
+// graph {
+//     layout="circo";
+//     id1[ label="Android Device #1" shape="square" ]
+//     id2[ label="Android Device #2" shape="square" ]
+//     id3[ label="Android Device #3" shape="square" ]
+//     id4[ label="Android Device #4" shape="square" ]
+//     id5[ label="Android Device #5" shape="square" ]
+//     id6[ label="Android Device #6" shape="square" ]
+//     id1 -- id2
+//     id1 -- id3
+//     id1 -- id4
+//     id1 -- id5
+//     id1 -- id6
+//     id2 -- id3
+//     id2 -- id4
+//     id2 -- id5
+//     id2 -- id6
+//     id3 -- id4
+//     id3 -- id5
+//     id3 -- id6
+//     id4 -- id5
+//     id4 -- id6
+//     id5 -- id6
+// }
+// ....
 
 
 == Prerequisites
@@ -82,7 +84,7 @@ graph {
 === Transport and Peer Discovery Protocol
 
 
-Multipeer P2P Replicator supports Wi-Fi transport, using `DNS-SD` (also known as Bonjour) for peer discovery.
+Multipeer  Replicator supports Wi-Fi transport, using `DNS-SD` (also known as Bonjour) for peer discovery.
 Peers connect to the same Wi-Fi network to discover and establish connections with one another.
 
 
@@ -90,7 +92,7 @@ Peers connect to the same Wi-Fi network to discover and establish connections wi
 
 
 For Android, we recommend using a recent release, preferably supporting minimum API level 24, or more recent but earlier versions should work with the multipeer sync feature.
-
+See xref:kotlin:supported-os.adoc[Supported Platforms] for more details.
 
 == Configuration
 
@@ -118,19 +120,16 @@ include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-collect
 
 
 === Peer Identity
-Each peer in the multipeer replication is uniquely identified and authenticated by using a peer's certificate.
 
+Each peer in the Multipeer replication is uniquely identified and authenticated by using a peer's certificate.
 
-`MultipeerReplicator` which uses TLS communication by default will require to specify a `TLSIdentity` object for specifying the identity.
-Even though we allow the identity to be a self-signed certificate which is suggested for non-production environments, the recommendation is to have the identity's certificate signed by an authority / issuer.
+Multipeer Replicator which uses TLS communication by default requires to specify a `TLSIdentity` object for specifying the identity.
 
+Although you can use a self-signed certificate for the identity (recommended for non-production environments), you should have an authority or issuer sign the identity's certificate for production use.
+The most common setup is to bundle an issuer's identity with the application and use it for signing the peer identity's certificate.
 
-The most simple setup is to bundle an issuer's identity with the application and use it for signing the peer identity's certificate.
-Later on, You can use the issuer's certificate for authenticating the connecting peer.
-
-
-In the multipeer replication environment, each peer can act as either a client or a server to the other peer, so you must create the identity's certificate with extension key usages for both client and server authentication to allow authentication from either direction.
-
+Later on, the issuer's certificate authenticates the connecting peer.
+As each peer could be either a client or a server to the other peer in the Multipeer replication environment, you must create the identity's certificate with the extension key usages for both client and server authentication to allow either direction to authenticate the certificate.
 
 
 .Get and Create an identity signed by an issuer
@@ -142,13 +141,15 @@ include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-tlsiden
 
 === Peer Authenticator
 
-
 `MultipeerReplicator` only supports certificate based authentication.
-You can specify the authenticator in two ways: certificate authentication callback or root certificates.
+You can specify the authenticator in two ways:
 
-When you specify the certificate authentication callback, the callback receives the remote peer's identity certificate.
+* certificate authentication callback
+* root certificates.
 
-When you specify the root certificates, the `MultipeerReplicator` automatically authenticates the remote peer's identity certificate by verifying whether one of the specified root certificates signed the certificate.
+When specifying the certificate authentication callback, the callback calls the remote peer's identity certificate.
+
+When specifying the root certificates, the Multipeer replicator automatically authenticates the remote peer's identity certificate by verifying whether one of the specified root certificates signed the certificate.
 
 
 .Authenticator with authentication callback
@@ -178,9 +179,8 @@ include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-config"
 ----
 
 
-TIP: In version 3.3.0, the recommended maximum number of peers in a mesh network is approximately 15.
-It should work with more but you'll need to carry out testing with your particular network,
-to assess any performance effects of packet loss or latency across larger mesh networks.
+TIP: Version 3.3.0 recommends a maximum of 15 peers in a mesh network.
+If you intend to exceed 15 peers, run tests with your particular network to assess any performance effects of packet loss or latency.
 
 
 == Life Cycle
@@ -241,8 +241,8 @@ You should make sure that the application has the necessary permissions to run i
 
 === Events
 
-Event types include the following.
 In general, the connection should just work, and most of these optional listen events give status you may only want to use during development and testing.
+Event types include the following:
 
 
 ==== Multipeer Replicator Status
@@ -295,10 +295,8 @@ include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-documen
 === Peer Identifier
 
 
-You assign each peer a unique peer ID, which is a digest of the peer's identity certificate.
-You can get the peer ID from the `peerID` property of the `MultipeerReplicator`.
-
-
+A unique `peerID`, which is a digest of the peer's identity certificate, identifies each peer.
+You can get your `peerID` from the `peerID` property of the `MultipeerReplicator`.
 
 
 Getting peer ID
