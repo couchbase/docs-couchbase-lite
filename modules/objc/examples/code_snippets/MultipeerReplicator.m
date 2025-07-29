@@ -76,26 +76,24 @@
     
     // If the identity doesn't exist or expired, create a new one.
     if (!identity || [identity.expiration compare:[NSDate date]] == NSOrderedAscending) {
-        // Create an issuer identity from the private key and certificate data in DER format.
-        NSData *privateKey = [self getIssuerPrivateKeyData];
-        NSData *cert = [self getIssuerCertificateData];
-        CBLTLSIdentity *issuer = [CBLTLSIdentity createIdentityWithPrivateKey:privateKey
-                                                                  certificate:cert
-                                                                        error:&error];
+        // Get the issuer's private key and certificate data (DER format) for signing the identity's certificate.
+        NSData *caKey = [self getIssuerPrivateKeyData];
+        NSData *caCert = [self getIssuerCertificateData];
         
         // Create a new identity signed with the issuer.
         NSDictionary *attrs = @{ kCBLCertAttrCommonName: @"MyApp" };
         NSDate *expiration = [[NSCalendar currentCalendar] dateByAddingUnit:NSCalendarUnitYear
-                                                                     value:2
-                                                                    toDate:[NSDate date]
-                                                                   options:0];
+                                                                      value:2
+                                                                     toDate:[NSDate date]
+                                                                    options:0];
         
-        identity = [CBLTLSIdentity createIdentityForKeyUsages:kCBLKeyUsagesClientAuth|kCBLKeyUsagesServerAuth
-                                                   attributes:attrs
-                                                   expiration:expiration
-                                                       issuer:issuer
-                                                        label:persistentLabel
-                                                        error:&error];
+        identity = [CBLTLSIdentity createSignedIdentityInsecureForKeyUsages:kCBLKeyUsagesClientAuth|kCBLKeyUsagesServerAuth
+                                                                 attributes:attrs
+                                                                 expiration:expiration
+                                                                      caKey:caKey
+                                                              caCertificate:caCert
+                                                                      label:persistentLabel
+                                                                      error:&error];
     }
     // end::multipeer-tlsidentity
     return identity;
@@ -120,15 +118,12 @@
 }
 
 - (id<CBLMultipeerAuthenticator>)authenticatorWithRootCerts {
-    NSData *privateKey = [self getIssuerPrivateKeyData];
-    NSData *cert = [self getIssuerCertificateData];
-    NSError *error = nil;
-    CBLTLSIdentity *issuer = [CBLTLSIdentity createIdentityWithPrivateKey:privateKey
-                                                              certificate:cert
-                                                                    error:&error];
     // tag::multipeer-authenticator-rootcerts
+    // Get issuer's certificate data (DER format), which was used to sign the peer's certificate.
+    NSData *caCert = [self getIssuerCertificateData];
+    SecCertificateRef caCertRef = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)caCert);
     id<CBLMultipeerAuthenticator> authenticator =
-    [[CBLMultipeerCertificateAuthenticator alloc] initWithRootCerts:issuer.certs];
+    [[CBLMultipeerCertificateAuthenticator alloc] initWithRootCerts:@[(__bridge_transfer id)caCertRef]];
     // end::multipeer-authenticator-rootcerts
     return authenticator;
 }
@@ -172,7 +167,6 @@
 }
 
 - (void)statusListener {
-    NSError *error = nil;
     CBLMultipeerReplicator *replicator = [self createMultipeerReplicator];
     // tag::multipeer-status-listener
     [replicator addStatusListenerWithQueue:nil listener:^(CBLMultipeerReplicatorStatus *status) {

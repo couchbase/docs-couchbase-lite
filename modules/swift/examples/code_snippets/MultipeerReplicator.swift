@@ -65,23 +65,21 @@ class MultipeerReplicatorSnippets {
 
         // If the identity doesn't exist or expired, create a new one.
         if identity == nil {
-            // Create an issuer identity from the private key and certificate data.
-            let privateKey = try getIssuerPrivateKeyData()
-            let cert = try getIssuerCertificateData()
-            let issuer = try TLSIdentity.createIdentity(
-                withPrivateKey: privateKey,
-                certificate: cert)
-
             // Define certificate attributes and expiration date.
             let attrs: [String: String] = [certAttrCommonName: "MyApp"]
             let expiration = Calendar.current.date(byAdding: .year, value: 2, to: Date())!
 
+            // Get issuer's private key and certificate data (DER format) for signing the identity's certificate.
+            let caKey = try getIssuerPrivateKeyData()
+            let caCert = try getIssuerCertificateData()
+            
             // Create a new identity signed with the issuer and save it with the persistent label.
-            identity = try TLSIdentity.createIdentity(
+            identity = try TLSIdentity.createSignedIdentityInsecure(
                 for: [.clientAuth, .serverAuth],
                 attributes: attrs,
                 expiration: expiration,
-                issuer: issuer,
+                caKey: caKey,
+                caCertificate: caCert,
                 label: persistentLabel)
         }
         // end::multipeer-tlsidentity[]
@@ -106,12 +104,11 @@ class MultipeerReplicatorSnippets {
     }
 
     func authenticatorWithRootCerts() throws -> MultipeerAuthenticator {
-        let privateKey = try getIssuerPrivateKeyData()
-        let cert = try getIssuerCertificateData()
-        let issuer = try TLSIdentity.createIdentity(withPrivateKey: privateKey, certificate: cert)
-
         // tag::multipeer-authenticator-rootcerts[]
-        let authenticator = MultipeerCertificateAuthenticator(rootCerts: issuer.certs)
+        // Get issuer's certificate data (DER format), which was used to sign the peer's certificate.
+        let caCert = try getIssuerCertificateData()
+        let caCertRef = SecCertificateCreateWithData(nil, caCert as CFData)!
+        let authenticator = MultipeerCertificateAuthenticator(rootCerts: [caCertRef])
         // end::multipeer-authenticator-rootcerts[]
         return authenticator
     }
