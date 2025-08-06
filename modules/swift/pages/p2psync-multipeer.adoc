@@ -77,9 +77,37 @@ Couchbase Lite supports different transport modes depending on the peer-to-peer 
 Multipeer Replicator supports Wi-Fi transport, using `DNS-SD` (also known as *Bonjour*) for peer discovery.
 You must connect Peers to the same Wi-Fi network to discover and establish connections with one another.
 
+=== Configuration Requirements
+
+To use `DNS-SD` for peer discovery, iOS apps must declare the *Bonjour* service type and request local network access permissions.
+Add the following keys to your app's `Info.plist`:
+
+==== NSBonjourServices
+Declare the service type used by MultipeerReplicator:
+
+[source,xml]
+----
+<key>NSBonjourServices</key>
+<array>
+	<string>_couchbaseP2P._tcp</string>
+</array>
+----
+
+==== NSLocalNetworkUsageDescription
+Add a usage description for local network access:
+
+[source,xml]
+----
+<key>NSLocalNetworkUsageDescription</key>
+<string>Used for discovering and connecting to peers for peer-to-peer sync.</string>
+----
+
+TIP: You can also configure these settings through Xcode's Info configuration UI under "*Bonjour Services*" and "*Privacy – Local Network Usage Description*."
+
+
 === Supported Platforms
 
-We recommend using a recent release of iOS, see our xref:swift:supported-os.adoc[Supported Platforms] for details.
+We recommend using a recent release of iOS, see xref:swift:supported-os.adoc[Supported Platforms] for details.
 
 
 == Configuration
