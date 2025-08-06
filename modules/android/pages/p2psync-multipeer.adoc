@@ -20,17 +20,6 @@ For small mesh topologies, Multipeer Replicator offers `autodiscovery` for Wi-Fi
 
 The dynamic mesh topology gives optimal peer connectivity and the lightweight and low-maintenance configuration requires less management and less code than using active-passive peer-to-peer sync.
 
-
-[TIP]
-.Bluetooth networking
-====
-Multipeer Replication is available for use over IP networks including Wi-Fi.
-Post-4.0 releases include Bluetooth Low Energy support.
-If you're working over a Bluetooth network, then take a look at xref:p2psync-custom.adoc[integrating a Custom Listener]
-with Couchbase Lite's Active-Passive Peer-to-Peer synchronization.
-====
-
-
 == Overview
 
 
@@ -125,8 +114,8 @@ Each peer in the Multipeer replication is uniquely identified and authenticated 
 
 Multipeer Replicator which uses TLS communication by default requires to specify a `TLSIdentity` object for specifying the identity.
 
-Although you can use a self-signed certificate for the identity (recommended for non-production environments), you should have an authority or issuer sign the identity's certificate for production use.
-The most common setup is to bundle an issuer's identity with the application and use it for signing the peer identity's certificate.
+You can use either a self-signed certificate for the identity or have an authority or issuer sign the identity's certificate.
+The choice depends on your specific security requirements and deployment environment.
 
 Later on, the issuer's certificate authenticates the connecting peer.
 As each peer could be either a client or a server to the other peer in the Multipeer replication environment, you must create the identity's certificate with the extension key usages for both client and server authentication to allow either direction to authenticate the certificate.
@@ -165,6 +154,17 @@ include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-authent
 include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-authenticator-rootcerts", indent=0]
 ----
 
+=== Self-Signed Certificate Implementation
+
+For environments where certificate authority management is not feasible, you can implement peer identity using self-signed certificates. This approach is commonly used in closed network environments where devices need to authenticate with each other without external certificate authorities.
+
+.Creating a self-signed identity for peer authentication
+[source,kotlin]
+----
+include::example$code_snippets/MultipeerReplicator.kt[tags="multipeer-self-signed-identity", indent=0]
+----
+
+When using self-signed certificates, implement your own certificate validation logic in the authenticator callback to make sure only trusted peers can join your mesh network.
 
 === Create MultipeerReplicatorConfiguration
 
@@ -178,10 +178,8 @@ The `MultipeerReplicatorConfiguration` can be created with a `peerGroupID` which
 include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-config", indent=0]
 ----
 
-
-TIP: Version 3.3.0 recommends a maximum of 15 peers in a mesh network.
-If you intend to exceed 15 peers, run tests with your particular network to assess any performance effects of packet loss or latency.
-
+TIP: Performance may vary in mesh networks depending on your specific environment and number of peers.
+We recommend running tests with your network configuration to assess any effects on packet loss or latency.
 
 == Life Cycle
 
