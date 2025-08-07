@@ -65,7 +65,36 @@
     return collections;
 }
 
-- (CBLTLSIdentity *)peerIdentity {
+- (CBLTLSIdentity *)createSelfSignedIdentity {
+    // tag::multipeer-selfsigned-tlsidentity
+    // Note: This example is simplified for demonstration and does not include error handling.
+    NSString *persistentLabel = @"com.myapp.identity";
+    
+    // Retrieve the TLS identity from the keychain using the persistent label.
+    NSError *error = nil;
+    CBLTLSIdentity *identity = [CBLTLSIdentity identityWithLabel:persistentLabel error:&error];
+    
+    // If the identity doesn't exist or expired, create a new one.
+    if (!identity || [identity.expiration compare:[NSDate date]] == NSOrderedAscending) {
+        // Define certificate attributes and expiration date.
+        NSDictionary *attrs = @{ kCBLCertAttrCommonName: @"MyApp" };
+        NSDate *expiration = [[NSCalendar currentCalendar] dateByAddingUnit:NSCalendarUnitYear
+                                                                      value:2
+                                                                     toDate:[NSDate date]
+                                                                    options:0];
+        
+        // Create and store a new self-signed identity in the keychain with a persistent label.
+        identity = [CBLTLSIdentity createIdentityForKeyUsages:kCBLKeyUsagesClientAuth|kCBLKeyUsagesServerAuth
+                                                   attributes:attrs
+                                                   expiration:expiration
+                                                        label:persistentLabel
+                                                        error:&error];
+    }
+    // end::multipeer-selfsigned-tlsidentity
+    return identity;
+}
+
+- (CBLTLSIdentity *)createCASignedIdentity {
     // tag::multipeer-tlsidentity
     // Note: This example is simplified for demonstration and does not include error handling.
     NSString *persistentLabel = @"com.myapp.identity";
@@ -80,13 +109,14 @@
         NSData *caKey = [self getIssuerPrivateKeyData];
         NSData *caCert = [self getIssuerCertificateData];
         
-        // Create a new identity signed with the issuer.
+        // Define certificate attributes and expiration date.
         NSDictionary *attrs = @{ kCBLCertAttrCommonName: @"MyApp" };
         NSDate *expiration = [[NSCalendar currentCalendar] dateByAddingUnit:NSCalendarUnitYear
                                                                       value:2
                                                                      toDate:[NSDate date]
                                                                     options:0];
         
+        // Create and store a new identity signed with the issuer in the keychain with a persistent label.
         identity = [CBLTLSIdentity createSignedIdentityInsecureForKeyUsages:kCBLKeyUsagesClientAuth|kCBLKeyUsagesServerAuth
                                                                  attributes:attrs
                                                                  expiration:expiration
@@ -129,7 +159,7 @@
 }
 
 - (CBLMultipeerReplicatorConfiguration *)createConfig {
-    CBLTLSIdentity *identity = [self peerIdentity];
+    CBLTLSIdentity *identity = [self createCASignedIdentity];
     id<CBLMultipeerAuthenticator> authenticator = [self authenticatorWithRootCerts];
     NSArray<CBLMultipeerCollectionConfiguration *> *collections = [self collectionConfig];
     
@@ -229,9 +259,8 @@
 - (void)neighborPeers {
     CBLMultipeerReplicator *replicator = [self createMultipeerReplicator];
     // tag::multipeer-neighbor-peers
-    NSArray<CBLPeerID *> *neighborPeers = replicator.neighborPeers;
     NSLog(@"Neighbor Peers:");
-    for (CBLPeerID *peerID in neighborPeers) {
+    for (CBLPeerID *peerID in replicator.neighborPeers) {
         NSLog(@" %@", peerID);
     }
     // end::multipeer-neighbor-peers
@@ -245,9 +274,8 @@
     void (^printPeerInfo)(CBLPeerInfo *) = ^(CBLPeerInfo *info) {
         NSLog(@"Peer ID: %@", info.peerID);
         NSLog(@" Status: %@", info.online ? @"online" : @"offline");
-        NSArray<CBLPeerID *> *neighborPeers = replicator.neighborPeers;
         NSLog(@" Neighbor Peers:");
-        for (CBLPeerID *peerID in neighborPeers) {
+        for (CBLPeerID *peerID in info.neighborPeers) {
             NSLog(@"  %@", peerID);
         }
         
