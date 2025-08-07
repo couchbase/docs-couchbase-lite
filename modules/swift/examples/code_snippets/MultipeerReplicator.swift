@@ -50,7 +50,37 @@ class MultipeerReplicatorSnippets {
         return collections
     }
 
-    func peerIdentity() throws -> TLSIdentity {
+    func createselfSignedIdentity() throws -> TLSIdentity {
+        // tag::multipeer-selfsigned-tlsidentity[]
+        let persistentLabel = "com.myapp.identity"
+
+        // Retrieve the TLS identity from the keychain using the persistent label.
+        var identity = try TLSIdentity.identity(withLabel: persistentLabel)
+
+        // If the identity exists but is expired, delete it.
+        if let existing = identity, existing.expiration < Date() {
+            try TLSIdentity.deleteIdentity(withLabel: persistentLabel)
+            identity = nil
+        }
+
+        // If the identity doesn't exist or expired, create a new one.
+        if identity == nil {
+            // Define certificate attributes and expiration date.
+            let attrs: [String: String] = [certAttrCommonName: "MyApp"]
+            let expiration = Calendar.current.date(byAdding: .year, value: 2, to: Date())!
+            
+            // Create and store a new self-signed identity in the keychain with a persistent label.
+            identity = try TLSIdentity.createIdentity(
+                for: [.clientAuth, .serverAuth],
+                attributes: attrs,
+                expiration: expiration,
+                label: persistentLabel)
+        }
+        // end::multipeer-selfsigned-tlsidentity[]
+        return identity!
+    }
+    
+    func createCASignedIdentity() throws -> TLSIdentity {
         // tag::multipeer-tlsidentity[]
         let persistentLabel = "com.myapp.identity"
 
@@ -73,7 +103,7 @@ class MultipeerReplicatorSnippets {
             let caKey = try getIssuerPrivateKeyData()
             let caCert = try getIssuerCertificateData()
             
-            // Create a new identity signed with the issuer and save it with the persistent label.
+            // Create and store a new identity signed with the issuer in the keychain with a persistent label.
             identity = try TLSIdentity.createSignedIdentityInsecure(
                 for: [.clientAuth, .serverAuth],
                 attributes: attrs,
@@ -114,7 +144,7 @@ class MultipeerReplicatorSnippets {
     }
 
     func createConfig() throws -> MultipeerReplicatorConfiguration {
-        let identity = try peerIdentity()
+        let identity = try createCASignedIdentity()
         let authenticator = try authenticatorWithRootCerts()
         let collections = try collectionConfig()
 
@@ -216,9 +246,8 @@ class MultipeerReplicatorSnippets {
     func neighborPeers() throws {
         let replicator = try createMultipeerReplicator()
         // tag::multipeer-neighbor-peers[]
-        let neighborPeers = replicator.neighborPeers
         print("Neighbor Peers:")
-        neighborPeers.forEach { peerID in
+        replicator.neighborPeers.forEach { peerID in
             print(" \(peerID)")
         }
         // end::multipeer-neighbor-peers[]
@@ -232,9 +261,8 @@ class MultipeerReplicatorSnippets {
         let printPeerInfo: (PeerInfo) -> Void = { info in
             print("Peer ID: \(info.peerID)")
             print(" Status: \(info.online ? "online" : "offline")")
-            let neighborPeers = replicator.neighborPeers
             print(" Neighbor Peers:")
-            neighborPeers.forEach { peerID in
+            info.neighborPeers.forEach { peerID in
                 print("  \(peerID)")
             }
 
