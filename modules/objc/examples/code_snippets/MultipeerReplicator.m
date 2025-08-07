@@ -74,8 +74,14 @@
     NSError *error = nil;
     CBLTLSIdentity *identity = [CBLTLSIdentity identityWithLabel:persistentLabel error:&error];
     
+    // If the identity exists but is expired, delete it.
+    if (identity && [identity.expiration compare:[NSDate date]] == NSOrderedAscending) {
+        [CBLTLSIdentity deleteIdentityWithLabel: persistentLabel error: &error];
+        identity = nil;
+    }
+        
     // If the identity doesn't exist or expired, create a new one.
-    if (!identity || [identity.expiration compare:[NSDate date]] == NSOrderedAscending) {
+    if (!identity) {
         // Define certificate attributes and expiration date.
         NSDictionary *attrs = @{ kCBLCertAttrCommonName: @"MyApp" };
         NSDate *expiration = [[NSCalendar currentCalendar] dateByAddingUnit:NSCalendarUnitYear
@@ -103,8 +109,14 @@
     NSError *error = nil;
     CBLTLSIdentity *identity = [CBLTLSIdentity identityWithLabel:persistentLabel error:&error];
     
+    // If the identity exists but is expired, delete it.
+    if (identity && [identity.expiration compare:[NSDate date]] == NSOrderedAscending) {
+        [CBLTLSIdentity deleteIdentityWithLabel: persistentLabel error: &error];
+        identity = nil;
+    }
+        
     // If the identity doesn't exist or expired, create a new one.
-    if (!identity || [identity.expiration compare:[NSDate date]] == NSOrderedAscending) {
+    if (!identity) {
         // Get the issuer's private key and certificate data (DER format) for signing the identity's certificate.
         NSData *caKey = [self getIssuerPrivateKeyData];
         NSData *caCert = [self getIssuerCertificateData];
