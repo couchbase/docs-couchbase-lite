@@ -24,6 +24,12 @@ pipeline {
                         sh 'jenkins/ios.sh 3.3.0 1.0.0'
                     }
                 }
+                stage("Validate Android") {
+                    agent { label 'cbl-android' }
+                    steps {
+                        sh 'jenkins/android_build.sh 3.3.0 1.0.0'
+                    }
+                }
             }
         }
     }

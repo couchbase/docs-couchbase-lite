@@ -15,8 +15,6 @@
 //
 package com.couchbase.codesnippets;
 
-import java.io.File;
-
 import org.jetbrains.annotations.NotNull;
 
 import com.couchbase.lite.Array;
@@ -33,9 +31,6 @@ import com.couchbase.lite.MutableDocument;
 @SuppressWarnings("unused")
 public class BasicExamples {
     public static class SupportingDatatypes {
-        private final File rootDir;
-
-        public SupportingDatatypes(@NotNull File rootDir) { this.rootDir = rootDir; }
 
         public void datatypeUsage() throws CouchbaseLiteException {
             // tag::datatype_usage_createdb[]

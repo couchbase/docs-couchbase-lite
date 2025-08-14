@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId "com.couchbase.codesnippets.android.kotlin"
-        minSdk 23
+        minSdk 24
         targetSdk 33
         versionCode 3
         versionName "3.2"
@@ -35,16 +35,16 @@ android {
 repositories {
     if (USE_LOCAL_MAVEN) {
         mavenLocal()
-        maven {
-            url "https://proget.sc.couchbase.com/maven2/internalmaven/"
-            content { includeGroupByRegex "com\\.couchbase\\.lite.*" }
-        }
     }
-    else {
-        maven {
-            url "https://mobile.maven.couchbase.com/maven2/dev/"
-            content { includeGroupByRegex "com\\.couchbase\\.lite.*" }
-        }
+
+    maven {
+        url "https://proget.sc.couchbase.com/maven2/internalmaven/"
+        content { includeGroupByRegex "com\\.couchbase\\.lite.*" }
+    }
+
+    maven {
+        url "https://mobile.maven.couchbase.com/maven2/dev/"
+        content { includeGroupByRegex "com\\.couchbase\\.lite.*" }
     }
 
     google()
