@@ -18,20 +18,6 @@ Couchbase Lite's Peer-to-Peer synchronization solution offers secure storage and
 For small mesh topologies, Multipeer Replicator offers `autodiscovery` for Wi-Fi-based networks and secure communication via TLS and certificate-based authentication.
 The dynamic mesh topology gives optimal peer connectivity and the lightweight and low-maintenance configuration requires less management and less code than using active-passive peer-to-peer sync.
 
-
-// Bluetooth - not yet
-
-[TIP]
-.Bluetooth Low Energy networking
-====
-Multipeer Replication is available for use over IP networks (Wi-Fi).
-Post-4.0 releases include Bluetooth Low Energy support.
-If you're working over a Bluetooth network, then take a look at xref:p2psync-custom.adoc[integrating a Custom Listener]
-with Couchbase Lite's Active-Passive Peer-to-Peer synchronization.
-====
-
-
-
 // end::introduction[]
 // end::introduction-full[]
 
@@ -46,10 +32,7 @@ The mesh network continuously adapts as peers join or leave, automatically heali
 
 This self-organizing approach ensures reliable data synchronization even in challenging network conditions, where individual peer connections may be intermittent or unreliable.
 
-Couchbase Lite supports different transport modes depending on the peer-to-peer synchronization approach:
-
-=== Multipeer Replicator
-- Current support (CBL 3.3): Wi-Fi (IP-based transport)
+Multipeer Replicator supports Wi-Fi (IP-based transport) as of CBL 3.3.
 
 
 // Mesh Diagram
@@ -91,9 +74,37 @@ Couchbase Lite supports different transport modes depending on the peer-to-peer 
 Multipeer Replicator supports Wi-Fi transport, using `DNS-SD` (also known as *Bonjour*) for peer discovery.
 You must connect Peers to the same Wi-Fi network to discover and establish connections with one another.
 
+=== Configuration Requirements
+
+To use `DNS-SD` for peer discovery, iOS apps must declare the *Bonjour* service type and request local network access permissions.
+Add the following keys to your app's `Info.plist`:
+
+==== NSBonjourServices
+Declare the service type used by MultipeerReplicator:
+
+[source,xml]
+----
+<key>NSBonjourServices</key>
+<array>
+  <string>_couchbaseP2P._tcp</string>
+</array>
+----
+
+==== NSLocalNetworkUsageDescription
+Add a usage description for local network access:
+
+[source,xml]
+----
+<key>NSLocalNetworkUsageDescription</key>
+<string>Used for discovering and connecting to peers for peer-to-peer sync.</string>
+----
+
+TIP: You can also configure these settings through Xcode's Info configuration UI under "*Bonjour Services*" and "*Privacy – Local Network Usage Description*."
+
+
 === Supported Platforms
 
-We recommend using a recent release of iOS, see our xref:swift:supported-os.adoc[Supported Platforms] for details.
+We recommend using a recent release of iOS, see xref:swift:supported-os.adoc[Supported Platforms] for details.
 
 
 == Configuration
@@ -118,23 +129,37 @@ include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-c
 
 === Peer Identity
 
-
 Each peer in the Multipeer replication is uniquely identified and authenticated by using a peer's certificate.
 
 Multipeer Replicator which uses TLS communication by default requires to specify a `TLSIdentity` object for specifying the identity.
 
-Although you can use a self-signed certificate for the identity (recommended for non-production environments), you should have an authority or issuer sign the identity's certificate for production use.
-The most common setup is to bundle an issuer's identity with the application and use it for signing the peer identity's certificate.
+You can use either a self-signed certificate for the identity or have an authority or issuer sign the identity's certificate.
+The choice depends on your specific security requirements and deployment environment.
 
-Later on, the issuer's certificate authenticates the connecting peer.
 As each peer could be either a client or a server to the other peer in the Multipeer replication environment, you must create the identity's certificate with the extension key usages for both client and server authentication to allow either direction to authenticate the certificate.
 
+==== CA-Signed Identity
+
+When using a certificate authority (CA) signed identity, the issuer's certificate authenticates the connecting peer.
 
 .Get and Create an identity signed by an issuer
 [source,swift]
 ----
 include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-tlsidentity", indent=0]
 ----
+
+==== Self-Signed Identity
+
+For environments where certificate authority management is not feasible, you can implement peer identity using self-signed certificates.
+This approach is commonly used in closed network environments where devices need to authenticate with each other without external certificate authorities.
+
+.Creating a self-signed identity for peer authentication
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-selfsigned-tlsidentity", indent=0]
+----
+
+When using self-signed certificates, implement your own certificate validation logic in the authenticator callback to make sure only trusted peers can join your mesh network.
 
 === Peer Authenticator
 
@@ -172,8 +197,8 @@ The `MultipeerReplicatorConfiguration` can be created with a `peerGroupID` which
 include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-config", indent=0]
 ----
 
-TIP: Version 3.3.0 recommends a maximum of 15 peers in a mesh network.
-If you intend to exceed 15 peers, run tests with your particular network to assess any performance effects of packet loss or latency.
+TIP: Performance may vary in mesh networks depending on your specific environment and number of peers.
+We recommend running tests with your network configuration to assess any effects on packet loss or latency.
 
 
 == Life Cycle
