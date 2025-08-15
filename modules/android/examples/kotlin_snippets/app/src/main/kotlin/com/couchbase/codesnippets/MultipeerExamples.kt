@@ -43,13 +43,13 @@ class MultipeerExamples {
         val collection2 = _collection2!!
         val collection3 = _collection3!!
 
-        // tag::multipeer-collection-simple
+        // tag::multipeer-collection-simple[]
         val collections = mutableSetOf<MultipeerCollectionConfiguration>()
         for(col in listOf(collection1, collection2, collection3)) {
             val builder = MultipeerCollectionConfiguration.Builder(col)
             collections.add(builder.build())
         }
-        // end::multipeer-collection-simple
+        // end::multipeer-collection-simple[]
 
         return collections
     }
@@ -59,7 +59,7 @@ class MultipeerExamples {
         val collection2 = _collection2!!
         val collection3 = _collection3!!
 
-        // tag::multipeer-collection-config
+        // tag::multipeer-collection-config[]
 
         // Config with custom conflict resolver
         val config1 = MultipeerCollectionConfiguration.Builder(collection1)
@@ -77,7 +77,7 @@ class MultipeerExamples {
             .build()
 
         val collections = setOf(config1, config2, config3)
-        // end::multipeer-collection-config
+        // end::multipeer-collection-config[]
 
         return collections
     }

@@ -96,12 +96,13 @@ For each collection, you'll create `MultipeerCollectionConfiguration` with the c
 .Specify collections without any configurations
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-collection-simple", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-collection-simple", indent=0]
 ----
+
 .Specify collections with some configuration
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-collection-config", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-collection-config", indent=0]
 ----
 
 
@@ -123,7 +124,7 @@ When using a certificate authority (CA) signed identity, the issuer's certificat
 .Get and Create an identity signed by an issuer
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-tlsidentity", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-tlsidentity", indent=0]
 ----
 
 ==== Self-Signed Identity
@@ -134,7 +135,7 @@ This approach is commonly used in closed network environments where devices need
 .Creating a self-signed identity for peer authentication
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerReplicator.kt[tags="multipeer-self-signed-identity", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-selfsigned-tlsidentity", indent=0]
 ----
 
 When using self-signed certificates, implement your own certificate validation logic in the authenticator callback to make sure only trusted peers can join your mesh network.
@@ -156,14 +157,14 @@ When specifying the root certificates, the Multipeer replicator automatically au
 .Authenticator with authentication callback
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-authenticator-callback", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-authenticator-callback", indent=0]
 ----
 
 
 .Authenticator with root certificates
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-authenticator-rootcerts", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-authenticator-rootcerts", indent=0]
 ----
 
 === Create MultipeerReplicatorConfiguration
@@ -175,7 +176,7 @@ The `MultipeerReplicatorConfiguration` can be created with a `peerGroupID` which
 .Creating MultipeerReplicatorConfiguration
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-config", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-config", indent=0]
 ----
 
 TIP: Performance may vary in mesh networks depending on your specific environment and number of peers.
@@ -189,7 +190,7 @@ We recommend running tests with your network configuration to assess any effects
 .Creating MultipeerReplicator
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-replicator", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-replicator", indent=0]
 ----
 
 
@@ -203,7 +204,7 @@ You can get the necessary permissions using:
 .Getting necessary permissions
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-permissions", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-permissions", indent=0]
 ----
 
 
@@ -212,7 +213,7 @@ include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-permiss
 .Starting MultipeerReplicator
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-replicator-start", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-replicator-start", indent=0]
 ----
 
 
@@ -222,7 +223,7 @@ include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-replica
 .Stopping MultipeerReplicator
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-replicator-stop", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-replicator-stop", indent=0]
 ----
 
 
@@ -249,7 +250,7 @@ Event types include the following:
 .Multipeer Replicator Status Listener
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-status-listener", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-status-listener", indent=0]
 ----
 
 
@@ -259,7 +260,7 @@ include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-status-
 .Peer Discovery Status Listener
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-peer-discovery-listener", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-peer-discovery-listener", indent=0]
 ----
 
 
@@ -269,7 +270,7 @@ include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-peer-di
 .Peer's Replicator Status Listener
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-replicator-status-listener", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-replicator-status-listener", indent=0]
 ----
 
 
@@ -281,7 +282,7 @@ include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-replica
 .Peer's Document Replication Listener
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-document-replication-listener", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-document-replication-listener", indent=0]
 ----
 
 
@@ -300,7 +301,7 @@ You can get your `peerID` from the `peerID` property of the `MultipeerReplicator
 Getting peer ID
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-peer-id", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-peer-id", indent=0]
 ----
 
 
@@ -313,7 +314,7 @@ You can get a list of current online peers' Identifiers from the `MultipeerRepli
 .Getting neighbor peers
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-neighbor-peers", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-neighbor-peers", indent=0]
 ----
 
 
@@ -323,7 +324,7 @@ include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-neighbo
 Getting peer info
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-peer-info", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-peer-info", indent=0]
 ----
 
 
@@ -339,7 +340,7 @@ include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-peer-in
 
 [source,kotlin]
 ----
-include::example$code_snippets/MultipeerP2pReplicator.kt[tags="multipeer-logdomain", indent=0]
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-logdomain", indent=0]
 ----
 
 
