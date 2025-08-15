@@ -20,7 +20,7 @@ import com.couchbase.lite.Collection;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.IndexConfiguration;
 
-
+@SuppressWarnings("unused")
 public class ArrayIndexExamples {
     public void ArrayIndexConfig() {
         // tag::array-index-config[]
