@@ -84,13 +84,13 @@ class SampleCodeTest {
 #endif
 
     // MARK: Logging
-    
+
     func dontTestOldLoggingApi() throws {
         // tag::console-logging[]
         Database.log.console.domains = .all // <.>
         Database.log.console.level = .verbose // <.>
         // end::console-logging[]
-        
+
         // tag::file-logging[]
         let tempFolder = NSTemporaryDirectory().appending("cbllog")
         let config = LogFileConfiguration(directory: tempFolder) // <.>
@@ -100,28 +100,28 @@ class SampleCodeTest {
         Database.log.file.config = config // <.>
         Database.log.file.level = .verbose // <.>
         // end::file-logging[]
-        
+
         // tag::set-custom-logging[]
         let logger = LogTestLogger(.warning)
         Database.log.custom =  logger // <.>
         // end::set-custom-logging[]
     }
-    
+
     func dontTestNewLoggingApi() throws {
         // tag::new-console-logging[]
         LogSinks.console = ConsoleLogSink(level: .verbose, domains: .all)
         // end::new-console-logging[]
-        
+
         // tag::new-file-logging[]
         let tempFolder = NSTemporaryDirectory().appending("cbllog")
         LogSinks.file = FileLogSink(level: .verbose, directory: tempFolder, usePlainText: false, maxKeptFiles: 12, maxFileSize: 524288)
         // end::new-file-logging[]
-        
+
         // tag::set-new-custom-logging[]
         LogSinks.custom = CustomLogSink(level: .warning, logSink: TestLogSink())
         // end::set-new-custom-logging[]
     }
-    
+
     func dontTestLoadingPrebuilt() throws {
         // tag::prebuilt-database[]
         // Note: Getting the path to a database is platform-specific.
@@ -162,7 +162,7 @@ class SampleCodeTest {
         // tag::date-getter[]
         let mutableDoc = MutableDocument(id: "xyz")
         mutableDoc.setValue(Date(), forKey: "createdAt")
-        
+
         guard let doc = try collection.document(id: "xyz") else { return }
         let date = doc.date(forKey: "createdAt")
         // end::date-getter[]
@@ -175,7 +175,7 @@ class SampleCodeTest {
         print(doc.toDictionary())
         // end::to-dictionary[]
     }
-    
+
     func dontTestToJSON() throws {
         // tag::to-json[]
         guard let doc = try collection.document(id: "xyz") else { return }
@@ -280,14 +280,14 @@ class SampleCodeTest {
         try collection.createIndex(index, name: "TypeNameIndex")
         // end::query-index_Querybuilder[]
     }
-    
+
     func dontTestPartialValueIndex() throws {
         // tag::partial-value-index[]
         let config = ValueIndexConfiguration(["city"], where: "type = \"hotel\"")
         try collection.createIndex(withName: "HotelCityIndex", config: config)
         // end::partial-value-index[]
     }
-    
+
     func dontTestPartialFTSIndex() throws {
         // tag::partial-full-text-index[]
         let config = FullTextIndexConfiguration(["description"], where: "type = \"hotel\"")
@@ -421,7 +421,7 @@ class SampleCodeTest {
 
     func dontTestCollectionOperatorIn() throws {
         // tag::query-collection-operator-in[]
-        let values = [
+        let properties = [
             Expression.property("first"),
             Expression.property("last"),
             Expression.property("username")
@@ -429,7 +429,7 @@ class SampleCodeTest {
 
         let query = QueryBuilder.select(SelectResult.all())
             .from(DataSource.collection(collection))
-            .where(Expression.string("Armani").in(values))
+            .where(Expression.string("Armani").in(properties))
         // end::query-collection-operator-in[]
 
         print(query)
@@ -1066,7 +1066,7 @@ class SampleCodeTest {
         // tag::database-replica[]
         let targetDatabase = DatabaseEndpoint(database: database2)
         var config = ReplicatorConfiguration(target: targetDatabase)
-        
+
         guard let collection1 = try database.collection(name: "collection1", scope: "scope1") else { return }
         config.addCollection(collection1)
         config.replicatorType = .push
@@ -1459,7 +1459,7 @@ class SampleCodeTest {
     func dontTestQuerySyntaxProps() throws {
         // tag::query-syntax-props[]
         let collection = try self.database.createCollection(name: "hotel")
-        
+
         let query = QueryBuilder
             .select(SelectResult.expression(Meta.id).as("metaId"),
                     SelectResult.expression(Expression.property("id")),
@@ -1536,7 +1536,7 @@ class SampleCodeTest {
                 let name = doc.string(forKey: "name")!
                 let city = doc.string(forKey: "city")!
                 let type = doc.string(forKey: "type")!
-                
+
                 // ... process document properties as required
                 print("Result properties are: \(hotelId), \(name), \(city), \(type)")
             }
@@ -1605,15 +1605,15 @@ class SampleCodeTest {
 
             // Now you can get the document using the ID
             if let doc = try collection.document(id: docsId) {
-                
+
                 let hotelId = doc.string(forKey: "id")!
-                
+
                 let name = doc.string(forKey: "name")!
-                
+
                 let city = doc.string(forKey: "city")!
-                
+
                 let type = doc.string(forKey: "type")!
-                
+
                 // ... process document properties as required
                 print("Result properties are: \(hotelId), \(name), \(city), \(type)")
             }
@@ -1713,7 +1713,7 @@ class SampleCodeTest {
 
         var thisConfig = ReplicatorConfiguration(target: targetEndpoint) // <.>
         thisConfig.addCollection(collection)
-        
+
         thisConfig.acceptOnlySelfSignedServerCertificate = true // <.>
 
         let thisAuthenticator = BasicAuthenticator(username: "valid.user", password: "valid.password.string")
@@ -1897,30 +1897,30 @@ class SampleCodeTest {
         self.listener = URLEndpointListener.init(config: config) // <1>
         // end::p2p-ws-api-urlendpointlistener-constructor[]
     }
-    
+
     func dontTestManageCollection() throws {
         guard let database = self.database else { return }
-        
+
         // tag::scopes-manage-create-collection[]
         let collection = try database.createCollection(name: "myCollectionName", scope: "myScopeName")
         // end::scopes-manage-create-collection[]
-        
+
         // tag::scopes-manage-index-collection[]
         let config = FullTextIndexConfiguration(["overview"])
         try collection.createIndex(withName: "overviewFTSIndex", config: config)
         // end::scopes-manage-index-collection[]
-        
+
         // tag::scopes-manage-list[]
         let scopes = try database.scopes()
         let collections = try database.collections(scope: "myScopeName")
         print("I have \(scopes.count) scopes and \(collections.count) collections")
         // end::scopes-manage-list[]
-        
+
         // tag::scopes-manage-drop-collection[]
         try database.deleteCollection(name: "myCollectionName", scope: "myScopeName")
         // end::scopes-manage-drop-collection[]
     }
-    
+
     // MARK: --
 
     func fMyActPeer() throws {
@@ -2023,7 +2023,7 @@ class SampleCodeTest {
         let target = DatabaseEndpoint(database: otherDB)
         var config = ReplicatorConfiguration(target: target)
         config.addCollection(collection)
-        
+
         let cert = self.listener.tlsIdentity!.certs[0]
         let validUsername = "cbl-user-01"
         let validPassword = "secret"
@@ -2253,7 +2253,7 @@ class SampleCodeTest {
                                   user: String?,
                                   pass: String?,
                                   handler: @escaping (PeerConnectionStatus, Error?) -> Void) throws {
-        
+
         guard let validUser = user, let validPassword = pass else {
             fatalError("UserCredentialsNotProvided")
             // ... take appropriate actions
@@ -2338,7 +2338,7 @@ class SampleCodeTest {
     // end::replicator-register-for-events[]
 
     func startListener() throws {
-        
+
         var messageEndpointListener: MessageEndpointListener!
 
         // tag::listener[]
@@ -2349,10 +2349,10 @@ class SampleCodeTest {
 
         print(messageEndpointListener.connections.count)
     }
-    
+
     func initialize() throws {
         guard let collection = try? self.database.defaultCollection() else { return }
-        
+
         // tag::sgw-act-rep-initialize[]
         let targetURL = URL(string: "wss://10.1.1.12:8092/travel-sample")!
         let targetEndpoint = URLEndpoint(url: targetURL)
@@ -2508,7 +2508,7 @@ class LogTestLogger: Logger {
 
 // tag::new-custom-logging[]
 class TestLogSink: LogSinkProtocol {
-    
+
     func writeLog(level: LogLevel, domain: LogDomain, message: String) {
         // handle the message, for example piping it to
         // a third party framework
@@ -2552,7 +2552,7 @@ class ActivePeer: MessageEndpointDelegate {
     init() throws {
         let id = ""
         let database = try Database(name: "dbname")
-        
+
 
         // tag::message-endpoint[]
         let collection = try database.createCollection(name: "collectionName")
@@ -2807,7 +2807,7 @@ public class Supporting_Datatypes
         // Create a mutable copy
         let mutableDict = dict.toMutable()
         // end::datatype_dictionary[]
-        
+
         print("street \(street) dict \(mutableDict)")
     }
 
@@ -2859,7 +2859,7 @@ public class Supporting_Datatypes
         // Create a mutable copy
         let mutableArray = array.toMutable()
         // end::datatype_array[]
-        
+
         print("phone is \(phone). mutable array is \(mutableArray)")
 
     }

@@ -213,7 +213,7 @@ class MultipeerExamples {
     fun createMultipeerReplicator() : MultipeerReplicator {
         val config = createConfig()
 
-        // tag::multipeer-replicator
+        // tag::multipeer-replicator[]
         val replicator = MultipeerReplicator(config)
         // end::multipeer-replicator[]
 
