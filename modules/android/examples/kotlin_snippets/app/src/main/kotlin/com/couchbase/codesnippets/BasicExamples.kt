@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-@file:Suppress("UNUSED_VARIABLE", "unused")
+@file:Suppress("UNUSED_VARIABLE", "unused", "DEPRECATION")
 
 package com.couchbase.codesnippets
 
@@ -51,7 +51,6 @@ import com.couchbase.lite.install
 import com.couchbase.lite.internal.utils.Fn
 import com.couchbase.lite.logging.BaseLogSink
 import com.couchbase.lite.logging.ConsoleLogSink
-import com.couchbase.lite.logging.FileLogSink
 import com.couchbase.lite.logging.LogSinks
 import com.couchbase.lite.newConfig
 import java.io.File
@@ -428,7 +427,7 @@ class SupportingDatatypes(private val context: Context) {
         val street = dict?.getString("street")
 
         // Iterate dictionary
-        dict?.forEach { println("${it} -> ${dict.getValue(it)}") }
+        dict?.forEach { println("$it -> ${dict.getValue(it)}") }
 
         // Create a mutable copy
         val mutableDict = dict?.toMutable()
@@ -472,7 +471,7 @@ class SupportingDatatypes(private val context: Context) {
         val phone = array?.getString(1)
 
         // Iterate array
-        array?.forEachIndexed { index, item -> println("Row  ${index} = ${item}") }
+        array?.forEachIndexed { index, item -> println("Row  $index = $item") }
 
         // Create a mutable copy
         val mutableArray = array?.toMutable()

@@ -13,13 +13,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+@file:Suppress("UNUSED_VARIABLE", "unused")
+
 package com.couchbase.codesnippets
 
 import android.app.Application
 import com.couchbase.lite.CouchbaseLite
-import com.couchbase.lite.Database
 import com.couchbase.lite.LogDomain
 import com.couchbase.lite.LogLevel
+import com.couchbase.lite.logging.ConsoleLogSink
+import com.couchbase.lite.logging.LogSinks
 
 
 class SnippetApplication : Application() {
@@ -35,8 +38,7 @@ class SnippetApplication : Application() {
         // tag::replication-logging[]
         CouchbaseLite.init(this, true)
 
-        Database.log.console.setDomains(LogDomain.REPLICATOR)
-        Database.log.console.level = LogLevel.DEBUG
+        LogSinks.get().console = ConsoleLogSink(LogLevel.DEBUG, LogDomain.REPLICATOR)
         // end::replication-logging[]
     }
 }

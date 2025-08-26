@@ -28,6 +28,7 @@ import com.couchbase.lite.ValueIndexItem
 
 class CollectionExamples {
     // We need to add a code sample to create a new collection in a scope
+    @Suppress("VariableNeverRead", "AssignedValueIsNeverRead")
     @Throws(CouchbaseLiteException::class)
     fun createCollectionInScope(db: Database) {
         // tag::scopes-manage-create-collection[]
