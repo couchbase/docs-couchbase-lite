@@ -1,0 +1,316 @@
+= Multipeer P2P Replicator
+ifdef::show_edition[:page-edition: Enterprise Edition]
+:description: The Multipeer Replicator enables lightweight, self-organizing mesh networks for apps running on the same local Wi-Fi.
+:source-language: swift
+
+
+[abstract]
+{description}
+This approach requires minimal setup and automates peer discovery and connectivity management, making it simpler than xref:p2psync-websocket.adoc[active-passive P2P configurations].
+
+
+[#introduction]
+// == Introduction
+// tag::introduction-full[]
+// tag::introduction[]
+Couchbase Lite's Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronization between mobile and IoT devices without needing a centralized cloud-based control point.
+
+For small mesh topologies, Multipeer Replicator offers `autodiscovery` for Wi-Fi-based networks and secure communication via TLS and certificate-based authentication.
+The dynamic mesh topology gives optimal peer connectivity and the lightweight and low-maintenance configuration requires less management and less code than using active-passive peer-to-peer sync.
+
+// end::introduction[]
+// end::introduction-full[]
+
+
+== Overview
+
+To maintain optimal connectivity, efficient data transport, and balanced workloads, the Multipeer Replicator forms a dynamic mesh network among peers in the same group.
+The mesh network provides resilience through multiple communication pathways - if one connection fails, data can flow through alternative routes.
+It avoids redundant direct connections, evenly distributes connections across peers, and optimizes communication paths through intelligent routing.
+
+The mesh network continuously adapts as peers join or leave, automatically healing itself by establishing new connections and rerouting data flow to maintain network integrity.
+
+This self-organizing approach ensures reliable data synchronization even in challenging network conditions, where individual peer connections may be intermittent or unreliable.
+
+Multipeer Replicator supports Wi-Fi (IP-based transport) as of CBL 3.3.
+
+
+// Mesh Diagram
+
+// [mesh]
+// ....
+// graph {
+//     layout="circo";
+//     id1[ label="iOS Device #1" shape="square" ]
+//     id2[ label="iOS Device #2" shape="square" ]
+//     id3[ label="iOS Device #3" shape="square" ]
+//     id4[ label="iOS Device #4" shape="square" ]
+//     id5[ label="iOS Device #5" shape="square" ]
+//     id6[ label="iOS Device #6" shape="square" ]
+//     id1 -- id2
+//     id1 -- id3
+//     id1 -- id4
+//     id1 -- id5
+//     id1 -- id6
+//     id2 -- id3
+//     id2 -- id4
+//     id2 -- id5
+//     id2 -- id6
+//     id3 -- id4
+//     id3 -- id5
+//     id3 -- id6
+//     id4 -- id5
+//     id4 -- id6
+//     id5 -- id6
+// }
+// ....
+
+
+
+== Prerequisites
+
+=== Transport and Peer Discovery Protocol
+
+Multipeer Replicator supports Wi-Fi transport, using `DNS-SD` (also known as *Bonjour*) for peer discovery.
+You must connect Peers to the same Wi-Fi network to discover and establish connections with one another.
+
+=== Configuration Requirements
+
+To use `DNS-SD` for peer discovery, iOS apps must declare the *Bonjour* service type and request local network access permissions.
+Add the following keys to your app's `Info.plist`:
+
+==== NSBonjourServices
+Declare the service type used by MultipeerReplicator:
+
+[source,xml]
+----
+<key>NSBonjourServices</key>
+<array>
+  <string>_couchbaseP2P._tcp</string>
+</array>
+----
+
+==== NSLocalNetworkUsageDescription
+Add a usage description for local network access:
+
+[source,xml]
+----
+<key>NSLocalNetworkUsageDescription</key>
+<string>Used for discovering and connecting to peers for peer-to-peer sync.</string>
+----
+
+TIP: You can also configure these settings through Xcode's Info configuration UI under "*Bonjour Services*" and "*Privacy – Local Network Usage Description*."
+
+
+=== Supported Platforms
+
+We recommend using a recent release of iOS, see xref:swift:supported-os.adoc[Supported Platforms] for details.
+
+
+== Configuration
+
+=== Collection Configurations
+
+You can specify one or more collections available for replication when creating a `MultipeerReplicatorConfiguration`.
+For each collection, you'll create `MultipeerCollectionConfiguration` with the collection object and optionally configure a custom conflict resolver or any replication filters you want to use for the collection.
+
+
+.Specify collections without any configurations
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-collection-simple", indent=0]
+----
+
+.Specify collections with some configuration
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-collection-config", indent=0]
+----
+
+=== Peer Identity
+
+Each peer in the Multipeer replication is uniquely identified and authenticated by using a peer's certificate.
+
+Multipeer Replicator which uses TLS communication by default requires to specify a `TLSIdentity` object for specifying the identity.
+
+You can use either a self-signed certificate for the identity or have an authority or issuer sign the identity's certificate.
+The choice depends on your specific security requirements and deployment environment.
+
+As each peer could be either a client or a server to the other peer in the Multipeer replication environment, you must create the identity's certificate with the extension key usages for both client and server authentication to allow either direction to authenticate the certificate.
+
+==== CA-Signed Identity
+
+When using a certificate authority (CA) signed identity, the issuer's certificate authenticates the connecting peer.
+
+.Get and Create an identity signed by an issuer
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-tlsidentity", indent=0]
+----
+
+==== Self-Signed Identity
+
+For environments where certificate authority management is not feasible, you can implement peer identity using self-signed certificates.
+This approach is commonly used in closed network environments where devices need to authenticate with each other without external certificate authorities.
+
+.Creating a self-signed identity for peer authentication
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-selfsigned-tlsidentity", indent=0]
+----
+
+When using self-signed certificates, implement your own certificate validation logic in the authenticator callback to make sure only trusted peers can join your mesh network.
+
+=== Peer Authenticator
+
+MultpeerReplicator only supports certificate based authentication.
+You can specify the authenticator in two ways:
+
+* certificate authentication callback
+* root certificates.
+
+When specifying the certificate authentication callback, the callback calls the remote peer's identity certificate.
+
+When specifying the root certificates, the Multipeer replicator automatically authenticates the remote peer's identity certificate by verifying whether one of the specified root certificates signed the certificate.
+
+
+.Authenticator with authentication callback
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-authenticator-callback", indent=0]
+----
+
+.Authenticator with root certificates
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-authenticator-rootcerts", indent=0]
+----
+
+=== Create MultipeerReplicatorConfiguration
+
+The `MultipeerReplicatorConfiguration` can be created with a `peerGroupID` which is an identity identifies the Peer-to-peer network used by the app, collection configurations, peer identity, and authenticator.
+
+
+.Creating MultipeerReplicatorConfiguration
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-config", indent=0]
+----
+
+TIP: Performance may vary in mesh networks depending on your specific environment and number of peers.
+We recommend running tests with your network configuration to assess any effects on packet loss or latency.
+
+
+== Life Cycle
+
+=== Create MultipeerReplicator with Configuration
+
+.Creating MultipeerReplicator
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-replicator", indent=0]
+----
+
+=== Start
+
+.Starting MultipeerReplicator
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-replicator-start", indent=0]
+----
+
+=== Stop
+
+.Stopping MultipeerReplicator
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-replicator-stop", indent=0]
+----
+
+=== Events
+
+In general, the connection should just work, and most of these optional listen events give status you may only want to use during development and testing.
+Event types include the following:
+
+==== Multipeer Replicator Status
+
+.Multipeer Replicator Status Listener
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-status-listener", indent=0]
+----
+
+==== Peer Discovery Status
+
+.Peer Discovery Status Listener
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-peer-discovery-listener", indent=0]
+----
+
+==== Peer's Replicator Status
+
+.Peer's Replicator Status Listener
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-replicator-status-listener", indent=0]
+----
+
+==== Peer's Document Replication
+
+.Peer's Document Replication Listener
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-document-replication-listener", indent=0]
+----
+
+
+== Peer Info
+
+=== Peer Identifier
+
+A unique `peerID`, which is a digest of the peer's identity certificate, identifies each peer.
+You can get your `peerID` from the `peerID` property of the `MultipeerReplicator`.
+
+
+.Getting peer ID
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-peer-id", indent=0]
+----
+
+=== Neighbor Peers
+
+You can get a list of current online peers' Identifiers from the `MultipeerReplicator` from the `neighborPeers` property.
+
+.Getting neighbor peers
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-neighbor-peers", indent=0]
+----
+
+=== Peer Info
+
+.Getting peer info
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-peer-info", indent=0]
+----
+
+
+== Logging
+
+`LogDomain` sets up the logging of:
+
+. Peer discovery log messages
+. Multipeer replication and mesh network management log messages
+
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-logdomain", indent=0]
+----
+
+
+== API Reference
+
+You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift[Swift API References] here.

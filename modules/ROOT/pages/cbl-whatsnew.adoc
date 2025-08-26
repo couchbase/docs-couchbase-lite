@@ -9,252 +9,43 @@ ifdef::show_edition[:page-edition: {release}]
 
 NOTE: Couchbase Lite 3.0 introduces some breaking changes. +
 If you're upgrading from 2.x, refer to the appropriate upgrade page -- see: <<lbl-upgrade>>. +
-You should be able to upgrade from 3.0.x to 3.1.x without manual intervention.
+You should be able to upgrade from 3.2.x to 3.3.x without manual intervention.
 
-== Release 3.2.4 (June 2025)
-
-Couchbase Lite Release 3.2.4 introduces fixes and enhancements for:
-
-xref:android:releasenotes.adoc#maint-latest[Android]
-|
-xref:c:releasenotes.adoc#maint-latest[C]
-|
-xref:csharp:releasenotes.adoc#maint-latest[.NET]
-|
-xref:java:releasenotes.adoc#maint-latest[Java]
-|
-xref:objc:releasenotes.adoc#maint-latest[Objective-C]
-|
-xref:swift:releasenotes.adoc#maint-latest[Swift]
-
-== Release 3.2.3 (April 2025)
+== Release 3.3.0 (September 2025)
 
 === New Features
 
-==== Swift API Enhancements
+=== Multipeer Replicator
 
-Couchbase Lite 3.2.3 introduces Reactive APIs in Swift.
-The Reactive APIs enable you map Couchbase Lite documents directly to Swift models, and then bind a model to a view representing the user interface.
-The user interface is automatically updated when the underlying data changes.
-The new Reactive APIs provide the following benefits:
+Couchbase Lite 3.3.0 introduces the new Multipeer Replicator API for bidirectional peer-to-peer synchronization in both Swift and Kotlin platforms.
+This replicator enables secure, direct synchronization between devices without the need for a centralized Sync Gateway.
 
-* Native adherence to Swift's Codable protocol, enabling automatic encoding and decoding between Couchbase Lite documents and Swift codable model objects.
-You can retrieve documents from the collection as decodable model objects.
-You can also save, delete, and purge model objects encoded as documents in the collection.
+The Multipeer Replicator supports:
 
-* The ability to decode Couchbase {sqlpp} query results directly into model objects.
-This makes queries observable, so that you can refresh the application automatically as the results change.
+* Peer discovery using DNS-SD (Bonjour) over a shared Wi-Fi network
 
-* Access to the Combine framework and the Observation framework, enabling you to publish change notifications whenever a query result changes, or documents in a collection change, or a replicator's status changes.
+* Encrypted TLS connections with certificate-based authentication
 
-For more information about Reactive APIs in Swift, see:
+* Automatic mesh formation and replication routing between peers
 
-* xref:swift:reactive.adoc[]
+* Real-time updates using continuous, push-and-pull replication
 
-==== Peer-to-Peer Synchronization in C
+Each device advertises itself using a shared group ID, discovers others, and forms an optimized mesh network for efficient data sync.
+Multipeer Replicator performs authentication using client/server certificates, and applications can configure custom filters, conflict resolvers, and listeners for fine-grained control.
 
-Couchbase Lite 3.2.3 introduces peer-to-peer synchronization in C.
-Couchbase Lite C supports peer-to-peer synchronization over IP using the WebSocket protocol via URLEndpointListener, but does not support custom transports through MessageEndpointListener.
+For more information about Multipeer Replicator, see:
 
-For more information about peer-to-peer synchronization in C, see:
+* xref:swift:p2psync-multipeer.adoc[Swift Multipeer Replicator]
 
-* xref:c:p2psync-websocket.adoc[]
-* xref:c:p2psync-websocket-using-passive.adoc[]
-* xref:c:p2psync-websocket-using-active.adoc[]
+* xref:android:p2psync-multipeer.adoc[Android Multipeer Replicator]
 
-== Release 3.2.2 (March 2025)
+NOTE: This feature supports only continuous, push-and-pull replication.
+Version 3.3.0 disables Delta Sync by default.
 
-.Deprecation Notice
-[IMPORTANT]
---
-From Couchbase Lite version 3.2.2, the current Logging API is deprecated and will be removed in a future release.
-
-Use of the deprecated and new Logging API at the same time is not supported.
-
-See the following links for information about migrating to the new Logging API:
-
-* xref:android:new-logging-api.adoc[Android]
-
-* xref:c:new-logging-api.adoc[C]
-
-* xref:csharp:new-logging-api.adoc[.NET]
-
-* xref:java:new-logging-api.adoc[Java]
-
-* xref:objc:new-logging-api.adoc[Objective-C]
-
-* xref:swift:new-logging-api.adoc[Swift]
---
-
-=== New Features
-
-==== New Logging API
-
-Couchbase Lite 3.2.2 introduces a new Logging API.
-The new Logging API has the following benefits:
-
-* Log sinks are now thread safe, removing risk of inconsistent states during initialization.
-
-* Simplified API and reduced implementation complexity.
-
-For more information about migrating to the new Logging API, see:
-
-* xref:android:new-logging-api.adoc[Android - New Logging API]
-
-* xref:c:new-logging-api.adoc[C - New Logging API]
-
-* xref:csharp:new-logging-api.adoc[.NET - New Logging API]
-
-* xref:java:new-logging-api.adoc[Java - New Logging API]
-
-* xref:objc:new-logging-api.adoc[Objective-C - New Logging API]
-
-* xref:swift:new-logging-api.adoc[Swift - New Logging API]
-
-==== Partial Index
-
-Couchbase Lite 3.2.2 introduces support for Partial Index - Partial Value and Partial Full-Text Indexes.
-The Partial Index can create a smaller index, potentially improving index and query performance. 
-You can use Partial Index to specify a `WHERE` clause in your index configuration.
-If a where clause is specified, the database will index a document only when the where clause condition is met. 
-
-For more information about Partial Index, see:
-
-* xref:android:indexing.adoc#partial-index[Android - Partial Index]
-
-* xref:c:indexing.adoc#partial-index[C - Partial Index]
-
-* xref:csharp:indexing.adoc#partial-index[.NET - Partial Index]
-
-* xref:java:indexing.adoc#partial-index[Java - Partial Index]
-
-* xref:objc:indexing.adoc#partial-index[Objective-C - Partial Index]
-
-* xref:swift:indexing.adoc#partial-index[Swift - Partial Index]
-
-== Release 3.2.1 (November 2024)
-
-=== New Features
-
-==== Array UNNEST and the Array Index
-
-You can use UNNEST in queries to unpack arrays within a document into individual rows. This capability makes it possible to join them with their parent object in the query.
-
-You can use UNNEST within the FROM clause. 
-You can chain UNNEST to perform multi-level UNNEST.
-
-You can also use a new type of index, the Array Index, to allow querying with UNNEST more efficiently.
-
-For more information about Array UNNEST, see: 
-
-* xref:android:query-n1ql-mobile.adoc#lbl-unnest[Android - Array UNNEST]
-
-* xref:c:query-n1ql-mobile.adoc#lbl-unnest[C - Array UNNEST]
-
-* xref:csharp:query-n1ql-mobile.adoc#lbl-unnest[.NET - Array UNNEST]
-
-* xref:java:query-n1ql-mobile.adoc#lbl-unnest[Java - Array UNNEST]
-
-* xref:objc:query-n1ql-mobile.adoc#lbl-unnest[Objective-C - Array UNNEST]
-
-* xref:swift:query-n1ql-mobile.adoc#lbl-unnest[Swift - Array UNNEST]
-
-For more information about Array indexes, see:
-
-* xref:android:indexing.adoc#array-indexing[Android - Array Indexing]
-
-* xref:c:indexing.adoc#array-indexing[C - Array Indexing]
-
-* xref:csharp:indexing.adoc#array-indexing[.NET - Array Indexing]
-
-* xref:java:indexing.adoc#array-indexing[Java - Array Indexing]
-
-* xref:objc:indexing.adoc#array-indexing[Objective-C - Array Indexing]
-
-* xref:swift:indexing.adoc#array-indexing[Swift - Array Indexing]
-
-== Release 3.2.0 (August 2024)
-
-IMPORTANT: Databases upgraded from 3.1.x to 3.2.x cannot be downgraded. 
-
-
-=== New Features
-
-==== Vector Search
-
-[IMPORTANT] 
---
-Vector Search is available only for 64-bit architectures and
-Intel processors that support the Advanced Vector Extensions 2 (AVX2) instruction set.
-To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.] 
---
-
-Vector Search is now available on Couchbase Lite for all platforms.
-Vector Search is a sophisticated data retrieval technique that focuses on matching the contextual meanings of search queries and data entries, rather than simple text matching.
-Vectors are represented by arrays of numbers known as embeddings, which are generated by Large Language Models (LLMs) to represent objects such as text, images, and audio.
-You can use Vector Search to efficiently find similar items or content based on the similarity of their vector representations. 
-This is useful for reducing the cost per query, performing semantic or similarity search, providing recommendations among others.
-
-Read more at: 
-
-* xref:android:vector-search.adoc[Vector Search - Android]
-** xref:android:gs-install.adoc[Installation Instructions]
-** xref:android:working-with-vector-search.adoc[Use Vector Search]
-
-* xref:c:vector-search.adoc[Vector Search - C]
-** xref:gs-downloads.adoc#vs-release-1-0-0-beta.3[Downloads Page]
-** xref:c:gs-install.adoc[Installation Instructions]
-** xref:c:working-with-vector-search.adoc[Use Vector Search]
-
-* xref:csharp:vector-search.adoc[Vector Search - .Net]
-** xref:csharp:gs-install.adoc[Installation Instructions]
-** xref:csharp:working-with-vector-search.adoc[Use Vector Search]
-
-* xref:java:vector-search.adoc[Vector Search - Java Desktop]
-** xref:java:gs-install.adoc[Installation Instructions]
-** xref:java:working-with-vector-search.adoc[Use Vector Search]
-
-* xref:objc:vector-search.adoc[Vector Search - Objective-C]
-** xref:objc:gs-install.adoc[Installation Instructions]
-** xref:objc:working-with-vector-search.adoc[Use Vector Search]
-
-* xref:swift:vector-search.adoc[Vector Search - Swift]
-** xref:swift:gs-install.adoc[Installation Instructions]
-** xref:swift:working-with-vector-search.adoc[Use Vector Search]
-
-==== Extended Date/Time Functionality
-
-Six new DateTime functions have been added to Couchbase Lite N1QL:
-
-* `STR_TO_TZ()`
-
-* `MILLIS_TO_TZ()`
-
-* `DATE_DIFF_STR()`
-
-* `DATE_DIFF_MILLIS()`
-
-* `DATE_ADD_STR()`
-
-* `DATE_ADD_MILLIS()`
-
-Read more at:
-
-* xref:android:query-n1ql-mobile.adoc#lbl-func-date[Android Date and Time Functions]
-
-* xref:c:query-n1ql-mobile.adoc#lbl-func-date[C Date and Time Functions]
-
-* xref:csharp:query-n1ql-mobile.adoc#lbl-func-date[.NET Date and Time Functions]
-
-* xref:java:query-n1ql-mobile.adoc#lbl-func-date[Java Date and Time Functions]
-
-* xref:objc:query-n1ql-mobile.adoc#lbl-func-date[Objective-C Date and Time Functions]
-
-* xref:swift:query-n1ql-mobile.adoc#lbl-func-date[Swift Date and Time Functions]
 
 == See also
 
-xref:3.1@couchbase-lite:ROOT:cbl-whatsnew.adoc[What's new in previous version 3.1]
+xref:3.2@couchbase-lite:ROOT:cbl-whatsnew.adoc[What's new in previous version 3.2]
 
 === Couchbase Lite Release Notes
 
