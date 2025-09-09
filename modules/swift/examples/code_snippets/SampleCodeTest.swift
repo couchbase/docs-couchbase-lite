@@ -421,7 +421,7 @@ class SampleCodeTest {
 
     func dontTestCollectionOperatorIn() throws {
         // tag::query-collection-operator-in[]
-        let values = [
+        let properties = [
             Expression.property("first"),
             Expression.property("last"),
             Expression.property("username")
@@ -429,7 +429,7 @@ class SampleCodeTest {
 
         let query = QueryBuilder.select(SelectResult.all())
             .from(DataSource.collection(collection))
-            .where(Expression.string("Armani").in(values))
+            .where(Expression.string("Armani").in(properties))
         // end::query-collection-operator-in[]
 
         print(query)
