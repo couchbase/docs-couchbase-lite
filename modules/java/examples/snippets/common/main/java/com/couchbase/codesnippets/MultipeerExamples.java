@@ -267,6 +267,20 @@ public class MultipeerExamples {
         // end::multipeer-peer-discovery-listener[]
     }
 
+    public void peerReplicatorStatus() throws CouchbaseLiteException, CertificateException {
+        final MultipeerReplicator replicator = createMultipeerReplicator();
+
+        // tag::multipeer-peer-discovery-listener[]
+        final ListenerToken token = replicator.addPeerReplicatorStatusListener(status -> {
+            final String direction = status.isOutgoing() ? "outgoing" : "incoming";
+            final String activity = status.getStatus().getActivityLevel().name().toLowerCase();
+            final String error = status.getStatus().getError() != null ? status.getStatus().getError().getMessage() : "none";
+            Log.i(TAG, String.format("Peer Replicator Status - Peer ID: %s, Direction: %s, Activity: %s, Error: %s",
+                    status, direction, activity, error));
+        });
+        // end::multipeer-peer-discovery-listener[]
+    }
+
     public void peerDocumentReplication() throws CouchbaseLiteException, CertificateException {
         final MultipeerReplicator replicator = createMultipeerReplicator();
 
