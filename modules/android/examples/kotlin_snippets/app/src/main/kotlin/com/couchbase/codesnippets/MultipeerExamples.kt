@@ -257,6 +257,22 @@ class MultipeerExamples {
         // end::multipeer-peer-discovery-listener[]
     }
 
+    fun peerReplicatorStatus()  {
+        val replicator = createMultipeerReplicator()
+        // tag::multipeer-replicator-status-listener[]
+        //val activities = ["stopped", "offline", "connecting", "idle", "busy"]
+        val token = replicator.addPeerReplicatorStatusListener { status ->
+            val direction = if(status.isOutgoing) "outgoing" else "incoming"
+            val activity = status.status.activityLevel.name.lowercase()
+            val error = status.status.error?.message ?: "none"
+            Log.i(TAG, "Peer Replicator Status - Peer ID: $status, " +
+                    "Direction: $direction, " +
+                    "Activity: $activity" +
+                    "Error: $error")
+        }
+        // end::multipeer-replicator-status-listener[]
+    }
+
     fun peerDocumentReplication() {
         val replicator = createMultipeerReplicator()
 
