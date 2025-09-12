@@ -1,5 +1,7 @@
 
-ext { CBL_VERSION='3.2.1-9' }
+ext {
+    CBL_VERSION = project.hasProperty('cblVersion') ? project.cblVersion : { throw new GradleException('cblVersion property is required. Use -PcblVersion=x.x.x-x') }()
+}
 
 buildscript {
     repositories {

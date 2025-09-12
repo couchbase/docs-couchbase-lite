@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-@file:Suppress("UNUSED_VARIABLE", "unused")
+@file:Suppress("UNUSED_VARIABLE", "unused", "DEPRECATION")
 
 package com.couchbase.codesnippets
 
@@ -46,6 +46,12 @@ import com.couchbase.lite.ReplicatorType
 import com.couchbase.lite.SelectResult
 import com.couchbase.lite.URLEndpoint
 import com.couchbase.lite.UnitOfWork
+import com.couchbase.lite.FileLogSinkFactory
+import com.couchbase.lite.install
+import com.couchbase.lite.internal.utils.Fn
+import com.couchbase.lite.logging.BaseLogSink
+import com.couchbase.lite.logging.ConsoleLogSink
+import com.couchbase.lite.logging.LogSinks
 import com.couchbase.lite.newConfig
 import java.io.File
 import java.io.FileOutputStream
@@ -66,6 +72,8 @@ class LogTestLogger(private val level: LogLevel) : Logger {
         // handle the message, for example piping it to a third party framework
     }
 }
+
+private fun sendToNetwork(format: String) { }
 
 // end::custom-logging[]
 class BasicExamples(private val context: Context) {
@@ -149,11 +157,11 @@ class BasicExamples(private val context: Context) {
     fun consoleLoggingExample() {
         // tag::console-logging[]
         Database.log.console.domains = LogDomain.ALL_DOMAINS // <.>
-        Database.log.console.level = LogLevel.DEBUG // <.>
+        Database.log.console.level = LogLevel.WARNING // <.>
         // end::console-logging[]
 
         // tag::console-logging-db[]
-        Database.log.console.level = LogLevel.DEBUG // <.>
+        Database.log.console.level = LogLevel.WARNING // <.>
         // end::console-logging-db[]
     }
 
@@ -173,6 +181,34 @@ class BasicExamples(private val context: Context) {
             // end::file-logging[]
         }
         // end::file-logging-config-factory[]
+    }
+
+    fun newConsoleLoggingExample() {
+        // tag::new-console-logging[]
+        LogSinks.get().console = ConsoleLogSink(LogLevel.WARNING)
+        // end::new-console-logging[]
+    }
+
+    fun newCustomLoggingExample(sendToNetwork: Fn.Consumer<String?>?) {
+        // tag::new-custom-logging[]
+        LogSinks.get().custom =
+            object : BaseLogSink(LogLevel.WARNING, LogDomain.NETWORK, LogDomain.REPLICATOR) {
+                public override fun writeLog(level: LogLevel, domain: LogDomain, message: String) {
+                    // sendToNetwork will be called only with messages from the NETWORK and REPLICATOR
+                    // domains with a log level of WARNING or higher.
+                    sendToNetwork(String.format("%s/%s: %s", domain, level, message))
+                }
+            }
+        // end::new-custom-logging[]
+    }
+
+    fun newFileLoggingExample() {
+        // tag::new-file-logging[]
+        FileLogSinkFactory.install(
+            directory = "/tmp/logs",
+            maxKeptFiles = 12,
+            isPlainText = true)
+        // end::new-file-logging[]
     }
 
     // ### Loading a pre-built database
@@ -391,7 +427,7 @@ class SupportingDatatypes(private val context: Context) {
         val street = dict?.getString("street")
 
         // Iterate dictionary
-        dict?.forEach { println("${it} -> ${dict.getValue(it)}") }
+        dict?.forEach { println("$it -> ${dict.getValue(it)}") }
 
         // Create a mutable copy
         val mutableDict = dict?.toMutable()
@@ -435,7 +471,7 @@ class SupportingDatatypes(private val context: Context) {
         val phone = array?.getString(1)
 
         // Iterate array
-        array?.forEachIndexed { index, item -> println("Row  ${index} = ${item}") }
+        array?.forEachIndexed { index, item -> println("Row  $index = $item") }
 
         // Create a mutable copy
         val mutableArray = array?.toMutable()

@@ -1,11 +1,778 @@
+
 = Documents
 :page-aliases: learn/swift-document.adoc
 :page-toclevels: 2@
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: Couchbase Lite concepts -- Data model -- Documents
 
-include::partial$_set_page_context_for_swift.adoc[]
 
-include::{root-commons}document.adoc[]
+:source-language: swift
+
+:source-language: swift
+
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:swift:database.adoc[Databases] | xref:swift:blob.adoc[Blobs] | xref:swift:indexing.adoc[Indexing] |
+--
+
+
+[#overview]
+== Overview
+
+
+[#document-structure]
+=== Document Structure
+
+In _Couchbase{nbsp}Lite_ the term 'document' refers to an entry in the database.
+You can compare it to a record, or a row in a table.
+
+Each document has an ID or unique identifier.
+This ID is similar to a primary key in other databases.
+
+You can specify the ID programmatically.
+If you omit it, it will be automatically generated as a UUID.
+
+NOTE: Couchbase documents are assigned to a xref:swift:database.adoc#database-concepts[Collection].
+The ID of a document must be unique within the Collection it is written to.
+You cannot change it after you have written the document.
+
+The document also has a value which contains the actual application data.
+This value is stored as a dictionary of key-value (k-v) pairs.
+The values can be made of up several different xref:swift:document.adoc#data-types[] such as numbers, strings, arrays, and nested objects.
+
+
+[#data-encoding]
+=== Data Encoding
+
+The document body is stored in an internal, efficient, binary form called
+https://github.com/couchbaselabs/fleece#readme[Fleece].
+This internal form can be easily converted into a manageable native dictionary format for manipulation in applications.
+
+Fleece data is stored in the smallest format that will hold the value whilst maintaining the integrity of the value.
+
+
+[#data-types]
+=== Data Types
+
+The `Document` class offers a set of property accessors for various scalar types, such as:
+
+* Boolean
+* Date
+* Double
+* Float
+* Int
+* Long
+* String
+
+These accessors take care of converting to/from JSON encoding, and make sure you get the type you expect.
+
+In addition to these basic data types Couchbase Lite provides for the following:
+
+Dictionary:: represents a read-only key-value pair collection
+MutableDictionary:: represents a writeable key-value pair collection
+Array:: represents a readonly ordered collection of objects
+MutableArray:: represents a writeable collection of objects
+Blob:: represents an arbitrary piece of binary data
+
+
+[#json]
+=== JSON
+
+Couchbase Lite also provides for the direct handling of JSON data implemented in most cases by the provision of a `toJSON()` method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array) -- see xref:swift:document.adoc#lbl-json-data[].
+
+
+[#constructing-a-document]
+== Constructing a Document
+
+
+An individual document often represents a single instance of an object in application code.
+
+You can consider a document as the equivalent of a 'row' in a relational table,
+with each of the document's attributes being equivalent to a 'column'.
+
+Documents can contain nested structures.
+This allows developers to express many-to-many relationships without requiring a reference or join table,
+and is naturally expressive of hierarchical data.
+
+Most apps will work with one or more documents, persisting them to a local database and optionally syncing them, either centrally or to the cloud.
+
+In this section we provide an example of how you might create a `hotel` document, which provides basic contact details and price data.
+
+.Data Model
+[source]
+----
+
+hotel: {
+  type: string (value = `hotel`)
+  name: string
+  address: dictionary {
+    street: string
+    city: string
+    state: string
+    country: string
+    code: string
+  }
+  phones: array
+  rate: float
+}
+
+----
+
+[#ex-usage]
+=== Open a Database
+
+First open your database.
+If the database does not already exist, Couchbase Lite will create it for you.
+
+Couchbase documents are assigned to a xref:swift:database.adoc#database-concepts[Collection].
+All the CRUD examples in this document operate on a `collection` object (here, the Default Collection).
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="datatype_usage_createdb", indent=0]
+----
+
+
+See xref:swift:database.adoc[Databases] for more information
+
+[#create-a-document]
+=== Create a Document
+
+Now create a new document to hold your application's data.
+
+Use the mutable form, so that you can add data to the document.
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="datatype_usage_createdoc", indent=0]
+----
+
+
+For more on using *Documents*, see xref:swift:document.adoc#document-initializers[] and xref:swift:document.adoc#mutability[].
+
+[#create-a-dictionary]
+=== Create a Dictionary
+
+Now create a mutable dictionary (`address`).
+
+Each element of the dictionary value will be directly accessible via its own key.
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="datatype_usage_mutdict", indent=0]
+----
+
+
+Learn more about xref:swift:document.adoc#using-dictionaries[].
+
+[#create-an-array]
+=== Create an Array
+
+Since the hotel may have multiple contact numbers, provide a field (`phones`) as a mutable array.
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="datatype_usage_mutarray", indent=0]
+----
+
+
+Learn more about xref:swift:document.adoc#using-arrays[]
+
+[#populate-a-document]
+=== Populate a Document
+
+Now add your data to the mutable document created earlier.
+Each data item is stored as a key-value pair.
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="datatype_usage_populate", indent=0]
+----
+
+
+NOTE: Couchbase recommend using a `type` attribute to define each logical document type.
+
+
+[#save-a-document]
+=== Save a Document
+
+Now persist the populated document to your Couchbase Lite database.
+This will auto-generate the document id.
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="datatype_usage_persist", indent=0]
+----
+
+
+[#close-the-database]
+=== Close the Database
+
+With your document saved, you can now close our Couchbase Lite database.
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="datatype_usage_closedb", indent=0]
+----
+
+
+[#working-with-data]
+== Working with Data
+
+
+[#checking-a-documents-properties]
+=== Checking a Document's Properties
+
+To check whether a given property exists in the document, use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Document.html#/s:18CouchbaseLiteSwift8DocumentC8contains3keySbSS_tF[Document.Contains(key:)] method.
+
+If you try to access a property which doesn't exist in the document, the call will return the default value for that getter method (0 for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Document.html#/s:18CouchbaseLiteSwift8DocumentC3int6forKeySiSS_tF[Document.int()] 0.0 for https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Document.html#/s:18CouchbaseLiteSwift8DocumentC5float6forKeySfSS_tF[Document.float()] etc.).
+
+
+[#date-accessors]
+=== Date accessors
+
+Couchbase Lite offers _Date_ accessors as a convenience.
+Dates are a common data type, but JSON doesn't natively support them, so the convention is to store them as strings in ISO-8601 format.
+
+[CAUTION]
+.Date precision
+====
+The `setDate()` function rounds to millisecond precision due to the underlying native Swift call.
+If you require greater precision, then use the `Double` type to store the date in microseconds.
+====
+
+.Date Getter
+[#ex-date-getter]
+
+
+[#ex-date-getter]
+====
+
+This example sets the date on the `createdAt` property and reads it back using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Document.html#/s:18CouchbaseLiteSwift8DocumentC4date6forKey10Foundation4DateVSgSS_tF[Document.date()] accessor method.
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="date-getter", indent=0]
+----
+
+
+====
+
+
+[#using-dictionaries]
+=== Using Dictionaries
+
+.API References
+
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/DictionaryObject.html[property accessors]
+
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/MutableDictionaryObject.html[MutableDictionaryObject]
+
+
+.Read Only
+[#ex-dict]
+
+
+[#ex-dict]
+====
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="datatype_dictionary", indent=0]
+----
+
+
+====
+
+
+.Mutable
+[#ex-mutdict]
+
+
+[#ex-mutdict]
+====
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="datatype_mutable_dictionary", indent=0]
+----
+
+
+====
+
+
+[#using-arrays]
+=== Using Arrays
+
+.API References
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/ArrayObject.html[ArrayObject]
+
+* https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/MutableArrayObject.html[MutableArrayObject]
+
+.Read Only
+[#ex-array]
+
+
+[#ex-array]
+====
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="datatype_array", indent=0]
+----
+
+
+====
+
+
+.Mutable
+[#ex-mutarray]
+
+
+[#ex-mutarray]
+====
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="datatype_mutable_array", indent=0]
+----
+
+
+====
+
+
+[#using-blobs]
+=== Using Blobs
+
+For more on working with blobs, see xref:swift:blob.adoc[Blobs]
+
+
+[#document-initializers]
+== Document Initializers
+
+
+You can use the following methods/initializers:
+
+* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/MutableDocument.html#/s:18CouchbaseLiteSwift15MutableDocumentCACycfc[MutableDocument()] initializer to create a new document where the document ID is randomly generated by the database.
+
+* Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/MutableDocument.html#/s:18CouchbaseLiteSwift15MutableDocumentC2idACSSSg_tcfc[MutableDocument(String id)] initializer to create a new document with a specific ID.
+
+* Use the {url-api-method-collection-getdocument} method to get a document.
+If the document doesn't exist in the collection, the method will return `null`.
+You can use this behavior to check if a document with a given ID already exists in the collection.
+
+
+.Persist a document
+[#ex-persists-doc]
+
+
+[#ex-persists-doc]
+====
+
+The following code example creates a document and persists it to the database.
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="initializer", indent=0]
+----
+
+
+====
+
+
+[#mutability]
+== Mutability
+
+
+By default, a document is immutable when it is read from the database.
+Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Document.html#/s:18CouchbaseLiteSwift8DocumentC9toMutableAA0fD0CyF[Document.toMutable()] to create an updatable instance of the document.
+
+
+.Make a mutable document
+[#ex-update-doc]
+
+
+[#ex-update-doc]
+====
+
+Changes to the document are persisted to the database when the `save` method is called.
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="update-document", indent=0]
+----
+
+
+====
+
+
+NOTE: Any user change to the value of reserved keys (`_id`, `_rev` or `_deleted`) will be detected when a document is saved and will result in an exception (Error Code 5 -- `CorruptRevisionData`) -- see also xref:swift:document.adoc#lbl-doc-constraints[].
+
+
+[#document-conversion]
+== Document Conversion
+
+
+You can convert a `Document` to a plain dictionary type and/or to a JSON string.
+This can often be useful to pass the document contents as a plain object to another method.
+
+.Convert document
+[#ex-conv-doc]
+
+
+[#ex-conv-doc]
+====
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="to-dictionary;to-json", indent=0]
+----
+
+
+====
+
+
+[#batch-operations]
+== Batch operations
+
+If you're making multiple changes to a database at once, it's faster to group them together.
+The following example persists a few documents in batch.
+
+.Batch operations
+[#ex-batch-ops]
+
+
+[#ex-batch-ops]
+====
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="batch", indent=0]
+----
+
+
+====
+
+
+At the *local* level this operation is still transactional: no other `Database` instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
+But Couchbase Mobile is a distributed system, and due to the way replication works, there's no guarantee that Sync Gateway or other devices will receive your changes all at once.
+
+
+[#document-change-events]
+== Document change events
+
+You can register for document changes.
+The following example registers for changes to the document with ID `user.john` and prints the `verified_account` property when a change is detected.
+
+
+.Document change events
+[#ex-doc-events]
+
+
+[#ex-doc-events]
+====
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="document-listener", indent=0]
+----
+
+
+====
+
+
+[#document-expiration]
+== Document Expiration
+
+Document expiration allows users to set the expiration date for a document.
+When the document expires, it is purged from the database.
+The purge is not replicated to Sync Gateway.
+
+.Set document expiration
+[#ex-set-doc-exp]
+
+
+[#ex-set-doc-exp]
+====
+
+This example sets the TTL for a document to 1 day from the current time.
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="document-expiration", indent=0]
+----
+
+
+====
+
+
+You can set expiration for a whole Collection
+
+[#lbl-doc-constraints]
+== Document Constraints
+
+Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
+This is to facilitate the creation of documents for use either in _local only_ mode where documents are not synced, or when used exclusively in peer-to-peer sync.
+
+NOTE: "_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes -- see xref:swift:document.adoc#res-keys[].
+
+Users are cautioned that any attempt to sync such documents to Sync Gateway will result in an error.
+To be future proof, you are advised to avoid creating such documents.
+Use of these attributes for user-level data may result in undefined system behavior.
+
+For more guidance -- see: xref:sync-gateway:ROOT:data-modeling.adoc[Sync Gateway - data modeling guidelines]
+
+[#res-keys]
+.Reserved Keys List
+====
+
+* _attachments
+
+* _deleted footnote:fn1[Any change to this reserved key will be detected when it is saved and will result in a Couchbase exception (Error Code 5 -- `CorruptRevisionData`)]
+
+* _id footnote:fn1[]
+
+* _removed
+
+* _rev footnote:fn1[]
+
+* _sequence
+====
+
+
+[#lbl-json-data]
+== Working with JSON Data
+
+In this section::
+xref:swift:document.adoc#lbl-array[]
+| xref:swift:document.adoc#lbl-blob[]
+| xref:swift:document.adoc#lbl-dictionary[]
+| xref:swift:document.adoc#lbl-document[]
+| xref:swift:document.adoc#lbl-result[]
+
+
+The `toJSON()` typed-accessor means you can easily work with JSON data, native and Couchbase Lite objects.
+
+[#lbl-array]
+=== Arrays
+
+Convert an `ArrayObject` to and from JSON using the `toJSON()` and `toArray` methods -- see xref:swift:document.adoc#ex-array[].
+
+Additionally you can:
+
+* Initialize a 'MutableArrayObject' using data supplied as a JSON string.
+This is done using the `init(json)` constructor -- see: xref:swift:document.adoc#ex-array[]
+
+* Convert an `ArrayFragment` object to a JSON String
+
+* Set data with a JSON string using `setJSON()`
+
+.Arrays as JSON strings
+[#ex-array]
+
+
+[#ex-array]
+====
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="tojson-array", indent=0]
+----
+
+
+====
+
+
+[#lbl-blob]
+=== Blobs
+Convert a `Blob` to JSON using the `toJSON` method -- see xref:swift:document.adoc#ex-blob[].
+
+You can use `isBlob()` to check whether a given dictionary object is a blob or not -- see xref:swift:document.adoc#ex-blob[].
+
+Note that the blob object must first be saved to the database (generating the required metadata) before you can use the `toJSON` method.
+
+[#ex-blob]
+.Blobs as JSON strings
+
+
+[#ex-blob]
+====
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="tojson-blob", indent=0]
+----
+
+
+====
+
+
+See also: xref:swift:blob.adoc[Blobs]
+
+[#lbl-dictionary]
+=== Dictionaries
+
+Convert a `DictionaryObject` to and from JSON using the `toJSON` and `toDictionary` methods -- see xref:swift:document.adoc#ex-dictionary[].
+
+Additionally you can:
+
+* Initialize a 'MutableDictionaryObject' using data supplied as a JSON string.
+This is done using the `init(json)` constructor-- see: xref:swift:document.adoc#ex-dictionary[]
+
+* Set data with a JSON string using `setJSON()`
+
+[#ex-dictionary]
+.Dictionaries as JSON strings
+
+
+[#ex-dictionary]
+====
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="tojson-dictionary", indent=0]
+----
+
+
+====
+
+
+[#lbl-document]
+=== Documents
+
+Convert a `Document` to and from JSON strings using the `toJSON()` and `setJSON()` methods -- see xref:swift:document.adoc#ex-document[].
+
+Additionally you can:
+
+* Initialize a 'MutableDocument' using data supplied as a JSON string.
+This is done using the `init(json)` or `init(id: json:)` constructor -- see: xref:swift:document.adoc#ex-document[]
+
+* Set data with a JSON string using `setJSON()`
+
+.Documents as JSON strings
+[#ex-document]
+
+
+[#ex-document]
+====
+
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="query-get-all;tojson-document", indent=0]
+----
+
+
+====
+
+
+[#lbl-result]
+=== Query Results as JSON
+
+Convert a `Query Result` to JSON using its {to-JSON} accessor method.
+
+[#ex-json]
+.Using JSON Results
+
+
+[#ex-json]
+====
+
+Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Result.html#/s:18CouchbaseLiteSwift6ResultC6toJSONSSyF[result.toJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See xref:swift:document.adoc#ex-json[] for a working example.
+
+[source, swift]
+----
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="query-access-json", indent=0]
+----
+
+
+====
+
+
+.JSON String Format
+[#ex-json-format]
+If your query selects ALL then the JSON format will be:
+
+[source, JSON]
+----
+{
+  database-name: {
+    key1: "value1",
+    keyx: "valuex"
+  }
+}
+----
+
+If your query selects a sub-set of available properties then the JSON format will be:
+
+[source, JSON]
+----
+{
+  key1: "value1",
+  keyx: "valuex"
+}
+----
+
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:swift:gs-prereqs.adoc[Prerequisites]
+* xref:swift:gs-install.adoc[Install]
+* xref:swift:gs-build.adoc[Build and Run]
+
+
+.
+
+[.column]
+=== {empty}
+.Learn more . . .
+* xref:swift:database.adoc[Databases]
+* xref:swift:document.adoc[Documents]
+* xref:swift:blob.adoc[Blobs]
+* xref:swift:replication.adoc[Remote Sync Gateway]
+* xref:swift:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+++++
+</div>
+++++
+
+

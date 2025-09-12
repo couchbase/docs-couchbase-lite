@@ -1804,7 +1804,7 @@ namespace api_walkthrough
             // end::tojson-blob[]
         }
 
-        private void CreateArrayIndex()
+        public void CreateArrayIndex()
         {
             var database = new Database("my-database");
             var collection = database.GetDefaultCollection();
@@ -2601,5 +2601,94 @@ public class MyClass
         // Add collections to the config now
 
         // end::sgw-act-rep-initialize[]
+    }
+
+    // tag::custom-logger
+    internal class MyCoolCustomLogger : ILogger
+    {
+        public LogLevel Level { get; set; }
+
+        public void Log(LogLevel level, LogDomain domain, string message)
+        {
+            // Do something cool with this information
+        }
+    }
+    // end::custom-logger
+
+    // tag::custom-log-sink
+    internal class MyCoolLogSink : BaseLogSink
+    {
+        public MyCoolLogSink(LogLevel level)
+            : base(level)
+        {
+
+        }
+
+        protected override void WriteLog(LogLevel level, LogDomain domain, string message)
+        {
+            // Do something cool with this information
+        }
+    }
+    // end::custom-log-sink
+
+    public void OldLoggingApi()
+    {
+        // tag::console-logging[]
+        Database.Log.Console.Level = LogLevel.Verbose;
+        // end::console-logging[]
+
+        // tag::file-logging[]
+        Database.Log.File.Config = new LogFileConfiguration("path/to/log/directory")
+        {
+            MaxRotateCount = 2, // Save 3 log files (i.e. 2 rotated and 1 current)
+            MaxSize = 1024 * 512, // 512KB per file, then rotated
+        };
+
+        Database.Log.File.Level = LogLevel.Verbose;
+        // end::file-logging[]
+
+        // tag::custom-logging-to-remove[]
+        Database.Log.Custom = new MyCoolCustomLogger() { Level = LogLevel.Verbose };
+        // end::custom-logging-to-remove[]
+    }
+
+    public void NewLoggingApi()
+    {
+        // tag::new-console-logging[]
+        LogSinks.Console = new ConsoleLogSink(LogLevel.Verbose);
+        // end::new-console-logging[]
+
+        // tag::new-file-logging[]
+        LogSinks.File = new FileLogSink(LogLevel.Verbose, "path/to/log/directory")
+        {
+            MaxKeptFiles = 3, // Save 3 log files (i.e. 2 rotated and 1 current)
+            MaxSize = 1024 * 512, // 512KB per file, then rotated
+        };
+        // end::new-file-logging[]
+
+        // tag::new-custom-logging[]
+        LogSinks.Custom = new MyCoolLogSink(LogLevel.Verbose);
+        // end::new-custom-logging[]
+    }
+
+
+    public void PartialValueIndex()
+    {
+        var collection = Database.GetDefaultCollection();
+
+        // tag::partial-value-index[]
+        var config = new ValueIndexConfiguration(["city"], "type = \"hotel\"");
+        collection.CreateIndex("HotelCityIndex", config);
+        // end::partial-value-index[]
+    }
+
+    public void PartialFTSIndex()
+    {
+        var collection = Database.GetDefaultCollection();
+
+        // tag::partial-full-text-index[]
+        var config = new FullTextIndexConfiguration(["description"], "type = \"hotel\"");
+        collection.CreateIndex("HotelDescIndex", config);
+        // end::partial-full-text-index[]
     }
 }

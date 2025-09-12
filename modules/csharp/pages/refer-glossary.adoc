@@ -1,6 +1,5 @@
+
 = Glossary
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-content-type: reference
 :page-role: -toc
 :page-aliases: glossary, refer/csharp-refer-glossary.adoc
@@ -8,6 +7,182 @@ ifdef::prerelease[:page-status: {prerelease}]
 :keywords: edge nosql api synchronization replication
 // End of Page Definition Statements
 
-include::partial$_set_page_context_for_csharp.adoc[]
 
-include::{root-commons}glossary.adoc[]
+:source-language: C#
+
+
+[#index]
+
+== Index
+[.pane__frame--blue]
+xref:csharp:refer-glossary.adoc#a[]  |  
+B  |  
+xref:csharp:refer-glossary.adoc#c[]  |  
+xref:csharp:refer-glossary.adoc#d[]  |  
+E  |  F  |  G  |  H  |  
+xref:csharp:refer-glossary.adoc#i[]  |  
+J  |  K |  
+xref:csharp:refer-glossary.adoc#l[]  |  
+M  |  
+xref:csharp:refer-glossary.adoc#n[]  |  
+O  |  
+xref:csharp:refer-glossary.adoc#p[]  |  
+Q  |  
+xref:csharp:refer-glossary.adoc#r[]  |  
+xref:csharp:refer-glossary.adoc#s[]  |  
+xref:csharp:refer-glossary.adoc#t[]  |  
+U  |  V  |  W  |  X  |  Y  |  Z
+
+[#a]
+== A
+
+[#active-peer]
+
+Active Peer::
+// tag::cbl-active-peer-full[]
+// tag::cbl-active-peer-def[]
+// tag::cbl-active-peer[]
+The term _active peer_, refers to the initiating peer in any peer-to-peer sync.
+// end::cbl-active-peer[]
+The active peer initiates the communications. It is the peer that initializes and manages the connection and replication of database changes.
++
+* _Synonym(s)_:
+* _Couchbase{nbsp}Lite Component_: peer-to-peer sync
+// end::cbl-active-peer-def[]
+* _Related Term(s)_: xref:csharp:refer-glossary.adoc#passive-peer[] xref:csharp:refer-glossary.adoc#peer-to-peer-sync[]
+* _Read More_: xref:csharp:landing-p2psync.adoc[Peer-to-Peer Sync]
+// end::cbl-active-peer-full[]
+
+
+[#c]
+== C
+
+// tag::replication-checkpoint-full[]
+[[csharp:refer-glossary:::checkpoint]]Checkpoint::
+// tag::replication-checkpoint-summary[]
+A _Checkpoint_, in _Couchbase Mobile_ terms, is a “save state” on a replicator, used to enable a restart at the last success-point in the event of a failure during a replication.
++
+
+// end::replication-checkpoint-summary[]
+The checkpoint itself is a (meta)document that describes how far in the replication process a given replicator has progressed.
++
+Note that two checkpoints are saved for every replication; one local and one remote.
++
+The checkpoint documents are compared at the beginning of every replication.
+If they do not agree, then it indicates a severe error during the last run, and the replication is forced to restart from the beginning.
+
+// end::replication-checkpoint-full[]
+
+
+Back to xref:csharp:refer-glossary.adoc#index[]
+
+[#d]
+== D
+
+[#delta-sync]
+
+Delta Sync::
+// tag::cbl-delta-sync-full[]
+// tag::cbl-delta-sync-def[]
+// tag::cbl-delta-sync[]
+Delta Sync is the ability to replicate only parts of the Couchbase document that have changed.
+
+This can result in significant savings in bandwidth consumption as well as throughput improvements, especially when network bandwidth is typically constrained.
+
+// tag::cbl-delta-sync[]
+// tag::cbl-delta-sync-def[]
+* _Related Term(s)_: xref:csharp:refer-glossary.adoc#passive-replicator[Passive replicator]
+* _Read More_: xref:csharp:replication.adoc#delta-sync[Delta Sync]
+// tag::cbl-delta-sync-full[]
+
+
+//Back to xref:csharp:refer-glossary.adoc#index[]
+
+[#i]
+== I
+
+Back to xref:csharp:refer-glossary.adoc#index[]
+
+[#l]
+== L
+
+Back to xref:csharp:refer-glossary.adoc#index[]
+
+[#n]
+== N
+
+Back to xref:csharp:refer-glossary.adoc#index[]
+
+[#p]
+== P
+
+[#passive-peer]
+
+Passive Peer::
+// tag::cbl-passive-peer-full[]
+// tag::cbl-passive-peer-def[]
+// tag::cbl-passive-peer[]
+The term _Passive peer_, refers to the non-initiating peer in any peer-to-peer sync.
+// end::cbl-passive-peer[]
+The passive peer reacts to communications it receives but does not initiate any communication on its own.
++
+* _Synonym(s)_:
+* _Couchbase{nbsp}Lite Component_: peer-to-peer sync
+// end::cbl-passive-peer-def[]
+* _Related Term(s)_: xref:csharp:refer-glossary.adoc#active-peer[], xref:csharp:refer-glossary.adoc#peer-to-peer-sync[]
+* _Read More_: xref:csharp:landing-p2psync.adoc[Peer-to-Peer Sync]
+// end::cbl-passive-peer[]
+
+
+[#peer-to-peer-sync]
+
+
+Peer-to-Peer Sync::
+// tag::cbl-peer-to-peer-sync-full[]
+// tag::cbl-peer-to-peer-sync-def[]
+// tag::cbl-peer-to-peer-sync[]
+The term _peer-to-peer sync_, in the Couchbase Mobile context refers to the synchronization of database changes between Couchbase Lite enabled clients without an intermediary server.
+// end::cbl-peer-to-peer-sync[]
+Couchbase Lite provides out-of-the-box peer-to-peer sync, over websockets, between Couchbase Lite enabled clients in IP-based networks.
++
+* _Synonym(s)_: p2p sync
+* _Couchbase{nbsp}Lite Component_: Inter-cluster replication
+// end::cbl-peer-to-peer-sync-def[]
+* _Related Term(s)_: xref:csharp:refer-glossary.adoc#active-peer[] xref:csharp:refer-glossary.adoc#passive-peer[]
+* _Read More_: xref:csharp:landing-p2psync.adoc[Peer-to-Peer Sync]
+// end::cbl-peer-to-peer-sync-full[]
+
+Back to xref:csharp:refer-glossary.adoc#index[]
+
+[#r]
+== R
+
+
+Back to xref:csharp:refer-glossary.adoc#index[]
+
+[#s]
+== S
+
+[#t]
+== T
+
+[#tlsidentity]
+
+TLSIdentity::
+// tag::cbl-p2psync-tlsid-full[]
+// tag::cbl-p2psync-tlsid-def[]
+// tag::cbl-p2psync-tlsid[]
+TLSIdentity represents the identity information (Key pair and Certificates) used for setting up TLS Communication.
+
+The TLSIdentity API differs from platform-to-platform.
+
+// end::cbl-p2psync-tlsid[]
+// end::cbl-p2psync-tlsid-def[]
+* _Synonym(s)_: n/a
+* _Topic Group_: _Using Peer-to-Peer Synchronization (web sockets_
+* _Related Term(s)_: xref:csharp:refer-glossary.adoc#active-peer[] xref:csharp:refer-glossary.adoc#passive-peer[]
+* _Read More_: xref:csharp:p2psync-websocket.adoc[Peer-to-Peer]
+// end::cbl-p2psync-tlsid-full[]
+
+Back to xref:csharp:refer-glossary.adoc#index[]
+

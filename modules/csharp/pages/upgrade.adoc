@@ -1,11 +1,409 @@
+
 = Upgrade
 :page-aliases: advance/csharp-dep-upgrade.adoc, dep-upgrade.adoc
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 
-include::partial$_set_page_context_for_csharp.adoc[]
+
+:source-language: C#
 
 
-include::{root-commons}upgrade.adoc[]
+// The admonition does not apply to C as it references upgrading from versions 2.x.
+// CBL-C started at version 3.0
+[IMPORTANT]
+--
+On upgrading from a 2.x release, all Couchbase Lite databases will be automatically re-indexed on initial database open. +
+This can result in a delay before the database is usable.
+--
+
+[#3-3-0-upgrade]
+== {major}.{minor}.{base}{empty} Upgrade
+
+The action will take place automatically and can lead to some delay in the database becoming available for use in your application.
+
+In addition, if you are syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
+See xref:sync-gateway::upgrading.adoc[Upgrading Sync Gateway] for more details.
+This is a one-way conversion.
+
+// All API and other listed changes included in the other platforms do not apply to CBL-C for the following reasons
+// The changes apply to pre 3.x versions (CBL-C started at 3.0)
+// Or they relate to Querybuilder functionality - CBL-C doesn't have Querybuilder.
+[#api-changes]
+=== API Changes
+
+
+This content introduces the changes made to the Couchbase{nbsp}Lite for C#.Net API for release {major}.{minor}.{base}{empty}.
+
+// Starting from 3.2 Couchbase{nbsp}Lite for C#.Net requires _Visual Studio 2019+_ and uses .Net Core 3.1 (updating from .Net Core 2.0).
+
+[#breaking-change]
+==== Breaking Change
+
+The function https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Atan2_Couchbase_Lite_Query_IExpression_Couchbase_Lite_Query_IExpression_[ATAN2(x, y)],
+which returns the principal value of the arc tangent of y/x, now becomes
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Atan2_Couchbase_Lite_Query_IExpression_Couchbase_Lite_Query_IExpression_[ATAN2(y, x)];
+that is, the arguments are reversed in line with common notation.
+
+
+[#removed]
+==== Removed
+
+[#activate]
+===== Activate
+
+We have removed the method `Activate()` from *all* platform support libraries *except* `Support.Android` (Xamarin Android)
+
+
+[#enabletextlogging]
+===== EnableTextLogging()
+We have removed the obsolete method `EnableTextLogging()` from all the platform support libraries.
+
+
+[#resetcheckpoint]
+===== ResetCheckpoint
+
+The method
+https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_ResetCheckpoint[ResetCheckpoint()]
+has been removed.
+Use the `reset:` argument when starting the replicator instead.
+
+[#before]
+===== Before
+[source, java,subs="attributes+, macros+"]
+----
+replicator.ResetCheckpoint();
+replicator.Start();
+----
+
+[#after]
+===== After
+[source, java,subs="attributes+, macros+"]
+----
+replicator.Start(true) // <.>
+
+----
+<.> Set the `reset:` argument `true` to initiate a replicator checkpoint reset
+
+[#setloglevel]
+===== SetLogLevel()
+We have removed the method
+https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_SetLogLevel_Couchbase_Lite_Logging_LogDomain_Couchbase_Lite_Logging_LogLevel_[Database.setLogLevel()] +
+Use
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Console[
+Database.log.console]
+instead:
+
+[#before-2]
+===== Before
+[source, java,subs="attributes+, macros+"]
+----
+Database.SetLogLevel(LogDomain.Replicator, LogLevel.Verbose);
+Database.SetLogLevel(LogDomain.Query, LogLevel.Verbose);
+----
+
+[#after-2]
+===== After
+[source, java,subs="attributes+, macros+"]
+----
+Database.Log.Console.Domains = LogDomain.All;
+Database.Log.Console.LogLevel = LogLevel.Verbose;
+
+----
+
+
+[#database-compact]
+==== Database.Compact
+We have removed the method
+https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Compact[Database.compact()]. +
+Use the method
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_PerformMaintenance_Couchbase_Lite_MaintenanceType_[Database.PerformMaintenance()] and the enum
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.MaintenanceType.html[MaintenanceType]
+instead
+
+[#before-3]
+===== Before
+[source, java,subs="attributes+, macros+"]
+----
+var db = new Database("thisdb");
+db.Compact()
+----
+
+[#after-3]
+===== After
+[source, java,subs="attributes+, macros+"]
+----
+var db = new Database("thisdb");
+
+db.PerformMaintenance(MaintenanceType.Compact)
+
+----
+
+
+[#deprecated-api]
+==== Deprecated API
+
+
+[#match]
+===== Match
+We will remove
+https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.IFullTextExpression.html#Couchbase_Lite_Query_IFullTextExpression_Match_System_String_[Match]
+at the next major release. +
+You should plan to switch to using the alternative
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.FullTextFunction.html#Couchbase_Lite_Query_FullTextFunction_Match_System_String_System_String_[FullTextFunction.match(indexName:)]
+at the earliest opportunity.
+
+[#before-4]
+===== Before
+[source, java,subs="attributes+, macros+"]
+----
+var whereClause =
+        FullTextExpression.Index("nameFTSIndex").Match("'querystring'");
+using (var query = QueryBuilder.Select(SelectResult.Expression(Meta.ID))
+    .From(DataSource.Database(db))
+    .Where(whereClause)) {
+    foreach (var result in query.Execute()) {
+        Console.WriteLine($"Document id {result.GetString(0)}");
+    }
+}
+----
+
+[#after-4]
+===== After
+[source, java,subs="attributes+, macros+"]
+----
+var whereClause =
+      FullTextFunction.Match("nameFTSIndex"),"'querystring'"); // <.>
+using (var query =
+    QueryBuilder.Select(SelectResult.Expression(Meta.ID))
+      .From(DataSource.Database(db))
+      .Where(whereClause)) {
+      foreach (var result in query.Execute()) {
+        Console.WriteLine($"Document id {result.GetString(0)}");
+      }
+  }
+----
+<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.FullTextFunction.htmlFullTextFunction.match(indexName:)[FullTextFunction.match(indexName:)]
+to build the query
+
+[#isnullormissing]
+===== IsNullOrMissing
+We will remove
+https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsNullOrMissing[isNullOrMissing] +
+You should plan to switch to using the alternative
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsNotValued[IsNotValued()]
+
+at the earliest opportunity.
+
+[#before-5]
+===== Before
+[source, java,subs="attributes+, macros+"]
+----
+var query = QueryBuilder.Select(SelectResult.All())
+    .From(DataSource.Database(db))
+    .Where(Expression.Property("missingprop").IsNullOrMissing())
+----
+
+[#after-5]
+===== After
+[source, java,subs="attributes+, macros+"]
+----
+var query = QueryBuilder.Select(SelectResult.All())
+    .From(DataSource.Database(db))
+    .Where(Expression.Property("missingprop").IsNotValued())
+----
+
+
+[#notnullormissing]
+===== NotNullOrMissing
+We will remove
+https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_NotNullOrMissing[notNullOrMissing]. +
+You should plan to switch to using the alternative
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsValued[isValued()]
+at the earliest opportunity.
+
+
+| isNotValued()
+
+
+[#before-6]
+===== Before
+[source, java,subs="attributes+, macros+"]
+----
+var query = QueryBuilder.Select(SelectResult.All())
+    .From(DataSource.Database(db))
+    .Where(Expression.Property("notmissingprop").NotNullOrMissing())
+----
+
+[#after-6]
+===== After
+[source, java,subs="attributes+, macros+"]
+----
+var query = QueryBuilder.Select(SelectResult.All())
+    .From(DataSource.Database(db))
+    .Where(Expression.Property("notmissingprop").IsValued())
+
+----
+
+
+[#lbl-db-upgrades]
+== 1.x Databases Upgrades to 2.x
+
+Databases created using Couchbase Lite 1.2 or later can still be used with Couchbase Lite 2.x; but will be automatically updated to the  current 2.x version.
+This feature is only available for the default storage type (i.e., not a ForestDB database).
+
+[#encrypted-databases]
+=== Encrypted Databases
+The automatic migration feature does not support encrypted databases.
+So if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/C#.html#database-encryption[1.x Database Guide]).
+
+Thus, to upgrade an encrypted 1.x database, you should do the following:
+
+.Upgrading Encrypted Databases
+****
+. Disable encryption using the Couchbase Lite 1.x framework (see https://docs-archive.couchbase.com/couchbase-lite/1.4/csharp.html#database-encryption[1.x encryption guide])
+. Open the database file with encryption enabled using the Couchbase Lite 2.x framework.
+****
+
+Since it is not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in the same application this upgrade path would require two successive upgrades.
+
+If you are using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.
+
+
+[#handling-of-existing-conflicts]
+=== Handling of Existing Conflicts
+
+If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
+
+This functionality is related to the way conflicts are now being handled in Couchbase Lite -- see xref:csharp:conflict.adoc[Handling Data Conflicts].
+
+Optionally, existing conflicts in the 1.x database can be resolved with the https://docs-archive.couchbase.com/couchbase-lite/1.4/C#.html#resolving-conflicts[1.x API] prior to the database being upgraded.
+
+[#handling-of-existing-attachments]
+=== Handling of Existing Attachments
+
+Attachments persisted in a 1.x database are copied to the new database.
+NOTE: The relevant Couchbase Lite API is now called the `Blob` API not the `Attachments` API.
+
+The functionally is identical but the internal schema for attachments has changed.
+
+Blobs are stored anywhere in the document, just like other value types.
+Whereas in 1.x they were stored under the `_attachments` field.
+
+The automatic upgrade functionality *does not* update the internal schema for attachments, so they remain accessible under the `_attachments` field.
+See xref:csharp:upgrade.adoc#ex-get-att[] for how to retrieve an attachment that was created in a 1.x database with a 2.x API.
+
+.Retrieve 1.x Attachment
+[#ex-get-att]
+
+
+[#ex-get-att]
+====
+
+
+[source, C#]
+----
+include::csharp:example$code_snippets/Program.cs[tags="1x-attachment", indent=0]
+----
+
+
+====
+
+
+[#replication-compatibility]
+=== Replication Compatibility
+
+The current replication protocol is not backwards compatible with the 1.x replication protocol.
+Therefore, to use replication with Couchbase Lite 2.x, the target Sync Gateway instance must also be upgraded to 2.x.
+
+Sync Gateway 2.x will continue to accept clients that connect through the 1.x protocol.
+
+It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through ws://localhost:4984/db.
+
+This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
+
+
+[#visual-studio]
+== Visual Studio
+
+The public facing API has completely changed in Couchbase Lite 2.0 and will require a re-write to upgrade an application that is using Couchbase Lite 1.x.
+To update an Xcode project built with Couchbase Lite 1.x:
+
+* Remove the existing Couchbase Lite nuget package from the Visual Studio project.
+* Remove all the Couchbase Lite 1.x dependencies -- see the  https://docs-archive.couchbase.com/couchbase-lite/1.4/csharp.html#getting-started[1.x installation guide].
+* Install the Couchbase Lite 2.0 framework in your project  -- see xref:csharp:gs-install.adoc[Install].
+At this point, there will be many compiler warnings.
+Refer to the examples on this page to learn about the new API.
+* Build & run your application.
+
+[#downgrading-couchbase-lite]
+== Downgrading Couchbase Lite
+
+[#downgrading-between-major-releases]
+=== Downgrading Between Major Releases
+
+*No Downgrade Support* - Downgrades between major versions of Couchbase Lite (CBL) are not supported.
+Once you upgrade to a new major version, downgrading to a previous major version may lead to incompatibility issues.
+
+For example, Upgrading from CBL 2.x.x to CBL 3.x.x does not guarantee the ability to revert to CBL 2.x.x.
+
+[#downgrading-between-minor-releases]
+=== Downgrading Between Minor Releases
+
+*Conditional Downgrade Support* - Downgrade support for minor releases is considered on a case-by-case basis.
+The release notes for each minor version will clarify whether downgrades are supported.
+
+For example, if a new minor version such as CBL 3.1.0 is released the release notes will specify whether downgrading to CBL 3.0.x is supported.
+
+[#downgrading-between-patch-releases]
+=== Downgrading Between Patch Releases
+
+*Full Downgrade Support* - Downgrades between patch releases are supported.
+Users can safely downgrade between different patch versions within the same minor release.
+
+For example, if you're running CBL 3.1.6 you can downgrade to CBL 3.1.4 or CBL 3.1.3 without issues.
+
+
+// Include standard footer
+
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:csharp:gs-prereqs.adoc[Prerequisites]
+* xref:csharp:gs-install.adoc[Install]
+* xref:csharp:gs-build.adoc[Build and Run]
+
+
+.
+
+[.column]
+=== {empty}
+.Learn more . . .
+* xref:csharp:database.adoc[Databases]
+* xref:csharp:document.adoc[Documents]
+* xref:csharp:blob.adoc[Blobs]
+* xref:csharp:replication.adoc[Remote Sync Gateway]
+* xref:csharp:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+++++
+</div>
+++++
 

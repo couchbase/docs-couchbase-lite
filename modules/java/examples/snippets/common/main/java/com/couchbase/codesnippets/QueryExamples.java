@@ -658,5 +658,19 @@ public class QueryExamples {
         return results;
         // end::query-syntax-n1ql-params[]
     }
+
+    public void partialIndexExample(Collection collection) throws CouchbaseLiteException {
+        // tag::query-partial-index[]
+        collection.createIndex("HotelCityIndex", new ValueIndexConfiguration("city").setWhere("type = \"hotel\""));
+        // end::query-partial-index[]
+    }
+
+    public void partialFullIndexExample(Collection collection) throws CouchbaseLiteException {
+        // tag::query-partial-full-index[]
+        collection.createIndex(
+            "HotelDescIndex",
+            new FullTextIndexConfiguration("description").setWhere("type = \"hotel\""));
+        // end::query-partial-full-index[]
+    }
 }
 

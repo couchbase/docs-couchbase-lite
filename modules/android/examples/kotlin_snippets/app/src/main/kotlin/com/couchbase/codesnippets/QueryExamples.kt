@@ -551,7 +551,8 @@ fun prepareIndex(collection: Collection) {
     // tag::fts-index[]
     collection.createIndex(
         "overviewFTSIndex",
-        FullTextIndexConfigurationFactory.newConfig("overview"))
+        FullTextIndexConfigurationFactory.newConfig("overview")
+    )
     // end::fts-index[]
 }
 
@@ -665,3 +666,18 @@ fun docsOnlyQuerySyntaxN1QLParams(database: Database): List<Result> {
     // end::query-syntax-n1ql-params[]
 }
 
+fun partialIndexExample(collection: Collection) {
+    // tag::query-partial-index[]
+    val config = ValueIndexConfigurationFactory.newConfig("city")
+    config.where = "type = \"hotel\""
+    collection.createIndex("HotelCityIndex", config)
+    // end::query-partial-index[]
+}
+
+fun partialFullIndexExample(collection: Collection) {
+    // tag::query-partial-full-index[]
+    val config = ValueIndexConfigurationFactory.newConfig("description")
+    config.where = "type = \"hotel\""
+    collection.createIndex("HotelDescIndex", config)
+    // end::query-partial-full-index[]
+}

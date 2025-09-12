@@ -1,23 +1,213 @@
+
 = Result Sets
-ifdef::show_edition[:page-edition: {release}]
-ifdef::prerelease[:page-status: {prerelease}]
 :page-role:
 :description: How to use Couchbase Lite Query's Result Sets
 :keywords: query, sql, n1ql, fuzzy-matching
 
-include::partial$_set_page_context_for_c.adoc[]
 
-:topic-group: query
-:param-related: {querybuilder--xref} |  {query-n1ql-mobile--xref} |  {querybuilder--xref--predictive-query} | {query-live--xref} | {indexing--xref}
-include::{root-partials}_show_page_header_block.adoc[]
+:source-language: c
 
-:is_fullpage:
-include::{root-commons}query-resultsets.adoc[]
+:source-language: c
+:url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__
 
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:c:querybuilder.adoc[QueryBuilder] |  xref:c:query-n1ql-mobile.adoc[{sqlpp} for Mobile] |  xref:c:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:c:query-live.adoc[Live Queries] | xref:c:indexing.adoc[Indexing]
+--
+
+
+[#query-execution]
+== Query Execution
+The execution of a Couchbase Lite for C's database query returns an array of results, a result set.
+
+Each row of the result set represents the data returned from a document that met the conditions defined by the `WHERE` statement of your query.
+The composition of each row is determined by the `SelectResult` expressions provided in the `SELECT` statement.
+
+
+[#lbl-process-resultset]
+== Processing Results
+xref:c:query-resultsets.adoc#lbl-acc-all[]
+| xref:c:query-resultsets.adoc#lbl-acc-id[]
+| xref:c:query-resultsets.adoc#lbl-acc-specific[]
+
+To retrieve the results of your query,  you need to execute it using `Query.execute`.
+
+The output from the execution is an array, with each array element representing the data from a document that matched your search criteria.
+
+To unpack the results you need to iterate through this array.
+Alternatively, you can convert the result to a JSON string -- see:
+
+
+[#lbl-acc-all]
+=== Access Document Properties - All Properties
+Here we look at how to access document properties when you have used SelectResult.all.
+
+In this case each array element is a dictionary structure with the database name as its key.
+The properties are presented in the value as an array of key-value pairs (property name/property value).
+
+You access the retrieved document properties by converting each row's value, in turn, to a dictionary -- as shown in xref:c:query-resultsets.adoc#ex-acc-all[].
+
+[#ex-acc-all]
+.Access All Properties
+
+
+[#ex-acc-all]
+====
+
+
+[source, c]
+----
+include::c:example$code_snippets/main.cpp[tags="query-access-all", indent=0]
+----
+
+
+====
+
+<.> Here we get the dictionary of document properties using the database name as the key.
+You can add this dictionary to an array of returned matches, for processing elsewhere in the app.
+<.> Alternatively, you can access the document properties here, by using the property names as keys to the dictionary object.
+
+[#lbl-acc-id]
+=== Access Document Properties - ID
+Here we look at how to access document properties when you have returned only the document IDs for documents that matched your selection criteria.
+
+This is something you may do when retrieval of the properties directly by the query may consume excessive amounts of memory and-or processing time.
+
+In this case each array element is a dictionary structure where `ID` is the key and the required document ID is the value.
+
+Access the required document properties by retrieving the document from the database using its document ID -- as shown in xref:c:query-resultsets.adoc#ex-acc-id[].
+
+[#ex-acc-id]
+.Access by ID
+
+
+[#ex-acc-id]
+====
+
+
+[source, c]
+----
+include::c:example$code_snippets/main.cpp[tags="query-access-id", indent=0]
+----
+
+
+====
+
+<.> Extract the Id value from the dictionary and use it to get the document from the database
+
+
+[#lbl-acc-specific]
+=== Access Document Properties - Selected Properties
+Here we look at how to access properties when you have used SelectResult to get a specific subset of properties.
+
+In this case each array element is an array of key value pairs (property name/property value).
+
+Access the retrieved properties by converting each row into a dictionary -- as shown in xref:c:query-resultsets.adoc#ex-acc-specific[].
+
+[#ex-acc-specific]
+
+
+[#ex-acc-specific]
+====
+
+
+[source, c]
+----
+include::c:example$code_snippets/main.cpp[tags="query-access-props", indent=0]
+----
+
+
+====
+
+
+[#json-result-sets]
 == JSON Result Sets
 
-include::{root-commons}querybuilder-jsonresult.adoc[subs="macros,attributes"]
+[#ex-json]
+.Using JSON Results
 
-include::{root-partials}block-related-content-data.adoc[]
 
-:is_fullpage!:
+[#ex-json]
+====
+
+Use {url-api-references-classes}json.html#ga3450acc0690101545d75986b91e4080[FLValue_ToJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See xref:c:query-resultsets.adoc#ex-json[] for a working example.
+
+[source, c]
+----
+include::c:example$code_snippets/main.cpp[tags="query-access-json", indent=0]
+----
+
+
+====
+
+
+.JSON String Format
+[#ex-json-format]
+If your query selects ALL then the JSON format will be:
+
+[source, JSON]
+----
+{
+  database-name: {
+    key1: "value1",
+    keyx: "valuex"
+  }
+}
+----
+
+If your query selects a sub-set of available properties then the JSON format will be:
+
+[source, JSON]
+----
+{
+  key1: "value1",
+  keyx: "valuex"
+}
+----
+
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+====== {empty}
+.How to . . .
+* xref:c:gs-prereqs.adoc[Prerequisites]
+* xref:c:gs-install.adoc[Install]
+* xref:c:gs-build.adoc[Build and Run]
+
+
+.
+
+[.column]
+====== {empty}
+.Learn more . . .
+* xref:c:database.adoc[Databases]
+* xref:c:document.adoc[Documents]
+* xref:c:blob.adoc[Blobs]
+* xref:c:replication.adoc[Remote Sync Gateway]
+* xref:c:conflict.adoc[Handling Data Conflicts]
+
+.
+
+
+[.column]
+====== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+
+++++
+</div>
+++++
+
+

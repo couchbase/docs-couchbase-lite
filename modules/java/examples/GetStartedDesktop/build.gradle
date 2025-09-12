@@ -4,8 +4,8 @@ plugins {
 }
 
 ext {
-    CBL_VERSION='3.2.1-8'
-    EXT_VERSION='1.0.0-26'
+    CBL_VERSION = project.hasProperty('cblVersion') ? project.cblVersion : { throw new GradleException('cblVersion property is required. Use -PcblVersion=x.x.x-x') }()
+    EXT_VERSION = project.hasProperty('extVersion') ? project.extVersion : { throw new GradleException('extVersion property is required. Use -PextVersion=x.x.x-x') }()
 }
 
 def USE_LOCAL_MAVEN = project.hasProperty("useLocalMaven")
@@ -23,16 +23,16 @@ java {
 repositories {
     if (USE_LOCAL_MAVEN) {
         mavenLocal()
-        maven {
-            url "https://proget.sc.couchbase.com/maven2/internalmaven/"
-            content { includeGroupByRegex "com\\.couchbase\\.lite.*" }
-        }
     }
-    else {
-        maven {
-            url "https://mobile.maven.couchbase.com/maven2/dev/"
-            content { includeGroupByRegex "com\\.couchbase\\.lite.*" }
-        }
+
+    maven {
+        url "https://proget.sc.couchbase.com/maven2/internalmaven/"
+        content { includeGroupByRegex "com\\.couchbase\\.lite.*" }
+    }
+
+    maven {
+        url "https://mobile.maven.couchbase.com/maven2/dev/"
+        content { includeGroupByRegex "com\\.couchbase\\.lite.*" }
     }
 
     google()
