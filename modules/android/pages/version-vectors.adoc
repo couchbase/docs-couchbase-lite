@@ -17,52 +17,41 @@ Related Content -- xref:android:database.adoc[Databases] | xref:android:document
 == Overview
 
 Couchbase Lite 4.0 introduces version vectors as a replacement for the previous revision tree system used in earlier versions.
-This architectural change improves how Couchbase Lite tracks document changes, handles conflicts, and synchronizes data across devices and with Sync Gateway.
+This change improves how Couchbase Lite tracks document changes, handles conflicts, and synchronizes data across devices and with Sync Gateway.
 
 Version vectors provide a more efficient and scalable approach to document versioning that aligns Couchbase Lite with Couchbase Server's versioning system, enabling seamless synchronization across the entire Couchbase ecosystem.
 
 [#what-are-version-vectors]
 == What are Version Vectors?
 
-A version vector is a data structure that tracks the complete history of document modifications across different sources. Instead of maintaining a tree-like structure of document revisions, version vectors use a more efficient approach based on logical timestamps.
+A version vector is a data structure that tracks the complete history of document modifications across different sources.
+Instead of maintaining a tree-like structure of document revisions, version vectors use a more efficient approach based on logical timestamps.
 
 [#key-components]
 === Key Components
 
-Source ID:: A unique identifier for each entity that can modify documents. In mobile environments, this typically represents a specific database instance on a device. Source IDs are 128-bit UUIDs that ensure global uniqueness across all devices and clusters.
+Source ID:: A unique identifier for each Couchbase Lite database instance that can modify documents.
+Each Couchbase Lite database on a device receives its own unique source ID, ensuring that document changes can be tracked back to their originating database.
 
-Timestamp:: A logical clock value that establishes the ordering of document changes within a single source. Couchbase Lite 4.0 uses Hybrid Logical Clocks (HLC), which combine real system time with logical counters to ensure proper causality tracking.
+Timestamp:: A logical clock value that establishes the ordering of document changes within a single source.
+Couchbase Lite 4.0 uses Hybrid Logical Clocks (HLC), which combine realtime with logical counters to ensure proper tracking.
 
-Version:: A combination of a timestamp and source ID that uniquely identifies when and where a specific document revision was created. This replaces the traditional revision ID concept.
+Version:: A combination of a timestamp and source ID that uniquely identifies when and where a specific document revision was created.
+This replaces the traditional revision ID concept.
 
-Version Vector:: An ordered array containing the latest version from every source that's modified the document. The vector is sorted in reverse chronological order, with the most recent version appearing first.
+Version Vector:: An ordered array containing the latest version from every source that's modified the document.
 
 [#version-vectors-vs-revision-trees]
 == Version Vectors vs. Revision Trees
 
-Understanding the differences between version vectors and the previous revision tree system helps clarify the benefits of this architectural change.
 
-[#revision-trees-cbl-3x]
-=== Revision Trees (CBL 3.x and earlier)
+Version vectors represents an improvement over the revision tree system used in Couchbase Lite 3.x and earlier versions.
+While the revision tree approach maintained complex branching trees of all document revisions with revision IDs in the format `<generation>-<document-hash>`, version vectors use a more efficient structure that tracks only the latest version from each source using timestamp-based identifiers in the format `<timestamp>@<source-id>`.
 
-The previous system used revision trees to track document history:
+This change eliminates the storage overhead of maintaining complete revision history trees and replaces the `"most active wins"` conflict resolution logic with `"last write wins"` approach based on hybrid logical timestamps.
 
-* **Revision IDs**: Generated using the format `<generation>-<document-hash>`
-* **Tree Structure**: Maintained a branching tree of all document revisions
-* **Conflict Resolution**: Used "most active wins" logic based on revision generation numbers
-* **Storage Overhead**: Required storing complete revision history trees
-* **Synchronization**: Complex tree merging operations during sync
+The result is significantly reduced storage requirements, simplified synchronization through vector comparison rather than tree merging operations, and better overall performance and scalability as the number of collaborating devices increases.
 
-[#version-vectors-cbl-4x]
-=== Version Vectors (CBL 4.0+)
-
-The new system uses version vectors for more efficient tracking:
-
-* **Version IDs**: Use the format `<timestamp>@<source-id>`
-* **Vector Structure**: Maintains only the latest version from each source
-* **Conflict Resolution**: Uses "last write wins" based on hybrid logical timestamps
-* **Storage Efficiency**: Significantly reduced storage requirements
-* **Synchronization**: Simplified vector comparison and merging
 
 [#benefits-of-version-vectors]
 === Benefits of Version Vectors
@@ -208,7 +197,8 @@ This approach:
 [#custom-conflict-resolution]
 === Custom Conflict Resolution
 
-While the default resolver changes, you can still implement custom conflict resolution logic. The new timestamp property provides additional context for making resolution decisions:
+While the default resolver changes, you can still implement custom conflict resolution logic.
+The new timestamp property provides additional context for making resolution decisions.
 
 .Custom Conflict Resolution Example
 [#ex-custom-conflict-resolution]
@@ -260,18 +250,15 @@ fun customResolve(conflict: Conflict): Document? {
 ====
 
 [#compatibility-and-migration]
-== Compatibility and Migration
-
-[#database-compatibility]
-=== Database Compatibility
+== Compatibility
 
 Couchbase Lite 4.0 provides backward compatibility for existing databases:
 
-Automatic Upgrade:: When opening a CBL 3.1 or 3.2 database with CBL 4.0, documents are automatically upgraded to use version vectors
+Automatic Upgrade:: When opening a CBL 3.1 or 3.2 database with CBL 4.0, documents are automatically upgraded to use version vectors.
 
-Lazy Migration:: The upgrade occurs incrementally as documents are accessed and modified
+Lazy Migration:: The upgrade occurs incrementally as documents are accessed and modified.
 
-No Downgrade:: Once upgraded to version vectors, databases cannot be opened with CBL 3.x versions
+No Downgrade:: Once upgraded to version vectors, databases cannot be opened with CBL 3.x versions.
 
 [#synchronization-compatibility]
 === Synchronization Compatibility
@@ -280,7 +267,8 @@ Version vector synchronization has specific requirements:
 
 Sync Gateway Compatibility:: CBL 4.0 requires Sync Gateway 4.0 or later. Attempting to sync with older Sync Gateway versions will result in an error.
 
-Peer-to-Peer Compatibility:: CBL 4.0 can only perform peer-to-peer sync with other CBL 4.0+ instances. Sync attempts with CBL 3.x peers will fail with an appropriate error message.
+Peer-to-Peer Compatibility:: CBL 4.0 can only perform peer-to-peer sync with other CBL 4.0+ instances.
+Sync attempts with CBL 3.x peers will fail with an appropriate error message.
 
 [#development-considerations]
 == Development Considerations
@@ -336,23 +324,6 @@ assertThat(updatedDoc.timestamp, greaterThan(doc.timestamp))
 --
 =====
 ====
-
-[#migration-planning]
-=== Migration Planning
-
-For existing applications:
-
-1. **Test Thoroughly**: Verify application behavior with version vector databases
-2. **Update Dependencies**: Ensure Sync Gateway infrastructure is upgraded to 4.0+
-3. **Review Conflict Logic**: Update any custom conflict resolution that relied on revision generation numbers
-4. **Monitor Performance**: Validate that the improved efficiency benefits your specific use cases
-
-[#summary]
-== Summary
-
-Version vectors represent a significant architectural improvement in Couchbase Lite 4.0, providing better performance, scalability, and synchronization capabilities. While the change is largely transparent to application code, understanding the new versioning system helps developers make informed decisions about conflict resolution, testing strategies, and migration planning.
-
-The move to version vectors aligns Couchbase Lite with the broader Couchbase ecosystem, ensuring efficient and reliable data synchronization from edge devices to cloud-scale deployments.
 
 [#related-content]
 == Related Content
