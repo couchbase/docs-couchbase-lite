@@ -14,341 +14,384 @@
 // CBL-C started at version 3.0
 [IMPORTANT]
 --
-On upgrading from a 2.x release, all Couchbase Lite databases will be automatically re-indexed on initial database open. +
+On upgrading from a 2.x release, all Couchbase Lite databases automatically re-indexes on initial database open. +
 This can result in a delay before the database is usable.
 --
 
-[#3-2-3-upgrade]
+[#4-0-0-upgrade]
 == {major}.{minor}.{base}{empty} Upgrade
 
-The action will take place automatically and can lead to some delay in the database becoming available for use in your application.
+Couchbase Lite 4.0 introduces significant architectural changes, most notably the migration from revision trees to version vectors for document versioning.
 
-In addition, if you are syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
-See xref:sync-gateway::upgrading.adoc[Upgrading Sync Gateway] for more details.
-This is a one-way conversion.
 
-// All API and other listed changes included in the other platforms do not apply to CBL-C for the following reasons
-// The changes apply to pre 3.x versions (CBL-C started at 3.0)
-// Or they relate to Querybuilder functionality - CBL-C doesn't have Querybuilder.
-[#api-changes]
-=== API Changes
 
+=== Major Changes in {major}.{minor}.{base}{empty}
 
-This content introduces the changes made to the Couchbase{nbsp}Lite for Android API for release {major}.{minor}.{base}{empty}.
+**Version Vector Architecture**:
+CBL {major}.{minor}.{base}{empty} replaces the revision tree system with version vectors, providing improved performance, scalability, and conflict resolution. Documents now use version-based revision IDs in the format `<timestamp>@<source-id>` instead of the previous `<generation>-<document-hash>` format.
 
+**Enhanced Conflict Resolution**:
+the default conflict resolution strategy changes from `most active wins` to `last write wins` based on hybrid logical timestamps, providing more intuitive and predictable conflict resolution behavior.
 
-[#removed]
-==== Removed
+**New Document Properties**:
+a new `timestamp` property is available on Document objects, providing direct access to the document's logical timestamp as a `long` value representing nanoseconds since the Unix epoch.
 
 
-[#resetcheckpoint]
-===== ResetCheckpoint
+[#database-compatibility-40]
+=== Database Compatibility
 
-The method https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#resetCheckpoint--[Replicator.resetCheckpoint()] has been removed. +
-Instead, use https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#start-boolean-[Replicator.resetCheckpoint(boolean reset)].
+**Automatic Upgrade from 3.x**:
+CBL {major}.{minor}.{base}{empty} databases are compatible with CBL 3.1 and 3.2 databases.
+When opening a 3.1 or 3.2 database with CBL {major}.{minor}.{base}{empty}, documents are automatically upgraded to use version vectors when they're accessed and saved.
 
-.Before
-[source, java]
-----
-replicator.resetCheckpoint()
-replicator.start()
-----
+**No Configuration Required**:
+CBL {major}.{minor}.{base}{empty} enables version vectors by default - the feature requires no API configuration.
 
-.After
-[source, java, subs="attributes+, macros+"]
-----
-replicator.start(true)
-----
-
-[#database-setloglevel]
-===== Database.setLogLevel
-
-The method https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/Database.html#setLogLevel-com.couchbase.lite.LogDomain-com.couchbase.lite.LogLevel-[Database.setLogLevel()]
-has been removed. +
-Instead:
-
-. Set the logging levels for loggers, individually
-. Set the domains to be logged by the console logger, explicitly.
+== Synchronization Compatibility
 
-.Before
-[source, java, subs="attributes+, macros+"]
-----
-Database.setLogLevel(LogDomain.ALL, LogLevel.VERBOSE)
-
-----
-
-.After
-[source, java, subs="attributes+, macros+"]
-----
-Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS)
-Database.log.getConsole().setLevel(LogLevel.VERBOSE)
-Database.log.getFile().setDomains(LogLevel.DEBUG)
-----
-
-[#database-compact]
-===== Database.compact
-The https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/Database.html#compact--[Database.compact()] method has been removed. +
-It is replaced by the new https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance(MaintenanceType)] method, and the maintenance operations represented in the enum https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android/com/couchbase/lite/MaintenanceType.html[MaintenanceType]
-
-.Before
-[source, java, subs="attributes+, macros+"]
-----
-try testdb.compact()
-
-----
-
-.After
-[source, java, subs="attributes+, macros+"]
-----
-testdb.performMaintenance(MaintenanceType.COMPACT)
-----
-
-
-[#deprecated-in-the-api]
-==== Deprecated in the API
-
-
-[#match]
-===== MATCH
-The class, https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/FullTextExpression.html[FullTextExpression]
-has been deprecated. +
-Use https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android/com/couchbase/lite/FullTextFunction.html[FullTextFunction] instead.
-
-.Before
-[source, java, subs="attributes+, macros+"]
-----
-FullTextExpression index = FullTextExpression.index("indexName")
-Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
-  .from(DataSource.database(testdb))
-  .where(index.match(queryString))
-
-----
-
-.After
-[source, java, subs="attributes+, macros+"]
-----
-Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
-  .from(DataSource.database(testdb))
-  .where(FullTextFunction.match("indexName", queryString))
-
-----
-
-[#isnullormissingnotnullormissing]
-===== isNullOrMissing/notNullOrMissing
-
-The functions https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/Expression.html#isNullOrMissing--[Expression.isNullOrMissing] and https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/Expression.html#notNullOrMissing--[Expression.notNullOrMissing] have been deprecated. +
-Use `isNotValued()` and-or `isValued()` instead.
-
-.Before
-[source, java, subs="attributes+, macros+"]
-----
-Query q =
-  QueryBuilder
-    .select([SelectResult.expression(Meta.id)])
-    .from(DataSource.database(testdb))
-    .where(
-      Expression.property("missingProp").isNullOrMissing())
-
-Query q =
-  QueryBuilder
-    .select([SelectResult.expression(Meta.id)])
-    .from(DataSource.database(testdb))
-    .where(Expression.property("notMissingProp").notNullOrMissing())
-
-----
-.After
-[source, java, subs="attributes+, macros+"]
-----
-Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
-  .from(DataSource.database(testdb))
-  .where(Expression.property("missingProp").isNotValued())
-
-Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
-  .from(DataSource.database(testdb))
-  .where(Expression.property("notMissingProp").isValued())
-
-----
-
-[#abstractreplicatorconfiguration]
-===== AbstractReplicatorConfiguration
-
-The enum https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setReplicatorType-com.couchbase.lite.AbstractReplicatorConfiguration.ReplicatorType-[AbstractReplicatorConfiguration.ReplicatorType]
-and the methods
-https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setReplicatorType--[
-ReplicatorConfiguration.setReplicatorType]
-and
-https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#getReplicatorType--[
-ReplicatorConfiguration.getReplicatorType]
-have all been deprecated. +
-Instead, use the methods `ReplicatorConfiguration.setType` and `ReplicatorConfiguration.getType`, and the top level enum `ReplicatorType`.
-
-.Before
-[source, java, subs="attributes+, macros+"]
-----
-ReplicatorConfiguration config =
-  new ReplicatorConfiguration().setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
-----
-.After
-[source, java, subs="attributes+, macros+"]
-----
-ReplicatorConfiguration config =
-  new ReplicatorConfiguration().setType(ReplicatorType.PUSH_AND_PULL);
-----
+[#synchronization-compatibility-40]
+=== Synchronization Compatibility
 
+**Sync Gateway Requirements**:
+CBL {major}.{minor}.{base}{empty} requires Sync Gateway 4.x or later for synchronization.
+Attempting to sync with Sync Gateway versions prior to 4.x results in replication errors with appropriate error messages indicating the incompatibility.
 
-[#moved-in-the-api]
-==== Moved in the API
+**Peer-to-Peer Compatibility**: CBL {major}.{minor}.{base}{empty} can only perform peer-to-peer synchronization with other CBL 4.x instances using either `URLEndpointListener` or `URLMessageEndpointListener`.
+Sync attempts with CBL 3.x peers fail with appropriate error messages.
 
 
-The enum https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.ActivityLevel.html[AbstractReplicator.ActivityLevel] and the classes https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.Progress.html[AbstractReplicator.Progress] and https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.Status.html[AbstractReplicator.Status] have all been moved to be top level definitions. +
-They are replaced by these definitions:
 
-* https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorActivityLevel.html[ReplicatorActivityLevel]
-* https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorProgress.html[ReplicatorProgress]
-* https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html[ReplicatorStatus]
+// [#3-2-3-upgrade]
+// == {major}.{minor}.{base}{empty} Upgrade
 
+// The action will take place automatically and can lead to some delay in the database becoming available for use in your application.
 
-.Before
-[source, java, subs="attributes+, macros+"]
-----
-ListenerToken token =
-  replicator.addChangeListener(
-    testSerialExecutor,
-    change -> {
-      final AbstractReplicator.Status status = change.getStatus()
-      if (status.getActivityLevel() == AbstractReplicator.ActivityLevel.BUSY)
-      { AbstractReplicator.Progress progress =
-          status.getProgress(); Logger.log("Progress: " + progress.completed + "/" progress.total);
-      }
-    });
+// In addition, if you're syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
+// See xref:sync-gateway::upgrading.adoc[Upgrading Sync Gateway] for more details.
+// This is a one-way conversion.
 
-----
-.After
-[source, java, subs="attributes+, macros+"]
-----
-ListenerToken token =
-  replicator.addChangeListener(
-    testSerialExecutor,
-    change -> {
-      final ReplicatorStatus status = change.getStatus()
-      if (status.getActivityLevel() == ReplicatorActivityLevel.BUSY)
-      { ReplicatorProgress progress =
-          status.getProgress(); Logger.log("Progress: " + progress.completed + "/" progress.total);
-      }
-    });
+// // All API and other listed changes included in the other platforms do not apply to CBL-C for the following reasons
+// // The changes apply to pre 3.x versions (CBL-C started at 3.0)
+// // Or they relate to Querybuilder functionality - CBL-C doesn't have Querybuilder.
+// [#api-changes]
+// === API Changes
 
-----
 
+// This content describes the changes made to the Couchbase{nbsp}Lite for Android API for release {major}.{minor}.{base}{empty}.
 
-[#lbl-db-upgrades]
-== 1.x Databases Upgrades to 2.x
 
-Databases created using Couchbase Lite 1.2 or later can still be used with Couchbase Lite 2.x; but will be automatically updated to the  current 2.x version.
-This feature is only available for the default storage type (i.e., not a ForestDB database).
+// [#removed]
+// ==== Removed
 
-[#encrypted-databases]
-=== Encrypted Databases
-The automatic migration feature does not support encrypted databases.
-So if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/Kotlin.html#database-encryption[1.x Database Guide]).
 
-Thus, to upgrade an encrypted 1.x database, you should do the following:
+// [#resetcheckpoint]
+// ===== ResetCheckpoint
 
-.Upgrading Encrypted Databases
-****
-. Disable encryption using the Couchbase Lite 1.x framework (see https://docs-archive.couchbase.com/couchbase-lite/1.4/android.html#database-encryption[1.x encryption guide])
-. Open the database file with encryption enabled using the Couchbase Lite 2.x framework.
-****
+// The method https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#resetCheckpoint--[Replicator.resetCheckpoint()] has been removed. +
+// Instead, use https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#start-boolean-[Replicator.resetCheckpoint(boolean reset)].
 
-Since it is not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in the same application this upgrade path would require two successive upgrades.
+// .Before
+// [source, java]
+// ----
+// replicator.resetCheckpoint()
+// replicator.start()
+// ----
 
-If you are using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.
+// .After
+// [source, java, subs="attributes+, macros+"]
+// ----
+// replicator.start(true)
+// ----
 
+// [#database-setloglevel]
+// ===== Database.setLogLevel
 
-[#handling-of-existing-conflicts]
-=== Handling of Existing Conflicts
+// The method https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/Database.html#setLogLevel-com.couchbase.lite.LogDomain-com.couchbase.lite.LogLevel-[Database.setLogLevel()]
+// has been removed. +
+// Instead:
 
-If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
+// . Set the logging levels for loggers, individually
+// . Set the domains to be logged by the console logger, explicitly.
 
-This functionality is related to the way conflicts are now being handled in Couchbase Lite -- see xref:android:conflict.adoc[Handling Data Conflicts].
+// .Before
+// [source, java, subs="attributes+, macros+"]
+// ----
+// Database.setLogLevel(LogDomain.ALL, LogLevel.VERBOSE)
 
-Optionally, existing conflicts in the 1.x database can be resolved with the https://docs-archive.couchbase.com/couchbase-lite/1.4/Kotlin.html#resolving-conflicts[1.x API] prior to the database being upgraded.
+// ----
 
-[#handling-of-existing-attachments]
-=== Handling of Existing Attachments
+// .After
+// [source, java, subs="attributes+, macros+"]
+// ----
+// Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS)
+// Database.log.getConsole().setLevel(LogLevel.VERBOSE)
+// Database.log.getFile().setDomains(LogLevel.DEBUG)
+// ----
+
+// [#database-compact]
+// ===== Database.compact
+// The https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/Database.html#compact--[Database.compact()] method has been removed. +
+// It is replaced by the new https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance(MaintenanceType)] method, and the maintenance operations represented in the enum https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android/com/couchbase/lite/MaintenanceType.html[MaintenanceType]
+
+// .Before
+// [source, java, subs="attributes+, macros+"]
+// ----
+// try testdb.compact()
+
+// ----
+
+// .After
+// [source, java, subs="attributes+, macros+"]
+// ----
+// testdb.performMaintenance(MaintenanceType.COMPACT)
+// ----
+
+
+// [#deprecated-in-the-api]
+// ==== Deprecated in the API
+
+
+// [#match]
+// ===== MATCH
+// The class, https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/FullTextExpression.html[FullTextExpression]
+// has been deprecated. +
+// Use https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android/com/couchbase/lite/FullTextFunction.html[FullTextFunction] instead.
+
+// .Before
+// [source, java, subs="attributes+, macros+"]
+// ----
+// FullTextExpression index = FullTextExpression.index("indexName")
+// Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
+//   .from(DataSource.database(testdb))
+//   .where(index.match(queryString))
+
+// ----
+
+// .After
+// [source, java, subs="attributes+, macros+"]
+// ----
+// Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
+//   .from(DataSource.database(testdb))
+//   .where(FullTextFunction.match("indexName", queryString))
+
+// ----
+
+// [#isnullormissingnotnullormissing]
+// ===== isNullOrMissing/notNullOrMissing
+
+// The functions https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/Expression.html#isNullOrMissing--[Expression.isNullOrMissing] and https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/Expression.html#notNullOrMissing--[Expression.notNullOrMissing] have been deprecated. +
+// Use `isNotValued()` and-or `isValued()` instead.
+
+// .Before
+// [source, java, subs="attributes+, macros+"]
+// ----
+// Query q =
+//   QueryBuilder
+//     .select([SelectResult.expression(Meta.id)])
+//     .from(DataSource.database(testdb))
+//     .where(
+//       Expression.property("missingProp").isNullOrMissing())
+
+// Query q =
+//   QueryBuilder
+//     .select([SelectResult.expression(Meta.id)])
+//     .from(DataSource.database(testdb))
+//     .where(Expression.property("notMissingProp").notNullOrMissing())
+
+// ----
+// .After
+// [source, java, subs="attributes+, macros+"]
+// ----
+// Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
+//   .from(DataSource.database(testdb))
+//   .where(Expression.property("missingProp").isNotValued())
+
+// Query q = QueryBuilder.select([SelectResult.expression(Meta.id)])
+//   .from(DataSource.database(testdb))
+//   .where(Expression.property("notMissingProp").isValued())
+
+// ----
+
+// [#abstractreplicatorconfiguration]
+// ===== AbstractReplicatorConfiguration
+
+// The enum https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setReplicatorType-com.couchbase.lite.AbstractReplicatorConfiguration.ReplicatorType-[AbstractReplicatorConfiguration.ReplicatorType]
+// and the methods
+// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setReplicatorType--[
+// ReplicatorConfiguration.setReplicatorType]
+// and
+// https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#getReplicatorType--[
+// ReplicatorConfiguration.getReplicatorType]
+// have all been deprecated. +
+// Instead, use the methods `ReplicatorConfiguration.setType` and `ReplicatorConfiguration.getType`, and the top level enum `ReplicatorType`.
+
+// .Before
+// [source, java, subs="attributes+, macros+"]
+// ----
+// ReplicatorConfiguration config =
+//   new ReplicatorConfiguration().setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+// ----
+// .After
+// [source, java, subs="attributes+, macros+"]
+// ----
+// ReplicatorConfiguration config =
+//   new ReplicatorConfiguration().setType(ReplicatorType.PUSH_AND_PULL);
+// ----
+
+
+// [#moved-in-the-api]
+// ==== Moved in the API
 
-Attachments persisted in a 1.x database are copied to the new database.
-NOTE: The relevant Couchbase Lite API is now called the `Blob` API not the `Attachments` API.
+
+// The enum https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.ActivityLevel.html[AbstractReplicator.ActivityLevel] and the classes https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.Progress.html[AbstractReplicator.Progress] and https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.Status.html[AbstractReplicator.Status] have all been moved to be top level definitions. +
+// They are replaced by these definitions:
 
-The functionally is identical but the internal schema for attachments has changed.
+// * https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorActivityLevel.html[ReplicatorActivityLevel]
+// * https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorProgress.html[ReplicatorProgress]
+// * https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html[ReplicatorStatus]
+
+
+// .Before
+// [source, java, subs="attributes+, macros+"]
+// ----
+// ListenerToken token =
+//   replicator.addChangeListener(
+//     testSerialExecutor,
+//     change -> {
+//       final AbstractReplicator.Status status = change.getStatus()
+//       if (status.getActivityLevel() == AbstractReplicator.ActivityLevel.BUSY)
+//       { AbstractReplicator.Progress progress =
+//           status.getProgress(); Logger.log("Progress: " + progress.completed + "/" progress.total);
+//       }
+//     });
 
-Blobs are stored anywhere in the document, just like other value types.
-Whereas in 1.x they were stored under the `_attachments` field.
+// ----
+// .After
+// [source, java, subs="attributes+, macros+"]
+// ----
+// ListenerToken token =
+//   replicator.addChangeListener(
+//     testSerialExecutor,
+//     change -> {
+//       final ReplicatorStatus status = change.getStatus()
+//       if (status.getActivityLevel() == ReplicatorActivityLevel.BUSY)
+//       { ReplicatorProgress progress =
+//           status.getProgress(); Logger.log("Progress: " + progress.completed + "/" progress.total);
+//       }
+//     });
 
-The automatic upgrade functionality *does not* update the internal schema for attachments, so they remain accessible under the `_attachments` field.
-See xref:android:upgrade.adoc#ex-get-att[] for how to retrieve an attachment that was created in a 1.x database with a 2.x API.
+// ----
 
-.Retrieve 1.x Attachment
-[#ex-get-att]
 
+// [#lbl-db-upgrades]
+// == 1.x Databases Upgrades to 2.x
 
-[#ex-get-att]
-====
+// Databases created using Couchbase Lite 1.2 or later can still be used with Couchbase Lite 2.x; but will be automatically updated to the  current 2.x version.
+// This feature is only available for the default storage type (i.e., not a ForestDB database).
 
-[tabs]
-=====
+// [#encrypted-databases]
+// === Encrypted Databases
+// The automatic migration feature does not support encrypted databases.
+// So if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/Kotlin.html#database-encryption[1.x Database Guide]).
 
+// Thus, to upgrade an encrypted 1.x database, you should do the following:
 
-Kotlin::
-+
---
+// .Upgrading Encrypted Databases
+// ****
+// . Disable encryption using the Couchbase Lite 1.x framework (see https://docs-archive.couchbase.com/couchbase-lite/1.4/android.html#database-encryption[1.x encryption guide])
+// . Open the database file with encryption enabled using the Couchbase Lite 2.x framework.
+// ****
 
-[source, Kotlin]
-----
-include::android:example$codesnippet_collection.kt[tags="1x-attachment", indent=0]
-----
+// Since it is not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in the same application this upgrade path would require two successive upgrades.
 
---
+// If you are using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.
 
-Java::
-+
---
-[source, Java]
-----
-include::android:example$codesnippet_collection.java[tags="1x-attachment", indent=0]
-----
---
 
-=====
+// [#handling-of-existing-conflicts]
+// === Handling of Existing Conflicts
 
+// If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
 
-====
+// This functionality is related to the way conflicts are now being handled in Couchbase Lite -- see xref:android:conflict.adoc[Handling Data Conflicts].
 
+// Optionally, existing conflicts in the 1.x database can be resolved with the https://docs-archive.couchbase.com/couchbase-lite/1.4/Kotlin.html#resolving-conflicts[1.x API] prior to the database being upgraded.
 
-[#replication-compatibility]
-=== Replication Compatibility
+// [#handling-of-existing-attachments]
+// === Handling of Existing Attachments
 
-The current replication protocol is not backwards compatible with the 1.x replication protocol.
-Therefore, to use replication with Couchbase Lite 2.x, the target Sync Gateway instance must also be upgraded to 2.x.
+// Attachments persisted in a 1.x database are copied to the new database.
+// NOTE: The relevant Couchbase Lite API is now called the `Blob` API not the `Attachments` API.
 
-Sync Gateway 2.x will continue to accept clients that connect through the 1.x protocol.
+// The functionally is identical but the internal schema for attachments has changed.
 
-It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through ws://localhost:4984/db.
+// Blobs are stored anywhere in the document, just like other value types.
+// Whereas in 1.x they were stored under the `_attachments` field.
 
-This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
+// The automatic upgrade functionality *does not* update the internal schema for attachments, so they remain accessible under the `_attachments` field.
+// See xref:android:upgrade.adoc#ex-get-att[] for how to retrieve an attachment that was created in a 1.x database with a 2.x API.
 
+// .Retrieve 1.x Attachment
+// [#ex-get-att]
 
-[#android-studio]
-== Android Studio
 
+// [#ex-get-att]
+// ====
 
-The API changed in Couchbase Lite 2.0 and you will need to port any application that is using Couchbase Lite 1.x API to the latest Couchbase Lite API.
-To update an Android project built with Couchbase Lite 1.x:
+// [tabs]
+// =====
 
-* Remove the existing Couchbase Lite dependency from the Android Studio project.
-* Install the Couchbase Lite framework in your project -- see the https://docs-archive.couchbase.com/couchbase-lite/1.4/java.html#getting-started[Getting Started].
-At this point, there will be many compiler warnings.
-Refer to the examples on this page to learn about the new API.
-* Build & run your application.
+
+// Kotlin::
+// +
+// --
+
+// [source, Kotlin]
+// ----
+// include::android:example$codesnippet_collection.kt[tags="1x-attachment", indent=0]
+// ----
+
+// --
+
+// Java::
+// +
+// --
+// [source, Java]
+// ----
+// include::android:example$codesnippet_collection.java[tags="1x-attachment", indent=0]
+// ----
+// --
+
+// =====
+
+
+// ====
+
+
+// [#replication-compatibility]
+// === Replication Compatibility
+
+// The current replication protocol is not backwards compatible with the 1.x replication protocol.
+// Therefore, to use replication with Couchbase Lite 2.x, the target Sync Gateway instance must also be upgraded to 2.x.
+
+// Sync Gateway 2.x will continue to accept clients that connect through the 1.x protocol.
+
+// It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through ws://localhost:4984/db.
+
+// This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
+
+
+// [#android-studio]
+// == Android Studio
+
+
+// The API changed in Couchbase Lite 2.0 and you will need to port any application that is using Couchbase Lite 1.x API to the latest Couchbase Lite API.
+// To update an Android project built with Couchbase Lite 1.x:
+
+// * Remove the existing Couchbase Lite dependency from the Android Studio project.
+// * Install the Couchbase Lite framework in your project -- see the https://docs-archive.couchbase.com/couchbase-lite/1.4/java.html#getting-started[Getting Started].
+// At this point, there will be many compiler warnings.
+// Refer to the examples on this page to learn about the new API.
+// * Build & run your application.
 
 
 [#downgrading-couchbase-lite]
@@ -357,18 +400,17 @@ Refer to the examples on this page to learn about the new API.
 [#downgrading-between-major-releases]
 === Downgrading Between Major Releases
 
-*No Downgrade Support* - Downgrades between major versions of Couchbase Lite (CBL) are not supported.
-Once you upgrade to a new major version, downgrading to a previous major version may lead to incompatibility issues.
-
-For example, Upgrading from CBL 2.x.x to CBL 3.x.x does not guarantee the ability to revert to CBL 2.x.x.
+*No Downgrade Support* - Couchbase Lite (CBL) does not support downgrades between major versions.
+Once you upgrade to a new major version, attempting to downgrade to a previous major version will create incompatibility issues.
+For example, upgrading from CBL 3.x.x to CBL 4.x.x does not allow you to revert to CBL 3.x.x.
 
 [#downgrading-between-minor-releases]
 === Downgrading Between Minor Releases
 
 *Conditional Downgrade Support* - Downgrade support for minor releases is considered on a case-by-case basis.
-The release notes for each minor version will clarify whether downgrades are supported.
+The release notes for each minor version clarify whether downgrades receive support.
 
-For example, if a new minor version such as CBL 3.1.0 is released the release notes will specify whether downgrading to CBL 3.0.x is supported.
+For example, when a new minor version such as CBL 3.1.0 becomes available, the release notes specify whether reverting to CBL 3.0.x receives support.
 
 [#downgrading-between-patch-releases]
 === Downgrading Between Patch Releases
