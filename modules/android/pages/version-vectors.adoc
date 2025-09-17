@@ -31,13 +31,13 @@ Instead of maintaining a tree-like structure of document revisions, version vect
 === Key Components
 
 Source ID:: A unique identifier for each Couchbase Lite database instance that can modify documents.
-Each Couchbase Lite database on a device receives its own unique source ID, ensuring that document changes can be tracked back to their originating database.
+Each Couchbase Lite database on a device receives its own unique source ID, ensuring that document changes tracks back to their originating database.
 
 Timestamp:: A logical clock value that establishes the ordering of document changes within a single source.
-Couchbase Lite 4.0 uses Hybrid Logical Clocks (HLC), which combine realtime with logical counters to ensure proper tracking.
+Couchbase Lite 4.0 uses Hybrid Logical Clocks (HLC), which combine real-time with logical counters to verify proper tracking.
 
-Version:: A combination of a timestamp and source ID that uniquely identifies when and where a specific document revision was created.
-This replaces the traditional revision ID concept.
+Version:: A combination of timestamp and source ID that uniquely identifies the specific point in time and location where the development process creates a particular document revision.
+This approach replaces traditional revision ID concepts.
 
 Version Vector:: An ordered array containing the latest version from every source that's modified the document.
 
@@ -45,12 +45,13 @@ Version Vector:: An ordered array containing the latest version from every sourc
 == Version Vectors vs. Revision Trees
 
 
-Version vectors represents an improvement over the revision tree system used in Couchbase Lite 3.x and earlier versions.
+Version vectors represents an improvement over revision tree system used in Couchbase Lite 3.x and earlier versions.
 While the revision tree approach maintained complex branching trees of all document revisions with revision IDs in the format `<generation>-<document-hash>`, version vectors use a more efficient structure that tracks only the latest version from each source using timestamp-based identifiers in the format `<timestamp>@<source-id>`.
 
 This change eliminates the storage overhead of maintaining complete revision history trees and replaces the `"most active wins"` conflict resolution logic with `"last write wins"` approach based on hybrid logical timestamps.
 
-The result is significantly reduced storage requirements, simplified synchronization through vector comparison rather than tree merging operations, and better overall performance and scalability as the number of collaborating devices increases.
+As a result, version vectors reduce storage requirements and simplify synchronization through vector comparison rather than tree merging operations.
+It also improves overall performance and scalability as the number of collaborating devices increases.
 
 
 [#benefits-of-version-vectors]
@@ -69,7 +70,7 @@ Reduced Complexity:: Eliminates the need to manage complex tree structures and r
 [#impact-on-document-identification]
 == Impact on Document Identification
 
-The transition to version vectors changes how documents are identified and referenced in your Android applications.
+The transition to version vectors transforms how documents receive identification and referencing within Android applications.
 
 [#revision-id-format-changes]
 === Revision ID Format Changes
@@ -92,7 +93,8 @@ The new format contains:
 [#document-api-changes]
 === Document API Changes
 
-The `Document.getRevisionID()` method continues to work but now returns version-based IDs. Additionally, a new timestamp property provides direct access to the document's logical timestamp:
+The `Document.getRevisionID()` method continues to work but now returns version-based IDs.
+Additionally, a new timestamp property provides direct access to the document's logical timestamp:
 
 .Accessing Document Version Information
 [#ex-document-version-info]
@@ -132,7 +134,7 @@ The timestamp value is returned as a `long` representing nanoseconds since the U
 [#impact-on-conflict-resolution]
 == Impact on Conflict Resolution
 
-Version vectors significantly change how Couchbase Lite resolves conflicts during synchronization.
+Version vectors change how Couchbase Lite resolves conflicts during synchronization.
 
 [#previous-conflict-resolution]
 === Previous Conflict Resolution (CBL 3.x)
