@@ -1,0 +1,277 @@
+= Version Vectors
+:page-toclevels: 2@
+:page-role:
+:description: Couchbase Lite 4.0 -- Version Vectors -- Document versioning and conflict resolution
+
+:source-language: C#
+
+[abstract]
+--
+Description -- _{description}_ +
+Related Content -- xref:csharp:database.adoc[Databases] | xref:csharp:document.adoc[Documents] | xref:csharp:conflict.adoc[Handling Data Conflicts] | xref:csharp:replication.adoc[Data Sync]
+--
+
+[#overview]
+== Overview
+
+Couchbase Lite 4.0 introduces version vectors as a replacement for the previous revision tree system used in earlier versions.
+This change improves how Couchbase Lite tracks document changes, handles conflicts, and synchronizes data across devices and with Sync Gateway.
+
+Version vectors provide a more efficient and scalable approach to document versioning that aligns Couchbase Lite with Couchbase Server's versioning system, enabling seamless synchronization across the entire Couchbase ecosystem.
+
+[#what-are-version-vectors]
+== What are Version Vectors?
+
+A version vector is a data structure that tracks the complete history of document modifications across different sources.
+Instead of maintaining a tree-like structure of document revisions, version vectors use a more efficient approach based on logical timestamps.
+
+[#key-components]
+=== Key Components
+
+Source ID:: A unique identifier for each Couchbase Lite database instance that can modify documents.
+Each Couchbase Lite database on a device receives its own unique source ID, ensuring that document changes tracks back to their originating database.
+
+Timestamp:: A logical clock value that establishes the ordering of document changes within a single source.
+Couchbase Lite 4.0 uses Hybrid Logical Clocks (HLC), which combine real-time with logical counters to verify proper tracking.
+
+Version:: A combination of timestamp and source ID that uniquely identifies the specific point in time and location where the development process creates a particular document revision.
+This approach replaces traditional revision ID concepts.
+
+Version Vector:: An ordered array containing the latest version from every source that's modified the document.
+
+[#version-vectors-vs-revision-trees]
+== Version Vectors vs. Revision Trees
+
+Version vectors represents an improvement over revision tree system used in Couchbase Lite 3.x and earlier versions.
+While the revision tree approach maintained complex branching trees of all document revisions with revision IDs in the format `<generation>-<document-hash>`, version vectors use a more efficient structure that tracks only the latest version from each source using timestamp-based identifiers in the format `<timestamp>@<source-id>`.
+
+This change eliminates the storage overhead of maintaining complete revision history trees and replaces the `"most active wins"` conflict resolution logic with `"last write wins"` approach based on hybrid logical timestamps.
+
+As a result, version vectors reduce storage requirements and simplify synchronization through vector comparison rather than tree merging operations.
+It also improves overall performance and scalability as the number of connected devices increases.
+
+[#benefits-of-version-vectors]
+=== Benefits of Version Vectors
+
+Improved Performance:: Version vectors require less storage space and processing power compared to maintaining complete revision trees.
+
+Better Scalability:: The system scales more efficiently as the number of connected devices increases.
+
+Simplified Conflict Resolution:: Last-write-wins logic based on timestamps is more predictable and easier to understand.
+
+Enhanced Synchronization:: Alignment with Couchbase Server's versioning enables more efficient sync operations.
+
+Reduced Complexity:: Eliminates the need to manage complex tree structures and revision genealogies.
+
+[#impact-on-document-identification]
+== Impact on Document Identification
+
+The transition to version vectors transforms how documents receive identification and referencing within .NET applications.
+
+[#revision-id-format-changes]
+=== Revision ID Format Changes
+
+**CBL 3.x Format**
+----
+1-7bf9c5c9d5e2c7a5d8f0e3c6a9d2f4b7
+----
+
+**CBL 4.0 Format**
+----
+1773b25174850000@4a7c8e5f-2d3b-4f9e-8c1a-6b4d9e2f7a5c
+----
+
+The new format contains:
+
+* **Timestamp portion**: `1773b25174850000` (hybrid logical clock value)
+* **Source ID portion**: `4a7c8e5f-2d3b-4f9e-8c1a-6b4d9e2f7a5c` (UUID)
+
+[#document-api-changes]
+=== Document API Changes
+
+The `Document.RevisionID` property continues to work but now returns version-based IDs.
+Additionally, a new timestamp property provides direct access to the document's logical timestamp:
+
+.Accessing Document Version Information
+[#ex-document-version-info]
+====
+[source, C#, indent=0]
+----
+// Existing revision ID access (now returns version format)
+string revisionId = document.RevisionID;
+
+// New timestamp property
+ulong timestamp = document.Timestamp;
+----
+====
+
+The timestamp value returns a `ulong` representing nanoseconds since the Unix epoch (January 1, 1970 00:00:00 UTC).
+
+[#impact-on-conflict-resolution]
+== Impact on Conflict Resolution
+
+Version vectors change how Couchbase Lite resolves conflicts during synchronization.
+
+[#previous-conflict-resolution]
+=== Previous Conflict Resolution (CBL 3.x)
+
+The revision tree system used `"most active wins"` logic:
+
+* Conflict resolves by comparing revision generation numbers.
+* The document with the highest generation number (most edits) would win.
+* This could lead to scenarios where older documents with more edits would override newer documents with fewer edits.
+
+[#new-conflict-resolution]
+=== New Conflict Resolution (CBL 4.0)
+
+Version vectors implement `"last write wins"` conflict resolution:
+
+.Default Conflict Resolution Logic
+[#ex-conflict-resolution]
+====
+[source, C#, indent=0]
+----
+public Document Resolve(Conflict conflict)
+{
+    if (conflict.RemoteDocument == null || conflict.LocalDocument == null)
+    {
+        return null; // Deleted revision always wins
+    }
+    else if (conflict.LocalDocument.Timestamp > conflict.RemoteDocument.Timestamp)
+    {
+        return conflict.LocalDocument;
+    }
+    else
+    {
+        return conflict.RemoteDocument;
+    }
+}
+----
+====
+
+This approach:
+
+* Compares hybrid logical timestamps to determine which revision received the most recent write operation.
+* Provides more intuitive conflict resolution behavior.
+* Ensures that the most recent change (by wall-clock time) typically wins.
+* Reduces unexpected conflict resolution outcomes.
+
+[#custom-conflict-resolution]
+=== Custom Conflict Resolution
+
+While the default resolver changes, you can still implement custom conflict resolution logic.
+The new timestamp property provides additional context for making resolution decisions.
+
+.Custom Conflict Resolution Example
+[#ex-custom-conflict-resolution]
+====
+[source, C#, indent=0]
+----
+public Document CustomResolve(Conflict conflict)
+{
+    var local = conflict.LocalDocument;
+    var remote = conflict.RemoteDocument;
+
+    if (local == null || remote == null)
+    {
+        return null;
+    }
+
+    // Use timestamp along with other business logic
+    if (local.Timestamp > remote.Timestamp)
+    {
+        // Local is newer, but check business rules
+        return ApplyBusinessRules(local, remote);
+    }
+    else
+    {
+        return ApplyBusinessRules(remote, local);
+    }
+}
+----
+====
+
+[#compatibility-and-migration]
+== Compatibility
+
+Couchbase Lite 4.0 provides backward compatibility for existing databases:
+
+Automatic Upgrade:: When opening a CBL 3.1 or 3.2 database with CBL 4.0, documents are automatically upgraded to use version vectors.
+
+Lazy Migration:: The upgrade occurs incrementally as documents are accessed and modified.
+
+No Downgrade:: Once upgraded to version vectors, databases cannot be opened with CBL 3.x versions.
+
+[#synchronization-compatibility]
+=== Synchronization Compatibility
+
+Version vector synchronization has specific requirements:
+
+Sync Gateway Compatibility:: CBL 4.0 requires Sync Gateway 4.0 or later.
+Attempting to sync with older Sync Gateway versions results in an error.
+
+Peer-to-Peer Compatibility:: CBL 4.0 can only perform peer-to-peer sync with other CBL 4.0+ instances.
+Sync attempts with CBL 3.x peers fails with an appropriate error message.
+
+[#development-considerations]
+== Development Considerations
+
+[#testing-applications]
+=== Testing Applications
+
+When testing applications with version vectors, be aware that:
+
+* **Non-deterministic IDs**: Version-based revision IDs cannot predicted prior due to timestamp components
+* **Test Assertions**: Update test cases to verify revision ID existence and ordering rather than specific values.
+* **Conflict Testing**: Verify that conflict resolution now uses timestamp-based logic.
+
+.Testing Document Revisions
+[#ex-testing-revisions]
+====
+[source, C#, indent=0]
+----
+// Instead of testing specific revision ID values
+// Assert.AreEqual("1-abc123", doc.RevisionID);
+
+// Test for presence and format
+Assert.IsNotNull(doc.RevisionID);
+Assert.IsTrue(doc.RevisionID.Contains("@"));
+
+// Test timestamp ordering
+var updatedDoc = // ... update document
+Assert.IsTrue(updatedDoc.Timestamp > doc.Timestamp);
+----
+====
+
+[#related-content]
+== Related Content
+
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+=== {empty}
+.How to . . .
+* xref:csharp:gs-prereqs.adoc[Prerequisites]
+* xref:csharp:gs-install.adoc[Install]
+* xref:csharp:gs-build.adoc[Build and Run]
+
+[.column]
+=== {empty}
+.Learn more . . .
+* xref:csharp:database.adoc[Databases]
+* xref:csharp:document.adoc[Documents]
+* xref:csharp:conflict.adoc[Handling Data Conflicts]
+* xref:csharp:replication.adoc[Data Sync]
+
+[.column]
+=== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+++++
+</div>
+++++
