@@ -51,6 +51,19 @@ Attempting to sync with Sync Gateway versions prior to 4.x results in replicatio
 **Peer-to-Peer Compatibility**: CBL {major}.{minor}.{base}{empty} can only perform peer-to-peer synchronization with other CBL 4.x instances using either `URLEndpointListener` or `MessageEndpointListener`.
 Sync attempts with CBL 3.x peers fail with appropriate error messages.
 
+[#replication-compatibility]
+=== Replication Compatibility
+
+CBL 4.0 introduces strict replication compatibility requirements due to the version vector architecture changes.
+
+**Sync Gateway Compatibility**: CBL 4.0 requires Sync Gateway 4.0 or later for synchronization.
+Attempting to sync with Sync Gateway versions prior to 4.0 results in replication errors with appropriate error messages indicating the incompatibility.
+
+**Peer-to-Peer Compatibility**: CBL 4.0 can only perform peer-to-peer synchronization with other CBL 4.0+ instances.
+Sync attempts with CBL 3.x or earlier peers fails with appropriate error messages.
+
+**No Backward Compatibility**: unlike previous CBL versions, CBL 4.0 cannot sync with earlier versions of either Sync Gateway or other CBL instances due to the fundamental changes in document versioning architecture.
+
 [#api-changes]
 === API Changes
 
@@ -86,7 +99,7 @@ has been removed. +
 Instead:
 
 . Set the logging levels for loggers, individually
-. Set the domains to be logged by the console logger, explicitly.
+. Explicitly set the domains that the console logger logs.
 
 .Before
 [source, Java,subs="attributes+, macros+"]
@@ -105,7 +118,7 @@ Database.log.getFile().setDomains(LogLevel.DEBUG)
 [#database-compact]
 ===== Database.compact
 The https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/Database.html#compact--[Database.compact()] method has been removed. +
-It is replaced by the new https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance(MaintenanceType)] method, and the maintenance operations represented in the enum https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/MaintenanceType.html[MaintenanceType]
+It's replaced by the new https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/Database.html#performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance(MaintenanceType)] method, and the maintenance operations represented in the enum https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-java/com/couchbase/lite/MaintenanceType.html[MaintenanceType]
 
 .Before
 [source, Java,subs="attributes+, macros+"]
@@ -251,7 +264,7 @@ ListenerToken token =
 === Downgrading Between Major Releases
 
 *No Downgrade Support* - Couchbase Lite (CBL) does not support downgrades between major versions.
-Once you upgrade to a new major version, downgrading to a previous major version will create incompatibility issues.
+Upgrading to a new major version creates incompatibility issues when attempting to downgrade to a previous major version.
 For example, upgrading from CBL 3.x.x to CBL 4.x.x does not allow you to revert to CBL 3.x.x.
 
 [#downgrading-between-minor-releases]
@@ -301,7 +314,7 @@ For example, if you're running CBL 3.1.6 you can downgrade to CBL 3.1.4 or CBL 3
 
 [.column]
 === {empty}
-.Dive Deeper 
+.Dive Deeper
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]

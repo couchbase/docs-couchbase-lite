@@ -5,12 +5,17 @@
 
 :source-language: c
 
-:source-language: c
 :url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__
 
 
 // The admonition does not apply to C as it references upgrading from versions 2.x.
 // CBL-C started at version 3.0
+
+[IMPORTANT]
+--
+On upgrading from a 2.x release, all Couchbase Lite databases automatically re-index on initial database open. +
+This can result in a delay before the database is usable.
+--
 
 [#4-0-0-upgrade]
 == {major}.{minor}.{base}{empty} Upgrade
@@ -59,6 +64,18 @@ Attempting to sync with Sync Gateway versions prior to 4.x results in replicatio
 **Peer-to-Peer Compatibility**: CBL {major}.{minor}.{base}{empty} can only perform peer-to-peer synchronization with other CBL 4.x instances using either `CBLURLEndpointListener` or `CBLMessageEndpointListener`.
 Sync attempts with CBL 3.x peers fail with appropriate error messages.
 
+[#replication-compatibility]
+=== Replication Compatibility
+
+CBL 4.0 introduces strict replication compatibility requirements due to the version vector architecture changes.
+
+**Sync Gateway Compatibility**: CBL 4.0 requires Sync Gateway 4.0 or later for synchronization.
+Attempting to sync with Sync Gateway versions prior to 4.0 results in replication errors with appropriate error messages indicating the incompatibility.
+
+**Peer-to-Peer Compatibility**: CBL 4.0 can only perform peer-to-peer synchronization with other CBL 4.0+ instances.
+Sync attempts with CBL 3.x or earlier peers fails with appropriate error messages.
+
+**No Backward Compatibility**: unlike previous CBL versions, CBL 4.0 cannot sync with earlier versions of either Sync Gateway or other CBL instances due to the fundamental changes in document versioning architecture.
 
 [#downgrading-couchbase-lite]
 == Downgrading Couchbase Lite
@@ -117,7 +134,7 @@ For example, if you're running CBL 3.1.6 you can downgrade to CBL 3.1.4 or CBL 3
 
 [.column]
 === {empty}
-.Dive Deeper 
+.Dive Deeper
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
