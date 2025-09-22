@@ -73,8 +73,9 @@ Sync attempts with CBL 3.x peers fail with appropriate error messages.
 ===== ResetCheckpoint
 
 .Alternative
-  `[replicator startWithReset:];`
-
+----
+`[replicator startWithReset:];`
+----
 .Before
 ----
 [replicator resetCheckpoint];
@@ -130,16 +131,15 @@ CBLDatabase.log.console.domains = kCBLLogDomainAll;
 ----
 CBLQueryFullTextExpression* index = [CBLQueryFullTextExpression indexWithName: @"indexName"];
 q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
-                        from: [CBLQueryDataSource database: self.database]
-                        where: [index match: @"'queryString'"]];
+from: [CBLQueryDataSource database: self.database]
+where: [index match: @"'queryString'"]];
 ----
-
 .After
 ----
-    q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
-                           from: [CBLQueryDataSource database: self.database]
-                          where: [CBLQueryFullTextFunction matchWithIndexName: @"indexName"
-                                                                        query: @"'queryString'"]];
+q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+from: [CBLQueryDataSource database: self.database]
+where: [CBLQueryFullTextFunction matchWithIndexName: @"indexName"
+query: @"'queryString'"]];
 ----
 
 [#isnullormissing-and-notnullormissing]
@@ -153,24 +153,24 @@ q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta i
 
 .Before
 ----
-    q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
-                           from: [CBLQueryDataSource database: self.database]
-                          where: [[CBLQueryExpression property: @"missingProp"] isNullOrMissing]];
+q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+from: [CBLQueryDataSource database: self.database]
+where: [[CBLQueryExpression property: @"missingProp"] isNullOrMissing]];
 
-    q2 = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
-                            from: [CBLQueryDataSource database: self.database]
-                           where: [[CBLQueryExpression property: @"notMissingProp"] notNullOrMissing]];
+q2 = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+from: [CBLQueryDataSource database: self.database]
+where: [[CBLQueryExpression property: @"notMissingProp"] notNullOrMissing]];
 ----
 
 .After
 ----
-    q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
-                           from: [CBLQueryDataSource database: self.database]
-                          where: [[CBLQueryExpression property: @"missingProp"] isNotValued]];
+q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+from: [CBLQueryDataSource database: self.database]
+where: [[CBLQueryExpression property: @"missingProp"] isNotValued]];
 
-    q2 = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
-                            from: [CBLQueryDataSource database: self.database]
-                           where: [[CBLQueryExpression property: @"notMissingProp"] isValued]];
+q2 = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+from: [CBLQueryDataSource database: self.database]
+where: [[CBLQueryExpression property: @"notMissingProp"] isValued]];
 ----
 
 [#updated-api]
@@ -187,14 +187,14 @@ CAUTION: Breaking change
 [source, objc]
 ----
 q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryFunction atan2: p y: [CBLQueryExpression integer: 90]]]]
-                            from: [CBLQueryDataSource database: self.database]];
+from: [CBLQueryDataSource database: self.database]];
 ----
 
 .After
 [source, objc]
 ----
 q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryFunction atan2: [CBLQueryExpression integer: 90] x: p]]]
-                           from: [CBLQueryDataSource database: self.database]];
+from: [CBLQueryDataSource database: self.database]];
 ----
 
 

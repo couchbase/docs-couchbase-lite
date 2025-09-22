@@ -70,6 +70,39 @@ Sync attempts with CBL 3.x or earlier peers fails with appropriate error message
 
 **No Backward Compatibility**: unlike previous CBL versions, CBL 4.0 cannot sync with earlier versions of either Sync Gateway or other CBL instances due to the fundamental changes in document versioning architecture.
 
+[#replicator-configuration]
+==== ReplicatorConfiguration
+
+Couchbase Lite {major}.{minor} introduces changes to the `ReplicatorConfiguration` class to improve API consistency across all Couchbase Lite platforms.
+The API no longer supports legacy collection management methods.
+
+**Removed APIs:**
+* `addCollection(s)` / `removeCollection(s)` / `getCollectionConfig()` methods
+* `ReplicatorConfiguration(Database, Endpoint)` constructor that uses default collection
+
+[#before-replicator]
+===== Before (.NET 3.x)
+[source, csharp]
+----
+var collConfig = new CollectionConfiguration();
+collConfig.Channels = new[] { "a", "b", "c" };
+
+var replicatorConfig = new ReplicatorConfiguration(target: endpoint);
+replicatorConfig.AddCollection(collectionA, collConfig);
+----
+
+[#after-replicator]
+===== After (.NET 4.0.0)
+[source, csharp]
+----
+var collConfig = new CollectionConfiguration(collection: collectionA);
+collConfig.Channels = new[] { "a", "b", "c" };
+
+var replicatorConfig = new ReplicatorConfiguration(collections: new[] { collConfig }, target: endpoint);
+----
+
+NOTE: This change provides API consistency across all CBL platforms and simplifies the implementation by requiring collections and configurations at construction time.
+
 [#api-changes]
 === API Changes
 
@@ -83,7 +116,7 @@ This content introduces the changes made to the Couchbase{nbsp}Lite for C#.Net A
 The function https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Atan2_Couchbase_Lite_Query_IExpression_Couchbase_Lite_Query_IExpression_[ATAN2(x, y)],
 which returns the principal value of the arc tangent of y/x, now becomes
 https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Atan2_Couchbase_Lite_Query_IExpression_Couchbase_Lite_Query_IExpression_[ATAN2(y, x)];
-that is, the arguments are reversed in line with common notation.
+that's, the arguments reverses in line with common notation.
 
 [#removed]
 ==== Removed
@@ -91,11 +124,11 @@ that is, the arguments are reversed in line with common notation.
 [#activate]
 ===== Activate
 
-We have removed the method `Activate()` from *all* platform support libraries *except* `Support.Android` (Xamarin Android)
+The method `Activate()` has been removed from *all* platform support libraries *except* `Support.Android` (Xamarin Android)
 
 [#enabletextlogging]
 ===== EnableTextLogging()
-We have removed the obsolete method `EnableTextLogging()` from all the platform support libraries.
+The obsolete method `EnableTextLogging()` is no longer supported in any platform support libraries.
 
 [#resetcheckpoint]
 ===== ResetCheckpoint

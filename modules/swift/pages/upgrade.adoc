@@ -127,15 +127,15 @@ try testdb.performMaintenance(type: .compact)
 let index = FullTextExpression.index ("indexName")
 let q = QueryBuilder.select([SelectResult.
 expression(Meta.id)])
-            .from(DataSource.database(testdb)) +
-            .where(index.match("'queryString'"))
+  .from(DataSource.database(testdb)) +
+  .where(index.match("'queryString'"))
 ----
 
 .After
 ----
 let q = QueryBuilder.select([SelectResult.expression(Meta.id)])
-            .from(DataSource.database(testdb))
-            .where(FullTextFunction.match(indexName: "indexName", query: "'queryString'"))
+  .from(DataSource.database(testdb))
+  .where(FullTextFunction.match(indexName: "indexName", query: "'queryString'"))
 ----
 
 [#isnullormissing-and-notnullormissing]
@@ -148,23 +148,23 @@ let q = QueryBuilder.select([SelectResult.expression(Meta.id)])
 .Before
 ----
 |let q1 = QueryBuilder.select([SelectResult.expression(Meta.id)])
-            .from(DataSource.database(testdb))
-            .where(Expression.property("missingProp").isNullOrMissing())
+  .from(DataSource.database(testdb))
+  .where(Expression.property("missingProp").isNullOrMissing())
 
 let q2 = QueryBuilder.select([SelectResult.expression(Meta.id)])
-            .from(DataSource.database(testdb))
-            .where(Expression.property("notMissingProp").notNullOrMissing())
+  .from(DataSource.database(testdb))
+  .where(Expression.property("notMissingProp").notNullOrMissing())
 ----
 
 .After
 ----
 let q1 = QueryBuilder.select([SelectResult.expression(Meta.id)])
-            .from(DataSource.database(testdb))
-            .where(Expression.property("missingProp").isNotValued())
+  .from(DataSource.database(testdb))
+  .where(Expression.property("missingProp").isNotValued())
 
 let q2 = QueryBuilder.select([SelectResult.expression(Meta.id)])
-            .from(DataSource.database(testdb))
-            .where(Expression.property("notMissingProp").isValued())
+  .from(DataSource.database(testdb))
+  .where(Expression.property("notMissingProp").isValued())
 ----
 
 [#updated-api]
@@ -180,7 +180,6 @@ The following classes are changed to Swift struct.
 
 .Before
 ----
-
 let config = DatabaseConfiguration()
 config.encryptionKey = EncryptionKey.password(password!)
 
@@ -209,14 +208,14 @@ CAUTION: Breaking change
 ----
 let p = Expression.property("number")
 let q = QueryBuilder.select([SelectResult.expression(Function.atan2(x: Expression.int(90), y: p))])
-            .from(DataSource.database(testdb))
+  .from(DataSource.database(testdb))
 ----
 
 .After
 [source, swift]
 ----
 let q = QueryBuilder.select([SelectResult.expression(Function.atan2(y: Expression.int(90), x: p))])
-            .from(DataSource.database(testdb))
+  .from(DataSource.database(testdb))
 ----
 
 [#replication-compatibility]
@@ -282,7 +281,7 @@ For example, if you're running CBL 3.1.6 you can downgrade to CBL 3.1.4 or CBL 3
 
 [.column]
 === {empty}
-.How to 
+.How to
 * xref:swift:gs-prereqs.adoc[Prerequisites]
 * xref:swift:gs-install.adoc[Install]
 * xref:swift:gs-build.adoc[Build and Run]
