@@ -8,7 +8,7 @@ ifdef::show_edition[:page-edition: {release}]
 
 
 NOTE: Couchbase Lite 4.0 introduces some breaking changes. +
-If you're upgrading from 3.x, see the appropriate upgrade page -- see: <<lbl-upgrade>>
+If you're upgrading from 3.x, see the appropriate upgrade page -- <<lbl-upgrade>>.
 You cannot downgrade from 4.0 to earlier versions of Couchbase Lite.
 
 == Release {release}
@@ -20,7 +20,7 @@ This architectural change enables superior conflict resolution, improved synchro
 
 ==== Version Vectors
 
-Couchbase Lite 4.0 replaces revision trees with *version vectors* for document versioning and conflict resolution.
+Couchbase Lite 4.0 replaces revision trees with version vectors for document versioning and conflict resolution.
 This change aligns Couchbase Lite with Couchbase Server and Sync Gateway, ensuring more consistent behavior in distributed and multi-cluster deployments.
 
 Key changes include:
@@ -33,17 +33,17 @@ A version vector is an ordered list of the latest versions from all sources that
 This uniquely identifies both the state and history of a document.
 
 * **Hybrid Logical Clocks (HLCs)**:
-Timestamps are now based on hybrid logical clocks, enabling *last-writer-wins* conflict resolution and simpler pruning of old revisions.
+Timestamps are now based on hybrid logical clocks, enabling last-writer-wins conflict resolution and simpler pruning of old revisions.
 
 * **New Document API**
-A new `timestamp` property has been added to documents:
+Documents now include a new `timestamp` property:
 - iOS: `UInt64`
 - .NET: `ULong`
 - Java: `long` (nanoseconds)
 - C: `uint64_t` (nanoseconds)
 
 * **Updated Conflict Resolution**:
-The default replicator conflict resolver now uses *last-write-wins* based on the document’s timestamp instead of generation numbers.
+The default replicator conflict resolver now uses last-write-wins based on the document’s timestamp instead of generation numbers.
 
 * **Revision History**:
 For testing and debugging, LiteCore provides an API to retrieve a document’s full version vector.
