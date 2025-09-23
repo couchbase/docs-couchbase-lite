@@ -1,4 +1,3 @@
-
 = Upgrade Couchbase Lite
 :page-aliases: advance/objc-dep-upgrade.adoc, dep-upgrade.adoc
 :page-role:
@@ -14,22 +13,56 @@
 // CBL-C started at version 3.0
 [IMPORTANT]
 --
-On upgrading from a 2.x release, all Couchbase Lite databases will be automatically re-indexed on initial database open. +
+On upgrading from a 2.x release, all Couchbase Lite databases automatically re-index on initial database open. +
 This can result in a delay before the database is usable.
 --
 
-[#3-2-3-upgrade]
+[#4-0-0-upgrade]
 == {major}.{minor}.{base}{empty} Upgrade
 
-The action will take place automatically and can lead to some delay in the database becoming available for use in your application.
+Couchbase Lite 4.0 introduces significant architectural changes, most notably the migration from revision trees to version vectors for document versioning.
+This upgrade requires careful planning and understanding of the compatibility requirements.
 
-In addition, if you are syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
+The action takes place automatically and can lead to some delay in the database becoming available for use in your application.
+
+In addition, if you're syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their effect.
 See xref:sync-gateway::upgrading.adoc[Upgrading Sync Gateway] for more details.
 This is a one-way conversion.
 
 // All API and other listed changes included in the other platforms do not apply to CBL-C for the following reasons
 // The changes apply to pre 3.x versions (CBL-C started at 3.0)
 // Or they relate to Querybuilder functionality - CBL-C doesn't have Querybuilder.
+=== Major Changes in {major}.{minor}.{base}{empty}
+
+**Version Vector Architecture**:
+CBL {major}.{minor}.{base}{empty} replaces the revision tree system with version vectors, providing improved performance, scalability, and conflict resolution.
+Documents now use version-based revision IDs in the format `<timestamp>@<source-id>` instead of the previous `<generation>-<document-hash>` format.
+
+**Enhanced Conflict Resolution**: The default conflict resolution strategy changes from `most active wins` to `last write wins` based on hybrid logical timestamps, providing more intuitive and predictable conflict resolution behavior.
+
+**New Document Properties**:
+a new `timestamp` property is available on Document objects, providing direct access to the document's logical timestamp as a `uint64_t` value representing nanoseconds since the Unix epoch.
+
+[#database-compatibility-40]
+=== Database Compatibility
+
+**Automatic Upgrade from 3.x**:
+CBL {major}.{minor}.{base}{empty} databases are compatible with CBL 3.1 and 3.2 databases.
+When opening a 3.1 or 3.2 database with CBL {major}.{minor}.{base}{empty}, documents are automatically upgraded to use version vectors when they're updated and saved.
+
+**No Configuration Required**:
+CBL {major}.{minor}.{base}{empty} enables version vectors by default - the feature requires no API configuration.
+
+[#synchronization-compatibility-40]
+=== Synchronization Compatibility
+
+**Sync Gateway Requirements**:
+CBL {major}.{minor}.{base}{empty} requires Sync Gateway 4.x or later for synchronization.
+Attempting to sync with Sync Gateway versions prior to 4.x results in replication errors with appropriate error messages indicating the incompatibility.
+
+**Peer-to-Peer Compatibility**: CBL {major}.{minor}.{base}{empty} can only perform peer-to-peer synchronization with other CBL 4.x instances using either `CBLURLEndpointListener` or `CBLMessageEndpointListener`.
+Sync attempts with CBL 3.x peers fail with appropriate error messages.
+
 [#api-changes]
 === API Changes
 
@@ -40,8 +73,9 @@ This is a one-way conversion.
 ===== ResetCheckpoint
 
 .Alternative
-  `[replicator startWithReset:];`
-
+----
+`[replicator startWithReset:];`
+----
 .Before
 ----
 [replicator resetCheckpoint];
@@ -85,7 +119,6 @@ CBLDatabase.log.console.domains = kCBLLogDomainAll;
 [testdb performMaintenance:kCBLMaintenanceTypeCompact error:&error];
 ----
 
-
 [#deprecated-api]
 ==== Deprecated API
 
@@ -98,18 +131,16 @@ CBLDatabase.log.console.domains = kCBLLogDomainAll;
 ----
 CBLQueryFullTextExpression* index = [CBLQueryFullTextExpression indexWithName: @"indexName"];
 q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
-                        from: [CBLQueryDataSource database: self.database]
-                        where: [index match: @"'queryString'"]];
+from: [CBLQueryDataSource database: self.database]
+where: [index match: @"'queryString'"]];
 ----
-
 .After
 ----
-    q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
-                           from: [CBLQueryDataSource database: self.database]
-                          where: [CBLQueryFullTextFunction matchWithIndexName: @"indexName"
-                                                                        query: @"'queryString'"]];
+q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+from: [CBLQueryDataSource database: self.database]
+where: [CBLQueryFullTextFunction matchWithIndexName: @"indexName"
+query: @"'queryString'"]];
 ----
-
 
 [#isnullormissing-and-notnullormissing]
 ===== isNullOrMissing and notNullOrMissing
@@ -122,29 +153,28 @@ q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta i
 
 .Before
 ----
-    q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
-                           from: [CBLQueryDataSource database: self.database]
-                          where: [[CBLQueryExpression property: @"missingProp"] isNullOrMissing]];
+q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+from: [CBLQueryDataSource database: self.database]
+where: [[CBLQueryExpression property: @"missingProp"] isNullOrMissing]];
 
-    q2 = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
-                            from: [CBLQueryDataSource database: self.database]
-                           where: [[CBLQueryExpression property: @"notMissingProp"] notNullOrMissing]];
+q2 = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+from: [CBLQueryDataSource database: self.database]
+where: [[CBLQueryExpression property: @"notMissingProp"] notNullOrMissing]];
 ----
 
 .After
 ----
-    q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
-                           from: [CBLQueryDataSource database: self.database]
-                          where: [[CBLQueryExpression property: @"missingProp"] isNotValued]];
+q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+from: [CBLQueryDataSource database: self.database]
+where: [[CBLQueryExpression property: @"missingProp"] isNotValued]];
 
-    q2 = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
-                            from: [CBLQueryDataSource database: self.database]
-                           where: [[CBLQueryExpression property: @"notMissingProp"] isValued]];
+q2 = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryMeta id]]]
+from: [CBLQueryDataSource database: self.database]
+where: [[CBLQueryExpression property: @"notMissingProp"] isValued]];
 ----
 
 [#updated-api]
 ==== Updated API
-
 
 [#atan2]
 ===== ATAN2
@@ -157,107 +187,42 @@ CAUTION: Breaking change
 [source, objc]
 ----
 q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryFunction atan2: p y: [CBLQueryExpression integer: 90]]]]
-                            from: [CBLQueryDataSource database: self.database]];
+from: [CBLQueryDataSource database: self.database]];
 ----
 
 .After
 [source, objc]
 ----
 q = [CBLQueryBuilder select: @[[CBLQuerySelectResult expression: [CBLQueryFunction atan2: [CBLQueryExpression integer: 90] x: p]]]
-                           from: [CBLQueryDataSource database: self.database]];
+from: [CBLQueryDataSource database: self.database]];
 ----
-
-
-[#lbl-db-upgrades]
-== 1.x Databases Upgrades to 2.x
-
-Databases created using Couchbase Lite 1.2 or later can still be used with Couchbase Lite 2.x; but will be automatically updated to the  current 2.x version.
-This feature is only available for the default storage type (i.e., not a ForestDB database).
-
-[#encrypted-databases]
-=== Encrypted Databases
-The automatic migration feature does not support encrypted databases.
-So if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/objc.html#database-encryption[1.x Database Guide]).
-
-Thus, to upgrade an encrypted 1.x database, you should do the following:
-
-.Upgrading Encrypted Databases
-****
-. Disable encryption using the Couchbase Lite 1.x framework (see https://docs-archive.couchbase.com/couchbase-lite/1.4/objc.html#database-encryption[1.x encryption guide])
-. Open the database file with encryption enabled using the Couchbase Lite 2.x framework.
-****
-
-Since it is not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in the same application this upgrade path would require two successive upgrades.
-
-If you are using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.
-
-
-[#handling-of-existing-conflicts]
-=== Handling of Existing Conflicts
-
-If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
-
-This functionality is related to the way conflicts are now being handled in Couchbase Lite -- see xref:objc:conflict.adoc[Handling Data Conflicts].
-
-Optionally, existing conflicts in the 1.x database can be resolved with the https://docs-archive.couchbase.com/couchbase-lite/1.4/objc.html#resolving-conflicts[1.x API] prior to the database being upgraded.
-
-[#handling-of-existing-attachments]
-=== Handling of Existing Attachments
-
-Attachments persisted in a 1.x database are copied to the new database.
-NOTE: The relevant Couchbase Lite API is now called the `Blob` API not the `Attachments` API.
-
-The functionally is identical but the internal schema for attachments has changed.
-
-Blobs are stored anywhere in the document, just like other value types.
-Whereas in 1.x they were stored under the `_attachments` field.
-
-The automatic upgrade functionality *does not* update the internal schema for attachments, so they remain accessible under the `_attachments` field.
-See xref:objc:upgrade.adoc#ex-get-att[] for how to retrieve an attachment that was created in a 1.x database with a 2.x API.
-
-.Retrieve 1.x Attachment
-[#ex-get-att]
-
-
-[#ex-get-att]
-====
-
-
-[source, objc]
-----
-include::objc:example$code_snippets/SampleCodeTest.m[tags="1x-attachment", indent=0]
-----
-
-
-====
 
 
 [#replication-compatibility]
 === Replication Compatibility
 
-The current replication protocol is not backwards compatible with the 1.x replication protocol.
-Therefore, to use replication with Couchbase Lite 2.x, the target Sync Gateway instance must also be upgraded to 2.x.
+CBL 4.0 introduces strict replication compatibility requirements due to the version vector architecture changes.
 
-Sync Gateway 2.x will continue to accept clients that connect through the 1.x protocol.
+**Sync Gateway Compatibility**: CBL 4.0 requires Sync Gateway 4.0 or later for synchronization.
+Attempting to sync with Sync Gateway versions prior to 4.0 results in replication errors with appropriate error messages indicating the incompatibility.
 
-It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through ws://localhost:4984/db.
+**Peer-to-Peer Compatibility**: CBL 4.0 can only perform peer-to-peer synchronization with other CBL 4.0+ instances.
+Sync attempts with CBL 3.x or earlier peers fails with appropriate error messages.
 
-This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
-
+**No Backward Compatibility**: Unlike previous CBL versions, CBL 4.0 cannot sync with earlier versions of either Sync Gateway or other CBL instances due to the fundamental changes in document versioning architecture.
 
 [#xcode]
 == Xcode
 
-The API has changed in Couchbase Lite 2.0 and will require porting an application that is using Couchbase Lite 1.x API to the Couchbase Lite 2.0 API.
+The API has changed in Couchbase Lite 2.0 and requires porting an application that's using Couchbase Lite 1.x API to the Couchbase Lite 2.0 API.
 To update an Xcode project built with Couchbase Lite 1.x:
 
 * Remove the existing *CouchbaseLite.framework* dependency from the Xcode project.
 * Remove all the Couchbase Lite 1.x dependencies (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/objc.html#getting-started[1.x installation guide]).
 * Install the Couchbase Lite 2.0 framework in your project  -- see xref:objc:gs-install.adoc[Install].
-At this point, there will be many compiler warnings.
-Refer to the examples on this page to learn about the new API.
+At this point, there are compiler warnings.
+See the examples on this page to learn about the new API.
 * Build & run your application.
-
 
 [#downgrading-couchbase-lite]
 == Downgrading Couchbase Lite
@@ -265,30 +230,27 @@ Refer to the examples on this page to learn about the new API.
 [#downgrading-between-major-releases]
 === Downgrading Between Major Releases
 
-*No Downgrade Support* - Downgrades between major versions of Couchbase Lite (CBL) are not supported.
-Once you upgrade to a new major version, downgrading to a previous major version may lead to incompatibility issues.
-
-For example, Upgrading from CBL 2.x.x to CBL 3.x.x does not guarantee the ability to revert to CBL 2.x.x.
+*No Downgrade Support* - Couchbase Lite (CBL) does not support downgrades between major versions.
+Once you upgrade to a new major version, attempting to downgrade to a previous major version creates incompatibility issues.
+For example, upgrading from CBL 3.x.x to CBL 4.x does not allow you to revert to CBL 3.x.
 
 [#downgrading-between-minor-releases]
 === Downgrading Between Minor Releases
 
-*Conditional Downgrade Support* - Downgrade support for minor releases is considered on a case-by-case basis.
-The release notes for each minor version will clarify whether downgrades are supported.
+*Conditional Downgrade Support* - Downgrade support for minor releases varies on a case-by-case basis.
+The release notes for each minor version clarify whether downgrades receive support.
 
-For example, if a new minor version such as CBL 3.1.0 is released the release notes will specify whether downgrading to CBL 3.0.x is supported.
+For example, when a new minor version such as CBL 3.1.0 becomes available, the release notes specify whether reverting to CBL 3.0.x receives support.
 
 [#downgrading-between-patch-releases]
 === Downgrading Between Patch Releases
 
-*Full Downgrade Support* - Downgrades between patch releases are supported.
-Users can safely downgrade between different patch versions within the same minor release.
+*Full Downgrade Support* - Couchbase Lite supports downgrades between patch releases.
+Users can downgrade between different patch versions within the same minor release.
 
 For example, if you're running CBL 3.1.6 you can downgrade to CBL 3.1.4 or CBL 3.1.3 without issues.
 
-
 // Include standard footer
-
 
 [#related-content]
 == Related Content
@@ -298,37 +260,34 @@ For example, if you're running CBL 3.1.6 you can downgrade to CBL 3.1.4 or CBL 3
 
 [.column]
 === {empty}
-.How to . . .
+.How to
 * xref:objc:gs-prereqs.adoc[Prerequisites]
 * xref:objc:gs-install.adoc[Install]
 * xref:objc:gs-build.adoc[Build and Run]
-
 
 .
 
 [.column]
 === {empty}
-.Learn more . . .
+.Learn more
 * xref:objc:database.adoc[Databases]
 * xref:objc:document.adoc[Documents]
+* xref:objc:version-vectors.adoc[Version Vectors]
 * xref:objc:blob.adoc[Blobs]
 * xref:objc:replication.adoc[Remote Sync Gateway]
 * xref:objc:conflict.adoc[Handling Data Conflicts]
 
 .
 
-
 [.column]
 === {empty}
-.Dive Deeper . . .
+.Dive Deeper
 https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
 .
 
-
 ++++
 </div>
 ++++
-
