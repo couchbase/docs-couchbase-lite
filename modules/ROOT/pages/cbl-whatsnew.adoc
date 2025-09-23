@@ -35,19 +35,6 @@ This uniquely identifies both the state and history of a document.
 * **Hybrid Logical Clocks (HLCs)**:
 Timestamps are now based on hybrid logical clocks, enabling last-writer-wins conflict resolution and simpler pruning of old revisions.
 
-* **New Document API**
-Documents now include a new `timestamp` property:
-- iOS: `UInt64`
-- .NET: `ULong`
-- Java: `long` (nanoseconds)
-- C: `uint64_t` (nanoseconds)
-
-* **Updated Conflict Resolution**:
-The default replicator conflict resolver now uses last-write-wins based on the document’s timestamp instead of generation numbers.
-
-* **Revision History**:
-For testing and debugging, LiteCore provides an API to retrieve a document’s full version vector.
-
 For more information about version vectors, see:
 
 * xref:android:version-vectors.adoc[Android - version vectors]
