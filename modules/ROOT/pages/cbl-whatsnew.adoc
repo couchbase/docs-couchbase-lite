@@ -8,27 +8,54 @@ ifdef::show_edition[:page-edition: {release}]
 
 
 NOTE: Couchbase Lite 4.0 introduces some breaking changes. +
-If you're upgrading from 3.x, refer to the appropriate upgrade page -- see: <<lbl-upgrade>>
+If you're upgrading from 3.x, see the appropriate upgrade page -- <<lbl-upgrade>>.
 You cannot downgrade from 4.0 to earlier versions of Couchbase Lite.
 
-== Release 4.0.0 (Q1 2025)
+== Release {release}
+
+Couchbase Lite Release {release} fundamentally transforms document versioning and conflict resolution by introducing version vectors, replacing the traditional revision tree approach.
+This architectural change enables superior conflict resolution, improved synchronization performance, and seamless data consistency.
 
 === New Features
 
 ==== Version Vectors
 
-NOTE: TODO
+Couchbase Lite 4.0 replaces revision trees with version vectors for document versioning and conflict resolution.
+This change aligns Couchbase Lite with Couchbase Server and Sync Gateway, ensuring more consistent behavior in distributed and multi-cluster deployments.
+
+Key changes include:
+
+* **Revision IDs → Versions**:
+Each revision is now identified by a version in the format `<timestamp>@<source-id>`.
+
+* **Revision Trees → Version Vectors**:
+A version vector is an ordered list of the latest versions from all sources that have modified a document.
+This uniquely identifies both the state and history of a document.
+
+* **Hybrid Logical Clocks (HLCs)**:
+Timestamps are now based on hybrid logical clocks, enabling last-writer-wins conflict resolution and simpler pruning of old revisions.
+
+For more information about version vectors, see:
+
+* xref:android:version-vectors.adoc[Android - version vectors]
+* xref:c:version-vectors.adoc[C - version vectors]
+* xref:csharp:version-vectors.adoc[.NET - version vectors]
+* xref:java:version-vectors.adoc[Java - version vectors]
+* xref:objc:version-vectors.adoc[Objective-C - version vectors]
+* xref:swift:version-vectors.adoc[Swift - version vectors]
 
 ==== Mobile XDCR Coexistence
 
-NOTE: TODO
+Couchbase Lite {release} version vector model brings it into alignment with Couchbase Server Cross Data Center Replication (XDCR) and Sync Gateway.
+This ensures that documents can sync seamlessly across:
+
+* Mobile-to-Server replication.
+* Multi-cluster Couchbase Server environments.
+* Peer-to-peer topologies.
 
 == See Also
 
-NOTE: TODO
-
 xref:3.3@couchbase-lite:ROOT:cbl-whatsnew.adoc[What's new in previous version 3.3]
-xref:3.2@couchbase-lite:ROOT:cbl-whatsnew.adoc[What's new in previous version 3.2]
 
 === Couchbase Lite Release Notes
 
