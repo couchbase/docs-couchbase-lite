@@ -8,8 +8,6 @@
 
 :source-language: swift
 
-:source-language: swift
-
 
 [abstract]
 --
@@ -138,6 +136,16 @@ pod install
 Swift Package Manager::
 +
 --
+
+Starting with version 4.0, the Swift Package Manager repository URL for Community Edition has changed:
+
+* *Version 3.x and earlier:* https://github.com/couchbase/couchbase-lite-ios.git
+* *Version 4.0 and later:* https://github.com/couchbase/couchbase-lite-swift.git
+
+If you're upgrading from 3.x to 4.0, you must update the repository URL in your Package.swift file or Xcode project settings.
+
+For Enterprise Edition - continue using https://github.com/couchbase/couchbase-lite-swift-ee.git
+
 NOTE: Using Swift Package Manager to install CouchbaseLiteSwift requires XCode 12+
 
 This tab explains how to include the CouchbaseLiteSwift package within your app +
@@ -146,7 +154,7 @@ See: <<case-1>> | <<case-2>>
 [#case-1]
 .Use Case 1. Include in Existing Swift Package
 ======
-Here we will add the `CouchbaseLiteSwift` dependency to your Parent Swift package -- see: xref:swift:gs-install.adoc#sample[] for the sample manifest.
+Here you'll add the `CouchbaseLiteSwift` dependency to your Parent Swift package -- see: xref:swift:gs-install.adoc#sample[] for the sample manifest.
 
 . Add the CouchbaseLiteSwift package as dependency by including the following in the parent package manifest:
 
@@ -163,7 +171,9 @@ dependencies: [
 +
 [#couchbaselite-url]
 <.> Insert appropriate Couchbase Lite URL: +
-For Community Edition use: https://github.com/couchbase/couchbase-lite-ios.git +
+*For Community Edition:* +
+- Version 4.0+: https://github.com/couchbase/couchbase-lite-swift.git +
+- Version 3.x and earlier: https://github.com/couchbase/couchbase-lite-ios.git +
 For Enterprise Edition use: https://github.com/couchbase/couchbase-lite-swift-ee.git
 
 +

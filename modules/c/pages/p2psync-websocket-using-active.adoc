@@ -76,7 +76,7 @@ static void simpleChangeListener(void* context,
 
     CBLError err{};
     FLString url = FLSTR("wss://localhost:4984/db");
-    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &err); 
+    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &err);
 
     CBLReplicationCollection collectionConfig;
     memset(&collectionConfig, 0, sizeof(CBLReplicationCollection));
@@ -98,16 +98,16 @@ static void simpleChangeListener(void* context,
     // Providing username and password credentials
     CBLAuthenticator* basicAuth =
         CBLAuth_CreatePassword(FLSTR("username"),
-                               FLSTR("passwd")); 
+                               FLSTR("passwd"));
     replConfig.authenticator = basicAuth;
 
     // Optionally, configure how we handle conflicts (note that this is set
     // per collection, and not on the overall replicator)
-    collectionConfig.conflictResolver = simpleConflictResolver_localWins; 
+    collectionConfig.conflictResolver = simpleConflictResolver_localWins;
 
     // Initialize replicator with created config
     CBLReplicator* replicator =
-        CBLReplicator_Create(&replConfig, &err); 
+        CBLReplicator_Create(&replConfig, &err);
 
     CBLEndpoint_Free(target);
 
@@ -115,10 +115,10 @@ static void simpleChangeListener(void* context,
     CBLListenerToken* token =
             CBLReplicator_AddChangeListener(replicator,
                                             simpleChangeListener,
-                                            NULL); 
+                                            NULL);
 
     // Start replication
-    CBLReplicator_Start(replicator, false); 
+    CBLReplicator_Start(replicator, false);
 ----
 ====
 
@@ -560,7 +560,10 @@ It will stop any active <<lbl-repl-chng,change listener>> once the replication i
 [#conflict-resolution]
 == Conflict Resolution
 
-Unless you specify otherwise, Couchbase Lite's default conflict resolution policy is applied -- see xref:c:conflict.adoc[Handling Data Conflicts].
+Unless you specify otherwise, Couchbase Lite 4.x uses Last Write Wins (LWW) conflict resolution by default during replication.
+When conflicts occur during pull replication, the change with the latest timestamp wins.
+Timestamps are local to each device.
+See xref:java:conflict.adoc[Handling Data Conflicts].
 
 To use a different policy, specify a _conflict resolver_ using {url-api-references-replicator-config}#aa664454f386c8300dd458ece30a3a8c6[conflictResolver] as shown in <<using-conflict-resolvers>>.
 

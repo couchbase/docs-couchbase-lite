@@ -611,7 +611,10 @@ It will stop any active <<lbl-repl-chng,change listener>> once the replication i
 [#conflict-resolution]
 == Conflict Resolution
 
-Unless you specify otherwise, Couchbase Lite's default conflict resolution policy is applied -- see xref:swift:conflict.adoc[Handling Data Conflicts].
+Unless you specify otherwise, Couchbase Lite 4.x uses Last Write Wins (LWW) conflict resolution by default during replication.
+This means that when conflicts occur during pull replication, the change with the latest timestamp wins.
+Timestamps are local to each device.
+See xref:swift:conflict.adoc[Handling Data Conflicts].
 
 To use a different policy, specify a _conflict resolver_ using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-swift}{empty}/couchbase-lite-swift/Structs/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC16conflictResolverAA08ConflictG8Protocol_pSgvp[conflictResolver] as shown in <<using-conflict-resolvers>>.
 
