@@ -122,13 +122,13 @@ class DBManager {
     fun replicate(uri: String): Flow<ReplicatorChange>? {
         val coll = collection ?: return null
 
-        val collConfig = CollectionConfiguration()
+        val collConfig = CollectionConfiguration(coll)
             .setPullFilter { doc, _ -> "Java" == doc.getString("language") }
 
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
+                setOf(collConfig),
                 target = URLEndpoint(URI(uri)),
-                collections = mapOf(setOf(coll) to collConfig),
                 type = ReplicatorType.PUSH_AND_PULL,
                 authenticator = BasicAuthenticator("sync-gateway", "password".toCharArray())
             )

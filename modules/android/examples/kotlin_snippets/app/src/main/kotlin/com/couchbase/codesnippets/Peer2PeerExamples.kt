@@ -18,6 +18,7 @@
 package com.couchbase.codesnippets
 
 import com.couchbase.lite.Collection
+import com.couchbase.lite.CollectionConfiguration
 import com.couchbase.lite.CouchbaseLiteException
 import com.couchbase.lite.Message
 import com.couchbase.lite.MessageEndpoint
@@ -49,7 +50,7 @@ class BrowserSessionManager : MessageEndpointDelegate {
         // Create the replicator object.
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
-                collections = mapOf(collections to null),
+                collections = CollectionConfiguration.fromCollections(collections),
                 target = messageEndpoint
             )
         )

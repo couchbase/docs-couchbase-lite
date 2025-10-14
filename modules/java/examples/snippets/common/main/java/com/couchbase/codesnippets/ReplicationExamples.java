@@ -61,8 +61,7 @@ public class ReplicationExamples {
 
             // tag::p2p-act-rep-func[]
             // initialize the replicator configuration
-            new ReplicatorConfiguration(new URLEndpoint(new URI("wss://listener.com:8954"))) // <.>
-                .addCollections(collections, null)
+            new ReplicatorConfiguration(CollectionConfiguration.fromCollections(collections), new URLEndpoint(new URI("wss://listener.com:8954"))) // <.>
 
                 // tag::p2p-act-rep-config-type[]
                 // Set replicator type
@@ -121,9 +120,10 @@ public class ReplicationExamples {
         Endpoint theListenerEndpoint
             = new URLEndpoint(new URI("wss://10.0.2.2:4984/db")); // <.>
 
+        Set<CollectionConfiguration> collConfig = CollectionConfiguration.fromCollections(collections);
+
         ReplicatorConfiguration thisConfig =
-            new ReplicatorConfiguration(theListenerEndpoint) // <.>
-                .addCollections(collections, null) // default configuration
+            new ReplicatorConfiguration(collConfig, theListenerEndpoint) // <.>
 
                 .setAcceptOnlySelfSignedServerCertificate(true) // <.>
                 .setAuthenticator(new BasicAuthenticator(
@@ -147,8 +147,7 @@ public class ReplicationExamples {
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, collectionConfig)
+            new ReplicatorConfiguration(Set.of(collectionConfig), new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
                 .setAuthenticator(new BasicAuthenticator("username", "password".toCharArray())));
 
         repl.start();
@@ -165,8 +164,7 @@ public class ReplicationExamples {
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, collectionConfig)
+            new ReplicatorConfiguration(Set.of(collectionConfig), new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
                 .setAuthenticator(new SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447")));
 
         repl.start();
@@ -184,8 +182,7 @@ public class ReplicationExamples {
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, collectionConfig)
+            new ReplicatorConfiguration(Set.of(collectionConfig), new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
                 .setHeaders(headers));
 
         repl.start();
@@ -195,13 +192,12 @@ public class ReplicationExamples {
 
     public void replicationPushFilterExample(Set<Collection> collections) throws URISyntaxException {
         // tag::replication-push-filter[]
-        CollectionConfiguration collectionConfig = new CollectionConfiguration()
-            .setPushFilter((document, flags) -> flags.contains(DocumentFlag.DELETED)); // <1>
+        Set<CollectionConfiguration> collectionConfigs = CollectionConfiguration.fromCollections(collections);
+        collectionConfigs.forEach(it->it.setPushFilter((document, flags) -> flags.contains(DocumentFlag.DELETED))); // <1>
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, collectionConfig));
+            new ReplicatorConfiguration(collectionConfigs, new URLEndpoint(new URI("ws://localhost:4984/mydatabase"))));
 
         repl.start();
         thisReplicator = repl;
@@ -209,15 +205,16 @@ public class ReplicationExamples {
     }
 
 
+
+
     public void replicationPullFilterExample(Set<Collection> collections) throws URISyntaxException {
         // tag::replication-pull-filter[]
-        CollectionConfiguration collectionConfig = new CollectionConfiguration()
-            .setPullFilter((document, flags) -> "draft".equals(document.getString("type"))); // <1>
+        Set<CollectionConfiguration> collectionConfigs = CollectionConfiguration.fromCollections(collections);
+        collectionConfigs.forEach(it->it.setPullFilter((document, flags) -> "draft".equals(document.getString("type")))); // <1>
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, collectionConfig));
+            new ReplicatorConfiguration(collectionConfigs, new URLEndpoint(new URI("ws://localhost:4984/mydatabase"))));
 
         repl.start();
         thisReplicator = repl;
@@ -227,8 +224,10 @@ public class ReplicationExamples {
     public void replicationResetCheckpointExample(Set<Collection> collections) throws URISyntaxException {
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, null));
+            new ReplicatorConfiguration(
+                    CollectionConfiguration.fromCollections(collections),
+                    new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+        );
 
         // tag::replication-reset-checkpoint[]
         repl.start(true);
@@ -242,8 +241,10 @@ public class ReplicationExamples {
     public void handlingNetworkErrorsExample(Set<Collection> collections) throws URISyntaxException {
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, null));
+            new ReplicatorConfiguration(
+                    CollectionConfiguration.fromCollections(collections),
+                    new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+        );
 
         // tag::replication-error-handling[]
         repl.addChangeListener(change -> {
@@ -260,8 +261,9 @@ public class ReplicationExamples {
         // tag::certificate-pinning[]
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, null)
+            new ReplicatorConfiguration(
+                    CollectionConfiguration.fromCollections(collections),
+                    new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
                 .setPinnedServerX509Certificate(
                     (X509Certificate) KeyStore.getInstance(keyStoreName).getCertificate(certAlias)));
 
@@ -274,8 +276,9 @@ public class ReplicationExamples {
         // tag::sgw-act-rep-initialize[]
         // initialize the replicator configuration
         ReplicatorConfiguration thisConfig = new ReplicatorConfiguration(
-            new URLEndpoint(new URI("wss://10.0.2.2:8954/travel-sample"))) // <.>
-            .addCollections(collections, null);
+                CollectionConfiguration.fromCollections(collections),
+                new URLEndpoint(new URI("wss://10.0.2.2:8954/travel-sample"))
+        ); // <.>
         // end::sgw-act-rep-initialize[]
     }
 
@@ -303,8 +306,9 @@ public class ReplicationExamples {
     public void customRetryConfigExample(Set<Collection> collections) throws URISyntaxException {
         // tag::replication-retry-config[]
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, null)
+            new ReplicatorConfiguration(
+                    CollectionConfiguration.fromCollections(collections),
+                    new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
                 //  other config as required . . .
                 .setHeartbeat(150) // <.>
                 .setMaxAttempts(20) // <.>
@@ -318,8 +322,11 @@ public class ReplicationExamples {
     public void replicatorDocumentEventExample(Set<Collection> collections) throws URISyntaxException {
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, null));
+            new ReplicatorConfiguration(
+                    CollectionConfiguration.fromCollections(collections),
+                    new URLEndpoint(new URI("ws://localhost:4984/mydatabase"))
+            )
+        );
 
 
         // tag::add-document-replication-listener[]
@@ -354,9 +361,11 @@ public class ReplicationExamples {
     public void replicationPendingDocumentsExample(Collection collection)
         throws CouchbaseLiteException, URISyntaxException {
         // tag::replication-pendingdocuments[]
+        CollectionConfiguration collConfig = new CollectionConfiguration(collection);
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollection(collection, null)
+            new ReplicatorConfiguration(
+                    Set.of(collConfig),
+                    new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
                 .setType(ReplicatorType.PUSH));
 
         Set<String> pendingDocs = repl.getPendingDocumentIds(collection);
@@ -392,9 +401,9 @@ public class ReplicationExamples {
         // Note: the target database must already contain the
         //       source collections or the replication will fail.
         final Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new DatabaseEndpoint(targetDb))
-                .addCollections(srcCollections, null)
-                .setType(ReplicatorType.PUSH));
+                new ReplicatorConfiguration(CollectionConfiguration.fromCollections(srcCollections), new DatabaseEndpoint(targetDb))
+                        .setType(ReplicatorType.PUSH)
+        );
 
         // Start the replicator
         // (be sure to hold a reference somewhere that will prevent it from being GCed)
@@ -405,12 +414,11 @@ public class ReplicationExamples {
 
     public void replicationWithCustomConflictResolverExample(Set<Collection> srcCollections, URI targetUri) {
         // tag::replication-conflict-resolver[]
+        Set<CollectionConfiguration> collConfigs = CollectionConfiguration.fromCollections(srcCollections);
+        collConfigs.forEach(it->it.setConflictResolver(new LocalWinConflictResolver()));
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(targetUri))
-                .addCollections(
-                    srcCollections,
-                    new CollectionConfiguration()
-                        .setConflictResolver(new LocalWinConflictResolver())));
+            new ReplicatorConfiguration(collConfigs, new URLEndpoint(targetUri))
+        );
 
         // Start the replicator
         // (be sure to hold a reference somewhere that will prevent it from being GCed)

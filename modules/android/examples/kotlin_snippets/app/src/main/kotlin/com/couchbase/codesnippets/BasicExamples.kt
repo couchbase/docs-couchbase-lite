@@ -23,6 +23,7 @@ import com.couchbase.codesnippets.util.log
 import com.couchbase.lite.BasicAuthenticator
 import com.couchbase.lite.Blob
 import com.couchbase.lite.Collection
+import com.couchbase.lite.CollectionConfiguration
 import com.couchbase.lite.CouchbaseLite
 import com.couchbase.lite.DataSource
 import com.couchbase.lite.Database
@@ -32,9 +33,7 @@ import com.couchbase.lite.Document
 import com.couchbase.lite.EncryptionKey
 import com.couchbase.lite.Expression
 import com.couchbase.lite.LogDomain
-import com.couchbase.lite.LogFileConfigurationFactory
 import com.couchbase.lite.LogLevel
-import com.couchbase.lite.Logger
 import com.couchbase.lite.Meta
 import com.couchbase.lite.MutableArray
 import com.couchbase.lite.MutableDictionary
@@ -64,10 +63,12 @@ import java.util.zip.ZipInputStream
 private const val TAG = "BASIC"
 
 // tag::custom-logging[]
-class LogTestLogger(private val level: LogLevel) : Logger {
-    override fun getLevel() = level
-
-    override fun log(level: LogLevel, domain: LogDomain, message: String) {
+class LogTestLogger(private val level: LogLevel) : BaseLogSink(level) {
+    override fun writeLog(
+        level: LogLevel,
+        domain: LogDomain,
+        message: String
+    ) {
         // this method will never be called if param level < this.level
         // handle the message, for example piping it to a third party framework
     }
@@ -94,7 +95,7 @@ class BasicExamples(private val context: Context) {
         val replicator =
             Replicator(
                 ReplicatorConfigurationFactory.newConfig(
-                    collections = mapOf(db.collections to null),
+                    collections = CollectionConfiguration.fromCollections(db.collections),
                     target = URLEndpoint(URI("ws://localhost:4984/getting-started-db")),
                     type = ReplicatorType.PUSH_AND_PULL,
                     authenticator = BasicAuthenticator("sync-gateway", "password".toCharArray())
@@ -149,38 +150,29 @@ class BasicExamples(private val context: Context) {
     fun enableCustomLoggingExample() {
         // tag::set-custom-logging[]
         // this custom logger will not log an event with a log level < WARNING
-        Database.log.custom = LogTestLogger(LogLevel.WARNING) // <.>
+        LogSinks.get().custom = LogTestLogger(LogLevel.WARNING) // <.>
         // end::set-custom-logging[]
     }
 
     // ### Console logging
     fun consoleLoggingExample() {
         // tag::console-logging[]
-        Database.log.console.domains = LogDomain.ALL_DOMAINS // <.>
-        Database.log.console.level = LogLevel.WARNING // <.>
+        LogSinks.get().console = ConsoleLogSink(LogLevel.WARNING, LogDomain.ALL) // <.>
         // end::console-logging[]
-
-        // tag::console-logging-db[]
-        Database.log.console.level = LogLevel.WARNING // <.>
-        // end::console-logging-db[]
     }
 
     // ### File logging
     fun fileLoggingExample() {
         // tag::file-logging[]
-        // tag::file-logging-config-factory[]
-        Database.log.file.let {
-            it.config = LogFileConfigurationFactory.newConfig(
-                context.cacheDir.absolutePath, // <.>
-                maxSize = 10240, // <.>
-                maxRotateCount = 5, // <.>
-                usePlainText = false
-            ) // <.>
-            it.level = LogLevel.INFO // <.>
-
-            // end::file-logging[]
-        }
-        // end::file-logging-config-factory[]
+        // tag::file-logging-sink-factory[]
+        FileLogSinkFactory.install(
+            directory = context.cacheDir.absolutePath, // <.>
+            level = LogLevel.INFO, // <.>
+            maxFileSize = 10240L, // <.>
+            maxKeptFiles = 5, // <.>
+            isPlainText = false // <.>
+        )
+        // end::file-logging-sink-factory[]
     }
 
     fun newConsoleLoggingExample() {

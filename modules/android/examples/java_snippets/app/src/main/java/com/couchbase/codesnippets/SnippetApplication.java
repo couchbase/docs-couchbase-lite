@@ -20,6 +20,8 @@ import android.app.Application;
 import com.couchbase.lite.CouchbaseLite;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.LogLevel;
+import com.couchbase.lite.logging.ConsoleLogSink;
+import com.couchbase.lite.logging.LogSinks;
 
 
 public class SnippetApplication extends Application {
@@ -37,7 +39,7 @@ public class SnippetApplication extends Application {
         // tag::replication-logging[]
         CouchbaseLite.init(this, true);
 
-        Database.log.getConsole().setLevel(LogLevel.DEBUG);
+        LogSinks.get().setConsole(new ConsoleLogSink(LogLevel.DEBUG));
         // end::replication-logging[]
     }
 }
