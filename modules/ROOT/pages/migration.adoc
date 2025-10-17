@@ -1,0 +1,937 @@
+= Migration Guide: Couchbase Lite 3.2.x / 3.3.x to 4.0.0
+:page-layout: landing-page-core-concept
+:page-status:
+:page-edition:
+:page-role:
+:description: Guide for migrating from Couchbase Lite 3.2.x / 3.3.x to 4.0.0
+
+Couchbase Lite 4.0.0 introduces several important updates and API changes to simplify development and ensure consistency across all platforms.
+Most APIs deprecated in versions 3.1.0 through 3.3.x have now been removed, and several configurations have been updated or restructured.
+
+This guide provides step-by-step instructions for upgrading from Couchbase Lite 3.2.x / 3.3.x to 4.0.0.
+Follow these guidelines to ensure a smooth migration with minimal disruption to your applications.
+
+== Document Operations on the Default Collection
+
+Starting in Couchbase Lite 3.1.0, scope and collections were introduced to better organize documents within a database.
+At that time, document operations performed directly through the Database object for the default collection, such as get, save, delete, purge, count, set or get expiration, index management, and listeners, were deprecated.
+
+In 4.0.0, all deprecated document APIs in the Database class have been removed.
+To work with documents in the default collection, retrieve the default collection from the database and use the collection's methods instead.
+
+[{tabs}]
+====
+Swift::
++
+--
+[source,swift]
+----
+// Before
+database.save(document)
+
+// After
+let collection = try database.defaultCollection()
+try collection.save(document)
+----
+--
+
+Objective-C::
++
+--
+[source,objectivec]
+----
+// Before
+[database saveDocument: document error: &error];
+
+// After
+CBLCollection* collection = [database defaultCollection: &error];
+[collection saveDocument: document error: &error];
+----
+--
+
+Java::
++
+--
+[source,java]
+----
+// Before
+database.save(document);
+
+// After
+Collection collection = database.getDefaultCollection();
+collection.save(document);
+----
+--
+
+C#::
++
+--
+[source,csharp]
+----
+// Before
+database.Save(document);
+
+// After
+var collection = database.GetDefaultCollection();
+collection.Save(document);
+----
+--
+
+C::
++
+--
+[source,c]
+----
+// Before
+CBLDatabase_SaveDocument(database, document, &error);
+
+// After
+CBLCollection* collection = CBLDatabase_DefaultCollection(database, &error);
+CBLCollection_SaveDocument(collection, document, &error);
+----
+--
+====
+
+== ReplicatorConfiguration and CollectionConfiguration
+
+When collections were introduced in 3.1.0, the ReplicatorConfiguration constructor that accepted a Database for the default collection was deprecated.
+A new API was introduced to let developers explicitly add collections to the ReplicatorConfiguration, each with an optional CollectionConfiguration as needed.
+
+In 4.0.0, the old constructor and related APIs have been removed.
+Collections must now be specified up front when creating a ReplicatorConfiguration.
+They can no longer be added or removed dynamically.
+This ensures consistency and prevents accidental inclusion of the default collection, which previously caused confusion or replication errors when not present on Sync Gateway.
+
+[{tabs}]
+====
+Swift::
++
+--
+[source,swift]
+----
+// Before (with database)
+let config = ReplicatorConfiguration(database, target: endpoint)
+
+// Before (with dynamic collection)
+var config = ReplicatorConfiguration(target: endpoint)
+config.addCollection(defaultCollection)
+
+// After
+let collections = [defaultCollection].map { CollectionConfiguration(collection: $0) }
+let config = ReplicatorConfiguration(collections: collections, target: endpoint)
+----
+--
+
+Objective-C::
++
+--
+[source,objectivec]
+----
+// Before (with database)
+CBLReplicatorConfiguration* config =
+    [[CBLReplicatorConfiguration alloc] initWithDatabase: database
+                                                   target: endpoint];
+
+// After
+CBLCollectionConfiguration* colConfig =
+    [[CBLCollectionConfiguration alloc] initWithCollections: @[defaultCollection]];
+CBLReplicatorConfiguration* config =
+    [[CBLReplicatorConfiguration alloc] initWithCollectionConfigurations: @[colConfig]
+                                                                   target: endpoint];
+----
+--
+
+Java::
++
+--
+[source,java]
+----
+// Before (with database)
+ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
+
+// Before (with dynamic collection)
+ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
+config.addCollection(defaultCollection, null);
+
+// After
+CollectionConfiguration colConfig = new CollectionConfiguration();
+config = new ReplicatorConfiguration(endpoint);
+config.addCollections(Collections.singletonList(defaultCollection), colConfig);
+----
+--
+
+C#::
++
+--
+[source,csharp]
+----
+// Before
+var config = new ReplicatorConfiguration(endpoint);
+config.AddCollection(DefaultCollection);
+
+// After
+var collections = CollectionConfiguration.FromCollections(DefaultCollection);
+var config = new ReplicatorConfiguration(collections, endpoint);
+----
+--
+
+C::
++
+--
+[source,c]
+----
+// Before
+CBLReplicatorConfiguration config = {
+    .database = database,
+    .endpoint = endpoint,
+    // ... other fields
+};
+
+// After
+CBLCollectionConfiguration colConfig = {
+    .collection = defaultCollection
+};
+CBLReplicatorConfiguration config = {
+    .collections = &colConfig,
+    .collectionCount = 1,
+    .endpoint = endpoint,
+    // ... other fields
+};
+----
+--
+====
+
+=== CBLReplicatorConfiguration Changes in Couchbase Lite C
+
+Couchbase Lite C uses a struct-based configuration and has never supported dynamic collection management.
+In version 4.0.0, several updates were made to align the API with other platforms:
+
+* The deprecated database property for the default collection in CBLReplicatorConfiguration has been removed.
+* The configuration fields have been reordered so that the required fields—collections, collectionCount, and endpoint—appear first, followed by commonly used fields such as replicatorType, authenticator, context, and pinnedServerCertificate.
+* CBLReplicatorCollection is now defined as an alias of CBLCollectionConfiguration. Developers are encouraged to use CBLCollectionConfiguration going forward, as CBLReplicatorCollection is not deprecated but will be removed in the next major release.
+
+Developers who create configurations using positional initialization should review and update the field order according to the latest ReplicatorConfiguration documentation.
+
+Furthermore, the deprecated `propertyEncryptor` and `propertyDecryptor` callbacks, previously used for encrypting and decrypting document properties in the default collection, have been removed.
+Developers should use the new `documentPropertyEncryptor` and `documentPropertyDecryptor` callbacks instead, which provide consistent and extensible encryption support across collections.
+
+== .NET Configuration API
+
+Couchbase Lite 4.0 modernizes its .NET configuration model to make configuration objects immutable and type-safe, leveraging new C# language features:
+
+* It uses C# 9 init-only properties and C# 11 required properties to enforce immutability and ensure that all mandatory fields are set at creation time.
+* Constructors now require all required properties, while optional properties can be set only during initialization.
+* The required properties are also declared as init-only to allow modifications when cloning an existing configuration using the C# 'with' keyword.
+
+This design ensures configuration objects remain predictable, reusable, and safe from unintended changes.
+
+[source,csharp]
+----
+// Before
+var config = new ReplicatorConfiguration(endpoint);
+config.AddCollection(DefaultCollection);
+
+// After
+var collections = CollectionConfiguration.FromCollections(DefaultCollection);
+var config = new ReplicatorConfiguration(collections, endpoint);
+
+// Clone immutably
+var updated = config with { ReplicatorType = ReplicatorType.Push };
+----
+
+== Replication Pending Documents
+
+The replication pending documents API applies only to documents that are waiting to be pushed to the remote endpoint.
+The deprecated methods for retrieving or checking pending documents without specifying a collection have been removed in 4.0.0.
+Use the corresponding methods that require a Collection object instead.
+
+[{tabs}]
+====
+Swift::
++
+--
+[source,swift]
+----
+// Before
+let pendings = try replicator.pendingDocumentIds()
+let isPending = try replicator.isDocumentPending("doc1")
+
+// After
+let defaultCollection = try database.defaultCollection()
+let pendings = try replicator.pendingDocumentIds(collection: defaultCollection)
+let isPending = try replicator.isDocumentPending("doc1", collection: defaultCollection)
+----
+--
+
+Objective-C::
++
+--
+[source,objectivec]
+----
+// Before
+NSArray* pendings = [replicator pendingDocumentIds: &error];
+BOOL isPending = [replicator isDocumentPending: @"doc1" error: &error];
+
+// After
+CBLCollection* defaultCollection = [database defaultCollection: &error];
+NSArray* pendings = [replicator pendingDocumentIdsForCollection: defaultCollection
+                                                           error: &error];
+BOOL isPending = [replicator isDocumentPending: @"doc1"
+                                    collection: defaultCollection
+                                         error: &error];
+----
+--
+
+Java::
++
+--
+[source,java]
+----
+// Before
+Set<String> pendings = replicator.getPendingDocumentIds();
+boolean isPending = replicator.isDocumentPending("doc1");
+
+// After
+Collection defaultCollection = database.getDefaultCollection();
+Set<String> pendings = replicator.getPendingDocumentIds(defaultCollection);
+boolean isPending = replicator.isDocumentPending("doc1", defaultCollection);
+----
+--
+
+C#::
++
+--
+[source,csharp]
+----
+// Before
+var pendings = replicator.GetPendingDocumentIds();
+var isPending = replicator.IsDocumentPending("doc1");
+
+// After
+var defaultCollection = database.GetDefaultCollection();
+var pendings = replicator.GetPendingDocumentIds(defaultCollection);
+var isPending = replicator.IsDocumentPending("doc1", defaultCollection);
+----
+--
+
+C::
++
+--
+[source,c]
+----
+// Before
+FLDict pendings = CBLReplicator_PendingDocumentIDs(replicator, &error);
+bool isPending = CBLReplicator_IsDocumentPending(replicator, "doc1", &error);
+
+// After
+CBLCollection* defaultCollection = CBLDatabase_DefaultCollection(database, &error);
+FLDict pendings = CBLReplicator_PendingDocumentIDs2(replicator, defaultCollection, &error);
+bool isPending = CBLReplicator_IsDocumentPending2(replicator, "doc1", defaultCollection, &error);
+----
+--
+====
+
+== Endpoint Listener Configuration
+
+The deprecated constructors for URLEndpointListenerConfiguration and MessageEndpointListenerConfiguration that accepted a Database object for the default collection have been removed in 4.0.0.
+Use constructors that accept one or more Collection objects instead.
+
+[{tabs}]
+====
+Swift::
++
+--
+[source,swift]
+----
+// Before
+let config1 = URLEndpointListenerConfiguration(database: database)
+let config2 = MessageEndpointListenerConfiguration(database: database,
+                                                    protocolType: .messageStream)
+
+// After
+let defaultCollection = try database.defaultCollection()
+let config1 = URLEndpointListenerConfiguration(collections: [defaultCollection])
+let config2 = MessageEndpointListenerConfiguration(collections: [defaultCollection],
+                                                    protocolType: .messageStream)
+----
+--
+
+Objective-C::
++
+--
+[source,objectivec]
+----
+// Before
+CBLURLEndpointListenerConfiguration* config1 =
+    [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: database];
+CBLMessageEndpointListenerConfiguration* config2 =
+    [[CBLMessageEndpointListenerConfiguration alloc] initWithDatabase: database
+                                                         protocolType: kCBLProtocolTypeMessageStream];
+
+// After
+CBLCollection* defaultCollection = [database defaultCollection: &error];
+CBLURLEndpointListenerConfiguration* config1 =
+    [[CBLURLEndpointListenerConfiguration alloc] initWithCollections: @[defaultCollection]];
+CBLMessageEndpointListenerConfiguration* config2 =
+    [[CBLMessageEndpointListenerConfiguration alloc] initWithCollections: @[defaultCollection]
+                                                            protocolType: kCBLProtocolTypeMessageStream];
+----
+--
+
+Java::
++
+--
+[source,java]
+----
+// Before
+URLEndpointListenerConfiguration config1 =
+    new URLEndpointListenerConfiguration(database);
+MessageEndpointListenerConfiguration config2 =
+    new MessageEndpointListenerConfiguration(database, ProtocolType.MESSAGE_STREAM);
+
+// After
+Collection defaultCollection = database.getDefaultCollection();
+URLEndpointListenerConfiguration config1 =
+    new URLEndpointListenerConfiguration(Collections.singletonList(defaultCollection));
+MessageEndpointListenerConfiguration config2 =
+    new MessageEndpointListenerConfiguration(Collections.singletonList(defaultCollection),
+                                              ProtocolType.MESSAGE_STREAM);
+----
+--
+
+C#::
++
+--
+[source,csharp]
+----
+// Before
+var config1 = new URLEndpointListenerConfiguration(database);
+var config2 = new MessageEndpointListenerConfiguration(database, ProtocolType.MessageStream);
+
+// After
+var defaultCollection = database.GetDefaultCollection();
+var config1 = new URLEndpointListenerConfiguration(new[] { defaultCollection });
+var config2 = new MessageEndpointListenerConfiguration(new[] { defaultCollection },
+                                                       ProtocolType.MessageStream);
+----
+--
+
+C::
++
+--
+[source,c]
+----
+// Before
+CBLURLEndpointListenerConfiguration config1 = {
+    .database = database,
+    // ... other fields
+};
+
+// After
+CBLCollection* defaultCollection = CBLDatabase_DefaultCollection(database, &error);
+CBLURLEndpointListenerConfiguration config1 = {
+    .collections = &defaultCollection,
+    .collectionCount = 1,
+    // ... other fields
+};
+----
+--
+====
+
+== TLSIdentity Creation
+
+Introduced in 3.3.0 for iOS and Android, MultipeerReplicator requires a TLSIdentity that supports both client and server authentication.
+
+In 4.0.0, the older methods for creating separate client-only or server-only identities have been removed to improve API consistency and prevent confusion.
+Use the unified API with the KeyUsages flag, which allows you to specify whether the identity is for the client, the server, or both.
+
+[NOTE]
+====
+Couchbase Lite C has provided only the unified API since version 3.2.3.
+====
+
+[{tabs}]
+====
+Swift::
++
+--
+[source,swift]
+----
+// Before
+let identity = TLSIdentity.createIdentity(forServer: server,
+                                          attributes: certAttrs,
+                                          label: "identity1")
+
+// After
+let identity = TLSIdentity.createIdentity(for: .serverAuth,
+                                          attributes: certAttrs,
+                                          label: "identity1")
+----
+--
+
+Objective-C::
++
+--
+[source,objectivec]
+----
+// Before
+CBLTLSIdentity* identity = [CBLTLSIdentity createIdentityForServer: YES
+                                                         attributes: certAttrs
+                                                              label: @"identity1"
+                                                              error: &error];
+
+// After
+CBLTLSIdentity* identity = [CBLTLSIdentity createIdentityFor: kCBLKeyUsageServerAuth
+                                                   attributes: certAttrs
+                                                        label: @"identity1"
+                                                        error: &error];
+----
+--
+
+Java::
++
+--
+[source,java]
+----
+// Before
+TLSIdentity identity = TLSIdentity.createIdentity(true, certAttrs, "identity1");
+
+// After
+TLSIdentity identity = TLSIdentity.createIdentity(KeyUsage.SERVER_AUTH, certAttrs, "identity1");
+----
+--
+
+C#::
++
+--
+[source,csharp]
+----
+// Before
+var identity = TLSIdentity.CreateIdentity(true, certAttrs, "identity1");
+
+// After
+var identity = TLSIdentity.CreateIdentity(KeyUsage.ServerAuth, certAttrs, "identity1");
+----
+--
+====
+
+== Logging API
+
+Since 3.2.2, Couchbase Lite has provided an immutable LogSink API for log configuration.
+In 4.0.0, the old logging APIs have been removed, leaving LogSink as the single supported log configuration API.
+
+[{tabs}]
+====
+Swift::
++
+--
+[source,swift]
+----
+// Before
+
+// Console
+Database.log.console.level = .verbose
+
+// File
+var config = LogFileConfiguration(directory: logDir)
+Database.log.file.config = config
+Database.log.file.level = .verbose
+
+// Custom
+Database.log.custom = MyCustomLogger()
+
+// After
+
+// Console
+LogSinks.console = ConsoleLogSink(level: .verbose)
+
+// File
+LogSinks.file = FileLogSink(level: .verbose, directory: logDir)
+
+// Custom
+LogSinks.file = CustomLogSink(level: .verbose, logSink: myCustomLogSink)
+----
+--
+
+Objective-C::
++
+--
+[source,objectivec]
+----
+// Before
+
+// Console
+CBLDatabase.log.console.level = kCBLLogLevelVerbose;
+
+// File
+CBLLogFileConfiguration* config = [[CBLLogFileConfiguration alloc] initWithDirectory: logDir];
+CBLDatabase.log.file.config = config;
+CBLDatabase.log.file.level = kCBLLogLevelVerbose;
+
+// Custom
+CBLDatabase.log.custom = myCustomLogger;
+
+// After
+
+// Console
+CBLLogSinks.console = [[CBLConsoleLogSink alloc] initWithLevel: kCBLLogLevelVerbose];
+
+// File
+CBLLogSinks.file = [[CBLFileLogSink alloc] initWithLevel: kCBLLogLevelVerbose
+                                               directory: logDir];
+
+// Custom
+CBLLogSinks.custom = [[CBLCustomLogSink alloc] initWithLevel: kCBLLogLevelVerbose
+                                                      logSink: myCustomLogSink];
+----
+--
+
+Java::
++
+--
+[source,java]
+----
+// Before
+
+// Console
+Database.log.getConsole().setLevel(LogLevel.VERBOSE);
+
+// File
+LogFileConfiguration config = new LogFileConfiguration(logDir);
+Database.log.getFile().setConfig(config);
+Database.log.getFile().setLevel(LogLevel.VERBOSE);
+
+// Custom
+Database.log.setCustom(new MyCustomLogger());
+
+// After
+
+// Console
+LogSinks.setConsole(new ConsoleLogSink(LogLevel.VERBOSE));
+
+// File
+LogSinks.setFile(new FileLogSink(LogLevel.VERBOSE, logDir));
+
+// Custom
+LogSinks.setCustom(new CustomLogSink(LogLevel.VERBOSE, myCustomLogSink));
+----
+--
+
+C#::
++
+--
+[source,csharp]
+----
+// Before
+
+// Console
+Database.Log.Console.Level = LogLevel.Verbose;
+
+// File
+var config = new LogFileConfiguration(logDir);
+Database.Log.File.Config = config;
+Database.Log.File.Level = LogLevel.Verbose;
+
+// Custom
+Database.Log.Custom = new MyCustomLogger();
+
+// After
+
+// Console
+LogSinks.Console = new ConsoleLogSink(LogLevel.Verbose);
+
+// File
+LogSinks.File = new FileLogSink(LogLevel.Verbose, logDir);
+
+// Custom
+LogSinks.Custom = new CustomLogSink(LogLevel.Verbose, myCustomLogSink);
+----
+--
+
+C::
++
+--
+[source,c]
+----
+// Before
+
+// Console
+CBLLog_SetConsoleLevel(kCBLLogVerbose);
+
+// File
+CBLLogFileConfiguration config = {
+    .level = kCBLLogVerbose,
+    .directory = logDir
+};
+CBLLog_SetFileConfig(&config);
+
+// Custom
+CBLLog_SetCallback(myCustomLogCallback);
+
+// After
+
+// Console
+CBLConsoleLogSink* consoleSink = CBLConsoleLogSink_Create(kCBLLogVerbose);
+CBLLogSinks_SetConsole(consoleSink);
+
+// File
+CBLFileLogSink* fileSink = CBLFileLogSink_Create(kCBLLogVerbose, logDir);
+CBLLogSinks_SetFile(fileSink);
+
+// Custom
+CBLCustomLogSink* customSink = CBLCustomLogSink_Create(kCBLLogVerbose, myCustomLogCallback);
+CBLLogSinks_SetCustom(customSink);
+----
+--
+====
+
+== QueryBuilder and Expression Changes
+
+Several QueryBuilder APIs have been updated or removed in 4.0.0 to improve consistency with Couchbase Server SQL++ syntax.
+
+=== DataSource
+
+The `DataSource.database()` expression for the default collection has been removed.
+Use `DataSource.collection()` instead.
+
+[{tabs}]
+====
+Swift::
++
+--
+[source,swift]
+----
+// Before
+let query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.database(database))
+
+// After
+let collection = try database.defaultCollection()
+let query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.collection(collection))
+----
+--
+
+Java::
++
+--
+[source,java]
+----
+// Before
+Query query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.database(database));
+
+// After
+Collection collection = database.getDefaultCollection();
+Query query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.collection(collection));
+----
+--
+
+C#::
++
+--
+[source,csharp]
+----
+// Before
+var query = QueryBuilder
+    .Select(SelectResult.All())
+    .From(DataSource.Database(database));
+
+// After
+var collection = database.GetDefaultCollection();
+var query = QueryBuilder
+    .Select(SelectResult.All())
+    .From(DataSource.Collection(collection));
+----
+--
+====
+
+=== Expressions
+
+The deprecated `isNullOrMissing()` and `notNullOrMissing()` functions have been removed.
+Use `isNotValued()` and `isValued()` instead, consistent with Couchbase Server SQL++ syntax.
+
+[{tabs}]
+====
+Swift::
++
+--
+[source,swift]
+----
+// Before
+let query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.collection(collection))
+    .where(Expression.property("name").isNullOrMissing())
+
+// After
+let query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.collection(collection))
+    .where(Expression.property("name").isNotValued())
+----
+--
+
+Java::
++
+--
+[source,java]
+----
+// Before
+Query query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.collection(collection))
+    .where(Expression.property("name").isNullOrMissing());
+
+// After
+Query query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.collection(collection))
+    .where(Expression.property("name").isNotValued());
+----
+--
+
+C#::
++
+--
+[source,csharp]
+----
+// Before
+var query = QueryBuilder
+    .Select(SelectResult.All())
+    .From(DataSource.Collection(collection))
+    .Where(Expression.Property("name").IsNullOrMissing());
+
+// After
+var query = QueryBuilder
+    .Select(SelectResult.All())
+    .From(DataSource.Collection(collection))
+    .Where(Expression.Property("name").IsNotValued());
+----
+--
+====
+
+=== Full-Text Search
+
+Full-text search APIs have been updated in 4.0.0:
+
+* `FullTextExpression` is removed; use `FullTextFunction` instead.
+* `rank()` and `match()` overloads that accept a string index name are removed; use overloads that accept an `IndexExpressionProtocol` / `IndexExpression` Interface.
+
+[{tabs}]
+====
+Swift::
++
+--
+[source,swift]
+----
+// Before
+let fts = FullTextExpression.index("ftsIndex")
+let query = QueryBuilder
+    .select(SelectResult.expression(Meta.id))
+    .from(DataSource.collection(collection))
+    .where(fts.match("search term"))
+
+// After
+let fts = FullTextFunction.index("ftsIndex")
+let query = QueryBuilder
+    .select(SelectResult.expression(Meta.id))
+    .from(DataSource.collection(collection))
+    .where(FullTextFunction.match(fts, query: "search term"))
+----
+--
+
+Java::
++
+--
+[source,java]
+----
+// Before
+FullTextExpression fts = FullTextExpression.index("ftsIndex");
+Query query = QueryBuilder
+    .select(SelectResult.expression(Meta.id))
+    .from(DataSource.collection(collection))
+    .where(fts.match("search term"));
+
+// After
+IndexExpression fts = FullTextFunction.index("ftsIndex");
+Query query = QueryBuilder
+    .select(SelectResult.expression(Meta.id))
+    .from(DataSource.collection(collection))
+    .where(FullTextFunction.match(fts, "search term"));
+----
+--
+
+C#::
++
+--
+[source,csharp]
+----
+// Before
+var fts = FullTextExpression.Index("ftsIndex");
+var query = QueryBuilder
+    .Select(SelectResult.Expression(Meta.ID))
+    .From(DataSource.Collection(collection))
+    .Where(fts.Match("search term"));
+
+// After
+var fts = FullTextFunction.Index("ftsIndex");
+var query = QueryBuilder
+    .Select(SelectResult.Expression(Meta.ID))
+    .From(DataSource.Collection(collection))
+    .Where(FullTextFunction.Match(fts, "search term"));
+----
+--
+====
+
+== Vector Search Compatibility
+
+Couchbase Lite 4.0.0 is compatible only with Vector Search 2.0.0, due to dependency and build process changes.
+
+If you are using Vector Search in your application, you must upgrade to Vector Search 2.0.0 when migrating to Couchbase Lite 4.0.0.
+
+For more information about Vector Search 2.0.0, see the Vector Search release notes.
+
+== Summary of Migration Actions
+
+The following table summarizes the key migration actions required when upgrading to Couchbase Lite 4.0.0:
+
+[cols="2,4"]
+|===
+|Area |Action
+
+|Document operations
+|Use Collection APIs instead of Database for the default collection
+
+|ReplicatorConfiguration
+|Define collections up front using CollectionConfiguration for each collection. Remove dynamic add/remove logic.
+
+|Couchbase Lite C
+|Update struct field order if using positional initialization.
+
+|.NET Configuration
+|Adopt immutable, init-only configuration model.
+
+|Replication pending documents
+|Use collection-specific APIs.
+
+|Endpoint Listener configuration
+|Use constructors that accept collections
+
+|TLSIdentity
+|Use unified creation API with KeyUsages flag
+
+|Logging
+|Configure logs via immutable LogSink API
+
+|QueryBuilder
+|Replace removed DataSource, expression, and FTS functions
+
+|Vector Search
+|Upgrade to Vector Search 2.0.0
+|===
