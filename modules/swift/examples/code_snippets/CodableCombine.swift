@@ -1,6 +1,6 @@
 //
 //  CodableCombine.swift
-//  CouchbaseLite
+//  code-snippets
 //
 //  Copyright © 2025 couchbase. All rights reserved.
 //

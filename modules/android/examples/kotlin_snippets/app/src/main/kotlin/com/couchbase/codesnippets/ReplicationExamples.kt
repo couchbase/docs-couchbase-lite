@@ -464,13 +464,3 @@ class ReplicationExamples {
     }
 }
 
-/* C A L L O U T S
-
-// Listener Callouts
-
-// tag::p2p-act-rep-config-cacert-pinned-callouts[]
-<.> Configure the pinned certificate using data from the byte array `cert`
-// end::p2p-act-rep-config-cacert-pinned-callouts[]
-
-*/
-

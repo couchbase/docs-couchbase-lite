@@ -550,7 +550,7 @@ and the
 xref:sync-gateway::sync-function-api.adoc[sync function]
 to specify which data to pull for each user.
 
-Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's replicator configuration object.
+Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's collection configuration object.
 In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
 
 [#anchor-auto-purge-on-revoke]
@@ -679,7 +679,7 @@ Clients wishing to sync previously removed documents must use the resetCheckpoin
 
 [source, c]
 ----
-include::c:example$code_snippets/main.cpp[tags="autopurge-override", indent=0]
+include::c:example$code_snippets/main.cpp[tags="sgw-config-autopurge", indent=0]
 ----
 
 
@@ -1101,11 +1101,11 @@ In this case, Couchbase Lite uses this embedded certificate to verify the trustw
 
 [.status]#Couchbase Lite 3.0.2#
 
-For the 3.02. release, changes have been made to the way certificates on the host are matched:
+For the 3.0.2 release, changes have been made to the way certificates on the host are matched:
 [horizontal]
 
-Prior to CBL3.0.2:: The pinned certificate was only compared with the leaf certificate of the host. This is not always suitable as leaf certificates are usually valid for shorter periods of time.
-CBL-3.0.2{plus}:: The pinned certificate will be compared against any certificate in the server's certificate chain.
+Prior to CBL 3.0.2:: The pinned certificate was only compared with the leaf certificate of the host. This is not always suitable as leaf certificates are usually valid for shorter periods of time.
+CBL 3.0.2{plus}:: The pinned certificate will be compared against any certificate in the server's certificate chain.
 
 
 The following steps describe how to configure certificate pinning between Couchbase Lite and Sync Gateway.

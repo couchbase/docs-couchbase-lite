@@ -1,6 +1,6 @@
 //
 //  MultipeerReplicator.swift
-//  CouchbaseLite
+//  code-snippets
 //
 //  Copyright © 2025 couchbase. All rights reserved.
 //
@@ -189,6 +189,9 @@ class MultipeerReplicatorSnippets {
             print("Multipeer Replicator: \(state), Error: \(error)")
         }
         // end::multipeer-status-listener[]
+        
+        // to hide the warning
+        print(token)
     }
 
     func peerDiscoveryListener() throws {
@@ -199,6 +202,9 @@ class MultipeerReplicatorSnippets {
             print("Peer Discovery Status - Peer ID: \(status.peerID), Status: \(online)")
         }
         // end::multipeer-peer-discovery-listener[]
+        
+        // to hide the warning
+        print(token)
     }
 
     func peerReplicatorStatus() throws {
@@ -215,6 +221,9 @@ class MultipeerReplicatorSnippets {
                   "Error: \(error)")
         }
         // end::multipeer-replicator-status-listener[]
+        
+        // to hide the warning
+        print(token)
     }
 
     func peerDocumentReplication() throws {
@@ -233,6 +242,9 @@ class MultipeerReplicatorSnippets {
             }
         }
         // end::multipeer-document-replication-listener[]
+        
+        // to hide the warning
+        print(token)
     }
 
     func peerID() throws {
