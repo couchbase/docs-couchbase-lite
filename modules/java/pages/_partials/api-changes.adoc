@@ -36,30 +36,6 @@ replicator.start()
 replicator.start(true)
 ----
 
-=== Database.setLogLevel
-
-The method {url-api-references-2-8-0}Database.html#setLogLevel-com.couchbase.lite.LogDomain-com.couchbase.lite.LogLevel-[Database.setLogLevel()]
-has been removed. +
-Instead:
-
-. Set the logging levels for loggers, individually
-. Set the domains to be logged by the console logger, explicitly.
-
-.Before
-[{source-header}]
-----
-Database.setLogLevel(LogDomain.ALL, LogLevel.VERBOSE)
-
-----
-
-.After
-[{source-header}]
-----
-Database.log.getConsole().setDomains(LogDomain.ALL_DOMAINS)
-Database.log.getConsole().setLevel(LogLevel.VERBOSE)
-Database.log.getFile().setDomains(LogLevel.DEBUG)
-----
-
 === Database.compact
 The {url-api-references-2-8-0}Database.html#compact--[Database.compact()] method has been removed. +
 It is replaced by the new {url-api-references-3-0-0}Database.html#performMaintenance-com.couchbase.lite.MaintenanceType-[Database.performMaintenance(MaintenanceType)] method, and the maintenance operations represented in the enum {url-api-references-3-0-0}MaintenanceType.html[MaintenanceType]
