@@ -107,12 +107,8 @@ Swift::
 --
 [source,swift]
 ----
-// Before (with database)
+// Before
 let config = ReplicatorConfiguration(database, target: endpoint)
-
-// Before (with dynamic collection)
-var config = ReplicatorConfiguration(target: endpoint)
-config.addCollection(defaultCollection)
 
 // After
 let collections = [defaultCollection].map { CollectionConfiguration(collection: $0) }
@@ -144,17 +140,14 @@ Java::
 --
 [source,java]
 ----
-// Before (with database)
+// Before
 ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
-
-// Before (with dynamic collection)
-ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint);
-config.addCollection(defaultCollection, null);
 
 // After
 CollectionConfiguration colConfig = new CollectionConfiguration();
-config = new ReplicatorConfiguration(endpoint);
-config.addCollections(Collections.singletonList(defaultCollection), colConfig);
+Map<Collection, CollectionConfiguration> collections = new HashMap<>();
+collections.put(defaultCollection, colConfig);
+ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint, collections);
 ----
 --
 
@@ -164,8 +157,7 @@ C#::
 [source,csharp]
 ----
 // Before
-var config = new ReplicatorConfiguration(endpoint);
-config.AddCollection(DefaultCollection);
+var config = new ReplicatorConfiguration(database);
 
 // After
 var collections = CollectionConfiguration.FromCollections(DefaultCollection);
@@ -228,8 +220,7 @@ This design ensures configuration objects remain predictable, reusable, and safe
 [source,csharp]
 ----
 // Before
-var config = new ReplicatorConfiguration(endpoint);
-config.AddCollection(DefaultCollection);
+var config = new ReplicatorConfiguration(database);
 
 // After
 var collections = CollectionConfiguration.FromCollections(DefaultCollection);
