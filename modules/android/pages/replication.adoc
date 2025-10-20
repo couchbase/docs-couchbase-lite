@@ -386,10 +386,6 @@ These are the credential the client will present to sync{nbsp}gateway if request
 Here we configure to provide _Basic Authentication_ credentials.
 Other options are available -- see: xref:android:replication.adoc#lbl-client-auth[].
 
-<.> Configure how the replication should handle conflict resolution -- see: xref:android:conflict.adoc[Handling Data Conflicts] topic for mor on conflict resolution.
-
-<.> Initialize the replicator using your configuration -- see: xref:android:replication.adoc#lbl-init-repl[].
-
 <.> Optionally, register an observer, which will notify you of changes to the replication status -- see: xref:android:replication.adoc#lbl-repl-mon[]
 
 <.> Start the replicator  -- see: xref:android:replication.adoc#lbl-repl-start[].
@@ -950,9 +946,6 @@ The push filter allows an app to push a subset of a database to the server.
 This can be very useful.
 For instance, high-priority documents could be pushed first, or documents in a "draft" state could be skipped.
 
-.Push Filter
-
-
 [tabs]
 =====
 
@@ -1053,7 +1046,7 @@ and the
 xref:sync-gateway::sync-function-api.adoc[sync function]
 to specify which data to pull for each user.
 
-Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's replicator configuration object.
+Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's collection configuration object.
 In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
 
 [#anchor-auto-purge-on-revoke]
@@ -1403,7 +1396,7 @@ Android Kotlin developers can take advantage of Flows and LiveData to monitor re
 
 [source, Kotlin, subs="attributes+"]
 ----
-include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt[tag="flow-as-replicator-change-listener"]
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/FlowExamples.kt[tag="flow-as-replicator-change-listener"]
 ----
 
 
@@ -1797,7 +1790,7 @@ Android Kotlin developers can also take advantage of Flows and LiveData to monit
 
 [source, Kotlin, subs="attributes+"]
 ----
-include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt[tag="flow-as-replicator-change-listener"]
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/FlowExamples.kt[tag="flow-as-replicator-change-listener"]
 ----
 
 

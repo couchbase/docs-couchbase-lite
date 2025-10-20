@@ -22,6 +22,7 @@ import com.couchbase.lite.Collection
 import com.couchbase.lite.CollectionConfiguration
 import com.couchbase.lite.CouchbaseLiteException
 import com.couchbase.lite.IndexConfiguration
+import com.couchbase.lite.ReplicatorConfiguration
 
 class ArrayIndexExamples {
     fun arrayIndexConfig() {
@@ -687,6 +688,14 @@ import kotlinx.coroutines.flow.mapNotNull
 
 
 class FlowExamples {
+    fun watchReplicator(replicator: Replicator): LiveData<ReplicatorStatus?> {
+        // tag::flow-as-replicator-change-listener[]
+        return replicator.replicatorChangesFlow()
+            .map { change -> change.status }
+            .asLiveData()
+        // end::flow-as-replicator-change-listener[]
+    }
+
     fun replChangeFlowExample(collection: Collection): LiveData<MutableList<String>> {
         // tag::flow-as-database-change-listener[]
         return collection.collectionChangeFlow(null)
@@ -2568,7 +2577,6 @@ class ReplicationExamples {
     private var thisToken: ListenerToken? = null
 
     fun activeReplicatorExample(collections: Set<Collection>) {
-        // tag::p2p-act-rep-start-full[]
         // Create replicator
         // Consider holding a reference somewhere
         // to prevent the Replicator from being GCed
@@ -2633,8 +2641,19 @@ class ReplicationExamples {
         thisReplicator = repl
         thisToken = token
 
-        // end::p2p-act-rep-start-full[]
         // end::p2p-act-rep-func[]
+    }
+
+
+    fun replicatorCopyConfig(
+        replicatorConfiguration: ReplicatorConfiguration,
+        repl: Replicator
+    ) {
+        // tag::p2p-act-rep-start-full[]
+        val replConfig: ReplicatorConfiguration =
+            ReplicatorConfiguration(replicatorConfiguration) // <.>
+        repl.start() // <.>
+        // end::p2p-act-rep-start-full[]
     }
 
     fun replicationBasicAuthenticationExample(collections: Set<Collection>) {

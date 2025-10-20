@@ -2702,7 +2702,6 @@ public class ReplicationExamples {
 
     public void activeReplicatorExample(Set<Collection> collections)
         throws URISyntaxException {
-        // tag::p2p-act-rep-start-full[]
         // Create replicator
         // Consider holding a reference somewhere
         // to prevent the Replicator from being 
@@ -2761,8 +2760,14 @@ public class ReplicationExamples {
         thisReplicator = repl;
         thisToken = token;
 
-        // end::p2p-act-rep-start-full[]
         // end::p2p-act-rep-func[]
+    }
+
+    public void replicatorCopyConfig(ReplicatorConfiguration replicatorConfiguration, Replicator repl) {
+        // tag::p2p-act-rep-start-full[]
+        ReplicatorConfiguration replConfig = new ReplicatorConfiguration(replicatorConfiguration); // <.>
+        repl.start(); // <.>
+        // end::p2p-act-rep-start-full[]
     }
 
     public void replicatorSimpleExample(Set<Collection> collections) throws URISyntaxException {
