@@ -217,8 +217,8 @@ fun ValueIndexConfiguration?.create(vararg expressions: String = emptyArray())
 [#logs]
 === Logs
 Use
-https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonConfigurationFactoriesKt.html#LogFileConfigurationFactory[LogFileConfigurationFactory]
-to create a `LogFileConfiguration` object, overriding the receiver's values with the passed parameters.
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonConfigurationFactoriesKt.html#FileLogSinkFactory[FileLogSinkFactory]
+to create a `FileLogSink` object, overriding the receiver's values with the passed parameters.
 
 [tabs]
 =====
@@ -239,13 +239,6 @@ Definition::
 --
 ----
 val FileLogSinkFactory: FileLogSink? = null 
-
-FileLogSinkFactory.install(  
-    directory = context.cacheDir.absolutePath,  
-    maxFileSize = 10240L,  
-    maxKeptFiles = 5,  
-    isPlainText = false  
-)
 
 fun FileLogSinkFactory?.install(
     directory: String? = null,
