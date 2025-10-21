@@ -29,7 +29,7 @@ database.save(document)
 
 // After
 let collection = try database.defaultCollection()
-try collection.save(document)
+try collection.save(document: document)
 ----
 --
 
@@ -263,7 +263,7 @@ BOOL isPending = [replicator isDocumentPending: @"doc1" error: &error];
 
 // After
 CBLCollection* defaultCollection = [database defaultCollection: &error];
-NSArray* pendings = [replicator pendingDocumentIdsForCollection: defaultCollection
+NSArray* pendings = [replicator pendingDocumentIDsForCollection: defaultCollection
                                                            error: &error];
 BOOL isPending = [replicator isDocumentPending: @"doc1"
                                     collection: defaultCollection
