@@ -128,10 +128,10 @@ CBLReplicatorConfiguration* config =
 
 // After
 CBLCollectionConfiguration* colConfig =
-    [[CBLCollectionConfiguration alloc] initWithCollections: @[defaultCollection]];
+ [[CBLCollectionConfiguration alloc] initWithCollection: defaultCollection];
 CBLReplicatorConfiguration* config =
-    [[CBLReplicatorConfiguration alloc] initWithCollectionConfigurations: @[colConfig]
-                                                                   target: endpoint];
+    [[CBLReplicatorConfiguration alloc] initWithCollections: @[colConfig]
+                                                      target: endpoint];
 ----
 --
 
@@ -144,10 +144,8 @@ Java::
 ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
 
 // After
-CollectionConfiguration colConfig = new CollectionConfiguration();
-Map<Collection, CollectionConfiguration> collections = new HashMap<>();
-collections.put(defaultCollection, colConfig);
-ReplicatorConfiguration config = new ReplicatorConfiguration(endpoint, collections);
+CollectionConfiguration colConfig = new CollectionConfiguration(defaultCollection);
+ReplicatorConfiguration config = new ReplicatorConfiguration(Set.of(colConfig), endpoint);
 ----
 --
 
@@ -383,9 +381,9 @@ MessageEndpointListenerConfiguration config2 =
 // After
 Collection defaultCollection = database.getDefaultCollection();
 URLEndpointListenerConfiguration config1 =
-    new URLEndpointListenerConfiguration(Collections.singletonList(defaultCollection));
+    new URLEndpointListenerConfiguration(Set.of(defaultCollection));
 MessageEndpointListenerConfiguration config2 =
-    new MessageEndpointListenerConfiguration(Collections.singletonList(defaultCollection),
+    new MessageEndpointListenerConfiguration(Set.of(defaultCollection),
                                               ProtocolType.MESSAGE_STREAM);
 ----
 --
@@ -472,10 +470,10 @@ CBLTLSIdentity* identity = [CBLTLSIdentity createIdentityForServer: YES
                                                               error: &error];
 
 // After
-CBLTLSIdentity* identity = [CBLTLSIdentity createIdentityFor: kCBLKeyUsageServerAuth
-                                                   attributes: certAttrs
-                                                        label: @"identity1"
-                                                        error: &error];
+CBLTLSIdentity* identity = [CBLTLSIdentity createIdentityForKeyUsages: kCBLKeyUsagesServerAuth
+                                                            attributes: certAttrs
+                                                                 label: @"identity1"
+                                                                 error: &error];
 ----
 --
 
@@ -488,7 +486,7 @@ Java::
 TLSIdentity identity = TLSIdentity.createIdentity(true, certAttrs, "identity1");
 
 // After
-TLSIdentity identity = TLSIdentity.createIdentity(KeyUsage.SERVER_AUTH, certAttrs, "identity1");
+TLSIdentity identity = TLSIdentity.createIdentity(Set.of(KeyUsage.SERVER_AUTH), certAttrs, "identity1");
 ----
 --
 
@@ -598,13 +596,23 @@ Database.log.setCustom(new MyCustomLogger());
 // After
 
 // Console
-LogSinks.setConsole(new ConsoleLogSink(LogLevel.VERBOSE));
+LogSinks.get().setConsole(new ConsoleLogSink(LogLevel.VERBOSE, LogDomain.ALL));
 
 // File
-LogSinks.setFile(new FileLogSink(LogLevel.VERBOSE, logDir));
+LogSinks.get().setFile(
+    new FileLogSink.Builder()
+        .setDirectory(logDir)
+        .setLevel(LogLevel.VERBOSE)
+        .build()
+);
 
 // Custom
-LogSinks.setCustom(new CustomLogSink(LogLevel.VERBOSE, myCustomLogSink));
+LogSinks.get().setCustom(new BaseLogSink(LogLevel.VERBOSE) {
+    @Override
+    protected void writeLog(LogLevel level, LogDomain domain, String message) {
+        // Your custom logging implementation
+    }
+});
 ----
 --
 
@@ -850,7 +858,8 @@ Query query = QueryBuilder
     .where(fts.match("search term"));
 
 // After
-IndexExpression fts = FullTextFunction.index("ftsIndex");
+IndexExpression fts = Expression.fullTextIndex("ftsIndex");
+
 Query query = QueryBuilder
     .select(SelectResult.expression(Meta.id))
     .from(DataSource.collection(collection))
