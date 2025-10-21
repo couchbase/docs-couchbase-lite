@@ -59,7 +59,7 @@ do
     # Get VS extension
     VS_SOURCE_URL=$(curl -s -L -o /dev/null -w '%{url_effective}' "http://proget.build.couchbase.com:8080/api/open_latestbuilds?product=couchbase-lite-ios-vector-search&version=${VS_VERSION}")
     echo $VS_SOURCE_URL
-    VS_PACKAGE_NAME="couchbase-lite-vector-search-${VS_VERSION}-apple.zip"
+    VS_PACKAGE_NAME="couchbase-lite-vector-search-${VS_VERSION}-${VS_BUILD_NO}-apple.zip"
     wget "$VS_SOURCE_URL$VS_PACKAGE_NAME"
     unzip -o $VS_PACKAGE_NAME -d "../Frameworks/"
 

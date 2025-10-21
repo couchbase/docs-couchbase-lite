@@ -155,7 +155,7 @@ Click the *GitHub* tab in the code examples for further details.
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags="p2p-act-rep-func", indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-rep-func;!sgw-rep-config-cacert;!sgw-rep-config-cacert-pinned", indent=0]
 ----
 
 
@@ -219,12 +219,11 @@ The constructor provides:
 
 * the name of the local database to be sync'd
 * the server's URL (including the port number and the name of the remote database to sync with)
-+
---
+
 It is expected that the app will identify the IP address and URL and append the remote database name to the URL endpoint, producing for example: `wss://10.0.2.2:4984/travel-sample`
 
 The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) prefixes.
---
+
 
 // Example 2
 .Add Target to Configuration
@@ -235,7 +234,7 @@ The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) pref
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-act-rep-initialize", indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-rep-target", indent=0]
 ----
 
 
@@ -258,7 +257,7 @@ Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/c
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-act-rep-network-interface", indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-rep-network-interface", indent=0]
 ----
 
 
@@ -294,7 +293,7 @@ We use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empt
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags="p2p-act-rep-config-type;p2p-act-rep-config-cont", indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-act-rep-config-type;sgw-act-rep-config-cont", indent=0]
 ----
 
 
@@ -444,7 +443,7 @@ Set the client to expect and accept only CA attested certificates.
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags=p2p-act-rep-config-cacert, indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-rep-config-cacert", indent=0]
 ----
 <.> This is the default.
 Only certificate chains with roots signed by a trusted CA are allowed.
@@ -459,7 +458,7 @@ Set the client to expect and accept only self-signed certificates
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags=p2p-act-rep-config-self-cert, indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags=sgw-rep-config-self-cert, indent=0]
 ----
 <.> Set this to `true` to accept any self signed cert.
 Any certificates that are not self-signed are rejected.
@@ -474,9 +473,8 @@ Set the client to expect and accept only a pinned certificate.
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tag=p2p-act-rep-config-cacert-pinned, indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tag=sgw-rep-config-cacert-pinned, indent=0]
 ----
-// include::swift:example$code_snippets/SampleCodeTest.swift[tag=p2p-act-rep-config-cacert-pinned-callouts, indent=0]
 --
 
 ======
@@ -644,7 +642,7 @@ and the
 xref:sync-gateway::sync-function-api.adoc[sync function]
 to specify which data to pull for each user.
 
-Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's replicator configuration object.
+Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's collection configuration object.
 In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
 
 [#anchor-auto-purge-on-revoke]
@@ -773,7 +771,7 @@ Clients wishing to sync previously removed documents must use the resetCheckpoin
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags="autopurge-override", indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-config-autopurge", indent=0]
 ----
 
 
@@ -858,7 +856,7 @@ You can, optionally, add a change listener (see xref:swift:replication.adoc#lbl-
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags="p2p-act-rep-start-full;!p2p-act-rep-add-change-listener", indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-start-repl", indent=0]
 ----
 
 
@@ -950,33 +948,13 @@ The returned _ReplicationStatus_ structure comprises:
 .Monitor replication
 ====
 
-
-[tabs]
-======
-
-Adding a Change Listener::
-+
---
+.Adding a Change Listener
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags=p2p-act-rep-add-change-listener,indent=0]
 ----
---
-+
-
-Using replicator.status::
-+
---
-[source, swift]
-----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags=p2p-act-rep-status,indent=0]
-----
---
-======
-
 
 ====
-
 
 [#lbl-repl-states]
 ==== Replication States
@@ -1209,15 +1187,6 @@ Certificate pinning is a technique that can be used by applications to "pin" a h
 The certificate is typically delivered to the client by an out-of-band channel and bundled with the client.
 In this case, Couchbase Lite uses this embedded certificate to verify the trustworthiness of the server (for example, a Sync Gateway) and no longer needs to rely on a trusted third party for that (commonly referred to as the Certificate Authority).
 
-[.status]#Couchbase Lite 3.0.2#
-
-For the 3.02. release, changes have been made to the way certificates on the host are matched:
-[horizontal]
-
-Prior to CBL3.0.2:: The pinned certificate was only compared with the leaf certificate of the host. This is not always suitable as leaf certificates are usually valid for shorter periods of time.
-CBL-3.0.2{plus}:: The pinned certificate will be compared against any certificate in the server's certificate chain.
-
-
 The following steps describe how to configure certificate pinning between Couchbase Lite and Sync Gateway.
 
 . xref:sync-gateway::security.adoc#creating-your-own-self-signed-certificate[Create your own self-signed certificate]
@@ -1281,7 +1250,7 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags="replication-logg
 ====
 
 
-For more on troubleshooting with logs, see: xref:swift:troubleshooting-logs.adoc[Using Logs].
+For more on troubleshooting with logs, see: xref:swift:new-logging-api.adoc[Using Logs].
 
 [#authentication-errors]
 === Authentication Errors

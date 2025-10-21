@@ -155,7 +155,7 @@ Click the *GitHub* tab in the code examples for further details.
 
 [source, objc]
 ----
-include::objc:example$code_snippets/SampleCodeTest.m[tags="p2p-act-rep-func", indent=0]
+include::objc:example$code_snippets/SampleCodeTest.m[tags="sgw-rep-func;!sgw-rep-config-cacert;!sgw-rep-config-cacert-pinned", indent=0]
 ----
 
 
@@ -219,12 +219,11 @@ The constructor provides:
 
 * the name of the local database to be sync'd
 * the server's URL (including the port number and the name of the remote database to sync with)
-+
---
+
 It is expected that the app will identify the IP address and URL and append the remote database name to the URL endpoint, producing for example: `wss://10.0.2.2:4984/travel-sample`
 
 The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) prefixes.
---
+
 
 // Example 2
 .Add Target to Configuration
@@ -235,7 +234,7 @@ The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) pref
 
 [source, objc]
 ----
-include::objc:example$code_snippets/SampleCodeTest.m[tags="sgw-act-rep-initialize", indent=0]
+include::objc:example$code_snippets/SampleCodeTest.m[tags="sgw-rep-target", indent=0]
 ----
 
 
@@ -258,7 +257,7 @@ Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/c
 
 [source, objc]
 ----
-include::objc:example$code_snippets/SampleCodeTest.m[tags="sgw-act-rep-network-interface", indent=0]
+include::objc:example$code_snippets/SampleCodeTest.m[tags="sgw-act-rep-configure-target", indent=0]
 ----
 
 
@@ -294,7 +293,7 @@ We use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empt
 
 [source, objc]
 ----
-include::objc:example$code_snippets/SampleCodeTest.m[tags="p2p-act-rep-config-type;p2p-act-rep-config-cont", indent=0]
+include::objc:example$code_snippets/SampleCodeTest.m[tags="sgw-act-rep-config-type;sgw-act-rep-config-cont", indent=0]
 ----
 
 
@@ -444,7 +443,7 @@ Set the client to expect and accept only CA attested certificates.
 
 [source, objc]
 ----
-include::objc:example$code_snippets/SampleCodeTest.m[tags=p2p-act-rep-config-cacert, indent=0]
+include::objc:example$code_snippets/SampleCodeTest.m[tags=sgw-rep-config-cacert, indent=0]
 ----
 <.> This is the default.
 Only certificate chains with roots signed by a trusted CA are allowed.
@@ -459,7 +458,7 @@ Set the client to expect and accept only self-signed certificates
 
 [source, objc]
 ----
-include::objc:example$code_snippets/SampleCodeTest.m[tags=p2p-act-rep-config-self-cert, indent=0]
+include::objc:example$code_snippets/SampleCodeTest.m[tags=sgw-rep-config-self-cert, indent=0]
 ----
 <.> Set this to `true` to accept any self signed cert.
 Any certificates that are not self-signed are rejected.
@@ -474,9 +473,8 @@ Set the client to expect and accept only a pinned certificate.
 
 [source, objc]
 ----
-include::objc:example$code_snippets/SampleCodeTest.m[tag=p2p-act-rep-config-cacert-pinned, indent=0]
+include::objc:example$code_snippets/SampleCodeTest.m[tag=sgw-rep-config-cacert-pinned, indent=0]
 ----
-// include::objc:example$code_snippets/SampleCodeTest.m[tag=p2p-act-rep-config-cacert-pinned-callouts, indent=0]
 --
 
 ======
@@ -644,7 +642,7 @@ and the
 xref:sync-gateway::sync-function-api.adoc[sync function]
 to specify which data to pull for each user.
 
-Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's replicator configuration object.
+Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's collection configuration object.
 In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
 
 [#anchor-auto-purge-on-revoke]
@@ -773,7 +771,7 @@ Clients wishing to sync previously removed documents must use the resetCheckpoin
 
 [source, objc]
 ----
-include::objc:example$code_snippets/SampleCodeTest.m[tags="autopurge-override", indent=0]
+include::objc:example$code_snippets/SampleCodeTest.m[tags="sgw-config-autopurge", indent=0]
 ----
 
 
@@ -858,7 +856,7 @@ You can, optionally, add a change listener (see xref:objc:replication.adoc#lbl-r
 
 [source, objc]
 ----
-include::objc:example$code_snippets/SampleCodeTest.m[tags="p2p-act-rep-start-full;!p2p-act-rep-add-change-listener", indent=0]
+include::objc:example$code_snippets/SampleCodeTest.m[tags="sgw-start-repl", indent=0]
 ----
 
 
@@ -959,7 +957,7 @@ Adding a Change Listener::
 --
 [source, objc]
 ----
-include::objc:example$code_snippets/SampleCodeTest.m[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
+include::objc:example$code_snippets/SampleCodeTest.m[tags=p2p-act-rep-add-change-listener,indent=0]
 ----
 --
 +
@@ -1206,7 +1204,7 @@ The following error codes are considered temporary by the Couchbase Lite replica
 
 Couchbase Lite footnote:[From 2.0] uses WebSockets as the communication protocol to transmit data.
 Some load balancers are not configured for WebSocket connections by default (NGINX for example);
-so it might be necessary to explicitly enable them in the load balancer's configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
+so it might be necessary to explicitly enable them in the its configuration (see xref:sync-gateway::load-balancer.adoc[Load Balancers]).
 
 By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
 The level of compression is set on Sync Gateway and can be tuned in the configuration file (xref:sync-gateway:ROOT:refer/config-properties.adoc#replicator_compression[`replicator_compression`]).
@@ -1220,15 +1218,6 @@ Couchbase Lite for Objective-C supports certificate pinning.
 Certificate pinning is a technique that can be used by applications to "pin" a host to its certificate.
 The certificate is typically delivered to the client by an out-of-band channel and bundled with the client.
 In this case, Couchbase Lite uses this embedded certificate to verify the trustworthiness of the server (for example, a Sync Gateway) and no longer needs to rely on a trusted third party for that (commonly referred to as the Certificate Authority).
-
-[.status]#Couchbase Lite 3.0.2#
-
-For the 3.02. release, changes have been made to the way certificates on the host are matched:
-[horizontal]
-
-Prior to CBL3.0.2:: The pinned certificate was only compared with the leaf certificate of the host. This is not always suitable as leaf certificates are usually valid for shorter periods of time.
-CBL-3.0.2{plus}:: The pinned certificate will be compared against any certificate in the server's certificate chain.
-
 
 The following steps describe how to configure certificate pinning between Couchbase Lite and Sync Gateway.
 
@@ -1293,7 +1282,7 @@ include::objc:example$code_snippets/SampleCodeTest.m[tags="replication-logging",
 ====
 
 
-For more on troubleshooting with logs, see: xref:objc:troubleshooting-logs.adoc[Using Logs].
+For more on troubleshooting with logs, see: xref:objc:new-logging-api.adoc[Using Logs].
 
 [#authentication-errors]
 === Authentication Errors

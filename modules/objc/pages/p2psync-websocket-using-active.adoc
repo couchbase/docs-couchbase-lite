@@ -62,9 +62,11 @@ You should configure and initialize a replicator for each Couchbase Lite databas
 
 [source, objc]
 ----
-include::objc:example$code_snippets/SampleCodeTest.m[tags="p2p-act-rep-func;!autopurge-override", indent=0]
+include::objc:example$code_snippets/SampleCodeTest.m[tags="p2p-act-rep-func;!autopurge-override;!p2p-act-rep-config-self-cert;!p2p-act-rep-config-cacert-pinned", indent=0]
 ----
 ====
+
+<.> Configure how the replication should perform <<conflict-resolution>>.
 
 <.> Configure how the client will authenticate the server.
 Here we say connect only to servers presenting a self-signed certificate.
@@ -72,8 +74,6 @@ By default, clients accept only servers presenting certificates that can be veri
 
 <.> Configure the credentials the client will present to the server.
 Here we say to provide _Basic Authentication_ credentials. Other options are available -- see: <<configuring-client-authentication>>.
-
-<.> Configure how the replication should perform <<conflict-resolution>>.
 
 <.> Initialize the replicator using your configuration object.
 
@@ -130,7 +130,7 @@ The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) pref
 
 [source, objc]
 ----
-include::objc:example$code_snippets/SampleCodeTest.m[tags="sgw-act-rep-initialize", indent=0]
+include::objc:example$code_snippets/SampleCodeTest.m[tags="p2p-act-rep-target;!p2p-act-rep-config-conflict", indent=0]
 ----
 ====
 
@@ -315,7 +315,6 @@ Set the client to expect and accept only a pinned certificate.
 ----
 include::objc:example$code_snippets/SampleCodeTest.m[tag=p2p-act-rep-config-cacert-pinned, indent=0]
 ----
-// include::objc:example$code_snippets/SampleCodeTest.m[tag=p2p-act-rep-config-cacert-pinned-callouts, indent=0]
 --
 
 ======
@@ -466,7 +465,7 @@ Adding a Change Listener::
 --
 [source, objc]
 ----
-include::objc:example$code_snippets/SampleCodeTest.m[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
+include::objc:example$code_snippets/SampleCodeTest.m[tags=p2p-act-rep-add-change-listener,indent=0]
 ----
 --
 +
@@ -649,7 +648,7 @@ include::objc:example$code_snippets/SampleCodeTest.m[tag=merge-conflict-resolver
 ====
 
 Just as a replicator may observe a conflict -- when updating a document that has changed both in the local database and in a remote database -- any attempt to save a document may also observe a conflict, if a replication has taken place since the local app retrieved the document from the database.
-To address that possibility, a version of the `Database.save()` method also takes a conflict resolver as shown in <<ex-merge-props>>.
+To address that possibility, a version of the `Collection.save()` method also takes a conflict resolver as shown in <<ex-merge-props>>.
 
 The following code snippet shows an example of merging properties from the existing document (`current`) into the one being saved (`new`).
 In the event of conflicting keys, it will pick the key value from `new`.
