@@ -184,9 +184,9 @@ public class JavaListenerExamples {
     public void replicatorConfigurationExample(Set<Collection> srcCollections, URI targetUrl, KeyStore keyStore)
         throws CouchbaseLiteException {
 
-    Set<CollectionConfiguration> collConfig = CollectionConfiguration.fromCollections(srcCollections);
+    Set<CollectionConfiguration> collConfigs = CollectionConfiguration.fromCollections(srcCollections);
         ReplicatorConfiguration config =
-            new ReplicatorConfiguration(collConfig, new URLEndpoint(targetUrl))
+            new ReplicatorConfiguration(collConfigs, new URLEndpoint(targetUrl))
 
                 // tag::p2p-act-rep-config-cacert[]
                 // Configure Server Security
@@ -678,12 +678,14 @@ public class Examples {
 
     public void fileLoggingExample() {
         // tag::file-logging[]
-        FileLogSinkFactory.install(
-                System.getProperty("user.dir") + "/MyApp/logs",
-                LogLevel.INFO,
-                10240L,
-                5,
-                false
+        LogSinks.get().setFile(  
+            new FileLogSink.Builder()  
+                .setDirectory(System.getProperty("user.dir") + "/MyApp/logs")  
+                .setLevel(LogLevel.INFO)  
+                .setMaxFileSize(10240L)  
+                .setMaxKeptFiles(5)  
+                .setPlainText(false)  
+                .build()  
         );
         // end::file-logging[]
     }
@@ -2348,7 +2350,10 @@ public class ReplicationExamples {
         Replicator repl = new Replicator( // <.>
 
             // initialize the replicator configuration
-            new ReplicatorConfiguration(CollectionConfiguration.fromCollections(collections), new URLEndpoint(new URI("wss://listener.com:8954"))) // <.>
+            new ReplicatorConfiguration(
+                CollectionConfiguration.fromCollections(collections), 
+                new URLEndpoint(new URI("wss://listener.com:8954"))
+            ) // <.>
 
 
                 // tag::p2p-act-rep-config-type[]
@@ -2413,7 +2418,7 @@ public class ReplicationExamples {
         // tag::replicator-simple[]
         Endpoint theListenerEndpoint
             = new URLEndpoint(new URI("wss://10.0.2.2:4984/db")); // <.>
-        Set<CollectionConfiguration> collConfig = CollectionConfiguration.fromCollections(collections);
+        Set<CollectionConfiguration> collConfigs = CollectionConfiguration.fromCollections(collections);
         ReplicatorConfiguration thisConfig =
             new ReplicatorConfiguration(collConfig, theListenerEndpoint) // <.>
 
@@ -2517,7 +2522,8 @@ public class ReplicationExamples {
         Replicator repl = new Replicator(
             new ReplicatorConfiguration(
                     CollectionConfiguration.fromCollections(collections),
-                    new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+                    new URLEndpoint(new URI("ws://localhost:4984/mydatabase"))
+            )
         );
 
         // tag::replication-reset-checkpoint[]
@@ -2534,7 +2540,8 @@ public class ReplicationExamples {
         Replicator repl = new Replicator(
             new ReplicatorConfiguration(
                         CollectionConfiguration.fromCollections(collections),
-                        new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+                        new URLEndpoint(new URI("ws://localhost:4984/mydatabase"))
+            )
         );
 
         // tag::replication-error-handling[]

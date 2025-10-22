@@ -161,9 +161,9 @@ public class AndroidListenerExamples {
 
     public void replicatorConfigurationExample(Set<Collection> srcCollections, URI targetUrl, KeyStore keyStore)
         throws CouchbaseLiteException {
-        Set<CollectionConfiguration> collConfig = CollectionConfiguration.fromCollections(srcCollections);
+        Set<CollectionConfiguration> collConfigs = CollectionConfiguration.fromCollections(srcCollections);
         ReplicatorConfiguration config =
-            new ReplicatorConfiguration(collConfig, new URLEndpoint(targetUrl))
+            new ReplicatorConfiguration(collConfigs, new URLEndpoint(targetUrl))
                 // tag::p2p-act-rep-config-cacert[]
                 // Configure Server Security
                 // -- only accept CA attested certs

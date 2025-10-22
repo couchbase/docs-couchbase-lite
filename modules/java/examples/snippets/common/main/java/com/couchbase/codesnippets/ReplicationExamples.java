@@ -60,7 +60,10 @@ public class ReplicationExamples {
 
             // tag::p2p-act-rep-func[]
             // initialize the replicator configuration
-            new ReplicatorConfiguration(CollectionConfiguration.fromCollections(collections), new URLEndpoint(new URI("wss://listener.com:8954"))) // <.>
+            new ReplicatorConfiguration(
+                CollectionConfiguration.fromCollections(collections),
+                new URLEndpoint(new URI("wss://listener.com:8954"))
+            ) // <.>
 
                 // tag::p2p-act-rep-config-type[]
                 // Set replicator type
@@ -125,7 +128,7 @@ public class ReplicationExamples {
         Endpoint theListenerEndpoint
             = new URLEndpoint(new URI("wss://10.0.2.2:4984/db")); // <.>
 
-        Set<CollectionConfiguration> collConfig = CollectionConfiguration.fromCollections(collections);
+        Set<CollectionConfiguration> collConfigs = CollectionConfiguration.fromCollections(collections);
 
         ReplicatorConfiguration thisConfig =
             new ReplicatorConfiguration(collConfig, theListenerEndpoint) // <.>

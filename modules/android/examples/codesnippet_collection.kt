@@ -212,6 +212,17 @@ class BasicExamples(private val context: Context) {
     // ### File logging
     fun fileLoggingExample() {
         // tag::file-logging[]
+        LogSinks.get().file = FileLogSink.Builder()  
+            .setDirectory(context.cacheDir.absolutePath)  
+            .setLevel(LogLevel.INFO)  
+            .setMaxFileSize(10240L)  
+            .setMaxKeptFiles(5)  
+            .setPlainText(false)  
+            .build()
+        // end::file-logging[]
+    }
+
+        fun fileLoggingFactoryExample() {
         // tag::file-logging-config-factory[]
         FileLogSinkFactory.install(
             directory = context.cacheDir.absolutePath, // <.>
@@ -220,7 +231,6 @@ class BasicExamples(private val context: Context) {
             maxKeptFiles = 5, // <.>
             isPlainText = false // <.>
         )
-        // end::file-logging[]
         // end::file-logging-config-factory[]
     }
 
