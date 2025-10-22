@@ -131,7 +131,7 @@ public class ReplicationExamples {
         Set<CollectionConfiguration> collConfigs = CollectionConfiguration.fromCollections(collections);
 
         ReplicatorConfiguration thisConfig =
-            new ReplicatorConfiguration(collConfig, theListenerEndpoint) // <.>
+            new ReplicatorConfiguration(collConfigs, theListenerEndpoint) // <.>
 
                 .setAcceptOnlySelfSignedServerCertificate(true) // <.>
                 .setAuthenticator(new BasicAuthenticator(
