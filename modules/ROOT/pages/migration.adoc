@@ -149,20 +149,6 @@ ReplicatorConfiguration config = new ReplicatorConfiguration(Set.of(colConfig), 
 ----
 --
 
-C#::
-+
---
-[source,csharp]
-----
-// Before
-var config = new ReplicatorConfiguration(database);
-
-// After
-var collections = CollectionConfiguration.FromCollections(DefaultCollection);
-var config = new ReplicatorConfiguration(collections, endpoint);
-----
---
-
 C::
 +
 --
@@ -218,7 +204,7 @@ This design ensures configuration objects remain predictable, reusable, and safe
 [source,csharp]
 ----
 // Before
-var config = new ReplicatorConfiguration(database);
+var config = new ReplicatorConfiguration(database, endpoint);
 
 // After
 var collections = CollectionConfiguration.FromCollections(DefaultCollection);
@@ -314,8 +300,8 @@ bool isPending = CBLReplicator_IsDocumentPending(replicator, "doc1", &error);
 
 // After
 CBLCollection* defaultCollection = CBLDatabase_DefaultCollection(database, &error);
-FLDict pendings = CBLReplicator_PendingDocumentIDs2(replicator, defaultCollection, &error);
-bool isPending = CBLReplicator_IsDocumentPending2(replicator, "doc1", defaultCollection, &error);
+FLDict pendings = CBLReplicator_PendingDocumentIDs(replicator, defaultCollection, &error);
+bool isPending = CBLReplicator_IsDocumentPending(replicator, "doc1", defaultCollection, &error);
 ----
 --
 ====
