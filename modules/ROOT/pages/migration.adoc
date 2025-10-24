@@ -204,14 +204,22 @@ This design ensures configuration objects remain predictable, reusable, and safe
 [source,csharp]
 ----
 // Before
-var config = new ReplicatorConfiguration(database, endpoint);
+var config = new ReplicatorConfiguration(endpoint);
+config.AddCollection(DefaultCollection);
+config.ReplicatorType = ReplicatorType.Push;
+
+// Copy
+var updated = new ReplicatorConfiguration(config);
+updated.ReplicatorType = ReplicatorType.Pull;
 
 // After
 var collections = CollectionConfiguration.FromCollections(DefaultCollection);
-var config = new ReplicatorConfiguration(collections, endpoint);
+var config = new ReplicatorConfiguration(collections, endpoint) {
+    ReplicatorType = ReplicatorType.Push
+};
 
-// Clone immutably
-var updated = config with { ReplicatorType = ReplicatorType.Push };
+// Copy immutably using 'with'
+var updated = config with { ReplicatorType = ReplicatorType.Pull };
 ----
 
 == Replication Pending Documents
