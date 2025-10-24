@@ -59,12 +59,7 @@ This makes it simple to create variant configurations, by simply overriding name
 .Example of overriding configuration
 [source, kotlin, indent=0]
 ----
-//include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ListenerExamples.kt[tag=override-config]
-        val listener8080 = URLEndpointListenerConfigurationFactory.newConfig(
-            networkInterface = "en0",
-            port = 8080
-        )
-        val listener8081 = listener8080.newConfig(port = 8081)
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/ListenerExamples.kt[tag=override-config]
 ----
 
 [#database]
@@ -94,9 +89,10 @@ Definition::
 ----
 val DatabaseConfigurationFactory: DatabaseConfiguration? = null
 
-fun DatabaseConfiguration?.create(
+fun DatabaseConfiguration?.newConfig(
     databasePath: String? = null,
-    encryptionKey: EncryptionKey? = null
+    encryptionKey: EncryptionKey? = null,
+    fullSync: Boolean? = null,
 )
 ----
 --
@@ -129,24 +125,20 @@ Definition::
 ----
 val ReplicatorConfigurationFactory: ReplicatorConfiguration? = null
 
-fun ReplicatorConfiguration?.create(
-    database: Database? = null,
-    target: Endpoint? = null,
+fun ReplicatorConfiguration.newConfig(
+    collections: Set<CollectionConfiguration>,
+    target: Endpoint,
     type: ReplicatorType? = null,
     continuous: Boolean? = null,
     authenticator: Authenticator? = null,
     headers: Map<String, String>? = null,
-    pinnedServerCertificate: ByteArray? = null,
-    channels: List<String>? = null,
-    documentIDs: List<String>? = null,
-    pushFilter: ReplicationFilter? = null,
-    pullFilter: ReplicationFilter? = null,
-    conflictResolver: ConflictResolver? = null,
+    pinnedServerCertificate: X509Certificate? = null,
     maxAttempts: Int? = null,
     maxAttemptWaitTime: Int? = null,
     heartbeat: Int? = null,
     enableAutoPurge: Boolean? = null,
-    acceptOnlySelfSignedServerCertificate: Boolean? = null
+    acceptOnlySelfSignedServerCertificate: Boolean? = null,
+    acceptParentDomainCookies: Boolean? = null
 )
 
 val MessageEndpointListenerConfigurationFactory: MessageEndpointListenerConfiguration? = null
@@ -226,8 +218,8 @@ fun ValueIndexConfiguration?.create(vararg expressions: String = emptyArray())
 [#logs]
 === Logs
 Use
-https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonConfigurationFactoriesKt.html#LogFileConfigurationFactory[LogFileConfigurationFactory]
-to create a `LogFileConfiguration` object, overriding the receiver's values with the passed parameters.
+https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonConfigurationFactoriesKt.html#FileLogSinkFactory[FileLogSinkFactory]
+to create a `FileLogSink` object, overriding the receiver's values with the passed parameters.
 
 [tabs]
 =====
@@ -247,15 +239,14 @@ Definition::
 +
 --
 ----
-val LogFileConfigurationFactory: LogFileConfiguration? = null
+val FileLogSinkFactory: FileLogSink? = null 
 
-.LogFileConfiguration.create()
-
-fun LogFileConfiguration?.create(
+fun FileLogSinkFactory?.install(
     directory: String? = null,
-    maxSize: Long? = null,
-    maxRotateCount: Int? = null,
-    usePlainText: Boolean? = null
+    level: LogLevel? = null,
+    maxFileSize: Long? = null,
+    maxKeptFiles: Int? = null,
+    isPlainText: Boolean? = null
 )
 ----
 --
@@ -266,84 +257,6 @@ fun LogFileConfiguration?.create(
 == Flows
 
 These wrappers use _Flowables_ to monitor for changes.
-
-[#database-change-flow]
-=== Database Change Flow
-
-Use the
-https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonFlowsKt.html#databaseChangeFlow(Database,Executor)[databaseChangeFlow(Database,Executor)]
-to monitor database change events.
-
-[tabs]
-=====
-
-
-In Use::
-+
---
-
-[source, kotlin, indent=0]
-----
-val updatedDocs = db.databaseChangeFlow()
-    .map { it.documentIDs }
-    .asLiveData()
-----
---
-
-
-Definition::
-+
---
-
-[source, kotlin, indent=0]
-----
-@ExperimentalCoroutinesApi
-fun Database.databaseChangeFlow(executor: Executor? = null)
-----
---
-
-=====
-
-
-[#document-change-flow]
-=== Document Change Flow
-Use
-https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-android-ktx/com/couchbase/lite/CommonFlowsKt.html#documentChangeFlow(Database,String,Executor)[documentChangeFlow(Database,String,Executor)]
-to monitor changes to a document.
-
-[tabs]
-=====
-
-
-In Use::
-+
---
-
-[source, kotlin, indent=0]
-----
-
-val docModDate = db.documentChangeFlow("1001", null)
-    .map { it.collection.getDocument(it.documentID)?.getString("lastModified") }
-    .asLiveData()
-
-----
---
-
-
-Definition::
-+
---
-
-[source, kotlin, indent=0]
-----
-@ExperimentalCoroutinesApi
-
-fun Database.documentChangeFlow(documentId: String, executor: Executor? = null)
-
-----
---
-
-=====
 
 [#replicator-change-flow]
 === Replicator Change Flow

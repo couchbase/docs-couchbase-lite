@@ -22,15 +22,26 @@ import androidx.lifecycle.asLiveData
 import com.couchbase.lite.Collection
 import com.couchbase.lite.DocumentChange
 import com.couchbase.lite.Query
+import com.couchbase.lite.Replicator
+import com.couchbase.lite.ReplicatorStatus
 import com.couchbase.lite.Result
 import com.couchbase.lite.collectionChangeFlow
 import com.couchbase.lite.documentChangeFlow
 import com.couchbase.lite.queryChangeFlow
+import com.couchbase.lite.replicatorChangesFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 
 
 class FlowExamples {
+    fun watchReplicator(replicator: Replicator): LiveData<ReplicatorStatus?> {
+        // tag::flow-as-replicator-change-listener[]
+        return replicator.replicatorChangesFlow()
+            .map { change -> change.status }
+            .asLiveData()
+        // end::flow-as-replicator-change-listener[]
+    }
+
     fun replChangeFlowExample(collection: Collection): LiveData<MutableList<String>> {
         // tag::flow-as-database-change-listener[]
         return collection.collectionChangeFlow(null)

@@ -19,6 +19,7 @@ import android.util.Log;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.couchbase.lite.BasicAuthenticator;
@@ -140,13 +141,13 @@ public class DBManager {
     // Create a replicator to push and pull changes to and from the cloud.
     // Be sure to hold a reference somewhere to prevent the Replicator from being GCed
     public ListenerToken replicate(String uri, ReplicatorChangeListener listener) throws URISyntaxException {
-        CollectionConfiguration collConfig = new CollectionConfiguration()
+        CollectionConfiguration collConfig = new CollectionConfiguration(collection)
             .setPullFilter((doc, flags) -> "Java".equals(doc.getString("language")));
 
         ReplicatorConfiguration replConfig =
             new ReplicatorConfiguration(
+                    Set.of(collConfig),
                 new URLEndpoint(new URI(uri)))
-                .addCollection(collection, collConfig)
                 .setType(ReplicatorType.PUSH_AND_PULL)
                 .setAuthenticator(new BasicAuthenticator("sync-gateway", "password".toCharArray()));
 

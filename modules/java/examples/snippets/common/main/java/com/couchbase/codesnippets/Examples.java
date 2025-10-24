@@ -22,6 +22,7 @@ import com.couchbase.codesnippets.utils.Logger;
 import com.couchbase.codesnippets.utils.Utils;
 import com.couchbase.lite.Blob;
 import com.couchbase.lite.Collection;
+import com.couchbase.lite.CollectionConfiguration;
 import com.couchbase.lite.Conflict;
 import com.couchbase.lite.ConflictResolver;
 import com.couchbase.lite.CouchbaseLiteException;
@@ -34,7 +35,6 @@ import com.couchbase.lite.EncryptionKey;
 import com.couchbase.lite.Endpoint;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.LogDomain;
-import com.couchbase.lite.LogFileConfiguration;
 import com.couchbase.lite.LogLevel;
 import com.couchbase.lite.Message;
 import com.couchbase.lite.MessageEndpoint;
@@ -110,25 +110,27 @@ public class Examples {
 
     public void enableCustomLoggingExample() {
         // tag::set-custom-logging[]
-        Database.log.setCustom(new LogTestLogger(LogLevel.WARNING)); // <.>
+        LogSinks.get().setCustom(new LogTestLogger(LogLevel.WARNING)); // <.>
         // end::set-custom-logging[]
     }
 
     public void consoleLoggingExample() {
         // tag::console-logging[]
-        Database.log.getConsole().setLevel(LogLevel.WARNING); // <.>
+        LogSinks.get().setConsole(new ConsoleLogSink(LogLevel.WARNING)); // <.>
         // end::console-logging[]
     }
 
     public void fileLoggingExample() {
         // tag::file-logging[]
-        LogFileConfiguration LogCfg = new LogFileConfiguration(
-            (System.getProperty("user.dir") + "/MyApp/logs")); // <.>
-        LogCfg.setMaxSize(10240); // <.>
-        LogCfg.setMaxRotateCount(5); // <.>
-        LogCfg.setUsePlaintext(false); // <.>
-        Database.log.getFile().setConfig(LogCfg);
-        Database.log.getFile().setLevel(LogLevel.INFO); // <.>
+
+        LogSinks.get().setFile(new FileLogSink.Builder()
+                .setDirectory(System.getProperty("user.dir") + "/MyApp/logs") // <.>
+                .setMaxFileSize(10240) // <.>
+                .setMaxKeptFiles(5) // <.>
+                .setPlainText(false) // <.>
+                .setLevel(LogLevel.INFO) // <.>
+                .build()); // <.>
+
         // end::file-logging[]
     }
 
@@ -273,9 +275,8 @@ public class Examples {
             new URLEndpoint(new URI("ws://localhost:4984/db"));
 
         final ReplicatorConfiguration config =
-            new ReplicatorConfiguration(endpoint)
+            new ReplicatorConfiguration(CollectionConfiguration.fromCollections(Set.of(collection)) ,endpoint)
                 .setType(ReplicatorType.PUSH);
-        config.addCollection(collection, null);
 
         Replicator replicator = new Replicator(config);
         final Set<String> pendingDocs =
@@ -321,18 +322,14 @@ class ImageClassifierModel implements PredictiveModel {
 
 @SuppressWarnings("unused")
 // tag::custom-logging[]
-class LogTestLogger implements com.couchbase.lite.Logger {
-    @NonNull
-    private final LogLevel level;
+class LogTestLogger extends BaseLogSink {
 
-    public LogTestLogger(@NonNull LogLevel level) { this.level = level; }
-
-    @NonNull
-    @Override
-    public LogLevel getLevel() { return level; }
+    public LogTestLogger(@NonNull LogLevel level) {
+        super(level);
+    }
 
     @Override
-    public void log(@NonNull LogLevel level, @NonNull LogDomain domain, @NonNull String message) {
+    protected void writeLog(@NonNull LogLevel level, @NonNull LogDomain domain, @NonNull String message) {
 
     }
 }
@@ -397,8 +394,8 @@ class BrowserSessionManager implements MessageEndpointDelegate {
         // end::message-endpoint[]
 
         // tag::message-endpoint-replicator[]
-        ReplicatorConfiguration config = new ReplicatorConfiguration(messageEndpointTarget);
-        config.addCollection(database.getDefaultCollection(), null);
+        Set<CollectionConfiguration> collConfig = CollectionConfiguration.fromCollections(Set.of(database.getDefaultCollection()));
+        ReplicatorConfiguration config = new ReplicatorConfiguration(collConfig, messageEndpointTarget);
 
         // Create the replicator object.
         replicator = new Replicator(config);

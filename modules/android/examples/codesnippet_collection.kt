@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2024 Couchbase, Inc All rights reserved.
+// Copyright (c) 2025 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,10 @@ package com.couchbase.codesnippets
 
 import com.couchbase.lite.ArrayIndexConfiguration
 import com.couchbase.lite.Collection
+import com.couchbase.lite.CollectionConfiguration
 import com.couchbase.lite.CouchbaseLiteException
 import com.couchbase.lite.IndexConfiguration
+import com.couchbase.lite.ReplicatorConfiguration
 
 class ArrayIndexExamples {
     fun arrayIndexConfig() {
@@ -79,9 +81,7 @@ import com.couchbase.lite.Document
 import com.couchbase.lite.EncryptionKey
 import com.couchbase.lite.Expression
 import com.couchbase.lite.LogDomain
-import com.couchbase.lite.LogFileConfigurationFactory
 import com.couchbase.lite.LogLevel
-import com.couchbase.lite.Logger
 import com.couchbase.lite.Meta
 import com.couchbase.lite.MutableArray
 import com.couchbase.lite.MutableDictionary
@@ -111,10 +111,8 @@ import java.util.zip.ZipInputStream
 private const val TAG = "BASIC"
 
 // tag::custom-logging[]
-class LogTestLogger(private val level: LogLevel) : Logger {
-    override fun getLevel() = level
-
-    override fun log(level: LogLevel, domain: LogDomain, message: String) {
+class LogTestLogger(level: LogLevel) : BaseLogSink(level) {
+    override fun writeLog(level: LogLevel, domain: LogDomain, message: String) {
         // this method will never be called if param level < this.level
         // handle the message, for example piping it to a third party framework
     }
@@ -141,7 +139,7 @@ class BasicExamples(private val context: Context) {
         val replicator =
             Replicator(
                 ReplicatorConfigurationFactory.newConfig(
-                    collections = mapOf(db.collections to null),
+                    collections = CollectionConfiguration.fromCollections(db.collections),
                     target = URLEndpoint(URI("ws://localhost:4984/getting-started-db")),
                     type = ReplicatorType.PUSH_AND_PULL,
                     authenticator = BasicAuthenticator("sync-gateway", "password".toCharArray())
@@ -196,37 +194,43 @@ class BasicExamples(private val context: Context) {
     fun enableCustomLoggingExample() {
         // tag::set-custom-logging[]
         // this custom logger will not log an event with a log level < WARNING
-        Database.log.custom = LogTestLogger(LogLevel.WARNING) // <.>
+        LogSinks.get().custom = LogTestLogger(LogLevel.WARNING) // <.>
         // end::set-custom-logging[]
     }
 
     // ### Console logging
     fun consoleLoggingExample() {
         // tag::console-logging[]
-        Database.log.console.domains = LogDomain.ALL_DOMAINS // <.>
-        Database.log.console.level = LogLevel.WARNING // <.>
+        LogSinks.get().console = ConsoleLogSink(LogLevel.WARNING, LogDomain.ALL)
         // end::console-logging[]
 
         // tag::console-logging-db[]
-        Database.log.console.level = LogLevel.WARNING // <.>
+        LogSinks.get().console = ConsoleLogSink(LogLevel.WARNING) // <.>
         // end::console-logging-db[]
     }
 
     // ### File logging
     fun fileLoggingExample() {
         // tag::file-logging[]
-        // tag::file-logging-config-factory[]
-        Database.log.file.let {
-            it.config = LogFileConfigurationFactory.newConfig(
-                context.cacheDir.absolutePath, // <.>
-                maxSize = 10240, // <.>
-                maxRotateCount = 5, // <.>
-                usePlainText = false
-            ) // <.>
-            it.level = LogLevel.INFO // <.>
+        LogSinks.get().file = FileLogSink.Builder()  
+            .setDirectory(context.cacheDir.absolutePath)  
+            .setLevel(LogLevel.INFO)  
+            .setMaxFileSize(10240L)  
+            .setMaxKeptFiles(5)  
+            .setPlainText(false)  
+            .build()
+        // end::file-logging[]
+    }
 
-            // end::file-logging[]
-        }
+        fun fileLoggingFactoryExample() {
+        // tag::file-logging-config-factory[]
+        FileLogSinkFactory.install(
+            directory = context.cacheDir.absolutePath, // <.>
+            level = LogLevel.INFO, // <.>
+            maxFileSize = 10240L, // <.>
+            maxKeptFiles = 5, // <.>
+            isPlainText = false // <.>
+        )
         // end::file-logging-config-factory[]
     }
 
@@ -694,6 +698,14 @@ import kotlinx.coroutines.flow.mapNotNull
 
 
 class FlowExamples {
+    fun watchReplicator(replicator: Replicator): LiveData<ReplicatorStatus?> {
+        // tag::flow-as-replicator-change-listener[]
+        return replicator.replicatorChangesFlow()
+            .map { change -> change.status }
+            .asLiveData()
+        // end::flow-as-replicator-change-listener[]
+    }
+
     fun replChangeFlowExample(collection: Collection): LiveData<MutableList<String>> {
         // tag::flow-as-database-change-listener[]
         return collection.collectionChangeFlow(null)
@@ -1597,7 +1609,7 @@ class BrowserSessionManager : MessageEndpointDelegate {
         // Create the replicator object.
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
-                collections = mapOf(collections to null),
+                collections = CollectionConfiguration.fromCollections(collections),
                 target = messageEndpoint
             )
         )
@@ -2575,18 +2587,17 @@ class ReplicationExamples {
     private var thisToken: ListenerToken? = null
 
     fun activeReplicatorExample(collections: Set<Collection>) {
-        // tag::p2p-act-rep-start-full[]
         // Create replicator
         // Consider holding a reference somewhere
         // to prevent the Replicator from being GCed
+        // tag::p2p-act-rep-func[]
         val repl = Replicator( // <.>
 
-            // tag::p2p-act-rep-func[]
             // initialize the replicator configuration
             ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("wss://listener.com:8954")), // <.>
+                collections = CollectionConfiguration.fromCollections(collections),
 
-                collections = mapOf(collections to null),
+                target = URLEndpoint(URI("wss://listener.com:8954")), // <.>
 
                 // tag::p2p-act-rep-config-type[]
                 // Set replicator type
@@ -2640,8 +2651,19 @@ class ReplicationExamples {
         thisReplicator = repl
         thisToken = token
 
-        // end::p2p-act-rep-start-full[]
         // end::p2p-act-rep-func[]
+    }
+
+
+    fun replicatorCopyConfig(
+        replicatorConfiguration: ReplicatorConfiguration,
+        repl: Replicator
+    ) {
+        // tag::p2p-act-rep-start-full[]
+        val replConfig: ReplicatorConfiguration =
+            ReplicatorConfiguration(replicatorConfiguration) // <.>
+        repl.start() // <.>
+        // end::p2p-act-rep-start-full[]
     }
 
     fun replicationBasicAuthenticationExample(collections: Set<Collection>) {
@@ -2650,8 +2672,8 @@ class ReplicationExamples {
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
+                collections = CollectionConfiguration.fromCollections(collections),
                 target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to null),
                 authenticator = BasicAuthenticator("username", "password".toCharArray())
             )
         )
@@ -2665,8 +2687,8 @@ class ReplicationExamples {
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
+                collections = CollectionConfiguration.fromCollections(collections),
                 target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to null),
                 authenticator = SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447")
             )
         )
@@ -2680,8 +2702,8 @@ class ReplicationExamples {
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
+                collections = CollectionConfiguration.fromCollections(collections),
                 target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to null),
                 headers = mapOf("CustomHeaderName" to "Value")
             )
         )
@@ -2692,15 +2714,18 @@ class ReplicationExamples {
 
     fun testReplicationPushFilter(collections: Set<Collection>) {
         // tag::replication-push-filter[]
-        val collectionConfig = CollectionConfigurationFactory.newConfig(
-            pushFilter = { _, flags -> flags.contains(DocumentFlag.DELETED) } // <1>
-        )
+        val collectionConfig = collections.map { collection ->
+            CollectionConfigurationFactory.newConfig(
+                collection = collection,
+                pushFilter = { _, flags -> flags.contains(DocumentFlag.DELETED) }
+            )
+        }.toSet()
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to collectionConfig)
+                collections = collectionConfig,
+                target = URLEndpoint(URI("ws://localhost:4984/mydatabase"))
             )
         )
         repl.start()
@@ -2710,15 +2735,18 @@ class ReplicationExamples {
 
     fun replicationPullFilterExample(collections: Set<Collection>) {
         // tag::replication-pull-filter[]
-        val collectionConfig = CollectionConfigurationFactory.newConfig(
-            pullFilter = { document, _ -> "draft" == document.getString("type") } // <1>
-        )
+        val collectionConfig = collections.map { collection ->
+            CollectionConfigurationFactory.newConfig(
+                collection = collection,
+                pullFilter = { document, _ -> "draft" == document.getString("type") } // <1>
+            )
+        }.toSet()
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to collectionConfig)
+                collections = collectionConfig,
+                target = URLEndpoint(URI("ws://localhost:4984/mydatabase"))
             )
         )
         repl.start()
@@ -2731,8 +2759,8 @@ class ReplicationExamples {
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
+                collections = CollectionConfiguration.fromCollections(collections),
                 target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to null)
             )
         )
 
@@ -2748,8 +2776,8 @@ class ReplicationExamples {
     fun handlingNetworkErrorExample(collections: Set<Collection>) {
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to null)
+                collections = CollectionConfiguration.fromCollections(collections),
+                target = URLEndpoint(URI("ws://localhost:4984/mydatabase"))
             )
         )
 
@@ -2769,8 +2797,8 @@ class ReplicationExamples {
         // tag::certificate-pinning[]
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
+                collections = CollectionConfiguration.fromCollections(collections),
                 target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to null),
                 pinnedServerCertificate = KeyStore.getInstance(keyStoreName)
                     .getCertificate(certAlias) as X509Certificate
             )
@@ -2784,8 +2812,8 @@ class ReplicationExamples {
         // tag::sgw-act-rep-initialize[]
         // initialize the replicator configuration
         val thisConfig = ReplicatorConfigurationFactory.newConfig(
-            target = URLEndpoint(URI("wss://10.0.2.2:8954/travel-sample")), // <.>
-            collections = mapOf(collections to null)
+            collections = CollectionConfiguration.fromCollections(collections),
+            target = URLEndpoint(URI("wss://10.0.2.2:8954/travel-sample")) // <.>
         )
         // end::sgw-act-rep-initialize[]
     }
@@ -2816,8 +2844,8 @@ class ReplicationExamples {
         // tag::replication-retry-config[]
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
+                collections = CollectionConfiguration.fromCollections(collections),
                 target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to null),
                 //  other config params as required . .
                 heartbeat = 150, // <1>
                 maxAttempts = 20,
@@ -2832,8 +2860,8 @@ class ReplicationExamples {
     fun replicatorDocumentEventExample(collections: Set<Collection>) {
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
+                collections = CollectionConfiguration.fromCollections(collections),
                 target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(collections to null),
             )
         )
 
@@ -2871,8 +2899,8 @@ class ReplicationExamples {
         // tag::replication-pendingdocuments[]
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
+                collections = CollectionConfiguration.fromCollections(setOf(collection)),
                 target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(setOf(collection) to null),
                 type = ReplicatorType.PUSH
             )
         )
@@ -2911,8 +2939,8 @@ class ReplicationExamples {
         //       source collections or the replication will fail.
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
+                collections = CollectionConfiguration.fromCollections(srcCollections),
                 target = DatabaseEndpoint(targetDb),
-                collections = mapOf(srcCollections to null),
                 type = ReplicatorType.PUSH
             )
         )
@@ -2927,9 +2955,9 @@ class ReplicationExamples {
     fun replicatorConfigurationExample(srcCollections: Set<Collection>, targetUrl: URI) {
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
-                target = URLEndpoint(targetUrl),
+                collections = CollectionConfiguration.fromCollections(srcCollections),
 
-                collections = mapOf(srcCollections to null),
+                target = URLEndpoint(targetUrl),
 
                 // tag::p2p-act-rep-config-cacert[]
                 // Configure Server Security
@@ -2964,7 +2992,7 @@ class ReplicationExamples {
         val theListenerEndpoint: Endpoint = URLEndpoint(URI("wss://10.0.2.2:4984/db")) // <.>
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
-                collections = mapOf(collections to null),
+                collections = CollectionConfiguration.fromCollections(collections),
                 target = theListenerEndpoint,
                 authenticator = BasicAuthenticator("valid.user", "valid.password.string".toCharArray()), // <.>
                 acceptOnlySelfSignedServerCertificate = true
@@ -2977,12 +3005,17 @@ class ReplicationExamples {
 
     fun testReplicationWithCustomConflictResolver(srcCollections: Set<Collection>) {
         // tag::replication-conflict-resolver[]
+        val collectionConfig = srcCollections.map { collection ->
+            CollectionConfigurationFactory.newConfig(
+                collection = collection,
+                conflictResolver = LocalWinsResolver
+            )
+        }.toSet()
 
-        val collectionConfig = CollectionConfigurationFactory.newConfig(conflictResolver = LocalWinsResolver)
         val repl = Replicator(
             ReplicatorConfigurationFactory.newConfig(
+                collections = collectionConfig,
                 target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
-                collections = mapOf(srcCollections to collectionConfig)
             )
         )
 

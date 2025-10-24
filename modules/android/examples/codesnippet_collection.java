@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2023 Couchbase, Inc All rights reserved.
+// Copyright (c) 2025 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -31,17 +32,33 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.ClientCertificateAuthenticator;
 import com.couchbase.lite.Collection;
+import com.couchbase.lite.CollectionConfiguration;
+import com.couchbase.lite.CouchbaseLite;
 import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.DatabaseEndpoint;
+import com.couchbase.lite.DocumentFlag;
+import com.couchbase.lite.Endpoint;
 import com.couchbase.lite.KeyStoreUtils;
 import com.couchbase.lite.ListenerCertificateAuthenticator;
+import com.couchbase.lite.ListenerToken;
+import com.couchbase.lite.LogDomain;
+import com.couchbase.lite.LogLevel;
+import com.couchbase.lite.ReplicatedDocument;
 import com.couchbase.lite.Replicator;
 import com.couchbase.lite.ReplicatorConfiguration;
+import com.couchbase.lite.ReplicatorType;
+import com.couchbase.lite.SessionAuthenticator;
 import com.couchbase.lite.TLSIdentity;
 import com.couchbase.lite.URLEndpoint;
 import com.couchbase.lite.URLEndpointListener;
 import com.couchbase.lite.URLEndpointListenerConfiguration;
+import com.couchbase.lite.logging.BaseLogSink;
+import com.couchbase.lite.logging.ConsoleLogSink;
+import com.couchbase.lite.logging.LogSinks;
 
 
 @SuppressWarnings("unused")
@@ -50,8 +67,8 @@ public class AndroidListenerExamples {
     private Replicator thisReplicator;
 
     public void listenerConfigTlsIdFullExample(File keyFile, Set<Collection> collections)
-        throws IOException, UnrecoverableEntryException, CertificateException, KeyStoreException,
-        NoSuchAlgorithmException, CouchbaseLiteException {
+            throws IOException, UnrecoverableEntryException, CertificateException, KeyStoreException,
+            NoSuchAlgorithmException, CouchbaseLiteException {
         // tag::listener-config-tls-id-full[]
         // tag::listener-config-tls-id-caCert[]
 
@@ -145,7 +162,7 @@ public class AndroidListenerExamples {
     public void listenerWithSelfSignedCert(KeyStore keyStore, URLEndpointListenerConfiguration thisConfig)
         throws CouchbaseLiteException {
         TLSIdentity thisIdentity = TLSIdentity.createIdentity(
-            true,
+            Set.of(SERVER_AUTH, CLIENT_AUTH),
             CERT_ATTRIBUTES,
             null,
             "couchbase-docs-cert"
@@ -157,9 +174,9 @@ public class AndroidListenerExamples {
 
     public void replicatorConfigurationExample(Set<Collection> srcCollections, URI targetUrl, KeyStore keyStore)
         throws CouchbaseLiteException {
+    Set<CollectionConfiguration> collConfigs = CollectionConfiguration.fromCollections(srcCollections);
         ReplicatorConfiguration config =
-            new ReplicatorConfiguration(new URLEndpoint(targetUrl))
-                .addCollections(srcCollections, null)
+            new ReplicatorConfiguration(collConfigs, new URLEndpoint(targetUrl))
 
                 // tag::p2p-act-rep-config-cacert[]
                 // Configure Server Security
@@ -193,7 +210,7 @@ public class AndroidListenerExamples {
     }
 }
 //
-// Copyright (c) 2023 Couchbase, Inc All rights reserved.
+// Copyright (c) 2025 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -231,12 +248,12 @@ public class SnippetApplication extends Application {
         // tag::replication-logging[]
         CouchbaseLite.init(this, true);
 
-        Database.log.getConsole().setLevel(LogLevel.DEBUG);
+        LogSinks.get().setConsole(new ConsoleLogSink(LogLevel.DEBUG));
         // end::replication-logging[]
     }
 }
 //
-// Copyright (c) 2024 Couchbase, Inc All rights reserved.
+// Copyright (c) 2025 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -281,7 +298,7 @@ public class ArrayIndexExamples {
     }
 }
 //
-// Copyright (c) 2023 Couchbase, Inc All rights reserved.
+// Copyright (c) 2025 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -475,7 +492,7 @@ public class BasicExamples {
 }
 
 //
-// Copyright (c) 2023 Couchbase, Inc All rights reserved.
+// Copyright (c) 2025 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -675,25 +692,29 @@ public class Examples {
 
     public void enableCustomLoggingExample() {
         // tag::set-custom-logging[]
-        Database.log.setCustom(new LogTestLogger(LogLevel.WARNING)); // <.>
+        LogSinks.get().setCustom(new LogTestLogger(LogLevel.WARNING)); // <.>
         // end::set-custom-logging[]
     }
 
     public void consoleLoggingExample() {
         // tag::console-logging[]
-        Database.log.getConsole().setLevel(LogLevel.WARNING); // <.>
+        // tag::console-logging-db[]
+        LogSinks.get().setConsole(new ConsoleLogSink(LogLevel.WARNING)); // <.>
+        // end::console-logging-db[]
         // end::console-logging[]
     }
 
     public void fileLoggingExample() {
         // tag::file-logging[]
-        LogFileConfiguration LogCfg = new LogFileConfiguration(
-            (System.getProperty("user.dir") + "/MyApp/logs")); // <.>
-        LogCfg.setMaxSize(10240); // <.>
-        LogCfg.setMaxRotateCount(5); // <.>
-        LogCfg.setUsePlaintext(false); // <.>
-        Database.log.getFile().setConfig(LogCfg);
-        Database.log.getFile().setLevel(LogLevel.INFO); // <.>
+        LogSinks.get().setFile(  
+            new FileLogSink.Builder()  
+                .setDirectory(System.getProperty("user.dir") + "/MyApp/logs")  
+                .setLevel(LogLevel.INFO)  
+                .setMaxFileSize(10240L)  
+                .setMaxKeptFiles(5)  
+                .setPlainText(false)  
+                .build()  
+        );
         // end::file-logging[]
     }
 
@@ -886,18 +907,14 @@ class ImageClassifierModel implements PredictiveModel {
 
 @SuppressWarnings("unused")
 // tag::custom-logging[]
-class LogTestLogger implements com.couchbase.lite.Logger {
-    @NonNull
-    private final LogLevel level;
+class LogTestLogger extends BaseLogSink {
 
-    public LogTestLogger(@NonNull LogLevel level) { this.level = level; }
-
-    @NonNull
-    @Override
-    public LogLevel getLevel() { return level; }
+    public LogTestLogger(@NonNull LogLevel level) {
+        super(level);
+    }
 
     @Override
-    public void log(@NonNull LogLevel level, @NonNull LogDomain domain, @NonNull String message) {
+    protected void writeLog(@NonNull LogLevel level, @NonNull LogDomain domain, @NonNull String message) {
 
     }
 }
@@ -1223,7 +1240,7 @@ public class Hotel {
             && Objects.equals(id, hotel.id);
     }
 }//
-// Copyright (c) 2021 Couchbase, Inc All rights reserved.
+// Copyright (c) 2025 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1365,7 +1382,7 @@ public class JSONExamples {
 }
 
 //
-// Copyright (c) 2023 Couchbase, Inc All rights reserved.
+// Copyright (c) 2025 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1489,8 +1506,8 @@ class ListenerExamples {
 
         thisConfig.setAuthenticator(
             new ListenerPasswordAuthenticator(
-                (username, password) ->
-                    validUser.equals(username) && Arrays.equals(validPass, password)
+                    (username, password) ->
+                            validUser.equals(username) && Arrays.equals(validPass, password)
             )
         ); // <.>
 
@@ -1840,7 +1857,7 @@ public class MultipeerExamples {
     }
 }
 //
-// Copyright (c) 2023 Couchbase, Inc All rights reserved.
+// Copyright (c) 2025 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1957,7 +1974,7 @@ public class PredictiveQueryExamples {
     }
 }
 //
-// Copyright (c) 2023 Couchbase, Inc All rights reserved.
+// Copyright (c) 2025 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -2241,7 +2258,7 @@ public class QueryExamples {
 
         // tag::query-syntax-all[]
         Query listQuery = QueryBuilder.select(SelectResult.all())
-            .from(DataSource.collection(collection));
+                .from(DataSource.collection(collection));
         // end::query-syntax-all[]
 
         // tag::query-access-all[]
@@ -2633,7 +2650,7 @@ public class QueryExamples {
 }
 
 //
-// Copyright (c) 2023 Couchbase, Inc All rights reserved.
+// Copyright (c) 2025 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -2687,16 +2704,18 @@ public class ReplicationExamples {
 
     public void activeReplicatorExample(Set<Collection> collections)
         throws URISyntaxException {
-        // tag::p2p-act-rep-start-full[]
         // Create replicator
         // Consider holding a reference somewhere
-        // to prevent the Replicator from being GCed
+        // to prevent the Replicator from being 
+        // tag::p2p-act-rep-func[]
         Replicator repl = new Replicator( // <.>
 
-            // tag::p2p-act-rep-func[]
+            
             // initialize the replicator configuration
-            new ReplicatorConfiguration(new URLEndpoint(new URI("wss://listener.com:8954"))) // <.>
-                .addCollections(collections, null)
+            new ReplicatorConfiguration(
+                CollectionConfiguration.fromCollections(collections), 
+                new URLEndpoint(new URI("wss://listener.com:8954"))
+            ) // <.>
 
                 // tag::p2p-act-rep-config-type[]
                 // Set replicator type
@@ -2746,8 +2765,14 @@ public class ReplicationExamples {
         thisReplicator = repl;
         thisToken = token;
 
-        // end::p2p-act-rep-start-full[]
         // end::p2p-act-rep-func[]
+    }
+
+    public void replicatorCopyConfig(ReplicatorConfiguration replicatorConfiguration, Replicator repl) {
+        // tag::p2p-act-rep-start-full[]
+        ReplicatorConfiguration replConfig = new ReplicatorConfiguration(replicatorConfiguration); // <.>
+        repl.start(); // <.>
+        // end::p2p-act-rep-start-full[]
     }
 
     public void replicatorSimpleExample(Set<Collection> collections) throws URISyntaxException {
@@ -2755,9 +2780,10 @@ public class ReplicationExamples {
         Endpoint theListenerEndpoint
             = new URLEndpoint(new URI("wss://10.0.2.2:4984/db")); // <.>
 
+        Set<CollectionConfiguration> collConfigs = CollectionConfiguration.fromCollections(collections);
+
         ReplicatorConfiguration thisConfig =
-            new ReplicatorConfiguration(theListenerEndpoint) // <.>
-                .addCollections(collections, null) // default configuration
+            new ReplicatorConfiguration(collConfig, theListenerEndpoint) // <.>
 
                 .setAcceptOnlySelfSignedServerCertificate(true) // <.>
                 .setAuthenticator(new BasicAuthenticator(
@@ -2781,8 +2807,7 @@ public class ReplicationExamples {
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, collectionConfig)
+            new ReplicatorConfiguration(Set.of(collectionConfig), new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
                 .setAuthenticator(new BasicAuthenticator("username", "password".toCharArray())));
 
         repl.start();
@@ -2795,12 +2820,11 @@ public class ReplicationExamples {
         Set<Collection> collections,
         CollectionConfiguration collectionConfig)
         throws URISyntaxException {
-        // tag::session-authentication[]
+    // tag::session-authentication[]
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, collectionConfig)
+            new ReplicatorConfiguration(Set.of(collectionConfig), new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
                 .setAuthenticator(new SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447")));
 
         repl.start();
@@ -2818,8 +2842,7 @@ public class ReplicationExamples {
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, collectionConfig)
+            new ReplicatorConfiguration(Set.of(collectionConfig), new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
                 .setHeaders(headers));
 
         repl.start();
@@ -2829,13 +2852,12 @@ public class ReplicationExamples {
 
     public void replicationPushFilterExample(Set<Collection> collections) throws URISyntaxException {
         // tag::replication-push-filter[]
-        CollectionConfiguration collectionConfig = new CollectionConfiguration()
-            .setPushFilter((document, flags) -> flags.contains(DocumentFlag.DELETED)); // <1>
+        Set<CollectionConfiguration> collectionConfigs = CollectionConfiguration.fromCollections(collections);
+        collectionConfigs.forEach(it->it.setPushFilter((document, flags) -> flags.contains(DocumentFlag.DELETED))); // <1>
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, collectionConfig));
+            new ReplicatorConfiguration(collectionConfigs, new URLEndpoint(new URI("ws://localhost:4984/mydatabase"))));
 
         repl.start();
         thisReplicator = repl;
@@ -2845,13 +2867,12 @@ public class ReplicationExamples {
 
     public void replicationPullFilterExample(Set<Collection> collections) throws URISyntaxException {
         // tag::replication-pull-filter[]
-        CollectionConfiguration collectionConfig = new CollectionConfiguration()
-            .setPullFilter((document, flags) -> "draft".equals(document.getString("type"))); // <1>
+        Set<CollectionConfiguration> collectionConfigs = CollectionConfiguration.fromCollections(collections);
+        collectionConfigs.forEach(it->it.setPullFilter((document, flags) -> "draft".equals(document.getString("type")))); // <1>
 
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, collectionConfig));
+            new ReplicatorConfiguration(collectionConfigs, new URLEndpoint(new URI("ws://localhost:4984/mydatabase"))));
 
         repl.start();
         thisReplicator = repl;
@@ -2861,8 +2882,10 @@ public class ReplicationExamples {
     public void replicationResetCheckpointExample(Set<Collection> collections) throws URISyntaxException {
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, null));
+            new ReplicatorConfiguration(
+                    CollectionConfiguration.fromCollections(collections),
+                    new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+        );
 
         // tag::replication-reset-checkpoint[]
         repl.start(true);
@@ -2876,8 +2899,10 @@ public class ReplicationExamples {
     public void handlingNetworkErrorsExample(Set<Collection> collections) throws URISyntaxException {
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, null));
+            new ReplicatorConfiguration(
+                        CollectionConfiguration.fromCollections(collections),
+                        new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+        );
 
         // tag::replication-error-handling[]
         repl.addChangeListener(change -> {
@@ -2894,10 +2919,11 @@ public class ReplicationExamples {
         // tag::certificate-pinning[]
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, null)
-                .setPinnedServerX509Certificate(
-                    (X509Certificate) KeyStore.getInstance(keyStoreName).getCertificate(certAlias)));
+                new ReplicatorConfiguration(
+                        CollectionConfiguration.fromCollections(collections),
+                        new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+                        .setPinnedServerX509Certificate(
+                                (X509Certificate) KeyStore.getInstance(keyStoreName).getCertificate(certAlias)));
 
         repl.start();
         thisReplicator = repl;
@@ -2908,8 +2934,9 @@ public class ReplicationExamples {
         // tag::sgw-act-rep-initialize[]
         // initialize the replicator configuration
         ReplicatorConfiguration thisConfig = new ReplicatorConfiguration(
-            new URLEndpoint(new URI("wss://10.0.2.2:8954/travel-sample"))) // <.>
-            .addCollections(collections, null);
+                CollectionConfiguration.fromCollections(collections),
+                new URLEndpoint(new URI("wss://10.0.2.2:8954/travel-sample"))
+        ); // <.>
         // end::sgw-act-rep-initialize[]
     }
 
@@ -2937,12 +2964,13 @@ public class ReplicationExamples {
     public void customRetryConfigExample(Set<Collection> collections) throws URISyntaxException {
         // tag::replication-retry-config[]
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, null)
-                //  other config as required . . .
-                .setHeartbeat(150) // <.>
-                .setMaxAttempts(20) // <.>
-                .setMaxAttemptWaitTime(600)); // <.>
+                new ReplicatorConfiguration(
+                        CollectionConfiguration.fromCollections(collections),
+                        new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+                        //  other config as required . . .
+                        .setHeartbeat(150) // <.>
+                        .setMaxAttempts(20) // <.>
+                        .setMaxAttemptWaitTime(600)); // <.>
 
         repl.start();
         thisReplicator = repl;
@@ -2952,8 +2980,11 @@ public class ReplicationExamples {
     public void replicatorDocumentEventExample(Set<Collection> collections) throws URISyntaxException {
         // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollections(collections, null));
+                new ReplicatorConfiguration(
+                        CollectionConfiguration.fromCollections(collections),
+                        new URLEndpoint(new URI("ws://localhost:4984/mydatabase"))
+                )
+        );
 
 
         // tag::add-document-replication-listener[]
@@ -2986,12 +3017,14 @@ public class ReplicationExamples {
     }
 
     public void replicationPendingDocumentsExample(Collection collection)
-        throws CouchbaseLiteException, URISyntaxException {
+            throws CouchbaseLiteException, URISyntaxException {
         // tag::replication-pendingdocuments[]
+        CollectionConfiguration collConfig = new CollectionConfiguration(collection);
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
-                .addCollection(collection, null)
-                .setType(ReplicatorType.PUSH));
+                new ReplicatorConfiguration(
+                        Set.of(collConfig),
+                        new URLEndpoint(new URI("ws://localhost:4984/mydatabase")))
+                        .setType(ReplicatorType.PUSH));
 
         Set<String> pendingDocs = repl.getPendingDocumentIds(collection);
 
@@ -3026,9 +3059,9 @@ public class ReplicationExamples {
         // Note: the target database must already contain the
         //       source collections or the replication will fail.
         final Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new DatabaseEndpoint(targetDb))
-                .addCollections(srcCollections, null)
-                .setType(ReplicatorType.PUSH));
+                new ReplicatorConfiguration(CollectionConfiguration.fromCollections(srcCollections), new DatabaseEndpoint(targetDb))
+                        .setType(ReplicatorType.PUSH)
+        );
 
         // Start the replicator
         // (be sure to hold a reference somewhere that will prevent it from being GCed)
@@ -3039,12 +3072,11 @@ public class ReplicationExamples {
 
     public void replicationWithCustomConflictResolverExample(Set<Collection> srcCollections, URI targetUri) {
         // tag::replication-conflict-resolver[]
+        Set<CollectionConfiguration> collConfigs = CollectionConfiguration.fromCollections(srcCollections);
+        collConfigs.forEach(it->it.setConflictResolver(new LocalWinConflictResolver()));
         Replicator repl = new Replicator(
-            new ReplicatorConfiguration(new URLEndpoint(targetUri))
-                .addCollections(
-                    srcCollections,
-                    new CollectionConfiguration()
-                        .setConflictResolver(new LocalWinConflictResolver())));
+                new ReplicatorConfiguration(collConfigs, new URLEndpoint(targetUri))
+        );
 
         // Start the replicator
         // (be sure to hold a reference somewhere that will prevent it from being GCed)
@@ -3056,7 +3088,7 @@ public class ReplicationExamples {
 
 
 //
-// Copyright (c) 2024 Couchbase, Inc All rights reserved.
+// Copyright (c) 2025 Couchbase, Inc All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

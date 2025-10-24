@@ -163,7 +163,7 @@ include::java:example$codesnippet_collection.java[tags="p2p-act-rep-func", inden
 *Notes on Example*
 
 <.> get endpoint for target DB
-<.> Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html[ReplicatorConfiguration] class's constructor -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html#ReplicatorConfiguration-com.couchbase.lite.Database-com.couchbase.lite.Endpoint-[ReplicatorConfiguration(database, endpoint)] -- to initialize the replicator configuration with the local database -- see also: xref:java:replication.adoc#lbl-cfg-tgt[]
+<.> Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html[ReplicatorConfiguration] class's constructor -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html#ReplicatorConfiguration-com.couchbase.lite.Database-com.couchbase.lite.Endpoint-[ReplicatorConfiguration(collectionConfigs, endpoint)] -- to initialize the replicator configuration with the local database -- see also: xref:java:replication.adoc#lbl-cfg-tgt[]
 <.> The default is to auto-purge documents that this user no longer has access to -- see: xref:java:replication.adoc#anchor-auto-purge-on-revoke[].
 Here we over-ride this behavior by setting its flag false.
 
@@ -174,10 +174,6 @@ By default, clients accept only servers presenting certificates that can be veri
 These are the credential the client will present to sync{nbsp}gateway if requested to do so. +
 Here we configure to provide _Basic Authentication_ credentials.
 Other options are available -- see: xref:java:replication.adoc#lbl-client-auth[].
-
-<.> Configure how the replication should handle conflict resolution -- see: xref:java:conflict.adoc[Handling Data Conflicts] topic for mor on conflict resolution.
-
-<.> Initialize the replicator using your configuration -- see: xref:java:replication.adoc#lbl-init-repl[].
 
 <.> Optionally, register an observer, which will notify you of changes to the replication status -- see: xref:java:replication.adoc#lbl-repl-mon[]
 
@@ -1173,15 +1169,6 @@ Certificate pinning is a technique that can be used by applications to "pin" a h
 The certificate is typically delivered to the client by an out-of-band channel and bundled with the client.
 In this case, Couchbase Lite uses this embedded certificate to verify the trustworthiness of the server (for example, a Sync Gateway) and no longer needs to rely on a trusted third party for that (commonly referred to as the Certificate Authority).
 
-[.status]#Couchbase Lite 3.0.2#
-
-For the 3.02. release, changes have been made to the way certificates on the host are matched:
-[horizontal]
-
-Prior to CBL3.0.2:: The pinned certificate was only compared with the leaf certificate of the host. This is not always suitable as leaf certificates are usually valid for shorter periods of time.
-CBL-3.0.2{plus}:: The pinned certificate will be compared against any certificate in the server's certificate chain.
-
-
 The following steps describe how to configure certificate pinning between Couchbase Lite and Sync Gateway.
 
 . xref:sync-gateway::security.adoc#creating-your-own-self-signed-certificate[Create your own self-signed certificate]
@@ -1245,7 +1232,7 @@ include::java:example$codesnippet_collection.java[tags="replication-logging", in
 ====
 
 
-For more on troubleshooting with logs, see: xref:java:troubleshooting-logs.adoc[Using Logs].
+For more on troubleshooting with logs, see: xref:java:new-logging-api.adoc[Using Logs].
 
 [#authentication-errors]
 === Authentication Errors
