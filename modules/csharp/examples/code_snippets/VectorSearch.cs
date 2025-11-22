@@ -16,30 +16,34 @@
 // limitations under the License.
 //
 
+using System.Diagnostics;
 using Couchbase.Lite;
 using Couchbase.Lite.Enterprise.Query;
 using Couchbase.Lite.Extensions;
 using Couchbase.Lite.Query;
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedVariable
+// ReSharper disable NotAccessedVariable
+// ReSharper disable RedundantAssignment
 
 namespace api_walkthrough
 {
-    class Color
+    internal class Color
     {
         public static float[] GetVector(string color)
         {
-            return new float[] { 0.0f, 0.0f, 0.0f };
+            return [0.0f, 0.0f, 0.0f];
         }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 
     public class VectorSearch
     {
-        public VectorSearch() { }
-
-        private static Task<float[]> GenerateEmbedding(string input)
+        // ReSharper disable once UnusedParameter.Local
+        private static Task<float[]?> GenerateEmbedding(string input)
         {
-            return Task.FromResult(Enumerable.Empty<float>().ToArray());
+            return Task.FromResult<float[]?>(Enumerable.Empty<float>().ToArray());
         }
 
         private static void EnableVectorSearchExtension()
@@ -49,7 +53,7 @@ namespace api_walkthrough
             // end::vs-setup-packaging[]
         }
 
-        private void CreateDefaultVectorIndexConfig()
+        private static void CreateDefaultVectorIndexConfig()
         {
             // tag::vs-create-default-config[]
             // Create a vector index configuration for indexing 3 dimensional vectors embedded
@@ -57,7 +61,7 @@ namespace api_walkthrough
             var config = new VectorIndexConfiguration("color", 3, 100);
             // end::vs-create-default-config[]
         }
-        private void CreateCustomVectorIndexConfig()
+        private static void CreateCustomVectorIndexConfig()
         {
             // tag::vs-create-custom-config[]
             // Create a vector index configuration for indexing 3 dimensional vectors embedded
@@ -75,7 +79,7 @@ namespace api_walkthrough
             // end::vs-create-custom-config[]
         }
 
-        private void CreateLazyIndex()
+        private static void CreateLazyIndex()
         {
             // tag::vs-lazy-index-config[]
             // Creating a lazy vector index is the same as creating a normal one, except
@@ -87,7 +91,7 @@ namespace api_walkthrough
             // end::vs-lazy-index-config[]
         }
 
-        private async Task UpdateLazyIndex()
+        private static async Task UpdateLazyIndex()
         {
             var database = new Database("my-database");
             var collection = database.GetDefaultCollection();
@@ -95,6 +99,7 @@ namespace api_walkthrough
             // tag::vs-create-lazy-index-embedding[]
             // Retrieve the index you wish to update
             var index = collection.GetIndex("index-name");
+            Debug.Assert(index != null);
 
             // Start an update on it (in this case, limit to 50 entries at a time)
             var updater = index.BeginUpdate(50);
@@ -103,18 +108,21 @@ namespace api_walkthrough
             while (updater != null) {
                 using (updater) {
                     // Otherwise, the updater will contain a list of data that needs embeddings generated
-                    int i = 0;
-                    foreach (var entry in updater) {
+                    var i = 0;
+                    foreach (var entry in updater.Where(x => x != null)) {
                         // The type of entry will depend on what you have set as your index.
                         // In this example, we will assume it was set to a string property.
                         // Let's also assume that if an embedding is not applicable, this
                         // pseudo function returns null
                         try {
-                            var embedding = await GenerateEmbedding((string)entry);
+                            var embedding = await GenerateEmbedding((string)entry!);
                             if (embedding == null) {
                                 // No embedding applicable.  Calling SetVector will null will
                                 // cause the underlying document to NOT be indexed
+                                // 4.0.0 bug says this is non nullable but it is nullable
+#pragma warning disable CS8625
                                 updater.SetVector(i, null);
+#pragma warning restore CS8625
                             } else {
                                 // Yes this if/else is unneeded, and only to demonstrate the
                                 // effect of setting null in SetVector
@@ -126,6 +134,8 @@ namespace api_walkthrough
                             // this entry.  The next time BeginUpdate is called, it will be considered again
                             updater.SkipVector(i);
                         }
+
+                        i++;
                     }
 
                     // This writes the vectors to the index.  Disposing it without calling this
@@ -152,6 +162,7 @@ namespace api_walkthrough
 
             // Create a vector index named "color_index" using the configuration
             var collection = database.GetCollection("colors");
+            Debug.Assert(collection != null);
             collection.CreateIndex("colors_index", config);
             // end::vs-create-index[]
         }
@@ -159,7 +170,7 @@ namespace api_walkthrough
         // tag::vs-predictive-model[]
         public sealed class ColorModel : IPredictiveModel
         {
-            public DictionaryObject Predict(DictionaryObject input)
+            public DictionaryObject? Predict(DictionaryObject input)
             {
                 // Get the input color code 
                 var inputColor = input.GetString("colorInput");
@@ -204,6 +215,7 @@ namespace api_walkthrough
 
             // Create a vector index from the configuration
             var collection = database.GetCollection("colors");
+            Debug.Assert(collection != null);
             collection.CreateIndex("colors_index", config);
             // end::vs-create-predictive-index[]
         }
@@ -309,7 +321,7 @@ namespace api_walkthrough
             // end::vs-hybrid-invalid[]
         }
 
-        private void FTSHybridQuery()
+        private static void FTSHybridQuery()
         {
             var database = new Database("my-database");
 
