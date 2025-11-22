@@ -474,9 +474,9 @@ static void close_database() {
 
 static void database_fullsync() {
    CBLDatabaseConfiguration config = CBLDatabaseConfiguration_Default();
-   // tag::database-fullsync[] 
+   // tag::database-fullsync[]
    // this enables full sync
-   config.fullSync = true; 
+   config.fullSync = true;
    // end::database-fullsync[]
 }
 
@@ -501,7 +501,7 @@ static void list_scopes_and_collections(){
     CBLDatabase *db = kDatabase;
     // tag::scopes-manage-list[]
     CBLError err{};
-    
+
     // Get Scopes
     FLMutableArray scopes = CBLDatabase_ScopeNames(db, &err);
     // Get default Scope
@@ -937,7 +937,7 @@ static void datatype_usage() {
     // Open or create DB if it doesn't exist
     CBLError err{};
     CBLDatabase* database = CBLDatabase_Open(FLSTR("mydb"), NULL, &err);
-    
+
     if (!database) {
         return;
     }
@@ -1562,7 +1562,7 @@ static void test_explain_statement() {
     FLSliceResult_Release(explanation);
     // end::query-explain-nofunction[]
     }
-    
+
     // DOCS NOTE: Others omitted for now
 }
 
@@ -1688,6 +1688,10 @@ static void start_replication() {
 }
 
 static void console_log_sink() {
+    // tag::console-logging[]
+    CBLLog_SetConsoleLevel(kCBLLogVerbose);
+    // end::console-logging[]
+
     // tag::new-console-logging[]
     CBLConsoleLogSink logSink {};
     logSink.level = kCBLLogVerbose;
@@ -1697,6 +1701,23 @@ static void console_log_sink() {
 }
 
 static void file_log_sink() {
+    // tag::file-logging[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    // NOTE: You will need to use a platform appropriate method for finding
+    // a temporary directory
+
+    CBLLogFileConfiguration config {}; // Don't bother zeroing, since we set all properties
+    config.level = kCBLLogInfo;
+    config.directory = FLSTR("/tmp/logs");;
+    config.maxRotateCount = 12;
+    config.maxSize = 1048576;
+    config.usePlaintext = false;
+
+    CBLError err{};
+    CBLLog_SetFileConfig(config, &err);
+    // end::file-logging[]
+
     // tag::new-file-logging[]
     CBLFileLogSink logSink {};
     logSink.level = kCBLLogVerbose;
@@ -1708,6 +1729,12 @@ static void file_log_sink() {
     // end::new-file-logging[]
 }
 
+// tag::custom-logging[]
+static void custom_log_callback(CBLLogDomain domain, CBLLogLevel level, FLString message) {
+    // handle the message, for example piping it to a third party framework
+}
+// end::custom-logging[]
+
 // tag::new-custom-logging[]
 static void custom_log_sink_callback(CBLLogDomain domain, CBLLogLevel level, FLString message) {
     // handle the message, for example piping it to a third party framework.
@@ -1715,6 +1742,10 @@ static void custom_log_sink_callback(CBLLogDomain domain, CBLLogLevel level, FLS
 // end::new-custom-logging[]
 
 static void enable_custom_log_sink() {
+    // tag::set-custom-logging[]
+    CBLLog_SetCallback(custom_log_callback);
+    // end::set-custom-logging[]
+
     // tag::set-new-custom-logging[]
     CBLCustomLogSink logSink {};
     logSink.level = kCBLLogVerbose;
@@ -2073,7 +2104,7 @@ static void docs_act_replication_config_section_snippets()
         CBLReplicator_AddChangeListener(replicator,
                                         simpleChangeListener,
                                         NULL); // <.>
-    
+
 }
 // END replication.html >> configure section
 
