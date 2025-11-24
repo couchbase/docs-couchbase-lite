@@ -35,7 +35,7 @@
     NSMutableArray<CBLMultipeerCollectionConfiguration*> *collections = [NSMutableArray array];
     for (CBLCollection *col in @[collection1, collection2, collection3]) {
         CBLMultipeerCollectionConfiguration *config =
-            [[CBLMultipeerCollectionConfiguration alloc] initWithCollection:col];
+        [[CBLMultipeerCollectionConfiguration alloc] initWithCollection:col];
         [collections addObject:config];
     }
     // end::multipeer-collection-simple
@@ -69,32 +69,32 @@
     // tag::multipeer-selfsigned-tlsidentity
     // Note: This example is simplified for demonstration and does not include error handling.
     NSString *persistentLabel = @"com.myapp.identity";
-    
+
     // Retrieve the TLS identity from the keychain using the persistent label.
     NSError *error = nil;
     CBLTLSIdentity *identity = [CBLTLSIdentity identityWithLabel:persistentLabel error:&error];
-    
+
     // If the identity exists but is expired, delete it.
     if (identity && [identity.expiration compare:[NSDate date]] == NSOrderedAscending) {
         [CBLTLSIdentity deleteIdentityWithLabel: persistentLabel error: &error];
         identity = nil;
     }
-        
+
     // If the identity doesn't exist or expired, create a new one.
     if (!identity) {
         // Define certificate attributes and expiration date.
         NSDictionary *attrs = @{ kCBLCertAttrCommonName: @"MyApp" };
         NSDate *expiration = [[NSCalendar currentCalendar] dateByAddingUnit:NSCalendarUnitYear
-                                                                      value:2
-                                                                     toDate:[NSDate date]
-                                                                    options:0];
-        
+            value:2
+            toDate:[NSDate date]
+            options:0];
+
         // Create and store a new self-signed identity in the keychain with a persistent label.
         identity = [CBLTLSIdentity createIdentityForKeyUsages:kCBLKeyUsagesClientAuth|kCBLKeyUsagesServerAuth
-                                                   attributes:attrs
-                                                   expiration:expiration
-                                                        label:persistentLabel
-                                                        error:&error];
+            attributes:attrs
+            expiration:expiration
+            label:persistentLabel
+            error:&error];
     }
     // end::multipeer-selfsigned-tlsidentity
     return identity;
@@ -104,38 +104,38 @@
     // tag::multipeer-tlsidentity
     // Note: This example is simplified for demonstration and does not include error handling.
     NSString *persistentLabel = @"com.myapp.identity";
-    
+
     // Retrieve the TLS identity from the keychain using the persistent label.
     NSError *error = nil;
     CBLTLSIdentity *identity = [CBLTLSIdentity identityWithLabel:persistentLabel error:&error];
-    
+
     // If the identity exists but is expired, delete it.
     if (identity && [identity.expiration compare:[NSDate date]] == NSOrderedAscending) {
         [CBLTLSIdentity deleteIdentityWithLabel: persistentLabel error: &error];
         identity = nil;
     }
-        
+
     // If the identity doesn't exist or expired, create a new one.
     if (!identity) {
         // Get the issuer's private key and certificate data (DER format) for signing the identity's certificate.
         NSData *caKey = [self getIssuerPrivateKeyData];
         NSData *caCert = [self getIssuerCertificateData];
-        
+
         // Define certificate attributes and expiration date.
         NSDictionary *attrs = @{ kCBLCertAttrCommonName: @"MyApp" };
         NSDate *expiration = [[NSCalendar currentCalendar] dateByAddingUnit:NSCalendarUnitYear
-                                                                      value:2
-                                                                     toDate:[NSDate date]
-                                                                    options:0];
-        
+            value:2
+            toDate:[NSDate date]
+            options:0];
+
         // Create and store a new identity signed with the issuer in the keychain with a persistent label.
         identity = [CBLTLSIdentity createSignedIdentityInsecureForKeyUsages:kCBLKeyUsagesClientAuth|kCBLKeyUsagesServerAuth
-                                                                 attributes:attrs
-                                                                 expiration:expiration
-                                                                      caKey:caKey
-                                                              caCertificate:caCert
-                                                                      label:persistentLabel
-                                                                      error:&error];
+            attributes:attrs
+            expiration:expiration
+            caKey:caKey
+            caCertificate:caCert
+            label:persistentLabel
+            error:&error];
     }
     // end::multipeer-tlsidentity
     return identity;
@@ -174,13 +174,13 @@
     CBLTLSIdentity *identity = [self createCASignedIdentity];
     id<CBLMultipeerAuthenticator> authenticator = [self authenticatorWithRootCerts];
     NSArray<CBLMultipeerCollectionConfiguration *> *collections = [self collectionConfig];
-    
+
     // tag::multipeer-config
     CBLMultipeerReplicatorConfiguration *config =
     [[CBLMultipeerReplicatorConfiguration alloc] initWithPeerGroupID:@"com.myapp"
-                                                            identity:identity
-                                                       authenticator:authenticator
-                                                         collections:collections];
+        identity:identity
+        authenticator:authenticator
+        collections:collections];
     // end::multipeer-config
     return config;
 }
@@ -254,7 +254,7 @@
             NSString *error = doc.error ? doc.error.localizedDescription : @"none";
             NSString *collection = [NSString stringWithFormat:@"%@.%@", doc.scope, doc.collection];
             NSLog(@" Collection: %@ Document ID: %@, Flags: %lu, Error: %@",
-                  collection, doc.id, (unsigned long)doc.flags, error);
+                collection, doc.id, (unsigned long)doc.flags, error);
         }
     }];
     // end::multipeer-document-replication-listener
@@ -282,7 +282,7 @@
     CBLMultipeerReplicator *replicator = [self createMultipeerReplicator];
     // tag::multipeer-peer-info
     NSArray<NSString *> *activities = @[ @"stopped", @"offline", @"connecting", @"idle", @"busy" ];
-    
+
     void (^printPeerInfo)(CBLPeerInfo *) = ^(CBLPeerInfo *info) {
         NSLog(@"Peer ID: %@", info.peerID);
         NSLog(@" Status: %@", info.online ? @"online" : @"offline");
@@ -290,13 +290,13 @@
         for (CBLPeerID *peerID in info.neighborPeers) {
             NSLog(@"  %@", peerID);
         }
-        
+
         CBLReplicatorStatus *replStatus = info.replicatorStatus;
         NSString *activity = activities[(NSInteger)replStatus.activity];
         NSString *error = replStatus.error ? replStatus.error.localizedDescription : @"none";
         NSLog(@" Replicator Status: %@, Error: %@", activity, error);
     };
-    
+
     for (CBLPeerID *peerID in replicator.neighborPeers) {
         CBLPeerInfo *peerInfo = [replicator peerInfoForPeerID: peerID];
         if (peerInfo) {

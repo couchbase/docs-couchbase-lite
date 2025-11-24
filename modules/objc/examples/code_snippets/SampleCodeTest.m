@@ -126,7 +126,7 @@
     [result addEntriesFromDictionary:remoteDict];
 
     return [[CBLMutableDocument alloc] initWithID:conflict.documentID
-                                             data:result];
+        data:result];
 }
 
 @end
@@ -169,7 +169,7 @@
         NSLog(@"%@", [NSString stringWithUTF8String: ifa->ifa_name]);
         // do something with this `ifa`
     }
-    
+
     freeifaddrs(ifaddrs);
     // end::listener-get-network-interfaces[]
 }
@@ -180,20 +180,20 @@
     //tag::console-logging-db[]
     CBLLogSinks.console = [[CBLConsoleLogSink alloc] initWithLevel:kCBLLogLevelVerbose domains:kCBLLogDomainDatabase];
     //end::console-logging-db[]
-    
+
     // tag::new-console-logging[]
     CBLLogSinks.console = [[CBLConsoleLogSink alloc] initWithLevel:kCBLLogLevelVerbose domains:kCBLLogDomainAll];
     // end::new-console-logging[]
-    
+
     // tag::new-file-logging[]
     NSString* tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent:  @"cbllog"];
     CBLLogSinks.file = [[CBLFileLogSink alloc] initWithLevel:kCBLLogLevelVerbose
-                                                   directory:tempFolder
-                                                usePlaintext:false
-                                                maxKeptFiles:12
-                                                 maxFileSize:524288];
+        directory:tempFolder
+        usePlaintext:false
+        maxKeptFiles:12
+        maxFileSize:524288];
     // end::new-file-logging[]
-    
+
     // tag::set-new-custom-logging[]
     TestLogSink* sink = [[TestLogSink alloc] init];
     CBLLogSinks.custom = [[CBLCustomLogSink alloc] initWithLevel:kCBLLogLevelWarning logSink:sink];
@@ -228,32 +228,32 @@
 
 - (void) dontTestManageCollection {
     NSError* error = nil;
-    
+
     // tag::scopes-manage-create-collection[]
     CBLCollection* collection = [self.database createCollectionWithName:@"myCollectionName"
-                                                                  scope:@"myScopeName"
-                                                                  error:&error];
+        scope:@"myScopeName"
+        error:&error];
     // end::scopes-manage-create-collection[]
-    
+
     // tag::scopes-manage-index-collection[]
     CBLFullTextIndexConfiguration* config = [[CBLFullTextIndexConfiguration alloc]
-                                             initWithExpression: @[@"overview"]
-                                             ignoreAccents: NO
-                                             language: nil];
+        initWithExpression: @[@"overview"]
+        ignoreAccents: NO
+        language: nil];
 
     [collection createIndexWithName: @"overviewFTSIndex" config:config error: &error];
     // end::scopes-manage-index-collection[]
-    
+
     // tag::scopes-manage-list[]
     NSArray* scopes = [self.database scopes: &error];
     NSArray* collections = [self.database collections:@"myScopeName" error:&error];
     NSLog(@"I have %d scopes and %d collections", (int)scopes.count, (int)collections.count);
     // end::scopes-manage-list[]
-    
+
     // tag::scopes-manage-drop-collection[]
     BOOL success = [self.database deleteCollectionWithName:@"myCollectionName"
-                                                     scope:@"myScopeName"
-                                                     error:&error];
+        scope:@"myScopeName"
+        error:&error];
     if (!success) {
         NSLog(@"Failed to delete the collection %@", error);
     }
@@ -281,7 +281,7 @@
         NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"travel-sample" ofType:@"cblite2"];
         if (![CBLDatabase copyFromPath:path toDatabase:@"travel-sample" withConfig:nil error:&error]) {
             [NSException raise:NSInternalInconsistencyException
-                        format:@"Could not load pre-built database:%@", error];
+            format:@"Could not load pre-built database:%@", error];
         }
     }
     // end::prebuilt-database[]
@@ -354,9 +354,9 @@
     // tag::document-expiration[]
     // Purge the document one day from now
     NSDate *ttl = [[NSCalendar currentCalendar] dateByAddingUnit:NSCalendarUnitDay
-                                                           value:1
-                                                          toDate:[NSDate date]
-                                                         options:0];
+        value:1
+        toDate:[NSDate date]
+        options:0];
     [self.collection setDocumentExpirationWithID:@"doc123" expiration:ttl error:&error];
 
     // Reset expiration
@@ -365,9 +365,9 @@
     // Query documents that will be expired in less than five minutes
     NSTimeInterval fiveMinutesFromNow = [[NSDate dateWithTimeIntervalSinceNow:60 * 5] timeIntervalSince1970];
     CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult expression:[CBLQueryMeta id]]]
-                                         from:[CBLQueryDataSource collection:self.collection]
-                                        where:[[CBLQueryMeta expiration]
-                                                lessThan:[CBLQueryExpression double:fiveMinutesFromNow]]];
+        from:[CBLQueryDataSource collection:self.collection]
+        where:[[CBLQueryMeta expiration]
+        lessThan:[CBLQueryExpression double:fiveMinutesFromNow]]];
     // end::document-expiration[]
     NSLog(@"%@", query);
 }
@@ -380,12 +380,12 @@
     CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"hoteldb" error:&error];
     CBLCollection *collection = [database defaultCollection:&error];
     // end::datatype_usage_createdb[]
-    
+
     // tag::datatype_usage_createdoc[]
     // Create your new document
     CBLMutableDocument *mutableDoc = [[CBLMutableDocument alloc] init];
     // end::datatype_usage_createdoc[]
-    
+
     // tag::datatype_usage_mutdict[]
     // Create and populate mutable dictionary
     // Create a new mutable dictionary and populate some keys/values
@@ -396,14 +396,14 @@
     [address setString:@"USA" forKey:@"country"];
     [address setString:@"90210" forKey:@"code"];
     // end::datatype_usage_mutdict[]
-    
+
     // tag::datatype_usage_mutarray[]
     // Create and populate mutable array
     CBLMutableArray *phones = [[CBLMutableArray alloc] init];
     [phones addString:@"650-000-0000"];
     [phones addString:@"650-000-0001"];
     // end::datatype_usage_mutarray[]
-    
+
     // tag::datatype_usage_populate[]
     // Initialize and populate the document
     // Add document type and hotel name as string
@@ -419,11 +419,11 @@
     // Add phone numbers(array)
     [mutableDoc setArray:phones forKey:@"phones"];
     // end::datatype_usage_populate[]
-    
+
     // tag::datatype_usage_persist[]
     [collection saveDocument:mutableDoc error:&error];
     // end::datatype_usage_persist[]
-    
+
     // tag::datatype_usage_closedb[]
     if (![self.database close:&error])
         NSLog(@"Error closing db:%@", error);
@@ -452,7 +452,7 @@
     // Create a mutable copy
     CBLMutableDictionary *mutableDict = [dict toMutable];
     // end::datatype_dictionary[]
-    
+
     NSLog(@"%@", mutableDict);
 }
 
@@ -498,7 +498,7 @@
     // Create a mutable copy
     CBLMutableArray *mutableArray = [array toMutable];
     // end::datatype_array[]
-    
+
     NSLog(@"%@", mutableArray);
 }
 
@@ -550,7 +550,7 @@
 
     [self.collection createIndexWithName:@"TypeNameIndex" config:config error:&error];
     // end::query-index[]
-    
+
     // tag::query-index_Querybuilder[]
     CBLValueIndexItem *type = [CBLValueIndexItem property:@"type"];
     CBLValueIndexItem *name = [CBLValueIndexItem property:@"name"];
@@ -563,7 +563,7 @@
     NSError* error;
     // tag::partial-value-index[]
     CBLValueIndexConfiguration* config = [[CBLValueIndexConfiguration alloc]
-                                          initWithExpression:@[@"city"] where:@"type = \"hotel\""];
+        initWithExpression:@[@"city"] where:@"type = \"hotel\""];
 
     [self.collection createIndexWithName:@"HotelCityIndex" config:config error:&error];
     // end::partial-value-index[]
@@ -573,10 +573,10 @@
     NSError* error;
     // tag::partial-full-text-index[]
     CBLFullTextIndexConfiguration* config = [[CBLFullTextIndexConfiguration alloc]
-                                             initWithExpression:@[@"description"]
-                                             where:@"type = \"hotel\""
-                                             ignoreAccents:NO
-                                             language:nil];
+        initWithExpression:@[@"description"]
+        where:@"type = \"hotel\""
+        ignoreAccents:NO
+        language:nil];
 
     [self.collection createIndexWithName:@"HotelDescIndex" config:config error:&error];
     // end::partial-full-text-index[]
@@ -589,7 +589,7 @@
     CBLQuerySelectResult *type = [CBLQuerySelectResult property:@"type"];
     CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
     CBLQuery *query = [CBLQueryBuilder select:@[metaId, type, name]
-                                         from:[CBLQueryDataSource collection:self.collection]];
+        from:[CBLQueryDataSource collection:self.collection]];
 
     NSEnumerator *rs = [query execute:&error];
     for (CBLQueryResult *result in rs) {
@@ -603,12 +603,12 @@
     CBLQuery *query;
     // tag::query-select-all[]
     query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
-                               from:[CBLQueryDataSource collection:self.collection]];
+        from:[CBLQueryDataSource collection:self.collection]];
     // end::query-select-all[]
 
     // tag::live-query[]
     query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
-                               from:[CBLQueryDataSource collection:self.collection]]; // <.>
+        from:[CBLQueryDataSource collection:self.collection]]; // <.>
 
     // Adds a query change listener.
     // Changes will be posted on the main queue.
@@ -629,10 +629,10 @@
     NSError *error;
     // tag::query-where[]
     CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
-                                         from:[CBLQueryDataSource collection:self.collection]
-                                        where:[[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"hotel"]]
-                                      groupBy:nil having:nil orderBy:nil
-                                        limit:[CBLQueryLimit limit:[CBLQueryExpression integer:10]]];
+        from:[CBLQueryDataSource collection:self.collection]
+        where:[[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"hotel"]]
+        groupBy:nil having:nil orderBy:nil
+        limit:[CBLQueryLimit limit:[CBLQueryExpression integer:10]]];
 
     NSEnumerator *rs = [query execute:&error];
     for (CBLQueryResult *result in rs) {
@@ -648,8 +648,8 @@
     // tag::query-deleted-documents[]
     // Query documents that have been deleted
     CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult expression:CBLQueryMeta.id]]
-                                         from:[CBLQueryDataSource collection:self.collection]
-                                        where:CBLQueryMeta.isDeleted];
+        from:[CBLQueryDataSource collection:self.collection]
+        where:CBLQueryMeta.isDeleted];
     // end::query-deleted-documents[]
     NSLog(@"%@", query);
 }
@@ -664,11 +664,11 @@
 
     CBLQueryExpression *type = [[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"hotel"]];
     CBLQueryExpression *contains = [CBLQueryArrayFunction contains:[CBLQueryExpression property:@"public_likes"]
-                                                             value:[CBLQueryExpression string:@"Armani Langworth"]];
+        value:[CBLQueryExpression string:@"Armani Langworth"]];
 
     CBLQuery *query = [CBLQueryBuilder select:@[id, name, likes]
-                                         from:[CBLQueryDataSource collection:self.collection]
-                                        where:[type andExpression:contains]];
+        from:[CBLQueryDataSource collection:self.collection]
+        where:[type andExpression:contains]];
 
     NSEnumerator *rs = [query execute:&error];
     for (CBLQueryResult *result in rs) {
@@ -680,12 +680,13 @@
 - (void) dontTestCollectionOperatorIn {
     // tag::query-collection-operator-in[]
     NSArray *values = @[[CBLQueryExpression property:@"first"],
-                       [CBLQueryExpression property:@"last"],
-                       [CBLQueryExpression property:@"username"]];
+        [CBLQueryExpression property:@"last"],
+        [CBLQueryExpression property:@"username"]];
 
     [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
-                       from:[CBLQueryDataSource collection:self.collection]
-                      where:[[CBLQueryExpression string:@"Armani"] in:values]];
+        from:[CBLQueryDataSource collection:self.collection]
+        where:[[CBLQueryExpression string:@"Armani"] in:values]];
+    NSLog(@"%@", query);
     // end::query-collection-operator-in[]
 }
 
@@ -700,8 +701,8 @@
     CBLQueryExpression *like = [[CBLQueryFunction lower:[CBLQueryExpression property:@"name"]] like:[CBLQueryExpression string:@"royal engineers museum"]];
 
     CBLQuery *query = [CBLQueryBuilder select:@[id, country, name]
-                                         from:[CBLQueryDataSource collection:self.collection]
-                                        where:[type andExpression:like]];
+        from:[CBLQueryDataSource collection:self.collection]
+        where:[type andExpression:like]];
 
     NSEnumerator *rs = [query execute:&error];
     for (CBLQueryResult *result in rs) {
@@ -722,10 +723,10 @@
     CBLQueryLimit *limit = [CBLQueryLimit limit:[CBLQueryExpression integer:10]];
 
     CBLQuery *query = [CBLQueryBuilder select:@[id, country, name]
-                                         from:[CBLQueryDataSource collection:self.collection]
-                                        where:[type andExpression:like]
-                                      groupBy:nil having:nil orderBy:nil
-                                        limit:limit];
+        from:[CBLQueryDataSource collection:self.collection]
+        where:[type andExpression:like]
+        groupBy:nil having:nil orderBy:nil
+        limit:limit];
     // end::query-like-operator-wildcard-match[]
 
     NSLog(@"%@", query);
@@ -743,10 +744,10 @@
     CBLQueryLimit *limit = [CBLQueryLimit limit:[CBLQueryExpression integer:10]];
 
     CBLQuery *query = [CBLQueryBuilder select:@[id, country, name]
-                                         from:[CBLQueryDataSource collection:self.collection]
-                                        where:[type andExpression:like]
-                                      groupBy:nil having:nil orderBy:nil
-                                        limit:limit];
+        from:[CBLQueryDataSource collection:self.collection]
+        where:[type andExpression:like]
+        groupBy:nil having:nil orderBy:nil
+        limit:limit];
     // end::query-like-operator-wildcard-character-match[]
 
     NSLog(@"%@", query);
@@ -764,10 +765,10 @@
     CBLQueryLimit *limit = [CBLQueryLimit limit:[CBLQueryExpression integer:10]];
 
     CBLQuery *query = [CBLQueryBuilder select:@[id, name]
-                                         from:[CBLQueryDataSource collection:collection]
-                                        where:[type andExpression:regex]
-                                      groupBy:nil having:nil orderBy:nil
-                                        limit:limit];
+        from:[CBLQueryDataSource collection:collection]
+        where:[type andExpression:regex]
+        groupBy:nil having:nil orderBy:nil
+        limit:limit];
     // end::query-regex-operator[]
 
     NSLog(@"%@", query);
@@ -776,31 +777,31 @@
 - (void) dontTestJoin {
     // tag::query-join[]
     CBLQuerySelectResult *name = [CBLQuerySelectResult
-                                  expression:[CBLQueryExpression property:@"name" from:@"airline"]];
+        expression:[CBLQueryExpression property:@"name" from:@"airline"]];
     CBLQuerySelectResult *callsign = [CBLQuerySelectResult
-                                      expression:[CBLQueryExpression property:@"callsign" from:@"airline"]];
+        expression:[CBLQueryExpression property:@"callsign" from:@"airline"]];
     CBLQuerySelectResult *dest = [CBLQuerySelectResult
-                                  expression:[CBLQueryExpression property:@"destinationairport" from:@"route"]];
+        expression:[CBLQueryExpression property:@"destinationairport" from:@"route"]];
     CBLQuerySelectResult *stops = [CBLQuerySelectResult
-                                   expression:[CBLQueryExpression property:@"stops" from:@"route"]];
+        expression:[CBLQueryExpression property:@"stops" from:@"route"]];
     CBLQuerySelectResult *airline = [CBLQuerySelectResult
-                                     expression:[CBLQueryExpression property:@"airline" from:@"route"]];
+        expression:[CBLQueryExpression property:@"airline" from:@"route"]];
 
     CBLQueryJoin *join = [CBLQueryJoin join:[CBLQueryDataSource collection:self.collection
-                                                                      as:@"route"]
-                                         on:[[CBLQueryMeta idFrom:@"airline"]
-                                             equalTo:[CBLQueryExpression property:@"airlineid"
-                                                                             from:@"route"]]];
+        as:@"route"]
+        on:[[CBLQueryMeta idFrom:@"airline"]
+        equalTo:[CBLQueryExpression property:@"airlineid"
+        from:@"route"]]];
 
     CBLQueryExpression *typeRoute = [[CBLQueryExpression property:@"type" from:@"route"]
-                                     equalTo:[CBLQueryExpression string:@"route"]];
+        equalTo:[CBLQueryExpression string:@"route"]];
     CBLQueryExpression *typeAirline = [[CBLQueryExpression property:@"type" from:@"airline"]
-                                       equalTo:[CBLQueryExpression string:@"airline"]];
+        equalTo:[CBLQueryExpression string:@"airline"]];
     CBLQueryExpression *sourceRIX = [[CBLQueryExpression property:@"sourceairport" from:@"route"]
-                                     equalTo:[CBLQueryExpression string:@"RIX"]];
+        equalTo:[CBLQueryExpression string:@"RIX"]];
 
     CBLQuery *query = [CBLQueryBuilder select:@[name, callsign, dest, stops, airline]
-                                         from:[CBLQueryDataSource collection:self.collection as:@"airline"]
+        from:[CBLQueryDataSource collection:self.collection as:@"airline"]
                                          join:@[join]
                                         where:[[typeRoute andExpression:typeAirline] andExpression:sourceRIX]];
     // end::query-join[]
@@ -844,7 +845,7 @@
 
 - (void) dontTestExplainAll {
     NSError *error;
-    
+
     // tag::query-explain-all[]
     CBLQuery *query = [CBLQueryBuilder
                        select:@[[CBLQuerySelectResult all]]
@@ -859,7 +860,7 @@
 }
 - (void) dontTestExplainLike {
     NSError *error;
-    
+
     // tag::query-explain-like[]
     CBLQueryExpression *type =
         [[CBLQueryExpression property:@"type"]
@@ -879,7 +880,7 @@
 }
 - (void) dontTestExplainNoPfx {
     NSError *error;
-    
+
     // tag::query-explain-nopfx[]
     CBLQueryExpression *type =
         [[CBLQueryExpression property:@"type"]
@@ -901,7 +902,7 @@
 
 - (void) dontTestExplainFunction {
     NSError *error;
-    
+
     // tag::query-explain-function[]
     CBLQueryExpression *type =
         [[CBLQueryFunction lower:[CBLQueryExpression property:@"type"]]
@@ -922,7 +923,7 @@
 
 - (void) dontTestExplainNoFunction {
     NSError *error;
-    
+
     // tag::query-explain-nofunction[]
     CBLQueryExpression *type =
         [[CBLQueryExpression property:@"type"]
@@ -943,7 +944,7 @@
 
 - (void) dontTestCreateFullTextIndex {
     NSError *error;
-    
+
     // tag::fts-index[]
     // Insert documents
     NSArray *overviews = @[@"buy groceries", @"play chess", @"book travels", @"buy museum tickets"];
@@ -1004,7 +1005,7 @@
     // tag::fts-query_Querybuilder[]
     id exp = [CBLQueryExpression fullTextIndex:@"nameFTSIndex"];
     CBLQueryExpression *where = [CBLQueryFullTextFunction matchWithIndex:exp query:@"'buy'"];
-    
+
     CBLQuery *query =
       [CBLQueryBuilder
         select:@[[CBLQuerySelectResult expression:[CBLQueryMeta id]]]
@@ -1085,7 +1086,7 @@
 
 - (void) dontTestQuerySyntaxJson {
     NSError *error;
-    
+
     // tag::query-syntax-all[]
     CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
                                              from:[CBLQueryDataSource collection:self.collection]]; // <.>
@@ -1129,7 +1130,7 @@
 
 - (void) dontTestQuerySyntaxAndAccessProps {
     NSError *error = nil;
-    
+
     // tag::query-syntax-props[]
     CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
 
@@ -1166,7 +1167,7 @@
     CBLQuery *query = [CBLQueryBuilder select:@[selectResult]
                                          from:[CBLQueryDataSource collection:self.collection]]; // <.>
     // end::query-syntax-count-only[]
-    
+
     // tag::query-access-count-only[]
     CBLQueryResultSet *results = [query execute:&error];
 
@@ -1174,20 +1175,20 @@
         count = [result integerForKey:@"myCount"]; // <.>
     }
     // end::query-access-count-only[]
-    
+
     NSLog(@"print to avoid warning %@ %ld", query, count);
 }
 
 - (void) dontTestQuerySyntaxID {
     NSError *error;
-    
+
     // tag::query-syntax-id[]
     CBLQuerySelectResult *selectResult = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
 
     CBLQuery *query = [CBLQueryBuilder select:@[selectResult]
                                          from:[CBLQueryDataSource collection:self.collection]];
     // end::query-syntax-id[]
-    
+
     // tag::query-access-id[]
     CBLQueryResultSet *results = [query execute:&error];
     CBLDocument *doc = nil;
@@ -1201,7 +1202,7 @@
         NSLog(@"doc.id = %@", doc.id);
     }
     // end::query-access-id[]
-    
+
     NSLog(@"print to avoid warning %@", query);
 }
 
@@ -1220,7 +1221,7 @@
                                       orderBy:nil
                                         limit:queryLimit];
     // end::query-syntax-pagination[]
-    
+
     NSLog(@"print to avoid warning %@", query);
 }
 
@@ -1234,7 +1235,7 @@
 
     CBLQueryResultSet *results = [query execute:&error];
     // end::query-syntax-n1ql[]
-    
+
     NSLog(@"resultset.count = %lu", (unsigned long)results.allResults.count);
 }
 
@@ -1252,7 +1253,7 @@
 
     CBLQueryResultSet *results =  [query execute:&error];
     // end::query-syntax-n1ql-params[]
-    
+
     NSLog(@"resultset.count = %lu", (unsigned long)results.allResults.count);
 }
 
@@ -1288,18 +1289,18 @@
     // tag::tojson-dictionary[]
     NSString *json = @"{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\","
     "\"city\":\"Balmain\",\"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\"}";
-    
-    
+
+
     CBLMutableDictionary *dict = [[CBLMutableDictionary alloc] initWithJSON:json
                                                                       error:&error];
-    
+
     NSString *name = [dict stringForKey:@"name"];
-    
+
     for (NSString *key in dict) {
         NSLog(@"%@ %@", key, [dict valueForKey:key]);
     }
     // end::tojson-dictionary[]
-    
+
     NSLog(@"%@", name);
 }
 
@@ -1343,7 +1344,7 @@
     CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithCollections:@[collectionConfig] target:target]; // <.>
 
     replConfig.acceptOnlySelfSignedServerCertificate = true; // <.>
-    
+
     replConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"valid.user"
                                                                   password:@"valid.password.string"]; // <.>
 
@@ -1368,50 +1369,50 @@
                                           initWithCollections:@[collectionConfig]
                                           target:listener]; // <.>
     // end::sgw-act-rep-configure-target[]
-    
+
     // tag::sgw-rep-network-interface[]
     config.networkInterface = @"en0";
     // end::sgw-rep-network-interface[]
-    
+
     // tag::sgw-act-rep-config-type[]
     config.replicatorType = kCBLReplicatorTypePushAndPull;
     // end::sgw-act-rep-config-type[]
-    
+
     // tag::sgw-act-rep-config-cont[]
     // Configure Sync Mode
     config.continuous = true;
     // end::sgw-act-rep-config-cont[]
-    
+
     // tag::replication-retry-config[]
     config.heartbeat = 150; // <.>
     config.maxAttempts = 20; // <.>
     config.maxAttemptWaitTime = 600; // <.>
     // end::replication-retry-config[]
-    
+
     // tag::sgw-rep-config-cacert[]
     // Only accept CA Certs
     config.acceptOnlySelfSignedServerCertificate = false; // <.>
     // end::sgw-rep-config-cacert[]
-    
+
     // tag::sgw-rep-config-self-cert[]
     // Only accept self-signed certs
     config.acceptOnlySelfSignedServerCertificate = true; // <.>
     // end::sgw-rep-config-self-cert[]
-    
+
     // tag::sgw-rep-config-cacert-pinned[]
     NSURL *certURL = [[NSBundle mainBundle] URLForResource:@"cert" withExtension:@"cer"];
     NSData *data = [[NSData alloc] initWithContentsOfURL:certURL];
     SecCertificateRef certificate = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
-    
+
     config.acceptOnlySelfSignedServerCertificate=false;
     config.pinnedServerCertificate = (SecCertificateRef)CFAutorelease(certificate);
     // end::sgw-rep-config-cacert-pinned[]
-    
+
     // tag::sgw-config-autopurge[]
     // Default is YES
     config.enableAutoPurge = NO; // <.>
     // end::sgw-config-autopurge[]
-    
+
     // tag::sgw-start-repl[]
     /** Apply configuration settings */
     self.replicator = [[CBLReplicator alloc] initWithConfig:config]; // <.>
@@ -1419,7 +1420,7 @@
     [self.replicator start]; // <.>
     // end::sgw-start-repl[]
     // end::sgw-rep-func[]
-    
+
     NSLog(@"print to aviod warning %@", config.description);
 }
 
@@ -1427,10 +1428,10 @@
     // tag::basic-authentication[]
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
-    
+
     CBLCollectionConfiguration *collectionConfig = [[CBLCollectionConfiguration alloc] initWithCollection:self.collection];
     CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithCollections:@[collectionConfig] target:target];
-    
+
     replConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"john" password:@"pass"];
 
     self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
@@ -1442,10 +1443,10 @@
     // tag::session-authentication[]
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
-    
+
     CBLCollectionConfiguration *collectionConfig = [[CBLCollectionConfiguration alloc] initWithCollection:self.collection];
     CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithCollections:@[collectionConfig] target:target];
-    
+
     replConfig.authenticator = [[CBLSessionAuthenticator alloc] initWithSessionID:@"904ac010862f37c8dd99015a33ab5a3565fd8447"];
 
     self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
@@ -1468,10 +1469,10 @@
     // tag::replication-pendingdocuments[]
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
-    
+
     CBLCollectionConfiguration *collectionConfig = [[CBLCollectionConfiguration alloc] initWithCollection:self.collection];
     CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithCollections:@[collectionConfig] target:target];
-    
+
     replConfig.replicatorType = kCBLReplicatorTypePush;
     // tag::replication-push-pendingdocumentids[]
     self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
@@ -1499,7 +1500,7 @@
                 // end::replication-push-isdocumentpending[]
             }
         }];
-        
+
         [self.replicator start];
     };
     // end::replication-pendingdocuments[]
@@ -1509,7 +1510,7 @@
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
     CBLCollectionConfiguration *collectionConfig = [[CBLCollectionConfiguration alloc] initWithCollection:self.collection];
-    
+
     // tag::replication-custom-header[]
     CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithCollections:@[collectionConfig] target:target];
     replConfig.headers = @{@"CustomHeaderName" :@"Value"};
@@ -1520,7 +1521,7 @@
     // tag::replication-push-filter[]
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
-    
+
     CBLCollectionConfiguration *collectionConfig = [[CBLCollectionConfiguration alloc] initWithCollection:self.collection];
     collectionConfig.pushFilter = ^BOOL(CBLDocument *doc, CBLDocumentFlags flags) { // <1>
         if ([[doc stringForKey:@"type"] isEqualToString:@"draft"]) {
@@ -1528,7 +1529,7 @@
         }
         return true;
     };
-    
+
     CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithCollections:@[collectionConfig] target:target];
 
     self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
@@ -1540,7 +1541,7 @@
     // tag::replication-pull-filter[]
     NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
-    
+
     CBLCollectionConfiguration *collectionConfig = [[CBLCollectionConfiguration alloc] initWithCollection:self.collection];
     collectionConfig.pullFilter = ^BOOL(CBLDocument *doc, CBLDocumentFlags flags) { // <1>
         if ((flags & kCBLDocumentFlagsDeleted) == kCBLDocumentFlagsDeleted) {
@@ -1548,7 +1549,7 @@
         }
         return true;
     };
-    
+
     CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithCollections:@[collectionConfig] target:target];
 
     self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
@@ -1604,7 +1605,7 @@
     NSURL *certURL = [[NSBundle mainBundle] URLForResource:@"cert" withExtension:@"cer"];
     NSData *data = [[NSData alloc] initWithContentsOfURL:certURL];
     SecCertificateRef certificate = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
-    
+
     config.acceptOnlySelfSignedServerCertificate=false;
     config.pinnedServerCertificate = (SecCertificateRef)CFAutorelease(certificate);
     // end::certificate-pinning[]
@@ -1615,11 +1616,11 @@
      if it's compiled against CBL Swift Community. */
     // tag::database-replica[]
     CBLDatabaseEndpoint *targetDatabase = [[CBLDatabaseEndpoint alloc] initWithDatabase:self.otherDB];
-    
+
     CBLCollectionConfiguration *collectionConfig = [[CBLCollectionConfiguration alloc] initWithCollection:self.collection];
     CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithCollections:@[collectionConfig] target:targetDatabase];
     replConfig.replicatorType = kCBLReplicatorTypePush;
-    
+
     self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
     [self.replicator start];
     // end::database-replica[]
@@ -1660,19 +1661,19 @@
     CBLURLEndpointListenerConfiguration *endpointConfig = [[CBLURLEndpointListenerConfiguration alloc]
                                                            initWithCollections:[NSArray arrayWithObject:self.collection]];
     // end::listener-config-db[]
-    
+
     // tag::listener-config-port[]
     endpointConfig.port =  55990; // <.>
     // end::listener-config-port[]
-    
+
     // tag::listener-config-netw-iface[]
     endpointConfig.networkInterface = @"10.1.1.10"; // <.>
     // end::listener-config-netw-iface[]
-    
+
     // tag::listener-config-delta-sync[]
     endpointConfig.enableDeltaSync = true; // <.>
     // end::listener-config-delta-sync[]
-    
+
     // Configure server security
     // tag::listener-config-tls-enable[]
     endpointConfig.disableTLS  = false; // <.>
@@ -1682,7 +1683,7 @@
     // Use an anonymous self-signed cert
     endpointConfig.tlsIdentity = nil; // <.>
     // end::listener-config-tls-id-anon[]
-    
+
     // tag::listener-config-client-auth-pwd[]
     // Configure Client Security using an Authenticator
     // For example, Basic Authentication <.>
@@ -1691,7 +1692,7 @@
         return [self isValidCredentials:username password:password];
     }];
     // end::listener-config-client-auth-pwd[]
-    
+
     // tag::listener-start[]
     // tag::listener-init[]
     // Initialize the listener <.>
@@ -1731,7 +1732,7 @@
 
     endpointConfig.tlsIdentity = tlsIdentity; // <.>
     // end::listener-config-tls-id-caCert[]
-    
+
     // tag::listener-config-tls-id-SelfSigned[]
     // Use a self-signed certificate
     NSDictionary *attrs = @{ kCBLCertAttrCommonName:@"Couchbase Inc" }; // <.>
@@ -1741,7 +1742,7 @@
                                                   expiration:[NSDate dateWithTimeIntervalSinceNow:86400] label:@"couchbase-docs-cert"
                                                        error:&error];// <.>
     // end::listener-config-tls-id-SelfSigned[]
-    
+
     // tag::listener-config-tls-id-set[]
     // Set the TLS Identity
     endpointConfig.tlsIdentity = tlsIdentity; // <.>
@@ -1761,7 +1762,7 @@
     config.authenticator = [[CBLListenerCertificateAuthenticator alloc]
                             initWithRootCerts:@[(id)CFBridgingRelease(rootCertRef)]];  // <.> <.>
     // end::listener-config-client-auth-root[]
-    
+
     // tag::listener-config-client-auth-lambda[]
     // Authenticate self-signed cert
     // using application logic
@@ -1786,7 +1787,7 @@
     NSUInteger totalConnections = self.listener.status.connectionCount;
     NSUInteger activeConnections = self.listener.status.activeConnectionCount;
     // end::listener-status-check[]
-    
+
     NSLog(@"%lu", (unsigned long)totalConnections);
     NSLog(@"%lu", (unsigned long)activeConnections);
 }
@@ -1800,7 +1801,7 @@
     NSURL *url = [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
     CBLCollectionConfiguration *collectionConfig = [[CBLCollectionConfiguration alloc] initWithCollection:self.collection];
-    
+
     // tag::p2p-act-rep-config-conflict[]
     /**
      Optionally set custom conflict resolver callback.
@@ -1810,31 +1811,31 @@
     // end::p2p-act-rep-config-conflict[]
     CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithCollections:@[collectionConfig] target:target];
     // end::p2p-act-rep-target[]
-    
+
     // tag::p2p-act-rep-config-type[]
     replConfig.replicatorType = kCBLReplicatorTypePush;
     // end::p2p-act-rep-config-type[]
-    
+
     // tag::p2p-act-rep-config-cont[]
     replConfig.continuous = YES;
     // end::p2p-act-rep-config-cont[]
-    
+
     // tag::autopurge-override[]
     /** Default is YES */
     replConfig.enableAutoPurge = NO;
     // end::autopurge-override[]
-    
+
     // tag::p2p-act-rep-config-cacert[]
     // Only accept CA Certs
     replConfig.acceptOnlySelfSignedServerCertificate = NO; // <.>
     // end::p2p-act-rep-config-cacert[]
-    
+
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Authentication
     // Here - expect and accept self-signed certs
     replConfig.acceptOnlySelfSignedServerCertificate = YES; // <.>
     // end::p2p-act-rep-config-self-cert[]
-    
+
     // tag::p2p-act-rep-config-cacert-pinned[]
     NSURL *certURL = [[NSBundle mainBundle] URLForResource:@"cert" withExtension:@"cer"];
     NSData *data = [[NSData alloc] initWithContentsOfURL:certURL];
@@ -1843,14 +1844,14 @@
     replConfig.pinnedServerCertificate = (SecCertificateRef)CFAutorelease(certificate);
     replConfig.acceptOnlySelfSignedServerCertificate=false;
     // end::p2p-act-rep-config-cacert-pinned[]
-    
+
     // tag::p2p-act-rep-auth[]
     // Here set client to use basic authentication
     // Providing username and password credentials
     // If prompted for them by server
     replConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; // <.>
     // end::p2p-act-rep-auth[]
-    
+
     // tag::p2p-act-rep-start-full[]
     // Apply configuration settings to the replicator
     self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig]; // <.>
@@ -1872,7 +1873,7 @@
     [self.replicator start]; // <.>
     // end::p2p-act-rep-start-full[]
     // end::p2p-act-rep-func[]
-    
+
     // tag::p2p-act-rep-stop[]
     // Remove the change listener
     [listenerToken remove];
@@ -1921,7 +1922,7 @@
     CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
     CBLCollectionConfiguration *collectionConfig = [[CBLCollectionConfiguration alloc] initWithCollection:self.collection];
     collectionConfig.conflictResolver = [[LocalWinConflictResolver alloc] init];
-    
+
     CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithCollections:@[collectionConfig] target:target];
 
     self.replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
@@ -1993,7 +1994,7 @@
         CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc]
                                                   initWithCollections:@[collectionConfig]
                                                   target:endpoint];
-        
+
         // Create the replicator object.
         CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:replConfig];
         [replicator start];
