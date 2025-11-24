@@ -13,21 +13,21 @@ This can result in a delay before the database is usable.
 --
 
 [#4-0-0-upgrade]
-== {major}.{minor}.{base}{empty} Upgrade
+== {major}.{minor}.{maintenance-ios}{empty} Upgrade
 
 Couchbase Lite 4.0 introduces significant architectural changes, most notably the migration from revision trees to version vectors for document versioning.
 This upgrade requires understanding of the compatibility requirements.
 
 The action takes place automatically and can lead to some delay in the database becoming available for use in your application.
 
-In addition, if you're syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their effects.
+In addition, if you're syncing with a {major}.{minor}.{maintenance-ios}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their effects.
 See xref:sync-gateway::upgrading.adoc[Upgrading Sync Gateway] for more details.
 This is a one-way conversion.
 
-=== Major Changes in {major}.{minor}.{base}{empty}
+=== Major Changes in {major}.{minor}.{maintenance-ios}{empty}
 
 **Version Vector Architecture**:
-CBL {major}.{minor}.{base}{empty} replaces the revision tree system with version vectors, providing improved performance, scalability, and conflict resolution.
+CBL {major}.{minor}.{maintenance-ios}{empty} replaces the revision tree system with version vectors, providing improved performance, scalability, and conflict resolution.
 Documents now use version-based revision IDs in the format `<timestamp>@<source-id>` instead of the previous `<generation>-<document-hash>` format.
 
 **Enhanced Conflict Resolution**: The default conflict resolution strategy changes from `most active wins` to `last write wins` based on hybrid logical timestamps, providing more intuitive and predictable conflict resolution behavior.
@@ -39,20 +39,20 @@ a new `timestamp` property is available on Document objects, providing direct ac
 === Database Compatibility
 
 **Automatic Upgrade from 3.x**:
-CBL {major}.{minor}.{base}{empty} databases are compatible with CBL 3.1 and 3.2 databases.
-When opening a 3.1 or 3.2 database with CBL {major}.{minor}.{base}{empty}, documents are automatically upgraded to use version vectors when they're updated and saved.
+CBL {major}.{minor}.{maintenance-ios}{empty} databases are compatible with CBL 3.1 and 3.2 databases.
+When opening a 3.1 or 3.2 database with CBL {major}.{minor}.{maintenance-ios}{empty}, documents are automatically upgraded to use version vectors when they're updated and saved.
 
 **No Configuration Required**:
-CBL {major}.{minor}.{base}{empty} enables version vectors by default - the feature requires no API configuration.
+CBL {major}.{minor}.{maintenance-ios}{empty} enables version vectors by default - the feature requires no API configuration.
 
 [#synchronization-compatibility-40]
 === Synchronization Compatibility
 
 **Sync Gateway Requirements**:
-CBL {major}.{minor}.{base}{empty} requires Sync Gateway 4.x or later for synchronization.
+CBL {major}.{minor}.{maintenance-ios}{empty} requires Sync Gateway 4.x or later for synchronization.
 Attempting to sync with Sync Gateway versions prior to 4.x results in replication errors with appropriate error messages indicating the incompatibility.
 
-**Peer-to-Peer Compatibility**: CBL {major}.{minor}.{base}{empty} can only perform peer-to-peer synchronization with other CBL 4.x instances using either `URLEndpointListener` or `MessageEndpointListener`.
+**Peer-to-Peer Compatibility**: CBL {major}.{minor}.{maintenance-ios}{empty} can only perform peer-to-peer synchronization with other CBL 4.x instances using either `URLEndpointListener` or `MessageEndpointListener`.
 Sync attempts with CBL 3.x peers fail with appropriate error messages.
 
 [#api-changes]
