@@ -801,7 +801,7 @@
         equalTo:[CBLQueryExpression string:@"RIX"]];
 
     CBLQuery *query = [CBLQueryBuilder select:@[name, callsign, dest, stops, airline]
-                                         from:[CBLQueryDataSource collection:self.collection as:@"airline"]
+        from:[CBLQueryDataSource collection:self.collection as:@"airline"]
                                          join:@[join]
                                         where:[[typeRoute andExpression:typeAirline] andExpression:sourceRIX]];
     // end::query-join[]
