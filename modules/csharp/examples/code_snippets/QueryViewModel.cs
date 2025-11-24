@@ -23,8 +23,8 @@ namespace cblQueryEgAppProj.ViewModels
         public static void testQuerySyntaxAll()
         {
             // For Documentation
-           
-            
+
+
             var dbName = "travel-sample";
             var this_Db = new Database(dbName);
 
@@ -118,9 +118,9 @@ namespace cblQueryEgAppProj.ViewModels
 
             // tag::query-syntax-props[]
             var query = QueryBuilder.Select(
-                    SelectResult.Property("type"),
-                    SelectResult.Property("name"),
-                    SelectResult.Property("city")).From(DataSource.Database(this_Db));
+                SelectResult.Property("type"),
+                SelectResult.Property("name"),
+                SelectResult.Property("city")).From(DataSource.Database(this_Db));
             // end::query-syntax-props[]
 
             // tag::query-access-props[]
@@ -287,8 +287,8 @@ namespace cblQueryEgAppProj.ViewModels
             Database thisDb = new Database(dbName, dbCfg);
 
             thisQuery = thisDb.CreateQuery("SELECT META().id FROM  _default WHERE type = 'hotel'");
-            
-            return thisQuery.Execute().AllResults(); 
+
+            return thisQuery.Execute().AllResults();
 
 
             //Dictionary<string, object> hotel = new Dictionary<string, object>();
@@ -318,4 +318,3 @@ namespace cblQueryEgAppProj.ViewModels
     } // public class
 } // namespace
 
- 

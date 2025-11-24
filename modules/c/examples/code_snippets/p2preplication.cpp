@@ -28,11 +28,11 @@ static CBLReplicator* kReplicator;
 // tag::p2p-act-rep-add-change-listener[]
 // Purpose -- illustrate a simple change listener
 static void simpleChangeListener(
-                void* context,
-                CBLReplicator* repl,
-                const CBLReplicatorStatus* status) {
-     if(status->error.code != 0) {
-         printf("Error %d / %d\n",
+        void* context,
+        CBLReplicator* repl, // <.>
+    const CBLReplicatorStatus* status) { // <.>
+        if(status->error.code != 0) {
+            printf("Error %d / %d\n", // <.>
                 status->error.domain,
                 status->error.code);
      }
@@ -58,8 +58,8 @@ static const CBLDocument* simpleConflictResolver_localWins(
 // tag::replication-pull-filter[]
 // Purpose -- illustrate a simple replication filter function
 static bool simpleReplicationFilter(void* context,
-                                    CBLDocument* argDoc,
-                                    CBLDocumentFlags argFlags)
+    CBLDocument* argDoc,
+    CBLDocumentFlags argFlags) // <.>
 {
     bool result = (argFlags == kCBLDocumentFlagsDeleted);
     return result;
@@ -73,11 +73,11 @@ static bool simpleReplicationFilter(void* context,
 // tag::SimpleReplicationDocumentListener[]
 // Purpose -- Illustrate a simple replication document listener
 static void SimpleReplicationDocumentListener(
-                                              void *context,
-                                              CBLReplicator *replicator,
-                                              bool isPush,
-                                              unsigned numDocuments,
-                                              const CBLReplicatedDocument *documents) {
+    void *context,
+    CBLReplicator *replicator,
+    bool isPush, // <.>
+    unsigned numDocuments, // <.>
+    const CBLReplicatedDocument *documents) { // <.>
 
     if(isPush) {
         printf("We pushed %d documents",numDocuments);
@@ -153,8 +153,8 @@ static void docs_act_replication() {
     // Optionally, add change listener
     CBLListenerToken* token =
             CBLReplicator_AddChangeListener(replicator,
-                                            simpleChangeListener,
-                                            NULL); // <.>
+            simpleChangeListener,
+            NULL); // <.>
 
     // Start replication
     CBLReplicator_Start(replicator, false); // <.>
@@ -243,7 +243,7 @@ static void docs_act_replication_config_section_snippets() {
     if(docs_example_ShowBasicAuth) {
         CBLAuthenticator* basicAuth =
             CBLAuth_CreatePassword(FLSTR("username"),
-                                   FLSTR("passwd"));
+                FLSTR("passwd"));
         config.authenticator = basicAuth; // <.>
     }
     // end::basic-authentication[]
@@ -252,7 +252,7 @@ static void docs_act_replication_config_section_snippets() {
     if(docs_example_ShowSessionAuth) {
         CBLAuthenticator* sessionAuth =
             CBLAuth_CreateSession(FLSTR("904ac010862f37c8dd99015a33ab5a3565fd8447"),
-                                  FLSTR("optionalCookieName"));
+                FLSTR("optionalCookieName"));
         config.authenticator = sessionAuth; // <.>
     }
 
@@ -263,8 +263,8 @@ static void docs_act_replication_config_section_snippets() {
     // Optionally, add custom headers
     FLMutableDict customHdrs = FLMutableDict_New();
     FLMutableDict_SetString(customHdrs,
-                            FLSTR("customHeaderName"),
-                            FLSTR("customHeaderValue"));
+        FLSTR("customHeaderName"),
+        FLSTR("customHeaderValue"));
 
     config.headers = customHdrs;
 
@@ -302,8 +302,8 @@ static void docs_act_replication_config_section_snippets() {
     // Add optional change listener
     CBLListenerToken* token =
         CBLReplicator_AddChangeListener(replicator,
-                                        docs_example_simpleChangeListener,
-                                        NULL); // <.>
+            docs_example_simpleChangeListener,
+            NULL); // <.>
 
 
 }
@@ -315,9 +315,9 @@ static void docs_act_replication_config_section_snippets() {
 // PAGE=Data Sync >> Initialize section
 // URL=https://docs.couchbase.com/couchbase-lite/current/c/replication.html#lbl-init-repl
 static CBLReplicator* docs_act_replication_Intialize(
-                        void* context,
-                        CBLReplicatorConfiguration argConfig,
-                        bool argResetRequired)
+    void* context,
+    CBLReplicatorConfiguration argConfig,
+    bool argResetRequired) // <.>
 {
 
     CBLError err;
@@ -353,8 +353,8 @@ static CBLReplicator* docs_act_replication_Intialize(
 // BEGIN replication.html >> Monitor section
 //
 static void docs_act_replication_Monitor(
-                                       void* context,
-                                       CBLReplicator* argRepl) {
+    void* context,
+    CBLReplicator* argRepl) {
 
     CBLError err;
 
@@ -364,17 +364,17 @@ static void docs_act_replication_Monitor(
     // Purpose -- illustrate addition of a Replicator change listener
     CBLListenerToken* token_ReplChangeListener =
             CBLReplicator_AddChangeListener(thisRepl,
-                                            simpleChangeListener,
-                                            NULL);
+                simpleChangeListener,
+                NULL);
 
     // end::p2p-act-rep-add-change-listener[]
     // tag::add-document-replication-listener[]
     // Purpose -- illustrate addition of a Document Replicator  listener
     CBLListenerToken* token_ReplDocListener =
             CBLReplicator_AddDocumentReplicationListener(
-                                                        thisRepl,
-                                                        SimpleReplicationDocumentListener,
-                                                        context);
+                thisRepl,
+                SimpleReplicationDocumentListener,
+                context);
 
     // end::add-document-replication-listener[]
     // tag::remove-document-replication-listener[]
@@ -418,8 +418,8 @@ static void docs_act_replication_Monitor(
             pendingId = FLValue_AsString(itemValue);
 
             if(CBLReplicator_IsDocumentPending(thisRepl,
-                                               pendingId,
-                                               &err)) {
+                    pendingId,
+                    &err)) {
                 // ... process the still pending docid as required <.>
 
             } else {
@@ -455,8 +455,8 @@ static void docs_act_replication_Monitor(
 // URL=https://docs.couchbase.com/couchbase-lite/current/c/replication.html#lbl-repl-stop
 
 static void docs_act_replication_Stop(
-                                       void* context,
-                                       CBLReplicator* argRepl) {
+        void* context,
+        CBLReplicator* argRepl) {
     // tag::p2p-act-rep-stop[]
     // Purpose -- show how to stop a replication
 

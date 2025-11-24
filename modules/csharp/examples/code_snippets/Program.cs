@@ -131,7 +131,7 @@ namespace api_walkthrough
             {
                 ConflictResolver = new LocalWinConflictResolver()
             };
-            
+
             var replConfig = new ReplicatorConfiguration([collectionConfig], target);
 
             var replicator = new Replicator(replConfig);
@@ -168,7 +168,7 @@ namespace api_walkthrough
         private static void TestCreateSelfSignedCert()
         {
             var store = new X509Store(StoreName.My);
-            
+
             // The identity will be stored in the secure
             // storage using the given label.
             var fiveMinToExpireCert = DateTimeOffset.UtcNow.AddMinutes(5);
@@ -271,13 +271,13 @@ namespace api_walkthrough
             // replicator is a Replicator instance
             if (resetCheckpointRequired_Example) {
                 replicator.Start(true); // <.>
-            } else { 
+            } else {
                 replicator.Start(false);
             }
 
             // Stop and dispose replicator later
             // end::replication-reset-checkpoint[]
-            
+
         }
 
         private static void Read1xAttachment()
@@ -289,7 +289,7 @@ namespace api_walkthrough
             var avatar = attachments.GetBlob("avatar");
             var content = avatar?.Content;
             // end::1x-attachment[]
-            
+
         }
 
         private static void CreateNewDatabase()
@@ -310,7 +310,7 @@ namespace api_walkthrough
 
         private static void DatabaseFullsync()
         {
-           // tag::database-fullsync[] 
+           // tag::database-fullsync[]
            // this enables fullsync
            var config = new DatabaseConfiguration
            {
@@ -324,7 +324,7 @@ namespace api_walkthrough
             var database = Database!;
             // tag::scopes-manage-create-collection[]
             var collectionWithDefaultScope = Database!.CreateCollection("colA");
-            var collection = database.CreateCollection("colA", "scopeA"); // Scope with named scopeA will be created if it's not existed. There is no public API to create a Scope. 
+            var collection = database.CreateCollection("colA", "scopeA"); // Scope with named scopeA will be created if it's not existed. There is no public API to create a Scope.
             // end::scopes-manage-create-collection[]
         }
 
@@ -620,7 +620,7 @@ namespace api_walkthrough
                 { Expression.Property("first"), Expression.Property("last"), Expression.Property("username") };
 
             using var query = QueryBuilder.Select(
-                    SelectResult.All())
+                SelectResult.All())
                 .From(DataSource.Collection(collection))
                 .Where(Expression.String("Armani").In(values));
 
@@ -629,7 +629,7 @@ namespace api_walkthrough
                 var jsonString = JsonSerializer.Serialize(body);
                 Console.WriteLine($"In results :: {jsonString}");
             }
-            
+
             // end::query-collection-operator-in[]
         }
 
@@ -639,8 +639,9 @@ namespace api_walkthrough
 
             // tag::query-like-operator[]
             using var query = QueryBuilder.Select(
-                    SelectResult.Expression(Meta.ID),
-                    SelectResult.Property("name"))
+                SelectResult.Expression(Meta.ID),
+                SelectResult.Property("name"),
+                SelectResult.Property("country"))
                 .From(DataSource.Collection(collection))
                 .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
                     .And(Function.Lower(Expression.Property("name")).Like(Expression.String("Royal Engineers Museum"))))
@@ -658,8 +659,9 @@ namespace api_walkthrough
 
             // tag::query-like-operator-wildcard-match[]
             using var query = QueryBuilder.Select(
-                    SelectResult.Expression(Meta.ID),
-                    SelectResult.Property("name"))
+                SelectResult.Expression(Meta.ID),
+                SelectResult.Property("name"),
+                SelectResult.Property("country"))
                 .From(DataSource.Collection(collection))
                 .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
                     .And(Function.Lower(Expression.Property("name")).Like(Expression.String("Eng%e%"))))
@@ -677,8 +679,9 @@ namespace api_walkthrough
 
             // tag::query-like-operator-wildcard-character-match[]
             using var query = QueryBuilder.Select(
-                    SelectResult.Expression(Meta.ID),
-                    SelectResult.Property("name"))
+                SelectResult.Expression(Meta.ID),
+                SelectResult.Property("name"),
+                SelectResult.Property("country"))
                 .From(DataSource.Collection(collection))
                 .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
                     .And(Expression.Property("name").Like(Expression.String("Royal Eng____rs Museum"))))
@@ -687,7 +690,7 @@ namespace api_walkthrough
             foreach (var result in query.Execute()) {
                 Console.WriteLine($"Name Property :: {result.GetString("name")}");
             }
-            
+
             // end::query-like-operator-wildcard-character-match[]
         }
 
@@ -697,8 +700,9 @@ namespace api_walkthrough
 
             // tag::query-regex-operator[]
             using var query = QueryBuilder.Select(
-                    SelectResult.Expression(Meta.ID),
-                    SelectResult.Property("name"))
+                SelectResult.Expression(Meta.ID),
+                SelectResult.Property("name"),
+                SelectResult.Property("country"))
                 .From(DataSource.Collection(collection))
                 .Where(Expression.Property("type").EqualTo(Expression.String("landmark"))
                     .And(Expression.Property("name").Regex(Expression.String("\\bEng.*e\\b"))))
@@ -717,11 +721,11 @@ namespace api_walkthrough
 
             // tag::query-join[]
             using var query = QueryBuilder.Select(
-                    SelectResult.Expression(Expression.Property("name").From("airline")),
-                    SelectResult.Expression(Expression.Property("callsign").From("airline")),
-                    SelectResult.Expression(Expression.Property("destinationairport").From("route")),
-                    SelectResult.Expression(Expression.Property("stops").From("route")),
-                    SelectResult.Expression(Expression.Property("airline").From("route")))
+                SelectResult.Expression(Expression.Property("name").From("airline")),
+                SelectResult.Expression(Expression.Property("callsign").From("airline")),
+                SelectResult.Expression(Expression.Property("destinationairport").From("route")),
+                SelectResult.Expression(Expression.Property("stops").From("route")),
+                SelectResult.Expression(Expression.Property("airline").From("route")))
                 .From(DataSource.Collection(collection).As("airline"))
                 .Join(Join.InnerJoin(DataSource.Collection(collection2).As("route"))
                     .On(Meta.ID.From("airline").EqualTo(Expression.Property("airlineid").From("route"))))
@@ -741,9 +745,9 @@ namespace api_walkthrough
 
             // tag::query-groupby[]
             using var query = QueryBuilder.Select(
-                    SelectResult.Expression(Function.Count(Expression.All())),
-                    SelectResult.Property("country"),
-                    SelectResult.Property("tz"))
+                SelectResult.Expression(Function.Count(Expression.All())),
+                SelectResult.Property("country"),
+                SelectResult.Property("tz"))
                 .From(DataSource.Collection(collection))
                 .Where(Expression.Property("type").EqualTo(Expression.String("airport"))
                     .And(Expression.Property("geo.alt").GreaterThanOrEqualTo(Expression.Int(300))))
@@ -762,8 +766,9 @@ namespace api_walkthrough
 
             // tag::query-orderby[]
             using var query = QueryBuilder.Select(
-                    SelectResult.Expression(Meta.ID),
-                    SelectResult.Property("title"))
+                SelectResult.Expression(Meta.ID),
+                SelectResult.Property("title"),
+                SelectResult.Property("country"))
                 .From(DataSource.Collection(collection))
                 .Where(Expression.Property("type").EqualTo(Expression.String("hotel")))
                 .OrderBy(Ordering.Property("title").Ascending())
@@ -929,7 +934,7 @@ namespace api_walkthrough
         {
             // tag::set-custom-logging[]
             LogSinks.Custom = new LogTestSink(); // <.>
-           
+
             // You can also specify the level of logging the logger receives
             LogSinks.Custom = new LogTestSink(LogLevel.Warning);
             // end::set-custom-logging[]
@@ -1059,7 +1064,7 @@ namespace api_walkthrough
         {
             var collection = Database!.GetDefaultCollection();
             using var database2 = new Database("backup");
-            
+
             // EE feature: This code will not compile on the community edition
             // tag::database-replica[]
             var targetDatabase = new DatabaseEndpoint(database2);
@@ -1319,7 +1324,7 @@ namespace api_walkthrough
                 //Get a custom object using the JSON string
                 var hotel = JsonSerializer.Deserialize<Hotel>(docJSONString);
 
-            } 
+            }
             // end::query-access-json[]
         }
 
@@ -1463,7 +1468,7 @@ namespace api_walkthrough
             // Update new document with JSOn String
             using var newHotel = doc.ToMutable();
             newHotel.SetJSON(newJsonString);
-            
+
             foreach (var key in newHotel.ToDictionary().Keys) {
                 Console.WriteLine("Data -- {0} = {1}",
                     key, newHotel.GetValue(key));
@@ -1563,10 +1568,10 @@ namespace api_walkthrough
             mutableDoc.SetBlob("avatar", imageBlob);
 
             // This example generates a 'blob not saved' exception
-            try { 
-                Console.WriteLine("myBlob (unsaved) as JSON = {0}", imageBlob.ToJSON()); 
-            } catch (Exception e) { 
-                Console.WriteLine("Exception = {0}", e.Message); 
+            try {
+                Console.WriteLine("myBlob (unsaved) as JSON = {0}", imageBlob.ToJSON());
+            } catch (Exception e) {
+                Console.WriteLine("Exception = {0}", e.Message);
             }
 
             collection.Save(mutableDoc);
@@ -1652,7 +1657,7 @@ namespace api_walkthrough
                 AcceptOnlySelfSignedServerCertificate = true, // <.>
                 Authenticator = new BasicAuthenticator("valid.user", "valid.password.string") // <.>
             };
-            
+
             var replicator = new Replicator(replConfig); // <.>
             replicator.Start(); // <.>
             // end::replicator-simple[]
@@ -1661,7 +1666,7 @@ namespace api_walkthrough
         private static void ListenerInitialize()
         {
             var collection = Database!.GetDefaultCollection();
-            
+
             // tag::listener-initialize[]
             var endpointConfig = new URLEndpointListenerConfiguration([collection]) // <.>
             {
@@ -1674,7 +1679,7 @@ namespace api_walkthrough
                 // Implement your own ValidatePassword function
                 Authenticator = new ListenerPasswordAuthenticator((_, user, password) => user == "valid.username" && ValidatePassword(password)) // <.>
             };
-            
+
             // tag::listener-start[]
             // Initialize the listener
             var listener = new URLEndpointListener(endpointConfig); // <.>
@@ -1682,7 +1687,7 @@ namespace api_walkthrough
             // Start the listener
             listener.Start(); // <.>
             // end::listener-start[]
-            
+
             // tag::listener-status-check[]
             var connectionCount = listener.Status.ConnectionCount; // <.>
             var activeConnectionCount = listener.Status.ActiveConnectionCount;  // <.>
@@ -2227,7 +2232,7 @@ namespace api_walkthrough
                     .GroupBy(kv => kv.Key)
                     .ToDictionary(g => g.Key, g => g.First().Value);
             }
-            
+
             return result != null ? new MutableDocument(conflict.DocumentID, result) : null;
         }
     }
@@ -2289,7 +2294,7 @@ namespace api_walkthrough
 
 // end::p2p-act-rep-start[]
 // end::p2p-act-rep-start-full[]
-// end::p2p-act-rep-func[] 
+// end::p2p-act-rep-func[]
 
 #warning p2p-act-rep-config-cacert used, but contains nothing
 // tag::p2p-act-rep-config-cacert[]
@@ -2369,7 +2374,7 @@ public class MyClass
         // end::console-logging[]
 
         // tag::file-logging[]
-        
+
         // Removed in 4.0
         // end::file-logging[]
 
@@ -2407,7 +2412,7 @@ public class MyClass
         {
             Where = "type = \"hotel\""
         };
-        
+
         collection.CreateIndex("HotelCityIndex", config);
         // end::partial-value-index[]
     }
@@ -2421,7 +2426,7 @@ public class MyClass
         {
             Where = "type = \"hotel\""
         };
-        
+
         collection.CreateIndex("HotelDescIndex", config);
         // end::partial-full-text-index[]
     }

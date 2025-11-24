@@ -2046,7 +2046,7 @@ static void docs_act_replication_config_section_snippets()
     if(docs_example_ShowBasicAuth) {
         CBLAuthenticator* basicAuth =
             CBLAuth_CreatePassword(FLSTR("username"),
-                                   FLSTR("passwd"));
+            FLSTR("passwd"));
         replConfig.authenticator = basicAuth; // <.>
     }
     // end::basic-authentication[]
@@ -2055,7 +2055,7 @@ static void docs_act_replication_config_section_snippets()
     if(docs_example_ShowSessionAuth) {
         CBLAuthenticator* sessionAuth =
             CBLAuth_CreateSession(FLSTR("904ac010862f37c8dd99015a33ab5a3565fd8447"),
-                                  FLSTR("optionalCookieName"));
+            FLSTR("optionalCookieName"));
         replConfig.authenticator = sessionAuth; // <.>
     }
     // end::session-authentication[]
@@ -2064,8 +2064,8 @@ static void docs_act_replication_config_section_snippets()
     // Optionally, add custom headers
     FLMutableDict customHdrs = FLMutableDict_New();
     FLMutableDict_SetString(customHdrs,
-                            FLSTR("customHeaderName"),
-                            FLSTR("customHeaderValue"));
+        FLSTR("customHeaderName"),
+        FLSTR("customHeaderValue"));
 
     replConfig.headers = customHdrs;
 
@@ -2102,8 +2102,8 @@ static void docs_act_replication_config_section_snippets()
     // Add optional change listener
     CBLListenerToken* token_ReplChangeListener =
         CBLReplicator_AddChangeListener(replicator,
-                                        simpleChangeListener,
-                                        NULL); // <.>
+            simpleChangeListener,
+            NULL); // <.>
 
 }
 // END replication.html >> configure section
@@ -2111,9 +2111,9 @@ static void docs_act_replication_config_section_snippets()
 // PAGE=Data Sync >> Initialize section
 // URL=https://docs.couchbase.com/couchbase-lite/current/c/replication.html#lbl-init-repl
 static CBLReplicator* docs_act_replication_Intialize(
-                        void* context,
-                        CBLReplicatorConfiguration argConfig,
-                        bool argResetRequired)
+    void* context,
+    CBLReplicatorConfiguration argConfig,
+    bool argResetRequired)
 {
     CBLError err{};
     bool docs_example_resetRequired = argResetRequired;
@@ -2138,26 +2138,26 @@ static CBLReplicator* docs_act_replication_Intialize(
 // PAGE=Data Sync >> Monitor section
 // URL=https://docs.couchbase.com/couchbase-lite/current/c/replication.html#lbl-repl-mon
 static void docs_act_replication_Monitor(
-                                       void* context,
-                                       CBLReplicator* argRepl) {
+        void* context,
+        CBLReplicator* argRepl) {
     CBLError err{};
     CBLReplicator* replicator = argRepl;
     CBLCollection* collection = CBLDatabase_DefaultCollection(kDatabase, NULL);
     // tag::p2p-act-rep-add-change-listener[]
     // Purpose -- illustrate addition of a Replicator change listener
     CBLListenerToken* token_ReplChangeListener =
-            CBLReplicator_AddChangeListener(replicator,
-                                            simpleChangeListener,
-                                            NULL);
+        CBLReplicator_AddChangeListener(replicator,
+        simpleChangeListener,
+        NULL); // <.>
     // end::p2p-act-rep-add-change-listener[]
 
     // tag::add-document-replication-listener[]
     // Purpose -- illustrate addition of a Document Replicator  listener
     CBLListenerToken* token_ReplDocListener =
-            CBLReplicator_AddDocumentReplicationListener(
-                                                        replicator,
-                                                        SimpleReplicationDocumentListener,
-                                                        context);
+        CBLReplicator_AddDocumentReplicationListener(
+            replicator,
+            SimpleReplicationDocumentListener,
+            context); // <.>
 
     // end::add-document-replication-listener[]
 
@@ -2193,9 +2193,9 @@ static void docs_act_replication_Monitor(
         while(NULL != (itemValue = FLDictIterator_GetValue(&item))) {
             pendingId = FLValue_AsString(itemValue);
             if(CBLReplicator_IsDocumentPending2(replicator,
-                                               pendingId,
-                                               collection,
-                                               &err)) {
+                pendingId,
+                collection,
+                &err)) { // <.>
                 // ... process the still pending docid as required <.>
             } else {
                 // Doc Id no longer pending
@@ -2224,8 +2224,8 @@ static void docs_act_replication_Monitor(
 // PAGE=Data Sync >> Stop
 // URL=https://docs.couchbase.com/couchbase-lite/current/c/replication.html#lbl-repl-stop
 static void docs_act_replication_Stop(
-                                       void* context,
-                                       CBLReplicator* argRepl) {
+    void* context,
+    CBLReplicator* argRepl) {
     // tag::p2p-act-rep-stop[]
     // Purpose -- show how to stop a replication
     if(CBLReplicator_Status(argRepl).activity!=kCBLReplicatorStopped) {
