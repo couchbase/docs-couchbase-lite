@@ -1,4 +1,3 @@
-
 = Pre-built Database
 :page-aliases: java-android-prebuilt-database.adoc
 :page-role:
@@ -18,17 +17,69 @@ _Abstract -- This content explains how to include a snapshot of a pre-built data
 --
 
 
+[#when-to-use]
+== When to Use Pre-built Databases
+
+Pre-built databases solve the "slow initial sync" problem for applications that require large datasets to be available on first launch.
+
+=== Typical Use Cases
+
+Use pre-built databases when your app has:
+
+* Large reference datasets that users need faster access to, such as:
+** Product catalogs with hundreds of thousands of items.
+** Geographic or mapping data.
+** Medical or pharmaceutical references.
+** Legal or regulatory documentation.
+** Educational content libraries.
+
+* Unacceptably long initial sync times from Sync Gateway (for example, 30+ minutes for large datasets).
+
+* Bandwidth-constrained users with limited, expensive, or unreliable network connectivity.
+
+* Offline-first requirements where the app must function before any network sync completes.
+
+=== Problem Solved
+
+Without pre-built databases, users must wait while your app syncs the entire dataset from Sync Gateway on first launch.
+For large datasets, this can mean wait times of 30-40 minutes or longer, depending on dataset size, document complexity, and network conditions.
+
+*Example scenario:* a field service application includes a product catalog with hundreds of thousands of items.
+Without a pre-built database, each user would need to sync the entire catalog on first launch—potentially taking 30-40 minutes or more over cellular networks.
+
+By bundling a pre-built database with the app, users have immediate access to the catalog.
+On first launch, the app only syncs items that changed after the build process, potentially reducing the wait time to under a minute
+
+=== Key Benefits
+
+* *Dramatically reduced initial sync time:* Users can begin using your app instead of waiting for large initial sync to complete.
+* *Lower bandwidth consumption:* Only document changes sync across the network, not the entire dataset.
+* *Better offline experience:* Full dataset available even before first sync.
+* *Improved user experience:* Users are not blocked by lengthy data downloads on first launch.
+
+=== When NOT to Use Pre-built Databases
+
+Pre-built databases may not be appropriate when:
+
+* Small datasets where initial sync completes in seconds or minutes.
+* Highly dynamic data where most documents change frequently between app releases.
+* User-specific data that varies per user (pre-built databases are for shared, non-user-specific data).
+* Strict app size constraints where adding the database impacts your app bundle size.
+* Frequent app updates where the effort of rebuilding and bundling the database outweighs the sync time savings.
+
+
 [#overview]
 == Overview
 
-
-_Couchbase{nbsp}Lite_ supports  pre-built databases. You can pre-load your app with data instead of syncing it from pass:q,a[_pass:q,a[Sync{nbsp}Gateway]_] during startup to minimize consumer wait time (arising from data setup) on initial install and launch of the application.
+Couchbase Lite supports pre-built databases.
+You can pre-load your app with data instead of syncing it from Sync Gateway during startup to minimize consumer wait time (arising from data setup) on initial install and launch of the application.
 
 Avoiding an initial bulk sync reduces startup time and network transfer costs.
 
-It is typically more efficient to download bulk data using the http/ftp stream employed during the application installation than to install a smaller application bundle and then use a replicator to pull in the bulk data.
+It's typically more efficient to download bulk data using the http/ftp stream employed during the application installation than to install a smaller application bundle and then use a replicator to pull in the bulk data.
 
-Pre-loaded data is typically public/shared, non-user-specific data that is static. Even if the data is not static, you can still benefit from preloading it and only syncing the changed documents on startup.
+Pre-loaded data is typically public/shared, non-user-specific data that's static.
+Even if the data is not static, you can still benefit from preloading it and only syncing the changed documents on startup.
 
 The initial sync of any pre-built database pulls in any content changes on the server that occurred after its incorporation into the app, updating the database.
 
@@ -37,61 +88,57 @@ The initial sync of any pre-built database pulls in any content changes on the s
 . Create a new Couchbase Lite database with the required dataset -- see xref:android:prebuilt-database.adoc#crt-db[]
 . Incorporate the pre-built database with your app bundle as an asset/resource -- see xref:android:prebuilt-database.adoc#bundle-db[]
 . Adjust the start-up logic of your app to check for the presence of the required database. +
-If the database doesn't already exist, create one using the bundled pre-built database.
-Initiate a sync to update the data -- see xref:android:prebuilt-database.adoc#deploy-db[]
+If the database does not already exist, create one using the bundled pre-built database.
+Start a sync to update the data -- see xref:android:prebuilt-database.adoc#deploy-db[].
 ****
 
 
 [#crt-db]
 == Creating Pre-built database
 
-
 These steps should form part of your build and release process:
 
-. Create a fresh Couchbase Lite database (every time)
+. Create a fresh Couchbase Lite database (every time).
 +
 [IMPORTANT]
 --
-*Always start with a fresh database for each app version*; this ensures there are no xref:refer-glossary.adoc#checkpoint[checkpoint] issues
+Always start with a fresh database for each app version as this ensures there are no xref:refer-glossary.adoc#checkpoint[checkpoint] issues.
 
-*Otherwise:*  You will invalidate the cached xref:refer-glossary.adoc#checkpoint[checkpoint] in the packaged database, and instead reuse the same database in your build process (for subsequent app versions).
+*Otherwise:*  you invalidate the cached xref:refer-glossary.adoc#checkpoint[checkpoint] in the packaged database, and instead reuse the same database in your build process (for subsequent app versions).
 --
-. Pull the data from Sync Gateway into the new Couchbase Lite database
+. Pull the data from Sync Gateway into the new Couchbase Lite database.
 +
 [IMPORTANT]
 --
-Ensure the replication used to populate Couchbase Lite database *uses the exact same remote URL and replication config parameters (channels and filters)* as those your app will use when it is running.
+Ensure the replication used to populate Couchbase Lite database *uses the exact same remote URL and replication config parameters (channels and filters)* as those your app uses when it's running.
 
-*Otherwise:* ... there will be a xref:refer-glossary.adoc#checkpoint[checkpoint] mismatch and the app will attempt to pull the data down again
+*Otherwise:* ... there is a xref:refer-glossary.adoc#checkpoint[checkpoint] mismatch and the app attempts to pull the data again.
 
-Don't, for instance, create a pre-built database against a staging Sync Gateway server and use it within a production app that syncs against a production Sync Gateway.
+Do not create a pre-built database against a staging Sync Gateway server and use it within a production app that syncs against a production Sync Gateway.
 --
 +
-You can use the cblite tool (`cblite cp`) for this -- see: https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/Documentation.md#cp-aka-export-import-push-pull[cblite cp (export, import, push, pull)]  |  https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md[cblite on GitHub]
+You can use the `cblite cp` tool for this -- see: https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/Documentation.md#cp-aka-export-import-push-pull[cblite cp (export, import, push, pull)]  |  https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md[cblite on GitHub].
 +
-.*Alternatively* ...
+.*Alternatively* 
 
-* You can write a simple CBL app to just initiate the required pull sync -- see: xref:android:replication.adoc[Remote Sync Gateway]
+* You can write a simple CBL app to start a pull sync -- see: xref:android:replication.adoc[Remote Sync Gateway].
 * A third party community Java app is available.
 It provides a UI to create a local Couchbase Lite database and pull data from a Sync Gateway database -- see:
-https://github.com/Infosys/CouchbaseLiteTester[CouchbaseLite Tester]
+https://github.com/Infosys/CouchbaseLiteTester[CouchbaseLite Tester].
 +
 NOTE: Couchbase accepts no responsibility for the ongoing availability, maintenance, or support of this third party community contribution, nor for the provision of support for issues arising from its use.
 
-. Create the *same* indexes the app will use (wait for the replication to finish before doing this).
+. Create the *same* indexes the app uses (wait for the replication to finish before doing this).
 
 
 [#bundle-db]
 == Bundle a Database with an Application
 
-
 Copy the database into your app package.
 
-Put it in an appropriate place (for example, an assets or resource folder).
+You can zip the database where the platform permits.
 
-Where the platform permits you can zip the database.
-
-*Alternatively* ... rather than bundling the database within the app, the app could pull the database down from a CDN server on launch.
+Alternatively you can pull the database from a CDN on launch instead of bundling it within the app.
 
 
 [#database-encryption]
@@ -99,8 +146,7 @@ Where the platform permits you can zip the database.
 
 IMPORTANT: This is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
 
-
-If you are using an encrypted database,
+If you're using an encrypted database,
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#copy(java.io.File,java.lang.String,com.couchbase.lite.DatabaseConfiguration)[Database.copy()]
 does not change the encryption key.
 The encryption key specified in the config when opening the database is the encryption key used for both the original database and copied database.
@@ -116,37 +162,36 @@ NOTE: To remove encryption on the copy, provide a null encryption-key
 [#deploy-db]
 == Using Pre-built Database on App Launch
 
-
 During the application start-up logic, check if database exists in the required location, and *if not*:
 
 . Locate the pre-packaged database (for example, in the assets or other resource folder)
 
 . Copy the pre-packaged database to the required location
 +
-Use the API's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#copy(java.io.File,java.lang.String,com.couchbase.lite.DatabaseConfiguration)[Database.copy()] method -- see: xref:android:prebuilt-database.adoc#lbl-code[]; this ensures that a UUID is generated for each copy
+Use the API's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/Database.html#copy(java.io.File,java.lang.String,com.couchbase.lite.DatabaseConfiguration)[Database.copy()] method -- see: xref:android:prebuilt-database.adoc#lbl-code[]. This ensures that a UUID is generated for each copy.
 +
 IMPORTANT: *Do not copy the database using any other method* +
-*Otherwise:* Each copy of the app will invalidate the other apps' xref:refer-glossary.adoc#checkpoint[checkpoints] because a new UUID was not generated.
+*Otherwise:* Each copy of the app invalidates the other apps' xref:refer-glossary.adoc#checkpoint[checkpoints] because a new UUID was not generated.
 
-. Open the database; you can now start querying the data and using it
+. Open the database, you can now start querying the data and using it.
 
-. Start a pull replication, to sync any changes
+. Start a pull replication, to sync any changes.
 +
-The replicator uses the pre-built database's xref:refer-glossary.adoc#checkpoint[checkpoint] as the timestamp to sync from; only documents changed since then are synced
+The replicator uses the pre-built database's xref:refer-glossary.adoc#checkpoint[checkpoint] as the timestamp to sync from, syncing only documents changed since then.
 +
 [IMPORTANT]
 --
 If you used cblite to pull the data *without including a port number with the URL* and are replicating in a Java or iOS (swift/ObjC) app -- *you must include the port number in the URL provided to the replication* (port 443 for `wss://` or 80 for `ws://`).
 
-*Otherwise:* You will get a xref:refer-glossary.adoc#checkpoint[checkpoint] mismatch. +
+*Otherwise:* you get a xref:refer-glossary.adoc#checkpoint[checkpoint] mismatch. +
 This is caused by a URL discrepancy, which arises because `cblite` automatically adds the default port number when none is specified, *but* the Java and iOS (swift/ObjC) replicators DO NOT.
 
 --
 
 +
-NOTE: Start your normal application logic immediately, unless it is essential to have the absolute up-to-date data set to begin.
+NOTE: Start your normal application logic immediately, unless it's essential to have the absolute up-to-date data set to begin.
 That way the user is not kept hanging around watching a progress indicator.
-They can begin interacting with your app whilst any out-of-data data is being updated.
+They can begin interacting with your app while any out-of-date data is being updated.
 
 .Copy database using API
 [#lbl-code]
@@ -185,6 +230,53 @@ include::android:example$codesnippet_collection.java[tags="prebuilt-database", i
 ====
 
 
+[#troubleshooting]
+== Troubleshooting
+
+=== Initial Sync Still Takes Too Long
+
+If you're using a pre-built database but initial sync is still slow:
+
+*Check checkpoint matching:*
+
+* Ensure the pre-built database was created using the exact same Sync Gateway URL, including port number (`:80` or `:443`)
+* Verify replication config parameters (channels, filters) match exactly between database creation and app usage
+* Confirm you're using `Database.copy()` API, not manual file copy, to preserve the database UUID
+
+*Verify database freshness:*
+
+* If your pre-built database is many weeks or months old, a large number of documents may have changed since you created it
+* Consider rebuilding your pre-built database more frequently (for example, with each app release or monthly)
+
+*Evaluate your dataset:*
+
+* If most documents change frequently between releases, pre-built databases provide less benefit
+* Consider whether channel filtering could reduce your dataset size
+
+=== Users Report Long Wait Times on First Launch
+
+If users still experience delays despite using pre-built databases:
+
+Do not block on sync completion:
+
+* Start your app UI immediately after copying the pre-built database
+* Let sync happen in the background while users interact with the (already available) data
+* Show "Checking for updates..." rather than "Loading data..."
+
+*Optimize the database copy operation:*
+
+* Make sure adequate storage space is available
+* Consider device performance characteristics (older devices with slower storage)
+
+=== App Bundle Size Too Large
+
+If bundling the database makes your app too large:
+
+* *Compress the database:* Zip the database file before bundling (if your platform permits)
+* *Use CDN delivery:* Download the pre-built database from a CDN on first launch instead of bundling in the app
+* *Evaluate data necessity:* Can you reduce the pre-loaded dataset? Consider loading only critical data pre-built and lazily syncing less critical data
+
+
 [#related-content]
 == Related Content
 ++++
@@ -198,9 +290,6 @@ include::android:example$codesnippet_collection.java[tags="prebuilt-database", i
 * xref:android:gs-install.adoc[Install]
 * xref:android:gs-build.adoc[Build and Run]
 
-
-.
-
 [.column]
 === {empty}
 .Learn more . . .
@@ -210,9 +299,6 @@ include::android:example$codesnippet_collection.java[tags="prebuilt-database", i
 * xref:android:replication.adoc[Remote Sync Gateway]
 * xref:android:conflict.adoc[Handling Data Conflicts]
 
-.
-
-
 [.column]
 === {empty}
 .Dive Deeper . . .
@@ -220,11 +306,6 @@ https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
 https://blog.couchbase.com/[Blog] |
 https://docs.couchbase.com/tutorials/[Tutorials]
 
-.
-
-
 ++++
 </div>
 ++++
-
-
