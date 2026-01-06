@@ -338,20 +338,22 @@ If your query selects ALL then the JSON format will be:
 [source, JSON]
 ----
 {
-  database-name: {
-    key1: "value1",
-    keyx: "valuex"
+  "collection-or-alias": {
+    "key1": "value1",
+    "keyx": "valuex"
   }
 }
 ----
 
-If your query selects a sub-set of available properties then the JSON format will be:
+NOTE: The top-level key is the collection name, for example "cards" for `SELECT * FROM main.cards`, or the alias if 1 is specified, for example "c" for `SELECT c.* FROM main.cards as c`.
+
+If your query selects a sub-set of available properties then the JSON format is:
 
 [source, JSON]
 ----
 {
-  key1: "value1",
-  keyx: "valuex"
+  "key1": "value1",
+  "keyx": "valuex"
 }
 ----
 
