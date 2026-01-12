@@ -16,11 +16,11 @@ if hash jq 2>/dev/null; then
     JQ=jq
 else
     echo "jq is not installed, downloading a local copy..."
-    
+
     # Detect OS and architecture
     OS=$(uname -s | tr '[:upper:]' '[:lower:]')
     ARCH=$(uname -m)
-    
+
     case "$OS" in
         linux)
             case "$ARCH" in
@@ -55,13 +55,13 @@ else
             exit 1
             ;;
     esac
-    
+
     JQ_URL="https://github.com/jqlang/jq/releases/download/jq-1.8.1/${JQ_BINARY}"
     echo "Downloading jq for $OS/$ARCH: $JQ_URL"
-    
+
     # Download jq using curl
     curl -L "$JQ_URL" -o /tmp/jq-local
-    
+
     chmod +x /tmp/jq-local
     JQ=/tmp/jq-local
 fi
@@ -72,6 +72,8 @@ VS_URL="http://proget.build.couchbase.com:8080/api/get_version?product=couchbase
 
 CBL_BUILD=$(curl -s $CBL_URL | $JQ -r '.BuildNumber')
 VS_BUILD=$(curl -s $VS_URL | $JQ -r '.BuildNumber')
+
+
 
 pushd $ANDROID_DIR/examples/
 ./gradlew assembleDebug -PcblVersion=$CBL_VERSION-$CBL_BUILD -PextVersion=$VS_VERSION-$VS_BUILD
