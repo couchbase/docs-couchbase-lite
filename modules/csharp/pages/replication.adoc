@@ -19,7 +19,7 @@ Use them as inspiration and adapt these examples to best practice when developin
 
 
 [#introduction]
- Introduction
+== Introduction
 
 
 Couchbase Lite for C#.Net provides API support for secure, bi-directional, synchronization of data changes between mobile applications and a central server database.
@@ -35,7 +35,7 @@ Your application runs a replicator (also referred to here as a client), which  w
 Subsequent sections provide additional details and examples for the main configuration options.
 
 [#replication-concepts]
- Replication Concepts
+== Replication Concepts
 
 Couchbase Lite allows for one database for each application running on the mobile device.
 This database can contain one or more scopes.
@@ -53,10 +53,10 @@ As part of the syncing setup, the Gateway has to map the Couchbase Lite database
 
 
 [#replication-protocol]
- Replication Protocol
+== Replication Protocol
 
 [#scheme]
-= Scheme
+=== Scheme
 
 Couchbase Mobile uses a replication protocol based on WebSockets for replication.
 To use this protocol the replication URL should specify WebSockets as the URL scheme (see the <<lbl-cfg-tgt>> section below).
@@ -74,14 +74,14 @@ Sync Gateway 2.x+ will automatically use:
 You can find further information in our blog: https://blog.couchbase.com/data-replication-couchbase-mobile/[Introducing the Data Replication Protocol].
 
 [#lbl-repl-ord]
-= Ordering
+=== Ordering
 
 To optimize for speed, the replication protocol doesn't guarantee that documents will be received in a particular order.
 So we don't recommend to rely on that when using the replication or database change listeners for example.
 
 
 [#scopes-and-collections]
- Scopes and Collections
+== Scopes and Collections
 
 Scopes and Collections allow you to organize your documents in Couchbase Lite.
 
@@ -96,7 +96,7 @@ During replication:
 . If Sync Gateway config is updated to add a collection to a scope that is being synchronized, the replication will ignore the collection. The added collection will not automatically sync until the Couchbase Lite replicator's configuration is updated.
 
 [#default-collection]
-= Default Collection
+=== Default Collection
 
 When upgrading Couchbase Lite to 3.1, the existing documents in the database will be automatically migrated to the default collection.
 
@@ -111,7 +111,7 @@ image:ROOT:cbl-replication-scopes-collections-2.png[Sync Couchbase Lite default 
 
 
 [#user-defined-collections]
-= User-Defined Collections
+=== User-Defined Collections
 
 The user-defined collections specified in the Couchbase Lite replicator setup must exist (and be identical) on the Sync Gateway side to sync.
 
@@ -124,7 +124,7 @@ image:ROOT:cbl-replication-scopes-collections-4.png["Syncing scope with user-def
 
 // tag::replicator-config-sample[]
 [#configuration-summary]
- Configuration Summary
+== Configuration Summary
 
 
 You should configure and initialize a replicator for each Couchbase Lite database instance you want to sync.
@@ -227,7 +227,7 @@ Other options are available -- see: <<lbl-client-auth>>.
 
 
 [#lbl-cfg-repl]
- Configure
+== Configure
 
 
 In this section::
@@ -249,7 +249,7 @@ In this section::
 --
 
 [#lbl-cfg-tgt]
-= Configure Target
+=== Configure Target
 
 Use the
 Initialize and define the replication configuration with local and remote database locations using the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html[ReplicatorConfiguration] object.
@@ -297,7 +297,7 @@ to ensure TLS encryption -- strongly recommended in production -- or `ws://`)
 
 
 [#lbl-cfg-sync]
-= Sync Mode
+=== Sync Mode
 
 
 Here we define the direction and type of replication we want to initiate.
@@ -342,7 +342,7 @@ This prevents the replications generating the same checkpoint `docID` resulting 
 --
 
 [#lbl-cfg-keep-alive]
-= Retry Configuration
+=== Retry Configuration
 
 
 Couchbase Lite for C#.Net's replication retry logic assures a resilient connection.
@@ -440,7 +440,7 @@ When necessary you can adjust any or all of those configurable values -- see: <<
 // END -- inclusion -- common-sgw-replication-cfg-retryadoc
 
 [#lbl-user-auth]
-= User Authorization
+=== User Authorization
 
 // include::ROOT:partial$authorization.adoc[]
 
@@ -473,7 +473,7 @@ endpoint on the Admin REST API.
 
 
 [#lbl-svr-auth]
-= Server Authentication
+=== Server Authentication
 
 Define the credentials your app (the client) is expecting to receive from the Sync Gateway (the server) in order to ensure it is prepared to continue with the sync.
 
@@ -554,12 +554,12 @@ This all assumes that you have configured the Sync Gateway to provide the approp
 
 
 [#lbl-client-auth]
-= Client Authentication
+=== Client Authentication
 
 There are two ways to authenticate from a Couchbase Lite client: <<basic-authentication>> or <<session-authentication>>.
 
 [#basic-authentication]
-== Basic Authentication
+==== Basic Authentication
 
 You can provide a user name and password to the basic authenticator class method.
 Under the hood, the replicator will send the credentials in the first request to retrieve a `SyncGatewaySession` cookie and use it for all subsequent requests during the replication.
@@ -589,7 +589,7 @@ replicator.Start();
 ====
 
 [#session-authentication]
-== Session Authentication
+==== Session Authentication
 
 Session authentication is another way to authenticate with Sync Gateway.
 
@@ -625,7 +625,7 @@ replicator.Start();
 ====
 
 [#lbl-repl-hdrs]
-= Custom Headers
+=== Custom Headers
 
 Custom headers can be set on the configuration object.
 The replicator will then include those headers in every request.
@@ -657,12 +657,12 @@ var config = new ReplicatorConfiguration(target)
 ====
 
 [#lbl-repl-fltrs]
-= Replication Filters
+=== Replication Filters
 
 Replication Filters allow you to have quick control over the documents stored as the result of a push and/or pull replication.
 
 [#push-filter]
-== Push Filter
+==== Push Filter
 
 The push filter allows an app to push a subset of a database to the server.
 This can be very useful.
@@ -702,7 +702,7 @@ Otherwise, long running functions would slow down the replicator considerably.
 Furthermore, your callback should not make assumptions about what thread it is being called on.
 
 [#pull-filter]
-== Pull Filter
+==== Pull Filter
 
 The pull filter gives an app the ability to validate documents being pulled, and skip ones that fail.
 This is an important security mechanism in a peer-to-peer topology with peers that are not fully trusted.
@@ -757,7 +757,7 @@ For more information, see <<anchor-auto-purge-on-revoke,Auto Purge on Revoke>>.
 ****
 
 [#lbl-repl-chan]
-= Channels
+=== Channels
 
 By default, Couchbase Lite gets all the channels to which the configured user account has access.
 
@@ -771,19 +771,19 @@ Optionally, it's also possible to specify a string array of channel names on Cou
 In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
 
 [#anchor-auto-purge-on-revoke]
-= Auto-purge on Channel Access Revocation
+=== Auto-purge on Channel Access Revocation
 
 [CAUTION]
 --
 This is a Breaking Change at 3.0
 --
 [#new-outcome]
-== New outcome
+==== New outcome
 
 By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user’s other channels) are auto-purged from the local database (in devices belonging to the user).
 
 [#prior-outcome]
-== Prior outcome
+==== Prior outcome
 
 _Previously these documents remained in the local database_
 
@@ -792,7 +792,7 @@ Now, in addition to 2.x auto purge, Couchbase Lite will also auto-purges the doc
 This feature is enabled by default, but an opt-out is available.
 
 [#behavior]
-== Behavior
+==== Behavior
 
 Users may lose access to channels in a number of ways:
 
@@ -879,7 +879,7 @@ Document changes subsequent to the channel reassignment will be pushed up as usu
 
 
 [#config]
-== Config
+==== Config
 
 Auto-purge behavior is controlled primarily by the ReplicationConfiguration option https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_EnableAutoPurge[EnableAutoPurge].
 Changing the state of this will impact *only* future replications; the replicator will not attempt to sync revisions that were auto purged on channel access removal.
@@ -908,7 +908,7 @@ thisConfig.EnableAutoPurge = false;  <1>
 <.> Here we have opted to turn off the auto purge behavior. By default auto purge is enabled.
 
 [#overrides]
-== Overrides
+==== Overrides
 Where necessary, clients can override the default auto-purge behavior.
 This can be done either by setting https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_EnableAutoPurge[EnableAutoPurge] to false, or for finer control by applying pull-filters -- see: <<tbl-pull-filters>> and <<lbl-repl-fltrs>>
 This ensures backwards compatible with 2.8 clients that use pull filters to prevent auto purge of removed docs.
@@ -940,7 +940,7 @@ a|Doc remains in local database
 
 
 [#lbl-repl-delta]
-= Delta Sync
+=== Delta Sync
 
 // tag::rep-delta-sync-concept[]
 
@@ -963,14 +963,14 @@ replications automatically *enable* delta sync.
 
 
 [#lbl-init-repl]
- Initialize
+== Initialize
 
 
 In this section::
 <<lbl-repl-start>>  | <<lbl-repl-ckpt>>
 
 [#lbl-repl-start]
-= Start Replicator
+=== Start Replicator
 
 
 Use the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html[Replicator]` class's https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator__ctor_Couchbase_Lite_Sync_ReplicatorConfiguration_[(ReplicatorConfiguration config)] constructor, to initialize the replicator with the configuration you have defined.
@@ -1003,7 +1003,7 @@ thisReplicator.Start(); <2>
 
 
 [#lbl-repl-ckpt]
-= Checkpoint Starts
+=== Checkpoint Starts
 
 Replicators use https://docs.couchbase.com/couchbase-lite/current/csharp/refer-glossary.html#checkpoint[checkpoints] to keep track of documents sent to the target database.
 
@@ -1041,7 +1041,7 @@ The default `false` is shown here for completeness only; it is unlikely you woul
 
 
 [#lbl-repl-mon]
- Monitor
+== Monitor
 
 
 In this section::
@@ -1056,7 +1056,7 @@ This enables you to know, for example, when the replication is actively transfer
 You can also choose to monitor document changes -- see: <<lbl-repl-evnts>>.
 
 [#lbl-repl-chng]
-= Change Listeners
+=== Change Listeners
 Use this to monitor changes and to inform on sync progress; this is an optional step.
 You can add and a replicator change listener at any point; it will report changes from the point it is registered.
 
@@ -1070,7 +1070,7 @@ You can remove a change listener with https://docs.couchbase.com/mobile/{major}.
 
 
 [#lbl-repl-status]
-= Replicator Status
+=== Replicator Status
 
 You can use the
 https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html[ReplicatorStatus] struct
@@ -1135,7 +1135,7 @@ _thisDatabase.Close();
 
 
 [#lbl-repl-states]
-== Replication States
+==== Replication States
 <<tbl-states>> shows the different states, or activity levels, reported in the API; and the meaning of each.
 
 .Replicator activity levels
@@ -1165,7 +1165,7 @@ NOTE: The replication change object also has properties to track the progress (`
 Since the replication occurs in batches the total count can vary through the course of a replication.
 
 [#replication-status-and-app-life-cycle]
-== Replication Status and App Life Cycle
+==== Replication Status and App Life Cycle
 
 Couchbase Lite doesn't react to OS backgrounding or foregrounding events and replication(s) will continue running as long as the remote system does not terminate the connection and the app does not terminate.
 It is generally recommended to stop replications before going into the background otherwise socket connections may be closed by the OS and this may interfere with the replication process.
@@ -1173,7 +1173,7 @@ It is generally recommended to stop replications before going into the backgroun
 
 // begin inclusion of document changes text
 [#lbl-repl-evnts]
-= Monitor Document Changes
+=== Monitor Document Changes
 
 You can choose to register for document updates during a replication.
 
@@ -1231,14 +1231,14 @@ replicator.RemoveChangeListener(token);
 ====
 
 [#document-access-removal-behavior]
-== Document Access Removal Behavior
+==== Document Access Removal Behavior
 
 When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
 
 // end inclusion of document changes text
 
 [#lbl-repl-pend]
-= Documents Pending Push
+=== Documents Pending Push
 
 TIP: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_IsDocumentPending_System_String_[Replicator.IsDocumentPending()] is quicker and more efficient.
 Use it in preference to returning a list of pending document IDs, where possible.
@@ -1301,7 +1301,7 @@ This is a snapshot and may have changed by the time the response is received and
 
 
 [#lbl-repl-stop]
- Stop
+== Stop
 
 
 Stopping a replication is straightforward.
@@ -1334,7 +1334,7 @@ It will stop any active <<lbl-repl-chng,change listener>> once the replication i
 
 
 [#lbl-nwk-errs]
- Error Handling
+== Error Handling
 
 
 When _replicator_ detects a network error it updates its status depending on the error type (permanent or temporary) and returns an appropriate HTTP error code.
@@ -1388,7 +1388,7 @@ The following error codes are considered temporary by the Couchbase Lite replica
 
 
 [#load-balancers]
- Load Balancers
+== Load Balancers
 
 
 Couchbase Lite footnote:[From 2.0] uses WebSockets as the communication protocol to transmit data.
@@ -1400,7 +1400,7 @@ The level of compression is set on Sync Gateway and can be tuned in the configur
 
 
 [#lbl-cert-pinning]
- Certificate Pinning
+== Certificate Pinning
 
 Couchbase Lite for C#.Net supports certificate pinning.
 
@@ -1465,11 +1465,11 @@ For more on pinning certificates see the blog entry: https://blog.couchbase.com/
 
 
 [#lbl-trouble]
- Troubleshooting
+== Troubleshooting
 
 
 [#logs]
-= Logs
+=== Logs
 As always, when there is a problem with replication, logging is your friend.
 You can increase the log output for activity related to replication with Sync Gateway -- see <<ex-logs>>.
 
@@ -1498,7 +1498,7 @@ Database.SetLogLevel(LogDomain.Network, LogLevel.Verbose);
 For more on troubleshooting with logs, see: xref:csharp:troubleshooting-logs.adoc[Using Logs].
 
 [#authentication-errors]
-= Authentication Errors
+=== Authentication Errors
 If Sync Gateway is configured with a self signed certificate but your app points to a `ws` scheme instead of `wss` you will encounter an error with status code `11006` -- see: <<ex-11006>>
 
 [#ex-11006]
@@ -1525,7 +1525,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 
 
 [#related-content]
- Related Content
+== Related Content
 ++++
 <div class="card-row three-column-row">
 ++++
