@@ -74,14 +74,6 @@ CBL_BUILD=$(curl -s $CBL_URL | $JQ -r '.BuildNumber')
 VS_BUILD=$(curl -s $VS_URL | $JQ -r '.BuildNumber')
 
 
-echo "=== Build Information ==="
-echo "CBL_VERSION: $CBL_VERSION"
-echo "VS_VERSION: $VS_VERSION"
-echo "CBL_BUILD: $CBL_BUILD"
-echo "VS_BUILD: $VS_BUILD"
-echo "Final CBL version: $CBL_VERSION-$CBL_BUILD"
-echo "Final VS version: $VS_VERSION-$VS_BUILD"
-echo "======================="
 
 pushd $ANDROID_DIR/examples/
 ./gradlew assembleDebug -PcblVersion=$CBL_VERSION-$CBL_BUILD -PextVersion=$VS_VERSION-$VS_BUILD
