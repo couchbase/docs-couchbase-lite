@@ -98,6 +98,28 @@ If you view a sync'd blob document in {cbs} Admin Console, you will see somethin
 image::ROOT:attach-replicated.png[]
 
 
+[#blob-deletion]
+== Blob Deletion and Cleanup
+
+When you delete a document that references a blob, the blob file itself is not immediately removed from the database.
+The blob file will be kept in the database until the database is compacted.
+
+To actually remove orphaned blob files from the database, you need to perform database maintenance using the compact option:
+
+.Compact Database to Remove Orphaned Blobs
+====
+
+[source, objc]
+----
+NSError* error;
+[database performMaintenance:kCBLMaintenanceTypeCompact error:&error];
+----
+
+====
+
+This ensures that blob files are only deleted when they are no longer referenced by any document in the database.
+
+
 [#related-content]
 == Related Content
 ++++
