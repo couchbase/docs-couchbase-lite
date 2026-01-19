@@ -153,7 +153,8 @@ public class Examples {
 
     public void newFileLoggingExample() {
         // tag::new-file-logging[]
-        LogSinks.get().setFile(new FileLogSink.Builder()
+         LogSinks.get().setFile(new FileLogSink.Builder()
+            .setLevel(LogLevel.VERBOSE)
             .setDirectory("/tmp/logs")
             .setMaxKeptFiles(12)
             .setPlainText(false)
