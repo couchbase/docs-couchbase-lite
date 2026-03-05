@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+@file:Suppress("UNUSED_VARIABLE", "unused", "DEPRECATION")
+
 package com.couchbase.codesnippets
 
 import com.couchbase.lite.ArrayIndexConfiguration
@@ -21,21 +23,21 @@ import com.couchbase.lite.CouchbaseLiteException
 import com.couchbase.lite.IndexConfiguration
 
 class ArrayIndexExamples {
-    fun ArrayIndexConfig() {
+    fun arrayIndexConfig() {
         // tag::array-index-config[]
         val config: IndexConfiguration = ArrayIndexConfiguration("contacts", "type")
         // end::array-index-config[]
     }
 
     @Throws(CouchbaseLiteException::class)
-    fun ArrayIndexSingle(collection: Collection) {
+    fun arrayIndexSingle(collection: Collection) {
         // tag::array-index-single[]
         collection.createIndex("myindex", ArrayIndexConfiguration("likes"))
         // end::array-index-single[]
     }
 
     @Throws(CouchbaseLiteException::class)
-    fun ArrayIndexNested(collection: Collection) {
+    fun arrayIndexNested(collection: Collection) {
         // tag::array-index-nested[]
         collection.createIndex(
             "myindex",

@@ -359,7 +359,7 @@ class ReplicationExamples {
                 log("Replicator activity level is ${change.status.activityLevel}")
                 try {
                     if (!repl.isDocumentPending(firstDoc, collection)) {
-                        log("Doc ID ${firstDoc} has been pushed")
+                        log("Doc ID $firstDoc has been pushed")
                     }
                 } catch (err: CouchbaseLiteException) {
                     log("Failed getting pending docs", err)

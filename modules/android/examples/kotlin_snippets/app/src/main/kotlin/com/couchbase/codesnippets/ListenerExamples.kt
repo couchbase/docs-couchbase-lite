@@ -20,6 +20,7 @@ package com.couchbase.codesnippets
 import com.couchbase.lite.Collection
 import com.couchbase.lite.Database
 import com.couchbase.lite.KeyStoreUtils
+import com.couchbase.lite.KeyUsage
 import com.couchbase.lite.ListenerCertificateAuthenticator
 import com.couchbase.lite.ListenerPasswordAuthenticator
 import com.couchbase.lite.TLSIdentity
@@ -135,7 +136,7 @@ class ListenerExamples {
     // under the label 'couchbase-docs-cert'
     fun listenerWithSelfSignedCert(thisConfig: URLEndpointListenerConfiguration) {
         val thisIdentity = TLSIdentity.createIdentity(
-            true,
+            setOf(KeyUsage.SERVER_AUTH),
             CERT_ATTRIBUTES,
             null,
             "couchbase-docs-cert"

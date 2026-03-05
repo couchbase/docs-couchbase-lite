@@ -1,9 +1,8 @@
-
-= Data Sync Peer-to-Peer
+= Active-Passive Peer-to-Peer Sync
 :page-aliases: learn/java-android-p2psync-websocket.adoc
 ifdef::show_edition[:page-edition: Enterprise Edition]
 :page-role:
-:description: Couchbase Lite's Peer-to-Peer Synchronization enables edge devices to synchronize securely without consuming centralized cloud-server resources
+:description: Where MultiPeer Sync is not available, Couchbase Lite's Active-Passive Peer-to-Peer Synchronization enables edge devices to synchronize securely without consuming centralized cloud-server resources
 
 
 :source-language: Java
@@ -19,6 +18,20 @@ Description -- _{description}_ +
 _Abstract -- An introduction to Couchbase Lite’s Peer-to-Peer Synchronization and its concepts._ +
 Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/[API Reference]  |  xref:android:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:android:p2psync-websocket-using-active.adoc[Active Peer]
 --
+
+
+[TIP]
+xref:p2psync-multipeer.adoc[Multipeer P2P Replicator]
+====
+Multipeer P2P Replicator is available for
+
+* Auto-discovery over local Wi-Fi (via `DNS-SD`)
+* Lightweight and low-maintenance configuration
+* Dynamic mesh topology for optimal peer connectivity
+* Secure communication via TLS and certificate-based authentication
+====
+
+
 
 
 [#introduction]
@@ -68,6 +81,12 @@ Therefore, to use Peer-to-Peer synchronization in your application, you must con
 ====
 
 Here you can see configuration involves a xref:android:p2psync-websocket-using-passive.adoc[Passive Peer] and an xref:android:p2psync-websocket-using-active.adoc[Active Peer] and a user-friendly Listener configuration in <<simple-configuration>>.
+
+Couchbase Lite supports different transport modes depending on the peer-to-peer synchronization approach:
+
+=== Active-Passive Peer-to-Peer
+- Supports: Wi-Fi (IP-based transport modes only)
+
 
 You can also learn how to implement Peer-to-Peer synchronization by referring to our tutorial -- see: xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Getting Started with Peer-to-Peer Synchronization].
 
