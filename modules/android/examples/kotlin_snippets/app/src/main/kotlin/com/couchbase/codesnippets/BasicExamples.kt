@@ -205,9 +205,11 @@ class BasicExamples(private val context: Context) {
     fun newFileLoggingExample() {
         // tag::new-file-logging[]
         FileLogSinkFactory.install(
+            level = LogLevel.VERBOSE,
             directory = "/tmp/logs",
             maxKeptFiles = 12,
-            isPlainText = true)
+            isPlainText = true
+        )
         // end::new-file-logging[]
     }
 
