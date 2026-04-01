@@ -1672,6 +1672,17 @@ namespace api_walkthrough
             var url = new URLEndpoint(new Uri("wss://listener.com:4984/otherDB"));
             var collectionConfig = new CollectionConfiguration(collection)
             {
+
+                // tag::p2p-act-rep-config-self-cert[]
+                // Configure Server Security -- only accept self-signed certs
+                AcceptOnlySelfSignedServerCertificate = true, // <.>
+                // end::p2p-act-rep-config-self-cert[]
+
+                // Configure Client Security
+                // tag::p2p-act-rep-auth[]
+                Authenticator = new BasicAuthenticator("valid.user", "valid.password.string"), // <.>
+                // end::p2p-act-rep-auth[]
+
                 // tag::p2p-act-rep-config-cont[]
                 // Configure Sync Mode
                 ConflictResolver = new LocalWinConflictResolver() // <.>
