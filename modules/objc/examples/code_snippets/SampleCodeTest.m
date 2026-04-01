@@ -683,11 +683,12 @@
         [CBLQueryExpression property:@"last"],
         [CBLQueryExpression property:@"username"]];
 
-    [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
+    CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
         from:[CBLQueryDataSource collection:self.collection]
         where:[[CBLQueryExpression string:@"Armani"] in:values]];
-    NSLog(@"%@", query);
     // end::query-collection-operator-in[]
+    
+    NSLog(@"%@", query);
 }
 
 - (void) dontTestLikeOperator {

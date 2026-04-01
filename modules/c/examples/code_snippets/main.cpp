@@ -1688,10 +1688,6 @@ static void start_replication() {
 }
 
 static void console_log_sink() {
-    // tag::console-logging[]
-    CBLLog_SetConsoleLevel(kCBLLogVerbose);
-    // end::console-logging[]
-
     // tag::new-console-logging[]
     CBLConsoleLogSink logSink {};
     logSink.level = kCBLLogVerbose;
@@ -1701,23 +1697,6 @@ static void console_log_sink() {
 }
 
 static void file_log_sink() {
-    // tag::file-logging[]
-    // NOTE: No error handling, for brevity (see getting started)
-
-    // NOTE: You will need to use a platform appropriate method for finding
-    // a temporary directory
-
-    CBLLogFileConfiguration config {}; // Don't bother zeroing, since we set all properties
-    config.level = kCBLLogInfo;
-    config.directory = FLSTR("/tmp/logs");;
-    config.maxRotateCount = 12;
-    config.maxSize = 1048576;
-    config.usePlaintext = false;
-
-    CBLError err{};
-    CBLLog_SetFileConfig(config, &err);
-    // end::file-logging[]
-
     // tag::new-file-logging[]
     CBLFileLogSink logSink {};
     logSink.level = kCBLLogVerbose;
@@ -1742,10 +1721,6 @@ static void custom_log_sink_callback(CBLLogDomain domain, CBLLogLevel level, FLS
 // end::new-custom-logging[]
 
 static void enable_custom_log_sink() {
-    // tag::set-custom-logging[]
-    CBLLog_SetCallback(custom_log_callback);
-    // end::set-custom-logging[]
-
     // tag::set-new-custom-logging[]
     CBLCustomLogSink logSink {};
     logSink.level = kCBLLogVerbose;
