@@ -78,13 +78,25 @@ JOIN orders o ON meta(u).id = o.user_id;
 FROM \`user` u
 NEST orders orders
 ON KEYS ARRAY s.order_id FOR s IN u.order_history END;
-| NEST/UNNEST not supported
+| NEST is not supported
 
 | LEFT OUTER NEST
 | SELECT * FROM user u +
 LEFT OUTER NEST orders orders +
 ON KEYS ARRAY s.order_id FOR s IN u.order_history END;
 | NEST/UNNEST not supported
+
+| UNNEST
+| SELECT route.sourceairport, route.destinationairport, sched.flight, sched.utc
+FROM route
+UNNEST schedule sched
+WHERE  sched.day = 1
+
+| SELECT sourceairport, destinationairport, flight, utc
+FROM route, sched
+UNNEST schedule sched
+WHERE  sched.day = 1
+
 
 | ARRAY
 | ARRAY i FOR i IN [1, 2] END
