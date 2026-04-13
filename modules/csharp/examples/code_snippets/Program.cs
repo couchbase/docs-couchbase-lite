@@ -1885,6 +1885,48 @@ namespace api_walkthrough
             }
         }
 
+        // CHANGE 1: New method providing the listener-config-tls-id-full tag body.
+        // The outer tag wraps both sub-sections so the adoc exclusion directives
+        // (!listener-config-tls-id-SelfSigned and !listener-config-tls-id-caCert)
+        // render only the correct branch per example.
+        public void ConfigureTLSListenerIdentity()
+        {
+            var collection = Database!.GetDefaultCollection();
+            var store = new X509Store(StoreName.My);
+
+            // tag::listener-config-tls-id-full[]
+            // tag::listener-config-tls-id-caCert[]
+            var serverData = File.ReadAllBytes("server.p12"); // <.>
+            var serverIdentity = TLSIdentity.ImportIdentity(store,
+                serverData,
+                "password", // <.>
+                "CBL-Server-Cert",
+                null); // <.>
+            var endpointConfigCa = new URLEndpointListenerConfiguration([collection])
+            {
+                TlsIdentity = serverIdentity // <.>
+            };
+            // end::listener-config-tls-id-caCert[]
+            // tag::listener-config-tls-id-SelfSigned[]
+            var certAttrs = new Dictionary<string, string>
+            {
+                { Certificate.CommonNameAttribute, "Couchbase Inc" } // <.>
+            };
+            var selfSignedIdentity = TLSIdentity.CreateIdentity(
+                KeyUsages.ServerAuth,
+                certAttrs,
+                null,
+                store,
+                "CBL-Server-Cert", // <.>
+                null);
+            var endpointConfigSs = new URLEndpointListenerConfiguration([collection])
+            {
+                TlsIdentity = selfSignedIdentity // <.>
+            };
+            // end::listener-config-tls-id-SelfSigned[]
+            // end::listener-config-tls-id-full[]
+        }
+
         public void datatype_usage()
         {
             // tag::datatype_usage_createdb[]
@@ -2322,8 +2364,10 @@ namespace api_walkthrough
 // tag::p2p-tlsid-store-in-keychain[]
 // end::p2p-tlsid-store-in-keychain[]
 
-#warning p2p-tlsid-delete-id-from-keychain used, but contains nothing
+// CHANGE 2: Replaced empty stub with actual delete call and removed #warning.
 // tag::p2p-tlsid-delete-id-from-keychain[]
+var store = new X509Store(StoreName.My);
+TLSIdentity.DeleteIdentity(store, "CBL-Server-Cert", null); // <.>
 // end::p2p-tlsid-delete-id-from-keychain[]
 
 public class MyClass

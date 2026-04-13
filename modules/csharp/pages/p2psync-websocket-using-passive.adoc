@@ -1,4 +1,3 @@
-
 = Passive Peer
 :page-aliases: advance/csharp-p2psync-websocket-using-passive.adoc
 ifdef::show_edition[:page-edition: Enterprise Edition]
@@ -13,7 +12,7 @@ ifdef::show_edition[:page-edition: Enterprise Edition]
 --
 Description -- _{description}_ +
 _Abstract -- How to set up a Listener to accept a Replicator connection and sync using peer-to-peer_ +
-Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net[API Reference]  |  xref:csharp:p2psync-websocket-using-passive.adoc[Passive Peer]  |  xref:csharp:p2psync-websocket-using-active.adoc[Active Peer]
+Related Content -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net[API Reference]  |  xref:csharp:p2psync-websocket-using-active.adoc[Active Peer]
 --
 
 
@@ -47,11 +46,8 @@ There is no limit on the number of Listeners you may configure -- <<simple-liste
 
 
 // Example 1
+[#simple-listener-initialization]
 .Listener configuration and initialization
-[#simple-listener-initialization]
-
-
-[#simple-listener-initialization]
 ====
 
 
@@ -115,8 +111,8 @@ All other configuration values take their default setting.
 
 
 // Example 2
-.Specify Local Collections
 [#ex-locdb]
+.Specify Local Collections
 ====
 
 
@@ -137,11 +133,8 @@ include::csharp:example$code_snippets/Program.cs[tags="listener-config-db", inde
 The Listener will automatically select an available port if you do not specify one -- see <<ex-port>> for how to specify a port.
 
 // Example 3
+[#ex-port]
 .Specify a port
-[#ex-port]
-
-
-[#ex-port]
 ====
 
 
@@ -160,12 +153,8 @@ Ensure that firewall rules do not block any port you do specify. +
 The Listener will listen on all network interfaces by default.
 
 // Example 4
-
 [#specify-a-network-interface-to-use]
 .Specify a Network Interface to Use
-
-
-[#specify-a-network-interface-to-use]
 ====
 
 
@@ -183,9 +172,6 @@ TIP: Where necessary, you can identify the available interfaces at runtime, usin
 
 [#get-network-interfaces]
 .Identify available network interfaces
-
-
-[#get-network-interfaces]
 ====
 
 
@@ -205,8 +191,6 @@ Both are valuable benefits, especially when network bandwidth is constrained.
 
 // Example 5
 .Enable delta sync
-
-
 ====
 
 
@@ -269,14 +253,16 @@ NOTE: Typically, you will configure the Listener's TLS Identity once during the 
 Here are some example code snippets showing:
 
 * Importing a TLS identity -- see: <<ex-import-tls-id>>
-* Setting TLS identity to expect self-signed certificate --  -- see: <<ex-create-tls-id>>
+* Setting TLS identity to expect self-signed certificate -- see: <<ex-create-tls-id>>
 * Setting TLS identity to expect anonymous certificate -- see: <<ex-anon-tls-id>>
 
+// NOTE FOR ENGINEERING: The tags listener-config-tls-id-full, listener-config-tls-id-SelfSigned,
+// and listener-config-tls-id-caCert are missing from Program.cs.
+// The following two examples will only render the DisableTLS line until those tags are added.
+// See DOC ticket raised against this file.
+
+[#ex-import-tls-id]
 .Import Listener's TLS identity
-[#ex-import-tls-id]
-
-
-[#ex-import-tls-id]
 ====
 
 Import an identity from a secure key and certificate data source.
@@ -293,11 +279,8 @@ include::csharp:example$code_snippets/Program.cs[tags="listener-config-tls-enabl
 <.> Use the retrieved data to create and store the TLS identity
 <.> Set this identity as the one presented in response to the client's prompt
 
+[#ex-create-tls-id]
 .Create Self-Signed Cert
-[#ex-create-tls-id]
-
-
-[#ex-create-tls-id]
 ====
 
 Create a TLSIdentity for the server using convenience API.  The system generates a self-signed certificate.
@@ -317,11 +300,8 @@ Add to secure storage as 'couchbase-docs-cert'.
 <.> Configure the server to present the defined identity credentials when prompted.
 
 
+[#ex-anon-tls-id]
 .Use Anonymous Self-Signed Certificate
-[#ex-anon-tls-id]
-
-
-[#ex-anon-tls-id]
 ====
 
 This example uses an _anonymous_ self signed certificate.  Generated certificates are held in secure storage.
@@ -369,8 +349,6 @@ To use client-supplied certificates instead -- see: <<using-client-certificate-a
 
 // Example 7
 .Password authentication
-
-
 ====
 
 
@@ -400,34 +378,28 @@ The client response to the certificate request is passed to the method supplied 
 The logic should take the form of function or block (such as, a closure expression) where the platform allows.
 
 // Example 8
+[#ex-set-cert-auth]
 .Set Certificate Authorization
-[#ex-set-cert-auth]
-
-
-[#ex-set-cert-auth]
 ====
 
-Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.P2P.ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator].
+Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.P2P.ListenerCertificateAuthenticator.html[ListenerCertificateAuthenticator].
 
 [source, C#]
 ----
-include::csharp:example$code_snippets/Program.cs[tags="listener-config-client-auth-root, indent=0]", indent=0]
+include::csharp:example$code_snippets/Program.cs[tags="listener-config-client-auth-root", indent=0]
 ----
 
 ====
 
-<.>  Get the identity data to authenticate against.
+<.> Get the identity data to authenticate against.
 This can be, for example, from a resource file provided with the app, or an identity previously saved in secure storage.
 <.> Configure the authenticator to authenticate the client supplied certificate(s) using these root certs.
 A valid client will provide one or more certificates that match a certificate in this list.
 <.> Add the authenticator to the Listener configuration.
 
 
+[#ex-use-app-logic]
 .Application Logic
-[#ex-use-app-logic]
-
-
-[#ex-use-app-logic]
 ====
 
 Configure the server (listener) to authenticate the client using user-supplied logic.
@@ -439,9 +411,9 @@ include::csharp:example$code_snippets/Program.cs[tags="listener-config-client-au
 
 ====
 
-<.>  Get the identity data to authenticate against.
+<.> Get the identity data to authenticate against.
 This can be, for example, from a resource file provided with the app, or an identity previously saved in secure storage.
-<.>  Configure the Authenticator to pass the root certificates to a user supplied code block.
+<.> Configure the Authenticator to pass the root certificates to a user supplied code block.
 This code assumes complete responsibility for authenticating the client supplied certificate(s).
 It must return a boolean value; with `true` denoting the client supplied certificate authentic.
 <.> Add the authenticator to the Listener configuration.
@@ -452,10 +424,9 @@ It must return a boolean value; with `true` denoting the client supplied certifi
 
 You can remove unwanted TLS identities from secure storage using the convenience API.
 
+
 // Example 9
 .Deleting TLS Identities
-
-
 ====
 
 
@@ -465,6 +436,7 @@ include::csharp:example$code_snippets/Program.cs[tags="p2p-tlsid-delete-id-from-
 ----
 ====
 
+<.> Remove the TLS identity stored under the specified label from secure storage.
 
 [#the-impact-of-tls-settings]
 === The Impact of TLS Settings
@@ -508,9 +480,6 @@ Once you have completed the Listener's configuration settings you can initialize
 // Example 10
 [#initialize-and-start-listener]
 .Initialize and start listener
-
-
-[#initialize-and-start-listener]
 ====
 
 
@@ -519,6 +488,9 @@ Once you have completed the Listener's configuration settings you can initialize
 include::csharp:example$code_snippets/Program.cs[tags="listener-start", indent=0]
 ----
 ====
+
+<.> Initialize the listener using the completed configuration.
+<.> Start the listener.
 
 
 [#monitor-listener]
@@ -529,11 +501,8 @@ Use the Listener's `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenan
 You should note that these counts can be extremely volatile. So, the actual number of active connections may have changed, by the time the `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-net}{empty}/couchbase-lite-net/api/Couchbase.Lite.P2P.ConnectionStatus.html[ConnectionStatus]` class returns a result.
 
 // Example 11
+[#get-connection-counts]
 .Get connection counts
-[#get-connection-counts]
-
-
-[#get-connection-counts]
 ====
 
 
@@ -543,6 +512,9 @@ include::csharp:example$code_snippets/Program.cs[tags="listener-status-check", i
 ----
 ====
 
+<.> Retrieve the total number of connections (active and passive) currently established with the listener.
+<.> Retrieve the number of connections currently replicating data, a subset of the total connection count.
+
 
 [#stop-listener]
 == Stop Listener
@@ -551,8 +523,6 @@ It is best practice to check the status of the Listener's connections and stop o
 
 // Example 12
 .Stop listener using `stop` method
-
-
 ====
 
 
@@ -575,7 +545,6 @@ NOTE: Closing the database will also close the Listener.
 [.column]
 === {empty}
 .How to
-* xref:csharp:p2psync-websocket-using-passive.adoc[Passive Peer]
 * xref:csharp:p2psync-websocket-using-active.adoc[Active Peer]
 
 
@@ -605,5 +574,3 @@ xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Gettin
 ++++
 </div>
 ++++
-
-
