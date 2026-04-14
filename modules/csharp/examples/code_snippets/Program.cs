@@ -1522,10 +1522,10 @@ namespace api_walkthrough
         public static void DeleteTLSIdentity()
         {
 
-        // tag::p2p-tlsid-delete-id-from-keychain[]
-        var store = new X509Store(StoreName.My);
-        TLSIdentity.DeleteIdentity(store, "CBL-Server-Cert", null); // <.>
-        // end::p2p-tlsid-delete-id-from-keychain[]
+            // tag::p2p-tlsid-delete-id-from-keychain[]
+            var store = new X509Store(StoreName.My);
+            TLSIdentity.DeleteIdentity(store, "CBL-Server-Cert", null); // <.>
+            // end::p2p-tlsid-delete-id-from-keychain[]
         }
 
         public void JsonApiDictionary()
