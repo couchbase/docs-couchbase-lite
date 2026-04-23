@@ -1,6 +1,6 @@
 = Multipeer P2P Replicator
 ifdef::show_edition[:page-edition: Enterprise Edition]
-:description: The Multipeer Replicator enables lightweight, self-organizing mesh networks for apps running on the same local Wi-Fi.
+:description: The Multipeer Replicator enables lightweight, self-organizing mesh networks over Wi-Fi and Bluetooth Low Energy.
 :source-language: swift
 
 
@@ -15,7 +15,7 @@ This approach requires minimal setup and automates peer discovery and connectivi
 // tag::introduction[]
 Couchbase Lite's Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronization between mobile and IoT devices without needing a centralized cloud-based control point.
 
-For small mesh topologies, Multipeer Replicator offers `autodiscovery` for Wi-Fi-based networks and secure communication via TLS and certificate-based authentication.
+For small mesh topologies, Multipeer Replicator offers autodiscovery over Wi-Fi and Bluetooth Low Energy, with secure communication via TLS and certificate-based authentication.
 The dynamic mesh topology gives optimal peer connectivity and the lightweight and low-maintenance configuration requires less management and less code than using active-passive peer-to-peer sync.
 
 // end::introduction[]
@@ -25,14 +25,13 @@ The dynamic mesh topology gives optimal peer connectivity and the lightweight an
 == Overview
 
 To maintain optimal connectivity, efficient data transport, and balanced workloads, the Multipeer Replicator forms a dynamic mesh network among peers in the same group.
-The mesh network provides resilience through multiple communication pathways - if one connection fails, data can flow through alternative routes.
+The mesh network provides resilience through multiple communication pathways.
+If one connection fails, data can flow through alternative routes.
 It avoids redundant direct connections, evenly distributes connections across peers, and optimizes communication paths through intelligent routing.
 
 The mesh network continuously adapts as peers join or leave, automatically healing itself by establishing new connections and rerouting data flow to maintain network integrity.
 
 This self-organizing approach ensures reliable data synchronization even in challenging network conditions, where individual peer connections may be intermittent or unreliable.
-
-Multipeer Replicator supports Wi-Fi (IP-based transport) as of CBL 3.3.
 
 
 // Mesh Diagram
@@ -69,19 +68,48 @@ Multipeer Replicator supports Wi-Fi (IP-based transport) as of CBL 3.3.
 
 == Prerequisites
 
-=== Transport and Peer Discovery Protocol
+The Multipeer Replicator supports two transports for peer discovery and replication: Wi-Fi and Bluetooth Low Energy (BLE). Wi-Fi is enabled by default.
+Bluetooth is optional and you enable it through the replicator configuration.
+See <<transports>>.
 
-Multipeer Replicator supports Wi-Fi transport, using `DNS-SD` (also known as *Bonjour*) for peer discovery.
-You must connect Peers to the same Wi-Fi network to discover and establish connections with one another.
+=== Transport Support
 
-=== Configuration Requirements
+.Transport support
+[cols="1,1,2,1,2"]
+|===
+|Transport |Available from |Discovery |Minimum iOS |Notes
 
-To use `DNS-SD` for peer discovery, iOS apps must declare the *Bonjour* service type and request local network access permissions.
-Add the following keys to your app's `Info.plist`:
+|Wi-Fi
+|CBL 3.3
+|DNS-SD (Bonjour)
+|iOS 10
+|Peers must connect to the same Wi-Fi network. Requires `NSBonjourServices` and `NSLocalNetworkUsageDescription` in `Info.plist`. See <<platform-configuration>>.
 
-==== NSBonjourServices
-Declare the service type used by MultipeerReplicator:
+|Bluetooth Low Energy
+|CBL 4.1
+|BLE advertising and scanning
+|iOS 15
+|Requires `NSBluetoothAlwaysUsageDescription` in `Info.plist`. See <<platform-configuration>>.
+|===
 
+=== Supported Platforms
+
+For Wi-Fi transport, CBL supports iOS 10 and higher.
+
+For Bluetooth transport, CBL supports iOS 15 and higher.
+
+See xref:swift:supported-os.adoc[Supported Platforms] for the full platform support matrix.
+
+[#platform-configuration]
+=== Platform Configuration
+
+iOS applications must declare the required keys in `Info.plist` for each transport they enable. You can also configure these settings through Xcode's Info configuration UI.
+
+==== Wi-Fi Transport
+
+To use Wi-Fi transport, declare the Bonjour service type and a local network usage description.
+
+.NSBonjourServices
 [source,xml]
 ----
 <key>NSBonjourServices</key>
@@ -90,21 +118,23 @@ Declare the service type used by MultipeerReplicator:
 </array>
 ----
 
-==== NSLocalNetworkUsageDescription
-Add a usage description for local network access:
-
+.NSLocalNetworkUsageDescription
 [source,xml]
 ----
 <key>NSLocalNetworkUsageDescription</key>
 <string>Used for discovering and connecting to peers for peer-to-peer sync.</string>
 ----
 
-TIP: You can also configure these settings through Xcode's Info configuration UI under "*Bonjour Services*" and "*Privacy – Local Network Usage Description*."
+==== Bluetooth Transport
 
+To use Bluetooth transport, declare a Bluetooth usage description.
 
-=== Supported Platforms
-
-We recommend using a recent release of iOS, see xref:swift:supported-os.adoc[Supported Platforms] for details.
+.NSBluetoothAlwaysUsageDescription
+[source,xml]
+----
+<key>NSBluetoothAlwaysUsageDescription</key>
+<string>Used for discovering and connecting to peers for peer-to-peer sync.</string>
+----
 
 
 == Configuration
@@ -186,6 +216,35 @@ include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-a
 include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-authenticator-rootcerts", indent=0]
 ----
 
+[#transports]
+=== Transports
+
+The `transports` property on `MultipeerReplicatorConfiguration` controls which transports the replicator uses for peer discovery and replication.
+The default is Wi-Fi only.
+
+To enable Bluetooth Low Energy alongside Wi-Fi, add `.bluetooth` to the transports set.
+
+.Default (Wi-Fi only)
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-config-transports-default", indent=0]
+----
+
+.Wi-Fi and Bluetooth
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-config-transports-both", indent=0]
+----
+
+.Bluetooth only
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-config-transports-bluetooth-only", indent=0]
+----
+
+When you enable both transports, the replicator automatically selects the best available transport for each peer and switches between them as reachability changes.
+See <<automatic-transport-switching>>.
+
 === Create MultipeerReplicatorConfiguration
 
 The `MultipeerReplicatorConfiguration` can be created with a `peerGroupID` which is an identity identifies the Peer-to-peer network used by the app, collection configurations, peer identity, and authenticator.
@@ -199,6 +258,29 @@ include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-c
 
 TIP: Performance may vary in mesh networks depending on your specific environment and number of peers.
 We recommend running tests with your network configuration to assess any effects on packet loss or latency.
+
+[#automatic-transport-switching]
+== Automatic Transport Switching
+
+When `MultipeerReplicator` is configured with both Wi-Fi and Bluetooth transports, it automatically selects the best available transport for each peer and switches transports as reachability changes.
+
+=== Transport Preference
+
+The replicator prefers Wi-Fi over Bluetooth when both transports can reach a peer.
+Bluetooth acts as a fallback when Wi-Fi cannot reach a peer.
+
+=== Fallback to Bluetooth
+
+For an individual peer, `MultipeerReplicator` falls back to Bluetooth when the peer is no longer reachable over Wi-Fi.
+This can occur if the peer disables Wi-Fi, becomes unreachable on the local network, or if replication over Wi-Fi fails because of a network-related error.
+
+In cases of connection or replication failure over Wi-Fi, `MultipeerReplicator` performs a small number of retries before falling back to Bluetooth.
+
+=== Return to Wi-Fi
+
+If a peer becomes reachable over Wi-Fi while replication is active over Bluetooth, `MultipeerReplicator` establishes a Wi-Fi connection in parallel with the existing Bluetooth connection.
+The Bluetooth connection remains active until the Wi-Fi connection is fully established and replication has resumed over Wi-Fi.
+This prevents any interruption in synchronization during the transition.
 
 
 == Life Cycle
@@ -230,6 +312,9 @@ include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-r
 === Events
 
 In general, the connection should just work, and most of these optional listen events give status you may only want to use during development and testing.
+
+Status events include a `transport` property that identifies which transport the event applies to. `MultipeerReplicatorStatus` events are delivered per enabled transport and also as an aggregated status (where `transport` is `nil`) representing the overall replicator state.
+
 Event types include the following:
 
 ==== Multipeer Replicator Status
@@ -290,6 +375,8 @@ include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-n
 ----
 
 === Peer Info
+
+The `PeerInfo` object provides information about a peer, including its identifier, certificate, online status, replicator status, neighbor peers, the transports on which the peer was discovered, and the transport presently used for replication.
 
 .Getting peer info
 [source,swift]

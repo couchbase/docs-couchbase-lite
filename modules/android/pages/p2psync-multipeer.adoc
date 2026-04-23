@@ -1,6 +1,6 @@
 = Multipeer P2P Replicator
 ifdef::show_edition[:page-edition: Enterprise Edition]
-:description: The Multipeer Replicator enables lightweight, self-organizing mesh networks for apps running on the same local Wi-Fi.
+:description: The Multipeer Replicator enables lightweight, self-organizing mesh networks over Wi-Fi and Bluetooth Low Energy.
 :source-language: Kotlin
 
 
@@ -16,7 +16,7 @@ This approach requires minimal setup and automates peer discovery and connectivi
 
 Couchbase Lite's Peer-to-Peer synchronization solution offers secure storage and bidirectional data synchronization between mobile and IoT devices without needing a centralized cloud-based control point.
 
-For small mesh topologies, Multipeer Replicator offers `autodiscovery` for Wi-Fi-based networks and secure communication via TLS and certificate-based authentication.
+For small mesh topologies, Multipeer Replicator offers autodiscovery over Wi-Fi and Bluetooth Low Energy, with secure communication via TLS and certificate-based authentication.
 
 The dynamic mesh topology gives optimal peer connectivity and the lightweight and low-maintenance configuration requires less management and less code than using active-passive peer-to-peer sync.
 
@@ -24,15 +24,13 @@ The dynamic mesh topology gives optimal peer connectivity and the lightweight an
 
 
 To maintain optimal connectivity, efficient data transport, and balanced workloads, the Multipeer Replicator forms a dynamic mesh network among peers in the same group.
-The mesh network provides resilience through multiple communication pathways - if one connection fails, data can flow through alternative routes.
+The mesh network provides resilience through multiple communication pathways. If one connection fails, data can flow through alternative routes.
 
 It avoids redundant direct connections, evenly distributes connections across peers, and optimizes communication paths through intelligent routing.
 
 The mesh network continuously adapts as peers join or leave, automatically healing itself by establishing new connections and rerouting data flow to maintain network integrity.
 
 This self-organizing approach ensures reliable data synchronization even in challenging network conditions, where individual peer connections may be intermittent or unreliable.
-
-Multipeer Replicator supports Wi-Fi (IP-based transport) as of CBL 3.3.
 
 // Mesh Diagram
 // [graphviz]
@@ -66,19 +64,81 @@ Multipeer Replicator supports Wi-Fi (IP-based transport) as of CBL 3.3.
 
 == Prerequisites
 
+The Multipeer Replicator supports two transports for peer discovery and replication: Wi-Fi and Bluetooth Low Energy (BLE). Wi-Fi is enabled by default. Bluetooth is optional and you enable it through the replicator configuration. See <<transports>>.
 
-=== Transport and Peer Discovery Protocol
+=== Transport Support
 
+.Transport support
+[cols="1,1,2,1,2"]
+|===
+|Transport |Available from |Discovery |Minimum Android API |Notes
 
-Multipeer  Replicator supports Wi-Fi transport, using `DNS-SD` (also known as Bonjour) for peer discovery.
-Peers connect to the same Wi-Fi network to discover and establish connections with one another.
+|Wi-Fi
+|CBL 3.3
+|DNS-SD (Bonjour)
+|API 24
+|Peers must connect to the same Wi-Fi network.
 
+|Bluetooth Low Energy
+|CBL 4.1
+|BLE advertising and scanning
+|API 29
+|Requires additional manifest permissions and runtime permission requests. See <<platform-configuration>>.
+|===
 
 === Supported Platforms
 
+For Wi-Fi transport, CBL supports Android API 24 and higher.
 
-For Android, we recommend using a recent release, preferably supporting minimum API level 24, or more recent but earlier versions should work with the multipeer sync feature.
-See xref:kotlin:supported-os.adoc[Supported Platforms] for more details.
+For Bluetooth transport, CBL supports Android API 29 and higher. On API 29 and 30, Bluetooth uses the legacy `BLUETOOTH`, `BLUETOOTH_ADMIN`, and `ACCESS_FINE_LOCATION` permissions. On API 31 and higher, Bluetooth uses the runtime permissions `BLUETOOTH_SCAN`, `BLUETOOTH_ADVERTISE`, and `BLUETOOTH_CONNECT`.
+
+See xref:android:supported-os.adoc[Supported Platforms] for the full platform support matrix.
+
+[#platform-configuration]
+=== Platform Configuration
+
+This section applies only if your application enables Bluetooth transport. Applications that use Wi-Fi only do not require these permissions.
+
+==== Manifest Permissions
+
+Declare the required Bluetooth permissions in your `AndroidManifest.xml`. The permissions differ between Android 11 (API 30) and lower, and Android 12 (API 31) and higher.
+
+[source,xml]
+----
+<manifest ...>
+
+    <!-- Android 11 (API 30) and lower -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        android:maxSdkVersion="30" />
+
+    <!-- Android 12 (API 31) and higher -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_ADVERTISE" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_CONNECT" />
+
+</manifest>
+----
+
+==== Runtime Permission Request
+
+On Android 12 (API 31) and higher, your application must request `BLUETOOTH_SCAN`, `BLUETOOTH_ADVERTISE`, and `BLUETOOTH_CONNECT` at runtime before starting the Multipeer Replicator. On Android 11 (API 30) and lower, your application must request `ACCESS_FINE_LOCATION` at runtime.
+
+.Requesting Bluetooth permissions at runtime
+[source,kotlin]
+----
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-bluetooth-permissions-request", indent=0]
+----
 
 == Configuration
 
@@ -167,6 +227,33 @@ include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/
 include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-authenticator-rootcerts", indent=0]
 ----
 
+[#transports]
+=== Transports
+
+The `transports` property on `MultipeerReplicatorConfiguration` controls which transports the replicator uses for peer discovery and replication. The default is Wi-Fi only.
+
+To enable Bluetooth Low Energy alongside Wi-Fi, add `MultipeerTransport.BLUETOOTH` to the transports set.
+
+.Default (Wi-Fi only)
+[source,kotlin]
+----
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-config-transports-default", indent=0]
+----
+
+.Wi-Fi and Bluetooth
+[source,kotlin]
+----
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-config-transports-both", indent=0]
+----
+
+.Bluetooth only
+[source,kotlin]
+----
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-config-transports-bluetooth-only", indent=0]
+----
+
+When you enable both transports, the replicator automatically selects the best available transport for each peer and switches between them as reachability changes. See <<automatic-transport-switching>>.
+
 === Create MultipeerReplicatorConfiguration
 
 
@@ -181,6 +268,25 @@ include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/
 
 TIP: Performance may vary in mesh networks depending on your specific environment and number of peers.
 We recommend running tests with your network configuration to assess any effects on packet loss or latency.
+
+[#automatic-transport-switching]
+== Automatic Transport Switching
+
+When `MultipeerReplicator` is configured with both Wi-Fi and Bluetooth transports, it automatically selects the best available transport for each peer and switches transports as reachability changes.
+
+=== Transport Preference
+
+The replicator prefers Wi-Fi over Bluetooth when both transports can reach a peer. Bluetooth acts as a fallback when Wi-Fi cannot reach a peer.
+
+=== Fallback to Bluetooth
+
+For an individual peer, `MultipeerReplicator` falls back to Bluetooth when the peer is no longer reachable over Wi-Fi. This can occur if the peer disables Wi-Fi, becomes unreachable on the local network, or if replication over Wi-Fi fails because of a network-related error.
+
+In cases of connection or replication failure over Wi-Fi, `MultipeerReplicator` performs a small number of retries before falling back to Bluetooth.
+
+=== Return to Wi-Fi
+
+If a peer becomes reachable over Wi-Fi while replication is active over Bluetooth, `MultipeerReplicator` establishes a Wi-Fi connection in parallel with the existing Bluetooth connection. The Bluetooth connection remains active until the Wi-Fi connection is fully established and replication has resumed over Wi-Fi. This prevents any interruption in synchronization during the transition.
 
 == Life Cycle
 
@@ -240,6 +346,9 @@ You should make sure that the application has the necessary permissions to run i
 === Events
 
 In general, the connection should just work, and most of these optional listen events give status you may only want to use during development and testing.
+
+Status events include a `transport` property that identifies which transport the event applies to. `MultipeerReplicatorStatus` events are delivered per enabled transport and also as an aggregated status (where `transport` is `null`) representing the overall replicator state.
+
 Event types include the following:
 
 
@@ -319,8 +428,9 @@ include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/
 
 === Peer Info
 
+The `PeerInfo` object provides information about a peer, including its identifier, certificate, online status, replicator status, neighbor peers, the transports on which the peer was discovered, and the transport currently used for replication.
 
-Getting peer info
+.Getting peer info
 [source,kotlin]
 ----
 include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-peer-info", indent=0]
@@ -346,7 +456,7 @@ include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/
 == API Reference
 
 
-You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-kotlin}{empty}/couchbase-lite-kotlin[Kotlin API References] here.
+You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}/couchbase-lite-android[Kotlin API References] here.
 
 
 
@@ -604,13 +714,13 @@ You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-kotl
 //     /// The `attributes` must include a common name (CN); otherwise an error
 //     /// will be thrown.
 //     ///
-//     /// If no the expiration date is specified, the default validity of one year
-//     /// will be applied.
-//     ///
 //     /// The optional issuer identity may be specified to sign the certificate.
 //     /// The  issuer identity can be created using
 //     /// `createIdentity(privateKeyData:certificateData:)`. If no issuer is specified,
 //     /// the certificate will be self-signed.
+//     ///
+//     /// If no the expiration date is specified, the default validity of one year
+//     /// will be applied.
 //     ///
 //     /// If a `label` is provided, the identity will be stored in the
 //     /// platform’s secure key storage under that label.
@@ -652,6 +762,3 @@ You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-kotl
 
 
 // *URL*
-
-
-
