@@ -185,6 +185,160 @@
     return config;
 }
 
+- (CBLMultipeerReplicatorConfiguration *)createConfigTransportsDefault {
+    CBLTLSIdentity *identity = [self createCASignedIdentity];
+    id<CBLMultipeerAuthenticator> authenticator = [self authenticatorWithRootCerts];
+    NSArray<CBLMultipeerCollectionConfiguration *> *collections = [self collectionConfig];
+
+    // tag::multipeer-config-transports-default[]
+    // Wi-Fi is the default transport. No additional configuration is required.
+    CBLMultipeerReplicatorConfiguration *config =
+    [[CBLMultipeerReplicatorConfiguration alloc] initWithPeerGroupID:@"com.myapp"
+        identity:identity
+        authenticator:authenticator
+        collections:collections];
+    // config.transports defaults to kCBLMultipeerTransportWifi
+    // end::multipeer-config-transports-default[]
+    return config;
+}
+
+- (CBLMultipeerReplicatorConfiguration *)createConfigTransportsBoth {
+    CBLTLSIdentity *identity = [self createCASignedIdentity];
+    id<CBLMultipeerAuthenticator> authenticator = [self authenticatorWithRootCerts];
+    NSArray<CBLMultipeerCollectionConfiguration *> *collections = [self collectionConfig];
+
+    // tag::multipeer-config-transports-both[]
+    CBLMultipeerReplicatorConfiguration *config =
+    [[CBLMultipeerReplicatorConfiguration alloc] initWithPeerGroupID:@"com.myapp"
+        identity:identity
+        authenticator:authenticator
+        collections:collections];
+    config.transports = kCBLMultipeerTransportWifi | kCBLMultipeerTransportBluetooth;
+    // end::multipeer-config-transports-both[]
+    return config;
+}
+
+- (CBLMultipeerReplicatorConfiguration *)createConfigTransportsBluetoothOnly {
+    CBLTLSIdentity *identity = [self createCASignedIdentity];
+    id<CBLMultipeerAuthenticator> authenticator = [self authenticatorWithRootCerts];
+    NSArray<CBLMultipeerCollectionConfiguration *> *collections = [self collectionConfig];
+
+    // tag::multipeer-config-transports-bluetooth-only[]
+    CBLMultipeerReplicatorConfiguration *config =
+    [[CBLMultipeerReplicatorConfiguration alloc] initWithPeerGroupID:@"com.myapp"
+        identity:identity
+        authenticator:authenticator
+        collections:collections];
+    config.transports = kCBLMultipeerTransportBluetooth;
+    // end::multipeer-config-transports-bluetooth-only[]
+    return config;
+}
+
+- (void)statusListener {
+    CBLMultipeerReplicator *replicator = [self createMultipeerReplicator];
+    // tag::multipeer-status-listener[]
+    [replicator addStatusListenerWithQueue:nil listener:^(CBLMultipeerReplicatorStatus *status) {
+        // transport is nil for the aggregated overall status;
+        // non-nil for a per-transport status update.
+        NSString *transport = status.transport == nil ? @"all"
+            : (status.transport.unsignedIntegerValue == kCBLMultipeerTransportWifi ? @"wifi" : @"bluetooth");
+        NSString *state = status.active ? @"active" : @"inactive";
+        NSString *err = status.error ? status.error.localizedDescription : @"none";
+        NSLog(@"Multipeer Replicator [%@]: %@, Error: %@", transport, state, err);
+    }];
+    // end::multipeer-status-listener[]
+}
+
+- (void)peerDiscoveryListener {
+    CBLMultipeerReplicator *replicator = [self createMultipeerReplicator];
+    // tag::multipeer-peer-discovery-listener[]
+    [replicator addPeerDiscoveryStatusListenerWithQueue:nil listener:^(CBLPeerDiscoveryStatus *status) {
+        NSString *online = status.online ? @"online" : @"offline";
+        NSString *transport = (status.transport == kCBLMultipeerTransportWifi) ? @"wifi" : @"bluetooth";
+        NSLog(@"Peer Discovery Status - Peer ID: %@, Transport: %@, Status: %@",
+              status.peerID, transport, online);
+    }];
+    // end::multipeer-peer-discovery-listener[]
+}
+
+- (void)peerReplicatorStatus {
+    CBLMultipeerReplicator *replicator = [self createMultipeerReplicator];
+    // tag::multipeer-replicator-status-listener[]
+    NSArray<NSString *> *activities = @[ @"stopped", @"offline", @"connecting", @"idle", @"busy" ];
+    [replicator addPeerReplicatorStatusListenerWithQueue:nil listener:^(CBLPeerReplicatorStatus *replStatus) {
+        NSString *direction = replStatus.outgoing ? @"outgoing" : @"incoming";
+        NSString *activity = activities[replStatus.status.activity];
+        NSString *transport = (replStatus.transport == kCBLMultipeerTransportWifi) ? @"wifi" : @"bluetooth";
+        NSString *error = replStatus.status.error ? replStatus.status.error.localizedDescription : @"none";
+        NSLog(@"Peer Replicator Status - "
+              "Peer ID: %@, Transport: %@, Direction: %@, Activity: %@, Error: %@",
+              replStatus.peerID, transport, direction, activity, error);
+    }];
+    // end::multipeer-replicator-status-listener[]
+}
+
+- (void)peerDocumentReplication {
+    CBLMultipeerReplicator *replicator = [self createMultipeerReplicator];
+    // tag::multipeer-document-replication-listener[]
+    [replicator addPeerDocumentReplicationListenerWithQueue:nil listener:^(CBLPeerDocumentReplication *docRepl) {
+        NSString *direction = docRepl.isPush ? @"Push" : @"Pull";
+        NSString *transport = (docRepl.transport == kCBLMultipeerTransportWifi) ? @"wifi" : @"bluetooth";
+        NSLog(@"Peer Document Replication - Peer ID: %@, Transport: %@, Direction: %@",
+              docRepl.peerID, transport, direction);
+        for (CBLReplicatedDocument *doc in docRepl.documents) {
+            NSString *error = doc.error ? doc.error.localizedDescription : @"none";
+            NSString *collection = [NSString stringWithFormat:@"%@.%@", doc.scope, doc.collection];
+            NSLog(@" Collection: %@ Document ID: %@, Flags: %lu, Error: %@",
+                collection, doc.id, (unsigned long)doc.flags, error);
+        }
+    }];
+    // end::multipeer-document-replication-listener[]
+}
+
+- (void)peerInfo {
+    CBLMultipeerReplicator *replicator = [self createMultipeerReplicator];
+    // tag::multipeer-peer-info[]
+    NSArray<NSString *> *activities = @[ @"stopped", @"offline", @"connecting", @"idle", @"busy" ];
+
+    void (^printPeerInfo)(CBLPeerInfo *) = ^(CBLPeerInfo *info) {
+        NSLog(@"Peer ID: %@", info.peerID);
+        NSLog(@" Status: %@", info.online ? @"online" : @"offline");
+
+        // transports: the set of transports on which this peer was discovered.
+        NSMutableArray<NSString *> *transportNames = [NSMutableArray array];
+        if (info.transports & kCBLMultipeerTransportWifi) [transportNames addObject:@"wifi"];
+        if (info.transports & kCBLMultipeerTransportBluetooth) [transportNames addObject:@"bluetooth"];
+        NSLog(@" Discovered on: %@", [transportNames componentsJoinedByString:@", "]);
+
+        // replicatorTransport: the transport currently used for replication.
+        // The value is kCBLMultipeerTransportWifi or kCBLMultipeerTransportBluetooth,
+        // or 0 if replication is not active.
+        NSString *replicatorTransport = (info.replicatorTransport == kCBLMultipeerTransportWifi) ? @"wifi"
+            : (info.replicatorTransport == kCBLMultipeerTransportBluetooth) ? @"bluetooth"
+            : @"none";
+        NSLog(@" Replicating on: %@", replicatorTransport);
+
+        NSLog(@" Neighbor Peers:");
+        for (CBLPeerID *peerID in info.neighborPeers) {
+            NSLog(@"  %@", peerID);
+        }
+
+        CBLReplicatorStatus *replStatus = info.replicatorStatus;
+        NSString *activity = activities[(NSInteger)replStatus.activity];
+        NSString *error = replStatus.error ? replStatus.error.localizedDescription : @"none";
+        NSLog(@" Replicator Status: %@, Error: %@", activity, error);
+    };
+
+    for (CBLPeerID *peerID in replicator.neighborPeers) {
+        CBLPeerInfo *peerInfo = [replicator peerInfoForPeerID: peerID];
+        if (peerInfo) {
+            printPeerInfo(peerInfo);
+        }
+    }
+    // end::multipeer-peer-info[]
+}
+
+
 - (CBLMultipeerReplicator *)createMultipeerReplicator {
     CBLMultipeerReplicatorConfiguration *config = [self createConfig];
     NSError *error = nil;
@@ -208,58 +362,6 @@
     // end::multipeer-replicator-stop
 }
 
-- (void)statusListener {
-    CBLMultipeerReplicator *replicator = [self createMultipeerReplicator];
-    // tag::multipeer-status-listener
-    [replicator addStatusListenerWithQueue:nil listener:^(CBLMultipeerReplicatorStatus *status) {
-        NSString *state = status.active ? @"active" : @"inactive";
-        NSString *err = status.error ? status.error.localizedDescription : @"none";
-        NSLog(@"Multipeer Replicator Status: %@, Error: %@", state, err);
-    }];
-    // end::multipeer-status-listener
-}
-
-- (void)peerDiscoveryListener {
-    CBLMultipeerReplicator *replicator = [self createMultipeerReplicator];
-    // tag::multipeer-peer-discovery-listener
-    [replicator addPeerDiscoveryStatusListenerWithQueue:nil listener:^(CBLPeerDiscoveryStatus *status) {
-        NSString *online = status.online ? @"online" : @"offline";
-        NSLog(@"Peer Discovery Status - Peer ID: %@, Status: %@", status.peerID, online);
-    }];
-    // end::multipeer-peer-discovery-listener
-}
-
-- (void)peerReplicatorStatus {
-    CBLMultipeerReplicator *replicator = [self createMultipeerReplicator];
-    // tag::multipeer-replicator-status-listener
-    NSArray<NSString *> *activities = @[ @"stopped", @"offline", @"connecting", @"idle", @"busy" ];
-    [replicator addPeerReplicatorStatusListenerWithQueue:nil listener:^(CBLPeerReplicatorStatus *replStatus) {
-        NSString *direction = replStatus.outgoing ? @"outgoing" : @"incoming";
-        NSString *activity = activities[replStatus.status.activity];
-        NSString *error = replStatus.status.error ? replStatus.status.error.localizedDescription : @"none";
-        NSLog(@"Peer Replicator Status - "
-              "Peer ID: %@, Direction: %@, Activity: %@, Error: %@",
-              replStatus.peerID, direction, activity, error);
-    }];
-    // end::multipeer-replicator-status-listener
-}
-
-- (void)peerDocumentReplication {
-    CBLMultipeerReplicator *replicator = [self createMultipeerReplicator];
-    // tag::multipeer-document-replication-listener
-    [replicator addPeerDocumentReplicationListenerWithQueue:nil listener:^(CBLPeerDocumentReplication *docRepl) {
-        NSString *direction = docRepl.isPush ? @"Push" : @"Pull";
-        NSLog(@"Peer Document Replication - Peer ID: %@, Direction: %@", docRepl.peerID, direction);
-        for (CBLReplicatedDocument *doc in docRepl.documents) {
-            NSString *error = doc.error ? doc.error.localizedDescription : @"none";
-            NSString *collection = [NSString stringWithFormat:@"%@.%@", doc.scope, doc.collection];
-            NSLog(@" Collection: %@ Document ID: %@, Flags: %lu, Error: %@",
-                collection, doc.id, (unsigned long)doc.flags, error);
-        }
-    }];
-    // end::multipeer-document-replication-listener
-}
-
 - (void)peerID {
     CBLMultipeerReplicator *replicator = [self createMultipeerReplicator];
     // tag::multipeer-peer-id
@@ -276,34 +378,6 @@
         NSLog(@" %@", peerID);
     }
     // end::multipeer-neighbor-peers
-}
-
-- (void)peerInfo {
-    CBLMultipeerReplicator *replicator = [self createMultipeerReplicator];
-    // tag::multipeer-peer-info
-    NSArray<NSString *> *activities = @[ @"stopped", @"offline", @"connecting", @"idle", @"busy" ];
-
-    void (^printPeerInfo)(CBLPeerInfo *) = ^(CBLPeerInfo *info) {
-        NSLog(@"Peer ID: %@", info.peerID);
-        NSLog(@" Status: %@", info.online ? @"online" : @"offline");
-        NSLog(@" Neighbor Peers:");
-        for (CBLPeerID *peerID in info.neighborPeers) {
-            NSLog(@"  %@", peerID);
-        }
-
-        CBLReplicatorStatus *replStatus = info.replicatorStatus;
-        NSString *activity = activities[(NSInteger)replStatus.activity];
-        NSString *error = replStatus.error ? replStatus.error.localizedDescription : @"none";
-        NSLog(@" Replicator Status: %@, Error: %@", activity, error);
-    };
-
-    for (CBLPeerID *peerID in replicator.neighborPeers) {
-        CBLPeerInfo *peerInfo = [replicator peerInfoForPeerID: peerID];
-        if (peerInfo) {
-            printPeerInfo(peerInfo);
-        }
-    }
-    // end::multipeer-peer-info
 }
 
 @end
