@@ -306,9 +306,13 @@
 
         // transports: the set of transports on which this peer was discovered.
         NSMutableArray<NSString *> *transportNames = [NSMutableArray array];
-        if (info.transports & kCBLMultipeerTransportWifi) [transportNames addObject:@"wifi"];
-        if (info.transports & kCBLMultipeerTransportBluetooth) [transportNames addObject:@"bluetooth"];
-        NSLog(@" Discovered on: %@", [transportNames componentsJoinedByString:@", "]);
+        if ((info.transports & kCBLMultipeerTransportWifi) != 0) {
+            [transportNames addObject:@"wifi"];
+        }
+
+        if ((info.transports & kCBLMultipeerTransportBluetooth) != 0) {
+            [transportNames addObject:@"bluetooth"];
+        }
 
         // replicatorTransport: the transport currently used for replication.
         // The value is kCBLMultipeerTransportWifi or kCBLMultipeerTransportBluetooth,
