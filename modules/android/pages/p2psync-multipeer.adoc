@@ -72,33 +72,49 @@ See <<transports>>.
 === Transport Support
 
 .Transport support
-[cols="1,1,2,1,2"]
+[cols="1,1,2,2"]
 |===
-|Transport |Available from |Discovery |Minimum Android API |Notes
+|Transport |Available from |Discovery |Notes
 
 |Wi-Fi
 |CBL 3.3
 |DNS-SD (Bonjour)
-|API 24
 |Peers must connect to the same Wi-Fi network.
 
 |Bluetooth Low Energy
 |CBL 4.1
 |BLE advertising and scanning
-|API 29
-|Requires additional manifest permissions and runtime permission requests. See <<platform-configuration>>.
+|Requires additional manifest permissions and runtime permission requests.
+See <<platform-configuration>>.
 |===
+
+NOTE: When you configure both transports, the Multipeer Replicator automatically selects the best available transport for each peer and switches between them as reachability changes, preferring Wi-Fi over Bluetooth.
+See <<automatic-transport-switching>>.
 
 === Supported Platforms
 
-For Bluetooth transport, CBL supports Android API 29 and higher.
+.Android API level requirements
+[cols="2,1"]
+|===
+|Feature |Minimum Android API
+
+|Couchbase Lite general support
+|API 24
+
+|Multipeer Replicator: Wi-Fi transport
+|API 24
+
+|Multipeer Replicator: Bluetooth transport
+|API 29
+|===
+
 On API 29 and 30, Bluetooth requires the legacy `BLUETOOTH`, `BLUETOOTH_ADMIN`, and `ACCESS_FINE_LOCATION` permissions.
 On API 31 and higher, Bluetooth requires the runtime permissions `BLUETOOTH_SCAN`, `BLUETOOTH_ADVERTISE`, and `BLUETOOTH_CONNECT`.
 
-See xref:android:supported-os.adoc[Supported Platforms] for the full platform support matrix.
+See <<bluetooth-platform-configuration>> for the required permissions.
 
 [#platform-configuration]
-=== Platform Configuration
+=== Bluetooth Platform Configuration
 
 This section applies only if your application enables Bluetooth transport. Applications that use Wi-Fi only do not require these permissions.
 
@@ -149,7 +165,6 @@ The `MultipeerReplicator` requires several configuration components to establish
 This section covers the key configurations you need to set up:
 
 === Collection Configurations
-
 
 You can specify one or more collections available for replication when creating a `MultipeerReplicatorConfiguration`.
 
@@ -233,9 +248,11 @@ include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/
 [#transports]
 === Transports
 
-The `transports` property on `MultipeerReplicatorConfiguration` controls which transports the replicator uses for peer discovery and replication. The default is Wi-Fi only.
+The `transports` property on `MultipeerReplicatorConfiguration` controls which transports the replicator uses for peer discovery and replication.
 
-To enable Bluetooth Low Energy alongside Wi-Fi, add `MultipeerTransport.BLUETOOTH` to the transports set.
+==== Wi-Fi Only
+
+Wi-Fi is the default transport. Existing applications continue to operate on Wi-Fi only after upgrading to CBL 4.1 with no code changes required.
 
 .Default (Wi-Fi only)
 [source,kotlin]
@@ -243,11 +260,9 @@ To enable Bluetooth Low Energy alongside Wi-Fi, add `MultipeerTransport.BLUETOOT
 include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-config-transports-default", indent=0]
 ----
 
-.Wi-Fi and Bluetooth
-[source,kotlin]
-----
-include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-config-transports-both", indent=0]
-----
+==== Bluetooth Only
+
+To use Bluetooth as the sole transport, set `transports` to `MultipeerTransport.BLUETOOTH`. Peers discover each other using BLE advertising and scanning rather than DNS-SD.
 
 .Bluetooth only
 [source,kotlin]
@@ -255,13 +270,19 @@ include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/
 include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-config-transports-bluetooth-only", indent=0]
 ----
 
-When you enable both transports, the replicator automatically selects the best available transport for each peer and switches between them as reachability changes. See <<automatic-transport-switching>>.
+==== Wi-Fi and Bluetooth with Automatic Switching
+
+To enable both transports, set `transports` to include both `MultipeerTransport.WIFI` and `MultipeerTransport.BLUETOOTH`. The replicator prefers Wi-Fi and falls back to Bluetooth automatically when Wi-Fi is unavailable. See <<automatic-transport-switching>>.
+
+.Wi-Fi and Bluetooth
+[source,kotlin]
+----
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/MultipeerExamples.kt[tags="multipeer-config-transports-both", indent=0]
+----
 
 === Create MultipeerReplicatorConfiguration
 
-
 The `MultipeerReplicatorConfiguration` can be created with a `peerGroupID` which is an identifier that identifies the peer-to-peer network used by the app, collection configurations, peer identity, and authenticator.
-
 
 .Creating MultipeerReplicatorConfiguration
 [source,kotlin]
@@ -339,9 +360,7 @@ include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/
 
 The `MultipeerReplicator` supports continuous mode, which allows it to operate in the background.
 
-
 When the application is put into the background, the `MultipeerReplicator` will continue to operate in the background.
-
 
 You should make sure that the application has the necessary permissions to run in the background and configure the `MultipeerReplicator` to support background operations.
 
@@ -388,8 +407,6 @@ include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/
 ==== Peer's Document Replication
 
 
-
-
 .Peer's Document Replication Listener
 [source,kotlin]
 ----
@@ -397,17 +414,13 @@ include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/
 ----
 
 
-
-
 == Peer Info
 
 
 === Peer Identifier
 
-
 A unique `peerID`, which is a digest of the peer's identity certificate, identifies each peer.
 You can get your `peerID` from the `peerID` property of the `MultipeerReplicator`.
-
 
 Getting peer ID
 [source,kotlin]
@@ -418,9 +431,7 @@ include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/
 
 === Neighbor Peers
 
-
 You can get a list of current online peers' Identifiers from the `MultipeerReplicator` from the `neighborPeers` property.
-
 
 .Getting neighbor peers
 [source,kotlin]
@@ -442,13 +453,10 @@ include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/
 
 == Logging
 
-
 `LogDomain` sets up the logging of:
-
 
 . Peer discovery log messages
 . Multipeer replication and mesh network management log messages
-
 
 [source,kotlin]
 ----
@@ -458,310 +466,4 @@ include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/
 
 == API Reference
 
-
 You can find https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}/couchbase-lite-android[Kotlin API References] here.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// == Overview
-
-
-// The Multipeer P2P Replicator automatically advertises its presence, discovers other peers,
-// and establishes connections for data replication with peers that share the same group identifier defined by the application.
-
-
-// To maintain optimal connectivity, efficient data transport, and balanced workloads, the Multipeer P2P Replicator forms a dynamic mesh network among peers in the same group.
-// It avoids redundant direct connections, evenly distributes connections across peers, and optimizes communication paths.
-// The mesh network continuously adapts as peers join or leave.
-
-
-// [mermaid]
-// ....
-// flowchart TB;
-//     id1[Android Device #1]
-//     id2[Android Device #2]
-//     id3[Android Device #3]
-//     id4[Android Device #4]
-//     id5[Android Device #5]
-//     id6[Android Device #6]
-//     id1<-->id2
-//     id1<-->id3
-//     id1<-->id4
-//     id1<-->id5
-//     id1<-->id6
-//     id2<-->id3
-//     id2<-->id4
-//     id2<-->id5
-//     id2<-->id6
-//     id3<-->id4
-//     id3<-->id5
-//     id3<-->id6
-//     id4<-->id5
-//     id4<-->id6
-//     id5<-->id6
-// ....
-
-
-
-
-// == Configuration
-
-
-// .Configuration for creating a Multipeer P2P Replicator
-// [source,java]
-// ----
-// public struct MultipeerReplicatorConfiguration {
-//     /// Identifier for discovering and connecting peers.
-//     public let peerGroupID: String
-
-
-//     /// Peer identity.
-//     /// @Note The identity’s certificate must be both server and client certificate.
-//     public let identity: TLSIdentity
-
-
-
-
-//     /// Peer authenticator.
-//     public let authenticator: MultipeerAuthenticator
-
-
-
-
-//     /// Collections to replicate.
-//     public let collections: [MultipeerCollectionConfiguration]
-
-
-
-
-//     /// Initialize the configuration with a peer group identifier, identity,
-//     /// authenticator and collections.
-//     public init(peerGroupID: String,
-//                 identity: TLSIdentity,
-//                 authenticator: MultipeerCertificateAuthenticator,
-//                 collections: [MultipeerCollectionConfiguration])
-// }
-// ----
-
-
-
-
-
-
-
-
-
-
-// TIP: In version 3.3.0, the recommended maximum number of peers in a mesh network is approximately 15.
-
-
-
-
-// === Life Cycle
-
-
-// Starting and stopping a peer-to-peer connection...
-
-
-
-
-// === Listening for Changes
-
-
-// Event types...
-
-
-
-
-// `PeerDocumentReplication`
-
-
-
-
-// == Example Use
-
-
-// Here we will show how to instansiate a `MultipeerReplicatorConfiguration` configuration with self-signed certificates, and connect it to an example collection.
-
-
-// [source,kotlin]
-// ----
-// // Code sample
-// ----
-
-
-// === MultipeerCollectionConfiguration
-
-
-// `MultipeerCollectionConfiguration` specifies a collection and its associated settings.
-// This includes a conflict resolver and replication filters.
-// A list of these configurations is required to define which collections will be replicated within the peer group network.
-
-
-
-
-// [source,kotlin]
-// ----
-// /// Type Alias for Multipeer Replication Filter Function.
-// public typealias MultipeerReplicationFilter =
-//     (PeerID, Document, DocumentFlags) -> Bool
-
-
-
-
-// /// Multipeer Conflict Resolver Protocol.
-// public protocol MultipeerConflictResolver {
-//     func resolve(peerID: PeerID, conflict: Conflict) -> Document?
-// }
-
-
-// /// Defines collection for replication including optional filters and
-// /// custom conflict resolver.
-// public struct MultipeerCollectionConfiguration {
-//     /// The collection.
-//     public let collection: Collection
-
-
-//     /// Document IDs filter.
-//     public var documentIDs: Array<String>?
-
-
-//     /// Push filter.
-//     public var pushFilter: MultipeerReplicationFilter?
-
-
-//     /// Pull filter.
-//     public var pullFilter: MultipeerReplicationFilter?
-
-
-
-
-//     /// Custom conflict resolver.
-//     public var conflictResolver: MultipeerConflictResolver?
-
-
-
-
-//     /// Initialize with a collection.
-//     public init(collection: Collection)
-// }
-// ----
-
-
-
-
-// === Authenticator
-
-
-// `MultipeerCertificateAuthenticator`
-
-
-// === Peer Info
-
-
-// `PeerInfo` provides information about the peer, including a peer unique identifier, the peer certificate, online status, replicator status, and its current `neighborPeers`.
-
-
-
-
-// [source,kotlin]
-// ----
-
-
-// ----
-
-
-// === Self-signed Certs
-
-
-// .Creating a self-signed certificate that can be used as both client and server cert
-// [source,kotlin]
-// ----
-// /// Extended Key Usage for which the certified public key may be used.
-// public struct KeyUsages: OptionSet {
-//     /// For Server Authentication
-//     public static let serverAuth = 0x40
-
-
-//     /// For Client Authentication
-//     public static let clientAuth = 0x80
-// }
-
-
-// /// TLS Identity
-// public class TLSIdentity {
-//     /// Create a TLS identity from private key and certificate data.
-//     ///
-//     /// The private key and certificate data must be either in PEM or DER format.
-//     /// This method can be used to create an issuer identity for signing
-//     /// a certificate when generating a new TLS identity.
-//     public static func createIdentity(privateKey: Data,
-//                                       certificate: Data) throws -> TLSIdentity
-
-
-
-
-//     /// Generate a TLS identity, either self-signed or signed by an issuer identity.
-//     ///
-//     /// The `attributes` must include a common name (CN); otherwise an error
-//     /// will be thrown.
-//     ///
-//     /// The optional issuer identity may be specified to sign the certificate.
-//     /// The  issuer identity can be created using
-//     /// `createIdentity(privateKeyData:certificateData:)`. If no issuer is specified,
-//     /// the certificate will be self-signed.
-//     ///
-//     /// If no the expiration date is specified, the default validity of one year
-//     /// will be applied.
-//     ///
-//     /// If a `label` is provided, the identity will be stored in the
-//     /// platform’s secure key storage under that label.
-//     public static func createIdentity(keyUsages: KeyUsages,
-//                                       attributes: [String: String],
-//                                       expiration: Date?,
-//                                       issuer: TLSIdentity?,
-//                                       label: String?) throws -> TLSIdentity
-
-
-
-
-
-
-
-
-//     @Deprecated, “Use createIdentity(keyUsages:attributes:expiration:issuer:label)”
-//     public static func createIdentity(server: Bool,
-//                                      attributes: [String: String],
-//                                      expiration: Date?,
-//                                      label: String) throws -> TLSIdentity
-// }
-// ----
-
-
-
-
-
-
-// === Logging
-
-
-// `LogDomain`
-
-
-
-
-// == API Reference
-
-
-// *URL*
