@@ -76,33 +76,50 @@ See <<transports>>.
 === Transport Support
 
 .Transport support
-[cols="1,1,2,1,2"]
+[cols="1,1,2,2"]
 |===
-|Transport |Available from |Discovery |Minimum iOS |Notes
+|Transport |Available from |Discovery |Notes
 
 |Wi-Fi
 |CBL 3.3
 |DNS-SD (Bonjour)
-|iOS 10
 |Peers must connect to the same Wi-Fi network. Requires `NSBonjourServices` and `NSLocalNetworkUsageDescription` in `Info.plist`. See <<platform-configuration>>.
 
 |Bluetooth Low Energy
 |CBL 4.1
 |BLE advertising and scanning
-|iOS 15
 |Requires `NSBluetoothAlwaysUsageDescription` in `Info.plist`. See <<platform-configuration>>.
 |===
 
+NOTE: When you configure both transports, the Multipeer Replicator automatically selects the best available transport for each peer and switches between them as reachability changes, preferring Wi-Fi over Bluetooth.
+See <<automatic-transport-switching>>.
+
 === Supported Platforms
 
-For Wi-Fi transport, CBL supports iOS 10 and higher.
+.iOS version requirements
+[cols="2,1"]
+|===
+|Feature |Minimum iOS
 
-For Bluetooth transport, CBL supports iOS 15 and higher.
+|Couchbase Lite general support
+|iOS 10
+
+|Multipeer Replicator: Wi-Fi transport
+|iOS 10
+
+|Multipeer Replicator: Bluetooth transport
+|iOS 15
+|===
+
+See <<platform-configuration>> for the required `Info.plist` keys.
 
 See xref:swift:supported-os.adoc[Supported Platforms] for the full platform support matrix.
 
 [#platform-configuration]
-=== Platform Configuration
+=== Bluetooth Platform Configuration
+
+This section applies only if your application enables Bluetooth transport.
+Applications that use Wi-Fi only do not require these keys.
 
 iOS applications must declare the required keys in `Info.plist` for each transport they enable. You can also configure these settings through Xcode's Info configuration UI.
 
@@ -194,7 +211,7 @@ When using self-signed certificates, implement your own certificate validation l
 
 === Peer Authenticator
 
-MultpeerReplicator only supports certificate based authentication.
+`MultipeerReplicator` only supports certificate based authentication.
 You can specify the authenticator in two ways:
 
 * certificate authentication callback
@@ -221,9 +238,10 @@ include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-a
 === Transports
 
 The `transports` property on `MultipeerReplicatorConfiguration` controls which transports the replicator uses for peer discovery and replication.
-The default is Wi-Fi only.
 
-To enable Bluetooth Low Energy alongside Wi-Fi, add `.bluetooth` to the transports set.
+==== Wi-Fi Only
+
+Wi-Fi is the default transport. Existing applications continue to operate on Wi-Fi only after upgrading to CBL 4.1 with no code changes required.
 
 .Default (Wi-Fi only)
 [source,swift]
@@ -231,11 +249,9 @@ To enable Bluetooth Low Energy alongside Wi-Fi, add `.bluetooth` to the transpor
 include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-config-transports-default", indent=0]
 ----
 
-.Wi-Fi and Bluetooth
-[source,swift]
-----
-include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-config-transports-both", indent=0]
-----
+==== Bluetooth Only
+
+To use Bluetooth as the sole transport, set `transports` to `[.bluetooth]`. Peers discover each other using BLE advertising and scanning rather than DNS-SD.
 
 .Bluetooth only
 [source,swift]
@@ -243,8 +259,15 @@ include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-c
 include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-config-transports-bluetooth-only", indent=0]
 ----
 
-When you enable both transports, the replicator automatically selects the best available transport for each peer and switches between them as reachability changes.
-See <<automatic-transport-switching>>.
+==== Wi-Fi and Bluetooth with Automatic Switching
+
+To enable both transports, set `transports` to include both `.wifi` and `.bluetooth`. The replicator prefers Wi-Fi and falls back to Bluetooth automatically when Wi-Fi is unavailable. See <<automatic-transport-switching>>.
+
+.Wi-Fi and Bluetooth
+[source,swift]
+----
+include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-config-transports-both", indent=0]
+----
 
 === Create MultipeerReplicatorConfiguration
 
@@ -377,7 +400,7 @@ include::swift:example$code_snippets/MultipeerReplicator.swift[tags="multipeer-n
 
 === Peer Info
 
-The `PeerInfo` object provides information about a peer, including its identifier, certificate, online status, replicator status, neighbor peers, the transports on which the peer was discovered, and the transport presently used for replication.
+The `PeerInfo` object provides information about a peer, including its identifier, certificate, online status, replicator status, neighbor peers, the transports on which the peer was discovered, and the transport currently used for replication.
 
 .Getting peer info
 [source,swift]
