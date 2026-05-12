@@ -1,4 +1,3 @@
-
 = Upgrade
 :page-aliases: advance/java-android-dep-upgrade.adoc, dep-upgrade.adoc
 :page-role:
@@ -18,14 +17,39 @@ On upgrading from a 2.x release, all Couchbase Lite databases will be automatica
 This can result in a delay before the database is usable.
 --
 
-[#3-2-3-upgrade]
+[#3-4-0-upgrade]
 == {major}.{minor}.{base}{empty} Upgrade
 
-The action will take place automatically and can lead to some delay in the database becoming available for use in your application.
+Couchbase Lite {major}.{minor} is a non-breaking upgrade from 3.3.
+Update your Couchbase Lite dependency to {major}.{minor} -- no API or configuration changes are required.
+Existing `MultipeerReplicatorConfiguration` setups continue to work without modification.
+The default transport remains Wi-Fi only.
 
-In addition, if you are syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
-See xref:sync-gateway::upgrading.adoc[Upgrading Sync Gateway] for more details.
-This is a one-way conversion.
+=== Enabling Bluetooth Transport (Optional)
+
+To enable Bluetooth Low Energy transport alongside Wi-Fi, set the `transports` property on your `MultipeerReplicatorConfiguration`:
+
+[source, Kotlin]
+----
+val config = MultipeerReplicatorConfiguration(
+    peerGroupID = "myGroup",
+    identity = identity,
+    authenticator = authenticator,
+    collections = collections)
+config.transports = EnumSet.of(MultipeerTransport.WIFI, MultipeerTransport.BLUETOOTH)
+----
+
+[source, Java]
+----
+MultipeerReplicatorConfiguration config = new MultipeerReplicatorConfiguration(
+    "myGroup",
+    identity,
+    authenticator,
+    collections);
+config.setTransports(EnumSet.of(MultipeerTransport.WIFI, MultipeerTransport.BLUETOOTH));
+----
+
+Bluetooth transport requires Android API 29 or later.
 
 // All API and other listed changes included in the other platforms do not apply to CBL-C for the following reasons
 // The changes apply to pre 3.x versions (CBL-C started at 3.0)
@@ -376,10 +400,7 @@ For example, if a new minor version such as CBL 3.1.0 is released the release no
 *Full Downgrade Support* - Downgrades between patch releases are supported.
 Users can safely downgrade between different patch versions within the same minor release.
 
-For example, if you're running CBL 3.1.6 you can downgrade to CBL 3.1.4 or CBL 3.1.3 without issues.
-
-
-// Include standard footer
+For example, if you're' running CBL 3.1.6 you can downgrade to CBL 3.1.4 or CBL 3.1.3 without issues.
 
 
 [#related-content]
@@ -423,4 +444,3 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 ++++
 </div>
 ++++
-
