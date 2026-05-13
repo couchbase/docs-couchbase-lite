@@ -1,15 +1,10 @@
-
 = Supported Operating System Versions
 :page-aliases: product/java-android-supported-os.adoc
 :page-role: -toc
 :description: Couchbase Lite on Android -- the OS and SDK versions on which this framework is supported
 
-
 :source-language: Java
-
-
 :source-language: Kotlin
-
 
 [abstract]
 --
@@ -33,7 +28,7 @@ Couchbase does not test against, nor guarantee support for, uncertified Android 
 
 .Supported versions
 [#supported-os-versions]
-[%autowidth.stretch#supported-os-versions]
+[%autowidth.stretch]
 |===
 |Platform |Runtime architectures |Minimum API Level
 
@@ -54,4 +49,27 @@ Couchbase does not test against, nor guarantee support for, uncertified Android 
 |24
 |===
 
+[#bluetooth-transport-requirements]
+== Bluetooth Transport Requirements
 
+[NOTE]
+--
+Bluetooth Low Energy (BLE) transport for the Multipeer Replicator requires *Android API 29 (Android 10) or later*, due to the availability of BLE L2CAP support on that API level.
+
+Devices running API 24--28 can still use Couchbase Lite 3.4 with all non-Bluetooth features, including Wi-Fi-based Multipeer replication.
+If your application targets API 24--28, do not include `.bluetooth` in your `MultipeerReplicatorConfiguration.transports` set.
+--
+
+[cols="1,^1", options="header"]
+|===
+|Feature |Minimum API Level
+
+|Couchbase Lite core
+|24
+
+|Multipeer Replicator (Wi-Fi)
+|24
+
+|Multipeer Replicator (Bluetooth LE)
+|29
+|===
