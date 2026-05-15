@@ -1,4 +1,3 @@
-
 = Live Queries
 :page-aliases: clang:query-live.adoc
 :page-role:
@@ -15,17 +14,6 @@
 --
 Description -- _{description}_ +
 --
-
-// BEGIN::Local page attributes
-// :blank-field: ____
-// :lang-title: C
-// :module: c
-// :packageNm: couchbase-lite-c
-// :source-language: c
-// snippet: c:example$code_snippets/main.cpp
-// :url-issues: https://github.com/couchbase/couchbase-lite-c/issues
-
-// END::Local page attributes
 
 [#overview]
 == Overview
@@ -53,36 +41,65 @@ When a change is detected the query automatically runs, and posts the new query 
 [#ex-qry-start]
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="live-query", indent=0]
 ----
-
-
-====
-
 <.> Build the query statements
 <.> Activate the _live_ query by attaching a listener.
-Save the token in order to detach the listener and stop the query later -- se xref:c:query-live.adoc#ex-qry-stop[]
+Save the token in order to detach the listener and stop the query later -- see xref:c:query-live.adoc#ex-qry-stop[]
+--
 
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="live-query", indent=0]
+----
+<.> Build the query statements
+<.> Activate the _live_ query by attaching a listener.
+Save the token in order to detach the listener and stop the query later -- see xref:c:query-live.adoc#ex-qry-stop[]
+--
+=====
 
-.Stop a LIve Query
+====
+
+.Stop a Live Query
 [#ex-qry-stop]
 
 
 [#ex-qry-stop]
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="stop-live-query", indent=0]
 ----
+<.> Here we use the change listener token from xref:c:query-live.adoc#ex-qry-start[] to remove the listener.
+Doing so stops the live query.
+--
 
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="stop-live-query", indent=0]
+----
+<.> Here we use the change listener token from xref:c:query-live.adoc#ex-qry-start[] to remove the listener.
+Doing so stops the live query.
+--
+=====
 
 ====
-
-<.> Here we use the change lister token from xref:c:query-live.adoc#ex-qry-start[] to remove the listener.
-Doing so stops the live query.
-

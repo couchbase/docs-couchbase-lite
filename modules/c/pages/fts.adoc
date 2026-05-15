@@ -1,4 +1,3 @@
-
 = Using Full-Text Search
 :page-aliases: clang:fts.adoc
 :page-role:
@@ -11,13 +10,6 @@
 :url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__
 
 
-// define abstract -- no include in root-commons content
-// :param-abstract!:
-// :param-related: xref:c:querybuilder.adoc#lbl-predquery[Predictive Queries] | xref:c:indexing.adoc[Indexing] | xref:c:querybuilder.adoc[QueryBuilder]
-// :topic-group: Queries
-// include::ROOT:partial$_show_page_header_block.adoc[]
-
-// Present common content
 [abstract]
 --
 Description -- _{description}_ +
@@ -45,12 +37,26 @@ They create and use an FTS index built from the hotel's `Overview` text.
 [#ex-indexbuilder]
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="fts-index", indent=0]
 ----
+--
 
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="fts-index", indent=0]
+----
+--
+=====
 
 ====
 
@@ -74,12 +80,26 @@ The following example finds all hotels mentioning _Michigan_ in their _Overview_
 [#ex-indexbuilder]
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="fts-query", indent=0]
 ----
+--
 
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="fts-query", indent=0]
+----
+--
+=====
 
 ====
 
@@ -139,7 +159,7 @@ Query the database for documents for which the term "linux" appears in the docum
 
 A _phrase query_ is one that retrieves all documents containing a nominated set of terms or term prefixes in a specified order with no intervening tokens.
 
-Phrase queries are specified by enclosing a space separated sequence of terms or term prefixes in double quotes (").
+Phrase queries are specified by enclosing a space separated sequence of terms or term prefixes in double quotes ("").
 
 .Phrase query
 ====
@@ -244,9 +264,3 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 ++++
 </div>
 ++++
-
-// Include common footer block -- this is now part of
-// Common Content component for this page
-// include::ROOT:partial$block-related-content-query.adoc[]
-
-
