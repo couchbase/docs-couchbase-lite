@@ -325,7 +325,12 @@ class MultipeerExamples {
         }
 
         for(peer in replicator.neighborPeers) {
-            printPeerInfo(replicator.getPeerInfo(peer))
+            val info = replicator.getPeerInfo(peer)
+            if (info != null) {
+                printPeerInfo(info)
+            } else {
+                Log.i(TAG, "Peer $peer no longer known")
+            }
         }
         // end::multipeer-peer-info[]
     }
