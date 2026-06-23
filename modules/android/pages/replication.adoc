@@ -153,17 +153,14 @@ public class InOrderExample {
 
     public Replicator runReplicator(Database db1, Database db2, ReplicatorChangeListener listener)
         throws CouchbaseLiteException {
-<<<<<<< HEAD
         ReplicatorConfiguration config = new ReplicatorConfiguration(db1, new DatabaseEndpoint(db2));
         config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
-=======
         CollectionConfiguration collectionConfig = new CollectionConfiguration(db1.getDefaultCollection());
         ReplicatorConfiguration config = new ReplicatorConfiguration(
             Set.of(collectionConfig),
             new DatabaseEndpoint(db2)
         );
         config.setType(ReplicatorType.PUSH_AND_PULL);
->>>>>>> d7f59a3e (added correlation id and obj-c disclaimer)
         config.setContinuous(false);
 
         Replicator repl = new Replicator(config);
@@ -180,31 +177,20 @@ public class InOrderExample {
 
 [source,java]
 ----
-/**
- * This version maximizes throughput.  It will deliver change notifications as quickly
- * as CPU availability allows. It may deliver change notifications out of order.
- * Listeners must be thread safe because they may be called from multiple threads.
- * In fact, they must be re-entrant because a given listener may be running on mutiple threads
- * simultaneously.  In addition, when notifications swamp the processors, notifications awaiting
- * a processor will be queued as Threads, (instead of as Runnables) with accompanying memory
- * and GC impact.
- */
+
 public class MaxThroughputExample {
     private static final ExecutorService MAX_THROUGHPUT_EXEC = Executors.newCachedThreadPool();
 
     public Replicator runReplicator(Database db1, Database db2, ReplicatorChangeListener listener)
         throws CouchbaseLiteException {
-<<<<<<< HEAD
         ReplicatorConfiguration config = new ReplicatorConfiguration(db1, new DatabaseEndpoint(db2));
         config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
-=======
         CollectionConfiguration collectionConfig = new CollectionConfiguration(db1.getDefaultCollection());
         ReplicatorConfiguration config = new ReplicatorConfiguration(
             Set.of(collectionConfig),
             new DatabaseEndpoint(db2)
         );
         config.setType(ReplicatorType.PUSH_AND_PULL);
->>>>>>> d7f59a3e (added correlation id and obj-c disclaimer)
         config.setContinuous(false);
 
         Replicator repl = new Replicator(config);
@@ -240,11 +226,7 @@ public class PolicyExample {
         = new RejectedExecutionHandler() {
         public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
             synchronized (this) {
-<<<<<<< HEAD
-                if (BACKUP_EXEC =  null) { BACKUP_EXEC = createBackupExecutor(); }
-=======
                 if (BACKUP_EXEC == null) { BACKUP_EXEC = createBackupExecutor(); }
->>>>>>> d7f59a3e (added correlation id and obj-c disclaimer)
             }
             BACKUP_EXEC.execute(r);
         }
@@ -264,17 +246,14 @@ public class PolicyExample {
 
     public Replicator runReplicator(Database db1, Database db2, ReplicatorChangeListener listener)
         throws CouchbaseLiteException {
-<<<<<<< HEAD
         ReplicatorConfiguration config = new ReplicatorConfiguration(db1, new DatabaseEndpoint(db2));
         config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
-=======
         CollectionConfiguration collectionConfig = new CollectionConfiguration(db1.getDefaultCollection());
         ReplicatorConfiguration config = new ReplicatorConfiguration(
             Set.of(collectionConfig),
             new DatabaseEndpoint(db2)
         );
         config.setType(ReplicatorType.PUSH_AND_PULL);
->>>>>>> d7f59a3e (added correlation id and obj-c disclaimer)
         config.setContinuous(false);
 
         Replicator repl = new Replicator(config);
@@ -447,7 +426,7 @@ The constructor provides:
 * the server's URL (including the port number and the name of the remote database to sync with)
 +
 --
-It is expected that the app will identify the IP address and URL and append the remote database name to the URL endpoint, producing for example: `wss://10.0.2.2:4984/travel-sample`
+It's expected that the app identifies the IP address and URL and append the remote database name to the URL endpoint, producing for example: `wss://10.0.2.2:4984/travel-sample`
 
 The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) prefixes.
 To use cleartext, un-encrypted, network traffic (`http://` and-or `ws://`),  include `android:usesCleartextTraffic="true"` in the `application` element of the manifest as shown on https://developer.android.com/training/articles/security-config#CleartextTrafficPermitted[android.com^]. +
@@ -1633,7 +1612,7 @@ include::android:example$codesnippet_collection.java[tags="remove-document-repli
 [#document-access-removal-behavior]
 ==== Document Access Removal Behavior
 
-When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
+When access to a document is removed on Sync Gateway (see: Sync Gateway's' xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
 
 
 [#lbl-repl-pend]
@@ -1694,7 +1673,7 @@ This is a snapshot and may have changed by the time the response is received and
 [#lbl-repl-correlation-id]
 === Correlation ID
 The correlation ID is a read-only property that identifies the Sync Gateway session associated with a Couchbase Lite replicator.
-Use it to correlate log entries on the client and server when diagnosing replication issues.
+Use it to correlate log entries across Couchbase Lite and Sync Gatewaywhen diagnosing replication issues.
 [#ex-repl-correlation-id]
 .Get the replicator correlation ID
 ====
