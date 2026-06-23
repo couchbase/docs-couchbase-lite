@@ -14,7 +14,7 @@ if(DEFINED CBL_MACOS_ARCH)
 endif()
 
 if(NOT DEFINED CBL_VERSION)
-    set(CBL_VERSION 4.0.0)
+    set(CBL_VERSION 4.1.0)
 endif()
 
 project(code-snippets)
@@ -35,6 +35,15 @@ add_executable(
         main.cpp
         VectorSearch.h
 )
+
+# These files are a catalog of doc snippets, not a real app: main() is empty and
+# every snippet function is intentionally uncalled. Silence the resulting
+# "unused function" noise so genuine warnings stay visible.
+if(MSVC)
+    target_compile_options(code-snippets PRIVATE /wd4505)
+else()
+    target_compile_options(code-snippets PRIVATE -Wno-unused-function)
+endif()
 
 if(CMAKE_COMPILER_IS_GNUCC AND CBL_STATIC_CXX)
     target_compile_options(code-snippets PRIVATE -Wno-psabi)
