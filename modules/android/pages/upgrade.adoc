@@ -27,7 +27,14 @@ The default transport remains Wi-Fi only.
 
 === Enabling Bluetooth Transport (Optional)
 
-To enable Bluetooth Low Energy transport alongside Wi-Fi, set the `transports` property on your `MultipeerReplicatorConfiguration`:
+By default, Multipeer Replication uses Wi-Fi only.
+You can configure the `transports` property on `MultipeerReplicatorConfiguration` to enable Bluetooth Low Energy (BLE) transport.
+
+==== Auto-Switching (Wi-Fi and BLE)
+
+To enable both Wi-Fi and BLE, set both transports.
+When both are in range, Couchbase Lite uses Wi-Fi.
+It falls back to BLE when Wi-Fi is unavailable.
 
 [source, Kotlin]
 ----
@@ -49,11 +56,32 @@ MultipeerReplicatorConfiguration config = new MultipeerReplicatorConfiguration(
 config.setTransports(EnumSet.of(MultipeerTransport.WIFI, MultipeerTransport.BLUETOOTH));
 ----
 
-Bluetooth transport requires Android API 29 or later.
+==== BLE Only
 
-// All API and other listed changes included in the other platforms do not apply to CBL-C for the following reasons
-// The changes apply to pre 3.x versions (CBL-C started at 3.0)
-// Or they relate to Querybuilder functionality - CBL-C doesn't have Querybuilder.
+To restrict replication to BLE exclusively, omit `MultipeerTransport.WIFI`.
+
+[source, Kotlin]
+----
+val config = MultipeerReplicatorConfiguration(
+    peerGroupID = "myGroup",
+    identity = identity,
+    authenticator = authenticator,
+    collections = collections)
+config.transports = EnumSet.of(MultipeerTransport.BLUETOOTH)
+----
+
+[source, Java]
+----
+MultipeerReplicatorConfiguration config = new MultipeerReplicatorConfiguration(
+    "myGroup",
+    identity,
+    authenticator,
+    collections);
+config.setTransports(EnumSet.of(MultipeerTransport.BLUETOOTH));
+----
+
+NOTE: Bluetooth transport requires Android API 29 or later.
+
 [#api-changes]
 === API Changes
 
