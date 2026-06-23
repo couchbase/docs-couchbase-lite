@@ -1,4 +1,3 @@
-
 = Blobs
 :page-aliases: clang:blob.adoc
 :page-role:
@@ -92,6 +91,28 @@ If you view a sync'd blob document in {cbs} Admin Console, you will see somethin
 image::ROOT:attach-replicated.png[]
 
 
+[#blob-deletion]
+== Blob Deletion and Cleanup
+
+When you delete a document that references a blob, the blob file itself is not immediately removed from the database.
+The blob file will be kept in the database until the database is compacted.
+
+To actually remove orphaned blob files from the database, you need to perform database maintenance using the compact option:
+
+.Compact Database to Remove Orphaned Blobs
+====
+
+[source, c]
+----
+CBLError error;
+CBLDatabase_PerformMaintenance(database, kCBLMaintenanceTypeCompact, &error);
+----
+
+====
+
+This ensures that blob files are only deleted when they are no longer referenced by any document in the database.
+
+
 [#related-content]
 == Related Content
 ++++
@@ -101,7 +122,6 @@ image::ROOT:attach-replicated.png[]
 [.column]
 === {empty}
 .How to . . .
-* xref:c:gs-prereqs.adoc[Prerequisites]
 * xref:c:gs-install.adoc[Install]
 * xref:c:gs-build.adoc[Build and Run]
 

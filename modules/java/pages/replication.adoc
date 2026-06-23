@@ -1,4 +1,3 @@
-
 = Data Sync using Sync Gateway
 :page-aliases: learn/java-replication.adoc
 :page-role:
@@ -137,7 +136,7 @@ You should configure and initialize a replicator for each Couchbase Lite databas
 xref:java:replication.adoc#ex-simple-repl[] shows the configuration and initialization process.
 
 NOTE: You need Couchbase Lite 3.1+ and Sync Gateway 3.1+ to use `custom` Scopes and Collections. +
-If you’re using Capella App Services or Sync Gateway releases that are older than version 3.1, you won’t be able to access `custom` Scopes and Collections.
+If you're using Capella App Services or Sync Gateway releases that are older than version 3.1, you won't be able to access `custom` Scopes and Collections.
 To use Couchbase Lite 3.1+ with these older versions, you can use the `default` Collection as a backup option.
 
 Click the *GitHub* tab in the code examples for further details.
@@ -163,7 +162,7 @@ include::java:example$codesnippet_collection.java[tags="p2p-act-rep-func", inden
 *Notes on Example*
 
 <.> get endpoint for target DB
-<.> Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html[ReplicatorConfiguration] class's constructor -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html#ReplicatorConfiguration-com.couchbase.lite.Database-com.couchbase.lite.Endpoint-[ReplicatorConfiguration(database, endpoint)] -- to initialize the replicator configuration with the local database -- see also: xref:java:replication.adoc#lbl-cfg-tgt[]
+<.> Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html[ReplicatorConfiguration] class's constructor -- https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html#ReplicatorConfiguration-com.couchbase.lite.Database-com.couchbase.lite.Endpoint-[ReplicatorConfiguration(collectionConfigs, endpoint)] -- to initialize the replicator configuration with the local database -- see also: xref:java:replication.adoc#lbl-cfg-tgt[]
 <.> The default is to auto-purge documents that this user no longer has access to -- see: xref:java:replication.adoc#anchor-auto-purge-on-revoke[].
 Here we over-ride this behavior by setting its flag false.
 
@@ -174,10 +173,6 @@ By default, clients accept only servers presenting certificates that can be veri
 These are the credential the client will present to sync{nbsp}gateway if requested to do so. +
 Here we configure to provide _Basic Authentication_ credentials.
 Other options are available -- see: xref:java:replication.adoc#lbl-client-auth[].
-
-<.> Configure how the replication should handle conflict resolution -- see: xref:java:conflict.adoc[Handling Data Conflicts] topic for mor on conflict resolution.
-
-<.> Initialize the replicator using your configuration -- see: xref:java:replication.adoc#lbl-init-repl[].
 
 <.> Optionally, register an observer, which will notify you of changes to the replication status -- see: xref:java:replication.adoc#lbl-repl-mon[]
 
@@ -409,7 +404,7 @@ Use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}
 
 * If there is a pinned certificate, nothing else matters, the server cert must *exactly* match the pinned certificate.
 * If there are no pinned certs and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-[setAcceptOnlySelfSignedServerCertificate] is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
-* If there are no pinned certificates and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-[setAcceptOnlySelfSignedServerCertificate] is `false` (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
+* If there are no pinned certificates and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-[setAcceptOnlySelfSignedServerCertificate] is `false` (default), the client validates the server's certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
 
 // Example 4
 .Set Server TLS security
@@ -456,7 +451,6 @@ Set the client to expect and accept only a pinned certificate.
 ----
 include::java:example$codesnippet_collection.java[tag=p2p-act-rep-config-cacert-pinned, indent=0]
 ----
-// include::java:example$codesnippet_collection.java[tag=p2p-act-rep-config-cacert-pinned-callouts, indent=0]
 --
 
 ======
@@ -624,7 +618,7 @@ and the
 xref:sync-gateway::sync-function-api.adoc[sync function]
 to specify which data to pull for each user.
 
-Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's replicator configuration object.
+Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's collection configuration object.
 In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
 
 [#anchor-auto-purge-on-revoke]
@@ -637,7 +631,7 @@ This is a Breaking Change at 3.0
 [#new-outcome]
 ==== New outcome
 
-By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user’s other channels) are auto-purged from the local database (in devices belonging to the user).
+By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user's other channels) are auto-purged from the local database (in devices belonging to the user).
 
 [#prior-outcome]
 ==== Prior outcome
@@ -659,7 +653,7 @@ Users may lose access to channels in a number of ways:
 
 * A channel is removed from a role the user is assigned to
 
-By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user’s other channels -- see: xref:java:replication.adoc#tbl-revoke-behavior[].
+By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user's other channels -- see: xref:java:replication.adoc#tbl-revoke-behavior[].
 
 Documents that exist in multiple channels belonging to the user (even if they are not actively replicating that channel) are not auto-purged unless the user loses access to all channels.
 
@@ -781,12 +775,12 @@ This ensures backwards compatible with 2.8 clients that use pull filters to prev
 |disabled
 2+a|Doc remains in local database
 
-App notified of “accessRemoved” if a _Documentlistener_ is registered
+App notified of "accessRemoved" if a _Documentlistener_ is registered
 
 |enabled (DEFAULT)
 a|Doc is auto purged
 
-App notified of “accessRemoved” if _Documentlistener_ registered
+App notified of "accessRemoved" if _Documentlistener_ registered
 a|Doc remains in local database
 
 
@@ -887,9 +881,10 @@ In this section::
 xref:java:replication.adoc#lbl-repl-chng[]  |
 xref:java:replication.adoc#lbl-repl-status[]  |
 xref:java:replication.adoc#lbl-repl-evnts[] |
-xref:java:replication.adoc#lbl-repl-pend[]
+xref:java:replication.adoc#lbl-repl-pend[] |
+xref:java:replication.adoc#lbl-repl-correlation-id[]
 
-You can monitor a replication’s status by using a combination of xref:java:replication.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorStatus.html#getActivityLevel--[getActivityLevel()].
+You can monitor a replication's status by using a combination of xref:java:replication.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/ReplicatorStatus.html#getActivityLevel--[getActivityLevel()].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
 You can also choose to monitor document changes -- see: xref:java:replication.adoc#lbl-repl-evnts[].
@@ -1074,6 +1069,20 @@ This is a snapshot and may have changed by the time the response is received and
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-java}{empty}/couchbase-lite-java/com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-[Replicator.isDocumentPending] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
 
+[#lbl-repl-correlation-id]
+=== Correlation ID
+The correlation ID is a read-only property that identifies the Sync Gateway session associated with a Couchbase Lite replicator.
+Use it to correlate log entries on the client and server when diagnosing replication issues.
+[#ex-repl-correlation-id]
+.Get the replicator correlation ID
+====
+[source, Java]
+----
+String correlationID = replicator.getCorrelationId();
+----
+====
+
+
 [#lbl-repl-stop]
 == Stop
 
@@ -1174,15 +1183,6 @@ Certificate pinning is a technique that can be used by applications to "pin" a h
 The certificate is typically delivered to the client by an out-of-band channel and bundled with the client.
 In this case, Couchbase Lite uses this embedded certificate to verify the trustworthiness of the server (for example, a Sync Gateway) and no longer needs to rely on a trusted third party for that (commonly referred to as the Certificate Authority).
 
-[.status]#Couchbase Lite 3.0.2#
-
-For the 3.02. release, changes have been made to the way certificates on the host are matched:
-[horizontal]
-
-Prior to CBL3.0.2:: The pinned certificate was only compared with the leaf certificate of the host. This is not always suitable as leaf certificates are usually valid for shorter periods of time.
-CBL-3.0.2{plus}:: The pinned certificate will be compared against any certificate in the server's certificate chain.
-
-
 The following steps describe how to configure certificate pinning between Couchbase Lite and Sync Gateway.
 
 . xref:sync-gateway::security.adoc#creating-your-own-self-signed-certificate[Create your own self-signed certificate]
@@ -1246,7 +1246,7 @@ include::java:example$codesnippet_collection.java[tags="replication-logging", in
 ====
 
 
-For more on troubleshooting with logs, see: xref:java:troubleshooting-logs.adoc[Using Logs].
+For more on troubleshooting with logs, see: xref:java:new-logging-api.adoc[Using Logs].
 
 [#authentication-errors]
 === Authentication Errors
@@ -1261,7 +1261,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: WebSocket error 100
 ----
 ====
 
-If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't using the certificate you will encounter an error with status code `5011` -- see: <<ex-5011>>
+If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't' using the certificate you will encounter an error with status code `5011` -- see: <<ex-5011>>
 
 [#ex-5011]
 .Certificate Mismatch or Not Found
@@ -1319,8 +1319,4 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 ++++
 </div>
 ++++
-
-
-// END -- inclusion -- common-sgw-replication.adoc
-
 

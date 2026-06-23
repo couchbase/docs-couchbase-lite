@@ -1,4 +1,3 @@
-
 = Databases
 :page-aliases: clang:database.adoc
 :page-role:
@@ -179,12 +178,28 @@ See also xref:c:database.adoc#lbl-find-db-loc[].
 [#ex-dbopen]
 ====
 
+[tabs]
+=====
 
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="new-database", indent=0]
 ----
+--
 
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="new-database", indent=0]
+----
+--
+
+=====
 
 ====
 
@@ -208,12 +223,28 @@ NOTE: Closing a database soon after starting a replication involving it can caus
 [#ex-dbclose]
 ====
 
+[tabs]
+=====
 
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="close-database", indent=0]
 ----
+--
 
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="close-database", indent=0]
+----
+--
+
+=====
 
 ====
 
@@ -234,17 +265,33 @@ CAUTION: Database Full Sync is a safe method to prevent data loss but will incur
 [#ex-dbfullsync]
 ====
 
+[tabs]
+=====
 
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="database-fullsync", indent=0]
 ----
+--
 
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="database-fullsync", indent=0]
+----
+--
+
+=====
 
 ====
 
 
-NOTE: It is not possible to change the configuration of a Database after instantiating the Database with the configuration by updating its `DatabaseConfiguration` property.
+NOTE: Once a Database is created, its configuration is immutable — modifying the `DatabaseConfiguration` property afterwards has no effect on the existing instance.
 
 [#database-encryption]
 == Database Encryption
@@ -269,12 +316,28 @@ Provide this encryption key every time the database is opened -- see xref:c:data
 [#ex-sdb-encrypt]
 ====
 
+[tabs]
+=====
 
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="database-encryption", indent=0]
 ----
+--
 
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="database-encryption", indent=0]
+----
+--
+
+=====
 
 ====
 
@@ -349,7 +412,6 @@ Note that the `cblite` tool is not supported by the https://www.couchbase.com/su
 [.column]
 === {empty}
 .How to . . .
-* xref:c:gs-prereqs.adoc[Prerequisites]
 * xref:c:gs-install.adoc[Install]
 * xref:c:gs-build.adoc[Build and Run]
 
@@ -381,5 +443,3 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 ++++
 </div>
 ++++
-
-

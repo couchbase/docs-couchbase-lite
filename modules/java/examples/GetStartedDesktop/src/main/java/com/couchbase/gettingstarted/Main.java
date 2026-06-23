@@ -2,6 +2,7 @@ package com.couchbase.gettingstarted;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Set;
 
 import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.Collection;
@@ -99,12 +100,12 @@ public class Main {
     }
 
     private Replicator startRepl(String uri, Collection collection) throws URISyntaxException {
-        CollectionConfiguration collConfig = new CollectionConfiguration()
+        CollectionConfiguration collConfig = new CollectionConfiguration(collection)
             .setPullFilter((doc, flags) -> "Java".equals(doc.getString("language")));
 
         ReplicatorConfiguration replConfig = new ReplicatorConfiguration(
+            Set.of(collConfig),
             new URLEndpoint(new URI(uri)))
-            .addCollection(collection, collConfig)
             .setType(ReplicatorType.PUSH_AND_PULL)
             .setAuthenticator(new BasicAuthenticator("sync-gateway", "password".toCharArray()));
 

@@ -32,6 +32,7 @@ import java.util.Set;
 
 import com.couchbase.lite.ClientCertificateAuthenticator;
 import com.couchbase.lite.Collection;
+import com.couchbase.lite.CollectionConfiguration;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.ListenerCertificateAuthenticator;
 import com.couchbase.lite.Replicator;
@@ -147,8 +148,10 @@ public class JavaListenerExamples {
         throws CouchbaseLiteException {
 
         ReplicatorConfiguration config =
-            new ReplicatorConfiguration(new URLEndpoint(targetUrl))
-                .addCollections(srcCollections, null)
+            new ReplicatorConfiguration(
+                    CollectionConfiguration.fromCollections(srcCollections),
+                    new URLEndpoint(targetUrl)
+            )
 
                 // tag::p2p-act-rep-config-cacert[]
                 // Configure Server Security

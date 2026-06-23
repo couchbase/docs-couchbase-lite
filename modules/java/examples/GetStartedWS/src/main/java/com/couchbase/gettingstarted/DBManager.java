@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.couchbase.lite.BasicAuthenticator;
@@ -120,13 +121,13 @@ public class DBManager {
     // Be sure to hold a reference somewhere to prevent the Replicator from being GCed
     public Replication startReplicator(Collection collection, ReplicatorChangeListener listener)
         throws URISyntaxException {
-        CollectionConfiguration collConfig = new CollectionConfiguration()
+        CollectionConfiguration collConfig = new CollectionConfiguration(collection)
             .setPullFilter((doc, flags) -> "Java".equals(doc.getString("language")));
 
         ReplicatorConfiguration replConfig =
             new ReplicatorConfiguration(
+                Set.of(collConfig),
                 new URLEndpoint(new URI("ws://localhost:4984/getting-started-db")))
-                .addCollection(collection, collConfig)
                 .setType(ReplicatorType.PUSH_AND_PULL)
                 .setAuthenticator(new BasicAuthenticator("sync-gateway", "password".toCharArray()));
 

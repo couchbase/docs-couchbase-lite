@@ -1,14 +1,24 @@
 
-= New Logging API
+= Logging API
+= Logging API
 :page-status:
 :page-edition:
 :page-aliases:
 :page-role:
-:description: A new Logging API.
+:description: Introduced in Couchbase Lite 3.2.2.
 :keywords: edge mobile api java kotlin android apple logging file console custom
 
 [abstract]
-{description}
+--
+{description} +
+Related Content -- xref:java:troubleshooting-queries.adoc[Troubleshooting Queries]
+--
+
+.Constraints
+[NOTE]
+--
+The retrieval of logs from the device is out of scope of this feature.
+--
 
 // Sets the correct mobile sdk for xref links in the common page
 
@@ -16,30 +26,14 @@
 
 
 // ROOT:partial$commons/common-
-[#upgrading-to-the-new-cbl-logging-api]
-== Upgrading to the New CBL Logging API
-
-CAUTION: Use of the deprecated and new Logging API at the same time is not supported.
-
-You can find information about the new Couchbase Lite Logging API introduced in Couchbase Lite 3.2.2.
-
-
-For information about the now deprecated earlier version of the Logging API, see xref:3.1@couchbase-lite:java:troubleshooting-logs.adoc[].
-
 
 [#logsinks]
 == LogSinks
 
-Couchbase Lite 3.2.2 introduced a new Logging API.
-The new Logging API has the following benefits:
+Log sinks are thread safe, removing risk of inconsistent states during initialization.
 
-* Log sinks are now thread safe, removing risk of inconsistent states during initialization.
 
-* Simplified API and reduced implementation complexity.
-
-The new logging API retains many of the core concepts of the previous API.
-
-The first thing to note is that the three destinations for logs have been renamed as `LogSinks`, in keeping with common source/sink terminology.
+The three destinations for logs have been named as `LogSinks`, following the common source–sink terminology.
 
 The `FileLogSink`, the `ConsoleLogSink` and the `CustomLogSink` are all to be installed in an instance of `LogSinks`.
 
@@ -53,7 +47,7 @@ Accessing `LogSinks` depends on the platform.
 In Java, use the method `LogSinks.get()` to obtain an instance.
 In Swift, Objective-C, .NET, and C, `LogSinks` provides only static methods, without a singleton instance.
 
-The biggest difference between the new and the old API is that `LogSinks` are immutable: you set the level and domain at which they log in their constructors.
+LogSinks` are immutable: you set the level and domain at which they log in their constructors
 For example, you can only change the level at which the `ConsoleLogSink` forwards messages to the console by installing a new one created for the new log level.
 
 Log output is split into the following streams:
@@ -80,16 +74,6 @@ For greater flexibility you can implement a custom logging class.
 The changes necessary convert the installation of a console logger from the old to the new API are minimal.
 Create an instance of `ConsoleLogSink` initialized with the desired log level and domains and install it.
 
-
-.Old API
-[source.no-callouts, java, indent=0]
-----
-
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=console-logging]
-
-----
-
-.New API
 [source.no-callouts, java, indent=0]
 ----
 
@@ -101,22 +85,11 @@ include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examp
 [#lbl-file-logsink]
 === Logging to the Couchbase File Log
 
-The changes necessary to convert the installation of a file logger are also similar.
-Instead of configuring a `FileLogger` using a `LogFileConfiguration`, create a new `FileLogSink` with the desired properties and install it.
+Create a new `FileLogSink` with the desired properties and install it.
 
-NOTE: `setRotateCount` from the old API is slightly different from `setMaxKeptFiles`.
+NOTE: `setRotateCount` from before 3.2.2 API is slightly different from `setMaxKeptFiles`.
 `setMaxKeptFiles` is the maximum number of log files that will exist at any time and is the count of rotated files (`setRotateCount`) plus one.
 
-
-.Old API
-[source.no-callouts, java, indent=0]
-----
-
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=file-logging]
-
-----
-
-.New API
 [source.no-callouts, java, indent=0]
 ----
 
@@ -124,49 +97,27 @@ include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examp
 
 ----
 
-
 [#lbl-custom-logsink]
 === Using a Custom Logger
 
-Installing a custom log sink with the new API is also streamlined: create an instance of your custom sink, and to install it use `LogSinks.get().setCustom` in Java, or the appropriate static method in Swift, Objective-C, .NET, and C.
+Create an instance of your custom sink, and to install it use `LogSinks.get().setCustom` in Java, or the appropriate static method in Swift, Objective-C, .NET, and C.
 
 As with the other log sinks, you will have to specify the level and domain at which Couchbase logs are forwarded to your custom sink at its creation.
-
 
 Your custom log sink code will have to change as well.
 In Java, the most significant change is that instead of _implementing_ the `Logger` interface, a custom log sink must _extend_ the `BaseLogSink` class.
 
 The `BaseLogSink` class does not have a no-args constructor: you must specify at least the level at which Couchbase logs will be forwarded to the logger.
 
+Your logger will receive only logs at the level and domain for which it is initialized.
+There is no need to record or filter the logs forwarded to the protected `writeLog` method.
 
-A second important change is that your logger will receive only logs at the level and domain for which it is initialized.
-There is no need to record or filter the logs forwarded to the protected `writeLog` method which replaces the public `log` method from the old API.
+`LogSinks` are meant to support logging by the Couchbase Lite platform. They were never meant as a general framework for logging.
 
-Related to this last point, the Couchbase `Loggers`, now `LogSinks` are meant to support logging by the Couchbase Lite platform.
-They were never meant as a general framework for logging.
-
-IMPORTANT: With the new API, customer code can no longer log, directly, to any of the Couchbase log sinks.
+IMPORTANT: Customer code can no longer log, directly, to any of the Couchbase log sinks.
 The Console and File log sinks cannot be subclassed and do not publish methods that allow writing logs.
 If you need to log to the console for example, you'll have to create your own way of doing so.
 
-
-.Old API Implementing The Custom Logger Interface
-[source.no-callouts, java, indent=0]
-----
-
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=custom-logging]
-
-----
-
-.Old API Enable Custom Logger
-[source.no-callouts, java, indent=0]
-----
-
-include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examples.java[tags=set-custom-logging]
-
-----
-
-.New API
 [source.no-callouts, java, indent=0]
 ----
 
@@ -174,4 +125,136 @@ include::java:example$snippets/common/main/java/com/couchbase/codesnippets/Examp
 
 ----
 
+[#decoding-binary-logs]
+== Decoding binary logs
 
+NOTE: The latest version of the cbl-log tool is `3.0.0`.
+
+You can use the *cbl-log* tool to decode binary log files -- see xref:java:new-logging-api.adoc#eg-cbl-log[].
+
+[#eg-cbl-log]
+.Using the cbl-log tool
+=====
+[tabs]
+====
+
+macOS::
++
+--
+Download the *cbl-log* tool using `wget`.
+
+[source,console,subs="attributes"]
+----
+wget https://packages.couchbase.com/releases/couchbase-lite-log/3.0.0/couchbase-lite-log-3.0.0-macos.zip
+----
+
+Extract the downloaded zip file.
+
+[source,console]
+----
+unzip couchbase-lite-log-3.0.0-macos.zip
+----
+
+Navigate to the *bin* directory and run the `cbl-log` executable.
+
+[source,console]
+----
+$ ./cbl-log logcat LOGFILE <OUTPUT_PATH>
+----
+--
+
+CentOS::
++
+--
+Download the *cbl-log* tool using `wget`.
+
+[source,console, subs="attributes"]
+----
+wget https://packages.couchbase.com/releases/couchbase-lite-log/3.0.0/couchbase-lite-log-3.0.0-centos.zip
+----
+
+Extract the downloaded zip file.
+
+[source,console]
+----
+unzip couchbase-lite-log-3.0.0-centos.zip
+----
+
+Navigate to the *bin* directory and run the `cbl-log` executable.
+
+[source,console]
+----
+cbl-log logcat LOGFILE <OUTPUT_PATH>
+----
+--
+
+Windows::
++
+--
+Download the *cbl-log* tool using PowerShell.
+
+[source,powershell, subs="attributes"]
+----
+Invoke-WebRequest https://packages.couchbase.com/releases/couchbase-lite-log/3.0.0/couchbase-lite-log-3.0.0-windows.zip -OutFile couchbase-lite-log-3.0.0-windows.zip
+----
+
+Extract the downloaded zip file using PowerShell.
+
+[source,powershell]
+----
+Expand-Archive -Path couchbase-lite-log-3.0.0-windows.zip -DestinationPath .
+----
+
+Run the `cbl-log` executable.
+
+[source,powershell]
+----
+$ .\cbl-log.exe logcat LOGFILE <OUTPUT_PATH>
+----
+--
+====
+=====
+
+[#related-content]
+== Related Content
+++++
+<div class="card-row three-column-row">
+++++
+
+[.column]
+====== {empty}
+.How to . . .
+* xref:java:querybuilder.adoc[QueryBuilder]
+* xref:java:query-n1ql-mobile.adoc[{sqlpp} for Mobile]
+* xref:java:query-live.adoc[Live Queries]
+* xref:java:fts.adoc[Full Text Search]
+
+.
+
+[.column]
+====== {empty}
+.Learn more . . .
+* xref:java:query-n1ql-mobile-querybuilder-diffs.adoc[{sqlpp} Mobile - Querybuilder  Differences]
+* xref:java:query-n1ql-mobile-server-diffs.adoc[{sqlpp} Mobile - {sqlpp} Server Differences]
+* xref:java:query-resultsets.adoc[Query Resultsets]
+* xref:java:query-troubleshooting.adoc[Query Troubleshooting]
+* xref:java:query-live.adoc[Live Queries]
+
+* xref:java:database.adoc[Databases]
+* xref:java:document.adoc[Documents]
+* xref:java:blob.adoc[Blobs]
+
+.
+
+[.column]
+====== {empty}
+.Dive Deeper . . .
+https://forums.couchbase.com/c/mobile/14[Mobile Forum] |
+https://blog.couchbase.com/[Blog] |
+https://docs.couchbase.com/tutorials/[Tutorials]
+
+.
+
+++++
+</div>
+++++

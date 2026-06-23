@@ -1,4 +1,3 @@
-
 = Indexing your Data
 :page-role:
 :description: Couchbase Lite database data model concepts - indexes
@@ -72,12 +71,26 @@ The code to create the index will look something like this:
 [#ex-create-index]
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="query-index", indent=0]
 ----
+--
 
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="query-index", indent=0]
+----
+--
+=====
 
 ====
 
@@ -135,11 +148,28 @@ SELECT * FROM col1 WHERE b=456;  -- cannot use partial index
 
 Partial Value Index is a form of Partial Index in which a value is used in the `WHERE` clause and the query is selected by the query optimizer.
 
-
+====
+[tabs]
+=====
+C::
++
+--
 [source.no-callouts, c, indent=0]
 ----
 include::c:example$code_snippets/main.cpp[tags=partial-value-index]
 ----
+--
+
+{cpp}::
++
+--
+[source.no-callouts, cpp, indent=0]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags=partial-value-index]
+----
+--
+=====
+====
 
 
 [#partial-full-text-index]
@@ -150,11 +180,28 @@ Instead, it's explicitly selected by the {sqlpp} `match(indexName, terms)` funct
 This means that a Partial Full-Text Index will always be used when the `match()` function is invoked, regardless of other predicates in the WHERE clause.
 For details, see xref:c:fts.adoc[].
 
-
+====
+[tabs]
+=====
+C::
++
+--
 [source.no-callouts, c, indent=0]
 ----
 include::c:example$code_snippets/main.cpp[tags=partial-full-text-index]
 ----
+--
+
+{cpp}::
++
+--
+[source.no-callouts, cpp, indent=0]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags=partial-full-text-index]
+----
+--
+=====
+====
 
 [#array-indexing]
 == Array Indexing
@@ -169,11 +216,28 @@ An array index is a new type of the index for indexing nested array's properties
 
 Below is an example array index configuration:
 
-
+====
+[tabs]
+=====
+C::
++
+--
 [source.no-callouts, c, indent=0]
 ----
 include::c:example$code_snippets/main.cpp[tags=array-index-config]
 ----
+--
+
+{cpp}::
++
+--
+[source.no-callouts, cpp, indent=0]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags=array-index-config]
+----
+--
+=====
+====
 
 
 [#array-index-syntax]
@@ -249,11 +313,28 @@ The query above produces the following output from the document:
 
 You can also perform the same operation using array indexes like so:
 
-
+====
+[tabs]
+=====
+C::
++
+--
 [source.no-callouts, c, indent=0]
 ----
 include::c:example$code_snippets/main.cpp[tags=array-index-single]
 ----
+--
+
+{cpp}::
++
+--
+[source.no-callouts, cpp, indent=0]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags=array-index-single]
+----
+--
+=====
+====
 
 
 You can perform similar operations on nested arrays:
@@ -279,11 +360,28 @@ The output demonstrates retrieval of both primary and secondary contact numbers 
 
 Here's an example of creating an array index on a nested array containing dictionary values:
 
-
+====
+[tabs]
+=====
+C::
++
+--
 [source.no-callouts, c, indent=0]
 ----
 include::c:example$code_snippets/main.cpp[tags=array-index-nested]
 ----
+--
+
+{cpp}::
++
+--
+[source.no-callouts, cpp, indent=0]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags=array-index-nested]
+----
+--
+=====
+====
 
 
 The above snippet creates an array index to allow you to iterate through `contacts[].phones[].type` in the document, namely `"home"` and `"mobile"`.
@@ -301,7 +399,6 @@ Attempting to create a query with array literals will return an error.
 [.column]
 === {empty}
 .How to . . .
-* xref:c:gs-prereqs.adoc[Prerequisites]
 * xref:c:gs-install.adoc[Install]
 * xref:c:gs-build.adoc[Build and Run]
 
@@ -333,4 +430,3 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 ++++
 </div>
 ++++
-

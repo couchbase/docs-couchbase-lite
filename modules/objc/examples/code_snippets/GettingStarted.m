@@ -1,18 +1,9 @@
 //
 //  GettingStarted.m
+//  code-snippets
 //
-//  Copyright (c) 2025 Couchbase, Inc. All rights reserved.
+//  Copyright © 2025 couchbase. All rights reserved.
 //
-//  Licensed under the Couchbase License Agreement (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//  https://info.couchbase.com/rs/302-GJY-034/images/2017-10-30_License_Agreement.pdf
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
 
 #import "GettingStarted.h"
 #import <CouchbaseLite/CouchbaseLite.h>
@@ -67,14 +58,13 @@
         // Create replicators to push and pull changes to and from the cloud.
         NSURL *url = [[NSURL alloc] initWithString:@"ws://localhost:4984/getting-started-db"];
         CBLURLEndpoint *targetEndpoint = [[CBLURLEndpoint alloc] initWithURL:url];
-        CBLReplicatorConfiguration *replConfig = [[CBLReplicatorConfiguration alloc] initWithTarget:targetEndpoint];
+        
+        CBLCollectionConfiguration* collectionConfig = [[CBLCollectionConfiguration alloc] initWithCollection: collection];
+        CBLReplicatorConfiguration* replConfig = [[CBLReplicatorConfiguration alloc] initWithCollections: @[collectionConfig] target:targetEndpoint];
+        
         replConfig.replicatorType = kCBLReplicatorTypePushAndPull;
-
         // Add authentication.
         replConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"john" password:@"pass"];
-        
-        // Add collection
-        [replConfig addCollection: collection config: nil];
         
         // Create replicator
         CBLReplicator *_replicator = [[CBLReplicator alloc] initWithConfig: replConfig];

@@ -550,7 +550,7 @@ and the
 xref:sync-gateway::sync-function-api.adoc[sync function]
 to specify which data to pull for each user.
 
-Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's replicator configuration object.
+Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's collection configuration object.
 In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
 
 [#anchor-auto-purge-on-revoke]
@@ -679,7 +679,7 @@ Clients wishing to sync previously removed documents must use the resetCheckpoin
 
 [source, c]
 ----
-include::c:example$code_snippets/main.cpp[tags="autopurge-override", indent=0]
+include::c:example$code_snippets/main.cpp[tags="sgw-config-autopurge", indent=0]
 ----
 
 
@@ -1158,7 +1158,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: WebSocket error 100
 ----
 ====
 
-If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't using the certificate you will encounter an error with status code `5011` -- see: <<ex-5011>>
+If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't using the certificate you'll encounter an error with status code `5011` -- see: <<ex-5011>>
 
 [#ex-5011]
 .Certificate Mismatch or Not Found
@@ -1184,7 +1184,6 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: Network error 11 "s
 [.column]
 ====== {empty}
 .How to . . .
-* xref:c:gs-prereqs.adoc[Prerequisites]
 * xref:c:gs-install.adoc[Install]
 * xref:c:gs-build.adoc[Build and Run]
 

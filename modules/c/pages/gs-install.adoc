@@ -36,6 +36,11 @@ xref:c:gs-build.adoc[Build and Run]
 // :release-dirs: pass:q,a[`{release-dir-ce}`]
 
 
+NOTE: Couchbase Lite for C ships both a C API and a {cpp} wrapper API in the same package.
+You do not need additional installation steps to use the {cpp} API.
+See xref:c:gs-build.adoc[Build and Run] for how to include each API in your project.
+
+
 [#lbl-get-binaries]
 == Download
 
@@ -87,7 +92,7 @@ To verify whether your device supports the AVX2 instructions set, https://www.in
 .Installation:
 ****
 xref:c:gs-install.adoc#lbl-apt[Install for Linux (APT)] {barsep}
-xref:c:gs-install.adoc#lbl-debt[Install for Linux (.deb)] {barsep}
+xref:c:gs-install.adoc#lbl-deb[Install for Linux (.deb)] {barsep}
 xref:c:gs-install.adoc#lbl-windows[Install for Windows] {barsep}
 xref:c:gs-install.adoc#lbl-macos[Install for macOS] {barsep}
 xref:c:gs-install.adoc#lbl-ios[Install for iOS] {barsep}
@@ -266,11 +271,11 @@ To install the Couchbase for C libraries on Windows from a downloaded release bi
 . From within the root directory, {release-dir-ce}, deploy the `lib`, `include` and `bin` libraries to a location accessible to your compiler.
 
 . Within  _Visual Studio_:
-.. *Create* a new C++ project
+.. *Create* a new {cpp} project
 +
 Be sure to select x64 for 64-bit builds
-.. Within *Project Properties* -> *C++ directories* -> *Library Directories*, *Add* `<path-to-deployed-directories>/lib`
-.. Within *Project Properties* -> *C++ directories* -> *Include Directories*, *Add* `<path-to-deployed-directories>/include`
+.. Within *Project Properties* -> *{cpp} directories* -> *Library Directories*, *Add* `<path-to-deployed-directories>/lib`
+.. Within *Project Properties* -> *{cpp} directories* -> *Include Directories*, *Add* `<path-to-deployed-directories>/include`
 .. Within *Project Properties* -> *Linker* -> *Input* -> *Additional Dependencies*, *Add* `cblite.lib`
 . *Copy* `<path-to-deployed-directories>/bin/cblite.dll` to your build location
 +
@@ -1097,8 +1102,8 @@ Please use the <<debian-3-3-0,Debian `.deb` download>> choosing the appropriate 
 
 // If both are defined render vector search downloads
 
-[#vs-release-1-0-0,id=vs-release-1-0-0]
-=== Vector Search Release 1.0.0
+[#vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c},id=vs-release-{vs-major}-{vs-minor}-{vs-maintenance-c}]
+=== Vector Search Release {vs-major}.{vs-minor}.{vs-maintenance-c}
 
 _Couchbase Lite Vector Search - C_ is available for all xref:c:supported-os.adoc[Supported Platforms].
 
@@ -1265,7 +1270,6 @@ Enterprise::
 [.column]
 ====== {empty}
 .How to . . .
-* xref:c:gs-prereqs.adoc[Prerequisites]
 * xref:c:gs-install.adoc[Install]
 * xref:c:gs-build.adoc[Build and Run]
 

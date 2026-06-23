@@ -23,7 +23,7 @@ Description -- _{description}_ +
 [#get-started]
 == Get Started
 
-Create or open an existing _Xcode_ project and install _Couchbase Lite {major}.{minor}.{base}{empty} using one of the xref:objc:gs-install.adoc#lbl-install-tabs[] methods shown.
+Create or open an existing _Xcode_ project and install _Couchbase Lite {major}.{minor}.{maintenance-ios} using one of the xref:objc:gs-install.adoc#lbl-install-tabs[] methods shown.
 
 Enterprise users can also download the Couchbase Lite Vector Search extension library.
 
@@ -40,10 +40,6 @@ Couchbase Lite is distributed as an xcframework, to support this:
 
 [#lbl-install-tabs]
 === Install Couchbase Lite
-
-////
-IMPORTANT: There is no Carthage support for the 3.2.0 Beta version of Couchbase Lite.
-////
 
 [tabs]
 ====
@@ -79,13 +75,13 @@ NOTE:  The minimum required version of Carthage is *38.0*
 .Couchbase Lite Community Edition
 [source,ruby,subs=attributes+]
 ----
-binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Community.json" ~> {major}.{minor}.{base}{empty}
+binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Community.json" ~> {major}.{minor}.{maintenance-ios}
 ----
 +
 .Couchbase Lite Enterprise Edition
 [source,ruby,subs=attributes+]
 ----
-binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Enterprise.json" ~> {major}.{minor}.{base}{empty}
+binary "https://packages.couchbase.com/releases/couchbase-lite-ios/carthage/CouchbaseLite-Enterprise.json" ~> {major}.{minor}.{maintenance-ios}
 ----
 
 . Run `carthage update --platform ios`.
@@ -107,7 +103,7 @@ NOTE: The minimum required version of Cocoapods is *1.15*
 ----
 target '<your target name>' do
   use_frameworks!
-  pod 'CouchbaseLite', '{major}.{minor}.{base}{empty}'
+  pod 'CouchbaseLite', '{major}.{minor}.{maintenance-ios}'
 end
 ----
 +
@@ -116,7 +112,7 @@ end
 ----
 target '<your target name>' do
   use_frameworks!
-  pod 'CouchbaseLite-Enterprise', '{major}.{minor}.{base}{empty}'
+  pod 'CouchbaseLite-Enterprise', '{major}.{minor}.{maintenance-ios}'
 end
 ----
 
@@ -139,7 +135,6 @@ You can get set up with the Vector Search Extension for iOS (Objective-C) by fol
 [IMPORTANT]
 --
 To use Vector Search, you must have Couchbase Lite installed and add the Vector Search extension to your Couchbase Lite application.
-There is no Carthage support for the beta release of Vector Search.
 Vector Search is available only for 64-bit architectures and
 Intel processors that support the Advanced Vector Extensions 2 (AVX2) instruction set.
 To verify whether your device supports the AVX2 instructions set, https://www.intel.com/content/www/us/en/support/articles/000090473/processors/intel-core-processors.html[follow these instructions.]
@@ -152,7 +147,7 @@ Direct Download::
 +
 --
 
-. Download the binaries from here -- https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}/couchbase-lite-vector-search_xcframework_{vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}.zip[binary download link.]
+. Download the binaries from here -- https://packages.couchbase.com/releases/couchbase-lite-vector-search/{vs-major}.{vs-minor}.{vs-maintenance-ios}/couchbase-lite-vector-search_xcframework_{vs-major}.{vs-minor}.{vs-maintenance-ios}.zip[binary download link.]
 
 . Unpack the download zip file into your XCode project location.
 
@@ -199,7 +194,7 @@ NOTE: The minimum required Cocoapods  version is *1.15*
 ----
 target 'Example' do
   use_frameworks!
-  pod 'CouchbaseLiteVectorSearch', '{vs-major}.{vs-minor}.{vs-maintenance-ios}{empty}' // <.>
+  pod 'CouchbaseLiteVectorSearch', '{vs-major}.{vs-minor}.{vs-maintenance-ios}' // <.>
 end
 ----
 

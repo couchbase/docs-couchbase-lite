@@ -15,6 +15,9 @@
 //
 package com.couchbase.codesnippets;
 
+import static com.couchbase.lite.KeyUsage.CLIENT_AUTH;
+import static com.couchbase.lite.KeyUsage.SERVER_AUTH;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,6 +36,7 @@ import java.util.Set;
 
 import com.couchbase.lite.ClientCertificateAuthenticator;
 import com.couchbase.lite.Collection;
+import com.couchbase.lite.CollectionConfiguration;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.KeyStoreUtils;
 import com.couchbase.lite.ListenerCertificateAuthenticator;
@@ -145,7 +149,7 @@ public class AndroidListenerExamples {
     public void listenerWithSelfSignedCert(KeyStore keyStore, URLEndpointListenerConfiguration thisConfig)
         throws CouchbaseLiteException {
         TLSIdentity thisIdentity = TLSIdentity.createIdentity(
-            true,
+            Set.of(SERVER_AUTH, CLIENT_AUTH),
             CERT_ATTRIBUTES,
             null,
             "couchbase-docs-cert"
@@ -157,10 +161,9 @@ public class AndroidListenerExamples {
 
     public void replicatorConfigurationExample(Set<Collection> srcCollections, URI targetUrl, KeyStore keyStore)
         throws CouchbaseLiteException {
+        Set<CollectionConfiguration> collConfigs = CollectionConfiguration.fromCollections(srcCollections);
         ReplicatorConfiguration config =
-            new ReplicatorConfiguration(new URLEndpoint(targetUrl))
-                .addCollections(srcCollections, null)
-
+            new ReplicatorConfiguration(collConfigs, new URLEndpoint(targetUrl))
                 // tag::p2p-act-rep-config-cacert[]
                 // Configure Server Security
                 // -- only accept CA attested certs

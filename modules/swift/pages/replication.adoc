@@ -1,4 +1,3 @@
-
 = Data Sync using Sync Gateway
 :page-aliases: learn/swift-replication.adoc
 :page-role:
@@ -9,8 +8,6 @@
 
 :source-language: swift
 
-
-// END::Local page attributes
 
 [abstract]
 --
@@ -38,7 +35,7 @@ For example, between a local Couchbase Lite database and remote Sync Gateway dat
 
 This page shows sample code and configuration examples covering the implementation of a replication using Sync Gateway.
 
-Your application runs a replicator (also referred to here as a client), which  will initiate connection with a Sync Gateway (also referred to here as a server) and participate in the replication of database changes to bring both local and remote databases into sync.
+Your application runs a replicator (also referred to here as a client), which initiates connection with a Sync Gateway (also referred to here as a server) and participate in the replication of database changes to bring both local and remote databases into sync.
 
 Subsequent sections provide additional details and examples for the main configuration options.
 
@@ -139,7 +136,7 @@ You should configure and initialize a replicator for each Couchbase Lite databas
 xref:swift:replication.adoc#ex-simple-repl[] shows the configuration and initialization process.
 
 NOTE: You need Couchbase Lite 3.1+ and Sync Gateway 3.1+ to use `custom` Scopes and Collections. +
-If you’re using Capella App Services or Sync Gateway releases that are older than version 3.1, you won’t be able to access `custom` Scopes and Collections.
+If you're using Capella App Services or Sync Gateway releases that are older than version 3.1, you won't be able to access `custom` Scopes and Collections.
 To use Couchbase Lite 3.1+ with these older versions, you can use the `default` Collection as a backup option.
 
 Click the *GitHub* tab in the code examples for further details.
@@ -155,7 +152,7 @@ Click the *GitHub* tab in the code examples for further details.
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags="p2p-act-rep-func", indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-rep-func;!sgw-rep-config-cacert;!sgw-rep-config-cacert-pinned", indent=0]
 ----
 
 
@@ -219,12 +216,11 @@ The constructor provides:
 
 * the name of the local database to be sync'd
 * the server's URL (including the port number and the name of the remote database to sync with)
-+
---
+
 It is expected that the app will identify the IP address and URL and append the remote database name to the URL endpoint, producing for example: `wss://10.0.2.2:4984/travel-sample`
 
 The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) prefixes.
---
+
 
 // Example 2
 .Add Target to Configuration
@@ -235,7 +231,7 @@ The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) pref
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-act-rep-initialize", indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-rep-target", indent=0]
 ----
 
 
@@ -258,7 +254,7 @@ Use https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/c
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-act-rep-network-interface", indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-rep-network-interface", indent=0]
 ----
 
 
@@ -294,7 +290,7 @@ We use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empt
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags="p2p-act-rep-config-type;p2p-act-rep-config-cont", indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-act-rep-config-type;sgw-act-rep-config-cont", indent=0]
 ----
 
 
@@ -429,7 +425,7 @@ Use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/
 
 * If there is a pinned certificate, nothing else matters, the server cert must *exactly* match the pinned certificate.
 * If there are no pinned certs and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
-* If there are no pinned certificates and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `false` (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
+* If there are no pinned certificates and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `false` (default), the client validates the server's certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
 
 // Example 4
 .Set Server TLS security
@@ -444,7 +440,7 @@ Set the client to expect and accept only CA attested certificates.
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags=p2p-act-rep-config-cacert, indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-rep-config-cacert", indent=0]
 ----
 <.> This is the default.
 Only certificate chains with roots signed by a trusted CA are allowed.
@@ -459,7 +455,7 @@ Set the client to expect and accept only self-signed certificates
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags=p2p-act-rep-config-self-cert, indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags=sgw-rep-config-self-cert, indent=0]
 ----
 <.> Set this to `true` to accept any self signed cert.
 Any certificates that are not self-signed are rejected.
@@ -474,9 +470,8 @@ Set the client to expect and accept only a pinned certificate.
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tag=p2p-act-rep-config-cacert-pinned, indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tag=sgw-rep-config-cacert-pinned, indent=0]
 ----
-// include::swift:example$code_snippets/SampleCodeTest.swift[tag=p2p-act-rep-config-cacert-pinned-callouts, indent=0]
 --
 
 ======
@@ -644,7 +639,7 @@ and the
 xref:sync-gateway::sync-function-api.adoc[sync function]
 to specify which data to pull for each user.
 
-Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's replicator configuration object.
+Optionally, it's also possible to specify a string array of channel names on Couchbase Lite's collection configuration object.
 In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
 
 [#anchor-auto-purge-on-revoke]
@@ -657,7 +652,7 @@ This is a Breaking Change at 3.0
 [#new-outcome]
 ==== New outcome
 
-By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user’s other channels) are auto-purged from the local database (in devices belonging to the user).
+By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user's other channels) are auto-purged from the local database (in devices belonging to the user).
 
 [#prior-outcome]
 ==== Prior outcome
@@ -679,7 +674,7 @@ Users may lose access to channels in a number of ways:
 
 * A channel is removed from a role the user is assigned to
 
-By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user’s other channels -- see: xref:swift:replication.adoc#tbl-revoke-behavior[].
+By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user's other channels -- see: xref:swift:replication.adoc#tbl-revoke-behavior[].
 
 Documents that exist in multiple channels belonging to the user (even if they are not actively replicating that channel) are not auto-purged unless the user loses access to all channels.
 
@@ -773,7 +768,7 @@ Clients wishing to sync previously removed documents must use the resetCheckpoin
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags="autopurge-override", indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-config-autopurge", indent=0]
 ----
 
 
@@ -801,12 +796,12 @@ This ensures backwards compatible with 2.8 clients that use pull filters to prev
 |disabled
 2+a|Doc remains in local database
 
-App notified of “accessRemoved” if a _Documentlistener_ is registered
+App notified of "accessRemoved" if a _Documentlistener_ is registered
 
 |enabled (DEFAULT)
 a|Doc is auto purged
 
-App notified of “accessRemoved” if _Documentlistener_ registered
+App notified of "accessRemoved" if _Documentlistener_ registered
 a|Doc remains in local database
 
 
@@ -858,7 +853,7 @@ You can, optionally, add a change listener (see xref:swift:replication.adoc#lbl-
 
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags="p2p-act-rep-start-full;!p2p-act-rep-add-change-listener", indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags="sgw-start-repl", indent=0]
 ----
 
 
@@ -907,9 +902,10 @@ In this section::
 xref:swift:replication.adoc#lbl-repl-chng[]  |
 xref:swift:replication.adoc#lbl-repl-status[]  |
 xref:swift:replication.adoc#lbl-repl-evnts[] |
-xref:swift:replication.adoc#lbl-repl-pend[]
+xref:swift:replication.adoc#lbl-repl-pend[] |
+xref:swift:replication.adoc#lbl-repl-correlation-id[]
 
-You can monitor a replication’s status by using a combination of xref:swift:replication.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV8activityAC13ActivityLevelOvp[Activity].
+You can monitor a replication's status by using a combination of xref:swift:replication.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator/Status.html#/s:18CouchbaseLiteSwift10ReplicatorC6StatusV8activityAC13ActivityLevelOvp[Activity].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
 You can also choose to monitor document changes -- see: xref:swift:replication.adoc#lbl-repl-evnts[].
@@ -950,33 +946,13 @@ The returned _ReplicationStatus_ structure comprises:
 .Monitor replication
 ====
 
-
-[tabs]
-======
-
-Adding a Change Listener::
-+
---
+.Adding a Change Listener
 [source, swift]
 ----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags=p2p-act-rep-add-change-listener;!p2p-act-rep-add-change-listener-label,indent=0]
+include::swift:example$code_snippets/SampleCodeTest.swift[tags=p2p-act-rep-add-change-listener,indent=0]
 ----
---
-+
-
-Using replicator.status::
-+
---
-[source, swift]
-----
-include::swift:example$code_snippets/SampleCodeTest.swift[tags=p2p-act-rep-status,indent=0]
-----
---
-======
-
 
 ====
-
 
 [#lbl-repl-states]
 ==== Replication States
@@ -1109,6 +1085,20 @@ This is a snapshot and may have changed by the time the response is received and
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC17isDocumentPendingySbSSKF[Replicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
 
+[#lbl-repl-correlation-id]
+=== Correlation ID
+The correlation ID is a read-only property that identifies the Sync Gateway session associated with a Couchbase Lite replicator.
+Use it to correlate log entries on the client and server when diagnosing replication issues.
+[#ex-repl-correlation-id]
+.Get the replicator correlation ID
+====
+[source, swift]
+----
+let correlationID = replicator.correlationID
+----
+====
+
+
 [#lbl-repl-stop]
 == Stop
 
@@ -1209,15 +1199,6 @@ Certificate pinning is a technique that can be used by applications to "pin" a h
 The certificate is typically delivered to the client by an out-of-band channel and bundled with the client.
 In this case, Couchbase Lite uses this embedded certificate to verify the trustworthiness of the server (for example, a Sync Gateway) and no longer needs to rely on a trusted third party for that (commonly referred to as the Certificate Authority).
 
-[.status]#Couchbase Lite 3.0.2#
-
-For the 3.02. release, changes have been made to the way certificates on the host are matched:
-[horizontal]
-
-Prior to CBL3.0.2:: The pinned certificate was only compared with the leaf certificate of the host. This is not always suitable as leaf certificates are usually valid for shorter periods of time.
-CBL-3.0.2{plus}:: The pinned certificate will be compared against any certificate in the server's certificate chain.
-
-
 The following steps describe how to configure certificate pinning between Couchbase Lite and Sync Gateway.
 
 . xref:sync-gateway::security.adoc#creating-your-own-self-signed-certificate[Create your own self-signed certificate]
@@ -1281,7 +1262,7 @@ include::swift:example$code_snippets/SampleCodeTest.swift[tags="replication-logg
 ====
 
 
-For more on troubleshooting with logs, see: xref:swift:troubleshooting-logs.adoc[Using Logs].
+For more on troubleshooting with logs, see: xref:swift:new-logging-api.adoc[Using Logs].
 
 [#authentication-errors]
 === Authentication Errors
@@ -1354,8 +1335,3 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 ++++
 </div>
 ++++
-
-
-// END -- inclusion -- common-sgw-replication.adoc
-
-

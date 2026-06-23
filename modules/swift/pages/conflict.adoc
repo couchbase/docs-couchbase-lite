@@ -67,9 +67,9 @@ Couchbase Lite uses the following rules to handle conflicts such as those descri
 A deleted document (that is, a _tombstone_) always wins over a document update.
 * If both changes are document changes:
 +
-The change with the most revisions will win.
+The change with the latest timestamp wins.
 +
-Since each change creates a revision with an ID prefixed by an incremented version number, the winner is the change with the highest version number.
+Timestamps are local to each device.
 
 The result is saved internally by the Couchbase Lite replicator.
 Those rules describe the internal behavior of the replicator.

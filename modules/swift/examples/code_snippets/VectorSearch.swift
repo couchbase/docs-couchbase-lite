@@ -1,8 +1,8 @@
 //
 //  VectorSearch.swift
-//  CouchbaseLite
+//  code-snippets
 //
-//  Copyright © 2024 couchbase. All rights reserved.
+//  Copyright © 2025 couchbase. All rights reserved.
 //
 
 import Foundation
@@ -435,5 +435,8 @@ class VectorSearchSnippets {
         // tag::array-index-nested[]
         try collection.createIndex(withName: "nestedArray", config: ArrayIndexConfiguration(path: "contacts[].phones", expressions: ["type"]))
         // end::array-index-nested[]
+        
+        // to hide the warning
+        print(config)
     }
 }

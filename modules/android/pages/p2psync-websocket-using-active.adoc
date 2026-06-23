@@ -431,7 +431,6 @@ Set the client to expect and accept only a pinned certificate.
 ----
 include::android:example$codesnippet_collection.kt[tag=p2p-act-rep-config-cacert-pinned, indent=0]
 ----
-// include::android:example$codesnippet_collection.kt[tag=p2p-act-rep-config-cacert-pinned-callouts, indent=0]
 --
 
 
@@ -671,7 +670,7 @@ Android Kotlin developers can take advantage of Flows and LiveData to monitor re
 
 [source, Kotlin, subs="attributes+"]
 ----
-include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt[tag="flow-as-replicator-change-listener"]
+include::android:example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/FlowExamples.kt[tag="flow-as-replicator-change-listener"]
 ----
 
 [#lbl-repl-status]
@@ -903,7 +902,10 @@ It will stop any active <<lbl-repl-chng,change listener>> once the replication i
 [#conflict-resolution]
 == Conflict Resolution
 
-Unless you specify otherwise, Couchbase Lite's default conflict resolution policy is applied -- see xref:android:conflict.adoc[Handling Data Conflicts].
+Unless you specify otherwise, Couchbase Lite 4.x uses Last Write Wins (LWW) conflict resolution by default during replication.
+When conflicts occur during pull replication, the change with the latest timestamp wins.
+Timestamps are local to each device.
+See xref:android:conflict.adoc[Handling Data Conflicts].
 
 To use a different policy, specify a _conflict resolver_ using https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setConflictResolver-com.couchbase.lite.ConflictResolver-[conflictResolver] as shown in <<using-conflict-resolvers>>.
 
@@ -994,7 +996,7 @@ include::android:example$codesnippet_collection.java[tag=merge-conflict-resolver
 ====
 
 Just as a replicator may observe a conflict -- when updating a document that has changed both in the local database and in a remote database -- any attempt to save a document may also observe a conflict, if a replication has taken place since the local app retrieved the document from the database.
-To address that possibility, a version of the `Database.save()` method also takes a conflict resolver as shown in <<ex-merge-props>>.
+To address that possibility, a version of the `Collection.save()` method also takes a conflict resolver as shown in <<ex-merge-props>>.
 
 The following code snippet shows an example of merging properties from the existing document (`current`) into the one being saved (`new`).
 In the event of conflicting keys, it will pick the key value from `new`.

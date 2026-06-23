@@ -1,8 +1,7 @@
-
 = Passive Peer
 :page-aliases: clang:p2psync-websocket-using-passive.adoc
 ifdef::show_edition[:page-edition: Enterprise Edition]
-:page-status: Couchbase Lite 3.2.3
+:page-status: 
 :page-role:
 :description: Couchbase Lite's Peer-to-Peer Synchronization enables edge devices to synchronize securely without consuming centralized cloud-server resources
 
@@ -15,10 +14,6 @@ ifdef::show_edition[:page-edition: Enterprise Edition]
 :url-api-class-ListenerPasswordAuthenticator: {url-api-references}/struct_c_b_l_listener_authenticator.html#ab289395196d0bbd4b7bd27bfbf1b9157
 :url-api-class-ListenerCertificateAuthenticator: {url-api-references}/struct_c_b_l_listener_authenticator.html#ab772751f6c964814f9c49c934eb9facf
 :url-api-class-connection-status: {url-api-references}/struct_c_b_l_connection_status.html
-
-// done in commons
-
-// Present common content including abstract and related content footer blocks
 
 [abstract]
 --
@@ -89,11 +84,27 @@ Note that client authentication is optional.
 [#simple-listener-initialization]
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-initialize", indent=0]
 ----
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-initialize", indent=0]
+----
+--
+=====
+
 ====
 
 . Here we show the default TLS authentication, which is an anonymous self-signed certificate.
@@ -128,11 +139,27 @@ All other configuration values take their default setting.
 [#ex-locdb]
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-config-db", indent=0]
 ----
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-config-db", indent=0]
+----
+--
+=====
+
 ====
 
 Set the list of local collections using the {url-api-references-urlendpointconfiguration}[URLEndpointListenerConfiguration].
@@ -150,11 +177,27 @@ The Listener will automatically select an available port if you do not specify o
 [#ex-port]
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-config-port", indent=0]
 ----
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-config-port", indent=0]
+----
+--
+=====
+
 ====
 
 To use a canonical port -- one known to other applications -- specify it explicitly using the {url-api-references-urlendpointconfiguration}#ae164b791eeeb816b9e3c3b25722a13a6[port] method shown here.
@@ -171,11 +214,27 @@ The Listener will listen on all network interfaces by default.
 [#specify-a-network-interface-to-use]
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-config-netw-iface", indent=0]
 ----
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-config-netw-iface", indent=0]
+----
+--
+=====
+
 ====
 
 To specify an interface -- one known to other applications -- identify it explicitly, using the {url-api-references-urlendpointconfiguration}#a5a10543158ed28e4489d1256cb50309f[networkInterface] method shown here.
@@ -195,11 +254,27 @@ Both are valuable benefits, especially when network bandwidth is constrained.
 
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-config-delta-sync", indent=0]
 ----
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-config-delta-sync", indent=0]
+----
+--
+=====
+
 ====
 
 Delta sync replication is not enabled by default.
@@ -293,9 +368,12 @@ include::c:example$code_snippets/main.cpp[tags="listener-config-tls-enable;liste
 Create a TLSIdentity for the server using convenience API.
 The system generates a self-signed certificate.
 
+// NOTE: This example uses hardcoded C code. C++ tab to be added after
+// engineering provides tagged includes in main.cpp and cbl_cpp.cpp.
+
 [tabs]
 ======
-macOS / iOS / Windows::
+macOS / iOS / Windows::
 +
 --
 [source, c]
@@ -307,11 +385,11 @@ FLMutableDict_SetString(attributes, kCBLCertAttrKeyCommonName, "Dev1");
 // Creates and persists the self-signed identity with label named "myidentity":
 CBLError error {};
 CBLTLSIdentity* identity = CBLTLSIdentity_CreateIdentity(
-  kCBLKeyUsagesServerAuth, 
-  keypair, 
-  attributes, 
-  0 /* Default, 1 year */,  
-  FLSTR("myidentity") /* Persistent label */, 
+  kCBLKeyUsagesServerAuth,
+  keypair,
+  attributes,
+  0 /* Default, 1 year */,
+  FLSTR("myidentity") /* Persistent label */,
   &error
 );
 
@@ -330,7 +408,7 @@ CBLTLSIdentity_Release(identity);
 
 --
 
-Linux / Android::
+Linux / Android::
 +
 --
 [source, c]
@@ -342,11 +420,11 @@ FLMutableDict_SetString(attributes, kCBLCertAttrKeyCommonName, "Dev1");
 // Creates the self-signed identity:
 CBLError error {};
 CBLTLSIdentity* identity = CBLTLSIdentity_CreateIdentity(
-  kCBLKeyUsagesServerAuth, 
-  keypair, 
-  attributes, 
-  0 /* Default, 1 year */,  
-  kFLSliceNull /* NULL label */, 
+  kCBLKeyUsagesServerAuth,
+  keypair,
+  attributes,
+  0 /* Default, 1 year */,
+  kFLSliceNull /* NULL label */,
   &error
 );
 
@@ -374,10 +452,26 @@ The created identity is stored in memory only. @/kFLSliceNull/
 This example uses an _anonymous_ self signed certificate.
 Generated certificates are held in secure storage.
 
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-config-tls-enable;listener-config-tls-id-anon", indent=0]
 ----
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-config-tls-enable;listener-config-tls-id-anon", indent=0]
+----
+--
+=====
 
 ====
 
@@ -390,6 +484,9 @@ This is the default setting. @/config.tlsIdentity/
 .Use External Key Callbacks
 [#ex-external-key-callbacks]
 ====
+
+// NOTE: This is a struct definition showing the C API callback interface.
+// It applies to both C and C++ users and does not require a C++ tab.
 
 [source, c]
 ----
@@ -467,16 +564,31 @@ To use client-supplied certificates instead -- see: <<using-client-certificate-a
 
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-config-client-auth-pwd", indent=0]
 ----
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-config-client-auth-pwd", indent=0]
+----
+--
+=====
+
 ====
 
 
 Where `user` and `password` are the client-supplied values from the http-authentication header.
-// and `validUser`/`validPassword` are the values acceptable to the server.
 
 
 [#using-client-certificate-authentication]
@@ -501,10 +613,28 @@ The logic should take the form of function or block (such as, a closure expressi
 
 Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the Listener {url-api-class-ListenerCertificateAuthenticator}[certificate] authenticator.
 
+// NOTE: The original include tag was broken: [tags="listener-config-client-auth-root, indent=0]"]
+// The correct tag is used here. Track the original bug in a separate cleanup ticket.
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
-include::c:example$code_snippets/main.cpp[tags="listener-config-client-auth-root, indent=0]", indent=0]
+include::c:example$code_snippets/main.cpp[tags="listener-config-client-auth-root", indent=0]
 ----
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-config-client-auth-root", indent=0]
+----
+--
+=====
 
 ====
 
@@ -521,12 +651,26 @@ A valid client will provide one or more certificates that match a certificate in
 
 Configure the server (listener) to authenticate the client using user-supplied logic.
 
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-config-client-auth-lambda", indent=0]
 ----
+--
 
-====
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-config-client-auth-lambda", indent=0]
+----
+--
+=====
 
 ////
 <.>  Get the identity data to authenticate against.
@@ -537,6 +681,7 @@ This code assumes complete responsibility for authenticating the client supplied
 It must return a boolean value; with `true` denoting the client supplied certificate authentic. @/authenticateClientCert/
 . Add the authenticator to the Listener configuration. @/config.authenticator/
 
+====
 
 [#delete-tls-identity]
 === Delete Entry
@@ -549,11 +694,27 @@ You can remove unwanted TLS identities from secure storage using the convenience
 
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="p2psync-act-tlsid-delete", indent=0]
 ----
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="p2psync-act-tlsid-delete", indent=0]
+----
+--
+=====
+
 ====
 
 
@@ -602,11 +763,27 @@ Once you have completed the Listener's configuration settings you can initialize
 .Initialize and start listener
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-start", indent=0]
 ----
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-start", indent=0]
+----
+--
+=====
+
 ====
 
 
@@ -623,11 +800,27 @@ So, the actual number of active connections may have changed, by the time the {u
 [#get-connection-counts]
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-status-check", indent=0]
 ----
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-status-check", indent=0]
+----
+--
+=====
+
 ====
 
 
@@ -642,11 +835,27 @@ It is best practice to check the status of the Listener's connections and stop o
 
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-stop", indent=0]
 ----
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-stop", indent=0]
+----
+--
+=====
+
 ====
 
 
@@ -686,5 +895,3 @@ xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Gettin
 ++++
 </div>
 ++++
-
-

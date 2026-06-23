@@ -7,20 +7,36 @@ ifdef::show_edition[:page-edition: {release}]
 // End of Page Definition Statements
 
 
-NOTE: Couchbase Lite 3.0 introduces some breaking changes. +
-If you're upgrading from 2.x, refer to the appropriate upgrade page -- see: <<lbl-upgrade>>. +
-You should be able to upgrade from 3.2.x to 3.3.x without manual intervention.
+NOTE: Couchbase Lite 4.0 introduces some breaking changes. +
+If you're upgrading from 3.x, see the appropriate upgrade page -- <<lbl-upgrade>>.
+You cannot downgrade from 4.0 to earlier versions of Couchbase Lite.
 
+<<<<<<< HEAD
 == Release 3.3.2 (February 2026)
 
 Couchbase Lite Release 3.3.2 introduces fixes and enhancements for:
 
 xref:android:releasenotes.adoc#maint-latest[Android]
 |
+=======
+== Release 4.0.3 (February 2026)
+
+Couchbase Lite Release 4.0.3 introduces fixes and enhancements for:
+
+xref:android:releasenotes.adoc#maint-latest[Android]
+|
+xref:c:releasenotes.adoc#maint-latest[C]
+|
+xref:csharp:releasenotes.adoc#maint-latest[.NET]
+|
+xref:java:releasenotes.adoc#maint-latest[Java]
+|
+>>>>>>> release/4.1
 xref:objc:releasenotes.adoc#maint-latest[Objective-C]
 |
 xref:swift:releasenotes.adoc#maint-latest[Swift]
 
+<<<<<<< HEAD
 == Release 3.3.1 (December 2025)
 
 Couchbase Lite Release 3.3.1 introduces fixes and enhancements for:
@@ -36,36 +52,84 @@ xref:swift:releasenotes.adoc#maint-3-3-1[Swift]
 === New Features
 
 ==== Multipeer Replicator
+=======
 
-Couchbase Lite 3.3.0 introduces the new Multipeer Replicator API for bidirectional peer-to-peer synchronization in both Swift and Kotlin platforms.
-This replicator enables secure, direct synchronization between devices without the need for a centralized Sync Gateway.
+== Release 4.0.2 (December 2025)
 
-The Multipeer Replicator supports:
+Couchbase Lite Release 4.0.2 introduces fixes and enhancements for:
 
-* Peer discovery using DNS-SD (Bonjour) over a shared Wi-Fi network
-
-* Encrypted TLS connections with certificate-based authentication
-
-* Automatic mesh formation and replication routing between peers
-
-* Real-time updates using continuous, push-and-pull replication
-
-Each device advertises itself using a shared group ID, discovers others, and forms an optimized mesh network for efficient data sync.
-Multipeer Replicator performs authentication using client/server certificates, and applications can configure custom filters, conflict resolvers, and listeners for fine-grained control.
-
-For more information about Multipeer Replicator, see:
-
-* xref:swift:p2psync-multipeer.adoc[Swift Multipeer Replicator]
-
-* xref:android:p2psync-multipeer.adoc[Android Multipeer Replicator]
-
-NOTE: This feature supports only continuous, push-and-pull replication.
-Version 3.3.0 disables Delta Sync by default.
+xref:android:releasenotes.adoc#maint-4-0-2[Android]
+|
+xref:c:releasenotes.adoc#maint-4-0-2[C]
+|
+xref:csharp:releasenotes.adoc#maint-4-0-2[.NET]
+|
+xref:java:releasenotes.adoc#maint-4-0-2[Java]
+|
+xref:objc:releasenotes.adoc#maint-4-0-2[Objective-C]
+|
+xref:swift:releasenotes.adoc#maint-4-0-2[Swift]
 
 
-== See also
+== Release 4.0.1 (November 2025)
 
-xref:3.2@couchbase-lite:ROOT:cbl-whatsnew.adoc[What's new in previous version 3.2]
+Couchbase Lite Release 4.0.1 introduces fixes and enhancements for:
+
+xref:objc:releasenotes.adoc#maint-4-0-1[Objective-C]
+|
+xref:swift:releasenotes.adoc#maint-4-0-1[Swift]
+
+
+== Release 4.0.0 (October 2025)
+
+Couchbase Lite Release {release} fundamentally transforms document versioning and conflict resolution by introducing version vectors, replacing the traditional revision tree approach.
+This architectural change enables superior conflict resolution, improved synchronization performance, and seamless data consistency.
+
+=== New Features
+
+<<version-vectors>> | <<mobile-xdcr-coexistence>>
+>>>>>>> release/4.1
+
+[#version-vectors]
+==== Version Vectors
+
+Couchbase Lite 4.0 replaces revision trees with version vectors for document versioning and conflict resolution.
+This change aligns Couchbase Lite with Couchbase Server and Sync Gateway, ensuring more consistent behavior in distributed and multi-cluster deployments.
+
+Key changes include:
+
+* **Revision IDs → Versions**:
+Each revision is now identified by a version in the format `<timestamp>@<source-id>`.
+
+* **Revision Trees → Version Vectors**:
+A version vector is an ordered list of the latest versions from all sources that have modified a document.
+This uniquely identifies both the state and history of a document.
+
+* **Hybrid Logical Clocks (HLCs)**:
+Timestamps are now based on hybrid logical clocks, enabling last-writer-wins conflict resolution and simpler pruning of old revisions.
+
+For more information about version vectors, see:
+
+* xref:android:version-vectors.adoc[Android - version vectors]
+* xref:c:version-vectors.adoc[C - version vectors]
+* xref:csharp:version-vectors.adoc[.NET - version vectors]
+* xref:java:version-vectors.adoc[Java - version vectors]
+* xref:objc:version-vectors.adoc[Objective-C - version vectors]
+* xref:swift:version-vectors.adoc[Swift - version vectors]
+
+[#mobile-xdcr-coexistence]
+==== Mobile XDCR Coexistence
+
+Couchbase Lite {release} version vector model brings it into alignment with Couchbase Server Cross Data Center Replication (XDCR) and Sync Gateway.
+This ensures that documents can sync seamlessly across:
+
+* Mobile-to-Server replication.
+* Multi-cluster Couchbase Server environments.
+* Peer-to-peer topologies.
+
+== See Also
+
+xref:3.3@couchbase-lite:ROOT:cbl-whatsnew.adoc[What's new in previous version 3.3]
 
 === Couchbase Lite Release Notes
 

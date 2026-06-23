@@ -1,8 +1,7 @@
-
 = Data Sync Peer-to-Peer
 :page-aliases: clang:p2psync-websocket.adoc, c:landing-p2psync.adoc
 ifdef::show_edition[:page-edition: Enterprise Edition]
-:page-status: Couchbase Lite 3.2.3
+:page-status: 3
 :page-role:
 :description: Couchbase Lite's Peer-to-Peer Synchronization enables edge devices to synchronize securely without consuming centralized cloud-server resources
 
@@ -12,9 +11,6 @@ ifdef::show_edition[:page-edition: Enterprise Edition]
 :url-api-references-urlendpointconfiguration: {url-api-references}/struct_c_b_l_u_r_l_endpoint_listener_configuration.html
 :url-api-references-urlendpointlistener: {url-api-references}/_c_b_l_u_r_l_endpoint_listener_8h.html
 
-// done in commons
-
-// Present common content including abstract and related content footer blocks
 [abstract]
 --
 Description -- _{description}_ +
@@ -143,10 +139,26 @@ You can configure a Peer-to-Peer synchronization with just a short amount of cod
 
 This simple listener configuration will give you a listener ready to participate in an encrypted synchronization with a replicator providing a valid user name and password.
 
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="listener-simple", indent=0]
 ----
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="listener-simple", indent=0]
+----
+--
+=====
 
 ====
 
@@ -162,14 +174,30 @@ include::c:example$code_snippets/main.cpp[tags="listener-simple", indent=0]
 
 This simple replicator configuration will give you an encrypted, bi-directional Peer-to-Peer synchronization with automatic conflict resolution.
 
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="replicator-simple", indent=0]
 ----
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="replicator-simple", indent=0]
+----
+--
+=====
 
 ====
 
-. Get the Listener's endpoint.
+. Get the Listener's' endpoint.
 Here we use a known URL, but it could be a URL established dynamically in a discovery phase. @/replConfig.endpoint/
 . Initialize the replicator configuration with the database to be synchronized and the Listener it is to synchronize with. @/replConfig.collections/
 . Configure the replicator to expect a self-signed certificate from the Listener. @/replConfig.acceptOnlySelfSignedServerCertificate/
@@ -331,7 +359,7 @@ Similar to other Couchbase Lite platforms, when using Couchbase Lite C, a genera
 [tabs]
 ====
 
-MacOS / iOS::
+MacOS / iOS::
 +
 --
 .Secure storage details
@@ -381,10 +409,10 @@ a|https://learn.microsoft.com/en-us/windows/win32/seccng/key-storage-and-retriev
 --
 
 
-Linux / Android::
+Linux / Android::
 +
 --
-As Linux-based operating systems do not have a standard or common secure key storage, and Android doesn't support native C/C++ API access to the default Keystore, Couchbase Lite C does not support persisting generated identities with the specified label on these platforms.
+As Linux-based operating systems do not have a standard or common secure key storage, and Android doesn't support native C/{cpp} API access to the default Keystore, Couchbase Lite C does not support persisting generated identities with the specified label on these platforms.
 
 As an alternative, Couchbase Lite C enables developers to implement their own cryptographic operations through a set of callbacks, enabling certificate signing and other cryptographic tasks during the TLS handshake using a private key stored in their preferred secure key storage.
 These callbacks allow operations like signing data, with the private key remaining securely stored and never exposed.
@@ -426,5 +454,3 @@ xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Gettin
 ++++
 </div>
 ++++
-
-
