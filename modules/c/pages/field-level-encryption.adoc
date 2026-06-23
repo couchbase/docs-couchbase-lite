@@ -1,4 +1,3 @@
-
 = Field Level Encryption
 :page-status: pass:q,a[Enterprise]
 :page-role:
@@ -9,11 +8,6 @@
 
 :source-language: c
 :url-api-references-classes: https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-c}{empty}/couchbase-lite-c/C/html/group__
-
-
-// :param-name: c
-// :param-title: C
-// :param-module: c
 
 
 IMPORTANT: This is an https://www.couchbase.com/products/editions[Enterprise Edition] feature.
@@ -59,12 +53,12 @@ You declare  properties requiring encryption by the replicator, as a dictionary 
 ----
 {
   "@type": "encryptable",
-  “value” : <Decrypted Value>
+  "value" : <Decrypted Value>
 } // <.>
 
 {
   "@type": "encryptable",
-  “ciphertext”: <Encrypted Value in BASE64 String>
+  "ciphertext": <Encrypted Value in BASE64 String>
 } // <.>
 
 ----
@@ -98,7 +92,7 @@ On successful encryption the replicator transforms the property into a format co
 == Server SDK compatibility
 
 
-Couchbase Lite's replicator ensures compatibility with Server SDK’s field level.
+Couchbase Lite's replicator ensures compatibility with Server SDK's field level.
 Both Push and Pull replication transform Couchbase Lite's encryptable dictionary to-and-from Server SDK Encrypted Field dictionary structure -- see: xref:c:field-level-encryption.adoc#ex-server-encryptable[].
 
 Push replicator::
@@ -112,15 +106,15 @@ Push replicator::
 [source]
 ----
 {
-    “alg”: <User-Specified or CB_MOBILE_CUSTOM>,
-    “ciphertext” : <Encrypted Value in BASE64 String>
+    "alg": <User-Specified or CB_MOBILE_CUSTOM>,
+    "ciphertext" : <Encrypted Value in BASE64 String>
 }
 ----
 ====
 
 Pull replicator::
 
-* Detects encrypted encryptable values by looking for  dictionary keys prefixed with “encrypted$”.
+* Detects encrypted encryptable values by looking for  dictionary keys prefixed with "encrypted$".
 * Transforms the dictionary by:
 ** Removing `alg`
 ** Replacing the `ciphertext` key with the `value`
@@ -137,9 +131,9 @@ Its directory structure differs CBL's encryptable dictionary when serializing th
 ----
 {
     encrypted$mykey: {
-        “alg” : “AEAD_AES_256_CBC_HMAC_SHA512”, // <.>
-        “kid” : “my-key-id”,
-        “ciphertext”: “<BASE64-TEXT>”
+        "alg" : "AEAD_AES_256_CBC_HMAC_SHA512", // <.>
+        "kid" : "my-key-id",
+        "ciphertext": "<BASE64-TEXT>"
     }
 }
 ----
@@ -176,10 +170,28 @@ If you return a null slice with an error the replicator logs the error and does 
 .Simple Encryption-Decryption Callback
 [#ex-get-att]
 ====
+
+[tabs]
+=====
+C::
++
+--
 [source, C]
 ----
 include::c:example$code_snippets/main.cpp[tag=replicator_property_encryptor_decryptor_sample]
 ----
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tag=replicator_property_encryptor_decryptor_sample]
+----
+--
+=====
+
 ====
 
 [#callback-configuration]
@@ -198,14 +210,28 @@ If you do not provide an encryption callback:
 [#ex-callback-config]
 ====
 
+[tabs]
+=====
+C::
++
+--
 [source, C, subs="attributes+, macros+"}]
 ----
 include::c:example$code_snippets/main.cpp[tag=replicator_property_encryption]
 ----
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tag=replicator_property_encryption]
+----
+--
+=====
+
 ====
-// :param-tags: replicator_property_encryption
-// include::ROOT:partial$block_tabbed_code_example.adoc[]
-// :param-tags!:
 
 
 [#querying-encryptables]
@@ -249,9 +275,9 @@ The push replicator should detect and report an error if an encrypted property i
 
 [#blobs]
 === Blobs
-Encrypting blob’s content is not supported.
+Encrypting blob's content is not supported.
 
-Where a Blob as a Fleece dictionary is specified in the encrypted property value, only the dictionary is encrypted; *not* the blob’s content.
+Where a Blob as a Fleece dictionary is specified in the encrypted property value, only the dictionary is encrypted; *not* the blob's content.
 
 [#delta-sync]
 === Delta Sync
@@ -269,10 +295,14 @@ In the meantime, adding an encrypted field including a nonce or random value to 
 [#example-brute-force-mitigation]
 .Sample brute-force mitigation code
 ====
+
+// NOTE: These are hardcoded C examples. C++ tab to be added after
+// engineering provides tagged includes in main.cpp and cbl_cpp.cpp.
+
 [source, C]
 ----
 void secureRandomize(void *bytes, size_t count) {
-    // This sample code uses Apple’s Common Crypto API to generate a secure random bytes.
+    // This sample code uses Apple's Common Crypto API to generate a secure random bytes.
     CCRandomGenerateBytes(bytes, count);
 }
 ----
@@ -292,7 +322,7 @@ FLValue nonceValue = FLValue_NewData({nonceBuf, sizeof(nonceBuf)});
 FLSliceResult nonceBase64 = FLValue_ToJSON(nonceValue);
 FLValue_Release(nonceValue);
 
-// Create an encryptable value from the random bytes and add to the document’s property:
+// Create an encryptable value from the random bytes and add to the document's property:
 auto nonce = CBLEncryptable_CreateWithString({nonceBase64.buf, nonceBase64.size});
 FLMutableDict_SetEncryptableValue(props, "nonce"_sl, nonce);
 
@@ -352,4 +382,3 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 ++++
 </div>
 ++++
-
