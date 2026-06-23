@@ -1,4 +1,3 @@
-
 = Data Sync using Sync Gateway
 :page-aliases: learn/objc-replication.adoc
 :page-role:
@@ -18,6 +17,12 @@ Description -- _{description}_ +
 Related Content -- xref:objc:conflict.adoc[Handling Data Conflicts] | xref:objc:dbreplica.adoc[Intra-Device] | <<p2psync-websocket.adoc,Peer-to-Peer>>
 --
 
+[IMPORTANT]
+--
+*Deprecated in 4.1*: Couchbase Lite for Objective-C on iOS is deprecated as of release 4.1.
+The decision for full removal will be made for a future release.
+New iOS projects should use xref:swift:index.adoc[Couchbase Lite for Swift].
+--
 
 .Code Snippets
 [NOTE]
@@ -139,7 +144,7 @@ You should configure and initialize a replicator for each Couchbase Lite databas
 xref:objc:replication.adoc#ex-simple-repl[] shows the configuration and initialization process.
 
 NOTE: You need Couchbase Lite 3.1+ and Sync Gateway 3.1+ to use `custom` Scopes and Collections. +
-If you’re using Capella App Services or Sync Gateway releases that are older than version 3.1, you won’t be able to access `custom` Scopes and Collections.
+If you're using Capella App Services or Sync Gateway releases that are older than version 3.1, you won't be able to access `custom` Scopes and Collections.
 To use Couchbase Lite 3.1+ with these older versions, you can use the `default` Collection as a backup option.
 
 Click the *GitHub* tab in the code examples for further details.
@@ -428,7 +433,7 @@ Use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/
 
 * If there is a pinned certificate, nothing else matters, the server cert must *exactly* match the pinned certificate.
 * If there are no pinned certs and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
-* If there are no pinned certificates and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `false` (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
+* If there are no pinned certificates and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `false` (default), the client validates the server's certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
 
 // Example 4
 .Set Server TLS security
@@ -655,7 +660,7 @@ This is a Breaking Change at 3.0
 [#new-outcome]
 ==== New outcome
 
-By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user’s other channels) are auto-purged from the local database (in devices belonging to the user).
+By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user's other channels) are auto-purged from the local database (in devices belonging to the user).
 
 [#prior-outcome]
 ==== Prior outcome
@@ -677,7 +682,7 @@ Users may lose access to channels in a number of ways:
 
 * A channel is removed from a role the user is assigned to
 
-By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user’s other channels -- see: xref:objc:replication.adoc#tbl-revoke-behavior[].
+By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user's other channels -- see: xref:objc:replication.adoc#tbl-revoke-behavior[].
 
 Documents that exist in multiple channels belonging to the user (even if they are not actively replicating that channel) are not auto-purged unless the user loses access to all channels.
 
@@ -799,12 +804,12 @@ This ensures backwards compatible with 2.8 clients that use pull filters to prev
 |disabled
 2+a|Doc remains in local database
 
-App notified of “accessRemoved” if a _Documentlistener_ is registered
+App notified of "accessRemoved" if a _Documentlistener_ is registered
 
 |enabled (DEFAULT)
 a|Doc is auto purged
 
-App notified of “accessRemoved” if _Documentlistener_ registered
+App notified of "accessRemoved" if _Documentlistener_ registered
 a|Doc remains in local database
 
 
@@ -907,7 +912,7 @@ xref:objc:replication.adoc#lbl-repl-status[]  |
 xref:objc:replication.adoc#lbl-repl-evnts[] |
 xref:objc:replication.adoc#lbl-repl-pend[]
 
-You can monitor a replication’s status by using a combination of xref:objc:replication.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorStatus.html#/c:objc(cs)CBLReplicatorStatus(py)activity[activity enum].
+You can monitor a replication's status by using a combination of xref:objc:replication.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorStatus.html#/c:objc(cs)CBLReplicatorStatus(py)activity[activity enum].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
 You can also choose to monitor document changes -- see: xref:objc:replication.adoc#lbl-repl-evnts[].
@@ -1080,7 +1085,7 @@ The behavior for Document Access Removal Notifications differs between Blip Sync
 
 * Blip Sync 3.0 (Couchbase Lite 3.x with Sync Gateway 3.x): When a Couchbase Lite 3.x client uses Blip Sync 3.0 to connect to Sync Gateway version 3.x, an Access Removal Notification is not sent to an ongoing replication when the document is still accessible through different channel accesses.
 
-This change means that in Blip Sync 3.0, documents that lose access to some channels but retain access through other channels do not trigger removal notifications or purge from the local database. 
+This change means that in Blip Sync 3.0, documents that lose access to some channels but retain access through other channels do not trigger removal notifications or purge from the local database.
 This prevents unnecessary document removal when the document remains accessible to the user through alternative channels.
 
 
@@ -1297,7 +1302,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: WebSocket error 100
 ----
 ====
 
-If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't using the certificate you will encounter an error with status code `5011` -- see: <<ex-5011>>
+If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't' using the certificate you will encounter an error with status code `5011` -- see: <<ex-5011>>
 
 [#ex-5011]
 .Certificate Mismatch or Not Found
@@ -1355,8 +1360,4 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 ++++
 </div>
 ++++
-
-
-// END -- inclusion -- common-sgw-replication.adoc
-
 
