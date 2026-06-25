@@ -13,6 +13,7 @@
 
 #include <cbl++/CouchbaseLite.hh>
 #include <iostream>
+#include <optional>
 
 // Page=build and run
 // url=https://docs-staging.couchbase.com/couchbase-lite/current/c/gs-build.html
@@ -605,6 +606,17 @@ static void replication_pendingdocuments(cbl::Replicator replicator, cbl::Collec
     // end::replication-pendingdocuments[]
 }
 
+static void p2p_act_rep_config_cacert() {
+    cbl::Database database("mydb");
+    cbl::Collection collection = database.getDefaultCollection();
+    cbl::ReplicatorConfiguration config({ cbl::CollectionConfiguration(collection) },
+                                        cbl::Endpoint::urlEndpoint("ws://localhost:4984/db"));
+    // tag::p2p-act-rep-config-cacert[]
+    // Configure Server Security -- only accept CA Certs
+    config.acceptOnlySelfSignedServerCertificate = false;
+    // end::p2p-act-rep-config-cacert[]
+}
+
 static void replication_retry_config() {
     cbl::Database database("mydb");
     cbl::Collection collection = database.getDefaultCollection();
@@ -640,6 +652,11 @@ static void replicator_simple() {
     // Initialize the replicator config with the collection and endpoint:
     cbl::ReplicatorConfiguration replConfig({ collectionConfig }, endpoint);
 
+    // tag::p2p-act-rep-config-self-cert[]
+    // Accept self-signed certificates, for testing purposes only:
+    replConfig.acceptOnlySelfSignedServerCertificate = true;
+    // end::p2p-act-rep-config-self-cert[]
+
     // Set up a basic authenticator with a username and password:
     replConfig.authenticator = cbl::Authenticator::basicAuthenticator("username", "password");
 
@@ -650,6 +667,54 @@ static void replicator_simple() {
     replicator.start();
     // end::replicator-simple[]
 }
+
+#ifdef COUCHBASE_ENTERPRISE
+// tag::replicator_property_encryption[]
+// tag::replicator_property_encryptor_decryptor_sample[]
+// Purpose: Declare property-level encryptor/decryptor callback functions
+
+// A simple symmetric XOR cipher shared by the encryptor and decryptor.
+static fleece::alloc_slice my_cipher_function(fleece::slice input) {
+    fleece::alloc_slice result(input.size);
+    for (size_t i = 0; i < input.size; ++i) {
+        ((uint8_t*)result.buf)[i] = ((const uint8_t*)input.buf)[i] ^ 'K';
+    }
+    return result;
+}
+
+static cbl::PropertyEncryptor property_encryptor =
+    [](fleece::slice scope, fleece::slice collection, fleece::slice documentID,
+       fleece::Dict properties, fleece::slice keyPath, fleece::slice input) -> cbl::EncryptionResult {
+        return { my_cipher_function(input), "MyEnc" };
+    };
+
+static cbl::PropertyDecryptor property_decryptor =
+    [](fleece::slice scope, fleece::slice collection, fleece::slice documentID,
+       fleece::Dict properties, fleece::slice keyPath, fleece::slice input,
+       std::optional<std::string_view> algorithm, std::optional<std::string_view> keyID) -> cbl::DecryptionResult {
+        return { my_cipher_function(input) };
+    };
+// end::replicator_property_encryptor_decryptor_sample[]
+// end::replicator_property_encryption[]
+
+static void replicator_property_encryption() {
+    cbl::Database database("mydb");
+    cbl::Collection collection = database.getDefaultCollection();
+    // tag::replicator_property_encryption[]
+    // Purpose: Show how to declare en(de)cryptors in the replicator config
+    cbl::Endpoint target = cbl::Endpoint::urlEndpoint("ws://localhost:4984/db");
+
+    cbl::CollectionConfiguration collectionConfig(collection);
+
+    cbl::ReplicatorConfiguration replConfig({ collectionConfig }, target);
+    replConfig.documentPropertyEncryptor = property_encryptor; // <.>
+    replConfig.documentPropertyDecryptor = property_decryptor; // <.>
+
+    cbl::Replicator replicator(replConfig);
+    replicator.start();
+    // end::replicator_property_encryption[]
+}
+#endif
 
 // The snippets in this file exist only to be compile-checked and pulled into the
 // docs via tagged regions; the project is never run, so main() is empty.
