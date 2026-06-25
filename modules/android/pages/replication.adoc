@@ -86,11 +86,11 @@ To use this protocol the replication URL should specify WebSockets as the URL sc
 
 Incompatibilities::
 Couchbase Lite's replication protocol is *incompatible* with CouchDB-based databases.
-And since Couchbase Lite 2.x+ only supports the new protocol, you will need to run a version of Sync Gateway that supports it -- see: xref:android:compatibility.adoc[Compatibility].
+And since Couchbase Lite 2.x+ only supports the new protocol, you need to run a version of Sync Gateway that supports it -- see: xref:android:compatibility.adoc[Compatibility].
 
 Legacy Compatibility::
 Clients using Couchbase Lite 1.x can continue to use `http` as the URL scheme.
-Sync Gateway 2.x+ will automatically use:
+Sync Gateway 2.x+ automatically uses:
 * The 1.x replication protocol when a Couchbase Lite 1.x client connects through `\http://localhost:4984/db`
 * The 2.0 replication protocol when a Couchbase Lite 2.0 client connects through `ws://localhost:4984/db`.
 
@@ -155,7 +155,6 @@ public class InOrderExample {
         throws CouchbaseLiteException {
         ReplicatorConfiguration config = new ReplicatorConfiguration(db1, new DatabaseEndpoint(db2));
         config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
-        CollectionConfiguration collectionConfig = new CollectionConfiguration(db1.getDefaultCollection());
         ReplicatorConfiguration config = new ReplicatorConfiguration(
             Set.of(collectionConfig),
             new DatabaseEndpoint(db2)
@@ -185,7 +184,6 @@ public class MaxThroughputExample {
         throws CouchbaseLiteException {
         ReplicatorConfiguration config = new ReplicatorConfiguration(db1, new DatabaseEndpoint(db2));
         config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
-        CollectionConfiguration collectionConfig = new CollectionConfiguration(db1.getDefaultCollection());
         ReplicatorConfiguration config = new ReplicatorConfiguration(
             Set.of(collectionConfig),
             new DatabaseEndpoint(db2)
@@ -248,7 +246,6 @@ public class PolicyExample {
         throws CouchbaseLiteException {
         ReplicatorConfiguration config = new ReplicatorConfiguration(db1, new DatabaseEndpoint(db2));
         config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
-        CollectionConfiguration collectionConfig = new CollectionConfiguration(db1.getDefaultCollection());
         ReplicatorConfiguration config = new ReplicatorConfiguration(
             Set.of(collectionConfig),
             new DatabaseEndpoint(db2)
@@ -1947,7 +1944,7 @@ include::android:example$codesnippet_collection.kt[tags="replication-logging", i
 --
 
 Java::
-+
+xbb+
 --
 [source, Java]
 ----
