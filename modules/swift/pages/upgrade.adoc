@@ -24,7 +24,9 @@ The default transport remains Wi-Fi only.
 
 === Enabling Bluetooth Transport (Optional)
 
-To enable Bluetooth Low Energy transport alongside Wi-Fi, set the `transports` property on your `MultipeerReplicatorConfiguration`:
+To enable Bluetooth Low Energy transport alongside Wi-Fi, set the `transports` property on your `MultipeerReplicatorConfiguration`.
+Setting both transports enables automatic transport switching: the replicator defaults to Wi-Fi when available and falls back to Bluetooth when Wi-Fi is unavailable.
+For more detail, see xref:swift:p2psync-multipeer.adoc#automatic-transport-switching[Automatic Transport Switching].
 
 [source, swift]
 ----
@@ -34,6 +36,18 @@ var config = MultipeerReplicatorConfiguration(
     authenticator: authenticator,
     collections: collections)
 config.transports = [.wifi, .bluetooth]
+----
+
+To restrict replication to Bluetooth exclusively, omit `.wifi`:
+
+[source, swift]
+----
+var config = MultipeerReplicatorConfiguration(
+    peerGroupID: "myGroup",
+    identity: identity,
+    authenticator: authenticator,
+    collections: collections)
+config.transports = [.bluetooth]
 ----
 
 Bluetooth transport requires iOS 15.0 or later.

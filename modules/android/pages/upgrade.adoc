@@ -9,8 +9,6 @@
 :source-language: Kotlin
 
 
-// The admonition does not apply to C as it references upgrading from versions 2.x.
-// CBL-C started at version 3.0
 [IMPORTANT]
 --
 On upgrading from a 2.x release, all Couchbase Lite databases will be automatically re-indexed on initial database open. +
@@ -28,12 +26,14 @@ The default transport remains Wi-Fi only.
 === Enabling Bluetooth Transport (Optional)
 
 By default, Multipeer Replication uses Wi-Fi only.
-You can configure the `transports` property on `MultipeerReplicatorConfiguration` to enable Bluetooth Low Energy (BLE) transport.
+You can configure the `transports` property on `MultipeerReplicatorConfiguration` to enable Bluetooth Low Energy (BLE) transport alongside Wi-Fi.
+This enables automatic transport switching: the replicator uses Wi-Fi when available and falls back to BLE when Wi-Fi is unavailable.
+For more detail, see xref:android:p2psync-multipeer.adoc#automatic-transport-switching[Automatic Transport Switching].
 
 ==== Auto-Switching (Wi-Fi and BLE)
 
-To enable both Wi-Fi and BLE, set both transports.
-When both are in range, Couchbase Lite uses Wi-Fi.
+Setting both transports enables auto-switching.
+When both transports can reach a peer, the replicator uses Wi-Fi.
 It falls back to BLE when Wi-Fi is unavailable.
 
 [source, Kotlin]
