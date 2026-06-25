@@ -66,10 +66,10 @@ See <<automatic-transport-switching>>.
 |Feature |Minimum iOS
 
 |Couchbase Lite general support
-|iOS 10
+|iOS 15
 
 |Multipeer Replicator: Wi-Fi transport
-|iOS 10
+|iOS 15
 
 |Multipeer Replicator: Bluetooth transport
 |iOS 15
@@ -234,6 +234,8 @@ To enable both transports, set `transports` to `kCBLMultipeerTransportWifi | kCB
 ----
 include::objc:example$code_snippets/MultipeerReplicator.m[tags="multipeer-config-transports-both", indent=0]
 ----
+
+NOTE: Bluetooth has lower throughput and higher latency than Wi-Fi, and its reliability can decrease as more peers join the Bluetooth network. We recommend using Wi-Fi as the primary transport for multipeer sync, with Bluetooth as a fallback, rather than relying on Bluetooth alone.
 
 === Create MultipeerReplicatorConfiguration
 
