@@ -1,4 +1,3 @@
-
 = Result Sets
 :page-role:
 :description: How to use Couchbase Lite Query's Result Sets
@@ -56,18 +55,34 @@ You access the retrieved document properties by converting each row's value, in 
 [#ex-acc-all]
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="query-access-all", indent=0]
 ----
-
-
-====
-
 <.> Here we get the dictionary of document properties using the database name as the key.
 You can add this dictionary to an array of returned matches, for processing elsewhere in the app.
 <.> Alternatively, you can access the document properties here, by using the property names as keys to the dictionary object.
+--
+
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="query-access-all", indent=0]
+----
+<.> Here we get the dictionary of document properties using the database name as the key.
+You can add this dictionary to an array of returned matches, for processing elsewhere in the app.
+<.> Alternatively, you can access the document properties here, by using the property names as keys to the dictionary object.
+--
+=====
+
+====
 
 [#lbl-acc-id]
 === Access Document Properties - ID
@@ -86,17 +101,30 @@ Access the required document properties by retrieving the document from the data
 [#ex-acc-id]
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="query-access-id", indent=0]
 ----
+<.> Extract the Id value from the dictionary and use it to get the document from the database
+--
 
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="query-access-id", indent=0]
+----
+<.> Extract the Id value from the dictionary and use it to get the document from the database
+--
+=====
 
 ====
-
-<.> Extract the Id value from the dictionary and use it to get the document from the database
-
 
 [#lbl-acc-specific]
 === Access Document Properties - Selected Properties
@@ -112,12 +140,26 @@ Access the retrieved properties by converting each row into a dictionary -- as s
 [#ex-acc-specific]
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="query-access-props", indent=0]
 ----
+--
 
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="query-access-props", indent=0]
+----
+--
+=====
 
 ====
 
@@ -134,11 +176,26 @@ include::c:example$code_snippets/main.cpp[tags="query-access-props", indent=0]
 
 Use {url-api-references-classes}json.html#ga3450acc0690101545d75986b91e4080[FLValue_ToJSON()] to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See xref:c:query-resultsets.adoc#ex-json[] for a working example.
 
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="query-access-json", indent=0]
 ----
+--
 
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="query-access-json", indent=0]
+----
+--
+=====
 
 ====
 
@@ -208,5 +265,3 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 ++++
 </div>
 ++++
-
-

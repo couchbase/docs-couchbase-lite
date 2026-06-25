@@ -1,4 +1,3 @@
-
 = Handling Data Conflicts
 :page-aliases: clang:conflict.adoc
 :page-role:
@@ -105,6 +104,12 @@ Apps have the following strategies for resolving conflicts:
 [tabs]
 =====
 
+C::
++
+--
+[tabs]
+======
+
 Local Wins::
 +
 --
@@ -114,7 +119,6 @@ include::c:example$code_snippets/main.cpp[tag=local-win-conflict-resolver,indent
 ----
 --
 
-
 Remote Wins::
 +
 --
@@ -122,20 +126,56 @@ Remote Wins::
 ----
 include::c:example$code_snippets/main.cpp[tag=remote-win-conflict-resolver,indent=0]
 ----
-
 --
-
 
 Merge::
 +
 --
-
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tag=merge-conflict-resolver,indent=0]
 ----
-
 --
+
+======
+--
+
+{cpp}::
++
+--
+[tabs]
+======
+
+Local Wins::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tag=local-win-conflict-resolver,indent=0]
+----
+--
+
+Remote Wins::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tag=remote-win-conflict-resolver,indent=0]
+----
+--
+
+Merge::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tag=merge-conflict-resolver,indent=0]
+----
+--
+
+======
+--
+
 =====
 
 ====
@@ -183,12 +223,26 @@ When the value is `null`, the default conflict resolution will be applied.
 [#wx-conflict-resolver]
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="replication-conflict-resolver", indent=0]
 ----
+--
 
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="replication-conflict-resolver", indent=0]
+----
+--
+=====
 
 ====
 
@@ -198,7 +252,7 @@ include::c:example$code_snippets/main.cpp[tags="replication-conflict-resolver", 
 
 
 When updating a document, you need to consider the possibility of update conflicts.
-Update conflicts can occur when you try to update a document that’s been updated since you read it.
+Update conflicts can occur when you try to update a document that's been updated since you read it.
 
 
 .How Updating May Cause Conflicts
@@ -261,12 +315,26 @@ In the event of conflicting keys, it will pick the key value from `new`.
 [#ex-merge-props]
 ====
 
-
+[tabs]
+=====
+C::
++
+--
 [source, c]
 ----
 include::c:example$code_snippets/main.cpp[tags="update-document-with-conflict-handler", indent=0]
 ----
+--
 
+{cpp}::
++
+--
+[source, cpp]
+----
+include::c:example$code_snippets/cbl_cpp.cpp[tags="update-document-with-conflict-handler", indent=0]
+----
+--
+=====
 
 ====
 
@@ -313,5 +381,3 @@ xref:tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc[Gettin
 ++++
 </div>
 ++++
-
-

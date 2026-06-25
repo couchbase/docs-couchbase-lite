@@ -12,7 +12,7 @@ pipeline {
                         sh 'jenkins/dotnet_build.sh 4.1.0 2.0.0'
                     }
                 }
-                stage("Validate C") {
+                stage("Validate C / C++") {
                     agent { label 's61113u16 (litecore)' }
                     steps {
                         sh 'jenkins/c_build.sh 4.1.0'
