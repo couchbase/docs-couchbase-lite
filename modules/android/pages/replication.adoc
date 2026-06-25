@@ -1,4 +1,3 @@
-
 = Data Sync using Sync Gateway
 :page-aliases: learn/java-android-replication.adoc
 :page-role:
@@ -87,11 +86,11 @@ To use this protocol the replication URL should specify WebSockets as the URL sc
 
 Incompatibilities::
 Couchbase Lite's replication protocol is *incompatible* with CouchDB-based databases.
-And since Couchbase Lite 2.x+ only supports the new protocol, you will need to run a version of Sync Gateway that supports it -- see: xref:android:compatibility.adoc[Compatibility].
+And since Couchbase Lite 2.x+ only supports the new protocol, you need to run a version of Sync Gateway that supports it -- see: xref:android:compatibility.adoc[Compatibility].
 
 Legacy Compatibility::
 Clients using Couchbase Lite 1.x can continue to use `http` as the URL scheme.
-Sync Gateway 2.x+ will automatically use:
+Sync Gateway 2.x+ automatically uses:
 * The 1.x replication protocol when a Couchbase Lite 1.x client connects through `\http://localhost:4984/db`
 * The 2.0 replication protocol when a Couchbase Lite 2.0 client connects through `ws://localhost:4984/db`.
 
@@ -154,8 +153,14 @@ public class InOrderExample {
 
     public Replicator runReplicator(Database db1, Database db2, ReplicatorChangeListener listener)
         throws CouchbaseLiteException {
-        ReplicatorConfiguration config = new ReplicatorConfiguration(db1, new DatabaseEndpoint(db2));
-        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+        CollectionConfiguration collectionConfig =
+                new CollectionConfiguration(db1.getDefaultCollection());
+
+        ReplicatorConfiguration config = new ReplicatorConfiguration(
+                Set.of(collectionConfig),
+                new DatabaseEndpoint(db2)
+        );
+        config.setType(ReplicatorType.PUSH_AND_PULL);
         config.setContinuous(false);
 
         Replicator repl = new Replicator(config);
@@ -172,22 +177,20 @@ public class InOrderExample {
 
 [source,java]
 ----
-/**
- * This version maximizes throughput.  It will deliver change notifications as quickly
- * as CPU availability allows. It may deliver change notifications out of order.
- * Listeners must be thread safe because they may be called from multiple threads.
- * In fact, they must be re-entrant because a given listener may be running on mutiple threads
- * simultaneously.  In addition, when notifications swamp the processors, notifications awaiting
- * a processor will be queued as Threads, (instead of as Runnables) with accompanying memory
- * and GC impact.
- */
+
 public class MaxThroughputExample {
     private static final ExecutorService MAX_THROUGHPUT_EXEC = Executors.newCachedThreadPool();
 
     public Replicator runReplicator(Database db1, Database db2, ReplicatorChangeListener listener)
         throws CouchbaseLiteException {
-        ReplicatorConfiguration config = new ReplicatorConfiguration(db1, new DatabaseEndpoint(db2));
-        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+        CollectionConfiguration collectionConfig =
+                new CollectionConfiguration(db1.getDefaultCollection());
+
+        ReplicatorConfiguration config = new ReplicatorConfiguration(
+                Set.of(collectionConfig),
+                new DatabaseEndpoint(db2)
+        );
+        config.setType(ReplicatorType.PUSH_AND_PULL);
         config.setContinuous(false);
 
         Replicator repl = new Replicator(config);
@@ -204,16 +207,6 @@ public class MaxThroughputExample {
 
 [source, java]
 ----
-/**
- * This version demonstrates the extreme configurability of the CouchBase Lite replicator callback system.
- * It may deliver updates out of order and does require thread-safe and re-entrant listeners
- * (though it does correctly synchronizes tasks passed to it using a SynchronousQueue).
- * The thread pool executor shown here is configured for the sweet spot for number of threads per CPU.
- * In a real system, this single executor might be used by the entire application and be passed to
- * this module, thus establishing a reasonable app-wide threading policy.
- * In an emergency (Rejected Execution) it lazily creates a backup executor with an unbounded queue
- * in front of it.  It, thus, may deliver notifications late, as well as out of order.
- */
 public class PolicyExample {
     private static final int CPUS = Runtime.getRuntime().availableProcessors();
 
@@ -223,7 +216,7 @@ public class PolicyExample {
         = new RejectedExecutionHandler() {
         public void rejectedExecution(Runnable r, ThreadPoolExecutor e) {
             synchronized (this) {
-                if (BACKUP_EXEC =  null) { BACKUP_EXEC = createBackupExecutor(); }
+                if (BACKUP_EXEC == null) { BACKUP_EXEC = createBackupExecutor(); }
             }
             BACKUP_EXEC.execute(r);
         }
@@ -243,8 +236,14 @@ public class PolicyExample {
 
     public Replicator runReplicator(Database db1, Database db2, ReplicatorChangeListener listener)
         throws CouchbaseLiteException {
-        ReplicatorConfiguration config = new ReplicatorConfiguration(db1, new DatabaseEndpoint(db2));
-        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+        CollectionConfiguration collectionConfig =
+                new CollectionConfiguration(db1.getDefaultCollection());
+
+        ReplicatorConfiguration config = new ReplicatorConfiguration(
+                Set.of(collectionConfig),
+                new DatabaseEndpoint(db2)
+        );
+        config.setType(ReplicatorType.PUSH_AND_PULL);
         config.setContinuous(false);
 
         Replicator repl = new Replicator(config);
@@ -309,7 +308,7 @@ You should configure and initialize a replicator for each Couchbase Lite databas
 xref:android:replication.adoc#ex-simple-repl[] shows the configuration and initialization process.
 
 NOTE: You need Couchbase Lite 3.1+ and Sync Gateway 3.1+ to use `custom` Scopes and Collections. +
-If you’re using Capella App Services or Sync Gateway releases that are older than version 3.1, you won’t be able to access `custom` Scopes and Collections.
+If you're using Capella App Services or Sync Gateway releases that are older than version 3.1, you won't be able to access `custom` Scopes and Collections.
 To use Couchbase Lite 3.1+ with these older versions, you can use the `default` Collection as a backup option.
 
 Click the *GitHub* tab in the code examples for further details.
@@ -417,7 +416,7 @@ The constructor provides:
 * the server's URL (including the port number and the name of the remote database to sync with)
 +
 --
-It is expected that the app will identify the IP address and URL and append the remote database name to the URL endpoint, producing for example: `wss://10.0.2.2:4984/travel-sample`
+It's expected that the app identifies the IP address and URL and append the remote database name to the URL endpoint, producing for example: `wss://10.0.2.2:4984/travel-sample`
 
 The URL scheme for web socket URLs uses `ws:` (non-TLS) or `wss:` (SSL/TLS) prefixes.
 To use cleartext, un-encrypted, network traffic (`http://` and-or `ws://`),  include `android:usesCleartextTraffic="true"` in the `application` element of the manifest as shown on https://developer.android.com/training/articles/security-config#CleartextTrafficPermitted[android.com^]. +
@@ -671,7 +670,7 @@ Use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{emp
 
 * If there is a pinned certificate, nothing else matters, the server cert must *exactly* match the pinned certificate.
 * If there are no pinned certs and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-[setAcceptOnlySelfSignedServerCertificate] is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
-* If there are no pinned certificates and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-[setAcceptOnlySelfSignedServerCertificate] is `false` (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
+* If there are no pinned certificates and https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-[setAcceptOnlySelfSignedServerCertificate] is `false` (default), the client validates the server's certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
 
 // Example 4
 .Set Server TLS security
@@ -1054,7 +1053,7 @@ This is a Breaking Change at 3.0
 [#new-outcome]
 ==== New outcome
 
-By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user’s other channels) are auto-purged from the local database (in devices belonging to the user).
+By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user's other channels) are auto-purged from the local database (in devices belonging to the user).
 
 [#prior-outcome]
 ==== Prior outcome
@@ -1076,7 +1075,7 @@ Users may lose access to channels in a number of ways:
 
 * A channel is removed from a role the user is assigned to
 
-By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user’s other channels -- see: xref:android:replication.adoc#tbl-revoke-behavior[].
+By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user's other channels -- see: xref:android:replication.adoc#tbl-revoke-behavior[].
 
 Documents that exist in multiple channels belonging to the user (even if they are not actively replicating that channel) are not auto-purged unless the user loses access to all channels.
 
@@ -1218,12 +1217,12 @@ This ensures backwards compatible with 2.8 clients that use pull filters to prev
 |disabled
 2+a|Doc remains in local database
 
-App notified of “accessRemoved” if a _Documentlistener_ is registered
+App notified of "accessRemoved" if a _Documentlistener_ is registered
 
 |enabled (DEFAULT)
 a|Doc is auto purged
 
-App notified of “accessRemoved” if _Documentlistener_ registered
+App notified of "accessRemoved" if _Documentlistener_ registered
 a|Doc remains in local database
 
 
@@ -1364,9 +1363,10 @@ In this section::
 xref:android:replication.adoc#lbl-repl-chng[]  |
 xref:android:replication.adoc#lbl-repl-status[]  |
 xref:android:replication.adoc#lbl-repl-evnts[] |
-xref:android:replication.adoc#lbl-repl-pend[]
+xref:android:replication.adoc#lbl-repl-pend[] |
+xref:android:replication.adoc#lbl-repl-correlation-id[]
 
-You can monitor a replication’s status by using a combination of xref:android:replication.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getActivityLevel()[getActivityLevel()].
+You can monitor a replication's status by using a combination of xref:android:replication.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/ReplicatorStatus.html#getActivityLevel()[getActivityLevel()].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
 You can also choose to monitor document changes -- see: xref:android:replication.adoc#lbl-repl-evnts[].
@@ -1602,7 +1602,7 @@ include::android:example$codesnippet_collection.java[tags="remove-document-repli
 [#document-access-removal-behavior]
 ==== Document Access Removal Behavior
 
-When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
+When access to a document is removed on Sync Gateway (see: Sync Gateway's' xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
 
 
 [#lbl-repl-pend]
@@ -1658,6 +1658,35 @@ include::android:example$codesnippet_collection.java[tags="replication-pendingdo
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#getPendingDocumentIds--[Replicator.getPendingDocumentIds()] returns a list of the document IDs for all documents waiting to be pushed.
 This is a snapshot and may have changed by the time the response is received and processed.
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-android}{empty}/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-[Replicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
+
+
+[#lbl-repl-correlation-id]
+=== Correlation ID
+The correlation ID is a read-only property that identifies the Sync Gateway session associated with a Couchbase Lite replicator.
+Use it to correlate log entries across Couchbase Lite and Sync Gateway when diagnosing replication issues.
+[#ex-repl-correlation-id]
+.Get the replicator correlation ID
+====
+[tabs]
+=====
+Kotlin::
++
+--
+[source, Kotlin]
+----
+val correlationID = replicator.correlationId
+----
+--
+Java::
++
+--
+[source, Java]
+----
+String correlationID = replicator.getCorrelationId();
+----
+--
+=====
+====
 
 
 [#lbl-repl-stop]
@@ -1908,7 +1937,7 @@ include::android:example$codesnippet_collection.kt[tags="replication-logging", i
 --
 
 Java::
-+
+xbb+
 --
 [source, Java]
 ----
@@ -1937,7 +1966,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: WebSocket error 100
 ----
 ====
 
-If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't using the certificate you will encounter an error with status code `5011` -- see: <<ex-5011>>
+If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't' using the certificate you will encounter an error with status code `5011` -- see: <<ex-5011>>
 
 [#ex-5011]
 .Certificate Mismatch or Not Found
@@ -1995,8 +2024,4 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 ++++
 </div>
 ++++
-
-
-// END -- inclusion -- common-sgw-replication.adoc
-
 

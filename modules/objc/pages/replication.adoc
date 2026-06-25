@@ -1,4 +1,3 @@
-
 = Data Sync using Sync Gateway
 :page-aliases: learn/objc-replication.adoc
 :page-role:
@@ -18,6 +17,12 @@ Description -- _{description}_ +
 Related Content -- xref:objc:conflict.adoc[Handling Data Conflicts] | xref:objc:dbreplica.adoc[Intra-Device] | <<p2psync-websocket.adoc,Peer-to-Peer>>
 --
 
+[IMPORTANT]
+--
+*Deprecated in 4.1*: Couchbase Lite for Objective-C on iOS is deprecated as of release 4.1.
+The decision for full removal will be made for a future release.
+New iOS projects should use xref:swift:index.adoc[Couchbase Lite for Swift].
+--
 
 .Code Snippets
 [NOTE]
@@ -139,8 +144,8 @@ You should configure and initialize a replicator for each Couchbase Lite databas
 xref:objc:replication.adoc#ex-simple-repl[] shows the configuration and initialization process.
 
 NOTE: You need Couchbase Lite 3.1+ and Sync Gateway 3.1+ to use `custom` Scopes and Collections. +
-If you’re using Capella App Services or Sync Gateway releases that are older than version 3.1, you won’t be able to access `custom` Scopes and Collections.
-To use Couchbase Lite 3.1+ with these older versions, you can use the `default` Collection as a backup option.
+If you're using Capella App Services or Sync Gateway releases that are older than version 3.1, you won't be able to access `custom` Scopes and Collections.
+To use Couchbase Lite 3.1+ with these earlier versions, you can use the `default` Collection as a backup option.
 
 Click the *GitHub* tab in the code examples for further details.
 
@@ -181,7 +186,7 @@ Other options are available -- see: xref:objc:replication.adoc#lbl-client-auth[]
 
 <.> Initialize the replicator using your configuration -- see: xref:objc:replication.adoc#lbl-init-repl[].
 
-<.> Optionally, register an observer, which will notify you of changes to the replication status -- see: xref:objc:replication.adoc#lbl-repl-mon[]
+<.> Optionally, register an observer, which notifies you of changes to the replication status -- see: xref:objc:replication.adoc#lbl-repl-mon[]
 
 <.> Start the replicator  -- see: xref:objc:replication.adoc#lbl-repl-start[].
 
@@ -314,7 +319,7 @@ This prevents the replications generating the same checkpoint `docID` resulting 
 
 Couchbase Lite for Objective-C's replication retry logic assures a resilient connection.
 
-The replicator minimizes the chance and impact of dropped connections by maintaining a heartbeat; essentially pinging the Sync Gateway at a configurable interval to ensure the connection remains alive.
+The replicator minimizes the chance and impact of dropped connections by maintaining a heartbeat; essentially pinging the Sync Gateway at a configurable interval to make sure the connection remains alive.
 
 In the event it detects a transient error, the replicator will attempt to reconnect, stopping only when the connection is re-established, or the number of retries exceeds the retry limit (9 times for a single-shot replication and unlimited for a continuous replication).
 
@@ -429,7 +434,7 @@ Use `https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/
 
 * If there is a pinned certificate, nothing else matters, the server cert must *exactly* match the pinned certificate.
 * If there are no pinned certs and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `true` then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.
-* If there are no pinned certificates and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `false` (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
+* If there are no pinned certificates and {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} is `false` (default), the client validates the server's certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.
 
 // Example 4
 .Set Server TLS security
@@ -657,7 +662,7 @@ This is a Breaking Change at 3.0
 [#new-outcome]
 ==== New outcome
 
-By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user’s other channels) are auto-purged from the local database (in devices belonging to the user).
+By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of the user's other channels) are auto-purged from the local database (in devices belonging to the user).
 
 [#prior-outcome]
 ==== Prior outcome
@@ -679,7 +684,7 @@ Users may lose access to channels in a number of ways:
 
 * A channel is removed from a role the user is assigned to
 
-By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user’s other channels -- see: xref:objc:replication.adoc#tbl-revoke-behavior[].
+By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) *unless* they belong to any of the user's' other channels -- see: xref:objc:replication.adoc#tbl-revoke-behavior[].
 
 Documents that exist in multiple channels belonging to the user (even if they are not actively replicating that channel) are not auto-purged unless the user loses access to all channels.
 
@@ -801,12 +806,12 @@ This ensures backwards compatible with 2.8 clients that use pull filters to prev
 |disabled
 2+a|Doc remains in local database
 
-App notified of “accessRemoved” if a _Documentlistener_ is registered
+App notified of "accessRemoved" if a _Documentlistener_ is registered
 
 |enabled (DEFAULT)
 a|Doc is auto purged
 
-App notified of “accessRemoved” if _Documentlistener_ registered
+App notified of "accessRemoved" if _Documentlistener_ registered
 a|Doc remains in local database
 
 
@@ -896,7 +901,7 @@ include::objc:example$code_snippets/SampleCodeTest.m[tags="replication-reset-che
 ====
 
 <.> Set start's reset option to `true`. +
-The default `false` is shown here for completeness only; it is unlikely you would explicitly use it in practice.
+The default `false` is shown here for completeness only; it's unlikely you would explicitly use it in practice.
 
 
 [#lbl-repl-mon]
@@ -907,9 +912,10 @@ In this section::
 xref:objc:replication.adoc#lbl-repl-chng[]  |
 xref:objc:replication.adoc#lbl-repl-status[]  |
 xref:objc:replication.adoc#lbl-repl-evnts[] |
-xref:objc:replication.adoc#lbl-repl-pend[]
+xref:objc:replication.adoc#lbl-repl-pend[] |
+xref:objc:replication.adoc#lbl-repl-correlation-id[]
 
-You can monitor a replication’s status by using a combination of xref:objc:replication.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorStatus.html#/c:objc(cs)CBLReplicatorStatus(py)activity[activity enum].
+You can monitor a replication's' status by using a combination of xref:objc:replication.adoc#lbl-repl-chng[] and the `replication.status.activity` property -- see; https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicatorStatus.html#/c:objc(cs)CBLReplicatorStatus(py)activity[activity enum].
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.
 
 You can also choose to monitor document changes -- see: xref:objc:replication.adoc#lbl-repl-evnts[].
@@ -920,7 +926,7 @@ Use this to monitor changes and to inform on sync progress; this is an optional 
 You can add and a replicator change listener at any point; it will report changes from the point it is registered.
 
 .Best Practice
-TIP: Don't forget to save the token so you can remove the listener later
+TIP: Don't' forget to save the token so you can remove the listener later
 
 Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html[Replicator] class to add a change listener as a callback to the Replicator (https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)addChangeListener:[addChangeListener(_:)]) -- see: xref:objc:replication.adoc#ex-repl-mon[].
 You will then be asynchronously notified of state changes.
@@ -1020,8 +1026,8 @@ Additionally, on iOS, an app already in the background may be terminated.
 In this case, the `Database` and `Replicator` instances will be `null` when the app returns to the foreground.
 Therefore, as preventive measure, it is recommended to do a `null` check when the app enters the foreground, and to re-initialize the database and replicator if any of those is `null`.
 
-On other platforms, Couchbase Lite doesn't react to OS backgrounding or foregrounding events and replication(s) will continue running as long as the remote system does not terminate the connection and the app does not terminate.
-It is generally recommended to stop replications before going into the background otherwise socket connections may be closed by the OS and this may interfere with the replication process.
+On other platforms, Couchbase Lite does not react to OS backgrounding or foregrounding events and replication(s) continues running as long as the remote system does not end, the connection and the app does not stop.
+It's' generally recommended to stop replications before going into the background otherwise socket connections may be closed by the OS and this may interfere with the replication process.
 
 
 [#lbl-repl-evnts]
@@ -1082,7 +1088,7 @@ The behavior for Document Access Removal Notifications differs between Blip Sync
 
 * Blip Sync 3.0 (Couchbase Lite 3.x with Sync Gateway 3.x): When a Couchbase Lite 3.x client uses Blip Sync 3.0 to connect to Sync Gateway version 3.x, an Access Removal Notification is not sent to an ongoing replication when the document is still accessible through different channel accesses.
 
-This change means that in Blip Sync 3.0, documents that lose access to some channels but retain access through other channels do not trigger removal notifications or purge from the local database. 
+This change means that in Blip Sync 3.0, documents that lose access to some channels but retain access through other channels do not trigger removal notifications or purge from the local database.
 This prevents unnecessary document removal when the document remains accessible to the user through alternative channels.
 
 
@@ -1096,7 +1102,7 @@ You can check whether documents are waiting to be pushed in any forthcoming sync
 
 * Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)pendingDocumentIDs:[CBLReplicator.pendingDocumentIDs()] method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.
 +
-This can be very useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it is safe to exit.
+This can be very useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it's safe to exit.
 
 * Use the https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)isDocumentPending:error:[CBLReplicator.isDocumentPending()] method to quickly check whether an individual document is pending a push.
 
@@ -1119,6 +1125,22 @@ include::objc:example$code_snippets/SampleCodeTest.m[tags="replication-pendingdo
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)pendingDocumentIDs:[CBLReplicator.pendingDocumentIDs()] returns a list of the document IDs for all documents waiting to be pushed.
 This is a snapshot and may have changed by the time the response is received and processed.
 <.> https://docs.couchbase.com/mobile/{major}.{minor}.{maintenance-ios}{empty}/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)isDocumentPending:error:[CBLReplicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
+
+
+[#lbl-repl-correlation-id]
+=== Correlation ID
+
+The correlation ID is a read-only property that identifies the Sync Gateway session associated with a Couchbase Lite replicator.
+Use it to correlate log entries on the client and server when diagnosing replication issues.
+
+[#ex-repl-correlation-id]
+.Get the replicator correlation ID
+====
+[source, objc]
+----
+NSString* correlationID = replicator.correlationID;
+----
+====
 
 
 [#lbl-repl-stop]
@@ -1308,7 +1330,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: WebSocket error 100
 ----
 ====
 
-If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't using the certificate you will encounter an error with status code `5011` -- see: <<ex-5011>>
+If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't' using the certificate you will encounter an error with status code `5011` -- see: <<ex-5011>>
 
 [#ex-5011]
 .Certificate Mismatch or Not Found
@@ -1366,8 +1388,3 @@ https://docs.couchbase.com/tutorials/[Tutorials]
 ++++
 </div>
 ++++
-
-
-// END -- inclusion -- common-sgw-replication.adoc
-
-
