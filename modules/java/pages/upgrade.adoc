@@ -21,16 +21,17 @@ The default transport remains Wi-Fi only.
 
 === Enabling Bluetooth Transport (Optional)
 
-To enable Bluetooth Low Energy transport alongside Wi-Fi, set the `transports` property on your `MultipeerReplicatorConfiguration`:
+To enable Bluetooth Low Energy transport alongside Wi-Fi, set the transports when building your `MultipeerReplicatorConfiguration`:
 
 [source, Java]
 ----
-MultipeerReplicatorConfiguration config = new MultipeerReplicatorConfiguration(
-    "myGroup",
-    identity,
-    authenticator,
-    collections);
-config.setTransports(EnumSet.of(MultipeerTransport.WIFI, MultipeerTransport.BLUETOOTH));
+MultipeerReplicatorConfiguration config = new MultipeerReplicatorConfiguration.Builder()
+    .setPeerGroupID("myGroup")
+    .setIdentity(identity)
+    .setAuthenticator(authenticator)
+    .setCollections(collections)
+    .setTransports(EnumSet.of(MultipeerTransport.WIFI, MultipeerTransport.BLUETOOTH))
+    .build();
 ----
 
 Bluetooth transport requires Android API 29 or later.
