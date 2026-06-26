@@ -119,6 +119,14 @@ Android requires runtime permission requests for Bluetooth operations.
 Request the permissions listed above at runtime before starting the Multipeer Replicator with Bluetooth enabled.
 See https://developer.android.com/develop/connectivity/bluetooth/bt-permissions[Android Bluetooth permissions] for details.
 
+.Requesting Bluetooth permissions at runtime
+[source,kotlin]
+----
+include::example$kotlin_snippets/app/src/main/kotlin/com/couchbase/codesnippets/android/kotlin/MainActivity.kt[tags="multipeer-bluetooth-permissions-request", indent=0]
+----
+
+TIP: If you have already created a `MultipeerReplicator`, you can call `getNecessaryPermissions()` on it to get the exact set of runtime permissions required for its configured transports, rather than listing them manually.
+
 
 == Configuration
 

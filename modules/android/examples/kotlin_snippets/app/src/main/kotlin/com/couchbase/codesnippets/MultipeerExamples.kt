@@ -382,7 +382,7 @@ class MultipeerExamples {
         }
 
         for(peer in replicator.neighborPeers) {
-            printPeerInfo(replicator.getPeerInfo(peer))
+            replicator.getPeerInfo(peer)?.let { printPeerInfo(it) }
         }
         // end::multipeer-peer-info[]
     }
