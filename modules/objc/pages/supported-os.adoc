@@ -1,15 +1,9 @@
-
 = Supported Operating System Versions
 :page-aliases: product/objc-supported-os.adoc
-:page-role:
 :page-role: -toc
 :description: Couchbase Lite on Objective-C -- the OS and SDK versions on which this framework is supported
 
-
 :source-language: objc
-
-:source-language: objc
-
 
 [abstract]
 --
@@ -17,9 +11,16 @@ Description -- _{description}_ +
 Related Content -- xref:cbl-whatsnew.adoc[What's New]  |  xref:objc:releasenotes.adoc[Release Notes] | xref:objc:compatibility.adoc[Compatibility]
 --
 
+[IMPORTANT]
+--
+*Deprecated in 4.1*: Couchbase Lite for Objective-C on iOS is deprecated as of release 4.1.
+The decision for full removal will be made for a future release.
+New iOS projects should use xref:swift:index.adoc[Couchbase Lite for Swift].
+--
 
 [#officially-supported-versions]
 == Officially Supported Versions
+
 The following table identifies the xref:objc:supported-os.adoc#supported-os-versions[supported platforms].
 
 .Supported versions
@@ -32,11 +33,37 @@ The following table identifies the xref:objc:supported-os.adoc#supported-os-vers
 |15.0+
 
 |macOS
-| 13 (Ventura), 14 (Sonoma),  15 (Sequoia)
+|14 (Sonoma), 15 (Sequoia)
 |===
 
 NOTE: Couchbase Lite for Objective-C provides native support for both Mac Catalyst and M1.
 
+[#feature-specific-platform-support]
+== Feature Specific Platform Support
+
+The following table lists platform requirements for features that support a subset of the <<supported>> platforms.
+
+[#multipeer-p2p-platform-requirements]
+=== Multipeer Peer-to-Peer Replicator
+
+The Multipeer Peer-to-Peer Replicator has the following requirements in addition to the platform requirements above.
+
+.Minimum iOS version by transport
+[#tbl-multipeer-ios-os, cols="1,^1,4"]
+|===
+h|Transport
+h|Minimum iOS Version
+h|Notes
+
+|Wi-Fi / LAN
+|iOS 15
+|
+
+|Bluetooth (BLE)
+|iOS 15
+|See xref:objc:p2psync-multipeer.adoc#platform-configuration[Bluetooth Platform Configuration]
+
+|===
 
 [#deprecated-versions]
 == Deprecated Versions
@@ -99,4 +126,3 @@ h|Operating System|Version|Deprecation Release
 | 3.1.0
 
 |===
-
