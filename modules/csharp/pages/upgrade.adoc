@@ -16,11 +16,11 @@ This can result in a delay before the database is usable.
 --
 
 [#3-3-0-upgrade]
-== {major}.{minor}.{base}{empty} Upgrade
+== {major}.{minor-net}.{maintenance-net}{empty} Upgrade
 
-The action will take place automatically and can lead to some delay in the database becoming available for use in your application.
+The action takes place automatically and can lead to some delay in the database becoming available for use in your application.
 
-In addition, if you are syncing with a {major}.{minor}.{base}{empty} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
+In addition, if you're syncing with a {major}.{minor}.{maintenance} Sync Gateway, you should be aware of the significant configuration enhancements introduced and their impact.
 See xref:sync-gateway::upgrading.adoc[Upgrading Sync Gateway] for more details.
 This is a one-way conversion.
 
@@ -31,7 +31,7 @@ This is a one-way conversion.
 === API Changes
 
 
-This content introduces the changes made to the Couchbase{nbsp}Lite for C#.Net API for release {major}.{minor}.{base}{empty}.
+This content introduces the changes made to the Couchbase{nbsp}Lite for C#.Net API for release {major}.{minor-net}.{maintenance-net}.
 
 // Starting from 3.2 Couchbase{nbsp}Lite for C#.Net requires _Visual Studio 2019+_ and uses .Net Core 3.1 (updating from .Net Core 2.0).
 
@@ -40,8 +40,8 @@ This content introduces the changes made to the Couchbase{nbsp}Lite for C#.Net A
 
 The function https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Atan2_Couchbase_Lite_Query_IExpression_Couchbase_Lite_Query_IExpression_[ATAN2(x, y)],
 which returns the principal value of the arc tangent of y/x, now becomes
-https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Atan2_Couchbase_Lite_Query_IExpression_Couchbase_Lite_Query_IExpression_[ATAN2(y, x)];
-that is, the arguments are reversed in line with common notation.
+https://docs.couchbase.com/mobile/{major}.{minor-net}.{maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Query.Function.html#Couchbase_Lite_Query_Function_Atan2_Couchbase_Lite_Query_IExpression_Couchbase_Lite_Query_IExpression_[ATAN2(y, x)];
+that's, the arguments are reversed in line with common notation.
 
 
 [#removed]
@@ -88,7 +88,7 @@ replicator.Start(true) // <.>
 We have removed the method
 https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_SetLogLevel_Couchbase_Lite_Logging_LogDomain_Couchbase_Lite_Logging_LogLevel_[Database.setLogLevel()] +
 Use
-https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Console[
+https://docs.couchbase.com/mobile/{major}.{minor-net}.{maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Logging.Log.html#Couchbase_Lite_Logging_Log_Console[
 Database.log.console]
 instead:
 
@@ -115,8 +115,8 @@ Database.Log.Console.LogLevel = LogLevel.Verbose;
 We have removed the method
 https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Compact[Database.compact()]. +
 Use the method
-https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_PerformMaintenance_Couchbase_Lite_MaintenanceType_[Database.PerformMaintenance()] and the enum
-https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.MaintenanceType.html[MaintenanceType]
+https://docs.couchbase.com/mobile/{major}.{minor-net}.{maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_PerformMaintenance_Couchbase_Lite_MaintenanceType_[Database.PerformMaintenance()] and the enum
+https://docs.couchbase.com/mobile/{major}.{minor-net}.{maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.MaintenanceType.html[MaintenanceType]
 instead
 
 [#before-3]
@@ -148,7 +148,7 @@ We will remove
 https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.IFullTextExpression.html#Couchbase_Lite_Query_IFullTextExpression_Match_System_String_[Match]
 at the next major release. +
 You should plan to switch to using the alternative
-https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.FullTextFunction.html#Couchbase_Lite_Query_FullTextFunction_Match_System_String_System_String_[FullTextFunction.match(indexName:)]
+https://docs.couchbase.com/mobile/{major}.{minor-net}.{maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Query.FullTextFunction.html#Couchbase_Lite_Query_FullTextFunction_Match_System_String_System_String_[FullTextFunction.match(indexName:)]
 at the earliest opportunity.
 
 [#before-4]
@@ -181,7 +181,7 @@ using (var query =
       }
   }
 ----
-<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.FullTextFunction.htmlFullTextFunction.match(indexName:)[FullTextFunction.match(indexName:)]
+<.> Here we use https://docs.couchbase.com/mobile/{major}.{minor-net}.{maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Query.FullTextFunction.htmlFullTextFunction.match(indexName:)[FullTextFunction.match(indexName:)]
 to build the query
 
 [#isnullormissing]
@@ -189,7 +189,7 @@ to build the query
 We will remove
 https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsNullOrMissing[isNullOrMissing] +
 You should plan to switch to using the alternative
-https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsNotValued[IsNotValued()]
+https://docs.couchbase.com/mobile/{major}.{minor-net}.{maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsNotValued[IsNotValued()]
 
 at the earliest opportunity.
 
@@ -217,7 +217,7 @@ var query = QueryBuilder.Select(SelectResult.All())
 We will remove
 https://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_NotNullOrMissing[notNullOrMissing]. +
 You should plan to switch to using the alternative
-https://docs.couchbase.com/mobile/{major}.{minor}.{base}{empty}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsValued[isValued()]
+https://docs.couchbase.com/mobile/{major}.{minor-net}.{maintenance-net}/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_IsValued[isValued()]
 at the earliest opportunity.
 
 
@@ -255,7 +255,7 @@ This feature is only available for the default storage type (i.e., not a ForestD
 The automatic migration feature does not support encrypted databases.
 So if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the https://docs-archive.couchbase.com/couchbase-lite/1.4/C#.html#database-encryption[1.x Database Guide]).
 
-Thus, to upgrade an encrypted 1.x database, you should do the following:
+To upgrade an encrypted 1.x database, you should do the following:
 
 .Upgrading Encrypted Databases
 ****
@@ -263,9 +263,9 @@ Thus, to upgrade an encrypted 1.x database, you should do the following:
 . Open the database file with encryption enabled using the Couchbase Lite 2.x framework.
 ****
 
-Since it is not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in the same application this upgrade path would require two successive upgrades.
+Since it's not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in the same application this upgrade path would require two successive upgrades.
 
-If you are using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.
+If you're using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.
 
 
 [#handling-of-existing-conflicts]
@@ -314,9 +314,9 @@ include::csharp:example$code_snippets/Program.cs[tags="1x-attachment", indent=0]
 The current replication protocol is not backwards compatible with the 1.x replication protocol.
 Therefore, to use replication with Couchbase Lite 2.x, the target Sync Gateway instance must also be upgraded to 2.x.
 
-Sync Gateway 2.x will continue to accept clients that connect through the 1.x protocol.
+Sync Gateway 2.x continues to accept clients that connect through the 1.x protocol.
 
-It will automatically use the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through ws://localhost:4984/db.
+It automatically uses the 1.x replication protocol when a Couchbase Lite 1.x client connects through \http://localhost:4984/db and the 2.0 replication protocol when a Couchbase Lite 2.0 client connects through ws://localhost:4984/db.
 
 This allows for a smoother transition to get all your user base onto a version of your application built with Couchbase Lite 2.x.
 
