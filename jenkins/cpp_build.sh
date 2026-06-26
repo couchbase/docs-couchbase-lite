@@ -7,7 +7,7 @@ fi
 
 THIS_DIR=$( dirname -- $(realpath "$0") )
 CBL_VERSION="$1"
-pushd "$THIS_DIR/../modules/c/examples/code_snippets"
+pushd "$THIS_DIR/../modules/c/examples/code_snippets_cpp"
 
 RESPONSE=$(curl -s "http://proget.build.couchbase.com:8080/api/get_version?product=couchbase-lite-c&version=${CBL_VERSION}")
 CBL_IS_RELEASE=$(echo -n "$RESPONSE" | jq .IsRelease)
