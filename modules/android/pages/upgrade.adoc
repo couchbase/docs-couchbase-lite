@@ -38,22 +38,24 @@ It falls back to BLE when Wi-Fi is unavailable.
 
 [source, Kotlin]
 ----
-val config = MultipeerReplicatorConfiguration(
-    peerGroupID = "myGroup",
-    identity = identity,
-    authenticator = authenticator,
-    collections = collections)
-config.transports = EnumSet.of(MultipeerTransport.WIFI, MultipeerTransport.BLUETOOTH)
+val config = MultipeerReplicatorConfiguration.Builder()
+    .setPeerGroupID("myGroup")
+    .setIdentity(identity)
+    .setAuthenticator(authenticator)
+    .setCollections(collections)
+    .setTransports(EnumSet.of(MultipeerTransport.WIFI, MultipeerTransport.BLUETOOTH))
+    .build()
 ----
 
 [source, Java]
 ----
-MultipeerReplicatorConfiguration config = new MultipeerReplicatorConfiguration(
-    "myGroup",
-    identity,
-    authenticator,
-    collections);
-config.setTransports(EnumSet.of(MultipeerTransport.WIFI, MultipeerTransport.BLUETOOTH));
+MultipeerReplicatorConfiguration config = new MultipeerReplicatorConfiguration.Builder()
+    .setPeerGroupID("myGroup")
+    .setIdentity(identity)
+    .setAuthenticator(authenticator)
+    .setCollections(collections)
+    .setTransports(EnumSet.of(MultipeerTransport.WIFI, MultipeerTransport.BLUETOOTH))
+    .build();
 ----
 
 ==== BLE Only
@@ -62,22 +64,24 @@ To restrict replication to BLE exclusively, omit `MultipeerTransport.WIFI`.
 
 [source, Kotlin]
 ----
-val config = MultipeerReplicatorConfiguration(
-    peerGroupID = "myGroup",
-    identity = identity,
-    authenticator = authenticator,
-    collections = collections)
-config.transports = EnumSet.of(MultipeerTransport.BLUETOOTH)
+val config = MultipeerReplicatorConfiguration.Builder()
+    .setPeerGroupID("myGroup")
+    .setIdentity(identity)
+    .setAuthenticator(authenticator)
+    .setCollections(collections)
+    .setTransports(EnumSet.of(MultipeerTransport.BLUETOOTH))
+    .build()
 ----
 
 [source, Java]
 ----
-MultipeerReplicatorConfiguration config = new MultipeerReplicatorConfiguration(
-    "myGroup",
-    identity,
-    authenticator,
-    collections);
-config.setTransports(EnumSet.of(MultipeerTransport.BLUETOOTH));
+MultipeerReplicatorConfiguration config = new MultipeerReplicatorConfiguration.Builder()
+    .setPeerGroupID("myGroup")
+    .setIdentity(identity)
+    .setAuthenticator(authenticator)
+    .setCollections(collections)
+    .setTransports(EnumSet.of(MultipeerTransport.BLUETOOTH))
+    .build();
 ----
 
 NOTE: Bluetooth transport requires Android API 29 or later.
