@@ -9,6 +9,7 @@ import com.couchbase.lite.MultipeerCertificateAuthenticator
 import com.couchbase.lite.MultipeerCollectionConfiguration
 import com.couchbase.lite.MultipeerReplicator
 import com.couchbase.lite.MultipeerReplicatorConfiguration
+import com.couchbase.lite.MultipeerTransport
 import com.couchbase.lite.PeerInfo
 import com.couchbase.lite.TLSIdentity
 import com.couchbase.lite.logging.ConsoleLogSink
@@ -18,6 +19,7 @@ import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 import java.util.Calendar
 import java.util.Date
+import java.util.EnumSet
 
 @Suppress("PropertyName")
 class MultipeerExamples {
@@ -210,6 +212,61 @@ class MultipeerExamples {
         return config
     }
 
+    fun configTransportsDefault() : MultipeerReplicatorConfiguration {
+        val identity = createCASignedIdentity()
+        val authenticator = authenticatorWithRootCerts()
+        val collections = collectionConfig()
+
+        // tag::multipeer-config-transports-default[]
+        // Wi-Fi is the default transport. No additional configuration is required.
+        val config = MultipeerReplicatorConfiguration.Builder()
+            .setPeerGroupID("com.myapp")
+            .setIdentity(identity)
+            .setAuthenticator(authenticator)
+            .setCollections(collections)
+            .build()
+        // transports defaults to EnumSet.of(MultipeerTransport.WIFI)
+        // end::multipeer-config-transports-default[]
+
+        return config
+    }
+
+    fun configTransportsBoth() : MultipeerReplicatorConfiguration {
+        val identity = createCASignedIdentity()
+        val authenticator = authenticatorWithRootCerts()
+        val collections = collectionConfig()
+
+        // tag::multipeer-config-transports-both[]
+        val config = MultipeerReplicatorConfiguration.Builder()
+            .setPeerGroupID("com.myapp")
+            .setIdentity(identity)
+            .setAuthenticator(authenticator)
+            .setCollections(collections)
+            .setTransports(EnumSet.of(MultipeerTransport.WIFI, MultipeerTransport.BLUETOOTH))
+            .build()
+        // end::multipeer-config-transports-both[]
+
+        return config
+    }
+
+    fun configTransportsBluetoothOnly() : MultipeerReplicatorConfiguration {
+        val identity = createCASignedIdentity()
+        val authenticator = authenticatorWithRootCerts()
+        val collections = collectionConfig()
+
+        // tag::multipeer-config-transports-bluetooth-only[]
+        val config = MultipeerReplicatorConfiguration.Builder()
+            .setPeerGroupID("com.myapp")
+            .setIdentity(identity)
+            .setAuthenticator(authenticator)
+            .setCollections(collections)
+            .setTransports(EnumSet.of(MultipeerTransport.BLUETOOTH))
+            .build()
+        // end::multipeer-config-transports-bluetooth-only[]
+
+        return config
+    }
+
 
     fun createMultipeerReplicator() : MultipeerReplicator {
         val config = createConfig()
@@ -326,7 +383,7 @@ class MultipeerExamples {
         }
 
         for(peer in replicator.neighborPeers) {
-            printPeerInfo(replicator.getPeerInfo(peer))
+            replicator.getPeerInfo(peer)?.let { printPeerInfo(it) }
         }
         // end::multipeer-peer-info[]
     }
