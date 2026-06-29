@@ -1,16 +1,20 @@
 = New in {release}
-ifdef::prerelease[:page-status: {prerelease}]
+ifdef::prerelease[:page-status: {release}]
 ifdef::show_edition[:page-edition: {release}]
 :page-partial:
 :page-content-type: reference
 :keywords: edge nosql performant compatibility mobile replication
 // End of Page Definition Statements
 
+NOTE: Couchbase Lite 4.1 introduces some breaking changes. +
+If you're upgrading from 3.x or 4.0, see the appropriate upgrade page -- <<lbl-upgrade>>.
+You cannot downgrade from 4.1 to earlier versions of Couchbase Lite.
+
 == Release 4.1.0
 
 === New Features
 
-==== Multipeer Replicator: Bluetooth Low Energy Transport
+==== OOTB Support for Peer-to-Peer Sync over Bluetooth Low Energy (BLE) via the Multipeer Replicator
 
 Couchbase Lite 4.1 extends the Multipeer Replicator with Bluetooth Low Energy (BLE) as an additional transport alongside Wi-Fi.
 You can now configure the Multipeer Replicator to use Wi-Fi only, Bluetooth only, or both transports simultaneously.
@@ -35,38 +39,28 @@ For more information, see:
 * xref:objc:p2psync-multipeer.adoc[Objective-C Multipeer Replicator]
 
 NOTE: Bluetooth has lower throughput and higher latency than Wi-Fi, and its reliability can decrease as more peers join the Bluetooth network.
-We recommend using Wi-Fi as the primary transport for multipeer sync, with Bluetooth as a fallback.
+Use Wi-Fi as the primary transport for multipeer sync, with Bluetooth as a fallback.
 
-==== Couchbase Lite C++ API (cbl++) Now Supported
+==== Couchbase Lite C++ API Now Supported
 
-Couchbase Lite 4.1 continues the commitment to the C++ wrapper API (`cbl++`) as a committed, supported API surface for Couchbase Lite C, first introduced in 3.4.
+Couchbase Lite 4.1 promotes the C++ wrapper API from volatile to a committed, supported API surface for Couchbase Lite C.
 
-The `cbl++` headers ship in all official Couchbase Lite C distributions.
+As of 4.1, the C++ API is a first-class, committed API with the following guarantees:
+
+* Source compatibility across patch and minor releases within a major line
+* Full availability across all Couchbase Lite C platforms, including iOS, Android, Windows, and Linux
+* Inclusion in official QA coverage and release testing
+* Documented deprecation policy for any future breaking changes
+
+The cbl++ headers ship in all official Couchbase Lite C distributions.
+A small set of golden-path examples covering CRUD, query, replication, and logging is available in the documentation.
 
 For more information, see xref:c:index.adoc[Couchbase Lite for C].
 
 ==== Windows ARM Support for Couchbase Lite C
 
-Couchbase Lite C 4.1 includes official support for Windows ARM64, enabling developers targeting ARM-based Windows devices to use Couchbase Lite C with full build and test coverage.
-
-==== Kotlin Serialization (Android)
-
-Couchbase Lite 4.1 for Android adds native support for `kotlinx.serialization`, allowing you to read and write domain model objects directly without manual field-by-field mapping.
-
-Define your model class with `@Serializable` and implement `DocumentModel`.
-Couchbase Lite handles conversion between your model and the underlying document, respecting Kotlin's nullability constraints and default property values.
-
-Key capabilities:
-
-* Save a `@Serializable` model instance directly to a collection using `Collection.save()`
-* Retrieve and deserialize a document by ID using `Collection.getDocumentAs<T>()`
-* Decode query result rows directly into model instances using `ResultSet.data<T>()`
-* Support for column-named results, `SELECT *` results, and results with document metadata
-
-This feature is available on Android (Kotlin) only.
-
-// For more information, see xref:android:kotlin-serialization.adoc[Kotlin Serialization].
-// Asked Pasin to confirm for now
+Couchbase Lite C 4.1 adds official support for Windows ARM64.
+This enables developers targeting ARM-based Windows devices including laptops, tablets, and mini PCs to use Couchbase Lite C with full build and test coverage.
 
 ==== Replication Correlation ID
 
@@ -85,9 +79,20 @@ For more information, see the Monitor section of the replication documentation f
 * xref:java:replication.adoc#lbl-repl-correlation-id[Java]
 * xref:csharp:replication.adoc#lbl-repl-correlation-id[.NET]
 
+==== Kotlin Serialization Support (Android)
+
+Couchbase Lite 4.1 for Android introduces native integration with `kotlinx.serialization`.
+
+You can now decode Couchbase Lite `Document` and `Dictionary` types directly into `@Serializable` Kotlin data classes without reflection-based workarounds such as Gson or Jackson.
+The integration respects Kotlin nullability constraints and default property values during decoding.
+
+This feature is Android-only.
+
+For more information, see xref:android:kotlin-serialization.adoc[Kotlin Serialization].
+
 == See also
 
-xref:3.4@couchbase-lite:ROOT:cbl-whatsnew.adoc[What's new in previous version 3.4]
+xref:4.0@couchbase-lite:ROOT:cbl-whatsnew.adoc[What's new in previous version 4.0]
 
 === Couchbase Lite Release Notes
 
