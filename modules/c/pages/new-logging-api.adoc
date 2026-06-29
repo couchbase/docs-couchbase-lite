@@ -106,9 +106,8 @@ include::c:example$code_snippets/cbl_cpp.cpp[tags=console-logging]
 
 
 .New API
+[{tabs}]
 ====
-[tabs]
-=====
 C::
 +
 --
@@ -118,15 +117,14 @@ include::c:example$code_snippets/main.cpp[tags=new-console-logging]
 ----
 --
 
-{cpp}::
+C++::
 +
 --
 [source.no-callouts, cpp, indent=0]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags=new-console-logging]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tag=new-console-logging]
 ----
 --
-=====
 ====
 
 [#lbl-file-logsink]
@@ -164,9 +162,8 @@ include::c:example$code_snippets/cbl_cpp.cpp[tags=file-logging]
 ====
 
 .New API
+[{tabs}]
 ====
-[tabs]
-=====
 C::
 +
 --
@@ -176,15 +173,14 @@ include::c:example$code_snippets/main.cpp[tags=new-file-logging]
 ----
 --
 
-{cpp}::
+C++::
 +
 --
 [source.no-callouts, cpp, indent=0]
 ----
-include::c:example$code_snippets/cbl_cpp.cpp[tags=new-file-logging]
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tag=new-file-logging]
 ----
 --
-=====
 ====
 
 [#lbl-custom-logsink]
@@ -192,15 +188,15 @@ include::c:example$code_snippets/cbl_cpp.cpp[tags=new-file-logging]
 
 Installing a custom log sink with the new API is also streamlined: create an instance of your custom sink, and to install it use `LogSinks.get().setCustom` in Java, or the appropriate static method in Swift, Objective-C, .NET, and C.
 
-As with the other log sinks, you will have to specify the level and domain at which Couchbase logs are forwarded to your custom sink at its creation.
+As with the other log sinks, you have to specify the level and domain at which Couchbase logs are forwarded to your custom sink at its creation.
 
 
 Your custom log sink code will have to change as well.
-In C, the custom log sink implementation is a callback that is assigned to CBLCustomLogSink object during creation.
+In C, the custom log sink implementation is a callback that's assigned to CBLCustomLogSink object during creation.
 
 
-A second important change is that your logger will receive only logs at the level and domain for which it is initialized.
-There is no need to record or filter the logs forwarded to the protected `writeLog` method which replaces the public `log` method from the old API.
+A second important change is that your logger will receive only logs at the level and domain for which it's initialized.
+There's no need to record or filter the logs forwarded to the protected `writeLog` method which replaces the public `log` method from the old API.
 
 Related to this last point, the Couchbase `Loggers`, now `LogSinks` are meant to support logging by the Couchbase Lite platform.
 They were never meant as a general framework for logging.
@@ -235,9 +231,8 @@ include::c:example$code_snippets/cbl_cpp.cpp[tags=custom-logging;set-custom-logg
 ====
 
 .New API
+[{tabs}]
 ====
-[tabs]
-=====
 C::
 +
 --
@@ -246,6 +241,16 @@ C::
 include::c:example$code_snippets/main.cpp[tags=new-custom-logging;set-new-custom-logging]
 ----
 --
+
+C++::
++
+--
+[source.no-callouts, cpp, indent=0]
+----
+include::c:example$code_snippets_cpp/cbl_cpp.cpp[tags=new-custom-logging;set-new-custom-logging]
+----
+--
+====
 
 {cpp}::
 +
