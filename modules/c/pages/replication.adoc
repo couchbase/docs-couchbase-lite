@@ -302,7 +302,7 @@ In the event it detects a transient error, the replicator will attempt to reconn
 
 On each retry the interval between attempts is increased exponentially (exponential backoff) up to the maximum wait time limit (5 minutes).
 
-The REST API provides configurable control over this replication retry logic using a set of configiurable properties -- see: xref:c:replication.adoc#tbl-repl-retry[].
+The table below shows a set of properties for configuring the replication retry logic -- see: xref:c:replication.adoc#tbl-repl-retry[].
 
 .Replication Retry Configuration Properties
 [#tbl-repl-retry,cols="2,3,5"]
@@ -961,7 +961,7 @@ include::c:example$code_snippets/main.cpp[tags="remove-document-replication-list
 [#document-access-removal-behavior]
 ==== Document Access Removal Behavior
 
-When access to a document is removed on Sync Gateway (see: Sync Gateway's xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
+When access to a document is removed on Sync Gateway (see: Sync Gateway's' xref:sync-gateway::sync-function-api.adoc[Sync Function]), the document replication listener sends a notification with the `AccessRemoved` flag set to `true` and subsequently purges the document from the database.
 
 
 [#lbl-repl-pend]
@@ -999,6 +999,20 @@ This is a snapshot and may have changed by the time the response is received and
 <.> {url-api-references-classes}replication.html#ga493eeac915dd54a274b907a010664a2e[CBLReplicator.isDocumentPending()] returns `true` if the document is waiting to be pushed, and `false` otherwise.
 
 
+[#lbl-repl-correlation-id]
+=== Correlation ID
+The correlation ID is a read-only property that identifies the Sync Gateway session associated with a Couchbase Lite replicator.
+Use it to correlate log entries on the client and server when diagnosing replication issues.
+[#ex-repl-correlation-id]
+.Get the replicator correlation ID
+====
+[source, c]
+----
+String correlationID = replicator.getCorrelationId();
+----
+====
+
+
 [#lbl-repl-stop]
 == Stop
 
@@ -1008,7 +1022,7 @@ It is done using {url-api-references-classes}replication.html#ga548ce28403200954
 This initiates an asynchronous operation and so is not necessarily immediate.
 Your app should account for this potential delay before attempting any subsequent operations.
 
-You can find further information on database operations in xref:c:database.adoc[Databases].
+You can find further information about database operations in xref:c:database.adoc[Databases].
 
 // Example 9
 .Stop replicator
@@ -1158,7 +1172,7 @@ CouchbaseLite Replicator ERROR: {Repl#2} Got LiteCore error: WebSocket error 100
 ----
 ====
 
-If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't using the certificate you will encounter an error with status code `5011` -- see: <<ex-5011>>
+If Sync Gateway is configured with a self signed certificate, and your app points to a `wss` scheme but the replicator configuration isn't' using the certificate you will encounter an error with status code `5011` -- see: <<ex-5011>>
 
 [#ex-5011]
 .Certificate Mismatch or Not Found
